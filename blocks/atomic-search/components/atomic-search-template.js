@@ -278,21 +278,21 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 id="facetContentType"
                 sort-criteria="alphanumericNatural"
                 field="el_contenttype"
-                label=${placeholders.searchContentTypeLabel || 'Content Type'}
+                label="${placeholders.searchContentTypeLabel || 'Content Type'}"
                 display-values-as="checkbox">
               </atomic-facet>
               <atomic-facet
                 id="facetStatus"
                 sort-criteria="alphanumericNatural"
                 field="el_status"
-                label=${placeholders.searchAnsweredLabel || 'Answered'}
+                label="${placeholders.searchAnsweredLabel || 'Answered'}"
                 display-values-as="checkbox">
               </atomic-facet>
               <atomic-facet
                 id="facetProduct"
                 sort-criteria="alphanumericNatural"
                 field="el_product"
-                label=${placeholders.searchProductLabel || 'Product'}
+                label="${placeholders.searchProductLabel || 'Product'}"
                 number-of-values="100"
                 display-values-as="checkbox"
                 with-search="false"
@@ -302,14 +302,14 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 id="facetRole"
                 sort-criteria="alphanumericNatural"
                 field="el_role"
-                label=${placeholders.searchRoleLabel || 'Role'}
+                label="${placeholders.searchRoleLabel || 'Role'}"
                 display-values-as="checkbox">
               </atomic-facet>
             
               <atomic-timeframe-facet
                 id="facetDate"
                 field="date"
-                label="Date"
+                label="${placeholders.searchDateLabel || 'Date'}"
                 injection-depth="1000"
                 filter-facet-count
                 enable-custom-range="false">
@@ -317,19 +317,19 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     amount="1"
                     unit="month"
                     period="past"
-                    label="Within one month">
+                    label="${placeholders.searchDateOneMonthLabel || 'Within one month'}">
                   </atomic-timeframe>
                   <atomic-timeframe
                     amount="6"
                     unit="month"
                     period="past"
-                    label="Within six months">
+                    label="${placeholders.searchDateSixMonthLabel || 'Within six months'}">
                   </atomic-timeframe>
                   <atomic-timeframe
                     amount="1"
                     unit="year"
                     period="past"
-                    label="Within one year">
+                    label="${placeholders.searchDateOneYearLabel || 'Within one year'}">
                   </atomic-timeframe>
               </atomic-timeframe-facet>
             </atomic-facet-manager>
@@ -849,6 +849,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='main'].atomic-no-result {
                     padding-left: 0;
                     border: none;
+                    background-color: unset;
                   }
                 }
         </style>
