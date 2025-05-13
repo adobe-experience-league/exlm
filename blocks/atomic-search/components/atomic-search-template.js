@@ -528,7 +528,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     <div class="mobile-result-title">
                       <atomic-field-condition must-match-is-recommendation="true">
                         <span class="atomic-recommendation-badge">${
-                          placeholders.recommendationBadge || 'Recommendation'
+                          placeholders.searchRecommendationBadge || 'Recommendation'
                         }</span>
                       </atomic-field-condition>
                       <atomic-result-text field="title" should-highlight="false">
@@ -589,7 +589,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         <div class="result-title">
                           <atomic-field-condition must-match-is-recommendation="true">
                             <span class="atomic-recommendation-badge">${
-                              placeholders.recommendationBadge || 'Recommendation'
+                              placeholders.searchRecommendationBadge || 'Recommendation'
                             }</span>
                           </atomic-field-condition>
                           <atomic-result-text field="title" should-highlight="false">

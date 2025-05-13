@@ -395,8 +395,8 @@ export default function atomicResultHandler(block, placeholders) {
     btn.innerHTML = `
       <span part="btn-text" class="atomic-child-btn-text">${
         isCollapsed
-          ? `${placeholders.expandAllReplies || 'Expand all replies'}`
-          : `${placeholders.collapseAllReplies || 'Collapse all replies'}`
+          ? `${placeholders.searchExpandAllReplies || 'Expand all replies'}`
+          : `${placeholders.searchCollapseAllReplies || 'Collapse all replies'}`
       }
       </span>
       <span part="chevron-icon ${isCollapsed ? '' : 'chevron-up'}" class="icon icon-atomic-search-chevron-blue">
