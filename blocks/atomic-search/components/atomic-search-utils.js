@@ -56,9 +56,11 @@ export const debounce = (ms, fn) => {
   let timer;
   // eslint-disable-next-line func-names
   return function (...args) {
+    const ctx = this;
     clearTimeout(timer);
-    args.unshift(this);
-    timer = setTimeout(fn(args), ms);
+    timer = setTimeout(() => {
+      fn.apply(ctx, args);
+    }, ms);
   };
 };
 
@@ -91,7 +93,8 @@ export const handleHeaderSearchVisibility = () => {
   }
 };
 
-export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutation } = {}) {
+export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutation, waitForElement = false } = {}) {
+  let observer;
   const ready = () => {
     const root = host.shadowRoot;
     if (!root) {
@@ -104,6 +107,11 @@ export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutati
       !!Array.from(host.shadowRoot.children).find((el) => el.tagName !== 'STYLE');
     let populated = hasContent();
 
+    if (waitForElement && !populated && root.nodeName === '#document-fragment') {
+      waitFor(ready, 300);
+      return;
+    }
+
     if (populated) {
       if (onPopulate) {
         onPopulate(root);
@@ -112,7 +120,7 @@ export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutati
       onEmpty(root);
     }
 
-    const obs = new MutationObserver((muts) => {
+    observer = new MutationObserver((muts) => {
       if (onMutation) {
         onMutation(muts, root);
       }
@@ -132,10 +140,17 @@ export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutati
       }
     });
 
-    obs.observe(root, { childList: true, subtree: true, attributes: true });
+    observer.observe(root, { childList: true, subtree: true, attributes: true });
   };
 
   ready();
+  return observer;
+}
+
+export function disconnectShadowObserver(observer) {
+  if (observer && typeof observer.disconnect === 'function') {
+    observer.disconnect();
+  }
 }
 
 export const sleep = (callback, timeout = 20) => {
@@ -148,3 +163,10 @@ export const sleep = (callback, timeout = 20) => {
     callback();
   });
 };
+
+export function isUserClick(e) {
+  if (typeof e.isTrusted === 'boolean') {
+    return e.isTrusted;
+  }
+  return e.detail > 0;
+}
