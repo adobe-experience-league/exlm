@@ -4242,14 +4242,14 @@
         }
       },
       {
-        "component": "exlm-tq-custom-field",
-        "name": "tqTags",
+        "component": "custom-execute-button",
+        "name": "generateTqTags",
         "label": "Generate TQ Tags",
         "valueType": "string",
         "extensionId": "exlm-ue-custom-field"
       },
       {
-        "component": "exlm-aem-tag",
+        "component": "custom-aem-tag",
         "name": "exlm-products",
         "label": "Solution(s)",
         "valueType": "string",
@@ -4257,7 +4257,7 @@
         "extensionId": "exlm-ue-custom-field"
       },
       {
-        "component": "exlm-aem-tag",
+        "component": "custom-aem-tag",
         "name": "exlm-features",
         "label": "Feature(s)",
         "valueType": "string",
