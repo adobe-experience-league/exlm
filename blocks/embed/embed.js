@@ -101,7 +101,7 @@ const loadEmbed = (block, link, autoplay) => {
 export default function decorate(block) {
   const placeholder = block.querySelector('picture');
   const link = block.querySelector('a').href;
-  if (link.includes('tv.adobe.com')) {
+  if (link?.includes('tv.adobe.com')) {
     const videoId = link.match(/\/v\/(\d+)/)?.[1];
     pushVideoMetadataOnLoad(videoId, link);
   }
