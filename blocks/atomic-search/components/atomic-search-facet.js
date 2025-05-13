@@ -1,4 +1,4 @@
-import { CUSTOM_EVENTS, waitForChildElement } from './atomic-search-utils.js';
+import { CUSTOM_EVENTS, debounce, isUserClick, waitForChildElement } from './atomic-search-utils.js';
 
 export default function atomicFacetHandler(baseElement) {
   const adjustChildElementsPosition = (facet, atomicElement) => {
@@ -28,6 +28,56 @@ export default function atomicFacetHandler(baseElement) {
           atomicElement.dataset.clickmore = 'true';
         }
       }
+    }
+    if (!facet.dataset.evented) {
+      facet.dataset.evented = 'true';
+      const clickHandler = (e) => {
+        const userClickAction = isUserClick(e);
+        if (!userClickAction) {
+          return;
+        }
+
+        const isChildFacet = facet.dataset.childfacet === 'true';
+        const isSelected = facet.firstElementChild.ariaChecked === 'false'; // Will take some to update the state.
+        const parentFacet = isChildFacet
+          ? facet.parentElement.querySelector(`[data-contenttype="${facet.dataset.parent}"]`)
+          : facet;
+        const parentFacetIsSelected = isChildFacet ? parentFacet.firstElementChild?.ariaChecked === 'true' : isSelected;
+        if (isChildFacet) {
+          // child facet click.
+          if (!isSelected && parentFacetIsSelected) {
+            parentFacet.firstElementChild.click();
+          } else if (isSelected && !parentFacetIsSelected) {
+            // Now check if all child facets excluding the current one is selected.
+            const parentFacetType = facet.dataset.parent;
+            const allChildFacets = Array.from(
+              facet.parentElement.querySelectorAll(`[data-parent="${parentFacetType}"]`),
+            );
+            const selectedCount = allChildFacets.reduce((acc, curr) => {
+              if (curr.firstElementChild.ariaChecked === 'true') {
+                return acc + 1;
+              }
+              return acc;
+            }, 1);
+            if (selectedCount === allChildFacets.length) {
+              parentFacet.firstElementChild.click();
+            }
+          }
+        } else {
+          // Parent facet click.
+          const parentFacetType = parentFacet.dataset.contenttype;
+          const parentFacetValue = parentFacetIsSelected ? 'true' : 'false';
+          const allChildFacets = facet.parentElement.querySelectorAll(`[data-parent="${parentFacetType}"]`);
+          allChildFacets.forEach((childFacet) => {
+            if (childFacet.firstElementChild.ariaChecked !== parentFacetValue) {
+              childFacet.firstElementChild.click();
+            }
+          });
+        }
+      };
+
+      const debouncedHandler = debounce(100, clickHandler);
+      facet.addEventListener('click', debouncedHandler);
     }
   };
 
