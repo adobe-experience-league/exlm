@@ -4,7 +4,7 @@
  * https://www.hlx.live/developer/block-collection/embed
  */
 
-import { pushVideoEvent } from '../../scripts/analytics/lib-analytics.js';
+import { pushVideoEvent, pushVideoMetadataOnLoad } from '../../scripts/analytics/lib-analytics.js';
 
 const loadScript = (url, callback, type) => {
   const head = document.querySelector('head');
@@ -101,6 +101,14 @@ const loadEmbed = (block, link, autoplay) => {
 export default function decorate(block) {
   const placeholder = block.querySelector('picture');
   const link = block.querySelector('a').href;
+  if (link?.includes('tv.adobe.com')) {
+    const videoId = link.match(/\/v\/(\d+)/)?.[1];
+    if (videoId) {
+      const thumbnailUrl = `https://video.tv.adobe.com/v/${videoId}?format=jpeg`;
+      pushVideoMetadataOnLoad(videoId, link, thumbnailUrl);
+    }
+  }
+
   block.textContent = '';
   if (placeholder) {
     const wrapper = document.createElement('div');
