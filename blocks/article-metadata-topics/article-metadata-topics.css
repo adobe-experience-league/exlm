@@ -12,11 +12,6 @@
   margin: 0;
 }
 
-.article-metadata-topics li + li:not(:last-child)::after {
-  content: ' |';
-  margin-left: 0.75em;
-}
-
 .article-metadata-topics li:first-child {
   font-size: var(--spectrum-font-size-75);
   text-transform: uppercase;
@@ -25,8 +20,18 @@
   margin-bottom: 0;
 }
 
+.article-metadata-topics li + li:not(:last-child) {
+  padding-right: 0;
+}
+
+.article-metadata-topics li + li:not(:last-child)::after {
+  font-size: 12px;
+  content: ' |';
+  margin-left: 0.5em;
+}
+
 .article-metadata-topics ul > li:not(:first-child) {
-  margin-right: 8px;
+  margin-right: 4px;
 }
 
 .article-metadata-topics ul > li:last-child {

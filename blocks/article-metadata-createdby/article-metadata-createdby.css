@@ -8,19 +8,25 @@
 }
 
 .article-metadata-createdby ul > li {
+  font-family: var(--body-font-family);
+  font-weight: 400;
   font-size: var(--spectrum-font-size-100);
-  color: var(--non-spectrum-dim-gray);
+  color: inherit;
   padding: 0 5px;
   cursor: default;
-  -webkit-font-smoothing: subpixel-antialiased;
   display: inline-block;
   margin-bottom: 0;
   margin-top: 0;
 }
 
+.article-metadata-createdby li:not(:last-child) {
+  padding-right: 0;
+}
+
 .article-metadata-createdby li:not(:last-child)::after {
+  font-size: 12px;
   content: ' |';
-  margin-left: 0.75em;
+  margin-left: 0.5em;
 }
 
 .article-metadata-createdby ul > li:not(:last-child) {

@@ -13,8 +13,9 @@
 }
 
 .article-metadata-appliesto li + li:not(:last-child)::after {
+  font-size: 12px;
   content: ' |';
-  margin-left: 0.75em;
+  margin-left: 0.5em;
 }
 
 .article-metadata-appliesto li:first-child {
