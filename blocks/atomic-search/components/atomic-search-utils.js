@@ -8,6 +8,7 @@ export const CUSTOM_EVENTS = {
   NO_RESULT_FOUND: 'ATOMIC_RESULT_NOT_FOUND',
   RESULT_FOUND: 'ATOMIC_RESULT_FOUND',
   SEARCH_QUERY_CHANGED: 'ATOMIC_SEARCH_QUERY_CHANGED',
+  SEARCH_CLEARED: 'ATOMIC_SEARCH_CLEARED',
 };
 
 export const COMMUNITY_SUPPORTED_SORT_ELEMENTS = ['el_view_status', 'el_kudo_status', 'el_reply_status'];
@@ -72,9 +73,11 @@ export const getFiltersFromUrl = () => {
   const filtersInfo = decodedHash.split('&').filter((s) => !!s);
   return filtersInfo.reduce((acc, curr) => {
     const [facetKeys, facetValueInfo] = curr.split('=');
-    const facetValues = facetValueInfo.split(',');
-    const keyName = facetKeys.replace('f-', '');
-    acc[keyName] = facetValues;
+    if (facetValueInfo) {
+      const facetValues = facetValueInfo.split(',');
+      const keyName = facetKeys.replace('f-', '');
+      acc[keyName] = facetValues;
+    }
     return acc;
   }, {});
 };
