@@ -12,6 +12,8 @@ import { htmlToElement } from '../../../scripts/scripts.js';
 export default function atomicNoResultHandler(block, placeholders) {
   const searchInterface = block.querySelector('atomic-search-interface');
   const facetSection = block.querySelector('atomic-layout-section[section="facets"]');
+  const resultSection = block.querySelector('atomic-folded-result-list');
+  const searchLayout = block.querySelector('atomic-search-layout');
   const baseElement = block.querySelector('atomic-no-results');
   let buildBreadcrumbManagerFn = null;
   const { engine } = searchInterface;
@@ -60,6 +62,14 @@ export default function atomicNoResultHandler(block, placeholders) {
               if (noResultsText) {
                 noResultsText.firstChild.textContent = `${labels.noResultsText} `;
               }
+
+              document.addEventListener(CUSTOM_EVENTS.SEARCH_CLEARED, () => {
+                clearFiltersButton.remove();
+                clearFiltersButton.remove();
+                defaultAtomicContent.appendChild(clearSearchButton);
+                clearFiltersText?.remove();
+              });
+
               if (!buildBreadcrumbManagerFn) {
                 // eslint-disable-next-line import/no-relative-packages
                 const module = await import('../../../scripts/coveo-headless/libs/browser/headless.esm.js');
@@ -93,6 +103,8 @@ export default function atomicNoResultHandler(block, placeholders) {
 
         observeShadowRoot(baseElement, {
           onPopulate: () => {
+            resultSection.classList.remove('list-wrap-skeleton');
+            searchLayout.classList.add('no-results');
             toggleResultHeaderClass(true);
             document.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NO_RESULT_FOUND));
             setTimeout(() => {
@@ -101,6 +113,7 @@ export default function atomicNoResultHandler(block, placeholders) {
             decorateNoResults();
           },
           onClear: () => {
+            searchLayout.classList.remove('no-results');
             toggleResultHeaderClass(false);
             document.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.RESULT_FOUND));
           },

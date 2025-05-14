@@ -42,9 +42,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
               }
               atomic-search-interface:not(.atomic-search-interface-no-results, .atomic-search-interface-error) atomic-search-layout {
                 grid-template-areas: 
-                  ". .                      atomic-section-search ."
-                  ". atomic-section-facets  atomic-section-main   ."
-                  ". atomic-section-facets  .                     ." !important;
+                  ". .                      atomic-section-search"
+                  ". atomic-section-facets  atomic-section-main"
+                  ". atomic-section-facets  .                  " !important;
     
                 @media(max-width: 1024px) {
                   grid-template-areas: 
@@ -364,6 +364,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
               <atomic-query-summary id="query-summary">
                 <style>
                   atomic-query-summary {
+                    min-height: 48px;
                     color: var(--non-spectrum-dark-gray);
                     font-size: 18px;
                     margin: 16px 0 20px;
@@ -382,7 +383,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     font-size: 14px;
                     color: var(--non-spectrum-graphite-gray);
                   }
-
+                  @media (min-width: 1024px) {
+                    min-height: auto;
+                  }
                 </style>
               </atomic-query-summary>
             </atomic-layout-section>
@@ -466,6 +469,10 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     border: 1px solid #CACACA;
                     border-radius: 4px;
                     color: var(--non-spectrum-grey-updated);
+
+                    @media(max-width: 1024px) {
+                      padding-right: 2rem;
+                    }
                   }
                   atomic-sort-dropdown::part(label) {
                     font-size: 12px;
@@ -505,8 +512,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
             </atomic-layout-section>
             <atomic-layout-section section="results">
               <style>
-                atomic-folded-result-list::part(result-list) {
-                  margin: 0 0 32px;
+                atomic-folded-result-list::part(list-wrap) {
+                  margin: 0 0 24px;
+                }
+                atomic-folded-result-list.list-wrap-skeleton {
+                 min-height: 100vh;
+                 display: block;
                 }
                 atomic-folded-result-list::part(outline) {
                   padding-left: 0;
@@ -522,7 +533,8 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   padding-left: 72px;
                 }
                 .result-header-item {
-                  font-size: 11px;
+                  font-size: var(--spectrum-font-size-50);
+                  text-transform: uppercase;
                   color: var(--non-spectrum-web-gray);
                 }
                .result-header-section.result-header-inactive {
@@ -758,7 +770,8 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-layout-section[section='pagination'] {
                   border-top: 1px solid var(--non-spectrurm-whisper-gray);
                   padding: 40px 0;
-                  margin-top: -8px;
+                  margin-top: 0;
+                  position: relative;
                 }
                 atomic-pager::part(active-page-button) {
                   border: none;
@@ -830,6 +843,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
               display: none;
             }
             @media only screen and (min-width: 1024px) {
+              atomic-search-layout atomic-layout-section[section='main'] {
+                position: relative;
+              }
               atomic-search-interface.atomic-search-interface-no-results atomic-search-layout {
                     grid-template-areas:
                     '. .                     atomic-section-search .'

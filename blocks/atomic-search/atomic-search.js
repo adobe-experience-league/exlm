@@ -64,7 +64,7 @@ export default function decorate(block) {
         <div class="atomic-load-skeleton-right">
           <div class="atomic-load-skeleton-filter">
             <div class="atomic-load-skeleton"></div>
-            <div class="atomic-load-skeleton"></div>
+            <div class="atomic-load-skeleton-search-filter atomic-load-skeleton"></div>
           </div>
           <div class="atomic-load-skeleton-result">
             ${`${[...Array(10)]
