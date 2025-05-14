@@ -8,6 +8,7 @@ export const CUSTOM_EVENTS = {
   NO_RESULT_FOUND: 'ATOMIC_RESULT_NOT_FOUND',
   RESULT_FOUND: 'ATOMIC_RESULT_FOUND',
   SEARCH_QUERY_CHANGED: 'ATOMIC_SEARCH_QUERY_CHANGED',
+  SEARCH_CLEARED: 'ATOMIC_SEARCH_CLEARED',
 };
 
 export const COMMUNITY_SUPPORTED_SORT_ELEMENTS = ['el_view_status', 'el_kudo_status', 'el_reply_status'];
@@ -56,9 +57,11 @@ export const debounce = (ms, fn) => {
   let timer;
   // eslint-disable-next-line func-names
   return function (...args) {
+    const ctx = this;
     clearTimeout(timer);
-    args.unshift(this);
-    timer = setTimeout(fn(args), ms);
+    timer = setTimeout(() => {
+      fn.apply(ctx, args);
+    }, ms);
   };
 };
 
@@ -70,9 +73,11 @@ export const getFiltersFromUrl = () => {
   const filtersInfo = decodedHash.split('&').filter((s) => !!s);
   return filtersInfo.reduce((acc, curr) => {
     const [facetKeys, facetValueInfo] = curr.split('=');
-    const facetValues = facetValueInfo.split(',');
-    const keyName = facetKeys.replace('f-', '');
-    acc[keyName] = facetValues;
+    if (facetValueInfo) {
+      const facetValues = facetValueInfo.split(',');
+      const keyName = facetKeys.replace('f-', '');
+      acc[keyName] = facetValues;
+    }
     return acc;
   }, {});
 };
@@ -91,7 +96,8 @@ export const handleHeaderSearchVisibility = () => {
   }
 };
 
-export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutation } = {}) {
+export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutation, waitForElement = false } = {}) {
+  let observer;
   const ready = () => {
     const root = host.shadowRoot;
     if (!root) {
@@ -104,6 +110,11 @@ export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutati
       !!Array.from(host.shadowRoot.children).find((el) => el.tagName !== 'STYLE');
     let populated = hasContent();
 
+    if (waitForElement && !populated && root.nodeName === '#document-fragment') {
+      waitFor(ready, 300);
+      return;
+    }
+
     if (populated) {
       if (onPopulate) {
         onPopulate(root);
@@ -112,7 +123,7 @@ export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutati
       onEmpty(root);
     }
 
-    const obs = new MutationObserver((muts) => {
+    observer = new MutationObserver((muts) => {
       if (onMutation) {
         onMutation(muts, root);
       }
@@ -132,10 +143,17 @@ export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutati
       }
     });
 
-    obs.observe(root, { childList: true, subtree: true, attributes: true });
+    observer.observe(root, { childList: true, subtree: true, attributes: true });
   };
 
   ready();
+  return observer;
+}
+
+export function disconnectShadowObserver(observer) {
+  if (observer && typeof observer.disconnect === 'function') {
+    observer.disconnect();
+  }
 }
 
 export const sleep = (callback, timeout = 20) => {
@@ -148,3 +166,10 @@ export const sleep = (callback, timeout = 20) => {
     callback();
   });
 };
+
+export function isUserClick(e) {
+  if (typeof e.isTrusted === 'boolean') {
+    return e.isTrusted;
+  }
+  return e.detail > 0;
+}

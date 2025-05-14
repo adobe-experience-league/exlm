@@ -64,7 +64,7 @@ export default function decorate(block) {
         <div class="atomic-load-skeleton-right">
           <div class="atomic-load-skeleton-filter">
             <div class="atomic-load-skeleton"></div>
-            <div class="atomic-load-skeleton"></div>
+            <div class="atomic-load-skeleton-search-filter atomic-load-skeleton"></div>
           </div>
           <div class="atomic-load-skeleton-result">
             ${`${[...Array(10)]
@@ -103,7 +103,7 @@ export default function decorate(block) {
     const commonActionHandler = () => {
       atomicFacetHandler(block.querySelector('atomic-facet'));
       atomicSearchBoxHandler(block.querySelector('atomic-search-box'));
-      atomicResultHandler(block);
+      atomicResultHandler(block, placeholders);
       atomicSortDropdownHandler(block.querySelector('atomic-sort-dropdown'));
       atomicFacetManagerHandler(block.querySelector('atomic-facet-manager'));
       atomicQuerySummaryHandler(block.querySelector('atomic-query-summary'), placeholders);
