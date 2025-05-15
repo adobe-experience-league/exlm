@@ -828,7 +828,6 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     display: none;
                   }
                   atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='main'].atomic-no-result {
-                    padding-left: 0;
                     border: none;
                   }
                 }
