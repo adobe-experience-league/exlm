@@ -27,7 +27,6 @@ export const allowedProducts = [
   'Experience Cloud Services',
   'Experience Manager',
   'Experience Manager|as a Cloud Service',
-  'Experience Manager|Assets',
   'Experience Manager|Cloud Manager',
   'Experience Platform',
   'GenStudio for Performance Marketing',

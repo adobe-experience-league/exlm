@@ -83,7 +83,6 @@ export default function atomicFacetManagerHandler(baseElement) {
       waitForChildElement(baseElement, initAtomicFacetManagerUI);
       return;
     }
-
     const modal = document.createElement('div');
     modal.className = 'facet-modal';
     modal.style.display = 'none';

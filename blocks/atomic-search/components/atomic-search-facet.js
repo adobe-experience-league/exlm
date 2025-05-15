@@ -116,6 +116,7 @@ export default function atomicFacetHandler(baseElement) {
     if (atomicFacet.getAttribute('id') === 'facetStatus') {
       if (!hasContentTypeFilter()) {
         atomicFacet?.classList?.add('hide-facet');
+        atomicFacet?.removeAttribute('is-collapsed');
       } else {
         atomicFacet?.classList?.remove('hide-facet');
       }

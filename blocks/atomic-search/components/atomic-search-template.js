@@ -297,7 +297,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 display-values-as="checkbox"
                 with-search="false"
                 allowed-values='${JSON.stringify(allowedProducts)}'>
-                </atomic-facet>
+              </atomic-facet>
               <atomic-facet
                 id="facetRole"
                 sort-criteria="alphanumericNatural"
@@ -863,9 +863,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     display: none;
                   }
                   atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='main'].atomic-no-result {
-                    padding-left: 0;
                     border: none;
-                    background-color: unset;
                   }
                 }
         </style>
