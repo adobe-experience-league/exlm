@@ -1,6 +1,6 @@
 import { CUSTOM_EVENTS, isUserClick } from './atomic-search-utils.js';
 
-export default function atomicBreadBoxHandler(baseElement, placeholders) {
+export default function atomicBreadBoxHandler(baseElement) {
   function updateFilterClearBtnStyles(enabled) {
     const clearBtn = document.querySelector('.clear-label');
     if (enabled) {
@@ -8,27 +8,6 @@ export default function atomicBreadBoxHandler(baseElement, placeholders) {
     } else {
       clearBtn.classList.remove('clear-btn-enabled');
     }
-  }
-
-  function updateAnsweredFacet(breadcrumb) {
-    if (!breadcrumb) return;
-    const breadcrumbButtons = breadcrumb.querySelectorAll('[part="breadcrumb-button"]');
-    breadcrumbButtons?.forEach((button) => {
-      const breadcrumbTitle = placeholders.searchAnsweredLabel || 'Answered:';
-      if (button?.querySelector('[part="breadcrumb-label"]')?.textContent === breadcrumbTitle) {
-        const breadcrumbValue = button?.querySelector('[part="breadcrumb-value"]');
-        switch (breadcrumbValue?.textContent) {
-          case 'false':
-            breadcrumbValue.textContent = placeholders.searchUnresolvedLabel || 'Unresolved';
-            break;
-          case 'true':
-            breadcrumbValue.textContent = placeholders.searchResolvedLabel || 'Resolved';
-            break;
-          default:
-            break;
-        }
-      }
-    });
   }
 
   function onFilterUpdate() {
@@ -86,7 +65,6 @@ export default function atomicBreadBoxHandler(baseElement, placeholders) {
       const observer = new MutationObserver(() => {
         attachListeners();
         onFilterUpdate();
-        updateAnsweredFacet(targetElement);
       });
       observer.observe(targetElement, { childList: true });
     } else {
@@ -101,7 +79,6 @@ export default function atomicBreadBoxHandler(baseElement, placeholders) {
         updateFilterClearBtnStyles(enabled);
         observeBreadboxUI(enabled);
         attachListeners();
-        updateAnsweredFacet(baseElement.shadowRoot?.querySelector(`[part="breadcrumb-list"]`));
       }
     });
   });
