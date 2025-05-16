@@ -191,6 +191,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(facet-child-element) {
                   margin-left: 32px;
                 }
+                atomic-facet.hide-facet {
+                  display: none;
+                }
                 atomic-facet::part(facet-hide-element) {
                   display: none;
                 }
@@ -208,7 +211,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   border-bottom: 2px solid var(--footer-border-color);
                   border-radius: 1px;
                 }
-                atomic-facet::part(facet), atomic-facet::part(placeholder) {
+                atomic-facet::part(placeholder) {
                     border: none;
                 }
                 atomic-facet::part(search-wrapper) {
@@ -226,6 +229,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 }
                 atomic-facet::part(facet) {
                   padding-right: 0;
+                  border: none;
                 }
                 atomic-facet::part(values) {
                   max-height: 500px;
@@ -235,13 +239,6 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 }
                 atomic-facet::part(show-more), atomic-facet::part(show-less) {
                   color: var(--non-spectrum-input-text);
-                }
-                atomic-facet::part(value-label) {
-                  width: auto;
-                }
-                atomic-facet::part(value-count) {
-                  width: auto;
-                  margin: 0;
                 }
                 atomic-facet::part(value-box) {
                   border: none;
@@ -260,9 +257,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 }
                 atomic-facet::part(value-count) {
                   color: var(--non-spectrum-article-dark-gray);
+                  width: auto;
+                  margin: 0;
                 }
                 atomic-facet::part(value-label) {
                   margin-right: 4px;
+                  width: auto;
                   color: var(--non-spectrum-article-dark-gray);
                 }
                 atomic-facet::part(clear-button) {
@@ -274,29 +274,35 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 }
               </style>
               <atomic-facet
-                  id="facetContentType"
-                  sort-criteria="alphanumericNatural"
-                  field="el_contenttype"
-                  label=${placeholders.searchContentTypeLabel || 'Content Type'}
-                  display-values-as="checkbox"
-                ></atomic-facet>
+                id="facetContentType"
+                sort-criteria="alphanumericNatural"
+                field="el_contenttype"
+                label="${placeholders.searchContentTypeLabel || 'Content Type'}"
+                display-values-as="checkbox">
+              </atomic-facet>
+              <atomic-facet
+                id="facetStatus"
+                sort-criteria="alphanumericNatural"
+                field="el_status"
+                label="${placeholders.searchAnsweredLabel || 'Answered'}"
+                display-values-as="checkbox">
+              </atomic-facet>
               <atomic-facet
                 id="facetProduct"
                 sort-criteria="alphanumericNatural"
                 field="el_product"
-                label=${placeholders.searchProductLabel || 'Product'}
+                label="${placeholders.searchProductLabel || 'Product'}"
                 number-of-values="60"
                 display-values-as="checkbox"
-              ></atomic-facet>
+                with-search="false">
+              </atomic-facet>
               <atomic-facet
                 id="facetRole"
                 sort-criteria="alphanumericNatural"
                 field="el_role"
-                label=${placeholders.searchRoleLabel || 'Role'}
-                display-values-as="checkbox"
-              ></atomic-facet>
-              
-            
+                label="${placeholders.searchRoleLabel || 'Role'}"
+                display-values-as="checkbox">
+              </atomic-facet>
             </atomic-facet-manager>
           </atomic-layout-section>
           <atomic-layout-section section="main">
@@ -799,7 +805,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   min-width: 25px;
                 }
                 @media(max-width: 1024px) {
-                   atomic-pager::part(previous-button), atomic-pager::part(next-button) {
+                  atomic-pager::part(previous-button), atomic-pager::part(next-button) {
                     transform: scale(0.7);
                   }
                 }

@@ -167,6 +167,11 @@ export default function decorate(block) {
         User: placeholders.searchRoleUserLabel || 'User',
       });
 
+      searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_status', {
+        true: placeholders.searchResolvedLabel || 'Resolved',
+        false: placeholders.searchUnresolvedLabel || 'Unresolved',
+      });
+
       searchInterface.i18n.addResourceBundle(languageCode, 'translation', {
         Name: placeholders.searchNameLabel || 'Name',
         'Content Type': placeholders.searchContentTypeLabel || 'Content Type',

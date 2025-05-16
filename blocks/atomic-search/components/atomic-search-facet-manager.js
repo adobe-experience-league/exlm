@@ -1,6 +1,6 @@
 import { waitForChildElement, debounce, CUSTOM_EVENTS, isMobile } from './atomic-search-utils.js';
 
-const orderedFacetIds = ['facetContentType', 'facetProduct', 'facetRole'];
+const orderedFacetIds = ['facetContentType', 'facetStatus', 'facetProduct', 'facetRole'];
 
 export default function atomicFacetManagerHandler(baseElement) {
   let resizeObserver;
@@ -83,7 +83,6 @@ export default function atomicFacetManagerHandler(baseElement) {
       waitForChildElement(baseElement, initAtomicFacetManagerUI);
       return;
     }
-
     const modal = document.createElement('div');
     modal.className = 'facet-modal';
     modal.style.display = 'none';

@@ -1,4 +1,12 @@
-import { CUSTOM_EVENTS, debounce, isUserClick, waitForChildElement } from './atomic-search-utils.js';
+import {
+  CUSTOM_EVENTS,
+  debounce,
+  isUserClick,
+  waitForChildElement,
+  hasContentTypeFilter,
+  updateHash,
+  COMMUNITY_CONTENT_TYPES,
+} from './atomic-search-utils.js';
 
 export default function atomicFacetHandler(baseElement) {
   const adjustChildElementsPosition = (facet, atomicElement) => {
@@ -107,6 +115,19 @@ export default function atomicFacetHandler(baseElement) {
   };
 
   const handleAtomicFacetUI = (atomicFacet) => {
+    if (atomicFacet.getAttribute('id') === 'facetStatus') {
+      // Hide the facetStatus if no filters are selected
+      if (!hasContentTypeFilter()) {
+        atomicFacet?.classList?.add('hide-facet');
+        atomicFacet?.removeAttribute('is-collapsed');
+      } else {
+        atomicFacet?.classList?.remove('hide-facet');
+      }
+      // Show the facetStatus if only community filters are selected
+      if (!hasContentTypeFilter(COMMUNITY_CONTENT_TYPES)) {
+        updateHash((key) => !key.includes('f-el_status'), '&');
+      }
+    }
     const parentWrapper = atomicFacet.shadowRoot.querySelector('[part="values"]');
     if (parentWrapper) {
       const facets = Array.from(parentWrapper.children);

@@ -339,7 +339,7 @@ export const atomicResultListStyles = `
 
                 </style>
 `;
-
+let isListenerAdded = false;
 export default function atomicResultHandler(block, placeholders) {
   const baseElement = block.querySelector('atomic-folded-result-list');
   const searchLayout = block.querySelector('atomic-search-layout');
@@ -494,7 +494,10 @@ export default function atomicResultHandler(block, placeholders) {
   }
 
   const clearAllBtn = document.querySelector('.clear-label');
-  clearAllBtn.addEventListener('click', onClearBtnClick);
+  if (!isListenerAdded) {
+    clearAllBtn.addEventListener('click', onClearBtnClick);
+    isListenerAdded = true;
+  }
 
   const updateAtomicResultUI = () => {
     const results = container.querySelectorAll('atomic-result');
