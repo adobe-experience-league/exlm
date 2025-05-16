@@ -47,7 +47,7 @@ export default function atomicNoResultHandler(block, placeholders) {
         const clearSearchButton = createButton(labels.clearSearch, () => updateHash((key) => !key.includes('q='), '&'));
 
         const decorateNoResults = async () => {
-          // Remove the 'f-el_status' when community content type is unchecked
+          // Remove the facetStatus when community content type is unchecked
           if (!hasContentTypeFilter(COMMUNITY_CONTENT_TYPES)) {
             updateHash((key) => !key.includes('f-el_status'), '&');
           }

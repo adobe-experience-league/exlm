@@ -90,6 +90,11 @@ export const getFiltersFromUrl = () => {
   }, {});
 };
 
+/**
+ * Checks if specific content type filters are active in the URL hash.
+ * If `contentTypes` is empty, it checks if any content type filter is selected in the URL.
+ * If `contentTypes` is provided, it checks if any of the specified types are among the selected ones.
+ */
 export const hasContentTypeFilter = (contentTypes = []) => {
   const { el_contenttype: selectedContentType = [] } = getFiltersFromUrl();
   if (contentTypes.length === 0) return selectedContentType.length > 0;
@@ -98,6 +103,9 @@ export const hasContentTypeFilter = (contentTypes = []) => {
   return hasSpecificFilters;
 };
 
+/**
+ * Updates the URL hash by filtering its current parts based on a provided condition.
+ */
 export const updateHash = (filterCondition, joinWith = '&') => {
   const currentHash = fragment();
   const updatedParts = currentHash.split('&').filter(filterCondition);
