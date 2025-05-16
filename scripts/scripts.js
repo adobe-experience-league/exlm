@@ -683,9 +683,9 @@ export function getConfig() {
     recentlyViewed: 'exl-hp-auth-recs-3',
   };
 
-  const currentHost = window.location.hostname;
+  // const currentHost = window.location.hostname;
   const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
-  const currentEnv = HOSTS.find((hostObj) => Object.values(hostObj).includes(currentHost));
+  const currentEnv = HOSTS[0]; // .find((hostObj) => Object.values(hostObj).includes(currentHost));
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const communityHost = currentEnv?.community || defaultEnv.community;
   const cdnOrigin = `https://${cdnHost}`;
