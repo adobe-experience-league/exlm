@@ -1,18 +1,21 @@
 .article-metadata-appliesto ul {
   list-style: none;
-  margin: 4px 0;
-  margin-left: 0;
+  margin: 5px 0;
 }
 
 .article-metadata-appliesto li {
   display: inline-block;
-  margin-top: unset;
   font-size: var(--spectrum-font-size-100);
 }
 
+.article-metadata-appliesto ul > li {
+  margin: 0;
+}
+
 .article-metadata-appliesto li + li:not(:last-child)::after {
+  font-size: 12px;
   content: ' |';
-  margin-left: 0.75em;
+  margin-left: 0.5em;
 }
 
 .article-metadata-appliesto li:first-child {

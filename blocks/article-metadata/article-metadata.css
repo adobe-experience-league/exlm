@@ -14,6 +14,12 @@
   min-height: 40px;
 }
 
+[class^='article-metadata-'] + .default-content-wrapper {
+  margin-top: 1.2em;
+  border-top: 1px solid #eaeaea;
+  padding-top: 1.2em;
+}
+
 @media (width >= 900px) {
   .doc-actions-mobile {
     display: none;
