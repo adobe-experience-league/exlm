@@ -10,7 +10,8 @@ export default function atomicFacetHandler(baseElement) {
         const previousSiblingEl = facet.previousElementSibling;
         if (
           !previousSiblingEl ||
-          (!previousSiblingEl.dataset.childfacet && previousSiblingEl.dataset.contenttype !== parentName)
+          (!previousSiblingEl.dataset.childfacet && previousSiblingEl.dataset.contenttype !== parentName) ||
+          (previousSiblingEl.dataset.childfacet && previousSiblingEl.dataset.parent !== parentName)
         ) {
           facetParentEl.insertAdjacentElement('afterend', facet);
         }
@@ -84,8 +85,7 @@ export default function atomicFacetHandler(baseElement) {
   const updateFacetUI = (facet, atomicElement, forceUpdate = false) => {
     const forceUpdateElement = forceUpdate === true;
     if (facet && (facet.dataset.updated !== 'true' || forceUpdateElement)) {
-      const contentType =
-        facet.dataset.contenttype || facet.textContent?.trim()?.match(/^(.+?)\(\d[\d,]*\)$/)?.[1] || '';
+      const contentType = facet.dataset.contenttype || facet.querySelector('.value-label').title || '';
       if (!facet.dataset.contenttype) {
         facet.dataset.contenttype = contentType;
       }
@@ -110,6 +110,12 @@ export default function atomicFacetHandler(baseElement) {
     const parentWrapper = atomicFacet.shadowRoot.querySelector('[part="values"]');
     if (parentWrapper) {
       const facets = Array.from(parentWrapper.children);
+      facets.forEach((facet) => {
+        if (!facet.dataset.contenttype) {
+          const contentType = facet.dataset.contenttype || facet.querySelector('.value-label').title || '';
+          facet.dataset.contenttype = contentType;
+        }
+      });
       facets.forEach((facet) => {
         updateFacetUI(facet, atomicFacet, false);
       });
