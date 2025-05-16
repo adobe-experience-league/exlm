@@ -699,7 +699,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 display:none;
               }
               atomic-no-results::part(no-results) {
-                font-size: 18px;
+                font-size: var(--spectrum-font-size-300);
                 text-align: left;
                 font-weight: normal;
               }
@@ -709,11 +709,18 @@ const getCoveoAtomicMarkup = (placeholders) => {
               atomic-no-results::part(search-tips) {
                 display:none;
               }
-              atomic-no-results ul > li {
+              atomic-no-results .atomic-no-results-text p {
+                font-size: var(--spectrum-font-size-200);
+                margin-bottom: 8px;
+              }
+              atomic-no-results .atomic-no-results-text ul > li {
                 color: inherit;
+                font-size: var(--spectrum-font-size-100);
+                margin-top: 5px;
+                margin-bottom: 5px;
               }
               atomic-no-results::part(clear-button) {
-                font-size: var(--spectrum-font-size-75);
+                font-size: var(--spectrum-font-size-100);
                 text-align: left;
                 text-decoration: underline;
                 margin-bottom: 10px;
