@@ -1,5 +1,7 @@
 import {
-  CUSTOM_EVENTS, debounce, isUserClick,
+  CUSTOM_EVENTS,
+  debounce,
+  isUserClick,
   waitForChildElement,
   hasContentTypeFilter,
   updateHash,
@@ -114,28 +116,17 @@ export default function atomicFacetHandler(baseElement) {
 
   const handleAtomicFacetUI = (atomicFacet) => {
     if (atomicFacet.getAttribute('id') === 'facetStatus') {
+      // Hide the facetStatus if no filters are selected
       if (!hasContentTypeFilter()) {
         atomicFacet?.classList?.add('hide-facet');
         atomicFacet?.removeAttribute('is-collapsed');
       } else {
         atomicFacet?.classList?.remove('hide-facet');
       }
+      // Show the facetStatus if only community filters are selected
       if (!hasContentTypeFilter(COMMUNITY_CONTENT_TYPES)) {
         updateHash((key) => !key.includes('f-el_status'), '&');
       }
-      const labels = atomicFacet.shadowRoot?.querySelectorAll('[part="value-label"]');
-      labels?.forEach((label) => {
-        switch (label.textContent) {
-          case 'false':
-            label.textContent = 'Unresolved';
-            break;
-          case 'true':
-            label.textContent = 'Resolved';
-            break;
-          default:
-            break;
-        }
-      });
     }
     const parentWrapper = atomicFacet.shadowRoot.querySelector('[part="values"]');
     if (parentWrapper) {

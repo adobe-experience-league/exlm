@@ -6,7 +6,6 @@ import {
 } from './atomic-result-children.js';
 import { nextNavigationArrow, previousNavigationArrow } from './atomic-search-icons.js';
 import { atomicResultListStyles, atomicResultStyles } from './atomic-search-result.js';
-import { allowedProducts } from './atomic-search-utils.js';
 
 const getCoveoAtomicMarkup = (placeholders) => {
   const { lang: languageCode } = getPathDetails();
@@ -293,10 +292,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 sort-criteria="alphanumericNatural"
                 field="el_product"
                 label="${placeholders.searchProductLabel || 'Product'}"
-                number-of-values="100"
+                number-of-values="60"
                 display-values-as="checkbox"
-                with-search="false"
-                allowed-values='${JSON.stringify(allowedProducts)}'>
+                with-search="false">
               </atomic-facet>
               <atomic-facet
                 id="facetRole"
@@ -305,33 +303,6 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 label="${placeholders.searchRoleLabel || 'Role'}"
                 display-values-as="checkbox">
               </atomic-facet>
-            
-              <atomic-timeframe-facet
-                id="facetDate"
-                field="date"
-                label="${placeholders.searchDateLabel || 'Date'}"
-                injection-depth="1000"
-                filter-facet-count
-                enable-custom-range="false">
-                  <atomic-timeframe
-                    amount="1"
-                    unit="month"
-                    period="past"
-                    label="${placeholders.searchDateOneMonthLabel || 'Within one month'}">
-                  </atomic-timeframe>
-                  <atomic-timeframe
-                    amount="6"
-                    unit="month"
-                    period="past"
-                    label="${placeholders.searchDateSixMonthLabel || 'Within six months'}">
-                  </atomic-timeframe>
-                  <atomic-timeframe
-                    amount="1"
-                    unit="year"
-                    period="past"
-                    label="${placeholders.searchDateOneYearLabel || 'Within one year'}">
-                  </atomic-timeframe>
-              </atomic-timeframe-facet>
             </atomic-facet-manager>
           </atomic-layout-section>
           <atomic-layout-section section="main">
@@ -827,7 +798,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   min-width: 25px;
                 }
                 @media(max-width: 1024px) {
-                   atomic-pager::part(previous-button), atomic-pager::part(next-button) {
+                  atomic-pager::part(previous-button), atomic-pager::part(next-button) {
                     transform: scale(0.7);
                   }
                 }

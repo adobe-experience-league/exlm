@@ -1,13 +1,13 @@
 import { waitForChildElement, debounce, CUSTOM_EVENTS, isMobile } from './atomic-search-utils.js';
 
-const orderedFacetIds = ['facetContentType', 'facetStatus', 'facetProduct', 'facetRole', 'facetDate'];
+const orderedFacetIds = ['facetContentType', 'facetStatus', 'facetProduct', 'facetRole'];
 
 export default function atomicFacetManagerHandler(baseElement) {
   let resizeObserver;
   let debounceTimer;
 
   const reorderFacets = () => {
-    const currentOrder = Array.from(baseElement.querySelectorAll('atomic-facet,atomic-timeframe-facet')).map((el) => el.id);
+    const currentOrder = Array.from(baseElement.querySelectorAll('atomic-facet')).map((el) => el.id);
     const isCorrectOrder = orderedFacetIds.every((id, index) => currentOrder[index] === id);
     if (isCorrectOrder) return;
 
