@@ -95,7 +95,8 @@ const getCoveoAtomicMarkup = (placeholders) => {
               atomic-search-box::part(clear-icon)  {
                 color: var(--background-color);
                 stroke-width: 2.5px;
-                transform: scale(0.6);
+                height: 10px;
+                width: 10px;
               }
               atomic-search-box::part(submit-button) {
                 transform: scale(0.8);
@@ -196,6 +197,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 }
                 atomic-facet::part(facet-hide-element) {
                   display: none;
+                }
+                atomic-search-interface.atomic-search-interface-no-results atomic-facet::part(facet-hide-element) {
+                  display: flex;
                 }
                 atomic-facet::part(facet-child-label) {
                   padding-top: 6px;
