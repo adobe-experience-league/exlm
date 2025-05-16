@@ -169,7 +169,7 @@ export default function decorate(block) {
 
       searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_status', {
         true: placeholders.searchResolvedLabel || 'Resolved',
-        false: placeholders.searchUnresolvedLabel || 'Unresolved'
+        false: placeholders.searchUnresolvedLabel || 'Unresolved',
       });
 
       searchInterface.i18n.addResourceBundle(languageCode, 'translation', {
