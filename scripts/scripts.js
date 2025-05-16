@@ -707,11 +707,11 @@ export function getConfig() {
     privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
-    coveoTokenUrl: `${cdnOrigin}/api/coveo-token?lang=${lang}`,
-    coveoSearchResultsUrl: isProd
+    coveoTokenUrl: `https://experienceleague.adobe.com/api/coveo-token?lang=${lang}`,
+    coveoSearchResultsUrl: isProd || true
       ? 'https://platform.cloud.coveo.com/rest/search/v2'
       : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
-    coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
+    coveoOrganizationId: isProd || true ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
     coveoToken: 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99',
     upcomingEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
