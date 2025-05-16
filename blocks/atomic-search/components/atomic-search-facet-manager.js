@@ -1,6 +1,6 @@
 import { waitForChildElement, debounce, CUSTOM_EVENTS, isMobile } from './atomic-search-utils.js';
 
-const orderedFacetIds = ['facetContentType', 'facetStatus', 'facetProduct', 'facetRole', 'facetDate'];
+const orderedFacetIds = ['facetContentType', 'facetStatus', 'facetProduct', 'facetRole'];
 
 export default function atomicFacetManagerHandler(baseElement) {
   let resizeObserver;
