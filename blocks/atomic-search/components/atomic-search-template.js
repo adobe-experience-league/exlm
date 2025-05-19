@@ -221,17 +221,17 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(search-wrapper) {
                   display: none;
                 }
-                atomic-facet::part(label-button) {
+                atomic-facet::part(label-button), atomic-timeframe-facet::part(label-button) {
                   font-weight: 700;
                   color: var(--non-spectrum-input-text);
                   justify-content: flex-end;
                   flex-direction: row-reverse;
                   gap: 16px;
                 }
-                atomic-facet::part(label-button-icon) {
+                atomic-facet::part(label-button-icon), atomic-timeframe-facet::part(label-button-icon) {
                   margin-left: 0;
                 }
-                atomic-facet::part(facet) {
+                atomic-facet::part(facet), atomic-timeframe-facet::part(facet) {
                   padding-right: 0;
                   border: none;
                 }
@@ -259,17 +259,17 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   background-color: var(--non-spectrum-grey-updated);
                   border-color: var(--non-spectrum-grey-updated);
                 }
-                atomic-facet::part(value-count) {
+                atomic-facet::part(value-count), atomic-timeframe-facet::part(value-count) {
                   color: var(--non-spectrum-article-dark-gray);
                   width: auto;
                   margin: 0;
                 }
-                atomic-facet::part(value-label) {
+                atomic-facet::part(value-label), atomic-timeframe-facet::part(value-label) {
                   margin-right: 4px;
                   width: auto;
                   color: var(--non-spectrum-article-dark-gray);
                 }
-                atomic-facet::part(clear-button) {
+                atomic-facet::part(clear-button), atomic-timeframe-facet::part(clear-button) {
                   display: none;
                 }
                 
@@ -307,6 +307,31 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 label="${placeholders.searchRoleLabel || 'Role'}"
                 display-values-as="checkbox">
               </atomic-facet>
+              <atomic-timeframe-facet
+                id="facetDate"
+                field="date"
+                label="${placeholders.searchDateLabel || 'Date'}"
+                filter-facet-count
+                enable-custom-range="false">
+                  <atomic-timeframe
+                    amount="1"
+                    unit="month"
+                    period="past"
+                    label="${placeholders.searchDateOneMonthLabel || 'Within one month'}">
+                  </atomic-timeframe>
+                  <atomic-timeframe
+                    amount="6"
+                    unit="month"
+                    period="past"
+                    label="${placeholders.searchDateSixMonthLabel || 'Within six months'}">
+                  </atomic-timeframe>
+                  <atomic-timeframe
+                    amount="1"
+                    unit="year"
+                    period="past"
+                    label="${placeholders.searchDateOneYearLabel || 'Within one year'}">
+                  </atomic-timeframe>
+              </atomic-timeframe-facet>
             </atomic-facet-manager>
           </atomic-layout-section>
           <atomic-layout-section section="main">
