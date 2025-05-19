@@ -51,11 +51,13 @@ export default function atomicFacetHandler(baseElement) {
         const parentFacet = isChildFacet
           ? facet.parentElement.querySelector(`[data-contenttype="${facet.dataset.parent}"]`)
           : facet;
-        const parentFacetIsSelected = isChildFacet ? parentFacet.firstElementChild?.ariaChecked === 'true' : isSelected;
+        const parentFacetIsSelected = isChildFacet
+          ? parentFacet?.firstElementChild?.ariaChecked === 'true'
+          : isSelected;
         if (isChildFacet) {
           // child facet click.
           if (!isSelected && parentFacetIsSelected) {
-            parentFacet.firstElementChild.click();
+            parentFacet?.firstElementChild.click();
           } else if (isSelected && !parentFacetIsSelected) {
             // Now check if all child facets excluding the current one is selected.
             const parentFacetType = facet.dataset.parent;
