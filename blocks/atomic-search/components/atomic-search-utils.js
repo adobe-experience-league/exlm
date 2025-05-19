@@ -8,7 +8,16 @@ export const CUSTOM_EVENTS = {
   NO_RESULT_FOUND: 'ATOMIC_RESULT_NOT_FOUND',
   RESULT_FOUND: 'ATOMIC_RESULT_FOUND',
   SEARCH_QUERY_CHANGED: 'ATOMIC_SEARCH_QUERY_CHANGED',
+  SEARCH_CLEARED: 'ATOMIC_SEARCH_CLEARED',
 };
+
+export const COMMUNITY_CONTENT_TYPES = [
+  'Community',
+  'Community|Questions',
+  'Community|Blogs',
+  'Community|Discussions',
+  'Community|Ideas',
+];
 
 export const COMMUNITY_SUPPORTED_SORT_ELEMENTS = ['el_view_status', 'el_kudo_status', 'el_reply_status'];
 
@@ -72,11 +81,35 @@ export const getFiltersFromUrl = () => {
   const filtersInfo = decodedHash.split('&').filter((s) => !!s);
   return filtersInfo.reduce((acc, curr) => {
     const [facetKeys, facetValueInfo] = curr.split('=');
-    const facetValues = facetValueInfo.split(',');
-    const keyName = facetKeys.replace('f-', '');
-    acc[keyName] = facetValues;
+    if (facetValueInfo) {
+      const facetValues = facetValueInfo.split(',');
+      const keyName = facetKeys.replace('f-', '');
+      acc[keyName] = facetValues;
+    }
     return acc;
   }, {});
+};
+
+/**
+ * Checks if specific content type filters are active in the URL hash.
+ * If `contentTypes` is empty, it checks if any content type filter is selected in the URL.
+ * If `contentTypes` is provided, it checks if any of the specified types are among the selected ones.
+ */
+export const hasContentTypeFilter = (contentTypes = []) => {
+  const { el_contenttype: selectedContentType = [] } = getFiltersFromUrl();
+  if (contentTypes.length === 0) return selectedContentType.length > 0;
+  if (selectedContentType.length === 0) return false;
+  const hasSpecificFilters = contentTypes.some((type) => selectedContentType.includes(type));
+  return hasSpecificFilters;
+};
+
+/**
+ * Updates the URL hash by filtering its current parts based on a provided condition.
+ */
+export const updateHash = (filterCondition, joinWith = '&') => {
+  const currentHash = fragment();
+  const updatedParts = currentHash.split('&').filter(filterCondition);
+  window.location.hash = updatedParts.join(joinWith);
 };
 
 export const handleHeaderSearchVisibility = () => {

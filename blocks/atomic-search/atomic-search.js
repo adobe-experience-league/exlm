@@ -64,7 +64,7 @@ export default function decorate(block) {
         <div class="atomic-load-skeleton-right">
           <div class="atomic-load-skeleton-filter">
             <div class="atomic-load-skeleton"></div>
-            <div class="atomic-load-skeleton"></div>
+            <div class="atomic-load-skeleton-search-filter atomic-load-skeleton"></div>
           </div>
           <div class="atomic-load-skeleton-result">
             ${`${[...Array(10)]
@@ -165,6 +165,11 @@ export default function decorate(block) {
         Developer: placeholders.searchRoleDeveloperLabel || 'Developer',
         Leader: placeholders.searchRoleLeaderLabel || 'Leader',
         User: placeholders.searchRoleUserLabel || 'User',
+      });
+
+      searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_status', {
+        true: placeholders.searchResolvedLabel || 'Resolved',
+        false: placeholders.searchUnresolvedLabel || 'Unresolved',
       });
 
       searchInterface.i18n.addResourceBundle(languageCode, 'translation', {

@@ -66,7 +66,7 @@ export const atomicResultStyles = `
                     }
                     atomic-result-section-excerpt {
                       color: #959595;
-                      font-size: var(--spectrum-font-size-50);
+                      font-size: var(--spectrum-font-size-75);
                       display: -webkit-box;
                       -webkit-line-clamp: 3; 
                       -webkit-box-orient: vertical;
@@ -77,7 +77,7 @@ export const atomicResultStyles = `
                     }
                     atomic-result-section-excerpt atomic-result-text {
                       color: #959595;
-                      font-size: var(--spectrum-font-size-50);
+                      font-size: var(--spectrum-font-size-75);
                     }
                     .result-title atomic-result-text, .mobile-result-title atomic-result-text {
                       font-size: var(--spectrum-font-size-100);
@@ -133,7 +133,7 @@ export const atomicResultStyles = `
                         flex-direction: row-reverse;
                         gap: 4px;
                         border: 1px solid #959595;
-                        color: #959595;
+                        color: var(--non-spectrum-grey-updated);
                       }
                     }
                     
@@ -339,9 +339,13 @@ export const atomicResultListStyles = `
 
                 </style>
 `;
-
+let isListenerAdded = false;
 export default function atomicResultHandler(block, placeholders) {
   const baseElement = block.querySelector('atomic-folded-result-list');
+  const searchLayout = block.querySelector('atomic-search-layout');
+  if (!searchLayout.classList.contains('no-results')) {
+    baseElement.classList.add('list-wrap-skeleton');
+  }
   const shadow = baseElement.shadowRoot;
   const container = shadow?.querySelector('[part="result-list"]');
 
@@ -351,12 +355,11 @@ export default function atomicResultHandler(block, placeholders) {
     });
     return;
   }
-
+  container.parentElement.part.add('list-wrap');
   // Make result section hidden and start adding skeleton.
   container.style.cssText = 'display: none;';
   container.dataset.view = isMobile() ? 'mobile' : 'desktop';
-  const skeletonWrapper = document.createElement('div');
-  skeletonWrapper.setAttribute('part', 'skeleton');
+  const skeletonWrapper = htmlToElement(`<div class="skeleton-wrapper" part="skeleton"></div>`);
   skeletonWrapper.innerHTML = renderAtomicSekeletonUI();
   container.parentElement.appendChild(skeletonWrapper);
   handleHeaderSearchVisibility();
@@ -365,6 +368,8 @@ export default function atomicResultHandler(block, placeholders) {
     const atomicBreadBox = document.querySelector('atomic-breadbox');
     const coveoClearBtn = atomicBreadBox?.shadowRoot?.querySelector('[part="clear"]');
     if (coveoClearBtn) {
+      const event = new CustomEvent(CUSTOM_EVENTS.SEARCH_CLEARED);
+      document.dispatchEvent(event);
       coveoClearBtn.click();
     }
   }
@@ -489,7 +494,10 @@ export default function atomicResultHandler(block, placeholders) {
   }
 
   const clearAllBtn = document.querySelector('.clear-label');
-  clearAllBtn.addEventListener('click', onClearBtnClick);
+  if (!isListenerAdded) {
+    clearAllBtn.addEventListener('click', onClearBtnClick);
+    isListenerAdded = true;
+  }
 
   const updateAtomicResultUI = () => {
     const results = container.querySelectorAll('atomic-result');
@@ -502,10 +510,6 @@ export default function atomicResultHandler(block, placeholders) {
           waitForChildElement(resultEl, hydrateResult);
           return;
         }
-        const blockLevelSkeleton = block.querySelector('.atomic-search-load-skeleton');
-        if (blockLevelSkeleton) {
-          block.removeChild(blockLevelSkeleton);
-        }
 
         const resultItem = resultShadow.querySelector(`.result-item.${isMobileView ? 'mobile-only' : 'desktop-only'}`);
         const resultContentType = resultItem?.querySelector('.result-content-type');
@@ -515,6 +519,12 @@ export default function atomicResultHandler(block, placeholders) {
           waitFor(hydrateResult);
           return;
         }
+
+        const blockLevelSkeleton = block.querySelector('.atomic-search-load-skeleton');
+        if (blockLevelSkeleton) {
+          block.removeChild(blockLevelSkeleton);
+        }
+
         const contentTypeElParent = contentTypeElWrap?.querySelector('ul');
         if (!contentTypeElParent) {
           waitFor(hydrateResult);
@@ -526,10 +536,11 @@ export default function atomicResultHandler(block, placeholders) {
         }
 
         // Remove skeleton
-        const skeleton = container.parentElement.querySelector('.atomic-skeleton');
+        const skeleton = container.parentElement.querySelector('.skeleton-wrapper');
         if (skeleton) {
           container.style.cssText = '';
-          container.parentElement.removeChild(skeletonWrapper);
+          baseElement.classList.remove('list-wrap-skeleton');
+          container.parentElement.removeChild(skeleton);
         }
 
         const atomicResultChildren = resultItem.querySelector('atomic-result-children');

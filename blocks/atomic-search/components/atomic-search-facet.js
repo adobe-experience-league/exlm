@@ -1,4 +1,12 @@
-import { CUSTOM_EVENTS, debounce, isUserClick, waitForChildElement } from './atomic-search-utils.js';
+import {
+  CUSTOM_EVENTS,
+  debounce,
+  isUserClick,
+  waitForChildElement,
+  hasContentTypeFilter,
+  updateHash,
+  COMMUNITY_CONTENT_TYPES,
+} from './atomic-search-utils.js';
 
 export default function atomicFacetHandler(baseElement) {
   const adjustChildElementsPosition = (facet, atomicElement) => {
@@ -10,7 +18,8 @@ export default function atomicFacetHandler(baseElement) {
         const previousSiblingEl = facet.previousElementSibling;
         if (
           !previousSiblingEl ||
-          (!previousSiblingEl.dataset.childfacet && previousSiblingEl.dataset.contenttype !== parentName)
+          (!previousSiblingEl.dataset.childfacet && previousSiblingEl.dataset.contenttype !== parentName) ||
+          (previousSiblingEl.dataset.childfacet && previousSiblingEl.dataset.parent !== parentName)
         ) {
           facetParentEl.insertAdjacentElement('afterend', facet);
         }
@@ -42,11 +51,13 @@ export default function atomicFacetHandler(baseElement) {
         const parentFacet = isChildFacet
           ? facet.parentElement.querySelector(`[data-contenttype="${facet.dataset.parent}"]`)
           : facet;
-        const parentFacetIsSelected = isChildFacet ? parentFacet.firstElementChild?.ariaChecked === 'true' : isSelected;
+        const parentFacetIsSelected = isChildFacet
+          ? parentFacet?.firstElementChild?.ariaChecked === 'true'
+          : isSelected;
         if (isChildFacet) {
           // child facet click.
           if (!isSelected && parentFacetIsSelected) {
-            parentFacet.firstElementChild.click();
+            parentFacet?.firstElementChild.click();
           } else if (isSelected && !parentFacetIsSelected) {
             // Now check if all child facets excluding the current one is selected.
             const parentFacetType = facet.dataset.parent;
@@ -84,8 +95,7 @@ export default function atomicFacetHandler(baseElement) {
   const updateFacetUI = (facet, atomicElement, forceUpdate = false) => {
     const forceUpdateElement = forceUpdate === true;
     if (facet && (facet.dataset.updated !== 'true' || forceUpdateElement)) {
-      const contentType =
-        facet.dataset.contenttype || facet.textContent?.trim()?.match(/^(.+?)\(\d[\d,]*\)$/)?.[1] || '';
+      const contentType = facet.dataset.contenttype || facet.querySelector('.value-label').title || '';
       if (!facet.dataset.contenttype) {
         facet.dataset.contenttype = contentType;
       }
@@ -107,9 +117,28 @@ export default function atomicFacetHandler(baseElement) {
   };
 
   const handleAtomicFacetUI = (atomicFacet) => {
+    if (atomicFacet.getAttribute('id') === 'facetStatus') {
+      // Hide the facetStatus if no filters are selected
+      if (!hasContentTypeFilter()) {
+        atomicFacet?.classList?.add('hide-facet');
+        atomicFacet?.removeAttribute('is-collapsed');
+      } else {
+        atomicFacet?.classList?.remove('hide-facet');
+      }
+      // Show the facetStatus if only community filters are selected
+      if (!hasContentTypeFilter(COMMUNITY_CONTENT_TYPES)) {
+        updateHash((key) => !key.includes('f-el_status'), '&');
+      }
+    }
     const parentWrapper = atomicFacet.shadowRoot.querySelector('[part="values"]');
     if (parentWrapper) {
       const facets = Array.from(parentWrapper.children);
+      facets.forEach((facet) => {
+        if (!facet.dataset.contenttype) {
+          const contentType = facet.dataset.contenttype || facet.querySelector('.value-label').title || '';
+          facet.dataset.contenttype = contentType;
+        }
+      });
       facets.forEach((facet) => {
         updateFacetUI(facet, atomicFacet, false);
       });

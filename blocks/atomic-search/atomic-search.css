@@ -99,9 +99,12 @@
 
 .atomic-search .atomic-search-load-skeleton {
   min-height: 100vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  position: absolute;
+  z-index: 11;
 }
 
 .atomic-load-skeleton-main {
@@ -112,7 +115,7 @@
 }
 
 .atomic-load-skeleton-head {
-  min-height: 88px;
+  min-height: 86px;
   width: 100%;
 }
 
@@ -130,29 +133,34 @@
   flex-direction: column;
 }
 
+.atomic-search.block:has(.atomic-search-load-skeleton) {
+  min-height: 100vh;
+  position: relative;
+}
+
 .atomic-load-skeleton-left .atomic-load-mobile-query {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .atomic-load-skeleton-left .atomic-load-mobile-filter {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 48px;
+  margin-bottom: 60px;
 }
 
 .atomic-load-skeleton-left .atomic-load-mobile-search-text.atomic-load-skeleton {
-  min-height: 24px;
-  height: 24px;
+  min-height: 18px;
+  height: 18px;
   width: 132px;
 }
 
 .atomic-load-skeleton-left .atomic-load-mobile-count.atomic-load-skeleton {
-  min-height: 18px;
-  height: 18px;
+  min-height: 16px;
+  height: 16px;
   width: 80px;
 }
 
@@ -165,7 +173,7 @@
 .atomic-load-skeleton-left .atomic-load-mobile-sort.atomic-load-skeleton {
   min-height: 40px;
   height: 40px;
-  width: 180px;
+  width: 160px;
 }
 
 .atomic-search-load-skeleton .atomic-load-skeleton {
@@ -261,8 +269,8 @@
 }
 
 .atomic-load-skeleton-result .atomic-skeleton-desktop-line-heading {
-  width: 100%;
-  height: 26px;
+  width: 95%;
+  height: 28px;
   margin-bottom: 8px;
 }
 
@@ -285,13 +293,15 @@
 }
 
 .atomic-load-skeleton-result .atomic-skeleton-desktop-line-button {
-  width: 80px;
-  height: 26px;
+  width: 100px;
+  height: 30px;
+  margin-left: 0;
+  margin-top: 2px;
 }
 
 .atomic-load-skeleton-result .atomic-skeleton-desktop-line-info {
-  width: 120px;
-  height: 24px;
+  width: 112px;
+  height: 40px;
 }
 
 .atomic-load-skeleton-result .atomic-skeleton-desktop-line-status {
@@ -317,17 +327,22 @@
 
 @media only screen and (min-width: 1024px) {
   .atomic-search atomic-search-interface atomic-search-layout[id^='atomic-search-layout'] {
-    grid-template-columns: 0 18% 72% 0 !important;
+    grid-template-columns: 0 18% 82% !important;
     grid-column-gap: 16px;
   }
 
   .atomic-load-skeleton-main {
     display: grid;
-    grid-template-columns: 0 18% 72% 0 !important;
+    grid-template-columns: 0 18% 82% !important;
   }
 
   .atomic-load-skeleton-head {
+    min-height: 84px;
     border-bottom: 1px solid var(--footer-border-color);
+  }
+
+  .atomic-load-skeleton-result {
+    padding-top: 20px;
   }
 
   .atomic-load-skeleton-head .atomic-load-skeleton {
@@ -335,14 +350,14 @@
   }
 
   .atomic-load-skeleton-left {
-    padding: 48px 0 0;
+    padding: 40px 0 0;
     border-right: 2px solid var(--footer-border-color);
     display: flex;
     flex-direction: column;
   }
 
   .atomic-load-skeleton-right {
-    padding: 16px 20px 0 68px;
+    padding: 8px 20px 0 68px;
     display: flex;
     flex-direction: column;
   }
@@ -352,7 +367,7 @@
   }
 
   .atomic-load-facet-header {
-    padding: 0 20px 14px 0;
+    padding: 0 20px 16px 0;
     display: block;
   }
 
@@ -380,7 +395,14 @@
 
   .atomic-load-skeleton-filter .atomic-load-skeleton {
     min-height: 40px;
-    width: 25%;
+    width: 30%;
+  }
+
+  .atomic-load-skeleton-filter .atomic-load-skeleton-search-filter.atomic-load-skeleton {
+    margin-top: 14px;
+    min-height: 40px;
+    width: 26%;
+    height: 40px;
   }
 
   .atomic-load-skeleton-result .atomic-load-skeleton {
@@ -388,7 +410,7 @@
   }
 
   .atomic-load-skeleton-filter .atomic-load-skeleton:nth-of-type(1) {
-    width: 35%;
+    width: 38%;
     min-height: 24px;
     height: 24px;
     margin-left: -32px;
