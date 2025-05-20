@@ -4,7 +4,7 @@ import { decorateIcons } from './lib-franklin.js';
  * Displays SEO warnings for specific tags.
  */
 
-export default function renderSeoWarnings() {
+export default function renderSEOWarnings() {
   const tags = ['h1'];
   let warningBanner = document.querySelector('.ue-warning-banner');
   const messages = [];

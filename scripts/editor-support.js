@@ -9,7 +9,7 @@ import {
   getMetadata,
 } from './lib-franklin.js';
 import { decorateRichtext } from './editor-support-rte.js';
-import renderSeoWarnings from './editor-support-seo.js';
+import renderSEOWarnings from './editor-support-seo.js';
 import { decorateMain, isPerspectivePage, loadArticles, loadIms } from './scripts.js';
 
 // set aem content root
@@ -335,7 +335,7 @@ function attachEventListeners(main) {
         const applied = await applyChanges(event);
         if (applied) {
           updateUEInstrumentation();
-          renderSeoWarnings();
+          renderSEOWarnings();
         } else {
           window.location.reload();
         }
@@ -372,4 +372,4 @@ if (signUpBlock) {
 
 // update UE component filters on page load
 updateUEInstrumentation();
-renderSeoWarnings();
+renderSEOWarnings();
