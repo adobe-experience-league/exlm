@@ -1,7 +1,7 @@
 import { getLink } from '../../scripts/scripts.js';
 // Utility function to filter sub-pages under a given path
 export const filterSubPages = (data, basePath) =>
-  data.filter((page) => page.path.startsWith(basePath) && page.path !== basePath);
+  data.filter((page) => page.path.startsWith(`${basePath}/`) && page.path !== basePath);
 
 // Utility function to build a multi-map from the filtered sub-pages
 export function convertToMultiMap(jsonData, page) {
