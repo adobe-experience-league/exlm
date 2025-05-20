@@ -20,6 +20,7 @@ import {
   createOptimizedPicture,
   toClassName,
 } from './lib-franklin.js';
+import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
 
 /**
  * please do not import any other modules here, as this file is used in the critical path.
@@ -1326,6 +1327,10 @@ async function loadPage() {
     }
     loadPage();
   };
+  const containsAtomicSearch = !!document.querySelector(`main .atomic-search`);
+  if (containsAtomicSearch) {
+    initiateCoveoAtomicSearch();
+  }
 
   if (isProfilePage) {
     await handleProfilePage();

@@ -1,5 +1,6 @@
-import { decorateIcons, loadScript } from '../../scripts/lib-franklin.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders, getPathDetails, getConfig, htmlToElement } from '../../scripts/scripts.js';
+import { initiateCoveoAtomicSearch } from '../../scripts/load-atomic-search-scripts.js';
 import atomicFacetHandler from './components/atomic-search-facet.js';
 import atomicResultHandler from './components/atomic-search-result.js';
 import atomicSortDropdownHandler from './components/atomic-search-sort-dropdown.js';
@@ -17,18 +18,6 @@ import atomicResultPageHandler from './components/atomic-search-results-per-page
 import loadCoveoToken from '../../scripts/data-service/coveo/coveo-token-service.js';
 
 let placeholders = {};
-
-async function initiateCoveoAtomicSearch() {
-  return new Promise((resolve, reject) => {
-    loadScript('https://static.cloud.coveo.com/atomic/v3.13.0/atomic.esm.js', { type: 'module' })
-      .then(async () => {
-        resolve(true);
-      })
-      .catch((e) => {
-        reject(e);
-      });
-  });
-}
 
 export default function decorate(block) {
   const renderAtomicShimmer = (insertBefore) => {
