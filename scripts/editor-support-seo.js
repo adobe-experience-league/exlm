@@ -1,0 +1,50 @@
+import { decorateIcons } from './lib-franklin.js';
+
+/**
+ * Displays SEO warnings for specific tags.
+ */
+// eslint-disable-next-line import/prefer-default-export
+export function displaySeoWarnings() {
+  const tags = ['h1'];
+  let warningBanner = document.querySelector('.ue-warning-banner');
+  const messages = [];
+
+  tags.forEach((tag) => {
+    const headings = document.querySelectorAll(`main ${tag}`);
+    const count = headings.length;
+
+    if (count === 0) {
+      messages.push(
+        `Warning: This page does not have a ${tag.toUpperCase()} element. Please include exactly one ${tag.toUpperCase()} tag.`,
+      );
+    } else if (count > 1) {
+      messages.push(
+        `Warning: This page has multiple ${tag.toUpperCase()} tags. Please update the page to have only one ${tag.toUpperCase()} tag.`,
+      );
+    }
+  });
+
+  if (messages.length === 0) {
+    if (warningBanner) warningBanner.remove();
+    return;
+  }
+
+  if (!warningBanner) {
+    warningBanner = document.createElement('div');
+    warningBanner.classList.add('ue-warning-banner');
+    document.body.prepend(warningBanner);
+  } else {
+    warningBanner.innerHTML = '';
+  }
+
+  const iconSpan = document.createElement('span');
+  iconSpan.className = 'icon icon-warning-light';
+  warningBanner.appendChild(iconSpan);
+
+  const messageNode = document.createTextNode(messages.join(' '));
+  warningBanner.appendChild(messageNode);
+
+  decorateIcons(warningBanner);
+}
+
+displaySeoWarnings();
