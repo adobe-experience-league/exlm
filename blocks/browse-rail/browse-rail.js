@@ -35,13 +35,10 @@ function setLinkVisibility(block, linkClass, show) {
 
 // Function to check if current page has sub-pages
 function hasDirectLeafNodes(jsonData, currentPage) {
+  const prefix = `${currentPage}/`;
   const directLeafNodes = jsonData.filter(
-    (item) =>
-      item.path.startsWith(currentPage) &&
-      item.path !== currentPage &&
-      !item.path.substring(currentPage.length + 1).includes('/'),
+    (item) => item.path.startsWith(prefix) && !item.path.slice(prefix.length).includes('/'),
   );
-
   return directLeafNodes.length > 0;
 }
 
