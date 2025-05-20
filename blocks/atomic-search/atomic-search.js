@@ -94,7 +94,7 @@ export default function decorate(block) {
 
     const commonActionHandler = () => {
       atomicFacetHandler(block.querySelector('atomic-facet'));
-      atomicSearchBoxHandler(block.querySelector('atomic-search-box'));
+      atomicSearchBoxHandler(block);
       atomicResultHandler(block, placeholders);
       atomicSortDropdownHandler(block.querySelector('atomic-sort-dropdown'));
       atomicFacetManagerHandler(block.querySelector('atomic-facet-manager'));

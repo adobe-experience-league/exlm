@@ -112,6 +112,8 @@
   flex-direction: column;
   min-height: 80vh;
   width: 100%;
+  pointer-events: all;
+  touch-action: all;
 }
 
 .atomic-load-skeleton-head {
@@ -136,6 +138,11 @@
 .atomic-search.block:has(.atomic-search-load-skeleton) {
   min-height: 100vh;
   position: relative;
+}
+
+.atomic-search .atomic-search-load-skeleton.atomic-skeleton-shimmer-hide {
+  pointer-events: none;
+  touch-action: none;
 }
 
 .atomic-load-skeleton-left .atomic-load-mobile-query {
@@ -229,6 +236,12 @@
   background-size: 400% 400%;
   animation: skeleton-shimmer 1.2s ease-in-out infinite;
   border-radius: 4px;
+}
+
+.atomic-search-load-skeleton .atomic-load-skeleton-head.atomic-skeleton-shimmer-hide {
+  visibility: hidden;
+  pointer-events: none;
+  touch-action: none;
 }
 
 .atomic-load-skeleton-result .atomic-skeleton-line-title {

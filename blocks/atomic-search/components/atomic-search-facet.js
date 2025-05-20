@@ -145,6 +145,24 @@ export default function atomicFacetHandler(baseElement) {
       facets.forEach((facet) => {
         adjustChildElementsPosition(facet, atomicFacet);
       });
+      if (atomicFacet.dataset.clickmore) {
+        const showMoreBtn = atomicFacet.shadowRoot.querySelector('[part="show-more"]');
+        if (showMoreBtn) {
+          setTimeout(() => {
+            showMoreBtn.click();
+          });
+        } else {
+          facets.forEach((facet) => {
+            if (facet.part.contains('facet-hide-element')) {
+              facet.part.remove('facet-child-element');
+              const labelElement = facet.querySelector('label');
+              labelElement.part.remove('facet-child-label');
+              facet.part.remove('facet-hide-element');
+            }
+          });
+        }
+        atomicFacet.dataset.clickmore = '';
+      }
     }
   };
 
