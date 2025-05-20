@@ -326,6 +326,62 @@ function handleEditorSelect(event) {
   }
 }
 
+function disablePublish() {
+  const head = document.getElementsByTagName('head')[0];
+  if (!head.querySelector('meta[name="urn:adobe:aue:config:disable"]')) {
+    const meta = document.createElement('meta');
+    meta.setAttribute('name', 'urn:adobe:aue:config:disable');
+    meta.setAttribute('content', 'publish');
+    head.appendChild(meta);
+  }
+}
+
+function enablePublish() {
+  const meta = document.querySelector('meta[name="urn:adobe:aue:config:disable"]');
+  if (meta && meta.getAttribute('content') === 'publish') {
+    meta.remove();
+    window.location.reload();
+  }
+}
+
+function checkH1Warnings() {
+  const h1s = document.querySelectorAll('main h1');
+  const warningId = 'warning-banner';
+  let existing = document.getElementById(warningId);
+
+  if (h1s.length === 1) {
+    if (existing) existing.remove();
+    enablePublish();
+    return;
+  }
+
+  let message = '';
+  if (h1s.length === 0) {
+    message = 'Warning: This page does not have an H1 element. Please update to include only one H1 tag.';
+  } else if (h1s.length > 1) {
+    message = 'Warning: This page has multiple H1 tags. Please update the page to only have one H1 tag.';
+  }
+
+  if (!existing) {
+    existing = document.createElement('div');
+    existing.id = warningId;
+    existing.style.cssText = `
+      background-color: #dc3545;
+      color: #ffffff;
+      border: 1px solid #dc3545;
+      padding: 20px;
+      margin: 10px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 16px;
+    `;
+    document.body.prepend(existing);
+  }
+
+  existing.textContent = message;
+  disablePublish();
+}
+
 function attachEventListners(main) {
   ['aue:content-patch', 'aue:content-update', 'aue:content-add', 'aue:content-move', 'aue:content-remove'].forEach(
     (eventType) =>
@@ -334,7 +390,9 @@ function attachEventListners(main) {
         const applied = await applyChanges(event);
         if (applied) {
           updateUEInstrumentation();
+          checkH1Warnings();
         } else {
+          checkH1Warnings();
           window.location.reload();
         }
       }),
@@ -370,3 +428,4 @@ if (signUpBlock) {
 
 // update UE component filters on page load
 updateUEInstrumentation();
+checkH1Warnings();
