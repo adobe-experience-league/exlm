@@ -10,8 +10,8 @@ export function displaySeoWarnings() {
   const messages = [];
 
   tags.forEach((tag) => {
-    const headings = document.querySelectorAll(`main ${tag}`);
-    const count = headings.length;
+    const elements = document.querySelectorAll(`main ${tag}`);
+    const count = elements.length;
 
     if (count === 0) {
       messages.push(
@@ -37,12 +37,19 @@ export function displaySeoWarnings() {
     warningBanner.innerHTML = '';
   }
 
-  const iconSpan = document.createElement('span');
-  iconSpan.className = 'icon icon-warning-light';
-  warningBanner.appendChild(iconSpan);
+  messages.forEach((msg) => {
+    const messageLine = document.createElement('div');
+    messageLine.classList.add('ue-warning-line');
 
-  const messageNode = document.createTextNode(messages.join(' '));
-  warningBanner.appendChild(messageNode);
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'icon icon-warning-light';
+    messageLine.appendChild(iconSpan);
+
+    const textNode = document.createTextNode(msg);
+    messageLine.appendChild(textNode);
+
+    warningBanner.appendChild(messageLine);
+  });
 
   decorateIcons(warningBanner);
 }
