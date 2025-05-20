@@ -37,7 +37,7 @@ function setLinkVisibility(block, linkClass, show) {
 function hasDirectLeafNodes(jsonData, currentPage) {
   const directLeafNodes = jsonData.filter(
     (item) =>
-      item.path.startsWith(currentPage) &&
+      item.path.startsWith(`${currentPage}/`) &&
       item.path !== currentPage &&
       !item.path.substring(currentPage.length + 1).includes('/'),
   );
