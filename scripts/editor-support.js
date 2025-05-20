@@ -9,7 +9,7 @@ import {
   getMetadata,
 } from './lib-franklin.js';
 import { decorateRichtext } from './editor-support-rte.js';
-import { displaySeoWarnings } from './editor-support-seo.js';
+import renderSeoWarnings from './editor-support-seo.js';
 import { decorateMain, isPerspectivePage, loadArticles, loadIms } from './scripts.js';
 
 // set aem content root
@@ -210,7 +210,7 @@ async function applyChanges(event) {
       loadArticles();
       newMain.style.display = null;
       // eslint-disable-next-line no-use-before-define
-      attachEventListners(newMain);
+      attachEventListeners(newMain);
       return true;
     }
 
@@ -327,7 +327,7 @@ function handleEditorSelect(event) {
   }
 }
 
-function attachEventListners(main) {
+function attachEventListeners(main) {
   ['aue:content-patch', 'aue:content-update', 'aue:content-add', 'aue:content-move', 'aue:content-remove'].forEach(
     (eventType) =>
       main?.addEventListener(eventType, async (event) => {
@@ -335,9 +335,8 @@ function attachEventListners(main) {
         const applied = await applyChanges(event);
         if (applied) {
           updateUEInstrumentation();
-          displaySeoWarnings();
+          renderSeoWarnings();
         } else {
-          displaySeoWarnings();
           window.location.reload();
         }
       }),
@@ -346,7 +345,7 @@ function attachEventListners(main) {
   main.addEventListener('aue:ui-select', handleEditorSelect);
 }
 
-attachEventListners(document.querySelector('main'));
+attachEventListeners(document.querySelector('main'));
 
 // temporary workaround until aue:ui-edit and aue:ui-preview events become available
 // show/hide sign-up block when switching betweeen UE Edit mode and preview
@@ -373,4 +372,4 @@ if (signUpBlock) {
 
 // update UE component filters on page load
 updateUEInstrumentation();
-displaySeoWarnings();
+renderSeoWarnings();

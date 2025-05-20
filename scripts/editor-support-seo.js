@@ -3,8 +3,8 @@ import { decorateIcons } from './lib-franklin.js';
 /**
  * Displays SEO warnings for specific tags.
  */
-// eslint-disable-next-line import/prefer-default-export
-export function displaySeoWarnings() {
+
+export default function renderSeoWarnings() {
   const tags = ['h1'];
   let warningBanner = document.querySelector('.ue-warning-banner');
   const messages = [];
@@ -53,5 +53,3 @@ export function displaySeoWarnings() {
 
   decorateIcons(warningBanner);
 }
-
-displaySeoWarnings();

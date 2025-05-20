@@ -1147,9 +1147,9 @@ body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination
 }
 
 .ue-warning-banner {
-  background-color: #dc3545;
-  color: #fff;
-  border: 1px solid #dc3545;
+  background-color: var(--non-spectrum-adobe-red);
+  color: var(--spectrum-gray-50);
+  border: 1px solid var(--non-spectrum-adobe-red);
   padding: 20px;
   margin: 10px;
   border-radius: 4px;
