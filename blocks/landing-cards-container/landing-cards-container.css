@@ -21,6 +21,7 @@
   display: flex;
   flex-direction: column;
   border: 1px solid #e0e0e0;
+  padding: 16px;
 }
 
 /* image container (if present - not sure about the if present part) */
@@ -62,41 +63,46 @@
   flex-direction: row;
   align-items: center;
   gap: 0.5rem;
-  padding: 10px 10px 0;
+  padding: 0 10px;
 }
 
 /* title styling */
 .landing-cards-container > div > div > div > p:has(picture) + p {
-  font-size: 18px !important;
-  font-weight: 600 !important;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
 }
 
 /* description paragraph styling */
 .landing-cards-container > div > div > div > p:last-child {
+  color: #666;
   font-size: 14px;
-  font-weight: 400;
-  line-height: calc(var(--spectrum-line-height-200) + 0.1);
+  margin-top: 12px;
 }
 
 .landing-cards-container > div > div > div > p:first-child:not(:has(picture)) {
-  font-size: 18px !important;
-  font-weight: 600 !important;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
 }
 
 .landing-cards-container > div > div > div > .icon-content-wrapper p:not(.icon) {
-  font-size: 18px !important;
-  font-weight: 600 !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
 }
 
 /* link styling */
 .landing-cards-container a {
   color: #1473e6;
-  text-decoration: none;
   font-weight: bold;
-  display: inline-block;
-  font-size: 14px;
+  text-decoration: none;
 }
 
 .landing-cards-container a:hover {
