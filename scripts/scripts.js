@@ -9,7 +9,6 @@ import {
   decorateBlocks,
   decorateBlock,
   decorateTemplateAndTheme,
-  waitForLCP,
   loadBlocks,
   loadCSS,
   decorateButtons,
@@ -19,6 +18,7 @@ import {
   readBlockConfig,
   createOptimizedPicture,
   toClassName,
+  loadBlock,
 } from './lib-franklin.js';
 import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
 
@@ -547,6 +547,29 @@ async function buildPreMain(main) {
 }
 
 /**
+ * Load LCP block and/or wait for LCP in default content.
+ */
+export async function waitForLCPonMain(lcpBlocks) {
+  const block = document.querySelector('main .block');
+  const hasLCPBlock = block && lcpBlocks.includes(block.dataset.blockName);
+  if (hasLCPBlock) await loadBlock(block);
+
+  document.body.style.display = null;
+  const lcpCandidate = document.querySelector('main img');
+  await new Promise((resolve) => {
+    if (lcpCandidate && lcpCandidate.src === 'about:error') {
+      resolve(); // error loading image
+    } else if (lcpCandidate && !lcpCandidate.complete) {
+      lcpCandidate.setAttribute('loading', 'eager');
+      lcpCandidate.addEventListener('load', resolve);
+      lcpCandidate.addEventListener('error', resolve);
+    } else {
+      resolve();
+    }
+  });
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -577,7 +600,7 @@ async function loadEager(doc) {
     buildPreMain(main);
     decorateMain(main);
     document.body.classList.add('appear');
-    await waitForLCP(LCP_BLOCKS);
+    await waitForLCPonMain(LCP_BLOCKS);
   }
 
   try {
