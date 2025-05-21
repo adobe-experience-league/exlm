@@ -32,6 +32,7 @@ const seeMoreConfig = {
   noOfRows: 2,
   prefetchCards: false,
 };
+let completeTargetData = null;
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
 // Event for target data change (Updating the block based on target data)
@@ -559,6 +560,7 @@ export default async function decorate(block) {
         let data = [];
         if (targetSupport) {
           data = Array.from(cardResponse?.data) ?? [];
+          completeTargetData = data;
 
           if (cardResponse?.meta?.sort === 'shuffled') {
             data = data?.sort(() => Math.random() - 0.5);
@@ -1003,6 +1005,17 @@ export default async function decorate(block) {
               const classOp =
                 contentDiv?.scrollWidth && contentDiv.scrollWidth <= contentDiv.offsetWidth ? 'add' : 'remove';
               navSectionEl.classList[classOp]('recommended-content-hidden');
+            }
+
+            if (targetSupport) {
+              const numberOfExistingCards = block.querySelectorAll('.card-wrapper');
+              const index = numberOfExistingCards.length ? numberOfExistingCards.length - DEFAULT_NUM_CARDS : 0;
+              if (!completeTargetData[index + DEFAULT_NUM_CARDS] && !block.dataset.browseCardRows) {
+                const seeMoreBtn = block.querySelector('.recommended-content-see-more-btn');
+                if (seeMoreBtn) {
+                  seeMoreBtn.classList.add('hide');
+                }
+              }
             }
 
             if (!targetSupport) {
