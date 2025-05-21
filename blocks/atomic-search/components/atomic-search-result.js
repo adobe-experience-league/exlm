@@ -32,6 +32,22 @@ export const atomicResultStyles = `
                         max-width: calc(100% - 40px);
                       }
                     }
+
+                    .result-description atomic-result-multi-value-text::part(result-multi-value-text-list) {
+                      gap: 4px;
+                      margin-top: 10px;
+                      flex-wrap: wrap;
+                    }
+                    
+                    .result-description atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                      border: 1px solid #959595;
+                      border-radius: 4px;
+                      color: var(--non-spectrum-grey-updated);
+                      font-size: 12px;
+                      line-height: 15px;
+                      padding: 5px;
+                    }
+
                     .result-item {
                       display: none;
                       gap: 16px;
@@ -555,6 +571,35 @@ export default function atomicResultHandler(block, placeholders) {
         const productElWrap = resultItem?.querySelector('.result-product')?.firstElementChild?.shadowRoot;
         const productElements = productElWrap?.querySelectorAll('li') || [];
         const contentTypeElements = contentTypeElParent?.querySelectorAll('li') || [];
+
+        const topicElements =
+          resultItem
+            ?.querySelector('.result-description atomic-result-multi-value-text')
+            ?.shadowRoot?.querySelectorAll('li') || [];
+        topicElements.forEach((li) => {
+          if (li.classList.contains('separator')) {
+            li.remove();
+            return;
+          }
+
+          const slot = li.querySelector('slot');
+          if (!slot || li.querySelector('a')) return;
+
+          const label = slot.textContent.trim();
+          if (!label) return;
+
+          const link = document.createElement('a');
+          link.href = `https://experienceleaguecommunities.adobe.com//t5/custom/page/page-id/Community-TopicsPage?topic=${encodeURIComponent(
+            label,
+          )}`;
+          link.textContent = label;
+          link.target = '_blank';
+          link.style.textDecoration = 'none';
+          link.style.color = 'inherit';
+
+          li.innerHTML = '';
+          li.appendChild(link);
+        });
 
         contentTypeElements.forEach((contentTypeEl) => {
           const contentType = contentTypeEl.textContent.toLowerCase().trim();
