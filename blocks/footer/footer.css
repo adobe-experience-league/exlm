@@ -86,7 +86,7 @@
   line-height: 1.4;
   margin: 0;
   padding: 12px 44px 12px 0;
-  position: relative;
+  position: static;
 }
 
 @media (width >= 900px) {
@@ -356,8 +356,7 @@
   .footer-breadcrumb .icon {
     height: 14px;
     width: 14px;
-    top: 2px;
-    position: relative;
+    vertical-align: -2px;
   }
 
   .footer-breadcrumb p {
@@ -373,7 +372,6 @@
   .footer-breadcrumb a:not(:last-child)::after {
     content: '›';
     padding: 0 8px;
-    position: relative;
     top: -1px;
     color: var(--non-spectrum-charcoal-gray);
   }
