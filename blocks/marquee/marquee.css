@@ -526,3 +526,22 @@ body[class^='article-'] .marquee-content-container {
 .marquee-background.has-video .marquee-bg-filler {
   display: none !important;
 }
+.marquee-video {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  object-fit: cover;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  border: none;
+}
+.marquee-background.has-video {
+  position: relative;
+  overflow: hidden;
+}
+.marquee-background-fill.hidden,
+.marquee-bg-filler.hidden,
+.marquee-subject {
+  display: none !important;
+}
