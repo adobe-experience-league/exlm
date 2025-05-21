@@ -1016,9 +1016,7 @@ export default async function decorate(block) {
                   seeMoreBtn.classList.add('hide');
                 }
               }
-            }
-
-            if (!targetSupport) {
+            } else {
               const containsLessResponse = contentDiv.querySelectorAll('.browse-card').length < DEFAULT_NUM_CARDS;
               const savedCardsCount = seeMoreConfig.prefetchCards
                 ? getSavedCardsCount(dataConfiguration, lowercaseOptionType)
