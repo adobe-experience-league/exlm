@@ -63,11 +63,10 @@ function handleSigninLinks(block) {
 }
 
 export default async function decorate(block) {
-  // Extract properties
   const [
     customBgColor, img, eyebrow, title, longDescr,
     firstCta, firstCtaLinkType, secondCta, secondCtaLinkType,
-    vedioUrlElem // index 9
+    vedioUrlElem
   ] = block.querySelectorAll(':scope div > div');
 
   const vedioUrl = vedioUrlElem?.textContent?.trim();
@@ -78,6 +77,8 @@ export default async function decorate(block) {
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
   const eyebrowText = eyebrow?.textContent?.trim();
+
+  const isIframeVideo = vedioUrl && vedioUrl.includes('adobe');
 
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-content-container'>
@@ -92,12 +93,15 @@ export default async function decorate(block) {
         </div>
       </div>
       <div class='marquee-background ${hasVedio ? 'has-video' : ''}' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
-        ${
-          hasVedio
-            ? `<iframe class="marquee-video" src="${vedioUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe>`
-            : subjectPicture
-              ? `<div class='marquee-subject' style="background-color: ${bgColor}">${subjectPicture.outerHTML}</div>`
-              : `<div class='marquee-spacer'></div>`
+        ${hasVedio
+          ? (
+            isIframeVideo
+              ? `<iframe class="marquee-video" src="${vedioUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe>`
+              : `<video class="marquee-video" src="${vedioUrl}" autoplay muted loop playsinline></video>`
+          )
+          : subjectPicture
+            ? `<div class='marquee-subject' style="background-color: ${bgColor}">${subjectPicture.outerHTML}</div>`
+            : `<div class='marquee-spacer'></div>`
         }
         <div class="marquee-background-fill ${hasVedio ? 'hidden' : ''}">
           ${
@@ -132,9 +136,7 @@ export default async function decorate(block) {
 
   block.append(marqueeDOM);
 
-  if (!((firstCta && firstCtaLinkType) || (secondCta && secondCtaLinkType))) {
-    return;
-  }
+  if (!((firstCta && firstCtaLinkType) || (secondCta && secondCtaLinkType))) return;
 
   const isVideoLinkType =
     firstCtaLinkType?.textContent?.trim() === 'video' || secondCtaLinkType?.textContent?.trim() === 'video';
