@@ -8,11 +8,13 @@ function handleVideoLinks(videoLinkElems, block) {
     videoLinkElem.setAttribute('href', '#');
     videoLinkElem.removeAttribute('target');
 
+    // Add play icon
     const playIcon = document.createElement('span');
     playIcon.classList.add('icon', 'icon-play');
     videoLinkElem.prepend(playIcon);
     decorateIcons(videoLinkElem);
 
+    // Create modal
     const modal = document.createElement('div');
     modal.classList.add('modal');
     const closeIcon = document.createElement('span');
@@ -22,6 +24,7 @@ function handleVideoLinks(videoLinkElems, block) {
     modal.style.display = 'none';
     block.append(modal);
 
+    // Event listeners
     videoLinkElem.addEventListener('click', (e) => {
       e.preventDefault();
       modal.style.display = 'flex';
@@ -63,14 +66,16 @@ export default async function decorate(block) {
   const [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType, vedioUrlElem] =
     block.querySelectorAll(':scope div > div');
 
-  const subjectPicture = img.querySelector('picture');
+  const subjectPicture = img?.querySelector('picture');
   const isStraightVariant = block.classList.contains('straight');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
   const eyebrowText = eyebrow?.textContent?.trim();
 
+  const isVideoBackground = block.classList.contains('vedio');
   const vedioUrl = vedioUrlElem?.textContent?.trim();
-  const isVideoBackground = block.classList.contains('vedio') && vedioUrl?.includes('adobe');
+  const isAdobeTvUrl = vedioUrl?.startsWith('https://video.tv.adobe.com/');
+  const shouldShowVideo = isVideoBackground && isAdobeTvUrl;
 
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-content-container'>
@@ -84,31 +89,31 @@ export default async function decorate(block) {
           </div>
         </div>
       </div>
-      <div class='marquee-background ${isVideoBackground ? 'has-video' : ''}' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
+      <div class='marquee-background ${shouldShowVideo ? 'has-video' : ''}' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
         ${
-          isVideoBackground
-            ? `<iframe class='marquee-video' src='${vedioUrl}' frameborder='0' allow='autoplay; fullscreen' allowfullscreen loading='lazy'></iframe>`
+          shouldShowVideo
+            ? `<iframe class='marquee-video' src='${vedioUrl}' frameborder='0' allow='autoplay; encrypted-media' allowfullscreen></iframe>`
             : subjectPicture
               ? `<div class='marquee-subject' style="background-color: ${bgColor}">${subjectPicture.outerHTML}</div>`
               : `<div class='marquee-spacer'></div>`
         }
-        <div class="marquee-background-fill ${isVideoBackground ? 'hidden' : ''}">
+        <div class="marquee-background-fill">
           ${
             !isStraightVariant
-              ? `<svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
+              ? `
+                <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
                   <path id="Path_1" data-name="Path 1" d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z" transform="translate(-738.685 1.777)" fill="${bgColor}" />
-                </svg>`
-              : ''
+                </svg>` : ''
           }
         </div>
-        <div class="marquee-bg-filler ${isVideoBackground ? 'hidden' : ''}" style="background-color: ${bgColor}"></div>
+        <div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>
       </div>
     </div>
   `);
 
   block.textContent = '';
 
-  if (!subjectPicture && !isVideoBackground) {
+  if (!subjectPicture && !shouldShowVideo) {
     block.classList.add('no-subject');
   }
 
@@ -117,6 +122,12 @@ export default async function decorate(block) {
   }
 
   block.append(marqueeDOM);
+
+  // Hide decorative backgrounds if video is present
+  if (shouldShowVideo) {
+    block.querySelector('.marquee-background-fill')?.classList.add('hidden');
+    block.querySelector('.marquee-bg-filler')?.classList.add('hidden');
+  }
 
   if (!((firstCta && firstCtaLinkType) || (secondCta && secondCtaLinkType))) return;
 
