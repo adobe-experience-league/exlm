@@ -14,6 +14,7 @@ import { isMobile } from '../header/header-utils.js';
 import createAtomicSkeleton from './components/atomic-search-skeleton.js';
 import atomicSearchBoxHandler from './components/atomic-search-box.js';
 import atomicResultPageHandler from './components/atomic-search-results-per-page.js';
+import loadCoveoToken from '../../scripts/data-service/coveo/coveo-token-service.js';
 
 let placeholders = {};
 
@@ -85,15 +86,17 @@ export default function decorate(block) {
       block.appendChild(skeletonWrapper);
     }
   };
+  const coveoTokenPromise = loadCoveoToken();
   const handleAtomicLibLoad = async () => {
     await customElements.whenDefined('atomic-search-interface');
     const searchInterface = block.querySelector('atomic-search-interface');
     const { coveoOrganizationId } = getConfig();
     const { lang: languageCode } = getPathDetails();
+    const coveoToken = await coveoTokenPromise;
 
     // Initialization
     await searchInterface.initialize({
-      accessToken: window.exlm.config.coveoToken,
+      accessToken: coveoToken,
       organizationId: coveoOrganizationId,
     });
 
