@@ -288,9 +288,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 id="facetStatus"
                 sort-criteria="alphanumericNatural"
                 field="el_status"
-                label="${
-                  placeholders.searchAnsweredLabel ? placeholders.searchAnsweredLabel.replace(/:$/, '') : 'Answered'
-                }"
+                label="${placeholders.searchAnsweredLabel || 'Answered'}"
                 display-values-as="checkbox">
               </atomic-facet>
               <atomic-facet
