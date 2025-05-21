@@ -984,6 +984,7 @@
                   "name": "Marquee",
                   "model": "marquee",
                   "classes": ["medium", "curved", "bg-spectrum-gray-700"],
+                  "vedioUrl": "https://video.tv.adobe.com/v/3448250/?learn=on&enablevpops",
                   "fileReference": "/content/dam/exlm/en/images/subjects/Community_headshot_single.png",
                   "title": "Marquee Title",
                   "titleType": "h2",

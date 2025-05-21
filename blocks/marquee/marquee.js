@@ -65,7 +65,7 @@ function handleSigninLinks(block) {
 export default async function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
-  const [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] =
+  const [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType, vedioUrlElem] =
     block.querySelectorAll(':scope div > div');
 
   const subjectPicture = img.querySelector('picture');
@@ -74,51 +74,55 @@ export default async function decorate(block) {
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
   const eyebrowText = eyebrow?.textContent?.trim();
 
+  // NEW: Check if the block has 'vedio' class and retrieve video URL
+  const isVideoBackground = block.classList.contains('vedio');
+  const vedioUrl = vedioUrlElem?.textContent?.trim();
+
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-content-container'>
-    <div class='marquee-foreground'>
-      <div class='marquee-text'>
-        ${eyebrowText !== '' ? `<div class='marquee-eyebrow'>${eyebrowText?.toUpperCase()}</div>` : ``}
-        <div class='marquee-title'>${title.innerHTML}</div>
-        <div class='marquee-long-description'>${longDescr.innerHTML}</div>
-        <div class='marquee-cta'>
-          ${decorateCustomButtons(firstCta, secondCta)}
+      <div class='marquee-foreground'>
+        <div class='marquee-text'>
+          ${eyebrowText !== '' ? `<div class='marquee-eyebrow'>${eyebrowText?.toUpperCase()}</div>` : ``}
+          <div class='marquee-title'>${title.innerHTML}</div>
+          <div class='marquee-long-description'>${longDescr.innerHTML}</div>
+          <div class='marquee-cta'>
+            ${decorateCustomButtons(firstCta, secondCta)}
+          </div>
         </div>
       </div>
-    </div>
-    <div class='marquee-background' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
-          ${
-            subjectPicture
+      <div class='marquee-background' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
+        ${
+          // NEW: Insert video if 'vedio' class is present, otherwise image/spacer
+          isVideoBackground && vedioUrl
+            ? `<video class='marquee-video' src='${vedioUrl}' autoplay muted loop playsinline></video>`
+            : subjectPicture
               ? `<div class='marquee-subject' style="background-color: ${bgColor}">${subjectPicture.outerHTML}</div>`
               : `<div class='marquee-spacer'></div>`
-          } 
-      <div class="marquee-background-fill">
-      ${
-        !isStraightVariant
-          ? `
-          <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
-            <path
-              id="Path_1"
-              data-name="Path 1"
-              d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z"
-              transform="translate(-738.685 1.777)"
-              fill="${bgColor}"
-            />
-          </svg>`
-          : ' '
-      }
+        }
+        <div class="marquee-background-fill">
+          ${
+            !isStraightVariant
+              ? `
+                <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
+                  <path
+                    id="Path_1"
+                    data-name="Path 1"
+                    d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z"
+                    transform="translate(-738.685 1.777)"
+                    fill="${bgColor}"
+                  />
+                </svg>` : ''
+          }
+        </div>
+        <div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>
       </div>
-      <div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>
-
-      </div>
-    </div>
     </div>
   `);
 
   block.textContent = '';
 
-  if (!subjectPicture) {
+  if (!subjectPicture && !isVideoBackground) {
     block.classList.add('no-subject');
   }
 
@@ -140,7 +144,7 @@ export default async function decorate(block) {
   function addCtaClass(ctaType, selector) {
     const ctaText = ctaType?.textContent?.trim();
     if (ctaText === 'video' || ctaText === 'signin') {
-      block.querySelector(selector).classList.add(ctaText);
+      block.querySelector(selector)?.classList.add(ctaText);
     }
   }
 
