@@ -63,8 +63,6 @@ function handleSigninLinks(block) {
 }
 
 export default async function decorate(block) {
-  // Extract properties
-  // always same order as in model, empty string if not set
   const [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType, vedioUrlElem] =
     block.querySelectorAll(':scope div > div');
 
@@ -74,11 +72,9 @@ export default async function decorate(block) {
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
   const eyebrowText = eyebrow?.textContent?.trim();
 
-  // NEW: Check if the block has 'vedio' class and retrieve video URL
   const isVideoBackground = block.classList.contains('vedio');
   const vedioUrl = vedioUrlElem?.textContent?.trim();
 
-  // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-content-container'>
       <div class='marquee-foreground'>
@@ -91,9 +87,8 @@ export default async function decorate(block) {
           </div>
         </div>
       </div>
-      <div class='marquee-background' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
+      <div class='marquee-background ${isVideoBackground ? 'has-video' : ''}' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
         ${
-          // NEW: Insert video if 'vedio' class is present, otherwise image/spacer
           isVideoBackground && vedioUrl
             ? `<video class='marquee-video' src='${vedioUrl}' autoplay muted loop playsinline></video>`
             : subjectPicture
@@ -105,13 +100,7 @@ export default async function decorate(block) {
             !isStraightVariant
               ? `
                 <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
-                  <path
-                    id="Path_1"
-                    data-name="Path 1"
-                    d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z"
-                    transform="translate(-738.685 1.777)"
-                    fill="${bgColor}"
-                  />
+                  <path id="Path_1" data-name="Path 1" d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z" transform="translate(-738.685 1.777)" fill="${bgColor}" />
                 </svg>` : ''
           }
         </div>
@@ -132,9 +121,13 @@ export default async function decorate(block) {
 
   block.append(marqueeDOM);
 
-  if (!((firstCta && firstCtaLinkType) || (secondCta && secondCtaLinkType))) {
-    return; // Exit early if no CTA or link type is present
+  // Hide decorative backgrounds if video is present
+  if (isVideoBackground) {
+    block.querySelector('.marquee-background-fill')?.classList.add('hidden');
+    block.querySelector('.marquee-bg-filler')?.classList.add('hidden');
   }
+
+  if (!((firstCta && firstCtaLinkType) || (secondCta && secondCtaLinkType))) return;
 
   const isVideoLinkType =
     firstCtaLinkType?.textContent?.trim() === 'video' || secondCtaLinkType?.textContent?.trim() === 'video';
