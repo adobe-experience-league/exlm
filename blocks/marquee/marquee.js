@@ -8,13 +8,11 @@ function handleVideoLinks(videoLinkElems, block) {
     videoLinkElem.setAttribute('href', '#');
     videoLinkElem.removeAttribute('target');
 
-    // Add play icon
     const playIcon = document.createElement('span');
     playIcon.classList.add('icon', 'icon-play');
     videoLinkElem.prepend(playIcon);
     decorateIcons(videoLinkElem);
 
-    // Create modal
     const modal = document.createElement('div');
     modal.classList.add('modal');
     const closeIcon = document.createElement('span');
@@ -24,7 +22,6 @@ function handleVideoLinks(videoLinkElems, block) {
     modal.style.display = 'none';
     block.append(modal);
 
-    // Event listeners
     videoLinkElem.addEventListener('click', (e) => {
       e.preventDefault();
       modal.style.display = 'flex';
@@ -77,6 +74,8 @@ export default async function decorate(block) {
   const isVideoBackground = block.classList.contains('vedio');
   const vedioUrl = vedioUrlElem?.textContent?.trim();
 
+  const showVideo = isVideoBackground && vedioUrl;
+
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-content-container'>
       <div class='marquee-foreground'>
@@ -89,9 +88,9 @@ export default async function decorate(block) {
           </div>
         </div>
       </div>
-      <div class='marquee-background ${isVideoBackground ? 'has-video' : ''}' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
+      <div class='marquee-background ${showVideo ? 'has-video' : ''}' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
         ${
-          isVideoBackground && vedioUrl
+          showVideo
             ? `<iframe class='marquee-video' src='${vedioUrl}' frameborder='0' allow='autoplay; encrypted-media' allowfullscreen></iframe>`
             : subjectPicture
               ? `<div class='marquee-subject' style="background-color: ${bgColor}">${subjectPicture.outerHTML}</div>`
@@ -113,7 +112,7 @@ export default async function decorate(block) {
 
   block.textContent = '';
 
-  if (!subjectPicture && !isVideoBackground) {
+  if (!subjectPicture && !showVideo) {
     block.classList.add('no-subject');
   }
 
@@ -123,8 +122,7 @@ export default async function decorate(block) {
 
   block.append(marqueeDOM);
 
-  // Hide decorative backgrounds if video is present
-  if (isVideoBackground) {
+  if (showVideo) {
     block.querySelector('.marquee-background-fill')?.classList.add('hidden');
     block.querySelector('.marquee-bg-filler')?.classList.add('hidden');
   }
