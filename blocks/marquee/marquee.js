@@ -81,7 +81,7 @@ export default async function decorate(block) {
   const vedioUrl = vedioUrlElem?.textContent?.trim();
   const isVideoVariant = block.classList.contains('vedio');
 
-  // Build DOM — always add image, we’ll remove later if needed
+  // Build DOM — always add image, we’ll remove/replace later only if video is enabled
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-content-container'>
       <div class='marquee-foreground'>
@@ -119,17 +119,20 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(marqueeDOM);
 
-  // Remove subject image and insert video if vedio variant is active
+  // If vedio variant is selected and vedioUrl is provided, replace image with video
   if (isVideoVariant && vedioUrl) {
     const subjectEl = block.querySelector('.marquee-subject');
-    if (subjectEl) subjectEl.remove();
-
-    const videoContainer = document.createElement('div');
-    videoContainer.className = 'marquee-video-container';
-    videoContainer.innerHTML = `
-      <iframe class='marquee-video' src='${vedioUrl}' frameborder='0' allow='autoplay; encrypted-media' allowfullscreen></iframe>
-    `;
-    block.querySelector('.marquee-background')?.prepend(videoContainer);
+    if (subjectEl) {
+      subjectEl.replaceWith(Object.assign(document.createElement('div'), {
+        className: 'marquee-video-container',
+        innerHTML: `<iframe class='marquee-video' src='${vedioUrl}' frameborder='0' allow='autoplay; encrypted-media' allowfullscreen></iframe>`,
+      }));
+    } else {
+      const fallbackVideoContainer = document.createElement('div');
+      fallbackVideoContainer.className = 'marquee-video-container';
+      fallbackVideoContainer.innerHTML = `<iframe class='marquee-video' src='${vedioUrl}' frameborder='0' allow='autoplay; encrypted-media' allowfullscreen></iframe>`;
+      block.querySelector('.marquee-background')?.prepend(fallbackVideoContainer);
+    }
   }
 
   if (!subjectPicture && !(isVideoVariant && vedioUrl)) {
