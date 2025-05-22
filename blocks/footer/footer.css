@@ -42,7 +42,6 @@
   background-color: transparent !important;
   font-weight: initial;
   padding: 15px 15px 15px 0;
-  position: relative;
   top: 2px;
 }
 
@@ -208,7 +207,6 @@
   transform-origin: 75% 75%;
   transition: transform 0.1s ease;
   width: 6px;
-  position: relative;
   top: -2px;
 }
 
@@ -289,7 +287,6 @@
 @media (width >= 600px) {
   .footer-lang-social .language-selector .language-selector-button {
     min-width: 132px;
-    position: unset;
   }
 }
 
