@@ -1837,6 +1837,18 @@
         "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
       },
       {
+  "condition": {
+    "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "vedio"] }]
+  },
+  "component": "text",
+  "valueType": "string",
+  "name": "vedioUrl",
+  "value": "",
+  "label": "Video URL",
+  "description": "Enter the MPC-hosted video URL (must be MP4 and compatible)."
+},
+
+      {
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
@@ -2256,19 +2268,7 @@
             "value": "signin"
           }
         ]
-      },
-      {
-  "condition": {
-    "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "vedio"] }]
-  },
-  "component": "text",
-  "valueType": "string",
-  "name": "vedioUrl",
-  "value": "",
-  "label": "Video URL",
-  "description": "Enter the MPC-hosted video URL (must be MP4 and compatible)."
-}
-
+      }
     ]
   },
   {
