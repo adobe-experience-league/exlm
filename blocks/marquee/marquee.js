@@ -41,7 +41,7 @@ function handleVideoLinks(videoLinkElems, block) {
     modal.addEventListener('click', () => {
       modal.style.display = 'none';
       document.body.removeAttribute('style');
-      modal.querySelector('.iframe-container').remove();
+      modal.querySelector('.iframe-container')?.remove();
     });
   });
 }
@@ -65,11 +65,23 @@ function handleSigninLinks(block) {
 export default async function decorate(block) {
   // Extract properties
   // always same order as in model, empty string if not set
-  const [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] =
-    block.querySelectorAll(':scope div > div');
+  const [
+    customBgColor,
+    img,
+    eyebrow,
+    title,
+    longDescr,
+    firstCta,
+    firstCtaLinkType,
+    secondCta,
+    secondCtaLinkType,
+    vedioUrlElem,
+  ] = block.querySelectorAll(':scope div > div');
 
-  const subjectPicture = img.querySelector('picture');
+  const subjectPicture = img?.querySelector('picture');
   const isStraightVariant = block.classList.contains('straight');
+  const isVideoVariant = block.classList.contains('vedio');
+  const vedioUrl = vedioUrlElem?.textContent?.trim();
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
   const eyebrowText = eyebrow?.textContent?.trim();
@@ -96,29 +108,58 @@ export default async function decorate(block) {
       <div class="marquee-background-fill">
       ${
         !isStraightVariant
-          ? `
-          <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
-            <path
-              id="Path_1"
-              data-name="Path 1"
-              d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z"
-              transform="translate(-738.685 1.777)"
-              fill="${bgColor}"
-            />
-          </svg>`
-          : ' '
+          ? `<svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
+                  <path
+                    d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z"
+                    transform="translate(-738.685 1.777)"
+                    fill="${bgColor}"
+                  />
+                </svg>`
+          : ''
       }
+        </div>
+        <div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>
       </div>
-      <div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>
-
-      </div>
-    </div>
     </div>
   `);
 
   block.textContent = '';
+  block.append(marqueeDOM);
 
-  if (!subjectPicture) {
+  // Replace image with video if vedio class and URL are present
+  if (isVideoVariant && vedioUrl) {
+    const svgEl = block.querySelector('.marquee-background svg');
+    if (svgEl) svgEl.style.display = 'none';
+
+    const bgFillerEl = block.querySelector('.marquee-bg-filler');
+    if (bgFillerEl) bgFillerEl.style.display = 'none';
+
+    const subjectEl = block.querySelector('.marquee-subject');
+    if (subjectEl) subjectEl.remove();
+
+    let videoSrc = vedioUrl;
+    if (!videoSrc.includes('autoplay=1')) {
+      const separator = videoSrc.includes('?') ? '&' : '?';
+      videoSrc += `${separator}autoplay=1&muted=1&playsinline=1`;
+    }
+
+    const videoContainer = document.createElement('div');
+    videoContainer.className = 'marquee-video-container';
+    videoContainer.innerHTML = `
+      <iframe
+        class="marquee-video"
+        src="${videoSrc}"
+        frameborder="0"
+        allow="autoplay; encrypted-media"
+        allowfullscreen
+        playsinline
+      ></iframe>
+    `;
+
+    block.querySelector('.marquee-background').prepend(videoContainer);
+  }
+
+  if (!subjectPicture && !(isVideoVariant && vedioUrl)) {
     block.classList.add('no-subject');
   }
 
@@ -140,7 +181,7 @@ export default async function decorate(block) {
   function addCtaClass(ctaType, selector) {
     const ctaText = ctaType?.textContent?.trim();
     if (ctaText === 'video' || ctaText === 'signin') {
-      block.querySelector(selector).classList.add(ctaText);
+      block.querySelector(selector)?.classList.add(ctaText);
     }
   }
 
