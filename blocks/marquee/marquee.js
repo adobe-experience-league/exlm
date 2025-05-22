@@ -41,7 +41,7 @@ function handleVideoLinks(videoLinkElems, block) {
     modal.addEventListener('click', () => {
       modal.style.display = 'none';
       document.body.removeAttribute('style');
-      modal.querySelector('.iframe-container')?.remove();
+      modal.querySelector('.iframe-container').remove();
     });
   });
 }
@@ -66,7 +66,7 @@ export default async function decorate(block) {
   const [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType, vedioUrlElem] =
     block.querySelectorAll(':scope div > div');
 
-  const subjectPicture = img?.querySelector('picture');
+  const subjectPicture = img.querySelector('picture');
   const isStraightVariant = block.classList.contains('straight');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
@@ -74,8 +74,6 @@ export default async function decorate(block) {
 
   const isVideoBackground = block.classList.contains('vedio');
   const vedioUrl = vedioUrlElem?.textContent?.trim();
-  const isAdobeTvUrl = vedioUrl?.startsWith('https://video.tv.adobe.com/');
-  const shouldShowVideo = isVideoBackground && isAdobeTvUrl;
 
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-content-container'>
@@ -89,10 +87,10 @@ export default async function decorate(block) {
           </div>
         </div>
       </div>
-      <div class='marquee-background ${shouldShowVideo ? 'has-video' : ''}' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
+      <div class='marquee-background ${isVideoBackground ? 'has-video' : ''}' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
         ${
-          shouldShowVideo
-            ? `<iframe class='marquee-video' src='${vedioUrl}' frameborder='0' allow='autoplay; encrypted-media' allowfullscreen></iframe>`
+          isVideoBackground && vedioUrl
+            ? `<video class='marquee-video' src='${vedioUrl}' autoplay muted loop playsinline></video>`
             : subjectPicture
               ? `<div class='marquee-subject' style="background-color: ${bgColor}">${subjectPicture.outerHTML}</div>`
               : `<div class='marquee-spacer'></div>`
@@ -113,7 +111,7 @@ export default async function decorate(block) {
 
   block.textContent = '';
 
-  if (!subjectPicture && !shouldShowVideo) {
+  if (!subjectPicture && !isVideoBackground) {
     block.classList.add('no-subject');
   }
 
@@ -124,7 +122,7 @@ export default async function decorate(block) {
   block.append(marqueeDOM);
 
   // Hide decorative backgrounds if video is present
-  if (shouldShowVideo) {
+  if (isVideoBackground) {
     block.querySelector('.marquee-background-fill')?.classList.add('hidden');
     block.querySelector('.marquee-bg-filler')?.classList.add('hidden');
   }
