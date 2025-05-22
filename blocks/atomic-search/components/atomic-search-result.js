@@ -43,8 +43,40 @@ export const atomicResultStyles = `
                       gap: 2px;
                       margin-left: 0;
                     }
+                    .mobile-result-field .mobile-result-thumbnail {
+                      margin-top: 10px;
+                    }
                     .result-root.recommendation-badge {
                           margin: 40px 0px 0px;
+                    }
+                    .result-field.text-thumbnail {
+                      display: flex;
+                      gap: 18px;
+                    }
+                    .result-field.text-thumbnail:not(:has(.result-thumbnail)) {
+                      gap: 0;
+                    }
+                    .result-field.text-thumbnail:has(.result-thumbnail) .result-text {
+                      flex: 0 0 56%;
+                    }
+                    .thumbnail-wrapper {
+                      position: relative;
+                      display: inline-block;
+                      cursor: pointer;
+                    }
+                    .thumbnail-img {
+                      display: block;
+                    }
+                    .thumbnail-wrapper .icon-play-outline-white {
+                      position: absolute;
+                      left: 50%;
+                      top: 50%;
+                      transform: translate(-50%, -50%);
+                      pointer-events: none;
+                    }
+                    .thumbnail-wrapper .icon-play-outline-white img {
+                      width: 40px;
+                      height: 40px;
                     }
                     @media(min-width: 1024px) {
                       .result-item.desktop-only {
@@ -499,6 +531,43 @@ export default function atomicResultHandler(block, placeholders) {
     isListenerAdded = true;
   }
 
+  function openVideoModal(videoUrl) {
+  document.body.style.overflow = 'hidden';    
+
+  let modal = document.querySelector('.tutorial-video-modal');
+  let iframeContainer;
+
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.classList.add('tutorial-video-modal');
+
+    const modalContent = document.createElement('div');
+    modalContent.classList.add('tutorial-video-modal-content');
+
+    const closeBtn = document.createElement('span');
+    closeBtn.classList.add('icon', 'icon-close-light');
+    closeBtn.addEventListener('click', () => {
+      document.body.style.overflow = '';
+      modal.style.display = 'none';
+    });
+
+    iframeContainer = document.createElement('div');
+    iframeContainer.classList.add('tutorial-video-modal-iframe-container');
+
+    modalContent.appendChild(closeBtn);
+    modalContent.appendChild(iframeContainer);
+    modal.appendChild(modalContent);
+    decorateIcons(modal);
+    document.body.appendChild(modal);
+  } else {
+    iframeContainer = modal.querySelector('.tutorial-video-modal-iframe-container');
+    modal.style.display = 'flex';
+  }
+
+  iframeContainer.innerHTML = `<iframe src="${videoUrl}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+}
+
+
   const updateAtomicResultUI = () => {
     const results = container.querySelectorAll('atomic-result');
     const isMobileView = isMobile();
@@ -551,7 +620,9 @@ export default function atomicResultHandler(block, placeholders) {
           const resultRoot = resultShadow.querySelector('.result-root');
           resultRoot.classList.add('recommendation-badge');
         }
-
+        
+        
+    
         const productElWrap = resultItem?.querySelector('.result-product')?.firstElementChild?.shadowRoot;
         const productElements = productElWrap?.querySelectorAll('li') || [];
         const contentTypeElements = contentTypeElParent?.querySelectorAll('li') || [];
@@ -602,7 +673,51 @@ export default function atomicResultHandler(block, placeholders) {
           decorateExternalLink(anchorTag);
           decorateIcons(anchorTag);
         }
+
+        const videoUrlEl = resultShadow.querySelector('atomic-result-text[field="video_url"]');
+        const titleEl = resultShadow.querySelector('atomic-result-text[field="title"]');
+
+        const VIDEO_THUMBNAIL_FORMAT = /^https:\/\/video\.tv\.adobe\.com\/v\/\w+/;
+
+        if (videoUrlEl) {
+          const videoUrl = videoUrlEl.textContent.trim();
+          const thumbnailAlt = titleEl.textContent.trim();
+          const cleanUrl = videoUrl.split('?')[0];
+
+          if (!VIDEO_THUMBNAIL_FORMAT.test(cleanUrl)) {
+            const thumbnail = resultShadow.querySelector('.result-thumbnail');
+            if (thumbnail) thumbnail.style.display = 'none';
+            return;
+          }
+
+          const imgUrl = `${cleanUrl  }?format=jpeg`;
+          const thumbnailWrapper = isMobileView
+          ? resultShadow.querySelector('.mobile-result-thumbnail')
+          : resultShadow.querySelector('.result-thumbnail');
+          if (thumbnailWrapper) {
+            let img = thumbnailWrapper.querySelector('img');
+            if (!img) {
+              img = document.createElement('img');
+              img.classList.add('thumbnail-img');
+              img.alt = thumbnailAlt;
+              img.loading = 'lazy';
+              const wrapper = document.createElement('span');
+              wrapper.classList.add('thumbnail-wrapper');
+              const playButton = document.createElement('span');
+              playButton.classList.add('icon', 'icon-play-outline-white');
+              wrapper.appendChild(img);
+              wrapper.appendChild(playButton);
+              decorateIcons(wrapper);
+              thumbnailWrapper.appendChild(wrapper);
+              wrapper.addEventListener('click', () => {
+                openVideoModal(cleanUrl); 
+              });
+            }
+          img.src = imgUrl;
+          }
+        }
       };
+      
       hydrateResult();
     });
 
@@ -616,6 +731,8 @@ export default function atomicResultHandler(block, placeholders) {
     const event = new CustomEvent(CUSTOM_EVENTS.RESULT_UPDATED);
     document.dispatchEvent(event);
   };
+
+  
 
   const onResize = () => {
     const isMobileView = isMobile();

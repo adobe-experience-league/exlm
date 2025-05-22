@@ -23,6 +23,40 @@ const getCoveoAtomicMarkup = (placeholders) => {
           <div class="header-bg"></div>
           <atomic-layout-section section="search">
             <style>
+            .tutorial-video-modal {
+                position: fixed;
+                display: flex;
+                z-index: 10;
+                inset: 0;
+                background-color: rgb(10 10 10 / 86%);
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+              }
+              .tutorial-video-modal-content {
+                width: 100%;
+              }
+              .tutorial-video-modal .icon.icon-close-light {
+                position: absolute;
+                top: 24px;
+                right: 24px;
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+                padding: 5px;
+              }
+              .tutorial-video-modal-iframe-container {
+                display: flex;
+                width: 100%;
+                height: 100%;
+                align-items: center;
+                justify-content: center;
+              }
+              .tutorial-video-modal-iframe-container iframe {
+                width: 90vw;
+                height: 50vw;
+                max-height: 95vh;
+              }
               atomic-search-layout atomic-layout-section[section='status'] {
                 position: relative;
                 @media(max-width: 1024px) {
@@ -630,9 +664,19 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </template>
                       </atomic-result-children-template>
                     </atomic-result-children>
+                    <atomic-field-condition must-match-el_contenttype="Tutorial">
+                      <atomic-field-condition if-defined="video_url">
+                        <div class="mobile-result-field mobile-result-thumbnail">
+                          <div class="mobile-result-thumbnail">
+                                <atomic-result-text field="video_url" style="display:none;" should-highlight="false"></atomic-result-text>
+                          </div>
+                        </div>
+                      </atomic-field-condition>
+                    </atomic-field-condition>
                   </div>
                   <div class="result-item desktop-only">
-                    <div class="result-field">
+                    <div class="result-field text-thumbnail">
+                    <div class="result-text">
                         <div class="result-title">
                           <atomic-field-condition must-match-is-recommendation="true">
                             <span class="atomic-recommendation-badge">${
@@ -675,6 +719,16 @@ const getCoveoAtomicMarkup = (placeholders) => {
                             <atomic-result-text field="excerpt" should-highlight="false"></atomic-result-text>
                           </atomic-result-section-excerpt>
                         </div>
+                        </div>
+                        <atomic-field-condition must-match-el_contenttype="Tutorial">
+                          <atomic-field-condition if-defined="video_url">
+                            <div class="result-field result-thumbnail">
+                              <div class="result-thumbnail">
+                                <atomic-result-text field="video_url" style="display:none;" should-highlight="false"></atomic-result-text>                     
+                              </div>
+                            </div>
+                          </atomic-field-condition>
+                        </atomic-field-condition>
                     </div>
                     <div class="result-field result-content-type">
                         <atomic-result-multi-value-text field="el_contenttype">
