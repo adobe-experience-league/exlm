@@ -81,7 +81,7 @@ export default async function decorate(block) {
   const vedioUrl = vedioUrlElem?.textContent?.trim();
   const isVideoVariant = block.classList.contains('vedio');
 
-  // Build DOM — always add image, will remove if vedio variant is active
+  // Build DOM — always add image, remove later if needed
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-content-container'>
       <div class='marquee-foreground'>
@@ -94,7 +94,7 @@ export default async function decorate(block) {
           </div>
         </div>
       </div>
-      <div class='marquee-background' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
+      <div class='marquee-background' ${isStraightVariant ? `style="background-color: ${bgColor}; position: relative; overflow: hidden;"` : 'style="position: relative; overflow: hidden;"'}>
         ${subjectPicture
           ? `<div class='marquee-subject' style="background-color: ${bgColor}">${subjectPicture.outerHTML}</div>`
           : `<div class='marquee-spacer'></div>`}
@@ -119,44 +119,49 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(marqueeDOM);
 
+  // If video variant active, replace image with video iframe
   if (isVideoVariant && vedioUrl) {
-    // Hide svg and bg filler when video is active
+    // Hide SVG and bg filler
     const svgEl = block.querySelector('.marquee-background svg');
     if (svgEl) svgEl.style.display = 'none';
 
     const bgFillerEl = block.querySelector('.marquee-bg-filler');
     if (bgFillerEl) bgFillerEl.style.display = 'none';
 
-    // Remove image and insert video iframe (muted autoplay)
+    // Remove subject image
     const subjectEl = block.querySelector('.marquee-subject');
-    const videoIframeHTML = `<iframe
-      class='marquee-video'
-      src='${vedioUrl}'
-      frameborder='0'
-      allow='autoplay; encrypted-media'
-      allowfullscreen
-      autoplay
-      muted
-      playsinline
-    ></iframe>`;
+    if (subjectEl) subjectEl.remove();
 
-    if (subjectEl) {
-      subjectEl.replaceWith(Object.assign(document.createElement('div'), {
-        className: 'marquee-video-container',
-        innerHTML: videoIframeHTML,
-      }));
-    } else {
-      const fallbackVideoContainer = document.createElement('div');
-      fallbackVideoContainer.className = 'marquee-video-container';
-      fallbackVideoContainer.innerHTML = videoIframeHTML;
-      block.querySelector('.marquee-background')?.prepend(fallbackVideoContainer);
+    // Append autoplay & muted params to vedioUrl if missing
+    let videoSrc = vedioUrl;
+    if (!videoSrc.includes('autoplay=1')) {
+      const separator = videoSrc.includes('?') ? '&' : '?';
+      videoSrc += `${separator}autoplay=1&muted=1&playsinline=1`;
     }
+
+    // Create video container & iframe
+    const videoContainer = document.createElement('div');
+    videoContainer.className = 'marquee-video-container';
+    videoContainer.innerHTML = `
+      <iframe
+        class="marquee-video"
+        src="${videoSrc}"
+        frameborder="0"
+        allow="autoplay; encrypted-media"
+        allowfullscreen
+        playsinline
+      ></iframe>
+    `;
+
+    block.querySelector('.marquee-background').prepend(videoContainer);
   }
 
+  // Add no-subject class if no image and no video
   if (!subjectPicture && !(isVideoVariant && vedioUrl)) {
     block.classList.add('no-subject');
   }
 
+  // Fill background color if fill-background class
   if (block.classList.contains('fill-background')) {
     block.style.backgroundColor = bgColor;
   }
