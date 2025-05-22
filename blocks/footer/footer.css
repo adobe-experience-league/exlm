@@ -42,6 +42,7 @@
   background-color: transparent !important;
   font-weight: initial;
   padding: 15px 15px 15px 0;
+  position: relative;
   top: 2px;
 }
 
@@ -85,6 +86,7 @@
   line-height: 1.4;
   margin: 0;
   padding: 12px 44px 12px 0;
+  position: relative;
 }
 
 @media (width >= 900px) {
@@ -189,6 +191,10 @@
   flex-direction: column;
 }
 
+.footer-lang-social .language-selector {
+  position: relative;
+}
+
 .footer-lang-social .language-selector a {
   color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-75);
@@ -207,6 +213,7 @@
   transform-origin: 75% 75%;
   transition: transform 0.1s ease;
   width: 6px;
+  position: relative;
   top: -2px;
 }
 
@@ -365,6 +372,7 @@
   .footer-breadcrumb a:not(:last-child)::after {
     content: '›';
     padding: 0 8px;
+    position: relative;
     top: -1px;
     color: var(--non-spectrum-charcoal-gray);
   }
