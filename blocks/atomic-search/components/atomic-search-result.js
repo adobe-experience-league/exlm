@@ -11,8 +11,10 @@ import {
 } from './atomic-search-utils.js';
 import { ContentTypeIcons } from './atomic-search-icons.js';
 import { decorateIcons } from '../../../scripts/lib-franklin.js';
-import { htmlToElement } from '../../../scripts/scripts.js';
+import { htmlToElement, getConfig } from '../../../scripts/scripts.js';
 import { INITIAL_ATOMIC_RESULT_CHILDREN_COUNT } from './atomic-result-children.js';
+
+const { communityTopicsUrl } = getConfig();
 
 export const atomicResultStyles = `
                   <style>
@@ -589,9 +591,7 @@ export default function atomicResultHandler(block, placeholders) {
           if (!label) return;
 
           const link = document.createElement('a');
-          link.href = `https://experienceleaguecommunities.adobe.com//t5/custom/page/page-id/Community-TopicsPage?topic=${encodeURIComponent(
-            label,
-          )}`;
+          link.href = `${communityTopicsUrl}${encodeURIComponent(label)}`;
           link.textContent = label;
           link.target = '_blank';
           link.style.textDecoration = 'none';
