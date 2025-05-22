@@ -738,7 +738,9 @@ export function getConfig() {
     interestsUrl: `${cdnOrigin}/api/interests?page_size=200&sort=Order`,
     // Param for localized Community Profile URL
     localizedCommunityProfileParam: `?profile.language=${communityLocale}`,
-    communityTopicsUrl: isProd ? `https://experienceleaguecommunities.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=` : `https://experienceleaguecommunities-dev.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`,
+    communityTopicsUrl: isProd
+      ? `https://experienceleaguecommunities.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`
+      : `https://experienceleaguecommunities-dev.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`,
   };
   return window.exlm.config;
 }
