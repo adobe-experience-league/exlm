@@ -2252,7 +2252,15 @@
             "value": "signin"
           }
         ]
-      }
+      },
+      {
+  "component": "text",
+  "valueType": "string",
+  "name": "vedioUrl",
+  "value": "",
+  "label": "Video URL",
+  "description": "Enter the MPC-hosted video URL "
+}
     ]
   },
   {

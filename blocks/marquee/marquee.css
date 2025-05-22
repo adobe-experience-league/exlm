@@ -502,3 +502,57 @@ body[class^='article-'] .marquee-content-container {
     box-sizing: border-box;
   }
 }
+/* === Marquee Video Enhancements === */
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.marquee .marquee-subject video.marquee-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none; /* Only shows on play */
+  z-index: 3;
+}
+
+.marquee .marquee-subject.playing video.marquee-video {
+  display: block;
+}
+
+.marquee .play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  background-color: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marquee .play-button::before {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  border-left: 18px solid white;
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+}
+
+.marquee .marquee-subject.playing .play-button {
+  display: none;
+}
