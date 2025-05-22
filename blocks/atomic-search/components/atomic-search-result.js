@@ -370,7 +370,7 @@ export default function atomicResultHandler(block, placeholders) {
   if (!container) {
     waitFor(() => {
       atomicResultHandler(block, placeholders);
-    });
+    }, 50);
     return;
   }
   container.parentElement.part.add('list-wrap');
@@ -525,7 +525,7 @@ export default function atomicResultHandler(block, placeholders) {
       const hydrateResult = () => {
         const resultShadow = resultEl.shadowRoot;
         if (!resultShadow) {
-          waitForChildElement(resultEl, hydrateResult);
+          waitForChildElement(resultEl, hydrateResult, 25);
           return;
         }
 
@@ -534,7 +534,7 @@ export default function atomicResultHandler(block, placeholders) {
         const contentTypeElWrap = resultContentType?.firstElementChild?.shadowRoot;
 
         if (!resultItem || !contentTypeElWrap) {
-          waitFor(hydrateResult);
+          waitFor(hydrateResult, 20);
           return;
         }
 
@@ -545,7 +545,7 @@ export default function atomicResultHandler(block, placeholders) {
 
         const contentTypeElParent = contentTypeElWrap?.querySelector('ul');
         if (!contentTypeElParent) {
-          waitFor(hydrateResult);
+          waitFor(hydrateResult, 20);
           return;
         }
         if (!resultItem.dataset.decorated) {
