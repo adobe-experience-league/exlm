@@ -192,7 +192,7 @@
 }
 
 .footer-lang-social .language-selector {
-  position: relative;
+  position: static;
 }
 
 .footer-lang-social .language-selector a {
@@ -294,6 +294,7 @@
 @media (width >= 600px) {
   .footer-lang-social .language-selector .language-selector-button {
     min-width: 132px;
+    position: static;
   }
 }
 
@@ -457,8 +458,7 @@
   margin: 0;
   height: 22px;
   width: 22px;
-  position: relative;
-  top: 8px;
+  vertical-align: -6px;
 }
 
 .footer-last-row .footer-copyrights-element span.icon path {
