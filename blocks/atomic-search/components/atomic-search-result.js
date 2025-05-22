@@ -532,41 +532,40 @@ export default function atomicResultHandler(block, placeholders) {
   }
 
   function openVideoModal(videoUrl) {
-  document.body.style.overflow = 'hidden';    
+    document.body.style.overflow = 'hidden';
 
-  let modal = document.querySelector('.tutorial-video-modal');
-  let iframeContainer;
+    let modal = document.querySelector('.tutorial-video-modal');
+    let iframeContainer;
 
-  if (!modal) {
-    modal = document.createElement('div');
-    modal.classList.add('tutorial-video-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.classList.add('tutorial-video-modal');
 
-    const modalContent = document.createElement('div');
-    modalContent.classList.add('tutorial-video-modal-content');
+      const modalContent = document.createElement('div');
+      modalContent.classList.add('tutorial-video-modal-content');
 
-    const closeBtn = document.createElement('span');
-    closeBtn.classList.add('icon', 'icon-close-light');
-    closeBtn.addEventListener('click', () => {
-      document.body.style.overflow = '';
-      modal.style.display = 'none';
-    });
+      const closeBtn = document.createElement('span');
+      closeBtn.classList.add('icon', 'icon-close-light');
+      closeBtn.addEventListener('click', () => {
+        document.body.style.overflow = '';
+        modal.style.display = 'none';
+      });
 
-    iframeContainer = document.createElement('div');
-    iframeContainer.classList.add('tutorial-video-modal-iframe-container');
+      iframeContainer = document.createElement('div');
+      iframeContainer.classList.add('tutorial-video-modal-iframe-container');
 
-    modalContent.appendChild(closeBtn);
-    modalContent.appendChild(iframeContainer);
-    modal.appendChild(modalContent);
-    decorateIcons(modal);
-    document.body.appendChild(modal);
-  } else {
-    iframeContainer = modal.querySelector('.tutorial-video-modal-iframe-container');
-    modal.style.display = 'flex';
+      modalContent.appendChild(closeBtn);
+      modalContent.appendChild(iframeContainer);
+      modal.appendChild(modalContent);
+      decorateIcons(modal);
+      document.body.appendChild(modal);
+    } else {
+      iframeContainer = modal.querySelector('.tutorial-video-modal-iframe-container');
+      modal.style.display = 'flex';
+    }
+
+    iframeContainer.innerHTML = `<iframe src="${videoUrl}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
   }
-
-  iframeContainer.innerHTML = `<iframe src="${videoUrl}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-}
-
 
   const updateAtomicResultUI = () => {
     const results = container.querySelectorAll('atomic-result');
@@ -620,9 +619,7 @@ export default function atomicResultHandler(block, placeholders) {
           const resultRoot = resultShadow.querySelector('.result-root');
           resultRoot.classList.add('recommendation-badge');
         }
-        
-        
-    
+
         const productElWrap = resultItem?.querySelector('.result-product')?.firstElementChild?.shadowRoot;
         const productElements = productElWrap?.querySelectorAll('li') || [];
         const contentTypeElements = contentTypeElParent?.querySelectorAll('li') || [];
@@ -690,10 +687,10 @@ export default function atomicResultHandler(block, placeholders) {
             return;
           }
 
-          const imgUrl = `${cleanUrl  }?format=jpeg`;
+          const imgUrl = `${cleanUrl}?format=jpeg`;
           const thumbnailWrapper = isMobileView
-          ? resultShadow.querySelector('.mobile-result-thumbnail')
-          : resultShadow.querySelector('.result-thumbnail');
+            ? resultShadow.querySelector('.mobile-result-thumbnail')
+            : resultShadow.querySelector('.result-thumbnail');
           if (thumbnailWrapper) {
             let img = thumbnailWrapper.querySelector('img');
             if (!img) {
@@ -710,14 +707,14 @@ export default function atomicResultHandler(block, placeholders) {
               decorateIcons(wrapper);
               thumbnailWrapper.appendChild(wrapper);
               wrapper.addEventListener('click', () => {
-                openVideoModal(cleanUrl); 
+                openVideoModal(cleanUrl);
               });
             }
-          img.src = imgUrl;
+            img.src = imgUrl;
           }
         }
       };
-      
+
       hydrateResult();
     });
 
@@ -731,8 +728,6 @@ export default function atomicResultHandler(block, placeholders) {
     const event = new CustomEvent(CUSTOM_EVENTS.RESULT_UPDATED);
     document.dispatchEvent(event);
   };
-
-  
 
   const onResize = () => {
     const isMobileView = isMobile();
