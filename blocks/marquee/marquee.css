@@ -1,4 +1,3 @@
-/* Marquee base setup */
 .section.marquee-container {
   padding-top: 0;
 }
@@ -7,12 +6,12 @@ div.marquee-wrapper {
   --marquee-height-small: 300px;
   --marquee-height-medium: 400px;
   --marquee-height-large: 560px;
+
   max-width: unset;
   margin-left: calc(-1 * var(--spectrum-spacing-300));
   margin-right: calc(-1 * var(--spectrum-spacing-300));
 }
 
-/* Marquee content layout */
 .marquee-content-container {
   display: flex;
   flex-direction: column-reverse;
@@ -25,7 +24,6 @@ div.marquee-wrapper {
   padding: 15px;
 }
 
-/* Eyebrow and title styles */
 .marquee-eyebrow {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-75);
@@ -48,7 +46,6 @@ div.marquee-wrapper {
   color: inherit;
 }
 
-/* Description styles */
 .marquee-short-description,
 .marquee-short-description * {
   font-family: var(--body-font-family);
@@ -67,7 +64,6 @@ div.marquee-wrapper {
   margin: 0;
 }
 
-/* CTA styles */
 .marquee-cta {
   display: flex;
   flex-direction: column-reverse;
@@ -104,22 +100,19 @@ div.marquee-wrapper {
   visibility: unset;
 }
 
-/* Background visuals */
-.marquee-background {
-  position: relative;
-  overflow: hidden;
-}
-
-.marquee-background-fill,
-.marquee-bg-filler {
-  display: none;
-}
-
 .marquee-background svg {
   display: none;
 }
 
-/* Support for when subject image is missing */
+.marquee-spacer {
+  display: none;
+  width: 40%;
+}
+
+.marquee-bg-filler {
+  display: none;
+}
+
 .marquee.no-subject {
   display: flex;
   flex-direction: column-reverse;
@@ -130,41 +123,10 @@ div.marquee-wrapper {
   min-height: unset;
 }
 
-/* Subject image styles */
-.marquee .marquee-subject img,
-.marquee .marquee-subject picture {
-  display: block;
-  max-width: 100%;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.marquee-background-fill {
+  display: none;
 }
 
-/* Video support */
-.marquee-background.has-video {
-  position: relative;
-  overflow: hidden;
-}
-
-.marquee-background.has-video .marquee-background-fill,
-.marquee-background.has-video .marquee-bg-filler,
-.marquee.has-video .marquee-subject {
-  display: none !important;
-}
-
-.marquee-video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 0;
-  border: none;
-  display: block;
-}
-
-/* Modal styles */
 .marquee .modal {
   position: fixed;
   z-index: 10;
@@ -204,7 +166,47 @@ div.marquee-wrapper {
   max-height: 95vh;
 }
 
-/* Responsive styles */
+.marquee .marquee-subject img,
+.marquee .marquee-subject picture {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.marquee.no-subject > .marquee-background img {
+  transform: none;
+  object-fit: cover;
+  object-position: center;
+}
+
+.marquee.straight .marquee-background,
+.marquee.straight .marquee-subject {
+  min-height: unset;
+}
+
+.marquee.straight.small .marquee-background {
+  height: 150px;
+}
+
+.marquee.straight.medium .marquee-background {
+  height: 200px;
+}
+
+.marquee.straight.large .marquee-background {
+  height: 280px;
+}
+
+.marquee.straight .marquee-subject,
+.marquee.straight .marquee-subject img {
+  height: 100%;
+}
+
+body[class^='article-'] .marquee-content-container {
+  background-color: var(--background-color);
+}
+
 @media (min-width: 600px) {
   .section.marquee-container {
     padding: 0 56px;
@@ -221,6 +223,14 @@ div.marquee-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .marquee.straight .marquee-subject {
+    display: block;
+  }
+
+  .marquee .marquee-subject picture {
+    width: auto;
   }
 
   .marquee .marquee-subject img {
@@ -273,6 +283,26 @@ div.marquee-wrapper {
     position: relative;
     min-height: 350px;
   }
+
+  .marquee.straight .marquee-subject picture {
+    width: auto;
+  }
+
+  .marquee.straight .marquee-subject img {
+    max-width: 100%;
+  }
+
+  .marquee.straight.small .marquee-background {
+    height: var(--marquee-height-small);
+  }
+
+  .marquee.straight.medium .marquee-background {
+    height: var(--marquee-height-medium);
+  }
+
+  .marquee.straight.large .marquee-background {
+    height: var(--marquee-height-large);
+  }
 }
 
 @media (min-width: 900px) {
@@ -283,6 +313,7 @@ div.marquee-wrapper {
   .marquee-content-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    flex-direction: row;
     margin: 0 auto;
     min-height: var(--marquee-height-medium);
   }
@@ -293,6 +324,7 @@ div.marquee-wrapper {
     align-items: center;
     justify-self: flex-end;
     max-width: calc(var(--default-max-width) / 2);
+    box-sizing: border-box;
     margin-left: var(--spectrum-spacing-800);
   }
 
@@ -300,6 +332,8 @@ div.marquee-wrapper {
     width: 100%;
     height: 100%;
     min-height: var(--marquee-height-medium);
+    display: block;
+    overflow: visible;
   }
 
   .marquee-text {
@@ -321,14 +355,17 @@ div.marquee-wrapper {
   }
 
   .marquee .marquee-subject {
+    display: block;
+    overflow: hidden;
+    min-height: unset;
     position: absolute;
     top: 10%;
     left: 100px;
-    overflow: hidden;
   }
 
   .marquee .marquee-subject img {
     object-fit: cover;
+    position: relative;
     z-index: 2;
     width: 100%;
     height: 100%;
@@ -343,6 +380,7 @@ div.marquee-wrapper {
     position: absolute;
     height: 100%;
     top: 0;
+    bottom: 0;
     left: -130px;
   }
 
@@ -353,6 +391,15 @@ div.marquee-wrapper {
     left: 479px;
     top: 0;
     width: 100%;
+  }
+
+  .marquee.no-subject {
+    display: block;
+  }
+
+  .marquee.no-subject > .marquee-background {
+    position: absolute;
+    min-height: 100%;
   }
 
   .marquee.large .marquee-content-container,
@@ -367,6 +414,14 @@ div.marquee-wrapper {
     right: -30px;
   }
 
+  .marquee.large .marquee-eyebrow {
+    font-size: var(--spectrum-font-size-10);
+  }
+
+  .marquee.large .marquee-long-description {
+    font-size: var(--spectrum-font-size-400);
+  }
+
   .marquee.large .marquee-subject,
   .marquee.large .marquee-subject img {
     min-width: 480px;
@@ -376,8 +431,34 @@ div.marquee-wrapper {
     left: 575px;
   }
 
+  .marquee.small .marquee-content-container,
+  .marquee.small .marquee-foreground,
+  .marquee.small .marquee-background,
+  .marquee.small .marquee-background-fill,
+  .marquee.small .marquee-bg-filler {
+    min-height: var(--marquee-height-small);
+  }
+
   .marquee.small .marquee-subject img {
     max-width: 320px;
+  }
+
+  .marquee.small .marquee-background-fill svg {
+    right: -200px;
+  }
+
+  .marquee.straight.large .marquee-background,
+  .marquee.straight.medium .marquee-background,
+  .marquee.straight.small .marquee-background {
+    height: unset;
+  }
+
+  .marquee.straight .marquee-subject {
+    inset: 0;
+  }
+
+  .marquee.straight .marquee-subject img {
+    max-width: 100%;
   }
 
   .marquee.small .marquee-bg-filler {
@@ -385,25 +466,29 @@ div.marquee-wrapper {
   }
 }
 
-/* With rails (browse/profile) */
+/* when shown on a page with a rail */
 @media (min-width: 1024px) {
+  /* no longer goes from end to end */
   body[class^='browse-'] .section div.marquee-wrapper,
   body[class*='profile-home-page'] .section div.marquee-wrapper {
     margin-left: unset;
     margin-right: unset;
   }
 
+  /* title */
   body[class^='browse-'] .marquee-title {
     font-size: var(--spectrum-font-size-900);
     line-height: 36px;
     margin-bottom: var(--spectrum-spacing-100);
   }
 
+  /* description */
   body[class^='browse-'] .marquee-long-description,
   body[class^='browse-'] .marquee-long-description * {
     line-height: 23.4px;
   }
 
+  /* cta */
   body[class^='browse-'] .marquee-cta a.button {
     font-size: var(--spectrum-font-size-200);
     line-height: 21px;
