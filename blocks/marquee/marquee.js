@@ -81,7 +81,7 @@ export default async function decorate(block) {
   const vedioUrl = vedioUrlElem?.textContent?.trim();
   const isVideoVariant = block.classList.contains('vedio');
 
-  // Build DOM — always add image, we’ll remove/replace later only if video is enabled
+  // Build DOM — always add image, will remove if vedio variant is active
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-content-container'>
       <div class='marquee-foreground'>
@@ -119,18 +119,36 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(marqueeDOM);
 
-  // If vedio variant is selected and vedioUrl is provided, replace image with video
   if (isVideoVariant && vedioUrl) {
+    // Hide svg and bg filler when video is active
+    const svgEl = block.querySelector('.marquee-background svg');
+    if (svgEl) svgEl.style.display = 'none';
+
+    const bgFillerEl = block.querySelector('.marquee-bg-filler');
+    if (bgFillerEl) bgFillerEl.style.display = 'none';
+
+    // Remove image and insert video iframe (muted autoplay)
     const subjectEl = block.querySelector('.marquee-subject');
+    const videoIframeHTML = `<iframe
+      class='marquee-video'
+      src='${vedioUrl}'
+      frameborder='0'
+      allow='autoplay; encrypted-media'
+      allowfullscreen
+      autoplay
+      muted
+      playsinline
+    ></iframe>`;
+
     if (subjectEl) {
       subjectEl.replaceWith(Object.assign(document.createElement('div'), {
         className: 'marquee-video-container',
-        innerHTML: `<iframe class='marquee-video' src='${vedioUrl}' frameborder='0' allow='autoplay; encrypted-media' allowfullscreen></iframe>`,
+        innerHTML: videoIframeHTML,
       }));
     } else {
       const fallbackVideoContainer = document.createElement('div');
       fallbackVideoContainer.className = 'marquee-video-container';
-      fallbackVideoContainer.innerHTML = `<iframe class='marquee-video' src='${vedioUrl}' frameborder='0' allow='autoplay; encrypted-media' allowfullscreen></iframe>`;
+      fallbackVideoContainer.innerHTML = videoIframeHTML;
       block.querySelector('.marquee-background')?.prepend(fallbackVideoContainer);
     }
   }
