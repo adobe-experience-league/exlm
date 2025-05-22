@@ -8,13 +8,11 @@ function handleVideoLinks(videoLinkElems, block) {
     videoLinkElem.setAttribute('href', '#');
     videoLinkElem.removeAttribute('target');
 
-    // Add play icon and decorate
     const playIcon = document.createElement('span');
     playIcon.classList.add('icon', 'icon-play');
     videoLinkElem.prepend(playIcon);
     decorateIcons(videoLinkElem);
 
-    // Create modal
     const modal = document.createElement('div');
     modal.classList.add('modal');
     const closeIcon = document.createElement('span');
@@ -24,7 +22,6 @@ function handleVideoLinks(videoLinkElems, block) {
     modal.style.display = 'none';
     block.append(modal);
 
-    // Show modal with iframe on click
     videoLinkElem.addEventListener('click', (e) => {
       e.preventDefault();
       modal.style.display = 'flex';
@@ -38,7 +35,6 @@ function handleVideoLinks(videoLinkElems, block) {
       }
     });
 
-    // Hide modal on click and clean iframe
     modal.addEventListener('click', () => {
       modal.style.display = 'none';
       document.body.style.overflow = '';
@@ -65,7 +61,6 @@ function handleSigninLinks(block) {
 }
 
 export default async function decorate(block) {
-  // Extract block content elements in expected order
   const [
     customBgColor,
     img,
@@ -129,7 +124,6 @@ export default async function decorate(block) {
     </div>
   `);
 
-  // Clear block and append new DOM
   block.textContent = '';
   block.append(marqueeDOM);
 
@@ -141,10 +135,42 @@ export default async function decorate(block) {
     block.style.backgroundColor = bgColor;
   }
 
-  // Exit early if no CTAs or link types
+  // ======= NEW: handle video background if "vedioUrl" data attribute present =======
+  const vedioUrl = block.getAttribute('data-vedio-url'); // You should set this attribute in your CMS/model
+  if (vedioUrl) {
+    const marqueeBg = block.querySelector('.marquee-background');
+    if (marqueeBg) {
+      // Clear image or spacer
+      const subjectDiv = marqueeBg.querySelector('.marquee-subject, .marquee-spacer');
+      if (subjectDiv) subjectDiv.remove();
+
+      // Hide background fill and filler SVG
+      const bgFill = marqueeBg.querySelector('.marquee-background-fill');
+      if (bgFill) bgFill.style.display = 'none';
+      const bgFiller = marqueeBg.querySelector('.marquee-bg-filler');
+      if (bgFiller) bgFiller.style.display = 'none';
+
+      // Create video iframe container
+      const videoContainer = document.createElement('div');
+      videoContainer.className = 'marquee-video-container';
+      videoContainer.innerHTML = `
+        <iframe
+          class="marquee-video"
+          src="${vedioUrl}"
+          frameborder="0"
+          allow="autoplay; encrypted-media"
+          allowfullscreen
+          autoplay
+          muted
+          playsinline
+        ></iframe>`;
+      marqueeBg.appendChild(videoContainer);
+    }
+  }
+  // ======= END new video background handling =======
+
   if (!((firstCta && firstCtaLinkType) || (secondCta && secondCtaLinkType))) return;
 
-  // Determine link types
   const isVideoLinkType =
     firstCtaLinkType?.textContent?.trim() === 'video' ||
     secondCtaLinkType?.textContent?.trim() === 'video';
@@ -152,7 +178,6 @@ export default async function decorate(block) {
     firstCtaLinkType?.textContent?.trim() === 'signin' ||
     secondCtaLinkType?.textContent?.trim() === 'signin';
 
-  // Add CTA classes for styling
   function addCtaClass(ctaType, selector) {
     const ctaText = ctaType?.textContent?.trim();
     if (ctaText === 'video' || ctaText === 'signin') {
@@ -164,7 +189,6 @@ export default async function decorate(block) {
   addCtaClass(firstCtaLinkType, '.marquee-cta > a:first-child');
   addCtaClass(secondCtaLinkType, '.marquee-cta > a:last-child');
 
-  // Handle sign-in and video links
   if (isSigninLinkType) handleSigninLinks(block);
   if (isVideoLinkType) {
     const videoLinkElems = block.querySelectorAll('.marquee-cta > .video');
