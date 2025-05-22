@@ -86,7 +86,6 @@
   line-height: 1.4;
   margin: 0;
   padding: 12px 44px 12px 0;
-  position: static;
 }
 
 @media (width >= 900px) {
@@ -191,10 +190,6 @@
   flex-direction: column;
 }
 
-.footer-lang-social .language-selector {
-  position: static;
-}
-
 .footer-lang-social .language-selector a {
   color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-75);
@@ -294,7 +289,7 @@
 @media (width >= 600px) {
   .footer-lang-social .language-selector .language-selector-button {
     min-width: 132px;
-    position: static;
+    position: unset;
   }
 }
 
