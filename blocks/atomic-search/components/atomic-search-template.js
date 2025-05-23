@@ -10,7 +10,7 @@ import { atomicResultListStyles, atomicResultStyles } from './atomic-search-resu
 const getCoveoAtomicMarkup = (placeholders) => {
   const { lang: languageCode } = getPathDetails();
   const atomicUIElements = htmlToElement(`
-        <atomic-search-interface language=${languageCode} fields-to-include='["@foldingchild","@foldingcollection","@foldingparent","author","author_bio_page","author_name","author_type","authorname","authortype","collection","connectortype","contenttype","date","documenttype","el_author_type","el_contenttype","el_id","el_interactionstyle","el_kudo_status","el_lirank","el_product","el_rank_icon","el_reply_status","el_solution","el_solutions_authored","el_type","el_usergenerictext","el_version","el_view_status","exl_description","exl_thumbnail","filetype","id","language","liMessageLabels","liboardinteractionstyle","licommunityurl","lithreadhassolution","objecttype","outlookformacuri","outlookuri","permanentid","role","source","sourcetype","sysdocumenttype","type","urihash","video_url", "sysdate", "el_kudo_status"]'>
+        <atomic-search-interface language=${languageCode}  search-hub="Experience League Learning Hub" fields-to-include='["@foldingchild","@foldingcollection","@foldingparent","author","author_bio_page","author_name","author_type","authorname","authortype","collection","connectortype","contenttype","date","documenttype","el_author_type","el_contenttype","el_id","el_interactionstyle","el_kudo_status","el_lirank","el_product","el_rank_icon","el_reply_status","el_solution","el_solutions_authored","el_type","el_usergenerictext","el_version","el_view_status","exl_description","exl_thumbnail","filetype","id","language","liMessageLabels","liboardinteractionstyle","licommunityurl","lithreadhassolution","objecttype","outlookformacuri","outlookuri","permanentid","role","source","sourcetype","sysdocumenttype","type","urihash","video_url", "sysdate", "el_kudo_status"]'>
           <script type="application/json" id="atomic-search-interface-config">
             {
               "search": {
@@ -609,6 +609,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       >
                       </atomic-result-number>
                     </div>
+                    <div class="result-description">
                     <atomic-result-children>
                       ${atomicResultChildrenStyles}
                       <atomic-load-more-children-results label="Show replies"></atomic-load-more-children-results>
@@ -630,6 +631,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </template>
                       </atomic-result-children-template>
                     </atomic-result-children>
+                    <atomic-result-multi-value-text
+                      field="limessagelabels"
+                      max-values-to-display=99
+                    >
+                    </atomic-result-multi-value-text>
+                    </div>
                   </div>
                   <div class="result-item desktop-only">
                     <div class="result-field">
@@ -696,6 +703,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       >
                       </atomic-result-number>
                     </div>
+                    <div class="result-description">
                     <atomic-result-children>
                       ${atomicResultChildrenStyles}
                       <atomic-result-children-template>
@@ -717,6 +725,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </template>
                       </atomic-result-children-template>
                     </atomic-result-children>
+                    <atomic-result-multi-value-text
+                      field="limessagelabels"
+                      max-values-to-display=99
+                    >
+                    </atomic-result-multi-value-text>
+                    </div>
                   </div>
                 </template>
                 </atomic-result-template>
