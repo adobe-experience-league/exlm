@@ -563,3 +563,70 @@ body[class^='article-'] .marquee-content-container {
   width: 100%;
   height: 100%;
 }
+/* VIDEO THUMBNAIL STATE */
+.marquee-subject.video-thumbnail {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.marquee-subject.video-thumbnail picture,
+.marquee-subject.video-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* PLAY ICON OVERLAY ON THUMBNAIL */
+.marquee-subject.video-thumbnail .icon-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  font-size: 64px;
+  color: white;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  border-radius: 50%;
+  pointer-events: none; /* Prevent click-blocking */
+}
+
+/* INLINE VIDEO PLAYER STATE */
+.marquee-subject.video-playing {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.marquee-subject.video-playing iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  object-fit: cover;
+}
+
+/* HIDE SVG BACKGROUND FILL WHEN IN VIDEO MODE */
+.marquee-background.video-mode .marquee-background-fill,
+.marquee-background.video-mode .marquee-bg-filler {
+  display: none;
+}
+
+/* ENSURE VIDEO THUMBNAIL OR PLAYER FILLS BACKGROUND */
+.marquee-background.video-mode {
+  position: relative;
+  padding: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.marquee-background.video-mode .marquee-subject {
+  flex: 1;
+  max-width: 100%;
+  height: 100%;
+}
