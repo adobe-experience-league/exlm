@@ -63,24 +63,42 @@ function handleSigninLinks(block) {
 }
 
 export default async function decorate(block) {
-  // Extract properties
-  // always same order as in model, empty string if not set
-  const [
-    customBgColor,
-    img,
-    eyebrow,
-    title,
-    longDescr,
-    firstCta,
-    firstCtaLinkType,
-    secondCta,
-    secondCtaLinkType,
-    videoUrlElem,
-  ] = block.querySelectorAll(':scope div > div');
+  const allFields = block.querySelectorAll(':scope div > div');
+  const isVideoVariant = block.classList.contains('video');
+
+  let customBgColor, videoUrlField, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType;
+
+  if (isVideoVariant) {
+    [
+      customBgColor,
+      videoUrlField,
+      img,
+      eyebrow,
+      title,
+      longDescr,
+      firstCta,
+      firstCtaLinkType,
+      secondCta,
+      secondCtaLinkType,
+    ] = allFields;
+  } else {
+    [
+      customBgColor,
+      img,
+      eyebrow,
+      title,
+      longDescr,
+      firstCta,
+      firstCtaLinkType,
+      secondCta,
+      secondCtaLinkType,
+    ] = allFields;
+    videoUrlField = null;
+  }
+
 
   const subjectPicture = img?.querySelector('picture');
   const isStraightVariant = block.classList.contains('straight');
-  const isVideoVariant = block.classList.contains('video');
   const videoUrl = videoUrlElem?.textContent?.trim();
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
