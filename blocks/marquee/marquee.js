@@ -8,13 +8,11 @@ function handleVideoLinks(videoLinkElems, block) {
     videoLinkElem.setAttribute('href', '#');
     videoLinkElem.removeAttribute('target');
 
-    // Add play icon
     const playIcon = document.createElement('span');
     playIcon.classList.add('icon', 'icon-play');
     videoLinkElem.prepend(playIcon);
     decorateIcons(videoLinkElem);
 
-    // Create modal
     const modal = document.createElement('div');
     modal.classList.add('modal');
     const closeIcon = document.createElement('span');
@@ -24,7 +22,6 @@ function handleVideoLinks(videoLinkElems, block) {
     modal.style.display = 'none';
     block.append(modal);
 
-    // Event listeners
     videoLinkElem.addEventListener('click', (e) => {
       e.preventDefault();
       modal.style.display = 'flex';
@@ -67,12 +64,14 @@ export default async function decorate(block) {
     block.querySelectorAll(':scope div > div');
 
   const subjectPicture = img.querySelector('picture');
+  const isLargeVariant = block.classList.contains('large');
   const isStraightVariant = block.classList.contains('straight');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
   const eyebrowText = eyebrow?.textContent?.trim();
   const videoUrl = videoUrlField?.textContent?.trim();
   const hasVideo = !!videoUrl;
+  const shouldEnableVideo = hasVideo && isLargeVariant && isStraightVariant;
 
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-content-container'>
@@ -86,12 +85,12 @@ export default async function decorate(block) {
           </div>
         </div>
       </div>
-      <div class='marquee-background ${hasVideo ? 'video-mode' : ''}' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
+      <div class='marquee-background ${shouldEnableVideo ? 'video-mode' : ''}' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
         ${
           subjectPicture
-            ? `<div class='marquee-subject ${hasVideo ? 'video-thumbnail' : ''}' style="background-color: ${bgColor}">
+            ? `<div class='marquee-subject ${shouldEnableVideo ? 'video-thumbnail' : ''}' style="background-color: ${bgColor}">
                 ${
-                  hasVideo
+                  shouldEnableVideo
                     ? `<a href="#" class="video-inline">${subjectPicture.outerHTML}
                         <span class="icon icon-play"></span>
                       </a>`
@@ -102,7 +101,7 @@ export default async function decorate(block) {
         }
         <div class="marquee-background-fill">
           ${
-            !isStraightVariant && !hasVideo
+            !isStraightVariant && !shouldEnableVideo
               ? `
               <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
                 <path
@@ -147,8 +146,8 @@ export default async function decorate(block) {
     handleVideoLinks(videoLinkElems, block);
   }
 
-  // Inline video for subject image
-  if (hasVideo) {
+  // Inline video playback for subject image
+  if (shouldEnableVideo) {
     const playLink = block.querySelector('.marquee-subject .video-inline');
     decorateIcons(playLink);
     playLink?.addEventListener('click', (e) => {
