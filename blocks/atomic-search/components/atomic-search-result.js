@@ -465,7 +465,7 @@ export default function atomicResultHandler(block, placeholders) {
         const countString = element.parentElement?.querySelector('.child-result-count')?.textContent?.trim();
         const childrenCount = countString && !Number.isNaN(countString) ? +countString : 0;
 
-        if (childrenCount <= INITIAL_ATOMIC_RESULT_CHILDREN_COUNT + 1) {
+        if (childrenCount <= INITIAL_ATOMIC_RESULT_CHILDREN_COUNT) {
           btn.part.add('hide-btn');
           childrenRoot.part.remove('children-root-with-button');
         } else {
