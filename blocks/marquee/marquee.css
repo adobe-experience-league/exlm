@@ -502,7 +502,6 @@ body[class^='article-'] .marquee-content-container {
     box-sizing: border-box;
   }
 }
-/* === MARQUEE VIDEO STYLES — FINAL VERSION === */
 
 /* Hide background SVGs when video is active */
 .marquee-background.video-mode .marquee-background-fill,
@@ -513,28 +512,29 @@ body[class^='article-'] .marquee-content-container {
 /* Ensure marquee-background fills container */
 .marquee-background.video-mode {
   position: relative;
+  padding: 0 !important;
+  margin: 0;
   display: flex;
   align-items: stretch;
   justify-content: center;
   width: 100% !important;
   height: 100% !important;
-  padding: 0 !important;
-  margin: 0;
   box-sizing: border-box;
 }
 
-/* Subject area fills background */
+/* Force subject to fill entire background */
 .marquee-background.video-mode .marquee-subject {
   flex: 1;
   width: 100% !important;
   height: 100% !important;
   max-width: 100%;
+  display: block;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
   top: 0;
-  box-sizing: border-box;
 }
 
 /* Thumbnail state */
@@ -555,35 +555,24 @@ body[class^='article-'] .marquee-content-container {
   display: block;
 }
 
-
+/* Play icon at bottom right using background SVG */
 .marquee-subject.video-thumbnail .icon-play {
-  z-index: 4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 90px;
-  height: 90px;
-  background-color: #e0e0e0; /* light gray circle */
-  border-radius: 50%;
   position: absolute;
   bottom: 1rem;
   right: 1rem;
-  cursor: pointer;
+  width: 72px;
+  height: 72px;
+  background-color: #d3d3d3; /* light gray circle */
+  background-image: url('/icons/play.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 36px 36px; /* size of the play triangle */
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
 }
 
-/* Use a pseudo-element to draw the triangle */
-.marquee-subject.video-thumbnail .icon-play::before {
-  content: '';
-  display: block;
-  width: 0;
-  height: 0;
-  border-left: 20px solid #333; /* dark triangle */
-  border-top: 12px solid transparent;
-  border-bottom: 12px solid transparent;
-  margin-left: 5px;
-}
-
-/* Playing state */
+/* Inline video playing state */
 .marquee-subject.video-playing {
   width: 100%;
   height: 100%;
@@ -606,7 +595,7 @@ body[class^='article-'] .marquee-content-container {
   object-fit: cover;
 }
 
-/* Modal styles for CTA video links */
+/* Fallback modal styles (if used for other video links) */
 .modal {
   position: fixed;
   top: 0;
