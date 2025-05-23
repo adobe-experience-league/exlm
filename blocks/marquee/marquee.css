@@ -502,7 +502,7 @@ body[class^='article-'] .marquee-content-container {
     box-sizing: border-box;
   }
 }
-/* === MARQUEE VIDEO STYLES === */
+/* === MARQUEE VIDEO STYLES — FINAL FIX === */
 
 /* Hide background SVGs when video is active */
 .marquee-background.video-mode .marquee-background-fill,
@@ -510,24 +510,32 @@ body[class^='article-'] .marquee-content-container {
   display: none;
 }
 
-/* Expand marquee-subject to fill background */
+/* Ensure marquee-background fills container */
 .marquee-background.video-mode {
   position: relative;
-  padding: 0;
+  padding: 0 !important;
+  margin: 0;
   display: flex;
   align-items: stretch;
   justify-content: center;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
+  box-sizing: border-box;
 }
 
+/* Force subject to fill entire background */
 .marquee-background.video-mode .marquee-subject {
   flex: 1;
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
   max-width: 100%;
   display: block;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  top: 0;
 }
 
 /* Thumbnail state */
@@ -535,8 +543,9 @@ body[class^='article-'] .marquee-content-container {
   width: 100%;
   height: 100%;
   position: relative;
-  cursor: pointer;
   display: block;
+  cursor: pointer;
+  overflow: hidden;
 }
 
 .marquee-subject.video-thumbnail picture,
@@ -547,18 +556,18 @@ body[class^='article-'] .marquee-content-container {
   display: block;
 }
 
-/* Play icon overlay */
+/* Move play icon to bottom right */
 .marquee-subject.video-thumbnail .icon-play {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  font-size: 64px;
+  bottom: 1rem;
+  right: 1rem;
+  transform: none;
+  font-size: 48px;
   color: white;
   background: rgba(0, 0, 0, 0.4);
-  padding: 20px;
+  padding: 12px;
   border-radius: 50%;
+  z-index: 2;
   pointer-events: none;
 }
 
@@ -567,24 +576,25 @@ body[class^='article-'] .marquee-content-container {
   width: 100%;
   height: 100%;
   position: relative;
+  overflow: hidden;
 }
 
 .marquee-subject.video-playing .video-playing {
-  width: 100%;
-  height: 100%;
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .marquee-subject.video-playing iframe {
   width: 100%;
   height: 100%;
   border: none;
-  object-fit: cover;
   display: block;
+  object-fit: cover;
 }
 
-/* Legacy modal (for non-inline video links only) */
+/* Fallback modal styles (if used for other video links) */
 .modal {
   position: fixed;
   top: 0;
