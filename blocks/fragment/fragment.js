@@ -39,13 +39,12 @@ export async function loadFragment(path) {
 export default async function decorate(block) {
   const link = block.querySelector('a');
   const path = link ? link.getAttribute('href') : block.textContent.trim();
-  loadFragment(path).then((fragment) => {
-    if (fragment) {
-      const fragmentSection = fragment.querySelector(':scope .section');
-      if (fragmentSection) {
-        block.closest('.section').classList.add(...fragmentSection.classList);
-        block.closest('.fragment').replaceWith(...fragmentSection.childNodes);
-      }
+  const fragment = await loadFragment(path);
+  if (fragment) {
+    const fragmentSection = fragment.querySelector(':scope .section');
+    if (fragmentSection) {
+      block.closest('.section').classList.add(...fragmentSection.classList);
+      block.closest('.fragment').replaceWith(...fragmentSection.childNodes);
     }
-  });
+  }
 }
