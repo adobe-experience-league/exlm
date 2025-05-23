@@ -1708,7 +1708,7 @@
         "required": true,
         "options": [
           {
-          "name": "Size Variant",
+            "name": "Size Variant",
             "children": [
               {
                 "name": "Large",
@@ -1746,8 +1746,7 @@
               },
               {
                 "name": "Insert a video",
-                "value": "video,"
-              }
+                "value": "video"}
             ]
           },
           {
@@ -1835,41 +1834,20 @@
         "value": "",
         "label": "Custom Background Color",
         "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
-      },{
+      },
+      {
   "condition": {
-    "some": [
-      { "var": "classes" },
-      { "===": [{ "var": "" }, "video"] }
-    ]
+    "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "video"] }]
   },
-  "actions": [
-    {
-      "type": "set",
-      "target": "Size Variant",
-      "value": "large"
-    },
-    {
-      "type": "set",
-      "target": "Style Variant",
-      "value": "straight"
-    }
-  ]
-},
-{
   "component": "text",
   "valueType": "string",
-  "name": "vedioUrl",
+  "name": "videoUrl",
   "value": "",
   "label": "Video URL",
-  "description": "Enter the MPC-hosted video URL",
-  "condition": {
-    "some": [
-      { "var": "classes" },
-      { "===": [{ "var": "" }, "video"] }
-    ]
-  }
-}      
-      ,{
+  "description": "Enter the MPC-hosted video URL"
+}
+      ,
+      {
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
