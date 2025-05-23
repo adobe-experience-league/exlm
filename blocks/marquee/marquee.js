@@ -66,38 +66,8 @@ function handleSigninLinks(block) {
 }
 
 export default async function decorate(block) {
-    const allFields = block.querySelectorAll(':scope div > div');
-  const isVideoVariant = block.classList.contains('video');
-
-  let customBgColor, videoUrlField, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType;
-
-  if (isVideoVariant) {
-    [
-      customBgColor,
-      videoUrlField,
-      img,
-      eyebrow,
-      title,
-      longDescr,
-      firstCta,
-      firstCtaLinkType,
-      secondCta,
-      secondCtaLinkType,
-    ] = allFields;
-  } else {
-    [
-      customBgColor,
-      img,
-      eyebrow,
-      title,
-      longDescr,
-      firstCta,
-      firstCtaLinkType,
-      secondCta,
-      secondCtaLinkType,
-    ] = allFields;
-    videoUrlField = null;
-  }
+  const [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType, videoUrlField] =
+    block.querySelectorAll(':scope div > div');
 
   const subjectPicture = img.querySelector('picture');
   const isLargeVariant = block.classList.contains('large');

@@ -1743,10 +1743,7 @@
               {
                 "name": "Fill marquee with given background color",
                 "value": "fill-background"
-              },
-              {
-                "name": "Insert a video",
-                "value": "video"}
+              }
             ]
           },
           {
@@ -1835,18 +1832,6 @@
         "label": "Custom Background Color",
         "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
       },
-      {
-  "condition": {
-    "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "video"] }]
-  },
-  "component": "text",
-  "valueType": "string",
-  "name": "videoUrl",
-  "value": "",
-  "label": "Video URL",
-  "description": "Enter the MPC-hosted video URL"
-}
-      ,
       {
         "component": "reference",
         "valueType": "string",
@@ -2267,7 +2252,15 @@
             "value": "signin"
           }
         ]
-      }
+      },
+      {
+  "component": "text",
+  "valueType": "string",
+  "name": "vedioUrl",
+  "value": "",
+  "label": "Video URL",
+  "description": "Enter the MPC-hosted video URL "
+}
     ]
   },
   {
