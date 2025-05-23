@@ -63,105 +63,76 @@ function handleSigninLinks(block) {
 }
 
 export default async function decorate(block) {
-  const [
-    customBgColor,
-    img,
-    eyebrow,
-    title,
-    longDescr,
-    firstCta,
-    firstCtaLinkType,
-    secondCta,
-    secondCtaLinkType,
-    vedioUrlElem,
-  ] = block.querySelectorAll(':scope div > div');
+  // Extract properties from the model
+  const [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType, videoUrlElem] =
+    block.querySelectorAll(':scope div > div');
 
-  const subjectPicture = img?.querySelector('picture');
+  const subjectPicture = img.querySelector('picture');
   const isStraightVariant = block.classList.contains('straight');
-  const vedioUrl = vedioUrlElem?.textContent?.trim();
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
   const eyebrowText = eyebrow?.textContent?.trim();
+  const videoUrl = videoUrlElem?.textContent?.trim();
 
+  // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-content-container'>
-    <div class='marquee-foreground'>
-      <div class='marquee-text'>
-        ${eyebrowText !== '' ? `<div class='marquee-eyebrow'>${eyebrowText?.toUpperCase()}</div>` : ``}
-        <div class='marquee-title'>${title.innerHTML}</div>
-        <div class='marquee-long-description'>${longDescr.innerHTML}</div>
-        <div class='marquee-cta'>
-          ${decorateCustomButtons(firstCta, secondCta)}
+      <div class='marquee-foreground'>
+        <div class='marquee-text'>
+          ${eyebrowText !== '' ? `<div class='marquee-eyebrow'>${eyebrowText?.toUpperCase()}</div>` : ``}
+          <div class='marquee-title'>${title.innerHTML}</div>
+          <div class='marquee-long-description'>${longDescr.innerHTML}</div>
+          <div class='marquee-cta'>
+            ${decorateCustomButtons(firstCta, secondCta)}
+          </div>
         </div>
+      </div>
+      <div class='marquee-background' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
+        ${
+          subjectPicture && videoUrl
+            ? `
+              <div class='marquee-subject video-thumbnail' style="background-color: ${bgColor}">
+                <a href="${videoUrl}" class="video">
+                  ${subjectPicture.outerHTML}
+                </a>
+              </div>
+            `
+            : subjectPicture
+            ? `<div class='marquee-subject' style="background-color: ${bgColor}">${subjectPicture.outerHTML}</div>`
+            : `<div class='marquee-spacer'></div>`
+        }
+        <div class="marquee-background-fill">
+        ${
+          !isStraightVariant
+            ? `
+            <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
+              <path
+                id="Path_1"
+                data-name="Path 1"
+                d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z"
+                transform="translate(-738.685 1.777)"
+                fill="${bgColor}"
+              />
+            </svg>` 
+            : ' '
+        }
+        </div>
+        <div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>
       </div>
     </div>
-    <div class='marquee-background' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
-          <div class='marquee-background-fill'>
-          ${
-            !isStraightVariant
-              ? `<svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
-                      <path
-                        d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z"
-                        transform="translate(-738.685 1.777)"
-                        fill="${bgColor}"
-                      />
-                    </svg>`
-              : ''
-          }
-          </div>
-          <div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>
-        </div>
-      </div>
   `);
 
   block.textContent = '';
-  block.append(marqueeDOM);
 
-  const bg = block.querySelector('.marquee-background');
-
-  if (subjectPicture) {
-    const subjectContainer = document.createElement('div');
-    subjectContainer.className = 'marquee-subject marquee-video-container';
-    subjectContainer.appendChild(subjectPicture);
-
-    if (vedioUrl) {
-      const playButton = document.createElement('button');
-      playButton.setAttribute('aria-label', 'Play Video');
-      playButton.className = 'embed-video-overlay-play';
-      playButton.innerHTML = `
-        <div class="embed-video-overlay-circle">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="embed-video-overlay-icon">
-            <path d="M8 5v14l11-7z"></path>
-          </svg>
-        </div>
-      `;
-      subjectContainer.appendChild(playButton);
-
-      playButton.addEventListener('click', () => {
-        playButton.remove();
-        subjectPicture.remove();
-
-        const separator = vedioUrl.includes('?') ? '&' : '?';
-        const videoIframe = document.createElement('iframe');
-        videoIframe.className = 'marquee-video';
-        videoIframe.setAttribute('src', `${vedioUrl}${separator}autoplay=1&muted=1&playsinline=1`);
-        videoIframe.setAttribute('frameborder', '0');
-        videoIframe.setAttribute('allow', 'autoplay; encrypted-media');
-        videoIframe.setAttribute('allowfullscreen', '');
-        subjectContainer.appendChild(videoIframe);
-      });
-    }
-
-    bg?.prepend(subjectContainer);
-  }
-
-  if (!subjectPicture && !vedioUrl) {
+  if (!subjectPicture) {
     block.classList.add('no-subject');
   }
 
   if (block.classList.contains('fill-background')) {
     block.style.backgroundColor = bgColor;
   }
+
+  block.append(marqueeDOM);
 
   if (!((firstCta && firstCtaLinkType) || (secondCta && secondCtaLinkType))) {
     return;
@@ -189,5 +160,10 @@ export default async function decorate(block) {
   if (isVideoLinkType) {
     const videoLinkElems = block.querySelectorAll('.marquee-cta > .video');
     handleVideoLinks(videoLinkElems, block);
+  }
+
+  if (videoUrl) {
+    const videoThumbLink = block.querySelectorAll('.video-thumbnail a.video');
+    handleVideoLinks(videoThumbLink, block);
   }
 }
