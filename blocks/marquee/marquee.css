@@ -502,36 +502,89 @@ body[class^='article-'] .marquee-content-container {
     box-sizing: border-box;
   }
 }
-.marquee-subject.video-thumbnail {
+/* === MARQUEE VIDEO STYLES === */
+
+/* Hide background SVGs when video is active */
+.marquee-background.video-mode .marquee-background-fill,
+.marquee-background.video-mode .marquee-bg-filler {
+  display: none;
+}
+
+/* Expand marquee-subject to fill background */
+.marquee-background.video-mode {
   position: relative;
-  display: inline-block;
-  width: 100%;
+  padding: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
   height: 100%;
 }
 
-.marquee-subject.video-thumbnail a.video {
+.marquee-background.video-mode .marquee-subject {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
   display: block;
   position: relative;
+  overflow: hidden;
 }
 
-.marquee-subject.video-thumbnail img {
+/* Thumbnail state */
+.marquee-subject.video-thumbnail {
   width: 100%;
-  height: auto;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
   display: block;
 }
 
+.marquee-subject.video-thumbnail picture,
+.marquee-subject.video-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Play icon overlay */
 .marquee-subject.video-thumbnail .icon-play {
   position: absolute;
   top: 50%;
   left: 50%;
-  font-size: 3rem;
-  color: white;
   transform: translate(-50%, -50%);
+  z-index: 2;
+  font-size: 64px;
+  color: white;
   background: rgba(0, 0, 0, 0.4);
+  padding: 20px;
   border-radius: 50%;
-  padding: 0.5rem;
+  pointer-events: none;
 }
 
+/* Inline video playing state */
+.marquee-subject.video-playing {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.marquee-subject.video-playing .video-playing {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+
+.marquee-subject.video-playing iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  object-fit: cover;
+  display: block;
+}
+
+/* Legacy modal (for non-inline video links only) */
 .modal {
   position: fixed;
   top: 0;
@@ -561,72 +614,5 @@ body[class^='article-'] .marquee-content-container {
 
 .iframe-container iframe {
   width: 100%;
-  height: 100%;
-}
-/* VIDEO THUMBNAIL STATE */
-.marquee-subject.video-thumbnail {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-  overflow: hidden;
-}
-
-.marquee-subject.video-thumbnail picture,
-.marquee-subject.video-thumbnail img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* PLAY ICON OVERLAY ON THUMBNAIL */
-.marquee-subject.video-thumbnail .icon-play {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  font-size: 64px;
-  color: white;
-  background: rgba(0, 0, 0, 0.4);
-  padding: 20px;
-  border-radius: 50%;
-  pointer-events: none; /* Prevent click-blocking */
-}
-
-/* INLINE VIDEO PLAYER STATE */
-.marquee-subject.video-playing {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.marquee-subject.video-playing iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
-  object-fit: cover;
-}
-
-/* HIDE SVG BACKGROUND FILL WHEN IN VIDEO MODE */
-.marquee-background.video-mode .marquee-background-fill,
-.marquee-background.video-mode .marquee-bg-filler {
-  display: none;
-}
-
-/* ENSURE VIDEO THUMBNAIL OR PLAYER FILLS BACKGROUND */
-.marquee-background.video-mode {
-  position: relative;
-  padding: 0;
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-}
-
-.marquee-background.video-mode .marquee-subject {
-  flex: 1;
-  max-width: 100%;
   height: 100%;
 }
