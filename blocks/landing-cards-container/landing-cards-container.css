@@ -95,11 +95,11 @@
 .landing-cards-container a {
   color: var(--spectrum-blue-700, #1473e6);
   text-decoration: none;
-  font-weight: var(--spectrum-font-weight-bold, 700);
+  font-weight: var(--spectrum-font-weight-bold, 700) !important;
   display: inline-block;
   font-size: var(--spectrum-font-size-100, 14px) !important;
   font-family: var(--spectrum-font-family, 'Adobe Clean', 'Helvetica Neue', Arial, sans-serif);
-  margin-top: 0;
+  margin-top: 0 !important;
 }
 
 .landing-cards-container a:hover {
