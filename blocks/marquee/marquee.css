@@ -502,7 +502,6 @@ body[class^='article-'] .marquee-content-container {
     box-sizing: border-box;
   }
 }
-
 .marquee-background.video-mode .marquee-background-fill,
 .marquee-background.video-mode .marquee-bg-filler {
   display: none;
@@ -559,8 +558,8 @@ body[class^='article-'] .marquee-content-container {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
-  width: 36px;    /* Adjust size */
-  height: 36px;
+  width: 18px;      /* small triangle size */
+  height: 18px;
   cursor: pointer;
   background: transparent !important; /* Remove background */
   border: none !important;
@@ -575,9 +574,9 @@ body[class^='article-'] .marquee-content-container {
 
 /* SVG inside play icon */
 .marquee-subject.video-thumbnail .icon-play svg {
-  width: 18px;
-  height: 18px;
-  fill: white; /* Bright white for visibility */
+  width: 100%;
+  height: 100%;
+  fill: white; /* Bright white triangle */
 }
 
 /* Inline video playing state */

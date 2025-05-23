@@ -10,10 +10,10 @@ function handleVideoLinks(videoLinkElems, block) {
 
     const playIcon = document.createElement('span');
     playIcon.classList.add('icon', 'icon-play');
-    // Inject SVG directly for play icon
+    // Inject small white triangle SVG as play icon
     playIcon.innerHTML = `
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" aria-hidden="true" focusable="false">
-        <path d="M8 5v14l11-7L8 5z" fill="currentColor"/>
+        <path d="M8 5v14l11-7L8 5z" fill="white"/>
       </svg>`;
     videoLinkElem.prepend(playIcon);
 
@@ -100,7 +100,7 @@ export default async function decorate(block) {
                     ? `<a href="#" class="video-inline" aria-label="Play video" role="button" tabindex="0">${subjectPicture.outerHTML}
                         <span class="icon icon-play" aria-hidden="true">
                           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" aria-hidden="true">
-                            <path d="M8 5v14l11-7L8 5z" fill="currentColor"/>
+                            <path d="M8 5v14l11-7L8 5z" fill="white"/>
                           </svg>
                         </span>
                       </a>`
