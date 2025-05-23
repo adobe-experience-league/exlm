@@ -1708,41 +1708,67 @@
         "required": true,
         "options": [
           {
-            "name": "Size Variant",
-            "children": [
-              {
-                "name": "Large",
-                "value": "large"
-              },
-              {
-                "name": "Medium",
-                "value": "medium"
-              },
-              {
-                "name": "Small",
-                "value": "small"
-              }
-            ]
-          },
+  "name": "Size Variant",
+  "value": {
+    "if": {
+      "some": [
+        { "var": "classes" },
+        { "===": [{ "var": "" }, "video"] }
+      ]
+    },
+    "then": "large",
+    "else": ""
+  },
+  "children": [
+    {
+      "name": "Large",
+      "value": "large"
+    },
+    {
+      "name": "Medium",
+      "value": "medium"
+    },
+    {
+      "name": "Small",
+      "value": "small"
+    }
+  ]
+}
+,
           {
-            "name": "Style Variant",
-            "children": [
-              {
-                "name": "Curved",
-                "value": "curved"
-              },
-              {
-                "name": "Straight",
-                "value": "straight"
-              }
-            ]
-          },
+  "name": "Style Variant",
+  "value": {
+    "if": {
+      "some": [
+        { "var": "classes" },
+        { "===": [{ "var": "" }, "video"] }
+      ]
+    },
+    "then": "straight",
+    "else": ""
+  },
+  "children": [
+    {
+      "name": "Curved",
+      "value": "curved"
+    },
+    {
+      "name": "Straight",
+      "value": "straight"
+    }
+  ]
+}
+,
           {
             "name": "Style Options",
             "children": [
               {
                 "name": "Fill marquee with given background color",
                 "value": "fill-background"
+              },
+              {
+                "name": "Insert a video",
+                "value": "video,"
               }
             ]
           },
@@ -1832,6 +1858,18 @@
         "label": "Custom Background Color",
         "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
       },
+      {
+        "condition": {
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "video"] }]
+        },
+  "component": "text",
+  "valueType": "string",
+  "name": "vedioUrl",
+  "value": "",
+  "label": "Video URL",
+  "description": "Enter the MPC-hosted video URL "
+},
+      
       {
         "component": "reference",
         "valueType": "string",
@@ -2252,15 +2290,7 @@
             "value": "signin"
           }
         ]
-      },
-      {
-  "component": "text",
-  "valueType": "string",
-  "name": "vedioUrl",
-  "value": "",
-  "label": "Video URL",
-  "description": "Enter the MPC-hosted video URL "
-}
+      }
     ]
   },
   {
