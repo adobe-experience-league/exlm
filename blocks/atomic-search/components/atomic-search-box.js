@@ -1,4 +1,4 @@
-import { CUSTOM_EVENTS, fragment } from './atomic-search-utils.js';
+import { CUSTOM_EVENTS, fragment, waitFor } from './atomic-search-utils.js';
 
 export const clearIconHandler = (clearIcon) => {
   if (!clearIcon || clearIcon.dataset.evented === 'true') {
@@ -13,7 +13,22 @@ export const clearIconHandler = (clearIcon) => {
   clearIcon.dataset.evented = 'true';
 };
 
-export default function atomicSearchBoxHandler(baseElement) {
+export default function atomicSearchBoxHandler(block) {
+  const baseElement = block.querySelector('atomic-search-box');
+  const shadowElement = baseElement.shadowRoot;
+  if (!shadowElement?.firstElementChild) {
+    waitFor(() => {
+      atomicSearchBoxHandler(block);
+    });
+    return;
+  }
+
+  const baseSkeleton = block.querySelector('.atomic-search-load-skeleton');
+  if (baseSkeleton) {
+    const skeletonSearchShimmer = baseSkeleton.querySelector('.atomic-load-skeleton-head');
+    skeletonSearchShimmer.classList.add('atomic-skeleton-shimmer-hide');
+    baseSkeleton.classList.add('atomic-skeleton-shimmer-hide');
+  }
   const onSearchQueryChange = () => {
     const { shadowRoot } = baseElement;
     const clearIcon = shadowRoot?.querySelector('[part="clear-button"]');

@@ -643,6 +643,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       >
                       </atomic-result-number>
                     </div>
+                    <div class="result-description">
                     <atomic-result-children>
                       ${atomicResultChildrenStyles}
                       <atomic-load-more-children-results label="Show replies"></atomic-load-more-children-results>
@@ -673,6 +674,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </div>
                       </atomic-field-condition>
                     </atomic-field-condition>
+                    <atomic-result-multi-value-text
+                      field="limessagelabels"
+                      max-values-to-display=99
+                    >
+                    </atomic-result-multi-value-text>
+                    </div>
                   </div>
                   <div class="result-item desktop-only">
                     <div class="result-field text-thumbnail">
@@ -750,6 +757,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       >
                       </atomic-result-number>
                     </div>
+                    <div class="result-description">
                     <atomic-result-children>
                       ${atomicResultChildrenStyles}
                       <atomic-result-children-template>
@@ -771,6 +779,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </template>
                       </atomic-result-children-template>
                     </atomic-result-children>
+                    <atomic-result-multi-value-text
+                      field="limessagelabels"
+                      max-values-to-display=99
+                    >
+                    </atomic-result-multi-value-text>
+                    </div>
                   </div>
                 </template>
                 </atomic-result-template>

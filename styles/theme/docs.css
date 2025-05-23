@@ -116,6 +116,10 @@
   padding: 0;
 }
 
+.docs main .section + .last {
+  margin-bottom: 48px;
+}
+
 @media (width >= 900px) {
   .docs main .section {
     padding: 0 54px;

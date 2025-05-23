@@ -1,4 +1,4 @@
-export const INITIAL_ATOMIC_RESULT_CHILDREN_COUNT = 2;
+export const INITIAL_ATOMIC_RESULT_CHILDREN_COUNT = 3;
 
 export const atomicResultChildrenStyles = `
     <style>
