@@ -91,9 +91,9 @@ export default async function decorate(block) {
             ? `<div class='marquee-subject ${shouldEnableVideo ? 'video-thumbnail' : ''}' style="background-color: ${bgColor}">
                 ${
                   shouldEnableVideo
-                    ? `<a href="#" class="video-inline">${subjectPicture.outerHTML}
-                        <span class="icon icon-play"></span>
-                      </a>`
+                    ? `<div class="video-thumbnail">${subjectPicture.outerHTML}
+                         <div class="play-button" aria-label="Play video" role="button" tabindex="0"></div>
+                       </div>`
                     : subjectPicture.outerHTML
                 }
               </div>`
@@ -146,13 +146,12 @@ export default async function decorate(block) {
     handleVideoLinks(videoLinkElems, block);
   }
 
-  // Inline video playback for subject image
+  // Inline video playback for subject image with custom play button bottom-right
   if (shouldEnableVideo) {
-    const playLink = block.querySelector('.marquee-subject .video-inline');
-    decorateIcons(playLink);
-    playLink?.addEventListener('click', (e) => {
+    const playButton = block.querySelector('.marquee-subject.video-thumbnail .play-button');
+    playButton?.addEventListener('click', (e) => {
       e.preventDefault();
-      const subjectWrapper = playLink.closest('.marquee-subject');
+      const subjectWrapper = playButton.closest('.marquee-subject');
       subjectWrapper.innerHTML = `
         <div class="video-playing">
           <iframe src="${videoUrl}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>

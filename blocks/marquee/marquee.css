@@ -503,9 +503,6 @@ body[class^='article-'] .marquee-content-container {
   }
 }
 
-/* === MARQUEE VIDEO STYLES — FINAL FIX === */
-
-/* Hide background SVGs when video is active */
 .marquee-background.video-mode .marquee-background-fill,
 .marquee-background.video-mode .marquee-bg-filler {
   display: none;
@@ -557,30 +554,38 @@ body[class^='article-'] .marquee-content-container {
   display: block;
 }
 
-/* Play button styling */
+/* === SMALL PLAY BUTTON AT BOTTOM RIGHT === */
 .marquee-subject.video-thumbnail .icon-play {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
-  width: 36px;    /* Adjust size */
-  height: 36px;
+  width: 32px;    /* Small size */
+  height: 32px;
   cursor: pointer;
-  background: transparent !important; /* Remove background */
-  border: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  pointer-events: auto;
+  background: rgba(0, 0, 0, 0.6); /* subtle dark background */
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
+  margin: 0;
   z-index: 10;
+  pointer-events: auto;
+  transition: background-color 0.3s ease;
 }
 
-/* Optional: scale the SVG inside icon-play */
+/* Play icon SVG inside the button */
 .marquee-subject.video-thumbnail .icon-play svg {
-  width: 100%;
-  height: 100%;
-  fill: #444; /* Darker triangle color */
+  width: 18px;
+  height: 18px;
+  fill: white; /* White play triangle */
+}
+
+/* Hover effect */
+.marquee-subject.video-thumbnail .icon-play:hover,
+.marquee-subject.video-thumbnail .icon-play:focus {
+  background: rgba(0, 0, 0, 0.9);
+  outline: none;
 }
 
 /* Inline video playing state */
