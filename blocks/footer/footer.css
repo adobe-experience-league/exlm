@@ -356,8 +356,7 @@
   .footer-breadcrumb .icon {
     height: 14px;
     width: 14px;
-    top: 2px;
-    position: relative;
+    vertical-align: -2px;
   }
 
   .footer-breadcrumb p {
@@ -459,8 +458,7 @@
   margin: 0;
   height: 22px;
   width: 22px;
-  position: relative;
-  top: 8px;
+  vertical-align: -6px;
 }
 
 .footer-last-row .footer-copyrights-element span.icon path {
