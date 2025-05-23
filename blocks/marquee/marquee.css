@@ -543,7 +543,7 @@ body[class^='article-'] .marquee-content-container {
 .marquee-subject.video-thumbnail {
   width: 100%;
   height: 100%;
-  position: relative; /* needed for play icon positioning */
+  position: relative; /* Needed for absolute play button */
   display: block;
   cursor: pointer;
   overflow: hidden;
@@ -557,22 +557,30 @@ body[class^='article-'] .marquee-content-container {
   display: block;
 }
 
-/* Play button using external SVG */
+/* Play button styling */
 .marquee-subject.video-thumbnail .icon-play {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
-  width: 36px;
+  width: 36px;    /* Adjust size */
   height: 36px;
-  background: url('/icons/play.svg') no-repeat center center;
-  background-size: contain;
-  background-color: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  margin: 0;
-  pointer-events: auto;
   cursor: pointer;
+  background: transparent !important; /* Remove background */
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* Optional: scale the SVG inside icon-play */
+.marquee-subject.video-thumbnail .icon-play svg {
+  width: 100%;
+  height: 100%;
+  fill: #444; /* Darker triangle color */
 }
 
 /* Inline video playing state */
