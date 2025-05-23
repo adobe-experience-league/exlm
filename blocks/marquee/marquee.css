@@ -503,6 +503,8 @@ body[class^='article-'] .marquee-content-container {
   }
 }
 
+/* === MARQUEE VIDEO STYLES — FINAL FIX === */
+
 /* Hide background SVGs when video is active */
 .marquee-background.video-mode .marquee-background-fill,
 .marquee-background.video-mode .marquee-bg-filler {
@@ -541,10 +543,10 @@ body[class^='article-'] .marquee-content-container {
 .marquee-subject.video-thumbnail {
   width: 100%;
   height: 100%;
-  position: relative;
+  position: relative; /* needed for play icon positioning */
   display: block;
   cursor: pointer;
-  overflow: visible; /* allow play icon outside if needed */
+  overflow: hidden;
 }
 
 .marquee-subject.video-thumbnail picture,
@@ -555,19 +557,22 @@ body[class^='article-'] .marquee-content-container {
   display: block;
 }
 
+/* Play button using external SVG */
 .marquee-subject.video-thumbnail .icon-play {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
-  width: 32px;    /* smaller size */
-  height: 32px;
-  background: none;
-  background-image: url('/icons/play.svg');
-  background-repeat: no-repeat;
-  background-position: center;
+  width: 36px;
+  height: 36px;
+  background: url('/icons/play.svg') no-repeat center center;
   background-size: contain;
-  pointer-events: none;
-  z-index: 2;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 /* Inline video playing state */
