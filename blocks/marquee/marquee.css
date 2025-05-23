@@ -502,12 +502,12 @@ body[class^='article-'] .marquee-content-container {
     box-sizing: border-box;
   }
 }
+
 .marquee-background.video-mode .marquee-background-fill,
 .marquee-background.video-mode .marquee-bg-filler {
   display: none;
 }
 
-/* Ensure marquee-background fills container */
 .marquee-background.video-mode {
   position: relative;
   padding: 0 !important;
@@ -520,7 +520,6 @@ body[class^='article-'] .marquee-content-container {
   box-sizing: border-box;
 }
 
-/* Force subject to fill entire background */
 .marquee-background.video-mode .marquee-subject {
   flex: 1;
   width: 100% !important;
@@ -539,7 +538,7 @@ body[class^='article-'] .marquee-content-container {
 .marquee-subject.video-thumbnail {
   width: 100%;
   height: 100%;
-  position: relative; /* Needed for absolute play button */
+  position: relative;
   display: block;
   cursor: pointer;
   overflow: hidden;
@@ -553,30 +552,27 @@ body[class^='article-'] .marquee-content-container {
   display: block;
 }
 
-/* Play button styling */
+/* Play button styling - white triangle */
 .marquee-subject.video-thumbnail .icon-play {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
-  width: 18px;      /* small triangle size */
-  height: 18px;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
   cursor: pointer;
-  background: transparent !important; /* Remove background */
-  border: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  pointer-events: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 10;
+  pointer-events: auto;
 }
 
 /* SVG inside play icon */
 .marquee-subject.video-thumbnail .icon-play svg {
   width: 100%;
   height: 100%;
-  fill: white; /* Bright white triangle */
+  fill: white;
 }
 
 /* Inline video playing state */
@@ -602,7 +598,7 @@ body[class^='article-'] .marquee-content-container {
   object-fit: cover;
 }
 
-/* Fallback modal styles (if used for other video links) */
+/* Fallback modal styles */
 .modal {
   position: fixed;
   top: 0;
