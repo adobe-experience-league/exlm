@@ -544,7 +544,7 @@ body[class^='article-'] .marquee-content-container {
   position: relative;
   display: block;
   cursor: pointer;
-  overflow: hidden;
+  overflow: visible; /* allow play icon outside if needed */
 }
 
 .marquee-subject.video-thumbnail picture,
@@ -555,19 +555,17 @@ body[class^='article-'] .marquee-content-container {
   display: block;
 }
 
-/* Play icon at bottom right using background SVG */
 .marquee-subject.video-thumbnail .icon-play {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
-  width: 72px;
-  height: 72px;
-  background-color: #d3d3d3; /* light gray circle */
+  width: 32px;    /* smaller size */
+  height: 32px;
+  background: none;
   background-image: url('/icons/play.svg');
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 36px 36px; /* size of the play triangle */
-  border-radius: 50%;
+  background-size: contain;
   pointer-events: none;
   z-index: 2;
 }
