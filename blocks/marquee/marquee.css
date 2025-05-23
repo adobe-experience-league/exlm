@@ -554,38 +554,30 @@ body[class^='article-'] .marquee-content-container {
   display: block;
 }
 
-/* === SMALL PLAY BUTTON AT BOTTOM RIGHT === */
+/* Play button styling */
 .marquee-subject.video-thumbnail .icon-play {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
-  width: 32px;    /* Small size */
-  height: 32px;
+  width: 36px;    /* Adjust size */
+  height: 36px;
   cursor: pointer;
-  background: rgba(0, 0, 0, 0.6); /* subtle dark background */
-  border-radius: 50%;
+  background: transparent !important; /* Remove background */
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  pointer-events: auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  margin: 0;
   z-index: 10;
-  pointer-events: auto;
-  transition: background-color 0.3s ease;
 }
 
-/* Play icon SVG inside the button */
+/* SVG inside play icon */
 .marquee-subject.video-thumbnail .icon-play svg {
   width: 18px;
   height: 18px;
-  fill: white; /* White play triangle */
-}
-
-/* Hover effect */
-.marquee-subject.video-thumbnail .icon-play:hover,
-.marquee-subject.video-thumbnail .icon-play:focus {
-  background: rgba(0, 0, 0, 0.9);
-  outline: none;
+  fill: white; /* Bright white for visibility */
 }
 
 /* Inline video playing state */

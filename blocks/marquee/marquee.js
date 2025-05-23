@@ -10,7 +10,13 @@ function handleVideoLinks(videoLinkElems, block) {
 
     const playIcon = document.createElement('span');
     playIcon.classList.add('icon', 'icon-play');
+    // Inject SVG directly for play icon
+    playIcon.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" aria-hidden="true" focusable="false">
+        <path d="M8 5v14l11-7L8 5z" fill="currentColor"/>
+      </svg>`;
     videoLinkElem.prepend(playIcon);
+
     decorateIcons(videoLinkElem);
 
     const modal = document.createElement('div');
@@ -91,9 +97,13 @@ export default async function decorate(block) {
             ? `<div class='marquee-subject ${shouldEnableVideo ? 'video-thumbnail' : ''}' style="background-color: ${bgColor}">
                 ${
                   shouldEnableVideo
-                    ? `<div class="video-thumbnail">${subjectPicture.outerHTML}
-                         <div class="play-button" aria-label="Play video" role="button" tabindex="0"></div>
-                       </div>`
+                    ? `<a href="#" class="video-inline" aria-label="Play video" role="button" tabindex="0">${subjectPicture.outerHTML}
+                        <span class="icon icon-play" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" aria-hidden="true">
+                            <path d="M8 5v14l11-7L8 5z" fill="currentColor"/>
+                          </svg>
+                        </span>
+                      </a>`
                     : subjectPicture.outerHTML
                 }
               </div>`
@@ -146,12 +156,13 @@ export default async function decorate(block) {
     handleVideoLinks(videoLinkElems, block);
   }
 
-  // Inline video playback for subject image with custom play button bottom-right
+  // Inline video playback for subject image
   if (shouldEnableVideo) {
-    const playButton = block.querySelector('.marquee-subject.video-thumbnail .play-button');
-    playButton?.addEventListener('click', (e) => {
+    const playLink = block.querySelector('.marquee-subject .video-inline');
+    decorateIcons(playLink);
+    playLink?.addEventListener('click', (e) => {
       e.preventDefault();
-      const subjectWrapper = playButton.closest('.marquee-subject');
+      const subjectWrapper = playLink.closest('.marquee-subject');
       subjectWrapper.innerHTML = `
         <div class="video-playing">
           <iframe src="${videoUrl}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
