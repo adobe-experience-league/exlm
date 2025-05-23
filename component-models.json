@@ -1708,57 +1708,35 @@
         "required": true,
         "options": [
           {
-  "name": "Size Variant",
-  "value": {
-    "if": {
-      "some": [
-        { "var": "classes" },
-        { "===": [{ "var": "" }, "video"] }
-      ]
-    },
-    "then": "large",
-    "else": ""
-  },
-  "children": [
-    {
-      "name": "Large",
-      "value": "large"
-    },
-    {
-      "name": "Medium",
-      "value": "medium"
-    },
-    {
-      "name": "Small",
-      "value": "small"
-    }
-  ]
-}
-,
+          "name": "Size Variant",
+            "children": [
+              {
+                "name": "Large",
+                "value": "large"
+              },
+              {
+                "name": "Medium",
+                "value": "medium"
+              },
+              {
+                "name": "Small",
+                "value": "small"
+              }
+            ]
+          },
           {
-  "name": "Style Variant",
-  "value": {
-    "if": {
-      "some": [
-        { "var": "classes" },
-        { "===": [{ "var": "" }, "video"] }
-      ]
-    },
-    "then": "straight",
-    "else": ""
-  },
-  "children": [
-    {
-      "name": "Curved",
-      "value": "curved"
-    },
-    {
-      "name": "Straight",
-      "value": "straight"
-    }
-  ]
-}
-,
+            "name": "Style Variant",
+            "children": [
+              {
+                "name": "Curved",
+                "value": "curved"
+              },
+              {
+                "name": "Straight",
+                "value": "straight"
+              }
+            ]
+          },
           {
             "name": "Style Options",
             "children": [
@@ -1857,20 +1835,41 @@
         "value": "",
         "label": "Custom Background Color",
         "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
-      },
-      {
-        "condition": {
-          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "video"] }]
-        },
+      },{
+  "condition": {
+    "some": [
+      { "var": "classes" },
+      { "===": [{ "var": "" }, "video"] }
+    ]
+  },
+  "actions": [
+    {
+      "type": "set",
+      "target": "Size Variant",
+      "value": "large"
+    },
+    {
+      "type": "set",
+      "target": "Style Variant",
+      "value": "straight"
+    }
+  ]
+},
+{
   "component": "text",
   "valueType": "string",
   "name": "vedioUrl",
   "value": "",
   "label": "Video URL",
-  "description": "Enter the MPC-hosted video URL "
-},
-      
-      {
+  "description": "Enter the MPC-hosted video URL",
+  "condition": {
+    "some": [
+      { "var": "classes" },
+      { "===": [{ "var": "" }, "video"] }
+    ]
+  }
+}      
+      ,{
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
