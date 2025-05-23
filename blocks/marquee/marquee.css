@@ -502,7 +502,7 @@ body[class^='article-'] .marquee-content-container {
     box-sizing: border-box;
   }
 }
-/* === MARQUEE VIDEO STYLES — FINAL FIX === */
+
 
 /* Hide background SVGs when video is active */
 .marquee-background.video-mode .marquee-background-fill,
@@ -513,29 +513,28 @@ body[class^='article-'] .marquee-content-container {
 /* Ensure marquee-background fills container */
 .marquee-background.video-mode {
   position: relative;
-  padding: 0 !important;
-  margin: 0;
   display: flex;
   align-items: stretch;
   justify-content: center;
   width: 100% !important;
   height: 100% !important;
+  padding: 0 !important;
+  margin: 0;
   box-sizing: border-box;
 }
 
-/* Force subject to fill entire background */
+/* Subject area fills background */
 .marquee-background.video-mode .marquee-subject {
   flex: 1;
   width: 100% !important;
   height: 100% !important;
   max-width: 100%;
-  display: block;
   position: relative;
   overflow: hidden;
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
   top: 0;
+  box-sizing: border-box;
 }
 
 /* Thumbnail state */
@@ -556,19 +555,31 @@ body[class^='article-'] .marquee-content-container {
   display: block;
 }
 
-/* Move play icon to bottom right */
+/* Refined play button */
 .marquee-subject.video-thumbnail .icon-play {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
-  transform: none;
-  font-size: 48px;
-  color: white;
-  background: rgba(0, 0, 0, 0.4);
-  padding: 12px;
+  width: 3rem;
+  height: 3rem;
+  background-color: rgba(0, 0, 0, 0.6);
   border-radius: 50%;
-  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
+  z-index: 2;
+}
+
+/* Pure CSS triangle play icon */
+.marquee-subject.video-thumbnail .icon-play::before {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  border-left: 0.75rem solid white;
+  border-top: 0.5rem solid transparent;
+  border-bottom: 0.5rem solid transparent;
 }
 
 /* Inline video playing state */
@@ -594,7 +605,7 @@ body[class^='article-'] .marquee-content-container {
   object-fit: cover;
 }
 
-/* Fallback modal styles (if used for other video links) */
+/* Modal styles for CTA video links */
 .modal {
   position: fixed;
   top: 0;
