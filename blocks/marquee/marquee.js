@@ -75,13 +75,13 @@ export default async function decorate(block) {
     firstCtaLinkType,
     secondCta,
     secondCtaLinkType,
-    vedioUrlElem,
+    videoUrlElem,
   ] = block.querySelectorAll(':scope div > div');
 
   const subjectPicture = img?.querySelector('picture');
   const isStraightVariant = block.classList.contains('straight');
-  const isVideoVariant = block.classList.contains('vedio');
-  const vedioUrl = vedioUrlElem?.textContent?.trim();
+  const isVideoVariant = block.classList.contains('video');
+  const videoUrl = videoUrlElem?.textContent?.trim();
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
   const eyebrowText = eyebrow?.textContent?.trim();
@@ -126,8 +126,8 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(marqueeDOM);
 
-  // Replace image with video if vedio class and URL are present
-  if (isVideoVariant && vedioUrl) {
+  // Replace image with video if video class and URL are present
+  if (isVideoVariant && videoUrl) {
     const svgEl = block.querySelector('.marquee-background svg');
     if (svgEl) svgEl.style.display = 'none';
 
@@ -137,7 +137,7 @@ export default async function decorate(block) {
     const subjectEl = block.querySelector('.marquee-subject');
     if (subjectEl) subjectEl.remove();
 
-    let videoSrc = vedioUrl;
+    let videoSrc = videoUrl;
     if (!videoSrc.includes('autoplay=1')) {
       const separator = videoSrc.includes('?') ? '&' : '?';
       videoSrc += `${separator}autoplay=1&muted=1&playsinline=1`;
@@ -159,7 +159,7 @@ export default async function decorate(block) {
     block.querySelector('.marquee-background').prepend(videoContainer);
   }
 
-  if (!subjectPicture && !(isVideoVariant && vedioUrl)) {
+  if (!subjectPicture && !(isVideoVariant && videoUrl)) {
     block.classList.add('no-subject');
   }
 

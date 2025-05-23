@@ -1745,8 +1745,8 @@
                 "value": "fill-background"
               },
               {
-                "name": "Insert a vedio",
-                "value": "vedio"}
+                "name": "Insert a video",
+                "value": "video"}
             ]
           },
           {
@@ -2258,11 +2258,11 @@
       },
       {
   "condition": {
-    "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "vedio"] }]
+    "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "video"] }]
   },
   "component": "text",
   "valueType": "string",
-  "name": "vedioUrl",
+  "name": "videoUrl",
   "value": "",
   "label": "Video URL",
   "description": "Enter the MPC-hosted video URL (must be MP4 and compatible)."
