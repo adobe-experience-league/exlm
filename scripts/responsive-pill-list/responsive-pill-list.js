@@ -40,6 +40,7 @@ export default class ResponsivePillList {
       ]);
       this.placeholders = placeholders;
       this.registerWrapperResizeHandler(() => {
+        this.scrollMaxReached = false;
         this.render();
       });
       this.onInitCallback?.();
@@ -305,8 +306,11 @@ export default class ResponsivePillList {
       }
     }
     if (rightButton) {
+      const maxTolerance = wrapperEl.offsetWidth - PILLS_OFFSET_DELTA;
+      const elementLeftPosition = lastElementChild.offsetLeft - scrollLeft;
       if (
-        lastElementChild.offsetLeft - scrollLeft < wrapperEl.offsetWidth - PILLS_OFFSET_DELTA ||
+        (elementLeftPosition < maxTolerance &&
+          elementLeftPosition + lastElementChild.offsetWidth - wrapperEl.offsetWidth < PILLS_OFFSET_DELTA / 2) ||
         this.scrollMaxReached
       ) {
         rightButton.classList.remove('responsive-pill-list-nav-visible');
