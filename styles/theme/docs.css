@@ -156,6 +156,31 @@
   min-width: 0;
 }
 
+.docs table:not(.code table, .table table) a {
+  color: var(--non-spectrum-link);
+}
+
+.docs table:not(.code table, .table table) a:hover {
+  color: var(--non-spectrum-custom-dark);
+}
+
+.docs main > div:first-child {
+  /* docs content area */
+  ul > li,
+  ol > li {
+    line-height: 1.4;
+    margin: 0.6em 0;
+
+    p {
+      margin-bottom: unset;
+    }
+
+    a:any-link {
+      line-height: 1.4;
+    }
+  }
+}
+
 .docs main > div:nth-last-child(2) {
   display: block !important;
   grid-row: 1/1;
@@ -259,14 +284,6 @@
 .docs table:not(.code table, .table table) img {
   max-width: 100%;
   width: auto;
-}
-
-.docs table:not(.code table, .table table) a {
-  color: var(--non-spectrum-link);
-}
-
-.docs table:not(.code table, .table table) a:hover {
-  color: var(--non-spectrum-custom-dark);
 }
 
 .docs table:not(.code table, .table table) a strong {
