@@ -567,6 +567,7 @@ export default function atomicResultHandler(block, placeholders) {
       closeBtn.addEventListener('click', () => {
         document.body.style.overflow = '';
         modal.style.display = 'none';
+        iframeContainer.innerHTML = '';
       });
 
       iframeContainer = document.createElement('div');
