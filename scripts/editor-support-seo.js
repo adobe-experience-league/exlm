@@ -1,9 +1,9 @@
-import { decorateIcons } from './lib-franklin.js';
+import { decorateIcons, loadCSS } from './lib-franklin.js';
 
+loadCSS(`${window.hlx.codeBasePath}/styles/ue-styles.css`);
 /**
  * Displays SEO warnings for specific tags.
  */
-
 export default function renderSEOWarnings() {
   const tags = ['h1'];
   let warningBanner = document.querySelector('.ue-warning-banner');
