@@ -567,7 +567,7 @@ export default function atomicResultHandler(block, placeholders) {
       closeBtn.addEventListener('click', () => {
         document.body.style.overflow = '';
         modal.style.display = 'none';
-        iframeContainer.innerHTML = '';
+        if (iframeContainer) iframeContainer.innerHTML = '';
       });
 
       iframeContainer = document.createElement('div');
@@ -579,12 +579,17 @@ export default function atomicResultHandler(block, placeholders) {
       decorateIcons(modal);
       const parentBlock = document.querySelector('.atomic-search');
       parentBlock.appendChild(modal);
+      if (parentBlock) {
+        parentBlock.appendChild(modal);
+      }
     } else {
       iframeContainer = modal.querySelector('.video-modal');
       modal.style.display = 'flex';
     }
 
-    iframeContainer.innerHTML = `<iframe src="${videoUrl}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+    if (iframeContainer && videoUrl) {
+      iframeContainer.innerHTML = `<iframe src="${videoUrl}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+    }
   }
 
   const updateAtomicResultUI = () => {
@@ -718,14 +723,15 @@ export default function atomicResultHandler(block, placeholders) {
           decorateIcons(anchorTag);
         }
 
-        const videoUrlEl = resultShadow.querySelector('atomic-result-text[field="video_url"]');
-        const titleEl = resultShadow.querySelector('atomic-result-text[field="title"]');
+        const videoUrlEl = resultShadow?.querySelector('atomic-result-text[field="video_url"]');
+        const titleEl = resultShadow?.querySelector('atomic-result-text[field="title"]');
 
         const VIDEO_THUMBNAIL_FORMAT = /^https:\/\/video\.tv\.adobe\.com\/v\/\w+/;
 
         if (videoUrlEl) {
-          const videoUrl = videoUrlEl.textContent.trim();
-          const thumbnailAlt = titleEl.textContent.trim();
+          const videoUrl = videoUrlEl.textContent?.trim() || '';
+          if (!videoUrl) return;
+          const thumbnailAlt = titleEl?.textContent || '';
           const cleanUrl = videoUrl.split('?')[0];
 
           if (!VIDEO_THUMBNAIL_FORMAT.test(cleanUrl)) {
@@ -736,8 +742,8 @@ export default function atomicResultHandler(block, placeholders) {
 
           const imgUrl = `${cleanUrl}?format=jpeg`;
           const thumbnailWrapper = isMobileView
-            ? resultShadow.querySelector('.atomic-search-result-item.mobile-only .result-field.result-thumbnail')
-            : resultShadow.querySelector('.atomic-search-result-item.desktop-only .result-field.result-thumbnail');
+            ? resultShadow?.querySelector('.atomic-search-result-item.mobile-only .result-field.result-thumbnail')
+            : resultShadow?.querySelector('.atomic-search-result-item.desktop-only .result-field.result-thumbnail');
           if (thumbnailWrapper) {
             let img = thumbnailWrapper.querySelector('img');
             if (!img) {
@@ -757,7 +763,7 @@ export default function atomicResultHandler(block, placeholders) {
                 openVideoModal(cleanUrl);
               });
             }
-            img.src = imgUrl;
+            img.src = imgUrl || '';
           }
         }
       };
