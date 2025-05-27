@@ -729,7 +729,7 @@ export default function atomicResultHandler(block, placeholders) {
         const VIDEO_THUMBNAIL_FORMAT = /^https:\/\/video\.tv\.adobe\.com\/v\/\w+/;
 
         if (videoUrlEl) {
-          const videoUrl = videoUrlEl.textContent?.trim() || '';
+          const videoUrl = videoUrlEl?.textContent?.trim() || '';
           if (!videoUrl) return;
           const thumbnailAlt = titleEl?.textContent || '';
           const cleanUrl = videoUrl.split('?')[0];
