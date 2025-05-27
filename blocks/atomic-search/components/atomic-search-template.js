@@ -23,7 +23,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
           <div class="header-bg"></div>
           <atomic-layout-section section="search">
             <style>
-            .video-modal-wrapper {
+            .atomic-search .video-modal-wrapper {
                 position: fixed;
                 display: flex;
                 z-index: 10;
@@ -33,26 +33,26 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 align-items: center;
                 overflow: hidden;
               }
-              .video-modal-container {
+              .atomic-search .video-modal-container {
                 width: 100%;
               }
-              .video-modal-wrapper .icon.icon-close-light {
+              .atomic-search .video-modal-wrapper .icon.icon-close-light {
                 position: absolute;
                 top: 24px;
                 right: 24px;
-                width: 20px;
-                height: 20px;
+                width: 30px;
+                height: 30px;
                 cursor: pointer;
                 padding: 5px;
               }
-              .video-modal {
+              .atomic-search .video-modal {
                 display: flex;
                 width: 100%;
                 height: 100%;
                 align-items: center;
                 justify-content: center;
               }
-              .video-modal iframe {
+              .atomic-search .video-modal iframe {
                 width: 90vw;
                 height: 50vw;
                 max-height: 95vh;
@@ -605,7 +605,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 <atomic-result-template>
                   <template>
                   ${atomicResultStyles}
-                  <div class="result-item mobile-only">
+                  <div class="result-item atomic-search-result-item mobile-only">
                     <div class="mobile-result-title">
                       <atomic-field-condition must-match-is-recommendation="true">
                         <span class="atomic-recommendation-badge">${
@@ -681,7 +681,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     </atomic-result-multi-value-text>
                     </div>
                   </div>
-                  <div class="result-item desktop-only">
+                  <div class="result-item atomic-search-result-item desktop-only">
                     <div class="result-field text-thumbnail">
                     <div class="result-text">
                         <div class="result-title">

@@ -61,38 +61,38 @@ export const atomicResultStyles = `
                       gap: 2px;
                       margin-left: 0;
                     }
-                    .mobile-result-field .result-thumbnail {
+                    .atomic-search-result-item.mobile-only .result-field.result-thumbnail {
                       margin-top: 10px;
                     }
                     .result-root.recommendation-badge {
                           margin: 40px 0px 0px;
                     }
-                    .result-field.text-thumbnail {
+                    .atomic-search-result-item .result-field.text-thumbnail {
                       display: flex;
                       gap: 18px;
                     }
-                    .result-field.text-thumbnail:not(:has(.result-thumbnail)) {
+                    .atomic-search-result-item .result-field.text-thumbnail:not(:has(.result-thumbnail)) {
                       gap: 0;
                     }
-                    .result-field.text-thumbnail:has(.result-thumbnail) .result-text {
+                    .atomic-search-result-item .result-field.text-thumbnail:has(.result-thumbnail) .result-text {
                       flex: 0 0 56%;
                     }
-                    .result-item .atomic-search-thumbnail-wrapper {
+                    .atomic-search-result-item.result-item .thumbnail-wrapper {
                       position: relative;
                       display: inline-block;
                       cursor: pointer;
                     } 
-                    .result-item .atomic-search-thumbnail-img {
+                    .atomic-search-result-item.result-item .thumbnail-img {
                       display: block;
                     }
-                    .result-item .atomic-search-thumbnail-wrapper .icon-play-outline-white {
+                    .atomic-search-result-item.result-item .thumbnail-wrapper .icon-play-outline-white {
                       position: absolute;
                       left: 50%;
                       top: 50%;
                       transform: translate(-50%, -50%);
                       pointer-events: none;
                     }
-                    .result-item .atomic-search-thumbnail-wrapper .icon-play-outline-white img {
+                    .atomic-search-result-item.result-item .thumbnail-wrapper .icon-play-outline-white img {
                       width: 40px;
                       height: 40px;
                     }
@@ -576,7 +576,8 @@ export default function atomicResultHandler(block, placeholders) {
       modalContent.appendChild(iframeContainer);
       modal.appendChild(modalContent);
       decorateIcons(modal);
-      document.body.appendChild(modal);
+      const parentBlock = document.querySelector('.atomic-search');
+      parentBlock.appendChild(modal);
     } else {
       iframeContainer = modal.querySelector('.video-modal');
       modal.style.display = 'flex';
@@ -734,17 +735,17 @@ export default function atomicResultHandler(block, placeholders) {
 
           const imgUrl = `${cleanUrl}?format=jpeg`;
           const thumbnailWrapper = isMobileView
-            ? resultShadow.querySelector('.mobile-only .result-field.result-thumbnail')
-            : resultShadow.querySelector('.desktop-only .result-field.result-thumbnail');
+            ? resultShadow.querySelector('.atomic-search-result-item.mobile-only .result-field.result-thumbnail')
+            : resultShadow.querySelector('.atomic-search-result-item.desktop-only .result-field.result-thumbnail');
           if (thumbnailWrapper) {
             let img = thumbnailWrapper.querySelector('img');
             if (!img) {
               img = document.createElement('img');
-              img.classList.add('atomic-search-thumbnail-img');
+              img.classList.add('thumbnail-img');
               img.alt = thumbnailAlt;
               img.loading = 'lazy';
               const wrapper = document.createElement('span');
-              wrapper.classList.add('atomic-search-thumbnail-wrapper');
+              wrapper.classList.add('thumbnail-wrapper');
               const playButton = document.createElement('span');
               playButton.classList.add('icon', 'icon-play-outline-white');
               wrapper.appendChild(img);
