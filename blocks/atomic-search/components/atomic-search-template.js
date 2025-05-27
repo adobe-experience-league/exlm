@@ -23,7 +23,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
           <div class="header-bg"></div>
           <atomic-layout-section section="search">
             <style>
-            .tutorial-video-modal {
+            .video-modal-wrapper {
                 position: fixed;
                 display: flex;
                 z-index: 10;
@@ -33,10 +33,10 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 align-items: center;
                 overflow: hidden;
               }
-              .tutorial-video-modal-content {
+              .video-modal-container {
                 width: 100%;
               }
-              .tutorial-video-modal .icon.icon-close-light {
+              .video-modal-wrapper .icon.icon-close-light {
                 position: absolute;
                 top: 24px;
                 right: 24px;
@@ -45,14 +45,14 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 cursor: pointer;
                 padding: 5px;
               }
-              .tutorial-video-modal-iframe-container {
+              .video-modal {
                 display: flex;
                 width: 100%;
                 height: 100%;
                 align-items: center;
                 justify-content: center;
               }
-              .tutorial-video-modal-iframe-container iframe {
+              .video-modal iframe {
                 width: 90vw;
                 height: 50vw;
                 max-height: 95vh;
@@ -667,8 +667,8 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     </atomic-result-children>
                     <atomic-field-condition must-match-el_contenttype="Tutorial">
                       <atomic-field-condition if-defined="video_url">
-                        <div class="mobile-result-field mobile-result-thumbnail">
-                          <div class="mobile-result-thumbnail">
+                        <div class="result-field result-thumbnail">
+                          <div class="result-thumbnail">
                                 <atomic-result-text field="video_url" style="display:none;" should-highlight="false"></atomic-result-text>
                           </div>
                         </div>

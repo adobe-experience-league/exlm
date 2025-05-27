@@ -61,7 +61,7 @@ export const atomicResultStyles = `
                       gap: 2px;
                       margin-left: 0;
                     }
-                    .mobile-result-field .mobile-result-thumbnail {
+                    .mobile-result-field .result-thumbnail {
                       margin-top: 10px;
                     }
                     .result-root.recommendation-badge {
@@ -77,22 +77,22 @@ export const atomicResultStyles = `
                     .result-field.text-thumbnail:has(.result-thumbnail) .result-text {
                       flex: 0 0 56%;
                     }
-                    .thumbnail-wrapper {
+                    .result-item .atomic-search-thumbnail-wrapper {
                       position: relative;
                       display: inline-block;
                       cursor: pointer;
-                    }
-                    .thumbnail-img {
+                    } 
+                    .result-item .atomic-search-thumbnail-img {
                       display: block;
                     }
-                    .thumbnail-wrapper .icon-play-outline-white {
+                    .result-item .atomic-search-thumbnail-wrapper .icon-play-outline-white {
                       position: absolute;
                       left: 50%;
                       top: 50%;
                       transform: translate(-50%, -50%);
                       pointer-events: none;
                     }
-                    .thumbnail-wrapper .icon-play-outline-white img {
+                    .result-item .atomic-search-thumbnail-wrapper .icon-play-outline-white img {
                       width: 40px;
                       height: 40px;
                     }
@@ -552,15 +552,15 @@ export default function atomicResultHandler(block, placeholders) {
   function openVideoModal(videoUrl) {
     document.body.style.overflow = 'hidden';
 
-    let modal = document.querySelector('.tutorial-video-modal');
+    let modal = document.querySelector('.video-modal-wrapper');
     let iframeContainer;
 
     if (!modal) {
       modal = document.createElement('div');
-      modal.classList.add('tutorial-video-modal');
+      modal.classList.add('video-modal-wrapper');
 
       const modalContent = document.createElement('div');
-      modalContent.classList.add('tutorial-video-modal-content');
+      modalContent.classList.add('video-modal-container');
 
       const closeBtn = document.createElement('span');
       closeBtn.classList.add('icon', 'icon-close-light');
@@ -570,7 +570,7 @@ export default function atomicResultHandler(block, placeholders) {
       });
 
       iframeContainer = document.createElement('div');
-      iframeContainer.classList.add('tutorial-video-modal-iframe-container');
+      iframeContainer.classList.add('video-modal');
 
       modalContent.appendChild(closeBtn);
       modalContent.appendChild(iframeContainer);
@@ -578,7 +578,7 @@ export default function atomicResultHandler(block, placeholders) {
       decorateIcons(modal);
       document.body.appendChild(modal);
     } else {
-      iframeContainer = modal.querySelector('.tutorial-video-modal-iframe-container');
+      iframeContainer = modal.querySelector('.video-modal');
       modal.style.display = 'flex';
     }
 
@@ -734,17 +734,17 @@ export default function atomicResultHandler(block, placeholders) {
 
           const imgUrl = `${cleanUrl}?format=jpeg`;
           const thumbnailWrapper = isMobileView
-            ? resultShadow.querySelector('.mobile-result-thumbnail')
-            : resultShadow.querySelector('.result-thumbnail');
+            ? resultShadow.querySelector('.mobile-only .result-field.result-thumbnail')
+            : resultShadow.querySelector('.desktop-only .result-field.result-thumbnail');
           if (thumbnailWrapper) {
             let img = thumbnailWrapper.querySelector('img');
             if (!img) {
               img = document.createElement('img');
-              img.classList.add('thumbnail-img');
+              img.classList.add('atomic-search-thumbnail-img');
               img.alt = thumbnailAlt;
               img.loading = 'lazy';
               const wrapper = document.createElement('span');
-              wrapper.classList.add('thumbnail-wrapper');
+              wrapper.classList.add('atomic-search-thumbnail-wrapper');
               const playButton = document.createElement('span');
               playButton.classList.add('icon', 'icon-play-outline-white');
               wrapper.appendChild(img);
