@@ -552,7 +552,9 @@ export default function atomicResultHandler(block, placeholders) {
   function openVideoModal(videoUrl) {
     document.body.style.overflow = 'hidden';
 
-    let modal = document.querySelector('.video-modal-wrapper');
+    const parentBlock = document.querySelector('.atomic-search');
+    if (!parentBlock) return;
+    let modal = parentBlock.querySelector('.video-modal-wrapper');
     let iframeContainer;
 
     if (!modal) {
@@ -577,11 +579,7 @@ export default function atomicResultHandler(block, placeholders) {
       modalContent.appendChild(iframeContainer);
       modal.appendChild(modalContent);
       decorateIcons(modal);
-      const parentBlock = document.querySelector('.atomic-search');
       parentBlock.appendChild(modal);
-      if (parentBlock) {
-        parentBlock.appendChild(modal);
-      }
     } else {
       iframeContainer = modal.querySelector('.video-modal');
       modal.style.display = 'flex';

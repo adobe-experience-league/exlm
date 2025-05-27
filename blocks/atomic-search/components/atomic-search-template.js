@@ -9,7 +9,10 @@ import { atomicResultListStyles, atomicResultStyles } from './atomic-search-resu
 
 const getCoveoAtomicMarkup = (placeholders) => {
   const { lang: languageCode } = getPathDetails();
-  const TUTORIAL_TYPE = 'Tutorial';
+  const CONTENT_TYPES = {
+    TUTORIAL: 'Tutorial',
+  };
+
   const atomicUIElements = htmlToElement(`
         <atomic-search-interface language=${languageCode}  search-hub="Experience League Learning Hub" fields-to-include='["@foldingchild","@foldingcollection","@foldingparent","author","author_bio_page","author_name","author_type","authorname","authortype","collection","connectortype","contenttype","date","documenttype","el_author_type","el_contenttype","el_id","el_interactionstyle","el_kudo_status","el_lirank","el_product","el_rank_icon","el_reply_status","el_solution","el_solutions_authored","el_type","el_usergenerictext","el_version","el_view_status","exl_description","exl_thumbnail","filetype","id","language","liMessageLabels","liboardinteractionstyle","licommunityurl","lithreadhassolution","objecttype","outlookformacuri","outlookuri","permanentid","role","source","sourcetype","sysdocumenttype","type","urihash","video_url", "sysdate", "el_kudo_status"]'>
           <script type="application/json" id="atomic-search-interface-config">
@@ -666,7 +669,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </template>
                       </atomic-result-children-template>
                     </atomic-result-children>
-                    <atomic-field-condition must-match-el_contenttype="${TUTORIAL_TYPE}">
+                    <atomic-field-condition must-match-el_contenttype="${CONTENT_TYPES.TUTORIAL}">
                       <atomic-field-condition if-defined="video_url">
                         <div class="result-field result-thumbnail">
                           <div class="result-thumbnail">
@@ -728,7 +731,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                           </atomic-result-section-excerpt>
                         </div>
                         </div>
-                        <atomic-field-condition must-match-el_contenttype="${TUTORIAL_TYPE}">
+                        <atomic-field-condition must-match-el_contenttype="${CONTENT_TYPES.TUTORIAL}">
                           <atomic-field-condition if-defined="video_url">
                             <div class="result-field result-thumbnail">
                               <div class="result-thumbnail">
