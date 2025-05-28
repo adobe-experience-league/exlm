@@ -1745,7 +1745,7 @@
                 "value": "fill-background"
               },
               {
-                "name": "Insert a video",
+                "name": "Select to insert a video as the background",
                 "value": "video"
               }
             ]
@@ -1846,7 +1846,7 @@
         "name": "videoUrl",
         "value": "",
         "label": "Video URL",
-        "description": "Enter the MPC-hosted video URL (must be MP4 and compatible)."
+        "description": "Enter the MPC-hosted video URL"
       },
       {
         "component": "reference",

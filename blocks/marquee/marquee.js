@@ -3,49 +3,6 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 
-function handleVideoLinks(videoLinkElems, block) {
-  videoLinkElems.forEach((videoLinkElem) => {
-    const videoLink = videoLinkElem.getAttribute('href');
-    videoLinkElem.setAttribute('href', '#');
-    videoLinkElem.removeAttribute('target');
-
-    // Add play icon
-    const playIcon = document.createElement('span');
-    playIcon.classList.add('icon', 'icon-play');
-    videoLinkElem.prepend(playIcon);
-    decorateIcons(videoLinkElem);
-
-    // Create modal
-    const modal = document.createElement('div');
-    modal.classList.add('modal');
-    const closeIcon = document.createElement('span');
-    closeIcon.classList.add('icon', 'icon-close-light');
-    modal.appendChild(closeIcon);
-    decorateIcons(modal);
-    modal.style.display = 'none';
-    block.append(modal);
-
-    // Event listeners
-    videoLinkElem.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (modal.style.display === 'none') {
-          modal.style.display = 'block';
-          modal.innerHTML += getDefaultEmbed(videoLink, { autoplay: true });
-          modal.appendChild(closeIcon);
-        } else {
-          modal.style.display = 'none';
-          modal.innerHTML = '';
-          modal.appendChild(closeIcon);
-        }
-      });
-        closeIcon.addEventListener('click', () => {
-        modal.style.display = 'none';
-        modal.innerHTML = '';
-        modal.appendChild(closeIcon);
-      });
-    });
-  }
-
 const getDefaultEmbed = (url, { autoplay = false } = {}) => `
   <div class="video-frame">
     <iframe
@@ -56,7 +13,6 @@ const getDefaultEmbed = (url, { autoplay = false } = {}) => `
       title="Content from ${new URL(url).hostname}"
       loading="lazy"></iframe>
   </div>`;
-
 
 const getMpcVideoDetailsByUrl = async (url) => {
   try {
@@ -84,7 +40,7 @@ function handleSigninLinks(block) {
         });
       }
     });
-  }
+}
 
 function createPlayButton() {
   return htmlToElement(`
@@ -109,6 +65,7 @@ export default async function decorate(block) {
     secondCta,
     secondCtaLinkType;
 
+  // checking if second div contains a picture element
   if (allDivs[1]?.querySelector('picture')) {
     [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] = allDivs;
   } else {
@@ -150,61 +107,48 @@ export default async function decorate(block) {
     <div class='marquee-background' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
       <div class='marquee-background-fill'>
           ${
-        !isStraightVariant
-          ? `
-          <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
-            <path
-              id="Path_1"
-              data-name="Path 1"
-              d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z"
-              transform="translate(-738.685 1.777)"
-              fill="${bgColor}"
-            />
-          </svg>`
-          : ' '
-      }
+            !isStraightVariant
+              ? `
+            <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
+              <path
+                d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z"
+                transform="translate(-738.685 1.777)"
+                fill="${bgColor}"
+              />
+            </svg>`
+              : ''
+          }
+        </div>
+        <div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>
       </div>
-      <div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>
-
-      </div>
-    </div>
     </div>
   `);
 
+  // Clear existing content and append the new marquee DOM
   block.textContent = '';
-block.append(marqueeDOM);
+  block.append(marqueeDOM);
 
-const bgContainer = block.querySelector('.marquee-background');
-const bgFill = bgContainer?.querySelector('.marquee-background-fill');
+  if (isVideoVariant) {
+    if (videoUrl) {
+      // Hide decorative SVG and filler for video variant
+      const svgEl = block.querySelector('.marquee-background svg');
+      if (svgEl) svgEl.style.display = 'none';
 
-const insertSubject = (element) => {
-  if (bgFill) {
-    bgFill.after(element);
-  } else {
-    bgContainer.prepend(element);
-  }
-};
+      const bgFillerEl = block.querySelector('.marquee-bg-filler');
+      if (bgFillerEl) bgFillerEl.style.display = 'none';
 
-if (isVideoVariant) {
-  if (videoUrl) {
-    const svgEl = bgContainer?.querySelector('svg');
-    if (svgEl) svgEl.style.display = 'none';
-    const bgFillerEl = block.querySelector('.marquee-bg-filler');
-    if (bgFillerEl) bgFillerEl.style.display = 'none';
-    if (bgContainer) bgContainer.style.position = 'relative';
+      const bgContainer = block.querySelector('.marquee-background');
+      bgContainer.style.position = 'relative';
 
-    const subjectEl = document.createElement('div');
-    subjectEl.classList.add('marquee-subject');
-    subjectEl.style.backgroundColor = bgColor;
-    Object.assign(subjectEl.style, {
-      position: 'relative',
-      width: '100%',
-      height: '100%',
-    });
-
-    try {
+      // Fetch MPC video details to get poster image
       const videoDetails = await getMpcVideoDetailsByUrl(videoUrl);
       const posterUrl = videoDetails?.video?.poster;
+      const subjectEl = document.createElement('div');
+      subjectEl.classList.add('marquee-subject');
+      subjectEl.style.backgroundColor = bgColor;
+      subjectEl.style.position = 'relative';
+      subjectEl.style.width = '100%';
+      subjectEl.style.height = '100%';
 
       if (posterUrl) {
         const imgEl = document.createElement('img');
@@ -222,63 +166,62 @@ if (isVideoVariant) {
 
       const playButton = createPlayButton();
       subjectEl.appendChild(playButton);
-
       playButton.addEventListener('click', (e) => {
         e.stopPropagation();
         subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
       });
 
-      insertSubject(subjectEl);
-    } catch (e) {
-      console.error('Failed to load video details:', e);
-      if (subjectPicture) {
-        const fallbackEl = document.createElement('div');
-        fallbackEl.classList.add('marquee-subject');
-        fallbackEl.style.backgroundColor = bgColor;
-        fallbackEl.append(subjectPicture);
-        insertSubject(fallbackEl);
+      bgContainer.prepend(subjectEl);
+    } else if (subjectPicture) {
+      // Fallback: if no videoUrl but picture exists, add it as subject
+      const bgContainer = block.querySelector('.marquee-background');
+      const bgFill = bgContainer.querySelector('.marquee-background-fill');
+      const subjectEl = document.createElement('div');
+      subjectEl.classList.add('marquee-subject');
+      subjectEl.style.backgroundColor = bgColor;
+      subjectEl.append(subjectPicture);
+      if (bgFill) {
+        bgFill.after(subjectEl);
       } else {
-        block.classList.add('no-subject');
+        bgContainer.prepend(subjectEl);
       }
+    } else {
+      block.classList.add('no-subject');
     }
   } else if (subjectPicture) {
+    // Non-video variant with subject picture
+    const bgContainer = block.querySelector('.marquee-background');
+    const bgFill = bgContainer.querySelector('.marquee-background-fill');
     const subjectEl = document.createElement('div');
     subjectEl.classList.add('marquee-subject');
     subjectEl.style.backgroundColor = bgColor;
     subjectEl.append(subjectPicture);
-    insertSubject(subjectEl);
+    if (bgFill) {
+      bgFill.after(subjectEl);
+    } else {
+      bgContainer.prepend(subjectEl);
+    }
   } else {
     block.classList.add('no-subject');
   }
-} else if (subjectPicture) {
-  const subjectEl = document.createElement('div');
-  subjectEl.classList.add('marquee-subject');
-  subjectEl.style.backgroundColor = bgColor;
-  subjectEl.append(subjectPicture);
-  insertSubject(subjectEl);
-} else {
-  block.classList.add('no-subject');
-}
 
+  // Apply background color if fill-background class present
   if (block.classList.contains('fill-background')) {
     block.style.backgroundColor = bgColor;
   }
 
-  block.append(marqueeDOM);
-
-  if (!((firstCta && firstCtaLinkType) || (secondCta && secondCtaLinkType))) {
-    return; // Exit early if no CTA or link type is present
-  }
-
+  // Check CTA link types
   const isVideoLinkType =
     firstCtaLinkType?.textContent?.trim() === 'video' || secondCtaLinkType?.textContent?.trim() === 'video';
+
   const isSigninLinkType =
     firstCtaLinkType?.textContent?.trim() === 'signin' || secondCtaLinkType?.textContent?.trim() === 'signin';
 
+  // Utility to add specific CTA classes
   function addCtaClass(ctaType, selector) {
     const ctaText = ctaType?.textContent?.trim();
     if (ctaText === 'video' || ctaText === 'signin') {
-      block.querySelector(selector).classList.add(ctaText);
+      block.querySelector(selector)?.classList.add(ctaText);
     }
   }
 
@@ -291,6 +234,56 @@ if (isVideoVariant) {
 
   if (isVideoLinkType) {
     const videoLinkElems = block.querySelectorAll('.marquee-cta > .video');
-    handleVideoLinks(videoLinkElems, block);
+    videoLinkElems.forEach((videoLinkElem) => {
+      const videoLink = videoLinkElem.getAttribute('href');
+
+      videoLinkElem.setAttribute('href', '#');
+      videoLinkElem.removeAttribute('target');
+
+      const playIcon = document.createElement('span');
+      playIcon.classList.add('icon', 'icon-play');
+      videoLinkElem.prepend(playIcon);
+
+      decorateIcons(videoLinkElem);
+
+      const modal = document.createElement('div');
+      modal.classList.add('modal');
+
+      const closeIcon = document.createElement('span');
+      closeIcon.classList.add('icon', 'icon-close-light');
+      modal.appendChild(closeIcon);
+
+      decorateIcons(modal);
+
+      modal.style.display = 'none';
+      block.append(modal);
+
+      videoLinkElem.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (modal.style.display === 'none') {
+          modal.style.display = 'block';
+          modal.innerHTML += getDefaultEmbed(videoLink, { autoplay: true });
+          modal.appendChild(closeIcon);
+        } else {
+          modal.style.display = 'none';
+          modal.innerHTML = '';
+          modal.appendChild(closeIcon);
+        }
+      });
+
+      closeIcon.addEventListener('click', () => {
+        modal.style.display = 'none';
+        modal.innerHTML = '';
+        modal.appendChild(closeIcon);
+      });
+    });
+  }
+
+  // Decorate icons for all CTAs
+  decorateIcons(block.querySelector('.marquee-cta'));
+
+  // Add marquee-straight class if straight variant
+  if (isStraightVariant) {
+    block.classList.add('marquee-straight');
   }
 }
