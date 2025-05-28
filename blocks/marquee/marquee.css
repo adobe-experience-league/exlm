@@ -503,13 +503,11 @@ body[class^='article-'] .marquee-content-container {
   }
 }
 
-/* Marquee with video: background setup */
 .marquee.video .marquee-background {
   position: relative;
   overflow: hidden;
 }
 
-/* Video or poster fills entire background */
 .marquee.video .marquee-subject {
   position: absolute;
   inset: 0;
@@ -521,21 +519,17 @@ body[class^='article-'] .marquee-content-container {
   cursor: pointer;
 }
 
-/* Poster image centered and scaled */
 .marquee.video .marquee-subject img {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  object-fit: contain;
   max-width: none;
   max-height: 100%;
   width: auto;
   height: auto;
-  z-index: 1;
 }
 
-/* Embedded iframe video */
 .marquee.video .marquee-subject iframe {
   position: absolute;
   inset: 0;
@@ -543,10 +537,8 @@ body[class^='article-'] .marquee-content-container {
   height: 100%;
   border: none;
   z-index: 10;
-  background-color: black;
 }
 
-/* Play button */
 .marquee.video .marquee-play-button {
   position: absolute;
   bottom: 10px;
@@ -556,13 +548,8 @@ body[class^='article-'] .marquee-content-container {
   padding: 0;
   cursor: pointer;
   z-index: 20;
-  outline-offset: 2px;
-}
-.marquee.video .marquee-play-button:focus {
-  outline: 2px solid #fff;
 }
 
-/* Circular play button background and icon */
 .marquee.video .video-overlay-play-circle {
   width: 48px;
   height: 48px;
@@ -572,6 +559,7 @@ body[class^='article-'] .marquee-content-container {
   align-items: center;
   justify-content: center;
 }
+
 .marquee.video .play-triangle {
   width: 0;
   height: 0;
