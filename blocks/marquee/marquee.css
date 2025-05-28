@@ -503,6 +503,7 @@ body[class^='article-'] .marquee-content-container {
   }
 }
 
+/* Styling for .marquee.video block */
 .marquee.video .marquee-background {
   position: relative;
   overflow: hidden;
@@ -553,7 +554,7 @@ body[class^='article-'] .marquee-content-container {
 .marquee.video .video-overlay-play-circle {
   width: 48px;
   height: 48px;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgb(0 0 0 / 60%);
   border-radius: 50%;
   display: flex;
   align-items: center;
