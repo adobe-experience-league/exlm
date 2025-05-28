@@ -3,6 +3,17 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 
+const getDefaultEmbed = (url, { autoplay = false } = {}) => `
+  <div class="video-frame">
+    <iframe 
+      src="${new URL(url).href + (autoplay ? '?autoplay=true' : '')}"
+      style="border:0; top:0; left:0; width:100%; height:100%; position:absolute;"
+      allowfullscreen
+      allow="encrypted-media; autoplay"
+      title="Content from ${new URL(url).hostname}"
+      loading="lazy"></iframe>
+  </div>`;
+  
 function handleVideoLinks(videoLinkElems, block) {
   videoLinkElems.forEach((videoLinkElem) => {
     const videoLink = videoLinkElem.getAttribute('href');
@@ -48,17 +59,6 @@ function handleVideoLinks(videoLinkElems, block) {
   });
 }
 
-const getDefaultEmbed = (url, { autoplay = false } = {}) => `
-  <div class="video-frame">
-    <iframe 
-      src="${new URL(url).href + (autoplay ? '?autoplay=true' : '')}"
-      style="border:0; top:0; left:0; width:100%; height:100%; position:absolute;"
-      allowfullscreen
-      allow="encrypted-media; autoplay"
-      title="Content from ${new URL(url).hostname}"
-      loading="lazy"></iframe>
-  </div>`;
-
 const getMpcVideoDetailsByUrl = async (url) => {
   try {
     const urlObj = new URL(url);
@@ -97,16 +97,16 @@ function createPlayButton() {
 export default async function decorate(block) {
   // Extract properties
   const allDivs = [...block.querySelectorAll(':scope > div')];
-  let customBgColor,
-    videoLinkWrapper,
-    img,
-    eyebrow,
-    title,
-    longDescr,
-    firstCta,
-    firstCtaLinkType,
-    secondCta,
-    secondCtaLinkType;
+  let customBgColor;
+    let videoLinkWrapper;
+    let img;
+    let eyebrow;
+    let title;
+    let longDescr;
+    let firstCta;
+    let firstCtaLinkType;
+    let secondCta;
+    let secondCtaLinkType;
 
   if (allDivs[1]?.querySelector('picture')) {
     [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] = allDivs;
