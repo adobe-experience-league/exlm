@@ -1,7 +1,7 @@
 /* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
-import { htmlToElement } from '../../scripts/scripts.js'; 
+import { htmlToElement } from '../../scripts/scripts.js';
 
 const getDefaultEmbed = (url, { autoplay = false } = {}) => `
   <div class="video-frame">
@@ -38,12 +38,32 @@ function createPlayButton() {
 export default async function decorate(block) {
   // Extract properties
   const allDivs = [...block.querySelectorAll(':scope > div')];
-  let customBgColor, videoLinkWrapper, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType;
+  let customBgColor,
+    videoLinkWrapper,
+    img,
+    eyebrow,
+    title,
+    longDescr,
+    firstCta,
+    firstCtaLinkType,
+    secondCta,
+    secondCtaLinkType;
 
   if (allDivs[1]?.querySelector('picture')) {
     [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] = allDivs;
   } else {
-    [customBgColor, videoLinkWrapper, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] = allDivs;
+    [
+      customBgColor,
+      videoLinkWrapper,
+      img,
+      eyebrow,
+      title,
+      longDescr,
+      firstCta,
+      firstCtaLinkType,
+      secondCta,
+      secondCtaLinkType,
+    ] = allDivs;
   }
 
   const subjectPicture = img?.querySelector('picture');
@@ -69,14 +89,18 @@ export default async function decorate(block) {
       </div>
       <div class='marquee-background' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
         <div class='marquee-background-fill'>
-          ${!isStraightVariant ? `
+          ${
+            !isStraightVariant
+              ? `
             <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
               <path
                 d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z"
                 transform="translate(-738.685 1.777)"
                 fill="${bgColor}"
               />
-            </svg>` : ''}
+            </svg>`
+              : ''
+          }
         </div>
         <div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>
       </div>
@@ -86,74 +110,85 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(marqueeDOM);
 
- if (isVideoVariant) {
-  if (videoUrl) {
-    const svgEl = block.querySelector('.marquee-background svg');
-    if (svgEl) svgEl.style.display = 'none';
+  if (isVideoVariant) {
+    if (videoUrl) {
+      const svgEl = block.querySelector('.marquee-background svg');
+      if (svgEl) svgEl.style.display = 'none';
 
-    const bgFillerEl = block.querySelector('.marquee-bg-filler');
-    if (bgFillerEl) bgFillerEl.style.display = 'none';
+      const bgFillerEl = block.querySelector('.marquee-bg-filler');
+      if (bgFillerEl) bgFillerEl.style.display = 'none';
 
-    const bgContainer = block.querySelector('.marquee-background');
-    bgContainer.style.position = 'relative';
+      const bgContainer = block.querySelector('.marquee-background');
+      bgContainer.style.position = 'relative';
 
-    const videoDetails = await getMpcVideoDetailsByUrl(videoUrl);
-    const posterUrl = videoDetails?.video?.poster;
+      const videoDetails = await getMpcVideoDetailsByUrl(videoUrl);
+      const posterUrl = videoDetails?.video?.poster;
 
-    const subjectEl = document.createElement('div');
-    subjectEl.classList.add('marquee-subject');
-    subjectEl.style.backgroundColor = bgColor;
-    subjectEl.style.position = 'relative';
-    subjectEl.style.width = '100%';
-    subjectEl.style.height = '100%';
+      const subjectEl = document.createElement('div');
+      subjectEl.classList.add('marquee-subject');
+      subjectEl.style.backgroundColor = bgColor;
+      subjectEl.style.position = 'relative';
+      subjectEl.style.width = '100%';
+      subjectEl.style.height = '100%';
 
-    if (posterUrl) {
-      const imgEl = document.createElement('img');
-      imgEl.classList.add('marquee-video-poster');
-      imgEl.src = posterUrl;
-      imgEl.alt = 'Video thumbnail';
-      Object.assign(imgEl.style, {
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-        objectPosition: 'center',
+      if (posterUrl) {
+        const imgEl = document.createElement('img');
+        imgEl.classList.add('marquee-video-poster');
+        imgEl.src = posterUrl;
+        imgEl.alt = 'Video thumbnail';
+        Object.assign(imgEl.style, {
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: 'center',
+        });
+        subjectEl.appendChild(imgEl);
+      }
+
+      const playButton = createPlayButton();
+      subjectEl.appendChild(playButton);
+
+      playButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
       });
-      subjectEl.appendChild(imgEl);
+
+      bgContainer.prepend(subjectEl);
+    } else if (subjectPicture) {
+      // *** FIXED fallback image insertion here ***
+      const bgContainer = block.querySelector('.marquee-background');
+      const bgFill = bgContainer.querySelector('.marquee-background-fill');
+      const subjectEl = document.createElement('div');
+      subjectEl.classList.add('marquee-subject');
+      subjectEl.style.backgroundColor = bgColor;
+      subjectEl.append(subjectPicture);
+      if (bgFill) {
+        bgFill.after(subjectEl);
+      } else {
+        bgContainer.prepend(subjectEl);
+      }
+    } else {
+      block.classList.add('no-subject');
     }
-
-    const playButton = createPlayButton();
-    subjectEl.appendChild(playButton);
-
-    playButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
-    });
-
-    bgContainer.prepend(subjectEl);
   } else if (subjectPicture) {
     const bgContainer = block.querySelector('.marquee-background');
+    const bgFill = bgContainer.querySelector('.marquee-background-fill');
     const subjectEl = document.createElement('div');
     subjectEl.classList.add('marquee-subject');
     subjectEl.style.backgroundColor = bgColor;
     subjectEl.append(subjectPicture);
-    bgContainer.prepend(subjectEl);
+    if (bgFill) {
+      bgFill.after(subjectEl);
+    } else {
+      bgContainer.prepend(subjectEl);
+    }
   } else {
     block.classList.add('no-subject');
   }
-} else if (subjectPicture) {
-  const bgContainer = block.querySelector('.marquee-background');
-  const subjectEl = document.createElement('div');
-  subjectEl.classList.add('marquee-subject');
-  subjectEl.style.backgroundColor = bgColor;
-  subjectEl.append(subjectPicture);
-  bgContainer.prepend(subjectEl);
-} else {
-  block.classList.add('no-subject');
-}
 
-if (block.classList.contains('fill-background')) {
-  block.style.backgroundColor = bgColor;
-}
+  if (block.classList.contains('fill-background')) {
+    block.style.backgroundColor = bgColor;
+  }
 
   // CTA classes & handlers
   const isVideoLinkType =
@@ -210,23 +245,30 @@ if (block.classList.contains('fill-background')) {
 
       videoLinkElem.addEventListener('click', (e) => {
         e.preventDefault();
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-
-        if (!modal.querySelector('iframe')) {
-          const iframeContainer = document.createElement('div');
-          iframeContainer.classList.add('iframe-container');
-          iframeContainer.innerHTML = `<iframe src="${videoLink}?autoplay=true" frameborder="0" allowfullscreen allow="autoplay"></iframe>`;
-          modal.appendChild(iframeContainer);
+        if (modal.style.display === 'none') {
+          modal.style.display = 'block';
+          modal.innerHTML += getDefaultEmbed(videoLink, { autoplay: true });
+          modal.appendChild(closeIcon);
+        } else {
+          modal.style.display = 'none';
+          modal.innerHTML = '';
+          modal.appendChild(closeIcon);
         }
       });
 
       closeIcon.addEventListener('click', () => {
         modal.style.display = 'none';
-        document.body.style.overflow = '';
-        const iframe = modal.querySelector('iframe');
-        if (iframe) iframe.remove();
+        modal.innerHTML = '';
+        modal.appendChild(closeIcon);
       });
     });
+  }
+
+  // Icon decorations on first and second CTA buttons
+  decorateIcons(block.querySelector('.marquee-cta'));
+
+  // Add class to marquee block to style variant if 'straight'
+  if (isStraightVariant) {
+    block.classList.add('marquee-straight');
   }
 }
