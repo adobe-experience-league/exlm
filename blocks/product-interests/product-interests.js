@@ -9,6 +9,11 @@ const interestsEventEmitter = getEmitter('interests');
 const profileEventEmitter = getEmitter('profile');
 const signupDialogEventEmitter = getEmitter('signupDialog');
 
+function sentAnalyticsInterestUpdateEvent(interests) {
+  // TODO: Push analytics event here
+  console.log('interests', interests);
+}
+
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
 try {
@@ -214,6 +219,8 @@ function handleProductInterestChange(block) {
       if (event.target.tagName === 'INPUT') {
         const [, id] = event.target.id.split('__');
         interestsEventEmitter.set(id, event.target.checked);
+
+        sentAnalyticsInterestUpdateEvent({ id, title: event.target.title });
       }
     });
   });
