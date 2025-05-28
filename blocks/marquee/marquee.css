@@ -186,6 +186,11 @@ div.marquee-wrapper {
   min-height: unset;
 }
 
+.marquee.video .marquee-background {
+  position: relative;
+  overflow: hidden;
+}
+
 .marquee.straight.small .marquee-background {
   height: 150px;
 }
@@ -504,10 +509,6 @@ body[class^='article-'] .marquee-content-container {
 }
 
 /* Styling for .marquee.video block */
-.marquee.video .marquee-background {
-  position: relative;
-  overflow: hidden;
-}
 
 .marquee.video .marquee-subject {
   position: absolute;
