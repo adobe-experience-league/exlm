@@ -502,3 +502,69 @@ body[class^='article-'] .marquee-content-container {
     box-sizing: border-box;
   }
 }
+
+.marquee.video .marquee-background {
+  position: relative;
+  overflow: hidden;
+}
+
+.marquee.video .marquee-subject {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-color: var(--spectrum-gray-700);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.marquee.video .marquee-subject img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: none;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+}
+
+.marquee.video .marquee-subject iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  z-index: 10;
+}
+
+.marquee.video .marquee-play-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  z-index: 20;
+}
+
+.marquee.video .video-overlay-play-circle {
+  width: 48px;
+  height: 48px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marquee.video .play-triangle {
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 16px solid #fff;
+  margin-left: 3px;
+}
