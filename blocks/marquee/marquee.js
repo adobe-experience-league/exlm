@@ -13,7 +13,7 @@ const getDefaultEmbed = (url, { autoplay = false } = {}) => `
       title="Content from ${new URL(url).hostname}"
       loading="lazy"></iframe>
   </div>`;
-  
+
 function handleVideoLinks(videoLinkElems, block) {
   videoLinkElems.forEach((videoLinkElem) => {
     const videoLink = videoLinkElem.getAttribute('href');
@@ -98,15 +98,15 @@ export default async function decorate(block) {
   // Extract properties
   const allDivs = [...block.querySelectorAll(':scope > div')];
   let customBgColor;
-    let videoLinkWrapper;
-    let img;
-    let eyebrow;
-    let title;
-    let longDescr;
-    let firstCta;
-    let firstCtaLinkType;
-    let secondCta;
-    let secondCtaLinkType;
+  let videoLinkWrapper;
+  let img;
+  let eyebrow;
+  let title;
+  let longDescr;
+  let firstCta;
+  let firstCtaLinkType;
+  let secondCta;
+  let secondCtaLinkType;
 
   if (allDivs[1]?.querySelector('picture')) {
     [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] = allDivs;
