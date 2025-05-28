@@ -1,6 +1,7 @@
 /* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { htmlToElement } from '../../scripts/scripts.js';
 
 function handleVideoLinks(videoLinkElems, block) {
   videoLinkElems.forEach((videoLinkElem) => {
@@ -27,24 +28,47 @@ function handleVideoLinks(videoLinkElems, block) {
     // Event listeners
     videoLinkElem.addEventListener('click', (e) => {
       e.preventDefault();
-      modal.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-
-      if (!modal.querySelector('iframe')) {
-        const iframeContainer = document.createElement('div');
-        iframeContainer.classList.add('iframe-container');
-        iframeContainer.innerHTML = `<iframe src="${videoLink}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-        modal.append(iframeContainer);
-      }
+      if (modal.style.display === 'none') {
+          modal.style.display = 'block';
+          modal.innerHTML += getDefaultEmbed(videoLink, { autoplay: true });
+          modal.appendChild(closeIcon);
+        } else {
+          modal.style.display = 'none';
+          modal.innerHTML = '';
+          modal.appendChild(closeIcon);
+        }
+      });
+        closeIcon.addEventListener('click', () => {
+        modal.style.display = 'none';
+        modal.innerHTML = '';
+        modal.appendChild(closeIcon);
+      });
     });
+  }
 
-    modal.addEventListener('click', () => {
-      modal.style.display = 'none';
-      document.body.removeAttribute('style');
-      modal.querySelector('.iframe-container').remove();
-    });
-  });
-}
+const getDefaultEmbed = (url, { autoplay = false } = {}) => `
+  <div class="video-frame">
+    <iframe
+      src="${new URL(url).href + (autoplay ? '?autoplay=true' : '')}"
+      style="border:0; top:0; left:0; width:100%; height:100%; position:absolute;"
+      allowfullscreen
+      allow="encrypted-media; autoplay"
+      title="Content from ${new URL(url).hostname}"
+      loading="lazy"></iframe>
+  </div>`;
+
+
+const getMpcVideoDetailsByUrl = async (url) => {
+  try {
+    const urlObj = new URL(url);
+    urlObj.searchParams.set('format', 'json');
+    const res = await fetch(urlObj.href);
+    if (!res.ok) return undefined;
+    return await res.json();
+  } catch {
+    return undefined;
+  }
+};
 
 function handleSigninLinks(block) {
   import('../../scripts/auth/profile.js')
@@ -60,19 +84,55 @@ function handleSigninLinks(block) {
         });
       }
     });
+  }
+
+function createPlayButton() {
+  return htmlToElement(`
+    <button aria-label="play" class="video-overlay-play-button marquee-play-button">
+      <div class="video-overlay-play-circle">
+        <div class="play-triangle"></div>
+      </div>
+    </button>`);
 }
 
 export default async function decorate(block) {
   // Extract properties
-  // always same order as in model, empty string if not set
-  const [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] =
-    block.querySelectorAll(':scope div > div');
+  const allDivs = [...block.querySelectorAll(':scope > div')];
+  let customBgColor,
+    videoLinkWrapper,
+    img,
+    eyebrow,
+    title,
+    longDescr,
+    firstCta,
+    firstCtaLinkType,
+    secondCta,
+    secondCtaLinkType;
 
-  const subjectPicture = img.querySelector('picture');
+  if (allDivs[1]?.querySelector('picture')) {
+    [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] = allDivs;
+  } else {
+    [
+      customBgColor,
+      videoLinkWrapper,
+      img,
+      eyebrow,
+      title,
+      longDescr,
+      firstCta,
+      firstCtaLinkType,
+      secondCta,
+      secondCtaLinkType,
+    ] = allDivs;
+  }
+
+  const subjectPicture = img?.querySelector('picture');
+  const isVideoVariant = block.classList.contains('video');
+  const videoUrl = videoLinkWrapper?.querySelector('a')?.href?.trim();
   const isStraightVariant = block.classList.contains('straight');
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
-  const eyebrowText = eyebrow?.textContent?.trim();
+  const eyebrowText = eyebrow?.textContent?.trim() || '';
 
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
@@ -88,13 +148,8 @@ export default async function decorate(block) {
       </div>
     </div>
     <div class='marquee-background' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
+      <div class='marquee-background-fill'>
           ${
-            subjectPicture
-              ? `<div class='marquee-subject' style="background-color: ${bgColor}">${subjectPicture.outerHTML}</div>`
-              : `<div class='marquee-spacer'></div>`
-          } 
-      <div class="marquee-background-fill">
-      ${
         !isStraightVariant
           ? `
           <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
@@ -117,10 +172,93 @@ export default async function decorate(block) {
   `);
 
   block.textContent = '';
+block.append(marqueeDOM);
 
-  if (!subjectPicture) {
+const bgContainer = block.querySelector('.marquee-background');
+const bgFill = bgContainer?.querySelector('.marquee-background-fill');
+
+const insertSubject = (element) => {
+  if (bgFill) {
+    bgFill.after(element);
+  } else {
+    bgContainer.prepend(element);
+  }
+};
+
+if (isVideoVariant) {
+  if (videoUrl) {
+    const svgEl = bgContainer?.querySelector('svg');
+    if (svgEl) svgEl.style.display = 'none';
+    const bgFillerEl = block.querySelector('.marquee-bg-filler');
+    if (bgFillerEl) bgFillerEl.style.display = 'none';
+    if (bgContainer) bgContainer.style.position = 'relative';
+
+    const subjectEl = document.createElement('div');
+    subjectEl.classList.add('marquee-subject');
+    subjectEl.style.backgroundColor = bgColor;
+    Object.assign(subjectEl.style, {
+      position: 'relative',
+      width: '100%',
+      height: '100%',
+    });
+
+    try {
+      const videoDetails = await getMpcVideoDetailsByUrl(videoUrl);
+      const posterUrl = videoDetails?.video?.poster;
+
+      if (posterUrl) {
+        const imgEl = document.createElement('img');
+        imgEl.classList.add('marquee-video-poster');
+        imgEl.src = posterUrl;
+        imgEl.alt = 'Video thumbnail';
+        Object.assign(imgEl.style, {
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: 'center',
+        });
+        subjectEl.appendChild(imgEl);
+      }
+
+      const playButton = createPlayButton();
+      subjectEl.appendChild(playButton);
+
+      playButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
+      });
+
+      insertSubject(subjectEl);
+    } catch (e) {
+      console.error('Failed to load video details:', e);
+      if (subjectPicture) {
+        const fallbackEl = document.createElement('div');
+        fallbackEl.classList.add('marquee-subject');
+        fallbackEl.style.backgroundColor = bgColor;
+        fallbackEl.append(subjectPicture);
+        insertSubject(fallbackEl);
+      } else {
+        block.classList.add('no-subject');
+      }
+    }
+  } else if (subjectPicture) {
+    const subjectEl = document.createElement('div');
+    subjectEl.classList.add('marquee-subject');
+    subjectEl.style.backgroundColor = bgColor;
+    subjectEl.append(subjectPicture);
+    insertSubject(subjectEl);
+  } else {
     block.classList.add('no-subject');
   }
+} else if (subjectPicture) {
+  const subjectEl = document.createElement('div');
+  subjectEl.classList.add('marquee-subject');
+  subjectEl.style.backgroundColor = bgColor;
+  subjectEl.append(subjectPicture);
+  insertSubject(subjectEl);
+} else {
+  block.classList.add('no-subject');
+}
 
   if (block.classList.contains('fill-background')) {
     block.style.backgroundColor = bgColor;
