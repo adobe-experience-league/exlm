@@ -229,10 +229,11 @@ export default async function decorate(block) {
       videoLinkElem.setAttribute('href', '#');
       videoLinkElem.removeAttribute('target');
 
-      const playIcon = document.createElement('span');
-      playIcon.classList.add('icon', 'icon-play');
-      videoLinkElem.prepend(playIcon);
-      decorateIcons(videoLinkElem);
+    if (!videoLinkElem.querySelector('.icon-play')) {
+    const playIcon = document.createElement('span');
+    playIcon.classList.add('icon', 'icon-play');
+    videoLinkElem.prepend(playIcon);}
+
 
       const modal = document.createElement('div');
       modal.classList.add('modal');
