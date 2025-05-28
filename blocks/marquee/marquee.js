@@ -86,7 +86,8 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(marqueeDOM);
 
-  if (isVideoVariant && videoUrl) {
+  if (isVideoVariant) {
+    if (videoUrl){
     const svgEl = block.querySelector('.marquee-background svg');
     if (svgEl) svgEl.style.display = 'none';
 
@@ -128,7 +129,7 @@ export default async function decorate(block) {
       subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
     });
 
-    bgContainer.prepend(subjectEl);
+    bgContainer.prepend(subjectEl);}
   } else if (subjectPicture) {
     const bgContainer = block.querySelector('.marquee-background');
     const subjectEl = document.createElement('div');
