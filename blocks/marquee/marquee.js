@@ -184,12 +184,6 @@ export default async function decorate(block) {
   block.append(marqueeDOM);
 
   if (isVideoVariant && videoUrl) {
-    const svgEl = block.querySelector('.marquee-background svg');
-    if (svgEl) svgEl.style.display = 'none';
-
-    const bgFillerEl = block.querySelector('.marquee-bg-filler');
-    if (bgFillerEl) bgFillerEl.style.display = 'none';
-
     const bgContainer = block.querySelector('.marquee-background');
     bgContainer.style.position = 'relative';
 
