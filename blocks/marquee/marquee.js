@@ -40,21 +40,21 @@ function handleVideoLinks(videoLinkElems, block) {
     // Event listeners
     videoLinkElem.addEventListener('click', (e) => {
       e.preventDefault();
-      if (modal.style.display === 'none') {
-        modal.style.display = 'block';
-        modal.innerHTML += getDefaultEmbed(videoLink, { autoplay: true });
-        modal.appendChild(closeIcon);
-      } else {
-        modal.style.display = 'none';
-        modal.innerHTML = '';
-        modal.appendChild(closeIcon);
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+
+      if (!modal.querySelector('iframe')) {
+        const iframeContainer = document.createElement('div');
+        iframeContainer.classList.add('iframe-container');
+        iframeContainer.innerHTML = `<iframe src="${videoLink}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+        modal.append(iframeContainer);
       }
     });
 
-    closeIcon.addEventListener('click', () => {
+    modal.addEventListener('click', () => {
       modal.style.display = 'none';
-      modal.innerHTML = '';
-      modal.appendChild(closeIcon);
+      document.body.removeAttribute('style');
+      modal.querySelector('.iframe-container').remove();
     });
   });
 }
@@ -280,8 +280,4 @@ export default async function decorate(block) {
 
   // Icon decorations on first and second CTA buttons
   decorateIcons(block.querySelector('.marquee-cta'));
-
-  if (isStraightVariant) {
-    block.classList.add('marquee-straight');
-  }
 }
