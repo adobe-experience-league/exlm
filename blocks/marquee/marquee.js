@@ -166,13 +166,13 @@ export default async function decorate(block) {
     </div>
   `);
 
-  function appendSubjectPicture(block, subjectPicture, bgColor) {
-    const bgContainer = block.querySelector('.marquee-background');
+  function appendSubjectPicture(container, pictureEl, color) {
+    const bgContainer = container.querySelector('.marquee-background');
     const bgFill = bgContainer.querySelector('.marquee-background-fill');
     const subjectEl = document.createElement('div');
     subjectEl.classList.add('marquee-subject');
-    subjectEl.style.backgroundColor = bgColor;
-    subjectEl.append(subjectPicture);
+    subjectEl.style.backgroundColor = color;
+    subjectEl.append(pictureEl);
     if (bgFill) {
       bgFill.after(subjectEl);
     } else {
