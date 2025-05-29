@@ -1849,9 +1849,15 @@
         "description": "Enter the MPC-hosted video URL"
       },
         {
-  "condition": {
-    "!==": [{ "var": "classes[?(@ == 'video')]" }, "video"]
-  },
+"condition": {
+  "not": {
+    "some": [
+      { "var": "classes" },
+      { "===": [{ "var": "" }, "video"] }
+    ]
+  }
+}
+,
 
   "component": "reference",
   "valueType": "string",
@@ -1861,9 +1867,14 @@
   "multi": false
 },
 {
- "condition": {
-    "!==": [{ "var": "classes[?(@ == 'video')]" }, "video"]
-  },
+  "condition": {
+  "not": {
+    "some": [
+      { "var": "classes" },
+      { "===": [{ "var": "" }, "video"] }
+    ]
+  }
+},
   "component": "text",
   "valueType": "string",
   "name": "fileReferenceAlt",
