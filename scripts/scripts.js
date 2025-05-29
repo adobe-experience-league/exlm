@@ -201,81 +201,6 @@ function addProfileRail(main) {
   main.append(profileRailSection);
 }
 
-function addSlides(main) {
-  // const slidesTemplate = `
-  //     <div class="slides block" data-block-name="slides">
-  //         <div>
-  //           <div>
-  //             <h2 id="the-overall-slides-title">The overall Slides title</h2>
-  //             <p>Description can contain standard markdown inline syntax such as <strong>bold text</strong>, <em>italics</em>, <code>inline code</code>, ~~strikethrough~~, <a href="https://example.com" title="hyperlinks" target="_blank">hyperlinks</a>. But cannot nest any nested blocks/containers.</p>
-  //           </div>
-  //         </div>
-  //         <div>
-  //           <div>
-  //             <p>
-  //               <picture>
-  //                 <source type="image/webp" srcset="https://main--exl-slides--davidjgonzalez.hlx.page/aem-assets/contextual-search/media_14917bf866a275c08bd19f96998eca0df30e7d8be.png?width=2000&amp;format=webply&amp;optimize=medium" media="(min-width: 600px)">
-  //                 <source type="image/webp" srcset="https://main--exl-slides--davidjgonzalez.hlx.page/aem-assets/contextual-search/media_14917bf866a275c08bd19f96998eca0df30e7d8be.png?width=750&amp;format=webply&amp;optimize=medium">
-  //                 <source type="image/png" srcset="https://main--exl-slides--davidjgonzalez.hlx.page/aem-assets/contextual-search/media_14917bf866a275c08bd19f96998eca0df30e7d8be.png?width=2000&amp;format=png&amp;optimize=medium" media="(min-width: 600px)">
-  //                 <img loading="lazy" alt="" src="https://main--exl-slides--davidjgonzalez.hlx.page/aem-assets/contextual-search/media_14917bf866a275c08bd19f96998eca0df30e7d8be.png?width=750&amp;format=png&amp;optimize=medium" width="1608" height="908">
-  //               </picture>
-  //             </p>
-  //             <ul>
-  //               <li><span type="circle" x="100" y="50" r="10">Circle callout tooltip</span></li>
-  //               <li><span type="circle" x="100" y="50" r="10">Circle callout tooltip</span></li>
-  //               <li><span type="rectangle" x="100" y="50" r="10">Rectangle callout tooltip</span></li>
-  //             </ul>
-  //             <h3 id="slide-title-can-be-anything">Slide title can be anything</h3>
-  //             <p>Description can contain standard markdown inline syntax such as <strong>bold text</strong>, <em>italics</em>, <code>inline code</code>, ~~strikethrough~~, <a href="https://example.com" title="hyperlinks" target="_blank">hyperlinks</a>. But cannot nest any nested blocks/containers.</p>
-  //           </div>
-  //         </div>
-  //         <div>
-  //           <div>
-  //             <p>
-  //               <picture>
-  //                 <source type="image/webp" srcset="https://main--exl-slides--davidjgonzalez.hlx.page/aem-assets/contextual-search/media_1c2da1c1eabad2b9dc49da522b6851b40bf2e16c1.png?width=2000&amp;format=webply&amp;optimize=medium" media="(min-width: 600px)">
-  //                 <source type="image/webp" srcset="https://main--exl-slides--davidjgonzalez.hlx.page/aem-assets/contextual-search/media_1c2da1c1eabad2b9dc49da522b6851b40bf2e16c1.png?width=750&amp;format=webply&amp;optimize=medium">
-  //                 <source type="image/png" srcset="https://main--exl-slides--davidjgonzalez.hlx.page/aem-assets/contextual-search/media_1c2da1c1eabad2b9dc49da522b6851b40bf2e16c1.png?width=2000&amp;format=png&amp;optimize=medium" media="(min-width: 600px)">
-  //                 <img loading="lazy" alt="" src="https://main--exl-slides--davidjgonzalez.hlx.page/aem-assets/contextual-search/media_1c2da1c1eabad2b9dc49da522b6851b40bf2e16c1.png?width=750&amp;format=png&amp;optimize=medium" width="1608" height="908">
-  //               </picture>
-  //             </p>
-  //             <ul>
-  //               <li><span type="circle" x="100" y="50" r="10">Circle callout tooltip</span></li>
-  //             </ul>
-  //             <h3 id="slide-title-can-be-something-else">Slide title can be something else</h3>
-  //             <p>Description can contain standard markdown inline syntax such as <strong>bold text</strong>, <em>italics</em>, <code>inline code</code>, ~~strikethrough~~, <a href="https://example.com" title="hyperlinks" target="_blank">hyperlinks</a>. But cannot nest any nested blocks/containers.</p>
-  //           </div>
-  //         </div>
-  //       </div>`;
-  const newTemplate = `<div class="slides"><div><div><div>
-            <h2>The overall Slides title</h2>
-            <p>Description can contain standard markdown inline syntax such as <strong>bold text</strong>, <em>italics</em>, <code>inline code</code>, ~~strikethrough~~, <a href="https://example.com">hyperlinks</a>. But cannot nest any nested blocks/containers.</p>
-          </div></div></div><div><div><div>
-            <p>
-              <img src="https://picsum.photos/1600/900/" alt="screenshot 1">
-            </p>
-            <ul>
-              <li>[Circle callout tooltip]{type="circle" x="100" y="50" r="10"}</li>
-              <li>[Circle callout tooltip]{type="circle" x="100" y="50" r="10"}</li>
-              <li>[Rectangle callout tooltip]{type="rectangle" x="100" y="50" r="10"}</li>
-            </ul>
-            <h3>Slide title can be anything</h3>
-            <p>Description can contain standard markdown inline syntax such as <strong>bold text</strong>, <em>italics</em>, <code>inline code</code>, ~~strikethrough~~, <a href="https://example.com">hyperlinks</a>. But cannot nest any nested blocks/containers.</p>
-          </div></div></div><div><div><div>
-            <p>
-              <img src="https://picsum.photos/1600/900/" alt="screenshot 2">
-            </p>
-            <ul>
-              <li>[Circle callout tooltip]{type="circle" x="100" y="50" r="10"}</li>
-            </ul>
-            <h3>Slide title can be something else</h3>
-            <p>Description can contain standard markdown inline syntax such as <strong>bold text</strong>, <em>italics</em>, <code>inline code</code>, ~~strikethrough~~, <a href="https://example.com">hyperlinks</a>. But cannot nest any nested blocks/containers.</p>
-          </div></div></div></div>`;
-  const slidesWrapper = document.createElement('div');
-  slidesWrapper.innerHTML = newTemplate;
-  main.appendChild(slidesWrapper);
-}
-
 /**
  * Add a mini TOC to the article page.
  * @param {HTMLElement} main
@@ -355,7 +280,6 @@ function buildAutoBlocks(main, isFragment = false) {
       if (isProfilePage) {
         addProfileRail(main);
       }
-      addSlides(main);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
