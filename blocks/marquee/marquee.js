@@ -166,6 +166,20 @@ export default async function decorate(block) {
     </div>
   `);
 
+  function appendSubjectPicture(block, subjectPicture, bgColor) {
+    const bgContainer = block.querySelector('.marquee-background');
+    const bgFill = bgContainer.querySelector('.marquee-background-fill');
+    const subjectEl = document.createElement('div');
+    subjectEl.classList.add('marquee-subject');
+    subjectEl.style.backgroundColor = bgColor;
+    subjectEl.append(subjectPicture);
+    if (bgFill) {
+      bgFill.after(subjectEl);
+    } else {
+      bgContainer.prepend(subjectEl);
+    }
+  }
+
   block.textContent = '';
   block.append(marqueeDOM);
 
@@ -214,32 +228,12 @@ export default async function decorate(block) {
 
       bgContainer.prepend(subjectEl);
     } else if (subjectPicture) {
-      const bgContainer = block.querySelector('.marquee-background');
-      const bgFill = bgContainer.querySelector('.marquee-background-fill');
-      const subjectEl = document.createElement('div');
-      subjectEl.classList.add('marquee-subject');
-      subjectEl.style.backgroundColor = bgColor;
-      subjectEl.append(subjectPicture);
-      if (bgFill) {
-        bgFill.after(subjectEl);
-      } else {
-        bgContainer.prepend(subjectEl);
-      }
+      appendSubjectPicture(block, subjectPicture, bgColor);
     } else {
       block.classList.add('no-subject');
     }
   } else if (subjectPicture) {
-    const bgContainer = block.querySelector('.marquee-background');
-    const bgFill = bgContainer.querySelector('.marquee-background-fill');
-    const subjectEl = document.createElement('div');
-    subjectEl.classList.add('marquee-subject');
-    subjectEl.style.backgroundColor = bgColor;
-    subjectEl.append(subjectPicture);
-    if (bgFill) {
-      bgFill.after(subjectEl);
-    } else {
-      bgContainer.prepend(subjectEl);
-    }
+    appendSubjectPicture(block, subjectPicture, bgColor);
   } else {
     block.classList.add('no-subject');
   }
