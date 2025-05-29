@@ -181,6 +181,7 @@ export default async function decorate(block) {
   }
 
   block.textContent = '';
+  block.append(marqueeDOM);
 
   if (isVideoVariant) {
     if (videoUrl) {
@@ -241,7 +242,6 @@ export default async function decorate(block) {
     block.style.backgroundColor = bgColor;
   }
 
-  block.append(marqueeDOM);
 
   if (!((firstCta && firstCtaLinkType) || (secondCta && secondCtaLinkType))) {
     return; // Exit early if no CTA or link type is present
