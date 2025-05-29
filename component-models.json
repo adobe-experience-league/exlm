@@ -1846,7 +1846,7 @@
         "name": "videoUrl",
         "value": "",
         "label": "Video URL",
-        "description": "Enter the MPC-hosted video URL"
+        "description": "Enter the MPC-hosted video URL (applicable only for style variant :straight and size variant : large)"
       },
       {
         "component": "reference",

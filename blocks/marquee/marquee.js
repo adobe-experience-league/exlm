@@ -129,6 +129,8 @@ export default async function decorate(block) {
   const isVideoVariant = block.classList.contains('video');
   const videoUrl = videoLinkWrapper?.querySelector('a')?.href?.trim();
   const isStraightVariant = block.classList.contains('straight');
+  const isLargeVariant = block.classList.contains('large');
+  const marqueeVideoVariant = isVideoVariant && isLargeVariant && isStraightVariant;
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
   const eyebrowText = eyebrow?.textContent?.trim() || '';
@@ -183,7 +185,13 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(marqueeDOM);
 
-  if (isVideoVariant && videoUrl) {
+  if (marqueeVideoVariant && videoUrl) {
+    const svgEl = block.querySelector('.marquee-background svg');
+    if (svgEl) svgEl.style.display = 'none';
+
+    const bgFillerEl = block.querySelector('.marquee-bg-filler');
+    if (bgFillerEl) bgFillerEl.style.display = 'none';
+
     const bgContainer = block.querySelector('.marquee-background');
     bgContainer.style.position = 'relative';
 
