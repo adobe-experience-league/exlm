@@ -196,7 +196,6 @@ export default async function decorate(block) {
     bgContainer.style.position = 'relative';
 
     const videoDetails = await getMpcVideoDetailsByUrl(videoUrl);
-    console.log(videoDetails)
     const posterUrl = videoDetails?.video?.poster;
 
     const subjectEl = document.createElement('div');
@@ -210,7 +209,7 @@ export default async function decorate(block) {
       const imgEl = document.createElement('img');
       imgEl.classList.add('marquee-video-poster');
       imgEl.src = posterUrl;
-      imgEl.alt = 'Video thumbnail';
+      imgEl.alt = videoDetails.title || 'Video thumbnail';
       Object.assign(imgEl.style, {
         width: '100%',
         height: '100%',
