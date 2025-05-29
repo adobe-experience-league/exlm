@@ -1,6 +1,7 @@
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { htmlToElement, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
+import { pushProductInterestsEvent } from '../../scripts/analytics/lib-analytics.js';
 import getEmitter from '../../scripts/events.js';
 import FormValidator from '../../scripts/form-validator.js';
 
@@ -8,11 +9,6 @@ const { interestsUrl } = getConfig();
 const interestsEventEmitter = getEmitter('interests');
 const profileEventEmitter = getEmitter('profile');
 const signupDialogEventEmitter = getEmitter('signupDialog');
-
-function sentAnalyticsInterestUpdateEvent(interests) {
-  // TODO: Push analytics event here
-  console.log('interests', interests);
-}
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
@@ -219,8 +215,14 @@ function handleProductInterestChange(block) {
       if (event.target.tagName === 'INPUT') {
         const [, id] = event.target.id.split('__');
         interestsEventEmitter.set(id, event.target.checked);
-
-        sentAnalyticsInterestUpdateEvent({ id, title: event.target.title });
+        // TODO: Push analytics event here, the idea is detect when is checked and when is unchecked
+        if (event.target.checked) {
+          pushProductInterestsEvent(id, event.target.title, 'selected');
+          console.info('selected', id, event.target.title);
+        } else {
+          pushProductInterestsEvent(id, event.target.title, 'unselected');
+          console.info('unselected', id, event.target.title);
+        }
       }
     });
   });
