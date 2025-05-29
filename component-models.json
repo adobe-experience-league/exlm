@@ -1851,7 +1851,7 @@
       {
   "condition": {
     "not": {
-      "in": ["video", { "var": "classes" }]
+      "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "video"] }]
     }
   },
   "component": "reference",
@@ -1864,7 +1864,7 @@
 {
   "condition": {
     "not": {
-      "in": ["video", { "var": "classes" }]
+      "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "video"] }]
     }
   },
   "component": "text",
