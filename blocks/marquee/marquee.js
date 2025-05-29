@@ -236,10 +236,6 @@ export default async function decorate(block) {
     block.style.backgroundColor = bgColor;
   }
 
-  if (block.classList.contains('fill-background')) {
-    block.style.backgroundColor = bgColor;
-  }
-
   if (!((firstCta && firstCtaLinkType) || (secondCta && secondCtaLinkType))) {
     return; // Exit early if no CTA or link type is present
   }
