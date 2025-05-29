@@ -66,19 +66,13 @@ export function addCallouts(step) {
   const picture = step.querySelector('picture');
   const image = step.querySelector('img');
 
-  if (!picture || !image) {
+  if (!picture && !image) {
     return;
   }
 
-  // Find the <source> tag with the media query "(min-width: 600px)"
-  const sourceElement = picture.querySelector('source[media="(min-width: 600px)"]');
-  // Create a new Image element
-  const largestImage = new Image();
-  // eslint-disable-next-line prefer-destructuring
-  largestImage.src = sourceElement.getAttribute('srcset').split(' ')[0];
+  let largestImage;
 
-  // Listen for the load event of the Image element
-  largestImage.onload = () => {
+  const setupCallout = () => {
     // Access the naturalWidth property of the loaded image
     // const naturalWidth = largestImage.naturalWidth;
     // const naturalHeight = largestImage.naturalHeight;
@@ -142,6 +136,20 @@ export function addCallouts(step) {
       }
     }).observe(image);
   };
+
+  if (!picture) {
+    largestImage = image;
+    setupCallout();
+  } else {
+    // Find the <source> tag with the media query "(min-width: 600px)"
+    const sourceElement = picture.querySelector('source[media="(min-width: 600px)"]');
+    // Create a new Image element
+    largestImage = new Image();
+    // eslint-disable-next-line prefer-destructuring
+    largestImage.src = sourceElement.getAttribute('srcset').split(' ')[0];
+    // Listen for the load event of the Image element
+    largestImage.onload = setupCallout;
+  }
 }
 
 export function parseCallout(calloutParams = '') {
@@ -222,13 +230,56 @@ export function getVisual(cell) {
   return visual;
 }
 
+export function generateVisualConfig(cell) {
+  const visual = {};
+  const [pictureWrapper, calloutWrapper] = cell?.children || [];
+  const pictureElement = pictureWrapper.querySelector(':scope picture') || pictureWrapper.querySelector(':scope img');
+  if (pictureElement) {
+    // image
+    visual.image = pictureElement.outerHTML;
+    if (calloutWrapper) {
+      visual.callouts = Array.from(calloutWrapper.querySelectorAll(':scope > li'))
+        .map((li) => {
+          const txt = li.textContent.trim();
+          // extract the "[…]" tooltip
+          const tooltip = txt.match(/^\[(.+?)\]/)?.[1] ?? null;
+          // pull out all key="value" pairs from the "{…}"
+          const props = Object.fromEntries(
+            [...txt.matchAll(/(\w+)="([^"]+)"/g)].map(([, k, v]) => [k, Number.isNaN(v) ? v : +v]),
+          );
+          const { x, y, r, height, width } = props;
+          return {
+            toast: null,
+            button: null,
+            width: width || r * 2, // TODO:: Hardcoding for now.
+            height: height || r * 2, // TODO:: Hardcoding for now.
+            x,
+            y,
+            tooltip,
+            clickable: null, // TODO:: Hardcoding for now.
+          };
+        })
+        .filter((o) => o.tooltip !== null);
+    }
+  } else if (cell.querySelector(':scope > pre')) {
+    // code
+    visual.code = cell.querySelector(':scope > pre').outerHTML;
+    visual.body = [...cell.querySelectorAll(':scope > *')]
+      .filter((el) => !el.matches('pre'))
+      .map((el) => el.outerHTML)
+      .join('');
+  }
+
+  return visual;
+}
+
 export async function activateStep(block, stepIndex, direction = 'next') {
   // There should only be 1 match, but the forEach guards against no matches as well
   const step = block.querySelector(`[data-step="${stepIndex}"]`);
 
   step.classList.add('active');
 
-  step.querySelectorAll('[data-callout] ~ picture > img').forEach((image) => {
+  step.querySelectorAll('[data-callout] ~ :is(picture > img, img)').forEach((image) => {
     if (image.complete && image.naturalWidth > 0) {
       addCallouts(step);
     } else {

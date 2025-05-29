@@ -1,8 +1,9 @@
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 import state from './state.js';
 import {
+  generateVisualConfig,
   getPreference,
   setPreference,
-  getVisual,
   getAudioFilename,
   getNextStep,
   getPreviousStep,
@@ -45,10 +46,6 @@ function html(content) {
 
                       <meta itemprop="caption" content="${step.title}">
                       <meta itemprop="representativeOfPage" content="${stepIndex === 0 ? 'true' : 'false'}">
-        
-                      <h4 id="${step.id}" class="title">${section.number ? `${section.number}.` : ''}${step.number}. ${
-                        step.title
-                      }</h4>
 
                       <!-- Visuals -->
                       <div class="visual-wrapper">
@@ -119,12 +116,25 @@ function html(content) {
 
                         </div>            
                       </div>
-
+                      <div class="content-info doc-content-info">
+                        <label class="step-label">Step ${step.number} of ${section.steps.length}</label>
+                        <div class="copy-icon">
+                            <span class="icon icon-copy-link"></span>
+                            <label>Copy link</label>
+                        </div>
+                      </div>            
                       <!-- Slide Controls -->
                       <div class="controls">
                           <div class="controls-bar">
-                              <button class="previous-button" data-previous-step="previous-button">Previous</button>
+                              <button class="previous-button secondary" data-previous-step="previous-button">Previous</button>
                               <button class="next-button" data-next-step="next-button">Next</button>
+
+                              <audio 
+                                  class="audio-player" data-audio-controls
+                                  src="${step.audio}" controls preload controlslist="nodownload">
+                                  <source src="${step.audio} type="audio/wav">
+                                  Your browser does not support the audio element.
+                              </audio>
 
                               <span class="auto-play">
                                   <label for="auto-play" class="auto-play-label">Autoplay</label>
@@ -134,15 +144,15 @@ function html(content) {
                                       data-auto-play-audio="${autoplayAudio}" 
                                       title="Turn autoplay on to automatically advance through the steps."></button>
                               </span>
-
-                              <audio 
-                                  class="audio-player" data-audio-controls
-                                  src="${step.audio}" controls preload controlslist="nodownload">
-                                  <source src="${step.audio} type="audio/wav">
-                                  Your browser does not support the audio element.
-                              </audio>
                           </div >
-
+                          
+                          <div class="content-info slides-content-info">
+                            <label class="step-label">Step ${step.number} of ${section.steps.length}</label>
+                            <div class="copy-icon">
+                                <span class="icon icon-copy-link"></span>
+                                <label>Copy link</label>
+                            </div>
+                          </div>
                           <div class="step-name" data-step-name>
 
                               ${
@@ -166,21 +176,21 @@ function html(content) {
 
                               <select class="step-name-select" data-step-name-select aria-label="Current step">
                                 ${section.steps
-                                  .map(
-                                    (stepOption, stepOptionIndex) =>
-                                      `<option value="${stepOption.id}">${stepOptionIndex + 1}. ${
-                                        stepOption.title
-                                      }</option>`,
-                                  )
+                                  .map((stepOption) => `<option value="${stepOption.id}">${stepOption.title}</option>`)
                                   .join('')}
                               </select>
                             
                           </div>
                       </div>
+
+                      <h4 id="${step.id}" class="title">${section.number ? `${section.number}.` : ''}${step.number}. ${
+                        step.title
+                      }</h4>
               
                       <!-- Step body -->
                       <div class="content" itemprop="description">
                           ${step.body}
+                          <button class="button secondary">Expand all steps</button>
                       </div>
                   </div>`,
                 )
@@ -274,14 +284,18 @@ function addEventHandlers(block) {
 }
 
 export default async function decorate(block) {
-  const blockId = block.querySelector(':scope > div:first-child > div:first-child > h2').id;
-
-  block.querySelector(':scope > div > div:first-child > h2').id = blockId;
-
+  const [firstChildBlock, ...restOfBlock] = block.children;
+  const baseHeadingElement = firstChildBlock.querySelector('h2');
+  let blockId = '';
+  if (baseHeadingElement) {
+    blockId = baseHeadingElement.id || baseHeadingElement.textContent.toLowerCase().split(' ').join('-');
+    baseHeadingElement.id = blockId;
+  }
+  const bodyElement = firstChildBlock.querySelector(':scope > div > div');
   const content = {
     id: blockId,
-    title: block.querySelector(':scope > div:first-child > div:first-child > h2').textContent,
-    body: [...block.querySelectorAll(':scope > div:first-child > div:first-child > *')]
+    title: baseHeadingElement?.textContent || '',
+    body: Array.from(bodyElement?.children || [])
       .filter((el) => !el.matches('h2'))
       .map((el) => el.outerHTML)
       .join(''),
@@ -295,7 +309,7 @@ export default async function decorate(block) {
 
   // Process rows 2 to n; these may be sections or steps
   await Promise.all(
-    [...block.querySelectorAll(':scope > div:not(:first-child)')].map(async (row) => {
+    restOfBlock.map(async (row) => {
       // Every row except the first ...
       if (row.querySelector(':scope > div:last-child').innerHTML.trim() === '') {
         // Sections have nothing in the right/last cell
@@ -316,21 +330,26 @@ export default async function decorate(block) {
       } else {
         // Steps have something in the right/last cell
         const text = row.querySelector(':scope > div:first-child');
-        const visual = row.querySelector(':scope > div:last-child');
-        const stepId = section.id
-          ? `${section.id}__${text.querySelector(':scope > h3, :scope > h4')?.id}`
-          : text.querySelector(':scope h3, :scope > h4')?.id;
+        // const visual = row.querySelector(':scope > div:last-child');
+        const slideWrapper = row.querySelector(':scope > div > div');
+        const [, , titleElement, ...rest] = slideWrapper?.children || [];
+        const titleId = titleElement?.id || titleElement?.textContent?.split(' ')?.join('-')?.toLowerCase() || '';
+        if (titleElement) {
+          titleElement.id = titleId;
+        }
+
+        const stepId = section.id ? `${section.id}__${titleId}` : titleId;
 
         section.steps.push({
           id: stepId,
           number: null, // Must be computed after all steps are collected
           active: window.location.hash === `#${blockId}=${stepId}`,
-          title: text.querySelector(':scope > h3, :scope > h4')?.textContent,
-          body: [...text.querySelectorAll(':scope > *')]
+          title: titleElement?.textContent,
+          body: Array.from(rest)
             .filter((el) => !el.matches('h3, h4'))
             .map((el) => el.outerHTML)
             .join(' '),
-          visual: getVisual(visual),
+          visual: generateVisualConfig(slideWrapper),
           audio: `https://dxenablementbeta.blob.core.windows.net/exl-slides/audio/${await getAudioFilename(text)}.wav`,
         });
       }
@@ -354,6 +373,7 @@ export default async function decorate(block) {
   });
 
   content.sections = sections || [];
+  console.log('****************** content::', content);
 
   block.innerHTML = html(content);
 
@@ -368,6 +388,7 @@ export default async function decorate(block) {
   }
 
   block.style.display = 'block';
+  decorateIcons(block);
 
   return block;
 }
