@@ -183,59 +183,57 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(marqueeDOM);
 
-  if (isVideoVariant) {
-    if (videoUrl) {
-      const svgEl = block.querySelector('.marquee-background svg');
-      if (svgEl) svgEl.style.display = 'none';
+  if (isVideoVariant && videoUrl) {
+    const svgEl = block.querySelector('.marquee-background svg');
+    if (svgEl) svgEl.style.display = 'none';
 
-      const bgFillerEl = block.querySelector('.marquee-bg-filler');
-      if (bgFillerEl) bgFillerEl.style.display = 'none';
+    const bgFillerEl = block.querySelector('.marquee-bg-filler');
+    if (bgFillerEl) bgFillerEl.style.display = 'none';
 
-      const bgContainer = block.querySelector('.marquee-background');
-      bgContainer.style.position = 'relative';
+    const bgContainer = block.querySelector('.marquee-background');
+    bgContainer.style.position = 'relative';
 
-      const videoDetails = await getMpcVideoDetailsByUrl(videoUrl);
-      const posterUrl = videoDetails?.video?.poster;
+    const videoDetails = await getMpcVideoDetailsByUrl(videoUrl);
+    const posterUrl = videoDetails?.video?.poster;
 
-      const subjectEl = document.createElement('div');
-      subjectEl.classList.add('marquee-subject');
-      subjectEl.style.backgroundColor = bgColor;
-      subjectEl.style.position = 'relative';
-      subjectEl.style.width = '100%';
-      subjectEl.style.height = '100%';
+    const subjectEl = document.createElement('div');
+    subjectEl.classList.add('marquee-subject');
+    subjectEl.style.backgroundColor = bgColor;
+    subjectEl.style.position = 'relative';
+    subjectEl.style.width = '100%';
+    subjectEl.style.height = '100%';
 
-      if (posterUrl) {
-        const imgEl = document.createElement('img');
-        imgEl.classList.add('marquee-video-poster');
-        imgEl.src = posterUrl;
-        imgEl.alt = 'Video thumbnail';
-        Object.assign(imgEl.style, {
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          objectPosition: 'center',
-        });
-        subjectEl.appendChild(imgEl);
-      }
-
-      const playButton = createPlayButton();
-      subjectEl.appendChild(playButton);
-
-      playButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
+    if (posterUrl) {
+      const imgEl = document.createElement('img');
+      imgEl.classList.add('marquee-video-poster');
+      imgEl.src = posterUrl;
+      imgEl.alt = 'Video thumbnail';
+      Object.assign(imgEl.style, {
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        objectPosition: 'center',
       });
-
-      bgContainer.prepend(subjectEl);
-    } else if (subjectPicture) {
-      appendSubjectPicture(block, subjectPicture, bgColor);
-    } else {
-      block.classList.add('no-subject');
+      subjectEl.appendChild(imgEl);
     }
+
+    const playButton = createPlayButton();
+    subjectEl.appendChild(playButton);
+
+    playButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
+    });
+
+    bgContainer.prepend(subjectEl);
   } else if (subjectPicture) {
     appendSubjectPicture(block, subjectPicture, bgColor);
   } else {
     block.classList.add('no-subject');
+  }
+
+  if (block.classList.contains('fill-background')) {
+    block.style.backgroundColor = bgColor;
   }
 
   if (block.classList.contains('fill-background')) {
