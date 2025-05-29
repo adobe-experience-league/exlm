@@ -3,6 +3,17 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 
+const getDefaultEmbed = (url, { autoplay = false } = {}) => `
+  <div class="video-frame">
+    <iframe 
+      src="${new URL(url).href + (autoplay ? '?autoplay=true' : '')}"
+      style="border:0; top:0; left:0; width:100%; height:100%; position:absolute;"
+      allowfullscreen
+      allow="encrypted-media; autoplay"
+      title="Content from ${new URL(url).hostname}"
+      loading="lazy"></iframe>
+  </div>`;
+
 function handleVideoLinks(videoLinkElems, block) {
   videoLinkElems.forEach((videoLinkElem) => {
     const videoLink = videoLinkElem.getAttribute('href');
@@ -26,38 +37,27 @@ function handleVideoLinks(videoLinkElems, block) {
     modal.style.display = 'none';
     block.append(modal);
 
-    // Event listeners
     videoLinkElem.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (modal.style.display === 'none') {
-        modal.style.display = 'block';
-        modal.innerHTML += getDefaultEmbed(videoLink, { autoplay: true });
-        modal.appendChild(closeIcon);
-      } else {
-        modal.style.display = 'none';
-        modal.innerHTML = '';
-        modal.appendChild(closeIcon);
-      }
-    });
+  e.preventDefault();
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
 
-    closeIcon.addEventListener('click', () => {
-      modal.style.display = 'none';
-      modal.innerHTML = '';
-      modal.appendChild(closeIcon);
-    });
+  if (!modal.querySelector('iframe')) {
+    const iframeContainer = document.createElement('div');
+    iframeContainer.classList.add('iframe-container');
+    iframeContainer.innerHTML = `<iframe src="${videoLink}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+    modal.append(iframeContainer);
+  }
+});
+
+modal.addEventListener('click', () => {
+  modal.style.display = 'none';
+  document.body.removeAttribute('style');
+  modal.querySelector('.iframe-container').remove();
+});
+
   });
 }
-
-const getDefaultEmbed = (url, { autoplay = false } = {}) => `
-  <div class="video-frame">
-    <iframe 
-      src="${new URL(url).href + (autoplay ? '?autoplay=true' : '')}"
-      style="border:0; top:0; left:0; width:100%; height:100%; position:absolute;"
-      allowfullscreen
-      allow="encrypted-media; autoplay"
-      title="Content from ${new URL(url).hostname}"
-      loading="lazy"></iframe>
-  </div>`;
 
 const getMpcVideoDetailsByUrl = async (url) => {
   try {
@@ -97,16 +97,16 @@ function createPlayButton() {
 export default async function decorate(block) {
   // Extract properties
   const allDivs = [...block.querySelectorAll(':scope > div')];
-  let customBgColor,
-    videoLinkWrapper,
-    img,
-    eyebrow,
-    title,
-    longDescr,
-    firstCta,
-    firstCtaLinkType,
-    secondCta,
-    secondCtaLinkType;
+  let customBgColor;
+  let videoLinkWrapper;
+  let img;
+  let eyebrow;
+  let title;
+  let longDescr;
+  let firstCta;
+  let firstCtaLinkType;
+  let secondCta;
+  let secondCtaLinkType;
 
   if (allDivs[1]?.querySelector('picture')) {
     [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] = allDivs;
@@ -276,7 +276,7 @@ export default async function decorate(block) {
   if (isVideoLinkType) {
     const videoLinkElems = block.querySelectorAll('.marquee-cta > .video');
     handleVideoLinks(videoLinkElems, block);
-    }
+  }
 
   // Icon decorations on first and second CTA buttons
   decorateIcons(block.querySelector('.marquee-cta'));
