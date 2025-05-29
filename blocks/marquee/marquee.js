@@ -196,6 +196,7 @@ export default async function decorate(block) {
     bgContainer.style.position = 'relative';
 
     const videoDetails = await getMpcVideoDetailsByUrl(videoUrl);
+    console.log(videoDetails)
     const posterUrl = videoDetails?.video?.poster;
 
     const subjectEl = document.createElement('div');
