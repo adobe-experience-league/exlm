@@ -61,8 +61,40 @@ export const atomicResultStyles = `
                       gap: 2px;
                       margin-left: 0;
                     }
+                    .atomic-search-result-item.mobile-only .result-field.result-thumbnail {
+                      margin-top: 10px;
+                    }
                     .result-root.recommendation-badge {
                           margin: 40px 0px 0px;
+                    }
+                    .atomic-search-result-item .result-field.text-thumbnail {
+                      display: flex;
+                      gap: 18px;
+                    }
+                    .atomic-search-result-item .result-field.text-thumbnail:not(:has(.result-thumbnail)) {
+                      gap: 0;
+                    }
+                    .atomic-search-result-item .result-field.text-thumbnail:has(.result-thumbnail) .result-text {
+                      flex: 0 0 56%;
+                    }
+                    .atomic-search-result-item.result-item .thumbnail-wrapper {
+                      position: relative;
+                      display: inline-block;
+                      cursor: pointer;
+                    } 
+                    .atomic-search-result-item.result-item .thumbnail-img {
+                      display: block;
+                    }
+                    .atomic-search-result-item.result-item .thumbnail-wrapper .icon-play-outline-white {
+                      position: absolute;
+                      left: 50%;
+                      top: 50%;
+                      transform: translate(-50%, -50%);
+                      pointer-events: none;
+                    }
+                    .atomic-search-result-item.result-item .thumbnail-wrapper .icon-play-outline-white img {
+                      width: 40px;
+                      height: 40px;
                     }
                     @media(min-width: 1024px) {
                       .result-item.desktop-only {
@@ -517,6 +549,47 @@ export default function atomicResultHandler(block, placeholders) {
     isListenerAdded = true;
   }
 
+  function openVideoModal(videoUrl) {
+    document.body.style.overflow = 'hidden';
+
+    const parentBlock = document.querySelector('.atomic-search');
+    if (!parentBlock) return;
+    let modal = parentBlock.querySelector('.video-modal-wrapper');
+    let iframeContainer;
+
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.classList.add('video-modal-wrapper');
+
+      const modalContent = document.createElement('div');
+      modalContent.classList.add('video-modal-container');
+
+      const closeBtn = document.createElement('span');
+      closeBtn.classList.add('icon', 'icon-close-light');
+      closeBtn.addEventListener('click', () => {
+        document.body.style.overflow = '';
+        modal.style.display = 'none';
+        if (iframeContainer) iframeContainer.innerHTML = '';
+      });
+
+      iframeContainer = document.createElement('div');
+      iframeContainer.classList.add('video-modal');
+
+      modalContent.appendChild(closeBtn);
+      modalContent.appendChild(iframeContainer);
+      modal.appendChild(modalContent);
+      decorateIcons(modal);
+      parentBlock.appendChild(modal);
+    } else {
+      iframeContainer = modal.querySelector('.video-modal');
+      modal.style.display = 'flex';
+    }
+
+    if (iframeContainer && videoUrl) {
+      iframeContainer.innerHTML = `<iframe src="${videoUrl}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+    }
+  }
+
   const updateAtomicResultUI = () => {
     const results = container.querySelectorAll('atomic-result');
     const isMobileView = isMobile();
@@ -647,7 +720,52 @@ export default function atomicResultHandler(block, placeholders) {
           decorateExternalLink(anchorTag);
           decorateIcons(anchorTag);
         }
+
+        const videoUrlEl = resultShadow?.querySelector('atomic-result-text[field="video_url"]');
+        const titleEl = resultShadow?.querySelector('atomic-result-text[field="title"]');
+
+        const VIDEO_THUMBNAIL_FORMAT = /^https:\/\/video\.tv\.adobe\.com\/v\/\w+/;
+
+        if (videoUrlEl) {
+          const videoUrl = videoUrlEl?.textContent?.trim() || '';
+          if (!videoUrl) return;
+          const thumbnailAlt = titleEl?.textContent || '';
+          const cleanUrl = videoUrl.split('?')[0];
+
+          if (!VIDEO_THUMBNAIL_FORMAT.test(cleanUrl)) {
+            const thumbnail = resultShadow.querySelector('.result-thumbnail');
+            if (thumbnail) thumbnail.style.display = 'none';
+            return;
+          }
+
+          const imgUrl = `${cleanUrl}?format=jpeg`;
+          const thumbnailWrapper = isMobileView
+            ? resultShadow?.querySelector('.atomic-search-result-item.mobile-only .result-field.result-thumbnail')
+            : resultShadow?.querySelector('.atomic-search-result-item.desktop-only .result-field.result-thumbnail');
+          if (thumbnailWrapper) {
+            let img = thumbnailWrapper.querySelector('img');
+            if (!img) {
+              img = document.createElement('img');
+              img.classList.add('thumbnail-img');
+              img.alt = thumbnailAlt;
+              img.loading = 'lazy';
+              const wrapper = document.createElement('span');
+              wrapper.classList.add('thumbnail-wrapper');
+              const playButton = document.createElement('span');
+              playButton.classList.add('icon', 'icon-play-outline-white');
+              wrapper.appendChild(img);
+              wrapper.appendChild(playButton);
+              decorateIcons(wrapper);
+              thumbnailWrapper.appendChild(wrapper);
+              wrapper.addEventListener('click', () => {
+                openVideoModal(cleanUrl);
+              });
+            }
+            img.src = imgUrl || '';
+          }
+        }
       };
+
       hydrateResult();
     });
 
