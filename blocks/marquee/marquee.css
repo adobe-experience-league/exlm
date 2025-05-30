@@ -510,16 +510,14 @@ body[class^='article-'] .marquee-content-container {
   }
 }
 
-/* Ensure background height is respected when video is active */
-.marquee.video.large .marquee-background {
+.marquee.video .marquee-background {
   position: relative;
   height: var(--marquee-height-large);
   min-height: var(--marquee-height-large);
   overflow: hidden;
 }
 
-/* Make the subject area (poster or iframe) fill exactly */
-.marquee.video.large .marquee-subject {
+.marquee.video .marquee-subject {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -533,9 +531,8 @@ body[class^='article-'] .marquee-content-container {
   cursor: pointer;
 }
 
-/* Stretch poster image or iframe */
-.marquee.video.large .marquee-subject img,
-.marquee.video.large .marquee-subject iframe {
+.marquee.video .marquee-subject img,
+.marquee.video .marquee-subject iframe {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -543,16 +540,14 @@ body[class^='article-'] .marquee-content-container {
   display: block;
 }
 
-/* Position and style iframe specifically */
-.marquee.video.large .marquee-subject iframe {
+.marquee.video .marquee-subject iframe {
   position: absolute;
   inset: 0;
   border: none;
   z-index: 2;
 }
 
-/* Play button container */
-.marquee.video.large .marquee-play-button {
+.marquee.video .marquee-play-button {
   position: absolute;
   bottom: 10px;
   right: 10px;
@@ -563,8 +558,7 @@ body[class^='article-'] .marquee-content-container {
   z-index: 3;
 }
 
-/* Circular semi-transparent overlay */
-.marquee.video.large .video-overlay-play-circle {
+.marquee.video .video-overlay-play-circle {
   width: 48px;
   height: 48px;
   background: rgb(0 0 0 / 60%);
@@ -574,8 +568,7 @@ body[class^='article-'] .marquee-content-container {
   justify-content: center;
 }
 
-/* Play triangle shape inside circle */
-.marquee.video.large .play-triangle {
+.marquee.video .play-triangle {
   width: 0;
   height: 0;
   border-top: 10px solid transparent;
