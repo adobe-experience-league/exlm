@@ -182,9 +182,13 @@ export default async function decorate(block) {
     }
   }
 
+  if (!marqueeVideoVariant) {
+    block.classList.remove('video');
+  }
+
   block.textContent = '';
   block.append(marqueeDOM);
-  if (marqueeVideoVariant && videoUrl) {
+  if (isVideoVariant && videoUrl) {
     const bgContainer = block.querySelector('.marquee-background');
     bgContainer.style.position = 'relative';
 
@@ -206,7 +210,7 @@ export default async function decorate(block) {
       Object.assign(imgEl.style, {
         width: '100%',
         height: '100%',
-        objectFit: 'contain',
+        objectFit: 'cover',
         objectPosition: 'center',
       });
       subjectEl.appendChild(imgEl);
@@ -222,11 +226,6 @@ export default async function decorate(block) {
 
     bgContainer.prepend(subjectEl);
   } else if (subjectPicture) {
-    // Ensure fallback image layout looks correct by removing any leftover .video-related DOM/CSS
-    block.classList.remove('video');
-    const existingSubject = block.querySelector('.marquee-subject');
-    if (existingSubject) existingSubject.remove();
-
     appendSubjectPicture(block, subjectPicture, bgColor);
   } else {
     block.classList.add('no-subject');
