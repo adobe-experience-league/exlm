@@ -189,6 +189,9 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(marqueeDOM);
   if (isVideoVariant && videoUrl) {
+    const bgFillerEl = block.querySelector('.marquee-bg-filler');
+    if (bgFillerEl) bgFillerEl.style.display = 'none';
+
     const bgContainer = block.querySelector('.marquee-background');
     bgContainer.style.position = 'relative';
 
@@ -207,12 +210,6 @@ export default async function decorate(block) {
       imgEl.classList.add('marquee-video-poster');
       imgEl.src = posterUrl;
       imgEl.alt = videoDetails.title || 'Video thumbnail';
-      Object.assign(imgEl.style, {
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-        objectPosition: 'center',
-      });
       subjectEl.appendChild(imgEl);
     }
 

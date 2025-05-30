@@ -528,8 +528,10 @@ body[class^='article-'] .marquee-content-container {
   transform: translate(-50%, -50%);
   max-width: none;
   max-height: 100%;
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .marquee.video .marquee-subject iframe {
