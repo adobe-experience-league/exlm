@@ -151,7 +151,7 @@ export default async function decorate(block) {
       <div class='marquee-background' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
         <div class='marquee-background-fill'>
           ${
-            !isStraightVariant
+            !marqueeVideoVariant
               ? `
             <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
               <path
@@ -186,9 +186,6 @@ export default async function decorate(block) {
   block.append(marqueeDOM);
 
   if (marqueeVideoVariant && videoUrl) {
-    const svgEl = block.querySelector('.marquee-background svg');
-    if (svgEl) svgEl.style.display = 'none';
-
     const bgFillerEl = block.querySelector('.marquee-bg-filler');
     if (bgFillerEl) bgFillerEl.style.display = 'none';
 
