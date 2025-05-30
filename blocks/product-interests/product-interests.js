@@ -215,13 +215,11 @@ function handleProductInterestChange(block) {
       if (event.target.tagName === 'INPUT') {
         const [, id] = event.target.id.split('__');
         interestsEventEmitter.set(id, event.target.checked);
-        // TODO: Push analytics event here, the idea is detect when is checked and when is unchecked
+
         if (event.target.checked) {
           pushProductInterestsEvent(id, event.target.title, 'selected');
-          console.info('selected', id, event.target.title);
         } else {
           pushProductInterestsEvent(id, event.target.title, 'unselected');
-          console.info('unselected', id, event.target.title);
         }
       }
     });

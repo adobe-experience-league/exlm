@@ -338,7 +338,7 @@ export function pushProductInterestsEvent(id, title, selectionType) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   window.adobeDataLayer.push({
-    event: 'productInterests',
+    event: 'productInterestsEvent',
     productInterests: {
       productId: id,
       productTitle: title,
