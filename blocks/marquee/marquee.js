@@ -220,7 +220,7 @@ export default async function decorate(block) {
           const imgEl = document.createElement('img');
           imgEl.classList.add('marquee-video-poster');
           imgEl.src = posterUrl;
-          imgEl.alt = videoDetails.title || 'Video thumbnail';
+          imgEl.alt = videoDetails?.title || 'Video thumbnail';
           subjectEl.appendChild(imgEl);
         }
 
@@ -237,7 +237,6 @@ export default async function decorate(block) {
       .catch((error) => {
         console.error('Error loading video details:', error);
 
-        // Still add play button so user can try playing the video
         const playButton = createPlayButton();
         subjectEl.appendChild(playButton);
 
