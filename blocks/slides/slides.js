@@ -1,4 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import state from './state.js';
 import {
   generateVisualConfig,
@@ -13,7 +14,7 @@ import {
   updateWindowLocation,
 } from './utils.js';
 
-function html(content) {
+function html(content, placeholders) {
   const initialView = getPreference('view') || 'as-slides';
   const autoplayAudio = getPreference('autoplayAudio') || false;
 
@@ -24,8 +25,12 @@ function html(content) {
                 <h2 class="title">${content.title}</h2>
 
                 <div class="display-toggles">
-                    <button class="as-docs button secondary" data-toggle-view="as-docs">View as docs</button>
-                    <button class="as-slides button secondary" data-toggle-view="as-slides">View as slides</button>
+                    <button class="as-docs button secondary" data-toggle-view="as-docs">${
+                      placeholders.viewAsDocsLabel || 'View as docs'
+                    }</button>
+                    <button class="as-slides button secondary" data-toggle-view="as-slides">${
+                      placeholders.viewAsSlidesLabel || 'View as slides'
+                    }</button>
                 </div>
             </div>
         
@@ -120,7 +125,7 @@ function html(content) {
                         <label class="step-label">Step ${step.number} of ${section.steps.length}</label>
                         <div class="copy-icon">
                             <span class="icon icon-copy-link"></span>
-                            <label>Copy link</label>
+                            <label>${placeholders?.userActionCopylinkLabel || 'Copy link'}</label>
                         </div>
                       </div>            
                       <!-- Slide Controls -->
@@ -137,13 +142,19 @@ function html(content) {
                               </audio>
 
                               <span class="auto-play">
-                                  <label for="auto-play" class="auto-play-label">Autoplay</label>
-                                  <button 
-                                      name="auto-play" 
-                                      class="auto-play-button" 
-                                      data-auto-play-audio="${autoplayAudio}" 
-                                      title="Turn autoplay on to automatically advance through the steps."></button>
+                                
+                                <button
+                                  name="auto-play"
+                                  class="auto-play-button"
+                                  data-auto-play-audio="${autoplayAudio}"
+                                  aria-pressed="${autoplayAudio}"
+                                  title="Turn autoplay on to automatically advance through the steps."
+                                >
+                                  <span class="auto-play-thumb"></span>
+                                </button>
+                                <label class="auto-play-label">${placeholders?.autoPlayLabel || 'Autoplay'}</label>
                               </span>
+
                           </div >
                           
                           <div class="content-info slides-content-info">
@@ -190,7 +201,9 @@ function html(content) {
                       <!-- Step body -->
                       <div class="content" itemprop="description">
                           ${step.body}
-                          <button class="button secondary">Expand all steps</button>
+                          <button class="button secondary">${
+                            placeholders?.expandAllStepsLabel || 'Expand all steps'
+                          }</button>
                       </div>
                   </div>`,
                 )
@@ -284,6 +297,7 @@ function addEventHandlers(block) {
 }
 
 export default async function decorate(block) {
+  const placeHolderPromise = fetchLanguagePlaceholders();
   const [firstChildBlock, ...restOfBlock] = block.children;
   const baseHeadingElement = firstChildBlock.querySelector('h2');
   let blockId = '';
@@ -291,7 +305,7 @@ export default async function decorate(block) {
     blockId = baseHeadingElement.id || baseHeadingElement.textContent.toLowerCase().split(' ').join('-');
     baseHeadingElement.id = blockId;
   }
-  const bodyElement = firstChildBlock.querySelector(':scope > div > div');
+  const bodyElement = firstChildBlock.querySelector(':scope > div');
   const content = {
     id: blockId,
     title: baseHeadingElement?.textContent || '',
@@ -331,7 +345,7 @@ export default async function decorate(block) {
         // Steps have something in the right/last cell
         const text = row.querySelector(':scope > div:first-child');
         // const visual = row.querySelector(':scope > div:last-child');
-        const slideWrapper = row.querySelector(':scope > div > div');
+        const slideWrapper = row.querySelector(':scope > div');
         const [, , titleElement, ...rest] = slideWrapper?.children || [];
         const titleId = titleElement?.id || titleElement?.textContent?.split(' ')?.join('-')?.toLowerCase() || '';
         if (titleElement) {
@@ -374,8 +388,8 @@ export default async function decorate(block) {
 
   content.sections = sections || [];
   console.log('****************** content::', content);
-
-  block.innerHTML = html(content);
+  const placeholders = await placeHolderPromise;
+  block.innerHTML = html(content, placeholders);
 
   addEventHandlers(block, getStepFromWindowLocation(block));
 

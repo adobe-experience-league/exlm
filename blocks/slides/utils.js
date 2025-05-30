@@ -70,6 +70,13 @@ export function addCallouts(step) {
     return;
   }
 
+  if (image.naturalWidth) {
+    const imageIsPortrait = image.naturalWidth < image.naturalHeight;
+    if (imageIsPortrait) {
+      image.style.aspectRatio = 'auto';
+    }
+  }
+
   let largestImage;
 
   const setupCallout = () => {
@@ -240,23 +247,44 @@ export function generateVisualConfig(cell) {
     if (calloutWrapper) {
       visual.callouts = Array.from(calloutWrapper.querySelectorAll(':scope > li'))
         .map((li) => {
+          const span = li.querySelector(':scope > span');
+          if (span) {
+            const x = Number(span.getAttribute('x'));
+            const y = Number(span.getAttribute('y'));
+            const r = Number(span.getAttribute('r'));
+            const width = Number(span.getAttribute('width')) || r * 2;
+            const height = Number(span.getAttribute('height')) || r * 2;
+            const tooltip = span.textContent.trim();
+            const clickable = span.getAttribute('clickable') || null;
+
+            return { toast: null, button: null, width, height, x, y, tooltip, clickable };
+          }
+
+          // Case 2: no span child—extract from li.textContent + key="value" pairs
           const txt = li.textContent.trim();
-          // extract the "[…]" tooltip
           const tooltip = txt.match(/^\[(.+?)\]/)?.[1] ?? null;
-          // pull out all key="value" pairs from the "{…}"
+
           const props = Object.fromEntries(
-            [...txt.matchAll(/(\w+)="([^"]+)"/g)].map(([, k, v]) => [k, Number.isNaN(v) ? v : +v]),
+            [...txt.matchAll(/(\w+)="([^"]+)"/g)].map(([, k, v]) => {
+              const num = Number(v);
+              return [k, Number.isNaN(num) ? v : num];
+            }),
           );
-          const { x, y, r, height, width } = props;
+
+          const { x = 0, y = 0, r = 0, width: wProp, height: hProp, clickable: clickableProp = null } = props;
+
+          const width = wProp ?? r * 2;
+          const height = hProp ?? r * 2;
+
           return {
             toast: null,
             button: null,
-            width: width || r * 2, // TODO:: Hardcoding for now.
-            height: height || r * 2, // TODO:: Hardcoding for now.
-            x,
-            y,
+            width,
+            height,
+            x: Number(x),
+            y: Number(y),
             tooltip,
-            clickable: null, // TODO:: Hardcoding for now.
+            clickable: clickableProp,
           };
         })
         .filter((o) => o.tooltip !== null);
@@ -279,7 +307,7 @@ export async function activateStep(block, stepIndex, direction = 'next') {
 
   step.classList.add('active');
 
-  step.querySelectorAll('[data-callout] ~ :is(picture > img, img)').forEach((image) => {
+  step.querySelectorAll(':is([data-callout] ~ img, [data-callout] ~ picture > img)').forEach((image) => {
     if (image.complete && image.naturalWidth > 0) {
       addCallouts(step);
     } else {

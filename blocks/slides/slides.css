@@ -100,8 +100,8 @@
   display: none;
   margin-top: 8px;
   margin-bottom: 0;
-  color: #2c2c2c;
-  font-size: 28px;
+  color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-700);
   font-weight: bold;
 }
 
@@ -110,7 +110,7 @@
   justify-content: space-between;
   padding: 20px 0 8px;
   display: none;
-  font-size: 12px;
+  font-size: var(--spectrum-font-size-75);
 }
 
 .block.slides .content-info .step-label {
@@ -123,13 +123,17 @@
   align-items: center;
   gap: 4px;
   margin-right: 20px;
-  color: #2c2c2c;
+  color: var(--non-spectrum-dark-gray);
+  cursor: pointer;
+}
+
+.block.slides .content-info .copy-icon label {
   cursor: pointer;
 }
 
 .block.slides .content-info .icon {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 .block.slides:has(.container.as-docs) .doc-content-info {
@@ -273,7 +277,7 @@
   padding: 1rem 2rem;
   border-radius: 1000px;
   font-weight: 700;
-  font-size: 1.25rem;
+  font-size: var(--spectrum-font-size-400);
   box-shadow: 0 0 20px rgba(0 0 0 80%);
 }
 
@@ -313,7 +317,7 @@
   color: lawngreen;
   margin: 0;
   padding: 1rem 2rem;
-  font-size: 1rem;
+  font-size: var(--spectrum-font-size-200);
   font-weight: bold;
   background-color: transparent;
   display: block;
@@ -356,7 +360,7 @@
 .block.slides .controls .previous-button,
 .block.slides .controls .next-button {
   height: var(--control-item-height);
-  font-size: 1rem;
+  font-size: var(--spectrum-font-size-200);
   margin-right: 1rem;
 }
 
@@ -367,49 +371,72 @@
 }
 
 .block.slides .controls .auto-play {
-  display: flex;
+  display: inline-flex;
+  gap: 8px;
   justify-content: center;
   align-items: center;
   padding-left: 0.25rem;
   height: var(--control-item-height);
   border-radius: var(--pill-border-radius) 0 0 var(--pill-border-radius);
+  font-size: var(--spectrum-font-size-100);
+  margin: 0 var(--spectrum-spacing-100) 0 var(--spectrum-spacing-200);
 
   /* background-color: #f2f3f4; */
 }
 
 .block.slides .controls .auto-play .auto-play-label {
-  margin: 0 var(--spectrum-spacing-100) 0 var(--spectrum-spacing-200);
-  font: normal;
+  user-select: none;
+  color: var(--non-spectrum-raisin-black);
+  font-size: 15px;
 }
 
 .block.slides .controls .auto-play .auto-play-button {
-  height: calc(var(--control-item-height) - 0.75rem);
-  background-color: var(--spectrum-gray-300);
-  color: var(--spectrum-gray-500);
-  min-width: 3rem;
-  display: inline-block;
+  position: relative;
+  width: 44px;
+  height: 22px;
   padding: 0;
-  font-size: var(--spectrum-body-size-s);
-  line-height: 1;
-}
-
-.block.slides .controls .auto-play .auto-play-button::before {
-  content: 'Off';
-}
-
-.block.slides .controls .auto-play .auto-play-button:hover {
+  border: 1px solid var(--non-spectrum-dark-gray);
+  border-radius: 12px;
+  background: var(--spectrum-gray-50);
   cursor: pointer;
-  background-color: var(--spectrum-gray-900);
-  color: var(--spectrum-gray-50);
+  transition:
+    background 0.2s,
+    border-color 0.2s;
 }
 
+.block.slides .controls .auto-play .auto-play-button .auto-play-thumb {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  background: var(--non-spectrum-dark-gray);
+  border-radius: 50%;
+  transition:
+    transform 0.2s,
+    background 0.2s;
+}
+
+/* OFF state (default) */
+.block.slides .controls .auto-play .auto-play-button[data-auto-play-audio='false'] {
+  background: var(--spectrum-gray-50);
+  border-color: var(--non-spectrum-dark-gray);
+}
+
+.block.slides .controls .auto-play .auto-play-button[data-auto-play-audio='false'] .auto-play-thumb {
+  background: var(--non-spectrum-dark-gray);
+  transform: translateX(1px);
+}
+
+/* ON state */
 .block.slides .controls .auto-play .auto-play-button[data-auto-play-audio='true'] {
-  background-color: var(--spectrum-gray-800);
-  color: var(--spectrum-gray-75);
+  background: var(--non-spectrum-dark-gray);
+  border-color: var(--non-spectrum-dark-gray);
 }
 
-.block.slides .controls .auto-play .auto-play-button[data-auto-play-audio='true']::before {
-  content: 'On';
+.block.slides .controls .auto-play .auto-play-button[data-auto-play-audio='true'] .auto-play-thumb {
+  background: var(--spectrum-gray-50);
+  transform: translateX(23px);
 }
 
 .block.slides .controls .audio-player {
@@ -514,12 +541,12 @@
   bottom: 0;
   right: 16px;
   display: none;
-  font-size: 16px;
+  font-size: var(--spectrum-font-size-200);
   height: 40px;
 }
 
 .block.slides .content p {
-  font-size: 16px;
+  font-size: var(--spectrum-font-size-200);
   margin-bottom: 20px;
 }
 
