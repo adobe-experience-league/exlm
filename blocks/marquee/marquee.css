@@ -509,17 +509,34 @@ body[class^='article-'] .marquee-content-container {
 }
 
 /* Styling for .marquee.video block */
-.marquee.video .marquee-subject img {
+
+.marquee.video .marquee-subject {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* key fix: cover whole area */
-  object-position: center center;
-  max-width: none;
-  max-height: none;
+  z-index: 0;
+  background-color: var(--spectrum-gray-700);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.marquee.video .marquee-subject img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.marquee.video .marquee-subject {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  position: relative;
+  background-color: var(--spectrum-gray-700);
+  overflow: hidden;
+  cursor: pointer;
 }
 
 .marquee.video .marquee-subject iframe {
@@ -529,13 +546,12 @@ body[class^='article-'] .marquee-content-container {
   height: 100%;
   border: none;
   z-index: 10;
-  object-fit: cover; /* ensure video also covers container */
 }
 
 .marquee.video .marquee-play-button {
   position: absolute;
-  bottom: 15px;  /* slight spacing for larger screens */
-  right: 15px;
+  bottom: 10px;
+  right: 10px;
   background: none;
   border: none;
   padding: 0;
@@ -544,9 +560,9 @@ body[class^='article-'] .marquee-content-container {
 }
 
 .marquee.video .video-overlay-play-circle {
-  width: 56px; /* slightly bigger */
-  height: 56px;
-  background: rgba(0, 0, 0, 0.6);
+  width: 48px;
+  height: 48px;
+  background: rgb(0 0 0 / 60%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -554,8 +570,11 @@ body[class^='article-'] .marquee-content-container {
 }
 
 .marquee.video .play-triangle {
-  border-top: 12px solid transparent;
-  border-bottom: 12px solid transparent;
-  border-left: 20px solid var(--background-color);
-  margin-left: 4px;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 16px solid var(--background-color);
+  margin-left: 3px;
 }
+
