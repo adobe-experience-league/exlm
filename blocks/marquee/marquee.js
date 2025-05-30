@@ -200,23 +200,25 @@ export default async function decorate(block) {
   block.append(marqueeDOM);
 
   if (isVideoVariant && videoUrl) {
-    const bgFillerEl = block.querySelector('.marquee-bg-filler');
-    if (bgFillerEl) bgFillerEl.style.display = 'none';
+  const bgFillerEl = block.querySelector('.marquee-bg-filler');
+  if (bgFillerEl) bgFillerEl.style.display = 'none';
 
-    const bgContainer = block.querySelector('.marquee-background');
-    bgContainer.style.position = 'relative';
+  const bgContainer = block.querySelector('.marquee-background');
+  bgContainer.style.position = 'relative';
 
-    const subjectEl = document.createElement('div');
-    subjectEl.classList.add('marquee-subject');
-    subjectEl.style.backgroundColor = bgColor;
-    subjectEl.style.position = 'relative';
-    subjectEl.style.width = '100%';
-    subjectEl.style.height = '100%';
+  const subjectEl = document.createElement('div');
+  subjectEl.classList.add('marquee-subject');
+  subjectEl.style.backgroundColor = bgColor;
+  subjectEl.style.position = 'relative';
+  subjectEl.style.width = '100%';
+  subjectEl.style.height = '100%';
 
+  const isMpcUrl = videoUrl.includes('video.tv.adobe.com');
+
+  if (isMpcUrl) {
     getMpcVideoDetailsByUrl(videoUrl)
       .then((videoDetails) => {
         const posterUrl = videoDetails?.video?.poster;
-
         if (posterUrl) {
           const imgEl = document.createElement('img');
           imgEl.classList.add('marquee-video-poster');
@@ -224,32 +226,39 @@ export default async function decorate(block) {
           imgEl.alt = videoDetails.title || 'Video thumbnail';
           subjectEl.appendChild(imgEl);
         }
-
         const playButton = createPlayButton();
         subjectEl.appendChild(playButton);
-
         playButton.addEventListener('click', (e) => {
           e.stopPropagation();
           subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
         });
-
         bgContainer.prepend(subjectEl);
       })
       .catch((error) => {
         console.error('Error loading video details:', error);
-
-        // Still add play button so user can try playing the video
         const playButton = createPlayButton();
         subjectEl.appendChild(playButton);
-
         playButton.addEventListener('click', (e) => {
           e.stopPropagation();
           subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
         });
-
         bgContainer.prepend(subjectEl);
       });
-  } else if (subjectPicture) {
+  } else {
+    // Non-MPC URL fallback
+    const playButton = createPlayButton();
+    subjectEl.appendChild(playButton);
+    // Optional fallback image or poster preview logic here (if needed)
+
+    playButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
+    });
+
+    bgContainer.prepend(subjectEl);
+  }
+}
+ else if (subjectPicture) {
     appendSubjectPicture(block, subjectPicture, bgColor);
   } else {
     block.classList.add('no-subject');
