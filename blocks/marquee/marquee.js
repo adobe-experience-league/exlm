@@ -244,7 +244,7 @@ export default async function decorate(block) {
         });
         bgContainer.prepend(subjectEl);
       });
-  } } else if (videoUrl.endsWith('.mp4')) {
+  } else if (videoUrl.endsWith('.mp4')) {
   const posterFallback = subjectPicture?.querySelector('img')?.src || '';
 
   const videoEl = document.createElement('video');
@@ -268,7 +268,7 @@ export default async function decorate(block) {
   subjectEl.appendChild(videoEl);
   bgContainer.prepend(subjectEl);
 }
-
+}
  else if (subjectPicture) {
     appendSubjectPicture(block, subjectPicture, bgColor);
   } else {
