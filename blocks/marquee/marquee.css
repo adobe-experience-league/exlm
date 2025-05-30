@@ -188,8 +188,6 @@ div.marquee-wrapper {
 
 .marquee.video .marquee-background {
   position: relative;
-  width: 100%;
-  height: 100%;
   overflow: hidden;
 }
 
@@ -510,51 +508,39 @@ body[class^='article-'] .marquee-content-container {
   }
 }
 
-/* Container for marquee video - responsive height and width */
-.marquee.video .marquee-background {
-  position: relative;
-  width: 100%;
-  height: 60vh;          /* Responsive height relative to viewport */
-  min-height: 300px;     /* Minimum height to avoid collapsing too small */
-  overflow: hidden;
-  background-color: var(--spectrum-gray-700);
-}
+/* Styling for .marquee.video block */
 
-/* Subject area (poster image or iframe video) fills entire container */
 .marquee.video .marquee-subject {
   position: absolute;
-  inset: 0;              /* top:0; right:0; bottom:0; left:0 */
+  inset: 0;
   width: 100%;
   height: 100%;
+  z-index: 0;
+  background-color: var(--spectrum-gray-700);
   overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   cursor: pointer;
-  z-index: 1;
 }
 
-/* Poster image and iframe video fill container, keep aspect ratio by cropping */
-.marquee.video .marquee-subject img,
-.marquee.video .marquee-subject iframe {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;     /* Fill and crop as needed */
-  object-position: center;
-  display: block;
-  margin: 0;
-  padding: 0;
+.marquee.video .marquee-subject img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: none;
+  max-height: 100%;
+  width: auto;
+  height: auto;
 }
 
-/* Iframe sits absolutely inside subject */
 .marquee.video .marquee-subject iframe {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   border: none;
-  z-index: 2;
+  z-index: 10;
 }
 
-/* Play button styling at bottom right corner */
 .marquee.video .marquee-play-button {
   position: absolute;
   bottom: 10px;
@@ -566,25 +552,21 @@ body[class^='article-'] .marquee-content-container {
   z-index: 20;
 }
 
-/* Circle behind play triangle */
 .marquee.video .video-overlay-play-circle {
   width: 48px;
   height: 48px;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgb(0 0 0 / 60%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Triangle shape for play icon */
 .marquee.video .play-triangle {
   width: 0;
   height: 0;
   border-top: 10px solid transparent;
   border-bottom: 10px solid transparent;
-  border-left: 16px solid var(--background-color, white);
+  border-left: 16px solid var(--background-color);
   margin-left: 3px;
 }
-
-
