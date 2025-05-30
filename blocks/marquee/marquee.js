@@ -260,4 +260,6 @@ export default async function decorate(block) {
     handleVideoLinks(videoLinkElems, block);
   }
 
+  // Icon decorations on first and second CTA buttons
+  decorateIcons(block.querySelector('.marquee-cta'));
 }
