@@ -22,7 +22,7 @@ export const redirectToSearchPage = (searchUrl, searchInput, filters = '') => {
     const filterValueEncoded = encodeURIComponent(filterValue);
     targetUrlWithLanguage += isLegacySearch
       ? `&f:@el_contenttype=[${filterValueEncoded}]`
-      : `&f-@el_contenttype=${filterValueEncoded}`;
+      : `&f-el_contenttype=${filterValueEncoded}`;
   }
   if (solution) {
     const solutionEncoded = encodeURIComponent(solution);
