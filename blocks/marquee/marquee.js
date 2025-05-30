@@ -4,10 +4,10 @@ import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 
 const getDefaultEmbed = (url, { autoplay = false } = {}) => `
-  <div class="video-frame">
+  <div class="video-frame" style="position:absolute; inset:0; width:100%; height:100%; overflow:hidden;">
     <iframe 
       src="${new URL(url).href + (autoplay ? '?autoplay=true' : '')}"
-      style="border:0; top:0; left:0; width:100%; height:100%; position:absolute;"
+      style="border:0; position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; background-color:black;"
       allowfullscreen
       allow="encrypted-media; autoplay"
       title="Content from ${new URL(url).hostname}"
