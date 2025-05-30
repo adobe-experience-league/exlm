@@ -244,20 +244,31 @@ export default async function decorate(block) {
         });
         bgContainer.prepend(subjectEl);
       });
-  } else {
-    // Non-MPC URL fallback
-    const playButton = createPlayButton();
-    subjectEl.appendChild(playButton);
-    // Optional fallback image or poster preview logic here (if needed)
+  } } else if (videoUrl.endsWith('.mp4')) {
+  const posterFallback = subjectPicture?.querySelector('img')?.src || '';
 
-    playButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
-    });
+  const videoEl = document.createElement('video');
+  videoEl.setAttribute('controls', true);
+  videoEl.setAttribute('playsinline', true);
+  videoEl.setAttribute('preload', 'metadata');
+  videoEl.classList.add('marquee-native-video');
+  videoEl.style.width = '100%';
+  videoEl.style.height = '100%';
 
-    bgContainer.prepend(subjectEl);
+  const source = document.createElement('source');
+  source.src = videoUrl;
+  source.type = 'video/mp4';
+
+  videoEl.appendChild(source);
+
+  if (posterFallback) {
+    videoEl.setAttribute('poster', posterFallback);
   }
+
+  subjectEl.appendChild(videoEl);
+  bgContainer.prepend(subjectEl);
 }
+
  else if (subjectPicture) {
     appendSubjectPicture(block, subjectPicture, bgColor);
   } else {
