@@ -509,13 +509,13 @@ body[class^='article-'] .marquee-content-container {
     box-sizing: border-box;
   }
 }
-
 .marquee.video .marquee-background {
   position: relative;
-  height: var(--marquee-height-large);
-  min-height: var(--marquee-height-large);
+  height: 60vh; /* Use viewport height so it scales nicely */
+  min-height: 300px; /* Minimum height to avoid shrinking too much */
   overflow: hidden;
   background-color: var(--spectrum-gray-700);
+  width: 100%;
 }
 
 .marquee.video .marquee-subject {
@@ -531,53 +531,20 @@ body[class^='article-'] .marquee-content-container {
   cursor: pointer;
 }
 
-/* Poster image & iframe video fill whole area, cover without black bars */
 .marquee.video .marquee-subject img,
 .marquee.video .marquee-subject iframe {
   width: 100%;
   height: 100%;
-  object-fit: cover;     /* THIS is key */
+  object-fit: cover;
   object-position: center;
   display: block;
   margin: 0;
   padding: 0;
 }
 
-/* Ensure iframe video overlays properly */
 .marquee.video .marquee-subject iframe {
   position: absolute;
   inset: 0;
   border: none;
   z-index: 2;
-}
-
-/* Play button styling */
-.marquee.video .marquee-play-button {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  z-index: 3;
-}
-
-.marquee.video .video-overlay-play-circle {
-  width: 48px;
-  height: 48px;
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.marquee.video .play-triangle {
-  width: 0;
-  height: 0;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-left: 16px solid var(--background-color);
-  margin-left: 3px;
 }
