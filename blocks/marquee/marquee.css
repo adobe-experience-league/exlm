@@ -510,35 +510,32 @@ body[class^='article-'] .marquee-content-container {
   }
 }
 
-/* Styling for .marquee.video block */
-
-.marquee.video .marquee-subject {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  background-color: var(--spectrum-gray-700);
+/* Ensure background height is respected when video is active */
+.marquee.video.large .marquee-background {
+  position: relative;
+  height: var(--marquee-height-large);
+  min-height: var(--marquee-height-large);
   overflow: hidden;
-  cursor: pointer;
 }
 
-.marquee.video .marquee-subject {
+/* Make the subject area (poster or iframe) fill exactly */
+.marquee.video.large .marquee-subject {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
-  background-color: var(--spectrum-gray-700);
   overflow: hidden;
-  cursor: pointer;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  z-index: 1;
+  background-color: var(--spectrum-gray-700);
+  cursor: pointer;
 }
 
-.marquee.video .marquee-subject img,
-.marquee.video .marquee-subject iframe {
+/* Stretch poster image or iframe */
+.marquee.video.large .marquee-subject img,
+.marquee.video.large .marquee-subject iframe {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -546,16 +543,16 @@ body[class^='article-'] .marquee-content-container {
   display: block;
 }
 
-.marquee.video .marquee-subject iframe {
+/* Position and style iframe specifically */
+.marquee.video.large .marquee-subject iframe {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
   border: none;
-  z-index: 10;
+  z-index: 2;
 }
 
-.marquee.video .marquee-play-button {
+/* Play button container */
+.marquee.video.large .marquee-play-button {
   position: absolute;
   bottom: 10px;
   right: 10px;
@@ -563,10 +560,11 @@ body[class^='article-'] .marquee-content-container {
   border: none;
   padding: 0;
   cursor: pointer;
-  z-index: 20;
+  z-index: 3;
 }
 
-.marquee.video .video-overlay-play-circle {
+/* Circular semi-transparent overlay */
+.marquee.video.large .video-overlay-play-circle {
   width: 48px;
   height: 48px;
   background: rgb(0 0 0 / 60%);
@@ -576,7 +574,8 @@ body[class^='article-'] .marquee-content-container {
   justify-content: center;
 }
 
-.marquee.video .play-triangle {
+/* Play triangle shape inside circle */
+.marquee.video.large .play-triangle {
   width: 0;
   height: 0;
   border-top: 10px solid transparent;
@@ -584,4 +583,3 @@ body[class^='article-'] .marquee-content-container {
   border-left: 16px solid var(--background-color);
   margin-left: 3px;
 }
-
