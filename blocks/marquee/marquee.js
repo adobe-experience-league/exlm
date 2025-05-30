@@ -195,42 +195,31 @@ export default async function decorate(block) {
     const bgContainer = block.querySelector('.marquee-background');
     bgContainer.style.position = 'relative';
 
-    const loadVideoPosterAndButton = (videoUrl, bgColor) =>
-      new Promise((resolve, reject) => {
-        getMpcVideoDetailsByUrl(videoUrl)
-          .then((videoDetails) => {
-            const posterUrl = videoDetails?.video?.poster;
+    const videoDetails = await getMpcVideoDetailsByUrl(videoUrl);
+    const posterUrl = videoDetails?.video?.poster;
 
-            const subjectEl = document.createElement('div');
-            subjectEl.classList.add('marquee-subject');
-            subjectEl.style.backgroundColor = bgColor;
-            subjectEl.style.position = 'relative';
-            subjectEl.style.width = '100%';
-            subjectEl.style.height = '100%';
+    const subjectEl = document.createElement('div');
+    subjectEl.classList.add('marquee-subject');
+    subjectEl.style.backgroundColor = bgColor;
+    subjectEl.style.position = 'relative';
+    subjectEl.style.width = '100%';
+    subjectEl.style.height = '100%';
 
-            if (posterUrl) {
-              const imgEl = document.createElement('img');
-              imgEl.classList.add('marquee-video-poster');
-              imgEl.src = posterUrl;
-              imgEl.alt = videoDetails?.title || 'Video thumbnail';
-              subjectEl.appendChild(imgEl);
-            }
+    if (posterUrl) {
+      const imgEl = document.createElement('img');
+      imgEl.classList.add('marquee-video-poster');
+      imgEl.src = posterUrl;
+      imgEl.alt = videoDetails.title || 'Video thumbnail';
+      subjectEl.appendChild(imgEl);
+    }
 
-            const playButton = createPlayButton();
-            subjectEl.appendChild(playButton);
+    const playButton = createPlayButton();
+    subjectEl.appendChild(playButton);
 
-            playButton.addEventListener('click', (e) => {
-              e.stopPropagation();
-              subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
-            });
-
-            resolve(subjectEl); // pass the fully prepared subjectEl back
-          })
-          .catch((error) => {
-            console.error('Failed to load video poster and button:', error);
-            reject(error);
-          });
-      });
+    playButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
+    });
 
     bgContainer.prepend(subjectEl);
   } else if (subjectPicture) {
@@ -271,6 +260,4 @@ export default async function decorate(block) {
     handleVideoLinks(videoLinkElems, block);
   }
 
-  // Icon decorations on first and second CTA buttons
-  decorateIcons(block.querySelector('.marquee-cta'));
 }
