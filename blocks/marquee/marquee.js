@@ -195,15 +195,15 @@ export default async function decorate(block) {
     const bgContainer = block.querySelector('.marquee-background');
     bgContainer.style.position = 'relative';
 
-    const videoDetails = await getMpcVideoDetailsByUrl(videoUrl);
-    const posterUrl = videoDetails?.video?.poster;
-
     const subjectEl = document.createElement('div');
     subjectEl.classList.add('marquee-subject');
     subjectEl.style.backgroundColor = bgColor;
     subjectEl.style.position = 'relative';
     subjectEl.style.width = '100%';
     subjectEl.style.height = '100%';
+
+    const videoDetails = await getMpcVideoDetailsByUrl(videoUrl);
+    const posterUrl = videoDetails?.video?.poster;
 
     if (posterUrl) {
       const imgEl = document.createElement('img');
