@@ -1,6 +1,18 @@
 /* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { htmlToElement } from '../../scripts/scripts.js';
+
+const getDefaultEmbed = (url, { autoplay = false } = {}) => `
+  <div class="video-frame" style="position: absolute; inset: 0; width: 100%; height: 100%;">
+    <iframe 
+      src="${new URL(url).href + (autoplay ? '?autoplay=true' : '')}"
+      style="border: 0; width: 100%; height: 100%;"
+      allowfullscreen
+      allow="encrypted-media; autoplay"
+      title="Content from ${new URL(url).hostname}"
+      loading="lazy"></iframe>
+  </div>`;
 
 function handleVideoLinks(videoLinkElems, block) {
   videoLinkElems.forEach((videoLinkElem) => {
@@ -46,6 +58,27 @@ function handleVideoLinks(videoLinkElems, block) {
   });
 }
 
+const getMpcVideoDetailsByUrl = (url) =>
+  new Promise((resolve, reject) => {
+    try {
+      const urlObj = new URL(url);
+      urlObj.searchParams.set('format', 'json');
+
+      fetch(urlObj.href)
+        .then((response) => response.json())
+        .then((data) => resolve(data))
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error('Error while fetching URL:', error);
+          resolve(undefined);
+        });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to process the URL:', error);
+      reject(new Error(`Failed to process the URL: ${error?.message}`));
+    }
+  });
+
 function handleSigninLinks(block) {
   import('../../scripts/auth/profile.js')
     .then((module) => module.isSignedInUser())
@@ -61,18 +94,55 @@ function handleSigninLinks(block) {
       }
     });
 }
+function createPlayButton() {
+  return htmlToElement(`
+    <button aria-label="play" class="video-overlay-play-button marquee-play-button">
+      <div class="video-overlay-play-circle">
+        <div class="play-triangle"></div>
+      </div>
+    </button>`);
+}
 
 export default async function decorate(block) {
   // Extract properties
-  // always same order as in model, empty string if not set
-  const [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] =
-    block.querySelectorAll(':scope div > div');
+  const allDivs = [...block.querySelectorAll(':scope > div')];
+  let customBgColor;
+  let videoLinkWrapper;
+  let img;
+  let eyebrow;
+  let title;
+  let longDescr;
+  let firstCta;
+  let firstCtaLinkType;
+  let secondCta;
+  let secondCtaLinkType;
 
-  const subjectPicture = img.querySelector('picture');
+  if (allDivs[1]?.querySelector('picture')) {
+    [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] = allDivs;
+  } else {
+    [
+      customBgColor,
+      videoLinkWrapper,
+      img,
+      eyebrow,
+      title,
+      longDescr,
+      firstCta,
+      firstCtaLinkType,
+      secondCta,
+      secondCtaLinkType,
+    ] = allDivs;
+  }
+
+  const subjectPicture = img?.querySelector('picture');
+  const isVideoVariant = block.classList.contains('video');
+  const videoUrl = videoLinkWrapper?.querySelector('a')?.href?.trim();
   const isStraightVariant = block.classList.contains('straight');
+  const isLargeVariant = block.classList.contains('large');
+  const marqueeVideoVariant = isVideoVariant && isLargeVariant && isStraightVariant;
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
-  const eyebrowText = eyebrow?.textContent?.trim();
+  const eyebrowText = eyebrow?.textContent?.trim() || '';
 
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
@@ -86,47 +156,107 @@ export default async function decorate(block) {
           ${decorateCustomButtons(firstCta, secondCta)}
         </div>
       </div>
-    </div>
-    <div class='marquee-background' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
+      </div>
+      <div class='marquee-background' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
+        <div class='marquee-background-fill'>
           ${
-            subjectPicture
-              ? `<div class='marquee-subject' style="background-color: ${bgColor}">${subjectPicture.outerHTML}</div>`
-              : `<div class='marquee-spacer'></div>`
-          } 
-      <div class="marquee-background-fill">
-      ${
-        !isStraightVariant
-          ? `
-          <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
-            <path
-              id="Path_1"
-              data-name="Path 1"
-              d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z"
-              transform="translate(-738.685 1.777)"
-              fill="${bgColor}"
-            />
-          </svg>`
-          : ' '
-      }
-      </div>
+            !isStraightVariant && !marqueeVideoVariant
+              ? `
+            <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
+              <path
+                d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z"
+                transform="translate(-738.685 1.777)"
+                fill="${bgColor}"
+              />
+            </svg>`
+              : ''
+          }
+        </div>
       <div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>
-
-      </div>
     </div>
     </div>
   `);
 
-  block.textContent = '';
+  function appendSubjectPicture(container, pictureEl, color) {
+    const bgContainer = container.querySelector('.marquee-background');
+    const bgFill = bgContainer.querySelector('.marquee-background-fill');
+    const subjectEl = document.createElement('div');
+    subjectEl.classList.add('marquee-subject');
+    subjectEl.style.backgroundColor = color;
+    subjectEl.append(pictureEl);
+    if (bgFill) {
+      bgFill.after(subjectEl);
+    } else {
+      bgContainer.prepend(subjectEl);
+    }
+  }
 
-  if (!subjectPicture) {
+  if (!marqueeVideoVariant) {
+    block.classList.remove('video');
+  }
+
+  block.textContent = '';
+  block.append(marqueeDOM);
+
+  if (isVideoVariant && videoUrl) {
+    const bgFillerEl = block.querySelector('.marquee-bg-filler');
+    if (bgFillerEl) bgFillerEl.style.display = 'none';
+
+    const bgContainer = block.querySelector('.marquee-background');
+    bgContainer.style.position = 'relative';
+
+    const subjectEl = document.createElement('div');
+    subjectEl.classList.add('marquee-subject');
+    subjectEl.style.backgroundColor = bgColor;
+    subjectEl.style.position = 'relative';
+    subjectEl.style.width = '100%';
+    subjectEl.style.height = '100%';
+
+    getMpcVideoDetailsByUrl(videoUrl)
+      .then((videoDetails) => {
+        const posterUrl = videoDetails?.video?.poster;
+
+        if (posterUrl) {
+          const imgEl = document.createElement('img');
+          imgEl.classList.add('marquee-video-poster');
+          imgEl.src = posterUrl;
+          imgEl.alt = videoDetails.title || 'Video thumbnail';
+          subjectEl.appendChild(imgEl);
+        }
+
+        const playButton = createPlayButton();
+        subjectEl.appendChild(playButton);
+
+        playButton.addEventListener('click', (e) => {
+          e.stopPropagation();
+          subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
+        });
+
+        bgContainer.prepend(subjectEl);
+      })
+      .catch((error) => {
+        console.error('Error loading video details:', error);
+
+        // Still add play button so user can try playing the video
+        const playButton = createPlayButton();
+        subjectEl.appendChild(playButton);
+
+        playButton.addEventListener('click', (e) => {
+          e.stopPropagation();
+          subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
+        });
+
+        bgContainer.prepend(subjectEl);
+      });
+  } else if (subjectPicture) {
+    appendSubjectPicture(block, subjectPicture, bgColor);
+  } else {
     block.classList.add('no-subject');
   }
 
   if (block.classList.contains('fill-background')) {
     block.style.backgroundColor = bgColor;
   }
-
-  block.append(marqueeDOM);
 
   if (!((firstCta && firstCtaLinkType) || (secondCta && secondCtaLinkType))) {
     return; // Exit early if no CTA or link type is present
