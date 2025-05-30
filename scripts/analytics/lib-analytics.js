@@ -327,3 +327,23 @@ export function pushVideoMetadataOnLoad(videoId, videoUrl, thumbnailUrl) {
     },
   });
 }
+
+/**
+ * Used to push a product interests event to the data layer
+ * @param {string} id - The product id.
+ * @param {string} title - The product interest title.
+ * @param {string} type - The product selection/deselection.
+ */
+export function pushProductInterestsEvent(id, title, selectionType) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'productInterestsEvent',
+    productInterests: {
+      productId: id,
+      productTitle: title,
+      productSelectionType: selectionType,
+      timestamp: new Date().toISOString(),
+    },
+  });
+}
