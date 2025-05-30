@@ -103,6 +103,17 @@ function createPlayButton() {
     </button>`);
 }
 
+function addPlayButton(container, videoUrl, bgContainer) {
+  const playButton = createPlayButton();
+  playButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    container.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
+  });
+
+  container.appendChild(playButton);
+  bgContainer.prepend(container);
+}
+
 export default async function decorate(block) {
   // Extract properties
   const allDivs = [...block.querySelectorAll(':scope > div')];
@@ -224,28 +235,12 @@ export default async function decorate(block) {
           subjectEl.appendChild(imgEl);
         }
 
-        const playButton = createPlayButton();
-        subjectEl.appendChild(playButton);
-
-        playButton.addEventListener('click', (e) => {
-          e.stopPropagation();
-          subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
-        });
-
-        bgContainer.prepend(subjectEl);
+        addPlayButton(subjectEl, videoUrl, bgContainer);
       })
       .catch((error) => {
+        // eslint-disable-next-line no-console
         console.error('Error loading video details:', error);
-
-        const playButton = createPlayButton();
-        subjectEl.appendChild(playButton);
-
-        playButton.addEventListener('click', (e) => {
-          e.stopPropagation();
-          subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
-        });
-
-        bgContainer.prepend(subjectEl);
+        addPlayButton(subjectEl, videoUrl, bgContainer);
       });
   } else if (subjectPicture) {
     appendSubjectPicture(block, subjectPicture, bgColor);
