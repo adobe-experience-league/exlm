@@ -184,11 +184,7 @@ export default async function decorate(block) {
 
   block.textContent = '';
   block.append(marqueeDOM);
-
   if (marqueeVideoVariant && videoUrl) {
-    const bgFillerEl = block.querySelector('.marquee-bg-filler');
-    if (bgFillerEl) bgFillerEl.style.display = 'none';
-
     const bgContainer = block.querySelector('.marquee-background');
     bgContainer.style.position = 'relative';
 
@@ -226,6 +222,11 @@ export default async function decorate(block) {
 
     bgContainer.prepend(subjectEl);
   } else if (subjectPicture) {
+    // Ensure fallback image layout looks correct by removing any leftover .video-related DOM/CSS
+    block.classList.remove('video');
+    const existingSubject = block.querySelector('.marquee-subject');
+    if (existingSubject) existingSubject.remove();
+
     appendSubjectPicture(block, subjectPicture, bgColor);
   } else {
     block.classList.add('no-subject');
