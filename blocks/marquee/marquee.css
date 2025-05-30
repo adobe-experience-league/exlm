@@ -587,7 +587,4 @@ body[class^='article-'] .marquee-content-container {
   margin-left: 3px;
 }
 
-/* Optional: Hide decorative SVGs when video active */
-.marquee.video svg.decorative-svg {
-  display: none;
-}
+
