@@ -59,17 +59,27 @@ function handleVideoLinks(videoLinkElems, block) {
   });
 }
 
-const getMpcVideoDetailsByUrl = async (url) => {
-  try {
-    const urlObj = new URL(url);
-    urlObj.searchParams.set('format', 'json');
-    const res = await fetch(urlObj.href);
-    if (!res.ok) return undefined;
-    return await res.json();
-  } catch {
-    return undefined;
-  }
-};
+const getMpcVideoDetailsByUrl = (url) =>
+  new Promise((resolve, reject) => {
+    try {
+      const urlObj = new URL(url);
+      urlObj.searchParams.set('format', 'json');
+
+      fetch(urlObj.href)
+        .then((response) => response.json())
+        .then((data) => resolve(data))
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error('Error while fetching URL:', error);
+          resolve(undefined);
+        });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to process the URL:', error);
+      reject(new Error(`Failed to process the URL: ${error?.message}`));
+    }
+  });
+
 function handleSigninLinks(block) {
   import('../../scripts/auth/profile.js')
     .then((module) => module.isSignedInUser())
@@ -188,6 +198,7 @@ export default async function decorate(block) {
 
   block.textContent = '';
   block.append(marqueeDOM);
+
   if (isVideoVariant && videoUrl) {
     const bgFillerEl = block.querySelector('.marquee-bg-filler');
     if (bgFillerEl) bgFillerEl.style.display = 'none';
@@ -202,26 +213,42 @@ export default async function decorate(block) {
     subjectEl.style.width = '100%';
     subjectEl.style.height = '100%';
 
-    const videoDetails = await getMpcVideoDetailsByUrl(videoUrl);
-    const posterUrl = videoDetails?.video?.poster;
+    getMpcVideoDetailsByUrl(videoUrl)
+      .then((videoDetails) => {
+        const posterUrl = videoDetails?.video?.poster;
 
-    if (posterUrl) {
-      const imgEl = document.createElement('img');
-      imgEl.classList.add('marquee-video-poster');
-      imgEl.src = posterUrl;
-      imgEl.alt = videoDetails.title || 'Video thumbnail';
-      subjectEl.appendChild(imgEl);
-    }
+        if (posterUrl) {
+          const imgEl = document.createElement('img');
+          imgEl.classList.add('marquee-video-poster');
+          imgEl.src = posterUrl;
+          imgEl.alt = videoDetails.title || 'Video thumbnail';
+          subjectEl.appendChild(imgEl);
+        }
 
-    const playButton = createPlayButton();
-    subjectEl.appendChild(playButton);
+        const playButton = createPlayButton();
+        subjectEl.appendChild(playButton);
 
-    playButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
-    });
+        playButton.addEventListener('click', (e) => {
+          e.stopPropagation();
+          subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
+        });
 
-    bgContainer.prepend(subjectEl);
+        bgContainer.prepend(subjectEl);
+      })
+      .catch((error) => {
+        console.error('Error loading video details:', error);
+
+        // Still add play button so user can try playing the video
+        const playButton = createPlayButton();
+        subjectEl.appendChild(playButton);
+
+        playButton.addEventListener('click', (e) => {
+          e.stopPropagation();
+          subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
+        });
+
+        bgContainer.prepend(subjectEl);
+      });
   } else if (subjectPicture) {
     appendSubjectPicture(block, subjectPicture, bgColor);
   } else {
