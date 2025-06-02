@@ -4246,7 +4246,7 @@
         "name": "generateTqTags",
         "label": "Generate TQ Tags",
         "valueType": "string",
-        "extensionId": "exlm-ue-custom-field"
+        "extensionId": "exl-ue-extension"
       },
       {
         "component": "custom-aem-tag",
@@ -4254,7 +4254,7 @@
         "label": "Solution(s)",
         "valueType": "string",
         "rootPath": "https://51837-exlmia-stage.adobeio-static.net/api/v1/web/exlia/getTQTags?taxonomyType=product",
-        "extensionId": "exlm-ue-custom-field"
+        "extensionId": "exl-ue-extension"
       },
       {
         "component": "custom-aem-tag",
@@ -4262,7 +4262,7 @@
         "label": "Feature(s)",
         "valueType": "string",
         "rootPath": "https://51837-exlmia-stage.adobeio-static.net/api/v1/web/exlia/getTQTags?taxonomyType=feature",
-        "extensionId": "exlm-ue-custom-field"
+        "extensionId": "exl-ue-extension"
       },
       {
         "component": "aem-tag",
