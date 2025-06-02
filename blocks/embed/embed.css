@@ -13,3 +13,12 @@
   margin-left: auto;
   margin-right: auto;
 }
+
+.embed-video {
+  left: 0;
+  width: 100%;
+  height: 0;
+  position: relative;
+  padding-bottom: 56.25%;
+  border: 1px solid #1e1e1e;
+}
