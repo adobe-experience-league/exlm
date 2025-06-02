@@ -34,6 +34,12 @@ export default async function decorate(block) {
   block.textContent = '';
 
   if (href) {
-    loadEmbed(block, href);
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        observer.disconnect();
+        loadEmbed(block, href);
+      }
+    });
+    observer.observe(block);
   }
 }
