@@ -164,7 +164,7 @@ export default async function decorate(block) {
         <div class='marquee-title'>${title.innerHTML}</div>
         <div class='marquee-long-description'>${longDescr.innerHTML}</div>
         <div class='marquee-cta'>
-          ${decorateCustomButtons(firstCta, secondCta)}
+          ${decorateCustomButtons(firstCta?.firstElementChild, secondCta?.firstElementChild)}
         </div>
       </div>
       </div>
