@@ -218,8 +218,6 @@ function handleProductInterestChange(block) {
 
         if (event.target.checked) {
           pushProductInterestsEvent(id, event.target.title, 'selected');
-        } else {
-          pushProductInterestsEvent(id, event.target.title, 'unselected');
         }
       }
     });
