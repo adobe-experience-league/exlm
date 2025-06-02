@@ -42,7 +42,6 @@ const embedTwitter = (url) => {
 /**
  *
  * @param {URL} url
- * @param {*} options
  * @returns
  */
 const embedMpc = (url) => {
