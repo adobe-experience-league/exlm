@@ -149,13 +149,6 @@
   }
 }
 
-.docs main > div {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-}
-
 .docs table:not(.code table, .table table) a {
   color: var(--non-spectrum-link);
 }
@@ -164,19 +157,26 @@
   color: var(--non-spectrum-custom-dark);
 }
 
-.docs main > div:first-child {
+.docs main > div {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
   /* docs content area */
-  ul > li,
-  ol > li {
-    line-height: 1.4;
-    margin: 0.6em 0;
-
-    p {
-      margin-bottom: unset;
-    }
-
-    a:any-link {
+  div.section {
+    ul > li,
+    ol > li {
       line-height: 1.4;
+      margin: 0.6em 0;
+
+      p {
+        margin-bottom: unset;
+      }
+
+      a:any-link {
+        line-height: 1.4;
+      }
     }
   }
 }
