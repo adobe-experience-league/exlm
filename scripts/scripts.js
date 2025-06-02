@@ -1010,7 +1010,7 @@ export async function fetchFragment(rePath, lang) {
 
 /** fetch fragment relative to /${lang}/global-fragments/ */
 export async function fetchGlobalFragment(metaName, fallback, lang) {
-  const fragmentPath = getMetadata(metaName);
+  const fragmentPath = getMetadata(metaName) ?? fallback;
   const fragmentUrl = fragmentPath?.startsWith('/en/') ? fragmentPath.replace('/en/', `/${lang}/`) : fallback;
   const path = `${window.hlx.codeBasePath}${fragmentUrl}.plain.html`;
   const fallbackPath = `${window.hlx.codeBasePath}${fallback}.plain.html`;

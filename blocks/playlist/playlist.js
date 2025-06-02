@@ -80,7 +80,7 @@ function iconSpan(icon) {
 function newPlayer(playlist) {
   const video = playlist.getActiveVideo();
   if (!video) return null;
-  const { src, autoplay = false, title, description, transcriptUrl, currentTime = 0, thumbnailUrl } = video;
+  const { src, autoplay = false, title, description, transcriptUrl, currentTime = 0 } = video;
 
   const iframeSrc = new URL(src);
   iframeSrc.searchParams.set('t', currentTime);
@@ -102,17 +102,12 @@ function newPlayer(playlist) {
   const player = htmlToElement(`
         <div class="playlist-player" data-playlist-player>
             <div class="playlist-player-video">
-              <div class="playlist-player-video-overlay" style="background:url(${thumbnailUrl})">
-                <button aria-label="play" class="playlist-player-video-overlay-play"><div class="playlist-player-video-overlay-circle"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="playlist-player-video-overlay-icon"><path d="M8 5v14l11-7z"></path> <path d="M0 0h24v24H0z" fill="none"></path></svg></div></button>
-              </div>
-                <template id="video-iframe-template">
-                  <iframe
-                      src="${iframeSrc}" 
-                      autoplay="${autoplay}"
-                      frameborder="0" 
-                      allow="${iframeAllowOptions.join('; ')}">
-                  </iframe>
-                </template>
+               <iframe
+                  src="${iframeSrc}" 
+                  autoplay="${autoplay}"
+                  frameborder="0" 
+                  allow="${iframeAllowOptions.join('; ')}">
+                </iframe>
             </div>
             <div class="playlist-player-info">
                 <h3 class="playlist-player-info-title">${title}</h3>
@@ -129,24 +124,10 @@ function newPlayer(playlist) {
 
   decoratePlaceholders(player);
 
-  const showIframe = () => {
-    const iframeTemplate = player.querySelector('#video-iframe-template');
-    const iframe = iframeTemplate.content.firstElementChild.cloneNode(true);
-    player.querySelector('.playlist-player-video').append(iframe);
-    player.querySelector('.playlist-player-video-overlay').replaceWith(iframe);
-    iframeTemplate.remove();
-    // wait for loaded
-    iframe.addEventListener('load', () => {
-      iframe.contentWindow.postMessage({ type: 'mpcAction', action: 'play' }, '*');
-    });
-  };
-
-  if (autoplay) showIframe();
-  else {
-    player.querySelector('.playlist-player-video-overlay').addEventListener('click', () => {
-      showIframe();
-    });
-  }
+  const iframe = player.querySelector('iframe');
+  iframe.addEventListener('load', () => {
+    iframe.contentWindow.postMessage({ type: 'mpcAction', action: 'play' }, '*');
+  });
   return player;
 }
 
