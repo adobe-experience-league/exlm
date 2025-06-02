@@ -104,5 +104,11 @@ export default function decorate(block) {
   }
 
   block.textContent = '';
-  loadEmbed(block, link);
+  const observer = new IntersectionObserver((entries) => {
+    if (entries.some((e) => e.isIntersecting)) {
+      observer.disconnect();
+      loadEmbed(block, link);
+    }
+  });
+  observer.observe(block);
 }
