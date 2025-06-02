@@ -5,6 +5,7 @@
  */
 
 import { pushVideoEvent, pushVideoMetadataOnLoad } from '../../scripts/analytics/lib-analytics.js';
+import { htmlToElement } from '../../scripts/scripts.js';
 
 const loadScript = (url, callback, type) => {
   const head = document.querySelector('head');
@@ -39,6 +40,27 @@ const embedTwitter = (url) => {
   loadScript('https://platform.twitter.com/widgets.js');
   return embedHTML;
 };
+
+const getMpcVideoDetailsByUrl = (url) =>
+  new Promise((resolve, reject) => {
+    try {
+      const urlObj = new URL(url);
+      urlObj.searchParams.set('format', 'json');
+
+      fetch(urlObj.href)
+        .then((response) => response.json())
+        .then((data) => resolve(data))
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error('Error while fetching url', error);
+          resolve(undefined);
+        });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to process the URL:', error);
+      reject(new Error(`'Failed to process the URL:' ${error?.message})`));
+    }
+  });
 
 /**
  *
@@ -99,7 +121,6 @@ const loadEmbed = (block, link, autoplay) => {
 };
 
 export default function decorate(block) {
-  const placeholder = block.querySelector('picture');
   const link = block.querySelector('a').href;
   if (link?.includes('tv.adobe.com')) {
     const videoId = link.match(/\/v\/(\d+)/)?.[1];
@@ -109,25 +130,34 @@ export default function decorate(block) {
     }
   }
 
-  block.textContent = '';
-  if (placeholder) {
+  block.innerHTML = '';
+  if (link) {
     const wrapper = document.createElement('div');
     wrapper.className = 'embed-placeholder';
-    wrapper.innerHTML = `<div class="embed-video-overlay">
+
+    getMpcVideoDetailsByUrl(link)
+      .then((videoDetails) => {
+        const poster = videoDetails?.video?.poster;
+        if (poster) {
+          const videoImg = htmlToElement(`<img class="video-poster" src=${poster} alt="video-poster"></img>`);
+          wrapper.appendChild(videoImg);
+        }
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error('Error fetching video details:', error);
+      });
+
+    const videoOverlay = htmlToElement(`<div class="embed-video-overlay">
                 <button aria-label="play" class="embed-video-overlay-play"><div class="embed-video-overlay-circle"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="embed-video-overlay-icon"><path d="M8 5v14l11-7z"></path> <path d="M0 0h24v24H0z" fill="none"></path></svg></div></button>
-              </div>`;
-    wrapper.prepend(placeholder);
+              </div>`);
+
+    wrapper.prepend(videoOverlay);
+
     wrapper.addEventListener('click', () => {
       loadEmbed(block, link, true);
     });
-    block.append(wrapper);
-  } else {
-    const observer = new IntersectionObserver((entries) => {
-      if (entries.some((e) => e.isIntersecting)) {
-        observer.disconnect();
-        loadEmbed(block, link);
-      }
-    });
-    observer.observe(block);
+
+    block.appendChild(wrapper);
   }
 }
