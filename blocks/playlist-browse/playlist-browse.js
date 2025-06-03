@@ -5,8 +5,17 @@ import {
   getPathDetails,
   htmlToElement,
   fetchWithFallback,
+  fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
 import { newMultiSelect, newPagination, newShowHidePanel } from './dom-helpers.js';
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 const EXPERIENCE_LEVEL_PLACEHOLDERS = [
   {
@@ -209,7 +218,7 @@ const updateCards = (filters) => {
     if (filteredPlaylists.length === 0) {
       const noResultsText =
         placeholders.noResultsText ||
-        'We are sorry, no results found matching the criteria. Try adjusting your search to view more content.';
+        'Try adjusting your search to view more content.';
 
       const errorMsg = htmlToElement(`
     <div class="playlist-no-results">${noResultsText}</div>

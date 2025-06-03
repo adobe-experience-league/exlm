@@ -430,5 +430,7 @@ button.filter-pill:focus {
   text-align: center;
   width: 100%;
   box-sizing: border-box;
+  grid-column: 1 / -1;
+  margin-bottom: 4rem;
 }
 
