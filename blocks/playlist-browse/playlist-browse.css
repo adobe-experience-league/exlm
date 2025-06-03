@@ -421,9 +421,17 @@ button.filter-pill:focus {
 .playlist-browse-pagination-label {
   margin: 0 1em;
 }
+
 .playlist-no-results {
+  width: 100%;
+  max-width: 100%;
+  background-color: #eee;
+  padding: 2rem;
   text-align: center;
-  font-size: 1.25rem;
-  margin: 2rem 0;
-  color: #555;
+  font-size: 1rem;
+  color: #333;
+  border-radius: 8px;
+  box-sizing: border-box;
+  margin: 2rem auto;
+  grid-column: 1 / -1; /* for grid layouts */
 }
