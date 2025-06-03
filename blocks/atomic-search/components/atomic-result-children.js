@@ -133,7 +133,7 @@ export const atomicResultChildrenTemplateStyles = `
                       overflow: hidden;
                       text-overflow: ellipsis;
                       font-size: var(--spectrum-font-size-100);
-                      line-height: 16px;
+                      line-height: 18px;
                       position: relative;
                       margin-left: 16px;
                     }
