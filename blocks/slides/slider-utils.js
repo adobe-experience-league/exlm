@@ -1,4 +1,5 @@
-import state from './state.js';
+import state from './slider-state.js';
+import { sendNotice } from '../../scripts/toast/toast.js';
 
 export function normalizeSpaces(str) {
   // Replace multiple spaces with a single space
@@ -411,4 +412,110 @@ export async function getAudioFilename(content) {
   text = normalizeSpaces(text);
 
   return `${text.length}-${await sha256(normalizeSpaces(text))}`;
+}
+
+export function copyToClipboard({ text, toastText }) {
+  try {
+    navigator.clipboard.writeText(text);
+    if (toastText) {
+      sendNotice(toastText);
+    }
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.error('Error copying link to clipboard:', err);
+  }
+}
+
+export function addEventHandlers(block, placeholders) {
+  block.querySelectorAll('[data-toggle-view]').forEach((button) => {
+    button.addEventListener('click', () => {
+      block.querySelector('.container').classList.toggle('as-docs');
+
+      if (button.dataset.toggleView === 'as-docs') {
+        setPreference('view', 'as-docs');
+        showAllSteps(block);
+      } else {
+        setPreference('view', 'as-slides');
+        showStep(block, state.currentStep);
+      }
+    });
+  });
+
+  block.querySelectorAll('[data-previous-step]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const previousStep = getPreviousStep(block, state.currentStep);
+
+      if (previousStep && getPreference('view') !== 'as-docs') {
+        state.currentStep = previousStep;
+        updateWindowLocation(block, state.currentStep);
+        showStep(block, state.currentStep, 'previous');
+      }
+    });
+  });
+
+  block.querySelectorAll('[data-next-step]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const nextStep = getNextStep(block, state.currentStep);
+
+      if (nextStep && getPreference('view') !== 'as-docs') {
+        state.currentStep = nextStep;
+        updateWindowLocation(block, state.currentStep);
+        showStep(block, state.currentStep, 'next');
+      }
+    });
+  });
+
+  block.querySelectorAll('[data-section-select]').forEach((select) => {
+    select.addEventListener('change', () => {
+      state.currentStep = select.value;
+      updateWindowLocation(block, state.currentStep);
+      showStep(block, state.currentStep, 'jump');
+      block.querySelectorAll('[data-option-force-active="true"]').forEach((option) => {
+        option.selected = true;
+      });
+    });
+  });
+
+  block.querySelectorAll('[data-step-name-select]').forEach((select) => {
+    select.addEventListener('change', () => {
+      state.currentStep = select.value;
+      updateWindowLocation(block, state.currentStep);
+      showStep(block, state.currentStep, 'jump');
+    });
+  });
+
+  block.querySelectorAll('audio').forEach((audio) => {
+    audio.addEventListener('ended', () => {
+      setTimeout(() => {
+        if (getPreference('autoplayAudio')) {
+          audio.closest('[data-step]').querySelector('[data-next-step]').click();
+        }
+      }, 2000);
+    });
+  });
+
+  block.querySelectorAll('.copy-icon').forEach((copyElement) => {
+    copyElement.addEventListener('click', () => {
+      const stepId = copyElement.dataset.copystep;
+      const blockId = block.querySelector('[data-block-id]')?.dataset?.blockId;
+      if (blockId && stepId) {
+        copyToClipboard({
+          text: `${window.location.origin}${window.location.pathname}#${blockId}=${stepId}`,
+          toastText: placeholders.userActionCopylinkToastText,
+        });
+      }
+    });
+  });
+
+  block.querySelectorAll('[data-auto-play-audio]').forEach((audioControls) => {
+    audioControls?.addEventListener('click', () => {
+      const autoPlayAudio = audioControls.dataset.autoPlayAudio === 'true';
+
+      block.querySelectorAll('[data-auto-play-audio]').forEach((ac) => {
+        ac.dataset.autoPlayAudio = !autoPlayAudio;
+      });
+
+      setPreference('autoplayAudio', !autoPlayAudio);
+    });
+  });
 }

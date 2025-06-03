@@ -1,18 +1,14 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import state from './state.js';
+import state from './slider-state.js';
 import {
   generateVisualConfig,
   getPreference,
-  setPreference,
   getAudioFilename,
-  getNextStep,
-  getPreviousStep,
   showAllSteps,
   showStep,
-  getStepFromWindowLocation,
-  updateWindowLocation,
-} from './utils.js';
+  addEventHandlers,
+} from './slider-utils.js';
 
 function html(content, placeholders) {
   const initialView = getPreference('view') || 'as-slides';
@@ -25,9 +21,6 @@ function html(content, placeholders) {
                 <h2 class="title">${content.title}</h2>
 
                 <div class="display-toggles">
-                    <button class="as-docs button secondary" data-toggle-view="as-docs">${
-                      placeholders.viewAsDocsLabel || 'View as docs'
-                    }</button>
                     <button class="as-slides button secondary" data-toggle-view="as-slides">${
                       placeholders.viewAsSlidesLabel || 'View as slides'
                     }</button>
@@ -123,7 +116,7 @@ function html(content, placeholders) {
                       </div>
                       <div class="content-info doc-content-info">
                         <label class="step-label">Step ${step.number} of ${section.steps.length}</label>
-                        <div class="copy-icon">
+                        <div class="copy-icon" data-copystep="${step.id}">
                             <span class="icon icon-copy-link"></span>
                             <label>${placeholders?.userActionCopylinkLabel || 'Copy link'}</label>
                         </div>
@@ -159,9 +152,9 @@ function html(content, placeholders) {
                           
                           <div class="content-info slides-content-info">
                             <label class="step-label">Step ${step.number} of ${section.steps.length}</label>
-                            <div class="copy-icon">
+                            <div class="copy-icon" data-copystep="${step.id}">
                                 <span class="icon icon-copy-link"></span>
-                                <label>Copy link</label>
+                                <label>${placeholders?.userActionCopylinkLabel || 'Copy link'}</label>
                             </div>
                           </div>
                           <div class="step-name" data-step-name>
@@ -201,7 +194,7 @@ function html(content, placeholders) {
                       <!-- Step body -->
                       <div class="content" itemprop="description">
                           ${step.body}
-                          <button class="button secondary">${
+                          <button class="button secondary" data-toggle-view="as-docs">${
                             placeholders?.expandAllStepsLabel || 'Expand all steps'
                           }</button>
                       </div>
@@ -213,87 +206,6 @@ function html(content, placeholders) {
               .join('')} <!-- End sections -->
             </div>
         </div>`;
-}
-
-function addEventHandlers(block) {
-  block.querySelectorAll('[data-toggle-view]').forEach((button) => {
-    button.addEventListener('click', () => {
-      block.querySelector('.container').classList.toggle('as-docs');
-
-      if (button.dataset.toggleView === 'as-docs') {
-        setPreference('view', 'as-docs');
-        showAllSteps(block);
-      } else {
-        setPreference('view', 'as-slides');
-        showStep(block, state.currentStep);
-      }
-    });
-  });
-
-  block.querySelectorAll('[data-previous-step]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const previousStep = getPreviousStep(block, state.currentStep);
-
-      if (previousStep && getPreference('view') !== 'as-docs') {
-        state.currentStep = previousStep;
-        updateWindowLocation(block, state.currentStep);
-        showStep(block, state.currentStep, 'previous');
-      }
-    });
-  });
-
-  block.querySelectorAll('[data-next-step]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const nextStep = getNextStep(block, state.currentStep);
-
-      if (nextStep && getPreference('view') !== 'as-docs') {
-        state.currentStep = nextStep;
-        updateWindowLocation(block, state.currentStep);
-        showStep(block, state.currentStep, 'next');
-      }
-    });
-  });
-
-  block.querySelectorAll('[data-section-select]').forEach((select) => {
-    select.addEventListener('change', () => {
-      state.currentStep = select.value;
-      updateWindowLocation(block, state.currentStep);
-      showStep(block, state.currentStep, 'jump');
-      block.querySelectorAll('[data-option-force-active="true"]').forEach((option) => {
-        option.selected = true;
-      });
-    });
-  });
-
-  block.querySelectorAll('[data-step-name-select]').forEach((select) => {
-    select.addEventListener('change', () => {
-      state.currentStep = select.value;
-      updateWindowLocation(block, state.currentStep);
-      showStep(block, state.currentStep, 'jump');
-    });
-  });
-
-  block.querySelectorAll('audio').forEach((audio) => {
-    audio.addEventListener('ended', () => {
-      setTimeout(() => {
-        if (getPreference('autoplayAudio')) {
-          audio.closest('[data-step]').querySelector('[data-next-step]').click();
-        }
-      }, 2000);
-    });
-  });
-
-  block.querySelectorAll('[data-auto-play-audio]').forEach((audioControls) => {
-    audioControls?.addEventListener('click', () => {
-      const autoPlayAudio = audioControls.dataset.autoPlayAudio === 'true';
-
-      block.querySelectorAll('[data-auto-play-audio]').forEach((ac) => {
-        ac.dataset.autoPlayAudio = !autoPlayAudio;
-      });
-
-      setPreference('autoplayAudio', !autoPlayAudio);
-    });
-  });
 }
 
 export default async function decorate(block) {
@@ -391,7 +303,7 @@ export default async function decorate(block) {
   const placeholders = await placeHolderPromise;
   block.innerHTML = html(content, placeholders);
 
-  addEventHandlers(block, getStepFromWindowLocation(block));
+  addEventHandlers(block, placeholders);
 
   state.currentStep = content.sections.flatMap((sec) => sec.steps).find((step) => step.active).id;
 
