@@ -116,7 +116,7 @@ function addPlayButton(container, videoUrl, bgContainer) {
 
 export default async function decorate(block) {
   // Extract properties
-  const allDivs = [...block.querySelectorAll(':scope > div')];
+  const allDivs = [...block.querySelectorAll(':scope div > div')];
   let customBgColor;
   let videoLinkWrapper;
   let img;
@@ -164,7 +164,7 @@ export default async function decorate(block) {
         <div class='marquee-title'>${title.innerHTML}</div>
         <div class='marquee-long-description'>${longDescr.innerHTML}</div>
         <div class='marquee-cta'>
-          ${decorateCustomButtons(firstCta?.firstElementChild, secondCta?.firstElementChild)}
+          ${decorateCustomButtons(firstCta, secondCta)}
         </div>
       </div>
       </div>
