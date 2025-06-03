@@ -421,3 +421,9 @@ button.filter-pill:focus {
 .playlist-browse-pagination-label {
   margin: 0 1em;
 }
+.playlist-no-results {
+  text-align: center;
+  font-size: 1.25rem;
+  margin: 2rem 0;
+  color: #555;
+}
