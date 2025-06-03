@@ -99,6 +99,7 @@ export const atomicResultChildrenTemplateStyles = `
         }
         .result-title {
             position: relative;
+            margin: 4px 0;
         }
             atomic-result-section-excerpt, atomic-result-text {
                       font-size: var(--spectrum-font-size-75);
@@ -113,13 +114,13 @@ export const atomicResultChildrenTemplateStyles = `
                       -webkit-box-orient: vertical;
                       overflow: hidden;
                       text-overflow: ellipsis;
-                      margin: 2px 0;
+                      margin: 2px 0 6px;
                       max-width: 90vw;
                     }
                     atomic-result-section-excerpt atomic-result-text {
                       color: #959595;
                       font-size: var(--spectrum-font-size-50);
-                      line-height: 12px;
+                      line-height: 14px;
                     }
                     .result-title atomic-result-text, .mobile-result-title atomic-result-text {
                       color: var(--non-spectrum-dark-charcoal);
