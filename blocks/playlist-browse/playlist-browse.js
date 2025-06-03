@@ -204,19 +204,6 @@ const updateCards = (filters) => {
   playlistsPromise.then((playlists) => {
     // add filtered cards and pagination for them.
     const filteredPlaylists = filterPlaylists(playlists.data, filters);
-
-    // ✅ Show error message if no playlists match
-    if (filteredPlaylists.length === 0) {
-      const errorMsg = htmlToElement(`
-        <div class="playlist-no-results">
-          We are sorry, no results found matching the criteria. Try adjusting your search to view more content.
-        </div>
-      `);
-      cards.innerHTML = '';
-      cards.append(errorMsg);
-      return; // Stop further execution
-    }
-
     const onPageChange = (page, ps) => {
       cards.innerHTML = '';
       ps.forEach((playlist) => cards.append(newPlaylistCard(playlist)));
@@ -417,6 +404,31 @@ class Filter {
 
     Promise.allSettled(filterOptionsPromises).then(() => {
       this.updateAll();
+       const filteredPlaylists = filterPlaylists(playlists.data, filters);
+
+
+
+    // ✅ Show error message if no playlists match
+
+    if (filteredPlaylists.length === 0) {
+
+      const errorMsg = htmlToElement(`
+
+        <div class="playlist-no-results">
+
+          We are sorry, no results found matching the criteria. Try adjusting your search to view more content.
+
+        </div>
+
+      `);
+
+      cards.innerHTML = '';
+
+      cards.append(errorMsg);
+
+      return; // Stop further execution
+
+    }
     });
 
     // add event listener to clear filters
