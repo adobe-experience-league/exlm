@@ -116,7 +116,7 @@ function addPlayButton(container, videoUrl, bgContainer) {
 
 export default async function decorate(block) {
   // Extract properties
-  const allDivs = [...block.querySelectorAll(':scope > div')];
+  const allDivs = [...block.querySelectorAll(':scope div > div')];
   let customBgColor;
   let videoLinkWrapper;
   let img;
