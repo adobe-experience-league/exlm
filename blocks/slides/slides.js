@@ -124,8 +124,12 @@ function html(content, placeholders) {
                       <!-- Slide Controls -->
                       <div class="controls">
                           <div class="controls-bar">
-                              <button class="previous-button secondary" data-previous-step="previous-button">Previous</button>
-                              <button class="next-button" data-next-step="next-button">Next</button>
+                              <button class="previous-button secondary" data-previous-step="previous-button">${
+                                placeholders.playlistPreviousLabel
+                              }</button>
+                              <button class="next-button" data-next-step="next-button">${
+                                placeholders.playlistNextLabel
+                              }</button>
 
                               <audio 
                                   class="audio-player" data-audio-controls
@@ -141,7 +145,10 @@ function html(content, placeholders) {
                                   class="auto-play-button"
                                   data-auto-play-audio="${autoplayAudio}"
                                   aria-pressed="${autoplayAudio}"
-                                  title="Turn autoplay on to automatically advance through the steps."
+                                  title=${
+                                    placeholders.autoplayStepsTitle ||
+                                    'Turn autoplay on to automatically advance through the steps.'
+                                  }
                                 >
                                   <span class="auto-play-thumb"></span>
                                 </button>
@@ -151,7 +158,13 @@ function html(content, placeholders) {
                           </div >
                           
                           <div class="content-info slides-content-info">
-                            <label class="step-label">Step ${step.number} of ${section.steps.length}</label>
+                            <label class="step-label">${
+                              placeholders.signupStepProgress
+                                ? `${placeholders.signupStepProgress
+                                    .replace('{}', step.number)
+                                    .replace('{}', section.steps.length)}`
+                                : `Step ${step.number} of ${section.steps.length}`
+                            }</label>
                             <div class="copy-icon" data-copystep="${step.id}">
                                 <span class="icon icon-copy-link"></span>
                                 <label>${placeholders?.userActionCopylinkLabel || 'Copy link'}</label>
@@ -233,8 +246,10 @@ export default async function decorate(block) {
     steps: [],
   };
 
+  block.style.visibility = 'hidden';
+
   // Process rows 2 to n; these may be sections or steps
-  await Promise.all(
+  const promise = Promise.all(
     restOfBlock.map(async (row) => {
       // Every row except the first ...
       if (row.querySelector(':scope > div:last-child').innerHTML.trim() === '') {
@@ -282,39 +297,41 @@ export default async function decorate(block) {
     }),
   );
 
-  if (section.steps.length > 0) {
-    // Handle the last section
-    sections.push(section);
-  }
+  promise.then(async () => {
+    if (section.steps.length > 0) {
+      // Handle the last section
+      sections.push(section);
+    }
 
-  // Handle the case where no step is active
-  if (!sections.flatMap((sec) => sec.steps).some((step) => step.active)) {
-    sections[0].steps[0].active = true;
-  }
+    // Handle the case where no step is active
+    if (!sections.flatMap((sec) => sec.steps).some((step) => step.active)) {
+      sections[0].steps[0].active = true;
+    }
 
-  sections.forEach((s) => {
-    s.steps.forEach((step, index) => {
-      step.number = index + 1;
+    sections.forEach((s) => {
+      s.steps.forEach((step, index) => {
+        step.number = index + 1;
+      });
     });
+
+    content.sections = sections || [];
+    const placeholders = await placeHolderPromise;
+    block.innerHTML = html(content, placeholders);
+
+    addEventHandlers(block, placeholders);
+
+    state.currentStep = content.sections.flatMap((sec) => sec.steps).find((step) => step.active).id;
+
+    if (getPreference('view') === 'as-docs') {
+      showAllSteps(block);
+    } else {
+      showStep(block, state.currentStep);
+    }
+
+    block.style.display = 'block';
+    block.style.visibility = '';
+    decorateIcons(block);
   });
-
-  content.sections = sections || [];
-  console.log('****************** content::', content);
-  const placeholders = await placeHolderPromise;
-  block.innerHTML = html(content, placeholders);
-
-  addEventHandlers(block, placeholders);
-
-  state.currentStep = content.sections.flatMap((sec) => sec.steps).find((step) => step.active).id;
-
-  if (getPreference('view') === 'as-docs') {
-    showAllSteps(block);
-  } else {
-    showStep(block, state.currentStep);
-  }
-
-  block.style.display = 'block';
-  decorateIcons(block);
 
   return block;
 }
