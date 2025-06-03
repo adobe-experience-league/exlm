@@ -411,6 +411,10 @@
     width: 30%;
   }
 
+  .section.atomic-search-container .atomic-search-wrapper {
+    max-width: 1440px;
+  }
+
   .atomic-load-skeleton-filter .atomic-load-skeleton-search-filter.atomic-load-skeleton {
     margin-top: 14px;
     min-height: 40px;
@@ -427,11 +431,5 @@
     min-height: 24px;
     height: 24px;
     margin-left: -32px;
-  }
-}
-
-@media only screen and (min-width: 1440px) {
-  .section.atomic-search-container .atomic-search-wrapper {
-    max-width: 90%;
   }
 }

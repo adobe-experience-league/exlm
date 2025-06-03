@@ -9,6 +9,7 @@ import atomicQuerySummaryHandler from './components/atomic-search-query-summary.
 import atomicBreadBoxHandler from './components/atomic-search-breadbox.js';
 import atomicPagerHandler from './components/atomic-search-pager.js';
 import atomicNoResultHandler from './components/atomic-search-no-results.js';
+import atomicNotificationHandler from './components/atomic-search-notification.js';
 import getCoveoAtomicMarkup from './components/atomic-search-template.js';
 import { CUSTOM_EVENTS, debounce, handleHeaderSearchVisibility } from './components/atomic-search-utils.js';
 import { isMobile } from '../header/header-utils.js';
@@ -98,6 +99,7 @@ export default function decorate(block) {
       atomicResultHandler(block, placeholders);
       atomicSortDropdownHandler(block.querySelector('atomic-sort-dropdown'));
       atomicFacetManagerHandler(block.querySelector('atomic-facet-manager'));
+      atomicNotificationHandler(block.querySelector('atomic-notifications'));
       atomicQuerySummaryHandler(block.querySelector('atomic-query-summary'), placeholders);
       atomicBreadBoxHandler(block.querySelector('atomic-breadbox'));
       atomicPagerHandler(block.querySelector('atomic-pager'));
@@ -116,10 +118,10 @@ export default function decorate(block) {
       customElements.whenDefined('atomic-no-results'),
       customElements.whenDefined('atomic-search-box'),
       customElements.whenDefined('atomic-results-per-page'),
+      customElements.whenDefined('atomic-notifications'),
     ]).then(() => {
       atomicNoResultHandler(block, placeholders);
       commonActionHandler();
-
       handleHeaderSearchVisibility();
       decorateIcons(block);
 

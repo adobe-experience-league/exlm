@@ -384,6 +384,22 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 }
               }
             </style>
+            <atomic-layout-section section="triggers">
+              <atomic-notifications>
+                <style>
+                    atomic-notifications {
+                      padding-top: 30px;
+                    }
+                    atomic-notifications::part(notification-link){
+                      color: var(--link-color);
+                    }
+                    atomic-notifications::part(trigger-span){
+                      display: block;
+                      max-width: fit-content;
+                    }
+                </style>
+              </atomic-notifications>
+            </atomic-layout-section>
             <atomic-layout-section section="query">
               <style>
                 atomic-layout-section {
