@@ -423,15 +423,12 @@ button.filter-pill:focus {
 }
 
 .playlist-no-results {
-  width: 100%;
-  max-width: 100%;
-  background-color: #eee;
-  padding: 2rem;
+  background-color: var(--spectrum-gray-200);
+  color: var(--non-spectrum-grey);
+  font-size: var(--spectrum-font-size-200);
+  padding: 72px 0;
   text-align: center;
-  font-size: 1rem;
-  color: #333;
-  border-radius: 8px;
+  width: 100%;
   box-sizing: border-box;
-  margin: 2rem auto;
-  grid-column: 1 / -1; /* for grid layouts */
 }
+

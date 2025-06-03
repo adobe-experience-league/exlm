@@ -205,16 +205,18 @@ const updateCards = (filters) => {
     // add filtered cards and pagination for them.
     const filteredPlaylists = filterPlaylists(playlists.data, filters);
 
-    // ✅ Show error message if no playlists match
+    // Show error message if no playlists match
     if (filteredPlaylists.length === 0) {
+      const noResultsText =
+        placeholders.noResultsText ||
+        'We are sorry, no results found matching the criteria. Try adjusting your search to view more content.';
+
       const errorMsg = htmlToElement(`
-        <div class="playlist-no-results">
-          We are sorry, no results found matching the criteria. Try adjusting your search to view more content.
-        </div>
-      `);
+    <div class="playlist-no-results">${noResultsText}</div>
+  `);
       cards.innerHTML = '';
       cards.append(errorMsg);
-      return; // Stop further execution
+      return;
     }
 
     const onPageChange = (page, ps) => {
@@ -417,7 +419,6 @@ class Filter {
 
     Promise.allSettled(filterOptionsPromises).then(() => {
       this.updateAll();
-      
     });
 
     // add event listener to clear filters
