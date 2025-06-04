@@ -17,9 +17,12 @@ async function getTranslatedDocContent() {
   const docResponse = await fetch(`${docPath}.plain.html`);
   const translatedDoc = await docResponse.text();
   const docElement = htmlToElement(`<div>${translatedDoc}</div>`);
-  decorateMain(docElement);
-  await loadBlocks(docElement);
-  return docElement.querySelector(':scope > div:first-child');
+  const sections = [...docElement.children].slice(0, -2);
+  const mainContent = document.createElement('div');
+  mainContent.append(...sections);
+  decorateMain(mainContent);
+  await loadBlocks(mainContent);
+  return mainContent;
 }
 
 async function toggleContent(isChecked, docContainer) {
