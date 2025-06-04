@@ -1,4 +1,4 @@
-import { decorateIcons, toCamelCase } from '../../scripts/lib-franklin.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 const iconMapping = {
@@ -19,13 +19,13 @@ export default async function decorate(block) {
   }
 
   const [noteTypeElement] = [...block.children].map((row) => row.firstElementChild);
-  noteTypeElement.textContent =
-    placeholders?.[`note${toCamelCase(noteTypeElement.textContent)}Label`] || noteTypeElement.textContent;
+  const noteTypeRaw = noteTypeElement.textContent.trim();
+  const noteType = noteTypeRaw.toLowerCase();
+  const localizedNoteLabel =
+    placeholders?.[`note${noteType.charAt(0).toUpperCase() + noteType.slice(1)}Label`] || noteTypeRaw;
 
   // Shouldn't apply to MD Github pages
   if (noteTypeElement && !noteTypeElement.querySelector('span.icon')) {
-    const noteType = noteTypeElement?.textContent.trim().toLowerCase();
-
     const svgName = iconMapping[noteType] ? iconMapping[noteType] : 'info';
     const iconSpan = document.createElement('span');
     iconSpan.className = `icon icon-${svgName}`;
@@ -33,5 +33,12 @@ export default async function decorate(block) {
 
     block.classList.add('note', noteType);
     decorateIcons(block);
+  }
+
+  const textNode = [...noteTypeElement.childNodes].find((node) => node.nodeType === Node.TEXT_NODE);
+  if (textNode) {
+    textNode.textContent = ` ${localizedNoteLabel}`;
+  } else {
+    noteTypeElement.append(` ${localizedNoteLabel}`);
   }
 }
