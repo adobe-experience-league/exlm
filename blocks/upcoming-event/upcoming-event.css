@@ -102,24 +102,12 @@
   display: none;
 }
 
-/** List view **/
+/** List view styles start **/
 
-.upcoming-event .view-switcher {
-  display: none;
-}
-
-.upcoming-event .card-figure-date {
-  display: none;
-}
-
-.upcoming-event .browse-cards-block-content > div .browse-card .show-more {
-  display: none;
-}
-
-.upcoming-event .browse-cards-block-content > div .browse-card .show-less {
-  display: none;
-}
-
+.upcoming-event .view-switcher,
+.upcoming-event .card-figure-date,
+.upcoming-event .browse-cards-block-content > div .browse-card .show-more,
+.upcoming-event .browse-cards-block-content > div .browse-card .show-less,
 .upcoming-event .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info {
   display: none;
 }
