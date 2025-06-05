@@ -11,8 +11,10 @@ import {
 } from './atomic-search-utils.js';
 import { ContentTypeIcons } from './atomic-search-icons.js';
 import { decorateIcons } from '../../../scripts/lib-franklin.js';
-import { htmlToElement } from '../../../scripts/scripts.js';
+import { htmlToElement, getConfig } from '../../../scripts/scripts.js';
 import { INITIAL_ATOMIC_RESULT_CHILDREN_COUNT } from './atomic-result-children.js';
+
+const { communityTopicsUrl } = getConfig();
 
 export const atomicResultStyles = `
                   <style>
@@ -32,6 +34,22 @@ export const atomicResultStyles = `
                         max-width: calc(100% - 40px);
                       }
                     }
+
+                    .result-description atomic-result-multi-value-text::part(result-multi-value-text-list) {
+                      gap: 4px;
+                      margin-top: 10px;
+                      flex-wrap: wrap;
+                    }
+                    
+                    .result-description atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                      border: 1px solid #959595;
+                      border-radius: 4px;
+                      color: var(--non-spectrum-grey-updated);
+                      font-size: 12px;
+                      line-height: 15px;
+                      padding: 5px;
+                    }
+
                     .result-item {
                       display: none;
                       gap: 16px;
@@ -43,8 +61,40 @@ export const atomicResultStyles = `
                       gap: 2px;
                       margin-left: 0;
                     }
+                    .atomic-search-result-item.mobile-only .result-field.result-thumbnail {
+                      margin-top: 10px;
+                    }
                     .result-root.recommendation-badge {
                           margin: 40px 0px 0px;
+                    }
+                    .atomic-search-result-item .result-field.text-thumbnail {
+                      display: flex;
+                      gap: 18px;
+                    }
+                    .atomic-search-result-item .result-field.text-thumbnail:not(:has(.result-thumbnail)) {
+                      gap: 0;
+                    }
+                    .atomic-search-result-item .result-field.text-thumbnail:has(.result-thumbnail) .result-text {
+                      flex: 0 0 56%;
+                    }
+                    .atomic-search-result-item.result-item .thumbnail-wrapper {
+                      position: relative;
+                      display: inline-block;
+                      cursor: pointer;
+                    } 
+                    .atomic-search-result-item.result-item .thumbnail-img {
+                      display: block;
+                    }
+                    .atomic-search-result-item.result-item .thumbnail-wrapper .icon-play-outline-white {
+                      position: absolute;
+                      left: 50%;
+                      top: 50%;
+                      transform: translate(-50%, -50%);
+                      pointer-events: none;
+                    }
+                    .atomic-search-result-item.result-item .thumbnail-wrapper .icon-play-outline-white img {
+                      width: 40px;
+                      height: 40px;
                     }
                     @media(min-width: 1024px) {
                       .result-item.desktop-only {
@@ -352,7 +402,7 @@ export default function atomicResultHandler(block, placeholders) {
   if (!container) {
     waitFor(() => {
       atomicResultHandler(block, placeholders);
-    });
+    }, 50);
     return;
   }
   container.parentElement.part.add('list-wrap');
@@ -447,7 +497,7 @@ export default function atomicResultHandler(block, placeholders) {
         const countString = element.parentElement?.querySelector('.child-result-count')?.textContent?.trim();
         const childrenCount = countString && !Number.isNaN(countString) ? +countString : 0;
 
-        if (childrenCount <= INITIAL_ATOMIC_RESULT_CHILDREN_COUNT + 1) {
+        if (childrenCount <= INITIAL_ATOMIC_RESULT_CHILDREN_COUNT) {
           btn.part.add('hide-btn');
           childrenRoot.part.remove('children-root-with-button');
         } else {
@@ -499,6 +549,47 @@ export default function atomicResultHandler(block, placeholders) {
     isListenerAdded = true;
   }
 
+  function openVideoModal(videoUrl) {
+    document.body.style.overflow = 'hidden';
+
+    const parentBlock = document.querySelector('.atomic-search');
+    if (!parentBlock) return;
+    let modal = parentBlock.querySelector('.video-modal-wrapper');
+    let iframeContainer;
+
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.classList.add('video-modal-wrapper');
+
+      const modalContent = document.createElement('div');
+      modalContent.classList.add('video-modal-container');
+
+      const closeBtn = document.createElement('span');
+      closeBtn.classList.add('icon', 'icon-close-light');
+      closeBtn.addEventListener('click', () => {
+        document.body.style.overflow = '';
+        modal.style.display = 'none';
+        if (iframeContainer) iframeContainer.innerHTML = '';
+      });
+
+      iframeContainer = document.createElement('div');
+      iframeContainer.classList.add('video-modal');
+
+      modalContent.appendChild(closeBtn);
+      modalContent.appendChild(iframeContainer);
+      modal.appendChild(modalContent);
+      decorateIcons(modal);
+      parentBlock.appendChild(modal);
+    } else {
+      iframeContainer = modal.querySelector('.video-modal');
+      modal.style.display = 'flex';
+    }
+
+    if (iframeContainer && videoUrl) {
+      iframeContainer.innerHTML = `<iframe src="${videoUrl}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+    }
+  }
+
   const updateAtomicResultUI = () => {
     const results = container.querySelectorAll('atomic-result');
     const isMobileView = isMobile();
@@ -507,7 +598,7 @@ export default function atomicResultHandler(block, placeholders) {
       const hydrateResult = () => {
         const resultShadow = resultEl.shadowRoot;
         if (!resultShadow) {
-          waitForChildElement(resultEl, hydrateResult);
+          waitForChildElement(resultEl, hydrateResult, 25);
           return;
         }
 
@@ -516,7 +607,7 @@ export default function atomicResultHandler(block, placeholders) {
         const contentTypeElWrap = resultContentType?.firstElementChild?.shadowRoot;
 
         if (!resultItem || !contentTypeElWrap) {
-          waitFor(hydrateResult);
+          waitFor(hydrateResult, 20);
           return;
         }
 
@@ -527,7 +618,7 @@ export default function atomicResultHandler(block, placeholders) {
 
         const contentTypeElParent = contentTypeElWrap?.querySelector('ul');
         if (!contentTypeElParent) {
-          waitFor(hydrateResult);
+          waitFor(hydrateResult, 20);
           return;
         }
         if (!resultItem.dataset.decorated) {
@@ -555,6 +646,33 @@ export default function atomicResultHandler(block, placeholders) {
         const productElWrap = resultItem?.querySelector('.result-product')?.firstElementChild?.shadowRoot;
         const productElements = productElWrap?.querySelectorAll('li') || [];
         const contentTypeElements = contentTypeElParent?.querySelectorAll('li') || [];
+
+        const topicElements =
+          resultItem
+            ?.querySelector('.result-description atomic-result-multi-value-text')
+            ?.shadowRoot?.querySelectorAll('li') || [];
+        topicElements.forEach((li) => {
+          if (li.classList.contains('separator')) {
+            li.remove();
+            return;
+          }
+
+          const slot = li.querySelector('slot');
+          if (!slot || li.querySelector('a')) return;
+
+          const label = slot.textContent.trim();
+          if (!label) return;
+
+          const link = document.createElement('a');
+          link.href = `${communityTopicsUrl}${encodeURIComponent(label)}`;
+          link.textContent = label;
+          link.target = '_blank';
+          link.style.textDecoration = 'none';
+          link.style.color = 'inherit';
+
+          li.innerHTML = '';
+          li.appendChild(link);
+        });
 
         contentTypeElements.forEach((contentTypeEl) => {
           const contentType = contentTypeEl.textContent.toLowerCase().trim();
@@ -602,7 +720,52 @@ export default function atomicResultHandler(block, placeholders) {
           decorateExternalLink(anchorTag);
           decorateIcons(anchorTag);
         }
+
+        const videoUrlEl = resultShadow?.querySelector('atomic-result-text[field="video_url"]');
+        const titleEl = resultShadow?.querySelector('atomic-result-text[field="title"]');
+
+        const VIDEO_THUMBNAIL_FORMAT = /^https:\/\/video\.tv\.adobe\.com\/v\/\w+/;
+
+        if (videoUrlEl) {
+          const videoUrl = videoUrlEl?.textContent?.trim() || '';
+          if (!videoUrl) return;
+          const thumbnailAlt = titleEl?.textContent || '';
+          const cleanUrl = videoUrl.split('?')[0];
+
+          if (!VIDEO_THUMBNAIL_FORMAT.test(cleanUrl)) {
+            const thumbnail = resultShadow.querySelector('.result-thumbnail');
+            if (thumbnail) thumbnail.style.display = 'none';
+            return;
+          }
+
+          const imgUrl = `${cleanUrl}?format=jpeg`;
+          const thumbnailWrapper = isMobileView
+            ? resultShadow?.querySelector('.atomic-search-result-item.mobile-only .result-field.result-thumbnail')
+            : resultShadow?.querySelector('.atomic-search-result-item.desktop-only .result-field.result-thumbnail');
+          if (thumbnailWrapper) {
+            let img = thumbnailWrapper.querySelector('img');
+            if (!img) {
+              img = document.createElement('img');
+              img.classList.add('thumbnail-img');
+              img.alt = thumbnailAlt;
+              img.loading = 'lazy';
+              const wrapper = document.createElement('span');
+              wrapper.classList.add('thumbnail-wrapper');
+              const playButton = document.createElement('span');
+              playButton.classList.add('icon', 'icon-play-outline-white');
+              wrapper.appendChild(img);
+              wrapper.appendChild(playButton);
+              decorateIcons(wrapper);
+              thumbnailWrapper.appendChild(wrapper);
+              wrapper.addEventListener('click', () => {
+                openVideoModal(cleanUrl);
+              });
+            }
+            img.src = imgUrl || '';
+          }
+        }
       };
+
       hydrateResult();
     });
 

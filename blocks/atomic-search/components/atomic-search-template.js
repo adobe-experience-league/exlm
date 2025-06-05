@@ -9,8 +9,12 @@ import { atomicResultListStyles, atomicResultStyles } from './atomic-search-resu
 
 const getCoveoAtomicMarkup = (placeholders) => {
   const { lang: languageCode } = getPathDetails();
+  const CONTENT_TYPES = {
+    TUTORIAL: 'Tutorial',
+  };
+
   const atomicUIElements = htmlToElement(`
-        <atomic-search-interface language=${languageCode} fields-to-include='["@foldingchild","@foldingcollection","@foldingparent","author","author_bio_page","author_name","author_type","authorname","authortype","collection","connectortype","contenttype","date","documenttype","el_author_type","el_contenttype","el_id","el_interactionstyle","el_kudo_status","el_lirank","el_product","el_rank_icon","el_reply_status","el_solution","el_solutions_authored","el_type","el_usergenerictext","el_version","el_view_status","exl_description","exl_thumbnail","filetype","id","language","liMessageLabels","liboardinteractionstyle","licommunityurl","lithreadhassolution","objecttype","outlookformacuri","outlookuri","permanentid","role","source","sourcetype","sysdocumenttype","type","urihash","video_url", "sysdate", "el_kudo_status"]'>
+        <atomic-search-interface language=${languageCode}  search-hub="Experience League Learning Hub" fields-to-include='["@foldingchild","@foldingcollection","@foldingparent","author","author_bio_page","author_name","author_type","authorname","authortype","collection","connectortype","contenttype","date","documenttype","el_author_type","el_contenttype","el_id","el_interactionstyle","el_kudo_status","el_lirank","el_product","el_rank_icon","el_reply_status","el_solution","el_solutions_authored","el_type","el_usergenerictext","el_version","el_view_status","exl_description","exl_thumbnail","filetype","id","language","liMessageLabels","liboardinteractionstyle","licommunityurl","lithreadhassolution","objecttype","outlookformacuri","outlookuri","permanentid","role","source","sourcetype","sysdocumenttype","type","urihash","video_url", "sysdate", "el_kudo_status"]'>
           <script type="application/json" id="atomic-search-interface-config">
             {
               "search": {
@@ -23,6 +27,40 @@ const getCoveoAtomicMarkup = (placeholders) => {
           <div class="header-bg"></div>
           <atomic-layout-section section="search">
             <style>
+            .atomic-search .video-modal-wrapper {
+                position: fixed;
+                display: flex;
+                z-index: 10;
+                inset: 0;
+                background-color: rgb(10 10 10 / 86%);
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+              }
+              .atomic-search .video-modal-container {
+                width: 100%;
+              }
+              .atomic-search .video-modal-wrapper .icon.icon-close-light {
+                position: absolute;
+                top: 24px;
+                right: 24px;
+                width: 30px;
+                height: 30px;
+                cursor: pointer;
+                padding: 5px;
+              }
+              .atomic-search .video-modal {
+                display: flex;
+                width: 100%;
+                height: 100%;
+                align-items: center;
+                justify-content: center;
+              }
+              .atomic-search .video-modal iframe {
+                width: 90vw;
+                height: 50vw;
+                max-height: 95vh;
+              }
               atomic-search-layout atomic-layout-section[section='status'] {
                 position: relative;
                 @media(max-width: 1024px) {
@@ -346,6 +384,22 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 }
               }
             </style>
+            <atomic-layout-section section="triggers">
+              <atomic-notifications>
+                <style>
+                    atomic-notifications {
+                      padding-top: 30px;
+                    }
+                    atomic-notifications::part(notification-link){
+                      color: var(--link-color);
+                    }
+                    atomic-notifications::part(trigger-span){
+                      display: block;
+                      max-width: fit-content;
+                    }
+                </style>
+              </atomic-notifications>
+            </atomic-layout-section>
             <atomic-layout-section section="query">
               <style>
                 atomic-layout-section {
@@ -571,7 +625,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 <atomic-result-template>
                   <template>
                   ${atomicResultStyles}
-                  <div class="result-item mobile-only">
+                  <div class="result-item atomic-search-result-item mobile-only">
                     <div class="mobile-result-title">
                       <atomic-field-condition must-match-is-recommendation="true">
                         <span class="atomic-recommendation-badge">${
@@ -609,6 +663,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       >
                       </atomic-result-number>
                     </div>
+                    <div class="result-description">
                     <atomic-result-children>
                       ${atomicResultChildrenStyles}
                       <atomic-load-more-children-results label="Show replies"></atomic-load-more-children-results>
@@ -630,9 +685,25 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </template>
                       </atomic-result-children-template>
                     </atomic-result-children>
+                    <atomic-field-condition must-match-el_contenttype="${CONTENT_TYPES.TUTORIAL}">
+                      <atomic-field-condition if-defined="video_url">
+                        <div class="result-field result-thumbnail">
+                          <div class="result-thumbnail">
+                                <atomic-result-text field="video_url" style="display:none;" should-highlight="false"></atomic-result-text>
+                          </div>
+                        </div>
+                      </atomic-field-condition>
+                    </atomic-field-condition>
+                    <atomic-result-multi-value-text
+                      field="limessagelabels"
+                      max-values-to-display=99
+                    >
+                    </atomic-result-multi-value-text>
+                    </div>
                   </div>
-                  <div class="result-item desktop-only">
-                    <div class="result-field">
+                  <div class="result-item atomic-search-result-item desktop-only">
+                    <div class="result-field text-thumbnail">
+                    <div class="result-text">
                         <div class="result-title">
                           <atomic-field-condition must-match-is-recommendation="true">
                             <span class="atomic-recommendation-badge">${
@@ -675,6 +746,16 @@ const getCoveoAtomicMarkup = (placeholders) => {
                             <atomic-result-text field="excerpt" should-highlight="false"></atomic-result-text>
                           </atomic-result-section-excerpt>
                         </div>
+                        </div>
+                        <atomic-field-condition must-match-el_contenttype="${CONTENT_TYPES.TUTORIAL}">
+                          <atomic-field-condition if-defined="video_url">
+                            <div class="result-field result-thumbnail">
+                              <div class="result-thumbnail">
+                                <atomic-result-text field="video_url" style="display:none;" should-highlight="false"></atomic-result-text>                     
+                              </div>
+                            </div>
+                          </atomic-field-condition>
+                        </atomic-field-condition>
                     </div>
                     <div class="result-field result-content-type">
                         <atomic-result-multi-value-text field="el_contenttype">
@@ -696,6 +777,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       >
                       </atomic-result-number>
                     </div>
+                    <div class="result-description">
                     <atomic-result-children>
                       ${atomicResultChildrenStyles}
                       <atomic-result-children-template>
@@ -717,6 +799,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </template>
                       </atomic-result-children-template>
                     </atomic-result-children>
+                    <atomic-result-multi-value-text
+                      field="limessagelabels"
+                      max-values-to-display=99
+                    >
+                    </atomic-result-multi-value-text>
+                    </div>
                   </div>
                 </template>
                 </atomic-result-template>

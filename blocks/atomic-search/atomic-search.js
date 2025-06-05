@@ -1,5 +1,6 @@
-import { decorateIcons, loadScript } from '../../scripts/lib-franklin.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders, getPathDetails, getConfig, htmlToElement } from '../../scripts/scripts.js';
+import { initiateCoveoAtomicSearch } from '../../scripts/load-atomic-search-scripts.js';
 import atomicFacetHandler from './components/atomic-search-facet.js';
 import atomicResultHandler from './components/atomic-search-result.js';
 import atomicSortDropdownHandler from './components/atomic-search-sort-dropdown.js';
@@ -8,26 +9,16 @@ import atomicQuerySummaryHandler from './components/atomic-search-query-summary.
 import atomicBreadBoxHandler from './components/atomic-search-breadbox.js';
 import atomicPagerHandler from './components/atomic-search-pager.js';
 import atomicNoResultHandler from './components/atomic-search-no-results.js';
+import atomicNotificationHandler from './components/atomic-search-notification.js';
 import getCoveoAtomicMarkup from './components/atomic-search-template.js';
 import { CUSTOM_EVENTS, debounce, handleHeaderSearchVisibility } from './components/atomic-search-utils.js';
 import { isMobile } from '../header/header-utils.js';
 import createAtomicSkeleton from './components/atomic-search-skeleton.js';
 import atomicSearchBoxHandler from './components/atomic-search-box.js';
 import atomicResultPageHandler from './components/atomic-search-results-per-page.js';
+import loadCoveoToken from '../../scripts/data-service/coveo/coveo-token-service.js';
 
 let placeholders = {};
-
-async function initiateCoveoAtomicSearch() {
-  return new Promise((resolve, reject) => {
-    loadScript('https://static.cloud.coveo.com/atomic/v3.13.0/atomic.esm.js', { type: 'module' })
-      .then(async () => {
-        resolve(true);
-      })
-      .catch((e) => {
-        reject(e);
-      });
-  });
-}
 
 export default function decorate(block) {
   const renderAtomicShimmer = (insertBefore) => {
@@ -85,15 +76,17 @@ export default function decorate(block) {
       block.appendChild(skeletonWrapper);
     }
   };
+  const coveoTokenPromise = loadCoveoToken();
   const handleAtomicLibLoad = async () => {
     await customElements.whenDefined('atomic-search-interface');
     const searchInterface = block.querySelector('atomic-search-interface');
     const { coveoOrganizationId } = getConfig();
     const { lang: languageCode } = getPathDetails();
+    const coveoToken = await coveoTokenPromise;
 
     // Initialization
     await searchInterface.initialize({
-      accessToken: window.exlm.config.coveoToken,
+      accessToken: coveoToken,
       organizationId: coveoOrganizationId,
     });
 
@@ -102,10 +95,11 @@ export default function decorate(block) {
 
     const commonActionHandler = () => {
       atomicFacetHandler(block.querySelector('atomic-facet'));
-      atomicSearchBoxHandler(block.querySelector('atomic-search-box'));
+      atomicSearchBoxHandler(block);
       atomicResultHandler(block, placeholders);
       atomicSortDropdownHandler(block.querySelector('atomic-sort-dropdown'));
       atomicFacetManagerHandler(block.querySelector('atomic-facet-manager'));
+      atomicNotificationHandler(block.querySelector('atomic-notifications'));
       atomicQuerySummaryHandler(block.querySelector('atomic-query-summary'), placeholders);
       atomicBreadBoxHandler(block.querySelector('atomic-breadbox'));
       atomicPagerHandler(block.querySelector('atomic-pager'));
@@ -124,10 +118,10 @@ export default function decorate(block) {
       customElements.whenDefined('atomic-no-results'),
       customElements.whenDefined('atomic-search-box'),
       customElements.whenDefined('atomic-results-per-page'),
+      customElements.whenDefined('atomic-notifications'),
     ]).then(() => {
       atomicNoResultHandler(block, placeholders);
       commonActionHandler();
-
       handleHeaderSearchVisibility();
       decorateIcons(block);
 

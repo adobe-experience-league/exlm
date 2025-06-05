@@ -9,7 +9,6 @@ import {
   decorateBlocks,
   decorateBlock,
   decorateTemplateAndTheme,
-  waitForLCP,
   loadBlocks,
   loadCSS,
   decorateButtons,
@@ -19,7 +18,9 @@ import {
   readBlockConfig,
   createOptimizedPicture,
   toClassName,
+  loadBlock,
 } from './lib-franklin.js';
+import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
 
 /**
  * please do not import any other modules here, as this file is used in the critical path.
@@ -546,6 +547,29 @@ async function buildPreMain(main) {
 }
 
 /**
+ * Load LCP block and/or wait for LCP in default content.
+ */
+export async function waitForLCPonMain(lcpBlocks) {
+  const block = document.querySelector('main .block');
+  const hasLCPBlock = block && lcpBlocks.includes(block.dataset.blockName);
+  if (hasLCPBlock) await loadBlock(block);
+
+  document.body.style.display = null;
+  const lcpCandidate = document.querySelector('main img');
+  await new Promise((resolve) => {
+    if (lcpCandidate && lcpCandidate.src === 'about:error') {
+      resolve(); // error loading image
+    } else if (lcpCandidate && !lcpCandidate.complete) {
+      lcpCandidate.setAttribute('loading', 'eager');
+      lcpCandidate.addEventListener('load', resolve);
+      lcpCandidate.addEventListener('error', resolve);
+    } else {
+      resolve();
+    }
+  });
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -576,7 +600,7 @@ async function loadEager(doc) {
     buildPreMain(main);
     decorateMain(main);
     document.body.classList.add('appear');
-    await waitForLCP(LCP_BLOCKS);
+    await waitForLCPonMain(LCP_BLOCKS);
   }
 
   try {
@@ -712,7 +736,7 @@ export function getConfig() {
       ? 'https://platform.cloud.coveo.com/rest/search/v2'
       : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
     coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
-    coveoToken: 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99',
+    coveoToken: isProd ? 'xx937144af-8882-494f-8a5e-96460f4f25d4' : 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99',
     upcomingEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
@@ -738,6 +762,9 @@ export function getConfig() {
     interestsUrl: `${cdnOrigin}/api/interests?page_size=200&sort=Order`,
     // Param for localized Community Profile URL
     localizedCommunityProfileParam: `?profile.language=${communityLocale}`,
+    communityTopicsUrl: isProd
+      ? `https://experienceleaguecommunities.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`
+      : `https://experienceleaguecommunities-dev.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`,
   };
   return window.exlm.config;
 }
@@ -982,7 +1009,7 @@ export async function fetchFragment(rePath, lang) {
 
 /** fetch fragment relative to /${lang}/global-fragments/ */
 export async function fetchGlobalFragment(metaName, fallback, lang) {
-  const fragmentPath = getMetadata(metaName);
+  const fragmentPath = getMetadata(metaName) ?? fallback;
   const fragmentUrl = fragmentPath?.startsWith('/en/') ? fragmentPath.replace('/en/', `/${lang}/`) : fallback;
   const path = `${window.hlx.codeBasePath}${fragmentUrl}.plain.html`;
   const fallbackPath = `${window.hlx.codeBasePath}${fallback}.plain.html`;
@@ -1326,6 +1353,10 @@ async function loadPage() {
     }
     loadPage();
   };
+  const containsAtomicSearch = !!document.querySelector(`main .atomic-search`);
+  if (containsAtomicSearch) {
+    initiateCoveoAtomicSearch();
+  }
 
   if (isProfilePage) {
     await handleProfilePage();

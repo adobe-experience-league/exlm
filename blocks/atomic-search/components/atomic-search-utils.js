@@ -17,6 +17,7 @@ export const COMMUNITY_CONTENT_TYPES = [
   'Community|Blogs',
   'Community|Discussions',
   'Community|Ideas',
+  'Community|User',
 ];
 
 export const COMMUNITY_SUPPORTED_SORT_ELEMENTS = ['el_view_status', 'el_kudo_status', 'el_reply_status'];

@@ -31,6 +31,11 @@ export default function atomicBreadBoxHandler(baseElement) {
         if (!isParentKey) {
           const [parentKey] = facetKey.split('|');
           element.dataset.parent = parentKey;
+          const labelElement = element.querySelector('[part="breadcrumb-value"]');
+          if (labelElement?.textContent?.includes('|')) {
+            const [parentType, childType] = labelElement.textContent.split('|');
+            labelElement.textContent = `${parentType} | ${childType}`;
+          }
         }
         element.addEventListener('click', (e) => {
           if (!isUserClick(e)) {
