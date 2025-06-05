@@ -586,15 +586,15 @@
 
 /** Upcoming events **/
 
-.upcoming-event .browse-card.upcoming-event-card {
+.upcoming-event-wrapper .upcoming-event .browse-card.upcoming-event-card {
   background-color: #fff;
 }
 
-.browse-card.upcoming-event-card .browse-card-banner {
+.upcoming-event-wrapper .browse-card.upcoming-event-card .browse-card-banner {
   background-color: #f00 !important;
   color: #000;
 }
 
-.browse-card.upcoming-event-card .browse-card-figure {
+.upcoming-event-wrapper .browse-card.upcoming-event-card .browse-card-figure {
   background-color: #000;
 }

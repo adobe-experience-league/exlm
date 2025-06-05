@@ -6,7 +6,16 @@ import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeli
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
+
 /**
+ *
  * Retrieves a list of unique product focus items from live events data.
  */
 async function getListofProducts() {
@@ -48,6 +57,17 @@ async function getListofProducts() {
   }
 }
 
+function toggleClassState(element, className) {
+  if (!element || !className) return;
+  element.classList.toggle(className);
+}
+
+function setActiveToggle(activeEl, inactiveEl, className) {
+  if (!activeEl || !inactiveEl) return;
+  activeEl.classList.add(className);
+  inactiveEl.classList.remove(className);
+}
+
 function setupExpandableDescription(card) {
   const cardContent = card.querySelector('.browse-card-content');
   const description = card.querySelector('.browse-card-description-text');
@@ -58,11 +78,11 @@ function setupExpandableDescription(card) {
 
   const showMoreBtn = document.createElement('span');
   showMoreBtn.classList.add('show-more');
-  showMoreBtn.innerHTML = 'Show more';
+  showMoreBtn.innerHTML = placeholders?.showMore || 'Show more';
 
   const showLessBtn = document.createElement('span');
   showLessBtn.classList.add('show-less');
-  showLessBtn.innerHTML = 'Show Less';
+  showLessBtn.innerHTML = placeholders?.showLess || 'Show Less';
 
   cardContent.appendChild(showMoreBtn);
   cardContent.appendChild(showLessBtn);
@@ -82,25 +102,54 @@ function setupExpandableDescription(card) {
   showMoreBtn.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
-    card.classList.add('expanded');
+    toggleClassState(card, 'expanded');
   });
 
   showLessBtn.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
-    card.classList.remove('expanded');
+    toggleClassState(card, 'expanded');
   });
 }
 
-export default async function decorate(block) {
-  let placeholders = {};
-  try {
-    placeholders = await fetchLanguagePlaceholders();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
-  }
+function addCardDateInfo(card) {
+  const cardFigure = card.querySelector('.browse-card-figure');
+  const eventInfo = card.querySelector('.browse-card-event-info');
+  const footer = card.querySelector('.browse-card-footer');
 
+  if (!eventInfo || !footer || cardFigure.querySelector('.card-figure-date')) return;
+
+  const eventTimeText = eventInfo.querySelector('.browse-card-event-time h6')?.textContent;
+  if (!eventTimeText || !eventTimeText.includes('|')) return;
+
+  const [rawDate, rawTime] = eventTimeText.split('|');
+  const dateParts = rawDate.trim();
+  const timeAndZone = rawTime.trim();
+
+  const dateDisplay = document.createElement('div');
+  dateDisplay.classList.add('card-figure-date');
+  dateDisplay.innerHTML = `
+    <div class="calendar-icon">
+      <span class="icon icon-calendar"></span>
+    </div>
+    <div class="date-display">
+      ${dateParts}
+    </div>
+    <div class="time-display">
+      ${timeAndZone}
+    </div>
+  `;
+
+  cardFigure.appendChild(dateDisplay);
+  decorateIcons(dateDisplay);
+
+  if (!footer.contains(eventInfo)) {
+    const clonedEventInfo = eventInfo.cloneNode(true);
+    footer.appendChild(clonedEventInfo);
+  }
+}
+
+export default async function decorate(block) {
   const [headingElement, descriptionElement, filterLabelElement] = [...block.children].map(
     (row) => row.firstElementChild,
   );
@@ -121,11 +170,11 @@ export default async function decorate(block) {
       </form>
       <div class="view-switcher">
       <button type="button" class="view-btn grid-view active" aria-label="Grid view">
-        Grid
+        ${placeholders?.gridViewLabel || 'Grid'}
         <span class="icon icon-grid"></span>
       </button>
       <button type="button" class="view-btn list-view" aria-label="List view">
-        List
+        ${placeholders?.listViewLabel || 'List'}
         <span class="icon icon-list-view"></span>
       </button>
     </div>
@@ -224,47 +273,17 @@ export default async function decorate(block) {
 
     gridViewBtn.addEventListener('click', () => {
       block.classList.remove('list');
-      gridViewBtn.classList.add('active');
-      listViewBtn.classList.remove('active');
+      setActiveToggle(gridViewBtn, listViewBtn, 'active');
     });
 
     listViewBtn.addEventListener('click', () => {
       block.classList.add('list');
-      listViewBtn.classList.add('active');
-      gridViewBtn.classList.remove('active');
+      setActiveToggle(listViewBtn, gridViewBtn, 'active');
+
       const cards = block.querySelectorAll('.browse-card');
       cards.forEach((card) => {
-        const cardFigure = card.querySelector('.browse-card-figure');
-        const eventInfo = card.querySelector('.browse-card-event-info');
-        const footer = card.querySelector('.browse-card-footer');
+        addCardDateInfo(card);
         setupExpandableDescription(card);
-
-        if (eventInfo && !cardFigure.querySelector('.card-figure-date') && footer) {
-          const eventTime = eventInfo.querySelector('.browse-card-event-time h6').textContent.split('|');
-          const dateParts = eventTime[0].trim();
-          const timeAndZone = eventTime[1].trim();
-
-          const dateDisplay = document.createElement('div');
-          dateDisplay.classList.add('card-figure-date');
-          dateDisplay.innerHTML = `
-            <div class="calendar-icon">
-              <span class="icon icon-calendar"></span>
-            </div>
-            <div class="date-display">
-              ${dateParts}
-            </div>
-             <div class="time-display">
-              ${timeAndZone}
-            </div>
-          `;
-
-          cardFigure.appendChild(dateDisplay);
-          decorateIcons(dateDisplay);
-          if (!footer.contains(eventInfo)) {
-            const clonedEventInfo = eventInfo.cloneNode(true);
-            footer.appendChild(clonedEventInfo);
-          }
-        }
       });
     });
 
