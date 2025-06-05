@@ -207,8 +207,8 @@
   position: relative;
   background-position: center;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 
 .browse-card .browse-card-figure.img-custom-height {
@@ -582,4 +582,19 @@
 
 .browse-card .browse-card-figure:hover .play-button .icon {
   display: none;
+}
+
+/** Upcoming events **/
+
+.upcoming-event .browse-card.upcoming-event-card {
+  background-color: #fff;
+}
+
+.browse-card.upcoming-event-card .browse-card-banner {
+  background-color: #f00 !important;
+  color: #000;
+}
+
+.browse-card.upcoming-event-card .browse-card-figure {
+  background-color: #000;
 }
