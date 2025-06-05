@@ -372,4 +372,9 @@ if (signUpBlock) {
 
 // update UE component filters on page load
 updateUEInstrumentation();
-renderSEOWarnings();
+
+// Ensure SEO warnings are rendered after blocks are decorated
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadBlocks(document.querySelector('main'));
+  renderSEOWarnings();
+});
