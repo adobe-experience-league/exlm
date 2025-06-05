@@ -170,10 +170,9 @@ export default async function decorate(block) {
 
     contentDiv.innerHTML = ''; // Clear previous cards
     if (updatedData.length === 0) {
+      const noResultsText = placeholders.noResultsText || 'We are sorry, no results found matching the criteria.';
       const errorMsg = htmlToElement(`
-    <div class="event-no-results">
-      We are sorry, no results found matching the criteria.
-    </div>
+    <div class="event-no-results">${noResultsText}</div>
   `);
       contentDiv.appendChild(errorMsg);
       return;
