@@ -23,22 +23,23 @@ async function getListofProducts() {
 
     const events = data?.eventList?.events || [];
 
-    const currentDate = new Date();
+    // const currentDate = new Date();
 
-    // Filter events within their own show window
-    const filteredEvents = events.filter((event) => {
-      if (!event.startTime || !event.endTime || !event.time) {
-        // eslint-disable-next-line no-console
-        console.error(`Event ${event.eventTitle} has invalid format. Missing startTime, endTime or time attribute.`);
-        return false;
-      }
-      const eventStartTime = new Date(event.startTime);
-      const eventEndTime = new Date(event.endTime);
-      return currentDate >= eventStartTime && currentDate <= eventEndTime;
-    });
+    // // Filter events within their own show window
+    // const filteredEvents = events.filter((event) => {
+    //   if (!event.startTime || !event.endTime || !event.time) {
+    //     // eslint-disable-next-line no-console
+    //     console.error(`Event ${event.eventTitle} has invalid format. Missing startTime, endTime or time attribute.`);
+    //     return false;
+    //   }
+    //   const eventStartTime = new Date(event.startTime);
+    //   const eventEndTime = new Date(event.endTime);
+    //   return currentDate >= eventStartTime && currentDate <= eventEndTime;
+    // });
 
     // Extract unique productFocus items and sort alphabetically
-    const products = Array.from(new Set(filteredEvents.flatMap((event) => event.productFocus || []))).sort();
+    // const products = Array.from(new Set(filteredEvents.flatMap((event) => event.productFocus || []))).sort();
+    const products = Array.from(new Set(events.flatMap((event) => event.productFocus || []))).sort();
 
     return products;
   } catch (error) {
@@ -168,6 +169,15 @@ export default async function decorate(block) {
     const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
 
     contentDiv.innerHTML = ''; // Clear previous cards
+    if (updatedData.length === 0) {
+      const errorMsg = htmlToElement(`
+    <div class="event-no-results">
+      We are sorry, no results found matching the criteria.
+    </div>
+  `);
+      contentDiv.appendChild(errorMsg);
+      return;
+    }
     updatedData.forEach((cardData) => {
       const cardDiv = document.createElement('div');
       buildCard(contentDiv, cardDiv, cardData);
