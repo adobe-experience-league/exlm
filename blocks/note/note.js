@@ -21,7 +21,7 @@ export default async function decorate(block) {
   const [noteTypeElement] = [...block.children].map((row) => row.firstElementChild);
   if (!noteTypeElement) return;
 
-  const noteTypeRaw = noteTypeElement.textContent.trim();
+  const noteTypeRaw = noteTypeElement.textContent?.trim();
   const noteType = noteTypeRaw.toLowerCase();
   const localizedNoteLabel =
     placeholders?.[`note${noteType.charAt(0).toUpperCase() + noteType.slice(1)}Label`] || noteTypeRaw;
