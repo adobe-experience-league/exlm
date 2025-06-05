@@ -136,6 +136,7 @@ export default async function decorate(block) {
 
   const updateFiltersAndCards = (selectedFilters) => {
     // Update URL params
+    console.log('updateFiltersAndCards called with filters:', selectedFilters);
     const url = new URL(window.location);
     if (selectedFilters.length) {
       url.searchParams.set('filters', selectedFilters.join(','));
