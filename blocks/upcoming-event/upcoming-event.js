@@ -15,7 +15,6 @@ try {
 }
 
 /**
- *
  * Retrieves a list of unique product focus items from live events data.
  */
 async function getListofProducts() {
