@@ -73,14 +73,6 @@ function handleSigninLinks(block) {
       }
     });
 }
-function createPlayButton() {
-  return htmlToElement(`
-    <button aria-label="play" class="video-overlay-play-button marquee-play-button">
-      <div class="video-overlay-play-circle">
-        <div class="play-triangle"></div>
-      </div>
-    </button>`);
-}
 
 export default async function decorate(block) {
   // Extract properties
