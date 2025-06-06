@@ -167,6 +167,17 @@ export default async function decorate(block) {
     const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
 
     contentDiv.innerHTML = ''; // Clear previous cards
+
+    // Show error message if selected product has no events
+    if (updatedData.length === 0) {
+      const noResultsText = placeholders.noResultsText || 'We are sorry, no results found matching the criteria.';
+      const errorMsg = htmlToElement(`
+    <div class="event-no-results">${noResultsText}</div>
+  `);
+      contentDiv.appendChild(errorMsg);
+      return;
+    }
+
     updatedData.forEach((cardData) => {
       const cardDiv = document.createElement('div');
       buildCard(contentDiv, cardDiv, cardData);

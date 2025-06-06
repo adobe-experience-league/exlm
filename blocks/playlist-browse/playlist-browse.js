@@ -5,8 +5,17 @@ import {
   getPathDetails,
   htmlToElement,
   fetchWithFallback,
+  fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
 import { newMultiSelect, newPagination, newShowHidePanel } from './dom-helpers.js';
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 const EXPERIENCE_LEVEL_PLACEHOLDERS = [
   {
@@ -204,6 +213,19 @@ const updateCards = (filters) => {
   playlistsPromise.then((playlists) => {
     // add filtered cards and pagination for them.
     const filteredPlaylists = filterPlaylists(playlists.data, filters);
+
+    // Show error message if no playlists match
+    if (filteredPlaylists.length === 0) {
+      const noResultsText = placeholders.noResultsText || 'We are sorry, no results found matching the criteria.';
+
+      const errorMsg = htmlToElement(`
+    <div class="playlist-no-results">${noResultsText}</div>
+  `);
+      cards.innerHTML = '';
+      cards.append(errorMsg);
+      return;
+    }
+
     const onPageChange = (page, ps) => {
       cards.innerHTML = '';
       ps.forEach((playlist) => cards.append(newPlaylistCard(playlist)));
