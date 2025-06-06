@@ -214,6 +214,8 @@ const updateCards = (filters) => {
     // add filtered cards and pagination for them.
     const filteredPlaylists = filterPlaylists(playlists.data, filters);
 
+     cards.innerHTML = '';
+
     // Show error message if no playlists match
     if (filteredPlaylists.length === 0) {
       const noResultsText =
@@ -221,10 +223,10 @@ const updateCards = (filters) => {
         'We are sorry, no results found matching the criteria.';
 
       const errorMsg = htmlToElement(`
-    <div class="playlist-no-results">${noResultsText}</div>
-  `);
-      cards.innerHTML = '';
-      block.append(errorMsg);
+        <div class="playlist-no-results">${noResultsText}</div>
+      `);
+
+      block.append(errorMsg); // Append to block instead of cards
       return;
     }
 
