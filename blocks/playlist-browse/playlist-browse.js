@@ -199,22 +199,26 @@ let pagination;
 
 // called when filters change
 const updateCards = (filters) => {
-  // reset pagination and cards
+
+  // Remove previous error message if any
+  const existingError = block.querySelector('.playlist-no-results');
+  if (existingError) existingError.remove();
+
   if (pagination) {
     pagination.remove();
   }
   cards.innerHTML = '';
 
-  // add loading cards
+  // Add loading cards
   for (let i = 0; i < 16; i += 1) {
     cards.append(newPlaylistCard({ loading: true }));
   }
 
   playlistsPromise.then((playlists) => {
-    // add filtered cards and pagination for them.
     const filteredPlaylists = filterPlaylists(playlists.data, filters);
 
-     cards.innerHTML = '';
+    // Clear loading state
+    cards.innerHTML = '';
 
     // Show error message if no playlists match
     if (filteredPlaylists.length === 0) {
@@ -230,7 +234,12 @@ const updateCards = (filters) => {
       return;
     }
 
+    // Render filtered playlists
     const onPageChange = (page, ps) => {
+      // Clean up error message again just in case
+      const existingError = block.querySelector('.playlist-no-results');
+      if (existingError) existingError.remove();
+
       cards.innerHTML = '';
       ps.forEach((playlist) => cards.append(newPlaylistCard(playlist)));
       window.scrollTo({ top: 0 });
@@ -251,6 +260,9 @@ const updateCards = (filters) => {
     pagination.classList.add('playlist-browse-pagination');
     decoratePlaceholders(pagination);
     cards.after(pagination);
+
+    // Load first page
+    onPageChange(1, filteredPlaylists.slice(0, pagination.pageSize));
   });
 };
 
