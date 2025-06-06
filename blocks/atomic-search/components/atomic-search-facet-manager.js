@@ -23,7 +23,7 @@ export default function atomicFacetManagerHandler(baseElement) {
     const modal = document.querySelector('.facet-modal');
     const referenceElement = document.querySelector('atomic-layout-section[section="status"]');
     const positionValue = referenceElement.getBoundingClientRect().bottom;
-    modal.style.top = `${positionValue - 8}px`;
+    modal.style.top = `${positionValue + window.scrollY - 8}px`;
   }
 
   function onResultsUpdate() {

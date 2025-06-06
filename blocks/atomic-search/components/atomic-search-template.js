@@ -69,7 +69,8 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   grid-template-columns: 1fr;
                   grid-template-areas:
                     "atomic-sort"
-                    "atomic-breadbox";
+                    "atomic-breadbox"
+                    "atomic-did-you-mean";
                 }
               }
               atomic-search-interface  atomic-search-layout {
@@ -447,6 +448,19 @@ const getCoveoAtomicMarkup = (placeholders) => {
               <style>
                 atomic-layout-section {
                   position: relative;
+                }
+                atomic-did-you-mean {
+                  margin-left: 0;
+                  @media(min-width: 1024px) {
+                    margin-left: 32px;
+                  }
+                }
+                atomic-did-you-mean::part(auto-corrected) {
+                  margin-bottom: 20px;
+                  color: var(--non-spectrum-input-text);
+                }
+                atomic-did-you-mean::part(no-results) {
+                  color: var(--non-spectrum-input-text);
                 }
                 .mobile-only #mobile-filter-btn {
                   display: block;
@@ -868,6 +882,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   margin-top: 0;
                   position: relative;
                 }
+                atomic-pager.atomic-pager-hide {
+                  display: none;
+                }
                 atomic-pager::part(active-page-button) {
                   border: none;
                   background-color: var(--non-spectrurm-whisper-gray);
@@ -883,6 +900,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-pager::part(previous-button-icon):disabled {
                   visibility: hidden;
                 }
+                @media(min-width: 1024px) {
+                  atomic-pager.atomic-pager-hide {
+                    display: block;
+                    visibility: hidden;
+                  }
+                }
               </style>
               <atomic-pager
                 previous-button-icon="${previousNavigationArrow}"
@@ -893,6 +916,10 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   color: var(--non-spectrum-grey-updated);
                   background-color: var(--background-color)
                   font-size: 15px;
+                  height: 36px;
+                  width: 36px;
+                  min-width: 36px;
+                  min-height: 36px;
                 }
                 atomic-results-per-page::part(active-button) {
                   border: none;
@@ -903,13 +930,19 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   color: var(--non-spectrum-input-text);
                   font-size: 15px;
                 }
+                atomic-pager::part(buttons) {
+                  align-items: center;
+                  margin-bottom: 4px;
+                }
                 atomic-pager::part(page-button) {
                   background-color: var(--background-color)
                   border: 1px solid var(--non-spectrurm-whisper-gray);
                   border-radius: 4px;
                   color: var(--non-spectrum-input-text);
-                  height: 26px;
-                  width: 26px;
+                  height: 36px;
+                  width: 36px;
+                  min-width: 36px;
+                  min-height: 36px;
                 }
                 atomic-pager::part(active-page-button) {
                   background-color: var(--non-spectrurm-whisper-gray);
@@ -920,6 +953,14 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   padding: 0;
                   width: 25px;
                   min-width: 25px;
+                }
+                @media(min-width: 414px) {
+                  atomic-pager::part(page-button), atomic-results-per-page::part(button) {
+                    min-width: 40px;
+                    min-height: 40px;
+                    height: 40px;
+                    width: 40px;
+                  }
                 }
                 @media(max-width: 1024px) {
                   atomic-pager::part(previous-button), atomic-pager::part(next-button) {
