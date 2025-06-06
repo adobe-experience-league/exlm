@@ -4,7 +4,7 @@ import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 
 const getDefaultEmbed = (url, { autoplay = false } = {}) => `
-  <div class="video-frame" style="position: absolute; inset: 0; width: 100%; height: 100%;">
+  <div class="video-frame" style=" inset: 0; width: 100%; height: 100%;">
     <iframe 
       src="${new URL(url).href + (autoplay ? '?autoplay=true' : '')}"
       style="border: 0; width: 100%; height: 100%;"
@@ -222,26 +222,9 @@ export default async function decorate(block) {
     subjectEl.style.position = 'relative';
     subjectEl.style.width = '100%';
     subjectEl.style.height = '100%';
+    subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: false });
+    bgContainer.appendChild(subjectEl);
 
-    getMpcVideoDetailsByUrl(videoUrl)
-      .then((videoDetails) => {
-        const posterUrl = videoDetails?.video?.poster;
-
-        if (posterUrl) {
-          const imgEl = document.createElement('img');
-          imgEl.classList.add('marquee-video-poster');
-          imgEl.src = posterUrl;
-          imgEl.alt = videoDetails?.title || 'Video thumbnail';
-          subjectEl.appendChild(imgEl);
-        }
-
-        addPlayButton(subjectEl, videoUrl, bgContainer);
-      })
-      .catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error('Error loading video details:', error);
-        addPlayButton(subjectEl, videoUrl, bgContainer);
-      });
   } else if (subjectPicture) {
     appendSubjectPicture(block, subjectPicture, bgColor);
   } else {
