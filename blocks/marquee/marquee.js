@@ -3,16 +3,24 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { htmlToElement } from '../../scripts/scripts.js';
 
-const getDefaultEmbed = (url, { autoplay = false } = {}) => `
-  <div class="video-frame" style="position: absolute; inset: 0; width: 100%; height: 100%;">
-    <iframe 
-      src="${new URL(url).href + (autoplay ? '?autoplay=true' : '')}"
-      style="border: 0; width: 100%; height: 100%;"
-      allowfullscreen
-      allow="encrypted-media; autoplay"
-      title="Content from ${new URL(url).hostname}"
-      loading="lazy"></iframe>
-  </div>`;
+const getDefaultEmbed = (url, { autoplay = false } = {}) => {
+  const embedUrl = new URL(url);
+  if (autoplay) {
+    embedUrl.searchParams.set('autoplay', 'true');
+    embedUrl.searchParams.set('muted', 'false');
+    embedUrl.searchParams.set('hidePlay', 'true'); 
+  }
+  return `
+    <div class="video-frame" style="position: absolute; inset: 0; width: 100%; height: 100%;">
+      <iframe
+        src="${embedUrl.href}"
+        style="border: 0; width: 100%; height: 100%;"
+        allowfullscreen
+        allow="autoplay *; fullscreen *; encrypted-media *"
+        title="Content from ${embedUrl.hostname}"
+        loading="lazy"></iframe>
+    </div>`;
+};
 
 function handleVideoLinks(videoLinkElems, block) {
   videoLinkElems.forEach((videoLinkElem) => {
