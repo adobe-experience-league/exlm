@@ -1,7 +1,6 @@
 /* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
-import { htmlToElement } from '../../scripts/scripts.js';
 
 const getDefaultEmbed = (url, { autoplay = false } = {}) => `
   <div class="video-frame" style="position: absolute; inset: 0; width: 100%; height: 100%;">
