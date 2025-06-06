@@ -125,8 +125,8 @@
     height: 32px;
     border-radius: 4px;
     border: 1px solid #000000e6;
-    background: #fdfdfd 0% 0% no-repeat padding-box;
-    color: #222;
+    background: var(--spectrum-gray-75) 0% 0% no-repeat padding-box;
+    color: var(--spectrum-gray-800);
     display: flex;
     flex-direction: row-reverse;
     gap: 8px;
@@ -148,8 +148,10 @@
   }
 
   .upcoming-event .view-switcher .view-btn.active {
-    background: #000000e6 0% 0% no-repeat padding-box;
-    color: #fff;
+    background: var(--spectrum-gray-900) 0% 0% no-repeat padding-box;
+    opacity: 0.9;
+    border: 1px solid var(--spectrum-gray-400);
+    color: var(--spectrum-gray-50);
   }
 
   .upcoming-event .view-switcher .view-btn.active .icon img {
@@ -197,7 +199,7 @@
     font-size: 28px;
     line-height: 36px;
     letter-spacing: 0;
-    color: #fff;
+    color: var(--spectrum-gray-50);
     opacity: 1;
   }
 
@@ -209,7 +211,7 @@
     font-size: 16px;
     line-height: 24px;
     letter-spacing: 0;
-    color: #fff;
+    color: var(--spectrum-gray-50);
     opacity: 1;
   }
 
@@ -243,7 +245,7 @@
   }
 
   .upcoming-event.list .browse-card .browse-card-footer .browse-card-event-info .browse-card-event-time h6 {
-    color: #323232;
+    color: var(--non-spectrum-dark-charcoal);
   }
 
   .upcoming-event.list .browse-card .browse-card-footer .browse-card-event-info .icon {
@@ -260,7 +262,7 @@
   .upcoming-event.list .browse-card .browse-card-footer .browse-card-cta-element {
     order: 3;
     margin-top: 30px;
-    background: #0265dc 0% 0% no-repeat padding-box;
+    background: var(--spectrum-blue-900) 0% 0% no-repeat padding-box;
     border-radius: 16px;
     text-align: left;
     font-style: normal;
@@ -269,7 +271,7 @@
     font-size: 14px;
     line-height: 17px;
     letter-spacing: 0;
-    color: #fff;
+    color: var(--spectrum-gray-50);
     width: 100%;
     height: 32px;
     justify-content: center;
@@ -287,7 +289,7 @@
     bottom: 32px;
     left: 0;
     width: 1px;
-    background-color: #e0e0e0;
+    background-color: var(--non-spectrum-divider-gray);
   }
 
   .upcoming-event.list .browse-cards-block-content {
@@ -301,7 +303,7 @@
     flex: 0 0 auto;
     min-height: unset;
     height: auto;
-    border: 1px solid #e8e8e8;
+    border: 1px solid var(--non-spectrum-unicorn-silver);
     border-radius: 16px;
     max-width: 1204px;
   }
@@ -327,7 +329,7 @@
     font-size: 17px;
     line-height: 21px;
     letter-spacing: 0;
-    color: #0265dc;
+    color: var(--spectrum-blue-900);
     opacity: 1;
     margin-top: 8px;
   }

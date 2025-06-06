@@ -587,14 +587,14 @@
 /** Upcoming events **/
 
 .upcoming-event-wrapper .upcoming-event .browse-card.upcoming-event-card {
-  background-color: #fff;
+  background-color: var(--spectrum-gray-50);
 }
 
 .upcoming-event-wrapper .browse-card.upcoming-event-card .browse-card-banner {
-  background-color: #f00 !important;
-  color: #000;
+  background-color: var(--non-spectrum-adobe-red) !important;
+  color: var(--spectrum-gray-900);
 }
 
 .upcoming-event-wrapper .browse-card.upcoming-event-card .browse-card-figure {
-  background-color: #000;
+  background-color: var(--spectrum-gray-900);
 }

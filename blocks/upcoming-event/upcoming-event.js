@@ -6,14 +6,6 @@ import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeli
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
-
 /**
  * Retrieves a list of unique product focus items from live events data.
  */
@@ -67,7 +59,7 @@ function setActiveToggle(activeEl, inactiveEl, className) {
   inactiveEl.classList.remove(className);
 }
 
-function setupExpandableDescription(card) {
+function setupExpandableDescription(card, placeholders) {
   const cardContent = card.querySelector('.browse-card-content');
   const description = card.querySelector('.browse-card-description-text');
 
@@ -149,6 +141,14 @@ function addCardDateInfo(card) {
 }
 
 export default async function decorate(block) {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
   const [headingElement, descriptionElement, filterLabelElement] = [...block.children].map(
     (row) => row.firstElementChild,
   );
@@ -282,7 +282,7 @@ export default async function decorate(block) {
       const cards = block.querySelectorAll('.browse-card');
       cards.forEach((card) => {
         addCardDateInfo(card);
-        setupExpandableDescription(card);
+        setupExpandableDescription(card, placeholders);
       });
     });
 
