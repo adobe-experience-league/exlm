@@ -174,7 +174,7 @@ export default async function decorate(block) {
       const errorMsg = htmlToElement(`
     <div class="event-no-results">${noResultsText}</div>
   `);
-      contentDiv.appendChild(errorMsg);
+      block.appendChild(errorMsg);
       return;
     }
     updatedData.forEach((cardData) => {
