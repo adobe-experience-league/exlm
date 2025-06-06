@@ -4242,59 +4242,22 @@
         }
       },
       {
-        "component": "custom-execute-button",
-        "name": "generateTqTags",
-        "label": "Generate TQ Tags",
-        "valueType": "string",
-        "extensionId": "exl-ue-extension"
-      },
-      {
         "component": "custom-aem-tag",
-        "name": "exlm-products",
-        "label": "Solution(s)",
-        "valueType": "string",
-        "rootPath": "https://51837-exlmia-stage.adobeio-static.net/api/v1/web/exlia/getTQTags?taxonomyType=product",
-        "extensionId": "exl-ue-extension"
-      },
-      {
-        "component": "custom-aem-tag",
-        "name": "exlm-features",
-        "label": "Feature(s)",
-        "valueType": "string",
-        "rootPath": "https://51837-exlmia-stage.adobeio-static.net/api/v1/web/exlia/getTQTags?taxonomyType=feature",
-        "extensionId": "exl-ue-extension"
-      },
-      {
-        "component": "aem-tag",
-        "valueType": "string",
-        "name": "coveo-solution",
-        "label": "Solution(s)",
-        "rootPath": "/content/cq:tags/exl/solution",
-        "description": "Sets the Coveo Solution(s) in page meta."
-      },
-      {
-        "component": "aem-tag",
-        "valueType": "string",
-        "name": "feature",
-        "label": "Feature(s)",
-        "rootPath": "/content/cq:tags/exl/feature",
-        "description": "Sets the Coveo Feature(s) in page meta."
-      },
-      {
-        "component": "aem-tag",
         "name": "role",
         "label": "Role(s)",
         "valueType": "string",
-        "rootPath": "/content/cq:tags/exl/role",
-        "description": "Sets the role(s) in page meta."
+        "rootPath": "https://51837-exlmia-stage.adobeio-static.net/api/v1/web/exlia/getTQTags?taxonomyType=role",
+        "description": "Sets the role(s) in page meta.",
+        "extensionId": "exl-ue-extension"
       },
       {
-        "component": "aem-tag",
+        "component": "custom-aem-tag",
         "name": "level",
         "label": "Experience Level(s)",
         "valueType": "string",
-        "rootPath": "/content/cq:tags/exl/experience-level",
-        "description": "Sets the level(s) in page meta."
+        "rootPath": "https://51837-exlmia-stage.adobeio-static.net/api/v1/web/exlia/getTQTags?taxonomyType=level",
+        "description": "Sets the level(s) in page meta.",
+        "extensionId": "exl-ue-extension"
       },
       {
         "component": "aem-content",
