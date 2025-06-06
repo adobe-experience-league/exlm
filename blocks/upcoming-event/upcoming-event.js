@@ -169,21 +169,27 @@ export default async function decorate(block) {
     const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
 
     contentDiv.innerHTML = ''; // Clear previous cards
+    const existingError = block.querySelector('.event-no-results');
+    if (existingError) existingError.remove(); // Prevent duplicate error message
+
     if (updatedData.length === 0) {
       const noResultsText = placeholders.noResultsText || 'We are sorry, no results found matching the criteria.';
       const errorMsg = htmlToElement(`
     <div class="event-no-results">${noResultsText}</div>
   `);
-      block.appendChild(errorMsg);
+
+      contentDiv.remove(); // Remove card container to prevent layout issues
+      block.appendChild(errorMsg); // Append error message directly to the block
       return;
     }
+
+    block.appendChild(contentDiv); // Only append if results exist
     updatedData.forEach((cardData) => {
       const cardDiv = document.createElement('div');
       buildCard(contentDiv, cardDiv, cardData);
       contentDiv.appendChild(cardDiv);
     });
   };
-
   // Pre-select checkboxes from URL filters
   [...block.querySelectorAll('.browse-card-dropdown .custom-checkbox input')]
     .filter((input) => urlFilters.includes(input.value) && !input.checked)
