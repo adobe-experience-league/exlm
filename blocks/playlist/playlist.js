@@ -349,11 +349,9 @@ export default function decorate(block) {
     videoCell.setAttribute('data-playlist-item-progress-box', '');
     videoDataCell.classList.add('playlist-item-content');
 
-    const [srcP, pictureP] = videoCell.children;
+    const [srcP] = videoCell.children;
     const [titleH, descriptionP, durationP, transcriptP] = videoDataCell.children;
     titleH.classList.add('playlist-item-title');
-    const { src } = pictureP.querySelector('img');
-    pictureP.replaceWith(...pictureP.childNodes);
 
     const video = {
       src: srcP.textContent,
@@ -361,7 +359,6 @@ export default function decorate(block) {
       description: descriptionP.textContent,
       duration: durationP.textContent,
       transcriptUrl: transcriptP.textContent,
-      thumbnailUrl: src,
       el: videoRow,
     };
 
