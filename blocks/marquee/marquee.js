@@ -58,27 +58,6 @@ function handleVideoLinks(videoLinkElems, block) {
   });
 }
 
-const getMpcVideoDetailsByUrl = (url) =>
-  new Promise((resolve, reject) => {
-    try {
-      const urlObj = new URL(url);
-      urlObj.searchParams.set('format', 'json');
-
-      fetch(urlObj.href)
-        .then((response) => response.json())
-        .then((data) => resolve(data))
-        .catch((error) => {
-          // eslint-disable-next-line no-console
-          console.error('Error while fetching URL:', error);
-          resolve(undefined);
-        });
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to process the URL:', error);
-      reject(new Error(`Failed to process the URL: ${error?.message}`));
-    }
-  });
-
 function handleSigninLinks(block) {
   import('../../scripts/auth/profile.js')
     .then((module) => module.isSignedInUser())
@@ -101,17 +80,6 @@ function createPlayButton() {
         <div class="play-triangle"></div>
       </div>
     </button>`);
-}
-
-function addPlayButton(container, videoUrl, bgContainer) {
-  const playButton = createPlayButton();
-  playButton.addEventListener('click', (e) => {
-    e.stopPropagation();
-    container.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
-  });
-
-  container.appendChild(playButton);
-  bgContainer.prepend(container);
 }
 
 export default async function decorate(block) {
@@ -222,26 +190,8 @@ export default async function decorate(block) {
     subjectEl.style.position = 'relative';
     subjectEl.style.width = '100%';
     subjectEl.style.height = '100%';
-
-    getMpcVideoDetailsByUrl(videoUrl)
-      .then((videoDetails) => {
-        const posterUrl = videoDetails?.video?.poster;
-
-        if (posterUrl) {
-          const imgEl = document.createElement('img');
-          imgEl.classList.add('marquee-video-poster');
-          imgEl.src = posterUrl;
-          imgEl.alt = videoDetails?.title || 'Video thumbnail';
-          subjectEl.appendChild(imgEl);
-        }
-
-        addPlayButton(subjectEl, videoUrl, bgContainer);
-      })
-      .catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error('Error loading video details:', error);
-        addPlayButton(subjectEl, videoUrl, bgContainer);
-      });
+    subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: false });
+    bgContainer.appendChild(subjectEl);
   } else if (subjectPicture) {
     appendSubjectPicture(block, subjectPicture, bgColor);
   } else {
