@@ -34,6 +34,10 @@
   color: var(--spectrum-gray-900);
 }
 
+.footer-wrapper.footer-hidden {
+  visibility: hidden;
+}
+
 .atomic-search form {
   display: flex;
   border: 1px solid var(--spectrum-gray-900);
@@ -105,6 +109,16 @@
   justify-content: flex-start;
   position: absolute;
   z-index: 11;
+}
+
+.atomic-search .modal-content {
+  position: relative;
+}
+
+.atomic-search button.facet-close-btn {
+  position: absolute;
+  right: 12px;
+  top: 12px;
 }
 
 .atomic-load-skeleton-main {
@@ -413,6 +427,10 @@
 
   .section.atomic-search-container .atomic-search-wrapper {
     max-width: 1440px;
+  }
+
+  .atomic-search button.facet-close-btn {
+    display: none;
   }
 
   .atomic-load-skeleton-filter .atomic-load-skeleton-search-filter.atomic-load-skeleton {
