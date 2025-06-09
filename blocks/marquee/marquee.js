@@ -1,26 +1,17 @@
 /* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
-import { htmlToElement } from '../../scripts/scripts.js';
 
-const getDefaultEmbed = (url, { autoplay = false } = {}) => {
-  const embedUrl = new URL(url);
-  if (autoplay) {
-    embedUrl.searchParams.set('autoplay', 'true');
-    embedUrl.searchParams.set('muted', 'false');
-    embedUrl.searchParams.set('hidePlay', 'true'); 
-  }
-  return `
-    <div class="video-frame" style="position: absolute; inset: 0; width: 100%; height: 100%;">
-      <iframe
-        src="${embedUrl.href}"
-        style="border: 0; width: 100%; height: 100%;"
-        allowfullscreen
-        allow="autoplay *; fullscreen *; encrypted-media *"
-        title="Content from ${embedUrl.hostname}"
-        loading="lazy"></iframe>
-    </div>`;
-};
+const getDefaultEmbed = (url, { autoplay = false } = {}) => `
+  <div class="video-frame" style="position: absolute; inset: 0; width: 100%; height: 100%;">
+    <iframe 
+      src="${new URL(url).href + (autoplay ? '?autoplay=true' : '')}"
+      style="border: 0; width: 100%; height: 100%;"
+      allowfullscreen
+      allow="encrypted-media; autoplay"
+      title="Content from ${new URL(url).hostname}"
+      loading="lazy"></iframe>
+  </div>`;
 
 function handleVideoLinks(videoLinkElems, block) {
   videoLinkElems.forEach((videoLinkElem) => {
@@ -66,27 +57,6 @@ function handleVideoLinks(videoLinkElems, block) {
   });
 }
 
-const getMpcVideoDetailsByUrl = (url) =>
-  new Promise((resolve, reject) => {
-    try {
-      const urlObj = new URL(url);
-      urlObj.searchParams.set('format', 'json');
-
-      fetch(urlObj.href)
-        .then((response) => response.json())
-        .then((data) => resolve(data))
-        .catch((error) => {
-          // eslint-disable-next-line no-console
-          console.error('Error while fetching URL:', error);
-          resolve(undefined);
-        });
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to process the URL:', error);
-      reject(new Error(`Failed to process the URL: ${error?.message}`));
-    }
-  });
-
 function handleSigninLinks(block) {
   import('../../scripts/auth/profile.js')
     .then((module) => module.isSignedInUser())
@@ -101,25 +71,6 @@ function handleSigninLinks(block) {
         });
       }
     });
-}
-function createPlayButton() {
-  return htmlToElement(`
-    <button aria-label="play" class="video-overlay-play-button marquee-play-button">
-      <div class="video-overlay-play-circle">
-        <div class="play-triangle"></div>
-      </div>
-    </button>`);
-}
-
-function addPlayButton(container, videoUrl, bgContainer) {
-  const playButton = createPlayButton();
-  playButton.addEventListener('click', (e) => {
-    e.stopPropagation();
-    container.innerHTML = getDefaultEmbed(videoUrl, { autoplay: true });
-  });
-
-  container.appendChild(playButton);
-  bgContainer.prepend(container);
 }
 
 export default async function decorate(block) {
@@ -224,32 +175,15 @@ export default async function decorate(block) {
     const bgContainer = block.querySelector('.marquee-background');
     bgContainer.style.position = 'relative';
 
-    const subjectEl = document.createElement('div');
-    subjectEl.classList.add('marquee-subject');
-    subjectEl.style.backgroundColor = bgColor;
-    subjectEl.style.position = 'relative';
-    subjectEl.style.width = '100%';
-    subjectEl.style.height = '100%';
+    const wrapper = document.createElement('div');
+  wrapper.classList.add('marquee-subject');
+  wrapper.style.backgroundColor = bgColor;
 
-    getMpcVideoDetailsByUrl(videoUrl)
-      .then((videoDetails) => {
-        const posterUrl = videoDetails?.video?.poster;
+  // Use innerHTML safely here
+  wrapper.innerHTML = getDefaultEmbed(videoUrl, { autoplay: false });
 
-        if (posterUrl) {
-          const imgEl = document.createElement('img');
-          imgEl.classList.add('marquee-video-poster');
-          imgEl.src = posterUrl;
-          imgEl.alt = videoDetails?.title || 'Video thumbnail';
-          subjectEl.appendChild(imgEl);
-        }
+  bgContainer.appendChild(wrapper);
 
-        addPlayButton(subjectEl, videoUrl, bgContainer);
-      })
-      .catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error('Error loading video details:', error);
-        addPlayButton(subjectEl, videoUrl, bgContainer);
-      });
   } else if (subjectPicture) {
     appendSubjectPicture(block, subjectPicture, bgColor);
   } else {

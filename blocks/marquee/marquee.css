@@ -379,6 +379,7 @@ body[class^='article-'] .marquee-content-container {
   .marquee-background-fill {
     position: static;
     min-height: var(--marquee-height-medium);
+    display: none;
   }
 
   .marquee-background svg {
