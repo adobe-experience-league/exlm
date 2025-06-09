@@ -226,10 +226,6 @@ const updateCards = (filters) => {
       return;
     }
 
-    // If results exist, remove error message if any
-    const existingErrorAfter = filters.block.querySelector('.playlist-no-results');
-    if (existingErrorAfter) existingErrorAfter.remove();
-
     const onPageChange = (page, ps) => {
       cards.innerHTML = '';
       ps.forEach((playlist) => cards.append(newPlaylistCard(playlist)));
