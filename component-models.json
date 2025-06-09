@@ -4246,8 +4246,16 @@
         "name": "role",
         "label": "Role(s)",
         "valueType": "string",
-        "rootPath": "https://51837-exlmia-stage.adobeio-static.net/api/v1/web/exlia/getTQTags?taxonomyType=role",
         "description": "Sets the role(s) in page meta.",
+        "dataSource": {
+          "type": "params",
+          "config": {
+            "action": "getTQTags",
+            "params": {
+              "taxonomyType": "role"
+            }
+          }
+        },
         "extensionId": "exl-ue-extension"
       },
       {
@@ -4255,8 +4263,25 @@
         "name": "level",
         "label": "Experience Level(s)",
         "valueType": "string",
-        "rootPath": "https://51837-exlmia-stage.adobeio-static.net/api/v1/web/exlia/getTQTags?taxonomyType=level",
         "description": "Sets the level(s) in page meta.",
+        "dataSource": {
+          "type": "params",
+          "config": {
+            "action": "getTQTags",
+            "params": {
+              "taxonomyType": "level"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "role",
+        "label": "Role(s)",
+        "valueType": "string",
+        "rootPath": "",
+        "description": "Sets the role(s) in page meta.",
         "extensionId": "exl-ue-extension"
       },
       {
