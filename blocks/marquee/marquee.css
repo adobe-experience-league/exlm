@@ -542,7 +542,3 @@ body[class^='article-'] .marquee-content-container {
   border: none;
   z-index: 10;
 }
-
-.marquee.video .marquee-background-fill {
-  display: none;
-}
