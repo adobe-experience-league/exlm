@@ -221,6 +221,7 @@ const updateCards = (filters) => {
       const errorMsg = htmlToElement(`<div class="playlist-no-results">${noResultsText}</div>`);
 
       cards.innerHTML = '';
+      filters.block.querySelector('.playlist-no-results')?.remove();
       filters.block.append(errorMsg);
       return;
     }
