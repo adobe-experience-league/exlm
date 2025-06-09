@@ -163,10 +163,9 @@
     height: 22px;
     font-style: normal;
     font-variant: normal;
-    font-weight: normal;
+    font-weight: var(--font-weight-heavy);
     font-size: 11px;
     line-height: 17px;
-    letter-spacing: 0.66px;
   }
 
   .upcoming-event.list .browse-card.upcoming-event-card .browse-card-figure .icon-calendar img {
@@ -194,7 +193,7 @@
   .upcoming-event.list .browse-card-figure .card-figure-date .date-display {
     font-style: normal;
     font-variant: normal;
-    font-weight: normal;
+    font-weight: bold;
     font-size: 28px;
     line-height: 36px;
     letter-spacing: 0;
@@ -245,6 +244,7 @@
 
   .upcoming-event.list .browse-card .browse-card-footer .browse-card-event-info .browse-card-event-time h6 {
     color: var(--non-spectrum-dark-charcoal);
+    font-weight: bold;
   }
 
   .upcoming-event.list .browse-card .browse-card-footer .browse-card-event-info .icon {
