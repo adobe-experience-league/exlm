@@ -12,14 +12,20 @@
   text-rendering: optimizelegibility;
 }
 
-.note > div:first-child > div {
-  color: var(--text-color);
-  display: flex;
-  align-items: center;
-  font-size: var(--spectrum-heading-size-xxs);
-  font-weight: bold;
-  line-height: 21px;
-  margin-bottom: 8px;
+.note > div {
+  &:not(:first-child) {
+    margin-bottom: 8px;
+  }
+
+  &:first-child > div {
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    font-size: var(--spectrum-heading-size-xxs);
+    font-weight: bold;
+    line-height: 21px;
+    margin-bottom: 8px;
+  }
 }
 
 .note div a {
