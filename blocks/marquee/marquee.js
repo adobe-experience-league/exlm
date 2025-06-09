@@ -128,23 +128,21 @@ export default async function decorate(block) {
       </div>
       </div>
       <div class='marquee-background' ${isStraightVariant ? `style="background-color: ${bgColor}"` : ''}>
-        <div class='marquee-background-fill'>
-          ${
-            !isStraightVariant && !marqueeVideoVariant
-              ? `
-            <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
-              <path
-                d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z"
-                transform="translate(-738.685 1.777)"
-                fill="${bgColor}"
-              />
-            </svg>`
-              : ''
-          }
-        </div>
-      ${
-        !isVideoVariant || !videoUrl ? `<div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>` : ''
-      }
+        ${
+          !isStraightVariant && !marqueeVideoVariant
+            ? `<div class="marquee-background-fill">
+         <svg xmlns="http://www.w3.org/2000/svg" width="755.203" height="606.616" viewBox="0 0 755.203 606.616">
+           <path
+             d="M739.5-1.777s-23.312,140.818,178.8,258.647c70.188,40.918,249.036,104.027,396.278,189.037,102.6,59.237,98.959,158.932,98.959,158.932h79.913l.431-606.616Z"
+             transform="translate(-738.685 1.777)"
+             fill="${bgColor}"
+           />
+         </svg>
+       </div>`
+            : ''
+        }
+
+      <div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>
     </div>
     </div>
   `);
@@ -171,6 +169,9 @@ export default async function decorate(block) {
   block.append(marqueeDOM);
 
   if (isVideoVariant && videoUrl) {
+    const bgFillerEl = block.querySelector('.marquee-bg-filler');
+    if (bgFillerEl) bgFillerEl.style.display = 'none';
+
     const bgContainer = block.querySelector('.marquee-background');
     bgContainer.style.position = 'relative';
 
