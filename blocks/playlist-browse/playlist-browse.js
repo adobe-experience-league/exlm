@@ -202,6 +202,7 @@ const updateCards = (filters) => {
   // reset pagination and cards
   if (pagination) {
     pagination.remove();
+    pagination = null;
   }
   cards.innerHTML = '';
 
@@ -217,14 +218,16 @@ const updateCards = (filters) => {
     // Show error message if no playlists match
     if (filteredPlaylists.length === 0) {
       const noResultsText = placeholders.noResultsText || 'We are sorry, no results found matching the criteria.';
+      const errorMsg = htmlToElement(`<div class="playlist-no-results">${noResultsText}</div>`);
 
-      const errorMsg = htmlToElement(`
-    <div class="playlist-no-results">${noResultsText}</div>
-  `);
       cards.innerHTML = '';
-      cards.append(errorMsg);
+      filters.block.append(errorMsg);
       return;
     }
+
+    // If results exist, remove error message if any
+    const existingErrorAfter = filters.block.querySelector('.playlist-no-results');
+    if (existingErrorAfter) existingErrorAfter.remove();
 
     const onPageChange = (page, ps) => {
       cards.innerHTML = '';
