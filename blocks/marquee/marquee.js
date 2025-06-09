@@ -175,14 +175,11 @@ export default async function decorate(block) {
     const bgContainer = block.querySelector('.marquee-background');
     bgContainer.style.position = 'relative';
 
-    const wrapper = document.createElement('div');
-  wrapper.classList.add('marquee-subject');
-  wrapper.style.backgroundColor = bgColor;
+     const embedWrapper = document.createElement('div');
+  embedWrapper.style.backgroundColor = bgColor;
+  embedWrapper.innerHTML = getDefaultEmbed(videoUrl, { autoplay: false });
 
-  // Use innerHTML safely here
-  wrapper.innerHTML = getDefaultEmbed(videoUrl, { autoplay: false });
-
-  bgContainer.appendChild(wrapper);
+  bgContainer.appendChild(embedWrapper);
 
   } else if (subjectPicture) {
     appendSubjectPicture(block, subjectPicture, bgColor);
