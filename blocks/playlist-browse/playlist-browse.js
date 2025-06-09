@@ -5,17 +5,8 @@ import {
   getPathDetails,
   htmlToElement,
   fetchWithFallback,
-  fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
 import { newMultiSelect, newPagination, newShowHidePanel } from './dom-helpers.js';
-
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
 
 const EXPERIENCE_LEVEL_PLACEHOLDERS = [
   {
@@ -205,6 +196,7 @@ const updateCards = (filters) => {
     pagination = null;
   }
   cards.innerHTML = '';
+  filters.block.querySelector('.playlist-no-results')?.remove();
 
   // add loading cards
   for (let i = 0; i < 16; i += 1) {
@@ -217,11 +209,15 @@ const updateCards = (filters) => {
 
     // Show error message if no playlists match
     if (filteredPlaylists.length === 0) {
-      const noResultsText = placeholders.noResultsText || 'We are sorry, no results found matching the criteria.';
-      const errorMsg = htmlToElement(`<div class="playlist-no-results">${noResultsText}</div>`);
+      const errorMsg = document.createElement('div');
+      errorMsg.className = 'playlist-no-results';
+      const noResultsText = createPlaceholderSpan(
+        'noResultsText',
+        'We are sorry, no results found matching the criteria.',
+      );
+      errorMsg.append(noResultsText);
 
       cards.innerHTML = '';
-      filters.block.querySelector('.playlist-no-results')?.remove();
       filters.block.append(errorMsg);
       return;
     }
