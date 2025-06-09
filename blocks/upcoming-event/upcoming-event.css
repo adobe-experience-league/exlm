@@ -141,10 +141,14 @@
   .upcoming-event .view-switcher .view-btn .icon {
     width: 18px;
     height: 18px;
+    display: none;
   }
 
-  .upcoming-event .view-switcher .view-btn .icon img {
-    filter: brightness(0);
+  .upcoming-event .view-btn.active .icon-grid-white,
+  .upcoming-event .view-btn:not(.active) .icon-grid-black,
+  .upcoming-event .view-btn.active .icon-list-view-white,
+  .upcoming-event .view-btn:not(.active) .icon-list-view-black {
+    display: inline-block;
   }
 
   .upcoming-event .view-switcher .view-btn.active {
@@ -152,10 +156,6 @@
     opacity: 0.9;
     border: 1px solid var(--spectrum-gray-400);
     color: var(--spectrum-gray-50);
-  }
-
-  .upcoming-event .view-switcher .view-btn.active .icon img {
-    filter: brightness(0) invert(1);
   }
 
   .upcoming-event.list .browse-card.upcoming-event-card .browse-card-banner {
@@ -170,7 +170,6 @@
   }
 
   .upcoming-event.list .browse-card.upcoming-event-card .browse-card-figure .icon-calendar img {
-    filter: brightness(0) invert(1);
     width: 32px;
     height: 32px;
   }

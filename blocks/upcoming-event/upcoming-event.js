@@ -121,7 +121,7 @@ function addCardDateInfo(card) {
   dateDisplay.classList.add('card-figure-date');
   dateDisplay.innerHTML = `
     <div class="calendar-icon">
-      <span class="icon icon-calendar"></span>
+      <span class="icon icon-calendar-white"></span>
     </div>
     <div class="date-display">
       ${dateParts}
@@ -170,11 +170,13 @@ export default async function decorate(block) {
       <div class="view-switcher">
       <button type="button" class="view-btn grid-view active" aria-label="Grid view">
         ${placeholders?.gridViewLabel || 'Grid'}
-        <span class="icon icon-grid"></span>
+        <span class="icon icon-grid-white"></span>
+        <span class="icon icon-grid-black"></span>
       </button>
       <button type="button" class="view-btn list-view" aria-label="List view">
         ${placeholders?.listViewLabel || 'List'}
-        <span class="icon icon-list-view"></span>
+        <span class="icon icon-list-view-black"></span>
+        <span class="icon icon-list-view-white"></span>
       </button>
     </div>
     </div>
