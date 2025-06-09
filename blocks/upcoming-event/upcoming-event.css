@@ -102,22 +102,6 @@
   display: none;
 }
 
-.event-no-results {
-  background-color: var(--spectrum-gray-200);
-  color: var(--non-spectrum-grey);
-  font-size: var(--spectrum-font-size-200);
-  padding: 72px 0;
-  text-align: center;
-  width: 100%;
-  box-sizing: border-box;
-  grid-column: 1 / -1;
-}
-
-.upcoming-event .browse-cards-block-content > .event-no-results {
-  min-height: unset;
-  height: 170px;
-}
-
 @media only screen and (min-width: 600px) {
   .section.upcoming-event-container {
     padding-bottom: 30px;
