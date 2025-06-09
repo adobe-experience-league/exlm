@@ -21,14 +21,34 @@ export default function atomicFacetManagerHandler(baseElement) {
 
   function positionModal() {
     const modal = document.querySelector('.facet-modal');
-    const referenceElement = document.querySelector('atomic-layout-section[section="status"]');
+    const referenceElement = document.querySelector('atomic-sort-dropdown');
     const positionValue = referenceElement.getBoundingClientRect().bottom;
-    modal.style.top = `${positionValue + window.scrollY - 8}px`;
+    const delta = 10;
+    const topValue = positionValue + window.scrollY + delta;
+    modal.style.top = `${topValue}px`;
+    modal.style.maxHeight = `${window.innerHeight - topValue}px`;
+    modal.style.overflowY = 'auto';
   }
 
   function onResultsUpdate() {
-    positionModal();
+    setTimeout(() => {
+      positionModal();
+    }, 100);
   }
+
+  const hideAtomicModal = () => {
+    const modal = document.querySelector('.facet-modal');
+    const placeholder = document.getElementById('facet-original-placeholder');
+    placeholder.parentNode.insertBefore(baseElement, placeholder);
+    document.querySelector('atomic-layout-section[section="results"]').style.display = '';
+    document.body.style.overflow = '';
+    modal.style.display = 'none';
+    const footerWrapper = document.querySelector('.footer-wrapper');
+    if (footerWrapper) {
+      footerWrapper.classList.remove('footer-hidden');
+    }
+    document.removeEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onResultsUpdate);
+  };
 
   const showAtomicModal = () => {
     const modal = document.querySelector('.facet-modal');
@@ -39,6 +59,7 @@ export default function atomicFacetManagerHandler(baseElement) {
 
     facetModalSlot.appendChild(baseElement);
     positionModal();
+    document.body.style.overflow = 'hidden';
     Object.assign(modal.style, {
       backgroundColor: 'white',
       width: '100%',
@@ -47,17 +68,18 @@ export default function atomicFacetManagerHandler(baseElement) {
       zIndex: '1',
       maxWidth: 'calc(100% - 40px)',
     });
+
+    const closeBtn = modal.querySelector('.facet-close-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', hideAtomicModal, { once: true });
+    }
+    const footerWrapper = document.querySelector('.footer-wrapper');
+    if (footerWrapper) {
+      footerWrapper.classList.add('footer-hidden');
+    }
+
     document.querySelector('atomic-layout-section[section="results"]').style.display = 'none';
     document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onResultsUpdate);
-  };
-
-  const hideAtomicModal = () => {
-    const modal = document.querySelector('.facet-modal');
-    const placeholder = document.getElementById('facet-original-placeholder');
-    placeholder.parentNode.insertBefore(baseElement, placeholder);
-    document.querySelector('atomic-layout-section[section="results"]').style.display = '';
-    modal.style.display = 'none';
-    document.removeEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onResultsUpdate);
   };
 
   const toggleModalVisibility = () => {
@@ -92,7 +114,9 @@ export default function atomicFacetManagerHandler(baseElement) {
       <div class="modal-backdrop"></div>
       <div class="modal-content">
         <div id="facet-modal-slot"></div>
-        <button id="close-modal-btn">Close</button>
+        <button class="facet-close-btn">
+          <span class="icon icon-close"></span>
+        </button>
       </div>
     `;
 
