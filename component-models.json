@@ -4250,7 +4250,7 @@
         "dataSource": {
           "type": "action",
           "config": {
-            "name": "getTQTags",
+            "name": "GetTQTags",
             "input": {
               "taxonomyType": "role"
             }
@@ -4267,9 +4267,9 @@
         "dataSource": {
           "type": "action",
           "config": {
-            "name": "getTQTags",
+            "name": "GetTQTags",
             "input": {
-              "taxonomyType": "role"
+              "taxonomyType": "level"
             }
           }
         },
