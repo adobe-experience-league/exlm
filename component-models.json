@@ -4248,10 +4248,10 @@
         "valueType": "string",
         "description": "Sets the role(s) in page meta.",
         "dataSource": {
-          "type": "params",
+          "type": "action",
           "config": {
-            "action": "getTQTags",
-            "params": {
+            "name": "getTQTags",
+            "input": {
               "taxonomyType": "role"
             }
           }
@@ -4265,23 +4265,14 @@
         "valueType": "string",
         "description": "Sets the level(s) in page meta.",
         "dataSource": {
-          "type": "params",
+          "type": "action",
           "config": {
-            "action": "getTQTags",
-            "params": {
-              "taxonomyType": "level"
+            "name": "getTQTags",
+            "input": {
+              "taxonomyType": "role"
             }
           }
         },
-        "extensionId": "exl-ue-extension"
-      },
-      {
-        "component": "custom-aem-tag",
-        "name": "role",
-        "label": "Role(s)",
-        "valueType": "string",
-        "rootPath": "",
-        "description": "Sets the role(s) in page meta.",
         "extensionId": "exl-ue-extension"
       },
       {
