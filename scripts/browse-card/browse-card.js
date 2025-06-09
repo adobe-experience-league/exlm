@@ -163,6 +163,13 @@ const buildEventContent = ({ event, contentType, cardContent, card }) => {
   decorateIcons(eventInfo);
   const title = card.querySelector('.browse-card-title-text');
   cardContent.insertBefore(eventInfo, title.nextElementSibling);
+  if (card.classList.contains('upcoming-event-card')) {
+    const upcomingTime = card.querySelector('.browse-card-event-time h6');
+    const parts = upcomingTime.textContent.split(' ');
+    const timezone = parts.pop();
+    const withParens = `${parts.join(' ')} (${timezone})`;
+    upcomingTime.textContent = withParens;
+  }
 };
 
 const buildInProgressBarContent = ({ inProgressStatus, cardFigure, card }) => {

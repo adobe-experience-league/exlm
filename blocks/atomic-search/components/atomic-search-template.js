@@ -145,6 +145,11 @@ const getCoveoAtomicMarkup = (placeholders) => {
               atomic-search-box::part(suggestions-wrapper) {
                 background-color: var(--background-color);
                 border: 1px solid #CACACA;
+                display: none;
+
+                @media (min-width: 1024px) {
+                  display: block;
+                }
               }
               atomic-search-box::part(textarea-spacer) {
                 display: none;
@@ -275,7 +280,6 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   border: none;
                 }
                 atomic-facet::part(values) {
-                  max-height: 500px;
                   overflow-y: auto;
                   margin-top: 0;
                   padding-right: 16px;
@@ -314,6 +318,11 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 
                 atomic-facet::part(show-more-less-icon) atomic-component-error, atomic-facet::part(value-checkbox-icon) atomic-component-error, atomic-facet::part(value-checkbox) atomic-component-error, atomic-component-error, atomic-icon atomic-component-error {
                   display: none !important;
+                }
+                @media (min-width: 1024px) {
+                  atomic-facet::part(values) {
+                    max-height: 500px;
+                  }
                 }
               </style>
               <atomic-facet
@@ -382,6 +391,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 border-top: 1px solid var(--footer-border-color);
                 @media(max-width: 1024px) {
                   padding-left: 20px;
+                  border-top: none;
                 }
               }
             </style>
