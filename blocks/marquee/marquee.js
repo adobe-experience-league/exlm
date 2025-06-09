@@ -2,10 +2,10 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
-const getDefaultEmbed = (url, { autoplay = false } = {}) => `
+const getDefaultEmbed = (url) => `
   <div class="video-frame" style="position: absolute; inset: 0; width: 100%; height: 100%;">
     <iframe 
-      src="${new URL(url).href + (autoplay ? '?autoplay=true' : '')}"
+      src="${new URL(url).href}"
       style="border: 0; width: 100%; height: 100%;"
       allowfullscreen
       allow="encrypted-media; autoplay"
@@ -175,14 +175,11 @@ export default async function decorate(block) {
     const bgContainer = block.querySelector('.marquee-background');
     bgContainer.style.position = 'relative';
 
-    const subjectEl = document.createElement('div');
-    subjectEl.classList.add('marquee-subject');
-    subjectEl.style.backgroundColor = bgColor;
-    subjectEl.style.position = 'relative';
-    subjectEl.style.width = '100%';
-    subjectEl.style.height = '100%';
-    subjectEl.innerHTML = getDefaultEmbed(videoUrl, { autoplay: false });
-    bgContainer.appendChild(subjectEl);
+    const embedWrapper = document.createElement('div');
+    embedWrapper.style.backgroundColor = bgColor;
+    embedWrapper.innerHTML = getDefaultEmbed(videoUrl);
+
+    bgContainer.appendChild(embedWrapper);
   } else if (subjectPicture) {
     appendSubjectPicture(block, subjectPicture, bgColor);
   } else {
