@@ -142,7 +142,9 @@ export default async function decorate(block) {
               : ''
           }
         </div>
-      <div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>
+      ${
+        !isVideoVariant || !videoUrl ? `<div class="marquee-bg-filler" style="background-color: ${bgColor}"></div>` : ''
+      }
     </div>
     </div>
   `);
@@ -169,9 +171,6 @@ export default async function decorate(block) {
   block.append(marqueeDOM);
 
   if (isVideoVariant && videoUrl) {
-    const bgFillerEl = block.querySelector('.marquee-bg-filler');
-    if (bgFillerEl) bgFillerEl.style.display = 'none';
-
     const bgContainer = block.querySelector('.marquee-background');
     bgContainer.style.position = 'relative';
 
