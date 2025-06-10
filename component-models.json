@@ -4280,9 +4280,6 @@
         "name": "generateTqTags",
         "label": "Generate TQ Tags",
         "valueType": "string",
-        "actionConfig": {
-          "handler": "generateTqTags"
-        },
         "extensionId": "exl-ue-extension"
       },
       {
