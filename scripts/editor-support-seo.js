@@ -11,7 +11,7 @@ export default function renderSEOWarnings() {
 
   tags.forEach((tag) => {
     const headerTagElements = document.querySelectorAll(`main ${tag}`);
-    let totalCount = headerTagElements.length;
+    let totalCount = headerTagElements?.length;
 
     // For article-marquee, Headings are rendered as text instead of tag
     const articleMarqueeDivs = document.querySelectorAll('.article-marquee div');
