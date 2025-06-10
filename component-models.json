@@ -4283,7 +4283,7 @@
         "actionConfig": {
           "handler": "generateTqTags"
         },
-        "extensionId": "exlm-ue-custom-field"
+        "extensionId": "exl-ue-extension"
       },
       {
         "component": "aem-content",
