@@ -4242,6 +4242,16 @@
         }
       },
       {
+        "component": "custom-action-button",
+        "name": "generateTqTags",
+        "label": "Generate TQ Tags",
+        "valueType": "string",
+        "actionConfig": {
+          "handler": "generateTqTags"
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
         "component": "custom-aem-tag",
         "name": "tq-role",
         "label": "Role(s)",
@@ -4273,13 +4283,6 @@
             }
           }
         },
-        "extensionId": "exl-ue-extension"
-      },
-      {
-        "component": "custom-action-button",
-        "name": "generateTqTags",
-        "label": "Generate TQ Tags",
-        "valueType": "string",
         "extensionId": "exl-ue-extension"
       },
       {
