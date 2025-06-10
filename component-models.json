@@ -4243,14 +4243,14 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "role",
+        "name": "tq-role",
         "label": "Role(s)",
         "valueType": "string",
         "description": "Sets the role(s) in page meta.",
         "dataSource": {
           "type": "action",
           "config": {
-            "name": "GetTQTags",
+            "name": "getTQTags",
             "params": {
               "taxonomyType": "role"
             }
@@ -4260,7 +4260,7 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "level",
+        "name": "tq-level",
         "label": "Experience Level(s)",
         "valueType": "string",
         "description": "Sets the level(s) in page meta.",
@@ -4274,6 +4274,16 @@
           }
         },
         "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-action-button",
+        "name": "generateTqTags",
+        "label": "Generate TQ Tags",
+        "valueType": "string",
+        "actionConfig": {
+          "handler": "generateTqTags"
+        },
+        "extensionId": "exlm-ue-custom-field"
       },
       {
         "component": "aem-content",
