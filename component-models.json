@@ -4281,7 +4281,79 @@
         "label": "Generate TQ Tags",
         "valueType": "string",
         "actionConfig": {
-          "handler": "generateTqTags"
+          "handler": "generateTqTags",
+          "updateFields": [
+            "tq-role",
+            "tq-level"
+          ]
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-products",
+        "label": "Product(s)",
+        "valueType": "string",
+        "description": "Sets the products(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "product"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-features",
+        "label": "Feature(s)",
+        "valueType": "string",
+        "description": "Sets the feature(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "feature"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-inductries",
+        "label": "Industries",
+        "valueType": "string",
+        "description": "Sets the industries in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "industry"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-topics",
+        "label": "Topic(s)",
+        "valueType": "string",
+        "description": "Sets the topic(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "topic"
+            }
+          }
         },
         "extensionId": "exl-ue-extension"
       },
