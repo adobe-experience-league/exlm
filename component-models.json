@@ -4277,11 +4277,11 @@
       },
       {
         "component": "custom-action-button",
-        "name": "generateTqTags",
+        "name": "generateTQTags",
         "label": "Generate TQ Tags",
         "valueType": "string",
         "actionConfig": {
-          "handler": "generateTqTags",
+          "handler": "generateTQTags",
           "updateFields": [
             "tq-role",
             "tq-level"
