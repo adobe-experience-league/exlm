@@ -5,39 +5,19 @@ loadCSS(`${window.hlx.codeBasePath}/styles/ue-styles.css`);
  * Displays SEO warnings for specific tags.
  */
 export default function renderSEOWarnings() {
-  // Ignore PHP as content is loaded as fragments from different pages
-  const excludedPages = ['/home.html'];
-
-  if (excludedPages.some((path) => window.location.pathname.includes(path))) {
-    return;
-  }
-
   const tags = ['h1'];
   let warningBanner = document.querySelector('.ue-warning-banner');
   const messages = [];
 
   tags.forEach((tag) => {
-    const headingTags = document.querySelectorAll(`main ${tag}`);
-    const hTagsCount = headingTags?.length || 0;
+    const elements = document.querySelectorAll(`main ${tag}`);
+    const count = elements.length;
 
-    // For article-marquee, Headings are rendered as text instead of tag
-    let hDivTagCount = 0;
-    const articleMarqueeDivs = document.querySelectorAll('.article-marquee div');
-    articleMarqueeDivs?.forEach((el) => {
-      const text = el.textContent.trim().toLowerCase();
-      const hasOnlyText = el.children.length === 0;
-      if (hasOnlyText && text === tag.toLowerCase()) {
-        hDivTagCount += 1;
-      }
-    });
-
-    const totalCount = hTagsCount + hDivTagCount;
-
-    if (totalCount === 0) {
+    if (count === 0) {
       messages.push(
         `Warning: This page does not have a ${tag.toUpperCase()} element. Please include exactly one ${tag.toUpperCase()} tag.`,
       );
-    } else if (totalCount > 1) {
+    } else if (count > 1) {
       messages.push(
         `Warning: This page has multiple ${tag.toUpperCase()} tags. Please update the page to have only one ${tag.toUpperCase()} tag.`,
       );
