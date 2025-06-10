@@ -4251,7 +4251,7 @@
           "type": "action",
           "config": {
             "name": "GetTQTags",
-            "input": {
+            "params": {
               "taxonomyType": "role"
             }
           }
@@ -4265,10 +4265,10 @@
         "valueType": "string",
         "description": "Sets the level(s) in page meta.",
         "dataSource": {
-          "type": "action",
+          "type": "url",
           "config": {
-            "name": "GetTQTags",
-            "input": {
+            "url": "https://51837-exlmia-stage.adobeio-static.net/api/v1/web/exlia/getTQTags",
+            "params": {
               "taxonomyType": "level"
             }
           }
