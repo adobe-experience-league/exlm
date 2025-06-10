@@ -112,7 +112,23 @@
   display: none;
 }
 
-@media (min-width: 600px) {
+.event-no-results {
+  background-color: var(--spectrum-gray-200);
+  color: var(--non-spectrum-grey);
+  font-size: var(--spectrum-font-size-200);
+  padding: 72px 0;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  grid-column: 1 / -1;
+}
+
+.upcoming-event .browse-cards-block-content > .event-no-results {
+  min-height: unset;
+  height: 170px;
+}
+
+@media (min-width: 900px) {
   .upcoming-event .view-switcher {
     margin-top: 24px;
     display: flex;
@@ -245,6 +261,8 @@
   .upcoming-event.list .browse-card .browse-card-footer .browse-card-event-info .browse-card-event-time h6 {
     color: var(--non-spectrum-dark-charcoal);
     font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   .upcoming-event.list .browse-card .browse-card-footer .browse-card-event-info .icon {

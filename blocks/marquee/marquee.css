@@ -542,34 +542,3 @@ body[class^='article-'] .marquee-content-container {
   border: none;
   z-index: 10;
 }
-
-.marquee.video .marquee-play-button {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  z-index: 20;
-}
-
-.marquee.video .video-overlay-play-circle {
-  width: 48px;
-  height: 48px;
-  background: rgb(0 0 0 / 60%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--background-color);
-}
-
-.marquee.video .play-triangle {
-  width: 0;
-  height: 0;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-left: 16px solid var(--background-color);
-  margin-left: 3px;
-}
