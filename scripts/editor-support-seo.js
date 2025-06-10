@@ -11,15 +11,20 @@ export default function renderSEOWarnings() {
 
   tags.forEach((tag) => {
     const headerTagElements = document.querySelectorAll(`main ${tag}`);
-    let totalCount = headerTagElements?.length;
+    const hTagsCount = headerTagElements?.length || 0;
 
     // For article-marquee, Headings are rendered as text instead of tag
+    let hDivTagCount = 0;
     const articleMarqueeDivs = document.querySelectorAll('.article-marquee div');
-    articleMarqueeDivs?.forEach((el) => {
-      if (el.textContent.trim().toLowerCase() === tag.toLowerCase()) {
-        totalCount += 1;
+    articleMarqueeDivs.forEach((el) => {
+      const text = el.textContent.trim().toLowerCase();
+      const hasOnlyText = el.children.length === 0;
+      if (hasOnlyText && text === tag.toLowerCase()) {
+        hDivTagCount += 1;
       }
     });
+
+    const totalCount = hTagsCount + hDivTagCount;
 
     if (totalCount === 0) {
       messages.push(
