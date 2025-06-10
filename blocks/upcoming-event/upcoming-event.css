@@ -128,7 +128,7 @@
   height: 170px;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 900px) {
   .upcoming-event .view-switcher {
     margin-top: 24px;
     display: flex;
@@ -261,6 +261,8 @@
   .upcoming-event.list .browse-card .browse-card-footer .browse-card-event-info .browse-card-event-time h6 {
     color: var(--non-spectrum-dark-charcoal);
     font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   .upcoming-event.list .browse-card .browse-card-footer .browse-card-event-info .icon {
