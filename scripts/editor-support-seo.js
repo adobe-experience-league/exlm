@@ -10,13 +10,13 @@ export default function renderSEOWarnings() {
   const messages = [];
 
   tags.forEach((tag) => {
-    const headerTagElements = document.querySelectorAll(`main ${tag}`);
-    const hTagsCount = headerTagElements?.length || 0;
+    const headingTags = document.querySelectorAll(`main ${tag}`);
+    const hTagsCount = headingTags?.length || 0;
 
     // For article-marquee, Headings are rendered as text instead of tag
     let hDivTagCount = 0;
     const articleMarqueeDivs = document.querySelectorAll('.article-marquee div');
-    articleMarqueeDivs.forEach((el) => {
+    articleMarqueeDivs?.forEach((el) => {
       const text = el.textContent.trim().toLowerCase();
       const hasOnlyText = el.children.length === 0;
       if (hasOnlyText && text === tag.toLowerCase()) {
