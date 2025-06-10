@@ -4325,7 +4325,7 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-inductries",
+        "name": "tq-industries",
         "label": "Industries",
         "valueType": "string",
         "description": "Sets the industries in page meta.",
