@@ -10,14 +10,22 @@ export default function renderSEOWarnings() {
   const messages = [];
 
   tags.forEach((tag) => {
-    const elements = document.querySelectorAll(`main ${tag}`);
-    const count = elements.length;
+    const headerTagElements = document.querySelectorAll(`main ${tag}`);
+    let totalCount = headerTagElements.length;
 
-    if (count === 0) {
+    // For article-marquee, Headings are rendered as text instead of tag
+    const articleMarqueeDivs = document.querySelectorAll('.article-marquee div');
+    articleMarqueeDivs?.forEach((el) => {
+      if (el.textContent.trim().toLowerCase() === tag.toLowerCase()) {
+        totalCount += 1;
+      }
+    });
+
+    if (totalCount === 0) {
       messages.push(
         `Warning: This page does not have a ${tag.toUpperCase()} element. Please include exactly one ${tag.toUpperCase()} tag.`,
       );
-    } else if (count > 1) {
+    } else if (totalCount > 1) {
       messages.push(
         `Warning: This page has multiple ${tag.toUpperCase()} tags. Please update the page to have only one ${tag.toUpperCase()} tag.`,
       );

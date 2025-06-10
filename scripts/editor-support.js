@@ -372,20 +372,4 @@ if (signUpBlock) {
 
 // update UE component filters on page load
 updateUEInstrumentation();
-
-document.addEventListener('DOMContentLoaded', () => {
-  const observer = new MutationObserver(async (mutations, obs) => {
-    const articleMarquee = document.querySelector('.article-marquee');
-    /**
-     * For article-marquee, Headings are rendered as text instead of tag
-     * So we should wait for block to load and then trigger the SEO warnings.
-     */
-    if (articleMarquee) {
-      obs.disconnect();
-      await loadBlocks(document.querySelector('main'));
-    }
-    renderSEOWarnings();
-  });
-
-  observer.observe(document.documentElement, { childList: true, subtree: true });
-});
+renderSEOWarnings();
