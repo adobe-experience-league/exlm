@@ -4276,17 +4276,10 @@
         "extensionId": "exl-ue-extension"
       },
       {
-        "component": "custom-action-button",
+        "component": "tq-action-button",
         "name": "generateTQTags",
         "label": "Generate TQ Tags",
         "valueType": "string",
-        "actionConfig": {
-          "handler": "generateTQTags",
-          "updateFields": [
-            "tq-role",
-            "tq-level"
-          ]
-        },
         "extensionId": "exl-ue-extension"
       },
       {
