@@ -113,10 +113,10 @@ export default function atomicFacetManagerHandler(baseElement) {
     modal.innerHTML = `
       <div class="modal-backdrop"></div>
       <div class="modal-content">
-        <div id="facet-modal-slot"></div>
         <button class="facet-close-btn">
           <span class="icon icon-close"></span>
         </button>
+        <div id="facet-modal-slot"></div>
       </div>
     `;
 

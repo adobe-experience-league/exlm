@@ -116,9 +116,9 @@
 }
 
 .atomic-search button.facet-close-btn {
-  position: absolute;
-  right: 12px;
-  top: 12px;
+  position: sticky;
+  left: calc(100% - 16px);
+  top: 8px;
 }
 
 .atomic-load-skeleton-main {
