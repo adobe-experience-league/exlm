@@ -1,14 +1,7 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import state from './slider-state.js';
-import {
-  generateVisualConfig,
-  getPreference,
-  getAudioFilename,
-  showAllSteps,
-  showStep,
-  addEventHandlers,
-} from './slider-utils.js';
+import { generateVisualConfig, getPreference, showAllSteps, showStep, addEventHandlers } from './slider-utils.js';
 
 function html(content, placeholders) {
   const initialView = getPreference('view') || 'as-slides';
@@ -269,17 +262,18 @@ export default async function decorate(block) {
           steps: [],
         };
       } else {
-        // Steps have something in the right/last cell
-        const text = row.querySelector(':scope > div:first-child');
         // const visual = row.querySelector(':scope > div:last-child');
         const slideWrapper = row.querySelector(':scope > div');
-        const [, , titleElement, ...rest] = slideWrapper?.children || [];
+        const [, , audioP, titleElement, ...rest] = slideWrapper?.children || [];
         const titleId = titleElement?.id || titleElement?.textContent?.split(' ')?.join('-')?.toLowerCase() || '';
         if (titleElement) {
           titleElement.id = titleId;
         }
 
         const stepId = section.id ? `${section.id}__${titleId}` : titleId;
+
+        const audio = `${audioP?.querySelector('a')?.href}` || '';
+        audioP.remove();
 
         section.steps.push({
           id: stepId,
@@ -291,7 +285,7 @@ export default async function decorate(block) {
             .map((el) => el.outerHTML)
             .join(' '),
           visual: generateVisualConfig(slideWrapper),
-          audio: `https://dxenablementbeta.blob.core.windows.net/exl-slides/audio/${await getAudioFilename(text)}.wav`,
+          audio,
         });
       }
     }),
