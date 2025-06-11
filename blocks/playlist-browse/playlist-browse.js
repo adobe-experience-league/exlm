@@ -212,8 +212,8 @@ const updateCards = (filters) => {
       const errorMsg = document.createElement('div');
       errorMsg.className = 'playlist-no-results';
       const noResultsText = createPlaceholderSpan(
-        'noResultsText',
-        'We are sorry, no results found matching the criteria.',
+        'noResultsTextBrowse',
+        'We are sorry, no results found matching the criteria. Try adjusting your search to view more content.',
       );
       errorMsg.append(noResultsText);
 
