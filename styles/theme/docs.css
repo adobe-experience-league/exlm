@@ -165,17 +165,24 @@
 
   /* docs content area */
   div.section {
-    ul > li,
-    ol > li {
-      line-height: 1.4;
-      margin: 0.6em 0;
-
-      p {
-        margin-bottom: unset;
-      }
-
-      a:any-link {
+    .accordion-wrapper,
+    .default-content-wrapper,
+    .related-articles-wrapper,
+    .table-wrapper,
+    .note-wrapper,
+    .list-wrapper {
+      ul > li,
+      ol > li {
         line-height: 1.4;
+        margin: 0.6em 0;
+
+        p {
+          margin-bottom: unset;
+        }
+
+        a:any-link {
+          line-height: 1.4;
+        }
       }
     }
   }
