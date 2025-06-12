@@ -297,7 +297,9 @@ export default async function decorate(block) {
 
     // Show error message if selected product has no events
     if (updatedData.length === 0) {
-      const noResultsText = placeholders.noResultsText || 'We are sorry, no results found matching the criteria.';
+      const noResultsText =
+        placeholders.noResultsTextBrowse ||
+        'We are sorry, no results found matching the criteria. Try adjusting your search to view more content.';
       const errorMsg = htmlToElement(`
     <div class="event-no-results">${noResultsText}</div>
   `);

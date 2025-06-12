@@ -396,24 +396,6 @@ export function updateWindowLocation(block, stepId) {
   }
 }
 
-export async function getAudioFilename(content) {
-  let text = [...content.querySelectorAll(':scope > *')]
-    .filter((el) => !el.matches('h1,h2,h3,h4'))
-    .map((el) => {
-      if (el.tagName === 'UL' || el.tagName === 'OL') {
-        const items = [...el.querySelectorAll('li')].map((li) => li.textContent);
-        return items.length > 1
-          ? `${items.slice(0, -1).join(', ') + (items.length > 2 ? ',' : '')} and ${items.slice(-1)}`
-          : items.join('');
-      }
-      return el.textContent;
-    })
-    .join(' ');
-  text = normalizeSpaces(text);
-
-  return `${text.length}-${await sha256(normalizeSpaces(text))}`;
-}
-
 export function copyToClipboard({ text, toastText }) {
   try {
     navigator.clipboard.writeText(text);

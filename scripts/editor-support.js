@@ -372,4 +372,3 @@ if (signUpBlock) {
 
 // update UE component filters on page load
 updateUEInstrumentation();
-renderSEOWarnings();
