@@ -53,7 +53,7 @@ function html(content, placeholders) {
                                   ?.filter((callout) => !callout.toast)
                                   .map(
                                     (callout) => `
-                                    <span class="callout" data-callout>
+                                    <span class="callout callout-${callout.type ?? ''}" data-callout>
                                         <span class="indicator ${callout.clickable ? 'clickable' : ''}" 
                                                 ${
                                                   !callout.button && callout.clickable === 'next'
@@ -126,7 +126,8 @@ function html(content, placeholders) {
 
                               <audio 
                                   class="audio-player" data-audio-controls
-                                  src="${step.audio}" controls preload controlslist="nodownload">
+                                  src="${step.audio}" controls preload controlslist="nodownload"
+                              >
                                   <source src="${step.audio} type="audio/wav">
                                   Your browser does not support the audio element.
                               </audio>

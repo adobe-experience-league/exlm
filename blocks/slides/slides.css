@@ -259,6 +259,12 @@
   height: 100%;
 }
 
+.slides .visual.image .callout.callout-rectangle {
+  border-radius: 0;
+
+  --border-radius: 0;
+}
+
 .slides .visual.image .callout .indicator {
   display: none;
 }
@@ -283,6 +289,10 @@
     0 0 0 20px rgb(var(--callout-color-r) var(--callout-color-g) var(--callout-color-b) / 5%);
   background-color: transparent;
   animation: pulse 2.5s ease-in-out forwards infinite;
+}
+
+.slides .step.active .visual.image .callout.callout-rectangle .indicator i {
+  border-radius: 0;
 }
 
 .slides .step.active .visual.image .callout.visible .indicator.clickable i {
@@ -568,12 +578,14 @@
 }
 
 .slides .content .button {
-  position: absolute;
+  --content-left-position: 172px;
+
   bottom: 0;
-  right: 16px;
+  left: calc(100% - var(--content-left-position));
   display: none;
   font-size: var(--spectrum-font-size-200);
   height: 40px;
+  position: relative;
 }
 
 .slides .content p {
