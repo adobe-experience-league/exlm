@@ -141,7 +141,7 @@
 /* larger font size above 1200px */
 @media (min-width: 1200px) {
   .media.block > .text > .description,
-  .media.block > .text > .description * {
+  .media.block > .text > .description *:not(a) {
     font-size: var(--spectrum-body-size-l);
     line-height: 23.4px;
   }
