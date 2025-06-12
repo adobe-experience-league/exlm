@@ -185,11 +185,9 @@ function html(content, placeholders) {
                               }
 
 
-                              <select class="step-name-select" data-step-name-select aria-label="Current step">
-                                ${section.steps
-                                  .map((stepOption) => `<option value="${stepOption.id}">${stepOption.title}</option>`)
-                                  .join('')}
-                              </select>
+                              <div class="step-name-title" aria-label="Current step">
+                                ${step.title}
+                              </div>
                             
                           </div>
                       </div>

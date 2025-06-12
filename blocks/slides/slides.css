@@ -181,7 +181,8 @@
   margin-bottom: 0;
   color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-700);
-  font-weight: bold;
+  line-height: 35px;
+  font-weight: var(--font-weight-bold);
 }
 
 .slides .content-info {
@@ -556,17 +557,12 @@
   background: white;
 }
 
-.slides .controls .step-name-select {
+.slides .controls .step-name-title {
   font-family: var(--body-font-family);
-  line-height: var(--exlm-line-height-h3);
-  font-size: var(--exlm-font-size-h3);
-  font-weight: var(--font-weight-700);
-  font-style: normal;
+  line-height: 35px;
+  font-size: var(--spectrum-font-size-700);
+  font-weight: var(--font-weight-bold);
   color: var(--non-spectrum-dark-gray);
-  width: 100%;
-  border: 0;
-  background-color: transparent;
-  outline: none;
 }
 
 .slides .content {

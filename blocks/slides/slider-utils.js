@@ -394,10 +394,6 @@ export function showStep(block, stepId, direction = 'next') {
 
   // Must come after the remove active above
   activateStep(block, stepId, direction);
-
-  step.querySelectorAll('[data-step-name-select]').forEach((select) => {
-    select.value = stepId;
-  });
 }
 
 export function showAllSteps(block) {
@@ -487,14 +483,6 @@ export function addEventHandlers(block, placeholders) {
       block.querySelectorAll('[data-option-force-active="true"]').forEach((option) => {
         option.selected = true;
       });
-    });
-  });
-
-  block.querySelectorAll('[data-step-name-select]').forEach((select) => {
-    select.addEventListener('change', () => {
-      state.currentStep = select.value;
-      updateWindowLocation(block, state.currentStep);
-      showStep(block, state.currentStep, 'jump');
     });
   });
 
