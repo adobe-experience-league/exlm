@@ -78,10 +78,6 @@
   cursor: pointer;
 }
 
-.media.block > .text > .description a:hover {
-  text-decoration: underline;
-}
-
 @media (min-width: 600px) {
   /* the block */
   .media.block {
