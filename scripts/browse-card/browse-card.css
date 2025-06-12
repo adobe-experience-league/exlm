@@ -584,6 +584,10 @@
   display: none;
 }
 
+.curated-cards-wrapper .browse-card .browse-card-banner {
+  color: var(--spectrum-gray-50);
+}
+
 /** Upcoming events **/
 
 .upcoming-event-wrapper .upcoming-event .browse-card.upcoming-event-card {
@@ -592,7 +596,7 @@
 
 .upcoming-event-wrapper .browse-card.upcoming-event-card .browse-card-banner {
   background-color: var(--non-spectrum-adobe-red) !important;
-  color: var(--spectrum-gray-900);
+  color: var(--spectrum-gray-50);
 }
 
 .upcoming-event-wrapper .browse-card.upcoming-event-card .browse-card-figure {
