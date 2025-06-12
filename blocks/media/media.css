@@ -50,7 +50,7 @@
 }
 
 .media.block > .text > .description,
-.media.block > .text > .description * {
+.media.block > .text > .description *:not(a) {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-body-size-m);
   line-height: 24px;
@@ -71,11 +71,6 @@
 
 .media.block > .text > .cta:empty {
   display: none;
-}
-
-.media.block > .text > .description a {
-  color: var(--non-spectrum-link);
-  cursor: pointer;
 }
 
 @media (min-width: 600px) {
