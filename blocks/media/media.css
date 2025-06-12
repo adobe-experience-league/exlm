@@ -57,15 +57,6 @@
   color: var(--spectrum-gray-800);
 }
 
-.media.block > .text > .description a {
-  color: var(--non-spectrum-link);
-  cursor: pointer;
-}
-
-.media.block > .text > .description a:hover {
-  text-decoration: underline;
-}
-
 .media.block > .text > .cta {
   display: flex;
   flex-flow: row wrap;
@@ -80,6 +71,15 @@
 
 .media.block > .text > .cta:empty {
   display: none;
+}
+
+.media.block > .text > .description a {
+  color: var(--non-spectrum-link);
+  cursor: pointer;
+}
+
+.media.block > .text > .description a:hover {
+  text-decoration: underline;
 }
 
 @media (min-width: 600px) {
