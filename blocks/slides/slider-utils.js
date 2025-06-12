@@ -359,7 +359,6 @@ export async function activateStep(block, stepIndex, direction = 'next') {
       audio.play();
     } catch (error) {
       // Its fine if the audio doesn't play
-      console.error('audio:auto-play failed with error', error);
     }
   } else {
     await audio.pause();
