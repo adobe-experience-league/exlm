@@ -63,6 +63,14 @@ export function getPreviousStep(block, currentStep) {
   return null; // No previous step found
 }
 
+function updateContentButtonPosition(step) {
+  const contentButton = step.querySelector('.content button');
+  if (contentButton) {
+    const width = contentButton.offsetWidth;
+    contentButton.style.setProperty('--content-left-position', `${width}px`);
+  }
+}
+
 export function addCallouts(step) {
   const picture = step.querySelector('picture');
   const image = step.querySelector('img');
@@ -257,8 +265,9 @@ export function generateVisualConfig(cell) {
             const height = Number(span.getAttribute('height')) || r * 2;
             const tooltip = span.textContent.trim();
             const clickable = span.getAttribute('clickable') || null;
+            const type = span.getAttribute('type') || '';
 
-            return { toast: null, button: null, width, height, x, y, tooltip, clickable };
+            return { toast: null, button: null, width, height, x, y, tooltip, clickable, type };
           }
 
           // Case 2: no span child—extract from li.textContent + key="value" pairs
@@ -302,6 +311,26 @@ export function generateVisualConfig(cell) {
   return visual;
 }
 
+function waitForAudioReady(audioEl) {
+  return new Promise((resolve, reject) => {
+    function onReady() {
+      resolve();
+    }
+
+    function onError() {
+      reject(new Error('Audio failed to load.'));
+    }
+
+    if (audioEl.readyState >= 3) {
+      onReady();
+      return;
+    }
+
+    audioEl.addEventListener('canplay', onReady, { once: true });
+    audioEl.addEventListener('error', onError, { once: true });
+  });
+}
+
 export async function activateStep(block, stepIndex, direction = 'next') {
   // There should only be 1 match, but the forEach guards against no matches as well
   const step = block.querySelector(`[data-step="${stepIndex}"]`);
@@ -310,9 +339,11 @@ export async function activateStep(block, stepIndex, direction = 'next') {
 
   step.querySelectorAll(':is([data-callout] ~ img, [data-callout] ~ picture > img)').forEach((image) => {
     if (image.complete && image.naturalWidth > 0) {
+      updateContentButtonPosition(step);
       addCallouts(step);
     } else {
       image.addEventListener('load', () => {
+        updateContentButtonPosition(step);
         addCallouts(step);
       });
     }
@@ -324,7 +355,8 @@ export async function activateStep(block, stepIndex, direction = 'next') {
 
   if (stepIndex === state.currentStep && autoplayAudio) {
     try {
-      await audio.play();
+      await waitForAudioReady(audio);
+      audio.play();
     } catch (error) {
       // Its fine if the audio doesn't play
     }
@@ -362,10 +394,6 @@ export function showStep(block, stepId, direction = 'next') {
 
   // Must come after the remove active above
   activateStep(block, stepId, direction);
-
-  step.querySelectorAll('[data-step-name-select]').forEach((select) => {
-    select.value = stepId;
-  });
 }
 
 export function showAllSteps(block) {
@@ -455,14 +483,6 @@ export function addEventHandlers(block, placeholders) {
       block.querySelectorAll('[data-option-force-active="true"]').forEach((option) => {
         option.selected = true;
       });
-    });
-  });
-
-  block.querySelectorAll('[data-step-name-select]').forEach((select) => {
-    select.addEventListener('change', () => {
-      state.currentStep = select.value;
-      updateWindowLocation(block, state.currentStep);
-      showStep(block, state.currentStep, 'jump');
     });
   });
 
