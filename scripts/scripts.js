@@ -1275,8 +1275,7 @@ async function loadPage() {
   loadDelayed();
   await showSignupDialog();
   if (window.hlx.aemRoot || window.location.href.includes('.html')) {
-    const { renderSEOWarnings } = await import('./editor-support-seo.js');
-    renderSEOWarnings();
+    loadDefaultModule(`${window.hlx.codeBasePath}/scripts/editor-support-seo.js`);
   }
   if (isDocPage) {
     // load prex/next buttons
