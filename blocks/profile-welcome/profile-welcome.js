@@ -134,11 +134,11 @@ async function decorateProfileWelcomeBlock(block) {
       const hasInterests = checkIfInterestsExist(interests);
       const communityDataEl =
         hasInterests && !UEAuthorMode
-          ? `<div class="profile-user-card-name">${adobeDisplayName}</div>
-     ${communityUserName ? `<div class="profile-user-card-tag">@${communityUserName}</div>` : ''}`
-          : `<div class="profile-user-card-name">${adobeDisplayName}</div>
-     ${communityUserName ? `<div class="profile-user-card-tag">@${communityUserName}</div>` : ''}
-     <div class="profile-user-card-org">${company}</div>`;
+          ? `<div class="profile-user-card-name" data-cs-mask>${adobeDisplayName}</div>
+         ${communityUserName ? `<div class="profile-user-card-tag" data-cs-mask>@${communityUserName}</div>` : ''}`
+          : `<div class="profile-user-card-name" data-cs-mask>${adobeDisplayName}</div>
+         ${communityUserName ? `<div class="profile-user-card-tag" data-cs-mask>@${communityUserName}</div>` : ''}
+            <div class="profile-user-card-org" data-cs-mask>${company}</div>`;
 
       const userCardInfoEl = block.querySelector('.profile-user-card-info');
       if (userCardInfoEl) {
@@ -249,16 +249,17 @@ async function decorateProfileWelcomeBlock(block) {
     }
 
     const eyebrowTextEl = block.querySelector('.profile-curated-eyebrowtext');
+    const maskedFirstName = `<span data-cs-mask>${adobeFirstName}</span>`;
     if (eyebrowTextEl) {
-      eyebrowTextEl.innerHTML = eyebrowText ? replaceProfileText(eyebrowText, adobeFirstName) : ``;
+      eyebrowTextEl.innerHTML = eyebrowText ? replaceProfileText(eyebrowText, maskedFirstName) : ``;
     }
     const curatedHeadingEl = block.querySelector('.profile-curated-card-heading');
     if (curatedHeadingEl) {
-      curatedHeadingEl.innerHTML = headingText ? replaceProfileText(headingText, adobeFirstName) : ``;
+      curatedHeadingEl.innerHTML = headingText ? replaceProfileText(headingText, maskedFirstName) : ``;
     }
     const curatedDescriptionEl = block.querySelector('.profile-curated-card-description');
     if (curatedDescriptionEl) {
-      curatedDescriptionEl.innerHTML = descriptionText ? replaceProfileText(descriptionText, adobeFirstName) : ``;
+      curatedDescriptionEl.innerHTML = descriptionText ? replaceProfileText(descriptionText, maskedFirstName) : ``;
     }
     const profileUserCardAvatar = block.querySelector('.profile-user-card-avatar');
     if (profileUserCardAvatar) {
