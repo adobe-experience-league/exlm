@@ -584,7 +584,7 @@
   display: none;
 }
 
-.curated-cards-wrapper .browse-card .browse-card-banner {
+.curated-cards-wrapper .browse-card.event-card .browse-card-banner {
   color: var(--spectrum-gray-50);
 }
 
