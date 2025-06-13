@@ -31,7 +31,7 @@ export default async function decorate(block) {
     ${MANAGE_ADOBE_ACCOUNT}
     </a>
     </div>
-    <div class="email-card-user-email">${email}</div>
+    <div class="email-card-user-email" data-cs-mask="true">${email}</div>
   `);
 
     block.append(emailCardDiv);
