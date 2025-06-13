@@ -134,15 +134,11 @@ async function decorateProfileWelcomeBlock(block) {
       const hasInterests = checkIfInterestsExist(interests);
       const communityDataEl =
         hasInterests && !UEAuthorMode
-          ? `<div class="profile-user-card-name" data-cs-mask="true">${adobeDisplayName}</div>
-         ${
-           communityUserName ? `<div class="profile-user-card-tag" data-cs-mask="true">@${communityUserName}</div>` : ''
-         }`
-          : `<div class="profile-user-card-name" data-cs-mask="true">${adobeDisplayName}</div>
-         ${
-           communityUserName ? `<div class="profile-user-card-tag" data-cs-mask="true">@${communityUserName}</div>` : ''
-         }
-            <div class="profile-user-card-org" data-cs-mask="true">${company}</div>`;
+          ? `<div class="profile-user-card-name" data-cs-mask>${adobeDisplayName}</div>
+         ${communityUserName ? `<div class="profile-user-card-tag" data-cs-mask>@${communityUserName}</div>` : ''}`
+          : `<div class="profile-user-card-name" data-cs-mask>${adobeDisplayName}</div>
+         ${communityUserName ? `<div class="profile-user-card-tag" data-cs-mask>@${communityUserName}</div>` : ''}
+            <div class="profile-user-card-org" data-cs-mask>${company}</div>`;
 
       const userCardInfoEl = block.querySelector('.profile-user-card-info');
       if (userCardInfoEl) {
@@ -253,7 +249,7 @@ async function decorateProfileWelcomeBlock(block) {
     }
 
     const eyebrowTextEl = block.querySelector('.profile-curated-eyebrowtext');
-    const maskedFirstName = `<span data-cs-mask="true">${adobeFirstName}</span>`;
+    const maskedFirstName = `<span data-cs-mask>${adobeFirstName}</span>`;
     if (eyebrowTextEl) {
       eyebrowTextEl.innerHTML = eyebrowText ? replaceProfileText(eyebrowText, maskedFirstName) : ``;
     }
