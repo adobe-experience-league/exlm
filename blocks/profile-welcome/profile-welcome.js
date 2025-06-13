@@ -142,7 +142,7 @@ async function decorateProfileWelcomeBlock(block) {
          ${
            communityUserName ? `<div class="profile-user-card-tag" data-cs-mask="true">@${communityUserName}</div>` : ''
          }
-            <div class="profile-user-card-org">${company}</div>`;
+            <div class="profile-user-card-org" data-cs-mask="true">${company}</div>`;
 
       const userCardInfoEl = block.querySelector('.profile-user-card-info');
       if (userCardInfoEl) {

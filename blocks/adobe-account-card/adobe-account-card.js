@@ -57,7 +57,7 @@ export default async function decorate(block) {
       <div class="profile-user-info">
         <div class="display-name adobe-display-name" data-cs-mask="true">${adobeDisplayName}</div>
         <div class="user-details">
-          <div class="user-company">${company}</div>
+          <div class="user-company" data-cs-mask="true">${company}</div>
           <div class="user-email" data-cs-mask="true">${email}</div>
         </div>
       </div>
