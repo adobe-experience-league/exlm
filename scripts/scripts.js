@@ -21,7 +21,6 @@ import {
   loadBlock,
 } from './lib-franklin.js';
 import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
-import renderSEOWarnings from './editor-support-seo.js';
 
 /**
  * please do not import any other modules here, as this file is used in the critical path.
@@ -1276,6 +1275,7 @@ async function loadPage() {
   loadDelayed();
   await showSignupDialog();
   if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+    const { renderSEOWarnings } = await import('./editor-support-seo.js');
     renderSEOWarnings();
   }
   if (isDocPage) {
