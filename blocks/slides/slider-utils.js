@@ -205,34 +205,75 @@ export function parseCallout(calloutParams = '') {
   return callout;
 }
 
+/**
+ * @param {string} attributesString
+ * @returns {Object}
+ */
+function parseAttributes(attributesString) {
+  const attrObj = {};
+  // Match attributes with values that may contain escaped quotes
+  const attributes = attributesString.match(/(\w+)=("(?:[^"\\]|\\.)*")/g) || [];
+  attributes.forEach((attr) => {
+    const [key, rawValue] = attr.split('=');
+    try {
+      attrObj[key] = JSON.parse(rawValue);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn(`Failed to parse value for ${key}:`, rawValue);
+      attrObj[key] = rawValue.slice(1, -1); // fallback: unquote manually
+    }
+  });
+
+  return attrObj;
+}
+
+/**
+ * @typedef {Object} Directive
+ * @property {string} name - The name of the directive
+ * @property {string} label - The label of the directive
+ * @property {Object} attributes - The attributes of the directive
+ */
+
+/**
+ * @param {string} directiveString
+ * @returns {Directive|null}
+ */
+function parseTextDirective(directiveString) {
+  const calloutMatch = directiveString.match(/:(.*)\[(.*?)\]\{(.*?)\}/);
+  if (calloutMatch) {
+    const [, name, label, attributesString] = calloutMatch;
+    const attributes = parseAttributes(attributesString);
+    return { name, label, attributes };
+  }
+  return null;
+}
+
+function parseCalloutList(calloutUl) {
+  return [...calloutUl.querySelectorAll('li')].map((li) => parseTextDirective(li.textContent));
+}
+
 export function getVisual(cell) {
   const visual = {};
 
   if (cell.querySelector(':scope picture')) {
     // image
     visual.image = cell.querySelector(':scope picture').outerHTML;
-    visual.callouts = Array.from(cell.querySelectorAll(':scope > ul > li'))
-      .map((li) => {
-        const txt = li.textContent.trim();
-        // extract the "[…]" tooltip
-        const tooltip = txt.match(/^\[(.+?)\]/)?.[1] ?? null;
-        // pull out all key="value" pairs from the "{…}"
-        const props = Object.fromEntries(
-          [...txt.matchAll(/(\w+)="([^"]+)"/g)].map(([, k, v]) => [k, Number.isNaN(v) ? v : +v]),
-        );
-        const { x, y, r } = props;
+    visual.callouts = parseCalloutList(cell.querySelector(':scope > ul'))
+      .filter((callout) => callout != null)
+      .map(({ label, attributes }) => {
+        const { x, y, r, type } = attributes;
         return {
+          type,
           toast: null,
           button: null,
           width: r * 2,
           height: r * 2,
           x,
           y,
-          tooltip,
+          tooltip: label,
           clickable: null,
         };
-      })
-      .filter((o) => o.tooltip !== null);
+      });
     // visual.callouts = [...cell.querySelectorAll(':scope > ul > li')].map((li) => parseCallout(li.textContent)).filter((item) => item !== null);
   } else if (cell.querySelector(':scope > pre')) {
     // code

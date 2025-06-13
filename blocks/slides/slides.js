@@ -60,7 +60,7 @@ function html(content, placeholders) {
                                                     ? 'data-next-step'
                                                     : ''
                                                 } 
-                                                data-callout-indicator
+                                                data-callout-indicator="${callout.type}"
                                                 data-callout-indicator-width="${callout.width}"
                                                 data-callout-indicator-height="${callout.height}"
                                                 data-callout-indicator-x="${callout.x}"
@@ -83,7 +83,7 @@ function html(content, placeholders) {
                                     </span>
                                 `,
                                   )
-                                  .join('')}                
+                                  .join('')}
                                 ${step.visual.image}`
                                 : ''
                             }
@@ -95,7 +95,7 @@ function html(content, placeholders) {
                                 <div class="body">${step.visual.body}</div>
                                 ${step.visual.code}`
                                 : ''
-                            }      
+                            }
                                 
                             ${
                               step.visual.callouts?.find((callout) => callout.toast)
@@ -105,7 +105,7 @@ function html(content, placeholders) {
                                 : ''
                             }
 
-                        </div>            
+                        </div>
                       </div>
                       <div class="content-info doc-content-info">
                         <label class="step-label">Step ${step.number} of ${section.steps.length}</label>
@@ -113,7 +113,7 @@ function html(content, placeholders) {
                             <span class="icon icon-copy-link"></span>
                             <label>${placeholders?.userActionCopylinkLabel || 'Copy link'}</label>
                         </div>
-                      </div>            
+                      </div>
                       <!-- Slide Controls -->
                       <div class="controls">
                           <div class="controls-bar">
