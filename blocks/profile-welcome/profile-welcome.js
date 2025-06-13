@@ -90,7 +90,7 @@ async function decorateProfileWelcomeBlock(block) {
   let industryName = '';
   const profileWelcomeBlock = document.createRange().createContextualFragment(`
     <div class="profile-curated-card">
-      <div class="profile-curated-eyebrowtext ">
+      <div class="profile-curated-eyebrowtext">
         <p class="profile-text-shimmer loading-shimmer" style="--placeholder-width: 20%; --placeholder-height: 14px"></p>
       </div>
       <div class="profile-curated-card-heading">
