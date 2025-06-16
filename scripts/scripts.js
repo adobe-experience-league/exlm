@@ -21,7 +21,6 @@ import {
   loadBlock,
 } from './lib-franklin.js';
 import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
-import renderSEOWarnings from './editor-support-seo.js';
 
 /**
  * please do not import any other modules here, as this file is used in the critical path.
@@ -1277,7 +1276,7 @@ async function loadPage() {
   loadDelayed();
   await showSignupDialog();
   if (window.hlx.aemRoot || window.location.href.includes('.html')) {
-    renderSEOWarnings();
+    loadDefaultModule(`${window.hlx.codeBasePath}/scripts/editor-support-seo.js`);
   }
   if (isDocPage) {
     // load prex/next buttons
