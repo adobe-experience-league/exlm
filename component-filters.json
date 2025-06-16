@@ -63,6 +63,7 @@
       "announcement-ribbon",
       "qualtrics",
       "upcoming-event",
+      "upcoming-event-v2",
       "notification-banner",
       "code",
       "playlist-browse",
@@ -108,7 +109,8 @@
       "topic-results",
       "announcement-ribbon",
       "qualtrics",
-      "upcoming-event"
+      "upcoming-event",
+      "upcoming-event-v2"
     ]
   },
   {
