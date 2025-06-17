@@ -371,18 +371,18 @@
 /** List view styles end **/
 
 /** Sort styles start **/
-.upcoming-event .browse-cards-block-header .browse-sort-view {
+.upcoming-event .browse-cards-block-header .browse-sort-filter {
   display: flex;
   flex-direction: row-reverse;
   width: 100%;
   justify-content: space-between;
 }
 
-.upcoming-event .browse-cards-block-header .browse-sort-view .browse-sort-container {
+.upcoming-event .browse-cards-block-header .browse-sort-filter .browse-sort-container {
   margin-top: 24px;
 }
 
-.upcoming-event .browse-cards-block-header .browse-sort-view .sort-container {
+.upcoming-event .browse-cards-block-header .browse-sort-filter .sort-container {
   display: flex;
   align-items: center;
   color: var(--spectrum-gray-700);
@@ -393,7 +393,7 @@
   text-align: right;
 }
 
-.upcoming-event .browse-cards-block-header .browse-sort-view .sort-drop-btn {
+.upcoming-event .browse-cards-block-header .browse-sort-filter .sort-drop-btn {
   background: transparent;
   cursor: pointer;
   color: var(--spectrum-gray-700);
@@ -408,7 +408,7 @@
   text-align: left;
 }
 
-.upcoming-event .browse-cards-block-header .browse-sort-view .sort-drop-btn::after {
+.upcoming-event .browse-cards-block-header .browse-sort-filter .sort-drop-btn::after {
   background-image: url('../../icons/down-arrow.svg');
   background-position: 0 0;
   background-repeat: no-repeat;
@@ -421,7 +421,7 @@
   width: 10px;
 }
 
-.upcoming-event .browse-cards-block-header .browse-sort-view .sort-container .sort-dropdown-content {
+.upcoming-event .browse-cards-block-header .browse-sort-filter .sort-container .sort-dropdown-content {
   background: var(--spectrum-gray-50);
   border: 1px solid var(--spectrum-gray-400);
   border-radius: 4px;
@@ -438,11 +438,11 @@
   z-index: 15;
 }
 
-.upcoming-event .browse-cards-block-header .browse-sort-view .sort-container .sort-dropdown-content.show {
+.upcoming-event .browse-cards-block-header .browse-sort-filter .sort-container .sort-dropdown-content.show {
   display: block;
 }
 
-.upcoming-event .browse-cards-block-header .browse-sort-view .sort-container .sort-dropdown-content a {
+.upcoming-event .browse-cards-block-header .browse-sort-filter .sort-container .sort-dropdown-content a {
   border: none;
   color: var(--non-spectrum-charcoal-gray);
   display: block;
@@ -454,7 +454,7 @@
   text-transform: capitalize;
 }
 
-.upcoming-event .browse-cards-block-header .browse-sort-view .sort-container .sort-dropdown-content a.selected {
+.upcoming-event .browse-cards-block-header .browse-sort-filter .sort-container .sort-dropdown-content a.selected {
   background-image: url('../../icons/checkmark.svg');
   background-position: 93% 12px;
   background-repeat: no-repeat;

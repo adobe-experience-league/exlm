@@ -167,7 +167,6 @@ export default async function decorate(block) {
       <form class="browse-card-dropdown">
       <label>${filterLabelElement?.innerHTML}</label>
       </form>
-      <div class="browse-sort-view">
       <div class="view-switcher">
       <button type="button" class="view-btn grid-view active" aria-label="Grid view">
         ${placeholders?.gridViewLabel || 'Grid'}
@@ -180,6 +179,7 @@ export default async function decorate(block) {
         <span class="icon icon-list-view-white"></span>
       </button>
     </div>
+    <div class="browse-sort-filter">
     <div class="browse-sort-container"></div>
     </div>
     </div>
@@ -189,7 +189,9 @@ export default async function decorate(block) {
 
   const tagsContainer = document.createElement('div');
   tagsContainer.classList.add('browse-card-tags');
-  headerDiv.appendChild(tagsContainer);
+  const filterSortContainer = headerDiv.querySelector('.browse-sort-filter');
+  filterSortContainer.appendChild(tagsContainer);
+  headerDiv.append(filterSortContainer);
 
   block.appendChild(headerDiv);
   const products = await getListofProducts();
@@ -318,6 +320,8 @@ export default async function decorate(block) {
       buildCard(contentDiv, cardDiv, cardData);
       contentDiv.appendChild(cardDiv);
     });
+    // eslint-disable-next-line no-use-before-define
+    enhanceListCardsAfterFilter();
   };
 
   // Pre-select checkboxes from URL filters
@@ -360,6 +364,22 @@ export default async function decorate(block) {
         const dateB = new Date(b.event.time);
         return sortOrder === 'descending' ? dateB - dateA : dateA - dateB;
       });
+  }
+
+  function enhanceListCardsAfterFilter() {
+    if (block.classList.contains('list')) {
+      const observer = new MutationObserver((_mutations, obs) => {
+        const cards = contentDiv.querySelectorAll('.browse-card');
+        if (cards.length > 0) {
+          cards.forEach((card) => {
+            addCardDateInfo(card);
+            setupExpandableDescription(card, placeholders);
+          });
+          obs.disconnect();
+        }
+      });
+      observer.observe(contentDiv, { childList: true, subtree: true });
+    }
   }
 
   function renderSortContainerForUpcomingEvents(data) {
@@ -429,20 +449,7 @@ export default async function decorate(block) {
           buildCard(contentDiv, cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         });
-
-        if (block.classList.contains('list')) {
-          const observer = new MutationObserver((_mutations, obs) => {
-            const cards = contentDiv.querySelectorAll('.browse-card');
-            if (cards.length > 0) {
-              cards.forEach((card) => {
-                addCardDateInfo(card);
-                setupExpandableDescription(card, placeholders);
-              });
-              obs.disconnect();
-            }
-          });
-          observer.observe(contentDiv, { childList: true, subtree: true });
-        }
+        enhanceListCardsAfterFilter();
       });
     });
   }
