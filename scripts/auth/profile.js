@@ -32,6 +32,14 @@ export async function signOut() {
   ['JWT', 'coveoToken', 'exl-profile', 'attributes', 'profile', 'pps-profile'].forEach((key) =>
     sessionStorage.removeItem(key),
   );
+
+  // Clear all cache entries from both sessionStorage and localStorage
+  Object.keys(sessionStorage).forEach((key) => {
+    if (key.startsWith('exl-fetch-cache')) {
+      sessionStorage.removeItem(key);
+    }
+  });
+
   const signOutRedirectUrl = getMetadata('signout-redirect-url');
 
   if (signOutRedirectUrl) {
