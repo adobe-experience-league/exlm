@@ -6971,6 +6971,58 @@
               {
                 "name": "Java",
                 "value": "language-java"
+              },
+              {
+                "name": "CSS",
+                "value": "language-css"
+              },
+              {
+                "name": "Python",
+                "value": "language-python"
+              },
+              {
+                "name": "Markup",
+                "value": "language-markup"
+              },
+              {
+                "name": "JSON5",
+                "value": "language-json5"
+              },
+              {
+                "name": "JSONP",
+                "value": "language-jsonp"
+              },
+              {
+                "name": "Git",
+                "value": "language-git"
+              },
+              {
+                "name": "GraphQL",
+                "value": "language-graphql"
+              },
+              {
+                "name": "HTTP",
+                "value": "language-http"
+              },
+              {
+                "name": "HTTP Pulbic-Key-Pins",
+                "value": "language-hpkp"
+              },
+              {
+                "name": "HTTPS",
+                "value": "language-https"
+              },
+              {
+                "name": "R",
+                "value": "language-r"
+              },
+              {
+                "name": "React JSX",
+                "value": "language-jsx"
+              },
+              {
+                "name": "React TSX",
+                "value": "language-tsx"
               }
             ]
           },
@@ -6980,6 +7032,10 @@
               {
                 "name": "Enable line numbering",
                 "value": "line-numbers"
+              },
+              {
+                "name": "Enable adjustable code block height",
+                "value": "expandable"
               }
             ]
           }
