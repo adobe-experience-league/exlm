@@ -429,6 +429,20 @@ export default async function decorate(block) {
           buildCard(contentDiv, cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         });
+
+        if (block.classList.contains('list')) {
+          const observer = new MutationObserver((_mutations, obs) => {
+            const cards = contentDiv.querySelectorAll('.browse-card');
+            if (cards.length > 0) {
+              cards.forEach((card) => {
+                addCardDateInfo(card);
+                setupExpandableDescription(card, placeholders);
+              });
+              obs.disconnect();
+            }
+          });
+          observer.observe(contentDiv, { childList: true, subtree: true });
+        }
       });
     });
   }
