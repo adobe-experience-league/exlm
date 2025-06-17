@@ -7034,7 +7034,7 @@
                 "value": "line-numbers"
               },
               {
-                "name": "Enable expandable code block",
+                "name": "Enable adjustable code block height",
                 "value": "expandable"
               }
             ]
