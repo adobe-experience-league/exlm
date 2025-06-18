@@ -1,10 +1,20 @@
 import { htmlToElement, getPathDetails } from '../../../scripts/scripts.js';
+import {
+  atomicResultChildrenStyles,
+  atomicResultChildrenTemplateStyles,
+  INITIAL_ATOMIC_RESULT_CHILDREN_COUNT,
+} from './atomic-result-children.js';
 import { nextNavigationArrow, previousNavigationArrow } from './atomic-search-icons.js';
+import { atomicResultListStyles, atomicResultStyles } from './atomic-search-result.js';
 
 const getCoveoAtomicMarkup = (placeholders) => {
   const { lang: languageCode } = getPathDetails();
+  const CONTENT_TYPES = {
+    TUTORIAL: 'Tutorial',
+  };
+
   const atomicUIElements = htmlToElement(`
-        <atomic-search-interface language=${languageCode} fields-to-include='["@foldingchild","@foldingcollection","@foldingparent","author","author_bio_page","author_name","author_type","authorname","authortype","collection","connectortype","contenttype","date","documenttype","el_author_type","el_contenttype","el_id","el_interactionstyle","el_kudo_status","el_lirank","el_product","el_rank_icon","el_reply_status","el_solution","el_solutions_authored","el_type","el_usergenerictext","el_version","el_view_status","exl_description","exl_thumbnail","filetype","id","language","liMessageLabels","liboardinteractionstyle","licommunityurl","lithreadhassolution","objecttype","outlookformacuri","outlookuri","permanentid","role","source","sourcetype","sysdocumenttype","type","urihash","video_url", "sysdate", "el_kudo_status"]'>
+        <atomic-search-interface language=${languageCode}  search-hub="Experience League Learning Hub" fields-to-include='["@foldingchild","@foldingcollection","@foldingparent","author","author_bio_page","author_name","author_type","authorname","authortype","collection","connectortype","contenttype","date","documenttype","el_author_type","el_contenttype","el_id","el_interactionstyle","el_kudo_status","el_lirank","el_product","el_rank_icon","el_reply_status","el_solution","el_solutions_authored","el_type","el_usergenerictext","el_version","el_view_status","exl_description","exl_thumbnail","filetype","id","language","liMessageLabels","liboardinteractionstyle","licommunityurl","lithreadhassolution","objecttype","outlookformacuri","outlookuri","permanentid","role","source","sourcetype","sysdocumenttype","type","urihash","video_url", "sysdate", "el_kudo_status"]'>
           <script type="application/json" id="atomic-search-interface-config">
             {
               "search": {
@@ -17,6 +27,40 @@ const getCoveoAtomicMarkup = (placeholders) => {
           <div class="header-bg"></div>
           <atomic-layout-section section="search">
             <style>
+            .atomic-search .video-modal-wrapper {
+                position: fixed;
+                display: flex;
+                z-index: 10;
+                inset: 0;
+                background-color: rgb(10 10 10 / 86%);
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+              }
+              .atomic-search .video-modal-container {
+                width: 100%;
+              }
+              .atomic-search .video-modal-wrapper .icon.icon-close-light {
+                position: absolute;
+                top: 24px;
+                right: 24px;
+                width: 30px;
+                height: 30px;
+                cursor: pointer;
+                padding: 5px;
+              }
+              .atomic-search .video-modal {
+                display: flex;
+                width: 100%;
+                height: 100%;
+                align-items: center;
+                justify-content: center;
+              }
+              .atomic-search .video-modal iframe {
+                width: 90vw;
+                height: 50vw;
+                max-height: 95vh;
+              }
               atomic-search-layout atomic-layout-section[section='status'] {
                 position: relative;
                 @media(max-width: 1024px) {
@@ -25,18 +69,20 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   grid-template-columns: 1fr;
                   grid-template-areas:
                     "atomic-sort"
-                    "atomic-breadbox";
+                    "atomic-breadbox"
+                    "atomic-did-you-mean";
                 }
               }
               atomic-search-interface  atomic-search-layout {
                 z-index: 1;
                 position: relative;
+                background-color: var(--non-spectrum-hover-bg);
               }
               atomic-search-interface:not(.atomic-search-interface-no-results, .atomic-search-interface-error) atomic-search-layout {
                 grid-template-areas: 
-                  ". .                      atomic-section-search ."
-                  ". atomic-section-facets  atomic-section-main   ."
-                  ". atomic-section-facets  .                     ." !important;
+                  ". .                      atomic-section-search"
+                  ". atomic-section-facets  atomic-section-main"
+                  ". atomic-section-facets  .                  " !important;
     
                 @media(max-width: 1024px) {
                   grid-template-areas: 
@@ -47,7 +93,8 @@ const getCoveoAtomicMarkup = (placeholders) => {
     
               }
               atomic-layout-section[section='search'] {
-                  margin-bottom: 36px !important;
+                  margin-bottom: 8px !important;
+                  max-width: 100% !important;
               }
               atomic-search-box::part(wrapper) {
                 height: 40px;
@@ -87,7 +134,8 @@ const getCoveoAtomicMarkup = (placeholders) => {
               atomic-search-box::part(clear-icon)  {
                 color: var(--background-color);
                 stroke-width: 2.5px;
-                transform: scale(0.6);
+                height: 10px;
+                width: 10px;
               }
               atomic-search-box::part(submit-button) {
                 transform: scale(0.8);
@@ -97,13 +145,18 @@ const getCoveoAtomicMarkup = (placeholders) => {
               atomic-search-box::part(suggestions-wrapper) {
                 background-color: var(--background-color);
                 border: 1px solid #CACACA;
+                display: none;
+
+                @media (min-width: 1024px) {
+                  display: block;
+                }
               }
               atomic-search-box::part(textarea-spacer) {
                 display: none;
               }
               .atomic-search-box-wrapper {
                 width: 100%;
-                margin: 32px 0 20px !important;
+                margin: 16px 0 20px !important;
                 @media(max-width: 1024px) {
                   margin-bottom: 0 !important;
                 }
@@ -183,8 +236,14 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(facet-child-element) {
                   margin-left: 32px;
                 }
+                atomic-facet.hide-facet {
+                  display: none;
+                }
                 atomic-facet::part(facet-hide-element) {
                   display: none;
+                }
+                atomic-search-interface.atomic-search-interface-no-results atomic-facet::part(facet-hide-element) {
+                  display: flex;
                 }
                 atomic-facet::part(facet-child-label) {
                   padding-top: 6px;
@@ -200,40 +259,33 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   border-bottom: 2px solid var(--footer-border-color);
                   border-radius: 1px;
                 }
-                atomic-facet::part(facet), atomic-facet::part(placeholder) {
+                atomic-facet::part(placeholder) {
                     border: none;
                 }
                 atomic-facet::part(search-wrapper) {
                   display: none;
                 }
-                atomic-facet::part(label-button) {
+                atomic-facet::part(label-button), atomic-timeframe-facet::part(label-button) {
                   font-weight: 700;
                   color: var(--non-spectrum-input-text);
                   justify-content: flex-end;
                   flex-direction: row-reverse;
                   gap: 16px;
                 }
-                atomic-facet::part(label-button-icon) {
+                atomic-facet::part(label-button-icon), atomic-timeframe-facet::part(label-button-icon) {
                   margin-left: 0;
                 }
-                atomic-facet::part(facet) {
+                atomic-facet::part(facet), atomic-timeframe-facet::part(facet) {
                   padding-right: 0;
+                  border: none;
                 }
                 atomic-facet::part(values) {
-                  max-height: 500px;
                   overflow-y: auto;
                   margin-top: 0;
                   padding-right: 16px;
                 }
                 atomic-facet::part(show-more), atomic-facet::part(show-less) {
                   color: var(--non-spectrum-input-text);
-                }
-                atomic-facet::part(value-label) {
-                  width: auto;
-                }
-                atomic-facet::part(value-count) {
-                  width: auto;
-                  margin: 0;
                 }
                 atomic-facet::part(value-box) {
                   border: none;
@@ -250,45 +302,84 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   background-color: var(--non-spectrum-grey-updated);
                   border-color: var(--non-spectrum-grey-updated);
                 }
-                atomic-facet::part(value-count) {
+                atomic-facet::part(value-count), atomic-timeframe-facet::part(value-count) {
                   color: var(--non-spectrum-article-dark-gray);
+                  width: auto;
+                  margin: 0;
                 }
-                atomic-facet::part(value-label) {
+                atomic-facet::part(value-label), atomic-timeframe-facet::part(value-label) {
                   margin-right: 4px;
+                  width: auto;
                   color: var(--non-spectrum-article-dark-gray);
                 }
-                atomic-facet::part(clear-button) {
+                atomic-facet::part(clear-button), atomic-timeframe-facet::part(clear-button) {
                   display: none;
                 }
                 
                 atomic-facet::part(show-more-less-icon) atomic-component-error, atomic-facet::part(value-checkbox-icon) atomic-component-error, atomic-facet::part(value-checkbox) atomic-component-error, atomic-component-error, atomic-icon atomic-component-error {
                   display: none !important;
                 }
+                @media (min-width: 1024px) {
+                  atomic-facet::part(values) {
+                    max-height: 500px;
+                  }
+                }
               </style>
               <atomic-facet
-                  id="facetContentType"
-                  sort-criteria="alphanumericNatural"
-                  field="el_contenttype"
-                  label=${placeholders.searchContentTypeLabel || 'Content Type'}
-                  display-values-as="checkbox"
-                ></atomic-facet>
+                id="facetContentType"
+                sort-criteria="alphanumericNatural"
+                field="el_contenttype"
+                label="${placeholders.searchContentTypeLabel || 'Content Type'}"
+                display-values-as="checkbox">
+              </atomic-facet>
+              <atomic-facet
+                id="facetStatus"
+                sort-criteria="alphanumericNatural"
+                field="el_status"
+                label="${placeholders.searchAnsweredLabel || 'Answered'}"
+                display-values-as="checkbox">
+              </atomic-facet>
               <atomic-facet
                 id="facetProduct"
                 sort-criteria="alphanumericNatural"
                 field="el_product"
-                label=${placeholders.searchProductLabel || 'Product'}
+                label="${placeholders.searchProductLabel || 'Product'}"
                 number-of-values="60"
                 display-values-as="checkbox"
-              ></atomic-facet>
+                with-search="false">
+              </atomic-facet>
               <atomic-facet
                 id="facetRole"
                 sort-criteria="alphanumericNatural"
                 field="el_role"
-                label=${placeholders.searchRoleLabel || 'Role'}
-                display-values-as="checkbox"
-              ></atomic-facet>
-              
-            
+                label="${placeholders.searchRoleLabel || 'Role'}"
+                display-values-as="checkbox">
+              </atomic-facet>
+              <atomic-timeframe-facet
+                id="facetDate"
+                field="date"
+                label="${placeholders.searchDateLabel || 'Date'}"
+                filter-facet-count
+                enable-custom-range="false">
+                  <atomic-timeframe
+                    amount="1"
+                    unit="month"
+                    period="past"
+                    label="${placeholders.searchDateOneMonthLabel || 'Within one month'}">
+                  </atomic-timeframe>
+                  <atomic-timeframe
+                    amount="6"
+                    unit="month"
+                    period="past"
+                    label="${placeholders.searchDateSixMonthLabel || 'Within six months'}">
+                  </atomic-timeframe>
+                  <atomic-timeframe
+                    amount="1"
+                    unit="year"
+                    period="past"
+                    label="${placeholders.searchDateOneYearLabel || 'Within one year'}">
+                  </atomic-timeframe>
+              </atomic-timeframe-facet>
             </atomic-facet-manager>
           </atomic-layout-section>
           <atomic-layout-section section="main">
@@ -296,12 +387,30 @@ const getCoveoAtomicMarkup = (placeholders) => {
               atomic-layout-section[section='main'] {
                 padding-left: 36px;
                 padding-right: 20px;
+                background-color: var(--non-spectrum-bg);
                 border-top: 1px solid var(--footer-border-color);
                 @media(max-width: 1024px) {
                   padding-left: 20px;
+                  border-top: none;
                 }
               }
             </style>
+            <atomic-layout-section section="triggers">
+              <atomic-notifications>
+                <style>
+                    atomic-notifications {
+                      padding-top: 30px;
+                    }
+                    atomic-notifications::part(notification-link){
+                      color: var(--link-color);
+                    }
+                    atomic-notifications::part(trigger-span){
+                      display: block;
+                      max-width: fit-content;
+                    }
+                </style>
+              </atomic-notifications>
+            </atomic-layout-section>
             <atomic-layout-section section="query">
               <style>
                 atomic-layout-section {
@@ -320,6 +429,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
               <atomic-query-summary id="query-summary">
                 <style>
                   atomic-query-summary {
+                    min-height: 48px;
                     color: var(--non-spectrum-dark-gray);
                     font-size: 18px;
                     margin: 16px 0 20px;
@@ -338,7 +448,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     font-size: 14px;
                     color: var(--non-spectrum-graphite-gray);
                   }
-
+                  @media (min-width: 1024px) {
+                    min-height: auto;
+                  }
                 </style>
               </atomic-query-summary>
             </atomic-layout-section>
@@ -346,6 +458,19 @@ const getCoveoAtomicMarkup = (placeholders) => {
               <style>
                 atomic-layout-section {
                   position: relative;
+                }
+                atomic-did-you-mean {
+                  margin-left: 0;
+                  @media(min-width: 1024px) {
+                    margin-left: 32px;
+                  }
+                }
+                atomic-did-you-mean::part(auto-corrected) {
+                  margin-bottom: 20px;
+                  color: var(--non-spectrum-input-text);
+                }
+                atomic-did-you-mean::part(no-results) {
+                  color: var(--non-spectrum-input-text);
                 }
                 .mobile-only #mobile-filter-btn {
                   display: block;
@@ -422,6 +547,10 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     border: 1px solid #CACACA;
                     border-radius: 4px;
                     color: var(--non-spectrum-grey-updated);
+
+                    @media(max-width: 1024px) {
+                      padding-right: 2rem;
+                    }
                   }
                   atomic-sort-dropdown::part(label) {
                     font-size: 12px;
@@ -461,10 +590,14 @@ const getCoveoAtomicMarkup = (placeholders) => {
             </atomic-layout-section>
             <atomic-layout-section section="results">
               <style>
-                atomic-result-list::part(result-list) {
-                  margin: 16px 0 32px;
+                atomic-folded-result-list::part(list-wrap) {
+                  margin: 0 0 24px;
                 }
-                atomic-result-list::part(outline) {
+                atomic-folded-result-list.list-wrap-skeleton {
+                 min-height: 100vh;
+                 display: block;
+                }
+                atomic-folded-result-list::part(outline) {
                   padding-left: 0;
                   padding-right: 0;
                 }
@@ -478,7 +611,8 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   padding-left: 72px;
                 }
                 .result-header-item {
-                  font-size: 11px;
+                  font-size: var(--spectrum-font-size-50);
+                  text-transform: uppercase;
                   color: var(--non-spectrum-web-gray);
                 }
                .result-header-section.result-header-inactive {
@@ -505,336 +639,23 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   <label>${placeholders.searchUpdatedLabel || 'UPDATED'}</label>
                 </div>
               </div>
-              <atomic-result-list id="coveo-results-list-wrapper">
-                <style>
-                  atomic-result-list::part(outline)::before {
-                    background-color:var(--footer-border-color);
-                  }
-                  atomic-result-list::part(skeleton) {
-                    display: flex;
-                    flex-direction: column;
-                  }
-                  atomic-result-list::part(atomic-skeleton),
-                  atomic-result-list::part(atomic-mobile-view) {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 4px;
-                    margin: 24px 0;
-                  }
-
-                  atomic-result-list::part(atomic-skeleton-line) {
-                    background: linear-gradient(-90deg, var(--shimmer-image-slide-start) 0%, var(--shimmer-image-slide-end) 50%, var(--shimmer-image-slide-start) 100%);
-                    background-size: 400% 400%;
-                    animation: skeleton-shimmer 1.2s ease-in-out infinite;
-                    border-radius: 4px;
-                  }
-
-                  atomic-result-list::part(atomic-skeleton-line-title) {
-                    height: 18px;
-                    width: 50%;
-                  }
-
-                  atomic-result-list::part(atomic-skeleton-line-subtitle) {
-                    height: 12px;
-                    width: 40%;
-                    margin: 6px 0;
-                  }
-
-                  atomic-result-list::part(atomic-skeleton-line-content) {
-                    height: 32px;
-                    width: 90%;
-                  }
-
-                  atomic-result-list::part(atomic-skeleton-grid-desktop) {
-                    display: grid;
-                    grid-template-columns: 1.5fr 0.5fr 0.6fr 0.4fr;
-                    gap: 16px;
-                    align-items: start;
-                    border-bottom: 1px solid #ddd;
-                    padding: 12px 0;
-                    margin-left: 32px;
-                  }
-
-                  atomic-result-list::part(atomic-skeleton-desktop-line) {
-                    background: linear-gradient(-90deg, var(--shimmer-image-slide-start) 0%, var(--shimmer-image-slide-end) 50%, var(--shimmer-image-slide-start) 100%);background-size: 400% 400%;
-                    animation: skeleton-shimmer 1.2s ease-in-out infinite;
-                    border-radius: 4px;
-                  }
-
-                  atomic-result-list::part(atomic-skeleton-desktop-line-heading) {
-                    width: 100%;
-                    height: 21px;
-                    margin-bottom: 6px;
-                  }
-
-                  atomic-result-list::part(atomic-skeleton-desktop-line-subheading) {
-                    width: 50%;
-                    height: 11px;
-                    margin-bottom: 8px;
-                  }
-
-                  atomic-result-list::part(atomic-skeleton-desktop-line-content) {
-                    width: 100%;
-                    height: 36px;
-                    margin-bottom: 8px;
-                  }
-
-                  atomic-result-list::part(atomic-skeleton-desktop-line-tag) {
-                    width: 50px;
-                    height: 12px;
-                    margin-bottom: 6px;
-                  }
-
-                  atomic-result-list::part(atomic-skeleton-desktop-line-button) {
-                    width: 80px;
-                    height: 26px;
-                  }
-
-                  atomic-result-list::part(atomic-skeleton-desktop-line-info) {
-                    width: 120px;
-                    height: 24px;
-                  }
-
-                  atomic-result-list::part(atomic-skeleton-desktop-line-status) {
-                    width: 60px;
-                    height: 14px;
-                  }
-
-                  @keyframes skeleton-shimmer {
-                    0% {
-                      background-position: 200% 0;
-                    }
-                    100% {
-                      background-position: -200% 0;
-                    }
-                  }
-
-                </style>
+                <atomic-folded-result-list
+                    collection-field="foldingcollection"
+                    child-field="foldingchild"
+                    parent-field="foldingparent"
+                    number-of-folded-results="${INITIAL_ATOMIC_RESULT_CHILDREN_COUNT}"
+                  >
+                 ${atomicResultListStyles}
                 <atomic-result-template>
                   <template>
-                  <style>
-                    :host {
-                      --content-type-playlist-color: #30a7ff;
-                      --content-type-tutorial-color: #10cfa9;
-                      --content-type-documentation-color: #0aa35b;
-                      --content-type-community-color: #ffde2c;
-                      --content-type-certification-color: #b6db00;
-                      --content-type-troubleshooting-color: #ffa213;
-                      --content-type-event-color: #ff709f;
-                      --content-type-perspective-color: #c844dc;
-                      --content-type-default-color: #000000
-                    }
-                    .result-root {
-                      @media(max-width: 1024px) {
-                        max-width: calc(100% - 40px);
-                      }
-                    }
-                    .result-item {
-                      display: none;
-                      gap: 16px;
-                      margin-left: 32px;
-                    }
-                    .result-item.mobile-only {
-                      display: flex;
-                      flex-direction: column;
-                      gap: 2px;
-                      margin-left: 0;
-                    }
-                    @media(min-width: 1024px) {
-                      .result-item.desktop-only {
-                        display: grid;
-                        grid-template-columns: 1.5fr 0.5fr 0.6fr 0.4fr;
-                      }
-                      .result-item.mobile-only {
-                        display: none;
-                      }
-                    }
-                    .result-title {
-                      position: relative;
-                    }
-                    atomic-result-section-excerpt, atomic-result-text {
-                      font-size: 12px;
-                      color: var(--non-spectrum-article-dark-gray);
-                    }
-                    atomic-result-section-excerpt {
-                      color: #959595 !important;
-                      font-size: 11px !important;
-                      display: -webkit-box;
-                      -webkit-line-clamp: 2; 
-                      -webkit-box-orient: vertical;
-                      overflow: hidden;
-                      text-overflow: ellipsis;
-                      margin: 6px 0 4px;
-                      max-width: 90vw;
-                    }
-                    atomic-result-section-excerpt atomic-result-text {
-                      color: #959595 !important;
-                      font-size: 11px !important;
-                    }
-                    .result-title atomic-result-text, .mobile-result-title atomic-result-text {
-                      font-size: 14px;
-                      color: var(--non-spectrum-dark-charcoal);
-                      font-weight: bold;
-                      overflow: hidden;
-                      max-width: 90vw;
-                    }
-                    .result-title atomic-result-text atomic-result-link, .mobile-result-title atomic-result-text atomic-result-link {
-                      width: 100%;
-                      display: block;
-                    }
-                    .result-content-type {
-                      display: flex;
-                      justify-content: flex-start;
-                    }
-                    atomic-result-multi-value-text::part(svg-element) {
-                      top: 2px;
-                      position: relative;
-                      max-height: 18px
-                    }
-                    .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-list) {
-                      margin: 0 8px 0 0;
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                      flex-wrap: wrap;
-                    }
-                    .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      width: fit-content;
-                      font-size: 12px;
-                      white-space: pre;
-                      white-space: nowrap;
-                    }
-
-                    @media(min-width: 1024px) {
-                      .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                        border: 1px solid var(--content-type-default-color);
-                        border-radius: 4px;
-                        padding: 4px 8px;
-                        color: var(--content-type-default-color);
-                        display: flex;
-                        align-items: center;
-                        flex-direction: row-reverse;
-                        gap: 4px;
-                      }
-                      .result-content-type.troubleshooting atomic-result-multi-value-text::part(result-multi-value-text-value),
-                      .result-content-type.troubleshoot atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                        border: 1px solid var(--content-type-troubleshooting-color);
-                        color: var(--content-type-troubleshooting-color);
-                      }
-                      .result-content-type.playlist atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                        border: 1px solid var(--content-type-playlist-color);
-                        color: var(--content-type-playlist-color);
-                      }
-                      .result-content-type.tutorial atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                        border: 1px solid var(--content-type-tutorial-color);
-                        color: var(--content-type-tutorial-color);
-                      }
-                      .result-content-type.documentation atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                        border: 1px solid var(--content-type-documentation-color);
-                        color: var(--content-type-documentation-color);
-                      }
-                      .result-content-type.community atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                        border: 1px solid var(--content-type-community-color);
-                        color: var(--content-type-community-color);
-                      }
-                      .result-content-type.certification atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                        border: 1px solid var(--content-type-certification-color);
-                        color: var(--content-type-certification-color);
-                      }
-                      .result-content-type.event atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                        border: 1px solid var(--content-type-event-color);
-                        color: var(--content-type-event-color);
-                      }
-                      .result-content-type.perspective atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                        border: 1px solid var(--content-type-perspective-color);
-                        color: var(--content-type-perspective-color);
-                      }
-                    }
-                    
-                    .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-separator) {
-                      display: none;
-                    }
-                    .result-product atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      font-size: 14px;
-                      color: var(--non-spectrum-web-gray);
-                      display: block;
-                    }
-                    .result-product atomic-result-multi-value-text::part(result-multi-value-text-list) {
-                      flex-wrap: wrap;
-                      gap: 4px;
-                    }
-                    .result-product atomic-result-multi-value-text::part(result-multi-value-text-separator) {
-                      display: none;
-                    }
-                    .result-updated {
-                      font-size: 14px;
-                      color: var(--non-spectrum-web-gray);
-                      text-align: left;
-                    }
-                    atomic-result-link {
-                      position: relative;
-                      color: #1E76E3;
-                      font-size: 11px !important;
-                      cursor: pointer;
-                    }
-                    atomic-result-link > a:not([slot="label"]) {
-                      position: absolute;
-                      left: 0;
-                    }
-                    atomic-result-link > a img {
-                      display: inline-block;
-                      margin-bottom: 6px;
-                      margin-left: 4px;
-                      height: 14px;
-                      width: 14px;
-                    }
-                    atomic-result-link > a > atomic-result-text {
-                      visibility: hidden
-                    }
-                    .result-icons-wrapper {
-                      display: flex;
-                      align-items: center;
-                      gap: 8px;
-                      margin: 2px 0;
-                    }
-                    .result-icon-item {
-                      display: flex;
-                      gap: 2px;
-                      align-items: center;
-                    }
-                    .icon-text {
-                      font-size: 11px;
-                      color: var(--non-spectrum-grey-updated);
-                      font-weight: bold;
-                    }
-                    .mobile-result-info {
-                      display: flex;
-                      align-items: center;
-                      gap: 12px;
-                    }
-                    .mobile-result-title atomic-result-text {
-                      font-size: 16px  !important;
-                      font-weight: bold !important;
-                      color: var(--non-spectrum-dark-gray) !important;
-                    }
-                    .mobile-result-info .result-field atomic-result-multi-value-text, .mobile-result-info .atomic-result-date, .mobile-result-info .result-product atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      color: var(--non-spectrum-web-gray);
-                      font-size: 12px;
-                    }
-                    .mobile-result-info .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      padding: 0;
-                    }
-                    .mobile-description atomic-result-section-excerpt atomic-result-text {
-                      font-size: 12px !important;
-                      color: #959595 !important;
-                    }
-    
-                     atomic-result-multi-value-text::part(result-multi-value-text-value)::first-child {
-                      background: red;
-                     }
-                  </style>
-                  <div class="result-item mobile-only">
+                  ${atomicResultStyles}
+                  <div class="result-item atomic-search-result-item mobile-only">
                     <div class="mobile-result-title">
+                      <atomic-field-condition must-match-is-recommendation="true">
+                        <span class="atomic-recommendation-badge">${
+                          placeholders.searchRecommendationBadge || 'Recommendation'
+                        }</span>
+                      </atomic-field-condition>
                       <atomic-result-text field="title" should-highlight="false">
                         <atomic-result-link></atomic-result-link>
                       </atomic-result-text>
@@ -858,15 +679,65 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         <atomic-result-text field="excerpt" should-highlight="false"></atomic-result-text>
                       </atomic-result-section-excerpt>
                     </div>
+                    <div class="child-result-count">
+                      <atomic-result-number
+                        field="totalNumberOfChildResults"
+                        tag="span"
+                        class="children-count__value"
+                      >
+                      </atomic-result-number>
+                    </div>
+                    <div class="result-description">
+                    <atomic-result-children>
+                      ${atomicResultChildrenStyles}
+                      <atomic-load-more-children-results label="Show replies"></atomic-load-more-children-results>
+                      <atomic-result-children-template>
+                        <template>
+                          ${atomicResultChildrenTemplateStyles}
+                          <div class="child-item">
+                            <div class="mobile-result-title result-title">
+                              <span class="icon icon-atomic-search-share"></span>
+                              <atomic-result-text field="title" should-highlight="false">
+                                <atomic-result-link>
+                                </atomic-result-link>
+                              </atomic-result-text>
+                            </div>
+                            <atomic-result-section-excerpt>
+                              <atomic-result-text field="excerpt" should-highlight="false"></atomic-result-text>
+                            </atomic-result-section-excerpt>
+                          </div>
+                        </template>
+                      </atomic-result-children-template>
+                    </atomic-result-children>
+                    <atomic-field-condition must-match-el_contenttype="${CONTENT_TYPES.TUTORIAL}">
+                      <atomic-field-condition if-defined="video_url">
+                        <div class="result-field result-thumbnail">
+                          <div class="result-thumbnail">
+                                <atomic-result-text field="video_url" style="display:none;" should-highlight="false"></atomic-result-text>
+                          </div>
+                        </div>
+                      </atomic-field-condition>
+                    </atomic-field-condition>
+                    <atomic-result-multi-value-text
+                      field="limessagelabels"
+                      max-values-to-display=99
+                    >
+                    </atomic-result-multi-value-text>
+                    </div>
                   </div>
-                  <div class="result-item desktop-only">
-                    <div class="result-field">
+                  <div class="result-item atomic-search-result-item desktop-only">
+                    <div class="result-field text-thumbnail">
+                    <div class="result-text">
                         <div class="result-title">
+                          <atomic-field-condition must-match-is-recommendation="true">
+                            <span class="atomic-recommendation-badge">${
+                              placeholders.searchRecommendationBadge || 'Recommendation'
+                            }</span>
+                          </atomic-field-condition>
                           <atomic-result-text field="title" should-highlight="false">
                             <atomic-result-link>
                             </atomic-result-link>
                           </atomic-result-text>
-                          
                         </div>
                         <div class="result-icons-wrapper">
                           <atomic-field-condition if-defined="el_view_status">
@@ -899,6 +770,16 @@ const getCoveoAtomicMarkup = (placeholders) => {
                             <atomic-result-text field="excerpt" should-highlight="false"></atomic-result-text>
                           </atomic-result-section-excerpt>
                         </div>
+                        </div>
+                        <atomic-field-condition must-match-el_contenttype="${CONTENT_TYPES.TUTORIAL}">
+                          <atomic-field-condition if-defined="video_url">
+                            <div class="result-field result-thumbnail">
+                              <div class="result-thumbnail">
+                                <atomic-result-text field="video_url" style="display:none;" should-highlight="false"></atomic-result-text>                     
+                              </div>
+                            </div>
+                          </atomic-field-condition>
+                        </atomic-field-condition>
                     </div>
                     <div class="result-field result-content-type">
                         <atomic-result-multi-value-text field="el_contenttype">
@@ -912,19 +793,107 @@ const getCoveoAtomicMarkup = (placeholders) => {
                           <atomic-result-date format="YYYY-MM-DD" field="sysdate">
                           </atomic-result-date>
                     </div>
+                    <div class="child-result-count">
+                      <atomic-result-number
+                        field="totalNumberOfChildResults"
+                        tag="span"
+                        class="children-count__value"
+                      >
+                      </atomic-result-number>
+                    </div>
+                    <div class="result-description">
+                    <atomic-result-children>
+                      ${atomicResultChildrenStyles}
+                      <atomic-result-children-template>
+                        <template>
+                          ${atomicResultChildrenTemplateStyles}
+                          
+                          <div class="child-item">
+                            <div class="result-title">
+                              <span class="icon icon-atomic-search-share"></span>
+                              <atomic-result-text field="title" should-highlight="false">
+                                <atomic-result-link>
+                                </atomic-result-link>
+                              </atomic-result-text>
+                            </div>
+                            <atomic-result-section-excerpt>
+                              <atomic-result-text field="excerpt" should-highlight="false"></atomic-result-text>
+                            </atomic-result-section-excerpt>
+                          </div>
+                        </template>
+                      </atomic-result-children-template>
+                    </atomic-result-children>
+                    <atomic-result-multi-value-text
+                      field="limessagelabels"
+                      max-values-to-display=99
+                    >
+                    </atomic-result-multi-value-text>
+                    </div>
                   </div>
                 </template>
                 </atomic-result-template>
-              </atomic-result-list>
+                </atomic-folded-result-list>
               <atomic-query-error></atomic-query-error>
-              <atomic-no-results></atomic-no-results>
+              <atomic-no-results enable-cancel-last-action="false">
+              <style>
+              atomic-no-results::part(icon) {
+                display:none;
+              }
+              atomic-no-results::part(no-results) {
+                font-size: var(--spectrum-font-size-300);
+                text-align: left;
+                font-weight: normal;
+              }
+              atomic-no-results::part(highlight) {
+                font-weight: bold;
+              }
+              atomic-no-results::part(search-tips) {
+                display:none;
+              }
+              atomic-no-results .atomic-no-results-text p {
+                font-size: var(--spectrum-font-size-200);
+                margin-bottom: 8px;
+              }
+              atomic-no-results .atomic-no-results-text ul > li {
+                color: inherit;
+                font-size: var(--spectrum-font-size-100);
+                margin-top: 5px;
+                margin-bottom: 5px;
+              }
+              atomic-no-results::part(clear-button) {
+                font-size: var(--spectrum-font-size-100);
+                text-align: left;
+                text-decoration: underline;
+                margin-bottom: 10px;
+                color: var(--link-color);
+              }
+              </style>
+              <atomic-breadbox></atomic-breadbox>
+              <div class="atomic-no-results-text">
+                  <p><strong>${placeholders.searchNoResultsSuggestionLabel || 'Search suggestions:'}</strong></p>
+                  <ul>
+                    <li>${
+                      placeholders.searchNoResultsSpellCheckText || 'Make sure keywords are spelled correctly.'
+                    }</li>
+                    <li>${placeholders.searchNoResultsRephraseText || 'Try rephrasing or using synonyms.'}</li>
+                    <li>${placeholders.searchNoResultsSpecificKeywordText || 'Use less specific keywords.'}</li>
+                    <li class="clear-filters-text" >${
+                      placeholders.searchNoResultsClearFiltersText || 'Clear your filters.'
+                    }</li>
+                  </ul>
+                </div>
+            </atomic-no-results>
             </atomic-layout-section>
             <atomic-layout-section section="pagination">
               <style>
                 atomic-layout-section[section='pagination'] {
                   border-top: 1px solid var(--non-spectrurm-whisper-gray);
                   padding: 40px 0;
-                  margin-top: -8px;
+                  margin-top: 0;
+                  position: relative;
+                }
+                atomic-pager.atomic-pager-hide {
+                  display: none;
                 }
                 atomic-pager::part(active-page-button) {
                   border: none;
@@ -941,6 +910,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-pager::part(previous-button-icon):disabled {
                   visibility: hidden;
                 }
+                @media(min-width: 1024px) {
+                  atomic-pager.atomic-pager-hide {
+                    display: block;
+                    visibility: hidden;
+                  }
+                }
               </style>
               <atomic-pager
                 previous-button-icon="${previousNavigationArrow}"
@@ -951,6 +926,10 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   color: var(--non-spectrum-grey-updated);
                   background-color: var(--background-color)
                   font-size: 15px;
+                  height: 36px;
+                  width: 36px;
+                  min-width: 36px;
+                  min-height: 36px;
                 }
                 atomic-results-per-page::part(active-button) {
                   border: none;
@@ -961,13 +940,19 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   color: var(--non-spectrum-input-text);
                   font-size: 15px;
                 }
+                atomic-pager::part(buttons) {
+                  align-items: center;
+                  margin-bottom: 4px;
+                }
                 atomic-pager::part(page-button) {
                   background-color: var(--background-color)
                   border: 1px solid var(--non-spectrurm-whisper-gray);
                   border-radius: 4px;
                   color: var(--non-spectrum-input-text);
-                  height: 26px;
-                  width: 26px;
+                  height: 36px;
+                  width: 36px;
+                  min-width: 36px;
+                  min-height: 36px;
                 }
                 atomic-pager::part(active-page-button) {
                   background-color: var(--non-spectrurm-whisper-gray);
@@ -979,8 +964,16 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   width: 25px;
                   min-width: 25px;
                 }
+                @media(min-width: 414px) {
+                  atomic-pager::part(page-button), atomic-results-per-page::part(button) {
+                    min-width: 40px;
+                    min-height: 40px;
+                    height: 40px;
+                    width: 40px;
+                  }
+                }
                 @media(max-width: 1024px) {
-                   atomic-pager::part(previous-button), atomic-pager::part(next-button) {
+                  atomic-pager::part(previous-button), atomic-pager::part(next-button) {
                     transform: scale(0.7);
                   }
                 }
@@ -988,6 +981,38 @@ const getCoveoAtomicMarkup = (placeholders) => {
               <atomic-results-per-page></atomic-results-per-page>
             </atomic-layout-section>
           </atomic-layout-section>
+          <style>
+            atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='status'] {
+              display: none;
+            }
+            atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='query'] {
+              display: none;
+            }
+            @media only screen and (min-width: 1024px) {
+              atomic-search-layout atomic-layout-section[section='main'] {
+                position: relative;
+              }
+              atomic-search-interface.atomic-search-interface-no-results atomic-search-layout {
+                    grid-template-areas:
+                    '. .                     atomic-section-search .'
+                    '. atomic-section-facets   atomic-section-main   .' !important;
+                    grid-template-columns:
+                  }
+                  atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='facets'] {
+                    display: block;
+                    height: fit-content;
+                  }
+                  atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='facets'].all-facets-hidden {
+                    display: none;
+                  }
+                  atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='pagination'] {
+                    display: none;
+                  }
+                  atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='main'].atomic-no-result {
+                    border: none;
+                  }
+                }
+        </style>
         </atomic-search-layout>
       </atomic-search-interface>
       `);

@@ -1,0 +1,18 @@
+.ue-warning-banner {
+  background-color: var(--non-spectrum-adobe-dark-red);
+  color: var(--spectrum-gray-50);
+  border: 1px solid var(--non-spectrum-adobe-dark-red);
+  padding: 20px;
+  margin: 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.ue-warning-banner .icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+  display: inline-block;
+  align-items: center;
+}

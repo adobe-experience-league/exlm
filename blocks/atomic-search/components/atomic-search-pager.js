@@ -34,6 +34,12 @@ export default function atomicPagerHandler(baseElement) {
     pageButtons.forEach((buttonEl) => {
       attachClickHandler(buttonEl);
     });
+    if (pageButtons.length <= 1) {
+      // Hide if there is just one button or so.
+      baseElement.classList.add('atomic-pager-hide');
+    } else {
+      baseElement.classList.remove('atomic-pager-hide');
+    }
     const scrollY = baseElement.dataset.scrolly ? +baseElement.dataset.scrolly : undefined;
     if (!Number.isNaN(scrollY)) {
       sleep(() => {

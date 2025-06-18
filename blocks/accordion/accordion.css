@@ -52,14 +52,6 @@
   margin-top: 14px;
 }
 
-.accordion p {
-  margin-top: 14px;
-}
-
-.accordion ol li p {
-  margin-bottom: 8px;
-}
-
 .accordion p:last-child {
   margin-bottom: 0;
 }
@@ -70,8 +62,6 @@
 
 .accordion ul li {
   margin-top: 0;
-  margin-bottom: 14px;
-  line-height: 1.5;
 }
 
 .accordion ul li:last-child {

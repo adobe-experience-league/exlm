@@ -8,7 +8,17 @@ export const CUSTOM_EVENTS = {
   NO_RESULT_FOUND: 'ATOMIC_RESULT_NOT_FOUND',
   RESULT_FOUND: 'ATOMIC_RESULT_FOUND',
   SEARCH_QUERY_CHANGED: 'ATOMIC_SEARCH_QUERY_CHANGED',
+  SEARCH_CLEARED: 'ATOMIC_SEARCH_CLEARED',
 };
+
+export const COMMUNITY_CONTENT_TYPES = [
+  'Community',
+  'Community|Questions',
+  'Community|Blogs',
+  'Community|Discussions',
+  'Community|Ideas',
+  'Community|User',
+];
 
 export const COMMUNITY_SUPPORTED_SORT_ELEMENTS = ['el_view_status', 'el_kudo_status', 'el_reply_status'];
 
@@ -56,9 +66,11 @@ export const debounce = (ms, fn) => {
   let timer;
   // eslint-disable-next-line func-names
   return function (...args) {
+    const ctx = this;
     clearTimeout(timer);
-    args.unshift(this);
-    timer = setTimeout(fn(args), ms);
+    timer = setTimeout(() => {
+      fn.apply(ctx, args);
+    }, ms);
   };
 };
 
@@ -70,11 +82,35 @@ export const getFiltersFromUrl = () => {
   const filtersInfo = decodedHash.split('&').filter((s) => !!s);
   return filtersInfo.reduce((acc, curr) => {
     const [facetKeys, facetValueInfo] = curr.split('=');
-    const facetValues = facetValueInfo.split(',');
-    const keyName = facetKeys.replace('f-', '');
-    acc[keyName] = facetValues;
+    if (facetValueInfo) {
+      const facetValues = facetValueInfo.split(',');
+      const keyName = facetKeys.replace('f-', '');
+      acc[keyName] = facetValues;
+    }
     return acc;
   }, {});
+};
+
+/**
+ * Checks if specific content type filters are active in the URL hash.
+ * If `contentTypes` is empty, it checks if any content type filter is selected in the URL.
+ * If `contentTypes` is provided, it checks if any of the specified types are among the selected ones.
+ */
+export const hasContentTypeFilter = (contentTypes = []) => {
+  const { el_contenttype: selectedContentType = [] } = getFiltersFromUrl();
+  if (contentTypes.length === 0) return selectedContentType.length > 0;
+  if (selectedContentType.length === 0) return false;
+  const hasSpecificFilters = contentTypes.some((type) => selectedContentType.includes(type));
+  return hasSpecificFilters;
+};
+
+/**
+ * Updates the URL hash by filtering its current parts based on a provided condition.
+ */
+export const updateHash = (filterCondition, joinWith = '&') => {
+  const currentHash = fragment();
+  const updatedParts = currentHash.split('&').filter(filterCondition);
+  window.location.hash = updatedParts.join(joinWith);
 };
 
 export const handleHeaderSearchVisibility = () => {
@@ -91,7 +127,8 @@ export const handleHeaderSearchVisibility = () => {
   }
 };
 
-export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutation } = {}) {
+export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutation, waitForElement = false } = {}) {
+  let observer;
   const ready = () => {
     const root = host.shadowRoot;
     if (!root) {
@@ -104,6 +141,11 @@ export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutati
       !!Array.from(host.shadowRoot.children).find((el) => el.tagName !== 'STYLE');
     let populated = hasContent();
 
+    if (waitForElement && !populated && root.nodeName === '#document-fragment') {
+      waitFor(ready, 300);
+      return;
+    }
+
     if (populated) {
       if (onPopulate) {
         onPopulate(root);
@@ -112,7 +154,7 @@ export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutati
       onEmpty(root);
     }
 
-    const obs = new MutationObserver((muts) => {
+    observer = new MutationObserver((muts) => {
       if (onMutation) {
         onMutation(muts, root);
       }
@@ -132,10 +174,17 @@ export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutati
       }
     });
 
-    obs.observe(root, { childList: true, subtree: true, attributes: true });
+    observer.observe(root, { childList: true, subtree: true, attributes: true });
   };
 
   ready();
+  return observer;
+}
+
+export function disconnectShadowObserver(observer) {
+  if (observer && typeof observer.disconnect === 'function') {
+    observer.disconnect();
+  }
 }
 
 export const sleep = (callback, timeout = 20) => {
@@ -148,3 +197,10 @@ export const sleep = (callback, timeout = 20) => {
     callback();
   });
 };
+
+export function isUserClick(e) {
+  if (typeof e.isTrusted === 'boolean') {
+    return e.isTrusted;
+  }
+  return e.detail > 0;
+}

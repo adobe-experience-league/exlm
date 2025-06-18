@@ -6,7 +6,7 @@ import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
 const bookmarkExclusionContentypes = [
-  CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
+  CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
   CONTENT_TYPES.COMMUNITY.MAPPING_KEY,
   CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
 ];
@@ -163,6 +163,13 @@ const buildEventContent = ({ event, contentType, cardContent, card }) => {
   decorateIcons(eventInfo);
   const title = card.querySelector('.browse-card-title-text');
   cardContent.insertBefore(eventInfo, title.nextElementSibling);
+  if (card.classList.contains('upcoming-event-card')) {
+    const upcomingTime = card.querySelector('.browse-card-event-time h6');
+    const parts = upcomingTime.textContent.split(' ');
+    const timezone = parts.pop();
+    const withParens = `${parts.join(' ')} (${timezone})`;
+    upcomingTime.textContent = withParens;
+  }
 };
 
 const buildInProgressBarContent = ({ inProgressStatus, cardFigure, card }) => {
@@ -200,7 +207,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
     let icon = null;
     const isLeftPlacement = false;
     if (
-      [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
+      [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
         contentType?.toLowerCase(),
       )
     ) {
@@ -270,7 +277,7 @@ const buildCardContent = async (card, model) => {
   cardContent.appendChild(cardMeta);
 
   if (
-    contentType === CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY ||
+    contentType === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY ||
     contentType === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY
   ) {
     buildEventContent({ event, contentType, cardContent, card });
@@ -509,7 +516,7 @@ export async function buildCard(container, element, model) {
       }
     });
     if (
-      [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
+      [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
         contentType?.toLowerCase(),
       )
     ) {

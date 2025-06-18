@@ -186,6 +186,11 @@ div.marquee-wrapper {
   min-height: unset;
 }
 
+.marquee.video .marquee-background {
+  position: relative;
+  overflow: hidden;
+}
+
 .marquee.straight.small .marquee-background {
   height: 150px;
 }
@@ -501,4 +506,39 @@ body[class^='article-'] .marquee-content-container {
     background-color: var(--background-color);
     box-sizing: border-box;
   }
+}
+
+/* Styling for .marquee.video block */
+
+.marquee.video .marquee-subject {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-color: var(--spectrum-gray-700);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.marquee.video .marquee-subject img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: none;
+  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.marquee.video .marquee-subject iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  z-index: 10;
 }

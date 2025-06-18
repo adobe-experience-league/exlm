@@ -1743,6 +1743,10 @@
               {
                 "name": "Fill marquee with given background color",
                 "value": "fill-background"
+              },
+              {
+                "name": "Select to insert a video as background",
+                "value": "video"
               }
             ]
           },
@@ -1831,6 +1835,18 @@
         "value": "",
         "label": "Custom Background Color",
         "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
+      },
+
+      {
+        "condition": {
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "video"] }]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "videoUrl",
+        "value": "",
+        "label": "Video URL",
+        "description": "Enter the MPC-hosted video URL (applicable only for style variant :straight and size variant : large)"
       },
       {
         "component": "reference",
@@ -2619,8 +2635,14 @@
         "valueType": "string",
         "name": "searchBar",
         "value": "",
-        "label": "Search Bar Text",
-        "description": "Search the search bar Placeholder Text"
+        "label": "Search Bar Placeholder Text"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "Search Page URL"
       }
     ]
   },
@@ -4233,7 +4255,8 @@
       },
       {
         "component": "aem-content",
-        "valueType": "string",
+        "valueType": "string[]",
+        "value": [],
         "name": "author-bio-page",
         "multi": true,
         "label": "Author Bio page URL",

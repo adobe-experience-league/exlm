@@ -12,8 +12,8 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 async function getListofProducts() {
   try {
     let data;
-    const { liveEventsUrl } = getConfig();
-    const response = await fetch(liveEventsUrl, {
+    const { upcomingEventsUrl } = getConfig();
+    const response = await fetch(upcomingEventsUrl, {
       method: 'GET',
     });
 
@@ -48,6 +48,98 @@ async function getListofProducts() {
   }
 }
 
+function toggleClassState(element, className) {
+  if (!element || !className) return;
+  element.classList.toggle(className);
+}
+
+function setActiveToggle(activeEl, inactiveEl, className) {
+  if (!activeEl || !inactiveEl) return;
+  activeEl.classList.add(className);
+  inactiveEl.classList.remove(className);
+}
+
+function setupExpandableDescription(card, placeholders) {
+  const cardContent = card.querySelector('.browse-card-content');
+  const description = card.querySelector('.browse-card-description-text');
+
+  if (!description || !cardContent) return;
+
+  if (cardContent.querySelector('.show-more')) return;
+
+  const showMoreBtn = document.createElement('span');
+  showMoreBtn.classList.add('show-more');
+  showMoreBtn.innerHTML = placeholders?.showMore || 'Show more';
+
+  const showLessBtn = document.createElement('span');
+  showLessBtn.classList.add('show-less');
+  showLessBtn.innerHTML = placeholders?.showLess || 'Show Less';
+
+  cardContent.appendChild(showMoreBtn);
+  cardContent.appendChild(showLessBtn);
+
+  const computedStyle = window.getComputedStyle(description);
+  const lineHeight = parseFloat(computedStyle.lineHeight);
+  const height = description.offsetHeight;
+  const lines = Math.round(height / lineHeight);
+
+  if (lines > 2) {
+    description.classList.add('text-expanded');
+  } else {
+    showMoreBtn.style.display = 'none';
+    showLessBtn.style.display = 'none';
+  }
+
+  showMoreBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleClassState(card, 'expanded');
+  });
+
+  showLessBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleClassState(card, 'expanded');
+  });
+}
+
+function addCardDateInfo(card) {
+  const cardFigure = card.querySelector('.browse-card-figure');
+  const eventInfo = card.querySelector('.browse-card-event-info');
+  const footer = card.querySelector('.browse-card-footer');
+
+  if (!eventInfo || !footer || cardFigure.querySelector('.card-figure-date')) return;
+
+  const eventTimeText = eventInfo.querySelector('.browse-card-event-time h6')?.textContent;
+  if (!eventTimeText || !eventTimeText.includes('|')) return;
+
+  const [rawDate, rawTime] = eventTimeText.split('|');
+  const dateParts = rawDate.trim();
+  const timeAndZone = rawTime.trim();
+
+  const dateDisplay = document.createElement('div');
+  dateDisplay.classList.add('card-figure-date');
+  dateDisplay.innerHTML = `
+    <div class="calendar-icon">
+      <span class="icon icon-calendar-white"></span>
+    </div>
+    <div class="date-display">
+      ${dateParts}
+    </div>
+    <div class="time-display">
+      ${timeAndZone}
+    </div>
+  `;
+
+  cardFigure.appendChild(dateDisplay);
+  decorateIcons(dateDisplay);
+
+  if (!footer.contains(eventInfo)) {
+    const clonedEventInfo = eventInfo.cloneNode(true);
+    footer.appendChild(clonedEventInfo);
+  }
+}
+
 export default async function decorate(block) {
   let placeholders = {};
   try {
@@ -75,8 +167,22 @@ export default async function decorate(block) {
       <form class="browse-card-dropdown">
       <label>${filterLabelElement?.innerHTML}</label>
       </form>
+      <div class="view-switcher">
+      <button type="button" class="view-btn grid-view active" aria-label="Grid view">
+        ${placeholders?.gridViewLabel || 'Grid'}
+        <span class="icon icon-grid-white"></span>
+        <span class="icon icon-grid-black"></span>
+      </button>
+      <button type="button" class="view-btn list-view" aria-label="List view">
+        ${placeholders?.listViewLabel || 'List'}
+        <span class="icon icon-list-view-black"></span>
+        <span class="icon icon-list-view-white"></span>
+      </button>
+    </div>
     </div>
   `);
+
+  decorateIcons(headerDiv.querySelector('.view-switcher'));
 
   const tagsContainer = document.createElement('div');
   tagsContainer.classList.add('browse-card-tags');
@@ -103,7 +209,7 @@ export default async function decorate(block) {
   contentDiv.classList.add('browse-cards-block-content');
 
   const parameters = {
-    contentType: CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
+    contentType: CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
   };
 
   const buildCardsShimmer = new BrowseCardShimmer();
@@ -163,10 +269,45 @@ export default async function decorate(block) {
       });
     });
 
+    const gridViewBtn = block.querySelector('.view-btn.grid-view');
+    const listViewBtn = block.querySelector('.view-btn.list-view');
+
+    gridViewBtn.addEventListener('click', () => {
+      block.classList.remove('list');
+      setActiveToggle(gridViewBtn, listViewBtn, 'active');
+    });
+
+    listViewBtn.addEventListener('click', () => {
+      block.classList.add('list');
+      setActiveToggle(listViewBtn, gridViewBtn, 'active');
+
+      const cards = block.querySelectorAll('.browse-card');
+      cards.forEach((card) => {
+        addCardDateInfo(card);
+        setupExpandableDescription(card, placeholders);
+      });
+    });
+
     // eslint-disable-next-line no-use-before-define
     const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
 
     contentDiv.innerHTML = ''; // Clear previous cards
+    const existingError = block.querySelector('.event-no-results');
+    if (existingError) existingError.remove(); // Prevent duplicate error message
+
+    // Show error message if selected product has no events
+    if (updatedData.length === 0) {
+      const noResultsText = placeholders.noResultsText || 'We are sorry, no results found matching the criteria.';
+      const errorMsg = htmlToElement(`
+    <div class="event-no-results">${noResultsText}</div>
+  `);
+
+      contentDiv.style.display = 'none';
+      block.appendChild(errorMsg);
+      return;
+    }
+
+    contentDiv.style.display = '';
     updatedData.forEach((cardData) => {
       const cardDiv = document.createElement('div');
       buildCard(contentDiv, cardDiv, cardData);
