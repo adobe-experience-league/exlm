@@ -256,6 +256,10 @@ button.toc-dropdown-button {
   transform: rotateZ(225deg);
 }
 
+.rail-content {
+  width: 100%;
+}
+
 @media only screen and (width >= 900px) {
   .toc-container {
     height: 100%;
