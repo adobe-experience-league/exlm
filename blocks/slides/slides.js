@@ -1,14 +1,7 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import state from './slider-state.js';
-import {
-  generateVisualConfig,
-  getPreference,
-  getAudioFilename,
-  showAllSteps,
-  showStep,
-  addEventHandlers,
-} from './slider-utils.js';
+import { generateVisualConfig, getPreference, showAllSteps, showStep, addEventHandlers } from './slider-utils.js';
 
 function html(content, placeholders) {
   const initialView = getPreference('view') || 'as-slides';
@@ -60,14 +53,14 @@ function html(content, placeholders) {
                                   ?.filter((callout) => !callout.toast)
                                   .map(
                                     (callout) => `
-                                    <span class="callout" data-callout>
+                                    <span class="callout callout-${callout.type ?? ''}" data-callout>
                                         <span class="indicator ${callout.clickable ? 'clickable' : ''}" 
                                                 ${
                                                   !callout.button && callout.clickable === 'next'
                                                     ? 'data-next-step'
                                                     : ''
                                                 } 
-                                                data-callout-indicator
+                                                data-callout-indicator="${callout.type}"
                                                 data-callout-indicator-width="${callout.width}"
                                                 data-callout-indicator-height="${callout.height}"
                                                 data-callout-indicator-x="${callout.x}"
@@ -90,7 +83,7 @@ function html(content, placeholders) {
                                     </span>
                                 `,
                                   )
-                                  .join('')}                
+                                  .join('')}
                                 ${step.visual.image}`
                                 : ''
                             }
@@ -102,7 +95,7 @@ function html(content, placeholders) {
                                 <div class="body">${step.visual.body}</div>
                                 ${step.visual.code}`
                                 : ''
-                            }      
+                            }
                                 
                             ${
                               step.visual.callouts?.find((callout) => callout.toast)
@@ -112,7 +105,7 @@ function html(content, placeholders) {
                                 : ''
                             }
 
-                        </div>            
+                        </div>
                       </div>
                       <div class="content-info doc-content-info">
                         <label class="step-label">Step ${step.number} of ${section.steps.length}</label>
@@ -120,7 +113,7 @@ function html(content, placeholders) {
                             <span class="icon icon-copy-link"></span>
                             <label>${placeholders?.userActionCopylinkLabel || 'Copy link'}</label>
                         </div>
-                      </div>            
+                      </div>
                       <!-- Slide Controls -->
                       <div class="controls">
                           <div class="controls-bar">
@@ -133,7 +126,8 @@ function html(content, placeholders) {
 
                               <audio 
                                   class="audio-player" data-audio-controls
-                                  src="${step.audio}" controls preload controlslist="nodownload">
+                                  src="${step.audio}" controls preload controlslist="nodownload"
+                              >
                                   <source src="${step.audio} type="audio/wav">
                                   Your browser does not support the audio element.
                               </audio>
@@ -191,11 +185,9 @@ function html(content, placeholders) {
                               }
 
 
-                              <select class="step-name-select" data-step-name-select aria-label="Current step">
-                                ${section.steps
-                                  .map((stepOption) => `<option value="${stepOption.id}">${stepOption.title}</option>`)
-                                  .join('')}
-                              </select>
+                              <div class="step-name-title" aria-label="Current step">
+                                ${step.title}
+                              </div>
                             
                           </div>
                       </div>
@@ -269,17 +261,18 @@ export default async function decorate(block) {
           steps: [],
         };
       } else {
-        // Steps have something in the right/last cell
-        const text = row.querySelector(':scope > div:first-child');
         // const visual = row.querySelector(':scope > div:last-child');
         const slideWrapper = row.querySelector(':scope > div');
-        const [, , titleElement, ...rest] = slideWrapper?.children || [];
+        const [, , audioP, titleElement, ...rest] = slideWrapper?.children || [];
         const titleId = titleElement?.id || titleElement?.textContent?.split(' ')?.join('-')?.toLowerCase() || '';
         if (titleElement) {
           titleElement.id = titleId;
         }
 
         const stepId = section.id ? `${section.id}__${titleId}` : titleId;
+
+        const audio = `${audioP?.querySelector('a')?.href}` || '';
+        audioP.remove();
 
         section.steps.push({
           id: stepId,
@@ -291,7 +284,7 @@ export default async function decorate(block) {
             .map((el) => el.outerHTML)
             .join(' '),
           visual: generateVisualConfig(slideWrapper),
-          audio: `https://dxenablementbeta.blob.core.windows.net/exl-slides/audio/${await getAudioFilename(text)}.wav`,
+          audio,
         });
       }
     }),

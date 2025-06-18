@@ -1275,7 +1275,9 @@ async function loadPage() {
   await loadLazy(document);
   loadDelayed();
   await showSignupDialog();
-
+  if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+    loadDefaultModule(`${window.hlx.codeBasePath}/scripts/editor-support-seo.js`);
+  }
   if (isDocPage) {
     // load prex/next buttons
     loadDefaultModule(`${window.hlx.codeBasePath}/scripts/prev-next-btn.js`);
