@@ -45,8 +45,8 @@ export function highlight(replace = false, isAnchorScroll = false) {
 
     if (anchorElement !== undefined && !isAnchorScroll) {
       render(() => {
-        ctx.querySelectorAll('a.is-active').forEach((i) => i.classList.remove('is-active'));
-        anchorElement.classList.add('is-active');
+        ctx.querySelectorAll('li.is-active').forEach((i) => i.classList.remove('is-active'));
+        anchorElement.parentElement.classList.add('is-active');
 
         const scrollOptions = {
           top: anchorElement.offsetTop - ctx.offsetTop,
@@ -58,8 +58,9 @@ export function highlight(replace = false, isAnchorScroll = false) {
         }
 
         const scrollableDivBlock = ctx.querySelector('.scrollable-div');
+
         const anchorTopPos = anchorElement.offsetTop;
-        anchorElement.classList.add('is-active');
+        anchorElement.parentElement.classList.add('is-active');
         scrollableDivBlock.scrollTop = anchorTopPos - 30;
 
         if (replace) {
