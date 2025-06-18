@@ -102,16 +102,15 @@
   display: none;
 }
 
-.upcoming-event .browse-card.upcoming-event-card {
+.upcoming-event-wrapper .upcoming-event .browse-card.upcoming-event-card {
   background-color: var(--spectrum-gray-50);
 }
 
-.upcoming-event .browse-card.upcoming-event-card .browse-card-banner {
+.upcoming-event-wrapper .browse-card.upcoming-event-card .browse-card-banner {
   background-color: var(--non-spectrum-adobe-red) !important;
-  color: var(--spectrum-gray-900);
 }
 
-.upcoming-event .browse-card.upcoming-event-card .browse-card-figure {
+.upcoming-event-wrapper .browse-card.upcoming-event-card .browse-card-figure {
   background-color: var(--spectrum-gray-900);
 }
 
@@ -460,16 +459,4 @@
   .upcoming-event .browse-cards-block-content {
     grid-template-columns: repeat(4, 1fr);
   }
-}
-
-.upcoming-event-wrapper .upcoming-event .browse-card.upcoming-event-card {
-  background-color: var(--spectrum-gray-50);
-}
-
-.upcoming-event-wrapper .browse-card.upcoming-event-card .browse-card-banner {
-  background-color: var(--non-spectrum-adobe-red) !important;
-}
-
-.upcoming-event-wrapper .browse-card.upcoming-event-card .browse-card-figure {
-  background-color: var(--spectrum-gray-900);
 }
