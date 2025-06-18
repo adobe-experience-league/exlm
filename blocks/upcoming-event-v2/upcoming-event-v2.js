@@ -48,6 +48,98 @@ async function getListofProducts() {
   }
 }
 
+function toggleClassState(element, className) {
+  if (!element || !className) return;
+  element.classList.toggle(className);
+}
+
+function setActiveToggle(activeEl, inactiveEl, className) {
+  if (!activeEl || !inactiveEl) return;
+  activeEl.classList.add(className);
+  inactiveEl.classList.remove(className);
+}
+
+function setupExpandableDescription(card, placeholders) {
+  const cardContent = card.querySelector('.browse-card-content');
+  const description = card.querySelector('.browse-card-description-text');
+
+  if (!description || !cardContent) return;
+
+  if (cardContent.querySelector('.show-more')) return;
+
+  const showMoreBtn = document.createElement('span');
+  showMoreBtn.classList.add('show-more');
+  showMoreBtn.innerHTML = placeholders?.showMore || 'Show more';
+
+  const showLessBtn = document.createElement('span');
+  showLessBtn.classList.add('show-less');
+  showLessBtn.innerHTML = placeholders?.showLess || 'Show Less';
+
+  cardContent.appendChild(showMoreBtn);
+  cardContent.appendChild(showLessBtn);
+
+  const computedStyle = window.getComputedStyle(description);
+  const lineHeight = parseFloat(computedStyle.lineHeight);
+  const height = description.offsetHeight;
+  const lines = Math.round(height / lineHeight);
+
+  if (lines > 2) {
+    description.classList.add('text-expanded');
+  } else {
+    showMoreBtn.style.display = 'none';
+    showLessBtn.style.display = 'none';
+  }
+
+  showMoreBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleClassState(card, 'expanded');
+  });
+
+  showLessBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleClassState(card, 'expanded');
+  });
+}
+
+function addCardDateInfo(card) {
+  const cardFigure = card.querySelector('.browse-card-figure');
+  const eventInfo = card.querySelector('.browse-card-event-info');
+  const footer = card.querySelector('.browse-card-footer');
+
+  if (!eventInfo || !footer || cardFigure.querySelector('.card-figure-date')) return;
+
+  const eventTimeText = eventInfo.querySelector('.browse-card-event-time h6')?.textContent;
+  if (!eventTimeText || !eventTimeText.includes('|')) return;
+
+  const [rawDate, rawTime] = eventTimeText.split('|');
+  const dateParts = rawDate.trim();
+  const timeAndZone = rawTime.trim();
+
+  const dateDisplay = document.createElement('div');
+  dateDisplay.classList.add('card-figure-date');
+  dateDisplay.innerHTML = `
+    <div class="calendar-icon">
+      <span class="icon icon-calendar-white"></span>
+    </div>
+    <div class="date-display">
+      ${dateParts}
+    </div>
+    <div class="time-display">
+      ${timeAndZone}
+    </div>
+  `;
+
+  cardFigure.appendChild(dateDisplay);
+  decorateIcons(dateDisplay);
+
+  if (!footer.contains(eventInfo)) {
+    const clonedEventInfo = eventInfo.cloneNode(true);
+    footer.appendChild(clonedEventInfo);
+  }
+}
+
 export default async function decorate(block) {
   let placeholders = {};
   try {
@@ -75,14 +167,26 @@ export default async function decorate(block) {
       <form class="browse-card-dropdown">
       <label>${filterLabelElement?.innerHTML}</label>
       </form>
+      <div class="view-switcher">
+      <button type="button" class="view-btn grid-view active" aria-label="Grid view">
+        ${placeholders?.gridViewLabel || 'Grid'}
+        <span class="icon icon-grid-white"></span>
+        <span class="icon icon-grid-black"></span>
+      </button>
+      <button type="button" class="view-btn list-view" aria-label="List view">
+        ${placeholders?.listViewLabel || 'List'}
+        <span class="icon icon-list-view-black"></span>
+        <span class="icon icon-list-view-white"></span>
+      </button>
+    </div>
     </div>
   `);
 
+  decorateIcons(headerDiv.querySelector('.view-switcher'));
+
   const tagsContainer = document.createElement('div');
   tagsContainer.classList.add('browse-card-tags');
-  const filterSortContainer = headerDiv.querySelector('.browse-sort-filter');
-  filterSortContainer.appendChild(tagsContainer);
-  headerDiv.append(filterSortContainer);
+  headerDiv.appendChild(tagsContainer);
 
   block.appendChild(headerDiv);
   const products = await getListofProducts();
@@ -165,6 +269,25 @@ export default async function decorate(block) {
       });
     });
 
+    const gridViewBtn = block.querySelector('.view-btn.grid-view');
+    const listViewBtn = block.querySelector('.view-btn.list-view');
+
+    gridViewBtn.addEventListener('click', () => {
+      block.classList.remove('list');
+      setActiveToggle(gridViewBtn, listViewBtn, 'active');
+    });
+
+    listViewBtn.addEventListener('click', () => {
+      block.classList.add('list');
+      setActiveToggle(listViewBtn, gridViewBtn, 'active');
+
+      const cards = block.querySelectorAll('.browse-card');
+      cards.forEach((card) => {
+        addCardDateInfo(card);
+        setupExpandableDescription(card, placeholders);
+      });
+    });
+
     // eslint-disable-next-line no-use-before-define
     const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
 
@@ -192,8 +315,6 @@ export default async function decorate(block) {
       buildCard(contentDiv, cardDiv, cardData);
       contentDiv.appendChild(cardDiv);
     });
-    // eslint-disable-next-line no-use-before-define
-    enhanceListCardsAfterFilter();
   };
 
   // Pre-select checkboxes from URL filters
@@ -218,113 +339,22 @@ export default async function decorate(block) {
    * @param {Array} params - Selected filter parameters.
    * @returns {Array} - Filtered and sorted card data.
    */
-  function fetchFilteredCardData(data, params = [], sortOrder = 'descending') {
+  function fetchFilteredCardData(data, params) {
     if (!data) return [];
     const solutionsList = Array.isArray(params) ? params : [params];
 
-    const filtered = solutionsList.length
-      ? data.filter((event) => {
-          const productArray = Array.isArray(event.product) ? event.product : [event.product];
-          return solutionsList.some((filter) => productArray.includes(filter));
-        })
-      : data;
-
-    return filtered
-      .filter((card) => card.event?.time)
-      .sort((a, b) => {
-        const dateA = new Date(a.event.time);
-        const dateB = new Date(b.event.time);
-        return sortOrder === 'descending' ? dateB - dateA : dateA - dateB;
-      });
-  }
-
-  function enhanceListCardsAfterFilter() {
-    if (block.classList.contains('list')) {
-      const observer = new MutationObserver((_mutations, obs) => {
-        const cards = contentDiv.querySelectorAll('.browse-card');
-        if (cards.length > 0) {
-          cards.forEach((card) => {
-            addCardDateInfo(card);
-            setupExpandableDescription(card, placeholders);
-          });
-          obs.disconnect();
-        }
-      });
-      observer.observe(contentDiv, { childList: true, subtree: true });
+    // If no filters are selected, return all data sorted by event time
+    if (solutionsList.length === 0) {
+      return data.filter((card) => card.event?.time).sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
     }
+
+    // Filter events that match any of the selected filters
+    return data
+      .filter((event) => {
+        const productArray = Array.isArray(event.product) ? event.product : [event.product];
+        return solutionsList.some((filter) => productArray.includes(filter));
+      })
+      .filter((card) => card.event?.time) // Ensure valid event time
+      .sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
   }
-
-  function renderSortContainerForUpcomingEvents(data) {
-    const wrapper = block.querySelector('.browse-sort-container');
-    if (!wrapper) return;
-
-    const sortContainer = document.createElement('div');
-    sortContainer.classList.add('sort-container');
-    sortContainer.innerHTML = `<span>${placeholders?.filterSortLabel || 'Sort by'}:</span>
-    <button class="sort-drop-btn">${placeholders?.filterSortNewestLabel || 'Newest'}</button>
-    <div class="sort-dropdown-content">
-      <a href="/" data-sort-criteria="descending" data-sort-caption="${
-        placeholders?.filterSortNewestLabel || 'Newest'
-      }">${placeholders?.filterSortNewestLabel || 'Newest'}</a>
-      <a href="/" data-sort-criteria="ascending" data-sort-caption="${
-        placeholders?.filterSortOldestLabel || 'Oldest'
-      }">${placeholders?.filterSortOldestLabel || 'Oldest'}</a>
-    </div>
-  `;
-    wrapper.appendChild(sortContainer);
-
-    const dropDownBtn = sortContainer.querySelector('.sort-drop-btn');
-    const sortDropdown = sortContainer.querySelector('.sort-dropdown-content');
-    const sortLinks = sortDropdown.querySelectorAll('a');
-
-    sortLinks[0].classList.add('selected');
-
-    dropDownBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      dropDownBtn.classList.toggle('active');
-      sortDropdown.classList.toggle('show');
-
-      setTimeout(() => {
-        document.addEventListener(
-          'click',
-          (event) => {
-            if (!sortDropdown.contains(event.target) && event.target !== dropDownBtn) {
-              sortDropdown.classList.remove('show');
-              dropDownBtn.classList.remove('active');
-            }
-          },
-          { once: true },
-        );
-      });
-    });
-
-    sortLinks.forEach((link) => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-
-        const sortCriteria = link.getAttribute('data-sort-criteria');
-        const sortCaption = link.getAttribute('data-sort-caption');
-
-        dropDownBtn.textContent = sortCaption;
-        sortDropdown.classList.remove('show');
-        dropDownBtn.classList.remove('active');
-
-        sortLinks.forEach((a) => a.classList.remove('selected'));
-        link.classList.add('selected');
-
-        const selectedFilters = [...block.querySelectorAll('.browse-tags')].map((tag) => tag.getAttribute('value'));
-
-        const sortedData = fetchFilteredCardData(data, selectedFilters, sortCriteria);
-        contentDiv.innerHTML = '';
-        sortedData.forEach((cardData) => {
-          const cardDiv = document.createElement('div');
-          buildCard(contentDiv, cardDiv, cardData);
-          contentDiv.appendChild(cardDiv);
-        });
-        enhanceListCardsAfterFilter();
-      });
-    });
-  }
-
-  renderSortContainerForUpcomingEvents(browseCardsContent);
 }

@@ -583,8 +583,3 @@
 .browse-card .browse-card-figure:hover .play-button .icon {
   display: none;
 }
-
-.browse-card.event-card .browse-card-banner,
-.browse-card.upcoming-event-card .browse-card-banner {
-  color: var(--spectrum-gray-50);
-}
