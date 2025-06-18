@@ -1,10 +1,10 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 
-.section.upcoming-event-container {
+.section.upcoming-event-v2-container {
   padding-bottom: 0;
 }
 
-.upcoming-event .browse-cards-block-header .browse-card-description-text {
+.upcoming-event-v2 .browse-cards-block-header .browse-card-description-text {
   text-align: center;
   color: var(--spectrum-gray-800);
   font-size: var(--spectrum-font-size-300);
@@ -12,28 +12,28 @@
   margin-bottom: 16px;
 }
 
-.upcoming-event .browse-cards-block-title {
+.upcoming-event-v2 .browse-cards-block-title {
   margin-bottom: 16px;
   text-align: center;
 }
 
-.upcoming-event .browse-card .browse-card-content {
+.upcoming-event-v2 .browse-card .browse-card-content {
   min-height: auto;
 }
 
-.upcoming-event .browse-cards-block-header {
+.upcoming-event-v2 .browse-cards-block-header {
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
 }
 
-.upcoming-event .browse-cards-block-header .browse-card-tags {
+.upcoming-event-v2 .browse-cards-block-header .browse-card-tags {
   margin-top: 1em;
   align-self: flex-start;
 }
 
-.upcoming-event .browse-cards-block-header .browse-tags {
+.upcoming-event-v2 .browse-cards-block-header .browse-tags {
   border-radius: 4px;
   background: var(--background-color);
   border: 1px solid var(--spectrum-gray-500);
@@ -51,7 +51,7 @@
   margin-top: 0;
 }
 
-.upcoming-event .browse-cards-block-header .browse-tags .icon-close {
+.upcoming-event-v2 .browse-cards-block-header .browse-tags .icon-close {
   width: 13px;
   height: auto;
   position: absolute;
@@ -60,11 +60,11 @@
   transform: translateY(-6px);
 }
 
-.upcoming-event .browse-cards-block-view {
+.upcoming-event-v2 .browse-cards-block-view {
   text-align: center;
 }
 
-.upcoming-event .browse-cards-block-content {
+.upcoming-event-v2 .browse-cards-block-content {
   display: grid;
   grid-template-columns: 1fr;
   gap: 32px;
@@ -72,16 +72,16 @@
   margin-bottom: 24px;
 }
 
-.upcoming-event .browse-cards-block-title h2 {
+.upcoming-event-v2 .browse-cards-block-title h2 {
   color: var(--spectrum-gray-800);
 }
 
-.upcoming-event .browse-cards-block-content > div {
+.upcoming-event-v2 .browse-cards-block-content > div {
   min-height: 284px;
   flex: 0 0 320px;
 }
 
-.upcoming-event .browse-card-dropdown {
+.upcoming-event-v2 .browse-card-dropdown {
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -91,36 +91,36 @@
   gap: 16px;
 }
 
-.upcoming-event .browse-card-dropdown > label {
+.upcoming-event-v2 .browse-card-dropdown > label {
   font-size: var(--spectrum-body-size-l);
   font-weight: var(--font-weight-bold);
   color: #363636;
 }
 
-.upcoming-event.featured-card-hidden-features .browse-cards-block-view,
-.upcoming-event.featured-card-hidden-features .browse-cards-block-content {
+.upcoming-event-v2.featured-card-hidden-features .browse-cards-block-view,
+.upcoming-event-v2.featured-card-hidden-features .browse-cards-block-content {
   display: none;
 }
 
-.upcoming-event-wrapper .upcoming-event .browse-card.upcoming-event-card {
+.upcoming-event-v2 .browse-card.upcoming-event-card {
   background-color: var(--spectrum-gray-50);
 }
 
-.upcoming-event-wrapper .browse-card.upcoming-event-card .browse-card-banner {
+.upcoming-event-v2 .browse-card.upcoming-event-card .browse-card-banner {
   background-color: var(--non-spectrum-adobe-red) !important;
 }
 
-.upcoming-event-wrapper .browse-card.upcoming-event-card .browse-card-figure {
+.upcoming-event-v2 .browse-card.upcoming-event-card .browse-card-figure {
   background-color: var(--spectrum-gray-900);
 }
 
 /** List view styles start **/
 
-.upcoming-event .view-switcher,
-.upcoming-event .card-figure-date,
-.upcoming-event .browse-cards-block-content > div .browse-card .show-more,
-.upcoming-event .browse-cards-block-content > div .browse-card .show-less,
-.upcoming-event .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info {
+.upcoming-event-v2 .view-switcher,
+.upcoming-event-v2 .card-figure-date,
+.upcoming-event-v2 .browse-cards-block-content > div .browse-card .show-more,
+.upcoming-event-v2 .browse-cards-block-content > div .browse-card .show-less,
+.upcoming-event-v2 .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info {
   display: none;
 }
 
@@ -135,20 +135,20 @@
   grid-column: 1 / -1;
 }
 
-.upcoming-event .browse-cards-block-content > .event-no-results {
+.upcoming-event-v2 .browse-cards-block-content > .event-no-results {
   min-height: unset;
   height: 170px;
 }
 
 @media (min-width: 900px) {
-  .upcoming-event .view-switcher {
+  .upcoming-event-v2 .view-switcher {
     margin-top: 24px;
     display: flex;
     gap: 8px;
     align-self: flex-end;
   }
 
-  .upcoming-event .view-switcher .view-btn {
+  .upcoming-event-v2 .view-switcher .view-btn {
     margin: 0;
     height: 32px;
     border-radius: 4px;
@@ -166,27 +166,27 @@
     padding: 7px 12px 7px 10px;
   }
 
-  .upcoming-event .view-switcher .view-btn .icon {
+  .upcoming-event-v2 .view-switcher .view-btn .icon {
     width: 18px;
     height: 18px;
     display: none;
   }
 
-  .upcoming-event .view-btn.active .icon-grid-white,
-  .upcoming-event .view-btn:not(.active) .icon-grid-black,
-  .upcoming-event .view-btn.active .icon-list-view-white,
-  .upcoming-event .view-btn:not(.active) .icon-list-view-black {
+  .upcoming-event-v2 .view-btn.active .icon-grid-white,
+  .upcoming-event-v2 .view-btn:not(.active) .icon-grid-black,
+  .upcoming-event-v2 .view-btn.active .icon-list-view-white,
+  .upcoming-event-v2 .view-btn:not(.active) .icon-list-view-black {
     display: inline-block;
   }
 
-  .upcoming-event .view-switcher .view-btn.active {
+  .upcoming-event-v2 .view-switcher .view-btn.active {
     background: var(--spectrum-gray-900) 0% 0% no-repeat padding-box;
     opacity: 0.9;
     border: 1px solid var(--spectrum-gray-400);
     color: var(--spectrum-gray-50);
   }
 
-  .upcoming-event.list .browse-card.upcoming-event-card .browse-card-banner {
+  .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-banner {
     top: 16px;
     height: 22px;
     font-style: normal;
@@ -196,12 +196,12 @@
     line-height: 17px;
   }
 
-  .upcoming-event.list .browse-card.upcoming-event-card .browse-card-figure .icon-calendar img {
+  .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-figure .icon-calendar img {
     width: 32px;
     height: 32px;
   }
 
-  .upcoming-event.list .browse-card.upcoming-event-card .browse-card-figure {
+  .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-figure {
     flex: 0 0 23.34%;
     border: unset;
     border-radius: 16px 0 0 16px;
@@ -211,14 +211,14 @@
     justify-content: center;
   }
 
-  .upcoming-event.list .browse-card-figure .card-figure-date {
+  .upcoming-event-v2.list .browse-card-figure .card-figure-date {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 4px;
   }
 
-  .upcoming-event.list .browse-card-figure .card-figure-date .date-display {
+  .upcoming-event-v2.list .browse-card-figure .card-figure-date .date-display {
     font-style: normal;
     font-variant: normal;
     font-weight: bold;
@@ -229,7 +229,7 @@
     opacity: 1;
   }
 
-  .upcoming-event.list .browse-card-figure .card-figure-date .time-display {
+  .upcoming-event-v2.list .browse-card-figure .card-figure-date .time-display {
     text-align: left;
     font-style: normal;
     font-variant: normal;
@@ -241,26 +241,26 @@
     opacity: 1;
   }
 
-  .upcoming-event.list .browse-card.upcoming-event-card .browse-card-content {
+  .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-content {
     padding: 32px;
   }
 
-  .upcoming-event.list .browse-card .browse-card-footer .browse-card-event-info {
+  .upcoming-event-v2.list .browse-card .browse-card-footer .browse-card-event-info {
     order: 0;
     margin: 0;
     align-self: flex-start;
     margin-bottom: 16.5px;
   }
 
-  .upcoming-event.list .browse-card.upcoming-event-card .browse-card-content .browse-card-event-info {
+  .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-content .browse-card-event-info {
     display: none;
   }
 
-  .upcoming-event.list .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info {
+  .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info {
     display: flex;
   }
 
-  .upcoming-event.list .browse-card .browse-card-footer {
+  .upcoming-event-v2.list .browse-card .browse-card-footer {
     padding: 32px;
     flex: 0 0 18.52%;
     position: relative;
@@ -270,25 +270,25 @@
     border-radius: 16px;
   }
 
-  .upcoming-event.list .browse-card .browse-card-footer .browse-card-event-info .browse-card-event-time h6 {
+  .upcoming-event-v2.list .browse-card .browse-card-footer .browse-card-event-info .browse-card-event-time h6 {
     color: var(--non-spectrum-dark-charcoal);
     font-weight: bold;
     white-space: nowrap;
     overflow: hidden;
   }
 
-  .upcoming-event.list .browse-card .browse-card-footer .browse-card-event-info .icon {
+  .upcoming-event-v2.list .browse-card .browse-card-footer .browse-card-event-info .icon {
     width: 18px;
     height: 18px;
   }
 
-  .upcoming-event.list .browse-card .browse-card-footer .browse-card-options {
+  .upcoming-event-v2.list .browse-card .browse-card-footer .browse-card-options {
     order: 2;
     align-self: flex-start;
     margin: 3px;
   }
 
-  .upcoming-event.list .browse-card .browse-card-footer .browse-card-cta-element {
+  .upcoming-event-v2.list .browse-card .browse-card-footer .browse-card-cta-element {
     order: 3;
     margin-top: 30px;
     background: var(--spectrum-blue-900) 0% 0% no-repeat padding-box;
@@ -307,11 +307,11 @@
     align-items: center;
   }
 
-  .upcoming-event.list .browse-card .browse-card-footer .browse-card-cta-element .icon.icon-new-tab-blue {
+  .upcoming-event-v2.list .browse-card .browse-card-footer .browse-card-cta-element .icon.icon-new-tab-blue {
     display: none;
   }
 
-  .upcoming-event.list .browse-card .browse-card-footer::before {
+  .upcoming-event-v2.list .browse-card .browse-card-footer::before {
     content: '';
     position: absolute;
     top: 32px;
@@ -321,14 +321,14 @@
     background-color: var(--non-spectrum-divider-gray);
   }
 
-  .upcoming-event.list .browse-cards-block-content {
+  .upcoming-event-v2.list .browse-cards-block-content {
     display: flex;
     flex-direction: column;
     margin-top: 24px;
     gap: 24px;
   }
 
-  .upcoming-event.list .browse-cards-block-content > div {
+  .upcoming-event-v2.list .browse-cards-block-content > div {
     flex: 0 0 auto;
     min-height: unset;
     height: auto;
@@ -337,18 +337,18 @@
     max-width: 1204px;
   }
 
-  .upcoming-event.list .browse-cards-block-content > div .browse-card {
+  .upcoming-event-v2.list .browse-cards-block-content > div .browse-card {
     min-height: auto;
     flex-direction: row;
   }
 
-  .upcoming-event.list .browse-cards-block-content > div .browse-card .browse-card-description-text.text-expanded {
+  .upcoming-event-v2.list .browse-cards-block-content > div .browse-card .browse-card-description-text.text-expanded {
     -webkit-line-clamp: 2;
     max-height: unset;
   }
 
-  .upcoming-event.list .browse-cards-block-content > div .browse-card .show-more,
-  .upcoming-event.list .browse-cards-block-content > div .browse-card.expanded .show-less {
+  .upcoming-event-v2.list .browse-cards-block-content > div .browse-card .show-more,
+  .upcoming-event-v2.list .browse-cards-block-content > div .browse-card.expanded .show-less {
     text-align: left;
     display: block;
     text-decoration: underline;
@@ -363,11 +363,11 @@
     margin-top: 8px;
   }
 
-  .upcoming-event.list .browse-cards-block-content .browse-card-description-text.text-expanded .show-more {
+  .upcoming-event-v2.list .browse-cards-block-content .browse-card-description-text.text-expanded .show-more {
     display: none;
   }
 
-  .upcoming-event.list
+  .upcoming-event-v2.list
     .browse-cards-block-content
     > div
     .browse-card.browse-card.expanded
@@ -375,7 +375,7 @@
     -webkit-line-clamp: unset;
   }
 
-  .upcoming-event.list .browse-cards-block-content > div .browse-card.expanded .show-more {
+  .upcoming-event-v2.list .browse-cards-block-content > div .browse-card.expanded .show-more {
     display: none;
   }
 }
@@ -383,41 +383,41 @@
 /** List view styles end **/
 
 @media only screen and (min-width: 600px) {
-  .section.upcoming-event-container {
+  .section.upcoming-event-v2-container {
     padding-bottom: 30px;
   }
 
-  .upcoming-event .browse-cards-block-content {
+  .upcoming-event-v2 .browse-cards-block-content {
     grid-template-columns: 1fr 1fr;
   }
 
-  .upcoming-event .browse-cards-block-view {
+  .upcoming-event-v2 .browse-cards-block-view {
     text-align: center;
   }
 
-  .upcoming-event .upcoming-event .browse-cards-block-content > div {
+  .upcoming-event-v2 .upcoming-event-v2 .browse-cards-block-content > div {
     flex: 0 0 286px;
   }
 
-  .upcoming-event .browse-cards-block-header .browse-card-description-text {
+  .upcoming-event-v2 .browse-cards-block-header .browse-card-description-text {
     margin-bottom: 36px;
   }
 
-  .upcoming-event .browse-card-dropdown {
+  .upcoming-event-v2 .browse-card-dropdown {
     flex-direction: row;
   }
 
-  .upcoming-event .custom-filter-dropdown {
+  .upcoming-event-v2 .custom-filter-dropdown {
     max-width: 200px;
   }
 }
 
 @media only screen and (min-width: 900px) {
-  .section.upcoming-event-container {
+  .section.upcoming-event-v2-container {
     padding-bottom: 40px;
   }
 
-  .upcoming-event .browse-cards-block-content {
+  .upcoming-event-v2 .browse-cards-block-content {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 32px;
@@ -425,38 +425,38 @@
     margin-bottom: 84px;
   }
 
-  .upcoming-event .browse-cards-block-view {
+  .upcoming-event-v2 .browse-cards-block-view {
     margin-top: -68px;
     text-align: right;
   }
 
-  .upcoming-event .browse-cards-block-title {
+  .upcoming-event-v2 .browse-cards-block-title {
     margin-bottom: 7px;
   }
 
-  .upcoming-event .browse-card-dropdown {
+  .upcoming-event-v2 .browse-card-dropdown {
     margin-bottom: 0;
   }
 
-  .upcoming-event .browse-card {
+  .upcoming-event-v2 .browse-card {
     text-align: left;
   }
 
-  .upcoming-event .browse-cards-block-content > div {
+  .upcoming-event-v2 .browse-cards-block-content > div {
     flex: 0 0 295px;
   }
 
-  .upcoming-event .custom-filter-dropdown {
+  .upcoming-event-v2 .custom-filter-dropdown {
     max-width: 300px;
   }
 
-  .upcoming-event .browse-cards-block-header .browse-card-description-text {
+  .upcoming-event-v2 .browse-cards-block-header .browse-card-description-text {
     margin-bottom: 16px;
   }
 }
 
 @media (min-width: 1400px) {
-  .upcoming-event .browse-cards-block-content {
+  .upcoming-event-v2 .browse-cards-block-content {
     grid-template-columns: repeat(4, 1fr);
   }
 }
