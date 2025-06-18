@@ -6,6 +6,7 @@ import { generateVisualConfig, getPreference, showAllSteps, showStep, addEventHa
 function html(content, placeholders) {
   const initialView = getPreference('view') || 'as-slides';
   const autoplayAudio = getPreference('autoplayAudio') || false;
+  const muted = getPreference('muteStatus') || false;
 
   return `
         <div class="container ${initialView}" data-block-id="${content.id}">
@@ -127,6 +128,7 @@ function html(content, placeholders) {
                               <audio 
                                   class="audio-player" data-audio-controls
                                   src="${step.audio}" controls preload controlslist="nodownload"
+                                  muted="${muted}"
                               >
                                   <source src="${step.audio} type="audio/wav">
                                   Your browser does not support the audio element.
