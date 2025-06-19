@@ -4290,7 +4290,7 @@
         "dataSource": {
           "type": "url",
           "config": {
-            "url": "https://51837-exlmia-stage.adobeio-static.net/api/v1/web/exlia/getTQTags",
+            "url": "https://51837-exlmia-stage.adobeio-static.net/api/v1/web/exlia/getTaxonomy",
             "params": {
               "taxonomyType": "level"
             }
