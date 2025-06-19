@@ -7005,7 +7005,7 @@
         "description": "Options that affect block appearance and behavior.",
         "valueType": "string",
         "required": true,
-        "maxSize": 2,
+        "maxSize": 3,
         "options": [
           {
             "name": "Code Language",
@@ -7130,7 +7130,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "number-lines",
+        "name": "initial-code-lines",
         "value": "",
         "label": "Default code lines to display",
         "description": "Set how many code lines are visible before expanding to show more."
