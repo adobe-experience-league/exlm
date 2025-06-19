@@ -7133,7 +7133,7 @@
         "name": "number-lines",
         "value": "",
         "label": "Default code lines to display",
-        "description": "Add the number of lines to display before the 'Show more' option appears."
+        "description": "Set how many code lines are visible before expanding to show more."
       }
     ]
   },
