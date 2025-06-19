@@ -7126,6 +7126,14 @@
         "value": "",
         "label": "Line highlighting",
         "description": "Add number to highlight rows within a code block. E.g. 1-3, 6 will highlight lines 1 through 3 and 6."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "number-lines",
+        "value": "",
+        "label": "Number of lines",
+        "description": "Add the number of lines to display before the 'Show more' option appears."
       }
     ]
   },
