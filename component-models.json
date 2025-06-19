@@ -7132,7 +7132,7 @@
         "valueType": "string",
         "name": "number-lines",
         "value": "",
-        "label": "Number of lines",
+        "label": "Default code lines to display",
         "description": "Add the number of lines to display before the 'Show more' option appears."
       }
     ]
