@@ -315,6 +315,10 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(clear-button), atomic-timeframe-facet::part(clear-button) {
                   display: none;
                 }
+
+                atomic-facet::part(facet-parent-hide-ui) {
+                  padding-bottom: 0.625rem;
+                }
                 
                 atomic-facet::part(show-more-less-icon) atomic-component-error, atomic-facet::part(value-checkbox-icon) atomic-component-error, atomic-facet::part(value-checkbox) atomic-component-error, atomic-component-error, atomic-icon atomic-component-error {
                   display: none !important;
