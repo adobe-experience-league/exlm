@@ -9,20 +9,12 @@ function getDataLineValue(arr) {
   return dataLineValue.slice(0, -2);
 }
 
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
-
 /**
  * Adds collapsible functionality to code blocks with more than 3 lines
  * @param {HTMLElement} block - The code block container
  * @param {HTMLElement} pre - The pre element containing the code
  */
-function addCollapsibleCodeFeature(block, pre, lines) {
+function addCollapsibleCodeFeature(block, pre, lines, placeholders) {
   const codeElement = pre.querySelector('code');
   if (!codeElement) return;
 
@@ -58,7 +50,15 @@ function addCollapsibleCodeFeature(block, pre, lines) {
   }
 }
 
-export default function decorate(block) {
+export default async function decorate(block) {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [preElement, lineNumberingEl, lineHighlightingEl, defaultLineNumbers] = htmlElementData;
 
@@ -142,6 +142,6 @@ export default function decorate(block) {
     }
   }
   if (block.classList.contains('expandable')) {
-    addCollapsibleCodeFeature(block, pre, defaultLines);
+    addCollapsibleCodeFeature(block, pre, defaultLines, placeholders);
   }
 }
