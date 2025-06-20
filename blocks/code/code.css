@@ -7,12 +7,12 @@
 }
 
 /* Collapsible code styles start */
-pre.collapsible-code[data-collapsed='true'] {
+.code pre.collapsible-code[data-collapsed='true'] {
   overflow-y: hidden;
   position: relative;
 }
 
-pre.collapsible-code[data-collapsed='true']::after {
+.code pre.collapsible-code[data-collapsed='true']::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -23,7 +23,7 @@ pre.collapsible-code[data-collapsed='true']::after {
   pointer-events: none;
 }
 
-.code-toggle-button {
+.code .code-toggle-button {
   background: transparent;
   cursor: pointer;
   color: var(--non-spectrum-eerie-black);
@@ -39,7 +39,7 @@ pre.collapsible-code[data-collapsed='true']::after {
   font-weight: var(--font-weight-extra-bold);
 }
 
-.code-toggle-button::after {
+.code .code-toggle-button::after {
   background-image: url('../../icons/down-arrow.svg');
   background-position: 0 0;
   background-repeat: no-repeat;
@@ -52,17 +52,17 @@ pre.collapsible-code[data-collapsed='true']::after {
   width: 10px;
 }
 
-.code-toggle-button.expanded::after {
+.code .code-toggle-button.expanded::after {
   transform: rotate(180deg);
 }
 
-.code-toggle-button:hover,
-.code-toggle-button:focus {
+.code .code-toggle-button:hover,
+.code .code-toggle-button:focus {
   background-color: transparent;
 }
 
 @media (min-width: 900px) {
-  pre.collapsible-code[data-collapsed='true'] {
+  .code pre.collapsible-code[data-collapsed='true'] {
     overflow: hidden;
   }
 }

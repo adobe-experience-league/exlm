@@ -1,5 +1,5 @@
 import { loadPrism } from '../../scripts/utils/prism-utils.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 function getDataLineValue(arr) {
   let dataLineValue = '';
@@ -7,6 +7,14 @@ function getDataLineValue(arr) {
     dataLineValue += `${className.slice(2)}, `;
   });
   return dataLineValue.slice(0, -2);
+}
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
 }
 
 /**
@@ -33,14 +41,16 @@ function addCollapsibleCodeFeature(block, pre, lines) {
 
     const toggleButton = document.createElement('button');
     toggleButton.className = 'code-toggle-button collapsed';
-    toggleButton.textContent = 'Show more';
+    toggleButton.textContent = placeholders?.showMore || 'Show more';
 
     toggleButton.addEventListener('click', () => {
       const isCollapsed = pre.getAttribute('data-collapsed') === 'true';
       pre.setAttribute('data-collapsed', isCollapsed ? 'false' : 'true');
       toggleButton.classList.toggle('collapsed', !isCollapsed);
       toggleButton.classList.toggle('expanded', isCollapsed);
-      toggleButton.textContent = isCollapsed ? 'Show less' : 'Show more';
+      toggleButton.textContent = isCollapsed
+        ? placeholders?.showLess || 'Show less'
+        : placeholders?.showMore || 'Show more';
       pre.style.maxHeight = isCollapsed ? '' : `${collapsedHeight}em`;
     });
 
@@ -120,10 +130,6 @@ export default function decorate(block) {
       setTimeout(() => {
         // Wait until the newly updated block is added to DOM and ready for Prism to highlight.
         window.Prism.highlightAllUnder(block, true);
-        // Add collapsible functionality after highlighting only if block has expandable class
-        if (block.classList.contains('expandable')) {
-          addCollapsibleCodeFeature(block, pre, defaultLines);
-        }
       }, 250);
     } else {
       // Prism library is not available. Probably the code block was newly authored to the page.
@@ -131,15 +137,11 @@ export default function decorate(block) {
         setTimeout(() => {
           // Wait until the newly updated block is added to DOM and ready for Prism to highlight.
           window.Prism.highlightAllUnder(block, true);
-          // Add collapsible functionality after highlighting only if block has expandable class
-          if (block.classList.contains('expandable')) {
-            addCollapsibleCodeFeature(block, pre, defaultLines);
-          }
         }, 250);
       });
     }
-  } else if (block.classList.contains('expandable')) {
-    // Add collapsible functionality directly if not in UE author mode and block has expandable class
+  }
+  if (block.classList.contains('expandable')) {
     addCollapsibleCodeFeature(block, pre, defaultLines);
   }
 }
