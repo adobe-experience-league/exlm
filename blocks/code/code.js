@@ -62,7 +62,7 @@ export default async function decorate(block) {
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
   const [preElement, lineNumberingEl, lineHighlightingEl, defaultLineNumbers] = htmlElementData;
 
-  const defaultLines = defaultLineNumbers?.textContent || 15;
+  const defaultLines = parseInt(defaultLineNumbers?.textContent, 10) || 15;
 
   const preTagAttributes = {};
   let preTagElement = preElement.childElementCount === 1 ? preElement.firstElementChild : preElement;
