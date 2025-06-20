@@ -689,7 +689,10 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       </atomic-result-number>
                     </div>
                     <div class="result-description">
-                    <atomic-result-children class="${HIDE_COMMUNITY_REPLIES ? 'hidden' : ''}">
+                    ${
+                      !HIDE_COMMUNITY_REPLIES
+                        ? `
+                    <atomic-result-children>
                       ${atomicResultChildrenStyles}
                       <atomic-load-more-children-results label="Show replies"></atomic-load-more-children-results>
                       <atomic-result-children-template>
@@ -710,6 +713,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </template>
                       </atomic-result-children-template>
                     </atomic-result-children>
+                    `
+                        : ''
+                    }
                     <atomic-field-condition must-match-el_contenttype="${CONTENT_TYPES.TUTORIAL}">
                       <atomic-field-condition if-defined="video_url">
                         <div class="result-field result-thumbnail">
@@ -803,7 +809,10 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       </atomic-result-number>
                     </div>
                     <div class="result-description">
-                    <atomic-result-children class="${HIDE_COMMUNITY_REPLIES ? 'hidden' : ''}">
+                    ${
+                      !HIDE_COMMUNITY_REPLIES
+                        ? `
+                    <atomic-result-children>
                       ${atomicResultChildrenStyles}
                       <atomic-result-children-template>
                         <template>
@@ -824,6 +833,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </template>
                       </atomic-result-children-template>
                     </atomic-result-children>
+                    `
+                        : ''
+                    }
                     <atomic-result-multi-value-text
                       field="limessagelabels"
                       max-values-to-display=99
