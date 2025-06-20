@@ -7,6 +7,7 @@ import {
 import { nextNavigationArrow, previousNavigationArrow } from './atomic-search-icons.js';
 import { atomicResultListStyles, atomicResultStyles } from './atomic-search-result.js';
 
+const HIDE_COMMUNITY_REPLIES = true;
 const getCoveoAtomicMarkup = (placeholders) => {
   const { lang: languageCode } = getPathDetails();
   const CONTENT_TYPES = {
@@ -688,7 +689,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       </atomic-result-number>
                     </div>
                     <div class="result-description">
-                    <atomic-result-children>
+                    <atomic-result-children style="${HIDE_COMMUNITY_REPLIES ? 'display: none;' : ''}">
                       ${atomicResultChildrenStyles}
                       <atomic-load-more-children-results label="Show replies"></atomic-load-more-children-results>
                       <atomic-result-children-template>
@@ -802,7 +803,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       </atomic-result-number>
                     </div>
                     <div class="result-description">
-                    <atomic-result-children>
+                    <atomic-result-children style="${HIDE_COMMUNITY_REPLIES ? 'display: none;' : ''}">
                       ${atomicResultChildrenStyles}
                       <atomic-result-children-template>
                         <template>
