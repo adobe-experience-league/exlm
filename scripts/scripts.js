@@ -331,6 +331,7 @@ export function decorateExternalLinks(main) {
     const href = a.getAttribute('href');
     if (!href) return;
     if (href.includes('#_blank')) {
+      a.setAttribute('href', href.replace('#_blank', ''));
       a.setAttribute('target', '_blank');
     } else if (!href.startsWith('#')) {
       if (a.hostname !== window.location.hostname) {
