@@ -6,9 +6,9 @@
   max-width: 100%;
 }
 
-/* Collapsible code styles */
+/* Collapsible code styles start */
 pre.collapsible-code[data-collapsed='true'] {
-  overflow: hidden;
+  overflow-y: hidden;
   position: relative;
 }
 
@@ -60,6 +60,14 @@ pre.collapsible-code[data-collapsed='true']::after {
 .code-toggle-button:focus {
   background-color: transparent;
 }
+
+@media (min-width: 900px) {
+  pre.collapsible-code[data-collapsed='true'] {
+    overflow: hidden;
+  }
+}
+
+/* Collapsible code styles end */
 
 /* Styles are imported from Prism Library [No Linting Required] */
 code[class*='language-'],
