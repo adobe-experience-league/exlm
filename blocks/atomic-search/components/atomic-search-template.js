@@ -689,7 +689,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       </atomic-result-number>
                     </div>
                     <div class="result-description">
-                    <atomic-result-children style="${HIDE_COMMUNITY_REPLIES ? 'display: none;' : ''}">
+                    <atomic-result-children class="${HIDE_COMMUNITY_REPLIES ? 'hidden' : ''}">
                       ${atomicResultChildrenStyles}
                       <atomic-load-more-children-results label="Show replies"></atomic-load-more-children-results>
                       <atomic-result-children-template>
@@ -803,7 +803,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       </atomic-result-number>
                     </div>
                     <div class="result-description">
-                    <atomic-result-children style="${HIDE_COMMUNITY_REPLIES ? 'display: none;' : ''}">
+                    <atomic-result-children class="${HIDE_COMMUNITY_REPLIES ? 'hidden' : ''}">
                       ${atomicResultChildrenStyles}
                       <atomic-result-children-template>
                         <template>
