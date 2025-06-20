@@ -164,10 +164,11 @@ export default async function decorate(block) {
         <div class="browse-card-description-text">
           ${descriptionElement?.innerHTML || ''}
         </div>
+      <div class="browse-sort-filter">
       <form class="browse-card-dropdown">
       <label>${filterLabelElement?.innerHTML}</label>
       </form>
-      <div class="view-switcher">
+        <div class="view-switcher">
       <button type="button" class="view-btn grid-view active" aria-label="Grid view">
         ${placeholders?.gridViewLabel || 'Grid'}
         <span class="icon icon-grid-white"></span>
@@ -178,10 +179,9 @@ export default async function decorate(block) {
         <span class="icon icon-list-view-black"></span>
         <span class="icon icon-list-view-white"></span>
       </button>
-    </div>
-    <div class="browse-sort-filter">
-    <div class="browse-sort-container"></div>
-    </div>
+      </div>
+      </div>
+      <div class="browse-sort-container"></div>
     </div>
   `);
 
@@ -189,9 +189,9 @@ export default async function decorate(block) {
 
   const tagsContainer = document.createElement('div');
   tagsContainer.classList.add('browse-card-tags');
-  const filterSortContainer = headerDiv.querySelector('.browse-sort-filter');
-  filterSortContainer.appendChild(tagsContainer);
-  headerDiv.append(filterSortContainer);
+  // const filterSortContainer = headerDiv.querySelector('.browse-sort-filter');
+  // filterSortContainer.appendChild(tagsContainer);
+  headerDiv.append(tagsContainer);
   block.appendChild(headerDiv);
   const products = await getListofProducts();
   const productsList = [];
