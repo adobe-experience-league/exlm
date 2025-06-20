@@ -594,11 +594,17 @@ export default function atomicResultHandler(block, placeholders) {
     const results = container.querySelectorAll('atomic-result');
     const isMobileView = isMobile();
     container.dataset.view = isMobileView ? 'mobile' : 'desktop';
-    results.forEach((resultEl) => {
-      const hydrateResult = () => {
+    results.forEach((resultElement) => {
+      const hydrateResult = (resultEl) => {
         const resultShadow = resultEl.shadowRoot;
         if (!resultShadow) {
-          waitForChildElement(resultEl, hydrateResult, 25);
+          waitForChildElement(
+            resultEl,
+            () => {
+              hydrateResult(resultEl);
+            },
+            25,
+          );
           return;
         }
 
@@ -607,7 +613,9 @@ export default function atomicResultHandler(block, placeholders) {
         const contentTypeElWrap = resultContentType?.firstElementChild?.shadowRoot;
 
         if (!resultItem || !contentTypeElWrap) {
-          waitFor(hydrateResult, 20);
+          waitFor(() => {
+            hydrateResult(resultEl);
+          }, 50);
           return;
         }
 
@@ -616,9 +624,17 @@ export default function atomicResultHandler(block, placeholders) {
           block.removeChild(blockLevelSkeleton);
         }
 
+        const recommendationBadgeExists = !!resultItem.querySelector('.atomic-recommendation-badge');
+        if (recommendationBadgeExists) {
+          const resultRoot = resultShadow.querySelector('.result-root');
+          resultRoot.classList.add('recommendation-badge');
+        }
+
         const contentTypeElParent = contentTypeElWrap?.querySelector('ul');
         if (!contentTypeElParent) {
-          waitFor(hydrateResult, 20);
+          waitFor(() => {
+            hydrateResult(resultEl);
+          }, 20);
           return;
         }
         if (!resultItem.dataset.decorated) {
@@ -636,12 +652,6 @@ export default function atomicResultHandler(block, placeholders) {
 
         const atomicResultChildren = resultItem.querySelector('atomic-result-children');
         handleAtomicResultChildrenUI(atomicResultChildren);
-
-        const recommendationBadgeExists = !!resultItem.querySelector('.atomic-recommendation-badge');
-        if (recommendationBadgeExists) {
-          const resultRoot = resultShadow.querySelector('.result-root');
-          resultRoot.classList.add('recommendation-badge');
-        }
 
         const productElWrap = resultItem?.querySelector('.result-product')?.firstElementChild?.shadowRoot;
         const productElements = productElWrap?.querySelectorAll('li') || [];
@@ -766,7 +776,7 @@ export default function atomicResultHandler(block, placeholders) {
         }
       };
 
-      hydrateResult();
+      hydrateResult(resultElement);
     });
 
     const layoutSectionEl = block.querySelector('atomic-layout-section[section="results"]');
