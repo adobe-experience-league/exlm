@@ -333,7 +333,6 @@
     height: auto;
     border: 1px solid var(--non-spectrum-unicorn-silver);
     border-radius: 16px;
-    max-width: 1204px;
   }
 
   .upcoming-event-v2.list .browse-cards-block-content > div .browse-card {

@@ -189,8 +189,6 @@ export default async function decorate(block) {
 
   const tagsContainer = document.createElement('div');
   tagsContainer.classList.add('browse-card-tags');
-  // const filterSortContainer = headerDiv.querySelector('.browse-sort-filter');
-  // filterSortContainer.appendChild(tagsContainer);
   headerDiv.append(tagsContainer);
   block.appendChild(headerDiv);
   const products = await getListofProducts();
