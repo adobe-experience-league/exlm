@@ -24,15 +24,41 @@ pre.collapsible-code[data-collapsed='true']::after {
 }
 
 .code-toggle-button {
-  display: block;
-  margin-top: 0.5em;
-  padding: 0.3em 0.7em;
-  background: var(--spectrum-blue-900);
-  color: var(--spectrum-gray-50);
-  border: none;
-  border-radius: 6px;
+  background: transparent;
   cursor: pointer;
-  font-size: 0.8em;
+  color: var(--non-spectrum-eerie-black);
+  border: 0 none;
+  border-radius: 4px;
+  font-size: var(--spectrum-font-size-50);
+  line-height: 17px;
+  margin: 0;
+  padding: 0 20px 0 0;
+  position: relative;
+  text-align: left;
+  text-transform: uppercase;
+  font-weight: var(--font-weight-extra-bold);
+}
+
+.code-toggle-button::after {
+  background-image: url('../../icons/down-arrow.svg');
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  background-size: 8px;
+  content: '';
+  height: 6px;
+  position: absolute;
+  right: 0;
+  top: 6px;
+  width: 10px;
+}
+
+.code-toggle-button.expanded::after {
+  transform: rotate(180deg);
+}
+
+.code-toggle-button:hover,
+.code-toggle-button:focus {
+  background-color: transparent;
 }
 
 /* Styles are imported from Prism Library [No Linting Required] */

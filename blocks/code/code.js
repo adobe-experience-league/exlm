@@ -14,7 +14,7 @@ function getDataLineValue(arr) {
  * @param {HTMLElement} block - The code block container
  * @param {HTMLElement} pre - The pre element containing the code
  */
-function addCollapsibleCodeFeature(block, pre) {
+function addCollapsibleCodeFeature(block, pre, lines) {
   const codeElement = pre.querySelector('code');
   if (!codeElement) return;
 
@@ -22,10 +22,9 @@ function addCollapsibleCodeFeature(block, pre) {
   const lineCount = (codeText.match(/\n/g) || []).length + 1;
 
   const lineHeight = 1.5;
-  const N = 15;
 
-  if (lineCount > N) {
-    const collapsedHeight = lineHeight * N;
+  if (lineCount > lines) {
+    const collapsedHeight = lineHeight * lines;
 
     pre.classList.add('collapsible-code');
     pre.setAttribute('data-lines', lineCount);
@@ -33,12 +32,14 @@ function addCollapsibleCodeFeature(block, pre) {
     pre.style.maxHeight = `${collapsedHeight}em`;
 
     const toggleButton = document.createElement('button');
-    toggleButton.className = 'code-toggle-button';
+    toggleButton.className = 'code-toggle-button collapsed';
     toggleButton.textContent = 'Show more';
 
     toggleButton.addEventListener('click', () => {
       const isCollapsed = pre.getAttribute('data-collapsed') === 'true';
       pre.setAttribute('data-collapsed', isCollapsed ? 'false' : 'true');
+      toggleButton.classList.toggle('collapsed', !isCollapsed);
+      toggleButton.classList.toggle('expanded', isCollapsed);
       toggleButton.textContent = isCollapsed ? 'Show less' : 'Show more';
       pre.style.maxHeight = isCollapsed ? '' : `${collapsedHeight}em`;
     });
@@ -49,7 +50,9 @@ function addCollapsibleCodeFeature(block, pre) {
 
 export default function decorate(block) {
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
-  const [preElement, lineNumberingEl, lineHighlightingEl] = htmlElementData;
+  const [preElement, lineNumberingEl, lineHighlightingEl, defaultLineNumbers] = htmlElementData;
+
+  const defaultLines = defaultLineNumbers?.textContent || 15;
 
   const preTagAttributes = {};
   let preTagElement = preElement.childElementCount === 1 ? preElement.firstElementChild : preElement;
@@ -119,7 +122,7 @@ export default function decorate(block) {
         window.Prism.highlightAllUnder(block, true);
         // Add collapsible functionality after highlighting only if block has expandable class
         if (block.classList.contains('expandable')) {
-          addCollapsibleCodeFeature(block, pre);
+          addCollapsibleCodeFeature(block, pre, defaultLines);
         }
       }, 250);
     } else {
@@ -130,13 +133,13 @@ export default function decorate(block) {
           window.Prism.highlightAllUnder(block, true);
           // Add collapsible functionality after highlighting only if block has expandable class
           if (block.classList.contains('expandable')) {
-            addCollapsibleCodeFeature(block, pre);
+            addCollapsibleCodeFeature(block, pre, defaultLines);
           }
         }, 250);
       });
     }
   } else if (block.classList.contains('expandable')) {
     // Add collapsible functionality directly if not in UE author mode and block has expandable class
-    addCollapsibleCodeFeature(block, pre);
+    addCollapsibleCodeFeature(block, pre, defaultLines);
   }
 }
