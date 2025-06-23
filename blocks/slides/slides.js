@@ -13,6 +13,7 @@ import {
 function html(content, placeholders) {
   const initialView = getPreference('view') || 'as-slides';
   const autoplayAudio = getPreference('autoplayAudio') || false;
+  console.log("*** autplay::", autoplayAudio);
 
   return `
         <div class="container ${initialView}" data-block-id="${content.id}">
