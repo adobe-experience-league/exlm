@@ -7,7 +7,6 @@ import {
 import { nextNavigationArrow, previousNavigationArrow } from './atomic-search-icons.js';
 import { atomicResultListStyles, atomicResultStyles } from './atomic-search-result.js';
 
-const HIDE_COMMUNITY_REPLIES = true;
 const getCoveoAtomicMarkup = (placeholders) => {
   const { lang: languageCode } = getPathDetails();
   const CONTENT_TYPES = {
@@ -689,27 +688,6 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       </atomic-result-number>
                     </div>
                     <div class="result-description">
-                    <atomic-result-children class="${HIDE_COMMUNITY_REPLIES ? 'hidden' : ''}">
-                      ${atomicResultChildrenStyles}
-                      <atomic-load-more-children-results label="Show replies"></atomic-load-more-children-results>
-                      <atomic-result-children-template>
-                        <template>
-                          ${atomicResultChildrenTemplateStyles}
-                          <div class="child-item">
-                            <div class="mobile-result-title result-title">
-                              <span class="icon icon-atomic-search-share"></span>
-                              <atomic-result-text field="title" should-highlight="false">
-                                <atomic-result-link>
-                                </atomic-result-link>
-                              </atomic-result-text>
-                            </div>
-                            <atomic-result-section-excerpt>
-                              <atomic-result-text field="excerpt" should-highlight="false"></atomic-result-text>
-                            </atomic-result-section-excerpt>
-                          </div>
-                        </template>
-                      </atomic-result-children-template>
-                    </atomic-result-children>
                     <atomic-field-condition must-match-el_contenttype="${CONTENT_TYPES.TUTORIAL}">
                       <atomic-field-condition if-defined="video_url">
                         <div class="result-field result-thumbnail">
@@ -803,27 +781,6 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       </atomic-result-number>
                     </div>
                     <div class="result-description">
-                    <atomic-result-children class="${HIDE_COMMUNITY_REPLIES ? 'hidden' : ''}">
-                      ${atomicResultChildrenStyles}
-                      <atomic-result-children-template>
-                        <template>
-                          ${atomicResultChildrenTemplateStyles}
-                          
-                          <div class="child-item">
-                            <div class="result-title">
-                              <span class="icon icon-atomic-search-share"></span>
-                              <atomic-result-text field="title" should-highlight="false">
-                                <atomic-result-link>
-                                </atomic-result-link>
-                              </atomic-result-text>
-                            </div>
-                            <atomic-result-section-excerpt>
-                              <atomic-result-text field="excerpt" should-highlight="false"></atomic-result-text>
-                            </atomic-result-section-excerpt>
-                          </div>
-                        </template>
-                      </atomic-result-children-template>
-                    </atomic-result-children>
                     <atomic-result-multi-value-text
                       field="limessagelabels"
                       max-values-to-display=99
