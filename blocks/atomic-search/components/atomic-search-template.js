@@ -1,9 +1,5 @@
 import { htmlToElement, getPathDetails } from '../../../scripts/scripts.js';
-import {
-  atomicResultChildrenStyles,
-  atomicResultChildrenTemplateStyles,
-  INITIAL_ATOMIC_RESULT_CHILDREN_COUNT,
-} from './atomic-result-children.js';
+import { INITIAL_ATOMIC_RESULT_CHILDREN_COUNT } from './atomic-result-children.js';
 import { nextNavigationArrow, previousNavigationArrow } from './atomic-search-icons.js';
 import { atomicResultListStyles, atomicResultStyles } from './atomic-search-result.js';
 
