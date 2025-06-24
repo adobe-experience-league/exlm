@@ -140,6 +140,14 @@ function addCardDateInfo(card) {
   }
 }
 
+function reDecoarateListView(block, cardDivContainer, placeholders) {
+  const card = cardDivContainer.querySelector('.browse-card');
+  if (card && block.classList.contains('list')) {
+    addCardDateInfo(card);
+    setupExpandableDescription(card, placeholders);
+  }
+}
+
 export default async function decorate(block) {
   let placeholders = {};
   try {
@@ -316,11 +324,7 @@ export default async function decorate(block) {
     updatedData.forEach((cardData) => {
       const cardDiv = document.createElement('div');
       buildCard(contentDiv, cardDiv, cardData).then(() => {
-        const card = cardDiv.querySelector('.browse-card');
-        if (card && block.classList.contains('list')) {
-          addCardDateInfo(card);
-          setupExpandableDescription(card, placeholders);
-        }
+        reDecoarateListView(block, cardDiv, placeholders);
       });
       contentDiv.appendChild(cardDiv);
     });
@@ -434,11 +438,7 @@ export default async function decorate(block) {
         sortedData.forEach((cardData) => {
           const cardDiv = document.createElement('div');
           buildCard(contentDiv, cardDiv, cardData).then(() => {
-            const card = cardDiv.querySelector('.browse-card');
-            if (card && block.classList.contains('list')) {
-              addCardDateInfo(card);
-              setupExpandableDescription(card, placeholders);
-            }
+            reDecoarateListView(block, cardDiv, placeholders);
           });
           contentDiv.appendChild(cardDiv);
         });
