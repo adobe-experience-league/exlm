@@ -1,9 +1,5 @@
 import { htmlToElement, getPathDetails } from '../../../scripts/scripts.js';
-import {
-  atomicResultChildrenStyles,
-  atomicResultChildrenTemplateStyles,
-  INITIAL_ATOMIC_RESULT_CHILDREN_COUNT,
-} from './atomic-result-children.js';
+import { INITIAL_ATOMIC_RESULT_CHILDREN_COUNT } from './atomic-result-children.js';
 import { nextNavigationArrow, previousNavigationArrow } from './atomic-search-icons.js';
 import { atomicResultListStyles, atomicResultStyles } from './atomic-search-result.js';
 
@@ -314,6 +310,10 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 }
                 atomic-facet::part(clear-button), atomic-timeframe-facet::part(clear-button) {
                   display: none;
+                }
+
+                atomic-facet::part(facet-parent-hide-ui) {
+                  padding-bottom: 0.625rem;
                 }
                 
                 atomic-facet::part(show-more-less-icon) atomic-component-error, atomic-facet::part(value-checkbox-icon) atomic-component-error, atomic-facet::part(value-checkbox) atomic-component-error, atomic-component-error, atomic-icon atomic-component-error {
@@ -688,27 +688,6 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       </atomic-result-number>
                     </div>
                     <div class="result-description">
-                    <atomic-result-children>
-                      ${atomicResultChildrenStyles}
-                      <atomic-load-more-children-results label="Show replies"></atomic-load-more-children-results>
-                      <atomic-result-children-template>
-                        <template>
-                          ${atomicResultChildrenTemplateStyles}
-                          <div class="child-item">
-                            <div class="mobile-result-title result-title">
-                              <span class="icon icon-atomic-search-share"></span>
-                              <atomic-result-text field="title" should-highlight="false">
-                                <atomic-result-link>
-                                </atomic-result-link>
-                              </atomic-result-text>
-                            </div>
-                            <atomic-result-section-excerpt>
-                              <atomic-result-text field="excerpt" should-highlight="false"></atomic-result-text>
-                            </atomic-result-section-excerpt>
-                          </div>
-                        </template>
-                      </atomic-result-children-template>
-                    </atomic-result-children>
                     <atomic-field-condition must-match-el_contenttype="${CONTENT_TYPES.TUTORIAL}">
                       <atomic-field-condition if-defined="video_url">
                         <div class="result-field result-thumbnail">
@@ -802,27 +781,6 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       </atomic-result-number>
                     </div>
                     <div class="result-description">
-                    <atomic-result-children>
-                      ${atomicResultChildrenStyles}
-                      <atomic-result-children-template>
-                        <template>
-                          ${atomicResultChildrenTemplateStyles}
-                          
-                          <div class="child-item">
-                            <div class="result-title">
-                              <span class="icon icon-atomic-search-share"></span>
-                              <atomic-result-text field="title" should-highlight="false">
-                                <atomic-result-link>
-                                </atomic-result-link>
-                              </atomic-result-text>
-                            </div>
-                            <atomic-result-section-excerpt>
-                              <atomic-result-text field="excerpt" should-highlight="false"></atomic-result-text>
-                            </atomic-result-section-excerpt>
-                          </div>
-                        </template>
-                      </atomic-result-children-template>
-                    </atomic-result-children>
                     <atomic-result-multi-value-text
                       field="limessagelabels"
                       max-values-to-display=99
