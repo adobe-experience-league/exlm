@@ -140,6 +140,22 @@ function addCardDateInfo(card) {
   }
 }
 
+function enhanceListCardsAfterFilter(block, contentDiv, placeholders) {
+  if (block.classList.contains('list')) {
+    const observer = new MutationObserver((_mutations, obs) => {
+      const cards = contentDiv.querySelectorAll('.browse-card');
+      if (cards.length > 0) {
+        cards.forEach((card) => {
+          addCardDateInfo(card);
+          setupExpandableDescription(card, placeholders);
+        });
+        obs.disconnect();
+      }
+    });
+    observer.observe(contentDiv, { childList: true, subtree: true });
+  }
+}
+
 export default async function decorate(block) {
   let placeholders = {};
   try {
@@ -164,7 +180,7 @@ export default async function decorate(block) {
         <div class="browse-card-description-text">
           ${descriptionElement?.innerHTML || ''}
         </div>
-      <div class="browse-sort-filter">
+      <div class="browse-upcoming-event-filter">
       <form class="browse-card-dropdown">
       <label>${filterLabelElement?.innerHTML}</label>
       </form>
@@ -317,8 +333,8 @@ export default async function decorate(block) {
       buildCard(contentDiv, cardDiv, cardData);
       contentDiv.appendChild(cardDiv);
     });
-    // eslint-disable-next-line no-use-before-define
-    enhanceListCardsAfterFilter();
+
+    enhanceListCardsAfterFilter(block, contentDiv, placeholders);
   };
 
   // Pre-select checkboxes from URL filters
@@ -362,22 +378,6 @@ export default async function decorate(block) {
         const dateB = new Date(b.event.time);
         return sortOrder === 'descending' ? dateB - dateA : dateA - dateB;
       });
-  }
-
-  function enhanceListCardsAfterFilter() {
-    if (block.classList.contains('list')) {
-      const observer = new MutationObserver((_mutations, obs) => {
-        const cards = contentDiv.querySelectorAll('.browse-card');
-        if (cards.length > 0) {
-          cards.forEach((card) => {
-            addCardDateInfo(card);
-            setupExpandableDescription(card, placeholders);
-          });
-          obs.disconnect();
-        }
-      });
-      observer.observe(contentDiv, { childList: true, subtree: true });
-    }
   }
 
   function renderSortContainerForUpcomingEvents(data) {
@@ -447,7 +447,7 @@ export default async function decorate(block) {
           buildCard(contentDiv, cardDiv, cardData);
           contentDiv.appendChild(cardDiv);
         });
-        enhanceListCardsAfterFilter();
+        enhanceListCardsAfterFilter(block, contentDiv, placeholders);
       });
     });
   }

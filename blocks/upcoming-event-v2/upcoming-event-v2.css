@@ -381,7 +381,7 @@
 /** List view styles end **/
 
 /** Sort styles start **/
-.upcoming-event-v2 .browse-cards-block-header .browse-sort-filter {
+.upcoming-event-v2 .browse-cards-block-header .browse-upcoming-event-filter {
   display: flex;
   flex-direction: row;
   width: 100%;
