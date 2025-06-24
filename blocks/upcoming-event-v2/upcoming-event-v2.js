@@ -140,6 +140,22 @@ function addCardDateInfo(card) {
   }
 }
 
+function enhanceListCardsAfterFilter(block, contentDiv, placeholders) {
+  if (block.classList.contains('list')) {
+    const observer = new MutationObserver((_mutations, obs) => {
+      const cards = contentDiv.querySelectorAll('.browse-card');
+      if (cards.length > 0) {
+        cards.forEach((card) => {
+          addCardDateInfo(card);
+          setupExpandableDescription(card, placeholders);
+        });
+        obs.disconnect();
+      }
+    });
+    observer.observe(contentDiv, { childList: true, subtree: true });
+  }
+}
+
 export default async function decorate(block) {
   let placeholders = {};
   try {
@@ -164,6 +180,7 @@ export default async function decorate(block) {
         <div class="browse-card-description-text">
           ${descriptionElement?.innerHTML || ''}
         </div>
+      <div class="browse-upcoming-event-filter">
       <form class="browse-card-dropdown">
       <label>${filterLabelElement?.innerHTML}</label>
       </form>
@@ -178,7 +195,9 @@ export default async function decorate(block) {
         <span class="icon icon-list-view-black"></span>
         <span class="icon icon-list-view-white"></span>
       </button>
-    </div>
+      </div>
+      </div>
+      <div class="browse-sort-container"></div>
     </div>
   `);
 
@@ -315,6 +334,8 @@ export default async function decorate(block) {
       buildCard(contentDiv, cardDiv, cardData);
       contentDiv.appendChild(cardDiv);
     });
+
+    enhanceListCardsAfterFilter(block, contentDiv, placeholders);
   };
 
   // Pre-select checkboxes from URL filters
@@ -339,22 +360,98 @@ export default async function decorate(block) {
    * @param {Array} params - Selected filter parameters.
    * @returns {Array} - Filtered and sorted card data.
    */
-  function fetchFilteredCardData(data, params) {
+  function fetchFilteredCardData(data, params = [], sortOrder = 'descending') {
     if (!data) return [];
     const solutionsList = Array.isArray(params) ? params : [params];
 
     // If no filters are selected, return all data sorted by event time
-    if (solutionsList.length === 0) {
-      return data.filter((card) => card.event?.time).sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
-    }
+    const filtered = solutionsList.length
+      ? data.filter((event) => {
+          const productArray = Array.isArray(event.product) ? event.product : [event.product];
+          return solutionsList.some((filter) => productArray.includes(filter));
+        })
+      : data;
 
-    // Filter events that match any of the selected filters
-    return data
-      .filter((event) => {
-        const productArray = Array.isArray(event.product) ? event.product : [event.product];
-        return solutionsList.some((filter) => productArray.includes(filter));
-      })
-      .filter((card) => card.event?.time) // Ensure valid event time
-      .sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
+    return filtered
+      .filter((card) => card.event?.time)
+      .sort((a, b) => {
+        const dateA = new Date(a.event.time);
+        const dateB = new Date(b.event.time);
+        return sortOrder === 'descending' ? dateB - dateA : dateA - dateB;
+      });
   }
+
+  function renderSortContainerForUpcomingEvents(data) {
+    const wrapper = block.querySelector('.browse-sort-container');
+    if (!wrapper) return;
+
+    const sortContainer = document.createElement('div');
+    sortContainer.classList.add('sort-container');
+    sortContainer.innerHTML = `<span>${placeholders?.filterSortLabel || 'Sort by'}:</span>
+    <button class="sort-drop-btn">${placeholders?.filterSortNewestLabel || 'Newest'}</button>
+    <div class="sort-dropdown-content">
+      <a href="/" data-sort-criteria="descending" data-sort-caption="${
+        placeholders?.filterSortNewestLabel || 'Newest'
+      }">${placeholders?.filterSortNewestLabel || 'Newest'}</a>
+      <a href="/" data-sort-criteria="ascending" data-sort-caption="${
+        placeholders?.filterSortOldestLabel || 'Oldest'
+      }">${placeholders?.filterSortOldestLabel || 'Oldest'}</a>
+    </div>
+  `;
+    wrapper.appendChild(sortContainer);
+
+    const dropDownBtn = sortContainer.querySelector('.sort-drop-btn');
+    const sortDropdown = sortContainer.querySelector('.sort-dropdown-content');
+    const sortLinks = sortDropdown.querySelectorAll('a');
+
+    sortLinks[0].classList.add('selected');
+
+    dropDownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropDownBtn.classList.toggle('active');
+      sortDropdown.classList.toggle('show');
+
+      setTimeout(() => {
+        document.addEventListener(
+          'click',
+          (event) => {
+            if (!sortDropdown.contains(event.target) && event.target !== dropDownBtn) {
+              sortDropdown.classList.remove('show');
+              dropDownBtn.classList.remove('active');
+            }
+          },
+          { once: true },
+        );
+      });
+    });
+
+    sortLinks.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const sortCriteria = link.getAttribute('data-sort-criteria');
+        const sortCaption = link.getAttribute('data-sort-caption');
+
+        dropDownBtn.textContent = sortCaption;
+        sortDropdown.classList.remove('show');
+        dropDownBtn.classList.remove('active');
+
+        sortLinks.forEach((a) => a.classList.remove('selected'));
+        link.classList.add('selected');
+
+        const selectedFilters = [...block.querySelectorAll('.browse-tags')].map((tag) => tag.getAttribute('value'));
+
+        const sortedData = fetchFilteredCardData(data, selectedFilters, sortCriteria);
+        contentDiv.innerHTML = '';
+        sortedData.forEach((cardData) => {
+          const cardDiv = document.createElement('div');
+          buildCard(contentDiv, cardDiv, cardData);
+          contentDiv.appendChild(cardDiv);
+        });
+        enhanceListCardsAfterFilter(block, contentDiv, placeholders);
+      });
+    });
+  }
+
+  renderSortContainerForUpcomingEvents(browseCardsContent);
 }
