@@ -140,22 +140,6 @@ function addCardDateInfo(card) {
   }
 }
 
-function enhanceListCardsAfterFilter(block, contentDiv, placeholders) {
-  if (block.classList.contains('list')) {
-    const observer = new MutationObserver((_mutations, obs) => {
-      const cards = contentDiv.querySelectorAll('.browse-card');
-      if (cards.length > 0) {
-        cards.forEach((card) => {
-          addCardDateInfo(card);
-          setupExpandableDescription(card, placeholders);
-        });
-        obs.disconnect();
-      }
-    });
-    observer.observe(contentDiv, { childList: true, subtree: true });
-  }
-}
-
 export default async function decorate(block) {
   let placeholders = {};
   try {
@@ -331,11 +315,15 @@ export default async function decorate(block) {
     contentDiv.style.display = '';
     updatedData.forEach((cardData) => {
       const cardDiv = document.createElement('div');
-      buildCard(contentDiv, cardDiv, cardData);
+      buildCard(contentDiv, cardDiv, cardData).then(() => {
+        const card = cardDiv.querySelector('.browse-card');
+        if (card && block.classList.contains('list')) {
+          addCardDateInfo(card);
+          setupExpandableDescription(card, placeholders);
+        }
+      });
       contentDiv.appendChild(cardDiv);
     });
-
-    enhanceListCardsAfterFilter(block, contentDiv, placeholders);
   };
 
   // Pre-select checkboxes from URL filters
@@ -445,10 +433,15 @@ export default async function decorate(block) {
         contentDiv.innerHTML = '';
         sortedData.forEach((cardData) => {
           const cardDiv = document.createElement('div');
-          buildCard(contentDiv, cardDiv, cardData);
+          buildCard(contentDiv, cardDiv, cardData).then(() => {
+            const card = cardDiv.querySelector('.browse-card');
+            if (card && block.classList.contains('list')) {
+              addCardDateInfo(card);
+              setupExpandableDescription(card, placeholders);
+            }
+          });
           contentDiv.appendChild(cardDiv);
         });
-        enhanceListCardsAfterFilter(block, contentDiv, placeholders);
       });
     });
   }
