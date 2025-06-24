@@ -494,7 +494,9 @@ export default function atomicResultHandler(block, placeholders) {
         }
         const elements = childrenRoot.querySelectorAll('.result-component');
         elements.forEach(decorateAtomicChildResult);
-        const countString = element.parentElement?.querySelector('.child-result-count')?.textContent?.trim();
+        const countString = element.parentElement?.parentElement
+          ?.querySelector('.child-result-count')
+          ?.textContent?.trim();
         const childrenCount = countString && !Number.isNaN(countString) ? +countString : 0;
 
         if (childrenCount <= INITIAL_ATOMIC_RESULT_CHILDREN_COUNT) {
