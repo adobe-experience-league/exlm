@@ -495,6 +495,7 @@
     flex-direction: column;
     margin-top: 24px;
     gap: 24px;
+    min-height: unset;
   }
 
   .upcoming-event-v2.list .browse-cards-block-content > div {
