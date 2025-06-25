@@ -235,7 +235,27 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet.hide-facet {
                   display: none;
                 }
-                atomic-facet::part(facet-hide-element) {
+                atomic-facet::part(facet-show-more-wrapper) {
+                  display: flex;
+                  margin: 16px 8px 8px;
+                }
+                atomic-facet::part(icon-item) {
+                  height: 9px;
+                  width: 9px;
+                  margin-top: 2px;
+                  display: none;
+                }
+                atomic-facet::part(show-icon) {
+                  display: block;
+                }
+                atomic-facet::part(facet-show-more) {
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  gap: 4px;
+                  color: var(--non-spectrum-input-text);
+                }
+                atomic-facet::part(facet-hide-element), atomic-facet::part(facet-collapsed) {
                   display: none;
                 }
                 atomic-search-interface.atomic-search-interface-no-results atomic-facet::part(facet-hide-element) {
@@ -330,6 +350,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 sort-criteria="alphanumericNatural"
                 field="el_contenttype"
                 label="${placeholders.searchContentTypeLabel || 'Content Type'}"
+                number-of-values="50"
                 display-values-as="checkbox">
               </atomic-facet>
               <atomic-facet
@@ -344,7 +365,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 sort-criteria="alphanumericNatural"
                 field="el_product"
                 label="${placeholders.searchProductLabel || 'Product'}"
-                number-of-values="60"
+                number-of-values="500"
                 display-values-as="checkbox"
                 with-search="false">
               </atomic-facet>
@@ -353,6 +374,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 sort-criteria="alphanumericNatural"
                 field="el_role"
                 label="${placeholders.searchRoleLabel || 'Role'}"
+                number-of-values="50"
                 display-values-as="checkbox">
               </atomic-facet>
               <atomic-timeframe-facet
