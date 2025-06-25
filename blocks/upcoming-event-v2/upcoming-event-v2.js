@@ -148,9 +148,9 @@ function reDecoarateListView(block, cardDivContainer, placeholders) {
   }
 }
 
-function buildUpdatedCards(block, contentDivContainer, sortedData, placeholders) {
+function buildUpdatedCards(block, contentDivContainer, data, placeholders) {
   contentDivContainer.innerHTML = '';
-  sortedData.forEach((cardData) => {
+  data.forEach((cardData) => {
     const cardDiv = document.createElement('div');
     buildCard(contentDivContainer, cardDiv, cardData).then(() => {
       reDecoarateListView(block, cardDiv, placeholders);
