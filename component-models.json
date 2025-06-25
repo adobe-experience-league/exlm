@@ -4303,7 +4303,8 @@
         "name": "generateTQTags",
         "label": "Generate TQ Tags",
         "valueType": "string",
-        "extensionId": "exl-ue-extension"
+        "extensionId": "exl-ue-extension",
+        "requiredTagsToEnable": ["tq-role", "tq-level"]
       },
       {
         "component": "custom-aem-tag",
