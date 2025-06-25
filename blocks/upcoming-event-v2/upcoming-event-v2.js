@@ -140,7 +140,7 @@ function addCardDateInfo(card) {
   }
 }
 
-function reDecoarateListView(block, cardDivContainer, placeholders) {
+function reDecorateListView(block, cardDivContainer, placeholders) {
   const card = cardDivContainer.querySelector('.browse-card');
   if (card && block.classList.contains('list')) {
     addCardDateInfo(card);
@@ -149,11 +149,10 @@ function reDecoarateListView(block, cardDivContainer, placeholders) {
 }
 
 function buildUpdatedCards(block, contentDivContainer, data, placeholders) {
-  contentDivContainer.innerHTML = '';
   data.forEach((cardData) => {
     const cardDiv = document.createElement('div');
     buildCard(contentDivContainer, cardDiv, cardData).then(() => {
-      reDecoarateListView(block, cardDiv, placeholders);
+      reDecorateListView(block, cardDiv, placeholders);
     });
     contentDivContainer.appendChild(cardDiv);
   });
@@ -313,6 +312,8 @@ export default async function decorate(block) {
     // eslint-disable-next-line no-use-before-define
     const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
 
+    contentDiv.innerHTML = '';
+
     const existingError = block.querySelector('.event-no-results');
     if (existingError) existingError.remove(); // Prevent duplicate error message
 
@@ -438,6 +439,7 @@ export default async function decorate(block) {
         const selectedFilters = [...block.querySelectorAll('.browse-tags')].map((tag) => tag.getAttribute('value'));
 
         const sortedData = fetchFilteredCardData(data, selectedFilters, sortCriteria);
+        contentDiv.innerHTML = '';
         buildUpdatedCards(block, contentDiv, sortedData, placeholders);
       });
     });
