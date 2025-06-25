@@ -602,11 +602,6 @@ async function loadEager(doc) {
     decorateMain(main);
     document.body.classList.add('appear');
     await waitForLCPonMain(LCP_BLOCKS);
-
-    // Applying data-cs-mask for profile pages
-    if (isProfilePage) {
-      document.body.setAttribute('data-cs-mask', '');
-    }
   }
 
   try {
@@ -1335,6 +1330,9 @@ async function loadPage() {
   };
 
   const handleProfilePage = async () => {
+    // Applying data-cs-mask for profile pages
+    document.body.setAttribute('data-cs-mask', '');
+
     if (window.location.href.includes('.html')) {
       loadPage();
     } else {
