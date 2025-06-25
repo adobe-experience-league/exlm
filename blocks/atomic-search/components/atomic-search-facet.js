@@ -1,3 +1,5 @@
+import { decorateIcons } from '../../../scripts/lib-franklin.js';
+import { htmlToElement } from '../../../scripts/scripts.js';
 import {
   CUSTOM_EVENTS,
   debounce,
@@ -8,7 +10,9 @@ import {
   COMMUNITY_CONTENT_TYPES,
 } from './atomic-search-utils.js';
 
-export default function atomicFacetHandler(baseElement) {
+const MAX_FACETS_WITHOUT_EXPANSION = 5;
+
+export default function atomicFacetHandler(baseElement, placeholders) {
   let baseObserver;
   const adjustChildElementsPosition = (facet, atomicElement) => {
     if (facet.dataset.childfacet === 'true') {
@@ -107,6 +111,20 @@ export default function atomicFacetHandler(baseElement) {
     sortedChildren.forEach((item) => parentWrapper.appendChild(item));
   };
 
+  const handleFacetsVisibility = (facets, expanded) => {
+    let count = 0;
+    facets.forEach((facet) => {
+      const isFacetParent = facet.dataset.childfacet !== 'true';
+      if (isFacetParent) {
+        count += 1;
+      }
+      if (count > MAX_FACETS_WITHOUT_EXPANSION) {
+        const op = expanded ? 'remove' : 'add';
+        facet.part[op]('facet-collapsed');
+      }
+    });
+  };
+
   const updateChildElementUI = (parentWrapper, facetParent) => {
     const children = Array.from(parentWrapper.children);
     const finalList = [];
@@ -171,6 +189,48 @@ export default function atomicFacetHandler(baseElement) {
     finalList.forEach((item) => parentWrapper.appendChild(item));
   };
 
+  const updateShowMoreVisibility = (facetParent) => {
+    if (facetParent.dataset.showMoreBtn) {
+      return;
+    }
+    const facets = Array.from(facetParent.querySelector('[part="values"]').children);
+    const parentFacetsCount = facets.filter((f) => f.dataset.childfacet !== 'true').length;
+    if (parentFacetsCount <= MAX_FACETS_WITHOUT_EXPANSION) {
+      return;
+    }
+    const showMoreLabel = placeholders.showMore || 'Show more';
+    const showLessLabel = placeholders.showLore || 'Show less';
+    facetParent.dataset.showMoreBtn = 'true';
+    const showMoreWrapper = htmlToElement(`<div part="facet-show-more-wrapper">
+        <button data-expanded="false" part="facet-show-more" class="facet-show-more-btn">
+          <span class="icon-elements">
+            <span part="icon-item show-icon" class="icon icon-plus"></span>
+            <span part="icon-item" class="icon icon-minus"></span>
+          </span>
+          <span class="button-label">${showMoreLabel}</span>
+        </button>
+      </div>`);
+    const showMoreBtn = showMoreWrapper.querySelector('button');
+    showMoreBtn.addEventListener('click', () => {
+      const previouslyExpanded = showMoreBtn.dataset.expanded === 'true';
+      const isExpanded = !previouslyExpanded;
+      const allFacets = Array.from(facetParent.querySelector('[part="values"]').children);
+      handleFacetsVisibility(allFacets, isExpanded);
+      showMoreBtn.dataset.expanded = `${isExpanded}`;
+      const btnLabel = showMoreBtn.querySelector('span.button-label');
+      btnLabel.textContent = isExpanded ? showLessLabel : showMoreLabel;
+      const iconElements = showMoreBtn.querySelectorAll('.icon');
+      iconElements.forEach((iconEl) => {
+        iconEl.part.remove('show-icon');
+      });
+      const iconToShow = showMoreBtn.querySelector(`.${isExpanded ? 'icon-minus' : 'icon-plus'}`);
+      iconToShow.part.add('show-icon');
+    });
+    decorateIcons(showMoreBtn);
+    facetParent.appendChild(showMoreWrapper);
+    handleFacetsVisibility(facets, false);
+  };
+
   const updateFacetUI = (facet, atomicElement, forceUpdate = false) => {
     const forceUpdateElement = forceUpdate === true;
     if (facet && (facet.dataset.updated !== 'true' || forceUpdateElement)) {
@@ -227,6 +287,7 @@ export default function atomicFacetHandler(baseElement) {
       });
       const facetParent = atomicFacet.shadowRoot.querySelector('[part="facet"]');
       updateChildElementUI(parentWrapper, facetParent);
+      updateShowMoreVisibility(facetParent);
       if (atomicFacet.dataset.clickmore) {
         const showMoreBtn = atomicFacet.shadowRoot.querySelector('[part="show-more"]');
         if (showMoreBtn) {
@@ -262,42 +323,6 @@ export default function atomicFacetHandler(baseElement) {
     valuesObserver.observe(shadow, { childList: true, subtree: true });
   };
 
-  const handleShowMoreClick = (atomicFacet) => {
-    const facetParent = atomicFacet.shadowRoot.querySelector('[part="facet"]');
-    if (!facetParent || facetParent.dataset.observed === 'true') return;
-    baseObserver = new MutationObserver((mutationsList) => {
-      let updatedFlag = false;
-      mutationsList.forEach((mutation) => {
-        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-          mutation.addedNodes.forEach((node) => {
-            if (node.nodeType === Node.ELEMENT_NODE && node.matches?.('li.relative.flex.items-center')) {
-              updateFacetUI(node, atomicFacet, true);
-              updatedFlag = true;
-            }
-          });
-        }
-      });
-      if (updatedFlag) {
-        const parentWrapper = atomicFacet.shadowRoot.querySelector('[part="values"]');
-        if (parentWrapper) {
-          const facets = Array.from(parentWrapper.children);
-          setTimeout(() => {
-            facets.forEach((facet) => {
-              adjustChildElementsPosition(facet, atomicFacet);
-            });
-            updateChildElementUI(parentWrapper, facetParent);
-          }, 200);
-        }
-      }
-    });
-
-    baseObserver.observe(facetParent, {
-      childList: true,
-      subtree: true,
-    });
-    facetParent.dataset.observed = 'true';
-  };
-
   const onResultsUpdate = () => {
     const atomicFacets = document.querySelectorAll('atomic-facet');
     atomicFacets.forEach(handleAtomicFacetUI);
@@ -309,12 +334,6 @@ export default function atomicFacetHandler(baseElement) {
 
     const atomicFacets = document.querySelectorAll('atomic-facet');
     atomicFacets.forEach((atomicFacet) => {
-      const showMoreBtn = atomicFacet.shadowRoot.querySelector('[part="show-more"]');
-      if (showMoreBtn) {
-        showMoreBtn.addEventListener('click', (e) => {
-          handleShowMoreClick(atomicFacet, e);
-        });
-      }
       observeFacetValuesList(atomicFacet);
       handleAtomicFacetUI(atomicFacet);
     });
