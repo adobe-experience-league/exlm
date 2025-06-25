@@ -15,6 +15,7 @@ import { htmlToElement, getConfig } from '../../../scripts/scripts.js';
 import { INITIAL_ATOMIC_RESULT_CHILDREN_COUNT } from './atomic-result-children.js';
 
 const { communityTopicsUrl } = getConfig();
+const MAX_HYDRATION_ATTEMPTS = 10;
 
 export const atomicResultStyles = `
                   <style>
@@ -445,6 +446,15 @@ export default function atomicResultHandler(block, placeholders) {
     }, 200);
   }
 
+  function removeBlockSkeleton() {
+    const skeleton = container.parentElement.querySelector('.skeleton-wrapper');
+    if (skeleton) {
+      container.style.cssText = '';
+      baseElement.classList.remove('list-wrap-skeleton');
+      container.parentElement.removeChild(skeleton);
+    }
+  }
+
   function decorateChildrenSection({ btn, element }) {
     const isCollapsed = btn.dataset.state === 'collapsed';
     btn.innerHTML = `
@@ -614,7 +624,7 @@ export default function atomicResultHandler(block, placeholders) {
         const resultContentType = resultItem?.querySelector('.result-content-type');
         const contentTypeElWrap = resultContentType?.firstElementChild?.shadowRoot;
 
-        if (!resultItem || !contentTypeElWrap) {
+        if (!resultItem) {
           waitFor(() => {
             hydrateResult(resultEl);
           }, 50);
@@ -631,6 +641,19 @@ export default function atomicResultHandler(block, placeholders) {
           const resultRoot = resultShadow.querySelector('.result-root');
           resultRoot.classList.add('recommendation-badge');
         }
+        const currentHydrationCount = +(resultEl.dataset.hydration || '0');
+        if (currentHydrationCount >= MAX_HYDRATION_ATTEMPTS) {
+          removeBlockSkeleton();
+          return; // Return to avoid repeated hydrations endlessly.
+        }
+        resultEl.dataset.hydration = `${currentHydrationCount + 1}`;
+
+        if (!contentTypeElWrap) {
+          waitFor(() => {
+            hydrateResult(resultEl);
+          }, 50);
+          return;
+        }
 
         const contentTypeElParent = contentTypeElWrap?.querySelector('ul');
         if (!contentTypeElParent) {
@@ -645,12 +668,7 @@ export default function atomicResultHandler(block, placeholders) {
         }
 
         // Remove skeleton
-        const skeleton = container.parentElement.querySelector('.skeleton-wrapper');
-        if (skeleton) {
-          container.style.cssText = '';
-          baseElement.classList.remove('list-wrap-skeleton');
-          container.parentElement.removeChild(skeleton);
-        }
+        removeBlockSkeleton();
 
         const atomicResultChildren = resultItem.querySelector('atomic-result-children');
         handleAtomicResultChildrenUI(atomicResultChildren);
@@ -778,6 +796,7 @@ export default function atomicResultHandler(block, placeholders) {
         }
       };
 
+      resultElement.dataset.hydration = '0';
       hydrateResult(resultElement);
     });
 
