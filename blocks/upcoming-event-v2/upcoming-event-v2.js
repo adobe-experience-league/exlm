@@ -117,9 +117,8 @@ function addCardDateInfo(card) {
   const dateParts = rawDate.trim();
   const timeAndZone = rawTime.trim();
 
-  const dateDisplay = document.createElement('div');
-  dateDisplay.classList.add('card-figure-date');
-  dateDisplay.innerHTML = `
+  const dateDisplay = htmlToElement(`
+    <div class="card-figure-date">
     <div class="calendar-icon">
       <span class="icon icon-calendar-white"></span>
     </div>
@@ -129,7 +128,7 @@ function addCardDateInfo(card) {
     <div class="time-display">
       ${timeAndZone}
     </div>
-  `;
+  `);
 
   cardFigure.appendChild(dateDisplay);
   decorateIcons(dateDisplay);
@@ -382,9 +381,9 @@ export default async function decorate(block) {
     const wrapper = block.querySelector('.browse-sort-container');
     if (!wrapper) return;
 
-    const sortContainer = document.createElement('div');
-    sortContainer.classList.add('sort-container');
-    sortContainer.innerHTML = `<span>${placeholders?.filterSortLabel || 'Sort by'}:</span>
+    const sortContainer = htmlToElement(`
+      <div class="sort-container">
+      <span>${placeholders?.filterSortLabel || 'Sort by'}:</span>
     <button class="sort-drop-btn">${placeholders?.filterSortNewestLabel || 'Newest'}</button>
     <div class="sort-dropdown-content">
       <a href="/" data-sort-criteria="descending" data-sort-caption="${
@@ -394,7 +393,8 @@ export default async function decorate(block) {
         placeholders?.filterSortOldestLabel || 'Oldest'
       }">${placeholders?.filterSortOldestLabel || 'Oldest'}</a>
     </div>
-  `;
+    </div>
+  `);
     wrapper.appendChild(sortContainer);
 
     const dropDownBtn = sortContainer.querySelector('.sort-drop-btn');
