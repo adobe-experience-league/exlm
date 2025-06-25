@@ -1335,6 +1335,9 @@ async function loadPage() {
     } else {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
+        // Applying data-cs-mask for signed-in profile pages
+        document.body.setAttribute('data-cs-mask', '');
+
         loadPage();
         loadTarget(signedIn);
       } else {
