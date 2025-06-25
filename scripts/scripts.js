@@ -1330,14 +1330,14 @@ async function loadPage() {
   };
 
   const handleProfilePage = async () => {
-    // Applying data-cs-mask for profile pages
-    document.body.setAttribute('data-cs-mask', '');
-
     if (window.location.href.includes('.html')) {
       loadPage();
     } else {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
+        // Applying data-cs-mask for signed-in profile pages
+        document.body.setAttribute('data-cs-mask', '');
+
         loadPage();
         loadTarget(signedIn);
       } else {
