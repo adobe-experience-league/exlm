@@ -4329,6 +4329,7 @@
         "label": "Feature(s)",
         "valueType": "string",
         "description": "Sets the feature(s) in page meta.",
+        "requiredTagsToEnable": ["tq-products"],
         "dataSource": {
           "type": "action",
           "config": {
