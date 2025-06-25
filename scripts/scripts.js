@@ -604,7 +604,7 @@ async function loadEager(doc) {
     await waitForLCPonMain(LCP_BLOCKS);
 
     // Applying data-cs-mask for profile pages
-    if (isProfilePage || document.body.classList.contains('profile')) {
+    if (isProfilePage) {
       document.body.setAttribute('data-cs-mask', '');
     }
   }
