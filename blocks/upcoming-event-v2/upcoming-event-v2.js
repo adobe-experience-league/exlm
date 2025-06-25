@@ -148,6 +148,17 @@ function reDecoarateListView(block, cardDivContainer, placeholders) {
   }
 }
 
+function buildUpdatedCards(block, contentDivContainer, sortedData, placeholders) {
+  contentDivContainer.innerHTML = '';
+  sortedData.forEach((cardData) => {
+    const cardDiv = document.createElement('div');
+    buildCard(contentDivContainer, cardDiv, cardData).then(() => {
+      reDecoarateListView(block, cardDiv, placeholders);
+    });
+    contentDivContainer.appendChild(cardDiv);
+  });
+}
+
 export default async function decorate(block) {
   let placeholders = {};
   try {
@@ -302,7 +313,6 @@ export default async function decorate(block) {
     // eslint-disable-next-line no-use-before-define
     const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
 
-    contentDiv.innerHTML = ''; // Clear previous cards
     const existingError = block.querySelector('.event-no-results');
     if (existingError) existingError.remove(); // Prevent duplicate error message
 
@@ -321,13 +331,7 @@ export default async function decorate(block) {
     }
 
     contentDiv.style.display = '';
-    updatedData.forEach((cardData) => {
-      const cardDiv = document.createElement('div');
-      buildCard(contentDiv, cardDiv, cardData).then(() => {
-        reDecoarateListView(block, cardDiv, placeholders);
-      });
-      contentDiv.appendChild(cardDiv);
-    });
+    buildUpdatedCards(block, contentDiv, updatedData, placeholders);
   };
 
   // Pre-select checkboxes from URL filters
@@ -434,14 +438,7 @@ export default async function decorate(block) {
         const selectedFilters = [...block.querySelectorAll('.browse-tags')].map((tag) => tag.getAttribute('value'));
 
         const sortedData = fetchFilteredCardData(data, selectedFilters, sortCriteria);
-        contentDiv.innerHTML = '';
-        sortedData.forEach((cardData) => {
-          const cardDiv = document.createElement('div');
-          buildCard(contentDiv, cardDiv, cardData).then(() => {
-            reDecoarateListView(block, cardDiv, placeholders);
-          });
-          contentDiv.appendChild(cardDiv);
-        });
+        buildUpdatedCards(block, contentDiv, sortedData, placeholders);
       });
     });
   }
