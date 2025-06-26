@@ -14,6 +14,7 @@ const MAX_FACETS_WITHOUT_EXPANSION = 5;
 
 export default function atomicFacetHandler(baseElement, placeholders) {
   let baseObserver;
+  let resultTimerId;
   const adjustChildElementsPosition = (facet, atomicElement) => {
     if (facet.dataset.childfacet === 'true') {
       const parentName = facet.dataset.parent;
@@ -111,7 +112,7 @@ export default function atomicFacetHandler(baseElement, placeholders) {
     sortedChildren.forEach((item) => parentWrapper.appendChild(item));
   };
 
-  const handleFacetsVisibility = (facets, expanded) => {
+  const handleFacetsVisibility = (facetParent, facets, expanded) => {
     let count = 0;
     facets.forEach((facet) => {
       const isFacetParent = facet.dataset.childfacet !== 'true';
@@ -121,8 +122,17 @@ export default function atomicFacetHandler(baseElement, placeholders) {
       if (count > MAX_FACETS_WITHOUT_EXPANSION) {
         const op = expanded ? 'remove' : 'add';
         facet.part[op]('facet-collapsed');
+      } else {
+        facet.part.remove('facet-collapsed');
       }
     });
+
+    const showMoreBtn = facetParent.querySelector('.facet-show-more-btn');
+    if (showMoreBtn) {
+      const needsShowMoreBtn = count > MAX_FACETS_WITHOUT_EXPANSION;
+      const op = needsShowMoreBtn ? 'remove' : 'add';
+      showMoreBtn.part[op]('facet-collapsed');
+    }
   };
 
   const updateChildElementUI = (parentWrapper, facetParent) => {
@@ -190,14 +200,14 @@ export default function atomicFacetHandler(baseElement, placeholders) {
   };
 
   const updateShowMoreVisibility = (facetParent) => {
-    if (facetParent.dataset.showMoreBtn) {
-      return;
-    }
     const facets = Array.from(facetParent.querySelector('[part="values"]').children);
-    const parentFacetsCount = facets.filter((f) => f.dataset.childfacet !== 'true').length;
-    if (parentFacetsCount <= MAX_FACETS_WITHOUT_EXPANSION) {
+    const existingBtn = facetParent.querySelector('.facet-show-more-btn');
+    if (facetParent.dataset.showMoreBtn && existingBtn) {
+      const expanded = existingBtn.dataset.expanded === 'true';
+      handleFacetsVisibility(facetParent, facets, expanded);
       return;
     }
+
     const showMoreLabel = placeholders.showMore || 'Show more';
     const showLessLabel = placeholders.showLore || 'Show less';
     facetParent.dataset.showMoreBtn = 'true';
@@ -215,7 +225,7 @@ export default function atomicFacetHandler(baseElement, placeholders) {
       const previouslyExpanded = showMoreBtn.dataset.expanded === 'true';
       const isExpanded = !previouslyExpanded;
       const allFacets = Array.from(facetParent.querySelector('[part="values"]').children);
-      handleFacetsVisibility(allFacets, isExpanded);
+      handleFacetsVisibility(facetParent, allFacets, isExpanded);
       showMoreBtn.dataset.expanded = `${isExpanded}`;
       const btnLabel = showMoreBtn.querySelector('span.button-label');
       btnLabel.textContent = isExpanded ? showLessLabel : showMoreLabel;
@@ -227,8 +237,11 @@ export default function atomicFacetHandler(baseElement, placeholders) {
       iconToShow.part.add('show-icon');
     });
     decorateIcons(showMoreBtn);
-    facetParent.appendChild(showMoreWrapper);
-    handleFacetsVisibility(facets, false);
+    const wrapper = facetParent.querySelector('fieldset.contents');
+    if (wrapper) {
+      wrapper.appendChild(showMoreWrapper);
+    }
+    handleFacetsVisibility(facetParent, facets, false);
   };
 
   const updateFacetUI = (facet, atomicElement, forceUpdate = false) => {
@@ -324,8 +337,14 @@ export default function atomicFacetHandler(baseElement, placeholders) {
   };
 
   const onResultsUpdate = () => {
-    const atomicFacets = document.querySelectorAll('atomic-facet');
-    atomicFacets.forEach(handleAtomicFacetUI);
+    if (resultTimerId) {
+      clearTimeout(resultTimerId);
+      resultTimerId = 0;
+    }
+    resultTimerId = setTimeout(() => {
+      const atomicFacets = document.querySelectorAll('atomic-facet');
+      atomicFacets.forEach(handleAtomicFacetUI);
+    }, 100);
   };
 
   const initAtomicFacetUI = () => {
