@@ -201,13 +201,10 @@ export default function atomicFacetHandler(baseElement, placeholders) {
 
   const updateShowMoreVisibility = (facetParent) => {
     const facets = Array.from(facetParent.querySelector('[part="values"]').children);
-
-    if (facetParent.dataset.showMoreBtn) {
-      const showmoreBtn = facetParent.querySelector('.facet-show-more-btn');
-      if (showmoreBtn) {
-        const expanded = showmoreBtn.dataset.expanded === 'true';
-        handleFacetsVisibility(facetParent, facets, expanded);
-      }
+    const existingBtn = facetParent.querySelector('.facet-show-more-btn');
+    if (facetParent.dataset.showMoreBtn && existingBtn) {
+      const expanded = existingBtn.dataset.expanded === 'true';
+      handleFacetsVisibility(facetParent, facets, expanded);
       return;
     }
 
@@ -240,7 +237,10 @@ export default function atomicFacetHandler(baseElement, placeholders) {
       iconToShow.part.add('show-icon');
     });
     decorateIcons(showMoreBtn);
-    facetParent.appendChild(showMoreWrapper);
+    const wrapper = facetParent.querySelector('fieldset.contents');
+    if (wrapper) {
+      wrapper.appendChild(showMoreWrapper);
+    }
     handleFacetsVisibility(facetParent, facets, false);
   };
 
