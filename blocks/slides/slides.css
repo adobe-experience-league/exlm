@@ -85,9 +85,9 @@
   --drop-shadow: 0 5px 10px rgba(0 0 0 / 10%);
   --callout-button-z: 1200;
   --callout-tooltip-z: 1300;
-  --toast-z: 1100;
-  --callout-indicator-z: 1000;
-  --step-counter-z: 900;
+  --toast-z: 3;
+  --callout-indicator-z: 2;
+  --step-counter-z: 1;
   --controls-height: 26px;
   --max-width: 1600px;
 }
@@ -603,7 +603,13 @@
 
 .slides .content p {
   font-size: var(--spectrum-font-size-200);
+  color: var(--non-spectrum-dark-gray);
   margin-bottom: 20px;
+}
+
+.slides .content li {
+  font-size: var(--spectrum-font-size-200);
+  color: var(--non-spectrum-dark-gray);
 }
 
 .slides:not(:has(.container.as-docs)) .content {
