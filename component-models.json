@@ -1837,24 +1837,6 @@
         "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
       },
       {
-        "component": "select",
-        "valueType": "string",
-        "name": "textColorSelector",
-        "value": "black",
-        "label": "Text Color Selector",
-        "description": "Select the color for all text elements (title, eyebrow, etc.)",
-        "options": [
-          {
-            "name": "Black",
-            "value": "black"
-          },
-          {
-            "name": "White",
-            "value": "white"
-          }
-        ]
-      },
-      {
         "condition": {
           "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "video"] }]
         },
@@ -2283,6 +2265,24 @@
           {
             "name": "Sign In",
             "value": "signin"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "textColorSelector",
+        "value": "black",
+        "label": "Text Color Selector",
+        "description": "Select the color for all text elements (title, eyebrow, etc.)",
+        "options": [
+          {
+            "name": "Black",
+            "value": "black"
+          },
+          {
+            "name": "White",
+            "value": "white"
           }
         ]
       }
