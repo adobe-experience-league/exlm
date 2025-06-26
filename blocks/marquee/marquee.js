@@ -89,7 +89,18 @@ export default async function decorate(block) {
   let textColorSelector;
 
   if (allDivs[1]?.querySelector('picture')) {
-    [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType, textColorSelector] = allDivs;
+    [
+      customBgColor,
+      img,
+      eyebrow,
+      title,
+      longDescr,
+      firstCta,
+      firstCtaLinkType,
+      secondCta,
+      secondCtaLinkType,
+      textColorSelector,
+    ] = allDivs;
   } else {
     [
       customBgColor,
@@ -115,8 +126,7 @@ export default async function decorate(block) {
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
   const eyebrowText = eyebrow?.textContent?.trim() || '';
-  
-  // Get text color from textColorSelector or default to black
+
   const textColor = textColorSelector?.textContent?.trim() || 'black';
 
   // Build DOM

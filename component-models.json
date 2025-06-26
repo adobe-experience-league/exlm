@@ -2274,7 +2274,7 @@
         "name": "textColorSelector",
         "value": "black",
         "label": "Text Color Selector",
-        "description": "Select the color for all text elements (title, eyebrow, etc.)",
+        "description": "Select the color for all text elements",
         "options": [
           {
             "name": "Black",
