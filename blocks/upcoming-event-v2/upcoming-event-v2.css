@@ -363,6 +363,9 @@
     font-weight: var(--font-weight-heavy);
     font-size: 11px;
     line-height: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-figure .icon-calendar img {
