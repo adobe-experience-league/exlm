@@ -86,9 +86,10 @@ export default async function decorate(block) {
   let firstCtaLinkType;
   let secondCta;
   let secondCtaLinkType;
+  let textColorSelector;
 
   if (allDivs[1]?.querySelector('picture')) {
-    [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] = allDivs;
+    [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType, textColorSelector] = allDivs;
   } else {
     [
       customBgColor,
@@ -101,6 +102,7 @@ export default async function decorate(block) {
       firstCtaLinkType,
       secondCta,
       secondCtaLinkType,
+      textColorSelector,
     ] = allDivs;
   }
 
@@ -113,12 +115,15 @@ export default async function decorate(block) {
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
   const eyebrowText = eyebrow?.textContent?.trim() || '';
+  
+  // Get text color from textColorSelector or default to black
+  const textColor = textColorSelector?.textContent?.trim() || 'black';
 
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-content-container'>
     <div class='marquee-foreground'>
-      <div class='marquee-text'>
+      <div class='marquee-text' style="color: ${textColor}">
         ${eyebrowText !== '' ? `<div class='marquee-eyebrow'>${eyebrowText?.toUpperCase()}</div>` : ``}
         <div class='marquee-title'>${title.innerHTML}</div>
         <div class='marquee-long-description'>${longDescr.innerHTML}</div>
