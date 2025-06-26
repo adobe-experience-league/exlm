@@ -136,7 +136,7 @@ export default async function decorate(block) {
       <div class='marquee-text' style="color: ${textColor}">
         ${eyebrowText !== '' ? `<div class='marquee-eyebrow'>${eyebrowText?.toUpperCase()}</div>` : ``}
         <div class='marquee-title'>${title.innerHTML}</div>
-        <div class='marquee-long-description' style="color: ${textColor}">${longDescr.innerHTML}</div>
+        <div class='marquee-long-description'>${longDescr.innerHTML}</div>
         <div class='marquee-cta'>
           ${decorateCustomButtons(firstCta, secondCta)}
         </div>
