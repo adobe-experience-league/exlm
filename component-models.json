@@ -1822,6 +1822,19 @@
                 "value": "custom"
               }
             ]
+          },
+          {
+            "name": "Text Color",
+            "children": [
+              {
+                "name": "Black",
+                "value": "text-black"
+              },
+              {
+                "name": "White",
+                "value": "text-white"
+              }
+            ]
           }
         ]
       },
