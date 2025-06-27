@@ -1828,11 +1828,11 @@
             "children": [
               {
                 "name": "Black",
-                "value": "text-black"
+                "value": "text-spectrum-gray-900"
               },
               {
                 "name": "White",
-                "value": "text-white"
+                "value": "text-spectrum-gray-50"
               }
             ]
           }
