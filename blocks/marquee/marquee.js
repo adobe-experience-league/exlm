@@ -111,9 +111,9 @@ export default async function decorate(block) {
   const isLargeVariant = block.classList.contains('large');
   const marqueeVideoVariant = isVideoVariant && isLargeVariant && isStraightVariant;
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
-  const textColorCls = [...block.classList].find((cls) => cls.startsWith('text-')) || 'text-black';
+  const textColorCls = [...block.classList].find((cls) => cls.startsWith('text-')) || 'text-spectrum-gray-900';
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
-  const textColor = textColorCls?.substr(5) || 'black';
+  const textColor = `var(--${textColorCls.substr(5)})` || `var(--spectrum-gray-900)`;
   const eyebrowText = eyebrow?.textContent?.trim() || '';
 
   // Build DOM
