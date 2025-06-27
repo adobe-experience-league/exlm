@@ -86,21 +86,9 @@ export default async function decorate(block) {
   let firstCtaLinkType;
   let secondCta;
   let secondCtaLinkType;
-  let textColorSelector;
 
   if (allDivs[1]?.querySelector('picture')) {
-    [
-      customBgColor,
-      img,
-      eyebrow,
-      title,
-      longDescr,
-      firstCta,
-      firstCtaLinkType,
-      secondCta,
-      secondCtaLinkType,
-      textColorSelector,
-    ] = allDivs;
+    [customBgColor, img, eyebrow, title, longDescr, firstCta, firstCtaLinkType, secondCta, secondCtaLinkType] = allDivs;
   } else {
     [
       customBgColor,
@@ -113,7 +101,6 @@ export default async function decorate(block) {
       firstCtaLinkType,
       secondCta,
       secondCtaLinkType,
-      textColorSelector,
     ] = allDivs;
   }
 
@@ -124,10 +111,9 @@ export default async function decorate(block) {
   const isLargeVariant = block.classList.contains('large');
   const marqueeVideoVariant = isVideoVariant && isLargeVariant && isStraightVariant;
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
+  const textColor = [...block.classList].find((cls) => cls.startsWith('text-')) || 'black';
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
   const eyebrowText = eyebrow?.textContent?.trim() || '';
-
-  const textColor = textColorSelector?.textContent?.trim() || 'black';
 
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`

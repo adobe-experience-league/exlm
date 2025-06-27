@@ -1822,7 +1822,20 @@
                 "value": "custom"
               }
             ]
-          }
+          },
+          {
+            "name": "Text Color Selector",
+            "children": [
+              {
+                "name": "Black",
+                "value": "text-black"
+              },
+              {
+                "name": "White",
+                "value": "text-white"
+              }
+            ]
+          },
         ]
       },
       {
@@ -2265,24 +2278,6 @@
           {
             "name": "Sign In",
             "value": "signin"
-          }
-        ]
-      },
-      {
-        "component": "select",
-        "valueType": "string",
-        "name": "textColorSelector",
-        "value": "black",
-        "label": "Text Color Selector",
-        "description": "Select the color for all text elements",
-        "options": [
-          {
-            "name": "Black",
-            "value": "black"
-          },
-          {
-            "name": "White",
-            "value": "white"
           }
         ]
       }
