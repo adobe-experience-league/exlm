@@ -983,7 +983,7 @@
                 "template": {
                   "name": "Marquee",
                   "model": "marquee",
-                  "classes": ["medium", "curved", "bg-spectrum-gray-700"],
+                  "classes": ["medium", "curved", "bg-spectrum-gray-700", "text-spectrum-gray-900"],
                   "fileReference": "/content/dam/exlm/en/images/subjects/Community_headshot_single.png",
                   "title": "Marquee Title",
                   "titleType": "h2",
