@@ -61,6 +61,7 @@ div.marquee-wrapper {
   font-size: var(--spectrum-font-size-300);
   line-height: var(--spectrum-line-height-l);
   margin: 0;
+  color: unset;
 }
 
 .marquee-cta {
