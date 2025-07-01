@@ -675,6 +675,10 @@ export default function atomicResultHandler(block, placeholders) {
 
         const productElWrap = resultItem?.querySelector('.result-product')?.firstElementChild?.shadowRoot;
         const productElements = productElWrap?.querySelectorAll('li') || [];
+        console.log("*** productElements::", productElements);
+        const count = productElements.length > 3;
+        // Do something when the count is more than 3.
+        // Setting the max-values-to-display will ensure that all the <li> elements are rendered and we have control over the DOM and the value of the product.
         const contentTypeElements = contentTypeElParent?.querySelectorAll('li') || [];
 
         const topicElements =

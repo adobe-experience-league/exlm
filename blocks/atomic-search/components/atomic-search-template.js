@@ -688,7 +688,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </atomic-result-multi-value-text>
                       </div>
                       <div class="result-field result-product">
-                          <atomic-result-multi-value-text field="el_product">
+                          <atomic-result-multi-value-text field="el_product" max-values-to-display="20">
                           </atomic-result-multi-value-text>
                       </div>
                       <div class="result-field result-updated">
@@ -787,7 +787,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </atomic-result-multi-value-text>
                     </div>
                     <div class="result-field result-product">
-                        <atomic-result-multi-value-text field="el_product">
+                        <atomic-result-multi-value-text field="el_product" max-values-to-display="20">
                         </atomic-result-multi-value-text>
                     </div>
                     <div class="result-field result-updated">
