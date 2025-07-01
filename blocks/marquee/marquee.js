@@ -111,14 +111,16 @@ export default async function decorate(block) {
   const isLargeVariant = block.classList.contains('large');
   const marqueeVideoVariant = isVideoVariant && isLargeVariant && isStraightVariant;
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
+  const textColorCls = [...block.classList].find((cls) => cls.startsWith('text-'));
   const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
+  const textColor = textColorCls ? `var(--${textColorCls.substring(5)})` : `var(--spectrum-gray-900)`;
   const eyebrowText = eyebrow?.textContent?.trim() || '';
 
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-content-container'>
     <div class='marquee-foreground'>
-      <div class='marquee-text'>
+      <div class='marquee-text' style="color: ${textColor}">
         ${eyebrowText !== '' ? `<div class='marquee-eyebrow'>${eyebrowText?.toUpperCase()}</div>` : ``}
         <div class='marquee-title'>${title.innerHTML}</div>
         <div class='marquee-long-description'>${longDescr.innerHTML}</div>

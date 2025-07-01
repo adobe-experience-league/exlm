@@ -28,7 +28,6 @@ div.marquee-wrapper {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-75);
   font-weight: var(--font-weight-bold);
-  color: var(--spectrum-gray-700);
   margin-bottom: var(--spectrum-spacing-300);
   line-height: 18px;
 }
@@ -62,6 +61,7 @@ div.marquee-wrapper {
   font-size: var(--spectrum-font-size-300);
   line-height: var(--spectrum-line-height-l);
   margin: 0;
+  color: unset;
 }
 
 .marquee-cta {
