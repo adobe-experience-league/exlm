@@ -16,18 +16,19 @@
   margin-left: 10px;
 }
 
-.doc-mt-toggle .doc-mt-checkbox a {
+.doc-mt-toggle .doc-mt-checkbox .info-tooltip-container {
   margin: 0 0 0 10px;
   position: relative;
+  cursor: pointer;
+  line-height: var(--spectrum-line-height-l);
 }
 
-.doc-mt-toggle .doc-mt-checkbox a .icon-info {
+.doc-mt-toggle .doc-mt-checkbox .info-tooltip-container .icon-info {
   width: 16px;
   height: 16px;
-  pointer-events: none;
 }
 
-.doc-mt-toggle .doc-mt-checkbox a .action-tooltip {
+.doc-mt-toggle .doc-mt-checkbox .info-tooltip-container .action-tooltip {
   background-color: var(--spectrum-gray-600);
   border-radius: 4px;
   bottom: 120%;
@@ -46,9 +47,10 @@
   overflow-wrap: break-word;
   min-width: 150px;
   z-index: 1;
+  line-height: 1.5;
 }
 
-.doc-mt-toggle .doc-mt-checkbox a .action-tooltip::after {
+.doc-mt-toggle .doc-mt-checkbox .info-tooltip-container .action-tooltip::after {
   border-width: 4px;
   border-style: solid;
   border-color: var(--spectrum-gray-600) transparent transparent transparent;
@@ -59,7 +61,7 @@
   top: 100%;
 }
 
-.doc-mt-toggle .doc-mt-checkbox a:hover .action-tooltip {
+.doc-mt-toggle .doc-mt-checkbox .info-tooltip-container:hover .action-tooltip {
   display: block;
 }
 

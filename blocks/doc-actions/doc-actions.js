@@ -1,9 +1,7 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { createTag, isDocPage, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
+import { createTag, isDocPage, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
 import UserActions from '../../scripts/user-actions/user-actions.js';
-
-const { automaticTranslationLink } = getConfig();
 
 async function decorateLanguageToggle(block, placeholders) {
   if (
@@ -15,13 +13,12 @@ async function decorateLanguageToggle(block, placeholders) {
       { class: 'doc-mt-toggle' },
       `<div class="doc-mt-checkbox">
       <span>${placeholders.automaticTranslation}</span>
-      <a href="${automaticTranslationLink}" target="_blank">
+      <div class="info-tooltip-container">
         <span class="icon icon-info"></span>
         <span class="action-tooltip">${
-          placeholders.changeLanguageTooltip ||
-          'To translate the page into English, choose English from the language switcher.'
+          placeholders.changeLanguageTooltip || 'Use the Language Selector to view the English version of this page.'
         }</span>
-      </a>
+      </div>
       </div>
       <div class="doc-mt-feedback">
         <span class="prompt">${placeholders.automaticTranslationFeedback}</span>
