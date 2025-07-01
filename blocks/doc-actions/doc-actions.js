@@ -15,9 +15,13 @@ async function decorateLanguageToggle(block, placeholders) {
       { class: 'doc-mt-toggle' },
       `<div class="doc-mt-checkbox">
       <span>${placeholders.automaticTranslation}</span>
-      <a href="${automaticTranslationLink}" target="_blank" title="${
-        placeholders.changeLanguageTooltip || 'to change language pls click on globe icon'
-      }"><span class="icon icon-info"></span></a>
+      <a href="${automaticTranslationLink}" target="_blank">
+        <span class="icon icon-info"></span>
+        <span class="action-tooltip">${
+          placeholders.changeLanguageTooltip ||
+          'To translate the page into English, choose English from the language switcher.'
+        }</span>
+      </a>
       </div>
       <div class="doc-mt-feedback">
         <span class="prompt">${placeholders.automaticTranslationFeedback}</span>
