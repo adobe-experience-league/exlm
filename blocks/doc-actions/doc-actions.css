@@ -31,16 +31,13 @@
 .doc-mt-toggle .doc-mt-checkbox .info-tooltip-container .action-tooltip {
   background-color: var(--spectrum-gray-600);
   border-radius: 4px;
-  bottom: 120%;
   color: var(--spectrum-gray-50);
   display: none;
   font-size: var(--spectrum-font-size-75);
   font-weight: var(--font-weight-normal);
-  left: 50%;
   padding: 2px 8px 4px;
   position: absolute;
   text-align: center;
-  transform: translateX(-50%);
   transition: all 130ms ease-in-out;
   white-space: normal;
   word-wrap: break-word;
@@ -48,17 +45,24 @@
   min-width: 150px;
   z-index: 1;
   line-height: 1.5;
+  left: auto;
+  right: 100%;
+  bottom: 50%;
+  transform: translateY(50%);
+  margin-right: 10px;
 }
 
 .doc-mt-toggle .doc-mt-checkbox .info-tooltip-container .action-tooltip::after {
   border-width: 4px;
   border-style: solid;
-  border-color: var(--spectrum-gray-600) transparent transparent transparent;
   content: '';
-  left: 50%;
-  margin-left: -4px;
   position: absolute;
-  top: 100%;
+  left: auto;
+  right: -8px;
+  top: 50%;
+  margin-top: -4px;
+  margin-left: 0;
+  border-color: transparent transparent transparent var(--spectrum-gray-600);
 }
 
 .doc-mt-toggle .doc-mt-checkbox .info-tooltip-container:hover .action-tooltip {
