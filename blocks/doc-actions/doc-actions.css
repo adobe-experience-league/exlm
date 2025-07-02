@@ -11,24 +11,24 @@
   gap: 5px;
 }
 
-.doc-mt-toggle .doc-mt-checkbox {
+.doc-mt-toggle .doc-mt-notification {
   display: flex;
   margin-left: 10px;
 }
 
-.doc-mt-toggle .doc-mt-checkbox .info-tooltip-container {
+.doc-mt-toggle .doc-mt-notification .info-tooltip-container {
   margin: 0 0 0 10px;
   position: relative;
   cursor: pointer;
   line-height: var(--spectrum-line-height-l);
 }
 
-.doc-mt-toggle .doc-mt-checkbox .info-tooltip-container .icon-info {
+.doc-mt-toggle .doc-mt-notification .info-tooltip-container .icon-info {
   width: 16px;
   height: 16px;
 }
 
-.doc-mt-toggle .doc-mt-checkbox .info-tooltip-container .action-tooltip {
+.doc-mt-toggle .doc-mt-notification .info-tooltip-container .action-tooltip {
   background-color: var(--spectrum-gray-600);
   border-radius: 4px;
   color: var(--spectrum-gray-50);
@@ -52,7 +52,7 @@
   margin-right: 10px;
 }
 
-.doc-mt-toggle .doc-mt-checkbox .info-tooltip-container .action-tooltip::after {
+.doc-mt-toggle .doc-mt-notification .info-tooltip-container .action-tooltip::after {
   border-width: 4px;
   border-style: solid;
   content: '';
@@ -65,7 +65,7 @@
   border-color: transparent transparent transparent var(--spectrum-gray-600);
 }
 
-.doc-mt-toggle .doc-mt-checkbox .info-tooltip-container:hover .action-tooltip {
+.doc-mt-toggle .doc-mt-notification .info-tooltip-container:hover .action-tooltip {
   display: block;
 }
 

@@ -11,7 +11,7 @@ async function decorateLanguageToggle(block, placeholders) {
     const languageToggleElement = createTag(
       'div',
       { class: 'doc-mt-toggle' },
-      `<div class="doc-mt-checkbox">
+      `<div class="doc-mt-notification">
       <span>${placeholders.automaticTranslation}</span>
       <div class="info-tooltip-container">
         <span class="icon icon-info"></span>
