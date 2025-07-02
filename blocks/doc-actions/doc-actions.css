@@ -11,58 +11,62 @@
   gap: 5px;
 }
 
-.doc-mt-toggle .doc-mt-checkbox {
+.doc-mt-toggle .doc-mt-notification {
   display: flex;
   margin-left: 10px;
 }
 
-.doc-mt-toggle .doc-mt-checkbox input[type='checkbox'] {
-  appearance: none;
-  width: 27px;
-  background: var(--spectrum-blue-900);
-  border-radius: 3rem;
+.doc-mt-toggle .doc-mt-notification .info-tooltip-container {
+  margin: 0 0 0 10px;
   position: relative;
   cursor: pointer;
-  outline: none;
-  transition: all 0.2s ease-in-out;
-  padding: 0;
-  margin-left: 10px;
-  height: 1rem;
-  border: 0;
+  line-height: var(--spectrum-line-height-l);
 }
 
-.doc-mt-toggle .doc-mt-checkbox input[type='checkbox']:checked {
-  background: var(--spectrum-gray-700);
-}
-
-.doc-mt-toggle .doc-mt-checkbox input[type='checkbox']::after {
-  position: absolute;
-  content: '';
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-  outline: 2px solid var(--spectrum-blue-900);
-  outline-offset: -1px;
-  background: var(--spectrum-gray-50);
-  transform: scale(0.7);
-  left: calc(100% - 0.95rem);
-  transition: all 0.2s ease-in-out;
-}
-
-.doc-mt-toggle .doc-mt-checkbox input[type='checkbox']:checked::after {
-  left: 0;
-  border: 0;
-  outline: 2px solid var(--spectrum-gray-600);
-}
-
-.doc-mt-toggle .doc-mt-checkbox a {
-  margin: 0 0 0 10px;
-}
-
-.doc-mt-toggle .doc-mt-checkbox a .icon-info {
+.doc-mt-toggle .doc-mt-notification .info-tooltip-container .icon-info {
   width: 16px;
   height: 16px;
-  pointer-events: none;
+}
+
+.doc-mt-toggle .doc-mt-notification .info-tooltip-container .action-tooltip {
+  background-color: var(--spectrum-gray-600);
+  border-radius: 4px;
+  color: var(--spectrum-gray-50);
+  display: none;
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-normal);
+  padding: 2px 8px 4px;
+  position: absolute;
+  text-align: center;
+  transition: all 130ms ease-in-out;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  min-width: 150px;
+  z-index: 1;
+  line-height: 1.5;
+  left: auto;
+  right: 100%;
+  bottom: 50%;
+  transform: translateY(50%);
+  margin-right: 10px;
+}
+
+.doc-mt-toggle .doc-mt-notification .info-tooltip-container .action-tooltip::after {
+  border-width: 4px;
+  border-style: solid;
+  content: '';
+  position: absolute;
+  left: auto;
+  right: -8px;
+  top: 50%;
+  margin-top: -4px;
+  margin-left: 0;
+  border-color: transparent transparent transparent var(--spectrum-gray-600);
+}
+
+.doc-mt-toggle .doc-mt-notification .info-tooltip-container:hover .action-tooltip {
+  display: block;
 }
 
 .doc-mt-toggle .doc-mt-feedback {
