@@ -235,6 +235,21 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet.hide-facet {
                   display: none;
                 }
+                atomic-facet::part(facet-shimmer) {
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  height: 100%;
+                  width: 100%;
+                  display: none;
+                  cursor: wait;
+                  background: var(--non-spectrum-hover-bg);
+                  opacity: 0.5;
+                  z-index: 10;
+                }
+                atomic-facet::part(show-shimmer) {
+                  display: block;
+                }
                 atomic-facet::part(facet-show-more-wrapper) {
                   display: flex;
                   margin: 16px 8px 8px;
