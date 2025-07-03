@@ -97,6 +97,83 @@ export const atomicResultStyles = `
                       width: 40px;
                       height: 40px;
                     }
+                    .atomic-search-result-item .result-product .result-field-multi {
+                      display: flex;
+                      gap: 6px;
+                      align-items: flex-start;
+                    }
+                    .atomic-search-result-item .result-product .hidden {
+                      display: none;
+                    }
+                    .atomic-search-result-item .result-product .result-field-title {
+                      color: var(--non-spectrum-web-gray);
+                    }
+                    .atomic-search-result-item .tooltip-placeholder {
+                      line-height: 0;
+                      margin-top: 2px;
+                    }
+                    .atomic-search-result-item .tooltip {
+                      display: inline;
+                      position: relative;
+                      margin: 2px 0 0 5px;
+                    }
+                    .atomic-search-result-item .tooltip .icon-info {
+                      width: 14px;
+                      height: 14px;
+                    }
+                    .atomic-search-result-item .tooltip svg {
+                      pointer-events: none;
+                    }
+                    .atomic-search-result-item .tooltip .tooltip-text {
+                      background-color: var(--non-spectrum-dim-gray);
+                      border-radius: 4px;
+                      color: var(--spectrum-gray-50);
+                      display: inline-block;
+                      font-size: var(--spectrum-font-size-50);
+                      font-weight: normal;
+                      line-height: var(--spectrum-line-height-xs);
+                      margin-left: 10px;
+                      opacity: 0;
+                      padding: 4px 9px 5px 10px;
+                      position: absolute;
+                      text-transform: uppercase;
+                      top: 0;
+                      transition: opacity 0.3s;
+                      visibility: hidden;
+                      width: max-content;
+                      max-width: 155px;
+                      z-index: 11;
+                    }
+                    .atomic-search-result-item .tooltip-top .tooltip-text {
+                      transform: translateX(-50%);
+                      top: unset;
+                      left: 50%;
+                      bottom: 100%;
+                      margin: 0 0 2px;
+                    }
+                    .atomic-search-result-item .tooltip .tooltip-text::before {
+                      border-color: transparent var(--non-spectrum-dim-gray) transparent transparent;
+                      border-style: solid;
+                      border-width: 4px;
+                      content: '';
+                      display: inline-block;
+                      margin-top: -4px;
+                      position: absolute;
+                      right: 100%;
+                      top: 50%;
+                    }
+                    .atomic-search-result-item .tooltip-top .tooltip-text::before {
+                      margin-top: 0;
+                      right: unset;
+                      top: unset;
+                      left: calc(50% - 7px);
+                      bottom: -7px;
+                      transform: rotate(-90deg);
+                    }
+                    .atomic-search-result-item .tooltip:hover .tooltip-text {
+                      visibility: visible;
+                      opacity: 1;
+                    }
                     @media(min-width: 1024px) {
                       .result-item.desktop-only {
                         display: grid;
@@ -191,17 +268,14 @@ export const atomicResultStyles = `
                     .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-separator) {
                       display: none;
                     }
-                    .result-product atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                    .result-product > atomic-result-multi-value-text::part(result-multi-value-text-value) {
                       font-size: var(--spectrum-font-size-100);
                       color: var(--non-spectrum-web-gray);
                       display: block;
                     }
-                    .result-product atomic-result-multi-value-text::part(result-multi-value-text-list) {
+                    .result-product > atomic-result-multi-value-text::part(result-multi-value-text-list) {
                       flex-wrap: wrap;
                       gap: 4px;
-                    }
-                    .result-product atomic-result-multi-value-text::part(result-multi-value-text-separator) {
-                      display: none;
                     }
                     .result-updated {
                       font-size: var(--spectrum-font-size-100);
@@ -260,7 +334,8 @@ export const atomicResultStyles = `
                       font-weight: bold;
                       color: var(--non-spectrum-dark-gray);
                     }
-                    .mobile-result-info .result-field atomic-result-multi-value-text, .mobile-result-info .atomic-result-date, .mobile-result-info .result-product atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                    .mobile-result-info .result-field atomic-result-multi-value-text, .mobile-result-info .atomic-result-date, 
+                    .mobile-result-info .result-product > atomic-result-multi-value-text::part(result-multi-value-text-value) {
                       color: var(--non-spectrum-web-gray);
                       font-size: var(--spectrum-font-size-75);
                     }
@@ -672,6 +747,19 @@ export default function atomicResultHandler(block, placeholders) {
 
         const atomicResultChildren = resultItem.querySelector('atomic-result-children');
         handleAtomicResultChildrenUI(atomicResultChildren);
+
+        const resultFieldMulti = resultItem?.querySelector('.result-product .result-field-multi');
+        const resultFieldValue = resultItem?.querySelector('.result-product .result-field-value');
+        const productList = resultItem?.querySelector('.result-product .result-field-value')?.firstElementChild?.shadowRoot?.querySelectorAll('li');
+        const productCount = productList ? productList.length : 0;
+        if (productCount > 2) {
+          resultFieldMulti?.classList.remove('hidden');
+          resultFieldValue?.classList.add('hidden');
+        }
+        else {
+          resultFieldMulti?.classList.add('hidden');
+          resultFieldValue?.classList.remove('hidden');
+        }
 
         const productElWrap = resultItem?.querySelector('.result-product')?.firstElementChild?.shadowRoot;
         const productElements = productElWrap?.querySelectorAll('li') || [];
