@@ -52,6 +52,8 @@ export default function atomicFacetHandler(baseElement, placeholders) {
           return;
         }
 
+        const shimmer = atomicElement.shadowRoot.querySelector('.facet-shimmer');
+        shimmer?.part.add('show-shimmer');
         const isChildFacet = facet.dataset.childfacet === 'true';
         const isSelected = facet.firstElementChild.ariaChecked === 'false'; // Will take some to update the state.
         const parentFacet = isChildFacet
@@ -163,7 +165,7 @@ export default function atomicFacetHandler(baseElement, placeholders) {
           }
         });
 
-        const parentLabel = lastParent.querySelector('label');
+        const parentLabel = lastParent?.querySelector('label');
         if (facetIsSelected) {
           parentLabel?.part.remove('facet-parent-hide-ui');
         } else {
@@ -205,6 +207,12 @@ export default function atomicFacetHandler(baseElement, placeholders) {
     if (facetParent.dataset.showMoreBtn && existingBtn) {
       const expanded = existingBtn.dataset.expanded === 'true';
       handleFacetsVisibility(facetParent, facets, expanded);
+      const shimmerElement = facetParent.querySelector('.facet-shimmer');
+      if (shimmerElement) {
+        setTimeout(() => {
+          shimmerElement.part.remove('show-shimmer');
+        }, 50);
+      }
       return;
     }
 
@@ -220,6 +228,7 @@ export default function atomicFacetHandler(baseElement, placeholders) {
           <span class="button-label">${showMoreLabel}</span>
         </button>
       </div>`);
+    const facetShimmer = htmlToElement(`<div class="facet-shimmer" part="facet-shimmer"></div>`);
     const showMoreBtn = showMoreWrapper.querySelector('button');
     showMoreBtn.addEventListener('click', () => {
       const previouslyExpanded = showMoreBtn.dataset.expanded === 'true';
@@ -240,6 +249,7 @@ export default function atomicFacetHandler(baseElement, placeholders) {
     const wrapper = facetParent.querySelector('fieldset.contents');
     if (wrapper) {
       wrapper.appendChild(showMoreWrapper);
+      wrapper.appendChild(facetShimmer);
     }
     handleFacetsVisibility(facetParent, facets, false);
   };
@@ -343,7 +353,13 @@ export default function atomicFacetHandler(baseElement, placeholders) {
     }
     resultTimerId = setTimeout(() => {
       const atomicFacets = document.querySelectorAll('atomic-facet');
-      atomicFacets.forEach(handleAtomicFacetUI);
+      atomicFacets.forEach((atomicFacet) => {
+        handleAtomicFacetUI(atomicFacet);
+        const shimmer = atomicFacet.shadowRoot.querySelector('.facet-shimmer');
+        setTimeout(() => {
+          shimmer?.part.remove('show-shimmer');
+        }, 50);
+      });
     }, 100);
   };
 
