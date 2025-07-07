@@ -136,7 +136,6 @@ export const atomicResultStyles = `
                       opacity: 0;
                       padding: 4px 9px 5px 10px;
                       position: absolute;
-                      text-transform: uppercase;
                       top: 0;
                       transition: opacity 0.3s;
                       visibility: hidden;
