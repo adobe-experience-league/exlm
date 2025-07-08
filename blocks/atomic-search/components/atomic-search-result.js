@@ -709,13 +709,14 @@ export default function atomicResultHandler(block, placeholders) {
 
         const resultFieldMulti = resultItem?.querySelector('.result-product .result-field-multi');
         const resultFieldValue = resultItem?.querySelector('.result-product .result-field-value');
-        const productList = resultItem?.querySelector('.result-product .result-field-value')?.firstElementChild?.shadowRoot?.querySelectorAll('li');
+        const productList = resultItem
+          ?.querySelector('.result-product .result-field-value')
+          ?.firstElementChild?.shadowRoot?.querySelectorAll('li');
         const productCount = productList ? productList.length : 0;
         if (productCount > 2) {
           resultFieldMulti?.classList.remove('hidden');
           resultFieldValue?.classList.add('hidden');
-        }
-        else {
+        } else {
           resultFieldMulti?.classList.add('hidden');
           resultFieldValue?.classList.remove('hidden');
         }
