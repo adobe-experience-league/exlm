@@ -1,10 +1,19 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import state from './slider-state.js';
-import { generateVisualConfig, getPreference, showAllSteps, showStep, addEventHandlers } from './slider-utils.js';
+import {
+  generateVisualConfig,
+  getPreference,
+  showAllSteps,
+  showStep,
+  addEventHandlers,
+  isDesktopView,
+} from './slider-utils.js';
 
 function html(content, placeholders) {
-  const initialView = getPreference('view') || 'as-slides';
+  const isDesktopUI = isDesktopView();
+  const initialView = isDesktopUI ? getPreference('view') || 'as-slides' : 'as-docs';
+
   const autoplayAudio = getPreference('autoplayAudio') || false;
   const muted = getPreference('muteStatus') || false;
 

@@ -1,6 +1,8 @@
 import state from './slider-state.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 
+export const isDesktopView = () => window.matchMedia('(min-width: 768px)').matches;
+
 export function normalizeSpaces(str) {
   // Replace multiple spaces with a single space
   return str.replace(/\s+/g, ' ').trim();
