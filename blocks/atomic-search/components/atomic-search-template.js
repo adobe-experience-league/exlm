@@ -704,7 +704,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       </div>
                       <div class="result-field result-product">
                         <div class="result-field-multi hidden">
-                          <div class="result-field-title">MULTISOLUTION</div>
+                          <div class="result-field-title">${placeholders.multiSolutionText || 'multisolution'}</div>
                           <div class="tooltip-placeholder">
                             <div class="tooltip tooltip-top">
                               <span class="icon icon-info"></span>
@@ -824,8 +824,8 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </atomic-result-multi-value-text>
                     </div>
                     <div class="result-field result-product">
-                        <div class="result-field-multi">
-                          <div class="result-field-title">MULTISOLUTION</div>
+                        <div class="result-field-multi hidden">
+                          <div class="result-field-title">${placeholders.multiSolutionText || 'multisolution'}</div>
                           <div class="tooltip-placeholder">
                             <div class="tooltip tooltip-top">
                               <span class="icon icon-info"></span>
@@ -845,7 +845,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                           </div>
                         </div>
                         <div class="result-field-value">
-                          <atomic-result-multi-value-text field="el_product" max-values-to-display="99">
+                          <atomic-result-multi-value-text field="el_product" max-values-to-display="1">
                           </atomic-result-multi-value-text>
                         </div>
                     </div>

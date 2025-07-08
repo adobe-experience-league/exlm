@@ -102,6 +102,7 @@ export const atomicResultStyles = `
                     }
                     .atomic-search-result-item .result-product .result-field-title {
                       font-size: var(--spectrum-font-size-75);
+                      text-transform: uppercase;
                     }
                     .atomic-search-result-item .tooltip-placeholder {
                       line-height: 0;
