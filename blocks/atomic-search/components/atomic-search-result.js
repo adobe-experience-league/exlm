@@ -102,7 +102,7 @@ export const atomicResultStyles = `
                     }
                     .atomic-search-result-item .result-product .result-field-title {
                       font-size: var(--spectrum-font-size-75);
-                      text-transform: uppercase;
+                      text-transform: capitalize;
                     }
                     .atomic-search-result-item .tooltip-placeholder {
                       line-height: 0;
@@ -710,11 +710,9 @@ export default function atomicResultHandler(block, placeholders) {
 
         const resultFieldMulti = resultItem?.querySelector('.result-product .result-field-multi');
         const resultFieldValue = resultItem?.querySelector('.result-product .result-field-value');
-        const productList = resultItem
-          ?.querySelector('.result-product .result-field-value')
-          ?.firstElementChild?.shadowRoot?.querySelectorAll('li');
+        const productList = resultFieldValue?.firstElementChild?.shadowRoot?.querySelectorAll('li');
         const productCount = productList ? productList.length : 0;
-        if (productCount > 2) {
+        if (productCount >= 1) {
           resultFieldMulti?.classList.remove('hidden');
           resultFieldValue?.classList.add('hidden');
         } else {
