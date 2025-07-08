@@ -30,11 +30,6 @@ export const atomicResultStyles = `
                       --content-type-perspective-color: #c844dc;
                       --content-type-default-color: #000000
                     }
-                    .result-root {
-                      @media(max-width: 1024px) {
-                        max-width: calc(100% - 40px);
-                      }
-                    }
 
                     .result-description atomic-result-multi-value-text::part(result-multi-value-text-list) {
                       gap: 4px;
@@ -100,13 +95,13 @@ export const atomicResultStyles = `
                     .atomic-search-result-item .result-product .result-field-multi {
                       display: flex;
                       gap: 6px;
-                      align-items: flex-start;
+                      align-items: center;
                     }
                     .atomic-search-result-item .result-product .hidden {
                       display: none;
                     }
                     .atomic-search-result-item .result-product .result-field-title {
-                      color: var(--non-spectrum-web-gray);
+                      font-size: var(--spectrum-font-size-75);
                     }
                     .atomic-search-result-item .tooltip-placeholder {
                       line-height: 0;
@@ -183,6 +178,9 @@ export const atomicResultStyles = `
                       .result-item.mobile-only {
                         display: none;
                       }
+                      .atomic-search-result-item .result-product .result-field-title {
+                        font-size: var(--spectrum-font-size-100);
+                      }
                     }
                     .result-title {
                       position: relative;
@@ -248,22 +246,6 @@ export const atomicResultStyles = `
                       white-space: pre;
                       white-space: nowrap;
                     }
-
-                    @media(min-width: 1024px) {
-                      .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                        border: 1px solid var(--content-type-default-color);
-                        border-radius: 4px;
-                        padding: 4px 8px;
-                        color: var(--content-type-default-color);
-                        display: flex;
-                        align-items: center;
-                        flex-direction: row-reverse;
-                        gap: 4px;
-                        border: 1px solid #959595;
-                        color: var(--non-spectrum-grey-updated);
-                      }
-                    }
-                    
                     .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-separator) {
                       display: none;
                     }
@@ -277,8 +259,7 @@ export const atomicResultStyles = `
                       gap: 4px;
                     }
                     .result-updated {
-                      font-size: var(--spectrum-font-size-100);
-                      color: var(--non-spectrum-web-gray);
+                      font-size: var(--spectrum-font-size-75);
                       text-align: left;
                     }
                     atomic-result-link {
@@ -324,6 +305,7 @@ export const atomicResultStyles = `
                       display: flex;
                       align-items: center;
                       gap: 12px;
+                      justify-content: flex-start;
                     }
                     .mobile-result-title {
                         position: relative;
@@ -335,7 +317,6 @@ export const atomicResultStyles = `
                     }
                     .mobile-result-info .result-field atomic-result-multi-value-text, .mobile-result-info .atomic-result-date, 
                     .mobile-result-info .result-product > atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      color: var(--non-spectrum-web-gray);
                       font-size: var(--spectrum-font-size-75);
                     }
                     .mobile-result-info .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-value) {
@@ -345,16 +326,32 @@ export const atomicResultStyles = `
                       font-size: var(--spectrum-font-size-75);
                       color: #959595;
                     }
-
-                     .result-title .atomic-recommendation-badge, .mobile-result-title .atomic-recommendation-badge {
-                        position: absolute;
-                        background-color: var(--non-spectrum-dim-gray);
-                        padding: 2px 8px;
+                    .result-title .atomic-recommendation-badge, .mobile-result-title .atomic-recommendation-badge {
+                      position: absolute;
+                      background-color: var(--non-spectrum-dim-gray);
+                      padding: 2px 8px;
+                      border-radius: 4px;
+                      font-size: var(--spectrum-font-size-75);
+                      color: var(--spectrum-gray-50);
+                      top: -28px;
+                    }
+                    @media(min-width: 1024px) {
+                      .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                        border: 1px solid var(--content-type-default-color);
                         border-radius: 4px;
-                        font-size: var(--spectrum-font-size-75);
-                        color: var(--spectrum-gray-50);
-                        top: -28px;
-                     }
+                        padding: 4px 8px;
+                        color: var(--content-type-default-color);
+                        display: flex;
+                        align-items: center;
+                        flex-direction: row-reverse;
+                        gap: 4px;
+                        border: 1px solid #959595;
+                        color: var(--non-spectrum-grey-updated);
+                      }
+                      .result-updated {
+                        font-size: var(--spectrum-font-size-100);
+                      }
+                    }
                   </style>
 `;
 
@@ -710,6 +707,19 @@ export default function atomicResultHandler(block, placeholders) {
           block.removeChild(blockLevelSkeleton);
         }
 
+        const resultFieldMulti = resultItem?.querySelector('.result-product .result-field-multi');
+        const resultFieldValue = resultItem?.querySelector('.result-product .result-field-value');
+        const productList = resultItem?.querySelector('.result-product .result-field-value')?.firstElementChild?.shadowRoot?.querySelectorAll('li');
+        const productCount = productList ? productList.length : 0;
+        if (productCount > 2) {
+          resultFieldMulti?.classList.remove('hidden');
+          resultFieldValue?.classList.add('hidden');
+        }
+        else {
+          resultFieldMulti?.classList.add('hidden');
+          resultFieldValue?.classList.remove('hidden');
+        }
+
         const recommendationBadgeExists = !!resultItem.querySelector('.atomic-recommendation-badge');
         if (recommendationBadgeExists) {
           const resultRoot = resultShadow.querySelector('.result-root');
@@ -746,19 +756,6 @@ export default function atomicResultHandler(block, placeholders) {
 
         const atomicResultChildren = resultItem.querySelector('atomic-result-children');
         handleAtomicResultChildrenUI(atomicResultChildren);
-
-        const resultFieldMulti = resultItem?.querySelector('.result-product .result-field-multi');
-        const resultFieldValue = resultItem?.querySelector('.result-product .result-field-value');
-        const productList = resultItem?.querySelector('.result-product .result-field-value')?.firstElementChild?.shadowRoot?.querySelectorAll('li');
-        const productCount = productList ? productList.length : 0;
-        if (productCount > 2) {
-          resultFieldMulti?.classList.remove('hidden');
-          resultFieldValue?.classList.add('hidden');
-        }
-        else {
-          resultFieldMulti?.classList.add('hidden');
-          resultFieldValue?.classList.remove('hidden');
-        }
 
         const productElWrap = resultItem?.querySelector('.result-product')?.firstElementChild?.shadowRoot;
         const productElements = productElWrap?.querySelectorAll('li') || [];
