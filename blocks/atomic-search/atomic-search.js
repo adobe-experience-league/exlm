@@ -81,7 +81,16 @@ export default function decorate(block) {
     await customElements.whenDefined('atomic-search-interface');
     const searchInterface = block.querySelector('atomic-search-interface');
     const { coveoOrganizationId } = getConfig();
-    const { lang: languageCode } = getPathDetails();
+    let { lang: languageCode } = getPathDetails();
+
+    const atomicLanguagesMap = {
+      'pt-br': 'pt-BR',
+      'zh-hans': 'zh-CN',
+      'zh-hant': 'zh-TW',
+    };
+
+    languageCode = atomicLanguagesMap[languageCode] || languageCode;
+
     const coveoToken = await coveoTokenPromise;
 
     // Initialization
@@ -175,7 +184,7 @@ export default function decorate(block) {
         Role: placeholders.searchRoleLabel || 'Role',
         Date: placeholders.searchDateLabel || 'Date',
         'Newest First': placeholders.searchNewestFirstLabel || 'Newest First',
-        'Oldest First': placeholders.searchOldesFirstLabel || 'Oldest First',
+        'Oldest First': placeholders.searchOldestFirstLabel || 'Oldest First',
         'Most Likes': placeholders.searchMostLikesLabel || 'Most Likes',
         'Most Replies': placeholders.searchMostRepliesLabel || 'Most Replies',
         'Most Views': placeholders.searchMostViewsLabel || 'Most Views',
