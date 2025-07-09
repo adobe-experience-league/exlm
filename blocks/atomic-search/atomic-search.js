@@ -185,7 +185,7 @@ export default function decorate(block) {
         Role: placeholders.searchRoleLabel || 'Role',
         Date: placeholders.searchDateLabel || 'Date',
         'Newest First': placeholders.searchNewestFirstLabel || 'Newest First',
-        'Oldest First': placeholders.searchOldesFirstLabel || 'Oldest First',
+        'Oldest First': placeholders.searchOldestFirstLabel || 'Oldest First',
         'Most Likes': placeholders.searchMostLikesLabel || 'Most Likes',
         'Most Replies': placeholders.searchMostRepliesLabel || 'Most Replies',
         'Most Views': placeholders.searchMostViewsLabel || 'Most Views',
