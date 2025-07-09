@@ -83,15 +83,14 @@ export default function decorate(block) {
     const { coveoOrganizationId } = getConfig();
     let { lang: languageCode } = getPathDetails();
 
-    const atomicLanguagesMap = new Map([
-      ['pt-br', 'pt-BR'],
-      ['zh-hans', 'zh-CN'],
-      ['zh-hant', 'zh-TW'],
-    ]);
+    const atomicLanguagesMap = {
+      'pt-br': 'pt-BR',
+      'zh-hans': 'zh-CN',
+      'zh-hant': 'zh-TW',
+    };
 
-    if (atomicLanguagesMap.has(languageCode)) {
-      languageCode = atomicLanguagesMap.get(languageCode);
-    }
+    languageCode = atomicLanguagesMap[languageCode] || languageCode;
+
     const coveoToken = await coveoTokenPromise;
 
     // Initialization
