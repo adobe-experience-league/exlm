@@ -81,7 +81,17 @@ export default function decorate(block) {
     await customElements.whenDefined('atomic-search-interface');
     const searchInterface = block.querySelector('atomic-search-interface');
     const { coveoOrganizationId } = getConfig();
-    const { lang: languageCode } = getPathDetails();
+    let { lang: languageCode } = getPathDetails();
+
+    const atomicLanguagesMap = new Map([
+      ['pt-br', 'pt-BR'],
+      ['zh-hans', 'zh-CN'],
+      ['zh-hant', 'zh-TW'],
+    ]);
+
+    if (atomicLanguagesMap.has(languageCode)) {
+      languageCode = atomicLanguagesMap.get(languageCode);
+    }
     const coveoToken = await coveoTokenPromise;
 
     // Initialization
