@@ -712,7 +712,7 @@ export default function atomicResultHandler(block, placeholders) {
         const resultFieldValue = resultItem?.querySelector('.result-product .result-field-value');
         const productList = resultFieldValue?.firstElementChild?.shadowRoot?.querySelectorAll('li');
         const productCount = productList ? productList.length : 0;
-        if (productCount >= 1) {
+        if (productCount > 2) {
           resultFieldMulti?.classList.remove('hidden');
           resultFieldValue?.classList.add('hidden');
         } else {
