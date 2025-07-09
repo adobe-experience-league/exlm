@@ -6,6 +6,7 @@ import {
   fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
 import { Playlist, LABELS } from './playlist-utils.js';
+import updateBlockTempChange from './playlist-test-data-mock.js'; // TODO:: Remove this line before PR.
 
 /**
  * convert seconds to time in minutes in the format of 'mm:ss'
@@ -422,6 +423,7 @@ playlist.onVideoChange((videos, vIndex) => {
  * @param {HTMLElement} block
  */
 export default function decorate(block) {
+  updateBlockTempChange(block);
   const main = document.querySelector('main');
   main.classList.add('playlist-page');
   const playlistSection = block.closest('.section');
