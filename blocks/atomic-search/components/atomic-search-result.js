@@ -127,7 +127,7 @@ export const atomicResultStyles = `
                       max-width: 90vw;
                     }
                     atomic-result-section-excerpt atomic-result-text {
-                      color: #959595;
+                      color: #505050;
                       font-size: var(--spectrum-font-size-75);
                     }
                     .result-title atomic-result-text, .mobile-result-title atomic-result-text {
