@@ -202,7 +202,7 @@ export const atomicResultStyles = `
                       max-width: 90vw;
                     }
                     atomic-result-section-excerpt atomic-result-text {
-                      color: #959595;
+                      color: #505050;
                       font-size: var(--spectrum-font-size-75);
                     }
                     .result-title atomic-result-text, .mobile-result-title atomic-result-text {
@@ -325,7 +325,7 @@ export const atomicResultStyles = `
                     }
                     .mobile-description atomic-result-section-excerpt atomic-result-text {
                       font-size: var(--spectrum-font-size-75);
-                      color: #959595;
+                      color: #505050;
                     }
                     .result-title .atomic-recommendation-badge, .mobile-result-title .atomic-recommendation-badge {
                       position: absolute;
