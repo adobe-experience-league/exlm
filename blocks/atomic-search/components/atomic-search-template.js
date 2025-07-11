@@ -424,7 +424,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
               atomic-layout-section[section='main'] {
                 padding-left: 36px;
                 padding-right: 20px;
-                background-color: var(--non-spectrum-bg);
+                background-color: var(--spectrum-gray-50);
                 border-top: 1px solid var(--footer-border-color);
                 @media(max-width: 1024px) {
                   padding-left: 20px;
@@ -703,8 +703,30 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </atomic-result-multi-value-text>
                       </div>
                       <div class="result-field result-product">
-                          <atomic-result-multi-value-text field="el_product">
+                        <div class="result-field-multi hidden">
+                          <div class="result-field-title">${placeholders.multiSolutionText || 'multisolution'}</div>
+                          <div class="tooltip-placeholder">
+                            <div class="tooltip tooltip-top">
+                              <span class="icon icon-info"></span>
+                              <span class="tooltip-text">
+                                <style>
+                                  .result-product .tooltip-text atomic-result-multi-value-text::part(result-multi-value-text-list) {
+                                    display: block;
+                                  }
+                                  .result-product .tooltip-text atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                                    display: inline;
+                                    color: var(--spectrum-gray-50);
+                                  }
+                                </style>
+                                <atomic-result-multi-value-text field="el_product" max-values-to-display="99"></atomic-result-multi-value-text> 
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="result-field-value">
+                          <atomic-result-multi-value-text field="el_product" max-values-to-display="1">
                           </atomic-result-multi-value-text>
+                        </div>
                       </div>
                       <div class="result-field result-updated">
                           <atomic-result-date format="YYYY-MM-DD" field="sysdate">
@@ -802,8 +824,30 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </atomic-result-multi-value-text>
                     </div>
                     <div class="result-field result-product">
-                        <atomic-result-multi-value-text field="el_product">
-                        </atomic-result-multi-value-text>
+                        <div class="result-field-multi hidden">
+                          <div class="result-field-title">${placeholders.multiSolutionText || 'multisolution'}</div>
+                          <div class="tooltip-placeholder">
+                            <div class="tooltip tooltip-top">
+                              <span class="icon icon-info"></span>
+                              <span class="tooltip-text">
+                                <style>
+                                  .result-product .tooltip-text atomic-result-multi-value-text::part(result-multi-value-text-list) {
+                                    display: block;
+                                  }
+                                  .result-product .tooltip-text atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                                    display: inline;
+                                    color: var(--spectrum-gray-50);
+                                  }
+                                </style>
+                                <atomic-result-multi-value-text field="el_product" max-values-to-display="99"></atomic-result-multi-value-text> 
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="result-field-value">
+                          <atomic-result-multi-value-text field="el_product" max-values-to-display="1">
+                          </atomic-result-multi-value-text>
+                        </div>
                     </div>
                     <div class="result-field result-updated">
                           <atomic-result-date format="YYYY-MM-DD" field="sysdate">
