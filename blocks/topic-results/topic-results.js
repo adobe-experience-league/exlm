@@ -2,11 +2,13 @@ import createHeading from './heading/heading.js';
 import decorateTabs from './tabs/tabs.js';
 import { populateFilteredResults } from './filtered-results/filtered-results.js';
 import ExlClient from './exl-client.js';
+import { getPathDetails } from '../../scripts/scripts.js';
 
 /**
  * @param {HTMLDivElement} block
  */
 export default async function decorate(block) {
+  const { lang } = getPathDetails();
   const client = new ExlClient();
   const combinedData = await client.getCombinedTopicsAndFeatures();
   const firstTopic = Object.values(combinedData)[488]; // Assuming you want to use the first topic for the heading
@@ -16,7 +18,7 @@ export default async function decorate(block) {
       title: 'TOPIC',
       heading: firstTopic.Name,
       viewMoreResultsLabel: 'View more results in search',
-      viewMoreResultsUrl: 'https://experienceleague-dev.adobe.com/search.html#sort=relevancy',
+      viewMoreResultsUrl: `${window.location.origin}/${lang}/search#sort=relevancy`,
     }),
   );
 

@@ -5,7 +5,7 @@ export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.
 export const { origin } = window.location.origin;
 export const render = window.requestAnimationFrame;
 export const root = window.location.pathname === '/';
-export const search = window.location.pathname === '/search.html';
+export const search = window.location.pathname === `/${lang}/search`;
 
 function locale() {
   sessionStorage.setItem('lang', lang);
