@@ -1,17 +1,37 @@
 import { getMetadata } from '../lib-franklin.js';
-import { htmlToElement, loadIms, getLanguageCode } from '../scripts.js';
+import { htmlToElement, loadIms, getLanguageCode, getPathDetails } from '../scripts.js';
 import SearchDelegate from './search-delegate.js';
 
 // Get language code from URL
 const languageCode = await getLanguageCode();
 // Get solution from metadata
 const solution = getMetadata('solution')?.split(',')[0].trim();
+// Get content type from metadata
+let contentType = getMetadata('type')?.trim();
+
+if (!contentType) {
+  // Fallback logic to determine contentType from URL
+  const url = window.location.pathname;
+  const { lang } = getPathDetails();
+  if (url === `/${lang}/playlists`) {
+    contentType = 'Playlist';
+  } else if (url === `/${lang}/perspectives`) {
+    contentType = 'Perspective';
+  } else if (url === `/${lang}/events`) {
+    contentType = 'Event';
+  } else if (url.includes(`/${lang}/certification`)) {
+    contentType = 'Certification';
+  } else {
+    contentType = '';
+  }
+}
 
 // Redirects to the search page based on the provided search input and filters
 export const redirectToSearchPage = (searchUrl, searchInput, filters = '') => {
   const isLegacySearch = searchUrl.includes('.html');
   let targetUrlWithLanguage = isLegacySearch ? `${searchUrl}?lang=${languageCode}` : searchUrl;
-  const filterValue = filters && filters.toLowerCase() === 'all' ? '' : filters;
+  // Use contentType as filter if available, otherwise use provided filters
+  const filterValue = contentType || (filters && filters.toLowerCase() === 'all' ? '' : filters);
   if (searchInput) {
     const trimmedSearchInput = encodeURIComponent(searchInput.trim());
     targetUrlWithLanguage += `#q=${trimmedSearchInput}`;
@@ -83,6 +103,11 @@ export default class Search {
     this.savedDefaultSuggestions = null;
     this.setupAutoCompleteEvents();
     this.callbackFn = this.showSearchSuggestions ? this.fetchInitialSuggestions : null;
+
+    // Set initial filter based on meta "type" / page URL
+    if (contentType) {
+      this.setSelectedSearchOption(contentType);
+    }
   }
 
   setupAutoCompleteEvents() {
