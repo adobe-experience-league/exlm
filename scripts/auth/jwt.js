@@ -21,7 +21,7 @@ async function fetchAndStoreJWT() {
       lastName: profileData?.last_name || '',
       displayName: profileData?.displayName || '',
       email: profileData?.email || '',
-      userId: profileData?.userId || '',
+      userId: profileData?.authId || '', // UGP-13266 use authId as the userId
       accessToken: adobeIMS.getAccessToken()?.token || '', // eslint-disable-line
       sessionId: (profileData?.session || '').replace(/.*\//, ''),
       accountType: profileData?.account_type || '',
