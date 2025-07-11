@@ -418,7 +418,7 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
   const searchWrapper = htmlToElement(
     `<div class="search-wrapper">
       <div class="search-short">
-        <a href="https://experienceleague.adobe.com/search.html" aria-label="Search">
+        <a href="${searchLink?.href}" aria-label="Search">
           <span title="Search" class="icon icon-search"></span>
         </a>
       </div>
@@ -737,7 +737,9 @@ class ExlHeader extends HTMLElement {
         const block = nav.querySelector(`:scope > .${className}`);
         block.style.visibility = 'hidden';
         await decorator(block, options);
-        block.style.visibility = 'visible';
+        if (!(className === 'search' && document.body.classList.contains('search'))) {
+          block.style.visibility = 'visible';
+        }
         this.dispatchEvent(new Event(`${className}-decorated`));
       };
 

@@ -6935,7 +6935,7 @@
         "component": "richtext",
         "valueType": "string",
         "name": "link",
-        "value": "<a href=\"/search.html\">Search</a>",
+        "value": "<a href=\"/en/search\">Search</a>",
         "label": "Seach Link/Text",
         "description": "Should be a link to the search page. The text should be the search label."
       },
