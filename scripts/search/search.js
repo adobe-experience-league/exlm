@@ -31,7 +31,7 @@ if (!contentType) {
 export const redirectToSearchPage = (searchUrl, searchInput, filters = '') => {
   const isLegacySearch = searchUrl.includes('.html');
   let targetUrlWithLanguage = isLegacySearch ? `${searchUrl}?lang=${languageCode}` : searchUrl;
-  const filterValue = filters && filters.toLowerCase() === 'all' ? '' : filters;
+  const filterValue = filters?.toLowerCase() === 'all' ? '' : filters;
   if (searchInput) {
     const trimmedSearchInput = encodeURIComponent(searchInput.trim());
     targetUrlWithLanguage += `#q=${trimmedSearchInput}`;
