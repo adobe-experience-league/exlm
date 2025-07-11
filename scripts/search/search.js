@@ -11,18 +11,19 @@ let contentType = getMetadata('type')?.trim();
 
 if (!contentType) {
   // Fallback logic to determine contentType from URL
-  const url = window.location.pathname;
   const { lang } = getPathDetails();
-  if (url === `/${lang}/playlists`) {
-    contentType = 'Playlist';
-  } else if (url === `/${lang}/perspectives`) {
-    contentType = 'Perspective';
-  } else if (url === `/${lang}/events`) {
-    contentType = 'Event';
-  } else if (url.includes(`/${lang}/certification`)) {
+  const url = window.location.pathname;
+
+  const contentTypeMap = {
+    [`/${lang}/playlists`]: 'Playlist',
+    [`/${lang}/perspectives`]: 'Perspective',
+    [`/${lang}/events`]: 'Event',
+  };
+
+  contentType = contentTypeMap[url] || '';
+
+  if (url.includes(`/${lang}/certification-home`)) {
     contentType = 'Certification';
-  } else {
-    contentType = '';
   }
 }
 
