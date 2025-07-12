@@ -180,6 +180,112 @@ function decoratePlaylistHeader(block, playlist) {
   );
 }
 
+function injectSchemaMarkup(schema) {
+  const json = JSON.stringify(schema);
+  const script = htmlToElement(`<script id="playlist-schema" type="application/ld+json">${json}</script>`);
+  document.head.appendChild(script);
+}
+
+/**
+ * Removes existing JSON-LD script tags that contain VideoObject schema
+ * This prevents duplicate schema information when generating new playlist schema
+ */
+function removeExistingVideoObjectSchemas() {
+  const scripts = document.querySelectorAll('script[type="application/ld+json"]');
+  scripts.forEach((script) => {
+    const content = script.innerHTML;
+    if (content && content.includes('@type') && content.includes('VideoObject')) {
+      script.remove();
+    }
+  });
+}
+
+function generateVideoPlaylistSchema(videos, block) {
+  const BASE_URL = `${window.location.protocol}//${window.location.hostname}`;
+  const currentPath = window.location.pathname;
+  const playlistSection = block.closest('.section');
+  const defaultContent = playlistSection.querySelector('.default-content-wrapper');
+  const playlistTitle = defaultContent.querySelector('h1, h2, h3, h4, h5, h6')?.textContent || document.title;
+  const playlistDescription = defaultContent.querySelector('p')?.textContent || '';
+  const playlistUrl = `${BASE_URL}${currentPath}`;
+  const allLevels = videos.flatMap((v) => v.educationLevel || []);
+  let commonEducationLevel = null;
+  if (allLevels.length) {
+    const counts = allLevels.reduce((acc, lvl) => {
+      acc[lvl] = (acc[lvl] || 0) + 1;
+      return acc;
+    }, {});
+
+    const [[educationLevelInfo]] = Object.entries(counts).sort(([, aCount], [, bCount]) => bCount - aCount);
+    commonEducationLevel = educationLevelInfo;
+  }
+  const MAX_THUMBNAILS = 3;
+  const list = {
+    '@type': ['ItemList', 'LearningResource'],
+    name: playlistTitle,
+    description: playlistDescription,
+    url: playlistUrl,
+    itemListOrder: 'https://schema.org/ItemListOrderAscending',
+    numberOfItems: videos.length,
+    ...(commonEducationLevel && { educationalLevel: commonEducationLevel }),
+    itemListElement: videos.map((video, idx) => {
+      const types = new Set(Array.isArray(video['@type']) ? video['@type'] : [video['@type'] || 'VideoObject']);
+      types.add('LearningResource');
+      const videoObj = {
+        '@type': Array.from(types),
+        name: video.name,
+        description: video.description,
+        duration: video.duration,
+        uploadDate: video.uploadDate,
+        ...(video.embedUrl && { embedUrl: video.embedUrl }),
+        ...(video.thumbnailUrl && {
+          thumbnailUrl: Array.isArray(video.thumbnailUrl)
+            ? video.thumbnailUrl.slice(0, MAX_THUMBNAILS)
+            : video.thumbnailUrl,
+        }),
+        ...(video.hasPart?.length > 0 && { hasPart: video.hasPart }),
+        ...(video.educationLevel && { educationalLevel: video.educationLevel }),
+        ...(video.learningResourceType && { learningResourceType: video.learningResourceType }),
+      };
+      return {
+        '@type': 'ListItem',
+        position: idx + 1,
+        item: videoObj,
+      };
+    }),
+  };
+  return {
+    '@context': 'https://schema.org',
+    '@type': ['WebPage', 'CollectionPage'],
+    url: playlistUrl,
+    name: playlistTitle,
+    description: playlistDescription,
+    mainEntity: list,
+  };
+}
+
+function processJsonLdAndGenerateSchema(jsonLdEl, block) {
+  const codeElements = jsonLdEl.querySelectorAll('code');
+  const videoSchemas = [];
+  codeElements.forEach((codeElement) => {
+    try {
+      const jsonString = codeElement.textContent.trim();
+      if (jsonString) {
+        const parsedJson = JSON.parse(jsonString);
+        videoSchemas.push(parsedJson);
+      }
+    } catch {
+      // no-op
+    }
+  });
+
+  if (videoSchemas.length > 0) {
+    removeExistingVideoObjectSchemas();
+    const playlistSchema = generateVideoPlaylistSchema(videoSchemas, block);
+    injectSchemaMarkup(playlistSchema);
+  }
+}
+
 /** @param {string} transcriptUrl */
 async function getCaptionParagraphs(transcriptUrl) {
   window.playlistCaptions = window.playlistCaptions || {};
@@ -340,6 +446,12 @@ export default function decorate(block) {
 
   const activeVideoIndex = getQueryStringParameter('video') || 0;
 
+  const jsonLdEl = block.firstElementChild?.querySelector('code') ? block.firstElementChild : null;
+  if (jsonLdEl) {
+    block.removeChild(jsonLdEl);
+    processJsonLdAndGenerateSchema(jsonLdEl, block);
+  }
+
   decoratePlaylistHeader(block, playlist);
 
   [...block.children].forEach((videoRow, videoIndex) => {
@@ -368,7 +480,8 @@ export default function decorate(block) {
     durationP.remove();
     transcriptP.remove();
 
-    jsonLdCell?.replaceWith(htmlToElement(`<script type="application/ld+json">${jsonLdCell.textContent}</script>`));
+    // Remove jsonLdCell as we're handling the schema with our custom implementation
+    jsonLdCell?.remove();
 
     // item bottom status
     videoDataCell.append(
