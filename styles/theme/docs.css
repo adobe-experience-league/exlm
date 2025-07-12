@@ -165,18 +165,13 @@
 
   /* docs content area */
   div.section {
-    .accordion-wrapper,
-    .default-content-wrapper,
-    .related-articles-wrapper,
-    .table-wrapper,
-    .note-wrapper,
-    .list-wrapper {
+    [class$='-wrapper'] {
       ul > li,
       ol > li {
         line-height: 1.4;
         margin: 0.6em 0;
 
-        p {
+        p:not(:has(+ :not(p))) {
           margin-bottom: unset;
         }
 
