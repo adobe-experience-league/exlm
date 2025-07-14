@@ -30,11 +30,6 @@ export const atomicResultStyles = `
                       --content-type-perspective-color: #c844dc;
                       --content-type-default-color: #000000
                     }
-                    .result-root {
-                      @media(max-width: 1024px) {
-                        max-width: calc(100% - 40px);
-                      }
-                    }
 
                     .result-description atomic-result-multi-value-text::part(result-multi-value-text-list) {
                       gap: 4px;
@@ -97,6 +92,83 @@ export const atomicResultStyles = `
                       width: 40px;
                       height: 40px;
                     }
+                    .atomic-search-result-item .result-product .result-field-multi {
+                      display: flex;
+                      gap: 6px;
+                      align-items: center;
+                    }
+                    .atomic-search-result-item .result-product .hidden {
+                      display: none;
+                    }
+                    .atomic-search-result-item .result-product .result-field-title {
+                      font-size: var(--spectrum-font-size-75);
+                      text-transform: capitalize;
+                    }
+                    .atomic-search-result-item .tooltip-placeholder {
+                      line-height: 0;
+                      margin-top: 2px;
+                    }
+                    .atomic-search-result-item .tooltip {
+                      display: inline;
+                      position: relative;
+                      margin: 2px 0 0 5px;
+                    }
+                    .atomic-search-result-item .tooltip .icon-info {
+                      width: 14px;
+                      height: 14px;
+                    }
+                    .atomic-search-result-item .tooltip svg {
+                      pointer-events: none;
+                    }
+                    .atomic-search-result-item .tooltip .tooltip-text {
+                      background-color: var(--non-spectrum-dim-gray);
+                      border-radius: 4px;
+                      color: var(--spectrum-gray-50);
+                      display: inline-block;
+                      font-size: var(--spectrum-font-size-50);
+                      font-weight: normal;
+                      line-height: var(--spectrum-line-height-xs);
+                      margin-left: 10px;
+                      opacity: 0;
+                      padding: 4px 9px 5px 10px;
+                      position: absolute;
+                      top: 0;
+                      transition: opacity 0.3s;
+                      visibility: hidden;
+                      width: max-content;
+                      max-width: 155px;
+                      z-index: 11;
+                    }
+                    .atomic-search-result-item .tooltip-top .tooltip-text {
+                      transform: translateX(-50%);
+                      top: unset;
+                      left: 50%;
+                      bottom: 100%;
+                      margin: 0 0 2px;
+                    }
+                    .atomic-search-result-item .tooltip .tooltip-text::before {
+                      border-color: transparent var(--non-spectrum-dim-gray) transparent transparent;
+                      border-style: solid;
+                      border-width: 4px;
+                      content: '';
+                      display: inline-block;
+                      margin-top: -4px;
+                      position: absolute;
+                      right: 100%;
+                      top: 50%;
+                    }
+                    .atomic-search-result-item .tooltip-top .tooltip-text::before {
+                      margin-top: 0;
+                      right: unset;
+                      top: unset;
+                      left: calc(50% - 7px);
+                      bottom: -7px;
+                      transform: rotate(-90deg);
+                    }
+                    .atomic-search-result-item .tooltip:hover .tooltip-text {
+                      visibility: visible;
+                      opacity: 1;
+                    }
                     @media(min-width: 1024px) {
                       .result-item.desktop-only {
                         display: grid;
@@ -106,6 +178,9 @@ export const atomicResultStyles = `
                       }
                       .result-item.mobile-only {
                         display: none;
+                      }
+                      .atomic-search-result-item .result-product .result-field-title {
+                        font-size: var(--spectrum-font-size-100);
                       }
                     }
                     .result-title {
@@ -127,7 +202,7 @@ export const atomicResultStyles = `
                       max-width: 90vw;
                     }
                     atomic-result-section-excerpt atomic-result-text {
-                      color: #959595;
+                      color: #505050;
                       font-size: var(--spectrum-font-size-75);
                     }
                     .result-title atomic-result-text, .mobile-result-title atomic-result-text {
@@ -172,40 +247,20 @@ export const atomicResultStyles = `
                       white-space: pre;
                       white-space: nowrap;
                     }
-
-                    @media(min-width: 1024px) {
-                      .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                        border: 1px solid var(--content-type-default-color);
-                        border-radius: 4px;
-                        padding: 4px 8px;
-                        color: var(--content-type-default-color);
-                        display: flex;
-                        align-items: center;
-                        flex-direction: row-reverse;
-                        gap: 4px;
-                        border: 1px solid #959595;
-                        color: var(--non-spectrum-grey-updated);
-                      }
-                    }
-                    
                     .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-separator) {
                       display: none;
                     }
-                    .result-product atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                    .result-product > atomic-result-multi-value-text::part(result-multi-value-text-value) {
                       font-size: var(--spectrum-font-size-100);
                       color: var(--non-spectrum-web-gray);
                       display: block;
                     }
-                    .result-product atomic-result-multi-value-text::part(result-multi-value-text-list) {
+                    .result-product > atomic-result-multi-value-text::part(result-multi-value-text-list) {
                       flex-wrap: wrap;
                       gap: 4px;
                     }
-                    .result-product atomic-result-multi-value-text::part(result-multi-value-text-separator) {
-                      display: none;
-                    }
                     .result-updated {
-                      font-size: var(--spectrum-font-size-100);
-                      color: var(--non-spectrum-web-gray);
+                      font-size: var(--spectrum-font-size-75);
                       text-align: left;
                     }
                     atomic-result-link {
@@ -251,6 +306,7 @@ export const atomicResultStyles = `
                       display: flex;
                       align-items: center;
                       gap: 12px;
+                      justify-content: flex-start;
                     }
                     .mobile-result-title {
                         position: relative;
@@ -260,8 +316,8 @@ export const atomicResultStyles = `
                       font-weight: bold;
                       color: var(--non-spectrum-dark-gray);
                     }
-                    .mobile-result-info .result-field atomic-result-multi-value-text, .mobile-result-info .atomic-result-date, .mobile-result-info .result-product atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      color: var(--non-spectrum-web-gray);
+                    .mobile-result-info .result-field atomic-result-multi-value-text, .mobile-result-info .atomic-result-date, 
+                    .mobile-result-info .result-product > atomic-result-multi-value-text::part(result-multi-value-text-value) {
                       font-size: var(--spectrum-font-size-75);
                     }
                     .mobile-result-info .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-value) {
@@ -269,18 +325,34 @@ export const atomicResultStyles = `
                     }
                     .mobile-description atomic-result-section-excerpt atomic-result-text {
                       font-size: var(--spectrum-font-size-75);
-                      color: #959595;
+                      color: #505050;
                     }
-
-                     .result-title .atomic-recommendation-badge, .mobile-result-title .atomic-recommendation-badge {
-                        position: absolute;
-                        background-color: var(--non-spectrum-dim-gray);
-                        padding: 2px 8px;
+                    .result-title .atomic-recommendation-badge, .mobile-result-title .atomic-recommendation-badge {
+                      position: absolute;
+                      background-color: var(--non-spectrum-dim-gray);
+                      padding: 2px 8px;
+                      border-radius: 4px;
+                      font-size: var(--spectrum-font-size-75);
+                      color: var(--spectrum-gray-50);
+                      top: -28px;
+                    }
+                    @media(min-width: 1024px) {
+                      .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                        border: 1px solid var(--content-type-default-color);
                         border-radius: 4px;
-                        font-size: var(--spectrum-font-size-75);
-                        color: var(--spectrum-gray-50);
-                        top: -28px;
-                     }
+                        padding: 4px 8px;
+                        color: var(--content-type-default-color);
+                        display: flex;
+                        align-items: center;
+                        flex-direction: row-reverse;
+                        gap: 4px;
+                        border: 1px solid #959595;
+                        color: var(--non-spectrum-grey-updated);
+                      }
+                      .result-updated {
+                        font-size: var(--spectrum-font-size-100);
+                      }
+                    }
                   </style>
 `;
 
@@ -634,6 +706,18 @@ export default function atomicResultHandler(block, placeholders) {
         const blockLevelSkeleton = block.querySelector('.atomic-search-load-skeleton');
         if (blockLevelSkeleton) {
           block.removeChild(blockLevelSkeleton);
+        }
+
+        const resultFieldMulti = resultItem?.querySelector('.result-product .result-field-multi');
+        const resultFieldValue = resultItem?.querySelector('.result-product .result-field-value');
+        const productList = resultFieldValue?.firstElementChild?.shadowRoot?.querySelectorAll('li');
+        const productCount = productList ? productList.length : 0;
+        if (productCount > 1) {
+          resultFieldMulti?.classList.remove('hidden');
+          resultFieldValue?.classList.add('hidden');
+        } else {
+          resultFieldMulti?.classList.add('hidden');
+          resultFieldValue?.classList.remove('hidden');
         }
 
         const recommendationBadgeExists = !!resultItem.querySelector('.atomic-recommendation-badge');
