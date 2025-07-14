@@ -745,7 +745,12 @@ class ExlHeader extends HTMLElement {
       decorateLinks(header);
       const logoP = decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator, this.decoratorOptions);
       const brandP = decorateHeaderBlock('brand', this.brandDecorator, this.decoratorOptions);
-      const searchP = decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
+      let searchP;
+      if (!document.body.classList.contains('search')) {
+        searchP = decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
+      } else {
+        nav?.querySelector(`:scope > .search`)?.remove();
+      }
       const languageP = decorateHeaderBlock('language-selector', this.languageDecorator, this.decoratorOptions);
       const productGridP = decorateHeaderBlock('product-grid', this.productGridDecorator, this.decoratorOptions);
       const signInP = decorateHeaderBlock('sign-in', this.signInDecorator, this.decoratorOptions);

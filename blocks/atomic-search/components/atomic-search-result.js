@@ -5,7 +5,6 @@ import {
   debounce,
   CUSTOM_EVENTS,
   isMobile,
-  handleHeaderSearchVisibility,
   disconnectShadowObserver,
   observeShadowRoot,
 } from './atomic-search-utils.js';
@@ -485,7 +484,6 @@ export default function atomicResultHandler(block, placeholders) {
   const skeletonWrapper = htmlToElement(`<div class="skeleton-wrapper" part="skeleton"></div>`);
   skeletonWrapper.innerHTML = renderAtomicSekeletonUI();
   container.parentElement.appendChild(skeletonWrapper);
-  handleHeaderSearchVisibility();
 
   function onClearBtnClick() {
     const atomicBreadBox = document.querySelector('atomic-breadbox');

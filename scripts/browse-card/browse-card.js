@@ -438,7 +438,8 @@ export async function buildCard(container, element, model) {
       if (
         VIDEO_THUMBNAIL_FORMAT.test(thumbnail) ||
         type === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
-        type === CONTENT_TYPES.TUTORIAL.MAPPING_KEY
+        type === CONTENT_TYPES.TUTORIAL.MAPPING_KEY ||
+        type === CONTENT_TYPES.EVENT.MAPPING_KEY
       ) {
         const playButton = document.createElement('div');
         playButton.classList.add('play-button');
