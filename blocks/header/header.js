@@ -418,7 +418,7 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
   const searchWrapper = htmlToElement(
     `<div class="search-wrapper">
       <div class="search-short">
-        <a href="https://experienceleague.adobe.com/search.html" aria-label="Search">
+        <a href="${searchLink?.href}" aria-label="Search">
           <span title="Search" class="icon icon-search"></span>
         </a>
       </div>
@@ -745,7 +745,12 @@ class ExlHeader extends HTMLElement {
       decorateLinks(header);
       const logoP = decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator, this.decoratorOptions);
       const brandP = decorateHeaderBlock('brand', this.brandDecorator, this.decoratorOptions);
-      const searchP = decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
+      let searchP;
+      if (!document.body.classList.contains('search')) {
+        searchP = decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
+      } else {
+        nav?.querySelector(`:scope > .search`)?.remove();
+      }
       const languageP = decorateHeaderBlock('language-selector', this.languageDecorator, this.decoratorOptions);
       const productGridP = decorateHeaderBlock('product-grid', this.productGridDecorator, this.decoratorOptions);
       const signInP = decorateHeaderBlock('sign-in', this.signInDecorator, this.decoratorOptions);

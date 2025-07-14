@@ -113,20 +113,6 @@ export const updateHash = (filterCondition, joinWith = '&') => {
   window.location.hash = updatedParts.join(joinWith);
 };
 
-export const handleHeaderSearchVisibility = () => {
-  const exlHeader = document.querySelector('exl-header');
-  if (exlHeader) {
-    const searchElement = exlHeader.shadowRoot.querySelector('.search');
-    if (searchElement) {
-      searchElement.style.visibility = 'hidden';
-    }
-    exlHeader.addEventListener('search-decorated', () => {
-      const element = exlHeader.shadowRoot.querySelector('.search');
-      element.style.visibility = 'hidden';
-    });
-  }
-};
-
 export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutation, waitForElement = false } = {}) {
   let observer;
   const ready = () => {
