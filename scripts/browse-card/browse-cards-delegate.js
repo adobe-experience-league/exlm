@@ -1,8 +1,8 @@
 import CoveoDataService from '../data-service/coveo/coveo-data-service.js';
-import LiveEventsDataService from '../data-service/live-events-data-service.js';
+import UpcomingEventsDataService from '../data-service/upcoming-events-data-service.js';
 import ADLSDataService from '../data-service/adls-data-service.js';
 import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
-import BrowseCardsLiveEventsAdaptor from './browse-cards-live-events-adaptor.js';
+import BrowseCardsUpcomingEventsAdaptor from './browse-cards-upcoming-events-adaptor.js';
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import PathsDataService from '../data-service/paths-data-service.js';
@@ -11,7 +11,7 @@ import { getExlPipelineDataSourceParams } from '../data-service/coveo/coveo-exl-
 import { RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import { createDateCriteria } from './browse-card-utils.js';
 
-const { liveEventsUrl, adlsUrl, pathsUrl } = getConfig();
+const { upcomingEventsUrl, adlsUrl, pathsUrl } = getConfig();
 
 const { lang } = getPathDetails();
 
@@ -110,19 +110,19 @@ const BrowseCardsDelegate = (() => {
   };
 
   /**
-   * Handles Live Events data service to fetch card data.
+   * Handles Upcoming Events data service to fetch card data.
    * @returns {Array} Array of card data.
    * @throws {Error} Throws an error if an issue occurs during data fetching.
    * @private
    */
-  const handleLiveEventsService = async () => {
-    const liveEventsService = new LiveEventsDataService(liveEventsUrl);
-    const events = await liveEventsService.fetchDataFromSource();
+  const handleUpcomingEventsService = async () => {
+    const upcomingEventsService = new UpcomingEventsDataService(upcomingEventsUrl);
+    const events = await upcomingEventsService.fetchDataFromSource();
     if (!events) {
       throw new Error('An error occurred');
     }
     if (events?.length) {
-      return BrowseCardsLiveEventsAdaptor.mapResultsToCardsData(events);
+      return BrowseCardsUpcomingEventsAdaptor.mapResultsToCardsData(events);
     }
     return [];
   };
@@ -215,7 +215,7 @@ const BrowseCardsDelegate = (() => {
    */
   const getServiceForContentType = (contentType) => {
     const contentTypesServices = {
-      [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY]: handleLiveEventsService,
+      [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY]: handleUpcomingEventsService,
       [CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY]: handleADLSService,
       [RECOMMENDED_COURSES_CONSTANTS.PATHS.MAPPING_KEY]: handlePathsService,
     };

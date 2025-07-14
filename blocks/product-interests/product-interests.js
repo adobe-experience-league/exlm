@@ -1,6 +1,7 @@
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { htmlToElement, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
+import { pushProductInterestsEvent } from '../../scripts/analytics/lib-analytics.js';
 import getEmitter from '../../scripts/events.js';
 import FormValidator from '../../scripts/form-validator.js';
 
@@ -214,6 +215,12 @@ function handleProductInterestChange(block) {
       if (event.target.tagName === 'INPUT') {
         const [, id] = event.target.id.split('__');
         interestsEventEmitter.set(id, event.target.checked);
+
+        if (event.target.checked) {
+          pushProductInterestsEvent(id, event.target.title, 'selected');
+        } else {
+          pushProductInterestsEvent(id, event.target.title, 'unselected');
+        }
       }
     });
   });

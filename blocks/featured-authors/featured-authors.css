@@ -45,7 +45,7 @@
 }
 
 .featured-authors.block.adobe .featured-authors-image {
-  border: 6px solid var(--spectrum-red-1400);
+  border: 6px solid var(--non-spectrum-adobe-dark-red);
 }
 
 .featured-authors.block.external .featured-authors-image {
@@ -76,7 +76,7 @@
 
 .featured-authors.block.adobe .featured-authors-image .source-tag {
   display: block;
-  background-color: var(--spectrum-red-1400);
+  background-color: var(--non-spectrum-adobe-dark-red);
 }
 
 .featured-authors.block.external .featured-authors-image .source-tag {

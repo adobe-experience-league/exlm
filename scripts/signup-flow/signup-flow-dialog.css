@@ -359,7 +359,7 @@
   }
 
   .signup-dialog-content .product-interests .interests-container {
-    max-height: 280px;
+    max-height: 340px;
   }
 
   .signup-dialog-content .product-interests .interests-container li {
@@ -388,6 +388,10 @@
 
   .signup-dialog-content .icon-block {
     max-width: 795px;
+  }
+
+  .signup-dialog-content .product-interests .interests-container {
+    max-height: 280px;
   }
 }
 

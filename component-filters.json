@@ -63,8 +63,11 @@
       "announcement-ribbon",
       "qualtrics",
       "upcoming-event",
+      "upcoming-event-v2",
       "notification-banner",
-      "code"
+      "code",
+      "playlist-browse",
+      "atomic-search"
     ]
   },
   {
@@ -106,7 +109,8 @@
       "topic-results",
       "announcement-ribbon",
       "qualtrics",
-      "upcoming-event"
+      "upcoming-event",
+      "upcoming-event-v2"
     ]
   },
   {
@@ -146,7 +150,8 @@
       "topic-results",
       "article-tags",
       "qualtrics",
-      "code"
+      "code",
+      "announcement-ribbon"
     ]
   },
   {
@@ -197,7 +202,8 @@
       "recommendation-marquee",
       "block-quote",
       "callout",
-      "qualtrics"
+      "qualtrics",
+      "announcement-ribbon"
     ]
   },
   {
@@ -290,7 +296,8 @@
       "featured-content",
       "note",
       "qualtrics",
-      "code"
+      "code",
+      "announcement-ribbon"
     ]
   },
   {

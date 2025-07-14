@@ -1,5 +1,11 @@
 import { createOptimizedPicture, decorateIcons } from '../../scripts/lib-franklin.js';
-import { createPlaceholderSpan, decoratePlaceholders, getPathDetails, htmlToElement } from '../../scripts/scripts.js';
+import {
+  createPlaceholderSpan,
+  decoratePlaceholders,
+  getPathDetails,
+  htmlToElement,
+  fetchWithFallback,
+} from '../../scripts/scripts.js';
 import { newMultiSelect, newPagination, newShowHidePanel } from './dom-helpers.js';
 
 const EXPERIENCE_LEVEL_PLACEHOLDERS = [
@@ -53,7 +59,9 @@ const PLACEHOLDERS = {
 
 async function fetchPlaylists() {
   const { lang } = getPathDetails();
-  const resp = await fetch(`/${lang}/playlists.json`);
+  const path = `${window.hlx.codeBasePath}/${lang}/playlists.json`;
+  const fallback = `${window.hlx.codeBasePath}/en/playlists.json`;
+  const resp = await fetchWithFallback(path, fallback);
   return resp.json();
 }
 
@@ -81,32 +89,6 @@ const filterOptions = [
   },
 ];
 const multiSelects = [];
-
-/**
- * Creates the marquee for the playlist browse page.
- * @param {HTMLElement} block
- */
-function decoratePlaylistBrowseMarquee(block) {
-  const [firstRow] = block.children;
-  const [firstCell] = firstRow.children;
-
-  const picture = createOptimizedPicture('/images/playlists-marquee-background.png', '', true, [
-    { media: '(min-width: 600px)', width: '700' },
-  ]);
-
-  const marquee = htmlToElement(`
-    <div class="playlist-browse-marquee">
-        <div class="playlist-browse-marquee-background"></div>
-        <div class="playlist-browse-marquee-content">
-        <h1>${firstCell.innerHTML}</h1>
-        </div>
-    </div>`);
-
-  marquee.querySelector('.playlist-browse-marquee-background').append(picture);
-
-  firstCell.remove();
-  block.parentElement.before(marquee);
-}
 
 /**
  * get all possible values for a filter from the playlists
@@ -211,8 +193,10 @@ const updateCards = (filters) => {
   // reset pagination and cards
   if (pagination) {
     pagination.remove();
+    pagination = null;
   }
   cards.innerHTML = '';
+  filters.block.querySelector('.playlist-no-results')?.remove();
 
   // add loading cards
   for (let i = 0; i < 16; i += 1) {
@@ -222,6 +206,22 @@ const updateCards = (filters) => {
   playlistsPromise.then((playlists) => {
     // add filtered cards and pagination for them.
     const filteredPlaylists = filterPlaylists(playlists.data, filters);
+
+    // Show error message if no playlists match
+    if (filteredPlaylists.length === 0) {
+      const errorMsg = document.createElement('div');
+      errorMsg.className = 'playlist-no-results';
+      const noResultsText = createPlaceholderSpan(
+        'noResultsTextBrowse',
+        'We are sorry, no results found matching the criteria. Try adjusting your search to view more content.',
+      );
+      errorMsg.append(noResultsText);
+
+      cards.innerHTML = '';
+      filters.block.append(errorMsg);
+      return;
+    }
+
     const onPageChange = (page, ps) => {
       cards.innerHTML = '';
       ps.forEach((playlist) => cards.append(newPlaylistCard(playlist)));
@@ -449,8 +449,6 @@ class Filter {
  * @param {HTMLElement} block
  */
 export default async function decorate(block) {
-  decoratePlaylistBrowseMarquee(block);
-
   // create the filter UI
   const filters = new Filter({
     onFilterChange: () => {

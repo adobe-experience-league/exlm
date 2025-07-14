@@ -6,7 +6,7 @@ import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
 const bookmarkExclusionContentypes = [
-  CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
+  CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
   CONTENT_TYPES.COMMUNITY.MAPPING_KEY,
   CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
 ];
@@ -74,6 +74,13 @@ const formatRemainingTime = (remainingTime) => {
 const getBookmarkId = ({ id, viewLink, contentType }) => {
   if (id) {
     return contentType === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ? `/playlists/${id}` : id;
+  }
+  return viewLink ? new URL(viewLink).pathname : '';
+};
+
+const getBookmarkPath = ({ id, viewLink, contentType }) => {
+  if (contentType === CONTENT_TYPES.PLAYLIST.MAPPING_KEY && id) {
+    return `/playlists/${id}`;
   }
   return viewLink ? new URL(viewLink).pathname : '';
 };
@@ -193,7 +200,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
     let icon = null;
     const isLeftPlacement = false;
     if (
-      [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
+      [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
         contentType?.toLowerCase(),
       )
     ) {
@@ -263,7 +270,7 @@ const buildCardContent = async (card, model) => {
   cardContent.appendChild(cardMeta);
 
   if (
-    contentType === CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY ||
+    contentType === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY ||
     contentType === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY
   ) {
     buildEventContent({ event, contentType, cardContent, card });
@@ -302,6 +309,7 @@ const buildCardContent = async (card, model) => {
   const cardAction = UserActions({
     container: cardOptions,
     id: getBookmarkId({ id, viewLink, contentType }),
+    bookmarkPath: getBookmarkPath({ id, viewLink, contentType }),
     link: copyLink,
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
     copyConfig: failedToLoad ? false : undefined,
@@ -501,7 +509,7 @@ export async function buildCard(container, element, model) {
       }
     });
     if (
-      [CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
+      [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
         contentType?.toLowerCase(),
       )
     ) {

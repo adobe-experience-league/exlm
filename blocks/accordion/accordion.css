@@ -38,7 +38,7 @@
   content: none;
 }
 
-.accordion details div > div {
+.accordion details > div > div {
   color: var(--non-spectrum-raisin-black);
   font-size: var(--spectrum-font-size-200);
   line-height: var(--spectrum-line-height-m);
@@ -52,14 +52,6 @@
   margin-top: 14px;
 }
 
-.accordion p {
-  margin-top: 14px;
-}
-
-.accordion ol li p {
-  margin-bottom: 8px;
-}
-
 .accordion p:last-child {
   margin-bottom: 0;
 }
@@ -70,8 +62,6 @@
 
 .accordion ul li {
   margin-top: 0;
-  margin-bottom: 14px;
-  line-height: 1.5;
 }
 
 .accordion ul li:last-child {
@@ -105,23 +95,6 @@ ol .accordion summary {
 
 .accordion details[open] summary::before {
   content: url('../../icons/chevron-down.svg');
-}
-
-.accordion .code-wrapper,
-.accordion .code-wrapper div,
-.accordion .note-wrapper,
-.accordion .note-wrapper div {
-  margin-left: 0;
-  margin-top: 0;
-}
-
-.accordion .code pre {
-  padding: 14px;
-  line-height: 21px;
-}
-
-.accordion .code code {
-  font-size: var(--spectrum-font-size-100);
 }
 
 .shade-box .accordion-wrapper:first-child details {

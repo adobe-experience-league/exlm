@@ -54,7 +54,7 @@
 }
 
 .featured-content.block.adobe .featured-content-image {
-  border: 6px solid var(--spectrum-red-1400);
+  border: 6px solid var(--non-spectrum-adobe-dark-red);
 }
 
 .featured-content.block.external .featured-content-image {
@@ -86,7 +86,7 @@
 
 .featured-content.block.adobe .featured-content-image .source-tag {
   display: block;
-  background-color: var(--spectrum-red-1400);
+  background-color: var(--non-spectrum-adobe-dark-red);
 }
 
 .featured-content.block.external .featured-content-image .source-tag {

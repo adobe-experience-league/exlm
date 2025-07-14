@@ -12,8 +12,8 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 async function getListofProducts() {
   try {
     let data;
-    const { liveEventsUrl } = getConfig();
-    const response = await fetch(liveEventsUrl, {
+    const { upcomingEventsUrl } = getConfig();
+    const response = await fetch(upcomingEventsUrl, {
       method: 'GET',
     });
 
@@ -103,7 +103,7 @@ export default async function decorate(block) {
   contentDiv.classList.add('browse-cards-block-content');
 
   const parameters = {
-    contentType: CONTENT_TYPES.LIVE_EVENT.MAPPING_KEY,
+    contentType: CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
   };
 
   const buildCardsShimmer = new BrowseCardShimmer();
@@ -167,6 +167,24 @@ export default async function decorate(block) {
     const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
 
     contentDiv.innerHTML = ''; // Clear previous cards
+    const existingError = block.querySelector('.event-no-results');
+    if (existingError) existingError.remove(); // Prevent duplicate error message
+
+    // Show error message if selected product has no events
+    if (updatedData.length === 0) {
+      const noResultsText =
+        placeholders.noResultsTextBrowse ||
+        'We are sorry, no results found matching the criteria. Try adjusting your search to view more content.';
+      const errorMsg = htmlToElement(`
+    <div class="event-no-results">${noResultsText}</div>
+  `);
+
+      contentDiv.style.display = 'none';
+      block.appendChild(errorMsg);
+      return;
+    }
+
+    contentDiv.style.display = '';
     updatedData.forEach((cardData) => {
       const cardDiv = document.createElement('div');
       buildCard(contentDiv, cardDiv, cardData);
