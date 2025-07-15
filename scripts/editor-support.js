@@ -11,6 +11,7 @@ import {
 import { decorateRichtext } from './editor-support-rte.js';
 import renderSEOWarnings from './editor-support-seo.js';
 import { decorateMain, isPerspectivePage, loadArticles, loadIms } from './scripts.js';
+import { loadPrism } from './utils/prism-utils.js';
 
 // set aem content root
 window.hlx.aemRoot = '/content/exlm/global';
@@ -327,6 +328,34 @@ function handleEditorSelect(event) {
   }
 }
 
+function highlightCodeBlock(container = document) {
+  const codeBlocks = container.querySelectorAll('pre code');
+
+  if (codeBlocks.length === 0) return;
+
+  const highlight = () => {
+    codeBlocks.forEach((block) => {
+      try {
+        window.Prism?.highlightElement(block);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('Prism highlight failed:', e);
+      }
+    });
+  };
+
+  if (window.Prism) {
+    setTimeout(highlight, 250);
+  } else {
+    loadPrism(document)
+      .then(() => {
+        setTimeout(highlight, 250);
+        // eslint-disable-next-line no-console
+      })
+      .catch((e) => console.error('Failed to load Prism:', e));
+  }
+}
+
 function attachEventListeners(main) {
   ['aue:content-patch', 'aue:content-update', 'aue:content-add', 'aue:content-move', 'aue:content-remove'].forEach(
     (eventType) =>
@@ -334,8 +363,10 @@ function attachEventListeners(main) {
         event.stopPropagation();
         const applied = await applyChanges(event);
         if (applied) {
+          const updatedEl = event.detail?.element ?? main;
           updateUEInstrumentation();
           renderSEOWarnings();
+          highlightCodeBlock(updatedEl);
         } else {
           window.location.reload();
         }
