@@ -233,6 +233,9 @@ export const atomicResultStyles = `
                       position: relative;
                       max-height: 18px
                     }
+                    atomic-result-multi-value-text::part(multi-hidden) {
+                      display: none;
+                    }
                     .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-list) {
                       margin: 0 8px 0 0;
                       display: flex;
@@ -708,7 +711,12 @@ export default function atomicResultHandler(block, placeholders) {
 
         const resultFieldMulti = resultItem?.querySelector('.result-product .result-field-multi');
         const resultFieldValue = resultItem?.querySelector('.result-product .result-field-value');
-        const productList = resultFieldValue?.firstElementChild?.shadowRoot?.querySelectorAll('li');
+        const allProductItems = resultFieldValue?.firstElementChild?.shadowRoot?.querySelectorAll('li');
+        const productList = allProductItems
+          ? Array.from(allProductItems).filter(
+              (item) => !item.classList.contains('separator') && !item.textContent.includes('|'),
+            )
+          : null;
         const productCount = productList ? productList.length : 0;
         if (productCount > 1) {
           resultFieldMulti?.classList.remove('hidden');
@@ -716,6 +724,14 @@ export default function atomicResultHandler(block, placeholders) {
         } else {
           resultFieldMulti?.classList.add('hidden');
           resultFieldValue?.classList.remove('hidden');
+
+          if (allProductItems && allProductItems.length > 1) {
+            Array.from(allProductItems).forEach((item, index) => {
+              if (index > 0) {
+                item.part.add('multi-hidden');
+              }
+            });
+          }
         }
 
         const recommendationBadgeExists = !!resultItem.querySelector('.atomic-recommendation-badge');
