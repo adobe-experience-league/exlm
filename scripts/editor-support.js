@@ -350,8 +350,8 @@ function highlightCodeBlock(container = document) {
     loadPrism(document)
       .then(() => {
         setTimeout(highlight, 250);
-        // eslint-disable-next-line no-console
       })
+      // eslint-disable-next-line no-console
       .catch((e) => console.error('Failed to load Prism:', e));
   }
 }
