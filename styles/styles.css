@@ -612,7 +612,6 @@ ul > li {
   font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: 27px;
-  color: var(--non-spectrum-grey);
   margin-top: 1em;
   margin-bottom: 2em;
 }
