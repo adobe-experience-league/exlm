@@ -604,6 +604,7 @@ ul {
   margin-left: 28px;
   list-style-type: disc;
   padding: 0;
+  color: var(--spectrum-gray-800);
 }
 
 ul > li {
@@ -612,7 +613,6 @@ ul > li {
   font-weight: var(--font-weight-normal);
   font-style: normal;
   line-height: 27px;
-  color: var(--non-spectrum-grey);
   margin-top: 1em;
   margin-bottom: 2em;
 }
@@ -625,6 +625,7 @@ ol {
   margin-left: 28px;
   list-style-type: decimal;
   padding: 0;
+  color: var(--spectrum-gray-800);
 }
 
 ol > li {
