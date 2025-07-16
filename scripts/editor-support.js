@@ -11,7 +11,6 @@ import {
 import { decorateRichtext } from './editor-support-rte.js';
 import renderSEOWarnings from './editor-support-seo.js';
 import { decorateMain, isPerspectivePage, loadArticles, loadIms } from './scripts.js';
-import { loadPrism } from './utils/prism-utils.js';
 
 // set aem content root
 window.hlx.aemRoot = '/content/exlm/global';
@@ -328,7 +327,7 @@ function handleEditorSelect(event) {
   }
 }
 
-function highlightCodeBlock(container = document) {
+async function highlightCodeBlock(container = document) {
   const codeBlocks = container.querySelectorAll('pre code');
 
   if (codeBlocks.length === 0) return;
@@ -347,6 +346,7 @@ function highlightCodeBlock(container = document) {
   if (window.Prism) {
     setTimeout(highlight, 250);
   } else {
+    const { default: loadPrism } = await import('./utils/prism-utils.js');
     loadPrism(document)
       .then(() => {
         setTimeout(highlight, 250);
@@ -366,7 +366,7 @@ function attachEventListeners(main) {
           const updatedEl = event.detail?.element ?? main;
           updateUEInstrumentation();
           renderSEOWarnings();
-          highlightCodeBlock(updatedEl);
+          await highlightCodeBlock(updatedEl);
         } else {
           window.location.reload();
         }
