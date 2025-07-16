@@ -374,8 +374,8 @@
 }
 
 .browse-card .user-actions button .icon {
-  height: 23px;
-  width: 23px;
+  height: 24px; /* a11y touch target must be 24px */
+  width: 24px; /* a11y touch target must be 24px */
 }
 
 .browse-card .browse-card-footer .browse-card-cta-element .icon {

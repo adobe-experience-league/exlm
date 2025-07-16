@@ -619,6 +619,7 @@ const productGridDecorator = async (productGridBlock, decoratorOptions) => {
 const adobeLogoDecorator = async (adobeLogoBlock) => {
   simplifySingleCellBlock(adobeLogoBlock);
   decorateIcons(adobeLogoBlock);
+  adobeLogoBlock.querySelector('a').setAttribute('aria-label', 'Adobe Experience League'); // a11y
   return adobeLogoBlock;
 };
 

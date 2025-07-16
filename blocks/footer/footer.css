@@ -41,14 +41,14 @@
   background: none;
   background-color: transparent !important;
   font-weight: initial;
-  padding: 15px 15px 15px 0;
+  padding: 10px 10px 10px 0;
   position: relative;
   top: 2px;
 }
 
 .language-selector .icon {
-  height: 18px;
-  width: 18px;
+  height: 24px; /* a11y touch target must be 24px */
+  width: 24px; /* a11y touch target must be 24px */
 }
 
 .footer-copyrights {
@@ -198,7 +198,11 @@
 .footer-lang-social .language-selector a {
   color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-75);
-  line-height: 1.6875rem;
+  line-height: 24px;
+  height: 24px; /* a11y touch target must be 24px */
+  display: block;
+  margin: 0;
+  vertical-align: middle;
 }
 
 .footer-lang-social .language-selector a::after {
