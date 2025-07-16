@@ -59,7 +59,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
               }
               atomic-search-layout atomic-layout-section[section='status'] {
                 position: relative;
-                @media(max-width: 1024px) {
+                @media(max-width: 1023px) {
                   position: relative;
                   gap: 12px;
                   grid-template-columns: 1fr;
@@ -80,7 +80,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   ". atomic-section-facets  atomic-section-main"
                   ". atomic-section-facets  .                  " !important;
     
-                @media(max-width: 1024px) {
+                @media(max-width: 1023px) {
                   grid-template-areas: 
                   "atomic-section-search"
                   "atomic-section-main" !important;
@@ -105,7 +105,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 font-size: 16px !important;
                 align-content: center;
 
-                @media(max-width: 1024px) {
+                @media(max-width: 1023px) {
                   font-size: 14px;
                 }
               }
@@ -153,7 +153,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
               .atomic-search-box-wrapper {
                 width: 100%;
                 margin: 16px 0 20px !important;
-                @media(max-width: 1024px) {
+                @media(max-width: 1023px) {
                   margin-bottom: 0 !important;
                 }
               }
@@ -426,7 +426,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 padding-right: 20px;
                 background-color: var(--spectrum-gray-50);
                 border-top: 1px solid var(--footer-border-color);
-                @media(max-width: 1024px) {
+                @media(max-width: 1023px) {
                   padding-left: 20px;
                   border-top: none;
                 }
@@ -452,7 +452,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
               <style>
                 atomic-layout-section {
                   position: relative;
-                  @media(max-width: 1024px) {
+                  @media(max-width: 1023px) {
                     // max-width: calc(100% - 40px);
                     overflow-x: hidden;
                   }
@@ -585,7 +585,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     border-radius: 4px;
                     color: var(--non-spectrum-grey-updated);
 
-                    @media(max-width: 1024px) {
+                    @media(max-width: 1023px) {
                       padding-right: 2rem;
                     }
                   }
@@ -1011,7 +1011,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     width: 40px;
                   }
                 }
-                @media(max-width: 1024px) {
+                @media(max-width: 1023px) {
                   atomic-pager::part(previous-button), atomic-pager::part(next-button) {
                     transform: scale(0.7);
                   }

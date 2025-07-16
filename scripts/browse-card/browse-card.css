@@ -16,8 +16,8 @@
   --browse-card-color-troubleshooting-secondary: #fff3df;
   --browse-card-color-upcoming-event-primary: #eb1000;
   --browse-card-color-upcoming-event-secondary: #ffc0c0;
-  --browse-card-color-event-primary: #ff709f;
-  --browse-card-color-event-secondary: #ffe2ec;
+  --browse-card-color-event-primary: #eb1000;
+  --browse-card-color-event-secondary: #ffc0c0;
   --browse-card-color-instructor-led-training-primary: #7a6afd;
   --browse-card-color-instructor-led-training-secondary: #e4e1ff;
   --browse-card-color-perspective-primary: #c844dc;
@@ -374,8 +374,8 @@
 }
 
 .browse-card .user-actions button .icon {
-  height: 23px;
-  width: 23px;
+  height: 24px; /* a11y touch target must be 24px */
+  width: 24px; /* a11y touch target must be 24px */
 }
 
 .browse-card .browse-card-footer .browse-card-cta-element .icon {
