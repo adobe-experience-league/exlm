@@ -272,6 +272,15 @@ export const atomicResultStyles = `
                       position: absolute;
                       left: 0;
                     }
+                    .result-title atomic-result-link:has(a) {
+                      display: block;
+                      width: 100%;
+                      --atomic-visited: red;
+                    }
+                    .result-title atomic-result-link a:visited > * {
+                      color: var(--atomic-visited);
+                      visibility: visible;
+                    }
                     atomic-result-link > a img {
                       display: inline-block;
                       margin-bottom: 6px;
@@ -280,7 +289,7 @@ export const atomicResultStyles = `
                       width: 14px;
                     }
                     atomic-result-link > a > atomic-result-text {
-                      visibility: hidden
+                      visibility: visible;
                     }
                     .result-icons-wrapper {
                       display: flex;
