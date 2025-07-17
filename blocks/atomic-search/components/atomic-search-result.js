@@ -272,6 +272,14 @@ export const atomicResultStyles = `
                       position: absolute;
                       left: 0;
                     }
+                    .result-title atomic-result-link:has(a) {
+                      display: block;
+                      width: 100%;
+                    }
+                    .result-title atomic-result-link a:visited > * {
+                      color:  #93219E !important;
+                      visibility: visible;
+                    }
                     atomic-result-link > a img {
                       display: inline-block;
                       margin-bottom: 6px;
@@ -280,7 +288,7 @@ export const atomicResultStyles = `
                       width: 14px;
                     }
                     atomic-result-link > a > atomic-result-text {
-                      visibility: hidden
+                      visibility: visible;
                     }
                     .result-icons-wrapper {
                       display: flex;
@@ -310,6 +318,14 @@ export const atomicResultStyles = `
                     .mobile-result-title {
                         position: relative;
                      }
+                    .result-item.mobile-only .mobile-result-title atomic-result-text:has(a) {
+                      display: block;
+                      width: 100%;
+                    }
+                    .result-item.mobile-only .mobile-result-title atomic-result-text a:visited > * {
+                      color:  #93219E;
+                      visibility: visible;
+                    }
                     .result-item.mobile-only .mobile-result-title atomic-result-text {
                       font-size: var(--spectrum-font-size-200);
                       font-weight: bold;
