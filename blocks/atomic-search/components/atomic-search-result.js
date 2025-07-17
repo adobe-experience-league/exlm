@@ -27,7 +27,8 @@ export const atomicResultStyles = `
                       --content-type-troubleshooting-color: #ffa213;
                       --content-type-event-color: #ff709f;
                       --content-type-perspective-color: #c844dc;
-                      --content-type-default-color: #000000
+                      --content-type-default-color: #000000;
+                      --atomic-visited-link-color: #93219E;
                     }
 
                     .result-description atomic-result-multi-value-text::part(result-multi-value-text-list) {
@@ -268,6 +269,9 @@ export const atomicResultStyles = `
                       font-size: var(--spectrum-font-size-50);
                       cursor: pointer;
                     }
+                    atomic-result-link a {
+                      text-decoration: none !important;
+                    }
                     atomic-result-link > a:not([slot="label"]) {
                       position: absolute;
                       left: 0;
@@ -277,7 +281,7 @@ export const atomicResultStyles = `
                       width: 100%;
                     }
                     .result-title atomic-result-link a:visited > * {
-                      color:  #93219E;
+                      color:  var(--atomic-visited-link-color);
                       visibility: visible;
                     }
                     atomic-result-link > a img {
@@ -323,7 +327,7 @@ export const atomicResultStyles = `
                       width: 100%;
                     }
                     .result-item.mobile-only .mobile-result-title atomic-result-text a:visited > * {
-                      color:  #93219E;
+                      color:  var(--atomic-visited-link-color);
                       visibility: visible;
                     }
                     .result-item.mobile-only .mobile-result-title atomic-result-text {
