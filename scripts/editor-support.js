@@ -327,6 +327,35 @@ function handleEditorSelect(event) {
   }
 }
 
+async function highlightCodeBlock(container = document) {
+  const codeBlocks = container.querySelectorAll('pre code');
+
+  if (codeBlocks.length === 0) return;
+
+  const highlight = () => {
+    codeBlocks.forEach((block) => {
+      try {
+        window.Prism?.highlightElement(block);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('Prism highlight failed:', e);
+      }
+    });
+  };
+
+  if (window.Prism) {
+    setTimeout(highlight, 250);
+  } else {
+    const { default: loadPrism } = await import('./utils/prism-utils.js');
+    loadPrism(document)
+      .then(() => {
+        setTimeout(highlight, 250);
+      })
+      // eslint-disable-next-line no-console
+      .catch((e) => console.error('Failed to load Prism:', e));
+  }
+}
+
 function attachEventListeners(main) {
   ['aue:content-patch', 'aue:content-update', 'aue:content-add', 'aue:content-move', 'aue:content-remove'].forEach(
     (eventType) =>
@@ -334,8 +363,10 @@ function attachEventListeners(main) {
         event.stopPropagation();
         const applied = await applyChanges(event);
         if (applied) {
+          const updatedEl = event.detail?.element ?? main;
           updateUEInstrumentation();
           renderSEOWarnings();
+          await highlightCodeBlock(updatedEl);
         } else {
           window.location.reload();
         }
