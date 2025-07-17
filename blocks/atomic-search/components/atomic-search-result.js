@@ -277,7 +277,7 @@ export const atomicResultStyles = `
                       width: 100%;
                     }
                     .result-title atomic-result-link a:visited > * {
-                      color:  #93219E !important;
+                      color:  #93219E;
                       visibility: visible;
                     }
                     atomic-result-link > a img {
