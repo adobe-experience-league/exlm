@@ -28,7 +28,7 @@ export const atomicResultStyles = `
                       --content-type-event-color: #ff709f;
                       --content-type-perspective-color: #c844dc;
                       --content-type-default-color: #000000;
-                      --atomic-visited-link-color: #93219E;
+                      --search-visited-link-color: #93219E;
                     }
 
                     .result-description atomic-result-multi-value-text::part(result-multi-value-text-list) {
@@ -276,7 +276,6 @@ export const atomicResultStyles = `
                       left: 0;
                     }
                     .result-title atomic-result-link:has(a), .mobile-result-title atomic-result-link:has(a) {
-                      display: block;
                       width: 100%;
                       overflow: hidden;
                       max-width: 90vw;
@@ -285,9 +284,8 @@ export const atomicResultStyles = `
                       -webkit-box-orient: vertical;
                       text-overflow: ellipsis;
                     }
-                    .result-title atomic-result-link a:visited > * {
-                      color:  var(--atomic-visited-link-color);
-                      visibility: visible;
+                    .result-title atomic-result-link a:visited > atomic-result-text {
+                      color:  var(--search-visited-link-color);
                     }
                     atomic-result-link > a img {
                       display: inline-block;
@@ -327,9 +325,8 @@ export const atomicResultStyles = `
                     .mobile-result-title {
                         position: relative;
                      }    
-                    .result-item.mobile-only .mobile-result-title atomic-result-link a:visited > * {
-                      color:  var(--atomic-visited-link-color);
-                      visibility: visible;
+                    .result-item.mobile-only .mobile-result-title atomic-result-link a:visited > atomic-result-text {
+                      color:  var(--search-visited-link-color);
                     }
                     .result-item.mobile-only .mobile-result-title atomic-result-text {
                       font-size: var(--spectrum-font-size-200);
