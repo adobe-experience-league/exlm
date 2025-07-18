@@ -27,7 +27,8 @@ export const atomicResultStyles = `
                       --content-type-troubleshooting-color: #ffa213;
                       --content-type-event-color: #ff709f;
                       --content-type-perspective-color: #c844dc;
-                      --content-type-default-color: #000000
+                      --content-type-default-color: #000000;
+                      --search-visited-link-color: #93219E;
                     }
 
                     .result-description atomic-result-multi-value-text::part(result-multi-value-text-list) {
@@ -268,9 +269,23 @@ export const atomicResultStyles = `
                       font-size: var(--spectrum-font-size-50);
                       cursor: pointer;
                     }
+                    atomic-result-link a {
+                      text-decoration: none !important;
+                    }
                     atomic-result-link > a:not([slot="label"]) {
-                      position: absolute;
                       left: 0;
+                    }
+                    .result-title atomic-result-link:has(a), .mobile-result-title atomic-result-link:has(a) {
+                      width: 100%;
+                      overflow: hidden;
+                      max-width: 90vw;
+                      display: -webkit-box;
+                      -webkit-line-clamp: 2; 
+                      -webkit-box-orient: vertical;
+                      text-overflow: ellipsis;
+                    }
+                    .result-title atomic-result-link a:visited > atomic-result-text {
+                      color:  var(--search-visited-link-color);
                     }
                     atomic-result-link > a img {
                       display: inline-block;
@@ -279,8 +294,8 @@ export const atomicResultStyles = `
                       height: 14px;
                       width: 14px;
                     }
-                    atomic-result-link > a > atomic-result-text {
-                      visibility: hidden
+                    atomic-result-link .icon-external-link {
+                      display: none;
                     }
                     .result-icons-wrapper {
                       display: flex;
@@ -309,7 +324,10 @@ export const atomicResultStyles = `
                     }
                     .mobile-result-title {
                         position: relative;
-                     }
+                     }    
+                    .result-item.mobile-only .mobile-result-title atomic-result-link a:visited > atomic-result-text {
+                      color:  var(--search-visited-link-color);
+                    }
                     .result-item.mobile-only .mobile-result-title atomic-result-text {
                       font-size: var(--spectrum-font-size-200);
                       font-weight: bold;
