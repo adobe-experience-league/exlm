@@ -273,12 +273,17 @@ export const atomicResultStyles = `
                       text-decoration: none !important;
                     }
                     atomic-result-link > a:not([slot="label"]) {
-                      position: absolute;
                       left: 0;
                     }
-                    .result-title atomic-result-link:has(a) {
+                    .result-title atomic-result-link:has(a), .mobile-result-title atomic-result-link:has(a) {
                       display: block;
                       width: 100%;
+                      overflow: hidden;
+                      max-width: 90vw;
+                      display: -webkit-box;
+                      -webkit-line-clamp: 2; 
+                      -webkit-box-orient: vertical;
+                      text-overflow: ellipsis;
                     }
                     .result-title atomic-result-link a:visited > * {
                       color:  var(--atomic-visited-link-color);
@@ -290,6 +295,9 @@ export const atomicResultStyles = `
                       margin-left: 4px;
                       height: 14px;
                       width: 14px;
+                    }
+                    atomic-result-link .icon-external-link {
+                      display: none;
                     }
                     .result-icons-wrapper {
                       display: flex;
@@ -318,12 +326,8 @@ export const atomicResultStyles = `
                     }
                     .mobile-result-title {
                         position: relative;
-                     }
-                    .result-item.mobile-only .mobile-result-title atomic-result-text:has(a) {
-                      display: block;
-                      width: 100%;
-                    }
-                    .result-item.mobile-only .mobile-result-title atomic-result-text a:visited > * {
+                     }    
+                    .result-item.mobile-only .mobile-result-title atomic-result-link a:visited > * {
                       color:  var(--atomic-visited-link-color);
                       visibility: visible;
                     }
@@ -851,7 +855,7 @@ export default function atomicResultHandler(block, placeholders) {
         }
 
         const videoUrlEl = resultShadow?.querySelector('atomic-result-text[field="video_url"]');
-        const titleEl = resultShadow?.querySelector('atomic-result-text[field="title"]');
+        const titleEl = resultShadow?.querySelector('atomic-result-link[field="title"]');
 
         const VIDEO_THUMBNAIL_FORMAT = /^https:\/\/video\.tv\.adobe\.com\/v\/\w+/;
 
