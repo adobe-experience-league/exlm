@@ -291,9 +291,6 @@ export const atomicResultStyles = `
                       height: 14px;
                       width: 14px;
                     }
-                    atomic-result-link > a > atomic-result-text {
-                      visibility: visible;
-                    }
                     .result-icons-wrapper {
                       display: flex;
                       align-items: center;
