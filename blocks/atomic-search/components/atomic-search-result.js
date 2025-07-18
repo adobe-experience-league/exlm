@@ -855,7 +855,7 @@ export default function atomicResultHandler(block, placeholders) {
         }
 
         const videoUrlEl = resultShadow?.querySelector('atomic-result-text[field="video_url"]');
-        const titleEl = resultShadow?.querySelector('atomic-result-link[field="title"]');
+        const titleEl = resultShadow?.querySelector('atomic-result-text[field="title"]');
 
         const VIDEO_THUMBNAIL_FORMAT = /^https:\/\/video\.tv\.adobe\.com\/v\/\w+/;
 
