@@ -1,6 +1,6 @@
 import { loadIms } from './scripts.js';
 
-export default async function highlightCodeBlock(document) {
+export async function highlightCodeBlock(document) {
   const codeBlocks = document.querySelectorAll('pre code');
 
   if (codeBlocks.length === 0) return;
