@@ -693,9 +693,8 @@ const getCoveoAtomicMarkup = (placeholders) => {
                           placeholders.searchRecommendationBadge || 'Recommendation'
                         }</span>
                       </atomic-field-condition>
-                      <atomic-result-text field="title" should-highlight="false">
-                        <atomic-result-link></atomic-result-link>
-                      </atomic-result-text>
+                      <atomic-result-link field="title">
+                      </atomic-result-link>
                     </div>
                     <div class="mobile-result-info">
                       <div class="result-field result-content-type">
@@ -772,10 +771,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                               placeholders.searchRecommendationBadge || 'Recommendation'
                             }</span>
                           </atomic-field-condition>
-                          <atomic-result-text field="title" should-highlight="false">
-                            <atomic-result-link>
+                          
+                            <atomic-result-link field="title">
                             </atomic-result-link>
-                          </atomic-result-text>
                         </div>
                         <div class="result-icons-wrapper">
                           <atomic-field-condition if-defined="el_view_status">
