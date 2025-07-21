@@ -422,6 +422,21 @@ export async function activateStep(block, stepIndex) {
   if (stepIndex === state.currentStep && autoplayAudio) {
     try {
       await waitForAudioReady(audio);
+      
+      // Only trigger autoplay event if the slides are in slide view mode (not docs view)
+      const container = block.querySelector('.container');
+      const isSlideMode = !container.classList.contains('as-docs');
+      
+      if (isSlideMode) {
+        // Trigger autoplay event when autoplay is enabled on page load
+        const audioOn = !audio.muted;
+        pushGuidePlayEvent({
+          title: formatGuideTitle(block, stepIndex),
+          trigger: 'autoplay',
+          steps: getTotalSteps(block)
+        }, audioOn);
+      }
+      
       audio.play();
     } catch (error) {
       // Its fine if the audio doesn't play
@@ -502,7 +517,7 @@ export function copyToClipboard({ text, toastText }) {
   }
 }
 
-export function addEventHandlers(block, placeholders) {
+export function addEventHandlers(block, placeholders) {  
   block.querySelectorAll('[data-toggle-view]').forEach((button) => {
     button.addEventListener('click', () => {
       block.querySelector('.container').classList.toggle('as-docs');
@@ -538,30 +553,27 @@ export function addEventHandlers(block, placeholders) {
       }
     });
   });
-
+  
   block.querySelectorAll('[data-next-step]').forEach((button) => {
     button.addEventListener('click', () => {
       const nextStep = getNextStep(block, state.currentStep);
 
       if (nextStep && getPreference('view') !== 'as-docs') {
-        // Track initial play when first slide is shown
-        const isFirstStep = !getPreviousStep(block, state.currentStep);
+        // Get audio status
         const audio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
         const audioOn = !audio.muted;
         
-        // Determine if this is the initial play or a next navigation
-        const trigger = isFirstStep && button.classList.contains('next-button') ? 'play' : 'next';
+        // Add analytics tracking for next button - always use 'next' as trigger
+        pushGuidePlayEvent({
+          title: formatGuideTitle(block, nextStep),
+          trigger: 'next',
+          steps: getTotalSteps(block)
+        }, audioOn);
         
+        // Update the step after tracking the event
         state.currentStep = nextStep;
         updateWindowLocation(block, state.currentStep);
         showStep(block, state.currentStep);
-        
-        // Add analytics tracking for next button
-        pushGuidePlayEvent({
-          title: formatGuideTitle(block, state.currentStep),
-          trigger,
-          steps: getTotalSteps(block)
-        }, audioOn);
       }
     });
   });
@@ -588,6 +600,19 @@ export function addEventHandlers(block, placeholders) {
   });
 
   block.querySelectorAll('audio').forEach((audio) => {
+    // Add event listener for the play button on the audio element
+    audio.addEventListener('play', () => {
+      const audioOn = !audio.muted;
+      const currentStepId = audio.closest('[data-step]').dataset.step;
+      
+      // Track this as a "play" event regardless of which step we're on
+      pushGuidePlayEvent({
+        title: formatGuideTitle(block, currentStepId),
+        trigger: 'play',
+        steps: getTotalSteps(block)
+      }, audioOn);
+    });
+    
     audio.addEventListener('ended', () => {
       setTimeout(() => {
         if (getPreference('autoplayAudio')) {
