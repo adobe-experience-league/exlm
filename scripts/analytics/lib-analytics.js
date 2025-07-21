@@ -358,15 +358,15 @@ export function pushProductInterestsEvent(id, title, selectionType) {
  */
 export function pushGuidePlayEvent(guide, audioOn) {
   window.adobeDataLayer = window.adobeDataLayer || [];
-  
+
   const audioStatus = audioOn ? 'audio on' : 'audio off';
-  
+
   window.adobeDataLayer.push({
-    event: "guidePlay",
+    event: 'guidePlay',
     guide: {
       title: guide.title,
       trigger: `${guide.trigger}:${audioStatus}`,
-      steps: guide.steps
+      steps: guide.steps,
     },
     web: {
       webPageDetails: {
@@ -375,7 +375,7 @@ export function pushGuidePlayEvent(guide, audioOn) {
         feature: document.querySelector('meta[name="feature"]')?.content?.toLowerCase() || '',
         URL: window.location.href,
         domain: window.location.host,
-      }
-    }
+      },
+    },
   });
 }
