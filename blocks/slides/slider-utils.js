@@ -1,5 +1,23 @@
 import state from './slider-state.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
+import { pushGuidePlayEvent } from '../../scripts/analytics/lib-analytics.js';
+
+// Helper function to format guide title
+function formatGuideTitle(block, stepId) {
+  const container = block.querySelector('.container');
+  const blockTitle = container.querySelector('.title').textContent;
+  const step = block.querySelector(`[data-step="${stepId}"]`);
+  const stepNumber = step.querySelector('.step-counter').textContent.split('/')[0].trim();
+  const slideTitle = step.querySelector('.step-name-title').textContent.trim();
+  
+  return `${blockTitle}:${stepNumber}:${slideTitle}`;
+}
+
+// Helper function to get total steps
+function getTotalSteps(block) {
+  const firstStep = block.querySelector('.step');
+  return firstStep.querySelector('.step-counter').textContent.split('/')[1].trim();
+}
 
 export const isDesktopView = () => window.matchMedia('(min-width: 768px)').matches;
 
@@ -507,6 +525,16 @@ export function addEventHandlers(block, placeholders) {
         state.currentStep = previousStep;
         updateWindowLocation(block, state.currentStep);
         showStep(block, state.currentStep);
+        
+        // Add analytics tracking for previous button
+        const audio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
+        const audioOn = !audio.muted;
+        
+        pushGuidePlayEvent({
+          title: formatGuideTitle(block, state.currentStep),
+          trigger: 'previous',
+          steps: getTotalSteps(block)
+        }, audioOn);
       }
     });
   });
@@ -516,9 +544,24 @@ export function addEventHandlers(block, placeholders) {
       const nextStep = getNextStep(block, state.currentStep);
 
       if (nextStep && getPreference('view') !== 'as-docs') {
+        // Track initial play when first slide is shown
+        const isFirstStep = !getPreviousStep(block, state.currentStep);
+        const audio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
+        const audioOn = !audio.muted;
+        
+        // Determine if this is the initial play or a next navigation
+        const trigger = isFirstStep && button.classList.contains('next-button') ? 'play' : 'next';
+        
         state.currentStep = nextStep;
         updateWindowLocation(block, state.currentStep);
         showStep(block, state.currentStep);
+        
+        // Add analytics tracking for next button
+        pushGuidePlayEvent({
+          title: formatGuideTitle(block, state.currentStep),
+          trigger,
+          steps: getTotalSteps(block)
+        }, audioOn);
       }
     });
   });
@@ -531,6 +574,16 @@ export function addEventHandlers(block, placeholders) {
       block.querySelectorAll('[data-option-force-active="true"]').forEach((option) => {
         option.selected = true;
       });
+      
+      // Add analytics tracking for section navigation
+      const audio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
+      const audioOn = !audio.muted;
+      
+      pushGuidePlayEvent({
+        title: formatGuideTitle(block, state.currentStep),
+        trigger: 'next', // Section navigation is treated as "next"
+        steps: getTotalSteps(block)
+      }, audioOn);
     });
   });
 
@@ -538,6 +591,18 @@ export function addEventHandlers(block, placeholders) {
     audio.addEventListener('ended', () => {
       setTimeout(() => {
         if (getPreference('autoplayAudio')) {
+          const nextStep = getNextStep(block, state.currentStep);
+          if (nextStep) {
+            const audioOn = !audio.muted;
+            
+            // Add analytics tracking for autoplay
+            pushGuidePlayEvent({
+              title: formatGuideTitle(block, nextStep),
+              trigger: 'autoplay',
+              steps: getTotalSteps(block)
+            }, audioOn);
+          }
+          
           audio.closest('[data-step]').querySelector('[data-next-step]').click();
         }
       }, 2000);
