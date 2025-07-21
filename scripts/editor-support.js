@@ -10,7 +10,7 @@ import {
 } from './lib-franklin.js';
 import { decorateRichtext } from './editor-support-rte.js';
 import renderSEOWarnings from './editor-support-seo.js';
-import { decorateMain, isPerspectivePage, loadArticles, loadIms } from './scripts.js';
+import { decorateMain, isPerspectivePage, loadArticles } from './scripts.js';
 
 // set aem content root
 window.hlx.aemRoot = '/content/exlm/global';
@@ -327,35 +327,6 @@ function handleEditorSelect(event) {
   }
 }
 
-async function highlightCodeBlock(container = document) {
-  const codeBlocks = container.querySelectorAll('pre code');
-
-  if (codeBlocks.length === 0) return;
-
-  const highlight = () => {
-    codeBlocks.forEach((block) => {
-      try {
-        window.Prism?.highlightElement(block);
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error('Prism highlight failed:', e);
-      }
-    });
-  };
-
-  if (window.Prism) {
-    setTimeout(highlight, 250);
-  } else {
-    const { default: loadPrism } = await import('./utils/prism-utils.js');
-    loadPrism(document)
-      .then(() => {
-        setTimeout(highlight, 250);
-      })
-      // eslint-disable-next-line no-console
-      .catch((e) => console.error('Failed to load Prism:', e));
-  }
-}
-
 function attachEventListeners(main) {
   ['aue:content-patch', 'aue:content-update', 'aue:content-add', 'aue:content-move', 'aue:content-remove'].forEach(
     (eventType) =>
@@ -363,10 +334,13 @@ function attachEventListeners(main) {
         event.stopPropagation();
         const applied = await applyChanges(event);
         if (applied) {
-          const updatedEl = event.detail?.element ?? main;
           updateUEInstrumentation();
           renderSEOWarnings();
-          await highlightCodeBlock(updatedEl);
+          if (main.querySelectorAll('.block.code').length > 0) {
+            const { highlightCodeBlock } = await import('./editor-support-blocks.js');
+            const updatedEl = event.detail?.element ?? main;
+            await highlightCodeBlock(updatedEl);
+          }
         } else {
           window.location.reload();
         }
@@ -382,23 +356,8 @@ attachEventListeners(document.querySelector('main'));
 // show/hide sign-up block when switching betweeen UE Edit mode and preview
 const signUpBlock = document.querySelector('.block.sign-up');
 if (signUpBlock) {
-  // check if user is signed in
-  try {
-    await loadIms();
-  } catch {
-    // eslint-disable-next-line no-console
-    console.warn('Adobe IMS not available.');
-  }
-
-  new MutationObserver((e) => {
-    e.forEach((change) => {
-      if (change.target.classList.contains('adobe-ue-edit')) {
-        signUpBlock.style.display = 'block';
-      } else {
-        signUpBlock.style.display = window.adobeIMS?.isSignedInUser() ? 'none' : 'block';
-      }
-    });
-  }).observe(document.documentElement, { attributeFilter: ['class'] });
+  const { handleSignUpBlock } = await import('./editor-support-blocks.js');
+  await handleSignUpBlock(signUpBlock);
 }
 
 // update UE component filters on page load
