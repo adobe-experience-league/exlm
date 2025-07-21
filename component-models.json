@@ -4280,7 +4280,7 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-role",
+        "name": "tq-roles",
         "label": "Role(s)",
         "valueType": "string",
         "description": "Sets the role(s) in page meta.",
@@ -4297,7 +4297,7 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-level",
+        "name": "tq-levels",
         "label": "Experience Level(s)",
         "valueType": "string",
         "description": "Sets the level(s) in page meta.",
