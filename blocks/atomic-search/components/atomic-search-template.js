@@ -1,9 +1,5 @@
 import { htmlToElement, getPathDetails } from '../../../scripts/scripts.js';
-import {
-  atomicResultChildrenStyles,
-  atomicResultChildrenTemplateStyles,
-  INITIAL_ATOMIC_RESULT_CHILDREN_COUNT,
-} from './atomic-result-children.js';
+import { INITIAL_ATOMIC_RESULT_CHILDREN_COUNT } from './atomic-result-children.js';
 import { nextNavigationArrow, previousNavigationArrow } from './atomic-search-icons.js';
 import { atomicResultListStyles, atomicResultStyles } from './atomic-search-result.js';
 
@@ -63,7 +59,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
               }
               atomic-search-layout atomic-layout-section[section='status'] {
                 position: relative;
-                @media(max-width: 1024px) {
+                @media(max-width: 1023px) {
                   position: relative;
                   gap: 12px;
                   grid-template-columns: 1fr;
@@ -84,7 +80,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   ". atomic-section-facets  atomic-section-main"
                   ". atomic-section-facets  .                  " !important;
     
-                @media(max-width: 1024px) {
+                @media(max-width: 1023px) {
                   grid-template-areas: 
                   "atomic-section-search"
                   "atomic-section-main" !important;
@@ -109,7 +105,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 font-size: 16px !important;
                 align-content: center;
 
-                @media(max-width: 1024px) {
+                @media(max-width: 1023px) {
                   font-size: 14px;
                 }
               }
@@ -157,7 +153,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
               .atomic-search-box-wrapper {
                 width: 100%;
                 margin: 16px 0 20px !important;
-                @media(max-width: 1024px) {
+                @media(max-width: 1023px) {
                   margin-bottom: 0 !important;
                 }
               }
@@ -239,7 +235,42 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet.hide-facet {
                   display: none;
                 }
-                atomic-facet::part(facet-hide-element) {
+                atomic-facet::part(facet-shimmer) {
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  height: 100%;
+                  width: 100%;
+                  display: none;
+                  cursor: wait;
+                  background: var(--non-spectrum-hover-bg);
+                  opacity: 0.5;
+                  z-index: 10;
+                }
+                atomic-facet::part(show-shimmer) {
+                  display: block;
+                }
+                atomic-facet::part(facet-show-more-wrapper) {
+                  display: flex;
+                  margin: 16px 8px 8px;
+                }
+                atomic-facet::part(icon-item) {
+                  height: 9px;
+                  width: 9px;
+                  margin-top: 2px;
+                  display: none;
+                }
+                atomic-facet::part(show-icon) {
+                  display: block;
+                }
+                atomic-facet::part(facet-show-more) {
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  gap: 4px;
+                  color: var(--non-spectrum-input-text);
+                }
+                atomic-facet::part(facet-hide-element), atomic-facet::part(facet-collapsed) {
                   display: none;
                 }
                 atomic-search-interface.atomic-search-interface-no-results atomic-facet::part(facet-hide-element) {
@@ -315,6 +346,10 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(clear-button), atomic-timeframe-facet::part(clear-button) {
                   display: none;
                 }
+
+                atomic-facet::part(facet-parent-hide-ui) {
+                  padding-bottom: 0.625rem;
+                }
                 
                 atomic-facet::part(show-more-less-icon) atomic-component-error, atomic-facet::part(value-checkbox-icon) atomic-component-error, atomic-facet::part(value-checkbox) atomic-component-error, atomic-component-error, atomic-icon atomic-component-error {
                   display: none !important;
@@ -330,6 +365,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 sort-criteria="alphanumericNatural"
                 field="el_contenttype"
                 label="${placeholders.searchContentTypeLabel || 'Content Type'}"
+                number-of-values="50"
                 display-values-as="checkbox">
               </atomic-facet>
               <atomic-facet
@@ -344,7 +380,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 sort-criteria="alphanumericNatural"
                 field="el_product"
                 label="${placeholders.searchProductLabel || 'Product'}"
-                number-of-values="60"
+                number-of-values="500"
                 display-values-as="checkbox"
                 with-search="false">
               </atomic-facet>
@@ -353,6 +389,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 sort-criteria="alphanumericNatural"
                 field="el_role"
                 label="${placeholders.searchRoleLabel || 'Role'}"
+                number-of-values="50"
                 display-values-as="checkbox">
               </atomic-facet>
               <atomic-timeframe-facet
@@ -387,9 +424,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
               atomic-layout-section[section='main'] {
                 padding-left: 36px;
                 padding-right: 20px;
-                background-color: var(--non-spectrum-bg);
+                background-color: var(--spectrum-gray-50);
                 border-top: 1px solid var(--footer-border-color);
-                @media(max-width: 1024px) {
+                @media(max-width: 1023px) {
                   padding-left: 20px;
                   border-top: none;
                 }
@@ -415,7 +452,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
               <style>
                 atomic-layout-section {
                   position: relative;
-                  @media(max-width: 1024px) {
+                  @media(max-width: 1023px) {
                     // max-width: calc(100% - 40px);
                     overflow-x: hidden;
                   }
@@ -548,7 +585,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     border-radius: 4px;
                     color: var(--non-spectrum-grey-updated);
 
-                    @media(max-width: 1024px) {
+                    @media(max-width: 1023px) {
                       padding-right: 2rem;
                     }
                   }
@@ -666,8 +703,30 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </atomic-result-multi-value-text>
                       </div>
                       <div class="result-field result-product">
-                          <atomic-result-multi-value-text field="el_product">
+                        <div class="result-field-multi hidden">
+                          <div class="result-field-title">${placeholders.multiSolutionText || 'multisolution'}</div>
+                          <div class="tooltip-placeholder">
+                            <div class="tooltip tooltip-top">
+                              <span class="icon icon-info"></span>
+                              <span class="tooltip-text">
+                                <style>
+                                  .result-product .tooltip-text atomic-result-multi-value-text::part(result-multi-value-text-list) {
+                                    display: block;
+                                  }
+                                  .result-product .tooltip-text atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                                    display: inline;
+                                    color: var(--spectrum-gray-50);
+                                  }
+                                </style>
+                                <atomic-result-multi-value-text field="el_product" max-values-to-display="99"></atomic-result-multi-value-text> 
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="result-field-value">
+                          <atomic-result-multi-value-text field="el_product" max-values-to-display="1">
                           </atomic-result-multi-value-text>
+                        </div>
                       </div>
                       <div class="result-field result-updated">
                           <atomic-result-date format="YYYY-MM-DD" field="sysdate">
@@ -688,27 +747,6 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       </atomic-result-number>
                     </div>
                     <div class="result-description">
-                    <atomic-result-children>
-                      ${atomicResultChildrenStyles}
-                      <atomic-load-more-children-results label="Show replies"></atomic-load-more-children-results>
-                      <atomic-result-children-template>
-                        <template>
-                          ${atomicResultChildrenTemplateStyles}
-                          <div class="child-item">
-                            <div class="mobile-result-title result-title">
-                              <span class="icon icon-atomic-search-share"></span>
-                              <atomic-result-text field="title" should-highlight="false">
-                                <atomic-result-link>
-                                </atomic-result-link>
-                              </atomic-result-text>
-                            </div>
-                            <atomic-result-section-excerpt>
-                              <atomic-result-text field="excerpt" should-highlight="false"></atomic-result-text>
-                            </atomic-result-section-excerpt>
-                          </div>
-                        </template>
-                      </atomic-result-children-template>
-                    </atomic-result-children>
                     <atomic-field-condition must-match-el_contenttype="${CONTENT_TYPES.TUTORIAL}">
                       <atomic-field-condition if-defined="video_url">
                         <div class="result-field result-thumbnail">
@@ -786,8 +824,30 @@ const getCoveoAtomicMarkup = (placeholders) => {
                         </atomic-result-multi-value-text>
                     </div>
                     <div class="result-field result-product">
-                        <atomic-result-multi-value-text field="el_product">
-                        </atomic-result-multi-value-text>
+                        <div class="result-field-multi hidden">
+                          <div class="result-field-title">${placeholders.multiSolutionText || 'multisolution'}</div>
+                          <div class="tooltip-placeholder">
+                            <div class="tooltip tooltip-top">
+                              <span class="icon icon-info"></span>
+                              <span class="tooltip-text">
+                                <style>
+                                  .result-product .tooltip-text atomic-result-multi-value-text::part(result-multi-value-text-list) {
+                                    display: block;
+                                  }
+                                  .result-product .tooltip-text atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                                    display: inline;
+                                    color: var(--spectrum-gray-50);
+                                  }
+                                </style>
+                                <atomic-result-multi-value-text field="el_product" max-values-to-display="99"></atomic-result-multi-value-text> 
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="result-field-value">
+                          <atomic-result-multi-value-text field="el_product" max-values-to-display="1">
+                          </atomic-result-multi-value-text>
+                        </div>
                     </div>
                     <div class="result-field result-updated">
                           <atomic-result-date format="YYYY-MM-DD" field="sysdate">
@@ -802,27 +862,6 @@ const getCoveoAtomicMarkup = (placeholders) => {
                       </atomic-result-number>
                     </div>
                     <div class="result-description">
-                    <atomic-result-children>
-                      ${atomicResultChildrenStyles}
-                      <atomic-result-children-template>
-                        <template>
-                          ${atomicResultChildrenTemplateStyles}
-                          
-                          <div class="child-item">
-                            <div class="result-title">
-                              <span class="icon icon-atomic-search-share"></span>
-                              <atomic-result-text field="title" should-highlight="false">
-                                <atomic-result-link>
-                                </atomic-result-link>
-                              </atomic-result-text>
-                            </div>
-                            <atomic-result-section-excerpt>
-                              <atomic-result-text field="excerpt" should-highlight="false"></atomic-result-text>
-                            </atomic-result-section-excerpt>
-                          </div>
-                        </template>
-                      </atomic-result-children-template>
-                    </atomic-result-children>
                     <atomic-result-multi-value-text
                       field="limessagelabels"
                       max-values-to-display=99
@@ -972,7 +1011,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     width: 40px;
                   }
                 }
-                @media(max-width: 1024px) {
+                @media(max-width: 1023px) {
                   atomic-pager::part(previous-button), atomic-pager::part(next-button) {
                     transform: scale(0.7);
                   }

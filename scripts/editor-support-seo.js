@@ -5,6 +5,10 @@ loadCSS(`${window.hlx.codeBasePath}/styles/ue-styles.css`);
  * Displays SEO warnings for specific tags.
  */
 export default function renderSEOWarnings() {
+  const EXCLUDED_PATHS = ['/global-fragments/', '/tools/', '/microsites/'];
+
+  if (EXCLUDED_PATHS.some((path) => window.location.pathname.includes(path))) return;
+
   const tags = ['h1'];
   let warningBanner = document.querySelector('.ue-warning-banner');
   const messages = [];

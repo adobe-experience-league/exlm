@@ -81,7 +81,7 @@ function buildMiniToc(block, placeholders) {
   const headers = Array.from(baseEl.querySelectorAll(selectorQuery)).filter(headerExclusions);
 
   if (headers.length > 1) {
-    const html = headers.map((i) => `<li><a href="#${i.id}" class="${setPadding(i.nodeName)}">${i.innerText}</a></li>`);
+    const html = headers.map((i) => `<li><a href="#${i.id}" class="${setPadding(i.nodeName)}">${i.innerHTML}</a></li>`);
     // eslint-disable-next-line no-restricted-globals
     const url = new URL(location.href);
     const lhash = url.hash.length > 0;

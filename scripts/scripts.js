@@ -331,6 +331,7 @@ export function decorateExternalLinks(main) {
     const href = a.getAttribute('href');
     if (!href) return;
     if (href.includes('#_blank')) {
+      a.setAttribute('href', href.replace('#_blank', ''));
       a.setAttribute('target', '_blank');
     } else if (!href.startsWith('#')) {
       if (a.hostname !== window.location.hostname) {
@@ -1335,6 +1336,10 @@ async function loadPage() {
     } else {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
+        // Applying data-cs-mask for signed-in profile-settings page
+        if (window.location.pathname === `/${lang}/home/profile-settings`) {
+          document.body.setAttribute('data-cs-mask', '');
+        }
         loadPage();
         loadTarget(signedIn);
       } else {

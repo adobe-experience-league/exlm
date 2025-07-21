@@ -1,6 +1,8 @@
 import state from './slider-state.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 
+export const isDesktopView = () => window.matchMedia('(min-width: 768px)').matches;
+
 export function normalizeSpaces(str) {
   // Replace multiple spaces with a single space
   return str.replace(/\s+/g, ' ').trim();
@@ -372,7 +374,7 @@ function waitForAudioReady(audioEl) {
   });
 }
 
-export async function activateStep(block, stepIndex, direction = 'next') {
+export async function activateStep(block, stepIndex) {
   // There should only be 1 match, but the forEach guards against no matches as well
   const step = block.querySelector(`[data-step="${stepIndex}"]`);
 
@@ -391,8 +393,13 @@ export async function activateStep(block, stepIndex, direction = 'next') {
   });
 
   const audio = step.querySelector('audio');
-
-  const autoplayAudio = direction === 'next' && getPreference('autoplayAudio') && getPreference('view') !== 'as-docs';
+  const autoplayAudio = getPreference('autoplayAudio') && getPreference('view') !== 'as-docs';
+  audio.muted = getPreference('muteStatus') || false;
+  const playbackRate = getPreference('playbackRate');
+  if (playbackRate) {
+    audio.playbackRate = playbackRate;
+  }
+  audio.currentTime = 0; // Reset the timeStamp so that it will always from start.
 
   if (stepIndex === state.currentStep && autoplayAudio) {
     try {
@@ -406,7 +413,7 @@ export async function activateStep(block, stepIndex, direction = 'next') {
   }
 }
 
-export function showStep(block, stepId, direction = 'next') {
+export function showStep(block, stepId) {
   const step = block.querySelector(`[data-step="${stepId}"]`);
 
   const previousButton = step.querySelector('[data-previous-step="previous-button"]');
@@ -434,13 +441,13 @@ export function showStep(block, stepId, direction = 'next') {
   });
 
   // Must come after the remove active above
-  activateStep(block, stepId, direction);
+  activateStep(block, stepId);
 }
 
 export function showAllSteps(block) {
   block.querySelectorAll('[data-step]').forEach(async (step) => {
     await step.querySelector('audio')?.pause();
-    activateStep(block, step.dataset.step, false);
+    activateStep(block, step.dataset.step);
   });
 }
 
@@ -499,7 +506,7 @@ export function addEventHandlers(block, placeholders) {
       if (previousStep && getPreference('view') !== 'as-docs') {
         state.currentStep = previousStep;
         updateWindowLocation(block, state.currentStep);
-        showStep(block, state.currentStep, 'previous');
+        showStep(block, state.currentStep);
       }
     });
   });
@@ -511,7 +518,7 @@ export function addEventHandlers(block, placeholders) {
       if (nextStep && getPreference('view') !== 'as-docs') {
         state.currentStep = nextStep;
         updateWindowLocation(block, state.currentStep);
-        showStep(block, state.currentStep, 'next');
+        showStep(block, state.currentStep);
       }
     });
   });
@@ -520,7 +527,7 @@ export function addEventHandlers(block, placeholders) {
     select.addEventListener('change', () => {
       state.currentStep = select.value;
       updateWindowLocation(block, state.currentStep);
-      showStep(block, state.currentStep, 'jump');
+      showStep(block, state.currentStep);
       block.querySelectorAll('[data-option-force-active="true"]').forEach((option) => {
         option.selected = true;
       });
@@ -534,6 +541,14 @@ export function addEventHandlers(block, placeholders) {
           audio.closest('[data-step]').querySelector('[data-next-step]').click();
         }
       }, 2000);
+    });
+
+    audio.addEventListener('volumechange', () => {
+      setPreference('muteStatus', audio.muted);
+    });
+
+    audio.addEventListener('ratechange', () => {
+      setPreference('playbackRate', audio.playbackRate);
     });
   });
 

@@ -11,7 +11,7 @@ import atomicPagerHandler from './components/atomic-search-pager.js';
 import atomicNoResultHandler from './components/atomic-search-no-results.js';
 import atomicNotificationHandler from './components/atomic-search-notification.js';
 import getCoveoAtomicMarkup from './components/atomic-search-template.js';
-import { CUSTOM_EVENTS, debounce, handleHeaderSearchVisibility } from './components/atomic-search-utils.js';
+import { CUSTOM_EVENTS, debounce } from './components/atomic-search-utils.js';
 import { isMobile } from '../header/header-utils.js';
 import createAtomicSkeleton from './components/atomic-search-skeleton.js';
 import atomicSearchBoxHandler from './components/atomic-search-box.js';
@@ -81,7 +81,16 @@ export default function decorate(block) {
     await customElements.whenDefined('atomic-search-interface');
     const searchInterface = block.querySelector('atomic-search-interface');
     const { coveoOrganizationId } = getConfig();
-    const { lang: languageCode } = getPathDetails();
+    let { lang: languageCode } = getPathDetails();
+
+    const atomicLanguagesMap = {
+      'pt-br': 'pt-BR',
+      'zh-hans': 'zh-CN',
+      'zh-hant': 'zh-TW',
+    };
+
+    languageCode = atomicLanguagesMap[languageCode] || languageCode;
+
     const coveoToken = await coveoTokenPromise;
 
     // Initialization
@@ -94,7 +103,7 @@ export default function decorate(block) {
     searchInterface.executeFirstSearch();
 
     const commonActionHandler = () => {
-      atomicFacetHandler(block.querySelector('atomic-facet'));
+      atomicFacetHandler(block.querySelector('atomic-facet'), placeholders);
       atomicSearchBoxHandler(block);
       atomicResultHandler(block, placeholders);
       atomicSortDropdownHandler(block.querySelector('atomic-sort-dropdown'));
@@ -122,7 +131,6 @@ export default function decorate(block) {
     ]).then(() => {
       atomicNoResultHandler(block, placeholders);
       commonActionHandler();
-      handleHeaderSearchVisibility();
       decorateIcons(block);
 
       const onResize = () => {
@@ -175,7 +183,7 @@ export default function decorate(block) {
         Role: placeholders.searchRoleLabel || 'Role',
         Date: placeholders.searchDateLabel || 'Date',
         'Newest First': placeholders.searchNewestFirstLabel || 'Newest First',
-        'Oldest First': placeholders.searchOldesFirstLabel || 'Oldest First',
+        'Oldest First': placeholders.searchOldestFirstLabel || 'Oldest First',
         'Most Likes': placeholders.searchMostLikesLabel || 'Most Likes',
         'Most Replies': placeholders.searchMostRepliesLabel || 'Most Replies',
         'Most Views': placeholders.searchMostViewsLabel || 'Most Views',

@@ -1706,6 +1706,7 @@
         "label": "Style",
         "valueType": "string",
         "required": true,
+        "maxSize": 6,
         "options": [
           {
             "name": "Size Variant",
@@ -1820,6 +1821,19 @@
               {
                 "name": "Custom",
                 "value": "custom"
+              }
+            ]
+          },
+          {
+            "name": "Text Color",
+            "children": [
+              {
+                "name": "Black",
+                "value": "text-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "text-spectrum-gray-50"
               }
             ]
           }
@@ -7000,7 +7014,7 @@
         "component": "richtext",
         "valueType": "string",
         "name": "link",
-        "value": "<a href=\"/search.html\">Search</a>",
+        "value": "<a href=\"/en/search\">Search</a>",
         "label": "Seach Link/Text",
         "description": "Should be a link to the search page. The text should be the search label."
       },
@@ -7084,7 +7098,7 @@
         "description": "Options that affect block appearance and behavior.",
         "valueType": "string",
         "required": true,
-        "maxSize": 2,
+        "maxSize": 3,
         "options": [
           {
             "name": "Code Language",
@@ -7205,6 +7219,17 @@
         "value": "",
         "label": "Line highlighting",
         "description": "Add number to highlight rows within a code block. E.g. 1-3, 6 will highlight lines 1 through 3 and 6."
+      },
+      {
+        "condition": {
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "expandable"] }]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "initial-code-lines",
+        "value": "",
+        "label": "Default code lines to display",
+        "description": "Set how many code lines are visible before expanding to show more."
       }
     ]
   },

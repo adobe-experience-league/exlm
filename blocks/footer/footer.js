@@ -111,6 +111,7 @@ function decorateBreadcrumb(footer) {
   const firstBreadcrumbAnchor = breadCrumb.querySelector('a');
   if (firstBreadcrumbAnchor) {
     firstBreadcrumbAnchor.innerHTML = `<span class="icon icon-home"></span>`;
+    firstBreadcrumbAnchor.setAttribute('aria-label', 'Home'); // a11y
   }
   decorateIcons(breadCrumb);
 }

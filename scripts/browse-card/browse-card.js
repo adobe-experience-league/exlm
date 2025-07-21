@@ -163,13 +163,6 @@ const buildEventContent = ({ event, contentType, cardContent, card }) => {
   decorateIcons(eventInfo);
   const title = card.querySelector('.browse-card-title-text');
   cardContent.insertBefore(eventInfo, title.nextElementSibling);
-  if (card.classList.contains('upcoming-event-card')) {
-    const upcomingTime = card.querySelector('.browse-card-event-time h6');
-    const parts = upcomingTime.textContent.split(' ');
-    const timezone = parts.pop();
-    const withParens = `${parts.join(' ')} (${timezone})`;
-    upcomingTime.textContent = withParens;
-  }
 };
 
 const buildInProgressBarContent = ({ inProgressStatus, cardFigure, card }) => {
@@ -445,7 +438,8 @@ export async function buildCard(container, element, model) {
       if (
         VIDEO_THUMBNAIL_FORMAT.test(thumbnail) ||
         type === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
-        type === CONTENT_TYPES.TUTORIAL.MAPPING_KEY
+        type === CONTENT_TYPES.TUTORIAL.MAPPING_KEY ||
+        type === CONTENT_TYPES.EVENT.MAPPING_KEY
       ) {
         const playButton = document.createElement('div');
         playButton.classList.add('play-button');
