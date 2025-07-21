@@ -2,6 +2,9 @@ import state from './slider-state.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { pushGuidePlayEvent } from '../../scripts/analytics/lib-analytics.js';
 
+// Track if audio is being played by autoplay
+let isAutoplayTriggered = false;
+
 // Helper function to format guide title
 function formatGuideTitle(block, stepId) {
   const container = block.querySelector('.container');
@@ -435,6 +438,9 @@ export async function activateStep(block, stepIndex) {
           trigger: 'autoplay',
           steps: getTotalSteps(block)
         }, audioOn);
+        
+        // Set the flag to indicate that audio is being played by autoplay
+        isAutoplayTriggered = true;
       }
       
       audio.play();
@@ -602,15 +608,21 @@ export function addEventHandlers(block, placeholders) {
   block.querySelectorAll('audio').forEach((audio) => {
     // Add event listener for the play button on the audio element
     audio.addEventListener('play', () => {
-      const audioOn = !audio.muted;
-      const currentStepId = audio.closest('[data-step]').dataset.step;
+      // Only trigger play event if it's not triggered by autoplay
+      if (!isAutoplayTriggered) {
+        const audioOn = !audio.muted;
+        const currentStepId = audio.closest('[data-step]').dataset.step;
+        
+        // Track this as a "play" event when manually played
+        pushGuidePlayEvent({
+          title: formatGuideTitle(block, currentStepId),
+          trigger: 'play',
+          steps: getTotalSteps(block)
+        }, audioOn);
+      }
       
-      // Track this as a "play" event regardless of which step we're on
-      pushGuidePlayEvent({
-        title: formatGuideTitle(block, currentStepId),
-        trigger: 'play',
-        steps: getTotalSteps(block)
-      }, audioOn);
+      // Reset the flag after handling the event
+      isAutoplayTriggered = false;
     });
     
     audio.addEventListener('ended', () => {
