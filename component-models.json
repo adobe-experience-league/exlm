@@ -6185,6 +6185,13 @@
         "value": "",
         "label": "Source URL",
         "description": "Source URL of the full video."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "sourceTitle",
+        "value": "",
+        "label": "Source Page Title"
       }
     ]
   },
