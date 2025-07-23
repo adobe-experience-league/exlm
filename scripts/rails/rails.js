@@ -9,6 +9,19 @@ async function decorateRail(railSection, position) {
   // wrap content in a wrapper div
   const content = document.createElement('div');
   content.classList.add('rail-content');
+
+  // Function to initialize on first scroll
+  const initializeOnScroll = () => {
+    // Only initialize once by removing the event listener immediately
+    window.removeEventListener('scroll', initializeOnScroll);
+
+    // Once we start scrolling, collapse the TOC
+    content.classList.add('is-stuck');
+  };
+
+  // Initialize only on first scroll
+  window.addEventListener('scroll', initializeOnScroll, { passive: true });
+
   content.replaceChildren(...railSection.children);
   railSection.replaceChildren(content);
 

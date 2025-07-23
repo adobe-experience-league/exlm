@@ -45,8 +45,21 @@ export function highlight(replace = false, isAnchorScroll = false) {
 
     if (anchorElement !== undefined && !isAnchorScroll) {
       render(() => {
-        ctx.querySelectorAll('a.is-active').forEach((i) => i.classList.remove('is-active'));
-        anchorElement.classList.add('is-active');
+        const currentActiveElements = ctx.querySelectorAll('li.is-active');
+        const [currentActiveElement] = currentActiveElements.length > 0 ? currentActiveElements : [null];
+
+        currentActiveElements.forEach((i) => i.classList.remove('is-active'));
+
+        const activeElement = anchorElement.parentElement;
+        activeElement.classList.add('is-active');
+
+        if (currentActiveElement !== activeElement) {
+          // Remove adjacent class from all elements
+          ctx.querySelectorAll('li.is-adjacent-prev').forEach((i) => i.classList.remove('is-adjacent-prev'));
+          if (activeElement.previousElementSibling) {
+            activeElement.previousElementSibling.classList.add('is-adjacent-prev');
+          }
+        }
 
         const scrollOptions = {
           top: anchorElement.offsetTop - ctx.offsetTop,
@@ -58,8 +71,9 @@ export function highlight(replace = false, isAnchorScroll = false) {
         }
 
         const scrollableDivBlock = ctx.querySelector('.scrollable-div');
+
         const anchorTopPos = anchorElement.offsetTop;
-        anchorElement.classList.add('is-active');
+        anchorElement.parentElement.classList.add('is-active');
         scrollableDivBlock.scrollTop = anchorTopPos - 30;
 
         if (replace) {
