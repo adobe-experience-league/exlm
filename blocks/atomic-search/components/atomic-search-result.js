@@ -797,8 +797,6 @@ export default function atomicResultHandler(block, placeholders) {
         const atomicResultChildren = resultItem.querySelector('atomic-result-children');
         handleAtomicResultChildrenUI(atomicResultChildren);
 
-        const productElWrap = resultItem?.querySelector('.result-product')?.firstElementChild?.shadowRoot;
-        const productElements = productElWrap?.querySelectorAll('li') || [];
         const contentTypeElements = contentTypeElParent?.querySelectorAll('li') || [];
 
         const topicElements =
@@ -856,17 +854,6 @@ export default function atomicResultHandler(block, placeholders) {
         if (contentTypeElements.length) {
           decorateIcons(contentTypeElParent);
         }
-
-        productElements.forEach((productElement) => {
-          const product = productElement.textContent.toLowerCase().trim();
-          if (product?.includes('|')) {
-            productElement.style.cssText = `display: none`;
-            const slotEl = productElement.firstElementChild;
-            if (slotEl) {
-              slotEl.style.cssText = `display: none`;
-            }
-          }
-        });
 
         const anchorTag = resultItem?.querySelector('atomic-result-link > a');
         const hasSpan = anchorTag?.querySelector('span');
