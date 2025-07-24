@@ -548,7 +548,7 @@ export function addEventHandlers(block, placeholders) {
       if (previousStep && getPreference('view') !== 'as-docs') {
         state.currentStep = previousStep;
         updateWindowLocation(block, state.currentStep);
-        showStep(block, state.currentStep);
+        showStep(block, state.currentStep, false); // Don't skip autoplay for normal navigation
 
         // Add analytics tracking for previous button
         const audio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
@@ -588,7 +588,7 @@ export function addEventHandlers(block, placeholders) {
         // Update the step after tracking the event
         state.currentStep = nextStep;
         updateWindowLocation(block, state.currentStep);
-        showStep(block, state.currentStep);
+        showStep(block, state.currentStep, false); // Don't skip autoplay for normal navigation
       }
     });
   });
@@ -597,7 +597,7 @@ export function addEventHandlers(block, placeholders) {
     select.addEventListener('change', () => {
       state.currentStep = select.value;
       updateWindowLocation(block, state.currentStep);
-      showStep(block, state.currentStep);
+      showStep(block, state.currentStep, false); // Don't skip autoplay for normal navigation
       block.querySelectorAll('[data-option-force-active="true"]').forEach((option) => {
         option.selected = true;
       });
