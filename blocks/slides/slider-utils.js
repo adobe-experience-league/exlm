@@ -48,10 +48,18 @@ export function getPreference(key) {
   }
   const preferences = JSON.parse(localStorage.getItem('experienceleague') || '{}');
 
-  if (preferences?.slide) {
-    return preferences.slide[key];
+  // Initialize preferences.slide if it doesn't exist
+  if (!preferences.slide) {
+    preferences.slide = {};
   }
-  return null;
+
+  // For autoplayAudio, default to true if not set
+  if (key === 'autoplayAudio' && preferences.slide[key] === undefined) {
+    preferences.slide[key] = true;
+    localStorage.setItem('experienceleague', JSON.stringify(preferences));
+  }
+
+  return preferences.slide[key];
 }
 
 export async function sha256(str) {
@@ -548,7 +556,7 @@ export function addEventHandlers(block, placeholders) {
       if (previousStep && getPreference('view') !== 'as-docs') {
         state.currentStep = previousStep;
         updateWindowLocation(block, state.currentStep);
-        showStep(block, state.currentStep, false); // Don't skip autoplay for normal navigation
+        showStep(block, state.currentStep);
 
         // Add analytics tracking for previous button
         const audio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
@@ -588,7 +596,7 @@ export function addEventHandlers(block, placeholders) {
         // Update the step after tracking the event
         state.currentStep = nextStep;
         updateWindowLocation(block, state.currentStep);
-        showStep(block, state.currentStep, false); // Don't skip autoplay for normal navigation
+        showStep(block, state.currentStep);
       }
     });
   });
@@ -597,7 +605,7 @@ export function addEventHandlers(block, placeholders) {
     select.addEventListener('change', () => {
       state.currentStep = select.value;
       updateWindowLocation(block, state.currentStep);
-      showStep(block, state.currentStep, false); // Don't skip autoplay for normal navigation
+      showStep(block, state.currentStep);
       block.querySelectorAll('[data-option-force-active="true"]').forEach((option) => {
         option.selected = true;
       });

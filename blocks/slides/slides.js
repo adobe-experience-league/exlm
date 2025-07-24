@@ -14,7 +14,7 @@ function html(content, placeholders) {
   const isDesktopUI = isDesktopView();
   const initialView = isDesktopUI ? getPreference('view') || 'as-slides' : 'as-docs';
 
-  const autoplayAudio = getPreference('autoplayAudio') || true;
+  const autoplayAudio = getPreference('autoplayAudio');
   const muted = getPreference('muteStatus') || false;
 
   return `
