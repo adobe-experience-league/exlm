@@ -29,6 +29,7 @@ export const atomicResultStyles = `
                       --content-type-perspective-color: #c844dc;
                       --content-type-default-color: #000000;
                       --search-visited-link-color: #93219E;
+                      --search-clickable-link-color: #0000EE;
                     }
 
                     .result-description atomic-result-multi-value-text::part(result-multi-value-text-list) {
@@ -207,7 +208,7 @@ export const atomicResultStyles = `
                     }
                     .result-title atomic-result-text, .mobile-result-title atomic-result-text {
                       font-size: var(--spectrum-font-size-100);
-                      color: var(--non-spectrum-dark-charcoal);
+                      color: var(--search-clickable-link-color);
                       font-weight: bold;
                       overflow: hidden;
                       max-width: 90vw;
