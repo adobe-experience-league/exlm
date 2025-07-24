@@ -395,7 +395,7 @@ function waitForAudioReady(audioEl) {
   });
 }
 
-export async function activateStep(block, stepIndex) {
+export async function activateStep(block, stepIndex, skipAutoplay = false) {
   // There should only be 1 match, but the forEach guards against no matches as well
   const step = block.querySelector(`[data-step="${stepIndex}"]`);
 
@@ -422,7 +422,7 @@ export async function activateStep(block, stepIndex) {
   }
   audio.currentTime = 0; // Reset the timeStamp so that it will always from start.
 
-  if (stepIndex === state.currentStep && autoplayAudio) {
+  if (stepIndex === state.currentStep && autoplayAudio && !skipAutoplay) {
     try {
       await waitForAudioReady(audio);
 
@@ -455,7 +455,7 @@ export async function activateStep(block, stepIndex) {
   }
 }
 
-export function showStep(block, stepId) {
+export function showStep(block, stepId, skipAutoplay = false) {
   const step = block.querySelector(`[data-step="${stepId}"]`);
 
   const previousButton = step.querySelector('[data-previous-step="previous-button"]');
@@ -483,13 +483,13 @@ export function showStep(block, stepId) {
   });
 
   // Must come after the remove active above
-  activateStep(block, stepId);
+  activateStep(block, stepId, skipAutoplay);
 }
 
 export function showAllSteps(block) {
   block.querySelectorAll('[data-step]').forEach(async (step) => {
     await step.querySelector('audio')?.pause();
-    activateStep(block, step.dataset.step);
+    activateStep(block, step.dataset.step, true); // Pass true to skip autoplay when showing all steps
   });
 }
 
@@ -536,7 +536,7 @@ export function addEventHandlers(block, placeholders) {
         showAllSteps(block);
       } else {
         setPreference('view', 'as-slides');
-        showStep(block, state.currentStep);
+        showStep(block, state.currentStep, true); // Pass true to skip autoplay when switching view modes
       }
     });
   });
