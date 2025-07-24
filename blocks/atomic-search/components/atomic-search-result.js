@@ -335,7 +335,7 @@ export const atomicResultStyles = `
                     .result-item.mobile-only .mobile-result-title atomic-result-text {
                       font-size: var(--spectrum-font-size-200);
                       font-weight: bold;
-                      color: var(--non-spectrum-dark-gray);
+                      color: var(--search-clickable-link-color);
                     }
                     .mobile-result-info .result-field atomic-result-multi-value-text, .mobile-result-info .atomic-result-date, 
                     .mobile-result-info .result-product > atomic-result-multi-value-text::part(result-multi-value-text-value) {
