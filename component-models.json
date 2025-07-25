@@ -4302,9 +4302,9 @@
         "valueType": "string",
         "description": "Sets the level(s) in page meta.",
         "dataSource": {
-          "type": "url",
+          "type": "action",
           "config": {
-            "url": "https://51837-exlmia-stage.adobeio-static.net/api/v1/web/exlia/getTaxonomy",
+            "name": "getTQTags",
             "params": {
               "taxonomyType": "level"
             }
@@ -4343,7 +4343,6 @@
         "label": "Feature(s)",
         "valueType": "string",
         "description": "Sets the feature(s) in page meta.",
-        "requiredTagsToEnable": ["tq-products"],
         "dataSource": {
           "type": "action",
           "config": {
@@ -4352,6 +4351,10 @@
               "taxonomyType": "feature"
             }
           }
+        },
+        "options": {
+          "dependentField": "tq-products",
+          "requiredTagsToEnable": ["tq-products"]
         },
         "extensionId": "exl-ue-extension"
       },
@@ -4370,6 +4373,10 @@
               "taxonomyType": "subfeature"
             }
           }
+        },
+        "options": {
+          "dependentField": "tq-features",
+          "requiredTagsToEnable": ["tq-features"]
         },
         "extensionId": "exl-ue-extension"
       },
