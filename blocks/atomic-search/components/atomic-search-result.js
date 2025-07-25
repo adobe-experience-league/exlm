@@ -29,7 +29,6 @@ export const atomicResultStyles = `
                       --content-type-perspective-color: #c844dc;
                       --content-type-default-color: #000000;
                       --search-visited-link-color: #93219E;
-                      --search-clickable-link-color: #0000EE;
                     }
 
                     .result-description atomic-result-multi-value-text::part(result-multi-value-text-list) {
@@ -208,7 +207,7 @@ export const atomicResultStyles = `
                     }
                     .result-title atomic-result-text, .mobile-result-title atomic-result-text {
                       font-size: var(--spectrum-font-size-100);
-                      color: var(--search-clickable-link-color);
+                      color: var(--non-spectrum-link);
                       font-weight: bold;
                       overflow: hidden;
                       max-width: 90vw;
@@ -335,7 +334,7 @@ export const atomicResultStyles = `
                     .result-item.mobile-only .mobile-result-title atomic-result-text {
                       font-size: var(--spectrum-font-size-200);
                       font-weight: bold;
-                      color: var(--search-clickable-link-color);
+                      color: var(--non-spectrum-link);
                     }
                     .mobile-result-info .result-field atomic-result-multi-value-text, .mobile-result-info .atomic-result-date, 
                     .mobile-result-info .result-product > atomic-result-multi-value-text::part(result-multi-value-text-value) {
