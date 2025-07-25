@@ -67,7 +67,8 @@
       "notification-banner",
       "code",
       "playlist-browse",
-      "atomic-search"
+      "atomic-search",
+      "skill-track"
     ]
   },
   {
@@ -353,6 +354,10 @@
   {
     "id": "tab",
     "components": ["tab"]
+  },
+  {
+    "id": "skill-track",
+    "components": ["lesson"]
   },
   {
     "id": "topic-results",
