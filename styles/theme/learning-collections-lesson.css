@@ -33,7 +33,8 @@
 
   .learning-collections-lesson main > div:not(.learning-collection-rail-section, .skill-track-rail-section) {
     overflow: auto;
-    padding: 0 60px;
+    padding: 0;
+    padding-right: 60px;
     grid-column: 2;
     max-width: 100%;
   }
@@ -66,8 +67,8 @@
     top: 80px;
     left: 0;
     bottom: 60px;
-    min-width: 250px;
-    max-width: 250px;
+    min-width: 200px;
+    max-width: 200px;
   }
 
   .learning-collections-lesson div.skill-track-rail-wrapper {
@@ -95,7 +96,7 @@
   .learning-collections-lesson .lesson-navigation-section {
     grid-column: 2;
     margin-top: 40px;
-    margin-bottom: 20px;
+    margin-bottom: 90px;
   }
 
   .learning-collections-lesson .lesson-navigation {
