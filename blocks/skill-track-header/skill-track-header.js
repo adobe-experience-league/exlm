@@ -1,59 +1,70 @@
-import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
-import { getMetadata } from '../../scripts/lib-franklin.js';
+/**
+ * Generates the DOM structure for the skill-track-header block
+ * @param {Array} props The block properties
+ * @returns {DocumentFragment} The generated DOM structure
+ */
+export function generateSkillTrackHeaderDOM(props) {
+  // Extract title and description from props
+  const [titleContainer, descriptionContainer] = props;
+  
+  // Create the DOM structure
+  const headerDOM = document.createRange().createContextualFragment(`
+    <div>
+      <div>${titleContainer.innerHTML}</div>
+      <div>${descriptionContainer.innerHTML}</div>
+    </div>
+  `);
+  
+  // Add accessibility attributes
+  const heading = headerDOM.querySelector('h1, h2, h3, h4, h5, h6');
+  if (heading) {
+    if (!heading.id) {
+      heading.id = 'skill-track-header-titles';
+    }
+  } else if (headerDOM.querySelector('div > div:first-child').textContent.trim()) {
+    // If no heading element exists, wrap the content in an h1
+    const titleDiv = headerDOM.querySelector('div > div:first-child');
+    const headingText = titleDiv.textContent.trim();
+    titleDiv.innerHTML = `<h1 id="skill-track-header-titles">${headingText}</h1>`;
+  }
+  
+  // Add ARIA role for the description
+  const descDiv = headerDOM.querySelector('div > div:last-child');
+  if (descDiv) {
+    descDiv.setAttribute('role', 'region');
+    descDiv.setAttribute('aria-label', 'Skill track description');
+    
+    // Ensure description has proper paragraph formatting if it's plain text
+    if (!descDiv.querySelector('p, ul, ol, strong, em, a') && descDiv.textContent.trim()) {
+      const descText = descDiv.textContent.trim();
+      descDiv.innerHTML = `<p>${descText}</p>`;
+    }
+  }
+  
+  return headerDOM;
+}
 
 /**
- * Decorates the skill track header block
- * @param {Element} block The skill track header block element
+ * Initializes the skill-track-header block
+ * @param {HTMLElement} block The skill-track-header block element
  */
 export default function decorate(block) {
-  // Add main container class
-  block.classList.add('skill-track-header-container');
+  // Add the main class to the block
+  block.classList.add('skill-track-header');
   
-  // Get all rows in the block
-  const rows = [...block.children];
+  // Get the first and only cell from each row
+  const props = [...block.children].map((row) => row.firstElementChild);
   
-  // Create the skill track header
-  const headerContainer = document.createElement('div');
-  headerContainer.classList.add('skill-track-header');
+  // Generate the DOM structure
+  const headerDOM = generateSkillTrackHeaderDOM(props);
   
-  // Process title row
-  const titleRow = rows[0];
-  if (titleRow) {
-    const titleCell = titleRow.querySelector(':scope > div');
-    if (titleCell) {
-      const title = titleCell.textContent.trim();
-      const titleTypeCell = titleCell.nextElementSibling;
-      let titleType = 'h1';
-      
-      if (titleTypeCell) {
-        const titleTypeText = titleTypeCell.textContent.trim();
-        if (titleTypeText && ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(titleTypeText.toLowerCase())) {
-          titleType = titleTypeText.toLowerCase();
-        }
-      }
-      
-      const titleEl = document.createElement(titleType);
-      titleEl.classList.add('skill-track-title');
-      titleEl.textContent = title;
-      headerContainer.appendChild(titleEl);
-    }
-    titleRow.remove();
+  // Clear the block and append the new DOM
+  block.textContent = '';
+  block.append(headerDOM);
+  
+  // Set aria-labelledby attribute on the block
+  const heading = block.querySelector('h1, h2, h3, h4, h5, h6');
+  if (heading) {
+    block.setAttribute('aria-labelledby', heading.id);
   }
-  
-  // Process description row
-  const descriptionRow = rows[0]; // Now the first row after removing the title row
-  if (descriptionRow) {
-    const descriptionCell = descriptionRow.querySelector(':scope > div');
-    if (descriptionCell) {
-      const description = descriptionCell.innerHTML;
-      const descriptionEl = document.createElement('div');
-      descriptionEl.classList.add('skill-track-description');
-      descriptionEl.innerHTML = description;
-      headerContainer.appendChild(descriptionEl);
-    }
-    descriptionRow.remove();
-  }
-  
-  // Add the header container to the block
-  block.appendChild(headerContainer);
 }

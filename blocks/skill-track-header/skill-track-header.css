@@ -1,17 +1,52 @@
-.skill-track-header-container {
-  margin: 1rem 0;
-}
+/* skill-track-header styles */
 
 .skill-track-header {
-  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--default-max-width);
+  margin: 0 auto;
+  padding: var(--spectrum-spacing-400) var(--spectrum-spacing-300);
 }
 
-.skill-track-title {
-  margin: 0 0 0.5rem 0;
-  color: var(--text-color, #333333);
+/* Title container styling */
+.skill-track-header > div > div:first-child {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-heading-size-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  color: var(--spectrum-gray-900);
+  margin: 0 0 var(--spectrum-spacing-300) 0;
 }
 
-.skill-track-description {
-  color: var(--text-secondary-color, #666666);
-  line-height: 1.5;
+/* Make all heading elements inherit styling from the title container */
+.skill-track-header > div > div:first-child :where(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+  color: inherit;
+  font: inherit;
+}
+
+/* Description styling for rich text */
+.skill-track-header > div > div:last-child {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-body-size-m);
+  line-height: var(--spectrum-line-height-m);
+  color: var(--spectrum-gray-800);
+}
+
+/* Responsive styles */
+@media (min-width: 600px) {
+  .skill-track-header {
+    padding: var(--spectrum-spacing-500) var(--spectrum-spacing-400);
+  }
+  
+  .skill-track-header > div > div:first-child {
+    font-size: var(--spectrum-heading-size-xxl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .skill-track-header {
+    padding: var(--spectrum-spacing-600) var(--spectrum-spacing-500);
+  }
 }
