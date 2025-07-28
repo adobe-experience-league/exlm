@@ -35,6 +35,16 @@
     grid-column: 2;
   }
 
+  .learning-collections-lesson
+    main
+    > div:not(.learning-collection-rail-section, .skill-track-rail-section):nth-child(3) {
+    margin-top: 80px;
+  }
+
+  .learning-collections-lesson main > div:not(.learning-collection-rail-section, .skill-track-rail-section):last-child {
+    margin-bottom: 60px;
+  }
+
   .learning-collections-lesson main > div.learning-collection-rail-section {
     grid-column: 1;
     padding: 0;
