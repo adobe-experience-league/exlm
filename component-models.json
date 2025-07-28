@@ -7278,5 +7278,19 @@
         "description": "Add multiple lesson page URLs"
       }
     ]
+  },
+  {
+    "id": "lessons",
+    "fields": [
+      {
+        "component": "aem-content",
+        "valueType": "string[]",
+        "value": [],
+        "name": "lesson-urls",
+        "multi": true,
+        "label": "Lesson URLs",
+        "description": "Add multiple lesson URLs"
+      }
+    ]
   }
 ]
