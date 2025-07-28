@@ -9,60 +9,69 @@ export default function decorate(block) {
   // Add main container class
   block.classList.add('skill-track-lessons-container');
 
+  // For multi-path fields, the structure is different
+  // Each path is in a separate div inside a row
+  const lessonPaths = [];
+
   // Get all rows in the block
   const rows = [...block.children];
+
+  // Extract all lesson paths from the rows
+  rows.forEach((row) => {
+    // Each row might contain multiple paths (one per cell)
+    const cells = [...row.querySelectorAll(':scope > div')];
+    cells.forEach((cell) => {
+      const path = cell.textContent.trim();
+      if (path) {
+        lessonPaths.push(path);
+      }
+    });
+  });
 
   // Create a container for all lessons
   const lessonsContainer = document.createElement('div');
   lessonsContainer.classList.add('skill-track-lessons');
 
-  // Process each lesson path row
-  rows.forEach((row, index) => {
-    const lessonPathCell = row.querySelector(':scope > div');
-    if (lessonPathCell) {
-      const lessonPath = lessonPathCell.textContent.trim();
-      if (lessonPath) {
-        // Create a lesson item
-        const lessonItem = document.createElement('div');
-        lessonItem.classList.add('skill-track-lesson-item');
+  // Process each lesson path
+  lessonPaths.forEach((lessonPath, index) => {
+    // Create a lesson item
+    const lessonItem = document.createElement('div');
+    lessonItem.classList.add('skill-track-lesson-item');
 
-        // Add lesson number
-        const lessonNumber = document.createElement('div');
-        lessonNumber.classList.add('lesson-number');
-        lessonNumber.textContent = index + 1;
-        lessonItem.appendChild(lessonNumber);
+    // Add lesson number
+    const lessonNumber = document.createElement('div');
+    lessonNumber.classList.add('lesson-number');
+    lessonNumber.textContent = index + 1;
+    lessonItem.appendChild(lessonNumber);
 
-        // Fetch lesson details (this would typically be done via an API call)
-        // For now, we'll create a placeholder that would be replaced with actual data
-        const lessonDetails = document.createElement('div');
-        lessonDetails.classList.add('lesson-details');
-        lessonDetails.setAttribute('data-lesson-path', lessonPath);
+    // Create lesson details
+    const lessonDetails = document.createElement('div');
+    lessonDetails.classList.add('lesson-details');
+    lessonDetails.setAttribute('data-lesson-path', lessonPath);
 
-        // Add a placeholder title
-        const lessonTitle = document.createElement('h3');
-        lessonTitle.classList.add('lesson-title');
-        lessonTitle.textContent = `Lesson ${index + 1}`;
-        lessonDetails.appendChild(lessonTitle);
+    // Add a placeholder title
+    const lessonTitle = document.createElement('h3');
+    lessonTitle.classList.add('lesson-title');
+    lessonTitle.textContent = `Lesson ${index + 1}`;
+    lessonDetails.appendChild(lessonTitle);
 
-        // Add a link to the lesson
-        const lessonLink = document.createElement('a');
-        lessonLink.classList.add('lesson-link');
-        lessonLink.href = lessonPath;
-        lessonLink.textContent = 'Go to lesson';
-        lessonLink.setAttribute('target', '_blank');
-        lessonDetails.appendChild(lessonLink);
+    // Add a link to the lesson
+    const lessonLink = document.createElement('a');
+    lessonLink.classList.add('lesson-link');
+    lessonLink.href = lessonPath;
+    lessonLink.textContent = 'Go to lesson';
+    lessonLink.setAttribute('target', '_blank');
+    lessonDetails.appendChild(lessonLink);
 
-        // Add the lesson details to the lesson item
-        lessonItem.appendChild(lessonDetails);
+    // Add the lesson details to the lesson item
+    lessonItem.appendChild(lessonDetails);
 
-        // Add the lesson item to the lessons container
-        lessonsContainer.appendChild(lessonItem);
-      }
-    }
-
-    // Remove the original row
-    row.remove();
+    // Add the lesson item to the lessons container
+    lessonsContainer.appendChild(lessonItem);
   });
+
+  // Clear the original content
+  block.innerHTML = '';
 
   // Add the lessons container to the block
   block.appendChild(lessonsContainer);
