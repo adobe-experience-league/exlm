@@ -19,31 +19,92 @@ export default function decorate(block) {
   // Array to store all lesson URLs
   const lessonUrls = [];
   
-  // First approach: Look for links in each row
-  console.log('Looking for links in rows');
-  const rows = [...block.children];
-  rows.forEach((row, index) => {
-    console.log(`Processing row ${index}:`, row.outerHTML);
+  // APPROACH 1: Check for data attributes that might contain the lesson paths
+  // The authoring system might store the data in a data attribute
+  console.log('Block dataset:', block.dataset);
+  if (block.dataset && block.dataset.lessonPaths) {
+    try {
+      // Try to parse the lesson paths as JSON
+      const paths = JSON.parse(block.dataset.lessonPaths);
+      console.log('Found lesson paths in dataset:', paths);
+      
+      if (Array.isArray(paths)) {
+        paths.forEach(path => {
+          if (path && !lessonUrls.includes(path)) {
+            lessonUrls.push(path);
+            console.log('Added path from dataset:', path);
+          }
+        });
+      }
+    } catch (e) {
+      console.error('Error parsing lesson paths from dataset:', e);
+    }
+  }
+  
+  // APPROACH 2: Look for the specific structure that comes from the authoring system
+  // If no paths found in dataset, try to extract from the DOM structure
+  if (lessonUrls.length === 0) {
+    console.log('No paths found in dataset, looking in DOM structure');
     
-    // Check for links in this row
-    const links = row.querySelectorAll('a');
-    if (links.length > 0) {
-      links.forEach(link => {
-        console.log(`Found link in row ${index}:`, link.href);
-        lessonUrls.push(link.href);
-      });
-    } else {
-      // If no links, check for URL text
-      const cells = [...row.children];
-      cells.forEach(cell => {
+    // In the authoring system, multi-value fields often appear as separate rows
+    const rows = [...block.children];
+    
+    // Debug the structure
+    console.log(`Found ${rows.length} rows in the block`);
+    rows.forEach((row, i) => console.log(`Row ${i} HTML:`, row.outerHTML));
+    
+    // Process each row to extract URLs
+    rows.forEach((row, index) => {
+      // First, try to find links directly
+      const links = row.querySelectorAll('a');
+      if (links.length > 0) {
+        links.forEach(link => {
+          const url = link.href;
+          console.log(`Found link in row ${index}:`, url);
+          if (url && !lessonUrls.includes(url)) {
+            lessonUrls.push(url);
+          }
+        });
+      } else {
+        // If no links found, look for text content that might be a URL
+        // Get the innermost div which typically contains the actual value
+        let cell = row;
+        while (cell.children.length === 1 && cell.children[0].tagName === 'DIV') {
+          cell = cell.children[0];
+        }
+        
         const text = cell.textContent.trim();
+        console.log(`Text content in row ${index}:`, text);
+        
         if (text && (text.startsWith('http') || text.startsWith('/') || text.includes('/'))) {
           console.log(`Found URL text in row ${index}:`, text);
+          if (!lessonUrls.includes(text)) {
+            lessonUrls.push(text);
+          }
+        }
+      }
+    });
+  }
+  
+  // APPROACH 3: Special case for multi-value fields in AEM
+  // If still no URLs found, try a different approach for multi-value fields
+  if (lessonUrls.length === 0) {
+    console.log('Trying special case for multi-value fields');
+    
+    // Sometimes multi-value fields are stored in a specific structure
+    // Look for divs that might contain the values
+    const allDivs = block.querySelectorAll('div');
+    allDivs.forEach((div, index) => {
+      // Check if this div might contain a URL
+      const text = div.textContent.trim();
+      if (text && (text.startsWith('http') || text.startsWith('/') || text.includes('/'))) {
+        console.log(`Found URL text in div ${index}:`, text);
+        if (!lessonUrls.includes(text)) {
           lessonUrls.push(text);
         }
-      });
-    }
-  });
+      }
+    });
+  }
   
   console.log('Found lesson URLs:', lessonUrls);
   
