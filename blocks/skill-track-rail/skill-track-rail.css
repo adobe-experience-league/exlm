@@ -1,0 +1,45 @@
+div.skill-track-rail-wrapper {
+  margin-top: 0;
+}
+
+.skill-track-rail {
+  background-color: var(--background-color);
+}
+
+.skill-track-rail h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--spectrum-gray-900);
+}
+
+.skill-track-rail .rail-content {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--spectrum-gray-700);
+}
+
+.skill-track-rail .skill-item {
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: 4px;
+  background-color: var(--highlight-light-background-color);
+}
+
+.skill-track-rail .skill-item:hover {
+  background-color: var(--highlight-dark-background-color);
+}
+
+.skill-track-rail .skill-progress {
+  width: 100%;
+  height: 4px;
+  background-color: var(--spectrum-gray-200);
+  border-radius: 2px;
+  margin-top: 4px;
+}
+
+.skill-track-rail .skill-progress-bar {
+  height: 100%;
+  background-color: var(--spectrum-blue-600);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}

@@ -8,7 +8,7 @@
   margin: 92px auto;
   padding: 0 46px;
   box-sizing: border-box;
-  max-width: 1700px;
+  max-width: var(--secondary-max-width);
 }
 
 .learning-collections-lesson .section {
@@ -21,28 +21,44 @@
 
 @media (width >= 900px) {
   .learning-collections-lesson main {
-    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-columns: 250px 1fr 250px;
+    grid-auto-rows: min-content;
     padding: 0;
   }
 
-  .learning-collections-lesson main > div:not(.toc-container, .mini-toc-container) {
+  .learning-collections-lesson main > div:not(.learning-collection-rail-section, .skill-track-rail-section) {
     overflow: auto;
-    padding: 0;
+    padding: 0 50px;
     grid-column: 2;
   }
 
-  .learning-collections-lesson main > div.toc-container {
-    grid-column: 1/1;
-    grid-row: 1/-1;
+  .learning-collections-lesson main > div.learning-collection-rail-section {
+    grid-column: 1;
+    grid-row: 1 / -1;
     padding: 0;
+    position: relative;
   }
 
-  .learning-collections-lesson main > div.mini-toc-container {
-    grid-column: 3/3;
-    grid-row: 1/-1;
+  .learning-collections-lesson main > div.skill-track-rail-section {
+    grid-column: 3;
+    grid-row: 1 / -1;
+    padding: 0;
     position: relative;
-    display: flex !important;
-    gap: 8px;
-    padding: 46px 10px 10px 0;
+  }
+
+  .learning-collections-lesson .learning-collection-rail {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    height: fit-content;
+  }
+
+  .learning-collections-lesson .skill-track-rail {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    height: fit-content;
   }
 }

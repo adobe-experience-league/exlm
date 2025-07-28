@@ -216,6 +216,30 @@ function addMiniToc(main) {
 }
 
 /**
+ * Add a learning collection rail to the left side.
+ * @param {HTMLElement} main
+ */
+function addLearningCollectionRail(main) {
+  const learningCollectionRailSection = document.createElement('div');
+  learningCollectionRailSection.classList.add('section', 'learning-collection-rail-section');
+  learningCollectionRailSection.append(buildBlock('learning-collection-rail', []));
+  main.insertBefore(learningCollectionRailSection, main.firstChild);
+}
+
+/**
+ * Add a skill track rail to the right side.
+ * @param {HTMLElement} main
+ */
+function addSkillTrackRail(main) {
+  const skillTrackRailSection = document.createElement('div');
+  skillTrackRailSection.classList.add('section', 'skill-track-rail-section');
+  skillTrackRailSection.append(buildBlock('skill-track-rail', []));
+  main.insertBefore(skillTrackRailSection, main.firstChild);
+}
+
+
+
+/**
  * Tabbed layout for Tab section
  * @param {HTMLElement} main
  */
@@ -279,6 +303,11 @@ function buildAutoBlocks(main, isFragment = false) {
       }
       if (isProfilePage) {
         addProfileRail(main);
+      }
+      // if we are on a learning collections lesson page
+      if (document.body.classList.contains('learning-collections-lesson')) {
+        addLearningCollectionRail(main);
+        addSkillTrackRail(main);
       }
     }
   } catch (error) {
