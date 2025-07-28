@@ -1,0 +1,48 @@
+.learning-collections-lesson {
+  background-color: var(--background-color);
+}
+
+.learning-collections-lesson main {
+  width: 100%;
+  display: grid;
+  margin: 92px auto;
+  padding: 0 46px;
+  box-sizing: border-box;
+  max-width: 1700px;
+}
+
+.learning-collections-lesson .section {
+  background-color: var(--background-color);
+}
+
+.learning-collections-lesson .section .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--spectrum-gray-900);
+}
+
+@media (width >= 900px) {
+  .learning-collections-lesson main {
+    grid-template-columns: 1fr 2fr 1fr;
+    padding: 0;
+  }
+
+  .learning-collections-lesson main > div:not(.toc-container, .mini-toc-container) {
+    overflow: auto;
+    padding: 0;
+    grid-column: 2;
+  }
+
+  .learning-collections-lesson main > div.toc-container {
+    grid-column: 1/1;
+    grid-row: 1/-1;
+    padding: 0;
+  }
+
+  .learning-collections-lesson main > div.mini-toc-container {
+    grid-column: 3/3;
+    grid-row: 1/-1;
+    position: relative;
+    display: flex !important;
+    gap: 8px;
+    padding: 46px 10px 10px 0;
+  }
+}
