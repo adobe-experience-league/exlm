@@ -46,9 +46,9 @@ export default function atomicFacetHandler(baseElement, placeholders) {
     }
     if (!facet.dataset.evented) {
       facet.dataset.evented = 'true';
-      const clickHandler = (e) => {
+      const clickHandler = (e, onlyOptionClicked = false) => {
         const userClickAction = isUserClick(e);
-        if (!userClickAction) {
+        if (!userClickAction || facet.dataset.filterclick === 'true') {
           return;
         }
 
@@ -62,9 +62,30 @@ export default function atomicFacetHandler(baseElement, placeholders) {
         const parentFacetIsSelected = isChildFacet
           ? parentFacet?.firstElementChild?.ariaChecked === 'true'
           : isSelected;
+        let filtersChanged = false;
         if (isChildFacet) {
           // child facet click.
-          if (!isSelected && parentFacetIsSelected) {
+          if (onlyOptionClicked === true) {
+            const parentFacetType = parentFacet.dataset.contenttype;
+            const allChildFacets = facet.parentElement.querySelectorAll(`[data-parent="${parentFacetType}"]`);
+            if (parentFacetIsSelected) {
+              filtersChanged = true;
+              parentFacet.firstElementChild.click();
+            }
+            allChildFacets.forEach((childFacet) => {
+              const isCurrentFacet = childFacet === facet;
+              if (
+                (!isCurrentFacet && childFacet.firstElementChild.ariaChecked === 'true') ||
+                (isCurrentFacet && childFacet.firstElementChild.ariaChecked === 'false')
+              ) {
+                filtersChanged = true;
+                childFacet.firstElementChild.click();
+              }
+            });
+            setTimeout(() => {
+              facet.dataset.filterclick = '';
+            }, 0);
+          } else if (!isSelected && parentFacetIsSelected) {
             parentFacet?.firstElementChild.click();
           } else if (isSelected && !parentFacetIsSelected) {
             // Now check if all child facets excluding the current one is selected.
@@ -79,6 +100,7 @@ export default function atomicFacetHandler(baseElement, placeholders) {
               return acc;
             }, 1);
             if (selectedCount === allChildFacets.length) {
+              filtersChanged = true;
               parentFacet.firstElementChild.click();
             }
           }
@@ -89,14 +111,35 @@ export default function atomicFacetHandler(baseElement, placeholders) {
           const allChildFacets = facet.parentElement.querySelectorAll(`[data-parent="${parentFacetType}"]`);
           allChildFacets.forEach((childFacet) => {
             if (childFacet.firstElementChild.ariaChecked !== parentFacetValue) {
+              filtersChanged = true;
               childFacet.firstElementChild.click();
             }
           });
+        }
+        if (!filtersChanged && shimmer) {
+          shimmer.part.remove('show-shimmer');
         }
       };
 
       const debouncedHandler = debounce(100, clickHandler);
       facet.addEventListener('click', debouncedHandler);
+      const onlyFilterEl = facet.querySelector(`[part="only-facet-btn"]`);
+      if (onlyFilterEl) {
+        const filterHandler = (e) => {
+          e.stopImmediatePropagation();
+          clickHandler(e, true);
+          facet.dataset.filterclick = 'true';
+        };
+        const debouncedFilterClickHandler = debounce(100, filterHandler);
+        onlyFilterEl.addEventListener('click', debouncedFilterClickHandler);
+        facet.addEventListener('mouseenter', () => {
+          onlyFilterEl.part.add('only-facet-visible');
+        });
+
+        facet.addEventListener('mouseleave', () => {
+          onlyFilterEl.part.remove('only-facet-visible');
+        });
+      }
     }
   };
 
@@ -150,8 +193,7 @@ export default function atomicFacetHandler(baseElement, placeholders) {
       if (tempGroup.length > 0) {
         const sortedGroup = sortElementsByLabel(tempGroup);
 
-        const parentSelected =
-          lastParent?.querySelector('button[part="facet-parent-button"]')?.getAttribute('aria-checked') === 'true';
+        const parentSelected = lastParent?.querySelector('button')?.getAttribute('aria-checked') === 'true';
         const atleastOneChildSelected = parentSelected
           ? true
           : sortedGroup.find((el) => el.querySelector('button')?.getAttribute('aria-checked') === 'true');
@@ -261,12 +303,15 @@ export default function atomicFacetHandler(baseElement, placeholders) {
       if (!facet.dataset.contenttype) {
         facet.dataset.contenttype = contentType;
       }
+      facet.part.add('facet-option');
       facet.dataset.updated = 'true';
       if (contentType.includes('|')) {
         const [parentName, facetName] = contentType.split('|');
         facet.dataset.parent = parentName;
         facet.dataset.childfacet = 'true';
         const spanElement = facet.querySelector('.value-label');
+        const onlyFilterEl = htmlToElement(`<span part="only-facet-btn">Only</span>`);
+        facet.appendChild(onlyFilterEl);
         if (spanElement) {
           spanElement.textContent = facetName;
           facet.part.add('facet-child-element');
