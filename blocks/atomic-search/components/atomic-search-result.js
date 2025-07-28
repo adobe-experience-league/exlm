@@ -754,6 +754,26 @@ export default function atomicResultHandler(block, placeholders) {
           } else {
             resultFieldMulti?.classList.remove('hidden');
             resultFieldValue?.classList.add('hidden');
+            const allTooltipItems = resultFieldMulti
+              ?.querySelector('atomic-result-multi-value-text')
+              ?.shadowRoot?.querySelectorAll('li');
+            if (allTooltipItems && allTooltipItems.length > 0) {
+              const textContents = Array.from(allTooltipItems)
+                .map((li) => li.textContent)
+                .filter(Boolean);
+
+              allTooltipItems.forEach((li) => {
+                const currentText = li.textContent;
+                const isChild = textContents.some((text) => currentText !== text && currentText.includes(text));
+
+                if (isChild) {
+                  li.part.add('multi-hidden');
+                  if (li.nextElementSibling?.part?.contains('result-multi-value-text-separator')) {
+                    li.nextElementSibling.part.add('multi-hidden');
+                  }
+                }
+              });
+            }
           }
         } else {
           resultFieldMulti?.classList.add('hidden');
