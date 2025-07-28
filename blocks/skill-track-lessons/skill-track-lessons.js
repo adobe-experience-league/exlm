@@ -8,60 +8,111 @@ import { getMetadata } from '../../scripts/lib-franklin.js';
 export default function decorate(block) {
   // Add main container class
   block.classList.add('skill-track-lessons-container');
+  
   // Debug the entire block HTML
-  console.log('Block HTML:', block.outerHTML);
+  console.log('Block HTML before processing:', block.outerHTML);
+  
+  // Check if the block is already a skill-track-lessons container
+  const isAlreadyProcessed = block.classList.contains('skill-track-lessons');
   
   // Create a container for all lessons
-  const lessonsContainer = document.createElement('div');
-  lessonsContainer.classList.add('skill-track-lessons');
+  let lessonsContainer;
+  if (isAlreadyProcessed) {
+    // If the block is already processed, use it directly
+    lessonsContainer = block;
+    console.log('Block is already processed as skill-track-lessons');
+  } else {
+    // Otherwise create a new container
+    lessonsContainer = document.createElement('div');
+    lessonsContainer.classList.add('skill-track-lessons');
+  }
   
-  // Extract URLs from the block
-  const urls = [];
+  // Debug the structure of the block
+  console.log('Block structure:');
+  [...block.children].forEach((row, i) => {
+    console.log(`Row ${i}:`, row.outerHTML);
+  });
   
-  // Process each row in the block to find URLs
-  [...block.children].forEach(row => {
-    const cell = row.firstElementChild;
-    if (cell) {
+  // Extract lesson paths directly from the block structure
+  const lessonPaths = [];
+  
+  // Check if we're dealing with the pre-rendered structure
+  const isPreRenderedStructure = block.querySelector('div > div > a') || block.classList.contains('skill-track-lessons');
+  
+  if (isPreRenderedStructure) {
+    console.log('Detected pre-rendered structure');
+    
+    // Find all links in the pre-rendered structure
+    const links = block.querySelectorAll('a');
+    links.forEach((link, index) => {
+      console.log(`Found pre-rendered link ${index}:`, link.href);
+      lessonPaths.push(link.href);
+    });
+  } else {
+    // Each row in the block represents a lesson path
+    [...block.children].forEach((row, index) => {
+      console.log(`Processing row ${index}`);
+      
+      // Get the cell content
+      const cell = row.firstElementChild;
+      if (!cell) {
+        console.log(`Row ${index} has no cell`);
+        return;
+      }
+      
+      // Try to extract URL from the cell
+      let path = null;
+      
       // Check if the cell contains a link
       const link = cell.querySelector('a');
       if (link) {
-        urls.push(link.href);
+        path = link.href;
+        console.log(`Found link in row ${index}:`, path);
       } else {
         // Otherwise use the text content if it looks like a URL
         const text = cell.textContent.trim();
         if (text && (text.startsWith('http') || text.startsWith('/') || text.includes('/'))) {
-          urls.push(text);
+          path = text;
+          console.log(`Found URL-like text in row ${index}:`, path);
+        } else {
+          console.log(`Row ${index} does not contain a URL-like text:`, text);
         }
       }
-    }
-  });
+      
+      if (path) {
+        lessonPaths.push(path);
+      }
+    });
+  }
   
-  console.log('Found URLs from rows:', urls);
+  console.log('Extracted lesson paths:', lessonPaths);
   
-  // If no URLs found in rows, try alternative approaches
-  if (urls.length === 0) {
+  // If no lesson paths found, try alternative approaches
+  if (lessonPaths.length === 0) {
+    console.log('No lesson paths found in rows, trying alternative approaches');
+    
     // Try to find all links in the block
     const links = block.querySelectorAll('a');
     if (links.length > 0) {
       console.log('Found links:', links.length);
       links.forEach(link => {
-        urls.push(link.href);
+        lessonPaths.push(link.href);
       });
     }
     
     // Try to extract URLs from text content of divs
-    if (urls.length === 0) {
+    if (lessonPaths.length === 0) {
       const allDivs = block.querySelectorAll('div');
       allDivs.forEach(div => {
         const text = div.textContent.trim();
         if (text && (text.startsWith('http') || text.startsWith('/') || text.includes('/'))) {
-          urls.push(text);
+          lessonPaths.push(text);
         }
       });
     }
     
     // Try to extract all text nodes
-    if (urls.length === 0) {
+    if (lessonPaths.length === 0) {
       const walker = document.createTreeWalker(
         block,
         NodeFilter.SHOW_TEXT,
@@ -73,17 +124,17 @@ export default function decorate(block) {
       while ((node = walker.nextNode())) {
         const text = node.nodeValue.trim();
         if (text && (text.startsWith('http') || text.startsWith('/') || text.includes('/'))) {
-          urls.push(text);
+          lessonPaths.push(text);
         }
       }
     }
   }
   
   // Log all found URLs
-  console.log('All found URLs:', urls);
+  console.log('All found URLs:', lessonPaths);
   
   // Create lesson items for each URL
-  urls.forEach((url, index) => {
+  lessonPaths.forEach((url, index) => {
     // Create a lesson item
     const lessonItem = document.createElement('div');
     lessonItem.classList.add('skill-track-lesson-item');
@@ -155,11 +206,14 @@ export default function decorate(block) {
     });
   }
   
-  // Clear the original content
-  block.innerHTML = '';
-  
-  // Add the lessons container to the block
-  block.appendChild(lessonsContainer);
+  // Only clear and replace content if we're not using the original block
+  if (!isAlreadyProcessed) {
+    // Clear the original content
+    block.innerHTML = '';
+    
+    // Add the lessons container to the block
+    block.appendChild(lessonsContainer);
+  }
   
   // Debug the final result
   console.log('Final lesson count:', lessonsContainer.children.length);
