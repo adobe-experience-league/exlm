@@ -1,5 +1,5 @@
 import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
-import { getMetadata } from '../../scripts/scripts.js';
+import { getMetadata } from '../../scripts/lib-franklin.js';
 
 /**
  * Decorates the skill track lessons block
@@ -8,7 +8,6 @@ import { getMetadata } from '../../scripts/scripts.js';
 export default function decorate(block) {
   // Add main container class
   block.classList.add('skill-track-lessons-container');
-  
   // Debug the entire block HTML
   console.log('Block HTML:', block.outerHTML);
   
