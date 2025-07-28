@@ -4318,7 +4318,9 @@
         "label": "Generate TQ Tags",
         "valueType": "string",
         "extensionId": "exl-ue-extension",
-        "requiredTagsToEnable": ["tq-roles", "tq-levels"]
+         "options": {
+          "requiredTagsToEnable": ["tq-roles", "tq-levels"]
+        }
       },
       {
         "component": "custom-aem-tag",
@@ -4364,7 +4366,6 @@
         "label": "Sub Feature(s)",
         "valueType": "string",
         "description": "Sets the subfeature(s) in page meta.",
-        "requiredTagsToEnable": ["tq-features"],
         "dataSource": {
           "type": "action",
           "config": {
