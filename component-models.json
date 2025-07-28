@@ -7278,26 +7278,5 @@
         "description": "Add multiple lesson page URLs"
       }
     ]
-  },
-  {
-    "id": "lesson",
-    "fields": [
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "title",
-        "value": "",
-        "label": "Lesson Title",
-        "description": "Title of the lesson"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "lesson_url",
-        "value": "",
-        "label": "Lesson Page URL",
-        "description": "URL to the lesson page"
-      }
-    ]
   }
 ]

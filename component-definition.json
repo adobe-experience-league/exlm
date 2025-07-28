@@ -1581,23 +1581,6 @@
               }
             }
           }
-        },
-        {
-          "title": "Lesson",
-          "id": "lesson",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block/item",
-                "template": {
-                  "name": "Lesson",
-                  "model": "lesson",
-                  "title": "Lesson Title",
-                  "lesson_url": "https://example.com/lesson"
-                }
-              }
-            }
-          }
         }
       ]
     }
