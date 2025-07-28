@@ -19,8 +19,14 @@ export default function decorate(block) {
   // Array to store all lesson URLs
   const lessonUrls = [];
 
-  // APPROACH 1: Check for data attributes that might contain the lesson paths
+  // IMPORTANT: Debug the block structure in detail
+  console.log('Block structure details:');
+  console.log('Block children count:', block.children.length);
   console.log('Block dataset:', block.dataset);
+  console.log('Block attributes:', [...block.attributes].map(attr => `${attr.name}="${attr.value}"`).join(', '));
+
+  // APPROACH 1: Check for data attributes that might contain the lesson paths
+  console.log('Approach 1: Checking for data attributes');
   if (block.dataset && block.dataset.lessonPaths) {
     try {
       const paths = JSON.parse(block.dataset.lessonPaths);
@@ -41,13 +47,17 @@ export default function decorate(block) {
 
   // APPROACH 2: Extract from DOM rows
   if (lessonUrls.length === 0) {
-    console.log('No paths found in dataset, looking in DOM structure');
+    console.log('Approach 2: Extracting from DOM rows');
 
     const rows = [...block.children];
     console.log(`Found ${rows.length} rows in the block`);
     rows.forEach((row, i) => console.log(`Row ${i} HTML:`, row.outerHTML));
 
     rows.forEach((row, index) => {
+      // Get all divs in this row
+      const allDivsInRow = row.querySelectorAll('div');
+      console.log(`Row ${index} has ${allDivsInRow.length} divs`);
+      
       // Find all <a> links inside the row (even multiple)
       const links = row.querySelectorAll('a');
       if (links.length > 0) {
@@ -59,39 +69,39 @@ export default function decorate(block) {
           }
         });
       } else {
-        // Fallback: extract text that looks like URLs
-        let cell = row;
-        while (cell.children.length === 1 && cell.children[0].tagName === 'DIV') {
-          cell = cell.children[0];
-        }
-
-        const text = cell.textContent.trim();
-        console.log(`Text content in row ${index}:`, text);
-
-        // Handle multiple space-separated or newline-separated URLs
-        const possibleUrls = text.split(/\s+/).filter(part =>
-          part.startsWith('http') || part.startsWith('/') || part.includes('/')
-        );
-
-        possibleUrls.forEach((urlCandidate) => {
-          if (!lessonUrls.includes(urlCandidate)) {
-            lessonUrls.push(urlCandidate);
-            console.log(`Found URL text in row ${index}:`, urlCandidate);
+        // If no links, check for URL text in all divs
+        allDivsInRow.forEach((div, divIndex) => {
+          const text = div.textContent.trim();
+          console.log(`Row ${index}, Div ${divIndex} text:`, text);
+          if (text && (text.startsWith('http') || text.startsWith('/') || text.includes('/'))) {
+            console.log(`Found URL text in row ${index}, div ${divIndex}:`, text);
+            if (!lessonUrls.includes(text)) {
+              lessonUrls.push(text);
+            }
           }
         });
+        
+        // Also check the row text directly
+        const rowText = row.textContent.trim();
+        if (rowText && (rowText.startsWith('http') || rowText.startsWith('/') || rowText.includes('/'))) {
+          console.log(`Found URL text directly in row ${index}:`, rowText);
+          if (!lessonUrls.includes(rowText)) {
+            lessonUrls.push(rowText);
+          }
+        }
       }
     });
   }
 
   // APPROACH 3: Special case for multi-value fields
   if (lessonUrls.length === 0) {
-    console.log('Trying special case for multi-value fields');
+    console.log('Approach 3: Special case for multi-value fields');
 
     const allDivs = block.querySelectorAll('div');
     allDivs.forEach((div, index) => {
       const text = div.textContent.trim();
 
-      // Same: split and handle multiple URLs per div
+      // Split and handle multiple URLs per div
       const possibleUrls = text.split(/\s+/).filter(part =>
         part.startsWith('http') || part.startsWith('/') || part.includes('/')
       );
@@ -104,8 +114,24 @@ export default function decorate(block) {
       });
     });
   }
+  
+  // APPROACH 4: Try to extract URLs from the block's text content
+  if (lessonUrls.length === 0) {
+    console.log('Approach 4: Extracting URLs from text content');
+    const text = block.textContent;
+    const urlRegex = /(https?:\/\/[^\s]+|\/[^\s]+)/g;
+    const matches = text.match(urlRegex);
+    if (matches) {
+      matches.forEach(match => {
+        console.log('Found URL in text content:', match);
+        if (!lessonUrls.includes(match)) {
+          lessonUrls.push(match);
+        }
+      });
+    }
+  }
 
-  console.log('Found lesson URLs:', lessonUrls);
+  console.log('Final lesson URLs:', lessonUrls);
 
   // Create lesson items
   if (lessonUrls.length > 0) {
