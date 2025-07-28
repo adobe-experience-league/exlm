@@ -15,7 +15,7 @@ function addNavigationButtons() {
   
   // Create previous button
   const prevButton = document.createElement('button');
-  prevButton.classList.add('lesson-nav-button', 'prev-lesson');
+  prevButton.classList.add('lesson-nav-button', 'prev-lesson', 'secondary');
   prevButton.textContent = 'Previous lesson';
   
   // Create next button
@@ -48,37 +48,36 @@ function addNavigationButtons() {
  * @param {Element} block The skill track rail block element
  */
 export default async function decorate(block) {
-  // Add dummy content for now
+  // Add skill track content
   block.innerHTML = `
     <div class="rail-content">
-      <h3>Skill Track</h3>
-      <div class="skill-item">
-        <strong>Fundamentals</strong>
-        <p>Basic concepts and terminology</p>
-        <div class="skill-progress">
-          <div class="skill-progress-bar" style="width: 100%"></div>
-        </div>
+      <div class="collection-name">COLLECTION NAME</div>
+      <h1 class="skill-track-title">Skill Track Title Lorem Ipsum</h1>
+      <p class="skill-track-description">[Skill Track Description] Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna.</p>
+      
+      <hr class="divider">
+      
+      <div class="bookmark-section">
+        <span class="bookmark-icon">🔖</span>
+        <span class="bookmark-text">Bookmark this resource</span>
       </div>
-      <div class="skill-item">
-        <strong>Intermediate</strong>
-        <p>Advanced techniques and workflows</p>
-        <div class="skill-progress">
-          <div class="skill-progress-bar" style="width: 75%"></div>
-        </div>
+      
+      <div class="module-section">
+        <h3 class="module-title">In this module</h3>
+        <ul class="module-list">
+          <li>Documentation Article Title Ipsum Dolor Sit Amet</li>
+          <li class="current-lesson"><strong>Video Tutorial Title Ipsum Dolor</strong></li>
+          <li>Documentation Article Title Ipsum Dolor Sit Amet</li>
+          <li>Documentation Article Title Ipsum Dolor Sit Amet</li>
+          <li>Skill Track Review</li>
+        </ul>
       </div>
-      <div class="skill-item">
-        <strong>Expert</strong>
-        <p>Master-level skills and optimization</p>
-        <div class="skill-progress">
-          <div class="skill-progress-bar" style="width: 25%"></div>
+      
+      <div class="progress-section">
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 50%"></div>
         </div>
-      </div>
-      <div class="skill-item">
-        <strong>Certification</strong>
-        <p>Official recognition and validation</p>
-        <div class="skill-progress">
-          <div class="skill-progress-bar" style="width: 0%"></div>
-        </div>
+        <div class="progress-text">2 of 4 Lessons Complete</div>
       </div>
     </div>
   `;

@@ -4,42 +4,102 @@ div.skill-track-rail-wrapper {
 
 .skill-track-rail {
   background-color: var(--background-color);
+  padding: 20px;
 }
 
-.skill-track-rail h3 {
-  font-size: 18px;
+.skill-track-rail .collection-name {
+  font-size: 12px;
   font-weight: 600;
-  color: var(--spectrum-gray-900);
+  text-transform: uppercase;
+  color: #333;
+  margin-bottom: 8px;
 }
 
-.skill-track-rail .rail-content {
+.skill-track-rail .skill-track-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 16px;
+  line-height: 1.3;
+}
+
+.skill-track-rail .skill-track-description {
   font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.skill-track-rail .divider {
+  border: none;
+  border-top: 1px solid #e5e5e5;
+  margin: 20px 0;
+}
+
+.skill-track-rail .bookmark-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  cursor: pointer;
+}
+
+.skill-track-rail .bookmark-icon {
+  font-size: 16px;
+  margin-right: 8px;
+}
+
+.skill-track-rail .bookmark-text {
+  font-size: 14px;
+  color: #333;
+}
+
+.skill-track-rail .module-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 12px;
+}
+
+.skill-track-rail .module-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+}
+
+.skill-track-rail .module-list li {
+  font-size: 14px;
+  color: #333;
+  padding: 8px 0;
   line-height: 1.4;
-  color: var(--spectrum-gray-700);
 }
 
-.skill-track-rail .skill-item {
-  margin-bottom: 12px;
-  padding: 8px;
-  border-radius: 4px;
-  background-color: var(--highlight-light-background-color);
+.skill-track-rail .module-list .current-lesson {
+  color: #06c;
+  font-weight: 600;
 }
 
-.skill-track-rail .skill-item:hover {
-  background-color: var(--highlight-dark-background-color);
+.skill-track-rail .progress-section {
+  margin-top: 24px;
 }
 
-.skill-track-rail .skill-progress {
+.skill-track-rail .progress-bar {
   width: 100%;
-  height: 4px;
-  background-color: var(--spectrum-gray-200);
-  border-radius: 2px;
-  margin-top: 4px;
+  height: 8px;
+  background-color: #e5e5e5;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
 }
 
-.skill-track-rail .skill-progress-bar {
+.skill-track-rail .progress-fill {
   height: 100%;
-  background-color: var(--spectrum-blue-600);
-  border-radius: 2px;
+  background-color: #06c;
+  border-radius: 4px;
   transition: width 0.3s ease;
+}
+
+.skill-track-rail .progress-text {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
 }

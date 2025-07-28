@@ -24,16 +24,18 @@
     position: relative;
     display: grid;
     margin: 0 auto;
-    padding-bottom: 90px;
+    padding: 0;
     max-width: var(--secondary-max-width);
     grid-template-columns: 250px 1fr 250px;
     min-height: 540px;
+    gap: 0;
   }
 
   .learning-collections-lesson main > div:not(.learning-collection-rail-section, .skill-track-rail-section) {
     overflow: auto;
-    padding: 0 50px;
+    padding: 0 60px;
     grid-column: 2;
+    max-width: 100%;
   }
 
   .learning-collections-lesson
@@ -50,6 +52,7 @@
     grid-column: 1;
     padding: 0;
     margin-right: 0;
+    border-right: 1px solid #e5e5e5;
   }
 
   .learning-collections-lesson main > div.skill-track-rail-section {
@@ -64,6 +67,7 @@
     left: 0;
     bottom: 60px;
     min-width: 250px;
+    max-width: 250px;
   }
 
   .learning-collections-lesson div.skill-track-rail-wrapper {
@@ -72,16 +76,19 @@
     right: 0;
     bottom: 60px;
     min-width: 250px;
+    max-width: 250px;
   }
 
   .learning-collections-lesson .learning-collection-rail {
     position: sticky;
     top: 10px;
+    width: 100%;
   }
 
   .learning-collections-lesson .skill-track-rail {
     position: sticky;
     top: 10px;
+    width: 100%;
   }
 
   /* Lesson Navigation Styles */
@@ -95,34 +102,5 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 50px;
-  }
-
-  .learning-collections-lesson .lesson-nav-button {
-    padding: 12px 24px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: 1px solid #d5d5d5;
-    background-color: white;
-    color: #333;
-  }
-
-  .learning-collections-lesson .lesson-nav-button.prev-lesson {
-    background-color: white;
-    color: #333;
-    border: 1px solid #d5d5d5;
-  }
-
-  .learning-collections-lesson .lesson-nav-button.next-lesson {
-    background-color: #06c;
-    color: white;
-    border: 1px solid #06c;
-  }
-
-  .learning-collections-lesson .lesson-nav-button:hover {
-    opacity: 0.8;
   }
 }
