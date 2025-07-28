@@ -5,7 +5,7 @@
 .learning-collections-lesson main {
   width: 100%;
   display: grid;
-  margin: 92px auto;
+  margin: 0 auto;
   padding: 0 46px;
   box-sizing: border-box;
   max-width: var(--secondary-max-width);
@@ -24,6 +24,7 @@
     position: relative;
     display: grid;
     margin: 0 auto;
+    padding-bottom: 90px;
     max-width: var(--secondary-max-width);
     grid-template-columns: 250px 1fr 250px;
     min-height: 540px;
@@ -37,7 +38,7 @@
 
   .learning-collections-lesson
     main
-    > div:not(.learning-collection-rail-section, .skill-track-rail-section):nth-child(3) {
+    > div:not(.learning-collection-rail-section, .skill-track-rail-section):first-child {
     margin-top: 80px;
   }
 
@@ -81,5 +82,47 @@
   .learning-collections-lesson .skill-track-rail {
     position: sticky;
     top: 10px;
+  }
+
+  /* Lesson Navigation Styles */
+  .learning-collections-lesson .lesson-navigation-section {
+    grid-column: 2;
+    margin-top: 40px;
+    margin-bottom: 20px;
+  }
+
+  .learning-collections-lesson .lesson-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 50px;
+  }
+
+  .learning-collections-lesson .lesson-nav-button {
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid #d5d5d5;
+    background-color: white;
+    color: #333;
+  }
+
+  .learning-collections-lesson .lesson-nav-button.prev-lesson {
+    background-color: white;
+    color: #333;
+    border: 1px solid #d5d5d5;
+  }
+
+  .learning-collections-lesson .lesson-nav-button.next-lesson {
+    background-color: #06c;
+    color: white;
+    border: 1px solid #06c;
+  }
+
+  .learning-collections-lesson .lesson-nav-button:hover {
+    opacity: 0.8;
   }
 }

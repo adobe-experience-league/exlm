@@ -223,7 +223,7 @@ function addLearningCollectionRail(main) {
   const learningCollectionRailSection = document.createElement('div');
   learningCollectionRailSection.classList.add('section', 'learning-collection-rail-section');
   learningCollectionRailSection.append(buildBlock('learning-collection-rail', []));
-  main.insertBefore(learningCollectionRailSection, main.firstChild);
+  main.append(learningCollectionRailSection);
 }
 
 /**
@@ -234,7 +234,7 @@ function addSkillTrackRail(main) {
   const skillTrackRailSection = document.createElement('div');
   skillTrackRailSection.classList.add('section', 'skill-track-rail-section');
   skillTrackRailSection.append(buildBlock('skill-track-rail', []));
-  main.insertBefore(skillTrackRailSection, main.firstChild);
+  main.append(skillTrackRailSection);
 }
 
 
