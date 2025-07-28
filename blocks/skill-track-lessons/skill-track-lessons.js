@@ -10,100 +10,87 @@ export default function decorate(block) {
   block.classList.add('skill-track-lessons-container');
   
   // Debug the block structure
-  console.log('Block HTML:', block.outerHTML);
+  console.log('Block structure:', block);
   
   // Create a container for all lessons
   const lessonsContainer = document.createElement('div');
   lessonsContainer.classList.add('skill-track-lessons');
   
-  // Get all rows in the block
-  const rows = [...block.children];
-  console.log('Number of rows:', rows.length);
+  // Look for the specific structure of multi-path fields
+  // In AEM, multi-value fields often have a specific structure
+  // Each value is in its own row with a specific class or attribute
   
-  // Extract all text content that looks like a URL
-  const allText = block.textContent;
-  console.log('All text content:', allText);
+  // First, try to find elements with data attributes related to multi-value fields
+  const multiValueRows = block.querySelectorAll('[data-multifield="true"], [data-multi="true"], .multifield-item, .multi-field-item');
   
-  // Use a regex to find all URLs in the text content
-  const urlRegex = /(https?:\/\/[^\s]+)|([^:\s]+\/[^\s]+)/g;
-  const matches = allText.match(urlRegex) || [];
-  
-  console.log('Found URL matches:', matches);
-  
-  // Process each match as a lesson path
-  matches.forEach((match, index) => {
-    // Skip if it's not a valid URL or path
-    if (!match.includes('/')) return;
+  if (multiValueRows.length > 0) {
+    console.log('Found multi-value rows:', multiValueRows.length);
     
-    // Create a lesson item
-    const lessonItem = document.createElement('div');
-    lessonItem.classList.add('skill-track-lesson-item');
+    // Process each multi-value row
+    multiValueRows.forEach((row, index) => {
+      const path = row.textContent.trim();
+      if (path) {
+        addLessonItem(lessonsContainer, path, index);
+      }
+    });
+  } else {
+    // If no specific multi-value structure is found, try a more general approach
+    // Look for any div that might contain a path
+    const allDivs = block.querySelectorAll('div');
+    const paths = [];
     
-    // Add lesson number
-    const lessonNumber = document.createElement('div');
-    lessonNumber.classList.add('lesson-number');
-    lessonNumber.textContent = index + 1;
-    lessonItem.appendChild(lessonNumber);
+    allDivs.forEach(div => {
+      // Check if this div contains text that looks like a path
+      const text = div.textContent.trim();
+      if (text && (text.includes('/') || text.includes('http'))) {
+        paths.push(text);
+      }
+    });
     
-    // Create lesson details
-    const lessonDetails = document.createElement('div');
-    lessonDetails.classList.add('lesson-details');
+    // Process unique paths
+    [...new Set(paths)].forEach((path, index) => {
+      addLessonItem(lessonsContainer, path, index);
+    });
     
-    // Add a title
-    const lessonTitle = document.createElement('h3');
-    lessonTitle.classList.add('lesson-title');
-    lessonTitle.textContent = `Lesson ${index + 1}`;
-    lessonDetails.appendChild(lessonTitle);
-    
-    // Add a link to the lesson
-    const lessonLink = document.createElement('a');
-    lessonLink.classList.add('lesson-link');
-    lessonLink.href = match;
-    lessonLink.textContent = 'Go to lesson';
-    lessonLink.setAttribute('target', '_blank');
-    lessonDetails.appendChild(lessonLink);
-    
-    // Add the lesson details to the lesson item
-    lessonItem.appendChild(lessonDetails);
-    
-    // Add the lesson item to the lessons container
-    lessonsContainer.appendChild(lessonItem);
-    
-    console.log(`Added lesson item for path: ${match}`);
-  });
-  
-  // If we still don't have any lessons, try a more direct approach
-  if (lessonsContainer.children.length === 0) {
-    console.log('No lessons found with URL matching, trying direct DOM traversal');
-    
-    // Process each row and cell directly
-    rows.forEach((row) => {
-      // Get all cells in the row
-      const cells = [...row.children];
+    // If still no paths found, try one more approach - look at the raw HTML
+    if (paths.length === 0) {
+      // Get all rows in the block
+      const rows = [...block.children];
       
-      cells.forEach((cell) => {
-        // Get all text nodes in the cell
-        const textNodes = [];
-        const walker = document.createTreeWalker(
-          cell,
-          NodeFilter.SHOW_TEXT,
-          null,
-          false
-        );
+      // Process each row
+      rows.forEach((row, rowIndex) => {
+        // Get all cells in the row
+        const cells = [...row.children];
         
-        let node;
-        while ((node = walker.nextNode())) {
-          const text = node.nodeValue.trim();
-          if (text && text.includes('/')) {
-            textNodes.push(text);
+        // Process each cell
+        cells.forEach((cell, cellIndex) => {
+          const text = cell.textContent.trim();
+          if (text && (text.includes('/') || text.includes('http'))) {
+            addLessonItem(lessonsContainer, text, paths.length);
+            paths.push(text);
           }
-        }
-        
-        // Process each text node as a potential lesson path
-        textNodes.forEach((text, index) => {
-          addLessonItem(lessonsContainer, text, lessonsContainer.children.length);
         });
       });
+    }
+  }
+  
+  // If we still don't have any lessons, try a completely different approach
+  if (lessonsContainer.children.length === 0) {
+    console.log('No lessons found with previous approaches, trying direct HTML parsing');
+    
+    // Get the HTML and look for patterns that might be paths
+    const html = block.innerHTML;
+    
+    // Look for any text that might be a path
+    const pathRegex = /(?:https?:\/\/[^\s"'<>]+)|(?:[^:\s"'<>]+\/[^\s"'<>]+)/g;
+    const matches = html.match(pathRegex) || [];
+    
+    // Process unique matches
+    [...new Set(matches)].forEach((match, index) => {
+      // Skip if it's not a valid URL or path
+      if (!match.includes('/')) return;
+      
+      addLessonItem(lessonsContainer, match, index);
     });
   }
   
@@ -115,7 +102,6 @@ export default function decorate(block) {
   
   // Debug the final result
   console.log('Final lesson count:', lessonsContainer.children.length);
-  console.log('Final HTML:', block.innerHTML);
 }
 
 /**
