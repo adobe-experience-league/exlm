@@ -15,49 +15,66 @@ export default function decorate(block) {
   const lessonsContainer = document.createElement('div');
   lessonsContainer.classList.add('skill-track-lessons');
   
-  // Extract all text content from the block
-  const allText = block.textContent;
-  console.log('All text content:', allText);
-  
-  // Find all URLs in the text content
+  // Extract URLs from the block
   const urls = [];
   
-  // First approach: Try to find all links in the block
-  const links = block.querySelectorAll('a');
-  if (links.length > 0) {
-    console.log('Found links:', links.length);
-    links.forEach(link => {
-      urls.push(link.href);
-    });
-  }
-  
-  // Second approach: Try to extract URLs from text content
-  if (urls.length === 0) {
-    // Get all divs that might contain URLs
-    const allDivs = block.querySelectorAll('div');
-    allDivs.forEach(div => {
-      const text = div.textContent.trim();
-      if (text && (text.startsWith('http') || text.startsWith('/') || text.includes('/'))) {
-        urls.push(text);
+  // Process each row in the block to find URLs
+  [...block.children].forEach(row => {
+    const cell = row.firstElementChild;
+    if (cell) {
+      // Check if the cell contains a link
+      const link = cell.querySelector('a');
+      if (link) {
+        urls.push(link.href);
+      } else {
+        // Otherwise use the text content if it looks like a URL
+        const text = cell.textContent.trim();
+        if (text && (text.startsWith('http') || text.startsWith('/') || text.includes('/'))) {
+          urls.push(text);
+        }
       }
-    });
-  }
+    }
+  });
   
-  // Third approach: Try to extract all text nodes
+  console.log('Found URLs from rows:', urls);
+  
+  // If no URLs found in rows, try alternative approaches
   if (urls.length === 0) {
-    const textNodes = [];
-    const walker = document.createTreeWalker(
-      block,
-      NodeFilter.SHOW_TEXT,
-      null,
-      false
-    );
+    // Try to find all links in the block
+    const links = block.querySelectorAll('a');
+    if (links.length > 0) {
+      console.log('Found links:', links.length);
+      links.forEach(link => {
+        urls.push(link.href);
+      });
+    }
     
-    let node;
-    while ((node = walker.nextNode())) {
-      const text = node.nodeValue.trim();
-      if (text && (text.startsWith('http') || text.startsWith('/') || text.includes('/'))) {
-        urls.push(text);
+    // Try to extract URLs from text content of divs
+    if (urls.length === 0) {
+      const allDivs = block.querySelectorAll('div');
+      allDivs.forEach(div => {
+        const text = div.textContent.trim();
+        if (text && (text.startsWith('http') || text.startsWith('/') || text.includes('/'))) {
+          urls.push(text);
+        }
+      });
+    }
+    
+    // Try to extract all text nodes
+    if (urls.length === 0) {
+      const walker = document.createTreeWalker(
+        block,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+      );
+      
+      let node;
+      while ((node = walker.nextNode())) {
+        const text = node.nodeValue.trim();
+        if (text && (text.startsWith('http') || text.startsWith('/') || text.includes('/'))) {
+          urls.push(text);
+        }
       }
     }
   }
