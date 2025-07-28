@@ -1,0 +1,17 @@
+.skill-track-header-container {
+  margin: 1rem 0;
+}
+
+.skill-track-header {
+  margin-bottom: 1.5rem;
+}
+
+.skill-track-title {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-color, #333333);
+}
+
+.skill-track-description {
+  color: var(--text-secondary-color, #666666);
+  line-height: 1.5;
+}

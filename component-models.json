@@ -7212,23 +7212,70 @@
     "fields": []
   },
   {
-    "id": "skill-track",
+    "id": "skill-track-header",
     "fields": [
       {
         "component": "text",
         "valueType": "string",
         "name": "title",
         "value": "",
-        "label": "Skill Track Title",
-        "description": "Sets the title for the skill track."
+        "label": "Title",
+        "description": "Sets the title for the skill track header."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h1",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
       },
       {
         "component": "richtext",
         "valueType": "string",
         "name": "description",
         "value": "",
-        "label": "Skill Track Description",
-        "description": "Sets the description for the skill track."
+        "label": "Description",
+        "description": "Sets the description for the skill track header."
+      }
+    ]
+  },
+  {
+    "id": "skill-track-lessons",
+    "fields": [
+      {
+        "component": "aem-content",
+        "valueType": "string[]",
+        "value": [],
+        "name": "lesson-paths",
+        "multi": true,
+        "label": "Lesson Page URLs",
+        "description": "Add multiple lesson page URLs"
       }
     ]
   },
