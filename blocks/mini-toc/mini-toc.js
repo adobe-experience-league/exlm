@@ -86,6 +86,60 @@ function getHeadingLevels() {
   return headingLevels;
 }
 
+export function observeElement(
+  host,
+  { onEmpty, onPopulate, onClear, onMutation, waitForElement = false, watchElementSelector = '' } = {},
+) {
+  let observer;
+  const ready = () => {
+    const hasContent = () => {
+      if (watchElementSelector) {
+        return !!host.firstElementChild && host.querySelector(watchElementSelector);
+      }
+      return !!(host.firstElementChild && host.firstElementChild.nextElementSibling);
+    };
+    let populated = hasContent();
+
+    if (waitForElement && !populated && host.nodeName === '#document-fragment') {
+      setTimeout(ready, 300);
+      return;
+    }
+
+    if (populated) {
+      if (onPopulate) {
+        onPopulate(host);
+      }
+    } else if (onEmpty) {
+      onEmpty(host);
+    }
+
+    observer = new MutationObserver((muts) => {
+      if (onMutation) {
+        onMutation(muts, host);
+      }
+
+      const nowPopulated = hasContent();
+
+      if (!populated && nowPopulated) {
+        populated = true;
+        if (onPopulate) {
+          onPopulate(host);
+        }
+      } else if (populated && !nowPopulated) {
+        populated = false;
+        if (onClear) {
+          onClear(host);
+        }
+      }
+    });
+
+    observer.observe(host, { childList: true, subtree: true, attributes: true });
+  };
+
+  ready();
+  return observer;
+}
+
 function buildMiniToc(block, placeholders) {
   const miniTOCHeading = placeholders?.onThisPage;
   const render = window.requestAnimationFrame;
@@ -218,6 +272,29 @@ function buildMiniToc(block, placeholders) {
         const debounceHighlight = debounce(10, () => highlight(false, isAnchorScroll));
         window.addEventListener('scroll', debounceHighlight);
       }
+      setTimeout(() => {
+        const parentWrapper = block.parentElement;
+        const blockHeight = parentWrapper.offsetHeight;
+        observeElement(parentWrapper, {
+          onPopulate: () => {
+            const siblingElement = block.nextElementSibling;
+            if (!siblingElement) {
+              return;
+            }
+            const siblingElementDimensionY = siblingElement.offsetTop + siblingElement.offsetHeight;
+            const delta = siblingElementDimensionY - window.innerHeight;
+            if (delta > 0) {
+              const buffer = 40;
+              const marginBottom = delta + blockHeight + buffer;
+              const main = document.querySelector('main');
+              const centerElement = main.querySelector(':scope > :not(.rail)');
+              if (centerElement) {
+                centerElement.style.marginBottom = `${marginBottom}px`;
+              }
+            }
+          },
+        });
+      }, 0);
     });
   } else {
     render(() => {

@@ -207,7 +207,7 @@ export const atomicResultStyles = `
                     }
                     .result-title atomic-result-text, .mobile-result-title atomic-result-text {
                       font-size: var(--spectrum-font-size-100);
-                      color: var(--non-spectrum-dark-charcoal);
+                      color: var(--non-spectrum-link);
                       font-weight: bold;
                       overflow: hidden;
                       max-width: 90vw;
@@ -334,7 +334,7 @@ export const atomicResultStyles = `
                     .result-item.mobile-only .mobile-result-title atomic-result-text {
                       font-size: var(--spectrum-font-size-200);
                       font-weight: bold;
-                      color: var(--non-spectrum-dark-gray);
+                      color: var(--non-spectrum-link);
                     }
                     .mobile-result-info .result-field atomic-result-multi-value-text, .mobile-result-info .atomic-result-date, 
                     .mobile-result-info .result-product > atomic-result-multi-value-text::part(result-multi-value-text-value) {
@@ -754,6 +754,26 @@ export default function atomicResultHandler(block, placeholders) {
           } else {
             resultFieldMulti?.classList.remove('hidden');
             resultFieldValue?.classList.add('hidden');
+            const allTooltipItems = resultFieldMulti
+              ?.querySelector('atomic-result-multi-value-text')
+              ?.shadowRoot?.querySelectorAll('li');
+            if (allTooltipItems && allTooltipItems.length > 0) {
+              const textContents = Array.from(allTooltipItems)
+                .map((li) => li.textContent)
+                .filter(Boolean);
+
+              allTooltipItems.forEach((li) => {
+                const currentText = li.textContent;
+                const isChild = textContents.some((text) => currentText !== text && currentText.includes(text));
+
+                if (isChild) {
+                  li.part.add('multi-hidden');
+                  if (li.nextElementSibling?.part?.contains('result-multi-value-text-separator')) {
+                    li.nextElementSibling.part.add('multi-hidden');
+                  }
+                }
+              });
+            }
           }
         } else {
           resultFieldMulti?.classList.add('hidden');

@@ -716,6 +716,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                                     display: inline;
                                     color: var(--spectrum-gray-50);
                                   }
+                                  .result-product .tooltip-text atomic-result-multi-value-text::part(multi-hidden) {
+                                    display: none;
+                                  }
                                 </style>
                                 <atomic-result-multi-value-text field="el_product" max-values-to-display="99"></atomic-result-multi-value-text> 
                               </span>
@@ -835,6 +838,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                                   .result-product .tooltip-text atomic-result-multi-value-text::part(result-multi-value-text-value) {
                                     display: inline;
                                     color: var(--spectrum-gray-50);
+                                  }
+                                  .result-product .tooltip-text atomic-result-multi-value-text::part(multi-hidden) {
+                                    display: none;
                                   }
                                 </style>
                                 <atomic-result-multi-value-text field="el_product" max-values-to-display="99"></atomic-result-multi-value-text> 
