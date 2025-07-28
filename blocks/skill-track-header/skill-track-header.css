@@ -19,11 +19,15 @@
   margin: 0 0 var(--spectrum-spacing-300) 0;
 }
 
-/* Make all heading elements inherit styling from the title container */
-.skill-track-header > div > div:first-child :where(h1, h2, h3, h4, h5, h6) {
+/* Heading elements styling */
+.skill-track-header h1,
+.skill-track-header h2,
+.skill-track-header h3,
+.skill-track-header h4,
+.skill-track-header h5,
+.skill-track-header h6 {
   margin: 0;
-  color: inherit;
-  font: inherit;
+  color: var(--spectrum-gray-900);
 }
 
 /* Description styling for rich text */
