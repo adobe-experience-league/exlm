@@ -360,7 +360,7 @@
     "components": []
   },
   {
-    "id": "quiz",
+    "id": "question",
     "components": ["question"]
   },
   {

@@ -1558,8 +1558,8 @@
                 "template": {
                   "name": "Quiz",
                   "model": "quiz",
-                  "filter": "question",
-                  "item": {
+                  "filter": "quiz",
+                  "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Question",
                     "model": "question",
