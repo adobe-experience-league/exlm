@@ -727,10 +727,18 @@ export default function atomicResultHandler(block, placeholders) {
           block.removeChild(blockLevelSkeleton);
         }
 
+        const currentHydrationCount = +(resultEl.dataset.hydration || '0');
+        resultEl.dataset.hydration = `${currentHydrationCount + 1}`;
         const resultFieldMulti = resultItem?.querySelector('.result-product .result-field-multi');
         const resultFieldValue = resultItem?.querySelector('.result-product .result-field-value');
         const productList = resultFieldValue?.firstElementChild?.shadowRoot?.querySelectorAll('li');
         const productCount = productList ? productList.length : 0;
+        if (productList && productList.length === 0) {
+          waitFor(() => {
+            hydrateResult(resultEl);
+          }, 100);
+          return;
+        }
         if (productCount > 1) {
           const tooltipBaseElement = resultFieldMulti.querySelector('atomic-result-multi-value-text');
           const liElements = tooltipBaseElement?.shadowRoot?.firstElementChild
@@ -785,12 +793,11 @@ export default function atomicResultHandler(block, placeholders) {
           const resultRoot = resultShadow.querySelector('.result-root');
           resultRoot.classList.add('recommendation-badge');
         }
-        const currentHydrationCount = +(resultEl.dataset.hydration || '0');
+
         if (currentHydrationCount >= MAX_HYDRATION_ATTEMPTS) {
           removeBlockSkeleton();
           return; // Return to avoid repeated hydrations endlessly.
         }
-        resultEl.dataset.hydration = `${currentHydrationCount + 1}`;
 
         if (!contentTypeElWrap) {
           waitFor(() => {

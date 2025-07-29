@@ -130,6 +130,12 @@
   z-index: 2; /* Ensure active item is on top */
 }
 
+.rail-content .mini-toc-wrapper .mini-toc ul li.is-active a {
+  font-weight: var(--font-weight-semi-bold);
+  background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
+  color: var(--non-spectrum-eerie-black);
+}
+
 /* Show the item immediately after the active item */
 .rail-content.is-stuck .mini-toc-wrapper .mini-toc ul li.is-active + li {
   display: inline-flex;
