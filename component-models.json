@@ -7227,22 +7227,11 @@
         "description": "Enter the question text"
       },
       {
-        "component": "select",
-        "valueType": "string",
-        "name": "type",
-        "value": "single",
-        "label": "Question Type",
-        "description": "Select whether this is a single or multiple choice question",
-        "options": [
-          {
-            "name": "Single Choice",
-            "value": "single"
-          },
-          {
-            "name": "Multiple Choice",
-            "value": "multiple"
-          }
-        ]
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "isMultipleChoice",
+        "label": "Multiple Choice Question",
+        "description": "Toggle on for multiple choice question, off for single choice question"
       },
       {
         "component": "richtext",

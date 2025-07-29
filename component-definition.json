@@ -1564,7 +1564,7 @@
                     "name": "Question",
                     "model": "question",
                     "question": "Sample question text",
-                    "type": "single",
+                    "isMultipleChoice": false,
                     "answers": "<ol><li>Answer 1</li><li>Answer 2</li><li>Answer 3</li></ol>",
                     "correctAnswers": "1"
                   }
@@ -1584,7 +1584,7 @@
                   "name": "Question",
                   "model": "question",
                   "question": "Sample question text",
-                  "type": "single",
+                  "isMultipleChoice": false,
                   "answers": "<ol><li>Answer 1</li><li>Answer 2</li><li>Answer 3</li></ol>",
                   "correctAnswers": "1"
                 }
