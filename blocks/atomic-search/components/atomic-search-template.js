@@ -231,6 +231,8 @@ const getCoveoAtomicMarkup = (placeholders) => {
               <style>
                 atomic-facet::part(facet-option) {
                   position: relative;
+                  display: flex;
+                  align-items: center;
                 }
                 atomic-facet::part(facet-child-element):hover {
                   background-color: var(--footer-border-color);
@@ -247,7 +249,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   right: 8px;
                   cursor: pointer;
                   color: var(--non-spectrum-web-gray);
-                  font-size: var(--spectrum-font-size-50);
+                  font-size: var(--spectrum-font-size-100);
                   font-weight: var(--font-weight-medium);
                   padding: 4px 6px;
                   z-index: 1;
@@ -298,6 +300,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 }
                 atomic-facet::part(facet-child-label) {
                   padding: 6px 40px 6px 32px;
+                  align-items: center;
                 }
                 atomic-facet::part(facet-parent-label) {
                   padding-bottom: 4px;
@@ -380,9 +383,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   atomic-facet::part(only-facet-btn) {
                     display: none;
                     right: 2px;
+                    font-size: var(--spectrum-font-size-50);
                   }
                   atomic-facet::part(only-facet-visible) {
-                    display: block;
+                    display: flex;
+                    align-items: center;
+                    height: 21px;
                   }
                 }
               </style>

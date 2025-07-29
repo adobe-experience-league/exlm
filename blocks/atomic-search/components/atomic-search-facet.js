@@ -310,7 +310,8 @@ export default function atomicFacetHandler(baseElement, placeholders) {
         facet.dataset.parent = parentName;
         facet.dataset.childfacet = 'true';
         const spanElement = facet.querySelector('.value-label');
-        const onlyFilterEl = htmlToElement(`<span part="only-facet-btn">Only</span>`);
+        const onlyLabel = placeholders.searchContentOnlyLabel ?? 'Only';
+        const onlyFilterEl = htmlToElement(`<span part="only-facet-btn">${onlyLabel}</span>`);
         facet.appendChild(onlyFilterEl);
         if (spanElement) {
           spanElement.textContent = facetName;
