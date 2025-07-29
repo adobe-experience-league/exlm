@@ -7289,7 +7289,10 @@
         "name": "lesson-urls",
         "multi": true,
         "label": "Lesson URLs",
-        "description": "Add multiple lesson URLs"
+        "description": "Add multiple lesson URLs",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/learning-collections-home"
+        }
       }
     ]
   }

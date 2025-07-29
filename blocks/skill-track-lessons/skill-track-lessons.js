@@ -3,14 +3,8 @@
  * @param {Element} block The skill track lessons block element
  */
 export default function decorate(block) {
-  console.log('Decorating skill-track-lessons block');
-
   // Add container class
   block.classList.add('skill-track-lessons-container');
-
-  // Store original HTML for debugging
-  const originalHTML = block.innerHTML;
-  console.log('Original HTML:', originalHTML);
 
   // Create a container for lessons
   const lessonsContainer = document.createElement('div');
@@ -19,119 +13,104 @@ export default function decorate(block) {
   // Array to store all lesson URLs
   const lessonUrls = [];
 
-  // IMPORTANT: Debug the block structure in detail
-  console.log('Block structure details:');
-  console.log('Block children count:', block.children.length);
-  console.log('Block dataset:', block.dataset);
-  console.log('Block attributes:', [...block.attributes].map(attr => `${attr.name}="${attr.value}"`).join(', '));
-
-  // APPROACH 1: Check for data attributes that might contain the lesson paths
-  console.log('Approach 1: Checking for data attributes');
+  // PRIORITY APPROACH: Extract lesson paths from the data attribute
+  // This is the most reliable way to get the multi-valued field data
   if (block.dataset && block.dataset.lessonPaths) {
     try {
       const paths = JSON.parse(block.dataset.lessonPaths);
-      console.log('Found lesson paths in dataset:', paths);
-
+      
       if (Array.isArray(paths)) {
         paths.forEach((path) => {
           if (path && !lessonUrls.includes(path)) {
             lessonUrls.push(path);
-            console.log('Added path from dataset:', path);
           }
         });
+      } else if (typeof paths === 'string') {
+        // Handle case where it might be a single string
+        lessonUrls.push(paths);
       }
     } catch (e) {
-      console.error('Error parsing lesson paths from dataset:', e);
+      console.error('Error parsing lesson paths from data attribute:', e);
     }
   }
 
-  // APPROACH 2: Extract from DOM rows
+  // If no URLs found in data attribute, try to extract from DOM structure
   if (lessonUrls.length === 0) {
-    console.log('Approach 2: Extracting from DOM rows');
-
+    // Look for the multi-value field row
     const rows = [...block.children];
-    console.log(`Found ${rows.length} rows in the block`);
-    rows.forEach((row, i) => console.log(`Row ${i} HTML:`, row.outerHTML));
-
-    rows.forEach((row, index) => {
-      // Get all divs in this row
-      const allDivsInRow = row.querySelectorAll('div');
-      console.log(`Row ${index} has ${allDivsInRow.length} divs`);
-      
-      // Find all <a> links inside the row (even multiple)
-      const links = row.querySelectorAll('a');
-      if (links.length > 0) {
-        links.forEach((link) => {
-          const url = link.href;
-          if (url && !lessonUrls.includes(url)) {
-            lessonUrls.push(url);
-            console.log(`Found link in row ${index}:`, url);
-          }
-        });
-      } else {
-        // If no links, check for URL text in all divs
-        allDivsInRow.forEach((div, divIndex) => {
-          const text = div.textContent.trim();
-          console.log(`Row ${index}, Div ${divIndex} text:`, text);
-          if (text && (text.startsWith('http') || text.startsWith('/') || text.includes('/'))) {
-            console.log(`Found URL text in row ${index}, div ${divIndex}:`, text);
-            if (!lessonUrls.includes(text)) {
-              lessonUrls.push(text);
+    
+    rows.forEach((row) => {
+      // First, check if this is a multi-value field row
+      const firstDiv = row.querySelector('div');
+      if (firstDiv && firstDiv.textContent.trim() === 'Lesson Page URLs') {
+        // This is the multi-value field row, extract all URLs from the second div
+        const urlsDiv = row.querySelector('div:nth-child(2)');
+        if (urlsDiv) {
+          // Extract all links
+          const links = urlsDiv.querySelectorAll('a');
+          if (links.length > 0) {
+            links.forEach(link => {
+              if (link.href && !lessonUrls.includes(link.href)) {
+                lessonUrls.push(link.href);
+              }
+            });
+          } else {
+            // If no links found, try to parse the text content
+            const text = urlsDiv.textContent.trim();
+            if (text) {
+              // Check if there are multiple URLs separated by commas or line breaks
+              const separators = [',', '\n', '\r\n'];
+              let foundSeparator = false;
+              
+              for (const separator of separators) {
+                if (text.includes(separator)) {
+                  const urls = text.split(separator).map(url => url.trim());
+                  urls.forEach(url => {
+                    if (url && !lessonUrls.includes(url) && 
+                       (url.startsWith('http') || url.startsWith('/') || url.includes('/'))) {
+                      lessonUrls.push(url);
+                    }
+                  });
+                  foundSeparator = true;
+                  break;
+                }
+              }
+              
+              // If no separator found, treat the whole text as a single URL
+              if (!foundSeparator && 
+                 (text.startsWith('http') || text.startsWith('/') || text.includes('/'))) {
+                lessonUrls.push(text);
+              }
             }
           }
-        });
-        
-        // Also check the row text directly
-        const rowText = row.textContent.trim();
-        if (rowText && (rowText.startsWith('http') || rowText.startsWith('/') || rowText.includes('/'))) {
-          console.log(`Found URL text directly in row ${index}:`, rowText);
-          if (!lessonUrls.includes(rowText)) {
-            lessonUrls.push(rowText);
-          }
+        }
+      } else {
+        // Regular row, check for links
+        const links = row.querySelectorAll('a');
+        if (links.length > 0) {
+          links.forEach(link => {
+            if (link.href && !lessonUrls.includes(link.href)) {
+              lessonUrls.push(link.href);
+            }
+          });
         }
       }
     });
   }
 
-  // APPROACH 3: Special case for multi-value fields
+  // Fallback: Try to extract URLs from the block's text content
   if (lessonUrls.length === 0) {
-    console.log('Approach 3: Special case for multi-value fields');
-
-    const allDivs = block.querySelectorAll('div');
-    allDivs.forEach((div, index) => {
-      const text = div.textContent.trim();
-
-      // Split and handle multiple URLs per div
-      const possibleUrls = text.split(/\s+/).filter(part =>
-        part.startsWith('http') || part.startsWith('/') || part.includes('/')
-      );
-
-      possibleUrls.forEach((urlCandidate) => {
-        if (!lessonUrls.includes(urlCandidate)) {
-          lessonUrls.push(urlCandidate);
-          console.log(`Found URL text in div ${index}:`, urlCandidate);
-        }
-      });
-    });
-  }
-  
-  // APPROACH 4: Try to extract URLs from the block's text content
-  if (lessonUrls.length === 0) {
-    console.log('Approach 4: Extracting URLs from text content');
     const text = block.textContent;
     const urlRegex = /(https?:\/\/[^\s]+|\/[^\s]+)/g;
     const matches = text.match(urlRegex);
     if (matches) {
       matches.forEach(match => {
-        console.log('Found URL in text content:', match);
         if (!lessonUrls.includes(match)) {
           lessonUrls.push(match);
         }
       });
     }
   }
-
-  console.log('Final lesson URLs:', lessonUrls);
 
   // Create lesson items
   if (lessonUrls.length > 0) {
@@ -161,11 +140,8 @@ export default function decorate(block) {
 
       lessonItem.appendChild(lessonDetails);
       lessonsContainer.appendChild(lessonItem);
-
-      console.log(`Added lesson item for URL: ${url}`);
     });
   } else {
-    console.error('No lesson URLs found');
     const message = document.createElement('div');
     message.textContent = 'No lesson URLs found. Please add lesson URLs to the block.';
     lessonsContainer.appendChild(message);
@@ -174,6 +150,7 @@ export default function decorate(block) {
   // Replace block content
   block.innerHTML = '';
   block.appendChild(lessonsContainer);
-
-  console.log('Final HTML:', block.innerHTML);
+  
+  // Debug: Log the URLs found to help with troubleshooting
+  console.log('Skill Track Lessons block: Found URLs:', lessonUrls);
 }
