@@ -4353,7 +4353,10 @@
           }
         },
         "options": {
-          "dependentField": "tq-products",
+          "dependentField": {
+            "name": "tq-products",
+            "taxonomyType": "product"
+          },
           "requiredTagsToEnable": ["tq-products"]
         },
         "extensionId": "exl-ue-extension"
@@ -4375,7 +4378,10 @@
           }
         },
         "options": {
-          "dependentField": "tq-features",
+          "dependentField": {
+            "name": "tq-features",
+            "taxonomyType": "feature"
+          },
           "requiredTagsToEnable": ["tq-features"]
         },
         "extensionId": "exl-ue-extension"
