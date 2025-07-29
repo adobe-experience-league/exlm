@@ -1,60 +1,147 @@
+/* Skill Track Lessons Component Styles */
+
 .skill-track-lessons-container {
-  margin: 1rem 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 .skill-track-lessons {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 20px;
+}
+
+.loading-message {
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+  color: #666;
 }
 
 .skill-track-lesson-item {
   display: flex;
-  align-items: center;
-  padding: 1rem;
-  border: 1px solid var(--spectrum-gray-300, #d3d3d3);
-  border-radius: 4px;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.skill-track-lesson-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .lesson-number {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border: 1px solid var(--spectrum-gray-300, #d3d3d3);
+  min-width: 40px;
+  height: 40px;
   border-radius: 50%;
-  margin-right: 1rem;
+  background-color: #1473e6;
+  color: white;
   font-weight: bold;
+  font-size: 18px;
 }
 
 .lesson-details {
-  flex-grow: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .lesson-title {
-  font-size: var(--exlm-font-size-content, 1rem);
-  margin: 0 0 0.5rem 0;
+  margin: 0;
+  font-size: 20px;
+  color: #202020;
 }
 
+.lesson-description {
+  margin: 0;
+  color: #505050;
+  font-size: 16px;
+}
+
+/* Styles for the links container */
+.lesson-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Base styles for all links */
 .lesson-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 4px;
   text-decoration: none;
-  color: var(--spectrum-blue-700, #0066cc);
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.lesson-link:hover {
-  text-decoration: underline;
+/* Primary lesson link */
+.lesson-link:not(.additional-link) {
+  background-color: #1473e6;
+  color: white;
+}
+
+.lesson-link:not(.additional-link):hover {
+  background-color: #0d66d0;
+}
+
+/* Additional resource links */
+.lesson-link.additional-link {
+  background-color: transparent;
+  color: #1473e6;
+  border: 1px solid #1473e6;
+}
+
+.lesson-link.additional-link:hover {
+  background-color: rgba(20, 115, 230, 0.1);
+}
+
+/* Add icons to links */
+.lesson-link::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.lesson-link:not(.additional-link)::before {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>');
+}
+
+.lesson-link.additional-link::before {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%231473e6"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>');
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .skill-track-lesson-item {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
+    gap: 15px;
   }
-
+  
   .lesson-number {
-    margin-right: 0;
+    align-self: flex-start;
+  }
+  
+  .lesson-links {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .lesson-link {
+    width: 100%;
   }
 }
