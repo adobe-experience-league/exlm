@@ -232,19 +232,26 @@
   padding-left: 1rem;
 }
 
-.slides .visual {
-  position: relative;
+.slides .visual-wrapper {
   display: flex;
   justify-content: center;
+  align-items: center;
+}
+
+.slides .visual {
+  position: relative;
+  height: fit-content;
+  width: fit-content;
 }
 
 .slides .visual.image picture,
 .slides .visual.image img {
-  max-width: 100%;
-  aspect-ratio: 16 / 9;
-  height: auto;
+  height: fit-content;
+  width: fit-content;
   display: block;
   border-radius: 16px;
+  object-fit: contain;
+  object-position: center;
 }
 
 .slides .visual.image .callout {
@@ -253,34 +260,24 @@
 
 .slides .visual.image .callout.visible {
   position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+  display: block;
+}
+
+.slides .indicator {
   height: 100%;
+  width: 100%;
 }
 
-.slides .visual.image .callout.callout-rectangle {
-  border-radius: 0;
-
-  --border-radius: 0;
-}
-
-.slides .visual.image .callout .indicator {
-  display: none;
-}
-
-.slides .step.active .visual.image .callout.visible .indicator i {
+.slides .indicator i {
   --callout-color-r: 3;
   --callout-color-g: 95;
   --callout-color-b: 230;
 
   position: relative;
   display: block;
-  width: 100%;
   height: 100%;
+  aspect-ratio: 1 / 1;
   z-index: var(--callout-indicator-z);
-  border-radius: 50%;
   border: solid 1px rgb(var(--callout-color-r) var(--callout-color-g) var(--callout-color-b));
   box-shadow:
     0 0 0 2px rgb(var(--callout-color-r) var(--callout-color-g) var(--callout-color-b) / 80%),
@@ -292,7 +289,14 @@
   animation: pulse 2.5s ease-in-out forwards infinite;
 }
 
-.slides .step.active .visual.image .callout.callout-rectangle .indicator i {
+.slides [type='circle'] .indicator i {
+  border-radius: 50%;
+}
+
+.slides [type='rectangle'] .indicator i {
+  height: 100%;
+  width: 100%;
+  aspect-ratio: unset;
   border-radius: 0;
 }
 
@@ -311,6 +315,9 @@
 .slides .step.active .visual.image .callout > .tooltip {
   display: none;
   position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
   opacity: 0;
   animation: fade-out 0.5s forwards;
   font-size: var(--spectrum-body-size-s);
@@ -321,8 +328,8 @@
 .slides .step.active .visual.image .callout.visible .indicator ~ .tooltip:hover {
   display: block;
   z-index: var(--callout-tooltip-z);
-  max-width: 35%;
-  min-width: 20%;
+  max-width: 200px;
+  min-width: 200px;
   color: var(--text-color);
   background-color: var(--spectrum-gray-50);
   border: solid 1px var(--spectrum-gray-300);

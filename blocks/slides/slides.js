@@ -63,18 +63,18 @@ function html(content, placeholders) {
                                   ?.filter((callout) => !callout.toast)
                                   .map(
                                     (callout) => `
-                                    <span class="callout callout-${callout.type ?? ''}" data-callout>
-                                        <span class="indicator ${callout.clickable ? 'clickable' : ''}" 
+                                    <span class="callout" data-callout ${Object.entries(callout.attributes)
+                                      .map(([key, value]) => `${key}="${value}"`)
+                                      .join(' ')}>
+                                        <span data-callout-indicator class="indicator ${
+                                          callout.clickable ? 'clickable' : ''
+                                        }" 
                                                 ${
                                                   !callout.button && callout.clickable === 'next'
                                                     ? 'data-next-step'
                                                     : ''
                                                 } 
-                                                data-callout-indicator="${callout.type}"
-                                                data-callout-indicator-width="${callout.width}"
-                                                data-callout-indicator-height="${callout.height}"
-                                                data-callout-indicator-x="${callout.x}"
-                                                data-callout-indicator-y="${callout.y}">
+                                                >
                                                     <i></i>
                                                     ${
                                                       callout.button
