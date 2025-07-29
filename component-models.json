@@ -7275,7 +7275,10 @@
         "name": "lesson-paths",
         "multi": true,
         "label": "Lesson Page URLs",
-        "description": "Add multiple lesson page URLs"
+        "description": "Add multiple lesson page URLs",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/learning-collections-home"
+        }
       }
     ]
   },
