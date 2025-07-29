@@ -1547,6 +1547,50 @@
               }
             }
           }
+        },
+        {
+          "title": "Quiz",
+          "id": "quiz",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Quiz",
+                  "model": "quiz",
+                  "filter": "question",
+                  "item": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Question",
+                    "model": "question",
+                    "question": "Sample question text",
+                    "type": "single",
+                    "answers": "<ol><li>Answer 1</li><li>Answer 2</li><li>Answer 3</li></ol>",
+                    "correctAnswers": "1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Question",
+          "id": "question",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Question",
+                  "model": "question",
+                  "question": "Sample question text",
+                  "type": "single",
+                  "answers": "<ol><li>Answer 1</li><li>Answer 2</li><li>Answer 3</li></ol>",
+                  "correctAnswers": "1"
+                }
+              }
+            }
+          }
         }
       ]
     }

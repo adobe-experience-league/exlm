@@ -7210,5 +7210,57 @@
   {
     "id": "atomic-search",
     "fields": []
+  },
+  {
+    "id": "quiz",
+    "fields": []
+  },
+  {
+    "id": "question",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "question",
+        "value": "",
+        "label": "Question",
+        "description": "Enter the question text"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "type",
+        "value": "single",
+        "label": "Question Type",
+        "description": "Select whether this is a single or multiple choice question",
+        "options": [
+          {
+            "name": "Single Choice",
+            "value": "single"
+          },
+          {
+            "name": "Multiple Choice",
+            "value": "multiple"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "answers",
+        "value": "",
+        "label": "Answers",
+        "description": "Enter the answers as an ordered list"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "correctAnswers",
+        "value": "",
+        "label": "Correct Answers",
+        "description": "Enter the correct answer numbers as comma-delimited values (e.g., '3,5')"
+      }
+    ]
   }
+
 ]
