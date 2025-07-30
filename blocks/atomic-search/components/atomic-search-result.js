@@ -794,6 +794,11 @@ export default function atomicResultHandler(block, placeholders) {
           } else {
             resultFieldMulti?.classList.remove('hidden');
             resultFieldValue?.classList.add('hidden');
+            const visibleElements = tooltipBaseElement.shadowRoot.querySelectorAll(`li:not([part~="multi-hidden"])`);
+            const lastVisibleElment = visibleElements[visibleElements.length - 1];
+            if (lastVisibleElment?.classList?.contains('separator')) {
+              lastVisibleElment.part.add('multi-hidden');
+            }
           }
         } else {
           resultFieldMulti?.classList.add('hidden');
