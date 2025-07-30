@@ -761,28 +761,15 @@ export default function atomicResultHandler(block, placeholders) {
             ? Array.from(tooltipBaseElement.shadowRoot.querySelectorAll(`li`))
             : [];
           const uniqueProductListItems = liElements.filter((item) => !item.classList.contains('separator'));
-          const uniqueProductTypes = liElements
-            .map((li) => {
-              if (li.textContent?.includes('|')) {
-                const [parentProductType] = li.textContent.split('|');
-                return parentProductType;
-              }
-              return li.textContent;
-            })
-            .filter(Boolean);
           const uniqueParentItems = uniqueProductListItems.reduce((acc, li) => {
             const currentText = li.textContent;
-            const isChild = uniqueProductTypes.some((text) => currentText !== text && currentText.includes(text));
+            const isChild = currentText.includes('|');
             if (isChild) {
               li.part.add('multi-hidden');
               if (li.nextElementSibling?.part?.contains('result-multi-value-text-separator')) {
                 li.nextElementSibling.part.add('multi-hidden');
               }
             } else {
-              if (li.textContent.includes('|')) {
-                const [parentProductTypeName] = li.textContent.split('|');
-                li.textContent = parentProductTypeName;
-              }
               acc.push(li);
             }
             return acc;
