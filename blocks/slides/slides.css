@@ -234,20 +234,42 @@
 
 .slides .visual-wrapper {
   display: flex;
+  position: relative;
   justify-content: center;
   align-items: center;
+  max-height: fit-content;
 }
 
 .slides .visual {
   position: relative;
-  height: fit-content;
-  width: fit-content;
+  height: 100%;
+}
+
+@media screen and (min-width: 600px) {
+  .slides .visual-wrapper {
+    height: 300px;
+    max-height: 100%;
+  }
+}
+
+@media screen and (min-width: 900px) {
+  .slides .visual-wrapper {
+    height: 400px;
+    max-height: 100%;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .slides .visual-wrapper {
+    height: 600px;
+    max-height: 100%;
+  }
 }
 
 .slides .visual.image picture,
 .slides .visual.image img {
-  height: fit-content;
-  width: fit-content;
+  height: 100%;
+  width: auto;
   display: block;
   border-radius: 16px;
   object-fit: contain;
@@ -676,10 +698,6 @@
 }
 
 @media screen and (min-width: 900px) {
-  .slides .visual-wrapper {
-    min-height: 230px;
-  }
-
   .slides .controls .controls-bar {
     border-radius: 20px;
     justify-content: flex-start;
