@@ -1,5 +1,8 @@
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { pushGuidePlayEvent } from '../../scripts/analytics/lib-analytics.js';
+import PreferenceStore from '../../scripts/preferences/preferences.js';
+
+export const preferences = new PreferenceStore('slides');
 
 // Track if audio is being played by autoplay
 let isAutoplayTriggered = false;
@@ -27,52 +30,6 @@ function getTotalSteps(block) {
 
 export const isDesktopView = () => window.matchMedia('(min-width: 768px)').matches;
 
-export function normalizeSpaces(str) {
-  // Replace multiple spaces with a single space
-  return str.replace(/\s+/g, ' ').trim();
-}
-
-export function setPreference(key, value) {
-  if (typeof Storage === 'undefined') {
-    return;
-  }
-
-  const preferences = JSON.parse(localStorage.getItem('experienceleague') || '{}');
-  preferences.slide = {
-    ...preferences.slide,
-    [key]: value,
-  };
-  localStorage.setItem('experienceleague', JSON.stringify(preferences));
-}
-
-export function getPreference(key) {
-  if (typeof Storage === 'undefined') {
-    return null;
-  }
-  const preferences = JSON.parse(localStorage.getItem('experienceleague') || '{}');
-
-  // Initialize preferences.slide if it doesn't exist
-  if (!preferences.slide) {
-    preferences.slide = {};
-  }
-
-  // For autoplayAudio, default to true if not set
-  if (key === 'autoplayAudio' && preferences.slide[key] === undefined) {
-    preferences.slide[key] = true;
-    localStorage.setItem('experienceleague', JSON.stringify(preferences));
-  }
-
-  return preferences.slide[key];
-}
-
-export async function sha256(str) {
-  const buffer = new TextEncoder().encode(str);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map((byte) => byte.toString(16).padStart(2, '0')).join('');
-  return hashHex;
-}
-
 export function getNextStep(block, currentStep) {
   const steps = [...block.querySelectorAll('[data-step]')] || [];
   const currentIndex = steps.findIndex((step) => step.dataset.step === currentStep);
@@ -97,44 +54,46 @@ export function getPreviousStep(block, currentStep) {
   return null; // No previous step found
 }
 
-function updateContentButtonPosition(step) {
-  const contentButton = step.querySelector('.content button');
-  if (contentButton) {
-    const width = contentButton.offsetWidth;
-    contentButton.style.setProperty('--content-left-position', `${width}px`);
+async function showCoachmarks(step) {
+  const image = step.querySelector('img');
+  if (!image.complete) {
+    await new Promise((resolve) => {
+      image.addEventListener('load', resolve);
+      image.addEventListener('error', resolve);
+    });
   }
+  const coachmarks = step.querySelectorAll('exl-coachmark');
+  coachmarks.forEach((coachmark) => {
+    coachmark.show();
+    const attObject = [...coachmark.attributes].reduce((acc, { name, value }) => ({ ...acc, [name]: value }), {});
+
+    const { type } = attObject;
+    if (type === 'circle') {
+      const { x, y, r } = attObject;
+      coachmark.style.left = `calc(${x}% - ${r / 2}%)`;
+      coachmark.style.top = `calc(${y}% - ${r}%)`;
+      coachmark.style.width = `${r}%`;
+      coachmark.style.aspectRatio = '1 / 1';
+    } else if (type === 'rectangle') {
+      const { x1, y1, x2, y2 } = attObject;
+      coachmark.style.left = `${x1}%`;
+      coachmark.style.top = `${y1}%`;
+      coachmark.style.width = `${x2 - x1}%`;
+      coachmark.style.height = `${y2 - y1}%`;
+    }
+    requestAnimationFrame(() => {
+      coachmark.reset();
+    });
+  });
 }
 
 export function addCallouts(step) {
   const image = step.querySelector('img');
 
+  showCoachmarks(step);
+
   new ResizeObserver(() => {
-    // image loaded, show the coachmark
-    if (image.complete) {
-      step.querySelectorAll('exl-coachmark').forEach((coachmark) => {
-        coachmark.show();
-
-        const attObject = [...coachmark.attributes].reduce((acc, { name, value }) => ({ ...acc, [name]: value }), {});
-
-        const { type } = attObject;
-        if (type === 'circle') {
-          const { x, y, r } = attObject;
-          coachmark.style.left = `calc(${x}% - ${r / 2}%)`;
-          coachmark.style.top = `calc(${y}% - ${r}%)`;
-          coachmark.style.width = `${r}%`;
-          coachmark.style.aspectRatio = '1 / 1';
-        } else if (type === 'rectangle') {
-          const { x1, y1, x2, y2 } = attObject;
-          coachmark.style.left = `${x1}%`;
-          coachmark.style.top = `${y1}%`;
-          coachmark.style.width = `${x2 - x1}%`;
-          coachmark.style.height = `${y2 - y1}%`;
-        }
-        requestAnimationFrame(() => {
-          coachmark.reset();
-        });
-      });
-    }
+    showCoachmarks(step);
   }).observe(image);
 }
 
@@ -174,48 +133,18 @@ export function generateVisualConfig(cell) {
   return visual;
 }
 
-function waitForAudioReady(audioEl) {
-  return new Promise((resolve, reject) => {
-    function onReady() {
-      resolve();
-    }
-
-    function onError() {
-      reject(new Error('Audio failed to load.'));
-    }
-
-    if (audioEl.readyState >= 3) {
-      onReady();
-      return;
-    }
-
-    audioEl.addEventListener('canplay', onReady, { once: true });
-    audioEl.addEventListener('error', onError, { once: true });
-  });
-}
-
 export async function activateStep(block, stepIndex, skipAutoplay = false) {
   // There should only be 1 match, but the forEach guards against no matches as well
   const step = block.querySelector(`[data-step="${stepIndex}"]`);
 
   step.classList.add('active');
 
-  step.querySelectorAll(':is([exl-coachmark] ~ img, exl-coachmark ~ picture > img)').forEach((image) => {
-    if (image.complete && image.naturalWidth > 0) {
-      updateContentButtonPosition(step);
-      addCallouts(step);
-    } else {
-      image.addEventListener('load', () => {
-        updateContentButtonPosition(step);
-        addCallouts(step);
-      });
-    }
-  });
+  addCallouts(step);
 
   const audio = step.querySelector('audio');
-  const autoplayAudio = getPreference('autoplayAudio') && getPreference('view') !== 'as-docs';
-  audio.muted = getPreference('muteStatus') || false;
-  const playbackRate = getPreference('playbackRate');
+  const autoplayAudio = preferences.get('autoplayAudio') && preferences.get('view') !== 'as-docs';
+  audio.muted = preferences.get('muteStatus') || false;
+  const playbackRate = preferences.get('playbackRate');
   if (playbackRate) {
     audio.playbackRate = playbackRate;
   }
@@ -223,8 +152,6 @@ export async function activateStep(block, stepIndex, skipAutoplay = false) {
 
   if (stepIndex === state.currentStep && autoplayAudio && !skipAutoplay) {
     try {
-      await waitForAudioReady(audio);
-
       // Only trigger autoplay event if the slides are in slide view mode (not docs view)
       const container = block.querySelector('.container');
       const isSlideMode = !container.classList.contains('as-docs');
@@ -292,18 +219,6 @@ export function showAllSteps(block) {
   });
 }
 
-export function getStepFromWindowLocation(block) {
-  const [blockId, stepId] = ((window.location?.hash ?? '').replace('#', '') ?? '').split('=');
-
-  if (
-    block.querySelector(`[data-block-id="${blockId}"] [data-step="${stepId}"], h2[id="${blockId}"] h4[id="${stepId}"]`)
-  ) {
-    return stepId;
-  }
-
-  return null;
-}
-
 export function updateWindowLocation(block, stepId) {
   const { blockId } = block.querySelector('[data-block-id]').dataset;
 
@@ -324,18 +239,22 @@ export function copyToClipboard({ text, toastText }) {
   }
 }
 
+function switchView(block, view) {
+  block.querySelector('.container').classList.toggle('as-docs');
+
+  if (view === 'as-docs') {
+    preferences.set('view', 'as-docs');
+    showAllSteps(block);
+  } else {
+    preferences.set('view', 'as-slides');
+    showStep(block, state.currentStep, true); // Pass true to skip autoplay when switching view modes
+  }
+}
+
 export async function addEventHandlers(block, placeholders) {
   block.querySelectorAll('[data-toggle-view]').forEach((button) => {
     button.addEventListener('click', () => {
-      block.querySelector('.container').classList.toggle('as-docs');
-
-      if (button.dataset.toggleView === 'as-docs') {
-        setPreference('view', 'as-docs');
-        showAllSteps(block);
-      } else {
-        setPreference('view', 'as-slides');
-        showStep(block, state.currentStep, true); // Pass true to skip autoplay when switching view modes
-      }
+      switchView(block, button.dataset.toggleView);
     });
   });
 
@@ -343,7 +262,7 @@ export async function addEventHandlers(block, placeholders) {
     button.addEventListener('click', () => {
       const previousStep = getPreviousStep(block, state.currentStep);
 
-      if (previousStep && getPreference('view') !== 'as-docs') {
+      if (previousStep && preferences.get('view') !== 'as-docs') {
         state.currentStep = previousStep;
         updateWindowLocation(block, state.currentStep);
         showStep(block, state.currentStep);
@@ -368,7 +287,7 @@ export async function addEventHandlers(block, placeholders) {
     button.addEventListener('click', () => {
       const nextStep = getNextStep(block, state.currentStep);
 
-      if (nextStep && getPreference('view') !== 'as-docs') {
+      if (nextStep && preferences.get('view') !== 'as-docs') {
         // Get audio status
         const audio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
         const audioOn = !audio.muted;
@@ -440,7 +359,7 @@ export async function addEventHandlers(block, placeholders) {
 
     audio.addEventListener('ended', () => {
       setTimeout(() => {
-        if (getPreference('autoplayAudio')) {
+        if (preferences.get('autoplayAudio')) {
           const nextStep = getNextStep(block, state.currentStep);
           if (nextStep) {
             const audioOn = !audio.muted;
@@ -462,11 +381,11 @@ export async function addEventHandlers(block, placeholders) {
     });
 
     audio.addEventListener('volumechange', () => {
-      setPreference('muteStatus', audio.muted);
+      preferences.set('muteStatus', audio.muted);
     });
 
     audio.addEventListener('ratechange', () => {
-      setPreference('playbackRate', audio.playbackRate);
+      preferences.set('playbackRate', audio.playbackRate);
     });
   });
 
@@ -491,7 +410,7 @@ export async function addEventHandlers(block, placeholders) {
         ac.dataset.autoPlayAudio = !autoPlayAudio;
       });
 
-      setPreference('autoplayAudio', !autoPlayAudio);
+      preferences.set('autoplayAudio', !autoPlayAudio);
     });
   });
 }

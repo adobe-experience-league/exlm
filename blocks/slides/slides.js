@@ -3,7 +3,7 @@ import { decoratePlaceholders, fetchLanguagePlaceholders } from '../../scripts/s
 
 import {
   generateVisualConfig,
-  getPreference,
+  preferences,
   showAllSteps,
   showStep,
   addEventHandlers,
@@ -13,10 +13,10 @@ import {
 
 function html(content, placeholders) {
   const isDesktopUI = isDesktopView();
-  const initialView = isDesktopUI ? getPreference('view') || 'as-slides' : 'as-docs';
+  const initialView = isDesktopUI ? preferences.get('view') || 'as-slides' : 'as-docs';
 
-  const autoplayAudio = getPreference('autoplayAudio');
-  const muted = getPreference('muteStatus') || false;
+  const autoplayAudio = preferences.get('autoplayAudio');
+  const muted = preferences.get('muteStatus') || false;
 
   return `
         <div class="container ${initialView}" data-block-id="${content.id}">
@@ -51,10 +51,10 @@ function html(content, placeholders) {
 
                       <!-- Visuals -->
                       <div class="visual-wrapper">
+                        <span class="step-counter">${stepIndex + 1}<span class="slash">/</span>${
+                          section.steps.length
+                        }</span>
                         <div class="visual ${step.visual.code ? 'code' : 'image'}">
-                            <span class="step-counter">${stepIndex + 1}<span class="slash">/</span>${
-                              section.steps.length
-                            }</span>
 
                             ${
                               step.visual.image
@@ -66,7 +66,7 @@ function html(content, placeholders) {
                                     (callout) => `
                                     <exl-coachmark  ${Object.entries(callout.attributes)
                                       .map(([key, value]) => `${key}="${value}"`)
-                                      .join(' ')}">
+                                      .join(' ')}>
                                         <span slot="title">${callout.tooltip}</span>
                                       </exl-coachmark>
                                 `,
@@ -306,7 +306,7 @@ export default async function decorate(block) {
 
   state.currentStep = content.sections.flatMap((sec) => sec.steps).find((step) => step.active).id;
 
-  if (getPreference('view') === 'as-docs') {
+  if (preferences.get('view') === 'as-docs') {
     showAllSteps(block);
   } else {
     showStep(block, state.currentStep);
