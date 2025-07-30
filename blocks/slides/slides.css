@@ -254,11 +254,7 @@
   object-position: center;
 }
 
-.slides .visual.image .callout {
-  display: none;
-}
-
-.slides .visual.image .callout.visible {
+.slides exl-coachmark {
   position: absolute;
   display: block;
 }

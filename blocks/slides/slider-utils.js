@@ -126,10 +126,9 @@ export function addCallouts(step) {
 
     new ResizeObserver(() => {
       if (image.complete && image.naturalWidth > 0) {
-        step.querySelectorAll('[data-callout]').forEach((callout) => {
+        step.querySelectorAll('exl-coachmark').forEach((callout) => {
           callout.classList.add('visible');
 
-          const indicator = callout.querySelector('[data-callout-indicator]');
           const button = callout.querySelector('[data-callout-button]');
           const attObject = [...callout.attributes].reduce((acc, { name, value }) => ({ ...acc, [name]: value }), {});
 
@@ -137,9 +136,9 @@ export function addCallouts(step) {
           if (type === 'circle') {
             const { x, y, r } = attObject;
             callout.style.left = `calc(${x}% - ${r / 2}%)`;
-            callout.style.top = `calc(${y}% - ${r / 2}%)`;
+            callout.style.top = `calc(${y}% - ${r}%)`;
             callout.style.width = `${r}%`;
-            callout.style.height = callout.style.width;
+            callout.style.aspectRatio = '1 / 1';
           } else if (type === 'rectangle') {
             const { x1, y1, x2, y2 } = attObject;
             callout.style.left = `${x1}%`;
@@ -159,10 +158,10 @@ export function addCallouts(step) {
               button.style.marginLeft = `${-1 * ((borderBox?.inlineSize || button.offsetWidth) / 2)}px`;
             }).observe(button);
 
-            indicator.style.left = 'unset';
-            indicator.style.top = 'unset';
-            indicator.style.width = `${button.offsetWidth * 1.5}px`;
-            indicator.style.height = indicator.style.width;
+            // indicator.style.left = 'unset';
+            // indicator.style.top = 'unset';
+            // indicator.style.width = `${button.offsetWidth * 1.5}px`;
+            // indicator.style.height = indicator.style.width;
           }
         });
       }
@@ -246,7 +245,7 @@ export async function activateStep(block, stepIndex, skipAutoplay = false) {
 
   step.classList.add('active');
 
-  step.querySelectorAll(':is([data-callout] ~ img, [data-callout] ~ picture > img)').forEach((image) => {
+  step.querySelectorAll(':is([exl-coachmark] ~ img, exl-coachmark ~ picture > img)').forEach((image) => {
     if (image.complete && image.naturalWidth > 0) {
       updateContentButtonPosition(step);
       addCallouts(step);

@@ -1,0 +1,278 @@
+/* stylelint-disable selector-class-pattern */
+.spectrum-CoachMark {
+  /* Core color tokens */
+  --spectrum-black-rgb: 0, 0, 0;
+  --spectrum-black: rgba(var(--spectrum-black-rgb));
+  --spectrum-white-rgb: 255, 255, 255;
+  --spectrum-white: rgba(var(--spectrum-white-rgb));
+
+  /* Animation & border sizes */
+  --spectrum-border-width-200: 2px;
+
+  /* CoachIndicator defaults */
+  --spectrum-coach-indicator-ring-diameter: 100%; /* adjust based on your design tokens */
+  --spectrum-coach-indicator-gap: 8px; /* example spacing token, e.g. spectrum-spacing-100 */
+
+  /* Derived sizing variables */
+  --spectrum-coach-indicator-ring-border-size: var(--spectrum-border-width-200);
+  --spectrum-coach-indicator-sizing-multiple: 3;
+
+  /* Animation details */
+  --spectrum-coach-animation-indicator-ring-duration: 3000ms;
+  --spectrum-coach-indicator-animation-keyframe-scale-1: 1;
+  --spectrum-coach-indicator-animation-keyframe-scale-2: 1.1;
+  --spectrum-coach-indicator-animation-keyframe-scale-3: 1.2;
+  --spectrum-coach-indicator-animation-ring-inner-delay-multiple: -0.5;
+  --spectrum-coach-indicator-ring-default-color: rgb(75 117 255 / 100%);
+  --spectrum-popover-border-color: rgb(198 198 198);
+  --spectrum-popover-corner-radius: 8px;
+  --spectrum-popover-background-color: var(--spectrum-white);
+
+  /* popover */
+  --spectrum-popover-width: 400px;
+
+  /* border and radius (falling back through mod‑vars) */
+  --spectrum-coachmark-border-size: var(--mod-coachmark-border-size, var(--mod-popover-border-width));
+  --spectrum-coachmark-border-radius: var(--mod-coachmark-border-radius, var(--mod-popover-corner-radius));
+
+  /* pop‑through values */
+  --mod-popover-border-width: 1px;
+  --mod-popover-corner-radius: 8px;
+  --mod-popover-content-area-spacing-vertical: 0;
+  --mod-button-edge-to-visual-only: 9px;
+
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.spectrum-CoachIndicator {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.spectrum-CoachIndicator-ring {
+  display: block;
+  position: absolute;
+  border-style: solid;
+  border-width: var(--mod-coach-indicator-ring-border-size, var(--spectrum-coach-indicator-ring-border-size));
+  border-radius: 50%;
+  border-color: var(--mod-coach-indicator-ring-default-color, var(--spectrum-coach-indicator-ring-default-color));
+  inset-block-start: var(
+    --mod-coach-indicator-top,
+    calc(var(--spectrum-coach-indicator-block-size) / 3 - var(--spectrum-coach-indicator-ring-border-size))
+  );
+  inset-inline-start: var(
+    --mod-coach-indicator-left,
+    calc(var(--spectrum-coach-indicator-inline-size) / 3 - var(--spectrum-coach-indicator-ring-border-size))
+  );
+  inline-size: var(--mod-coach-indicator-ring-inline-size, var(--spectrum-coach-indicator-ring-diameter));
+  block-size: var(--mod-coach-indicator-ring-block-size, var(--spectrum-coach-indicator-ring-diameter));
+  animation: var(--mod-coach-indicator-animation-name, pulse)
+    var(--mod-coach-animation-indicator-ring-duration, var(--spectrum-coach-animation-indicator-ring-duration)) linear
+    infinite;
+
+  &:nth-child(1) {
+    animation-delay: calc(
+      var(--mod-coach-animation-indicator-ring-duration, var(--spectrum-coach-animation-indicator-ring-duration)) *
+        var(--spectrum-coach-indicator-animation-ring-inner-delay-multiple)
+    );
+  }
+
+  &:nth-child(2) {
+    animation-delay: calc(
+      var(--mod-coach-animation-indicator-ring-duration, var(--spectrum-coach-animation-indicator-ring-duration)) *
+        var(--mod-coach-animation-indicator-ring-center-delay-multiple, -0.66)
+    );
+  }
+
+  &:nth-child(3) {
+    animation-delay: calc(
+      var(--mod-coach-animation-indicator-ring-duration, var(--spectrum-coach-animation-indicator-ring-duration)) *
+        var(--mod-coach-animation-indicator-ring-outer-delay-multiple, -1)
+    );
+  }
+}
+
+.spectrum-CoachMark--rectangle .spectrum-CoachIndicator-ring {
+  border-radius: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spectrum-CoachIndicator-ring {
+    animation: none;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(var(--spectrum-coach-indicator-animation-keyframe-scale-1));
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(var(--spectrum-coach-indicator-animation-keyframe-scale-2));
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(var(--spectrum-coach-indicator-animation-keyframe-scale-3));
+    opacity: 0;
+  }
+}
+
+/* When the coachmark has an image… */
+.spectrum-CoachMark-image-wrapper {
+  block-size: var(--mod-coachmark-media-height, 120px);
+  min-block-size: var(--mod-coachmark-media-min-height, 80px);
+  inline-size: calc(var(--mod-coachmark-width, 240px) - (var(--spectrum-coachmark-border-size) * 2));
+  object-fit: cover;
+  object-position: center;
+  border-start-start-radius: inherit;
+  border-start-end-radius: inherit;
+}
+
+/* The <img> itself */
+.spectrum-CoachMark-image {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  border-start-start-radius: calc(var(--spectrum-coachmark-border-radius) - var(--spectrum-coachmark-border-size));
+  border-start-end-radius: calc(var(--spectrum-coachmark-border-radius) - var(--spectrum-coachmark-border-size));
+}
+
+/* Shared padding for header, content & footer */
+.spectrum-CoachMark-header,
+.spectrum-CoachMark-content,
+.spectrum-CoachMark-footer {
+  padding-block: 0;
+  padding-inline: var(--mod-coachmark-padding, 16px);
+}
+
+/* Header row */
+.spectrum-CoachMark-header {
+  padding-block-start: var(--mod-coachmark-padding, 16px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-block-end: var(--mod-coachmark-header-to-body, 12px);
+}
+
+/* Title text */
+.spectrum-CoachMark-title {
+  color: var(--mod-coachmark-title-color, rgb(44 44 44 / 100%));
+  font-size: var(--mod-coachmark-title-font-size, 14px);
+  font-weight: var(--mod-coachmark-title-text-font-weight, 700);
+  font-family: var(
+    --mod-coachmark-title-font-family,
+    adobe-clean,
+    'Source Sans Pro',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif
+  );
+  font-style: var(--mod-coachmark-title-font-style, normal);
+  line-height: var(--mod-coachmark-title-text-line-height, 1.3);
+  margin-block-end: 0;
+}
+
+/* Action‑menu slot wrapper */
+.spectrum-CoachMark-action-menu {
+  white-space: nowrap;
+  z-index: 1;
+  margin-inline-start: var(--mod-coachmark-heading-to-action-button, 16px);
+}
+
+/* (Deprecated menu classes left untouched) */
+.spectrum-CoachMark-menu {
+  display: var(--spectrum-coachmark-menu-display);
+}
+
+.spectrum-CoachMark-menu--mobile {
+  --spectrum-coachmark-menu-display: var(--spectrum-coachmark-menu-mobile-display);
+}
+
+/* Body content */
+.spectrum-CoachMark-content {
+  margin-block-end: var(--mod-coachmark-body-to-footer, 16px);
+  color: var(--mod-coachmark-content-font-color, rgb(44 44 44 / 100%));
+  font-size: var(--mod-coachmark-content-font-size, 14px);
+  font-weight: var(--mod-coachmark-content-font-weight, 400);
+  font-family: var(
+    --mod-coachmark-content-font-family,
+    adobe-clean,
+    'Source Sans Pro',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif
+  );
+  font-style: var(--mod-coachmark-content-font-style, normal);
+  line-height: var(--mod-coachmark-content-line-height, 1.5);
+}
+
+/* Footer (pagination + buttons) */
+.spectrum-CoachMark-footer {
+  display: grid;
+  align-items: end;
+  margin-block-start: 0;
+  padding-block-end: var(--mod-coachmark-padding, 16px);
+}
+
+/* Step count */
+.spectrum-CoachMark-step {
+  justify-self: start;
+  margin-block-end: calc(var(--mod-coachmark-step-to-bottom, 4px) - var(--mod-coachmark-padding, 16px));
+  color: var(--mod-coachmark-step-color, rgb(113 113 113 / 100%));
+  font-size: var(--mod-coachmark-step-font-size, 12px);
+  font-weight: var(--mod-coachmark-step-text-font-weight, 400);
+  font-family: var(--spectrum-sans-serif-font);
+  font-style: var(--mod-coachmark-step-font-style, normal);
+  line-height: var(--mod-coachmark-step-text-line-height, 1.5);
+  white-space: nowrap;
+}
+
+/* Button group */
+.spectrum-CoachMark-buttongroup {
+  display: var(--spectrum-coachmark-buttongroup-display);
+  grid-column-start: 2;
+}
+
+/* Mobile variant */
+.spectrum-CoachMark-buttongroup--mobile {
+  --spectrum-coachmark-buttongroup-display: var(--spectrum-coachmark-buttongroup-mobile-display);
+  --mod-buttongroup-spacing: 8px;
+}
+
+.spectrum-Popover {
+  box-sizing: border-box;
+  position: absolute;
+  outline: none;
+  padding: var(--mod-popover-content-area-spacing-vertical, var(--spectrum-popover-content-area-spacing-vertical)) 0;
+  display: none;
+  flex-direction: column;
+  border-style: solid;
+  border-radius: var(--spectrum-popover-corner-radius);
+  border-color: var(--spectrum-popover-border-color);
+  border-width: var(--spectrum-popover-border-width);
+  background-color: var(--spectrum-popover-background-color);
+  filter: var(--spectrum-popover-filter);
+  width: var(--spectrum-popover-width);
+  box-shadow:
+    0 4px 24px 0 rgb(0 0 0 / 12%),
+    0 1.5px 6px 0 rgb(0 0 0 / 8%);
+}
+
+.spectrum-CoachIndicator:hover + .spectrum-Popover {
+  display: inline-flex;
+}
+
+.spectrum-Popover--right-top {
+  left: calc(50% - var(--spectrum-popover-width) / 2);
+  top: calc(100% + 24px);
+}
