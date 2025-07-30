@@ -693,6 +693,22 @@ export default function atomicResultHandler(block, placeholders) {
     }
   }
 
+  const sanitizeProductTypes = (resultFieldValue) => {
+    const allProductItems = resultFieldValue?.firstElementChild?.shadowRoot?.querySelectorAll('li');
+    if (allProductItems && allProductItems.length > 0) {
+      Array.from(allProductItems).forEach((item, index) => {
+        const textLabel = item.firstElementChild?.textContent;
+        if (textLabel?.includes('|')) {
+          const [parentName] = textLabel.split("|");
+          item.firstElementChild.textContent = parentName;
+        }
+        if (index > 0) {
+          item.part.add('multi-hidden');
+        }
+      });
+    }
+  };
+
   const updateAtomicResultUI = () => {
     const results = container.querySelectorAll('atomic-result');
     const isMobileView = isMobile();
@@ -750,15 +766,7 @@ export default function atomicResultHandler(block, placeholders) {
           if (uniqueProductListItems.length === 1) {
             resultFieldMulti?.classList.add('hidden');
             resultFieldValue?.classList.remove('hidden');
-
-            const allProductItems = resultFieldValue?.firstElementChild?.shadowRoot?.querySelectorAll('li');
-            if (allProductItems && allProductItems.length > 1) {
-              Array.from(allProductItems).forEach((item, index) => {
-                if (index > 0) {
-                  item.part.add('multi-hidden');
-                }
-              });
-            }
+            sanitizeProductTypes(resultFieldValue);
           } else {
             resultFieldMulti?.classList.remove('hidden');
             resultFieldValue?.classList.add('hidden');
@@ -772,7 +780,7 @@ export default function atomicResultHandler(block, placeholders) {
 
               allTooltipItems.forEach((li) => {
                 const currentText = li.textContent;
-                const isChild = textContents.some((text) => currentText !== text && currentText.includes(text));
+                const isChild = currentText.includes("|") || textContents.some((text) => currentText !== text && currentText.includes(text));
 
                 if (isChild) {
                   li.part.add('multi-hidden');
@@ -786,6 +794,7 @@ export default function atomicResultHandler(block, placeholders) {
         } else {
           resultFieldMulti?.classList.add('hidden');
           resultFieldValue?.classList.remove('hidden');
+          sanitizeProductTypes(resultFieldValue);
         }
 
         const recommendationBadgeExists = !!resultItem.querySelector('.atomic-recommendation-badge');
@@ -794,7 +803,7 @@ export default function atomicResultHandler(block, placeholders) {
           resultRoot.classList.add('recommendation-badge');
         }
 
-        if (currentHydrationCount >= MAX_HYDRATION_ATTEMPTS) {
+        if (resultItem.dataset.decorated && currentHydrationCount >= MAX_HYDRATION_ATTEMPTS) {
           removeBlockSkeleton();
           return; // Return to avoid repeated hydrations endlessly.
         }
