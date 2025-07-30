@@ -7,7 +7,7 @@
   --spectrum-white: rgba(var(--spectrum-white-rgb));
 
   /* Animation & border sizes */
-  --spectrum-border-width-200: 2px;
+  --spectrum-border-width-200: 3px;
 
   /* CoachIndicator defaults */
   --spectrum-coach-indicator-ring-diameter: 100%; /* adjust based on your design tokens */
@@ -19,9 +19,6 @@
 
   /* Animation details */
   --spectrum-coach-animation-indicator-ring-duration: 3000ms;
-  --spectrum-coach-indicator-animation-keyframe-scale-1: 1;
-  --spectrum-coach-indicator-animation-keyframe-scale-2: 1.1;
-  --spectrum-coach-indicator-animation-keyframe-scale-3: 1.2;
   --spectrum-coach-indicator-animation-ring-inner-delay-multiple: -0.5;
   --spectrum-coach-indicator-ring-default-color: rgb(75 117 255 / 100%);
   --spectrum-popover-border-color: rgb(198 198 198);
@@ -96,7 +93,7 @@
 }
 
 .spectrum-CoachMark--rectangle .spectrum-CoachIndicator-ring {
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -107,17 +104,26 @@
 
 @keyframes pulse {
   0% {
-    transform: scale(var(--spectrum-coach-indicator-animation-keyframe-scale-1));
+    transform: scale(
+      var(--spectrum-coach-indicator-animation-keyframe-scale-x-1),
+      var(--spectrum-coach-indicator-animation-keyframe-scale-y-1)
+    );
     opacity: 0;
   }
 
   50% {
-    transform: scale(var(--spectrum-coach-indicator-animation-keyframe-scale-2));
+    transform: scale(
+      var(--spectrum-coach-indicator-animation-keyframe-scale-x-2),
+      var(--spectrum-coach-indicator-animation-keyframe-scale-y-2)
+    );
     opacity: 1;
   }
 
   100% {
-    transform: scale(var(--spectrum-coach-indicator-animation-keyframe-scale-3));
+    transform: scale(
+      var(--spectrum-coach-indicator-animation-keyframe-scale-x-3),
+      var(--spectrum-coach-indicator-animation-keyframe-scale-y-3)
+    );
     opacity: 0;
   }
 }

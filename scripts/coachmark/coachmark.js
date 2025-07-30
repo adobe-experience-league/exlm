@@ -20,13 +20,11 @@ const HTML = ({ type }) => `
     >
       <div class="spectrum-CoachMark-header">
         <div class="spectrum-CoachMark-title">
-          Try playing with a pixel brush
+          <slot name="title"></slot>
         </div>
       </div>
       <div class="spectrum-CoachMark-content">
-        Pixel brushes use pixels to create brush strokes, just like in other
-        design and drawing tools. Start drawing, and zoom in to see the pixels
-        in each stroke.
+        <slot name="content"></slot>
       </div>
     </div>
 </div>
@@ -35,15 +33,71 @@ const HTML = ({ type }) => `
 class EXLCoachmark extends HTMLElement {
   constructor() {
     super();
-    const shadow = this.attachShadow({ mode: 'open' });
+    this.shadow = null;
 
     // 3) Adopt it into every instance
-    shadow.adoptedStyleSheets = [sheet];
+    this.shadow = this.attachShadow({ mode: 'open' });
+    this.shadow.adoptedStyleSheets = [sheet];
 
     // 4) Stamp your HTML
-    shadow.innerHTML += HTML({
+    this.shadow.innerHTML += HTML({
       type: this.getAttribute('type') || 'circle',
     });
+
+    this.indicator = this.shadow.querySelector('.spectrum-CoachIndicator');
+  }
+
+  initPulseAnimation() {
+    const io = new IntersectionObserver(
+      (entries, observer) => {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            observer.disconnect();
+            setTimeout(() => {
+              const DELTA_PX = 8;
+              const w = this.indicator.getBoundingClientRect().width;
+              const h = this.indicator.getBoundingClientRect().height;
+              const sx1 = 1;
+              const sy1 = 1;
+              const sx2 = (w + DELTA_PX) / w;
+              const sy2 = (h + DELTA_PX) / h;
+              const sx3 = (w + DELTA_PX * 2) / w;
+              const sy3 = (h + DELTA_PX * 2) / h;
+              this.indicator.style.setProperty('--spectrum-coach-indicator-animation-keyframe-scale-x-1', sx1);
+              this.indicator.style.setProperty('--spectrum-coach-indicator-animation-keyframe-scale-y-1', sy1);
+              this.indicator.style.setProperty('--spectrum-coach-indicator-animation-keyframe-scale-x-2', sx2);
+              this.indicator.style.setProperty('--spectrum-coach-indicator-animation-keyframe-scale-y-2', sy2);
+              this.indicator.style.setProperty('--spectrum-coach-indicator-animation-keyframe-scale-x-3', sx3);
+              this.indicator.style.setProperty('--spectrum-coach-indicator-animation-keyframe-scale-y-3', sy3);
+            }, 300);
+          }
+        }
+      },
+      { root: null, rootMargin: '0px', threshold: 0.1 },
+    );
+
+    io.observe(this.indicator);
+  }
+
+  handleSlots() {
+    // Check if the slot "text" is provided; if not, remove .spectrum-CoachMark-content
+    const slotText = this.querySelector('[slot="content"]');
+    const contentEl = this.shadow.querySelector('.spectrum-CoachMark-content');
+    if (!slotText && contentEl) {
+      contentEl.remove();
+    }
+
+    const slotTitle = this.querySelector('[slot="title"]');
+    const titleEl = this.shadow.querySelector('.spectrum-CoachMark-title');
+    if (!slotTitle && titleEl) {
+      titleEl.remove();
+    }
+  }
+
+  connectedCallback() {
+    this.initPulseAnimation();
+    this.handleSlots();
   }
 }
 

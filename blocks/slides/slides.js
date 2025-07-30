@@ -66,7 +66,9 @@ function html(content, placeholders) {
                                     (callout) => `
                                     <exl-coachmark  ${Object.entries(callout.attributes)
                                       .map(([key, value]) => `${key}="${value}"`)
-                                      .join(' ')}"></exl-coachmark>
+                                      .join(' ')}">
+                                        <span slot="title">${callout.tooltip}</span>
+                                      </exl-coachmark>
                                 `,
                                   )
                                   .join('')}
