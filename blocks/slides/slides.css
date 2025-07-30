@@ -556,7 +556,7 @@
   animation: pop-toast 12s ease forwards;
 }
 
-.slides .visual .step-counter {
+.slides .step-counter {
   position: absolute;
   right: 1rem;
   bottom: 1rem;
@@ -574,7 +574,7 @@
   font-weight: var(--font-weight-700);
 }
 
-.slides .visual .step-counter .slash {
+.slides .step-counter .slash {
   padding: 0 var(--spectrum-spacing-75);
   color: var(--spectrum-gray-200);
 }
@@ -691,7 +691,7 @@
 
 .slides .container.as-docs .display-toggles .as-docs,
 .slides .container.as-docs .visual.image .callout .indicator button,
-.slides .container.as-docs .visual.image .step-counter,
+.slides .container.as-docs .step-counter,
 .slides .container.as-docs .controls,
 .slides .container.as-docs .toast {
   display: none;
