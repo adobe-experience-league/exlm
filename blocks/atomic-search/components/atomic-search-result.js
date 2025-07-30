@@ -693,6 +693,22 @@ export default function atomicResultHandler(block, placeholders) {
     }
   }
 
+  const sanitizeProductTypes = (resultFieldValue) => {
+    const allProductItems = resultFieldValue?.firstElementChild?.shadowRoot?.querySelectorAll('li');
+    if (allProductItems && allProductItems.length > 0) {
+      Array.from(allProductItems).forEach((item, index) => {
+        const textLabel = item.firstElementChild?.textContent;
+        if (textLabel?.includes('|')) {
+          const [parentName] = textLabel.split('|');
+          item.firstElementChild.textContent = parentName;
+        }
+        if (index > 0) {
+          item.part.add('multi-hidden');
+        }
+      });
+    }
+  };
+
   const updateAtomicResultUI = () => {
     const results = container.querySelectorAll('atomic-result');
     const isMobileView = isMobile();
@@ -744,48 +760,37 @@ export default function atomicResultHandler(block, placeholders) {
           const liElements = tooltipBaseElement?.shadowRoot?.firstElementChild
             ? Array.from(tooltipBaseElement.shadowRoot.querySelectorAll(`li`))
             : [];
-          const uniqueProductListItems = liElements.filter(
-            (item) => !item.classList.contains('separator') && !item.textContent.includes('|'),
-          );
-          if (uniqueProductListItems.length === 1) {
+          const uniqueProductListItems = liElements.filter((item) => !item.classList.contains('separator'));
+          const uniqueParentItems = uniqueProductListItems.reduce((acc, li) => {
+            const currentText = li.textContent;
+            const isChild = currentText.includes('|');
+            if (isChild) {
+              li.part.add('multi-hidden');
+              if (li.nextElementSibling?.part?.contains('result-multi-value-text-separator')) {
+                li.nextElementSibling.part.add('multi-hidden');
+              }
+            } else {
+              acc.push(li);
+            }
+            return acc;
+          }, []);
+          if (uniqueParentItems.length <= 1) {
             resultFieldMulti?.classList.add('hidden');
             resultFieldValue?.classList.remove('hidden');
-
-            const allProductItems = resultFieldValue?.firstElementChild?.shadowRoot?.querySelectorAll('li');
-            if (allProductItems && allProductItems.length > 1) {
-              Array.from(allProductItems).forEach((item, index) => {
-                if (index > 0) {
-                  item.part.add('multi-hidden');
-                }
-              });
-            }
+            sanitizeProductTypes(resultFieldValue);
           } else {
             resultFieldMulti?.classList.remove('hidden');
             resultFieldValue?.classList.add('hidden');
-            const allTooltipItems = resultFieldMulti
-              ?.querySelector('atomic-result-multi-value-text')
-              ?.shadowRoot?.querySelectorAll('li');
-            if (allTooltipItems && allTooltipItems.length > 0) {
-              const textContents = Array.from(allTooltipItems)
-                .map((li) => li.textContent)
-                .filter(Boolean);
-
-              allTooltipItems.forEach((li) => {
-                const currentText = li.textContent;
-                const isChild = textContents.some((text) => currentText !== text && currentText.includes(text));
-
-                if (isChild) {
-                  li.part.add('multi-hidden');
-                  if (li.nextElementSibling?.part?.contains('result-multi-value-text-separator')) {
-                    li.nextElementSibling.part.add('multi-hidden');
-                  }
-                }
-              });
+            const visibleElements = tooltipBaseElement.shadowRoot.querySelectorAll(`li:not([part~="multi-hidden"])`);
+            const lastVisibleElment = visibleElements[visibleElements.length - 1];
+            if (lastVisibleElment?.classList?.contains('separator')) {
+              lastVisibleElment.part.add('multi-hidden');
             }
           }
         } else {
           resultFieldMulti?.classList.add('hidden');
           resultFieldValue?.classList.remove('hidden');
+          sanitizeProductTypes(resultFieldValue);
         }
 
         const recommendationBadgeExists = !!resultItem.querySelector('.atomic-recommendation-badge');
@@ -794,7 +799,7 @@ export default function atomicResultHandler(block, placeholders) {
           resultRoot.classList.add('recommendation-badge');
         }
 
-        if (currentHydrationCount >= MAX_HYDRATION_ATTEMPTS) {
+        if (resultItem.dataset.decorated && currentHydrationCount >= MAX_HYDRATION_ATTEMPTS) {
           removeBlockSkeleton();
           return; // Return to avoid repeated hydrations endlessly.
         }
