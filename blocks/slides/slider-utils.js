@@ -1,9 +1,12 @@
-import state from './slider-state.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { pushGuidePlayEvent } from '../../scripts/analytics/lib-analytics.js';
 
 // Track if audio is being played by autoplay
 let isAutoplayTriggered = false;
+
+export const state = {
+  currentStep: 0,
+};
 
 // Helper function to format guide title
 function formatGuideTitle(block, stepId) {
@@ -103,84 +106,36 @@ function updateContentButtonPosition(step) {
 }
 
 export function addCallouts(step) {
-  const picture = step.querySelector('picture');
   const image = step.querySelector('img');
 
-  if (!picture && !image) {
-    return;
-  }
+  new ResizeObserver(() => {
+    // image loaded, show the coachmark
+    if (image.complete) {
+      step.querySelectorAll('exl-coachmark').forEach((coachmark) => {
+        coachmark.show();
 
-  if (image.naturalWidth) {
-    const imageIsPortrait = image.naturalWidth < image.naturalHeight;
-    if (imageIsPortrait) {
-      image.style.aspectRatio = 'auto';
-    }
-  }
+        const attObject = [...coachmark.attributes].reduce((acc, { name, value }) => ({ ...acc, [name]: value }), {});
 
-  let largestImage;
-
-  const setupCallout = () => {
-    // Access the naturalWidth property of the loaded image
-    // const naturalWidth = largestImage.naturalWidth;
-    // const naturalHeight = largestImage.naturalHeight;
-
-    new ResizeObserver(() => {
-      if (image.complete && image.naturalWidth > 0) {
-        step.querySelectorAll('exl-coachmark').forEach((callout) => {
-          callout.classList.add('visible');
-
-          const button = callout.querySelector('[data-callout-button]');
-          const attObject = [...callout.attributes].reduce((acc, { name, value }) => ({ ...acc, [name]: value }), {});
-
-          const { type } = attObject;
-          if (type === 'circle') {
-            const { x, y, r } = attObject;
-            callout.style.left = `calc(${x}% - ${r / 2}%)`;
-            callout.style.top = `calc(${y}% - ${r}%)`;
-            callout.style.width = `${r}%`;
-            callout.style.aspectRatio = '1 / 1';
-          } else if (type === 'rectangle') {
-            const { x1, y1, x2, y2 } = attObject;
-            callout.style.left = `${x1}%`;
-            callout.style.top = `${y1}%`;
-            callout.style.width = `${x2 - x1}%`;
-            callout.style.height = `${y2 - y1}%`;
-          }
-
-          if (button) {
-            new ResizeObserver((buttonResize) => {
-              // eslint-disable-next-line no-restricted-syntax
-              const borderBox = buttonResize[0].borderBoxSize[0];
-
-              button.style.left = '50%';
-              button.style.top = '50%';
-              button.style.marginTop = `${-1 * ((borderBox?.blockSize || button.offsetHeight) / 2)}px`;
-              button.style.marginLeft = `${-1 * ((borderBox?.inlineSize || button.offsetWidth) / 2)}px`;
-            }).observe(button);
-
-            // indicator.style.left = 'unset';
-            // indicator.style.top = 'unset';
-            // indicator.style.width = `${button.offsetWidth * 1.5}px`;
-            // indicator.style.height = indicator.style.width;
-          }
+        const { type } = attObject;
+        if (type === 'circle') {
+          const { x, y, r } = attObject;
+          coachmark.style.left = `calc(${x}% - ${r / 2}%)`;
+          coachmark.style.top = `calc(${y}% - ${r}%)`;
+          coachmark.style.width = `${r}%`;
+          coachmark.style.aspectRatio = '1 / 1';
+        } else if (type === 'rectangle') {
+          const { x1, y1, x2, y2 } = attObject;
+          coachmark.style.left = `${x1}%`;
+          coachmark.style.top = `${y1}%`;
+          coachmark.style.width = `${x2 - x1}%`;
+          coachmark.style.height = `${y2 - y1}%`;
+        }
+        requestAnimationFrame(() => {
+          coachmark.reset();
         });
-      }
-    }).observe(image);
-  };
-
-  if (!picture) {
-    largestImage = image;
-    setupCallout();
-  } else {
-    // Find the <source> tag with the media query "(min-width: 600px)"
-    const sourceElement = picture.querySelector('source[media="(min-width: 600px)"]');
-    // Create a new Image element
-    largestImage = new Image();
-    // eslint-disable-next-line prefer-destructuring
-    largestImage.src = sourceElement.getAttribute('srcset').split(' ')[0];
-    // Listen for the load event of the Image element
-    largestImage.onload = setupCallout;
-  }
+      });
+    }
+  }).observe(image);
 }
 
 export function generateVisualConfig(cell) {
@@ -338,8 +293,7 @@ export function showAllSteps(block) {
 }
 
 export function getStepFromWindowLocation(block) {
-  // eslint-disable-next-line prefer-const
-  let [blockId, stepId] = ((window.location?.hash ?? '').replace('#', '') ?? '').split('=');
+  const [blockId, stepId] = ((window.location?.hash ?? '').replace('#', '') ?? '').split('=');
 
   if (
     block.querySelector(`[data-block-id="${blockId}"] [data-step="${stepId}"], h2[id="${blockId}"] h4[id="${stepId}"]`)
@@ -370,7 +324,7 @@ export function copyToClipboard({ text, toastText }) {
   }
 }
 
-export function addEventHandlers(block, placeholders) {
+export async function addEventHandlers(block, placeholders) {
   block.querySelectorAll('[data-toggle-view]').forEach((button) => {
     button.addEventListener('click', () => {
       block.querySelector('.container').classList.toggle('as-docs');
