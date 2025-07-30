@@ -124,35 +124,28 @@ export function addCallouts(step) {
     // const naturalWidth = largestImage.naturalWidth;
     // const naturalHeight = largestImage.naturalHeight;
 
-    new ResizeObserver((imageResize) => {
+    new ResizeObserver(() => {
       if (image.complete && image.naturalWidth > 0) {
-        step.querySelectorAll('[data-callout]').forEach((callout) => {
+        step.querySelectorAll('exl-coachmark').forEach((callout) => {
           callout.classList.add('visible');
 
-          const indicator = callout.querySelector('[data-callout-indicator]');
           const button = callout.querySelector('[data-callout-button]');
-          const tooltip = callout.querySelector('[data-callout-tooltip]');
+          const attObject = [...callout.attributes].reduce((acc, { name, value }) => ({ ...acc, [name]: value }), {});
 
-          const imageHeight = imageResize[0].borderBoxSize[0].blockSize;
-          const imageWidth = imageResize[0].borderBoxSize[0].inlineSize;
-
-          const scaleX = imageWidth / largestImage.naturalWidth;
-          const scaleY = imageHeight / largestImage.naturalHeight;
-
-          const width = parseInt(indicator.dataset.calloutIndicatorWidth, 10) || 100;
-          const height = parseInt(indicator.dataset.calloutIndicatorHeight, 10) || width;
-          const left = parseInt(indicator.dataset.calloutIndicatorX, 10);
-          const top = parseInt(indicator.dataset.calloutIndicatorY, 10);
-
-          const indicatorLeft = ((left - width / 2) * scaleX) / imageWidth;
-          const indicatorTop = ((top - height / 2) * scaleY) / imageHeight;
-          const indicatorWidth = (width * scaleX) / imageWidth;
-          const indicatorHeight = (height * scaleY) / imageHeight;
-
-          indicator.style.left = `${indicatorLeft * 100}%`;
-          indicator.style.top = `${indicatorTop * 100}%`;
-          indicator.style.width = `${indicatorWidth * 100}%`;
-          indicator.style.height = `${indicatorHeight * 100}%`;
+          const { type } = attObject;
+          if (type === 'circle') {
+            const { x, y, r } = attObject;
+            callout.style.left = `calc(${x}% - ${r / 2}%)`;
+            callout.style.top = `calc(${y}% - ${r}%)`;
+            callout.style.width = `${r}%`;
+            callout.style.aspectRatio = '1 / 1';
+          } else if (type === 'rectangle') {
+            const { x1, y1, x2, y2 } = attObject;
+            callout.style.left = `${x1}%`;
+            callout.style.top = `${y1}%`;
+            callout.style.width = `${x2 - x1}%`;
+            callout.style.height = `${y2 - y1}%`;
+          }
 
           if (button) {
             new ResizeObserver((buttonResize) => {
@@ -165,19 +158,10 @@ export function addCallouts(step) {
               button.style.marginLeft = `${-1 * ((borderBox?.inlineSize || button.offsetWidth) / 2)}px`;
             }).observe(button);
 
-            indicator.style.left = 'unset';
-            indicator.style.top = 'unset';
-            indicator.style.width = `${button.offsetWidth * 1.5}px`;
-            indicator.style.height = indicator.style.width;
-          }
-
-          if (tooltip) {
-            const tooltipAdjust = 50;
-            const tooltipLeft = ((left - tooltipAdjust) * scaleX) / imageWidth;
-            const tooltipTop = ((top + tooltipAdjust) * scaleY) / imageHeight;
-
-            tooltip.style.left = `${tooltipLeft * 100}%`;
-            tooltip.style.top = `${tooltipTop * 100}%`;
+            // indicator.style.left = 'unset';
+            // indicator.style.top = 'unset';
+            // indicator.style.width = `${button.offsetWidth * 1.5}px`;
+            // indicator.style.height = indicator.style.width;
           }
         });
       }
@@ -199,125 +183,6 @@ export function addCallouts(step) {
   }
 }
 
-export function parseCallout(calloutParams = '') {
-  const params = calloutParams.split('|') || [];
-
-  const callout = {};
-
-  callout.toast = params.find((value) => value?.startsWith('toast='))?.split('=')[1] || null;
-
-  if (callout.toast) {
-    return callout;
-  }
-
-  callout.button = params.find((value) => value?.startsWith('button='))?.split('=')[1] || null;
-
-  callout.width = parseInt(params[0], 10);
-  callout.height = callout.width;
-  callout.x = parseInt(params[1], 10);
-  callout.y = parseInt(params[2], 10);
-
-  if (['width', 'height', 'x', 'y'].find((prop) => Number.isNaN(callout[prop])) !== undefined) {
-    if (callout.button) {
-      callout.position = 'middle';
-      callout.x = 'unset';
-      callout.y = 'unset';
-    } else {
-      return null;
-    }
-  }
-
-  callout.tooltip = params.find((value) => value?.startsWith('tooltip='))?.split('=')[1] || null;
-  callout.clickable = params.find((value) => value === 'next') ? 'next' : false;
-  if (!callout.clickable) {
-    callout.clickable = params.find((value) => value?.startsWith('click='))?.split('=')[1] || false;
-  }
-
-  return callout;
-}
-
-/**
- * @param {string} attributesString
- * @returns {Object}
- */
-function parseAttributes(attributesString) {
-  const attrObj = {};
-  // Match attributes with values that may contain escaped quotes
-  const attributes = attributesString.match(/(\w+)=("(?:[^"\\]|\\.)*")/g) || [];
-  attributes.forEach((attr) => {
-    const [key, rawValue] = attr.split('=');
-    try {
-      attrObj[key] = JSON.parse(rawValue);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.warn(`Failed to parse value for ${key}:`, rawValue);
-      attrObj[key] = rawValue.slice(1, -1); // fallback: unquote manually
-    }
-  });
-
-  return attrObj;
-}
-
-/**
- * @typedef {Object} Directive
- * @property {string} name - The name of the directive
- * @property {string} label - The label of the directive
- * @property {Object} attributes - The attributes of the directive
- */
-
-/**
- * @param {string} directiveString
- * @returns {Directive|null}
- */
-function parseTextDirective(directiveString) {
-  const calloutMatch = directiveString.match(/:(.*)\[(.*?)\]\{(.*?)\}/);
-  if (calloutMatch) {
-    const [, name, label, attributesString] = calloutMatch;
-    const attributes = parseAttributes(attributesString);
-    return { name, label, attributes };
-  }
-  return null;
-}
-
-function parseCalloutList(calloutUl) {
-  return [...calloutUl.querySelectorAll('li')].map((li) => parseTextDirective(li.textContent));
-}
-
-export function getVisual(cell) {
-  const visual = {};
-
-  if (cell.querySelector(':scope picture')) {
-    // image
-    visual.image = cell.querySelector(':scope picture').outerHTML;
-    visual.callouts = parseCalloutList(cell.querySelector(':scope > ul'))
-      .filter((callout) => callout != null)
-      .map(({ label, attributes }) => {
-        const { x, y, r, type } = attributes;
-        return {
-          type,
-          toast: null,
-          button: null,
-          width: r * 2,
-          height: r * 2,
-          x,
-          y,
-          tooltip: label,
-          clickable: null,
-        };
-      });
-    // visual.callouts = [...cell.querySelectorAll(':scope > ul > li')].map((li) => parseCallout(li.textContent)).filter((item) => item !== null);
-  } else if (cell.querySelector(':scope > pre')) {
-    // code
-    visual.code = cell.querySelector(':scope > pre').outerHTML;
-    visual.body = [...cell.querySelectorAll(':scope > *')]
-      .filter((el) => !el.matches('pre'))
-      .map((el) => el.outerHTML)
-      .join('');
-  }
-
-  return visual;
-}
-
 export function generateVisualConfig(cell) {
   const visual = {};
   const [pictureWrapper, calloutWrapper] = cell?.children || [];
@@ -326,50 +191,21 @@ export function generateVisualConfig(cell) {
     // image
     visual.image = pictureElement.outerHTML;
     if (calloutWrapper) {
-      visual.callouts = Array.from(calloutWrapper.querySelectorAll(':scope > li'))
-        .map((li) => {
-          const span = li.querySelector(':scope > span');
-          if (span) {
-            const x = Number(span.getAttribute('x'));
-            const y = Number(span.getAttribute('y'));
-            const r = Number(span.getAttribute('r'));
-            const width = Number(span.getAttribute('width')) || r * 2;
-            const height = Number(span.getAttribute('height')) || r * 2;
-            const tooltip = span.textContent.trim();
-            const clickable = span.getAttribute('clickable') || null;
-            const type = span.getAttribute('type') || '';
+      visual.callouts = Array.from(calloutWrapper.querySelectorAll(':scope > li > span')).map((span) => {
+        const attributes = Object.fromEntries(
+          [...span.attributes].map(({ name, value }) => {
+            const num = Number(value);
+            return [name, Number.isNaN(num) ? value : num];
+          }),
+        );
 
-            return { toast: null, button: null, width, height, x, y, tooltip, clickable, type };
-          }
-
-          // Case 2: no span child—extract from li.textContent + key="value" pairs
-          const txt = li.textContent.trim();
-          const tooltip = txt.match(/^\[(.+?)\]/)?.[1] ?? null;
-
-          const props = Object.fromEntries(
-            [...txt.matchAll(/(\w+)="([^"]+)"/g)].map(([, k, v]) => {
-              const num = Number(v);
-              return [k, Number.isNaN(num) ? v : num];
-            }),
-          );
-
-          const { x = 0, y = 0, r = 0, width: wProp, height: hProp, clickable: clickableProp = null } = props;
-
-          const width = wProp ?? r * 2;
-          const height = hProp ?? r * 2;
-
-          return {
-            toast: null,
-            button: null,
-            width,
-            height,
-            x: Number(x),
-            y: Number(y),
-            tooltip,
-            clickable: clickableProp,
-          };
-        })
-        .filter((o) => o.tooltip !== null);
+        return {
+          toast: null,
+          button: null,
+          tooltip: span.textContent.trim(),
+          attributes,
+        };
+      });
     }
   } else if (cell.querySelector(':scope > pre')) {
     // code
@@ -409,7 +245,7 @@ export async function activateStep(block, stepIndex, skipAutoplay = false) {
 
   step.classList.add('active');
 
-  step.querySelectorAll(':is([data-callout] ~ img, [data-callout] ~ picture > img)').forEach((image) => {
+  step.querySelectorAll(':is([exl-coachmark] ~ img, exl-coachmark ~ picture > img)').forEach((image) => {
     if (image.complete && image.naturalWidth > 0) {
       updateContentButtonPosition(step);
       addCallouts(step);

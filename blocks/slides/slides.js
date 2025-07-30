@@ -9,6 +9,7 @@ import {
   addEventHandlers,
   isDesktopView,
 } from './slider-utils.js';
+import '../../scripts/coachmark/coachmark.js';
 
 function html(content, placeholders) {
   const isDesktopUI = isDesktopView();
@@ -63,34 +64,11 @@ function html(content, placeholders) {
                                   ?.filter((callout) => !callout.toast)
                                   .map(
                                     (callout) => `
-                                    <span class="callout callout-${callout.type ?? ''}" data-callout>
-                                        <span class="indicator ${callout.clickable ? 'clickable' : ''}" 
-                                                ${
-                                                  !callout.button && callout.clickable === 'next'
-                                                    ? 'data-next-step'
-                                                    : ''
-                                                } 
-                                                data-callout-indicator="${callout.type}"
-                                                data-callout-indicator-width="${callout.width}"
-                                                data-callout-indicator-height="${callout.height}"
-                                                data-callout-indicator-x="${callout.x}"
-                                                data-callout-indicator-y="${callout.y}">
-                                                    <i></i>
-                                                    ${
-                                                      callout.button
-                                                        ? `<button ${
-                                                            callout.clickable === 'next' ? 'data-next-step' : ''
-                                                          } data-callout-button>${callout.button}</button>`
-                                                        : ''
-                                                    }
-                                        </span>
-                                        ${
-                                          callout.tooltip
-                                            ? `<p class="tooltip" data-callout-tooltip>${callout.tooltip}</p>`
-                                            : ''
-                                        }
-                                      
-                                    </span>
+                                    <exl-coachmark  ${Object.entries(callout.attributes)
+                                      .map(([key, value]) => `${key}="${value}"`)
+                                      .join(' ')}">
+                                        <span slot="title">${callout.tooltip}</span>
+                                      </exl-coachmark>
                                 `,
                                   )
                                   .join('')}
