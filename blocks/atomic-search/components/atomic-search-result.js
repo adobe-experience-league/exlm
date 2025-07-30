@@ -699,7 +699,7 @@ export default function atomicResultHandler(block, placeholders) {
       Array.from(allProductItems).forEach((item, index) => {
         const textLabel = item.firstElementChild?.textContent;
         if (textLabel?.includes('|')) {
-          const [parentName] = textLabel.split("|");
+          const [parentName] = textLabel.split('|');
           item.firstElementChild.textContent = parentName;
         }
         if (index > 0) {
@@ -780,7 +780,9 @@ export default function atomicResultHandler(block, placeholders) {
 
               allTooltipItems.forEach((li) => {
                 const currentText = li.textContent;
-                const isChild = currentText.includes("|") || textContents.some((text) => currentText !== text && currentText.includes(text));
+                const isChild =
+                  currentText.includes('|') ||
+                  textContents.some((text) => currentText !== text && currentText.includes(text));
 
                 if (isChild) {
                   li.part.add('multi-hidden');
