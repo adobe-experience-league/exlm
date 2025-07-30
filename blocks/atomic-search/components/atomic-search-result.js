@@ -760,37 +760,44 @@ export default function atomicResultHandler(block, placeholders) {
           const liElements = tooltipBaseElement?.shadowRoot?.firstElementChild
             ? Array.from(tooltipBaseElement.shadowRoot.querySelectorAll(`li`))
             : [];
-          const uniqueProductListItems = liElements.filter(
-            (item) => !item.classList.contains('separator') && !item.textContent.includes('|'),
-          );
-          if (uniqueProductListItems.length === 1) {
+          const uniqueProductListItems = liElements.filter((item) => !item.classList.contains('separator'));
+          const uniqueProductTypes = liElements
+            .map((li) => {
+              if (li.textContent?.includes('|')) {
+                const [parentProductType] = li.textContent.split('|');
+                return parentProductType;
+              }
+              return li.textContent;
+            })
+            .filter(Boolean);
+          const uniqueParentItems = uniqueProductListItems.reduce((acc, li) => {
+            const currentText = li.textContent;
+            const isChild = uniqueProductTypes.some((text) => currentText !== text && currentText.includes(text));
+            if (isChild) {
+              li.part.add('multi-hidden');
+              if (li.nextElementSibling?.part?.contains('result-multi-value-text-separator')) {
+                li.nextElementSibling.part.add('multi-hidden');
+              }
+            } else {
+              if (li.textContent.includes('|')) {
+                const [parentProductTypeName] = li.textContent.split('|');
+                li.textContent = parentProductTypeName;
+              }
+              acc.push(li);
+            }
+            return acc;
+          }, []);
+          if (uniqueParentItems.length <= 1) {
             resultFieldMulti?.classList.add('hidden');
             resultFieldValue?.classList.remove('hidden');
             sanitizeProductTypes(resultFieldValue);
           } else {
             resultFieldMulti?.classList.remove('hidden');
             resultFieldValue?.classList.add('hidden');
-            const allTooltipItems = resultFieldMulti
-              ?.querySelector('atomic-result-multi-value-text')
-              ?.shadowRoot?.querySelectorAll('li');
-            if (allTooltipItems && allTooltipItems.length > 0) {
-              const textContents = Array.from(allTooltipItems)
-                .map((li) => li.textContent)
-                .filter(Boolean);
-
-              allTooltipItems.forEach((li) => {
-                const currentText = li.textContent;
-                const isChild =
-                  currentText.includes('|') ||
-                  textContents.some((text) => currentText !== text && currentText.includes(text));
-
-                if (isChild) {
-                  li.part.add('multi-hidden');
-                  if (li.nextElementSibling?.part?.contains('result-multi-value-text-separator')) {
-                    li.nextElementSibling.part.add('multi-hidden');
-                  }
-                }
-              });
+            const visibleElements = tooltipBaseElement.shadowRoot.querySelectorAll(`li:not([part~="multi-hidden"])`);
+            const lastVisibleElment = visibleElements[visibleElements.length - 1];
+            if (lastVisibleElment?.classList?.contains('separator')) {
+              lastVisibleElment.part.add('multi-hidden');
             }
           }
         } else {
