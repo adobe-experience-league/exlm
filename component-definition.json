@@ -1593,10 +1593,11 @@
                   "filter": "lesson-items",
                   "name": "Lesson Items",
                   "model": "lesson-items",
-                  "item": {
+                  "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Lesson",
-                    "model": "lesson"
+                    "model": "lesson",
+                    "author-path": "/content/exlm/global/en"
                   }
                 }
               }
