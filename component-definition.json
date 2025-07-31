@@ -1576,7 +1576,8 @@
                 "template": {
                   "name": "Skill Track Lessons",
                   "model": "skill-track-lessons",
-                  "lesson-paths": []
+                  "lesson-paths": [],
+                  "additional-link-paths": []
                 }
               }
             }

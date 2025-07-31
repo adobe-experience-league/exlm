@@ -7275,7 +7275,16 @@
         "name": "lesson-paths",
         "multi": true,
         "label": "Lesson Page URLs",
-        "description": "Add multiple lesson page URLs"
+        "description": "Add multiple lesson page URLs. Each URL will be displayed as a separate lesson in the skill track."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string[]",
+        "value": [],
+        "name": "additional-link-paths",
+        "multi": true,
+        "label": "Additional Link Paths",
+        "description": "Add multiple additional link paths that will be associated with the lessons."
       }
     ]
   },
@@ -7284,7 +7293,7 @@
     "fields": [
       {
         "component": "aem-content",
-        "valueType": "string",
+        "valueType": "string[]",
         "value": [],
         "name": "lesson-urls",
         "multi": true,
