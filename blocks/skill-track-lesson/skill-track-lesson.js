@@ -3,16 +3,8 @@
  * @param {Element} block The skill track lesson block element
  */
 export default function decorate(block) {
-  // Create a wrapper element
-  const wrapper = document.createElement('div');
-  wrapper.classList.add('skill-track-lesson-wrapper');
-
-  // Move the block into the wrapper
-  block.parentNode.insertBefore(wrapper, block);
-  wrapper.appendChild(block);
-
   // Add main container class
-  block.classList.add('skill-track-lesson-container');
+  block.classList.add('skill-track-lesson');
 
   // Get all rows in the block
   const rows = [...block.children];
@@ -45,15 +37,10 @@ export default function decorate(block) {
     headerRow.remove();
   }
 
-  // Create a container for all lessons
-  const skillTrackLessonContainer = document.createElement('div');
-  skillTrackLessonContainer.classList.add('skill-track-lesson');
-  block.appendChild(skillTrackLessonContainer);
-
   // Process each lesson row
   rows.forEach((row, index) => {
     const lessonContainer = document.createElement('div');
-    lessonContainer.classList.add('lesson-item');
+    lessonContainer.classList.add('lesson');
 
     // Get lesson content cells
     const cells = [...row.querySelectorAll(':scope > div')];
@@ -79,8 +66,7 @@ export default function decorate(block) {
       }
     }
 
-    // Add the lesson to the skill track lesson container
-    skillTrackLessonContainer.appendChild(lessonContainer);
-    row.remove();
+    // Replace the row with the lesson container
+    row.replaceWith(lessonContainer);
   });
 }
