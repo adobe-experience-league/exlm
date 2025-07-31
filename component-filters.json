@@ -361,7 +361,7 @@
     "components": []
   },
   {
-    "id": "skill-track",
+    "id": "skill-track-lesson",
     "components": ["lesson"]
   },
   {

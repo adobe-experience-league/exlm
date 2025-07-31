@@ -1,23 +1,23 @@
 /**
- * Decorates the skill track block
- * @param {Element} block The skill track block element
+ * Decorates the skill track lesson block
+ * @param {Element} block The skill track lesson block element
  */
 export default function decorate(block) {
   // Create a wrapper element
   const wrapper = document.createElement('div');
-  wrapper.classList.add('skill-track-wrapper');
+  wrapper.classList.add('skill-track-lesson-wrapper');
 
   // Move the block into the wrapper
   block.parentNode.insertBefore(wrapper, block);
   wrapper.appendChild(block);
 
   // Add main container class
-  block.classList.add('skill-track-container');
+  block.classList.add('skill-track-lesson-container');
 
   // Get all rows in the block
   const rows = [...block.children];
 
-  // Create the skill track header
+  // Create the skill track lesson header
   const headerRow = rows.shift();
   if (headerRow) {
     const headerContainer = document.createElement('div');
@@ -46,14 +46,14 @@ export default function decorate(block) {
   }
 
   // Create a container for all lessons
-  const skillTrackContainer = document.createElement('div');
-  skillTrackContainer.classList.add('skill-track');
-  block.appendChild(skillTrackContainer);
+  const skillTrackLessonContainer = document.createElement('div');
+  skillTrackLessonContainer.classList.add('skill-track-lesson');
+  block.appendChild(skillTrackLessonContainer);
 
   // Process each lesson row
   rows.forEach((row, index) => {
     const lessonContainer = document.createElement('div');
-    lessonContainer.classList.add('skill-track-lesson');
+    lessonContainer.classList.add('lesson-item');
 
     // Get lesson content cells
     const cells = [...row.querySelectorAll(':scope > div')];
@@ -79,8 +79,8 @@ export default function decorate(block) {
       }
     }
 
-    // Add the lesson to the skill track container
-    skillTrackContainer.appendChild(lessonContainer);
+    // Add the lesson to the skill track lesson container
+    skillTrackLessonContainer.appendChild(lessonContainer);
     row.remove();
   });
 }

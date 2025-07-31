@@ -1576,7 +1576,7 @@
                 "template": {
                   "name": "Skill Track Lesson",
                   "model": "skill-track-lesson",
-                  "filter": "skill-track"
+                  "filter": "skill-track-lesson"
                 }
               }
             }

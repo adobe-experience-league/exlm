@@ -8,14 +8,25 @@ main > div {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Style the skill-track-lesson-wrapper */
+.skill-track-lesson-wrapper {
+  width: 100%;
+}
+
+/* Style the skill-track-lesson-container */
+.skill-track-lesson-container {
+  width: 100%;
+}
+
 /* Style the skill-track-lesson container */
 .skill-track-lesson {
   padding: 0;
   margin-top: 2rem;
+  counter-reset: lesson-counter;
 }
 
-/* Style each lesson item (direct div children of skill-track-lesson) */
-.skill-track-lesson > div:not(.section-metadata) {
+/* Style each lesson item */
+.lesson-item {
   display: flex;
   align-items: center;
   padding: 1.25rem;
@@ -27,21 +38,17 @@ main > div {
   position: relative;
 }
 
-.skill-track-lesson > div:not(.section-metadata):last-child {
+.lesson-item:last-child {
   margin-bottom: 0;
 }
 
-.skill-track-lesson > div:not(.section-metadata):hover {
+.lesson-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Add numbering to each lesson */
-.skill-track-lesson {
-  counter-reset: lesson-counter;
-}
-
-.skill-track-lesson > div:not(.section-metadata)::before {
+.lesson-item::before {
   counter-increment: lesson-counter;
   content: counter(lesson-counter);
   display: flex;
@@ -58,23 +65,30 @@ main > div {
   box-shadow: 0 2px 4px rgba(20, 115, 230, 0.3);
 }
 
+/* Style lesson title */
+.lesson-title {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
 /* Style links inside lessons */
-.skill-track-lesson a {
+.lesson-link {
   color: #1473e6;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s ease;
-  padding: 0.5rem 0;
-  display: block;
+  padding: 0.5rem 0.75rem;
+  background-color: #f0f5ff;
+  border-radius: 4px;
+  display: inline-block;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
 }
 
-.skill-track-lesson a:hover {
+.lesson-link:hover {
   color: #0d66d0;
-  text-decoration: underline;
+  background-color: #e0ebff;
+  text-decoration: none;
 }
 
 /* For backward compatibility, also style .skill-track the same way */
