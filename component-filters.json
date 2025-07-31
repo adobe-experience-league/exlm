@@ -362,11 +362,8 @@
     "components": []
   },
   {
-    "id": "lesson-items",
+    "id": "lesson",
     "components": ["lesson"]
-  },
-  {
-
   },
   {
     "id": "rte-custom-options",
