@@ -22,7 +22,9 @@ export function generateLessonDOM(lesson) {
     const linkEl = document.createElement('a');
     linkEl.classList.add('lesson-link');
     linkEl.href = lessonUrl;
-    linkEl.textContent = 'Go to lesson';
+    linkEl.textContent = lessonUrl;
+    
+    linkEl.setAttribute('title', lessonUrl); // Add full URL as tooltip
     linkEl.setAttribute('target', '_blank');
     lessonContainer.appendChild(linkEl);
   }

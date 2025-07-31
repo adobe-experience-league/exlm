@@ -1,37 +1,34 @@
+/* Wrapper styling */
+.skill-track-wrapper {
+  background-color: #f5f5f5;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
 /* Main container styling */
 .skill-track {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1.5rem;
+  max-width: 100%;
+  margin: 0;
+  padding: 1rem;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   counter-reset: lesson-counter;
 }
 
-/* Header styling */
-.skill-track-header {
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border-color, #e1e1e1);
-}
-
-.skill-track-header h2 {
-  margin: 0;
-  font-size: 2rem;
-  color: var(--header-color, #333);
-}
-
-/* Counter setup for numbering lessons */
-.skill-track > div:not(.skill-track-header) {
+/* Lesson container styling - vertical list */
+.skill-track > div {
   position: relative;
   counter-increment: lesson-counter;
   padding-left: 3rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+  display: block;
+  width: 100%;
+  box-sizing: border-box; /* Ensure padding is included in width */
 }
 
 /* Create the numbered circle */
-.skill-track > div:not(.skill-track-header)::before {
+.skill-track > div::before {
   content: counter(lesson-counter);
   position: absolute;
   left: 0;
@@ -47,33 +44,8 @@
   font-weight: bold;
 }
 
-/* Link styling */
-.lesson-link {
-  display: block;
-  padding: 0.75rem 1rem;
-  background-color: var(--link-background-color, #f5f5f5);
-  color: var(--link-color, #333);
-  text-decoration: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-}
-
-/* Link hover effect */
-.lesson-link:hover {
-  background-color: var(--link-hover-background-color, #e0e0e0);
-  transform: translateY(-2px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Link focus effect */
-.lesson-link:focus {
-  outline: 2px solid var(--focus-color, #1473e6);
-  outline-offset: 2px;
-}
-
 /* Progress indicator line connecting the numbers */
-.skill-track > div:not(.skill-track-header):not(:last-child)::after {
+.skill-track > div:not(:last-child)::after {
   content: '';
   position: absolute;
   top: 2rem;
@@ -93,30 +65,4 @@
 .skill-track > div.current::before {
   background-color: var(--current-background-color, #f5c400);
   color: var(--current-counter-color, #333);
-}
-
-/* Responsive grid layout for many lessons */
-@media (min-width: 768px) {
-  .skill-track {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-  }
-  
-  .skill-track-header {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (min-width: 1200px) {
-  .skill-track {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* Lesson content styling */
-.lesson-content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
 }

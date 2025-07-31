@@ -1,40 +1,7 @@
-/* Lesson container styling */
 .lesson {
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
+  margin-bottom: var(--spectrum-spacing-100);
+  padding: var(--spectrum-spacing-75);
+  border-radius: var(--spectrum-spacing-75);
   transition: background-color 0.3s ease;
-}
-
-.lesson:hover {
-  background-color: var(--hover-background-color, #f9f9f9);
-}
-
-/* Lesson content styling */
-.lesson-content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-/* Lesson link styling */
-.lesson-link {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background-color: var(--link-background-color, #1473e6);
-  color: var(--link-color, white);
-  text-decoration: none;
-  border-radius: 0.25rem;
-  font-weight: 500;
-  align-self: flex-start;
-  transition: background-color 0.3s ease;
-}
-
-.lesson-link:hover {
-  background-color: var(--link-hover-background-color, #0d66d0);
-}
-
-.lesson-link:focus {
-  outline: 2px solid var(--focus-color, #1473e6);
-  outline-offset: 2px;
+  background-color: var(--non-spectrum-grey-100);
 }

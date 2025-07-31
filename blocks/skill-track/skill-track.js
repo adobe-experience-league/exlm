@@ -11,23 +11,6 @@ export default function decorate(block) {
   // Get all rows
   const rows = [...block.children];
   
-  // Process header (first row)
-  if (rows.length > 0) {
-    const header = rows.shift();
-    const headerDiv = document.createElement('div');
-    headerDiv.classList.add('skill-track-header');
-    
-    // Get title from first cell
-    const titleCell = header.querySelector(':scope > div');
-    if (titleCell) {
-      const title = document.createElement('h2');
-      title.textContent = titleCell.textContent.trim();
-      headerDiv.appendChild(title);
-    }
-    
-    block.prepend(headerDiv);
-  }
-  
   // Process each lesson row
   rows.forEach((row) => {
     // Set data attributes to match component definition
