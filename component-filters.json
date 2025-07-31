@@ -363,7 +363,7 @@
   },
   {
     "id": "lesson",
-    "components": ["lesson"]
+    "components": ["lessons"]
   },
   {
     "id": "rte-custom-options",
