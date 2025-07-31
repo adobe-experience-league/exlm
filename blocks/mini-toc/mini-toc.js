@@ -287,7 +287,8 @@ function buildMiniToc(block, placeholders) {
               const buffer = 40;
               const marginBottom = delta + blockHeight + buffer;
               const main = document.querySelector('main');
-              const centerElement = main.querySelector(':scope > :not(.rail)');
+              const nonRailElements = main.querySelectorAll(':scope > :not(.rail)');
+              const centerElement = Array.from(nonRailElements).find((el) => el.querySelectorAll('.block').length > 0);
               if (centerElement) {
                 centerElement.style.marginBottom = `${marginBottom}px`;
               }
