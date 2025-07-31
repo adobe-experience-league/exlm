@@ -70,7 +70,7 @@
       "atomic-search",
       "skill-track-header",
       "skill-track-lessons",
-      "lessons"
+      "lesson-items"
     ]
   },
   {
@@ -360,6 +360,13 @@
   {
     "id": "topic-results",
     "components": []
+  },
+  {
+    "id": "lesson-items",
+    "components": ["lesson-item"]
+  },
+  {
+
   },
   {
     "id": "rte-custom-options",
