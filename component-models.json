@@ -7270,7 +7270,7 @@
     "fields": [
       {
         "component": "aem-content",
-        "name": "lesson-paths",
+        "name": "lessonPaths",
         "multi": true,
         "label": "Lesson Page URLs",
         "description": "Add multiple lesson page URLs. Each URL will be displayed as a separate lesson in the skill track."
