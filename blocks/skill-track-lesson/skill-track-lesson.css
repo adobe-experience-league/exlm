@@ -8,18 +8,22 @@ main > div {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Style the skill-track-lesson container */
+/* Style both skill-track and skill-track-lesson containers */
+.skill-track,
 .skill-track-lesson {
   padding: 0;
+  counter-reset: lesson-counter;
 }
 
 /* Style the lessons container */
 .lessons-container {
   margin-top: 2rem;
-  counter-reset: lesson-counter;
 }
 
-/* Style each lesson item */
+/* Style each lesson item - both direct children and items in lessons-container */
+.skill-track > div:not(.section-metadata):not(.skill-track-header):not(.lessons-container),
+.skill-track-lesson > div:not(.section-metadata):not(.skill-track-header):not(.lessons-container),
+.lessons-container > div,
 .lesson {
   display: flex;
   align-items: center;
@@ -32,16 +36,25 @@ main > div {
   position: relative;
 }
 
+.skill-track > div:not(.section-metadata):not(.skill-track-header):not(.lessons-container):last-child,
+.skill-track-lesson > div:not(.section-metadata):not(.skill-track-header):not(.lessons-container):last-child,
+.lessons-container > div:last-child,
 .lesson:last-child {
   margin-bottom: 0;
 }
 
+.skill-track > div:not(.section-metadata):not(.skill-track-header):not(.lessons-container):hover,
+.skill-track-lesson > div:not(.section-metadata):not(.skill-track-header):not(.lessons-container):hover,
+.lessons-container > div:hover,
 .lesson:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Add numbering to each lesson */
+.skill-track > div:not(.section-metadata):not(.skill-track-header):not(.lessons-container)::before,
+.skill-track-lesson > div:not(.section-metadata):not(.skill-track-header):not(.lessons-container)::before,
+.lessons-container > div::before,
 .lesson::before {
   counter-increment: lesson-counter;
   content: counter(lesson-counter);
@@ -67,6 +80,10 @@ main > div {
 }
 
 /* Style links inside lessons */
+.skill-track a,
+.skill-track-lesson a,
+.lessons-container a,
+.lesson a,
 .lesson-link {
   color: #1473e6;
   text-decoration: none;
@@ -77,8 +94,15 @@ main > div {
   border-radius: 4px;
   display: inline-block;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
+.skill-track a:hover,
+.skill-track-lesson a:hover,
+.lessons-container a:hover,
+.lesson a:hover,
 .lesson-link:hover {
   color: #0d66d0;
   background-color: #e0ebff;
@@ -87,21 +111,32 @@ main > div {
 
 /* Style the skill-track-header */
 .skill-track-header {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
 
+.skill-track-header h1,
 .skill-track-header h2 {
   margin-top: 0;
-  margin-bottom: 0.5rem;
-  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.75rem;
+  color: #323232;
 }
 
-.skill-track-header p {
+.skill-track-header p,
+.skill-track-header > div > div {
   margin: 0;
   color: #505050;
+  font-size: 1.1rem;
 }
 
 /* Hide section-metadata */
 .section-metadata {
   display: none;
+}
+
+/* Ensure the original HTML structure is also styled */
+.skill-track > div > div,
+.skill-track-lesson > div > div {
+  flex-grow: 1;
 }

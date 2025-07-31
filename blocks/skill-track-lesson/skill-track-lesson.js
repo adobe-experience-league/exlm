@@ -3,9 +3,14 @@
  * @param {Element} block The skill track lesson block element
  */
 export default function decorate(block) {
-  // Add main container class
+  // Add both classes to ensure compatibility with both name and model
+  block.classList.add('skill-track');
   block.classList.add('skill-track-lesson');
-
+  
+  // Set data attributes to help the system recognize the block
+  block.dataset.blockName = 'skill-track-lesson';
+  block.dataset.blockModel = 'skill-track-lesson';
+  
   // Get all rows in the block
   const rows = [...block.children];
 
@@ -48,6 +53,8 @@ export default function decorate(block) {
     const lessonItem = document.createElement('div');
     lessonItem.classList.add('lesson');
     lessonItem.dataset.blockName = 'lesson';
+    lessonItem.dataset.blockModel = 'lesson';
+    lessonItem.dataset.slingResourceType = 'core/franklin/components/block/v1/block/item';
     
     // Get lesson content cells
     const cells = [...row.querySelectorAll(':scope > div')];
@@ -80,4 +87,7 @@ export default function decorate(block) {
     lessonsContainer.appendChild(lessonItem);
     row.remove();
   });
+  
+  // Add a special attribute to indicate this block has been processed
+  block.dataset.processed = 'true';
 }
