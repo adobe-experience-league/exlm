@@ -291,6 +291,31 @@
     ]
   },
   {
+    "id": "learning-collections-page-section",
+    "components": [
+      "text",
+      "title",
+      "button",
+      "image",
+      "adobe-account-card",
+      "data-and-email-consent",
+      "role-and-industry",
+      "user-profile-card",
+      "email-card",
+      "product-interests",
+      "product-experience-level",
+      "bookmarks",
+      "awards",
+      "profile-welcome",
+      "recommended-content",
+      "recommendation-marquee",
+      "personalized-content-placeholder",
+      "announcement-ribbon",
+      "recently-reviewed",
+      "qualtrics"
+    ]
+  },
+  {
     "id": "sign-up-flow-section",
     "components": [
       "text",
@@ -341,10 +366,6 @@
   {
     "id": "browse-rail-section",
     "components": ["browse-rail"]
-  },
-  {
-    "id": "learning-collections-page-section",
-    "components": ["learning-collections-page-rail"]
   },
   {
     "id": "article-header-section",
