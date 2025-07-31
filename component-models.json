@@ -7266,22 +7266,7 @@
     ]
   },
   {
-    "id": "skill-track-lessons",
-    "fields": [
-      {
-        "component": "aem-content",
-        "valueType": "string[]",
-        "value": [""],
-        "name": "lesson-paths",
-        "multi": true,
-        "label": "Lesson Page URLs",
-        "description": "Add multiple lesson page URLs. Each URL will be displayed as a separate lesson in the skill track."
-      }
-    ]
-  },
-
-  {
-    "id": "skill-track",
+    "id": "skill-track-lesson",
     "fields": []
   },
   {
@@ -7293,7 +7278,10 @@
         "name": "lesson_url",
         "value": "",
         "label": "Lesson Page URL",
-        "description": "URL to the lesson page"
+        "description": "URL to the lesson page",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/learning-collections-home/"
+        }
       }
     ]
   }

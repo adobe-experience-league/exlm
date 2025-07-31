@@ -1,58 +1,27 @@
-/**
- * Generates the DOM structure for the skill-track-header block
- * @param {Array} headerContainers The title and description containers
- * @returns {DocumentFragment} The generated DOM structure
- */
-export function generateSkillTrackHeaderDOM(headerContainers) {
-  const [titleContainer, descriptionContainer] = headerContainers;
+/* this function can be reused by other components if needed */
+export function generateSkillTrackHeaderDOM(block) {
+  const wrapper = document.createElement('div');
 
-  // Create the DOM structure
-  const headerDOM = document.createRange().createContextualFragment(`
-    <div>
-      <div>${titleContainer.innerHTML}</div>
-      <div>${descriptionContainer.innerHTML}</div>
-    </div>
-  `);
+  Array.from(block.children).forEach((element, i) => {
+    const div = document.createElement('div');
+    div.className = i === 0 ? 'skill-track-title' : 'skill-track-description';
 
-  // Add accessibility attributes
-  const heading = headerDOM.querySelector('h1, h2, h3, h4, h5, h6');
-  if (heading) {
-    if (!heading.id) {
-      heading.id = 'skill-track-header-titles';
+    if (i === 0) {
+      const heading = element.querySelector('h1,h2,h3,h4,h5,h6');
+      div.append(heading || element.textContent.trim());
+    } else {
+      div.append(element);
     }
-  } else if (headerDOM.querySelector('div > div:first-child').textContent.trim()) {
-    // If no heading element exists, wrap the content in an h1
-    const titleDiv = headerDOM.querySelector('div > div:first-child');
-    const headingText = titleDiv.textContent.trim();
-    titleDiv.innerHTML = `<h1 id="skill-track-header-titles">${headingText}</h1>`;
-  }
 
-  // Add ARIA role for the description
-  const descDiv = headerDOM.querySelector('div > div:last-child');
-  return headerDOM;
+    wrapper.append(div);
+  });
+
+  return wrapper;
 }
 
-/**
- * Initializes the skill-track-header block
- * @param {HTMLElement} block The skill-track-header block element
- */
 export default function decorate(block) {
-  // Add the main class to the block
   block.classList.add('skill-track-header');
-
-  // Get the first and only cell from each row
-  const headerContainers = [...block.children].map((row) => row.firstElementChild);
-
-  // Generate the DOM structure
-  const headerDOM = generateSkillTrackHeaderDOM(headerContainers);
-
-  // Clear the block and append the new DOM
+  const dom = generateSkillTrackHeaderDOM(block);
   block.textContent = '';
-  block.append(headerDOM);
-
-  // Set aria-labelledby attribute on the block
-  const heading = block.querySelector('h1, h2, h3, h4, h5, h6');
-  if (heading) {
-    block.setAttribute('aria-labelledby', heading.id);
-  }
+  block.append(dom);
 }

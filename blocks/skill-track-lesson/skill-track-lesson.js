@@ -1,11 +1,16 @@
-import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
-import { getMetadata } from '../../scripts/scripts.js';
-
 /**
  * Decorates the skill track block
  * @param {Element} block The skill track block element
  */
 export default function decorate(block) {
+  // Create a wrapper element
+  const wrapper = document.createElement('div');
+  wrapper.classList.add('skill-track-wrapper');
+
+  // Move the block into the wrapper
+  block.parentNode.insertBefore(wrapper, block);
+  wrapper.appendChild(block);
+
   // Add main container class
   block.classList.add('skill-track-container');
 
@@ -40,16 +45,15 @@ export default function decorate(block) {
     headerRow.remove();
   }
 
+  // Create a container for all lessons
+  const skillTrackContainer = document.createElement('div');
+  skillTrackContainer.classList.add('skill-track');
+  block.appendChild(skillTrackContainer);
+
   // Process each lesson row
   rows.forEach((row, index) => {
     const lessonContainer = document.createElement('div');
     lessonContainer.classList.add('skill-track-lesson');
-
-    // Add lesson number
-    const lessonNumber = document.createElement('div');
-    lessonNumber.classList.add('lesson-number');
-    lessonNumber.textContent = index + 1;
-    lessonContainer.appendChild(lessonNumber);
 
     // Get lesson content cells
     const cells = [...row.querySelectorAll(':scope > div')];
@@ -75,6 +79,8 @@ export default function decorate(block) {
       }
     }
 
-    row.replaceWith(lessonContainer);
+    // Add the lesson to the skill track container
+    skillTrackContainer.appendChild(lessonContainer);
+    row.remove();
   });
 }

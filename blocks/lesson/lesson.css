@@ -1,0 +1,62 @@
+.lesson-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.lesson-content {
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.lesson-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background-color: #1473e6;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.lesson-title {
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+  font-size: 1.3rem;
+  color: #323232;
+  padding-left: 0.5rem;
+}
+
+.lesson-link {
+  align-self: flex-start;
+  padding: 0.6rem 1.2rem;
+  background-color: #1473e6;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 500;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.lesson-link:hover {
+  background-color: #0d66d0;
+  transform: translateY(-2px);
+}
+
+/* Add a subtle pattern to the background */
+.lesson-container {
+  background-color: #f9f9f9;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.8) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.8) 1px, transparent 1px);
+  background-size: 20px 20px;
+  border-radius: 8px;
+}

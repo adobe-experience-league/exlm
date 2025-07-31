@@ -1567,15 +1567,15 @@
           }
         },
         {
-          "title": "Skill Track",
-          "id": "skill-track",
+          "title": "Skill Track Lesson",
+          "id": "skill-track-lesson",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Skill Track",
-                  "model": "skill-track",
+                  "model": "skill-track-lesson",
                   "filter": "skill-track"
                 }
               }
