@@ -7270,8 +7270,6 @@
     "fields": [
       {
         "component": "aem-content",
-        "valueType": "string[]",
-        "value": [],
         "name": "lesson-paths",
         "multi": true,
         "label": "Lesson Page URLs",
