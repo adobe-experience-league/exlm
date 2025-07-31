@@ -7284,7 +7284,7 @@
     "fields": [
       {
         "component": "aem-content",
-        "valueType": "string[]",
+        "valueType": "string",
         "value": [],
         "name": "lesson-urls",
         "multi": true,
