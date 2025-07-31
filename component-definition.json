@@ -1595,8 +1595,8 @@
                   "model": "lesson-items",
                   "item": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
-                    "name": "Lesson Item",
-                    "model": "lesson-item"
+                    "name": "Lesson",
+                    "model": "lesson"
                   }
                 }
               }
@@ -1604,15 +1604,15 @@
           }
         },
         {
-          "title": "Lesson Item",
-          "id": "lesson-item",
+          "title": "Lesson",
+          "id": "lesson",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block/item",
                 "template": {
-                  "name": "Lesson Item",
-                  "model": "lesson-item"
+                  "name": "Lesson",
+                  "model": "lesson"
                 }
               }
             }

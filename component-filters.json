@@ -363,7 +363,7 @@
   },
   {
     "id": "lesson-items",
-    "components": ["lesson-item"]
+    "components": ["lesson"]
   },
   {
 

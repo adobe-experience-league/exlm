@@ -7284,7 +7284,7 @@
     "fields": []
   },
   {
-    "id": "lesson-item",
+    "id": "lesson",
     "fields": [
       {
         "component": "aem-content",
