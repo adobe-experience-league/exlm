@@ -154,6 +154,28 @@
           }
         },
         {
+          "title": "Editable Learning Collections Page Section",
+          "id": "learning-collections-page-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "filter": "learning-collections-page-section",
+                  "name": "Learning Collections Page Section",
+                  "model": "learning-collections-page-section",
+                  "style": "learning-collections-page-section",
+                  "learningcollectionspagerail": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block",
+                    "name": "Learning Collections Page Rail",
+                    "model": "learning-collections-page-rail"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Profile Section",
           "id": "profile-section",
           "plugins": {

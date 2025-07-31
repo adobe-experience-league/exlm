@@ -25,7 +25,7 @@
   },
   {
     "id": "main-learning-collections",
-    "components": ["section", "learning-collections-page-rail-section", "tab-section"]
+    "components": ["section", "learning-collections-page-section", "tab-section"]
   },
   {
     "id": "section",
@@ -343,7 +343,7 @@
     "components": ["browse-rail"]
   },
   {
-    "id": "learning-collections-page-rail-section",
+    "id": "learning-collections-page-section",
     "components": ["learning-collections-page-rail"]
   },
   {
