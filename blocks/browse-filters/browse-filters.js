@@ -388,7 +388,7 @@ function handleUriHash() {
   if (filtersInfo.length && window.headlessBaseSolutionQuery) {
     const resetPageIndex = pageNumber === 1;
     const fireSelection = true;
-    handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex);
+    handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex, pageNumber);
   }
   updateClearFilterStatus(browseFiltersSection);
   window.headlessSearchEngine.executeFirstSearch();
@@ -427,7 +427,8 @@ function constructFilterPagination(block) {
         window.headlessPager.selectPage(newPageNumber);
         const fireSelection = true;
         const resetPageIndex = false;
-        handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex);
+        const targetPageNumber = newPageNumber;
+        handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex, targetPageNumber);
       }
     });
   });
