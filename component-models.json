@@ -7223,6 +7223,19 @@
     "fields": []
   },
   {
+    "id": "learning-collections-page-rail",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "navigation",
+        "value": "",
+        "label": "Learning Collections Navigation",
+        "description": "Override default behaviour with custom Navigation"
+      }
+    ]
+  },
+  {
     "id": "atomic-search",
     "fields": []
   }
