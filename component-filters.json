@@ -362,7 +362,7 @@
     "components": []
   },
   {
-    "id": "lesson",
+    "id": "lessons",
     "components": ["lessons"]
   },
   {

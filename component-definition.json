@@ -1595,7 +1595,7 @@
                   "model": "lesson-skill-track",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
-                    "name": "Lesson",
+                    "name": "Lessons",
                     "model": "lessons"
                   }
                 }
