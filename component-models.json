@@ -7280,18 +7280,18 @@
     ]
   },
   {
-    "id": "lesson-items",
+    "id": "lesson-skill-track",
     "fields": []
   },
   {
-    "id": "lesson",
+    "id": "lessons",
     "fields": [
       {
         "component": "aem-content",
         "valueType": "string",
-        "name": "author-path",
-        "label": "Author Path",
-        "description": "Select the author path from AEM structure for this lesson."
+        "name": "url",
+        "label": "URL",
+        "description": "Enter the URL for this lesson."
       }
     ]
   }

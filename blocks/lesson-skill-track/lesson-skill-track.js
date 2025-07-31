@@ -1,14 +1,14 @@
 /**
- * Decorator for lesson items block
- * @param {Element} block The lesson items block element
+ * Decorator for lesson-skill-track block
+ * @param {Element} block The lesson-skill-track block element
  */
 export default function decorate(block) {
   // Add container class to the main block
-  block.classList.add('lesson-items-container');
+  block.classList.add('lesson-skill-track-container');
   
   // Create a container for lessons
   const lessonsContainer = document.createElement('div');
-  lessonsContainer.classList.add('lesson-items');
+  lessonsContainer.classList.add('lessons-container');
   
   // Process each lesson item
   const lessonItems = Array.from(block.children);
@@ -29,17 +29,24 @@ export default function decorate(block) {
       const lessonDetails = document.createElement('div');
       lessonDetails.classList.add('lesson-details');
       
-      // Get the author path from the row
+      // Get the URL from the row
       const cells = Array.from(row.children);
       if (cells.length > 0) {
-        const authorPath = cells[0].textContent.trim();
+        const lessonUrl = cells[0].textContent.trim();
         
-        if (authorPath) {
+        if (lessonUrl) {
           // Create a link to the lesson
           const lessonLink = document.createElement('a');
           lessonLink.classList.add('lesson-link');
-          lessonLink.href = authorPath;
-          lessonLink.textContent = `Lesson ${index + 1} - ${authorPath}`;
+          lessonLink.href = lessonUrl;
+          lessonLink.textContent = `Lesson ${index + 1}`;
+          
+          // If the URL is an absolute URL, open in a new tab
+          if (lessonUrl.startsWith('http')) {
+            lessonLink.target = '_blank';
+            lessonLink.rel = 'noopener noreferrer';
+          }
+          
           lessonDetails.appendChild(lessonLink);
         }
       }

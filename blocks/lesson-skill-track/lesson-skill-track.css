@@ -1,0 +1,75 @@
+.lesson-skill-track-container {
+  margin: 1rem 0;
+  width: 100%;
+}
+
+.lessons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: var(--default-max-width);
+  margin: 0 auto;
+}
+
+.lesson-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--spectrum-gray-100);
+  transition: background-color 0.2s ease;
+}
+
+.lesson-item:hover {
+  background-color: var(--spectrum-gray-200);
+}
+
+.lesson-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin-right: 1rem;
+  border-radius: 50%;
+  background-color: var(--spectrum-blue-700);
+  color: white;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.lesson-details {
+  flex-grow: 1;
+}
+
+.lesson-link {
+  color: var(--spectrum-blue-700);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: var(--spectrum-body-size-m);
+}
+
+.lesson-link:hover {
+  text-decoration: underline;
+}
+
+.no-lessons {
+  padding: 1rem;
+  color: var(--spectrum-gray-700);
+  text-align: center;
+  font-style: italic;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .lesson-item {
+    padding: 0.75rem;
+  }
+  
+  .lesson-number {
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-right: 0.75rem;
+    font-size: 0.9rem;
+  }
+}
