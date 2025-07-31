@@ -37,11 +37,18 @@ export default function decorate(block) {
     headerRow.remove();
   }
 
+  // Create a container for lessons
+  const lessonsContainer = document.createElement('div');
+  lessonsContainer.classList.add('lessons-container');
+  block.appendChild(lessonsContainer);
+
   // Process each lesson row
   rows.forEach((row, index) => {
-    const lessonContainer = document.createElement('div');
-    lessonContainer.classList.add('lesson');
-
+    // Create a lesson item that will be recognized by the system
+    const lessonItem = document.createElement('div');
+    lessonItem.classList.add('lesson');
+    lessonItem.dataset.blockName = 'lesson';
+    
     // Get lesson content cells
     const cells = [...row.querySelectorAll(':scope > div')];
 
@@ -50,23 +57,27 @@ export default function decorate(block) {
       const titleEl = document.createElement('h3');
       titleEl.classList.add('lesson-title');
       titleEl.textContent = cells[0].textContent.trim();
-      lessonContainer.appendChild(titleEl);
+      lessonItem.appendChild(titleEl);
     }
 
     // Get URL from second cell and create link
     if (cells[1]) {
       const url = cells[1].textContent.trim();
       if (url) {
+        // Store the URL as a data attribute for the system to recognize
+        lessonItem.dataset.lessonUrl = url;
+        
         const linkEl = document.createElement('a');
         linkEl.classList.add('lesson-link');
         linkEl.href = url;
         linkEl.textContent = 'Go to lesson';
         linkEl.setAttribute('target', '_blank');
-        lessonContainer.appendChild(linkEl);
+        lessonItem.appendChild(linkEl);
       }
     }
 
-    // Replace the row with the lesson container
-    row.replaceWith(lessonContainer);
+    // Add the lesson to the lessons container
+    lessonsContainer.appendChild(lessonItem);
+    row.remove();
   });
 }
