@@ -69,7 +69,7 @@
       "playlist-browse",
       "atomic-search",
       "skill-track-header",
-      "skill-track-lesson"
+      "skill-track"
     ]
   },
   {
@@ -361,7 +361,11 @@
     "components": []
   },
   {
-    "id": "skill-track-lesson",
+    "id": "skill-track",
+    "components": ["lesson"]
+  },
+  {
+    "id": "skill-track",
     "components": ["lesson"]
   },
   {

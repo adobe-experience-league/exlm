@@ -4,32 +4,27 @@
  * @returns {Element} The lesson DOM
  */
 export function generateLessonDOM(lesson) {
-  const rows = [...lesson.children];
   const lessonContainer = document.createElement('div');
   lessonContainer.classList.add('lesson-content');
   
-  // Process title from first row
-  if (rows[0]) {
-    const titleCell = rows[0].querySelector(':scope > div');
-    if (titleCell && titleCell.textContent.trim()) {
-      const titleEl = document.createElement('h3');
-      titleEl.classList.add('lesson-title');
-      titleEl.textContent = titleCell.textContent.trim();
-      lessonContainer.appendChild(titleEl);
+  // Get lesson URL from data attribute or from the first cell
+  let lessonUrl = lesson.dataset.lessonUrl;
+  
+  if (!lessonUrl) {
+    const cells = [...lesson.querySelectorAll(':scope > div')];
+    if (cells[0] && cells[0].textContent.trim()) {
+      lessonUrl = cells[0].textContent.trim();
     }
   }
   
-  // Process URL from second row
-  if (rows[1]) {
-    const urlCell = rows[1].querySelector(':scope > div');
-    if (urlCell && urlCell.textContent.trim()) {
-      const linkEl = document.createElement('a');
-      linkEl.classList.add('lesson-link');
-      linkEl.href = urlCell.textContent.trim();
-      linkEl.textContent = 'Go to lesson';
-      linkEl.setAttribute('target', '_blank');
-      lessonContainer.appendChild(linkEl);
-    }
+  if (lessonUrl) {
+    // Create link element
+    const linkEl = document.createElement('a');
+    linkEl.classList.add('lesson-link');
+    linkEl.href = lessonUrl;
+    linkEl.textContent = 'Go to lesson';
+    linkEl.setAttribute('target', '_blank');
+    lessonContainer.appendChild(linkEl);
   }
   
   return lessonContainer;
@@ -40,7 +35,8 @@ export function generateLessonDOM(lesson) {
  * @param {Element} block The lesson block element
  */
 export default function decorate(block) {
-  block.classList.add('lesson-container');
+  // Add class for styling
+  block.classList.add('lesson');
   
   // Generate the lesson DOM
   const lessonDOM = generateLessonDOM(block);

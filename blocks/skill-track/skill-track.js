@@ -1,8 +1,8 @@
 import { generateLessonDOM } from '../lesson/lesson.js';
 
 /**
- * Decorates the skill track lesson block
- * @param {Element} block The skill track lesson block element
+ * Decorates the skill track block
+ * @param {Element} block The skill track block element
  */
 export default function decorate(block) {
   // Add container class
