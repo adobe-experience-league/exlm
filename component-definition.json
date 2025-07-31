@@ -1576,7 +1576,13 @@
                 "template": {
                   "name": "Skill Track",
                   "model": "skill-track-lesson",
-                  "filter": "skill-track-lesson"
+                  "filter": "skill-track-lesson",
+                  "item": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Lesson",
+                    "model": "lesson",
+                    "lesson_url": ""
+                  }
                 }
               }
             }

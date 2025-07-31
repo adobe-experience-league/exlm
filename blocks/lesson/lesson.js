@@ -1,52 +1,51 @@
-import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
-import { getMetadata } from '../../scripts/scripts.js';
+/**
+ * Generates the lesson DOM from a lesson element
+ * @param {Element} lesson The lesson element
+ * @returns {Element} The lesson DOM
+ */
+export function generateLessonDOM(lesson) {
+  const rows = [...lesson.children];
+  const lessonContainer = document.createElement('div');
+  lessonContainer.classList.add('lesson-content');
+  
+  // Process title from first row
+  if (rows[0]) {
+    const titleCell = rows[0].querySelector(':scope > div');
+    if (titleCell && titleCell.textContent.trim()) {
+      const titleEl = document.createElement('h3');
+      titleEl.classList.add('lesson-title');
+      titleEl.textContent = titleCell.textContent.trim();
+      lessonContainer.appendChild(titleEl);
+    }
+  }
+  
+  // Process URL from second row
+  if (rows[1]) {
+    const urlCell = rows[1].querySelector(':scope > div');
+    if (urlCell && urlCell.textContent.trim()) {
+      const linkEl = document.createElement('a');
+      linkEl.classList.add('lesson-link');
+      linkEl.href = urlCell.textContent.trim();
+      linkEl.textContent = 'Go to lesson';
+      linkEl.setAttribute('target', '_blank');
+      lessonContainer.appendChild(linkEl);
+    }
+  }
+  
+  return lessonContainer;
+}
 
 /**
  * Decorates the lesson block
  * @param {Element} block The lesson block element
  */
 export default function decorate(block) {
-  // Add main container class
   block.classList.add('lesson-container');
-
-  // Get all rows in the block
-  const rows = [...block.children];
-
-  // Process the lesson content
-  const lessonContainer = document.createElement('div');
-  lessonContainer.classList.add('lesson-content');
-
-  // Get title from first row
-  const titleRow = rows[0];
-  if (titleRow) {
-    const titleCell = titleRow.querySelector(':scope > div');
-    if (titleCell) {
-      const title = titleCell.textContent.trim();
-      const titleEl = document.createElement('h3');
-      titleEl.classList.add('lesson-title');
-      titleEl.textContent = title;
-      lessonContainer.appendChild(titleEl);
-    }
-  }
-
-  // Get URL from second row
-  const urlRow = rows[1];
-  if (urlRow) {
-    const urlCell = urlRow.querySelector(':scope > div');
-    if (urlCell) {
-      const url = urlCell.textContent.trim();
-      if (url) {
-        const linkEl = document.createElement('a');
-        linkEl.classList.add('lesson-link');
-        linkEl.href = url;
-        linkEl.textContent = 'Go to lesson';
-        linkEl.setAttribute('target', '_blank');
-        lessonContainer.appendChild(linkEl);
-      }
-    }
-  }
-
-  // Replace the block content with our formatted lesson container
+  
+  // Generate the lesson DOM
+  const lessonDOM = generateLessonDOM(block);
+  
+  // Replace block content
   block.innerHTML = '';
-  block.appendChild(lessonContainer);
+  block.appendChild(lessonDOM);
 }
