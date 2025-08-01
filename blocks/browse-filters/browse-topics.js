@@ -59,10 +59,11 @@ export const generateQuery = (topic) => {
   };
 };
 
-export function dispatchCoveoAdvancedQuery({ query, fireSelection = true, resetPage = true }) {
+export function dispatchCoveoAdvancedQuery({ query, fireSelection = true, resetPage = true, targetPageNumber }) {
   if (!window.headlessQueryActionCreators) {
     return;
   }
+  const selectedPageNumber = typeof targetPageNumber === 'number' ? targetPageNumber : undefined;
   const advancedQueryAction = window.headlessQueryActionCreators.updateAdvancedSearchQueries({
     aq: query,
   });
@@ -70,8 +71,9 @@ export function dispatchCoveoAdvancedQuery({ query, fireSelection = true, resetP
   const isQueryDispatchable = !!query || window.headlessStatusControllers?.state?.firstSearchExecuted;
   if (window.headlessSearchActionCreators && fireSelection && isQueryDispatchable) {
     const searchAction = window.headlessSearchActionCreators.executeSearch(window.logSearchboxSubmit());
-    if (window.headlessPager && resetPage) {
-      window.headlessPager.selectPage(1);
+    if (window.headlessPager && (resetPage || selectedPageNumber !== undefined)) {
+      const pgNum = selectedPageNumber !== undefined ? selectedPageNumber : 1;
+      window.headlessPager.selectPage(pgNum);
     }
     window.headlessSearchEngine.dispatch(searchAction);
   }
@@ -104,12 +106,16 @@ const reInitTopicSelection = () => {
     });
   });
   if (fireSelection) {
+    let targetPageNumber;
+    if (window.headlessPager?.state?.currentPage) {
+      targetPageNumber = window.headlessPager.state.currentPage;
+    }
     // eslint-disable-next-line no-use-before-define
-    handleTopicSelection();
+    handleTopicSelection(undefined, undefined, undefined, targetPageNumber);
   }
 };
 
-export function handleTopicSelection(block, fireSelection, resetPage) {
+export function handleTopicSelection(block, fireSelection, resetPage, targetPageNumber) {
   const wrapper = block || document;
   const selectedTopics = Array.from(wrapper.querySelectorAll('.browse-topics-item-active')).reduce((acc, curr) => {
     const id = curr.dataset.topicname;
@@ -160,7 +166,7 @@ export function handleTopicSelection(block, fireSelection, resetPage) {
         query = topicsQuery;
       }
     }
-    dispatchCoveoAdvancedQuery({ query, fireSelection, resetPage });
+    dispatchCoveoAdvancedQuery({ query, fireSelection, resetPage, targetPageNumber });
   } else {
     document.removeEventListener(COVEO_SEARCH_CUSTOM_EVENTS.READY, reInitTopicSelection);
     document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.READY, reInitTopicSelection);

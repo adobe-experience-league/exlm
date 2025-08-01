@@ -255,13 +255,17 @@ export const getSelectedTopics = (decodedHash) => {
   if (filterInfo) {
     const solutionsCheck = filterInfo.match(/@el_solution=("[^"]*")/g) ?? [];
     const featuresCheck = filterInfo.match(/@el_features=("[^"]*")/g) ?? [];
-    featuresCheck.concat(solutionsCheck).reduce((acc, curr) => {
-      const [, featureName] = curr.split('=');
-      if (featureName) {
-        acc.push(featureName.trim().replace(/"/g, ''));
-      }
-      return acc;
-    }, selectedTopics);
+    const versionsCheck = filterInfo.match(/@el_version=("[^"]*")/g) ?? [];
+    featuresCheck
+      .concat(solutionsCheck)
+      .concat(versionsCheck)
+      .reduce((acc, curr) => {
+        const [, featureName] = curr.split('=');
+        if (featureName) {
+          acc.push(featureName.trim().replace(/"/g, ''));
+        }
+        return acc;
+      }, selectedTopics);
   }
   const elProductInfo = hashesList.find((hash) => hash.includes('f-el_product='));
   if (elProductInfo) {
