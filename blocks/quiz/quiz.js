@@ -1,122 +1,105 @@
 /**
- * Quiz component that contains multiple questions
+ * Quiz component that can contain multiple question components
  */
 export default function decorate(block) {
   // Add quiz container class
   block.classList.add('quiz-container');
   
-  // Add a title to the quiz if provided
-  const rows = [...block.children];
-  if (rows.length > 0) {
-    const titleRow = rows[0];
-    if (titleRow.children.length > 0) {
-      const titleText = titleRow.children[0].textContent.trim();
-      if (titleText) {
-        const titleElement = document.createElement('h2');
-        titleElement.classList.add('quiz-title');
-        titleElement.textContent = titleText;
-        
-        // Insert the title at the beginning of the block
-        block.insertBefore(titleElement, block.firstChild);
-        
-        // Remove the title row as it's now displayed as a proper heading
-        titleRow.remove();
-      }
-    }
+  // Create a form element to wrap all questions
+  const form = document.createElement('form');
+  form.classList.add('quiz-form');
+  
+  // Move all children to the form
+  while (block.firstChild) {
+    form.appendChild(block.firstChild);
   }
   
-  // Add a submit quiz button
-  const submitQuizButton = document.createElement('button');
-  submitQuizButton.classList.add('quiz-submit-btn');
-  submitQuizButton.textContent = 'Submit Quiz';
-  submitQuizButton.style.display = 'none'; // Initially hidden
+  // Add submit button
+  const submitButton = document.createElement('button');
+  submitButton.type = 'submit';
+  submitButton.classList.add('quiz-submit-button');
+  submitButton.textContent = 'SUBMIT';
+  form.appendChild(submitButton);
   
-  // Add a score display container that will be updated when all questions are answered
-  const scoreContainer = document.createElement('div');
-  scoreContainer.classList.add('quiz-score-container');
-  scoreContainer.style.display = 'none'; // Initially hidden
+  // Add form to block
+  block.appendChild(form);
   
-  // Create score display
-  const scoreDisplay = document.createElement('div');
-  scoreDisplay.classList.add('quiz-score');
-  scoreContainer.appendChild(scoreDisplay);
-  
-  // Add event listener to update score when questions are answered
-  block.addEventListener('question-answered', () => {
-    // Check if all questions have been answered
-    const questionBlocks = block.querySelectorAll('.question-container');
-    const answeredQuestions = block.querySelectorAll('.question-container.correct, .question-container.incorrect');
+  // Handle form submission
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
     
-    if (questionBlocks.length === answeredQuestions.length) {
-      // All questions have been answered, show the score
-      const correctAnswers = block.querySelectorAll('.question-container.correct').length;
-      const totalQuestions = questionBlocks.length;
-      
-      scoreDisplay.textContent = `Your Score: ${correctAnswers} / ${totalQuestions}`;
-      scoreContainer.style.display = 'block';
-      
-      // Show a message based on the score
-      const scorePercentage = (correctAnswers / totalQuestions) * 100;
-      const scoreMessage = document.createElement('div');
-      scoreMessage.classList.add('quiz-score-message');
-      
-      if (scorePercentage === 100) {
-        scoreMessage.textContent = 'Perfect! You got all questions correct!';
-        scoreMessage.classList.add('perfect-score');
-      } else if (scorePercentage >= 80) {
-        scoreMessage.textContent = 'Great job! You did very well!';
-        scoreMessage.classList.add('great-score');
-      } else if (scorePercentage >= 60) {
-        scoreMessage.textContent = 'Good effort! Keep learning!';
-        scoreMessage.classList.add('good-score');
+    // Get all question blocks
+    const questionBlocks = form.querySelectorAll('.question-container');
+    let score = 0;
+    let totalQuestions = questionBlocks.length;
+    
+    // Check each question
+    questionBlocks.forEach((questionBlock) => {
+      const isCorrect = checkAnswer(questionBlock);
+      if (isCorrect) {
+        score += 1;
+        questionBlock.classList.add('correct');
       } else {
-        scoreMessage.textContent = 'Keep practicing! You\'ll get better!';
-        scoreMessage.classList.add('needs-improvement');
+        questionBlock.classList.add('incorrect');
       }
+    });
+    
+    // Show results
+    const resultDiv = document.createElement('div');
+    resultDiv.classList.add('quiz-result');
+    resultDiv.innerHTML = `<p>Your score: ${score}/${totalQuestions}</p>`;
+    
+    // Check if results already exist
+    const existingResult = block.querySelector('.quiz-result');
+    if (existingResult) {
+      block.replaceChild(resultDiv, existingResult);
+    } else {
+      block.appendChild(resultDiv);
+    }
+    
+    // Disable form after submission
+    submitButton.disabled = true;
+    
+    // Re-enable after 3 seconds
+    setTimeout(() => {
+      submitButton.disabled = false;
+    }, 3000);
+  });
+  
+  /**
+   * Check if the answer for a question is correct
+   * @param {HTMLElement} questionBlock - The question block element
+   * @returns {boolean} - Whether the answer is correct
+   */
+  function checkAnswer(questionBlock) {
+    const isMultipleChoice = questionBlock.classList.contains('multiple-choice');
+    const correctAnswers = questionBlock.dataset.correctAnswers.split(',').map(num => parseInt(num.trim(), 10));
+    
+    if (isMultipleChoice) {
+      // For multiple choice, all correct options must be selected and no incorrect options
+      const checkboxes = questionBlock.querySelectorAll('input[type="checkbox"]');
+      let allCorrect = true;
       
-      scoreContainer.appendChild(scoreMessage);
-      
-      // Add a retry button
-      const retryButton = document.createElement('button');
-      retryButton.classList.add('quiz-retry-btn');
-      retryButton.textContent = 'Retry Quiz';
-      retryButton.addEventListener('click', () => {
-        // Reset all questions
-        questionBlocks.forEach(questionBlock => {
-          questionBlock.classList.remove('correct', 'incorrect');
-          const inputs = questionBlock.querySelectorAll('input');
-          inputs.forEach(input => {
-            input.checked = false;
-            input.disabled = false;
-          });
-          
-          const submitBtn = questionBlock.querySelector('.question-submit-btn');
-          if (submitBtn) {
-            submitBtn.disabled = false;
-          }
-          
-          const feedback = questionBlock.querySelector('.question-feedback');
-          if (feedback) {
-            feedback.style.display = 'none';
-          }
-        });
-        
-        // Hide score container
-        scoreContainer.style.display = 'none';
-        
-        // Remove score message and retry button
-        if (scoreMessage.parentNode) {
-          scoreMessage.remove();
-        }
-        if (retryButton.parentNode) {
-          retryButton.remove();
+      checkboxes.forEach((checkbox, index) => {
+        const isCorrectOption = correctAnswers.includes(index + 1);
+        if ((checkbox.checked && !isCorrectOption) || (!checkbox.checked && isCorrectOption)) {
+          allCorrect = false;
         }
       });
       
-      scoreContainer.appendChild(retryButton);
+      return allCorrect;
+    } else {
+      // For single choice, only one option can be selected
+      const radioButtons = questionBlock.querySelectorAll('input[type="radio"]');
+      let selectedIndex = -1;
+      
+      radioButtons.forEach((radio, index) => {
+        if (radio.checked) {
+          selectedIndex = index + 1;
+        }
+      });
+      
+      return correctAnswers.includes(selectedIndex);
     }
-  });
-  
-  // Append the score container to the quiz block
-  block.appendChild(scoreContainer);
+  }
 }

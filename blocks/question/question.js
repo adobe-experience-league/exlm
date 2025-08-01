@@ -2,148 +2,83 @@
  * Question component for quizzes
  */
 export default function decorate(block) {
-  // Add question container class
-  block.classList.add('question-container');
+  // Get the question data from the block
+  const rows = Array.from(block.children);
   
-  // Hide the 4th div (correctAnswers) in every question
-  const divs = block.querySelectorAll(':scope > div');
-  if (divs.length >= 4) {
-    divs[3].style.display = 'none';
+  // Extract question text from the first row
+  const questionText = rows[0]?.textContent.trim() || 'Question';
+  
+  // Extract isMultipleChoice from the second row
+  const isMultipleChoice = rows[1]?.textContent.trim().toLowerCase() === 'true';
+  
+  // Extract answers from the third row (should be an ordered list)
+  const answersRow = rows[2];
+  let answersList = [];
+  
+  if (answersRow) {
+    const orderedList = answersRow.querySelector('ol');
+    if (orderedList) {
+      answersList = Array.from(orderedList.querySelectorAll('li')).map(li => li.innerHTML);
+    } else {
+      // If no ordered list is found, try to extract text content
+      answersList = [answersRow.textContent.trim()];
+    }
   }
   
-  // Get the question data from the block
-  const questionText = block.querySelector('[name="question"]').textContent.trim();
-  const isMultipleChoice = block.querySelector('[name="isMultipleChoice"]')?.textContent.trim() === 'true';
-  const answersHtml = block.querySelector('[name="answers"]').innerHTML;
-  const correctAnswersText = block.querySelector('[name="correctAnswers"]').textContent.trim();
-  
-  // Parse correct answers
-  const correctAnswers = correctAnswersText.split(',').map(num => parseInt(num.trim(), 10));
-  
-  // Create the question element
-  const questionElement = document.createElement('div');
-  questionElement.classList.add('question-text');
-  questionElement.textContent = questionText;
-  
-  // Create a separator line
-  const separator = document.createElement('hr');
-  separator.classList.add('question-separator');
-  
-  // Create the answers container
-  const answersContainer = document.createElement('div');
-  answersContainer.classList.add('answers-container');
-  
-  // Parse the answers from the HTML
-  const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = answersHtml;
-  const answerItems = tempDiv.querySelectorAll('li');
-  
-  // Create the answers list with radio buttons or checkboxes
-  const answersList = document.createElement('ul');
-  answersList.classList.add('answers-list');
-  
-  answerItems.forEach((item, index) => {
-    const answerItem = document.createElement('li');
-    answerItem.classList.add('answer-item');
-    
-    const inputId = `question-${Date.now()}-answer-${index}`;
-    
-    // Create radio button or checkbox
-    const input = document.createElement('input');
-    input.type = isMultipleChoice ? 'checkbox' : 'radio';
-    input.id = inputId;
-    input.name = `question-${Date.now()}`;
-    input.value = index + 1;
-    input.classList.add('answer-input');
-    
-    // Create label for the input
-    const label = document.createElement('label');
-    label.htmlFor = inputId;
-    label.classList.add('answer-label');
-    label.innerHTML = item.innerHTML;
-    
-    // Add input and label to the answer item
-    answerItem.appendChild(input);
-    answerItem.appendChild(label);
-    answersList.appendChild(answerItem);
-  });
-  
-  // Add the answers list to the answers container
-  answersContainer.appendChild(answersList);
-  
-  // Create submit button
-  const submitButton = document.createElement('button');
-  submitButton.classList.add('question-submit-btn');
-  submitButton.textContent = 'SUBMIT';
-  
-  // Create feedback element
-  const feedbackElement = document.createElement('div');
-  feedbackElement.classList.add('question-feedback');
-  feedbackElement.style.display = 'none';
-  
-  // Add event listener to the submit button
-  submitButton.addEventListener('click', () => {
-    // Get selected answers
-    const selectedInputs = answersContainer.querySelectorAll('input:checked');
-    const selectedAnswers = Array.from(selectedInputs).map(input => parseInt(input.value, 10));
-    
-    // Check if any answer is selected
-    if (selectedAnswers.length === 0) {
-      feedbackElement.textContent = 'Please select an answer.';
-      feedbackElement.className = 'question-feedback warning';
-      feedbackElement.style.display = 'block';
-      return;
-    }
-    
-    // Check if the answer is correct
-    let isCorrect = false;
-    
-    if (isMultipleChoice) {
-      // For multiple choice, all correct answers must be selected and no incorrect answers
-      isCorrect = 
-        selectedAnswers.length === correctAnswers.length && 
-        selectedAnswers.every(answer => correctAnswers.includes(answer));
-    } else {
-      // For single choice, the selected answer must be in the correct answers
-      isCorrect = correctAnswers.includes(selectedAnswers[0]);
-    }
-    
-    // Update feedback
-    if (isCorrect) {
-      feedbackElement.textContent = 'Correct!';
-      feedbackElement.className = 'question-feedback correct';
-      block.classList.add('correct');
-    } else {
-      feedbackElement.textContent = 'Incorrect. Try again.';
-      feedbackElement.className = 'question-feedback incorrect';
-      block.classList.add('incorrect');
-    }
-    
-    feedbackElement.style.display = 'block';
-    
-    // Disable inputs after submission
-    answersContainer.querySelectorAll('input').forEach(input => {
-      input.disabled = true;
-    });
-    
-    // Disable submit button
-    submitButton.disabled = true;
-    
-    // Dispatch event to notify the quiz component
-    const event = new CustomEvent('question-answered', {
-      bubbles: true,
-      detail: { isCorrect }
-    });
-    block.dispatchEvent(event);
-  });
+  // Extract correct answers from the fourth row
+  const correctAnswersText = rows[3]?.textContent.trim() || '';
   
   // Clear the block content
   block.innerHTML = '';
   
-  // Add the elements to the block
-  block.appendChild(questionElement);
-  block.appendChild(separator);
+  // Add question container class
+  block.classList.add('question-container');
+  if (isMultipleChoice) {
+    block.classList.add('multiple-choice');
+  } else {
+    block.classList.add('single-choice');
+  }
+  
+  // Store correct answers as data attribute
+  block.dataset.correctAnswers = correctAnswersText;
+  
+  // Create question header
+  const questionHeader = document.createElement('div');
+  questionHeader.classList.add('question-header');
+  
+  const questionTitle = document.createElement('h3');
+  questionTitle.classList.add('question-title');
+  questionTitle.innerHTML = questionText;
+  questionHeader.appendChild(questionTitle);
+  
+  block.appendChild(questionHeader);
+  
+  // Create answers container
+  const answersContainer = document.createElement('div');
+  answersContainer.classList.add('answers-container');
+  
+  // Create form elements for answers
+  const inputType = isMultipleChoice ? 'checkbox' : 'radio';
+  const inputName = `question-${Math.random().toString(36).substring(2, 9)}`;
+  
+  answersList.forEach((answer, index) => {
+    const answerWrapper = document.createElement('div');
+    answerWrapper.classList.add('answer-wrapper');
+    
+    const input = document.createElement('input');
+    input.type = inputType;
+    input.name = inputName;
+    input.id = `${inputName}-${index}`;
+    input.value = index + 1;
+    
+    const label = document.createElement('label');
+    label.setAttribute('for', `${inputName}-${index}`);
+    label.innerHTML = answer;
+    
+    answerWrapper.appendChild(input);
+    answerWrapper.appendChild(label);
+    answersContainer.appendChild(answerWrapper);
+  });
+  
   block.appendChild(answersContainer);
-  block.appendChild(submitButton);
-  block.appendChild(feedbackElement);
 }

@@ -1,141 +1,108 @@
 .question-container {
   background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 40px;
-  margin-bottom: 30px;
-  max-width: 1000px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.question-text {
-  font-size: 18px;
-  font-weight: 500;
-  color: #000000;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
   margin-bottom: 20px;
-  line-height: 1.5;
 }
 
-.question-separator {
-  border: none;
-  height: 1px;
-  background-color: #e0e0e0;
-  margin: 20px 0 30px 0;
-  width: 100%;
+.question-header {
+  margin-bottom: 15px;
+}
+
+.question-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  line-height: 1.4;
 }
 
 .answers-container {
-  margin-bottom: 40px;
-}
-
-.answers-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-.answer-item {
   display: flex;
-  align-items: center;
-  margin-bottom: 25px;
-  padding: 5px 0;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.answer-input {
+.answer-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.answer-wrapper:hover {
+  background-color: #f5f5f5;
+}
+
+.answer-wrapper input[type="radio"],
+.answer-wrapper input[type="checkbox"] {
+  margin-top: 3px;
+  cursor: pointer;
+}
+
+.answer-wrapper input[type="radio"] {
   appearance: none;
   -webkit-appearance: none;
-  -moz-appearance: none;
   width: 20px;
   height: 20px;
-  border: 2px solid #666;
+  border: 2px solid #999;
   border-radius: 50%;
-  margin-right: 15px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.answer-wrapper input[type="radio"]:checked {
+  border: 6px solid #e61e1e;
+}
+
+.answer-wrapper input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #999;
+  border-radius: 4px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.answer-wrapper input[type="checkbox"]:checked {
+  background-color: #e61e1e;
+  border-color: #e61e1e;
   position: relative;
-  cursor: pointer;
-  flex-shrink: 0;
 }
 
-.answer-input:checked {
-  border-color: #666;
-}
-
-.answer-input:checked::after {
-  content: "";
+.answer-wrapper input[type="checkbox"]:checked::after {
+  content: "✓";
+  color: white;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 10px;
-  height: 10px;
-  background-color: #666;
-  border-radius: 50%;
+  font-size: 14px;
 }
 
-.answer-label {
-  font-size: 16px;
+.answer-wrapper label {
+  flex: 1;
   cursor: pointer;
-  line-height: 1.4;
-}
-
-.question-submit-btn {
-  background-color: #e41c13;
-  color: white;
-  border: none;
-  border-radius: 25px;
-  padding: 12px 40px;
   font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  display: block;
-  margin: 30px auto 10px;
-  text-transform: uppercase;
+  line-height: 1.5;
 }
 
-.question-submit-btn:hover {
-  background-color: #c41810;
+/* Styling for correct/incorrect answers after submission */
+.question-container.correct .question-header::before {
+  content: "✓";
+  color: #4CAF50;
+  font-size: 18px;
+  margin-right: 10px;
 }
 
-.question-submit-btn:disabled {
-  background-color: #f5a8a5;
-  cursor: not-allowed;
-}
-
-.question-feedback {
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 4px;
-  font-weight: 500;
-  text-align: center;
-}
-
-.question-feedback.correct {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.question-feedback.incorrect {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-.question-feedback.warning {
-  background-color: #fff3cd;
-  color: #856404;
-}
-
-/* Style for correct/incorrect questions */
-.question-container.correct {
-  border-left: 4px solid #28a745;
-}
-
-.question-container.incorrect {
-  border-left: 4px solid #dc3545;
-}
-
-/* Hide the correctAnswers field */
-[name="correctAnswers"],
-.question-container > div:nth-child(4) {
-  display: none !important;
+.question-container.incorrect .question-header::before {
+  content: "✗";
+  color: #f44336;
+  font-size: 18px;
+  margin-right: 10px;
 }
