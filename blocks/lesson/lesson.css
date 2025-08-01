@@ -1,0 +1,7 @@
+.lesson {
+  margin-bottom: var(--spectrum-spacing-100);
+  padding: var(--spectrum-spacing-75);
+  border-radius: var(--spectrum-spacing-75);
+  transition: background-color 0.3s ease;
+  background-color: var(--non-spectrum-grey-100);
+}
