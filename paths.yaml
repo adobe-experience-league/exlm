@@ -107,6 +107,20 @@ mappings:
   - /content/exlm-nmohamme.resource/zh-CN/playlists.json:/zh-hans/playlists.json
   - /content/exlm-nmohamme.resource/zh-TW/playlists.json:/zh-hant/playlists.json
 
+  # learning collections indices
+  - /content/exlm-nmohamme.resource/en/learning-collections.json:/en/learning-collections.json
+  - /content/exlm-nmohamme.resource/fr/learning-collections.json:/fr/learning-collections.json
+  - /content/exlm-nmohamme.resource/de/learning-collections.json:/de/learning-collections.json
+  - /content/exlm-nmohamme.resource/es/learning-collections.json:/es/learning-collections.json
+  - /content/exlm-nmohamme.resource/it/learning-collections.json:/it/learning-collections.json
+  - /content/exlm-nmohamme.resource/nl/learning-collections.json:/nl/learning-collections.json
+  - /content/exlm-nmohamme.resource/pt-BR/learning-collections.json:/pt-br/learning-collections.json
+  - /content/exlm-nmohamme.resource/ko/learning-collections.json:/ko/learning-collections.json
+  - /content/exlm-nmohamme.resource/ja/learning-collections.json:/ja/learning-collections.json
+  - /content/exlm-nmohamme.resource/sv/learning-collections.json:/sv/learning-collections.json
+  - /content/exlm-nmohamme.resource/zh-CN/learning-collections.json:/zh-hans/learning-collections.json
+  - /content/exlm-nmohamme.resource/zh-TW/learning-collections.json:/zh-hant/learning-collections.json
+
   # site indices - for sitemaps
   - /content/exlm-nmohamme.resource/en/query-index.json:/en/query-index.json
   - /content/exlm-nmohamme.resource/fr/query-index.json:/fr/query-index.json
