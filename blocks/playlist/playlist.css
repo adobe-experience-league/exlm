@@ -214,17 +214,10 @@
 .playlist-item img {
   border-top-left-radius: var(--playlist-border-radius-inner);
   border-top-right-radius: var(--playlist-border-radius-inner);
-}
-
-.playlist-item picture,
-.playlist-item picture img {
   display: block;
   width: 100%;
   aspect-ratio: 4/1;
   object-fit: cover;
-}
-
-.playlist-item picture {
   max-height: 75%;
 }
 

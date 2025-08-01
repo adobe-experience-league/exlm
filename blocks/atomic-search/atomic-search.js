@@ -11,7 +11,7 @@ import atomicPagerHandler from './components/atomic-search-pager.js';
 import atomicNoResultHandler from './components/atomic-search-no-results.js';
 import atomicNotificationHandler from './components/atomic-search-notification.js';
 import getCoveoAtomicMarkup from './components/atomic-search-template.js';
-import { CUSTOM_EVENTS, debounce, handleHeaderSearchVisibility } from './components/atomic-search-utils.js';
+import { CUSTOM_EVENTS, debounce } from './components/atomic-search-utils.js';
 import { isMobile } from '../header/header-utils.js';
 import createAtomicSkeleton from './components/atomic-search-skeleton.js';
 import atomicSearchBoxHandler from './components/atomic-search-box.js';
@@ -131,7 +131,6 @@ export default function decorate(block) {
     ]).then(() => {
       atomicNoResultHandler(block, placeholders);
       commonActionHandler();
-      handleHeaderSearchVisibility();
       decorateIcons(block);
 
       const onResize = () => {

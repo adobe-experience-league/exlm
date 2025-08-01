@@ -27,7 +27,14 @@ import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
  * Load files async using import() if you must.
  */
 
-const LCP_BLOCKS = ['video-embed', 'marquee', 'article-marquee', 'personalized-content-placeholder', 'atomic-search']; // add your LCP blocks to the list
+const LCP_BLOCKS = [
+  'video-embed',
+  'marquee',
+  'article-marquee',
+  'personalized-content-placeholder',
+  'atomic-search',
+  'slides',
+]; // add your LCP blocks to the list
 
 /**
  * load fonts.css and set a session storage flag

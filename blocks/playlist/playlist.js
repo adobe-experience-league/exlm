@@ -7,6 +7,40 @@ import {
 } from '../../scripts/scripts.js';
 import { Playlist, LABELS } from './playlist-utils.js';
 
+const removeLastSlash = (url) => url.replace(/\/$/, '');
+const isSameUrl = (a, b) => {
+  const aUrl = new URL(a);
+  const bUrl = new URL(b);
+  return aUrl.origin === bUrl.origin && removeLastSlash(aUrl.pathname) === removeLastSlash(bUrl.pathname);
+};
+
+/**
+ * find the json-ld script/object that contains the video url
+ */
+const findJsonLd = (videoUrl) => {
+  const jsonLdScripts = document.querySelectorAll('script[type="application/ld+json"]');
+  if (!jsonLdScripts || !jsonLdScripts.length) return null;
+
+  const jsonLd = [...jsonLdScripts]
+    .map((script) => {
+      const parsed = JSON.parse(script.textContent);
+      return Array.isArray(parsed) ? parsed : [parsed];
+    })
+    .flat()
+    .find((jsonLdObj) => isSameUrl(jsonLdObj.embedUrl, videoUrl));
+
+  return jsonLd;
+};
+
+function getVideoThumbnailUrl(videoUrl, jsonLdString) {
+  const jsonLd = jsonLdString ? JSON.parse(jsonLdString) : findJsonLd(videoUrl);
+  const thumbnails = [jsonLd?.thumbnailUrl].flat();
+
+  const defaultThumbnail = thumbnails.sort()[jsonLd.length - 1]; // last one
+  const bestFit = thumbnails?.find((url) => url.includes('640x'));
+  return bestFit || defaultThumbnail;
+}
+
 /**
  * convert seconds to time in minutes in the format of 'mm:ss'
  * @param {string} seconds
@@ -345,11 +379,11 @@ export default function decorate(block) {
   [...block.children].forEach((videoRow, videoIndex) => {
     videoRow.classList.add('playlist-item');
     const [videoCell, videoDataCell, jsonLdCell] = videoRow.children;
+    const [srcP] = videoCell.children;
     videoCell.classList.add('playlist-item-thumbnail');
     videoCell.setAttribute('data-playlist-item-progress-box', '');
     videoDataCell.classList.add('playlist-item-content');
 
-    const [srcP] = videoCell.children;
     const [titleH, descriptionP, durationP, transcriptP] = videoDataCell.children;
     titleH.classList.add('playlist-item-title');
 
@@ -369,6 +403,11 @@ export default function decorate(block) {
     transcriptP.remove();
 
     jsonLdCell?.replaceWith(htmlToElement(`<script type="application/ld+json">${jsonLdCell.textContent}</script>`));
+    // add thumbnail from jsonld if available
+    const thumbnailUrl = getVideoThumbnailUrl(video.src, jsonLdCell?.textContent);
+    if (thumbnailUrl) {
+      videoCell.innerHTML = `<img src="${thumbnailUrl}" alt="${srcP.textContent}">`;
+    }
 
     // item bottom status
     videoDataCell.append(
