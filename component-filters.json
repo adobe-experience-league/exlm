@@ -67,7 +67,9 @@
       "notification-banner",
       "code",
       "playlist-browse",
-      "atomic-search"
+      "atomic-search",
+      "skill-track-header",
+      "skill-track"
     ]
   },
   {
@@ -357,6 +359,10 @@
   {
     "id": "topic-results",
     "components": []
+  },
+  {
+    "id": "skill-track",
+    "components": ["lesson"]
   },
   {
     "id": "rte-custom-options",
