@@ -107,7 +107,7 @@ mappings:
   - /content/exlm.resource/zh-CN/playlists.json:/zh-hans/playlists.json
   - /content/exlm.resource/zh-TW/playlists.json:/zh-hant/playlists.json
 
-    # learning collection inidices
+  # learning collection inidices
   - /content/exlm.resource/en/learning-collections.json:/en/learning-collections.json
   - /content/exlm.resource/fr/learning-collections.json:/fr/learning-collections.json
   - /content/exlm.resource/de/learning-collections.json:/de/learning-collections.json
