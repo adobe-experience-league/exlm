@@ -1,55 +1,46 @@
 /**
  * Generates the DOM for a question
+ * This function is also called by quiz.js
  * @param {Element} block The question block element
- * @param {number} index The index of the question
  * @returns {Element} The generated question DOM
  */
-export function generateQuestionDOM(block, index) {
+export function generateQuestionDOM(block) {
   // Create question container
   const questionContainer = document.createElement('div');
   questionContainer.classList.add('question-block');
   
-  // Extract all divs from the block
+  // Extract all rows from the block
   const rows = [...block.children];
   
-  // Extract question data from rows
-  const questionRow = rows[0];
-  const typeRow = rows[1];
-  const answersRow = rows[2];
-  const correctAnswersRow = rows[3];
+  // Process the question content
+  let questionText = '';
+  let isMultipleChoice = false;
+  let answers = [];
+  let correctAnswers = [];
   
-  // Get question text
-  const questionText = questionRow?.querySelector('div')?.textContent?.trim() || '';
-  
-  // Get question type (single or multiple choice)
-  const isMultipleChoice = typeRow?.querySelector('div')?.textContent?.trim()?.toLowerCase() === 'true';
-  
-  // Get answers from ordered list
-  const answersList = answersRow?.querySelector('div ol');
-  const answers = answersList 
-    ? [...answersList.querySelectorAll('li')].map(li => li.textContent.trim())
-    : [];
-  
-  // Get correct answers
-  const correctAnswersText = correctAnswersRow?.querySelector('div')?.textContent?.trim() || '';
-  const correctAnswers = correctAnswersText 
-    ? correctAnswersText.split(',').map(num => parseInt(num.trim(), 10))
-    : [];
-  
-  // Check for any specific classes that might be applied to the question
-  const isRequiredQuestion = block.classList.contains('required');
-  const hasCustomStyle = block.classList.contains('custom-style');
-  const questionTheme = [...block.classList].find(cls => cls.startsWith('theme-'));
-  
-  // Add any additional classes from the block
-  if (isRequiredQuestion) questionContainer.classList.add('required');
-  if (hasCustomStyle) questionContainer.classList.add('custom-style');
-  if (questionTheme) questionContainer.classList.add(questionTheme);
+  // Extract data from rows
+  rows.forEach((row, rowIndex) => {
+    if (rowIndex === 0) {
+      // First row contains the question text
+      questionText = row.textContent.trim();
+    } else if (rowIndex === 1) {
+      // Second row contains the question type (single or multiple choice)
+      isMultipleChoice = row.textContent.trim().toLowerCase() === 'true';
+    } else if (rowIndex === 2) {
+      // Third row contains the answers as an ordered list
+      const answersList = row.querySelector('ol');
+      if (answersList) {
+        answers = [...answersList.querySelectorAll('li')].map(li => li.textContent.trim());
+      }
+    } else if (rowIndex === 3) {
+      // Fourth row contains the correct answers as comma-delimited values
+      correctAnswers = row.textContent.trim().split(',').map(num => parseInt(num.trim(), 10));
+    }
+  });
   
   // Store correct answers as a data attribute for potential future use
   questionContainer.dataset.correctAnswers = correctAnswers.join(',');
   questionContainer.dataset.isMultipleChoice = isMultipleChoice.toString();
-  questionContainer.dataset.questionIndex = index.toString();
   
   // Create question text
   const questionTextElement = document.createElement('p');
@@ -77,12 +68,12 @@ export function generateQuestionDOM(block, index) {
     
     const input = document.createElement('input');
     input.type = isMultipleChoice ? 'checkbox' : 'radio';
-    input.name = `question-${index}`;
-    input.id = `question-${index}-answer-${answerIndex}`;
+    input.name = `question-${block.dataset.questionIndex || 0}`;
+    input.id = `question-${block.dataset.questionIndex || 0}-answer-${answerIndex}`;
     input.value = answerIndex + 1; // 1-based index for answers
     
     const label = document.createElement('label');
-    label.htmlFor = `question-${index}-answer-${answerIndex}`;
+    label.htmlFor = input.id;
     label.textContent = answer;
     
     inputContainer.appendChild(input);
@@ -90,15 +81,6 @@ export function generateQuestionDOM(block, index) {
     answerOption.appendChild(label);
     answersContainer.appendChild(answerOption);
   });
-  
-  // Add submit button if standalone
-  if (index === 0 && block.classList.contains('question')) {
-    const submitButton = document.createElement('button');
-    submitButton.type = 'submit';
-    submitButton.classList.add('question-submit-button');
-    submitButton.textContent = 'SUBMIT';
-    questionContainer.appendChild(submitButton);
-  }
   
   return questionContainer;
 }
@@ -108,9 +90,22 @@ export function generateQuestionDOM(block, index) {
  * @param {Element} block The question block element
  */
 export default function decorate(block) {
-  // This function is only used when the question is used standalone
-  // In most cases, questions will be used within a quiz block
-  const questionDOM = generateQuestionDOM(block, 0);
+  // Set a question index for standalone questions
+  block.dataset.questionIndex = '0';
+  
+  // Generate the question DOM
+  const dom = generateQuestionDOM(block);
+  
+  // Clear the block and append the DOM
   block.textContent = '';
-  block.appendChild(questionDOM);
+  block.append(dom);
+  
+  // Add submit button if standalone
+  if (block.classList.contains('question')) {
+    const submitButton = document.createElement('button');
+    submitButton.type = 'submit';
+    submitButton.classList.add('question-submit-button');
+    submitButton.textContent = 'SUBMIT';
+    block.appendChild(submitButton);
+  }
 }

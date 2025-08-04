@@ -1,46 +1,40 @@
 import { generateQuestionDOM } from '../question/question.js';
 
-/**
- * Decorates the quiz block
- * @param {Element} block The quiz block element
- */
 export default function decorate(block) {
   // Add quiz container class
   block.classList.add('quiz-container');
   
-  // Check for any specific classes that might be applied to the quiz
-  const hasCustomStyle = block.classList.contains('custom-style');
-  const quizTheme = [...block.classList].find(cls => cls.startsWith('theme-'));
-  const isCompactQuiz = block.classList.contains('compact');
-  
   // Create a form element to wrap all questions
   const form = document.createElement('form');
   form.classList.add('quiz-form');
-  
-  // Add any additional classes from the block
-  if (hasCustomStyle) form.classList.add('custom-style');
-  if (quizTheme) form.classList.add(quizTheme);
-  if (isCompactQuiz) form.classList.add('compact');
-  
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     // Form submission can be handled by external scripts
   });
   
+  // Get all question blocks (children of the quiz block)
+  const questions = [...block.children];
+  
   // Create a container for all questions
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
   
-  // Get all question blocks (children of the quiz block)
-  const questions = [...block.children];
-  
-  // Process each question
-  questions.forEach((question, index) => {
+  // Loop through all question blocks
+  questions.forEach((question) => {
     // Generate the question DOM
-    const questionDOM = generateQuestionDOM(question, index);
+    const questionDOM = generateQuestionDOM(question);
     
-    // Add the question to the questions container
-    questionsContainer.appendChild(questionDOM);
+    // Empty the content, keep root element with UE instrumentation
+    question.textContent = '';
+    
+    // Add block classes
+    question.classList.add('question', 'block');
+    
+    // Append the generated DOM to the question
+    question.append(questionDOM);
+    
+    // Move the question to the questions container
+    questionsContainer.append(question);
   });
   
   // Create submit button
