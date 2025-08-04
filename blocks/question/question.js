@@ -1,84 +1,105 @@
 /**
- * Question component for quizzes
+ * Generates the DOM for a question
+ * @param {Element} block The question block element
+ * @param {number} index The index of the question
+ * @returns {Element} The generated question DOM
  */
-export default function decorate(block) {
-  // Get the question data from the block
-  const rows = Array.from(block.children);
+export function generateQuestionDOM(block, index) {
+  // Extract all divs from the block
+  const allDivs = [...block.querySelectorAll(':scope div > div')];
   
-  // Extract question text from the first row
-  const questionText = rows[0]?.textContent.trim() || 'Question';
+  // Extract properties from the divs
+  let questionText;
+  let questionType;
+  let answersContent;
+  let correctAnswersText;
   
-  // Extract isMultipleChoice from the second row
-  const isMultipleChoice = rows[1]?.textContent.trim().toLowerCase() === 'true';
+  // Assign divs to variables based on their position
+  [questionText, questionType, answersContent, correctAnswersText] = allDivs;
   
-  // Extract answers from the third row (should be an ordered list)
-  const answersRow = rows[2];
-  let answersList = [];
+  // Extract values from the properties
+  const questionTextValue = questionText?.textContent?.trim() || '';
+  const isMultipleChoice = questionType?.textContent?.trim()?.toLowerCase() === 'true';
   
-  if (answersRow) {
-    const orderedList = answersRow.querySelector('ol');
-    if (orderedList) {
-      answersList = Array.from(orderedList.querySelectorAll('li')).map(li => li.innerHTML);
-    } else {
-      // If no ordered list is found, try to extract text content
-      answersList = [answersRow.textContent.trim()];
-    }
-  }
+  // Get answers from ordered list
+  const answersList = answersContent?.querySelector('ol');
+  const answers = answersList 
+    ? [...answersList.querySelectorAll('li')].map(li => li.textContent.trim())
+    : [];
   
-  // Extract correct answers from the fourth row
-  const correctAnswersText = rows[3]?.textContent.trim() || '';
+  // Get correct answers
+  const correctAnswers = correctAnswersText?.textContent?.trim()
+    ? correctAnswersText.textContent.trim().split(',').map(num => parseInt(num.trim(), 10))
+    : [];
   
-  // Clear the block content
-  block.innerHTML = '';
+  // Check for any specific classes that might be applied to the question
+  const isRequiredQuestion = block.classList.contains('required');
+  const hasCustomStyle = block.classList.contains('custom-style');
+  const questionTheme = [...block.classList].find(cls => cls.startsWith('theme-'));
   
-  // Add question container class
-  block.classList.add('question-container');
-  if (isMultipleChoice) {
-    block.classList.add('multiple-choice');
-  } else {
-    block.classList.add('single-choice');
-  }
+  // Create question container
+  const questionContainer = document.createElement('div');
+  questionContainer.classList.add('question-block');
   
-  // Store correct answers as data attribute
-  block.dataset.correctAnswers = correctAnswersText;
+  // Add any additional classes from the block
+  if (isRequiredQuestion) questionContainer.classList.add('required');
+  if (hasCustomStyle) questionContainer.classList.add('custom-style');
+  if (questionTheme) questionContainer.classList.add(questionTheme);
   
-  // Create question header
-  const questionHeader = document.createElement('div');
-  questionHeader.classList.add('question-header');
+  // Store correct answers as a data attribute for potential future use
+  questionContainer.dataset.correctAnswers = correctAnswers.join(',');
+  questionContainer.dataset.isMultipleChoice = isMultipleChoice.toString();
+  questionContainer.dataset.questionIndex = index.toString();
   
-  const questionTitle = document.createElement('h3');
-  questionTitle.classList.add('question-title');
-  questionTitle.innerHTML = questionText;
-  questionHeader.appendChild(questionTitle);
+  // Create question DOM structure
+  const questionDOM = document.createRange().createContextualFragment(`
+    <p class="question-text">${questionTextValue}</p>
+    <hr class="question-divider">
+    <div class="answers-container"></div>
+  `);
   
-  block.appendChild(questionHeader);
-  
-  // Create answers container
-  const answersContainer = document.createElement('div');
-  answersContainer.classList.add('answers-container');
-  
-  // Create form elements for answers
-  const inputType = isMultipleChoice ? 'checkbox' : 'radio';
-  const inputName = `question-${Math.random().toString(36).substring(2, 9)}`;
-  
-  answersList.forEach((answer, index) => {
-    const answerWrapper = document.createElement('div');
-    answerWrapper.classList.add('answer-wrapper');
+  // Add answers to the container
+  const answersContainer = questionDOM.querySelector('.answers-container');
+  answers.forEach((answer, answerIndex) => {
+    const answerOption = document.createElement('div');
+    answerOption.classList.add('answer-option');
     
-    const input = document.createElement('input');
-    input.type = inputType;
-    input.name = inputName;
-    input.id = `${inputName}-${index}`;
-    input.value = index + 1;
+    const inputType = isMultipleChoice ? 'checkbox' : 'radio';
+    const inputName = `question-${index}`;
+    const inputId = `question-${index}-answer-${answerIndex}`;
+    const inputValue = answerIndex + 1; // 1-based index for answers
     
-    const label = document.createElement('label');
-    label.setAttribute('for', `${inputName}-${index}`);
-    label.innerHTML = answer;
+    answerOption.innerHTML = `
+      <div class="input-container">
+        <input type="${inputType}" name="${inputName}" id="${inputId}" value="${inputValue}">
+      </div>
+      <label for="${inputId}">${answer}</label>
+    `;
     
-    answerWrapper.appendChild(input);
-    answerWrapper.appendChild(label);
-    answersContainer.appendChild(answerWrapper);
+    answersContainer.appendChild(answerOption);
   });
   
-  block.appendChild(answersContainer);
+  // Add submit button if standalone
+  if (index === 0 && block.classList.contains('question')) {
+    const submitButton = document.createElement('button');
+    submitButton.type = 'submit';
+    submitButton.classList.add('question-submit-button');
+    submitButton.textContent = 'SUBMIT';
+    questionDOM.appendChild(submitButton);
+  }
+  
+  questionContainer.appendChild(questionDOM);
+  return questionContainer;
+}
+
+/**
+ * Decorates the question block
+ * @param {Element} block The question block element
+ */
+export default function decorate(block) {
+  // This function is only used when the question is used standalone
+  // In most cases, questions will be used within a quiz block
+  const questionDOM = generateQuestionDOM(block, 0);
+  block.textContent = '';
+  block.appendChild(questionDOM);
 }

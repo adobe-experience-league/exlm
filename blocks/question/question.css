@@ -1,108 +1,131 @@
-.question-container {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin-bottom: 20px;
+.question-block {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.question-header {
-  margin-bottom: 15px;
+.question-text {
+  font-size: 1.25rem;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+  font-weight: 500;
 }
 
-.question-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
-  line-height: 1.4;
+.question-divider {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 1.5rem 0;
+  width: 100%;
 }
 
 .answers-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
-.answer-wrapper {
+.answer-option {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
+  align-items: center;
+  gap: 1rem;
 }
 
-.answer-wrapper:hover {
-  background-color: #f5f5f5;
+.input-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
 }
 
-.answer-wrapper input[type="radio"],
-.answer-wrapper input[type="checkbox"] {
-  margin-top: 3px;
-  cursor: pointer;
-}
-
-.answer-wrapper input[type="radio"] {
+.answer-option input[type="radio"] {
   appearance: none;
   -webkit-appearance: none;
+  -moz-appearance: none;
   width: 20px;
   height: 20px;
-  border: 2px solid #999;
+  border: 2px solid #757575;
   border-radius: 50%;
   outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.answer-wrapper input[type="radio"]:checked {
-  border: 6px solid #e61e1e;
-}
-
-.answer-wrapper input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  border: 2px solid #999;
-  border-radius: 4px;
-  outline: none;
-  transition: all 0.2s ease;
-}
-
-.answer-wrapper input[type="checkbox"]:checked {
-  background-color: #e61e1e;
-  border-color: #e61e1e;
+  cursor: pointer;
   position: relative;
 }
 
-.answer-wrapper input[type="checkbox"]:checked::after {
-  content: "✓";
-  color: white;
+.answer-option input[type="radio"]:checked {
+  border-color: #1473e6;
+}
+
+.answer-option input[type="radio"]:checked::before {
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 14px;
+  width: 10px;
+  height: 10px;
+  background-color: #1473e6;
+  border-radius: 50%;
 }
 
-.answer-wrapper label {
-  flex: 1;
+.answer-option input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #757575;
+  border-radius: 3px;
+  outline: none;
   cursor: pointer;
-  font-size: 16px;
-  line-height: 1.5;
+  position: relative;
 }
 
-/* Styling for correct/incorrect answers after submission */
-.question-container.correct .question-header::before {
+.answer-option input[type="checkbox"]:checked {
+  border-color: #1473e6;
+  background-color: #1473e6;
+}
+
+.answer-option input[type="checkbox"]:checked::before {
   content: "✓";
-  color: #4CAF50;
-  font-size: 18px;
-  margin-right: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
 }
 
-.question-container.incorrect .question-header::before {
-  content: "✗";
-  color: #f44336;
-  font-size: 18px;
-  margin-right: 10px;
+.answer-option label {
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.question-submit-button {
+  display: block;
+  padding: 0.75rem 2.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 50px;
+  background-color: #e30000;
+  color: white;
+  cursor: pointer;
+  margin: 2rem auto 0;
+  transition: background-color 0.2s ease;
+}
+
+.question-submit-button:hover {
+  background-color: #c00000;
+}
+
+/* Standalone question styling */
+.block.question .question-block {
+  margin: 2rem auto;
 }

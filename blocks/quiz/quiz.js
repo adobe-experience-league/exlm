@@ -1,7 +1,18 @@
+import { generateQuestionDOM } from '../question/question.js';
+
 /**
- * Quiz component that can contain multiple question components
+ * Decorates the quiz block
+ * @param {Element} block The quiz block element
  */
 export default function decorate(block) {
+  // Extract all divs from the block
+  const allDivs = [...block.querySelectorAll(':scope > div')];
+  
+  // Check for any specific classes that might be applied to the quiz
+  const hasCustomStyle = block.classList.contains('custom-style');
+  const quizTheme = [...block.classList].find(cls => cls.startsWith('theme-'));
+  const isCompactQuiz = block.classList.contains('compact');
+  
   // Add quiz container class
   block.classList.add('quiz-container');
   
@@ -9,97 +20,36 @@ export default function decorate(block) {
   const form = document.createElement('form');
   form.classList.add('quiz-form');
   
-  // Move all children to the form
-  while (block.firstChild) {
-    form.appendChild(block.firstChild);
-  }
+  // Add any additional classes from the block
+  if (hasCustomStyle) form.classList.add('custom-style');
+  if (quizTheme) form.classList.add(quizTheme);
+  if (isCompactQuiz) form.classList.add('compact');
   
-  // Add submit button
-  const submitButton = document.createElement('button');
-  submitButton.type = 'submit';
-  submitButton.classList.add('quiz-submit-button');
-  submitButton.textContent = 'SUBMIT';
-  form.appendChild(submitButton);
-  
-  // Add form to block
-  block.appendChild(form);
-  
-  // Handle form submission
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    
-    // Get all question blocks
-    const questionBlocks = form.querySelectorAll('.question-container');
-    let score = 0;
-    let totalQuestions = questionBlocks.length;
-    
-    // Check each question
-    questionBlocks.forEach((questionBlock) => {
-      const isCorrect = checkAnswer(questionBlock);
-      if (isCorrect) {
-        score += 1;
-        questionBlock.classList.add('correct');
-      } else {
-        questionBlock.classList.add('incorrect');
-      }
-    });
-    
-    // Show results
-    const resultDiv = document.createElement('div');
-    resultDiv.classList.add('quiz-result');
-    resultDiv.innerHTML = `<p>Your score: ${score}/${totalQuestions}</p>`;
-    
-    // Check if results already exist
-    const existingResult = block.querySelector('.quiz-result');
-    if (existingResult) {
-      block.replaceChild(resultDiv, existingResult);
-    } else {
-      block.appendChild(resultDiv);
-    }
-    
-    // Disable form after submission
-    submitButton.disabled = true;
-    
-    // Re-enable after 3 seconds
-    setTimeout(() => {
-      submitButton.disabled = false;
-    }, 3000);
+    // Form submission can be handled by external scripts
   });
   
-  /**
-   * Check if the answer for a question is correct
-   * @param {HTMLElement} questionBlock - The question block element
-   * @returns {boolean} - Whether the answer is correct
-   */
-  function checkAnswer(questionBlock) {
-    const isMultipleChoice = questionBlock.classList.contains('multiple-choice');
-    const correctAnswers = questionBlock.dataset.correctAnswers.split(',').map(num => parseInt(num.trim(), 10));
+  // Create quiz DOM structure
+  const quizDOM = document.createRange().createContextualFragment(`
+    <div class="questions-container"></div>
+    <button type="submit" class="quiz-submit-button">SUBMIT</button>
+  `);
+  
+  // Process each question
+  const questionsContainer = quizDOM.querySelector('.questions-container');
+  allDivs.forEach((question, index) => {
+    // Generate the question DOM
+    const questionDOM = generateQuestionDOM(question, index);
     
-    if (isMultipleChoice) {
-      // For multiple choice, all correct options must be selected and no incorrect options
-      const checkboxes = questionBlock.querySelectorAll('input[type="checkbox"]');
-      let allCorrect = true;
-      
-      checkboxes.forEach((checkbox, index) => {
-        const isCorrectOption = correctAnswers.includes(index + 1);
-        if ((checkbox.checked && !isCorrectOption) || (!checkbox.checked && isCorrectOption)) {
-          allCorrect = false;
-        }
-      });
-      
-      return allCorrect;
-    } else {
-      // For single choice, only one option can be selected
-      const radioButtons = questionBlock.querySelectorAll('input[type="radio"]');
-      let selectedIndex = -1;
-      
-      radioButtons.forEach((radio, index) => {
-        if (radio.checked) {
-          selectedIndex = index + 1;
-        }
-      });
-      
-      return correctAnswers.includes(selectedIndex);
-    }
-  }
+    // Add the question to the questions container
+    questionsContainer.appendChild(questionDOM);
+  });
+  
+  // Append all elements to the form
+  form.appendChild(quizDOM);
+  
+  // Clear the block and append the form
+  block.textContent = '';
+  block.appendChild(form);
 }
