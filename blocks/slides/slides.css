@@ -232,55 +232,70 @@
   padding-left: 1rem;
 }
 
+.slides .visual-wrapper {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  max-height: fit-content;
+}
+
 .slides .visual {
   position: relative;
-  display: flex;
-  justify-content: center;
+  height: 100%;
+}
+
+@media screen and (min-width: 600px) {
+  .slides .visual-wrapper {
+    height: 300px;
+    max-height: 100%;
+  }
+}
+
+@media screen and (min-width: 900px) {
+  .slides .visual-wrapper {
+    height: 400px;
+    max-height: 100%;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .slides .visual-wrapper {
+    height: 600px;
+    max-height: 100%;
+  }
 }
 
 .slides .visual.image picture,
 .slides .visual.image img {
-  max-width: 100%;
-  aspect-ratio: 16 / 9;
-  height: auto;
+  height: 100%;
+  width: auto;
   display: block;
   border-radius: 16px;
+  object-fit: contain;
+  object-position: center;
 }
 
-.slides .visual.image .callout {
-  display: none;
-}
-
-.slides .visual.image .callout.visible {
+.slides exl-coachmark {
   position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+  display: block;
+}
+
+.slides .indicator {
   height: 100%;
+  width: 100%;
 }
 
-.slides .visual.image .callout.callout-rectangle {
-  border-radius: 0;
-
-  --border-radius: 0;
-}
-
-.slides .visual.image .callout .indicator {
-  display: none;
-}
-
-.slides .step.active .visual.image .callout.visible .indicator i {
+.slides .indicator i {
   --callout-color-r: 3;
   --callout-color-g: 95;
   --callout-color-b: 230;
 
   position: relative;
   display: block;
-  width: 100%;
   height: 100%;
+  aspect-ratio: 1 / 1;
   z-index: var(--callout-indicator-z);
-  border-radius: 50%;
   border: solid 1px rgb(var(--callout-color-r) var(--callout-color-g) var(--callout-color-b));
   box-shadow:
     0 0 0 2px rgb(var(--callout-color-r) var(--callout-color-g) var(--callout-color-b) / 80%),
@@ -292,7 +307,14 @@
   animation: pulse 2.5s ease-in-out forwards infinite;
 }
 
-.slides .step.active .visual.image .callout.callout-rectangle .indicator i {
+.slides [type='circle'] .indicator i {
+  border-radius: 50%;
+}
+
+.slides [type='rectangle'] .indicator i {
+  height: 100%;
+  width: 100%;
+  aspect-ratio: unset;
   border-radius: 0;
 }
 
@@ -311,6 +333,9 @@
 .slides .step.active .visual.image .callout > .tooltip {
   display: none;
   position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
   opacity: 0;
   animation: fade-out 0.5s forwards;
   font-size: var(--spectrum-body-size-s);
@@ -321,8 +346,8 @@
 .slides .step.active .visual.image .callout.visible .indicator ~ .tooltip:hover {
   display: block;
   z-index: var(--callout-tooltip-z);
-  max-width: 35%;
-  min-width: 20%;
+  max-width: 200px;
+  min-width: 200px;
   color: var(--text-color);
   background-color: var(--spectrum-gray-50);
   border: solid 1px var(--spectrum-gray-300);
@@ -531,7 +556,7 @@
   animation: pop-toast 12s ease forwards;
 }
 
-.slides .visual .step-counter {
+.slides .step-counter {
   position: absolute;
   right: 1rem;
   bottom: 1rem;
@@ -549,7 +574,7 @@
   font-weight: var(--font-weight-700);
 }
 
-.slides .visual .step-counter .slash {
+.slides .step-counter .slash {
   padding: 0 var(--spectrum-spacing-75);
   color: var(--spectrum-gray-200);
 }
@@ -626,7 +651,7 @@
 
 .slides:not(:has(.container.as-docs)) {
   border-radius: 16px;
-  background-color: var(--spectrum-gray-300);
+  background-color: var(--spectrum-gray-200);
   padding: 16px;
 }
 
@@ -666,17 +691,13 @@
 
 .slides .container.as-docs .display-toggles .as-docs,
 .slides .container.as-docs .visual.image .callout .indicator button,
-.slides .container.as-docs .visual.image .step-counter,
+.slides .container.as-docs .step-counter,
 .slides .container.as-docs .controls,
 .slides .container.as-docs .toast {
   display: none;
 }
 
 @media screen and (min-width: 900px) {
-  .slides .visual-wrapper {
-    min-height: 230px;
-  }
-
   .slides .controls .controls-bar {
     border-radius: 20px;
     justify-content: flex-start;

@@ -229,8 +229,30 @@ const getCoveoAtomicMarkup = (placeholders) => {
             </div>
             <atomic-facet-manager>
               <style>
+                atomic-facet::part(facet-option) {
+                  position: relative;
+                  display: flex;
+                  align-items: center;
+                }
+                atomic-facet::part(facet-child-element):hover {
+                  background-color: var(--footer-border-color);
+                }
                 atomic-facet::part(facet-child-element) {
                   margin-left: 32px;
+                  border-radius: 4px;
+                }
+                atomic-facet::part(only-facet-btn):hover {
+                  color: var(--non-spectrum-graphite-gray);
+                }
+                atomic-facet::part(only-facet-btn) {
+                  position: absolute;
+                  right: 8px;
+                  cursor: pointer;
+                  color: var(--non-spectrum-web-gray);
+                  font-size: var(--spectrum-font-size-100);
+                  font-weight: var(--font-weight-medium);
+                  padding: 4px 6px;
+                  z-index: 1;
                 }
                 atomic-facet.hide-facet {
                   display: none;
@@ -277,8 +299,8 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   display: flex;
                 }
                 atomic-facet::part(facet-child-label) {
-                  padding-top: 6px;
-                  padding-bottom: 6px;
+                  padding: 6px 40px 6px 32px;
+                  align-items: center;
                 }
                 atomic-facet::part(facet-parent-label) {
                   padding-bottom: 4px;
@@ -313,7 +335,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(values) {
                   overflow-y: auto;
                   margin-top: 0;
-                  padding-right: 16px;
+                  padding-right: 8px;
                 }
                 atomic-facet::part(show-more), atomic-facet::part(show-less) {
                   color: var(--non-spectrum-input-text);
@@ -357,6 +379,16 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 @media (min-width: 1024px) {
                   atomic-facet::part(values) {
                     max-height: 500px;
+                  }
+                  atomic-facet::part(only-facet-btn) {
+                    display: none;
+                    right: 2px;
+                    font-size: var(--spectrum-font-size-50);
+                  }
+                  atomic-facet::part(only-facet-visible) {
+                    display: flex;
+                    align-items: center;
+                    height: 21px;
                   }
                 }
               </style>
