@@ -211,40 +211,6 @@
     ]
   },
   {
-    "id": "section-learning-collections",
-    "components": [
-      "text",
-      "image",
-      "button",
-      "title",
-      "columns",
-      "icon-block",
-      "curated-cards",
-      "teaser",
-      "detailed-teaser",
-      "marquee",
-      "carousel",
-      "sign-up",
-      "video-embed",
-      "secondary-search",
-      "accordion-group",
-      "media",
-      "authorable-card",
-      "featured-cards",
-      "events-cards",
-      "adls-cards",
-      "tabbed-cards",
-      "tabs",
-      "recommended-courses",
-      "recommended-content",
-      "recommendation-marquee",
-      "block-quote",
-      "callout",
-      "qualtrics",
-      "announcement-ribbon"
-    ]
-  },
-  {
     "id": "section-author-bio",
     "components": ["author-bio"]
   },
