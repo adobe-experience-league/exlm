@@ -154,7 +154,7 @@
           }
         },
         {
-          "title": "Editable Learning Collections Page Section",
+          "title": "Learning Collections Page Section",
           "id": "learning-collections-page-section",
           "plugins": {
             "xwalk": {
