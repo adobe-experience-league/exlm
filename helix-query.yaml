@@ -836,3 +836,115 @@ indices:
       - '/zh-hant/playlists/**'
     exclude:
       - '/zh-hant/playlists'
+
+  learning-collections-en: &base-learning-collections
+    target: /en/learning-collections.json
+    include:
+      - '/en/learning-collections-home/**'
+    exclude:
+      - '/en/learning-collections-home'
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      description:
+        select: head > meta[property="og:description"]
+        value: attribute(el, "content")
+      image:
+        select: head > meta[property="og:image"]
+        value: attribute(el, "content")
+      lastModified:
+        select: head > meta[name="last-update"]
+        value: |
+          parseTimestamp(attribute(el, "content"), 'ddd MMM DD YYYY hh:mm:ss GMT')
+      robots:
+        select: head > meta[name="robots"]
+        value: attribute(el, "content")
+
+  learning-collections-fr:
+    <<: *base-learning-collections
+    target: /fr/learning-collections.json
+    include:
+      - '/fr/learning-collections-home/**'
+    exclude:
+      - '/fr/learning-collections-home'
+
+  learning-collections-de:
+    <<: *base-learning-collections
+    target: /de/learning-collections.json
+    include:
+      - '/de/learning-collections-home/**'
+    exclude:
+      - '/de/learning-collections-home'
+
+  learning-collections-es:
+    <<: *base-learning-collections
+    target: /es/learning-collections.json
+    include:
+      - '/es/learning-collections-home/**'
+    exclude:
+      - '/es/learning-collections-home'
+
+  learning-collections-it:
+    <<: *base-learning-collections
+    target: /it/learning-collections.json
+    include:
+      - '/it/learning-collections-home/**'
+    exclude:
+      - '/it/learning-collections-home'
+
+  learning-collections-nl:
+    <<: *base-learning-collections
+    target: /nl/learning-collections.json
+    include:
+      - '/nl/learning-collections-home/**'
+    exclude:
+      - '/nl/learning-collections-home'
+
+  learning-collections-pt-br:
+    <<: *base-learning-collections
+    target: /pt-br/learning-collections.json
+    include:
+      - '/pt-br/learning-collections-home/**'
+    exclude:
+      - '/pt-br/learning-collections-home'
+
+  learning-collections-ko:
+    <<: *base-learning-collections
+    target: /ko/learning-collections.json
+    include:
+      - '/ko/learning-collections-home/**'
+    exclude:
+      - '/ko/learning-collections-home'
+
+  learning-collections-ja:
+    <<: *base-learning-collections
+    target: /ja/learning-collections.json
+    include:
+      - '/ja/learning-collections-home/**'
+    exclude:
+      - '/ja/learning-collections-home'
+
+  learning-collections-sv:
+    <<: *base-learning-collections
+    target: /sv/learning-collections.json
+    include:
+      - '/sv/learning-collections-home/**'
+    exclude:
+      - '/sv/learning-collections-home'
+
+  learning-collections-zh-hans:
+    <<: *base-learning-collections
+    target: /zh-hans/learning-collections.json
+    include:
+      - '/zh-hans/learning-collections-home/**'
+    exclude:
+      - '/zh-hans/learning-collections-home'
+
+  learning-collections-zh-hant:
+    <<: *base-learning-collections
+    target: /zh-hant/learning-collections.json
+    include:
+      - '/zh-hant/learning-collections-home/**'
+    exclude:
+      - '/zh-hant/learning-collections-home'
