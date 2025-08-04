@@ -36,3 +36,37 @@
 .quiz-submit-button:hover {
   background-color: #c00000;
 }
+
+.quiz-submit-button:disabled {
+  background-color: #b3b3b3;
+  cursor: not-allowed;
+}
+
+.quiz-reset-button {
+  display: block;
+  padding: 0.75rem 2.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 50px;
+  background-color: #6c757d;
+  color: white;
+  cursor: pointer;
+  margin: 1rem auto 0;
+  transition: background-color 0.2s ease;
+}
+
+.quiz-reset-button:hover {
+  background-color: #5a6268;
+}
+
+.quiz-results {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+}

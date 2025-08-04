@@ -7248,6 +7248,22 @@
         "value": "",
         "label": "Correct Answers",
         "description": "Enter the correct answer numbers as comma-delimited values (e.g., '3,5')"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "correctFeedback",
+        "value": "",
+        "label": "Correct Answer Feedback",
+        "description": "Enter the feedback message to display when the answer is correct"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "incorrectFeedback",
+        "value": "",
+        "label": "Incorrect Answer Feedback",
+        "description": "Enter the feedback message to display when the answer is incorrect"
       }
     ]
   }
