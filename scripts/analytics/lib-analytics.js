@@ -10,6 +10,7 @@ export const type = document.querySelector('meta[name="type"]')?.content?.toLowe
 
 const fullSolution = document.querySelector('meta[name="solution"]')?.content || '';
 const feature = document.querySelector('meta[name="feature"]')?.content.toLowerCase() || '';
+const featureAttribute = document.querySelector('meta[name="feature-attribute"]')?.content.toLowerCase() || '';
 const subSolution = document.querySelector('meta[name="sub-solution"]')?.content || '';
 const solutionVersion = document.querySelector('meta[name="version"]')?.content || '';
 const role = document.querySelector('meta[name="role"]')?.content || '';
@@ -154,6 +155,7 @@ export async function pushPageDataLayer(language) {
         type,
         fullSolution,
         feature,
+        featureAttribute,
       },
     },
     user,
