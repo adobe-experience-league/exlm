@@ -5,16 +5,13 @@ import { generateQuestionDOM } from '../question/question.js';
  * @param {Element} block The quiz block element
  */
 export default function decorate(block) {
-  // Extract all divs from the block
-  const allDivs = [...block.querySelectorAll(':scope > div')];
+  // Add quiz container class
+  block.classList.add('quiz-container');
   
   // Check for any specific classes that might be applied to the quiz
   const hasCustomStyle = block.classList.contains('custom-style');
   const quizTheme = [...block.classList].find(cls => cls.startsWith('theme-'));
   const isCompactQuiz = block.classList.contains('compact');
-  
-  // Add quiz container class
-  block.classList.add('quiz-container');
   
   // Create a form element to wrap all questions
   const form = document.createElement('form');
@@ -30,15 +27,15 @@ export default function decorate(block) {
     // Form submission can be handled by external scripts
   });
   
-  // Create quiz DOM structure
-  const quizDOM = document.createRange().createContextualFragment(`
-    <div class="questions-container"></div>
-    <button type="submit" class="quiz-submit-button">SUBMIT</button>
-  `);
+  // Create a container for all questions
+  const questionsContainer = document.createElement('div');
+  questionsContainer.classList.add('questions-container');
+  
+  // Get all question blocks (children of the quiz block)
+  const questions = [...block.children];
   
   // Process each question
-  const questionsContainer = quizDOM.querySelector('.questions-container');
-  allDivs.forEach((question, index) => {
+  questions.forEach((question, index) => {
     // Generate the question DOM
     const questionDOM = generateQuestionDOM(question, index);
     
@@ -46,8 +43,15 @@ export default function decorate(block) {
     questionsContainer.appendChild(questionDOM);
   });
   
+  // Create submit button
+  const submitButton = document.createElement('button');
+  submitButton.type = 'submit';
+  submitButton.classList.add('quiz-submit-button');
+  submitButton.textContent = 'SUBMIT';
+  
   // Append all elements to the form
-  form.appendChild(quizDOM);
+  form.appendChild(questionsContainer);
+  form.appendChild(submitButton);
   
   // Clear the block and append the form
   block.textContent = '';
