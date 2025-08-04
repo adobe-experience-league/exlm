@@ -1,0 +1,19 @@
+body.learning-collections main {
+  position: relative;
+  display: grid;
+  margin: 0 auto;
+  max-width: var(--secondary-max-width);
+  grid-template-columns: 214px 1fr;
+  min-height: 540px;
+  align-items: start;
+}
+
+body.learning-collections main > :nth-child(2) {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+body.learning-collections main > :nth-child(1) {
+  grid-column: 2;
+  grid-row: 1;
+}

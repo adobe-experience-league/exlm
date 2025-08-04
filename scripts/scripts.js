@@ -158,6 +158,7 @@ export const isPerspectivePage = matchesAnyTheme(/articles/);
 export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
+export const isLearningCollectionsPage = matchesAnyTheme(/^learning-collections.*/);
 
 /**
  * add a section for the left rail when on a browse page.
@@ -199,6 +200,17 @@ function addProfileRail(main) {
   profileRailSection.classList.add('profile-rail-section');
   profileRailSection.append(buildBlock('profile-rail', []));
   main.append(profileRailSection);
+}
+
+/**
+ * Add a left rail to the learning collections page.
+ * @param {HTMLElement} main
+ */
+function addLearningCollectionsPageRail(main) {
+  const lcPageRailSection = document.createElement('div');
+  lcPageRailSection.classList.add('learning-collections-page-rail-section');
+  lcPageRailSection.append(buildBlock('learning-collections-page-rail', []));
+  main.append(lcPageRailSection);
 }
 
 /**
@@ -279,6 +291,9 @@ function buildAutoBlocks(main, isFragment = false) {
       }
       if (isProfilePage) {
         addProfileRail(main);
+      }
+      if (isLearningCollectionsPage) {
+        addLearningCollectionsPageRail(main);
       }
     }
   } catch (error) {
