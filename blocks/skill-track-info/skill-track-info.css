@@ -32,8 +32,10 @@
 
 /* Progress section */
 .skill-track-info .progress-section {
+  display: flex;
+  justify-content: space-between;
   gap: 20px;
-  flex-shrink: 0;
+  margin-top: 20px;
 }
 
 /* Progress text */

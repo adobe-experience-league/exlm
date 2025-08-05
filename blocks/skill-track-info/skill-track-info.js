@@ -102,9 +102,15 @@ export default async function decorate(block) {
     stepSelectorContainer.appendChild(dropdownForm);
 
     // Assemble the layout
+    const progressSectionWrapper = document.createElement('div');
+    progressSectionWrapper.className = 'progress-section-wrapper';
 
-    progressSection.appendChild(progressText);
-    progressSection.appendChild(progressBar);
+    
+    progressSectionWrapper.appendChild(progressText);
+    progressSectionWrapper.appendChild(progressBar);
+
+    progressSection.appendChild(progressSectionWrapper);
+    
     progressSection.appendChild(stepSelectorContainer);
 
     contentArea.appendChild(title);
