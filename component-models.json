@@ -7325,7 +7325,7 @@
         "label": "Lesson Page URL",
         "description": "URL to the lesson page",
         "validation": {
-          "rootPath": "/content/exlm/global/en/learning-collections-home/"
+          "rootPath": "/content/exlm/global/en/learning-collections/"
         }
       },
       {
@@ -7336,7 +7336,7 @@
         "label": "Lesson Page URL",
         "description": "URL to the lesson page",
         "validation": {
-          "rootPath": "/content/exlm/global/en/learning-collections-home/"
+          "rootPath": "/content/exlm/global/en/learning-collections/"
         }
       }
     ]
@@ -7352,7 +7352,7 @@
         "label": "Lesson Page URL",
         "description": "URL to the lesson page",
         "validation": {
-          "rootPath": "/content/exlm/global/en/learning-collections-home/"
+          "rootPath": "/content/exlm/global/en/learning-collections/"
         }
       }
     ]
