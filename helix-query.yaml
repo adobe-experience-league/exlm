@@ -861,12 +861,18 @@ indices:
         select: head > meta[name="robots"]
         value: attribute(el, "content")
       skillTrackHeader:
-        selectFirst: div.skill-track-header > div:first-child
+        selectFirst: div.skill-track-meta > div:first-child
         value: textContent(el)
       skillTrackDescription:
-        selectFirst: div.skill-track-header > div:nth-child(2) > div
+        selectFirst: div.skill-track-meta > div:nth-child(2) > div
         value: innerHTML(el)
-      skillTracks:
+      skillTrackRecap:
+        selectFirst: div.skill-track-meta > div:nth-child(3) a
+        value: attribute(el, 'href')
+      skillTrackQuiz:
+        selectFirst: div.skill-track-meta > div:nth-child(4) a
+        value: attribute(el, 'href')
+      skillTrackSteps:
         select: div.skill-track a
         values: attribute(el, 'href')
 
