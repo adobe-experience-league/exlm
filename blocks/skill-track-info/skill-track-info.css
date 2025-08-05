@@ -1,0 +1,169 @@
+.skill-track-info-wrapper {
+  width: 100%;
+}
+
+.skill-track-info .back-to-collection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--background-color);
+  border: none;
+  border-radius: 4px;
+  padding: 8px;
+  color: var(--text-color);
+  font-size: 12px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.skill-track-info .back-to-collection:hover {
+  background: var(--spectrum-gray-200);
+}
+
+/* Title */
+.skill-track-info .skill-track-title {
+  font-size: 28px;
+  color: var(--text-color);
+  margin: 0;
+  line-height: 1.2;
+  flex: 1;
+}
+
+/* Progress section */
+.skill-track-info .progress-section {
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+/* Progress text */
+.skill-track-info .progress-text {
+  font-size: 14px;
+  color: #666;
+  white-space: nowrap;
+}
+
+/* Progress bar */
+.skill-track-info .progress-bar {
+  width: 200px;
+  height: 8px;
+  background: #e8e8e8;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.skill-track-info .progress-fill {
+  height: 100%;
+  background: #06c;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Step selector container */
+.skill-track-info .step-selector-container {
+  min-width: 250px;
+}
+
+/* Custom styles for dropdown utility within skill-track-info */
+.skill-track-info .custom-filter-dropdown {
+  width: 100%;
+}
+
+.skill-track-info .custom-filter-dropdown button {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  color: #333;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.skill-track-info .custom-filter-dropdown button:hover {
+  border-color: #06c;
+}
+
+.skill-track-info .custom-filter-dropdown .custom-filter-dropdown-name {
+  flex: 1;
+}
+
+.skill-track-info .custom-filter-dropdown .icon-chevron {
+  width: 12px;
+  height: 12px;
+  color: #666;
+  transition: transform 0.2s ease;
+}
+
+.skill-track-info .custom-filter-dropdown.open .icon-chevron {
+  transform: rotate(180deg);
+}
+
+.skill-track-info .filter-dropdown-content {
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 10%);
+}
+
+.skill-track-info .custom-checkbox {
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.skill-track-info .custom-checkbox:hover {
+  background: #f5f5f5;
+}
+
+.skill-track-info .custom-checkbox input[type='checkbox'] {
+  display: none;
+}
+
+.skill-track-info .custom-checkbox label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  width: 100%;
+}
+
+.skill-track-info .custom-checkbox .title {
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
+}
+
+.skill-track-info .custom-checkbox .title:hover {
+  color: #06c;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .skill-track-info .skill-track-content {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .skill-track-info .progress-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .skill-track-info .progress-bar {
+    width: 100%;
+  }
+
+  .skill-track-info .step-selector-container {
+    width: 100%;
+  }
+
+  .skill-track-info .skill-track-title {
+    font-size: 24px;
+  }
+}
