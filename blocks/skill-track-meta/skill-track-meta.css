@@ -1,8 +1,6 @@
+/* Simple outline for skill track meta */
 .skill-track-meta {
+  border: 2px solid var(--spectrum-gray-500);
   text-align: center;
-  padding: var(--spectrum-spacing-300);
-  background-color: var(--highlight-light-background-color);
-  border-radius: 8px;
-  box-shadow: 0 2px 8px var(--box-back-drop-shadow);
-  margin-bottom: var(--spectrum-spacing-400);
+  margin-bottom: var(--spectrum-spacing-200);
 }
