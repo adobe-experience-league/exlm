@@ -388,7 +388,7 @@ function handleUriHash() {
   if (filtersInfo.length && window.headlessBaseSolutionQuery) {
     const resetPageIndex = pageNumber === 1;
     const fireSelection = true;
-    handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex);
+    handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex, pageNumber);
   }
   updateClearFilterStatus(browseFiltersSection);
   window.headlessSearchEngine.executeFirstSearch();
@@ -427,7 +427,8 @@ function constructFilterPagination(block) {
         window.headlessPager.selectPage(newPageNumber);
         const fireSelection = true;
         const resetPageIndex = false;
-        handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex);
+        const targetPageNumber = newPageNumber;
+        handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex, targetPageNumber);
       }
     });
   });
@@ -447,6 +448,8 @@ function constructFilterPagination(block) {
           e.target.value = window.headlessPager?.state?.currentPage || 1;
         } else {
           window.headlessPager.selectPage(newPageNum);
+          const searchAction = window.headlessSearchActionCreators.executeSearch(window.logSearchboxSubmit());
+          window.headlessSearchEngine.dispatch(searchAction);
         }
       }
     });
@@ -461,6 +464,8 @@ function constructFilterPagination(block) {
       }
       if (e.key === 'Enter') {
         window.headlessPager.selectPage(+e.target.value);
+        const searchAction = window.headlessSearchActionCreators.executeSearch(window.logSearchboxSubmit());
+        window.headlessSearchEngine.dispatch(searchAction);
       }
     });
   }
