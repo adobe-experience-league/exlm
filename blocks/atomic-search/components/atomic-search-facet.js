@@ -66,6 +66,8 @@ export default function atomicFacetHandler(baseElement, placeholders) {
         if (isChildFacet) {
           // child facet click.
           if (onlyOptionClicked === true) {
+            const filterOption = facet.querySelector(`.filter-option`);
+            const isAllFilter = filterOption.dataset.type === 'all';
             const parentFacetType = parentFacet.dataset.contenttype;
             const allChildFacets = facet.parentElement.querySelectorAll(`[data-parent="${parentFacetType}"]`);
             if (parentFacetIsSelected) {
@@ -74,7 +76,12 @@ export default function atomicFacetHandler(baseElement, placeholders) {
             }
             allChildFacets.forEach((childFacet) => {
               const isCurrentFacet = childFacet === facet;
-              if (
+              if (isAllFilter) {
+                if (childFacet.firstElementChild.ariaChecked === 'false') {
+                  filtersChanged = true;
+                  childFacet.firstElementChild.click();
+                }
+              } else if (
                 (!isCurrentFacet && childFacet.firstElementChild.ariaChecked === 'true') ||
                 (isCurrentFacet && childFacet.firstElementChild.ariaChecked === 'false')
               ) {
@@ -123,7 +130,7 @@ export default function atomicFacetHandler(baseElement, placeholders) {
 
       const debouncedHandler = debounce(100, clickHandler);
       facet.addEventListener('click', debouncedHandler);
-      const onlyFilterEl = facet.querySelector(`[part="only-facet-btn"]`);
+      const onlyFilterEl = facet.querySelector(`.filter-option`);
       if (onlyFilterEl) {
         const filterHandler = (e) => {
           e.stopImmediatePropagation();
@@ -200,6 +207,16 @@ export default function atomicFacetHandler(baseElement, placeholders) {
         const facetIsSelected = parentSelected || atleastOneChildSelected;
 
         sortedGroup.forEach((el) => {
+          const optionSelected = el.querySelector('button')?.getAttribute('aria-checked') === 'true';
+          const filterOption = el.querySelector(`.filter-option`);
+
+          if (optionSelected) {
+            filterOption.dataset.type = 'all';
+            filterOption.innerHTML = 'All';
+          } else {
+            filterOption.dataset.type = 'only';
+            filterOption.innerHTML = 'Only';
+          }
           if (facetIsSelected && !el.part?.contains('facet-missing-parent')) {
             el.part.remove('facet-hide-element');
           } else {
@@ -311,7 +328,7 @@ export default function atomicFacetHandler(baseElement, placeholders) {
         facet.dataset.childfacet = 'true';
         const spanElement = facet.querySelector('.value-label');
         const onlyLabel = placeholders.searchContentOnlyLabel ?? 'Only';
-        const onlyFilterEl = htmlToElement(`<span part="only-facet-btn">${onlyLabel}</span>`);
+        const onlyFilterEl = htmlToElement(`<span class="filter-option" part="only-facet-btn">${onlyLabel}</span>`);
         facet.appendChild(onlyFilterEl);
         if (spanElement) {
           spanElement.textContent = facetName;
