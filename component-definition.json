@@ -1564,6 +1564,64 @@
               }
             }
           }
+        },
+        {
+          "title": "Skill Track Meta",
+          "id": "skill-track-meta",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Skill Track Meta",
+                  "model": "skill-track-meta",
+                  "title": "Skill Track Title",
+                  "titleType": "h1",
+                  "description": "Skill Track Description",
+                  "recap_url": "",
+                  "quiz_url": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Skill Track",
+          "id": "skill-track",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Skill Track",
+                  "model": "skill-track",
+                  "filter": "skill-track",
+                  "item": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Step",
+                    "model": "step",
+                    "step_url": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Step",
+          "id": "step",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Step",
+                  "model": "step",
+                  "step_url": ""
+                }
+              }
+            }
+          }
         }
       ]
     }
