@@ -67,7 +67,8 @@
       "notification-banner",
       "code",
       "playlist-browse",
-      "atomic-search"
+      "atomic-search",
+      "quiz"
     ]
   },
   {
@@ -357,6 +358,10 @@
   {
     "id": "topic-results",
     "components": []
+  },
+  {
+    "id": "quiz",
+    "components": ["question"]
   },
   {
     "id": "rte-custom-options",

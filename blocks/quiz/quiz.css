@@ -1,0 +1,65 @@
+.quiz-container {
+  max-width: 800px;
+  margin: var(--spectrum-spacing-400) auto;
+  padding: var(--spectrum-spacing-300);
+  background-color: var(--highlight-light-background-color);
+  border-radius: 8px;
+  box-shadow: var(--box-shadow-2);
+}
+
+.questions-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spectrum-spacing-400);
+}
+
+/* Question form styling */
+.question-form {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--spectrum-spacing-300);
+}
+
+.question-submit-button {
+  display: block;
+  padding: 0.75rem 2.5rem;
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-semi-bold);
+  text-transform: uppercase;
+  border: none;
+  border-radius: 50px;
+  background-color: var(--non-spectrum-adobe-red);
+  color: var(--background-color);
+  cursor: pointer;
+  margin: var(--spectrum-spacing-200) auto 0;
+  transition: background-color 0.2s ease;
+}
+
+.question-submit-button:hover {
+  background-color: var(--non-spectrum-adobe-dark-red);
+}
+
+.question-submit-button:disabled {
+  background-color: var(--spectrum-gray-400);
+  cursor: not-allowed;
+}
+
+/* Ensure feedback appears below submit button */
+.question-feedback {
+  margin-top: var(--spectrum-spacing-200);
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-weight: var(--font-weight-semi-bold);
+  text-align: center;
+}
+
+/* Feedback styling */
+.question-feedback.correct {
+  background-color: var(--spectrum-green-100);
+  color: var(--spectrum-green-900);
+}
+
+.question-feedback.incorrect {
+  background-color: var(--spectrum-red-100);
+  color: var(--spectrum-red-900);
+}
