@@ -651,7 +651,7 @@
 
 .slides:not(:has(.container.as-docs)) {
   border-radius: 16px;
-  background-color: var(--spectrum-gray-300);
+  background-color: var(--spectrum-gray-200);
   padding: 16px;
 }
 
