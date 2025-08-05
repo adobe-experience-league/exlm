@@ -19,7 +19,7 @@ export function generateSkillTrackHeaderDOM(block) {
 }
 
 export default function decorate(block) {
-  block.classList.add('skill-track-header');
+  block.classList.add('skill-track-meta');
   const dom = generateSkillTrackHeaderDOM(block);
   block.textContent = '';
   block.append(dom);

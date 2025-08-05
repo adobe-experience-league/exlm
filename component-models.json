@@ -7212,7 +7212,7 @@
     "fields": []
   },
   {
-    "id": "skill-track-header",
+    "id": "skill-track-meta",
     "fields": [
       {
         "component": "text",
@@ -7220,7 +7220,7 @@
         "name": "title",
         "value": "",
         "label": "Title",
-        "description": "Sets the title for the skill track header."
+        "description": "Sets the title for the skill track."
       },
       {
         "component": "select",
@@ -7261,7 +7261,7 @@
         "name": "description",
         "value": "",
         "label": "Description",
-        "description": "Sets the description for the skill track header."
+        "description": "Sets the description for the skill track."
       },
       {
         "component": "aem-content",

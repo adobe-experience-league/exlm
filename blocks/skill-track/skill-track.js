@@ -6,7 +6,7 @@ export default function decorate(block) {
   // Get all rows
   const rows = [...block.children];
 
-  rows.forEach((row) => {
+  rows.forEach(() => {
     block.classList.add('skill-track-step');
   });
 }
