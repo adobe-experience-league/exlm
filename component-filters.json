@@ -24,6 +24,10 @@
     "components": ["sign-up-flow-section"]
   },
   {
+    "id": "main-learning-collections",
+    "components": ["section", "learning-collections-page-section", "tab-section"]
+  },
+  {
     "id": "section",
     "components": [
       "text",
@@ -251,6 +255,10 @@
       "recently-reviewed",
       "qualtrics"
     ]
+  },
+  {
+    "id": "learning-collections-page-section",
+    "components": ["text", "title", "button", "image", "announcement-ribbon"]
   },
   {
     "id": "sign-up-flow-section",
