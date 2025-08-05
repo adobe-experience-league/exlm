@@ -207,7 +207,6 @@ function html(content, placeholders) {
 }
 
 export default async function decorate(block) {
-  import('../../scripts/coachmark/coachmark.js'); // async load it.
   const placeHolderPromise = fetchLanguagePlaceholders();
   const [firstChildBlock, ...restOfBlock] = block.children;
   const baseHeadingElement = firstChildBlock.querySelector('h2');
@@ -299,6 +298,12 @@ export default async function decorate(block) {
   });
 
   content.sections = sections || [];
+  
+  // Check if any steps have callouts (coachmarks) before rendering
+  const hasCoachmarks = content.sections.some(sec => 
+    sec.steps.some(step => step.visual.callouts?.length > 0)
+  );
+  
   const placeholders = await placeHolderPromise;
   block.innerHTML = html(content, placeholders);
 
@@ -316,5 +321,14 @@ export default async function decorate(block) {
   block.style.visibility = '';
   decorateIcons(block);
   decoratePlaceholders(block);
+  
+  // Load coachmark only if coachmarks are present in the content
+  if (hasCoachmarks) {
+    import('../../scripts/coachmark/coachmark.js').catch(() => {
+      // eslint-disable-next-line no-console
+      console.log('Coachmark failed to load');
+    });
+  }
+  
   return block;
 }
