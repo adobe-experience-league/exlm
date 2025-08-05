@@ -46,6 +46,14 @@ export function generateQuestionDOM(block) {
   block.dataset.correctFeedback = correctFeedback;
   block.dataset.incorrectFeedback = incorrectFeedback;
   
+  // Create question number label (e.g., "Question 1 of 3")
+  const questionNumberElement = document.createElement('p');
+  questionNumberElement.classList.add('question-number');
+  const questionIndex = (parseInt(block.dataset.questionIndex, 10) || 0) + 1;
+  const totalQuestions = parseInt(block.dataset.totalQuestions, 10) || 1;
+  questionNumberElement.textContent = `Question ${questionIndex} of ${totalQuestions}`;
+  questionContainer.appendChild(questionNumberElement);
+  
   // Create question text
   const questionTextElement = document.createElement('p');
   questionTextElement.classList.add('question-text');
@@ -62,44 +70,31 @@ export function generateQuestionDOM(block) {
   answersContainer.classList.add('answers-container');
   questionContainer.appendChild(answersContainer);
   
-  // Create answer options
-  answers.forEach((answer, answerIndex) => {
-    const answerOption = document.createElement('div');
-    answerOption.classList.add('answer-option');
-    answerOption.style.display = 'flex';
-    answerOption.style.alignItems = 'center';
-    answerOption.style.marginBottom = '2rem';
-    answerOption.style.position = 'relative';
-    answerOption.style.textAlign = 'left';
-    
-    // Create input element
-    const input = document.createElement('input');
-    input.type = isMultipleChoice ? 'checkbox' : 'radio';
-    input.name = `question-${block.dataset.questionIndex || 0}`;
-    input.id = `question-${block.dataset.questionIndex || 0}-answer-${answerIndex}`;
-    input.value = answerIndex + 1; // 1-based index for answers
-    input.classList.add('answer-input');
-    input.style.margin = '0';
-    input.style.width = '15px';
-    input.style.height = '15px';
-    input.style.marginRight = '0.75rem';
-    input.style.display = 'inline-block';
-    input.style.verticalAlign = 'middle';
-    input.style.position = 'static';
-    input.style.opacity = '1';
-    answerOption.appendChild(input);
-    
-    // Create label element
-    const label = document.createElement('label');
-    label.htmlFor = input.id;
-    label.textContent = answer;
-    label.style.display = 'inline-block';
-    label.style.verticalAlign = 'middle';
-    answerOption.appendChild(label);
-    
-    // Add to answers container
-    answersContainer.appendChild(answerOption);
-  });
+answers.forEach((answer, answerIndex) => {
+  const answerOption = document.createElement('div');
+  answerOption.classList.add('answer-option');
+
+  // Create input element
+  const input = document.createElement('input');
+  input.type = isMultipleChoice ? 'checkbox' : 'radio';
+  input.name = `question-${block.dataset.questionIndex || 0}`;
+  input.id = `question-${block.dataset.questionIndex || 0}-answer-${answerIndex}`;
+  input.value = answerIndex + 1; // 1-based index for answers
+  input.classList.add('answer-input');
+
+  answerOption.appendChild(input);
+
+  // Create label element
+  const label = document.createElement('label');
+  label.htmlFor = input.id;
+  label.textContent = answer;
+  label.classList.add('answer-label');
+
+  answerOption.appendChild(label);
+
+  // Add to answers container
+  answersContainer.appendChild(answerOption);
+});
   
   // Create feedback element (hidden initially)
   const feedbackElement = document.createElement('div');
