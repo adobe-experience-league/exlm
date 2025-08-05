@@ -20,7 +20,7 @@ function checkQuestionAnswer(questionElement) {
       selectedAnswers.every((answer) => correctAnswers.includes(answer))
     );
   }
-  
+
   // For single choice questions
   const selectedAnswer = questionElement.querySelector('input[type="radio"]:checked');
   return selectedAnswer && correctAnswers.includes(parseInt(selectedAnswer.value, 10));
