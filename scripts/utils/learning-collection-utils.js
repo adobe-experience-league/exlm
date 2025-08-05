@@ -1,15 +1,54 @@
 import { fetchJson, getPathDetails } from '../scripts.js';
 
+// Cache key for session storage
+const LEARNING_COLLECTIONS_CACHE_KEY = 'learning_collections_data';
+
+/**
+ * Gets cached data from session storage
+ * @returns {Array|null} Cached data or null if not found
+ */
+function getCachedData() {
+  try {
+    const cached = sessionStorage.getItem(LEARNING_COLLECTIONS_CACHE_KEY);
+    return cached ? JSON.parse(cached) : null;
+  } catch (error) {
+    console.warn('Error reading from session storage:', error);
+    return null;
+  }
+}
+
+/**
+ * Stores data in session storage
+ * @param {Array} data - Data to cache
+ */
+function setCachedData(data) {
+  try {
+    sessionStorage.setItem(LEARNING_COLLECTIONS_CACHE_KEY, JSON.stringify(data));
+  } catch (error) {
+    console.warn('Error writing to session storage:', error);
+  }
+}
+
 /**
  * Fetches learning collection data from the JSON index file
  * @returns {Promise<Array>} Learning collection data
  */
 export async function fetchData() {
   try {
+    // Check session storage first
+    const cachedData = getCachedData();
+    if (cachedData) {
+      return cachedData;
+    }
+
     const { lang } = getPathDetails();
     const path = `${window.hlx.codeBasePath}/${lang}/learning-collections.json`;
     const fallback = `${window.hlx.codeBasePath}/en/learning-collections.json`;
     const resp = await fetchJson(path, fallback);
+    
+    // Cache the fetched data
+    setCachedData(resp);
+    
     return resp;
   } catch (error) {
     console.error('Error fetching learning collection data:', error);
