@@ -10,6 +10,7 @@ import {
   isDesktopView,
   state,
 } from './slider-utils.js';
+import '../../scripts/coachmark/coachmark.js';
 
 function html(content, placeholders) {
   const isDesktopUI = isDesktopView();
@@ -299,11 +300,6 @@ export default async function decorate(block) {
 
   content.sections = sections || [];
   
-  // Check if any steps have callouts (coachmarks) before rendering
-  const hasCoachmarks = content.sections.some(sec => 
-    sec.steps.some(step => step.visual.callouts?.length > 0)
-  );
-  
   const placeholders = await placeHolderPromise;
   block.innerHTML = html(content, placeholders);
 
@@ -321,14 +317,6 @@ export default async function decorate(block) {
   block.style.visibility = '';
   decorateIcons(block);
   decoratePlaceholders(block);
-  
-  // Load coachmark only if coachmarks are present in the content
-  if (hasCoachmarks) {
-    import('../../scripts/coachmark/coachmark.js').catch(() => {
-      // eslint-disable-next-line no-console
-      console.log('Coachmark failed to load');
-    });
-  }
   
   return block;
 }
