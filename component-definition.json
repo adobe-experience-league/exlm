@@ -1577,6 +1577,11 @@
                   "name": "Skill Track",
                   "model": "skill-track",
                   "filter": "skill-track",
+                  "title": "Skill Track Title",
+                  "titleType": "h1",
+                  "description": "Skill Track Description",
+                  "recap_url": "",
+                  "quiz_url":"",
                   "item": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Lesson",
