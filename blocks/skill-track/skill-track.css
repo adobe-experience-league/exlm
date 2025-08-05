@@ -1,48 +1,6 @@
-.skill-track-wrapper {
-  background-color: var(--spectrum-gray-100);
-  padding: var(--spectrum-spacing-100);
-  border-radius: var(--spectrum-spacing-100);
-}
-
-.skill-track {
-  margin: 0;
-  padding: var(--spectrum-spacing-100);
-  background-color: var(--background-color);
-  border-radius: var(--spectrum-spacing-100);
-  box-shadow: 0 2px 8px var(--box-back-drop-shadow);
-  counter-reset: lesson-counter;
-}
-
-/* Lesson container styling - vertical list */
+/* Adding a small divider between steps */
 .skill-track > div {
-  position: relative;
-  counter-increment: lesson-counter;
-  padding-left: 3rem;
-  margin-bottom: var(--spectrum-spacing-100);
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
   border-bottom: 1px solid var(--spectrum-gray-200);
   padding-bottom: var(--spectrum-spacing-100);
-}
-
-.skill-track > div:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-}
-
-/* Create the numbered circle */
-.skill-track > div::before {
-  content: counter(lesson-counter);
-  position: absolute;
-  left: 0;
-  width: 2rem;
-  height: 2rem;
-  background-color: var(--non-spectrum-navy-blue);
-  color: var(--background-color);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spectrum-spacing-100);
 }

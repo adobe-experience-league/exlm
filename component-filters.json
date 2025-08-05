@@ -362,7 +362,7 @@
   },
   {
     "id": "skill-track",
-    "components": ["lesson"]
+    "components": ["step"]
   },
   {
     "id": "rte-custom-options",

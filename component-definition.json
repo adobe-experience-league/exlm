@@ -1560,7 +1560,9 @@
                   "model": "skill-track-header",
                   "title": "Skill Track Title",
                   "titleType": "h1",
-                  "description": "Skill Track Description"
+                  "description": "Skill Track Description",
+                  "recap_url": "",
+                  "quiz_url": ""
                 }
               }
             }
@@ -1577,16 +1579,11 @@
                   "name": "Skill Track",
                   "model": "skill-track",
                   "filter": "skill-track",
-                  "title": "Skill Track Title",
-                  "titleType": "h1",
-                  "description": "Skill Track Description",
-                  "recap_url": "",
-                  "quiz_url":"",
                   "item": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
-                    "name": "Lesson",
-                    "model": "lesson",
-                    "lesson_url": ""
+                    "name": "Step",
+                    "model": "step",
+                    "step_url": ""
                   }
                 }
               }
@@ -1594,16 +1591,16 @@
           }
         },
         {
-          "title": "Lesson",
-          "id": "lesson",
+          "title": "Step",
+          "id": "step",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block/item",
                 "template": {
-                  "name": "Lesson",
-                  "model": "lesson",
-                  "lesson_url": ""
+                  "name": "Step",
+                  "model": "step",
+                  "step_url": ""
                 }
               }
             }

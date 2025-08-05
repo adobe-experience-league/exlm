@@ -7262,68 +7262,14 @@
         "value": "",
         "label": "Description",
         "description": "Sets the description for the skill track header."
-      }
-    ]
-  },
-  {
-    "id": "skill-track",
-    "fields": [
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "title",
-        "value": "",
-        "label": "Title",
-        "description": "Sets the title for the skill track header."
-      },
-      {
-        "component": "select",
-        "valueType": "string",
-        "name": "titleType",
-        "value": "h1",
-        "label": "Heading Type",
-        "options": [
-          {
-            "name": "H1",
-            "value": "h1"
-          },
-          {
-            "name": "H2",
-            "value": "h2"
-          },
-          {
-            "name": "H3",
-            "value": "h3"
-          },
-          {
-            "name": "H4",
-            "value": "h4"
-          },
-          {
-            "name": "H5",
-            "value": "h5"
-          },
-          {
-            "name": "H6",
-            "value": "h6"
-          }
-        ]
-      },
-      {
-        "component": "richtext",
-        "valueType": "string",
-        "name": "description",
-        "value": "",
-        "label": "Description",
-        "description": "Sets the description for the skill track header."
       },
       {
         "component": "aem-content",
         "valueType": "string",
         "name": "recap_url",
         "value": "",
-        "label": "Lesson Page URL",
-        "description": "URL to the lesson page",
+        "label": "Recap URL",
+        "description": "URL to recap",
         "validation": {
           "rootPath": "/content/exlm/global/en/learning-collections/"
         }
@@ -7333,8 +7279,8 @@
         "valueType": "string",
         "name": "quiz_url",
         "value": "",
-        "label": "Lesson Page URL",
-        "description": "URL to the lesson page",
+        "label": "Quiz page URL",
+        "description": "URL to the quiz page",
         "validation": {
           "rootPath": "/content/exlm/global/en/learning-collections/"
         }
@@ -7342,15 +7288,19 @@
     ]
   },
   {
-    "id": "lesson",
+    "id": "skill-track",
+    "fields": []
+  },
+  {
+    "id": "step",
     "fields": [
       {
         "component": "aem-content",
         "valueType": "string",
-        "name": "lesson_url",
+        "name": "step_url",
         "value": "",
-        "label": "Lesson Page URL",
-        "description": "URL to the lesson page",
+        "label": "Step Page URL",
+        "description": "URL to the step",
         "validation": {
           "rootPath": "/content/exlm/global/en/learning-collections/"
         }
