@@ -49,9 +49,8 @@ export function generateQuestionDOM(block) {
   // Create question number label (e.g., "Question 1 of 3")
   const questionNumberElement = document.createElement('p');
   questionNumberElement.classList.add('question-number');
-  const questionIndex = (parseInt(block.dataset.questionIndex, 10) || 0) + 1;
-  const totalQuestions = parseInt(block.dataset.totalQuestions, 10) || 1;
-  questionNumberElement.textContent = `Question ${questionIndex} of ${totalQuestions}`;
+  const questionIndex = parseInt(block.dataset.questionIndex) + 1;
+  questionNumberElement.textContent = `Question ${questionIndex} of ${block.dataset.totalQuestions}`;
   questionContainer.appendChild(questionNumberElement);
   
   // Create question text
@@ -59,11 +58,6 @@ export function generateQuestionDOM(block) {
   questionTextElement.classList.add('question-text');
   questionTextElement.textContent = questionText;
   questionContainer.appendChild(questionTextElement);
-  
-  // Create divider
-  const divider = document.createElement('hr');
-  divider.classList.add('question-divider');
-  questionContainer.appendChild(divider);
   
   // Create answers container
   const answersContainer = document.createElement('div');

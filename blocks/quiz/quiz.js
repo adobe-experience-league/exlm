@@ -59,7 +59,6 @@ function submitQuiz(questions) {
 }
 
 export default function decorate(block) {
-  block.classList.add('quiz-container');
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
   
@@ -83,8 +82,6 @@ export default function decorate(block) {
     
     // Append the generated DOM to the question
     question.append(questionDOM);
-    
-    // Move the question to the questions container
     questionsContainer.append(question);
   });
   

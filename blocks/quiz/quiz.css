@@ -1,3 +1,5 @@
+@import '../question/question.css';
+
 .quiz-container {
   max-width: 800px;
   margin: var(--spectrum-spacing-400) auto;
@@ -9,34 +11,17 @@
   flex-direction: column;
   gap: var(--spectrum-spacing-400);
 }
-.question-number {
-  font-size: var(--spectrum-font-size-200);
-  color: var(--spectrum-gray-700);
-  margin-top: 0;
-  margin-bottom: var(--spectrum-spacing-100);
-  font-weight: var(--font-weight-bold);
-}
-
-/* Question form styling */
-.question-form {
-  display: flex;
-  flex-direction: column;
-  margin-top: var(--spectrum-spacing-300);
-}
 
 .quiz-submit-button {
   display: block;
   padding: 0.75rem 2.5rem;
   font-size: var(--spectrum-font-size-200);
   font-weight: var(--font-weight-semi-bold);
-  text-transform: uppercase;
-  border: none;
   border-radius: 50px;
   background-color: #3B63FB;
   color: var(--background-color);
   cursor: pointer;
   margin: var(--spectrum-spacing-400) auto 0;
-  transition: background-color 0.2s ease;
 }
 
 .quiz-submit-button:hover {
@@ -48,7 +33,6 @@
   cursor: not-allowed;
 }
 
-/* Ensure feedback appears below submit button */
 .question-feedback {
   margin-top: var(--spectrum-spacing-200);
   padding: 0.75rem;
@@ -57,7 +41,6 @@
   text-align: center;
 }
 
-/* Feedback styling */
 .question-feedback.correct {
   background-color: var(--spectrum-green-100);
   color: var(--spectrum-green-900);
@@ -66,47 +49,4 @@
 .question-feedback.incorrect {
   background-color: var(--spectrum-red-100);
   color: var(--spectrum-red-900);
-}
-
-.answer-option {
-  display: flex !important;
-  align-items: center;
-  margin-bottom: 2rem;
-  position: relative;
-  text-align: left;
-}
-
-.answer-input {
-  margin: 0;
-  width: 15px;
-  height: 15px;
-  margin-right: 0.75rem;
-  display: inline-block;
-  vertical-align: middle;
-  position: static;
-  opacity: 1;
-}
-
-.answer-label {
-  display: inline-block;
-  vertical-align: middle;
-}
-.question-divider {
-  border: none;
-  border-top: 2px solid var(--non-spectrum-divider-gray);
-  margin: var(--spectrum-spacing-300) 0;
-  width: 100%;
-}
-
-.answer-input:checked {
-  accent-color: var(--non-spectrum-adobe-red);
-}
-
-.question-block {
-  background-color: var(--background-color);
-  padding: var(--spectrum-spacing-400);
-  border-radius: 8px;
-  border: 2px solid var(--non-spectrum-divider-gray);
-  max-width: 800px;
-  margin: 0 auto;
 }
