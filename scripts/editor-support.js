@@ -170,6 +170,12 @@ function updateUEInstrumentation() {
       setUEFilter(elem, 'sign-up-flow-section');
     });
   }
+
+  // ----- if learning-collections page, identified by theme
+  if (document.querySelector('body[class^=learning-collections]') || getMetadata('theme') === 'learning-collections') {
+    // update available sections
+    setUEFilter(main, 'main-learning-collections');
+  }
 }
 
 /**

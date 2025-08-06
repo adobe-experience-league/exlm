@@ -127,6 +127,10 @@ div.marquee-wrapper {
   display: none;
 }
 
+.marquee.fill-background .marquee-text {
+  background-color: transparent;
+}
+
 .marquee .modal {
   position: fixed;
   z-index: 10;
