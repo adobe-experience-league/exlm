@@ -24,3 +24,7 @@ body.learning-collections .section,
   max-width: 728px;
   margin: 0 auto;
 }
+
+body.learning-collections .skill-track-info-section {
+  border-bottom: 1px solid var(--spectrum-gray-200);
+}
