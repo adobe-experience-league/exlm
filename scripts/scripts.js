@@ -634,24 +634,24 @@ export function getConfig() {
       env: 'PROD',
       cdn: 'experienceleague.adobe.com',
       authorUrl: 'author-p122525-e1219150.adobeaemcloud.com',
-      hlxPreview: 'main--exlm-prod--adobe-experience-league.hlx.page',
-      hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
+      hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.hlx.page$/,
+      hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.hlx.live$/,
       community: 'experienceleaguecommunities.adobe.com',
     },
     {
       env: 'STAGE',
       cdn: 'experienceleague-stage.adobe.com',
       authorUrl: 'author-p122525-e1219192.adobeaemcloud.com',
-      hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
-      hlxLive: 'main--exlm-stage--adobe-experience-league.live',
+      hlxPreview: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).page$/,
+      hlxLive: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-dev.adobe.com',
     },
     {
       env: 'DEV',
       cdn: 'experienceleague-dev.adobe.com',
       authorUrl: 'author-p122525-e1200861.adobeaemcloud.com',
-      hlxPreview: 'main--exlm--adobe-experience-league.hlx.page',
-      hlxLive: 'main--exlm--adobe-experience-league.hlx.live',
+      hlxPreview: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).page$/,
+      hlxLive: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-dev.adobe.com',
     },
   ];
@@ -692,7 +692,9 @@ export function getConfig() {
 
   const currentHost = window.location.hostname;
   const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
-  const currentEnv = HOSTS.find((hostObj) => Object.values(hostObj).includes(currentHost));
+  const currentEnv = HOSTS.find((hostObj) =>
+    Object.values(hostObj).some((val) => (val instanceof RegExp ? val.test(currentHost) : val === currentHost)),
+  );
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const communityHost = currentEnv?.community || defaultEnv.community;
   const cdnOrigin = `https://${cdnHost}`;
