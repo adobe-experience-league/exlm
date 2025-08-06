@@ -256,7 +256,7 @@ button.toc-dropdown-button {
   transform: rotateZ(225deg);
 }
 
-.mini-toc-container .rail-content {
+.toc-container .rail-content {
   width: 100%;
   position: sticky;
   top: -1px;
