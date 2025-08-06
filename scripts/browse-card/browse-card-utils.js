@@ -98,9 +98,11 @@ export const getCardData = async (articlePath, placeholders) => {
     product: solutions,
     authorInfo: {
       name: getMetadata('author-name', doc)
-        .split(',')
+        ?.split(',')
         .map((name) => name.trim()),
-      type: [getMetadata('author-type', doc)],
+      type: getMetadata('author-type', doc)
+        ?.split(',')
+        .map((t) => t.trim()),
     },
     tags: [],
     copyLink: fullURL,
