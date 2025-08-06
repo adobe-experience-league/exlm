@@ -20,7 +20,6 @@ body.learning-collections .section,
   display: flex;
   flex-direction: column;
   gap: 40px;
-  width: 100%;
   max-width: 728px;
   margin: 0 auto;
 }
