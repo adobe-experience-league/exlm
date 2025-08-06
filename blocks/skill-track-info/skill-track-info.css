@@ -21,6 +21,22 @@
   background: var(--spectrum-gray-200);
 }
 
+.skill-track-info .back-to-collection .icon {
+  width: 32px;
+  height: 32px;
+}
+
+.skill-track-info .back-to-collection .icon-learning-collection {
+  background-image: url('../../icons/learning-collection.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.skill-track-info .back-to-collection .back-to-collection-label {
+  font-weight: var(--font-weight-semi-bold);
+}
+
 /* Title */
 .skill-track-info .skill-track-title {
   font-size: var(--spectrum-font-size-700);
