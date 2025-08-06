@@ -1,7 +1,72 @@
 import { getCurrentStepInfo } from '../../scripts/utils/learning-collection-utils.js';
+import { fetchPlaceholders } from '../../scripts/lib-franklin.js';
 
-export default async function decorate() {
-  console.log('skill-track-nav');
+export default async function decorate(block) {
   const stepInfo = await getCurrentStepInfo();
-  console.log(stepInfo);
+  console.log('stepInfo', stepInfo);  
+  const placeholders = await fetchPlaceholders();
+
+  if (!stepInfo) return;
+
+  // Clear block and add class
+  block.textContent = '';
+  block.classList.add('skill-track-nav');
+
+  // Find current step
+  const currentStepIndex = stepInfo.skillTrackSteps.findIndex(step => step.url === window.location.pathname);
+
+  // Create container
+  const container = document.createElement('div');
+  container.className = 'skill-track-nav-buttons';
+
+  // Go Back link
+  const goBackLink = document.createElement('a');
+  goBackLink.className = 'button skill-track-nav-button skill-track-nav-back secondary';
+  goBackLink.textContent = placeholders['learning-collection-go-back'] || 'Go Back';
+  
+  // Disable go back button if on first step
+  if (currentStepIndex === 0) {
+    goBackLink.classList.add('disabled');
+    goBackLink.href = '#';
+    goBackLink.style.pointerEvents = 'none';
+    goBackLink.style.opacity = '0.5';
+  } else {
+    goBackLink.href = stepInfo.prevStep || '#';
+  }
+
+  // Second link based on step type
+  const secondLink = document.createElement('a');
+  secondLink.className = 'button skill-track-nav-button';
+
+  // Check if recap or quiz step - use root level properties
+  const isRecap = stepInfo?.isRecap || false;
+  const isQuiz = stepInfo?.isQuiz || false;
+
+  if (isRecap) {
+    // Take Quiz link
+    secondLink.classList.add('skill-track-nav-quiz');
+    secondLink.textContent = placeholders['learning-collection-take-quiz'] || 'Take Quiz';
+    secondLink.href = stepInfo.skillTrackQuiz || '#';
+  } else if (isQuiz) {
+    // Submit Answers link
+    secondLink.classList.add('skill-track-nav-submit');
+    secondLink.textContent = placeholders['learning-collection-submit-answers'] || 'Submit Answers';
+    secondLink.href = '#';
+    secondLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      // Add submit logic here
+    });
+  } else {
+    // Next link
+    secondLink.classList.add('skill-track-nav-next');
+    secondLink.textContent = placeholders['learning-collection-next'] || 'Next';
+    secondLink.href = stepInfo.nextStep || '#';
+  }
+
+  // Add links to container
+  container.appendChild(goBackLink);
+  container.appendChild(secondLink);
+
+  // Add to block
+  block.appendChild(container);
 }
