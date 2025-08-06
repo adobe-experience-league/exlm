@@ -27,7 +27,7 @@
 }
 
 .mini-toc-wrapper .mini-toc .scrollable-div:hover {
-  overflow: hidden auto;
+  overflow: hidden scroll;
 }
 
 .mini-toc-wrapper .mini-toc h2 {
@@ -93,57 +93,10 @@
 }
 
 /* Basic active item styling */
-.mini-toc-wrapper .mini-toc ul li.is-active {
+.mini-toc-wrapper .mini-toc ul li a.is-active {
   font-weight: var(--font-weight-semi-bold);
+  background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
   color: #1e1e1e;
-  overflow-y: hidden;
-  position: relative;
-}
-
-.scrolling-down .mini-toc-wrapper .mini-toc ul li.is-active {
-  background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
-}
-
-.scrolling-up .mini-toc-wrapper .mini-toc ul li.is-active {
-  background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
-}
-
-/* Show all items when hovering over the TOC */
-.mini-toc-wrapper:hover .mini-toc ul li {
-  display: block !important;
-}
-
-/* Show all items when rail is not stuck */
-.rail-content:not(.is-stuck) .mini-toc-wrapper .mini-toc ul li {
-  display: block !important;
-}
-
-/* Hide all list items by default when TOC is collapsed */
-.rail-content.is-stuck .mini-toc-wrapper .mini-toc ul li {
-  display: none;
-}
-
-/* Show the active item */
-.rail-content.is-stuck .mini-toc-wrapper .mini-toc ul li.is-active {
-  display: inline-flex;
-  position: relative;
-  z-index: 2; /* Ensure active item is on top */
-}
-
-.rail-content .mini-toc-wrapper .mini-toc ul li.is-active a {
-  font-weight: var(--font-weight-semi-bold);
-  background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
-  color: var(--non-spectrum-eerie-black);
-}
-
-/* Show the item immediately after the active item */
-.rail-content.is-stuck .mini-toc-wrapper .mini-toc ul li.is-active + li {
-  display: inline-flex;
-}
-
-/* Show the item immediately before the active item */
-.rail-content.is-stuck .mini-toc-wrapper .mini-toc ul li.is-adjacent-prev {
-  display: inline-flex;
 }
 
 @media (width >= 600px) {
