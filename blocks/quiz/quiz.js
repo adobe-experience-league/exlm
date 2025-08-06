@@ -1,3 +1,4 @@
+import { htmlToElement } from '../../scripts/scripts.js';
 import { generateQuestionDOM } from '../question/question.js';
 
 /**
@@ -23,7 +24,7 @@ function checkQuestionAnswer(questionElement) {
 
   // For single choice questions
   const selectedAnswer = questionElement.querySelector('input[type="radio"]:checked');
-  return selectedAnswer && correctAnswers.includes(parseInt(selectedAnswer.value, 10));
+  return selectedAnswer && correctAnswers.includes(parseInt(selectedAnswer?.value || '0', 10));
 }
 
 /**
@@ -32,21 +33,22 @@ function checkQuestionAnswer(questionElement) {
  * @param {boolean} isCorrect Whether the answer is correct
  */
 function showQuestionFeedback(questionElement, isCorrect) {
-  // Create feedback element
-  const feedbackElement = document.createElement('div');
-  feedbackElement.classList.add('question-feedback');
-
   // Get custom feedback messages from data attributes
   const correctFeedback = questionElement.dataset.correctFeedback || 'Correct!';
   const incorrectFeedback = questionElement.dataset.incorrectFeedback || 'Incorrect';
 
-  // Set feedback text and class
-  feedbackElement.textContent = isCorrect ? correctFeedback : incorrectFeedback;
-  feedbackElement.classList.add(isCorrect ? 'correct' : 'incorrect');
+  // Create feedback element using htmlToElement
+  const feedbackElement = htmlToElement(`
+    <div class="question-feedback ${isCorrect ? 'correct' : 'incorrect'}">
+      ${isCorrect ? correctFeedback : incorrectFeedback}
+    </div>
+  `);
 
   // Find the question block DOM and append feedback
   const questionBlock = questionElement.querySelector('.question-block');
-  questionBlock.appendChild(feedbackElement);
+  if (questionBlock) {
+    questionBlock.appendChild(feedbackElement);
+  }
 }
 
 /**
@@ -88,11 +90,10 @@ export default function decorate(block) {
     questionsContainer.append(question);
   });
 
-  // Create a single submit button for the entire quiz
-  const submitButton = document.createElement('button');
-  submitButton.type = 'button';
-  submitButton.classList.add('quiz-submit-button');
-  submitButton.textContent = 'SUBMIT';
+  // Create a single submit button for the entire quiz using htmlToElement
+  const submitButton = htmlToElement(`
+    <button type="button" class="quiz-submit-button">SUBMIT</button>
+  `);
   submitButton.addEventListener('click', () => {
     submitQuiz(questions);
     submitButton.disabled = true;

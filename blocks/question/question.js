@@ -1,3 +1,4 @@
+import { htmlToElement } from '../../scripts/scripts.js';
 /**
  * Generates the DOM for a question
  * This function is also called by quiz.js
@@ -27,7 +28,7 @@ export function generateQuestionDOM(block) {
   let answers = [];
   const answersList = answersDiv?.querySelector('ol');
   if (answersList) {
-    answers = [...answersList.querySelectorAll('li')].map((li) => li.textContent.trim());
+    answers = [...(answersList.querySelectorAll('li') || [])].map((li) => li?.textContent?.trim() || '');
   }
 
   // Extract correct answers
@@ -49,17 +50,18 @@ export function generateQuestionDOM(block) {
   block.dataset.correctFeedback = correctFeedback;
   block.dataset.incorrectFeedback = incorrectFeedback;
 
-  // Create question number label (e.g., "Question 1 of 3")
-  const questionNumberElement = document.createElement('p');
-  questionNumberElement.classList.add('question-number');
-  const questionIndex = parseInt(block.dataset.questionIndex, 10) + 1;
-  questionNumberElement.textContent = `Question ${questionIndex} of ${block.dataset.totalQuestions}`;
+  // Create question number label (e.g., "Question 1 of 3") using htmlToElement
+  const questionIndex = parseInt(block.dataset?.questionIndex || '0', 10) + 1;
+  const totalQuestions = block.dataset?.totalQuestions || '1';
+  const questionNumberElement = htmlToElement(`
+    <p class="question-number">Question ${questionIndex} of ${totalQuestions}</p>
+  `);
   questionContainer.appendChild(questionNumberElement);
 
-  // Create question text
-  const questionTextElement = document.createElement('p');
-  questionTextElement.classList.add('question-text');
-  questionTextElement.textContent = questionText;
+  // Create question text using htmlToElement
+  const questionTextElement = htmlToElement(`
+    <p class="question-text">${questionText}</p>
+  `);
   questionContainer.appendChild(questionTextElement);
 
   // Create answers container
@@ -71,23 +73,23 @@ export function generateQuestionDOM(block) {
     const answerOption = document.createElement('div');
     answerOption.classList.add('answer-option');
 
-    // Create input element
-    const input = document.createElement('input');
-    input.type = isMultipleChoice ? 'checkbox' : 'radio';
-    input.name = `question-${block.dataset.questionIndex || 0}`;
-    input.id = `question-${block.dataset.questionIndex || 0}-answer-${answerIndex}`;
-    input.value = answerIndex + 1; // 1-based index for answers
-    input.classList.add('answer-input');
+    // Create input and label elements
+    const inputId = `question-${block.dataset?.questionIndex || 0}-answer-${answerIndex}`;
+    const inputType = isMultipleChoice ? 'checkbox' : 'radio';
+    const inputName = `question-${block.dataset?.questionIndex || 0}`;
+    const inputValue = answerIndex + 1; // 1-based index for answers
 
-    answerOption.appendChild(input);
+    const inputWithLabel = htmlToElement(`
+      <div>
+        <input type="${inputType}" name="${inputName}" id="${inputId}" value="${inputValue}" class="answer-input">
+        <label for="${inputId}" class="answer-label">${answer}</label>
+      </div>
+    `);
 
-    // Create label element
-    const label = document.createElement('label');
-    label.htmlFor = input.id;
-    label.textContent = answer;
-    label.classList.add('answer-label');
-
-    answerOption.appendChild(label);
+    // Move the elements to the answerOption div
+    while (inputWithLabel.firstChild) {
+      answerOption.appendChild(inputWithLabel.firstChild);
+    }
 
     // Add to answers container
     answersContainer.appendChild(answerOption);
