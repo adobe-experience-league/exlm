@@ -100,10 +100,6 @@
   display: block !important;
 }
 
-.rail-content:not(.is-stuck) .mini-toc-wrapper .mini-toc ul li {
-  display: block !important;
-}
-
 @keyframes slide-from-top {
   from {
     transform: translateY(-100%);

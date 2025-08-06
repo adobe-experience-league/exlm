@@ -9,20 +9,6 @@ async function decorateRail(railSection, position) {
   // wrap content in a wrapper div
   const content = document.createElement('div');
   content.classList.add('rail-content');
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        content.classList.toggle('is-stuck', !entry.isIntersecting);
-      });
-    },
-    {
-      threshold: 1,
-    },
-  );
-
-  observer.observe(content);
-
   content.replaceChildren(...railSection.children);
   railSection.replaceChildren(content);
 
