@@ -92,7 +92,7 @@ export default function decorate(block) {
   const submitButton = document.createElement('button');
   submitButton.type = 'button';
   submitButton.classList.add('quiz-submit-button');
-  submitButton.textContent = 'SUBMIT ANSWERS';
+  submitButton.textContent = 'SUBMIT';
   submitButton.addEventListener('click', () => {
     submitQuiz(questions);
     submitButton.disabled = true;
