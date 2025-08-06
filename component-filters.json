@@ -24,6 +24,10 @@
     "components": ["sign-up-flow-section"]
   },
   {
+    "id": "main-learning-collections",
+    "components": ["section", "learning-collections-page-section", "tab-section"]
+  },
+  {
     "id": "section",
     "components": [
       "text",
@@ -68,6 +72,8 @@
       "code",
       "playlist-browse",
       "atomic-search",
+      "skill-track-meta",
+      "skill-track",
       "quiz"
     ]
   },
@@ -254,6 +260,10 @@
     ]
   },
   {
+    "id": "learning-collections-page-section",
+    "components": ["text", "title", "button", "image", "announcement-ribbon"]
+  },
+  {
     "id": "sign-up-flow-section",
     "components": [
       "text",
@@ -358,6 +368,10 @@
   {
     "id": "topic-results",
     "components": []
+  },
+  {
+    "id": "skill-track",
+    "components": ["step"]
   },
   {
     "id": "quiz",
