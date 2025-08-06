@@ -49,31 +49,27 @@ export function generateQuestionDOM(block) {
   block.dataset.correctFeedback = correctFeedback;
   block.dataset.incorrectFeedback = incorrectFeedback;
 
+  // Create question number label (e.g., "Question 1 of 3")
+  const questionNumberElement = document.createElement('p');
+  questionNumberElement.classList.add('question-number');
+  const questionIndex = parseInt(block.dataset.questionIndex, 10) + 1;
+  questionNumberElement.textContent = `Question ${questionIndex} of ${block.dataset.totalQuestions}`;
+  questionContainer.appendChild(questionNumberElement);
+
   // Create question text
   const questionTextElement = document.createElement('p');
   questionTextElement.classList.add('question-text');
   questionTextElement.textContent = questionText;
   questionContainer.appendChild(questionTextElement);
 
-  // Create divider
-  const divider = document.createElement('hr');
-  divider.classList.add('question-divider');
-  questionContainer.appendChild(divider);
-
   // Create answers container
   const answersContainer = document.createElement('div');
   answersContainer.classList.add('answers-container');
   questionContainer.appendChild(answersContainer);
 
-  // Create answer options
   answers.forEach((answer, answerIndex) => {
     const answerOption = document.createElement('div');
     answerOption.classList.add('answer-option');
-    answerOption.style.display = 'flex';
-    answerOption.style.alignItems = 'center';
-    answerOption.style.marginBottom = '2rem';
-    answerOption.style.position = 'relative';
-    answerOption.style.textAlign = 'left';
 
     // Create input element
     const input = document.createElement('input');
@@ -82,22 +78,15 @@ export function generateQuestionDOM(block) {
     input.id = `question-${block.dataset.questionIndex || 0}-answer-${answerIndex}`;
     input.value = answerIndex + 1; // 1-based index for answers
     input.classList.add('answer-input');
-    input.style.margin = '0';
-    input.style.width = '15px';
-    input.style.height = '15px';
-    input.style.marginRight = '0.75rem';
-    input.style.display = 'inline-block';
-    input.style.verticalAlign = 'middle';
-    input.style.position = 'static';
-    input.style.opacity = '1';
+
     answerOption.appendChild(input);
 
     // Create label element
     const label = document.createElement('label');
     label.htmlFor = input.id;
     label.textContent = answer;
-    label.style.display = 'inline-block';
-    label.style.verticalAlign = 'middle';
+    label.classList.add('answer-label');
+
     answerOption.appendChild(label);
 
     // Add to answers container

@@ -44,47 +44,39 @@ function showQuestionFeedback(questionElement, isCorrect) {
   feedbackElement.textContent = isCorrect ? correctFeedback : incorrectFeedback;
   feedbackElement.classList.add(isCorrect ? 'correct' : 'incorrect');
 
-  // Append feedback after the form
-  const form = questionElement.querySelector('.question-form');
-  form.after(feedbackElement);
+  // Find the question block DOM and append feedback
+  const questionBlock = questionElement.querySelector('.question-block');
+  questionBlock.appendChild(feedbackElement);
+}
+
+/**
+ * Submits the quiz and shows feedback for each question
+ * @param {NodeList} questions The list of question elements
+ */
+function submitQuiz(questions) {
+  // Check each question and show feedback
+  questions.forEach((question) => {
+    const isCorrect = checkQuestionAnswer(question);
+    showQuestionFeedback(question, isCorrect);
+  });
 }
 
 export default function decorate(block) {
-  block.classList.add('quiz-container');
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
 
   const questions = [...block.children];
 
+  // Set total questions count
+  const totalQuestions = questions.length;
+
   questions.forEach((question, index) => {
-    // Set question index
+    // Set question index and total questions
     question.dataset.questionIndex = index.toString();
+    question.dataset.totalQuestions = totalQuestions.toString();
 
     // Generate the question DOM
     const questionDOM = generateQuestionDOM(question);
-
-    // Create a form for each question
-    const form = document.createElement('form');
-    form.classList.add('question-form');
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      // Check if the answer is correct
-      const isCorrect = checkQuestionAnswer(question);
-
-      // Show feedback
-      showQuestionFeedback(question, isCorrect);
-
-      // Disable submit button
-      const submitButton = form.querySelector('.question-submit-button');
-      submitButton.disabled = true;
-    });
-
-    // Create submit button for this question
-    const submitButton = document.createElement('button');
-    submitButton.type = 'submit';
-    submitButton.classList.add('question-submit-button');
-    submitButton.textContent = 'SUBMIT';
 
     question.textContent = '';
 
@@ -93,18 +85,21 @@ export default function decorate(block) {
 
     // Append the generated DOM to the question
     question.append(questionDOM);
-
-    // Append the submit button to the form
-    form.appendChild(submitButton);
-
-    // Append the form to the question
-    question.appendChild(form);
-
-    // Move the question to the questions container
     questionsContainer.append(question);
   });
 
-  // Clear the block and append the questions container
+  // Create a single submit button for the entire quiz
+  const submitButton = document.createElement('button');
+  submitButton.type = 'button';
+  submitButton.classList.add('quiz-submit-button');
+  submitButton.textContent = 'SUBMIT ANSWERS';
+  submitButton.addEventListener('click', () => {
+    submitQuiz(questions);
+    submitButton.disabled = true;
+  });
+
+  // Clear the block and build the quiz structure
   block.textContent = '';
   block.appendChild(questionsContainer);
+  block.appendChild(submitButton);
 }
