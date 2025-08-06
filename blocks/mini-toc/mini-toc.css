@@ -27,7 +27,7 @@
 }
 
 .mini-toc-wrapper .mini-toc .scrollable-div:hover {
-  overflow: hidden scroll;
+  overflow: hidden auto;
 }
 
 .mini-toc-wrapper .mini-toc h2 {
