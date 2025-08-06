@@ -256,15 +256,6 @@ button.toc-dropdown-button {
   transform: rotateZ(225deg);
 }
 
-.mini-toc-container .rail-content {
-  width: 100%;
-  position: sticky;
-  top: -1px;
-  bottom: 5px;
-  overflow-y: hidden;
-  height: max-content;
-}
-
 @media only screen and (width >= 900px) {
   .toc-container {
     height: 100%;
