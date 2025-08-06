@@ -2,24 +2,6 @@ import { fetchLanguagePlaceholders, isPerspectivePage } from '../../scripts/scri
 import { highlight, setLevels, hashFragment } from './utils.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 
-let lastScrollTop = 0;
-
-window.addEventListener('scroll', () => {
-  const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-
-  if (currentScroll > lastScrollTop) {
-    // Scrolling down
-    document.body.classList.add('scrolling-down');
-    document.body.classList.remove('scrolling-up');
-  } else {
-    // Scrolling up
-    document.body.classList.add('scrolling-up');
-    document.body.classList.remove('scrolling-down');
-  }
-
-  lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // For Mobile or negative scrolling
-});
-
 /**
  * debounce fn execution
  */
@@ -130,10 +112,10 @@ function buildMiniToc(block, placeholders) {
       if (anchors.length > 0) {
         anchors.forEach((i, idx) => {
           if (lhash === false && idx === 0) {
-            i.parentElement.classList.add('is-active');
+            i.classList.add('is-active');
             lactive = true;
           } else if (lhash && i.hash === url.hash) {
-            i.parentElement.classList.add('is-active');
+            i.classList.add('is-active');
             lactive = true;
           }
 
@@ -143,8 +125,8 @@ function buildMiniToc(block, placeholders) {
               const ahash = (i.href.length > 0 ? new URL(i.href).hash || '' : '').replace(/^#/, '');
               const activeAnchor = i;
               render(() => {
-                anchors.forEach((a) => a.parentElement.classList.remove('is-active'));
-                activeAnchor.parentElement.classList.add('is-active');
+                anchors.forEach((a) => a.classList.remove('is-active'));
+                activeAnchor.classList.add('is-active');
 
                 if (ahash.length > 0) {
                   hashFragment(ahash);
