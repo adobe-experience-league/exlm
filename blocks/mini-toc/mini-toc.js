@@ -108,42 +108,6 @@ function buildMiniToc(block, placeholders) {
       const tocHeadingDivNode = `<div><h2>${miniTOCHeading}</h2></div>`;
       block.innerHTML = `${tocHeadingDivNode}\n<div class='scrollable-div'><ul>${html.join('\n')}</ul></div>`;
 
-      const wrapperElement = block.parentElement;
-      let isHovered = false;
-      wrapperElement.addEventListener('mouseenter', () => {
-        if (isHovered) {
-          return;
-        }
-        isHovered = true;
-        const activeElement = block.querySelector('.is-active');
-        if (activeElement) {
-          const scrollableElement = block.querySelector('.scrollable-div');
-          const { scroll: targetScrollTop } = Array.from(scrollableElement.querySelectorAll('li')).reduce(
-            (acc, curr) => {
-              if (curr.className.includes('is-adjacent-prev') || !activeElement.previousElementSibling) {
-                acc.calculate = false;
-              }
-              if (acc.calculate) {
-                acc.scroll += curr.offsetHeight;
-              }
-              return acc;
-            },
-            { scroll: 0, calculate: true },
-          );
-
-          scrollableElement.scrollTop = targetScrollTop;
-        }
-      });
-
-      wrapperElement.addEventListener('mouseleave', () => {
-        if (!isHovered) {
-          return;
-        }
-        isHovered = false;
-        const scrollableElement = block.querySelector('.scrollable-div');
-        scrollableElement.scrollTop = 0;
-      });
-
       let lactive = false;
       const anchors = Array.from(block.querySelectorAll('a'));
 
@@ -166,18 +130,10 @@ function buildMiniToc(block, placeholders) {
       if (anchors.length > 0) {
         anchors.forEach((i, idx) => {
           if (lhash === false && idx === 0) {
-            const activeElement = i.parentElement;
-            activeElement.classList.add('is-active');
-            if (activeElement.previousElementSibling) {
-              activeElement.previousElementSibling.classList.add('is-adjacent-prev');
-            }
+            i.parentElement.classList.add('is-active');
             lactive = true;
           } else if (lhash && i.hash === url.hash) {
-            const activeElement = i.parentElement;
-            activeElement.classList.add('is-active');
-            if (activeElement.previousElementSibling) {
-              activeElement.previousElementSibling.classList.add('is-adjacent-prev');
-            }
+            i.parentElement.classList.add('is-active');
             lactive = true;
           }
 
@@ -187,17 +143,8 @@ function buildMiniToc(block, placeholders) {
               const ahash = (i.href.length > 0 ? new URL(i.href).hash || '' : '').replace(/^#/, '');
               const activeAnchor = i;
               render(() => {
-                anchors.forEach((a) => {
-                  a.parentElement.classList.remove('is-active');
-                  a.parentElement.classList.remove('is-adjacent-prev');
-                });
-
-                const activeElement = activeAnchor.parentElement;
-                activeElement.classList.add('is-active');
-
-                if (activeElement.previousElementSibling) {
-                  activeElement.previousElementSibling.classList.add('is-adjacent-prev');
-                }
+                anchors.forEach((a) => a.parentElement.classList.remove('is-active'));
+                activeAnchor.parentElement.classList.add('is-active');
 
                 if (ahash.length > 0) {
                   hashFragment(ahash);
