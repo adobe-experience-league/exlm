@@ -73,7 +73,8 @@
       "playlist-browse",
       "atomic-search",
       "skill-track-meta",
-      "skill-track"
+      "skill-track",
+      "quiz"
     ]
   },
   {
@@ -260,7 +261,7 @@
   },
   {
     "id": "learning-collections-page-section",
-    "components": ["text", "title", "button", "image", "announcement-ribbon"]
+    "components": ["text", "title", "button", "image", "announcement-ribbon", "skill-track-meta", "skill-track"]
   },
   {
     "id": "sign-up-flow-section",
@@ -371,6 +372,10 @@
   {
     "id": "skill-track",
     "components": ["step"]
+  },
+  {
+    "id": "quiz",
+    "components": ["question"]
   },
   {
     "id": "rte-custom-options",
