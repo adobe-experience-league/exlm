@@ -261,7 +261,7 @@
   },
   {
     "id": "learning-collections-page-section",
-    "components": ["text", "title", "button", "image", "announcement-ribbon", "skill-track-meta", "skill-track"]
+    "components": ["text", "title", "button", "image", "announcement-ribbon", "skill-track-meta", "skill-track","quiz"]
   },
   {
     "id": "sign-up-flow-section",
