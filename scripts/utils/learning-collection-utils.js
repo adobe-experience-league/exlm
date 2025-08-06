@@ -45,10 +45,10 @@ export async function fetchData() {
     const path = `${window.hlx.codeBasePath}/${lang}/learning-collections.json`;
     const fallback = `${window.hlx.codeBasePath}/en/learning-collections.json`;
     const resp = await fetchJson(path, fallback);
-    
+
     // Cache the fetched data
     setCachedData(resp);
-    
+
     return resp;
   } catch (error) {
     console.error('Error fetching learning collection data:', error);
@@ -69,7 +69,7 @@ function extractLearningCollectionPath(url) {
 
   // Split by '/' and find learning-collections
   const parts = cleanUrl.split('/');
-  const learningCollectionsIndex = parts.findIndex(part => part === 'learning-collections');
+  const learningCollectionsIndex = parts.findIndex((part) => part === 'learning-collections');
 
   if (learningCollectionsIndex === -1) return null;
 
@@ -87,7 +87,7 @@ function extractSkillTrackPath(url) {
 
   const cleanUrl = url.startsWith('/') ? url.slice(1) : url;
   const parts = cleanUrl.split('/');
-  const learningCollectionsIndex = parts.findIndex(part => part === 'learning-collections');
+  const learningCollectionsIndex = parts.findIndex((part) => part === 'learning-collections');
 
   if (learningCollectionsIndex === -1) return null;
 
@@ -111,11 +111,15 @@ function findParentSkillTrack(data, url) {
   if (!collectionPath || !skillTrackPath) return null;
 
   // Find the skill track entry
-  return data.find(item => {
-    const itemPath = item.path || '';
-    return itemPath.includes(`/learning-collections/${collectionPath}/${skillTrackPath}`) &&
-      itemPath.split('/').length === 5; // Skill track level
-  }) || null;
+  return (
+    data.find((item) => {
+      const itemPath = item.path || '';
+      return (
+        itemPath.includes(`/learning-collections/${collectionPath}/${skillTrackPath}`) &&
+        itemPath.split('/').length === 5
+      ); // Skill track level
+    }) || null
+  );
 }
 
 /**
@@ -127,12 +131,12 @@ function findParentSkillTrack(data, url) {
 function getOrderedSteps(data, skillTrackSteps) {
   if (!data || !skillTrackSteps || !Array.isArray(skillTrackSteps)) return [];
 
-  return skillTrackSteps.map(stepUrl => {
-    const stepData = data.find(item => item.path === stepUrl);
+  return skillTrackSteps.map((stepUrl) => {
+    const stepData = data.find((item) => item.path === stepUrl);
     return {
       name: stepData?.title || '',
       description: stepData?.description || '',
-      url: stepUrl
+      url: stepUrl,
     };
   });
 }
@@ -155,38 +159,38 @@ export async function getStepInfo(url) {
 
     // Get ordered steps
     const skillTrackSteps = getOrderedSteps(data, parentSkillTrack.skillTrackSteps || []);
-    
+
     // Create complete navigation array: steps + recap + quiz
     const allSteps = [...skillTrackSteps];
-    
+
     // Add recap if it exists
     if (parentSkillTrack.skillTrackRecap) {
-      const recapData = data.find(item => item.path === parentSkillTrack.skillTrackRecap);
+      const recapData = data.find((item) => item.path === parentSkillTrack.skillTrackRecap);
       if (recapData) {
         allSteps.push({
           name: recapData.title || '',
           description: recapData.description || '',
-          url: parentSkillTrack.skillTrackRecap
+          url: parentSkillTrack.skillTrackRecap,
         });
       }
     }
-    
+
     // Add quiz if it exists
     if (parentSkillTrack.skillTrackQuiz) {
-      const quizData = data.find(item => item.path === parentSkillTrack.skillTrackQuiz);
+      const quizData = data.find((item) => item.path === parentSkillTrack.skillTrackQuiz);
       if (quizData) {
         allSteps.push({
           name: quizData.title || '',
           description: quizData.description || '',
-          url: parentSkillTrack.skillTrackQuiz
+          url: parentSkillTrack.skillTrackQuiz,
         });
       }
     }
-    
+
     const totalSteps = allSteps.length;
 
     // Find current step index
-    const currentStepIndex = allSteps.findIndex(step => step.url === url);
+    const currentStepIndex = allSteps.findIndex((step) => step.url === url);
     const currentStep = currentStepIndex + 1;
 
     // Get next and previous steps
@@ -225,4 +229,3 @@ export async function getCurrentStepInfo() {
   const currentUrl = window.location.pathname;
   return getStepInfo(currentUrl);
 }
-

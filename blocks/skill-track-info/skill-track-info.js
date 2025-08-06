@@ -3,110 +3,112 @@ import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js'
 import { decorateIcons, fetchPlaceholders } from '../../scripts/lib-franklin.js';
 
 export default async function decorate(block) {
-    const stepInfo = await getCurrentStepInfo();
-    const placeholders = await fetchPlaceholders();
+  const stepInfo = await getCurrentStepInfo();
+  const placeholders = await fetchPlaceholders();
 
-    if (!stepInfo) {
-        console.warn('No step info available for skill-track-info');
-        return;
-    }
+  if (!stepInfo) {
+    console.warn('No step info available for skill-track-info');
+    return;
+  }
 
-    // Clear existing content
-    block.textContent = '';
-    block.classList.add('skill-track-info');
+  // Clear existing content
+  block.textContent = '';
+  block.classList.add('skill-track-info');
 
-    // Create main container
-    const container = document.createElement('div');
-    container.className = 'skill-track-info-parent';
+  // Create main container
+  const container = document.createElement('div');
+  container.className = 'skill-track-info-parent';
 
-    // Back to collection link
-    const backLink = document.createElement('a');
-    backLink.className = 'back-to-collection';
-    backLink.href = stepInfo.collectionUrl;
-    backLink.innerHTML = `<span class="icon icon-learning-collection" aria-label="${placeholders['learning-collection-back-to-collection-icon'] || 'Back to collection icon'}"></span>
-    <span class="back-to-collection-label">${placeholders['learning-collection-back-to-collection-button'] || 'BACK TO THE COLLECTION'}</span>
+  // Back to collection link
+  const backLink = document.createElement('a');
+  backLink.className = 'back-to-collection';
+  backLink.href = stepInfo.collectionUrl;
+  backLink.innerHTML = `<span class="icon icon-learning-collection" aria-label="${
+    placeholders['learning-collection-back-to-collection-icon'] || 'Back to collection icon'
+  }"></span>
+    <span class="back-to-collection-label">${
+      placeholders['learning-collection-back-to-collection-button'] || 'BACK TO THE COLLECTION'
+    }</span>
   `;
 
-    // Main content area
-    const contentArea = document.createElement('div');
-    contentArea.className = 'skill-track-content';
+  // Main content area
+  const contentArea = document.createElement('div');
+  contentArea.className = 'skill-track-content';
 
-    // Title
-    const title = document.createElement('h1');
-    title.className = 'skill-track-title';
-    title.textContent = stepInfo.skillTrackHeader;
+  // Title
+  const title = document.createElement('h1');
+  title.className = 'skill-track-title';
+  title.textContent = stepInfo.skillTrackHeader;
 
-    // Progress section
-    const progressSection = document.createElement('div');
-    progressSection.className = 'progress-section';
+  // Progress section
+  const progressSection = document.createElement('div');
+  progressSection.className = 'progress-section';
 
-    const progressText = document.createElement('div');
-    progressText.className = 'progress-text';
-    progressText.textContent = `${stepInfo.currentStep} of ${stepInfo.totalSteps} ${placeholders['learning-collection-steps-complete'] || 'Steps Complete'}`;
+  const progressText = document.createElement('div');
+  progressText.className = 'progress-text';
+  progressText.textContent = `${stepInfo.currentStep} of ${stepInfo.totalSteps} ${
+    placeholders['learning-collection-steps-complete'] || 'Steps Complete'
+  }`;
 
-    // Progress bar
-    const progressBar = document.createElement('div');
-    progressBar.className = 'progress-bar';
+  // Progress bar
+  const progressBar = document.createElement('div');
+  progressBar.className = 'progress-bar';
 
-    const progressFill = document.createElement('div');
-    progressFill.className = 'progress-fill';
-    progressFill.style.width = `${(stepInfo.currentStep / stepInfo.totalSteps) * 100}%`;
+  const progressFill = document.createElement('div');
+  progressFill.className = 'progress-fill';
+  progressFill.style.width = `${(stepInfo.currentStep / stepInfo.totalSteps) * 100}%`;
 
-    progressBar.appendChild(progressFill);
+  progressBar.appendChild(progressFill);
 
-    // Step selector using dropdown utility
-    const stepSelectorContainer = document.createElement('div');
-    stepSelectorContainer.className = 'step-selector-container';
+  // Step selector using dropdown utility
+  const stepSelectorContainer = document.createElement('div');
+  stepSelectorContainer.className = 'step-selector-container';
 
-    const currentStep = stepInfo.skillTrackSteps.find(step => step.url === window.location.pathname);
-    const currentStepName = currentStep ? currentStep.name : (placeholders['learning-collection-select-step'] || 'Select Step');
+  const currentStep = stepInfo.skillTrackSteps.find((step) => step.url === window.location.pathname);
+  const currentStepName = currentStep
+    ? currentStep.name
+    : placeholders['learning-collection-select-step'] || 'Select Step';
 
-    // Create form element for dropdown
-    const dropdownForm = document.createElement('form');
-    dropdownForm.className = 'step-dropdown-form';
+  // Create form element for dropdown
+  const dropdownForm = document.createElement('form');
+  dropdownForm.className = 'step-dropdown-form';
 
-    // Prepare options for dropdown
-    const dropdownOptions = stepInfo.skillTrackSteps.map(step => ({
-        title: step.name,
-        value: step.url
-    }));
+  // Prepare options for dropdown
+  const dropdownOptions = stepInfo.skillTrackSteps.map((step) => ({
+    title: step.name,
+    value: step.url,
+  }));
 
-    // Create dropdown using utility
-    const dropdown = new Dropdown(
-        dropdownForm,
-        currentStepName,
-        dropdownOptions,
-        DROPDOWN_VARIANTS.ANCHOR
-    );
+  // Create dropdown using utility
+  const dropdown = new Dropdown(dropdownForm, currentStepName, dropdownOptions, DROPDOWN_VARIANTS.ANCHOR);
 
-    // Handle dropdown selection
-    dropdown.handleOnChange((selectedUrl) => {
-        if (selectedUrl) {
-            window.location.href = selectedUrl;
-        }
-    });
+  // Handle dropdown selection
+  dropdown.handleOnChange((selectedUrl) => {
+    if (selectedUrl) {
+      window.location.href = selectedUrl;
+    }
+  });
 
-    stepSelectorContainer.appendChild(dropdownForm);
+  stepSelectorContainer.appendChild(dropdownForm);
 
-    // Assemble the layout
-    const progressSectionWrapper = document.createElement('div');
-    progressSectionWrapper.className = 'progress-section-wrapper';
+  // Assemble the layout
+  const progressSectionWrapper = document.createElement('div');
+  progressSectionWrapper.className = 'progress-section-wrapper';
 
-    
-    progressSectionWrapper.appendChild(progressText);
-    progressSectionWrapper.appendChild(progressBar);
+  progressSectionWrapper.appendChild(progressText);
+  progressSectionWrapper.appendChild(progressBar);
 
-    progressSection.appendChild(progressSectionWrapper);
-    
-    progressSection.appendChild(stepSelectorContainer);
+  progressSection.appendChild(progressSectionWrapper);
 
-    contentArea.appendChild(title);
-    contentArea.appendChild(progressSection);
+  progressSection.appendChild(stepSelectorContainer);
 
-    container.appendChild(backLink);
-    container.appendChild(contentArea);
-    block.appendChild(container);
+  contentArea.appendChild(title);
+  contentArea.appendChild(progressSection);
 
-    // Decorate icons after all content is added
-    decorateIcons(backLink);
+  container.appendChild(backLink);
+  container.appendChild(contentArea);
+  block.appendChild(container);
+
+  // Decorate icons after all content is added
+  decorateIcons(backLink);
 }

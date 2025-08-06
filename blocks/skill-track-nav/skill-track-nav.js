@@ -3,7 +3,6 @@ import { fetchPlaceholders } from '../../scripts/lib-franklin.js';
 
 export default async function decorate(block) {
   const stepInfo = await getCurrentStepInfo();
-  console.log('stepInfo', stepInfo);  
   const placeholders = await fetchPlaceholders();
 
   if (!stepInfo) return;
@@ -13,7 +12,7 @@ export default async function decorate(block) {
   block.classList.add('skill-track-nav');
 
   // Find current step
-  const currentStepIndex = stepInfo.skillTrackSteps.findIndex(step => step.url === window.location.pathname);
+  const currentStepIndex = stepInfo.skillTrackSteps.findIndex((step) => step.url === window.location.pathname);
 
   // Create container
   const container = document.createElement('div');
@@ -23,7 +22,7 @@ export default async function decorate(block) {
   const goBackLink = document.createElement('a');
   goBackLink.className = 'button skill-track-nav-button skill-track-nav-back secondary';
   goBackLink.textContent = placeholders['learning-collection-go-back'] || 'Go Back';
-  
+
   // Disable go back button if on first step
   if (currentStepIndex === 0) {
     goBackLink.classList.add('disabled');
