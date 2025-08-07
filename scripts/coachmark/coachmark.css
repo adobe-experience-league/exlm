@@ -268,17 +268,33 @@
   border-width: var(--spectrum-popover-border-width);
   background-color: var(--spectrum-popover-background-color);
   filter: var(--spectrum-popover-filter);
-  width: var(--spectrum-popover-width);
+  max-width: var(--spectrum-popover-width);
   box-shadow:
     0 4px 24px 0 rgb(0 0 0 / 12%),
     0 1.5px 6px 0 rgb(0 0 0 / 8%);
 }
 
+/* Show popover on indicator hover */
 .spectrum-CoachIndicator:hover + .spectrum-Popover {
   display: inline-flex;
 }
 
 .spectrum-Popover--right-top {
-  left: calc(50% - var(--spectrum-popover-width) / 2);
+  left: 0;
   top: calc(100% + 24px);
+}
+
+.spectrum-Popover--left-top {
+  right: 0;
+  top: calc(100% + 24px);
+}
+
+@media (max-width: 900px) {
+  .spectrum-Popover--right-top {
+    left: 0;
+  }
+
+  .spectrum-Popover--left-top {
+    right: 0;
+  }
 }
