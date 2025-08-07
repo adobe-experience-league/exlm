@@ -63,13 +63,12 @@ function html(content, placeholders) {
                                 ${step.visual.callouts
                                   ?.filter((callout) => !callout.toast)
                                   .map(
-                                    (callout) => `
+                                    (callout) => {console.log("Hi", callout); return `
                                     <exl-coachmark  ${Object.entries(callout.attributes)
                                       .map(([key, value]) => `${key}="${value}"`)
                                       .join(' ')}>
                                         <span slot="title">${callout.tooltip}</span>
-                                      </exl-coachmark>
-                                `,
+                                      </exl-coachmark>`}
                                   )
                                   .join('')}
                                 ${step.visual.image}`
