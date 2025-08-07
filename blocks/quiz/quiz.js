@@ -8,7 +8,7 @@ import { generateQuestionDOM } from '../question/question.js';
  */
 
 function checkQuestionAnswer(questionElement) {
-  if (!questionElement) return;
+  if (!questionElement) return false;
 
   const correctAnswers = questionElement.dataset.correctAnswers.split(',').map(Number);
   const isMultipleChoice = questionElement.dataset.isMultipleChoice === 'true';
@@ -34,9 +34,12 @@ function checkQuestionAnswer(questionElement) {
  * Shows feedback for a question
  * @param {Element} questionElement The question element
  * @param {boolean} isCorrect Whether the answer is correct
+ * @param {Object} placeholders Language placeholders
  */
-function showQuestionFeedback(questionElement, isCorrect) {
-  if (!questionElement) return;
+function showQuestionFeedback(questionElement, isCorrect, placeholders = {}) {
+  if (!questionElement) {
+    return;
+  }
 
   // Get custom feedback messages from data attributes
   const correctFeedback = questionElement.dataset.correctFeedback || placeholders?.correct || 'Correct!';
@@ -59,12 +62,13 @@ function showQuestionFeedback(questionElement, isCorrect) {
 /**
  * Submits the quiz and shows feedback for each question
  * @param {NodeList} questions The list of question elements
+ * @param {Object} placeholders Language placeholders
  */
-function submitQuiz(questions) {
+function submitQuiz(questions, placeholders = {}) {
   // Check each question and show feedback
   questions?.forEach((question) => {
     const isCorrect = checkQuestionAnswer(question);
-    showQuestionFeedback(question, isCorrect);
+    showQuestionFeedback(question, isCorrect, placeholders);
   });
 }
 
@@ -90,7 +94,7 @@ export default async function decorate(block) {
     question.dataset.totalQuestions = totalQuestions.toString();
 
     // Generate the question DOM
-    const questionDOM = generateQuestionDOM(question);
+    const questionDOM = generateQuestionDOM(question, placeholders);
 
     question.textContent = '';
 
@@ -107,7 +111,7 @@ export default async function decorate(block) {
     <button type="button" class="quiz-submit-button">${placeholders?.submit || 'SUBMIT'}</button>
   `);
   submitButton.addEventListener('click', () => {
-    submitQuiz(questions);
+    submitQuiz(questions, placeholders);
     submitButton.disabled = true;
   });
 
