@@ -1,10 +1,19 @@
-import { htmlToElement } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 /**
  * Generates the DOM for a question
  * This function is also called by quiz.js
  * @param {Element} block The question block element
  * @returns {Element} The generated question DOM
  */
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
+
 export function generateQuestionDOM(block) {
   // Create question container
   const questionContainer = document.createElement('div');
@@ -41,8 +50,8 @@ export function generateQuestionDOM(block) {
   }
 
   // Extract feedback messages
-  const correctFeedback = correctFeedbackDiv?.textContent?.trim() || 'Correct!';
-  const incorrectFeedback = incorrectFeedbackDiv?.textContent?.trim() || 'Incorrect';
+  const correctFeedback = correctFeedbackDiv?.textContent?.trim();
+  const incorrectFeedback = incorrectFeedbackDiv?.textContent?.trim();
 
   // Store values as data attributes
   block.dataset.correctAnswers = correctAnswers.join(',');
@@ -54,7 +63,9 @@ export function generateQuestionDOM(block) {
   const questionIndex = parseInt(block.dataset?.questionIndex || '0', 10) + 1;
   const totalQuestions = block.dataset?.totalQuestions || '1';
   const questionNumberElement = htmlToElement(`
-    <p class="question-number">Question ${questionIndex} of ${totalQuestions}</p>
+    <p class="question-number">${placeholders?.question || 'Question'} ${questionIndex} ${
+      placeholders?.of || 'of'
+    } ${totalQuestions}</p>
   `);
   questionContainer.appendChild(questionNumberElement);
 

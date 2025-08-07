@@ -1,4 +1,4 @@
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { generateQuestionDOM } from '../question/question.js';
 
 /**
@@ -6,6 +6,15 @@ import { generateQuestionDOM } from '../question/question.js';
  * @param {Element} questionElement The question element
  * @returns {boolean} Whether the selected answers are correct
  */
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
+
 function checkQuestionAnswer(questionElement) {
   const correctAnswers = questionElement.dataset.correctAnswers.split(',').map(Number);
   const isMultipleChoice = questionElement.dataset.isMultipleChoice === 'true';
@@ -34,8 +43,8 @@ function checkQuestionAnswer(questionElement) {
  */
 function showQuestionFeedback(questionElement, isCorrect) {
   // Get custom feedback messages from data attributes
-  const correctFeedback = questionElement.dataset.correctFeedback || 'Correct!';
-  const incorrectFeedback = questionElement.dataset.incorrectFeedback || 'Incorrect';
+  const correctFeedback = questionElement.dataset.correctFeedback || placeholders.correct || 'Correct!';
+  const incorrectFeedback = questionElement.dataset.incorrectFeedback || placeholders.incorrect || 'Incorrect';
 
   // Create feedback element using htmlToElement
   const feedbackElement = htmlToElement(`
@@ -92,7 +101,7 @@ export default function decorate(block) {
 
   // Create a single submit button for the entire quiz using htmlToElement
   const submitButton = htmlToElement(`
-    <button type="button" class="quiz-submit-button">SUBMIT</button>
+    <button type="button" class="quiz-submit-button">${placeholders?.submit || 'SUBMITSsss'}</button>
   `);
   submitButton.addEventListener('click', () => {
     submitQuiz(questions);
