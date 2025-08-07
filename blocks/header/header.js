@@ -425,7 +425,7 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
       <div class="search-full">
         <div class="search-container">
           <span title="Search" class="icon icon-search"></span>
-          <input autocomplete="off" class="search-input" type="text" aria-label="top-nav-combo-search" aria-expanded="false" title="Insert a query. Press enter to send" role="combobox" placeholder="${
+          <input autocomplete="off" class="search-input" type="text" aria-label="top-nav-combo-search" aria-expanded="false" role="combobox" placeholder="${
             searchPlaceholder.textContent
           }">
           <span title="Clear" class="icon icon-clear search-clear-icon"></span>
