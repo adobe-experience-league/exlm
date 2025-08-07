@@ -6,14 +6,6 @@ import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.
  * @returns {Element} The generated question DOM
  */
 
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
-
 export function generateQuestionDOM(block) {
   // Create question container
   const questionContainer = document.createElement('div');
@@ -119,7 +111,14 @@ export function generateQuestionDOM(block) {
  * Decorates the question block
  * @param {Element} block The question block element
  */
-export default function decorate(block) {
+export default async function decorate(block) {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
   // Generate the question DOM
   const dom = generateQuestionDOM(block);
 

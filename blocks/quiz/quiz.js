@@ -7,15 +7,9 @@ import { generateQuestionDOM } from '../question/question.js';
  * @returns {boolean} Whether the selected answers are correct
  */
 
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
-
 function checkQuestionAnswer(questionElement) {
+  if (!questionElement) return;
+
   const correctAnswers = questionElement.dataset.correctAnswers.split(',').map(Number);
   const isMultipleChoice = questionElement.dataset.isMultipleChoice === 'true';
 
@@ -42,9 +36,11 @@ function checkQuestionAnswer(questionElement) {
  * @param {boolean} isCorrect Whether the answer is correct
  */
 function showQuestionFeedback(questionElement, isCorrect) {
+  if (!questionElement) return;
+
   // Get custom feedback messages from data attributes
-  const correctFeedback = questionElement.dataset.correctFeedback || placeholders.correct || 'Correct!';
-  const incorrectFeedback = questionElement.dataset.incorrectFeedback || placeholders.incorrect || 'Incorrect';
+  const correctFeedback = questionElement.dataset.correctFeedback || placeholders?.correct || 'Correct!';
+  const incorrectFeedback = questionElement.dataset.incorrectFeedback || placeholders?.incorrect || 'Incorrect';
 
   // Create feedback element using htmlToElement
   const feedbackElement = htmlToElement(`
@@ -54,7 +50,7 @@ function showQuestionFeedback(questionElement, isCorrect) {
   `);
 
   // Find the question block DOM and append feedback
-  const questionBlock = questionElement.querySelector('.question-block');
+  const questionBlock = questionElement?.querySelector('.question-block');
   if (questionBlock) {
     questionBlock.appendChild(feedbackElement);
   }
@@ -66,13 +62,20 @@ function showQuestionFeedback(questionElement, isCorrect) {
  */
 function submitQuiz(questions) {
   // Check each question and show feedback
-  questions.forEach((question) => {
+  questions?.forEach((question) => {
     const isCorrect = checkQuestionAnswer(question);
     showQuestionFeedback(question, isCorrect);
   });
 }
 
-export default function decorate(block) {
+export default async function decorate(block) {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
 
@@ -81,7 +84,7 @@ export default function decorate(block) {
   // Set total questions count
   const totalQuestions = questions.length;
 
-  questions.forEach((question, index) => {
+  questions?.forEach((question, index) => {
     // Set question index and total questions
     question.dataset.questionIndex = index.toString();
     question.dataset.totalQuestions = totalQuestions.toString();
@@ -101,7 +104,7 @@ export default function decorate(block) {
 
   // Create a single submit button for the entire quiz using htmlToElement
   const submitButton = htmlToElement(`
-    <button type="button" class="quiz-submit-button">${placeholders?.submit || 'SUBMITSsss'}</button>
+    <button type="button" class="quiz-submit-button">${placeholders?.submit || 'SUBMIT'}</button>
   `);
   submitButton.addEventListener('click', () => {
     submitQuiz(questions);
