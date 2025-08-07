@@ -105,6 +105,10 @@ export function generateVisualConfig(cell) {
     // image
     visual.image = pictureElement.outerHTML;
     if (calloutWrapper) {
+      console.log("Hi", calloutWrapper.querySelectorAll(':scope > li > span'))
+      console.log("Hi", calloutWrapper.querySelectorAll('li > span'))
+      console.log("Hi", calloutWrapper.innerHTML)
+      console.log("Hi2", calloutWrapper.querySelectorAll(':scope > li > span').length)
       visual.callouts = Array.from(calloutWrapper.querySelectorAll(':scope > li > span')).map((span) => {
         const attributes = Object.fromEntries(
           [...span.attributes].map(({ name, value }) => {
