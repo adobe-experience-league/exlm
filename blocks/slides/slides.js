@@ -207,7 +207,6 @@ function html(content, placeholders) {
 }
 
 export default async function decorate(block) {
-  import('../../scripts/coachmark/coachmark.js'); // async load it.
   const placeHolderPromise = fetchLanguagePlaceholders();
   const [firstChildBlock, ...restOfBlock] = block.children;
   const baseHeadingElement = firstChildBlock.querySelector('h2');
@@ -299,6 +298,17 @@ export default async function decorate(block) {
   });
 
   content.sections = sections || [];
+  
+  // Check if any steps have callouts before loading coachmark
+  const hasCallouts = content.sections.some(sectionItem => 
+    sectionItem.steps.some(step => step.visual.callouts && step.visual.callouts.length > 0)
+  );
+  
+  // Only load coachmark if there are callouts present
+  if (hasCallouts) {
+    import('../../scripts/coachmark/coachmark.js'); // async load it.
+  }
+  
   const placeholders = await placeHolderPromise;
   block.innerHTML = html(content, placeholders);
 

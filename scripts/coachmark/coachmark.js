@@ -6,6 +6,8 @@ fetch(new URL('./coachmark.css', import.meta.url))
   .then((r) => r.text())
   .then((cssText) => sheet.replaceSync(cssText));
 
+
+
 const HTML = ({ type }) => `
 <div class="spectrum-CoachMark spectrum-CoachMark--${type}">
     <div class="spectrum-CoachIndicator">
