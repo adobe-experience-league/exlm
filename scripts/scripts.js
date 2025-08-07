@@ -440,9 +440,16 @@ export async function decorateInlineText(textNode) {
   if (textContent.includes('[') && textContent.includes(']{')) {
     const span = document.createElement('span');
     span.innerHTML = getDecoratedInlineHtml(textContent);
-    window.requestAnimationFrame(() => {
+    
+    // For callout syntax, process synchronously to avoid race conditions
+    if (textContent.includes(':callout[')) {
       textNode.replaceWith(...span.childNodes);
-    });
+    } else {
+      // For other inline decorations, use requestAnimationFrame
+      window.requestAnimationFrame(() => {
+        textNode.replaceWith(...span.childNodes);
+      });
+    }
   }
 }
 

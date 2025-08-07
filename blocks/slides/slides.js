@@ -1,5 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { decoratePlaceholders, fetchLanguagePlaceholders , decorateInlineAttributes} from '../../scripts/scripts.js';
+import { decoratePlaceholders, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 import {
   generateVisualConfig,
@@ -206,7 +206,6 @@ function html(content, placeholders) {
 }
 
 export default async function decorate(block) {
-  decorateInlineAttributes(block);
   const placeHolderPromise = fetchLanguagePlaceholders();
   const [firstChildBlock, ...restOfBlock] = block.children;
   const baseHeadingElement = firstChildBlock.querySelector('h2');
