@@ -63,12 +63,12 @@ function html(content, placeholders) {
                                 ${step.visual.callouts
                                   ?.filter((callout) => !callout.toast)
                                   .map(
-                                    (callout) => {console.log("Hi", callout); return `
+                                    (callout) => `
                                     <exl-coachmark  ${Object.entries(callout.attributes)
                                       .map(([key, value]) => `${key}="${value}"`)
                                       .join(' ')}>
                                         <span slot="title">${callout.tooltip}</span>
-                                      </exl-coachmark>`}
+                                      </exl-coachmark>`
                                   )
                                   .join('')}
                                 ${step.visual.image}`
@@ -308,6 +308,8 @@ export default async function decorate(block) {
     await import('../../scripts/coachmark/coachmark.js'); // await the import to ensure it's loaded
     await customElements.whenDefined('exl-coachmark');
   }
+
+  console.log(content);
   
   const placeholders = await placeHolderPromise;
   block.innerHTML = html(content, placeholders);
