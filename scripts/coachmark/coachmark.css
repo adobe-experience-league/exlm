@@ -26,7 +26,8 @@
   --spectrum-popover-background-color: var(--spectrum-white);
 
   /* popover */
-  --spectrum-popover-width: 400px;
+  --spectrum-popover-min-width: 200px;
+  --spectrum-popover-max-width: 400px;
 
   /* border and radius (falling back through mod‑vars) */
   --spectrum-coachmark-border-size: var(--mod-coachmark-border-size, var(--mod-popover-border-width));
@@ -268,7 +269,8 @@
   border-width: var(--spectrum-popover-border-width);
   background-color: var(--spectrum-popover-background-color);
   filter: var(--spectrum-popover-filter);
-  max-width: var(--spectrum-popover-width);
+  width: fit-content;
+  max-width: var(--spectrum-popover-max-width);
   box-shadow:
     0 4px 24px 0 rgb(0 0 0 / 12%),
     0 1.5px 6px 0 rgb(0 0 0 / 8%);
@@ -289,12 +291,8 @@
   top: calc(100% + 24px);
 }
 
-@media (max-width: 900px) {
-  .spectrum-Popover--right-top {
-    left: 0;
-  }
-
-  .spectrum-Popover--left-top {
-    right: 0;
+@media (min-width: 900px) {
+  .spectrum-Popover {
+    min-width: var(--spectrum-popover-min-width);
   }
 }

@@ -307,6 +307,7 @@ export default async function decorate(block) {
   // Only load coachmark if there are callouts present
   if (hasCallouts) {
     await import('../../scripts/coachmark/coachmark.js'); // await the import to ensure it's loaded
+    await customElements.whenDefined('exl-coachmark');
   }
   
   const placeholders = await placeHolderPromise;
