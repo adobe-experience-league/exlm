@@ -12,6 +12,7 @@ function getCachedData() {
     const cached = sessionStorage.getItem(LEARNING_COLLECTIONS_CACHE_KEY);
     return cached ? JSON.parse(cached) : null;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.warn('Error reading from session storage:', error);
     return null;
   }
@@ -25,6 +26,7 @@ function setCachedData(data) {
   try {
     sessionStorage.setItem(LEARNING_COLLECTIONS_CACHE_KEY, JSON.stringify(data));
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.warn('Error writing to session storage:', error);
   }
 }
@@ -51,6 +53,7 @@ export async function fetchData() {
 
     return resp;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Error fetching learning collection data:', error);
     return [];
   }
@@ -216,6 +219,7 @@ export async function getStepInfo(url) {
       isQuiz,
     };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Error getting learning collection step info:', error);
     return null;
   }

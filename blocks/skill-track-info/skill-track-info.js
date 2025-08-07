@@ -7,6 +7,7 @@ export default async function decorate(block) {
   const placeholders = await fetchPlaceholders();
 
   if (!stepInfo) {
+    // eslint-disable-next-line no-console
     console.warn('No step info available for skill-track-info');
     return;
   }
