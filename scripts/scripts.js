@@ -434,17 +434,12 @@ export const getDecoratedInlineHtml = (inputStr) => {
 /**
  * @param {Node} textNode
  */
-export async function decorateInlineText(textNode) {
+export function decorateInlineText(textNode) {
   const { textContent } = textNode;
   if (textContent.includes('[') && textContent.includes(']{')) {
     const span = document.createElement('span');
     span.innerHTML = getDecoratedInlineHtml(textContent);
-    await new Promise((resolve) => {
-      window.requestAnimationFrame(() => {
-        textNode.replaceWith(...span.childNodes);
-        resolve();
-      });
-    });
+    textNode.replaceWith(...span.childNodes);
   }
 }
 
@@ -504,19 +499,25 @@ export function decoratePreviousImage(textNode) {
 /**
  * @param {HTMLElement} element
  */
-export async function decorateInlineAttributes(element) {
+export function decorateInlineAttributes(element) {
   const ignoredElements = ['pre', 'code', 'script', 'style'];
   const isParentIgnored = (node) => ignoredElements.includes(node?.parentElement?.tagName?.toLowerCase());
-  const promises = [];
+
+  // Collect all text nodes first to avoid TreeWalker issues when DOM changes
+  const textNodes = [];
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, (node) =>
     isParentIgnored(node) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
   );
+
   while (walker.nextNode()) {
-    const { currentNode } = walker;
-    promises.push(decorateInlineText(currentNode));
-    decoratePreviousImage(currentNode);
+    textNodes.push(walker.currentNode);
   }
-  await Promise.all(promises);
+
+  // Process all collected text nodes
+  textNodes.forEach((textNode) => {
+    decorateInlineText(textNode);
+    decoratePreviousImage(textNode);
+  });
 }
 
 /**
@@ -587,15 +588,14 @@ export async function waitForLCPonMain(lcpBlocks) {
  * @param {Element} main The main element
  */
 // eslint-disable-next-line import/prefer-default-export
-export async function decorateMain(main, isFragment = false) {
+export function decorateMain(main, isFragment = false) {
   // docs pages do not use buttons, only links
   if (!isDocPage) {
     decorateButtons(main);
   }
   decorateAnchors(main); // must be run before decorateIcons
   decorateIcons(main);
-  // ALL inline attributes must be decorated before we proceed. Needed for blocks that depend on the decorated attributes.
-  await decorateInlineAttributes(main);
+  decorateInlineAttributes(main);
   decorateExternalLinks(main);
   buildAutoBlocks(main, isFragment);
   decorateSections(main);
