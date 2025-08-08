@@ -28,6 +28,10 @@
     "components": ["section", "learning-collections-page-section", "tab-section"]
   },
   {
+    "id": "main-learning-collections-hub",
+    "components": ["section", "learning-collections-hub-section", "tab-section"]
+  },
+  {
     "id": "section",
     "components": [
       "text",
@@ -262,6 +266,10 @@
   {
     "id": "learning-collections-page-section",
     "components": ["text", "title", "button", "image", "announcement-ribbon", "skill-track-meta", "skill-track", "quiz"]
+  },
+  {
+    "id": "learning-collections-hub-section",
+    "components": ["text", "title", "button", "image", "announcement-ribbon"]
   },
   {
     "id": "sign-up-flow-section",

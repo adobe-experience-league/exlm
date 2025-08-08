@@ -176,6 +176,15 @@ function updateUEInstrumentation() {
     // update available sections
     setUEFilter(main, 'main-learning-collections');
   }
+
+  // ----- if learning-collections page hub, identified by theme
+  if (
+    document.querySelector('body[class^=learning-collections-hub]') ||
+    getMetadata('theme') === 'learning-collections-hub'
+  ) {
+    // update available sections
+    setUEFilter(main, 'main-learning-collections-hub');
+  }
 }
 
 /**
