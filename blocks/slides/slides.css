@@ -245,10 +245,27 @@
   height: 100%;
 }
 
+.slides .visual.image picture {
+  display: flex;
+  height: 100%;
+}
+
+.slides .visual.image img {
+  height: 100%;
+  width: auto;
+  border-radius: 16px;
+  object-fit: contain;
+  object-position: center;
+}
+
 @media screen and (min-width: 600px) {
   .slides .visual-wrapper {
     height: 300px;
     max-height: 100%;
+  }
+
+  .slides .visual.image picture {
+    display: block;
   }
 }
 
@@ -264,16 +281,6 @@
     height: 600px;
     max-height: 100%;
   }
-}
-
-.slides .visual.image picture,
-.slides .visual.image img {
-  height: 100%;
-  width: auto;
-  display: block;
-  border-radius: 16px;
-  object-fit: contain;
-  object-position: center;
 }
 
 .slides exl-coachmark {
