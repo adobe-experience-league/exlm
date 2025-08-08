@@ -25,10 +25,6 @@
   --spectrum-popover-corner-radius: 8px;
   --spectrum-popover-background-color: var(--spectrum-white);
 
-  /* popover */
-  --spectrum-popover-min-width: 200px;
-  --spectrum-popover-max-width: 400px;
-
   /* border and radius (falling back through mod‑vars) */
   --spectrum-coachmark-border-size: var(--mod-coachmark-border-size, var(--mod-popover-border-width));
   --spectrum-coachmark-border-radius: var(--mod-coachmark-border-radius, var(--mod-popover-corner-radius));
@@ -38,6 +34,11 @@
   --mod-popover-corner-radius: 8px;
   --mod-popover-content-area-spacing-vertical: 0;
   --mod-button-edge-to-visual-only: 9px;
+
+  /* popover */
+  --mod-popover-min-width-180: 180px;
+  --mod-popover-min-width-200: 200px;
+  --mod-popover-max-width-400: 400px;
 
   width: 100%;
   height: 100%;
@@ -270,7 +271,8 @@
   background-color: var(--spectrum-popover-background-color);
   filter: var(--spectrum-popover-filter);
   width: fit-content;
-  max-width: var(--spectrum-popover-max-width);
+  min-width: var(--mod-popover-min-width-180);
+  max-width: var(--mod-popover-max-width-400);
   box-shadow:
     0 4px 24px 0 rgb(0 0 0 / 12%),
     0 1.5px 6px 0 rgb(0 0 0 / 8%);
@@ -283,16 +285,16 @@
 
 .spectrum-Popover--right-top {
   left: 0;
-  top: calc(100% + 24px);
+  top: calc(100% + 20px);
 }
 
 .spectrum-Popover--left-top {
   right: 0;
-  top: calc(100% + 24px);
+  top: calc(100% + 20px);
 }
 
 @media (min-width: 900px) {
   .spectrum-Popover {
-    min-width: var(--spectrum-popover-min-width);
+    min-width: var(--mod-popover-min-width-200);
   }
 }
