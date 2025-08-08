@@ -298,6 +298,8 @@ export default async function decorate(block) {
     });
   });
 
+  await customElements.whenDefined('exl-coachmark');
+
   content.sections = sections || [];
   const placeholders = await placeHolderPromise;
   block.innerHTML = html(content, placeholders);
