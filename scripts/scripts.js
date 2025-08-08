@@ -434,17 +434,12 @@ export const getDecoratedInlineHtml = (inputStr) => {
 /**
  * @param {Node} textNode
  */
-export async function decorateInlineText(textNode) {
+export function decorateInlineText(textNode) {
   const { textContent } = textNode;
   if (textContent.includes('[') && textContent.includes(']{')) {
     const span = document.createElement('span');
     span.innerHTML = getDecoratedInlineHtml(textContent);
-    await new Promise((resolve) => {
-      window.requestAnimationFrame(() => {
-        textNode.replaceWith(...span.childNodes);
-        resolve();
-      });
-    });
+    textNode.replaceWith(...span.childNodes);
   }
 }
 
@@ -504,7 +499,7 @@ export function decoratePreviousImage(textNode) {
 /**
  * @param {HTMLElement} element
  */
-export async function decorateInlineAttributes(element) {
+export function decorateInlineAttributes(element) {
   const ignoredElements = ['pre', 'code', 'script', 'style'];
   const isParentIgnored = (node) => ignoredElements.includes(node?.parentElement?.tagName?.toLowerCase());
   
@@ -519,13 +514,10 @@ export async function decorateInlineAttributes(element) {
   }
   
   // Process all collected text nodes
-  const promises = [];
   textNodes.forEach((textNode) => {
-    promises.push(decorateInlineText(textNode));
+    decorateInlineText(textNode);
     decoratePreviousImage(textNode);
   });
-  
-  await Promise.all(promises);
 }
 
 /**
