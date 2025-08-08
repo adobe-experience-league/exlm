@@ -261,7 +261,7 @@
   },
   {
     "id": "learning-collections-page-section",
-    "components": ["text", "title", "button", "image", "announcement-ribbon", "skill-track-meta", "skill-track", "quiz"]
+    "components": ["text", "title", "button", "image", "announcement-ribbon", "skill-track-meta", "skill-track", "quiz", "drill-in"]
   },
   {
     "id": "sign-up-flow-section",
@@ -376,6 +376,14 @@
   {
     "id": "quiz",
     "components": ["question"]
+  },
+  {
+    "id": "drill-in",
+    "components": ["drill-in-callout"]
+  },
+  {
+    "id": "drill-in-callout",
+    "components": ["drill-in-card"]
   },
   {
     "id": "rte-custom-options",

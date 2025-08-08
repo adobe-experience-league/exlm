@@ -7377,5 +7377,60 @@
         "description": "Enter the feedback message to display when the answer is incorrect"
       }
     ]
+  },
+  {
+    "id": "drill-in",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Background Image",
+        "description": "Upload the main image for the drill-in block",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "fileReferenceAlt",
+        "value": "",
+        "label": "Image Description",
+        "description": "A descriptive text of the image will be shown as tooltip."
+      }
+    ]
+  },
+  {
+    "id": "drill-in-callout",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "position",
+        "value": "",
+        "label": "Position (x,y)",
+        "description": "Enter the position as x,y coordinates (percentages from 0-100)"
+      }
+    ]
+  },
+  {
+    "id": "drill-in-card",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Card Title",
+        "description": "Enter the title for this card"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Card Description",
+        "description": "Enter the description for this card"
+      }
+    ]
   }
 ]
