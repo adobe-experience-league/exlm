@@ -74,6 +74,38 @@ class EXLCoachmark extends HTMLElement {
   reset() {
     this.handleSlots();
     this.indicatorPulse();
+    this.adjustPopoverPosition();
+  }
+
+  adjustPopoverPosition() {
+    const x = parseFloat(this.getAttribute('x') || '0');
+    const type = this.getAttribute('type') || 'circle';
+
+    const popover = this.shadow.querySelector('.spectrum-Popover');
+    if (!popover) return;
+
+    // Remove existing position classes
+    popover.classList.remove('spectrum-Popover--right-top', 'spectrum-Popover--left-top');
+
+    if (type === 'circle') {
+      if (x < 50) {
+        popover.classList.add('spectrum-Popover--right-top');
+      } else {
+        popover.classList.add('spectrum-Popover--left-top');
+      }
+    } else if (type === 'rectangle') {
+      const x1 = parseFloat(this.getAttribute('x1') || '0');
+      const x2 = parseFloat(this.getAttribute('x2') || '0');
+      const rectCenterX = (x1 + x2) / 2;
+
+      if (rectCenterX < 50) {
+        // Rectangle center is on the left side - position popover on the right
+        popover.classList.add('spectrum-Popover--right-top');
+      } else {
+        // Rectangle center is on the right side - position popover on the left
+        popover.classList.add('spectrum-Popover--left-top');
+      }
+    }
   }
 
   handleSlots() {

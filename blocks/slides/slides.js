@@ -152,7 +152,7 @@ function html(content, placeholders) {
                             }</label>
                             <div class="copy-icon" data-copystep="${step.id}">
                                 <span class="icon icon-copy-link"></span>
-                                <label
+                                <label>
                                   <span data-placeholder="userActionCopylinkLabel">Copy link</span>
                                 </label>
                             </div>
