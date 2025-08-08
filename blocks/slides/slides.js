@@ -208,12 +208,12 @@ function html(content, placeholders) {
 
 export default async function decorate(block) {
   import('../../scripts/coachmark/coachmark.js'); // async load it.
-  
+
   // Set default autoplay preference if not already set
   if (preferences.get('autoplayAudio') === undefined) {
     preferences.set('autoplayAudio', true);
   }
-  
+
   const placeHolderPromise = fetchLanguagePlaceholders();
   const [firstChildBlock, ...restOfBlock] = block.children;
   const baseHeadingElement = firstChildBlock.querySelector('h2');
