@@ -57,6 +57,7 @@
       "recommended-courses",
       "recommended-content",
       "recommendation-marquee",
+      "video-clips-widget",
       "block-quote",
       "callout",
       "featured-authors",
@@ -107,6 +108,7 @@
       "recommended-courses",
       "recommended-content",
       "recommendation-marquee",
+      "video-clips-widget",
       "block-quote",
       "callout",
       "featured-authors",
@@ -148,6 +150,7 @@
       "recommended-courses",
       "recommended-content",
       "recommendation-marquee",
+      "video-clips-widget",
       "block-quote",
       "callout",
       "featured-authors",
@@ -207,6 +210,7 @@
       "recommended-courses",
       "recommended-content",
       "recommendation-marquee",
+      "video-clips-widget",
       "block-quote",
       "callout",
       "qualtrics",
@@ -253,6 +257,7 @@
       "profile-welcome",
       "recommended-content",
       "recommendation-marquee",
+      "video-clips-widget",
       "personalized-content-placeholder",
       "announcement-ribbon",
       "recently-reviewed",
@@ -348,6 +353,10 @@
   {
     "id": "icon-block",
     "components": ["icon-card"]
+  },
+  {
+    "id": "video-clips-widget",
+    "components": ["video-clip"]
   },
   {
     "id": "teaser",
