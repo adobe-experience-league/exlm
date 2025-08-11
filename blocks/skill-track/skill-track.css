@@ -1,0 +1,6 @@
+/* Adding a small divider between steps */
+.skill-track > div {
+  border-bottom: 1px solid var(--spectrum-gray-200);
+  padding-bottom: var(--spectrum-spacing-100);
+  margin-bottom: var(--spectrum-spacing-100);
+}

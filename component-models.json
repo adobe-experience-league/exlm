@@ -1287,6 +1287,21 @@
     ]
   },
   {
+    "id": "learning-collections-page-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Style",
+        "description": "The section style",
+        "valueType": "string",
+        "hidden": true,
+        "options": []
+      }
+    ]
+  },
+  {
     "id": "article-header-section",
     "fields": [
       {
@@ -7210,5 +7225,157 @@
   {
     "id": "atomic-search",
     "fields": []
+  },
+  {
+    "id": "skill-track-meta",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the title for the skill track."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h1",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description for the skill track."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "recap_url",
+        "value": "",
+        "label": "Recap URL",
+        "description": "URL to recap",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/learning-collections/"
+        }
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "quiz_url",
+        "value": "",
+        "label": "Quiz page URL",
+        "description": "URL to the quiz page",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/learning-collections/"
+        }
+      }
+    ]
+  },
+  {
+    "id": "skill-track",
+    "fields": []
+  },
+  {
+    "id": "step",
+    "fields": [
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "step_url",
+        "value": "",
+        "label": "Step Page URL",
+        "description": "URL to the step",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/learning-collections/"
+        }
+      }
+    ]
+  },
+  {
+    "id": "quiz",
+    "fields": []
+  },
+  {
+    "id": "question",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "question",
+        "value": "",
+        "label": "Question",
+        "description": "Enter the question text"
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "isMultipleChoice",
+        "label": "Multiple Choice Question",
+        "description": "Toggle on for multiple choice question, off for single choice question"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "answers",
+        "value": "",
+        "label": "Answers",
+        "description": "Enter the answers as an ordered list"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "correctAnswers",
+        "value": "",
+        "label": "Correct Answers",
+        "description": "Enter the correct answer numbers as comma-delimited values (e.g., '3,5')"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "correctFeedback",
+        "value": "",
+        "label": "Correct Answer Feedback",
+        "description": "Enter the feedback message to display when the answer is correct"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "incorrectFeedback",
+        "value": "",
+        "label": "Incorrect Answer Feedback",
+        "description": "Enter the feedback message to display when the answer is incorrect"
+      }
+    ]
   }
 ]

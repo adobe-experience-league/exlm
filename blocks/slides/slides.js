@@ -15,7 +15,7 @@ function html(content, placeholders) {
   const isDesktopUI = isDesktopView();
   const initialView = isDesktopUI ? preferences.get('view') || 'as-slides' : 'as-docs';
 
-  const autoplayAudio = preferences.get('autoplayAudio');
+  const autoplayAudio = preferences.get('autoplayAudio') !== undefined ? preferences.get('autoplayAudio') : true;
   const muted = preferences.get('muteStatus') || false;
 
   return `
@@ -152,7 +152,7 @@ function html(content, placeholders) {
                             }</label>
                             <div class="copy-icon" data-copystep="${step.id}">
                                 <span class="icon icon-copy-link"></span>
-                                <label
+                                <label>
                                   <span data-placeholder="userActionCopylinkLabel">Copy link</span>
                                 </label>
                             </div>
@@ -208,6 +208,12 @@ function html(content, placeholders) {
 
 export default async function decorate(block) {
   import('../../scripts/coachmark/coachmark.js'); // async load it.
+
+  // Set default autoplay preference if not already set
+  if (preferences.get('autoplayAudio') === undefined) {
+    preferences.set('autoplayAudio', true);
+  }
+
   const placeHolderPromise = fetchLanguagePlaceholders();
   const [firstChildBlock, ...restOfBlock] = block.children;
   const baseHeadingElement = firstChildBlock.querySelector('h2');
@@ -297,6 +303,8 @@ export default async function decorate(block) {
       step.number = index + 1;
     });
   });
+
+  await customElements.whenDefined('exl-coachmark');
 
   content.sections = sections || [];
   const placeholders = await placeHolderPromise;

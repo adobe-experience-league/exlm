@@ -836,3 +836,130 @@ indices:
       - '/zh-hant/playlists/**'
     exclude:
       - '/zh-hant/playlists'
+
+  learning-collections-en: &base-learning-collections
+    target: /en/learning-collections.json
+    include:
+      - '/en/learning-collections/**'
+    exclude:
+      - '/en/learning-collections'
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      description:
+        select: head > meta[property="og:description"]
+        value: attribute(el, "content")
+      image:
+        select: head > meta[property="og:image"]
+        value: attribute(el, "content")
+      lastModified:
+        select: head > meta[name="last-update"]
+        value: |
+          parseTimestamp(attribute(el, "content"), 'ddd MMM DD YYYY hh:mm:ss GMT')
+      robots:
+        select: head > meta[name="robots"]
+        value: attribute(el, "content")
+      skillTrackHeader:
+        selectFirst: div.skill-track-meta > div:first-child
+        value: textContent(el)
+      skillTrackDescription:
+        selectFirst: div.skill-track-meta > div:nth-child(2) > div
+        value: innerHTML(el)
+      skillTrackRecap:
+        selectFirst: div.skill-track-meta > div:nth-child(3) a
+        value: attribute(el, 'href')
+      skillTrackQuiz:
+        selectFirst: div.skill-track-meta > div:nth-child(4) a
+        value: attribute(el, 'href')
+      skillTrackSteps:
+        select: div.skill-track a
+        values: attribute(el, 'href')
+
+  learning-collections-fr:
+    <<: *base-learning-collections
+    target: /fr/learning-collections.json
+    include:
+      - '/fr/learning-collections/**'
+    exclude:
+      - '/fr/learning-collections'
+
+  learning-collections-de:
+    <<: *base-learning-collections
+    target: /de/learning-collections.json
+    include:
+      - '/de/learning-collections/**'
+    exclude:
+      - '/de/learning-collections'
+
+  learning-collections-es:
+    <<: *base-learning-collections
+    target: /es/learning-collections.json
+    include:
+      - '/es/learning-collections/**'
+    exclude:
+      - '/es/learning-collections'
+
+  learning-collections-it:
+    <<: *base-learning-collections
+    target: /it/learning-collections.json
+    include:
+      - '/it/learning-collections/**'
+    exclude:
+      - '/it/learning-collections'
+
+  learning-collections-nl:
+    <<: *base-learning-collections
+    target: /nl/learning-collections.json
+    include:
+      - '/nl/learning-collections/**'
+    exclude:
+      - '/nl/learning-collections'
+
+  learning-collections-pt-br:
+    <<: *base-learning-collections
+    target: /pt-br/learning-collections.json
+    include:
+      - '/pt-br/learning-collections/**'
+    exclude:
+      - '/pt-br/learning-collections'
+
+  learning-collections-ko:
+    <<: *base-learning-collections
+    target: /ko/learning-collections.json
+    include:
+      - '/ko/learning-collections/**'
+    exclude:
+      - '/ko/learning-collections'
+
+  learning-collections-ja:
+    <<: *base-learning-collections
+    target: /ja/learning-collections.json
+    include:
+      - '/ja/learning-collections/**'
+    exclude:
+      - '/ja/learning-collections'
+
+  learning-collections-sv:
+    <<: *base-learning-collections
+    target: /sv/learning-collections.json
+    include:
+      - '/sv/learning-collections/**'
+    exclude:
+      - '/sv/learning-collections'
+
+  learning-collections-zh-hans:
+    <<: *base-learning-collections
+    target: /zh-hans/learning-collections.json
+    include:
+      - '/zh-hans/learning-collections/**'
+    exclude:
+      - '/zh-hans/learning-collections'
+
+  learning-collections-zh-hant:
+    <<: *base-learning-collections
+    target: /zh-hant/learning-collections.json
+    include:
+      - '/zh-hant/learning-collections/**'
+    exclude:
+      - '/zh-hant/learning-collections'
