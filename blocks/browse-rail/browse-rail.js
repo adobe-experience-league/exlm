@@ -192,15 +192,11 @@ async function displayProductNav(block, currentPagePath, results, lang) {
     link.setAttribute('href', pagePath);
 
     const span = document.createElement('span');
-    span.appendChild(createPlaceholderSpan('all', 'All', unwrapSpan, unwrapSpan));
+    span.append(createPlaceholderSpan('all', 'All', unwrapSpan, unwrapSpan));
     if (languages.includes(lang)) {
-      span.append(document.createTextNode(' '));
-      span.appendChild(createPlaceholderSpan('content', 'Content', unwrapSpan, unwrapSpan));
-      span.append(document.createTextNode(' '));
-      span.appendChild(document.createTextNode(`${parentPageTitle}`));
+      span.append(' ', createPlaceholderSpan('content', 'Content', unwrapSpan, unwrapSpan), ' ', parentPageTitle);
     } else {
-      span.appendChild(document.createTextNode(` ${parentPageTitle} `));
-      span.appendChild(createPlaceholderSpan('content', 'Content', unwrapSpan, unwrapSpan));
+      span.append(' ', parentPageTitle, ' ', createPlaceholderSpan('content', 'Content', unwrapSpan, unwrapSpan));
     }
     link.appendChild(span);
 
@@ -329,13 +325,9 @@ export default async function decorate(block) {
     activeSpan.classList.add('is-active');
     activeSpan.append(createPlaceholderSpan('all', 'All', unwrapSpan, unwrapSpan));
     if (languages.includes(lang)) {
-      activeSpan.append(document.createTextNode(' '));
-      activeSpan.append(createPlaceholderSpan('content', 'Content', unwrapSpan, unwrapSpan));
-      activeSpan.append(document.createTextNode(' '));
-      activeSpan.append(`${label}`);
+      activeSpan.append(' ', createPlaceholderSpan('content', 'Content', unwrapSpan, unwrapSpan), ' ', label);
     } else {
-      activeSpan.append(` ${label} `);
-      activeSpan.append(createPlaceholderSpan('content', 'Content', unwrapSpan, unwrapSpan));
+      activeSpan.append(' ', label, ' ', createPlaceholderSpan('content', 'Content', unwrapSpan, unwrapSpan));
     }
 
     ul.append(li);
