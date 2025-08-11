@@ -173,14 +173,17 @@ const filterPlaylists = (playlists, filters) => {
   });
 };
 
+const xssSanitizeFilterValue = (value) => value.replace(/[^a-zA-Z0-9]/g, '');
+
 /**
  * @returns {Filters}
  */
 function readFiltersFromUrl() {
   const url = new URL(window.location.href);
-  const solution = url.searchParams.getAll('solution');
-  const role = url.searchParams.getAll('role') || [];
-  const level = url.searchParams.getAll('level') || [];
+  const solution = url.searchParams.getAll('solution')?.map(xssSanitizeFilterValue);
+  const role = url.searchParams.getAll('role')?.map(xssSanitizeFilterValue) || [];
+  const level = url.searchParams.getAll('level')?.map(xssSanitizeFilterValue) || [];
+
   return { solution, role, level } || [];
 }
 

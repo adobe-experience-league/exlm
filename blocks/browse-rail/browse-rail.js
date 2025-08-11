@@ -14,6 +14,7 @@ import getProducts from '../../scripts/utils/product-utils.js';
 const { browseMoreProductsLink } = getConfig();
 
 const unwrapSpan = (span) => span.replaceWith(span.textContent);
+const languages = ['es', 'fr', 'pt-br', 'it'];
 
 // Utility function to toggle visibility of items
 function toggleItemVisibility(itemList, startIndex, show) {
@@ -82,8 +83,7 @@ function handleViewLessClick(block, numFeaturedProducts) {
   setLinkVisibility(block, '.viewLessLink', false);
 }
 
-async function displayAllProducts(block) {
-  const { lang } = getPathDetails();
+async function displayAllProducts(block, lang) {
   const productList = await getProducts(lang);
 
   if (productList.length > 0) {
@@ -155,7 +155,7 @@ async function displayAllProducts(block) {
  * @param {string} currentPagePath
  * @param {*} results
  */
-async function displayProductNav(block, currentPagePath, results) {
+async function displayProductNav(block, currentPagePath, results, lang) {
   // Find the parent page for product sub-pages
   const parentPage = results.find((page) => page.path === getPathUntilLevel(currentPagePath, 3));
   let parentPageTitle = '';
@@ -192,9 +192,12 @@ async function displayProductNav(block, currentPagePath, results) {
     link.setAttribute('href', pagePath);
 
     const span = document.createElement('span');
-    span.appendChild(createPlaceholderSpan('all', 'All', unwrapSpan, unwrapSpan));
-    span.appendChild(document.createTextNode(` ${parentPageTitle} `));
-    span.appendChild(createPlaceholderSpan('content', 'Content', unwrapSpan, unwrapSpan));
+    span.append(createPlaceholderSpan('all', 'All', unwrapSpan, unwrapSpan));
+    if (languages.includes(lang)) {
+      span.append(' ', createPlaceholderSpan('content', 'Content', unwrapSpan, unwrapSpan), ' ', parentPageTitle);
+    } else {
+      span.append(' ', parentPageTitle, ' ', createPlaceholderSpan('content', 'Content', unwrapSpan, unwrapSpan));
+    }
     link.appendChild(span);
 
     li.append(link);
@@ -256,6 +259,7 @@ function displayManualNav(manualNav, block) {
 
 // Main function to decorate the block
 export default async function decorate(block) {
+  const { lang } = getPathDetails();
   // get any defined manual navigation
   const [manualNav] = block.querySelectorAll(':scope div > div');
 
@@ -286,7 +290,7 @@ export default async function decorate(block) {
     if (manualNav) {
       displayManualNav(manualNav, block);
     } else {
-      displayAllProducts(block);
+      displayAllProducts(block, lang);
     }
   }
 
@@ -320,8 +324,11 @@ export default async function decorate(block) {
     const activeSpan = document.createElement('span');
     activeSpan.classList.add('is-active');
     activeSpan.append(createPlaceholderSpan('all', 'All', unwrapSpan, unwrapSpan));
-    activeSpan.append(` ${label} `);
-    activeSpan.append(createPlaceholderSpan('content', 'Content', unwrapSpan, unwrapSpan));
+    if (languages.includes(lang)) {
+      activeSpan.append(' ', createPlaceholderSpan('content', 'Content', unwrapSpan, unwrapSpan), ' ', label);
+    } else {
+      activeSpan.append(' ', label, ' ', createPlaceholderSpan('content', 'Content', unwrapSpan, unwrapSpan));
+    }
 
     ul.append(li);
     li.append(activeSpan);
@@ -334,7 +341,7 @@ export default async function decorate(block) {
       displayManualNav(manualNav, block);
     } else {
       // dynamically create sub page nav or if empty show products list
-      await displayProductNav(block, currentPagePath, results);
+      await displayProductNav(block, currentPagePath, results, lang);
     }
   }
   handleToggleClick(block);
