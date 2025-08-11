@@ -7377,5 +7377,55 @@
         "description": "Enter the feedback message to display when the answer is incorrect"
       }
     ]
+  },
+  {
+    "id": "drill-in",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Image",
+        "description": "The main image for the drill-in block",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "fileReferenceAlt",
+        "value": "",
+        "label": "Image Alt Text",
+        "description": "A descriptive text of the image for accessibility"
+      }
+    ]
+  },
+  {
+    "id": "callout",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "calloutTitle",
+        "value": "",
+        "label": "Callout Title",
+        "description": "Title for the callout"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cardTitle",
+        "value": "",
+        "label": "Card Title",
+        "description": "Title for the pop-out card"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "cardDescription",
+        "value": "",
+        "label": "Card Description",
+        "description": "Description text for the pop-out card"
+      }
+    ]
   }
 ]

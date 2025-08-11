@@ -74,7 +74,8 @@
       "atomic-search",
       "skill-track-meta",
       "skill-track",
-      "quiz"
+      "quiz",
+      "drill-in"
     ]
   },
   {
@@ -376,6 +377,10 @@
   {
     "id": "quiz",
     "components": ["question"]
+  },
+  {
+    "id": "drill-in",
+    "components": ["callout"]
   },
   {
     "id": "rte-custom-options",
