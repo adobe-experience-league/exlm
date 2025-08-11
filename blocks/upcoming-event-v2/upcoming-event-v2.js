@@ -263,7 +263,7 @@ export default async function decorate(block) {
     ? urlParams
         .get('filters')
         .split(',')
-        .map((filter) => filter.replace(/[^a-z0-9]/gi, ''))
+        .map((filter) => filter.replace(/[^a-zA-Z0-9.]/gi, ''))
     : [];
 
   const updateFiltersAndCards = (selectedFilters) => {
