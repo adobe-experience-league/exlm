@@ -299,9 +299,10 @@ const buildNavItems = (ul, level = 0) => {
   };
 
   if (level === 0) {
-    // add search link (visible on mobile only)
-    ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
-
+    // add search link (visible on mobile only excluding Search page)
+    if (!document.body.classList.contains('search')) {
+      ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
+    }
     const addMobileLangSelector = async () => {
       // add language select (visible on mobile only)
 
@@ -432,7 +433,7 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
       </div>
       <div class="search-full">
         <div class="search-container">
-          <span title="Search" class="icon icon-search"></span>
+          <span title="${placeholders?.search || 'Search'}" class="icon icon-search"></span>
           <input autocomplete="off" class="search-input" type="text" aria-label="top-nav-combo-search" aria-expanded="false" title="${
             placeholders?.searchPlaceholderTitle || 'Insert a query. Press enter to send'
           }" role="combobox" placeholder="${searchPlaceholder.textContent}">
@@ -756,7 +757,7 @@ class ExlHeader extends HTMLElement {
       const brandP = decorateHeaderBlock('brand', this.brandDecorator, this.decoratorOptions);
       let searchP;
       if (!document.body.classList.contains('search')) {
-        searchP = decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
+        searchP = await decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
       } else {
         nav?.querySelector(`:scope > .search`)?.remove();
       }
