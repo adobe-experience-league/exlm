@@ -1690,7 +1690,9 @@
                   "name": "Callout",
                   "model": "callout",
                   "cardTitle": "Sample Card Title",
-                  "cardDescription": "Sample card description text goes here."
+                  "cardDescription": "Sample card description text goes here.",
+                  "positionX": "50",
+                  "positionY": "50"
                 }
               }
             }

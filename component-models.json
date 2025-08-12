@@ -7417,6 +7417,22 @@
         "value": "",
         "label": "Card Description",
         "description": "Description text for the pop-out card"
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "positionX",
+        "value": "50",
+        "label": "X Position",
+        "description": "Horizontal position of the callout on the image (0-100%)"
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "positionY",
+        "value": "50",
+        "label": "Y Position",
+        "description": "Vertical position of the callout on the image (0-100%)"
       }
     ]
   }
