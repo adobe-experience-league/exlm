@@ -314,7 +314,9 @@ export default async function decorate(block) {
 
   state.currentStep = content.sections.flatMap((sec) => sec.steps).find((step) => step.active).id;
 
-  if (preferences.get('view') === 'as-docs') {
+  const isDesktopUI = isDesktopView();
+
+  if (preferences.get('view') === 'as-docs' || !isDesktopUI) {
     showAllSteps(block);
   } else {
     showStep(block, state.currentStep);
