@@ -28,7 +28,7 @@ function getTotalSteps(block) {
   return firstStep.querySelector('.step-counter').textContent.split('/')[1].trim();
 }
 
-export const isDesktopView = () => window.matchMedia('(min-width: 768px)').matches;
+export const isDesktopView = () => window.matchMedia('(min-width: 900px)').matches;
 
 export function getNextStep(block, currentStep) {
   const steps = [...block.querySelectorAll('[data-step]')] || [];
