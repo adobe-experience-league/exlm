@@ -1,0 +1,175 @@
+/* Drill-in component styles */
+.drill-in-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.drill-in-image-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.drill-in-image-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Position the coachmark elements */
+exl-coachmark {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  transform: translate(-50%, -50%);
+  z-index: 9;
+}
+
+/* Navigation container styles */
+.drill-in-nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  position: relative;
+  z-index: 15;
+}
+
+.drill-in-title {
+  flex-grow: 1;
+  text-align: center;
+  font-weight: bold;
+  margin: 0 10px;
+  color: #333;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.drill-in-nav-button {
+  background: unset; /* Adobe blue */
+  border: none;
+  color: #505050;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  border-radius: 50%;
+  z-index: 20;
+  position: relative;
+}
+
+.drill-in-nav-button:hover {
+  color: #eb1000; /* Darker blue on hover */
+  background-color: unset;
+}
+
+.drill-in-nav-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgb(20 115 230 / 50%);
+}
+
+/* Make the coachmark indicator visible and clickable */
+.drill-in-coachmark {
+  cursor: pointer;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+/* Style the content inside the popover */
+.drill-in-coachmark [slot='content'] {
+  padding: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.drill-in-coachmark .spectrum-CoachIndicator {
+  cursor: pointer;
+  z-index: 10;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.drill-in-coachmark .spectrum-CoachIndicator-ring {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  border-color: #666 !important; /* Grey color */
+}
+
+/* Style for the plus button */
+.drill-in-plus-button {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background-color: #eb1000; /* Red color */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transform: translate(-50%, -50%); /* Center the button on its position */
+  box-shadow: 0 2px 4px rgb(0 0 0 / 30%);
+  border: 2px solid white;
+}
+
+.drill-in-plus-button .icon-plus {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drill-in-coachmark.active + .drill-in-plus-button {
+  color: #eb1000;
+  background-color: #fff;
+  border: 2px solid #eb1000;
+  border-radius: 50%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .drill-in-trigger {
+    width: 24px;
+    height: 24px;
+  }
+
+  exl-coachmark {
+    width: 24px;
+    height: 24px;
+  }
+
+  .drill-in-nav-button {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  .drill-in-plus-button {
+    width: 20px;
+    height: 20px;
+
+    /* Position is already centered with transform in the main rule */
+  }
+
+  .drill-in-plus-button .icon-plus {
+    width: 12px;
+    height: 12px;
+  }
+}
