@@ -7405,14 +7405,6 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "calloutTitle",
-        "value": "",
-        "label": "Callout Title",
-        "description": "Title for the callout"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
         "name": "cardTitle",
         "value": "",
         "label": "Card Title",
