@@ -24,9 +24,16 @@ const BrowseCardsADLSAdaptor = (() => {
    */
   const mapResultToCardsDataModel = (result) => {
     const contentType = CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY;
-    const { solution, name, description, path, dates, time } = result || {};
+    const { solution, name, description, path, paths, dates, time } = result || {};
     const adlsDomain = extractDomain(adlsUrl);
-    const formattedPath = path && !path.startsWith('/') ? `/${path}` : path;
+    
+    let formattedPath;
+    if (path) {
+      formattedPath = !path.startsWith('/') ? `/${path}` : path;
+    } else if (paths && Array.isArray(paths) && paths.length > 0) {
+      const firstPath = paths[0];
+      formattedPath = firstPath.replace('us-en:/content/athena/us/us-en', '');
+    }
 
     return {
       ...browseCardDataModel,
@@ -39,8 +46,8 @@ const BrowseCardsADLSAdaptor = (() => {
         time,
       },
       description: description || '',
-      copyLink: `${adlsDomain}${formattedPath}` || '',
-      viewLink: `${adlsDomain}${formattedPath}` || '',
+      copyLink: formattedPath ? `${adlsDomain}${formattedPath}` : '',
+      viewLink: formattedPath ? `${adlsDomain}${formattedPath}` : '',
       viewLinkText: placeholders.browseCardInstructorLedViewLabel || 'View course',
     };
   };
