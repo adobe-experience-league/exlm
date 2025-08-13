@@ -380,7 +380,7 @@
   },
   {
     "id": "drill-in",
-    "components": ["callout"]
+    "components": ["drill-in-callout"]
   },
   {
     "id": "rte-custom-options",

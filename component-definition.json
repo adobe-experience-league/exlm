@@ -1669,8 +1669,8 @@
                   "fileReferenceAlt": "Drill In Image",
                   "item": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
-                    "name": "Callout",
-                    "model": "callout",
+                    "name": "Drill In Callout",
+                    "model": "drill-in-callout",
                     "cardTitle": "Sample Card Title",
                     "cardDescription": "Sample card description text goes here."
                   }
@@ -1680,15 +1680,15 @@
           }
         },
         {
-          "title": "Callout",
-          "id": "callout",
+          "title": "Drill In Callout",
+          "id": "drill-in-callout",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block/item",
                 "template": {
-                  "name": "Callout",
-                  "model": "callout",
+                  "name": "Drill In Callout",
+                  "model": "drill-in-callout",
                   "cardTitle": "Sample Card Title",
                   "cardDescription": "Sample card description text goes here.",
                   "positionX": "50",
