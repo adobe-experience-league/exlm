@@ -324,6 +324,11 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   justify-content: flex-end;
                   flex-direction: row-reverse;
                   gap: 16px;
+                  position: relative;
+                }
+                atomic-facet::part(sort-action) {
+                  position: absolute;
+                  right: 24px;
                 }
                 atomic-facet::part(label-button-icon), atomic-timeframe-facet::part(label-button-icon) {
                   margin-left: 0;

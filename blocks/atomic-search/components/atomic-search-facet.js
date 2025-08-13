@@ -143,18 +143,38 @@ export default function atomicFacetHandler(baseElement, placeholders) {
     }
   };
 
-  const sortElementsByLabel = (elements) =>
+  const sortElementsByLabel = (elements, order = 'asc') =>
     elements.sort((a, b) => {
       const aText = a.querySelector('.value-label')?.textContent?.trim().toLowerCase() || '';
       const bText = b.querySelector('.value-label')?.textContent?.trim().toLowerCase() || '';
-      return aText.localeCompare(bText);
+      return order === 'desc' ? bText.localeCompare(aText) : aText.localeCompare(bText);
     });
 
-  const sortFacetsInOrder = (parentWrapper) => {
+  const sortFacetsInOrder = (parentWrapper, order = 'asc') => {
     const children = Array.from(parentWrapper.children);
-    const sortedChildren = sortElementsByLabel(children);
+    const sortedChildren = sortElementsByLabel(children, order);
     parentWrapper.innerHTML = '';
     sortedChildren.forEach((item) => parentWrapper.appendChild(item));
+  };
+
+  const enableSortAction = (atomicFacet) => {
+    const labelBtn = atomicFacet.shadowRoot.querySelector(`[part="label-button"]`);
+    const sortElement = labelBtn.querySelector(".sort-action");
+    if (sortElement) {
+      return;
+    }
+    const sortButton = htmlToElement(`<button part="sort-action" class="sort-action">↓</button>`);
+    sortButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+       const parentWrapper = atomicFacet.shadowRoot.querySelector('[part="values"]');
+       const newOrder = labelBtn.dataset.sort === "asc" ? "desc" : "asc";
+       labelBtn.dataset.sort = newOrder;
+       sortFacetsInOrder(parentWrapper, newOrder);
+    });
+    labelBtn.appendChild(sortButton);
+    labelBtn.dataset.sort = "asc";
+
   };
 
   const handleFacetsVisibility = (facetParent, facets, expanded) => {
@@ -350,6 +370,7 @@ export default function atomicFacetHandler(baseElement, placeholders) {
       facets.forEach((facet) => {
         updateFacetUI(facet, atomicFacet, false);
       });
+      enableSortAction(atomicFacet);
       sortFacetsInOrder(parentWrapper);
       facets.forEach((facet) => {
         adjustChildElementsPosition(facet, atomicFacet);
