@@ -1,235 +1,203 @@
-import { fetchJson, getPathDetails } from '../scripts.js';
-
-// Cache key for session storage
-const LEARNING_COLLECTIONS_CACHE_KEY = 'learning_collections_data';
+import { fetchPlaceholders } from '../lib-franklin.js';
 
 /**
- * Gets cached data from session storage
- * @returns {Array|null} Cached data or null if not found
+ * Extracts the skill track fragment URL from the current page path.
+ * For a path like /{locale}/learning-collections/{collection}/{fragment}/{step}/...,
+ * returns /{locale}/learning-collections/{collection}/{fragment}
+ *
+ * @returns {string|null} The skill track fragment URL or null if not found
  */
-function getCachedData() {
-  try {
-    const cached = sessionStorage.getItem(LEARNING_COLLECTIONS_CACHE_KEY);
-    return cached ? JSON.parse(cached) : null;
-  } catch (error) {
+export function getSkillTrackFragmentUrl() {
+  const url = window.location.pathname;
+  // Match: /{locale}/learning-collections/{collection}/{fragment}/
+  const match = url.match(/^\/[a-z-]+\/learning-collections\/[^/]+\/[^/]+/);
+  return match ? match[0] : null;
+}
+
+/**
+ * Fetches the skill track fragment HTML content from the server.
+ *
+ * @param {string} [path] - The path to fetch the fragment from. If not provided,
+ *                         uses the result of getSkillTrackFragmentUrl()
+ * @returns {Promise<Document|null>} Parsed HTML document or null if fetch fails
+ */
+async function fetchSkillTrackFragment(path = getSkillTrackFragmentUrl()) {
+  if (!path) return null;
+  const fragmentUrl = `${path}.plain.html`;
+  const res = await fetch(fragmentUrl);
+  if (!res.ok) {
     // eslint-disable-next-line no-console
-    console.warn('Error reading from session storage:', error);
+    console.error(`Failed to fetch skill track fragment: ${fragmentUrl}`);
     return null;
   }
+  const text = await res.text();
+  const parser = new DOMParser();
+  return parser.parseFromString(text, 'text/html');
 }
 
 /**
- * Stores data in session storage
- * @param {Array} data - Data to cache
+ * Determines the current step position and navigation metadata for a skill track.
+ *
+ * @param {Array<{name: string, url: string}>} allSteps - Array of step objects with name and URL
+ * @param {string} skillTrackRecap - URL of the recap step
+ * @param {string} skillTrackQuiz - URL of the quiz step
+ * @returns {Object} Step metadata object containing:
+ *   - {number} currentStep - Index of the current step (1-based)
+ *   - {string} nextStep - URL of the next step (null if none)
+ *   - {string} prevStep - URL of the previous step (null if none)
+ *   - {string} collectionUrl - Base URL of the learning collection
+ *   - {boolean} isRecap - Whether current page is the recap step
+ *   - {boolean} isQuiz - Whether current page is the quiz step
  */
-function setCachedData(data) {
-  try {
-    sessionStorage.setItem(LEARNING_COLLECTIONS_CACHE_KEY, JSON.stringify(data));
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.warn('Error writing to session storage:', error);
-  }
-}
+function getStepMeta(allSteps, skillTrackRecap, skillTrackQuiz) {
+  const currentPath = window.location.pathname;
+  let currentStep = null;
+  let nextStep = null;
+  let prevStep = null;
+  let currentIdx = -1;
 
-/**
- * Fetches learning collection data from the JSON index file
- * @returns {Promise<Array>} Learning collection data
- */
-export async function fetchData() {
-  try {
-    // Check session storage first
-    const cachedData = getCachedData();
-    if (cachedData) {
-      return cachedData;
+  for (let i = 0; i < allSteps.length; i += 1) {
+    if (allSteps[i] && currentPath.startsWith(allSteps[i].url)) {
+      currentStep = i + 1; // 1-based index
+      currentIdx = i;
+      break;
     }
-
-    const { lang } = getPathDetails();
-    const path = `${window.hlx.codeBasePath}/${lang}/learning-collections.json`;
-    const fallback = `${window.hlx.codeBasePath}/en/learning-collections.json`;
-    const resp = await fetchJson(path, fallback);
-
-    // Cache the fetched data
-    setCachedData(resp);
-
-    return resp;
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching learning collection data:', error);
-    return [];
   }
-}
-
-/**
- * Extracts the learning collection path from a URL
- * @param {string} url - The URL to parse
- * @returns {string} The learning collection path
- */
-function extractLearningCollectionPath(url) {
-  if (!url) return null;
-
-  // Remove leading slash if present
-  const cleanUrl = url.startsWith('/') ? url.slice(1) : url;
-
-  // Split by '/' and find learning-collections
-  const parts = cleanUrl.split('/');
-  const learningCollectionsIndex = parts.findIndex((part) => part === 'learning-collections');
-
-  if (learningCollectionsIndex === -1) return null;
-
-  // Return the learning collection identifier (next part after learning-collections)
-  return parts[learningCollectionsIndex + 1] || null;
-}
-
-/**
- * Extracts the skill track path from a URL
- * @param {string} url - The URL to parse
- * @returns {string} The skill track path
- */
-function extractSkillTrackPath(url) {
-  if (!url) return null;
-
-  const cleanUrl = url.startsWith('/') ? url.slice(1) : url;
-  const parts = cleanUrl.split('/');
-  const learningCollectionsIndex = parts.findIndex((part) => part === 'learning-collections');
-
-  if (learningCollectionsIndex === -1) return null;
-
-  // Check if there's a skill track part (after learning collection)
-  const skillTrackIndex = learningCollectionsIndex + 2;
-  return parts[skillTrackIndex] || null;
-}
-
-/**
- * Finds the parent skill track data for a given URL
- * @param {Array} data - The learning collection JSON data
- * @param {string} url - The URL to find parent for
- * @returns {Object|null} The parent skill track data
- */
-function findParentSkillTrack(data, url) {
-  if (!data || !url) return null;
-
-  const collectionPath = extractLearningCollectionPath(url);
-  const skillTrackPath = extractSkillTrackPath(url);
-
-  if (!collectionPath || !skillTrackPath) return null;
-
-  // Find the skill track entry
-  return (
-    data.find((item) => {
-      const itemPath = item.path || '';
-      return (
-        itemPath.includes(`/learning-collections/${collectionPath}/${skillTrackPath}`) &&
-        itemPath.split('/').length === 5
-      ); // Skill track level
-    }) || null
-  );
-}
-
-/**
- * Gets all steps for a skill track in order
- * @param {Array} data - The learning collection JSON data
- * @param {Array} skillTrackSteps - Array of step URLs from skill track
- * @returns {Array} Array of step data with name, description, url
- */
-function getOrderedSteps(data, skillTrackSteps) {
-  if (!data || !skillTrackSteps || !Array.isArray(skillTrackSteps)) return [];
-
-  return skillTrackSteps.map((stepUrl) => {
-    const stepData = data.find((item) => item.path === stepUrl);
-    return {
-      name: stepData?.title || '',
-      description: stepData?.description || '',
-      url: stepUrl,
-    };
-  });
-}
-
-/**
- * Gets comprehensive learning collection information for a given step URL
- * @param {string} url - The step URL to get information for
- * @returns {Promise<Object>} Formatted learning collection step information
- */
-export async function getStepInfo(url) {
-  try {
-    const data = await fetchData();
-    if (!data || !url) return null;
-
-    const parentSkillTrack = findParentSkillTrack(data, url);
-    if (!parentSkillTrack) return null;
-
-    const collectionPath = extractLearningCollectionPath(url);
-    const collectionUrl = `/en/learning-collections/${collectionPath}/`;
-
-    // Get ordered steps
-    const skillTrackSteps = getOrderedSteps(data, parentSkillTrack.skillTrackSteps || []);
-
-    // Create complete navigation array: steps + recap + quiz
-    const allSteps = [...skillTrackSteps];
-
-    // Add recap if it exists
-    if (parentSkillTrack.skillTrackRecap) {
-      const recapData = data.find((item) => item.path === parentSkillTrack.skillTrackRecap);
-      if (recapData) {
-        allSteps.push({
-          name: recapData.title || '',
-          description: recapData.description || '',
-          url: parentSkillTrack.skillTrackRecap,
-        });
+  if (currentIdx === -1) {
+    // fallback: try to match by last segment
+    const lastSeg = currentPath.split('/').pop();
+    for (let i = 0; i < allSteps.length; i += 1) {
+      if (allSteps[i].url.split('/').pop() === lastSeg) {
+        currentStep = i + 1; // 1-based index
+        currentIdx = i;
+        break;
       }
     }
-
-    // Add quiz if it exists
-    if (parentSkillTrack.skillTrackQuiz) {
-      const quizData = data.find((item) => item.path === parentSkillTrack.skillTrackQuiz);
-      if (quizData) {
-        allSteps.push({
-          name: quizData.title || '',
-          description: quizData.description || '',
-          url: parentSkillTrack.skillTrackQuiz,
-        });
-      }
-    }
-
-    const totalSteps = allSteps.length;
-
-    // Find current step index
-    const currentStepIndex = allSteps.findIndex((step) => step.url === url);
-    const currentStep = currentStepIndex + 1;
-
-    // Get next and previous steps
-    const nextStep = currentStepIndex < totalSteps - 1 ? allSteps[currentStepIndex + 1].url : null;
-    const prevStep = currentStepIndex > 0 ? allSteps[currentStepIndex - 1].url : null;
-
-    // Check if current page is recap or quiz
-    const isRecap = url === parentSkillTrack.skillTrackRecap;
-    const isQuiz = url === parentSkillTrack.skillTrackQuiz;
-
-    return {
-      skillTrackHeader: parentSkillTrack.skillTrackHeader || '',
-      skillTrackDescription: parentSkillTrack.skillTrackDescription || '',
-      skillTrackRecap: parentSkillTrack.skillTrackRecap || '',
-      skillTrackQuiz: parentSkillTrack.skillTrackQuiz || '',
-      skillTrackSteps: allSteps,
-      totalSteps,
-      currentStep,
-      nextStep,
-      prevStep,
-      collectionUrl,
-      isRecap,
-      isQuiz,
-    };
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error getting learning collection step info:', error);
-    return null;
   }
+  if (currentIdx !== -1) {
+    prevStep = allSteps[currentIdx - 1]?.url || null;
+    nextStep = allSteps[currentIdx + 1]?.url || null;
+  }
+
+  // Collection URL: parent path up to /learning-collections/slug
+  let collectionUrl = '';
+  const [, matchedUrl] = currentPath.match(/^(\/[a-z-]+\/learning-collections\/[^/]+)/) || [];
+  if (matchedUrl) collectionUrl = matchedUrl;
+
+  // isRecap, isQuiz
+  const isRecap = !!(skillTrackRecap && currentPath.startsWith(skillTrackRecap));
+  const isQuiz = !!(skillTrackQuiz && currentPath.startsWith(skillTrackQuiz));
+
+  return {
+    currentStep,
+    nextStep,
+    prevStep,
+    collectionUrl,
+    isRecap,
+    isQuiz,
+  };
 }
 
 /**
- * Gets learning collection step information for the current page URL
- * @returns {Promise<Object>} Formatted learning collection step information
+ * Extracts metadata from a skill track fragment DOM element.
+ * Parses the fragment to extract header, description, recap/quiz URLs,
+ * and step information.
+ *
+ * @param {Document} fragment - Parsed HTML document containing skill track data
+ * @returns {Promise<Object>} Skill track metadata object containing:
+ *   - {string} skillTrackHeader - Title of the skill track
+ *   - {string} skillTrackDescription - Description HTML content
+ *   - {string} skillTrackRecap - URL of the recap step
+ *   - {string} skillTrackQuiz - URL of the quiz step
+ *   - {Array<{name: string, url: string}>} skillTrackSteps - Array of step objects
+ *   - {number} totalSteps - Total number of steps in the track
+ *   - {number} currentStep - Index of the current step (1-based)
+ *   - {string|null} nextStep - URL of the next step (null if none)
+ *   - {string|null} prevStep - URL of the previous step (null if none)
+ *   - {string} collectionUrl - Base URL of the learning collection
+ *   - {boolean} isRecap - Whether current page is the recap step
+ *   - {boolean} isQuiz - Whether current page is the quiz step
  */
+async function extractSkillTrackMeta(fragment) {
+  if (!fragment) return {};
+
+  const meta = fragment.querySelector('.skill-track-meta');
+  const track = fragment.querySelector('.skill-track');
+
+  const skillTrackHeader = meta?.children[0]?.querySelector('h1, h2, h3, h4, h5, h6')?.textContent?.trim() || '';
+  const skillTrackDescription = meta?.children[1]?.innerHTML || '';
+  const skillTrackRecap = meta?.children[2]?.querySelector('a')?.getAttribute('href') || '';
+  const skillTrackQuiz = meta?.children[3]?.querySelector('a')?.getAttribute('href') || '';
+
+  // Steps
+  const stepDivs = Array.from(track?.children || []);
+  const allSteps = stepDivs
+    .map((div) => {
+      const a = div.querySelector('a');
+      const nameDiv = div.children?.[1];
+      const url = a?.getAttribute('href') || '';
+      const name = nameDiv?.textContent?.trim() || '';
+      if (!url || !name) return null;
+      return { name, url };
+    })
+    .filter(Boolean);
+
+  // Fetch placeholders for step names
+  const placeholders = await fetchPlaceholders();
+
+  // Add recap and quiz steps to allSteps
+  if (skillTrackRecap) {
+    allSteps.push({
+      name: placeholders['skill-reack-recap-step-name'] || 'Recap - Key Takeaways',
+      url: skillTrackRecap,
+    });
+  }
+  if (skillTrackQuiz) {
+    allSteps.push({ name: placeholders['skill-track-quiz-step-name'] || 'Skill Track Quiz', url: skillTrackQuiz });
+  }
+
+  const totalSteps = allSteps.length;
+
+  return {
+    skillTrackHeader,
+    skillTrackDescription,
+    skillTrackRecap,
+    skillTrackQuiz,
+    skillTrackSteps: allSteps,
+    totalSteps,
+    ...getStepMeta(allSteps, skillTrackRecap, skillTrackQuiz),
+  };
+}
+
 export async function getCurrentStepInfo() {
-  const currentUrl = window.location.pathname;
-  return getStepInfo(currentUrl);
+  const fragUrl = getSkillTrackFragmentUrl();
+  if (!fragUrl) return null;
+  const storageKey = `skill-track-meta:${fragUrl}`;
+  let meta = null;
+
+  // Try to get from sessionStorage
+  try {
+    const cached = sessionStorage.getItem(storageKey);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      // Re-run getStepMeta to update navigation for current page
+      if (parsed && Array.isArray(parsed.skillTrackSteps)) {
+        const stepMeta = getStepMeta(parsed.skillTrackSteps, parsed.skillTrackRecap, parsed.skillTrackQuiz);
+        return { ...parsed, ...stepMeta };
+      }
+    }
+  } catch (e) {
+    // ignore parse errors
+  }
+
+  // Not cached, fetch and store
+  const fragment = await fetchSkillTrackFragment(fragUrl);
+  if (!fragment) return null;
+  meta = await extractSkillTrackMeta(fragment);
+  try {
+    sessionStorage.setItem(storageKey, JSON.stringify(meta));
+  } catch (e) {
+    // ignore storage errors
+  }
+  return meta;
 }
