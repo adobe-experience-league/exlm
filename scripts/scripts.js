@@ -230,10 +230,14 @@ function addMiniToc(main) {
 function addSkillTrackInfo(main) {
   // Check if skill-track-info block already exists
   if (!main.querySelector('.skill-track-info.block')) {
-    const skillTrackInfoSection = document.createElement('div');
-    skillTrackInfoSection.classList.add('skill-track-info-section');
-    skillTrackInfoSection.append(buildBlock('skill-track-info', []));
-    main.prepend(skillTrackInfoSection);
+    if (isDocPage) {
+      main.querySelector('main > div:first-child').prepend(buildBlock('skill-track-info', []));
+    } else {
+      const skillTrackInfoSection = document.createElement('div');
+      skillTrackInfoSection.classList.add('skill-track-info-section');
+      skillTrackInfoSection.append(buildBlock('skill-track-info', []));
+      main.prepend(skillTrackInfoSection);
+    }
   }
 }
 
@@ -244,10 +248,14 @@ function addSkillTrackInfo(main) {
 function addSkillTrackNav(main) {
   // Check if skill-track-nav block already exists
   if (!main.querySelector('.skill-track-nav.block')) {
-    const skillTrackNavSection = document.createElement('div');
-    skillTrackNavSection.classList.add('skill-track-nav-section');
-    skillTrackNavSection.append(buildBlock('skill-track-nav', []));
-    main.append(skillTrackNavSection);
+    if (isDocPage) {
+      main.querySelector('main > div:first-child').append(buildBlock('skill-track-nav', []));
+    } else {
+      const skillTrackNavSection = document.createElement('div');
+      skillTrackNavSection.classList.add('skill-track-nav-section');
+      skillTrackNavSection.append(buildBlock('skill-track-nav', []));
+      main.append(skillTrackNavSection);
+    }
   }
 }
 
@@ -317,7 +325,8 @@ function buildAutoBlocks(main, isFragment = false) {
         addProfileRail(main);
       }
       // if we are on a learning collection step page
-      if (isLearningCollectionStep) {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (isLearningCollectionStep || urlParams.get('learning-collection-fragment')) {
         addSkillTrackInfo(main);
         addSkillTrackNav(main);
       }

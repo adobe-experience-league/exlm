@@ -2,6 +2,10 @@
   width: 100%;
 }
 
+.docs .skill-track-info-wrapper {
+  margin-bottom: 40px;
+}
+
 .skill-track-info .back-to-collection {
   display: flex;
   align-items: center;

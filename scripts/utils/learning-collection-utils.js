@@ -1,4 +1,5 @@
 import { fetchPlaceholders } from '../lib-franklin.js';
+import { getPathDetails } from '../scripts.js';
 
 /**
  * Extracts the skill track fragment URL from the current page path.
@@ -11,7 +12,16 @@ export function getSkillTrackFragmentUrl() {
   const url = window.location.pathname;
   // Match: /{locale}/learning-collections/{collection}/{fragment}/
   const match = url.match(/^\/[a-z-]+\/learning-collections\/[^/]+\/[^/]+/);
-  return match ? match[0] : null;
+  if (match) {
+    return match[0];
+  }
+  
+  // Fallback: Check query parameters for fragment URL
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('learning-collection-fragment')) {
+    return urlParams.get('learning-collection-fragment');
+  }
+  return null;
 }
 
 /**
@@ -50,14 +60,14 @@ async function fetchSkillTrackFragment(path = getSkillTrackFragmentUrl()) {
  *   - {boolean} isQuiz - Whether current page is the quiz step
  */
 function getStepMeta(allSteps, skillTrackRecap, skillTrackQuiz) {
-  const currentPath = window.location.pathname;
+  const currentPath = window.location.href;
   let currentStep = null;
   let nextStep = null;
   let prevStep = null;
   let currentIdx = -1;
 
   for (let i = 0; i < allSteps.length; i += 1) {
-    if (allSteps[i] && currentPath.startsWith(allSteps[i].url)) {
+    if (allSteps[i] && currentPath.includes(allSteps[i].url)) {
       currentStep = i + 1; // 1-based index
       currentIdx = i;
       break;
@@ -79,10 +89,15 @@ function getStepMeta(allSteps, skillTrackRecap, skillTrackQuiz) {
     nextStep = allSteps[currentIdx + 1]?.url || null;
   }
 
-  // Collection URL: parent path up to /learning-collections/slug
+  // Collection URL: parent path up to /learning-collections/slug, using getSkillTrackFragmentUrl()
   let collectionUrl = '';
-  const [, matchedUrl] = currentPath.match(/^(\/[a-z-]+\/learning-collections\/[^/]+)/) || [];
-  if (matchedUrl) collectionUrl = matchedUrl;
+  if (typeof getSkillTrackFragmentUrl === 'function') {
+    const fragmentUrl = getSkillTrackFragmentUrl();
+    if (fragmentUrl) {
+      const [, matchedUrl] = fragmentUrl.match(/^(\/[a-z-]+\/learning-collections\/[^/]+)/) || [];
+      if (matchedUrl) collectionUrl = matchedUrl;
+    }
+  }
 
   // isRecap, isQuiz
   const isRecap = !!(skillTrackRecap && currentPath.startsWith(skillTrackRecap));
@@ -124,6 +139,12 @@ async function extractSkillTrackMeta(fragment) {
   const meta = fragment.querySelector('.skill-track-meta');
   const track = fragment.querySelector('.skill-track');
 
+  if (!meta || !track) {
+    // eslint-disable-next-line no-console
+    console.error('Skill track meta or track not found');
+    return {};
+  }
+
   const skillTrackHeader = meta?.children[0]?.querySelector('h1, h2, h3, h4, h5, h6')?.textContent?.trim() || '';
   const skillTrackDescription = meta?.children[1]?.innerHTML || '';
   const skillTrackRecap = meta?.children[2]?.querySelector('a')?.getAttribute('href') || '';
@@ -135,9 +156,22 @@ async function extractSkillTrackMeta(fragment) {
     .map((div) => {
       const a = div.querySelector('a');
       const nameDiv = div.children?.[1];
-      const url = a?.getAttribute('href') || '';
+      let url = a?.getAttribute('href') || '';
       const name = nameDiv?.textContent?.trim() || '';
       if (!url || !name) return null;
+
+      // Use getPathDetails to get locale
+      const { lang: locale } = getPathDetails ? getPathDetails() : { lang: 'en' };
+      const lcPrefix = `/${locale}/learning-collections`;
+      if (!url.startsWith(lcPrefix)) {
+        const fragUrl = getSkillTrackFragmentUrl?.();
+        if (fragUrl) {
+          // Append the fragment URL as a query parameter without encoding
+          const separator = url.includes('?') ? '&' : '?';
+          url = `${url}${separator}learning-collection-fragment=${fragUrl}`;
+        }
+      }
+
       return { name, url };
     })
     .filter(Boolean);
