@@ -358,7 +358,7 @@ export default class Search {
 
   setSelectedSearchOption(filterValue) {
     const selectedEl = this.searchPickerPopover.querySelector(`.search-picker-label[data-filter-value=${filterValue}]`);
-    const optionLabel = selectedEl.textContent;
+    const optionLabel = selectedEl.textContent.trim();
 
     const searchParams = this.searchOptions.map((o) => o.split(':')[0]);
     if (searchParams.includes(optionLabel)) {
