@@ -473,9 +473,7 @@ export function decorateInlineText(textNode) {
   if (textContent.includes('[') && textContent.includes(']{')) {
     const span = document.createElement('span');
     span.innerHTML = getDecoratedInlineHtml(textContent);
-    window.requestAnimationFrame(() => {
-      textNode.replaceWith(...span.childNodes);
-    });
+    textNode.replaceWith(...span.childNodes);
   }
 }
 
@@ -538,14 +536,22 @@ export function decoratePreviousImage(textNode) {
 export function decorateInlineAttributes(element) {
   const ignoredElements = ['pre', 'code', 'script', 'style'];
   const isParentIgnored = (node) => ignoredElements.includes(node?.parentElement?.tagName?.toLowerCase());
+
+  // Collect all text nodes first to avoid TreeWalker issues when DOM changes
+  const textNodes = [];
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, (node) =>
     isParentIgnored(node) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
   );
+
   while (walker.nextNode()) {
-    const { currentNode } = walker;
-    decorateInlineText(currentNode);
-    decoratePreviousImage(currentNode);
+    textNodes.push(walker.currentNode);
   }
+
+  // Process all collected text nodes
+  textNodes.forEach((textNode) => {
+    decorateInlineText(textNode);
+    decoratePreviousImage(textNode);
+  });
 }
 
 /**
