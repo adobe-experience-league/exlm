@@ -37,45 +37,43 @@ exl-coachmark {
 }
 
 .drill-in-title {
-  flex-grow: 1;
-  text-align: center;
-  font-weight: bold;
-  margin: 0 10px;
-  color: #333;
-  font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 200px;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  margin-right: 45px;
+  margin-top: 10px;
+  outline-offset: 5px;
+  color: #000;
+}
+
+.drill-in-nav-buttons-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  margin-top: 10px;
+  position: relative;
 }
 
 .drill-in-nav-button {
   background: unset; /* Adobe blue */
   border: none;
-  color: #505050;
+  color: #707070;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
   padding: 0;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
+  transition: background-color 0.3s;
   justify-content: center;
-  transition: background-color 0.2s ease;
-  border-radius: 50%;
-  z-index: 20;
-  position: relative;
+  margin: 0;
+  height: 40px;
+  width: 30px;
+  display: inline-flex;
 }
 
 .drill-in-nav-button:hover {
   color: #eb1000; /* Darker blue on hover */
   background-color: unset;
-}
-
-.drill-in-nav-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgb(20 115 230 / 50%);
 }
 
 /* Make the coachmark indicator visible and clickable */
@@ -88,10 +86,15 @@ exl-coachmark {
 
 /* Style the content inside the popover */
 .drill-in-coachmark [slot='content'] {
-  padding: 10px;
-  font-size: 14px;
+  padding: 4px;
+  margin-bottom: 10px;
+  font-weight: 300;
   line-height: 1.5;
-  color: #333;
+  color: #000;
+  height: auto;
+  max-height: 400px;
+  font-size: 15px;
+  letter-spacing: 0.1px;
 }
 
 /* stylelint-disable-next-line selector-class-pattern */
@@ -114,8 +117,8 @@ exl-coachmark {
 /* Style for the plus button */
 .drill-in-plus-button {
   position: absolute;
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   background-color: #eb1000; /* Red color */
   border-radius: 50%;
   display: flex;
@@ -126,50 +129,28 @@ exl-coachmark {
   cursor: pointer;
   transform: translate(-50%, -50%); /* Center the button on its position */
   box-shadow: 0 2px 4px rgb(0 0 0 / 30%);
-  border: 2px solid white;
 }
 
-.drill-in-plus-button .icon-plus {
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.drill-in-plus-button span {
+  font-size: 18px;
+  line-height: 1;
+  display: block;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.drill-in-coachmark:hover + .drill-in-plus-button {
+  border: 2px solid;
+  border-color: #fff;
+  border-radius: 50%;
 }
 
 .drill-in-coachmark.active + .drill-in-plus-button {
-  color: #eb1000;
   background-color: #fff;
   border: 2px solid #eb1000;
   border-radius: 50%;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .drill-in-trigger {
-    width: 24px;
-    height: 24px;
-  }
-
-  exl-coachmark {
-    width: 24px;
-    height: 24px;
-  }
-
-  .drill-in-nav-button {
-    padding: 4px 8px;
-    font-size: 12px;
-  }
-
-  .drill-in-plus-button {
-    width: 20px;
-    height: 20px;
-
-    /* Position is already centered with transform in the main rule */
-  }
-
-  .drill-in-plus-button .icon-plus {
-    width: 12px;
-    height: 12px;
-  }
+.drill-in-coachmark.active + .drill-in-plus-button span {
+  color: #eb1000;
 }
