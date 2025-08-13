@@ -26,7 +26,7 @@ const BrowseCardsADLSAdaptor = (() => {
     const contentType = CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY;
     const { solution, name, description, path, paths, dates, time } = result || {};
     const adlsDomain = extractDomain(adlsUrl);
-    
+
     let formattedPath;
     if (path) {
       formattedPath = !path.startsWith('/') ? `/${path}` : path;
