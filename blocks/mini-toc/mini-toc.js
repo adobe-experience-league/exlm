@@ -56,7 +56,8 @@ function headerExclusions(header) {
     header.id.length > 0 &&
     !header.classList.contains('no-mtoc') &&
     !header.closest('details') &&
-    !header.closest('sp-tabs')
+    !header.closest('sp-tabs') &&
+    !header.closest('.tab-content')
   );
 }
 
@@ -66,6 +67,60 @@ function getHeadingLevels() {
     levels !== null && parseInt(levels.content, 10) > 0 ? parseInt(levels.content, 10) : undefined,
   );
   return headingLevels;
+}
+
+export function observeElement(
+  host,
+  { onEmpty, onPopulate, onClear, onMutation, waitForElement = false, watchElementSelector = '' } = {},
+) {
+  let observer;
+  const ready = () => {
+    const hasContent = () => {
+      if (watchElementSelector) {
+        return !!host.firstElementChild && host.querySelector(watchElementSelector);
+      }
+      return !!(host.firstElementChild && host.firstElementChild.nextElementSibling);
+    };
+    let populated = hasContent();
+
+    if (waitForElement && !populated && host.nodeName === '#document-fragment') {
+      setTimeout(ready, 300);
+      return;
+    }
+
+    if (populated) {
+      if (onPopulate) {
+        onPopulate(host);
+      }
+    } else if (onEmpty) {
+      onEmpty(host);
+    }
+
+    observer = new MutationObserver((muts) => {
+      if (onMutation) {
+        onMutation(muts, host);
+      }
+
+      const nowPopulated = hasContent();
+
+      if (!populated && nowPopulated) {
+        populated = true;
+        if (onPopulate) {
+          onPopulate(host);
+        }
+      } else if (populated && !nowPopulated) {
+        populated = false;
+        if (onClear) {
+          onClear(host);
+        }
+      }
+    });
+
+    observer.observe(host, { childList: true, subtree: true, attributes: true });
+  };
+
+  ready();
+  return observer;
 }
 
 function buildMiniToc(block, placeholders) {
@@ -147,6 +202,33 @@ function buildMiniToc(block, placeholders) {
         const debounceHighlight = debounce(10, () => highlight(false, isAnchorScroll));
         window.addEventListener('scroll', debounceHighlight);
       }
+      setTimeout(() => {
+        const parentWrapper = block.parentElement;
+        const blockHeight = parentWrapper.offsetHeight;
+        observeElement(parentWrapper, {
+          onPopulate: () => {
+            const siblingElement = block.nextElementSibling;
+            if (!siblingElement) {
+              return;
+            }
+            const siblingElementDimensionY = siblingElement.offsetTop + siblingElement.offsetHeight;
+            const delta = siblingElementDimensionY - window.innerHeight;
+            if (delta > 0) {
+              const buffer = 40;
+              const contentDiff = Math.abs(siblingElement.offsetHeight - blockHeight) + buffer;
+              const extraSpaceNeeded = delta + blockHeight + buffer;
+              const marginBottom =
+                siblingElement.offsetHeight > blockHeight ? Math.min(extraSpaceNeeded, contentDiff) : extraSpaceNeeded;
+              const main = document.querySelector('main');
+              const nonRailElements = main.querySelectorAll(':scope > :not(.rail)');
+              const centerElement = Array.from(nonRailElements).find((el) => el.querySelectorAll('.block').length > 0);
+              if (centerElement) {
+                centerElement.style.marginBottom = `${marginBottom}px`;
+              }
+            }
+          },
+        });
+      }, 0);
     });
   } else {
     render(() => {
