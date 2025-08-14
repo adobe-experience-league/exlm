@@ -38,6 +38,10 @@ function getProductName() {
 
 // The TOC additional UI elements
 // TODO: Localizable strings, move to a separate file if needed
+const filterPlaceholder = createPlaceholderSpan('typeToFilter', 'Type to filter');
+const keywordPlaceholder = createPlaceholderSpan('filterByKeyword', 'Filter by keyword');
+const expandPlaceholder = createPlaceholderSpan('expandAllSections', 'Expand all sections');
+const clearPlaceholder = createPlaceholderSpan('searchClearLabel', 'Clear');
 const tocActions = () => `
   <div class="toc-header-actions">
     <!-- TOC Filter Bar -->
@@ -46,8 +50,8 @@ const tocActions = () => `
         <span title="Filter" class="icon icon-icon-filter toc-filter-icon"></span>
         <input autocomplete="off" class="toc-filter-input" type="text" 
           aria-label="Filter by keyword" aria-expanded="false" 
-          title="Type to filter" role="textbox" placeholder="Filter by keyword" />
-        <span title="Clear" class="icon icon-icon-clear toc-clear-icon"/>
+          title="${filterPlaceholder.textContent}" role="textbox" placeholder="${keywordPlaceholder.textContent}" />
+        <span title="${clearPlaceholder.textContent}" class="icon icon-icon-clear toc-clear-icon"/>
       </div>
     </div>
 
@@ -55,7 +59,7 @@ const tocActions = () => `
     <div class="spectrum-switch">
       <input type="checkbox" class="spectrum-switch-input" id="custom-switch" />
       <span class="spectrum-switch-switch"></span>
-      <label class="spectrum-switch-label" for="custom-switch">Expand all sections</label>
+      <label class="spectrum-switch-label" for="custom-switch">${expandPlaceholder.textContent}</label>
     </div>
   </div>
 `;
