@@ -131,8 +131,14 @@ export default async function decorate(block) {
   }
 
   // Extract filters from URL
+  // Extract and sanitize filters from URL
   const urlParams = new URLSearchParams(window.location.search);
-  const urlFilters = urlParams.get('filters')?.split(',') || [];
+  const urlFilters = urlParams.get('filters')
+    ? urlParams
+        .get('filters')
+        .split(',')
+        .map((filter) => filter.replace(/[^a-z0-9]/gi, ''))
+    : [];
 
   const updateFiltersAndCards = (selectedFilters) => {
     // Update URL params

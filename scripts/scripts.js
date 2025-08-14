@@ -27,7 +27,14 @@ import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
  * Load files async using import() if you must.
  */
 
-const LCP_BLOCKS = ['video-embed', 'marquee', 'article-marquee', 'personalized-content-placeholder', 'atomic-search']; // add your LCP blocks to the list
+const LCP_BLOCKS = [
+  'video-embed',
+  'marquee',
+  'article-marquee',
+  'personalized-content-placeholder',
+  'atomic-search',
+  'slides',
+]; // add your LCP blocks to the list
 
 /**
  * load fonts.css and set a session storage flag
@@ -432,9 +439,7 @@ export function decorateInlineText(textNode) {
   if (textContent.includes('[') && textContent.includes(']{')) {
     const span = document.createElement('span');
     span.innerHTML = getDecoratedInlineHtml(textContent);
-    window.requestAnimationFrame(() => {
-      textNode.replaceWith(...span.childNodes);
-    });
+    textNode.replaceWith(...span.childNodes);
   }
 }
 
@@ -497,14 +502,22 @@ export function decoratePreviousImage(textNode) {
 export function decorateInlineAttributes(element) {
   const ignoredElements = ['pre', 'code', 'script', 'style'];
   const isParentIgnored = (node) => ignoredElements.includes(node?.parentElement?.tagName?.toLowerCase());
+
+  // Collect all text nodes first to avoid TreeWalker issues when DOM changes
+  const textNodes = [];
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, (node) =>
     isParentIgnored(node) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
   );
+
   while (walker.nextNode()) {
-    const { currentNode } = walker;
-    decorateInlineText(currentNode);
-    decoratePreviousImage(currentNode);
+    textNodes.push(walker.currentNode);
   }
+
+  // Process all collected text nodes
+  textNodes.forEach((textNode) => {
+    decorateInlineText(textNode);
+    decoratePreviousImage(textNode);
+  });
 }
 
 /**
@@ -627,24 +640,24 @@ export function getConfig() {
       env: 'PROD',
       cdn: 'experienceleague.adobe.com',
       authorUrl: 'author-p122525-e1219150.adobeaemcloud.com',
-      hlxPreview: 'main--exlm-prod--adobe-experience-league.hlx.page',
-      hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
+      hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.hlx.page$/,
+      hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.hlx.live$/,
       community: 'experienceleaguecommunities.adobe.com',
     },
     {
       env: 'STAGE',
       cdn: 'experienceleague-stage.adobe.com',
       authorUrl: 'author-p122525-e1219192.adobeaemcloud.com',
-      hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
-      hlxLive: 'main--exlm-stage--adobe-experience-league.live',
+      hlxPreview: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).page$/,
+      hlxLive: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-dev.adobe.com',
     },
     {
       env: 'DEV',
       cdn: 'experienceleague-dev.adobe.com',
       authorUrl: 'author-p122525-e1200861.adobeaemcloud.com',
-      hlxPreview: 'main--exlm--adobe-experience-league.hlx.page',
-      hlxLive: 'main--exlm--adobe-experience-league.hlx.live',
+      hlxPreview: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).page$/,
+      hlxLive: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-dev.adobe.com',
     },
   ];
@@ -685,7 +698,9 @@ export function getConfig() {
 
   const currentHost = window.location.hostname;
   const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
-  const currentEnv = HOSTS.find((hostObj) => Object.values(hostObj).includes(currentHost));
+  const currentEnv = HOSTS.find((hostObj) =>
+    Object.values(hostObj).some((val) => (val instanceof RegExp ? val.test(currentHost) : val === currentHost)),
+  );
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const communityHost = currentEnv?.community || defaultEnv.community;
   const cdnOrigin = `https://${cdnHost}`;

@@ -9,6 +9,7 @@ async function decorateRail(railSection, position) {
   // wrap content in a wrapper div
   const content = document.createElement('div');
   content.classList.add('rail-content');
+
   content.replaceChildren(...railSection.children);
   railSection.replaceChildren(content);
 

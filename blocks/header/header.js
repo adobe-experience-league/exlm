@@ -11,6 +11,7 @@ import {
   getLink,
   getPathDetails,
   fetchGlobalFragment,
+  fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
 import {
@@ -298,9 +299,10 @@ const buildNavItems = (ul, level = 0) => {
   };
 
   if (level === 0) {
-    // add search link (visible on mobile only)
-    ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
-
+    // add search link (visible on mobile only excluding Search page)
+    if (!document.body.classList.contains('search')) {
+      ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
+    }
     const addMobileLangSelector = async () => {
       // add language select (visible on mobile only)
 
@@ -404,6 +406,13 @@ const navDecorator = async (navBlock, decoratorOptions) => {
  * @param {DecoratorOptions} decoratorOptions
  */
 const searchDecorator = async (searchBlock, decoratorOptions) => {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
   // save this for later use in mobile nav.
   const searchLink = getCell(searchBlock, 1, 1)?.firstChild;
   decoratorState.searchLinkHtml = searchLink.outerHTML;
@@ -419,16 +428,16 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
     `<div class="search-wrapper">
       <div class="search-short">
         <a href="${searchLink?.href}" aria-label="Search">
-          <span title="Search" class="icon icon-search"></span>
+          <span title="${placeholders?.search || 'Search'}" class="icon icon-search"></span>
         </a>
       </div>
       <div class="search-full">
         <div class="search-container">
-          <span title="Search" class="icon icon-search"></span>
-          <input autocomplete="off" class="search-input" type="text" aria-label="top-nav-combo-search" aria-expanded="false" title="Insert a query. Press enter to send" role="combobox" placeholder="${
-            searchPlaceholder.textContent
-          }">
-          <span title="Clear" class="icon icon-clear search-clear-icon"></span>
+          <span title="${placeholders?.search || 'Search'}" class="icon icon-search"></span>
+          <input autocomplete="off" class="search-input" type="text" aria-label="top-nav-combo-search" aria-expanded="false" title="${
+            placeholders?.searchPlaceholderTitle || 'Insert a query. Press enter to send'
+          }" role="combobox" placeholder="${searchPlaceholder.textContent}">
+          <span title="${placeholders?.searchClearLabel || 'Clear'}" class="icon icon-clear search-clear-icon"></span>
           <div class="search-suggestions-popover">
             <ul role="listbox">
             </ul>
@@ -619,6 +628,7 @@ const productGridDecorator = async (productGridBlock, decoratorOptions) => {
 const adobeLogoDecorator = async (adobeLogoBlock) => {
   simplifySingleCellBlock(adobeLogoBlock);
   decorateIcons(adobeLogoBlock);
+  adobeLogoBlock.querySelector('a').setAttribute('aria-label', 'Adobe Experience League'); // a11y
   return adobeLogoBlock;
 };
 
@@ -747,7 +757,7 @@ class ExlHeader extends HTMLElement {
       const brandP = decorateHeaderBlock('brand', this.brandDecorator, this.decoratorOptions);
       let searchP;
       if (!document.body.classList.contains('search')) {
-        searchP = decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
+        searchP = await decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
       } else {
         nav?.querySelector(`:scope > .search`)?.remove();
       }

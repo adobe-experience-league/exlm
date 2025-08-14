@@ -27,7 +27,7 @@
 }
 
 .mini-toc-wrapper .mini-toc .scrollable-div:hover {
-  overflow: hidden scroll;
+  overflow: hidden auto;
 }
 
 .mini-toc-wrapper .mini-toc h2 {
@@ -92,6 +92,7 @@
   color: var(--spectrum-sidenav-item-text-color-hover, var(--spectrum-alias-text-color-hover));
 }
 
+/* Basic active item styling */
 .mini-toc-wrapper .mini-toc ul li a.is-active {
   font-weight: var(--font-weight-semi-bold);
   background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
