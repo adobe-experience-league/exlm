@@ -17,15 +17,6 @@
   display: block;
 }
 
-/* Position the coachmark elements */
-exl-coachmark {
-  position: absolute;
-  width: 32px;
-  height: 32px;
-  transform: translate(-50%, -50%);
-  z-index: 9;
-}
-
 /* Navigation container styles */
 .drill-in-nav-container {
   display: flex;
@@ -33,7 +24,6 @@ exl-coachmark {
   justify-content: space-between;
   width: 100%;
   position: relative;
-  z-index: 15;
 }
 
 .drill-in-title {
@@ -79,9 +69,12 @@ exl-coachmark {
 /* Make the coachmark indicator visible and clickable */
 .drill-in-coachmark {
   cursor: pointer;
-  opacity: 1 !important;
-  visibility: visible !important;
-  display: block !important;
+  opacity: 1;
+  visibility: visible;
+  width: 32px;
+  height: 32px;
+  transform: translate(-50%, -50%);
+  z-index: 1;
 }
 
 /* Style the content inside the popover */
@@ -95,23 +88,6 @@ exl-coachmark {
   max-height: 400px;
   font-size: 15px;
   letter-spacing: 0.1px;
-}
-
-/* stylelint-disable-next-line selector-class-pattern */
-.drill-in-coachmark .spectrum-CoachIndicator {
-  cursor: pointer;
-  z-index: 10;
-  opacity: 1 !important;
-  visibility: visible !important;
-  display: block !important;
-}
-
-/* stylelint-disable-next-line selector-class-pattern */
-.drill-in-coachmark .spectrum-CoachIndicator-ring {
-  opacity: 1 !important;
-  visibility: visible !important;
-  display: block !important;
-  border-color: #666 !important; /* Grey color */
 }
 
 /* Style for the plus button */

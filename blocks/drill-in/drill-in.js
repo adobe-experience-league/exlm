@@ -67,7 +67,6 @@ export default async function decorate(block) {
     coachmark.style.left = `${x}%`;
     coachmark.style.top = `${y}%`;
     coachmark.style.display = 'block';
-    coachmark.style.zIndex = '10';
     
     // Store the position as data attributes for easier access
     coachmark.dataset.positionX = x.toString();
@@ -140,7 +139,6 @@ export default async function decorate(block) {
       if (rings) {
         rings.forEach(ring => {
           ring.style.borderColor = '#eee'; 
-          ring.style.zIndex = '0';
         });
       }
 
