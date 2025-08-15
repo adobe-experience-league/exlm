@@ -1,11 +1,5 @@
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
-import {
-  htmlToElement,
-  getLanguageCode,
-  createPlaceholderSpan,
-  getConfig,
-  matchesAnyTheme,
-} from '../../scripts/scripts.js';
+import { htmlToElement, getLanguageCode, createPlaceholderSpan, matchesAnyTheme } from '../../scripts/scripts.js';
 import { rewriteDocsPath } from '../../scripts/utils/path-utils.js';
 import getSolutionByName from './toc-solutions.js';
 
@@ -16,11 +10,24 @@ import getSolutionByName from './toc-solutions.js';
  */
 async function fetchToc(tocID) {
   const lang = (await getLanguageCode()) || 'en';
-  const { cdnOrigin } = getConfig();
+  const tocPath = `/${lang}/toc/${tocID}.plain.html`;
   try {
-    const response = await fetch(`${cdnOrigin}/api/action/tocs/${tocID}?lang=${lang}`);
-    const json = await response.json();
-    return json.data;
+    const response = await fetch(tocPath);
+    const html = await response.text();
+    const element = htmlToElement(html);
+    const ul = element.querySelector('ul');
+
+    // cleanup: remove <p> tags that are wrapping <a> tags
+    ul.querySelectorAll('a').forEach((a) => {
+      if (a.parentElement && a.parentElement.tagName.toLowerCase() === 'p') {
+        const p = a.parentElement;
+        p.replaceWith(a);
+      }
+    });
+
+    return {
+      HTML: ul.outerHTML,
+    };
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error fetching toc data', error);
