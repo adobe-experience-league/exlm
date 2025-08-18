@@ -187,11 +187,10 @@
   content: '';
   box-sizing: content-box;
   background: rgb(0 0 0 / 0%) url('/icons/chevron-down.svg') no-repeat right center;
-  transform: rotate(180deg);
 }
 
 .toc a.toc-toggle[aria-expanded='true']::after {
-  transform: rotate(0);
+  transform: rotate(180deg);
 }
 
 .toc ul li.hidden {
