@@ -704,6 +704,25 @@
           }
         },
         {
+          "title": "Drill In Callout",
+          "id": "drill-in-callout",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Drill In Callout",
+                  "model": "drill-in-callout",
+                  "cardTitle": "Sample Card Title",
+                  "cardDescription": "Sample card description text goes here.",
+                  "positionX": "50",
+                  "positionY": "50"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Email Card",
           "id": "email-card",
           "plugins": {
@@ -1778,25 +1797,6 @@
                     "cardTitle": "Sample Card Title",
                     "cardDescription": "Sample card description text goes here."
                   }
-                }
-              }
-            }
-          }
-        },
-        {
-          "title": "Drill In Callout",
-          "id": "drill-in-callout",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block/item",
-                "template": {
-                  "name": "Drill In Callout",
-                  "model": "drill-in-callout",
-                  "cardTitle": "Sample Card Title",
-                  "cardDescription": "Sample card description text goes here.",
-                  "positionX": "50",
-                  "positionY": "50"
                 }
               }
             }
