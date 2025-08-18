@@ -2,6 +2,7 @@ import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import {
   htmlToElement,
   getLanguageCode,
+  fetchLanguagePlaceholders,
   createPlaceholderSpan,
   getConfig,
   matchesAnyTheme,
@@ -38,11 +39,7 @@ function getProductName() {
 
 // The TOC additional UI elements
 // TODO: Localizable strings, move to a separate file if needed
-const filterPlaceholder = createPlaceholderSpan('typeToFilter', 'Type to filter');
-const keywordPlaceholder = createPlaceholderSpan('filterByKeyword', 'Filter by keyword');
-const expandPlaceholder = createPlaceholderSpan('expandAllSections', 'Expand all sections');
-const clearPlaceholder = createPlaceholderSpan('searchClearLabel', 'Clear');
-const tocActions = () => `
+const tocActions = (placeholders) => `
   <div class="toc-header-actions">
     <!-- TOC Filter Bar -->
     <div class="toc-filter-wrapper">
@@ -50,8 +47,8 @@ const tocActions = () => `
         <span title="Filter" class="icon icon-icon-filter toc-filter-icon"></span>
         <input autocomplete="off" class="toc-filter-input" type="text" 
           aria-label="Filter by keyword" aria-expanded="false" 
-          title="${filterPlaceholder.textContent}" role="textbox" placeholder="${keywordPlaceholder.textContent}" />
-        <span title="${clearPlaceholder.textContent}" class="icon icon-icon-clear toc-clear-icon"/>
+          title="${placeholders?.typeToFilter}" role="textbox" placeholder="${placeholders?.filterByKeyword}" />
+        <span title="${placeholders?.searchClearLabel}" class="icon icon-icon-clear toc-clear-icon"/>
       </div>
     </div>
 
@@ -59,12 +56,12 @@ const tocActions = () => `
     <div class="spectrum-switch">
       <input type="checkbox" class="spectrum-switch-input" id="custom-switch" />
       <span class="spectrum-switch-switch"></span>
-      <label class="spectrum-switch-label" for="custom-switch">${expandPlaceholder.textContent}</label>
+      <label class="spectrum-switch-label" for="custom-switch">${placeholders?.expandAllSections}</label>
     </div>
   </div>
 `;
 
-function buildProductHeader() {
+function buildProductHeader(placeholders) {
   const productName = getProductName();
   const solutionInfo = getSolutionByName(productName);
   return htmlToElement(`
@@ -73,7 +70,7 @@ function buildProductHeader() {
         <span class="icon icon-${solutionInfo.class}"></span>
         <h3>${solutionInfo.name}</h3>
       </div>
-      ${tocActions()}
+      ${tocActions(placeholders)}
     </div>
   `);
 }
@@ -389,6 +386,14 @@ function initializeTocFilter() {
  * @param {Element} block The toc block element
  */
 export default async function decorate(block) {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
   if (matchesAnyTheme(/kb-article/)) return;
   const tocID = block.querySelector('.toc > div > div').textContent;
   if (!tocID && document.querySelector('.toc-dropdown')) return;
@@ -401,7 +406,7 @@ export default async function decorate(block) {
   tocContent.classList.add('toc-content');
   tocContent.id = 'toc-dropdown-popover';
 
-  const productHeader = buildProductHeader();
+  const productHeader = buildProductHeader(placeholders);
   decorateIcons(productHeader.querySelector('.toc-header-content'), '/solutions');
   decorateIcons(productHeader.querySelector('.toc-header-actions'));
   const tocMobileDropdown = buildTocMobileDropdown();
