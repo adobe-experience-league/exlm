@@ -262,7 +262,17 @@
   },
   {
     "id": "learning-collections-page-section",
-    "components": ["text", "title", "button", "image", "announcement-ribbon", "skill-track-meta", "skill-track", "quiz", "drill-in"]
+    "components": [
+      "text",
+      "title",
+      "button",
+      "image",
+      "announcement-ribbon",
+      "skill-track-meta",
+      "skill-track",
+      "quiz",
+      "drill-in"
+    ]
   },
   {
     "id": "sign-up-flow-section",
