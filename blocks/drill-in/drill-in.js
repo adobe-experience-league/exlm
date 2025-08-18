@@ -240,6 +240,7 @@ export default async function decorate(block) {
     // Previous button click handler
     prevButton.addEventListener('click', (e) => {
       e.preventDefault();
+      e.stopPropagation();
       const prevIndex = (index - 1 + coachmarks.length) % coachmarks.length;
       navigateCoachmark(prevIndex);
     });
@@ -247,6 +248,7 @@ export default async function decorate(block) {
     // Next button click handler
     nextButton.addEventListener('click', (e) => {
       e.preventDefault();
+      e.stopPropagation();
       const nextIndex = (index + 1) % coachmarks.length;
       navigateCoachmark(nextIndex);
     });
@@ -254,6 +256,7 @@ export default async function decorate(block) {
     // Add click event to the coachmark itself to show the popover
     coachmark.addEventListener('click', (e) => {
       e.preventDefault();
+      e.stopPropagation();
       navigateCoachmark(index);
     });
   });
