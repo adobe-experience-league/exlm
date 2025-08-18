@@ -48,7 +48,7 @@
   border: none;
   color: var(--non-spectrum-web-gray);
   font-size: var(--spectrum-font-size-200);
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
   padding: 0;
   justify-content: center;
@@ -78,12 +78,10 @@
   padding: 4px;
   margin-bottom: 10px;
   font-weight: var(--font-weight-light);
-  line-height: 1.5;
   color: var(--spectrum-gray-900);
   height: auto;
   max-height: 400px;
   font-size: var(--spectrum-font-size-200);
-  letter-spacing: 0.1px;
 }
 
 .drill-in-plus-button {
@@ -95,8 +93,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-weight: bold;
+  color: var(--spectrum-gray-50);
+  font-weight: var(var(--font-weight-bold));
   cursor: pointer;
   transform: translate(-50%, -50%);
   box-shadow: 0 2px 4px rgb(0 0 0 / 30%);
@@ -106,7 +104,7 @@
   font-size: var(--spectrum-font-size-300);
   line-height: 1;
   display: block;
-  color: white;
+  color: var(--spectrum-gray-50);
   transform: translateY(-1px);
 }
 
