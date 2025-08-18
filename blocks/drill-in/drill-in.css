@@ -1,0 +1,127 @@
+.drill-in-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.drill-in-image-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.drill-in-image-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.drill-in-nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  position: relative;
+}
+
+.drill-in-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  margin-right: 45px;
+  margin-top: 10px;
+  outline-offset: 5px;
+  color: var(--spectrum-gray-900);
+}
+
+.drill-in-nav-buttons-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  margin-top: 10px;
+  position: relative;
+}
+
+.drill-in-nav-button {
+  background: unset;
+  border: none;
+  color: var(--non-spectrum-web-gray);
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  justify-content: center;
+  margin: 0;
+  height: 40px;
+  width: 30px;
+  display: inline-flex;
+}
+
+.drill-in-nav-button:hover,
+.drill-in-nav-button:focus {
+  color: var(--non-spectrum-adobe-dark-red);
+  background-color: unset;
+}
+
+.drill-in-coachmark {
+  cursor: pointer;
+  opacity: 1;
+  visibility: visible;
+  width: 32px;
+  height: 32px;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.drill-in-coachmark [slot='content'] {
+  padding: 4px;
+  margin-bottom: 10px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--spectrum-gray-900);
+  height: auto;
+  max-height: 400px;
+  font-size: 15px;
+  letter-spacing: 0.1px;
+}
+
+.drill-in-plus-button {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-color: var(--non-spectrum-adobe-dark-red);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 30%);
+}
+
+.drill-in-plus-button span {
+  font-size: 18px;
+  line-height: 1;
+  display: block;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.drill-in-coachmark:hover + .drill-in-plus-button {
+  border: 2px solid;
+  border-color: var(--spectrum-gray-50);
+  border-radius: 50%;
+}
+
+.drill-in-coachmark.active + .drill-in-plus-button {
+  background-color: var(--spectrum-gray-50);
+  border: 2px solid var(--non-spectrum-adobe-dark-red);
+  border-radius: 50%;
+}
+
+.drill-in-coachmark.active + .drill-in-plus-button span {
+  color: var(--non-spectrum-adobe-dark-red);
+}
