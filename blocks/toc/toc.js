@@ -47,8 +47,10 @@ const tocActions = (placeholders) => `
         <span title="Filter" class="icon icon-icon-filter toc-filter-icon"></span>
         <input autocomplete="off" class="toc-filter-input" type="text" 
           aria-label="Filter by keyword" aria-expanded="false" 
-          title="${placeholders?.typeToFilter}" role="textbox" placeholder="${placeholders?.filterByKeyword}" />
-        <span title="${placeholders?.searchClearLabel}" class="icon icon-icon-clear toc-clear-icon"/>
+          title="${placeholders?.typeToFilter || 'Type to filter'}" role="textbox" placeholder="${
+            placeholders?.filterByKeyword || 'Filter by keyword'
+          }" />
+        <span title="${placeholders?.searchClearLabel || 'Clear'}" class="icon icon-icon-clear toc-clear-icon"/>
       </div>
     </div>
 
@@ -56,7 +58,9 @@ const tocActions = (placeholders) => `
     <div class="spectrum-switch">
       <input type="checkbox" class="spectrum-switch-input" id="custom-switch" />
       <span class="spectrum-switch-switch"></span>
-      <label class="spectrum-switch-label" for="custom-switch">${placeholders?.expandAllSections}</label>
+      <label class="spectrum-switch-label" for="custom-switch">${
+        placeholders?.expandAllSections || 'Expand all sections'
+      }</label>
     </div>
   </div>
 `;
