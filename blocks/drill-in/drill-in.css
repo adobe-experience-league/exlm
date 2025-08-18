@@ -25,8 +25,8 @@
 }
 
 .drill-in-title {
-  font-size: 20px;
-  font-weight: 700;
+  font-size: var(--spectrum-font-size-400);
+  font-weight: var(--font-weight-bold);
   margin-bottom: 30px;
   margin-right: 45px;
   margin-top: 10px;
@@ -47,7 +47,7 @@
   background: unset;
   border: none;
   color: var(--non-spectrum-web-gray);
-  font-size: 16px;
+  font-size: var(--spectrum-font-size-200);
   font-weight: bold;
   cursor: pointer;
   padding: 0;
@@ -77,12 +77,12 @@
 .drill-in-coachmark [slot='content'] {
   padding: 4px;
   margin-bottom: 10px;
-  font-weight: 300;
+  font-weight: var(--font-weight-light);
   line-height: 1.5;
   color: var(--spectrum-gray-900);
   height: auto;
   max-height: 400px;
-  font-size: 15px;
+  font-size: var(--spectrum-font-size-200);
   letter-spacing: 0.1px;
 }
 
@@ -103,7 +103,7 @@
 }
 
 .drill-in-plus-button span {
-  font-size: 18px;
+  font-size: var(--spectrum-font-size-300);
   line-height: 1;
   display: block;
   color: white;

@@ -126,69 +126,70 @@ export default async function decorate(block) {
     imageWrapper.appendChild(coachmark);
     imageWrapper.appendChild(plusButtonContainer);
 
-    setTimeout(() => {
-      coachmark.show();
-      const indicator = coachmark.shadowRoot?.querySelector('.spectrum-CoachIndicator');
-      if (indicator) {
-        indicator.style.pointerEvents = 'none';
-      }
-      coachmark.indicatorPulse();
+    coachmark.show();
+    const indicator = coachmark.shadowRoot?.querySelector('.spectrum-CoachIndicator');
+    if (indicator) {
+      indicator.style.pointerEvents = 'none';
+    }
 
+    setTimeout(() => {
+      coachmark.indicatorPulse();
       const rings = coachmark.shadowRoot?.querySelectorAll('.spectrum-CoachIndicator-ring');
       if (rings) {
         rings.forEach((ring) => {
           ring.style.borderColor = 'var(--overlay-background-color)';
         });
       }
-
-      // Popover styling
-      const popOvers = coachmark.shadowRoot?.querySelectorAll('.spectrum-Popover');
-      if (popOvers) {
-        popOvers.forEach((popOverEle) => {
-          popOverEle.style.top = '50%';
-          popOverEle.style.transform = 'translateY(-50%)';
-          popOverEle.style.border = 'none';
-          popOverEle.style.borderBottom = '4px solid var(--non-spectrum-adobe-dark-red)';
-          popOverEle.style.width = '400px';
-          popOverEle.style.padding = '30px';
-
-          const popOverEleTitle = popOverEle.querySelector('.spectrum-CoachMark-header');
-          if (popOverEleTitle) {
-            popOverEleTitle.style.padding = '0';
-            popOverEleTitle.style.margin = '0';
-            popOverEleTitle.style.display = 'unset';
-          }
-
-          const popOverEleContent = popOverEle.querySelector('.spectrum-CoachMark-content');
-          if (popOverEleContent) {
-            popOverEleContent.style.padding = '0';
-            popOverEleContent.style.margin = '0';
-          }
-
-          const existingNotch = popOverEle.querySelector('.popover-notch');
-          if (existingNotch) existingNotch.remove();
-
-          const notch = document.createElement('div');
-          notch.className = 'popover-notch';
-          notch.style.width = '12px';
-          notch.style.height = '12px';
-          notch.style.position = 'absolute';
-          notch.style.top = '50%';
-          notch.style.backgroundColor = 'white';
-          notch.style.transform = 'translateY(-50%) rotate(45deg)';
-
-          if (popOverEle.classList.contains('spectrum-Popover--left-top')) {
-            popOverEle.style.right = 'calc(100% + 30px)';
-            notch.style.right = '-6px';
-          }
-          if (popOverEle.classList.contains('spectrum-Popover--right-top')) {
-            popOverEle.style.left = 'calc(100% + 30px)';
-            notch.style.left = '-6px';
-          }
-          popOverEle.appendChild(notch);
-        });
-      }
     }, 100);
+
+    // Popover styling
+    const popOvers = coachmark.shadowRoot?.querySelectorAll('.spectrum-Popover');
+    if (popOvers) {
+      popOvers.forEach((popOverEle) => {
+        popOverEle.style.top = '50%';
+        popOverEle.style.transform = 'translateY(-50%)';
+        popOverEle.style.border = 'none';
+        popOverEle.style.borderBottom = '4px solid var(--non-spectrum-adobe-dark-red)';
+        popOverEle.style.width = '400px';
+        popOverEle.style.padding = '30px';
+
+        const popOverEleTitle = popOverEle.querySelector('.spectrum-CoachMark-header');
+        if (popOverEleTitle) {
+          popOverEleTitle.style.padding = '0';
+          popOverEleTitle.style.margin = '0';
+          popOverEleTitle.style.display = 'unset';
+        }
+
+        const popOverEleContent = popOverEle.querySelector('.spectrum-CoachMark-content');
+        if (popOverEleContent) {
+          popOverEleContent.style.padding = '0';
+          popOverEleContent.style.margin = '0';
+        }
+
+        const existingNotch = popOverEle.querySelector('.popover-notch');
+        if (existingNotch) existingNotch.remove();
+
+        const notch = document.createElement('div');
+        notch.className = 'popover-notch';
+        notch.style.width = '12px';
+        notch.style.height = '12px';
+        notch.style.position = 'absolute';
+        notch.style.top = '50%';
+        notch.style.backgroundColor = 'white';
+        notch.style.transform = 'translateY(-50%) rotate(45deg)';
+
+        if (popOverEle.classList.contains('spectrum-Popover--left-top')) {
+          popOverEle.style.right = 'calc(100% + 30px)';
+          notch.style.right = '-6px';
+        }
+        if (popOverEle.classList.contains('spectrum-Popover--right-top')) {
+          popOverEle.style.left = 'calc(100% + 30px)';
+          notch.style.left = '-6px';
+        }
+        popOverEle.appendChild(notch);
+      });
+    }
+    // }, 100);
 
     // Hide the original callout div as we're showing it in coachmarks now
     calloutDiv.style.display = 'none';
