@@ -7299,6 +7299,13 @@
         "validation": {
           "rootPath": "/content/exlm/global/en/learning-collections/"
         }
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "time",
+        "value": "",
+        "label": "Estimated time to complete (in minutes/hours)"
       }
     ]
   },
@@ -7319,6 +7326,14 @@
         "validation": {
           "rootPath": "/content/exlm/global/en/learning-collections/"
         }
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Step Page Title",
+        "description": "Page title of the step"
       }
     ]
   },
