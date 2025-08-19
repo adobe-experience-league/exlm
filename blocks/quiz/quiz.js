@@ -43,11 +43,7 @@ async function checkSelectedAnswers(
   );
   
   // Check if all selected answers are correct
-  const allAnswersCorrect = answerHashes.every((hash) => hashedCorrectAnswers.includes(hash));
-  return allAnswersCorrect;
-
-  // All selected answers are correct
-  return true;
+  return answerHashes.every((hash) => hashedCorrectAnswers.includes(hash));
 }
 
 async function checkQuestionAnswer(questionElement) {
