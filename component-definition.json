@@ -1292,7 +1292,9 @@
                     "question": "Sample question text",
                     "isMultipleChoice": false,
                     "answers": "<ol><li>Answer 1</li><li>Answer 2</li><li>Answer 3</li></ol>",
-                    "correctAnswers": "1"
+                    "correctAnswers": "1",
+                    "correctFeedback": "Your answer is correct",
+                    "incorrectFeedback": "Your answer is incorrect"
                   }
                 }
               }
