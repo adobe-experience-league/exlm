@@ -305,8 +305,14 @@ async function applyChanges(event) {
  * Event listener for aue:ui-select, selection of a component
  */
 function handleEditorSelect(event) {
-  // we are only interested in the target
+  // handle deselection for flip cards
   if (!event.detail.selected) {
+    // if a flip-card-item was deselected, unflip it
+    if (event.target.closest('.flip-card > div')) {
+      const flipCard = event.target.closest('.flip-card > div');
+      flipCard.classList.remove('flipped');
+      flipCard.setAttribute('aria-pressed', 'false');
+    }
     return;
   }
 
@@ -336,15 +342,8 @@ function handleEditorSelect(event) {
   if (event.target.closest('.flip-card > div')) {
     // flip the selected card
     const flipCard = event.target.closest('.flip-card > div');
-    const isCurrentlyFlipped = flipCard.classList.contains('flipped');
-    
-    if (isCurrentlyFlipped) {
-      flipCard.classList.remove('flipped');
-      flipCard.setAttribute('aria-pressed', 'false');
-    } else {
-      flipCard.classList.add('flipped');
-      flipCard.setAttribute('aria-pressed', 'true');
-    }
+    flipCard.classList.add('flipped');
+    flipCard.setAttribute('aria-pressed', 'true');
   }
 }
 
