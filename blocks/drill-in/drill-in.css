@@ -110,6 +110,7 @@
   color: var(--spectrum-gray-900);
   font-size: var(--spectrum-font-size-200);
   height: auto;
+  overflow-y: auto;
 }
 
 .drill-in-coachmark.has-mobile-popover .drill-in-coachmark [slot='content'] {
@@ -189,7 +190,6 @@
 
   .drill-in-coachmark [slot='content'] {
     max-height: 200px;
-    overflow-y: auto;
   }
 
   .drill-in-close-btn {
