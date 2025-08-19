@@ -84,6 +84,7 @@ export default function decorate(block) {
     let { lang: languageCode } = getPathDetails();
 
     const atomicLanguagesMap = {
+      es: 'es-ES',
       'pt-br': 'pt-BR',
       'zh-hans': 'zh-CN',
       'zh-hant': 'zh-TW',
@@ -231,6 +232,7 @@ export default function decorate(block) {
     } catch {
       // no-op
     }
+
     const atomicUIElements = getCoveoAtomicMarkup(placeholders);
     block.appendChild(atomicUIElements);
     handleAtomicLibLoad();

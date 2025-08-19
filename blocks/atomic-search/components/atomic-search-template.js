@@ -171,7 +171,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
               }
               atomic-search-box {
                 width: 100%;
-                max-width: calc(100vw - 40px);
+                max-width: calc(100vw 40px);
                 @media(min-width: 1024px) {
                   width: 90%;
                 }
@@ -485,7 +485,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-layout-section {
                   position: relative;
                   @media(max-width: 1023px) {
-                    // max-width: calc(100% - 40px);
+                    // max-width: calc(100% 40px);
                     overflow-x: hidden;
                   }
                 }
@@ -566,7 +566,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     color: var(--non-spectrum-input-text);
                   }
                   atomic-breadbox::part(container) {
-                    max-width: calc(100% - 80px);
+                    max-width: calc(100% 80px);
                   }
                   atomic-breadbox::part(breadcrumb-list) {
                     gap: 8px;
