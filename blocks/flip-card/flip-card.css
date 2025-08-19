@@ -1,0 +1,101 @@
+.flip-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.flip-card > div {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  min-height: 250px;
+  perspective: 1000px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.flip-card > div > div {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  transition: transform 0.6s ease-in-out;
+  background: var(--background-color);
+  border-top: 5px solid var(--spectrum-red-800);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 1.5rem;
+  transform-style: preserve-3d;
+  will-change: transform;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizelegibility;
+}
+
+.flip-card > div > div .icon-refresh {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+/* Focus states for accessibility */
+.flip-card > div:focus {
+  outline: 2px solid var(--spectrum-blue-500);
+  outline-offset: 2px;
+}
+
+.flip-card > div > div:first-child {
+  transform: rotateY(0deg);
+}
+
+.flip-card > div > div:last-child {
+  transform: rotateY(180deg);
+}
+
+.flip-card > div.flipped > div:first-child {
+  transform: rotateY(180deg);
+}
+
+.flip-card > div.flipped > div:last-child {
+  transform: rotateY(0deg);
+  inset: -10px;
+  background-color: var(--spectrum-gray-75);
+}
+
+@media (min-width: 900px) {
+  .flip-card {
+    flex-flow: row wrap;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .flip-card > div {
+    flex: 1;
+    min-height: 300px;
+    max-width: none;
+  }
+
+  .flip-card > div > div {
+    padding: 1.5rem;
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .flip-card > div > div {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .flip-card > div > div::after {
+    transition: none;
+  }
+}
