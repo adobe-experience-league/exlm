@@ -7439,7 +7439,7 @@
         "name": "positionX",
         "value": "50",
         "label": "X Position",
-        "description": "Horizontal position of the callout on the image (0-100%)"
+        "description": "Horizontal position of the callout, measured from the top-left corner (0–100%)"
       },
       {
         "component": "text",
@@ -7447,7 +7447,7 @@
         "name": "positionY",
         "value": "50",
         "label": "Y Position",
-        "description": "Vertical position of the callout on the image (0-100%)"
+        "description": "Vertical position of the callout, measured from the top-left corner (0–100%)"
       }
     ]
   }
