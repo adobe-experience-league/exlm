@@ -1,28 +1,61 @@
 .question-block {
   background-color: var(--background-color);
   padding: var(--spectrum-spacing-400);
-  border-radius: 8px;
-  border: 2px solid var(--non-spectrum-divider-gray);
-  max-width: 800px;
+  border-radius: 16px;
+  border: 1px solid #d9d9d9;
+  width: 728px;
+  height: auto;
+  min-height: 360px;
   margin: 0 auto;
+  opacity: 1;
+  box-sizing: border-box;
+}
+
+.questions-container {
+  gap: var(--spectrum-spacing-700);
 }
 
 .question-number {
-  font-size: var(--spectrum-font-size-200);
-  color: var(--spectrum-gray-700);
+  font-family: var(--body-font-family);
+  font-weight: var(--font-weight-bold);
+  font-style: normal;
+  font-size: 24px;
+  letter-spacing: 0%;
   margin-top: 0;
   margin-bottom: var(--spectrum-spacing-100);
-  font-weight: var(--font-weight-bold);
+}
+
+.question-block p:not(.question-text) {
+  color: #2c2c2c;
+  line-height: 125%;
 }
 
 .question-text {
-  font-size: var(--spectrum-font-size-300);
-  margin-top: 0;
-  margin-bottom: var(--spectrum-spacing-300);
-  line-height: 1.5;
-  font-weight: var(--font-weight-medium);
+  font-family: var(--body-font-family);
+  font-weight: var(--font-weight-normal);
+  font-style: normal;
+  font-size: var(--spectrum-font-size-400);
+  line-height: 100%;
+  letter-spacing: 0%;
   position: relative;
-  padding-bottom: var(--spectrum-spacing-300);
+  padding-bottom: 30px;
+  margin-top: var(--spectrum-spacing-300);
+  margin-bottom: 30px;
+}
+
+.answer-option {
+  font-family: var(--body-font-family);
+  font-weight: var(--font-weight-normal);
+  font-style: normal;
+  font-size: var(--spectrum-font-size-200);
+  line-height: 19px;
+  letter-spacing: 0%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spectrum-spacing-400);
+  position: relative;
+  text-align: left;
 }
 
 .question-text::after {
@@ -32,15 +65,7 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  border-top: 2px solid var(--non-spectrum-divider-gray);
-}
-
-.answer-option {
-  display: flex;
-  align-items: center;
-  margin-bottom: 2rem;
-  position: relative;
-  text-align: left;
+  border-top: 1px solid #b7b7b7;
 }
 
 .answer-input {

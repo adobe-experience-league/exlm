@@ -7365,7 +7365,7 @@
         "name": "answers",
         "value": "",
         "label": "Answers",
-        "description": "Enter the answers as an ordered list"
+        "description": "Enter the answer as an ordered list upto maximum 10 options"
       },
       {
         "component": "text",

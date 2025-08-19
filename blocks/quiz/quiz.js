@@ -164,11 +164,8 @@ export default async function decorate(block) {
     questionsContainer.append(question);
   });
 
-  // Create a single submit button for the entire quiz using htmlToElement
-  const submitButton = htmlToElement(`
-    <button type="button" class="quiz-submit-button">${placeholders?.submit || 'SUBMIT'}</button>
-  `);
-  submitButton.addEventListener('click', async () => {
+  // Create a function to handle quiz submission that can be called externally
+  window.submitQuizHandler = async () => {
     // Check if all questions are answered
     let allQuestionsAnswered = true;
 
@@ -193,21 +190,49 @@ export default async function decorate(block) {
         </div>
       `);
 
-      // Insert above the submit button
-      submitButton.before(errorMessage);
-      return;
+      // Insert at the end of the questions container
+      questionsContainer.appendChild(errorMessage);
+      return false;
     }
 
     // Remove any existing question feedback before showing new feedback
     const existingFeedback = block.querySelectorAll('.question-feedback');
     existingFeedback.forEach((feedback) => feedback.remove());
 
-    submitButton.disabled = true;
     await submitQuiz(questions, placeholders);
+    return true;
+  };
+
+  // Create quiz description section
+  const quizDescriptionContainer = document.createElement('div');
+  quizDescriptionContainer.classList.add('quiz-description-container');
+
+  const quizDescriptionTitle = document.createElement('h2');
+  quizDescriptionTitle.classList.add('quiz-description-title');
+  quizDescriptionTitle.textContent = 'Skill Track Quiz';
+
+  const quizDescriptionText = document.createElement('ul');
+  quizDescriptionText.classList.add('quiz-description-text');
+
+  const descriptionItems = [
+    'End of Skill Track quizzes are pass/fail',
+    'A "passing" grade is based on a total score of 80%',
+    'Quizzes are not timed',
+    'You can retake quizzes as many times as necessary',
+    'Questions may be in the form of multiple choice, multi select, and ordering in bullet points',
+  ];
+
+  descriptionItems.forEach((item) => {
+    const listItem = document.createElement('li');
+    listItem.textContent = item;
+    quizDescriptionText.appendChild(listItem);
   });
+
+  quizDescriptionContainer.appendChild(quizDescriptionTitle);
+  quizDescriptionContainer.appendChild(quizDescriptionText);
 
   // Clear the block and build the quiz structure
   block.textContent = '';
+  block.appendChild(quizDescriptionContainer);
   block.appendChild(questionsContainer);
-  block.appendChild(submitButton);
 }

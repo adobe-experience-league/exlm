@@ -50,10 +50,25 @@ export default async function decorate(block) {
     // Submit Answers link
     secondLink.classList.add('skill-track-nav-submit');
     secondLink.textContent = placeholders['learning-collection-submit-answers'] || 'Submit Answers';
-    secondLink.href = '#';
-    secondLink.addEventListener('click', (e) => {
+    secondLink.href = stepInfo.nextStep || '#';
+    secondLink.addEventListener('click', async (e) => {
       e.preventDefault();
-      // Add submit logic here
+
+      // Disable the button immediately to prevent multiple submissions
+      secondLink.disabled = true;
+      secondLink.classList.add('disabled');
+
+      // Call the quiz submission handler if it exists
+      if (window.submitQuizHandler) {
+        const success = await window.submitQuizHandler();
+
+        // If submission was successful and there's a next step, navigate after a delay
+        if (success && stepInfo.nextStep) {
+          setTimeout(() => {
+            window.location.href = stepInfo.nextStep;
+          }, 1500); // Delay to show feedback before navigation
+        }
+      }
     });
   } else {
     // Next link
