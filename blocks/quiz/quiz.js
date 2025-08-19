@@ -170,6 +170,45 @@ export default async function decorate(block) {
     <button type="button" class="quiz-submit-button">${placeholders?.submit || 'SUBMIT'}</button>
   `);
   submitButton.addEventListener('click', async () => {
+    // Check if all questions are answered
+    let allQuestionsAnswered = true;
+    
+    // Remove any existing error message
+    const existingError = block.querySelector('.quiz-error-message');
+    if (existingError) {
+      existingError.remove();
+    }
+    
+    // Simple check for each question
+    for (const question of questions) {
+      const isMultipleChoice = question.dataset.isMultipleChoice === 'true';
+      const hasAnswer = isMultipleChoice 
+        ? question.querySelectorAll('input[type="checkbox"]:checked').length > 0
+        : question.querySelector('input[type="radio"]:checked') !== null;
+        
+      if (!hasAnswer) {
+        allQuestionsAnswered = false;
+        break;
+      }
+    }
+    
+    if (!allQuestionsAnswered) {
+      // Show simple error message
+      const errorMessage = htmlToElement(`
+        <div class="question-feedback incorrect quiz-error-message">
+          ${placeholders?.answerAllQuestions || 'Please answer all the questions'}
+        </div>
+      `);
+      
+      // Insert above the submit button
+      submitButton.before(errorMessage);
+      return;
+    }
+    
+    // Remove any existing question feedback before showing new feedback
+    const existingFeedback = block.querySelectorAll('.question-feedback');
+    existingFeedback.forEach(feedback => feedback.remove());
+    
     submitButton.disabled = true;
     await submitQuiz(questions, placeholders);
   });
