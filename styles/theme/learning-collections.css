@@ -18,7 +18,6 @@ h6 {
   display: flex;
   flex-direction: column;
   gap: 40px;
-  width: 100%;
   max-width: 878px;
   margin: 0 auto;
 }

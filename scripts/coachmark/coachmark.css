@@ -279,7 +279,6 @@
 }
 
 /** White coachmark styles start **/
-
 .spectrum-coachmark-white .spectrum-CoachIndicator-ring {
   border-color: var(--overlay-background-color);
 }
@@ -289,8 +288,18 @@
   transform: translateY(-50%);
   border: none;
   border-bottom: 4px solid var(--non-spectrum-adobe-dark-red);
-  width: 400px;
+  width: 100%;
   padding: 30px;
+  max-height: fit-content;
+}
+
+.spectrum-coachmark-white .spectrum-Popover.popover-mobile {
+  inset: 0 !important;
+  transform: none;
+  min-height: 100vh;
+  min-width: 100vw;
+  position: fixed;
+  overflow: hidden;
 }
 
 .spectrum-coachmark-white .spectrum-Popover.spectrum-Popover--left-top {
@@ -321,6 +330,10 @@
   transform: translateY(-50%) rotate(45deg);
 }
 
+.spectrum-coachmark-white .spectrum-Popover.popover-mobile .popover-notch {
+  display: none;
+}
+
 .spectrum-coachmark-white .spectrum-Popover.spectrum-Popover--left-top .popover-notch {
   right: -6px;
 }
@@ -349,5 +362,9 @@
 @media (min-width: 900px) {
   .spectrum-Popover {
     min-width: var(--mod-popover-min-width-200);
+  }
+
+  .spectrum-coachmark-white .spectrum-Popover {
+    width: 400px;
   }
 }

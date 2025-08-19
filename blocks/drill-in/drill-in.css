@@ -19,19 +19,21 @@
 .drill-in-nav-container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
-  position: relative;
 }
 
 .drill-in-title {
   font-size: var(--spectrum-font-size-400);
   font-weight: var(--font-weight-bold);
   margin-bottom: 30px;
-  margin-right: 45px;
   margin-top: 10px;
   outline-offset: 5px;
   color: var(--spectrum-gray-900);
+}
+
+.drill-in-coachmark.has-mobile-popover .drill-in-title {
+  margin-right: auto;
+  font-size: var(--spectrum-font-size-800);
 }
 
 .drill-in-nav-buttons-container {
@@ -40,7 +42,11 @@
   justify-content: center;
   align-self: flex-start;
   margin-top: 10px;
-  position: relative;
+}
+
+.drill-in-coachmark.has-mobile-popover .drill-in-nav-buttons-container {
+  align-self: unset;
+  margin-top: 0;
 }
 
 .drill-in-nav-button {
@@ -64,6 +70,13 @@
   background-color: unset;
 }
 
+.drill-in-coachmark.has-mobile-popover .drill-in-nav-button {
+  color: var(--spectrum-gray-900);
+  font-size: var(--spectrum-font-size-600);
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
 .drill-in-coachmark {
   cursor: pointer;
   opacity: 1;
@@ -74,27 +87,34 @@
   z-index: 10;
 }
 
+.drill-in-coachmark.has-mobile-popover {
+  transform: none;
+}
+
 .drill-in-coachmark [slot='content'] {
   padding: 4px;
   margin-bottom: 10px;
   font-weight: var(--font-weight-light);
   color: var(--spectrum-gray-900);
-  height: auto;
-  max-height: 400px;
   font-size: var(--spectrum-font-size-200);
+  height: auto;
+}
+
+.drill-in-coachmark.has-mobile-popover .drill-in-coachmark [slot='content'] {
+  font-size: var(--spectrum-font-size-400);
 }
 
 .drill-in-plus-button {
   position: absolute;
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
   background-color: var(--non-spectrum-adobe-dark-red);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--spectrum-gray-50);
-  font-weight: var(var(--font-weight-bold));
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
   transform: translate(-50%, -50%);
   box-shadow: 0 2px 4px rgb(0 0 0 / 30%);
@@ -121,4 +141,46 @@
 
 .drill-in-coachmark.active + .drill-in-plus-button span {
   color: var(--non-spectrum-adobe-dark-red);
+}
+
+.drill-in-close-btn {
+  background-color: unset;
+  color: var(--spectrum-gray-900);
+  font-size: var(--spectrum-font-size-600);
+  margin-bottom: 30px;
+  margin-top: 10px;
+  text-overflow: clip;
+}
+
+.drill-in-close-btn:hover,
+.drill-in-close-btn:focus {
+  background-color: unset;
+}
+
+.no-scroll {
+  overflow: hidden;
+}
+
+@media (min-width: 900px) {
+  .drill-in-nav-container {
+    justify-content: space-between;
+  }
+
+  .drill-in-plus-button {
+    width: 30px;
+    height: 30px;
+  }
+
+  .drill-in-title {
+    margin-right: 45px;
+  }
+
+  .drill-in-coachmark [slot='content'] {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .drill-in-close-btn {
+    display: none;
+  }
 }
