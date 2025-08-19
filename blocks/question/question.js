@@ -120,10 +120,23 @@ export default async function decorate(block) {
     // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
   }
+  
+  // Store the original correct answers div for preservation
+  const correctAnswersDiv = block.children[3];
+  
   // Generate the question DOM
   const dom = generateQuestionDOM(block, placeholders);
-
+  
   // Clear the block and append the DOM
   block.textContent = '';
   block.append(dom);
+  
+  // Re-add the original correct answers div to preserve it in the HTML source
+  if (correctAnswersDiv) {
+    const preservedDiv = document.createElement('div');
+    preservedDiv.classList.add('preserved-correct-answers');
+    preservedDiv.style.cssText = 'display: none; visibility: hidden;';
+    preservedDiv.innerHTML = correctAnswersDiv.innerHTML;
+    block.appendChild(preservedDiv);
+  }
 }
