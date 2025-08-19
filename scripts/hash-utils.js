@@ -38,6 +38,6 @@ export async function hashAnswer(pagePath, questionIndex, answerIndex, answerTex
   const pageSalt = 'EXL_QUIZ_SALT';
   
   const canonicalText = canonicalizeText(answerText);
-  const input = `${pagePath}|${questionIndex}|${answerIndex}|${canonicalText}|${pageSalt}`;
-  return sha256Base64(input);
+  const hashedAnswer = `${pagePath}|${questionIndex}|${answerIndex}|${canonicalText}|${pageSalt}`;
+  return sha256Base64(hashedAnswer);
 }

@@ -7,6 +7,7 @@ import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.
  * @param {Object} placeholders Language placeholders
  * @returns {Element} The generated question DOM
  */
+
 export function generateQuestionDOM(block, placeholders = {}) {
   // Create question container
   const questionContainer = document.createElement('div');
@@ -34,7 +35,6 @@ export function generateQuestionDOM(block, placeholders = {}) {
   }
 
   // Store the hashed correct answers directly
-  // No need to parse as integers since they're now hash strings
   block.dataset.correctAnswers = correctAnswersDiv?.textContent?.trim() || '';
   block.dataset.isMultipleChoice = isMultipleChoice.toString();
   block.dataset.correctFeedback = correctFeedbackDiv?.textContent?.trim() || '';

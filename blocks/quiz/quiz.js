@@ -4,79 +4,26 @@ import { hashAnswer } from '../../scripts/hash-utils.js';
 
 /**
  * Checks if the selected answers for a question are correct
- * @param {Element} questionElement The question element
- * @returns {Promise<boolean>} Whether the selected answers are correct
+ * @param {number[]} selectedAnswerIndices Array of selected answer indices
+ * @param {string[]} answerTexts Array of all answer texts
+ * @param {string} pagePath The page path
+ * @param {string} questionIndex The question index
+ * @param {string[]} hashedCorrectAnswers Array of correct answer hashes
+ * @param {boolean} isMultipleChoice Whether the question is multiple choice
+ * @returns {boolean} Whether the selected answers are correct
  */
-async function checkQuestionAnswer(questionElement) {
-  if (!questionElement) return false;
-
-  // Get the hashed correct answers from the dataset
-  const hashedCorrectAnswers = questionElement.dataset.correctAnswers.split(',');
-  const isMultipleChoice = questionElement.dataset.isMultipleChoice === 'true';
-
-  // Get all answer texts
-  const answerElements = questionElement.querySelectorAll('.answer-label');
-  const answerTexts = Array.from(answerElements).map(el => el.textContent.trim());
-
-  if (isMultipleChoice) {
-    const selectedAnswers = Array.from(questionElement.querySelectorAll('input[type="checkbox"]:checked')).map(
-      (input) => parseInt(input.value, 10),
-    );
-
-    // For multiple choice, all selected answers must be correct and all correct answers must be selected
-    if (selectedAnswers.length !== hashedCorrectAnswers.length) {
-      return false;
-    }
-    
-    // Check each selected answer against the hashed values
-    for (const selectedAnswer of selectedAnswers) {
-      // Use 1-based index to match server-side behavior
-      const answerIndex = selectedAnswer;
-      if (answerIndex > 0 && answerIndex <= answerTexts.length) {
-        const answerText = answerTexts[answerIndex - 1];
-        
-        // Generate hash for the selected answer
-        // Use the full path to match server-side behavior
-        const pagePath = window.location.pathname;
-        const questionIndex = questionElement.dataset?.questionIndex || '0';
-        
-        console.log("Input values:", {
-          pagePath,
-          questionIndex,
-          answerIndex: answerIndex.toString(),
-          answerText
-        });
-        
-        const answerHash = await hashAnswer(pagePath, questionIndex, answerIndex.toString(), answerText);
-        
-        console.log("Correct answer hashes:", hashedCorrectAnswers);
-        console.log("Generated hash:", answerHash);
-        
-        // Check if the hash is in the list of correct answer hashes
-        if (!hashedCorrectAnswers.includes(answerHash)) {
-          return false;
-        }
-      } else {
-        return false;
-      }
-    }
-    
-    return true;
-  } else {
-    // For single choice questions
-    const selectedAnswer = questionElement.querySelector('input[type="radio"]:checked');
-    if (!selectedAnswer) return false;
-    
-    // Use 1-based index to match server-side behavior
-    const answerIndex = parseInt(selectedAnswer.value, 10);
+async function checkSelectedAnswers(selectedAnswerIndices, answerTexts, pagePath, questionIndex, hashedCorrectAnswers, isMultipleChoice) {
+  // For multiple choice, all selected answers must be correct and all correct answers must be selected
+  if (isMultipleChoice && selectedAnswerIndices.length !== hashedCorrectAnswers.length) {
+    return false;
+  }
+  
+  // Check each selected answer
+  for (const answerIndex of selectedAnswerIndices) {
     if (answerIndex > 0 && answerIndex <= answerTexts.length) {
       const answerText = answerTexts[answerIndex - 1];
       
-      // Generate hash for the selected answer
-      // Use the full path to match server-side behavior
-      const pagePath = window.location.pathname;
-      const questionIndex = questionElement.dataset?.questionIndex || '0';
-      
+      // Log input values
       console.log("Input values:", {
         pagePath,
         questionIndex,
@@ -84,17 +31,62 @@ async function checkQuestionAnswer(questionElement) {
         answerText
       });
       
+      // Generate hash for the selected answer
       const answerHash = await hashAnswer(pagePath, questionIndex, answerIndex.toString(), answerText);
       
+      // Log hash values
       console.log("Correct answer hashes:", hashedCorrectAnswers);
       console.log("Generated hash:", answerHash);
       
-      // Check if the hash is in the list of correct answer hashes
-      return hashedCorrectAnswers.includes(answerHash);
+      // Check if this answer is correct
+      if (!hashedCorrectAnswers.includes(answerHash)) {
+        return false;
+      }
+    } else {
+      return false;
     }
-    
-    return false;
   }
+  
+  // All selected answers are correct
+  return true;
+}
+
+async function checkQuestionAnswer(questionElement) {
+  if (!questionElement) return false;
+
+  // Get the hashed correct answers 
+  const hashedCorrectAnswers = questionElement.dataset.correctAnswers.split(',');
+  const isMultipleChoice = questionElement.dataset.isMultipleChoice === 'true';
+
+  // Get all answer texts
+  const answerElements = questionElement.querySelectorAll('.answer-label');
+  const answerTexts = Array.from(answerElements).map(el => el.textContent.trim());
+
+  const pagePath = window.location.pathname;
+  const questionIndex = questionElement.dataset?.questionIndex || '0';
+
+  let selectedAnswerIndices = [];
+  
+  if (isMultipleChoice) {
+    selectedAnswerIndices = Array.from(questionElement.querySelectorAll('input[type="checkbox"]:checked')).map(
+      (input) => parseInt(input.value, 10)
+    );
+  } else {
+    const selectedAnswer = questionElement.querySelector('input[type="radio"]:checked');
+    if (!selectedAnswer) return false;
+    
+    selectedAnswerIndices = [parseInt(selectedAnswer.value, 10)];
+  }
+  
+  // Check if the selected answers are correct
+  return checkSelectedAnswers(
+    selectedAnswerIndices,
+    answerTexts,
+    pagePath,
+    questionIndex,
+    hashedCorrectAnswers,
+    isMultipleChoice
+  );
 }
 
 /**
