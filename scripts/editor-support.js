@@ -348,7 +348,7 @@ function handleEditorSelect(event) {
       selectedFlipCard.classList.remove('flipped');
       selectedFlipCard.setAttribute('aria-pressed', 'false');
     }
-    
+
     // flip the newly selected card
     const flipCard = event.target.closest('.flip-card > div');
     flipCard.classList.add('flipped');
