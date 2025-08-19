@@ -331,6 +331,21 @@ function handleEditorSelect(event) {
       behavior: 'instant',
     });
   }
+
+  // if a flip-card-item was selected
+  if (event.target.closest('.flip-card > div')) {
+    // flip the selected card
+    const flipCard = event.target.closest('.flip-card > div');
+    const isCurrentlyFlipped = flipCard.classList.contains('flipped');
+    
+    if (isCurrentlyFlipped) {
+      flipCard.classList.remove('flipped');
+      flipCard.setAttribute('aria-pressed', 'false');
+    } else {
+      flipCard.classList.add('flipped');
+      flipCard.setAttribute('aria-pressed', 'true');
+    }
+  }
 }
 
 function attachEventListeners(main) {
