@@ -8,7 +8,7 @@
 .flip-card > div {
   position: relative;
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
   min-height: 250px;
   perspective: 1000px;
   cursor: pointer;
@@ -81,7 +81,6 @@
   .flip-card > div {
     flex: 1;
     min-height: 300px;
-    max-width: none;
   }
 
   .flip-card > div > div {
