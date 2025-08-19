@@ -62,11 +62,8 @@ export default async function decorate(block) {
       if (window.submitQuizHandler) {
         const success = await window.submitQuizHandler();
 
-        // If submission was successful and there's a next step, navigate after a delay
         if (success && stepInfo.nextStep) {
-          setTimeout(() => {
-            window.location.href = stepInfo.nextStep;
-          }, 1500); // Delay to show feedback before navigation
+          window.location.href = stepInfo.nextStep;
         }
       }
     });

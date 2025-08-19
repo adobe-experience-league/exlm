@@ -50,7 +50,6 @@
   font-size: var(--spectrum-font-size-200);
   line-height: 19px;
   letter-spacing: 0%;
-  text-align: center;
   display: flex;
   align-items: center;
   margin-bottom: var(--spectrum-spacing-400);
