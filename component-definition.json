@@ -855,6 +855,63 @@
           }
         },
         {
+          "title": "Flip Card",
+          "id": "flip-card",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Flip Card",
+                  "model": "flip-card",
+                  "filter": "flip-card",
+                  "heading": "Flip Card Section",
+                  "headingType": "h2",
+                  "description": "Interactive flip cards with front and back content",
+                  "item1": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Flip Card Item",
+                    "model": "flip-card-item",
+                    "frontContent": "<p>Front content of the flip card</p>",
+                    "backContent": "<p>Back content of the flip card</p>"
+                  },
+                  "item2": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Flip Card Item",
+                    "model": "flip-card-item",
+                    "frontContent": "<p>Front content of the flip card</p>",
+                    "backContent": "<p>Back content of the flip card</p>"
+                  },
+                  "item3": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Flip Card Item",
+                    "model": "flip-card-item",
+                    "frontContent": "<p>Front content of the flip card</p>",
+                    "backContent": "<p>Back content of the flip card</p>"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Flip Card Item",
+          "id": "flip-card-item",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Flip Card Item",
+                  "model": "flip-card-item",
+                  "frontContent": "<p>Front content of the flip card</p>",
+                  "backContent": "<p>Back content of the flip card</p>"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Footer Breadcrumb",
           "id": "footer-breadcrumb",
           "plugins": {
@@ -1708,63 +1765,6 @@
                 "template": {
                   "name": "Video Embed",
                   "model": "video-embed"
-                }
-              }
-            }
-          }
-        },
-        {
-          "title": "Flip Card",
-          "id": "flip-card",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block",
-                "template": {
-                  "name": "Flip Card",
-                  "model": "flip-card",
-                  "filter": "flip-card",
-                  "heading": "Flip Card Section",
-                  "headingType": "h2",
-                  "description": "Interactive flip cards with front and back content",
-                  "item1": {
-                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
-                    "name": "Flip Card Item",
-                    "model": "flip-card-item",
-                    "frontContent": "<p>Front content of the flip card</p>",
-                    "backContent": "<p>Back content of the flip card</p>"
-                  },
-                  "item2": {
-                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
-                    "name": "Flip Card Item",
-                    "model": "flip-card-item",
-                    "frontContent": "<p>Front content of the flip card</p>",
-                    "backContent": "<p>Back content of the flip card</p>"
-                  },
-                  "item3": {
-                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
-                    "name": "Flip Card Item",
-                    "model": "flip-card-item",
-                    "frontContent": "<p>Front content of the flip card</p>",
-                    "backContent": "<p>Back content of the flip card</p>"
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "title": "Flip Card Item",
-          "id": "flip-card-item",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block/item",
-                "template": {
-                  "name": "Flip Card Item",
-                  "model": "flip-card-item",
-                  "frontContent": "<p>Front content of the flip card</p>",
-                  "backContent": "<p>Back content of the flip card</p>"
                 }
               }
             }
