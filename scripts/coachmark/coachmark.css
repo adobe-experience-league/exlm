@@ -302,7 +302,6 @@
   border-radius: 0;
   max-height: 1000vh;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .spectrum-coachmark-white .spectrum-Popover.spectrum-Popover--left-top {
