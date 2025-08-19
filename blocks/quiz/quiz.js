@@ -30,15 +30,27 @@ async function checkQuestionAnswer(questionElement) {
     
     // Check each selected answer against the hashed values
     for (const selectedAnswer of selectedAnswers) {
-      // Convert from 1-based to 0-based index
-      const answerIndex = selectedAnswer - 1;
-      if (answerIndex >= 0 && answerIndex < answerTexts.length) {
-        const answerText = answerTexts[answerIndex];
+      // Use 1-based index to match server-side behavior
+      const answerIndex = selectedAnswer;
+      if (answerIndex > 0 && answerIndex <= answerTexts.length) {
+        const answerText = answerTexts[answerIndex - 1];
         
         // Generate hash for the selected answer
+        // Use the full path to match server-side behavior
         const pagePath = window.location.pathname;
         const questionIndex = questionElement.dataset?.questionIndex || '0';
+        
+        console.log("Input values:", {
+          pagePath,
+          questionIndex,
+          answerIndex: answerIndex.toString(),
+          answerText
+        });
+        
         const answerHash = await hashAnswer(pagePath, questionIndex, answerIndex.toString(), answerText);
+        
+        console.log("Correct answer hashes:", hashedCorrectAnswers);
+        console.log("Generated hash:", answerHash);
         
         // Check if the hash is in the list of correct answer hashes
         if (!hashedCorrectAnswers.includes(answerHash)) {
@@ -55,14 +67,27 @@ async function checkQuestionAnswer(questionElement) {
     const selectedAnswer = questionElement.querySelector('input[type="radio"]:checked');
     if (!selectedAnswer) return false;
     
-    const selectedIndex = parseInt(selectedAnswer.value, 10) - 1; // Convert to 0-based
-    if (selectedIndex >= 0 && selectedIndex < answerTexts.length) {
-      const answerText = answerTexts[selectedIndex];
+    // Use 1-based index to match server-side behavior
+    const answerIndex = parseInt(selectedAnswer.value, 10);
+    if (answerIndex > 0 && answerIndex <= answerTexts.length) {
+      const answerText = answerTexts[answerIndex - 1];
       
       // Generate hash for the selected answer
+      // Use the full path to match server-side behavior
       const pagePath = window.location.pathname;
       const questionIndex = questionElement.dataset?.questionIndex || '0';
-      const answerHash = await hashAnswer(pagePath, questionIndex, selectedIndex.toString(), answerText);
+      
+      console.log("Input values:", {
+        pagePath,
+        questionIndex,
+        answerIndex: answerIndex.toString(),
+        answerText
+      });
+      
+      const answerHash = await hashAnswer(pagePath, questionIndex, answerIndex.toString(), answerText);
+      
+      console.log("Correct answer hashes:", hashedCorrectAnswers);
+      console.log("Generated hash:", answerHash);
       
       // Check if the hash is in the list of correct answer hashes
       return hashedCorrectAnswers.includes(answerHash);
