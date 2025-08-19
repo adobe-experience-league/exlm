@@ -536,6 +536,7 @@ strong:not(a strong) {
 :lang(ja),
 :lang(ko) {
   font-synthesis: weight small-caps;
+  word-break: keep-all;
 }
 
 html {

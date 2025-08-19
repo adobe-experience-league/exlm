@@ -1,4 +1,5 @@
 body.learning-collections,
+body.learning-collections .section,
 .learning-collections-page-section {
   background-color: var(--background-color);
 }
@@ -14,10 +15,15 @@ h6 {
   line-height: normal;
 }
 
+body.learning-collections .section,
 .learning-collections-page-section {
   display: flex;
   flex-direction: column;
   gap: 40px;
-  max-width: 878px;
+  max-width: 728px;
   margin: 0 auto;
+}
+
+body.learning-collections .skill-track-info-section {
+  border-bottom: 1px solid var(--spectrum-gray-200);
 }

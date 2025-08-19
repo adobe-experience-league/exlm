@@ -1,0 +1,23 @@
+.skill-track-nav-wrapper {
+  width: 100%;
+  margin-top: var(--spectrum-spacing-400);
+}
+
+.skill-track-nav-buttons {
+  display: flex;
+  gap: var(--spectrum-spacing-200);
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.skill-track-nav-back.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.skill-track-nav-back.disabled:hover {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
