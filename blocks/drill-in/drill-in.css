@@ -64,6 +64,12 @@
   display: inline-flex;
 }
 
+.drill-in-coachmark,
+.drill-in-plus-button,
+.drill-in-nav-button {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .drill-in-nav-button:hover,
 .drill-in-nav-button:focus {
   color: var(--non-spectrum-adobe-dark-red);
@@ -75,6 +81,12 @@
   font-size: var(--spectrum-font-size-600);
   margin-top: 10px;
   margin-bottom: 30px;
+}
+
+.drill-in-coachmark.has-mobile-popover .drill-in-nav-button:hover,
+.drill-in-coachmark.has-mobile-popover .drill-in-nav-button:focus {
+  color: var(--non-spectrum-adobe-dark-red);
+  background-color: unset;
 }
 
 .drill-in-coachmark {

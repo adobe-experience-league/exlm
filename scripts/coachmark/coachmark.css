@@ -300,6 +300,7 @@
   min-width: 100vw;
   position: fixed;
   overflow: hidden;
+  border-radius: 0;
 }
 
 .spectrum-coachmark-white .spectrum-Popover.spectrum-Popover--left-top {
