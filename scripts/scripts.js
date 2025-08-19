@@ -165,6 +165,7 @@ export const isPerspectivePage = matchesAnyTheme(/articles/);
 export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
+export const isLearningCollectionStep = matchesAnyTheme(/learning-collections-step/);
 
 /**
  * add a section for the left rail when on a browse page.
@@ -220,6 +221,34 @@ function addMiniToc(main) {
   tocSection.append(miniTocBlock);
   miniTocBlock.style.display = 'none';
   main.append(tocSection);
+}
+
+/**
+ * Add skill track info block to learning collection step pages.
+ * @param {HTMLElement} main
+ */
+function addSkillTrackInfo(main) {
+  // Check if skill-track-info block already exists
+  if (!main.querySelector('.skill-track-info.block')) {
+    const skillTrackInfoSection = document.createElement('div');
+    skillTrackInfoSection.classList.add('skill-track-info-section');
+    skillTrackInfoSection.append(buildBlock('skill-track-info', []));
+    main.prepend(skillTrackInfoSection);
+  }
+}
+
+/**
+ * Add skill track navigation block to learning collection step pages.
+ * @param {HTMLElement} main
+ */
+function addSkillTrackNav(main) {
+  // Check if skill-track-nav block already exists
+  if (!main.querySelector('.skill-track-nav.block')) {
+    const skillTrackNavSection = document.createElement('div');
+    skillTrackNavSection.classList.add('skill-track-nav-section');
+    skillTrackNavSection.append(buildBlock('skill-track-nav', []));
+    main.append(skillTrackNavSection);
+  }
 }
 
 /**
@@ -286,6 +315,11 @@ function buildAutoBlocks(main, isFragment = false) {
       }
       if (isProfilePage) {
         addProfileRail(main);
+      }
+      // if we are on a learning collection step page
+      if (isLearningCollectionStep) {
+        addSkillTrackInfo(main);
+        addSkillTrackNav(main);
       }
     }
   } catch (error) {

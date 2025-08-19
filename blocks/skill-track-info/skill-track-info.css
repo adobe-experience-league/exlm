@@ -1,0 +1,180 @@
+.skill-track-info-wrapper {
+  width: 100%;
+}
+
+.skill-track-info .back-to-collection {
+  display: flex;
+  align-items: center;
+  gap: var(--spectrum-spacing-100);
+  background: var(--background-color);
+  border: none;
+  border-radius: var(--spectrum-spacing-75);
+  padding: var(--spectrum-spacing-100);
+  color: var(--text-color);
+  font-size: var(--spectrum-font-size-75);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.skill-track-info .back-to-collection:hover {
+  background: var(--spectrum-gray-200);
+}
+
+.skill-track-info .back-to-collection .icon {
+  width: 32px;
+  height: 32px;
+}
+
+.skill-track-info .back-to-collection .icon-learning-collection {
+  background-image: url('../../icons/learning-collection.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.skill-track-info .back-to-collection .back-to-collection-label {
+  font-weight: var(--font-weight-semi-bold);
+}
+
+/* Title */
+.skill-track-info .skill-track-title {
+  font-size: var(--spectrum-font-size-700);
+  color: var(--text-color);
+  margin: 0;
+  line-height: 1.2;
+  flex: 1;
+}
+
+/* Progress section */
+.skill-track-info .progress-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--spectrum-spacing-300);
+  margin-top: var(--spectrum-spacing-300);
+}
+
+/* Progress text */
+.skill-track-info .progress-text {
+  white-space: nowrap;
+  font-weight: var(--font-weight-semi-bold);
+  margin-bottom: var(--spectrum-spacing-200);
+}
+
+/* Progress bar */
+.skill-track-info .progress-bar {
+  width: 200px;
+  height: var(--spectrum-spacing-100);
+  background: var(--spectrum-gray-200);
+  border-radius: var(--spectrum-spacing-75);
+  overflow: hidden;
+  position: relative;
+}
+
+.skill-track-info .progress-fill {
+  height: 100%;
+  background: var(--spectrum-blue-700);
+  border-radius: var(--spectrum-spacing-75);
+  transition: width 0.3s ease;
+}
+
+.skill-track-info .step-selector-container {
+  min-width: 250px;
+}
+
+.skill-track-info .custom-filter-dropdown button {
+  width: 100%;
+  border: 1px solid var(--spectrum-gray-300);
+  border-radius: var(--spectrum-spacing-75);
+  background: var(--background-color);
+  font-size: var(--spectrum-font-size-100);
+  cursor: pointer;
+  max-width: 300px;
+}
+
+.skill-track-info .custom-filter-dropdown button > span:first-child {
+  margin-right: 20px;
+}
+
+.skill-track-info .custom-filter-dropdown button:hover {
+  border-color: var(--spectrum-blue-700);
+}
+
+.skill-track-info .custom-filter-dropdown .icon-chevron {
+  width: var(--spectrum-spacing-200);
+  height: var(--spectrum-spacing-200);
+  color: var(--spectrum-gray-500);
+  transition: transform 0.2s ease;
+}
+
+.skill-track-info .custom-filter-dropdown.open .icon-chevron {
+  transform: translateY(-50%) rotate(180deg);
+  margin-bottom: 10px;
+}
+
+.skill-track-info .filter-dropdown-content {
+  border: 1px solid var(--spectrum-gray-300);
+  border-top: none;
+  border-radius: 0 0 var(--spectrum-spacing-75) var(--spectrum-spacing-75);
+  box-shadow: var(--box-shadow-2);
+}
+
+.skill-track-info .custom-checkbox {
+  padding: var(--spectrum-spacing-100) var(--spectrum-spacing-200);
+  font-size: var(--spectrum-font-size-100);
+  color: var(--spectrum-gray-700);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.skill-track-info .custom-checkbox:hover {
+  background: var(--spectrum-gray-100);
+}
+
+.skill-track-info .custom-checkbox input[type='checkbox'] {
+  display: none;
+}
+
+.skill-track-info .custom-checkbox label {
+  display: flex;
+  cursor: pointer;
+  width: 100%;
+}
+
+.skill-track-info .custom-filter-dropdown .custom-checkbox .title {
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
+  line-height: var(--spectrum-line-height-s);
+}
+
+.skill-track-info .custom-checkbox .title:hover {
+  color: var(--spectrum-blue-700);
+}
+
+/* Responsive design */
+@media (max-width: 900px) {
+  .skill-track-info .skill-track-content {
+    flex-direction: column;
+    gap: var(--spectrum-spacing-300);
+  }
+
+  .skill-track-info .progress-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spectrum-spacing-300);
+  }
+
+  .skill-track-info .progress-bar {
+    width: 100%;
+  }
+
+  .skill-track-info .step-selector-container {
+    width: 100%;
+  }
+
+  .skill-track-info .skill-track-title {
+    font-size: var(--spectrum-font-size-600);
+  }
+}
