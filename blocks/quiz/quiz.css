@@ -18,7 +18,7 @@
   box-sizing: border-box;
 }
 
-.quiz-description-title {
+.quizTitle {
   font-family: var(--body-font-family);
   font-weight: var(--font-weight-bold);
   font-style: normal;
@@ -28,17 +28,16 @@
   margin-bottom: var(--spectrum-spacing-300);
 }
 
-.quiz-description-text {
+.quizDescription {
   font-family: var(--body-font-family);
   font-weight: var(--font-weight-normal);
   font-style: normal;
   font-size: var(--spectrum-font-size-200);
   line-height: 16px;
   margin: 0;
-  padding-left: var(--spectrum-font-size-400);
 }
 
-.quiz-description-text li {
+.quizDescription li {
   font-family: var(--body-font-family);
   font-weight: var(--font-weight-normal);
   font-style: normal;

@@ -143,11 +143,11 @@ export default async function decorate(block) {
 
   // Get all children of the block
   const allChildren = [...block.children];
-  
+
   // The first two divs are quiz description elements
   const titleElement = allChildren[0];
   const textElement = allChildren[1];
-  
+
   // The rest are questions
   const questions = allChildren.slice(2);
 
@@ -217,12 +217,12 @@ export default async function decorate(block) {
 
   // Create quiz description title
   const quizDescriptionTitle = document.createElement('h2');
-  quizDescriptionTitle.classList.add('quiz-description-title');
+  quizDescriptionTitle.classList.add('quizTitle');
   quizDescriptionTitle.textContent = titleElement?.querySelector('div')?.textContent || '';
-  
+
   // Create quiz description text
   const quizDescriptionText = document.createElement('ul');
-  quizDescriptionText.classList.add('quiz-description-text');
+  quizDescriptionText.classList.add('quizDescription');
   quizDescriptionText.innerHTML = textElement?.querySelector('div')?.innerHTML || '';
 
   quizDescriptionContainer.appendChild(quizDescriptionTitle);
