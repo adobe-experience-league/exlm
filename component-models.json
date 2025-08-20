@@ -7343,7 +7343,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "quiz-description-title",
+        "name": "quizTitle",
         "value": "",
         "label": "Quiz Title",
         "description": "Enter the skill track quiz title"
@@ -7351,7 +7351,7 @@
       {
         "component": "richtext",
         "valueType": "string",
-        "name": "quiz-description-text",
+        "name": "quizDescription",
         "value": "",
         "label": "Quiz Description",
         "description": "Enter the skill track quiz description"

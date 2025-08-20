@@ -141,7 +141,15 @@ export default async function decorate(block) {
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
 
-  const questions = [...block.children];
+  // Get all children of the block
+  const allChildren = [...block.children];
+  
+  // The first two divs are quiz description elements
+  const titleElement = allChildren[0];
+  const textElement = allChildren[1];
+  
+  // The rest are questions
+  const questions = allChildren.slice(2);
 
   // Set total questions count
   const totalQuestions = questions.length;
@@ -207,15 +215,15 @@ export default async function decorate(block) {
   const quizDescriptionContainer = document.createElement('div');
   quizDescriptionContainer.classList.add('quiz-description-container');
 
-  // Get quiz description title from block data
-  const quizDescriptionTitleText = block.querySelector('.quiz-description-title');
+  // Create quiz description title
   const quizDescriptionTitle = document.createElement('h2');
   quizDescriptionTitle.classList.add('quiz-description-title');
-  quizDescriptionTitle.textContent = quizDescriptionTitleText;
-  const quizDescriptionTextContent = block.querySelector('.quiz-description-text');
+  quizDescriptionTitle.textContent = titleElement?.querySelector('div')?.textContent || '';
+  
+  // Create quiz description text
   const quizDescriptionText = document.createElement('ul');
   quizDescriptionText.classList.add('quiz-description-text');
-  quizDescriptionText.innerHTML = quizDescriptionTextContent;
+  quizDescriptionText.innerHTML = textElement?.querySelector('div')?.innerHTML || '';
 
   quizDescriptionContainer.appendChild(quizDescriptionTitle);
   quizDescriptionContainer.appendChild(quizDescriptionText);
