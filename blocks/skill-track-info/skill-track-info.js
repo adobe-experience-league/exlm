@@ -5,7 +5,13 @@ import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
   const stepInfo = await getCurrentStepInfo();
-  const placeholders = await fetchLanguagePlaceholders();
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
 
   if (!stepInfo) {
     // eslint-disable-next-line no-console
