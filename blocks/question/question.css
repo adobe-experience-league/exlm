@@ -1,60 +1,28 @@
 .question-block {
   background-color: var(--background-color);
   padding: var(--spectrum-spacing-400);
-  border-radius: 16px;
-  border: 1px solid #d9d9d9;
-  width: 728px;
-  height: auto;
-  min-height: 360px;
+  border-radius: 8px;
+  border: 2px solid var(--non-spectrum-divider-gray);
+  max-width: 800px;
   margin: 0 auto;
-  opacity: 1;
-  box-sizing: border-box;
-}
-
-.questions-container {
-  gap: var(--spectrum-spacing-700);
 }
 
 .question-number {
-  font-family: var(--body-font-family);
-  font-weight: var(--font-weight-bold);
-  font-style: normal;
-  font-size: 24px;
-  letter-spacing: 0%;
+  font-size: var(--spectrum-font-size-200);
+  color: var(--spectrum-gray-700);
   margin-top: 0;
   margin-bottom: var(--spectrum-spacing-100);
-}
-
-.question-block p:not(.question-text) {
-  color: #2c2c2c;
-  line-height: 125%;
+  font-weight: var(--font-weight-bold);
 }
 
 .question-text {
-  font-family: var(--body-font-family);
-  font-weight: var(--font-weight-normal);
-  font-style: normal;
-  font-size: var(--spectrum-font-size-400);
-  line-height: 100%;
-  letter-spacing: 0%;
+  font-size: var(--spectrum-font-size-300);
+  margin-top: 0;
+  margin-bottom: var(--spectrum-spacing-300);
+  line-height: 1.5;
+  font-weight: var(--font-weight-medium);
   position: relative;
-  padding-bottom: 30px;
-  margin-top: var(--spectrum-spacing-300);
-  margin-bottom: 30px;
-}
-
-.answer-option {
-  font-family: var(--body-font-family);
-  font-weight: var(--font-weight-normal);
-  font-style: normal;
-  font-size: var(--spectrum-font-size-200);
-  line-height: 19px;
-  letter-spacing: 0%;
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--spectrum-spacing-400);
-  position: relative;
-  text-align: left;
+  padding-bottom: var(--spectrum-spacing-300);
 }
 
 .question-text::after {
@@ -64,7 +32,15 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  border-top: 1px solid #b7b7b7;
+  border-top: 2px solid var(--non-spectrum-divider-gray);
+}
+
+.answer-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  position: relative;
+  text-align: left;
 }
 
 .answer-input {
