@@ -1070,7 +1070,17 @@ export async function fetchGlobalFragment(metaName, fallback, lang) {
 
 /* fetch language specific placeholders, fallback to english */
 export async function fetchLanguagePlaceholders(lang) {
-  const langCode = lang || getPathDetails()?.lang || 'en';
+  const { communityHost } = getConfig();
+  const isCommunityDomain = window.location.origin.includes(communityHost);
+  const communityLang = new Map([['pt', 'pt-br']]);
+
+  const langCode =
+    lang ||
+    (isCommunityDomain
+      ? communityLang.get(document.documentElement.lang?.toLowerCase()) || document.documentElement.lang?.toLowerCase()
+      : getPathDetails()?.lang) ||
+    'en';
+
   try {
     // Try fetching placeholders with the specified language
     return await fetchPlaceholders(`${window.hlx.codeBasePath}/${langCode}`);
