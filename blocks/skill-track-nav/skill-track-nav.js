@@ -1,9 +1,9 @@
 import { getCurrentStepInfo } from '../../scripts/utils/learning-collection-utils.js';
-import { fetchPlaceholders } from '../../scripts/lib-franklin.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
   const stepInfo = await getCurrentStepInfo();
-  const placeholders = await fetchPlaceholders();
+  const placeholders = await fetchLanguagePlaceholders();
 
   if (!stepInfo) return;
 

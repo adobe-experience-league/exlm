@@ -1,10 +1,11 @@
 import { getCurrentStepInfo } from '../../scripts/utils/learning-collection-utils.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
-import { decorateIcons, fetchPlaceholders } from '../../scripts/lib-franklin.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
   const stepInfo = await getCurrentStepInfo();
-  const placeholders = await fetchPlaceholders();
+  const placeholders = await fetchLanguagePlaceholders();
 
   if (!stepInfo) {
     // eslint-disable-next-line no-console
