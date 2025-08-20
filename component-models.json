@@ -7500,5 +7500,30 @@
         "description": "Vertical position of the callout, measured from the top-left corner (0–100%)"
       }
     ]
+  },
+  {
+    "id": "flip-card",
+    "fields": []
+  },
+  {
+    "id": "flip-card-item",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "frontContent",
+        "value": "",
+        "label": "Front Content",
+        "description": "Content displayed on the front of the flip card."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "backContent",
+        "value": "",
+        "label": "Back Content",
+        "description": "Content displayed on the back of the flip card when flipped."
+      }
+    ]
   }
 ]
