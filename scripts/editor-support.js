@@ -301,23 +301,13 @@ async function applyChanges(event) {
   return false;
 }
 
-// track the currently selected flip card
-let selectedFlipCard = null;
-
 /**
  * Event listener for aue:ui-select, selection of a component
  */
-function handleEditorSelect(event) {
-  // handle deselection for flip cards
-  if (!event.detail.selected) {
-    // unflip the previously selected flip card
-    if (selectedFlipCard) {
-      selectedFlipCard.classList.remove('flipped');
-      selectedFlipCard.setAttribute('aria-pressed', 'false');
-      selectedFlipCard = null;
-    }
-    return;
-  }
+async function handleEditorSelect(event) {
+  // handle flip card selection
+  const { handleFlipCardSelection } = await import('./editor-support-blocks.js');
+  handleFlipCardSelection(event);
 
   // if a tab panel was selected
   if (event.target.closest('.tabpanel')) {
@@ -339,21 +329,6 @@ function handleEditorSelect(event) {
       left: carouselItem.offsetLeft - carouselItem.parentNode.offsetLeft,
       behavior: 'instant',
     });
-  }
-
-  // if a flip-card-item was selected
-  if (event.target.closest('.flip-card > div')) {
-    // unflip the previously selected flip card
-    if (selectedFlipCard) {
-      selectedFlipCard.classList.remove('flipped');
-      selectedFlipCard.setAttribute('aria-pressed', 'false');
-    }
-
-    // flip the newly selected card
-    const flipCard = event.target.closest('.flip-card > div');
-    flipCard.classList.add('flipped');
-    flipCard.setAttribute('aria-pressed', 'true');
-    selectedFlipCard = flipCard;
   }
 }
 
