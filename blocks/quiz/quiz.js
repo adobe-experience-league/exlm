@@ -199,8 +199,8 @@ export default async function decorate(block) {
     return true;
   };
 
-  // Get the title type from block data or default to h2
-  const titleType = block.dataset.titleType || 'h2';
+  const heading = titleElement?.querySelector('h1,h2,h3,h4,h5,h6');
+  const titleType = heading ? heading.tagName.toLowerCase() : 'h2';
 
   // Create quiz description section using htmlToElement
   const quizDescriptionContainer = htmlToElement(`
