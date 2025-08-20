@@ -7351,7 +7351,7 @@
       {
         "component": "select",
         "valueType": "string",
-        "name": "quizTitleType",
+        "name": "titleType",
         "value": "h2",
         "label": "Heading Type",
         "options": [

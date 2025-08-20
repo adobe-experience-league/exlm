@@ -1286,7 +1286,7 @@
                   "model": "quiz",
                   "filter": "quiz",
                   "quizTitle": "Skill Track Quiz",
-                  "quizTitleType": "h2",
+                  "titleType": "h2",
                   "quizDescription": "<ul><li>End of Skill Track quizzes are pass/fail</li><li>A \"passing\" grade is based on a total score of 80%</li><li>Quizzes are not timed</li><li>You can retake quizzes as many times as necessary</li><li>Questions may be in the form of multiple choice, multi select, and ordering in bullet points</li></ul>",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
