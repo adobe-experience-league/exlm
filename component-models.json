@@ -7343,7 +7343,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "quizTitle",
+        "name": "title",
         "value": "",
         "label": "Quiz Title",
         "description": "Enter the skill track quiz title"
