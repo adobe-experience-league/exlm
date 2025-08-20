@@ -55,7 +55,7 @@
 
 .flip-card > div > div:first-child {
   position: absolute;
-  inset: 0;
+  inset: 10px;
   transform: rotateY(0deg);
 }
 
@@ -69,8 +69,6 @@
 
 .flip-card > div.flipped > div:last-child {
   transform: rotateY(0deg);
-
-  /* inset: -10px; */
   background-color: var(--spectrum-gray-75);
 }
 
