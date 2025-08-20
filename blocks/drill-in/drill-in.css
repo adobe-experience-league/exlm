@@ -158,7 +158,7 @@
 .drill-in-close-btn {
   background-color: unset;
   color: var(--spectrum-gray-900);
-  font-size: var(--spectrum-font-size-600);
+  font-size: var(--spectrum-font-size-400);
   margin-bottom: 30px;
   margin-top: 10px;
   text-overflow: clip;
