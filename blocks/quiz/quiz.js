@@ -199,13 +199,11 @@ export default async function decorate(block) {
     return true;
   };
 
-  const heading = titleElement?.querySelector('h1,h2,h3,h4,h5,h6');
-
   // Create quiz description section using htmlToElement
   const quizDescriptionContainer = htmlToElement(`
     <div class="quiz-description-container">
       <div class="quiz-title">
-        ${heading?.innerHTML || ''}
+        ${titleElement?.innerHTML || ''}
       </div>
       <ul class="quiz-description">${textElement?.querySelector('div')?.innerHTML || ''}</ul>
     </div>
