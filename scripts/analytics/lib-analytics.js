@@ -369,7 +369,7 @@ export function pushGuidePlayEvent(guide, audioOn) {
       title: guide.title,
       trigger: `${guide.trigger}:${audioStatus}`,
       steps: guide.steps,
-    }
+    },
   });
 }
 
@@ -394,6 +394,6 @@ export function pushGuidePlayMetadataEvent(guide, audioOn) {
       title: guide.title,
       trigger: `${guide.trigger}:${audioStatus}`,
       steps: guide.steps,
-    }
+    },
   });
 }

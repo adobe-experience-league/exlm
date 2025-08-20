@@ -4,8 +4,6 @@ import PreferenceStore from '../../scripts/preferences/preferences.js';
 
 export const preferences = new PreferenceStore('slides');
 
-
-
 export const state = {
   currentStep: 0,
 };
@@ -166,8 +164,6 @@ export async function activateStep(block, stepIndex, skipAutoplay = false) {
           },
           audioOn,
         );
-
-
       }
 
       audio.play();
