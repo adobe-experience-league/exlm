@@ -209,17 +209,18 @@ export default async function decorate(block) {
 
   const quizDescriptionTitle = document.createElement('h2');
   quizDescriptionTitle.classList.add('quiz-description-title');
-  quizDescriptionTitle.textContent = 'Skill Track Quiz';
+  quizDescriptionTitle.textContent = placeholders?.quizTitle || 'Skill Track Quiz';
 
   const quizDescriptionText = document.createElement('ul');
   quizDescriptionText.classList.add('quiz-description-text');
 
   const descriptionItems = [
-    'End of Skill Track quizzes are pass/fail',
-    'A "passing" grade is based on a total score of 80%',
-    'Quizzes are not timed',
-    'You can retake quizzes as many times as necessary',
-    'Questions may be in the form of multiple choice, multi select, and ordering in bullet points',
+    placeholders?.quizDesc1 || 'End of Skill Track quizzes are pass/fail',
+    placeholders?.quizDesc2 || 'A "passing" grade is based on a total score of 80%',
+    placeholders?.quizDesc3 || 'Quizzes are not timed',
+    placeholders?.quizDesc4 || 'You can retake quizzes as many times as necessary',
+    placeholders?.quizDesc5 ||
+      'Questions may be in the form of multiple choice, multi select, and ordering in bullet points',
   ];
 
   descriptionItems.forEach((item) => {
