@@ -200,12 +200,12 @@ export default async function decorate(block) {
   };
 
   // Get the title type from block data or default to h2
-  const titleType = block.dataset.titleType || 'h2';
+  const quizTitleType = block.dataset.quizTitleType || 'h2';
 
   // Create quiz description section using htmlToElement
   const quizDescriptionContainer = htmlToElement(`
     <div class="quiz-description-container">
-      <${titleType} class="quiz-title">${titleElement?.querySelector('div')?.textContent || ''}</${titleType}>
+      <${quizTitleType} class="quiz-title">${titleElement?.querySelector('div')?.textContent || ''}</${quizTitleType}>
       <ul class="quiz-description">${textElement?.querySelector('div')?.innerHTML || ''}</ul>
     </div>
   `);
