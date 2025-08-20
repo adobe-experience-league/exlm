@@ -12,13 +12,13 @@
 }
 
 .quiz-description-container {
-  width: 728px;
+  max-width: 728px;
   height: 156px;
   margin: 0 auto 80px;
   box-sizing: border-box;
 }
 
-.quizTitle {
+.quiz-title {
   font-family: var(--body-font-family);
   font-weight: var(--font-weight-bold);
   font-style: normal;
@@ -28,7 +28,7 @@
   margin-bottom: var(--spectrum-spacing-300);
 }
 
-.quizDescription {
+.quiz-description {
   font-family: var(--body-font-family);
   font-weight: var(--font-weight-normal);
   font-style: normal;
@@ -37,13 +37,14 @@
   margin: 0;
 }
 
-.quizDescription li {
+.quiz-description li {
   font-family: var(--body-font-family);
   font-weight: var(--font-weight-normal);
   font-style: normal;
   font-size: var(--spectrum-font-size-200);
-  line-height: 100%;
+  line-height: 16px;
   margin-bottom: var(--spectrum-spacing-100);
+  margin-top: 0;
 }
 
 .questions-container {

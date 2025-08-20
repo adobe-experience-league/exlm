@@ -217,12 +217,12 @@ export default async function decorate(block) {
 
   // Create quiz description title
   const quizDescriptionTitle = document.createElement('h2');
-  quizDescriptionTitle.classList.add('quizTitle');
+  quizDescriptionTitle.classList.add('quiz-title');
   quizDescriptionTitle.textContent = titleElement?.querySelector('div')?.textContent || '';
 
   // Create quiz description text
   const quizDescriptionText = document.createElement('ul');
-  quizDescriptionText.classList.add('quizDescription');
+  quizDescriptionText.classList.add('quiz-description');
   quizDescriptionText.innerHTML = textElement?.querySelector('div')?.innerHTML || '';
 
   quizDescriptionContainer.appendChild(quizDescriptionTitle);

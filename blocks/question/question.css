@@ -3,7 +3,7 @@
   padding: var(--spectrum-spacing-400);
   border-radius: 16px;
   border: 1px solid var(--non-spectrum-pale-grey);
-  width: 728px;
+  max-width: 728px;
   height: auto;
   min-height: 360px;
   margin: 0 auto;
@@ -65,7 +65,7 @@
 
 .answer-input {
   margin: 0;
-  width: 15px;
+  max-width: 15px;
   height: 15px;
   margin-right: 0.75rem;
   display: inline-block;
