@@ -1,85 +1,75 @@
 @import '../question/question.css';
 
-.quiz-container {
+.quiz .quiz-container {
   max-width: 800px;
   margin: var(--spectrum-spacing-400) auto;
   padding: var(--spectrum-spacing-300);
 }
 
-.quiz-wrapper,
-.section > div {
+.quiz .quiz-wrapper,
+.quiz .section > div {
   margin: unset;
 }
 
-.quiz-description-container {
+.quiz .quiz-description-container {
   max-width: 728px;
   height: 156px;
-  margin: 0 auto 80px;
+  margin: 0 auto 50px;
   box-sizing: border-box;
 }
 
-.quiz-title {
-  font-family: var(--body-font-family);
+.quiz .quiz-title {
   font-weight: var(--font-weight-bold);
-  font-style: normal;
   font-size: var(--spectrum-font-size-800);
-  line-height: 40px;
+  line-height: var(--spectrum-line-height-xxl);
   margin-top: var(--spectrum-spacing-600);
   margin-bottom: var(--spectrum-spacing-300);
 }
 
-.quiz-description {
-  font-family: var(--body-font-family);
+.quiz .quiz-description {
   font-weight: var(--font-weight-normal);
-  font-style: normal;
   font-size: var(--spectrum-font-size-200);
-  line-height: 16px;
+  line-height: var(--spectrum-line-height-xs);
   margin: 0;
 }
 
-.quiz-description li {
-  font-family: var(--body-font-family);
+.quiz .quiz-description li {
   font-weight: var(--font-weight-normal);
-  font-style: normal;
   font-size: var(--spectrum-font-size-200);
-  line-height: 16px;
+  line-height: var(--spectrum-line-height-xs);
   margin-bottom: var(--spectrum-spacing-100);
   margin-top: 0;
 }
 
-.questions-container {
+.quiz .questions-container {
   display: flex;
   flex-direction: column;
   gap: var(--spectrum-spacing-400);
 }
 
-.question-feedback {
+.quiz .question-feedback {
   margin-top: var(--spectrum-spacing-200);
   text-align: left;
-  font-family: var(--body-font-family);
   font-weight: var(--font-weight-normal);
   font-style: italic;
   font-size: var(--spectrum-font-size-200);
-  line-height: 19px;
-  margin-left: 15px;
-  padding-left: 0.75rem;
+  line-height: var(--spectrum-line-height-s);
 }
 
-.question-feedback.correct {
+.quiz .question-feedback.correct {
   color: var(--non-spectrum-viridian);
 }
 
-.question-feedback.incorrect {
+.quiz .question-feedback.incorrect {
   color: var(--non-spectrum-adobe-red);
 }
 
-.quiz-error-message {
+.quiz .quiz-error-message {
   color: var(--non-spectrum-adobe-red);
-  font-family: var(--body-font-family);
   font-weight: var(--font-weight-normal);
   font-style: italic;
   font-size: var(--spectrum-font-size-200);
-  line-height: 19px;
+  line-height: var(--spectrum-line-height-s);
   text-align: center;
   margin-left: 0;
   padding-left: 0;

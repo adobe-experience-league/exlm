@@ -1,4 +1,4 @@
-.question-block {
+.question .question-block {
   background-color: var(--background-color);
   padding: var(--spectrum-spacing-400);
   border-radius: 16px;
@@ -10,42 +10,36 @@
   box-sizing: border-box;
 }
 
-.questions-container {
+.question .questions-container {
   gap: var(--spectrum-spacing-700);
 }
 
-.question-number {
-  font-family: var(--body-font-family);
+.question .question-number {
   font-weight: var(--font-weight-bold);
-  font-style: normal;
-  font-size: 24px;
+  font-size: var(--spectrum-font-size-600);
   margin-top: 0;
   margin-bottom: var(--spectrum-spacing-100);
 }
 
-.question-block p:not(.question-text) {
+.question .question-block p:not(.question-text) {
   color: var(--non-spectrum-dark-gray);
-  line-height: 30px;
+  line-height: var(--spectrum-line-height-xl);
 }
 
-.question-text {
-  font-family: var(--body-font-family);
+.question .question-text {
   font-weight: var(--font-weight-normal);
-  font-style: normal;
   font-size: var(--spectrum-font-size-400);
-  line-height: 20px;
+  line-height: var(--spectrum-line-height-s);
   position: relative;
   padding-bottom: 30px;
   margin-top: var(--spectrum-spacing-300);
   margin-bottom: 30px;
 }
 
-.answer-option {
-  font-family: var(--body-font-family);
+.question .answer-option {
   font-weight: var(--font-weight-normal);
-  font-style: normal;
   font-size: var(--spectrum-font-size-200);
-  line-height: 19px;
+  line-height: var(--spectrum-line-height-s);
   display: flex;
   align-items: center;
   margin-bottom: var(--spectrum-spacing-400);
@@ -53,7 +47,7 @@
   text-align: left;
 }
 
-.question-text::after {
+.question .question-text::after {
   content: '';
   display: block;
   position: absolute;
@@ -63,7 +57,7 @@
   border-top: 1px solid var(--non-spectrum-after-grey);
 }
 
-.answer-input {
+.question .answer-input {
   margin: 0;
   max-width: 15px;
   height: 15px;
@@ -72,6 +66,6 @@
   vertical-align: middle;
 }
 
-.answer-input:checked {
+.question .answer-input:checked {
   accent-color: var(--non-spectrum-adobe-red);
 }
