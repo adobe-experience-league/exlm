@@ -207,27 +207,15 @@ export default async function decorate(block) {
   const quizDescriptionContainer = document.createElement('div');
   quizDescriptionContainer.classList.add('quiz-description-container');
 
+  // Get quiz description title from block data
+  const quizDescriptionTitleText = block.querySelector('.quiz-description-title');
   const quizDescriptionTitle = document.createElement('h2');
   quizDescriptionTitle.classList.add('quiz-description-title');
-  quizDescriptionTitle.textContent = placeholders?.quizTitle || 'Skill Track Quiz';
-
+  quizDescriptionTitle.textContent = quizDescriptionTitleText;
+  const quizDescriptionTextContent = block.querySelector('.quiz-description-text');
   const quizDescriptionText = document.createElement('ul');
   quizDescriptionText.classList.add('quiz-description-text');
-
-  const descriptionItems = [
-    placeholders?.quizDesc1 || 'End of Skill Track quizzes are pass/fail',
-    placeholders?.quizDesc2 || 'A "passing" grade is based on a total score of 80%',
-    placeholders?.quizDesc3 || 'Quizzes are not timed',
-    placeholders?.quizDesc4 || 'You can retake quizzes as many times as necessary',
-    placeholders?.quizDesc5 ||
-      'Questions may be in the form of multiple choice, multi select, and ordering in bullet points',
-  ];
-
-  descriptionItems.forEach((item) => {
-    const listItem = document.createElement('li');
-    listItem.textContent = item;
-    quizDescriptionText.appendChild(listItem);
-  });
+  quizDescriptionText.innerHTML = quizDescriptionTextContent;
 
   quizDescriptionContainer.appendChild(quizDescriptionTitle);
   quizDescriptionContainer.appendChild(quizDescriptionText);

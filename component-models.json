@@ -7339,7 +7339,24 @@
   },
   {
     "id": "quiz",
-    "fields": []
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "quiz-description-title",
+        "value": "",
+        "label": "Quiz Title",
+        "description": "Enter the skill track quiz title"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "quiz-description-text",
+        "value": "",
+        "label": "Quiz Description",
+        "description": "Enter the skill track quiz description"
+      }
+    ]
   },
   {
     "id": "question",
