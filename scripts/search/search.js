@@ -1,11 +1,14 @@
 import { getMetadata } from '../lib-franklin.js';
-import { htmlToElement, loadIms, getLanguageCode, getPathDetails } from '../scripts.js';
+import { htmlToElement, loadIms, getLanguageCode, getPathDetails, getConfig } from '../scripts.js';
 import SearchDelegate from './search-delegate.js';
+
+const { communityHost } = getConfig();
+const isCommunityDomain = window.location.origin.includes(communityHost);
 
 // Get language code from URL
 const languageCode = await getLanguageCode();
 let solution;
-if (window.location.origin.includes('experienceleaguecommunities')) {
+if (isCommunityDomain) {
   // Get solution from page title
   solution = getMetadata('og:title')?.replace('Adobe ', '');
 } else {
