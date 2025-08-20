@@ -27,21 +27,21 @@ async function checkSelectedAnswers(
 
   // Check if any answer index is invalid
   const hasInvalidIndex = selectedAnswerIndices.some(
-    (answerIndex) => answerIndex <= 0 || answerIndex > answerTexts.length
+    (answerIndex) => answerIndex <= 0 || answerIndex > answerTexts.length,
   );
-  
+
   if (hasInvalidIndex) {
     return false;
   }
-  
-  // Generate hashes for all selected answers
+
+  // Generate hash for all selected answers
   const answerHashes = await Promise.all(
     selectedAnswerIndices.map((answerIndex) => {
       const answerText = answerTexts[answerIndex - 1];
       return hashAnswer(pagePath, questionIndex, answerIndex.toString(), answerText);
-    })
+    }),
   );
-  
+
   // Check if all selected answers are correct
   return answerHashes.every((hash) => hashedCorrectAnswers.includes(hash));
 }
@@ -53,7 +53,6 @@ async function checkQuestionAnswer(questionElement) {
   const hashedCorrectAnswers = questionElement.dataset.correctAnswers.split(',');
   const isMultipleChoice = questionElement.dataset.isMultipleChoice === 'true';
 
-  // Get all answer texts
   const answerElements = questionElement.querySelectorAll('.answer-label');
   const answerTexts = Array.from(answerElements).map((el) => el.textContent.trim());
 
@@ -121,12 +120,10 @@ function showQuestionFeedback(questionElement, isCorrect, placeholders = {}) {
 async function submitQuiz(questions, placeholders = {}) {
   // Check all questions and show feedback
   const questionsArray = Array.from(questions || []);
-  
+
   // Process all questions in parallel
-  const results = await Promise.all(
-    questionsArray.map((question) => checkQuestionAnswer(question))
-  );
-  
+  const results = await Promise.all(questionsArray.map((question) => checkQuestionAnswer(question)));
+
   // Show feedback for each question
   questionsArray.forEach((question, index) => {
     showQuestionFeedback(question, results[index], placeholders);
@@ -167,11 +164,8 @@ export default async function decorate(block) {
     questionsContainer.append(question);
   });
 
-  // Create a single submit button for the entire quiz using htmlToElement
-  const submitButton = htmlToElement(`
-    <button type="button" class="quiz-submit-button">${placeholders?.submit || 'SUBMIT'}</button>
-  `);
-  submitButton.addEventListener('click', async () => {
+  // Create a function to handle quiz submission that can be called externally
+  window.submitQuizHandler = async () => {
     // Check if all questions are answered
     let allQuestionsAnswered = true;
 
@@ -196,21 +190,50 @@ export default async function decorate(block) {
         </div>
       `);
 
-      // Insert above the submit button
-      submitButton.before(errorMessage);
-      return;
+      // Insert at the end of the questions container
+      questionsContainer.appendChild(errorMessage);
+      return false;
     }
 
     // Remove any existing question feedback before showing new feedback
     const existingFeedback = block.querySelectorAll('.question-feedback');
     existingFeedback.forEach((feedback) => feedback.remove());
 
-    submitButton.disabled = true;
     await submitQuiz(questions, placeholders);
+    return true;
+  };
+
+  // Create quiz description section
+  const quizDescriptionContainer = document.createElement('div');
+  quizDescriptionContainer.classList.add('quiz-description-container');
+
+  const quizDescriptionTitle = document.createElement('h2');
+  quizDescriptionTitle.classList.add('quiz-description-title');
+  quizDescriptionTitle.textContent = placeholders?.quizTitle || 'Skill Track Quiz';
+
+  const quizDescriptionText = document.createElement('ul');
+  quizDescriptionText.classList.add('quiz-description-text');
+
+  const descriptionItems = [
+    placeholders?.quizDesc1 || 'End of Skill Track quizzes are pass/fail',
+    placeholders?.quizDesc2 || 'A "passing" grade is based on a total score of 80%',
+    placeholders?.quizDesc3 || 'Quizzes are not timed',
+    placeholders?.quizDesc4 || 'You can retake quizzes as many times as necessary',
+    placeholders?.quizDesc5 ||
+      'Questions may be in the form of multiple choice, multi select, and ordering in bullet points',
+  ];
+
+  descriptionItems.forEach((item) => {
+    const listItem = document.createElement('li');
+    listItem.textContent = item;
+    quizDescriptionText.appendChild(listItem);
   });
+
+  quizDescriptionContainer.appendChild(quizDescriptionTitle);
+  quizDescriptionContainer.appendChild(quizDescriptionText);
 
   // Clear the block and build the quiz structure
   block.textContent = '';
+  block.appendChild(quizDescriptionContainer);
   block.appendChild(questionsContainer);
-  block.appendChild(submitButton);
 }
