@@ -305,6 +305,12 @@ async function applyChanges(event) {
  * Event listener for aue:ui-select, selection of a component
  */
 async function handleEditorSelect(event) {
+  
+  // we are only interested in the target
+  if (!event.detail.selected) {
+    return;
+  }
+
   // handle flip card selection
   const { handleFlipCardSelection } = await import('./editor-support-blocks.js');
   handleFlipCardSelection(event);
