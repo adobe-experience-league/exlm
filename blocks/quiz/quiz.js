@@ -200,12 +200,13 @@ export default async function decorate(block) {
   };
 
   const heading = titleElement?.querySelector('h1,h2,h3,h4,h5,h6');
-  const titleType = heading ? heading.tagName.toLowerCase() : 'h2';
 
   // Create quiz description section using htmlToElement
   const quizDescriptionContainer = htmlToElement(`
     <div class="quiz-description-container">
-      <${titleType} class="quiz-title">${titleElement?.querySelector('div')?.textContent || ''}</${titleType}>
+      <div class="quiz-title">
+        ${heading?.innerHTML || ''}
+      </div>
       <ul class="quiz-description">${textElement?.querySelector('div')?.innerHTML || ''}</ul>
     </div>
   `);
