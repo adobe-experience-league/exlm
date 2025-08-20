@@ -75,7 +75,8 @@
       "skill-track-meta",
       "skill-track",
       "quiz",
-      "drill-in"
+      "drill-in",
+      "flip-card"
     ]
   },
   {
@@ -391,6 +392,10 @@
   {
     "id": "drill-in",
     "components": ["drill-in-callout"]
+  },
+  {
+    "id": "flip-card",
+    "components": ["flip-card-item"]
   },
   {
     "id": "rte-custom-options",
