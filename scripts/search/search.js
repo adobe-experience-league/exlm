@@ -4,8 +4,14 @@ import SearchDelegate from './search-delegate.js';
 
 // Get language code from URL
 const languageCode = await getLanguageCode();
-// Get solution from metadata
-const solution = getMetadata('solution')?.split(',')[0].trim();
+let solution;
+if (window.location.origin.includes('experienceleaguecommunities')) {
+  // Get solution from page title
+  solution = getMetadata('og:title')?.replace('Adobe ', '');
+} else {
+  // Get solution from metadata
+  solution = getMetadata('solution')?.split(',')[0].trim();
+}
 // Get content type from metadata
 let contentType = getMetadata('type')?.trim();
 
