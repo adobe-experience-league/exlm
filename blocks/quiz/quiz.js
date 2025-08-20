@@ -20,17 +20,12 @@ async function checkSelectedAnswers(
   hashedCorrectAnswers,
   isMultipleChoice,
 ) {
-  // For multiple choice, all selected answers must be correct and all correct answers must be selected
-  if (isMultipleChoice && selectedAnswerIndices.length !== hashedCorrectAnswers.length) {
-    return false;
-  }
-
-  // Check if any answer index is invalid
-  const hasInvalidIndex = selectedAnswerIndices.some(
-    (answerIndex) => answerIndex <= 0 || answerIndex > answerTexts.length,
-  );
-
-  if (hasInvalidIndex) {
+  // Check if the number of answers is correct for multiple choice
+  // and if all selected indices are valid
+  if (
+    (isMultipleChoice && selectedAnswerIndices.length !== hashedCorrectAnswers.length) ||
+    selectedAnswerIndices.some((answerIndex) => answerIndex <= 0 || answerIndex > answerTexts.length)
+  ) {
     return false;
   }
 
@@ -141,15 +136,8 @@ export default async function decorate(block) {
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
 
-  // Get all children of the block
-  const allChildren = [...block.children];
-
-  // The first two divs are quiz description elements
-  const titleElement = allChildren[0];
-  const textElement = allChildren[1];
-
-  // The rest are questions
-  const questions = allChildren.slice(2);
+  // Get title, text, and questions from block children using destructuring
+  const [titleElement, textElement, ...questions] = [...block.children];
 
   // Set total questions count
   const totalQuestions = questions.length;
@@ -211,22 +199,16 @@ export default async function decorate(block) {
     return true;
   };
 
-  // Create quiz description section
-  const quizDescriptionContainer = document.createElement('div');
-  quizDescriptionContainer.classList.add('quiz-description-container');
+  // Get the title type from block data or default to h2
+  const titleType = block.dataset.titleType || 'h2';
 
-  // Create quiz description title
-  const quizDescriptionTitle = document.createElement('h2');
-  quizDescriptionTitle.classList.add('quiz-title');
-  quizDescriptionTitle.textContent = titleElement?.querySelector('div')?.textContent || '';
-
-  // Create quiz description text
-  const quizDescriptionText = document.createElement('ul');
-  quizDescriptionText.classList.add('quiz-description');
-  quizDescriptionText.innerHTML = textElement?.querySelector('div')?.innerHTML || '';
-
-  quizDescriptionContainer.appendChild(quizDescriptionTitle);
-  quizDescriptionContainer.appendChild(quizDescriptionText);
+  // Create quiz description section using htmlToElement
+  const quizDescriptionContainer = htmlToElement(`
+    <div class="quiz-description-container">
+      <${titleType} class="quiz-title">${titleElement?.querySelector('div')?.textContent || ''}</${titleType}>
+      <ul class="quiz-description">${textElement?.querySelector('div')?.innerHTML || ''}</ul>
+    </div>
+  `);
 
   // Clear the block and build the quiz structure
   block.textContent = '';

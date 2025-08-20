@@ -2,6 +2,9 @@
  * Utility functions for hashing quiz answers
  */
 
+// Fixed salt value - must match the one used on the server side
+const PAGE_SALT = 'EXL_QUIZ_SALT';
+
 /**
  * Creates a canonical version of text (trimmed, lowercase)
  * @param {string} text The text to canonicalize
@@ -34,10 +37,7 @@ async function sha256Base64(input) {
  * @returns {Promise<string>} The hashed answer
  */
 export async function hashAnswer(pagePath, questionIndex, answerIndex, answerText) {
-  // Fixed salt value - must match the one used on the server side
-  const pageSalt = 'EXL_QUIZ_SALT';
+  const input = [pagePath, questionIndex, answerIndex, canonicalizeText(answerText), PAGE_SALT].join('|');
 
-  const canonicalText = canonicalizeText(answerText);
-  const hashedAnswer = `${pagePath}|${questionIndex}|${answerIndex}|${canonicalText}|${pageSalt}`;
-  return sha256Base64(hashedAnswer);
+  return sha256Base64(input);
 }

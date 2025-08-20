@@ -2,7 +2,7 @@
   background-color: var(--background-color);
   padding: var(--spectrum-spacing-400);
   border-radius: 16px;
-  border: 1px solid var(--non-spectrum-pale-grey);
+  border: 1px solid var(--non-spectrum-outline-grey);
   max-width: 728px;
   height: auto;
   min-height: 360px;
@@ -60,7 +60,7 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  border-top: 1px solid #b7b7b7;
+  border-top: 1px solid var(--non-spectrum-after-grey);
 }
 
 .answer-input {
