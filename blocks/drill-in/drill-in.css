@@ -80,7 +80,8 @@
   font-weight: var(--font-weight-light);
   color: var(--spectrum-gray-900);
   height: auto;
-  max-height: 400px;
+  max-height: 200px;
+  overflow-y: auto;
   font-size: var(--spectrum-font-size-200);
 }
 
