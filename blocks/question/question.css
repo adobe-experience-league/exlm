@@ -2,12 +2,11 @@
   background-color: var(--background-color);
   padding: var(--spectrum-spacing-400);
   border-radius: 16px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--non-spectrum-pale-grey);
   width: 728px;
   height: auto;
   min-height: 360px;
   margin: 0 auto;
-  opacity: 1;
   box-sizing: border-box;
 }
 
@@ -20,14 +19,13 @@
   font-weight: var(--font-weight-bold);
   font-style: normal;
   font-size: 24px;
-  letter-spacing: 0%;
   margin-top: 0;
   margin-bottom: var(--spectrum-spacing-100);
 }
 
 .question-block p:not(.question-text) {
-  color: #2c2c2c;
-  line-height: 125%;
+  color: var(--non-spectrum-dark-gray);
+  line-height: 30px;
 }
 
 .question-text {
@@ -35,8 +33,7 @@
   font-weight: var(--font-weight-normal);
   font-style: normal;
   font-size: var(--spectrum-font-size-400);
-  line-height: 100%;
-  letter-spacing: 0%;
+  line-height: 20px;
   position: relative;
   padding-bottom: 30px;
   margin-top: var(--spectrum-spacing-300);
@@ -49,7 +46,6 @@
   font-style: normal;
   font-size: var(--spectrum-font-size-200);
   line-height: 19px;
-  letter-spacing: 0%;
   display: flex;
   align-items: center;
   margin-bottom: var(--spectrum-spacing-400);

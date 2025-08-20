@@ -16,7 +16,6 @@
   height: 156px;
   margin: 0 auto 80px;
   box-sizing: border-box;
-  opacity: 1;
 }
 
 .quiz-description-title {
@@ -24,9 +23,8 @@
   font-weight: var(--font-weight-bold);
   font-style: normal;
   font-size: var(--spectrum-font-size-800);
-  line-height: 125%;
-  letter-spacing: 0%;
-  margin-top: 40px;
+  line-height: 40px;
+  margin-top: var(--spectrum-spacing-600);
   margin-bottom: var(--spectrum-spacing-300);
 }
 
@@ -35,10 +33,9 @@
   font-weight: var(--font-weight-normal);
   font-style: normal;
   font-size: var(--spectrum-font-size-200);
-  line-height: 100%;
-  letter-spacing: 0%;
+  line-height: 16px;
   margin: 0;
-  padding-left: 20px;
+  padding-left: var(--spectrum-font-size-400);
 }
 
 .quiz-description-text li {
@@ -47,7 +44,6 @@
   font-style: normal;
   font-size: var(--spectrum-font-size-200);
   line-height: 100%;
-  letter-spacing: 0%;
   margin-bottom: var(--spectrum-spacing-100);
 }
 
@@ -65,7 +61,6 @@
   font-style: italic;
   font-size: var(--spectrum-font-size-200);
   line-height: 19px;
-  letter-spacing: 0%;
   margin-left: 15px;
   padding-left: 0.75rem;
 }
@@ -85,7 +80,6 @@
   font-style: italic;
   font-size: var(--spectrum-font-size-200);
   line-height: 19px;
-  letter-spacing: 0%;
   text-align: center;
   margin-left: 0;
   padding-left: 0;
