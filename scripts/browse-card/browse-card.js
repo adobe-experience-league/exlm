@@ -358,6 +358,15 @@ function lowerCaseSameOriginUrls(url) {
   return url;
 }
 
+let videoClipModalPromise = null;
+
+const getVideoClipModal = () => {
+  if (!videoClipModalPromise) {
+    videoClipModalPromise = import('./browse-card-video-clip-modal.js');
+  }
+  return videoClipModalPromise;
+};
+
 /**
  * Builds a browse card element with various components based on the provided model data.
  *
@@ -383,7 +392,7 @@ export async function buildCard(container, element, model) {
   model.viewLink = lowerCaseSameOriginUrls(model.viewLink);
   model.copyLink = lowerCaseSameOriginUrls(model.copyLink);
 
-  let type = contentType?.toLowerCase();
+  let type = contentType?.toLowerCase()?.split(' ')?.join('-');
   const inProgressMappingKey = RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY.toLowerCase();
   const recommededMappingKey = RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY.toLowerCase();
   if (contentType === inProgressMappingKey || contentType === recommededMappingKey) {
@@ -395,15 +404,26 @@ export async function buildCard(container, element, model) {
       type = mappingKey.toLowerCase();
     }
   }
+  const isVideoClip = type === CONTENT_TYPES.VIDEO_CLIP.MAPPING_KEY;
+
   const card = createTag(
     'div',
     { class: `browse-card ${type}-card ${failedToLoad ? 'browse-card-frozen' : ''}` },
-    `<div class="browse-card-figure"></div><div class="browse-card-content"></div><div class="browse-card-footer"></div>`,
+    `<div class="browse-card-figure"></div>${
+      isVideoClip ? `<div class="browse-card-video-clip"></div>` : ''
+    }<div class="browse-card-content"></div><div class="browse-card-footer"></div>`,
   );
   const cardFigure = card.querySelector('.browse-card-figure');
   const cardContent = card.querySelector('.browse-card-content');
 
-  if (thumbnail) {
+  if (isVideoClip) {
+    const cardClipContainer = card.querySelector('.browse-card-video-clip');
+    const playButton = document.createElement('div');
+    playButton.classList.add('play-button');
+    playButton.innerHTML = '<span class="icon icon-play-outline-white"></span>';
+    cardClipContainer.appendChild(playButton);
+    decorateIcons(playButton);
+  } else if (thumbnail) {
     const laptopContainer = document.createElement('div');
     laptopContainer.classList.add('laptop-container');
     const laptopScreen = document.createElement('div');
@@ -500,12 +520,41 @@ export async function buildCard(container, element, model) {
   }
   await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
   await buildCardContent(card, model);
+
+  if (isVideoClip) {
+    const playButton = card.querySelector('.play-button');
+    const thumbnailArea = card.querySelector('.browse-card-figure');
+
+    const videoClickHandler = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      getVideoClipModal().then(({ BrowseCardVideoClipModal }) => {
+        const modal = new BrowseCardVideoClipModal({
+          model,
+        });
+        modal.open();
+      });
+    };
+
+    if (playButton) {
+      playButton.addEventListener('click', videoClickHandler);
+    }
+
+    thumbnailArea.addEventListener('click', videoClickHandler);
+  }
+
   if (model.viewLink) {
     const cardContainer = document.createElement('a');
     cardContainer.setAttribute('href', model.viewLink);
     cardContainer.addEventListener('click', (e) => {
       const preventLinkRedirection = !!(e.target && e.target.closest('.user-actions'));
-      if (preventLinkRedirection) {
+
+      // Prevent default link behavior for user actions and video clips
+      if (
+        preventLinkRedirection ||
+        (isVideoClip && (e.target.closest('.browse-card-figure') || e.target.closest('.play-button')))
+      ) {
         e.preventDefault();
       }
     });

@@ -10,7 +10,7 @@ const BrowseCardsTargetDataAdapter = (() => {
    * @returns {Object} The BrowseCards data model.
    */
   const mapResultsToCardsDataModel = (data) => {
-    const contentTypeKey = data?.contentType?.toUpperCase();
+    const contentTypeKey = data?.contentType?.toUpperCase()?.split(' ')?.join('_');
     const articlePath = `/${getPathDetails().lang}${data?.path}`;
     const fullURL = new URL(articlePath, window.location.origin).href;
     const solutions = data?.product.split(',').map((s) => s.trim());
