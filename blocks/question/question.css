@@ -2,7 +2,7 @@
   background-color: var(--background-color);
   padding: var(--spectrum-spacing-400);
   border-radius: 16px;
-  border: 1px solid var(--non-spectrum-pale-grey);
+  border: 1px solid var(--non-spectrum-pale-grey-dark);
   max-width: 728px;
   height: auto;
   min-height: 360px;
