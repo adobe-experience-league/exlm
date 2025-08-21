@@ -261,10 +261,6 @@ export default async function decorate(block) {
       e.preventDefault();
       e.stopPropagation();
       closePopover(coachmark);
-      // Prevent automatic navigation to next popover by stopping event propagation
-      // This fixes the issue where clicking close would navigate to the next popover
-      e.stopImmediatePropagation();
-      return false; // Additional safeguard to prevent any default behavior
     });
 
     window.addEventListener('resize', () => {
