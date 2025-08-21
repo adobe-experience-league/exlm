@@ -4291,7 +4291,8 @@
         "label": "Author Bio page URL",
         "validation": {
           "rootPath": "/content/exlm/global/en/perspectives/authors"
-        }
+        },
+        "visible": "theme=='articles'"
       },
       {
         "component": "aem-tag",
