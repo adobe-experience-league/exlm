@@ -373,7 +373,7 @@ if (signUpBlock) {
 // update UE component filters on page load
 updateUEInstrumentation();
 
-window.addEventListener('aue:ui-init', (event) => {
+window.addEventListener('aem-ue-init', (event) => {
   console.log("gautham")
   console.log("event", event)  
   console.log(event.detail.pageProps)
