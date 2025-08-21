@@ -5,6 +5,8 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
  * @param {Element} block The drill-in block element
  */
 export default async function decorate(block) {
+  const isMobile = () => window.matchMedia('(max-width: 900px)').matches;
+
   await import('../../scripts/coachmark/coachmark.js');
 
   const imageDiv = block.querySelector(':scope > div:first-child');
@@ -30,30 +32,102 @@ export default async function decorate(block) {
 
   const coachmarks = [];
 
+  const closePopover = (cm) => {
+    cm.classList.remove('active');
+    cm.classList.remove('has-mobile-popover');
+
+    const popover = cm.shadowRoot?.querySelector('.spectrum-Popover');
+    if (popover) {
+      popover.classList.remove('is-open');
+      popover.style.display = 'none';
+    }
+    const anyMobilePopover = document.querySelectorAll('.drill-in-coachmark.has-mobile-popover').length > 0;
+    if (!anyMobilePopover) {
+      document.body.classList.remove('no-scroll');
+    }
+  };
+
+  const getDivText = (parent, nth, trim = true) => {
+    const text = parent.querySelector(`:scope > div:nth-child(${nth})`)?.textContent || '';
+    return trim ? text.trim() : text;
+  };
+
+  const parsePosition = (text, defaultVal = 50) => {
+    const val = parseInt(text, 10);
+    return !Number.isNaN(val) && val >= 0 && val <= 100 ? val : defaultVal;
+  };
+
+  const setAbsolutePosition = (el, x, y, offset = 0) => {
+    el.style.position = 'absolute';
+    el.style.left = `calc(${x}% + ${offset}px)`;
+    el.style.top = `calc(${y}% + ${offset}px)`;
+  };
+
+  const createNavButton = (cls, label, html) => {
+    const btn = document.createElement('button');
+    btn.className = cls;
+    btn.setAttribute('aria-label', label);
+    btn.innerHTML = html;
+    return btn;
+  };
+
+  const showCoachmark = (idx) => {
+    coachmarks.forEach((cm) => {
+      cm.classList.remove('active');
+      const popover = cm.shadowRoot?.querySelector('.spectrum-Popover');
+      if (popover) {
+        popover.style.display = 'none';
+        popover.classList.remove('is-open');
+      }
+    });
+
+    coachmarks[idx].classList.add('active');
+    coachmarks[idx].show();
+
+    // Make sure the rings are not visible after click
+    const rings = coachmarks[idx].shadowRoot?.querySelectorAll('.spectrum-CoachIndicator-ring');
+    if (rings) {
+      rings.forEach((ring) => {
+        ring.style.display = 'none';
+      });
+    }
+  };
+
+  const updatePopoverState = (cm, popover) => {
+    if (!popover) return;
+    popover.style.display = 'inline-flex';
+    popover.classList.add('is-open');
+    popover.classList.remove('popover-mobile');
+
+    if (isMobile()) {
+      popover.classList.add('popover-mobile');
+      cm.classList.add('has-mobile-popover');
+      document.body.classList.add('no-scroll');
+    } else {
+      cm.classList.remove('has-mobile-popover');
+      document.body.classList.remove('no-scroll');
+    }
+  };
+
+  const navigateCoachmark = (targetIndex) => {
+    showCoachmark(targetIndex);
+    coachmarks.forEach((cm, idx) => {
+      const popover = cm.shadowRoot?.querySelector('.spectrum-Popover');
+      if (idx === targetIndex) {
+        cm.style.zIndex = baseZIndex + 1;
+        updatePopoverState(cm, popover);
+      } else {
+        cm.style.zIndex = baseZIndex;
+        cm.classList.remove('has-mobile-popover');
+      }
+    });
+  };
+
   calloutDivs.forEach((calloutDiv) => {
-    const calloutTitle = calloutDiv.querySelector(':scope > div:first-child')?.textContent || '';
-    const calloutDescription = calloutDiv.querySelector(':scope > div:nth-child(2)')?.textContent || '';
-    const positionXDiv = calloutDiv.querySelector(':scope > div:nth-child(3)');
-    const positionYDiv = calloutDiv.querySelector(':scope > div:nth-child(4)');
-
-    // Default position is center (50%, 50%) if not specified
-    let x = 50;
-    let y = 50;
-
-    // Parse position values if available
-    if (positionXDiv) {
-      const positionX = parseInt(positionXDiv.textContent, 10);
-      if (!Number.isNaN(positionX) && positionX >= 0 && positionX <= 100) {
-        x = positionX;
-      }
-    }
-
-    if (positionYDiv) {
-      const positionY = parseInt(positionYDiv.textContent, 10);
-      if (!Number.isNaN(positionY) && positionY >= 0 && positionY <= 100) {
-        y = positionY;
-      }
-    }
+    const calloutTitle = getDivText(calloutDiv, 1);
+    const calloutDescription = getDivText(calloutDiv, 2);
+    const x = parsePosition(getDivText(calloutDiv, 3));
+    const y = parsePosition(getDivText(calloutDiv, 4));
 
     // Create the coachmark element
     const coachmark = document.createElement('exl-coachmark');
@@ -62,10 +136,7 @@ export default async function decorate(block) {
     coachmark.classList.add('drill-in-coachmark');
 
     // Position the coachmark
-    coachmark.style.position = 'absolute';
-    coachmark.style.left = `${x}%`;
-    coachmark.style.top = `${y}%`;
-    coachmark.style.display = 'block';
+    setAbsolutePosition(coachmark, x, y);
 
     // Store the position as data attributes for easier access
     coachmark.dataset.positionX = x.toString();
@@ -79,8 +150,7 @@ export default async function decorate(block) {
     plusButtonContainer.appendChild(plusButton);
 
     // Position the plus button at the same coordinates as the coachmark
-    plusButtonContainer.style.left = `calc(${x}% + 3px)`;
-    plusButtonContainer.style.top = `calc(${y}% + 3px)`;
+    setAbsolutePosition(plusButtonContainer, x, y, 3);
     // Add a data attribute to track which coachmark this plus button belongs to
     plusButtonContainer.dataset.coachmarkIndex = coachmarks.length;
 
@@ -96,21 +166,17 @@ export default async function decorate(block) {
 
     const navButtons = document.createElement('div');
     navButtons.classList.add('drill-in-nav-buttons-container');
-    const prevButton = document.createElement('button');
-    prevButton.className = 'drill-in-nav-button prev';
-    prevButton.innerHTML = '&lt;';
-    prevButton.setAttribute('aria-label', 'Previous callout');
 
-    const nextButton = document.createElement('button');
-    nextButton.className = 'drill-in-nav-button next';
-    nextButton.innerHTML = '&gt;';
-    nextButton.setAttribute('aria-label', 'Next callout');
+    const prevButton = createNavButton('drill-in-nav-button prev', 'Previous callout', '&lt;');
+    const nextButton = createNavButton('drill-in-nav-button next', 'Next callout', '&gt;');
+    const closeBtn = createNavButton('drill-in-close-btn', 'Close', '&#x2715;');
 
     navButtons.appendChild(prevButton);
     navButtons.appendChild(nextButton);
 
     navContainer.appendChild(titleEl);
     navContainer.appendChild(navButtons);
+    navContainer.appendChild(closeBtn);
 
     headerSlot.appendChild(navContainer);
 
@@ -151,9 +217,12 @@ export default async function decorate(block) {
         notch.classList.add('popover-notch');
 
         popOverEle.appendChild(notch);
+
+        // Ensure popover is not displayed on initial load (fixes issue with modal opening automatically on mobile)
+        popOverEle.style.display = 'none';
+        popOverEle.classList.remove('is-open');
       });
     }
-
     // Hide the original callout div as we're showing it in coachmarks now
     calloutDiv.style.display = 'none';
   });
@@ -162,44 +231,7 @@ export default async function decorate(block) {
   coachmarks.forEach((coachmark, index) => {
     const prevButton = coachmark.querySelector('.drill-in-nav-button.prev');
     const nextButton = coachmark.querySelector('.drill-in-nav-button.next');
-
-    // Function to show a specific coachmark
-    const showCoachmark = (idx) => {
-      coachmarks.forEach((cm) => {
-        cm.classList.remove('active');
-        // Hide the popover
-        const popover = cm.shadowRoot?.querySelector('.spectrum-Popover');
-        if (popover) {
-          popover.style.display = 'none';
-        }
-      });
-
-      coachmarks[idx].classList.add('active');
-      coachmarks[idx].show();
-
-      // Make sure the rings are not visible after click
-      const rings = coachmarks[idx].shadowRoot?.querySelectorAll('.spectrum-CoachIndicator-ring');
-      if (rings) {
-        rings.forEach((ring) => {
-          ring.style.display = 'none';
-        });
-      }
-    };
-
-    const navigateCoachmark = (targetIndex) => {
-      showCoachmark(targetIndex);
-      coachmarks.forEach((cm, idx) => {
-        if (idx === targetIndex) {
-          cm.style.zIndex = baseZIndex + 1;
-        } else {
-          cm.style.zIndex = baseZIndex;
-        }
-      });
-      const popover = coachmarks[targetIndex].shadowRoot?.querySelector('.spectrum-Popover');
-      if (popover) {
-        popover.style.display = 'inline-flex';
-      }
-    };
+    const closeButton = coachmark.querySelector('.drill-in-close-btn');
 
     // Previous button click handler
     prevButton.addEventListener('click', (e) => {
@@ -223,6 +255,26 @@ export default async function decorate(block) {
       e.stopPropagation();
       navigateCoachmark(index);
     });
+
+    // Close button click handler
+    closeButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      closePopover(coachmark);
+      // Prevent automatic navigation to next popover by stopping event propagation
+      // This fixes the issue where clicking close would navigate to the next popover
+      e.stopImmediatePropagation();
+      return false; // Additional safeguard to prevent any default behavior
+    });
+
+    window.addEventListener('resize', () => {
+      coachmarks.forEach((cm) => {
+        const popover = cm.shadowRoot?.querySelector('.spectrum-Popover');
+        if (popover && popover.classList.contains('is-open')) {
+          updatePopoverState(cm, popover);
+        }
+      });
+    });
   });
 
   // Add click event to the document to hide coachmarks when clicking outside
@@ -230,11 +282,7 @@ export default async function decorate(block) {
     // Only hide if not clicking on a coachmark or navigation button
     if (!e.target.closest('exl-coachmark') && !e.target.closest('.drill-in-nav-button')) {
       coachmarks.forEach((cm) => {
-        cm.classList.remove('active');
-        const popover = cm.shadowRoot?.querySelector('.spectrum-Popover');
-        if (popover) {
-          popover.style.display = 'none';
-        }
+        closePopover(cm);
       });
     }
   });
