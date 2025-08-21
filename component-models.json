@@ -4337,6 +4337,18 @@
     ]
   },
   {
+    "id": "author-bio-metadata",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      }
+    ]
+  },
+  {
     "id": "block-quote",
     "fields": [
       {
