@@ -58,6 +58,7 @@ export default function atomicSortDropdownHandler(baseElement) {
     const optionElements = selectElement ? Array.from(selectElement.children) : [];
     optionElements.forEach((option) => {
       const optionKey = option.value;
+      option.removeAttribute('disabled');
       const isCommunityOption = COMMUNITY_SUPPORTED_SORT_ELEMENTS.find((opt) => optionKey.includes(opt));
       const displayValue = isCommunityOption && !communityFilterSelected ? 'none' : '';
       option.style.display = displayValue;
