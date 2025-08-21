@@ -88,7 +88,7 @@ export default function atomicSortDropdownHandler(baseElement) {
   document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, () => {
     setTimeout(() => {
       updateSortOptions();
-    }, 1000);
+    }, 250);
   });
   document.addEventListener(CUSTOM_EVENTS.RESIZED, debouncedResize);
 
