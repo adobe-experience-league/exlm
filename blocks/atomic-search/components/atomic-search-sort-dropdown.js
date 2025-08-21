@@ -56,11 +56,22 @@ export default function atomicSortDropdownHandler(baseElement) {
 
     const selectElement = baseElement.shadowRoot.querySelector('[part="select"]');
     const optionElements = selectElement ? Array.from(selectElement.children) : [];
-    optionElements.forEach((option) => {
+    const hiddenOptions = new Map();
+
+    optionElements.forEach((option, idx) => {
       const optionKey = option.value;
-      const isCommunityOption = COMMUNITY_SUPPORTED_SORT_ELEMENTS.find((opt) => optionKey.includes(opt));
-      const displayValue = isCommunityOption && !communityFilterSelected ? 'none' : '';
-      option.style.display = displayValue;
+      const isCommunityOption = COMMUNITY_SUPPORTED_SORT_ELEMENTS.some((opt) => optionKey.includes(opt));
+      const shouldHide = isCommunityOption && !communityFilterSelected;
+
+      if (shouldHide && !hiddenOptions.has(optionKey)) {
+        hiddenOptions.set(optionKey, { option, index: idx });
+        option.remove(); // iOS-safe
+      } else if (!shouldHide && hiddenOptions.has(optionKey)) {
+        const { option: hiddenOpt, index } = hiddenOptions.get(optionKey);
+        const parent = optionElements[0].parentElement;
+        parent.insertBefore(hiddenOpt, parent.options[index] || null);
+        hiddenOptions.delete(optionKey);
+      }
     });
   }
 
