@@ -117,8 +117,12 @@
 
 .atomic-search button.facet-close-btn {
   position: sticky;
-  left: calc(100% - 16px);
+  left: calc(100% - 50px);
   top: 8px;
+  background: var(--background-color);
+  border: 1px solid var(--non-spectrum-grey-updated);
+  padding: 5px;
+  z-index: 2;
 }
 
 .atomic-load-skeleton-main {
