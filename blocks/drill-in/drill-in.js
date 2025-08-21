@@ -217,6 +217,9 @@ export default async function decorate(block) {
         notch.classList.add('popover-notch');
 
         popOverEle.appendChild(notch);
+        // Ensure popover is not displayed on initial load (fixes issue with modal opening automatically on mobile)
+        popOverEle.style.display = 'none';
+        popOverEle.classList.remove('is-open');
       });
     }
     // Hide the original callout div as we're showing it in coachmarks now
