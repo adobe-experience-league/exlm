@@ -60,8 +60,9 @@ export default function atomicSortDropdownHandler(baseElement) {
       const optionKey = option.value;
       const isCommunityOption = COMMUNITY_SUPPORTED_SORT_ELEMENTS.find((opt) => optionKey.includes(opt));
       const displayValue = isCommunityOption && !communityFilterSelected ? 'none' : '';
+      option.style.display = displayValue;
       if (displayValue) {
-        option.remove();
+        option.setAttribute('disabled', 'disabled');
       }
     });
   }
