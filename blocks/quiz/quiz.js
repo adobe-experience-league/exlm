@@ -44,8 +44,8 @@ async function checkSelectedAnswers(
 async function checkQuestionAnswer(questionElement) {
   if (!questionElement) return false;
 
-  // Get the hashed correct answers
-  const hashedCorrectAnswers = questionElement.dataset.correctAnswers.split(',');
+  // Get the hashed correct answers from metadata attribute
+  const hashedCorrectAnswers = questionElement.getAttribute('data-correctAnswers').split(',');
   const isMultipleChoice = questionElement.dataset.isMultipleChoice === 'true';
 
   const answerElements = questionElement.querySelectorAll('.answer-label');

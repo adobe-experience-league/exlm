@@ -34,8 +34,9 @@ export function generateQuestionDOM(block, placeholders = {}) {
     answers = [...(answersList.querySelectorAll('li') || [])].map((li) => li?.textContent?.trim() || '');
   }
 
-  // Store the hashed correct answers directly
-  block.dataset.correctAnswers = correctAnswersDiv?.textContent?.trim() || '';
+  // Store the hashed correct answers as metadata
+  block.setAttribute('data-correctAnswers', correctAnswersDiv?.textContent?.trim() || '');
+
   block.dataset.isMultipleChoice = isMultipleChoice.toString();
   block.dataset.correctFeedback = correctFeedbackDiv?.textContent?.trim() || '';
   block.dataset.incorrectFeedback = incorrectFeedbackDiv?.textContent?.trim() || '';

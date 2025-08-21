@@ -61,7 +61,6 @@ export default async function decorate(block) {
       e.preventDefault();
 
       // Disable the button immediately to prevent multiple submissions
-      secondLink.disabled = true;
       secondLink.classList.add('disabled');
 
       // Call the quiz submission handler if it exists
@@ -70,6 +69,18 @@ export default async function decorate(block) {
 
         if (success && stepInfo.nextStep) {
           window.location.href = stepInfo.nextStep;
+        } else if (!success) {
+          // re-enable submit button after answering all questions
+          const inputs = document.querySelectorAll('.question input[type="checkbox"], .question input[type="radio"]');
+          inputs.forEach((input) => {
+            input.addEventListener(
+              'change',
+              () => {
+                secondLink.classList.remove('disabled');
+              },
+              { once: true },
+            );
+          });
         }
       }
     });
