@@ -267,21 +267,14 @@ export default async function decorate(block) {
       // Check if the second element is a UL (callout)
       const hasCallout = children.length > 1 && children[1].tagName === 'UL';
 
-      // Use different destructuring based on whether there's a callout
+      // Directly destructure based on whether there's a callout
       let audioP;
       let titleElement;
       let rest;
-
       if (hasCallout) {
-        const [, , audio, title, ...remaining] = children;
-        audioP = audio;
-        titleElement = title;
-        rest = remaining;
+        [, , audioP, titleElement, ...rest] = children;
       } else {
-        const [, audio, title, ...remaining] = children;
-        audioP = audio;
-        titleElement = title;
-        rest = remaining;
+        [, audioP, titleElement, ...rest] = children;
       }
 
       const titleId = titleElement?.id || titleElement?.textContent?.split(' ')?.join('-')?.toLowerCase() || '';
