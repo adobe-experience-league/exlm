@@ -169,12 +169,15 @@ export async function activateStep(block, stepIndex, skipAutoplay = false) {
       }
 
       // Handle autoplay promise properly
-      audio.play().then(() => {
-        // Autoplay succeeded
-      }).catch(() => {
-        // If autoplay fails (e.g., no user interaction), reset the flag
-        state.isAutoPlaying = false;
-      });
+      audio
+        .play()
+        .then(() => {
+          // Autoplay succeeded
+        })
+        .catch(() => {
+          // If autoplay fails (e.g., no user interaction), reset the flag
+          state.isAutoPlaying = false;
+        });
     } catch (error) {
       // Its fine if the audio doesn't play
       // Reset the autoplay flag if autoplay fails
@@ -270,10 +273,10 @@ export async function addEventHandlers(block, placeholders) {
         state.currentStep = previousStep;
         updateWindowLocation(block, state.currentStep);
 
-                // Add analytics tracking for previous button
-                const audio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
-                const audioOn = !audio.muted;
-        
+        // Add analytics tracking for previous button
+        const audio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
+        const audioOn = !audio.muted;
+
         pushGuidePlayEvent(
           {
             title: formatGuideTitle(block, state.currentStep),
@@ -356,7 +359,7 @@ export async function addEventHandlers(block, placeholders) {
           audioOn,
         );
       }
-      
+
       // Reset the autoplay flag after the play event
       state.isAutoPlaying = false;
     });
