@@ -4337,7 +4337,7 @@
     ]
   },
   {
-    "id": "author-bio-metadata",
+    "id": "author-metadata",
     "fields": [
       {
         "component": "text",
