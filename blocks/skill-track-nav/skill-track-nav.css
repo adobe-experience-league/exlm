@@ -11,13 +11,9 @@
   align-items: center;
 }
 
-.skill-track-nav-back.disabled {
+.skill-track-nav-button.disabled,
+.skill-track-nav-button.disabled:hover {
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
-}
-
-.skill-track-nav-back.disabled:hover {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
