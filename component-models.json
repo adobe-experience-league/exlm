@@ -4393,6 +4393,61 @@
     ]
   },
   {
+    "id": "course-metadata",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string[]",
+        "value": [],
+        "name": "instructor-page",
+        "multi": true,
+        "label": "Instructor page URL",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/courses/instructors"
+        }
+      },
+      {
+        "component": "aem-tag",
+        "valueType": "string",
+        "name": "coveo-solution",
+        "label": "Solution(s)",
+        "rootPath": "/content/cq:tags/exl/solution",
+        "description": "Sets the Coveo Solution(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "valueType": "string",
+        "name": "feature",
+        "label": "Feature(s)",
+        "rootPath": "/content/cq:tags/exl/feature",
+        "description": "Sets the Coveo Feature(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "name": "role",
+        "label": "Role(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/role",
+        "description": "Sets the role(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "name": "level",
+        "label": "Experience Level(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/experience-level",
+        "description": "Sets the level(s) in page meta."
+      }
+    ]
+  },
+  {
     "id": "block-quote",
     "fields": [
       {
