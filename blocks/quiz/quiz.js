@@ -125,6 +125,9 @@ async function submitQuiz(questions, placeholders = {}) {
   });
 }
 
+// Export the quiz submission handler for use in other modules
+export let submitQuizHandler;
+
 export default async function decorate(block) {
   let placeholders = {};
   try {
@@ -161,7 +164,7 @@ export default async function decorate(block) {
   });
 
   // Create a function to handle quiz submission that can be called externally
-  window.submitQuizHandler = async () => {
+  submitQuizHandler = async () => {
     // Check if all questions are answered
     let allQuestionsAnswered = true;
 

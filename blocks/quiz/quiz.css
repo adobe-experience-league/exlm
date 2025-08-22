@@ -75,7 +75,7 @@
   padding-left: 0;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 900px) {
   .quiz {
     width: 728px;
   }

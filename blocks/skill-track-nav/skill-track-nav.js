@@ -1,5 +1,6 @@
 import { getCurrentStepInfo } from '../../scripts/utils/learning-collection-utils.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { submitQuizHandler } from '../quiz/quiz.js';
 
 export default async function decorate(block) {
   const stepInfo = await getCurrentStepInfo();
@@ -64,8 +65,8 @@ export default async function decorate(block) {
       secondLink.classList.add('disabled');
 
       // Call the quiz submission handler if it exists
-      if (window.submitQuizHandler) {
-        const success = await window.submitQuizHandler();
+      if (submitQuizHandler) {
+        const success = await submitQuizHandler();
 
         if (success && stepInfo.nextStep) {
           window.location.href = stepInfo.nextStep;
