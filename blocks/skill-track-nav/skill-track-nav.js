@@ -65,8 +65,9 @@ export default async function decorate(block) {
       secondLink.classList.add('disabled');
 
       // Call the quiz submission handler if it exists
-      if (submitQuizHandler) {
-        const success = await submitQuizHandler();
+      const handler = submitQuizHandler();
+      if (handler) {
+        const success = await handler();
 
         if (success && stepInfo.nextStep) {
           window.location.href = stepInfo.nextStep;
