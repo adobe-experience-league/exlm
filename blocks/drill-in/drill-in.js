@@ -43,7 +43,7 @@ export default async function decorate(block) {
     }
     const anyMobilePopover = document.querySelectorAll('.drill-in-coachmark.has-mobile-popover').length > 0;
     if (!anyMobilePopover) {
-      document.body.classList.remove('no-scroll');
+      document.body.classList.remove('overflow-hidden');
     }
   };
 
@@ -102,10 +102,10 @@ export default async function decorate(block) {
     if (isMobile()) {
       popover.classList.add('popover-mobile');
       cm.classList.add('has-mobile-popover');
-      document.body.classList.add('no-scroll');
+      document.body.classList.add('overflow-hidden');
     } else {
       cm.classList.remove('has-mobile-popover');
-      document.body.classList.remove('no-scroll');
+      document.body.classList.remove('overflow-hidden');
     }
   };
 

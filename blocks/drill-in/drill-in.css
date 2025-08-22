@@ -169,10 +169,6 @@
   background-color: unset;
 }
 
-.no-scroll {
-  overflow: hidden;
-}
-
 @media (min-width: 900px) {
   .drill-in-nav-container {
     justify-content: space-between;
