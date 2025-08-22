@@ -1,4 +1,4 @@
-import { getCurrentStepInfo } from '../../scripts/utils/learning-collection-utils.js';
+import { getCurrentStepInfo } from '../../scripts/utils/course-utils.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
@@ -31,11 +31,11 @@ export default async function decorate(block) {
   const backLink = document.createElement('a');
   backLink.className = 'back-to-collection';
   backLink.href = stepInfo.collectionUrl;
-  backLink.innerHTML = `<span class="icon icon-learning-collection" aria-label="${
-    placeholders['learning-collection-back-to-collection-icon'] || 'Back to collection icon'
+  backLink.innerHTML = `<span class="icon icon-course" aria-label="${
+    placeholders['course-back-to-collection-icon'] || 'Back to collection icon'
   }"></span>
     <span class="back-to-collection-label">${
-      placeholders['learning-collection-back-to-collection-button'] || 'BACK TO THE COLLECTION'
+      placeholders['course-back-to-collection-button'] || 'BACK TO THE COLLECTION'
     }</span>
   `;
 
@@ -55,7 +55,7 @@ export default async function decorate(block) {
   const progressText = document.createElement('div');
   progressText.className = 'progress-text';
   progressText.textContent = `${stepInfo.currentStep} of ${stepInfo.totalSteps} ${
-    placeholders['learning-collection-steps-complete'] || 'Steps Complete'
+    placeholders['course-steps-complete'] || 'Steps Complete'
   }`;
 
   // Progress bar
@@ -75,7 +75,7 @@ export default async function decorate(block) {
   const currentStep = stepInfo.skillTrackSteps.find((step) => step.url === window.location.pathname);
   const currentStepName = currentStep
     ? currentStep.name
-    : placeholders['learning-collection-select-step'] || 'Select Step';
+    : placeholders['course-select-step'] || 'Select Step';
 
   // Create form element for dropdown
   const dropdownForm = document.createElement('form');

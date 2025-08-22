@@ -26,8 +26,8 @@
   height: 32px;
 }
 
-.skill-track-info .back-to-collection .icon-learning-collection {
-  background-image: url('../../icons/learning-collection.svg');
+.skill-track-info .back-to-collection .icon-course {
+  background-image: url('../../icons/course.svg');
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;

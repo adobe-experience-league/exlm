@@ -2,15 +2,15 @@ import { fetchLanguagePlaceholders } from '../scripts.js';
 
 /**
  * Extracts the skill track fragment URL from the current page path.
- * For a path like /{locale}/learning-collections/{collection}/{fragment}/{step}/...,
- * returns /{locale}/learning-collections/{collection}/{fragment}
+ * For a path like /{locale}/courses/{collection}/{fragment}/{step}/...,
+ * returns /{locale}/courses/{collection}/{fragment}
  *
  * @returns {string|null} The skill track fragment URL or null if not found
  */
 export function getSkillTrackFragmentUrl() {
   const url = window.location.pathname;
-  // Match: /{locale}/learning-collections/{collection}/{fragment}/
-  const match = url.match(/^\/[a-z-]+\/learning-collections\/[^/]+\/[^/]+/);
+  // Match: /{locale}/courses/{collection}/{fragment}/
+  const match = url.match(/^\/[a-z-]+\/courses\/[^/]+\/[^/]+/);
   return match ? match[0] : null;
 }
 
@@ -79,9 +79,9 @@ function getStepMeta(allSteps, skillTrackRecap, skillTrackQuiz) {
     nextStep = allSteps[currentIdx + 1]?.url || null;
   }
 
-  // Collection URL: parent path up to /learning-collections/slug
+  // Collection URL: parent path up to /courses/slug
   let collectionUrl = '';
-  const [, matchedUrl] = currentPath.match(/^(\/[a-z-]+\/learning-collections\/[^/]+)/) || [];
+  const [, matchedUrl] = currentPath.match(/^(\/[a-z-]+\/courses\/[^/]+)/) || [];
   if (matchedUrl) collectionUrl = matchedUrl;
 
   // isRecap, isQuiz
