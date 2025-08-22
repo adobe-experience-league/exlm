@@ -270,13 +270,11 @@ export async function addEventHandlers(block, placeholders) {
       const previousStep = getPreviousStep(block, state.currentStep);
 
       if (previousStep && preferences.get('view') !== 'as-docs') {
-        state.currentStep = previousStep;
-        updateWindowLocation(block, state.currentStep);
+        // Get audio status from the current step (the step we're navigating FROM)
+        const currentAudio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
+        const audioOn = !currentAudio.muted;
 
-        // Add analytics tracking for previous button
-        const audio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
-        const audioOn = !audio.muted;
-
+        // Add analytics tracking for previous button - log the step we're navigating FROM
         pushGuidePlayEvent(
           {
             title: formatGuideTitle(block, state.currentStep),
@@ -286,6 +284,8 @@ export async function addEventHandlers(block, placeholders) {
           audioOn,
         );
 
+        state.currentStep = previousStep;
+        updateWindowLocation(block, state.currentStep);
         showStep(block, state.currentStep);
       }
     });
@@ -296,14 +296,14 @@ export async function addEventHandlers(block, placeholders) {
       const nextStep = getNextStep(block, state.currentStep);
 
       if (nextStep && preferences.get('view') !== 'as-docs') {
-        // Get audio status
-        const audio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
-        const audioOn = !audio.muted;
+        // Get audio status from the current step (the step we're navigating FROM)
+        const currentAudio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
+        const audioOn = !currentAudio.muted;
 
-        // Add analytics tracking for next button - always use 'next' as trigger
+        // Add analytics tracking for next button - log the step we're navigating FROM
         pushGuidePlayEvent(
           {
-            title: formatGuideTitle(block, nextStep),
+            title: formatGuideTitle(block, state.currentStep),
             trigger: 'next',
             steps: getTotalSteps(block),
           },
@@ -320,17 +320,13 @@ export async function addEventHandlers(block, placeholders) {
 
   block.querySelectorAll('[data-section-select]').forEach((select) => {
     select.addEventListener('change', () => {
-      state.currentStep = select.value;
-      updateWindowLocation(block, state.currentStep);
-      showStep(block, state.currentStep);
-      block.querySelectorAll('[data-option-force-active="true"]').forEach((option) => {
-        option.selected = true;
-      });
+      const newStep = select.value;
 
-      // Add analytics tracking for section navigation
-      const audio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
-      const audioOn = !audio.muted;
+      // Get audio status from the current step (the step we're navigating FROM)
+      const currentAudio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
+      const audioOn = !currentAudio.muted;
 
+      // Add analytics tracking for section navigation - log the step we're navigating FROM
       pushGuidePlayEvent(
         {
           title: formatGuideTitle(block, state.currentStep),
@@ -339,6 +335,13 @@ export async function addEventHandlers(block, placeholders) {
         },
         audioOn,
       );
+
+      state.currentStep = newStep;
+      updateWindowLocation(block, state.currentStep);
+      showStep(block, state.currentStep);
+      block.querySelectorAll('[data-option-force-active="true"]').forEach((option) => {
+        option.selected = true;
+      });
     });
   });
 
@@ -369,21 +372,8 @@ export async function addEventHandlers(block, placeholders) {
         if (preferences.get('autoplayAudio')) {
           const nextStep = getNextStep(block, state.currentStep);
           if (nextStep) {
-            const audioOn = !audio.muted;
-
-            // Add analytics tracking for autoplay
-            state.isAutoPlaying = true;
-            pushGuideAutoPlayEvent(
-              {
-                title: formatGuideTitle(block, nextStep),
-                trigger: 'autoplay',
-                steps: getTotalSteps(block),
-              },
-              audioOn,
-            );
+            audio.closest('[data-step]').querySelector('[data-next-step]').click();
           }
-
-          audio.closest('[data-step]').querySelector('[data-next-step]').click();
         }
       }, 2000);
     });
