@@ -1,20 +1,11 @@
 import { getMetadata } from '../lib-franklin.js';
-import { htmlToElement, loadIms, getLanguageCode, getPathDetails, getConfig } from '../scripts.js';
+import { htmlToElement, loadIms, getLanguageCode, getPathDetails } from '../scripts.js';
 import SearchDelegate from './search-delegate.js';
-
-const { communityHost } = getConfig();
-const isCommunityDomain = window.location.origin.includes(communityHost);
 
 // Get language code from URL
 const languageCode = await getLanguageCode();
-let solution;
-if (isCommunityDomain) {
-  // Get solution from page title
-  solution = getMetadata('og:title')?.replace('Adobe ', '');
-} else {
-  // Get solution from metadata
-  solution = getMetadata('solution')?.split(',')[0].trim();
-}
+// Get solution from metadata
+const solution = getMetadata('solution')?.split(',')[0].trim();
 // Get content type from metadata
 let contentType = getMetadata('type')?.trim();
 
