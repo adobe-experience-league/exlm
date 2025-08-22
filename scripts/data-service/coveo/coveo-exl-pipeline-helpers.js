@@ -291,7 +291,7 @@ export async function exlPipelineCoveoDataAdaptor(params) {
       ...queryData,
       id: parentResult?.el_id || el_id || '',
       contentType,
-      badgeTitle: contentType ? CONTENT_TYPES[contentType.toUpperCase()]?.LABEL : '',
+      badgeTitle: contentType ? CONTENT_TYPES[contentType.toUpperCase().split(' ').join('_')]?.LABEL : '',
       thumbnail:
         raw?.exl_thumbnail ||
         (raw?.video_url &&
