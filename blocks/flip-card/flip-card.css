@@ -1,0 +1,104 @@
+.flip-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spectrum-spacing-300);
+  font-size: var(--spectrum-font-size-100);
+}
+
+.flip-card > div {
+  position: relative;
+  width: 100%;
+  max-width: var(--default-max-width);
+  perspective: 1000px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.flip-card > div > div {
+  backface-visibility: hidden;
+  transition: transform 0.6s ease-in-out;
+  background: var(--background-color);
+  border-top: var(--spectrum-spacing-75) solid var(--spectrum-red-800);
+  box-shadow: var(--box-shadow-1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: var(--spectrum-spacing-300);
+  padding-bottom: var(--spectrum-spacing-400);
+  transform-style: preserve-3d;
+  will-change: transform;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizelegibility;
+}
+
+.flip-card > div > div .icon-refresh {
+  position: absolute;
+  bottom: var(--spectrum-spacing-100);
+  right: var(--spectrum-spacing-100);
+  width: var(--spectrum-spacing-200);
+  height: var(--spectrum-spacing-200);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+/* Focus states for accessibility */
+.flip-card > div:focus {
+  outline: var(--spectrum-spacing-50) solid var(--spectrum-blue-500);
+  outline-offset: var(--spectrum-spacing-50);
+}
+
+.flip-card > div > div:first-child {
+  position: absolute;
+  inset: 10px;
+  transform: rotateY(0deg);
+}
+
+.flip-card > div > div:last-child {
+  transform: rotateY(180deg);
+}
+
+.flip-card > div.flipped > div:first-child {
+  transform: rotateY(180deg);
+}
+
+.flip-card > div.flipped > div:last-child {
+  transform: rotateY(0deg);
+  background-color: var(--spectrum-gray-75);
+}
+
+@media (min-width: 900px) {
+  .flip-card {
+    flex-flow: row;
+    justify-content: center;
+    align-items: stretch;
+    gap: var(--spectrum-spacing-500);
+  }
+
+  .flip-card > div {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 300px;
+  }
+
+  .flip-card > div > div:last-child {
+    flex: 1;
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .flip-card > div > div {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .flip-card > div > div::after {
+    transition: none;
+  }
+}

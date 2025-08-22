@@ -1,10 +1,17 @@
 import { getCurrentStepInfo } from '../../scripts/utils/learning-collection-utils.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
-import { decorateIcons, fetchPlaceholders } from '../../scripts/lib-franklin.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
   const stepInfo = await getCurrentStepInfo();
-  const placeholders = await fetchPlaceholders();
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
 
   if (!stepInfo) {
     // eslint-disable-next-line no-console

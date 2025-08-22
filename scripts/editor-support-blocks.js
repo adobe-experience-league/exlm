@@ -1,5 +1,36 @@
 import { loadIms } from './scripts.js';
 
+// track the currently selected flip card
+let selectedFlipCard = null;
+
+export function handleFlipCardSelection(event) {
+  // handle deselection for flip cards
+  if (!event.detail.selected) {
+    // unflip the previously selected flip card
+    if (selectedFlipCard) {
+      selectedFlipCard.classList.remove('flipped');
+      selectedFlipCard.setAttribute('aria-pressed', 'false');
+      selectedFlipCard = null;
+    }
+    return;
+  }
+
+  // if a flip-card-item was selected
+  if (event.target.closest('.flip-card > div')) {
+    // unflip the previously selected flip card
+    if (selectedFlipCard) {
+      selectedFlipCard.classList.remove('flipped');
+      selectedFlipCard.setAttribute('aria-pressed', 'false');
+    }
+
+    // flip the newly selected card
+    const flipCard = event.target.closest('.flip-card > div');
+    flipCard.classList.add('flipped');
+    flipCard.setAttribute('aria-pressed', 'true');
+    selectedFlipCard = flipCard;
+  }
+}
+
 export async function highlightCodeBlock(document) {
   const codeBlocks = document.querySelectorAll('pre code');
 

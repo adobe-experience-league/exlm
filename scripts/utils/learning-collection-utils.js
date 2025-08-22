@@ -1,4 +1,4 @@
-import { fetchPlaceholders } from '../lib-franklin.js';
+import { fetchLanguagePlaceholders } from '../scripts.js';
 
 /**
  * Extracts the skill track fragment URL from the current page path.
@@ -143,7 +143,13 @@ async function extractSkillTrackMeta(fragment) {
     .filter(Boolean);
 
   // Fetch placeholders for step names
-  const placeholders = await fetchPlaceholders();
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
 
   // Add recap and quiz steps to allSteps
   if (skillTrackRecap) {
