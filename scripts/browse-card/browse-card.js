@@ -392,10 +392,14 @@ export async function buildCard(container, element, model) {
   model.viewLink = lowerCaseSameOriginUrls(model.viewLink);
   model.copyLink = lowerCaseSameOriginUrls(model.copyLink);
 
-  let type = contentType?.toLowerCase()?.split(' ')?.join('-');
+  const isVideoClip = badgeTitle?.toUpperCase() === CONTENT_TYPES['VIDEO CLIP'].LABEL.toUpperCase();
+
+  let type = contentType?.toLowerCase();
   const inProgressMappingKey = RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY.toLowerCase();
   const recommededMappingKey = RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY.toLowerCase();
-  if (contentType === inProgressMappingKey || contentType === recommededMappingKey) {
+  if (isVideoClip) {
+    type = CONTENT_TYPES['VIDEO CLIP'].MAPPING_KEY;
+  } else if (contentType === inProgressMappingKey || contentType === recommededMappingKey) {
     const mappingKey = Object.keys(CONTENT_TYPES).find(
       (key) => CONTENT_TYPES[key].LABEL.toUpperCase() === badgeTitle.toUpperCase(),
     );
@@ -404,19 +408,29 @@ export async function buildCard(container, element, model) {
       type = mappingKey.toLowerCase();
     }
   }
-  const isVideoClip = type === CONTENT_TYPES.VIDEO_CLIP.MAPPING_KEY;
+
+  const clickableLink = !(isVideoClip && !model.parentURL);
+  const showVideoIconOnly = !!(isVideoClip && !thumbnail);
+
+  if (isVideoClip) {
+    const link = model.parentURL || model.videoURL;
+    if (link) {
+      model.copyLink = lowerCaseSameOriginUrls(link);
+      model.viewLink = lowerCaseSameOriginUrls(link);
+    }
+  }
 
   const card = createTag(
     'div',
     { class: `browse-card ${type}-card ${failedToLoad ? 'browse-card-frozen' : ''}` },
     `<div class="browse-card-figure"></div>${
-      isVideoClip ? `<div class="browse-card-video-clip"></div>` : ''
+      showVideoIconOnly ? `<div class="browse-card-video-clip"></div>` : ''
     }<div class="browse-card-content"></div><div class="browse-card-footer"></div>`,
   );
   const cardFigure = card.querySelector('.browse-card-figure');
   const cardContent = card.querySelector('.browse-card-content');
 
-  if (isVideoClip) {
+  if (showVideoIconOnly) {
     const cardClipContainer = card.querySelector('.browse-card-video-clip');
     const playButton = document.createElement('div');
     playButton.classList.add('play-button');
@@ -459,7 +473,8 @@ export async function buildCard(container, element, model) {
         VIDEO_THUMBNAIL_FORMAT.test(thumbnail) ||
         type === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
         type === CONTENT_TYPES.TUTORIAL.MAPPING_KEY ||
-        type === CONTENT_TYPES.EVENT.MAPPING_KEY
+        type === CONTENT_TYPES.EVENT.MAPPING_KEY ||
+        type === CONTENT_TYPES['VIDEO CLIP'].MAPPING_KEY
       ) {
         const playButton = document.createElement('div');
         playButton.classList.add('play-button');
@@ -521,32 +536,38 @@ export async function buildCard(container, element, model) {
   await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
   await buildCardContent(card, model);
 
+  const videoClickHandler = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    getVideoClipModal().then(async ({ BrowseCardVideoClipModal }) => {
+      const modal = await BrowseCardVideoClipModal.create({
+        model,
+      });
+      modal.open();
+    });
+  };
+
   if (isVideoClip) {
     const playButton = card.querySelector('.play-button');
-    const thumbnailArea = card.querySelector('.browse-card-figure');
-
-    const videoClickHandler = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      getVideoClipModal().then(({ BrowseCardVideoClipModal }) => {
-        const modal = new BrowseCardVideoClipModal({
-          model,
-        });
-        modal.open();
-      });
-    };
-
+    const cta = card.querySelector('.browse-card-cta-element');
+    const img = card.querySelector('.browse-card-figure img');
     if (playButton) {
       playButton.addEventListener('click', videoClickHandler);
     }
-
-    thumbnailArea.addEventListener('click', videoClickHandler);
+    if (cta) {
+      cta.addEventListener('click', videoClickHandler);
+    }
+    if (img) {
+      img.addEventListener('click', videoClickHandler);
+    }
   }
 
   if (model.viewLink) {
     const cardContainer = document.createElement('a');
-    cardContainer.setAttribute('href', model.viewLink);
+    if (clickableLink) {
+      cardContainer.setAttribute('href', model.viewLink);
+    }
     cardContainer.addEventListener('click', (e) => {
       const preventLinkRedirection = !!(e.target && e.target.closest('.user-actions'));
 

@@ -93,7 +93,7 @@ export const getCardData = async (articlePath, placeholders) => {
     description: getMetadata('description', doc),
     type,
     contentType: type,
-    badgeTitle: type ? CONTENT_TYPES[type.toUpperCase().split(' ').join('_')]?.LABEL : '',
+    badgeTitle: type ? CONTENT_TYPES[type.toUpperCase()]?.LABEL : '',
     thumbnail: createThumbnailURL(doc, type) || '',
     product: solutions,
     authorInfo: {

@@ -1,25 +1,53 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
 
-export const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
-
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
+export const isCompactUIMode = () => window.matchMedia('(max-width: 1023px)').matches;
 
 export class BrowseCardVideoClipModal {
   static activeInstance = null;
 
+  static placeholders = {};
+
+  static placeholdersInitialized = false;
+
+  /**
+   * Initialize placeholders if not already done
+   * @returns {Promise<Object>} The placeholders object
+   */
+  static async initPlaceholders() {
+    if (!this.placeholdersInitialized) {
+      try {
+        this.placeholders = await fetchLanguagePlaceholders();
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Error fetching placeholders:', err);
+      } finally {
+        this.placeholdersInitialized = true;
+      }
+    }
+    return this.placeholders;
+  }
+
+  /**
+   * Static factory method to create an instance after ensuring placeholders are loaded
+   * @param {Object} options - Options for the modal
+   * @returns {Promise<BrowseCardVideoClipModal>} A new instance with placeholders loaded
+   */
+  static async create(options) {
+    await BrowseCardVideoClipModal.initPlaceholders();
+    return new BrowseCardVideoClipModal(options);
+  }
+
+  /**
+   * Constructor - prefer using the static create() method instead
+   * @param {Object} options - Options for the modal
+   */
   constructor(options) {
     this.model = options?.model || {};
 
     if (BrowseCardVideoClipModal.activeInstance) {
       // If the same video clip is clicked (check by id), just return the existing instance
-      if (BrowseCardVideoClipModal.activeInstance.model.id === this.model.id) {
+      if (BrowseCardVideoClipModal.activeInstance.model.parentURL === this.model.parentURL) {
         // eslint-disable-next-line no-constructor-return
         return BrowseCardVideoClipModal.activeInstance;
       }
@@ -42,14 +70,13 @@ export class BrowseCardVideoClipModal {
 
     this.modal = null;
     this.backdrop = null;
-    this.header = null;
     this.videoContainer = null;
     this.contentCard = null;
     this.miniPlayerMode = false;
     this.miniPlayerButton = null;
     this.miniPlayerLabel = null;
 
-    this.isMobileView = isMobile();
+    this.isCompactMode = isCompactUIMode();
     this.loadStyles();
     this.createModal();
     this.setupEventListeners();
@@ -61,28 +88,36 @@ export class BrowseCardVideoClipModal {
   }
 
   handleResize() {
-    const currentMobileState = isMobile();
-
-    if (this.isMobileView !== currentMobileState) {
-      this.isMobileView = currentMobileState;
-      if (currentMobileState && this.miniPlayerMode) {
+    const currentState = isCompactUIMode();
+    if (this.isCompactMode !== currentState) {
+      this.isCompactMode = currentState;
+      if (currentState && this.miniPlayerMode) {
         this.toggleMiniPlayer(); // If switching to mobile view while in mini-player mode, switch to expanded view
       }
 
-      if (currentMobileState) {
-        this.backdrop.classList.add('mobile-view');
-        this.modal.classList.add('mobile-view');
+      if (currentState) {
+        this.backdrop.classList.add('compact-mode');
+        this.modal.classList.add('compact-mode');
       } else {
-        this.backdrop.classList.remove('mobile-view');
-        this.modal.classList.remove('mobile-view');
+        this.backdrop.classList.remove('compact-mode');
+        this.modal.classList.remove('compact-mode');
       }
     }
+    this.updateModalDimensions();
   }
 
   createModal() {
     const { title, videoURL, parentName, parentURL, product, failedToLoad = false } = this.model;
 
-    const isMobileView = isMobile();
+    let videoSrc = videoURL;
+    if (this.miniPlayerMode) {
+      const hasParams = videoSrc?.includes('?');
+      if (videoSrc) {
+        videoSrc = `${videoSrc}${hasParams ? '&' : '?'}autoplay=1`;
+      }
+    }
+
+    const isCompactMode = isCompactUIMode();
 
     let tagTextHTML = '';
     if (product?.length > 0 || failedToLoad) {
@@ -92,7 +127,7 @@ export class BrowseCardVideoClipModal {
       if (isMultiSolution) {
         tagTextHTML = `
           <div class="video-modal-tag-text">
-            <h4>${placeholders?.multiSolutionText || 'multisolution'}</h4>
+            <h4>${BrowseCardVideoClipModal.placeholders?.multiSolutionText || 'multisolution'}</h4>
             <div class="video-modal-tooltip-placeholder">
               <div class="video-modal-tooltip video-modal-tooltip-top video-modal-tooltip-grey">
                 <span class="icon icon-info"></span>
@@ -111,53 +146,61 @@ export class BrowseCardVideoClipModal {
     }
 
     this.backdrop = htmlToElement(`
-      <div class="browse-card-video-modal-backdrop">
-        <div class="browse-card-video-modal-actions backdrop-actions">
-          <button class="browse-card-video-modal-miniplayer" aria-label="${
-            placeholders?.activateMiniplayerText || 'Activate miniplayer'
+      <div class="browse-card-video-clip-modal-backdrop">
+        <div class="browse-card-video-clip-modal-actions backdrop-actions">
+          <button class="browse-card-video-clip-modal-miniplayer" aria-label="${
+            BrowseCardVideoClipModal.placeholders?.activateMiniplayerText || 'Activate miniplayer'
           }">
             <span class="icon icon-activate-mini-player"></span>
-            <span class="miniplayer-label">${placeholders?.activateMiniplayerText || 'Activate miniplayer'}</span>
+            <span class="miniplayer-label">${
+              BrowseCardVideoClipModal.placeholders?.activateMiniplayerText || 'Activate miniplayer'
+            }</span>
           </button>
-          <button class="browse-card-video-modal-close" aria-label="${placeholders?.closePlayerText || 'Close player'}">
-            <span class="close-label">${placeholders?.closePlayerText || 'Close player'}</span>
+          <button class="browse-card-video-clip-modal-close" aria-label="${
+            BrowseCardVideoClipModal.placeholders?.closePlayerText || 'Close player'
+          }">
+            <span class="close-label">${BrowseCardVideoClipModal.placeholders?.closePlayerText || 'Close player'}</span>
             <span class="icon icon-close-white"></span>
           </button>
         </div>
-        <div class="browse-card-video-modal">
-          <div class="browse-card-video-modal-content">
-            <div class="browse-card-video-modal-actions modal-actions" style="display: none;">
-              <button class="browse-card-video-modal-miniplayer" aria-label="${
-                placeholders?.expandVideoPlayerText || 'Expand video player'
+        <div class="browse-card-video-clip-modal">
+          <div class="browse-card-video-clip-modal-content">
+            <div class="browse-card-video-clip-modal-actions modal-actions">
+              <button class="browse-card-video-clip-modal-miniplayer" aria-label="${
+                BrowseCardVideoClipModal.placeholders?.expandVideoPlayerText || 'Expand video player'
               }">
                 <span class="icon icon-expand-player"></span>
-                <span class="miniplayer-label">${placeholders?.expandVideoPlayerText || 'Expand video player'}</span>
+                <span class="miniplayer-label">${
+                  BrowseCardVideoClipModal.placeholders?.expandVideoPlayerText || 'Expand video player'
+                }</span>
               </button>
-              <button class="browse-card-video-modal-close" aria-label="${
-                placeholders?.closePlayerText || 'Close player'
+              <button class="browse-card-video-clip-modal-close" aria-label="${
+                BrowseCardVideoClipModal.placeholders?.closePlayerText || 'Close player'
               }">
-                <span class="close-label">${placeholders?.closePlayerText || 'Close player'}</span>
+                <span class="close-label">${
+                  BrowseCardVideoClipModal.placeholders?.closePlayerText || 'Close player'
+                }</span>
                 <span class="icon icon-close-white"></span>
               </button>
             </div>
-            <div class="browse-card-video-modal-body">
-              <div class="browse-card-video-container">
-                ${videoURL ? `<iframe src="${videoURL}" allowfullscreen></iframe>` : ''}
+            <div class="browse-card-video-clip-modal-body">
+              <div class="browse-card-video-clip-container">
+                ${videoURL ? `<iframe src="${videoSrc}" allowfullscreen></iframe>` : ''}
               </div>
-              <div class="browse-card-video-info">
+              <div class="browse-card-video-clip-info">
                 ${tagTextHTML}
-                <div class="browse-card-video-info-header">
-                  <h4 class="browse-card-video-info-title">${title || ''}</h4>
+                <div class="browse-card-video-clip-info-header">
+                  <h4 class="browse-card-video-clip-info-title">${title || ''}</h4>
                 </div>
-                <div class="browse-card-video-source-row">
-                  <div class="browse-card-video-source">
-                    <span>${placeholders?.clippedFromText || 'Clipped from:'} </span>
+                <div class="browse-card-source-row">
+                  <div class="browse-card-source">
+                    <span>${BrowseCardVideoClipModal.placeholders?.clippedFrom || 'Clipped from:'} </span>
                     <a href="${parentURL || '#'}">${parentName || ''}</a>
                   </div>
-                  <div class="browse-card-video-actions">
-                    <button class="browse-card-video-button">
-                      <a href="${videoURL}" class="browse-card-video-full-link" target="_blank">
-                        ${placeholders?.watchFullVideoText || 'Watch full video'}
+                  <div class="browse-card-actions">
+                    <button class="browse-card-button">
+                      <a href="${videoURL}" class="browse-card-full-link" target="_blank">
+                        ${BrowseCardVideoClipModal.placeholders?.watchFullVideo || 'Watch full video'}
                       </a>
                     </button>
                   </div>
@@ -169,18 +212,18 @@ export class BrowseCardVideoClipModal {
       </div>
     `);
 
-    this.modal = this.backdrop.querySelector('.browse-card-video-modal');
+    this.modal = this.backdrop.querySelector('.browse-card-video-clip-modal');
 
-    this.videoContainer = this.modal.querySelector('.browse-card-video-container');
-    this.contentCard = this.modal.querySelector('.browse-card-video-info');
+    this.videoContainer = this.modal.querySelector('.browse-card-video-clip-container');
+    this.contentCard = this.modal.querySelector('.browse-card-video-clip-info');
 
-    this.backdropMiniPlayerButton = this.backdrop.querySelector('.browse-card-video-modal-miniplayer');
+    this.backdropMiniPlayerButton = this.backdrop.querySelector('.browse-card-video-clip-modal-miniplayer');
     this.backdropMiniPlayerLabel = this.backdrop.querySelector('.miniplayer-label');
-    this.backdropCloseButton = this.backdrop.querySelector('.browse-card-video-modal-close');
+    this.backdropCloseButton = this.backdrop.querySelector('.browse-card-video-clip-modal-close');
 
-    this.modalMiniPlayerButton = this.modal.querySelector('.browse-card-video-modal-miniplayer');
+    this.modalMiniPlayerButton = this.modal.querySelector('.browse-card-video-clip-modal-miniplayer');
     this.modalMiniPlayerLabel = this.modal.querySelector('.miniplayer-label');
-    this.modalCloseButton = this.modal.querySelector('.browse-card-video-modal-close');
+    this.modalCloseButton = this.modal.querySelector('.browse-card-video-clip-modal-close');
 
     this.miniPlayerButton = this.backdropMiniPlayerButton;
     this.miniPlayerLabel = this.backdropMiniPlayerLabel;
@@ -194,9 +237,9 @@ export class BrowseCardVideoClipModal {
       });
     }
 
-    if (isMobileView) {
-      this.backdrop.classList.add('mobile-view');
-      this.modal.classList.add('mobile-view');
+    if (isCompactMode) {
+      this.backdrop.classList.add('compact-mode');
+      this.modal.classList.add('compact-mode');
     }
 
     decorateIcons(this.backdrop);
@@ -231,9 +274,9 @@ export class BrowseCardVideoClipModal {
     document.addEventListener('keydown', keyHandler);
     this.eventListeners.push({ element: document, type: 'keydown', handler: keyHandler });
 
-    const resizeHandler = () => this.handleResize();
-    window.addEventListener('resize', resizeHandler);
-    this.eventListeners.push({ element: window, type: 'resize', handler: resizeHandler });
+    // Use ResizeObserver instead of window resize event
+    this.resizeObserver = new ResizeObserver(() => this.handleResize());
+    this.resizeObserver.observe(document.documentElement);
   }
 
   open() {
@@ -255,6 +298,9 @@ export class BrowseCardVideoClipModal {
 
     if (!this.miniPlayerMode) {
       this.backdrop.classList.add('expanded-mode');
+      setTimeout(() => {
+        this.updateModalDimensions();
+      }, 100);
     }
 
     // Prevent body scrolling
@@ -282,13 +328,26 @@ export class BrowseCardVideoClipModal {
     setTimeout(removeElements, 300); // Match animation duration
   }
 
+  updateModalDimensions() {
+    const modalWidth = this.modal.offsetWidth;
+    if (modalWidth > 0) {
+      const actionsContainer = this.backdrop.querySelector('.backdrop-actions');
+      actionsContainer.style.maxWidth = this.miniPlayerMode ? '' : `${modalWidth}px`;
+    }
+  }
+
   removeEventListeners() {
     this.eventListeners.forEach(({ element, type, handler }) => {
       if (element) {
         element.removeEventListener(type, handler);
       }
     });
-    this.eventListeners = [];
+    this.eventListeners.length = 0;
+
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
   }
 
   updateContent(model) {
@@ -299,57 +358,62 @@ export class BrowseCardVideoClipModal {
       videoURL,
       parentName,
       parentURL,
-      viewLinkText = placeholders?.watchFullVideoText || 'Watch full video',
+      viewLinkText = BrowseCardVideoClipModal.placeholders?.watchFullVideo || 'Watch full video',
     } = this.model;
 
-    const titleElement = this.modal.querySelector('.browse-card-video-info-title');
+    const titleElement = this.modal.querySelector('.browse-card-video-clip-info-title');
     if (titleElement) {
       titleElement.textContent = title || '';
     }
 
-    const videoContainer = this.modal.querySelector('.browse-card-video-container');
+    const videoContainer = this.modal.querySelector('.browse-card-video-clip-container');
     if (videoContainer && videoURL) {
       const existingIframe = videoContainer.querySelector('iframe');
       if (existingIframe) {
         existingIframe.remove();
       }
+
+      let videoSrc = videoURL;
+      if (this.miniPlayerMode) {
+        const hasParams = videoSrc.includes('?');
+        videoSrc = `${videoSrc}${hasParams ? '&' : '?'}autoplay=1`;
+      }
+
       const iframe = createTag('iframe', {
-        src: videoURL,
+        src: videoSrc,
         allowfullscreen: true,
       });
       videoContainer.appendChild(iframe);
     }
-    const parentLink = this.modal.querySelector('.browse-card-video-source a');
+    const parentLink = this.modal.querySelector('.browse-card-source a');
     if (parentLink) {
       parentLink.href = parentURL || '#';
       parentLink.textContent = parentName || '';
     }
 
-    const fullVideoLink = this.modal.querySelector('.browse-card-video-full-link');
+    const fullVideoLink = this.modal.querySelector('.browse-card-full-link');
     if (fullVideoLink) {
       fullVideoLink.href = videoURL;
-      fullVideoLink.textContent = viewLinkText || placeholders?.watchFullVideoText || 'Watch full video';
+      fullVideoLink.textContent =
+        viewLinkText || BrowseCardVideoClipModal.placeholders?.watchFullVideo || 'Watch full video';
     }
   }
 
   toggleMiniPlayer() {
-    if (isMobile() && !this.miniPlayerMode) {
+    if (isCompactUIMode() && !this.miniPlayerMode) {
+      this.updateModalDimensions();
       return; // Don't toggle to mini-player on mobile
     }
 
     this.miniPlayerMode = !this.miniPlayerMode;
-
     if (this.miniPlayerMode) {
       // Enter mini player mode
       this.modal.classList.add('mini-player-mode');
       this.backdrop.classList.add('mini-player-mode');
       this.backdrop.classList.remove('expanded-mode');
 
-      this.modal.querySelector('.modal-actions').style.display = 'flex';
-      this.backdrop.querySelector('.backdrop-actions').style.display = 'none';
-
-      const actionsElement = this.modal.querySelector('.browse-card-video-actions');
-      const infoHeader = this.modal.querySelector('.browse-card-video-info-header');
+      const actionsElement = this.modal.querySelector('.browse-card-actions');
+      const infoHeader = this.modal.querySelector('.browse-card-video-clip-info-header');
 
       if (actionsElement && infoHeader) {
         const actionsClone = actionsElement.cloneNode(true);
@@ -365,8 +429,7 @@ export class BrowseCardVideoClipModal {
       this.modal.classList.remove('mini-player-mode');
       this.backdrop.classList.remove('mini-player-mode');
       this.backdrop.classList.add('expanded-mode');
-      this.modal.querySelector('.modal-actions').style.display = 'none';
-      this.backdrop.querySelector('.backdrop-actions').style.display = 'flex';
+
       const clonedActions = this.modal.querySelector('.miniplayer-actions');
       if (clonedActions && clonedActions.parentNode) {
         clonedActions.parentNode.removeChild(clonedActions);
@@ -376,5 +439,8 @@ export class BrowseCardVideoClipModal {
       this.closeButton = this.backdropCloseButton;
       document.body.style.overflow = 'hidden';
     }
+    setTimeout(() => {
+      this.updateModalDimensions();
+    }, 100);
   }
 }
