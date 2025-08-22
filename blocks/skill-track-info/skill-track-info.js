@@ -29,14 +29,12 @@ export default async function decorate(block) {
 
   // Back to collection link
   const backLink = document.createElement('a');
-  backLink.className = 'back-to-collection';
+  backLink.className = 'back-to-course';
   backLink.href = stepInfo.collectionUrl;
   backLink.innerHTML = `<span class="icon icon-course" aria-label="${
-    placeholders['course-back-to-collection-icon'] || 'Back to collection icon'
+    placeholders['course-back-to-course-icon'] || 'Back to course icon'
   }"></span>
-    <span class="back-to-collection-label">${
-      placeholders['course-back-to-collection-button'] || 'BACK TO THE COLLECTION'
-    }</span>
+    <span class="back-to-course-label">${placeholders['course-back-to-course-button'] || 'BACK TO THE COURSE'}</span>
   `;
 
   // Main content area
@@ -73,9 +71,7 @@ export default async function decorate(block) {
   stepSelectorContainer.className = 'step-selector-container';
 
   const currentStep = stepInfo.skillTrackSteps.find((step) => step.url === window.location.pathname);
-  const currentStepName = currentStep
-    ? currentStep.name
-    : placeholders['course-select-step'] || 'Select Step';
+  const currentStepName = currentStep ? currentStep.name : placeholders['course-select-step'] || 'Select Step';
 
   // Create form element for dropdown
   const dropdownForm = document.createElement('form');

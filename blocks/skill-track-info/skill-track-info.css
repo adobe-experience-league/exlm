@@ -2,7 +2,7 @@
   width: 100%;
 }
 
-.skill-track-info .back-to-collection {
+.skill-track-info .back-to-course {
   display: flex;
   align-items: center;
   gap: var(--spectrum-spacing-100);
@@ -17,23 +17,23 @@
   transition: background-color 0.2s ease;
 }
 
-.skill-track-info .back-to-collection:hover {
+.skill-track-info .back-to-course:hover {
   background: var(--spectrum-gray-200);
 }
 
-.skill-track-info .back-to-collection .icon {
+.skill-track-info .back-to-course .icon {
   width: 32px;
   height: 32px;
 }
 
-.skill-track-info .back-to-collection .icon-course {
+.skill-track-info .back-to-course .icon-course {
   background-image: url('../../icons/course.svg');
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
 }
 
-.skill-track-info .back-to-collection .back-to-collection-label {
+.skill-track-info .back-to-course .back-to-course-label {
   font-weight: var(--font-weight-semi-bold);
 }
 
