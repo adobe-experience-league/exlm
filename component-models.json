@@ -4377,6 +4377,15 @@
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl/experience-level",
         "description": "Sets the level(s) in page meta."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "signout-redirect-url",
+        "label": "Sign out Redirect URL",
+        "validation": {
+          "rootPath": "/content/exlm/global"
+        }
       }
     ]
   },
@@ -4444,6 +4453,15 @@
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl/experience-level",
         "description": "Sets the level(s) in page meta."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "signout-redirect-url",
+        "label": "Sign out Redirect URL",
+        "validation": {
+          "rootPath": "/content/exlm/global"
+        }
       }
     ]
   },
