@@ -1,11 +1,12 @@
 import { sendNotice } from '../../scripts/toast/toast.js';
-import { pushGuidePlayEvent, pushGuidePlayMetadataEvent } from '../../scripts/analytics/lib-analytics.js';
+import { pushGuidePlayEvent, pushGuideAutoPlayEvent } from '../../scripts/analytics/lib-analytics.js';
 import PreferenceStore from '../../scripts/preferences/preferences.js';
 
 export const preferences = new PreferenceStore('slides');
 
 export const state = {
   currentStep: 0,
+  isAutoPlaying: false,
 };
 
 // Helper function to format guide title
@@ -156,7 +157,8 @@ export async function activateStep(block, stepIndex, skipAutoplay = false) {
       if (isSlideMode) {
         // Trigger autoplay event when autoplay is enabled on page load
         const audioOn = !audio.muted;
-        pushGuidePlayMetadataEvent(
+        state.isAutoPlaying = true;
+        pushGuideAutoPlayEvent(
           {
             title: formatGuideTitle(block, stepIndex),
             trigger: 'autoplay',
@@ -166,9 +168,17 @@ export async function activateStep(block, stepIndex, skipAutoplay = false) {
         );
       }
 
-      audio.play();
+      // Handle autoplay promise properly
+      audio.play().then(() => {
+        // Autoplay succeeded
+      }).catch(() => {
+        // If autoplay fails (e.g., no user interaction), reset the flag
+        state.isAutoPlaying = false;
+      });
     } catch (error) {
       // Its fine if the audio doesn't play
+      // Reset the autoplay flag if autoplay fails
+      state.isAutoPlaying = false;
     }
   } else {
     await audio.pause();
@@ -259,12 +269,11 @@ export async function addEventHandlers(block, placeholders) {
       if (previousStep && preferences.get('view') !== 'as-docs') {
         state.currentStep = previousStep;
         updateWindowLocation(block, state.currentStep);
-        showStep(block, state.currentStep);
 
-        // Add analytics tracking for previous button
-        const audio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
-        const audioOn = !audio.muted;
-
+                // Add analytics tracking for previous button
+                const audio = block.querySelector(`[data-step="${state.currentStep}"] audio`);
+                const audioOn = !audio.muted;
+        
         pushGuidePlayEvent(
           {
             title: formatGuideTitle(block, state.currentStep),
@@ -273,6 +282,8 @@ export async function addEventHandlers(block, placeholders) {
           },
           audioOn,
         );
+
+        showStep(block, state.currentStep);
       }
     });
   });
@@ -334,15 +345,20 @@ export async function addEventHandlers(block, placeholders) {
       const audioOn = !audio.muted;
       const currentStepId = audio.closest('[data-step]').dataset.step;
 
-      // Track this as a "play" event when manually played
-      pushGuidePlayEvent(
-        {
-          title: formatGuideTitle(block, currentStepId),
-          trigger: 'play',
-          steps: getTotalSteps(block),
-        },
-        audioOn,
-      );
+      // Only track as a "play" event when manually played (not autoplay)
+      if (!state.isAutoPlaying) {
+        pushGuidePlayEvent(
+          {
+            title: formatGuideTitle(block, currentStepId),
+            trigger: 'play',
+            steps: getTotalSteps(block),
+          },
+          audioOn,
+        );
+      }
+      
+      // Reset the autoplay flag after the play event
+      state.isAutoPlaying = false;
     });
 
     audio.addEventListener('ended', () => {
@@ -353,7 +369,8 @@ export async function addEventHandlers(block, placeholders) {
             const audioOn = !audio.muted;
 
             // Add analytics tracking for autoplay
-            pushGuidePlayMetadataEvent(
+            state.isAutoPlaying = true;
+            pushGuideAutoPlayEvent(
               {
                 title: formatGuideTitle(block, nextStep),
                 trigger: 'autoplay',
