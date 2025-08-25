@@ -143,7 +143,7 @@ function shuffleArray(array) {
   }));
 
   // Fisher-Yates shuffle algorithm
-  for (let i = indexedArray.length - 1; i > 0; i--) {
+  for (let i = indexedArray.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
     [indexedArray[i], indexedArray[j]] = [indexedArray[j], indexedArray[i]];
   }
