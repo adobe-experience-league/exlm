@@ -27,6 +27,9 @@ const communityProducts = [
 ];
 
 let solution = '';
+// see: https://jira.corp.adobe.com/browse/EXLM-3813.
+// this is a temporary fix and steakholders accept the technical debt and  dependecy on community HTML as-is. 
+// This will break infuture and that's also acceptable
 if (isCommunityDomain) {
   // Get solution from breadcrumb
   const breadcrumbItems = document.querySelectorAll('#breadcrumbs .spectrum-Breadcrumbs-item');
