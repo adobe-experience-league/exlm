@@ -130,6 +130,27 @@ let quizHandlerFunction = null;
 // Export a constant function that returns the current handler
 export const submitQuizHandler = () => quizHandlerFunction;
 
+/**
+ * Shuffles the given array
+ * @param {Array} array The array to shuffle
+ * @returns {Array} The shuffled array
+ */
+function shuffleArray(array) {
+  // Map array items with their original indices
+  const indexedArray = array.map((item, index) => ({
+    item,
+    originalIndex: index,
+  }));
+
+  // Fisher-Yates shuffle algorithm
+  for (let i = indexedArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indexedArray[i], indexedArray[j]] = [indexedArray[j], indexedArray[i]];
+  }
+
+  return indexedArray;
+}
+
 export default async function decorate(block) {
   let placeholders = {};
   try {
@@ -142,14 +163,26 @@ export default async function decorate(block) {
   questionsContainer.classList.add('questions-container');
 
   // Get title, text, and questions from block children using destructuring
-  const [titleElement, textElement, ...questions] = [...block.children];
+  const [titleElement, textElement, ...questionsOriginal] = [...block.children];
+
+  // Shuffle questions while preserving original indices
+  const shuffledQuestions = shuffleArray(questionsOriginal);
 
   // Set total questions count
-  const totalQuestions = questions.length;
+  const totalQuestions = shuffledQuestions.length;
 
-  questions?.forEach((question, index) => {
-    // Set question index and total questions
-    question.dataset.questionIndex = index.toString();
+  // Initialize display index
+  let displayIndex = 1;
+
+  // Process each question
+  shuffledQuestions?.forEach(({ item: question, originalIndex }) => {
+    // Set original index for answer validation
+    question.dataset.questionIndex = originalIndex.toString();
+
+    // Set display index for UI numbering
+    question.dataset.displayIndex = displayIndex.toString();
+    displayIndex += 1;
+
     question.dataset.totalQuestions = totalQuestions.toString();
 
     // Generate the question DOM
@@ -176,8 +209,11 @@ export default async function decorate(block) {
       existingError.remove();
     }
 
+    // Get all question elements
+    const questionElements = Array.from(questionsContainer.querySelectorAll('.question'));
+
     // Check if all questions are answered using Array methods
-    allQuestionsAnswered = Array.from(questions).every((question) => {
+    allQuestionsAnswered = questionElements.every((question) => {
       const isMultipleChoice = question.dataset.isMultipleChoice === 'true';
       return isMultipleChoice
         ? question.querySelectorAll('input[type="checkbox"]:checked').length > 0
@@ -200,7 +236,7 @@ export default async function decorate(block) {
     const existingFeedback = block.querySelectorAll('.question-feedback');
     existingFeedback.forEach((feedback) => feedback.remove());
 
-    await submitQuiz(questions, placeholders);
+    await submitQuiz(questionElements, placeholders);
     return true;
   };
 

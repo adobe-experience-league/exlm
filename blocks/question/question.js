@@ -41,11 +41,12 @@ export function generateQuestionDOM(block, placeholders = {}) {
   block.dataset.correctFeedback = correctFeedbackDiv?.textContent?.trim() || '';
   block.dataset.incorrectFeedback = incorrectFeedbackDiv?.textContent?.trim() || '';
 
-  // Create question number label (e.g., "Question 1 of 3") using htmlToElement
-  const questionIndex = parseInt(block.dataset?.questionIndex || '0', 10) + 1;
+  // Get display index for question numbering
+  const displayIndex =
+    block.dataset?.displayIndex || (parseInt(block.dataset?.questionIndex || '0', 10) + 1).toString();
   const totalQuestions = block.dataset?.totalQuestions || '1';
   const questionNumberElement = htmlToElement(`
-    <p class="question-number">${placeholders?.question || 'Question'} ${questionIndex} ${
+    <p class="question-number">${placeholders?.question || 'Question'} ${displayIndex} ${
       placeholders?.of || 'of'
     } ${totalQuestions}</p>
   `);
