@@ -1,33 +1,81 @@
 import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { generateQuestionDOM } from '../question/question.js';
+import { hashAnswer } from '../../scripts/hash-utils.js';
 
 /**
  * Checks if the selected answers for a question are correct
- * @param {Element} questionElement The question element
+ * @param {number[]} selectedAnswerIndices Array of selected answer indices
+ * @param {string[]} answerTexts Array of all answer texts
+ * @param {string} pagePath The page path
+ * @param {string} questionIndex The question index
+ * @param {string[]} hashedCorrectAnswers Array of correct answer hashes
+ * @param {boolean} isMultipleChoice Whether the question is multiple choice
  * @returns {boolean} Whether the selected answers are correct
  */
-
-function checkQuestionAnswer(questionElement) {
-  if (!questionElement) return false;
-
-  const correctAnswers = questionElement.dataset.correctAnswers.split(',').map(Number);
-  const isMultipleChoice = questionElement.dataset.isMultipleChoice === 'true';
-
-  if (isMultipleChoice) {
-    const selectedAnswers = Array.from(questionElement.querySelectorAll('input[type="checkbox"]:checked')).map(
-      (input) => parseInt(input.value, 10),
-    );
-
-    // Check if selected answers match correct answers
-    return (
-      selectedAnswers.length === correctAnswers.length &&
-      selectedAnswers.every((answer) => correctAnswers.includes(answer))
-    );
+async function checkSelectedAnswers(
+  selectedAnswerIndices,
+  answerTexts,
+  pagePath,
+  questionIndex,
+  hashedCorrectAnswers,
+  isMultipleChoice,
+) {
+  // Check if the number of answers is correct for multiple choice
+  // and if all selected indices are valid
+  if (
+    (isMultipleChoice && selectedAnswerIndices.length !== hashedCorrectAnswers.length) ||
+    selectedAnswerIndices.some((answerIndex) => answerIndex <= 0 || answerIndex > answerTexts.length)
+  ) {
+    return false;
   }
 
-  // For single choice questions
-  const selectedAnswer = questionElement.querySelector('input[type="radio"]:checked');
-  return selectedAnswer && correctAnswers.includes(parseInt(selectedAnswer?.value || '0', 10));
+  // Generate hash for all selected answers
+  const answerHashes = await Promise.all(
+    selectedAnswerIndices.map((answerIndex) => {
+      const answerText = answerTexts[answerIndex - 1];
+      return hashAnswer(pagePath, questionIndex, answerIndex.toString(), answerText);
+    }),
+  );
+
+  // Check if all selected answers are correct
+  return answerHashes.every((hash) => hashedCorrectAnswers.includes(hash));
+}
+
+async function checkQuestionAnswer(questionElement) {
+  if (!questionElement) return false;
+
+  // Get the hashed correct answers from metadata attribute
+  const hashedCorrectAnswers = questionElement.getAttribute('data-correctAnswers').split(',');
+  const isMultipleChoice = questionElement.dataset.isMultipleChoice === 'true';
+
+  const answerElements = questionElement.querySelectorAll('.answer-label');
+  const answerTexts = Array.from(answerElements).map((el) => el.textContent.trim());
+
+  const pagePath = window.location.pathname;
+  const questionIndex = questionElement.dataset?.questionIndex || '0';
+
+  let selectedAnswerIndices = [];
+
+  if (isMultipleChoice) {
+    selectedAnswerIndices = Array.from(questionElement.querySelectorAll('input[type="checkbox"]:checked')).map(
+      (input) => parseInt(input.value, 10),
+    );
+  } else {
+    const selectedAnswer = questionElement.querySelector('input[type="radio"]:checked');
+    if (!selectedAnswer) return false;
+
+    selectedAnswerIndices = [parseInt(selectedAnswer.value, 10)];
+  }
+
+  // Check if the selected answers are correct
+  return checkSelectedAnswers(
+    selectedAnswerIndices,
+    answerTexts,
+    pagePath,
+    questionIndex,
+    hashedCorrectAnswers,
+    isMultipleChoice,
+  );
 }
 
 /**
@@ -64,13 +112,23 @@ function showQuestionFeedback(questionElement, isCorrect, placeholders = {}) {
  * @param {NodeList} questions The list of question elements
  * @param {Object} placeholders Language placeholders
  */
-function submitQuiz(questions, placeholders = {}) {
-  // Check each question and show feedback
-  questions?.forEach((question) => {
-    const isCorrect = checkQuestionAnswer(question);
-    showQuestionFeedback(question, isCorrect, placeholders);
+async function submitQuiz(questions, placeholders = {}) {
+  // Check all questions and show feedback
+  const questionsArray = Array.from(questions || []);
+
+  // Process all questions in parallel
+  const results = await Promise.all(questionsArray.map((question) => checkQuestionAnswer(question)));
+
+  // Show feedback for each question
+  questionsArray.forEach((question, index) => {
+    showQuestionFeedback(question, results[index], placeholders);
   });
 }
+
+let quizHandlerFunction = null;
+
+// Export a constant function that returns the current handler
+export const submitQuizHandler = () => quizHandlerFunction;
 
 export default async function decorate(block) {
   let placeholders = {};
@@ -83,7 +141,8 @@ export default async function decorate(block) {
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
 
-  const questions = [...block.children];
+  // Get title, text, and questions from block children using destructuring
+  const [titleElement, textElement, ...questions] = [...block.children];
 
   // Set total questions count
   const totalQuestions = questions.length;
@@ -106,17 +165,57 @@ export default async function decorate(block) {
     questionsContainer.append(question);
   });
 
-  // Create a single submit button for the entire quiz using htmlToElement
-  const submitButton = htmlToElement(`
-    <button type="button" class="quiz-submit-button">${placeholders?.submit || 'SUBMIT'}</button>
+  // Create a function to handle quiz submission that can be called externally
+  quizHandlerFunction = async () => {
+    // Check if all questions are answered
+    let allQuestionsAnswered = true;
+
+    // Remove any existing error message
+    const existingError = block.querySelector('.quiz-error-message');
+    if (existingError) {
+      existingError.remove();
+    }
+
+    // Check if all questions are answered using Array methods
+    allQuestionsAnswered = Array.from(questions).every((question) => {
+      const isMultipleChoice = question.dataset.isMultipleChoice === 'true';
+      return isMultipleChoice
+        ? question.querySelectorAll('input[type="checkbox"]:checked').length > 0
+        : question.querySelector('input[type="radio"]:checked') !== null;
+    });
+
+    if (!allQuestionsAnswered) {
+      const errorMessage = htmlToElement(`
+        <div class="question-feedback incorrect quiz-error-message">
+          ${placeholders?.answerAllQuestions || 'Please answer all the questions'}
+        </div>
+      `);
+
+      // Insert at the end of the questions container
+      questionsContainer.appendChild(errorMessage);
+      return false;
+    }
+
+    // Remove any existing question feedback before showing new feedback
+    const existingFeedback = block.querySelectorAll('.question-feedback');
+    existingFeedback.forEach((feedback) => feedback.remove());
+
+    await submitQuiz(questions, placeholders);
+    return true;
+  };
+
+  // Create quiz description section using htmlToElement
+  const quizDescriptionContainer = htmlToElement(`
+    <div class="quiz-description-container">
+      <div class="quiz-title">
+        ${titleElement?.innerHTML || ''}
+      </div>
+      <ul class="quiz-description">${textElement?.querySelector('div')?.innerHTML || ''}</ul>
+    </div>
   `);
-  submitButton.addEventListener('click', () => {
-    submitQuiz(questions, placeholders);
-    submitButton.disabled = true;
-  });
 
   // Clear the block and build the quiz structure
   block.textContent = '';
+  block.appendChild(quizDescriptionContainer);
   block.appendChild(questionsContainer);
-  block.appendChild(submitButton);
 }

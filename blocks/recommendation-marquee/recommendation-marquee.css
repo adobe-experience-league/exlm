@@ -132,6 +132,24 @@
 .recommendation-marquee.block
   .browse-cards-block-content
   .card-wrapper
+  .browse-card.video-clip-card
+  .browse-card-video-clip {
+  order: 3;
+  padding-top: 0;
+  height: auto;
+}
+
+.recommendation-marquee.block
+  .browse-cards-block-content
+  .card-wrapper
+  .browse-card.video-clip-card
+  .browse-card-figure {
+  order: 4;
+}
+
+.recommendation-marquee.block
+  .browse-cards-block-content
+  .card-wrapper
   .browse-card
   .browse-card-figure.img-custom-height {
   height: 150px;
@@ -366,6 +384,7 @@
     .card-wrapper:first-child
     .browse-card {
     display: block;
+    position: relative;
   }
 
   .recommendation-marquee.block
@@ -406,6 +425,25 @@
     margin-bottom: 16px;
     background-color: var(--spectrum-gray-50);
     border-radius: 0 0 8px 8px;
+  }
+
+  .recommendation-marquee.block
+    .browse-cards-block-content.recommendation-marquee-wrap
+    .card-wrapper:first-child
+    .browse-card.video-clip-card
+    .browse-card-video-clip {
+    height: 0;
+  }
+
+  .recommendation-marquee.block
+    .browse-cards-block-content.recommendation-marquee-wrap
+    .card-wrapper:first-child
+    .browse-card.video-clip-card
+    .browse-card-video-clip
+    .play-button {
+    position: absolute;
+    top: calc(50% - 20px);
+    left: calc(25% - 20px);
   }
 
   .recommendation-marquee.block

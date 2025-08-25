@@ -1,5 +1,6 @@
 import { getCurrentStepInfo } from '../../scripts/utils/learning-collection-utils.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { submitQuizHandler } from '../quiz/quiz.js';
 
 export default async function decorate(block) {
   const stepInfo = await getCurrentStepInfo();
@@ -56,10 +57,34 @@ export default async function decorate(block) {
     // Submit Answers link
     secondLink.classList.add('skill-track-nav-submit');
     secondLink.textContent = placeholders['learning-collection-submit-answers'] || 'Submit Answers';
-    secondLink.href = '#';
-    secondLink.addEventListener('click', (e) => {
+    secondLink.href = stepInfo.nextStep || '#';
+    secondLink.addEventListener('click', async (e) => {
       e.preventDefault();
-      // Add submit logic here
+
+      // Disable the button immediately to prevent multiple submissions
+      secondLink.classList.add('disabled');
+
+      // Call the quiz submission handler if it exists
+      const handler = submitQuizHandler();
+      if (handler) {
+        const success = await handler();
+
+        if (success && stepInfo.nextStep) {
+          window.location.href = stepInfo.nextStep;
+        } else if (!success) {
+          // re-enable submit button after answering all questions
+          const inputs = document.querySelectorAll('.question input[type="checkbox"], .question input[type="radio"]');
+          inputs.forEach((input) => {
+            input.addEventListener(
+              'change',
+              () => {
+                secondLink.classList.remove('disabled');
+              },
+              { once: true },
+            );
+          });
+        }
+      }
     });
   } else {
     // Next link
