@@ -1,0 +1,186 @@
+.section.course-marquee-container {
+  padding-top: 0;
+}
+
+.section.course-marquee-container .course-marquee-wrapper {
+  background: linear-gradient(to right, #000 0%, #000 55%, #451256 100% /* violet-purple */);
+}
+
+.course-marquee {
+  color: var(--spectrum-gray-50);
+  padding: 30px;
+}
+
+.course-marquee-breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.course-marquee-breadcrumb > span,
+.course-marquee-breadcrumb > a {
+  color: var(--spectrum-gray-50);
+  display: inline-block;
+  font-size: var(--spectrum-font-size-100);
+  line-height: 24px;
+  margin: 0;
+}
+
+.course-marquee-breadcrumb > a:hover {
+  text-decoration: underline;
+}
+
+.course-marquee-breadcrumb > span::before,
+.course-marquee-breadcrumb > a::before {
+  background-image: url('../../icons/chevron-right-white.svg');
+  background-size: 16px;
+  bottom: -3px;
+  content: '';
+  display: inline-block;
+  height: 16px;
+  margin-right: 5px;
+  margin-left: 5px;
+  position: relative;
+  width: 16px;
+}
+
+.course-marquee-breadcrumb > span {
+  color: var(--spectrum-gray-300);
+  font-weight: var(--font-weight-bold, 600);
+}
+
+.course-marquee-breadcrumb > span:first-child::before,
+.course-marquee-breadcrumb > a:first-child::before {
+  content: none;
+}
+
+.course-marquee-breadcrumb > span:first-child,
+.course-marquee-breadcrumb > a:first-child {
+  font-weight: var(--font-weight-normal, 400);
+  color: var(--spectrum-gray-400);
+}
+
+.course-marquee-title {
+  font-size: var(--spectrum-font-size-900);
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.2;
+  color: var(--spectrum-gray-50);
+}
+
+.course-marquee-description {
+  font-size: var(--spectrum-font-size-300);
+  line-height: 1.5;
+  margin-bottom: 32px;
+  color: var(--spectrum-gray-400);
+}
+
+.course-marquee-separator {
+  width: 100%;
+  margin: 0 0 32px;
+}
+
+.course-metadata-bookmark {
+  display: flex;
+  justify-content: space-between;
+}
+
+.course-marquee-metadata {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  font-size: var(--spectrum-font-size-75);
+}
+
+.metadata-item {
+  display: flex;
+  align-items: center;
+}
+
+.metadata-label {
+  color: var(--spectrum-gray-200);
+  margin-right: 4px;
+}
+
+.metadata-value {
+  color: var(--spectrum-gray-400);
+}
+
+.metadata-separator {
+  width: 4px;
+  height: 4px;
+  background-color: var(--spectrum-gray-50);
+  border-radius: 50%;
+  margin: 0 12px;
+}
+
+.course-marquee-bookmark .user-actions {
+  display: flex;
+  align-items: center;
+}
+
+.course-marquee-bookmark button {
+  background: none;
+  border: none;
+  color: var(--spectrum-gray-50);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.course-marquee-bookmark .user-actions button {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.course-marquee-bookmark .user-actions button label {
+  color: var(--spectrum-gray-200);
+  font-size: var(--spectrum-font-size-75);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+@media (min-width: 900px) {
+  body.learning-collections .section.course-marquee-container {
+    max-width: unset;
+    padding: 0 56px;
+  }
+
+  .section.course-marquee-container .course-marquee-wrapper {
+    margin-left: calc(-1 * var(--spectrum-spacing-800));
+    margin-right: calc(-1 * var(--spectrum-spacing-800));
+    max-width: unset;
+  }
+
+  .course-marquee {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 45px;
+  }
+
+  .course-marquee-breadcrumb > span,
+  .course-marquee-breadcrumb > a {
+    font-size: var(--spectrum-font-size-200);
+  }
+
+  .course-marquee-title {
+    font-size: var(--spectrum-font-size-1100);
+  }
+
+  .course-marquee-description {
+    font-size: var(--spectrum-font-size-400);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .course-marquee-metadata,
+  .course-marquee-bookmark .user-actions button label {
+    font-size: var(--spectrum-font-size-100);
+  }
+}

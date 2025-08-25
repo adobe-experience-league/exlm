@@ -1,0 +1,10 @@
+<svg id="Save_Bookmark" data-name="Save Bookmark" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <rect id="Rectangle_189163" data-name="Rectangle 189163" width="24" height="24" rx="2" fill="#e6e6e6" opacity="0"/>
+  <g id="Save" transform="translate(6 2)">
+    <g id="Decorative_icon" data-name="Decorative icon">
+      <g id="Icon">
+        <path id="Path_185152" data-name="Path 185152" d="M15,4.667V19.595l-2.983-2.917L10.85,15.542,9.683,16.675,6.667,19.62V4.667ZM15.833,3h-10A.833.833,0,0,0,5,3.833V22.588a.436.436,0,0,0,.255.38A.351.351,0,0,0,5.422,23a.426.426,0,0,0,.293-.123l5.145-5.008,5.1,4.99a.417.417,0,0,0,.293.12.393.393,0,0,0,.167-.032.417.417,0,0,0,.245-.378V3.833A.833.833,0,0,0,15.833,3Z" transform="translate(-5 -3)" fill="#ffffff"/>
+      </g>
+    </g>
+  </g>
+</svg>
