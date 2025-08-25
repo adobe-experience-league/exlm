@@ -3,7 +3,9 @@
 /* Browse card colors */
 :root {
   --browse-card-color-playlist-primary: #30a7ff;
+  --browse-card-color-video-clip-primary: #30a7ff;
   --browse-card-color-playlist-secondary: #d6edff;
+  --browse-card-color-video-clip-secondary: #d6edff;
   --browse-card-color-tutorial-primary: #10cfa9;
   --browse-card-color-tutorial-secondary: #cff5ee;
   --browse-card-color-documentation-primary: #0aa35b;
@@ -50,6 +52,10 @@
 
 .browse-card.playlist-card {
   background-color: var(--browse-card-color-playlist-secondary);
+}
+
+.browse-card.video-clip-card {
+  background-color: var(--browse-card-color-video-clip-secondary);
 }
 
 .browse-card.tutorial-card {
@@ -211,6 +217,42 @@
   justify-content: center;
 }
 
+.browse-card .browse-card-video-clip {
+  padding: 24px 16px 0;
+  background-color: var(--background-color);
+  height: 64px;
+  flex-grow: 0;
+}
+
+.browse-card .browse-card-content {
+  padding: 24px 16px 16px;
+  background-color: var(--background-color);
+}
+
+.browse-card.video-clip-card .browse-card-content {
+  padding-top: 16px;
+}
+
+.browse-card .browse-card-video-clip .play-button {
+  width: fit-content;
+}
+
+.browse-card .browse-card-event-info .icon {
+  height: 16px;
+  width: 16px;
+  margin-top: 2px;
+}
+
+.browse-card .user-actions button .icon {
+  height: 24px; /* a11y touch target must be 24px */
+  width: 24px; /* a11y touch target must be 24px */
+}
+
+.browse-card .browse-card-video-clip .play-button .icon {
+  height: 40px;
+  width: 40px;
+}
+
 .browse-card .browse-card-figure.img-custom-height {
   height: 198px;
   max-height: 198px;
@@ -283,11 +325,6 @@
   height: 204px;
 }
 
-.browse-card .browse-card-content {
-  padding: 24px 16px 16px;
-  background-color: var(--background-color);
-}
-
 .browse-card .browse-card-meta-info {
   display: flex;
   gap: 12px;
@@ -298,12 +335,6 @@
   color: var(--non-spectrum-grey-updated);
   font-size: var(--spectrum-font-size-75);
   line-height: var(--spectrum-line-height-s);
-}
-
-.browse-card .browse-card-event-info .icon {
-  height: 16px;
-  width: 16px;
-  margin-top: 2px;
 }
 
 .browse-card .browse-card-author-info {
@@ -371,11 +402,6 @@
   font-weight: var(--font-weight-semi-bold);
   font-size: var(--spectrum-font-size-100);
   line-height: var(--spectrum-line-height-s);
-}
-
-.browse-card .user-actions button .icon {
-  height: 24px; /* a11y touch target must be 24px */
-  width: 24px; /* a11y touch target must be 24px */
 }
 
 .browse-card .browse-card-footer .browse-card-cta-element .icon {
