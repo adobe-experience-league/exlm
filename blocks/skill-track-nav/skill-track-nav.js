@@ -1,4 +1,4 @@
-import { getCurrentStepInfo } from '../../scripts/utils/learning-collection-utils.js';
+import { getCurrentStepInfo } from '../../scripts/utils/course-utils.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
 
@@ -28,7 +28,7 @@ export default async function decorate(block) {
   // Go Back link
   const goBackLink = document.createElement('a');
   goBackLink.className = 'button skill-track-nav-button skill-track-nav-back secondary';
-  goBackLink.textContent = placeholders['learning-collection-go-back'] || 'Go Back';
+  goBackLink.textContent = placeholders['course-go-back'] || 'Go Back';
 
   // Disable go back button if on first step
   if (currentStepIndex === 0) {
@@ -51,12 +51,12 @@ export default async function decorate(block) {
   if (isRecap) {
     // Take Quiz link
     secondLink.classList.add('skill-track-nav-quiz');
-    secondLink.textContent = placeholders['learning-collection-take-quiz'] || 'Take Quiz';
+    secondLink.textContent = placeholders['course-take-quiz'] || 'Take Quiz';
     secondLink.href = stepInfo.skillTrackQuiz || '#';
   } else if (isQuiz) {
     // Submit Answers link
     secondLink.classList.add('skill-track-nav-submit');
-    secondLink.textContent = placeholders['learning-collection-submit-answers'] || 'Submit Answers';
+    secondLink.textContent = placeholders['course-submit-answers'] || 'Submit Answers';
     secondLink.href = stepInfo.nextStep || '#';
     secondLink.addEventListener('click', async (e) => {
       e.preventDefault();
@@ -89,7 +89,7 @@ export default async function decorate(block) {
   } else {
     // Next link
     secondLink.classList.add('skill-track-nav-next');
-    secondLink.textContent = placeholders['learning-collection-next'] || 'Next';
+    secondLink.textContent = placeholders['course-next'] || 'Next';
     secondLink.href = stepInfo.nextStep || '#';
   }
 

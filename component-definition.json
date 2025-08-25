@@ -154,17 +154,17 @@
           }
         },
         {
-          "title": "Learning Collections Page Section",
-          "id": "learning-collections-page-section",
+          "title": "Courses Section",
+          "id": "courses-section",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/section/v1/section",
                 "template": {
-                  "filter": "learning-collections-page-section",
-                  "name": "Learning Collections Page Section",
-                  "model": "learning-collections-page-section",
-                  "style": "learning-collections-page-section"
+                  "filter": "courses-section",
+                  "name": "Courses Section",
+                  "model": "courses-section",
+                  "style": "courses-section"
                 }
               }
             }

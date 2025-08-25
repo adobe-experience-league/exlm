@@ -165,7 +165,7 @@ export const isPerspectivePage = matchesAnyTheme(/articles/);
 export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
-export const isLearningCollectionStep = matchesAnyTheme(/learning-collections-step/);
+export const isCourseStep = matchesAnyTheme(/courses-step/);
 
 /**
  * add a section for the left rail when on a browse page.
@@ -317,7 +317,7 @@ function buildAutoBlocks(main, isFragment = false) {
         addProfileRail(main);
       }
       // if we are on a learning collection step page
-      if (isLearningCollectionStep) {
+      if (isCourseStep) {
         addSkillTrackInfo(main);
         addSkillTrackNav(main);
       }

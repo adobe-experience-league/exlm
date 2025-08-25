@@ -1,10 +1,10 @@
-body.learning-collections,
-body.learning-collections .section,
-.learning-collections-page-section {
+body.courses,
+body.courses .section,
+.courses-section {
   background-color: var(--background-color);
 }
 
-.learning-collections p,
+.courses p,
 h1,
 h2,
 h3,
@@ -15,8 +15,8 @@ h6 {
   line-height: normal;
 }
 
-body.learning-collections .section,
-.learning-collections-page-section {
+body.courses .section,
+.courses-section {
   display: flex;
   flex-direction: column;
   gap: 40px;
@@ -24,6 +24,6 @@ body.learning-collections .section,
   margin: 0 auto;
 }
 
-body.learning-collections .skill-track-info-section {
+body.courses .skill-track-info-section {
   border-bottom: 1px solid var(--spectrum-gray-200);
 }
