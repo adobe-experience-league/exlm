@@ -163,7 +163,6 @@ async function extractSkillTrackMeta(fragment) {
   }
 
   const totalSteps = allSteps.length;
-
   return {
     skillTrackHeader,
     skillTrackDescription,
@@ -171,7 +170,6 @@ async function extractSkillTrackMeta(fragment) {
     skillTrackQuiz,
     skillTrackSteps: allSteps,
     totalSteps,
-    ...getStepMeta(allSteps, skillTrackRecap, skillTrackQuiz),
   };
 }
 
@@ -187,8 +185,8 @@ export async function getCurrentStepInfo() {
     if (cached) {
       const parsed = JSON.parse(cached);
       // Re-run getStepMeta to update navigation for current page
-      if (parsed && Array.isArray(parsed.skillTrackSteps)) {
-        const stepMeta = getStepMeta(parsed.skillTrackSteps, parsed.skillTrackRecap, parsed.skillTrackQuiz);
+      if (parsed && Array.isArray(parsed?.skillTrackSteps)) {
+        const stepMeta = getStepMeta(parsed?.skillTrackSteps, parsed?.skillTrackRecap, parsed?.skillTrackQuiz);
         return { ...parsed, ...stepMeta };
       }
     }
@@ -200,6 +198,34 @@ export async function getCurrentStepInfo() {
   const fragment = await fetchSkillTrackFragment(fragUrl);
   if (!fragment) return null;
   meta = await extractSkillTrackMeta(fragment);
+  try {
+    sessionStorage.setItem(storageKey, JSON.stringify(meta));
+  } catch (e) {
+    // ignore storage errors
+  }
+  return { ...meta, ...getStepMeta(meta?.skillTrackSteps, meta?.skillTrackRecap, meta?.skillTrackQuiz) };
+}
+
+export async function getSkillTrackMeta(skillTrackFragmentUrl) {
+  if (!skillTrackFragmentUrl) return null;
+  const storageKey = `skill-track-meta:${skillTrackFragmentUrl}`;
+  let meta = null;
+
+  try {
+    const cached = sessionStorage.getItem(storageKey);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (parsed && Array.isArray(parsed?.skillTrackSteps)) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    // ignore parse errors
+  }
+
+  const fragment = await fetchSkillTrackFragment(skillTrackFragmentUrl);
+  if (!fragment) return null;
+  meta = await extractSkillTrackMeta(fragment, false);
   try {
     sessionStorage.setItem(storageKey, JSON.stringify(meta));
   } catch (e) {

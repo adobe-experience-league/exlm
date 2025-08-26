@@ -1,7 +1,7 @@
 body.courses,
 body.courses .section,
 .courses-section {
-  background-color: var(--background-color);
+  background-color: var(--spectrum-gray-100);
 }
 
 .courses p,
