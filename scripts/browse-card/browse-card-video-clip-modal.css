@@ -18,6 +18,8 @@
 
 .browse-card-video-clip-modal-backdrop.expanded-mode {
   background-color: rgb(0 0 0 / 75%);
+
+  --container-height: 55vh;
 }
 
 .browse-card-video-clip-modal-backdrop * {
@@ -492,6 +494,28 @@
     max-width: 26%;
   }
 
+  .browse-card-video-clip-modal-backdrop.expanded-mode .video-modal-tag-text {
+    margin-bottom: 2px;
+  }
+
+  .browse-card-video-clip-modal-backdrop.expanded-mode .browse-card-video-clip-info-header {
+    margin-bottom: 0;
+  }
+
+  .browse-card-video-clip-modal-backdrop.expanded-mode .browse-card-video-clip-info-title {
+    line-height: normal;
+  }
+
+  .browse-card-video-clip-modal-backdrop.expanded-mode .browse-card-source {
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+
+  .browse-card-video-clip-modal-backdrop.expanded-mode .browse-card-source-row {
+    max-height: 20px;
+    align-items: flex-start;
+  }
+
   .browse-card-video-clip-modal.mini-player-mode .browse-card-source-row {
     height: auto;
   }
@@ -510,6 +534,19 @@
     max-height: max(40%, 458px);
     min-width: 420px;
     max-width: min(30%, 480px);
+  }
+
+  .browse-card-video-clip-modal-backdrop.expanded-mode .browse-card-video-clip-info-header {
+    margin-bottom: 8px;
+  }
+
+  .browse-card-video-clip-modal-backdrop.expanded-mode .browse-card-source {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .browse-card-video-clip-modal-backdrop.expanded-mode .browse-card-source-row {
+    max-height: auto;
   }
 
   .browse-card-video-clip-modal-backdrop.expanded-mode .browse-card-video-clip-container {
