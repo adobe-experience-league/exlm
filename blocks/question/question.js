@@ -4,13 +4,13 @@ import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.
  * Generates the DOM for a question
  * This function is also called by quiz.js
  * @param {Element} block The question block element
- * @param {Object} placeholders Language placeholders
  * @param {number} displayIndex The display index for visual numbering
  * @param {number} totalQuestions The total number of questions
+ * @param {Object} placeholders Language placeholders
  * @returns {Element} The generated question DOM
  */
 
-export function generateQuestionDOM(block, placeholders = {}, displayIndex, totalQuestions) {
+export function generateQuestionDOM(block, displayIndex, totalQuestions, placeholders = {}) {
   // Create question container
   const questionContainer = document.createElement('div');
   questionContainer.classList.add('question-block');

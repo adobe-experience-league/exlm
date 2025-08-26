@@ -184,7 +184,7 @@ export default async function decorate(block) {
     displayIndex += 1;
 
     // Generate the question DOM
-    const questionDOM = generateQuestionDOM(question, placeholders, currentDisplayIndex, totalQuestions);
+    const questionDOM = generateQuestionDOM(question, currentDisplayIndex, totalQuestions, placeholders);
 
     question.textContent = '';
 
