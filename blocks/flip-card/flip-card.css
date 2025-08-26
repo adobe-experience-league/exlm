@@ -16,6 +16,7 @@
   transform-style: preserve-3d;
   will-change: transform;
   margin: 0 auto;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .flip-card > div > div {
