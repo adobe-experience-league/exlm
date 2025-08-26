@@ -76,7 +76,8 @@
       "skill-track",
       "quiz",
       "drill-in",
-      "flip-card"
+      "flip-card",
+      "course-breakdown"
     ]
   },
   {
@@ -273,7 +274,8 @@
       "skill-track",
       "quiz",
       "drill-in",
-      "flip-card"
+      "flip-card",
+      "course-breakdown"
     ]
   },
   {
@@ -397,6 +399,10 @@
   {
     "id": "flip-card",
     "components": ["flip-card-item"]
+  },
+  {
+    "id": "course-breakdown",
+    "components": ["course-breakdown-item"]
   },
   {
     "id": "rte-custom-options",

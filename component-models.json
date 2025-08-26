@@ -7525,5 +7525,116 @@
         "description": "Content displayed on the back of the flip card when flipped."
       }
     ]
+  },
+  {
+    "id": "course-breakdown",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Title for the course breakdown"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h1",
+        "label": "Title Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "courseInfoTitle",
+        "value": "",
+        "label": "Course info Title",
+        "description": "Title for the course Breadown info section"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "courseInfoTitleType",
+        "value": "h2",
+        "label": "Course info Title Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "courseInfoDescription",
+        "value": "",
+        "label": "Course info Description",
+        "description": "Description for the course Breadown info section"
+      }
+    ]
+  },
+  {
+    "id": "course-breakdown-item",
+    "fields": [
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "skill_track_url",
+        "value": "",
+        "label": "Skill Track Page URL",
+        "description": "URL to the Skill track",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/courses/"
+        }
+      }
+    ]
   }
 ]
