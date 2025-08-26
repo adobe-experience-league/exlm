@@ -131,8 +131,7 @@ function SkillTrackCard(SkillTrackPromise, open = false) {
 }
 
 export default async function decorate(block) {
-  const rows = block.children;
-  const [title, infoTitle, infoDescription, ...skillTracks] = rows;
+  const [title, infoTitle, infoDescription, ...skillTracks] = block.children;
 
   let placeholders = {};
   try {
@@ -142,13 +141,17 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
-  block.innerText = '';
+  
+  block.textContent = '';
   block.append(Header(title, placeholders));
   block.append(InfoCard(infoTitle, infoDescription, placeholders));
 
   skillTracks.forEach((skillTrack, index) => {
     const skillTrackFragment = skillTrack.querySelector('a')?.getAttribute('href');
     const SkillTrackPromise = getSkillTrackMeta(skillTrackFragment);
-    block.append(SkillTrackCard(SkillTrackPromise, index === 0));
+    const SkillTrackCardElement = SkillTrackCard(SkillTrackPromise, index === 0);
+    skillTrack.innerHTML = '';
+    skillTrack.append(SkillTrackCardElement);
+    block.append(skillTrack);
   });
 }
