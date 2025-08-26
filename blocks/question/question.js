@@ -5,10 +5,12 @@ import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.
  * This function is also called by quiz.js
  * @param {Element} block The question block element
  * @param {Object} placeholders Language placeholders
+ * @param {number} displayIndex The display index for visual numbering
+ * @param {number} totalQuestions The total number of questions
  * @returns {Element} The generated question DOM
  */
 
-export function generateQuestionDOM(block, placeholders = {}) {
+export function generateQuestionDOM(block, placeholders = {}, displayIndex, totalQuestions) {
   // Create question container
   const questionContainer = document.createElement('div');
   questionContainer.classList.add('question-block');
@@ -34,21 +36,18 @@ export function generateQuestionDOM(block, placeholders = {}) {
     answers = [...(answersList.querySelectorAll('li') || [])].map((li) => li?.textContent?.trim() || '');
   }
 
-  // Store the hashed correct answers as metadata
+  // Store the hashed correct answers
   block.setAttribute('data-correctAnswers', correctAnswersDiv?.textContent?.trim() || '');
-
   block.dataset.isMultipleChoice = isMultipleChoice.toString();
-  block.dataset.correctFeedback = correctFeedbackDiv?.textContent?.trim() || '';
-  block.dataset.incorrectFeedback = incorrectFeedbackDiv?.textContent?.trim() || '';
+  block.correctFeedbackText = correctFeedbackDiv?.textContent?.trim() || '';
+  block.incorrectFeedbackText = incorrectFeedbackDiv?.textContent?.trim() || '';
 
-  // Get display index for question numbering
-  const displayIndex =
-    block.dataset?.displayIndex || (parseInt(block.dataset?.questionIndex || '0', 10) + 1).toString();
-  const totalQuestions = block.dataset?.totalQuestions || '1';
+  const displayIndexValue = displayIndex || (parseInt(block.dataset?.questionIndex || '0', 10) + 1).toString();
+  const totalQuestionsValue = totalQuestions || '1';
   const questionNumberElement = htmlToElement(`
-    <p class="question-number">${placeholders?.question || 'Question'} ${displayIndex} ${
+    <p class="question-number">${placeholders?.question || 'Question'} ${displayIndexValue} ${
       placeholders?.of || 'of'
-    } ${totalQuestions}</p>
+    } ${totalQuestionsValue}</p>
   `);
   questionContainer.appendChild(questionNumberElement);
 

@@ -89,9 +89,9 @@ function showQuestionFeedback(questionElement, isCorrect, placeholders = {}) {
     return;
   }
 
-  // Get custom feedback messages from data attributes
-  const correctFeedback = questionElement.dataset.correctFeedback || placeholders?.correct || 'Correct!';
-  const incorrectFeedback = questionElement.dataset.incorrectFeedback || placeholders?.incorrect || 'Incorrect';
+  // Get custom feedback messages from properties
+  const correctFeedback = questionElement.correctFeedbackText || placeholders?.correct || 'Correct!';
+  const incorrectFeedback = questionElement.incorrectFeedbackText || placeholders?.incorrect || 'Incorrect';
 
   // Create feedback element using htmlToElement
   const feedbackElement = htmlToElement(`
@@ -180,13 +180,11 @@ export default async function decorate(block) {
     question.dataset.questionIndex = originalIndex.toString();
 
     // Set display index for UI numbering
-    question.dataset.displayIndex = displayIndex.toString();
+    const currentDisplayIndex = displayIndex;
     displayIndex += 1;
 
-    question.dataset.totalQuestions = totalQuestions.toString();
-
     // Generate the question DOM
-    const questionDOM = generateQuestionDOM(question, placeholders);
+    const questionDOM = generateQuestionDOM(question, placeholders, currentDisplayIndex, totalQuestions);
 
     question.textContent = '';
 
