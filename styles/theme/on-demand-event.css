@@ -35,6 +35,27 @@
   }
 }
 
+@media (min-width: 600px) and (max-width: 1023px) {
+  .on-demand-event .section.event-secondary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    align-items: stretch; /* Ensure all items in a row match height */
+  }
+
+  /* height 100% for all items in the row */
+  .on-demand-event .section.event-secondary > div {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* last child spans all columns */
+  .on-demand-event .section.event-secondary > div:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (min-width: 1024px) {
   .on-demand-event main {
     display: grid;
