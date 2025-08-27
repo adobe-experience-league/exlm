@@ -50,19 +50,19 @@
     width: 100%;
   }
 
-  .on-demand-event .section.event-primary {
+  .on-demand-event .section.event-secondary {
     grid-column: 1; /* first half */
+    grid-row: 2;
+  }
+
+  .on-demand-event .section.event-primary {
+    grid-column: 2; /* second half */
     grid-row: 2;
 
     > div {
       max-width: calc(var(--default-max-width) / 2 - (var(--desktop-column-gap) * 2));
       margin: auto;
     }
-  }
-
-  .on-demand-event .section.event-secondary {
-    grid-column: 2; /* second half */
-    grid-row: 2;
   }
 
   /* Event Right Rail */
