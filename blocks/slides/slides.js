@@ -262,7 +262,21 @@ export default async function decorate(block) {
     } else {
       // const visual = row.querySelector(':scope > div:last-child');
       const slideWrapper = row.querySelector(':scope > div');
-      const [, , audioP, titleElement, ...rest] = slideWrapper?.children || [];
+      const children = Array.from(slideWrapper?.children || []);
+
+      // Check if the second element is a UL (callout)
+      const hasCallout = children.length > 1 && children[1].tagName === 'UL';
+
+      // Directly destructure based on whether there's a callout
+      let audioP;
+      let titleElement;
+      let rest;
+      if (hasCallout) {
+        [, , audioP, titleElement, ...rest] = children;
+      } else {
+        [, audioP, titleElement, ...rest] = children;
+      }
+
       const titleId = titleElement?.id || titleElement?.textContent?.split(' ')?.join('-')?.toLowerCase() || '';
       if (titleElement) {
         titleElement.id = titleId;
@@ -270,8 +284,10 @@ export default async function decorate(block) {
 
       const stepId = section.id ? `${section.id}__${titleId}` : titleId;
 
-      const audio = `${audioP?.querySelector('a')?.href}` || '';
-      audioP.remove();
+      const audio = audioP ? `${audioP.querySelector('a')?.href}` || '' : '';
+      if (audioP) {
+        audioP.remove();
+      }
 
       section.steps.push({
         id: stepId,

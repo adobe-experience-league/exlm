@@ -278,6 +278,74 @@
     0 1.5px 6px 0 rgb(0 0 0 / 8%);
 }
 
+/** White coachmark styles start **/
+.spectrum-coachmark-white .spectrum-CoachIndicator-ring {
+  border-color: var(--overlay-background-color);
+}
+
+.spectrum-coachmark-white .spectrum-Popover {
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  border-bottom: 4px solid var(--non-spectrum-adobe-dark-red);
+  width: 100%;
+  padding: 30px;
+  max-height: fit-content;
+}
+
+.spectrum-coachmark-white .spectrum-Popover.popover-mobile {
+  inset: 0 !important;
+  transform: none;
+  min-height: 100vh;
+  min-width: 100vw;
+  position: fixed;
+  border-radius: 0;
+  max-height: 1000vh;
+  overflow-y: auto;
+}
+
+.spectrum-coachmark-white .spectrum-Popover.spectrum-Popover--left-top {
+  right: calc(100% + 30px);
+}
+
+.spectrum-coachmark-white .spectrum-Popover.spectrum-Popover--right-top {
+  left: calc(100% + 30px);
+}
+
+.spectrum-coachmark-white .spectrum-CoachMark-header {
+  padding: 0;
+  margin: 0;
+  display: unset;
+}
+
+.spectrum-coachmark-white .spectrum-CoachMark-content {
+  padding: 0;
+  margin: 0;
+}
+
+.spectrum-coachmark-white .popover-notch {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  top: 50%;
+  background-color: var(--spectrum-gray-50);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.spectrum-coachmark-white .spectrum-Popover.popover-mobile .popover-notch {
+  display: none;
+}
+
+.spectrum-coachmark-white .spectrum-Popover.spectrum-Popover--left-top .popover-notch {
+  right: -6px;
+}
+
+.spectrum-coachmark-white .spectrum-Popover.spectrum-Popover--right-top .popover-notch {
+  left: -6px;
+}
+
+/** White coachmark styles end **/
+
 /* Show popover on indicator hover */
 .spectrum-CoachIndicator:hover + .spectrum-Popover {
   display: inline-flex;
@@ -296,5 +364,9 @@
 @media (min-width: 900px) {
   .spectrum-Popover {
     min-width: var(--mod-popover-min-width-200);
+  }
+
+  .spectrum-coachmark-white .spectrum-Popover {
+    width: 400px;
   }
 }

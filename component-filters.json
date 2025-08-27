@@ -74,7 +74,9 @@
       "atomic-search",
       "skill-track-meta",
       "skill-track",
-      "quiz"
+      "quiz",
+      "drill-in",
+      "flip-card"
     ]
   },
   {
@@ -261,7 +263,18 @@
   },
   {
     "id": "learning-collections-page-section",
-    "components": ["text", "title", "button", "image", "announcement-ribbon", "skill-track-meta", "skill-track", "quiz"]
+    "components": [
+      "text",
+      "title",
+      "button",
+      "image",
+      "announcement-ribbon",
+      "skill-track-meta",
+      "skill-track",
+      "quiz",
+      "drill-in",
+      "flip-card"
+    ]
   },
   {
     "id": "sign-up-flow-section",
@@ -376,6 +389,14 @@
   {
     "id": "quiz",
     "components": ["question"]
+  },
+  {
+    "id": "drill-in",
+    "components": ["drill-in-callout"]
+  },
+  {
+    "id": "flip-card",
+    "components": ["flip-card-item"]
   },
   {
     "id": "rte-custom-options",

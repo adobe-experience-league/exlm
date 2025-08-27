@@ -1,4 +1,5 @@
 import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+
 /**
  * Generates the DOM for a question
  * This function is also called by quiz.js
@@ -33,24 +34,12 @@ export function generateQuestionDOM(block, placeholders = {}) {
     answers = [...(answersList.querySelectorAll('li') || [])].map((li) => li?.textContent?.trim() || '');
   }
 
-  // Extract correct answers
-  let correctAnswers = [];
-  if (correctAnswersDiv) {
-    correctAnswers = correctAnswersDiv.textContent
-      .trim()
-      .split(',')
-      .map((num) => parseInt(num.trim(), 10));
-  }
+  // Store the hashed correct answers as metadata
+  block.setAttribute('data-correctAnswers', correctAnswersDiv?.textContent?.trim() || '');
 
-  // Extract feedback messages
-  const correctFeedback = correctFeedbackDiv?.textContent?.trim();
-  const incorrectFeedback = incorrectFeedbackDiv?.textContent?.trim();
-
-  // Store values as data attributes
-  block.dataset.correctAnswers = correctAnswers.join(',');
   block.dataset.isMultipleChoice = isMultipleChoice.toString();
-  block.dataset.correctFeedback = correctFeedback;
-  block.dataset.incorrectFeedback = incorrectFeedback;
+  block.dataset.correctFeedback = correctFeedbackDiv?.textContent?.trim() || '';
+  block.dataset.incorrectFeedback = incorrectFeedbackDiv?.textContent?.trim() || '';
 
   // Create question number label (e.g., "Question 1 of 3") using htmlToElement
   const questionIndex = parseInt(block.dataset?.questionIndex || '0', 10) + 1;
