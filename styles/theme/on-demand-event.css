@@ -11,7 +11,7 @@
 
 .on-demand-event h1 + p {
   font-size: 1.25em;
-  color: var(--spectrum-gray-600);
+  color: var(--spectrum-gray-600); /* must use this for a11y contrast */
   margin-top: 0.5em;
   margin-bottom: 1.5em;
 }
