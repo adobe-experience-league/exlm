@@ -752,7 +752,7 @@ class ExlHeader extends HTMLElement {
           this.dispatchEvent(new Event(`${className}-decorated`));
         } catch (err) {
           // eslint-disable-next-line no-console
-          console.error(`Error decorating ${className} block:`, err);
+          console.error(`Error decorating header block: ${className}`, err);
         }
       };
 
