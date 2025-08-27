@@ -1,0 +1,95 @@
+.on-demand-event main {
+  display: grid;
+  margin: 0 auto;
+  padding: 0 20px;
+  padding-bottom: 3em;
+  max-width: 1700px;
+
+  --desktop-column-gap: 20px;
+  --desktop-row-gap: 15px;
+}
+
+.on-demand-event h1 + p {
+  font-size: 1.25em;
+  color: var(--spectrum-gray-500);
+  margin-top: 0.5em;
+  margin-bottom: 1.5em;
+}
+
+.on-demand-event main > div.right-rail {
+  display: none;
+}
+
+.section {
+  padding: 0;
+}
+
+.on-demand-event .section.event-primary,
+.on-demand-event .section.event-secondary {
+  h3,
+  h2 {
+    border-bottom: 2px solid #e0e0e0; /* grey underline */
+    padding-bottom: 15px;
+    line-height: 40px;
+    margin-bottom: 15px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .on-demand-event main {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    grid-template-rows: auto auto;
+    gap: var(--desktop-row-gap) var(--desktop-column-gap);
+  }
+
+  /* Event Video and Title/Meta section */
+  .on-demand-event main > div.section:first-child {
+    grid-column: 1 / span 2; /* span 2 columns */
+    grid-row: 1;
+    width: 100%;
+  }
+
+  .on-demand-event .section.event-primary {
+    grid-column: 1; /* first half */
+    grid-row: 2;
+
+    > div {
+      max-width: calc(var(--default-max-width) / 2 - (var(--desktop-column-gap) * 2));
+      margin: auto;
+    }
+  }
+
+  .on-demand-event .section.event-secondary {
+    grid-column: 2; /* second half */
+    grid-row: 2;
+  }
+
+  /* Event Right Rail */
+  .on-demand-event main > div.event-rail {
+    grid-column: 3; /* 1fr column */
+    grid-row: 1 / span 2;
+    background-color: rgb(236 235 235 / 70%);
+    display: initial;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    content: 'target content';
+    position: relative;
+  }
+
+  .on-demand-event main > div.event-rail::before {
+    content: 'target content';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+    font-size: 1.2em;
+    color: #333;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
