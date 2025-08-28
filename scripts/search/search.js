@@ -82,6 +82,7 @@ export default class Search {
     this.canHideSearchOptions = false;
     this.searchPickerLabelEl = null;
     this.searchPickerLabelEl = this.searchBlock.querySelector('.search-picker-button .search-picker-label');
+    /** @type {HTMLDivElement} */
     this.searchPickerPopover = this.searchBlock.querySelector('.search-picker-popover');
     this.selectedCheckmarkEl = this.searchPickerPopover.querySelector('.icon');
     this.searchSuggestionsPopover = this.searchBlock.querySelector('.search-suggestions-popover');
@@ -356,8 +357,14 @@ export default class Search {
     redirectToSearchPage(this.searchUrl, suggestion, this.searchPickerLabelEl.dataset.filterValue);
   }
 
+  /**
+   * @param {string} filterValue
+   */
   setSelectedSearchOption(filterValue) {
     const selectedEl = this.searchPickerPopover.querySelector(`.search-picker-label[data-filter-value=${filterValue}]`);
+    if (!selectedEl) {
+      return;
+    }
     const optionLabel = selectedEl.textContent.trim();
 
     const searchParams = this.searchOptions.map((o) => o.split(':')[0]);
