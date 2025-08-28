@@ -36,8 +36,8 @@ export function generateQuestionDOM(block, displayIndex, totalQuestions, placeho
     answers = [...(answersList.querySelectorAll('li') || [])].map((li) => li?.textContent?.trim() || '');
   }
 
-  // Store the hashed correct answers
-  block.setAttribute('data-correctAnswers', correctAnswersDiv?.textContent?.trim() || '');
+  // Store the hashed correct answers as a property
+  block.correctAnswers = correctAnswersDiv?.textContent?.trim() || '';
   block.dataset.isMultipleChoice = isMultipleChoice.toString();
   block.correctFeedbackText = correctFeedbackDiv?.textContent?.trim() || '';
   block.incorrectFeedbackText = incorrectFeedbackDiv?.textContent?.trim() || '';
