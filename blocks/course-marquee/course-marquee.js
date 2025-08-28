@@ -13,13 +13,11 @@ export default async function decorate(block) {
   const rows = [...block.children];
   const courseTitle = rows[0]?.querySelector('div')?.textContent || '';
   const courseDescription = rows[1]?.querySelector('div')?.textContent || '';
-  const courseDuration = rows[2]?.querySelector('div')?.textContent || '';
 
   const courseName = getMetadata('og:title') || document.title;
 
-  const productName = getMetadata('product') || 'Product name';
-  const experienceLevel = getMetadata('experience-level') || 'Experience level';
-  const prerequisites = getMetadata('prerequisites') || 'None';
+  const productName = getMetadata('coveo-solution') || 'Product name';
+  const experienceLevel = getMetadata('level') || 'Experience level';
 
   block.textContent = '';
 
@@ -63,16 +61,6 @@ export default async function decorate(block) {
       <div class="metadata-item">
         <span class="metadata-label">${placeholders.courseExperienceLevelLabel || 'Experience level'}:</span>
         <span class="metadata-value">${experienceLevel}</span>
-      </div>
-      <div class="metadata-separator"></div>
-      <div class="metadata-item">
-        <span class="metadata-label">${placeholders.coursePrerequisitesLabel || 'Prerequisites'}:</span>
-        <span class="metadata-value">${prerequisites}</span>
-      </div>
-      <div class="metadata-separator"></div>
-      <div class="metadata-item">
-        <span class="metadata-label">${placeholders.courseDurationLabel || 'Duration'}:</span>
-        <span class="metadata-value">${courseDuration}</span>
       </div>
     </div>
   `;
