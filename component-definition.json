@@ -665,8 +665,7 @@
                   "name": "Course Marquee",
                   "model": "course-marquee",
                   "title": "Course Title",
-                  "description": "Course description that will be limited to 3 lines in display.",
-                  "duration": "1hr"
+                  "description": "Course description that will be limited to 3 lines in display."
                 }
               }
             }

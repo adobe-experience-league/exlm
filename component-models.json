@@ -7544,14 +7544,6 @@
         "value": "",
         "label": "Description",
         "description": "Sets the description for the course. Please keep content brief as it will be limited to 3 lines in display."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "duration",
-        "value": "",
-        "label": "Duration",
-        "description": "Sets the duration for the course."
       }
     ]
   }
