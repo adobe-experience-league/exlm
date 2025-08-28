@@ -1,6 +1,6 @@
 sitemaps:
   example:
-    origin: https://experienceleague-stage.adobe.com
+    origin: https://experienceleague.adobe.com
     default: en
     lastmod: YYYY-MM-DD
     languages:
