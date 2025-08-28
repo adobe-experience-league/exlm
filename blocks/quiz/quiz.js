@@ -52,7 +52,7 @@ async function checkQuestionAnswer(questionElement) {
   const answerTexts = Array.from(answerElements).map((el) => el.textContent.trim());
 
   const pagePath = window.location.pathname;
-  const questionIndex = questionElement.dataset?.questionIndex || '0';
+  const questionIndex = questionElement.questionIndex.toString();
 
   let selectedAnswerIndices = [];
 
@@ -177,14 +177,14 @@ export default async function decorate(block) {
   // Process each question
   shuffledQuestions?.forEach(({ item: question, originalIndex }) => {
     // Set original index for answer validation
-    question.dataset.questionIndex = originalIndex.toString();
+    question.questionIndex = originalIndex;
 
     // Set display index for UI numbering
     const currentDisplayIndex = displayIndex;
     displayIndex += 1;
 
     // Generate the question DOM
-    const questionDOM = generateQuestionDOM(question, currentDisplayIndex, totalQuestions, placeholders);
+    const questionDOM = generateQuestionDOM(question, currentDisplayIndex, totalQuestions, originalIndex, placeholders);
 
     question.textContent = '';
 

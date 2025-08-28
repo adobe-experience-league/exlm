@@ -10,7 +10,7 @@ import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.
  * @returns {Element} The generated question DOM
  */
 
-export function generateQuestionDOM(block, displayIndex, totalQuestions, placeholders = {}) {
+export function generateQuestionDOM(block, displayIndex, totalQuestions, questionIndex, placeholders = {}) {
   // Create question container
   const questionContainer = document.createElement('div');
   questionContainer.classList.add('question-block');
@@ -41,8 +41,9 @@ export function generateQuestionDOM(block, displayIndex, totalQuestions, placeho
   block.dataset.isMultipleChoice = isMultipleChoice.toString();
   block.correctFeedbackText = correctFeedbackDiv?.textContent?.trim() || '';
   block.incorrectFeedbackText = incorrectFeedbackDiv?.textContent?.trim() || '';
+  block.questionIndex = questionIndex;
 
-  const displayIndexValue = displayIndex || (parseInt(block.dataset?.questionIndex || '0', 10) + 1).toString();
+  const displayIndexValue = displayIndex || (parseInt(questionIndex, 10) + 1).toString();
   const totalQuestionsValue = totalQuestions || '1';
   const questionNumberElement = htmlToElement(`
     <p class="question-number">${placeholders?.question || 'Question'} ${displayIndexValue} ${
@@ -67,9 +68,9 @@ export function generateQuestionDOM(block, displayIndex, totalQuestions, placeho
     answerOption.classList.add('answer-option');
 
     // Create input and label elements
-    const inputId = `question-${block.dataset?.questionIndex || 0}-answer-${answerIndex}`;
+    const inputId = `question-${questionIndex}-answer-${answerIndex}`;
     const inputType = isMultipleChoice ? 'checkbox' : 'radio';
-    const inputName = `question-${block.dataset?.questionIndex || 0}`;
+    const inputName = `question-${questionIndex}`;
     const inputValue = answerIndex + 1; // 1-based index for answers
 
     const inputWithLabel = htmlToElement(`
@@ -110,7 +111,7 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
   // Generate the question DOM
-  const dom = generateQuestionDOM(block, placeholders);
+  const dom = generateQuestionDOM(block, null, null, 0, placeholders);
 
   // Clear the block and append the DOM
   block.textContent = '';
