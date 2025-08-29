@@ -165,17 +165,21 @@ export default async function decorate(block) {
   // Get title, text, and questions from block children using destructuring
   const [titleElement, textElement, ...questionsOriginal] = [...block.children];
 
-  // Shuffle questions while preserving original indices
-  const shuffledQuestions = shuffleArray(questionsOriginal);
+  const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+
+  // Only shuffle questions if not in authoring mode
+  const orderedQuestions = UEAuthorMode
+    ? questionsOriginal.map((item, index) => ({ item, originalIndex: index }))
+    : shuffleArray(questionsOriginal);
 
   // Set total questions count
-  const totalQuestions = shuffledQuestions.length;
+  const totalQuestions = orderedQuestions.length;
 
   // Initialize display index
   let displayIndex = 1;
 
   // Process each question
-  shuffledQuestions?.forEach(({ item: question, originalIndex }) => {
+  orderedQuestions?.forEach(({ item: question, originalIndex }) => {
     // Set original index for answer validation
     question.questionIndex = originalIndex;
 

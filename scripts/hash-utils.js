@@ -1,9 +1,12 @@
 /**
  * Utility functions for hashing quiz answers
  */
+import { getMetadata } from './lib-franklin.js';
 
-// Fixed salt value - must match the one used on the server side
-const PAGE_SALT = 'EXL_QUIZ_SALT';
+// Get salt from metadata
+function getSalt() {
+  return getMetadata('content-integrity-token');
+}
 
 /**
  * Creates a canonical version of text (trimmed, lowercase)
@@ -37,7 +40,8 @@ async function sha256Base64(input) {
  * @returns {Promise<string>} The hashed answer
  */
 export async function hashAnswer(pagePath, questionIndex, answerIndex, answerText) {
-  const input = [pagePath, questionIndex, answerIndex, canonicalizeText(answerText), PAGE_SALT].join('|');
+  const salt = getSalt();
+  const input = [pagePath, questionIndex, answerIndex, canonicalizeText(answerText), salt].join('|');
 
   return sha256Base64(input);
 }
