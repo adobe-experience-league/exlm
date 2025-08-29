@@ -72,8 +72,8 @@
       "code",
       "playlist-browse",
       "atomic-search",
-      "skill-track-meta",
-      "skill-track",
+      "module-meta",
+      "module",
       "quiz",
       "drill-in",
       "flip-card"
@@ -269,8 +269,8 @@
       "button",
       "image",
       "announcement-ribbon",
-      "skill-track-meta",
-      "skill-track",
+      "module-meta",
+      "module",
       "quiz",
       "drill-in",
       "flip-card"
@@ -383,7 +383,7 @@
     "components": []
   },
   {
-    "id": "skill-track",
+    "id": "module",
     "components": ["step"]
   },
   {

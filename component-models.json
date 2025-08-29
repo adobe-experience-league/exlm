@@ -7324,7 +7324,7 @@
     "fields": []
   },
   {
-    "id": "skill-track-meta",
+    "id": "module-meta",
     "fields": [
       {
         "component": "text",
@@ -7332,7 +7332,7 @@
         "name": "title",
         "value": "",
         "label": "Title",
-        "description": "Sets the title for the skill track."
+        "description": "Sets the title for the module."
       },
       {
         "component": "select",
@@ -7373,7 +7373,7 @@
         "name": "description",
         "value": "",
         "label": "Description",
-        "description": "Sets the description for the skill track."
+        "description": "Sets the description for the module."
       },
       {
         "component": "aem-content",
@@ -7407,7 +7407,7 @@
     ]
   },
   {
-    "id": "skill-track",
+    "id": "module",
     "fields": []
   },
   {
@@ -7443,7 +7443,7 @@
         "name": "title",
         "value": "",
         "label": "Quiz Title",
-        "description": "Enter the skill track quiz title"
+        "description": "Enter the module quiz title"
       },
       {
         "component": "select",
@@ -7484,7 +7484,7 @@
         "name": "quizDescription",
         "value": "",
         "label": "Quiz Description",
-        "description": "Enter the skill track quiz description"
+        "description": "Enter the module quiz description"
       }
     ]
   },

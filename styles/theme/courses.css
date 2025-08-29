@@ -15,6 +15,6 @@ h6 {
   line-height: normal;
 }
 
-body.courses .skill-track-info-section {
+body.courses .module-info-section {
   border-bottom: 1px solid var(--spectrum-gray-200);
 }
