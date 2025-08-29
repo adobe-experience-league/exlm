@@ -744,11 +744,16 @@ class ExlHeader extends HTMLElement {
       await decorateCommunityBlock(header, this.decoratorOptions);
 
       const decorateHeaderBlock = async (className, decorator, options) => {
-        const block = nav.querySelector(`:scope > .${className}`);
-        block.style.visibility = 'hidden';
-        await decorator(block, options);
-        block.style.visibility = 'visible';
-        this.dispatchEvent(new Event(`${className}-decorated`));
+        try {
+          const block = nav.querySelector(`:scope > .${className}`);
+          block.style.visibility = 'hidden';
+          await decorator(block, options);
+          block.style.visibility = 'visible';
+          this.dispatchEvent(new Event(`${className}-decorated`));
+        } catch (err) {
+          // eslint-disable-next-line no-console
+          console.error(`Error decorating header block: ${className}`, err);
+        }
       };
 
       // Do this first to ensure all links are decorated correctly before they are used.

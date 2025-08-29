@@ -1,6 +1,7 @@
 import { buildBlock, decorateBlock, decorateSections, loadBlock, updateSectionsStatus } from '../lib-franklin.js';
 import getCookie from '../utils/cookie-utils.js';
 import getEmitter from '../events.js';
+import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
 const [PHP, PERSPECTIVES_HOME] = ['/home', '/perspectives'];
@@ -155,6 +156,15 @@ class AdobeTargetClient {
   sanitizeTargetData() {
     if (!window?.exlm?.targetData?.length) {
       return;
+    }
+
+    if (!isFeatureEnabled('videoClip')) {
+      const videoClipCardsIndex = window.exlm.targetData.findIndex(
+        (targetDataValue) => !!targetDataValue?.data?.find((target) => target.contentType === 'Video Clip'),
+      );
+      if (videoClipCardsIndex !== -1) {
+        window.exlm.targetData.splice(videoClipCardsIndex, 1);
+      }
     }
 
     window.exlm.targetData = window.exlm.targetData
