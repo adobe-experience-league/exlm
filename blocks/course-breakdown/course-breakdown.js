@@ -37,7 +37,7 @@ function InfoCard(title, description, placeholders) {
       </div>
       ${description.innerHTML}
       <div>
-        <img src="/images/course-certificate.png" alt="Course Certificate placeholder" />
+        <img src="${window.hlx.codeBasePath}/images/course-certificate.png" alt="Course Certificate placeholder" />
         <p>${
           placeholders.courseBreakdownInfoFooterText ||
           'Plus, earn a Certificate of Completion to share your accomplishment with your network.'
