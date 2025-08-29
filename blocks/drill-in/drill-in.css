@@ -227,6 +227,11 @@
     justify-content: space-between;
   }
 
+  .drill-in-coachmark {
+    width: 32px;
+    height: 32px;
+  }
+
   .drill-in-plus-button {
     width: 30px;
     height: 30px;
