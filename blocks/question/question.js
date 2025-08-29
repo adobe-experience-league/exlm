@@ -4,11 +4,13 @@ import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.
  * Generates the DOM for a question
  * This function is also called by quiz.js
  * @param {Element} block The question block element
+ * @param {number} displayIndex The display index for visual numbering
+ * @param {number} totalQuestions The total number of questions
  * @param {Object} placeholders Language placeholders
  * @returns {Element} The generated question DOM
  */
 
-export function generateQuestionDOM(block, placeholders = {}) {
+export function generateQuestionDOM(block, displayIndex, totalQuestions, questionIndex, placeholders = {}) {
   // Create question container
   const questionContainer = document.createElement('div');
   questionContainer.classList.add('question-block');
@@ -34,20 +36,19 @@ export function generateQuestionDOM(block, placeholders = {}) {
     answers = [...(answersList.querySelectorAll('li') || [])].map((li) => li?.textContent?.trim() || '');
   }
 
-  // Store the hashed correct answers as metadata
-  block.setAttribute('data-correctAnswers', correctAnswersDiv?.textContent?.trim() || '');
-
+  // Store the hashed correct answers as a property
+  block.correctAnswers = correctAnswersDiv?.textContent?.trim() || '';
   block.dataset.isMultipleChoice = isMultipleChoice.toString();
-  block.dataset.correctFeedback = correctFeedbackDiv?.textContent?.trim() || '';
-  block.dataset.incorrectFeedback = incorrectFeedbackDiv?.textContent?.trim() || '';
+  block.correctFeedbackText = correctFeedbackDiv?.textContent?.trim() || '';
+  block.incorrectFeedbackText = incorrectFeedbackDiv?.textContent?.trim() || '';
+  block.questionIndex = questionIndex;
 
-  // Create question number label (e.g., "Question 1 of 3") using htmlToElement
-  const questionIndex = parseInt(block.dataset?.questionIndex || '0', 10) + 1;
-  const totalQuestions = block.dataset?.totalQuestions || '1';
+  const displayIndexValue = displayIndex || (parseInt(questionIndex, 10) + 1).toString();
+  const totalQuestionsValue = totalQuestions || '1';
   const questionNumberElement = htmlToElement(`
-    <p class="question-number">${placeholders?.question || 'Question'} ${questionIndex} ${
+    <p class="question-number">${placeholders?.question || 'Question'} ${displayIndexValue} ${
       placeholders?.of || 'of'
-    } ${totalQuestions}</p>
+    } ${totalQuestionsValue}</p>
   `);
   questionContainer.appendChild(questionNumberElement);
 
@@ -67,9 +68,9 @@ export function generateQuestionDOM(block, placeholders = {}) {
     answerOption.classList.add('answer-option');
 
     // Create input and label elements
-    const inputId = `question-${block.dataset?.questionIndex || 0}-answer-${answerIndex}`;
+    const inputId = `question-${questionIndex}-answer-${answerIndex}`;
     const inputType = isMultipleChoice ? 'checkbox' : 'radio';
-    const inputName = `question-${block.dataset?.questionIndex || 0}`;
+    const inputName = `question-${questionIndex}`;
     const inputValue = answerIndex + 1; // 1-based index for answers
 
     const inputWithLabel = htmlToElement(`
@@ -110,7 +111,7 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
   // Generate the question DOM
-  const dom = generateQuestionDOM(block, placeholders);
+  const dom = generateQuestionDOM(block, null, null, 0, placeholders);
 
   // Clear the block and append the DOM
   block.textContent = '';
