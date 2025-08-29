@@ -69,7 +69,6 @@
 .drill-in-mobile-header .drill-in-nav-button {
   margin: 0;
   height: auto;
-  font-size: var(--spectrum-font-size-600);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -113,14 +112,10 @@
 }
 
 .drill-in-mobile-popover [slot='content'] {
-  font-size: var(--spectrum-font-size-400);
+  font-size: var(--spectrum-font-size-200);
   line-height: 1.5;
   margin-bottom: 20px;
   color: var(--spectrum-gray-900);
-}
-
-.drill-in-coachmark.has-mobile-popover [slot='content'] {
-  font-size: var(--spectrum-font-size-400);
 }
 
 .drill-in-plus-button {
@@ -200,8 +195,6 @@
 }
 
 .drill-in-mobile-header .drill-in-title {
-  font-size: var(--spectrum-font-size-600);
-  font-weight: var(--font-weight-bold);
   color: var(--spectrum-gray-900);
   margin: 0;
   flex-grow: 1;
@@ -215,7 +208,7 @@
 
 .drill-in-mobile-header .drill-in-close-btn {
   margin: 0 0 0 10px;
-  font-size: var(--spectrum-font-size-600);
+  font-size: var(--spectrum-font-size-200);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -233,7 +233,7 @@ export default async function decorate(block) {
     const navContainer = document.createElement('div');
     navContainer.className = 'drill-in-nav-container';
 
-    const titleEl = document.createElement('span');
+    const titleEl = document.createElement('h3');
     titleEl.className = 'drill-in-title';
     titleEl.textContent = calloutTitle;
 
