@@ -3,11 +3,6 @@
  */
 import { getMetadata } from './lib-franklin.js';
 
-// Get salt from metadata
-function getSalt() {
-  return getMetadata('content-integrity-token');
-}
-
 /**
  * Creates a canonical version of text (trimmed, lowercase)
  * @param {string} text The text to canonicalize
@@ -40,7 +35,7 @@ async function sha256Base64(input) {
  * @returns {Promise<string>} The hashed answer
  */
 export async function hashAnswer(pagePath, questionIndex, answerIndex, answerText) {
-  const salt = getSalt();
+  const salt = getMetadata('content-integrity-token');
   const input = [pagePath, questionIndex, answerIndex, canonicalizeText(answerText), salt].join('|');
 
   return sha256Base64(input);
