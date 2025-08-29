@@ -1287,7 +1287,7 @@
     ]
   },
   {
-    "id": "learning-collections-page-section",
+    "id": "courses-section",
     "fields": [
       {
         "component": "select",
@@ -7324,7 +7324,7 @@
     "fields": []
   },
   {
-    "id": "skill-track-meta",
+    "id": "module-meta",
     "fields": [
       {
         "component": "text",
@@ -7332,7 +7332,7 @@
         "name": "title",
         "value": "",
         "label": "Title",
-        "description": "Sets the title for the skill track."
+        "description": "Sets the title for the module."
       },
       {
         "component": "select",
@@ -7373,7 +7373,7 @@
         "name": "description",
         "value": "",
         "label": "Description",
-        "description": "Sets the description for the skill track."
+        "description": "Sets the description for the module."
       },
       {
         "component": "aem-content",
@@ -7383,7 +7383,7 @@
         "label": "Recap URL",
         "description": "URL to recap",
         "validation": {
-          "rootPath": "/content/exlm/global/en/learning-collections/"
+          "rootPath": "/content/exlm/global/en/courses/"
         }
       },
       {
@@ -7394,7 +7394,7 @@
         "label": "Quiz page URL",
         "description": "URL to the quiz page",
         "validation": {
-          "rootPath": "/content/exlm/global/en/learning-collections/"
+          "rootPath": "/content/exlm/global/en/courses/"
         }
       },
       {
@@ -7407,7 +7407,7 @@
     ]
   },
   {
-    "id": "skill-track",
+    "id": "module",
     "fields": []
   },
   {
@@ -7421,7 +7421,7 @@
         "label": "Step Page URL",
         "description": "URL to the step",
         "validation": {
-          "rootPath": "/content/exlm/global/en/learning-collections/"
+          "rootPath": "/content/exlm/global/en/courses/"
         }
       },
       {
@@ -7443,7 +7443,7 @@
         "name": "title",
         "value": "",
         "label": "Quiz Title",
-        "description": "Enter the skill track quiz title"
+        "description": "Enter the module quiz title"
       },
       {
         "component": "select",
@@ -7484,7 +7484,7 @@
         "name": "quizDescription",
         "value": "",
         "label": "Quiz Description",
-        "description": "Enter the skill track quiz description"
+        "description": "Enter the module quiz description"
       }
     ]
   },

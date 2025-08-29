@@ -5,7 +5,7 @@ loadCSS(`${window.hlx.codeBasePath}/styles/ue-styles.css`);
  * Displays SEO warnings for specific tags.
  */
 export default function renderSEOWarnings() {
-  const EXCLUDED_PATHS = ['/global-fragments/', '/tools/', '/microsites/'];
+  const EXCLUDED_PATHS = ['/global-fragments/', '/tools/', '/microsites/', '/perspectives/authors/'];
 
   if (EXCLUDED_PATHS.some((path) => window.location.pathname.includes(path))) return;
 

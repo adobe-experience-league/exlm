@@ -1,9 +1,9 @@
-.skill-track-nav-wrapper {
+.module-nav-wrapper {
   width: 100%;
   margin-top: var(--spectrum-spacing-400);
 }
 
-.skill-track-nav-buttons {
+.module-nav-buttons {
   display: flex;
   gap: var(--spectrum-spacing-200);
   flex-wrap: wrap;
@@ -11,8 +11,8 @@
   align-items: center;
 }
 
-.skill-track-nav-button.disabled,
-.skill-track-nav-button.disabled:hover {
+.module-nav-button.disabled,
+.module-nav-button.disabled:hover {
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
