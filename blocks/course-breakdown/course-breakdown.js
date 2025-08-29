@@ -9,7 +9,7 @@ const SKILL_TRACK_CARD_STATUS = {
   COMPLETED: 'completed',
 };
 
-function Header(title, moduleCount, placeholder) {
+function Header(title, moduleCount, moduleTime, placeholder) {
   const header = document.createElement('div');
   header.classList.add('course-breakdown-header');
   header.innerHTML = `
@@ -18,7 +18,7 @@ function Header(title, moduleCount, placeholder) {
           <span class="icon icon-course-outline"></span>
           <span class="cb-module-count">${moduleCount} ${placeholder.courseBreakdownModuleCountText || 'Modules'}</span>
           <span class="separator">•</span>
-          <span class="cb-module-time">${'1 Hour'}</span>
+          <span class="cb-module-time">${moduleTime.textContent}</span>
         </div>
     `;
   decorateIcons(header);
@@ -165,7 +165,7 @@ function SkillTrackCard({
 }
 
 export default async function decorate(block) {
-  const [title, infoTitle, infoDescription, ...skillTracks] = block.children;
+  const [title, moduleTime, infoTitle, infoDescription, ...skillTracks] = block.children;
 
   let placeholders = {};
   try {
@@ -176,7 +176,7 @@ export default async function decorate(block) {
   }
 
   block.textContent = '';
-  block.append(Header(title, skillTracks?.length, placeholders));
+  block.append(Header(title, skillTracks?.length, moduleTime, placeholders));
   block.append(InfoCard(infoTitle, infoDescription, placeholders));
 
   skillTracks.forEach((skillTrack, index) => {
