@@ -13,12 +13,14 @@ const communityProducts = [
   'Advertising',
   'Analytics',
   'Audience Manager',
+  'Campaign',
   'Campaign Classic v7 & Campaign v8',
   'Campaign Standard',
   'Developer',
   'Experience Manager',
-  'Campaign',
+  'Commerce',
   'Experience Platform',
+  'Experience Cloud',
   'Journey Optimizer',
   'Marketo Engage',
   'Workfront',
@@ -35,7 +37,13 @@ if (isCommunityDomain) {
   const breadcrumbItems = document.querySelectorAll('#breadcrumbs .spectrum-Breadcrumbs-item');
   if (breadcrumbItems.length >= 3) {
     // product name is the 3rd breadcrumb (index 2)
-    solution = breadcrumbItems[2].textContent.trim().replace('Adobe ', '');
+    solution = breadcrumbItems[2].textContent.trim();
+
+    if (solution.includes('Adobe Experience Manager')) {
+      solution = 'Experience Manager';
+    } else {
+      solution = solution.replace('Adobe ', '');
+    }
 
     if (!communityProducts.some((p) => p.toLowerCase() === solution.toLowerCase())) {
       solution = '';
