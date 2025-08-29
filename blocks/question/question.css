@@ -67,5 +67,5 @@
 }
 
 .question .answer-input:checked {
-  accent-color: var(--non-spectrum-adobe-red);
+  accent-color: var(--link-hover-color);
 }
