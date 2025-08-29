@@ -7573,6 +7573,14 @@
       {
         "component": "text",
         "valueType": "string",
+        "name": "moduleTimeText",
+        "value": "",
+        "label": "Module Time",
+        "description": "Time Taken to Complete the module"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
         "name": "courseInfoTitle",
         "value": "",
         "label": "Course info Title",

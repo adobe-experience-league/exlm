@@ -4,6 +4,27 @@
   gap: 30px;
 }
 
+/* Header */
+.course-breakdown .course-breakdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  .cb-header-info {
+    font-size: 18px;
+    color: var(--spectrum-gray-700);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .icon {
+      width: 16px;
+    }
+  }
+}
+
+/* Info Card */
 .course-breakdown .course-breakdown-info-card {
   background-color: #fff;
   border-radius: 16px;
@@ -55,8 +76,183 @@
   }
 }
 
+/* Skill Track Card */
+.course-breakdown .course-breakdown-skill-track-card {
+  background-color: #fff;
+  border-radius: 16px;
+  border: 1px solid var(--spectrum-gray-200);
+  padding: 24px;
+
+  &.completed {
+    border: 3px solid var(--spectrum-green-600);
+  }
+
+  .cb-skill-track-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--spectrum-gray-200);
+
+    .cb-module-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background-color: #000;
+      color: #fff;
+      border-radius: 50%;
+      font-weight: 600;
+      font-size: 14px;
+      flex-shrink: 0;
+
+      .icon {
+        width: 16px;
+        height: 16px;
+      }
+
+      &.completed {
+        background-color: var(--spectrum-green-600);
+      }
+    }
+
+    .cb-module-title {
+      flex-grow: 1;
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--spectrum-gray-900);
+      line-height: 1.4;
+    }
+
+    .cb-start-btn {
+      margin: 0;
+      padding: 0 16px;
+
+      a {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 400;
+      }
+
+      &.disabled {
+        cursor: not-allowed;
+        background: transparent;
+        border: 2px solid var(--spectrum-gray-400);
+
+        a {
+          color: var(--spectrum-gray-400);
+          pointer-events: none;
+        }
+      }
+
+      &.completed {
+        background: transparent;
+        border: 2px solid var(--spectrum-gray-900);
+
+        a {
+          color: var(--spectrum-gray-900);
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  .cb-steps-info {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+
+    .cb-steps-info-text {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .cb-chevron {
+      display: grid;
+      place-items: center;
+      transition: transform 0.2s ease;
+    }
+
+    .cb-steps-status-text {
+      margin-left: auto;
+      font-weight: 600;
+      color: var(--spectrum-gray-700);
+
+      &::before {
+        content: '';
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background-color: var(--spectrum-gray-400);
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      &.in-progress {
+        &::before {
+          background-color: var(--spectrum-blue-800);
+        }
+      }
+
+      &.completed {
+        &::before {
+          background-color: var(--spectrum-green-600);
+        }
+      }
+    }
+
+    &.open {
+      .cb-chevron {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .cb-steps-list {
+    margin-top: 12px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      max-height 0.1s ease-in,
+      opacity 0.3s ease-in;
+
+    &.open {
+      display: block;
+      overflow: auto;
+      max-height: 1000px;
+      opacity: 1;
+    }
+  }
+
+  .cb-step-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 0;
+
+    .cb-step-number {
+      color: var(--spectrum-gray-900);
+      border-radius: 50%;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .cb-step-title {
+      flex-grow: 1;
+      font-size: 16px;
+      line-height: 1.4;
+    }
+  }
+}
+
 /* Shimmer Loading State */
-.course-breakdown-skill-track-card-shimmer {
+.course-breakdown .course-breakdown-skill-track-card-shimmer {
   background-color: #fff;
   border-radius: 16px;
   border: 1px solid var(--spectrum-gray-200);
@@ -132,195 +328,5 @@
 
   100% {
     background-position: 200% 0;
-  }
-}
-
-/* Actual Skill Track Card */
-.course-breakdown-skill-track-card {
-  background-color: #fff;
-  border-radius: 16px;
-  border: 1px solid var(--spectrum-gray-200);
-  padding: 24px;
-
-  .cb-skill-track-header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--spectrum-gray-200);
-
-    .cb-module-number {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-      background-color: #000;
-      color: #fff;
-      border-radius: 50%;
-      font-weight: 600;
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-
-    .cb-module-title {
-      flex-grow: 1;
-      margin: 0;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--spectrum-gray-900);
-      line-height: 1.4;
-    }
-
-    .cb-start-btn {
-      padding: 8px 16px;
-      background-color: transparent;
-      border: 1px solid var(--spectrum-gray-300);
-      border-radius: 6px;
-      color: var(--spectrum-gray-600);
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-
-      &:hover {
-        background-color: var(--spectrum-gray-50);
-        border-color: var(--spectrum-gray-400);
-      }
-    }
-  }
-
-  .cb-skill-track-progress-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding-bottom: 15px;
-
-    .cb-steps-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-
-      .cb-steps-count {
-        font-size: 14px;
-        color: var(--spectrum-gray-700);
-        font-weight: 500;
-      }
-
-      .cb-chevron {
-        font-size: 12px;
-        color: var(--spectrum-gray-500);
-        cursor: pointer;
-        transition: transform 0.2s ease;
-
-        &:hover {
-          transform: translateY(1px);
-        }
-
-        &.open {
-          transform: rotate(180deg);
-        }
-      }
-    }
-
-    .cb-progress-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-grow: 1;
-      justify-content: center;
-
-      .cb-progress-dot {
-        width: 20px;
-        height: 20px;
-        border: 2px solid var(--spectrum-gray-300);
-        border-radius: 50%;
-        background-color: transparent;
-        transition: all 0.2s ease;
-        cursor: pointer;
-
-        &:hover {
-          border-color: var(--spectrum-gray-400);
-          transform: scale(1.1);
-        }
-
-        &.completed {
-          background-color: var(--spectrum-gray-600);
-          border-color: var(--spectrum-gray-600);
-        }
-      }
-    }
-
-    .cb-progress-text {
-      font-size: 14px;
-      color: var(--spectrum-gray-700);
-      font-weight: 600;
-      flex-shrink: 0;
-    }
-  }
-
-  .cb-steps-list {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-    margin-top: 0;
-    border-top: 1px solid var(--spectrum-gray-200);
-
-    &.open {
-      max-height: 500px;
-      margin-top: 16px;
-      padding-top: 16px;
-    }
-
-    .cb-step-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--spectrum-gray-100);
-
-      &:last-child {
-        border-bottom: none;
-      }
-
-      .cb-step-number {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 24px;
-        height: 24px;
-        background-color: var(--spectrum-gray-100);
-        color: var(--spectrum-gray-600);
-        border-radius: 50%;
-        font-size: 12px;
-        font-weight: 600;
-        flex-shrink: 0;
-      }
-
-      .cb-step-title {
-        flex-grow: 1;
-        font-size: 14px;
-        color: var(--spectrum-gray-700);
-        font-weight: 500;
-        line-height: 1.4;
-      }
-
-      .cb-step-status {
-        width: 40px;
-        height: 2px;
-        background-color: var(--spectrum-gray-200);
-        border-radius: 1px;
-        flex-shrink: 0;
-        transition: background-color 0.2s ease;
-
-        &.completed {
-          background-color: var(--spectrum-gray-600);
-        }
-      }
-    }
   }
 }

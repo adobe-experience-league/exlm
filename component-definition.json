@@ -667,6 +667,7 @@
                   "filter": "course-breakdown",
                   "title": "In this Course",
                   "titleType": "h1",
+                  "moduleTimeText": "1 Hour",
                   "courseInfoTitle": "Skills you'll gain from this Course",
                   "courseInfoTitleType": "h2",
                   "courseInfoDescription": "Course Info Description",

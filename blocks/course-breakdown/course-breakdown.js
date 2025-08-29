@@ -1,13 +1,27 @@
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { getSkillTrackMeta } from '../../scripts/utils/course-utils.js';
 
-function Header(title) {
-  // TODO: Add number of modules and steps
+const SKILL_TRACK_CARD_STATUS = {
+  DISABLED: 'disabled',
+  NOT_STARTED: 'not-started',
+  IN_PROGRESS: 'in-progress',
+  COMPLETED: 'completed',
+};
+
+function Header(title, moduleCount, placeholder) {
   const header = document.createElement('div');
   header.classList.add('course-breakdown-header');
   header.innerHTML = `
         ${title.innerHTML}
+        <div class="cb-header-info">
+          <span class="icon icon-course-outline"></span>
+          <span class="cb-module-count">${moduleCount} ${placeholder.courseBreakdownModuleCountText || 'Modules'}</span>
+          <span class="separator">•</span>
+          <span class="cb-module-time">${'1 Hour'}</span>
+        </div>
     `;
+  decorateIcons(header);
   return header;
 }
 
@@ -60,68 +74,88 @@ function SkillTrackCardShimmer() {
   return card;
 }
 
-function SkillTrackCard(SkillTrackPromise, open = false) {
+/**
+ * @param {Promise<SkillTrackMeta>} SkillTrackPromise - The promise that resolves to the skill track meta
+ * @param {number} index - The index of the skill track card
+ * @param {boolean} open - Whether the skill track card is open
+ * @param {SKILL_TRACK_CARD_STATUS} status - The status of the skill track card
+ * @param {Object} placeholders - The placeholders object from placeholders.json
+ * @returns {HTMLElement}
+ */
+function SkillTrackCard({
+  SkillTrackPromise,
+  index,
+  open = false,
+  status = SKILL_TRACK_CARD_STATUS.NOT_STARTED,
+  placeholders,
+}) {
   const CardShimmer = SkillTrackCardShimmer();
+
+  const startButtonTextMap = {
+    [SKILL_TRACK_CARD_STATUS.DISABLED]: placeholders.courseBreakdownModuleButtonDisabled || 'Start Module',
+    [SKILL_TRACK_CARD_STATUS.NOT_STARTED]: placeholders.courseBreakdownModuleButtonNotStarted || 'Start Module',
+    [SKILL_TRACK_CARD_STATUS.IN_PROGRESS]: placeholders.courseBreakdownModuleButtonInProgress || 'Resume Module',
+    [SKILL_TRACK_CARD_STATUS.COMPLETED]: placeholders.courseBreakdownModuleButtonCompleted || 'Review Module',
+  };
+  const startButtonText = startButtonTextMap[status] || 'Start Module';
+
+  const skillTrackCardStatusMap = {
+    [SKILL_TRACK_CARD_STATUS.DISABLED]: placeholders.courseBreakdownStatusDisabled || 'Not Started',
+    [SKILL_TRACK_CARD_STATUS.NOT_STARTED]: placeholders.courseBreakdownStatusNotStarted || 'Not Started',
+    [SKILL_TRACK_CARD_STATUS.IN_PROGRESS]: placeholders.courseBreakdownStatusInProgress || 'In progress',
+    [SKILL_TRACK_CARD_STATUS.COMPLETED]: placeholders.courseBreakdownStatusCompleted || 'Completed',
+  };
+  const skillTrackCardStatusText = skillTrackCardStatusMap[status] || 'Not started';
+
   SkillTrackPromise.then((skillTrackMeta) => {
     const card = document.createElement('div');
     card.className = 'course-breakdown-skill-track-card';
 
-    // Calculate completed steps (for now, assume 0 completed)
-    const completedSteps = 0;
-    const totalSteps = skillTrackMeta.totalSteps || skillTrackMeta.skillTrackSteps?.length || 0;
-
-    // Create progress dots
-    const progressDots =
-      skillTrackMeta.skillTrackSteps
-        ?.map((step, index) => {
-          const isCompleted = index < completedSteps;
-          return `<span class="cb-progress-dot ${isCompleted ? 'completed' : ''}" title="${step.name}"></span>`;
-        })
-        .join('') || '';
-
     // Create steps list
     const stepsList =
       skillTrackMeta.skillTrackSteps
-        ?.map((step, index) => {
-          const isCompleted = index < completedSteps;
-          return `
+        ?.map(
+          (step, stepIndex) =>
+            `
         <div class="cb-step-item">
-          <span class="cb-step-number">${index + 1}</span>
+          <span class="cb-step-number">${stepIndex + 1}.</span>
           <span class="cb-step-title">${step.name}</span>
-          <span class="cb-step-status ${isCompleted ? 'completed' : ''}"></span>
         </div>
-      `;
-        })
+      `,
+        )
         .join('') || '';
 
     card.innerHTML = `
       <div class="cb-skill-track-header">
-        <span class="cb-module-number">1</span>
+        <span class="cb-module-number ${status}">
+        ${status === SKILL_TRACK_CARD_STATUS.COMPLETED ? '<span class="icon icon-checkmark-light"></span>' : index + 1}
+          </span>
         <h3 class="cb-module-title">${skillTrackMeta.skillTrackHeader || 'Module Title'}</h3>
-        <button class="cb-start-btn">Start Module</button>
+        <button class="button cb-start-btn ${status}" >
+          <a href="${skillTrackMeta.skillTrackSteps[0].url || '#'}">${startButtonText}</a>
+        </button>
       </div>
-      <div class="cb-skill-track-progress-row">
-        <div class="cb-steps-info">
-          <span class="cb-steps-count">${totalSteps} Steps in this Module</span>
-          <span class="cb-chevron ${open ? 'open' : ''}">▼</span>
+        <div class="cb-steps-info ${open ? 'open' : ''}">
+          <span class="cb-steps-info-text">${placeholders.CourseBreakdownModuleDetails || 'Module Details'}</span>
+          <span class="cb-chevron"> <span class="icon icon-chevron"></span></span>
+          <span class="cb-steps-status-text ${status}">${skillTrackCardStatusText}</span>
         </div>
-        <div class="cb-progress-bar">
-          ${progressDots}
-        </div>
-        <span class="cb-progress-text">${completedSteps} of ${totalSteps} Complete</span>
       </div>
       <div class="cb-steps-list ${open ? 'open' : ''}">
         ${stepsList}
       </div>
     `;
 
-    // Add click handler for chevron
-    const chevron = card.querySelector('.cb-chevron');
+    card.classList.add(status);
+    decorateIcons(card);
+
+    // Add click handler for steps info
+    const stepInfo = card.querySelector('.cb-steps-info');
     const stepsListEl = card.querySelector('.cb-steps-list');
 
-    chevron.addEventListener('click', () => {
+    stepInfo.addEventListener('click', () => {
       stepsListEl.classList.toggle('open');
-      chevron.classList.toggle('open');
+      stepInfo.classList.toggle('open');
     });
 
     // Replace shimmer with actual card
@@ -141,15 +175,23 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
-  
   block.textContent = '';
-  block.append(Header(title, placeholders));
+  block.append(Header(title, skillTracks?.length, placeholders));
   block.append(InfoCard(infoTitle, infoDescription, placeholders));
 
   skillTracks.forEach((skillTrack, index) => {
     const skillTrackFragment = skillTrack.querySelector('a')?.getAttribute('href');
     const SkillTrackPromise = getSkillTrackMeta(skillTrackFragment);
-    const SkillTrackCardElement = SkillTrackCard(SkillTrackPromise, index === 0);
+
+    const skillTrackProp = {
+      SkillTrackPromise,
+      index,
+      open: index === 0,
+      status: index === 0 ? SKILL_TRACK_CARD_STATUS.NOT_STARTED : SKILL_TRACK_CARD_STATUS.DISABLED,
+      placeholders,
+    };
+
+    const SkillTrackCardElement = SkillTrackCard(skillTrackProp);
     skillTrack.innerHTML = '';
     skillTrack.append(SkillTrackCardElement);
     block.append(skillTrack);
