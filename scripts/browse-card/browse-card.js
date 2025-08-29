@@ -410,7 +410,7 @@ export async function buildCard(container, element, model) {
   }
 
   const clickableLink = !(isVideoClip && !model.parentURL);
-  const showVideoIconOnly = !!(isVideoClip && !thumbnail);
+  const showVideoIconOnly = isVideoClip;
 
   if (isVideoClip) {
     const link = model.parentURL || model.videoURL;
