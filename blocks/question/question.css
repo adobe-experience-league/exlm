@@ -40,8 +40,6 @@
   font-weight: var(--font-weight-normal);
   font-size: var(--spectrum-font-size-200);
   line-height: var(--spectrum-line-height-s);
-  display: flex;
-  align-items: center;
   margin-bottom: var(--spectrum-spacing-400);
   position: relative;
   text-align: left;
@@ -59,10 +57,8 @@
 
 .question .answer-input {
   margin: 0;
-  max-width: 15px;
+  width: 15px;
   height: 15px;
-  margin-right: 0.75rem;
-  display: inline-block;
   vertical-align: middle;
 }
 
@@ -70,17 +66,27 @@
   accent-color: var(--link-hover-color);
 }
 
-.question .answer-option > div {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  flex-direction: row;
-}
-
 .question .answer-label {
   display: inline-block;
-  width: auto;
-  white-space: normal;
   text-align: left;
-  flex: 1;
+}
+
+.question .answer-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: none;
+}
+
+.question .answer-table td {
+  border: none;
+  padding: 0;
+}
+
+.question .input-cell {
+  width: 30px;
+  vertical-align: top;
+}
+
+.question .label-cell {
+  vertical-align: top;
 }
