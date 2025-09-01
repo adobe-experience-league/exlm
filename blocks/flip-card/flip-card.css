@@ -7,6 +7,19 @@
   font-size: var(--spectrum-font-size-100);
 }
 
+.flip-card p,
+.flip-card ol li,
+.flip-card ul li {
+  font-size: var(--spectrum-font-size-100);
+  color: unset;
+  margin: 0;
+}
+
+.flip-card ol,
+.flip-card ul {
+  margin: 0;
+}
+
 .flip-card > div {
   position: relative;
   width: 280px;
