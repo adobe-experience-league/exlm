@@ -61,7 +61,9 @@ function createOptions(container, readTimeText) {
 
   const readTime = document.createElement('div');
   readTime.classList.add('article-marquee-read-time');
-  readTime.innerHTML = `<span class="icon icon-time"></span> <span>${placeholders?.readingTime || 'Reading Time: '}${readTimeText}</span>`;
+  readTime.innerHTML = `<span class="icon icon-time"></span> <span>${
+    placeholders?.readingTime || 'Reading Time: '
+  }${readTimeText}</span>`;
   decorateIcons(readTime);
 
   const options = document.createElement('div');
