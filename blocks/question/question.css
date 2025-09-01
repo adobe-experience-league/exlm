@@ -74,11 +74,13 @@
   display: flex;
   align-items: center;
   width: 100%;
+  flex-direction: row;
 }
 
 .question .answer-label {
   display: inline-block;
-  max-width: calc(100% - 30px);
-  overflow-wrap: break-word;
-  word-break: break-word;
+  width: auto;
+  white-space: normal;
+  text-align: left;
+  flex: 1;
 }
