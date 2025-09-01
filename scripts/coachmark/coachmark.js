@@ -52,15 +52,15 @@ class EXLCoachmark extends HTMLElement {
     this.coachmark.style.display = 'none';
 
     // Set base z-index
-    this.style.zIndex = baseZIndex;
+    this.coachmark.style.zIndex = baseZIndex;
 
     // Add hover event listeners to increase z-index on hover
     this.addEventListener('mouseenter', () => {
-      this.style.zIndex = baseZIndex + 1;
+      this.coachmark.style.zIndex = baseZIndex + 1;
     });
 
     this.addEventListener('mouseleave', () => {
-      this.style.zIndex = baseZIndex;
+      this.coachmark.style.zIndex = baseZIndex;
     });
   }
 
