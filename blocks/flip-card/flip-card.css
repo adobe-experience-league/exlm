@@ -7,17 +7,10 @@
   font-size: var(--spectrum-font-size-100);
 }
 
-.flip-card p,
-.flip-card ol li,
-.flip-card ul li {
+.flip-card * {
+  margin: 0;
   font-size: var(--spectrum-font-size-100);
   color: unset;
-  margin: 0;
-}
-
-.flip-card ol,
-.flip-card ul {
-  margin: 0;
 }
 
 .flip-card > div {
