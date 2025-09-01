@@ -45,6 +45,7 @@
   margin-bottom: var(--spectrum-spacing-400);
   position: relative;
   text-align: left;
+  width: 100%;
 }
 
 .question .question-text::after {
@@ -64,8 +65,16 @@
   margin-right: 0.75rem;
   display: inline-block;
   vertical-align: middle;
+  flex-shrink: 0;
 }
 
 .question .answer-input:checked {
   accent-color: var(--link-hover-color);
+}
+
+.question .answer-label {
+  display: inline-block;
+  width: 100%;
+  overflow: visible;
+  word-wrap: break-word;
 }
