@@ -43,6 +43,9 @@
   margin-bottom: var(--spectrum-spacing-400);
   position: relative;
   text-align: left;
+  display: block;
+  clear: both;
+  min-height: 24px;
 }
 
 .question .question-text::after {
@@ -56,10 +59,11 @@
 }
 
 .question .answer-input {
-  margin: 0;
+  float: left;
+  margin: 3px 0 0 0;
   width: 15px;
   height: 15px;
-  vertical-align: middle;
+  clear: left;
 }
 
 .question .answer-input:checked {
@@ -67,26 +71,7 @@
 }
 
 .question .answer-label {
-  display: inline-block;
-  text-align: left;
-}
-
-.question .answer-table {
-  width: 100%;
-  border-collapse: collapse;
-  border: none;
-}
-
-.question .answer-table td {
-  border: none;
-  padding: 0;
-}
-
-.question .input-cell {
-  width: 30px;
-  vertical-align: top;
-}
-
-.question .label-cell {
-  vertical-align: top;
+  display: block;
+  margin-left: 25px;
+  padding-top: 1px;
 }

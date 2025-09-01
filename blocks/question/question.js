@@ -74,16 +74,10 @@ export function generateQuestionDOM(block, displayIndex, totalQuestions, questio
     const inputValue = answerIndex + 1; // 1-based index for answers
 
     const inputWithLabel = htmlToElement(`
-      <table class="answer-table">
-        <tr>
-          <td class="input-cell">
-            <input type="${inputType}" name="${inputName}" id="${inputId}" value="${inputValue}" class="answer-input">
-          </td>
-          <td class="label-cell">
-            <label for="${inputId}" class="answer-label">${answer}</label>
-          </td>
-        </tr>
-      </table>
+      <div class="answer-wrapper">
+        <input type="${inputType}" name="${inputName}" id="${inputId}" value="${inputValue}" class="answer-input">
+        <label for="${inputId}" class="answer-label">${answer}</label>
+      </div>
     `);
 
     // Move the elements to the answerOption div
