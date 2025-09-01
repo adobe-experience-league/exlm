@@ -293,17 +293,6 @@
   max-height: fit-content;
 }
 
-.spectrum-coachmark-white .spectrum-Popover.popover-mobile {
-  inset: 0 !important;
-  transform: none;
-  min-height: 100vh;
-  min-width: 100vw;
-  position: fixed;
-  border-radius: 0;
-  max-height: 1000vh;
-  overflow-y: auto;
-}
-
 .spectrum-coachmark-white .spectrum-Popover.spectrum-Popover--left-top {
   right: calc(100% + 30px);
 }
@@ -330,10 +319,6 @@
   top: 50%;
   background-color: var(--spectrum-gray-50);
   transform: translateY(-50%) rotate(45deg);
-}
-
-.spectrum-coachmark-white .spectrum-Popover.popover-mobile .popover-notch {
-  display: none;
 }
 
 .spectrum-coachmark-white .spectrum-Popover.spectrum-Popover--left-top .popover-notch {

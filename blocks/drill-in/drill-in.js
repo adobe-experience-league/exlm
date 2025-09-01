@@ -39,7 +39,6 @@ export default async function decorate(block) {
 
   const closePopover = (cm) => {
     cm.classList.remove('active');
-    cm.classList.remove('has-mobile-popover');
 
     const popover = cm.shadowRoot?.querySelector('.spectrum-Popover');
     if (popover) {
@@ -51,11 +50,6 @@ export default async function decorate(block) {
     const popoverContainer = document.querySelector('.drill-in-mobile-popover-container');
     if (popoverContainer) {
       popoverContainer.innerHTML = '';
-    }
-
-    const anyMobilePopover = document.querySelectorAll('.drill-in-coachmark.has-mobile-popover').length > 0;
-    if (!anyMobilePopover) {
-      document.body.classList.remove('overflow-hidden');
     }
   };
 
@@ -120,7 +114,6 @@ export default async function decorate(block) {
     }
 
     popover.classList.add('is-open');
-    popover.classList.remove('popover-mobile');
 
     if (isMobile()) {
       // For mobile, create a new popover in the document flow
@@ -150,7 +143,6 @@ export default async function decorate(block) {
 
       // Hide the original popover
       popover.style.display = 'none';
-      cm.classList.add('has-mobile-popover');
 
       // Set up event listeners for the cloned buttons
       const prevBtn = navButtons.querySelector('.prev');
@@ -178,7 +170,6 @@ export default async function decorate(block) {
     } else {
       // For desktop, use the original popover
       popover.style.display = 'inline-flex';
-      cm.classList.remove('has-mobile-popover');
     }
   };
 
@@ -191,7 +182,6 @@ export default async function decorate(block) {
         updatePopoverState(cm, popover);
       } else {
         cm.style.zIndex = baseZIndex;
-        cm.classList.remove('has-mobile-popover');
       }
     });
   };
