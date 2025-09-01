@@ -59,7 +59,7 @@
 
 .question .answer-input {
   margin: 0;
-  max-width: 15px;
+  width: 15px;
   height: 15px;
   margin-right: 0.75rem;
   display: inline-block;
