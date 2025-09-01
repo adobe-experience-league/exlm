@@ -1,11 +1,59 @@
 import { getMetadata } from '../lib-franklin.js';
-import { htmlToElement, loadIms, getLanguageCode, getPathDetails } from '../scripts.js';
+import { htmlToElement, loadIms, getLanguageCode, getPathDetails, getConfig } from '../scripts.js';
 import SearchDelegate from './search-delegate.js';
+
+const { communityHost } = getConfig();
+const isCommunityDomain = window.location.origin.includes(communityHost);
 
 // Get language code from URL
 const languageCode = await getLanguageCode();
-// Get solution from metadata
-const solution = getMetadata('solution')?.split(',')[0].trim();
+
+// Community Products List
+const communityProducts = [
+  'Advertising',
+  'Analytics',
+  'Audience Manager',
+  'Campaign',
+  'Campaign Classic v7 & Campaign v8',
+  'Campaign Standard',
+  'Developer',
+  'Experience Manager',
+  'Commerce',
+  'Experience Platform',
+  'Experience Cloud',
+  'Journey Optimizer',
+  'Marketo Engage',
+  'Workfront',
+  'Target',
+  'Real-Time Customer Data Platform',
+];
+
+let solution = '';
+// see: https://jira.corp.adobe.com/browse/EXLM-3813.
+// this is a temporary fix and steakholders accept the technical debt and  dependecy on community HTML as-is.
+// This will break infuture and that's also acceptable
+if (isCommunityDomain) {
+  // Get solution from breadcrumb
+  const breadcrumbItems = document.querySelectorAll('#breadcrumbs .spectrum-Breadcrumbs-item');
+  if (breadcrumbItems.length >= 3) {
+    // product name is the 3rd breadcrumb (index 2)
+    solution = breadcrumbItems[2].textContent.trim();
+
+    if (solution.includes('Adobe Experience Manager')) {
+      solution = 'Experience Manager';
+    } else {
+      solution = solution.replace('Adobe ', '');
+    }
+
+    if (!communityProducts.some((p) => p.toLowerCase() === solution.toLowerCase())) {
+      solution = '';
+    }
+  }
+} else {
+  // Get solution from metadata
+  solution = getMetadata('solution')?.split(',')[0].trim();
+}
+
 // Get content type from metadata
 let contentType = getMetadata('type')?.trim();
 
