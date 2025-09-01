@@ -11,6 +11,8 @@
   margin: 0;
   font-size: var(--spectrum-font-size-100);
   color: unset;
+  line-height: 1.6;
+  font-weight: unset;
 }
 
 .flip-card > div {
