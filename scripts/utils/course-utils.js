@@ -204,19 +204,19 @@ export async function getCurrentStepInfo() {
   } catch (e) {
     // ignore storage errors
   }
-  return { ...meta, ...getStepMeta(meta?.skillTrackSteps, meta?.skillTrackRecap, meta?.skillTrackQuiz) };
+  return { ...meta, ...getStepMeta(meta?.moduleSteps, meta?.moduleRecap, meta?.moduleQuiz) };
 }
 
-export async function getSkillTrackMeta(skillTrackFragmentUrl) {
-  if (!skillTrackFragmentUrl) return null;
-  const storageKey = `skill-track-meta:${skillTrackFragmentUrl}`;
+export async function getmoduleMeta(moduleFragmentUrl) {
+  if (!moduleFragmentUrl) return null;
+  const storageKey = `module-meta:${moduleFragmentUrl}`;
   let meta = null;
 
   try {
     const cached = sessionStorage.getItem(storageKey);
     if (cached) {
       const parsed = JSON.parse(cached);
-      if (parsed && Array.isArray(parsed?.skillTrackSteps)) {
+      if (parsed && Array.isArray(parsed?.moduleSteps)) {
         return parsed;
       }
     }
@@ -224,7 +224,7 @@ export async function getSkillTrackMeta(skillTrackFragmentUrl) {
     // ignore parse errors
   }
 
-  const fragment = await fetchModuleFragment(skillTrackFragmentUrl);
+  const fragment = await fetchModuleFragment(moduleFragmentUrl);
   if (!fragment) return null;
   meta = await extractModuleMeta(fragment, false);
   try {
