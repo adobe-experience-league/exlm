@@ -4,6 +4,15 @@ body.courses .section,
   background-color: var(--background-color);
 }
 
+body.courses .section,
+.courses-page-section {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  max-width: 728px;
+  margin: 0 auto;
+}
+
 .courses p,
 h1,
 h2,
