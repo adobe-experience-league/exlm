@@ -31,7 +31,7 @@ export default async function decorate(block) {
   block.parentNode.insertBefore(mobilePopoverContainer, block.nextSibling);
 
   // Get all the child elements except the first child which is img
-  const baseZIndex = 10;
+  const baseZIndex = 1;
   const calloutDivs = Array.from(block.querySelectorAll(':scope > div')).slice(1);
   if (calloutDivs.length === 0) return;
 
@@ -286,7 +286,7 @@ export default async function decorate(block) {
       });
     }
     // Hide the original callout div as we're showing it in coachmarks now
-    calloutDiv.style.display = 'none';
+    calloutDiv.remove();
   });
 
   // Set up navigation between coachmarks
