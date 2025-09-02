@@ -30,9 +30,6 @@ const HTML = ({ type }) => `
 </div>
 `;
 
-// Base z-index for all coachmarks
-const baseZIndex = 1;
-
 class EXLCoachmark extends HTMLElement {
   constructor() {
     super();
@@ -50,18 +47,6 @@ class EXLCoachmark extends HTMLElement {
     this.indicator = this.shadow.querySelector('.spectrum-CoachIndicator');
     this.coachmark = this.shadow.querySelector('.spectrum-CoachMark');
     this.coachmark.style.display = 'none';
-
-    // Set base z-index
-    this.coachmark.style.zIndex = baseZIndex;
-
-    // Add hover event listeners to increase z-index on hover
-    this.addEventListener('mouseenter', () => {
-      this.coachmark.style.zIndex = baseZIndex + 1;
-    });
-
-    this.addEventListener('mouseleave', () => {
-      this.coachmark.style.zIndex = baseZIndex;
-    });
   }
 
   show() {
