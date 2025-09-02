@@ -7,6 +7,18 @@
   font-size: var(--spectrum-font-size-100);
 }
 
+.flip-card * {
+  margin: 0;
+  font-size: var(--spectrum-font-size-100);
+  color: unset;
+  line-height: 1.6;
+  font-weight: unset;
+}
+
+.flip-card :where(h1, h2, h3, h4, h5, h6) {
+  font-weight: var(--font-weight-bold);
+}
+
 .flip-card > div {
   position: relative;
   width: 280px;
