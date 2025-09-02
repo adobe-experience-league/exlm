@@ -1,7 +1,7 @@
 body.courses,
 body.courses .section,
 .courses-section {
-  background-color: var(--spectrum-gray-100);
+  background-color: var(--background-color);
 }
 
 .courses p,
@@ -15,15 +15,6 @@ h6 {
   line-height: normal;
 }
 
-body.courses .section,
-.courses-section {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-  max-width: 728px;
-  margin: 0 auto;
-}
-
-body.courses .skill-track-info-section {
+body.courses .module-info-section {
   border-bottom: 1px solid var(--spectrum-gray-200);
 }

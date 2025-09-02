@@ -44,15 +44,15 @@ async function checkSelectedAnswers(
 async function checkQuestionAnswer(questionElement) {
   if (!questionElement) return false;
 
-  // Get the hashed correct answers from metadata attribute
-  const hashedCorrectAnswers = questionElement.getAttribute('data-correctAnswers').split(',');
+  // Get the hashed correct answers from property
+  const hashedCorrectAnswers = questionElement.correctAnswers.split(',');
   const isMultipleChoice = questionElement.dataset.isMultipleChoice === 'true';
 
   const answerElements = questionElement.querySelectorAll('.answer-label');
   const answerTexts = Array.from(answerElements).map((el) => el.textContent.trim());
 
   const pagePath = window.location.pathname;
-  const questionIndex = questionElement.dataset?.questionIndex || '0';
+  const questionIndex = questionElement.questionIndex.toString();
 
   let selectedAnswerIndices = [];
 
@@ -89,9 +89,9 @@ function showQuestionFeedback(questionElement, isCorrect, placeholders = {}) {
     return;
   }
 
-  // Get custom feedback messages from data attributes
-  const correctFeedback = questionElement.dataset.correctFeedback || placeholders?.correct || 'Correct!';
-  const incorrectFeedback = questionElement.dataset.incorrectFeedback || placeholders?.incorrect || 'Incorrect';
+  // Get custom feedback messages from properties
+  const correctFeedback = questionElement.correctFeedbackText || placeholders?.correct || 'Correct!';
+  const incorrectFeedback = questionElement.incorrectFeedbackText || placeholders?.incorrect || 'Incorrect';
 
   // Create feedback element using htmlToElement
   const feedbackElement = htmlToElement(`
@@ -130,6 +130,27 @@ let quizHandlerFunction = null;
 // Export a constant function that returns the current handler
 export const submitQuizHandler = () => quizHandlerFunction;
 
+/**
+ * Shuffles the given array
+ * @param {Array} array The array to shuffle
+ * @returns {Array} The shuffled array
+ */
+function shuffleArray(array) {
+  // Map array items with their original indices
+  const indexedArray = array.map((item, index) => ({
+    item,
+    originalIndex: index,
+  }));
+
+  // Fisher-Yates shuffle algorithm
+  for (let i = indexedArray.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indexedArray[i], indexedArray[j]] = [indexedArray[j], indexedArray[i]];
+  }
+
+  return indexedArray;
+}
+
 export default async function decorate(block) {
   let placeholders = {};
   try {
@@ -142,18 +163,32 @@ export default async function decorate(block) {
   questionsContainer.classList.add('questions-container');
 
   // Get title, text, and questions from block children using destructuring
-  const [titleElement, textElement, ...questions] = [...block.children];
+  const [titleElement, textElement, ...questionsOriginal] = [...block.children];
+
+  const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+
+  // Only shuffle questions if not in authoring mode
+  const orderedQuestions = UEAuthorMode
+    ? questionsOriginal.map((item, index) => ({ item, originalIndex: index }))
+    : shuffleArray(questionsOriginal);
 
   // Set total questions count
-  const totalQuestions = questions.length;
+  const totalQuestions = orderedQuestions.length;
 
-  questions?.forEach((question, index) => {
-    // Set question index and total questions
-    question.dataset.questionIndex = index.toString();
-    question.dataset.totalQuestions = totalQuestions.toString();
+  // Initialize display index
+  let displayIndex = 1;
+
+  // Process each question
+  orderedQuestions?.forEach(({ item: question, originalIndex }) => {
+    // Set original index for answer validation
+    question.questionIndex = originalIndex;
+
+    // Set display index for UI numbering
+    const currentDisplayIndex = displayIndex;
+    displayIndex += 1;
 
     // Generate the question DOM
-    const questionDOM = generateQuestionDOM(question, placeholders);
+    const questionDOM = generateQuestionDOM(question, currentDisplayIndex, totalQuestions, originalIndex, placeholders);
 
     question.textContent = '';
 
@@ -176,8 +211,11 @@ export default async function decorate(block) {
       existingError.remove();
     }
 
+    // Get all question elements
+    const questionElements = Array.from(questionsContainer.querySelectorAll('.question'));
+
     // Check if all questions are answered using Array methods
-    allQuestionsAnswered = Array.from(questions).every((question) => {
+    allQuestionsAnswered = questionElements.every((question) => {
       const isMultipleChoice = question.dataset.isMultipleChoice === 'true';
       return isMultipleChoice
         ? question.querySelectorAll('input[type="checkbox"]:checked').length > 0
@@ -200,7 +238,7 @@ export default async function decorate(block) {
     const existingFeedback = block.querySelectorAll('.question-feedback');
     existingFeedback.forEach((feedback) => feedback.remove());
 
-    await submitQuiz(questions, placeholders);
+    await submitQuiz(questionElements, placeholders);
     return true;
   };
 
