@@ -58,7 +58,7 @@
     padding: 24px 24px 10px 200px;
     border-radius: 0 0 16px 16px;
     display: flex;
-    background: linear-gradient(120deg, #000 0%, #6d4aff 10%, #a98aff 15%, #000 30%, #000 100%);
+    background: radial-gradient(circle at 10% 20%, #6f1cc0, #2e0854 15%, #000 40%);
 
     p {
       margin-left: auto;
