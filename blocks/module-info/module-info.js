@@ -1,4 +1,4 @@
-import { getCurrentStepInfo } from '../../scripts/utils/learning-collection-utils.js';
+import { getCurrentStepInfo } from '../../scripts/utils/course-utils.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
@@ -15,38 +15,36 @@ export default async function decorate(block) {
 
   if (!stepInfo) {
     // eslint-disable-next-line no-console
-    console.warn('No step info available for skill-track-info');
+    console.warn('No step info available for module-info');
     return;
   }
 
   // Clear existing content
   block.textContent = '';
-  block.classList.add('skill-track-info');
+  block.classList.add('module-info');
 
   // Create main container
   const container = document.createElement('div');
-  container.className = 'skill-track-info-parent';
+  container.className = 'module-info-parent';
 
-  // Back to collection link
+  // Back to course link
   const backLink = document.createElement('a');
-  backLink.className = 'back-to-collection';
-  backLink.href = stepInfo.collectionUrl;
-  backLink.innerHTML = `<span class="icon icon-learning-collection" aria-label="${
-    placeholders['learning-collection-back-to-collection-icon'] || 'Back to collection icon'
+  backLink.className = 'back-to-course';
+  backLink.href = stepInfo.courseUrl;
+  backLink.innerHTML = `<span class="icon icon-course" aria-label="${
+    placeholders['course-back-to-course-icon'] || 'Back to course icon'
   }"></span>
-    <span class="back-to-collection-label">${
-      placeholders['learning-collection-back-to-collection-button'] || 'BACK TO THE COLLECTION'
-    }</span>
+    <span class="back-to-course-label">${placeholders['course-back-to-course-button'] || 'BACK TO THE COURSE'}</span>
   `;
 
   // Main content area
   const contentArea = document.createElement('div');
-  contentArea.className = 'skill-track-content';
+  contentArea.className = 'module-content';
 
   // Title
   const title = document.createElement('h1');
-  title.className = 'skill-track-title';
-  title.textContent = stepInfo.skillTrackHeader;
+  title.className = 'module-title';
+  title.textContent = stepInfo.moduleHeader;
 
   // Progress section
   const progressSection = document.createElement('div');
@@ -55,7 +53,7 @@ export default async function decorate(block) {
   const progressText = document.createElement('div');
   progressText.className = 'progress-text';
   progressText.textContent = `${stepInfo.currentStep} of ${stepInfo.totalSteps} ${
-    placeholders['learning-collection-steps-complete'] || 'Steps Complete'
+    placeholders['course-steps-complete'] || 'Steps Complete'
   }`;
 
   // Progress bar
@@ -72,17 +70,15 @@ export default async function decorate(block) {
   const stepSelectorContainer = document.createElement('div');
   stepSelectorContainer.className = 'step-selector-container';
 
-  const currentStep = stepInfo.skillTrackSteps.find((step) => step.url === window.location.pathname);
-  const currentStepName = currentStep
-    ? currentStep.name
-    : placeholders['learning-collection-select-step'] || 'Select Step';
+  const currentStep = stepInfo.moduleSteps.find((step) => step.url === window.location.pathname);
+  const currentStepName = currentStep ? currentStep.name : placeholders['course-select-step'] || 'Select Step';
 
   // Create form element for dropdown
   const dropdownForm = document.createElement('form');
   dropdownForm.className = 'step-dropdown-form';
 
   // Prepare options for dropdown
-  const dropdownOptions = stepInfo.skillTrackSteps.map((step) => ({
+  const dropdownOptions = stepInfo.moduleSteps.map((step) => ({
     title: step.name,
     value: step.url,
   }));
