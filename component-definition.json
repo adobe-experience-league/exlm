@@ -1386,7 +1386,7 @@
                   "name": "Quiz",
                   "model": "quiz",
                   "filter": "quiz",
-                  "title": "module Quiz",
+                  "title": "Module Quiz",
                   "titleType": "h2",
                   "quizDescription": "<ul><li>End of module quizzes are pass/fail</li><li>A \"passing\" grade is based on a total score of 80%</li><li>Quizzes are not timed</li><li>You can retake quizzes as many times as necessary</li><li>Questions may be in the form of multiple choice, multi select, and ordering in bullet points</li></ul>",
                   "item1": {
