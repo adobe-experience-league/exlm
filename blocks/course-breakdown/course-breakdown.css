@@ -55,13 +55,12 @@
 
   & > div:last-child {
     position: relative;
-    padding: 24px 24px 10px 200px;
+    padding: 24px 24px 24px 220px;
     border-radius: 0 0 16px 16px;
     display: flex;
-    background: radial-gradient(circle at 10% 20%, #6f1cc0, #2e0854 15%, #000 40%);
+    background: radial-gradient(circle at 12% 150%, #6f1cc0, #2e0854 15%, #000 40%);
 
     p {
-      margin-left: auto;
       color: white;
     }
 
