@@ -287,7 +287,6 @@ export default async function decorate(block) {
     }
     // Hide the original callout div as we're showing it in coachmarks now
     calloutDiv.style.display = 'none';
-    // calloutDiv.remove();
   });
 
   // Set up navigation between coachmarks
