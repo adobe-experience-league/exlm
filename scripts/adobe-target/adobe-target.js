@@ -158,7 +158,7 @@ class AdobeTargetClient {
       return;
     }
 
-    if (!isFeatureEnabled('videoclip')) {
+    if (!isFeatureEnabled('videoClip')) {
       const videoClipCardsIndex = window.exlm.targetData.findIndex(
         (targetDataValue) => !!targetDataValue?.data?.find((target) => target.contentType === 'Video Clip'),
       );
