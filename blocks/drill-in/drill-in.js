@@ -291,7 +291,7 @@ export default async function decorate(block) {
     // If in UE author mode, hide the calloutDiv, otherwise remove it
     if (isUEAuthorMode) {
       // Hide the original callout div as we're showing it in coachmarks now
-      calloutDiv.style.display = 'none';
+      calloutDiv.style.color = 'pink';
     } else {
       calloutDiv.remove();
     }
