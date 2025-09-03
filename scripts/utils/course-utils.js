@@ -7,11 +7,24 @@ import { fetchLanguagePlaceholders } from '../scripts.js';
  *
  * @returns {string|null} The module fragment URL or null if not found
  */
+/**
+ * Extracts the module fragment URL from the current page path.
+ * For a path like /{locale}/courses/{collection}/{fragment}/{step}/...,
+ * returns /{locale}/courses/{collection}/{fragment}
+ *
+ * @returns {string|null} The module fragment URL or null if not found
+ */
 export function getModuleFragmentUrl() {
-  const url = window.location.pathname;
-  // Match: /{locale}/courses/{collection}/{fragment}/
-  const match = url.match(/^\/[a-z-]+\/courses\/[^/]+\/[^/]+/);
-  return match ? match[0] : null;
+  const parts = window.location.pathname.split("/").filter(Boolean);
+  // find "courses" in the path
+  const idx = parts.indexOf("courses");
+  if (idx > 0 && parts.length > idx + 2) {
+    const locale = parts[idx - 1];
+    const collection = parts[idx + 1];
+    const fragment = parts[idx + 2];
+    return `/${locale}/courses/${collection}/${fragment}`;
+  }
+  return null;
 }
 
 /**
