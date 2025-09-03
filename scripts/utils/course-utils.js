@@ -159,7 +159,7 @@ async function extractModuleMeta(fragment) {
     });
   }
   if (moduleQuiz) {
-    allSteps.push({ name: placeholders['module-quiz-step-name'] || 'module Quiz', url: moduleQuiz });
+    allSteps.push({ name: placeholders['module-quiz-step-name'] || 'Module Quiz', url: moduleQuiz });
   }
 
   const totalSteps = allSteps.length;
