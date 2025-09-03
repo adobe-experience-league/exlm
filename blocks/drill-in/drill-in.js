@@ -285,8 +285,16 @@ export default async function decorate(block) {
         popOverEle.classList.remove('is-open');
       });
     }
-    // Hide the original callout div as we're showing it in coachmarks now
-    calloutDiv.style.display = 'none';
+    // Check if it's in UE author mode
+    const isUEAuthorMode = window.location.href.includes('/editor.html/') || document.body.classList.contains('editor');
+
+    // If in UE author mode, hide the calloutDiv, otherwise remove it
+    if (isUEAuthorMode) {
+      // Hide the original callout div as we're showing it in coachmarks now
+      calloutDiv.style.display = 'none';
+    } else {
+      calloutDiv.remove();
+    }
   });
 
   // Set up navigation between coachmarks
