@@ -286,7 +286,8 @@ export default async function decorate(block) {
       });
     }
     // Hide the original callout div as we're showing it in coachmarks now
-    calloutDiv.remove();
+    calloutDiv.style.display = 'none';
+    // calloutDiv.remove();
   });
 
   // Set up navigation between coachmarks
