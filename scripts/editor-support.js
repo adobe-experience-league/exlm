@@ -171,10 +171,10 @@ function updateUEInstrumentation() {
     });
   }
 
-  // ----- if learning-collections page, identified by theme
-  if (document.querySelector('body[class^=learning-collections]') || getMetadata('theme') === 'learning-collections') {
+  // ----- if courses page, identified by theme
+  if (document.querySelector('body[class^=courses]') || getMetadata('theme') === 'courses') {
     // update available sections
-    setUEFilter(main, 'main-learning-collections');
+    setUEFilter(main, 'main-courses');
   }
 }
 

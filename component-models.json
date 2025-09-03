@@ -1287,7 +1287,7 @@
     ]
   },
   {
-    "id": "learning-collections-page-section",
+    "id": "courses-section",
     "fields": [
       {
         "component": "select",
@@ -4284,6 +4284,27 @@
       },
       {
         "component": "aem-content",
+        "valueType": "string",
+        "name": "signout-redirect-url",
+        "label": "Sign out Redirect URL",
+        "validation": {
+          "rootPath": "/content/exlm/global"
+        }
+      }
+    ]
+  },
+  {
+    "id": "article-metadata",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      },
+      {
+        "component": "aem-content",
         "valueType": "string[]",
         "value": [],
         "name": "author-bio-page",
@@ -4291,6 +4312,82 @@
         "label": "Author Bio page URL",
         "validation": {
           "rootPath": "/content/exlm/global/en/perspectives/authors"
+        }
+      },
+      {
+        "component": "aem-tag",
+        "valueType": "string",
+        "name": "coveo-solution",
+        "label": "Solution(s)",
+        "rootPath": "/content/cq:tags/exl/solution",
+        "description": "Sets the Coveo Solution(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "valueType": "string",
+        "name": "feature",
+        "label": "Feature(s)",
+        "rootPath": "/content/cq:tags/exl/feature",
+        "description": "Sets the Coveo Feature(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "name": "role",
+        "label": "Role(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/role",
+        "description": "Sets the role(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "name": "level",
+        "label": "Experience Level(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/experience-level",
+        "description": "Sets the level(s) in page meta."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "signout-redirect-url",
+        "label": "Sign out Redirect URL",
+        "validation": {
+          "rootPath": "/content/exlm/global"
+        }
+      }
+    ]
+  },
+  {
+    "id": "author-metadata",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      }
+    ]
+  },
+  {
+    "id": "course-metadata",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string[]",
+        "value": [],
+        "name": "instructor-page",
+        "multi": true,
+        "label": "Instructor page URL",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/courses/instructors"
         }
       },
       {
@@ -7227,7 +7324,7 @@
     "fields": []
   },
   {
-    "id": "skill-track-meta",
+    "id": "module-meta",
     "fields": [
       {
         "component": "text",
@@ -7235,7 +7332,7 @@
         "name": "title",
         "value": "",
         "label": "Title",
-        "description": "Sets the title for the skill track."
+        "description": "Sets the title for the module."
       },
       {
         "component": "select",
@@ -7276,7 +7373,7 @@
         "name": "description",
         "value": "",
         "label": "Description",
-        "description": "Sets the description for the skill track."
+        "description": "Sets the description for the module."
       },
       {
         "component": "aem-content",
@@ -7286,7 +7383,7 @@
         "label": "Recap URL",
         "description": "URL to recap",
         "validation": {
-          "rootPath": "/content/exlm/global/en/learning-collections/"
+          "rootPath": "/content/exlm/global/en/courses/"
         }
       },
       {
@@ -7297,7 +7394,7 @@
         "label": "Quiz page URL",
         "description": "URL to the quiz page",
         "validation": {
-          "rootPath": "/content/exlm/global/en/learning-collections/"
+          "rootPath": "/content/exlm/global/en/courses/"
         }
       },
       {
@@ -7310,7 +7407,7 @@
     ]
   },
   {
-    "id": "skill-track",
+    "id": "module",
     "fields": []
   },
   {
@@ -7324,7 +7421,7 @@
         "label": "Step Page URL",
         "description": "URL to the step",
         "validation": {
-          "rootPath": "/content/exlm/global/en/learning-collections/"
+          "rootPath": "/content/exlm/global/en/courses/"
         }
       },
       {
@@ -7346,7 +7443,7 @@
         "name": "title",
         "value": "",
         "label": "Quiz Title",
-        "description": "Enter the skill track quiz title"
+        "description": "Enter the module quiz title"
       },
       {
         "component": "select",
@@ -7387,7 +7484,7 @@
         "name": "quizDescription",
         "value": "",
         "label": "Quiz Description",
-        "description": "Enter the skill track quiz description"
+        "description": "Enter the module quiz description"
       }
     ]
   },
