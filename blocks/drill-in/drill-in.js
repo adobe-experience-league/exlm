@@ -286,7 +286,7 @@ export default async function decorate(block) {
       });
     }
     // Check if it's in UE author mode
-    const isUEAuthorMode = window.location.href.includes('/editor.html/') || document.body.classList.contains('editor');
+    const isUEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
     // If in UE author mode, hide the calloutDiv, otherwise remove it
     if (isUEAuthorMode) {
