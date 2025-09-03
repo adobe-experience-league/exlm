@@ -1,12 +1,6 @@
 import { fetchLanguagePlaceholders } from '../scripts.js';
 
-/**
- * Extracts the module fragment URL from the current page path.
- * For a path like /{locale}/courses/{collection}/{fragment}/{step}/...,
- * returns /{locale}/courses/{collection}/{fragment}
- *
- * @returns {string|null} The module fragment URL or null if not found
- */
+
 /**
  * Extracts the module fragment URL from the current page path.
  * For a path like /{locale}/courses/{collection}/{fragment}/{step}/...,
