@@ -187,7 +187,7 @@ function createSeeMoreButton(block, contentDiv, fetchDataAndRenderBlock) {
  * @returns {void}
  */
 export function updateCopyFromTarget(data, heading, subheading, taglineCta, taglineText) {
-  if (isFeatureEnabled('recMarqueeTargetHeading')) {
+  if (isFeatureEnabled('recmarqueetargetheading')) {
     if (data?.meta?.heading && heading) {
       if (heading.firstElementChild && !heading.firstElementChild.className.includes('loading-shimmer')) {
         heading.firstElementChild.innerHTML = data.meta.heading;
