@@ -152,6 +152,7 @@ export default async function decorate(block) {
         prevBtn.addEventListener('click', () => {
           const prevIndex = (coachmarks.indexOf(cm) - 1 + coachmarks.length) % coachmarks.length;
           navigateCoachmark(prevIndex);
+          prevBtn.style.color = 'var(--non-spectrum-adobe-dark-red)';
         });
       }
 
@@ -159,6 +160,7 @@ export default async function decorate(block) {
         nextBtn.addEventListener('click', () => {
           const nextIndex = (coachmarks.indexOf(cm) + 1) % coachmarks.length;
           navigateCoachmark(nextIndex);
+          nextBtn.style.color = 'var(--non-spectrum-adobe-dark-red)';
         });
       }
 
