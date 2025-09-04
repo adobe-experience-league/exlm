@@ -45,7 +45,9 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.drill-in-nav-button {
+.drill-in-nav-button,
+.drill-in-nav-button:focus,
+.drill-in-nav-button:hover {
   background: unset;
   border: none;
   color: var(--non-spectrum-web-gray);
@@ -60,8 +62,7 @@
   display: inline-flex;
 }
 
-.drill-in-nav-button:active,
-.drill-in-nav-button:focus {
+.drill-in-nav-button:active {
   color: var(--non-spectrum-adobe-dark-red);
   background-color: unset;
 }
