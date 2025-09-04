@@ -655,6 +655,50 @@
           }
         },
         {
+          "title": "Course Breakdown",
+          "id": "course-breakdown",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Course Breakdown",
+                  "model": "course-breakdown",
+                  "filter": "course-breakdown",
+                  "title": "In this Course",
+                  "titleType": "h1",
+                  "moduleTimeText": "1 Hour",
+                  "courseInfoTitle": "Skills you'll gain from this Course",
+                  "courseInfoTitleType": "h2",
+                  "courseInfoDescription": "Course Info Description",
+                  "item": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Course Breakdown Item",
+                    "model": "course-breakdown-item",
+                    "skill_track_url": "/content/exlm/global/en/courses/"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Course Breakdown Item",
+          "id": "course-breakdown-item",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Course Breakdown Item",
+                  "model": "course-breakdown-item",
+                  "skill_track_url": "/content/exlm/global/en/courses/"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Curated Cards",
           "id": "curated-cards",
           "plugins": {
