@@ -62,10 +62,6 @@
 }
 
 .course-marquee .course-marquee-title {
-  font-size: var(--spectrum-font-size-900);
-  font-weight: 700;
-  margin-bottom: 16px;
-  line-height: 1.2;
   color: var(--spectrum-gray-50);
 }
 
@@ -192,11 +188,8 @@
     font-size: var(--spectrum-font-size-200);
   }
 
-  .course-marquee .course-marquee-title {
-    font-size: var(--spectrum-font-size-1100);
-  }
-
-  .course-marquee .course-marquee-description {
+  .course-marquee .course-marquee-description,
+  .courses .course-marquee .course-marquee-description * {
     font-size: var(--spectrum-font-size-400);
   }
 
