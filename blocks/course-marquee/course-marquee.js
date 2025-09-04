@@ -1,5 +1,5 @@
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
   let placeholders = {};
@@ -10,14 +10,16 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
+  const { lang = 'en' } = getPathDetails() || {};
+
   const rows = [...block.children];
   const courseTitle = rows[0]?.querySelector('div')?.textContent || '';
   const courseDescription = rows[1]?.querySelector('div')?.innerHTML || '';
 
   const courseName = getMetadata('og:title') || document.title;
 
-  const productName = getMetadata('coveo-solution') || 'Product name';
-  const experienceLevel = getMetadata('level') || 'Experience level';
+  const productName = getMetadata('coveo-solution') || '';
+  const experienceLevel = getMetadata('level') || '';
 
   block.textContent = '';
 
@@ -26,7 +28,7 @@ export default async function decorate(block) {
 
   const coursesLink = document.createElement('a');
   coursesLink.textContent = placeholders.coursesLabel || 'Courses';
-  coursesLink.href = '/en/learning-collections';
+  coursesLink.href = `/${lang}/learning-collections`;
 
   const courseNameSpan = document.createElement('span');
   courseNameSpan.textContent = courseName;
@@ -51,20 +53,39 @@ export default async function decorate(block) {
   const metadata = document.createElement('div');
   metadata.classList.add('course-metadata-bookmark');
 
-  const metadataHTML = `
-    <div class="course-marquee-metadata">
-      <div class="metadata-item">
-        <span class="metadata-label">${placeholders.courseProductLabel || 'Product'}:</span>
-        <span class="metadata-value">${productName}</span>
-      </div>
-      <div class="metadata-separator"></div>
-      <div class="metadata-item">
-        <span class="metadata-label">${placeholders.courseExperienceLevelLabel || 'Experience level'}:</span>
-        <span class="metadata-value">${experienceLevel}</span>
-      </div>
-    </div>
+  const metadataContainer = document.createElement('div');
+  metadataContainer.classList.add('course-marquee-metadata');
+
+  // add productName item only if available
+  if (productName) {
+    const productItem = document.createElement('div');
+    productItem.classList.add('metadata-item');
+    productItem.innerHTML = `
+    <span class="metadata-label">${placeholders.courseProductLabel || 'Product'}:</span>
+    <span class="metadata-value">${productName}</span>
   `;
-  metadata.innerHTML = metadataHTML;
+    metadataContainer.appendChild(productItem);
+  }
+
+  // add separator only if both values are present
+  if (productName && experienceLevel) {
+    const metadataSeparator = document.createElement('div');
+    metadataSeparator.classList.add('metadata-separator');
+    metadataContainer.appendChild(metadataSeparator);
+  }
+
+  // add experienceLevel item only if available
+  if (experienceLevel) {
+    const expItem = document.createElement('div');
+    expItem.classList.add('metadata-item');
+    expItem.innerHTML = `
+    <span class="metadata-label">${placeholders.courseExperienceLevelLabel || 'Experience level'}:</span>
+    <span class="metadata-value">${experienceLevel}</span>
+  `;
+    metadataContainer.appendChild(expItem);
+  }
+
+  metadata.appendChild(metadataContainer);
 
   const bookmarkContainer = document.createElement('div');
   bookmarkContainer.classList.add('course-marquee-bookmark');
