@@ -77,7 +77,8 @@
       "quiz",
       "drill-in",
       "flip-card",
-      "course-breakdown"
+      "course-breakdown",
+      "course-marquee"
     ]
   },
   {
@@ -275,7 +276,8 @@
       "quiz",
       "drill-in",
       "flip-card",
-      "course-breakdown"
+      "course-breakdown",
+      "course-marquee"
     ]
   },
   {
