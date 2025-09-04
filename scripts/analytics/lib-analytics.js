@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
-export const search = window.location.pathname === '/search.html' || window.location.pathname.endsWith('/search');
+const lang = document.querySelector('html').lang || 'en';
+export const search = window.location.pathname === '/search.html' || window.location.pathname === `/${lang}/search`;
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
 export const browse = document.querySelector('meta[name="theme"]')?.content.includes('browse-') || false;
 export const browseProduct = document.querySelector('meta[name="theme"]')?.content.includes('browse-product') || false;
