@@ -8,10 +8,16 @@ import { fetchLanguagePlaceholders } from '../scripts.js';
  * @returns {string|null} The module fragment URL or null if not found
  */
 export function getModuleFragmentUrl() {
-  const url = window.location.pathname;
-  // Match: /{locale}/courses/{collection}/{fragment}/
-  const match = url.match(/^\/[a-z-]+\/courses\/[^/]+\/[^/]+/);
-  return match ? match[0] : null;
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  // find "courses" in the path
+  const idx = parts.indexOf('courses');
+  if (idx > 0 && parts.length > idx + 2) {
+    const locale = parts[idx - 1];
+    const collection = parts[idx + 1];
+    const fragment = parts[idx + 2];
+    return `/${locale}/courses/${collection}/${fragment}`;
+  }
+  return null;
 }
 
 /**
@@ -159,7 +165,7 @@ async function extractModuleMeta(fragment) {
     });
   }
   if (moduleQuiz) {
-    allSteps.push({ name: placeholders['module-quiz-step-name'] || 'module Quiz', url: moduleQuiz });
+    allSteps.push({ name: placeholders['module-quiz-step-name'] || 'Module Quiz', url: moduleQuiz });
   }
 
   const totalSteps = allSteps.length;
