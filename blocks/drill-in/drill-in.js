@@ -25,8 +25,13 @@ export default async function decorate(block) {
     imageDiv.appendChild(imageWrapper);
   }
 
+  // Create a container for the mobile popover that will be in the normal document flow
+  const mobilePopoverContainer = document.createElement('div');
+  mobilePopoverContainer.className = 'drill-in-mobile-popover-container';
+  block.parentNode.insertBefore(mobilePopoverContainer, block.nextSibling);
+
   // Get all the child elements except the first child which is img
-  const baseZIndex = 10;
+  const baseZIndex = 1;
   const calloutDivs = Array.from(block.querySelectorAll(':scope > div')).slice(1);
   if (calloutDivs.length === 0) return;
 
@@ -34,16 +39,17 @@ export default async function decorate(block) {
 
   const closePopover = (cm) => {
     cm.classList.remove('active');
-    cm.classList.remove('has-mobile-popover');
 
     const popover = cm.shadowRoot?.querySelector('.spectrum-Popover');
     if (popover) {
       popover.classList.remove('is-open');
       popover.style.display = 'none';
     }
-    const anyMobilePopover = document.querySelectorAll('.drill-in-coachmark.has-mobile-popover').length > 0;
-    if (!anyMobilePopover) {
-      document.body.classList.remove('overflow-hidden');
+
+    // Clear the mobile popover container
+    const popoverContainer = document.querySelector('.drill-in-mobile-popover-container');
+    if (popoverContainer) {
+      popoverContainer.innerHTML = '';
     }
   };
 
@@ -93,23 +99,81 @@ export default async function decorate(block) {
     }
   };
 
+  // Forward declaration for navigateCoachmark
+  let navigateCoachmark;
+
+  // Define navigateCoachmark function
+
   const updatePopoverState = (cm, popover) => {
     if (!popover) return;
-    popover.style.display = 'inline-flex';
+
+    // Clear any existing content in the mobile container
+    const popoverContainer = document.querySelector('.drill-in-mobile-popover-container');
+    if (popoverContainer) {
+      popoverContainer.innerHTML = '';
+    }
+
     popover.classList.add('is-open');
-    popover.classList.remove('popover-mobile');
 
     if (isMobile()) {
-      popover.classList.add('popover-mobile');
-      cm.classList.add('has-mobile-popover');
-      document.body.classList.add('overflow-hidden');
+      // For mobile, create a new popover in the document flow
+      const mobilePopover = document.createElement('div');
+      mobilePopover.className = 'drill-in-mobile-popover';
+
+      // Copy the title and content from the original popover
+      const title = cm.querySelector('.drill-in-title').cloneNode(true);
+      const content = cm.querySelector('[slot="content"]').cloneNode(true);
+      const navButtons = cm.querySelector('.drill-in-nav-buttons-container').cloneNode(true);
+      const closeBtn = cm.querySelector('.drill-in-close-btn').cloneNode(true);
+
+      // Create the structure with title, navigation buttons, and close button in the same row
+      const header = document.createElement('div');
+      header.className = 'drill-in-mobile-header';
+      header.appendChild(title);
+      header.appendChild(navButtons);
+      header.appendChild(closeBtn);
+
+      mobilePopover.appendChild(header);
+      mobilePopover.appendChild(content);
+
+      // Add to the container
+      if (popoverContainer) {
+        popoverContainer.appendChild(mobilePopover);
+      }
+
+      // Hide the original popover
+      popover.style.display = 'none';
+
+      // Set up event listeners for the cloned buttons
+      const prevBtn = navButtons.querySelector('.prev');
+      const nextBtn = navButtons.querySelector('.next');
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+          const prevIndex = (coachmarks.indexOf(cm) - 1 + coachmarks.length) % coachmarks.length;
+          navigateCoachmark(prevIndex);
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+          const nextIndex = (coachmarks.indexOf(cm) + 1) % coachmarks.length;
+          navigateCoachmark(nextIndex);
+        });
+      }
+
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          closePopover(cm);
+        });
+      }
     } else {
-      cm.classList.remove('has-mobile-popover');
-      document.body.classList.remove('overflow-hidden');
+      // For desktop, use the original popover
+      popover.style.display = 'inline-flex';
     }
   };
 
-  const navigateCoachmark = (targetIndex) => {
+  navigateCoachmark = (targetIndex) => {
     showCoachmark(targetIndex);
     coachmarks.forEach((cm, idx) => {
       const popover = cm.shadowRoot?.querySelector('.spectrum-Popover');
@@ -118,7 +182,6 @@ export default async function decorate(block) {
         updatePopoverState(cm, popover);
       } else {
         cm.style.zIndex = baseZIndex;
-        cm.classList.remove('has-mobile-popover');
       }
     });
   };
@@ -160,7 +223,7 @@ export default async function decorate(block) {
     const navContainer = document.createElement('div');
     navContainer.className = 'drill-in-nav-container';
 
-    const titleEl = document.createElement('span');
+    const titleEl = document.createElement('h3');
     titleEl.className = 'drill-in-title';
     titleEl.textContent = calloutTitle;
 
@@ -222,8 +285,16 @@ export default async function decorate(block) {
         popOverEle.classList.remove('is-open');
       });
     }
-    // Hide the original callout div as we're showing it in coachmarks now
-    calloutDiv.style.display = 'none';
+    // Check if it's in UE author mode
+    const isUEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+
+    // If in UE author mode, hide the calloutDiv, otherwise remove it
+    if (isUEAuthorMode) {
+      // Hide the original callout div as we're showing it in coachmarks now
+      calloutDiv.style.display = 'none';
+    } else {
+      calloutDiv.remove();
+    }
   });
 
   // Set up navigation between coachmarks
