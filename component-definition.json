@@ -665,6 +665,7 @@
                   "name": "Course Marquee",
                   "model": "course-marquee",
                   "title": "Course Title",
+                  "titleHeadingType": "h3",
                   "description": "Course description that will be limited to 3 lines in display."
                 }
               }
