@@ -1,7 +1,7 @@
 .course-breakdown {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: var(--spectrum-spacing-400);
 }
 
 /* Header */
@@ -9,33 +9,33 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--spectrum-spacing-300);
 
   .cb-header-info {
-    font-size: 18px;
+    font-size: var(--spectrum-font-size-300);
     color: var(--spectrum-gray-700);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--spectrum-spacing-100);
 
     .icon {
-      width: 16px;
+      width: var(--spectrum-spacing-300);
     }
   }
 }
 
 /* Info Card */
 .course-breakdown .course-breakdown-info-card {
-  background-color: #fff;
-  border-radius: 16px;
+  background-color: var(--spectrum-gray-50);
+  border-radius: var(--spectrum-spacing-300);
   border: 1px solid var(--spectrum-gray-200);
 
   & > div:first-child {
-    padding: 2em 3em 0;
+    padding: var(--spectrum-spacing-500) var(--spectrum-spacing-600) 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
+    gap: var(--spectrum-spacing-300);
 
     & > div:first-child > h1,
     h2,
@@ -43,33 +43,33 @@
     h4,
     h5,
     h6 {
-      font-size: 24px;
+      font-size: var(--spectrum-font-size-400);
       margin: 0;
-      margin-right: 24px;
+      margin-right: var(--spectrum-spacing-400);
     }
   }
 
   & > div:nth-child(2) {
-    padding: 0 3em 2em;
+    padding: 0 var(--spectrum-spacing-600) var(--spectrum-spacing-500);
   }
 
   & > div:last-child {
     position: relative;
-    padding: 24px 24px 24px 220px;
-    border-radius: 0 0 16px 16px;
+    padding: var(--spectrum-spacing-400) var(--spectrum-spacing-400) var(--spectrum-spacing-400) 220px;
+    border-radius: 0 0 var(--spectrum-spacing-300) var(--spectrum-spacing-300);
     display: flex;
     background: radial-gradient(circle at 12% 150%, #6f1cc0, #2e0854 15%, #000 40%);
 
     p {
-      color: white;
+      color: var(--spectrum-gray-50);
     }
 
     img {
-      box-shadow: 0 0 10px 0 rgb(0 0 0 / 10%);
+      box-shadow: 0 0 10px 0 var(--box-back-drop-shadow);
       position: absolute;
-      border-radius: 5px;
-      left: 40px;
-      top: -20px;
+      border-radius: var(--spectrum-spacing-75);
+      left: var(--spectrum-spacing-600);
+      top: calc(-1 * var(--spectrum-spacing-400));
       width: 120px;
     }
   }
@@ -77,10 +77,10 @@
 
 /* Skill Track Card */
 .course-breakdown .course-breakdown-module-card {
-  background-color: #fff;
-  border-radius: 16px;
+  background-color: var(--spectrum-gray-50);
+  border-radius: var(--spectrum-spacing-300);
   border: 1px solid var(--spectrum-gray-200);
-  padding: 24px;
+  padding: var(--spectrum-spacing-400);
 
   &.completed {
     border: 3px solid var(--spectrum-green-600);
@@ -89,27 +89,27 @@
   .cb-module-header {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
-    padding-bottom: 16px;
+    gap: var(--spectrum-spacing-300);
+    margin-bottom: var(--spectrum-spacing-300);
+    padding-bottom: var(--spectrum-spacing-300);
     border-bottom: 2px solid var(--spectrum-gray-200);
 
     .cb-module-number {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 32px;
-      height: 32px;
-      background-color: #000;
-      color: #fff;
+      width: var(--spectrum-spacing-500);
+      height: var(--spectrum-spacing-500);
+      background-color: var(--spectrum-gray-900);
+      color: var(--spectrum-gray-50);
       border-radius: 50%;
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: var(--font-weight-semi-bold);
+      font-size: var(--spectrum-font-size-100);
       flex-shrink: 0;
 
       .icon {
-        width: 16px;
-        height: 16px;
+        width: var(--spectrum-spacing-300);
+        height: var(--spectrum-spacing-300);
       }
 
       &.completed {
@@ -120,20 +120,20 @@
     .cb-module-title {
       flex-grow: 1;
       margin: 0;
-      font-size: 24px;
-      font-weight: 600;
+      font-size: var(--spectrum-font-size-400);
+      font-weight: var(--font-weight-semi-bold);
       color: var(--spectrum-gray-900);
       line-height: 1.4;
     }
 
     .cb-start-btn {
       margin: 0;
-      padding: 0 16px;
+      padding: 0 var(--spectrum-spacing-300);
 
       a {
-        color: #fff;
-        font-size: 14px;
-        font-weight: 400;
+        color: var(--spectrum-gray-50);
+        font-size: var(--spectrum-font-size-100);
+        font-weight: var(--font-weight-normal);
       }
 
       &.disabled {
@@ -153,7 +153,7 @@
 
         a {
           color: var(--spectrum-gray-900);
-          font-weight: 500;
+          font-weight: var(--font-weight-medium);
         }
       }
     }
@@ -163,12 +163,12 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--spectrum-spacing-75);
     flex-shrink: 0;
 
     .cb-steps-info-text {
-      font-size: 18px;
-      font-weight: 600;
+      font-size: var(--spectrum-font-size-300);
+      font-weight: var(--font-weight-semi-bold);
     }
 
     .cb-chevron {
@@ -179,17 +179,17 @@
 
     .cb-steps-status-text {
       margin-left: auto;
-      font-weight: 600;
+      font-weight: var(--font-weight-semi-bold);
       color: var(--spectrum-gray-700);
 
       &::before {
         content: '';
         display: inline-block;
-        width: 10px;
-        height: 10px;
+        width: var(--spectrum-spacing-100);
+        height: var(--spectrum-spacing-100);
         background-color: var(--spectrum-gray-400);
         border-radius: 50%;
-        margin-right: 8px;
+        margin-right: var(--spectrum-spacing-100);
       }
 
       &.in-progress {
@@ -213,7 +213,7 @@
   }
 
   .cb-steps-list {
-    margin-top: 12px;
+    margin-top: var(--spectrum-spacing-200);
     max-height: 0;
     overflow: hidden;
     opacity: 0;
@@ -232,19 +232,19 @@
   .cb-step-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 6px 0;
+    gap: var(--spectrum-spacing-200);
+    padding: var(--spectrum-spacing-75) 0;
 
     .cb-step-number {
       color: var(--spectrum-gray-900);
       border-radius: 50%;
-      font-size: 16px;
-      font-weight: 600;
+      font-size: var(--spectrum-font-size-200);
+      font-weight: var(--font-weight-semi-bold);
     }
 
     .cb-step-title {
       flex-grow: 1;
-      font-size: 16px;
+      font-size: var(--spectrum-font-size-200);
       line-height: 1.4;
     }
   }
@@ -252,17 +252,17 @@
 
 /* Shimmer Loading State */
 .course-breakdown .course-breakdown-module-card-shimmer {
-  background-color: #fff;
-  border-radius: 16px;
+  background-color: var(--spectrum-gray-50);
+  border-radius: var(--spectrum-spacing-300);
   border: 1px solid var(--spectrum-gray-200);
-  padding: 24px;
+  padding: var(--spectrum-spacing-400);
 
   .cb-module-shimmer-header {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
-    padding-bottom: 16px;
+    gap: var(--spectrum-spacing-300);
+    margin-bottom: var(--spectrum-spacing-300);
+    padding-bottom: var(--spectrum-spacing-300);
     border-bottom: 1px solid var(--spectrum-gray-200);
   }
 
@@ -270,14 +270,19 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: var(--spectrum-spacing-300);
   }
 
   .cb-shimmer {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background: linear-gradient(
+      90deg,
+      var(--shimmer-image-slide-start) 25%,
+      var(--shimmer-image-slide-mid) 50%,
+      var(--shimmer-image-slide-start) 75%
+    );
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
-    border-radius: 4px;
+    border-radius: var(--spectrum-spacing-75);
     display: inline-block;
 
     &.cb-shimmer-circle {
@@ -287,16 +292,16 @@
 
     &.cb-shimmer-title {
       flex-grow: 1;
-      border-radius: 4px;
+      border-radius: var(--spectrum-spacing-75);
     }
 
     &.cb-shimmer-btn {
-      border-radius: 6px;
+      border-radius: var(--spectrum-spacing-75);
       flex-shrink: 0;
     }
 
     &.cb-shimmer-steps-label {
-      border-radius: 4px;
+      border-radius: var(--spectrum-spacing-75);
       flex-shrink: 0;
     }
 
@@ -306,7 +311,7 @@
     }
 
     &.cb-shimmer-progress-text {
-      border-radius: 4px;
+      border-radius: var(--spectrum-spacing-75);
       flex-shrink: 0;
     }
   }
@@ -314,7 +319,7 @@
   .cb-shimmer-progress-bar {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--spectrum-spacing-100);
     flex-grow: 1;
     justify-content: center;
   }
