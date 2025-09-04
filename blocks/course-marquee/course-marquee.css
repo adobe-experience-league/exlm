@@ -138,20 +138,19 @@
   align-items: center;
 }
 
-.course-marquee .course-marquee-bookmark button {
+.course-marquee .course-marquee-bookmark .user-actions .bookmark {
+  display: flex;
+  flex-wrap: nowrap;
   background: none;
   border: none;
   color: var(--spectrum-gray-50);
   cursor: pointer;
-  display: flex;
   align-items: center;
   padding: 0;
 }
 
-.course-marquee .course-marquee-bookmark .user-actions button {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
+.course-marquee .course-marquee-bookmark .user-actions .bookmark[data-bookmarked='true'] .icon-bookmark-white {
+  display: none;
 }
 
 .course-marquee .course-marquee-bookmark .user-actions button label {
