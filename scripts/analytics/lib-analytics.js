@@ -181,7 +181,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       event: 'page loaded',
       web: webDetails,
       user,
-      search: searchTrackingData || undefined,
+      search: searchTrackingData,
       userGUID: user.userDetails.userID,
     });
   }
