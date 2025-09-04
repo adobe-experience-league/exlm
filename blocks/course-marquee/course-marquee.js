@@ -12,7 +12,7 @@ export default async function decorate(block) {
 
   const rows = [...block.children];
   const courseTitle = rows[0]?.querySelector('div')?.textContent || '';
-  const courseDescription = rows[1]?.querySelector('div')?.textContent || '';
+  const courseDescription = rows[1]?.querySelector('div')?.innerHTML || '';
 
   const courseName = getMetadata('og:title') || document.title;
 
@@ -43,7 +43,7 @@ export default async function decorate(block) {
 
   const description = document.createElement('div');
   description.classList.add('course-marquee-description');
-  description.textContent = courseDescription;
+  description.innerHTML = courseDescription;
 
   const separator = document.createElement('hr');
   separator.classList.add('course-marquee-separator');

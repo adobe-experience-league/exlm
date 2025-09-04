@@ -71,13 +71,30 @@
 
 .course-marquee-description {
   font-size: var(--spectrum-font-size-300);
-  line-height: 1.5;
   margin-bottom: 32px;
   color: var(--spectrum-gray-100);
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.courses .course-marquee-description * {
+  font-size: var(--spectrum-font-size-300);
+  line-height: 1.5;
+  color: var(--spectrum-gray-100);
+  margin-top: 0;
+  margin-bottom: 0;
+  font-weight: var(--font-weight-normal);
+  overflow: visible;
+}
+
+.courses .course-marquee-description :where(h1, h2, h3, h4, h5, h6, strong) {
+  font-weight: var(--font-weight-bold);
+}
+
+.courses .course-marquee-description :any-link {
+  color: var(--non-spectrum-link);
 }
 
 .course-marquee-separator {
@@ -149,7 +166,7 @@
 }
 
 @media (min-width: 900px) {
-  body.learning-collections .section.course-marquee-container {
+  body.courses .section.course-marquee-container {
     max-width: unset;
     padding: 0 56px;
   }
