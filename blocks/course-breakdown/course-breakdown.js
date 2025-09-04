@@ -9,7 +9,7 @@ const SKILL_TRACK_CARD_STATUS = {
   COMPLETED: 'completed',
 };
 
-function Header(title, moduleCount, moduleTime, placeholder) {
+function headerDom(title, moduleCount, moduleTime, placeholder) {
   const header = document.createElement('div');
   header.classList.add('course-breakdown-header');
   header.innerHTML = `
@@ -25,7 +25,7 @@ function Header(title, moduleCount, moduleTime, placeholder) {
   return header;
 }
 
-function InfoCard(title, description, placeholders) {
+function infoCardDom(title, description, placeholders) {
   const card = document.createElement('div');
   card.classList.add('course-breakdown-info-card');
   card.innerHTML = `
@@ -168,8 +168,8 @@ export default async function decorate(block) {
   }
 
   block.textContent = '';
-  block.append(Header(title, modules?.length, moduleTime, placeholders));
-  block.append(InfoCard(infoTitle, infoDescription, placeholders));
+  block.append(headerDom(title, modules?.length, moduleTime, placeholders));
+  block.append(infoCardDom(infoTitle, infoDescription, placeholders));
 
   modules.forEach((module, index) => {
     const moduleFragment = module.querySelector('a')?.getAttribute('href');
