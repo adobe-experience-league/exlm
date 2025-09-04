@@ -18,7 +18,7 @@ export default async function decorate(block) {
       title: 'TOPIC',
       heading: firstTopic.Name,
       viewMoreResultsLabel: 'View more results in search',
-      viewMoreResultsUrl: `${window.location.origin}/${lang}/search#sort=relevancy`,
+      viewMoreResultsUrl: `https://experienceleague-dev.adobe.com/${lang}/search#sort=relevancy`,
     }),
   );
 
