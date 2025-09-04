@@ -84,7 +84,7 @@ function moduleCard({
   const CardShimmer = moduleCardShimmer();
 
   const startButtonTextMap = {
-    [SKILL_TRACK_CARD_STATUS.DISABLED]: placeholders.courseBreakdownModuleButtonDisabled || 'Start Module',
+    [SKILL_TRACK_CARD_STATUS.DISABLED]: placeholders.courseBreakdownModuleButtonNotStarted || 'Start Module',
     [SKILL_TRACK_CARD_STATUS.NOT_STARTED]: placeholders.courseBreakdownModuleButtonNotStarted || 'Start Module',
     [SKILL_TRACK_CARD_STATUS.IN_PROGRESS]: placeholders.courseBreakdownModuleButtonInProgress || 'Resume Module',
     [SKILL_TRACK_CARD_STATUS.COMPLETED]: placeholders.courseBreakdownModuleButtonCompleted || 'Review Module',
@@ -92,7 +92,7 @@ function moduleCard({
   const startButtonText = startButtonTextMap[status] || 'Start Module';
 
   const moduleCardStatusMap = {
-    [SKILL_TRACK_CARD_STATUS.DISABLED]: placeholders.courseBreakdownStatusDisabled || 'Not Started',
+    [SKILL_TRACK_CARD_STATUS.DISABLED]: placeholders.courseBreakdownStatusNotStarted || 'Not Started',
     [SKILL_TRACK_CARD_STATUS.NOT_STARTED]: placeholders.courseBreakdownStatusNotStarted || 'Not Started',
     [SKILL_TRACK_CARD_STATUS.IN_PROGRESS]: placeholders.courseBreakdownStatusInProgress || 'In progress',
     [SKILL_TRACK_CARD_STATUS.COMPLETED]: placeholders.courseBreakdownStatusCompleted || 'Completed',
