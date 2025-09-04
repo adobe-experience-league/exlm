@@ -169,7 +169,6 @@ async function extractModuleMeta(fragment) {
   }
 
   const totalSteps = allSteps.length;
-
   return {
     moduleHeader,
     moduleDescription,
@@ -206,6 +205,34 @@ export async function getCurrentStepInfo() {
   const fragment = await fetchModuleFragment(fragUrl);
   if (!fragment) return null;
   meta = await extractModuleMeta(fragment);
+  try {
+    sessionStorage.setItem(storageKey, JSON.stringify(meta));
+  } catch (e) {
+    // ignore storage errors
+  }
+  return { ...meta, ...getStepMeta(meta?.moduleSteps, meta?.moduleRecap, meta?.moduleQuiz) };
+}
+
+export async function getmoduleMeta(moduleFragmentUrl) {
+  if (!moduleFragmentUrl) return null;
+  const storageKey = `module-meta:${moduleFragmentUrl}`;
+  let meta = null;
+
+  try {
+    const cached = sessionStorage.getItem(storageKey);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (parsed && Array.isArray(parsed?.moduleSteps)) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    // ignore parse errors
+  }
+
+  const fragment = await fetchModuleFragment(moduleFragmentUrl);
+  if (!fragment) return null;
+  meta = await extractModuleMeta(fragment, false);
   try {
     sessionStorage.setItem(storageKey, JSON.stringify(meta));
   } catch (e) {
