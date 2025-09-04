@@ -150,17 +150,17 @@ export default async function decorate(block) {
 
       if (prevBtn) {
         prevBtn.addEventListener('click', () => {
+          prevBtn.style.color = 'var(--non-spectrum-adobe-dark-red)';
           const prevIndex = (coachmarks.indexOf(cm) - 1 + coachmarks.length) % coachmarks.length;
           navigateCoachmark(prevIndex);
-          prevBtn.style.color = 'var(--non-spectrum-adobe-dark-red)';
         });
       }
 
       if (nextBtn) {
         nextBtn.addEventListener('click', () => {
+          nextBtn.style.color = 'var(--non-spectrum-adobe-dark-red)';
           const nextIndex = (coachmarks.indexOf(cm) + 1) % coachmarks.length;
           navigateCoachmark(nextIndex);
-          nextBtn.style.color = 'var(--non-spectrum-adobe-dark-red)';
         });
       }
 
