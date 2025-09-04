@@ -259,7 +259,7 @@ export default function atomicFacetHandler(baseElement, placeholders) {
     }
 
     const showMoreLabel = placeholders.showMore || 'Show more';
-    const showLessLabel = placeholders.showLore || 'Show less';
+    const showLessLabel = placeholders.showLess || 'Show less';
     facetParent.dataset.showMoreBtn = 'true';
     const showMoreWrapper = htmlToElement(`<div part="facet-show-more-wrapper">
         <button data-expanded="false" part="facet-show-more" class="facet-show-more-btn">
