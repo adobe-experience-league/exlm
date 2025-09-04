@@ -29,7 +29,7 @@ export default async function decorate(block) {
   if (productName) {
     metadataItemsHTML += `
       <div class="metadata-item">
-        <span class="metadata-label">${placeholders.courseProductLabel || 'Product'}:</span>
+        <span class="metadata-label">${placeholders?.courseProductLabel || 'Product'}:</span>
         <span class="metadata-value">${productName}</span>
       </div>
     `;
@@ -42,7 +42,7 @@ export default async function decorate(block) {
   if (experienceLevel) {
     metadataItemsHTML += `
       <div class="metadata-item">
-        <span class="metadata-label">${placeholders.courseExperienceLevelLabel || 'Experience level'}:</span>
+        <span class="metadata-label">${placeholders?.courseExperienceLevelLabel || 'Experience level'}:</span>
         <span class="metadata-value">${experienceLevel}</span>
       </div>
     `;
@@ -52,7 +52,7 @@ export default async function decorate(block) {
   const courseMarqueeHTML = htmlToElement(`
     <div>
       <div class="course-marquee-breadcrumb">
-        <a href="/${lang}/courses">${placeholders.coursesLabel || 'Courses'}</a>
+        <a href="/${lang}/courses">${placeholders?.coursesLabel || 'Courses'}</a>
         <span>${courseName}</span>
       </div>
       <div class="course-marquee-content">
@@ -86,7 +86,7 @@ export default async function decorate(block) {
         bookmarkPath: pathname,
         link: window.location.href,
         bookmarkConfig: {
-          label: placeholders.bookmarkThisCourse || 'Bookmark this Course',
+          label: placeholders?.bookmarkThisCourse || 'Bookmark this Course',
           icons: ['bookmark-white', 'bookmark-active'],
         },
         copyConfig: false,
