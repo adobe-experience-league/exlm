@@ -28,7 +28,7 @@ export default async function decorate(block) {
 
   const coursesLink = document.createElement('a');
   coursesLink.textContent = placeholders.coursesLabel || 'Courses';
-  coursesLink.href = `/${lang}/learning-collections`;
+  coursesLink.href = `/${lang}/courses`;
 
   const courseNameSpan = document.createElement('span');
   courseNameSpan.textContent = courseName;
