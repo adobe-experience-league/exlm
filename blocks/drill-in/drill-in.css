@@ -45,9 +45,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.drill-in-nav-button,
-.drill-in-nav-button:focus,
-.drill-in-nav-button:active {
+.drill-in-nav-button {
   background: unset;
   border: none;
   color: var(--non-spectrum-web-gray);
@@ -62,7 +60,8 @@
   display: inline-flex;
 }
 
-.drill-in-nav-button:hover {
+.drill-in-nav-button:active,
+.drill-in-nav-button:focus {
   color: var(--non-spectrum-adobe-dark-red);
   background-color: unset;
 }
@@ -233,9 +232,9 @@
   }
 }
 
-@media (hover: none) and (pointer: coarse) {
+@media (hover: hover) and (pointer: fine) {
   .drill-in-nav-button:hover {
-    color: var(--non-spectrum-web-gray);
+    color: var(--non-spectrum-adobe-dark-red);
     background-color: unset;
   }
 }
