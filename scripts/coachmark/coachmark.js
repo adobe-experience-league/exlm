@@ -109,6 +109,7 @@ class EXLCoachmark extends HTMLElement {
   }
 
   handleSlots() {
+    const popoverEl = this.shadow.querySelector('.spectrum-Popover');
     // Check if the slot "text" is provided; if not, remove .spectrum-CoachMark-content
     const slotText = this.querySelector('[slot="content"]');
     const contentEl = this.shadow.querySelector('.spectrum-CoachMark-content');
@@ -120,6 +121,10 @@ class EXLCoachmark extends HTMLElement {
     const titleEl = this.shadow.querySelector('.spectrum-CoachMark-title');
     if (!slotTitle && titleEl) {
       titleEl.remove();
+    }
+
+    if (!((slotTitle && slotTitle.textContent.trim()) || (slotText && slotText.textContent.trim()))) {
+      popoverEl.style.display = 'none';
     }
   }
 
