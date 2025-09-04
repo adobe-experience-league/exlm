@@ -123,7 +123,7 @@ class EXLCoachmark extends HTMLElement {
       titleEl.remove();
     }
 
-    if (!((slotTitle && slotTitle.textContent.trim()) || (slotText && slotText.textContent.trim()))) {
+    if (!(slotTitle?.textContent.trim() || slotText?.textContent.trim())) {
       popoverEl.style.display = 'none';
     }
   }
