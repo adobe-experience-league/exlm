@@ -371,14 +371,30 @@ export function pushGuidePlayEvent(guide, audioOn) {
       trigger: `${guide.trigger}:${audioStatus}`,
       steps: guide.steps,
     },
-    web: {
-      webPageDetails: {
-        type: document.querySelector('meta[name="type"]')?.content?.toLowerCase() || '',
-        solution: document.querySelector('meta[name="solution"]')?.content?.split(',')[0].toLowerCase() || '',
-        feature: document.querySelector('meta[name="feature"]')?.content?.toLowerCase() || '',
-        URL: window.location.href,
-        domain: window.location.host,
-      },
+  });
+}
+
+/**
+ * Used to push a guide autoplay event to the data layer
+ * @param {Object} guide - Guide information
+ * @param {string} guide.title - Guide title in format "guide title:step number:slide title"
+ * @param {string} guide.trigger - Action that triggered the event (play, next, previous, autoplay)
+ * @param {string} guide.steps - Total number of slides in the guide
+ * @param {boolean} audioOn - Whether audio is on or off
+ * @param {string} stepIndex - Current step index
+ * @param {string} blockId - Block identifier for the slides component
+ */
+export function pushGuideAutoPlayEvent(guide, audioOn) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const audioStatus = audioOn ? 'audio on' : 'audio off';
+
+  window.adobeDataLayer.push({
+    event: 'guideAutoPlay',
+    guide: {
+      title: guide.title,
+      trigger: `${guide.trigger}:${audioStatus}`,
+      steps: guide.steps,
     },
   });
 }

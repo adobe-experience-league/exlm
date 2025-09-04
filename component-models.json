@@ -1287,7 +1287,7 @@
     ]
   },
   {
-    "id": "learning-collections-page-section",
+    "id": "courses-section",
     "fields": [
       {
         "component": "select",
@@ -4284,6 +4284,27 @@
       },
       {
         "component": "aem-content",
+        "valueType": "string",
+        "name": "signout-redirect-url",
+        "label": "Sign out Redirect URL",
+        "validation": {
+          "rootPath": "/content/exlm/global"
+        }
+      }
+    ]
+  },
+  {
+    "id": "article-metadata",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      },
+      {
+        "component": "aem-content",
         "valueType": "string[]",
         "value": [],
         "name": "author-bio-page",
@@ -4291,6 +4312,82 @@
         "label": "Author Bio page URL",
         "validation": {
           "rootPath": "/content/exlm/global/en/perspectives/authors"
+        }
+      },
+      {
+        "component": "aem-tag",
+        "valueType": "string",
+        "name": "coveo-solution",
+        "label": "Solution(s)",
+        "rootPath": "/content/cq:tags/exl/solution",
+        "description": "Sets the Coveo Solution(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "valueType": "string",
+        "name": "feature",
+        "label": "Feature(s)",
+        "rootPath": "/content/cq:tags/exl/feature",
+        "description": "Sets the Coveo Feature(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "name": "role",
+        "label": "Role(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/role",
+        "description": "Sets the role(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "name": "level",
+        "label": "Experience Level(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/experience-level",
+        "description": "Sets the level(s) in page meta."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "signout-redirect-url",
+        "label": "Sign out Redirect URL",
+        "validation": {
+          "rootPath": "/content/exlm/global"
+        }
+      }
+    ]
+  },
+  {
+    "id": "author-metadata",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      }
+    ]
+  },
+  {
+    "id": "course-metadata",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string[]",
+        "value": [],
+        "name": "instructor-page",
+        "multi": true,
+        "label": "Instructor page URL",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/courses/instructors"
         }
       },
       {
@@ -7227,7 +7324,7 @@
     "fields": []
   },
   {
-    "id": "skill-track-meta",
+    "id": "module-meta",
     "fields": [
       {
         "component": "text",
@@ -7235,7 +7332,7 @@
         "name": "title",
         "value": "",
         "label": "Title",
-        "description": "Sets the title for the skill track."
+        "description": "Sets the title for the module."
       },
       {
         "component": "select",
@@ -7276,7 +7373,7 @@
         "name": "description",
         "value": "",
         "label": "Description",
-        "description": "Sets the description for the skill track."
+        "description": "Sets the description for the module."
       },
       {
         "component": "aem-content",
@@ -7286,7 +7383,7 @@
         "label": "Recap URL",
         "description": "URL to recap",
         "validation": {
-          "rootPath": "/content/exlm/global/en/learning-collections/"
+          "rootPath": "/content/exlm/global/en/courses/"
         }
       },
       {
@@ -7297,7 +7394,7 @@
         "label": "Quiz page URL",
         "description": "URL to the quiz page",
         "validation": {
-          "rootPath": "/content/exlm/global/en/learning-collections/"
+          "rootPath": "/content/exlm/global/en/courses/"
         }
       },
       {
@@ -7310,7 +7407,7 @@
     ]
   },
   {
-    "id": "skill-track",
+    "id": "module",
     "fields": []
   },
   {
@@ -7324,7 +7421,7 @@
         "label": "Step Page URL",
         "description": "URL to the step",
         "validation": {
-          "rootPath": "/content/exlm/global/en/learning-collections/"
+          "rootPath": "/content/exlm/global/en/courses/"
         }
       },
       {
@@ -7339,7 +7436,57 @@
   },
   {
     "id": "quiz",
-    "fields": []
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Quiz Title",
+        "description": "Enter the module quiz title"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h2",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "quizDescription",
+        "value": "",
+        "label": "Quiz Description",
+        "description": "Enter the module quiz description"
+      }
+    ]
   },
   {
     "id": "question",
@@ -7365,7 +7512,7 @@
         "name": "answers",
         "value": "",
         "label": "Answers",
-        "description": "Enter the answers as an ordered list"
+        "description": "Enter the answer as an ordered list upto maximum 10 options"
       },
       {
         "component": "text",
@@ -7390,6 +7537,89 @@
         "value": "",
         "label": "Incorrect Answer Feedback",
         "description": "Enter the feedback message to display when the answer is incorrect"
+      }
+    ]
+  },
+  {
+    "id": "drill-in",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Image",
+        "description": "The main image for the drill-in block",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "fileReferenceAlt",
+        "value": "",
+        "label": "Image Alt Text",
+        "description": "A descriptive text of the image for accessibility"
+      }
+    ]
+  },
+  {
+    "id": "drill-in-callout",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cardTitle",
+        "value": "",
+        "label": "Card Title",
+        "description": "Title for the pop-out card"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "cardDescription",
+        "value": "",
+        "label": "Card Description",
+        "description": "Description text for the pop-out card"
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "positionX",
+        "value": "50",
+        "label": "X Position",
+        "description": "Horizontal position of the callout, measured from the top-left corner (0–100%)"
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "positionY",
+        "value": "50",
+        "label": "Y Position",
+        "description": "Vertical position of the callout, measured from the top-left corner (0–100%)"
+      }
+    ]
+  },
+  {
+    "id": "flip-card",
+    "fields": []
+  },
+  {
+    "id": "flip-card-item",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "frontContent",
+        "value": "",
+        "label": "Front Content",
+        "description": "Content displayed on the front of the flip card."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "backContent",
+        "value": "",
+        "label": "Back Content",
+        "description": "Content displayed on the back of the flip card when flipped."
       }
     ]
   }

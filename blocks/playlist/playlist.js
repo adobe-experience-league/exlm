@@ -6,6 +6,7 @@ import {
   fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
 import { Playlist, LABELS } from './playlist-utils.js';
+import { updateTranscript, transcriptLoading } from '../video-transcript/video-transcript.js';
 
 const removeLastSlash = (url) => url.replace(/\/$/, '');
 const isSameUrl = (a, b) => {
@@ -129,10 +130,6 @@ function newPlayer(playlist) {
     'autoplay',
   ];
 
-  const transcriptLoading = [100, 100, 100, 80, 70, 40]
-    .map((i) => `<p class="loading-shimmer" style="--placeholder-width: ${i}%"></p>`)
-    .join('');
-
   const player = htmlToElement(`
         <div class="playlist-player" data-playlist-player>
             <div class="playlist-player-video">
@@ -214,59 +211,6 @@ function decoratePlaylistHeader(block, playlist) {
   );
 }
 
-/** @param {string} transcriptUrl */
-async function getCaptionParagraphs(transcriptUrl) {
-  window.playlistCaptions = window.playlistCaptions || {};
-  if (window.playlistCaptions[transcriptUrl]) return window.playlistCaptions[transcriptUrl];
-  const response = await fetch(transcriptUrl);
-  const transcriptJson = await response.json();
-  const captions = transcriptJson?.captions || [];
-  const paragraphs = [];
-  let currentParagraph = '';
-  captions.forEach(({ content, startOfParagraph }) => {
-    if (startOfParagraph) {
-      paragraphs.push(currentParagraph);
-      currentParagraph = content;
-    } else {
-      currentParagraph += ` ${content}`;
-    }
-  });
-  paragraphs.push(currentParagraph);
-
-  window.playlistCaptions[transcriptUrl] = paragraphs;
-  return paragraphs;
-}
-
-/**
- * Updates current video transcript
- * @param {HTMLDetailsElement} transcriptDetail
- */
-function updateTranscript(transcriptDetail) {
-  const transcriptUrl = transcriptDetail.getAttribute('data-playlist-player-info-transcript');
-  const clearTranscript = () => [...transcriptDetail.querySelectorAll('p')].forEach((p) => p.remove());
-  const showTranscriptNotAvailable = () => {
-    clearTranscript();
-    transcriptDetail.append(createPlaceholderSpan(LABELS.transcriptNotAvailable, 'Transcript not available'));
-  };
-  transcriptDetail.addEventListener('toggle', (event) => {
-    if (event.target.open && transcriptDetail.dataset.ready !== 'true') {
-      getCaptionParagraphs(transcriptUrl)
-        .then((paragraphs) => {
-          clearTranscript();
-          if (!paragraphs || !paragraphs.length || !paragraphs.join('').trim()) {
-            showTranscriptNotAvailable();
-          } else paragraphs.forEach((paragraph) => transcriptDetail.append(htmlToElement(`<p>${paragraph}</p>`)));
-        })
-        .catch(() => {
-          showTranscriptNotAvailable();
-        })
-        .finally(() => {
-          transcriptDetail.dataset.ready = 'true';
-        });
-    }
-  });
-}
-
 /**
  * Shows the video at the given count
  * @param {import('./mpc-util.js').Video} video
@@ -280,7 +224,9 @@ function updatePlayer(playlist) {
   if (!player) return;
   const playerContainer = document.querySelector('[data-playlist-player-container]');
   const transcriptDetail = player.querySelector('[data-playlist-player-info-transcript]');
-  updateTranscript(transcriptDetail);
+  const transcriptUrl = transcriptDetail.getAttribute('data-playlist-player-info-transcript');
+
+  updateTranscript(transcriptUrl, transcriptDetail);
   playerContainer.innerHTML = '';
   playerContainer.append(player);
   window.scrollTo({ top: 0, behavior: 'smooth' });

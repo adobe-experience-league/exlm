@@ -1,0 +1,29 @@
+body.courses,
+body.courses .section,
+.courses-section {
+  background-color: var(--background-color);
+}
+
+body.courses .section,
+.courses-page-section {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  max-width: 728px;
+  margin: 0 auto;
+}
+
+.courses p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-color);
+  line-height: normal;
+}
+
+body.courses .module-info-section {
+  border-bottom: 1px solid var(--spectrum-gray-200);
+}

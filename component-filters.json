@@ -24,8 +24,8 @@
     "components": ["sign-up-flow-section"]
   },
   {
-    "id": "main-learning-collections",
-    "components": ["section", "learning-collections-page-section", "tab-section"]
+    "id": "main-courses",
+    "components": ["section", "courses-section", "tab-section"]
   },
   {
     "id": "section",
@@ -72,9 +72,11 @@
       "code",
       "playlist-browse",
       "atomic-search",
-      "skill-track-meta",
-      "skill-track",
-      "quiz"
+      "module-meta",
+      "module",
+      "quiz",
+      "drill-in",
+      "flip-card"
     ]
   },
   {
@@ -260,8 +262,19 @@
     ]
   },
   {
-    "id": "learning-collections-page-section",
-    "components": ["text", "title", "button", "image", "announcement-ribbon", "skill-track-meta", "skill-track", "quiz"]
+    "id": "courses-section",
+    "components": [
+      "text",
+      "title",
+      "button",
+      "image",
+      "announcement-ribbon",
+      "module-meta",
+      "module",
+      "quiz",
+      "drill-in",
+      "flip-card"
+    ]
   },
   {
     "id": "sign-up-flow-section",
@@ -370,12 +383,20 @@
     "components": []
   },
   {
-    "id": "skill-track",
+    "id": "module",
     "components": ["step"]
   },
   {
     "id": "quiz",
     "components": ["question"]
+  },
+  {
+    "id": "drill-in",
+    "components": ["drill-in-callout"]
+  },
+  {
+    "id": "flip-card",
+    "components": ["flip-card-item"]
   },
   {
     "id": "rte-custom-options",

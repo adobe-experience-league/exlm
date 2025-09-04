@@ -165,6 +165,7 @@ export const isPerspectivePage = matchesAnyTheme(/articles/);
 export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
+export const isCourseStep = matchesAnyTheme(/courses-step/);
 
 /**
  * add a section for the left rail when on a browse page.
@@ -220,6 +221,34 @@ function addMiniToc(main) {
   tocSection.append(miniTocBlock);
   miniTocBlock.style.display = 'none';
   main.append(tocSection);
+}
+
+/**
+ * Add module info block to course step pages.
+ * @param {HTMLElement} main
+ */
+function addModuleInfo(main) {
+  // Check if module-info block already exists
+  if (!main.querySelector('.module-info.block')) {
+    const moduleInfoSection = document.createElement('div');
+    moduleInfoSection.classList.add('module-info-section');
+    moduleInfoSection.append(buildBlock('module-info', []));
+    main.prepend(moduleInfoSection);
+  }
+}
+
+/**
+ * Add module navigation block to course step pages.
+ * @param {HTMLElement} main
+ */
+function addModuleNav(main) {
+  // Check if module-nav block already exists
+  if (!main.querySelector('.module-nav.block')) {
+    const moduleNavSection = document.createElement('div');
+    moduleNavSection.classList.add('module-nav-section');
+    moduleNavSection.append(buildBlock('module-nav', []));
+    main.append(moduleNavSection);
+  }
 }
 
 /**
@@ -286,6 +315,11 @@ function buildAutoBlocks(main, isFragment = false) {
       }
       if (isProfilePage) {
         addProfileRail(main);
+      }
+      // if we are on a course step page
+      if (isCourseStep) {
+        addModuleInfo(main);
+        addModuleNav(main);
       }
     }
   } catch (error) {
@@ -836,6 +870,7 @@ export async function loadIms() {
       window.adobeid = {
         scope:
           'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read,pps.read',
+        autoValidateToken: true,
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
         ...ims,
         onReady: () => {
@@ -1035,7 +1070,17 @@ export async function fetchGlobalFragment(metaName, fallback, lang) {
 
 /* fetch language specific placeholders, fallback to english */
 export async function fetchLanguagePlaceholders(lang) {
-  const langCode = lang || getPathDetails()?.lang || 'en';
+  const { communityHost } = getConfig();
+  const isCommunityDomain = window.location.origin.includes(communityHost);
+  const communityLang = new Map([['pt', 'pt-br']]);
+
+  const langCode =
+    lang ||
+    (isCommunityDomain
+      ? communityLang.get(document.documentElement.lang?.toLowerCase()) || document.documentElement.lang?.toLowerCase()
+      : getPathDetails()?.lang) ||
+    'en';
+
   try {
     // Try fetching placeholders with the specified language
     return await fetchPlaceholders(`${window.hlx.codeBasePath}/${langCode}`);

@@ -145,8 +145,8 @@ export default function atomicFacetHandler(baseElement, placeholders) {
 
   const sortElementsByLabel = (elements) =>
     elements.sort((a, b) => {
-      const aText = a.querySelector('.value-label')?.textContent?.trim().toLowerCase() || '';
-      const bText = b.querySelector('.value-label')?.textContent?.trim().toLowerCase() || '';
+      const aText = a.dataset.contenttype?.trim().toLowerCase() || '';
+      const bText = b.dataset.contenttype?.trim().toLowerCase() || '';
       return aText.localeCompare(bText);
     });
 
@@ -259,7 +259,7 @@ export default function atomicFacetHandler(baseElement, placeholders) {
     }
 
     const showMoreLabel = placeholders.showMore || 'Show more';
-    const showLessLabel = placeholders.showLore || 'Show less';
+    const showLessLabel = placeholders.showLess || 'Show less';
     facetParent.dataset.showMoreBtn = 'true';
     const showMoreWrapper = htmlToElement(`<div part="facet-show-more-wrapper">
         <button data-expanded="false" part="facet-show-more" class="facet-show-more-btn">

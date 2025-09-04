@@ -171,10 +171,10 @@ function updateUEInstrumentation() {
     });
   }
 
-  // ----- if learning-collections page, identified by theme
-  if (document.querySelector('body[class^=learning-collections]') || getMetadata('theme') === 'learning-collections') {
+  // ----- if courses page, identified by theme
+  if (document.querySelector('body[class^=courses]') || getMetadata('theme') === 'courses') {
     // update available sections
-    setUEFilter(main, 'main-learning-collections');
+    setUEFilter(main, 'main-courses');
   }
 }
 
@@ -304,11 +304,15 @@ async function applyChanges(event) {
 /**
  * Event listener for aue:ui-select, selection of a component
  */
-function handleEditorSelect(event) {
+async function handleEditorSelect(event) {
   // we are only interested in the target
   if (!event.detail.selected) {
     return;
   }
+
+  // handle flip card selection
+  const { handleFlipCardSelection } = await import('./editor-support-blocks.js');
+  handleFlipCardSelection(event);
 
   // if a tab panel was selected
   if (event.target.closest('.tabpanel')) {
