@@ -61,7 +61,7 @@
 }
 
 .drill-in-nav-button:hover,
-.drill-in-nav-button:focus-visible {
+.drill-in-nav-button:focus {
   color: var(--non-spectrum-adobe-dark-red);
   background-color: unset;
 }
