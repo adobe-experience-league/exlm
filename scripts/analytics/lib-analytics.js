@@ -421,16 +421,3 @@ export function pushGuideAutoPlayEvent(guide, audioOn) {
     },
   });
 }
-
-/**
- * Used to push search event to the data layer
- * @param {Object} searchTrackingData - search related data for tracking.
- */
-export function pushSearchEvent(searchTrackingData) {
-  window.adobeDataLayer = window.adobeDataLayer || [];
-
-  window.adobeDataLayer.push({
-    event: 'searchEvent',
-    search: searchTrackingData,
-  });
-}
