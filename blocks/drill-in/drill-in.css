@@ -39,7 +39,15 @@
   margin-top: 10px;
 }
 
+.drill-in-coachmark,
+.drill-in-plus-button,
 .drill-in-nav-button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.drill-in-nav-button,
+.drill-in-nav-button:focus,
+.drill-in-nav-button:active {
   background: unset;
   border: none;
   color: var(--non-spectrum-web-gray);
@@ -54,14 +62,7 @@
   display: inline-flex;
 }
 
-.drill-in-coachmark,
-.drill-in-plus-button,
-.drill-in-nav-button {
-  -webkit-tap-highlight-color: transparent;
-}
-
-.drill-in-nav-button:hover,
-.drill-in-nav-button:focus {
+.drill-in-nav-button:hover {
   color: var(--non-spectrum-adobe-dark-red);
   background-color: unset;
 }
