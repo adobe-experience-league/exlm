@@ -232,3 +232,10 @@
     display: none;
   }
 }
+
+@media (hover: none) and (pointer: coarse) {
+  .drill-in-nav-button:hover {
+    color: var(--non-spectrum-web-gray);
+    background-color: unset;
+  }
+}
