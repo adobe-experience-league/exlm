@@ -128,7 +128,7 @@ function moduleCard({
         </button>
       </div>
         <div class="cb-steps-info ${open ? 'open' : ''}">
-          <span class="cb-steps-info-text">${placeholders.CourseBreakdownModuleDetails || 'Module Details'}</span>
+          <span class="cb-steps-info-text">${placeholders.courseBreakdownModuleDetails || 'Module Details'}</span>
           <span class="cb-chevron"> <span class="icon icon-chevron"></span></span>
           <span class="cb-steps-status-text ${status}">${moduleCardStatusText}</span>
         </div>
