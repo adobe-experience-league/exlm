@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
-export const search = window.location.pathname === '/search.html';
+export const search = window.location.pathname === '/search.html' || window.location.pathname.endsWith('/search');
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
 export const browse = document.querySelector('meta[name="theme"]')?.content.includes('browse-') || false;
 export const browseProduct = document.querySelector('meta[name="theme"]')?.content.includes('browse-product') || false;
@@ -57,7 +57,7 @@ export const pageName = (language) => {
   return responseStr.toLowerCase();
 };
 
-export async function pushPageDataLayer(language) {
+export async function pushPageDataLayer(language, searchTrackingData) {
   window.adobeDataLayer = window.adobeDataLayer || [];
   const user = {
     userDetails: {
@@ -121,46 +121,69 @@ export async function pushPageDataLayer(language) {
     sections.shift();
   }
   const mainSiteSection = search ? 'search' : '';
+  const containsAtomicSearch = search && !!document.querySelector(`main .atomic-search`);
 
-  window.adobeDataLayer.push({
-    event: 'page loaded',
-    web: {
-      webPageDetails: {
-        URL: window.location.href,
-        cleanURL: window.location.href.replace(/^https?:\/\//, '').replace(/#.*$/, ''),
-        domain: window.location.host,
-        docrole: role,
-        doctype: docType,
-        docduration: duration,
-        mainSiteSection,
-        name,
-        gitEdit: document.querySelector('meta[name="git-edit"]')?.content || '',
-        exlId: document.querySelector('meta[name="exl-id"]')?.content || '',
-        pageLanguage: language,
-        pageName: name,
-        pageType: 'webpage',
-        pageViews: { value: 1 },
-        prevPage: localStorage.getItem('prevPage') || '',
-        userAgent: window.navigator.userAgent,
-        server: window.location.host,
-        siteSection: section,
-        siteSubSection1: sections[0] === 'perspective' ? 'perspectives' : sections[0] || '',
-        siteSubSection2: sections[1] || '',
-        siteSubSection3: sections[2] || '',
-        siteSubSection4: sections[3] || '',
-        siteSubSection5: sections[4] || '',
-        solution: browseProduct ? sections[1] : solution,
-        solutionVersion,
-        subSolution,
-        type,
-        fullSolution,
-        feature,
-        featureAttribute,
-      },
+  const webDetails = {
+    webPageDetails: {
+      URL: window.location.href,
+      cleanURL: window.location.href.replace(/^https?:\/\//, '').replace(/#.*$/, ''),
+      domain: window.location.host,
+      docrole: role,
+      doctype: docType,
+      docduration: duration,
+      mainSiteSection,
+      name,
+      gitEdit: document.querySelector('meta[name="git-edit"]')?.content || '',
+      exlId: document.querySelector('meta[name="exl-id"]')?.content || '',
+      pageLanguage: language,
+      pageName: name,
+      pageType: 'webpage',
+      pageViews: { value: 1 },
+      prevPage: localStorage.getItem('prevPage') || '',
+      userAgent: window.navigator.userAgent,
+      server: window.location.host,
+      siteSection: section,
+      siteSubSection1: sections[0] === 'perspective' ? 'perspectives' : sections[0] || '',
+      siteSubSection2: sections[1] || '',
+      siteSubSection3: sections[2] || '',
+      siteSubSection4: sections[3] || '',
+      siteSubSection5: sections[4] || '',
+      solution: browseProduct ? sections[1] : solution,
+      solutionVersion,
+      subSolution,
+      type,
+      fullSolution,
+      feature,
+      featureAttribute,
     },
-    user,
-    userGUID: user.userDetails.userID,
-  });
+  };
+  if (containsAtomicSearch && !searchTrackingData) {
+    document.addEventListener(
+      'ATOMIC_SEARCH_PAGE_LOAD_EVENT',
+      (e) => {
+        const trackingData = e.detail?.trackingData;
+        const dataLayer = {
+          event: 'page loaded',
+          web: webDetails,
+          user,
+          userGUID: user.userDetails.userID,
+        };
+        if (trackingData) {
+          dataLayer.search = trackingData;
+        }
+        window.adobeDataLayer.push(dataLayer);
+      },
+      { once: true },
+    );
+  } else {
+    window.adobeDataLayer.push({
+      event: 'page loaded',
+      web: webDetails,
+      user,
+      search: searchTrackingData || undefined,
+      userGUID: user.userDetails.userID,
+    });
+  }
 }
 
 export function pushLinkClick(e) {
@@ -395,5 +418,18 @@ export function pushGuideAutoPlayEvent(guide, audioOn) {
       trigger: `${guide.trigger}:${audioStatus}`,
       steps: guide.steps,
     },
+  });
+}
+
+/**
+ * Used to push search event to the data layer
+ * @param {Object} searchTrackingData - search related data for tracking.
+ */
+export function pushSearchEvent(searchTrackingData) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'searchEvent',
+    search: searchTrackingData,
   });
 }
