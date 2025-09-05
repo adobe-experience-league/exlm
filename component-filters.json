@@ -286,14 +286,7 @@
   },
   {
     "id": "course-hub-section",
-    "components": [
-      "text",
-      "title",
-      "button",
-      "image",
-      "announcement-ribbon",
-      "marquee"
-    ]
+    "components": ["text", "title", "button", "image", "announcement-ribbon", "marquee"]
   },
   {
     "id": "sign-up-flow-section",
