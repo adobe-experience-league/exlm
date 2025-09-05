@@ -9,6 +9,7 @@ const bookmarkExclusionContentypes = [
   CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
   CONTENT_TYPES.COMMUNITY.MAPPING_KEY,
   CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
+  CONTENT_TYPES['VIDEO CLIP'].MAPPING_KEY,
 ];
 
 /* Fetch data from the Placeholder.json */
@@ -236,8 +237,13 @@ const buildCardContent = async (card, model) => {
     inProgressStatus = {},
     failedToLoad = false,
     truncateDescription = false,
+    badgeTitle,
   } = model;
-  const contentType = type?.toLowerCase();
+  let contentType = type?.toLowerCase();
+  const isVideoClip = badgeTitle?.toUpperCase() === CONTENT_TYPES['VIDEO CLIP'].LABEL.toUpperCase();
+  if (isVideoClip) {
+    contentType = CONTENT_TYPES['VIDEO CLIP'].MAPPING_KEY;
+  }
   const cardContent = card.querySelector('.browse-card-content');
   const cardFooter = card.querySelector('.browse-card-footer');
 
