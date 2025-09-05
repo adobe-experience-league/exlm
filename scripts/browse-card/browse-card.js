@@ -542,31 +542,22 @@ export async function buildCard(container, element, model) {
   await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
   await buildCardContent(card, model);
 
-  const videoClickHandler = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    getVideoClipModal().then(async ({ BrowseCardVideoClipModal }) => {
-      const modal = await BrowseCardVideoClipModal.create({
-        model,
-      });
-      modal.open();
-    });
-  };
-
   if (isVideoClip) {
-    const playButton = card.querySelector('.play-button');
-    const cta = card.querySelector('.browse-card-cta-element');
-    const img = card.querySelector('.browse-card-figure img');
-    if (playButton) {
-      playButton.addEventListener('click', videoClickHandler);
-    }
-    if (cta) {
-      cta.addEventListener('click', videoClickHandler);
-    }
-    if (img) {
-      img.addEventListener('click', videoClickHandler);
-    }
+    const cardOptions = card.querySelector('.browse-card-options');
+    card.addEventListener('click', (e) => {
+      if (cardOptions?.contains(e.target)) {
+        return;
+      }
+      e.preventDefault();
+      e.stopPropagation();
+
+      getVideoClipModal().then(async ({ BrowseCardVideoClipModal }) => {
+        const modal = await BrowseCardVideoClipModal.create({
+          model,
+        });
+        modal.open();
+      });
+    });
   }
 
   if (model.viewLink) {
