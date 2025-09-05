@@ -56,7 +56,8 @@ function headerExclusions(header) {
     header.id.length > 0 &&
     !header.classList.contains('no-mtoc') &&
     !header.closest('details') &&
-    !header.closest('sp-tabs')
+    !header.closest('sp-tabs') &&
+    !header.closest('.tab-content')
   );
 }
 
