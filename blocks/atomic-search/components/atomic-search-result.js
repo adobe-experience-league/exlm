@@ -69,6 +69,7 @@ export const atomicResultStyles = `
                     }
                     .atomic-search-result-item .result-field.text-thumbnail:not(:has(.result-thumbnail)) {
                       gap: 0;
+                      display: block;
                     }
                     .atomic-search-result-item .result-field.text-thumbnail:has(.result-thumbnail) .result-text {
                       flex: 0 0 56%;
@@ -140,10 +141,10 @@ export const atomicResultStyles = `
                       z-index: 11;
                     }
                     .atomic-search-result-item .tooltip-top .tooltip-text {
-                      transform: translateX(-50%);
+                      display: block;
+                      bottom: 20px;
+                      transform: translateX(calc(-50% + 12px));
                       top: unset;
-                      left: 50%;
-                      bottom: 100%;
                       margin: 0 0 2px;
                     }
                     .atomic-search-result-item .tooltip .tooltip-text::before {
