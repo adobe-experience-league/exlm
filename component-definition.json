@@ -171,6 +171,23 @@
           }
         },
         {
+          "title": "Course Hub Section",
+          "id": "course-hub-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "filter": "course-hub-section",
+                  "name": "Course Hub Section",
+                  "model": "course-hub-section",
+                  "style": "course-hub-section"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Profile Section",
           "id": "profile-section",
           "plugins": {

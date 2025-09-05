@@ -172,9 +172,15 @@ function updateUEInstrumentation() {
   }
 
   // ----- if courses page, identified by theme
-  if (document.querySelector('body[class^=courses]') || getMetadata('theme') === 'courses') {
+  if (document.querySelector('body[class^=courses]') || getMetadata('theme')?.includes('courses')) {
     // update available sections
     setUEFilter(main, 'main-courses');
+  }
+
+  // ----- if course hub page, identified by theme
+  if (document.querySelector('body[class^=course-hub]') || getMetadata('theme')?.includes('course-hub')) {
+    // update available sections
+    setUEFilter(main, 'main-course-hub');
   }
 }
 
