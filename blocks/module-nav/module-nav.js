@@ -25,19 +25,19 @@ export default async function decorate(block) {
   const container = document.createElement('div');
   container.className = 'module-nav-buttons';
 
-  // Go Back link
-  const goBackLink = document.createElement('a');
-  goBackLink.className = 'button module-nav-button module-nav-back secondary';
-  goBackLink.textContent = placeholders['course-go-back'] || 'Go Back';
+  // Previous link
+  const previousLink = document.createElement('a');
+  previousLink.className = 'button module-nav-button module-nav-back secondary';
+  previousLink.textContent = placeholders['playlist-previous-label'] || 'Previous';
 
-  // Disable go back button if on first step
+  // Disable previous button if on first step
   if (currentStepIndex === 0) {
-    goBackLink.classList.add('disabled');
-    goBackLink.href = '#';
-    goBackLink.style.pointerEvents = 'none';
-    goBackLink.style.opacity = '0.5';
+    previousLink.classList.add('disabled');
+    previousLink.href = '#';
+    previousLink.style.pointerEvents = 'none';
+    previousLink.style.opacity = '0.5';
   } else {
-    goBackLink.href = stepInfo.prevStep || '#';
+    previousLink.href = stepInfo.prevStep || '#';
   }
 
   // Second link based on step type
@@ -94,7 +94,7 @@ export default async function decorate(block) {
   }
 
   // Add links to container
-  container.appendChild(goBackLink);
+  container.appendChild(previousLink);
   container.appendChild(secondLink);
 
   // Add to block

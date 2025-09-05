@@ -265,10 +265,6 @@ export default async function decorate(block) {
       indicator.style.pointerEvents = 'none';
     }
 
-    setTimeout(() => {
-      coachmark.indicatorPulse();
-    }, 100);
-
     // Popover styling
     const popOvers = coachmark.shadowRoot?.querySelectorAll('.spectrum-Popover');
     if (popOvers) {
@@ -346,7 +342,11 @@ export default async function decorate(block) {
   // Add click event to the document to hide coachmarks when clicking outside
   document.addEventListener('click', (e) => {
     // Only hide if not clicking on a coachmark or navigation button
-    if (!e.target.closest('exl-coachmark') && !e.target.closest('.drill-in-nav-button')) {
+    if (
+      !e.target.closest('exl-coachmark') &&
+      !e.target.closest('.drill-in-nav-button') &&
+      !e.target.closest('.drill-in-mobile-popover-container')
+    ) {
       coachmarks.forEach((cm) => {
         closePopover(cm);
       });
