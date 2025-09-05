@@ -170,7 +170,7 @@
 
 .drill-in-mobile-popover {
   background-color: var(--spectrum-gray-50);
-  border-bottom: 4px solid var(--spectrum-blue-800);
+  border-top: 4px solid var(--spectrum-blue-800);
   padding: 20px;
   margin: 20px 0;
   width: 100%;
