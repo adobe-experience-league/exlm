@@ -285,14 +285,14 @@
 
 /** White coachmark styles start **/
 .spectrum-coachmark-white .spectrum-CoachIndicator-ring {
-  border-color: var(--overlay-background-color);
+  display: none;
 }
 
 .spectrum-coachmark-white .spectrum-Popover {
   top: 50%;
   transform: translateY(-50%);
   border: none;
-  border-bottom: 4px solid var(--non-spectrum-adobe-dark-red);
+  border-top: 4px solid var(--spectrum-blue-800);
   width: 100%;
   padding: 30px;
   max-height: fit-content;

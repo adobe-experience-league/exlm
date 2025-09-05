@@ -62,7 +62,7 @@
 
 .drill-in-nav-button:hover,
 .drill-in-nav-button:focus {
-  color: var(--non-spectrum-adobe-dark-red);
+  color: var(--spectrum-blue-800);
   background-color: unset;
 }
 
@@ -105,7 +105,8 @@
   position: absolute;
   width: 20px;
   height: 20px;
-  background-color: var(--non-spectrum-adobe-dark-red);
+  background-color: var(--spectrum-gray-50);
+  border: 2px solid var(--spectrum-blue-800);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -121,23 +122,29 @@
   font-size: var(--spectrum-font-size-300);
   line-height: 1;
   display: block;
-  color: var(--spectrum-gray-50);
+  color: var(--spectrum-blue-800);
   transform: translateY(-1px);
 }
 
-.drill-in-coachmark:hover + .drill-in-plus-button {
-  border: 2px solid var(--spectrum-gray-50);
-  border-radius: 50%;
+.drill-in-coachmark.active + .drill-in-plus-button {
+  background-color: var(--spectrum-blue-800);
+  position: relative;
 }
 
-.drill-in-coachmark.active + .drill-in-plus-button {
-  background-color: var(--spectrum-gray-50);
-  border: 2px solid var(--non-spectrum-adobe-dark-red);
+.drill-in-coachmark.active + .drill-in-plus-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
+  border: 2px solid var(--spectrum-blue-800);
+  transform: translate(-50%, -50%);
 }
 
 .drill-in-coachmark.active + .drill-in-plus-button span {
-  color: var(--non-spectrum-adobe-dark-red);
+  color: var(--spectrum-gray-50);
 }
 
 .drill-in-close-btn {
@@ -163,7 +170,7 @@
 
 .drill-in-mobile-popover {
   background-color: var(--spectrum-gray-50);
-  border-bottom: 4px solid var(--non-spectrum-adobe-dark-red);
+  border-bottom: 4px solid var(--spectrum-blue-800);
   padding: 20px;
   margin: 20px 0;
   width: 100%;
@@ -211,6 +218,11 @@
   .drill-in-plus-button {
     width: 30px;
     height: 30px;
+  }
+
+  .drill-in-coachmark.active + .drill-in-plus-button::before {
+    width: 45px;
+    height: 45px;
   }
 
   .drill-in-title {
