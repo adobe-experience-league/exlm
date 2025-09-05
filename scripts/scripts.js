@@ -165,7 +165,7 @@ export const isPerspectivePage = matchesAnyTheme(/articles/);
 export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
-export const isCourseStep = matchesAnyTheme(/courses-step/);
+export const isCourseStep = matchesAnyTheme(/course-step/);
 
 /**
  * add a section for the left rail when on a browse page.

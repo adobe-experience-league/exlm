@@ -28,6 +28,10 @@
     "components": ["section", "courses-section", "tab-section"]
   },
   {
+    "id": "main-course-hub",
+    "components": ["section", "course-hub-section", "tab-section"]
+  },
+  {
     "id": "section",
     "components": [
       "text",
@@ -279,6 +283,10 @@
       "course-breakdown",
       "course-marquee"
     ]
+  },
+  {
+    "id": "course-hub-section",
+    "components": ["text", "title", "button", "image", "announcement-ribbon", "marquee"]
   },
   {
     "id": "sign-up-flow-section",
