@@ -1,3 +1,7 @@
+.flip-card-wrapper {
+  width: 100%;
+}
+
 .flip-card {
   display: flex;
   flex-direction: column;
