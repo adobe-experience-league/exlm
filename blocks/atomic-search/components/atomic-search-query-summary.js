@@ -15,7 +15,7 @@ export default function atomicQuerySummaryHandler(baseElement, placeholders) {
     } else {
       baseElement.removeAttribute('mobile');
     }
-  };
+  }
 
   const handlerSummaryTextChanges = () => {
     const target = baseElement.shadowRoot.querySelector('[part~="container"]');
