@@ -122,6 +122,13 @@
 
 .course-marquee .metadata-value {
   color: var(--spectrum-gray-100);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.course-marquee .metadata-value-item {
+  color: var(--spectrum-gray-100);
 }
 
 .course-marquee .metadata-separator {
