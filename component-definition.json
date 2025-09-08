@@ -983,8 +983,10 @@
                 "template": {
                   "name": "Flip Card Item",
                   "model": "flip-card-item",
-                  "title": "",
-                  "titleType": "h3",
+                  "frontTitle": "",
+                  "frontTitleHeadingType": "h3",
+                  "backTitle": "",
+                  "backTitleHeadingType": "h3",
                   "frontContent": "<p>Front content of the flip card</p>",
                   "backContent": "<p>Back content of the flip card</p>"
                 }
