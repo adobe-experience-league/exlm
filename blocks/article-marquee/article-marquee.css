@@ -223,7 +223,6 @@
 
 .article-marquee .user-actions .bookmark-label,
 .copylink-label {
-  padding-left: 10px;
   font-size: var(--spectrum-font-size-200);
 }
 
