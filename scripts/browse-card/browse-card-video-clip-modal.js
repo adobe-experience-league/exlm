@@ -199,7 +199,7 @@ export class BrowseCardVideoClipModal {
                   </div>
                   <div class="browse-card-actions">
                     <button class="browse-card-button">
-                      <a href="${videoURL}" class="browse-card-full-link" target="_blank">
+                      <a href="${parentURL}" class="browse-card-full-link" target="_blank">
                         ${BrowseCardVideoClipModal.placeholders?.watchFullVideo || 'Watch full video'}
                       </a>
                     </button>
