@@ -22,6 +22,23 @@ export default async function decorate(block) {
   const productName = getMetadata('coveo-solution') || '';
   const experienceLevel = getMetadata('level') || '';
 
+  // Function to create HTML for multiple values with proper spacing
+  const createMultiValueHTML = (values) => {
+    if (!values) return '';
+
+    // Split by semicolons or commas, trim each value, and remove duplicates
+    const uniqueValues = [
+      ...new Set(
+        values
+          .split(/[;,]/)
+          .map((value) => value.trim())
+          .filter(Boolean),
+      ),
+    ];
+
+    return uniqueValues.map((value) => `<span class="metadata-value-item">${value}</span>`).join('');
+  };
+
   block.textContent = '';
 
   // Create metadata items HTML
@@ -30,7 +47,7 @@ export default async function decorate(block) {
     metadataItemsHTML += `
       <div class="metadata-item">
         <span class="metadata-label">${placeholders?.courseProductLabel || 'Product'}:</span>
-        <span class="metadata-value">${productName}</span>
+        <div class="metadata-value">${createMultiValueHTML(productName)}</div>
       </div>
     `;
   }
@@ -43,7 +60,7 @@ export default async function decorate(block) {
     metadataItemsHTML += `
       <div class="metadata-item">
         <span class="metadata-label">${placeholders?.courseExperienceLevelLabel || 'Experience level'}:</span>
-        <span class="metadata-value">${experienceLevel}</span>
+        <div class="metadata-value">${createMultiValueHTML(experienceLevel)}</div>
       </div>
     `;
   }
