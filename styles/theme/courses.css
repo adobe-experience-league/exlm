@@ -23,7 +23,3 @@ h6 {
   color: var(--text-color);
   line-height: normal;
 }
-
-body.courses .module-info-section {
-  border-bottom: 1px solid var(--spectrum-gray-200);
-}
