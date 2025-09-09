@@ -623,14 +623,11 @@
 }
 
 .slides .content .button {
-  --content-left-position: 172px;
-
   bottom: 0;
-  left: calc(100% - var(--content-left-position));
   display: none;
   font-size: var(--spectrum-font-size-200);
   height: 40px;
-  position: relative;
+  float: right;
 }
 
 .slides .content p {
