@@ -54,11 +54,23 @@ export default function decorate(block) {
 
     card.innerHTML = `
       <div>
-        ${frontTitleText ? `<${frontTitleTag} class="flip-card-title ${hasFrontContent ? '' : 'flip-card-title-only'}">${frontTitleText}</${frontTitleTag}>` : ''}
+        ${
+          frontTitleText
+            ? `<${frontTitleTag} class="flip-card-title ${
+                hasFrontContent ? '' : 'flip-card-title-only'
+              }">${frontTitleText}</${frontTitleTag}>`
+            : ''
+        }
         ${frontContentDiv ? `<div class="flip-card-content">${frontContentDiv.innerHTML}</div>` : ''}
       </div>
       <div>
-        ${backTitleText ? `<${backTitleTag} class="flip-card-title ${hasBackContent ? '' : 'flip-card-title-only'}">${backTitleText}</${backTitleTag}>` : ''}
+        ${
+          backTitleText
+            ? `<${backTitleTag} class="flip-card-title ${
+                hasBackContent ? '' : 'flip-card-title-only'
+              }">${backTitleText}</${backTitleTag}>`
+            : ''
+        }
         ${backContentDiv ? `<div class="flip-card-content">${backContentDiv.innerHTML}</div>` : ''}
       </div>
     `;
