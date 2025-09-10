@@ -9,6 +9,7 @@ const bookmarkExclusionContentypes = [
   CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
   CONTENT_TYPES.COMMUNITY.MAPPING_KEY,
   CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
+  CONTENT_TYPES['VIDEO CLIP'].MAPPING_KEY,
 ];
 
 /* Fetch data from the Placeholder.json */
@@ -236,8 +237,13 @@ const buildCardContent = async (card, model) => {
     inProgressStatus = {},
     failedToLoad = false,
     truncateDescription = false,
+    badgeTitle,
   } = model;
-  const contentType = type?.toLowerCase();
+  let contentType = type?.toLowerCase();
+  const isVideoClip = badgeTitle?.toUpperCase() === CONTENT_TYPES['VIDEO CLIP'].LABEL.toUpperCase();
+  if (isVideoClip) {
+    contentType = CONTENT_TYPES['VIDEO CLIP'].MAPPING_KEY;
+  }
   const cardContent = card.querySelector('.browse-card-content');
   const cardFooter = card.querySelector('.browse-card-footer');
 
@@ -536,31 +542,22 @@ export async function buildCard(container, element, model) {
   await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
   await buildCardContent(card, model);
 
-  const videoClickHandler = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    getVideoClipModal().then(async ({ BrowseCardVideoClipModal }) => {
-      const modal = await BrowseCardVideoClipModal.create({
-        model,
-      });
-      modal.open();
-    });
-  };
-
   if (isVideoClip) {
-    const playButton = card.querySelector('.play-button');
-    const cta = card.querySelector('.browse-card-cta-element');
-    const img = card.querySelector('.browse-card-figure img');
-    if (playButton) {
-      playButton.addEventListener('click', videoClickHandler);
-    }
-    if (cta) {
-      cta.addEventListener('click', videoClickHandler);
-    }
-    if (img) {
-      img.addEventListener('click', videoClickHandler);
-    }
+    const cardOptions = card.querySelector('.browse-card-options');
+    card.addEventListener('click', (e) => {
+      if (cardOptions?.contains(e.target)) {
+        return;
+      }
+      e.preventDefault();
+      e.stopPropagation();
+
+      getVideoClipModal().then(async ({ BrowseCardVideoClipModal }) => {
+        const modal = await BrowseCardVideoClipModal.create({
+          model,
+        });
+        modal.open();
+      });
+    });
   }
 
   if (model.viewLink) {

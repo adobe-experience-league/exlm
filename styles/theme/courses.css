@@ -1,7 +1,5 @@
-body.courses,
-body.courses .section,
-.courses-section {
-  background-color: var(--background-color);
+.courses {
+  --highlight-light-background-color: #fff;
 }
 
 body.courses .section,
@@ -26,4 +24,8 @@ h6 {
 
 body.courses .module-info-section {
   border-bottom: 1px solid var(--spectrum-gray-200);
+}
+
+body.courses .section > div:has(> .block) {
+  width: 100%;
 }
