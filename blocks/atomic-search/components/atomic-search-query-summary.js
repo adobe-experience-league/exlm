@@ -1,3 +1,4 @@
+import { htmlToElement } from '../../../scripts/scripts.js';
 import { waitFor, waitForChildElement, CUSTOM_EVENTS, isMobile } from './atomic-search-utils.js';
 
 export default function atomicQuerySummaryHandler(baseElement, placeholders) {
@@ -41,7 +42,18 @@ export default function atomicQuerySummaryHandler(baseElement, placeholders) {
         const resultText = searchQuery
           ? placeholders.atomicSearchResultText || 'Search Results for'
           : placeholders.atomicSearchNoQueryResultText || 'Search Results';
-        resultTextElement.innerHTML = `<span style="margin-right: 8px;" class="search-result-left">${resultText}: ${searchQuery}</span> <span class="search-right">${pageText}</span>`;
+
+        resultTextElement.innerHTML = '';
+
+        const leftSpan = htmlToElement(`<span class="search-result-left" style="margin-right:8px"></span>`);
+        leftSpan.textContent = `${resultText}: ${searchQuery}`; // XSS protection - textContent is a safe sink, do not use innerHTML. UGP-13611
+
+        const rightSpan = htmlToElement(`<span class="search-right"></span>`);
+        rightSpan.textContent = pageText;
+
+        resultTextElement.appendChild(leftSpan);
+        resultTextElement.appendChild(rightSpan);
+
         resultTextElement.dataset.searchkey = searchQuery;
         resultTextElement.dataset.pagekey = pageText;
         if (!queryElementWrap) {
