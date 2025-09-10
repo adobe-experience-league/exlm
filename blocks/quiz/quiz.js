@@ -78,51 +78,41 @@ async function checkQuestionAnswer(questionElement) {
   );
 }
 
-/**
- * Shows feedback for a question
- * @param {Element} questionElement The question element
- * @param {boolean} isCorrect Whether the answer is correct
- * @param {Object} placeholders Language placeholders
- */
-function showQuestionFeedback(questionElement, isCorrect, placeholders = {}) {
-  if (!questionElement) {
-    return;
-  }
-
-  // Get custom feedback messages from properties
-  const correctFeedback = questionElement.correctFeedbackText || placeholders?.correct || 'Correct!';
-  const incorrectFeedback = questionElement.incorrectFeedbackText || placeholders?.incorrect || 'Incorrect';
-
-  // Create feedback element using htmlToElement
-  const feedbackElement = htmlToElement(`
-    <div class="question-feedback ${isCorrect ? 'correct' : 'incorrect'}">
-      ${isCorrect ? correctFeedback : incorrectFeedback}
-    </div>
-  `);
-
-  // Find the question block DOM and append feedback
-  const questionBlock = questionElement?.querySelector('.question-block');
-  if (questionBlock) {
-    questionBlock.appendChild(feedbackElement);
-  }
-}
+// This function has been removed as per requirements
 
 /**
- * Submits the quiz and shows feedback for each question
+ * Submits the quiz and evaluates the results
  * @param {NodeList} questions The list of question elements
  * @param {Object} placeholders Language placeholders
+ * @param {Element} passCriteriaElement The pass criteria element
+ * @param {Element} passMsgElement The pass message element
+ * @param {Element} failMsgElement The fail message element
+ * @returns {Object} The quiz results including correct answers count and whether the quiz was passed
  */
-async function submitQuiz(questions, placeholders = {}) {
-  // Check all questions and show feedback
+async function submitQuiz(questions, placeholders = {}, passCriteriaElement, passMsgElement, failMsgElement) {
+  // Check all questions
   const questionsArray = Array.from(questions || []);
 
   // Process all questions in parallel
   const results = await Promise.all(questionsArray.map((question) => checkQuestionAnswer(question)));
-
-  // Show feedback for each question
-  questionsArray.forEach((question, index) => {
-    showQuestionFeedback(question, results[index], placeholders);
-  });
+  
+  // Count correct answers
+  const correctAnswersCount = results.filter(Boolean).length;
+  
+  // Get pass criteria as a number (default to 100% if not specified)
+  const passCriteriaValue = passCriteriaElement ? 
+    parseInt(passCriteriaElement.textContent.trim(), 10) : 
+    questionsArray.length;
+  
+  // Determine if quiz was passed
+  const isPassed = correctAnswersCount >= passCriteriaValue;
+  
+  return {
+    correctAnswersCount,
+    totalQuestions: questionsArray.length,
+    isPassed,
+    passCriteriaValue,
+  };
 }
 
 let quizHandlerFunction = null;
@@ -234,11 +224,31 @@ export default async function decorate(block) {
       return false;
     }
 
-    // Remove any existing question feedback before showing new feedback
-    const existingFeedback = block.querySelectorAll('.question-feedback');
-    existingFeedback.forEach((feedback) => feedback.remove());
-
-    await submitQuiz(questionElements, placeholders);
+    // Submit quiz and get results
+    const quizResults = await submitQuiz(questionElements, placeholders, passCriteria, passMsg, failMsg);
+    
+    // Clear all page contents
+    block.textContent = '';
+    
+    // Create result container
+    const resultContainer = document.createElement('div');
+    resultContainer.classList.add('quiz-result-container');
+    
+    // Display pass or fail message in a box
+    const resultMessage = htmlToElement(`
+      <div class="quiz-result-message ${quizResults.isPassed ? 'correct' : 'incorrect'}">
+        ${quizResults.isPassed 
+          ? (passMsg?.textContent || 'Congratulations! You passed the quiz.') 
+          : (failMsg?.textContent || 'You did not meet the pass criteria. Please try again.')}
+      </div>
+    `);
+    
+    // Add result message to container
+    resultContainer.appendChild(resultMessage);
+    
+    // Add result container to block
+    block.appendChild(resultContainer);
+    
     return true;
   };
 
