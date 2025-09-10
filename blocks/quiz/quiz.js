@@ -67,6 +67,11 @@ async function checkQuestionAnswer(questionElement) {
     selectedAnswerIndices = [parseInt(selectedAnswer.value, 10)];
   }
 
+  // Debug info
+  console.log(`Question ${questionIndex} - Selected indices:`, selectedAnswerIndices);
+  console.log(`Question ${questionIndex} - Answer texts:`, answerTexts);
+  console.log(`Question ${questionIndex} - Hashed correct answers:`, hashedCorrectAnswers);
+
   // Check if the selected answers are correct
   const isCorrect = await checkSelectedAnswers(
     selectedAnswerIndices,
@@ -187,51 +192,25 @@ export default async function decorate(block) {
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
 
-  // Get all block children
-  const blockChildren = [...block.children];
+  // Get title, text, and questions from block children using destructuring
+  const [titleElement, textElement, ...questionsOriginal] = [...block.children];
   
-  // First two elements are always title and description
-  const titleElement = blockChildren[0];
-  const textElement = blockChildren[1];
-  
-  // Get the data attributes from the block
-  const blockDiv = block.querySelector(':scope > div > div');
-  
-  // Get passing criteria and messages from data attributes
-  const passingCriteriaAttr = blockDiv && blockDiv.getAttribute('data-passing-criteria');
-  const quizPassMessageAttr = blockDiv && blockDiv.getAttribute('data-quiz-pass-message');
-  const quizFailMessageAttr = blockDiv && blockDiv.getAttribute('data-quiz-fail-message');
-  
-  // Make sure passing criteria is set properly
+  // Get passing criteria from block properties
+  const passingCriteriaAttr = block.querySelector(':scope > div > div').getAttribute('data-passing-criteria');
   if (passingCriteriaAttr) {
-    // Ensure it's a valid number
-    const parsedCriteria = parseInt(passingCriteriaAttr, 10);
-    if (!isNaN(parsedCriteria) && parsedCriteria > 0) {
-      block.dataset.passingCriteria = parsedCriteria.toString();
-      console.log(`Setting passing criteria to: ${parsedCriteria}`);
-    } else {
-      console.log(`Invalid passing criteria value: ${passingCriteriaAttr}`);
-    }
-  } else {
-    console.log('No passing criteria attribute found');
+    block.dataset.passingCriteria = passingCriteriaAttr;
+    console.log(`Setting passing criteria from attribute: ${passingCriteriaAttr}`);
   }
-
+  
+  // Get quiz pass/fail messages from block properties
+  const quizPassMessageAttr = block.querySelector(':scope > div > div').getAttribute('data-quiz-pass-message');
   if (quizPassMessageAttr) {
     block.dataset.quizPassMessage = quizPassMessageAttr;
   }
-
+  
+  const quizFailMessageAttr = block.querySelector(':scope > div > div').getAttribute('data-quiz-fail-message');
   if (quizFailMessageAttr) {
     block.dataset.quizFailMessage = quizFailMessageAttr;
-  }
-  
-  // Find all question elements (skip the first two elements which are title and description)
-  const questionsOriginal = [];
-  for (let i = 2; i < blockChildren.length; i++) {
-    const child = blockChildren[i];
-    // Check if this is a question element (has at least 4 children for question text, multiple choice, answers, and correct answers)
-    if (child.children.length >= 4) {
-      questionsOriginal.push(child);
-    }
   }
 
   const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
@@ -270,9 +249,7 @@ export default async function decorate(block) {
   });
 
   // Parse passing criteria from block dataset
-  // Ensure it's a valid number by using parseInt and providing a default of 0
-  const passingCriteriaStr = block.dataset.passingCriteria;
-  const passingCriteria = passingCriteriaStr ? parseInt(passingCriteriaStr, 10) : 0;
+  const passingCriteria = parseInt(block.dataset.passingCriteria || '0', 10);
   console.log(`Parsed passing criteria: ${passingCriteria}, from dataset: ${block.dataset.passingCriteria}`);
 
   // Create a function to handle quiz submission that can be called externally
