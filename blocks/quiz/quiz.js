@@ -68,7 +68,7 @@ async function checkQuestionAnswer(questionElement) {
   }
 
   // Check if the selected answers are correct
-  return checkSelectedAnswers(
+  const isCorrect = await checkSelectedAnswers(
     selectedAnswerIndices,
     answerTexts,
     pagePath,
@@ -76,6 +76,9 @@ async function checkQuestionAnswer(questionElement) {
     hashedCorrectAnswers,
     isMultipleChoice,
   );
+  
+  console.log(`Question ${questionIndex} answer check: ${isCorrect ? 'Correct' : 'Incorrect'}`);
+  return isCorrect;
 }
 
 /**
@@ -129,13 +132,16 @@ async function submitQuiz(questions, placeholders = {}, passingCriteria = 0) {
   // Count correct answers
   const correctAnswersCount = results.filter(Boolean).length;
 
+  // Ensure passing criteria is a valid number
+  const validPassingCriteria = typeof passingCriteria === 'number' && !isNaN(passingCriteria) ? passingCriteria : 0;
+
   // Determine if the quiz is passed based on passing criteria
   // If passing criteria is set, check if correct answers meet or exceed it
   // If passing criteria is not set, default to false
-  const isPassed = passingCriteria > 0 ? correctAnswersCount >= passingCriteria : false;
+  const isPassed = validPassingCriteria > 0 ? correctAnswersCount >= validPassingCriteria : false;
 
   // Log for debugging
-  console.log(`Quiz Results: ${correctAnswersCount} correct out of ${questionsArray.length}, passing criteria: ${passingCriteria}, isPassed: ${isPassed}`);
+  console.log(`Quiz Results: ${correctAnswersCount} correct out of ${questionsArray.length}, passing criteria: ${validPassingCriteria}, isPassed: ${isPassed}`);
 
   return {
     correctAnswersCount,
@@ -213,7 +219,12 @@ export default async function decorate(block) {
     const parsedCriteria = parseInt(passingCriteriaAttr, 10);
     if (!isNaN(parsedCriteria) && parsedCriteria > 0) {
       block.dataset.passingCriteria = parsedCriteria.toString();
+      console.log(`Setting passing criteria to: ${parsedCriteria}`);
+    } else {
+      console.log(`Invalid passing criteria value: ${passingCriteriaAttr}`);
     }
+  } else {
+    console.log('No passing criteria attribute found');
   }
 
   if (quizPassMessageAttr) {
@@ -260,7 +271,10 @@ export default async function decorate(block) {
   });
 
   // Parse passing criteria from block dataset
-  const passingCriteria = parseInt(block.dataset.passingCriteria || '0', 10);
+  // Ensure it's a valid number by using parseInt and providing a default of 0
+  const passingCriteriaStr = block.dataset.passingCriteria;
+  const passingCriteria = passingCriteriaStr ? parseInt(passingCriteriaStr, 10) : 0;
+  console.log(`Parsed passing criteria: ${passingCriteria}, from dataset: ${block.dataset.passingCriteria}`);
 
   // Create a function to handle quiz submission that can be called externally
   quizHandlerFunction = async () => {
@@ -314,14 +328,21 @@ export default async function decorate(block) {
       
       // Process the quiz and get results
       const quizResults = await submitQuiz(questionElements, placeholders, passingCriteria);
+      
+      // Log the quiz results
+      console.log(`Quiz results:`, quizResults);
+      console.log(`Is passed: ${quizResults.isPassed}, Correct answers: ${quizResults.correctAnswersCount}, Total questions: ${quizResults.totalQuestions}`);
 
       // Clear the block content
       block.textContent = '';
 
       // Create and show the result message
+      const resultMessage = quizResults.isPassed ? quizPassMessage : quizFailMessage;
+      console.log(`Showing ${quizResults.isPassed ? 'pass' : 'fail'} message: ${resultMessage}`);
+      
       const resultMessageElement = htmlToElement(`
         <div class="quiz-result-message ${quizResults.isPassed ? 'pass' : 'fail'}">
-          ${quizResults.isPassed ? quizPassMessage : quizFailMessage}
+          ${resultMessage}
         </div>
       `);
 
