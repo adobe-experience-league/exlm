@@ -162,8 +162,8 @@ export default async function decorate(block) {
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
 
-  // Get title, text, and questions from block children using destructuring
-  const [titleElement, textElement, ...questionsOriginal] = [...block.children];
+  // Get title, text, pass criteria, pass message, fail message, and questions from block children using destructuring
+  const [titleElement, textElement, passCriteria, passMsg, failMsg, ...questionsOriginal] = [...block.children];
 
   const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
