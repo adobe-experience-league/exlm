@@ -1,6 +1,15 @@
 import { decorateIcon } from '../../scripts/lib-franklin.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
-export default function decorate(block) {
+export default async function decorate(block) {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
   const cards = block.querySelectorAll('div > div');
 
   function toggleCard(card) {
@@ -19,7 +28,7 @@ export default function decorate(block) {
     cardContent.innerHTML += `
       <div class="flip-container">
         <span class="icon icon-refresh" aria-hidden="true"></span>
-        <span class="flip-text" aria-label="Flip">Flip</span>
+        <span class="flip-text" aria-label="Flip">${placeholders.flipText || 'Flip'}</span>
       </div>
     `;
 
