@@ -5,7 +5,6 @@ indices:
     include:
       - '/en/**'
     exclude:
-      - '/en/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /en/query-index.json
@@ -34,7 +33,6 @@ indices:
     include:
       - '/fr/**'
     exclude:
-      - '/fr/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /fr/query-index.json
@@ -44,7 +42,6 @@ indices:
     include:
       - '/de/**'
     exclude:
-      - '/de/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /de/query-index.json
@@ -54,7 +51,6 @@ indices:
     include:
       - '/es/**'
     exclude:
-      - '/es/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /es/query-index.json
@@ -64,7 +60,6 @@ indices:
     include:
       - '/it/**'
     exclude:
-      - '/it/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /it/query-index.json
@@ -74,7 +69,6 @@ indices:
     include:
       - '/nl/**'
     exclude:
-      - '/nl/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /nl/query-index.json
@@ -84,7 +78,6 @@ indices:
     include:
       - '/pt-br/**'
     exclude:
-      - '/pt-br/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /pt-br/query-index.json
@@ -94,7 +87,6 @@ indices:
     include:
       - '/ko/**'
     exclude:
-      - '/ko/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /ko/query-index.json
@@ -104,7 +96,6 @@ indices:
     include:
       - '/ja/**'
     exclude:
-      - '/ja/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /ja/query-index.json
@@ -114,7 +105,6 @@ indices:
     include:
       - '/sv/**'
     exclude:
-      - '/sv/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /sv/query-index.json
@@ -124,7 +114,6 @@ indices:
     include:
       - '/zh-hans/**'
     exclude:
-      - '/zh-hans/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /zh-hans/query-index.json
@@ -134,7 +123,6 @@ indices:
     include:
       - '/zh-hant/**'
     exclude:
-      - '/zh-hant/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /zh-hant/query-index.json
@@ -375,7 +363,6 @@ indices:
       - '/en/docs/experience-manager-learn/**'
       - '/en/docs/experience-manager-cloud-service/**'
     exclude:
-      - '/en/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /en/sitemap-index-1.json
@@ -402,7 +389,6 @@ indices:
       - '/en/docs/experience-cloud-kcs/**'
       - '/en/docs/experience-manager-learn/**'
       - '/en/docs/experience-manager-cloud-service/**'
-      - '/en/fragments'
       - '/*.json'
       - '/**/*.json'
     properties:
@@ -427,7 +413,6 @@ indices:
       - '/fr/docs/experience-manager-learn/**'
       - '/fr/docs/experience-manager-cloud-service/**'
     exclude:
-      - '/fr/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /fr/sitemap-index-1.json
@@ -447,7 +432,6 @@ indices:
       - '/fr/docs/experience-cloud-kcs/**'
       - '/fr/docs/experience-manager-learn/**'
       - '/fr/docs/experience-manager-cloud-service/**'
-      - '/fr/fragments'
       - '/*.json'
       - '/**/*.json'
 
@@ -465,7 +449,6 @@ indices:
       - '/de/docs/experience-manager-learn/**'
       - '/de/docs/experience-manager-cloud-service/**'
     exclude:
-      - '/de/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /de/sitemap-index-1.json
@@ -485,7 +468,6 @@ indices:
       - '/de/docs/experience-cloud-kcs/**'
       - '/de/docs/experience-manager-learn/**'
       - '/de/docs/experience-manager-cloud-service/**'
-      - '/de/fragments'
       - '/*.json'
       - '/**/*.json'
 
@@ -503,7 +485,6 @@ indices:
       - '/es/docs/experience-manager-learn/**'
       - '/es/docs/experience-manager-cloud-service/**'
     exclude:
-      - '/es/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /es/sitemap-index-1.json
@@ -523,7 +504,6 @@ indices:
       - '/es/docs/experience-cloud-kcs/**'
       - '/es/docs/experience-manager-learn/**'
       - '/es/docs/experience-manager-cloud-service/**'
-      - '/es/fragments'
       - '/*.json'
       - '/**/*.json'
 
@@ -541,7 +521,6 @@ indices:
       - '/it/docs/experience-manager-learn/**'
       - '/it/docs/experience-manager-cloud-service/**'
     exclude:
-      - '/it/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /it/sitemap-index-1.json
@@ -561,7 +540,6 @@ indices:
       - '/it/docs/experience-cloud-kcs/**'
       - '/it/docs/experience-manager-learn/**'
       - '/it/docs/experience-manager-cloud-service/**'
-      - '/it/fragments'
       - '/*.json'
       - '/**/*.json'
 
@@ -579,7 +557,6 @@ indices:
       - '/nl/docs/experience-manager-learn/**'
       - '/nl/docs/experience-manager-cloud-service/**'
     exclude:
-      - '/nl/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /nl/sitemap-index-1.json
@@ -599,7 +576,6 @@ indices:
       - '/nl/docs/experience-cloud-kcs/**'
       - '/nl/docs/experience-manager-learn/**'
       - '/nl/docs/experience-manager-cloud-service/**'
-      - '/nl/fragments'
       - '/*.json'
       - '/**/*.json'
 
@@ -617,7 +593,6 @@ indices:
       - '/pt-br/docs/experience-manager-learn/**'
       - '/pt-br/docs/experience-manager-cloud-service/**'
     exclude:
-      - '/pt-br/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /pt-br/sitemap-index-1.json
@@ -637,7 +612,6 @@ indices:
       - '/pt-br/docs/experience-cloud-kcs/**'
       - '/pt-br/docs/experience-manager-learn/**'
       - '/pt-br/docs/experience-manager-cloud-service/**'
-      - '/pt-br/fragments'
       - '/*.json'
       - '/**/*.json'
 
@@ -655,7 +629,6 @@ indices:
       - '/ko/docs/experience-manager-learn/**'
       - '/ko/docs/experience-manager-cloud-service/**'
     exclude:
-      - '/ko/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /ko/sitemap-index-1.json
@@ -675,7 +648,6 @@ indices:
       - '/ko/docs/experience-cloud-kcs/**'
       - '/ko/docs/experience-manager-learn/**'
       - '/ko/docs/experience-manager-cloud-service/**'
-      - '/ko/fragments'
       - '/*.json'
       - '/**/*.json'
 
@@ -693,7 +665,6 @@ indices:
       - '/ja/docs/experience-manager-learn/**'
       - '/ja/docs/experience-manager-cloud-service/**'
     exclude:
-      - '/ja/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /ja/sitemap-index-1.json
@@ -713,7 +684,6 @@ indices:
       - '/ja/docs/experience-cloud-kcs/**'
       - '/ja/docs/experience-manager-learn/**'
       - '/ja/docs/experience-manager-cloud-service/**'
-      - '/ja/fragments'
       - '/*.json'
       - '/**/*.json'
 
@@ -731,7 +701,6 @@ indices:
       - '/sv/docs/experience-manager-learn/**'
       - '/sv/docs/experience-manager-cloud-service/**'
     exclude:
-      - '/sv/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /sv/sitemap-index-1.json
@@ -751,7 +720,6 @@ indices:
       - '/sv/docs/experience-cloud-kcs/**'
       - '/sv/docs/experience-manager-learn/**'
       - '/sv/docs/experience-manager-cloud-service/**'
-      - '/sv/fragments'
       - '/*.json'
       - '/**/*.json'
 
@@ -769,7 +737,6 @@ indices:
       - '/zh-hans/docs/experience-manager-learn/**'
       - '/zh-hans/docs/experience-manager-cloud-service/**'
     exclude:
-      - '/zh-hans/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /zh-hans/sitemap-index-1.json
@@ -789,7 +756,6 @@ indices:
       - '/zh-hans/docs/experience-cloud-kcs/**'
       - '/zh-hans/docs/experience-manager-learn/**'
       - '/zh-hans/docs/experience-manager-cloud-service/**'
-      - '/zh-hans/fragments'
       - '/*.json'
       - '/**/*.json'
 
@@ -807,7 +773,6 @@ indices:
       - '/zh-hant/docs/experience-manager-learn/**'
       - '/zh-hant/docs/experience-manager-cloud-service/**'
     exclude:
-      - '/zh-hant/fragments'
       - '/*.json'
       - '/**/*.json'
     target: /zh-hant/sitemap-index-1.json
@@ -827,7 +792,6 @@ indices:
       - '/zh-hant/docs/experience-cloud-kcs/**'
       - '/zh-hant/docs/experience-manager-learn/**'
       - '/zh-hant/docs/experience-manager-cloud-service/**'
-      - '/zh-hant/fragments'
       - '/*.json'
       - '/**/*.json'
 
