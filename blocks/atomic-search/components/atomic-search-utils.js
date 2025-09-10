@@ -9,7 +9,6 @@ export const CUSTOM_EVENTS = {
   RESULT_FOUND: 'ATOMIC_RESULT_FOUND',
   SEARCH_QUERY_CHANGED: 'ATOMIC_SEARCH_QUERY_CHANGED',
   SEARCH_CLEARED: 'ATOMIC_SEARCH_CLEARED',
-  PAGE_LOAD_EVENT: 'ATOMIC_SEARCH_PAGE_LOAD_EVENT',
 };
 
 export const COMMUNITY_CONTENT_TYPES = [
@@ -232,4 +231,4 @@ export function escapeHtml(unsafe) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
-}
+};
