@@ -7802,8 +7802,8 @@
         "valueType": "string",
         "name": "skill_track_url",
         "value": "",
-        "label": "Skill Track Page URL",
-        "description": "URL to the Skill track",
+        "label": "Module Page URL",
+        "description": "URL to the Module",
         "validation": {
           "rootPath": "/content/exlm/global/en/courses/"
         }

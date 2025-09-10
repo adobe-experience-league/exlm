@@ -2,6 +2,19 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { getmoduleMeta } from '../../scripts/utils/course-utils.js';
 
+// Function to check if a module is completed based on query parameter
+function isModuleCompleted(moduleIndex) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const completedModules = urlParams.get('completed');
+
+  if (!completedModules) return false;
+
+  // Check if the module index is in the completed modules list
+  // Format: ?completed=0,1,2 (comma-separated indices)
+  const completedIndices = completedModules.split(',').map((idx) => parseInt(idx, 10));
+  return completedIndices.includes(moduleIndex);
+}
+
 const SKILL_TRACK_CARD_STATUS = {
   DISABLED: 'disabled',
   NOT_STARTED: 'not-started',
@@ -67,10 +80,10 @@ function moduleCardShimmer() {
 }
 
 /**
- * @param {Promise<moduleMeta>} modulePromise - The promise that resolves to the skill track meta
- * @param {number} index - The index of the skill track card
- * @param {boolean} open - Whether the skill track card is open
- * @param {SKILL_TRACK_CARD_STATUS} status - The status of the skill track card
+ * @param {Promise<moduleMeta>} modulePromise - The promise that resolves to the Module meta
+ * @param {number} index - The index of the Module card
+ * @param {boolean} open - Whether the Module card is open
+ * @param {SKILL_TRACK_CARD_STATUS} status - The status of the Module card
  * @param {Object} placeholders - The placeholders object from placeholders.json
  * @returns {HTMLElement}
  */
@@ -81,6 +94,8 @@ function moduleCard({
   status = SKILL_TRACK_CARD_STATUS.NOT_STARTED,
   placeholders,
 }) {
+  // Check if this module is marked as completed via query param
+  const finalStatus = isModuleCompleted(index) ? SKILL_TRACK_CARD_STATUS.COMPLETED : status;
   const CardShimmer = moduleCardShimmer();
 
   const startButtonTextMap = {
@@ -89,15 +104,15 @@ function moduleCard({
     [SKILL_TRACK_CARD_STATUS.IN_PROGRESS]: placeholders.courseBreakdownModuleButtonInProgress || 'Resume Module',
     [SKILL_TRACK_CARD_STATUS.COMPLETED]: placeholders.courseBreakdownModuleButtonCompleted || 'Review Module',
   };
-  const startButtonText = startButtonTextMap[status] || 'Start Module';
+  const startButtonText = startButtonTextMap[finalStatus] || 'Start Module';
 
   const moduleCardStatusMap = {
     [SKILL_TRACK_CARD_STATUS.DISABLED]: placeholders.courseBreakdownStatusNotStarted || 'Not Started',
     [SKILL_TRACK_CARD_STATUS.NOT_STARTED]: placeholders.courseBreakdownStatusNotStarted || 'Not Started',
     [SKILL_TRACK_CARD_STATUS.IN_PROGRESS]: placeholders.courseBreakdownStatusInProgress || 'In progress',
-    [SKILL_TRACK_CARD_STATUS.COMPLETED]: placeholders.courseBreakdownStatusCompleted || 'Completed',
+    [SKILL_TRACK_CARD_STATUS.COMPLETED]: placeholders.courseBreakdownStatusComplete || 'Completed',
   };
-  const moduleCardStatusText = moduleCardStatusMap[status] || 'Not started';
+  const moduleCardStatusText = moduleCardStatusMap[finalStatus] || 'Not started';
 
   modulePromise.then((moduleMeta) => {
     const card = document.createElement('div');
@@ -119,18 +134,24 @@ function moduleCard({
 
     card.innerHTML = `
       <div class="cb-module-header">
-        <span class="cb-module-number ${status}">
-        ${status === SKILL_TRACK_CARD_STATUS.COMPLETED ? '<span class="icon icon-checkmark-light"></span>' : index + 1}
-          </span>
-        <h3 class="cb-module-title">${moduleMeta.moduleHeader || 'Module Title'}</h3>
-        <button class="button cb-start-btn ${status}" >
+        <div class="cb-module-title-wrapper">
+          <span class="cb-module-number ${finalStatus}">
+          ${
+            finalStatus === SKILL_TRACK_CARD_STATUS.COMPLETED
+              ? '<span class="icon icon-checkmark-light"></span>'
+              : index + 1
+          }
+            </span>
+          <h3 class="cb-module-title">${moduleMeta.moduleHeader || 'Module Title'}</h3>
+        </div>
+        <button class="button cb-start-btn ${finalStatus}" >
           <a href="${moduleMeta.moduleSteps[0].url || '#'}">${startButtonText}</a>
         </button>
       </div>
         <div class="cb-steps-info ${open ? 'open' : ''}">
           <span class="cb-steps-info-text">${placeholders.courseBreakdownModuleDetails || 'Module Details'}</span>
           <span class="cb-chevron"> <span class="icon icon-chevron"></span></span>
-          <span class="cb-steps-status-text ${status}">${moduleCardStatusText}</span>
+          <span class="cb-steps-status-text ${finalStatus}">${moduleCardStatusText}</span>
         </div>
       </div>
       <div class="cb-steps-list ${open ? 'open' : ''}">
@@ -138,7 +159,8 @@ function moduleCard({
       </div>
     `;
 
-    card.classList.add(status);
+    // Add the status class to the entire card to get the green border for completed modules
+    card.classList.add(finalStatus);
     decorateIcons(card);
 
     // Add click handler for steps info
@@ -175,11 +197,19 @@ export default async function decorate(block) {
     const moduleFragment = module.querySelector('a')?.getAttribute('href');
     const modulePromise = getmoduleMeta(moduleFragment);
 
+    // Determine module status
+    let moduleStatus = index === 0 ? SKILL_TRACK_CARD_STATUS.NOT_STARTED : SKILL_TRACK_CARD_STATUS.DISABLED;
+
+    // Check if this module is marked as completed via query param
+    if (isModuleCompleted(index)) {
+      moduleStatus = SKILL_TRACK_CARD_STATUS.COMPLETED;
+    }
+
     const moduleProp = {
       modulePromise,
       index,
       open: index === 0,
-      status: index === 0 ? SKILL_TRACK_CARD_STATUS.NOT_STARTED : SKILL_TRACK_CARD_STATUS.DISABLED,
+      status: moduleStatus,
       placeholders,
     };
 
