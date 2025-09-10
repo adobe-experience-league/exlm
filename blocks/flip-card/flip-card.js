@@ -51,35 +51,46 @@ export default async function decorate(block) {
 
     const cardDivs = Array.from(card.children);
 
-    const frontTitleText = cardDivs[0]?.textContent.trim() || '';
-    const frontTitleTag = cardDivs[1]?.textContent.trim() || 'h3';
-    const backTitleText = cardDivs[2]?.textContent.trim() || '';
-    const backTitleTag = cardDivs[3]?.textContent.trim() || 'h3';
-    const frontContentDiv = cardDivs[4];
-    const backContentDiv = cardDivs[5];
+    // New structure:
+    // cardDivs[0]: Front title with tag (e.g., <h3 id="front-title">Front Title</h3>)
+    // cardDivs[1]: Back title with tag (e.g., <h3 id="back-title">Back Title</h3>)
+    // cardDivs[2]: Front content
+    // cardDivs[3]: Back content
+
+    // Using object destructuring for child elements
+    const [frontTitleDiv, backTitleDiv, frontContentDiv, backContentDiv] = cardDivs;
 
     const hasFrontContent = frontContentDiv && frontContentDiv.textContent.trim() !== '';
     const hasBackContent = backContentDiv && backContentDiv.textContent.trim() !== '';
 
+    // Check if we have titles
+    const hasFrontTitle = frontTitleDiv && frontTitleDiv.firstElementChild;
+    const hasBackTitle = backTitleDiv && backTitleDiv.firstElementChild;
+
+    // Extract the title elements and add appropriate classes
+    if (hasFrontTitle) {
+      const frontTitleElement = frontTitleDiv.firstElementChild;
+      frontTitleElement.classList.add('flip-card-title');
+      if (!hasFrontContent) {
+        frontTitleElement.classList.add('flip-card-title-only');
+      }
+    }
+
+    if (hasBackTitle) {
+      const backTitleElement = backTitleDiv.firstElementChild;
+      backTitleElement.classList.add('flip-card-title');
+      if (!hasBackContent) {
+        backTitleElement.classList.add('flip-card-title-only');
+      }
+    }
+
     card.innerHTML = `
-      <div>
-        ${
-          frontTitleText
-            ? `<${frontTitleTag} class="flip-card-title ${
-                hasFrontContent ? '' : 'flip-card-title-only'
-              }">${frontTitleText}</${frontTitleTag}>`
-            : ''
-        }
+      <div class="${!hasFrontTitle && hasFrontContent ? 'content-only' : ''}">
+        ${frontTitleDiv ? frontTitleDiv.innerHTML : ''}
         ${frontContentDiv ? `<div class="flip-card-content">${frontContentDiv.innerHTML}</div>` : ''}
       </div>
-      <div>
-        ${
-          backTitleText
-            ? `<${backTitleTag} class="flip-card-title ${
-                hasBackContent ? '' : 'flip-card-title-only'
-              }">${backTitleText}</${backTitleTag}>`
-            : ''
-        }
+      <div class="${!hasBackTitle && hasBackContent ? 'content-only' : ''}">
+        ${backTitleDiv ? backTitleDiv.innerHTML : ''}
         ${backContentDiv ? `<div class="flip-card-content">${backContentDiv.innerHTML}</div>` : ''}
       </div>
     `;

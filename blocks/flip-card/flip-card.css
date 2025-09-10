@@ -88,7 +88,7 @@
 /* Content scrolling */
 .flip-card > div > div .flip-card-content {
   overflow-y: auto;
-  max-height: 170px; /* Adjust based on card size and title height */
+  max-height: 180px; /* Adjust based on card size and title height */
   width: 100%;
   padding-right: 10px; /* Space for scrollbar */
   box-sizing: border-box;
@@ -183,6 +183,15 @@
 
 .flip-card .flip-card-content :where(h1, h2, h3, h4, h5, h6, strong) {
   font-weight: var(--font-weight-bold);
+}
+
+/* Content-only styling */
+.flip-card > div > div.content-only {
+  justify-content: center;
+}
+
+.flip-card > div > div.content-only .flip-card-content {
+  max-height: 220px;
 }
 
 @media (min-width: 600px) {
