@@ -130,7 +130,12 @@ async function submitQuiz(questions, placeholders = {}, passingCriteria = 0) {
   const correctAnswersCount = results.filter(Boolean).length;
 
   // Determine if the quiz is passed based on passing criteria
+  // If passing criteria is set, check if correct answers meet or exceed it
+  // If passing criteria is not set, default to false
   const isPassed = passingCriteria > 0 ? correctAnswersCount >= passingCriteria : false;
+
+  // Log for debugging
+  console.log(`Quiz Results: ${correctAnswersCount} correct out of ${questionsArray.length}, passing criteria: ${passingCriteria}, isPassed: ${isPassed}`);
 
   return {
     correctAnswersCount,
@@ -190,20 +195,25 @@ export default async function decorate(block) {
   const blockDiv = block.querySelector(':scope > div > div');
 
   // Get attributes from elements or from data attributes with null checks
-  const passingCriteriaAttr =
-    (passingCriteriaElement && passingCriteriaElement.querySelector('div')?.textContent) ||
+  const passingCriteriaAttr = 
+    (passingCriteriaElement && passingCriteriaElement.querySelector('div')?.textContent?.trim()) || 
     (blockDiv && blockDiv.getAttribute('data-passing-criteria'));
-
-  const quizPassMessageAttr =
-    (quizPassMessageElement && quizPassMessageElement.querySelector('div')?.innerHTML) ||
+    
+  const quizPassMessageAttr = 
+    (quizPassMessageElement && quizPassMessageElement.querySelector('div')?.innerHTML) || 
     (blockDiv && blockDiv.getAttribute('data-quiz-pass-message'));
-
-  const quizFailMessageAttr =
-    (quizFailMessageElement && quizFailMessageElement.querySelector('div')?.innerHTML) ||
+    
+  const quizFailMessageAttr = 
+    (quizFailMessageElement && quizFailMessageElement.querySelector('div')?.innerHTML) || 
     (blockDiv && blockDiv.getAttribute('data-quiz-fail-message'));
-
+  
+  // Make sure passing criteria is set properly
   if (passingCriteriaAttr) {
-    block.dataset.passingCriteria = passingCriteriaAttr;
+    // Ensure it's a valid number
+    const parsedCriteria = parseInt(passingCriteriaAttr, 10);
+    if (!isNaN(parsedCriteria) && parsedCriteria > 0) {
+      block.dataset.passingCriteria = parsedCriteria.toString();
+    }
   }
 
   if (quizPassMessageAttr) {
@@ -299,6 +309,9 @@ export default async function decorate(block) {
       const quizFailMessage =
         block.dataset.quizFailMessage || '<p>Sorry, you did not pass the quiz. Please try again.</p>';
 
+      // Log the passing criteria for debugging
+      console.log(`Passing criteria: ${passingCriteria}`);
+      
       // Process the quiz and get results
       const quizResults = await submitQuiz(questionElements, placeholders, passingCriteria);
 
