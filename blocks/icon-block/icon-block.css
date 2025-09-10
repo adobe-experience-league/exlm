@@ -38,9 +38,8 @@
   color: var(--non-spectrum-custom-dark);
   font-weight: bold;
   margin-bottom: 8px;
-  overflow: hidden;
-  text-overflow: ellipsis;
   max-width: 229px;
+  flex: 1;
 }
 
 .icon-block .icon-description {
@@ -48,11 +47,7 @@
   margin-bottom: 16px;
   line-height: 18.2px;
   color: var(--spectrum-gray-700);
-  text-overflow: ellipsis;
   flex: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  display: -webkit-box;
 }
 
 .icon-block .icon-link,
