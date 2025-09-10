@@ -146,7 +146,7 @@
   background-color: var(--spectrum-gray-50);
   border-radius: 50%;
   margin: 0 12px;
-  display: none;
+  align-self: center;
 }
 
 .course-marquee .course-marquee-bookmark .user-actions {
