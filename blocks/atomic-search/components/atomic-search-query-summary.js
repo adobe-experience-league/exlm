@@ -41,12 +41,9 @@ export default function atomicQuerySummaryHandler(baseElement, placeholders) {
         const resultText = searchQuery
           ? placeholders.atomicSearchResultText || 'Search Results for'
           : placeholders.atomicSearchNoQueryResultText || 'Search Results';
-
-        resultTextElement.innerHTML = `<span style="margin-right: 8px;" class="search-result-left"></span> <span class="search-right">${pageText}</span>`;
-
-        const resultSpanLeft = resultTextElement.querySelector('.search-result-left');
-        resultSpanLeft.textContent = `${resultText}: ${searchQuery}`; // XSS please keep this here due to UGP-13611. DO not use InnerHTML here.
-
+        resultTextElement.innerHTML = `<span style="margin-right: 8px;" class="search-result-left">${resultText}: ${searchQuery}</span> <span class="search-right">${pageText}</span>`;
+        resultTextElement.dataset.searchkey = searchQuery;
+        resultTextElement.dataset.pagekey = pageText;
         if (!queryElementWrap) {
           resultTextElement.className = 'result-query';
           baseElement.shadowRoot.appendChild(resultTextElement);
