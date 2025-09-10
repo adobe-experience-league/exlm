@@ -176,16 +176,31 @@ export default async function decorate(block) {
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
 
-  // Get title, text, and questions from block children using destructuring
-  const [titleElement, textElement, ...questionsOriginal] = [...block.children];
+  // Get title, text, and the new fields using destructuring
+  const [
+    titleElement,
+    textElement,
+    passingCriteriaElement,
+    quizPassMessageElement,
+    quizFailMessageElement,
+    ...questionsOriginal
+  ] = [...block.children];
 
-  // Get passing criteria and messages from block properties
+  // Get passing criteria and messages from block properties or from the elements
   const blockDiv = block.querySelector(':scope > div > div');
 
-  // Safely get attributes with null checks
-  const passingCriteriaAttr = blockDiv && blockDiv.getAttribute('data-passing-criteria');
-  const quizPassMessageAttr = blockDiv && blockDiv.getAttribute('data-quiz-pass-message');
-  const quizFailMessageAttr = blockDiv && blockDiv.getAttribute('data-quiz-fail-message');
+  // Get attributes from elements or from data attributes with null checks
+  const passingCriteriaAttr =
+    (passingCriteriaElement && passingCriteriaElement.querySelector('div')?.textContent) ||
+    (blockDiv && blockDiv.getAttribute('data-passing-criteria'));
+
+  const quizPassMessageAttr =
+    (quizPassMessageElement && quizPassMessageElement.querySelector('div')?.innerHTML) ||
+    (blockDiv && blockDiv.getAttribute('data-quiz-pass-message'));
+
+  const quizFailMessageAttr =
+    (quizFailMessageElement && quizFailMessageElement.querySelector('div')?.innerHTML) ||
+    (blockDiv && blockDiv.getAttribute('data-quiz-fail-message'));
 
   if (passingCriteriaAttr) {
     block.dataset.passingCriteria = passingCriteriaAttr;
