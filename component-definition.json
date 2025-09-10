@@ -952,9 +952,9 @@
                     "name": "Flip Card Item",
                     "model": "flip-card-item",
                     "frontTitle": "Front Title",
-                    "frontTitleHeadingType": "h3",
+                    "frontTitleType": "h3",
                     "backTitle": "Back Title",
-                    "backTitleHeadingType": "h3",
+                    "backTitleType": "h3",
                     "frontContent": "<p>Front content of the flip card</p>",
                     "backContent": "<p>Back content of the flip card</p>"
                   },
@@ -963,9 +963,9 @@
                     "name": "Flip Card Item",
                     "model": "flip-card-item",
                     "frontTitle": "Front Title",
-                    "frontTitleHeadingType": "h3",
+                    "frontTitleType": "h3",
                     "backTitle": "Back Title",
-                    "backTitleHeadingType": "h3",
+                    "backTitleType": "h3",
                     "frontContent": "<p>Front content of the flip card</p>",
                     "backContent": "<p>Back content of the flip card</p>"
                   },
@@ -974,9 +974,9 @@
                     "name": "Flip Card Item",
                     "model": "flip-card-item",
                     "frontTitle": "Front Title",
-                    "frontTitleHeadingType": "h3",
+                    "frontTitleType": "h3",
                     "backTitle": "Back Title",
-                    "backTitleHeadingType": "h3",
+                    "backTitleType": "h3",
                     "frontContent": "<p>Front content of the flip card</p>",
                     "backContent": "<p>Back content of the flip card</p>"
                   }
@@ -996,9 +996,9 @@
                   "name": "Flip Card Item",
                   "model": "flip-card-item",
                   "frontTitle": "Front Title",
-                  "frontTitleHeadingType": "h3",
+                  "frontTitleType": "h3",
                   "backTitle": "Back Title",
-                  "backTitleHeadingType": "h3",
+                  "backTitleType": "h3",
                   "frontContent": "<p>Front content of the flip card</p>",
                   "backContent": "<p>Back content of the flip card</p>"
                 }

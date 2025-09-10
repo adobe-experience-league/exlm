@@ -7684,7 +7684,7 @@
       {
         "component": "select",
         "valueType": "string",
-        "name": "frontTitleHeadingType",
+        "name": "frontTitleType",
         "value": "h3",
         "label": "Front Title Heading Type",
         "options": [
@@ -7725,7 +7725,7 @@
       {
         "component": "select",
         "valueType": "string",
-        "name": "backTitleHeadingType",
+        "name": "backTitleType",
         "value": "h3",
         "label": "Back Title Heading Type",
         "options": [
