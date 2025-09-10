@@ -111,8 +111,10 @@ function showQuestionFeedback(questionElement, isCorrect, placeholders = {}) {
  * Submits the quiz and shows feedback for each question
  * @param {NodeList} questions The list of question elements
  * @param {Object} placeholders Language placeholders
+ * @param {number} passingCriteria The number of questions that must be answered correctly to pass
+ * @returns {Object} The quiz results including correct answers count and pass/fail status
  */
-async function submitQuiz(questions, placeholders = {}) {
+async function submitQuiz(questions, placeholders = {}, passingCriteria = 0) {
   // Check all questions and show feedback
   const questionsArray = Array.from(questions || []);
 
@@ -123,6 +125,18 @@ async function submitQuiz(questions, placeholders = {}) {
   questionsArray.forEach((question, index) => {
     showQuestionFeedback(question, results[index], placeholders);
   });
+
+  // Count correct answers
+  const correctAnswersCount = results.filter(Boolean).length;
+
+  // Determine if the quiz is passed based on passing criteria
+  const isPassed = passingCriteria > 0 ? correctAnswersCount >= passingCriteria : false;
+
+  return {
+    correctAnswersCount,
+    totalQuestions: questionsArray.length,
+    isPassed,
+  };
 }
 
 let quizHandlerFunction = null;
@@ -165,6 +179,26 @@ export default async function decorate(block) {
   // Get title, text, and questions from block children using destructuring
   const [titleElement, textElement, ...questionsOriginal] = [...block.children];
 
+  // Get passing criteria and messages from block properties
+  const blockDiv = block.querySelector(':scope > div > div');
+
+  // Safely get attributes with null checks
+  const passingCriteriaAttr = blockDiv && blockDiv.getAttribute('data-passing-criteria');
+  const quizPassMessageAttr = blockDiv && blockDiv.getAttribute('data-quiz-pass-message');
+  const quizFailMessageAttr = blockDiv && blockDiv.getAttribute('data-quiz-fail-message');
+
+  if (passingCriteriaAttr) {
+    block.dataset.passingCriteria = passingCriteriaAttr;
+  }
+
+  if (quizPassMessageAttr) {
+    block.dataset.quizPassMessage = quizPassMessageAttr;
+  }
+
+  if (quizFailMessageAttr) {
+    block.dataset.quizFailMessage = quizFailMessageAttr;
+  }
+
   const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
   // Only shuffle questions if not in authoring mode
@@ -200,6 +234,9 @@ export default async function decorate(block) {
     questionsContainer.append(question);
   });
 
+  // Parse passing criteria from block dataset
+  const passingCriteria = parseInt(block.dataset.passingCriteria || '0', 10);
+
   // Create a function to handle quiz submission that can be called externally
   quizHandlerFunction = async () => {
     // Check if all questions are answered
@@ -209,6 +246,12 @@ export default async function decorate(block) {
     const existingError = block.querySelector('.quiz-error-message');
     if (existingError) {
       existingError.remove();
+    }
+
+    // Remove any existing result message
+    const existingResultMessage = block.querySelector('.quiz-result-message');
+    if (existingResultMessage) {
+      existingResultMessage.remove();
     }
 
     // Get all question elements
@@ -234,12 +277,39 @@ export default async function decorate(block) {
       return false;
     }
 
-    // Remove any existing question feedback before showing new feedback
-    const existingFeedback = block.querySelectorAll('.question-feedback');
-    existingFeedback.forEach((feedback) => feedback.remove());
+    // Check if passing criteria is set
+    if (passingCriteria > 0) {
+      // Get quiz pass/fail messages from block properties
+      const quizPassMessage = block.dataset.quizPassMessage || '<p>Congratulations! You have passed the quiz.</p>';
+      const quizFailMessage =
+        block.dataset.quizFailMessage || '<p>Sorry, you did not pass the quiz. Please try again.</p>';
 
-    await submitQuiz(questionElements, placeholders);
-    return true;
+      // Process the quiz and get results
+      const quizResults = await submitQuiz(questionElements, placeholders, passingCriteria);
+
+      // Clear the block content
+      block.textContent = '';
+
+      // Create and show the result message
+      const resultMessageElement = htmlToElement(`
+        <div class="quiz-result-message ${quizResults.isPassed ? 'pass' : 'fail'}">
+          ${quizResults.isPassed ? quizPassMessage : quizFailMessage}
+        </div>
+      `);
+
+      // Add the result message to the block
+      block.appendChild(resultMessageElement);
+
+      return quizResults;
+    } else {
+      // If no passing criteria is set, just show the feedback for each question (original behavior)
+      // Remove any existing question feedback before showing new feedback
+      const existingFeedback = block.querySelectorAll('.question-feedback');
+      existingFeedback.forEach((feedback) => feedback.remove());
+
+      // Process the quiz without changing the display
+      return await submitQuiz(questionElements, placeholders, 0);
+    }
   };
 
   // Create quiz description section using htmlToElement
@@ -251,6 +321,9 @@ export default async function decorate(block) {
       <ul class="quiz-description">${textElement?.querySelector('div')?.innerHTML || ''}</ul>
     </div>
   `);
+
+  // Make quizDescriptionContainer accessible in the outer scope
+  window.quizDescriptionContainer = quizDescriptionContainer;
 
   // Clear the block and build the quiz structure
   block.textContent = '';
