@@ -187,31 +187,20 @@ export default async function decorate(block) {
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
 
-  // Get title, text, and the new fields using destructuring
-  const [
-    titleElement,
-    textElement,
-    passingCriteriaElement,
-    quizPassMessageElement,
-    quizFailMessageElement,
-    ...questionsOriginal
-  ] = [...block.children];
-
-  // Get passing criteria and messages from block properties or from the elements
+  // Get all block children
+  const blockChildren = [...block.children];
+  
+  // First two elements are always title and description
+  const titleElement = blockChildren[0];
+  const textElement = blockChildren[1];
+  
+  // Get the data attributes from the block
   const blockDiv = block.querySelector(':scope > div > div');
-
-  // Get attributes from elements or from data attributes with null checks
-  const passingCriteriaAttr = 
-    (passingCriteriaElement && passingCriteriaElement.querySelector('div')?.textContent?.trim()) || 
-    (blockDiv && blockDiv.getAttribute('data-passing-criteria'));
-    
-  const quizPassMessageAttr = 
-    (quizPassMessageElement && quizPassMessageElement.querySelector('div')?.innerHTML) || 
-    (blockDiv && blockDiv.getAttribute('data-quiz-pass-message'));
-    
-  const quizFailMessageAttr = 
-    (quizFailMessageElement && quizFailMessageElement.querySelector('div')?.innerHTML) || 
-    (blockDiv && blockDiv.getAttribute('data-quiz-fail-message'));
+  
+  // Get passing criteria and messages from data attributes
+  const passingCriteriaAttr = blockDiv && blockDiv.getAttribute('data-passing-criteria');
+  const quizPassMessageAttr = blockDiv && blockDiv.getAttribute('data-quiz-pass-message');
+  const quizFailMessageAttr = blockDiv && blockDiv.getAttribute('data-quiz-fail-message');
   
   // Make sure passing criteria is set properly
   if (passingCriteriaAttr) {
@@ -233,6 +222,16 @@ export default async function decorate(block) {
 
   if (quizFailMessageAttr) {
     block.dataset.quizFailMessage = quizFailMessageAttr;
+  }
+  
+  // Find all question elements (skip the first two elements which are title and description)
+  const questionsOriginal = [];
+  for (let i = 2; i < blockChildren.length; i++) {
+    const child = blockChildren[i];
+    // Check if this is a question element (has at least 4 children for question text, multiple choice, answers, and correct answers)
+    if (child.children.length >= 4) {
+      questionsOriginal.push(child);
+    }
   }
 
   const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
