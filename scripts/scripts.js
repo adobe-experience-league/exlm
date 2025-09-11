@@ -1263,6 +1263,10 @@ export async function fetchJson(url, fallbackUrl) {
     .then((json) => json?.data || []);
 }
 
+export function xssSanitizeQueryParamValue(value) {
+  return value?.replace(/[^a-zA-Z0-9\s.]/g, '');
+}
+
 export function getCookie(cookieName) {
   const decodedCookie = decodeURIComponent(document.cookie);
   const cookies = decodedCookie.split(';');
