@@ -7878,7 +7878,7 @@
       {
         "component": "select",
         "valueType": "string",
-        "name": "titleHeadingType",
+        "name": "titleType",
         "value": "h3",
         "label": "Title Heading Type",
         "options": [
