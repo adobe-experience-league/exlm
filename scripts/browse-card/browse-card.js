@@ -198,16 +198,19 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
 
 const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }) => {
   if (viewLinkText) {
-    let icon = null;
+    let icon;
     const isLeftPlacement = false;
-    if (
-      [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
-        contentType?.toLowerCase(),
-      )
-    ) {
-      icon = 'new-tab-blue';
-    } else {
-      icon = 'chevron-right-blue';
+    const type = contentType?.toLowerCase();
+    switch (type) {
+      case CONTENT_TYPES.TUTORIAL.MAPPING_KEY:
+        icon = null;
+        break;
+      case CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY:
+      case CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY:
+        icon = 'new-tab-blue';
+        break;
+      default:
+        icon = 'chevron-right-blue';
     }
     const iconMarkup = icon ? `<span class="icon icon-${icon}"></span>` : '';
     const linkText = htmlToElement(`
@@ -493,10 +496,18 @@ export async function buildCard(container, element, model) {
     card.classList.add('thumbnail-not-loaded');
   }
   if (badgeTitle || failedToLoad) {
-    const bannerElement = createTag('h3', { class: 'browse-card-banner' });
-    bannerElement.innerText = badgeTitle || '';
-    bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
-    cardFigure.appendChild(bannerElement);
+    if (type === CONTENT_TYPES.COURSE.MAPPING_KEY) {
+      const bannerElement = htmlToElement(`<div class="browse-card-icon">
+        <span class="icon icon-certificate"></span
+      </div>`);
+      decorateIcons(bannerElement);
+      cardFigure.appendChild(bannerElement);
+    } else {
+      const bannerElement = createTag('h3', { class: 'browse-card-banner' });
+      bannerElement.innerText = badgeTitle || '';
+      bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
+      cardFigure.appendChild(bannerElement);
+    }
   }
 
   if (contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY) {
