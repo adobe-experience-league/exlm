@@ -4,10 +4,9 @@ export default function decorate(block) {
   block.classList.add('key-takeaways-block');
 
   // Extract content from the block using destructuring
-  const [titleElement, headingTypeElement, contentElement] = [...block.children];
+  const [titleElement, contentElement] = [...block.children];
 
   const titleText = titleElement?.querySelector('div')?.textContent || 'Key Takeaways';
-  const headingType = headingTypeElement?.querySelector('div')?.textContent || 'h3';
   const contentList = contentElement?.querySelector('div > ul');
 
   // Create container
