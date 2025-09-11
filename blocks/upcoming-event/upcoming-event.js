@@ -1,5 +1,10 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { fetchLanguagePlaceholders, htmlToElement, getConfig } from '../../scripts/scripts.js';
+import {
+  fetchLanguagePlaceholders,
+  htmlToElement,
+  getConfig,
+  xssSanitizeQueryParamValue,
+} from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
@@ -134,10 +139,7 @@ export default async function decorate(block) {
   // Extract and sanitize filters from URL
   const urlParams = new URLSearchParams(window.location.search);
   const urlFilters = urlParams.get('filters')
-    ? urlParams
-        .get('filters')
-        .split(',')
-        .map((filter) => filter.replace(/[^a-z0-9]/gi, ''))
+    ? urlParams.get('filters').split(',').map(xssSanitizeQueryParamValue)
     : [];
 
   const updateFiltersAndCards = (selectedFilters) => {
