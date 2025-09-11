@@ -6,7 +6,7 @@ export default function decorate(block) {
   // Extract content from the block using destructuring
   const [titleElement, contentElement] = [...block.children];
 
-  const titleText = titleElement?.querySelector('div')?.textContent || 'Key Takeaways';
+  const titleText = titleElement?.querySelector('div')?.textContent;
   const contentList = contentElement?.querySelector('div > ul');
 
   // Create container
