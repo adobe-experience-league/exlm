@@ -12,9 +12,9 @@ export default async function decorate(block) {
 
   const { lang = 'en' } = getPathDetails() || {};
 
-  const rows = [...block.children];
+  const [firstRow, secondRow] = block.children;
   // Get the HTML content of the first row as a string
-  const courseTitleEl = rows[0]?.querySelector('h1, h2, h3, h4, h5, h6');
+  const courseTitleEl = firstRow?.querySelector('h1, h2, h3, h4, h5, h6');
   const courseTitleHTML = courseTitleEl
     ? (() => {
         courseTitleEl.classList.add('course-marquee-title');
@@ -22,7 +22,7 @@ export default async function decorate(block) {
       })()
     : '';
   // Course description is now in the second row
-  const courseDescription = rows[1]?.querySelector('div')?.innerHTML || '';
+  const courseDescription = secondRow?.querySelector('div')?.innerHTML || '';
 
   const courseName = getMetadata('og:title') || document.title;
 
