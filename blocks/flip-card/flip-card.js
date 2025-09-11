@@ -60,12 +60,12 @@ export default async function decorate(block) {
     // Using object destructuring for child elements
     const [frontTitleDiv, backTitleDiv, frontContentDiv, backContentDiv] = cardDivs;
 
-    const hasFrontContent = frontContentDiv && frontContentDiv.textContent.trim() !== '';
-    const hasBackContent = backContentDiv && backContentDiv.textContent.trim() !== '';
+    const hasFrontContent = !!frontContentDiv?.textContent?.trim();
+    const hasBackContent = !!backContentDiv?.textContent?.trim();
 
     // Check if we have titles
-    const hasFrontTitle = frontTitleDiv && frontTitleDiv.firstElementChild;
-    const hasBackTitle = backTitleDiv && backTitleDiv.firstElementChild;
+    const hasFrontTitle = frontTitleDiv?.firstElementChild;
+    const hasBackTitle = backTitleDiv?.firstElementChild;
 
     // Extract the title elements and add appropriate classes
     if (hasFrontTitle) {
