@@ -232,7 +232,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(facet-option) {
                   position: relative;
                   display: flex;
-                  align-items: center;
+                  align-items: flex-start;
+                  padding-top: 0.625rem;
+                  padding-bottom: 0.625rem;
                 }
                 atomic-facet::part(facet-child-element):hover {
                   background-color: var(--footer-border-color);
@@ -350,6 +352,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(value-checkbox) {
                   border: 2px solid #959595;
                   border-radius: 2px;
+                  margin-top: 4px;
+                }
+                atomic-facet::part(value-checkbox-label) {
+                  display: inline;
+                  padding-top: 0;
+                  padding-bottom: 0;
                 }
                 atomic-facet::part(value-checkbox-checked) {
                   background-color: var(--non-spectrum-grey-updated);
@@ -359,6 +367,11 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   color: var(--non-spectrum-article-dark-gray);
                   width: auto;
                   margin: 0;
+                }
+                atomic-facet::part(value-label) {
+                  overflow: initial;
+                  text-overflow: unset;
+                  white-space: normal;
                 }
                 atomic-facet::part(value-label), atomic-timeframe-facet::part(value-label) {
                   margin-right: 4px;
