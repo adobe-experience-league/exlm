@@ -1,5 +1,5 @@
 import { htmlToElement } from '../../../scripts/scripts.js';
-import { waitFor, waitForChildElement, CUSTOM_EVENTS, isMobile } from './atomic-search-utils.js';
+import { waitFor, waitForChildElement, CUSTOM_EVENTS, isMobile, escapeHtml } from './atomic-search-utils.js';
 
 export default function atomicQuerySummaryHandler(baseElement, placeholders) {
   baseElement.dataset.view = isMobile() ? 'mobile' : 'desktop';
@@ -20,7 +20,7 @@ export default function atomicQuerySummaryHandler(baseElement, placeholders) {
 
   const handlerSummaryTextChanges = () => {
     const target = baseElement.shadowRoot.querySelector('[part~="container"]');
-    const summaryText = target?.textContent;
+    const summaryText = target?.textContent ? escapeHtml(target?.textContent) : '';
     if (!target) {
       waitFor(handlerSummaryTextChanges);
       return;
