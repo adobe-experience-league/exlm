@@ -164,7 +164,7 @@
                   "filter": "courses-section",
                   "name": "Courses Section",
                   "model": "courses-section",
-                  "style": "courses-section"
+                  "style": ["courses-section", "default"]
                 }
               }
             }
@@ -181,7 +181,7 @@
                   "filter": "course-hub-section",
                   "name": "Course Hub Section",
                   "model": "course-hub-section",
-                  "style": "course-hub-section"
+                  "style": ["course-hub-section", "default"]
                 }
               }
             }
