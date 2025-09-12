@@ -1,26 +1,47 @@
-import { decorateIcons } from '../../scripts/lib-franklin.js';
+/**
+ * Generates the DOM structure for the key-takeaways block
+ * @param {HTMLElement} block The key-takeaways block element
+ * @returns {HTMLElement} The generated DOM structure
+ */
+export function generateKeyTakeawaysDOM(block) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'key-takeaways-wrapper';
 
+  const keyTakeawaysBlock = document.createElement('div');
+  keyTakeawaysBlock.className = 'key-takeaways-block';
+
+  // Process the block content
+  const rows = [...block.children];
+
+  if (rows[0]) {
+    const titleDiv = document.createElement('div');
+    titleDiv.className = 'key-takeaways-title';
+
+    const heading = rows[0].querySelector('h1,h2,h3,h4,h5,h6');
+    titleDiv.append(heading || rows[0].textContent.trim());
+
+    keyTakeawaysBlock.append(titleDiv);
+  }
+
+  if (rows[1]) {
+    const listDiv = document.createElement('div');
+    listDiv.className = 'key-takeaways-list';
+    listDiv.append(rows[1]);
+
+    keyTakeawaysBlock.append(listDiv);
+  }
+
+  wrapper.append(keyTakeawaysBlock);
+  return wrapper;
+}
+
+/**
+ * Decorates the key-takeaways block
+ * @param {HTMLElement} block The key-takeaways block element
+ */
 export default function decorate(block) {
-  block.classList.add('key-takeaways-block');
-
-  // Extract content from the block using destructuring
-  const [titleElement, contentElement] = [...block.children];
-
-  const titleText = titleElement?.querySelector('div')?.textContent;
-  const contentList = contentElement?.querySelector('div > ul');
-
-  // Create container
-  const container = document.createElement('div');
-  container.className = 'key-takeaways-container';
-  const title = document.createElement(headingType);
-  title.id = 'key-takeaways-title';
-  title.textContent = titleText;
-  container.appendChild(title);
-  contentList.className = 'key-takeaways-list';
-  container.appendChild(contentList);
-
-  // Clear the block and append the new structure
+  block.classList.add('key-takeaways');
+  const dom = generateKeyTakeawaysDOM(block);
   block.textContent = '';
-  block.appendChild(container);
-  decorateIcons(block);
+  block.append(dom);
 }

@@ -9,18 +9,26 @@
   border: 1px solid var(--non-spectrum-unicorn-silver);
 }
 
-#key-takeaways-title {
+.key-takeaways-title {
   font-size: 20px;
   font-weight: 700;
   padding-bottom: 16px;
-  margin-top: unset;
+  margin: 0;
   padding-left: 36px;
   color: var(--non-spectrum-dark-gray);
   line-height: 1.5;
   position: relative;
 }
 
-#key-takeaways-title::after {
+.key-takeaways-title > * {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  line-height: inherit;
+}
+
+.key-takeaways-title::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -29,7 +37,7 @@
   border-bottom: 1px solid var(--non-spectrum-unicorn-silver);
 }
 
-#key-takeaways-title::before {
+.key-takeaways-title::before {
   content: '';
   position: absolute;
   margin-top: 3px;
@@ -41,11 +49,6 @@
   background-position: center;
   background-size: contain;
   filter: brightness(0); /* Make the icon black */
-}
-
-.key-takeaways-list {
-  padding-left: 24px;
-  margin: 0;
 }
 
 .key-takeaways-list li {
