@@ -1453,7 +1453,7 @@
                   "name": "Quiz Scorecard",
                   "model": "quiz-scorecard",
                   "title": "",
-                  "titleType": "h2",
+                  "titleType": "h6",
                   "description": "You're now ready to move on to the next Module.",
                   "status": "pass",
                   "cta1_Type": "primary",
