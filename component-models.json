@@ -8025,32 +8025,32 @@
           {
             "name": "H6",
             "value": "h6"
-          },
-          {
-            "component": "richtext",
-            "valueType": "string",
-            "name": "description",
-            "value": "",
-            "label": "Description",
-            "description": "Sets the description for the course completion block."
-          },
-          {
-            "component": "text",
-            "valueType": "string",
-            "name": "shareButtonText",
-            "value": "",
-            "label": "Button Text for Share",
-            "description": "Label for the share button"
-          },
-          {
-            "component": "text",
-            "valueType": "string",
-            "name": "downloadButtonText",
-            "value": "",
-            "label": "Button Text for certificate Download",
-            "description": "Label for the download certificate button"
           }
         ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description for the course completion block."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "shareButtonText",
+        "value": "",
+        "label": "Button Text for Share",
+        "description": "Label for the share button"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "downloadButtonText",
+        "value": "",
+        "label": "Button Text for certificate Download",
+        "description": "Label for the download certificate button"
       }
     ]
   }
