@@ -1,7 +1,5 @@
-body.courses,
-body.courses .section,
-.courses-section {
-  background-color: var(--background-color);
+.courses {
+  --highlight-light-background-color: #fff;
 }
 
 body.courses .section,

@@ -232,13 +232,15 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(facet-option) {
                   position: relative;
                   display: flex;
-                  align-items: center;
+                  align-items: flex-start;
+                  padding-top: 0.625rem;
+                  padding-bottom: 0.625rem;
                 }
                 atomic-facet::part(facet-child-element):hover {
                   background-color: var(--footer-border-color);
                 }
                 atomic-facet::part(facet-child-element) {
-                  margin-left: 32px;
+                  margin-left: 24px;
                   border-radius: 4px;
                 }
                 atomic-facet::part(only-facet-btn):hover {
@@ -299,7 +301,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   display: flex;
                 }
                 atomic-facet::part(facet-child-label) {
-                  padding: 6px 40px 6px 32px;
+                  padding: 6px var(--atomic-search-facet-padding) 6px 32px;
                   align-items: center;
                 }
                 atomic-facet::part(facet-parent-label) {
@@ -329,6 +331,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   margin-left: 0;
                 }
                 atomic-facet::part(facet), atomic-timeframe-facet::part(facet) {
+                  padding-left: 0;
                   padding-right: 0;
                   border: none;
                 }
@@ -350,6 +353,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(value-checkbox) {
                   border: 2px solid #959595;
                   border-radius: 2px;
+                  margin-top: 4px;
+                }
+                atomic-facet::part(value-checkbox-label) {
+                  display: inline;
+                  padding-top: 0;
+                  padding-bottom: 0;
                 }
                 atomic-facet::part(value-checkbox-checked) {
                   background-color: var(--non-spectrum-grey-updated);
@@ -359,6 +368,11 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   color: var(--non-spectrum-article-dark-gray);
                   width: auto;
                   margin: 0;
+                }
+                atomic-facet::part(value-label) {
+                  overflow: initial;
+                  text-overflow: unset;
+                  white-space: normal;
                 }
                 atomic-facet::part(value-label), atomic-timeframe-facet::part(value-label) {
                   margin-right: 4px;

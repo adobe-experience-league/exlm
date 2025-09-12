@@ -778,7 +778,6 @@ export function getConfig() {
     targetCriteriaIds,
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
-    privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `${cdnOrigin}/api/coveo-token?lang=${lang}`,
@@ -829,7 +828,11 @@ function loadOneTrust() {
     window.location.host.split('.').length === 3 ? '' : '-test'
   }`;
   window.fedsConfig.privacy.footerLinkSelector = '.footer [href="#onetrust"]';
-  const { privacyScript } = getConfig();
+  const { isProd, cdnOrigin } = getConfig();
+  // @see: https://wiki.corp.adobe.com/display/adobedotcom/Privacy
+  const privacyScript = isProd
+    ? `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`
+    : `https://www.stage.adobe.com/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`;
   return loadScript(privacyScript, {
     async: true,
     defer: true,
@@ -1257,6 +1260,10 @@ export async function fetchJson(url, fallbackUrl) {
     .then((response) => (!response.ok && fallbackUrl ? fetch(fallbackUrl) : response))
     .then((response) => (response.ok ? response.json() : null))
     .then((json) => json?.data || []);
+}
+
+export function xssSanitizeQueryParamValue(value) {
+  return value?.replace(/[^a-zA-Z0-9\s.]/g, '');
 }
 
 export function getCookie(cookieName) {

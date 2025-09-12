@@ -1293,11 +1293,30 @@
         "component": "select",
         "name": "style",
         "value": "",
-        "label": "Style",
-        "description": "The section style",
+        "label": "Background Color",
+        "description": "Section background color",
         "valueType": "string",
-        "hidden": true,
-        "options": []
+        "options": [
+          {
+            "name": "Default",
+            "value": ["courses-section", "default"]
+          },
+          {
+            "name": "White",
+            "value": ["courses-section", "bg-white"]
+          },
+          {
+            "name": "Dark Gray",
+            "value": ["courses-section", "bg-dark-gray"]
+          }
+        ]
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "center-aligned",
+        "label": "Align the default blocks in this section to the center.",
+        "description": "Enabling this option will align the default blocks in this section to the center."
       }
     ]
   },
@@ -1308,11 +1327,30 @@
         "component": "select",
         "name": "style",
         "value": "",
-        "label": "Style",
-        "description": "The section style",
+        "label": "Background Color",
+        "description": "Section background color",
         "valueType": "string",
-        "hidden": true,
-        "options": []
+        "options": [
+          {
+            "name": "Default",
+            "value": ["course-hub-section", "default"]
+          },
+          {
+            "name": "White",
+            "value": ["course-hub-section", "bg-white"]
+          },
+          {
+            "name": "Dark Gray",
+            "value": ["course-hub-section", "bg-dark-gray"]
+          }
+        ]
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "center-aligned",
+        "label": "Align the default blocks in this section to the center.",
+        "description": "Enabling this option will align the default blocks in this section to the center."
       }
     ]
   },
@@ -7451,7 +7489,7 @@
         "label": "Recap URL",
         "description": "URL to recap",
         "validation": {
-          "rootPath": "/content/exlm/global/en/courses/"
+          "rootPath": "/content/exlm/global/en/courses"
         }
       },
       {
@@ -7462,7 +7500,7 @@
         "label": "Quiz page URL",
         "description": "URL to the quiz page",
         "validation": {
-          "rootPath": "/content/exlm/global/en/courses/"
+          "rootPath": "/content/exlm/global/en/courses"
         }
       },
       {
@@ -7489,7 +7527,7 @@
         "label": "Step Page URL",
         "description": "URL to the step",
         "validation": {
-          "rootPath": "/content/exlm/global/en/courses/"
+          "rootPath": "/content/exlm/global/en/courses"
         }
       },
       {
@@ -7805,7 +7843,7 @@
         "label": "Skill Track Page URL",
         "description": "URL to the Skill track",
         "validation": {
-          "rootPath": "/content/exlm/global/en/courses/"
+          "rootPath": "/content/exlm/global/en/courses"
         }
       }
     ]
