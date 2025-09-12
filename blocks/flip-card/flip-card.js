@@ -1,7 +1,15 @@
 import { decorateIcon } from '../../scripts/lib-franklin.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
-export default function decorate(block) {
-  // Get all flip card items
+export default async function decorate(block) {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
   const cards = block.querySelectorAll('div > div');
 
   function toggleCard(card) {
@@ -16,35 +24,81 @@ export default function decorate(block) {
     }
   }
 
-  function addRefreshIcon(cardContent) {
-    const refreshIcon = document.createElement('span');
-    refreshIcon.className = 'icon icon-refresh';
-    refreshIcon.setAttribute('aria-label', 'Refresh');
-    cardContent.appendChild(refreshIcon);
+  function addFlipText(cardContent) {
+    cardContent.innerHTML += `
+      <div class="flip-container">
+        <span class="icon icon-refresh" aria-hidden="true"></span>
+        <span class="flip-text" aria-label="Flip">${placeholders.flipText || 'Flip'}</span>
+      </div>
+    `;
+
+    const flipContainer = cardContent.querySelector('.flip-container:last-child');
+    const refreshIcon = flipContainer.querySelector('.icon-refresh');
+
     decorateIcon(refreshIcon);
+
+    flipContainer.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = cardContent.parentElement;
+      toggleCard(card);
+    });
   }
 
   cards.forEach((card, index) => {
-    // Make card focusable for accessibility
     card.setAttribute('tabindex', '0');
     card.setAttribute('role', 'button');
     card.setAttribute('aria-label', `Flip card ${index + 1}`);
 
-    // Add refresh icons to both front and back content
-    const frontContent = card.querySelector('div:first-child');
-    const backContent = card.querySelector('div:last-child');
+    const cardDivs = Array.from(card.children);
 
-    if (frontContent) {
-      addRefreshIcon(frontContent);
+    // New structure:
+    // cardDivs[0]: Front title with tag (e.g., <h3 id="front-title">Front Title</h3>)
+    // cardDivs[1]: Back title with tag (e.g., <h3 id="back-title">Back Title</h3>)
+    // cardDivs[2]: Front content
+    // cardDivs[3]: Back content
+
+    // Using object destructuring for child elements
+    const [frontTitleDiv, backTitleDiv, frontContentDiv, backContentDiv] = cardDivs;
+
+    const hasFrontContent = !!frontContentDiv?.textContent?.trim();
+    const hasBackContent = !!backContentDiv?.textContent?.trim();
+
+    // Check if we have titles
+    const hasFrontTitle = frontTitleDiv?.firstElementChild;
+    const hasBackTitle = backTitleDiv?.firstElementChild;
+
+    // Extract the title elements and add appropriate classes
+    if (hasFrontTitle) {
+      const frontTitleElement = frontTitleDiv.firstElementChild;
+      frontTitleElement.classList.add('flip-card-title');
+      if (!hasFrontContent) {
+        frontTitleElement.classList.add('flip-card-title-only');
+      }
     }
-    if (backContent) {
-      addRefreshIcon(backContent);
+
+    if (hasBackTitle) {
+      const backTitleElement = backTitleDiv.firstElementChild;
+      backTitleElement.classList.add('flip-card-title');
+      if (!hasBackContent) {
+        backTitleElement.classList.add('flip-card-title-only');
+      }
     }
 
-    // Add click event listener for flip functionality
-    card.addEventListener('click', () => toggleCard(card));
+    card.innerHTML = `
+      <div class="${!hasFrontTitle && hasFrontContent ? 'content-only' : ''}">
+        ${frontTitleDiv ? frontTitleDiv.innerHTML : ''}
+        ${frontContentDiv ? `<div class="flip-card-content">${frontContentDiv.innerHTML}</div>` : ''}
+      </div>
+      <div class="${!hasBackTitle && hasBackContent ? 'content-only' : ''}">
+        ${backTitleDiv ? backTitleDiv.innerHTML : ''}
+        ${backContentDiv ? `<div class="flip-card-content">${backContentDiv.innerHTML}</div>` : ''}
+      </div>
+    `;
 
-    // Add keyboard support for accessibility
+    const [frontContainer, backContainer] = card.children;
+    addFlipText(frontContainer);
+    addFlipText(backContainer);
+
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();

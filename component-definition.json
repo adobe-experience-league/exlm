@@ -951,6 +951,10 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Flip Card Item",
                     "model": "flip-card-item",
+                    "frontTitle": "Front Title",
+                    "frontTitleType": "h3",
+                    "backTitle": "Back Title",
+                    "backTitleType": "h3",
                     "frontContent": "<p>Front content of the flip card</p>",
                     "backContent": "<p>Back content of the flip card</p>"
                   },
@@ -958,6 +962,10 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Flip Card Item",
                     "model": "flip-card-item",
+                    "frontTitle": "Front Title",
+                    "frontTitleType": "h3",
+                    "backTitle": "Back Title",
+                    "backTitleType": "h3",
                     "frontContent": "<p>Front content of the flip card</p>",
                     "backContent": "<p>Back content of the flip card</p>"
                   },
@@ -965,6 +973,10 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Flip Card Item",
                     "model": "flip-card-item",
+                    "frontTitle": "Front Title",
+                    "frontTitleType": "h3",
+                    "backTitle": "Back Title",
+                    "backTitleType": "h3",
                     "frontContent": "<p>Front content of the flip card</p>",
                     "backContent": "<p>Back content of the flip card</p>"
                   }
@@ -983,6 +995,10 @@
                 "template": {
                   "name": "Flip Card Item",
                   "model": "flip-card-item",
+                  "frontTitle": "Front Title",
+                  "frontTitleType": "h3",
+                  "backTitle": "Back Title",
+                  "backTitleType": "h3",
                   "frontContent": "<p>Front content of the flip card</p>",
                   "backContent": "<p>Back content of the flip card</p>"
                 }
