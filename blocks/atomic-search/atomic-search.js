@@ -103,7 +103,7 @@ export default function decorate(block) {
     searchInterface.executeFirstSearch();
 
     const commonActionHandler = () => {
-      atomicFacetHandler(block.querySelector('atomic-facet'), placeholders);
+      atomicFacetHandler(block, placeholders);
       atomicSearchBoxHandler(block);
       atomicResultHandler(block, placeholders);
       atomicSortDropdownHandler(block.querySelector('atomic-sort-dropdown'));
