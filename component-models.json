@@ -7983,5 +7983,75 @@
         "description": "Sets the description for the course. Please keep content brief as it will be limited to 3 lines in display."
       }
     ]
+  },
+  {
+    "id": "course-completion",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the title for the course completion block."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          },
+          {
+            "component": "richtext",
+            "valueType": "string",
+            "name": "description",
+            "value": "",
+            "label": "Description",
+            "description": "Sets the description for the course completion block."
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "shareButtonText",
+            "value": "",
+            "label": "Button Text for Share",
+            "description": "Label for the share button"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "downloadButtonText",
+            "value": "",
+            "label": "Button Text for certificate Download",
+            "description": "Label for the download certificate button"
+          }
+        ]
+      }
+    ]
   }
 ]
