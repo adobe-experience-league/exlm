@@ -110,7 +110,7 @@ function moduleCard({
     [SKILL_TRACK_CARD_STATUS.DISABLED]: placeholders.courseBreakdownStatusNotStarted || 'Not Started',
     [SKILL_TRACK_CARD_STATUS.NOT_STARTED]: placeholders.courseBreakdownStatusNotStarted || 'Not Started',
     [SKILL_TRACK_CARD_STATUS.IN_PROGRESS]: placeholders.courseBreakdownStatusInProgress || 'In progress',
-    [SKILL_TRACK_CARD_STATUS.COMPLETED]: placeholders.courseBreakdownStatusComplete || 'Completed',
+    [SKILL_TRACK_CARD_STATUS.COMPLETED]: placeholders.courseBreakdownStatusCompleted || 'Complete',
   };
   const moduleCardStatusText = moduleCardStatusMap[finalStatus] || 'Not started';
 
