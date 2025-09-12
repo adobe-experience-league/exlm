@@ -240,7 +240,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   background-color: var(--footer-border-color);
                 }
                 atomic-facet::part(facet-child-element) {
-                  margin-left: 32px;
+                  margin-left: 24px;
                   border-radius: 4px;
                 }
                 atomic-facet::part(only-facet-btn):hover {
@@ -301,7 +301,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   display: flex;
                 }
                 atomic-facet::part(facet-child-label) {
-                  padding: 6px 40px 6px 32px;
+                  padding: 6px var(--atomic-search-facet-padding) 6px 32px;
                   align-items: center;
                 }
                 atomic-facet::part(facet-parent-label) {
@@ -331,6 +331,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   margin-left: 0;
                 }
                 atomic-facet::part(facet), atomic-timeframe-facet::part(facet) {
+                  padding-left: 0;
                   padding-right: 0;
                   border: none;
                 }
