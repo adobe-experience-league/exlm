@@ -349,6 +349,141 @@ indices:
       - /zh-hant/perspectives/authors/**
     target: /zh-hant/perspective-index.json
 
+  course-en: &base-course
+    include:
+      - /en/courses/*
+    exclude:
+      - /en/courses/instructors/**
+    target: /en/course-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: |
+          attribute(el, 'content')
+      theme:
+        select: head > meta[name="theme"]
+        value: |
+          attribute(el, 'content')
+      lastModified:
+        select: head > meta[name="last-update"]
+        value: |
+          parseTimestamp(attribute(el, "content"), 'ddd MMM DD YYYY hh:mm:ss GMT')
+      robots:
+        select: head > meta[name="robots"]
+        value: attribute(el, "content")
+      instructorPage:
+        select: head > meta[name="instructor-page"]
+        value: |
+          attribute(el, 'content')
+      coveoContentType:
+        select: head > meta[name="coveo-content-type"]
+        value: |
+          attribute(el, 'content')
+      coveoSolution:
+        select: head > meta[name="coveo-solution"]
+        value: |
+          attribute(el, 'content')
+      coveoFeature:
+        select: head > meta[name="feature"]
+        value: |
+          attribute(el, 'content')
+      coveoRole:
+        select: head > meta[name="role"]
+        value: |
+          attribute(el, 'content')
+      coveoLevel:
+        select: head > meta[name="level"]
+        value: |
+          attribute(el, 'content')
+
+  course-fr:
+    <<: *base-course
+    include:
+      - /fr/courses/*
+    exclude:
+      - /fr/courses/instructors/**
+    target: /fr/course-index.json
+
+  course-de:
+    <<: *base-course
+    include:
+      - /de/courses/*
+    exclude:
+      - /de/courses/instructors/**
+    target: /de/course-index.json
+
+  course-es:
+    <<: *base-course
+    include:
+      - /es/courses/*
+    exclude:
+      - /es/courses/instructors/**
+    target: /es/course-index.json
+
+  course-it:
+    <<: *base-course
+    include:
+      - /it/courses/*
+    exclude:
+      - /it/courses/instructors/**
+    target: /it/course-index.json
+
+  course-nl:
+    <<: *base-course
+    include:
+      - /nl/courses/*
+    exclude:
+      - /nl/courses/instructors/**
+    target: /nl/course-index.json
+
+  course-pt-br:
+    <<: *base-course
+    include:
+      - /pt-br/courses/*
+    exclude:
+      - /pt-br/courses/instructors/**
+    target: /pt-br/course-index.json
+
+  course-ko:
+    <<: *base-course
+    include:
+      - /ko/courses/*
+    exclude:
+      - /ko/courses/instructors/**
+    target: /ko/course-index.json
+
+  course-ja:
+    <<: *base-course
+    include:
+      - /ja/courses/*
+    exclude:
+      - /ja/courses/instructors/**
+    target: /ja/course-index.json
+
+  course-sv:
+    <<: *base-course
+    include:
+      - /sv/courses/*
+    exclude:
+      - /sv/courses/instructors/**
+    target: /sv/course-index.json
+
+  course-zh-hans:
+    <<: *base-course
+    include:
+      - /zh-hans/courses/*
+    exclude:
+      - /zh-hans/courses/instructors/**
+    target: /zh-hans/course-index.json
+
+  course-zh-hant:
+    <<: *base-course
+    include:
+      - /zh-hant/courses/*
+    exclude:
+      - /zh-hant/courses/instructors/**
+    target: /zh-hant/course-index.json
+
   # Sitemap indicies, split in 2 google has a limit of 50k (and 50MB) urls per sitemap
   sitemap-en-1: &base-sitemap-1
     include:
