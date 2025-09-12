@@ -75,7 +75,7 @@
   width: 120px;
 }
 
-/* Skill Track Card */
+/* Module Card */
 .course-breakdown .course-breakdown-module-card {
   background-color: var(--spectrum-gray-50);
   border-radius: var(--spectrum-spacing-300);
@@ -89,11 +89,19 @@
 
 .course-breakdown .course-breakdown-module-card .cb-module-header {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: var(--spectrum-spacing-300);
-  margin-bottom: var(--spectrum-spacing-300);
+  margin-bottom: var(--spectrum-spacing-400);
   padding-bottom: var(--spectrum-spacing-300);
   border-bottom: 2px solid var(--spectrum-gray-200);
+}
+
+.course-breakdown .course-breakdown-module-card .cb-module-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--spectrum-spacing-300);
+  width: 100%;
 }
 
 .course-breakdown .course-breakdown-module-card .cb-module-header .cb-module-number {
@@ -131,6 +139,7 @@
 .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn {
   margin: 0;
   padding: 0 var(--spectrum-spacing-300);
+  width: 100%;
 }
 
 .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn a {
@@ -208,7 +217,6 @@
 }
 
 .course-breakdown .course-breakdown-module-card .cb-steps-list {
-  margin-top: var(--spectrum-spacing-200);
   max-height: 0;
   overflow: hidden;
   opacity: 0;
@@ -222,6 +230,7 @@
   overflow: auto;
   max-height: 1000px;
   opacity: 1;
+  margin-top: var(--spectrum-spacing-200);
 }
 
 .course-breakdown .course-breakdown-module-card .cb-step-item {
@@ -317,4 +326,21 @@
   gap: var(--spectrum-spacing-100);
   flex-grow: 1;
   justify-content: center;
+}
+
+@media (min-width: 600px) {
+  .course-breakdown .course-breakdown-module-card .cb-module-header {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .course-breakdown .course-breakdown-module-card .cb-module-title-wrapper {
+    width: auto;
+    margin-bottom: 0;
+    flex-grow: 1;
+  }
+
+  .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn {
+    width: auto;
+  }
 }
