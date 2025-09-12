@@ -84,12 +84,11 @@ async function checkQuestionAnswer(questionElement) {
  * Submits the quiz and evaluates the results
  * @param {NodeList} questions The list of question elements
  * @param {Object} placeholders Language placeholders
- * @param {Element} passCriteriaElement The pass criteria element
- * @param {Element} passMsgElement The pass message element
- * @param {Element} failMsgElement The fail message element
+ * @param {Element} passPageUrlElement The pass page URL element
+ * @param {Element} failPageUrlElement The fail page URL element
  * @returns {Object} The quiz results including correct answers count and whether the quiz was passed
  */
-async function submitQuiz(questions, placeholders = {}, passCriteriaElement, passMsgElement, failMsgElement) {
+async function submitQuiz(questions, placeholders = {}, passPageUrlElement, failPageUrlElement) {
   // Check all questions
   const questionsArray = Array.from(questions || []);
 
@@ -99,19 +98,23 @@ async function submitQuiz(questions, placeholders = {}, passCriteriaElement, pas
   // Count correct answers
   const correctAnswersCount = results.filter(Boolean).length;
   
-  // Get pass criteria as a number (default to 100% if not specified)
-  const passCriteriaValue = passCriteriaElement ? 
-    parseInt(passCriteriaElement.textContent.trim(), 10) : 
-    questionsArray.length;
+  // Default pass criteria is 65% of total questions
+  const passCriteriaValue = Math.ceil(questionsArray.length * 0.65);
   
   // Determine if quiz was passed
   const isPassed = correctAnswersCount >= passCriteriaValue;
+  
+  // Extract URLs from anchor elements in the elements
+  const passPageUrl = passPageUrlElement?.querySelector('a')?.href;
+  const failPageUrl = failPageUrlElement?.querySelector('a')?.href;
   
   return {
     correctAnswersCount,
     totalQuestions: questionsArray.length,
     isPassed,
     passCriteriaValue,
+    passPageUrl: passPageUrl || '',
+    failPageUrl: failPageUrl || ''
   };
 }
 
@@ -141,6 +144,7 @@ function shuffleArray(array) {
   return indexedArray;
 }
 
+
 export default async function decorate(block) {
   let placeholders = {};
   try {
@@ -152,8 +156,12 @@ export default async function decorate(block) {
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
 
-  // Get title, text, pass criteria, pass message, fail message, and questions from block children using destructuring
-  const [titleElement, textElement, passCriteria, passMsg, failMsg, ...questionsOriginal] = [...block.children];
+  // Get title, text, pass page URL, fail page URL, and questions from block children
+  const [titleElement, textElement, passPageUrlElement, failPageUrlElement, ...questionsOriginal] = [...block.children];
+  
+  // Extract URLs from anchor elements
+  const passPageUrl = passPageUrlElement?.querySelector('a')?.href;
+  const failPageUrl = failPageUrlElement?.querySelector('a')?.href;
 
   const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
@@ -201,55 +209,45 @@ export default async function decorate(block) {
       existingError.remove();
     }
 
-    // Get all question elements
-    const questionElements = Array.from(questionsContainer.querySelectorAll('.question'));
+  // Get all question elements
+  const questionElements = Array.from(questionsContainer.querySelectorAll('.question'));
 
-    // Check if all questions are answered using Array methods
-    allQuestionsAnswered = questionElements.every((question) => {
-      const isMultipleChoice = question.dataset.isMultipleChoice === 'true';
-      return isMultipleChoice
-        ? question.querySelectorAll('input[type="checkbox"]:checked').length > 0
-        : question.querySelector('input[type="radio"]:checked') !== null;
-    });
+  // Check if all questions are answered using Array methods
+  allQuestionsAnswered = questionElements.every((question) => {
+    const isMultipleChoice = question.dataset.isMultipleChoice === 'true';
+    return isMultipleChoice
+      ? question.querySelectorAll('input[type="checkbox"]:checked').length > 0
+      : question.querySelector('input[type="radio"]:checked') !== null;
+  });
 
-    if (!allQuestionsAnswered) {
-      const errorMessage = htmlToElement(`
-        <div class="question-feedback incorrect quiz-error-message">
-          ${placeholders?.answerAllQuestions || 'Please answer all the questions'}
-        </div>
-      `);
-
-      // Insert at the end of the questions container
-      questionsContainer.appendChild(errorMessage);
-      return false;
-    }
-
-    // Submit quiz and get results
-    const quizResults = await submitQuiz(questionElements, placeholders, passCriteria, passMsg, failMsg);
-    
-    // Clear all page contents
-    block.textContent = '';
-    
-    // Create result container
-    const resultContainer = document.createElement('div');
-    resultContainer.classList.add('quiz-result-container');
-    
-    // Display pass or fail message in a box
-    const resultMessage = htmlToElement(`
-      <div class="quiz-result-message ${quizResults.isPassed ? 'correct' : 'incorrect'}">
-        ${quizResults.isPassed 
-          ? (passMsg?.textContent || 'Congratulations! You passed the quiz.') 
-          : (failMsg?.textContent || 'You did not meet the pass criteria. Please try again.')}
+  if (!allQuestionsAnswered) {
+    const errorMessage = htmlToElement(`
+      <div class="question-feedback incorrect quiz-error-message">
+        ${placeholders?.answerAllQuestions || 'Please answer all the questions'}
       </div>
     `);
-    
-    // Add result message to container
-    resultContainer.appendChild(resultMessage);
-    
-    // Add result container to block
-    block.appendChild(resultContainer);
-    
-    return true;
+
+    // Insert at the end of the questions container
+    questionsContainer.appendChild(errorMessage);
+    return false;
+  }
+
+  // Submit quiz and get results
+  const quizResults = await submitQuiz(questionElements, placeholders, passPageUrlElement, failPageUrlElement);
+  
+  // Get the appropriate URL based on quiz result
+  const redirectUrl = quizResults.isPassed 
+    ? quizResults.passPageUrl 
+    : quizResults.failPageUrl;
+  
+  // Navigate to the appropriate URL
+  if (redirectUrl) {
+    window.location.href = redirectUrl;
+  } else {
+    // Fallback if no URL is provided
+    window.location.href = quizResults.isPassed ? '/' : '/';
+  }
+  return true;
   };
 
   // Create quiz description section using htmlToElement

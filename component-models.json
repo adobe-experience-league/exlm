@@ -7555,28 +7555,16 @@
         "description": "Enter the module quiz description"
       },
       {
-        "component": "text",
+        "component": "aem-content",
         "valueType": "string",
-        "name": "passingCriteria",
-        "value": "",
-        "label": "Passing Criteria",
-        "description": "Enter the number of questions that must be answered correctly to pass the quiz"
+        "name": "pass-page-url",
+        "label": "Quiz pass page url"
       },
       {
-        "component": "richtext",
+        "component": "aem-content",
         "valueType": "string",
-        "name": "quizPassMessage",
-        "value": "",
-        "label": "Quiz Pass Message",
-        "description": "Message to display when the user passes the quiz"
-      },
-      {
-        "component": "richtext",
-        "valueType": "string",
-        "name": "quizFailMessage",
-        "value": "",
-        "label": "Quiz Fail Message",
-        "description": "Message to display when the user fails the quiz"
+        "name": "fail-page-url",
+        "label": "Quiz fail page url"
       }
     ]
   },
