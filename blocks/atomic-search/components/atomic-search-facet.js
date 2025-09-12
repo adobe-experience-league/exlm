@@ -12,9 +12,10 @@ import {
 
 const MAX_FACETS_WITHOUT_EXPANSION = 5;
 
-export default function atomicFacetHandler(baseElement, placeholders) {
+export default function atomicFacetHandler(block, placeholders) {
   let baseObserver;
   let resultTimerId;
+  const baseElement = block.querySelector('atomic-facet');
   const adjustChildElementsPosition = (facet, atomicElement) => {
     if (facet.dataset.childfacet === 'true') {
       const parentName = facet.dataset.parent;
@@ -319,6 +320,16 @@ export default function atomicFacetHandler(baseElement, placeholders) {
           const labelElement = facet.querySelector('label');
           labelElement.part.add('facet-child-label');
           adjustChildElementsPosition(facet, atomicElement);
+        }
+        if (!facet.dataset.onlyfacet) {
+          onlyFilterEl.part.add('only-facet-visible');
+          const btnWidth = onlyFilterEl.offsetWidth;
+          onlyFilterEl.part.remove('only-facet-visible');
+          if (btnWidth > 0) {
+            const buffer = 4;
+            block.style.setProperty('--atomic-search-facet-padding', `${btnWidth + buffer}px`);
+          }
+          facet.dataset.onlyfacet = 'true';
         }
       }
     }

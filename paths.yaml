@@ -93,6 +93,20 @@ mappings:
   - /content/exlm.resource/zh-CN/perspective-index.json:/zh-hans/perspective-index.json
   - /content/exlm.resource/zh-TW/perspective-index.json:/zh-hant/perspective-index.json
 
+  # course indices
+  - /content/exlm.resource/en/course-index.json:/en/course-index.json
+  - /content/exlm.resource/fr/course-index.json:/fr/course-index.json
+  - /content/exlm.resource/de/course-index.json:/de/course-index.json
+  - /content/exlm.resource/es/course-index.json:/es/course-index.json
+  - /content/exlm.resource/it/course-index.json:/it/course-index.json
+  - /content/exlm.resource/nl/course-index.json:/nl/course-index.json
+  - /content/exlm.resource/pt-BR/course-index.json:/pt-br/course-index.json
+  - /content/exlm.resource/ko/course-index.json:/ko/course-index.json
+  - /content/exlm.resource/ja/course-index.json:/ja/course-index.json
+  - /content/exlm.resource/sv/course-index.json:/sv/course-index.json
+  - /content/exlm.resource/zh-CN/course-index.json:/zh-hans/course-index.json
+  - /content/exlm.resource/zh-TW/course-index.json:/zh-hant/course-index.json
+
   # playlists inidices
   - /content/exlm.resource/en/playlists.json:/en/playlists.json
   - /content/exlm.resource/fr/playlists.json:/fr/playlists.json
