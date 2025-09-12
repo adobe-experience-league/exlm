@@ -159,25 +159,21 @@
   position: absolute;
   inset: 10px;
   transform: rotateY(0deg);
-  z-index: 2;
 }
 
 .flip-card > div > div:last-child {
   position: absolute;
   inset: 10px;
   transform: rotateY(180deg);
-  z-index: 1;
 }
 
 .flip-card > div.flipped > div:first-child {
   transform: rotateY(180deg);
-  z-index: 1;
 }
 
 .flip-card > div.flipped > div:last-child {
   transform: rotateY(0deg);
   background-color: var(--spectrum-gray-75);
-  z-index: 2;
 }
 
 .flip-card .flip-card-content *,
