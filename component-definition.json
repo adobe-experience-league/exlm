@@ -164,7 +164,7 @@
                   "filter": "courses-section",
                   "name": "Courses Section",
                   "model": "courses-section",
-                  "style": "courses-section"
+                  "style": ["courses-section", "default"]
                 }
               }
             }
@@ -181,7 +181,7 @@
                   "filter": "course-hub-section",
                   "name": "Course Hub Section",
                   "model": "course-hub-section",
-                  "style": "course-hub-section"
+                  "style": ["course-hub-section", "default"]
                 }
               }
             }
@@ -726,7 +726,7 @@
                   "name": "Course Marquee",
                   "model": "course-marquee",
                   "title": "Course Title",
-                  "titleHeadingType": "h3",
+                  "titleType": "h3",
                   "description": "Course description that will be limited to 3 lines in display."
                 }
               }
@@ -951,6 +951,10 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Flip Card Item",
                     "model": "flip-card-item",
+                    "frontTitle": "Front Title",
+                    "frontTitleType": "h3",
+                    "backTitle": "Back Title",
+                    "backTitleType": "h3",
                     "frontContent": "<p>Front content of the flip card</p>",
                     "backContent": "<p>Back content of the flip card</p>"
                   },
@@ -958,6 +962,10 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Flip Card Item",
                     "model": "flip-card-item",
+                    "frontTitle": "Front Title",
+                    "frontTitleType": "h3",
+                    "backTitle": "Back Title",
+                    "backTitleType": "h3",
                     "frontContent": "<p>Front content of the flip card</p>",
                     "backContent": "<p>Back content of the flip card</p>"
                   },
@@ -965,6 +973,10 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Flip Card Item",
                     "model": "flip-card-item",
+                    "frontTitle": "Front Title",
+                    "frontTitleType": "h3",
+                    "backTitle": "Back Title",
+                    "backTitleType": "h3",
                     "frontContent": "<p>Front content of the flip card</p>",
                     "backContent": "<p>Back content of the flip card</p>"
                   }
@@ -983,6 +995,10 @@
                 "template": {
                   "name": "Flip Card Item",
                   "model": "flip-card-item",
+                  "frontTitle": "Front Title",
+                  "frontTitleType": "h3",
+                  "backTitle": "Back Title",
+                  "backTitleType": "h3",
                   "frontContent": "<p>Front content of the flip card</p>",
                   "backContent": "<p>Back content of the flip card</p>"
                 }

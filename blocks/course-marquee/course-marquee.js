@@ -12,10 +12,17 @@ export default async function decorate(block) {
 
   const { lang = 'en' } = getPathDetails() || {};
 
-  const rows = [...block.children];
-  const courseTitle = rows[0]?.querySelector('div')?.textContent || '';
-  const titleHeadingType = rows[1]?.querySelector('div')?.textContent || 'h1';
-  const courseDescription = rows[2]?.querySelector('div')?.innerHTML || '';
+  const [firstRow, secondRow] = block.children;
+  // Get the HTML content of the first row as a string
+  const courseTitleEl = firstRow?.querySelector('h1, h2, h3, h4, h5, h6');
+  const courseTitleHTML = courseTitleEl
+    ? (() => {
+        courseTitleEl.classList.add('course-marquee-title');
+        return courseTitleEl.outerHTML;
+      })()
+    : '';
+  // Course description is now in the second row
+  const courseDescription = secondRow?.querySelector('div')?.innerHTML || '';
 
   const courseName = getMetadata('og:title') || document.title;
 
@@ -73,7 +80,7 @@ export default async function decorate(block) {
         <span>${courseName}</span>
       </div>
       <div class="course-marquee-content">
-        <${titleHeadingType} class="course-marquee-title">${courseTitle}</${titleHeadingType}>
+        ${courseTitleHTML}
         <div class="course-marquee-description">${courseDescription}</div>
         <hr class="course-marquee-separator">
         <div class="course-metadata-bookmark">
