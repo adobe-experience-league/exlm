@@ -178,6 +178,39 @@ function moduleCard({
   return CardShimmer;
 }
 
+/**
+ * Determines the status of a module based on its index and previous module completion status
+ *
+ * @param {number} index - The index of the module
+ * @param {boolean} prevModuleCompleted - Whether the previous module is completed
+ * @returns {Array} - Array containing [moduleStatus, updatedPrevModuleCompleted]
+ */
+function determineModuleStatus(index, prevModuleCompleted) {
+  let moduleStatus;
+  let newPrevModuleCompleted = prevModuleCompleted;
+
+  if (index === 0) {
+    // First module is always NOT_STARTED unless completed
+    moduleStatus = SKILL_TRACK_CARD_STATUS.NOT_STARTED;
+  } else if (prevModuleCompleted) {
+    // If previous module is completed, this module should be enabled
+    moduleStatus = SKILL_TRACK_CARD_STATUS.NOT_STARTED;
+  } else {
+    // Otherwise, module is disabled
+    moduleStatus = SKILL_TRACK_CARD_STATUS.DISABLED;
+  }
+
+  // Check if this module is marked as completed via query param
+  if (isModuleCompleted(index)) {
+    moduleStatus = SKILL_TRACK_CARD_STATUS.COMPLETED;
+    newPrevModuleCompleted = true;
+  } else {
+    newPrevModuleCompleted = false;
+  }
+
+  return [moduleStatus, newPrevModuleCompleted];
+}
+
 export default async function decorate(block) {
   const [title, moduleTime, infoTitle, infoDescription, ...modules] = block.children;
 
@@ -200,27 +233,12 @@ export default async function decorate(block) {
     const moduleFragment = module.querySelector('a')?.getAttribute('href');
     const modulePromise = getmoduleMeta(moduleFragment);
 
-    // Determine module status
-    let moduleStatus;
+    // Determine module status using the extracted function
+    // The function returns [moduleStatus, newPrevModuleCompleted]
+    const [moduleStatus, newPrevModuleCompleted] = determineModuleStatus(index, prevModuleCompleted);
 
-    if (index === 0) {
-      // First module is always NOT_STARTED unless completed
-      moduleStatus = SKILL_TRACK_CARD_STATUS.NOT_STARTED;
-    } else if (prevModuleCompleted) {
-      // If previous module is completed, this module should be enabled
-      moduleStatus = SKILL_TRACK_CARD_STATUS.NOT_STARTED;
-    } else {
-      // Otherwise, module is disabled
-      moduleStatus = SKILL_TRACK_CARD_STATUS.DISABLED;
-    }
-
-    // Check if this module is marked as completed via query param
-    if (isModuleCompleted(index)) {
-      moduleStatus = SKILL_TRACK_CARD_STATUS.COMPLETED;
-      prevModuleCompleted = true;
-    } else {
-      prevModuleCompleted = false;
-    }
+    // Update prevModuleCompleted for the next iteration
+    prevModuleCompleted = newPrevModuleCompleted;
 
     const moduleProp = {
       modulePromise,

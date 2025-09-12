@@ -139,6 +139,7 @@
 .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn {
   margin: 0;
   padding: 0 var(--spectrum-spacing-300);
+  width: 100%;
 }
 
 .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn a {
@@ -161,7 +162,6 @@
 .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn.completed {
   background: transparent;
   border: 2px solid var(--spectrum-gray-900);
-  width: 100%;
 }
 
 .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn.completed a {
@@ -340,11 +340,7 @@
     flex-grow: 1;
   }
 
-  .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn.completed {
+  .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn {
     width: auto;
-  }
-
-  .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn.completed a {
-    text-transform: none;
   }
 }
