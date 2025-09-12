@@ -493,10 +493,18 @@ export async function buildCard(container, element, model) {
     card.classList.add('thumbnail-not-loaded');
   }
   if (badgeTitle || failedToLoad) {
-    const bannerElement = createTag('h3', { class: 'browse-card-banner' });
-    bannerElement.innerText = badgeTitle || '';
-    bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
-    cardFigure.appendChild(bannerElement);
+    if (type === CONTENT_TYPES.COURSE.MAPPING_KEY) {
+      const bannerElement = htmlToElement(`<div class="browse-card-icon">
+        <span class="icon icon-course-badge"></span
+      </div>`);
+      decorateIcons(bannerElement);
+      cardFigure.appendChild(bannerElement);
+    } else {
+      const bannerElement = createTag('h3', { class: 'browse-card-banner' });
+      bannerElement.innerText = badgeTitle || '';
+      bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
+      cardFigure.appendChild(bannerElement);
+    }
   }
 
   if (contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY) {

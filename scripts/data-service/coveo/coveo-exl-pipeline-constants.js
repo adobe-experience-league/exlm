@@ -72,4 +72,8 @@ export const CONTENT_TYPES = Object.freeze({
     MAPPING_KEY: 'video-clip',
     LABEL: placeholders.browseCardVideoClipLabel || 'Video Clip',
   },
+  COURSE: {
+    MAPPING_KEY: 'course',
+    LABEL: placeholders.browseCardCourseLabel || 'Course',
+  },
 });
