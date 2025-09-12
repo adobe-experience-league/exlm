@@ -145,6 +145,30 @@ function shuffleArray(array) {
 }
 
 
+// Fetch page content and insert it into the current page
+const fetchPageContent = async (url, block) => {
+  // Show loading state
+  const loadingMessage = htmlToElement('<div class="quiz-loading">Loading results...</div>');
+  block.appendChild(loadingMessage);
+  
+  // Fetch the content
+  const response = await fetch(`${url}.plain.html`);
+  if (response.ok) {
+    const pageContent = await response.text();
+    
+    // Clear the block content
+    block.textContent = '';
+    
+    // Create a container for the fetched content
+    const resultContainer = document.createElement('div');
+    resultContainer.classList.add('quiz-result-container');
+    resultContainer.innerHTML = pageContent;
+    
+    // Add the result container to the block
+    block.appendChild(resultContainer);
+  }
+};
+
 export default async function decorate(block) {
   let placeholders = {};
   try {
@@ -240,12 +264,9 @@ export default async function decorate(block) {
     ? quizResults.passPageUrl 
     : quizResults.failPageUrl;
   
-  // Navigate to the appropriate URL
+  // Load the appropriate page content as a fragment
   if (redirectUrl) {
-    window.location.href = redirectUrl;
-  } else {
-    // Fallback if no URL is provided
-    window.location.href = quizResults.isPassed ? '/' : '/';
+    await fetchPageContent(redirectUrl, block);
   }
   return true;
   };
