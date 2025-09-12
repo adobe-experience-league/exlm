@@ -1,15 +1,15 @@
-.key-takeaways-wrapper {
+.course-summary-wrapper {
   max-width: 720px;
 }
 
-.key-takeaways-block {
+.course-summary-block {
   background-color: var(--spectrum-gray-100);
   border-radius: 16px;
   padding: 24px;
   border: 1px solid var(--non-spectrum-unicorn-silver);
 }
 
-.key-takeaways-title {
+.course-summary-title {
   font-size: 20px;
   font-weight: 700;
   padding-bottom: 16px;
@@ -20,7 +20,7 @@
   position: relative;
 }
 
-.key-takeaways-title > * {
+.course-summary-title > * {
   margin: 0;
   font-size: inherit;
   font-weight: inherit;
@@ -28,7 +28,7 @@
   line-height: inherit;
 }
 
-.key-takeaways-title::after {
+.course-summary-title::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -37,7 +37,7 @@
   border-bottom: 1px solid var(--non-spectrum-unicorn-silver);
 }
 
-.key-takeaways-title::before {
+.course-summary-title::before {
   content: '';
   position: absolute;
   margin-top: 3px;
@@ -51,12 +51,12 @@
   filter: brightness(0); /* Make the icon black */
 }
 
-.key-takeaways-list li {
+.course-summary-list li {
   position: relative;
   padding-left: 8px;
   font-size: 18px;
 }
 
-.key-takeaways-list li:last-child {
+.course-summary-list li:last-child {
   margin-bottom: 0;
 }

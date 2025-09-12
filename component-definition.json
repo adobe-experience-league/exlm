@@ -734,6 +734,24 @@
           }
         },
         {
+          "title": "Course Summary",
+          "id": "course-summary",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Course Summary",
+                  "model": "course-summary",
+                  "title": "Course Summary",
+                  "titleType": "h3",
+                  "description": "<ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li><li>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</li><li>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</li></ul>"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Curated Cards",
           "id": "curated-cards",
           "plugins": {
@@ -1243,6 +1261,48 @@
           }
         },
         {
+          "title": "Module",
+          "id": "module",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Module",
+                  "model": "module",
+                  "filter": "module",
+                  "item": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Step",
+                    "model": "step",
+                    "step_url": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Module Meta",
+          "id": "module-meta",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Module Meta",
+                  "model": "module-meta",
+                  "title": "Module Title",
+                  "titleType": "h1",
+                  "description": "Module Description",
+                  "recap_url": "",
+                  "quiz_url": ""
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Nav",
           "id": "nav",
           "plugins": {
@@ -1608,48 +1668,6 @@
           }
         },
         {
-          "title": "Module",
-          "id": "module",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block",
-                "template": {
-                  "name": "Module",
-                  "model": "module",
-                  "filter": "module",
-                  "item": {
-                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
-                    "name": "Step",
-                    "model": "step",
-                    "step_url": ""
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "title": "Module Meta",
-          "id": "module-meta",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block",
-                "template": {
-                  "name": "Module Meta",
-                  "model": "module-meta",
-                  "title": "Module Title",
-                  "titleType": "h1",
-                  "description": "Module Description",
-                  "recap_url": "",
-                  "quiz_url": ""
-                }
-              }
-            }
-          }
-        },
-        {
           "title": "Social",
           "id": "social",
           "plugins": {
@@ -1865,24 +1883,6 @@
                 "template": {
                   "name": "Video Embed",
                   "model": "video-embed"
-                }
-              }
-            }
-          }
-        },
-        {
-          "title": "Key Takeaways",
-          "id": "key-takeaways",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block",
-                "template": {
-                  "name": "Key Takeaways",
-                  "model": "key-takeaways",
-                  "title": "Key Takeaways",
-                  "titleType": "h3",
-                  "description": "<ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li><li>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</li><li>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</li></ul>"
                 }
               }
             }
