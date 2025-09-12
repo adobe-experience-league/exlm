@@ -1,0 +1,113 @@
+.quiz-scorecard {
+  max-width: 800px;
+  margin: var(--spectrum-spacing-400) auto;
+  padding: var(--spectrum-spacing-300);
+  border-radius: 16px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.quiz-scorecard-pass {
+  border: 2px solid var(--spectrum-green-600);
+}
+
+.quiz-scorecard-fail {
+  border: 2px solid var(--non-spectrum-adobe-red);
+}
+
+.quiz-scorecard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spectrum-spacing-300);
+}
+
+.quiz-scorecard-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin-bottom: var(--spectrum-spacing-200);
+}
+
+.quiz-scorecard-pass .quiz-scorecard-icon {
+  background-color: var(--spectrum-green-100);
+}
+
+.quiz-scorecard-fail .quiz-scorecard-icon {
+  background-color: var(--spectrum-red-100);
+}
+
+.quiz-scorecard-icon .icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.quiz-scorecard-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.quiz-scorecard-result {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--spectrum-font-size-300);
+  line-height: var(--spectrum-line-height-m);
+  margin-bottom: var(--spectrum-spacing-100);
+}
+
+.quiz-scorecard-pass .quiz-scorecard-result {
+  color: var(--spectrum-green-900);
+}
+
+.quiz-scorecard-fail .quiz-scorecard-result {
+  color: var(--non-spectrum-adobe-red);
+}
+
+.quiz-scorecard-score {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--spectrum-font-size-900);
+  line-height: var(--spectrum-line-height-xxl);
+  margin-bottom: var(--spectrum-spacing-200);
+}
+
+.quiz-scorecard-pass .quiz-scorecard-score {
+  color: var(--spectrum-green-700);
+}
+
+.quiz-scorecard-fail .quiz-scorecard-score {
+  color: var(--non-spectrum-adobe-red);
+}
+
+.quiz-scorecard-description {
+  font-weight: var(--font-weight-normal);
+  font-size: var(--spectrum-font-size-200);
+  line-height: var(--spectrum-line-height-s);
+  color: var(--spectrum-gray-800);
+  margin-bottom: var(--spectrum-spacing-400);
+  max-width: 80%;
+}
+
+.quiz-scorecard-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spectrum-spacing-300);
+  margin-top: var(--spectrum-spacing-200);
+}
+
+.quiz-scorecard-buttons .button {
+  min-width: 120px;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .quiz-scorecard-buttons {
+    flex-direction: column;
+  }
+  
+  .quiz-scorecard-description {
+    max-width: 95%;
+  }
+}
