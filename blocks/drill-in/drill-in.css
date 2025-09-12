@@ -243,3 +243,10 @@
     display: none;
   }
 }
+
+@media (hover: none) and (pointer: coarse) {
+  .drill-in-nav-button:hover,
+  .drill-in-nav-button:focus {
+    color: var(--non-spectrum-web-gray);
+  }
+}
