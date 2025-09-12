@@ -22,10 +22,6 @@ h6 {
   line-height: normal;
 }
 
-body.courses .module-info-section {
-  border-bottom: 1px solid var(--spectrum-gray-200);
-}
-
 body.courses .section > div:has(> .block) {
   width: 100%;
 }

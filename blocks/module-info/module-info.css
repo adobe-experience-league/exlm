@@ -2,11 +2,17 @@
   width: 100%;
 }
 
+.module-info {
+  background-color: var(--spectrum-gray-100);
+  border-radius: 16px;
+  padding: 40px;
+  border: 1px solid var(--non-spectrum-unicorn-silver);
+}
+
 .module-info .back-to-course {
   display: flex;
   align-items: center;
   gap: var(--spectrum-spacing-100);
-  background: var(--background-color);
   border: none;
   border-radius: var(--spectrum-spacing-75);
   padding: var(--spectrum-spacing-100);
@@ -26,15 +32,27 @@
   height: 32px;
 }
 
-.module-info .back-to-course .icon-course {
-  background-image: url('../../icons/course.svg');
+.module-info .back-to-course .icon-collection-icon {
+  background-image: url('../../icons/collection-icon.svg');
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
 }
 
+.module-info .back-to-course .icon-back-arrow {
+  background-image: url('../../icons/back-arrow.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  width: 18px;
+  height: 18px;
+  margin: 0 8px;
+}
+
 .module-info .back-to-course .back-to-course-label {
-  font-weight: var(--font-weight-semi-bold);
+  font-size: var(--spectrum-font-size-100);
+  line-height: 1.25;
+  font-weight: var(--font-weight-bold);
 }
 
 /* Title */
@@ -42,7 +60,7 @@
   font-size: var(--spectrum-font-size-700);
   color: var(--text-color);
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.25;
   flex: 1;
 }
 
@@ -53,30 +71,6 @@
   align-items: flex-end;
   gap: var(--spectrum-spacing-300);
   margin-top: var(--spectrum-spacing-300);
-}
-
-/* Progress text */
-.module-info .progress-text {
-  white-space: nowrap;
-  font-weight: var(--font-weight-semi-bold);
-  margin-bottom: var(--spectrum-spacing-200);
-}
-
-/* Progress bar */
-.module-info .progress-bar {
-  width: 200px;
-  height: var(--spectrum-spacing-100);
-  background: var(--spectrum-gray-200);
-  border-radius: var(--spectrum-spacing-75);
-  overflow: hidden;
-  position: relative;
-}
-
-.module-info .progress-fill {
-  height: 100%;
-  background: var(--spectrum-blue-700);
-  border-radius: var(--spectrum-spacing-75);
-  transition: width 0.3s ease;
 }
 
 .module-info .step-selector-container {
@@ -94,6 +88,7 @@
 }
 
 .module-info .custom-filter-dropdown button > span:first-child {
+  color: var(--non-spectrum-dark-gray);
   margin-right: 20px;
 }
 
@@ -164,10 +159,6 @@
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spectrum-spacing-300);
-  }
-
-  .module-info .progress-bar {
-    width: 100%;
   }
 
   .module-info .step-selector-container {
