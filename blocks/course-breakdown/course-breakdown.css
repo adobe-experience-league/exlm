@@ -92,7 +92,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--spectrum-spacing-300);
-  margin-bottom: var(--spectrum-spacing-300);
+  margin-bottom: var(--spectrum-spacing-400);
   padding-bottom: var(--spectrum-spacing-300);
   border-bottom: 2px solid var(--spectrum-gray-200);
 }
@@ -102,27 +102,6 @@
   align-items: center;
   gap: var(--spectrum-spacing-300);
   width: 100%;
-}
-
-@media (min-width: 600px) {
-  .course-breakdown .course-breakdown-module-card .cb-module-header {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .course-breakdown .course-breakdown-module-card .cb-module-title-wrapper {
-    width: auto;
-    margin-bottom: 0;
-    flex-grow: 1;
-  }
-
-  .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn {
-    width: auto;
-  }
-
-  .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn.completed a {
-    text-transform: none;
-  }
 }
 
 .course-breakdown .course-breakdown-module-card .cb-module-header .cb-module-number {
@@ -182,6 +161,7 @@
 .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn.completed {
   background: transparent;
   border: 2px solid var(--spectrum-gray-900);
+  width: 100%;
 }
 
 .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn.completed a {
@@ -237,7 +217,6 @@
 }
 
 .course-breakdown .course-breakdown-module-card .cb-steps-list {
-  margin-top: var(--spectrum-spacing-200);
   max-height: 0;
   overflow: hidden;
   opacity: 0;
@@ -251,6 +230,7 @@
   overflow: auto;
   max-height: 1000px;
   opacity: 1;
+  margin-top: var(--spectrum-spacing-200);
 }
 
 .course-breakdown .course-breakdown-module-card .cb-step-item {
@@ -346,4 +326,25 @@
   gap: var(--spectrum-spacing-100);
   flex-grow: 1;
   justify-content: center;
+}
+
+@media (min-width: 600px) {
+  .course-breakdown .course-breakdown-module-card .cb-module-header {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .course-breakdown .course-breakdown-module-card .cb-module-title-wrapper {
+    width: auto;
+    margin-bottom: 0;
+    flex-grow: 1;
+  }
+
+  .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn.completed {
+    width: auto;
+  }
+
+  .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn.completed a {
+    text-transform: none;
+  }
 }

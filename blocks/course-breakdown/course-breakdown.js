@@ -149,7 +149,7 @@ function moduleCard({
         </button>
       </div>
         <div class="cb-steps-info ${open ? 'open' : ''}">
-          <span class="cb-steps-info-text">${placeholders.courseBreakdownModuleDetails || 'Module Details'}</span>
+          <span class="cb-steps-info-text">${placeholders.courseBreakdownModuleDetails || 'Module details'}</span>
           <span class="cb-chevron"> <span class="icon icon-chevron"></span></span>
           <span class="cb-steps-status-text ${finalStatus}">${moduleCardStatusText}</span>
         </div>
@@ -193,16 +193,33 @@ export default async function decorate(block) {
   block.append(headerDom(title, modules?.length, moduleTime, placeholders));
   block.append(infoCardDom(infoTitle, infoDescription, placeholders));
 
+  // Keep track of previous module status to enable the next module after a completed one
+  let prevModuleCompleted = false;
+
   modules.forEach((module, index) => {
     const moduleFragment = module.querySelector('a')?.getAttribute('href');
     const modulePromise = getmoduleMeta(moduleFragment);
 
     // Determine module status
-    let moduleStatus = index === 0 ? SKILL_TRACK_CARD_STATUS.NOT_STARTED : SKILL_TRACK_CARD_STATUS.DISABLED;
+    let moduleStatus;
+
+    if (index === 0) {
+      // First module is always NOT_STARTED unless completed
+      moduleStatus = SKILL_TRACK_CARD_STATUS.NOT_STARTED;
+    } else if (prevModuleCompleted) {
+      // If previous module is completed, this module should be enabled
+      moduleStatus = SKILL_TRACK_CARD_STATUS.NOT_STARTED;
+    } else {
+      // Otherwise, module is disabled
+      moduleStatus = SKILL_TRACK_CARD_STATUS.DISABLED;
+    }
 
     // Check if this module is marked as completed via query param
     if (isModuleCompleted(index)) {
       moduleStatus = SKILL_TRACK_CARD_STATUS.COMPLETED;
+      prevModuleCompleted = true;
+    } else {
+      prevModuleCompleted = false;
     }
 
     const moduleProp = {
