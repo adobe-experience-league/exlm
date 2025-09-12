@@ -198,19 +198,16 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
 
 const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }) => {
   if (viewLinkText) {
-    let icon;
+    let icon = null;
     const isLeftPlacement = false;
-    const type = contentType?.toLowerCase();
-    switch (type) {
-      case CONTENT_TYPES.TUTORIAL.MAPPING_KEY:
-        icon = null;
-        break;
-      case CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY:
-      case CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY:
-        icon = 'new-tab-blue';
-        break;
-      default:
-        icon = 'chevron-right-blue';
+    if (
+      [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
+        contentType?.toLowerCase(),
+      )
+    ) {
+      icon = 'new-tab-blue';
+    } else {
+      icon = 'chevron-right-blue';
     }
     const iconMarkup = icon ? `<span class="icon icon-${icon}"></span>` : '';
     const linkText = htmlToElement(`
@@ -498,7 +495,7 @@ export async function buildCard(container, element, model) {
   if (badgeTitle || failedToLoad) {
     if (type === CONTENT_TYPES.COURSE.MAPPING_KEY) {
       const bannerElement = htmlToElement(`<div class="browse-card-icon">
-        <span class="icon icon-certificate"></span
+        <span class="icon icon-course-badge"></span
       </div>`);
       decorateIcons(bannerElement);
       cardFigure.appendChild(bannerElement);

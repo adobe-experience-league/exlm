@@ -1,9 +1,10 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, htmlToElement, xssSanitizeQueryParamValue } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 
 // Module-level placeholders variable
 let placeholders = {};
@@ -31,23 +32,71 @@ const URL_PARAMS = {
 const DROPDOWN_TYPE = 'multi-select';
 
 /**
- * Fetches the list of products from the featured card products JSON
+ * Fetches and caches the course index for a given language prefix
+ * Uses window-level caching to avoid multiple requests for the same data
+ * @param {string} prefix - Language prefix for the course index (default: 'en')
+ * @returns {Promise<Array>} Array of course index data
+ */
+async function fetchCourseIndex(prefix = 'en') {
+  window.courseIndex = window.courseIndex || {};
+  const loaded = window.courseIndex[`${prefix}-loaded`];
+  if (!loaded) {
+    window.courseIndex[`${prefix}-loaded`] = new Promise((resolve, reject) => {
+      const url = `/${prefix}/course-index.json`;
+      fetch(url)
+        .then((resp) => {
+          if (resp.ok) {
+            return resp.json();
+          }
+          window.courseIndex[prefix] = [];
+          return {};
+        })
+        .then((json) => {
+          window.courseIndex[prefix] = json?.data ?? [];
+          resolve(json?.data ?? []);
+        })
+        .catch((error) => {
+          window.courseIndex[prefix] = [];
+          reject(error);
+        });
+    });
+  }
+  await window.courseIndex[`${prefix}-loaded`];
+  return window.courseIndex[prefix];
+}
+
+
+/**
+ * Fetches the list of products from the course index JSON
  * @returns {Promise<string[]>} Array of product solution names
  */
 async function getProductList() {
   try {
-    const { default: ffetch } = await import('../../scripts/ffetch.js');
-    const solutionList = await ffetch('/featured-card-products.json').all();
-    return solutionList.map((solution) => solution.Solution);
+    const courseIndex = await fetchCourseIndex();
+
+    const products = courseIndex.reduce((acc, curr) => {
+      if (curr?.coveoSolution) {
+        // Split by ";" and trim spaces
+        const items = curr.coveoSolution.split(";").map(s => s.trim());
+        acc.push(...items);
+      }
+      return acc;
+    }, []);
+
+    // Remove duplicates
+    const uniqueProducts = [...new Set(products)];
+
+    return uniqueProducts;
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error('Error fetching product list:', error);
+    console.error("Error fetching product list:", error);
     return [];
   }
 }
 
 /**
  * Creates the header section with title, dropdown filter, and clear filter button
+ * Uses module-level placeholders for internationalization
  * @param {HTMLElement} headingElement - The heading element from block children
  * @param {HTMLElement} filterLabelElement - The filter label element from block children
  * @returns {HTMLElement} The constructed header div element
@@ -81,16 +130,11 @@ function createHeader(headingElement, filterLabelElement) {
  */
 function getFiltersFromUrl() {
   const urlParams = new URLSearchParams(window.location.search);
-  const filtersParam = urlParams.get(URL_PARAMS.FILTERS);
+  const filtersParam =  urlParams.get('filters')
+      ? urlParams.get('filters').split(',').map(xssSanitizeQueryParamValue)
+      : [];
 
-  if (!filtersParam) {
-    return [];
-  }
-
-  return filtersParam
-    .split(',')
-    .map((filter) => filter.replace(/[^a-z0-9\s]/gi, ''))
-    .filter(Boolean);
+  return filtersParam;
 }
 
 /**
@@ -111,6 +155,7 @@ function updateFilters(selectedFilters) {
 
 /**
  * Creates filter tags based on selected filters
+ * Uses module-level placeholders for internationalization
  * @param {HTMLElement} block - The main block element
  * @param {string[]} selectedFilters - Array of selected filter values
  */
@@ -224,6 +269,7 @@ function addShimmerWrapper(contentDiv, shimmer) {
 
 /**
  * Fetches and renders browse cards content
+ * Uses module-level placeholders for error and no-results messages
  * @param {HTMLElement} block - The main block element
  * @param {string[]} selectedFilters - Array of selected filter values
  * @param {HTMLElement} contentDiv - The content container element
@@ -231,8 +277,8 @@ function addShimmerWrapper(contentDiv, shimmer) {
  */
 async function fetchAndRenderCards(block, selectedFilters, contentDiv, shimmer) {
   const param = {
-    contentType: '',
-    product: selectedFilters.length > 0 ? selectedFilters : undefined,
+    contentType: CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase().split(','),
+    ...(selectedFilters.length > 0 && { product: selectedFilters }),
   };
 
   try {
@@ -261,7 +307,7 @@ async function fetchAndRenderCards(block, selectedFilters, contentDiv, shimmer) 
     } else {
       // Show no results message using placeholder
       const noResultsMessage = placeholders?.noCoursesFoundText || 'No courses found for the selected filters.';
-      contentDiv.innerHTML = `<p class="course-no-results">${noResultsMessage}</p>`;
+      contentDiv.innerHTML = `<div class="course-no-results">${noResultsMessage}</div>`;
       if (!block.contains(contentDiv)) {
         block.appendChild(contentDiv);
       }
@@ -273,7 +319,7 @@ async function fetchAndRenderCards(block, selectedFilters, contentDiv, shimmer) 
 
     // Show error message using placeholder
     const errorMessage = placeholders?.coursesLoadError || 'Failed to load courses. Please try again.';
-    contentDiv.innerHTML = `<p class="error-message">${errorMessage}</p>`;
+    contentDiv.innerHTML = `<div class="course-no-results">${errorMessage}</div>`;
     if (!block.contains(contentDiv)) {
       block.appendChild(contentDiv);
     }

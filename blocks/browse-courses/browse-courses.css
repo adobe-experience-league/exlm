@@ -86,11 +86,14 @@
 }
 
 .browse-courses .course-no-results {
+  align-items: center;
   background-color: var(--spectrum-gray-200);
   box-sizing: border-box;
   color: var(--non-spectrum-grey);
+  display: flex;
   font-size: var(--spectrum-font-size-200);
   grid-column: 1 / -1;
+  justify-content: center;
   padding: 72px 0;
   text-align: center;
   width: 100%;

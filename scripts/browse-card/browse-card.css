@@ -660,16 +660,6 @@
   padding: 0 24px 24px;
 }
 
-.browse-card.course-card .browse-card-cta-element {
-  background-color: var(--non-spectrum-bright-blue);
-  color: var(--spectrum-gray-50);
-  border: none;
-  border-radius: 24px;
-  padding: 12px 24px;
-  font-size: var(--spectrum-font-size-200);
-  font-weight: var(--font-weight-semi-bold);
-}
-
 /* Event Card Variant */
 .browse-card.event-card .browse-card-banner,
 .browse-card.upcoming-event-card .browse-card-banner {
