@@ -7712,6 +7712,88 @@
     "id": "flip-card-item",
     "fields": [
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "frontTitle",
+        "value": "",
+        "label": "Front Title",
+        "description": "Optional title for the front of the flip card. If provided, it will be displayed with an underline."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "frontTitleType",
+        "value": "h3",
+        "label": "Front Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "backTitle",
+        "value": "",
+        "label": "Back Title",
+        "description": "Optional title for the back of the flip card. If provided, it will be displayed with an underline."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "backTitleType",
+        "value": "h3",
+        "label": "Back Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
         "component": "richtext",
         "valueType": "string",
         "name": "frontContent",
@@ -7862,7 +7944,7 @@
       {
         "component": "select",
         "valueType": "string",
-        "name": "titleHeadingType",
+        "name": "titleType",
         "value": "h3",
         "label": "Title Heading Type",
         "options": [
