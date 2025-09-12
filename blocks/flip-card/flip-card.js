@@ -51,12 +51,6 @@ export default async function decorate(block) {
 
     const cardDivs = Array.from(card.children);
 
-    // New structure:
-    // cardDivs[0]: Front title with tag (e.g., <h3 id="front-title">Front Title</h3>)
-    // cardDivs[1]: Back title with tag (e.g., <h3 id="back-title">Back Title</h3>)
-    // cardDivs[2]: Front content
-    // cardDivs[3]: Back content
-
     // Using object destructuring for child elements
     const [frontTitleDiv, backTitleDiv, frontContentDiv, backContentDiv] = cardDivs;
 
@@ -85,11 +79,11 @@ export default async function decorate(block) {
     }
 
     card.innerHTML = `
-      <div class="${!hasFrontTitle && hasFrontContent ? 'content-only' : ''}">
+      <div${!hasFrontTitle && hasFrontContent ? ' class="content-only"' : ''}>
         ${frontTitleDiv ? frontTitleDiv.innerHTML : ''}
         ${frontContentDiv ? `<div class="flip-card-content">${frontContentDiv.innerHTML}</div>` : ''}
       </div>
-      <div class="${!hasBackTitle && hasBackContent ? 'content-only' : ''}">
+      <div${!hasBackTitle && hasBackContent ? ' class="content-only"' : ''}>
         ${backTitleDiv ? backTitleDiv.innerHTML : ''}
         ${backContentDiv ? `<div class="flip-card-content">${backContentDiv.innerHTML}</div>` : ''}
       </div>

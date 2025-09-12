@@ -114,8 +114,12 @@
   background-color: var(--spectrum-gray-300);
 }
 
-/* Focus states for accessibility */
+/* Focus states for accessibility - only show outline when using keyboard */
 .flip-card > div:focus {
+  outline: none; /* Remove default focus outline for mouse clicks */
+}
+
+.flip-card > div:focus-visible {
   outline: var(--spectrum-spacing-50) solid var(--spectrum-blue-500);
   outline-offset: var(--spectrum-spacing-50);
 }
@@ -130,7 +134,7 @@
   right: var(--spectrum-spacing-100);
   display: flex;
   align-items: center;
-  gap: var(--spectrum-spacing-50);
+  gap: var(--spectrum-spacing-100);
   color: var(--spectrum-gray-700);
   font-size: var(--spectrum-font-size-75);
   transition: color 0.3s ease;
@@ -183,6 +187,19 @@
 
 .flip-card .flip-card-content :where(h1, h2, h3, h4, h5, h6, strong) {
   font-weight: var(--font-weight-bold);
+}
+
+/* Reset all heading styles in flip-card content to behave like paragraphs */
+.flip-card .flip-card-content :where(h1, h2, h3, h4, h5, h6) {
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  margin: 0 0 var(--spectrum-spacing-300);
+}
+
+/* Apply the same margin to headings in lists as paragraphs in lists */
+.flip-card .flip-card-content li > :where(h1, h2, h3, h4, h5, h6) {
+  margin-bottom: var(--spectrum-spacing-100);
 }
 
 /* Content-only styling */
