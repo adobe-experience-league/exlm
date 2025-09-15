@@ -63,6 +63,8 @@
   cursor: pointer;
   margin: 0 auto;
   -webkit-tap-highlight-color: transparent;
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 
 /* Card faces */
@@ -82,8 +84,6 @@
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizelegibility;
   border-radius: 12px;
-  transform-style: preserve-3d;
-  will-change: transform;
 }
 
 /* Scroll wrapper inside card */
