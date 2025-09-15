@@ -102,7 +102,7 @@ async function getProductList() {
  * @returns {HTMLElement} The constructed header div element
  */
 function createHeader(headingElement, filterLabelElement) {
-  const clearFilterText = placeholders?.clearFilterLabel || 'Clear filters';
+  const clearFilterText = placeholders?.filterClearLabel || 'Clear filters';
 
   const headerDiv = htmlToElement(`
     <div class="${CSS_CLASSES.HEADER}">
