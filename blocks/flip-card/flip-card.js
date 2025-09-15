@@ -53,10 +53,6 @@ export default async function decorate(block) {
 
     // Using object destructuring for child elements
     const [frontTitleDiv, backTitleDiv, frontContentDiv, backContentDiv] = cardDivs;
-
-    const hasFrontContent = !!frontContentDiv?.textContent?.trim();
-    const hasBackContent = !!backContentDiv?.textContent?.trim();
-
     // Check if we have titles
     const hasFrontTitle = frontTitleDiv?.firstElementChild;
     const hasBackTitle = backTitleDiv?.firstElementChild;
@@ -65,35 +61,21 @@ export default async function decorate(block) {
     if (hasFrontTitle) {
       const frontTitleElement = frontTitleDiv.firstElementChild;
       frontTitleElement.classList.add('flip-card-title');
-      if (!hasFrontContent) {
-        frontTitleElement.classList.add('flip-card-title-only');
-      }
     }
 
     if (hasBackTitle) {
       const backTitleElement = backTitleDiv.firstElementChild;
       backTitleElement.classList.add('flip-card-title');
-      if (!hasBackContent) {
-        backTitleElement.classList.add('flip-card-title-only');
-      }
     }
 
     card.innerHTML = `
-      <div class="${!hasFrontTitle && hasFrontContent ? 'content-only' : ''}">
+      <div>
         ${frontTitleDiv ? frontTitleDiv.innerHTML : ''}
-        ${
-          frontContentDiv
-            ? `<div class="flip-card-content-wrapper"><div class="flip-card-content">${frontContentDiv.innerHTML}</div></div>`
-            : ''
-        }
+        ${frontContentDiv ? `<div class="flip-card-content">${frontContentDiv.innerHTML}</div>` : ''}
       </div>
-      <div class="${!hasBackTitle && hasBackContent ? 'content-only' : ''}">
+      <div>
         ${backTitleDiv ? backTitleDiv.innerHTML : ''}
-        ${
-          backContentDiv
-            ? `<div class="flip-card-content-wrapper"><div class="flip-card-content">${backContentDiv.innerHTML}</div></div>`
-            : ''
-        }
+        ${backContentDiv ? `<div class="flip-card-content">${backContentDiv.innerHTML}</div>` : ''}
       </div>
     `;
 
