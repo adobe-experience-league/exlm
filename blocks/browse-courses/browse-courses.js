@@ -305,7 +305,7 @@ async function fetchAndRenderCards(block, selectedFilters, contentDiv, shimmer) 
       }
     } else {
       // Show no results message using placeholder
-      const noResultsMessage = placeholders?.noCoursesFoundText || 'No courses found for the selected filters.';
+      const noResultsMessage = placeholders?.courseNoResultsText || 'No courses found for the selected filters.';
       contentDiv.innerHTML = `<div class="course-no-results">${noResultsMessage}</div>`;
       if (!block.contains(contentDiv)) {
         block.appendChild(contentDiv);
@@ -317,7 +317,7 @@ async function fetchAndRenderCards(block, selectedFilters, contentDiv, shimmer) 
     console.error('Error fetching browse cards content:', error);
 
     // Show error message using placeholder
-    const errorMessage = placeholders?.coursesLoadError || 'Failed to load courses. Please try again.';
+    const errorMessage = placeholders?.courseLoadError || 'Failed to load courses. Please try again.';
     contentDiv.innerHTML = `<div class="course-no-results">${errorMessage}</div>`;
     if (!block.contains(contentDiv)) {
       block.appendChild(contentDiv);
