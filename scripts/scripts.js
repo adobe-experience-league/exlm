@@ -776,6 +776,7 @@ export function getConfig() {
     modalReDisplayDuration,
     cookieConsentName,
     targetCriteriaIds,
+    quizPassingCriteria: 0.65, // 65% passing criteria for quizzes
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
     privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,

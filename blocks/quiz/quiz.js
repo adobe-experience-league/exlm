@@ -1,4 +1,4 @@
-import { htmlToElement, fetchLanguagePlaceholders, decorateExternalLinks } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, decorateExternalLinks, getConfig } from '../../scripts/scripts.js';
 import { generateQuestionDOM } from '../question/question.js';
 import { hashAnswer } from '../../scripts/hash-utils.js';
 import { moveInstrumentation } from '../../scripts/utils/ue-utils.js';
@@ -95,27 +95,28 @@ async function submitQuiz(questions, placeholders = {}, passPageUrlElement, fail
 
   // Process all questions in parallel
   const results = await Promise.all(questionsArray.map((question) => checkQuestionAnswer(question)));
-  
+
   // Count correct answers
   const correctAnswersCount = results.filter(Boolean).length;
-  
-  // Default pass criteria is 65% of total questions
-  const passCriteriaValue = Math.ceil(questionsArray.length * 0.65);
-  
+
+  // Get pass criteria from config (default to 65% if not available)
+  const { quizPassingCriteria = 0.65 } = getConfig();
+  const passCriteriaValue = Math.ceil(questionsArray.length * quizPassingCriteria);
+
   // Determine if quiz was passed
   const isPassed = correctAnswersCount >= passCriteriaValue;
-  
+
   // Extract URLs from anchor elements in the elements
   const passPageUrl = passPageUrlElement?.querySelector('a')?.href;
   const failPageUrl = failPageUrlElement?.querySelector('a')?.href;
-  
+
   return {
     correctAnswersCount,
     totalQuestions: questionsArray.length,
     isPassed,
     passCriteriaValue,
     passPageUrl: passPageUrl || '',
-    failPageUrl: failPageUrl || ''
+    failPageUrl: failPageUrl || '',
   };
 }
 
@@ -145,57 +146,84 @@ function shuffleArray(array) {
   return indexedArray;
 }
 
-
 // Fetch page content and insert it into the current page
-const fetchPageContent = async (url, block) => {
+const fetchPageContent = async (url, block, isPassed = false) => {
   // Show loading state
   const loadingMessage = htmlToElement('<div class="quiz-loading">Loading results...</div>');
   block.appendChild(loadingMessage);
-  
+
   try {
     // Fetch the content
     const response = await fetch(`${url}.plain.html`);
     if (response.ok) {
       const pageContent = await response.text();
-      
+
       // Clear the block content but preserve the data attributes
       const correctAnswers = block.dataset.correctAnswers;
       const totalQuestions = block.dataset.totalQuestions;
       block.textContent = '';
-      
+
       // Restore the data attributes
       if (correctAnswers) block.dataset.correctAnswers = correctAnswers;
       if (totalQuestions) block.dataset.totalQuestions = totalQuestions;
-      
+
       // Create a container for the fetched content
       const resultContainer = document.createElement('div');
       resultContainer.classList.add('quiz-result-container');
       resultContainer.innerHTML = pageContent;
-      
+
       // Import necessary functions for proper decoration
       const { loadBlocks, decorateSections, decorateBlocks } = await import('../../scripts/lib-franklin.js');
-      
+
       // Decorate the content properly
       decorateSections(resultContainer);
       decorateBlocks(resultContainer);
       decorateExternalLinks(resultContainer);
-      
+
       // Find the quiz-scorecard block and pass the quiz results data
       const quizScorecard = resultContainer.querySelector('.quiz-scorecard');
       if (quizScorecard && correctAnswers && totalQuestions) {
         quizScorecard.dataset.correctAnswers = correctAnswers;
         quizScorecard.dataset.totalQuestions = totalQuestions;
       }
-      
+
       await loadBlocks(resultContainer);
-      
+
       // Special handling for AEM root mode
       if (window.hlx.aemRoot) {
         moveInstrumentation(block, resultContainer);
       }
-      
+
       // Add the result container to the block
       block.appendChild(resultContainer);
+
+      // Hide module-info-section when quiz results are displayed
+      const moduleInfoSection = document.querySelector('body.courses .module-info-section');
+      if (moduleInfoSection) {
+        moduleInfoSection.style.display = 'none';
+      }
+
+      // Scroll to the top of the page to show the results
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Update navigation buttons
+      const backButton = document.querySelector('.module-nav-button.module-nav-back.secondary');
+      const nextButton = document.querySelector('.module-nav-button.module-nav-submit.disabled');
+
+      if (backButton) {
+        backButton.textContent = 'Back to Course Overview';
+      }
+
+      if (nextButton) {
+        nextButton.textContent = 'Next';
+
+        // Enable or disable the Next button based on quiz result
+        if (isPassed) {
+          nextButton.classList.remove('disabled');
+        } else {
+          nextButton.classList.add('disabled');
+        }
+      }
     }
   } catch (err) {
     /* eslint-disable-next-line no-console */
@@ -216,7 +244,7 @@ export default async function decorate(block) {
 
   // Get title, text, pass page URL, fail page URL, and questions from block children
   const [titleElement, textElement, passPageUrlElement, failPageUrlElement, ...questionsOriginal] = [...block.children];
-  
+
   // Extract URLs from anchor elements
   const passPageUrl = passPageUrlElement?.querySelector('a')?.href;
   const failPageUrl = failPageUrlElement?.querySelector('a')?.href;
@@ -267,52 +295,50 @@ export default async function decorate(block) {
       existingError.remove();
     }
 
-  // Get all question elements
-  const questionElements = Array.from(questionsContainer.querySelectorAll('.question'));
+    // Get all question elements
+    const questionElements = Array.from(questionsContainer.querySelectorAll('.question'));
 
-  // Check if all questions are answered using Array methods
-  allQuestionsAnswered = questionElements.every((question) => {
-    const isMultipleChoice = question.dataset.isMultipleChoice === 'true';
-    return isMultipleChoice
-      ? question.querySelectorAll('input[type="checkbox"]:checked').length > 0
-      : question.querySelector('input[type="radio"]:checked') !== null;
-  });
+    // Check if all questions are answered using Array methods
+    allQuestionsAnswered = questionElements.every((question) => {
+      const isMultipleChoice = question.dataset.isMultipleChoice === 'true';
+      return isMultipleChoice
+        ? question.querySelectorAll('input[type="checkbox"]:checked').length > 0
+        : question.querySelector('input[type="radio"]:checked') !== null;
+    });
 
-  if (!allQuestionsAnswered) {
-    const errorMessage = htmlToElement(`
+    if (!allQuestionsAnswered) {
+      const errorMessage = htmlToElement(`
       <div class="question-feedback incorrect quiz-error-message">
         ${placeholders?.answerAllQuestions || 'Please answer all the questions'}
       </div>
     `);
 
-    // Insert at the end of the questions container
-    questionsContainer.appendChild(errorMessage);
-    return false;
-  }
+      // Insert at the end of the questions container
+      questionsContainer.appendChild(errorMessage);
+      return false;
+    }
 
-  // Submit quiz and get results
-  const quizResults = await submitQuiz(questionElements, placeholders, passPageUrlElement, failPageUrlElement);
-  
-  // Get the appropriate URL based on quiz result
-  const redirectUrl = quizResults.isPassed 
-    ? quizResults.passPageUrl 
-    : quizResults.failPageUrl;
-  
-  // Load the appropriate page content as a fragment
-  if (redirectUrl) {
-    // Store quiz results as data attributes to make them available to the quiz-scorecard block
-    const quizResultsData = {
-      correctAnswersCount: quizResults.correctAnswersCount,
-      totalQuestions: quizResults.totalQuestions
-    };
-    
-    // Save the quiz results data to pass to the fetchPageContent function
-    block.dataset.correctAnswers = quizResultsData.correctAnswersCount;
-    block.dataset.totalQuestions = quizResultsData.totalQuestions;
-    
-    await fetchPageContent(redirectUrl, block);
-  }
-  return true;
+    // Submit quiz and get results
+    const quizResults = await submitQuiz(questionElements, placeholders, passPageUrlElement, failPageUrlElement);
+
+    // Get the appropriate URL based on quiz result
+    const redirectUrl = quizResults.isPassed ? quizResults.passPageUrl : quizResults.failPageUrl;
+
+    // Load the appropriate page content as a fragment
+    if (redirectUrl) {
+      // Store quiz results as data attributes to make them available to the quiz-scorecard block
+      const quizResultsData = {
+        correctAnswersCount: quizResults.correctAnswersCount,
+        totalQuestions: quizResults.totalQuestions,
+      };
+
+      // Save the quiz results data to pass to the fetchPageContent function
+      block.dataset.correctAnswers = quizResultsData.correctAnswersCount;
+      block.dataset.totalQuestions = quizResultsData.totalQuestions;
+
+      await fetchPageContent(redirectUrl, block, quizResults.isPassed);
+    }
+    return true;
   };
 
   // Create quiz description section using htmlToElement
