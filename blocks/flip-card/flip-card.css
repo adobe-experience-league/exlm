@@ -9,6 +9,7 @@
   justify-content: center;
   gap: var(--spectrum-spacing-300);
   font-size: var(--spectrum-font-size-100);
+  perspective: 1000px;
 }
 
 /* Title styling */
@@ -63,11 +64,11 @@
   will-change: transform;
   margin: 0 auto;
   -webkit-tap-highlight-color: transparent;
+  transition: transform 0.6s ease-in-out;
 }
 
 .flip-card > div > div {
   backface-visibility: hidden;
-  transition: transform 0.6s ease-in-out;
   background: var(--background-color);
   box-shadow: var(--box-shadow-1);
   display: flex;
@@ -77,8 +78,8 @@
   text-align: left;
   padding: var(--spectrum-spacing-300);
   padding-bottom: var(--spectrum-spacing-400);
-  transform-style: preserve-3d;
-  will-change: transform;
+
+  /* transform-style: preserve-3d; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizelegibility;
