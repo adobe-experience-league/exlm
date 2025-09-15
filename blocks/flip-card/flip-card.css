@@ -64,7 +64,6 @@
   will-change: transform;
   margin: 0 auto;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 0.6s ease-in-out;
 }
 
 .flip-card > div > div {
@@ -78,8 +77,7 @@
   text-align: left;
   padding: var(--spectrum-spacing-300);
   padding-bottom: var(--spectrum-spacing-400);
-
-  /* transform-style: preserve-3d; */
+  transition: transform 0.6s ease-in-out;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizelegibility;
