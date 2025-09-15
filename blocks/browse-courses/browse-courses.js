@@ -65,7 +65,6 @@ async function fetchCourseIndex(prefix = 'en') {
   return window.courseIndex[prefix];
 }
 
-
 /**
  * Fetches the list of products from the course index JSON
  * @returns {Promise<string[]>} Array of product solution names
@@ -77,7 +76,7 @@ async function getProductList() {
     const products = courseIndex.reduce((acc, curr) => {
       if (curr?.coveoSolution) {
         // Split by ";" and trim spaces
-        const items = curr.coveoSolution.split(";").map(s => s.trim());
+        const items = curr.coveoSolution.split(';').map((s) => s.trim());
         acc.push(...items);
       }
       return acc;
@@ -89,7 +88,7 @@ async function getProductList() {
     return uniqueProducts;
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error("Error fetching product list:", error);
+    console.error('Error fetching product list:', error);
     return [];
   }
 }
@@ -130,9 +129,9 @@ function createHeader(headingElement, filterLabelElement) {
  */
 function getFiltersFromUrl() {
   const urlParams = new URLSearchParams(window.location.search);
-  const filtersParam =  urlParams.get('filters')
-      ? urlParams.get('filters').split(',').map(xssSanitizeQueryParamValue)
-      : [];
+  const filtersParam = urlParams.get('filters')
+    ? urlParams.get('filters').split(',').map(xssSanitizeQueryParamValue)
+    : [];
 
   return filtersParam;
 }
