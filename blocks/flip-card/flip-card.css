@@ -82,7 +82,6 @@
   padding-right: 10px;
   box-sizing: border-box;
   position: relative;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* Scrollbar */
@@ -209,6 +208,11 @@
 .flip-card > div.flipped > div:last-child {
   transform: rotateY(0deg);
   background-color: var(--spectrum-gray-75);
+}
+
+/* Active card face styling */
+.flip-card > div > div.active {
+  z-index: 1;
 }
 
 /* Responsive layout */

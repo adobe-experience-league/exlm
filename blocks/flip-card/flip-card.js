@@ -14,13 +14,20 @@ export default async function decorate(block) {
 
   function toggleCard(card) {
     const isCurrentlyFlipped = card.classList.contains('flipped');
+    const [frontFace, backFace] = card.children;
 
     if (isCurrentlyFlipped) {
       card.classList.remove('flipped');
       card.setAttribute('aria-pressed', 'false');
+      // Update active class
+      frontFace.classList.add('active');
+      backFace.classList.remove('active');
     } else {
       card.classList.add('flipped');
       card.setAttribute('aria-pressed', 'true');
+      // Update active class
+      frontFace.classList.remove('active');
+      backFace.classList.add('active');
     }
   }
 
@@ -80,6 +87,8 @@ export default async function decorate(block) {
     `;
 
     const [frontContainer, backContainer] = card.children;
+    // Add active class to front face initially
+    frontContainer.classList.add('active');
     addFlipText(frontContainer);
     addFlipText(backContainer);
 
