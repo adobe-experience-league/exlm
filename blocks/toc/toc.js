@@ -3,18 +3,28 @@ import {
   htmlToElement,
   getLanguageCode,
   createPlaceholderSpan,
+  getConfig,
   matchesAnyTheme,
   fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
 import { rewriteDocsPath } from '../../scripts/utils/path-utils.js';
 import getSolutionByName from './toc-solutions.js';
 
-/**
- * fetch toc html from service
- * @param {string} tocID
- * @returns {Promise<string>}
- */
-async function fetchToc(tocID) {
+async function fetchV1Toc(tocID) {
+  const lang = (await getLanguageCode()) || 'en';
+  const { cdnOrigin } = getConfig();
+  try {
+    const response = await fetch(`${cdnOrigin}/api/action/tocs/${tocID}?lang=${lang}`);
+    const json = await response.json();
+    return json.data;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching toc data', error);
+    return null;
+  }
+}
+
+async function fetchV2Toc(tocID) {
   const lang = (await getLanguageCode()) || 'en';
   const tocPath = `/${lang}/toc/${tocID}.plain.html`;
   try {
@@ -39,6 +49,22 @@ async function fetchToc(tocID) {
     console.error('Error fetching toc data', error);
     return null;
   }
+}
+
+function isUUIDV4(id) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+}
+
+/**
+ * fetch toc html from service
+ * @param {string} tocID
+ * @returns {Promise<string>}
+ */
+async function fetchToc(tocID) {
+  if (isUUIDV4(tocID)) {
+    return fetchV1Toc(tocID); // legacy toc ids are always UUIDv4
+  }
+  return fetchV2Toc(tocID); // new toc ids are not UUIDv4
 }
 
 /**
