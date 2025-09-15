@@ -258,7 +258,7 @@
   object-position: center;
 }
 
-@media screen and (min-width: 600px) {
+@container (min-width: 600px) {
   .slides .visual-wrapper {
     height: 300px;
     max-height: 100%;
@@ -269,14 +269,14 @@
   }
 }
 
-@media screen and (min-width: 900px) {
+@container (min-width: 900px) {
   .slides .visual-wrapper {
     height: 400px;
     max-height: 100%;
   }
 }
 
-@media screen and (min-width: 1200px) {
+@container (min-width: 1200px) {
   .slides .visual-wrapper {
     height: 600px;
     max-height: 100%;
@@ -623,14 +623,11 @@
 }
 
 .slides .content .button {
-  --content-left-position: 172px;
-
   bottom: 0;
-  left: calc(100% - var(--content-left-position));
   display: none;
   font-size: var(--spectrum-font-size-200);
   height: 40px;
-  position: relative;
+  float: right;
 }
 
 .slides .content p {

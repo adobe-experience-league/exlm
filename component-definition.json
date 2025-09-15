@@ -154,17 +154,34 @@
           }
         },
         {
-          "title": "Learning Collections Page Section",
-          "id": "learning-collections-page-section",
+          "title": "Courses Section",
+          "id": "courses-section",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/section/v1/section",
                 "template": {
-                  "filter": "learning-collections-page-section",
-                  "name": "Learning Collections Page Section",
-                  "model": "learning-collections-page-section",
-                  "style": "learning-collections-page-section"
+                  "filter": "courses-section",
+                  "name": "Courses Section",
+                  "model": "courses-section",
+                  "style": ["courses-section", "default"]
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Course Hub Section",
+          "id": "course-hub-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "filter": "course-hub-section",
+                  "name": "Course Hub Section",
+                  "model": "course-hub-section",
+                  "style": ["course-hub-section", "default"]
                 }
               }
             }
@@ -555,6 +572,22 @@
           }
         },
         {
+          "title": "Browse Courses",
+          "id": "browse-courses",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Browse Courses",
+                  "model": "browse-courses",
+                  "headingType": "h2"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Browse Filters",
           "id": "browse-filters",
           "plugins": {
@@ -650,6 +683,68 @@
               "page": {
                 "resourceType": "core/franklin/components/columns/v1/columns",
                 "template": {}
+              }
+            }
+          }
+        },
+        {
+          "title": "Course Breakdown",
+          "id": "course-breakdown",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Course Breakdown",
+                  "model": "course-breakdown",
+                  "filter": "course-breakdown",
+                  "title": "In this Course",
+                  "titleType": "h1",
+                  "moduleTimeText": "1 Hour",
+                  "courseInfoTitle": "Skills you'll gain from this Course",
+                  "courseInfoTitleType": "h2",
+                  "courseInfoDescription": "Course Info Description",
+                  "item": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Course Breakdown Item",
+                    "model": "course-breakdown-item",
+                    "skill_track_url": "/content/exlm/global/en/courses/"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Course Breakdown Item",
+          "id": "course-breakdown-item",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Course Breakdown Item",
+                  "model": "course-breakdown-item",
+                  "skill_track_url": "/content/exlm/global/en/courses/"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Course Marquee",
+          "id": "course-marquee",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Course Marquee",
+                  "model": "course-marquee",
+                  "title": "Course Title",
+                  "titleType": "h3",
+                  "description": "Course description that will be limited to 3 lines in display."
+                }
               }
             }
           }
@@ -872,6 +967,10 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Flip Card Item",
                     "model": "flip-card-item",
+                    "frontTitle": "Front Title",
+                    "frontTitleType": "h3",
+                    "backTitle": "Back Title",
+                    "backTitleType": "h3",
                     "frontContent": "<p>Front content of the flip card</p>",
                     "backContent": "<p>Back content of the flip card</p>"
                   },
@@ -879,6 +978,10 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Flip Card Item",
                     "model": "flip-card-item",
+                    "frontTitle": "Front Title",
+                    "frontTitleType": "h3",
+                    "backTitle": "Back Title",
+                    "backTitleType": "h3",
                     "frontContent": "<p>Front content of the flip card</p>",
                     "backContent": "<p>Back content of the flip card</p>"
                   },
@@ -886,6 +989,10 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Flip Card Item",
                     "model": "flip-card-item",
+                    "frontTitle": "Front Title",
+                    "frontTitleType": "h3",
+                    "backTitle": "Back Title",
+                    "backTitleType": "h3",
                     "frontContent": "<p>Front content of the flip card</p>",
                     "backContent": "<p>Back content of the flip card</p>"
                   }
@@ -904,6 +1011,10 @@
                 "template": {
                   "name": "Flip Card Item",
                   "model": "flip-card-item",
+                  "frontTitle": "Front Title",
+                  "frontTitleType": "h3",
+                  "backTitle": "Back Title",
+                  "backTitleType": "h3",
                   "frontContent": "<p>Front content of the flip card</p>",
                   "backContent": "<p>Back content of the flip card</p>"
                 }
@@ -1342,9 +1453,9 @@
                   "name": "Quiz",
                   "model": "quiz",
                   "filter": "quiz",
-                  "title": "Skill Track Quiz",
+                  "title": "Module Quiz",
                   "titleType": "h2",
-                  "quizDescription": "<ul><li>End of Skill Track quizzes are pass/fail</li><li>A \"passing\" grade is based on a total score of 80%</li><li>Quizzes are not timed</li><li>You can retake quizzes as many times as necessary</li><li>Questions may be in the form of multiple choice, multi select, and ordering in bullet points</li></ul>",
+                  "quizDescription": "<ul><li>End of module quizzes are pass/fail</li><li>A \"passing\" grade is based on a total score of 80%</li><li>Quizzes are not timed</li><li>You can retake quizzes as many times as necessary</li><li>Questions may be in the form of multiple choice, multi select, and ordering in bullet points</li></ul>",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Question",
@@ -1513,16 +1624,16 @@
           }
         },
         {
-          "title": "Skill Track",
-          "id": "skill-track",
+          "title": "Module",
+          "id": "module",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "name": "Skill Track",
-                  "model": "skill-track",
-                  "filter": "skill-track",
+                  "name": "Module",
+                  "model": "module",
+                  "filter": "module",
                   "item": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Step",
@@ -1535,18 +1646,18 @@
           }
         },
         {
-          "title": "Skill Track Meta",
-          "id": "skill-track-meta",
+          "title": "Module Meta",
+          "id": "module-meta",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "name": "Skill Track Meta",
-                  "model": "skill-track-meta",
-                  "title": "Skill Track Title",
+                  "name": "Module Meta",
+                  "model": "module-meta",
+                  "title": "Module Title",
                   "titleType": "h1",
-                  "description": "Skill Track Description",
+                  "description": "Module Description",
                   "recap_url": "",
                   "quiz_url": ""
                 }

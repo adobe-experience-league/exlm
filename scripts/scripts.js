@@ -165,7 +165,7 @@ export const isPerspectivePage = matchesAnyTheme(/articles/);
 export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
-export const isLearningCollectionStep = matchesAnyTheme(/learning-collections-step/);
+export const isCourseStep = matchesAnyTheme(/course-step/);
 
 /**
  * add a section for the left rail when on a browse page.
@@ -224,30 +224,30 @@ function addMiniToc(main) {
 }
 
 /**
- * Add skill track info block to learning collection step pages.
+ * Add module info block to course step pages.
  * @param {HTMLElement} main
  */
-function addSkillTrackInfo(main) {
-  // Check if skill-track-info block already exists
-  if (!main.querySelector('.skill-track-info.block')) {
-    const skillTrackInfoSection = document.createElement('div');
-    skillTrackInfoSection.classList.add('skill-track-info-section');
-    skillTrackInfoSection.append(buildBlock('skill-track-info', []));
-    main.prepend(skillTrackInfoSection);
+function addModuleInfo(main) {
+  // Check if module-info block already exists
+  if (!main.querySelector('.module-info.block')) {
+    const moduleInfoSection = document.createElement('div');
+    moduleInfoSection.classList.add('module-info-section');
+    moduleInfoSection.append(buildBlock('module-info', []));
+    main.prepend(moduleInfoSection);
   }
 }
 
 /**
- * Add skill track navigation block to learning collection step pages.
+ * Add module navigation block to course step pages.
  * @param {HTMLElement} main
  */
-function addSkillTrackNav(main) {
-  // Check if skill-track-nav block already exists
-  if (!main.querySelector('.skill-track-nav.block')) {
-    const skillTrackNavSection = document.createElement('div');
-    skillTrackNavSection.classList.add('skill-track-nav-section');
-    skillTrackNavSection.append(buildBlock('skill-track-nav', []));
-    main.append(skillTrackNavSection);
+function addModuleNav(main) {
+  // Check if module-nav block already exists
+  if (!main.querySelector('.module-nav.block')) {
+    const moduleNavSection = document.createElement('div');
+    moduleNavSection.classList.add('module-nav-section');
+    moduleNavSection.append(buildBlock('module-nav', []));
+    main.append(moduleNavSection);
   }
 }
 
@@ -316,10 +316,10 @@ function buildAutoBlocks(main, isFragment = false) {
       if (isProfilePage) {
         addProfileRail(main);
       }
-      // if we are on a learning collection step page
-      if (isLearningCollectionStep) {
-        addSkillTrackInfo(main);
-        addSkillTrackNav(main);
+      // if we are on a course step page
+      if (isCourseStep) {
+        addModuleInfo(main);
+        addModuleNav(main);
       }
     }
   } catch (error) {
@@ -778,7 +778,6 @@ export function getConfig() {
     targetCriteriaIds,
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
-    privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `${cdnOrigin}/api/coveo-token?lang=${lang}`,
@@ -829,7 +828,11 @@ function loadOneTrust() {
     window.location.host.split('.').length === 3 ? '' : '-test'
   }`;
   window.fedsConfig.privacy.footerLinkSelector = '.footer [href="#onetrust"]';
-  const { privacyScript } = getConfig();
+  const { isProd, cdnOrigin } = getConfig();
+  // @see: https://wiki.corp.adobe.com/display/adobedotcom/Privacy
+  const privacyScript = isProd
+    ? `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`
+    : `https://www.stage.adobe.com/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`;
   return loadScript(privacyScript, {
     async: true,
     defer: true,
@@ -871,6 +874,7 @@ export async function loadIms() {
         scope:
           'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read,pps.read',
         autoValidateToken: true,
+        alwaysRemoveTokenFromUrl: true,
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
         ...ims,
         onReady: () => {
@@ -1256,6 +1260,10 @@ export async function fetchJson(url, fallbackUrl) {
     .then((response) => (!response.ok && fallbackUrl ? fetch(fallbackUrl) : response))
     .then((response) => (response.ok ? response.json() : null))
     .then((json) => json?.data || []);
+}
+
+export function xssSanitizeQueryParamValue(value) {
+  return value?.replace(/[^a-zA-Z0-9\s.]/g, '');
 }
 
 export function getCookie(cookieName) {

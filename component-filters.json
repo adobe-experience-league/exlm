@@ -24,8 +24,12 @@
     "components": ["sign-up-flow-section"]
   },
   {
-    "id": "main-learning-collections",
-    "components": ["section", "learning-collections-page-section", "tab-section"]
+    "id": "main-courses",
+    "components": ["section", "courses-section", "tab-section"]
+  },
+  {
+    "id": "main-course-hub",
+    "components": ["section", "course-hub-section", "tab-section"]
   },
   {
     "id": "section",
@@ -72,11 +76,14 @@
       "code",
       "playlist-browse",
       "atomic-search",
-      "skill-track-meta",
-      "skill-track",
+      "module-meta",
+      "module",
       "quiz",
       "drill-in",
-      "flip-card"
+      "flip-card",
+      "course-breakdown",
+      "course-marquee",
+      "browse-courses"
     ]
   },
   {
@@ -262,19 +269,25 @@
     ]
   },
   {
-    "id": "learning-collections-page-section",
+    "id": "courses-section",
     "components": [
       "text",
       "title",
       "button",
       "image",
       "announcement-ribbon",
-      "skill-track-meta",
-      "skill-track",
+      "module-meta",
+      "module",
       "quiz",
       "drill-in",
-      "flip-card"
+      "flip-card",
+      "course-breakdown",
+      "course-marquee"
     ]
+  },
+  {
+    "id": "course-hub-section",
+    "components": ["text", "title", "button", "image", "announcement-ribbon", "marquee"]
   },
   {
     "id": "sign-up-flow-section",
@@ -383,7 +396,7 @@
     "components": []
   },
   {
-    "id": "skill-track",
+    "id": "module",
     "components": ["step"]
   },
   {
@@ -397,6 +410,10 @@
   {
     "id": "flip-card",
     "components": ["flip-card-item"]
+  },
+  {
+    "id": "course-breakdown",
+    "components": ["course-breakdown-item"]
   },
   {
     "id": "rte-custom-options",

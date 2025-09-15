@@ -195,11 +195,11 @@ export class BrowseCardVideoClipModal {
                 <div class="browse-card-source-row">
                   <div class="browse-card-source">
                     <span>${BrowseCardVideoClipModal.placeholders?.clippedFrom || 'Clipped from:'} </span>
-                    <a href="${parentURL || '#'}">${parentName || ''}</a>
+                    <a target="_blank" href="${parentURL || '#'}">${parentName || ''}</a>
                   </div>
                   <div class="browse-card-actions">
                     <button class="browse-card-button">
-                      <a href="${videoURL}" class="browse-card-full-link" target="_blank">
+                      <a href="${parentURL}" class="browse-card-full-link" target="_blank">
                         ${BrowseCardVideoClipModal.placeholders?.watchFullVideo || 'Watch full video'}
                       </a>
                     </button>

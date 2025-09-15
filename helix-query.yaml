@@ -4,6 +4,9 @@ indices:
   site-en: &base-site
     include:
       - '/en/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /en/query-index.json
     properties:
       title:
@@ -29,66 +32,99 @@ indices:
     <<: *base-site
     include:
       - '/fr/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /fr/query-index.json
 
   site-de:
     <<: *base-site
     include:
       - '/de/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /de/query-index.json
 
   site-es:
     <<: *base-site
     include:
       - '/es/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /es/query-index.json
 
   site-it:
     <<: *base-site
     include:
       - '/it/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /it/query-index.json
 
   site-nl:
     <<: *base-site
     include:
       - '/nl/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /nl/query-index.json
 
   site-pt-br:
     <<: *base-site
     include:
       - '/pt-br/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /pt-br/query-index.json
 
   site-ko:
     <<: *base-site
     include:
       - '/ko/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /ko/query-index.json
 
   site-ja:
     <<: *base-site
     include:
       - '/ja/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /ja/query-index.json
 
   site-sv:
     <<: *base-site
     include:
       - '/sv/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /sv/query-index.json
 
   site-zh-hans:
     <<: *base-site
     include:
       - '/zh-hans/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /zh-hans/query-index.json
 
   site-zh-hant:
     <<: *base-site
     include:
       - '/zh-hant/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /zh-hant/query-index.json
 
   browse-en: &base-browse
@@ -313,6 +349,141 @@ indices:
       - /zh-hant/perspectives/authors/**
     target: /zh-hant/perspective-index.json
 
+  course-en: &base-course
+    include:
+      - /en/courses/*
+    exclude:
+      - /en/courses/instructors/**
+    target: /en/course-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: |
+          attribute(el, 'content')
+      theme:
+        select: head > meta[name="theme"]
+        value: |
+          attribute(el, 'content')
+      lastModified:
+        select: head > meta[name="last-update"]
+        value: |
+          parseTimestamp(attribute(el, "content"), 'ddd MMM DD YYYY hh:mm:ss GMT')
+      robots:
+        select: head > meta[name="robots"]
+        value: attribute(el, "content")
+      instructorPage:
+        select: head > meta[name="instructor-page"]
+        value: |
+          attribute(el, 'content')
+      coveoContentType:
+        select: head > meta[name="coveo-content-type"]
+        value: |
+          attribute(el, 'content')
+      coveoSolution:
+        select: head > meta[name="coveo-solution"]
+        value: |
+          attribute(el, 'content')
+      coveoFeature:
+        select: head > meta[name="feature"]
+        value: |
+          attribute(el, 'content')
+      coveoRole:
+        select: head > meta[name="role"]
+        value: |
+          attribute(el, 'content')
+      coveoLevel:
+        select: head > meta[name="level"]
+        value: |
+          attribute(el, 'content')
+
+  course-fr:
+    <<: *base-course
+    include:
+      - /fr/courses/*
+    exclude:
+      - /fr/courses/instructors/**
+    target: /fr/course-index.json
+
+  course-de:
+    <<: *base-course
+    include:
+      - /de/courses/*
+    exclude:
+      - /de/courses/instructors/**
+    target: /de/course-index.json
+
+  course-es:
+    <<: *base-course
+    include:
+      - /es/courses/*
+    exclude:
+      - /es/courses/instructors/**
+    target: /es/course-index.json
+
+  course-it:
+    <<: *base-course
+    include:
+      - /it/courses/*
+    exclude:
+      - /it/courses/instructors/**
+    target: /it/course-index.json
+
+  course-nl:
+    <<: *base-course
+    include:
+      - /nl/courses/*
+    exclude:
+      - /nl/courses/instructors/**
+    target: /nl/course-index.json
+
+  course-pt-br:
+    <<: *base-course
+    include:
+      - /pt-br/courses/*
+    exclude:
+      - /pt-br/courses/instructors/**
+    target: /pt-br/course-index.json
+
+  course-ko:
+    <<: *base-course
+    include:
+      - /ko/courses/*
+    exclude:
+      - /ko/courses/instructors/**
+    target: /ko/course-index.json
+
+  course-ja:
+    <<: *base-course
+    include:
+      - /ja/courses/*
+    exclude:
+      - /ja/courses/instructors/**
+    target: /ja/course-index.json
+
+  course-sv:
+    <<: *base-course
+    include:
+      - /sv/courses/*
+    exclude:
+      - /sv/courses/instructors/**
+    target: /sv/course-index.json
+
+  course-zh-hans:
+    <<: *base-course
+    include:
+      - /zh-hans/courses/*
+    exclude:
+      - /zh-hans/courses/instructors/**
+    target: /zh-hans/course-index.json
+
+  course-zh-hant:
+    <<: *base-course
+    include:
+      - /zh-hant/courses/*
+    exclude:
+      - /zh-hant/courses/instructors/**
+    target: /zh-hant/course-index.json
+
   # Sitemap indicies, split in 2 google has a limit of 50k (and 50MB) urls per sitemap
   sitemap-en-1: &base-sitemap-1
     include:
@@ -326,6 +497,9 @@ indices:
       - '/en/docs/experience-cloud-kcs/**'
       - '/en/docs/experience-manager-learn/**'
       - '/en/docs/experience-manager-cloud-service/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /en/sitemap-index-1.json
     properties:
       robots:
@@ -373,6 +547,9 @@ indices:
       - '/fr/docs/experience-cloud-kcs/**'
       - '/fr/docs/experience-manager-learn/**'
       - '/fr/docs/experience-manager-cloud-service/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /fr/sitemap-index-1.json
   sitemap-fr-2:
     <<: *base-sitemap-2
@@ -406,6 +583,9 @@ indices:
       - '/de/docs/experience-cloud-kcs/**'
       - '/de/docs/experience-manager-learn/**'
       - '/de/docs/experience-manager-cloud-service/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /de/sitemap-index-1.json
   sitemap-de-2:
     <<: *base-sitemap-2
@@ -439,6 +619,9 @@ indices:
       - '/es/docs/experience-cloud-kcs/**'
       - '/es/docs/experience-manager-learn/**'
       - '/es/docs/experience-manager-cloud-service/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /es/sitemap-index-1.json
   sitemap-es-2:
     <<: *base-sitemap-2
@@ -472,6 +655,9 @@ indices:
       - '/it/docs/experience-cloud-kcs/**'
       - '/it/docs/experience-manager-learn/**'
       - '/it/docs/experience-manager-cloud-service/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /it/sitemap-index-1.json
   sitemap-it-2:
     <<: *base-sitemap-2
@@ -505,6 +691,9 @@ indices:
       - '/nl/docs/experience-cloud-kcs/**'
       - '/nl/docs/experience-manager-learn/**'
       - '/nl/docs/experience-manager-cloud-service/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /nl/sitemap-index-1.json
   sitemap-nl-2:
     <<: *base-sitemap-2
@@ -538,6 +727,9 @@ indices:
       - '/pt-br/docs/experience-cloud-kcs/**'
       - '/pt-br/docs/experience-manager-learn/**'
       - '/pt-br/docs/experience-manager-cloud-service/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /pt-br/sitemap-index-1.json
   sitemap-pt-br-2:
     <<: *base-sitemap-2
@@ -571,6 +763,9 @@ indices:
       - '/ko/docs/experience-cloud-kcs/**'
       - '/ko/docs/experience-manager-learn/**'
       - '/ko/docs/experience-manager-cloud-service/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /ko/sitemap-index-1.json
   sitemap-ko-2:
     <<: *base-sitemap-2
@@ -604,6 +799,9 @@ indices:
       - '/ja/docs/experience-cloud-kcs/**'
       - '/ja/docs/experience-manager-learn/**'
       - '/ja/docs/experience-manager-cloud-service/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /ja/sitemap-index-1.json
   sitemap-ja-2:
     <<: *base-sitemap-2
@@ -637,6 +835,9 @@ indices:
       - '/sv/docs/experience-cloud-kcs/**'
       - '/sv/docs/experience-manager-learn/**'
       - '/sv/docs/experience-manager-cloud-service/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /sv/sitemap-index-1.json
   sitemap-sv-2:
     <<: *base-sitemap-2
@@ -670,6 +871,9 @@ indices:
       - '/zh-hans/docs/experience-cloud-kcs/**'
       - '/zh-hans/docs/experience-manager-learn/**'
       - '/zh-hans/docs/experience-manager-cloud-service/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /zh-hans/sitemap-index-1.json
   sitemap-zh-hans-2:
     <<: *base-sitemap-2
@@ -703,6 +907,9 @@ indices:
       - '/zh-hant/docs/experience-cloud-kcs/**'
       - '/zh-hant/docs/experience-manager-learn/**'
       - '/zh-hant/docs/experience-manager-cloud-service/**'
+    exclude:
+      - '/*.json'
+      - '/**/*.json'
     target: /zh-hant/sitemap-index-1.json
   sitemap-zh-hant-2:
     <<: *base-sitemap-2

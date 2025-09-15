@@ -1,4 +1,4 @@
-import { getCurrentStepInfo } from '../../scripts/utils/learning-collection-utils.js';
+import { getCurrentStepInfo } from '../../scripts/utils/course-utils.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
 
@@ -16,33 +16,33 @@ export default async function decorate(block) {
 
   // Clear block and add class
   block.textContent = '';
-  block.classList.add('skill-track-nav');
+  block.classList.add('module-nav');
 
   // Find current step
-  const currentStepIndex = stepInfo.skillTrackSteps.findIndex((step) => step.url === window.location.pathname);
+  const currentStepIndex = stepInfo.moduleSteps.findIndex((step) => step.url === window.location.pathname);
 
   // Create container
   const container = document.createElement('div');
-  container.className = 'skill-track-nav-buttons';
+  container.className = 'module-nav-buttons';
 
-  // Go Back link
-  const goBackLink = document.createElement('a');
-  goBackLink.className = 'button skill-track-nav-button skill-track-nav-back secondary';
-  goBackLink.textContent = placeholders['learning-collection-go-back'] || 'Go Back';
+  // Previous link
+  const previousLink = document.createElement('a');
+  previousLink.className = 'button module-nav-button module-nav-back secondary';
+  previousLink.textContent = placeholders['playlist-previous-label'] || 'Previous';
 
-  // Disable go back button if on first step
+  // Disable previous button if on first step
   if (currentStepIndex === 0) {
-    goBackLink.classList.add('disabled');
-    goBackLink.href = '#';
-    goBackLink.style.pointerEvents = 'none';
-    goBackLink.style.opacity = '0.5';
+    previousLink.classList.add('disabled');
+    previousLink.href = '#';
+    previousLink.style.pointerEvents = 'none';
+    previousLink.style.opacity = '0.5';
   } else {
-    goBackLink.href = stepInfo.prevStep || '#';
+    previousLink.href = stepInfo.prevStep || '#';
   }
 
   // Second link based on step type
   const secondLink = document.createElement('a');
-  secondLink.className = 'button skill-track-nav-button';
+  secondLink.className = 'button module-nav-button';
 
   // Check if recap or quiz step - use root level properties
   const isRecap = stepInfo?.isRecap || false;
@@ -50,13 +50,13 @@ export default async function decorate(block) {
 
   if (isRecap) {
     // Take Quiz link
-    secondLink.classList.add('skill-track-nav-quiz');
-    secondLink.textContent = placeholders['learning-collection-take-quiz'] || 'Take Quiz';
-    secondLink.href = stepInfo.skillTrackQuiz || '#';
+    secondLink.classList.add('module-nav-quiz');
+    secondLink.textContent = placeholders['course-take-quiz'] || 'Take Quiz';
+    secondLink.href = stepInfo.moduleQuiz || '#';
   } else if (isQuiz) {
     // Submit Answers link
-    secondLink.classList.add('skill-track-nav-submit');
-    secondLink.textContent = placeholders['learning-collection-submit-answers'] || 'Submit Answers';
+    secondLink.classList.add('module-nav-submit');
+    secondLink.textContent = placeholders['course-submit-answers'] || 'Submit Answers';
     secondLink.href = stepInfo.nextStep || '#';
     secondLink.addEventListener('click', async (e) => {
       e.preventDefault();
@@ -88,13 +88,13 @@ export default async function decorate(block) {
     });
   } else {
     // Next link
-    secondLink.classList.add('skill-track-nav-next');
-    secondLink.textContent = placeholders['learning-collection-next'] || 'Next';
+    secondLink.classList.add('module-nav-next');
+    secondLink.textContent = placeholders['course-next'] || 'Next';
     secondLink.href = stepInfo.nextStep || '#';
   }
 
   // Add links to container
-  container.appendChild(goBackLink);
+  container.appendChild(previousLink);
   container.appendChild(secondLink);
 
   // Add to block

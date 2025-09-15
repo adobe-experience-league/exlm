@@ -1287,17 +1287,70 @@
     ]
   },
   {
-    "id": "learning-collections-page-section",
+    "id": "courses-section",
     "fields": [
       {
         "component": "select",
         "name": "style",
         "value": "",
-        "label": "Style",
-        "description": "The section style",
+        "label": "Background Color",
+        "description": "Section background color",
         "valueType": "string",
-        "hidden": true,
-        "options": []
+        "options": [
+          {
+            "name": "Default",
+            "value": ["courses-section", "default"]
+          },
+          {
+            "name": "White",
+            "value": ["courses-section", "bg-white"]
+          },
+          {
+            "name": "Dark Gray",
+            "value": ["courses-section", "bg-dark-gray"]
+          }
+        ]
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "center-aligned",
+        "label": "Align the default blocks in this section to the center.",
+        "description": "Enabling this option will align the default blocks in this section to the center."
+      }
+    ]
+  },
+  {
+    "id": "course-hub-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Background Color",
+        "description": "Section background color",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Default",
+            "value": ["course-hub-section", "default"]
+          },
+          {
+            "name": "White",
+            "value": ["course-hub-section", "bg-white"]
+          },
+          {
+            "name": "Dark Gray",
+            "value": ["course-hub-section", "bg-dark-gray"]
+          }
+        ]
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "center-aligned",
+        "label": "Align the default blocks in this section to the center.",
+        "description": "Enabling this option will align the default blocks in this section to the center."
       }
     ]
   },
@@ -4284,6 +4337,27 @@
       },
       {
         "component": "aem-content",
+        "valueType": "string",
+        "name": "signout-redirect-url",
+        "label": "Sign out Redirect URL",
+        "validation": {
+          "rootPath": "/content/exlm/global"
+        }
+      }
+    ]
+  },
+  {
+    "id": "article-metadata",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      },
+      {
+        "component": "aem-content",
         "valueType": "string[]",
         "value": [],
         "name": "author-bio-page",
@@ -4292,6 +4366,135 @@
         "validation": {
           "rootPath": "/content/exlm/global/en/perspectives/authors"
         }
+      },
+      {
+        "component": "aem-tag",
+        "valueType": "string",
+        "name": "coveo-solution",
+        "label": "Solution(s)",
+        "rootPath": "/content/cq:tags/exl/solution",
+        "description": "Sets the Coveo Solution(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "valueType": "string",
+        "name": "feature",
+        "label": "Feature(s)",
+        "rootPath": "/content/cq:tags/exl/feature",
+        "description": "Sets the Coveo Feature(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "name": "role",
+        "label": "Role(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/role",
+        "description": "Sets the role(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "name": "level",
+        "label": "Experience Level(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/experience-level",
+        "description": "Sets the level(s) in page meta."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "signout-redirect-url",
+        "label": "Sign out Redirect URL",
+        "validation": {
+          "rootPath": "/content/exlm/global"
+        }
+      }
+    ]
+  },
+  {
+    "id": "author-metadata",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      }
+    ]
+  },
+  {
+    "id": "course-metadata",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string[]",
+        "value": [],
+        "name": "instructor-page",
+        "multi": true,
+        "label": "Instructor page URL",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/courses/instructors"
+        }
+      },
+      {
+        "component": "aem-tag",
+        "valueType": "string",
+        "name": "coveo-solution",
+        "label": "Solution(s)",
+        "rootPath": "/content/cq:tags/exl/solution",
+        "description": "Sets the Coveo Solution(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "valueType": "string",
+        "name": "feature",
+        "label": "Feature(s)",
+        "rootPath": "/content/cq:tags/exl/feature",
+        "description": "Sets the Coveo Feature(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "name": "role",
+        "label": "Role(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/role",
+        "description": "Sets the role(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "name": "level",
+        "label": "Experience Level(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/experience-level",
+        "description": "Sets the level(s) in page meta."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "signout-redirect-url",
+        "label": "Sign out Redirect URL",
+        "validation": {
+          "rootPath": "/content/exlm/global"
+        }
+      }
+    ]
+  },
+  {
+    "id": "course-hub-metadata",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
       },
       {
         "component": "aem-tag",
@@ -7227,7 +7430,7 @@
     "fields": []
   },
   {
-    "id": "skill-track-meta",
+    "id": "module-meta",
     "fields": [
       {
         "component": "text",
@@ -7235,7 +7438,7 @@
         "name": "title",
         "value": "",
         "label": "Title",
-        "description": "Sets the title for the skill track."
+        "description": "Sets the title for the module."
       },
       {
         "component": "select",
@@ -7276,7 +7479,7 @@
         "name": "description",
         "value": "",
         "label": "Description",
-        "description": "Sets the description for the skill track."
+        "description": "Sets the description for the module."
       },
       {
         "component": "aem-content",
@@ -7286,7 +7489,7 @@
         "label": "Recap URL",
         "description": "URL to recap",
         "validation": {
-          "rootPath": "/content/exlm/global/en/learning-collections/"
+          "rootPath": "/content/exlm/global/en/courses"
         }
       },
       {
@@ -7297,7 +7500,7 @@
         "label": "Quiz page URL",
         "description": "URL to the quiz page",
         "validation": {
-          "rootPath": "/content/exlm/global/en/learning-collections/"
+          "rootPath": "/content/exlm/global/en/courses"
         }
       },
       {
@@ -7310,7 +7513,7 @@
     ]
   },
   {
-    "id": "skill-track",
+    "id": "module",
     "fields": []
   },
   {
@@ -7324,7 +7527,7 @@
         "label": "Step Page URL",
         "description": "URL to the step",
         "validation": {
-          "rootPath": "/content/exlm/global/en/learning-collections/"
+          "rootPath": "/content/exlm/global/en/courses"
         }
       },
       {
@@ -7346,7 +7549,7 @@
         "name": "title",
         "value": "",
         "label": "Quiz Title",
-        "description": "Enter the skill track quiz title"
+        "description": "Enter the module quiz title"
       },
       {
         "component": "select",
@@ -7387,7 +7590,7 @@
         "name": "quizDescription",
         "value": "",
         "label": "Quiz Description",
-        "description": "Enter the skill track quiz description"
+        "description": "Enter the module quiz description"
       }
     ]
   },
@@ -7509,6 +7712,88 @@
     "id": "flip-card-item",
     "fields": [
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "frontTitle",
+        "value": "",
+        "label": "Front Title",
+        "description": "Optional title for the front of the flip card. If provided, it will be displayed with an underline."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "frontTitleType",
+        "value": "h3",
+        "label": "Front Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "backTitle",
+        "value": "",
+        "label": "Back Title",
+        "description": "Optional title for the back of the flip card. If provided, it will be displayed with an underline."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "backTitleType",
+        "value": "h3",
+        "label": "Back Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
         "component": "richtext",
         "valueType": "string",
         "name": "frontContent",
@@ -7523,6 +7808,233 @@
         "value": "",
         "label": "Back Content",
         "description": "Content displayed on the back of the flip card when flipped."
+      }
+    ]
+  },
+  {
+    "id": "course-breakdown",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Title for the course breakdown"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h1",
+        "label": "Title Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "moduleTimeText",
+        "value": "",
+        "label": "Module Time",
+        "description": "Time Taken to Complete the module"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "courseInfoTitle",
+        "value": "",
+        "label": "Course info Title",
+        "description": "Title for the course Breadown info section"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "courseInfoTitleType",
+        "value": "h2",
+        "label": "Course info Title Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "courseInfoDescription",
+        "value": "",
+        "label": "Course info Description",
+        "description": "Description for the course Breadown info section"
+      }
+    ]
+  },
+  {
+    "id": "course-breakdown-item",
+    "fields": [
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "skill_track_url",
+        "value": "",
+        "label": "Skill Track Page URL",
+        "description": "URL to the Skill track",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/courses"
+        }
+      }
+    ]
+  },
+  {
+    "id": "course-marquee",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the title for the course."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description for the course. Please keep content brief as it will be limited to 3 lines in display."
+      }
+    ]
+  },
+  {
+    "id": "browse-courses",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the headline for Upcoming events."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "filterLabel",
+        "value": "",
+        "label": "Filter Label",
+        "description": "Sets the text for Products filter label in dropdown."
       }
     ]
   }
