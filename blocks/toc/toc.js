@@ -2,20 +2,15 @@ import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import {
   htmlToElement,
   getLanguageCode,
-  fetchLanguagePlaceholders,
   createPlaceholderSpan,
   getConfig,
   matchesAnyTheme,
+  fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
 import { rewriteDocsPath } from '../../scripts/utils/path-utils.js';
 import getSolutionByName from './toc-solutions.js';
 
-/**
- * fetch toc html from service
- * @param {string} tocID
- * @returns {Promise<string>}
- */
-async function fetchToc(tocID) {
+async function fetchV1Toc(tocID) {
   const lang = (await getLanguageCode()) || 'en';
   const { cdnOrigin } = getConfig();
   try {
@@ -27,6 +22,49 @@ async function fetchToc(tocID) {
     console.error('Error fetching toc data', error);
     return null;
   }
+}
+
+async function fetchV2Toc(tocID) {
+  const lang = (await getLanguageCode()) || 'en';
+  const tocPath = `/${lang}/toc/${tocID}.plain.html`;
+  try {
+    const response = await fetch(tocPath);
+    const html = await response.text();
+    const element = htmlToElement(html);
+    const ul = element.querySelector('ul');
+
+    // cleanup: remove <p> tags that are wrapping <a> tags
+    ul.querySelectorAll('a').forEach((a) => {
+      if (a.parentElement && a.parentElement.tagName.toLowerCase() === 'p') {
+        const p = a.parentElement;
+        p.replaceWith(a);
+      }
+    });
+
+    return {
+      HTML: ul.outerHTML,
+    };
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching toc data', error);
+    return null;
+  }
+}
+
+function isUUIDV4(id) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+}
+
+/**
+ * fetch toc html from service
+ * @param {string} tocID
+ * @returns {Promise<string>}
+ */
+async function fetchToc(tocID) {
+  if (isUUIDV4(tocID)) {
+    return fetchV1Toc(tocID); // legacy toc ids are always UUIDv4
+  }
+  return fetchV2Toc(tocID); // new toc ids are not UUIDv4
 }
 
 /**
