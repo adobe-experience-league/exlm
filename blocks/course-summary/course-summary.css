@@ -1,15 +1,15 @@
-.course-summary-wrapper {
+.key-takeaways-wrapper {
   max-width: 720px;
 }
 
-.course-summary-block {
+.key-takeaways-block {
   background-color: var(--spectrum-gray-100);
   border-radius: 16px;
   padding: 24px;
   border: 1px solid var(--non-spectrum-unicorn-silver);
 }
 
-.course-summary-title {
+.key-takeaways-title {
   font-size: 20px;
   font-weight: 700;
   padding-bottom: 16px;
@@ -20,7 +20,7 @@
   position: relative;
 }
 
-.course-summary-title > * {
+.key-takeaways-title > * {
   margin: 0;
   font-size: inherit;
   font-weight: inherit;
@@ -28,7 +28,7 @@
   line-height: inherit;
 }
 
-.course-summary-title::after {
+.key-takeaways-title::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -37,7 +37,7 @@
   border-bottom: 1px solid var(--non-spectrum-unicorn-silver);
 }
 
-.course-summary-title::before {
+.key-takeaways-title::before {
   content: '';
   position: absolute;
   margin-top: 3px;
@@ -51,12 +51,12 @@
   filter: brightness(0); /* Make the icon black */
 }
 
-.course-summary-list li {
+.key-takeaways-list li {
   position: relative;
   padding-left: 8px;
   font-size: 18px;
 }
 
-.course-summary-list li:last-child {
+.key-takeaways-list li:last-child {
   margin-bottom: 0;
 }
