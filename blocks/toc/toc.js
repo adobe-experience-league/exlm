@@ -29,7 +29,17 @@ async function fetchV2Toc(tocID) {
   const tocPath = `/${lang}/toc/${tocID}.plain.html`;
   try {
     const response = await fetch(tocPath);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch toc data from ${tocPath}: ${response.statusText}`);
+    }
+
     const html = await response.text();
+
+    if (!html) {
+      throw new Error('Failed to fetch toc data: no html');
+    }
+
     const element = htmlToElement(html);
     const ul = element.querySelector('ul');
 
