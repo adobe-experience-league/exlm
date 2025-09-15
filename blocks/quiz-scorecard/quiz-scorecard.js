@@ -51,31 +51,42 @@ export default function decorate(block) {
   const contentContainer = document.createElement('div');
   contentContainer.className = 'quiz-scorecard-content';
   
-  // Add status text
+  // Add status text from title field
   const statusTextElement = document.createElement('p');
   statusTextElement.className = 'quiz-scorecard-status-text';
-  statusTextElement.textContent = status === 'pass' ? 'You passed the quiz!' : 'You didn\'t pass the quiz.';
+  // Use title content if available, otherwise fall back to default messages
+  if (titleElement && titleElement.textContent.trim()) {
+    statusTextElement.textContent = titleElement.textContent.trim();
+  } else {
+    statusTextElement.textContent = status === 'pass' ? 'You passed the quiz!' : 'You didn\'t pass the quiz!';
+  }
   contentContainer.appendChild(statusTextElement);
   
-  // Add score (title)
-  if (titleElement) {
+  // Add quiz score results (correct answers out of total)
+  const scoreResultElement = document.createElement('div');
+  scoreResultElement.className = 'quiz-scorecard-result';
+  
+  // Try to extract a score pattern like "X of Y correct" from title element
+  const scorePattern = /(\d+)\s+of\s+(\d+)\s+correct/i;
+  const textMatch = titleElement?.textContent.match(scorePattern);
+  
+  if (textMatch) {
+    scoreResultElement.textContent = textMatch[0];
+  } else {
+    // Check if there's a data attribute with quiz results
+    const correctAnswers = block.dataset.correctAnswers || '0';
+    const totalQuestions = block.dataset.totalQuestions || '0';
+    scoreResultElement.textContent = `${correctAnswers} out of ${totalQuestions} correct`;
+  }
+  
+  contentContainer.appendChild(scoreResultElement);
+  
+  // Add score (title) - keeping this for backward compatibility
+  if (titleElement && false) { // Disabled but kept for reference
     // Use the title element's text content as the score
     const scoreElement = document.createElement(titleElement.tagName);
     scoreElement.className = 'quiz-scorecard-score';
-    
-    // Try to extract a score pattern like "X of Y correct"
-    const scorePattern = /(\d+)\s+of\s+(\d+)\s+correct/i;
-    const idMatch = titleElement.id ? titleElement.id.match(scorePattern) : null;
-    const textMatch = titleElement.textContent.match(scorePattern);
-    
-    if (idMatch || textMatch) {
-      // If we found a score pattern, use it
-      scoreElement.textContent = (idMatch || textMatch)[0];
-    } else {
-      // Otherwise use the full text content
-      scoreElement.textContent = titleElement.textContent;
-    }
-    
+    scoreElement.textContent = titleElement.textContent;
     contentContainer.appendChild(scoreElement);
   }
   

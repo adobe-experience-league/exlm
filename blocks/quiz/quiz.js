@@ -1,6 +1,7 @@
-import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, decorateExternalLinks } from '../../scripts/scripts.js';
 import { generateQuestionDOM } from '../question/question.js';
 import { hashAnswer } from '../../scripts/hash-utils.js';
+import { moveInstrumentation } from '../../scripts/utils/ue-utils.js';
 
 /**
  * Checks if the selected answers for a question are correct
@@ -151,21 +152,54 @@ const fetchPageContent = async (url, block) => {
   const loadingMessage = htmlToElement('<div class="quiz-loading">Loading results...</div>');
   block.appendChild(loadingMessage);
   
-  // Fetch the content
-  const response = await fetch(`${url}.plain.html`);
-  if (response.ok) {
-    const pageContent = await response.text();
-    
-    // Clear the block content
-    block.textContent = '';
-    
-    // Create a container for the fetched content
-    const resultContainer = document.createElement('div');
-    resultContainer.classList.add('quiz-result-container');
-    resultContainer.innerHTML = pageContent;
-    
-    // Add the result container to the block
-    block.appendChild(resultContainer);
+  try {
+    // Fetch the content
+    const response = await fetch(`${url}.plain.html`);
+    if (response.ok) {
+      const pageContent = await response.text();
+      
+      // Clear the block content but preserve the data attributes
+      const correctAnswers = block.dataset.correctAnswers;
+      const totalQuestions = block.dataset.totalQuestions;
+      block.textContent = '';
+      
+      // Restore the data attributes
+      if (correctAnswers) block.dataset.correctAnswers = correctAnswers;
+      if (totalQuestions) block.dataset.totalQuestions = totalQuestions;
+      
+      // Create a container for the fetched content
+      const resultContainer = document.createElement('div');
+      resultContainer.classList.add('quiz-result-container');
+      resultContainer.innerHTML = pageContent;
+      
+      // Import necessary functions for proper decoration
+      const { loadBlocks, decorateSections, decorateBlocks } = await import('../../scripts/lib-franklin.js');
+      
+      // Decorate the content properly
+      decorateSections(resultContainer);
+      decorateBlocks(resultContainer);
+      decorateExternalLinks(resultContainer);
+      
+      // Find the quiz-scorecard block and pass the quiz results data
+      const quizScorecard = resultContainer.querySelector('.quiz-scorecard');
+      if (quizScorecard && correctAnswers && totalQuestions) {
+        quizScorecard.dataset.correctAnswers = correctAnswers;
+        quizScorecard.dataset.totalQuestions = totalQuestions;
+      }
+      
+      await loadBlocks(resultContainer);
+      
+      // Special handling for AEM root mode
+      if (window.hlx.aemRoot) {
+        moveInstrumentation(block, resultContainer);
+      }
+      
+      // Add the result container to the block
+      block.appendChild(resultContainer);
+    }
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.error('Error fetching quiz result content:', err);
   }
 };
 
@@ -266,6 +300,16 @@ export default async function decorate(block) {
   
   // Load the appropriate page content as a fragment
   if (redirectUrl) {
+    // Store quiz results as data attributes to make them available to the quiz-scorecard block
+    const quizResultsData = {
+      correctAnswersCount: quizResults.correctAnswersCount,
+      totalQuestions: quizResults.totalQuestions
+    };
+    
+    // Save the quiz results data to pass to the fetchPageContent function
+    block.dataset.correctAnswers = quizResultsData.correctAnswersCount;
+    block.dataset.totalQuestions = quizResultsData.totalQuestions;
+    
     await fetchPageContent(redirectUrl, block);
   }
   return true;

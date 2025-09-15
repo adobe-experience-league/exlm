@@ -20,13 +20,11 @@
 
 /* Pass/Fail specific styles */
 .quiz-scorecard-pass {
-  border: 2px solid #268E6C;
-  background-color: rgba(38, 142, 108, 0.05);
+  border: 2px solid #2D9D78;
 }
 
 .quiz-scorecard-fail {
-  border: 2px solid #D7373F;
-  background-color: rgba(215, 55, 63, 0.05);
+  border: 2px solid #EB1000;
 }
 
 /* Icon styles */
@@ -41,11 +39,11 @@
 }
 
 .quiz-scorecard-pass .icon-correct {
-  color: #268E6C;
+  color: #2D9D78;
 }
 
 .quiz-scorecard-fail .icon-wrong {
-  color: #D7373F;
+  color: #EB1000;
 }
 
 /* Content styles */
@@ -73,7 +71,23 @@
   color: #2C2C2C;
 }
 
-/* Score styles */
+/* Quiz result styles */
+.quiz-scorecard-result {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0.5rem 0;
+  line-height: 1.2;
+}
+
+.quiz-scorecard-pass .quiz-scorecard-result {
+  color: #2D9D78;
+}
+
+.quiz-scorecard-fail .quiz-scorecard-result {
+  color: #EB1000;
+}
+
+/* Score styles (kept for backward compatibility) */
 .quiz-scorecard-score {
   font-size: 2rem;
   font-weight: 700;
@@ -91,11 +105,9 @@
 
 /* Description styles */
 .quiz-scorecard-description {
-  font-size: 1rem;
-  line-height: 1.5;
-  margin: 0.5rem 0;
-  max-width: 600px;
-  color: #2C2C2C;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 150%;
 }
 
 /* CTA container styles */
