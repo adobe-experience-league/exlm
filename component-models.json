@@ -7985,7 +7985,7 @@
     ]
   },
   {
-    "id": "key-takeaways",
+    "id": "course-recap",
     "fields": [
       {
         "component": "text",
@@ -7993,7 +7993,7 @@
         "name": "title",
         "value": "",
         "label": "Title",
-        "description": "Sets the title for the Key Takeaways."
+        "description": "Sets the title for the course summary."
       },
       {
         "component": "select",
@@ -8034,7 +8034,7 @@
         "name": "description",
         "value": "",
         "label": "Description",
-        "description": "Sets the description of key takeaways from the current module. Make sure all the take aways are mentioned as bullet points."
+        "description": "Sets the description of course summary from the current module. Make sure all the take aways are mentioned as bullet points."
       }
     ]
   }
