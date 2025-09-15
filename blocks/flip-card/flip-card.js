@@ -71,19 +71,11 @@ export default async function decorate(block) {
     card.innerHTML = `
       <div>
         ${frontTitleDiv ? frontTitleDiv.innerHTML : ''}
-        ${
-          frontContentDiv
-            ? `<div class="flip-card-content-wrapper"><div class="flip-card-content">${frontContentDiv.innerHTML}</div></div>`
-            : ''
-        }
+        ${frontContentDiv ? `<div class="flip-card-content">${frontContentDiv.innerHTML}</div>` : ''}
       </div>
       <div>
         ${backTitleDiv ? backTitleDiv.innerHTML : ''}
-        ${
-          backContentDiv
-            ? `<div class="flip-card-content-wrapper"><div class="flip-card-content">${backContentDiv.innerHTML}</div></div>`
-            : ''
-        }
+        ${backContentDiv ? `<div class="flip-card-content">${backContentDiv.innerHTML}</div>` : ''}
       </div>
     `;
 
