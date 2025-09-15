@@ -79,8 +79,6 @@ async function checkQuestionAnswer(questionElement) {
   );
 }
 
-// This function has been removed as per requirements
-
 /**
  * Submits the quiz and evaluates the results
  * @param {NodeList} questions The list of question elements
