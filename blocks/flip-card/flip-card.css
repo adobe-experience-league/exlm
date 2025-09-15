@@ -34,7 +34,7 @@
   background-color: var(--spectrum-blue-900);
 }
 
-.flip-card-title:has(+ .flip-card-content:empty) {
+.flip-card-title:has(+ .flip-card-content-wrapper > .flip-card-content:empty) {
   text-align: center;
   align-self: center;
   width: unset;
@@ -75,7 +75,7 @@
 }
 
 /* Scroll wrapper inside card */
-.flip-card > div > div .flip-card-content {
+.flip-card > div > div .flip-card-content-wrapper {
   overflow-y: auto;
   max-height: 250px;
   width: 100%;
@@ -86,26 +86,26 @@
 }
 
 /* Scrollbar */
-.flip-card > div > div .flip-card-content::-webkit-scrollbar {
+.flip-card > div > div .flip-card-content-wrapper::-webkit-scrollbar {
   width: 6px;
 }
 
-.flip-card > div > div .flip-card-content::-webkit-scrollbar-track {
+.flip-card > div > div .flip-card-content-wrapper::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.flip-card > div > div .flip-card-content::-webkit-scrollbar-thumb {
+.flip-card > div > div .flip-card-content-wrapper::-webkit-scrollbar-thumb {
   background-color: var(--spectrum-gray-200);
   border-radius: 3px;
 }
 
-.flip-card > div > div .flip-card-content::-webkit-scrollbar-thumb:hover {
+.flip-card > div > div .flip-card-content-wrapper::-webkit-scrollbar-thumb:hover {
   background-color: var(--spectrum-gray-300);
 }
 
-/* .flip-card > div > div .flip-card-content {
+.flip-card > div > div .flip-card-content {
   width: 100%;
-} */
+}
 
 /* Accessibility focus */
 .flip-card > div:focus {
@@ -189,7 +189,7 @@
   justify-content: center;
 }
 
-.flip-card > div > div:not(:has(.flip-card-title)) .flip-card-content {
+.flip-card > div > div:not(:has(.flip-card-title)) .flip-card-content-wrapper {
   max-height: 300px;
 }
 
