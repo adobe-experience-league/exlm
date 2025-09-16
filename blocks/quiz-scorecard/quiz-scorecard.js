@@ -16,11 +16,12 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
   // Extract properties using array destructuring
-  const [titleDiv, classesDiv, descriptionDiv, cta1Div, cta2Div] = [...block.children];
+  const [titleDiv, descriptionDiv, cta1Div, cta2Div] = [...block.children];
 
   // Extract data from divs
   const titleElement = titleDiv.querySelector('h6, h5, h4, h3, h2, h1');
-  const classes = classesDiv.querySelector('div').textContent.trim().toLowerCase();
+  // Get the class from block's class list (pass or fail)
+  const classes = block.className.includes('pass') ? 'pass' : 'fail';
   const description = descriptionDiv?.querySelector('div')?.textContent?.trim() || '';
 
   // Clear the block content
@@ -29,6 +30,9 @@ export default async function decorate(block) {
   // Create scorecard container
   const scorecardContainer = document.createElement('div');
   scorecardContainer.className = 'quiz-scorecard-container';
+  
+  // Add quiz-scorecard class with pass/fail status
+  block.classList.add(`quiz-scorecard-${classes}`);
 
   // Add classes icon
   const iconElement = htmlToElement(`
