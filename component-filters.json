@@ -83,7 +83,8 @@
       "flip-card",
       "course-breakdown",
       "course-marquee",
-      "browse-courses"
+      "browse-courses",
+      "course-recap"
     ]
   },
   {
@@ -282,7 +283,8 @@
       "drill-in",
       "flip-card",
       "course-breakdown",
-      "course-marquee"
+      "course-marquee",
+      "course-recap"
     ]
   },
   {
