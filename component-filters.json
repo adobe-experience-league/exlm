@@ -83,7 +83,9 @@
       "flip-card",
       "course-breakdown",
       "course-marquee",
-      "course-completion"
+      "course-completion",
+      "browse-courses",
+      "course-recap"
     ]
   },
   {
@@ -283,12 +285,14 @@
       "flip-card",
       "course-breakdown",
       "course-marquee",
-      "course-completion"
+      "course-completion",
+      "course-recap",
+      "browse-courses"
     ]
   },
   {
     "id": "course-hub-section",
-    "components": ["text", "title", "button", "image", "announcement-ribbon", "marquee"]
+    "components": ["text", "title", "button", "image", "announcement-ribbon", "marquee", "browse-courses"]
   },
   {
     "id": "sign-up-flow-section",

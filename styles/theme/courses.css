@@ -7,7 +7,7 @@ body.courses .section,
   display: flex;
   flex-direction: column;
   gap: 40px;
-  max-width: 728px;
+  max-width: 792px;
   margin: 0 auto;
 }
 
@@ -20,10 +20,6 @@ h5,
 h6 {
   color: var(--text-color);
   line-height: normal;
-}
-
-body.courses .module-info-section {
-  border-bottom: 1px solid var(--spectrum-gray-200);
 }
 
 body.courses .section > div:has(> .block) {
