@@ -202,7 +202,7 @@ const fetchPageContent = async (url, block, isPassed = false, placeholders = {})
       }
 
       if (nextButton) {
-        nextButton.textContent = placeholders?.next-btn-label || 'Next';
+        nextButton.textContent = placeholders?.nextBtnLabel || 'Next';
 
         // Enable or disable the Next button based on quiz result
         if (isPassed) {
