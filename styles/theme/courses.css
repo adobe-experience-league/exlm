@@ -5,6 +5,7 @@
 .courses .section,
 .courses-section {
   max-width: 792px;
+  margin: 0 auto;
 }
 
 .courses p,
