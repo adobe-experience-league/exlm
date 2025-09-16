@@ -4,8 +4,8 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 20px;
-  color: #2c2c2c;
+  gap: var(--spectrum-spacing-300);
+  color: var(--non-spectrum-dark-gray);
 }
 
 /* Certificate container */
@@ -13,7 +13,7 @@
   width: 100%;
   height: 278px;
   position: relative;
-  border-radius: 16px;
+  border-radius: var(--spectrum-spacing-200);
   overflow: hidden;
   display: grid;
   place-items: center;
@@ -23,7 +23,7 @@
     radial-gradient(circle at 50% 80%, rgb(249 119 216 / 35%), transparent 40%),
     radial-gradient(circle at 20% 30%, rgb(255 124 101 / 35%), transparent 65%),
     radial-gradient(circle at 10% 80%, rgb(255 124 101 / 35%), transparent 45%);
-  background-color: #fff; /* fallback */
+  background-color: var(--background-color);
 }
 
 /* Confetti canvas */
@@ -66,29 +66,29 @@
 .course-completion button {
   margin: 0;
   max-width: min-content;
-  margin-bottom: 20px;
+  margin-bottom: var(--spectrum-spacing-300);
   transition: background-color 0.3s ease;
 }
 
 .course-completion button.primary {
-  background-color: #1473e6;
+  background-color: var(--non-spectrum-navy-blue);
 }
 
 .course-completion button.primary:hover {
-  background-color: #0f56b3;
+  background-color: var(--non-spectrum-dark-navy-blue);
 }
 
 .course-completion button.secondary {
-  background-color: #fff;
-  color: #2c2c2c;
-  border-color: #2c2c2c;
-  padding: 8px 20px;
+  background-color: var(--background-color);
+  color: var(--non-spectrum-dark-gray);
+  border-color: var(--non-spectrum-dark-gray);
+  padding: var(--spectrum-spacing-100) var(--spectrum-spacing-300);
 }
 
 .course-completion button div {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spectrum-spacing-100);
 }
 
 .course-completion button .icon {
@@ -103,7 +103,7 @@ h3,
 h4,
 h5,
 h6 {
-  color: #2c2c2c;
+  color: var(--non-spectrum-dark-gray);
 }
 
 .course-completion p {
@@ -140,6 +140,6 @@ h6 {
 
   .course-completion .course-completion-button-container {
     flex-direction: row;
-    gap: 16px;
+    gap: var(--spectrum-spacing-200);
   }
 }
