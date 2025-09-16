@@ -146,12 +146,6 @@ function shuffleArray(array) {
 
 // Fetch page content and insert it into the current page
 const fetchPageContent = async (url, block, isPassed = false, placeholders = {}) => {
-  // Show loading state with placeholder
-  const loadingMessage = htmlToElement(
-    `<div class="quiz-loading">${placeholders?.loadingResults || 'Loading results...'}</div>`,
-  );
-  block.appendChild(loadingMessage);
-
   try {
     // Fetch the content
     const response = await fetch(`${url}.plain.html`);

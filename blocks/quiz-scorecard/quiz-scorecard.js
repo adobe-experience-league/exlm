@@ -20,15 +20,10 @@ export default async function decorate(block) {
 
   // Extract data from divs
   const resultText = resultDiv;
-  // Get the class from block's class list (pass or fail)
-  const classes = block.classList.contains('pass') ? 'pass' : 'fail';
   const description = descriptionDiv?.textContent?.trim() || '';
 
   // Clear the block content
   block.textContent = '';
-
-  // Add quiz-scorecard class with pass/fail status
-  block.classList.add(`quiz-scorecard-${classes}`);
 
   // Get score values from data attributes
   const correctAnswers = block.dataset.correctAnswers || '0';
@@ -36,7 +31,7 @@ export default async function decorate(block) {
 
   // Prepare CTA HTML if needed
   let ctaHTML = '';
-  if (classes === 'fail') {
+  if (block.classList.contains('fail')) {
     const cta1Container = cta1Div.querySelector('div');
     const cta2Container = cta2Div.querySelector('div');
     ctaHTML = `
@@ -53,7 +48,7 @@ export default async function decorate(block) {
         <span class="icon icon-${block.classList.contains('pass') ? 'correct' : 'wrong'}"></span>
       </div>
       <div class="quiz-scorecard-content">
-        <div class="quiz-scorecard-classes-text">${resultText.innerHTML || ''}</div>
+        <div class="quiz-scorecard-text">${resultText.innerHTML || ''}</div>
         <div class="quiz-scorecard-result">${correctAnswers} ${placeholders?.out || 'out'} ${
           placeholders?.of || 'of'
         } ${totalQuestions}</div>
