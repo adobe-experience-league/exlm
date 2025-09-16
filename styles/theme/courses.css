@@ -7,7 +7,7 @@ body.courses .section,
   display: flex;
   flex-direction: column;
   gap: 40px;
-  max-width: 728px;
+  max-width: 792px;
   margin: 0 auto;
 }
 
