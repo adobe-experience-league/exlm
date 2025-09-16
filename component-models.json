@@ -8092,8 +8092,8 @@
         "valueType": "string",
         "name": "skill_track_url",
         "value": "",
-        "label": "Skill Track Page URL",
-        "description": "URL to the Skill track",
+        "label": "Module Page URL",
+        "description": "URL to the Module",
         "validation": {
           "rootPath": "/content/exlm/global/en/courses"
         }
@@ -8205,6 +8205,60 @@
         "value": "",
         "label": "Filter Label",
         "description": "Sets the text for Products filter label in dropdown."
+      }
+    ]
+  },
+  {
+    "id": "course-recap",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the title for the course summary."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description of course summary from the current module. Make sure all the take aways are mentioned as bullet points."
       }
     ]
   }
