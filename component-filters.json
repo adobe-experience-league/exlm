@@ -84,7 +84,8 @@
       "course-breakdown",
       "course-marquee",
       "browse-courses",
-      "course-recap"
+      "course-recap",
+      "quiz-scorecard"
     ]
   },
   {
@@ -285,7 +286,8 @@
       "course-breakdown",
       "course-marquee",
       "course-recap",
-      "browse-courses"
+      "browse-courses",
+      "quiz-scorecard"
     ]
   },
   {
