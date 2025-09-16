@@ -1544,9 +1544,8 @@
                 "template": {
                   "name": "Quiz Scorecard",
                   "model": "quiz-scorecard",
-                  "title": "",
-                  "titleType": "h6",
-                  "description": "You're now ready to move on to the next Module.",
+                  "resultText": "",
+                  "description": "",
                   "classes": "pass",
                   "cta1_Type": "",
                   "cta1_linkText": "Back to Step 1",

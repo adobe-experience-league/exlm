@@ -16,87 +16,54 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
   // Extract properties using array destructuring
-  const [titleDiv, descriptionDiv, cta1Div, cta2Div] = [...block.children];
+  const [resultDiv, descriptionDiv, cta1Div, cta2Div] = [...block.children];
 
   // Extract data from divs
-  const titleElement = titleDiv.querySelector('h6, h5, h4, h3, h2, h1');
+  const resultText = resultDiv;
   // Get the class from block's class list (pass or fail)
-  const classes = block.className.includes('pass') ? 'pass' : 'fail';
-  const description = descriptionDiv?.querySelector('div')?.textContent?.trim() || '';
+  const classes = block.classList.contains('pass') ? 'pass' : 'fail';
+  const description = descriptionDiv?.textContent?.trim() || '';
 
   // Clear the block content
-  block.innerHTML = '';
+  block.textContent = '';
 
-  // Create scorecard container
-  const scorecardContainer = document.createElement('div');
-  scorecardContainer.className = 'quiz-scorecard-container';
-  
   // Add quiz-scorecard class with pass/fail status
   block.classList.add(`quiz-scorecard-${classes}`);
-
-  // Add classes icon
-  const iconElement = htmlToElement(`
-    <div class="quiz-scorecard-icon-container">
-      <span class="icon icon-${classes === 'pass' ? 'correct' : 'wrong'}"></span>
-    </div>
-  `);
-  scorecardContainer.appendChild(iconElement);
-  decorateIcons(scorecardContainer);
-
-  // Create content container
-  const contentContainer = document.createElement('div');
-  contentContainer.className = 'quiz-scorecard-content';
-
-  // Create classes text element
-  const classesTextElement = titleElement;
-  classesTextElement.className = 'quiz-scorecard-classes-text';
-
-  // Only set content as fallback if the title element's content is empty
-  if (!titleElement.textContent.trim()) {
-    classesTextElement.textContent =
-      classes === 'pass'
-        ? placeholders?.quizPass || 'You passed the quiz!'
-        : placeholders?.quizFail || "You didn't pass the quiz!";
-  }
-  contentContainer.appendChild(classesTextElement);
-
-  // Add quiz score results (correct answers out of total)
-  const scoreResultElement = document.createElement('div');
-  scoreResultElement.className = 'quiz-scorecard-result';
 
   // Get score values from data attributes
   const correctAnswers = block.dataset.correctAnswers || '0';
   const totalQuestions = block.dataset.totalQuestions || '0';
 
-  scoreResultElement.textContent = `${correctAnswers} ${placeholders?.out || 'out'} ${
-    placeholders?.of || 'of'
-  } ${totalQuestions}`;
-
-  contentContainer.appendChild(scoreResultElement);
-
-  const descriptionElement = document.createElement('div');
-  descriptionElement.className = 'quiz-scorecard-description';
-  descriptionElement.textContent = description;
-  contentContainer.appendChild(descriptionElement);
-
-  // Add CTAs for fail class
+  // Prepare CTA HTML if needed
+  let ctaHTML = '';
   if (classes === 'fail') {
     const cta1Container = cta1Div.querySelector('div');
     const cta2Container = cta2Div.querySelector('div');
-
-    const ctaContainerHTML = `
+    ctaHTML = `
       <div class="quiz-scorecard-cta-container">
         ${decorateCustomButtons(cta1Container, cta2Container)}
       </div>
     `;
-
-    // Add the CTA container to the content
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = ctaContainerHTML;
-    contentContainer.appendChild(tempDiv.firstElementChild);
   }
 
-  // Add content to scorecard
-  scorecardContainer.appendChild(contentContainer);
-  block.appendChild(scorecardContainer);
+  // Create the entire scorecard structure using htmlToElement
+  const scorecardHTML = `
+    <div class="quiz-scorecard-container">
+      <div class="quiz-scorecard-icon-container">
+        <span class="icon icon-${block.classList.contains('pass') ? 'correct' : 'wrong'}"></span>
+      </div>
+      <div class="quiz-scorecard-content">
+        <div class="quiz-scorecard-classes-text">${resultText.innerHTML || ''}</div>
+        <div class="quiz-scorecard-result">${correctAnswers} ${placeholders?.out || 'out'} ${
+          placeholders?.of || 'of'
+        } ${totalQuestions}</div>
+        <div class="quiz-scorecard-description">${description}</div>
+        ${ctaHTML}
+      </div>
+    </div>
+  `;
+
+  const scorecardElement = htmlToElement(scorecardHTML);
+  block.appendChild(scorecardElement);
+  decorateIcons(scorecardElement);
 }
