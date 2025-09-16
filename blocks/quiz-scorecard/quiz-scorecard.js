@@ -19,7 +19,6 @@ export default async function decorate(block) {
   const [resultDiv, descriptionDiv, cta1Div, cta2Div] = [...block.children];
 
   // Extract data from divs
-  const resultText = resultDiv;
   const description = descriptionDiv?.textContent?.trim() || '';
 
   // Clear the block content
@@ -48,7 +47,7 @@ export default async function decorate(block) {
         <span class="icon icon-${block.classList.contains('pass') ? 'correct' : 'wrong'}"></span>
       </div>
       <div class="quiz-scorecard-content">
-        <div class="quiz-scorecard-text">${resultText.innerHTML || ''}</div>
+        <div class="quiz-scorecard-text">${resultDiv.innerHTML || ''}</div>
         <div class="quiz-scorecard-result">${correctAnswers} ${placeholders?.out || 'out'} ${
           placeholders?.of || 'of'
         } ${totalQuestions}</div>
