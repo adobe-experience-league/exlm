@@ -7591,6 +7591,176 @@
         "value": "",
         "label": "Quiz Description",
         "description": "Enter the module quiz description"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "pass-page-url",
+        "label": "Quiz pass page url"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "fail-page-url",
+        "label": "Quiz fail page url"
+      }
+    ]
+  },
+  {
+    "id": "quiz-scorecard",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Title for the quiz scorecard"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h6",
+        "label": "Title Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "status",
+        "value": "pass",
+        "label": "Quiz Status",
+        "description": "Sets whether this is a pass or fail scorecard",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Pass",
+            "value": "pass"
+          },
+          {
+            "name": "Fail",
+            "value": "fail"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description text that appears below the score"
+      },
+      {
+        "condition": {
+          "===": [{ "var": "status" }, "fail"]
+        },
+        "component": "select",
+        "name": "cta1_Type",
+        "value": "primary",
+        "label": "First CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "status" }, "fail"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_linkText",
+        "value": "",
+        "label": "First CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "condition": {
+          "===": [{ "var": "status" }, "fail"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_link",
+        "value": "",
+        "label": "First CTA Link",
+        "description": "What link to open when clicking the button."
+      },
+      {
+        "condition": {
+          "===": [{ "var": "status" }, "fail"]
+        },
+        "component": "select",
+        "name": "cta2_Type",
+        "value": "secondary",
+        "label": "Second CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "status" }, "fail"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta2_linkText",
+        "value": "",
+        "label": "Second CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "condition": {
+          "===": [{ "var": "status" }, "fail"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta2_link",
+        "value": "",
+        "label": "Second CTA Link",
+        "description": "What link to open when clicking the button."
       }
     ]
   },
