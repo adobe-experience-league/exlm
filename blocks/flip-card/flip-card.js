@@ -14,13 +14,20 @@ export default async function decorate(block) {
 
   function toggleCard(card) {
     const isCurrentlyFlipped = card.classList.contains('flipped');
+    const [frontFace, backFace] = card.children;
 
     if (isCurrentlyFlipped) {
       card.classList.remove('flipped');
       card.setAttribute('aria-pressed', 'false');
+      // Update active class
+      frontFace.classList.add('active');
+      backFace.classList.remove('active');
     } else {
       card.classList.add('flipped');
       card.setAttribute('aria-pressed', 'true');
+      // Update active class
+      frontFace.classList.remove('active');
+      backFace.classList.add('active');
     }
   }
 
@@ -51,18 +58,8 @@ export default async function decorate(block) {
 
     const cardDivs = Array.from(card.children);
 
-    // New structure:
-    // cardDivs[0]: Front title with tag (e.g., <h3 id="front-title">Front Title</h3>)
-    // cardDivs[1]: Back title with tag (e.g., <h3 id="back-title">Back Title</h3>)
-    // cardDivs[2]: Front content
-    // cardDivs[3]: Back content
-
     // Using object destructuring for child elements
     const [frontTitleDiv, backTitleDiv, frontContentDiv, backContentDiv] = cardDivs;
-
-    const hasFrontContent = !!frontContentDiv?.textContent?.trim();
-    const hasBackContent = !!backContentDiv?.textContent?.trim();
-
     // Check if we have titles
     const hasFrontTitle = frontTitleDiv?.firstElementChild;
     const hasBackTitle = backTitleDiv?.firstElementChild;
@@ -71,31 +68,27 @@ export default async function decorate(block) {
     if (hasFrontTitle) {
       const frontTitleElement = frontTitleDiv.firstElementChild;
       frontTitleElement.classList.add('flip-card-title');
-      if (!hasFrontContent) {
-        frontTitleElement.classList.add('flip-card-title-only');
-      }
     }
 
     if (hasBackTitle) {
       const backTitleElement = backTitleDiv.firstElementChild;
       backTitleElement.classList.add('flip-card-title');
-      if (!hasBackContent) {
-        backTitleElement.classList.add('flip-card-title-only');
-      }
     }
 
     card.innerHTML = `
-      <div class="${!hasFrontTitle && hasFrontContent ? 'content-only' : ''}">
+      <div>
         ${frontTitleDiv ? frontTitleDiv.innerHTML : ''}
         ${frontContentDiv ? `<div class="flip-card-content">${frontContentDiv.innerHTML}</div>` : ''}
       </div>
-      <div class="${!hasBackTitle && hasBackContent ? 'content-only' : ''}">
+      <div>
         ${backTitleDiv ? backTitleDiv.innerHTML : ''}
         ${backContentDiv ? `<div class="flip-card-content">${backContentDiv.innerHTML}</div>` : ''}
       </div>
     `;
 
     const [frontContainer, backContainer] = card.children;
+    // Add active class to front face initially
+    frontContainer.classList.add('active');
     addFlipText(frontContainer);
     addFlipText(backContainer);
 
