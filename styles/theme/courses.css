@@ -2,7 +2,7 @@
   --highlight-light-background-color: #fff;
 }
 
-body.courses .section,
+.courses .section,
 .courses-section {
   max-width: 792px;
 }
@@ -18,6 +18,6 @@ h6 {
   line-height: normal;
 }
 
-body.courses .section > div:has(> .block) {
+.courses .section > div:has(> .block) {
   width: 100%;
 }
