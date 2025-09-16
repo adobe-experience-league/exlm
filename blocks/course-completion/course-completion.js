@@ -25,6 +25,15 @@ const CONFIG = {
 };
 
 /**
+ * Shares the current page URL to LinkedIn
+ */
+function shareOnLinkedIn() {
+  const urlToShare = encodeURIComponent(window.location.href);
+  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${urlToShare}`;
+  window.open(linkedInUrl, '_blank', 'width=600,height=600');
+}
+
+/**
  * Creates and configures the confetti canvas
  * @returns {HTMLCanvasElement} Configured canvas element
  */
@@ -77,6 +86,12 @@ function createContent(children) {
             <button class="btn secondary">${downloadBtn.innerHTML}</button>
         </div>
     `;
+
+  // Add LinkedIn sharing functionality to primary button
+  const primaryButton = container.querySelector('.btn.primary');
+  if (primaryButton) {
+    primaryButton.addEventListener('click', shareOnLinkedIn);
+  }
 
   return container;
 }
