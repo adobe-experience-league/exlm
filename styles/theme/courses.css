@@ -7,6 +7,17 @@ body.courses .section,
   max-width: 792px;
 }
 
+.courses p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-color);
+  line-height: normal;
+}
+
 body.courses .section > div:has(> .block) {
   width: 100%;
 }
