@@ -43,9 +43,6 @@ export default async function decorate(block) {
   const contentContainer = document.createElement('div');
   contentContainer.className = 'quiz-scorecard-content';
 
-  // Add appropriate class based on status
-  block.classList.add(`quiz-scorecard-${classes}`);
-
   // Create classes text element
   const classesTextElement = titleElement;
   classesTextElement.className = 'quiz-scorecard-classes-text';
