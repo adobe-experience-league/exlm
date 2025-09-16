@@ -3,23 +3,8 @@
 }
 
 body.courses .section,
-.courses-page-section {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
+.courses-section {
   max-width: 792px;
-  margin: 0 auto;
-}
-
-.courses p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: var(--text-color);
-  line-height: normal;
 }
 
 body.courses .section > div:has(> .block) {
