@@ -7652,9 +7652,9 @@
       },
       {
         "component": "select",
-        "name": "status",
+        "name": "classes",
         "value": "pass",
-        "label": "Quiz Status",
+        "label": "Quiz classes",
         "description": "Sets whether this is a pass or fail scorecard",
         "valueType": "string",
         "options": [
@@ -7678,7 +7678,7 @@
       },
       {
         "condition": {
-          "===": [{ "var": "status" }, "fail"]
+          "===": [{ "var": "classes" }, "fail"]
         },
         "component": "select",
         "name": "cta1_Type",
@@ -7699,7 +7699,7 @@
       },
       {
         "condition": {
-          "===": [{ "var": "status" }, "fail"]
+          "===": [{ "var": "classes" }, "fail"]
         },
         "component": "text",
         "valueType": "string",
@@ -7710,7 +7710,7 @@
       },
       {
         "condition": {
-          "===": [{ "var": "status" }, "fail"]
+          "===": [{ "var": "classes" }, "fail"]
         },
         "component": "text",
         "valueType": "string",
@@ -7721,7 +7721,7 @@
       },
       {
         "condition": {
-          "===": [{ "var": "status" }, "fail"]
+          "===": [{ "var": "classes" }, "fail"]
         },
         "component": "select",
         "name": "cta2_Type",
@@ -7742,7 +7742,7 @@
       },
       {
         "condition": {
-          "===": [{ "var": "status" }, "fail"]
+          "===": [{ "var": "classes" }, "fail"]
         },
         "component": "text",
         "valueType": "string",
@@ -7753,7 +7753,7 @@
       },
       {
         "condition": {
-          "===": [{ "var": "status" }, "fail"]
+          "===": [{ "var": "classes" }, "fail"]
         },
         "component": "text",
         "valueType": "string",

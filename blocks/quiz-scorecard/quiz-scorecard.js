@@ -1,23 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-
-/**
- * Create icon element for pass/fail status
- * @param {string} status - 'pass' or 'fail'
- * @returns {HTMLElement} Icon element
- */
-function createStatusIcon(status) {
-  const iconContainer = document.createElement('div');
-  const iconSpan = document.createElement('span');
-
-  iconContainer.className = 'quiz-scorecard-icon-container';
-  iconSpan.className = `icon icon-${status === 'pass' ? 'correct' : 'wrong'}`;
-
-  iconContainer.appendChild(iconSpan);
-
-  return iconContainer;
-}
+import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 
 /**
  * Decorate the quiz scorecard block
@@ -33,25 +16,26 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
   // Extract properties using array destructuring
-  const [titleDiv, statusDiv, descriptionDiv, cta1Div, cta2Div] = [...block.children];
+  const [titleDiv, classesDiv, descriptionDiv, cta1Div, cta2Div] = [...block.children];
 
   // Extract data from divs
   const titleElement = titleDiv.querySelector('h6, h5, h4, h3, h2, h1');
-  const status = statusDiv.querySelector('div').textContent.trim().toLowerCase();
+  const classes = classesDiv.querySelector('div').textContent.trim().toLowerCase();
   const description = descriptionDiv?.querySelector('div')?.textContent?.trim() || '';
 
   // Clear the block content
   block.innerHTML = '';
 
-  // Add appropriate class based on status
-  block.classList.add(`quiz-scorecard-${status}`);
-
   // Create scorecard container
   const scorecardContainer = document.createElement('div');
   scorecardContainer.className = 'quiz-scorecard-container';
 
-  // Add status icon
-  const iconElement = createStatusIcon(status);
+  // Add classes icon
+  const iconElement = htmlToElement(`
+    <div class="quiz-scorecard-icon-container">
+      <span class="icon icon-${classes === 'pass' ? 'correct' : 'wrong'}"></span>
+    </div>
+  `);
   scorecardContainer.appendChild(iconElement);
   decorateIcons(scorecardContainer);
 
@@ -59,15 +43,21 @@ export default async function decorate(block) {
   const contentContainer = document.createElement('div');
   contentContainer.className = 'quiz-scorecard-content';
 
-  // Create status text element
-  const statusTextElement = titleElement;
-  statusTextElement.className = 'quiz-scorecard-status-text';
+  // Add appropriate class based on status
+  block.classList.add(`quiz-scorecard-${classes}`);
+
+  // Create classes text element
+  const classesTextElement = titleElement;
+  classesTextElement.className = 'quiz-scorecard-classes-text';
 
   // Only set content as fallback if the title element's content is empty
   if (!titleElement.textContent.trim()) {
-    statusTextElement.textContent = status === 'pass' ? 'You passed the quiz!' : "You didn't pass the quiz!";
+    classesTextElement.textContent =
+      classes === 'pass'
+        ? placeholders?.quizPass || 'You passed the quiz!'
+        : placeholders?.quizFail || "You didn't pass the quiz!";
   }
-  contentContainer.appendChild(statusTextElement);
+  contentContainer.appendChild(classesTextElement);
 
   // Add quiz score results (correct answers out of total)
   const scoreResultElement = document.createElement('div');
@@ -88,8 +78,8 @@ export default async function decorate(block) {
   descriptionElement.textContent = description;
   contentContainer.appendChild(descriptionElement);
 
-  // Add CTAs for fail status
-  if (status === 'fail') {
+  // Add CTAs for fail class
+  if (classes === 'fail') {
     const cta1Container = cta1Div.querySelector('div');
     const cta2Container = cta2Div.querySelector('div');
 

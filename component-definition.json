@@ -1547,11 +1547,11 @@
                   "title": "",
                   "titleType": "h6",
                   "description": "You're now ready to move on to the next Module.",
-                  "status": "pass",
-                  "cta1_Type": "primary",
+                  "classes": "pass",
+                  "cta1_Type": "",
                   "cta1_linkText": "Back to Step 1",
                   "cta1_link": "",
-                  "cta2_Type": "secondary",
+                  "cta2_Type": "",
                   "cta2_linkText": "Retake the quiz",
                   "cta2_link": ""
                 }

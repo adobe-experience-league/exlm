@@ -18,14 +18,14 @@
 /* Pass/Fail specific styles */
 .quiz-scorecard-pass {
   border: 2px solid var(--non-spectrum-pass-green);
-  
+
   --color: var(--non-spectrum-pass-green);
   --text-color: var(--non-spectrum-dark-gray);
 }
 
 .quiz-scorecard-fail {
   border: 2px solid var(--non-spectrum-adobe-dark-red);
-  
+
   --color: var(--non-spectrum-adobe-dark-red);
   --text-color: var(--non-spectrum-dark-gray);
 }
@@ -48,8 +48,7 @@
   width: 100%;
 }
 
-/* Status text styles */
-.quiz-scorecard-status-text {
+.quiz-scorecard-classes-text {
   font-size: var(--spectrum-font-size-100);
   margin: 0;
   font-weight: var(--font-weight-normal);

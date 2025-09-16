@@ -204,11 +204,11 @@ const fetchPageContent = async (url, block, isPassed = false, placeholders = {})
       const nextButton = document.querySelector('.module-nav-button.module-nav-submit.disabled');
 
       if (backButton) {
-        backButton.textContent = 'Back to Course Overview';
+        backButton.textContent = placeholders?.backToCourses || 'Back to Course Overview';
       }
 
       if (nextButton) {
-        nextButton.textContent = 'Next';
+        nextButton.textContent = placeholders?.next || 'Next';
 
         // Enable or disable the Next button based on quiz result
         if (isPassed) {
@@ -308,7 +308,7 @@ export default async function decorate(block) {
     }
 
     // Submit quiz and get results
-    const quizResults = await submitQuiz(questionElements, passPageUrlElement, failPageUrlElement);
+    const quizResults = await submitQuiz(questionElements, passPageUrlElement, failPageUrlElement, placeholders);
 
     // Get the appropriate URL based on quiz result
     const redirectUrl = quizResults.isPassed ? quizResults.passPageUrl : quizResults.failPageUrl;
