@@ -85,10 +85,9 @@ async function checkQuestionAnswer(questionElement) {
  * @param {NodeList} questions The list of question elements
  * @param {Element} passPageUrlElement The pass page URL element
  * @param {Element} failPageUrlElement The fail page URL element
- * @param {Object} placeholders Language placeholders
  * @returns {Object} The quiz results including correct answers count and whether the quiz was passed
  */
-async function submitQuiz(questions, passPageUrlElement, failPageUrlElement, placeholders = {}) {
+async function submitQuiz(questions, passPageUrlElement, failPageUrlElement) {
   // Check all questions
   const questionsArray = Array.from(questions || []);
 
@@ -309,7 +308,7 @@ export default async function decorate(block) {
     }
 
     // Submit quiz and get results
-    const quizResults = await submitQuiz(questionElements, passPageUrlElement, failPageUrlElement, placeholders);
+    const quizResults = await submitQuiz(questionElements, passPageUrlElement, failPageUrlElement);
 
     // Get the appropriate URL based on quiz result
     const redirectUrl = quizResults.isPassed ? quizResults.passPageUrl : quizResults.failPageUrl;
