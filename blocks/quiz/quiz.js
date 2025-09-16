@@ -198,11 +198,11 @@ const fetchPageContent = async (url, block, isPassed = false, placeholders = {})
       const nextButton = document.querySelector('.module-nav-button.module-nav-submit.disabled');
 
       if (backButton) {
-        backButton.textContent = placeholders?.backToCourses || 'Back to Course Overview';
+        backButton.textContent = placeholders?.backToCourseOverview || 'Back to Course Overview';
       }
 
       if (nextButton) {
-        nextButton.textContent = placeholders?.next || 'Next';
+        nextButton.textContent = placeholders?.next-btn-label || 'Next';
 
         // Enable or disable the Next button based on quiz result
         if (isPassed) {
