@@ -284,12 +284,13 @@
       "flip-card",
       "course-breakdown",
       "course-marquee",
-      "course-recap"
+      "course-recap",
+      "browse-courses"
     ]
   },
   {
     "id": "course-hub-section",
-    "components": ["text", "title", "button", "image", "announcement-ribbon", "marquee"]
+    "components": ["text", "title", "button", "image", "announcement-ribbon", "marquee", "browse-courses"]
   },
   {
     "id": "sign-up-flow-section",
