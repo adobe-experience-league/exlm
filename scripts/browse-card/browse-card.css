@@ -606,11 +606,67 @@
   transition: transform 0.2s;
 }
 
-.browse-card .browse-card-figure:hover .play-button .icon {
-  display: none;
+/* Course Card Variant */
+.browse-card.course-card .browse-card-figure {
+  background: linear-gradient(
+    90deg,
+    #ffb199 0%,
+    /* peach */ #ffcad4 30%,
+    /* pink */ #e9d7fa 80%,
+    /* light purple */ #d6e9ff 100% /* light blue */
+  );
+  overflow: visible;
 }
 
+.browse-card.course-card .browse-card-icon {
+  width: 64px;
+  height: 64px;
+  background-color: var(--spectrum-gray-900);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 24px;
+  top: 50%;
+}
+
+.browse-card.course-card .browse-card-icon .icon {
+  width: 32px;
+  height: 32px;
+}
+
+.browse-card.course-card .browse-card-content {
+  padding: 56px 24px 24px;
+}
+
+.browse-card.course-card .browse-card-tag-text {
+  margin: 0 0 8px;
+}
+
+.browse-card.course-card .browse-card-title-text {
+  font-size: var(--spectrum-font-size-600);
+  line-height: 1.25;
+  margin: 0 0 16px;
+}
+
+.browse-card.course-card .browse-card-description-text {
+  font-size: var(--spectrum-font-size-300);
+  line-height: 1.5;
+  -webkit-line-clamp: 3;
+}
+
+.browse-card.course-card .browse-card-footer {
+  padding: 0 24px 24px;
+}
+
+/* Event Card Variant */
 .browse-card.event-card .browse-card-banner,
 .browse-card.upcoming-event-card .browse-card-banner {
   color: var(--spectrum-gray-50);
+}
+
+/* CSS Specificity */
+.browse-card .browse-card-figure:hover .play-button .icon {
+  display: none;
 }
