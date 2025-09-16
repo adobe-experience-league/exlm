@@ -83,12 +83,12 @@ async function checkQuestionAnswer(questionElement) {
 /**
  * Submits the quiz and evaluates the results
  * @param {NodeList} questions The list of question elements
- * @param {Object} placeholders Language placeholders
  * @param {Element} passPageUrlElement The pass page URL element
  * @param {Element} failPageUrlElement The fail page URL element
+ * @param {Object} placeholders Language placeholders
  * @returns {Object} The quiz results including correct answers count and whether the quiz was passed
  */
-async function submitQuiz(questions, placeholders = {}, passPageUrlElement, failPageUrlElement) {
+async function submitQuiz(questions, passPageUrlElement, failPageUrlElement, placeholders = {}) {
   // Check all questions
   const questionsArray = Array.from(questions || []);
 
@@ -239,10 +239,6 @@ export default async function decorate(block) {
   // Get title, text, pass page URL, fail page URL, and questions from block children
   const [titleElement, textElement, passPageUrlElement, failPageUrlElement, ...questionsOriginal] = [...block.children];
 
-  // Extract URLs from anchor elements
-  const passPageUrl = passPageUrlElement?.querySelector('a')?.href;
-  const failPageUrl = failPageUrlElement?.querySelector('a')?.href;
-
   const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
   // Only shuffle questions if not in authoring mode
@@ -313,7 +309,7 @@ export default async function decorate(block) {
     }
 
     // Submit quiz and get results
-    const quizResults = await submitQuiz(questionElements, placeholders, passPageUrlElement, failPageUrlElement);
+    const quizResults = await submitQuiz(questionElements, passPageUrlElement, failPageUrlElement, placeholders);
 
     // Get the appropriate URL based on quiz result
     const redirectUrl = quizResults.isPassed ? quizResults.passPageUrl : quizResults.failPageUrl;

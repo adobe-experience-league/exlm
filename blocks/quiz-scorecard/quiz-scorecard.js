@@ -1,4 +1,4 @@
-import { createOptimizedPicture, decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
