@@ -130,7 +130,7 @@ async function extractModuleMeta(fragment) {
   const meta = fragment.querySelector('.module-meta');
   const track = fragment.querySelector('.module');
 
-  const moduleHeader = meta?.children[0]?.querySelector('h1, h2, h3, h4, h5, h6')?.textContent?.trim() || '';
+  const moduleHeader = meta?.children[0]?.textContent?.trim() || '';
   const moduleDescription = meta?.children[1]?.innerHTML || '';
   const moduleRecap = meta?.children[2]?.querySelector('a')?.getAttribute('href') || '';
   const moduleQuiz = meta?.children[3]?.querySelector('a')?.getAttribute('href') || '';
@@ -198,7 +198,8 @@ export async function getCurrentStepInfo() {
       }
     }
   } catch (e) {
-    // ignore parse errors
+    // eslint-disable-next-line no-console
+    console.error(e);
   }
 
   // Not cached, fetch and store
@@ -208,7 +209,8 @@ export async function getCurrentStepInfo() {
   try {
     sessionStorage.setItem(storageKey, JSON.stringify(meta));
   } catch (e) {
-    // ignore storage errors
+    // eslint-disable-next-line no-console
+    console.error(e);
   }
   return { ...meta, ...getStepMeta(meta?.moduleSteps, meta?.moduleRecap, meta?.moduleQuiz) };
 }
@@ -227,16 +229,18 @@ export async function getmoduleMeta(moduleFragmentUrl) {
       }
     }
   } catch (e) {
-    // ignore parse errors
+    // eslint-disable-next-line no-console
+    console.error(e);
   }
 
   const fragment = await fetchModuleFragment(moduleFragmentUrl);
   if (!fragment) return null;
-  meta = await extractModuleMeta(fragment, false);
+  meta = await extractModuleMeta(fragment);
   try {
     sessionStorage.setItem(storageKey, JSON.stringify(meta));
   } catch (e) {
-    // ignore storage errors
+    // eslint-disable-next-line no-console
+    console.error(e);
   }
   return meta;
 }

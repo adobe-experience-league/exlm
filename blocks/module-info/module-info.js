@@ -31,9 +31,10 @@ export default async function decorate(block) {
   const backLink = document.createElement('a');
   backLink.className = 'back-to-course';
   backLink.href = stepInfo.courseUrl;
-  backLink.innerHTML = `<span class="icon icon-course" aria-label="${
+  backLink.innerHTML = `<span class="icon icon-collection-icon" aria-label="${
     placeholders['course-back-to-course-icon'] || 'Back to course icon'
   }"></span>
+    <span class="icon icon-back-arrow" aria-label="Back arrow"></span>
     <span class="back-to-course-label">${placeholders['course-back-to-course-button'] || 'BACK TO THE COURSE'}</span>
   `;
 
@@ -42,29 +43,13 @@ export default async function decorate(block) {
   contentArea.className = 'module-content';
 
   // Title
-  const title = document.createElement('h1');
+  const title = document.createElement('span');
   title.className = 'module-title';
   title.textContent = stepInfo.moduleHeader;
 
   // Progress section
   const progressSection = document.createElement('div');
   progressSection.className = 'progress-section';
-
-  const progressText = document.createElement('div');
-  progressText.className = 'progress-text';
-  progressText.textContent = `${stepInfo.currentStep} of ${stepInfo.totalSteps} ${
-    placeholders['course-steps-complete'] || 'Steps Complete'
-  }`;
-
-  // Progress bar
-  const progressBar = document.createElement('div');
-  progressBar.className = 'progress-bar';
-
-  const progressFill = document.createElement('div');
-  progressFill.className = 'progress-fill';
-  progressFill.style.width = `${(stepInfo.currentStep / stepInfo.totalSteps) * 100}%`;
-
-  progressBar.appendChild(progressFill);
 
   // Step selector using dropdown utility
   const stepSelectorContainer = document.createElement('div');
@@ -94,15 +79,6 @@ export default async function decorate(block) {
   });
 
   stepSelectorContainer.appendChild(dropdownForm);
-
-  // Assemble the layout
-  const progressSectionWrapper = document.createElement('div');
-  progressSectionWrapper.className = 'progress-section-wrapper';
-
-  progressSectionWrapper.appendChild(progressText);
-  progressSectionWrapper.appendChild(progressBar);
-
-  progressSection.appendChild(progressSectionWrapper);
 
   progressSection.appendChild(stepSelectorContainer);
 

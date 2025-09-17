@@ -82,7 +82,11 @@
       "drill-in",
       "flip-card",
       "course-breakdown",
-      "course-marquee"
+      "course-marquee",
+      "course-completion",
+      "browse-courses",
+      "course-recap",
+      "quiz-scorecard"
     ]
   },
   {
@@ -281,12 +285,16 @@
       "drill-in",
       "flip-card",
       "course-breakdown",
-      "course-marquee"
+      "course-marquee",
+      "course-completion",
+      "course-recap",
+      "browse-courses",
+      "quiz-scorecard"
     ]
   },
   {
     "id": "course-hub-section",
-    "components": ["text", "title", "button", "image", "announcement-ribbon", "marquee"]
+    "components": ["text", "title", "button", "image", "announcement-ribbon", "marquee", "browse-courses"]
   },
   {
     "id": "sign-up-flow-section",

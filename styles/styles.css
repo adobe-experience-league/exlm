@@ -319,6 +319,7 @@
   --non-spectrum-hover-bg: #f5f5f5;
   --non-spectrum-input-text: #4b4b4b;
   --non-spectrum-dark-gray: #2c2c2c;
+  --non-spectrum-slate-gray: #363636;
   --non-spectrum-charcoal-gray: #505050;
   --non-spectrum-graphite-gray: #4b4b4b;
   --non-spectrurm-whisper-gray: #eaeaea;
@@ -330,12 +331,13 @@
   --non-spectrum-silver: #f5f5f5;
   --non-spectrum-neo-blue: #0265dc;
   --non-spectrum-royal-blue: #0d66d0;
+  --non-spectrum-azure-blue: #378ef0;
+  --non-spectrum-bright-blue: #3B63FB;
   --non-spectrum-light-coral: #73b53a;
   --non-spectrum-dim-gray: #747474;
   --non-spectrum-dim-orange: #e2a43e;
   --non-spectrum-lime-green: #12805c;
   --non-spectrum-light-cyan: #20a3a8;
-  --non-spectrum-azure-blue: #378ef0;
   --non-spectrum-silver-mist: #d2d2d2;
   --non-spectrum-blue-cobalt: #0364dc;
   --non-spectrum-adobe-red: #f00;
@@ -351,6 +353,8 @@
   --non-spectrum-divider-gray: #e0e0e0;
   --non-spectrum-medium-light-grey: #b7b7b7;
   --non-spectrum-pale-grey-dark: #D9D9D9;
+  --non-spectrum-smoke: #686868;
+  --non-spectrum-pass-green: #2d9d78;
 
   /* Max-width values  */
   --default-max-width: 1280px;

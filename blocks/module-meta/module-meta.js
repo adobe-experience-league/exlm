@@ -6,8 +6,7 @@ export function generateModuleHeaderDOM(block) {
 
     if (i === 0) {
       div.className = 'module-title';
-      const heading = element.querySelector('h1,h2,h3,h4,h5,h6');
-      div.append(heading || element.textContent.trim());
+      div.append(element?.textContent?.trim());
     } else {
       div.append(element);
     }

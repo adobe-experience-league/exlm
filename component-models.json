@@ -7452,39 +7452,6 @@
         "description": "Sets the title for the module."
       },
       {
-        "component": "select",
-        "valueType": "string",
-        "name": "titleType",
-        "value": "h1",
-        "label": "Heading Type",
-        "options": [
-          {
-            "name": "H1",
-            "value": "h1"
-          },
-          {
-            "name": "H2",
-            "value": "h2"
-          },
-          {
-            "name": "H3",
-            "value": "h3"
-          },
-          {
-            "name": "H4",
-            "value": "h4"
-          },
-          {
-            "name": "H5",
-            "value": "h5"
-          },
-          {
-            "name": "H6",
-            "value": "h6"
-          }
-        ]
-      },
-      {
         "component": "richtext",
         "valueType": "string",
         "name": "description",
@@ -7602,6 +7569,143 @@
         "value": "",
         "label": "Quiz Description",
         "description": "Enter the module quiz description"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "pass-page-url",
+        "label": "Quiz pass page url"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "fail-page-url",
+        "label": "Quiz fail page url"
+      }
+    ]
+  },
+  {
+    "id": "quiz-scorecard",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "resultText",
+        "value": "",
+        "label": "Result text",
+        "description": "Result of the quiz scorecard"
+      },
+      {
+        "component": "select",
+        "name": "classes",
+        "value": "pass",
+        "label": "Quiz classes",
+        "description": "Sets whether this is a pass or fail scorecard",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Pass",
+            "value": "pass"
+          },
+          {
+            "name": "Fail",
+            "value": "fail"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description text that appears below the score"
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "fail"]
+        },
+        "component": "select",
+        "name": "cta1_Type",
+        "value": "primary",
+        "label": "First CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "fail"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_linkText",
+        "value": "",
+        "label": "First CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "fail"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_link",
+        "value": "",
+        "label": "First CTA Link",
+        "description": "What link to open when clicking the button."
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "fail"]
+        },
+        "component": "select",
+        "name": "cta2_Type",
+        "value": "secondary",
+        "label": "Second CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "fail"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta2_linkText",
+        "value": "",
+        "label": "Second CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "fail"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta2_link",
+        "value": "",
+        "label": "Second CTA Link",
+        "description": "What link to open when clicking the button."
       }
     ]
   },
@@ -7933,8 +8037,8 @@
         "valueType": "string",
         "name": "skill_track_url",
         "value": "",
-        "label": "Skill Track Page URL",
-        "description": "URL to the Skill track",
+        "label": "Module Page URL",
+        "description": "URL to the Module",
         "validation": {
           "rootPath": "/content/exlm/global/en/courses"
         }
@@ -7992,6 +8096,184 @@
         "value": "",
         "label": "Description",
         "description": "Sets the description for the course. Please keep content brief as it will be limited to 3 lines in display."
+      }
+    ]
+  },
+  {
+    "id": "browse-courses",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the headline for Upcoming events."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "filterLabel",
+        "value": "",
+        "label": "Filter Label",
+        "description": "Sets the text for Products filter label in dropdown."
+      }
+    ]
+  },
+  {
+    "id": "course-completion",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the title for the course completion block."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description for the course completion block."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "shareButtonText",
+        "value": "",
+        "label": "Button Text for Share",
+        "description": "Label for the share button"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "downloadButtonText",
+        "value": "",
+        "label": "Button Text for certificate Download",
+        "description": "Label for the download certificate button"
+      }
+    ]
+  },
+  {
+    "id": "course-recap",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the title for the course summary."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description of course summary from the current module. Make sure all the take aways are mentioned as bullet points."
       }
     ]
   }

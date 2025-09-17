@@ -1,0 +1,62 @@
+.course-recap-wrapper {
+  max-width: 720px;
+}
+
+.course-recap-block {
+  background-color: var(--spectrum-gray-100);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid var(--non-spectrum-unicorn-silver);
+}
+
+.course-recap-title {
+  font-size: 20px;
+  font-weight: 700;
+  padding-bottom: 16px;
+  margin: 0;
+  padding-left: 36px;
+  color: var(--non-spectrum-dark-gray);
+  line-height: 1.5;
+  position: relative;
+}
+
+.course-recap-title > * {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  line-height: inherit;
+}
+
+.course-recap-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  border-bottom: 1px solid var(--non-spectrum-unicorn-silver);
+}
+
+.course-recap-title::before {
+  content: '';
+  position: absolute;
+  margin-top: 3px;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  background-image: url('../../icons/tutorial.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  filter: brightness(0); /* Make the icon black */
+}
+
+.course-recap-list li {
+  position: relative;
+  padding-left: 8px;
+  font-size: 18px;
+}
+
+.course-recap-list li:last-child {
+  margin-bottom: 0;
+}
