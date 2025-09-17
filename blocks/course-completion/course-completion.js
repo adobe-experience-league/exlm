@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/extensions
 import { create as createConfetti } from '../../scripts/confetti/canvas-confetti-1.9.3.module.min.mjs';
+import { htmlToElement } from '../../scripts/scripts.js';
 
 // Constants
 const CONFIG = {
@@ -76,16 +77,16 @@ function createCertContainer() {
 function createContent(children) {
   const [title, description, shareBtn, downloadBtn] = children;
 
-  const container = document.createElement('div');
-  container.classList.add('course-completion-content-container');
-  container.innerHTML = `
-        <h1>${title.textContent}</h1>
-        <p>${description.textContent}</p>
-        <div class="course-completion-button-container">
-            <button class="btn primary">${shareBtn.innerHTML}</button>
-            <button class="btn secondary">${downloadBtn.innerHTML}</button>
-        </div>
-    `;
+  const container = htmlToElement(`
+    <div class="course-completion-content-container">
+      <h1>${title.textContent}</h1>
+      <p>${description.textContent}</p>
+      <div class="course-completion-button-container">
+        <button class="btn primary">${shareBtn.innerHTML}</button>
+        <button class="btn secondary">${downloadBtn.innerHTML}</button>
+      </div>
+    </div>
+  `);
 
   // Add LinkedIn sharing functionality to primary button
   const primaryButton = container.querySelector('.btn.primary');
