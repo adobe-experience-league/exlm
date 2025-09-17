@@ -19,6 +19,7 @@
 
 .browse-courses .browse-card-dropdown > label {
   color: var(--non-spectrum-slate-gray);
+  display: inline-block;
   font-size: var(--spectrum-body-size-100);
   font-weight: var(--font-weight-bold);
 }
