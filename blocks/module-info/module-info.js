@@ -43,7 +43,7 @@ export default async function decorate(block) {
   contentArea.className = 'module-content';
 
   // Title
-  const title = document.createElement('h1');
+  const title = document.createElement('h2');
   title.className = 'module-title';
   title.textContent = stepInfo.moduleHeader;
 
