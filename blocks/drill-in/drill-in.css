@@ -119,7 +119,7 @@
 }
 
 .drill-in-plus-button span {
-  font-size: var(--spectrum-font-size-300);
+  font-size: var(--spectrum-font-size-100);
   line-height: 1;
   display: block;
   color: var(--spectrum-blue-800);
@@ -238,8 +238,20 @@
     display: none;
   }
 
+  .drill-in-plus-button span {
+    font-size: var(--spectrum-font-size-300);
+    transform: translateY(-2px);
+  }
+
   /* Hide mobile popover container on desktop */
   .drill-in-mobile-popover-container {
     display: none;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .drill-in-nav-button:hover,
+  .drill-in-nav-button:focus {
+    color: var(--non-spectrum-web-gray);
   }
 }
