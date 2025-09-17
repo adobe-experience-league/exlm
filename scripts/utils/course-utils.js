@@ -130,7 +130,7 @@ async function extractModuleMeta(fragment) {
   const meta = fragment.querySelector('.module-meta');
   const track = fragment.querySelector('.module');
 
-  const moduleHeader = meta?.children[0]?.innerHTML || '';
+  const moduleHeader = meta?.children[0]?.querySelector('h1, h2, h3, h4, h5, h6')?.outerHTML || '';
   const moduleDescription = meta?.children[1]?.innerHTML || '';
   const moduleRecap = meta?.children[2]?.querySelector('a')?.getAttribute('href') || '';
   const moduleQuiz = meta?.children[3]?.querySelector('a')?.getAttribute('href') || '';
@@ -235,7 +235,7 @@ export async function getmoduleMeta(moduleFragmentUrl) {
 
   const fragment = await fetchModuleFragment(moduleFragmentUrl);
   if (!fragment) return null;
-  meta = await extractModuleMeta(fragment, false);
+  meta = await extractModuleMeta(fragment);
   try {
     sessionStorage.setItem(storageKey, JSON.stringify(meta));
   } catch (e) {
