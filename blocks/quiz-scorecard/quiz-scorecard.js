@@ -50,7 +50,7 @@ export default async function decorate(block) {
         <div class="quiz-scorecard-text">${resultDiv.innerHTML || ''}</div>
         <div class="quiz-scorecard-result">${correctAnswers} ${placeholders?.out || 'out'} ${
           placeholders?.of || 'of'
-        } ${totalQuestions}</div>
+        } ${totalQuestions} ${placeholders?.correct || 'correct'}</div>
         <div class="quiz-scorecard-description">${description}</div>
         ${ctaHTML}
       </div>
