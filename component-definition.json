@@ -1309,7 +1309,7 @@
                   "name": "Module Meta",
                   "model": "module-meta",
                   "title": "Module Title",
-                  "titleType": "h1",
+                  "titleType": "h2",
                   "description": "Module Description",
                   "recap_url": "",
                   "quiz_url": ""
