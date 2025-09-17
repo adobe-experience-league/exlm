@@ -1,9 +1,5 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 
-.section.browse-courses-container {
-  padding-bottom: 0;
-}
-
 .browse-courses .browse-cards-block-header {
   display: flex;
   flex-direction: column;
@@ -19,6 +15,7 @@
 
 .browse-courses .browse-card-dropdown > label {
   color: var(--non-spectrum-slate-gray);
+  display: inline-block;
   font-size: var(--spectrum-body-size-100);
   font-weight: var(--font-weight-bold);
 }
