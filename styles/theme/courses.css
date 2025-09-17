@@ -2,12 +2,9 @@
   --highlight-light-background-color: #fff;
 }
 
-body.courses .section,
-.courses-page-section {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-  max-width: 728px;
+.courses .section,
+.courses-section {
+  max-width: 792px;
   margin: 0 auto;
 }
 
@@ -22,10 +19,6 @@ h6 {
   line-height: normal;
 }
 
-body.courses .module-info-section {
-  border-bottom: 1px solid var(--spectrum-gray-200);
-}
-
-body.courses .section > div:has(> .block) {
+.courses .section > div:has(> .block) {
   width: 100%;
 }
