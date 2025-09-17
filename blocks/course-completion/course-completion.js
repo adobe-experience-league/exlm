@@ -77,7 +77,7 @@ function createCertContainer() {
 function createContent(children) {
   const [title, description, shareBtn, downloadBtn] = children;
 
-  const container = htmlToElement(`
+  const container = shareBtn && downloadBtn && htmlToElement(`
     <div class="course-completion-content-container">
       <h1>${title.textContent}</h1>
       <p>${description.textContent}</p>
