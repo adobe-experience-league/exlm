@@ -2,7 +2,7 @@
   max-width: 800px;
   margin: 0 auto;
   padding: var(--spectrum-spacing-500);
-  border-radius: 8px;
+  border-radius: 16px;
   box-sizing: border-box;
   font-family: var(--body-font-family);
 }
@@ -30,10 +30,6 @@
   --text-color: var(--non-spectrum-dark-gray);
 }
 
-.quiz-scorecard-icon-container {
-  margin-bottom: var(--spectrum-spacing-100);
-}
-
 .quiz-scorecard-icon-container .icon {
   width: 40px;
   height: 40px;
@@ -59,9 +55,9 @@
 .quiz-scorecard-result {
   font-size: var(--spectrum-font-size-1100);
   font-weight: var(--font-weight-bold);
-  margin: var(--spectrum-spacing-100) 0;
   line-height: 1.2;
   color: var(--color);
+  text-transform: lowercase;
 }
 
 /* Score styles */
@@ -85,7 +81,6 @@
   justify-content: center;
   align-items: center;
   gap: var(--spectrum-spacing-200);
-  margin-top: var(--spectrum-spacing-200);
 }
 
 @media (min-width: 900px) {
