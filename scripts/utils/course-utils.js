@@ -130,7 +130,7 @@ async function extractModuleMeta(fragment) {
   const meta = fragment.querySelector('.module-meta');
   const track = fragment.querySelector('.module');
 
-  const moduleHeader = meta?.children[0]?.querySelector('h1, h2, h3, h4, h5, h6')?.outerHTML || '';
+  const moduleHeader = meta?.children[0]?.textContent?.trim() || '';
   const moduleDescription = meta?.children[1]?.innerHTML || '';
   const moduleRecap = meta?.children[2]?.querySelector('a')?.getAttribute('href') || '';
   const moduleQuiz = meta?.children[3]?.querySelector('a')?.getAttribute('href') || '';

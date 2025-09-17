@@ -43,9 +43,9 @@ export default async function decorate(block) {
   contentArea.className = 'module-content';
 
   // Title
-  const title = document.createElement('div');
+  const title = document.createElement('span');
   title.className = 'module-title';
-  title.innerHTML = stepInfo.moduleHeader;
+  title.textContent = stepInfo.moduleHeader;
 
   // Progress section
   const progressSection = document.createElement('div');
