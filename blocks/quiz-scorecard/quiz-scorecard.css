@@ -1,0 +1,95 @@
+.quiz-scorecard {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--spectrum-spacing-500);
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-family: var(--body-font-family);
+}
+
+.quiz-scorecard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spectrum-spacing-200);
+}
+
+/* Pass/Fail specific styles */
+.quiz-scorecard.pass {
+  border: 2px solid var(--non-spectrum-pass-green);
+
+  --color: var(--non-spectrum-pass-green);
+  --text-color: var(--non-spectrum-dark-gray);
+}
+
+.quiz-scorecard.fail {
+  border: 2px solid var(--non-spectrum-adobe-dark-red);
+
+  --color: var(--non-spectrum-adobe-dark-red);
+  --text-color: var(--non-spectrum-dark-gray);
+}
+
+.quiz-scorecard-icon-container {
+  margin-bottom: var(--spectrum-spacing-100);
+}
+
+.quiz-scorecard-icon-container .icon {
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+}
+
+.quiz-scorecard-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spectrum-spacing-100);
+  width: 100%;
+}
+
+.quiz-scorecard-text {
+  font-size: var(--spectrum-font-size-100);
+  margin: 0;
+  font-weight: var(--font-weight-normal);
+  color: var(--text-color);
+}
+
+/* Quiz result styles */
+.quiz-scorecard-result {
+  font-size: var(--spectrum-font-size-1100);
+  font-weight: var(--font-weight-bold);
+  margin: var(--spectrum-spacing-100) 0;
+  line-height: 1.2;
+  color: var(--color);
+}
+
+/* Score styles */
+.quiz-scorecard-score {
+  font-size: var(--spectrum-font-size-600);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+  line-height: 1.2;
+  color: var(--color);
+}
+
+.quiz-scorecard-description {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--spectrum-font-size-300);
+  line-height: 150%;
+}
+
+.quiz-scorecard-cta-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spectrum-spacing-200);
+  margin-top: var(--spectrum-spacing-200);
+}
+
+@media (min-width: 900px) {
+  .quiz-scorecard {
+    width: 728px;
+  }
+}
