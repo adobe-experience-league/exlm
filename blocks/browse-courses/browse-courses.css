@@ -1,9 +1,5 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 
-.section.browse-courses-container {
-  padding-bottom: 0;
-}
-
 .browse-courses .browse-cards-block-header {
   display: flex;
   flex-direction: column;
