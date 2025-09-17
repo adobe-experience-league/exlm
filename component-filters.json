@@ -83,6 +83,7 @@
       "flip-card",
       "course-breakdown",
       "course-marquee",
+      "course-completion",
       "browse-courses",
       "course-recap",
       "quiz-scorecard"
@@ -285,6 +286,7 @@
       "flip-card",
       "course-breakdown",
       "course-marquee",
+      "course-completion",
       "course-recap",
       "browse-courses",
       "quiz-scorecard"
