@@ -4519,6 +4519,64 @@
         "extensionId": "exl-ue-extension"
       },
       {
+        "component": "custom-aem-tag",
+        "name": "tq-subfeatures",
+        "label": "Sub Feature(s)",
+        "valueType": "string",
+        "description": "Sets the subfeature(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "subfeature"
+            }
+          }
+        },
+        "options": {
+          "dependentField": {
+            "name": "tq-features",
+            "taxonomyType": "feature"
+          },
+          "requiredTagsToEnable": ["tq-features"]
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-industries",
+        "label": "Industries",
+        "valueType": "string",
+        "description": "Sets the industries in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "industry"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-topics",
+        "label": "Topic(s)",
+        "valueType": "string",
+        "description": "Sets the topic(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "topic"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
         "name": "signout-redirect-url",
