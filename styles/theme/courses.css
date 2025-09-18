@@ -2,7 +2,7 @@
   --highlight-light-background-color: #fff;
 }
 
-.courses .section,
+.courses .section:not(.notification-banner-container),
 .courses-section {
   max-width: 792px;
   margin: 0 auto;
