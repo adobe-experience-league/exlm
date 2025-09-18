@@ -212,10 +212,6 @@ div.marquee-wrapper {
   height: 100%;
 }
 
-body[class^='article-'] .marquee-content-container {
-  background-color: var(--background-color);
-}
-
 @media (min-width: 600px) {
   .section.marquee-container {
     padding: 0 56px;
@@ -545,4 +541,83 @@ body[class^='article-'] .marquee-content-container {
   height: 100%;
   border: none;
   z-index: 10;
+}
+
+/* Course Marquee */
+
+.course-hub .marquee-content-container {
+  position: relative;
+  width: 100%;
+  height: 500px; /* adjust as needed */
+  overflow: hidden;
+}
+
+.course-hub .marquee-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; /* make sure background stays behind text */
+}
+
+.course-hub .marquee-background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.course-hub .marquee-foreground {
+  position: relative;
+  z-index: 1; /* ensures text is above the image */
+  color: white;
+}
+
+/* Tablet view */
+@media (max-width: 900px) {
+  .course-hub .marquee-content-container {
+    height: auto; /* let content decide height */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .course-hub .marquee-background {
+    position: relative; /* image stacks naturally */
+    height: 300px; /* smaller height */
+  }
+
+  .course-hub .marquee-background img {
+    height: 100%;
+    object-fit: cover;
+    object-position: center right;
+  }
+
+  .course-hub .marquee-foreground {
+    position: relative;
+    background: #000; /* black background for readability */
+    color: white;
+    padding: 20px;
+    max-width: 100%;
+  }
+}
+
+/* Mobile view */
+@media (max-width: 600px) {
+  .course-hub .marquee-background {
+    height: 250px; /* reduce height further */
+  }
+
+  .course-hub .marquee-foreground {
+    padding: 16px;
+    font-size: 0.9rem;
+  }
+
+  .course-hub .marquee-background img {
+    object-position: center right; /* center horizontally, show top part on mobile */
+  }
+}
+
+body[class^='article-'] .marquee-content-container {
+  background-color: var(--background-color);
 }
