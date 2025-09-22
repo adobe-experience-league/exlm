@@ -1,4 +1,5 @@
-.courses {
+.courses.course-module,
+.courses.course-step {
   --highlight-light-background-color: #fff;
 }
 
