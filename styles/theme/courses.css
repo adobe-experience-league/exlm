@@ -1,20 +1,15 @@
-.courses {
+.courses.course-module,
+.courses.course-step {
   --highlight-light-background-color: #fff;
 }
 
-.courses .section,
+.courses .section:not(.notification-banner-container),
 .courses-section {
   max-width: 792px;
   margin: 0 auto;
 }
 
-.courses p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+.courses :where(h1, h2, h3, h4, h5, h6, p) {
   color: var(--text-color);
   line-height: normal;
 }

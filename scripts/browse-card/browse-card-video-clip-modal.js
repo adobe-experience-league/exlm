@@ -276,7 +276,7 @@ export class BrowseCardVideoClipModal {
 
     // Use ResizeObserver instead of window resize event
     this.resizeObserver = new ResizeObserver(() => this.handleResize());
-    this.resizeObserver.observe(document.documentElement);
+    this.resizeObserver.observe(this.backdrop);
   }
 
   open() {
