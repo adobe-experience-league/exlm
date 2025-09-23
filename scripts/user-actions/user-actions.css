@@ -1,7 +1,6 @@
 .user-actions {
-  align-items: flex-start;
+  align-items: baseline;
   display: flex;
-  flex-wrap: wrap;
 }
 
 .user-actions button {
