@@ -97,8 +97,8 @@ function html(content, placeholders) {
                       </div>
                       <div class="content-info doc-content-info">
                        <label class="step-label">${
-                         placeholders.signupStepProgress
-                           ? `${placeholders.signupStepProgress
+                         placeholders.slidesStepProgress
+                           ? `${placeholders.slidesStepProgress
                                .replace('{}', step.number)
                                .replace('{}', section.steps.length)}`
                            : `Step ${step.number} of ${section.steps.length}`
@@ -150,8 +150,8 @@ function html(content, placeholders) {
                           
                           <div class="content-info slides-content-info">
                             <label class="step-label">${
-                              placeholders.signupStepProgress
-                                ? `${placeholders.signupStepProgress
+                              placeholders.slidesStepProgress
+                                ? `${placeholders.slidesStepProgress
                                     .replace('{}', step.number)
                                     .replace('{}', section.steps.length)}`
                                 : `Step ${step.number} of ${section.steps.length}`
