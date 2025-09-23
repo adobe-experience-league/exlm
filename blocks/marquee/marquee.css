@@ -212,6 +212,12 @@ div.marquee-wrapper {
   height: 100%;
 }
 
+/* Course Hub Marquee */
+
+.course-hub .marquee-content-container {
+  flex-direction: column;
+}
+
 body[class^='article-'] .marquee-content-container {
   background-color: var(--background-color);
 }
