@@ -204,18 +204,22 @@ export default function decorate(block) {
         { once: true },
       );
 
-      const trackingHandler = () => {
+      const trackingHandler = (event) => {
+        const isResizeAction = event?.detail?.callFrom === 'resize';
+        if (isResizeAction) {
+          return;
+        }
         const searchState = searchInterface.engine?.state;
         const trackingData = searchState && generateAdobeTrackingData(searchState);
         if (trackingData) {
           if (!eventFiredOnPageLoad) {
             eventFiredOnPageLoad = true;
-            const event = new CustomEvent(CUSTOM_EVENTS.PAGE_LOAD_EVENT, {
+            const pageloadEvent = new CustomEvent(CUSTOM_EVENTS.PAGE_LOAD_EVENT, {
               detail: {
                 trackingData,
               },
             });
-            document.dispatchEvent(event);
+            document.dispatchEvent(pageloadEvent);
           } else {
             const { lang } = getPathDetails();
             pushPageDataLayer(lang, trackingData);
