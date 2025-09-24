@@ -1,5 +1,7 @@
 import { fetchLanguagePlaceholders } from '../scripts.js';
 
+// Module utils
+
 /**
  * Extracts the module fragment URL from the current page path.
  * For a path like /{locale}/courses/{collection}/{fragment}/{step}/...,
@@ -180,6 +182,25 @@ async function extractModuleMeta(fragment) {
   };
 }
 
+/**
+ * Gets current step information for the module with caching support.
+ * Retrieves module metadata from cache or fetches from server if not cached.
+ * Updates step navigation metadata for the current page.
+ *
+ * @returns {Promise<Object|null>} Module metadata object containing:
+ *   - {string} moduleHeader - Title of the module
+ *   - {string} moduleDescription - Description HTML content
+ *   - {string} moduleRecap - URL of the recap step
+ *   - {string} moduleQuiz - URL of the quiz step
+ *   - {Array<{name: string, url: string}>} moduleSteps - Array of step objects
+ *   - {number} totalSteps - Total number of steps in the track
+ *   - {number} currentStep - Index of the current step (1-based)
+ *   - {string|null} nextStep - URL of the next step (null if none)
+ *   - {string|null} prevStep - URL of the previous step (null if none)
+ *   - {string} courseUrl - Base URL of the course
+ *   - {boolean} isRecap - Whether current page is the recap step
+ *   - {boolean} isQuiz - Whether current page is the quiz step
+ */
 export async function getCurrentStepInfo() {
   const fragUrl = getModuleFragmentUrl();
   if (!fragUrl) return null;
@@ -215,6 +236,19 @@ export async function getCurrentStepInfo() {
   return { ...meta, ...getStepMeta(meta?.moduleSteps, meta?.moduleRecap, meta?.moduleQuiz) };
 }
 
+/**
+ * Gets module metadata for a specific module fragment URL with caching support.
+ * Retrieves cached metadata or fetches from server if not cached.
+ *
+ * @param {string} moduleFragmentUrl - The module fragment URL to get metadata for
+ * @returns {Promise<Object|null>} Module metadata object containing:
+ *   - {string} moduleHeader - Title of the module
+ *   - {string} moduleDescription - Description HTML content
+ *   - {string} moduleRecap - URL of the recap step
+ *   - {string} moduleQuiz - URL of the quiz step
+ *   - {Array<{name: string, url: string}>} moduleSteps - Array of step objects
+ *   - {number} totalSteps - Total number of steps in the track
+ */
 export async function getmoduleMeta(moduleFragmentUrl) {
   if (!moduleFragmentUrl) return null;
   const storageKey = `module-meta:${moduleFragmentUrl}`;
@@ -236,6 +270,122 @@ export async function getmoduleMeta(moduleFragmentUrl) {
   const fragment = await fetchModuleFragment(moduleFragmentUrl);
   if (!fragment) return null;
   meta = await extractModuleMeta(fragment);
+  try {
+    sessionStorage.setItem(storageKey, JSON.stringify(meta));
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(e);
+  }
+  return meta;
+}
+
+// Course utils
+
+/**
+ * Extracts the course fragment URL from the current page path.
+ * For a path like /{locale}/courses/{collection}/{fragment}/{step}/...,
+ * returns /{locale}/courses/{collection}
+ *
+ * @returns {string|null} The course fragment URL or null if not found
+ */
+export function getCourseFragmentUrl() {
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  const idx = parts.indexOf('courses');
+  if (idx > 0 && parts.length > idx + 1) {
+    const locale = parts[idx - 1];
+    const collection = parts[idx + 1];
+    return `/${locale}/courses/${collection}`;
+  }
+  return null;
+}
+
+/**
+ * Fetches the course fragment HTML content from the server.
+ *
+ * @param {string} courseFragmentUrl - The course fragment URL to fetch
+ * @returns {Promise<Document|null>} Parsed HTML document or null if fetch fails
+ */
+export async function fetchCourseFragment(courseFragmentUrl) {
+  if (!courseFragmentUrl) return null;
+  const fragmentUrl = `${courseFragmentUrl}.plain.html`;
+  const res = await fetch(fragmentUrl);
+  if (!res.ok) {
+    return null;
+  }
+  const text = await res.text();
+  const parser = new DOMParser();
+  return parser.parseFromString(text, 'text/html');
+}
+
+/**
+ * Extracts metadata from a course fragment DOM element.
+ * Parses the fragment to extract course information including heading,
+ * description, total time, and module URLs.
+ *
+ * @param {Document} fragment - Parsed HTML document containing course data
+ * @returns {Promise<Object>} Course metadata object containing:
+ *   - {string} heading - Course title
+ *   - {string} description - Course description HTML content
+ *   - {string} totalTime - Total course duration
+ *   - {Array<string>} modules - Array of module URLs
+ */
+export async function extractCourseMeta(fragment) {
+  if (!fragment) return {};
+
+  const marqueeMeta = fragment.querySelector('.course-marquee');
+  const heading = marqueeMeta?.children[0]?.textContent?.trim() || '';
+  const description = marqueeMeta?.children[1]?.innerHTML || '';
+  const courseBreakdownMeta = fragment.querySelector('.course-breakdown');
+  const totalTime = courseBreakdownMeta?.children[1]?.textContent?.trim() || '';
+  const modules =
+    courseBreakdownMeta?.children.length > 4
+      ? [...courseBreakdownMeta.children].slice(4).map((child) => child.querySelector('a')?.getAttribute('href') || '')
+      : [];
+  return {
+    heading,
+    description,
+    totalTime,
+    modules,
+  };
+}
+
+/**
+ * Gets current course metadata with caching support.
+ * Retrieves course metadata from cache or fetches from server if not cached.
+ *
+ * @param {string} [courseFragmentUrl] - The course fragment URL to get metadata for.
+ *                                      If not provided, uses getCourseFragmentUrl()
+ * @returns {Promise<Object|null>} Course metadata object containing:
+ *   - {string} heading - Course title
+ *   - {string} description - Course description HTML content
+ *   - {string} totalTime - Total course duration
+ *   - {Array<string>} modules - Array of module URLs
+ *   - {string} url - The course fragment URL
+ */
+export async function getCurrentCourseMeta(courseFragmentUrl = getCourseFragmentUrl()) {
+  if (!courseFragmentUrl) return null;
+  const storageKey = `course-meta:${courseFragmentUrl}`;
+  let meta = null;
+
+  try {
+    const cached = sessionStorage.getItem(storageKey);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (parsed && Array.isArray(parsed?.modules)) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(e);
+  }
+
+  const fragment = await fetchCourseFragment(courseFragmentUrl);
+  if (!fragment) return null;
+
+  meta = await extractCourseMeta(fragment);
+  meta.url = courseFragmentUrl;
+
   try {
     sessionStorage.setItem(storageKey, JSON.stringify(meta));
   } catch (e) {
