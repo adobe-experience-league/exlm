@@ -109,7 +109,7 @@ export default function decorate(block) {
       atomicSortDropdownHandler(block.querySelector('atomic-sort-dropdown'));
       atomicFacetManagerHandler(block.querySelector('atomic-facet-manager'));
       atomicNotificationHandler(block.querySelector('atomic-notifications'));
-      atomicQuerySummaryHandler(block.querySelector('atomic-query-summary'), placeholders);
+      atomicQuerySummaryHandler(block, placeholders);
       atomicBreadBoxHandler(block.querySelector('atomic-breadbox'));
       atomicPagerHandler(block.querySelector('atomic-pager'));
       atomicResultPageHandler(block.querySelector('atomic-results-per-page'));
