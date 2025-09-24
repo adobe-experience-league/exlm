@@ -11,12 +11,13 @@ import atomicPagerHandler from './components/atomic-search-pager.js';
 import atomicNoResultHandler from './components/atomic-search-no-results.js';
 import atomicNotificationHandler from './components/atomic-search-notification.js';
 import getCoveoAtomicMarkup from './components/atomic-search-template.js';
-import { CUSTOM_EVENTS, debounce } from './components/atomic-search-utils.js';
+import { CUSTOM_EVENTS, debounce, generateAdobeTrackingData } from './components/atomic-search-utils.js';
 import { isMobile } from '../header/header-utils.js';
 import createAtomicSkeleton from './components/atomic-search-skeleton.js';
 import atomicSearchBoxHandler from './components/atomic-search-box.js';
 import atomicResultPageHandler from './components/atomic-search-results-per-page.js';
 import loadCoveoToken from '../../scripts/data-service/coveo/coveo-token-service.js';
+import { pushPageDataLayer } from '../../scripts/analytics/lib-analytics.js';
 
 let placeholders = {};
 
@@ -132,6 +133,7 @@ export default function decorate(block) {
       atomicNoResultHandler(block, placeholders);
       commonActionHandler();
       decorateIcons(block);
+      let eventFiredOnPageLoad = false;
 
       const onResize = () => {
         const isMobileView = isMobile();
@@ -202,6 +204,29 @@ export default function decorate(block) {
         { once: true },
       );
 
+      const trackingHandler = (event) => {
+        const isResizeAction = event?.detail?.callFrom === 'resize';
+        if (isResizeAction) {
+          return;
+        }
+        const searchState = searchInterface.engine?.state;
+        const trackingData = searchState && generateAdobeTrackingData(searchState);
+        if (trackingData) {
+          if (!eventFiredOnPageLoad) {
+            eventFiredOnPageLoad = true;
+            const pageloadEvent = new CustomEvent(CUSTOM_EVENTS.PAGE_LOAD_EVENT, {
+              detail: {
+                trackingData,
+              },
+            });
+            document.dispatchEvent(pageloadEvent);
+          } else {
+            const { lang } = getPathDetails();
+            pushPageDataLayer(lang, trackingData);
+          }
+        }
+      };
+
       document.addEventListener(CUSTOM_EVENTS.NO_RESULT_FOUND, () => {
         const skeleton = block.querySelector('.atomic-search-load-skeleton');
         if (skeleton) {
@@ -211,6 +236,7 @@ export default function decorate(block) {
         if (baseSummaryQueryEl) {
           baseSummaryQueryEl.dataset.observed = '';
         }
+        trackingHandler();
       });
 
       document.addEventListener(CUSTOM_EVENTS.RESULT_FOUND, () => {
@@ -221,6 +247,8 @@ export default function decorate(block) {
           commonActionHandler();
         }, 200);
       });
+
+      document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, trackingHandler);
     });
   };
 
