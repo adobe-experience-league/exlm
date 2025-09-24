@@ -378,6 +378,7 @@ div.marquee-wrapper {
 
   .course-hub .marquee .marquee-subject img {
     object-fit: contain;
+    float: left;
   }
 
   .marquee-background-fill {
