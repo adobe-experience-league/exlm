@@ -6,7 +6,7 @@ import { getCurrentStepInfo, getCurrentCourseMeta } from '../utils/course-utils.
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 export const search = window.location.pathname === '/search.html';
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
-export const courses = window.location.pathname.indexOf('/courses') !== -1;
+export const courses = document.querySelector('meta[name="theme"]')?.content.includes('course-') || false;
 export const browse = document.querySelector('meta[name="theme"]')?.content.includes('browse-') || false;
 export const browseProduct = document.querySelector('meta[name="theme"]')?.content.includes('browse-product') || false;
 export const playlist = window.location.pathname.indexOf('/playlists') !== -1;
