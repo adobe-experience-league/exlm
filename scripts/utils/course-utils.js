@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-cycle
 import { fetchLanguagePlaceholders } from '../scripts.js';
 
 // Module utils
