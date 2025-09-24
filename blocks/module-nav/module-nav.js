@@ -1,4 +1,4 @@
-import { getCurrentStepInfo, getCurrentCourseMeta, getCourseFragmentUrl } from '../../scripts/utils/course-utils.js';
+import { getCurrentStepInfo, getCurrentCourseMeta } from '../../scripts/utils/course-utils.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
 
@@ -146,8 +146,6 @@ export default async function decorate(block) {
                   // eslint-disable-next-line no-console
                   console.error('Error navigating to next module:', error);
                 });
-
-              return;
             }
           }
         }
