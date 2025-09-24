@@ -1,9 +1,11 @@
-import { getCurrentStepInfo } from '../../scripts/utils/course-utils.js';
+import { getCurrentStepInfo, getCurrentCourseMeta, getCourseFragmentUrl } from '../../scripts/utils/course-utils.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
 
 export default async function decorate(block) {
   const stepInfo = await getCurrentStepInfo();
+  const courseInfo = await getCurrentCourseMeta();
+
   let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();
@@ -99,4 +101,57 @@ export default async function decorate(block) {
 
   // Add to block
   block.appendChild(container);
+
+  const allButtons = block.querySelectorAll('.module-nav-button');
+  allButtons.forEach((button) => {
+    button.addEventListener('click', (e) => {
+      // Handle navigation to next module when on last step of current module
+      const buttonText = button.textContent.trim();
+      const nextText = placeholders['course-next'] || 'Next';
+      const isLastStep = currentStepIndex === stepInfo.moduleSteps.length - 1;
+      if (buttonText === nextText && isLastStep) {
+        e.preventDefault();
+
+        if (courseInfo && courseInfo.modules && courseInfo.modules.length > 0) {
+          // Extract the current module path from the URL
+          const pathParts = window.location.pathname.split('/');
+          const currentModulePath = pathParts.length > 4 ? pathParts[4] : '';
+
+          if (currentModulePath) {
+            const currentModuleIndex = courseInfo.modules.findIndex((url) => url.includes(currentModulePath));
+
+            // If there's a next module, navigate to its first step
+            if (currentModuleIndex !== -1 && currentModuleIndex < courseInfo.modules.length - 1) {
+              const nextModuleUrl = courseInfo.modules[currentModuleIndex + 1];
+
+              // Fetch the next module's metadata to find the first step
+              fetch(`${nextModuleUrl}.plain.html`)
+                .then((response) => response.text())
+                .then((html) => {
+                  const parser = new DOMParser();
+                  const doc = parser.parseFromString(html, 'text/html');
+
+                  // Find the first step link in the module
+                  const moduleElement = doc.querySelector('.module');
+                  if (moduleElement && moduleElement.children.length > 0) {
+                    const firstStepLink = moduleElement.children[0].querySelector('a');
+                    const firstStepUrl = firstStepLink?.getAttribute('href');
+
+                    if (firstStepUrl) {
+                      window.location.href = firstStepUrl;
+                    }
+                  }
+                })
+                .catch((error) => {
+                  // eslint-disable-next-line no-console
+                  console.error('Error navigating to next module:', error);
+                });
+
+              return;
+            }
+          }
+        }
+      }
+    });
+  });
 }
