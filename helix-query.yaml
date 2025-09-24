@@ -395,6 +395,18 @@ indices:
         select: head > meta[name="level"]
         value: |
           attribute(el, 'content')
+      coveoSubFeature:
+        select: head > meta[name="sub-feature"]
+        value: |
+          attribute(el, 'content')
+      coveoIndustry:
+        select: head > meta[name="industry"]
+        value: |
+          attribute(el, 'content')
+      coveoTopic:
+        select: head > meta[name="topic"]
+        value: |
+          attribute(el, 'content')
 
   course-fr:
     <<: *base-course
