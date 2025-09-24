@@ -1,6 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { getPathDetails, fetchGlobalFragment, htmlToElement } from '../../scripts/scripts.js';
-import LanguageBlock from '../language/language.js';
 
 /** @param {HTMLElement} block  */
 const decorateFooterLinks = (block) => {
@@ -66,13 +65,10 @@ function extractDomain(domain) {
 }
 
 async function decorateSocial(footer) {
-  // create the divs to acomodate the social icons and the language selector
-  const languageSelector = footer.querySelector('.language-selector');
+  // create the divs to acomodate the social icons
   const groupDiv = document.createElement('div');
   groupDiv.classList.add('footer-lang-social');
-  groupDiv.appendChild(languageSelector);
 
-  // append languageBlock to footer
   const footerLastRow = document.createElement('div');
   footerLastRow.classList.add('footer-last-row');
   footerLastRow.appendChild(groupDiv);
@@ -147,20 +143,6 @@ function decorateCopyrightsMenu(footer) {
   decorateIcons(footerRights);
 }
 
-function decorateLanguageSelector(footer, lang) {
-  const languageSelector = footer.querySelector('.language-selector');
-  const languageBlock = new LanguageBlock({
-    position: 'top',
-    popoverId: 'language-picker-popover-footer',
-    block: languageSelector,
-    selectedLanguage: lang,
-  });
-  languageSelector.appendChild(languageBlock);
-  const languageSelectorDiv = languageSelector.querySelector('div');
-  const languageBlockButton = languageBlock.querySelector('.language-selector-button');
-  languageBlockButton.appendChild(languageSelectorDiv);
-}
-
 function handleSocialIconStyles(footer) {
   Array.from(footer.querySelectorAll('.social a')).forEach((anchor) => {
     const svg = anchor.querySelector('svg');
@@ -204,6 +186,6 @@ export default async function decorate(block) {
     await decorateMenu(footer);
     handleSocialIconStyles(footer);
     decorateCopyrightsMenu(footer);
-    decorateLanguageSelector(footer, lang);
+    footer?.querySelector('.language-selector')?.remove();
   }
 }
