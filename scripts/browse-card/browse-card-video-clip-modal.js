@@ -1,5 +1,6 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
+import { pushVideoEvent } from '../analytics/lib-analytics.js';
 
 export const isCompactUIMode = () => window.matchMedia('(max-width: 1023px)').matches;
 
@@ -274,7 +275,22 @@ export class BrowseCardVideoClipModal {
     document.addEventListener('keydown', keyHandler);
     this.eventListeners.push({ element: document, type: 'keydown', handler: keyHandler });
 
-    // Use ResizeObserver instead of window resize event
+    const messageHandler = (event) => {
+      if (event.data?.type === 'mpcStatus') {
+        if (event.data.state === 'play') {
+          pushVideoEvent({
+            title: this.model.title || '',
+            description: this.model.description || '',
+            url: this.model.videoURL || '',
+            duration: this.model.duration || '',
+          });
+        }
+      }
+    };
+
+    window.addEventListener('message', messageHandler, false);
+    this.eventListeners.push({ element: window, type: 'message', handler: messageHandler });
+
     this.resizeObserver = new ResizeObserver(() => this.handleResize());
     this.resizeObserver.observe(this.backdrop);
   }
