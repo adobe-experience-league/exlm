@@ -1,7 +1,47 @@
-import { getCurrentStepInfo, getCurrentCourseMeta } from '../../scripts/utils/course-utils.js';
+import {
+  getCurrentStepInfo,
+  getCurrentCourseMeta,
+  isLastStep,
+  getNextModuleFirstStep,
+} from '../../scripts/utils/course-utils.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
 
+async function handleQuizNextButton(e) {
+  e.preventDefault();
+
+  // Disable the button immediately to prevent multiple submissions
+  e.target.classList.add('disabled');
+
+  // Call the quiz submission handler if it exists
+  const handler = submitQuizHandler();
+  if (handler) {
+    const success = await handler();
+
+    if (success) {
+      // Check if this is the last step in the module
+      if (await isLastStep()) {
+        // Get the first step of the next module
+        const nextModuleFirstStepUrl = await getNextModuleFirstStep();
+        if (nextModuleFirstStepUrl) {
+          e.target.href = nextModuleFirstStepUrl;
+        }
+      }
+    } else if (!success) {
+      // re-enable submit button after answering all questions
+      const inputs = document.querySelectorAll('.question input[type="checkbox"], .question input[type="radio"]');
+      inputs.forEach((input) => {
+        input.addEventListener(
+          'change',
+          () => {
+            e.target.classList.remove('disabled');
+          },
+          { once: true },
+        );
+      });
+    }
+  }
+}
 export default async function decorate(block) {
   const stepInfo = await getCurrentStepInfo();
   const courseInfo = await getCurrentCourseMeta();
@@ -60,39 +100,31 @@ export default async function decorate(block) {
     secondLink.classList.add('module-nav-submit');
     secondLink.textContent = placeholders['course-submit-answers'] || 'Submit Answers';
     secondLink.href = stepInfo.nextStep || '#';
-    secondLink.addEventListener('click', async (e) => {
-      e.preventDefault();
-
-      // Disable the button immediately to prevent multiple submissions
-      secondLink.classList.add('disabled');
-
-      // Call the quiz submission handler if it exists
-      const handler = submitQuizHandler();
-      if (handler) {
-        const success = await handler();
-
-        if (success && stepInfo.nextStep) {
-          window.location.href = stepInfo.nextStep;
-        } else if (!success) {
-          // re-enable submit button after answering all questions
-          const inputs = document.querySelectorAll('.question input[type="checkbox"], .question input[type="radio"]');
-          inputs.forEach((input) => {
-            input.addEventListener(
-              'change',
-              () => {
-                secondLink.classList.remove('disabled');
-              },
-              { once: true },
-            );
-          });
-        }
-      }
-    });
+    secondLink.addEventListener('click', handleQuizNextButton, { once: true });
   } else {
     // Next link
     secondLink.classList.add('module-nav-next');
     secondLink.textContent = placeholders['course-next'] || 'Next';
     secondLink.href = stepInfo.nextStep || '#';
+  }
+
+  // Check if this is the last step
+  if (!isQuiz && (await isLastStep())) {
+    // Set up the link to navigate to the first step of the next module
+    secondLink.addEventListener(
+      'click',
+      async (e) => {
+        e.preventDefault();
+
+        // Get the first step of the next module
+        const nextModuleFirstStepUrl = await getNextModuleFirstStep();
+
+        if (nextModuleFirstStepUrl) {
+          window.location.href = nextModuleFirstStepUrl;
+        }
+      },
+      { once: true },
+    );
   }
 
   // Add links to container
@@ -101,55 +133,4 @@ export default async function decorate(block) {
 
   // Add to block
   block.appendChild(container);
-
-  const allButtons = block.querySelectorAll('.module-nav-button');
-  allButtons.forEach((button) => {
-    button.addEventListener('click', (e) => {
-      // Handle navigation to next module when on last step of current module
-      const buttonText = button.textContent.trim();
-      const nextText = placeholders['course-next'] || 'Next';
-      const isLastStep = currentStepIndex === stepInfo.moduleSteps.length - 1;
-      if (buttonText === nextText && isLastStep) {
-        e.preventDefault();
-
-        if (courseInfo && courseInfo.modules && courseInfo.modules.length > 0) {
-          // Extract the current module path from the URL
-          const pathParts = window.location.pathname.split('/');
-          const currentModulePath = pathParts.length > 4 ? pathParts[4] : '';
-
-          if (currentModulePath) {
-            const currentModuleIndex = courseInfo.modules.findIndex((url) => url.includes(currentModulePath));
-
-            // If there's a next module, navigate to its first step
-            if (currentModuleIndex !== -1 && currentModuleIndex < courseInfo.modules.length - 1) {
-              const nextModuleUrl = courseInfo.modules[currentModuleIndex + 1];
-
-              // Fetch the next module's metadata to find the first step
-              fetch(`${nextModuleUrl}.plain.html`)
-                .then((response) => response.text())
-                .then((html) => {
-                  const parser = new DOMParser();
-                  const doc = parser.parseFromString(html, 'text/html');
-
-                  // Find the first step link in the module
-                  const moduleElement = doc.querySelector('.module');
-                  if (moduleElement && moduleElement.children.length > 0) {
-                    const firstStepLink = moduleElement.children[0].querySelector('a');
-                    const firstStepUrl = firstStepLink?.getAttribute('href');
-
-                    if (firstStepUrl) {
-                      window.location.href = firstStepUrl;
-                    }
-                  }
-                })
-                .catch((error) => {
-                  // eslint-disable-next-line no-console
-                  console.error('Error navigating to next module:', error);
-                });
-            }
-          }
-        }
-      }
-    });
-  });
 }

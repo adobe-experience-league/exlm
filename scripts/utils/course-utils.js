@@ -394,3 +394,67 @@ export async function getCurrentCourseMeta(courseFragmentUrl = getCourseFragment
   }
   return meta;
 }
+
+/**
+ * Checks if the current step is the last step in the module.
+ *
+ * @param {Object} stepInfo - The step information object from getCurrentStepInfo()
+ * @returns {boolean} True if current step is the last step, false otherwise
+ */
+export async function isLastStep() {
+  const stepInfo = await getCurrentStepInfo();
+  if (!stepInfo || !stepInfo.moduleSteps || !Array.isArray(stepInfo.moduleSteps)) {
+    return false;
+  }
+
+  const currentStepIndex = stepInfo.moduleSteps.findIndex((step) => step.url === window.location.pathname);
+  return currentStepIndex === stepInfo.moduleSteps.length - 1;
+}
+
+/**
+ * Gets the URL of the first step of the next module.
+ *
+ * @returns {Promise<string|null>} URL of the first step of the next module, or null if there is no next module
+ */
+export async function getNextModuleFirstStep() {
+  const courseInfo = await getCurrentCourseMeta();
+  if (!courseInfo || !courseInfo.modules || !Array.isArray(courseInfo.modules) || courseInfo.modules.length === 0) {
+    return null;
+  }
+
+  // Extract the current module path from the URL
+  const pathParts = window.location.pathname.split('/');
+  const currentModulePath = pathParts.length > 4 ? pathParts[4] : '';
+
+  if (!currentModulePath) {
+    return null;
+  }
+
+  // Find the current module index
+  const currentModuleIndex = courseInfo.modules.findIndex((url) => url.includes(currentModulePath));
+
+  // If there's a next module, get its first step
+  if (currentModuleIndex !== -1 && currentModuleIndex < courseInfo.modules.length - 1) {
+    const nextModuleUrl = courseInfo.modules[currentModuleIndex + 1];
+
+    try {
+      // Fetch the next module's metadata to find the first step
+      const response = await fetch(`${nextModuleUrl}.plain.html`);
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      // Find the first step link in the module
+      const moduleElement = doc.querySelector('.module');
+      if (moduleElement && moduleElement.children.length > 0) {
+        const firstStepLink = moduleElement.children[0].querySelector('a');
+        return firstStepLink?.getAttribute('href') || null;
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error navigating to next module:', error);
+    }
+  }
+
+  return null;
+}
