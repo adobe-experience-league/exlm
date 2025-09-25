@@ -94,7 +94,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     const tags = createTags(result, contentType?.toLowerCase());
     let url = parentResult?.clickUri || parentResult?.uri || clickUri || uri || '';
     url = rewriteDocsPath(url);
-    const contentTypeTitleCase = convertToTitleCase(contentType?.toLowerCase());
+    const contentTypeTitleCase = convertToTitleCase(contentType?.toLowerCase()).replace(/\s+/g, '');
 
     return {
       ...browseCardDataModel,
