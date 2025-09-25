@@ -3,7 +3,6 @@ import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
 
 export default async function decorate(block) {
-  const stepInfo = await getCurrentStepInfo();
   let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();
@@ -11,6 +10,8 @@ export default async function decorate(block) {
     // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
   }
+
+  const stepInfo = await getCurrentStepInfo(placeholders);
 
   if (!stepInfo) return;
 
