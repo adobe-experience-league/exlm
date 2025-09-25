@@ -1,9 +1,4 @@
-import {
-  getCurrentStepInfo,
-  getCurrentCourseMeta,
-  isLastStep,
-  getNextModuleFirstStep,
-} from '../../scripts/utils/course-utils.js';
+import { getCurrentStepInfo, isLastStep, getNextModuleFirstStep } from '../../scripts/utils/course-utils.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
 
