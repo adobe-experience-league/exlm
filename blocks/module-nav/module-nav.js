@@ -44,7 +44,6 @@ async function handleQuizNextButton(e) {
 }
 export default async function decorate(block) {
   const stepInfo = await getCurrentStepInfo();
-  const courseInfo = await getCurrentCourseMeta();
 
   let placeholders = {};
   try {
