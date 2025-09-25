@@ -4,6 +4,12 @@
   background: transparent;
   box-shadow: none;
   margin-top: var(--spectrum-spacing-300, 24px);
+
+  /* BugFix UGP-13740 Japanese text handling */
+  :lang(ja) {
+    word-break: normal;
+    line-break: strict;
+  }
 }
 
 /* grid layout */
