@@ -10,15 +10,15 @@
 export function extractCourseModuleIds(url = window.location.pathname) {
   const segments = url.split('/').filter(Boolean);
   const coursesIndex = segments.indexOf('courses');
-  
+
   if (coursesIndex === -1 || coursesIndex >= segments.length - 1) {
     return { courseId: null, moduleId: null };
   }
-  
+
   const courseId = segments[coursesIndex + 1];
   const moduleSegment = segments[coursesIndex + 2];
   const moduleId = moduleSegment ? `${courseId}/${moduleSegment}` : null;
-  
+
   return { courseId, moduleId };
 }
 

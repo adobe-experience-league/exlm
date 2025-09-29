@@ -1,6 +1,7 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { getModuleMeta } from '../../scripts/courses/course-utils.js';
+import { MODULE_STATUS } from '../../scripts/courses/course-profile.js';
 
 // Function to check if a module is completed based on query parameter
 function isModuleCompleted(moduleIndex) {
@@ -14,13 +15,6 @@ function isModuleCompleted(moduleIndex) {
   const completedIndices = completedModules.split(',').map((idx) => parseInt(idx, 10));
   return completedIndices.includes(moduleIndex);
 }
-
-const SKILL_TRACK_CARD_STATUS = {
-  DISABLED: 'disabled',
-  NOT_STARTED: 'not-started',
-  IN_PROGRESS: 'in-progress',
-  COMPLETED: 'completed',
-};
 
 function headerDom(title, moduleCount, moduleTime, placeholder) {
   const header = document.createElement('div');
@@ -83,34 +77,28 @@ function moduleCardShimmer() {
  * @param {Promise<moduleMeta>} modulePromise - The promise that resolves to the Module meta
  * @param {number} index - The index of the Module card
  * @param {boolean} open - Whether the Module card is open
- * @param {SKILL_TRACK_CARD_STATUS} status - The status of the Module card
+ * @param {MODULE_STATUS} status - The status of the Module card
  * @param {Object} placeholders - The placeholders object from placeholders.json
  * @returns {HTMLElement}
  */
-function moduleCard({
-  modulePromise,
-  index,
-  open = false,
-  status = SKILL_TRACK_CARD_STATUS.NOT_STARTED,
-  placeholders,
-}) {
+function moduleCard({ modulePromise, index, open = false, status = MODULE_STATUS.NOT_STARTED, placeholders }) {
   // Check if this module is marked as completed via query param
-  const finalStatus = isModuleCompleted(index) ? SKILL_TRACK_CARD_STATUS.COMPLETED : status;
+  const finalStatus = isModuleCompleted(index) ? MODULE_STATUS.COMPLETED : status;
   const CardShimmer = moduleCardShimmer();
 
   const startButtonTextMap = {
-    [SKILL_TRACK_CARD_STATUS.DISABLED]: placeholders.courseBreakdownModuleButtonNotStarted || 'Start Module',
-    [SKILL_TRACK_CARD_STATUS.NOT_STARTED]: placeholders.courseBreakdownModuleButtonNotStarted || 'Start Module',
-    [SKILL_TRACK_CARD_STATUS.IN_PROGRESS]: placeholders.courseBreakdownModuleButtonInProgress || 'Resume Module',
-    [SKILL_TRACK_CARD_STATUS.COMPLETED]: placeholders.courseBreakdownModuleButtonCompleted || 'Review Module',
+    [MODULE_STATUS.DISABLED]: placeholders.courseBreakdownModuleButtonNotStarted || 'Start Module',
+    [MODULE_STATUS.NOT_STARTED]: placeholders.courseBreakdownModuleButtonNotStarted || 'Start Module',
+    [MODULE_STATUS.IN_PROGRESS]: placeholders.courseBreakdownModuleButtonInProgress || 'Resume Module',
+    [MODULE_STATUS.COMPLETED]: placeholders.courseBreakdownModuleButtonCompleted || 'Review Module',
   };
   const startButtonText = startButtonTextMap[finalStatus] || 'Start Module';
 
   const moduleCardStatusMap = {
-    [SKILL_TRACK_CARD_STATUS.DISABLED]: placeholders.courseBreakdownStatusNotStarted || 'Not Started',
-    [SKILL_TRACK_CARD_STATUS.NOT_STARTED]: placeholders.courseBreakdownStatusNotStarted || 'Not Started',
-    [SKILL_TRACK_CARD_STATUS.IN_PROGRESS]: placeholders.courseBreakdownStatusInProgress || 'In progress',
-    [SKILL_TRACK_CARD_STATUS.COMPLETED]: placeholders.courseBreakdownStatusCompleted || 'Complete',
+    [MODULE_STATUS.DISABLED]: placeholders.courseBreakdownStatusNotStarted || 'Not Started',
+    [MODULE_STATUS.NOT_STARTED]: placeholders.courseBreakdownStatusNotStarted || 'Not Started',
+    [MODULE_STATUS.IN_PROGRESS]: placeholders.courseBreakdownStatusInProgress || 'In progress',
+    [MODULE_STATUS.COMPLETED]: placeholders.courseBreakdownStatusCompleted || 'Complete',
   };
   const moduleCardStatusText = moduleCardStatusMap[finalStatus] || 'Not started';
 
@@ -136,11 +124,7 @@ function moduleCard({
       <div class="cb-module-header">
         <div class="cb-module-title-wrapper">
           <span class="cb-module-number ${finalStatus}">
-          ${
-            finalStatus === SKILL_TRACK_CARD_STATUS.COMPLETED
-              ? '<span class="icon icon-checkmark-light"></span>'
-              : index + 1
-          }
+          ${finalStatus === MODULE_STATUS.COMPLETED ? '<span class="icon icon-checkmark-light"></span>' : index + 1}
             </span>
           <h3 class="cb-module-title">${moduleMeta.moduleHeader || 'Module Title'}</h3>
         </div>
@@ -191,18 +175,18 @@ function determineModuleStatus(index, prevModuleCompleted) {
 
   if (index === 0) {
     // First module is always NOT_STARTED unless completed
-    moduleStatus = SKILL_TRACK_CARD_STATUS.NOT_STARTED;
+    moduleStatus = MODULE_STATUS.NOT_STARTED;
   } else if (prevModuleCompleted) {
     // If previous module is completed, this module should be enabled
-    moduleStatus = SKILL_TRACK_CARD_STATUS.NOT_STARTED;
+    moduleStatus = MODULE_STATUS.NOT_STARTED;
   } else {
     // Otherwise, module is disabled
-    moduleStatus = SKILL_TRACK_CARD_STATUS.DISABLED;
+    moduleStatus = MODULE_STATUS.DISABLED;
   }
 
   // Check if this module is marked as completed via query param
   if (isModuleCompleted(index)) {
-    moduleStatus = SKILL_TRACK_CARD_STATUS.COMPLETED;
+    moduleStatus = MODULE_STATUS.COMPLETED;
     newPrevModuleCompleted = true;
   } else {
     newPrevModuleCompleted = false;
