@@ -75,8 +75,7 @@ export async function pushPageDataLayer(language) {
     const courseMeta = await getCurrentCourseMeta();
 
     const courseTitle = courseMeta?.heading || '';
-    const courseId = courseMeta?.url.split('/').filter(Boolean).pop() || '';
-
+    const courseId = `/${courseMeta?.url.split('/').filter(Boolean).slice(1).join('/') || ''}`;
     const moduleTitle = stepInfo?.moduleHeader || '';
 
     const isStepPage = document.querySelector('meta[name="theme"]')?.content.includes('course-step');
