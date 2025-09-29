@@ -422,7 +422,7 @@ export async function getNextModuleFirstStep() {
   if (currentModuleIndex !== -1 && currentModuleIndex < courseInfo.modules.length - 1) {
     const nextModuleUrl = courseInfo.modules[currentModuleIndex + 1];
 
-    const nextModuleMeta = await getmoduleMeta(nextModuleUrl);
+    const nextModuleMeta = await getModuleMeta(nextModuleUrl);
 
     // If we have module steps, return the first one
     if (nextModuleMeta && nextModuleMeta.moduleSteps && nextModuleMeta.moduleSteps.length > 0) {
