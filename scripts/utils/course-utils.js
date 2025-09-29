@@ -411,7 +411,7 @@ export async function isLastStep() {
   return currentStepIndex === stepInfo.moduleSteps.length - 1;
 }
 
-//Gets the URL of the first step of the next module.
+// Gets the URL of the first step of the next module.
 export async function getNextModuleFirstStep() {
   const courseInfo = await getCurrentCourseMeta();
   if (!courseInfo || !courseInfo.modules || !Array.isArray(courseInfo.modules) || courseInfo.modules.length === 0) {
