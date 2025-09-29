@@ -92,7 +92,7 @@ function updateUEInstrumentation() {
   }
 
   // ----- if article page, identified by theme
-  if (document.querySelector('body[class^=articles]')) {
+  if (document.querySelector('body[class^=articles]') || getMetadata('theme') === 'articles') {
     // update available sections
     setUEFilter(main, 'main-article');
     // update available blocks for article content sections
@@ -122,7 +122,7 @@ function updateUEInstrumentation() {
   }
 
   // ----- if author bio page, identified by theme
-  if (document.querySelector('body[class^=authors-bio-page]')) {
+  if (document.querySelector('body[class^=authors-bio-page]') || getMetadata('theme') === 'authors-bio-page') {
     // update available sections
     setUEFilter(main, 'empty');
     // update the only available default section
@@ -163,7 +163,7 @@ function updateUEInstrumentation() {
   }
 
   // ----- if signup-flow-modal pages, identified by theme
-  if (document.querySelector('body[class^=signup]')) {
+  if (document.querySelector('body[class^=signup]') || getMetadata('theme') === 'signup') {
     // update available sections
     setUEFilter(main, 'main-signup');
     main.querySelectorAll('.section').forEach((elem) => {
