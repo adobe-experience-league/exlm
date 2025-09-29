@@ -1,6 +1,8 @@
 // eslint-disable-next-line import/extensions
 import { create as createConfetti } from '../../scripts/confetti/canvas-confetti-1.9.3.module.min.mjs';
 import { htmlToElement } from '../../scripts/scripts.js';
+import createCanvas from '../../scripts/utils/canvas-utils.js';
+import { canvasToPDF } from '../../scripts/utils/canvas-pdf-utils.js';
 
 // Constants
 const CONFIG = {
@@ -26,19 +28,41 @@ const CONFIG = {
 };
 
 /**
- * Shares the current page URL to LinkedIn
+ * Downloads the certificate as PDF
  */
-function shareOnLinkedIn() {
-  const urlToShare = encodeURIComponent(window.location.href);
-  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${urlToShare}`;
-  window.open(linkedInUrl, '_blank', 'width=600,height=600');
+async function downloadCertificate(canvas) {
+  try {
+    const pdfBlob = await canvasToPDF(canvas, {
+      title: 'Course Completion Certificate',
+      author: 'Learning Platform',
+      subject: 'Certificate of Course Completion',
+      scale: 1.2,
+    });
+
+    // Create download link
+    const url = URL.createObjectURL(pdfBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'certificate.pdf';
+
+    // Trigger download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Clean up
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    /* eslint-disable-next-line no-console */
+    console.error('Error downloading certificate:', error);
+  }
 }
 
 /**
  * Creates and configures the confetti canvas
  * @returns {HTMLCanvasElement} Configured canvas element
  */
-function createCanvas() {
+function createConfettiCanvas() {
   const canvas = document.createElement('canvas');
   canvas.classList.add('course-completion-confetti-canvas');
 
@@ -51,47 +75,60 @@ function createCanvas() {
 /**
  * Creates a certificate container with image and canvas
  * @param {HTMLElement} block - The block element
+ * @param {Object} textOptions - Text configuration options
  * @returns {Object} Container and canvas elements
  */
-function createCertContainer() {
+async function createCertContainer(textOptions = []) {
   const container = document.createElement('div');
-  container.classList.add('course-completion-certificate-container', 'gradient');
+  container.classList.add('course-completion-certificate-container');
 
-  const img = document.createElement('img');
-  img.src = window.hlx.codeBasePath + CONFIG.IMAGES.CERTIFICATE;
-  img.alt = CONFIG.IMAGES.ALT_TEXT;
-  img.classList.add('course-completion-certificate-image');
-  container.appendChild(img);
+  const certificateCanvas = await createCanvas({
+    width: 369,
+    height: 285,
+    backgroundColor: 'transparent',
+    className: 'course-completion-certificate',
+    options: {
+      text: textOptions,
+      image: {
+        src: window.hlx.codeBasePath + CONFIG.IMAGES.CERTIFICATE,
+        alt: CONFIG.IMAGES.ALT_TEXT,
+        position: { x: 0, y: 0 },
+        width: 369,
+        height: 285,
+        fit: 'cover',
+      },
+    },
+  });
 
-  const canvas = createCanvas();
+  container.appendChild(certificateCanvas);
+
+  const canvas = createConfettiCanvas();
   container.appendChild(canvas);
 
   return { container, canvas };
 }
-
 /**
  * Creates the content container with title, description, and buttons
  * @param {Array} children - Block children elements
+ * @param {HTMLCanvasElement} certificateCanvas - The certificate canvas for download
  * @returns {HTMLElement} Content container
  */
-function createContent(children) {
-  const [title, description, shareBtn, downloadBtn] = children;
+function createContent(children, certificateCanvas) {
+  const [title, description, , downloadBtn] = children;
 
   const container = htmlToElement(`
     <div class="course-completion-content-container">
       <h1>${title?.textContent}</h1>
       <p>${description?.textContent}</p>
       <div class="course-completion-button-container">
-        <button class="btn primary">${shareBtn?.innerHTML}</button>
-        <button class="btn secondary">${downloadBtn?.innerHTML}</button>
+        <button class="btn primary download-certificate">${downloadBtn?.innerHTML}</button>
       </div>
     </div>
   `);
-
-  // Add LinkedIn sharing functionality to primary button
-  const primaryButton = container.querySelector('.btn.primary');
-  if (primaryButton) {
-    primaryButton.addEventListener('click', shareOnLinkedIn);
+  // Add PDF download functionality to download certificate button
+  const downloadCetificateBtn = container.querySelector('.download-certificate');
+  if (downloadBtn && downloadCetificateBtn && certificateCanvas) {
+    downloadCetificateBtn.addEventListener('click', () => downloadCertificate(certificateCanvas));
   }
 
   return container;
@@ -139,9 +176,40 @@ function startConfetti(canvas) {
  * Main decorator function for course completion block
  * @param {HTMLElement} block - The block element to decorate
  */
-export default function decorate(block) {
-  const { container, canvas } = createCertContainer(block);
-  const content = createContent(block.children);
+export default async function decorate(block) {
+  const certificateText = [
+    {
+      content: 'Marketo Engage Core Concepts',
+      position: { x: 185, y: 100 },
+      font: { size: '24px', weight: 'bold' }, // Custom weight for emphasis
+      color: '#2c3e50',
+      align: 'center',
+    },
+    {
+      content: 'Completed by',
+      position: { x: 185, y: 140 },
+      font: { size: '14px' },
+      color: '#7f8c8d',
+      align: 'center',
+    },
+    {
+      content: 'Noor',
+      position: { x: 185, y: 160 },
+      font: { size: '20px', weight: 'bold' }, // Bold name
+      color: '#e74c3c',
+      align: 'center',
+    },
+    {
+      content: new Date().toLocaleDateString(),
+      position: { x: 185, y: 200 },
+      font: { size: '12px' },
+      color: '#95a5a6',
+      align: 'center',
+    },
+  ];
+
+  const { container, canvas } = await createCertContainer(certificateText);
+  const content = createContent(block.children, container.querySelector('.course-completion-certificate'));
 
   block.textContent = '';
   block.append(container, content);
