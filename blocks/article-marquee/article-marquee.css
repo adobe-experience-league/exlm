@@ -187,6 +187,11 @@
   min-height: 24px;
 }
 
+.article-marquee-options .user-actions {
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
 .article-marquee-options .user-actions .icon {
   width: 24px;
   height: 24px;

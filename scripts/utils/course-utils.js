@@ -1,6 +1,3 @@
-// eslint-disable-next-line import/no-cycle
-import { fetchLanguagePlaceholders } from '../scripts.js';
-
 // Module utils
 
 /**
@@ -127,7 +124,7 @@ function getStepMeta(allSteps, moduleRecap, moduleQuiz) {
  *   - {boolean} isRecap - Whether current page is the recap step
  *   - {boolean} isQuiz - Whether current page is the quiz step
  */
-async function extractModuleMeta(fragment) {
+async function extractModuleMeta(fragment, placeholders) {
   if (!fragment) return {};
 
   const meta = fragment.querySelector('.module-meta');
@@ -150,15 +147,6 @@ async function extractModuleMeta(fragment) {
       return { name, url };
     })
     .filter(Boolean);
-
-  // Fetch placeholders for step names
-  let placeholders = {};
-  try {
-    placeholders = await fetchLanguagePlaceholders();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
-  }
 
   // Add recap and quiz steps to allSteps
   if (moduleRecap) {
@@ -202,7 +190,7 @@ async function extractModuleMeta(fragment) {
  *   - {boolean} isRecap - Whether current page is the recap step
  *   - {boolean} isQuiz - Whether current page is the quiz step
  */
-export async function getCurrentStepInfo() {
+export async function getCurrentStepInfo(placeholders = {}) {
   const fragUrl = getModuleFragmentUrl();
   if (!fragUrl) return null;
   const storageKey = `module-meta:${fragUrl}`;
@@ -227,7 +215,7 @@ export async function getCurrentStepInfo() {
   // Not cached, fetch and store
   const fragment = await fetchModuleFragment(fragUrl);
   if (!fragment) return null;
-  meta = await extractModuleMeta(fragment);
+  meta = await extractModuleMeta(fragment, placeholders);
   try {
     sessionStorage.setItem(storageKey, JSON.stringify(meta));
   } catch (e) {
@@ -250,7 +238,7 @@ export async function getCurrentStepInfo() {
  *   - {Array<{name: string, url: string}>} moduleSteps - Array of step objects
  *   - {number} totalSteps - Total number of steps in the track
  */
-export async function getmoduleMeta(moduleFragmentUrl) {
+export async function getModuleMeta(moduleFragmentUrl, placeholders = {}) {
   if (!moduleFragmentUrl) return null;
   const storageKey = `module-meta:${moduleFragmentUrl}`;
   let meta = null;
@@ -270,7 +258,7 @@ export async function getmoduleMeta(moduleFragmentUrl) {
 
   const fragment = await fetchModuleFragment(moduleFragmentUrl);
   if (!fragment) return null;
-  meta = await extractModuleMeta(fragment);
+  meta = await extractModuleMeta(fragment, placeholders);
   try {
     sessionStorage.setItem(storageKey, JSON.stringify(meta));
   } catch (e) {
