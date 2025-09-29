@@ -1,8 +1,5 @@
 /* eslint-disable no-console */
 
-// eslint-disable-next-line import/no-cycle
-import { getCurrentStepInfo, getCurrentCourseMeta } from '../utils/course-utils.js';
-
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 export const search = window.location.pathname === '/search.html';
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
@@ -71,6 +68,8 @@ export async function pushPageDataLayer(language) {
   let stepObj = null;
 
   if (courses) {
+    const { getCurrentStepInfo, getCurrentCourseMeta } = await import('../utils/course-utils.js');
+
     const stepInfo = await getCurrentStepInfo();
     const courseMeta = await getCurrentCourseMeta();
 
