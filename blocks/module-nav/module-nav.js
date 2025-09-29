@@ -39,7 +39,6 @@ async function handleQuizNextButton(e) {
 }
 export default async function decorate(block) {
   const stepInfo = await getCurrentStepInfo();
-
   let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();
