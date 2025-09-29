@@ -21,6 +21,7 @@ const solutionVersion = document.querySelector('meta[name="version"]')?.content 
 const role = document.querySelector('meta[name="role"]')?.content || '';
 const docType = document.querySelector('meta[name="doc-type"]')?.content || '';
 const duration = document.querySelector('meta[name="duration"]')?.content || '';
+const level = document.querySelector('meta[name="level"]')?.content || '';
 
 const UEFilters = {
   Role: '',
@@ -77,11 +78,12 @@ export async function pushPageDataLayer(language) {
     const courseId = courseMeta?.url.split('/').filter(Boolean).pop() || '';
 
     const moduleTitle = stepInfo?.moduleHeader || '';
-    const currentStepIndex = stepInfo?.currentStep;
-    const stepTitle = (stepInfo?.currentStep && stepInfo?.moduleSteps?.[currentStepIndex - 1].name) || '';
+
+    const isStepPage = document.querySelector('meta[name="theme"]')?.content.includes('course-step');
+    const stepTitle = isStepPage ? document.querySelector('meta[property="og:title"]')?.content || '' : '';
 
     if (courseId) {
-      courseObj = { title: courseTitle, id: courseId, solution: fullSolution, role };
+      courseObj = { title: courseTitle, id: courseId, solution: fullSolution, role, level };
     }
     if (moduleTitle) {
       moduleObj = { title: moduleTitle };
