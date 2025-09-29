@@ -437,22 +437,11 @@ export async function getNextModuleFirstStep() {
   if (currentModuleIndex !== -1 && currentModuleIndex < courseInfo.modules.length - 1) {
     const nextModuleUrl = courseInfo.modules[currentModuleIndex + 1];
 
-    try {
-      // Fetch the next module's metadata to find the first step
-      const response = await fetch(`${nextModuleUrl}.plain.html`);
-      const html = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
+    const nextModuleMeta = await getmoduleMeta(nextModuleUrl);
 
-      // Find the first step link in the module
-      const moduleElement = doc.querySelector('.module');
-      if (moduleElement && moduleElement.children.length > 0) {
-        const firstStepLink = moduleElement.children[0].querySelector('a');
-        return firstStepLink?.getAttribute('href') || null;
-      }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error navigating to next module:', error);
+    // If we have module steps, return the first one
+    if (nextModuleMeta && nextModuleMeta.moduleSteps && nextModuleMeta.moduleSteps.length > 0) {
+      return nextModuleMeta.moduleSteps[0].url;
     }
   }
 

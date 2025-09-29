@@ -104,21 +104,10 @@ export default async function decorate(block) {
 
   // Check if this is the last step
   if (!isQuiz && (await isLastStep())) {
-    // Set up the link to navigate to the first step of the next module
-    secondLink.addEventListener(
-      'click',
-      async (e) => {
-        e.preventDefault();
-
-        // Get the first step of the next module
-        const nextModuleFirstStepUrl = await getNextModuleFirstStep();
-
-        if (nextModuleFirstStepUrl) {
-          window.location.href = nextModuleFirstStepUrl;
-        }
-      },
-      { once: true },
-    );
+    const nextModuleFirstStepUrl = await getNextModuleFirstStep();
+    if (nextModuleFirstStepUrl) {
+      secondLink.href = nextModuleFirstStepUrl;
+    }
   }
 
   // Add links to container
