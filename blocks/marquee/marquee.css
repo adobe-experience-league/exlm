@@ -127,7 +127,8 @@ div.marquee-wrapper {
   display: none;
 }
 
-.marquee.fill-background .marquee-text {
+.marquee.fill-background .marquee-text,
+.marquee.fill-gradient .marquee-text {
   background-color: transparent;
 }
 
