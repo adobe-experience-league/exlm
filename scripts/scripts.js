@@ -1266,34 +1266,10 @@ function decodeHtmlEntities(str) {
 }
 
 /**
- * Sets the content of metadata tags.
- * @param {Document} document - The DOM document
- * @param {string} name - The meta tag name or property
- * @param {string} content - The value to set in the meta tag
- */
-function setMetadata(document, name, content) {
-  const attr = name && name.includes(':') ? 'property' : 'name';
-  const existingMetaTags = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)];
-
-  if (existingMetaTags.length === 0) {
-    // Create a new meta tag if it doesn't exist
-    const newMetaTag = document.createElement('meta');
-    newMetaTag.setAttribute(attr, name);
-    newMetaTag.setAttribute('content', content);
-    document.head.appendChild(newMetaTag);
-  } else {
-    // Update existing meta tags
-    existingMetaTags.forEach((metaTag) => {
-      metaTag.setAttribute('content', content);
-    });
-  }
-}
-
-/**
- * Update TQ Tags metadata
+ * Update TQ Tags metadata directly in meta tags
  * @param {Document} document
  */
-export function updateTQTagsMetadata(document) {
+export function updateTQTagsMetadata() {
   const keyMapping = {
     'tq-roles': 'role',
     'tq-levels': 'level',
@@ -1304,24 +1280,25 @@ export function updateTQTagsMetadata(document) {
     'tq-topics': 'topic',
   };
 
-  Object.entries(keyMapping).forEach(([key, newKey]) => {
-    const metaTag = getMetadata(key);
+  Object.entries(keyMapping).forEach(([originalName, metaName]) => {
+    const metaTag = document.querySelector(`meta[name="${originalName}"]`);
     if (!metaTag) return;
 
     try {
-      const decoded = decodeHtmlEntities(metaTag);
+      const decoded = decodeHtmlEntities(metaTag.content);
       const parsed = JSON.parse(decoded);
 
       if (Array.isArray(parsed)) {
-        const separator = key === 'tq-products' ? ';' : ',';
+        const separator = originalName === 'tq-products' ? ';' : ',';
         const labels = [...new Set(parsed.map((item) => item.label?.trim()).filter(Boolean))].join(separator);
 
-        if (labels) {
-          setMetadata(document, newKey, labels);
+        if (labels && metaTag) {
+          metaTag.name = metaName;
+          metaTag.content = labels;
         }
       }
     } catch (e) {
-      console.error(`Failed to parse metadata for ${key}:`, e, metaTag);
+      console.error(`Failed to parse metadata for ${originalName}:`, e, metaTag);
     }
   });
 }
@@ -1447,7 +1424,7 @@ async function loadPage() {
       !pagePath.includes('/courses/instructors') &&
       !pagePath.includes('/courses/course-fragments')
     ) {
-      updateTQTagsMetadata(document);
+      updateTQTagsMetadata();
     } else {
       decodeAemPageMetaTags();
     }
