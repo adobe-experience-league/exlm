@@ -1,6 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { getmoduleMeta } from '../../scripts/utils/course-utils.js';
+import { getmoduleMeta } from '../../scripts/courses/course-utils.js';
 
 // Function to check if a module is completed based on query parameter
 function isModuleCompleted(moduleIndex) {

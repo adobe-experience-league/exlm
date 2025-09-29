@@ -1,4 +1,4 @@
-import { getCurrentStepInfo } from '../../scripts/utils/course-utils.js';
+import { getCurrentStepInfo } from '../../scripts/courses/course-utils.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
 

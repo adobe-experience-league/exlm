@@ -1,4 +1,4 @@
-import { getCurrentStepInfo } from '../../scripts/utils/course-utils.js';
+import { getCurrentStepInfo } from '../../scripts/courses/course-utils.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
