@@ -1,3 +1,15 @@
+/* Animation keyframes */
+@keyframes slide-up {
+  from {
+    transform: translateY(var(--slide-up-from, 300px));
+  }
+
+  to {
+    transform: translateY(var(--slide-up-to, 20px));
+    visibility: visible;
+  }
+}
+
 /* Main container */
 .course-completion {
   display: flex;
@@ -10,7 +22,11 @@
 
 /* Certificate container */
 .course-completion .course-completion-certificate-container {
+  --slide-up-from: 300px;
+  --slide-up-to: 20px;
+
   width: 100%;
+  max-width: 558px;
   height: 278px;
   position: relative;
   border-radius: var(--spectrum-spacing-200);
@@ -53,6 +69,8 @@
   transform: translateY(300px);
   animation: slide-up 1s ease-in-out 0.3s forwards;
   transition: transform 1s ease-in-out;
+  max-width: 369px;
+  width: 100%;
 }
 
 /* Button container */
@@ -103,21 +121,12 @@
   line-height: 150%;
 }
 
-/* Animation keyframes */
-@keyframes slide-up {
-  from {
-    transform: translateY(300px);
-  }
-
-  to {
-    transform: translateY(40px);
-    visibility: visible;
-  }
-}
-
 @media (min-width: 600px) {
   .course-completion .course-completion-certificate-container {
     height: 320px;
+
+    --slide-up-from: 300px;
+    --slide-up-to: 40px;
   }
 
   .course-completion .course-completion-certificate-image {
@@ -129,6 +138,9 @@
   .course-completion .course-completion-certificate-container {
     width: 588px;
     height: 330px;
+
+    --slide-up-from: 300px;
+    --slide-up-to: 50px;
   }
 
   .course-completion .course-completion-button-container {
