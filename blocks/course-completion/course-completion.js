@@ -193,7 +193,7 @@ export default async function decorate(block) {
       align: 'center',
     },
     {
-      content: 'Noor',
+      content: 'Noor Mohamed',
       position: { x: 185, y: 160 },
       font: { size: '20px', weight: 'bold' }, // Bold name
       color: '#e74c3c',

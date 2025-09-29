@@ -244,6 +244,4 @@ async function createCanvas(config = {}) {
   return canvasElement;
 }
 
-export default {
-  createCanvas,
-};
+export default createCanvas;
