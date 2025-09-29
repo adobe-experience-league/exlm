@@ -18,7 +18,6 @@ const solutionVersion = document.querySelector('meta[name="version"]')?.content 
 const role = document.querySelector('meta[name="role"]')?.content || '';
 const docType = document.querySelector('meta[name="doc-type"]')?.content || '';
 const duration = document.querySelector('meta[name="duration"]')?.content || '';
-const level = document.querySelector('meta[name="level"]')?.content || '';
 
 const UEFilters = {
   Role: '',
@@ -72,16 +71,21 @@ export async function pushPageDataLayer(language) {
 
     const stepInfo = await getCurrentStepInfo();
     const courseMeta = await getCurrentCourseMeta();
+    const parts = courseMeta?.url.split('/').filter(Boolean).slice(1).join('/');
 
     const courseTitle = courseMeta?.heading || '';
-    const courseId = `/${courseMeta?.url.split('/').filter(Boolean).slice(1).join('/') || ''}`;
+    const courseId = parts ? `/${parts}` : '';
+    const courseSolution = courseMeta?.solution || '';
+    const courseRole = courseMeta?.role || '';
+    const courseLevel = courseMeta?.level || '';
+
     const moduleTitle = stepInfo?.moduleHeader || '';
 
     const isStepPage = document.querySelector('meta[name="theme"]')?.content.includes('course-step');
     const stepTitle = isStepPage ? document.querySelector('meta[property="og:title"]')?.content || '' : '';
 
     if (courseId) {
-      courseObj = { title: courseTitle, id: courseId, solution: fullSolution, role, level };
+      courseObj = { title: courseTitle, id: courseId, solution: courseSolution, role: courseRole, level: courseLevel };
     }
     if (moduleTitle) {
       moduleObj = { title: moduleTitle };
