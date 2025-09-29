@@ -718,7 +718,7 @@
   }
 
   .slides .controls .audio-player {
-    width: 100%;
+    width: auto;
   }
 
   .slides .controls .auto-play {

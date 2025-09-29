@@ -1,6 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { getmoduleMeta } from '../../scripts/courses/course-utils.js';
+import { getModuleMeta } from '../../scripts/courses/course-utils.js';
 
 // Function to check if a module is completed based on query parameter
 function isModuleCompleted(moduleIndex) {
@@ -231,7 +231,7 @@ export default async function decorate(block) {
 
   modules.forEach((module, index) => {
     const moduleFragment = module.querySelector('a')?.getAttribute('href');
-    const modulePromise = getmoduleMeta(moduleFragment);
+    const modulePromise = getModuleMeta(moduleFragment, placeholders);
 
     // Determine module status using the extracted function
     // The function returns [moduleStatus, newPrevModuleCompleted]
