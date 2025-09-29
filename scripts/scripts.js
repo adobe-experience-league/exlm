@@ -1177,12 +1177,25 @@ function formatPageMetaTags(inputString) {
     .map((part) => part.trim());
 }
 
+function decodeAemCqMetaTags() {
+  const cqTagsMeta = document.querySelector(`meta[name="cq-tags"]`);
+  if (cqTagsMeta) {
+    const segments = cqTagsMeta.content.split(', ');
+    const decodedCQTags = segments.map((segment) =>
+      segment
+        .split('/')
+        .map((part, index) => (index > 0 ? atob(part) : part))
+        .join('/'),
+    );
+    cqTagsMeta.content = decodedCQTags.join(', ');
+  }
+}
+
 function decodeAemPageMetaTags() {
   const solutionMeta = document.querySelector(`meta[name="coveo-solution"]`);
   const roleMeta = document.querySelector(`meta[name="role"]`);
   const levelMeta = document.querySelector(`meta[name="level"]`);
   const featureMeta = document.querySelector(`meta[name="feature"]`);
-  const cqTagsMeta = document.querySelector(`meta[name="cq-tags"]`);
 
   const solutions = solutionMeta ? formatPageMetaTags(solutionMeta.content) : [];
   const features = featureMeta ? formatPageMetaTags(featureMeta.content) : [];
@@ -1241,16 +1254,76 @@ function decodeAemPageMetaTags() {
   if (levelMeta) {
     levelMeta.content = decodedLevels.join(',');
   }
-  if (cqTagsMeta) {
-    const segments = cqTagsMeta.content.split(', ');
-    const decodedCQTags = segments.map((segment) =>
-      segment
-        .split('/')
-        .map((part, index) => (index > 0 ? atob(part) : part))
-        .join('/'),
-    );
-    cqTagsMeta.content = decodedCQTags.join(', ');
+}
+
+// HTML entity decoder utility
+function decodeHtmlEntities(str) {
+  if (!str || typeof str !== 'string') return str;
+
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = str;
+  return textarea.value;
+}
+
+/**
+ * Sets the content of metadata tags.
+ * @param {Document} document - The DOM document
+ * @param {string} name - The meta tag name or property
+ * @param {string} content - The value to set in the meta tag
+ */
+function setMetadata(document, name, content) {
+  const attr = name && name.includes(':') ? 'property' : 'name';
+  const existingMetaTags = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)];
+
+  if (existingMetaTags.length === 0) {
+    // Create a new meta tag if it doesn't exist
+    const newMetaTag = document.createElement('meta');
+    newMetaTag.setAttribute(attr, name);
+    newMetaTag.setAttribute('content', content);
+    document.head.appendChild(newMetaTag);
+  } else {
+    // Update existing meta tags
+    existingMetaTags.forEach((metaTag) => {
+      metaTag.setAttribute('content', content); // safer than direct .content
+    });
   }
+}
+
+/**
+ * Update TQ Tags metadata
+ * @param {Document} document
+ */
+export function updateTQTagsMetadata(document) {
+  const keyMapping = {
+    'tq-roles': 'role',
+    'tq-levels': 'level',
+    'tq-products': 'coveo-solution',
+    'tq-features': 'feature',
+    'tq-subfeatures': 'sub-feature',
+    'tq-industries': 'industry',
+    'tq-topics': 'topic',
+  };
+
+  Object.entries(keyMapping).forEach(([key, newKey]) => {
+    const metaTag = getMetadata(document, key);
+    if (!metaTag) return;
+
+    try {
+      const decoded = decodeHtmlEntities(metaTag);
+      const parsed = JSON.parse(decoded);
+
+      if (Array.isArray(parsed)) {
+        const separator = key === 'tq-products' ? ';' : ',';
+        const labels = [...new Set(parsed.map((item) => item.label?.trim()).filter(Boolean))].join(separator);
+
+        if (labels) {
+          setMetadata(document, newKey, labels);
+        }
+      }
+    } catch (e) {
+      console.error(`Failed to parse metadata for ${key}:`, e, metaTag);
+    }
+  });
 }
 
 /**
@@ -1367,7 +1440,17 @@ async function loadPage() {
 
   // For AEM Author mode, decode the tags value
   if (window.hlx.aemRoot || window.location.href.includes('.html')) {
-    decodeAemPageMetaTags();
+    decodeAemCqMetaTags();
+    const pagePath = window?.location.pathname;
+    if (
+      pagePath.includes('/courses/') &&
+      !pagePath.includes('/courses/instructors') &&
+      !pagePath.includes('/courses/course-fragments')
+    ) {
+      updateTQTagsMetadata();
+    } else {
+      decodeAemPageMetaTags();
+    }
   }
 
   const { suffix: currentPagePath, lang } = getPathDetails();
