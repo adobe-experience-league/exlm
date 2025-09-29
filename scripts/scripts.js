@@ -1265,6 +1265,24 @@ function decodeHtmlEntities(str) {
   return textarea.value;
 }
 
+export function setMetadata(name, content) {
+  const attr = name && name.includes(':') ? 'property' : 'name';
+  const existingMetaTags = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)];
+
+  if (existingMetaTags.length === 0) {
+    // Create a new meta tag if it doesn't exist
+    const newMetaTag = document.createElement('meta');
+    newMetaTag.setAttribute(attr, name);
+    newMetaTag.setAttribute('content', content);
+    document.head.appendChild(newMetaTag);
+  } else {
+    // Update existing meta tags
+    existingMetaTags.forEach((metaTag) => {
+      metaTag.content = content;
+    });
+  }
+}
+
 /**
  * Update TQ Tags metadata directly in meta tags
  * @param {Document} document
@@ -1292,9 +1310,8 @@ export function updateTQTagsMetadata() {
         const separator = originalName === 'tq-products' ? ';' : ',';
         const labels = [...new Set(parsed.map((item) => item.label?.trim()).filter(Boolean))].join(separator);
 
-        if (labels && metaTag) {
-          metaTag.name = metaName;
-          metaTag.content = labels;
+        if (labels) {
+          setMetadata(metaName, labels);
         }
       }
     } catch (e) {
