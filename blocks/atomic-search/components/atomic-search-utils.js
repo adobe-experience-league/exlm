@@ -9,6 +9,7 @@ export const CUSTOM_EVENTS = {
   RESULT_FOUND: 'ATOMIC_RESULT_FOUND',
   SEARCH_QUERY_CHANGED: 'ATOMIC_SEARCH_QUERY_CHANGED',
   SEARCH_CLEARED: 'ATOMIC_SEARCH_CLEARED',
+  PAGE_LOAD_EVENT: 'ATOMIC_SEARCH_PAGE_LOAD_EVENT',
 };
 
 export const COMMUNITY_CONTENT_TYPES = [
@@ -199,3 +200,36 @@ export function escapeHtml(unsafe) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
+
+export const extractSelectedFacets = (data) =>
+  Object.entries(data).reduce((result, [key, { request }]) => {
+    if (request && request.currentValues) {
+      const selectedValues = request.currentValues
+        .filter((item) => item.state === 'selected')
+        .map((item) => item.value);
+
+      if (selectedValues.length > 0) {
+        result[key.replace('el_', '')] = selectedValues;
+      }
+    }
+    return result;
+  }, {});
+
+export const generateAdobeTrackingData = (searchState) => {
+  const { search, query, facetSet, sortCriteria } = searchState;
+  const { response } = search;
+  if (typeof response.totalCount !== 'number') {
+    return null;
+  }
+  const filter = facetSet ? extractSelectedFacets(facetSet) : {};
+  const data = {
+    count: response.totalCount,
+    filter,
+    solution: '',
+    sortBy: sortCriteria,
+    depth: 1,
+    term: query.q,
+    tool: 'coveo',
+  };
+  return data;
+};
