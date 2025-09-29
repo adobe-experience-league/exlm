@@ -1,6 +1,28 @@
 // Module utils
 
 /**
+ * Extracts courseId and moduleId from a URL path
+ * @param {string} [url] - The URL path to extract from. If not provided, uses current page URL
+ * @returns {Object} Object containing courseId and moduleId
+ *   - {string|null} courseId - The course identifier
+ *   - {string|null} moduleId - The module identifier (null if not found)
+ */
+export function extractCourseModuleIds(url = window.location.pathname) {
+  const segments = url.split('/').filter(Boolean);
+  const coursesIndex = segments.indexOf('courses');
+  
+  if (coursesIndex === -1 || coursesIndex >= segments.length - 1) {
+    return { courseId: null, moduleId: null };
+  }
+  
+  const courseId = segments[coursesIndex + 1];
+  const moduleSegment = segments[coursesIndex + 2];
+  const moduleId = moduleSegment ? `${courseId}/${moduleSegment}` : null;
+  
+  return { courseId, moduleId };
+}
+
+/**
  * Extracts the module fragment URL from the current page path.
  * For a path like /{locale}/courses/{collection}/{fragment}/{step}/...,
  * returns /{locale}/courses/{collection}/{fragment}

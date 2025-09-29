@@ -1,30 +1,45 @@
 
 
 import { defaultProfileClient } from '../auth/profile.js';
+import { extractCourseModuleIds, getCurrentCourseMeta } from './course-utils.js';
 
 /**
  * Utility functions for managing course progress in user profile
  */
 
 /**
+ * Get current courses from user profile
+ * @returns {Promise<Object>} Current courses object from user profile
+ */
+async function getCurrentCourses() {
+  const profile = await defaultProfileClient.getMergedProfile();
+  return profile.courses || {};
+}
+
+/**
  * Start a module in a course
- * @param {string} courseId - Course identifier
- * @param {string} name - Course name
- * @param {string} description - Course description
- * @param {string} moduleId - Module identifier
+ * @param {string} courseId - Course URL identifier
+ * @param {string} moduleId - Module URL identifier
  * @returns {Promise<void>}
  */
-async function startModule(courseId, name, description, moduleId) {
-  const profile = await defaultProfileClient.getMergedProfile();
-  const courses = profile.courses || {};
+async function startModule(url = window.location.pathname) {
+  const { courseId, moduleId } = extractCourseModuleIds(url);
+  const courseMeta = await getCurrentCourseMeta();
+  
+  if (!courseMeta) {
+    console.error('Failed to get course metadata');
+    return;
+  }
+  
+  const courses = await getCurrentCourses();
   const updatedCourses = { ...courses };
   const startTime = new Date().toISOString();
   
   // Initialize course if it doesn't exist
   if (!updatedCourses[courseId]) {
     updatedCourses[courseId] = {
-      name,
-      description,
+      name: courseMeta.heading,
+      description: courseMeta.description,
       modules: {}
     };
   }
@@ -48,13 +63,13 @@ async function startModule(courseId, name, description, moduleId) {
 
 /**
  * Finish a module in a course
- * @param {string} courseId - Course identifier
- * @param {string} moduleId - Module identifier
+ * @param {string} courseId - Course URL identifier
+ * @param {string} moduleId - Module URL identifier
  * @returns {Promise<void>}
  */
-async function finishModule(courseId, moduleId) {
-  const profile = await defaultProfileClient.getMergedProfile();
-  const courses = profile.courses || {};
+async function finishModule(url = window.location.pathname) {
+  const { courseId, moduleId } = extractCourseModuleIds(url);
+  const courses = await getCurrentCourses();
   const updatedCourses = { ...courses };
   const finishTime = new Date().toISOString();
   
@@ -72,12 +87,12 @@ async function finishModule(courseId, moduleId) {
 
 /**
  * Complete a course
- * @param {string} courseId - Course identifier
+ * @param {string} courseId - Course URL identifier
  * @returns {Promise<void>}
  */
-async function completeCourse(courseId) {
-  const profile = await defaultProfileClient.getMergedProfile();
-  const courses = profile.courses || {};
+async function completeCourse(url = window.location.pathname) {
+  const { courseId } = extractCourseModuleIds(url);
+  const courses = await getCurrentCourses();
   const updatedCourses = { ...courses };
   
   if (updatedCourses[courseId] && !updatedCourses[courseId].awardGranted) {
@@ -90,6 +105,7 @@ async function completeCourse(courseId) {
 
 
 export {
+  getCurrentCourses,
   startModule,
   finishModule,
   completeCourse
