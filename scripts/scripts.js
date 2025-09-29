@@ -1447,7 +1447,7 @@ async function loadPage() {
       !pagePath.includes('/courses/instructors') &&
       !pagePath.includes('/courses/course-fragments')
     ) {
-      updateTQTagsMetadata();
+      updateTQTagsMetadata(document);
     } else {
       decodeAemPageMetaTags();
     }
