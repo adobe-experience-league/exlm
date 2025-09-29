@@ -394,3 +394,52 @@ export async function getCurrentCourseMeta(courseFragmentUrl = getCourseFragment
   }
   return meta;
 }
+
+/**
+ * Checks if the current step is the last step in the module.
+ *
+ * @param {Object} stepInfo - The step information object from getCurrentStepInfo()
+ * @returns {boolean} True if current step is the last step, false otherwise
+ */
+export async function isLastStep() {
+  const stepInfo = await getCurrentStepInfo();
+  if (!stepInfo || !stepInfo.moduleSteps || !Array.isArray(stepInfo.moduleSteps)) {
+    return false;
+  }
+
+  const currentStepIndex = stepInfo.moduleSteps.findIndex((step) => step.url === window.location.pathname);
+  return currentStepIndex === stepInfo.moduleSteps.length - 1;
+}
+
+//Gets the URL of the first step of the next module.
+export async function getNextModuleFirstStep() {
+  const courseInfo = await getCurrentCourseMeta();
+  if (!courseInfo || !courseInfo.modules || !Array.isArray(courseInfo.modules) || courseInfo.modules.length === 0) {
+    return null;
+  }
+
+  // Extract the current module path from the URL
+  const pathParts = window.location.pathname.split('/');
+  const currentModulePath = pathParts.length > 4 ? pathParts[4] : '';
+
+  if (!currentModulePath) {
+    return null;
+  }
+
+  // Find the current module index
+  const currentModuleIndex = courseInfo.modules.findIndex((url) => url.includes(currentModulePath));
+
+  // If there's a next module, get its first step
+  if (currentModuleIndex !== -1 && currentModuleIndex < courseInfo.modules.length - 1) {
+    const nextModuleUrl = courseInfo.modules[currentModuleIndex + 1];
+
+    const nextModuleMeta = await getmoduleMeta(nextModuleUrl);
+
+    // If we have module steps, return the first one
+    if (nextModuleMeta && nextModuleMeta.moduleSteps && nextModuleMeta.moduleSteps.length > 0) {
+      return nextModuleMeta.moduleSteps[0].url;
+    }
+  }
+
+  return null;
+}
