@@ -96,7 +96,13 @@ function html(content, placeholders) {
                         </div>
                       </div>
                       <div class="content-info doc-content-info">
-                        <label class="step-label">Step ${step.number} of ${section.steps.length}</label>
+                       <label class="step-label">${
+                         placeholders.slidesStepProgress
+                           ? `${placeholders.slidesStepProgress
+                               .replace('{}', step.number)
+                               .replace('{}', section.steps.length)}`
+                           : `Step ${step.number} of ${section.steps.length}`
+                       }</label>
                         <div class="copy-icon" data-copystep="${step.id}">
                             <span class="icon icon-copy-link"></span>
                             <span data-placeholder="userActionCopylinkLabel">Copy link</span>
@@ -144,8 +150,8 @@ function html(content, placeholders) {
                           
                           <div class="content-info slides-content-info">
                             <label class="step-label">${
-                              placeholders.signupStepProgress
-                                ? `${placeholders.signupStepProgress
+                              placeholders.slidesStepProgress
+                                ? `${placeholders.slidesStepProgress
                                     .replace('{}', step.number)
                                     .replace('{}', section.steps.length)}`
                                 : `Step ${step.number} of ${section.steps.length}`
