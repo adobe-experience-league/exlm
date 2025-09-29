@@ -1284,7 +1284,7 @@ function setMetadata(document, name, content) {
   } else {
     // Update existing meta tags
     existingMetaTags.forEach((metaTag) => {
-      metaTag.setAttribute('content', content); // safer than direct .content
+      metaTag.setAttribute('content', content);
     });
   }
 }
@@ -1305,7 +1305,7 @@ export function updateTQTagsMetadata(document) {
   };
 
   Object.entries(keyMapping).forEach(([key, newKey]) => {
-    const metaTag = getMetadata(document, key);
+    const metaTag = getMetadata(key);
     if (!metaTag) return;
 
     try {
