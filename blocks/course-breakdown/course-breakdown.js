@@ -1,7 +1,7 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { getModuleMeta } from '../../scripts/courses/course-utils.js';
-import { MODULE_STATUS } from '../../scripts/courses/course-profile.js';
+import { MODULE_STATUS, getCourseStatus, getModuleStatus, getLastAddedModule } from '../../scripts/courses/course-profile.js';
 
 // Function to check if a module is completed based on query parameter
 function isModuleCompleted(moduleIndex) {
@@ -16,10 +16,29 @@ function isModuleCompleted(moduleIndex) {
   return completedIndices.includes(moduleIndex);
 }
 
-function headerDom(title, moduleCount, moduleTime, placeholder) {
+function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
   const header = document.createElement('div');
   header.classList.add('course-breakdown-header');
+
+
+  if(courseStatus) {
+    const startButtonTextMap = {
+      [MODULE_STATUS.NOT_STARTED]: placeholder.courseBreakdownButtonNotStarted || 'Start Learning',
+      [MODULE_STATUS.IN_PROGRESS]: placeholder.courseBreakdownButtonInProgress || 'Continue Learning',
+      [MODULE_STATUS.COMPLETED]: placeholder.courseBreakdownButtonCompleted || 'Review Course',
+    };
+    const startButtonText = startButtonTextMap[courseStatus] || 'Start Learning';
+    const startButton = document.createElement('a');
+    startButton.classList.add("course-breakdown-header-start-button", "button");
+    startButton.textContent = startButtonText;
+    getLastAddedModule().then((lastAddedModuleUrl)=>{
+      startButton.href = lastAddedModuleUrl;
+      header.append(startButton);
+    })
+  }
+
   header.innerHTML = `
+  <div>
         ${title.innerHTML}
         <div class="cb-header-info">
           <span class="icon icon-course-outline"></span>
@@ -27,20 +46,23 @@ function headerDom(title, moduleCount, moduleTime, placeholder) {
           <span class="separator">•</span>
           <span class="cb-module-time">${moduleTime.textContent}</span>
         </div>
+  </div>
     `;
   decorateIcons(header);
   return header;
 }
 
-function infoCardDom(title, description, placeholders) {
+function infoCardDom(title, description, courseStatus, placeholders) {
   const card = document.createElement('div');
   card.classList.add('course-breakdown-info-card');
+
   card.innerHTML = `
       <div>
         ${title.innerHTML}
-        <button>
+        ${!courseStatus ? `<button>
           ${placeholders.courseBreakdownInfoSignInButton || 'Sign In to Start'}
-        </button>
+        </button>` : ''}
+        
       </div>
       ${description.innerHTML}
       <div>
@@ -51,6 +73,12 @@ function infoCardDom(title, description, placeholders) {
         }</p>
       </div>
     `;
+    
+    if(!courseStatus) {
+      card.querySelector('button')?.addEventListener('click', ()=>{
+        window.adobeIMS.signIn();
+      })
+    }
   return card;
 }
 
@@ -81,9 +109,7 @@ function moduleCardShimmer() {
  * @param {Object} placeholders - The placeholders object from placeholders.json
  * @returns {HTMLElement}
  */
-function moduleCard({ modulePromise, index, open = false, status = MODULE_STATUS.NOT_STARTED, placeholders }) {
-  // Check if this module is marked as completed via query param
-  const finalStatus = isModuleCompleted(index) ? MODULE_STATUS.COMPLETED : status;
+function moduleCard({ modulePromise, index, open = false, placeholders }) {
   const CardShimmer = moduleCardShimmer();
 
   const startButtonTextMap = {
@@ -92,7 +118,6 @@ function moduleCard({ modulePromise, index, open = false, status = MODULE_STATUS
     [MODULE_STATUS.IN_PROGRESS]: placeholders.courseBreakdownModuleButtonInProgress || 'Resume Module',
     [MODULE_STATUS.COMPLETED]: placeholders.courseBreakdownModuleButtonCompleted || 'Review Module',
   };
-  const startButtonText = startButtonTextMap[finalStatus] || 'Start Module';
 
   const moduleCardStatusMap = {
     [MODULE_STATUS.DISABLED]: placeholders.courseBreakdownStatusNotStarted || 'Not Started',
@@ -100,11 +125,26 @@ function moduleCard({ modulePromise, index, open = false, status = MODULE_STATUS
     [MODULE_STATUS.IN_PROGRESS]: placeholders.courseBreakdownStatusInProgress || 'In progress',
     [MODULE_STATUS.COMPLETED]: placeholders.courseBreakdownStatusCompleted || 'Complete',
   };
-  const moduleCardStatusText = moduleCardStatusMap[finalStatus] || 'Not started';
 
-  modulePromise.then((moduleMeta) => {
+  modulePromise.then(async (moduleMeta) => {
+    
     const card = document.createElement('div');
     card.className = 'course-breakdown-module-card';
+    
+    let moduleStatus = await getModuleStatus(moduleMeta.moduleUrl);
+    
+    // If module is completed via query param, set module status to completed
+    if(isModuleCompleted(index)) {
+      moduleStatus = MODULE_STATUS.COMPLETED;
+    }
+
+    if(!moduleStatus) {
+      moduleStatus = MODULE_STATUS.DISABLED;
+    }
+
+    const startButtonText = startButtonTextMap[moduleStatus] || 'Start Module';
+    const moduleCardStatusText = moduleCardStatusMap[moduleStatus] || 'Not started';
+
 
     // Create steps list
     const stepsList =
@@ -123,19 +163,19 @@ function moduleCard({ modulePromise, index, open = false, status = MODULE_STATUS
     card.innerHTML = `
       <div class="cb-module-header">
         <div class="cb-module-title-wrapper">
-          <span class="cb-module-number ${finalStatus}">
-          ${finalStatus === MODULE_STATUS.COMPLETED ? '<span class="icon icon-checkmark-light"></span>' : index + 1}
+          <span class="cb-module-number ${moduleStatus}">
+          ${moduleStatus === MODULE_STATUS.COMPLETED ? '<span class="icon icon-checkmark-light"></span>' : index + 1}
             </span>
           <h3 class="cb-module-title">${moduleMeta.moduleHeader || 'Module Title'}</h3>
         </div>
-        <button class="button cb-start-btn ${finalStatus}" >
+        <button class="button cb-start-btn ${moduleStatus}" >
           <a href="${moduleMeta.moduleSteps[0].url || '#'}">${startButtonText}</a>
         </button>
       </div>
         <div class="cb-steps-info ${open ? 'open' : ''}">
           <span class="cb-steps-info-text">${placeholders.courseBreakdownModuleDetails || 'Module details'}</span>
           <span class="cb-chevron"> <span class="icon icon-chevron"></span></span>
-          <span class="cb-steps-status-text ${finalStatus}">${moduleCardStatusText}</span>
+          <span class="cb-steps-status-text ${moduleStatus}">${moduleCardStatusText}</span>
         </div>
       </div>
       <div class="cb-steps-list ${open ? 'open' : ''}">
@@ -144,7 +184,7 @@ function moduleCard({ modulePromise, index, open = false, status = MODULE_STATUS
     `;
 
     // Add the status class to the entire card to get the green border for completed modules
-    card.classList.add(finalStatus);
+    card.classList.add(moduleStatus);
     decorateIcons(card);
 
     // Add click handler for steps info
@@ -162,38 +202,6 @@ function moduleCard({ modulePromise, index, open = false, status = MODULE_STATUS
   return CardShimmer;
 }
 
-/**
- * Determines the status of a module based on its index and previous module completion status
- *
- * @param {number} index - The index of the module
- * @param {boolean} prevModuleCompleted - Whether the previous module is completed
- * @returns {Array} - Array containing [moduleStatus, updatedPrevModuleCompleted]
- */
-function determineModuleStatus(index, prevModuleCompleted) {
-  let moduleStatus;
-  let newPrevModuleCompleted = prevModuleCompleted;
-
-  if (index === 0) {
-    // First module is always NOT_STARTED unless completed
-    moduleStatus = MODULE_STATUS.NOT_STARTED;
-  } else if (prevModuleCompleted) {
-    // If previous module is completed, this module should be enabled
-    moduleStatus = MODULE_STATUS.NOT_STARTED;
-  } else {
-    // Otherwise, module is disabled
-    moduleStatus = MODULE_STATUS.DISABLED;
-  }
-
-  // Check if this module is marked as completed via query param
-  if (isModuleCompleted(index)) {
-    moduleStatus = MODULE_STATUS.COMPLETED;
-    newPrevModuleCompleted = true;
-  } else {
-    newPrevModuleCompleted = false;
-  }
-
-  return [moduleStatus, newPrevModuleCompleted];
-}
 
 export default async function decorate(block) {
   const [title, moduleTime, infoTitle, infoDescription, ...modules] = block.children;
@@ -206,29 +214,20 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
-  block.textContent = '';
-  block.append(headerDom(title, modules?.length, moduleTime, placeholders));
-  block.append(infoCardDom(infoTitle, infoDescription, placeholders));
+  const courseStatus = await getCourseStatus();
 
-  // Keep track of previous module status to enable the next module after a completed one
-  let prevModuleCompleted = false;
+  block.textContent = '';
+  block.append(headerDom(title, modules?.length, moduleTime, courseStatus, placeholders));
+  block.append(infoCardDom(infoTitle, infoDescription, courseStatus, placeholders));
 
   modules.forEach((module, index) => {
     const moduleFragment = module.querySelector('a')?.getAttribute('href');
     const modulePromise = getModuleMeta(moduleFragment, placeholders);
 
-    // Determine module status using the extracted function
-    // The function returns [moduleStatus, newPrevModuleCompleted]
-    const [moduleStatus, newPrevModuleCompleted] = determineModuleStatus(index, prevModuleCompleted);
-
-    // Update prevModuleCompleted for the next iteration
-    prevModuleCompleted = newPrevModuleCompleted;
-
     const moduleProp = {
       modulePromise,
       index,
       open: index === 0,
-      status: moduleStatus,
       placeholders,
     };
 

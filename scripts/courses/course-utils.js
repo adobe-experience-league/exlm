@@ -15,7 +15,7 @@ export function extractCourseModuleIds(url = window.location.pathname) {
     return { courseId: null, moduleId: null };
   }
 
-  const courseId = segments[coursesIndex + 1];
+  const courseId = `${segments[coursesIndex]}/${segments[coursesIndex + 1]}`;
   const moduleSegment = segments[coursesIndex + 2];
   const moduleId = moduleSegment ? `${courseId}/${moduleSegment}` : null;
 
@@ -29,8 +29,8 @@ export function extractCourseModuleIds(url = window.location.pathname) {
  *
  * @returns {string|null} The module fragment URL or null if not found
  */
-export function getModuleFragmentUrl() {
-  const parts = window.location.pathname.split('/').filter(Boolean);
+export function getModuleFragmentUrl(url = window.location.pathname) {
+  const parts = url.split('/').filter(Boolean);
   // find "courses" in the path
   const idx = parts.indexOf('courses');
   if (idx > 0 && parts.length > idx + 2) {
@@ -49,7 +49,8 @@ export function getModuleFragmentUrl() {
  *                         uses the result of getModuleFragmentUrl()
  * @returns {Promise<Document|null>} Parsed HTML document or null if fetch fails
  */
-async function fetchModuleFragment(path = getModuleFragmentUrl()) {
+async function fetchModuleFragment(url = window.location.pathname) {
+  const path = getModuleFragmentUrl(url);
   if (!path) return null;
   const fragmentUrl = `${path}.plain.html`;
   const res = await fetch(fragmentUrl);
@@ -212,8 +213,8 @@ async function extractModuleMeta(fragment, placeholders) {
  *   - {boolean} isRecap - Whether current page is the recap step
  *   - {boolean} isQuiz - Whether current page is the quiz step
  */
-export async function getCurrentStepInfo(placeholders = {}) {
-  const fragUrl = getModuleFragmentUrl();
+export async function getCurrentStepInfo(url = window.location.pathname, placeholders = {}) {
+  const fragUrl = getModuleFragmentUrl(url);
   if (!fragUrl) return null;
   const storageKey = `module-meta:${fragUrl}`;
   let meta = null;
@@ -260,7 +261,8 @@ export async function getCurrentStepInfo(placeholders = {}) {
  *   - {Array<{name: string, url: string}>} moduleSteps - Array of step objects
  *   - {number} totalSteps - Total number of steps in the track
  */
-export async function getModuleMeta(moduleFragmentUrl, placeholders = {}) {
+export async function getModuleMeta(url = window.location.pathname, placeholders = {}) {
+  const moduleFragmentUrl = getModuleFragmentUrl(url);
   if (!moduleFragmentUrl) return null;
   const storageKey = `module-meta:${moduleFragmentUrl}`;
   let meta = null;
@@ -299,8 +301,8 @@ export async function getModuleMeta(moduleFragmentUrl, placeholders = {}) {
  *
  * @returns {string|null} The course fragment URL or null if not found
  */
-export function getCourseFragmentUrl() {
-  const parts = window.location.pathname.split('/').filter(Boolean);
+export function getCourseFragmentUrl(url = window.location.pathname) {
+  const parts = url.split('/').filter(Boolean);
   const idx = parts.indexOf('courses');
   if (idx > 0 && parts.length > idx + 1) {
     const locale = parts[idx - 1];
@@ -316,7 +318,8 @@ export function getCourseFragmentUrl() {
  * @param {string} courseFragmentUrl - The course fragment URL to fetch
  * @returns {Promise<Document|null>} Parsed HTML document or null if fetch fails
  */
-export async function fetchCourseFragment(courseFragmentUrl) {
+export async function fetchCourseFragment(url = window.location.pathname) {
+  const courseFragmentUrl = getCourseFragmentUrl(url);
   if (!courseFragmentUrl) return null;
   const fragmentUrl = `${courseFragmentUrl}.plain.html`;
   const res = await fetch(fragmentUrl);
@@ -373,7 +376,8 @@ export async function extractCourseMeta(fragment) {
  *   - {Array<string>} modules - Array of module URLs
  *   - {string} url - The course fragment URL
  */
-export async function getCurrentCourseMeta(courseFragmentUrl = getCourseFragmentUrl()) {
+export async function getCurrentCourseMeta(url = window.location.pathname) {
+  const courseFragmentUrl = getCourseFragmentUrl(url);
   if (!courseFragmentUrl) return null;
   const storageKey = `course-meta:${courseFragmentUrl}`;
   let meta = null;

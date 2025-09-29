@@ -2,7 +2,7 @@
  * Course profile utilities
  */
 
-import { defaultProfileClient } from '../auth/profile.js';
+import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { extractCourseModuleIds, getCurrentCourseMeta } from './course-utils.js';
 
 const COURSE_STATUS = {
@@ -28,7 +28,29 @@ const MODULE_STATUS = {
  */
 async function getCurrentCourses() {
   const profile = await defaultProfileClient.getMergedProfile();
-  return profile.courses || {};
+  return profile?.courses || {};
+}
+
+/**
+ * Get the last added module from the current course
+ * @returns {Promise<string>} The last added module URL
+ */
+async function getLastAddedModule() {
+  const courses = await getCurrentCourses();
+  const courseMeta = await getCurrentCourseMeta();
+
+  if(!courses.modules) {
+    return courseMeta.modules[0];
+  }
+  const lastAddedModule = Object.values(courses).sort((a, b) => new Date(b.modules[b.modules.length - 1].started) - new Date(a.modules[a.modules.length - 1].started))[0];
+  const lastAddedModuleUrl = courseMeta.modules.find((moduleUrl) => {
+    const { moduleId: metaModuleId } = extractCourseModuleIds(moduleUrl);
+    return metaModuleId === lastAddedModule.moduleId;
+  });
+  if (!lastAddedModuleUrl) {
+    return courseMeta.modules[0];
+  }
+  return lastAddedModuleUrl;
 }
 
 /**
@@ -37,6 +59,11 @@ async function getCurrentCourses() {
  * @returns {Promise<string>} Course status: COURSE_STATUS.NOT_STARTED, COURSE_STATUS.IN_PROGRESS, or COURSE_STATUS.COMPLETED
  */
 async function getCourseStatus(url = window.location.pathname) {
+  // If user is not signed in, return null
+  if (!await isSignedInUser()) {
+    return null;
+  }
+
   const { courseId } = extractCourseModuleIds(url);
 
   if (!courseId) {
@@ -63,6 +90,11 @@ async function getCourseStatus(url = window.location.pathname) {
  * @returns {Promise<string>} Module status: MODULE_STATUS.DISABLED, MODULE_STATUS.NOT_STARTED, MODULE_STATUS.IN_PROGRESS, or MODULE_STATUS.COMPLETED
  */
 async function getModuleStatus(url = window.location.pathname) {
+  // If user is not signed in, return null
+  if (!await isSignedInUser()) {
+    return null;
+  }
+
   const { courseId, moduleId } = extractCourseModuleIds(url);
 
   if (!courseId || !moduleId) {
@@ -207,6 +239,7 @@ export {
   getCurrentCourses,
   getCourseStatus,
   getModuleStatus,
+  getLastAddedModule,
   startModule,
   finishModule,
   completeCourse,
