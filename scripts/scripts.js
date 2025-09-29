@@ -1436,11 +1436,7 @@ async function loadPage() {
   if (window.hlx.aemRoot || window.location.href.includes('.html')) {
     decodeAemCqMetaTags();
     const pagePath = window?.location.pathname;
-    if (
-      pagePath.includes('/courses/') &&
-      !pagePath.includes('/courses/instructors') &&
-      !pagePath.includes('/courses/course-fragments')
-    ) {
+    if (pagePath.includes('/courses/') && !pagePath.includes('/courses/instructors')) {
       updateTQTagsMetadata();
     } else {
       decodeAemPageMetaTags();
