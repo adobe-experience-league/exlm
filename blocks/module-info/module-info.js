@@ -3,6 +3,7 @@ import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js'
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { MODULE_STATUS, startModule, getModuleStatus } from '../../scripts/courses/course-profile.js';
+import { sendNotice } from '../../scripts/toast/toast.js';
 
 export default async function decorate(block) {
   const moduleStatus = await getModuleStatus();
@@ -25,9 +26,11 @@ export default async function decorate(block) {
 
   // If module is disabled, redirect to course page
   // Otherwise, update module status in profile
-  if(!moduleStatus || moduleStatus === MODULE_STATUS.DISABLED) {
+  if(!moduleStatus || moduleStatus === MODULE_STATUS.DISABLED || !window.hlx.aemRoot || !window.location.href.includes('.html')) {
     // Uncomment this to redirect to course page once profile API updates are done (https://jira.corp.adobe.com/browse/UGP-13737)
-    // window.location.href = stepInfo.courseUrl;
+    sendNotice("You are not authorized to access this module. Redirecting to course page.", 'error');
+    document.querySelector('main').style.visibility = 'hidden';
+    setTimeout(()=>{window.location.href = stepInfo.courseUrl}, 3000);
   } else {
     startModule();
   }
