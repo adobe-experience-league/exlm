@@ -86,6 +86,7 @@ export const getCardData = async (articlePath, placeholders) => {
   if (solutions.length < 2 && coveoSolution) {
     solutions = coveoSolution.split(';').map((s) => s.trim());
   }
+  const viewLinkPlaceholderKey = `browseCard${convertToTitleCase(type)}ViewLabel`.replace(/\s+/g, '');
 
   return {
     id: getMetadata('id', doc),
@@ -108,9 +109,7 @@ export const getCardData = async (articlePath, placeholders) => {
     copyLink: fullURL,
     bookmarkLink: '',
     viewLink: fullURL,
-    viewLinkText: placeholders[`browseCard${convertToTitleCase(type)}ViewLabel`]
-      ? placeholders[`browseCard${convertToTitleCase(type)}ViewLabel`]
-      : `View ${type}`,
+    viewLinkText: placeholders[viewLinkPlaceholderKey] ? placeholders[viewLinkPlaceholderKey] : `View ${type}`,
   };
 };
 
