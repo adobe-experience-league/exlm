@@ -296,8 +296,7 @@ export function getCourseFragmentUrl() {
  */
 export async function fetchCourseFragment(courseFragmentUrl) {
   if (!courseFragmentUrl) return null;
-  const fragmentUrl = `${courseFragmentUrl}.plain.html`;
-  const res = await fetch(fragmentUrl);
+  const res = await fetch(courseFragmentUrl);
   if (!res.ok) {
     return null;
   }
@@ -309,7 +308,7 @@ export async function fetchCourseFragment(courseFragmentUrl) {
 /**
  * Extracts metadata from a course fragment DOM element.
  * Parses the fragment to extract course information including heading,
- * description, total time, and module URLs.
+ * description, total time, role, solution, level and module URLs.
  *
  * @param {Document} fragment - Parsed HTML document containing course data
  * @returns {Promise<Object>} Course metadata object containing:
@@ -317,6 +316,9 @@ export async function fetchCourseFragment(courseFragmentUrl) {
  *   - {string} description - Course description HTML content
  *   - {string} totalTime - Total course duration
  *   - {Array<string>} modules - Array of module URLs
+ *   - {string} role - Course role
+ *   - {string} solution - Course solution
+ *   - {string} level - Course level
  */
 export async function extractCourseMeta(fragment) {
   if (!fragment) return {};
@@ -330,11 +332,17 @@ export async function extractCourseMeta(fragment) {
     courseBreakdownMeta?.children.length > 4
       ? [...courseBreakdownMeta.children].slice(4).map((child) => child.querySelector('a')?.getAttribute('href') || '')
       : [];
+  const role = fragment.querySelector('meta[name="role"]')?.content || '';
+  const solution = fragment.querySelector('meta[name="solution"]')?.content || '';
+  const level = fragment.querySelector('meta[name="level"]')?.content || '';
   return {
     heading,
     description,
     totalTime,
     modules,
+    role,
+    solution,
+    level,
   };
 }
 
