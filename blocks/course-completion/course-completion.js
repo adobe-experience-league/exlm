@@ -4,13 +4,7 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import createCanvas from '../../scripts/utils/canvas-utils.js';
 import { canvasToPDF } from '../../scripts/utils/canvas-pdf-utils.js';
 
-// Constants
 const CONFIG = {
-  CANVAS: {
-    WIDTH: 588,
-    HEIGHT: 330,
-    Z_INDEX: '9',
-  },
   CONFETTI: {
     DURATION: 30000, // 30 seconds
     PARTICLE_COUNT: 7,
@@ -20,13 +14,22 @@ const CONFIG = {
     INITIAL_DELAY: 800,
     FALLBACK_PARTICLES: 100,
     FALLBACK_SPREAD: 50,
+    CANVAS: {
+      WIDTH: 588,
+      HEIGHT: 330,
+    },
   },
-  IMAGES: {
-    CERTIFICATE: '/images/completion-certificate-mock.png',
-    ALT_TEXT: 'Course Certificate',
+  CERTIFICATE: {
+    IMAGE: {
+      PLACEHOLDER: '/images/completion-certificate-mock.png',
+      ALT_TEXT: 'Course Certificate',
+    },
+    WIDTH: 369,
+    HEIGHT: 285,
+    SCALE: 3,
   },
   API: {
-    URL: 'https://mocki.io/v1/d882efc4-04b9-4a5c-8110-a10fb18878bf',
+    URL: 'https://mocki.io/v1/d882efc4-04b9-4a5c-8110-a10fb18878bf', // Mock API URL - To be replaced with Profile API once implemented
   },
 };
 
@@ -84,7 +87,7 @@ async function downloadCertificate(canvas) {
       title: 'Course Completion Certificate',
       author: 'Learning Platform',
       subject: 'Certificate of Course Completion',
-      scale: 1, // Use actual canvas dimensions
+      scale: CONFIG.CERTIFICATE.SCALE, // Use actual canvas dimensions
     });
 
     // Create download link
@@ -114,111 +117,10 @@ function createConfettiCanvas() {
   const canvas = document.createElement('canvas');
   canvas.classList.add('course-completion-confetti-canvas');
 
-  canvas.width = CONFIG.CANVAS.WIDTH;
-  canvas.height = CONFIG.CANVAS.HEIGHT;
+  canvas.width = CONFIG.CONFETTI.CANVAS.WIDTH;
+  canvas.height = CONFIG.CONFETTI.CANVAS.HEIGHT;
 
   return canvas;
-}
-
-/**
- * Creates a certificate container with image and canvas using API data
- * @param {Object} courseData - Course data from API
- * @returns {Object} Container and canvas elements
- */
-async function createCertContainer(courseData) {
-  const container = document.createElement('div');
-  container.classList.add('course-completion-certificate-container');
-
-  // Create certificate text using API data
-  const certificateText = [
-    {
-      content: courseData.name,
-      position: { x: 185, y: 100 },
-      font: { size: '22px', weight: 'bold' },
-      color: '#686868',
-      align: 'center',
-    },
-    {
-      content: 'COMPLETED BY',
-      position: { x: 185, y: 140 },
-      font: { size: '8px' },
-      color: '#686868',
-      align: 'center',
-    },
-    {
-      content: 'Noor Mohamed',
-      position: { x: 185, y: 160 },
-      font: { size: '16px', weight: 'bold' },
-      color: '#2C2C2C',
-      align: 'center',
-    },
-    {
-      content: courseData.issued,
-      position: { x: 185, y: 200 },
-      font: { size: '8px' },
-      color: '#686868',
-      align: 'center',
-    },
-    {
-      content: `Completion Time: ${courseData.completionTimeInHrs} hours`,
-      position: { x: 300, y: 240 },
-      font: { size: '7px' },
-      color: '#2C2C2C',
-      align: 'center',
-    },
-  ];
-
-  const certificateCanvas = await createCanvas({
-    width: 369,
-    height: 285,
-    backgroundColor: 'transparent',
-    className: 'course-completion-certificate',
-    options: {
-      text: certificateText,
-      image: {
-        src: window.hlx.codeBasePath + CONFIG.IMAGES.CERTIFICATE,
-        alt: CONFIG.IMAGES.ALT_TEXT,
-        position: { x: 0, y: 0 },
-        width: 369,
-        height: 285,
-        fit: 'cover',
-      },
-    },
-  });
-
-  container.appendChild(certificateCanvas);
-
-  const canvas = createConfettiCanvas();
-  container.appendChild(canvas);
-
-  return { container, canvas };
-}
-
-/**
- * Creates the content container with title, description, and buttons
- * @param {Array} children - Block children elements
- * @param {HTMLCanvasElement} certificateCanvas - The certificate canvas for download
- * @returns {HTMLElement} Content container
- */
-function createContent(children, certificateCanvas) {
-  const [title, description, , downloadBtn] = children;
-
-  const container = htmlToElement(`
-    <div class="course-completion-content-container">
-      <h1>${title?.textContent}</h1>
-      <p>${description?.textContent}</p>
-      <div class="course-completion-button-container">
-        <button class="btn primary download-certificate">${downloadBtn?.innerHTML}</button>
-      </div>
-    </div>
-  `);
-  // Add PDF download functionality to download certificate button
-  const downloadCetificateBtn = container.querySelector('.download-certificate');
-  if (downloadBtn && downloadCetificateBtn && certificateCanvas) {
-    downloadCetificateBtn.addEventListener('click', () => downloadCertificate(certificateCanvas));
-  }
-
-  return container;
 }
 
 /**
@@ -260,6 +162,107 @@ function startConfetti(canvas) {
 }
 
 /**
+ * Creates a certificate container with image and canvas using API data
+ * @param {Object} courseData - Course data from API
+ * @returns {Object} Container and canvas elements
+ */
+async function createCertificateContainer(courseData) {
+  const container = document.createElement('div');
+  container.classList.add('course-completion-certificate-container');
+
+  // Create certificate text using API data with scale adjustment
+  const certificateText = [
+    {
+      content: courseData.name,
+      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 100 * CONFIG.CERTIFICATE.SCALE },
+      font: { size: `${22 * CONFIG.CERTIFICATE.SCALE}px`, weight: 'bold' },
+      color: '#686868',
+      align: 'center',
+    },
+    {
+      content: 'COMPLETED BY',
+      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 140 * CONFIG.CERTIFICATE.SCALE },
+      font: { size: `${8 * CONFIG.CERTIFICATE.SCALE}px` },
+      color: '#686868',
+      align: 'center',
+    },
+    {
+      content: 'John Doe',
+      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 160 * CONFIG.CERTIFICATE.SCALE },
+      font: { size: `${16 * CONFIG.CERTIFICATE.SCALE}px`, weight: 'bold' },
+      color: '#2C2C2C',
+      align: 'center',
+    },
+    {
+      content: courseData.issued,
+      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 200 * CONFIG.CERTIFICATE.SCALE },
+      font: { size: `${8 * CONFIG.CERTIFICATE.SCALE}px` },
+      color: '#686868',
+      align: 'center',
+    },
+    {
+      content: `Completion Time: ${courseData.completionTimeInHrs} hours`,
+      position: { x: 300 * CONFIG.CERTIFICATE.SCALE, y: 240 * CONFIG.CERTIFICATE.SCALE },
+      font: { size: `${7 * CONFIG.CERTIFICATE.SCALE}px` },
+      color: '#2C2C2C',
+      align: 'center',
+    },
+  ];
+
+  const certificateCanvas = await createCanvas({
+    width: CONFIG.CERTIFICATE.WIDTH * CONFIG.CERTIFICATE.SCALE,
+    height: CONFIG.CERTIFICATE.HEIGHT * CONFIG.CERTIFICATE.SCALE,
+    backgroundColor: 'transparent',
+    className: 'course-completion-certificate',
+    options: {
+      text: certificateText,
+      image: {
+        src: window.hlx.codeBasePath + CONFIG.CERTIFICATE.IMAGE.PLACEHOLDER,
+        alt: CONFIG.CERTIFICATE.IMAGE.ALT_TEXT,
+        position: { x: 0, y: 0 },
+        width: CONFIG.CERTIFICATE.WIDTH * CONFIG.CERTIFICATE.SCALE,
+        height: CONFIG.CERTIFICATE.HEIGHT * CONFIG.CERTIFICATE.SCALE,
+        fit: 'cover',
+      },
+    },
+  });
+
+  container.appendChild(certificateCanvas);
+
+  const canvas = createConfettiCanvas();
+  container.appendChild(canvas);
+
+  return { container, canvas };
+}
+
+/**
+ * Creates the content container with title, description, and buttons
+ * @param {Array} children - Block children elements
+ * @param {HTMLCanvasElement} certificateCanvas - The certificate canvas for download
+ * @returns {HTMLElement} Content container
+ */
+function createContent(children, certificateCanvas) {
+  const [title, description, , downloadBtn] = children;
+
+  const container = htmlToElement(`
+    <div class="course-completion-content-container">
+      <h1>${title?.textContent}</h1>
+      <p>${description?.textContent}</p>
+      <div class="course-completion-button-container">
+        <button class="btn primary download-certificate">${downloadBtn?.innerHTML}</button>
+      </div>
+    </div>
+  `);
+  // Add PDF download functionality to download certificate button
+  const downloadCetificateBtn = container.querySelector('.download-certificate');
+  if (downloadBtn && downloadCetificateBtn && certificateCanvas) {
+    downloadCetificateBtn.addEventListener('click', () => downloadCertificate(certificateCanvas));
+  }
+
+  return container;
+}
+
+/**
  * Main decorator function for course completion block
  * @param {HTMLElement} block - The block element to decorate
  */
@@ -277,7 +280,7 @@ export default async function decorate(block) {
     const courseData = await fetchCourseData();
 
     // Create certificate with API data
-    const { container, canvas } = await createCertContainer(courseData);
+    const { container, canvas } = await createCertificateContainer(courseData);
     const content = createContent(originalChildren, container.querySelector('.course-completion-certificate'));
 
     // Replace shimmer with actual certificate
