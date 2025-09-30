@@ -49,8 +49,8 @@ export default async function decorate(block) {
       <div class="quiz-scorecard-content">
         <div class="quiz-scorecard-text">${resultDiv.innerHTML || ''}</div>
         <div class="quiz-scorecard-result">${
-          placeholders.courseScorecardResult
-            ? `${placeholders.courseScorecardResult.replace('{}', correctAnswers).replace('{}', totalQuestions)}`
+          placeholders?.courseScorecardResult
+            ? `${placeholders?.courseScorecardResult.replace('{}', correctAnswers).replace('{}', totalQuestions)}`
             : `${correctAnswers} out of ${totalQuestions} correct`
         }</div>
         <div class="quiz-scorecard-description">${description}</div>
