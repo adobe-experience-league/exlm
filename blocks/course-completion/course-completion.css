@@ -177,7 +177,7 @@
     height: 330px;
 
     --slide-up-from: 300px;
-    --slide-up-to: 50px;
+    --slide-up-to: 40px;
   }
 
   .course-completion .course-completion-button-container {
