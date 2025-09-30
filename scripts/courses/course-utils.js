@@ -213,8 +213,8 @@ async function extractModuleMeta(fragment, placeholders) {
  *   - {boolean} isRecap - Whether current page is the recap step
  *   - {boolean} isQuiz - Whether current page is the quiz step
  */
-export async function getCurrentStepInfo(url = window.location.pathname, placeholders = {}) {
-  const fragUrl = getModuleFragmentUrl(url);
+export async function getCurrentStepInfo(placeholders = {}) {
+  const fragUrl = getModuleFragmentUrl();
   if (!fragUrl) return null;
   const storageKey = `module-meta:${fragUrl}`;
   let meta = null;
