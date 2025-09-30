@@ -296,8 +296,7 @@ export function getCourseFragmentUrl() {
  */
 export async function fetchCourseFragment(courseFragmentUrl) {
   if (!courseFragmentUrl) return null;
-  const fragmentUrl = `${courseFragmentUrl}.plain.html`;
-  const res = await fetch(fragmentUrl);
+  const res = await fetch(courseFragmentUrl);
   if (!res.ok) {
     return null;
   }
@@ -309,7 +308,7 @@ export async function fetchCourseFragment(courseFragmentUrl) {
 /**
  * Extracts metadata from a course fragment DOM element.
  * Parses the fragment to extract course information including heading,
- * description, total time, and module URLs.
+ * description, total time, role, solution, level and module URLs.
  *
  * @param {Document} fragment - Parsed HTML document containing course data
  * @returns {Promise<Object>} Course metadata object containing:
@@ -317,6 +316,9 @@ export async function fetchCourseFragment(courseFragmentUrl) {
  *   - {string} description - Course description HTML content
  *   - {string} totalTime - Total course duration
  *   - {Array<string>} modules - Array of module URLs
+ *   - {string} role - Course role
+ *   - {string} solution - Course solution
+ *   - {string} level - Course level
  */
 export async function extractCourseMeta(fragment) {
   if (!fragment) return {};
@@ -330,11 +332,17 @@ export async function extractCourseMeta(fragment) {
     courseBreakdownMeta?.children.length > 4
       ? [...courseBreakdownMeta.children].slice(4).map((child) => child.querySelector('a')?.getAttribute('href') || '')
       : [];
+  const role = fragment.querySelector('meta[name="role"]')?.content || '';
+  const solution = fragment.querySelector('meta[name="solution"]')?.content || '';
+  const level = fragment.querySelector('meta[name="level"]')?.content || '';
   return {
     heading,
     description,
     totalTime,
     modules,
+    role,
+    solution,
+    level,
   };
 }
 
@@ -382,4 +390,53 @@ export async function getCurrentCourseMeta(courseFragmentUrl = getCourseFragment
     console.error(e);
   }
   return meta;
+}
+
+/**
+ * Checks if the current step is the last step in the module.
+ *
+ * @param {Object} stepInfo - The step information object from getCurrentStepInfo()
+ * @returns {boolean} True if current step is the last step, false otherwise
+ */
+export async function isLastStep() {
+  const stepInfo = await getCurrentStepInfo();
+  if (!stepInfo || !stepInfo.moduleSteps || !Array.isArray(stepInfo.moduleSteps)) {
+    return false;
+  }
+
+  const currentStepIndex = stepInfo.moduleSteps.findIndex((step) => step.url === window.location.pathname);
+  return currentStepIndex === stepInfo.moduleSteps.length - 1;
+}
+
+// Gets the URL of the first step of the next module.
+export async function getNextModuleFirstStep() {
+  const courseInfo = await getCurrentCourseMeta();
+  if (!courseInfo || !courseInfo.modules || !Array.isArray(courseInfo.modules) || courseInfo.modules.length === 0) {
+    return null;
+  }
+
+  // Extract the current module path from the URL
+  const pathParts = window.location.pathname.split('/');
+  const currentModulePath = pathParts.length > 4 ? pathParts[4] : '';
+
+  if (!currentModulePath) {
+    return null;
+  }
+
+  // Find the current module index
+  const currentModuleIndex = courseInfo.modules.findIndex((url) => url.includes(currentModulePath));
+
+  // If there's a next module, get its first step
+  if (currentModuleIndex !== -1 && currentModuleIndex < courseInfo.modules.length - 1) {
+    const nextModuleUrl = courseInfo.modules[currentModuleIndex + 1];
+
+    const nextModuleMeta = await getModuleMeta(nextModuleUrl);
+
+    // If we have module steps, return the first one
+    if (nextModuleMeta && nextModuleMeta.moduleSteps && nextModuleMeta.moduleSteps.length > 0) {
+      return nextModuleMeta.moduleSteps[0].url;
+    }
+  }
+
+  return null;
 }
