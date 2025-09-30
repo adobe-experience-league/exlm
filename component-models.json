@@ -1919,7 +1919,7 @@
         "valueType": "string",
         "name": "customHexCode",
         "value": "",
-        "label": "Custom Background Color",
+        "label": "Custom Background & Gradient Colors",
         "description": "Enter a custom hex code (e.g., FFFFFF, without the #). For gradients, enter multiple hex codes separated by commas."
       },
       {
