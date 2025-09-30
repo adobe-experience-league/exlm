@@ -1,4 +1,4 @@
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import createCanvas from '../../scripts/utils/canvas-utils.js';
 import { canvasToPDF } from '../../scripts/utils/canvas-pdf-utils.js';
 import { launchConfetti } from '../../scripts/utils/confetti-utils.js';
@@ -31,6 +31,34 @@ const CONFIG = {
     URL: 'https://mocki.io/v1/d882efc4-04b9-4a5c-8110-a10fb18878bf', // Mock API URL - To be replaced with Profile API once implemented
   },
 };
+
+let placeholders = {};
+
+/**
+ * Simple text wrapping - breaks long text into multiple lines
+ * @param {string} text - Text to wrap
+ * @param {number} maxLength - Maximum characters per line
+ * @returns {string} Wrapped text with line breaks
+ */
+function wrapText(text, maxLength = 30) {
+  if (text.length <= maxLength) return text;
+  
+  const words = text.split(' ');
+  const lines = [];
+  let currentLine = '';
+  
+  words.forEach((word) => {
+    if ((currentLine + word).length <= maxLength) {
+      currentLine += (currentLine ? ' ' : '') + word;
+    } else {
+      if (currentLine) lines.push(currentLine);
+      currentLine = word;
+    }
+  });
+  
+  if (currentLine) lines.push(currentLine);
+  return lines.join('\n');
+}
 
 /**
  * Fetches course data from API
@@ -71,8 +99,11 @@ function createErrorMessage() {
   const errorDiv = document.createElement('div');
   errorDiv.classList.add('error-message');
   errorDiv.innerHTML = `
-    <h3>Unable to Load Certificate</h3>
-    <p>There was an error loading your certificate data. Please try again later.</p>
+    <h3>${placeholders?.courseCertificateErrorTitle || 'Unable to Load Certificate'}</h3>
+    <p>${
+      placeholders?.courseCertificateErrorMessage ||
+      'There was an error loading your certificate data. Please try again later.'
+    }</p>
   `;
   return errorDiv;
 }
@@ -132,17 +163,17 @@ async function createCertificateContainer(courseData) {
   const container = document.createElement('div');
   container.classList.add('course-completion-certificate-container');
 
-  // Create certificate text using API data with scale adjustment
+  // Create certificate text using API data with scale adjustment and placeholders
   const certificateText = [
     {
-      content: courseData.name,
+      content: wrapText(courseData.name, 20), // Simple character-based wrapping
       position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 115 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${22 * CONFIG.CERTIFICATE.SCALE}px`, weight: 'bold' },
       color: '#2C2C2C',
       align: 'center',
     },
     {
-      content: 'COMPLETED BY',
+      content: placeholders?.courseCompletedByText || 'COMPLETED BY',
       position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 180 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${8 * CONFIG.CERTIFICATE.SCALE}px` },
       color: '#686868',
@@ -156,14 +187,17 @@ async function createCertificateContainer(courseData) {
       align: 'center',
     },
     {
-      content: `ISSUED July 30, 2025`, // courseData.issued,
+      content: 'ISSUED July 30, 2025',
       position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 220 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${8.5 * CONFIG.CERTIFICATE.SCALE}px` },
       color: '#686868',
       align: 'center',
     },
     {
-      content: `Completion Time: ${courseData.completionTimeInHrs} hours`,
+      content: (placeholders?.courseCompletionTimeText || 'Completion Time [hours] hours').replace(
+        '[hours]',
+        courseData.completionTimeInHrs,
+      ),
       position: { x: 300 * CONFIG.CERTIFICATE.SCALE, y: 240 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${7.5 * CONFIG.CERTIFICATE.SCALE}px` },
       color: '#2C2C2C',
@@ -231,6 +265,14 @@ function createContent(children, certificateCanvas) {
 export default async function decorate(block) {
   // Store original children before clearing block
   const originalChildren = Array.from(block.children);
+
+  // Load placeholders
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:');
+  }
 
   // Show shimmer loading initially
   const shimmerContainer = createShimmerElements();
