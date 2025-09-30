@@ -25,18 +25,66 @@ const CONFIG = {
     CERTIFICATE: '/images/completion-certificate-mock.png',
     ALT_TEXT: 'Course Certificate',
   },
+  API: {
+    URL: 'https://mocki.io/v1/d882efc4-04b9-4a5c-8110-a10fb18878bf',
+  },
 };
 
 /**
- * Downloads the certificate as PDF
+ * Fetches course data from API
+ */
+async function fetchCourseData() {
+  try {
+    const response = await fetch(CONFIG.API.URL);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.course;
+  } catch (error) {
+    console.error('Error fetching course data:', error);
+    throw error;
+  }
+}
+
+/**
+ * Creates shimmer loading elements
+ */
+function createShimmerElements() {
+  const shimmerContainer = document.createElement('div');
+  shimmerContainer.classList.add('course-completion-certificate-container');
+
+  const shimmerCanvas = document.createElement('div');
+  shimmerCanvas.classList.add('course-completion-certificate', 'shimmer');
+
+  shimmerContainer.appendChild(shimmerCanvas);
+  return shimmerContainer;
+}
+
+/**
+ * Creates error message element
+ */
+function createErrorMessage() {
+  const errorDiv = document.createElement('div');
+  errorDiv.classList.add('error-message');
+  errorDiv.innerHTML = `
+    <h3>Unable to Load Certificate</h3>
+    <p>There was an error loading your certificate data. Please try again later.</p>
+  `;
+  return errorDiv;
+}
+
+/**
+ * Downloads the certificate as high-quality PNG
  */
 async function downloadCertificate(canvas) {
   try {
+    // Download as PDF with actual canvas dimensions (no scaling)
     const pdfBlob = await canvasToPDF(canvas, {
       title: 'Course Completion Certificate',
       author: 'Learning Platform',
       subject: 'Certificate of Course Completion',
-      scale: 1.2,
+      scale: 1, // Use actual canvas dimensions
     });
 
     // Create download link
@@ -73,14 +121,52 @@ function createConfettiCanvas() {
 }
 
 /**
- * Creates a certificate container with image and canvas
- * @param {HTMLElement} block - The block element
- * @param {Object} textOptions - Text configuration options
+ * Creates a certificate container with image and canvas using API data
+ * @param {Object} courseData - Course data from API
  * @returns {Object} Container and canvas elements
  */
-async function createCertContainer(textOptions = []) {
+async function createCertContainer(courseData) {
   const container = document.createElement('div');
   container.classList.add('course-completion-certificate-container');
+
+  // Create certificate text using API data
+  const certificateText = [
+    {
+      content: courseData.name,
+      position: { x: 185, y: 100 },
+      font: { size: '22px', weight: 'bold' },
+      color: '#686868',
+      align: 'center',
+    },
+    {
+      content: 'COMPLETED BY',
+      position: { x: 185, y: 140 },
+      font: { size: '8px' },
+      color: '#686868',
+      align: 'center',
+    },
+    {
+      content: 'Noor Mohamed',
+      position: { x: 185, y: 160 },
+      font: { size: '16px', weight: 'bold' },
+      color: '#2C2C2C',
+      align: 'center',
+    },
+    {
+      content: courseData.issued,
+      position: { x: 185, y: 200 },
+      font: { size: '8px' },
+      color: '#686868',
+      align: 'center',
+    },
+    {
+      content: `Completion Time: ${courseData.completionTimeInHrs} hours`,
+      position: { x: 300, y: 240 },
+      font: { size: '7px' },
+      color: '#2C2C2C',
+      align: 'center',
+    },
+  ];
 
   const certificateCanvas = await createCanvas({
     width: 369,
@@ -88,7 +174,7 @@ async function createCertContainer(textOptions = []) {
     backgroundColor: 'transparent',
     className: 'course-completion-certificate',
     options: {
-      text: textOptions,
+      text: certificateText,
       image: {
         src: window.hlx.codeBasePath + CONFIG.IMAGES.CERTIFICATE,
         alt: CONFIG.IMAGES.ALT_TEXT,
@@ -107,6 +193,7 @@ async function createCertContainer(textOptions = []) {
 
   return { container, canvas };
 }
+
 /**
  * Creates the content container with title, description, and buttons
  * @param {Array} children - Block children elements
@@ -177,42 +264,32 @@ function startConfetti(canvas) {
  * @param {HTMLElement} block - The block element to decorate
  */
 export default async function decorate(block) {
-  const certificateText = [
-    {
-      content: 'Marketo Engage Core Concepts',
-      position: { x: 185, y: 100 },
-      font: { size: '24px', weight: 'bold' }, // Custom weight for emphasis
-      color: '#2c3e50',
-      align: 'center',
-    },
-    {
-      content: 'Completed by',
-      position: { x: 185, y: 140 },
-      font: { size: '14px' },
-      color: '#7f8c8d',
-      align: 'center',
-    },
-    {
-      content: 'Noor Mohamed',
-      position: { x: 185, y: 160 },
-      font: { size: '20px', weight: 'bold' }, // Bold name
-      color: '#e74c3c',
-      align: 'center',
-    },
-    {
-      content: new Date().toLocaleDateString(),
-      position: { x: 185, y: 200 },
-      font: { size: '12px' },
-      color: '#95a5a6',
-      align: 'center',
-    },
-  ];
+  // Store original children before clearing block
+  const originalChildren = Array.from(block.children);
 
-  const { container, canvas } = await createCertContainer(certificateText);
-  const content = createContent(block.children, container.querySelector('.course-completion-certificate'));
-
+  // Show shimmer loading initially
+  const shimmerContainer = createShimmerElements();
   block.textContent = '';
-  block.append(container, content);
+  block.appendChild(shimmerContainer);
 
-  startConfetti(canvas);
+  try {
+    // Fetch course data from API
+    const courseData = await fetchCourseData();
+
+    // Create certificate with API data
+    const { container, canvas } = await createCertContainer(courseData);
+    const content = createContent(originalChildren, container.querySelector('.course-completion-certificate'));
+
+    // Replace shimmer with actual certificate
+    block.textContent = '';
+    block.append(container, content);
+
+    // Start confetti animation
+    startConfetti(canvas);
+  } catch {
+    // Show error message
+    const errorMessage = createErrorMessage();
+    block.textContent = '';
+    block.appendChild(errorMessage);
+  }
 }

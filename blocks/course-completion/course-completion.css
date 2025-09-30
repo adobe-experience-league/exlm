@@ -10,6 +10,17 @@
   }
 }
 
+/* Shimmer loading animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
 /* Main container */
 .course-completion {
   display: flex;
@@ -119,6 +130,32 @@
 
 .course-completion p {
   line-height: 150%;
+}
+
+.course-completion .shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  transform: translateY(10px);
+  width: 369px;
+  height: 285px;
+}
+
+.course-completion .error-message {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  padding: 40px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.course-completion .error-message :where(h3, h4, h5, h6) {
+  margin: 0;
+}
+
+.course-completion .error-message p {
+  margin: 20px 0 0;
 }
 
 @media (min-width: 600px) {
