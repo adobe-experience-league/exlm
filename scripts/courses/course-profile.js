@@ -108,8 +108,13 @@ async function getModuleStatus(url = window.location.pathname) {
   }
 
   const course = courses[courseId];
+
   if (!course || !course.modules) {
-    return MODULE_STATUS.NOT_STARTED;
+    // If the module is the first module of the course, return not started
+    if(courseMeta.modules[0].includes(url) || url.includes(courseMeta.modules[0])) {
+      return MODULE_STATUS.NOT_STARTED;
+    }
+    return MODULE_STATUS.DISABLED;
   }
 
   // Check if previous module is finished
