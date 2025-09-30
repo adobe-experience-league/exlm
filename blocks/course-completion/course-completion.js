@@ -21,7 +21,7 @@ const CONFIG = {
   },
   CERTIFICATE: {
     IMAGE: {
-      PLACEHOLDER: '/images/completion-certificate-mock.png',
+      PLACEHOLDER: '/images/course-certificate-placeholder.png',
       ALT_TEXT: 'Course Certificate',
     },
     WIDTH: 369,
@@ -174,36 +174,36 @@ async function createCertificateContainer(courseData) {
   const certificateText = [
     {
       content: courseData.name,
-      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 100 * CONFIG.CERTIFICATE.SCALE },
+      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 115 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${22 * CONFIG.CERTIFICATE.SCALE}px`, weight: 'bold' },
-      color: '#686868',
+      color: '#2C2C2C',
       align: 'center',
     },
     {
       content: 'COMPLETED BY',
-      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 140 * CONFIG.CERTIFICATE.SCALE },
+      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 180 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${8 * CONFIG.CERTIFICATE.SCALE}px` },
       color: '#686868',
       align: 'center',
     },
     {
       content: 'John Doe',
-      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 160 * CONFIG.CERTIFICATE.SCALE },
+      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 195 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${16 * CONFIG.CERTIFICATE.SCALE}px`, weight: 'bold' },
       color: '#2C2C2C',
       align: 'center',
     },
     {
-      content: courseData.issued,
-      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 200 * CONFIG.CERTIFICATE.SCALE },
-      font: { size: `${8 * CONFIG.CERTIFICATE.SCALE}px` },
+      content: `ISSUED July 30, 2025`, // courseData.issued,
+      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 220 * CONFIG.CERTIFICATE.SCALE },
+      font: { size: `${8.5 * CONFIG.CERTIFICATE.SCALE}px` },
       color: '#686868',
       align: 'center',
     },
     {
       content: `Completion Time: ${courseData.completionTimeInHrs} hours`,
       position: { x: 300 * CONFIG.CERTIFICATE.SCALE, y: 240 * CONFIG.CERTIFICATE.SCALE },
-      font: { size: `${7 * CONFIG.CERTIFICATE.SCALE}px` },
+      font: { size: `${7.5 * CONFIG.CERTIFICATE.SCALE}px` },
       color: '#2C2C2C',
       align: 'center',
     },
