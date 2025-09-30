@@ -179,7 +179,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
 
     name = `xl:learn:${subs.join(':')}`;
   }
-  
+
   const webDetails = {
     webPageDetails: {
       URL: window.location.href,
