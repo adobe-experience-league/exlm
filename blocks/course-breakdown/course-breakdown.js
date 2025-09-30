@@ -31,8 +31,11 @@ function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
     const startButton = document.createElement('a');
     startButton.classList.add("course-breakdown-header-start-button", "button");
     startButton.textContent = startButtonText;
-    getLastAddedModule().then((lastAddedModuleUrl)=>{
-      startButton.href = lastAddedModuleUrl;
+    getLastAddedModule().then(async (lastAddedModuleUrl)=>{
+      const moduleMeta = await getModuleMeta(lastAddedModuleUrl, placeholder);
+      if(moduleMeta && moduleMeta.moduleSteps.length && moduleMeta.moduleSteps[0]?.url) {
+      startButton.href = moduleMeta.moduleSteps[0].url;
+      }
       header.append(startButton);
     })
   }
