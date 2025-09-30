@@ -556,10 +556,7 @@ div.marquee-wrapper {
 }
 
 .course-hub .marquee .marquee-subject img,
-.course-hub .marquee .marquee-subject picture {
-  object-fit: contain;
-}
-
+.course-hub .marquee .marquee-subject picture,
 .course-hub .marquee.no-subject > .marquee-background img {
   object-fit: contain;
 }

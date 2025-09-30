@@ -127,9 +127,9 @@ export default async function decorate(block) {
       const [first, second] = colors;
       gradientColor = `linear-gradient(to right, ${first} 0%, ${first} 55%, ${second} 100%)`;
     } else if (colors.length === 1) {
-      gradientColor = `linear-gradient(to right, ${colors[0]} 0%, ${colors[0]} 100%)`;
+      gradientColor = `${colors[0]}`;
     } else {
-      gradientColor = '#FFFFFF';
+      gradientColor = bgColorCls ? `var(--${bgColorCls.slice(3)})` : '#FFFFFF';
     }
     block.style.backgroundColor = bgColor;
     block.querySelector('img').style.background = gradientColor;
