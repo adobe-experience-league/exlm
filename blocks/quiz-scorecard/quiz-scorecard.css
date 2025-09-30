@@ -15,6 +15,10 @@
   gap: var(--spectrum-spacing-200);
 }
 
+.quiz-scorecard-container .default-content-wrapper {
+  text-align: left;
+}
+
 /* Pass/Fail specific styles */
 .quiz-scorecard.pass {
   border: 2px solid var(--non-spectrum-pass-green);
