@@ -870,7 +870,7 @@ export default function atomicResultHandler(block, placeholders) {
           } else if (!isMobileView) {
             // UI effect is only for desktop.
             const svgIcon = ContentTypeIcons[contentType] || '';
-            if (contentType) resultContentType.classList.add(contentType);
+            if (contentType) resultContentType.classList.add(contentType.replace(/\s+/g, '-'));
             const svgElement = contentTypeEl.querySelector('span.svg-element');
             if (svgElement) {
               contentTypeEl.removeChild(svgElement);
