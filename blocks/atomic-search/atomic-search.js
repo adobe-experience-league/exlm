@@ -88,6 +88,7 @@ export default function decorate(block) {
       'pt-br': 'pt-BR',
       'zh-hans': 'zh-CN',
       'zh-hant': 'zh-TW',
+      es: 'es-ES',
     };
 
     languageCode = atomicLanguagesMap[languageCode] || languageCode;
