@@ -1814,7 +1814,7 @@
                 "value": "fill-background"
               },
               {
-                "name": "Fill marquee with given gradient",
+                "name": "Fill marquee with given gradient colors",
                 "value": "fill-gradient"
               },
               {
