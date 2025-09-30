@@ -1,8 +1,7 @@
-// eslint-disable-next-line import/extensions
-import { create as createConfetti } from '../../scripts/confetti/canvas-confetti-1.9.3.module.min.mjs';
 import { htmlToElement } from '../../scripts/scripts.js';
 import createCanvas from '../../scripts/utils/canvas-utils.js';
 import { canvasToPDF } from '../../scripts/utils/canvas-pdf-utils.js';
+import { launchConfetti } from '../../scripts/utils/confetti-utils.js';
 
 const CONFIG = {
   CONFETTI: {
@@ -45,6 +44,7 @@ async function fetchCourseData() {
     const data = await response.json();
     return data.course;
   } catch (error) {
+    /* eslint-disable-next-line no-console */
     console.error('Error fetching course data:', error);
     throw error;
   }
@@ -121,44 +121,6 @@ function createConfettiCanvas() {
   canvas.height = CONFIG.CONFETTI.CANVAS.HEIGHT;
 
   return canvas;
-}
-
-/**
- * Animates confetti for the specified duration
- * @param {Object} confettiInstance - Confetti instance
- */
-function animateConfetti(confettiInstance) {
-  const end = Date.now() + CONFIG.CONFETTI.DURATION;
-
-  function frame() {
-    confettiInstance({
-      particleCount: CONFIG.CONFETTI.PARTICLE_COUNT,
-      spread: CONFIG.CONFETTI.SPREAD,
-      ticks: CONFIG.CONFETTI.TICKS,
-      origin: { x: 0.5, y: 1 },
-    });
-
-    if (Date.now() < end) {
-      setTimeout(() => requestAnimationFrame(frame), CONFIG.CONFETTI.FRAME_DELAY);
-    }
-  }
-
-  frame();
-}
-
-/**
- * Creates confetti instance and starts animation
- * @param {HTMLCanvasElement} canvas - Canvas element for confetti
- */
-function startConfetti(canvas) {
-  const myConfetti = createConfetti(canvas, {
-    resize: true,
-    useWorker: true,
-  });
-
-  setTimeout(() => {
-    animateConfetti(myConfetti);
-  }, CONFIG.CONFETTI.INITIAL_DELAY);
 }
 
 /**
@@ -287,8 +249,21 @@ export default async function decorate(block) {
     block.textContent = '';
     block.append(container, content);
 
-    // Start confetti animation
-    startConfetti(canvas);
+    // Launch confetti animation
+    launchConfetti(canvas, {
+      confettiOptions: {
+        resize: true,
+        useWorker: true,
+      },
+      animationConfig: {
+        duration: CONFIG.CONFETTI.DURATION,
+        particleCount: CONFIG.CONFETTI.PARTICLE_COUNT,
+        spread: CONFIG.CONFETTI.SPREAD,
+        ticks: CONFIG.CONFETTI.TICKS,
+        frameDelay: CONFIG.CONFETTI.FRAME_DELAY,
+      },
+      initialDelay: CONFIG.CONFETTI.INITIAL_DELAY,
+    });
   } catch {
     // Show error message
     const errorMessage = createErrorMessage();
