@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
-export const search = window.location.pathname === '/search.html';
+const lang = document.querySelector('html').lang || 'en';
+export const search = window.location.pathname === '/search.html' || window.location.pathname === `/${lang}/search`;
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
 export const courses = document.querySelector('meta[name="theme"]')?.content.includes('course-') || false;
 export const browse = document.querySelector('meta[name="theme"]')?.content.includes('browse-') || false;
@@ -59,7 +60,7 @@ export const pageName = (language) => {
   return responseStr.toLowerCase();
 };
 
-export async function pushPageDataLayer(language) {
+export async function pushPageDataLayer(language, searchTrackingData) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   let courseObj = null;
@@ -157,6 +158,7 @@ export async function pushPageDataLayer(language) {
     sections.shift();
   }
   const mainSiteSection = search ? 'search' : '';
+  const containsAtomicSearch = search && !!document.querySelector(`main .atomic-search`);
 
   // Determine section1 value to avoid nested ternary
   let section1Value = '';
@@ -177,53 +179,78 @@ export async function pushPageDataLayer(language) {
 
     name = `xl:learn:${subs.join(':')}`;
   }
+  
+  const webDetails = {
+    webPageDetails: {
+      URL: window.location.href,
+      cleanURL: window.location.href.replace(/^https?:\/\//, '').replace(/#.*$/, ''),
+      domain: window.location.host,
+      docrole: role,
+      doctype: docType,
+      docduration: duration,
+      mainSiteSection,
+      name,
+      gitEdit: document.querySelector('meta[name="git-edit"]')?.content || '',
+      exlId: document.querySelector('meta[name="exl-id"]')?.content || '',
+      pageLanguage: language,
+      pageName: name,
+      pageType: 'webpage',
+      pageViews: { value: 1 },
+      prevPage: localStorage.getItem('prevPage') || '',
+      userAgent: window.navigator.userAgent,
+      server: window.location.host,
+      siteSection: section,
+      siteSubSection1: courseObj ? 'courses' : section1Value,
 
-  window.adobeDataLayer.push({
-    event: 'page loaded',
-    web: {
-      webPageDetails: {
-        URL: window.location.href,
-        cleanURL: window.location.href.replace(/^https?:\/\//, '').replace(/#.*$/, ''),
-        domain: window.location.host,
-        docrole: role,
-        doctype: docType,
-        docduration: duration,
-        mainSiteSection,
-        name,
-        gitEdit: document.querySelector('meta[name="git-edit"]')?.content || '',
-        exlId: document.querySelector('meta[name="exl-id"]')?.content || '',
-        pageLanguage: language,
-        pageName: name,
-        pageType: 'webpage',
-        pageViews: { value: 1 },
-        prevPage: localStorage.getItem('prevPage') || '',
-        userAgent: window.navigator.userAgent,
-        server: window.location.host,
-        siteSection: section,
-        siteSubSection1: courseObj ? 'courses' : section1Value,
+      siteSubSection2: courseObj ? courseObj.solution || '' : sections[1] || '',
 
-        siteSubSection2: courseObj ? courseObj.solution || '' : sections[1] || '',
+      siteSubSection3: courseObj ? courseObj.title || '' : sections[2] || '',
 
-        siteSubSection3: courseObj ? courseObj.title || '' : sections[2] || '',
+      siteSubSection4: courseObj ? moduleObj?.title || '' : sections[3] || '',
 
-        siteSubSection4: courseObj ? moduleObj?.title || '' : sections[3] || '',
-
-        siteSubSection5: courseObj ? stepObj?.title || '' : sections[4] || '',
-        solution: browseProduct ? sections[1] : solution,
-        solutionVersion,
-        subSolution,
-        type,
-        fullSolution,
-        feature,
-        featureAttribute,
-      },
+      siteSubSection5: courseObj ? stepObj?.title || '' : sections[4] || '',
+      solution: browseProduct ? sections[1] : solution,
+      solutionVersion,
+      subSolution,
+      type,
+      fullSolution,
+      feature,
+      featureAttribute,
     },
-    user,
-    userGUID: user.userDetails.userID,
-    ...(courseObj && { courses: courseObj }),
-    ...(moduleObj && { module: moduleObj }),
-    ...(stepObj && { steps: stepObj }),
-  });
+  };
+  if (containsAtomicSearch && !searchTrackingData) {
+    document.addEventListener(
+      'ATOMIC_SEARCH_PAGE_LOAD_EVENT',
+      (e) => {
+        const trackingData = e.detail?.trackingData;
+        const dataLayer = {
+          event: 'page loaded',
+          web: webDetails,
+          user,
+          userGUID: user.userDetails.userID,
+          ...(courseObj && { courses: courseObj }),
+          ...(moduleObj && { module: moduleObj }),
+          ...(stepObj && { steps: stepObj }),
+        };
+        if (trackingData) {
+          dataLayer.search = trackingData;
+        }
+        window.adobeDataLayer.push(dataLayer);
+      },
+      { once: true },
+    );
+  } else {
+    window.adobeDataLayer.push({
+      event: 'page loaded',
+      web: webDetails,
+      user,
+      search: searchTrackingData,
+      userGUID: user.userDetails.userID,
+      ...(courseObj && { courses: courseObj }),
+      ...(moduleObj && { module: moduleObj }),
+      ...(stepObj && { steps: stepObj }),
+    });
+  }
 }
 
 export function pushLinkClick(e) {
