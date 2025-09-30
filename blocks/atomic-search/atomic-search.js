@@ -85,10 +85,10 @@ export default function decorate(block) {
     let { lang: languageCode } = getPathDetails();
 
     const atomicLanguagesMap = {
+      es: 'es-ES',
       'pt-br': 'pt-BR',
       'zh-hans': 'zh-CN',
       'zh-hant': 'zh-TW',
-      es: 'es-ES',
     };
 
     languageCode = atomicLanguagesMap[languageCode] || languageCode;
