@@ -102,10 +102,9 @@ function moduleCardShimmer() {
 }
 
 /**
- * @param {Promise<moduleMeta>} modulePromise - The promise that resolves to the Module meta
+ * @param {Promise<{moduleMeta, moduleStatus}>} modulePromise - The promise that resolves to the Module meta and status
  * @param {number} index - The index of the Module card
  * @param {boolean} open - Whether the Module card is open
- * @param {MODULE_STATUS} status - The status of the Module card
  * @param {Object} placeholders - The placeholders object from placeholders.json
  * @returns {HTMLElement}
  */
@@ -126,12 +125,10 @@ function moduleCard({ modulePromise, index, open = false, placeholders }) {
     [MODULE_STATUS.COMPLETED]: placeholders.courseBreakdownStatusCompleted || 'Complete',
   };
 
-  modulePromise.then(async (moduleMeta) => {
-    
+  modulePromise.then(({ moduleMeta, moduleStatusBasedonProfile }) => {
+    let moduleStatus = moduleStatusBasedonProfile;
     const card = document.createElement('div');
     card.className = 'course-breakdown-module-card';
-    
-    let moduleStatus = await getModuleStatus(moduleMeta.moduleUrl);
     
     // If module is completed via query param, set module status to completed
     if(isModuleCompleted(index)) {
@@ -222,7 +219,13 @@ export default async function decorate(block) {
 
   modules.forEach((module, index) => {
     const moduleFragment = module.querySelector('a')?.getAttribute('href');
-    const modulePromise = getModuleMeta(moduleFragment, placeholders);
+    const modulePromise = Promise.all([
+      getModuleMeta(moduleFragment, placeholders),
+      getModuleStatus(moduleFragment)
+    ]).then(([moduleMeta, moduleStatusBasedonProfile]) => ({
+      moduleMeta,
+      moduleStatusBasedonProfile
+    }));
 
     const moduleProp = {
       modulePromise,
