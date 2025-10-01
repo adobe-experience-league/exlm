@@ -42,11 +42,11 @@ let placeholders = {};
  */
 function wrapText(text, maxLength = 30) {
   if (text.length <= maxLength) return text;
-  
+
   const words = text.split(' ');
   const lines = [];
   let currentLine = '';
-  
+
   words.forEach((word) => {
     if ((currentLine + word).length <= maxLength) {
       currentLine += (currentLine ? ' ' : '') + word;
@@ -55,7 +55,7 @@ function wrapText(text, maxLength = 30) {
       currentLine = word;
     }
   });
-  
+
   if (currentLine) lines.push(currentLine);
   return lines.join('\n');
 }
@@ -99,7 +99,7 @@ function createErrorMessage() {
   const errorDiv = document.createElement('div');
   errorDiv.classList.add('error-message');
   errorDiv.innerHTML = `
-    <h3>${placeholders?.courseCertificateErrorTitle || 'Unable to Load Certificate'}</h3>
+    <h4>${placeholders?.courseCertificateErrorTitle || 'Unable to Load Certificate'}</h4>
     <p>${
       placeholders?.courseCertificateErrorMessage ||
       'There was an error loading your certificate data. Please try again later.'
