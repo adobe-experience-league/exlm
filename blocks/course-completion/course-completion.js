@@ -111,8 +111,11 @@ function createErrorMessage() {
 /**
  * Downloads the certificate as high-quality PDF
  */
-async function downloadCertificate(canvas, courseData) {
+async function downloadCertificate(canvas, courseData, downloadButton) {
   try {
+    // Disable button
+    downloadButton.disabled = true;
+
     // Create dynamic filename with course name
     const courseName = courseData.name
       .replace(/[^a-zA-Z0-9\s]/g, '')
@@ -142,9 +145,15 @@ async function downloadCertificate(canvas, courseData) {
 
     // Clean up
     URL.revokeObjectURL(url);
+
+    // Re-enable button
+    downloadButton.disabled = false;
   } catch (error) {
     /* eslint-disable-next-line no-console */
     console.error('Error downloading certificate:', error);
+
+    // Re-enable button
+    downloadButton.disabled = false;
   }
 }
 
@@ -254,14 +263,16 @@ function createContent(children, certificateCanvas, courseData) {
       <h1>${title?.textContent}</h1>
       <p>${description?.textContent}</p>
       <div class="course-completion-button-container">
-        <button class="btn primary download-certificate">${downloadBtn?.innerHTML}</button>
+        <button class="btn primary download-certificate">${downloadBtn?.textContent}</button>
       </div>
     </div>
   `);
   // Add PDF download functionality to download certificate button
   const downloadCertificateBtn = container.querySelector('.download-certificate');
   if (downloadBtn && downloadCertificateBtn && certificateCanvas) {
-    downloadCertificateBtn.addEventListener('click', () => downloadCertificate(certificateCanvas, courseData));
+    downloadCertificateBtn.addEventListener('click', () =>
+      downloadCertificate(certificateCanvas, courseData, downloadCertificateBtn),
+    );
   }
 
   return container;
