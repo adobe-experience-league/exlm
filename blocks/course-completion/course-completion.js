@@ -109,15 +109,20 @@ function createErrorMessage() {
 }
 
 /**
- * Downloads the certificate as high-quality PNG
+ * Downloads the certificate as high-quality PDF
  */
-async function downloadCertificate(canvas) {
+async function downloadCertificate(canvas, courseData) {
   try {
+    // Create dynamic filename with course name
+    const courseName = courseData.name.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '-').toLowerCase();
+    const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD - Would be replaced with issued date from API
+    const filename = `${courseName}-certificate-${date}.pdf`;
+
     // Download as PDF with actual canvas dimensions (no scaling)
     const pdfBlob = await canvasToPDF(canvas, {
-      title: 'Course Completion Certificate',
-      author: 'Learning Platform',
-      subject: 'Certificate of Course Completion',
+      title: `${courseData.name} - ${placeholders?.courseCertificateTitleText || 'Course Completion Certificate'}`,
+      author: placeholders?.courseCertificateAuthorText || 'Experience League | Adobe',
+      subject: placeholders?.courseCertificateSubjectText || 'Certificate of Course Completion',
       scale: CONFIG.CERTIFICATE.SCALE, // Use actual canvas dimensions
     });
 
@@ -125,7 +130,7 @@ async function downloadCertificate(canvas) {
     const url = URL.createObjectURL(pdfBlob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'certificate.pdf';
+    link.download = filename;
 
     // Trigger download
     document.body.appendChild(link);
@@ -235,9 +240,10 @@ async function createCertificateContainer(courseData) {
  * Creates the content container with title, description, and buttons
  * @param {Array} children - Block children elements
  * @param {HTMLCanvasElement} certificateCanvas - The certificate canvas for download
+ * @param {Object} courseData - Course data from API
  * @returns {HTMLElement} Content container
  */
-function createContent(children, certificateCanvas) {
+function createContent(children, certificateCanvas, courseData) {
   const [title, description, , downloadBtn] = children;
 
   const container = htmlToElement(`
@@ -250,9 +256,9 @@ function createContent(children, certificateCanvas) {
     </div>
   `);
   // Add PDF download functionality to download certificate button
-  const downloadCetificateBtn = container.querySelector('.download-certificate');
-  if (downloadBtn && downloadCetificateBtn && certificateCanvas) {
-    downloadCetificateBtn.addEventListener('click', () => downloadCertificate(certificateCanvas));
+  const downloadCertificateBtn = container.querySelector('.download-certificate');
+  if (downloadBtn && downloadCertificateBtn && certificateCanvas) {
+    downloadCertificateBtn.addEventListener('click', () => downloadCertificate(certificateCanvas, courseData));
   }
 
   return container;
@@ -285,7 +291,7 @@ export default async function decorate(block) {
 
     // Create certificate with API data
     const { container, canvas } = await createCertificateContainer(courseData);
-    const content = createContent(originalChildren, container.querySelector('.course-completion-certificate'));
+    const content = createContent(originalChildren, container.querySelector('.course-completion-certificate'), courseData);
 
     // Replace shimmer with actual certificate
     block.textContent = '';

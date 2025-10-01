@@ -11,7 +11,7 @@ async function loadJsPDF() {
     return jsPDFPromise;
   }
 
-  if (window.jspdf && window.jspdf.jsPDF) {
+  if (window.jspdf?.jsPDF) {
     return window.jspdf.jsPDF;
   }
 
@@ -20,7 +20,7 @@ async function loadJsPDF() {
     script.src = '/scripts/jspdf/jspdf.umd.min.js';
 
     script.onload = () => {
-      if (window.jspdf && window.jspdf.jsPDF) {
+      if (window.jspdf?.jsPDF) {
         resolve(window.jspdf.jsPDF);
       } else {
         reject(new Error('jsPDF failed to load properly'));
@@ -49,7 +49,7 @@ async function loadJsPDF() {
  */
 export async function canvasToPDF(canvas, options = {}) {
   const {
-    title = 'Canvas Export',
+    title = 'Course Completion Certificate',
     author = 'Experience League',
     subject = 'Certificate of Completion',
     scale = 1,
