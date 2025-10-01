@@ -176,7 +176,7 @@
   white-space: nowrap;
 }
 
-.course-marquee-container > :not(.course-marquee-container) {
+.section.course-marquee-container > :not(.course-marquee-wrapper) {
   max-width: 792px;
 }
 
