@@ -1,8 +1,10 @@
 /* eslint-disable no-console */
+
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 const lang = document.querySelector('html').lang || 'en';
 export const search = window.location.pathname === '/search.html' || window.location.pathname === `/${lang}/search`;
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
+export const courses = document.querySelector('meta[name="theme"]')?.content.includes('course-') || false;
 export const browse = document.querySelector('meta[name="theme"]')?.content.includes('browse-') || false;
 export const browseProduct = document.querySelector('meta[name="theme"]')?.content.includes('browse-product') || false;
 export const playlist = window.location.pathname.indexOf('/playlists') !== -1;
@@ -60,6 +62,40 @@ export const pageName = (language) => {
 
 export async function pushPageDataLayer(language, searchTrackingData) {
   window.adobeDataLayer = window.adobeDataLayer || [];
+
+  let courseObj = null;
+  let moduleObj = null;
+  let stepObj = null;
+
+  if (courses) {
+    const { getCurrentStepInfo, getCurrentCourseMeta } = await import('../utils/course-utils.js');
+
+    const stepInfo = await getCurrentStepInfo();
+    const courseMeta = await getCurrentCourseMeta();
+    const parts = courseMeta?.url.split('/').filter(Boolean).slice(1).join('/');
+
+    const courseTitle = courseMeta?.heading || '';
+    const courseId = parts ? `/${parts}` : '';
+    const courseSolution = courseMeta?.solution || '';
+    const courseRole = courseMeta?.role || '';
+    const courseLevel = courseMeta?.level || '';
+
+    const moduleTitle = stepInfo?.moduleHeader || '';
+
+    const isStepPage = document.querySelector('meta[name="theme"]')?.content.includes('course-step');
+    const stepTitle = isStepPage ? document.querySelector('meta[property="og:title"]')?.content || '' : '';
+
+    if (courseId) {
+      courseObj = { title: courseTitle, id: courseId, solution: courseSolution, role: courseRole, level: courseLevel };
+    }
+    if (moduleTitle) {
+      moduleObj = { title: moduleTitle };
+    }
+    if (stepTitle) {
+      stepObj = { title: stepTitle };
+    }
+  }
+
   const user = {
     userDetails: {
       userAccountType: '',
@@ -115,7 +151,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
     section = 'search';
   }
 
-  const name = pageName(language);
+  let name = pageName(language);
   const sections = name.replace(/^xl:(docs|learn):/, '').split(':');
 
   if (!browse && sections.length > 1) {
@@ -123,6 +159,26 @@ export async function pushPageDataLayer(language, searchTrackingData) {
   }
   const mainSiteSection = search ? 'search' : '';
   const containsAtomicSearch = search && !!document.querySelector(`main .atomic-search`);
+
+  // Determine section1 value to avoid nested ternary
+  let section1Value = '';
+  if (sections[0] === 'perspective') {
+    section1Value = 'perspectives';
+  } else {
+    section1Value = sections[0] || '';
+  }
+
+  if (courses) {
+    const subs = [
+      'courses',
+      courseObj?.solution || '',
+      courseObj?.title || '',
+      moduleObj?.title || '',
+      stepObj?.title || '',
+    ].filter(Boolean);
+
+    name = `xl:learn:${subs.join(':')}`;
+  }
 
   const webDetails = {
     webPageDetails: {
@@ -144,11 +200,15 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       userAgent: window.navigator.userAgent,
       server: window.location.host,
       siteSection: section,
-      siteSubSection1: sections[0] === 'perspective' ? 'perspectives' : sections[0] || '',
-      siteSubSection2: sections[1] || '',
-      siteSubSection3: sections[2] || '',
-      siteSubSection4: sections[3] || '',
-      siteSubSection5: sections[4] || '',
+      siteSubSection1: courseObj ? 'courses' : section1Value,
+
+      siteSubSection2: courseObj ? courseObj.solution || '' : sections[1] || '',
+
+      siteSubSection3: courseObj ? courseObj.title || '' : sections[2] || '',
+
+      siteSubSection4: courseObj ? moduleObj?.title || '' : sections[3] || '',
+
+      siteSubSection5: courseObj ? stepObj?.title || '' : sections[4] || '',
       solution: browseProduct ? sections[1] : solution,
       solutionVersion,
       subSolution,
@@ -168,6 +228,9 @@ export async function pushPageDataLayer(language, searchTrackingData) {
           web: webDetails,
           user,
           userGUID: user.userDetails.userID,
+          ...(courseObj && { courses: courseObj }),
+          ...(moduleObj && { module: moduleObj }),
+          ...(stepObj && { steps: stepObj }),
         };
         if (trackingData) {
           dataLayer.search = trackingData;
@@ -183,6 +246,9 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       user,
       search: searchTrackingData,
       userGUID: user.userDetails.userID,
+      ...(courseObj && { courses: courseObj }),
+      ...(moduleObj && { module: moduleObj }),
+      ...(stepObj && { steps: stepObj }),
     });
   }
 }
