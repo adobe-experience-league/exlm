@@ -92,7 +92,7 @@ function updateUEInstrumentation() {
   }
 
   // ----- if article page, identified by theme
-  if (document.querySelector('body[class^=articles]')) {
+  if (getMetadata('theme') === 'articles') {
     // update available sections
     setUEFilter(main, 'main-article');
     // update available blocks for article content sections
@@ -122,7 +122,7 @@ function updateUEInstrumentation() {
   }
 
   // ----- if author bio page, identified by theme
-  if (document.querySelector('body[class^=authors-bio-page]')) {
+  if (getMetadata('theme') === 'authors-bio-page') {
     // update available sections
     setUEFilter(main, 'empty');
     // update the only available default section
@@ -139,7 +139,7 @@ function updateUEInstrumentation() {
   }
 
   // ----- if header, identified by theme
-  if (document.querySelector('body[class^=header]') || getMetadata('theme') === 'header') {
+  if (getMetadata('theme') === 'header') {
     // update available sections
     setUEFilter(main, 'empty');
     // update the only available default section
@@ -148,7 +148,7 @@ function updateUEInstrumentation() {
   }
 
   // ----- if footer, identified by theme
-  if (document.querySelector('body[class^=footer]') || getMetadata('theme') === 'footer') {
+  if (getMetadata('theme') === 'footer') {
     // update available sections
     setUEFilter(main, 'empty');
     // update the only available default section
@@ -157,13 +157,13 @@ function updateUEInstrumentation() {
   }
 
   // ----- if profile pages, identified by theme
-  if (document.querySelector('body[class^=profile]') || getMetadata('theme') === 'profile') {
+  if (getMetadata('theme') === 'profile') {
     // update available sections
     setUEFilter(main, 'main-profile');
   }
 
   // ----- if signup-flow-modal pages, identified by theme
-  if (document.querySelector('body[class^=signup]')) {
+  if (getMetadata('theme') === 'signup') {
     // update available sections
     setUEFilter(main, 'main-signup');
     main.querySelectorAll('.section').forEach((elem) => {
@@ -172,13 +172,13 @@ function updateUEInstrumentation() {
   }
 
   // ----- if courses page, identified by theme
-  if (document.querySelector('body[class^=courses]') || getMetadata('theme')?.includes('courses')) {
+  if (getMetadata('theme')?.includes('courses')) {
     // update available sections
     setUEFilter(main, 'main-courses');
   }
 
   // ----- if course hub page, identified by theme
-  if (document.querySelector('body[class^=course-hub]') || getMetadata('theme')?.includes('course-hub')) {
+  if (getMetadata('theme')?.includes('course-hub')) {
     // update available sections
     setUEFilter(main, 'main-course-hub');
   }

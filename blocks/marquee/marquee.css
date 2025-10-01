@@ -127,7 +127,8 @@ div.marquee-wrapper {
   display: none;
 }
 
-.marquee.fill-background .marquee-text {
+.marquee.fill-background .marquee-text,
+.marquee.fill-gradient .marquee-text {
   background-color: transparent;
 }
 
@@ -210,10 +211,6 @@ div.marquee-wrapper {
 .marquee.straight .marquee-subject,
 .marquee.straight .marquee-subject img {
   height: 100%;
-}
-
-body[class^='article-'] .marquee-content-container {
-  background-color: var(--background-color);
 }
 
 @media (min-width: 600px) {
@@ -378,6 +375,11 @@ body[class^='article-'] .marquee-content-container {
     z-index: 2;
     width: 100%;
     height: 100%;
+  }
+
+  .course-hub .marquee .marquee-subject img {
+    object-fit: contain;
+    float: left;
   }
 
   .marquee-background-fill {
@@ -545,4 +547,22 @@ body[class^='article-'] .marquee-content-container {
   height: 100%;
   border: none;
   z-index: 10;
+}
+
+/* Course Hub Marquee */
+
+.course-hub .marquee-content-container {
+  flex-direction: column;
+}
+
+.course-hub .marquee .marquee-subject img,
+.course-hub .marquee .marquee-subject picture,
+.course-hub .marquee.no-subject > .marquee-background img {
+  object-fit: contain;
+}
+
+/* Perspective Marquee */
+
+body[class^='article-'] .marquee-content-container {
+  background-color: var(--background-color);
 }

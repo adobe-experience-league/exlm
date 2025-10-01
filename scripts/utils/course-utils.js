@@ -1,4 +1,4 @@
-import { fetchLanguagePlaceholders } from '../scripts.js';
+// Module utils
 
 /**
  * Extracts the module fragment URL from the current page path.
@@ -124,7 +124,7 @@ function getStepMeta(allSteps, moduleRecap, moduleQuiz) {
  *   - {boolean} isRecap - Whether current page is the recap step
  *   - {boolean} isQuiz - Whether current page is the quiz step
  */
-async function extractModuleMeta(fragment) {
+async function extractModuleMeta(fragment, placeholders) {
   if (!fragment) return {};
 
   const meta = fragment.querySelector('.module-meta');
@@ -147,15 +147,6 @@ async function extractModuleMeta(fragment) {
       return { name, url };
     })
     .filter(Boolean);
-
-  // Fetch placeholders for step names
-  let placeholders = {};
-  try {
-    placeholders = await fetchLanguagePlaceholders();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
-  }
 
   // Add recap and quiz steps to allSteps
   if (moduleRecap) {
@@ -180,7 +171,26 @@ async function extractModuleMeta(fragment) {
   };
 }
 
-export async function getCurrentStepInfo() {
+/**
+ * Gets current step information for the module with caching support.
+ * Retrieves module metadata from cache or fetches from server if not cached.
+ * Updates step navigation metadata for the current page.
+ *
+ * @returns {Promise<Object|null>} Module metadata object containing:
+ *   - {string} moduleHeader - Title of the module
+ *   - {string} moduleDescription - Description HTML content
+ *   - {string} moduleRecap - URL of the recap step
+ *   - {string} moduleQuiz - URL of the quiz step
+ *   - {Array<{name: string, url: string}>} moduleSteps - Array of step objects
+ *   - {number} totalSteps - Total number of steps in the track
+ *   - {number} currentStep - Index of the current step (1-based)
+ *   - {string|null} nextStep - URL of the next step (null if none)
+ *   - {string|null} prevStep - URL of the previous step (null if none)
+ *   - {string} courseUrl - Base URL of the course
+ *   - {boolean} isRecap - Whether current page is the recap step
+ *   - {boolean} isQuiz - Whether current page is the quiz step
+ */
+export async function getCurrentStepInfo(placeholders = {}) {
   const fragUrl = getModuleFragmentUrl();
   if (!fragUrl) return null;
   const storageKey = `module-meta:${fragUrl}`;
@@ -205,7 +215,7 @@ export async function getCurrentStepInfo() {
   // Not cached, fetch and store
   const fragment = await fetchModuleFragment(fragUrl);
   if (!fragment) return null;
-  meta = await extractModuleMeta(fragment);
+  meta = await extractModuleMeta(fragment, placeholders);
   try {
     sessionStorage.setItem(storageKey, JSON.stringify(meta));
   } catch (e) {
@@ -215,7 +225,20 @@ export async function getCurrentStepInfo() {
   return { ...meta, ...getStepMeta(meta?.moduleSteps, meta?.moduleRecap, meta?.moduleQuiz) };
 }
 
-export async function getmoduleMeta(moduleFragmentUrl) {
+/**
+ * Gets module metadata for a specific module fragment URL with caching support.
+ * Retrieves cached metadata or fetches from server if not cached.
+ *
+ * @param {string} moduleFragmentUrl - The module fragment URL to get metadata for
+ * @returns {Promise<Object|null>} Module metadata object containing:
+ *   - {string} moduleHeader - Title of the module
+ *   - {string} moduleDescription - Description HTML content
+ *   - {string} moduleRecap - URL of the recap step
+ *   - {string} moduleQuiz - URL of the quiz step
+ *   - {Array<{name: string, url: string}>} moduleSteps - Array of step objects
+ *   - {number} totalSteps - Total number of steps in the track
+ */
+export async function getModuleMeta(moduleFragmentUrl, placeholders = {}) {
   if (!moduleFragmentUrl) return null;
   const storageKey = `module-meta:${moduleFragmentUrl}`;
   let meta = null;
@@ -235,7 +258,7 @@ export async function getmoduleMeta(moduleFragmentUrl) {
 
   const fragment = await fetchModuleFragment(moduleFragmentUrl);
   if (!fragment) return null;
-  meta = await extractModuleMeta(fragment);
+  meta = await extractModuleMeta(fragment, placeholders);
   try {
     sessionStorage.setItem(storageKey, JSON.stringify(meta));
   } catch (e) {
@@ -243,4 +266,177 @@ export async function getmoduleMeta(moduleFragmentUrl) {
     console.error(e);
   }
   return meta;
+}
+
+// Course utils
+
+/**
+ * Extracts the course fragment URL from the current page path.
+ * For a path like /{locale}/courses/{collection}/{fragment}/{step}/...,
+ * returns /{locale}/courses/{collection}
+ *
+ * @returns {string|null} The course fragment URL or null if not found
+ */
+export function getCourseFragmentUrl() {
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  const idx = parts.indexOf('courses');
+  if (idx > 0 && parts.length > idx + 1) {
+    const locale = parts[idx - 1];
+    const collection = parts[idx + 1];
+    return `/${locale}/courses/${collection}`;
+  }
+  return null;
+}
+
+/**
+ * Fetches the course fragment HTML content from the server.
+ *
+ * @param {string} courseFragmentUrl - The course fragment URL to fetch
+ * @returns {Promise<Document|null>} Parsed HTML document or null if fetch fails
+ */
+export async function fetchCourseFragment(courseFragmentUrl) {
+  if (!courseFragmentUrl) return null;
+  const res = await fetch(courseFragmentUrl);
+  if (!res.ok) {
+    return null;
+  }
+  const text = await res.text();
+  const parser = new DOMParser();
+  return parser.parseFromString(text, 'text/html');
+}
+
+/**
+ * Extracts metadata from a course fragment DOM element.
+ * Parses the fragment to extract course information including heading,
+ * description, total time, role, solution, level and module URLs.
+ *
+ * @param {Document} fragment - Parsed HTML document containing course data
+ * @returns {Promise<Object>} Course metadata object containing:
+ *   - {string} heading - Course title
+ *   - {string} description - Course description HTML content
+ *   - {string} totalTime - Total course duration
+ *   - {Array<string>} modules - Array of module URLs
+ *   - {string} role - Course role
+ *   - {string} solution - Course solution
+ *   - {string} level - Course level
+ */
+export async function extractCourseMeta(fragment) {
+  if (!fragment) return {};
+
+  const marqueeMeta = fragment.querySelector('.course-marquee');
+  const heading = marqueeMeta?.children[0]?.textContent?.trim() || '';
+  const description = marqueeMeta?.children[1]?.innerHTML || '';
+  const courseBreakdownMeta = fragment.querySelector('.course-breakdown');
+  const totalTime = courseBreakdownMeta?.children[1]?.textContent?.trim() || '';
+  const modules =
+    courseBreakdownMeta?.children.length > 4
+      ? [...courseBreakdownMeta.children].slice(4).map((child) => child.querySelector('a')?.getAttribute('href') || '')
+      : [];
+  const role = fragment.querySelector('meta[name="role"]')?.content || '';
+  const solution = fragment.querySelector('meta[name="solution"]')?.content || '';
+  const level = fragment.querySelector('meta[name="level"]')?.content || '';
+  return {
+    heading,
+    description,
+    totalTime,
+    modules,
+    role,
+    solution,
+    level,
+  };
+}
+
+/**
+ * Gets current course metadata with caching support.
+ * Retrieves course metadata from cache or fetches from server if not cached.
+ *
+ * @param {string} [courseFragmentUrl] - The course fragment URL to get metadata for.
+ *                                      If not provided, uses getCourseFragmentUrl()
+ * @returns {Promise<Object|null>} Course metadata object containing:
+ *   - {string} heading - Course title
+ *   - {string} description - Course description HTML content
+ *   - {string} totalTime - Total course duration
+ *   - {Array<string>} modules - Array of module URLs
+ *   - {string} url - The course fragment URL
+ */
+export async function getCurrentCourseMeta(courseFragmentUrl = getCourseFragmentUrl()) {
+  if (!courseFragmentUrl) return null;
+  const storageKey = `course-meta:${courseFragmentUrl}`;
+  let meta = null;
+
+  try {
+    const cached = sessionStorage.getItem(storageKey);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (parsed && Array.isArray(parsed?.modules)) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(e);
+  }
+
+  const fragment = await fetchCourseFragment(courseFragmentUrl);
+  if (!fragment) return null;
+
+  meta = await extractCourseMeta(fragment);
+  meta.url = courseFragmentUrl;
+
+  try {
+    sessionStorage.setItem(storageKey, JSON.stringify(meta));
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(e);
+  }
+  return meta;
+}
+
+/**
+ * Checks if the current step is the last step in the module.
+ *
+ * @param {Object} stepInfo - The step information object from getCurrentStepInfo()
+ * @returns {boolean} True if current step is the last step, false otherwise
+ */
+export async function isLastStep() {
+  const stepInfo = await getCurrentStepInfo();
+  if (!stepInfo || !stepInfo.moduleSteps || !Array.isArray(stepInfo.moduleSteps)) {
+    return false;
+  }
+
+  const currentStepIndex = stepInfo.moduleSteps.findIndex((step) => step.url === window.location.pathname);
+  return currentStepIndex === stepInfo.moduleSteps.length - 1;
+}
+
+// Gets the URL of the first step of the next module.
+export async function getNextModuleFirstStep() {
+  const courseInfo = await getCurrentCourseMeta();
+  if (!courseInfo || !courseInfo.modules || !Array.isArray(courseInfo.modules) || courseInfo.modules.length === 0) {
+    return null;
+  }
+
+  // Extract the current module path from the URL
+  const pathParts = window.location.pathname.split('/');
+  const currentModulePath = pathParts.length > 4 ? pathParts[4] : '';
+
+  if (!currentModulePath) {
+    return null;
+  }
+
+  // Find the current module index
+  const currentModuleIndex = courseInfo.modules.findIndex((url) => url.includes(currentModulePath));
+
+  // If there's a next module, get its first step
+  if (currentModuleIndex !== -1 && currentModuleIndex < courseInfo.modules.length - 1) {
+    const nextModuleUrl = courseInfo.modules[currentModuleIndex + 1];
+
+    const nextModuleMeta = await getModuleMeta(nextModuleUrl);
+
+    // If we have module steps, return the first one
+    if (nextModuleMeta && nextModuleMeta.moduleSteps && nextModuleMeta.moduleSteps.length > 0) {
+      return nextModuleMeta.moduleSteps[0].url;
+    }
+  }
+
+  return null;
 }

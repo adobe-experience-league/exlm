@@ -1,9 +1,43 @@
-import { getCurrentStepInfo } from '../../scripts/utils/course-utils.js';
+import { getCurrentStepInfo, isLastStep, getNextModuleFirstStep } from '../../scripts/utils/course-utils.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
 
+async function handleQuizNextButton(e) {
+  e.preventDefault();
+
+  // Disable the button immediately to prevent multiple submissions
+  e.target.classList.add('disabled');
+
+  // Call the quiz submission handler if it exists
+  const handler = submitQuizHandler();
+  if (handler) {
+    const success = await handler();
+
+    if (success) {
+      // Check if this is the last step in the module
+      if (await isLastStep()) {
+        // Get the first step of the next module
+        const nextModuleFirstStepUrl = await getNextModuleFirstStep();
+        if (nextModuleFirstStepUrl) {
+          e.target.href = nextModuleFirstStepUrl;
+        }
+      }
+    } else if (!success) {
+      // re-enable submit button after answering all questions
+      const inputs = document.querySelectorAll('.question input[type="checkbox"], .question input[type="radio"]');
+      inputs.forEach((input) => {
+        input.addEventListener(
+          'change',
+          () => {
+            e.target.classList.remove('disabled');
+          },
+          { once: true },
+        );
+      });
+    }
+  }
+}
 export default async function decorate(block) {
-  const stepInfo = await getCurrentStepInfo();
   let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();
@@ -11,6 +45,8 @@ export default async function decorate(block) {
     // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
   }
+
+  const stepInfo = await getCurrentStepInfo(placeholders);
 
   if (!stepInfo) return;
 
@@ -58,39 +94,20 @@ export default async function decorate(block) {
     secondLink.classList.add('module-nav-submit');
     secondLink.textContent = placeholders['course-submit-answers'] || 'Submit Answers';
     secondLink.href = stepInfo.nextStep || '#';
-    secondLink.addEventListener('click', async (e) => {
-      e.preventDefault();
-
-      // Disable the button immediately to prevent multiple submissions
-      secondLink.classList.add('disabled');
-
-      // Call the quiz submission handler if it exists
-      const handler = submitQuizHandler();
-      if (handler) {
-        const success = await handler();
-
-        if (success && stepInfo.nextStep) {
-          window.location.href = stepInfo.nextStep;
-        } else if (!success) {
-          // re-enable submit button after answering all questions
-          const inputs = document.querySelectorAll('.question input[type="checkbox"], .question input[type="radio"]');
-          inputs.forEach((input) => {
-            input.addEventListener(
-              'change',
-              () => {
-                secondLink.classList.remove('disabled');
-              },
-              { once: true },
-            );
-          });
-        }
-      }
-    });
+    secondLink.addEventListener('click', handleQuizNextButton, { once: true });
   } else {
     // Next link
     secondLink.classList.add('module-nav-next');
     secondLink.textContent = placeholders['course-next'] || 'Next';
     secondLink.href = stepInfo.nextStep || '#';
+  }
+
+  // Check if this is the last step
+  if (!isQuiz && (await isLastStep())) {
+    const nextModuleFirstStepUrl = await getNextModuleFirstStep();
+    if (nextModuleFirstStepUrl) {
+      secondLink.href = nextModuleFirstStepUrl;
+    }
   }
 
   // Add links to container
