@@ -1814,6 +1814,10 @@
                 "value": "fill-background"
               },
               {
+                "name": "Fill marquee with given gradient colors",
+                "value": "fill-gradient"
+              },
+              {
                 "name": "Select to insert a video as background",
                 "value": "video"
               }
@@ -1909,16 +1913,15 @@
       },
       {
         "condition": {
-          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "custom"] }]
+          "some": [{ "var": "classes" }, { "in": [{ "var": "" }, ["custom", "fill-gradient"]] }]
         },
         "component": "text",
         "valueType": "string",
         "name": "customHexCode",
         "value": "",
-        "label": "Custom Background Color",
-        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
+        "label": "Custom Background & Gradient Colors",
+        "description": "Enter a custom hex code (e.g., FFFFFF, without the #). For gradients, enter multiple hex codes separated by commas."
       },
-
       {
         "condition": {
           "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "video"] }]
@@ -8262,14 +8265,6 @@
         "value": "",
         "label": "Description",
         "description": "Sets the description for the course completion block."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "shareButtonText",
-        "value": "",
-        "label": "Button Text for Share",
-        "description": "Label for the share button"
       },
       {
         "component": "text",

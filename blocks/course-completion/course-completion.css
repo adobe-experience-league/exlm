@@ -1,22 +1,40 @@
+/* Animation keyframes */
+@keyframes slide-up {
+  from {
+    transform: translateY(var(--slide-up-from, 300px));
+  }
+
+  to {
+    transform: translateY(var(--slide-up-to, 35px));
+    visibility: visible;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
 /* Main container */
 .course-completion {
-  display: flex;
   align-items: center;
-  justify-content: center;
+  color: var(--non-spectrum-dark-gray);
+  display: flex;
   flex-direction: column;
   gap: var(--spectrum-spacing-300);
-  color: var(--non-spectrum-dark-gray);
+  justify-content: center;
 }
 
 /* Certificate container */
 .course-completion .course-completion-certificate-container {
-  width: 100%;
-  height: 278px;
-  position: relative;
-  border-radius: var(--spectrum-spacing-200);
-  overflow: hidden;
-  display: grid;
-  place-items: center;
+  --slide-up-from: 300px;
+  --slide-up-to: 35px;
+
   background: radial-gradient(circle at 70% 80%, rgb(249 119 121 / 25%), transparent 40%),
     radial-gradient(circle at 80% 40%, rgb(181 222 255 / 35%), transparent 40%),
     radial-gradient(circle at 80% 80%, rgb(181 222 255 / 35%), transparent 70%),
@@ -24,116 +42,118 @@
     radial-gradient(circle at 20% 30%, rgb(255 124 101 / 35%), transparent 65%),
     radial-gradient(circle at 10% 80%, rgb(255 124 101 / 35%), transparent 45%);
   background-color: var(--background-color);
+  border-radius: var(--spectrum-spacing-200);
+  display: grid;
+  height: 278px;
+  max-width: 720px;
+  overflow: hidden;
+  place-items: center;
+  position: relative;
+  width: 100%;
 }
 
 /* Confetti canvas */
 .course-completion .course-completion-confetti-canvas {
+  height: 100%;
+  left: 0;
+  pointer-events: none;
   position: absolute;
   top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 9;
+  z-index: 1;
+}
+
+/* Certificate image */
+.course-completion .course-completion-certificate {
+  animation: slide-up 1s ease-in-out 0.3s forwards;
+  max-width: 317px;
+  position: relative;
+  transform: translateY(300px);
+  transition: transform 1s ease-in-out;
+  width: 100%;
+  z-index: 2;
 }
 
 /* Content container */
 .course-completion .course-completion-content-container {
-  display: flex;
   align-items: center;
-  justify-content: center;
+  display: flex;
   flex-direction: column;
+  justify-content: center;
   text-align: center;
 }
 
-/* Certificate image */
-.course-completion .course-completion-certificate-image {
-  max-width: 318px;
-  z-index: 10;
-  position: relative;
-  transform: translateY(400px);
-  animation: slide-up 1s ease-in-out 0.3s forwards;
-  transition: transform 1s ease-in-out;
+/* Content typography */
+.course-completion .course-completion-content-container :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--non-spectrum-dark-gray);
+  margin: 0 0 20px;
 }
 
-/* Button container */
-.course-completion .course-completion-button-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.course-completion .course-completion-content-container p {
+  color: var(--non-spectrum-dark-gray);
+  line-height: 1.5;
+  margin: 0 0 20px;
 }
 
-.course-completion button {
+/* Content buttons */
+.course-completion .course-completion-content-container button {
   margin: 0;
-  max-width: min-content;
-  margin-bottom: var(--spectrum-spacing-300);
-  transition: background-color 0.3s ease;
+  padding: 10px 30px;
 }
 
-.course-completion button.primary {
-  background-color: var(--non-spectrum-navy-blue);
+/* Loading states */
+.course-completion .course-completion-certificate-container .shimmer {
+  animation: shimmer 1.5s infinite;
+  background: linear-gradient(
+    90deg,
+    var(--shimmer-image-slide-start) 25%,
+    var(--shimmer-image-slide-end) 50%,
+    var(--shimmer-image-slide-start) 75%
+  );
+  background-size: 200px 100%;
+  border-radius: 4px;
+  height: 285px;
+  transform: translateY(10px);
+  width: 369px;
 }
 
-.course-completion button.primary:hover {
-  background-color: var(--non-spectrum-dark-navy-blue);
+/* Error states */
+.course-completion .course-completion-certificate-container .error-message {
+  background-color: var(--spectrum-gray-200);
+  border-radius: 8px;
+  color: var(--non-spectrum-grey);
+  padding: 40px;
+  text-align: center;
 }
 
-.course-completion button.secondary {
-  background-color: var(--background-color);
-  color: var(--non-spectrum-dark-gray);
-  border-color: var(--non-spectrum-dark-gray);
-  padding: var(--spectrum-spacing-100) var(--spectrum-spacing-300);
+.course-completion .course-completion-certificate-container .error-message :where(h3, h4, h5, h6) {
+  margin: 0;
 }
 
-.course-completion button div {
-  display: flex;
-  align-items: center;
-  gap: var(--spectrum-spacing-100);
+.course-completion .course-completion-certificate-container .error-message p {
+  margin: 20px 0 0;
 }
 
-.course-completion button .icon {
-  width: 21px;
-  height: 21px;
-}
-
-.course-completion :where(h1, h2, h3, h4, h5, h6, p) {
-  color: var(--non-spectrum-dark-gray);
-}
-
-.course-completion p {
-  line-height: 150%;
-}
-
-/* Animation keyframes */
-@keyframes slide-up {
-  from {
-    transform: translateY(300px);
-  }
-
-  to {
-    transform: translateY(50px);
-    visibility: visible;
-  }
-}
-
+/* Media queries */
 @media (min-width: 600px) {
   .course-completion .course-completion-certificate-container {
+    --slide-up-from: 300px;
+    --slide-up-to: 40px;
+
     height: 320px;
   }
 
-  .course-completion .course-completion-certificate-image {
-    max-width: 368px;
+  .course-completion .course-completion-certificate {
+    max-width: 369px;
   }
 }
 
 @media (min-width: 900px) {
   .course-completion .course-completion-certificate-container {
-    width: 588px;
-    height: 330px;
-  }
+    --slide-up-from: 300px;
+    --slide-up-to: 40px;
 
-  .course-completion .course-completion-button-container {
-    flex-direction: row;
-    gap: var(--spectrum-spacing-200);
+    height: 330px;
+    max-width: 588px;
   }
 }
