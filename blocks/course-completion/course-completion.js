@@ -114,7 +114,10 @@ function createErrorMessage() {
 async function downloadCertificate(canvas, courseData) {
   try {
     // Create dynamic filename with course name
-    const courseName = courseData.name.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '-').toLowerCase();
+    const courseName = courseData.name
+      .replace(/[^a-zA-Z0-9\s]/g, '')
+      .replace(/\s+/g, '-')
+      .toLowerCase();
     const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD - Would be replaced with issued date from API
     const filename = `${courseName}-certificate-${date}.pdf`;
 
@@ -291,7 +294,11 @@ export default async function decorate(block) {
 
     // Create certificate with API data
     const { container, canvas } = await createCertificateContainer(courseData);
-    const content = createContent(originalChildren, container.querySelector('.course-completion-certificate'), courseData);
+    const content = createContent(
+      originalChildren,
+      container.querySelector('.course-completion-certificate'),
+      courseData,
+    );
 
     // Replace shimmer with actual certificate
     block.textContent = '';
