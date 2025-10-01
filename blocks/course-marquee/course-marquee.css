@@ -176,7 +176,11 @@
   white-space: nowrap;
 }
 
-@media (min-width: 900px) {
+.section.course-marquee-container > :not(.course-marquee-wrapper) {
+  max-width: 792px;
+}
+
+@media (min-width: 600px) {
   body.courses .section.course-marquee-container {
     max-width: unset;
     padding: 0 56px;
