@@ -8269,14 +8269,6 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "shareButtonText",
-        "value": "",
-        "label": "Button Text for Share",
-        "description": "Label for the share button"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
         "name": "downloadButtonText",
         "value": "",
         "label": "Button Text for certificate Download",
