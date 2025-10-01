@@ -21,7 +21,6 @@ const CONFIG = {
   CERTIFICATE: {
     IMAGE: {
       PLACEHOLDER: '/images/course-certificate-placeholder.png',
-      ALT_TEXT: 'Course Certificate',
     },
     WIDTH: 369,
     HEIGHT: 285,
@@ -231,7 +230,6 @@ async function createCertificateContainer(courseData) {
       text: certificateText,
       image: {
         src: window.hlx.codeBasePath + CONFIG.CERTIFICATE.IMAGE.PLACEHOLDER,
-        alt: CONFIG.CERTIFICATE.IMAGE.ALT_TEXT,
         position: { x: 0, y: 0 },
         width: CONFIG.CERTIFICATE.WIDTH * CONFIG.CERTIFICATE.SCALE,
         height: CONFIG.CERTIFICATE.HEIGHT * CONFIG.CERTIFICATE.SCALE,

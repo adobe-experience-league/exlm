@@ -179,7 +179,6 @@ async function createCanvas(config = {}) {
   // Configure image
   const imageConfig = {
     src: '',
-    alt: 'Canvas Image',
     position: { x: 0, y: 0 },
     width,
     height,
@@ -206,7 +205,6 @@ async function createCanvas(config = {}) {
   canvasElement.width = width;
   canvasElement.height = height;
   canvasElement.classList.add(className);
-  canvasElement.alt = imageConfig.alt;
 
   const ctx = canvasElement.getContext('2d');
 
