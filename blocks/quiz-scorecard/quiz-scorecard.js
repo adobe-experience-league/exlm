@@ -62,4 +62,12 @@ export default async function decorate(block) {
   const scorecardElement = htmlToElement(scorecardHTML);
   block.appendChild(scorecardElement);
   decorateIcons(scorecardElement);
+
+  const secondaryButton = scorecardElement.querySelector('.button.secondary');
+  if (secondaryButton) {
+    secondaryButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.reload();
+    });
+  }
 }
