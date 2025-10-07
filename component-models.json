@@ -1525,6 +1525,10 @@
           {
             "name": "Border w/ alternating rows",
             "value": "b-alt-row"
+          },
+          {
+            "name": "Align to middle",
+            "value": "align-middle"
           }
         ]
       }
