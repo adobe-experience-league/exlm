@@ -4382,14 +4382,14 @@
         "component": "aem-tag",
         "valueType": "string",
         "name": "feature",
-        "label": "Feature(s)",
+        "label": "Legacy Feature(s)",
         "rootPath": "/content/cq:tags/exl/feature",
         "description": "Sets the Coveo Feature(s) in page meta."
       },
       {
         "component": "aem-tag",
         "name": "role",
-        "label": "Role(s)",
+        "label": "Legacy Role(s)",
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl/role",
         "description": "Sets the role(s) in page meta."
@@ -4397,10 +4397,143 @@
       {
         "component": "aem-tag",
         "name": "level",
-        "label": "Experience Level(s)",
+        "label": "Legacy Experience Level(s)",
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl/experience-level",
         "description": "Sets the level(s) in page meta."
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-roles",
+        "label": "Role(s)",
+        "valueType": "string",
+        "description": "Sets the role(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "role"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-levels",
+        "label": "Experience Level(s)",
+        "valueType": "string",
+        "description": "Sets the level(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "level"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-products",
+        "label": "Product(s)",
+        "valueType": "string",
+        "description": "Sets the products(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "product"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-features",
+        "label": "Feature(s)",
+        "valueType": "string",
+        "description": "Sets the feature(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "feature"
+            }
+          }
+        },
+        "options": {
+          "dependentField": {
+            "name": "tq-products",
+            "taxonomyType": "product"
+          },
+          "requiredTagsToEnable": ["tq-products"]
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-subfeatures",
+        "label": "Sub Feature(s)",
+        "valueType": "string",
+        "description": "Sets the subfeature(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "subfeature"
+            }
+          }
+        },
+        "options": {
+          "dependentField": {
+            "name": "tq-features",
+            "taxonomyType": "feature"
+          },
+          "requiredTagsToEnable": ["tq-features"]
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-industries",
+        "label": "Industries",
+        "valueType": "string",
+        "description": "Sets the industries in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "industry"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-topics",
+        "label": "Topic(s)",
+        "valueType": "string",
+        "description": "Sets the topic(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "topic"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
       },
       {
         "component": "aem-content",
