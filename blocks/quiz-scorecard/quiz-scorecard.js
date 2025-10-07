@@ -63,9 +63,10 @@ export default async function decorate(block) {
   block.appendChild(scorecardElement);
   decorateIcons(scorecardElement);
 
-  const secondaryButton = scorecardElement.querySelector('.button.secondary');
-  if (secondaryButton) {
-    secondaryButton.addEventListener('click', (e) => {
+  const retakeButton = scorecardElement.querySelector('.quiz-scorecard-cta-container a:last-child');
+  if (retakeButton) {
+    retakeButton.classList.add('retake-quiz-button');
+    retakeButton.addEventListener('click', (e) => {
       e.preventDefault();
       window.location.reload();
     });
