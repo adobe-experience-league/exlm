@@ -254,7 +254,7 @@ async function createCertificateContainer(courseData) {
  * @returns {HTMLElement} Content container
  */
 function createContent(children, certificateCanvas, courseData) {
-  const [title, description, , downloadBtn] = children;
+  const [title, description, downloadBtn] = children;
 
   const container = htmlToElement(`
     <div class="course-completion-content-container">
