@@ -1517,7 +1517,6 @@
         "valueType": "string",
         "name": "classes",
         "label": "Style Type",
-        "description": "Select the style type.",
         "options": [
           {
             "name": "Border w/ alternating rows",
