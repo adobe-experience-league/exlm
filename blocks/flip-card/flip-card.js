@@ -1,15 +1,4 @@
-import { decorateIcon } from '../../scripts/lib-franklin.js';
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-
 export default async function decorate(block) {
-  let placeholders = {};
-  try {
-    placeholders = await fetchLanguagePlaceholders();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
-  }
-
   const cards = block.querySelectorAll('div > div');
 
   function toggleCard(card) {
@@ -29,26 +18,6 @@ export default async function decorate(block) {
       frontFace.classList.remove('active');
       backFace.classList.add('active');
     }
-  }
-
-  function addFlipText(cardContent) {
-    cardContent.innerHTML += `
-      <div class="flip-container">
-        <span class="icon icon-refresh" aria-hidden="true"></span>
-        <span class="flip-text" aria-label="Flip">${placeholders.flipText || 'Flip'}</span>
-      </div>
-    `;
-
-    const flipContainer = cardContent.querySelector('.flip-container:last-child');
-    const refreshIcon = flipContainer.querySelector('.icon-refresh');
-
-    decorateIcon(refreshIcon);
-
-    flipContainer.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const card = cardContent.parentElement;
-      toggleCard(card);
-    });
   }
 
   cards.forEach((card, index) => {
@@ -86,11 +55,14 @@ export default async function decorate(block) {
       </div>
     `;
 
-    const [frontContainer, backContainer] = card.children;
+    const [frontContainer] = card.children;
     // Add active class to front face initially
     frontContainer.classList.add('active');
-    addFlipText(frontContainer);
-    addFlipText(backContainer);
+
+    // Add click event to the entire card
+    card.addEventListener('click', () => {
+      toggleCard(card);
+    });
 
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
