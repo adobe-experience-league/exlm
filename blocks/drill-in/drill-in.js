@@ -286,24 +286,14 @@ export default async function decorate(block) {
 
     // If in UE author mode, hide the calloutDiv, otherwise remove it
     if (isUEAuthorMode) {
-      const resource = calloutDiv.getAttribute('data-aue-resource');
-      const type = calloutDiv.getAttribute('data-aue-type');
-      const label = calloutDiv.getAttribute('data-aue-label');
-      const model = calloutDiv.getAttribute('data-aue-model');
+      const CalloutDivAttrs = ['data-aue-resource', 'data-aue-type', 'data-aue-label', 'data-aue-model'];
 
-      // Copy attributes to plus button
-      if (resource) plusButtonContainer.setAttribute('data-aue-resource', resource);
-      if (type) plusButtonContainer.setAttribute('data-aue-type', type);
-      if (label) plusButtonContainer.setAttribute('data-aue-label', label);
-      if (model) plusButtonContainer.setAttribute('data-aue-model', model);
+      CalloutDivAttrs.forEach((attr) => {
+        const value = calloutDiv.getAttribute(attr);
+        if (value) plusButtonContainer.setAttribute(attr, value);
+        calloutDiv.removeAttribute(attr);
+      });
 
-      // Remove them from original calloutDiv
-      calloutDiv.removeAttribute('data-aue-resource');
-      calloutDiv.removeAttribute('data-aue-type');
-      calloutDiv.removeAttribute('data-aue-label');
-      calloutDiv.removeAttribute('data-aue-model');
-
-      // Optionally hide it
       calloutDiv.style.display = 'none';
     } else {
       calloutDiv.remove();
