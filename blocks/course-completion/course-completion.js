@@ -161,9 +161,9 @@ async function downloadCertificate(canvas, courseData, downloadButton) {
  * Shares the course completion to LinkedIn
  */
 function shareToLinkedIn() {
-  const shareUrl = encodeURIComponent(window.location.href);  
+  const shareUrl = encodeURIComponent(window.location.href);
   const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`;
-  
+
   // Open LinkedIn share in new window
   window.open(linkedInUrl, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
 }
@@ -273,12 +273,14 @@ function createContent(children, certificateCanvas, courseData) {
       <h1>${title?.textContent}</h1>
       <p>${description?.textContent}</p>
       <div class="course-completion-button-container">
-        <button class="btn primary  linkedin-share"><span class="icon icon-linkedin-white"></span>${placeholders?.CourseCompleteShareOnLinkedin || 'Share with your network'}</button>
+        <button class="btn primary  linkedin-share"><span class="icon icon-linkedin-white"></span>${
+          placeholders?.CourseCompleteShareOnLinkedin || 'Share with your network'
+        }</button>
         <button class="btn secondary download-certificate">${downloadBtn?.textContent}</button>
       </div>
     </div>
   `);
-  
+
   // Add PDF download functionality to download certificate button
   const downloadCertificateBtn = container.querySelector('.download-certificate');
   if (downloadBtn && downloadCertificateBtn && certificateCanvas) {
