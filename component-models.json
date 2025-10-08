@@ -1513,15 +1513,12 @@
         "label": "Rows"
       },
       {
-        "component": "select",
+        "component": "multiselect",
         "valueType": "string",
         "name": "classes",
         "label": "Style Type",
+        "description": "Select the style type.",
         "options": [
-          {
-            "name": "Default",
-            "value": ""
-          },
           {
             "name": "Border w/ alternating rows",
             "value": "b-alt-row"
