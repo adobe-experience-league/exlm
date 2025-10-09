@@ -2,6 +2,7 @@ import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.
 import createCanvas from '../../scripts/utils/canvas-utils.js';
 import { canvasToPDF } from '../../scripts/utils/canvas-pdf-utils.js';
 import { launchConfetti } from '../../scripts/utils/confetti-utils.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 const CONFIG = {
   CONFETTI: {
@@ -157,6 +158,17 @@ async function downloadCertificate(canvas, courseData, downloadButton) {
 }
 
 /**
+ * Shares the course completion to LinkedIn
+ */
+function shareToLinkedIn() {
+  const shareUrl = encodeURIComponent(window.location.href);
+  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`;
+
+  // Open LinkedIn share in new window
+  window.open(linkedInUrl, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
+}
+
+/**
  * Creates and configures the confetti canvas
  * @returns {HTMLCanvasElement} Configured canvas element
  */
@@ -261,16 +273,26 @@ function createContent(children, certificateCanvas, courseData) {
       <h1>${title?.textContent}</h1>
       <p>${description?.textContent}</p>
       <div class="course-completion-button-container">
-        <button class="btn primary download-certificate">${downloadBtn?.textContent}</button>
+        <button class="btn primary  linkedin-share"><span class="icon icon-linkedin-white"></span>${
+          placeholders?.CourseCompleteShareOnLinkedin || 'Share with your network'
+        }</button>
+        <button class="btn secondary download-certificate">${downloadBtn?.textContent}</button>
       </div>
     </div>
   `);
+
   // Add PDF download functionality to download certificate button
   const downloadCertificateBtn = container.querySelector('.download-certificate');
   if (downloadBtn && downloadCertificateBtn && certificateCanvas) {
     downloadCertificateBtn.addEventListener('click', () =>
       downloadCertificate(certificateCanvas, courseData, downloadCertificateBtn),
     );
+  }
+
+  // Add LinkedIn share functionality
+  const linkedInShareBtn = container.querySelector('.linkedin-share');
+  if (linkedInShareBtn) {
+    linkedInShareBtn.addEventListener('click', () => shareToLinkedIn());
   }
 
   return container;
@@ -334,4 +356,5 @@ export default async function decorate(block) {
     block.textContent = '';
     block.appendChild(errorMessage);
   }
+  decorateIcons(block);
 }
