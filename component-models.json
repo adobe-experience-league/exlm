@@ -8301,10 +8301,16 @@
       {
         "component": "text",
         "valueType": "string",
+        "name": "shareButtonText",
+        "value": "",
+        "label": "Button text for share button"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
         "name": "downloadButtonText",
         "value": "",
-        "label": "Button Text for certificate Download",
-        "description": "Label for the download certificate button"
+        "label": "Button text for download certificate"
       }
     ]
   },

@@ -266,20 +266,24 @@ async function createCertificateContainer(courseData) {
  * @returns {HTMLElement} Content container
  */
 function createContent(children, certificateCanvas, courseData) {
-  const [title, description, downloadBtn] = children;
+  const [title, description, linkedInBtn, downloadBtn] = children;
 
   const container = htmlToElement(`
     <div class="course-completion-content-container">
       <h1>${title?.textContent}</h1>
       <p>${description?.textContent}</p>
       <div class="course-completion-button-container">
-        <button class="btn primary  linkedin-share"><span class="icon icon-linkedin-white"></span>${
-          placeholders?.CourseCompleteShareOnLinkedin || 'Share with your network'
-        }</button>
+        <button class="btn primary linkedin-share"><span class="icon icon-linkedin-white"></span>${linkedInBtn?.textContent}</button>
         <button class="btn secondary download-certificate">${downloadBtn?.textContent}</button>
       </div>
     </div>
   `);
+
+  // Add LinkedIn share functionality
+  const linkedInShareBtn = container.querySelector('.linkedin-share');
+  if (linkedInShareBtn) {
+    linkedInShareBtn.addEventListener('click', () => shareToLinkedIn());
+  }
 
   // Add PDF download functionality to download certificate button
   const downloadCertificateBtn = container.querySelector('.download-certificate');
@@ -288,13 +292,6 @@ function createContent(children, certificateCanvas, courseData) {
       downloadCertificate(certificateCanvas, courseData, downloadCertificateBtn),
     );
   }
-
-  // Add LinkedIn share functionality
-  const linkedInShareBtn = container.querySelector('.linkedin-share');
-  if (linkedInShareBtn) {
-    linkedInShareBtn.addEventListener('click', () => shareToLinkedIn());
-  }
-
   return container;
 }
 
