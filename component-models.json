@@ -1513,18 +1513,18 @@
         "label": "Rows"
       },
       {
-        "component": "select",
+        "component": "multiselect",
         "valueType": "string",
         "name": "classes",
         "label": "Style Type",
         "options": [
           {
-            "name": "Default",
-            "value": ""
-          },
-          {
             "name": "Border w/ alternating rows",
             "value": "b-alt-row"
+          },
+          {
+            "name": "Align to middle",
+            "value": "align-middle"
           }
         ]
       }
