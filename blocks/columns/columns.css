@@ -17,6 +17,10 @@
   padding: 16px;
 }
 
+.columns.align-middle > div {
+  align-items: center;
+}
+
 .columns img {
   width: 100%;
 }

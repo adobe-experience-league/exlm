@@ -76,7 +76,7 @@
 
 .browse-courses .browse-cards-block-content {
   display: grid;
-  gap: 32px 24px;
+  gap: 32px;
   grid-template-columns: 1fr;
   margin: 32px 0 0;
   min-height: 284px;
@@ -102,7 +102,7 @@
 }
 
 .browse-courses .browse-card-shimmer {
-  gap: 32px 24px;
+  gap: 32px;
   margin: 0;
 }
 

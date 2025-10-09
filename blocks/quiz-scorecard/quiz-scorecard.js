@@ -33,6 +33,10 @@ export default async function decorate(block) {
   if (block.classList.contains('fail')) {
     const cta1Container = cta1Div.querySelector('div');
     const cta2Container = cta2Div.querySelector('div');
+
+    // Add retake-quiz-button class
+    cta2Container.querySelector('a')?.classList.add('retake-quiz-button');
+
     ctaHTML = `
       <div class="quiz-scorecard-cta-container">
         ${decorateCustomButtons(cta1Container, cta2Container)}
@@ -62,4 +66,12 @@ export default async function decorate(block) {
   const scorecardElement = htmlToElement(scorecardHTML);
   block.appendChild(scorecardElement);
   decorateIcons(scorecardElement);
+
+  const retakeButton = scorecardElement.querySelector('.retake-quiz-button');
+  if (retakeButton) {
+    retakeButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.reload();
+    });
+  }
 }
