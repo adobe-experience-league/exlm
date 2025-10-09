@@ -369,6 +369,10 @@
   height: 16px;
 }
 
+.browse-card-video-clip-modal-backdrop.expanded-mode .browse-card-video-clip-info:has(.video-modal-hide) {
+  padding-bottom: 20px;
+}
+
 .browse-card-video-clip-modal-backdrop.mini-player-mode {
   flex-direction: row;
   justify-content: flex-end;
@@ -448,6 +452,14 @@
   display: none;
 }
 
+.browse-card-video-clip-modal .browse-card-actions.video-modal-actions-hide {
+  display: none;
+}
+
+.browse-card-video-clip-modal-backdrop .browse-card-video-clip-info .browse-card-source-row:has(.video-modal-hide) {
+  display: none;
+}
+
 .browse-card-video-clip-modal.mini-player-mode .browse-card-full-link {
   padding: 6px 12px;
 }
@@ -459,7 +471,7 @@
 @media (min-width: 600px) {
   .browse-card-video-clip-modal {
     width: fit-content;
-    max-width: min(calc(85vh * 16 / 9), 90vw);
+    max-width: min(calc(85vh * 16 / 9), 60vw);
     max-height: 85vh;
   }
 
@@ -478,6 +490,10 @@
 
   .browse-card-video-clip-modal-backdrop .backdrop-actions {
     max-width: calc(var(--container-height) * 16 / 9);
+  }
+
+  .browse-card-video-clip-modal-backdrop.expanded-mode .browse-card-video-clip-modal {
+    min-width: min(calc(var(--container-height) * 16 / 9), 58vw);
   }
 
   .browse-card-video-clip-modal-backdrop .miniplayer-label,
