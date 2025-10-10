@@ -252,6 +252,20 @@ function addModuleNav(main) {
 }
 
 /**
+ * Add course breadcrumb block to course step pages.
+ * @param {HTMLElement} main
+ */
+function addCourseBreadcrumb(main) {
+  // Check if course-breadcrumb block already exists
+  if (!main.querySelector('.course-breadcrumb.block')) {
+    const courseBreadcrumbSection = document.createElement('div');
+    courseBreadcrumbSection.classList.add('course-breadcrumb-section');
+    courseBreadcrumbSection.append(buildBlock('course-breadcrumb', []));
+    main.prepend(courseBreadcrumbSection);
+  }
+}
+
+/**
  * Tabbed layout for Tab section
  * @param {HTMLElement} main
  */
@@ -319,6 +333,7 @@ function buildAutoBlocks(main, isFragment = false) {
       // if we are on a course step page
       if (isCourseStep) {
         addModuleInfo(main);
+        addCourseBreadcrumb(main);
         addModuleNav(main);
       }
     }
