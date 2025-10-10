@@ -81,10 +81,17 @@
 
 .quiz-scorecard-cta-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: var(--spectrum-spacing-200);
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .quiz-scorecard-cta-container {
+    flex-direction: row;
+  }
 }
 
 @media (min-width: 900px) {

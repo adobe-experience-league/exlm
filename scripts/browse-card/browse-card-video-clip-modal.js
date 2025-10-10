@@ -217,6 +217,8 @@ export class BrowseCardVideoClipModal {
 
     this.videoContainer = this.modal.querySelector('.browse-card-video-clip-container');
     this.contentCard = this.modal.querySelector('.browse-card-video-clip-info');
+    this.watchFullVideoBtn = this.backdrop.querySelector('.browse-card-button');
+    this.videoSourceContainer = this.backdrop.querySelector('.browse-card-source');
 
     this.backdropMiniPlayerButton = this.backdrop.querySelector('.browse-card-video-clip-modal-miniplayer');
     this.backdropMiniPlayerLabel = this.backdrop.querySelector('.miniplayer-label');
@@ -242,6 +244,8 @@ export class BrowseCardVideoClipModal {
       this.backdrop.classList.add('compact-mode');
       this.modal.classList.add('compact-mode');
     }
+
+    this.updateVideoDetailsVisibility();
 
     decorateIcons(this.backdrop);
   }
@@ -413,6 +417,8 @@ export class BrowseCardVideoClipModal {
       fullVideoLink.textContent =
         viewLinkText || BrowseCardVideoClipModal.placeholders?.watchFullVideo || 'Watch full video';
     }
+    this.updateVideoDetailsVisibility();
+    this.updateMiniPlayerCtaVisibility();
   }
 
   toggleMiniPlayer() {
@@ -455,8 +461,29 @@ export class BrowseCardVideoClipModal {
       this.closeButton = this.backdropCloseButton;
       document.body.style.overflow = 'hidden';
     }
+    this.updateMiniPlayerCtaVisibility();
     setTimeout(() => {
       this.updateModalDimensions();
     }, 100);
+  }
+
+  updateVideoDetailsVisibility() {
+    const fullVideoExists = !!this.model.parentURL;
+    const classOp = fullVideoExists ? 'remove' : 'add';
+    if (this.watchFullVideoBtn) {
+      this.watchFullVideoBtn.classList[classOp]('video-modal-hide');
+    }
+    if (this.videoSourceContainer) {
+      this.videoSourceContainer.classList[classOp]('video-modal-hide');
+    }
+  }
+
+  updateMiniPlayerCtaVisibility() {
+    const miniPlayerActions = this.modal.querySelector('.miniplayer-actions');
+    if (miniPlayerActions) {
+      const fullVideoExists = !!this.model.parentURL;
+      const classOp = fullVideoExists ? 'remove' : 'add';
+      miniPlayerActions.classList[classOp]('video-modal-actions-hide');
+    }
   }
 }
