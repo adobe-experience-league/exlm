@@ -331,6 +331,9 @@ export default async function decorate(block) {
   content.sections = sections || [];
   const placeholders = await placeHolderPromise;
   block.innerHTML = html(content, placeholders);
+  block.querySelectorAll('.step .image img').forEach((imgElement) => {
+    imgElement.loading = 'eager';
+  });
 
   addEventHandlers(block, placeholders);
 
