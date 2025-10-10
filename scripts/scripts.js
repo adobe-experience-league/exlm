@@ -1302,7 +1302,7 @@ export function setMetadata(name, content) {
  * Update TQ Tags metadata directly in meta tags
  * @param {Document} document
  */
-export function updateTQTagsMetadata() {
+export function updateTQTagsForCoveo() {
   const keyMapping = {
     'tq-roles': 'role',
     'tq-levels': 'level',
@@ -1331,6 +1331,52 @@ export function updateTQTagsMetadata() {
       }
     } catch (e) {
       console.error(`Failed to parse metadata for ${originalName}:`, e, metaTag);
+    }
+  });
+}
+
+/**
+ * Update TQ Tags metadata
+ * @param {Document} document
+ */
+export function updateTQTagsMetadata() {
+  const keysToUpdate = [
+    'tq-roles',
+    'tq-levels',
+    'tq-products',
+    'tq-features',
+    'tq-subfeatures',
+    'tq-industries',
+    'tq-topics',
+  ];
+
+  keysToUpdate.forEach((key) => {
+    const metaTag = getMetadata(key);
+    if (!metaTag) return;
+
+    try {
+      const decoded = decodeHtmlEntities(metaTag);
+      const parsed = JSON.parse(decoded);
+
+      if (Array.isArray(parsed)) {
+        const updatedTags = parsed
+          .map((item) => (item.uri && item.label ? `${item.uri}|${item.label}` : null))
+          .filter(Boolean)
+          .join(', ');
+        if (updatedTags) {
+          setMetadata(`${key}`, updatedTags);
+          // Extract labels (the part after |) and join by comma
+          const labels = updatedTags
+            .split(',')
+            .map((tag) => tag.split('|')[1]?.trim())
+            .filter(Boolean)
+            .join(', ');
+
+          setMetadata(`${key}-labels`, labels);
+        }
+      }
+    } catch (e) {
+      console.error(`Failed to parse metadata for ${key}:`, e);
     }
   });
 }
@@ -1450,12 +1496,8 @@ async function loadPage() {
   // For AEM Author mode, decode the tags value
   if (window.hlx.aemRoot || window.location.href.includes('.html')) {
     decodeAemCqMetaTags();
-    const pagePath = window?.location.pathname;
-    if (pagePath.includes('/courses/') && !pagePath.includes('/courses/instructors')) {
-      updateTQTagsMetadata();
-    } else {
-      decodeAemPageMetaTags();
-    }
+    updateTQTagsMetadata();
+    decodeAemPageMetaTags();
   }
 
   const { suffix: currentPagePath, lang } = getPathDetails();
