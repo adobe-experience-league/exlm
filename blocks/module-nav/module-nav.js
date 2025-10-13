@@ -1,5 +1,5 @@
 import { getCurrentStepInfo, isLastStep, getNextModuleFirstStep } from '../../scripts/utils/course-utils.js';
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
 
 async function handleQuizNextButton(e) {
@@ -84,17 +84,33 @@ export default async function decorate(block) {
   const isRecap = stepInfo?.isRecap || false;
   const isQuiz = stepInfo?.isQuiz || false;
 
+  // Get environment config
+  const { isProd } = getConfig();
+
+  // Check if quiz should be skipped (already passed and not in production)
+  const skipQuiz = isQuiz && !isProd && sessionStorage.getItem('course.skipQuiz') === 'true';
+
   if (isRecap) {
     // Take Quiz link
     secondLink.classList.add('module-nav-quiz');
     secondLink.textContent = placeholders['course-take-quiz'] || 'Take Quiz';
     secondLink.href = stepInfo.moduleQuiz || '#';
   } else if (isQuiz) {
-    // Submit Answers link
-    secondLink.classList.add('module-nav-submit');
-    secondLink.textContent = placeholders['course-submit-answers'] || 'Submit Answers';
-    secondLink.href = stepInfo.nextStep || '#';
-    secondLink.addEventListener('click', handleQuizNextButton, { once: true });
+    if (skipQuiz) {
+      // Quiz already passed, show Next button
+      secondLink.classList.add('module-nav-next');
+      secondLink.textContent = placeholders?.nextBtnLabel || 'Next';
+      secondLink.href = stepInfo.nextStep || '#';
+
+      // Update previous button text
+      previousLink.textContent = placeholders?.backToCourseOverview || 'Back to Course Overview';
+    } else {
+      // Submit Answers link
+      secondLink.classList.add('module-nav-submit');
+      secondLink.textContent = placeholders['course-submit-answers'] || 'Submit Answers';
+      secondLink.href = stepInfo.nextStep || '#';
+      secondLink.addEventListener('click', handleQuizNextButton, { once: true });
+    }
   } else {
     // Next link
     secondLink.classList.add('module-nav-next');
@@ -103,7 +119,7 @@ export default async function decorate(block) {
   }
 
   // Check if this is the last step
-  if (!isQuiz && (await isLastStep())) {
+  if ((!isQuiz || skipQuiz) && (await isLastStep())) {
     const nextModuleFirstStepUrl = await getNextModuleFirstStep();
     if (nextModuleFirstStepUrl) {
       secondLink.href = nextModuleFirstStepUrl;
