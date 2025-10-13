@@ -166,6 +166,7 @@ export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 export const isCourseStep = matchesAnyTheme(/course-step/);
+export const isCertificatePage = matchesAnyTheme(/course-certificate/);
 
 /**
  * add a section for the left rail when on a browse page.
@@ -335,6 +336,11 @@ function buildAutoBlocks(main, isFragment = false) {
         addModuleInfo(main);
         addCourseBreadcrumb(main);
         addModuleNav(main);
+      }
+
+      // if we are on a certificate page
+      if (isCertificatePage) {
+        addCourseBreadcrumb(main);
       }
     }
   } catch (error) {

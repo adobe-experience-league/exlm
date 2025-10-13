@@ -3,12 +3,12 @@ import { fetchLanguagePlaceholders, getPathDetails, matchesAnyTheme } from '../.
 
 /**
  * Checks if the current page is a certificate page.
- * Certificate pages have the 'certificate' theme.
+ * Certificate pages have the 'course-certificate' theme.
  *
  * @returns {boolean} True if the current page is a certificate page, false otherwise
  */
 function isCertificatePage() {
-  return matchesAnyTheme(/certificate/);
+  return matchesAnyTheme(/course-certificate/);
 }
 
 export default async function decorate(block) {
