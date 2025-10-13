@@ -15,14 +15,16 @@ export default async function decorate(block) {
   }
 
   const coveosolutions = getMetadata('coveo-solution');
-  const solutions = [
-    ...new Set(
-      coveosolutions.split(';').map((item) => {
-        const parts = item.split('|');
-        return parts.length > 1 ? parts[1].trim() : item.trim();
-      }),
-    ),
-  ].join(',');
+  const solutions =
+    getMetadata('tq-products-labels') ||
+    [
+      ...new Set(
+        coveosolutions.split(';').map((item) => {
+          const parts = item.split('|');
+          return parts.length > 1 ? parts[1].trim() : item.trim();
+        }),
+      ),
+    ].join(',');
 
   const features = getPreferredMetadata('tq-features-labels', 'loc-feature', 'feature');
   const roles = getPreferredMetadata('tq-roles-labels', 'loc-role', 'role');
