@@ -534,6 +534,9 @@ indices:
         select: head > meta[name="last-update"]
         value: |
           parseTimestamp(attribute(el, "content"), 'ddd MMM DD YYYY hh:mm:ss GMT')
+      lastContentModified:
+        select: none
+        value: parseTimestamp(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
   sitemap-fr-1:
     <<: *base-sitemap-1
     include:
