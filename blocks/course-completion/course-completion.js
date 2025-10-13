@@ -171,11 +171,13 @@ async function downloadCertificate(canvas, courseData, downloadButton) {
  * Shares the course completion to LinkedIn
  */
 function shareToLinkedIn() {
-  const shareUrl = encodeURIComponent(getCourseLandingPageUrl());
-  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`;
-
-  // Open LinkedIn share in new window
-  window.open(linkedInUrl, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
+  const shareUrl = getCourseLandingPageUrl();
+  if (!shareUrl) return;
+  window.open(
+    `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+    '_blank',
+    'width=600,height=400,scrollbars=yes,resizable=yes',
+  );
 }
 
 /**
