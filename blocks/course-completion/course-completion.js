@@ -60,6 +60,16 @@ function wrapText(text, maxLength = 30) {
   return lines.join('\n');
 }
 
+function getCourseLandingPageUrl() {
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  if (parts.length >= 2) {
+    const url = new URL(window.location.origin);
+    url.pathname = `/${parts[0]}/${parts[1]}`;
+    return url.toString();
+  }
+  return null;
+}
+
 /**
  * Fetches course data from API
  */
@@ -161,7 +171,7 @@ async function downloadCertificate(canvas, courseData, downloadButton) {
  * Shares the course completion to LinkedIn
  */
 function shareToLinkedIn() {
-  const shareUrl = encodeURIComponent(window.location.href);
+  const shareUrl = encodeURIComponent(getCourseLandingPageUrl());
   const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`;
 
   // Open LinkedIn share in new window
