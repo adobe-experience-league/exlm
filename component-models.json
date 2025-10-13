@@ -1513,18 +1513,18 @@
         "label": "Rows"
       },
       {
-        "component": "select",
+        "component": "multiselect",
         "valueType": "string",
         "name": "classes",
         "label": "Style Type",
         "options": [
           {
-            "name": "Default",
-            "value": ""
-          },
-          {
             "name": "Border w/ alternating rows",
             "value": "b-alt-row"
+          },
+          {
+            "name": "Align to middle",
+            "value": "align-middle"
           }
         ]
       }
@@ -4578,6 +4578,38 @@
         "validation": {
           "rootPath": "/content/exlm/global/en/courses/instructors"
         }
+      },
+      {
+        "component": "aem-tag",
+        "valueType": "string",
+        "name": "coveo-solution",
+        "label": "Solution(s)",
+        "rootPath": "/content/cq:tags/exl/solution",
+        "description": "Sets the Coveo Solution(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "valueType": "string",
+        "name": "feature",
+        "label": "Legacy Feature(s)",
+        "rootPath": "/content/cq:tags/exl/feature",
+        "description": "Sets the Coveo Feature(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "name": "role",
+        "label": "Legacy Role(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/role",
+        "description": "Sets the role(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "name": "level",
+        "label": "Legacy Experience Level(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/experience-level",
+        "description": "Sets the level(s) in page meta."
       },
       {
         "component": "custom-aem-tag",
@@ -8402,10 +8434,16 @@
       {
         "component": "text",
         "valueType": "string",
+        "name": "shareButtonText",
+        "value": "",
+        "label": "Button text for share button"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
         "name": "downloadButtonText",
         "value": "",
-        "label": "Button Text for certificate Download",
-        "description": "Label for the download certificate button"
+        "label": "Button text for download certificate"
       }
     ]
   },

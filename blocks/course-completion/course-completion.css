@@ -101,6 +101,25 @@
   padding: 10px 30px;
 }
 
+/* Button container */
+.course-completion .course-completion-button-container {
+  display: flex;
+  gap: var(--spectrum-spacing-200);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.course-completion .course-completion-button-container .linkedin-share {
+  display: flex;
+  align-items: center;
+  gap: var(--spectrum-spacing-100);
+}
+
+.course-completion .course-completion-button-container .linkedin-share .icon {
+  width: 21px;
+  height: 21px;
+}
+
 /* Loading states */
 .course-completion .course-completion-certificate-container .shimmer {
   animation: shimmer 1.5s infinite;
