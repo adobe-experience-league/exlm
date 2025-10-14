@@ -6,14 +6,32 @@ import {
   getPathDetails,
 } from '../../scripts/scripts.js';
 
+// Cache for storing video ID mappings to avoid redundant API calls
+const videoIdCache = new Map();
+
 async function fetchLOCVideoId(videoId, lang) {
+  // Create a cache key combining videoId and language
+  const cacheKey = `${videoId}-${lang}`;
+
+  // Check if we already have this video ID cached
+  if (videoIdCache.has(cacheKey)) {
+    // eslint-disable-next-line no-console
+    console.log(`Using cached video ID for ${videoId} (${lang})`);
+    return videoIdCache.get(cacheKey);
+  }
+
   // const { mpcVideoIdUrl } = getConfig();
   try {
     const response = await fetch(
       `https://51837-657fuchsiazebra-test.adobeioruntime.net/api/v1/web/main/videos?videoId=${videoId}&lang=${lang}`,
     );
     const json = await response.json();
-    return json.data?.localizedvideoId;
+    const localizedVideoId = json.data?.localizedvideoId;
+
+    // Cache the result for future use
+    videoIdCache.set(cacheKey, localizedVideoId);
+
+    return localizedVideoId;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error fetching localized video ID', error);
