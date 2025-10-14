@@ -326,27 +326,27 @@ function buildAutoBlocks(main, isFragment = false) {
           addBrowseBreadCrumb(main);
           addBrowseRail(main);
           break;
-          
+
         case isPerspectivePage:
           addMiniToc(main);
           break;
-          
+
         case isProfilePage:
           addProfileRail(main);
           break;
 
-        // if we are on a course step page  
+        // if we are on a course step page
         case isCourseStep:
           addModuleInfo(main);
           addCourseBreadcrumb(main);
           addModuleNav(main);
           break;
-          
-        // if we are on a certificate page  
+
+        // if we are on a certificate page
         case isCertificatePage:
           addCourseBreadcrumb(main);
           break;
-          
+
         default:
           break;
       }
