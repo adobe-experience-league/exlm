@@ -1,3 +1,6 @@
+import updateVideoUrl from '../../scripts/utils/video-utils.js';
+import { getPathDetails } from '../../scripts/scripts.js';
+
 const getDefaultEmbed = (url) => `<div class="video-frame">
     <iframe 
       src="${url.href}"
@@ -34,10 +37,12 @@ export default async function decorate(block) {
   block.textContent = '';
 
   if (href) {
+    const { lang } = getPathDetails() || 'en';
+    const locVideoUrl = await updateVideoUrl(href, lang);
     const observer = new IntersectionObserver((entries) => {
       if (entries.some((e) => e.isIntersecting)) {
         observer.disconnect();
-        loadEmbed(block, href);
+        loadEmbed(block, locVideoUrl);
       }
     });
     observer.observe(block);

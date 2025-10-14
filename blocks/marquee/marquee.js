@@ -1,57 +1,8 @@
 /* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
-import {
-  // getConfig,
-  getPathDetails,
-} from '../../scripts/scripts.js';
-
-const VIDEO_KEY = 'videos';
-
-async function fetchLOCVideoId(videoId, lang) {
-  const cacheKey = `${VIDEO_KEY}-${videoId}-${lang}`;
-
-  try {
-    if (cacheKey in sessionStorage) {
-      const cachedData = JSON.parse(sessionStorage[cacheKey]);
-      return cachedData.localizedVideoId;
-    }
-
-    const response = await fetch(
-      `https://51837-657fuchsiazebra-test.adobeioruntime.net/api/v1/web/main/videos?videoId=${videoId}&lang=${lang}`,
-    );
-    const json = await response.json();
-    const localizedVideoId = json.data?.localizedvideoId;
-
-    const cacheData = {
-      localizedVideoId,
-    };
-    sessionStorage.setItem(cacheKey, JSON.stringify(cacheData));
-
-    return localizedVideoId;
-  } catch (error) {
-    sessionStorage.removeItem(cacheKey);
-    /* eslint-disable no-console */
-    console.error('Error fetching localized video ID', error);
-    return null;
-  }
-}
-
-async function replaceVideoUrl(url, lang) {
-  const match = url?.match(/\/v\/(\d+)/);
-  if (!match) return url;
-
-  const originalId = match[1];
-  const localizedId = await fetchLOCVideoId(originalId, lang);
-
-  if (localizedId && localizedId !== originalId) {
-    const newUrl = url.replace(`/v/${originalId}`, `/v/${localizedId}`);
-    // eslint-disable-next-line no-console
-    console.log(`Updated video URL: ${newUrl}`);
-    return newUrl;
-  }
-  return url;
-}
+import updateVideoUrl from '../../scripts/utils/video-utils.js';
+import { getPathDetails } from '../../scripts/scripts.js';
 
 const getDefaultEmbed = (url) => `
   <div class="video-frame" style="position: absolute; inset: 0; width: 100%; height: 100%;">
@@ -64,9 +15,10 @@ const getDefaultEmbed = (url) => `
       loading="lazy"></iframe>
   </div>`;
 
-function handleVideoLinks(videoLinkElems, block) {
-  videoLinkElems.forEach((videoLinkElem) => {
+function handleVideoLinks(videoLinkElems, block, lang) {
+  videoLinkElems.forEach(async (videoLinkElem) => {
     const videoLink = videoLinkElem.getAttribute('href');
+    const locVideoLink = await updateVideoUrl(videoLink, lang);
     videoLinkElem.setAttribute('href', '#');
     videoLinkElem.removeAttribute('target');
 
@@ -95,7 +47,7 @@ function handleVideoLinks(videoLinkElems, block) {
       if (!modal.querySelector('iframe')) {
         const iframeContainer = document.createElement('div');
         iframeContainer.classList.add('iframe-container');
-        iframeContainer.innerHTML = `<iframe src="${videoLink}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+        iframeContainer.innerHTML = `<iframe src="${locVideoLink}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
         modal.append(iframeContainer);
       }
     });
@@ -125,6 +77,7 @@ function handleSigninLinks(block) {
 }
 
 export default async function decorate(block) {
+  const { lang } = getPathDetails() || 'en';
   // Extract properties
   const allDivs = [...block.querySelectorAll(':scope div > div')];
   let customBgColor;
@@ -157,9 +110,7 @@ export default async function decorate(block) {
 
   const subjectPicture = img?.querySelector('picture');
   const isVideoVariant = block.classList.contains('video');
-  let videoUrl = videoLinkWrapper?.querySelector('a')?.href?.trim();
-  const { lang } = getPathDetails() || 'en';
-  videoUrl = await replaceVideoUrl(videoUrl, lang);
+  const videoUrl = videoLinkWrapper?.querySelector('a')?.href?.trim();
   const isStraightVariant = block.classList.contains('straight');
   const isLargeVariant = block.classList.contains('large');
   const marqueeVideoVariant = isVideoVariant && isLargeVariant && isStraightVariant;
@@ -246,6 +197,7 @@ export default async function decorate(block) {
   block.append(marqueeDOM);
 
   if (isVideoVariant && videoUrl) {
+    const locVideoUrl = await updateVideoUrl(videoUrl, lang);
     const bgFillerEl = block.querySelector('.marquee-bg-filler');
     if (bgFillerEl) bgFillerEl.style.display = 'none';
 
@@ -254,7 +206,7 @@ export default async function decorate(block) {
 
     const embedWrapper = document.createElement('div');
     embedWrapper.style.backgroundColor = bgColor;
-    embedWrapper.innerHTML = getDefaultEmbed(videoUrl);
+    embedWrapper.innerHTML = getDefaultEmbed(locVideoUrl);
 
     bgContainer.appendChild(embedWrapper);
   } else if (subjectPicture) {
@@ -292,6 +244,6 @@ export default async function decorate(block) {
 
   if (isVideoLinkType) {
     const videoLinkElems = block.querySelectorAll('.marquee-cta > .video');
-    handleVideoLinks(videoLinkElems, block);
+    handleVideoLinks(videoLinkElems, block, lang);
   }
 }
