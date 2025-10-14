@@ -1,6 +1,45 @@
 /* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import {
+  // getConfig,
+  getPathDetails,
+} from '../../scripts/scripts.js';
+
+async function fetchLOCVideoId(videoId, lang) {
+  // const { mpcVideoIdUrl } = getConfig();
+  try {
+    const response = await fetch(
+      `https://51837-657fuchsiazebra-test.adobeioruntime.net/api/v1/web/main/videos?videoId=${videoId}&lang=${lang}`,
+    );
+    const json = await response.json();
+    return json.data?.localizedvideoId;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching localized video ID', error);
+    return null;
+  }
+}
+
+async function replaceVideoUrl(url, lang) {
+  // Extract authored video ID from the URL (e.g., 336859)
+  const match = url?.match(/\/v\/(\d+)/);
+  if (!match) return url;
+
+  const originalId = match[1];
+  const localizedId = await fetchLOCVideoId(originalId, lang);
+
+  if (localizedId && localizedId !== originalId) {
+    // Replace the video URL with the localized ID
+    const newUrl = url.replace(`/v/${originalId}`, `/v/${localizedId}`);
+    // eslint-disable-next-line no-console
+    console.log(`Updated video URL: ${newUrl}`);
+    return newUrl;
+  }
+
+  // If no localized ID found, return the original
+  return url;
+}
 
 const getDefaultEmbed = (url) => `
   <div class="video-frame" style="position: absolute; inset: 0; width: 100%; height: 100%;">
@@ -106,7 +145,9 @@ export default async function decorate(block) {
 
   const subjectPicture = img?.querySelector('picture');
   const isVideoVariant = block.classList.contains('video');
-  const videoUrl = videoLinkWrapper?.querySelector('a')?.href?.trim();
+  let videoUrl = videoLinkWrapper?.querySelector('a')?.href?.trim();
+  const { lang } = getPathDetails() || 'en';
+  videoUrl = await replaceVideoUrl(videoUrl, lang);
   const isStraightVariant = block.classList.contains('straight');
   const isLargeVariant = block.classList.contains('large');
   const marqueeVideoVariant = isVideoVariant && isLargeVariant && isStraightVariant;
