@@ -12,7 +12,7 @@ const videoIdCache = new Map();
 async function fetchLOCVideoId(videoId, lang) {
   // Create a cache key combining videoId and language
   const cacheKey = `${videoId}-${lang}`;
-
+  
   // Check if we already have this video ID cached
   if (videoIdCache.has(cacheKey)) {
     // eslint-disable-next-line no-console
@@ -20,21 +20,29 @@ async function fetchLOCVideoId(videoId, lang) {
     return videoIdCache.get(cacheKey);
   }
 
-  // const { mpcVideoIdUrl } = getConfig();
+  // Make API call and cache the result
   try {
+    // eslint-disable-next-line no-console
+    console.log(`Fetching localized video ID for ${videoId} (${lang})`);
     const response = await fetch(
       `https://51837-657fuchsiazebra-test.adobeioruntime.net/api/v1/web/main/videos?videoId=${videoId}&lang=${lang}`,
     );
     const json = await response.json();
     const localizedVideoId = json.data?.localizedvideoId;
-
-    // Cache the result for future use
+    
+    // Cache the result for future use (even if null)
     videoIdCache.set(cacheKey, localizedVideoId);
-
+    
+    // eslint-disable-next-line no-console
+    console.log(`Cached video ID mapping: ${videoId} -> ${localizedVideoId} (${lang})`);
+    
     return localizedVideoId;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error fetching localized video ID', error);
+    
+    // Cache null result to avoid repeated failed API calls
+    videoIdCache.set(cacheKey, null);
     return null;
   }
 }
