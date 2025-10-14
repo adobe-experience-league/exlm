@@ -28,6 +28,9 @@ indices:
       robots:
         select: head > meta[name="robots"]
         value: attribute(el, "content")
+      lastContentModified:
+        select: none
+        value: parseTimestamp(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
   site-fr:
     <<: *base-site
     include:
@@ -147,6 +150,9 @@ indices:
       robots:
         select: head > meta[name="robots"]
         value: attribute(el, "content")
+      lastContentModified:
+        select: none
+        value: parseTimestamp(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
 
   browse-fr:
     <<: *base-browse
@@ -260,6 +266,9 @@ indices:
         select: head > meta[name="level"]
         value: |
           attribute(el, 'content')
+      lastContentModified:
+        select: none
+        value: parseTimestamp(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
 
   perspective-fr:
     <<: *base-perspective
@@ -395,6 +404,9 @@ indices:
         select: head > meta[name="level"]
         value: |
           attribute(el, 'content')
+      lastContentModified:
+        select: none
+        value: parseTimestamp(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
 
   course-fr:
     <<: *base-course
@@ -509,6 +521,9 @@ indices:
         select: head > meta[name="last-update"]
         value: |
           parseTimestamp(attribute(el, "content"), 'ddd MMM DD YYYY hh:mm:ss GMT')
+      lastContentModified:
+        select: none
+        value: parseTimestamp(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
   sitemap-en-2: &base-sitemap-2
     target: /en/sitemap-index-2.json
     include:
@@ -534,6 +549,9 @@ indices:
         select: head > meta[name="last-update"]
         value: |
           parseTimestamp(attribute(el, "content"), 'ddd MMM DD YYYY hh:mm:ss GMT')
+      lastContentModified:
+        select: none
+        value: parseTimestamp(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
   sitemap-fr-1:
     <<: *base-sitemap-1
     include:
