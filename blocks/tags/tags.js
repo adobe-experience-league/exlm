@@ -1,8 +1,8 @@
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { getMetadata } from '../../scripts/lib-franklin.js';
 
-function getPreferredMetadata(primaryMetadataKey, fallbackMetadataKey) {
-  return getMetadata(primaryMetadataKey) ? getMetadata(primaryMetadataKey) : getMetadata(fallbackMetadataKey);
+function getPreferredMetadata(tqMetaKey, locLegacyMetaKey, legacyMetaKey) {
+  return getMetadata(tqMetaKey) || getMetadata(locLegacyMetaKey) || getMetadata(legacyMetaKey);
 }
 
 export default async function decorate(block) {
@@ -15,18 +15,20 @@ export default async function decorate(block) {
   }
 
   const coveosolutions = getMetadata('coveo-solution');
-  const solutions = [
-    ...new Set(
-      coveosolutions.split(';').map((item) => {
-        const parts = item.split('|');
-        return parts.length > 1 ? parts[1].trim() : item.trim();
-      }),
-    ),
-  ].join(',');
+  const solutions =
+    getMetadata('tq-products-labels') ||
+    [
+      ...new Set(
+        coveosolutions.split(';').map((item) => {
+          const parts = item.split('|');
+          return parts.length > 1 ? parts[1].trim() : item.trim();
+        }),
+      ),
+    ].join(',');
 
-  const features = getPreferredMetadata('loc-feature', 'feature');
-  const roles = getPreferredMetadata('loc-role', 'role');
-  const experienceLevels = getPreferredMetadata('loc-level', 'level');
+  const features = getPreferredMetadata('tq-features-labels', 'loc-feature', 'feature');
+  const roles = getPreferredMetadata('tq-roles-labels', 'loc-role', 'role');
+  const experienceLevels = getPreferredMetadata('tq-levels-labels', 'loc-level', 'level');
 
   function createTagsHTML(values) {
     return values
