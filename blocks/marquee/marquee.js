@@ -6,43 +6,41 @@ import {
   getPathDetails,
 } from '../../scripts/scripts.js';
 
-// Cache for storing video ID mappings to avoid redundant API calls
-const videoIdCache = new Map();
+const VIDEO_KEY = 'videos';
 
 async function fetchLOCVideoId(videoId, lang) {
-  // Create a cache key combining videoId and language
-  const cacheKey = `${videoId}-${lang}`;
+  // Create unique cache key for this video ID and language combination
+  const cacheKey = `${VIDEO_KEY}-${videoId}-${lang}`;
   
-  // Check if we already have this video ID cached
-  if (videoIdCache.has(cacheKey)) {
-    // eslint-disable-next-line no-console
-    console.log(`Using cached video ID for ${videoId} (${lang})`);
-    return videoIdCache.get(cacheKey);
-  }
-
-  // Make API call and cache the result
   try {
-    // eslint-disable-next-line no-console
-    console.log(`Fetching localized video ID for ${videoId} (${lang})`);
+    // Check if we have cached data for this specific video ID and language
+    if (cacheKey in sessionStorage) {
+      const cachedData = JSON.parse(sessionStorage[cacheKey]);
+      return cachedData.localizedVideoId;
+    }
+
+    // Make API call if not cached
     const response = await fetch(
       `https://51837-657fuchsiazebra-test.adobeioruntime.net/api/v1/web/main/videos?videoId=${videoId}&lang=${lang}`,
     );
     const json = await response.json();
     const localizedVideoId = json.data?.localizedvideoId;
     
-    // Cache the result for future use (even if null)
-    videoIdCache.set(cacheKey, localizedVideoId);
-    
-    // eslint-disable-next-line no-console
-    console.log(`Cached video ID mapping: ${videoId} -> ${localizedVideoId} (${lang})`);
+    // Cache the result with the specific key
+    const cacheData = {
+      localizedVideoId,
+      timestamp: Date.now(),
+      videoId,
+      lang
+    };
+    sessionStorage.setItem(cacheKey, JSON.stringify(cacheData));
     
     return localizedVideoId;
   } catch (error) {
-    // eslint-disable-next-line no-console
+    // Remove any corrupted cache data for this specific key
+    sessionStorage.removeItem(cacheKey);
+    /* eslint-disable no-console */
     console.error('Error fetching localized video ID', error);
-    
-    // Cache null result to avoid repeated failed API calls
-    videoIdCache.set(cacheKey, null);
     return null;
   }
 }
