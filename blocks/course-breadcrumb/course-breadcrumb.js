@@ -32,7 +32,7 @@ export default async function decorate(block) {
 
   // Clear existing content
   block.textContent = '';
-  block.classList.add('breadcrumbs');
+  // No need to add 'breadcrumbs' class as we're using course-breadcrumb selectors in CSS
 
   const { lang } = getPathDetails();
 

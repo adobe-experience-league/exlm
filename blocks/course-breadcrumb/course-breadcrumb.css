@@ -1,16 +1,16 @@
 /* Container styles */
-.course-breadcrumb.breadcrumbs .course-breadcrumb-container {
+.course-breadcrumb .course-breadcrumb-container {
   width: 100%;
 }
 
-.course-breadcrumb.breadcrumbs .course-breadcrumb-items {
+.course-breadcrumb .course-breadcrumb-items {
   display: flex;
   flex-wrap: nowrap;
   overflow-x: hidden;
 }
 
 /* Common breadcrumb item styles - applied to all links */
-.course-breadcrumb.breadcrumbs .course-breadcrumb-items a {
+.course-breadcrumb .course-breadcrumb-items a {
   color: var(--non-spectrum-dark-gray);
   display: inline-block;
   font-size: var(--spectrum-font-size-200);
@@ -22,7 +22,7 @@
 }
 
 /* Chevron separator */
-.course-breadcrumb.breadcrumbs .course-breadcrumb-items a::before {
+.course-breadcrumb .course-breadcrumb-items a::before {
   background-color: var(--non-spectrum-dark-gray);
   mask-image: url('/icons/chevron_right.svg');
   bottom: -3px;
@@ -36,22 +36,22 @@
 }
 
 /* Remove chevron from first item */
-.course-breadcrumb.breadcrumbs .course-breadcrumb-courses::before {
+.course-breadcrumb .course-breadcrumb-courses::before {
   content: none;
 }
 
 /* Current item styling */
-.course-breadcrumb.breadcrumbs .course-breadcrumb-current {
+.course-breadcrumb .course-breadcrumb-current {
   font-weight: var(--font-weight-bold);
 }
 
 /* Responsive adjustments */
 @media (min-width: 600px) {
-  .course-breadcrumb.breadcrumbs .course-breadcrumb-items a {
+  .course-breadcrumb .course-breadcrumb-items a {
     max-width: 150px;
   }
 
-  .course-breadcrumb.breadcrumbs .course-breadcrumb-current {
+  .course-breadcrumb .course-breadcrumb-current {
     max-width: none;
   }
 }
