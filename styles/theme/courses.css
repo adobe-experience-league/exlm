@@ -1,10 +1,16 @@
-.courses.course-module,
-.courses.course-step {
-  --highlight-light-background-color: #fff;
-}
-
 .courses .section:not(.notification-banner-container),
 .courses-section {
+  background-color: var(--spectrum-gray-50);
+  padding: 24px 49px;
+}
+
+.courses .section.bg-dark-gray:not(.notification-banner-container),
+.courses-section.bg-dark-gray {
+  background-color: var(--highlight-dark-background-color);
+}
+
+.courses-section > div,
+.courses .section:not(.notification-banner-container) > div {
   max-width: 792px;
   margin: 0 auto;
 }
