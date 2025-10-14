@@ -1,5 +1,5 @@
 import { getCurrentCourseMeta, getCurrentStepInfo } from '../../scripts/utils/course-utils.js';
-import { fetchLanguagePlaceholders, getPathDetails, matchesAnyTheme } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, getPathDetails, matchesAnyTheme, htmlToElement } from '../../scripts/scripts.js';
 
 /**
  * Checks if the current page is a certificate page.
@@ -34,49 +34,39 @@ export default async function decorate(block) {
   block.textContent = '';
   block.classList.add('breadcrumbs');
 
-  // Create breadcrumb container
-  const container = document.createElement('div');
-  const innerContainer = document.createElement('div');
-  container.appendChild(innerContainer);
-  block.appendChild(container);
-
-  // Course link (first level) - include language code in URL
-  const courseLink = document.createElement('a');
   const { lang } = getPathDetails();
-  courseLink.href = `/${lang}/courses`;
-  courseLink.textContent = placeholders?.coursesLabel || 'Courses';
-  innerContainer.appendChild(courseLink);
 
-  // Course title link (second level)
-  const courseTitleLink = document.createElement('a');
-  courseTitleLink.href = courseInfo.url;
-  courseTitleLink.textContent = courseInfo.heading || '';
-  courseTitleLink.title = courseInfo.heading || '';
-  innerContainer.appendChild(courseTitleLink);
+  // Determine the breadcrumb links based on page type
+  const currentStep = !isCertificatePage()
+    ? stepInfo.moduleSteps.find((step) => step.url === window.location.pathname)
+    : null;
 
-  // Check if this is a certificate page
-  if (isCertificatePage()) {
-    const certificateLink = document.createElement('a');
-    certificateLink.textContent = placeholders?.coursesCertificate || 'Certificate'; // Preset as Certificate
-    certificateLink.style.pointerEvents = 'none';
-    innerContainer.appendChild(certificateLink);
-  } else {
-    // For step pages, add module title (third level)
-    const moduleTitleLink = document.createElement('a');
-    // Use the first step of the module as the link target
-    moduleTitleLink.href = stepInfo.moduleSteps[0]?.url || stepInfo.courseUrl;
-    moduleTitleLink.textContent = stepInfo.moduleHeader || '';
-    moduleTitleLink.title = stepInfo.moduleHeader || ''; // Add tooltip with full text
-    innerContainer.appendChild(moduleTitleLink);
-
-    // Step title (fourth level) - only add if we're on a step page
-    const currentStep = stepInfo.moduleSteps.find((step) => step.url === window.location.pathname);
-    if (currentStep) {
-      const stepLink = document.createElement('a');
-
-      stepLink.textContent = currentStep.name;
-      stepLink.style.pointerEvents = 'none';
-      innerContainer.appendChild(stepLink);
+  const breadcrumbLinks = `
+    <a href="/${lang}/courses" class="course-breadcrumb-courses">${placeholders?.coursesLabel || 'Courses'}</a>
+    <a href="${courseInfo.url}" title="${courseInfo.heading || ''}" class="course-breadcrumb-course-title">${
+      courseInfo.heading || ''
+    }</a>
+    ${
+      isCertificatePage()
+        ? `<a class="course-breadcrumb-certificate course-breadcrumb-current" style="pointer-events: none">${
+            placeholders?.coursesCertificate || 'Certificate'
+          }</a>`
+        : `<a href="${stepInfo.moduleSteps[0]?.url || stepInfo.courseUrl}" title="${
+            stepInfo.moduleHeader || ''
+          }" class="course-breadcrumb-module">${stepInfo.moduleHeader || ''}</a>
+         ${
+           currentStep
+             ? `<a class="course-breadcrumb-step course-breadcrumb-current" style="pointer-events: none">${currentStep.name}</a>`
+             : ''
+         }`
     }
-  }
+  `;
+
+  const breadcrumbHTML = htmlToElement(`
+    <div class="course-breadcrumb-container">
+      <div class="course-breadcrumb-items">${breadcrumbLinks}</div>
+    </div>
+  `);
+
+  block.appendChild(breadcrumbHTML);
 }

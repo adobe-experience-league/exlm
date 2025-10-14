@@ -1,10 +1,16 @@
-.course-breadcrumb.breadcrumbs > div > div {
+/* Container styles */
+.course-breadcrumb.breadcrumbs .course-breadcrumb-container {
+  width: 100%;
+}
+
+.course-breadcrumb.breadcrumbs .course-breadcrumb-items {
   display: flex;
   flex-wrap: nowrap;
   overflow-x: hidden;
 }
 
-.course-breadcrumb.breadcrumbs > div > div > a {
+/* Common breadcrumb item styles - applied to all links */
+.course-breadcrumb.breadcrumbs .course-breadcrumb-items a {
   color: var(--non-spectrum-dark-gray);
   display: inline-block;
   font-size: var(--spectrum-font-size-200);
@@ -15,7 +21,8 @@
   max-width: 100px;
 }
 
-.course-breadcrumb.breadcrumbs > div > div > a::before {
+/* Chevron separator */
+.course-breadcrumb.breadcrumbs .course-breadcrumb-items a::before {
   background-color: var(--non-spectrum-dark-gray);
   mask-image: url('/icons/chevron_right.svg');
   bottom: -3px;
@@ -28,20 +35,23 @@
   width: 18px;
 }
 
-.course-breadcrumb.breadcrumbs > div > div > a:first-child::before {
+/* Remove chevron from first item */
+.course-breadcrumb.breadcrumbs .course-breadcrumb-courses::before {
   content: none;
 }
 
-.course-breadcrumb.breadcrumbs > div > div > a:last-child {
+/* Current item styling */
+.course-breadcrumb.breadcrumbs .course-breadcrumb-current {
   font-weight: var(--font-weight-bold);
 }
 
+/* Responsive adjustments */
 @media (min-width: 600px) {
-  .course-breadcrumb.breadcrumbs > div > div > a {
+  .course-breadcrumb.breadcrumbs .course-breadcrumb-items a {
     max-width: 150px;
   }
 
-  .course-breadcrumb.breadcrumbs > div > div > a:last-child {
+  .course-breadcrumb.breadcrumbs .course-breadcrumb-current {
     max-width: none;
   }
 }
