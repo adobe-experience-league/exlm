@@ -9,35 +9,27 @@ import {
 const VIDEO_KEY = 'videos';
 
 async function fetchLOCVideoId(videoId, lang) {
-  // Create unique cache key for this video ID and language combination
   const cacheKey = `${VIDEO_KEY}-${videoId}-${lang}`;
-  
+
   try {
-    // Check if we have cached data for this specific video ID and language
     if (cacheKey in sessionStorage) {
       const cachedData = JSON.parse(sessionStorage[cacheKey]);
       return cachedData.localizedVideoId;
     }
 
-    // Make API call if not cached
     const response = await fetch(
       `https://51837-657fuchsiazebra-test.adobeioruntime.net/api/v1/web/main/videos?videoId=${videoId}&lang=${lang}`,
     );
     const json = await response.json();
     const localizedVideoId = json.data?.localizedvideoId;
-    
-    // Cache the result with the specific key
+
     const cacheData = {
       localizedVideoId,
-      timestamp: Date.now(),
-      videoId,
-      lang
     };
     sessionStorage.setItem(cacheKey, JSON.stringify(cacheData));
-    
+
     return localizedVideoId;
   } catch (error) {
-    // Remove any corrupted cache data for this specific key
     sessionStorage.removeItem(cacheKey);
     /* eslint-disable no-console */
     console.error('Error fetching localized video ID', error);
@@ -46,7 +38,6 @@ async function fetchLOCVideoId(videoId, lang) {
 }
 
 async function replaceVideoUrl(url, lang) {
-  // Extract authored video ID from the URL (e.g., 336859)
   const match = url?.match(/\/v\/(\d+)/);
   if (!match) return url;
 
@@ -54,14 +45,11 @@ async function replaceVideoUrl(url, lang) {
   const localizedId = await fetchLOCVideoId(originalId, lang);
 
   if (localizedId && localizedId !== originalId) {
-    // Replace the video URL with the localized ID
     const newUrl = url.replace(`/v/${originalId}`, `/v/${localizedId}`);
     // eslint-disable-next-line no-console
     console.log(`Updated video URL: ${newUrl}`);
     return newUrl;
   }
-
-  // If no localized ID found, return the original
   return url;
 }
 
