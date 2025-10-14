@@ -36,7 +36,7 @@
 }
 
 /* Remove chevron from first item */
-.course-breadcrumb .course-breadcrumb-courses::before {
+.course-breadcrumb .course-breadcrumb-items .course-breadcrumb-courses::before {
   content: none;
 }
 

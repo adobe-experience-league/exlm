@@ -321,34 +321,21 @@ function buildAutoBlocks(main, isFragment = false) {
     }
     if (!isFragment) {
       // Determine page type and add appropriate blocks
-      switch (true) {
-        case isBrowsePage:
-          addBrowseBreadCrumb(main);
-          addBrowseRail(main);
-          break;
-
-        case isPerspectivePage:
-          addMiniToc(main);
-          break;
-
-        case isProfilePage:
-          addProfileRail(main);
-          break;
-
+      if (isBrowsePage) {
+        addBrowseBreadCrumb(main);
+        addBrowseRail(main);
+      } else if (isPerspectivePage) {
+        addMiniToc(main);
+      } else if (isProfilePage) {
+        addProfileRail(main);
+      } else if (isCourseStep) {
         // if we are on a course step page
-        case isCourseStep:
-          addModuleInfo(main);
-          addCourseBreadcrumb(main);
-          addModuleNav(main);
-          break;
-
+        addModuleInfo(main);
+        addCourseBreadcrumb(main);
+        addModuleNav(main);
+      } else if (isCertificatePage) {
         // if we are on a certificate page
-        case isCertificatePage:
-          addCourseBreadcrumb(main);
-          break;
-
-        default:
-          break;
+        addCourseBreadcrumb(main);
       }
     }
   } catch (error) {
