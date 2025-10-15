@@ -90,35 +90,35 @@ export default async function decorate(block) {
   // Check if quiz should be skipped (already passed and not in production)
   const skipQuiz = isQuiz && !isProd && sessionStorage.getItem('course.skipQuiz') === 'true';
 
+  // Function to set up the next button for regular navigation
+  const setupNextButton = () => {
+    nextLink.classList.add('module-nav-next');
+    nextLink.textContent = placeholders['course-next'] || 'Next';
+    nextLink.href = stepInfo.nextStep || '#';
+  };
+
   if (isRecap) {
     // Take Quiz link
     nextLink.classList.add('module-nav-quiz');
     nextLink.textContent = placeholders['course-take-quiz'] || 'Take Quiz';
     nextLink.href = stepInfo.moduleQuiz || '#';
-  } else if (isQuiz) {
-    if (skipQuiz) {
-      // Quiz already passed, show Next button
-      nextLink.classList.add('module-nav-next');
-      nextLink.textContent = placeholders?.nextBtnLabel || 'Next';
-      nextLink.href = stepInfo.nextStep || '#';
-
-      // Update previous button text
-      previousLink.textContent = placeholders?.backToCourseOverview || 'Back to Course Overview';
-    } else {
-      // Submit Answers link
-      nextLink.classList.add('module-nav-submit');
-      nextLink.textContent = placeholders['course-submit-answers'] || 'Submit Answers';
-      nextLink.href = stepInfo.nextStep || '#';
-      nextLink.addEventListener('click', handleQuizNextButton, { once: true });
-    }
-  } else {
-    // Next link
-    nextLink.classList.add('module-nav-next');
-    nextLink.textContent = placeholders['course-next'] || 'Next';
+  } else if (isQuiz && !skipQuiz) {
+    // Submit Answers link
+    nextLink.classList.add('module-nav-submit');
+    nextLink.textContent = placeholders['course-submit-answers'] || 'Submit Answers';
     nextLink.href = stepInfo.nextStep || '#';
+    nextLink.addEventListener('click', handleQuizNextButton, { once: true });
+  } else {
+    // Regular Next link (for normal steps or skipped quizzes)
+    setupNextButton();
+
+    // Update previous button text if this is a skipped quiz
+    if (isQuiz && skipQuiz) {
+      previousLink.textContent = placeholders?.backToCourseOverview || 'Back to Course Overview';
+    }
   }
 
-  // Check if this is the last step
+  // Check if this is the last step - maintaining the original condition exactly
   if ((!isQuiz || skipQuiz) && (await isLastStep())) {
     const nextModuleFirstStepUrl = await getNextModuleFirstStep();
     if (nextModuleFirstStepUrl) {
