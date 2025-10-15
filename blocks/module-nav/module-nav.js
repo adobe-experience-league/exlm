@@ -77,8 +77,8 @@ export default async function decorate(block) {
   }
 
   // Second link based on step type
-  const secondLink = document.createElement('a');
-  secondLink.className = 'button module-nav-button';
+  const nextLink = document.createElement('a');
+  nextLink.className = 'button module-nav-button';
 
   // Check if recap or quiz step - use root level properties
   const isRecap = stepInfo?.isRecap || false;
@@ -92,43 +92,43 @@ export default async function decorate(block) {
 
   if (isRecap) {
     // Take Quiz link
-    secondLink.classList.add('module-nav-quiz');
-    secondLink.textContent = placeholders['course-take-quiz'] || 'Take Quiz';
-    secondLink.href = stepInfo.moduleQuiz || '#';
+    nextLink.classList.add('module-nav-quiz');
+    nextLink.textContent = placeholders['course-take-quiz'] || 'Take Quiz';
+    nextLink.href = stepInfo.moduleQuiz || '#';
   } else if (isQuiz) {
     if (skipQuiz) {
       // Quiz already passed, show Next button
-      secondLink.classList.add('module-nav-next');
-      secondLink.textContent = placeholders?.nextBtnLabel || 'Next';
-      secondLink.href = stepInfo.nextStep || '#';
+      nextLink.classList.add('module-nav-next');
+      nextLink.textContent = placeholders?.nextBtnLabel || 'Next';
+      nextLink.href = stepInfo.nextStep || '#';
 
       // Update previous button text
       previousLink.textContent = placeholders?.backToCourseOverview || 'Back to Course Overview';
     } else {
       // Submit Answers link
-      secondLink.classList.add('module-nav-submit');
-      secondLink.textContent = placeholders['course-submit-answers'] || 'Submit Answers';
-      secondLink.href = stepInfo.nextStep || '#';
-      secondLink.addEventListener('click', handleQuizNextButton, { once: true });
+      nextLink.classList.add('module-nav-submit');
+      nextLink.textContent = placeholders['course-submit-answers'] || 'Submit Answers';
+      nextLink.href = stepInfo.nextStep || '#';
+      nextLink.addEventListener('click', handleQuizNextButton, { once: true });
     }
   } else {
     // Next link
-    secondLink.classList.add('module-nav-next');
-    secondLink.textContent = placeholders['course-next'] || 'Next';
-    secondLink.href = stepInfo.nextStep || '#';
+    nextLink.classList.add('module-nav-next');
+    nextLink.textContent = placeholders['course-next'] || 'Next';
+    nextLink.href = stepInfo.nextStep || '#';
   }
 
   // Check if this is the last step
   if ((!isQuiz || skipQuiz) && (await isLastStep())) {
     const nextModuleFirstStepUrl = await getNextModuleFirstStep();
     if (nextModuleFirstStepUrl) {
-      secondLink.href = nextModuleFirstStepUrl;
+      nextLink.href = nextModuleFirstStepUrl;
     }
   }
 
   // Add links to container
   container.appendChild(previousLink);
-  container.appendChild(secondLink);
+  container.appendChild(nextLink);
 
   // Add to block
   block.appendChild(container);
