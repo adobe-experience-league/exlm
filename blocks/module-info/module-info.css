@@ -2,10 +2,15 @@
   width: 100%;
 }
 
+.module-info-section,
+.module-info-container {
+  padding-top: 0;
+}
+
 .module-info {
   background-color: var(--spectrum-gray-100);
   border-radius: 16px;
-  padding: 40px;
+  padding: 0 40px 40px;
   border: 1px solid var(--non-spectrum-unicorn-silver);
 }
 
