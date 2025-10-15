@@ -166,6 +166,7 @@ export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 export const isCourseStep = matchesAnyTheme(/course-step/);
+export const isCertificatePage = matchesAnyTheme(/course-certificate/);
 
 /**
  * add a section for the left rail when on a browse page.
@@ -252,6 +253,20 @@ function addModuleNav(main) {
 }
 
 /**
+ * Add course breadcrumb block to course step pages.
+ * @param {HTMLElement} main
+ */
+function addCourseBreadcrumb(main) {
+  // Check if course-breadcrumb block already exists
+  if (!main.querySelector('.course-breadcrumb.block')) {
+    const courseBreadcrumbSection = document.createElement('div');
+    courseBreadcrumbSection.classList.add('course-breadcrumb-section');
+    courseBreadcrumbSection.append(buildBlock('course-breadcrumb', []));
+    main.prepend(courseBreadcrumbSection);
+  }
+}
+
+/**
  * Tabbed layout for Tab section
  * @param {HTMLElement} main
  */
@@ -305,21 +320,22 @@ function buildAutoBlocks(main, isFragment = false) {
       buildTabSection(main);
     }
     if (!isFragment) {
-      // if we are on a product browse page
+      // Determine page type and add appropriate blocks
       if (isBrowsePage) {
         addBrowseBreadCrumb(main);
         addBrowseRail(main);
-      }
-      if (isPerspectivePage) {
+      } else if (isPerspectivePage) {
         addMiniToc(main);
-      }
-      if (isProfilePage) {
+      } else if (isProfilePage) {
         addProfileRail(main);
-      }
-      // if we are on a course step page
-      if (isCourseStep) {
+      } else if (isCourseStep) {
+        // if we are on a course step page
         addModuleInfo(main);
+        addCourseBreadcrumb(main);
         addModuleNav(main);
+      } else if (isCertificatePage) {
+        // if we are on a certificate page
+        addCourseBreadcrumb(main);
       }
     }
   } catch (error) {
