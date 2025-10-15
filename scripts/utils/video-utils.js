@@ -1,7 +1,6 @@
 // import { getConfig } from "../scripts";
 
 const VIDEO_KEY = 'videos';
-const API_DELAY_MS = 1000;
 const mpcLanguagesMap = {
   en: 'eng',
   de: 'ger',
@@ -33,11 +32,6 @@ async function fetchLOCVideoId(videoId, lang) {
       const cachedData = JSON.parse(sessionStorage[cacheKey]);
       return cachedData.localizedVideoId;
     }
-
-    // Add 1 second delay before making the API call
-    await new Promise((resolve) => {
-      setTimeout(resolve, API_DELAY_MS);
-    });
 
     // TODO: Replace Adobe IO URL with {mpcVideoUrl}
     const response = await fetch(
