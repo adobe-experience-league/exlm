@@ -6,7 +6,7 @@
 
 .courses .section.bg-dark-gray:not(.notification-banner-container),
 .courses-section.bg-dark-gray {
-  background-color: var(--highlight-dark-background-color);
+  background-color: var(--spectrum-gray-50);
 }
 
 .courses-section > div,
