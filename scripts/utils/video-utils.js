@@ -94,8 +94,6 @@ export default async function updateVideoUrl(url, lang) {
 
     if (localizedId && localizedId !== originalId) {
       const newUrl = url.replace(`/v/${originalId}`, `/v/${localizedId}`);
-      // eslint-disable-next-line no-console
-      console.log(`Updated video URL: ${newUrl}`);
       return newUrl;
     }
   } catch (error) {
