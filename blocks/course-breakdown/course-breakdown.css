@@ -5,11 +5,28 @@
 }
 
 /* Header */
-.course-breakdown .course-breakdown-header {
+
+.course-breakdown .course-breakdown-header > div {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--spectrum-spacing-300);
+  margin-top: var(--spectrum-spacing-800);
+}
+
+.course-breakdown .course-breakdown-header > div h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+
+.course-breakdown .course-breakdown-header > a {
+  margin-left: auto;
+  display: block;
+  max-width: min-content;
 }
 
 .course-breakdown .course-breakdown-header .cb-header-info {

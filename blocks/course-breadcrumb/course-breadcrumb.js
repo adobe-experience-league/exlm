@@ -1,4 +1,4 @@
-import { getCurrentCourseMeta, getCurrentStepInfo } from '../../scripts/utils/course-utils.js';
+import { getCurrentCourseMeta, getCurrentStepInfo } from '../../scripts/courses/course-utils.js';
 import { fetchLanguagePlaceholders, getPathDetails, matchesAnyTheme, htmlToElement } from '../../scripts/scripts.js';
 
 /**

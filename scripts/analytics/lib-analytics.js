@@ -68,7 +68,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
   let stepObj = null;
 
   if (courses) {
-    const { getCurrentStepInfo, getCurrentCourseMeta } = await import('../utils/course-utils.js');
+    const { getCurrentStepInfo, getCurrentCourseMeta } = await import('../courses/course-utils.js');
 
     const stepInfo = await getCurrentStepInfo();
     const courseMeta = await getCurrentCourseMeta();
