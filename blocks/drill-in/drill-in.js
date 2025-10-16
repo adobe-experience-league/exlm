@@ -286,7 +286,14 @@ export default async function decorate(block) {
 
     // If in UE author mode, hide the calloutDiv, otherwise remove it
     if (isUEAuthorMode) {
-      // Hide the original callout div as we're showing it in coachmarks now
+      const CalloutDivAttrs = ['data-aue-resource', 'data-aue-type', 'data-aue-label', 'data-aue-model'];
+
+      CalloutDivAttrs.forEach((attr) => {
+        const value = calloutDiv.getAttribute(attr);
+        if (value) plusButtonContainer.setAttribute(attr, value);
+        calloutDiv.removeAttribute(attr);
+      });
+
       calloutDiv.style.display = 'none';
     } else {
       calloutDiv.remove();

@@ -112,56 +112,6 @@
   outline-offset: var(--spectrum-spacing-50);
 }
 
-/* Flip icon */
-.flip-card > div > div .flip-container {
-  position: absolute;
-  bottom: var(--spectrum-spacing-100);
-  right: var(--spectrum-spacing-100);
-  display: flex;
-  align-items: center;
-  gap: var(--spectrum-spacing-100);
-  color: var(--spectrum-gray-700);
-  font-size: var(--spectrum-font-size-75);
-  transition: color 0.3s ease;
-  cursor: pointer;
-}
-
-.flip-card > div > div .flip-container:hover .flip-text {
-  color: var(--spectrum-blue-900);
-}
-
-.icon-refresh {
-  position: relative;
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  vertical-align: middle;
-}
-
-.icon-refresh img {
-  transition: opacity 0.2s ease;
-}
-
-.icon-refresh::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background: url('/icons/refresh-blue.svg') center/contain no-repeat;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.flip-container:hover .icon-refresh img {
-  opacity: 0;
-}
-
-.flip-container:hover .icon-refresh::after {
-  opacity: 1;
-}
-
 /* Content typography */
 .flip-card .flip-card-content *,
 .flip-card .flip-card-content:any-link {

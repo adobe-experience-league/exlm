@@ -166,6 +166,7 @@ export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 export const isCourseStep = matchesAnyTheme(/course-step/);
+export const isCertificatePage = matchesAnyTheme(/course-certificate/);
 
 /**
  * add a section for the left rail when on a browse page.
@@ -252,6 +253,20 @@ function addModuleNav(main) {
 }
 
 /**
+ * Add course breadcrumb block to course step pages.
+ * @param {HTMLElement} main
+ */
+function addCourseBreadcrumb(main) {
+  // Check if course-breadcrumb block already exists
+  if (!main.querySelector('.course-breadcrumb.block')) {
+    const courseBreadcrumbSection = document.createElement('div');
+    courseBreadcrumbSection.classList.add('course-breadcrumb-section');
+    courseBreadcrumbSection.append(buildBlock('course-breadcrumb', []));
+    main.prepend(courseBreadcrumbSection);
+  }
+}
+
+/**
  * Tabbed layout for Tab section
  * @param {HTMLElement} main
  */
@@ -305,21 +320,22 @@ function buildAutoBlocks(main, isFragment = false) {
       buildTabSection(main);
     }
     if (!isFragment) {
-      // if we are on a product browse page
+      // Determine page type and add appropriate blocks
       if (isBrowsePage) {
         addBrowseBreadCrumb(main);
         addBrowseRail(main);
-      }
-      if (isPerspectivePage) {
+      } else if (isPerspectivePage) {
         addMiniToc(main);
-      }
-      if (isProfilePage) {
+      } else if (isProfilePage) {
         addProfileRail(main);
-      }
-      // if we are on a course step page
-      if (isCourseStep) {
+      } else if (isCourseStep) {
+        // if we are on a course step page
         addModuleInfo(main);
+        addCourseBreadcrumb(main);
         addModuleNav(main);
+      } else if (isCertificatePage) {
+        // if we are on a certificate page
+        addCourseBreadcrumb(main);
       }
     }
   } catch (error) {
@@ -1177,12 +1193,25 @@ function formatPageMetaTags(inputString) {
     .map((part) => part.trim());
 }
 
+function decodeAemCqMetaTags() {
+  const cqTagsMeta = document.querySelector(`meta[name="cq-tags"]`);
+  if (cqTagsMeta) {
+    const segments = cqTagsMeta.content.split(', ');
+    const decodedCQTags = segments.map((segment) =>
+      segment
+        .split('/')
+        .map((part, index) => (index > 0 ? atob(part) : part))
+        .join('/'),
+    );
+    cqTagsMeta.content = decodedCQTags.join(', ');
+  }
+}
+
 function decodeAemPageMetaTags() {
   const solutionMeta = document.querySelector(`meta[name="coveo-solution"]`);
   const roleMeta = document.querySelector(`meta[name="role"]`);
   const levelMeta = document.querySelector(`meta[name="level"]`);
   const featureMeta = document.querySelector(`meta[name="feature"]`);
-  const cqTagsMeta = document.querySelector(`meta[name="cq-tags"]`);
 
   const solutions = solutionMeta ? formatPageMetaTags(solutionMeta.content) : [];
   const features = featureMeta ? formatPageMetaTags(featureMeta.content) : [];
@@ -1241,16 +1270,116 @@ function decodeAemPageMetaTags() {
   if (levelMeta) {
     levelMeta.content = decodedLevels.join(',');
   }
-  if (cqTagsMeta) {
-    const segments = cqTagsMeta.content.split(', ');
-    const decodedCQTags = segments.map((segment) =>
-      segment
-        .split('/')
-        .map((part, index) => (index > 0 ? atob(part) : part))
-        .join('/'),
-    );
-    cqTagsMeta.content = decodedCQTags.join(', ');
+}
+
+// HTML entity decoder utility
+function decodeHtmlEntities(str) {
+  if (!str || typeof str !== 'string') return str;
+
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = str;
+  return textarea.value;
+}
+
+export function setMetadata(name, content) {
+  const attr = name && name.includes(':') ? 'property' : 'name';
+  const existingMetaTags = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)];
+
+  if (existingMetaTags.length === 0) {
+    // Create a new meta tag if it doesn't exist
+    const newMetaTag = document.createElement('meta');
+    newMetaTag.setAttribute(attr, name);
+    newMetaTag.setAttribute('content', content);
+    document.head.appendChild(newMetaTag);
+  } else {
+    // Update existing meta tags
+    existingMetaTags.forEach((metaTag) => {
+      metaTag.content = content;
+    });
   }
+}
+
+/**
+ * Update TQ Tags metadata directly in meta tags
+ * @param {Document} document
+ */
+export function updateTQTagsForCoveo() {
+  const keyMapping = {
+    'tq-roles': 'role',
+    'tq-levels': 'level',
+    'tq-products': 'coveo-solution',
+    'tq-features': 'feature',
+    'tq-subfeatures': 'sub-feature',
+    'tq-industries': 'industry',
+    'tq-topics': 'topic',
+  };
+
+  Object.entries(keyMapping).forEach(([originalName, metaName]) => {
+    const metaTag = document.querySelector(`meta[name="${originalName}"]`);
+    if (!metaTag) return;
+
+    try {
+      const decoded = decodeHtmlEntities(metaTag.content);
+      const parsed = JSON.parse(decoded);
+
+      if (Array.isArray(parsed)) {
+        const separator = originalName === 'tq-products' ? ';' : ',';
+        const labels = [...new Set(parsed.map((item) => item.label?.trim()).filter(Boolean))].join(separator);
+
+        if (labels) {
+          setMetadata(metaName, labels);
+        }
+      }
+    } catch (e) {
+      console.error(`Failed to parse metadata for ${originalName}:`, e, metaTag);
+    }
+  });
+}
+
+/**
+ * Update TQ Tags metadata
+ * @param {Document} document
+ */
+export function updateTQTagsMetadata() {
+  const keysToUpdate = [
+    'tq-roles',
+    'tq-levels',
+    'tq-products',
+    'tq-features',
+    'tq-subfeatures',
+    'tq-industries',
+    'tq-topics',
+  ];
+
+  keysToUpdate.forEach((key) => {
+    const metaTag = getMetadata(key);
+    if (!metaTag) return;
+
+    try {
+      const decoded = decodeHtmlEntities(metaTag);
+      const parsed = JSON.parse(decoded);
+
+      if (Array.isArray(parsed)) {
+        const updatedTags = parsed
+          .map((item) => (item.uri && item.label ? `${item.uri}|${item.label}` : null))
+          .filter(Boolean)
+          .join(', ');
+        if (updatedTags) {
+          setMetadata(`${key}`, updatedTags);
+          // Extract labels (the part after |) and join by comma
+          const labels = updatedTags
+            .split(',')
+            .map((tag) => tag.split('|')[1]?.trim())
+            .filter(Boolean)
+            .join(', ');
+
+          setMetadata(`${key}-labels`, labels);
+        }
+      }
+    } catch (e) {
+      console.error(`Failed to parse metadata for ${key}:`, e);
+    }
+  });
 }
 
 /**
@@ -1367,6 +1496,8 @@ async function loadPage() {
 
   // For AEM Author mode, decode the tags value
   if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+    decodeAemCqMetaTags();
+    updateTQTagsMetadata();
     decodeAemPageMetaTags();
   }
 

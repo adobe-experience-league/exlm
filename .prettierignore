@@ -10,3 +10,4 @@ scripts/feedback/qualtrics/qualtrics-embed.js
 scripts/ffetch.js
 sitemap-index.xml
 scripts/confetti/canvas-confetti-1.9.3.module.min.mjs
+scripts/jspdf/jspdf.umd.min.js

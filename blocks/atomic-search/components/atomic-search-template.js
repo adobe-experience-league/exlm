@@ -1,16 +1,23 @@
-import { htmlToElement, getPathDetails } from '../../../scripts/scripts.js';
+import { htmlToElement } from '../../../scripts/scripts.js';
 import { INITIAL_ATOMIC_RESULT_CHILDREN_COUNT } from './atomic-result-children.js';
 import { nextNavigationArrow, previousNavigationArrow } from './atomic-search-icons.js';
 import { atomicResultListStyles, atomicResultStyles } from './atomic-search-result.js';
 
 const getCoveoAtomicMarkup = (placeholders) => {
-  const { lang: languageCode } = getPathDetails();
+  const locales = new Map([
+    ['es', 'es-ES'],
+    ['pt-br', 'pt-BR'],
+    ['zh-hans', 'zh-CN'],
+    ['zh-hant', 'zh-TW'],
+  ]);
+  const locale = locales.get(document.querySelector('html').lang) || document.querySelector('html').lang || 'en';
+
   const CONTENT_TYPES = {
     TUTORIAL: 'Tutorial',
   };
 
   const atomicUIElements = htmlToElement(`
-        <atomic-search-interface language=${languageCode}  search-hub="Experience League Learning Hub" fields-to-include='["@foldingchild","@foldingcollection","@foldingparent","author","author_bio_page","author_name","author_type","authorname","authortype","collection","connectortype","contenttype","date","documenttype","el_author_type","el_contenttype","el_id","el_interactionstyle","el_kudo_status","el_lirank","el_product","el_rank_icon","el_reply_status","el_solution","el_solutions_authored","el_type","el_usergenerictext","el_version","el_view_status","exl_description","exl_thumbnail","filetype","id","language","liMessageLabels","liboardinteractionstyle","licommunityurl","lithreadhassolution","objecttype","outlookformacuri","outlookuri","permanentid","role","source","sourcetype","sysdocumenttype","type","urihash","video_url", "sysdate", "el_kudo_status"]'>
+        <atomic-search-interface language=${locale}  search-hub="Experience League Learning Hub" fields-to-include='["@foldingchild","@foldingcollection","@foldingparent","author","author_bio_page","author_name","author_type","authorname","authortype","collection","connectortype","contenttype","date","documenttype","el_author_type","el_contenttype","el_id","el_interactionstyle","el_kudo_status","el_lirank","el_product","el_rank_icon","el_reply_status","el_solution","el_solutions_authored","el_type","el_usergenerictext","el_version","el_view_status","exl_description","exl_thumbnail","filetype","id","language","liMessageLabels","liboardinteractionstyle","licommunityurl","lithreadhassolution","objecttype","outlookformacuri","outlookuri","permanentid","role","source","sourcetype","sysdocumenttype","type","urihash","video_url", "sysdate", "el_kudo_status"]'>
           <script type="application/json" id="atomic-search-interface-config">
             {
               "search": {

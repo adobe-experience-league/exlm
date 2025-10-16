@@ -26,8 +26,8 @@ export default async function decorate(block) {
 
   const courseName = getMetadata('og:title') || document.title;
 
-  const productName = getMetadata('coveo-solution') || '';
-  const experienceLevel = getMetadata('level') || '';
+  const productName = getMetadata('tq-products-labels') || '';
+  const experienceLevel = getMetadata('tq-levels-labels') || '';
 
   // Function to create HTML for multiple values with proper spacing
   const createMultiValueHTML = (values) => {

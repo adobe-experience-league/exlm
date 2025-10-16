@@ -710,7 +710,7 @@ export default function atomicResultHandler(block, placeholders) {
     }
   };
 
-  const updateAtomicResultUI = () => {
+  const updateAtomicResultUI = (callFrom) => {
     const results = container.querySelectorAll('atomic-result');
     const isMobileView = isMobile();
     container.dataset.view = isMobileView ? 'mobile' : 'desktop';
@@ -870,7 +870,7 @@ export default function atomicResultHandler(block, placeholders) {
           } else if (!isMobileView) {
             // UI effect is only for desktop.
             const svgIcon = ContentTypeIcons[contentType] || '';
-            if (contentType) resultContentType.classList.add(contentType);
+            if (contentType) resultContentType.classList.add(contentType.replace(/\s+/g, '-'));
             const svgElement = contentTypeEl.querySelector('span.svg-element');
             if (svgElement) {
               contentTypeEl.removeChild(svgElement);
@@ -951,7 +951,11 @@ export default function atomicResultHandler(block, placeholders) {
     }
     const searchLayoutEl = block.querySelector('atomic-search-layout');
     searchLayoutEl.dataset.result = 'found';
-    const event = new CustomEvent(CUSTOM_EVENTS.RESULT_UPDATED);
+    const event = new CustomEvent(CUSTOM_EVENTS.RESULT_UPDATED, {
+      detail: {
+        callFrom,
+      },
+    });
     document.dispatchEvent(event);
   };
 
@@ -959,7 +963,7 @@ export default function atomicResultHandler(block, placeholders) {
     const isMobileView = isMobile();
     const view = isMobileView ? 'mobile' : 'desktop';
     if (view !== container.dataset.view) {
-      updateAtomicResultUI();
+      updateAtomicResultUI('resize');
     }
   };
   const debouncedResize = debounce(200, onResize);

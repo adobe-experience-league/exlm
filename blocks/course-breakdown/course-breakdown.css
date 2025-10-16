@@ -157,6 +157,8 @@ h6 {
   margin: 0;
   padding: 0 var(--spectrum-spacing-300);
   width: 100%;
+  white-space: nowrap;
+  overflow: visible;
 }
 
 .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn a {

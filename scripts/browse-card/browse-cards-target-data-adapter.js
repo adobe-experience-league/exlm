@@ -14,6 +14,7 @@ const BrowseCardsTargetDataAdapter = (() => {
     const articlePath = `/${getPathDetails().lang}${data?.path}`;
     const fullURL = new URL(articlePath, window.location.origin).href;
     const solutions = data?.product.split(',').map((s) => s.trim());
+    const viewLinkPlaceholderKey = `browseCard${convertToTitleCase(data?.contentType)}ViewLabel`.replace(/\s+/g, '');
     return {
       ...data,
       badgeTitle: CONTENT_TYPES[contentTypeKey]?.LABEL,
@@ -27,8 +28,8 @@ const BrowseCardsTargetDataAdapter = (() => {
       copyLink: fullURL,
       bookmarkLink: '',
       viewLink: fullURL,
-      viewLinkText: placeholders[`browseCard${convertToTitleCase(data?.contentType)}ViewLabel`]
-        ? placeholders[`browseCard${convertToTitleCase(data?.contentType)}ViewLabel`]
+      viewLinkText: placeholders[viewLinkPlaceholderKey]
+        ? placeholders[viewLinkPlaceholderKey]
         : `View ${data?.contentType}`,
     };
   };
