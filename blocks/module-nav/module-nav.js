@@ -1,5 +1,5 @@
 import { getCurrentStepInfo, isLastStep, getNextModuleFirstStep } from '../../scripts/utils/course-utils.js';
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
 
 async function handleQuizNextButton(e) {
@@ -77,42 +77,58 @@ export default async function decorate(block) {
   }
 
   // Second link based on step type
-  const secondLink = document.createElement('a');
-  secondLink.className = 'button module-nav-button';
+  const nextLink = document.createElement('a');
+  nextLink.className = 'button module-nav-button';
 
   // Check if recap or quiz step - use root level properties
   const isRecap = stepInfo?.isRecap || false;
   const isQuiz = stepInfo?.isQuiz || false;
 
+  // Get environment config
+  const { isProd } = getConfig();
+
+  // Check if quiz should be skipped (already passed and not in production)
+  const skipQuiz = isQuiz && !isProd && sessionStorage.getItem('course.skipQuiz') === 'true';
+
+  // Function to set up the next button for regular navigation
+  const setupNextButton = () => {
+    nextLink.classList.add('module-nav-next');
+    nextLink.textContent = placeholders['course-next'] || 'Next';
+    nextLink.href = stepInfo.nextStep || '#';
+  };
+
   if (isRecap) {
     // Take Quiz link
-    secondLink.classList.add('module-nav-quiz');
-    secondLink.textContent = placeholders['course-take-quiz'] || 'Take Quiz';
-    secondLink.href = stepInfo.moduleQuiz || '#';
-  } else if (isQuiz) {
+    nextLink.classList.add('module-nav-quiz');
+    nextLink.textContent = placeholders['course-take-quiz'] || 'Take Quiz';
+    nextLink.href = stepInfo.moduleQuiz || '#';
+  } else if (isQuiz && !skipQuiz) {
     // Submit Answers link
-    secondLink.classList.add('module-nav-submit');
-    secondLink.textContent = placeholders['course-submit-answers'] || 'Submit Answers';
-    secondLink.href = stepInfo.nextStep || '#';
-    secondLink.addEventListener('click', handleQuizNextButton, { once: true });
+    nextLink.classList.add('module-nav-submit');
+    nextLink.textContent = placeholders['course-submit-answers'] || 'Submit Answers';
+    nextLink.href = stepInfo.nextStep || '#';
+    nextLink.addEventListener('click', handleQuizNextButton, { once: true });
   } else {
-    // Next link
-    secondLink.classList.add('module-nav-next');
-    secondLink.textContent = placeholders['course-next'] || 'Next';
-    secondLink.href = stepInfo.nextStep || '#';
+    // Regular Next link (for normal steps or skipped quizzes)
+    setupNextButton();
+
+    // Update previous button text if this is a skipped quiz
+    if (isQuiz && skipQuiz) {
+      previousLink.textContent = placeholders?.backToCourseOverview || 'Back to Course Overview';
+    }
   }
 
-  // Check if this is the last step
-  if (!isQuiz && (await isLastStep())) {
+  // Check if this is the last step - maintaining the original condition exactly
+  if ((!isQuiz || skipQuiz) && (await isLastStep())) {
     const nextModuleFirstStepUrl = await getNextModuleFirstStep();
     if (nextModuleFirstStepUrl) {
-      secondLink.href = nextModuleFirstStepUrl;
+      nextLink.href = nextModuleFirstStepUrl;
     }
   }
 
   // Add links to container
   container.appendChild(previousLink);
-  container.appendChild(secondLink);
+  container.appendChild(nextLink);
 
   // Add to block
   block.appendChild(container);
