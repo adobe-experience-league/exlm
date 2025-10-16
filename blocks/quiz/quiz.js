@@ -226,6 +226,7 @@ export default async function decorate(block) {
     // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
   }
+
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
 
@@ -241,6 +242,25 @@ export default async function decorate(block) {
 
   // Set total questions count
   const totalQuestions = orderedQuestions.length;
+
+  // Get environment config
+  const { isProd } = getConfig();
+  // Check if quiz should be skipped (only in non-prod environments)
+  const skipQuiz = !isProd && sessionStorage.getItem('course.skipQuiz') === 'true';
+
+  if (skipQuiz) {
+    const passPageUrl = passPageUrlElement?.querySelector('a')?.href;
+
+    // Set quiz data attributes with actual numbers
+    // When skipping, we assume all questions are correct
+    block.dataset.correctAnswers = totalQuestions.toString();
+    block.dataset.totalQuestions = totalQuestions.toString();
+
+    if (passPageUrl) {
+      await fetchPageContent(passPageUrl, block, true, placeholders);
+      return; // Stop further quiz rendering
+    }
+  }
 
   // Initialize display index
   let displayIndex = 1;
@@ -311,10 +331,15 @@ export default async function decorate(block) {
     if (redirectUrl) {
       // Save quiz results data directly to the block's dataset attributes
       // These will be used by the quiz-scorecard block and preserved during fetchPageContent
-      block.dataset.correctAnswers = quizResults.correctAnswersCount;
-      block.dataset.totalQuestions = quizResults.totalQuestions;
+      block.dataset.correctAnswers = quizResults?.correctAnswersCount;
+      block.dataset.totalQuestions = quizResults?.totalQuestions;
 
       await fetchPageContent(redirectUrl, block, quizResults.isPassed, placeholders);
+
+      // Save skip flag if quiz passed
+      if (quizResults?.isPassed) {
+        sessionStorage.setItem('course.skipQuiz', 'true');
+      }
     }
     return true;
   };
