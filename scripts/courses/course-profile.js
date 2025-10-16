@@ -39,10 +39,12 @@ async function getLastAddedModule() {
   const courses = await getCurrentCourses();
   const courseMeta = await getCurrentCourseMeta();
 
-  if(!courses.modules) {
+  if (!courses.modules) {
     return courseMeta.modules[0];
   }
-  const lastAddedModule = Object.values(courses).sort((a, b) => new Date(b.modules[b.modules.length - 1].started) - new Date(a.modules[a.modules.length - 1].started))[0];
+  const lastAddedModule = Object.values(courses).sort(
+    (a, b) => new Date(b.modules[b.modules.length - 1].started) - new Date(a.modules[a.modules.length - 1].started),
+  )[0];
   const lastAddedModuleUrl = courseMeta.modules.find((moduleUrl) => {
     const { moduleId: metaModuleId } = extractCourseModuleIds(moduleUrl);
     return metaModuleId === lastAddedModule.moduleId;
@@ -60,7 +62,7 @@ async function getLastAddedModule() {
  */
 async function getCourseStatus(url = window.location.pathname) {
   // If user is not signed in, return null
-  if (!await isSignedInUser()) {
+  if (!(await isSignedInUser())) {
     return null;
   }
 
@@ -91,7 +93,7 @@ async function getCourseStatus(url = window.location.pathname) {
  */
 async function getModuleStatus(url = window.location.pathname) {
   // If user is not signed in, return null
-  if (!await isSignedInUser()) {
+  if (!(await isSignedInUser())) {
     return null;
   }
 
@@ -111,7 +113,7 @@ async function getModuleStatus(url = window.location.pathname) {
 
   if (!course || !course.modules) {
     // If the module is the first module of the course, return not started
-    if(courseMeta.modules[0].includes(url) || url.includes(courseMeta.modules[0])) {
+    if (courseMeta.modules[0].includes(url) || url.includes(courseMeta.modules[0])) {
       return MODULE_STATUS.NOT_STARTED;
     }
     return MODULE_STATUS.DISABLED;

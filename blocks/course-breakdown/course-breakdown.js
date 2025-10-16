@@ -1,7 +1,12 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { getModuleMeta } from '../../scripts/courses/course-utils.js';
-import { MODULE_STATUS, getCourseStatus, getModuleStatus, getLastAddedModule } from '../../scripts/courses/course-profile.js';
+import {
+  MODULE_STATUS,
+  getCourseStatus,
+  getModuleStatus,
+  getLastAddedModule,
+} from '../../scripts/courses/course-profile.js';
 
 // Function to check if a module is completed based on query parameter
 function isModuleCompleted(moduleIndex) {
@@ -20,8 +25,7 @@ function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
   const header = document.createElement('div');
   header.classList.add('course-breakdown-header');
 
-
-  if(courseStatus) {
+  if (courseStatus) {
     const startButtonTextMap = {
       [MODULE_STATUS.NOT_STARTED]: placeholder.courseBreakdownButtonNotStarted || 'Start Learning',
       [MODULE_STATUS.IN_PROGRESS]: placeholder.courseBreakdownButtonInProgress || 'Continue Learning',
@@ -29,15 +33,15 @@ function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
     };
     const startButtonText = startButtonTextMap[courseStatus] || 'Start Learning';
     const startButton = document.createElement('a');
-    startButton.classList.add("course-breakdown-header-start-button", "button");
+    startButton.classList.add('course-breakdown-header-start-button', 'button');
     startButton.textContent = startButtonText;
-    getLastAddedModule().then(async (lastAddedModuleUrl)=>{
+    getLastAddedModule().then(async (lastAddedModuleUrl) => {
       const moduleMeta = await getModuleMeta(lastAddedModuleUrl, placeholder);
-      if(moduleMeta && moduleMeta.moduleSteps.length && moduleMeta.moduleSteps[0]?.url) {
-      startButton.href = moduleMeta.moduleSteps[0].url;
+      if (moduleMeta && moduleMeta.moduleSteps.length && moduleMeta.moduleSteps[0]?.url) {
+        startButton.href = moduleMeta.moduleSteps[0].url;
       }
       header.append(startButton);
-    })
+    });
   }
 
   header.innerHTML = `
@@ -62,9 +66,13 @@ function infoCardDom(title, description, courseStatus, placeholders) {
   card.innerHTML = `
       <div>
         ${title.innerHTML}
-        ${!courseStatus ? `<button>
+        ${
+          !courseStatus
+            ? `<button>
           ${placeholders.courseBreakdownInfoSignInButton || 'Sign In to Start'}
-        </button>` : ''}
+        </button>`
+            : ''
+        }
         
       </div>
       ${description.innerHTML}
@@ -76,12 +84,12 @@ function infoCardDom(title, description, courseStatus, placeholders) {
         }</p>
       </div>
     `;
-    
-    if(!courseStatus) {
-      card.querySelector('button')?.addEventListener('click', ()=>{
-        window.adobeIMS.signIn();
-      })
-    }
+
+  if (!courseStatus) {
+    card.querySelector('button')?.addEventListener('click', () => {
+      window.adobeIMS.signIn();
+    });
+  }
   return card;
 }
 
@@ -132,19 +140,18 @@ function moduleCard({ modulePromise, index, open = false, placeholders }) {
     let moduleStatus = moduleStatusBasedonProfile;
     const card = document.createElement('div');
     card.className = 'course-breakdown-module-card';
-    
+
     // If module is completed via query param, set module status to completed
-    if(isModuleCompleted(index)) {
+    if (isModuleCompleted(index)) {
       moduleStatus = MODULE_STATUS.COMPLETED;
     }
 
-    if(!moduleStatus) {
+    if (!moduleStatus) {
       moduleStatus = MODULE_STATUS.DISABLED;
     }
 
     const startButtonText = startButtonTextMap[moduleStatus] || 'Start Module';
     const moduleCardStatusText = moduleCardStatusMap[moduleStatus] || 'Not started';
-
 
     // Create steps list
     const stepsList =
@@ -202,7 +209,6 @@ function moduleCard({ modulePromise, index, open = false, placeholders }) {
   return CardShimmer;
 }
 
-
 export default async function decorate(block) {
   const [title, moduleTime, infoTitle, infoDescription, ...modules] = block.children;
 
@@ -224,10 +230,10 @@ export default async function decorate(block) {
     const moduleFragment = module.querySelector('a')?.getAttribute('href');
     const modulePromise = Promise.all([
       getModuleMeta(moduleFragment, placeholders),
-      getModuleStatus(moduleFragment)
+      getModuleStatus(moduleFragment),
     ]).then(([moduleMeta, moduleStatusBasedonProfile]) => ({
       moduleMeta,
-      moduleStatusBasedonProfile
+      moduleStatusBasedonProfile,
     }));
 
     const moduleProp = {
