@@ -37,8 +37,8 @@ export default async function decorate(block) {
   block.textContent = '';
 
   if (href) {
-    const { lang } = getPathDetails() || 'en';
-    const locVideoUrl = await updateVideoUrl(href, lang);
+    const { lang = 'en' } = getPathDetails() || {};
+    const locVideoUrl = lang === 'en' ? href : await updateVideoUrl(href, lang);
     const observer = new IntersectionObserver((entries) => {
       if (entries.some((e) => e.isIntersecting)) {
         observer.disconnect();

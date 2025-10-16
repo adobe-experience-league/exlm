@@ -18,7 +18,7 @@ const getDefaultEmbed = (url) => `
 function handleVideoLinks(videoLinkElems, block, lang) {
   videoLinkElems.forEach(async (videoLinkElem) => {
     const videoLink = videoLinkElem.getAttribute('href');
-    const locVideoLink = await updateVideoUrl(videoLink, lang);
+    const locVideoLink = lang === 'en' ? videoLink : await updateVideoUrl(videoLink, lang);
     videoLinkElem.setAttribute('href', '#');
     videoLinkElem.removeAttribute('target');
 
@@ -77,7 +77,7 @@ function handleSigninLinks(block) {
 }
 
 export default async function decorate(block) {
-  const { lang } = getPathDetails() || 'en';
+  const { lang = 'en' } = getPathDetails() || {};
   // Extract properties
   const allDivs = [...block.querySelectorAll(':scope div > div')];
   let customBgColor;
@@ -197,7 +197,7 @@ export default async function decorate(block) {
   block.append(marqueeDOM);
 
   if (isVideoVariant && videoUrl) {
-    const locVideoUrl = await updateVideoUrl(videoUrl, lang);
+    const locVideoUrl = lang === 'en' ? videoUrl : await updateVideoUrl(videoUrl, lang);
     const bgFillerEl = block.querySelector('.marquee-bg-filler');
     if (bgFillerEl) bgFillerEl.style.display = 'none';
 
