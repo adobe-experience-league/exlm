@@ -1,7 +1,7 @@
 /* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
-import updateVideoUrl from '../../scripts/utils/video-utils.js';
+import { getLocalizedVideoUrl } from '../../scripts/utils/video-utils.js';
 import { getPathDetails } from '../../scripts/scripts.js';
 
 const getDefaultEmbed = (url) => `
@@ -18,7 +18,7 @@ const getDefaultEmbed = (url) => `
 function handleVideoLinks(videoLinkElems, block, lang) {
   videoLinkElems.forEach(async (videoLinkElem) => {
     const videoLink = videoLinkElem.getAttribute('href');
-    const locVideoLink = lang === 'en' ? videoLink : await updateVideoUrl(videoLink, lang);
+    const locVideoLink = await getLocalizedVideoUrl(videoLink, lang);
     videoLinkElem.setAttribute('href', '#');
     videoLinkElem.removeAttribute('target');
 
@@ -197,7 +197,7 @@ export default async function decorate(block) {
   block.append(marqueeDOM);
 
   if (isVideoVariant && videoUrl) {
-    const locVideoUrl = lang === 'en' ? videoUrl : await updateVideoUrl(videoUrl, lang);
+    const locVideoUrl = await getLocalizedVideoUrl(videoUrl, lang);
     const bgFillerEl = block.querySelector('.marquee-bg-filler');
     if (bgFillerEl) bgFillerEl.style.display = 'none';
 

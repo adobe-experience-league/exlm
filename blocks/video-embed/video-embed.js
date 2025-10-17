@@ -1,4 +1,4 @@
-import updateVideoUrl from '../../scripts/utils/video-utils.js';
+import { getLocalizedVideoUrl } from '../../scripts/utils/video-utils.js';
 import { getPathDetails } from '../../scripts/scripts.js';
 
 const getDefaultEmbed = (url) => `<div class="video-frame">
@@ -38,7 +38,7 @@ export default async function decorate(block) {
 
   if (href) {
     const { lang = 'en' } = getPathDetails() || {};
-    const locVideoUrl = lang === 'en' ? href : await updateVideoUrl(href, lang);
+    const locVideoUrl = await getLocalizedVideoUrl(href, lang);
     const observer = new IntersectionObserver((entries) => {
       if (entries.some((e) => e.isIntersecting)) {
         observer.disconnect();
