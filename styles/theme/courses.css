@@ -10,7 +10,7 @@
 }
 
 .courses-section > div,
-.courses .section:not(.notification-banner-container) > div {
+.courses .section:not(.notification-banner-container, .course-marquee-container) > div {
   max-width: 792px;
   margin: 0 auto;
 }
