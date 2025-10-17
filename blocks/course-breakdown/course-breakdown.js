@@ -27,9 +27,9 @@ function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
 
   if (courseStatus) {
     const startButtonTextMap = {
-      [MODULE_STATUS.NOT_STARTED]: placeholder.courseBreakdownButtonNotStarted || 'Start Learning',
-      [MODULE_STATUS.IN_PROGRESS]: placeholder.courseBreakdownButtonInProgress || 'Continue Learning',
-      [MODULE_STATUS.COMPLETED]: placeholder.courseBreakdownButtonCompleted || 'Review Course',
+      [MODULE_STATUS.NOT_STARTED]: placeholder?.courseBreakdownButtonNotStarted || 'Start Learning',
+      [MODULE_STATUS.IN_PROGRESS]: placeholder?.courseBreakdownButtonInProgress || 'Continue Learning',
+      [MODULE_STATUS.COMPLETED]: placeholder?.courseBreakdownButtonCompleted || 'Review Course',
     };
     const startButtonText = startButtonTextMap[courseStatus] || 'Start Learning';
     const startButton = document.createElement('a');
@@ -37,7 +37,7 @@ function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
     startButton.textContent = startButtonText;
     getLastAddedModule().then(async (lastAddedModuleUrl) => {
       const moduleMeta = await getModuleMeta(lastAddedModuleUrl, placeholder);
-      if (moduleMeta && moduleMeta.moduleSteps.length && moduleMeta.moduleSteps[0]?.url) {
+      if (moduleMeta?.moduleSteps.length && moduleMeta?.moduleSteps[0]?.url) {
         startButton.href = moduleMeta.moduleSteps[0].url;
       }
       header.append(startButton);
@@ -49,7 +49,9 @@ function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
         ${title.innerHTML}
         <div class="cb-header-info">
           <span class="icon icon-course-outline"></span>
-          <span class="cb-module-count">${moduleCount} ${placeholder.courseBreakdownModuleCountText || 'Modules'}</span>
+          <span class="cb-module-count">${moduleCount} ${
+            placeholder?.courseBreakdownModuleCountText || 'Modules'
+          }</span>
           <span class="separator">•</span>
           <span class="cb-module-time">${moduleTime.textContent}</span>
         </div>
@@ -69,7 +71,7 @@ function infoCardDom(title, description, courseStatus, placeholders) {
         ${
           !courseStatus
             ? `<button>
-          ${placeholders.courseBreakdownInfoSignInButton || 'Sign In to Start'}
+          ${placeholders?.courseBreakdownInfoSignInButton || 'Sign In to Start'}
         </button>`
             : ''
         }
@@ -79,7 +81,7 @@ function infoCardDom(title, description, courseStatus, placeholders) {
       <div>
         <img src="${window.hlx.codeBasePath}/images/course-certificate.png" alt="Course Certificate placeholder" />
         <p>${
-          placeholders.courseBreakdownInfoFooterText ||
+          placeholders?.courseBreakdownInfoFooterText ||
           'Plus, earn a Certificate of Completion to share your accomplishment with your network.'
         }</p>
       </div>
@@ -123,17 +125,17 @@ function moduleCard({ modulePromise, index, open = false, placeholders }) {
   const CardShimmer = moduleCardShimmer();
 
   const startButtonTextMap = {
-    [MODULE_STATUS.DISABLED]: placeholders.courseBreakdownModuleButtonNotStarted || 'Start Module',
-    [MODULE_STATUS.NOT_STARTED]: placeholders.courseBreakdownModuleButtonNotStarted || 'Start Module',
-    [MODULE_STATUS.IN_PROGRESS]: placeholders.courseBreakdownModuleButtonInProgress || 'Resume Module',
-    [MODULE_STATUS.COMPLETED]: placeholders.courseBreakdownModuleButtonCompleted || 'Review Module',
+    [MODULE_STATUS.DISABLED]: placeholders?.courseBreakdownModuleButtonNotStarted || 'Start Module',
+    [MODULE_STATUS.NOT_STARTED]: placeholders?.courseBreakdownModuleButtonNotStarted || 'Start Module',
+    [MODULE_STATUS.IN_PROGRESS]: placeholders?.courseBreakdownModuleButtonInProgress || 'Resume Module',
+    [MODULE_STATUS.COMPLETED]: placeholders?.courseBreakdownModuleButtonCompleted || 'Review Module',
   };
 
   const moduleCardStatusMap = {
-    [MODULE_STATUS.DISABLED]: placeholders.courseBreakdownStatusNotStarted || 'Not Started',
-    [MODULE_STATUS.NOT_STARTED]: placeholders.courseBreakdownStatusNotStarted || 'Not Started',
-    [MODULE_STATUS.IN_PROGRESS]: placeholders.courseBreakdownStatusInProgress || 'In progress',
-    [MODULE_STATUS.COMPLETED]: placeholders.courseBreakdownStatusCompleted || 'Complete',
+    [MODULE_STATUS.DISABLED]: placeholders?.courseBreakdownStatusNotStarted || 'Not Started',
+    [MODULE_STATUS.NOT_STARTED]: placeholders?.courseBreakdownStatusNotStarted || 'Not Started',
+    [MODULE_STATUS.IN_PROGRESS]: placeholders?.courseBreakdownStatusInProgress || 'In progress',
+    [MODULE_STATUS.COMPLETED]: placeholders?.courseBreakdownStatusCompleted || 'Complete',
   };
 
   modulePromise.then(({ moduleMeta, moduleStatusBasedonProfile }) => {
@@ -180,7 +182,7 @@ function moduleCard({ modulePromise, index, open = false, placeholders }) {
         </button>
       </div>
         <div class="cb-steps-info ${open ? 'open' : ''}">
-          <span class="cb-steps-info-text">${placeholders.courseBreakdownModuleDetails || 'Module details'}</span>
+          <span class="cb-steps-info-text">${placeholders?.courseBreakdownModuleDetails || 'Module details'}</span>
           <span class="cb-chevron"> <span class="icon icon-chevron"></span></span>
           <span class="cb-steps-status-text ${moduleStatus}">${moduleCardStatusText}</span>
         </div>
