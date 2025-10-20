@@ -1,5 +1,5 @@
 import { getCurrentStepInfo, isLastStep, getNextModuleFirstStep } from '../../scripts/courses/course-utils.js';
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
 
 async function handleQuizNextButton(e) {
