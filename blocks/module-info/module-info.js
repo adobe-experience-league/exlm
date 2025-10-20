@@ -1,9 +1,13 @@
-import { getCurrentStepInfo } from '../../scripts/utils/course-utils.js';
+import { getCurrentStepInfo } from '../../scripts/courses/course-utils.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { MODULE_STATUS, startModule, getModuleStatus } from '../../scripts/courses/course-profile.js';
+import { sendNotice } from '../../scripts/toast/toast.js';
 
 export default async function decorate(block) {
+  const moduleStatus = await getModuleStatus();
+
   let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();
@@ -18,6 +22,17 @@ export default async function decorate(block) {
     // eslint-disable-next-line no-console
     console.warn('No step info available for module-info');
     return;
+  }
+
+  // If module is disabled, redirect to course page
+  // Otherwise, update module status in profile
+  if (!moduleStatus || moduleStatus === MODULE_STATUS.DISABLED) {
+    // Uncomment this to redirect to course page once profile API updates are done (https://jira.corp.adobe.com/browse/UGP-13737)
+    sendNotice('You are not authorized to access this module. Redirecting to course page.', 'error');
+    // document.querySelector('main').style.visibility = 'hidden';
+    // setTimeout(()=>{window.location.href = stepInfo.courseUrl}, 3000);
+  } else {
+    startModule();
   }
 
   // Clear existing content
