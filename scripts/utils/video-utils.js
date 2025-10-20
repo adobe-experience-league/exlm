@@ -35,7 +35,7 @@ async function fetchLOCVideoId(videoId, lang) {
     }
 
     const response = await fetch(
-      `https://51837-657fuchsiazebra-test.adobeioruntime.net/api/v1/web/main/videos?videoId=${videoId}&lang=${lang}`,
+      `https://51837-657fuchsiazebra-dev.adobeioruntime.net/api/v1/web/main/videos?videoId=${videoId}&lang=${lang}`,
       {
         headers: { 'Content-Type': 'application/json' },
       },
