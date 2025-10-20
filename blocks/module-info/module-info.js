@@ -4,8 +4,33 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { MODULE_STATUS, startModule, getModuleStatus } from '../../scripts/courses/course-profile.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 export default async function decorate(block) {
+  // Check if user is authenticated
+  const isAuthenticated = await isSignedInUser();
+
+  if (!isAuthenticated) {
+    // Store current step page URL in sessionStorage
+    sessionStorage.setItem('current-step-page', window.location.href);
+
+    // Redirect to sign-in
+    window.adobeIMS?.signIn();
+    return;
+  }
+
+  // User is authenticated, check if we need to redirect to a stored step page
+  const storedStepPage = sessionStorage.getItem('current-step-page');
+  if (storedStepPage && storedStepPage !== window.location.href) {
+    // Clear the stored URL to prevent redirect loops
+    sessionStorage.removeItem('current-step-page');
+
+    // Redirect to the stored step page
+    window.location.href = storedStepPage;
+    return;
+  }
+
+  // User is authenticated, proceed with normal flow
   const moduleStatus = await getModuleStatus();
 
   let placeholders = {};
@@ -27,10 +52,11 @@ export default async function decorate(block) {
   // If module is disabled, redirect to course page
   // Otherwise, update module status in profile
   if (!moduleStatus || moduleStatus === MODULE_STATUS.DISABLED) {
-    // Uncomment this to redirect to course page once profile API updates are done (https://jira.corp.adobe.com/browse/UGP-13737)
     sendNotice('You are not authorized to access this module. Redirecting to course page.', 'error');
-    // document.querySelector('main').style.visibility = 'hidden';
-    // setTimeout(()=>{window.location.href = stepInfo.courseUrl}, 3000);
+    document.querySelector('main').style.visibility = 'hidden';
+    setTimeout(() => {
+      window.location.href = stepInfo.courseUrl;
+    }, 3000);
   } else {
     startModule();
   }
