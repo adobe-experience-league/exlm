@@ -565,7 +565,7 @@ export async function buildCard(container, element, model) {
   }
 
   if (title) {
-    const titleElement = createTag('h5', { class: 'browse-card-title-text' });
+    const titleElement = createTag('h3', { class: 'browse-card-title-text' });
     titleElement.innerHTML = title;
     cardContent.appendChild(titleElement);
   }
