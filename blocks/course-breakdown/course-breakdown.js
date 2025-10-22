@@ -25,24 +25,9 @@ function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
   const header = document.createElement('div');
   header.classList.add('course-breakdown-header');
 
-  if (courseStatus) {
-    const startButtonTextMap = {
-      [MODULE_STATUS.NOT_STARTED]: placeholder?.courseBreakdownButtonNotStarted || 'Start Learning',
-      [MODULE_STATUS.IN_PROGRESS]: placeholder?.courseBreakdownButtonInProgress || 'Continue Learning',
-      [MODULE_STATUS.COMPLETED]: placeholder?.courseBreakdownButtonCompleted || 'Review Course',
-    };
-    const startButtonText = startButtonTextMap[courseStatus] || 'Start Learning';
-    const startButton = document.createElement('a');
-    startButton.classList.add('course-breakdown-header-start-button', 'button');
-    startButton.textContent = startButtonText;
-    getLastAddedModule().then(async (lastAddedModuleUrl) => {
-      const moduleMeta = await getModuleMeta(lastAddedModuleUrl, placeholder);
-      if (moduleMeta?.moduleSteps.length && moduleMeta?.moduleSteps[0]?.url) {
-        startButton.href = moduleMeta.moduleSteps[0].url;
-      }
-      header.append(startButton);
-    });
-  }
+  // Create a single button that will be used for both signed-in and signed-out users
+  const actionButton = document.createElement(courseStatus ? 'a' : 'button');
+  actionButton.classList.add('course-breakdown-header-start-button', 'button');
 
   header.innerHTML = `
   <div>
@@ -58,6 +43,32 @@ function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
   </div>
     `;
   decorateIcons(header);
+
+  if (courseStatus) {
+    // For signed-in users: Configure as a link with appropriate text
+    const startButtonTextMap = {
+      [MODULE_STATUS.NOT_STARTED]: placeholder?.courseBreakdownButtonNotStarted || 'Start Learning',
+      [MODULE_STATUS.IN_PROGRESS]: placeholder?.courseBreakdownButtonInProgress || 'Continue Learning',
+      [MODULE_STATUS.COMPLETED]: placeholder?.courseBreakdownButtonCompleted || 'Review Course',
+    };
+    actionButton.textContent = startButtonTextMap[courseStatus] || 'Start Learning';
+
+    // Set the href asynchronously
+    getLastAddedModule().then(async (lastAddedModuleUrl) => {
+      const moduleMeta = await getModuleMeta(lastAddedModuleUrl, placeholder);
+      if (moduleMeta?.moduleSteps.length && moduleMeta?.moduleSteps[0]?.url) {
+        actionButton.href = moduleMeta.moduleSteps[0].url;
+      }
+    });
+  } else {
+    // For signed-out users: Configure as a button with sign-in functionality
+    actionButton.textContent = placeholder?.courseBreakdownInfoSignInButton || 'Sign In to Start';
+    actionButton.addEventListener('click', () => {
+      window.adobeIMS.signIn();
+    });
+  }
+  header.append(actionButton);
+
   return header;
 }
 
@@ -68,14 +79,6 @@ function infoCardDom(title, description, courseStatus, placeholders) {
   card.innerHTML = `
       <div>
         ${title.innerHTML}
-        ${
-          !courseStatus
-            ? `<button>
-          ${placeholders?.courseBreakdownInfoSignInButton || 'Sign In to Start'}
-        </button>`
-            : ''
-        }
-        
       </div>
       ${description.innerHTML}
       <div>
@@ -89,11 +92,6 @@ function infoCardDom(title, description, courseStatus, placeholders) {
       </div>
     `;
 
-  if (!courseStatus) {
-    card.querySelector('button')?.addEventListener('click', () => {
-      window.adobeIMS.signIn();
-    });
-  }
   return card;
 }
 
