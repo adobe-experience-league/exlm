@@ -350,16 +350,17 @@ export async function extractCourseMeta(fragment) {
   if (!fragment) return {};
 
   const marqueeMeta = fragment.querySelector('.course-marquee');
-  const heading = marqueeMeta?.children[0]?.textContent?.trim() || '';
-  const description = marqueeMeta?.children[1]?.innerHTML || '';
   const courseBreakdownMeta = fragment.querySelector('.course-breakdown');
-  const totalTime = courseBreakdownMeta?.children[1]?.textContent?.trim() || '';
-  const courseCompletionPage = courseBreakdownMeta?.children[4]?.querySelector('a')?.getAttribute('href') || '';
 
-  const modules =
-    courseBreakdownMeta?.children.length > 5
-      ? [...courseBreakdownMeta.children].slice(5).map((child) => child.querySelector('a')?.getAttribute('href') || '')
-      : [];
+  const [headingElement, descriptionElement] = marqueeMeta?.children || [];
+  const heading = headingElement?.textContent?.trim() || '';
+  const description = descriptionElement?.innerHTML || '';
+
+  const [, totalTimeElement, , , courseCompletionElement, ...moduleElements] = courseBreakdownMeta?.children || [];
+  const totalTime = totalTimeElement?.textContent?.trim() || '';
+  const courseCompletionPage = courseCompletionElement?.querySelector('a')?.getAttribute('href') || '';
+
+  const modules = moduleElements.map((child) => child.querySelector('a')?.getAttribute('href') || '');
 
   const role = fragment.querySelector('meta[name="role"]')?.content || '';
   const solution = fragment.querySelector('meta[name="solution"]')?.content || '';
