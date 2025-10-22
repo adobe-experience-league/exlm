@@ -214,6 +214,7 @@ function moduleCard({ modulePromise, index, open = false, placeholders }) {
 }
 
 export default async function decorate(block) {
+  // eslint-disable-next-line no-unused-vars
   const [title, moduleTime, infoTitle, infoDescription, courseCompletionPageElement, ...modules] = [...block.children];
 
   let placeholders = {};
