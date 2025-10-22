@@ -3,22 +3,10 @@ import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js'
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { MODULE_STATUS, startModule, getModuleStatus } from '../../scripts/courses/course-profile.js';
-import { isSignedInUser } from '../../scripts/auth/profile.js';
+import { sendNotice } from '../../scripts/toast/toast.js';
 
 export default async function decorate(block) {
-  // Check if user is signed in, if not trigger sign in
-  const isSignedIn = await isSignedInUser();
-  if (!isSignedIn) {
-    // Trigger sign in
-    window.adobeIMS?.signIn();
-    return;
-  }
-
   const moduleStatus = await getModuleStatus();
-
-  // Store current step URL in localStorage when user is on a step page
-  // This will be used to redirect back to this page after login
-  localStorage.setItem('lastStepUrl', window.location.pathname);
 
   let placeholders = {};
   try {
@@ -40,10 +28,9 @@ export default async function decorate(block) {
   // Otherwise, update module status in profile
   if (!moduleStatus || moduleStatus === MODULE_STATUS.DISABLED) {
     // Uncomment this to redirect to course page once profile API updates are done (https://jira.corp.adobe.com/browse/UGP-13737)
-    document.querySelector('main').style.visibility = 'hidden';
-    setTimeout(() => {
-      window.location.href = stepInfo.courseUrl;
-    }, 3000);
+    sendNotice('You are not authorized to access this module. Redirecting to course page.', 'error');
+    // document.querySelector('main').style.visibility = 'hidden';
+    // setTimeout(()=>{window.location.href = stepInfo.courseUrl}, 3000);
   } else {
     startModule();
   }
