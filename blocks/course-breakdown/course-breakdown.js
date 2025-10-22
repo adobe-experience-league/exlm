@@ -214,7 +214,7 @@ function moduleCard({ modulePromise, index, open = false, placeholders }) {
 }
 
 export default async function decorate(block) {
-  const [title, moduleTime, infoTitle, infoDescription, ...modules] = block.children;
+  const [title, moduleTime, infoTitle, infoDescription, courseCompletionPageElement, ...modules] = [...block.children];
 
   let placeholders = {};
   try {

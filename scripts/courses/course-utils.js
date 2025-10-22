@@ -333,7 +333,7 @@ export async function fetchCourseFragment(url = window.location.pathname) {
 /**
  * Extracts metadata from a course fragment DOM element.
  * Parses the fragment to extract course information including heading,
- * description, total time, role, solution, level and module URLs.
+ * description, total time, role, solution, level, course completion page and module URLs.
  *
  * @param {Document} fragment - Parsed HTML document containing course data
  * @returns {Promise<Object>} Course metadata object containing:
@@ -344,6 +344,7 @@ export async function fetchCourseFragment(url = window.location.pathname) {
  *   - {string} role - Course role
  *   - {string} solution - Course solution
  *   - {string} level - Course level
+ *   - {string} courseCompletionPage - URL to the course completion page
  */
 export async function extractCourseMeta(fragment) {
   if (!fragment) return {};
@@ -353,13 +354,17 @@ export async function extractCourseMeta(fragment) {
   const description = marqueeMeta?.children[1]?.innerHTML || '';
   const courseBreakdownMeta = fragment.querySelector('.course-breakdown');
   const totalTime = courseBreakdownMeta?.children[1]?.textContent?.trim() || '';
+  const courseCompletionPage = courseBreakdownMeta?.children[4]?.querySelector('a')?.getAttribute('href') || '';
+
   const modules =
-    courseBreakdownMeta?.children.length > 4
-      ? [...courseBreakdownMeta.children].slice(4).map((child) => child.querySelector('a')?.getAttribute('href') || '')
+    courseBreakdownMeta?.children.length > 5
+      ? [...courseBreakdownMeta.children].slice(5).map((child) => child.querySelector('a')?.getAttribute('href') || '')
       : [];
+
   const role = fragment.querySelector('meta[name="role"]')?.content || '';
   const solution = fragment.querySelector('meta[name="solution"]')?.content || '';
   const level = fragment.querySelector('meta[name="level"]')?.content || '';
+
   return {
     heading,
     description,
@@ -368,6 +373,7 @@ export async function extractCourseMeta(fragment) {
     role,
     solution,
     level,
+    courseCompletionPage,
   };
 }
 
