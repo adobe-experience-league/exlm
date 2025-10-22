@@ -21,7 +21,7 @@ function isModuleCompleted(moduleIndex) {
   return completedIndices.includes(moduleIndex);
 }
 
-function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder, courseCompletionPage) {
+function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
   const header = document.createElement('div');
   header.classList.add('course-breakdown-header');
 
@@ -35,25 +35,13 @@ function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder, co
     const startButton = document.createElement('a');
     startButton.classList.add('course-breakdown-header-start-button', 'button');
     startButton.textContent = startButtonText;
-    
-    // If course is completed and course completion page is set, redirect to completion page
-    if (courseStatus === MODULE_STATUS.COMPLETED && courseCompletionPage) {
-      startButton.href = courseCompletionPage;
-    } else {
-      // Otherwise use the default behavior
-      getLastAddedModule().then(async (lastAddedModuleUrl) => {
-        const moduleMeta = await getModuleMeta(lastAddedModuleUrl, placeholder);
-        if (moduleMeta?.moduleSteps.length && moduleMeta?.moduleSteps[0]?.url) {
-          startButton.href = moduleMeta.moduleSteps[0].url;
-        }
-        header.append(startButton);
-      });
-    }
-    
-    // If course completion page is set and course is completed, append button immediately
-    if (courseStatus === MODULE_STATUS.COMPLETED && courseCompletionPage) {
+    getLastAddedModule().then(async (lastAddedModuleUrl) => {
+      const moduleMeta = await getModuleMeta(lastAddedModuleUrl, placeholder);
+      if (moduleMeta?.moduleSteps.length && moduleMeta?.moduleSteps[0]?.url) {
+        startButton.href = moduleMeta.moduleSteps[0].url;
+      }
       header.append(startButton);
-    }
+    });
   }
 
   header.innerHTML = `
@@ -226,7 +214,11 @@ function moduleCard({ modulePromise, index, open = false, placeholders }) {
 }
 
 export default async function decorate(block) {
-  const [title, moduleTime, infoTitle, infoDescription, ...modules] = block.children;
+  // Get title, text, course completion page, and modules from block children
+  const [title, moduleTime, infoTitle, infoDescription, courseCompletionPageElement, ...modules] = [...block.children];
+  
+  // Note: courseCompletionPageElement is extracted but not used yet
+  // It will be used in future implementation for course completion functionality
 
   let placeholders = {};
   try {
@@ -237,12 +229,9 @@ export default async function decorate(block) {
   }
 
   const courseStatus = await getCourseStatus();
-  
-  // Get the course completion page URL from the block's dataset
-  const courseCompletionPage = block.dataset.course_completion_page || '';
 
   block.textContent = '';
-  block.append(headerDom(title, modules?.length, moduleTime, courseStatus, placeholders, courseCompletionPage));
+  block.append(headerDom(title, modules?.length, moduleTime, courseStatus, placeholders));
   block.append(infoCardDom(infoTitle, infoDescription, courseStatus, placeholders));
 
   modules.forEach((module, index) => {
