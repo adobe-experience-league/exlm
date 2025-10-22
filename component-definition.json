@@ -704,6 +704,7 @@
                   "courseInfoTitle": "Skills you'll gain from this Course",
                   "courseInfoTitleType": "h2",
                   "courseInfoDescription": "Course Info Description",
+                  "courseCompletionPage": "",
                   "item": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Course Breakdown Item",

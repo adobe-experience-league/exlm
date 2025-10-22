@@ -21,7 +21,7 @@ function isModuleCompleted(moduleIndex) {
   return completedIndices.includes(moduleIndex);
 }
 
-function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
+function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder, courseCompletionPage) {
   const header = document.createElement('div');
   header.classList.add('course-breakdown-header');
 
@@ -35,13 +35,25 @@ function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
     const startButton = document.createElement('a');
     startButton.classList.add('course-breakdown-header-start-button', 'button');
     startButton.textContent = startButtonText;
-    getLastAddedModule().then(async (lastAddedModuleUrl) => {
-      const moduleMeta = await getModuleMeta(lastAddedModuleUrl, placeholder);
-      if (moduleMeta?.moduleSteps.length && moduleMeta?.moduleSteps[0]?.url) {
-        startButton.href = moduleMeta.moduleSteps[0].url;
-      }
+    
+    // If course is completed and course completion page is set, redirect to completion page
+    if (courseStatus === MODULE_STATUS.COMPLETED && courseCompletionPage) {
+      startButton.href = courseCompletionPage;
+    } else {
+      // Otherwise use the default behavior
+      getLastAddedModule().then(async (lastAddedModuleUrl) => {
+        const moduleMeta = await getModuleMeta(lastAddedModuleUrl, placeholder);
+        if (moduleMeta?.moduleSteps.length && moduleMeta?.moduleSteps[0]?.url) {
+          startButton.href = moduleMeta.moduleSteps[0].url;
+        }
+        header.append(startButton);
+      });
+    }
+    
+    // If course completion page is set and course is completed, append button immediately
+    if (courseStatus === MODULE_STATUS.COMPLETED && courseCompletionPage) {
       header.append(startButton);
-    });
+    }
   }
 
   header.innerHTML = `
@@ -225,9 +237,12 @@ export default async function decorate(block) {
   }
 
   const courseStatus = await getCourseStatus();
+  
+  // Get the course completion page URL from the block's dataset
+  const courseCompletionPage = block.dataset.course_completion_page || '';
 
   block.textContent = '';
-  block.append(headerDom(title, modules?.length, moduleTime, courseStatus, placeholders));
+  block.append(headerDom(title, modules?.length, moduleTime, courseStatus, placeholders, courseCompletionPage));
   block.append(infoCardDom(infoTitle, infoDescription, courseStatus, placeholders));
 
   modules.forEach((module, index) => {
