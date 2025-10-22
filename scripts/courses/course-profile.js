@@ -137,16 +137,12 @@ async function getModuleStatus(url = window.location.pathname) {
 
   const currentModule = course.modules[moduleId];
 
-  if (currentModule.finished) {
+  if (currentModule?.finished) {
     return MODULE_STATUS.COMPLETED;
   }
 
-  if (currentModule.started) {
+  if (currentModule?.started) {
     return MODULE_STATUS.IN_PROGRESS;
-  }
-
-  if (!currentModule) {
-    return MODULE_STATUS.NOT_STARTED;
   }
 
   return MODULE_STATUS.NOT_STARTED;
