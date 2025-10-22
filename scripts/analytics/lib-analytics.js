@@ -84,6 +84,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
 
     const isStepPage = document.querySelector('meta[name="theme"]')?.content.includes('course-step');
     const stepTitle = isStepPage ? document.querySelector('meta[property="og:title"]')?.content || '' : '';
+    const stepType = 'content';
 
     if (courseId) {
       courseObj = { title: courseTitle, id: courseId, solution: courseSolution, role: courseRole, level: courseLevel };
@@ -92,7 +93,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       moduleObj = { title: moduleTitle };
     }
     if (stepTitle) {
-      stepObj = { title: stepTitle };
+      stepObj = { title: stepTitle, type: stepType };
     }
   }
 
