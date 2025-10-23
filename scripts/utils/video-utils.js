@@ -1,4 +1,4 @@
-// import { getConfig } from "../scripts";
+import { getConfig } from '../scripts.js';
 
 const VIDEO_KEY = 'videos';
 // Languages currently supported for MPC captions
@@ -25,7 +25,7 @@ const mpcLanguagesMap = {
  */
 async function fetchLOCVideoId(videoId, lang) {
   const cacheKey = `${VIDEO_KEY}-${videoId}-${lang}`;
-  // const { mpcVideoUrl } = getConfig();
+  const { mpcVideoUrl } = getConfig();
 
   try {
     const cachedData = sessionStorage.getItem(cacheKey);
@@ -34,12 +34,9 @@ async function fetchLOCVideoId(videoId, lang) {
       return parsed.localizedVideoId;
     }
 
-    const response = await fetch(
-      `https://51837-657fuchsiazebra-dev.adobeioruntime.net/api/v1/web/main/videos?videoId=${videoId}&lang=${lang}`,
-      {
-        headers: { 'Content-Type': 'application/json' },
-      },
-    );
+    const response = await fetch(`${mpcVideoUrl}?videoId=${videoId}&lang=${lang}`, {
+      headers: { 'Content-Type': 'application/json' },
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
