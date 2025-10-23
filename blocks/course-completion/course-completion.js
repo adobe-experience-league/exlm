@@ -3,6 +3,7 @@ import createCanvas from '../../scripts/utils/canvas-utils.js';
 import { canvasToPDF } from '../../scripts/utils/canvas-pdf-utils.js';
 import { launchConfetti } from '../../scripts/utils/confetti-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { getCurrentCourseMeta } from '../../scripts/courses/course-utils.js';
 
 const CONFIG = {
   CONFETTI: {
@@ -26,9 +27,6 @@ const CONFIG = {
     WIDTH: 369,
     HEIGHT: 285,
     SCALE: 3,
-  },
-  API: {
-    URL: 'https://mocki.io/v1/d882efc4-04b9-4a5c-8110-a10fb18878bf', // Mock API URL - To be replaced with Profile API once implemented
   },
 };
 
@@ -71,21 +69,29 @@ function getCourseLandingPageUrl() {
 }
 
 /**
- * Fetches course data from API
+ * Fetches certificate data for the current course
+ * @returns {Promise<Object>} Certificate data
  */
-async function fetchCourseData() {
-  try {
-    const response = await fetch(CONFIG.API.URL);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+async function fetchCertificateData() {
+  // Get course metadata from course-utils
+  const courseMeta = await getCurrentCourseMeta();
+
+  // Extract completion time from course metadata
+  let completionHours = '8';
+  if (courseMeta.totalTime) {
+    const match = courseMeta.totalTime.match(/\d+/);
+    if (match) {
+      completionHours = match[0];
     }
-    const data = await response.json();
-    return data.course;
-  } catch (error) {
-    /* eslint-disable-next-line no-console */
-    console.error('Error fetching course data:', error);
-    throw error;
   }
+
+  // Return certificate data
+  return {
+    name: courseMeta.heading,
+    completionTimeInHrs: completionHours,
+    userName: 'John Doe',
+    completionDate: 'July 30, 2025',
+  };
 }
 
 /**
@@ -131,7 +137,7 @@ async function downloadCertificate(canvas, courseData, downloadButton) {
       .replace(/[^a-zA-Z0-9\s]/g, '')
       .replace(/\s+/g, '-')
       .toLowerCase();
-    const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD - Would be replaced with issued date from API
+    const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     const filename = `${courseName}-certificate-${date}.pdf`;
 
     // Download as PDF with actual canvas dimensions (no scaling)
@@ -220,14 +226,14 @@ async function createCertificateContainer(courseData) {
       align: 'center',
     },
     {
-      content: 'John Doe',
+      content: courseData.userName || 'John Doe',
       position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 195 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${16 * CONFIG.CERTIFICATE.SCALE}px`, weight: 'bold' },
       color: '#2C2C2C',
       align: 'center',
     },
     {
-      content: 'ISSUED July 30, 2025',
+      content: `ISSUED ${courseData.completionDate || 'July 30, 2025'}`,
       position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 220 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${8.5 * CONFIG.CERTIFICATE.SCALE}px` },
       color: '#686868',
@@ -329,10 +335,10 @@ export default async function decorate(block) {
   block.appendChild(shimmerContainer);
 
   try {
-    // Fetch course data from API
-    const courseData = await fetchCourseData();
+    // Fetch certificate data
+    const courseData = await fetchCertificateData();
 
-    // Create certificate with API data
+    // Create certificate with data
     const { container, canvas } = await createCertificateContainer(courseData);
     const content = createContent(
       originalChildren,
@@ -359,8 +365,9 @@ export default async function decorate(block) {
       },
       initialDelay: CONFIG.CONFETTI.INITIAL_DELAY,
     });
-  } catch {
+  } catch (error) {
     // Show error message
+    console.error('Error in decorate function:', error);
     const errorMessage = createErrorMessage();
     block.textContent = '';
     block.appendChild(errorMessage);
