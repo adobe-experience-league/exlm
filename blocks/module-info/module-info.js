@@ -1,9 +1,21 @@
-import { getCurrentStepInfo } from '../../scripts/utils/course-utils.js';
+import { getCurrentStepInfo } from '../../scripts/courses/course-utils.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { MODULE_STATUS, startModule, getModuleStatus } from '../../scripts/courses/course-profile.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 export default async function decorate(block) {
+  // Check if user is signed in, if not trigger sign in
+  const isSignedIn = await isSignedInUser();
+  if (!isSignedIn) {
+    // Trigger sign in
+    window.adobeIMS?.signIn();
+    return;
+  }
+
+  const moduleStatus = await getModuleStatus();
+
   let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();
@@ -18,6 +30,17 @@ export default async function decorate(block) {
     // eslint-disable-next-line no-console
     console.warn('No step info available for module-info');
     return;
+  }
+
+  // If module is disabled, redirect to course page
+  // Otherwise, update module status in profile
+  if (!moduleStatus || moduleStatus === MODULE_STATUS.DISABLED) {
+    document.querySelector('main').style.visibility = 'hidden';
+    setTimeout(() => {
+      window.location.href = stepInfo.courseUrl;
+    }, 3000);
+  } else {
+    startModule();
   }
 
   // Clear existing content
