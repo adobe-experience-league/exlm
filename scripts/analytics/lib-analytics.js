@@ -660,6 +660,41 @@ export async function pushStepsStartEvent(stepInfo) {
 }
 
 /**
+ * Used to push a bookmark event to the Adobe data layer.
+ * @param {Object} trackingInfo - Tracking information
+ * @param {Object} [trackingInfo.course] - Course information (optional)
+ * @param {string} trackingInfo.course.title - Title of the course
+ * @param {string} trackingInfo.course.id - ID of the course
+ * @param {string} trackingInfo.course.solution - Solution related to the course
+ * @param {string} trackingInfo.course.role - Role associated with the course
+ * @param {string} trackingInfo.destinationDomain - Destination domain for the link
+ */
+export function pushBookmarkEvent(trackingInfo) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const dataLayerEntry = {
+    event: 'linkClicked',
+    link: {
+      linkTitle: 'Bookmark Collection',
+      linkLocation: 'header',
+      linkType: 'Custom',
+      destinationDomain: trackingInfo.destinationDomain,
+    },
+  };
+
+  if (trackingInfo.course) {
+    dataLayerEntry.courses = {
+      title: trackingInfo.course.title,
+      id: trackingInfo.course.id,
+      solution: trackingInfo.course.solution,
+      role: trackingInfo.course.role,
+    };
+  }
+
+  window.adobeDataLayer.push(dataLayerEntry);
+}
+
+/**
  * Pushes a course certificate event to the Adobe data layer.
  * @param {Object} trackingData - Tracking data
  * @param {string} trackingData.action - The action performed, e.g., 'download' or 'share'
