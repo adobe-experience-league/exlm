@@ -8252,6 +8252,17 @@
         "value": "",
         "label": "Course info Description",
         "description": "Description for the course Breadown info section"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "courseCompletionPage",
+        "value": "",
+        "label": "Course Completion Page",
+        "description": "URL to the course completion page",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/courses"
+        }
       }
     ]
   },
