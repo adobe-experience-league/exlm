@@ -8,7 +8,9 @@ import { isSignedInUser } from '../../scripts/auth/profile.js';
 export default async function decorate(block) {
   // Check if user is signed in, if not trigger sign in
   const isSignedIn = await isSignedInUser();
-  if (!isSignedIn) {
+  // Check if it's in UE author mode
+  const isUEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+  if (!isSignedIn && !isUEAuthorMode) {
     // Trigger sign in
     window.adobeIMS?.signIn();
     return;
@@ -34,7 +36,7 @@ export default async function decorate(block) {
 
   // If module is disabled, redirect to course page
   // Otherwise, update module status in profile
-  if (!moduleStatus || moduleStatus === MODULE_STATUS.DISABLED) {
+  if ((!moduleStatus || moduleStatus === MODULE_STATUS.DISABLED) && !isUEAuthorMode) {
     document.querySelector('main').style.visibility = 'hidden';
     setTimeout(() => {
       window.location.href = stepInfo.courseUrl;
