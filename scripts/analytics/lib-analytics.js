@@ -66,6 +66,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
   let courseObj = null;
   let moduleObj = null;
   let stepObj = null;
+  let coursePreviousPageName = 'xl:learn:courses';
 
   if (courses) {
     const { getCurrentStepInfo, getCurrentCourseMeta } = await import('../courses/course-utils.js');
@@ -84,6 +85,21 @@ export async function pushPageDataLayer(language, searchTrackingData) {
 
     const isStepPage = document.querySelector('meta[name="theme"]')?.content.includes('course-step');
     const stepTitle = isStepPage ? document.querySelector('meta[property="og:title"]')?.content || '' : '';
+    const stepType = 'content';
+
+    if (isStepPage && stepInfo) {
+      if (stepInfo.currentStep === 1) {
+        // For first step, previous page is the course landing page
+        coursePreviousPageName += `:${courseSolution}:${courseTitle}`;
+      } else {
+        // For other steps, find the previous step name
+        const prevStepIndex = stepInfo.currentStep - 2; // 0-based index
+        if (prevStepIndex >= 0 && stepInfo.moduleSteps && stepInfo.moduleSteps[prevStepIndex]) {
+          const prevStepName = stepInfo.moduleSteps[prevStepIndex].name;
+          coursePreviousPageName += `:${courseSolution}:${courseTitle}:${moduleTitle}:${prevStepName}`;
+        }
+      }
+    }
 
     if (courseId) {
       courseObj = { title: courseTitle, id: courseId, solution: courseSolution, role: courseRole, level: courseLevel };
@@ -92,7 +108,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       moduleObj = { title: moduleTitle };
     }
     if (stepTitle) {
-      stepObj = { title: stepTitle };
+      stepObj = { title: stepTitle, type: stepType };
     }
   }
 
@@ -196,7 +212,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       pageName: name,
       pageType: 'webpage',
       pageViews: { value: 1 },
-      prevPage: localStorage.getItem('prevPage') || '',
+      prevPage: courseObj ? coursePreviousPageName : localStorage.getItem('prevPage') || '',
       userAgent: window.navigator.userAgent,
       server: window.location.host,
       siteSection: section,
