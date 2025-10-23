@@ -78,7 +78,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     const { raw, parentResult, title, excerpt, clickUri, uri } = result || {};
     /* eslint-disable camelcase */
 
-    const { el_id, el_contenttype, el_product, el_solution, el_type } = parentResult?.raw || raw || {};
+    const { el_id, el_contenttype, el_product, el_solution, el_type, role } = parentResult?.raw || raw || {};
     let contentType;
     if (el_type) {
       contentType = el_type.trim();
@@ -127,6 +127,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
         name: raw?.author_name || '',
         type: raw?.author_type || '',
       },
+      role,
     };
   };
 
