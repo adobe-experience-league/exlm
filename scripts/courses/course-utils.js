@@ -174,12 +174,12 @@ async function extractModuleMeta(fragment, placeholders) {
   // Add recap and quiz steps to allSteps
   if (moduleRecap) {
     allSteps.push({
-      name: placeholders['module-recap-step-name'] || 'Recap - Key Takeaways',
+      name: placeholders?.moduleRecapStepName || 'Recap - Key Takeaways',
       url: moduleRecap,
     });
   }
   if (moduleQuiz) {
-    allSteps.push({ name: placeholders['module-quiz-step-name'] || 'Module Quiz', url: moduleQuiz });
+    allSteps.push({ name: placeholders?.moduleQuizStepName || 'Module Quiz', url: moduleQuiz });
   }
 
   const totalSteps = allSteps.length;
