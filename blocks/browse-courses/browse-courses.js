@@ -2,7 +2,7 @@
  * Browse Courses Block
  * Displays a filterable grid of courses with product and status filters
  * Enriches course data with user progress when signed in
- * 
+ *
  * Features:
  * - Product filtering (triggers API fetch)
  * - Status filtering (client-side, no API call)
@@ -171,7 +171,7 @@ function getFiltersFromUrl() {
  * @example
  * updateUrlParams(['Analytics', 'Commerce'])
  * // URL becomes: ?product=Analytics,Commerce
- * 
+ *
  * updateUrlParams([])
  * // URL parameter is removed
  */
@@ -362,7 +362,7 @@ async function fetchCourseData(selectedFilters = []) {
     contentType: CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase().split(','),
     ...(selectedFilters.length > 0 && { product: selectedFilters }),
   };
-  
+
   // Fetch browse cards data (automatically enriched by BrowseCardsDelegate for signed-in users)
   const data = await BrowseCardsDelegate.fetchCardData(param);
 
@@ -388,7 +388,7 @@ function analyzeCourseStatuses(courseData) {
   courseData.forEach((course) => {
     if (course.meta?.courseInfo?.courseStatus) {
       const status = course.meta.courseInfo.courseStatus;
-      
+
       if (status === COURSE_STATUS.NOT_STARTED) {
         statuses.hasNotStarted = true;
       } else if (status === COURSE_STATUS.IN_PROGRESS) {
@@ -412,13 +412,13 @@ function analyzeCourseStatuses(courseData) {
  */
 function createStatusFilterOptions(courseData) {
   const statuses = analyzeCourseStatuses(courseData);
-  
+
   // If ALL courses are "Not Started" (no other statuses), don't show dropdown
   const onlyNotStarted = statuses.hasNotStarted && !statuses.hasInProgress && !statuses.hasCompleted;
   if (onlyNotStarted) {
     return []; // No dropdown needed when all courses have same status
   }
-  
+
   const options = [];
 
   // Include "Not Started" if it exists (and we have other statuses too, checked above)
@@ -458,7 +458,7 @@ function createStatusDropdownContainer(dropdownForm) {
     container.innerHTML = ''; // Clear existing content
     return container;
   }
-  
+
   // Create new container
   container = document.createElement('div');
   container.className = 'status-dropdown-container';
@@ -478,13 +478,13 @@ function updateClearFilterButtonState(block, state) {
   // Check if any product filters are selected
   const checkedProductInputs = [...block.querySelectorAll(`${SELECTORS.CHECKBOX_INPUT}:checked`)];
   const hasProductFilters = checkedProductInputs.length > 0;
-  
+
   // Check if any status filters are selected
   const hasStatusFilters = state.currentStatusFilters?.length > 0;
-  
+
   // Disable button if no filters are active
   const hasActiveFilters = hasProductFilters || hasStatusFilters;
-  
+
   if (hasActiveFilters) {
     clearFilterButton.removeAttribute('disabled');
     clearFilterButton.classList.remove('disabled');
@@ -515,12 +515,15 @@ function setupStatusDropdownHandler(dropdown, block, shimmer, state) {
     addShimmerWrapper(block, shimmer);
 
     // Filter existing course data by status (client-side, no API call)
-    const filteredData = state.currentStatusFilters.length > 0
-      ? state.courseData.filter((course) => state.currentStatusFilters.includes(course.meta?.courseInfo?.courseStatus))
-      : state.courseData;
-    
+    const filteredData =
+      state.currentStatusFilters.length > 0
+        ? state.courseData.filter((course) =>
+            state.currentStatusFilters.includes(course.meta?.courseInfo?.courseStatus),
+          )
+        : state.courseData;
+
     await renderCards(block, filteredData, shimmer);
-    
+
     // Update clear button state after filter change
     updateClearFilterButtonState(block, state);
   });
@@ -538,13 +541,13 @@ function setupStatusDropdownHandler(dropdown, block, shimmer, state) {
 function updateStatusDropdown(block, courseData, shimmer, state) {
   // Analyze current data for available statuses
   const statusList = createStatusFilterOptions(courseData);
-  
+
   const dropdownForm = block.querySelector(SELECTORS.DROPDOWN);
   if (!dropdownForm) return null;
-  
+
   // Get or create dedicated container for status dropdown
   const statusContainer = createStatusDropdownContainer(dropdownForm);
-  
+
   // If no status options, clear container and return null
   if (statusList.length === 0) {
     statusContainer.innerHTML = '';
@@ -593,7 +596,7 @@ function setupProductDropdownHandler(dropdown, block, shimmer, state) {
 
     // Fetch new data from API with selected product filters
     state.courseData = await fetchCourseData(selectedFilters);
-    
+
     // Update status dropdown to reflect available statuses in filtered data (only for signed-in users)
     if (state.isSignedIn) {
       // Reset current status filters if they don't exist in new data
@@ -604,18 +607,21 @@ function setupProductDropdownHandler(dropdown, block, shimmer, state) {
         if (status === COURSE_STATUS.COMPLETED) return availableStatuses.hasCompleted;
         return false;
       });
-      
+
       // Update the status dropdown with new options
       state.statusDropdown = updateStatusDropdown(block, state.courseData, shimmer, state);
     }
-    
+
     // Re-apply current status filters to new data (if any) - only for signed-in users
-    const dataToRender = state.isSignedIn && state.currentStatusFilters.length > 0
-      ? state.courseData.filter((course) => state.currentStatusFilters.includes(course.meta?.courseInfo?.courseStatus))
-      : state.courseData;
-    
+    const dataToRender =
+      state.isSignedIn && state.currentStatusFilters.length > 0
+        ? state.courseData.filter((course) =>
+            state.currentStatusFilters.includes(course.meta?.courseInfo?.courseStatus),
+          )
+        : state.courseData;
+
     await renderCards(block, dataToRender, shimmer);
-    
+
     // Update clear button state after filter change
     updateClearFilterButtonState(block, state);
   });
@@ -630,29 +636,29 @@ function setupProductDropdownHandler(dropdown, block, shimmer, state) {
  */
 function setupClearFilterHandler(block, shimmer, state) {
   const clearFilterButton = block.querySelector(`.${CSS_CLASSES.CLEAR_FILTER}`);
-  
+
   if (clearFilterButton) {
     clearFilterButton.addEventListener('click', async (event) => {
       event.preventDefault();
-      
+
       // Don't proceed if button is disabled
       if (clearFilterButton.hasAttribute('disabled')) {
         return;
       }
-      
+
       // IMPORTANT: Reset ALL filter state FIRST before any other operations
       state.currentStatusFilters = [];
-      
+
       // Clear product dropdown using the reusable reset() method
       if (state.productDropdown) {
         state.productDropdown.reset();
       }
-      
+
       // Clear status dropdown using the reusable reset() method (for signed-in users)
       if (state.isSignedIn && state.statusDropdown) {
         state.statusDropdown.reset();
       }
-      
+
       // Clear URL parameters
       updateUrlParams([]);
 
@@ -665,15 +671,15 @@ function setupClearFilterHandler(block, shimmer, state) {
 
       // Fetch all courses without any filters
       state.courseData = await fetchCourseData([]);
-      
+
       // Update status dropdown to reflect all available statuses (only for signed-in users)
       if (state.isSignedIn) {
         state.statusDropdown = updateStatusDropdown(block, state.courseData, shimmer, state);
       }
 
-      const dataToRender = state.courseData; 
+      const dataToRender = state.courseData;
       await renderCards(block, dataToRender, shimmer);
-      
+
       // Update clear button state
       updateClearFilterButtonState(block, state);
     });
@@ -734,17 +740,17 @@ export default async function decorate(block) {
   // BrowseCardsDelegate automatically enriches with meta.courseInfo.courseStatus for signed-in users
   const urlFilters = getFiltersFromUrl();
   const courseData = await fetchCourseData(urlFilters);
-  
+
   // Initialize status filter dropdown - ONLY for signed-in users
   let statusDropdown = null;
   if (isUserSignedIn) {
     const statusList = createStatusFilterOptions(courseData);
-    
+
     // Only create dropdown if there are status options
     if (statusList.length > 0) {
       const dropdownForm = block.querySelector(SELECTORS.DROPDOWN);
       const statusContainer = createStatusDropdownContainer(dropdownForm);
-      
+
       statusDropdown = new Dropdown(
         statusContainer,
         placeholders?.filterCourseStatusLabel || 'Progress',
@@ -753,7 +759,7 @@ export default async function decorate(block) {
       );
     }
   }
-  
+
   // Create mutable state object to share between handlers
   const state = {
     courseData,
@@ -762,7 +768,7 @@ export default async function decorate(block) {
     productDropdown, // Store product dropdown reference
     isSignedIn: isUserSignedIn, // Track signed-in status
   };
-  
+
   await renderCards(block, state.courseData, buildCardsShimmer);
 
   // Restore URL filter state to UI
@@ -772,14 +778,14 @@ export default async function decorate(block) {
 
   // Setup event handlers
   setupProductDropdownHandler(productDropdown, block, buildCardsShimmer, state);
-  
+
   // Only setup status dropdown handler if dropdown was created (signed-in users only)
   if (statusDropdown) {
     setupStatusDropdownHandler(statusDropdown, block, buildCardsShimmer, state);
   }
-  
+
   setupClearFilterHandler(block, buildCardsShimmer, state);
-  
+
   // Initialize clear button state based on current filters
   updateClearFilterButtonState(block, state);
 }

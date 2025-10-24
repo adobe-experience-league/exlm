@@ -83,4 +83,3 @@ const BrowseCardsCourseEnricher = (() => {
 })();
 
 export default BrowseCardsCourseEnricher;
-

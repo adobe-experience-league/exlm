@@ -1,6 +1,11 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
-import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS, VIDEO_THUMBNAIL_FORMAT, COURSE_STATUS } from './browse-cards-constants.js';
+import {
+  AUTHOR_TYPE,
+  RECOMMENDED_COURSES_CONSTANTS,
+  VIDEO_THUMBNAIL_FORMAT,
+  COURSE_STATUS,
+} from './browse-cards-constants.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
