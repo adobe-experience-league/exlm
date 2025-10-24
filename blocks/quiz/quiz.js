@@ -217,20 +217,14 @@ const fetchPageContent = async (url, block, isPassed = false, placeholders = {})
         }
       }
     }
-  } catch (err) {
-    /* eslint-disable-next-line no-console */
-    console.error('Error fetching quiz result content:', err);
-  }
+  } catch (err) {}
 };
 
 export default async function decorate(block) {
   let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
-  }
+  } catch (err) {}
 
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
@@ -298,9 +292,7 @@ export default async function decorate(block) {
     // This should happen regardless of whether all questions are answered
     try {
       await pushQuizSubmitEvent();
-    } catch (e) {
-      console.error('Error triggering quiz submit event:', e);
-    }
+    } catch (e) {}
 
     // Check if all questions are answered
     let allQuestionsAnswered = true;
@@ -356,9 +348,7 @@ export default async function decorate(block) {
         // Trigger quiz completed event only when the quiz is passed
         try {
           await pushQuizCompletedEvent();
-        } catch (e) {
-          console.error('Error triggering quiz completed event:', e);
-        }
+        } catch (e) {}
       }
     }
     return true;

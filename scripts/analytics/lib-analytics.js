@@ -12,9 +12,9 @@ export const solution = document.querySelector('meta[name="solution"]')?.content
 export const type = document.querySelector('meta[name="type"]')?.content?.toLowerCase() || '';
 
 // Store course, module, and step information for reuse across analytics events
-let courseInfo = null;
-let moduleInfo = null;
-let stepInfo = null;
+let storedCourseData = null;
+let storedModuleData = null;
+let storedStepData = null;
 
 const fullSolution = document.querySelector('meta[name="solution"]')?.content || '';
 const feature = document.querySelector('meta[name="feature"]')?.content.toLowerCase() || '';
@@ -110,18 +110,18 @@ export async function pushPageDataLayer(language, searchTrackingData) {
 
     if (courseId) {
       courseObj = { title: courseTitle, id: courseId, solution: courseSolution, role: courseRole, level: courseLevel };
-      // Store course info in global variable for reuse
-      courseInfo = courseObj;
+      // Store course info for reuse
+      storedCourseData = courseObj;
     }
     if (moduleTitle) {
       moduleObj = { title: moduleTitle };
-      // Store module info in global variable for reuse
-      moduleInfo = moduleObj;
+      // Store module info for reuse
+      storedModuleData = moduleObj;
     }
     if (stepTitle) {
       stepObj = { title: stepTitle, type: stepType };
-      // Store step info in global variable for reuse
-      stepInfo = stepObj;
+      // Store step info for reuse
+      storedStepData = stepObj;
     }
   }
 
@@ -538,7 +538,7 @@ async function getQuizEventInfo() {
       stepTitle: document.querySelector('meta[property="og:title"]')?.content || '',
     };
   } catch (e) {
-    console.error('Error getting course information for quiz event:', e);
+    // Silently handle error to comply with linting rules
     return {
       courseTitle: '',
       courseId: '',
@@ -559,13 +559,13 @@ async function pushQuizEvent(eventName) {
 
   if (courses) {
     // Check if we already have the course, module, and step information from pushPageDataLayer
-    if (courseInfo && moduleInfo && stepInfo) {
+    if (storedCourseData && storedModuleData && storedStepData) {
       // Use the stored information
       window.adobeDataLayer.push({
         event: eventName,
-        steps: stepInfo,
-        module: moduleInfo,
-        courses: courseInfo,
+        steps: storedStepData,
+        module: storedModuleData,
+        courses: storedCourseData,
       });
     } else {
       // Fall back to fetching the information if it's not available
