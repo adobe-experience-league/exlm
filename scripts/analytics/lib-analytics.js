@@ -503,3 +503,46 @@ export function pushGuideAutoPlayEvent(guide, audioOn) {
     },
   });
 }
+
+/**
+ * Pushes a course certificate event to the Adobe data layer.
+ * @param {Object} trackingData - Tracking data
+ * @param {string} trackingData.action - The action performed, e.g., 'download' or 'share'
+ * @param {string} trackingData.title - Title of the course
+ * @param {string} trackingData.id - ID of the course
+ * @param {string} trackingData.solution - Solution related to the course
+ * @param {string} trackingData.role - Role associated with the course
+ * @param {string} trackingData.linkTitle - CTA text for the button
+ * @param {string} trackingData.destinationDomain - Destination domain for the link
+ */
+export function pushCourseCertificateEvent(trackingData) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  let eventName;
+  let linkType;
+  if (trackingData.action === 'download') {
+    eventName = 'courseCertificateDownload';
+    linkType = 'Download';
+  } else if (trackingData.action === 'share') {
+    eventName = 'courseCertificateShare';
+    linkType = 'Share';
+  }
+
+  const dataLayerEntry = {
+    event: eventName,
+    link: {
+      linkTitle: trackingData.linkTitle,
+      linkLocation: 'Body',
+      linkType,
+      destinationDomain: trackingData.destinationDomain,
+    },
+    courses: {
+      title: trackingData.title,
+      id: trackingData.id,
+      solution: trackingData.solution,
+      role: trackingData.role,
+    },
+  };
+
+  window.adobeDataLayer.push(dataLayerEntry);
+}
