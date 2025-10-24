@@ -176,10 +176,10 @@ function moduleCard({ modulePromise, index, open = false, placeholders }) {
           <span class="cb-module-number ${moduleStatus}">
           ${moduleStatus === MODULE_STATUS.COMPLETED ? '<span class="icon icon-checkmark-light"></span>' : index + 1}
             </span>
-          <h3 class="cb-module-title">${moduleMeta.moduleHeader || 'Module Title'}</h3>
+          <h3 class="cb-module-title">${moduleMeta?.moduleHeader || 'Module Title'}</h3>
         </div>
         <button class="button cb-start-btn ${moduleStatus}" >
-          <a href="${moduleMeta.moduleSteps[0].url || '#'}">${startButtonText}</a>
+          <a href="${moduleMeta?.moduleSteps[0].url || '#'}">${startButtonText}</a>
         </button>
       </div>
         <div class="cb-steps-info ${open ? 'open' : ''}">
