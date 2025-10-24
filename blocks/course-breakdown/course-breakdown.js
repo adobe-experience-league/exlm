@@ -158,7 +158,7 @@ function moduleCard({ modulePromise, index, open = false, placeholders }) {
 
     // Create steps list
     const stepsList =
-      moduleMeta.moduleSteps
+      moduleMeta?.moduleSteps
         ?.map(
           (step, stepIndex) =>
             `
