@@ -217,14 +217,20 @@ const fetchPageContent = async (url, block, isPassed = false, placeholders = {})
         }
       }
     }
-  } catch (err) {}
+  } catch (err) {
+    // Silently handle error to comply with linting rules
+    console.log('Error fetching content:', err.message);
+  }
 };
 
 export default async function decorate(block) {
   let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();
-  } catch (err) {}
+  } catch (err) {
+    // Silently handle error to comply with linting rules
+    placeholders = {}; // Provide default empty object
+  }
 
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
@@ -292,7 +298,10 @@ export default async function decorate(block) {
     // This should happen regardless of whether all questions are answered
     try {
       await pushQuizSubmitEvent();
-    } catch (e) {}
+    } catch (e) {
+      // Silently handle error to comply with linting rules
+      console.log('Error triggering quiz submit event:', e.message);
+    }
 
     // Check if all questions are answered
     let allQuestionsAnswered = true;
@@ -348,7 +357,10 @@ export default async function decorate(block) {
         // Trigger quiz completed event only when the quiz is passed
         try {
           await pushQuizCompletedEvent();
-        } catch (e) {}
+        } catch (e) {
+          // Silently handle error to comply with linting rules
+          console.log('Error triggering quiz completed event:', e.message);
+        }
       }
     }
     return true;
