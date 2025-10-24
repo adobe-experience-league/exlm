@@ -11,6 +11,11 @@ export const playlist = window.location.pathname.indexOf('/playlists') !== -1;
 export const solution = document.querySelector('meta[name="solution"]')?.content?.split(',')[0].toLowerCase() || '';
 export const type = document.querySelector('meta[name="type"]')?.content?.toLowerCase() || '';
 
+// Store course, module, and step information for reuse across analytics events
+let courseInfo = null;
+let moduleInfo = null;
+let stepInfo = null;
+
 const fullSolution = document.querySelector('meta[name="solution"]')?.content || '';
 const feature = document.querySelector('meta[name="feature"]')?.content.toLowerCase() || '';
 const featureAttribute = document.querySelector('meta[name="feature-attribute"]')?.content.toLowerCase() || '';
@@ -85,7 +90,9 @@ export async function pushPageDataLayer(language, searchTrackingData) {
 
     const isStepPage = document.querySelector('meta[name="theme"]')?.content.includes('course-step');
     const stepTitle = isStepPage ? document.querySelector('meta[property="og:title"]')?.content || '' : '';
-    const stepType = 'content';
+    // Check if the current step contains a quiz block
+    const hasQuizBlock = document.querySelector('.quiz') !== null;
+    const stepType = hasQuizBlock ? 'quiz' : 'content';
 
     if (isStepPage && stepInfo) {
       if (stepInfo.currentStep === 1) {
@@ -103,12 +110,18 @@ export async function pushPageDataLayer(language, searchTrackingData) {
 
     if (courseId) {
       courseObj = { title: courseTitle, id: courseId, solution: courseSolution, role: courseRole, level: courseLevel };
+      // Store course info in global variable for reuse
+      courseInfo = courseObj;
     }
     if (moduleTitle) {
       moduleObj = { title: moduleTitle };
+      // Store module info in global variable for reuse
+      moduleInfo = moduleObj;
     }
     if (stepTitle) {
       stepObj = { title: stepTitle, type: stepType };
+      // Store step info in global variable for reuse
+      stepInfo = stepObj;
     }
   }
 
@@ -502,4 +515,100 @@ export function pushGuideAutoPlayEvent(guide, audioOn) {
       steps: guide.steps,
     },
   });
+}
+
+/**
+ * Helper function to get course and module information for quiz events
+ * @returns {Promise<Object>} Object containing course and module information
+ */
+async function getQuizEventInfo() {
+  try {
+    const { getCurrentStepInfo, getCurrentCourseMeta } = await import('../courses/course-utils.js');
+
+    const stepInfo = await getCurrentStepInfo();
+    const courseMeta = await getCurrentCourseMeta();
+    const parts = courseMeta?.url.split('/').filter(Boolean).slice(1).join('/');
+
+    return {
+      courseTitle: courseMeta?.heading || '',
+      courseId: parts ? `/${parts}` : '',
+      courseSolution: courseMeta?.solution || '',
+      courseRole: courseMeta?.role || '',
+      moduleTitle: stepInfo?.moduleHeader || '',
+      stepTitle: document.querySelector('meta[property="og:title"]')?.content || '',
+    };
+  } catch (e) {
+    console.error('Error getting course information for quiz event:', e);
+    return {
+      courseTitle: '',
+      courseId: '',
+      courseSolution: '',
+      courseRole: '',
+      moduleTitle: '',
+      stepTitle: '',
+    };
+  }
+}
+
+/**
+ * Used to push a quiz event to the data layer
+ * @param {string} eventName - The name of the event (quizStart, quizSubmit, quizCompleted)
+ */
+async function pushQuizEvent(eventName) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  if (courses) {
+    // Check if we already have the course, module, and step information from pushPageDataLayer
+    if (courseInfo && moduleInfo && stepInfo) {
+      // Use the stored information
+      window.adobeDataLayer.push({
+        event: eventName,
+        steps: stepInfo,
+        module: moduleInfo,
+        courses: courseInfo,
+      });
+    } else {
+      // Fall back to fetching the information if it's not available
+      const info = await getQuizEventInfo();
+
+      window.adobeDataLayer.push({
+        event: eventName,
+        steps: {
+          title: info.stepTitle,
+          type: 'quiz',
+        },
+        module: {
+          title: info.moduleTitle,
+        },
+        courses: {
+          title: info.courseTitle,
+          id: info.courseId,
+          solution: info.courseSolution,
+          role: info.courseRole,
+        },
+      });
+    }
+  }
+}
+
+/**
+ * Used to push a quiz start event to the data layer
+ */
+export async function pushQuizStartEvent() {
+  await pushQuizEvent('quizStart');
+}
+
+/**
+ * Used to push a quiz submit event to the data layer
+ */
+export async function pushQuizSubmitEvent() {
+  await pushQuizEvent('quizSubmit');
+}
+
+/**
+ * Used to push a quiz completed event to the data layer
+ * This event is fired only when a user successfully passes the quiz
+ */
+export async function pushQuizCompletedEvent() {
+  await pushQuizEvent('quizCompleted');
 }

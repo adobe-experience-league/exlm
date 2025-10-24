@@ -3,6 +3,11 @@ import { generateQuestionDOM } from '../question/question.js';
 import { hashAnswer } from '../../scripts/hash-utils.js';
 import { moveInstrumentation } from '../../scripts/utils/ue-utils.js';
 import { loadBlocks, decorateSections, decorateBlocks } from '../../scripts/lib-franklin.js';
+import {
+  pushQuizStartEvent,
+  pushQuizSubmitEvent,
+  pushQuizCompletedEvent,
+} from '../../scripts/analytics/lib-analytics.js';
 
 /**
  * Checks if the selected answers for a question are correct
@@ -289,6 +294,14 @@ export default async function decorate(block) {
 
   // Create a function to handle quiz submission that can be called externally
   quizHandlerFunction = async () => {
+    // Trigger quiz submit event immediately when submit button is clicked
+    // This should happen regardless of whether all questions are answered
+    try {
+      await pushQuizSubmitEvent();
+    } catch (e) {
+      console.error('Error triggering quiz submit event:', e);
+    }
+
     // Check if all questions are answered
     let allQuestionsAnswered = true;
 
@@ -339,6 +352,13 @@ export default async function decorate(block) {
       // Save skip flag if quiz passed
       if (quizResults?.isPassed) {
         sessionStorage.setItem('course.skipQuiz', 'true');
+
+        // Trigger quiz completed event only when the quiz is passed
+        try {
+          await pushQuizCompletedEvent();
+        } catch (e) {
+          console.error('Error triggering quiz completed event:', e);
+        }
       }
     }
     return true;
@@ -358,4 +378,7 @@ export default async function decorate(block) {
   block.textContent = '';
   block.appendChild(quizDescriptionContainer);
   block.appendChild(questionsContainer);
+
+  // Trigger quiz start event when the quiz is loaded
+  pushQuizStartEvent();
 }
