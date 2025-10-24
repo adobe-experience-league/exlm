@@ -28,7 +28,27 @@ const MODULE_STATUS = {
  */
 async function getCurrentCourses() {
   const profile = await defaultProfileClient.getMergedProfile();
-  return profile?.courses || {};
+  const courses = profile?.courses || {};
+  
+  // Handle case where courses might be an array due to API format inconsistencies
+  if (Array.isArray(courses)) {
+    // If it's an empty array, return empty object
+    if (courses.length === 0) {
+      return {};
+    }
+    
+    // If array contains objects with courseId, flatten to object keyed by courseId
+    const flattened = {};
+    courses.forEach((course) => {
+      if (course && typeof course === 'object' && course.id) {
+        flattened[course.id] = course;
+      }
+    });
+    
+    return flattened;
+  }
+  
+  return courses;
 }
 
 /**
