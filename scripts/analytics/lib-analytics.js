@@ -447,11 +447,11 @@ export async function pushQuizEvent(eventName) {
 
   try {
     const eventData = await getQuizEventInfo();
-    
+
     window.adobeDataLayer = window.adobeDataLayer || [];
     window.adobeDataLayer.push({
       event: eventName,
-      ...eventData
+      ...eventData,
     });
   } catch (e) {
     // Log error but don't throw to prevent breaking the user experience
