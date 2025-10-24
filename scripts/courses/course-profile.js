@@ -4,6 +4,7 @@
 
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { extractCourseModuleIds, getCurrentCourseMeta } from './course-utils.js';
+import { pushCourseStartEvent } from '../analytics/lib-analytics.js';
 
 const COURSE_STATUS = {
   NOT_STARTED: 'not-started',
@@ -191,6 +192,20 @@ async function startModule(url = window.location.pathname) {
       description: courseMeta.description,
       modules: {},
     };
+
+    const isFirstModule =
+      courseMeta.modules && courseMeta.modules.length > 0 && courseMeta.modules[0].includes(moduleId);
+
+    // push course start event
+    if (isFirstModule) {
+      pushCourseStartEvent({
+        title: courseMeta.heading,
+        id: courseId,
+        solution: courseMeta.solution,
+        role: courseMeta.role,
+        startTime,
+      });
+    }
   }
 
   // Initialize module if it doesn't exist
