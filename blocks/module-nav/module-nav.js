@@ -1,6 +1,7 @@
 import { getCurrentStepInfo, isLastStep, getNextModuleFirstStep } from '../../scripts/courses/course-utils.js';
 import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
+import { finishModule } from '../../scripts/courses/course-profile.js';
 
 async function handleQuizNextButton(e) {
   e.preventDefault();
@@ -17,6 +18,7 @@ async function handleQuizNextButton(e) {
       // Check if this is the last step in the module
       if (await isLastStep()) {
         // Get the first step of the next module
+        await finishModule();
         const nextModuleFirstStepUrl = await getNextModuleFirstStep();
         if (nextModuleFirstStepUrl) {
           e.target.href = nextModuleFirstStepUrl;
@@ -120,6 +122,7 @@ export default async function decorate(block) {
 
   // Check if this is the last step - maintaining the original condition exactly
   if ((!isQuiz || skipQuiz) && (await isLastStep())) {
+    await finishModule();
     const nextModuleFirstStepUrl = await getNextModuleFirstStep();
     if (nextModuleFirstStepUrl) {
       nextLink.href = nextModuleFirstStepUrl;

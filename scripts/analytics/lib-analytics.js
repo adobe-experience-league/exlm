@@ -66,6 +66,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
   let courseObj = null;
   let moduleObj = null;
   let stepObj = null;
+  let coursePreviousPageName = 'xl:learn:courses';
 
   if (courses) {
     const { getCurrentStepInfo, getCurrentCourseMeta } = await import('../courses/course-utils.js');
@@ -84,6 +85,23 @@ export async function pushPageDataLayer(language, searchTrackingData) {
 
     const isStepPage = document.querySelector('meta[name="theme"]')?.content.includes('course-step');
     const stepTitle = isStepPage ? document.querySelector('meta[property="og:title"]')?.content || '' : '';
+    // Check if the current step contains a quiz block
+    const hasQuizBlock = document.querySelector('.quiz') !== null;
+    const stepType = hasQuizBlock ? 'quiz' : 'content';
+
+    if (isStepPage && stepInfo) {
+      if (stepInfo.currentStep === 1) {
+        // For first step, previous page is the course landing page
+        coursePreviousPageName += `:${courseSolution}:${courseTitle}`;
+      } else {
+        // For other steps, find the previous step name
+        const prevStepIndex = stepInfo.currentStep - 2; // 0-based index
+        if (prevStepIndex >= 0 && stepInfo.moduleSteps && stepInfo.moduleSteps[prevStepIndex]) {
+          const prevStepName = stepInfo.moduleSteps[prevStepIndex].name;
+          coursePreviousPageName += `:${courseSolution}:${courseTitle}:${moduleTitle}:${prevStepName}`;
+        }
+      }
+    }
 
     if (courseId) {
       courseObj = { title: courseTitle, id: courseId, solution: courseSolution, role: courseRole, level: courseLevel };
@@ -92,7 +110,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       moduleObj = { title: moduleTitle };
     }
     if (stepTitle) {
-      stepObj = { title: stepTitle };
+      stepObj = { title: stepTitle, type: stepType };
     }
   }
 
@@ -196,7 +214,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       pageName: name,
       pageType: 'webpage',
       pageViews: { value: 1 },
-      prevPage: localStorage.getItem('prevPage') || '',
+      prevPage: courseObj ? coursePreviousPageName : localStorage.getItem('prevPage') || '',
       userAgent: window.navigator.userAgent,
       server: window.location.host,
       siteSection: section,
@@ -257,6 +275,7 @@ export function pushLinkClick(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
+  const isCourseStartCTA = e.target.closest('.course-breakdown-header-start-button');
 
   let linkLocation = 'unidentified';
   if (e.target.closest('.rail-right') || e.target.closest('.mini-toc-wrapper')) {
@@ -269,6 +288,8 @@ export function pushLinkClick(e) {
     linkLocation = 'footer';
   } else if (e.target.closest('main') && docs) {
     linkLocation = 'body';
+  } else if (isCourseStartCTA) {
+    linkLocation = 'course landing page';
   }
 
   let linkType = 'other';
@@ -280,20 +301,29 @@ export function pushLinkClick(e) {
     linkType = 'view more/less';
     destinationDomain = e.target.closest('ul').parentNode.querySelector('p').innerText;
     name = 'ExperienceEventType:web.webInteraction.linkClicks';
+  } else if (isCourseStartCTA) {
+    linkType = 'Custom';
+    destinationDomain = window.location.hostname;
+  }
+
+  const linkObj = {
+    destinationDomain,
+    linkLocation,
+    linkTitle: e.target.innerHTML || '',
+    linkType,
+  };
+
+  // Only add solution field if not a course CTA
+  if (!isCourseStartCTA) {
+    linkObj.solution =
+      document.querySelector('meta[name="solution"]') !== null
+        ? document.querySelector('meta[name="solution"]').content.split(',')[0].trim()
+        : '';
   }
 
   window.adobeDataLayer.push({
     event: 'linkClicked',
-    link: {
-      destinationDomain,
-      linkLocation,
-      linkTitle: e.target.innerHTML || '',
-      linkType,
-      solution:
-        document.querySelector('meta[name="solution"]') !== null
-          ? document.querySelector('meta[name="solution"]').content.split(',')[0].trim()
-          : '',
-    },
+    link: linkObj,
     ...UEFilters,
     web: {
       webInteraction: {
@@ -421,6 +451,73 @@ export function pushVideoMetadataOnLoad(videoId, videoUrl, thumbnailUrl) {
 }
 
 /**
+ * Fetches course, module, and step information for analytics events
+ * @returns {Promise<Object>} Object containing course, module, and step information
+ */
+export async function getQuizEventInfo() {
+  try {
+    const { getCurrentStepInfo, getCurrentCourseMeta } = await import('../courses/course-utils.js');
+
+    const stepInfo = await getCurrentStepInfo();
+    const courseMeta = await getCurrentCourseMeta();
+    const parts = courseMeta?.url.split('/').filter(Boolean).slice(1).join('/');
+
+    const courseTitle = courseMeta?.heading || '';
+    const courseId = parts ? `/${parts}` : '';
+    const courseSolution = courseMeta?.solution || '';
+    const courseRole = courseMeta?.role || '';
+    const courseLevel = courseMeta?.level || '';
+
+    const moduleTitle = stepInfo?.moduleHeader || '';
+    const stepTitle = document.querySelector('meta[property="og:title"]')?.content || '';
+
+    return {
+      courses: {
+        title: courseTitle,
+        id: courseId,
+        solution: courseSolution,
+        role: courseRole,
+        level: courseLevel,
+      },
+      module: {
+        title: moduleTitle,
+      },
+      steps: {
+        title: stepTitle,
+        type: 'quiz',
+      },
+    };
+  } catch (e) {
+    return {
+      courses: { title: '', id: '', solution: '', role: '', level: '' },
+      module: { title: '' },
+      steps: { title: '', type: 'quiz' },
+    };
+  }
+}
+
+/**
+ * Used to push a quiz event to the data layer
+ * @param {string} eventName - The name of the event (quizStart, quizSubmit, quizCompleted)
+ */
+export async function pushQuizEvent(eventName) {
+  if (!courses) return;
+
+  try {
+    const eventData = await getQuizEventInfo();
+
+    window.adobeDataLayer = window.adobeDataLayer || [];
+    window.adobeDataLayer.push({
+      event: eventName,
+      ...eventData,
+    });
+  } catch (e) {
+    // Log error but don't throw to prevent breaking the user experience
+    console.error(`Error pushing quiz event ${eventName}:`, e);
+  }
+}
+
+/**
  * Used to push a product interests event to the data layer
  * @param {string} id - The product id.
  * @param {string} title - The product interest title.
@@ -486,4 +583,47 @@ export function pushGuideAutoPlayEvent(guide, audioOn) {
       steps: guide.steps,
     },
   });
+}
+
+/**
+ * Pushes a course certificate event to the Adobe data layer.
+ * @param {Object} trackingData - Tracking data
+ * @param {string} trackingData.action - The action performed, e.g., 'download' or 'share'
+ * @param {string} trackingData.title - Title of the course
+ * @param {string} trackingData.id - ID of the course
+ * @param {string} trackingData.solution - Solution related to the course
+ * @param {string} trackingData.role - Role associated with the course
+ * @param {string} trackingData.linkTitle - CTA text for the button
+ * @param {string} trackingData.destinationDomain - Destination domain for the link
+ */
+export function pushCourseCertificateEvent(trackingData) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  let eventName;
+  let linkType;
+  if (trackingData.action === 'download') {
+    eventName = 'courseCertificateDownload';
+    linkType = 'Download';
+  } else if (trackingData.action === 'share') {
+    eventName = 'courseCertificateShare';
+    linkType = 'Share';
+  }
+
+  const dataLayerEntry = {
+    event: eventName,
+    link: {
+      linkTitle: trackingData.linkTitle,
+      linkLocation: 'Body',
+      linkType,
+      destinationDomain: trackingData.destinationDomain,
+    },
+    courses: {
+      title: trackingData.title,
+      id: trackingData.id,
+      solution: trackingData.solution,
+      role: trackingData.role,
+    },
+  };
+
+  window.adobeDataLayer.push(dataLayerEntry);
 }

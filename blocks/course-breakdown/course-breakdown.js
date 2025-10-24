@@ -25,24 +25,8 @@ function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
   const header = document.createElement('div');
   header.classList.add('course-breakdown-header');
 
-  if (courseStatus) {
-    const startButtonTextMap = {
-      [MODULE_STATUS.NOT_STARTED]: placeholder?.courseBreakdownButtonNotStarted || 'Start Learning',
-      [MODULE_STATUS.IN_PROGRESS]: placeholder?.courseBreakdownButtonInProgress || 'Continue Learning',
-      [MODULE_STATUS.COMPLETED]: placeholder?.courseBreakdownButtonCompleted || 'Review Course',
-    };
-    const startButtonText = startButtonTextMap[courseStatus] || 'Start Learning';
-    const startButton = document.createElement('a');
-    startButton.classList.add('course-breakdown-header-start-button', 'button');
-    startButton.textContent = startButtonText;
-    getLastAddedModule().then(async (lastAddedModuleUrl) => {
-      const moduleMeta = await getModuleMeta(lastAddedModuleUrl, placeholder);
-      if (moduleMeta?.moduleSteps.length && moduleMeta?.moduleSteps[0]?.url) {
-        startButton.href = moduleMeta.moduleSteps[0].url;
-      }
-      header.append(startButton);
-    });
-  }
+  const startButton = document.createElement('a');
+  startButton.classList.add('course-breakdown-header-start-button', 'button');
 
   header.innerHTML = `
   <div>
@@ -58,6 +42,34 @@ function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
   </div>
     `;
   decorateIcons(header);
+
+  if (courseStatus) {
+    // For signed-in users: Configure as a link with appropriate text
+    const startButtonTextMap = {
+      [MODULE_STATUS.NOT_STARTED]: placeholder?.courseBreakdownButtonNotStarted || 'Start Course',
+      [MODULE_STATUS.IN_PROGRESS]: placeholder?.courseBreakdownButtonInProgress || 'Continue Learning',
+      [MODULE_STATUS.COMPLETED]: placeholder?.courseBreakdownButtonCompleted || 'Review Course',
+    };
+    startButton.textContent = startButtonTextMap[courseStatus] || 'Start Course';
+
+    // Set the href asynchronously
+    getLastAddedModule().then(async (lastAddedModuleUrl) => {
+      const moduleMeta = await getModuleMeta(lastAddedModuleUrl, placeholder);
+      if (moduleMeta?.moduleSteps.length && moduleMeta?.moduleSteps[0]?.url) {
+        startButton.href = moduleMeta.moduleSteps[0].url;
+      }
+    });
+  } else {
+    // For signed-out users: Configure as a link with sign-in functionality
+    startButton.textContent = placeholder?.courseBreakdownInfoSignInButton || 'Sign In to Start';
+    startButton.href = '#';
+    startButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.adobeIMS.signIn();
+    });
+  }
+  header.append(startButton);
+
   return header;
 }
 
@@ -68,14 +80,6 @@ function infoCardDom(title, description, courseStatus, placeholders) {
   card.innerHTML = `
       <div>
         ${title.innerHTML}
-        ${
-          !courseStatus
-            ? `<button>
-          ${placeholders?.courseBreakdownInfoSignInButton || 'Sign In to Start'}
-        </button>`
-            : ''
-        }
-        
       </div>
       ${description.innerHTML}
       <div>
@@ -89,11 +93,6 @@ function infoCardDom(title, description, courseStatus, placeholders) {
       </div>
     `;
 
-  if (!courseStatus) {
-    card.querySelector('button')?.addEventListener('click', () => {
-      window.adobeIMS.signIn();
-    });
-  }
   return card;
 }
 
@@ -159,7 +158,7 @@ function moduleCard({ modulePromise, index, open = false, placeholders }) {
 
     // Create steps list
     const stepsList =
-      moduleMeta.moduleSteps
+      moduleMeta?.moduleSteps
         ?.map(
           (step, stepIndex) =>
             `
@@ -177,10 +176,10 @@ function moduleCard({ modulePromise, index, open = false, placeholders }) {
           <span class="cb-module-number ${moduleStatus}">
           ${moduleStatus === MODULE_STATUS.COMPLETED ? '<span class="icon icon-checkmark-light"></span>' : index + 1}
             </span>
-          <h3 class="cb-module-title">${moduleMeta.moduleHeader || 'Module Title'}</h3>
+          <h3 class="cb-module-title">${moduleMeta?.moduleHeader || 'Module Title'}</h3>
         </div>
         <button class="button cb-start-btn ${moduleStatus}" >
-          <a href="${moduleMeta.moduleSteps[0].url || '#'}">${startButtonText}</a>
+          <a href="${moduleMeta?.moduleSteps[0].url || '#'}">${startButtonText}</a>
         </button>
       </div>
         <div class="cb-steps-info ${open ? 'open' : ''}">
