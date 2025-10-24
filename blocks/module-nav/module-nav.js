@@ -39,30 +39,7 @@ async function handleQuizNextButton(e) {
     nextButton.textContent = placeholders?.nextBtnLabel || 'Next';
   }
 
-  if (isQuizPassed) {
-    // Check if this is the last step in the module
-    if (await isLastStep()) {
-      // Check if this is the last module of the course and complete the course
-      if (await isLastModuleOfCourse()) {
-        await completeCourse();
-        const courseCompletionPageUrl = await getCourseCompletionPageUrl();
-        if (courseCompletionPageUrl) {
-          e.target.href = courseCompletionPageUrl;
-        }
-      } else {
-        await finishModule();
-        // If there is a next module - get First Step of the Next Module
-        const nextModuleFirstStepUrl = await getNextModuleFirstStep();
-        if (nextModuleFirstStepUrl) {
-          e.target.href = nextModuleFirstStepUrl;
-        }
-      }
-
-      if (nextButton) {
-        nextButton.classList.remove('disabled');
-      }
-    }
-  } else {
+  if (!isQuizPassed) {
     // re-enable submit button after answering all questions
     const inputs = document.querySelectorAll('.question input[type="checkbox"], .question input[type="radio"]');
     inputs.forEach((input) => {
@@ -74,6 +51,25 @@ async function handleQuizNextButton(e) {
         { once: true },
       );
     });
+    return;
+  }
+
+  // Check if this is the last step in the module
+  if (!(await isLastStep())) return;
+
+  // Check if this is the last module of the course and complete the course
+  if (await isLastModuleOfCourse()) {
+    await completeCourse();
+    const url = await getCourseCompletionPageUrl();
+    if (url) e.target.href = url;
+  } else {
+    await finishModule();
+    const url = await getNextModuleFirstStep();
+    if (url) e.target.href = url;
+  }
+
+  if (nextButton) {
+    nextButton.classList.remove('disabled');
   }
 }
 
