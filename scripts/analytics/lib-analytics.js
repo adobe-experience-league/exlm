@@ -273,6 +273,7 @@ export function pushLinkClick(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
+  const isCourseStartCTA = e.target.closest('.course-breakdown-header-start-button');
 
   let linkLocation = 'unidentified';
   if (e.target.closest('.rail-right') || e.target.closest('.mini-toc-wrapper')) {
@@ -285,6 +286,8 @@ export function pushLinkClick(e) {
     linkLocation = 'footer';
   } else if (e.target.closest('main') && docs) {
     linkLocation = 'body';
+  } else if (isCourseStartCTA) {
+    linkLocation = 'course landing page';
   }
 
   let linkType = 'other';
@@ -296,20 +299,29 @@ export function pushLinkClick(e) {
     linkType = 'view more/less';
     destinationDomain = e.target.closest('ul').parentNode.querySelector('p').innerText;
     name = 'ExperienceEventType:web.webInteraction.linkClicks';
+  } else if (isCourseStartCTA) {
+    linkType = 'Custom';
+    destinationDomain = window.location.hostname;
+  }
+
+  const linkObj = {
+    destinationDomain,
+    linkLocation,
+    linkTitle: e.target.innerHTML || '',
+    linkType,
+  };
+
+  // Only add solution field if not a course CTA
+  if (!isCourseStartCTA) {
+    linkObj.solution =
+      document.querySelector('meta[name="solution"]') !== null
+        ? document.querySelector('meta[name="solution"]').content.split(',')[0].trim()
+        : '';
   }
 
   window.adobeDataLayer.push({
     event: 'linkClicked',
-    link: {
-      destinationDomain,
-      linkLocation,
-      linkTitle: e.target.innerHTML || '',
-      linkType,
-      solution:
-        document.querySelector('meta[name="solution"]') !== null
-          ? document.querySelector('meta[name="solution"]').content.split(',')[0].trim()
-          : '',
-    },
+    link: linkObj,
     ...UEFilters,
     web: {
       webInteraction: {
