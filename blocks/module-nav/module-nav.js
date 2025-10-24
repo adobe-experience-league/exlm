@@ -42,9 +42,6 @@ async function handleQuizNextButton(e) {
   if (isQuizPassed) {
     // Check if this is the last step in the module
     if (await isLastStep()) {
-      // Get the first step of the next module
-      await finishModule();
-
       // Check if this is the last module of the course and complete the course
       if (await isLastModuleOfCourse()) {
         await completeCourse();
@@ -53,6 +50,7 @@ async function handleQuizNextButton(e) {
           e.target.href = courseCompletionPageUrl;
         }
       } else {
+        await finishModule();
         // If there is a next module - get First Step of the Next Module
         const nextModuleFirstStepUrl = await getNextModuleFirstStep();
         if (nextModuleFirstStepUrl) {
@@ -154,7 +152,6 @@ export default async function decorate(block) {
   // Check if this is the last step - maintaining the original condition exactly
   if ((!isQuiz || skipQuiz) && (await isLastStep())) {
     nextLink.classList.add('disabled');
-    await finishModule();
     if (await isLastModuleOfCourse()) {
       await completeCourse();
       const courseCompletionPageUrl = await getCourseCompletionPageUrl();
@@ -162,6 +159,7 @@ export default async function decorate(block) {
         nextLink.href = courseCompletionPageUrl;
       }
     } else {
+      await finishModule();
       const nextModuleFirstStepUrl = await getNextModuleFirstStep();
       if (nextModuleFirstStepUrl) {
         nextLink.href = nextModuleFirstStepUrl;

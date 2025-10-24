@@ -241,12 +241,22 @@ async function finishModule(url = window.location.pathname) {
  * @returns {Promise<void>}
  */
 async function completeCourse(url = window.location.pathname) {
-  const { courseId } = extractCourseModuleIds(url);
+  const { courseId, moduleId } = extractCourseModuleIds(url);
   const courses = await getCurrentCourses();
   const updatedCourses = { ...courses };
 
   if (updatedCourses[courseId] && !updatedCourses[courseId].awardGranted) {
-    updatedCourses[courseId].awardGranted = new Date().toISOString();
+    const finishTime = new Date().toISOString();
+    
+    // Mark the current module as finished if not already
+    if (moduleId && !updatedCourses[courseId].modules[moduleId]?.finished) {
+      updatedCourses[courseId].modules[moduleId] = {
+        ...updatedCourses[courseId].modules[moduleId],
+        finished: finishTime,
+      };
+    }
+    
+    updatedCourses[courseId].awardGranted = finishTime;
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile('courses', updatedCourses, true);
