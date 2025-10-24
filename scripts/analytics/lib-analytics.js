@@ -439,6 +439,52 @@ export function pushVideoMetadataOnLoad(videoId, videoUrl, thumbnailUrl) {
 }
 
 /**
+ * Fetches course, module, and step information for analytics events
+ * @returns {Promise<Object>} Object containing course, module, and step information
+ */
+export async function getQuizEventInfo() {
+  try {
+    const { getCurrentStepInfo, getCurrentCourseMeta } = await import('../courses/course-utils.js');
+
+    const stepInfo = await getCurrentStepInfo();
+    const courseMeta = await getCurrentCourseMeta();
+    const parts = courseMeta?.url.split('/').filter(Boolean).slice(1).join('/');
+
+    const courseTitle = courseMeta?.heading || '';
+    const courseId = parts ? `/${parts}` : '';
+    const courseSolution = courseMeta?.solution || '';
+    const courseRole = courseMeta?.role || '';
+    const courseLevel = courseMeta?.level || '';
+
+    const moduleTitle = stepInfo?.moduleHeader || '';
+    const stepTitle = document.querySelector('meta[property="og:title"]')?.content || '';
+
+    return {
+      courses: {
+        title: courseTitle,
+        id: courseId,
+        solution: courseSolution,
+        role: courseRole,
+        level: courseLevel,
+      },
+      module: {
+        title: moduleTitle,
+      },
+      steps: {
+        title: stepTitle,
+        type: 'quiz',
+      },
+    };
+  } catch (e) {
+    return {
+      courses: { title: '', id: '', solution: '', role: '', level: '' },
+      module: { title: '' },
+      steps: { title: '', type: 'quiz' },
+    };
+  }
+}
+
+/**
  * Used to push a quiz event to the data layer
  * @param {string} eventName - The name of the event (quizStart, quizSubmit, quizCompleted)
  */
@@ -568,50 +614,4 @@ export function pushCourseCertificateEvent(trackingData) {
   };
 
   window.adobeDataLayer.push(dataLayerEntry);
-}
-
-/**
- * Fetches course, module, and step information for analytics events
- * @returns {Promise<Object>} Object containing course, module, and step information
- */
-export async function getQuizEventInfo() {
-  try {
-    const { getCurrentStepInfo, getCurrentCourseMeta } = await import('../courses/course-utils.js');
-
-    const stepInfo = await getCurrentStepInfo();
-    const courseMeta = await getCurrentCourseMeta();
-    const parts = courseMeta?.url.split('/').filter(Boolean).slice(1).join('/');
-
-    const courseTitle = courseMeta?.heading || '';
-    const courseId = parts ? `/${parts}` : '';
-    const courseSolution = courseMeta?.solution || '';
-    const courseRole = courseMeta?.role || '';
-    const courseLevel = courseMeta?.level || '';
-
-    const moduleTitle = stepInfo?.moduleHeader || '';
-    const stepTitle = document.querySelector('meta[property="og:title"]')?.content || '';
-
-    return {
-      courses: {
-        title: courseTitle,
-        id: courseId,
-        solution: courseSolution,
-        role: courseRole,
-        level: courseLevel,
-      },
-      module: {
-        title: moduleTitle,
-      },
-      steps: {
-        title: stepTitle,
-        type: 'quiz',
-      },
-    };
-  } catch (e) {
-    return {
-      courses: { title: '', id: '', solution: '', role: '', level: '' },
-      module: { title: '' },
-      steps: { title: '', type: 'quiz' },
-    };
-  }
 }
