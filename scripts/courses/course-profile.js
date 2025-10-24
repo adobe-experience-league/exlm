@@ -29,25 +29,6 @@ const MODULE_STATUS = {
 async function getCurrentCourses() {
   const profile = await defaultProfileClient.getMergedProfile();
   const courses = profile?.courses || {};
-  
-  // Handle case where courses might be an array due to API format inconsistencies
-  if (Array.isArray(courses)) {
-    // If it's an empty array, return empty object
-    if (courses.length === 0) {
-      return {};
-    }
-    
-    // If array contains objects with courseId, flatten to object keyed by courseId
-    const flattened = {};
-    courses.forEach((course) => {
-      if (course && typeof course === 'object' && course.id) {
-        flattened[course.id] = course;
-      }
-    });
-    
-    return flattened;
-  }
-  
   return courses;
 }
 
@@ -272,6 +253,17 @@ async function completeCourse(url = window.location.pathname) {
   }
 }
 
+/**
+ * Checks if a course is completed
+ * @param {string} url - The URL path to extract courseId from. If not provided, uses current page URL
+ * @returns {Promise<boolean>} True if course is completed, false otherwise
+ */
+async function isCourseCompleted(url = window.location.pathname) {
+  const { courseId } = extractCourseModuleIds(url);
+  const courses = await getCurrentCourses();
+  return courses[courseId]?.awardGranted;
+}
+
 export {
   COURSE_STATUS,
   MODULE_STATUS,
@@ -282,4 +274,5 @@ export {
   startModule,
   finishModule,
   completeCourse,
+  isCourseCompleted,
 };
