@@ -18,8 +18,7 @@
   margin: 0;
 }
 
-.course-breakdown .course-breakdown-header > a,
-.course-breakdown .course-breakdown-header > button {
+.course-breakdown .course-breakdown-header > a {
   margin-left: auto;
   display: block;
   max-width: min-content;

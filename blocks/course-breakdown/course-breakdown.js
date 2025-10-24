@@ -25,9 +25,8 @@ function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
   const header = document.createElement('div');
   header.classList.add('course-breakdown-header');
 
-  // Create a single button that will be used for both signed-in and signed-out users
-  const actionButton = document.createElement(courseStatus ? 'a' : 'button');
-  actionButton.classList.add('course-breakdown-header-start-button', 'button');
+  const startButton = document.createElement('a');
+  startButton.classList.add('course-breakdown-header-start-button', 'button');
 
   header.innerHTML = `
   <div>
@@ -47,27 +46,29 @@ function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
   if (courseStatus) {
     // For signed-in users: Configure as a link with appropriate text
     const startButtonTextMap = {
-      [MODULE_STATUS.NOT_STARTED]: placeholder?.courseBreakdownButtonNotStarted || 'Start Learning',
+      [MODULE_STATUS.NOT_STARTED]: placeholder?.courseBreakdownButtonNotStarted || 'Start Course',
       [MODULE_STATUS.IN_PROGRESS]: placeholder?.courseBreakdownButtonInProgress || 'Continue Learning',
       [MODULE_STATUS.COMPLETED]: placeholder?.courseBreakdownButtonCompleted || 'Review Course',
     };
-    actionButton.textContent = startButtonTextMap[courseStatus] || 'Start Learning';
+    startButton.textContent = startButtonTextMap[courseStatus] || 'Start Course';
 
     // Set the href asynchronously
     getLastAddedModule().then(async (lastAddedModuleUrl) => {
       const moduleMeta = await getModuleMeta(lastAddedModuleUrl, placeholder);
       if (moduleMeta?.moduleSteps.length && moduleMeta?.moduleSteps[0]?.url) {
-        actionButton.href = moduleMeta.moduleSteps[0].url;
+        startButton.href = moduleMeta.moduleSteps[0].url;
       }
     });
   } else {
-    // For signed-out users: Configure as a button with sign-in functionality
-    actionButton.textContent = placeholder?.courseBreakdownInfoSignInButton || 'Sign In to Start';
-    actionButton.addEventListener('click', () => {
+    // For signed-out users: Configure as a link with sign-in functionality
+    startButton.textContent = placeholder?.courseBreakdownInfoSignInButton || 'Sign In to Start';
+    startButton.href = '#';
+    startButton.addEventListener('click', (e) => {
+      e.preventDefault();
       window.adobeIMS.signIn();
     });
   }
-  header.append(actionButton);
+  header.append(startButton);
 
   return header;
 }
