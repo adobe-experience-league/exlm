@@ -39,20 +39,36 @@ async function getLastAddedModule() {
   const courses = await getCurrentCourses();
   const courseMeta = await getCurrentCourseMeta();
 
-  if (!courses.modules) {
+  const { courseId: currentCourseId } = extractCourseModuleIds(window.location.pathname);
+  const currentCourse = courses[currentCourseId];
+
+  if (
+    Object.keys(courses).length === 0 ||
+    !currentCourseId ||
+    !currentCourse ||
+    !currentCourse.modules ||
+    Object.keys(currentCourse.modules).length === 0
+  ) {
     return courseMeta.modules[0];
   }
-  const lastAddedModule = Object.values(courses).sort(
-    (a, b) => new Date(b.modules[b.modules.length - 1].started) - new Date(a.modules[a.modules.length - 1].started),
-  )[0];
-  const lastAddedModuleUrl = courseMeta.modules.find((moduleUrl) => {
-    const { moduleId: metaModuleId } = extractCourseModuleIds(moduleUrl);
-    return metaModuleId === lastAddedModule.moduleId;
+
+  let latestModuleId = null;
+  let latestStartTime = null;
+
+  Object.entries(currentCourse.modules).forEach(([moduleId, moduleData]) => {
+    if (moduleData.started && (!latestStartTime || new Date(moduleData.started) > new Date(latestStartTime))) {
+      latestStartTime = moduleData.started;
+      latestModuleId = moduleId;
+    }
   });
-  if (!lastAddedModuleUrl) {
+
+  if (!latestModuleId) {
     return courseMeta.modules[0];
   }
-  return lastAddedModuleUrl;
+
+  const moduleUrl = courseMeta.modules.find((url) => url.includes(latestModuleId));
+
+  return moduleUrl || courseMeta.modules[0];
 }
 
 /**
