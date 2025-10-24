@@ -28,8 +28,7 @@ const MODULE_STATUS = {
  */
 async function getCurrentCourses() {
   const profile = await defaultProfileClient.getMergedProfile();
-  const courses = profile?.courses || {};
-  return courses;
+  return profile?.courses || {};
 }
 
 /**
@@ -247,7 +246,7 @@ async function completeCourse(url = window.location.pathname) {
 
   if (updatedCourses[courseId] && !updatedCourses[courseId].awardGranted) {
     const finishTime = new Date().toISOString();
-    
+
     // Mark the current module as finished if not already
     if (moduleId && !updatedCourses[courseId].modules[moduleId]?.finished) {
       updatedCourses[courseId].modules[moduleId] = {
@@ -255,7 +254,7 @@ async function completeCourse(url = window.location.pathname) {
         finished: finishTime,
       };
     }
-    
+
     updatedCourses[courseId].awardGranted = finishTime;
 
     // Update the profile with the new courses data
