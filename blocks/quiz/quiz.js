@@ -335,13 +335,13 @@ export default async function decorate(block) {
       block.dataset.totalQuestions = quizResults?.totalQuestions;
 
       await fetchPageContent(redirectUrl, block, quizResults.isPassed, placeholders);
-
-      // Save skip flag if quiz passed
-      if (quizResults?.isPassed) {
-        sessionStorage.setItem('course.skipQuiz', 'true');
-      }
     }
-    return true;
+
+    if (quizResults?.isPassed) {
+      return true;
+    }
+
+    return false;
   };
 
   // Create quiz description section using htmlToElement
