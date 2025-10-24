@@ -361,6 +361,8 @@ export default async function decorate(block) {
           // Silently handle error to comply with linting rules
           console.log('Error triggering quiz completed event:', e.message);
         }
+
+        return true;
       }
     }
     return true;
