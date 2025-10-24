@@ -1,6 +1,6 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
-import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS, VIDEO_THUMBNAIL_FORMAT } from './browse-cards-constants.js';
+import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS, VIDEO_THUMBNAIL_FORMAT, COURSE_STATUS } from './browse-cards-constants.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
@@ -226,6 +226,7 @@ const buildCardContent = async (card, model) => {
   const {
     id,
     description,
+    meta,
     contentType: type,
     viewLink,
     viewLinkText,
@@ -256,15 +257,33 @@ const buildCardContent = async (card, model) => {
     cardContent.appendChild(descriptionElement);
   }
 
-  const cardMeta = document.createElement('div');
-  cardMeta.classList.add('browse-card-meta-info');
+  if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY && meta?.courseInfo?.courseStatus) {
+    // Map course status to localized label
+    const statusMapping = {
+      [COURSE_STATUS.NOT_STARTED]: placeholders.courseStatusNotStarted || 'Not Started',
+      [COURSE_STATUS.IN_PROGRESS]: placeholders.courseStatusInProgress || 'In Progress',
+      [COURSE_STATUS.COMPLETED]: placeholders.courseStatusCompleted || 'Completed',
+    };
+
+    const courseStatusLabel = statusMapping[meta.courseInfo.courseStatus] || '';
+
+    if (courseStatusLabel) {
+      const cardMeta = document.createElement('div');
+      cardMeta.classList.add('browse-card-meta-info', 'course-status-meta');
+      cardMeta.innerHTML = `<span class="status-badge status-${meta.courseInfo.courseStatus}"></span><span class="status-text">${courseStatusLabel}</span>`;
+      cardContent.appendChild(cardMeta);
+    }
+  }
 
   if (
     contentType === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
     contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ||
     contentType === RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY
   ) {
+    const cardMeta = document.createElement('div');
+    cardMeta.classList.add('browse-card-meta-info');
     buildTagsContent(cardMeta, tags);
+    cardContent.appendChild(cardMeta);
   }
 
   if (contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY) {
@@ -272,8 +291,6 @@ const buildCardContent = async (card, model) => {
       buildCourseDurationContent({ inProgressStatus, inProgressText, cardContent });
     }
   }
-
-  cardContent.appendChild(cardMeta);
 
   if (
     contentType === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY ||

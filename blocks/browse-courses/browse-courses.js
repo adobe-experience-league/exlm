@@ -18,8 +18,8 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
+import { COURSE_STATUS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
-import { getCurrentCourses, COURSE_STATUS } from '../../scripts/courses/course-profile.js';
 
 /**
  * Module-level placeholders for internationalization
@@ -285,10 +285,13 @@ function getResponsiveShimmerCount() {
 
 /**
  * Adds shimmer wrapper inside content container and applies shimmer
- * @param {HTMLElement} contentDiv - The content container element
+ * @param {HTMLElement} block - The main block element
  * @param {BrowseCardShimmer} shimmer - The shimmer instance
  */
-function addShimmerWrapper(contentDiv, shimmer) {
+function addShimmerWrapper(block, shimmer) {
+  const contentDiv = block.querySelector(`.${CSS_CLASSES.CONTENT}`);
+  if (!contentDiv) return;
+
   // Clear existing content
   contentDiv.innerHTML = '';
 
@@ -302,176 +305,89 @@ function addShimmerWrapper(contentDiv, shimmer) {
 }
 
 /**
- * Extracts the course path from a URL, removing the language parameter
- * @param {string} url - The full URL
- * @returns {string} The path without language (e.g., "courses/course-name")
- */
-function extractCoursePathFromUrl(url) {
-  try {
-    const urlObj = new URL(url);
-    const pathSegments = urlObj.pathname.split('/').filter(Boolean);
-    
-    // Always remove the first segment (language code like "en", "fr", "pt-BR", etc.)
-    if (pathSegments.length > 0) {
-      pathSegments.shift();
-    }
-    
-    return pathSegments.join('/');
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error parsing URL:', url, error);
-    return '';
-  }
-}
-
-/**
- * Enriches browse cards data with user's course progress information
- * Matches courses by path and determines status based on progress
- * @param {Array} data - Array of browse card course data
- * @param {Object} courses - User's course progress data (keyed by course path)
- * @returns {Array} Array of enriched courses with courseInfo property
- */
-function matchCoursesWithProfile(data, courses) {
-  if (!data) {
-    return [];
-  }
-  
-  const enrichedCourses = [];
-
-  data.forEach((card) => {
-    let courseStatus = COURSE_STATUS.NOT_STARTED;
-    
-    if (card.viewLink && courses) {
-      // Extract path without language parameter for matching
-      const cardPath = extractCoursePathFromUrl(card.viewLink);
-
-      // Check if this course exists in user's progress data
-      if (courses[cardPath]) {
-        const courseProgress = courses[cardPath];
-        const hasModules = courseProgress.modules && Object.keys(courseProgress.modules).length > 0;
-        
-        // Determine course status based on progress
-        if (courseProgress.awardGranted) {
-          courseStatus = COURSE_STATUS.COMPLETED;
-        } else if (hasModules) {
-          courseStatus = COURSE_STATUS.IN_PROGRESS;
-        }
-      }
-    }
-    
-    // Add courseInfo to each card
-    enrichedCourses.push({
-      ...card,
-      courseInfo: {
-        courseStatus,
-      },
-    });
-  });
-
-  return enrichedCourses;
-}
-
-/**
  * Renders course cards to the DOM
  * Uses module-level placeholders for error and no-results messages
  * @param {HTMLElement} block - The main block element
- * @param {Array} enrichedCourses - Array of enriched course data to render
- * @param {HTMLElement} contentDiv - The content container element
+ * @param {Array} courseData - Array of course data to render
  * @param {BrowseCardShimmer} shimmer - The shimmer loading instance
  */
-async function renderCards(block, enrichedCourses, contentDiv, shimmer) {
+async function renderCards(block, courseData, shimmer) {
+  const contentDiv = block.querySelector(`.${CSS_CLASSES.CONTENT}`);
+  if (!contentDiv) return;
+
   try {
-    const browseCardsContent = enrichedCourses;
     shimmer.removeShimmer();
 
     // Clear existing content
     contentDiv.innerHTML = '';
 
-    if (browseCardsContent?.length > 0) {
+    if (courseData?.length > 0) {
       // Use document fragment for better performance
       const fragment = document.createDocumentFragment();
 
-      browseCardsContent.forEach((cardData) => {
+      courseData.forEach((cardData) => {
         const cardDiv = document.createElement('div');
         buildCard(contentDiv, cardDiv, cardData);
         fragment.appendChild(cardDiv);
       });
 
       contentDiv.appendChild(fragment);
-
-      // Only append contentDiv if it's not already in the block
-      if (!block.contains(contentDiv)) {
-        block.appendChild(contentDiv);
-      }
     } else {
       // Show no results message using placeholder
       const noResultsMessage = placeholders?.courseNoResultsText || 'No courses found for the selected filters.';
       contentDiv.innerHTML = `<div class="course-no-results">${noResultsMessage}</div>`;
-      if (!block.contains(contentDiv)) {
-        block.appendChild(contentDiv);
-      }
     }
   } catch (error) {
     shimmer.removeShimmer();
     // eslint-disable-next-line no-console
-    console.error('Error fetching browse cards content:', error);
+    console.error('Error rendering browse cards:', error);
 
     // Show error message using placeholder
     const errorMessage = placeholders?.courseLoadError || 'Failed to load courses. Please try again.';
     contentDiv.innerHTML = `<div class="course-no-results">${errorMessage}</div>`;
-    if (!block.contains(contentDiv)) {
-      block.appendChild(contentDiv);
-    }
   }
 }
 
 /**
- * Fetches browse cards data and enriches with user course progress
+ * Fetches course data from the API
  * @param {string[]} selectedFilters - Array of selected product filter values (optional)
- * @param {Object} userCourses - User's course progress data (optional, if already fetched)
- * @returns {Promise<Array>} Enriched courses data with courseInfo.courseStatus
+ * @returns {Promise<Array>} Course data with meta.courseInfo.courseStatus (auto-enriched by delegate for signed-in users)
  * @description
- * 1. Fetches course cards from API based on filters
- * 2. If userCourses provided, matches courses with progress and adds courseStatus
- * 3. Returns all courses (matched courses get status, others get NOT_STARTED)
+ * Fetches course cards from API based on filters.
+ * BrowseCardsDelegate automatically enriches with meta.courseInfo.courseStatus for signed-in users.
  */
-async function fetchAndEnrichCourses(selectedFilters = [], userCourses = null) {
+async function fetchCourseData(selectedFilters = []) {
   // Build API parameters
   const param = {
     contentType: CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase().split(','),
     ...(selectedFilters.length > 0 && { product: selectedFilters }),
   };
   
-  // Fetch browse cards data
-  let data = await BrowseCardsDelegate.fetchCardData(param);
-
-  // Enrich with user progress if available
-  if (userCourses) {
-    data = matchCoursesWithProfile(data, userCourses);
-  }
+  // Fetch browse cards data (automatically enriched by BrowseCardsDelegate for signed-in users)
+  const data = await BrowseCardsDelegate.fetchCardData(param);
 
   return data;
 }
 
 /**
- * Analyzes enriched course data and determines which statuses are present
- * @param {Array} enrichedData - Array of enriched course data with courseInfo
- * @returns {Object} Object containing boolean flags for each status
+ * Analyzes course data to determine which statuses are present
+ * @param {Array} courseData - Array of course data with meta.courseInfo
+ * @returns {Object} Object containing boolean flags for each status (hasNotStarted, hasInProgress, hasCompleted)
  */
-function analyzeEnrichedDataStatuses(enrichedData) {
+function analyzeCourseStatuses(courseData) {
   const statuses = {
     hasNotStarted: false,
     hasInProgress: false,
     hasCompleted: false,
   };
 
-  if (!enrichedData || enrichedData.length === 0) {
+  if (!courseData || courseData.length === 0) {
     return statuses;
   }
 
-  enrichedData.forEach((course) => {
-    if (course.courseInfo?.courseStatus) {
-      const status = course.courseInfo.courseStatus;
+  courseData.forEach((course) => {
+    if (course.meta?.courseInfo?.courseStatus) {
+      const status = course.meta.courseInfo.courseStatus;
       
       if (status === COURSE_STATUS.NOT_STARTED) {
         statuses.hasNotStarted = true;
@@ -487,15 +403,15 @@ function analyzeEnrichedDataStatuses(enrichedData) {
 }
 
 /**
- * Creates status filter dropdown options based on enriched course data
- * @param {Array} enrichedData - Array of enriched course data with courseInfo
+ * Creates status filter dropdown options based on course data
+ * @param {Array} courseData - Array of course data with meta.courseInfo
  * @returns {Array<Object>} Array of status options with title and value properties
  * @description
  * Includes status options present in the dataset.
- * Special rule: If ALL courses are "Not Started", returns empty array (no filtering needed)
+ * Special rule: If ALL courses are "Not Started", returns empty array (no filtering needed).
  */
-function createStatusFilterOptionsFromData(enrichedData) {
-  const statuses = analyzeEnrichedDataStatuses(enrichedData);
+function createStatusFilterOptions(courseData) {
+  const statuses = analyzeCourseStatuses(courseData);
   
   // If ALL courses are "Not Started" (no other statuses), don't show dropdown
   const onlyNotStarted = statuses.hasNotStarted && !statuses.hasInProgress && !statuses.hasCompleted;
@@ -508,21 +424,21 @@ function createStatusFilterOptionsFromData(enrichedData) {
   // Include "Not Started" if it exists (and we have other statuses too, checked above)
   if (statuses.hasNotStarted) {
     options.push({
-      title: 'Not Started',
+      title: placeholders?.courseStatusNotStarted || 'Not Started',
       value: COURSE_STATUS.NOT_STARTED,
     });
   }
 
   if (statuses.hasInProgress) {
     options.push({
-      title: 'In Progress',
+      title: placeholders?.courseStatusInProgress || 'In Progress',
       value: COURSE_STATUS.IN_PROGRESS,
     });
   }
 
   if (statuses.hasCompleted) {
     options.push({
-      title: 'Completed',
+      title: placeholders?.courseStatusCompleted || 'Completed',
       value: COURSE_STATUS.COMPLETED,
     });
   }
@@ -564,7 +480,7 @@ function updateClearFilterButtonState(block, state) {
   const hasProductFilters = checkedProductInputs.length > 0;
   
   // Check if any status filters are selected
-  const hasStatusFilters = state.currentStatusFilters && state.currentStatusFilters.length > 0;
+  const hasStatusFilters = state.currentStatusFilters?.length > 0;
   
   // Disable button if no filters are active
   const hasActiveFilters = hasProductFilters || hasStatusFilters;
@@ -584,11 +500,10 @@ function updateClearFilterButtonState(block, state) {
  * Uses the 'value' field from status options (COURSE_STATUS constants)
  * @param {Dropdown} dropdown - The status dropdown instance
  * @param {HTMLElement} block - The main block element
- * @param {HTMLElement} contentDiv - The content container element
  * @param {BrowseCardShimmer} shimmer - The shimmer loading instance
- * @param {Object} state - Mutable state object containing enrichedData and currentStatusFilters
+ * @param {Object} state - Mutable state object containing courseData and currentStatusFilters
  */
-function setupStatusDropdownHandler(dropdown, block, contentDiv, shimmer, state) {
+function setupStatusDropdownHandler(dropdown, block, shimmer, state) {
   dropdown.handleOnChange(async (selectedValues) => {
     // Parse selected values (contains COURSE_STATUS constant values)
     state.currentStatusFilters = (Array.isArray(selectedValues) ? selectedValues : selectedValues.split(','))
@@ -597,13 +512,14 @@ function setupStatusDropdownHandler(dropdown, block, contentDiv, shimmer, state)
 
     // Show loading state
     shimmer.updateCount(getResponsiveShimmerCount());
-    addShimmerWrapper(contentDiv, shimmer);
+    addShimmerWrapper(block, shimmer);
 
-    // Filter existing enriched data by status (client-side, no API call)
+    // Filter existing course data by status (client-side, no API call)
     const filteredData = state.currentStatusFilters.length > 0
-      ? state.enrichedData.filter((course) => state.currentStatusFilters.includes(course.courseInfo.courseStatus))
-      : state.enrichedData;
-    await renderCards(block, filteredData, contentDiv, shimmer);
+      ? state.courseData.filter((course) => state.currentStatusFilters.includes(course.meta?.courseInfo?.courseStatus))
+      : state.courseData;
+    
+    await renderCards(block, filteredData, shimmer);
     
     // Update clear button state after filter change
     updateClearFilterButtonState(block, state);
@@ -611,18 +527,17 @@ function setupStatusDropdownHandler(dropdown, block, contentDiv, shimmer, state)
 }
 
 /**
- * Updates the status dropdown with new options based on current data
+ * Updates the status dropdown with new options based on current course data
  * Recreates the dropdown and sets up its handler
  * @param {HTMLElement} block - The main block element
- * @param {Array} enrichedData - Current enriched course data
- * @param {HTMLElement} contentDiv - The content container element
+ * @param {Array} courseData - Current course data
  * @param {BrowseCardShimmer} shimmer - The shimmer loading instance
  * @param {Object} state - Mutable state object
  * @returns {Dropdown|null} The new status dropdown instance or null if no options
  */
-function updateStatusDropdown(block, enrichedData, contentDiv, shimmer, state) {
+function updateStatusDropdown(block, courseData, shimmer, state) {
   // Analyze current data for available statuses
-  const statusList = createStatusFilterOptionsFromData(enrichedData);
+  const statusList = createStatusFilterOptions(courseData);
   
   const dropdownForm = block.querySelector(SELECTORS.DROPDOWN);
   if (!dropdownForm) return null;
@@ -648,7 +563,7 @@ function updateStatusDropdown(block, enrichedData, contentDiv, shimmer, state) {
   );
 
   // Setup handler for new dropdown
-  setupStatusDropdownHandler(statusDropdown, block, contentDiv, shimmer, state);
+  setupStatusDropdownHandler(statusDropdown, block, shimmer, state);
 
   return statusDropdown;
 }
@@ -656,14 +571,13 @@ function updateStatusDropdown(block, enrichedData, contentDiv, shimmer, state) {
 /**
  * Sets up product dropdown change handler
  * Fetches new data from API when product filters change
- * Updates status dropdown options based on new data
+ * Updates status dropdown options based on new data (only for signed-in users)
  * @param {Dropdown} dropdown - The product dropdown instance
  * @param {HTMLElement} block - The main block element
- * @param {HTMLElement} contentDiv - The content container element
  * @param {BrowseCardShimmer} shimmer - The shimmer loading instance
- * @param {Object} state - Mutable state object containing enrichedData, currentStatusFilters, userCourses, and statusDropdown
+ * @param {Object} state - Mutable state object containing courseData, currentStatusFilters, statusDropdown, and isSignedIn
  */
-function setupProductDropdownHandler(dropdown, block, contentDiv, shimmer, state) {
+function setupProductDropdownHandler(dropdown, block, shimmer, state) {
   dropdown.handleOnChange(async (selectedValues) => {
     const selectedFilters = (Array.isArray(selectedValues) ? selectedValues : selectedValues.split(','))
       .map((item) => item.trim())
@@ -675,15 +589,15 @@ function setupProductDropdownHandler(dropdown, block, contentDiv, shimmer, state
 
     // Show loading state
     shimmer.updateCount(getResponsiveShimmerCount());
-    addShimmerWrapper(contentDiv, shimmer);
+    addShimmerWrapper(block, shimmer);
 
     // Fetch new data from API with selected product filters
-    state.enrichedData = await fetchAndEnrichCourses(selectedFilters, state.userCourses);
+    state.courseData = await fetchCourseData(selectedFilters);
     
-    // Update status dropdown to reflect available statuses in filtered data
-    if (state.userCourses && Object.keys(state.userCourses).length > 0) {
+    // Update status dropdown to reflect available statuses in filtered data (only for signed-in users)
+    if (state.isSignedIn) {
       // Reset current status filters if they don't exist in new data
-      const availableStatuses = analyzeEnrichedDataStatuses(state.enrichedData);
+      const availableStatuses = analyzeCourseStatuses(state.courseData);
       state.currentStatusFilters = state.currentStatusFilters.filter((status) => {
         if (status === COURSE_STATUS.NOT_STARTED) return availableStatuses.hasNotStarted;
         if (status === COURSE_STATUS.IN_PROGRESS) return availableStatuses.hasInProgress;
@@ -692,15 +606,15 @@ function setupProductDropdownHandler(dropdown, block, contentDiv, shimmer, state
       });
       
       // Update the status dropdown with new options
-      state.statusDropdown = updateStatusDropdown(block, state.enrichedData, contentDiv, shimmer, state);
+      state.statusDropdown = updateStatusDropdown(block, state.courseData, shimmer, state);
     }
     
-    // Re-apply current status filters to new data (if any)
-    const dataToRender = state.currentStatusFilters.length > 0
-      ? state.enrichedData.filter((course) => state.currentStatusFilters.includes(course.courseInfo.courseStatus))
-      : state.enrichedData;
+    // Re-apply current status filters to new data (if any) - only for signed-in users
+    const dataToRender = state.isSignedIn && state.currentStatusFilters.length > 0
+      ? state.courseData.filter((course) => state.currentStatusFilters.includes(course.meta?.courseInfo?.courseStatus))
+      : state.courseData;
     
-    await renderCards(block, dataToRender, contentDiv, shimmer);
+    await renderCards(block, dataToRender, shimmer);
     
     // Update clear button state after filter change
     updateClearFilterButtonState(block, state);
@@ -711,11 +625,10 @@ function setupProductDropdownHandler(dropdown, block, contentDiv, shimmer, state
  * Sets up clear filter button click handler
  * Resets all filters (product and status) and shows all courses
  * @param {HTMLElement} block - The main block element
- * @param {HTMLElement} contentDiv - The content container element
  * @param {BrowseCardShimmer} shimmer - The shimmer loading instance
- * @param {Object} state - Mutable state object containing enrichedData, currentStatusFilters, userCourses, and statusDropdown
+ * @param {Object} state - Mutable state object containing courseData, currentStatusFilters, statusDropdown, isSignedIn, and productDropdown
  */
-function setupClearFilterHandler(block, contentDiv, shimmer, state) {
+function setupClearFilterHandler(block, shimmer, state) {
   const clearFilterButton = block.querySelector(`.${CSS_CLASSES.CLEAR_FILTER}`);
   
   if (clearFilterButton) {
@@ -727,12 +640,18 @@ function setupClearFilterHandler(block, contentDiv, shimmer, state) {
         return;
       }
       
-      // Uncheck all dropdown checkboxes
-      const checkedInputs = [...block.querySelectorAll(`${SELECTORS.CHECKBOX_INPUT}:checked`)];
-      checkedInputs.forEach((input) => input.click());
-
-      // Reset status filters state
+      // IMPORTANT: Reset ALL filter state FIRST before any other operations
       state.currentStatusFilters = [];
+      
+      // Clear product dropdown using the reusable reset() method
+      if (state.productDropdown) {
+        state.productDropdown.reset();
+      }
+      
+      // Clear status dropdown using the reusable reset() method (for signed-in users)
+      if (state.isSignedIn && state.statusDropdown) {
+        state.statusDropdown.reset();
+      }
       
       // Clear URL parameters
       updateUrlParams([]);
@@ -742,17 +661,18 @@ function setupClearFilterHandler(block, contentDiv, shimmer, state) {
 
       // Show loading state
       shimmer.updateCount(getResponsiveShimmerCount());
-      addShimmerWrapper(contentDiv, shimmer);
+      addShimmerWrapper(block, shimmer);
 
-      // Fetch and render all courses without any filters
-      state.enrichedData = await fetchAndEnrichCourses([], state.userCourses);
+      // Fetch all courses without any filters
+      state.courseData = await fetchCourseData([]);
       
-      // Update status dropdown to reflect all available statuses
-      if (state.userCourses && Object.keys(state.userCourses).length > 0) {
-        state.statusDropdown = updateStatusDropdown(block, state.enrichedData, contentDiv, shimmer, state);
+      // Update status dropdown to reflect all available statuses (only for signed-in users)
+      if (state.isSignedIn) {
+        state.statusDropdown = updateStatusDropdown(block, state.courseData, shimmer, state);
       }
-      
-      await renderCards(block, state.enrichedData, contentDiv, shimmer);
+
+      const dataToRender = state.courseData; 
+      await renderCards(block, dataToRender, shimmer);
       
       // Update clear button state
       updateClearFilterButtonState(block, state);
@@ -765,19 +685,7 @@ function setupClearFilterHandler(block, contentDiv, shimmer, state) {
  * Initializes the course browsing interface with product and status filters
  * @param {HTMLElement} block - The block element to decorate
  * @description
- * Flow:
- * 1. Loads placeholders for i18n
- * 2. Creates header with filters and clear button
- * 3. Fetches user courses if signed in
- * 4. Initializes product dropdown (always shown)
- * 5. Conditionally initializes status dropdown:
- *    - Only if user has courses
- *    - Only shows statuses that exist in user's courses
- * 6. Fetches and renders initial course data with user progress
- * 7. Sets up filter change handlers:
- *    - Product filter: fetches new data from API
- *    - Status filter: filters existing data client-side (if available)
- * 8. Sets up clear filters handler
+ * Status dropdown is only shown for signed-in users with course progress data.
  */
 export default async function decorate(block) {
   // Fetch placeholders for internationalization
@@ -800,16 +708,8 @@ export default async function decorate(block) {
   const contentDiv = document.createElement('div');
   contentDiv.classList.add(CSS_CLASSES.CONTENT);
 
-  // Fetch user courses if signed in (needed for status dropdown options)
-  let userCourses = null;
-  if (isSignedInUser()) {
-    try {
-      userCourses = await getCurrentCourses();
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error fetching user courses:', error);
-    }
-  }
+  // Check if user is signed in (required for status dropdown)
+  const isUserSignedIn = await isSignedInUser();
 
   // Fetch products and create product dropdown
   const products = await getProductList();
@@ -828,17 +728,17 @@ export default async function decorate(block) {
 
   // Initialize and show shimmer loading state
   const buildCardsShimmer = new BrowseCardShimmer(getResponsiveShimmerCount());
-  addShimmerWrapper(contentDiv, buildCardsShimmer);
+  addShimmerWrapper(block, buildCardsShimmer);
 
   // Fetch and render initial course data based on URL filters
+  // BrowseCardsDelegate automatically enriches with meta.courseInfo.courseStatus for signed-in users
   const urlFilters = getFiltersFromUrl();
-  const enrichedData = await fetchAndEnrichCourses(urlFilters, userCourses);
+  const courseData = await fetchCourseData(urlFilters);
   
-  // Initialize status filter dropdown (only if user has courses)
-  // Create dropdown AFTER fetching enriched data to analyze actual displayed courses
+  // Initialize status filter dropdown - ONLY for signed-in users
   let statusDropdown = null;
-  if (userCourses && Object.keys(userCourses).length > 0) {
-    const statusList = createStatusFilterOptionsFromData(enrichedData);
+  if (isUserSignedIn) {
+    const statusList = createStatusFilterOptions(courseData);
     
     // Only create dropdown if there are status options
     if (statusList.length > 0) {
@@ -856,13 +756,14 @@ export default async function decorate(block) {
   
   // Create mutable state object to share between handlers
   const state = {
-    enrichedData,
+    courseData,
     currentStatusFilters: [],
-    userCourses,
     statusDropdown, // Store reference to allow updates
+    productDropdown, // Store product dropdown reference
+    isSignedIn: isUserSignedIn, // Track signed-in status
   };
   
-  await renderCards(block, state.enrichedData, contentDiv, buildCardsShimmer);
+  await renderCards(block, state.courseData, buildCardsShimmer);
 
   // Restore URL filter state to UI
   preselectFiltersFromUrl(block, urlFilters);
@@ -870,14 +771,14 @@ export default async function decorate(block) {
   updateTags(block, urlFilters);
 
   // Setup event handlers
-  setupProductDropdownHandler(productDropdown, block, contentDiv, buildCardsShimmer, state);
+  setupProductDropdownHandler(productDropdown, block, buildCardsShimmer, state);
   
-  // Only setup status dropdown handler if dropdown was created
+  // Only setup status dropdown handler if dropdown was created (signed-in users only)
   if (statusDropdown) {
-    setupStatusDropdownHandler(statusDropdown, block, contentDiv, buildCardsShimmer, state);
+    setupStatusDropdownHandler(statusDropdown, block, buildCardsShimmer, state);
   }
   
-  setupClearFilterHandler(block, contentDiv, buildCardsShimmer, state);
+  setupClearFilterHandler(block, buildCardsShimmer, state);
   
   // Initialize clear button state based on current filters
   updateClearFilterButtonState(block, state);

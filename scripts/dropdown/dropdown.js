@@ -76,6 +76,41 @@ export default class Dropdown {
   }
 
   /**
+   * Resets the dropdown to its initial state
+   * Clears all selections, resets button text, and clears internal state
+   * @return {void}
+   */
+  reset() {
+    if (!this.dropdown) return;
+
+    // Reset internal state
+    this.dropdown.dataset.selected = '';
+
+    // Reset button label to default value
+    const buttonLabel = this.dropdown.querySelector('button > span.custom-filter-dropdown-name');
+    if (buttonLabel) {
+      buttonLabel.textContent = this.defaultValue;
+    }
+
+    // Uncheck all checkboxes
+    const checkboxes = this.dropdown.querySelectorAll('.custom-checkbox input[type="checkbox"]');
+    checkboxes.forEach((checkbox) => {
+      if (checkbox.checked) {
+        checkbox.checked = false;
+      }
+    });
+
+    // Close dropdown if open
+    if (this.dropdown.classList.contains('open')) {
+      this.dropdown.classList.remove('open');
+      const dropdownContent = this.dropdown.querySelector('.filter-dropdown-content');
+      if (dropdownContent) {
+        dropdownContent.style.display = 'none';
+      }
+    }
+  }
+
+  /**
    * Handle click events and perform specific actions based on the event target.
    */
   handleClickEvents() {

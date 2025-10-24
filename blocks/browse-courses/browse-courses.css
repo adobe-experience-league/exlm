@@ -49,6 +49,7 @@
 .browse-courses .browse-card-clear-filter.disabled {
   color: var(--spectrum-gray-500);
   cursor: not-allowed;
+  pointer-events: none;
 }
 
 .browse-courses .browse-cards-block-header .browse-card-tags {
