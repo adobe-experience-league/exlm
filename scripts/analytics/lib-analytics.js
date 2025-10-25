@@ -85,7 +85,9 @@ export async function pushPageDataLayer(language, searchTrackingData) {
 
     const isStepPage = document.querySelector('meta[name="theme"]')?.content.includes('course-step');
     const stepTitle = isStepPage ? document.querySelector('meta[property="og:title"]')?.content || '' : '';
-    const stepType = 'content';
+    // Check if the current step contains a quiz block
+    const hasQuizBlock = document.querySelector('.quiz') !== null;
+    const stepType = hasQuizBlock ? 'quiz' : 'content';
 
     if (isStepPage && stepInfo) {
       if (stepInfo.currentStep === 1) {
@@ -273,6 +275,7 @@ export function pushLinkClick(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
+  const isCourseStartCTA = e.target.closest('.course-breakdown-header-start-button');
 
   let linkLocation = 'unidentified';
   if (e.target.closest('.rail-right') || e.target.closest('.mini-toc-wrapper')) {
@@ -285,6 +288,8 @@ export function pushLinkClick(e) {
     linkLocation = 'footer';
   } else if (e.target.closest('main') && docs) {
     linkLocation = 'body';
+  } else if (isCourseStartCTA) {
+    linkLocation = 'course landing page';
   }
 
   let linkType = 'other';
@@ -296,20 +301,29 @@ export function pushLinkClick(e) {
     linkType = 'view more/less';
     destinationDomain = e.target.closest('ul').parentNode.querySelector('p').innerText;
     name = 'ExperienceEventType:web.webInteraction.linkClicks';
+  } else if (isCourseStartCTA) {
+    linkType = 'Custom';
+    destinationDomain = window.location.hostname;
+  }
+
+  const linkObj = {
+    destinationDomain,
+    linkLocation,
+    linkTitle: e.target.innerHTML || '',
+    linkType,
+  };
+
+  // Only add solution field if not a course CTA
+  if (!isCourseStartCTA) {
+    linkObj.solution =
+      document.querySelector('meta[name="solution"]') !== null
+        ? document.querySelector('meta[name="solution"]').content.split(',')[0].trim()
+        : '';
   }
 
   window.adobeDataLayer.push({
     event: 'linkClicked',
-    link: {
-      destinationDomain,
-      linkLocation,
-      linkTitle: e.target.innerHTML || '',
-      linkType,
-      solution:
-        document.querySelector('meta[name="solution"]') !== null
-          ? document.querySelector('meta[name="solution"]').content.split(',')[0].trim()
-          : '',
-    },
+    link: linkObj,
     ...UEFilters,
     web: {
       webInteraction: {
@@ -434,6 +448,73 @@ export function pushVideoMetadataOnLoad(videoId, videoUrl, thumbnailUrl) {
       id: videoId,
     },
   });
+}
+
+/**
+ * Fetches course, module, and step information for analytics events
+ * @returns {Promise<Object>} Object containing course, module, and step information
+ */
+export async function getQuizEventInfo() {
+  try {
+    const { getCurrentStepInfo, getCurrentCourseMeta } = await import('../courses/course-utils.js');
+
+    const stepInfo = await getCurrentStepInfo();
+    const courseMeta = await getCurrentCourseMeta();
+    const parts = courseMeta?.url.split('/').filter(Boolean).slice(1).join('/');
+
+    const courseTitle = courseMeta?.heading || '';
+    const courseId = parts ? `/${parts}` : '';
+    const courseSolution = courseMeta?.solution || '';
+    const courseRole = courseMeta?.role || '';
+    const courseLevel = courseMeta?.level || '';
+
+    const moduleTitle = stepInfo?.moduleHeader || '';
+    const stepTitle = document.querySelector('meta[property="og:title"]')?.content || '';
+
+    return {
+      courses: {
+        title: courseTitle,
+        id: courseId,
+        solution: courseSolution,
+        role: courseRole,
+        level: courseLevel,
+      },
+      module: {
+        title: moduleTitle,
+      },
+      steps: {
+        title: stepTitle,
+        type: 'quiz',
+      },
+    };
+  } catch (e) {
+    return {
+      courses: { title: '', id: '', solution: '', role: '', level: '' },
+      module: { title: '' },
+      steps: { title: '', type: 'quiz' },
+    };
+  }
+}
+
+/**
+ * Used to push a quiz event to the data layer
+ * @param {string} eventName - The name of the event (quizStart, quizSubmit, quizCompleted)
+ */
+export async function pushQuizEvent(eventName) {
+  if (!courses) return;
+
+  try {
+    const eventData = await getQuizEventInfo();
+
+    window.adobeDataLayer = window.adobeDataLayer || [];
+    window.adobeDataLayer.push({
+      event: eventName,
+      ...eventData,
+    });
+  } catch (e) {
+    // Log error but don't throw to prevent breaking the user experience
+    console.error(`Error pushing quiz event ${eventName}:`, e);
+  }
 }
 
 /**

@@ -242,18 +242,39 @@ const BrowseCardsDelegate = (() => {
       param = paramObj;
       const { contentType } = param;
       const cardDataService = getServiceForContentType(contentType);
-      if (cardDataService) {
-        const cardDataPromise = cardDataService();
-        cardDataPromise
-          .then((data) => {
-            resolve(data);
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      } else {
+
+      if (!cardDataService) {
         reject(new Error('Service Unavailable'));
+        return;
       }
+
+      cardDataService()
+        .then(async (cardData) => {
+          // Enrich course data with user progress if applicable
+          if (contentType?.includes(CONTENT_TYPES.COURSE.MAPPING_KEY)) {
+            try {
+              const { isSignedInUser } = await import('../auth/profile.js');
+              const isSignedIn = await isSignedInUser();
+              if (isSignedIn) {
+                const [{ getCurrentCourses }, { default: BrowseCardsCourseEnricher }] = await Promise.all([
+                  import('../courses/course-profile.js'),
+                  import('./browse-cards-course-enricher.js'),
+                ]);
+                const courses = await getCurrentCourses();
+                resolve(BrowseCardsCourseEnricher.enrichCardsWithCourseStatus(cardData, courses));
+                return;
+              }
+            } catch (error) {
+              // eslint-disable-next-line no-console
+              console.warn('Course enrichment failed:', error);
+            }
+          }
+
+          resolve(cardData);
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
 
   return {
