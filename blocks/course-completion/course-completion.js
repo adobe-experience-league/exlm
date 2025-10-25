@@ -3,9 +3,9 @@ import createCanvas from '../../scripts/utils/canvas-utils.js';
 import { canvasToPDF } from '../../scripts/utils/canvas-pdf-utils.js';
 import { launchConfetti } from '../../scripts/utils/confetti-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { getCurrentCourseMeta } from '../../scripts/courses/course-utils.js';
+import { getCurrentCourseMeta, extractCourseModuleIds } from '../../scripts/courses/course-utils.js';
 import { pushCourseCertificateEvent } from '../../scripts/analytics/lib-analytics.js';
-
+import { getCurrentCourses, getUserDisplayName } from '../../scripts/courses/course-profile.js';
 
 const CONFIG = {
   CONFETTI: {
@@ -79,20 +79,37 @@ async function fetchCertificateData() {
   const courseMeta = await getCurrentCourseMeta();
 
   // Extract completion time from course metadata
-  let completionHours = '8';
-  if (courseMeta.totalTime) {
-    const match = courseMeta.totalTime.match(/\d+/);
-    if (match) {
-      completionHours = match[0];
+  const completionHours = courseMeta.totalTime?.match(/\d+/)?.[0] || '';
+
+  // Get user name and course completion date
+  let completionDate = null;
+  let userName = null;
+
+  try {
+    // Get the current course ID
+    const { courseId } = extractCourseModuleIds(window.location.pathname);
+
+    // Get user name from profile using the utility function
+    userName = await getUserDisplayName();
+
+    // Get course completion date from awardGranted timestamp
+    const courses = await getCurrentCourses();
+    if (courses && courseId && courses[courseId] && courses[courseId].awardGranted) {
+      // Convert timestamp to readable date
+      const awardDate = new Date(courses[courseId].awardGranted);
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      completionDate = awardDate.toLocaleDateString('en-US', options);
     }
+  } catch (e) {
+    console.error('Error getting user profile or completion date:', e);
   }
 
   // Return certificate data
   return {
     name: courseMeta.heading,
     completionTimeInHrs: completionHours,
-    userName: 'John Doe',
-    completionDate: 'July 30, 2025',
+    userName,
+    completionDate,
   };
 }
 
@@ -235,7 +252,7 @@ async function createCertificateContainer(courseData) {
   // Create certificate text using API data with scale adjustment and placeholders
   const certificateText = [
     {
-      content: wrapText(courseData.name, 20), // Simple character-based wrapping
+      content: wrapText(courseData.name, 30), // Simple character-based wrapping
       position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 115 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${22 * CONFIG.CERTIFICATE.SCALE}px`, weight: 'bold' },
       color: '#2C2C2C',
@@ -249,14 +266,14 @@ async function createCertificateContainer(courseData) {
       align: 'center',
     },
     {
-      content: courseData.userName || 'John Doe',
+      content: courseData.userName || '',
       position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 195 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${16 * CONFIG.CERTIFICATE.SCALE}px`, weight: 'bold' },
       color: '#2C2C2C',
       align: 'center',
     },
     {
-      content: `ISSUED ${courseData.completionDate || 'July 30, 2025'}`,
+      content: courseData.completionDate ? `ISSUED ${courseData.completionDate}` : '',
       position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 220 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${8.5 * CONFIG.CERTIFICATE.SCALE}px` },
       color: '#686868',

@@ -252,6 +252,27 @@ async function completeCourse(url = window.location.pathname) {
   }
 }
 
+/**
+ * Get user's display name from profile
+ * @returns {Promise<string|null>} User's display name or null if not available
+ */
+async function getUserDisplayName() {
+  try {
+    const profile = await defaultProfileClient.getMergedProfile();
+
+    // Return first available name source in priority order
+    return (
+      profile?.name ||
+      (profile?.firstName && profile?.lastName ? `${profile.firstName} ${profile.lastName}` : null) ||
+      (window.adobeIMS?.isSignedInUser() && window.adobeIMS.getProfile()?.name) ||
+      null
+    );
+  } catch (e) {
+    console.error('Error getting user display name:', e);
+    return null;
+  }
+}
+
 export {
   COURSE_STATUS,
   MODULE_STATUS,
@@ -262,4 +283,5 @@ export {
   startModule,
   finishModule,
   completeCourse,
+  getUserDisplayName,
 };
