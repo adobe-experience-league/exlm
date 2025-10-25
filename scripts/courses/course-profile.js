@@ -281,6 +281,9 @@ async function getUserDisplayName() {
     console.error('Error getting user display name:', e);
     return null;
   }
+}
+
+/**
  * Checks if a course is completed
  * @param {string} url - The URL path to extract courseId from. If not provided, uses current page URL
  * @returns {Promise<boolean>} True if course is completed, false otherwise
