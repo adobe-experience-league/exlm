@@ -6,6 +6,8 @@ const browseCardDataModel = {
   product: [],
   title: '',
   description: '',
+  meta: {},
+  // TODO: Cleanup all the meta properties and add it under meta object dynamically based on the contentType
   tags: [],
   event: {
     time: '',

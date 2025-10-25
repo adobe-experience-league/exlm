@@ -4,6 +4,8 @@ import { canvasToPDF } from '../../scripts/utils/canvas-pdf-utils.js';
 import { launchConfetti } from '../../scripts/utils/confetti-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { getCurrentCourseMeta } from '../../scripts/courses/course-utils.js';
+import { pushCourseCertificateEvent } from '../../scripts/analytics/lib-analytics.js';
+
 
 const CONFIG = {
   CONFETTI: {
@@ -154,6 +156,16 @@ async function downloadCertificate(canvas, courseData, downloadButton) {
     link.href = url;
     link.download = filename;
 
+    pushCourseCertificateEvent({
+      action: 'download',
+      title: courseName,
+      solution: courseData.solution,
+      role: courseData.role,
+      linkTitle: downloadButton.textContent?.trim(),
+      destinationDomain: window.location.href,
+      id: courseData.id,
+    });
+
     // Trigger download
     document.body.appendChild(link);
     link.click();
@@ -176,9 +188,20 @@ async function downloadCertificate(canvas, courseData, downloadButton) {
 /**
  * Shares the course completion to LinkedIn
  */
-function shareToLinkedIn() {
+function shareToLinkedIn(courseData, linkedInShareBtn) {
   const shareUrl = getCourseLandingPageUrl();
   if (!shareUrl) return;
+
+  pushCourseCertificateEvent({
+    action: 'share',
+    title: courseData.name,
+    solution: courseData.solution,
+    role: courseData.role,
+    linkTitle: linkedInShareBtn.textContent?.trim(),
+    destinationDomain: window.location.href,
+    id: courseData.id,
+  });
+
   window.open(
     `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
     '_blank',
@@ -300,7 +323,7 @@ function createContent(children, certificateCanvas, courseData) {
   // Add LinkedIn share functionality
   const linkedInShareBtn = container.querySelector('.linkedin-share');
   if (linkedInShareBtn) {
-    linkedInShareBtn.addEventListener('click', () => shareToLinkedIn());
+    linkedInShareBtn.addEventListener('click', () => shareToLinkedIn(courseData, linkedInShareBtn));
   }
 
   // Add PDF download functionality to download certificate button
