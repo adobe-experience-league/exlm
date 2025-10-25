@@ -509,10 +509,8 @@ export async function getEventInfo(stepType = 'content', existingStepInfo = null
   }
 }
 
-/**
- * Alias for getEventInfo with quiz step type for backward compatibility
- * @returns {Promise<Object>} Object containing course, module, and step information
- */
+// @returns {Promise<Object>} Object containing course, module, and step information
+
 export async function getQuizEventInfo() {
   return getEventInfo('quiz');
 }
@@ -636,10 +634,8 @@ export async function pushStepsStartEvent(stepInfo) {
   }
 }
 
-/**
- * Alias for pushStepsStartEvent for backward compatibility
- * @param {Object} stepInfo - The step information object from getCurrentStepInfo()
- */
+// @param {Object} stepInfo - The step information object from getCurrentStepInfo()
+
 export const pushStepStartEvent = pushStepsStartEvent;
 
 /**
