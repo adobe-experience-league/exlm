@@ -636,8 +636,6 @@ export async function pushStepsStartEvent(stepInfo) {
 
 // @param {Object} stepInfo - The step information object from getCurrentStepInfo()
 
-export const pushStepStartEvent = pushStepsStartEvent;
-
 /**
  * Pushes a course certificate event to the Adobe data layer.
  * @param {Object} trackingData - Tracking data
