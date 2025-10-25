@@ -270,14 +270,14 @@ async function getUserDisplayName() {
   try {
     const profile = await defaultProfileClient.getMergedProfile();
 
-    // Return first available name source in priority order
     return (
       profile?.name ||
-      (profile?.firstName && profile?.lastName ? `${profile.firstName} ${profile.lastName}` : null) ||
-      (window.adobeIMS?.isSignedInUser() && window.adobeIMS.getProfile()?.name) ||
+      (window.adobeIMS?.isSignedInUser() &&
+        (window.adobeIMS.getProfile()?.displayName || window.adobeIMS.getProfile()?.name)) ||
       null
     );
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error('Error getting user display name:', e);
     return null;
   }

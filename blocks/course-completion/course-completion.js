@@ -101,6 +101,7 @@ async function fetchCertificateData() {
       completionDate = awardDate.toLocaleDateString('en-US', options);
     }
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error('Error getting user profile or completion date:', e);
   }
 
@@ -407,6 +408,7 @@ export default async function decorate(block) {
     });
   } catch (error) {
     // Show error message
+    // eslint-disable-next-line no-console
     console.error('Error in decorate function:', error);
     const errorMessage = createErrorMessage();
     block.textContent = '';
