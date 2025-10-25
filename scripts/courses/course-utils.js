@@ -487,7 +487,7 @@ export async function getNextModuleFirstStep(url = window.location.pathname) {
  */
 export async function getCourseCompletionPageUrl(url = window.location.pathname) {
   const courseInfo = await getCurrentCourseMeta(url);
-  if (!courseInfo || !courseInfo.courseCompletionPage) {
+  if (!courseInfo || !courseInfo?.courseCompletionPage) {
     return null;
   }
   return courseInfo.courseCompletionPage;
