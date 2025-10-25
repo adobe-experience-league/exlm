@@ -4,6 +4,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { MODULE_STATUS, startModule, getModuleStatus } from '../../scripts/courses/course-profile.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
+import { pushStepsStartEvent } from '../../scripts/analytics/lib-analytics.js';
 
 export default async function decorate(block) {
   // Check if user is signed in, if not trigger sign in
@@ -33,6 +34,9 @@ export default async function decorate(block) {
     console.warn('No step info available for module-info');
     return;
   }
+
+  // Push stepsStart event to adobeDataLayer for non-quiz steps
+  await pushStepsStartEvent(stepInfo);
 
   // If module is disabled, redirect to course page
   // Otherwise, update module status in profile
