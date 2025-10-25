@@ -146,7 +146,7 @@ function shuffleArray(array) {
 }
 
 // Fetch page content and insert it into the current page
-const fetchPageContent = async (url, block, isPassed = false, placeholders = {}) => {
+const fetchPageContent = async (url, block) => {
   try {
     // Fetch the content
     const response = await fetch(`${url}.plain.html`);
@@ -193,25 +193,6 @@ const fetchPageContent = async (url, block, isPassed = false, placeholders = {})
 
       // Scroll to the top of the page to show the results
       window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      // Update navigation buttons
-      const backButton = document.querySelector('.module-nav-button.module-nav-back.secondary');
-      const nextButton = document.querySelector('.module-nav-button.module-nav-submit.disabled');
-
-      if (backButton) {
-        backButton.textContent = placeholders?.backToCourseOverview || 'Back to Course Overview';
-      }
-
-      if (nextButton) {
-        nextButton.textContent = placeholders?.nextBtnLabel || 'Next';
-
-        // Enable or disable the Next button based on quiz result
-        if (isPassed) {
-          nextButton.classList.remove('disabled');
-        } else {
-          nextButton.classList.add('disabled');
-        }
-      }
     }
   } catch (err) {
     /* eslint-disable-next-line no-console */
@@ -258,7 +239,7 @@ export default async function decorate(block) {
     block.dataset.totalQuestions = totalQuestions.toString();
 
     if (passPageUrl) {
-      await fetchPageContent(passPageUrl, block, true, placeholders);
+      await fetchPageContent(passPageUrl, block);
       return; // Stop further quiz rendering
     }
   }
@@ -338,7 +319,7 @@ export default async function decorate(block) {
       block.dataset.correctAnswers = quizResults?.correctAnswersCount;
       block.dataset.totalQuestions = quizResults?.totalQuestions;
 
-      await fetchPageContent(redirectUrl, block, quizResults.isPassed, placeholders);
+      await fetchPageContent(redirectUrl, block);
     }
 
     if (quizResults?.isPassed) {
