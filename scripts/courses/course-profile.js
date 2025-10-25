@@ -194,7 +194,7 @@ async function startModule(url = window.location.pathname) {
     };
 
     const isFirstModule =
-      courseMeta.modules && courseMeta.modules.length > 0 && courseMeta.modules[0].includes(moduleId);
+      courseMeta.modules && courseMeta.modules.length > 0 && courseMeta.modules?.[0]?.includes(moduleId);
 
     // push course start event
     if (isFirstModule) {
