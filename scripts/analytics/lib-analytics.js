@@ -452,13 +452,15 @@ export function pushVideoMetadataOnLoad(videoId, videoUrl, thumbnailUrl) {
 
 /**
  * Fetches course, module, and step information for analytics events
+ * @param {string} stepType - The type of step ('quiz' or 'content')
+ * @param {Object} [existingStepInfo] - Optional existing step info object
  * @returns {Promise<Object>} Object containing course, module, and step information
  */
-export async function getQuizEventInfo() {
+export async function getEventInfo(stepType = 'content', existingStepInfo = null) {
   try {
     const { getCurrentStepInfo, getCurrentCourseMeta } = await import('../courses/course-utils.js');
 
-    const stepInfo = await getCurrentStepInfo();
+    const stepInfo = existingStepInfo || (await getCurrentStepInfo());
     const courseMeta = await getCurrentCourseMeta();
     const parts = courseMeta?.url.split('/').filter(Boolean).slice(1).join('/');
 
@@ -469,7 +471,17 @@ export async function getQuizEventInfo() {
     const courseLevel = courseMeta?.level || '';
 
     const moduleTitle = stepInfo?.moduleHeader || '';
-    const stepTitle = document.querySelector('meta[property="og:title"]')?.content || '';
+
+    // Get step title either from meta tag or from step info
+    let stepTitle = document.querySelector('meta[property="og:title"]')?.content || '';
+
+    // If we have step info and no title from meta tag, try to get it from step info
+    if (stepInfo && !stepTitle && stepInfo.moduleSteps) {
+      const currentStep = stepInfo.moduleSteps.find((step) => step.url === window.location.pathname);
+      if (currentStep) {
+        stepTitle = currentStep.name;
+      }
+    }
 
     return {
       courses: {
@@ -484,16 +496,25 @@ export async function getQuizEventInfo() {
       },
       steps: {
         title: stepTitle,
-        type: 'quiz',
+        type: stepType,
       },
     };
   } catch (e) {
+    console.error('Error getting event info:', e);
     return {
       courses: { title: '', id: '', solution: '', role: '', level: '' },
       module: { title: '' },
-      steps: { title: '', type: 'quiz' },
+      steps: { title: '', type: stepType },
     };
   }
+}
+
+/**
+ * Alias for getEventInfo with quiz step type for backward compatibility
+ * @returns {Promise<Object>} Object containing course, module, and step information
+ */
+export async function getQuizEventInfo() {
+  return getEventInfo('quiz');
 }
 
 /**
@@ -504,7 +525,7 @@ export async function pushQuizEvent(eventName) {
   if (!courses) return;
 
   try {
-    const eventData = await getQuizEventInfo();
+    const eventData = await getEventInfo('quiz');
 
     window.adobeDataLayer = window.adobeDataLayer || [];
     window.adobeDataLayer.push({
@@ -584,6 +605,42 @@ export function pushGuideAutoPlayEvent(guide, audioOn) {
     },
   });
 }
+
+/**
+ * Pushes the stepsStart event to the adobeDataLayer when a user begins a step
+ * This event should not be triggered for quiz steps as they already have quizstart event
+ * @param {Object} stepInfo - The step information object from getCurrentStepInfo()
+ */
+export async function pushStepsStartEvent(stepInfo) {
+  if (!courses || !stepInfo) return;
+
+  // Check if the current step is a quiz step
+  const isQuizStep = stepInfo.isQuiz || document.querySelector('.quiz') !== null;
+
+  // Don't trigger the event for quiz steps
+  if (isQuizStep) {
+    return;
+  }
+
+  try {
+    const eventData = await getEventInfo('content', stepInfo);
+
+    window.adobeDataLayer = window.adobeDataLayer || [];
+    window.adobeDataLayer.push({
+      event: 'stepsStart',
+      ...eventData,
+    });
+  } catch (e) {
+    // Log error but don't throw to prevent breaking the user experience
+    console.error('Error pushing stepsStart event:', e);
+  }
+}
+
+/**
+ * Alias for pushStepsStartEvent for backward compatibility
+ * @param {Object} stepInfo - The step information object from getCurrentStepInfo()
+ */
+export const pushStepStartEvent = pushStepsStartEvent;
 
 /**
  * Pushes a course certificate event to the Adobe data layer.
