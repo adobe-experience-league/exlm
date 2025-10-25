@@ -4,6 +4,11 @@
 
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { extractCourseModuleIds, getCurrentCourseMeta } from './course-utils.js';
+import {
+  pushModuleStartEvent,
+  pushModuleCompletionEvent,
+  pushCourseCompletionEvent,
+} from '../analytics/lib-analytics.js';
 
 const COURSE_STATUS = {
   NOT_STARTED: 'not-started',
@@ -207,6 +212,7 @@ async function startModule(url = window.location.pathname) {
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile('courses', updatedCourses, true);
+    await pushModuleStartEvent();
   }
 }
 
@@ -231,6 +237,7 @@ async function finishModule(url = window.location.pathname) {
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile('courses', updatedCourses, true);
+    await pushModuleCompletionEvent();
   }
 }
 
@@ -259,6 +266,8 @@ async function completeCourse(url = window.location.pathname) {
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile('courses', updatedCourses, true);
+    await pushModuleCompletionEvent();
+    await pushCourseCompletionEvent(courseId, updatedCourses);
   }
 }
 
