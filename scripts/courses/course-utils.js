@@ -479,6 +479,82 @@ export async function getNextModuleFirstStep(url = window.location.pathname) {
   return null;
 }
 
+/*
+ * Fetches and caches the course index for a given language prefix
+ * Uses window-level caching to avoid multiple requests for the same data
+ * @param {string} prefix - Language prefix for the course index (default: 'en')
+ * @returns {Promise<Array>} Array of course index data
+ */
+export async function fetchCourseIndex(prefix = 'en') {
+  window.courseIndex = window.courseIndex || {};
+  const loaded = window.courseIndex[`${prefix}-loaded`];
+  if (!loaded) {
+    window.courseIndex[`${prefix}-loaded`] = new Promise((resolve, reject) => {
+      const url = `/${prefix}/course-index.json`;
+      fetch(url)
+        .then((resp) => {
+          if (resp.ok) {
+            return resp.json();
+          }
+          window.courseIndex[prefix] = [];
+          return {};
+        })
+        .then((json) => {
+          window.courseIndex[prefix] = json?.data ?? [];
+          resolve(json?.data ?? []);
+        })
+        .catch((error) => {
+          window.courseIndex[prefix] = [];
+          reject(error);
+        });
+    });
+  }
+  await window.courseIndex[`${prefix}-loaded`];
+  return window.courseIndex[prefix];
+}
+
+export function transformCourseMetaToCardModel({ course, placeholders, status }) {
+  const baseUrl = `${window.location.protocol}//${window.location.host}`;
+
+  return {
+    id: course.path.split('/').pop(),
+    contentType: course.coveoContentType || 'Course',
+    badgeTitle: course.coveoContentType || 'Course',
+    thumbnail: '',
+    product: [course.coveoSolution],
+    title: course.title,
+    description: '',
+    tags: course.theme.split(',').map((theme) => ({
+      icon: '',
+      text: theme.trim(),
+    })),
+    event: {
+      time: '',
+    },
+    contributor: {
+      thumbnail: '',
+      name: '',
+      level: course.coveoLevel,
+      date: '',
+    },
+    authorInfo: {
+      name: '',
+      type: '',
+    },
+    copyLink: baseUrl + course.path,
+    bookmarkLink: '',
+    viewLink: baseUrl + course.path,
+    viewLinkText: placeholders?.browseCardCourseViewLabel || 'View course',
+    inProgressText: '',
+    inProgressStatus: '',
+    meta: {
+      courseInfo: {
+        courseStatus: status,
+      },
+    },
+  };
+}
+
 /**
  * Gets the URL of the course completion page.
  *
