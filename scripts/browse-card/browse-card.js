@@ -521,6 +521,9 @@ export async function buildCard(container, element, model) {
       </div>`);
       decorateIcons(bannerElement);
       cardFigure.appendChild(bannerElement);
+      const hiddenBanner = createTag('h3', { class: 'browse-card-banner visually-hidden' });
+      hiddenBanner.innerText = badgeTitle || '';
+      cardFigure.appendChild(hiddenBanner);
     } else {
       const bannerElement = createTag('h3', { class: 'browse-card-banner' });
       bannerElement.innerText = badgeTitle || '';
