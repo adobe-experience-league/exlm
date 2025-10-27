@@ -1,7 +1,21 @@
-import { getCurrentStepInfo, isLastStep, getNextModuleFirstStep } from '../../scripts/courses/course-utils.js';
+import {
+  getCurrentStepInfo,
+  isLastStep,
+  getNextModuleFirstStep,
+  isLastModuleOfCourse,
+  getCourseCompletionPageUrl,
+} from '../../scripts/courses/course-utils.js';
 import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
-import { finishModule } from '../../scripts/courses/course-profile.js';
+import { finishModule, completeCourse } from '../../scripts/courses/course-profile.js';
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
 
 async function handleQuizNextButton(e) {
   e.preventDefault();
@@ -11,45 +25,56 @@ async function handleQuizNextButton(e) {
 
   // Call the quiz submission handler if it exists
   const handler = submitQuizHandler();
-  if (handler) {
-    const success = await handler();
+  if (!handler) return;
+  const isQuizPassed = await handler();
 
-    if (success) {
-      // Check if this is the last step in the module
-      if (await isLastStep()) {
-        // Get the first step of the next module
-        await finishModule();
-        const nextModuleFirstStepUrl = await getNextModuleFirstStep();
-        if (nextModuleFirstStepUrl) {
-          e.target.href = nextModuleFirstStepUrl;
-        }
-      }
-    } else if (!success) {
-      // re-enable submit button after answering all questions
-      const inputs = document.querySelectorAll('.question input[type="checkbox"], .question input[type="radio"]');
-      inputs.forEach((input) => {
-        input.addEventListener(
-          'change',
-          () => {
-            e.target.classList.remove('disabled');
-          },
-          { once: true },
-        );
-      });
-    }
+  const backButton = document.querySelector('.module-nav-button.module-nav-back');
+  const nextButton = document.querySelector('.module-nav-button.module-nav-submit');
+
+  if (backButton) {
+    backButton.textContent = placeholders?.backToCourseOverview || 'Back to Course Overview';
+  }
+
+  if (nextButton) {
+    nextButton.textContent = placeholders?.nextBtnLabel || 'Next';
+  }
+
+  if (!isQuizPassed) {
+    // re-enable submit button after answering all questions
+    const inputs = document.querySelectorAll('.question input[type="checkbox"], .question input[type="radio"]');
+    inputs.forEach((input) => {
+      input.addEventListener(
+        'change',
+        () => {
+          e.target.classList.remove('disabled');
+        },
+        { once: true },
+      );
+    });
+    return;
+  }
+
+  // Check if this is the last step in the module
+  if (!(await isLastStep())) return;
+
+  // Check if this is the last module of the course and complete the course
+  if (await isLastModuleOfCourse()) {
+    await completeCourse();
+    const url = await getCourseCompletionPageUrl();
+    if (url) e.target.href = url;
+  } else {
+    await finishModule();
+    const url = await getNextModuleFirstStep();
+    if (url) e.target.href = url;
+  }
+
+  if (nextButton) {
+    nextButton.classList.remove('disabled');
   }
 }
+
 export default async function decorate(block) {
-  let placeholders = {};
-  try {
-    placeholders = await fetchLanguagePlaceholders();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
-  }
-
   const stepInfo = await getCurrentStepInfo(placeholders);
-
   if (!stepInfo) return;
 
   // Clear block and add class
@@ -122,11 +147,21 @@ export default async function decorate(block) {
 
   // Check if this is the last step - maintaining the original condition exactly
   if ((!isQuiz || skipQuiz) && (await isLastStep())) {
-    await finishModule();
-    const nextModuleFirstStepUrl = await getNextModuleFirstStep();
-    if (nextModuleFirstStepUrl) {
-      nextLink.href = nextModuleFirstStepUrl;
+    nextLink.classList.add('disabled');
+    if (await isLastModuleOfCourse()) {
+      await completeCourse();
+      const courseCompletionPageUrl = await getCourseCompletionPageUrl();
+      if (courseCompletionPageUrl) {
+        nextLink.href = courseCompletionPageUrl;
+      }
+    } else {
+      await finishModule();
+      const nextModuleFirstStepUrl = await getNextModuleFirstStep();
+      if (nextModuleFirstStepUrl) {
+        nextLink.href = nextModuleFirstStepUrl;
+      }
     }
+    nextLink.classList.remove('disabled');
   }
 
   // Add links to container

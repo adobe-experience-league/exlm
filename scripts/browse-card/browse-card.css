@@ -142,7 +142,7 @@
   );
 }
 
-.browse-card .browse-card-tag-text h4 {
+.browse-card .browse-card-tag-text .browse-card-solution-text {
   text-transform: uppercase;
   margin: 0;
   font-size: var(--spectrum-font-size-75);
@@ -376,7 +376,7 @@
 }
 
 .browse-card .browse-card-footer {
-  padding: 0 16px 24px;
+  padding: 0 16px 24px 10px;
   background-color: var(--background-color);
   display: flex;
   flex-grow: 0;
@@ -616,6 +616,7 @@
     /* light purple */ #d6e9ff 100% /* light blue */
   );
   overflow: visible;
+  z-index: 1;
 }
 
 .browse-card.course-card .browse-card-icon {
@@ -638,6 +639,45 @@
 
 .browse-card.course-card .browse-card-content {
   padding-top: 56px;
+  position: relative;
+}
+
+.browse-card.course-card .browse-card-meta-info {
+  display: block;
+  position: absolute;
+  bottom: 10px;
+}
+
+.browse-card.course-card .browse-card-meta-info .status-badge {
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+  display: inline-block;
+  background-color: transparent;
+  border-radius: 50%;
+  vertical-align: -1px;
+}
+
+.browse-card.course-card .browse-card-meta-info .status-badge.status-not-started {
+  background-color: var(--non-spectrum-medium-gray);
+  border: none;
+}
+
+.browse-card.course-card .browse-card-meta-info .status-badge.status-in-progress {
+  background-color: var(--non-spectrum-navy-blue);
+  border: none;
+}
+
+.browse-card.course-card .browse-card-meta-info .status-badge.status-completed {
+  background-color: var(--non-spectrum-pass-green);
+  border: none;
+}
+
+.browse-card.course-card .browse-card-meta-info .status-text {
+  font-size: var(--spectrum-font-size-100);
+  line-height: var(--spectrum-line-height-s);
+  color: var(--non-spectrum-dark-gray);
+  font-weight: var(--font-weight-bold);
 }
 
 /* Event Card Variant */
