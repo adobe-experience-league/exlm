@@ -540,7 +540,9 @@ export async function buildCard(container, element, model) {
     const tagElement = createTag(
       'div',
       { class: 'browse-card-tag-text' },
-      `<h4>${isMultiSolution ? placeholders.multiSolutionText || 'multisolution' : tagText}</h4>`,
+      `<div class="browse-card-solution-text">${
+        isMultiSolution ? placeholders.multiSolutionText || 'multisolution' : tagText
+      }</div>`,
     );
 
     if (isMultiSolution) {
