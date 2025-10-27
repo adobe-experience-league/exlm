@@ -286,6 +286,21 @@ async function completeCourse(url = window.location.pathname) {
 }
 
 /**
+ * Get user's display name from profile
+ * @returns {Promise<string|null>} User's display name or null if not available
+ */
+async function getUserDisplayName() {
+  try {
+    const profile = await defaultProfileClient.getMergedProfile();
+    return profile?.displayName || null;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error getting user display name:', e);
+    return null;
+  }
+}
+
+/**
  * Checks if a course is completed
  * @param {string} url - The URL path to extract courseId from. If not provided, uses current page URL
  * @returns {Promise<boolean>} True if course is completed, false otherwise
@@ -306,5 +321,6 @@ export {
   startModule,
   finishModule,
   completeCourse,
+  getUserDisplayName,
   isCourseCompleted,
 };
