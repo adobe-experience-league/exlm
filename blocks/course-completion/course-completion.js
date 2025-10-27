@@ -35,6 +35,18 @@ const CONFIG = {
 let placeholders = {};
 
 /**
+ * Determines the optimal text wrapping configuration based on text length
+ * @param {string} text - Text to analyze
+ * @returns {Object} Configuration with charLength and fontSize
+ */
+function getTextWrapConfig(text) {
+  if (text.length <= 40) return { charLength: 20, fontSize: 22 };
+  if (text.length <= 60) return { charLength: 30, fontSize: 22 };
+  if (text.length <= 70) return { charLength: 35, fontSize: 20 };
+  return { charLength: 40, fontSize: 18 };
+}
+
+/**
  * Simple text wrapping - breaks long text into multiple lines
  * @param {string} text - Text to wrap
  * @param {number} maxLength - Maximum characters per line
@@ -251,11 +263,14 @@ async function createCertificateContainer(courseData) {
   container.classList.add('course-completion-certificate-container');
 
   // Create certificate text using API data with scale adjustment and placeholders
+  const courseName = courseData.name || 'Adobe Marketo Engage Overview';
+  const wrapConfig = getTextWrapConfig(courseName);
+
   const certificateText = [
     {
-      content: wrapText(courseData.name, 30), // Simple character-based wrapping
+      content: wrapText(courseData.name, wrapConfig.charLength), // Dynamic character-based wrapping
       position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 115 * CONFIG.CERTIFICATE.SCALE },
-      font: { size: `${22 * CONFIG.CERTIFICATE.SCALE}px`, weight: 'bold' },
+      font: { size: `${wrapConfig.fontSize * CONFIG.CERTIFICATE.SCALE}px`, weight: 'bold' },
       color: '#2C2C2C',
       align: 'center',
     },
@@ -274,7 +289,9 @@ async function createCertificateContainer(courseData) {
       align: 'center',
     },
     {
-      content: courseData.completionDate ? `ISSUED ${courseData.completionDate}` : '',
+      content: courseData.completionDate
+        ? `${placeholders?.courseIssuedDateText || 'ISSUED'} ${courseData.completionDate}`
+        : '',
       position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 220 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${8.5 * CONFIG.CERTIFICATE.SCALE}px` },
       color: '#686868',
