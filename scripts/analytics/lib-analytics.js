@@ -76,7 +76,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
     const parts = courseMeta?.url.split('/').filter(Boolean).slice(1).join('/');
 
     const courseTitle = courseMeta?.heading || '';
-    const courseId = parts ? `/${parts}` : '';
+    const courseId = parts ? `${parts}` : '';
     const courseSolution = courseMeta?.solution || '';
     const courseRole = courseMeta?.role || '';
     const courseLevel = courseMeta?.level || '';
@@ -96,7 +96,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       } else {
         // For other steps, find the previous step name
         const prevStepIndex = stepInfo.currentStep - 2; // 0-based index
-        if (prevStepIndex >= 0 && stepInfo.moduleSteps && stepInfo.moduleSteps[prevStepIndex]) {
+        if (prevStepIndex >= 0 && stepInfo.moduleSteps?.[prevStepIndex]) {
           const prevStepName = stepInfo.moduleSteps[prevStepIndex].name;
           coursePreviousPageName += `:${courseSolution}:${courseTitle}:${moduleTitle}:${prevStepName}`;
         }
@@ -154,6 +154,31 @@ export async function pushPageDataLayer(language, searchTrackingData) {
         orgs: userData.orgs || [],
         userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
       };
+
+      if (userData.courses?.[courseObj?.id]) {
+        const courseInfo = userData.courses[courseObj.id];
+        if (courseInfo?.modules && typeof courseInfo?.modules === 'object') {
+          let startTime = null;
+          Object.keys(courseInfo.modules).forEach((modId) => {
+            const mod = courseInfo.modules[modId];
+            if (mod?.started) {
+              if (!startTime || new Date(mod.started) < new Date(startTime)) {
+                startTime = mod.started;
+              }
+            }
+          });
+          if (startTime) {
+            courseObj.startTime = startTime;
+          }
+
+          if (courseInfo?.awardGranted) courseObj.finishTime = courseInfo.awardGranted;
+
+          if (courseObj?.startTime && courseObj?.finishTime) {
+            const durationMs = new Date(courseObj.finishTime) - new Date(courseObj.startTime);
+            courseObj.duration = Math.round(durationMs / 60000); // duration in minutes
+          }
+        }
+      }
     }
   } catch (e) {
     // eslint-disable-next-line no-console
@@ -675,4 +700,112 @@ export function pushCourseCertificateEvent(trackingData) {
   };
 
   window.adobeDataLayer.push(dataLayerEntry);
+}
+
+export async function pushCourseCompletionEvent(courseId, currentCourses) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const { getCurrentCourseMeta } = await import('../courses/course-utils.js');
+  const courseMeta = await getCurrentCourseMeta();
+
+  const courseInfo = currentCourses[courseId];
+  let startTime = null;
+  const finishTime = courseInfo?.awardGranted || '';
+  let courseDuration = null;
+
+  if (courseInfo?.modules && typeof courseInfo?.modules === 'object') {
+    Object.keys(courseInfo.modules).forEach((modId) => {
+      const mod = courseInfo.modules[modId];
+      if (mod?.started) {
+        if (!startTime || new Date(mod.started) < new Date(startTime)) {
+          startTime = mod.started;
+        }
+      }
+    });
+
+    if (startTime && finishTime) {
+      const durationMs = new Date(finishTime) - new Date(startTime);
+      courseDuration = Math.round(durationMs / 60000); // duration in minutes
+    }
+  }
+
+  window.adobeDataLayer.push({
+    event: 'coursesCompleted',
+    courses: {
+      title: courseMeta?.heading || '',
+      id: courseId,
+      solution: courseMeta?.solution || '',
+      role: courseMeta?.role || '',
+      finishTime,
+      duration: courseDuration,
+    },
+  });
+}
+
+export async function pushModuleStartEvent(courseId) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const { getCurrentCourseMeta, getCurrentStepInfo } = await import('../courses/course-utils.js');
+
+  const courseMeta = await getCurrentCourseMeta();
+  const stepInfo = await getCurrentStepInfo();
+
+  window.adobeDataLayer.push({
+    event: 'moduleStart',
+    module: {
+      title: stepInfo?.moduleHeader || '',
+    },
+    courses: {
+      title: courseMeta?.heading || '',
+      id: courseId || '',
+      solution: courseMeta?.solution || '',
+      role: courseMeta?.role || '',
+    },
+  });
+}
+
+export async function pushModuleCompletionEvent(courseId) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const { getCurrentCourseMeta, getCurrentStepInfo } = await import('../courses/course-utils.js');
+
+  const courseMeta = await getCurrentCourseMeta();
+  const stepInfo = await getCurrentStepInfo();
+
+  window.adobeDataLayer.push({
+    event: 'moduleCompleted',
+    module: {
+      title: stepInfo?.moduleHeader || '',
+    },
+    courses: {
+      title: courseMeta?.heading || '',
+      id: courseId || '',
+      solution: courseMeta?.solution || '',
+      role: courseMeta?.role || '',
+    },
+  });
+}
+
+/**
+ * Pushes a course start event to the Adobe data layer.
+ * @param {Object} courseData - Course data
+ * @param {string} courseData.title - Title of the course
+ * @param {string} courseData.id - ID of the course
+ * @param {string} courseData.solution - Solution related to the course
+ * @param {string} courseData.role - Role associated with the course
+ * @param {string} courseData.startTime - Start time of the course
+ */
+export function pushCourseStartEvent(courseData) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'coursesStart',
+    courses: {
+      title: courseData.title,
+      id: courseData.id,
+      solution: courseData.solution,
+      role: courseData.role,
+      startTime: courseData.startTime,
+    },
+  });
 }
