@@ -31,15 +31,8 @@ async function handleQuizNextButton(e) {
   const backButton = document.querySelector('.module-nav-button.module-nav-back');
   const nextButton = document.querySelector('.module-nav-button.module-nav-submit');
 
-  if (backButton) {
-    backButton.textContent = placeholders?.backToCourseOverview || 'Back to Course Overview';
-  }
-
-  if (nextButton) {
-    nextButton.textContent = placeholders?.nextBtnLabel || 'Next';
-  }
-
   if (!isQuizPassed) {
+    // Don't change button text if quiz isn't passed
     // re-enable submit button after answering all questions
     const inputs = document.querySelectorAll('.question input[type="checkbox"], .question input[type="radio"]');
     inputs.forEach((input) => {
@@ -52,6 +45,18 @@ async function handleQuizNextButton(e) {
       );
     });
     return;
+  }
+
+  if (backButton) {
+    backButton.textContent = placeholders?.backToCourseOverview || 'Back to Course Overview';
+  }
+
+  if (nextButton) {
+    nextButton.textContent = placeholders?.nextBtnLabel || 'Next';
+  }
+
+  if (e.target.quizHandler) {
+    e.target.removeEventListener('click', e.target.quizHandler);
   }
 
   // Check if this is the last step in the module
@@ -134,7 +139,8 @@ export default async function decorate(block) {
     nextLink.classList.add('module-nav-submit');
     nextLink.textContent = placeholders['course-submit-answers'] || 'Submit Answers';
     nextLink.href = stepInfo.nextStep || '#';
-    nextLink.addEventListener('click', handleQuizNextButton, { once: true });
+    nextLink.quizHandler = handleQuizNextButton;
+    nextLink.addEventListener('click', nextLink.quizHandler);
   } else {
     // Regular Next link (for normal steps or skipped quizzes)
     setupNextButton();
