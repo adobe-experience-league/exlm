@@ -540,7 +540,9 @@ export async function buildCard(container, element, model) {
     const tagElement = createTag(
       'div',
       { class: 'browse-card-tag-text' },
-      `<h4>${isMultiSolution ? placeholders.multiSolutionText || 'multisolution' : tagText}</h4>`,
+      `<div class="browse-card-solution-text">${
+        isMultiSolution ? placeholders.multiSolutionText || 'multisolution' : tagText
+      }</div>`,
     );
 
     if (isMultiSolution) {
@@ -565,7 +567,7 @@ export async function buildCard(container, element, model) {
   }
 
   if (title) {
-    const titleElement = createTag('h5', { class: 'browse-card-title-text' });
+    const titleElement = createTag('h3', { class: 'browse-card-title-text' });
     titleElement.innerHTML = title;
     cardContent.appendChild(titleElement);
   }
