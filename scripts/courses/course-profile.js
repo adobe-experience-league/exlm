@@ -8,6 +8,7 @@ import {
   pushModuleStartEvent,
   pushModuleCompletionEvent,
   pushCourseCompletionEvent,
+  pushCourseStartEvent,
 } from '../analytics/lib-analytics.js';
 
 const COURSE_STATUS = {
@@ -196,6 +197,19 @@ async function startModule(url = window.location.pathname) {
       description: courseMeta.description,
       modules: {},
     };
+
+    const isFirstModule = courseMeta.modules?.[0]?.includes(moduleId);
+
+    // push course start event
+    if (isFirstModule) {
+      pushCourseStartEvent({
+        title: courseMeta.heading,
+        id: courseId,
+        solution: courseMeta.solution,
+        role: courseMeta.role,
+        startTime,
+      });
+    }
   }
 
   // Initialize module if it doesn't exist

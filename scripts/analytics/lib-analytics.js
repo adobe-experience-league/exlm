@@ -785,3 +785,27 @@ export async function pushModuleCompletionEvent(courseId) {
     },
   });
 }
+
+/**
+ * Pushes a course start event to the Adobe data layer.
+ * @param {Object} courseData - Course data
+ * @param {string} courseData.title - Title of the course
+ * @param {string} courseData.id - ID of the course
+ * @param {string} courseData.solution - Solution related to the course
+ * @param {string} courseData.role - Role associated with the course
+ * @param {string} courseData.startTime - Start time of the course
+ */
+export function pushCourseStartEvent(courseData) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'coursesStart',
+    courses: {
+      title: courseData.title,
+      id: courseData.id,
+      solution: courseData.solution,
+      role: courseData.role,
+      startTime: courseData.startTime,
+    },
+  });
+}
