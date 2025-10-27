@@ -197,19 +197,6 @@ async function startModule(url = window.location.pathname) {
       description: courseMeta.description,
       modules: {},
     };
-
-    const isFirstModule = courseMeta.modules?.[0]?.includes(moduleId);
-
-    // push course start event
-    if (isFirstModule) {
-      pushCourseStartEvent({
-        title: courseMeta.heading,
-        id: courseId,
-        solution: courseMeta.solution,
-        role: courseMeta.role,
-        startTime,
-      });
-    }
   }
 
   // Initialize module if it doesn't exist
@@ -227,6 +214,19 @@ async function startModule(url = window.location.pathname) {
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile('courses', updatedCourses, true);
     pushModuleStartEvent(courseId);
+
+    const isFirstModule = courseMeta.modules?.[0]?.includes(moduleId);
+
+    // push course start event
+    if (isFirstModule) {
+      pushCourseStartEvent({
+        title: courseMeta.heading,
+        id: courseId,
+        solution: courseMeta.solution,
+        role: courseMeta.role,
+        startTime,
+      });
+    }
   }
 }
 
