@@ -269,13 +269,7 @@ async function completeCourse(url = window.location.pathname) {
 async function getUserDisplayName() {
   try {
     const profile = await defaultProfileClient.getMergedProfile();
-
-    return (
-      profile?.name ||
-      (window.adobeIMS?.isSignedInUser() &&
-        (window.adobeIMS.getProfile()?.displayName || window.adobeIMS.getProfile()?.name)) ||
-      null
-    );
+    return profile?.displayName || null;
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('Error getting user display name:', e);
