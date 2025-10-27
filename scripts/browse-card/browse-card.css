@@ -142,7 +142,7 @@
   );
 }
 
-.browse-card .browse-card-tag-text h4 {
+.browse-card .browse-card-tag-text .browse-card-solution-text {
   text-transform: uppercase;
   margin: 0;
   font-size: var(--spectrum-font-size-75);
