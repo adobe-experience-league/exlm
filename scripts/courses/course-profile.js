@@ -198,35 +198,35 @@ async function startModule(url = window.location.pathname) {
       modules: {},
     };
 
-    const isFirstModule = courseMeta.modules?.[0]?.includes(moduleId);
-
-    // push course start event
-    if (isFirstModule) {
-      pushCourseStartEvent({
-        title: courseMeta.heading,
-        id: courseId,
-        solution: courseMeta.solution,
-        role: courseMeta.role,
-        startTime,
-      });
+    // Initialize module if it doesn't exist
+    if (!updatedCourses[courseId].modules) {
+      updatedCourses[courseId].modules = {};
     }
-  }
 
-  // Initialize module if it doesn't exist
-  if (!updatedCourses[courseId].modules) {
-    updatedCourses[courseId].modules = {};
-  }
+    // Set module start time only if not already set
+    if (!updatedCourses[courseId].modules[moduleId]?.started) {
+      updatedCourses[courseId].modules[moduleId] = {
+        ...updatedCourses[courseId].modules[moduleId],
+        started: startTime,
+      };
 
-  // Set module start time only if not already set
-  if (!updatedCourses[courseId].modules[moduleId]?.started) {
-    updatedCourses[courseId].modules[moduleId] = {
-      ...updatedCourses[courseId].modules[moduleId],
-      started: startTime,
-    };
+      // Update the profile with the new courses data
+      await defaultProfileClient.updateProfile('courses', updatedCourses, true);
+      pushModuleStartEvent(courseId);
 
-    // Update the profile with the new courses data
-    await defaultProfileClient.updateProfile('courses', updatedCourses, true);
-    pushModuleStartEvent(courseId);
+      const isFirstModule = courseMeta.modules?.[0]?.includes(moduleId);
+
+      // push course start event
+      if (isFirstModule) {
+        pushCourseStartEvent({
+          title: courseMeta.heading,
+          id: courseId,
+          solution: courseMeta.solution,
+          role: courseMeta.role,
+          startTime,
+        });
+      }
+    }
   }
 }
 
