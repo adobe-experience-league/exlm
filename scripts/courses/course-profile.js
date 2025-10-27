@@ -212,7 +212,7 @@ async function startModule(url = window.location.pathname) {
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile('courses', updatedCourses, true);
-    await pushModuleStartEvent();
+    pushModuleStartEvent(courseId);
   }
 }
 
@@ -237,7 +237,7 @@ async function finishModule(url = window.location.pathname) {
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile('courses', updatedCourses, true);
-    await pushModuleCompletionEvent();
+    pushModuleCompletionEvent(courseId);
   }
 }
 
@@ -266,8 +266,8 @@ async function completeCourse(url = window.location.pathname) {
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile('courses', updatedCourses, true);
-    await pushModuleCompletionEvent();
-    await pushCourseCompletionEvent(courseId, updatedCourses);
+    pushModuleCompletionEvent(courseId);
+    pushCourseCompletionEvent(courseId, updatedCourses);
   }
 }
 

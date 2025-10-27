@@ -693,7 +693,7 @@ export async function pushCourseCompletionEvent(courseId, currentCourses) {
   });
 }
 
-export async function pushModuleStartEvent() {
+export async function pushModuleStartEvent(courseId) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   const { getCurrentCourseMeta, getCurrentStepInfo } = await import('../courses/course-utils.js');
@@ -708,14 +708,14 @@ export async function pushModuleStartEvent() {
     },
     courses: {
       title: courseMeta?.heading || '',
-      id: courseMeta?.id || '',
+      id: courseId || '',
       solution: courseMeta?.solution || '',
       role: courseMeta?.role || '',
     },
   });
 }
 
-export async function pushModuleCompletionEvent() {
+export async function pushModuleCompletionEvent(courseId) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   const { getCurrentCourseMeta, getCurrentStepInfo } = await import('../courses/course-utils.js');
@@ -730,7 +730,7 @@ export async function pushModuleCompletionEvent() {
     },
     courses: {
       title: courseMeta?.heading || '',
-      id: courseMeta?.id || '',
+      id: courseId || '',
       solution: courseMeta?.solution || '',
       role: courseMeta?.role || '',
     },
