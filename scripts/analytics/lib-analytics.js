@@ -96,7 +96,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       } else {
         // For other steps, find the previous step name
         const prevStepIndex = stepInfo.currentStep - 2; // 0-based index
-        if (prevStepIndex >= 0 && stepInfo.moduleSteps && stepInfo.moduleSteps[prevStepIndex]) {
+        if (prevStepIndex >= 0 && stepInfo.moduleSteps?.[prevStepIndex]) {
           const prevStepName = stepInfo.moduleSteps[prevStepIndex].name;
           coursePreviousPageName += `:${courseSolution}:${courseTitle}:${moduleTitle}:${prevStepName}`;
         }
@@ -155,13 +155,13 @@ export async function pushPageDataLayer(language, searchTrackingData) {
         userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
       };
 
-      if (userData.courses && courseObj?.id && userData.courses[courseObj.id]) {
+      if (userData.courses?.[courseObj?.id]) {
         const courseInfo = userData.courses[courseObj.id];
-        if (courseInfo?.modules && typeof courseInfo.modules === 'object') {
+        if (courseInfo?.modules && typeof courseInfo?.modules === 'object') {
           let startTime = null;
           Object.keys(courseInfo.modules).forEach((modId) => {
             const mod = courseInfo.modules[modId];
-            if (mod && mod.started) {
+            if (mod?.started) {
               if (!startTime || new Date(mod.started) < new Date(startTime)) {
                 startTime = mod.started;
               }
@@ -664,10 +664,10 @@ export async function pushCourseCompletionEvent(courseId, currentCourses) {
   const finishTime = courseInfo?.awardGranted || '';
   let courseDuration = null;
 
-  if (courseInfo?.modules && typeof courseInfo.modules === 'object') {
+  if (courseInfo?.modules && typeof courseInfo?.modules === 'object') {
     Object.keys(courseInfo.modules).forEach((modId) => {
       const mod = courseInfo.modules[modId];
-      if (mod && mod.started) {
+      if (mod?.started) {
         if (!startTime || new Date(mod.started) < new Date(startTime)) {
           startTime = mod.started;
         }
