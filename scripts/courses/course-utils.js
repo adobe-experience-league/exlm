@@ -513,7 +513,7 @@ export async function fetchCourseIndex(prefix = 'en') {
   return window.courseIndex[prefix];
 }
 
-export function transformCourseMetaToCardModel({ course, placeholders, status }) {
+export function transformCourseMetaToCardModel({ course, placeholders }) {
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
   return {
@@ -547,11 +547,7 @@ export function transformCourseMetaToCardModel({ course, placeholders, status })
     viewLinkText: placeholders?.browseCardCourseViewLabel || 'View course',
     inProgressText: '',
     inProgressStatus: '',
-    meta: {
-      courseInfo: {
-        courseStatus: status,
-      },
-    },
+    meta: {},
   };
 }
 
