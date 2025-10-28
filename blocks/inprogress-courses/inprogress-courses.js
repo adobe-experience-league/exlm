@@ -58,7 +58,11 @@ export default function build(block) {
         }
         const placeholders = await fetchLanguagePlaceholders();
         const firstName = profileResult?.first_name;
-        block.innerHTML = `<div><h3>Keep up the Good work, ${firstName}.</h3></div><div class="inprogress-courses-card-wrapper"></div><div></div>`;
+        const headerText = placeholders?.inprogressCoursesHeader || 'Keep up the Good work, [firstName].';
+        block.innerHTML = `<div><h3>${headerText.replace(
+          '[firstName]',
+          firstName,
+        )}</h3></div><div class="inprogress-courses-card-wrapper"></div><div></div>`;
         const lang = document.querySelector('html').lang || 'en';
         const allCourses = await fetchCourseIndex(lang);
         const courseIds = courseIdentifiers.map((id) => `/${lang}/${id}`);
