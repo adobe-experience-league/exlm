@@ -59,8 +59,9 @@
 
 .question .answer-input {
   margin: 0;
-  width: 15px; /* Safari answers option fix */
+  width: 15px;
   height: 15px;
+  min-width: 15px;
   margin-right: 0.75rem;
   display: inline-block;
   vertical-align: middle;

@@ -87,17 +87,18 @@ function getCourseLandingPageUrl() {
  * @returns {Promise<Object>} Certificate data
  */
 async function fetchCertificateData() {
-  // Get course metadata from course-utils
-  const courseMeta = await getCurrentCourseMeta();
-
-  // Extract completion time from course metadata
-  const completionHours = courseMeta.totalTime?.match(/\d+/)?.[0] || '';
-
-  // Get user name and course completion date
+  let courseMeta = {};
+  let completionHours = '';
   let completionDate = null;
   let userName = null;
 
   try {
+    // Get course metadata from course-utils
+    courseMeta = await getCurrentCourseMeta();
+
+    // Extract completion time from course metadata
+    completionHours = courseMeta.totalTime?.match(/\d+/)?.[0] || '';
+
     // Get the current course ID
     const { courseId } = extractCourseModuleIds(window.location.pathname);
 
@@ -106,7 +107,7 @@ async function fetchCertificateData() {
 
     // Get course completion date from awardGranted timestamp
     const courses = await getCurrentCourses();
-    if (courses && courseId && courses[courseId] && courses[courseId].awardGranted) {
+    if (courses?.[courseId]?.awardGranted) {
       // Convert timestamp to readable date
       const awardDate = new Date(courses[courseId].awardGranted);
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
