@@ -4,11 +4,14 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { MODULE_STATUS, startModule, getModuleStatus } from '../../scripts/courses/course-profile.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
+import { pushStepsStartEvent } from '../../scripts/analytics/lib-analytics.js';
 
 export default async function decorate(block) {
   // Check if user is signed in, if not trigger sign in
   const isSignedIn = await isSignedInUser();
-  if (!isSignedIn) {
+  // Check if it's in UE author mode
+  const isUEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+  if (!isSignedIn && !isUEAuthorMode) {
     // Trigger sign in
     window.adobeIMS?.signIn();
     return;
@@ -32,9 +35,12 @@ export default async function decorate(block) {
     return;
   }
 
+  // Push stepsStart event to adobeDataLayer for non-quiz steps
+  await pushStepsStartEvent(stepInfo);
+
   // If module is disabled, redirect to course page
   // Otherwise, update module status in profile
-  if (!moduleStatus || moduleStatus === MODULE_STATUS.DISABLED) {
+  if ((!moduleStatus || moduleStatus === MODULE_STATUS.DISABLED) && !isUEAuthorMode) {
     document.querySelector('main').style.visibility = 'hidden';
     setTimeout(() => {
       window.location.href = stepInfo.courseUrl;

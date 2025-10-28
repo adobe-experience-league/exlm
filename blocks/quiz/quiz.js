@@ -3,6 +3,7 @@ import { generateQuestionDOM } from '../question/question.js';
 import { hashAnswer } from '../../scripts/hash-utils.js';
 import { moveInstrumentation } from '../../scripts/utils/ue-utils.js';
 import { loadBlocks, decorateSections, decorateBlocks } from '../../scripts/lib-franklin.js';
+import { pushQuizEvent } from '../../scripts/analytics/lib-analytics.js';
 
 /**
  * Checks if the selected answers for a question are correct
@@ -145,7 +146,7 @@ function shuffleArray(array) {
 }
 
 // Fetch page content and insert it into the current page
-const fetchPageContent = async (url, block, isPassed = false, placeholders = {}) => {
+const fetchPageContent = async (url, block) => {
   try {
     // Fetch the content
     const response = await fetch(`${url}.plain.html`);
@@ -192,25 +193,6 @@ const fetchPageContent = async (url, block, isPassed = false, placeholders = {})
 
       // Scroll to the top of the page to show the results
       window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      // Update navigation buttons
-      const backButton = document.querySelector('.module-nav-button.module-nav-back.secondary');
-      const nextButton = document.querySelector('.module-nav-button.module-nav-submit.disabled');
-
-      if (backButton) {
-        backButton.textContent = placeholders?.backToCourseOverview || 'Back to Course Overview';
-      }
-
-      if (nextButton) {
-        nextButton.textContent = placeholders?.nextBtnLabel || 'Next';
-
-        // Enable or disable the Next button based on quiz result
-        if (isPassed) {
-          nextButton.classList.remove('disabled');
-        } else {
-          nextButton.classList.add('disabled');
-        }
-      }
     }
   } catch (err) {
     /* eslint-disable-next-line no-console */
@@ -257,7 +239,7 @@ export default async function decorate(block) {
     block.dataset.totalQuestions = totalQuestions.toString();
 
     if (passPageUrl) {
-      await fetchPageContent(passPageUrl, block, true, placeholders);
+      await fetchPageContent(passPageUrl, block);
       return; // Stop further quiz rendering
     }
   }
@@ -289,6 +271,9 @@ export default async function decorate(block) {
 
   // Create a function to handle quiz submission that can be called externally
   quizHandlerFunction = async () => {
+    // Trigger quiz submit event immediately when submit button is clicked
+    await pushQuizEvent('quizSubmit');
+
     // Check if all questions are answered
     let allQuestionsAnswered = true;
 
@@ -334,14 +319,17 @@ export default async function decorate(block) {
       block.dataset.correctAnswers = quizResults?.correctAnswersCount;
       block.dataset.totalQuestions = quizResults?.totalQuestions;
 
-      await fetchPageContent(redirectUrl, block, quizResults.isPassed, placeholders);
-
-      // Save skip flag if quiz passed
-      if (quizResults?.isPassed) {
-        sessionStorage.setItem('course.skipQuiz', 'true');
-      }
+      await fetchPageContent(redirectUrl, block);
     }
-    return true;
+
+    if (quizResults?.isPassed) {
+      // Trigger quiz completed event only when the quiz is passed
+      await pushQuizEvent('quizCompleted');
+
+      return true;
+    }
+
+    return false;
   };
 
   // Create quiz description section using htmlToElement
@@ -358,4 +346,7 @@ export default async function decorate(block) {
   block.textContent = '';
   block.appendChild(quizDescriptionContainer);
   block.appendChild(questionsContainer);
+
+  // Trigger quiz start event when the quiz is loaded
+  await pushQuizEvent('quizStart');
 }

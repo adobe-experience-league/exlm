@@ -333,6 +333,20 @@ const buildCardContent = async (card, model) => {
 
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
+  let bookmarkTrackingInfo;
+  if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
+    const lang = document.querySelector('html').lang || 'en';
+    const [, courseId] = model.viewLink?.split(`/${lang}/`) || [];
+    bookmarkTrackingInfo = {
+      destinationDomain: model.viewLink,
+      course: {
+        id: courseId || model.id,
+        title: model.title,
+        solution: model.product,
+        role: model.role,
+      },
+    };
+  }
 
   const cardAction = UserActions({
     container: cardOptions,
@@ -341,6 +355,7 @@ const buildCardContent = async (card, model) => {
     link: copyLink,
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
     copyConfig: failedToLoad ? false : undefined,
+    bookmarkTrackingInfo,
   });
 
   cardAction.decorate();
@@ -521,6 +536,9 @@ export async function buildCard(container, element, model) {
       </div>`);
       decorateIcons(bannerElement);
       cardFigure.appendChild(bannerElement);
+      const hiddenBanner = createTag('h3', { class: 'browse-card-banner visually-hidden' });
+      hiddenBanner.innerText = badgeTitle || '';
+      cardFigure.appendChild(hiddenBanner);
     } else {
       const bannerElement = createTag('h3', { class: 'browse-card-banner' });
       bannerElement.innerText = badgeTitle || '';
@@ -540,7 +558,9 @@ export async function buildCard(container, element, model) {
     const tagElement = createTag(
       'div',
       { class: 'browse-card-tag-text' },
-      `<h4>${isMultiSolution ? placeholders.multiSolutionText || 'multisolution' : tagText}</h4>`,
+      `<div class="browse-card-solution-text">${
+        isMultiSolution ? placeholders.multiSolutionText || 'multisolution' : tagText
+      }</div>`,
     );
 
     if (isMultiSolution) {
@@ -565,7 +585,7 @@ export async function buildCard(container, element, model) {
   }
 
   if (title) {
-    const titleElement = createTag('h5', { class: 'browse-card-title-text' });
+    const titleElement = createTag('h3', { class: 'browse-card-title-text' });
     titleElement.innerHTML = title;
     cardContent.appendChild(titleElement);
   }

@@ -174,12 +174,12 @@ async function extractModuleMeta(fragment, placeholders) {
   // Add recap and quiz steps to allSteps
   if (moduleRecap) {
     allSteps.push({
-      name: placeholders['module-recap-step-name'] || 'Recap - Key Takeaways',
+      name: placeholders?.moduleRecapStepName || 'Recap - Key Takeaways',
       url: moduleRecap,
     });
   }
   if (moduleQuiz) {
-    allSteps.push({ name: placeholders['module-quiz-step-name'] || 'Module Quiz', url: moduleQuiz });
+    allSteps.push({ name: placeholders?.moduleQuizStepName || 'Module Quiz', url: moduleQuiz });
   }
 
   const totalSteps = allSteps.length;
@@ -429,7 +429,7 @@ export async function getCurrentCourseMeta(url = window.location.pathname) {
  * Checks if the current step is the last step in the module.
  *
  * @param {Object} stepInfo - The step information object from getCurrentStepInfo()
- * @returns {boolean} True if current step is the last step, false otherwise
+ * @returns {Promise<boolean>} True if current step is the last step, false otherwise
  */
 export async function isLastStep() {
   const stepInfo = await getCurrentStepInfo();
@@ -442,14 +442,19 @@ export async function isLastStep() {
 }
 
 // Gets the URL of the first step of the next module.
-export async function getNextModuleFirstStep() {
+/**
+ * Gets the URL of the first step of the next module.
+ *
+ * @returns {Promise<string|null>} The URL of the first step of the next module or null if not found
+ */
+export async function getNextModuleFirstStep(url = window.location.pathname) {
   const courseInfo = await getCurrentCourseMeta();
   if (!courseInfo || !courseInfo.modules || !Array.isArray(courseInfo.modules) || courseInfo.modules.length === 0) {
     return null;
   }
 
   // Extract the current module path from the URL
-  const pathParts = window.location.pathname.split('/');
+  const pathParts = url.split('/');
   const currentModulePath = pathParts.length > 4 ? pathParts[4] : '';
 
   if (!currentModulePath) {
@@ -457,7 +462,7 @@ export async function getNextModuleFirstStep() {
   }
 
   // Find the current module index
-  const currentModuleIndex = courseInfo.modules.findIndex((url) => url.includes(currentModulePath));
+  const currentModuleIndex = courseInfo.modules.findIndex((moduleUrl) => moduleUrl.includes(currentModulePath));
 
   // If there's a next module, get its first step
   if (currentModuleIndex !== -1 && currentModuleIndex < courseInfo.modules.length - 1) {
@@ -472,4 +477,40 @@ export async function getNextModuleFirstStep() {
   }
 
   return null;
+}
+
+/**
+ * Gets the URL of the course completion page.
+ *
+ * @param {string} url - The URL path to extract courseId and moduleId from. If not provided, uses current page URL
+ * @returns {Promise<string|null>} The URL of the course completion page or null if not found
+ */
+export async function getCourseCompletionPageUrl(url = window.location.pathname) {
+  const courseInfo = await getCurrentCourseMeta(url);
+  if (!courseInfo || !courseInfo?.courseCompletionPage) {
+    return null;
+  }
+  return courseInfo.courseCompletionPage;
+}
+
+/**
+ * Checks if the current module is the last module of the course.
+ *
+ * @param {string} url - The URL path to extract courseId and moduleId from. If not provided, uses current page URL
+ * @returns {Promise<boolean>} True if current module is the last module of the course, false otherwise
+ */
+export async function isLastModuleOfCourse(url = window.location.pathname) {
+  const courseInfo = await getCurrentCourseMeta(url);
+  if (!courseInfo || !courseInfo.modules || !Array.isArray(courseInfo.modules) || courseInfo.modules.length === 0) {
+    return false;
+  }
+  const pathParts = url.split('/');
+  const currentModulePath = pathParts.length > 4 ? pathParts[4] : '';
+
+  if (!currentModulePath) {
+    return false;
+  }
+
+  const currentModuleIndex = courseInfo.modules.findIndex((moduleUrl) => moduleUrl.includes(currentModulePath));
+  return currentModuleIndex === courseInfo.modules.length - 1;
 }

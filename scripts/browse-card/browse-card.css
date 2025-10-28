@@ -128,6 +128,12 @@
   display: flex;
 }
 
+.browse-card .browse-card-banner.visually-hidden {
+  position: absolute;
+  padding: 0;
+  margin: -1px;
+}
+
 .browse-card.browse-card-frozen .browse-card-tag-text {
   height: 21px;
   width: 100px;
@@ -142,7 +148,7 @@
   );
 }
 
-.browse-card .browse-card-tag-text h4 {
+.browse-card .browse-card-tag-text .browse-card-solution-text {
   text-transform: uppercase;
   margin: 0;
   font-size: var(--spectrum-font-size-75);
