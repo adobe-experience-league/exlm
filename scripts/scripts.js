@@ -166,7 +166,7 @@ export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 export const isCourseStep = matchesAnyTheme(/course-step/);
-export const isCertificatePage = matchesAnyTheme(/course-certificate/);
+export const isCertificatePage = () => document.querySelector('.course-completion') !== null;
 
 /**
  * add a section for the left rail when on a browse page.
