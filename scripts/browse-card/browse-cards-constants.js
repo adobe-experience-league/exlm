@@ -53,3 +53,9 @@ export const AUTHOR_TYPE = Object.freeze({
 export const BASE_COVEO_ADVANCED_QUERY = '(@el_contenttype NOT "Community|User")';
 
 export const VIDEO_THUMBNAIL_FORMAT = /^https:\/\/video\.tv\.adobe\.com\/v\/\w+\?format=jpeg$/;
+
+export const COURSE_STATUS = Object.freeze({
+  NOT_STARTED: 'not-started',
+  IN_PROGRESS: 'in-progress',
+  COMPLETED: 'completed',
+});

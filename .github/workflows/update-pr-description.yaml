@@ -14,7 +14,7 @@ jobs:
       REPO: ${{ github.event.repository.name }}
       BRANCH: ${{ github.head_ref }}
       PR_NUMBER: ${{ github.event.number }}
-      ORIGIN: https://${{ github.head_ref}}--${{ github.event.repository.name }}--${{ github.repository_owner }}.aem.page
+      ORIGIN: https://${{ github.head_ref}}--${{ github.event.repository.name }}--${{ github.repository_owner }}.aem.live
     steps:
       - name: Prepare Env Variables
         run: |

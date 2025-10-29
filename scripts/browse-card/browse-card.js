@@ -1,6 +1,11 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
-import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS, VIDEO_THUMBNAIL_FORMAT } from './browse-cards-constants.js';
+import {
+  AUTHOR_TYPE,
+  RECOMMENDED_COURSES_CONSTANTS,
+  VIDEO_THUMBNAIL_FORMAT,
+  COURSE_STATUS,
+} from './browse-cards-constants.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
@@ -226,6 +231,7 @@ const buildCardContent = async (card, model) => {
   const {
     id,
     description,
+    meta,
     contentType: type,
     viewLink,
     viewLinkText,
@@ -256,15 +262,33 @@ const buildCardContent = async (card, model) => {
     cardContent.appendChild(descriptionElement);
   }
 
-  const cardMeta = document.createElement('div');
-  cardMeta.classList.add('browse-card-meta-info');
+  if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY && meta?.courseInfo?.courseStatus) {
+    // Map course status to localized label
+    const statusMapping = {
+      [COURSE_STATUS.NOT_STARTED]: placeholders.courseStatusNotStarted || 'Not Started',
+      [COURSE_STATUS.IN_PROGRESS]: placeholders.courseStatusInProgress || 'In Progress',
+      [COURSE_STATUS.COMPLETED]: placeholders.courseStatusCompleted || 'Completed',
+    };
+
+    const courseStatusLabel = statusMapping[meta.courseInfo.courseStatus] || '';
+
+    if (courseStatusLabel) {
+      const cardMeta = document.createElement('div');
+      cardMeta.classList.add('browse-card-meta-info', 'course-status-meta');
+      cardMeta.innerHTML = `<span class="status-badge status-${meta.courseInfo.courseStatus}"></span><span class="status-text">${courseStatusLabel}</span>`;
+      cardContent.appendChild(cardMeta);
+    }
+  }
 
   if (
     contentType === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
     contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ||
     contentType === RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY
   ) {
+    const cardMeta = document.createElement('div');
+    cardMeta.classList.add('browse-card-meta-info');
     buildTagsContent(cardMeta, tags);
+    cardContent.appendChild(cardMeta);
   }
 
   if (contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY) {
@@ -272,8 +296,6 @@ const buildCardContent = async (card, model) => {
       buildCourseDurationContent({ inProgressStatus, inProgressText, cardContent });
     }
   }
-
-  cardContent.appendChild(cardMeta);
 
   if (
     contentType === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY ||
@@ -311,6 +333,20 @@ const buildCardContent = async (card, model) => {
 
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
+  let bookmarkTrackingInfo;
+  if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
+    const lang = document.querySelector('html').lang || 'en';
+    const [, courseId] = model.viewLink?.split(`/${lang}/`) || [];
+    bookmarkTrackingInfo = {
+      destinationDomain: model.viewLink,
+      course: {
+        id: courseId || model.id,
+        title: model.title,
+        solution: model.product,
+        role: model.role,
+      },
+    };
+  }
 
   const cardAction = UserActions({
     container: cardOptions,
@@ -319,6 +355,7 @@ const buildCardContent = async (card, model) => {
     link: copyLink,
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
     copyConfig: failedToLoad ? false : undefined,
+    bookmarkTrackingInfo,
   });
 
   cardAction.decorate();
@@ -499,6 +536,9 @@ export async function buildCard(container, element, model) {
       </div>`);
       decorateIcons(bannerElement);
       cardFigure.appendChild(bannerElement);
+      const hiddenBanner = createTag('h3', { class: 'browse-card-banner visually-hidden' });
+      hiddenBanner.innerText = badgeTitle || '';
+      cardFigure.appendChild(hiddenBanner);
     } else {
       const bannerElement = createTag('h3', { class: 'browse-card-banner' });
       bannerElement.innerText = badgeTitle || '';
@@ -518,7 +558,9 @@ export async function buildCard(container, element, model) {
     const tagElement = createTag(
       'div',
       { class: 'browse-card-tag-text' },
-      `<h4>${isMultiSolution ? placeholders.multiSolutionText || 'multisolution' : tagText}</h4>`,
+      `<div class="browse-card-solution-text">${
+        isMultiSolution ? placeholders.multiSolutionText || 'multisolution' : tagText
+      }</div>`,
     );
 
     if (isMultiSolution) {
@@ -543,7 +585,7 @@ export async function buildCard(container, element, model) {
   }
 
   if (title) {
-    const titleElement = createTag('h5', { class: 'browse-card-title-text' });
+    const titleElement = createTag('h3', { class: 'browse-card-title-text' });
     titleElement.innerHTML = title;
     cardContent.appendChild(titleElement);
   }

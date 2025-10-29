@@ -4,6 +4,12 @@
 
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { extractCourseModuleIds, getCurrentCourseMeta } from './course-utils.js';
+import {
+  pushModuleStartEvent,
+  pushModuleCompletionEvent,
+  pushCourseCompletionEvent,
+  pushCourseStartEvent,
+} from '../analytics/lib-analytics.js';
 
 const COURSE_STATUS = {
   NOT_STARTED: 'not-started',
@@ -207,6 +213,20 @@ async function startModule(url = window.location.pathname) {
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile('courses', updatedCourses, true);
+    pushModuleStartEvent(courseId);
+
+    const isFirstModule = courseMeta.modules?.[0]?.includes(moduleId);
+
+    // push course start event
+    if (isFirstModule) {
+      pushCourseStartEvent({
+        title: courseMeta.heading,
+        id: courseId,
+        solution: courseMeta.solution,
+        role: courseMeta.role,
+        startTime,
+      });
+    }
   }
 }
 
@@ -231,6 +251,7 @@ async function finishModule(url = window.location.pathname) {
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile('courses', updatedCourses, true);
+    pushModuleCompletionEvent(courseId);
   }
 }
 
@@ -240,16 +261,54 @@ async function finishModule(url = window.location.pathname) {
  * @returns {Promise<void>}
  */
 async function completeCourse(url = window.location.pathname) {
-  const { courseId } = extractCourseModuleIds(url);
+  const { courseId, moduleId } = extractCourseModuleIds(url);
   const courses = await getCurrentCourses();
   const updatedCourses = { ...courses };
 
   if (updatedCourses[courseId] && !updatedCourses[courseId].awardGranted) {
-    updatedCourses[courseId].awardGranted = new Date().toISOString();
+    const finishTime = new Date().toISOString();
+
+    // Mark the current module as finished if not already
+    if (moduleId && !updatedCourses[courseId].modules[moduleId]?.finished) {
+      updatedCourses[courseId].modules[moduleId] = {
+        ...updatedCourses[courseId].modules[moduleId],
+        finished: finishTime,
+      };
+    }
+
+    updatedCourses[courseId].awardGranted = finishTime;
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile('courses', updatedCourses, true);
+    pushModuleCompletionEvent(courseId);
+    pushCourseCompletionEvent(courseId, updatedCourses);
   }
+}
+
+/**
+ * Get user's display name from profile
+ * @returns {Promise<string|null>} User's display name or null if not available
+ */
+async function getUserDisplayName() {
+  try {
+    const profile = await defaultProfileClient.getMergedProfile();
+    return profile?.displayName || null;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error getting user display name:', e);
+    return null;
+  }
+}
+
+/**
+ * Checks if a course is completed
+ * @param {string} url - The URL path to extract courseId from. If not provided, uses current page URL
+ * @returns {Promise<boolean>} True if course is completed, false otherwise
+ */
+async function isCourseCompleted(url = window.location.pathname) {
+  const { courseId } = extractCourseModuleIds(url);
+  const courses = await getCurrentCourses();
+  return courses[courseId]?.awardGranted;
 }
 
 export {
@@ -262,4 +321,6 @@ export {
   startModule,
   finishModule,
   completeCourse,
+  getUserDisplayName,
+  isCourseCompleted,
 };

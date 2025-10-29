@@ -28,6 +28,9 @@ export default async function decorate(block) {
 
   const productName = getMetadata('tq-products-labels') || '';
   const experienceLevel = getMetadata('tq-levels-labels') || '';
+  const role = getMetadata('role') || '';
+  const solution = getMetadata('solution') || '';
+  const courseLink = getMetadata('og:url') || window.location.href;
 
   // Function to create HTML for multiple values with proper spacing
   const createMultiValueHTML = (values) => {
@@ -45,7 +48,16 @@ export default async function decorate(block) {
 
     return uniqueValues.map((value) => `<span class="metadata-value-item">${value}</span>`).join('');
   };
-
+  const [, courseIdFromLink] = courseLink?.split(`/${lang}/`) || [];
+  const bookmarkTrackingInfo = {
+    destinationDomain: courseLink,
+    course: {
+      id: courseIdFromLink,
+      title: courseName,
+      solution: solution.split(',').filter(Boolean),
+      role,
+    },
+  };
   block.textContent = '';
 
   // Create metadata items HTML
@@ -114,6 +126,7 @@ export default async function decorate(block) {
           icons: ['bookmark-white', 'bookmark-active'],
         },
         copyConfig: false,
+        bookmarkTrackingInfo,
       });
       cardAction.decorate();
     }
