@@ -753,7 +753,7 @@ export default async function decorate(block) {
 
       statusDropdown = new Dropdown(
         statusContainer,
-        placeholders?.filterCourseStatusLabel || 'Progress',
+        placeholders?.filterCourseStatusLabel || 'Status',
         statusList,
         DROPDOWN_TYPE,
       );

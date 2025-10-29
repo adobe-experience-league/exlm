@@ -155,6 +155,12 @@ export async function pushPageDataLayer(language, searchTrackingData) {
         userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
       };
 
+      // get a list of all courses titles with awardGranted property
+      const coursesWithAwardGranted = Object.values(userData?.courses || {})
+        .filter((course) => course?.awardGranted && course.name)
+        .map((course) => course.name);
+      user.userDetails.courses = coursesWithAwardGranted.length ? coursesWithAwardGranted : [];
+
       if (userData.courses?.[courseObj?.id]) {
         const courseInfo = userData.courses[courseObj.id];
         if (courseInfo?.modules && typeof courseInfo?.modules === 'object') {
@@ -195,9 +201,26 @@ export async function pushPageDataLayer(language, searchTrackingData) {
   }
 
   let name = pageName(language);
+
+  if (courses) {
+    let certificatePageName;
+    if (document.querySelector('.course-completion.block')) {
+      certificatePageName = 'certificate completion';
+    }
+    const subs = [
+      'courses',
+      courseObj?.solution || '',
+      courseObj?.title || '',
+      certificatePageName || moduleObj?.title || '',
+      stepObj?.title || '',
+    ].filter(Boolean);
+
+    name = `xl:learn:${subs.join(':')}`;
+  }
+
   const sections = name.replace(/^xl:(docs|learn):/, '').split(':');
 
-  if (!browse && sections.length > 1) {
+  if (!browse && sections.length > 1 && !courses) {
     sections.shift();
   }
   const mainSiteSection = search ? 'search' : '';
@@ -209,18 +232,6 @@ export async function pushPageDataLayer(language, searchTrackingData) {
     section1Value = 'perspectives';
   } else {
     section1Value = sections[0] || '';
-  }
-
-  if (courses) {
-    const subs = [
-      'courses',
-      courseObj?.solution || '',
-      courseObj?.title || '',
-      moduleObj?.title || '',
-      stepObj?.title || '',
-    ].filter(Boolean);
-
-    name = `xl:learn:${subs.join(':')}`;
   }
 
   const webDetails = {
@@ -243,15 +254,15 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       userAgent: window.navigator.userAgent,
       server: window.location.host,
       siteSection: section,
-      siteSubSection1: courseObj ? 'courses' : section1Value,
+      siteSubSection1: section1Value,
 
-      siteSubSection2: courseObj ? courseObj.solution || '' : sections[1] || '',
+      siteSubSection2: sections[1] || '',
 
-      siteSubSection3: courseObj ? courseObj.title || '' : sections[2] || '',
+      siteSubSection3: sections[2] || '',
 
-      siteSubSection4: courseObj ? moduleObj?.title || '' : sections[3] || '',
+      siteSubSection4: sections[3] || '',
 
-      siteSubSection5: courseObj ? stepObj?.title || '' : sections[4] || '',
+      siteSubSection5: sections[4] || '',
       solution: browseProduct ? sections[1] : solution,
       solutionVersion,
       subSolution,
@@ -657,6 +668,41 @@ export async function pushStepsStartEvent(stepInfo) {
     // Log error but don't throw to prevent breaking the user experience
     console.error('Error pushing stepsStart event:', e);
   }
+}
+
+/**
+ * Used to push a bookmark event to the Adobe data layer.
+ * @param {Object} trackingInfo - Tracking information
+ * @param {Object} [trackingInfo.course] - Course information (optional)
+ * @param {string} trackingInfo.course.title - Title of the course
+ * @param {string} trackingInfo.course.id - ID of the course
+ * @param {string} trackingInfo.course.solution - Solution related to the course
+ * @param {string} trackingInfo.course.role - Role associated with the course
+ * @param {string} trackingInfo.destinationDomain - Destination domain for the link
+ */
+export function pushBookmarkEvent(trackingInfo) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const dataLayerEntry = {
+    event: 'linkClicked',
+    link: {
+      linkTitle: 'Bookmark Collection',
+      linkLocation: 'header',
+      linkType: 'Custom',
+      destinationDomain: trackingInfo.destinationDomain,
+    },
+  };
+
+  if (trackingInfo.course) {
+    dataLayerEntry.courses = {
+      title: trackingInfo.course.title,
+      id: trackingInfo.course.id,
+      solution: trackingInfo.course.solution,
+      role: trackingInfo.course.role,
+    };
+  }
+
+  window.adobeDataLayer.push(dataLayerEntry);
 }
 
 /**
