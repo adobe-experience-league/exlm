@@ -1,3 +1,5 @@
+import { getConfig } from '../scripts.js';
+
 /**
  * Languages currently supported for MPC videos
  * Maps language codes to MPC caption language identifiers
@@ -37,11 +39,6 @@ const MPC_LANGUAGES_MAP = {
 };
 
 /**
- * Adobe TV API base URL for video collections
- */
-const ADOBE_TV_API_BASE = 'https://stage-api.tv.adobe.com/videos';
-
-/**
  * Collection type constants
  */
 const COLLECTION_TYPES = {
@@ -66,11 +63,11 @@ export async function fetchVideoCollections(videoId) {
     console.warn('Video ID is required for fetching collections');
     return null;
   }
-
-  const apiUrl = `${ADOBE_TV_API_BASE}/${videoId}/collections`;
+  const { mpcApiBase } = getConfig();
+  const mpcApi = `${mpcApiBase}/${videoId}/collections`;
 
   try {
-    const response = await fetch(apiUrl, {
+    const response = await fetch(mpcApi, {
       headers: {
         'Content-Type': 'application/json',
       },
