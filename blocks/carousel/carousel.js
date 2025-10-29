@@ -36,7 +36,7 @@ export default function decorate(block) {
   // loop through all children blocks
   [...panels].forEach((panel, i) => {
     // generate the  panel
-    let [image, classList, ...rest] = panel.children;
+    const [image, classList, ...rest] = panel.children;
     const classesText = classList.textContent.trim();
     const classes = (classesText ? classesText.split(',') : []).map((c) => c && c.trim()).filter((c) => !!c);
     const blockType = [...classes].includes('detailed-teaser') ? 'detailed-teaser' : 'teaser';
@@ -45,9 +45,7 @@ export default function decorate(block) {
       const bgColor = `var(--${bgColorCls.substr(3)})`;
       panel.style.backgroundColor = bgColor;
     }
-    if (blockType === 'detailed-teaser') {
-      [image, classList, , ...rest] = panel.children;
-    }
+
     // check if we have to render teaser or a detailed teaser
     const teaserDOM =
       blockType === 'detailed-teaser'
