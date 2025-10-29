@@ -83,14 +83,6 @@ function getCourseLandingPageUrl() {
 }
 
 /**
- * Detects if the page is in authoring mode
- * @returns {boolean} True if in authoring mode
- */
-function isAuthoringMode() {
-  return window.hlx.aemRoot || window.location.href.includes('.html');
-}
-
-/**
  * Fetches certificate data for the current course
  * @returns {Promise<Object>} Certificate data
  */
@@ -129,10 +121,9 @@ async function fetchCertificateData() {
   // Return certificate data with fallbacks for null values
   return {
     name: courseMeta?.heading || 'Course Title',
-    completionTimeInHrs: completionHours || '2',
+    completionTimeInHrs: completionHours || '',
     userName: userName || 'User',
-    completionDate:
-      completionDate || new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    completionDate: completionDate || '',
   };
 }
 
@@ -437,13 +428,9 @@ export default async function decorate(block) {
     // Show error message
     // eslint-disable-next-line no-console
     console.error('Error in decorate function:', error);
-
-    // Only show error message if not in authoring mode
-    if (!isAuthoringMode()) {
-      const errorMessage = createErrorMessage();
-      block.textContent = '';
-      block.appendChild(errorMessage);
-    }
+    const errorMessage = createErrorMessage();
+    block.textContent = '';
+    block.appendChild(errorMessage);
   }
   decorateIcons(block);
 }
