@@ -831,6 +831,7 @@ export function getConfig() {
     communityTopicsUrl: isProd
       ? `https://experienceleaguecommunities.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`
       : `https://experienceleaguecommunities-dev.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`,
+    mpcVideoUrl: `${cdnOrigin}/api/action/videos`,
   };
   return window.exlm.config;
 }
