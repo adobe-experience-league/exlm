@@ -331,6 +331,11 @@ async function completeCourse(url = window.location.pathname) {
       }
     }
 
+    // Set awards timestamp
+    course.awards = {
+      timestamp: finishTime,
+    };
+
     // Get the course completion page url and extract the ID (without language)
     const courseCompletionUrl = await getCourseCompletionPageUrl(url);
     if (courseCompletionUrl) {
@@ -339,11 +344,6 @@ async function completeCourse(url = window.location.pathname) {
       const id = idParts.join('/');
       course.awards.id = id;
     }
-
-    // Set awards timestamp
-    course.awards = {
-      timestamp: finishTime,
-    };
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
