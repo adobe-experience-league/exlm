@@ -97,7 +97,7 @@ async function fetchCertificateData() {
     courseMeta = await getCurrentCourseMeta();
 
     // Extract completion time from course metadata
-    completionHours = courseMeta.totalTime?.match(/\d+/)?.[0] || '';
+    completionHours = courseMeta?.totalTime?.match(/\d+/)?.[0] || '';
 
     // Get the current course ID
     const { courseId } = extractCourseModuleIds(window.location.pathname);
@@ -118,12 +118,12 @@ async function fetchCertificateData() {
     console.error('Error getting user profile or completion date:', e);
   }
 
-  // Return certificate data
+  // Return certificate data with fallbacks for null values
   return {
-    name: courseMeta.heading,
-    completionTimeInHrs: completionHours,
-    userName,
-    completionDate,
+    name: courseMeta?.heading || 'Course Title',
+    completionTimeInHrs: completionHours || '',
+    userName: userName || 'User',
+    completionDate: completionDate || '',
   };
 }
 
