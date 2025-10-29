@@ -1,5 +1,9 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 
+.section.browse-courses-container {
+  padding: var(--spectrum-spacing-500) var(--spectrum-spacing-300);
+}
+
 .browse-courses .browse-cards-block-header {
   display: flex;
   flex-direction: column;
@@ -14,18 +18,27 @@
 }
 
 .browse-courses .browse-card-dropdown > label {
-  color: var(--non-spectrum-slate-gray);
+  color: var(--non-spectrum-dark-gray);
   display: inline-block;
-  font-size: var(--spectrum-body-size-100);
+  font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-bold);
+  line-height: 150%;
 }
 
 .browse-courses .custom-filter-dropdown {
-  margin-top: 5px;
+  margin-top: var(--spectrum-spacing-100);
+}
+
+.browse-courses .custom-filter-dropdown button {
+  padding: var(--spectrum-spacing-100) var(--spectrum-spacing-300);
+  color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-normal);
 }
 
 .browse-courses .status-dropdown-container {
   width: 100%;
+  margin-top: var(--spectrum-spacing-100);
 }
 
 .browse-courses .browse-card-clear-filter {
@@ -47,9 +60,12 @@
 
 .browse-courses .browse-card-clear-filter[disabled],
 .browse-courses .browse-card-clear-filter.disabled {
-  color: var(--spectrum-gray-500);
+  color: var(--non-spectrum-smoke);
   cursor: not-allowed;
+  font-weight: var(--font-weight-bold);
   pointer-events: none;
+  font-size: var(--spectrum-font-size-100);
+  line-height: 150%;
 }
 
 .browse-courses .browse-cards-block-header .browse-card-tags {
@@ -94,7 +110,7 @@
 
 .browse-courses .browse-cards-block-content {
   display: grid;
-  gap: 32px;
+  gap: 24px;
   grid-template-columns: 1fr;
   margin: 32px 0 0;
   min-height: 284px;
@@ -134,26 +150,45 @@
   }
 
   .browse-courses .browse-filter-controls {
-    align-items: center;
     display: flex;
-    gap: 16px;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .browse-courses .browse-filter-controls::before {
+    content: '';
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: var(--spectrum-spacing-300);
+  }
+
+  .browse-courses .browse-card-dropdown > label {
+    position: absolute;
+    top: 0;
+    left: 0;
   }
 
   .browse-courses .browse-card-dropdown {
-    align-items: center;
     display: flex;
-    gap: 12px;
+    width: 100%;
+    gap: var(--spectrum-spacing-100);
+    margin-top: var(--spectrum-spacing-100);
   }
 
-  .browse-courses .custom-filter-dropdown {
+  .browse-courses .custom-filter-dropdown,
+  .browse-courses .status-dropdown-container {
     margin: 0;
     min-width: 180px;
+    flex: 1;
   }
 
   .browse-courses .browse-card-clear-filter {
-    position: static;
+    position: absolute;
+    top: 0;
+    right: 0;
     word-wrap: break-word;
-    max-width: 100px;
+    max-width: none;
   }
 
   .browse-courses .browse-cards-block-content {
@@ -167,19 +202,51 @@
 
 @media only screen and (min-width: 900px) {
   .section.browse-courses-container {
-    padding-bottom: 40px;
+    padding: var(--spectrum-spacing-1100) 148px;
+  }
+
+  .browse-courses .browse-filter-controls {
+    align-items: center;
+    display: flex;
+    gap: 24px;
+    flex-direction: row;
+  }
+
+  .browse-courses .browse-filter-controls::before {
+    display: none;
+  }
+
+  .browse-courses .browse-card-dropdown {
+    align-items: center;
+    display: flex;
+    gap: 24px;
+    width: auto;
+    margin: 0;
+  }
+
+  .browse-courses .browse-card-clear-filter {
+    position: static;
+    max-width: 100px;
+  }
+
+  .browse-courses .browse-card-dropdown > label {
+    position: unset;
   }
 
   .browse-courses .browse-cards-block-content {
     grid-template-columns: repeat(3, 1fr);
+    gap: 32px 24px;
   }
 
   .browse-courses .browse-cards-block-content > div {
     flex: 0 0 295px;
   }
 
-  .browse-courses .custom-filter-dropdown {
+  .browse-courses .custom-filter-dropdown,
+  .browse-courses .status-dropdown-container {
     min-width: 300px;
+    flex: none;
+    width: auto;
   }
 
   .browse-courses .browse-card-shimmer {
