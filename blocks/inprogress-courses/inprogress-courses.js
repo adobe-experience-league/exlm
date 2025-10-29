@@ -69,17 +69,19 @@ export default function build(block) {
           fetchLanguagePlaceholders(),
         ]);
         const firstName = profileResult?.first_name;
-        const headerText = placeholders?.inprogressCoursesHeader || 'Keep up the Good work, [firstName].';
-        block.innerHTML = `<div><h3>${headerText.replace(
-          '[firstName]',
-          firstName,
-        )}</h3></div><div class="inprogress-courses-card-wrapper"></div><div></div>`;
+        const headerText = placeholders?.inprogressCoursesHeader || 'Keep up the Good work';
+        block.innerHTML = `<div><h3>${headerText}, ${firstName}.</h3></div><div class="inprogress-courses-card-wrapper"></div><div></div>`;
         const lang = document.querySelector('html').lang || 'en';
         const allCourses = await fetchCourseIndex(lang);
         const courseIds = courseIdentifiers.map((id) => `/${lang}/${id}`);
         const filteredCourses = allCourses.filter((course) => courseIds.includes(course.path));
 
-        const cardModels = filteredCourses.map((c) => transformCourseMetaToCardModel({ course: c, placeholders }));
+        const cardModels = filteredCourses.map((model) => {
+          const path = model.path || '';
+          const [, id] = path.split(`/${lang}/`);
+          const course = profileCourses[id];
+          return transformCourseMetaToCardModel({ model, course, placeholders });
+        });
         const courses = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus(cardModels, profileCourses);
         const inProgressCourses = courses
           .filter((course) => course.meta?.courseInfo?.courseStatus === COURSE_STATUS.IN_PROGRESS)

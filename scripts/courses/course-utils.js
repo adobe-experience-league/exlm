@@ -513,40 +513,25 @@ export async function fetchCourseIndex(prefix = 'en') {
   return window.courseIndex[prefix];
 }
 
-export function transformCourseMetaToCardModel({ course, placeholders }) {
+function transformHtmlToString(htmlText) {
+  const el = document.createElement('div');
+  el.innerHTML = htmlText;
+  return el.textContent;
+}
+
+export function transformCourseMetaToCardModel({ model, placeholders, course }) {
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
   return {
-    id: course.path.split('/').pop(),
-    contentType: course.coveoContentType || 'Course',
-    badgeTitle: course.coveoContentType || 'Course',
-    thumbnail: '',
-    product: [course.coveoSolution],
-    title: course.title,
-    description: '',
-    tags: course.theme.split(',').map((theme) => ({
-      icon: '',
-      text: theme.trim(),
-    })),
-    event: {
-      time: '',
-    },
-    contributor: {
-      thumbnail: '',
-      name: '',
-      level: course.coveoLevel,
-      date: '',
-    },
-    authorInfo: {
-      name: '',
-      type: '',
-    },
-    copyLink: baseUrl + course.path,
-    bookmarkLink: '',
-    viewLink: baseUrl + course.path,
+    id: model.path?.split('/')?.pop() || '',
+    contentType: model.coveoContentType || 'Course',
+    badgeTitle: model.coveoContentType || 'Course',
+    product: model.coveoSolution ? [model.coveoSolution] : [],
+    title: model.title,
+    description: course?.description ? transformHtmlToString(course.description) : '',
+    copyLink: baseUrl + model.path,
+    viewLink: baseUrl + model.path,
     viewLinkText: placeholders?.browseCardCourseViewLabel || 'View course',
-    inProgressText: '',
-    inProgressStatus: '',
     meta: {},
   };
 }
