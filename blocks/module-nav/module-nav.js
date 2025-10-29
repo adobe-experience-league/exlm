@@ -4,6 +4,7 @@ import {
   getNextModuleFirstStep,
   isLastModuleOfCourse,
   getCourseCompletionPageUrl,
+  getCourseFragmentUrl,
 } from '../../scripts/courses/course-utils.js';
 import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
@@ -15,6 +16,16 @@ try {
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
+}
+
+// Helper function to update back button to point to course landing page
+async function updateBackButtonToCourseUrl(button, placeholdersObj) {
+  if (!button) return;
+  button.textContent = placeholdersObj?.backToCourseOverview || 'Back to Course Overview';
+  const courseUrl = await getCourseFragmentUrl();
+  if (courseUrl) {
+    button.href = courseUrl;
+  }
 }
 
 async function handleQuizNextButton(e) {
@@ -48,7 +59,7 @@ async function handleQuizNextButton(e) {
   }
 
   if (backButton) {
-    backButton.textContent = placeholders?.backToCourseOverview || 'Back to Course Overview';
+    await updateBackButtonToCourseUrl(backButton, placeholders);
   }
 
   if (nextButton) {
@@ -143,9 +154,9 @@ export default async function decorate(block) {
     // Regular Next link (for normal steps or skipped quizzes)
     setupNextButton();
 
-    // Update previous button text if this is a skipped quiz
+    // Update previous button text and href if this is a skipped quiz
     if (isQuiz && skipQuiz) {
-      previousLink.textContent = placeholders?.backToCourseOverview || 'Back to Course Overview';
+      await updateBackButtonToCourseUrl(previousLink, placeholders);
     }
   }
 
