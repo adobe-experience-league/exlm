@@ -166,7 +166,7 @@ export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 export const isCourseStep = matchesAnyTheme(/course-step/);
-export const isCertificatePage = () => document.querySelector('.course-completion') !== null;
+export const isCertificatePage = () => !!document.querySelector('.course-completion'); // Checking for presence of course-completion block
 
 /**
  * add a section for the left rail when on a browse page.
@@ -333,7 +333,7 @@ function buildAutoBlocks(main, isFragment = false) {
         addModuleInfo(main);
         addCourseBreadcrumb(main);
         addModuleNav(main);
-      } else if (isCertificatePage) {
+      } else if (isCertificatePage()) {
         // if we are on a certificate page
         addCourseBreadcrumb(main);
       }
