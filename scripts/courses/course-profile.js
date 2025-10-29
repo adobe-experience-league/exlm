@@ -3,7 +3,7 @@
  */
 
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
-import { extractCourseModuleIds, getCurrentCourseMeta } from './course-utils.js';
+import { extractCourseModuleIds, getCurrentCourseMeta, getCourseCompletionPageUrl } from './course-utils.js';
 import {
   pushModuleStartEvent,
   pushModuleCompletionEvent,
@@ -329,6 +329,15 @@ async function completeCourse(url = window.location.pathname) {
       if (module && !module.finishedAt) {
         module.finishedAt = finishTime;
       }
+    }
+
+    // Get the course completion page url and extract the ID (without language)
+    const courseCompletionUrl = await getCourseCompletionPageUrl(url);
+    if (courseCompletionUrl) {
+      const parts = courseCompletionUrl.split('/');
+      const idParts = parts.slice(2);
+      const id = idParts.join('/');
+      course.awards.id = id;
     }
 
     // Set awards timestamp
