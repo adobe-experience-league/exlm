@@ -294,7 +294,7 @@
   border: none;
   border-top: 4px solid var(--spectrum-blue-800);
   width: 100%;
-  padding: 30px;
+  padding: 24px;
   max-height: fit-content;
 }
 

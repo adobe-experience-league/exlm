@@ -10,7 +10,7 @@
 .module-info {
   background-color: var(--spectrum-gray-100);
   border-radius: 16px;
-  padding: 0 40px 40px;
+  padding: 40px 64px 40px 64px;
   border: 1px solid var(--non-spectrum-unicorn-silver);
 }
 
@@ -20,8 +20,8 @@
   gap: var(--spectrum-spacing-100);
   border: none;
   border-radius: var(--spectrum-spacing-75);
-  padding: var(--spectrum-spacing-100);
-  color: var(--text-color);
+  margin-top: 0px;
+  color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-75);
   text-transform: uppercase;
   cursor: pointer;
@@ -55,6 +55,7 @@
 }
 
 .module-info .back-to-course .back-to-course-label {
+  color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-100);
   line-height: 1.25;
   font-weight: var(--font-weight-bold);
@@ -62,8 +63,8 @@
 
 /* Title */
 .module-info .module-title {
-  font-size: var(--spectrum-font-size-700);
-  color: var(--text-color);
+  font-size: var(--spectrum-font-size-600);
+  color: var(--non-spectrum-dark-gray);
   margin: 0;
   line-height: 1.25;
   flex: 1;
@@ -72,15 +73,11 @@
 
 /* Progress section */
 .module-info .progress-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: var(--spectrum-spacing-300);
-  margin-top: var(--spectrum-spacing-300);
+  margin-top: var(--spectrum-spacing-400);
 }
 
 .module-info .step-selector-container {
-  min-width: 250px;
+  max-width: 311px;
 }
 
 .module-info .custom-filter-dropdown button {
@@ -90,7 +87,6 @@
   background: var(--background-color);
   font-size: var(--spectrum-font-size-100);
   cursor: pointer;
-  max-width: 300px;
 }
 
 .module-info .custom-filter-dropdown button > span:first-child {
@@ -156,6 +152,9 @@
 
 /* Responsive design */
 @media (max-width: 900px) {
+  .module-info {
+    padding: 12px 24px 12px 24px;
+  }
   .module-info .module-content {
     flex-direction: column;
     gap: var(--spectrum-spacing-300);

@@ -1,5 +1,8 @@
 @import '../question/question.css';
-
+.section.quiz-container {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
 .quiz .quiz-container {
   max-width: 800px;
   margin: var(--spectrum-spacing-400) auto;
@@ -12,7 +15,7 @@
 }
 
 .quiz .quiz-description-container {
-  max-width: 728px;
+  max-width: 792px;
   height: auto;
   margin: 0 auto 50px;
   box-sizing: border-box;
@@ -22,10 +25,11 @@
   font-weight: var(--font-weight-bold);
   font-size: var(--spectrum-font-size-800);
   line-height: var(--spectrum-line-height-xxl);
-  margin-top: var(--spectrum-spacing-600);
   margin-bottom: var(--spectrum-spacing-300);
 }
-
+.quiz .quiz-title h2 {
+  margin-top: 0px;
+}
 .quiz .quiz-description {
   font-weight: var(--font-weight-normal);
   font-size: var(--spectrum-font-size-200);
@@ -77,6 +81,6 @@
 
 @media (min-width: 900px) {
   .quiz {
-    width: 728px;
+    width: 792px;
   }
 }

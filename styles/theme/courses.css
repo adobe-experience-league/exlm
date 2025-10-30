@@ -1,7 +1,6 @@
 .courses .section:not(.notification-banner-container),
 .courses-section {
   background-color: var(--spectrum-gray-50);
-  padding: 24px 49px;
 }
 
 .courses .section.bg-dark-gray:not(.notification-banner-container),
@@ -9,10 +8,23 @@
   background-color: var(--spectrum-gray-50);
 }
 
-.courses-section > div,
-.courses .section:not(.notification-banner-container, .course-marquee-container) > div {
-  max-width: 792px;
+.courses-section > div:not(.default-content-wrapper),
+.courses .section:not(.notification-banner-container, .course-marquee-container, .default-content-wrapper) > div:not(.default-content-wrapper) {
+  max-width: 920px;
   margin: 0 auto;
+}
+
+.courses .section .default-content-wrapper{
+  max-width: 792px;
+}
+
+/* Media query for screens 900px and above */
+@media (min-width: 900px) {
+  .courses-section > div > .block:not(.module-info, .course-breadcrumb),
+  .courses .section:not(.notification-banner-container, .course-marquee-container, .module-info-container, .course-breadcrumb-container) > div > .block {
+    padding-left: 64px;
+    padding-right: 64px;
+  }
 }
 
 .courses :where(h1, h2, h3, h4, h5, h6, p) {
