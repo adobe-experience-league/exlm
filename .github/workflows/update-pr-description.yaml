@@ -9,7 +9,7 @@ jobs:
   update-description:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.UPDATE_PR_GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.UPDATE_PR_GITHUB_TOKEN }}
       OWNER: ${{ github.repository_owner }}
       REPO: ${{ github.event.repository.name }}
       BRANCH: ${{ github.head_ref }}

@@ -20,6 +20,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import { COURSE_STATUS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
+import { fetchCourseIndex } from '../../scripts/courses/course-utils.js';
 
 /**
  * Module-level placeholders for internationalization
@@ -59,40 +60,6 @@ const URL_PARAMS = {
  * Dropdown configuration
  */
 const DROPDOWN_TYPE = 'multi-select';
-
-/**
- * Fetches and caches the course index for a given language prefix
- * Uses window-level caching to avoid multiple requests for the same data
- * @param {string} prefix - Language prefix for the course index (default: 'en')
- * @returns {Promise<Array>} Array of course index data
- */
-async function fetchCourseIndex(prefix = 'en') {
-  window.courseIndex = window.courseIndex || {};
-  const loaded = window.courseIndex[`${prefix}-loaded`];
-  if (!loaded) {
-    window.courseIndex[`${prefix}-loaded`] = new Promise((resolve, reject) => {
-      const url = `/${prefix}/course-index.json`;
-      fetch(url)
-        .then((resp) => {
-          if (resp.ok) {
-            return resp.json();
-          }
-          window.courseIndex[prefix] = [];
-          return {};
-        })
-        .then((json) => {
-          window.courseIndex[prefix] = json?.data ?? [];
-          resolve(json?.data ?? []);
-        })
-        .catch((error) => {
-          window.courseIndex[prefix] = [];
-          reject(error);
-        });
-    });
-  }
-  await window.courseIndex[`${prefix}-loaded`];
-  return window.courseIndex[prefix];
-}
 
 /**
  * Fetches the list of products from the course index JSON

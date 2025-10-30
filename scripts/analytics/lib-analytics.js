@@ -155,21 +155,20 @@ export async function pushPageDataLayer(language, searchTrackingData) {
         userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
       };
 
-      // get a list of all courses titles with awardGranted property
-      const coursesWithAwardGranted = Object.values(userData?.courses || {})
-        .filter((course) => course?.awardGranted && course.name)
+      // get a list of all courses titles with awards.timestamp property
+      const coursesWithAwards = (userData?.courses || [])
+        .filter((course) => course?.awards?.timestamp && course.name)
         .map((course) => course.name);
-      user.userDetails.courses = coursesWithAwardGranted.length ? coursesWithAwardGranted : [];
+      user.userDetails.courses = coursesWithAwards.length ? coursesWithAwards : [];
 
-      if (userData.courses?.[courseObj?.id]) {
-        const courseInfo = userData.courses[courseObj.id];
-        if (courseInfo?.modules && typeof courseInfo?.modules === 'object') {
+      const courseInfo = (userData.courses || []).find((c) => c.courseId === courseObj?.id);
+      if (courseInfo) {
+        if (courseInfo?.modules && Array.isArray(courseInfo?.modules)) {
           let startTime = null;
-          Object.keys(courseInfo.modules).forEach((modId) => {
-            const mod = courseInfo.modules[modId];
-            if (mod?.started) {
-              if (!startTime || new Date(mod.started) < new Date(startTime)) {
-                startTime = mod.started;
+          courseInfo.modules.forEach((mod) => {
+            if (mod?.startedAt) {
+              if (!startTime || new Date(mod.startedAt) < new Date(startTime)) {
+                startTime = mod.startedAt;
               }
             }
           });
@@ -177,7 +176,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
             courseObj.startTime = startTime;
           }
 
-          if (courseInfo?.awardGranted) courseObj.finishTime = courseInfo.awardGranted;
+          if (courseInfo?.awards?.timestamp) courseObj.finishTime = courseInfo.awards.timestamp;
 
           if (courseObj?.startTime && courseObj?.finishTime) {
             const durationMs = new Date(courseObj.finishTime) - new Date(courseObj.startTime);
@@ -754,17 +753,16 @@ export async function pushCourseCompletionEvent(courseId, currentCourses) {
   const { getCurrentCourseMeta } = await import('../courses/course-utils.js');
   const courseMeta = await getCurrentCourseMeta();
 
-  const courseInfo = currentCourses[courseId];
+  const courseInfo = currentCourses.find((c) => c.courseId === courseId);
   let startTime = null;
-  const finishTime = courseInfo?.awardGranted || '';
+  const finishTime = courseInfo?.awards?.timestamp || '';
   let courseDuration = null;
 
-  if (courseInfo?.modules && typeof courseInfo?.modules === 'object') {
-    Object.keys(courseInfo.modules).forEach((modId) => {
-      const mod = courseInfo.modules[modId];
-      if (mod?.started) {
-        if (!startTime || new Date(mod.started) < new Date(startTime)) {
-          startTime = mod.started;
+  if (courseInfo?.modules && Array.isArray(courseInfo?.modules)) {
+    courseInfo.modules.forEach((mod) => {
+      if (mod?.startedAt) {
+        if (!startTime || new Date(mod.startedAt) < new Date(startTime)) {
+          startTime = mod.startedAt;
         }
       }
     });

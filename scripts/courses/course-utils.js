@@ -448,7 +448,7 @@ export async function isLastStep() {
  * @returns {Promise<string|null>} The URL of the first step of the next module or null if not found
  */
 export async function getNextModuleFirstStep(url = window.location.pathname) {
-  const courseInfo = await getCurrentCourseMeta();
+  const courseInfo = await getCurrentCourseMeta(url);
   if (!courseInfo || !courseInfo.modules || !Array.isArray(courseInfo.modules) || courseInfo.modules.length === 0) {
     return null;
   }
@@ -477,6 +477,63 @@ export async function getNextModuleFirstStep(url = window.location.pathname) {
   }
 
   return null;
+}
+
+/*
+ * Fetches and caches the course index for a given language prefix
+ * Uses window-level caching to avoid multiple requests for the same data
+ * @param {string} prefix - Language prefix for the course index (default: 'en')
+ * @returns {Promise<Array>} Array of course index data
+ */
+export async function fetchCourseIndex(prefix = 'en') {
+  window.courseIndex = window.courseIndex || {};
+  const loaded = window.courseIndex[`${prefix}-loaded`];
+  if (!loaded) {
+    window.courseIndex[`${prefix}-loaded`] = new Promise((resolve, reject) => {
+      const url = `/${prefix}/course-index.json`;
+      fetch(url)
+        .then((resp) => {
+          if (resp.ok) {
+            return resp.json();
+          }
+          window.courseIndex[prefix] = [];
+          return {};
+        })
+        .then((json) => {
+          window.courseIndex[prefix] = json?.data ?? [];
+          resolve(json?.data ?? []);
+        })
+        .catch((error) => {
+          window.courseIndex[prefix] = [];
+          reject(error);
+        });
+    });
+  }
+  await window.courseIndex[`${prefix}-loaded`];
+  return window.courseIndex[prefix];
+}
+
+function transformHtmlToString(htmlText) {
+  const el = document.createElement('div');
+  el.innerHTML = htmlText;
+  return el.textContent;
+}
+
+export function transformCourseMetaToCardModel({ model, placeholders, course }) {
+  const baseUrl = `${window.location.protocol}//${window.location.host}`;
+
+  return {
+    id: model.path?.split('/')?.pop() || '',
+    contentType: model.coveoContentType || 'Course',
+    badgeTitle: model.coveoContentType || 'Course',
+    product: model.coveoSolution ? [model.coveoSolution] : [],
+    title: model.title,
+    description: course?.description ? transformHtmlToString(course.description) : '',
+    copyLink: baseUrl + model.path,
+    viewLink: baseUrl + model.path,
+    viewLinkText: placeholders?.browseCardCourseViewLabel || 'View course',
+    meta: {},
+  };
 }
 
 /**
