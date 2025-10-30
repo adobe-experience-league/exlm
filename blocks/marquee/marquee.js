@@ -15,10 +15,17 @@ const getDefaultEmbed = (url) => `
       loading="lazy"></iframe>
   </div>`;
 
-function handleVideoLinks(videoLinkElems, block, lang) {
-  videoLinkElems.forEach(async (videoLinkElem) => {
+async function handleVideoLinks(videoLinkElems, block, lang) {
+  const videoPromises = Array.from(videoLinkElems).map(async (videoLinkElem) => {
     const videoLink = videoLinkElem.getAttribute('href');
     const locVideoLink = await getLocalizedVideoUrl(videoLink, lang);
+
+    return { videoLinkElem, locVideoLink };
+  });
+
+  const videoResults = await Promise.all(videoPromises);
+
+  videoResults.forEach(({ videoLinkElem, locVideoLink }) => {
     videoLinkElem.setAttribute('href', '#');
     videoLinkElem.removeAttribute('target');
 
@@ -244,6 +251,6 @@ export default async function decorate(block) {
 
   if (isVideoLinkType) {
     const videoLinkElems = block.querySelectorAll('.marquee-cta > .video');
-    handleVideoLinks(videoLinkElems, block, lang);
+    await handleVideoLinks(videoLinkElems, block, lang);
   }
 }

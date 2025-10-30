@@ -41,14 +41,8 @@ const MPC_LANGUAGES_MAP = {
 /**
  * Collection type constants
  */
-const COLLECTION_TYPES = {
+const COLLECTION_CONSTANTS = {
   LOCALIZATION: 'localization',
-};
-
-/**
- * Video type constants
- */
-const VIDEO_TYPES = {
   TRANSLATED: 'translated',
 };
 
@@ -105,7 +99,7 @@ function hasTargetLanguageCaptions(video, targetLocale) {
 function findTranslatedVideo(videos, targetLocale) {
   return (
     videos.find(
-      (video) => video.videoType === VIDEO_TYPES.TRANSLATED && hasTargetLanguageCaptions(video, targetLocale),
+      (video) => video.videoType === COLLECTION_CONSTANTS.TRANSLATED && hasTargetLanguageCaptions(video, targetLocale),
     ) || null
   );
 }
@@ -117,22 +111,12 @@ function findTranslatedVideo(videos, targetLocale) {
  * @returns {Object} - Object with localizedId and hasTargetLanguage properties
  */
 function findLocalizedVideoId(collectionsData, lang) {
-  // Early return for invalid input
-  if (!collectionsData?.collections?.length) {
-    return { localizedId: null, hasTargetLanguage: false };
-  }
-
   const targetLocale = MPC_LANGUAGES_MAP[lang];
-  if (!targetLocale) {
-    return { localizedId: null, hasTargetLanguage: false };
-  }
-
-  // Find the localization collection
   const localizationCollection = collectionsData.collections.find(
-    (collection) => collection.collectionType === COLLECTION_TYPES.LOCALIZATION,
+    (collection) => collection.collectionType === COLLECTION_CONSTANTS.LOCALIZATION,
   );
-
-  if (!localizationCollection?.videos?.length) {
+  // Early return for invalid input
+  if (!collectionsData?.collections?.length || !targetLocale || !localizationCollection?.videos?.length) {
     return { localizedId: null, hasTargetLanguage: false };
   }
 
