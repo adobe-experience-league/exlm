@@ -3,13 +3,15 @@
  */
 
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
-import { extractCourseModuleIds, getCurrentCourseMeta } from './course-utils.js';
+import { extractCourseModuleIds, getCurrentCourseMeta, getCourseCompletionPageUrl } from './course-utils.js';
 import {
   pushModuleStartEvent,
   pushModuleCompletionEvent,
   pushCourseCompletionEvent,
   pushCourseStartEvent,
 } from '../analytics/lib-analytics.js';
+
+const COURSE_KEY = 'courses_v2';
 
 const COURSE_STATUS = {
   NOT_STARTED: 'not-started',
@@ -29,12 +31,32 @@ const MODULE_STATUS = {
  */
 
 /**
+ * Find a course in the courses array by courseId
+ * @param {Array} courses - Array of course objects
+ * @param {string} courseId - Course identifier to find
+ * @returns {Object|null} Found course or null
+ */
+function findCourse(courses, courseId) {
+  return courses?.find((course) => course.courseId === courseId) || null;
+}
+
+/**
+ * Find a module in a course's modules array by moduleId
+ * @param {Object} course - Course object
+ * @param {string} moduleId - Module identifier to find
+ * @returns {Object|null} Found module or null
+ */
+function findModule(course, moduleId) {
+  return course?.modules?.find((module) => module.moduleId === moduleId) || null;
+}
+
+/**
  * Get current courses from user profile
- * @returns {Promise<Object>} Current courses object from user profile
+ * @returns {Promise<Array>} Current courses array from user profile
  */
 async function getCurrentCourses() {
   const profile = await defaultProfileClient.getMergedProfile();
-  return profile?.courses || {};
+  return profile?.[COURSE_KEY] || [];
 }
 
 /**
@@ -46,14 +68,14 @@ async function getLastAddedModule() {
   const courseMeta = await getCurrentCourseMeta();
 
   const { courseId: currentCourseId } = extractCourseModuleIds(window.location.pathname);
-  const currentCourse = courses[currentCourseId];
+  const currentCourse = findCourse(courses, currentCourseId);
 
   if (
-    Object.keys(courses).length === 0 ||
+    courses.length === 0 ||
     !currentCourseId ||
     !currentCourse ||
     !currentCourse.modules ||
-    Object.keys(currentCourse.modules).length === 0
+    currentCourse.modules.length === 0
   ) {
     return courseMeta.modules[0];
   }
@@ -61,10 +83,10 @@ async function getLastAddedModule() {
   let latestModuleId = null;
   let latestStartTime = null;
 
-  Object.entries(currentCourse.modules).forEach(([moduleId, moduleData]) => {
-    if (moduleData.started && (!latestStartTime || new Date(moduleData.started) > new Date(latestStartTime))) {
-      latestStartTime = moduleData.started;
-      latestModuleId = moduleId;
+  currentCourse.modules.forEach((module) => {
+    if (module.startedAt && (!latestStartTime || new Date(module.startedAt) > new Date(latestStartTime))) {
+      latestStartTime = module.startedAt;
+      latestModuleId = module.moduleId;
     }
   });
 
@@ -95,13 +117,13 @@ async function getCourseStatus(url = window.location.pathname) {
   }
 
   const courses = await getCurrentCourses();
-  const course = courses[courseId];
+  const course = findCourse(courses, courseId);
 
   if (!course) {
     return COURSE_STATUS.NOT_STARTED;
   }
 
-  if (course.awardGranted) {
+  if (course.awards?.timestamp) {
     return COURSE_STATUS.COMPLETED;
   }
 
@@ -131,9 +153,9 @@ async function getModuleStatus(url = window.location.pathname) {
     return MODULE_STATUS.DISABLED;
   }
 
-  const course = courses[courseId];
+  const course = findCourse(courses, courseId);
 
-  if (!course || !course.modules) {
+  if (!course || !course.modules || course.modules.length === 0) {
     // If the module is the first module of the course, return not started
     if (courseMeta.modules[0].includes(url) || url.includes(courseMeta.modules[0])) {
       return MODULE_STATUS.NOT_STARTED;
@@ -150,20 +172,20 @@ async function getModuleStatus(url = window.location.pathname) {
   if (moduleIndex > 0) {
     const prevModuleUrl = courseMeta.modules[moduleIndex - 1];
     const { moduleId: prevModuleId } = extractCourseModuleIds(prevModuleUrl);
-    const prevModule = course.modules[prevModuleId];
+    const prevModule = findModule(course, prevModuleId);
 
-    if (!prevModule || !prevModule.finished) {
+    if (!prevModule || !prevModule.finishedAt) {
       return MODULE_STATUS.DISABLED;
     }
   }
 
-  const currentModule = course.modules[moduleId];
+  const currentModule = findModule(course, moduleId);
 
-  if (currentModule?.finished) {
+  if (currentModule?.finishedAt) {
     return MODULE_STATUS.COMPLETED;
   }
 
-  if (currentModule?.started) {
+  if (currentModule?.startedAt) {
     return MODULE_STATUS.IN_PROGRESS;
   }
 
@@ -187,32 +209,61 @@ async function startModule(url = window.location.pathname) {
   }
 
   const courses = await getCurrentCourses();
-  const updatedCourses = { ...courses };
+  const updatedCourses = [...courses];
   const startTime = new Date().toISOString();
 
-  // Initialize course if it doesn't exist
-  if (!updatedCourses[courseId]) {
-    updatedCourses[courseId] = {
+  // Find existing course or create new one
+  let course = findCourse(updatedCourses, courseId);
+
+  if (!course) {
+    // Create new course
+    course = {
+      courseId,
       name: courseMeta.heading,
-      description: courseMeta.description,
-      modules: {},
+      modules: [],
     };
+    updatedCourses.push(course);
   }
 
-  // Initialize module if it doesn't exist
-  if (!updatedCourses[courseId].modules) {
-    updatedCourses[courseId].modules = {};
+  // Initialize modules array if it doesn't exist
+  if (!course.modules) {
+    course.modules = [];
   }
+
+  // Find existing module or create new one
+  let module = findModule(course, moduleId);
 
   // Set module start time only if not already set
-  if (!updatedCourses[courseId].modules[moduleId]?.started) {
-    updatedCourses[courseId].modules[moduleId] = {
-      ...updatedCourses[courseId].modules[moduleId],
-      started: startTime,
+  if (!module) {
+    // Create new module
+    module = {
+      moduleId,
+      startedAt: startTime,
     };
+    course.modules.push(module);
 
     // Update the profile with the new courses data
-    await defaultProfileClient.updateProfile('courses', updatedCourses, true);
+    await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
+    pushModuleStartEvent(courseId);
+
+    const isFirstModule = courseMeta.modules?.[0]?.includes(moduleId);
+
+    // push course start event
+    if (isFirstModule) {
+      pushCourseStartEvent({
+        title: courseMeta.heading,
+        id: courseId,
+        solution: courseMeta.solution,
+        role: courseMeta.role,
+        startTime,
+      });
+    }
+  } else if (!module.startedAt) {
+    // Module exists but no start time - update it
+    module.startedAt = startTime;
+
+    // Update the profile with the new courses data
+    await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
     pushModuleStartEvent(courseId);
 
     const isFirstModule = courseMeta.modules?.[0]?.includes(moduleId);
@@ -239,18 +290,20 @@ async function startModule(url = window.location.pathname) {
 async function finishModule(url = window.location.pathname) {
   const { courseId, moduleId } = extractCourseModuleIds(url);
   const courses = await getCurrentCourses();
-  const updatedCourses = { ...courses };
+  const updatedCourses = [...courses];
   const finishTime = new Date().toISOString();
 
+  const course = findCourse(updatedCourses, courseId);
+  if (!course) return;
+
+  const module = findModule(course, moduleId);
+
   // Set module finish time only if not already set
-  if (!updatedCourses[courseId].modules[moduleId]?.finished) {
-    updatedCourses[courseId].modules[moduleId] = {
-      ...updatedCourses[courseId].modules[moduleId],
-      finished: finishTime,
-    };
+  if (module && !module.finishedAt) {
+    module.finishedAt = finishTime;
 
     // Update the profile with the new courses data
-    await defaultProfileClient.updateProfile('courses', updatedCourses, true);
+    await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
     pushModuleCompletionEvent(courseId);
   }
 }
@@ -263,23 +316,37 @@ async function finishModule(url = window.location.pathname) {
 async function completeCourse(url = window.location.pathname) {
   const { courseId, moduleId } = extractCourseModuleIds(url);
   const courses = await getCurrentCourses();
-  const updatedCourses = { ...courses };
+  const updatedCourses = [...courses];
 
-  if (updatedCourses[courseId] && !updatedCourses[courseId].awardGranted) {
+  const course = findCourse(updatedCourses, courseId);
+
+  if (course && !course.awards?.timestamp) {
     const finishTime = new Date().toISOString();
 
     // Mark the current module as finished if not already
-    if (moduleId && !updatedCourses[courseId].modules[moduleId]?.finished) {
-      updatedCourses[courseId].modules[moduleId] = {
-        ...updatedCourses[courseId].modules[moduleId],
-        finished: finishTime,
-      };
+    if (moduleId) {
+      const module = findModule(course, moduleId);
+      if (module && !module.finishedAt) {
+        module.finishedAt = finishTime;
+      }
     }
 
-    updatedCourses[courseId].awardGranted = finishTime;
+    // Set awards timestamp
+    course.awards = {
+      timestamp: finishTime,
+    };
+
+    // Get the course completion page url and extract the ID (without language)
+    const courseCompletionUrl = await getCourseCompletionPageUrl(url);
+    if (courseCompletionUrl) {
+      const parts = courseCompletionUrl.split('/');
+      const idParts = parts.slice(2);
+      const id = idParts.join('/');
+      course.awards.id = id;
+    }
 
     // Update the profile with the new courses data
-    await defaultProfileClient.updateProfile('courses', updatedCourses, true);
+    await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
     pushModuleCompletionEvent(courseId);
     pushCourseCompletionEvent(courseId, updatedCourses);
   }
@@ -308,7 +375,8 @@ async function getUserDisplayName() {
 async function isCourseCompleted(url = window.location.pathname) {
   const { courseId } = extractCourseModuleIds(url);
   const courses = await getCurrentCourses();
-  return courses[courseId]?.awardGranted;
+  const course = findCourse(courses, courseId);
+  return !!course?.awards?.timestamp;
 }
 
 export {

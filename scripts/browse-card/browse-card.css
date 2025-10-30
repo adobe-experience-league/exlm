@@ -644,14 +644,34 @@
 }
 
 .browse-card.course-card .browse-card-content {
-  padding-top: 56px;
   position: relative;
+  padding: 60px 24px 0;
+}
+
+.browse-card.course-card .browse-card-tag-text .browse-card-solution-text {
+  text-transform: uppercase;
+  margin: 0;
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-bold);
+  color: var(--non-spectrum-dark-gray);
+  letter-spacing: 0.7px;
+  line-height: 125%;
+  opacity: 1;
+}
+
+.browse-card.course-card .browse-card-title-text {
+  margin: var(--spectrum-spacing-100) 0 var(--spectrum-spacing-300) 0;
+  font-size: 24px;
+  text-transform: none;
+  line-height: 125%;
+  color: var(--non-spectrum-dark-gray);
+  font-weight: var(--font-weight-bold);
 }
 
 .browse-card.course-card .browse-card-meta-info {
   display: block;
   position: absolute;
-  bottom: 10px;
+  bottom: 0;
 }
 
 .browse-card.course-card .browse-card-meta-info .status-badge {
@@ -684,6 +704,15 @@
   line-height: var(--spectrum-line-height-s);
   color: var(--non-spectrum-dark-gray);
   font-weight: var(--font-weight-bold);
+}
+
+.browse-card.course-card .user-actions button .icon {
+  height: 22px;
+  width: 22px;
+}
+
+.browse-card.course-card .browse-card-footer {
+  padding: 24px;
 }
 
 /* Event Card Variant */

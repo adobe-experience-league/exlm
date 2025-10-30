@@ -66,7 +66,10 @@
 .browse-courses .browse-card-clear-filter.disabled {
   color: var(--non-spectrum-smoke);
   cursor: not-allowed;
+  font-weight: var(--font-weight-bold);
   pointer-events: none;
+  font-size: var(--spectrum-font-size-100);
+  line-height: 150%;
 }
 
 .browse-courses .browse-cards-block-header .browse-card-tags {
