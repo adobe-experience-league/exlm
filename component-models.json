@@ -8391,6 +8391,10 @@
     ]
   },
   {
+    "id": "inprogress-courses",
+    "fields": []
+  },
+  {
     "id": "course-completion",
     "fields": [
       {

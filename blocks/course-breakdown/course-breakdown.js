@@ -201,6 +201,14 @@ function moduleCard({ modulePromise, index, open = false, placeholders }) {
     const stepInfo = card.querySelector('.cb-steps-info');
     const stepsListEl = card.querySelector('.cb-steps-list');
 
+    if (moduleStatus === MODULE_STATUS.IN_PROGRESS || moduleStatus === MODULE_STATUS.NOT_STARTED) {
+      stepInfo.classList.add('open');
+      stepsListEl.classList.add('open');
+    } else {
+      stepInfo.classList.remove('open');
+      stepsListEl.classList.remove('open');
+    }
+
     stepInfo.addEventListener('click', () => {
       stepsListEl.classList.toggle('open');
       stepInfo.classList.toggle('open');

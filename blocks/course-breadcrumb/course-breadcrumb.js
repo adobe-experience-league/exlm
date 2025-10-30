@@ -1,15 +1,5 @@
 import { getCurrentCourseMeta, getCurrentStepInfo } from '../../scripts/courses/course-utils.js';
-import { fetchLanguagePlaceholders, getPathDetails, matchesAnyTheme, htmlToElement } from '../../scripts/scripts.js';
-
-/**
- * Checks if the current page is a certificate page.
- * Certificate pages have the 'course-certificate' theme.
- *
- * @returns {boolean} True if the current page is a certificate page, false otherwise
- */
-function isCertificatePage() {
-  return matchesAnyTheme(/course-certificate/);
-}
+import { fetchLanguagePlaceholders, getPathDetails, isCertificatePage, htmlToElement } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
   let placeholders = {};
@@ -48,15 +38,15 @@ export default async function decorate(block) {
     }</a>
     ${
       isCertificatePage()
-        ? `<a class="course-breadcrumb-certificate course-breadcrumb-current" style="pointer-events: none">${
+        ? `<a class="course-breadcrumb-certificate course-breadcrumb-current" title="${
             placeholders?.coursesCertificate || 'Certificate'
-          }</a>`
+          }">${placeholders?.coursesCertificate || 'Certificate'}</a>`
         : `<a href="${stepInfo.moduleSteps[0]?.url || stepInfo.courseUrl}" title="${
             stepInfo.moduleHeader || ''
           }" class="course-breadcrumb-module">${stepInfo.moduleHeader || ''}</a>
          ${
            currentStep
-             ? `<a class="course-breadcrumb-step course-breadcrumb-current" style="pointer-events: none">${currentStep.name}</a>`
+             ? `<a class="course-breadcrumb-step course-breadcrumb-current" title="${currentStep.name}">${currentStep.name}</a>`
              : ''
          }`
     }

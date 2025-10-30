@@ -43,6 +43,8 @@
 /* Current item styling */
 .course-breadcrumb .course-breadcrumb-current {
   font-weight: var(--font-weight-bold);
+  cursor: default;
+  pointer-events: auto;
 }
 
 /* Responsive adjustments */
