@@ -10,7 +10,7 @@
 .module-info {
   background-color: var(--spectrum-gray-100);
   border-radius: 16px;
-  padding: 40px 64px 40px 64px;
+  padding: 40px 64px;
   border: 1px solid var(--non-spectrum-unicorn-silver);
 }
 
@@ -20,7 +20,7 @@
   gap: var(--spectrum-spacing-100);
   border: none;
   border-radius: var(--spectrum-spacing-75);
-  margin-top: 0px;
+  margin-top: 0;
   color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-75);
   text-transform: uppercase;
@@ -153,8 +153,9 @@
 /* Responsive design */
 @media (max-width: 900px) {
   .module-info {
-    padding: 12px 24px 12px 24px;
+    padding: 12px 24px;
   }
+
   .module-info .module-content {
     flex-direction: column;
     gap: var(--spectrum-spacing-300);
