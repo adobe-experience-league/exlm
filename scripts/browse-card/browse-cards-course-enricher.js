@@ -38,18 +38,18 @@ const BrowseCardsCourseEnricher = (() => {
   const determineCourseStatus = (courseProgress) => {
     if (!courseProgress) return COURSE_STATUS.NOT_STARTED;
 
-    if (courseProgress.awardGranted) {
+    if (courseProgress.awards?.timestamp) {
       return COURSE_STATUS.COMPLETED;
     }
 
-    const hasModules = courseProgress.modules && Object.keys(courseProgress.modules).length > 0;
+    const hasModules = courseProgress.modules && courseProgress.modules.length > 0;
     return hasModules ? COURSE_STATUS.IN_PROGRESS : COURSE_STATUS.NOT_STARTED;
   };
 
   /**
    * Enriches card data with course progress information.
    * @param {Array} cardData - Array of card data to enrich.
-   * @param {Object} courses - User's course progress data.
+   * @param {Array} courses - User's course progress data array.
    * @returns {Array} Enriched card data with course status information.
    */
   const enrichCardsWithCourseStatus = (cardData, courses) => {
@@ -60,9 +60,10 @@ const BrowseCardsCourseEnricher = (() => {
     return cardData.map((card) => {
       let courseStatus = COURSE_STATUS.NOT_STARTED;
 
-      if (card.viewLink && courses) {
+      if (card.viewLink && courses && Array.isArray(courses)) {
         const cardPath = extractCoursePathFromUrl(card.viewLink);
-        courseStatus = determineCourseStatus(courses[cardPath]);
+        const courseProgress = courses.find((c) => c.courseId === cardPath);
+        courseStatus = determineCourseStatus(courseProgress);
       }
 
       return {
