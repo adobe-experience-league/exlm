@@ -11,7 +11,7 @@ import {
   pushCourseStartEvent,
 } from '../analytics/lib-analytics.js';
 
-const COURSE_KEY = 'courses';
+const COURSE_KEY = 'courses_v2';
 
 const COURSE_STATUS = {
   NOT_STARTED: 'not-started',
