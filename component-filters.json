@@ -84,6 +84,7 @@
       "course-breakdown",
       "course-marquee",
       "course-completion",
+      "inprogress-courses",
       "browse-courses",
       "course-recap",
       "quiz-scorecard"
@@ -288,13 +289,23 @@
       "course-marquee",
       "course-completion",
       "course-recap",
+      "inprogress-courses",
       "browse-courses",
       "quiz-scorecard"
     ]
   },
   {
     "id": "course-hub-section",
-    "components": ["text", "title", "button", "image", "announcement-ribbon", "marquee", "browse-courses"]
+    "components": [
+      "text",
+      "title",
+      "button",
+      "image",
+      "announcement-ribbon",
+      "marquee",
+      "inprogress-courses",
+      "browse-courses"
+    ]
   },
   {
     "id": "sign-up-flow-section",
