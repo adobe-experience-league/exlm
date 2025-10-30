@@ -8,6 +8,10 @@
   background-color: var(--spectrum-gray-50);
 }
 
+.courses .section .default-content-wrapper {
+  max-width: 792px;
+}
+
 .courses-section > div:not(.default-content-wrapper),
 .courses
   .section:not(.notification-banner-container, .course-marquee-container, .default-content-wrapper)
@@ -16,8 +20,15 @@
   margin: 0 auto;
 }
 
-.courses .section .default-content-wrapper {
-  max-width: 792px;
+/* Typography styles */
+.courses :where(h1, h2, h3, h4, h5, h6, p) {
+  color: var(--text-color);
+  line-height: normal;
+}
+
+/* Block container width */
+.courses .section > div:has(> .block) {
+  width: 100%;
 }
 
 /* Media query for screens 900px and above */
@@ -32,16 +43,6 @@
     )
     > div
     > .block {
-    padding-left: 64px;
-    padding-right: 64px;
+    padding: 0 64px;
   }
-}
-
-.courses :where(h1, h2, h3, h4, h5, h6, p) {
-  color: var(--text-color);
-  line-height: normal;
-}
-
-.courses .section > div:has(> .block) {
-  width: 100%;
 }
