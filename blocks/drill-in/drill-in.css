@@ -25,8 +25,7 @@
 .drill-in-title {
   font-size: var(--spectrum-font-size-400);
   font-weight: var(--font-weight-bold);
-  margin-bottom: 30px;
-  margin-top: 10px;
+  margin-top: unset;
   outline-offset: 5px;
   color: var(--spectrum-gray-900);
 }
@@ -86,16 +85,14 @@
 }
 
 .drill-in-coachmark [slot='content'] {
-  padding: 4px;
-  margin-bottom: 10px;
   font-weight: var(--font-weight-light);
-  color: var(--spectrum-gray-900);
-  font-size: var(--spectrum-font-size-200);
+  color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-100);
   height: auto;
 }
 
 .drill-in-mobile-popover [slot='content'] {
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-100);
   line-height: 1.5;
   margin-bottom: 20px;
   color: var(--spectrum-gray-900);

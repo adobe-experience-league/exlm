@@ -1,17 +1,30 @@
-.courses .section:not(.notification-banner-container),
-.courses-section {
-  background-color: var(--spectrum-gray-50);
-  padding: 24px 49px;
-}
-
-.courses .section.bg-dark-gray:not(.notification-banner-container),
-.courses-section.bg-dark-gray {
+.courses-section,
+.courses .section:not(.notification-banner-container) {
   background-color: var(--spectrum-gray-50);
 }
 
-.courses-section > div,
-.courses .section:not(.notification-banner-container, .course-marquee-container) > div {
+.courses-section.bg-dark-gray,
+.courses .section.bg-dark-gray:not(.notification-banner-container) {
+  background-color: var(--spectrum-gray-50);
+}
+
+.courses .section .default-content-wrapper {
   max-width: 792px;
+}
+
+.courses-section > div:not(.default-content-wrapper) {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.courses .section > div:has(> .block) {
+  width: 100%;
+}
+
+.courses
+  .section:not(.notification-banner-container, .course-marquee-container, .default-content-wrapper)
+  > div:not(.default-content-wrapper) {
+  max-width: 920px;
   margin: 0 auto;
 }
 
@@ -20,6 +33,17 @@
   line-height: normal;
 }
 
-.courses .section > div:has(> .block) {
-  width: 100%;
+@media (min-width: 900px) {
+  .courses-section > div > .block:not(.module-info, .course-breadcrumb),
+  .courses
+    .section:not(
+      .notification-banner-container,
+      .course-marquee-container,
+      .module-info-container,
+      .course-breadcrumb-container
+    )
+    > div
+    > .block {
+    padding: 0 64px;
+  }
 }
