@@ -448,7 +448,7 @@ export async function isLastStep() {
  * @returns {Promise<string|null>} The URL of the first step of the next module or null if not found
  */
 export async function getNextModuleFirstStep(url = window.location.pathname) {
-  const courseInfo = await getCurrentCourseMeta();
+  const courseInfo = await getCurrentCourseMeta(url);
   if (!courseInfo || !courseInfo.modules || !Array.isArray(courseInfo.modules) || courseInfo.modules.length === 0) {
     return null;
   }

@@ -57,7 +57,7 @@ export default function decorate(block) {
       const { getCurrentCourses, COURSE_STATUS } = await import('../../scripts/courses/course-profile.js');
       Promise.all([getCurrentCourses(), defaultProfileClient.getMergedProfile()]).then(
         async ([profileCourses, profileResult]) => {
-          const courseIdentifiers = Object.keys(profileCourses);
+          const courseIdentifiers = profileCourses.map((c) => c.courseId);
           if (!courseIdentifiers?.length) {
             block.classList.add('inprogress-courses-hidden');
             return;
@@ -82,7 +82,7 @@ export default function decorate(block) {
           const cardModels = filteredCourses.map((model) => {
             const path = model.path || '';
             const [, id] = path.split(`/${lang}/`);
-            const course = profileCourses[id];
+            const course = profileCourses.find((c) => c.courseId === id);
             return transformCourseMetaToCardModel({ model, course, placeholders });
           });
           const courses = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus(cardModels, profileCourses);
