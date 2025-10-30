@@ -105,11 +105,12 @@ async function fetchCertificateData() {
     // Get user name from profile using the utility function
     userName = await getUserDisplayName();
 
-    // Get course completion date from awardGranted timestamp
+    // Get course completion date from awards.timestamp
     const courses = await getCurrentCourses();
-    if (courses?.[courseId]?.awardGranted) {
+    const course = courses?.find((c) => c.courseId === courseId);
+    if (course?.awards?.timestamp) {
       // Convert timestamp to readable date
-      const awardDate = new Date(courses[courseId].awardGranted);
+      const awardDate = new Date(course.awards.timestamp);
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       completionDate = awardDate.toLocaleDateString('en-US', options);
     }
