@@ -39,7 +39,7 @@ const MPC_LANGUAGES_MAP = {
 };
 
 /**
- * Collection type constants
+ * Video collection constants
  */
 const VIDEO_COLLECTION_CONSTANTS = {
   LOCALIZATION: 'localization',
