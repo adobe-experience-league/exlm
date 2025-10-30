@@ -1,8 +1,10 @@
 @import '../question/question.css';
+
 .section.quiz-container {
-  padding-top: 0px;
-  padding-bottom: 0px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
+
 .quiz .quiz-container {
   max-width: 800px;
   margin: var(--spectrum-spacing-400) auto;
@@ -27,9 +29,11 @@
   line-height: var(--spectrum-line-height-xxl);
   margin-bottom: var(--spectrum-spacing-300);
 }
+
 .quiz .quiz-title h2 {
-  margin-top: 0px;
+  margin-top: 0;
 }
+
 .quiz .quiz-description {
   font-weight: var(--font-weight-normal);
   font-size: var(--spectrum-font-size-200);
