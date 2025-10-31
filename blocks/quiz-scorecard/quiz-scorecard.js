@@ -75,9 +75,11 @@ export default async function decorate(block) {
       window.location.reload();
     });
   }
-  
+
   // Add event listener for "Back to step one" button
-  const backToStepOneButton = scorecardElement.querySelector('.quiz-scorecard-cta-container a:not(.retake-quiz-button)');
+  const backToStepOneButton = scorecardElement.querySelector(
+    '.quiz-scorecard-cta-container a:not(.retake-quiz-button)',
+  );
   if (backToStepOneButton) {
     backToStepOneButton.addEventListener('click', async (e) => {
       e.preventDefault();
