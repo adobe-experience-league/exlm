@@ -85,7 +85,7 @@ export default async function decorate(block) {
       e.preventDefault();
       // Get the module steps information
       const stepInfo = await getCurrentStepInfo();
-      if (stepInfo && stepInfo.moduleSteps && stepInfo.moduleSteps.length > 0) {
+      if (stepInfo?.moduleSteps?.length > 0) {
         // Navigate to the first step of the module
         window.location.href = stepInfo.moduleSteps[0].url;
       }
