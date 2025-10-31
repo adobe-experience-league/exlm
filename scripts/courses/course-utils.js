@@ -522,11 +522,21 @@ function transformHtmlToString(htmlText) {
 export function transformCourseMetaToCardModel({ model, placeholders, course }) {
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
+  let productArray = [];
+  if (model.coveoSolution) {
+    if (model.coveoSolution.includes(';')) {
+      const solutions = model.coveoSolution.split(';').map((s) => s.trim());
+      productArray = [...new Set(solutions)];
+    } else {
+      productArray = [model.coveoSolution];
+    }
+  }
+
   return {
     id: model.path?.split('/')?.pop() || '',
     contentType: model.coveoContentType || 'Course',
     badgeTitle: model.coveoContentType || 'Course',
-    product: model.coveoSolution ? [model.coveoSolution] : [],
+    product: productArray,
     title: model.title,
     description: course?.description ? transformHtmlToString(course.description) : '',
     copyLink: baseUrl + model.path,
