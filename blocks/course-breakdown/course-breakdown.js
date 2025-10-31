@@ -83,9 +83,7 @@ function infoCardDom(title, description, courseStatus, placeholders) {
       </div>
       ${description.innerHTML}
       <div>
-        <img src="${
-          window.hlx.codeBasePath
-        }/images/course-certificate-placeholder.png" alt="Course Certificate placeholder" />
+        <img src="${window.hlx.codeBasePath}/images/courses-certificate.png" alt="Course Certificate placeholder" />
         <p>${
           placeholders?.courseBreakdownInfoFooterText ||
           'Plus, earn a Certificate of Completion to share your accomplishment with your network.'
