@@ -1,6 +1,7 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import { getCurrentStepInfo } from '../../scripts/courses/course-utils.js';
 
 /**
  * Decorate the quiz scorecard block
@@ -72,6 +73,22 @@ export default async function decorate(block) {
     retakeButton.addEventListener('click', (e) => {
       e.preventDefault();
       window.location.reload();
+    });
+  }
+
+  // Add event listener for "Back to step one" button
+  const backToStepOneButton = scorecardElement.querySelector(
+    '.quiz-scorecard-cta-container a:not(.retake-quiz-button)',
+  );
+  if (backToStepOneButton) {
+    backToStepOneButton.addEventListener('click', async (e) => {
+      e.preventDefault();
+      // Get the module steps information
+      const stepInfo = await getCurrentStepInfo();
+      if (stepInfo && stepInfo.moduleSteps && stepInfo.moduleSteps.length > 0) {
+        // Navigate to the first step of the module
+        window.location.href = stepInfo.moduleSteps[0].url;
+      }
     });
   }
 }
