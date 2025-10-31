@@ -26,7 +26,7 @@
   color: var(--non-spectrum-dark-gray);
   display: flex;
   flex-direction: column;
-  gap: var(--spectrum-spacing-300);
+  gap: var(--spectrum-spacing-500);
   justify-content: center;
 }
 
@@ -86,13 +86,15 @@
 /* Content typography */
 .course-completion .course-completion-content-container :where(h1, h2, h3, h4, h5, h6) {
   color: var(--non-spectrum-dark-gray);
-  margin: 0 0 20px;
+  margin: 0 0 var(--spectrum-spacing-300);
+  line-height: 125%;
 }
 
 .course-completion .course-completion-content-container p {
   color: var(--non-spectrum-dark-gray);
-  line-height: 1.5;
-  margin: 0 0 20px;
+  line-height: 150%;
+  margin: 0 0 var(--spectrum-spacing-500);
+  font-size: var(--spectrum-font-size-400);
 }
 
 /* Content buttons */
@@ -104,9 +106,9 @@
 /* Button container */
 .course-completion .course-completion-button-container {
   display: flex;
-  gap: var(--spectrum-spacing-200);
+  gap: 24px;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-flow: column wrap;
 }
 
 .course-completion .course-completion-button-container .linkedin-share {
@@ -153,8 +155,16 @@
   margin: 20px 0 0;
 }
 
+.courses .section.course-completion-container {
+  padding: 0 var(--spectrum-spacing-100) var(--spectrum-spacing-100);
+}
+
 /* Media queries */
 @media (min-width: 600px) {
+  .courses .section.course-completion-container {
+    padding: 0 24px 36px;
+  }
+
   .course-completion .course-completion-certificate-container {
     --slide-up-from: 300px;
     --slide-up-to: 40px;
@@ -164,6 +174,10 @@
 
   .course-completion .course-completion-certificate {
     max-width: 369px;
+  }
+
+  .course-completion .course-completion-button-container {
+    flex-direction: row;
   }
 }
 
