@@ -1,5 +1,6 @@
 .section.course-marquee-container {
   padding-top: 0;
+  padding-bottom: 0;
 }
 
 .section.course-marquee-container .course-marquee-wrapper {
@@ -21,7 +22,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 }
 
 .course-marquee .course-marquee-breadcrumb > span,
@@ -52,7 +53,7 @@
 }
 
 .course-marquee .course-marquee-breadcrumb > span {
-  color: var(--spectrum-gray-100);
+  color: var(--spectrum-gray-50);
   font-weight: var(--font-weight-bold);
 }
 
@@ -64,7 +65,7 @@
 .course-marquee .course-marquee-breadcrumb > span:first-child,
 .course-marquee .course-marquee-breadcrumb > a:first-child {
   font-weight: var(--font-weight-normal, 400);
-  color: var(--spectrum-gray-100);
+  color: var(--spectrum-gray-50);
 }
 
 .course-marquee .course-marquee-title {
@@ -73,8 +74,8 @@
 
 .course-marquee .course-marquee-description {
   font-size: var(--spectrum-font-size-300);
-  margin-bottom: 32px;
-  color: var(--spectrum-gray-100);
+  margin-bottom: 24px;
+  color: var(--spectrum-gray-50);
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -101,8 +102,8 @@
 
 .course-marquee .course-marquee-separator {
   width: 100%;
-  margin: 0 0 32px;
-  border-bottom: 0.5px solid var(--spectrum-gray-400);
+  margin: 0 0 24px;
+  border-bottom: 0.5px solid var(--non-spectrum-unicorn-silver);
 }
 
 .course-marquee .course-metadata-bookmark {
@@ -125,19 +126,19 @@
 }
 
 .course-marquee .metadata-label {
-  color: var(--spectrum-gray-200);
+  color: var(--spectrum-gray-50);
   margin-right: 4px;
 }
 
 .course-marquee .metadata-value {
-  color: var(--spectrum-gray-100);
+  color: var(--spectrum-gray-50);
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
 .course-marquee .metadata-value-item {
-  color: var(--spectrum-gray-100);
+  color: var(--spectrum-gray-50);
 }
 
 .course-marquee .metadata-separator {
@@ -170,7 +171,7 @@
 }
 
 .course-marquee .course-marquee-bookmark .user-actions button label {
-  color: var(--spectrum-gray-200);
+  color: var(--spectrum-gray-50);
   font-size: var(--spectrum-font-size-75);
   line-height: normal;
   white-space: nowrap;
@@ -199,7 +200,7 @@
   .course-marquee {
     max-width: 900px;
     margin: 0 auto;
-    padding: 45px;
+    padding: 32px;
   }
 
   .course-marquee .course-marquee-breadcrumb > span,
