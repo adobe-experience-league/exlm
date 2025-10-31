@@ -513,12 +513,6 @@ export async function fetchCourseIndex(prefix = 'en') {
   return window.courseIndex[prefix];
 }
 
-function transformHtmlToString(htmlText) {
-  const el = document.createElement('div');
-  el.innerHTML = htmlText;
-  return el.textContent;
-}
-
 export function transformCourseMetaToCardModel({ model, placeholders }) {
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
@@ -538,7 +532,7 @@ export function transformCourseMetaToCardModel({ model, placeholders }) {
     badgeTitle: model.coveoContentType || 'Course',
     product: productArray,
     title: model.title,
-    description: model.description ? transformHtmlToString(model.description) : '',
+    description: model.description || '',
     copyLink: baseUrl + model.path,
     viewLink: baseUrl + model.path,
     viewLinkText: placeholders?.browseCardCourseViewLabel || 'View course',
