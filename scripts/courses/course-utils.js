@@ -519,7 +519,7 @@ function transformHtmlToString(htmlText) {
   return el.textContent;
 }
 
-export function transformCourseMetaToCardModel({ model, placeholders, course }) {
+export function transformCourseMetaToCardModel({ model, placeholders }) {
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
   let productArray = [];
@@ -532,12 +532,7 @@ export function transformCourseMetaToCardModel({ model, placeholders, course }) 
     }
   }
 
-  let description = '';
-  if (course?.description) {
-    description = transformHtmlToString(course.description);
-  } else if (model.description) {
-    description = transformHtmlToString(model.description);
-  }
+  const description = model.description ? transformHtmlToString(model.description) : '';
 
   return {
     id: model.path?.split('/')?.pop() || '',
