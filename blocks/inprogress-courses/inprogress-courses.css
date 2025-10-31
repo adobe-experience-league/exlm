@@ -15,7 +15,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--spectrum-spacing-500);
 }
 
 .inprogress-courses-cta-wrapper button {
@@ -38,5 +38,11 @@
     max-width: 720px;
     margin: 0 auto;
     grid-column: 1 / span 2;
+  }
+}
+
+@media (min-width: 900px) {
+  .inprogress-courses-card-wrapper {
+    gap: var(--spectrum-spacing-500) 24px;
   }
 }
