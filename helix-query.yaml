@@ -392,7 +392,7 @@ indices:
         value: |
           attribute(el, 'content')
       coveoSolution:
-        select: head > meta[name="solution"]
+        select: head > meta[name="coveo-solution"]
         value: |
           attribute(el, 'content')
       coveoFeature:
