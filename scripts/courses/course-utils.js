@@ -522,12 +522,13 @@ function transformHtmlToString(htmlText) {
 export function transformCourseMetaToCardModel({ model, placeholders, course }) {
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
-  let solutionArray = [];
+  let productArray = [];
   if (model.coveoSolution) {
     if (model.coveoSolution.includes(';')) {
-      solutionArray = model.coveoSolution.split(';').map((s) => s.trim());
+      const solutions = model.coveoSolution.split(';').map((s) => s.trim());
+      productArray = [...new Set(solutions)];
     } else {
-      solutionArray = [model.coveoSolution];
+      productArray = [model.coveoSolution];
     }
   }
 
@@ -535,7 +536,7 @@ export function transformCourseMetaToCardModel({ model, placeholders, course }) 
     id: model.path?.split('/')?.pop() || '',
     contentType: model.coveoContentType || 'Course',
     badgeTitle: model.coveoContentType || 'Course',
-    product: solutionArray,
+    product: productArray,
     title: model.title,
     description: course?.description ? transformHtmlToString(course.description) : '',
     copyLink: baseUrl + model.path,
