@@ -1,3 +1,8 @@
+.courses .course-breadcrumb-section.course-breadcrumb-container,
+.courses .section.course-breadcrumb-container {
+  padding: 36px var(--spectrum-spacing-300);
+}
+
 /* Container styles */
 .course-breadcrumb .course-breadcrumb-container {
   width: 100%;
@@ -19,6 +24,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100px;
+  font-weight: var(--font-weight-normal);
+  line-height: 150%;
 }
 
 /* Chevron separator */
@@ -29,8 +36,8 @@
   content: '';
   display: inline-block;
   height: 18px;
-  margin-right: 3px;
-  margin-left: 3px;
+  margin-right: var(--spectrum-spacing-100);
+  margin-left: var(--spectrum-spacing-100);
   position: relative;
   width: 18px;
 }
@@ -49,6 +56,11 @@
 
 /* Responsive adjustments */
 @media (min-width: 600px) {
+  .courses .course-breadcrumb-section.course-breadcrumb-container,
+  .courses .section.course-breadcrumb-container {
+    padding: 36px 24px;
+  }
+
   .course-breadcrumb .course-breadcrumb-items a {
     max-width: 150px;
   }
