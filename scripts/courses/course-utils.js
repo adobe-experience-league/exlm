@@ -532,13 +532,20 @@ export function transformCourseMetaToCardModel({ model, placeholders, course }) 
     }
   }
 
+  let description = '';
+  if (course?.description) {
+    description = transformHtmlToString(course.description);
+  } else if (model.description) {
+    description = transformHtmlToString(model.description);
+  }
+
   return {
     id: model.path?.split('/')?.pop() || '',
     contentType: model.coveoContentType || 'Course',
     badgeTitle: model.coveoContentType || 'Course',
     product: productArray,
     title: model.title,
-    description: course?.description ? transformHtmlToString(course.description) : '',
+    description,
     copyLink: baseUrl + model.path,
     viewLink: baseUrl + model.path,
     viewLinkText: placeholders?.browseCardCourseViewLabel || 'View course',
