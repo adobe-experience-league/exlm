@@ -79,12 +79,7 @@ export default function decorate(block) {
           const courseIds = courseIdentifiers.map((id) => `/${lang}/${id}`);
           const filteredCourses = allCourses.filter((course) => courseIds.includes(course.path));
 
-          const cardModels = filteredCourses.map((model) => {
-            const path = model.path || '';
-            const [, id] = path.split(`/${lang}/`);
-            const course = profileCourses.find((c) => c.courseId === id);
-            return transformCourseMetaToCardModel({ model, course, placeholders });
-          });
+          const cardModels = filteredCourses.map((model) => transformCourseMetaToCardModel({ model, placeholders }));
           const courses = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus(cardModels, profileCourses);
           const inProgressCourses = courses
             .filter((course) => course.meta?.courseInfo?.courseStatus === COURSE_STATUS.IN_PROGRESS)

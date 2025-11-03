@@ -369,6 +369,9 @@ indices:
         select: head > meta[property="og:title"]
         value: |
           attribute(el, 'content')
+      description:
+        select: head > meta[property="og:description"]
+        value: attribute(el, "content")
       theme:
         select: head > meta[name="theme"]
         value: |
