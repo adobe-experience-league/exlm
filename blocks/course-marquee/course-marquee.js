@@ -123,7 +123,7 @@ export default async function decorate(block) {
         link: window.location.href,
         bookmarkConfig: {
           label: placeholders?.bookmarkThisCourse || 'Bookmark this Course',
-          icons: ['bookmark-white', 'bookmark-active'],
+          icons: ['bookmark-new', 'bookmark-active'],
         },
         copyConfig: false,
         bookmarkTrackingInfo,
