@@ -89,6 +89,7 @@ export default async function decorate(block) {
       const firstStepUrl = stepInfo?.moduleSteps?.[0]?.url;
       if (firstStepUrl) window.location.href = firstStepUrl;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error navigating to the first step:', error);
     }
   });
