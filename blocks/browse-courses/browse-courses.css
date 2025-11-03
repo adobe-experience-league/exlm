@@ -43,6 +43,10 @@
   margin-top: var(--spectrum-spacing-100);
 }
 
+.browse-courses .status-dropdown-container:empty {
+  display: none;
+}
+
 .browse-courses .browse-card-clear-filter {
   color: var(--spectrum-blue-900);
   cursor: pointer;
