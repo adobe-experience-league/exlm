@@ -20,6 +20,15 @@ const role = document.querySelector('meta[name="role"]')?.content || '';
 const docType = document.querySelector('meta[name="doc-type"]')?.content || '';
 const duration = document.querySelector('meta[name="duration"]')?.content || '';
 
+// TQ Tags
+const productV2 = document.querySelector('meta[name="tq-products-labels"]')?.content || '';
+const subFeatureV2 = document.querySelector('meta[name="tq-subfeatures-labels"]')?.content.toLowerCase() || '';
+const featureV2 = document.querySelector('meta[name="tq-features-labels"]')?.content.toLowerCase() || '';
+const roleV2 = document.querySelector('meta[name="tq-roles-labels"]')?.content || '';
+const levelV2 = document.querySelector('meta[name="tq-levels-labels"]')?.content || '';
+const topicV2 = document.querySelector('meta[name="tq-topics-labels"]')?.content || '';
+const industryV2 = document.querySelector('meta[name="tq-industries-labels"]')?.content || '';
+
 const UEFilters = {
   Role: '',
   ContentType: '',
@@ -269,6 +278,13 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       fullSolution,
       feature,
       featureAttribute,
+      productV2,
+      subFeatureV2,
+      featureV2,
+      roleV2,
+      levelV2,
+      topicV2,
+      industryV2,
     },
   };
   if (containsAtomicSearch && !searchTrackingData) {
