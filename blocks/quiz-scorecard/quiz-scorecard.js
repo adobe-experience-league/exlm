@@ -84,11 +84,12 @@ export default async function decorate(block) {
 
   backToStepOneButton.addEventListener('click', async (e) => {
     e.preventDefault();
-    // Get the module steps information
-    const stepInfo = await getCurrentStepInfo();
-    if (stepInfo?.moduleSteps?.length > 0) {
-      // Navigate to the first step of the module
-      window.location.href = stepInfo?.moduleSteps?.[0]?.url;
+    try {
+      const stepInfo = await getCurrentStepInfo();
+      const firstStepUrl = stepInfo?.moduleSteps?.[0]?.url;
+      if (firstStepUrl) window.location.href = firstStepUrl;
+    } catch (error) {
+      console.error('Error navigating to the first step:', error);
     }
   });
 }
