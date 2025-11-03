@@ -80,15 +80,15 @@ export default async function decorate(block) {
   const backToStepOneButton = scorecardElement.querySelector(
     '.quiz-scorecard-cta-container a:not(.retake-quiz-button)',
   );
-  if (backToStepOneButton) {
-    backToStepOneButton.addEventListener('click', async (e) => {
-      e.preventDefault();
-      // Get the module steps information
-      const stepInfo = await getCurrentStepInfo();
-      if (stepInfo?.moduleSteps?.length > 0) {
-        // Navigate to the first step of the module
-        window.location.href = stepInfo.moduleSteps[0].url;
-      }
-    });
-  }
+  if (!backToStepOneButton) return;
+
+  backToStepOneButton.addEventListener('click', async (e) => {
+    e.preventDefault();
+    // Get the module steps information
+    const stepInfo = await getCurrentStepInfo();
+    if (stepInfo?.moduleSteps?.length > 0) {
+      // Navigate to the first step of the module
+      window.location.href = stepInfo?.moduleSteps?.[0]?.url;
+    }
+  });
 }
