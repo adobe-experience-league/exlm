@@ -10,8 +10,8 @@
 
 .courses.course-step .section.module-info-container,
 .courses.course-step .section.course-breadcrumb-section {
-  padding: 0;
   padding-top: 32px;
+  padding-bottom: 0;
 }
 
 .courses.course-step .section.module-info-container {
