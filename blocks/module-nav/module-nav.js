@@ -45,7 +45,6 @@ async function handleQuizNextButton(e) {
   // Check if quiz-scorecard block is present (quiz has been successfully submitted)
   const quizScorecard = document.querySelector('.quiz-scorecard');
 
-  // Update button text only if quiz scorecard is displayed (successful submission)
   if (quizScorecard) {
     if (backButton) {
       await updateBackButtonToCourseUrl(backButton, placeholders);
