@@ -5,7 +5,7 @@
 
 .courses-section.bg-dark-gray,
 .courses .section.bg-dark-gray:not(.notification-banner-container) {
-  background-color: var(--spectrum-gray-50);
+  background-color: var(--highlight-light-background-color);
 }
 
 .courses .section .default-content-wrapper {
