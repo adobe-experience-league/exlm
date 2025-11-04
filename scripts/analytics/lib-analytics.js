@@ -327,8 +327,10 @@ export function pushLinkClick(e) {
 
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
   const isCourseStartCTA = e.target.closest('.course-breakdown-header-start-button');
+  const isBrowseCard = e.target.closest('.browse-cards-block-content');
 
   let linkLocation = 'unidentified';
+  let linkTitle = e.target.innerHTML || '';
   if (e.target.closest('.rail-right') || e.target.closest('.mini-toc-wrapper')) {
     linkLocation = 'mtoc';
   } else if (e.target.closest('.rail-left')) {
@@ -337,7 +339,7 @@ export function pushLinkClick(e) {
     linkLocation = 'header';
   } else if (e.target.closest('.footer')) {
     linkLocation = 'footer';
-  } else if (e.target.closest('main') && docs) {
+  } else if ((e.target.closest('main') && docs) || isBrowseCard) {
     linkLocation = 'body';
   } else if (isCourseStartCTA) {
     linkLocation = 'course landing page';
@@ -355,17 +357,27 @@ export function pushLinkClick(e) {
   } else if (isCourseStartCTA) {
     linkType = 'Custom';
     destinationDomain = window.location.hostname;
+  } else if (isBrowseCard) {
+    destinationDomain = e.target.closest('a').href;
+    linkTitle = isBrowseCard.textContent
+      .replace(/[ \t]*\n[ \t]*/g, '\n')
+      .replace(/\n{2,}/g, '\n')
+      .trim();
+    const upcomingEventEl = e.target.closest('.upcoming-event-v2');
+    const isUpcomingEvent = upcomingEventEl ? 'Upcoming Event' : 'On Demand Event';
+    const cardViewType = upcomingEventEl?.classList?.contains('list') ? 'List' : 'Grid';
+    linkType = `${cardViewType} | ${isUpcomingEvent} `;
   }
 
   const linkObj = {
     destinationDomain,
     linkLocation,
-    linkTitle: e.target.innerHTML || '',
+    linkTitle,
     linkType,
   };
 
   // Only add solution field if not a course CTA
-  if (!isCourseStartCTA) {
+  if (!isCourseStartCTA && !isBrowseCard) {
     linkObj.solution =
       document.querySelector('meta[name="solution"]') !== null
         ? document.querySelector('meta[name="solution"]').content.split(',')[0].trim()

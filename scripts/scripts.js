@@ -924,7 +924,9 @@ const loadMartech = async (headerPromise, footerPromise) => {
     Promise.allSettled([headerPromise, footerPromise]).then(() => {
       const linkClicked = document.querySelectorAll('a,.view-more-less span, .language-selector-popover span');
       const clickHandler = (e) => {
-        if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') pushLinkClick(e);
+        if (e.target.tagName === 'A' || e.target.tagName === 'SPAN' || e.target.closest('a')) {
+          pushLinkClick(e);
+        }
       };
       linkClicked.forEach((e) => e.addEventListener('click', clickHandler));
     });
