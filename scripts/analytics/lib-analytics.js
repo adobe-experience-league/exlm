@@ -322,7 +322,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
   }
 }
 
-export function pushLinkClick(e) {
+export async function pushLinkClick(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
@@ -346,6 +346,8 @@ export function pushLinkClick(e) {
   let linkType = 'other';
   let name = e.target.innerHTML;
   let destinationDomain = e.target.href;
+  let linkTitle = e.target.innerHTML || '';
+
   if (!viewMoreLess && e.target.href?.match(/.(pdf|zip|dmg|exe)$/)) {
     linkType = 'download';
   } else if (viewMoreLess) {
@@ -354,13 +356,17 @@ export function pushLinkClick(e) {
     name = 'ExperienceEventType:web.webInteraction.linkClicks';
   } else if (isCourseStartCTA) {
     linkType = 'Custom';
-    destinationDomain = window.location.hostname;
+    destinationDomain = window.location.href;
+    const { getCurrentCourseMeta } = await import('../courses/course-utils.js');
+    const courseMeta = await getCurrentCourseMeta();
+    const courseTitle = courseMeta?.heading;
+    linkTitle = `${e.target.innerHTML} | ${courseTitle}`;
   }
 
   const linkObj = {
     destinationDomain,
     linkLocation,
-    linkTitle: e.target.innerHTML || '',
+    linkTitle,
     linkType,
   };
 
