@@ -1,5 +1,7 @@
 import { getConfig } from '../scripts.js';
 
+const { mpcApiBase, isProd } = getConfig();
+
 /**
  * Languages currently supported for MPC videos
  * Maps language codes to MPC caption language identifiers
@@ -57,7 +59,6 @@ export async function fetchVideoCollections(videoId) {
     console.warn('Video ID is required for fetching collections');
     return null;
   }
-  const { mpcApiBase } = getConfig();
   const mpcApi = `${mpcApiBase}/${videoId}/collections`;
 
   try {
@@ -226,5 +227,8 @@ export default async function updateVideoUrl(url, lang) {
  * @returns {Promise<string>} - Localized video URL or original URL for English
  */
 export async function getLocalizedVideoUrl(url, lang = 'en') {
-  return lang === 'en' ? url : updateVideoUrl(url, lang);
+  if (!isProd) {
+    return lang === 'en' ? url : updateVideoUrl(url, lang);
+  }
+  return url;
 }

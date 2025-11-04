@@ -1,5 +1,4 @@
 .module-nav-wrapper {
-  max-width: 792px;
   width: 100%;
   margin-top: var(--spectrum-spacing-400);
 }
