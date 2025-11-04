@@ -40,10 +40,11 @@ let placeholders = {};
  * @returns {Object} Configuration with charLength and fontSize
  */
 function getTextWrapConfig(text) {
-  if (text.length <= 40) return { charLength: 20, fontSize: 22 };
-  if (text.length <= 60) return { charLength: 30, fontSize: 22 };
-  if (text.length <= 70) return { charLength: 35, fontSize: 20 };
-  return { charLength: 40, fontSize: 18 };
+  const len = text.length;
+  if (len >= 70) return { charLength: 30, fontSize: 16 };
+  if (len >= 60) return { charLength: 30, fontSize: 18 };
+  if (len >= 40) return { charLength: 30, fontSize: 20 };
+  return { charLength: 25, fontSize: 23 };
 }
 
 /**
@@ -52,7 +53,7 @@ function getTextWrapConfig(text) {
  * @param {number} maxLength - Maximum characters per line
  * @returns {string} Wrapped text with line breaks
  */
-function wrapText(text, maxLength = 30) {
+function wrapText(text, maxLength = 25) {
   if (text.length <= maxLength) return text;
 
   const words = text.split(' ');
@@ -265,27 +266,27 @@ async function createCertificateContainer(courseData) {
   container.classList.add('course-completion-certificate-container');
 
   // Create certificate text using API data with scale adjustment and placeholders
-  const courseName = courseData.name || 'Adobe Marketo Engage Overview';
-  const wrapConfig = getTextWrapConfig(courseName);
+  const courseName = courseData.name || '';
+  const textConfig = getTextWrapConfig(courseName);
 
   const certificateText = [
     {
-      content: wrapText(courseData.name, wrapConfig.charLength), // Dynamic character-based wrapping
-      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 115 * CONFIG.CERTIFICATE.SCALE },
-      font: { size: `${wrapConfig.fontSize * CONFIG.CERTIFICATE.SCALE}px`, weight: 'bold' },
+      content: wrapText(courseName, textConfig.charLength), // Dynamic character-based wrapping
+      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 80 * CONFIG.CERTIFICATE.SCALE },
+      font: { size: `${textConfig.fontSize * CONFIG.CERTIFICATE.SCALE}px`, weight: 'bold' },
       color: '#2C2C2C',
       align: 'center',
     },
     {
       content: placeholders?.courseCompletedByText || 'COMPLETED BY',
-      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 180 * CONFIG.CERTIFICATE.SCALE },
+      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 140 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${8 * CONFIG.CERTIFICATE.SCALE}px` },
       color: '#686868',
       align: 'center',
     },
     {
       content: courseData.userName || '',
-      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 195 * CONFIG.CERTIFICATE.SCALE },
+      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 155 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${16 * CONFIG.CERTIFICATE.SCALE}px`, weight: 'bold' },
       color: '#2C2C2C',
       align: 'center',
@@ -294,17 +295,17 @@ async function createCertificateContainer(courseData) {
       content: courseData.completionDate
         ? `${placeholders?.courseIssuedDateText || 'ISSUED'} ${courseData.completionDate}`
         : '',
-      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 220 * CONFIG.CERTIFICATE.SCALE },
+      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 180 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${8.5 * CONFIG.CERTIFICATE.SCALE}px` },
       color: '#686868',
       align: 'center',
     },
     {
-      content: (placeholders?.courseCompletionTimeText || 'Completion Time [hours] hours').replace(
+      content: (placeholders?.courseCompletionTimeText || 'Time to complete: [hours] hours').replace(
         '[hours]',
         courseData.completionTimeInHrs,
       ),
-      position: { x: 300 * CONFIG.CERTIFICATE.SCALE, y: 240 * CONFIG.CERTIFICATE.SCALE },
+      position: { x: 300 * CONFIG.CERTIFICATE.SCALE, y: 250 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${7.5 * CONFIG.CERTIFICATE.SCALE}px` },
       color: '#2C2C2C',
       align: 'center',
