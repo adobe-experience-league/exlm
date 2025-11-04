@@ -1,23 +1,6 @@
 @import '../question/question.css';
 
-.section.quiz-container {
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-.quiz .quiz-container {
-  max-width: 800px;
-  margin: var(--spectrum-spacing-400) auto;
-  padding: var(--spectrum-spacing-300);
-}
-
-.quiz .quiz-wrapper,
-.quiz .section > div {
-  margin: unset;
-}
-
 .quiz .quiz-description-container {
-  max-width: 792px;
   height: auto;
   margin: 0 auto 50px;
   box-sizing: border-box;
@@ -81,10 +64,4 @@
   text-align: center;
   margin-left: 0;
   padding-left: 0;
-}
-
-@media (min-width: 900px) {
-  .quiz {
-    width: 792px;
-  }
 }
