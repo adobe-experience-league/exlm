@@ -7,6 +7,7 @@ import {
   COURSE_STATUS,
 } from './browse-cards-constants.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
+import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
@@ -642,6 +643,7 @@ export async function buildCard(container, element, model) {
   element.querySelector('a').addEventListener(
     'click',
     () => {
+      pushBrowseCardClickEvent(model);
       sendCoveoClickEvent('browse-card', model);
     },
     { once: true },

@@ -869,3 +869,25 @@ export function pushCourseStartEvent(courseData) {
     },
   });
 }
+
+/**
+ * Pushes a browse card clicked event to the Adobe data layer.
+ * This event is triggered when any part of a browse card is clicked.
+ * @param {Object} cardData - Card data from the browse card model
+ */
+export function pushBrowseCardClickEvent(cardData) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const dataLayerEntry = {
+    event: 'browseCardClicked',
+    link: {
+      linkTitle: cardData.title || '',
+      linkLocation: 'Browse card',
+      linkType: 'Custom',
+      destinationDomain: cardData.viewLink || '',
+      contentType: cardData.contentType || '',
+    },
+  };
+
+  window.adobeDataLayer.push(dataLayerEntry);
+}
