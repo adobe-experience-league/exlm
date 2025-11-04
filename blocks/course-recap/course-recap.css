@@ -1,7 +1,3 @@
-.course-recap-wrapper {
-  max-width: 792px;
-}
-
 .course-recap-block {
   background-color: var(--spectrum-gray-100);
   border-radius: 16px;
@@ -48,7 +44,7 @@
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-  filter: brightness(0); /* Make the icon black */
+  filter: brightness(0);
 }
 
 .course-recap-list li {
