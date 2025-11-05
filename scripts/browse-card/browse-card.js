@@ -640,10 +640,42 @@ export async function buildCard(container, element, model) {
     element.appendChild(card);
   }
 
+  const cardHeader = card.parentElement?.parentElement?.parentElement?.parentElement?.parentElement
+    ?.querySelector('div > div.browse-cards-block-title')
+    ?.innerText.toLowerCase()
+    .trim();
+  const cardPosition = String(Array.from(element.parentElement.children).indexOf(element) + 1);
+
+  // DataLayer - Browse card click event
+  element.querySelector('a:not(.browse-card-options)').addEventListener(
+    'click',
+    () => {
+      pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
+    },
+    { once: true },
+  );
+
+  // DataLayer - Browse card click event for Bookmark
+  element.querySelector('.browse-card-options .user-actions .bookmark').addEventListener(
+    'click',
+    () => {
+      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, cardHeader, cardPosition);
+    },
+    { once: true },
+  );
+
+  // DataLayer - Browse card click event for Copy Link
+  element.querySelector('.browse-card-options .user-actions .copy-link').addEventListener(
+    'click',
+    () => {
+      pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
+    },
+    { once: true },
+  );
+
   element.querySelector('a').addEventListener(
     'click',
     () => {
-      pushBrowseCardClickEvent(model);
       sendCoveoClickEvent('browse-card', model);
     },
     { once: true },
