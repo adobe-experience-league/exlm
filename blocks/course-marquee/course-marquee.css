@@ -166,7 +166,7 @@
   padding: 0;
 }
 
-.course-marquee .course-marquee-bookmark .user-actions .bookmark[data-bookmarked='true'] .icon-bookmark-white {
+.course-marquee .course-marquee-bookmark .user-actions .bookmark[data-bookmarked='true'] .icon-bookmark-new {
   display: none;
 }
 
