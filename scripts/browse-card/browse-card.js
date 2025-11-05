@@ -658,7 +658,8 @@ export async function buildCard(container, element, model) {
   // DataLayer - Browse card click event for Bookmark
   element.querySelector('.browse-card-options .user-actions .bookmark')?.addEventListener(
     'click',
-    () => {
+    (e) => {
+      e.stopPropagation();
       pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, cardHeader, cardPosition);
     },
     { once: true },
@@ -667,7 +668,8 @@ export async function buildCard(container, element, model) {
   // DataLayer - Browse card click event for Copy Link
   element.querySelector('.browse-card-options .user-actions .copy-link')?.addEventListener(
     'click',
-    () => {
+    (e) => {
+      e.stopPropagation();
       pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
     },
     { once: true },
