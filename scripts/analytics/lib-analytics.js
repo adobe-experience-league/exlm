@@ -165,12 +165,12 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       };
 
       // get a list of all courses titles with awards.timestamp property
-      const coursesWithAwards = (userData?.courses || [])
+      const coursesWithAwards = (userData?.courses_v2 || [])
         .filter((course) => course?.awards?.timestamp && course.name)
         .map((course) => course.name);
       user.userDetails.courses = coursesWithAwards.length ? coursesWithAwards : [];
 
-      const courseInfo = (userData.courses || []).find((c) => c.courseId === courseObj?.id);
+      const courseInfo = (userData.courses_v2 || []).find((c) => c.courseId === courseObj?.id);
       if (courseInfo) {
         if (courseInfo?.modules && Array.isArray(courseInfo?.modules)) {
           let startTime = null;
