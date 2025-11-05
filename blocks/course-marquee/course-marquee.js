@@ -1,6 +1,10 @@
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders, getPathDetails, htmlToElement } from '../../scripts/scripts.js';
 
+function getPreferredMetadata(tqMetaKey, locLegacyMetaKey, legacyMetaKey) {
+  return getMetadata(tqMetaKey) || getMetadata(locLegacyMetaKey) || getMetadata(legacyMetaKey);
+}
+
 export default async function decorate(block) {
   let placeholders = {};
   try {
@@ -26,8 +30,18 @@ export default async function decorate(block) {
 
   const courseName = getMetadata('og:title') || document.title;
 
-  const productName = getMetadata('tq-products-labels') || '';
-  const experienceLevel = getMetadata('tq-levels-labels') || '';
+  const coveosolutions = getMetadata('coveo-solution');
+  const productName =
+    getMetadata('tq-products-labels') ||
+    [
+      ...new Set(
+        coveosolutions.split(';').map((item) => {
+          const parts = item.split('|');
+          return parts.length > 1 ? parts[1].trim() : item.trim();
+        }),
+      ),
+    ].join(',');
+  const experienceLevel = getPreferredMetadata('tq-levels-labels', 'loc-level', 'level');
   const role = getMetadata('role') || '';
   const solution = getMetadata('solution') || '';
   const courseLink = getMetadata('og:url') || window.location.href;

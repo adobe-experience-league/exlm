@@ -24,7 +24,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100px;
-  font-weight: var(--font-weight-normal);
   line-height: 150%;
 }
 
