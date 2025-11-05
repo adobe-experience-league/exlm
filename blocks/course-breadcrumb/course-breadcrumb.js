@@ -39,8 +39,8 @@ export default async function decorate(block) {
     ${
       isCertificatePage()
         ? `<a class="course-breadcrumb-certificate course-breadcrumb-current" title="${
-            placeholders?.coursesCertificate || 'Certificate'
-          }">${placeholders?.coursesCertificate || 'Certificate'}</a>`
+            placeholders?.courseCertificate || 'Certificate of completion'
+          }">${placeholders?.courseCertificate || 'Certificate of completion'}</a>`
         : `<a href="${stepInfo.moduleSteps[0]?.url || stepInfo.courseUrl}" title="${
             stepInfo.moduleHeader || ''
           }" class="course-breadcrumb-module">${stepInfo.moduleHeader || ''}</a>
