@@ -1,6 +1,7 @@
 .courses.course-step .section.quiz-scorecard-container {
   padding: 0;
 }
+
 .quiz-scorecard {
   margin: 0 auto;
   padding: var(--spectrum-spacing-500);
