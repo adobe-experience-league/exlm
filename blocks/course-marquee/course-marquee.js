@@ -32,7 +32,7 @@ export default async function decorate(block) {
 
   const coveosolutions = getMetadata('coveo-solution');
   const productName =
-    getMetadata('tq-products-labels') ||
+    getMetadata('product-v2') ||
     [
       ...new Set(
         coveosolutions.split(';').map((item) => {
@@ -41,7 +41,7 @@ export default async function decorate(block) {
         }),
       ),
     ].join(',');
-  const experienceLevel = getPreferredMetadata('tq-levels-labels', 'loc-level', 'level');
+  const experienceLevel = getPreferredMetadata('level-v2', 'loc-level', 'level');
   const role = getMetadata('role') || '';
   const solution = getMetadata('solution') || '';
   const courseLink = getMetadata('og:url') || window.location.href;

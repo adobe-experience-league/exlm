@@ -16,7 +16,7 @@ export default async function decorate(block) {
 
   const coveosolutions = getMetadata('coveo-solution');
   const solutions =
-    getMetadata('tq-products-labels') ||
+    getMetadata('product-v2') ||
     [
       ...new Set(
         coveosolutions.split(';').map((item) => {
@@ -26,9 +26,9 @@ export default async function decorate(block) {
       ),
     ].join(',');
 
-  const features = getPreferredMetadata('tq-features-labels', 'loc-feature', 'feature');
-  const roles = getPreferredMetadata('tq-roles-labels', 'loc-role', 'role');
-  const experienceLevels = getPreferredMetadata('tq-levels-labels', 'loc-level', 'level');
+  const features = getPreferredMetadata('feature-v2', 'loc-feature', 'feature');
+  const roles = getPreferredMetadata('role-v2', 'loc-role', 'role');
+  const experienceLevels = getPreferredMetadata('level-v2', 'loc-level', 'level');
 
   function createTagsHTML(values) {
     return values

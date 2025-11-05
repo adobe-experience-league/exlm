@@ -4405,7 +4405,7 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-roles",
-        "label": "Role(s)",
+        "label": "Role(s) V2",
         "valueType": "string",
         "description": "Sets the role(s) in page meta.",
         "dataSource": {
@@ -4422,7 +4422,7 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-levels",
-        "label": "Experience Level(s)",
+        "label": "Experience Level(s) V2",
         "valueType": "string",
         "description": "Sets the level(s) in page meta.",
         "dataSource": {
@@ -4439,7 +4439,7 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-products",
-        "label": "Product(s)",
+        "label": "Product(s) V2",
         "valueType": "string",
         "description": "Sets the products(s) in page meta.",
         "dataSource": {
@@ -4456,7 +4456,7 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-features",
-        "label": "Feature(s)",
+        "label": "Feature(s) V2",
         "valueType": "string",
         "description": "Sets the feature(s) in page meta.",
         "dataSource": {
@@ -4480,7 +4480,7 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-subfeatures",
-        "label": "Sub Feature(s)",
+        "label": "Sub Feature(s) V2",
         "valueType": "string",
         "description": "Sets the subfeature(s) in page meta.",
         "dataSource": {
@@ -4504,7 +4504,7 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-industries",
-        "label": "Industries",
+        "label": "Industries V2",
         "valueType": "string",
         "description": "Sets the industries in page meta.",
         "dataSource": {
@@ -4521,7 +4521,7 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-topics",
-        "label": "Topic(s)",
+        "label": "Topic(s) V2",
         "valueType": "string",
         "description": "Sets the topic(s) in page meta.",
         "dataSource": {
@@ -4614,7 +4614,7 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-roles",
-        "label": "Role(s)",
+        "label": "Role(s) V2",
         "valueType": "string",
         "description": "Sets the role(s) in page meta.",
         "dataSource": {
@@ -4631,7 +4631,7 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-levels",
-        "label": "Experience Level(s)",
+        "label": "Experience Level(s) V2",
         "valueType": "string",
         "description": "Sets the level(s) in page meta.",
         "dataSource": {
@@ -4648,7 +4648,7 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-products",
-        "label": "Product(s)",
+        "label": "Product(s) V2",
         "valueType": "string",
         "description": "Sets the products(s) in page meta.",
         "dataSource": {
@@ -4665,7 +4665,7 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-features",
-        "label": "Feature(s)",
+        "label": "Feature(s) V2",
         "valueType": "string",
         "description": "Sets the feature(s) in page meta.",
         "dataSource": {
@@ -4689,7 +4689,7 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-subfeatures",
-        "label": "Sub Feature(s)",
+        "label": "Sub Feature(s) V2",
         "valueType": "string",
         "description": "Sets the subfeature(s) in page meta.",
         "dataSource": {
@@ -4713,7 +4713,7 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-industries",
-        "label": "Industries",
+        "label": "Industries V2",
         "valueType": "string",
         "description": "Sets the industries in page meta.",
         "dataSource": {
@@ -4730,7 +4730,7 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-topics",
-        "label": "Topic(s)",
+        "label": "Topic(s) V2",
         "valueType": "string",
         "description": "Sets the topic(s) in page meta.",
         "dataSource": {

@@ -1342,19 +1342,19 @@ export function updateTQTagsForCoveo() {
  * Update TQ Tags metadata
  * @param {Document} document
  */
-export function updateTQTagsMetadata() {
-  const keysToUpdate = [
-    'tq-roles',
-    'tq-levels',
-    'tq-products',
-    'tq-features',
-    'tq-subfeatures',
-    'tq-industries',
-    'tq-topics',
-  ];
+export function updateTQTagsMetadata(document) {
+  const keyMapping = {
+    'tq-roles': 'role-v2',
+    'tq-levels': 'level-v2',
+    'tq-products': 'product-v2',
+    'tq-features': 'feature-v2',
+    'tq-subfeatures': 'subfeature-v2',
+    'tq-industries': 'industry-v2',
+    'tq-topics': 'topic-v2',
+  };
 
-  keysToUpdate.forEach((key) => {
-    const metaTag = getMetadata(key);
+  Object.entries(keyMapping).forEach(([key, newKey]) => {
+    const metaTag = getMetadata(document, key);
     if (!metaTag) return;
 
     try {
@@ -1367,7 +1367,7 @@ export function updateTQTagsMetadata() {
           .filter(Boolean)
           .join(', ');
         if (updatedTags) {
-          setMetadata(`${key}`, updatedTags);
+          setMetadata(document, key, updatedTags);
           // Extract labels (the part after |) and join by comma
           const labels = updatedTags
             .split(',')
@@ -1375,7 +1375,7 @@ export function updateTQTagsMetadata() {
             .filter(Boolean)
             .join(', ');
 
-          setMetadata(`${key}-labels`, labels);
+          setMetadata(document, newKey, labels);
         }
       }
     } catch (e) {
