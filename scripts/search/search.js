@@ -66,12 +66,15 @@ if (!contentType) {
     [`/${lang}/playlists`]: 'Playlist',
     [`/${lang}/perspectives`]: 'Perspective',
     [`/${lang}/events`]: 'Event',
+    [`/${lang}/courses`]: 'Course',
   };
 
   contentType = contentTypeMap[url] || '';
 
   if (url.includes(`/${lang}/certification-home`)) {
     contentType = 'Certification';
+  } else if (url.includes(`/${lang}/courses/`)) {
+    contentType = 'Course';
   }
 }
 
@@ -79,7 +82,8 @@ if (!contentType) {
 export const redirectToSearchPage = (searchUrl, searchInput, filters = '') => {
   const isLegacySearch = searchUrl.includes('.html');
   let targetUrlWithLanguage = isLegacySearch ? `${searchUrl}?lang=${languageCode}` : searchUrl;
-  const filterValue = filters?.toLowerCase() === 'all' ? '' : filters;
+  const filterValue =
+    !filters || filters?.toLowerCase() === 'all' ? encodeURIComponent(contentType) : encodeURIComponent(filters);
   if (searchInput) {
     const trimmedSearchInput = encodeURIComponent(searchInput.trim());
     targetUrlWithLanguage += `#q=${trimmedSearchInput}`;
