@@ -356,6 +356,7 @@
   --non-spectrum-pale-grey-dark: #D9D9D9;
   --non-spectrum-smoke: #686868;
   --non-spectrum-pass-green: #2d9d78;
+  --non-spectrum-rose-red: #ffc0c0;
 
   /* Max-width values  */
   --default-max-width: 1280px;
@@ -469,9 +470,9 @@ p {
   margin-bottom: 16px;
 }
 
-h1 + p,
-h2 + p,
-h3 + p {
+h1+p,
+h2+p,
+h3+p {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-content);
   font-weight: var(--font-weight-normal);
@@ -605,8 +606,8 @@ em:has(> u) {
   display: inline-block;
 }
 
-em > u,
-em > a > u {
+em>u,
+em>a>u {
   text-decoration: none;
   font-style: normal;
 }
@@ -618,7 +619,7 @@ ul {
   color: var(--spectrum-gray-800);
 }
 
-ul > li {
+ul>li {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-content);
   font-weight: var(--font-weight-normal);
@@ -628,7 +629,7 @@ ul > li {
   margin-bottom: 2em;
 }
 
-ul > li > p {
+ul>li>p {
   margin-bottom: 8px;
 }
 
@@ -639,7 +640,7 @@ ol {
   color: var(--spectrum-gray-800);
 }
 
-ol > li {
+ol>li {
   font-family: var(--body-font-family);
   font-size: var(--exlm-font-size-content);
   font-weight: var(--font-weight-normal);
@@ -650,24 +651,24 @@ ol > li {
   margin-bottom: 2em;
 }
 
-ol > li > p {
+ol>li>p {
   margin-bottom: 8px;
 }
 
-ol > li > ol {
+ol>li>ol {
   margin-bottom: 14px;
   list-style-type: lower-alpha;
 }
 
 /* stylelint-disable no-descending-specificity */
-ol > li:not(:last-child),
-ul > li:not(:last-child) {
+ol>li:not(:last-child),
+ul>li:not(:last-child) {
   margin-bottom: 0.875em;
   color: inherit;
 }
 
-ol > blockquote > p:last-child,
-ul > blockquote > p:last-child {
+ol>blockquote>p:last-child,
+ul>blockquote>p:last-child {
   margin-bottom: 0;
 }
 
@@ -835,7 +836,7 @@ blockquote p::after {
   line-height: 0;
 }
 
-blockquote > p:not(:last-child) {
+blockquote>p:not(:last-child) {
   margin-bottom: 8px;
 }
 
@@ -968,8 +969,8 @@ picture[align="right"] {
   color: var(--spectrum-red-900);
 }
 
-.section[data-center-aligned='true'] .default-content-wrapper > *,
-.section.highlight[data-center-aligned='true'] .default-content-wrapper > * {
+.section[data-center-aligned='true'] .default-content-wrapper>*,
+.section.highlight[data-center-aligned='true'] .default-content-wrapper>* {
   text-align: center;
 }
 
@@ -994,7 +995,7 @@ picture[align="right"] {
   visibility: hidden;
 }
 
-.section > .default-content-wrapper:last-child > p:last-child {
+.section>.default-content-wrapper:last-child>p:last-child {
   margin-bottom: 0;
 }
 
@@ -1011,7 +1012,7 @@ picture[align="right"] {
   padding-bottom: 0;
 }
 
-.section > div {
+.section>div {
   /* limit block wrappers max width */
   max-width: var(--default-max-width);
   margin: auto;
@@ -1023,16 +1024,18 @@ picture[align="right"] {
   }
 }
 
-.section.curated-cards-container, .section.events-cards-container {
+.section.curated-cards-container,
+.section.events-cards-container {
   padding-bottom: 0;
 }
 
 /* the browse rail is hidden by default */
-main > div.browse-rail {
+main>div.browse-rail {
   display: none;
 }
 
-body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination, body[class^="browse-"] .browse-filters-full-container .browse-filters-one-pg-result {
+body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination,
+body[class^="browse-"] .browse-filters-full-container .browse-filters-one-pg-result {
   margin-bottom: 40px;
 }
 
@@ -1067,7 +1070,8 @@ body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination
 }
 
 @media (min-width: 600px) {
-  body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination, body[class^="browse-"] .browse-filters-full-container .browse-filters-one-pg-result {
+  body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination,
+  body[class^="browse-"] .browse-filters-full-container .browse-filters-one-pg-result {
     margin-bottom: 58px;
   }
 }
@@ -1089,23 +1093,27 @@ body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination
     min-height: auto;
   }
 
-  body[class^="browse-"] .section.curated-cards-container, body[class^="browse-"] .section.events-cards-container, body[class^="browse-"] .section.teaser-container, body[class^="browse-"] .section.adls-cards-container {
+  body[class^="browse-"] .section.curated-cards-container,
+  body[class^="browse-"] .section.events-cards-container,
+  body[class^="browse-"] .section.teaser-container,
+  body[class^="browse-"] .section.adls-cards-container {
     padding-top: 40px;
     padding-bottom: 40px;
   }
 
-  body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination, body[class^="browse-"] .browse-filters-full-container .browse-filters-one-pg-result {
+  body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination,
+  body[class^="browse-"] .browse-filters-full-container .browse-filters-one-pg-result {
     margin-bottom: 82px;
   }
 
-  body[class^="browse-"] .browse-filters-form .browse-hide-section + .browse-topics {
+  body[class^="browse-"] .browse-filters-form .browse-hide-section+.browse-topics {
     margin-bottom: 8px;
   }
 }
 
 /* browse rail breakpoint same as main hamburger menu (>= 1024px) */
 @media (min-width: 1024px) {
-  body[class^="browse-"] > main {
+  body[class^="browse-"]>main {
     display: grid;
     grid-template: auto auto / 256px calc(100% - 256px);
     grid-template-areas: "browse-rail main";
@@ -1115,11 +1123,11 @@ body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination
     margin: auto;
   }
 
-  main > div.section {
+  main>div.section {
     grid-column: 2;
   }
 
-  main > div.section.browse-rail-section {
+  main>div.section.browse-rail-section {
     display: initial;
     grid-column: 1;
     grid-row: 1/100;
@@ -1153,11 +1161,11 @@ body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination
   margin-bottom: 1em;
 }
 
-.ue-table-block > div {
+.ue-table-block>div {
   display: table-row;
 }
 
-.ue-table-block > div > div {
+.ue-table-block>div>div {
   display: table-cell;
   padding: 8px;
   border: 1px solid #ddd;
@@ -1170,5 +1178,3 @@ body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination
   border: 1px solid #ddd;
   background-color: #f5cbcd;
 }
-
-
