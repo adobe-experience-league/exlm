@@ -869,3 +869,33 @@ export function pushCourseStartEvent(courseData) {
     },
   });
 }
+
+/**
+ * Pushes a browse card click event to the Adobe Data Layer.
+ * This event is fired whenever a user clicks on any part of a browse card.
+ *
+ * @param {string} eventName - The name of the event to be pushed (e.g., "browseCardClicked").
+ * @param {Object} cardData - The data object representing the browse card.
+ * @param {string} [cardData.contentType] - The type of content represented by the card (e.g., "article", "video").
+ * @param {string} [cardData.viewLink] - The destination URL or domain the card points to.
+ * @param {string} [cardData.title] - The display title of the card.
+ * @param {string} cardHeader - The header or category associated with the card (used as `linkType`).
+ * @param {number} cardPosition - The index or position of the card within the list/grid.
+ */
+export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const dataLayerEntry = {
+    event: eventName,
+    link: {
+      contentType: cardData.contentType || '',
+      destinationDomain: cardData.viewLink || '',
+      linkTitle: cardData.title || '',
+      linkLocation: 'body',
+      linkType: cardHeader,
+      position: cardPosition,
+    },
+  };
+
+  window.adobeDataLayer.push(dataLayerEntry);
+}
