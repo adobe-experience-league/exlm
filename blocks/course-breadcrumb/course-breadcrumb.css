@@ -10,7 +10,7 @@
 
 .course-breadcrumb .course-breadcrumb-items {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   overflow-x: hidden;
 }
 
@@ -24,7 +24,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100px;
-  font-weight: var(--font-weight-normal);
   line-height: 150%;
 }
 
