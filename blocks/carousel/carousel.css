@@ -1,5 +1,6 @@
 @import '../teaser/teaser.css';
 @import '../detailed-teaser/detailed-teaser.css';
+@import '../media/media.css';
 
 /* carousel wrapper stretches over complete width */
 .section div.carousel-wrapper {
