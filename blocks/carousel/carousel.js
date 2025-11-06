@@ -1,5 +1,6 @@
 import { generateDetailedTeaserDOM } from '../detailed-teaser/detailed-teaser.js';
 import { generateTeaserDOM } from '../teaser/teaser.js';
+import { generateMediaDOM } from '../media/media.js';
 
 // callback for touch based scrolling event
 function updateButtons(entries) {
@@ -46,16 +47,24 @@ export default function decorate(block) {
       panel.style.backgroundColor = bgColor;
     }
 
-    // check if we have to render teaser or a detailed teaser
-    const teaserDOM =
-      blockType === 'detailed-teaser'
-        ? generateDetailedTeaserDOM([image, ...rest], classes)
-        : generateTeaserDOM([image, ...rest], classes);
+    // check if we have to render teaser, detailed teaser, or media
+    let contentDOM;
+    if (blockType === 'detailed-teaser') {
+      contentDOM = generateDetailedTeaserDOM([image, ...rest], classes);
+    } else if ([...classes].includes('media')) {
+      contentDOM = generateMediaDOM([image, ...rest], classes);
+      panel.classList.add('media', 'block');
+    } else {
+      contentDOM = generateTeaserDOM([image, ...rest], classes);
+    }
+
     panel.textContent = '';
-    panel.classList.add(blockType, 'block');
+    if (![...classes].includes('media')) {
+      panel.classList.add(blockType, 'block');
+    }
     classes.forEach((c) => panel.classList.add(c.trim()));
     panel.dataset.panel = `panel_${i}`;
-    panel.append(teaserDOM);
+    panel.append(contentDOM);
     panelContainer.append(panel);
 
     if (panels.length > 1) {
