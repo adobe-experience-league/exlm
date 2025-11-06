@@ -30,7 +30,8 @@
 
 /* teaser inside carousel have same height and texts are centered */
 .carousel.block > .panel-container > .detailed-teaser.block,
-.carousel.block > .panel-container > .teaser.block {
+.carousel.block > .panel-container > .teaser.block,
+.carousel.block > .panel-container > .media.block {
   flex-shrink: 0;
   scroll-snap-align: start;
   height: auto;
