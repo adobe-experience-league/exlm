@@ -1,29 +1,38 @@
+.courses.course-step {
+  --highlight-light-background-color: #fff;
+}
+
 .courses-section,
-.courses .section:not(.notification-banner-container) {
-  background-color: var(--spectrum-gray-50);
+.courses.course-step .section:not(.notification-banner-container) {
+  padding: 24px 49px;
 }
 
-.courses-section.bg-dark-gray,
-.courses .section.bg-dark-gray:not(.notification-banner-container) {
-  background-color: var(--spectrum-gray-50);
+.courses.course-step .section.module-info-container,
+.courses.course-step .section.course-breadcrumb-section {
+  padding-top: 32px;
+  padding-bottom: 0;
 }
 
-.courses .section .default-content-wrapper {
-  max-width: 792px;
+.courses.course-step .section.module-info-container {
+  padding-bottom: 20px;
 }
 
-.courses-section > div:not(.default-content-wrapper) {
+.courses .section:not(.notification-banner-container, .course-marquee-container) > div {
   max-width: 920px;
   margin: 0 auto;
 }
 
-.courses .section > div:has(> .block) {
-  width: 100%;
+.courses.course-step .section:not(.notification-banner-container, .course-marquee-container) > div {
+  max-width: 792px;
+  margin: 0 auto;
 }
 
-.courses
-  .section:not(.notification-banner-container, .course-marquee-container, .default-content-wrapper)
-  > div:not(.default-content-wrapper) {
+.courses.course-step
+  .section.module-info-container:not(.notification-banner-container, .course-marquee-container)
+  > div,
+.courses.course-step
+  .section.course-breadcrumb-section:not(.notification-banner-container, .course-marquee-container)
+  > div {
   max-width: 920px;
   margin: 0 auto;
 }
@@ -31,19 +40,4 @@
 .courses :where(h1, h2, h3, h4, h5, h6, p) {
   color: var(--text-color);
   line-height: normal;
-}
-
-@media (min-width: 900px) {
-  .courses-section > div > .block:not(.module-info, .course-breadcrumb),
-  .courses
-    .section:not(
-      .notification-banner-container,
-      .course-marquee-container,
-      .module-info-container,
-      .course-breadcrumb-container
-    )
-    > div
-    > .block {
-    padding: 0 64px;
-  }
 }
