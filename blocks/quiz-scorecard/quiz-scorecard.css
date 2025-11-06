@@ -97,9 +97,3 @@
     flex-direction: row;
   }
 }
-
-@media (min-width: 900px) {
-  .quiz-scorecard {
-    min-width: 792px;
-  }
-}
