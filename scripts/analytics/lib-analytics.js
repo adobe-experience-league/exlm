@@ -77,6 +77,9 @@ export async function pushPageDataLayer(language, searchTrackingData) {
   let stepObj = null;
   let coursePreviousPageName = 'xl:learn:courses';
 
+  // Get the clean URL of the current page
+  const currentCleanUrl = window.location.href.replace(/^https?:\/\//, '').replace(/#.*$/, '');
+
   if (courses) {
     const { getCurrentStepInfo, getCurrentCourseMeta } = await import('../courses/course-utils.js');
 
@@ -320,6 +323,9 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       ...(stepObj && { steps: stepObj }),
     });
   }
+
+  // Updating localStorage with current page URL for next page load
+  localStorage.setItem('prevPage', currentCleanUrl);
 }
 
 export async function pushLinkClick(e) {
