@@ -95,11 +95,7 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block",
                     "name": "Social Share",
                     "model": "social-share",
-                    "social network": [
-                      "facebook",
-                      "twitter",
-                      "linkedin"
-                    ]
+                    "social network": ["facebook", "twitter", "linkedin"]
                   },
                   "author-summary": {
                     "sling:resourceType": "core/franklin/components/block/v1/block",
@@ -168,10 +164,7 @@
                   "filter": "courses-section",
                   "name": "Courses Section",
                   "model": "courses-section",
-                  "style": [
-                    "courses-section",
-                    "default"
-                  ]
+                  "style": ["courses-section", "default"]
                 }
               }
             }
@@ -188,10 +181,7 @@
                   "filter": "course-hub-section",
                   "name": "Course Hub Section",
                   "model": "course-hub-section",
-                  "style": [
-                    "course-hub-section",
-                    "default"
-                  ]
+                  "style": ["course-hub-section", "default"]
                 }
               }
             }
@@ -207,10 +197,7 @@
                 "template": {
                   "name": "Profile Section",
                   "model": "profile-section",
-                  "style": [
-                    "profile-section",
-                    "default"
-                  ],
+                  "style": ["profile-section", "default"],
                   "filter": "profile-section"
                 }
               }
@@ -227,10 +214,7 @@
                 "template": {
                   "name": "Profile Bottom Section",
                   "model": "profile-bottom-section",
-                  "style": [
-                    "profile-bottom-section",
-                    "default"
-                  ],
+                  "style": ["profile-bottom-section", "default"],
                   "filter": "profile-bottom-section"
                 }
               }
@@ -345,9 +329,7 @@
                 "template": {
                   "name": "ADLS Cards",
                   "model": "adls-cards",
-                  "classes": [
-                    "header-left"
-                  ],
+                  "classes": ["header-left"],
                   "headingType": "h2",
                   "sortby": "recommended"
                 }
@@ -486,9 +468,7 @@
                   "filter": "authorable-card",
                   "name": "Authorable Card",
                   "model": "authorable-card",
-                  "classes": [
-                    "header-left"
-                  ],
+                  "classes": ["header-left"],
                   "headingType": "h2",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
@@ -673,10 +653,7 @@
                     "title": "Teaser Title",
                     "titleType": "h3",
                     "longDescr": "<p>Teaser Description</p>",
-                    "classes": [
-                      "light",
-                      "left"
-                    ]
+                    "classes": ["light", "left"]
                   }
                 }
               }
@@ -830,9 +807,7 @@
                 "template": {
                   "name": "Curated Cards",
                   "model": "curated-cards",
-                  "classes": [
-                    "header-left"
-                  ],
+                  "classes": ["header-left"],
                   "headingType": "h2"
                 }
               }
@@ -864,11 +839,7 @@
                 "template": {
                   "name": "Detailed Teaser",
                   "model": "detailed-teaser",
-                  "classes": [
-                    "light",
-                    "left",
-                    "detailed-teaser"
-                  ],
+                  "classes": ["light", "left", "detailed-teaser"],
                   "fileReference": "/content/dam/adobe-summit-background.jpeg",
                   "eyebrow_logo": "/content/dam/summit-logo.png",
                   "eyebrow_title": "Eyebrow title",
@@ -959,9 +930,7 @@
                 "template": {
                   "name": "Events Cards",
                   "model": "events-cards",
-                  "classes": [
-                    "header-left"
-                  ],
+                  "classes": ["header-left"],
                   "headingType": "h2"
                 }
               }
@@ -979,10 +948,7 @@
                   "name": "Featured Authors",
                   "model": "featured-authors",
                   "authors_headingType": "h2",
-                  "classes": [
-                    "adobe",
-                    "left"
-                  ]
+                  "classes": ["adobe", "left"]
                 }
               }
             }
@@ -1020,10 +986,7 @@
                   "name": "Featured Content",
                   "model": "featured-content",
                   "content_cta": "Read Article",
-                  "classes": [
-                    "adobe",
-                    "left"
-                  ],
+                  "classes": ["adobe", "left"],
                   "cta1_Type": "primary",
                   "cta1_customBgColor": "--spectrum-gray-700",
                   "cta1_textColor": "white",
@@ -1312,12 +1275,7 @@
                 "template": {
                   "name": "Marquee",
                   "model": "marquee",
-                  "classes": [
-                    "medium",
-                    "curved",
-                    "bg-spectrum-gray-700",
-                    "text-spectrum-gray-900"
-                  ],
+                  "classes": ["medium", "curved", "bg-spectrum-gray-700", "text-spectrum-gray-900"],
                   "fileReference": "/content/dam/exlm/en/images/subjects/Community_headshot_single.png",
                   "title": "Marquee Title",
                   "titleType": "h2",
@@ -1672,9 +1630,7 @@
                 "template": {
                   "name": "Recommendation Marquee",
                   "model": "recommendation-marquee",
-                  "roles": [
-                    "profile_context"
-                  ],
+                  "roles": ["profile_context"],
                   "filterProductBy": "all_adobe_products",
                   "headingType": "h2"
                 }
@@ -1692,9 +1648,7 @@
                 "template": {
                   "name": "Recommended Content",
                   "model": "recommended-content",
-                  "roles": [
-                    "profile_context"
-                  ],
+                  "roles": ["profile_context"],
                   "filterProductBy": "all_adobe_products",
                   "headingType": "h2"
                 }
@@ -1855,9 +1809,7 @@
                 "template": {
                   "name": "Tabbed Cards",
                   "model": "tabbed-cards",
-                  "classes": [
-                    "header-left"
-                  ],
+                  "classes": ["header-left"],
                   "headingType": "h2"
                 }
               }
@@ -1932,10 +1884,7 @@
                   "title": "Teaser Title",
                   "titleType": "h3",
                   "longDescr": "<p>Teaser Description</p>",
-                  "classes": [
-                    "light",
-                    "left"
-                  ],
+                  "classes": ["light", "left"],
                   "cta1_Type": "primary",
                   "cta1_customBgColor": "--spectrum-gray-700",
                   "cta1_textColor": "white",
