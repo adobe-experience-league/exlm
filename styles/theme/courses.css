@@ -37,6 +37,14 @@
   margin: 0 auto;
 }
 
+/* When quiz-scorecard is present, breadcrumb should have 792px width */
+.courses.course-step:has(.quiz-scorecard)
+  .section.course-breadcrumb-section:not(.notification-banner-container, .course-marquee-container)
+  > div {
+  max-width: 792px;
+  margin: 0 auto;
+}
+
 .courses :where(h1, h2, h3, h4, h5, h6, p) {
   color: var(--text-color);
   line-height: normal;
