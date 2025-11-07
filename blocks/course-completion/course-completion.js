@@ -7,6 +7,7 @@ import { getCurrentCourseMeta, extractCourseModuleIds } from '../../scripts/cour
 import { pushCourseCertificateEvent } from '../../scripts/analytics/lib-analytics.js';
 import { getCurrentCourses, getUserDisplayName, isCourseCompleted } from '../../scripts/courses/course-profile.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
+import { queueAnalyticsEvent } from '../../scripts/analytics/analytics-queue.js';
 
 const CONFIG = {
   CONFETTI: {
@@ -195,7 +196,7 @@ async function downloadCertificate(canvas, courseData, downloadButton) {
     link.href = url;
     link.download = filename;
 
-    pushCourseCertificateEvent({
+    queueAnalyticsEvent(pushCourseCertificateEvent, {
       action: 'download',
       title: courseData.name,
       solution: courseData.solution,
@@ -231,7 +232,7 @@ function shareToLinkedIn(courseData, linkedInShareBtn) {
   const shareUrl = getCourseLandingPageUrl();
   if (!shareUrl) return;
 
-  pushCourseCertificateEvent({
+  queueAnalyticsEvent(pushCourseCertificateEvent, {
     action: 'share',
     title: courseData.name,
     solution: courseData.solution,

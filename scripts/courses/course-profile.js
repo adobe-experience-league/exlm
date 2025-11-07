@@ -10,6 +10,7 @@ import {
   pushCourseCompletionEvent,
   pushCourseStartEvent,
 } from '../analytics/lib-analytics.js';
+import { queueAnalyticsEvent } from '../analytics/analytics-queue.js';
 
 const COURSE_KEY = 'courses_v2';
 
@@ -244,13 +245,13 @@ async function startModule(url = window.location.pathname) {
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
-    pushModuleStartEvent(courseId);
+    queueAnalyticsEvent(pushModuleStartEvent, courseId);
 
     const isFirstModule = courseMeta.modules?.[0]?.includes(moduleId);
 
     // push course start event
     if (isFirstModule) {
-      pushCourseStartEvent({
+      queueAnalyticsEvent(pushCourseStartEvent, {
         title: courseMeta.heading,
         id: courseId,
         solution: courseMeta.solution,
@@ -264,13 +265,13 @@ async function startModule(url = window.location.pathname) {
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
-    pushModuleStartEvent(courseId);
+    queueAnalyticsEvent(pushModuleStartEvent, courseId);
 
     const isFirstModule = courseMeta.modules?.[0]?.includes(moduleId);
 
     // push course start event
     if (isFirstModule) {
-      pushCourseStartEvent({
+      queueAnalyticsEvent(pushCourseStartEvent, {
         title: courseMeta.heading,
         id: courseId,
         solution: courseMeta.solution,
@@ -304,7 +305,7 @@ async function finishModule(url = window.location.pathname) {
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
-    pushModuleCompletionEvent(courseId);
+    queueAnalyticsEvent(pushModuleCompletionEvent, courseId);
   }
 }
 
@@ -347,8 +348,9 @@ async function completeCourse(url = window.location.pathname) {
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
-    pushModuleCompletionEvent(courseId);
-    pushCourseCompletionEvent(courseId, updatedCourses);
+
+    queueAnalyticsEvent(pushModuleCompletionEvent, courseId);
+    queueAnalyticsEvent(pushCourseCompletionEvent, courseId, updatedCourses);
   }
 }
 

@@ -913,12 +913,20 @@ const loadMartech = async (headerPromise, footerPromise) => {
   // start datalayer work early
   // eslint-disable-next-line import/no-cycle
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
-  libAnalyticsPromise.then((libAnalyticsModule) => {
+  libAnalyticsPromise.then(async (libAnalyticsModule) => {
     const { pushPageDataLayer, pushLinkClick, pageName } = libAnalyticsModule;
     const { lang } = getPathDetails();
-    pushPageDataLayer(lang)
+
+    try {
+      await pushPageDataLayer(lang);
+      // Signal that analytics is ready and process queued events
+      const { signalReadyforAnalyticsEvents } = await import('./analytics/analytics-queue.js');
+      signalReadyforAnalyticsEvents();
+    } catch (e) {
       // eslint-disable-next-line no-console
-      .catch((e) => console.error('Error getting pageLoadModel:', e));
+      console.error('Error getting pageLoadModel:', e);
+    }
+
     localStorage.setItem('prevPage', pageName(lang));
 
     Promise.allSettled([headerPromise, footerPromise]).then(() => {
