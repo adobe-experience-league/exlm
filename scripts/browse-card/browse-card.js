@@ -228,7 +228,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
 
 const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
-const buildCardContent = async (card, model, cardHeader, cardPosition) => {
+const buildCardContent = async (card, model) => {
   const {
     id,
     description,
@@ -358,10 +358,10 @@ const buildCardContent = async (card, model, cardHeader, cardPosition) => {
     copyConfig: failedToLoad ? false : undefined,
     bookmarkTrackingInfo,
     bookmarkCallback: (linkType, position) => {
-      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, linkType || cardHeader, position || cardPosition);
+      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, linkType, position);
     },
     copyCallback: (linkType, position) => {
-      pushBrowseCardClickEvent('copyLinkBrowseCard', model, linkType || cardHeader, position || cardPosition);
+      pushBrowseCardClickEvent('copyLinkBrowseCard', model, linkType, position);
     },
   });
 
@@ -597,17 +597,7 @@ export async function buildCard(container, element, model) {
     cardContent.appendChild(titleElement);
   }
   await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
-
-  // Calculate cardHeader and cardPosition before building card content
-  // We need to temporarily add the card to get the position, then remove it
-  element.appendChild(card);
-  const cardHeader = element.parentElement?.parentElement?.parentElement?.parentElement?.parentElement
-    ?.querySelector('div > div.browse-cards-block-title')
-    ?.innerText.trim();
-  const cardPosition = String(Array.from(element.parentElement.children).indexOf(element) + 1);
-  element.removeChild(card);
-
-  await buildCardContent(card, model, cardHeader, cardPosition);
+  await buildCardContent(card, model);
 
   if (isVideoClip) {
     const cardOptions = card.querySelector('.browse-card-options');
@@ -654,6 +644,20 @@ export async function buildCard(container, element, model) {
     element.appendChild(cardContainer);
   } else {
     element.appendChild(card);
+  }
+
+  // Calculate cardHeader and cardPosition after the card is in the DOM
+  const cardHeader = element.parentElement?.parentElement?.parentElement?.parentElement?.parentElement
+    ?.querySelector('div > div.browse-cards-block-title')
+    ?.innerText.trim();
+  const cardPosition = String(Array.from(element.parentElement.children).indexOf(element) + 1);
+
+  // Update the UserActions callbacks with the calculated values
+  const cardOptions = card.querySelector('.browse-card-options');
+  if (cardOptions) {
+    // Store the calculated values on the card element for the handlers to access
+    card.dataset.cardHeader = cardHeader || '';
+    card.dataset.cardPosition = cardPosition || '';
   }
 
   // DataLayer - Browse card click event

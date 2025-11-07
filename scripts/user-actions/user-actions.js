@@ -140,7 +140,7 @@ const UserActions = (config) => {
               copyTooltip: placeholders?.userActionCopylinkTooltip || 'Copy link URL',
             },
           }),
-        onButtonClick: () =>
+        onButtonClick: (element) =>
           copyHandler({
             id,
             link,
@@ -148,6 +148,7 @@ const UserActions = (config) => {
               copyToastText: placeholders?.userActionCopylinkToastText || 'URL copied',
             },
             callback: copyCallback,
+            element,
           }),
       });
     }

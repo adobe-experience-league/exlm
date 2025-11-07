@@ -37,6 +37,11 @@ async function isBookmarked(bookmarkId) {
  */
 export async function bookmarkHandler(config) {
   const { element, id: idValue, bookmarkPath, tooltips, bookmarkTrackingInfo, callback, linkType, position } = config;
+
+  // Get cardHeader and cardPosition from the card element if not provided
+  const card = element.closest('.browse-card');
+  const finalLinkType = linkType || card?.dataset?.cardHeader;
+  const finalPosition = position || card?.dataset?.cardPosition;
   const { lang: languageCode } = getPathDetails();
   const profileData = await defaultProfileClient.getMergedProfile(true);
   let id = bookmarkPath || idValue;
@@ -58,7 +63,7 @@ export async function bookmarkHandler(config) {
         bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
         sendNotice(tooltips?.bookmarkToastText);
         assetInteractionModel(id, 'Bookmarked');
-        if (callback) callback(linkType, position);
+        if (callback) callback(finalLinkType, finalPosition);
       })
       .catch(() => sendNotice(tooltips?.profileNotUpdated, 'error'));
   } else {
@@ -69,7 +74,7 @@ export async function bookmarkHandler(config) {
         bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
         sendNotice(tooltips?.removeBookmarkToastText);
         assetInteractionModel(id, 'Bookmark Removed');
-        if (callback) callback(linkType, position);
+        if (callback) callback(finalLinkType, finalPosition);
       })
       .catch(() => {
         sendNotice(tooltips?.profileNotUpdated, 'error');

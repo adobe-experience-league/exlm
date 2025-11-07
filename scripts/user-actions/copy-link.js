@@ -33,7 +33,12 @@ export function copyToClipboard({ assetId = '', text, toastText }) {
  * @param {Function} config.callback - Optional callback function to be called after copy action.
  */
 export function copyHandler(config) {
-  const { id, link, tooltip, callback, linkType, position } = config;
+  const { id, link, tooltip, callback, linkType, position, element } = config;
+
+  // Get cardHeader and cardPosition from the card element if not provided
+  const card = element?.closest?.('.browse-card');
+  const finalLinkType = linkType || card?.dataset?.cardHeader;
+  const finalPosition = position || card?.dataset?.cardPosition;
   if (link) {
     const text = link.startsWith('/') ? `${window.location.origin}${link}` : link;
     copyToClipboard({
@@ -41,7 +46,7 @@ export function copyHandler(config) {
       text,
       toastText: tooltip?.copyToastText,
     });
-    if (callback) callback(linkType, position);
+    if (callback) callback(finalLinkType, finalPosition);
   }
 }
 
