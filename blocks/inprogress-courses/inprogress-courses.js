@@ -91,11 +91,9 @@ export default function decorate(block) {
 
           // Find the latest module start time for each course and use it for sorting
           inProgressCourses.forEach((course) => {
-            // Add "courses/" prefix to match the format in profileCourses
             const courseIdWithPrefix = `courses/${course.id}`;
             const profileCourse = profileCourses.find((pc) => pc.courseId === courseIdWithPrefix);
             if (profileCourse?.modules?.length) {
-              // Find the latest start time among all modules
               let latestStartTime = 0;
               profileCourse.modules.forEach((module) => {
                 if (module.startedAt) {
