@@ -5,7 +5,8 @@ import { launchConfetti } from '../../scripts/utils/confetti-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { getCurrentCourseMeta, extractCourseModuleIds } from '../../scripts/courses/course-utils.js';
 import { pushCourseCertificateEvent } from '../../scripts/analytics/lib-analytics.js';
-import { getCurrentCourses, getUserDisplayName } from '../../scripts/courses/course-profile.js';
+import { getCurrentCourses, getUserDisplayName, isCourseCompleted } from '../../scripts/courses/course-profile.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 const CONFIG = {
   CONFETTI: {
@@ -381,6 +382,31 @@ function createContent(children, certificateCanvas, courseData) {
 export default async function decorate(block) {
   // Store original children before clearing block
   const originalChildren = Array.from(block.children);
+
+  document.querySelector('main').style.visibility = 'hidden';
+
+  // Check if user is signed in
+  const isSignedIn = await isSignedInUser();
+  // Check if it's in UE author mode
+  const isUEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+
+  if (!isSignedIn && !isUEAuthorMode) {
+    // Force user to sign in
+    window.adobeIMS?.signIn();
+    return;
+  }
+
+  // Check if user has completed the course (has certificate)
+  if (!isUEAuthorMode) {
+    const hasCertificate = await isCourseCompleted();
+    if (!hasCertificate) {
+      // Redirect to course landing page if no certificate
+      const courseLandingUrl = getCourseLandingPageUrl();
+      window.location.href = courseLandingUrl || window.location.origin;
+    }
+  }
+
+  document.querySelector('main').style.visibility = 'unset';
 
   // Load placeholders
   try {
