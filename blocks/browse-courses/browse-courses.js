@@ -375,20 +375,13 @@ function analyzeCourseStatuses(courseData) {
  * @returns {Array<Object>} Array of status options with title and value properties
  * @description
  * Includes status options present in the dataset.
- * Special rule: If ALL courses are "Not Started", returns empty array (no filtering needed).
+ * Always shows dropdown with available statuses, even if only one status is present.
  */
 function createStatusFilterOptions(courseData) {
   const statuses = analyzeCourseStatuses(courseData);
-
-  // If ALL courses are "Not Started" (no other statuses), don't show dropdown
-  const onlyNotStarted = statuses.hasNotStarted && !statuses.hasInProgress && !statuses.hasCompleted;
-  if (onlyNotStarted) {
-    return []; // No dropdown needed when all courses have same status
-  }
-
   const options = [];
 
-  // Include "Not Started" if it exists (and we have other statuses too, checked above)
+  // Include "Not Started" if it exists
   if (statuses.hasNotStarted) {
     options.push({
       title: placeholders?.courseStatusNotStarted || 'Not Started',
