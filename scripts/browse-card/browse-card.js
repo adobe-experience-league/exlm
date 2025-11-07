@@ -670,8 +670,8 @@ export async function buildCard(container, element, model) {
   element.querySelector('.browse-card-options .user-actions .copy-link')?.addEventListener(
     'click',
     (e) => {
-      e.stopPropagation();
       e.preventDefault();
+      e.stopPropagation();
       pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
     },
     { once: true },
