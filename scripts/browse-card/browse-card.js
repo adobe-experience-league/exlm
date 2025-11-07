@@ -659,6 +659,7 @@ export async function buildCard(container, element, model) {
   element.querySelector('.browse-card-options .user-actions .bookmark')?.addEventListener(
     'click',
     (e) => {
+      e.preventDefault();
       e.stopPropagation();
       pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, cardHeader, cardPosition);
     },
@@ -669,6 +670,7 @@ export async function buildCard(container, element, model) {
   element.querySelector('.browse-card-options .user-actions .copy-link')?.addEventListener(
     'click',
     (e) => {
+      e.preventDefault();
       e.stopPropagation();
       pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
     },
