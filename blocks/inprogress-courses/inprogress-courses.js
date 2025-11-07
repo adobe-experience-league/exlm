@@ -93,20 +93,10 @@ export default function decorate(block) {
           inProgressCourses.forEach((course) => {
             const courseIdWithPrefix = `courses/${course.id}`;
             const profileCourse = profileCourses.find((pc) => pc.courseId === courseIdWithPrefix);
-            if (profileCourse?.modules?.length) {
-              let latestStartTime = 0;
-              profileCourse.modules.forEach((module) => {
-                if (module.startedAt) {
-                  const startTime = new Date(module.startedAt).getTime();
-                  if (startTime > latestStartTime) {
-                    latestStartTime = startTime;
-                  }
-                }
-              });
-              course.latestModuleStartTime = latestStartTime;
-            } else {
-              course.latestModuleStartTime = 0;
-            }
+
+            course.latestModuleStartTime = profileCourse?.modules?.length
+              ? Math.max(...profileCourse.modules.map((m) => (m.startedAt ? new Date(m.startedAt).getTime() : 0)))
+              : 0;
           });
 
           // Sort courses by latest module start time (most recent first)
