@@ -122,7 +122,6 @@
 
 .course-marquee .metadata-item {
   display: flex;
-  align-items: center;
 }
 
 .course-marquee .metadata-label {
@@ -134,7 +133,7 @@
   color: var(--spectrum-gray-50);
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 12px;
 }
 
 .course-marquee .metadata-value-item {
@@ -166,8 +165,12 @@
   padding: 0;
 }
 
-.course-marquee .course-marquee-bookmark .user-actions .bookmark[data-bookmarked='true'] .icon-bookmark-white {
+.course-marquee .course-marquee-bookmark .user-actions .bookmark[data-bookmarked='true'] .icon-bookmark-new {
   display: none;
+}
+
+.course-marquee .course-marquee-bookmark .user-actions .bookmark:hover .icon-bookmark-new {
+  background-color: transparent;
 }
 
 .course-marquee .course-marquee-bookmark .user-actions button label {
@@ -179,6 +182,20 @@
 
 .section.course-marquee-container > :not(.course-marquee-wrapper) {
   max-width: 792px;
+}
+
+/* Multi value item css */
+.course-marquee .course-marquee-metadata.multi .metadata-separator {
+  display: none;
+}
+
+.course-marquee .course-marquee-metadata.multi {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.course-marquee .course-marquee-metadata.multi .metadata-item {
+  margin-bottom: 8px;
 }
 
 @media (min-width: 600px) {
@@ -225,5 +242,20 @@
   .course-marquee .course-marquee-metadata,
   .course-marquee .course-marquee-bookmark .user-actions button label {
     font-size: var(--spectrum-font-size-100);
+  }
+}
+
+@media (min-width: 900px) {
+  .course-marquee .course-marquee-metadata.multi {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .course-marquee .course-marquee-metadata.multi .metadata-separator {
+    display: block;
+  }
+
+  .course-marquee .course-marquee-metadata.multi .metadata-item {
+    margin-bottom: 0;
   }
 }

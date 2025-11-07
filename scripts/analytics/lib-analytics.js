@@ -165,12 +165,12 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       };
 
       // get a list of all courses titles with awards.timestamp property
-      const coursesWithAwards = (userData?.courses || [])
+      const coursesWithAwards = (userData?.courses_v2 || [])
         .filter((course) => course?.awards?.timestamp && course.name)
         .map((course) => course.name);
       user.userDetails.courses = coursesWithAwards.length ? coursesWithAwards : [];
 
-      const courseInfo = (userData.courses || []).find((c) => c.courseId === courseObj?.id);
+      const courseInfo = (userData.courses_v2 || []).find((c) => c.courseId === courseObj?.id);
       if (courseInfo) {
         if (courseInfo?.modules && Array.isArray(courseInfo?.modules)) {
           let startTime = null;
@@ -874,4 +874,34 @@ export function pushCourseStartEvent(courseData) {
       startTime: courseData.startTime,
     },
   });
+}
+
+/**
+ * Pushes a browse card click event to the Adobe Data Layer.
+ * This event is fired whenever a user clicks on any part of a browse card.
+ *
+ * @param {string} eventName - The name of the event to be pushed (e.g., "browseCardClicked").
+ * @param {Object} cardData - The data object representing the browse card.
+ * @param {string} [cardData.contentType] - The type of content represented by the card (e.g., "article", "video").
+ * @param {string} [cardData.viewLink] - The destination URL or domain the card points to.
+ * @param {string} [cardData.title] - The display title of the card.
+ * @param {string} cardHeader - The header or category associated with the card (used as `linkType`).
+ * @param {number} cardPosition - The index or position of the card within the list/grid.
+ */
+export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const dataLayerEntry = {
+    event: eventName,
+    link: {
+      contentType: cardData.contentType || '',
+      destinationDomain: cardData.viewLink || '',
+      linkTitle: cardData.title || '',
+      linkLocation: 'body',
+      linkType: cardHeader,
+      position: cardPosition,
+    },
+  };
+
+  window.adobeDataLayer.push(dataLayerEntry);
 }

@@ -86,7 +86,7 @@ function getStepMeta(allSteps, moduleRecap, moduleQuiz) {
   let currentIdx = -1;
 
   for (let i = 0; i < allSteps.length; i += 1) {
-    if (allSteps[i] && currentPath.startsWith(allSteps[i].url)) {
+    if (allSteps[i] && currentPath === allSteps[i].url) {
       currentStep = i + 1; // 1-based index
       currentIdx = i;
       break;

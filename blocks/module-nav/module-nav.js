@@ -42,8 +42,19 @@ async function handleQuizNextButton(e) {
   const backButton = document.querySelector('.module-nav-button.module-nav-back');
   const nextButton = document.querySelector('.module-nav-button.module-nav-submit');
 
+  // Check if quiz-scorecard block is present (quiz has been successfully submitted)
+  const quizScorecard = document.querySelector('.quiz-scorecard');
+
+  if (quizScorecard) {
+    if (backButton) {
+      await updateBackButtonToCourseUrl(backButton, placeholders);
+    }
+    if (nextButton) {
+      nextButton.textContent = placeholders?.nextBtnLabel || 'Next';
+    }
+  }
+
   if (!isQuizPassed) {
-    // Don't change button text if quiz isn't passed
     // re-enable submit button after answering all questions
     const inputs = document.querySelectorAll('.question input[type="checkbox"], .question input[type="radio"]');
     inputs.forEach((input) => {
@@ -56,14 +67,6 @@ async function handleQuizNextButton(e) {
       );
     });
     return;
-  }
-
-  if (backButton) {
-    await updateBackButtonToCourseUrl(backButton, placeholders);
-  }
-
-  if (nextButton) {
-    nextButton.textContent = placeholders?.nextBtnLabel || 'Next';
   }
 
   // Remove the event listener when quiz is passed
@@ -126,6 +129,9 @@ export default async function decorate(block) {
   const isRecap = stepInfo?.isRecap || false;
   const isQuiz = stepInfo?.isQuiz || false;
 
+  // Check if next step is a quiz step
+  const isNextStepQuiz = stepInfo?.nextStep === stepInfo?.moduleQuiz;
+
   // Get environment config
   const { isProd } = getConfig();
 
@@ -139,7 +145,7 @@ export default async function decorate(block) {
     nextLink.href = stepInfo.nextStep || '#';
   };
 
-  if (isRecap) {
+  if (isRecap || isNextStepQuiz) {
     // Take Quiz link
     nextLink.classList.add('module-nav-quiz');
     nextLink.textContent = placeholders['course-take-quiz'] || 'Take Quiz';
@@ -177,6 +183,15 @@ export default async function decorate(block) {
       }
     }
     nextLink.classList.remove('disabled');
+  }
+
+  // Check if quiz-scorecard block is present on page load
+  const quizScorecard = document.querySelector('.quiz-scorecard');
+  if (quizScorecard && isQuiz) {
+    await updateBackButtonToCourseUrl(previousLink, placeholders);
+    if (nextLink.classList.contains('module-nav-submit')) {
+      nextLink.textContent = placeholders?.nextBtnLabel || 'Next';
+    }
   }
 
   // Add links to container

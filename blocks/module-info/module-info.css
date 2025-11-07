@@ -19,10 +19,6 @@
   transition: background-color 0.2s ease;
 }
 
-.module-info .back-to-course:hover {
-  background: var(--spectrum-gray-200);
-}
-
 .module-info .back-to-course .icon {
   width: 32px;
   height: 32px;
