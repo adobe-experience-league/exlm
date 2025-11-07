@@ -2,7 +2,6 @@ import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 /* eslint-disable no-plusplus */
 export function generateMediaDOM(props) {
-  // get the first and only cell from each row
   // Extract properties, always same order as in model, empty string if not set
   const [pictureContainer, eyebrow, title, description, firstCta, secondCta] = props;
   const picture = pictureContainer.querySelector('picture');
@@ -28,7 +27,7 @@ export function generateMediaDOM(props) {
 export default function decorate(block) {
   // get the first and only cell from each row
   const props = [...block.children].map((row) => row.firstElementChild);
-  const mediaDOM = generateMediaDOM(props, block.classList);
+  const mediaDOM = generateMediaDOM(props);
   block.textContent = '';
   block.append(mediaDOM);
 }
