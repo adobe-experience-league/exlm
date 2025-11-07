@@ -27,6 +27,7 @@ import { fetchCourseIndex } from '../../scripts/courses/course-utils.js';
  * Loaded from language-specific placeholder files
  */
 let placeholders = {};
+const numberOfResults = 1000;
 
 /**
  * DOM selectors used throughout the module
@@ -328,6 +329,7 @@ async function fetchCourseData(selectedFilters = []) {
   const param = {
     contentType: CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase().split(','),
     ...(selectedFilters.length > 0 && { product: selectedFilters }),
+    noOfResults: numberOfResults,
   };
 
   // Fetch browse cards data (automatically enriched by BrowseCardsDelegate for signed-in users)
