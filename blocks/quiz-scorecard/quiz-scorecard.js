@@ -2,6 +2,7 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 import { getCurrentStepInfo } from '../../scripts/courses/course-utils.js';
+import { pushLinkClick } from '../../scripts/analytics/lib-analytics.js';
 
 /**
  * Decorate the quiz scorecard block
@@ -76,21 +77,27 @@ export default async function decorate(block) {
     });
   }
 
-  // Add event listener for "Back to step one" button
+  // Set href for "Back to step one" button
   const backToStepOneButton = scorecardElement.querySelector(
     '.quiz-scorecard-cta-container a:not(.retake-quiz-button)',
   );
   if (!backToStepOneButton) return;
 
-  backToStepOneButton.addEventListener('click', async (e) => {
-    e.preventDefault();
-    try {
-      const stepInfo = await getCurrentStepInfo();
+  // Fetch the first step URL and assign it to the href attribute
+  try {
+    getCurrentStepInfo().then((stepInfo) => {
       const firstStepUrl = stepInfo?.moduleSteps?.[0]?.url;
-      if (firstStepUrl) window.location.href = firstStepUrl;
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error navigating to the first step:', error);
-    }
-  });
+      if (firstStepUrl) {
+        backToStepOneButton.href = firstStepUrl;
+
+        // calling pushLinkClick explicitly
+        backToStepOneButton.addEventListener('click', (e) => {
+          pushLinkClick(e);
+        });
+      }
+    });
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error setting href for the first step:', error);
+  }
 }
