@@ -16,6 +16,7 @@
   justify-content: center;
   align-items: center;
   margin-bottom: var(--spectrum-spacing-500);
+  text-align: center;
 }
 
 .inprogress-courses-cta-wrapper button {
