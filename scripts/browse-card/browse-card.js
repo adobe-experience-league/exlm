@@ -646,10 +646,22 @@ export async function buildCard(container, element, model) {
     element.appendChild(card);
   }
 
-  // Calculate cardHeader and cardPosition after the card is in the DOM
-  const cardHeader = element.parentElement?.parentElement?.parentElement?.parentElement?.parentElement
-    ?.querySelector('div > div.browse-cards-block-title')
-    ?.innerText.trim();
+  // Find the closest section header for this specific card
+  const cardHeader = (() => {
+    let currentElement = element;
+
+    while (currentElement?.parentElement) {
+      currentElement = currentElement?.parentElement;
+      const sectionHeader = currentElement.querySelector('.browse-cards-block-title');
+      if (sectionHeader) {
+        const immediateChild = sectionHeader.children[0];
+        return immediateChild?.innerText?.trim() || '';
+      }
+    }
+
+    return '';
+  })();
+
   const cardPosition = String(Array.from(element.parentElement.children).indexOf(element) + 1);
 
   // Update the UserActions callbacks with the calculated values
