@@ -93,6 +93,7 @@ async function fetchCertificateData() {
   let completionHours = '';
   let completionDate = null;
   let userName = null;
+  let courseId = '';
 
   try {
     // Get course metadata from course-utils
@@ -102,7 +103,8 @@ async function fetchCertificateData() {
     completionHours = courseMeta?.totalTime?.match(/\d+/)?.[0] || '';
 
     // Get the current course ID
-    const { courseId } = extractCourseModuleIds(window.location.pathname);
+    const courseIdObj = extractCourseModuleIds(window.location.pathname);
+    courseId = courseIdObj?.courseId || '';
 
     // Get user name from profile using the utility function
     userName = await getUserDisplayName();
@@ -127,6 +129,9 @@ async function fetchCertificateData() {
     completionTimeInHrs: completionHours || '',
     userName: userName || 'User',
     completionDate: completionDate || '',
+    solution: courseMeta?.solution || '',
+    role: courseMeta?.role || '',
+    id: courseId || '',
   };
 }
 
@@ -192,7 +197,7 @@ async function downloadCertificate(canvas, courseData, downloadButton) {
 
     pushCourseCertificateEvent({
       action: 'download',
-      title: courseName,
+      title: courseData.name,
       solution: courseData.solution,
       role: courseData.role,
       linkTitle: downloadButton.textContent?.trim(),
