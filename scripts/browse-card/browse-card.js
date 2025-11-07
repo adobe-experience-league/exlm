@@ -228,7 +228,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
 
 const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
-const buildCardContent = async (card, model) => {
+const buildCardContent = async (card, model, cardHeader, cardPosition) => {
   const {
     id,
     description,
@@ -357,6 +357,12 @@ const buildCardContent = async (card, model) => {
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
     copyConfig: failedToLoad ? false : undefined,
     bookmarkTrackingInfo,
+    bookmarkCallback: (linkType, position) => {
+      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, linkType || cardHeader, position || cardPosition);
+    },
+    copyCallback: (linkType, position) => {
+      pushBrowseCardClickEvent('copyLinkBrowseCard', model, linkType || cardHeader, position || cardPosition);
+    },
   });
 
   cardAction.decorate();
@@ -591,7 +597,17 @@ export async function buildCard(container, element, model) {
     cardContent.appendChild(titleElement);
   }
   await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
-  await buildCardContent(card, model);
+
+  // Calculate cardHeader and cardPosition before building card content
+  // We need to temporarily add the card to get the position, then remove it
+  element.appendChild(card);
+  const cardHeader = element.parentElement?.parentElement?.parentElement?.parentElement?.parentElement
+    ?.querySelector('div > div.browse-cards-block-title')
+    ?.innerText.trim();
+  const cardPosition = String(Array.from(element.parentElement.children).indexOf(element) + 1);
+  element.removeChild(card);
+
+  await buildCardContent(card, model, cardHeader, cardPosition);
 
   if (isVideoClip) {
     const cardOptions = card.querySelector('.browse-card-options');
@@ -640,39 +656,15 @@ export async function buildCard(container, element, model) {
     element.appendChild(card);
   }
 
-  const cardHeader = card.parentElement?.parentElement?.parentElement?.parentElement?.parentElement
-    ?.querySelector('div > div.browse-cards-block-title')
-    ?.innerText.toLowerCase()
-    .trim();
-  const cardPosition = String(Array.from(element.parentElement.children).indexOf(element) + 1);
-
   // DataLayer - Browse card click event
-  element.querySelector('a:not(.browse-card-options)')?.addEventListener(
+  element.querySelector('a')?.addEventListener(
     'click',
-    () => {
+    (e) => {
+      // Don't trigger browseCardClicked if clicking on user actions (bookmark/copy link)
+      if (e.target && e.target.closest('.user-actions')) {
+        return;
+      }
       pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
-    },
-    { once: true },
-  );
-
-  // DataLayer - Browse card click event for Bookmark
-  element.querySelector('.browse-card-options .user-actions .bookmark')?.addEventListener(
-    'click',
-    (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, cardHeader, cardPosition);
-    },
-    { once: true },
-  );
-
-  // DataLayer - Browse card click event for Copy Link
-  element.querySelector('.browse-card-options .user-actions .copy-link')?.addEventListener(
-    'click',
-    (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
     },
     { once: true },
   );
