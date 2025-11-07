@@ -3,7 +3,6 @@ import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile
 import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 const DEFAULT_NUM_COURSES = 2;
-const MAX_NUM_COURSES = 4;
 
 export default function decorate(block) {
   const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
@@ -81,13 +80,27 @@ export default function decorate(block) {
 
           const cardModels = filteredCourses.map((model) => transformCourseMetaToCardModel({ model, placeholders }));
           const courses = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus(cardModels, profileCourses);
-          const inProgressCourses = courses
-            .filter((course) => course.meta?.courseInfo?.courseStatus === COURSE_STATUS.IN_PROGRESS)
-            .slice(0, MAX_NUM_COURSES);
+          const inProgressCourses = courses.filter(
+            (course) => course.meta?.courseInfo?.courseStatus === COURSE_STATUS.IN_PROGRESS,
+          );
+
           if (inProgressCourses.length === 0) {
             block.classList.add('inprogress-courses-hidden');
             return;
           }
+
+          // Find the latest module start time for each course and use it for sorting
+          inProgressCourses.forEach((course) => {
+            const courseIdWithPrefix = `courses/${course.id}`;
+            const profileCourse = profileCourses.find((pc) => pc.courseId === courseIdWithPrefix);
+
+            course.latestModuleStartTime = profileCourse?.modules?.length
+              ? Math.max(...profileCourse.modules.map((m) => (m.startedAt ? new Date(m.startedAt).getTime() : 0)))
+              : 0;
+          });
+
+          // Sort courses by latest module start time (most recent first)
+          inProgressCourses.sort((a, b) => b.latestModuleStartTime - a.latestModuleStartTime);
 
           const [headerWrappper, contentDiv, ctaSectionWrapper] = Array.from(block.children);
           headerWrappper.classList.add('inprogress-courses-header-wrapper');
