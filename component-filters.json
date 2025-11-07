@@ -84,6 +84,7 @@
       "course-breakdown",
       "course-marquee",
       "course-completion",
+      "course-awards",
       "inprogress-courses",
       "browse-courses",
       "course-recap",
@@ -263,6 +264,7 @@
       "product-experience-level",
       "bookmarks",
       "awards",
+      "course-awards",
       "profile-welcome",
       "recommended-content",
       "recommendation-marquee",
@@ -288,6 +290,7 @@
       "course-breakdown",
       "course-marquee",
       "course-completion",
+      "course-awards",
       "course-recap",
       "inprogress-courses",
       "browse-courses",
@@ -395,7 +398,7 @@
   },
   {
     "id": "teaser",
-    "components": ["teaser", "detailed-teaser"]
+    "components": ["teaser", "detailed-teaser", "media"]
   },
   {
     "id": "accordion",

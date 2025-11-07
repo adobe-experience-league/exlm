@@ -1,3 +1,11 @@
+.courses.course-step .section.quiz-scorecard-container {
+  padding: 0;
+}
+
+.quiz-scorecard-wrapper {
+  width: 100%;
+}
+
 .quiz-scorecard {
   margin: 0 auto;
   padding: var(--spectrum-spacing-500);
@@ -91,11 +99,5 @@
 @media (min-width: 600px) {
   .quiz-scorecard-cta-container {
     flex-direction: row;
-  }
-}
-
-@media (min-width: 900px) {
-  .quiz-scorecard {
-    width: 792px;
   }
 }

@@ -7,6 +7,7 @@ import {
   COURSE_STATUS,
 } from './browse-cards-constants.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
+import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
@@ -638,6 +639,43 @@ export async function buildCard(container, element, model) {
   } else {
     element.appendChild(card);
   }
+
+  const cardHeader = card.parentElement?.parentElement?.parentElement?.parentElement?.parentElement
+    ?.querySelector('div > div.browse-cards-block-title')
+    ?.innerText.toLowerCase()
+    .trim();
+  const cardPosition = String(Array.from(element.parentElement.children).indexOf(element) + 1);
+
+  // DataLayer - Browse card click event
+  element.querySelector('a:not(.browse-card-options)')?.addEventListener(
+    'click',
+    () => {
+      pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
+    },
+    { once: true },
+  );
+
+  // DataLayer - Browse card click event for Bookmark
+  element.querySelector('.browse-card-options .user-actions .bookmark')?.addEventListener(
+    'click',
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, cardHeader, cardPosition);
+    },
+    { once: true },
+  );
+
+  // DataLayer - Browse card click event for Copy Link
+  element.querySelector('.browse-card-options .user-actions .copy-link')?.addEventListener(
+    'click',
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
+    },
+    { once: true },
+  );
 
   element.querySelector('a').addEventListener(
     'click',

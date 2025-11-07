@@ -48,7 +48,7 @@ export default async function decorate(block) {
 
   // Function to create HTML for multiple values with proper spacing
   const createMultiValueHTML = (values) => {
-    if (!values) return '';
+    if (!values) return { html: '', isMulti: false };
 
     // Split by semicolons or commas, trim each value, and remove duplicates
     const uniqueValues = [
@@ -60,7 +60,10 @@ export default async function decorate(block) {
       ),
     ];
 
-    return uniqueValues.map((value) => `<span class="metadata-value-item">${value}</span>`).join('');
+    const isMulti = uniqueValues.length > 1;
+    const html = uniqueValues.map((value) => `<span class="metadata-value-item">${value}</span>`).join('');
+
+    return { html, isMulti };
   };
   const [, courseIdFromLink] = courseLink?.split(`/${lang}/`) || [];
   const bookmarkTrackingInfo = {
@@ -76,11 +79,19 @@ export default async function decorate(block) {
 
   // Create metadata items HTML
   let metadataItemsHTML = '';
+
+  // Process product name
+  let isMultiProduct = false;
+  let productHTML = '';
   if (productName) {
+    const result = createMultiValueHTML(productName);
+    productHTML = result.html;
+    isMultiProduct = result.isMulti;
+
     metadataItemsHTML += `
       <div class="metadata-item">
         <span class="metadata-label">${placeholders?.courseProductLabel || 'Product'}:</span>
-        <div class="metadata-value">${createMultiValueHTML(productName)}</div>
+        <div class="metadata-value">${productHTML}</div>
       </div>
     `;
   }
@@ -89,14 +100,27 @@ export default async function decorate(block) {
     metadataItemsHTML += `<div class="metadata-separator"></div>`;
   }
 
+  // Process experience level
+  let isMultiExperience = false;
+  let experienceHTML = '';
   if (experienceLevel) {
+    const result = createMultiValueHTML(experienceLevel);
+    experienceHTML = result.html;
+    isMultiExperience = result.isMulti;
+
     metadataItemsHTML += `
       <div class="metadata-item">
         <span class="metadata-label">${placeholders?.courseExperienceLevelLabel || 'Experience level'}:</span>
-        <div class="metadata-value">${createMultiValueHTML(experienceLevel)}</div>
+        <div class="metadata-value">${experienceHTML}</div>
       </div>
     `;
   }
+
+  // Determine if we have multi values in either product or experience
+  const hasMultiValues = isMultiProduct || isMultiExperience;
+
+  // Add the multi class to the metadata container if there are multi values
+  const metadataClass = hasMultiValues ? 'course-marquee-metadata multi' : 'course-marquee-metadata';
 
   // Generate complete HTML structure
   const courseMarqueeHTML = htmlToElement(`
@@ -110,7 +134,7 @@ export default async function decorate(block) {
         <div class="course-marquee-description">${courseDescription}</div>
         <hr class="course-marquee-separator">
         <div class="course-metadata-bookmark">
-          <div class="course-marquee-metadata">
+          <div class="${metadataClass}">
             ${metadataItemsHTML}
           </div>
           <div class="course-marquee-bookmark"></div>
