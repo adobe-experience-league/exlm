@@ -272,9 +272,6 @@ export default async function decorate(block) {
 
   // Create a function to handle quiz submission that can be called externally
   quizHandlerFunction = async () => {
-    // Trigger quiz submit event immediately when submit button is clicked
-    await pushQuizEvent('quizSubmit');
-
     // Check if all questions are answered
     let allQuestionsAnswered = true;
 
@@ -306,6 +303,9 @@ export default async function decorate(block) {
       questionsContainer.appendChild(errorMessage);
       return false;
     }
+
+    // Trigger quiz submit event only after validating all questions are answered
+    await pushQuizEvent('quizSubmit');
 
     // Submit quiz and get results
     const quizResults = await submitQuiz(questionElements, passPageUrlElement, failPageUrlElement, placeholders);
