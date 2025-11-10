@@ -29,8 +29,8 @@ export default function decorate(block) {
 
     if (cardModels.length > DEFAULT_NUM_COURSES) {
       const showMoreButton = createTag('button', { class: 'secondary' });
-      const showMoreText = placeholders?.showMore || 'Show More';
-      const showLessText = placeholders?.showLess || 'Show Less';
+      const showMoreText = placeholders?.seeMore || 'See More';
+      const showLessText = placeholders?.seeLess || 'See Less';
       showMoreButton.textContent = showMoreText;
       showMoreButton.addEventListener('click', () => {
         visibleCourses = visibleCourses === DEFAULT_NUM_COURSES ? cardModels.length : DEFAULT_NUM_COURSES;
