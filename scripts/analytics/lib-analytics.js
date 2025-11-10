@@ -77,6 +77,9 @@ export async function pushPageDataLayer(language, searchTrackingData) {
   let stepObj = null;
   let coursePreviousPageName = 'xl:learn:courses';
 
+  // Get the previous page URL from document.referrer
+  const referrerUrl = document.referrer ? document.referrer.replace(/^https?:\/\//, '').replace(/#.*$/, '') : '';
+
   if (courses) {
     const { getCurrentStepInfo, getCurrentCourseMeta } = await import('../courses/course-utils.js');
 
@@ -86,7 +89,10 @@ export async function pushPageDataLayer(language, searchTrackingData) {
 
     const courseTitle = courseMeta?.heading || '';
     const courseId = parts ? `${parts}` : '';
-    const courseSolution = courseMeta?.solution || '';
+
+    const courseFullSolution = courseMeta?.solution || '';
+    const courseSolution = courseFullSolution.split(',')[0].trim() || '';
+
     const courseRole = courseMeta?.role || '';
     const courseLevel = courseMeta?.level || '';
 
@@ -113,7 +119,14 @@ export async function pushPageDataLayer(language, searchTrackingData) {
     }
 
     if (courseId) {
-      courseObj = { title: courseTitle, id: courseId, solution: courseSolution, role: courseRole, level: courseLevel };
+      courseObj = {
+        title: courseTitle,
+        id: courseId,
+        solution: courseSolution,
+        fullSolution: courseFullSolution,
+        role: courseRole,
+        level: courseLevel,
+      };
     }
     if (moduleTitle) {
       moduleObj = { title: moduleTitle };
@@ -258,7 +271,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       pageName: name,
       pageType: 'webpage',
       pageViews: { value: 1 },
-      prevPage: courseObj ? coursePreviousPageName : localStorage.getItem('prevPage') || '',
+      prevPage: courseObj ? coursePreviousPageName : referrerUrl,
       userAgent: window.navigator.userAgent,
       server: window.location.host,
       siteSection: section,
@@ -322,7 +335,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
   }
 }
 
-export function pushLinkClick(e) {
+export async function pushLinkClick(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
@@ -346,6 +359,8 @@ export function pushLinkClick(e) {
   let linkType = 'other';
   let name = e.target.innerHTML;
   let destinationDomain = e.target.href;
+  let linkTitle = e.target.innerHTML || '';
+
   if (!viewMoreLess && e.target.href?.match(/.(pdf|zip|dmg|exe)$/)) {
     linkType = 'download';
   } else if (viewMoreLess) {
@@ -354,13 +369,17 @@ export function pushLinkClick(e) {
     name = 'ExperienceEventType:web.webInteraction.linkClicks';
   } else if (isCourseStartCTA) {
     linkType = 'Custom';
-    destinationDomain = window.location.hostname;
+    destinationDomain = window.location.href;
+    const { getCurrentCourseMeta } = await import('../courses/course-utils.js');
+    const courseMeta = await getCurrentCourseMeta();
+    const courseTitle = courseMeta?.heading;
+    linkTitle = `${e.target.innerHTML} | ${courseTitle}`;
   }
 
   const linkObj = {
     destinationDomain,
     linkLocation,
-    linkTitle: e.target.innerHTML || '',
+    linkTitle,
     linkType,
   };
 
@@ -517,7 +536,10 @@ export async function getEventInfo(stepType = 'content', existingStepInfo = null
 
     const courseTitle = courseMeta?.heading || '';
     const courseId = parts ? `/${parts}` : '';
-    const courseSolution = courseMeta?.solution || '';
+
+    const courseFullSolution = courseMeta?.solution || '';
+    const courseSolution = courseFullSolution.split(',')[0].trim() || '';
+
     const courseRole = courseMeta?.role || '';
     const courseLevel = courseMeta?.level || '';
 
@@ -539,6 +561,7 @@ export async function getEventInfo(stepType = 'content', existingStepInfo = null
         title: courseTitle,
         id: courseId,
         solution: courseSolution,
+        fullSolution: courseFullSolution,
         role: courseRole,
         level: courseLevel,
       },
@@ -553,7 +576,7 @@ export async function getEventInfo(stepType = 'content', existingStepInfo = null
   } catch (e) {
     console.error('Error getting event info:', e);
     return {
-      courses: { title: '', id: '', solution: '', role: '', level: '' },
+      courses: { title: '', id: '', solution: '', fullSolution: '', role: '', level: '' },
       module: { title: '' },
       steps: { title: '', type: stepType },
     };
@@ -709,10 +732,13 @@ export function pushBookmarkEvent(trackingInfo) {
   };
 
   if (trackingInfo.course) {
+    const courseSolutionFull = trackingInfo.course.fullSolution || trackingInfo.course.solution;
+
     dataLayerEntry.courses = {
       title: trackingInfo.course.title,
       id: trackingInfo.course.id,
       solution: trackingInfo.course.solution,
+      fullSolution: courseSolutionFull,
       role: trackingInfo.course.role,
     };
   }
@@ -744,6 +770,8 @@ export function pushCourseCertificateEvent(trackingData) {
     linkType = 'Share';
   }
 
+  const courseSolutionFull = trackingData.fullSolution || trackingData.solution;
+
   const dataLayerEntry = {
     event: eventName,
     link: {
@@ -756,6 +784,7 @@ export function pushCourseCertificateEvent(trackingData) {
       title: trackingData.title,
       id: trackingData.id,
       solution: trackingData.solution,
+      fullSolution: courseSolutionFull,
       role: trackingData.role,
     },
   };
@@ -868,4 +897,34 @@ export function pushCourseStartEvent(courseData) {
       startTime: courseData.startTime,
     },
   });
+}
+
+/**
+ * Pushes a browse card click event to the Adobe Data Layer.
+ * This event is fired whenever a user clicks on any part of a browse card.
+ *
+ * @param {string} eventName - The name of the event to be pushed (e.g., "browseCardClicked").
+ * @param {Object} cardData - The data object representing the browse card.
+ * @param {string} [cardData.contentType] - The type of content represented by the card (e.g., "article", "video").
+ * @param {string} [cardData.viewLink] - The destination URL or domain the card points to.
+ * @param {string} [cardData.title] - The display title of the card.
+ * @param {string} cardHeader - The header or category associated with the card (used as `linkType`).
+ * @param {number} cardPosition - The index or position of the card within the list/grid.
+ */
+export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const dataLayerEntry = {
+    event: eventName,
+    link: {
+      contentType: cardData?.contentType?.toLowerCase().trim() || '',
+      destinationDomain: cardData?.viewLink || '',
+      linkTitle: cardData?.title || '',
+      linkLocation: 'body',
+      linkType: cardHeader,
+      position: cardPosition,
+    },
+  };
+
+  window.adobeDataLayer.push(dataLayerEntry);
 }

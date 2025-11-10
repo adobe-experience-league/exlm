@@ -10,6 +10,7 @@ import {
   pushCourseCompletionEvent,
   pushCourseStartEvent,
 } from '../analytics/lib-analytics.js';
+import { queueAnalyticsEvent } from '../analytics/analytics-queue.js';
 
 const COURSE_KEY = 'courses_v2';
 
@@ -242,15 +243,11 @@ async function startModule(url = window.location.pathname) {
     };
     course.modules.push(module);
 
-    // Update the profile with the new courses data
-    await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
-    pushModuleStartEvent(courseId);
-
     const isFirstModule = courseMeta.modules?.[0]?.includes(moduleId);
 
     // push course start event
     if (isFirstModule) {
-      pushCourseStartEvent({
+      await queueAnalyticsEvent(pushCourseStartEvent, {
         title: courseMeta.heading,
         id: courseId,
         solution: courseMeta.solution,
@@ -258,19 +255,20 @@ async function startModule(url = window.location.pathname) {
         startTime,
       });
     }
+
+    await queueAnalyticsEvent(pushModuleStartEvent, courseId);
+
+    // Update the profile with the new courses data
+    defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
   } else if (!module.startedAt) {
     // Module exists but no start time - update it
     module.startedAt = startTime;
 
-    // Update the profile with the new courses data
-    await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
-    pushModuleStartEvent(courseId);
-
     const isFirstModule = courseMeta.modules?.[0]?.includes(moduleId);
 
     // push course start event
     if (isFirstModule) {
-      pushCourseStartEvent({
+      await queueAnalyticsEvent(pushCourseStartEvent, {
         title: courseMeta.heading,
         id: courseId,
         solution: courseMeta.solution,
@@ -278,6 +276,11 @@ async function startModule(url = window.location.pathname) {
         startTime,
       });
     }
+
+    await queueAnalyticsEvent(pushModuleStartEvent, courseId);
+
+    // Update the profile with the new courses data
+    defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
   }
 }
 
@@ -304,7 +307,7 @@ async function finishModule(url = window.location.pathname) {
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
-    pushModuleCompletionEvent(courseId);
+    await queueAnalyticsEvent(pushModuleCompletionEvent, courseId);
   }
 }
 
@@ -347,8 +350,9 @@ async function completeCourse(url = window.location.pathname) {
 
     // Update the profile with the new courses data
     await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
-    pushModuleCompletionEvent(courseId);
-    pushCourseCompletionEvent(courseId, updatedCourses);
+
+    await queueAnalyticsEvent(pushModuleCompletionEvent, courseId);
+    await queueAnalyticsEvent(pushCourseCompletionEvent, courseId, updatedCourses);
   }
 }
 

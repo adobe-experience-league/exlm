@@ -1,6 +1,7 @@
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { getPathDetails, htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { getCurrentCourses } from '../../scripts/courses/course-profile.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const { lang } = getPathDetails();
@@ -26,14 +27,22 @@ const profileSettingsPage = `/${lang}/home/profile-settings`;
 const navURL = `${window.location.origin}/${navPage}`;
 
 const isSignedIn = await isSignedInUser();
-let awards = false;
+let hasAwards = false;
 if (isSignedIn) {
   const profileData = await defaultProfileClient.getMergedProfile();
+
+  // Check for completed courses (certificates)
+  const courses = await getCurrentCourses();
+  const completedCourses = courses?.filter((course) => course.awards?.timestamp);
+  const hasCertificates = completedCourses?.length > 0;
+
+  // Check for awarded skills
   const skills = profileData?.skills;
-  const awardedSkills = skills.filter((skill) => skill.award === true);
-  if (awardedSkills.length) {
-    awards = true;
-  }
+  const awardedSkills = skills?.filter((skill) => skill.award === true);
+  const hasAwardedSkills = awardedSkills?.length > 0;
+
+  // Show awards if user has either certificates or awarded skills
+  hasAwards = hasCertificates || hasAwardedSkills;
 }
 
 async function fetchNavContent() {
@@ -81,8 +90,8 @@ export default async function ProfileRail(block) {
   });
 
   block.querySelectorAll('.profile-rail-links > li').forEach((navLink) => {
-    // In case of no awards for the profile
-    if (!awards && !UEAuthorMode) {
+    // In case of no awards or certificates for the profile
+    if (!hasAwards && !UEAuthorMode) {
       // remove the Awards link from left rail
       const awardsLink = navLink.querySelector(`a[href*="${awardsPage}"]`);
       if (awardsLink) {

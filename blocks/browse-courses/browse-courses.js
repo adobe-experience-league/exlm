@@ -27,6 +27,7 @@ import { fetchCourseIndex } from '../../scripts/courses/course-utils.js';
  * Loaded from language-specific placeholder files
  */
 let placeholders = {};
+const numberOfResults = 1000;
 
 /**
  * DOM selectors used throughout the module
@@ -328,6 +329,7 @@ async function fetchCourseData(selectedFilters = []) {
   const param = {
     contentType: CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase().split(','),
     ...(selectedFilters.length > 0 && { product: selectedFilters }),
+    noOfResults: numberOfResults,
   };
 
   // Fetch browse cards data (automatically enriched by BrowseCardsDelegate for signed-in users)
@@ -375,20 +377,13 @@ function analyzeCourseStatuses(courseData) {
  * @returns {Array<Object>} Array of status options with title and value properties
  * @description
  * Includes status options present in the dataset.
- * Special rule: If ALL courses are "Not Started", returns empty array (no filtering needed).
+ * Always shows dropdown with available statuses, even if only one status is present.
  */
 function createStatusFilterOptions(courseData) {
   const statuses = analyzeCourseStatuses(courseData);
-
-  // If ALL courses are "Not Started" (no other statuses), don't show dropdown
-  const onlyNotStarted = statuses.hasNotStarted && !statuses.hasInProgress && !statuses.hasCompleted;
-  if (onlyNotStarted) {
-    return []; // No dropdown needed when all courses have same status
-  }
-
   const options = [];
 
-  // Include "Not Started" if it exists (and we have other statuses too, checked above)
+  // Include "Not Started" if it exists
   if (statuses.hasNotStarted) {
     options.push({
       title: placeholders?.courseStatusNotStarted || 'Not Started',
@@ -527,7 +522,7 @@ function updateStatusDropdown(block, courseData, shimmer, state) {
   // Create new status dropdown with updated options
   const statusDropdown = new Dropdown(
     statusContainer,
-    placeholders?.filterCourseStatusLabel || 'Progress',
+    placeholders?.filterCourseStatusLabel || 'Status',
     statusList,
     DROPDOWN_TYPE,
   );

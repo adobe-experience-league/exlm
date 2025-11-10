@@ -536,6 +536,9 @@ export function transformCourseMetaToCardModel({ model, placeholders }) {
     copyLink: baseUrl + model.path,
     viewLink: baseUrl + model.path,
     viewLinkText: placeholders?.browseCardCourseViewLabel || 'View course',
+    el_course_duration: model.totalTime || '',
+    el_course_module_count: model.modules?.length?.toString() || '',
+    el_level: model.level || '',
     meta: {},
   };
 }

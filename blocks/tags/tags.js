@@ -16,7 +16,6 @@ export default async function decorate(block) {
 
   const coveosolutions = getMetadata('coveo-solution');
   const solutions =
-    getMetadata('product-v2') ||
     [
       ...new Set(
         coveosolutions.split(';').map((item) => {
@@ -24,11 +23,11 @@ export default async function decorate(block) {
           return parts.length > 1 ? parts[1].trim() : item.trim();
         }),
       ),
-    ].join(',');
+    ].join(',') || getMetadata('product-v2');
 
-  const features = getPreferredMetadata('feature-v2', 'loc-feature', 'feature');
-  const roles = getPreferredMetadata('role-v2', 'loc-role', 'role');
-  const experienceLevels = getPreferredMetadata('level-v2', 'loc-level', 'level');
+  const features = getPreferredMetadata('loc-feature', 'feature', 'feature-v2');
+  const roles = getPreferredMetadata('loc-role', 'role', 'role-v2');
+  const experienceLevels = getPreferredMetadata('loc-level', 'level', 'level-v2');
 
   function createTagsHTML(values) {
     return values

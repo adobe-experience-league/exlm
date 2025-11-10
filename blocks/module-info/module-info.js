@@ -5,6 +5,7 @@ import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { MODULE_STATUS, startModule, getModuleStatus } from '../../scripts/courses/course-profile.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { pushStepsStartEvent } from '../../scripts/analytics/lib-analytics.js';
+import { queueAnalyticsEvent } from '../../scripts/analytics/analytics-queue.js';
 
 export default async function decorate(block) {
   // Check if user is signed in, if not trigger sign in
@@ -35,9 +36,6 @@ export default async function decorate(block) {
     return;
   }
 
-  // Push stepsStart event to adobeDataLayer for non-quiz steps
-  await pushStepsStartEvent(stepInfo);
-
   // If module is disabled, redirect to course page
   // Otherwise, update module status in profile
   if ((!moduleStatus || moduleStatus === MODULE_STATUS.DISABLED) && !isUEAuthorMode) {
@@ -46,8 +44,11 @@ export default async function decorate(block) {
       window.location.href = stepInfo.courseUrl;
     }, 3000);
   } else {
-    startModule();
+    await startModule();
   }
+
+  // Push stepsStart event to adobeDataLayer for non-quiz steps
+  await queueAnalyticsEvent(pushStepsStartEvent, stepInfo);
 
   // Clear existing content
   block.textContent = '';
@@ -62,10 +63,10 @@ export default async function decorate(block) {
   backLink.className = 'back-to-course';
   backLink.href = stepInfo.courseUrl;
   backLink.innerHTML = `<span class="icon icon-collection-icon" aria-label="${
-    placeholders['course-back-to-course-icon'] || 'Back to course icon'
+    placeholders?.courseBackToCourseIcon || 'Back to course icon'
   }"></span>
     <span class="icon icon-back-arrow" aria-label="Back arrow"></span>
-    <span class="back-to-course-label">${placeholders['course-back-to-course-button'] || 'BACK TO THE COURSE'}</span>
+    <span class="back-to-course-label">${placeholders?.courseBackToCourseButton || 'BACK TO THE COURSE'}</span>
   `;
 
   // Main content area

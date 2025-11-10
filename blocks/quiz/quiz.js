@@ -4,6 +4,7 @@ import { hashAnswer } from '../../scripts/hash-utils.js';
 import { moveInstrumentation } from '../../scripts/utils/ue-utils.js';
 import { loadBlocks, decorateSections, decorateBlocks } from '../../scripts/lib-franklin.js';
 import { pushQuizEvent } from '../../scripts/analytics/lib-analytics.js';
+import { queueAnalyticsEvent } from '../../scripts/analytics/analytics-queue.js';
 
 /**
  * Checks if the selected answers for a question are correct
@@ -271,9 +272,6 @@ export default async function decorate(block) {
 
   // Create a function to handle quiz submission that can be called externally
   quizHandlerFunction = async () => {
-    // Trigger quiz submit event immediately when submit button is clicked
-    await pushQuizEvent('quizSubmit');
-
     // Check if all questions are answered
     let allQuestionsAnswered = true;
 
@@ -305,6 +303,9 @@ export default async function decorate(block) {
       questionsContainer.appendChild(errorMessage);
       return false;
     }
+
+    // Trigger quiz submit event only after validating all questions are answered
+    await pushQuizEvent('quizSubmit');
 
     // Submit quiz and get results
     const quizResults = await submitQuiz(questionElements, passPageUrlElement, failPageUrlElement, placeholders);
@@ -348,5 +349,5 @@ export default async function decorate(block) {
   block.appendChild(questionsContainer);
 
   // Trigger quiz start event when the quiz is loaded
-  await pushQuizEvent('quizStart');
+  await queueAnalyticsEvent(pushQuizEvent, 'quizStart');
 }
