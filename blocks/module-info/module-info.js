@@ -63,10 +63,10 @@ export default async function decorate(block) {
   backLink.className = 'back-to-course';
   backLink.href = stepInfo.courseUrl;
   backLink.innerHTML = `<span class="icon icon-collection-icon" aria-label="${
-    placeholders['course-back-to-course-icon'] || 'Back to course icon'
+    placeholders?.courseBackToCourseIcon || 'Back to course icon'
   }"></span>
     <span class="icon icon-back-arrow" aria-label="Back arrow"></span>
-    <span class="back-to-course-label">${placeholders['course-back-to-course-button'] || 'BACK TO THE COURSE'}</span>
+    <span class="back-to-course-label">${placeholders?.courseBackToCourseButton || 'BACK TO THE COURSE'}</span>
   `;
 
   // Main content area
