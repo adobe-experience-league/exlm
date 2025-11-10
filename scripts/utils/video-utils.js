@@ -1,4 +1,4 @@
-const MPC_API_BASE = `https://api.tv.adobe.com/videos`;
+import { getConfig } from '../scripts.js';
 
 /**
  * Languages currently supported for MPC videos
@@ -57,7 +57,8 @@ export async function fetchVideoCollections(videoId) {
     console.warn('Video ID is required for fetching collections');
     return null;
   }
-  const mpcApi = `${MPC_API_BASE}/${videoId}/collections`;
+  const { mpcApiBase } = getConfig();
+  const mpcApi = `${mpcApiBase}/${videoId}/collections`;
 
   try {
     const response = await fetch(mpcApi, {

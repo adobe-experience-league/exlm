@@ -831,6 +831,8 @@ export function getConfig() {
     communityTopicsUrl: isProd
       ? `https://experienceleaguecommunities.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`
       : `https://experienceleaguecommunities-dev.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`,
+    // MPC API Base
+    mpcApiBase: `https://api.tv.adobe.com/videos`,
   };
   return window.exlm.config;
 }
