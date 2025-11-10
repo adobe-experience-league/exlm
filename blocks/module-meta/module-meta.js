@@ -1,25 +1,14 @@
-export function generateModuleHeaderDOM(block) {
-  const wrapper = document.createElement('div');
+import { getCurrentStepInfo } from '../../scripts/courses/course-utils.js';
 
-  Array.from(block.children).forEach((element, i) => {
-    const div = document.createElement('div');
+export default async function decorate() {
+  // Check if it's in UE author mode
+  const isUEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
-    if (i === 0) {
-      div.className = 'module-title';
-      div.append(element?.textContent?.trim());
-    } else {
-      div.append(element);
-    }
-
-    wrapper.append(div);
-  });
-
-  return wrapper;
-}
-
-export default function decorate(block) {
-  block.classList.add('module-meta');
-  const dom = generateModuleHeaderDOM(block);
-  block.textContent = '';
-  block.append(dom);
+  if (!isUEAuthorMode) {
+    const stepInfo = await getCurrentStepInfo();
+    document.querySelector('main').style.visibility = 'hidden';
+    setTimeout(() => {
+      window.location.href = stepInfo.courseUrl;
+    }, 1000);
+  }
 }

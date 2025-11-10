@@ -1,6 +1,55 @@
-/* Adding a small divider between steps */
+/* Counter for step numbers */
+.module {
+  counter-reset: step-counter;
+}
+
 .module > div {
-  border-bottom: 1px solid var(--spectrum-gray-200);
-  padding-bottom: var(--spectrum-spacing-100);
-  margin-bottom: var(--spectrum-spacing-100);
+  counter-increment: step-counter;
+  position: relative;
+  background: var(--background-color);
+  border-radius: 16px;
+  padding: 32px;
+  margin: 24px 0;
+  box-shadow: 0 10px 30px #00000026;
+  padding-left: 90px;
+  display: flex;
+  flex-direction: column-reverse;
+  border: 6px solid var(--non-spectrum-dark-navy-blue);
+}
+
+.module > div::before {
+  content: '';
+  position: absolute;
+  top: -34px;
+  right: 50%;
+  width: 6px;
+  height: 30px;
+  background-color: var(--non-spectrum-dark-navy-blue);
+}
+
+.module > div::after {
+  position: absolute;
+  left: 30px;
+  top: 30px;
+  width: 40px;
+  height: 40px;
+  background: var(--spectrum-gray-900);
+  border-radius: 50%;
+  z-index: 2;
+  content: counter(step-counter);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Step title (second div in each row) */
+.module > div > div:nth-child(2) {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--spectrum-gray-900);
+  margin-bottom: 12px;
+  line-height: 1.4;
 }

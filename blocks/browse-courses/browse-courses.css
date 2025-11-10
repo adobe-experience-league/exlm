@@ -36,6 +36,8 @@
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-normal);
   line-height: normal;
+  display: flex;
+  align-items: center;
 }
 
 .browse-courses .status-dropdown-container {
