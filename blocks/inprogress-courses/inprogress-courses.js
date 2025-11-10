@@ -4,6 +4,12 @@ import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
 const DEFAULT_NUM_COURSES = 2;
 
+function replaceProfileText(field, value) {
+  return field.replace('{adobeIMS.first_name}', value);
+}
+
+const convertToTitleCase = (str) => (str ? str.replace(/\b\w/g, (match) => match.toUpperCase()) : '');
+
 export default function decorate(block) {
   const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
   const renderCourses = (contentDiv, courses, limit) => {
@@ -46,11 +52,26 @@ export default function decorate(block) {
 
     renderCourses(contentDiv, cardModels, visibleCourses);
   };
+  const [firstRow] = block.querySelectorAll(':scope div > div');
+  const configuredHeadingText = firstRow?.innerHTML;
+  const inprogressCoursesBlock = document.createRange().createContextualFragment(`
+    <div class="inprogress-courses-header-wrapper"></div>
+    <div class="inprogress-courses-card-wrapper"></div>
+    <div class="inprogress-courses-cta-wrapper"></div>
+  `);
+  block.textContent = '';
+  block.append(inprogressCoursesBlock);
+
+  const headerEl = block.querySelector('.inprogress-courses-header-wrapper');
+  const contentDiv = block.querySelector('.inprogress-courses-card-wrapper');
+
   if (UEAuthorMode) {
-    block.innerHTML = `<div><h3>Keep up the Good work, firstName.</h3></div><div class="inprogress-courses-card-wrapper">This block will load the in progress courses from the profile.</div><div></div>`;
+    headerEl.innerHTML = configuredHeadingText ? replaceProfileText(configuredHeadingText, 'First Name') : '';
+    contentDiv.textContent = 'This block will load the in progress courses from the profile.';
   } else {
     isSignedInUser().then(async (isUserSignedIn) => {
       if (!isUserSignedIn) {
+        block.classList.add('inprogress-courses-hidden');
         return;
       }
       const { getCurrentCourses, COURSE_STATUS } = await import('../../scripts/courses/course-profile.js');
@@ -70,9 +91,10 @@ export default function decorate(block) {
             import('../../scripts/browse-card/browse-cards-course-enricher.js'),
             fetchLanguagePlaceholders(),
           ]);
-          const firstName = profileResult?.first_name;
-          const headerText = placeholders?.inprogressCoursesHeader || 'Keep up the Good work';
-          block.innerHTML = `<div><h3>${headerText}, ${firstName}.</h3></div><div class="inprogress-courses-card-wrapper"></div><div></div>`;
+
+          const firstName = convertToTitleCase(profileResult?.first_name);
+          const maskedFirstName = `<span data-cs-mask>${firstName}</span>`;
+          headerEl.innerHTML = configuredHeadingText ? replaceProfileText(configuredHeadingText, maskedFirstName) : '';
           const lang = document.querySelector('html').lang || 'en';
           const allCourses = await fetchCourseIndex(lang);
           const courseIds = courseIdentifiers.map((id) => `/${lang}/${id}`);
@@ -118,8 +140,7 @@ export default function decorate(block) {
           // Sort courses by latest module start time (most recent first)
           inProgressCourses.sort((a, b) => b.latestModuleStartTime - a.latestModuleStartTime);
 
-          const [headerWrappper, contentDiv, ctaSectionWrapper] = Array.from(block.children);
-          headerWrappper.classList.add('inprogress-courses-header-wrapper');
+          const ctaSectionWrapper = block.querySelector('.inprogress-courses-cta-wrapper');
           setupCoursesUI(ctaSectionWrapper, inProgressCourses, contentDiv, placeholders);
         },
       );
