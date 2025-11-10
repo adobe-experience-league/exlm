@@ -39,8 +39,8 @@ export default async function decorate(block) {
           return parts.length > 1 ? parts[1].trim() : item.trim();
         }),
       ),
-    ].join(',') || getMetadata('tq-products-labels');
-  const experienceLevel = getPreferredMetadata('loc-level', 'level', 'tq-levels-labels');
+    ].join(',') || getMetadata('product-v2');
+  const experienceLevel = getPreferredMetadata('loc-level', 'level', 'level-v2');
   const role = getMetadata('role') || '';
   const solution = getMetadata('solution') || '';
   const courseLink = getMetadata('og:url') || window.location.href;
