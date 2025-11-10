@@ -914,12 +914,11 @@ const loadMartech = async (headerPromise, footerPromise) => {
   // eslint-disable-next-line import/no-cycle
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
   libAnalyticsPromise.then((libAnalyticsModule) => {
-    const { pushPageDataLayer, pushLinkClick, pageName } = libAnalyticsModule;
+    const { pushPageDataLayer, pushLinkClick } = libAnalyticsModule;
     const { lang } = getPathDetails();
     pushPageDataLayer(lang)
       // eslint-disable-next-line no-console
       .catch((e) => console.error('Error getting pageLoadModel:', e));
-    localStorage.setItem('prevPage', pageName(lang));
 
     Promise.allSettled([headerPromise, footerPromise]).then(() => {
       const linkClicked = document.querySelectorAll('a,.view-more-less span, .language-selector-popover span');
