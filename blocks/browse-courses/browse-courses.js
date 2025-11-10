@@ -522,7 +522,7 @@ function updateStatusDropdown(block, courseData, shimmer, state) {
   // Create new status dropdown with updated options
   const statusDropdown = new Dropdown(
     statusContainer,
-    placeholders?.filterCourseStatusLabel || 'Progress',
+    placeholders?.filterCourseStatusLabel || 'Status',
     statusList,
     DROPDOWN_TYPE,
   );
