@@ -646,7 +646,8 @@ export async function buildCard(container, element, model) {
       ?.innerText.trim() ||
     card.parentElement?.parentElement?.parentElement?.parentElement
       ?.querySelector('.rec-block-header')
-      ?.innerText.trim();
+      ?.innerText.trim() ||
+    '';
   const cardPosition = String(Array.from(element.parentElement.children).indexOf(element) + 1);
 
   // DataLayer - Browse card click event
