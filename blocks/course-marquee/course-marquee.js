@@ -32,7 +32,6 @@ export default async function decorate(block) {
 
   const coveosolutions = getMetadata('coveo-solution');
   const productName =
-    getMetadata('tq-products-labels') ||
     [
       ...new Set(
         coveosolutions.split(';').map((item) => {
@@ -40,8 +39,8 @@ export default async function decorate(block) {
           return parts.length > 1 ? parts[1].trim() : item.trim();
         }),
       ),
-    ].join(',');
-  const experienceLevel = getPreferredMetadata('tq-levels-labels', 'loc-level', 'level');
+    ].join(',') || getMetadata('tq-products-labels');
+  const experienceLevel = getPreferredMetadata('loc-level', 'level', 'tq-levels-labels');
   const role = getMetadata('role') || '';
   const solution = getMetadata('solution') || '';
   const courseLink = getMetadata('og:url') || window.location.href;
