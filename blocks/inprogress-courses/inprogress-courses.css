@@ -1,3 +1,5 @@
+@import '../../scripts/browse-card/browse-cards-block.css';
+
 .section.inprogress-courses-container {
   padding: var(--spectrum-spacing-500) var(--spectrum-spacing-300);
 }
