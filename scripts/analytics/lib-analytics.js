@@ -89,7 +89,10 @@ export async function pushPageDataLayer(language, searchTrackingData) {
 
     const courseTitle = courseMeta?.heading || '';
     const courseId = parts ? `${parts}` : '';
-    const courseSolution = courseMeta?.solution || '';
+
+    const courseFullSolution = courseMeta?.solution || '';
+    const courseSolution = courseFullSolution.split(',')[0].trim() || '';
+
     const courseRole = courseMeta?.role || '';
     const courseLevel = courseMeta?.level || '';
 
@@ -116,7 +119,14 @@ export async function pushPageDataLayer(language, searchTrackingData) {
     }
 
     if (courseId) {
-      courseObj = { title: courseTitle, id: courseId, solution: courseSolution, role: courseRole, level: courseLevel };
+      courseObj = {
+        title: courseTitle,
+        id: courseId,
+        solution: courseSolution,
+        fullSolution: courseFullSolution,
+        role: courseRole,
+        level: courseLevel,
+      };
     }
     if (moduleTitle) {
       moduleObj = { title: moduleTitle };
@@ -526,7 +536,10 @@ export async function getEventInfo(stepType = 'content', existingStepInfo = null
 
     const courseTitle = courseMeta?.heading || '';
     const courseId = parts ? `/${parts}` : '';
-    const courseSolution = courseMeta?.solution || '';
+
+    const courseFullSolution = courseMeta?.solution || '';
+    const courseSolution = courseFullSolution.split(',')[0].trim() || '';
+
     const courseRole = courseMeta?.role || '';
     const courseLevel = courseMeta?.level || '';
 
@@ -548,6 +561,7 @@ export async function getEventInfo(stepType = 'content', existingStepInfo = null
         title: courseTitle,
         id: courseId,
         solution: courseSolution,
+        fullSolution: courseFullSolution,
         role: courseRole,
         level: courseLevel,
       },
@@ -562,7 +576,7 @@ export async function getEventInfo(stepType = 'content', existingStepInfo = null
   } catch (e) {
     console.error('Error getting event info:', e);
     return {
-      courses: { title: '', id: '', solution: '', role: '', level: '' },
+      courses: { title: '', id: '', solution: '', fullSolution: '', role: '', level: '' },
       module: { title: '' },
       steps: { title: '', type: stepType },
     };
@@ -718,10 +732,13 @@ export function pushBookmarkEvent(trackingInfo) {
   };
 
   if (trackingInfo.course) {
+    const fullSolution = trackingInfo.course.fullSolution || trackingInfo.course.solution;
+
     dataLayerEntry.courses = {
       title: trackingInfo.course.title,
       id: trackingInfo.course.id,
       solution: trackingInfo.course.solution,
+      fullSolution: fullSolution,
       role: trackingInfo.course.role,
     };
   }
@@ -753,6 +770,8 @@ export function pushCourseCertificateEvent(trackingData) {
     linkType = 'Share';
   }
 
+  const fullSolution = trackingData.fullSolution || trackingData.solution;
+
   const dataLayerEntry = {
     event: eventName,
     link: {
@@ -765,6 +784,7 @@ export function pushCourseCertificateEvent(trackingData) {
       title: trackingData.title,
       id: trackingData.id,
       solution: trackingData.solution,
+      fullSolution: fullSolution,
       role: trackingData.role,
     },
   };
