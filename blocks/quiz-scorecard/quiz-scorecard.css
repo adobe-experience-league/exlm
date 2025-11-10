@@ -2,6 +2,10 @@
   padding: 0;
 }
 
+.quiz-scorecard-wrapper {
+  width: 100%;
+}
+
 .quiz-scorecard {
   margin: 0 auto;
   padding: var(--spectrum-spacing-500);

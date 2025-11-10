@@ -23,7 +23,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100px;
+  max-width: 150px;
   line-height: 150%;
 }
 
@@ -61,7 +61,7 @@
   }
 
   .course-breadcrumb .course-breadcrumb-items a {
-    max-width: 150px;
+    max-width: 250px;
   }
 
   .course-breadcrumb .course-breadcrumb-current {
