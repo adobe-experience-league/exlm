@@ -34,6 +34,7 @@
 }
 
 .course-awards .course-awards-card-title {
+  color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-400);
   font-weight: var(--font-weight-bold);
   line-height: var(--spectrum-line-height-m);
