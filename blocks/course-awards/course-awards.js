@@ -36,6 +36,7 @@ function certificateCard(props) {
 
 export default async function decorate(block) {
   block.textContent = '';
+  const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
   try {
     placeholders = await fetchLanguagePlaceholders();
@@ -50,14 +51,18 @@ export default async function decorate(block) {
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Error fetching courses:', err);
-    block.closest('.section.course-awards-container')?.remove();
+    if (!UEAuthorMode) {
+      block.closest('.section.course-awards-container')?.remove();
+    }
     return;
   }
 
   const completedCourses = courses?.filter((course) => course?.awards?.timestamp);
 
   if (!completedCourses?.length) {
-    block.closest('.section.course-awards-container')?.remove();
+    if (!UEAuthorMode) {
+      block.closest('.section.course-awards-container')?.remove();
+    }
     return;
   }
 

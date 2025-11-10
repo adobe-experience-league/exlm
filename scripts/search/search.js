@@ -72,6 +72,8 @@ if (!contentType) {
 
   if (url.includes(`/${lang}/certification-home`)) {
     contentType = 'Certification';
+  } else if (url.includes(`/${lang}/courses`)) {
+    contentType = 'Course';
   }
 }
 
