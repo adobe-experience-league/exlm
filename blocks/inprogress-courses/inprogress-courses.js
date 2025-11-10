@@ -62,7 +62,7 @@ export default function decorate(block) {
             return;
           }
           const [
-            { transformCourseMetaToCardModel, fetchCourseIndex },
+            { transformCourseMetaToCardModel, fetchCourseIndex, getCurrentCourseMeta },
             { default: BrowseCardsCourseEnricher },
             placeholders,
           ] = await Promise.all([
@@ -78,7 +78,23 @@ export default function decorate(block) {
           const courseIds = courseIdentifiers.map((id) => `/${lang}/${id}`);
           const filteredCourses = allCourses.filter((course) => courseIds.includes(course.path));
 
-          const cardModels = filteredCourses.map((model) => transformCourseMetaToCardModel({ model, placeholders }));
+          // Transform course metadata to card models and include course metadata
+          const cardModels = await Promise.all(
+            filteredCourses.map(async (model) => {
+              // Get full course metadata to ensure we have all the fields
+              const courseMeta = await getCurrentCourseMeta(model.path);
+              return transformCourseMetaToCardModel({
+                model: {
+                  ...model,
+                  level: courseMeta?.level || '',
+                  totalTime: courseMeta?.totalTime || '',
+                  modules: courseMeta?.modules || [],
+                },
+                placeholders,
+              });
+            }),
+          );
+
           const courses = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus(cardModels, profileCourses);
           const inProgressCourses = courses.filter(
             (course) => course.meta?.courseInfo?.courseStatus === COURSE_STATUS.IN_PROGRESS,
