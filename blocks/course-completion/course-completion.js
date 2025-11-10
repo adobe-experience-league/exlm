@@ -196,7 +196,7 @@ async function downloadCertificate(canvas, courseData, downloadButton) {
     link.href = url;
     link.download = filename;
 
-    queueAnalyticsEvent(pushCourseCertificateEvent, {
+    await queueAnalyticsEvent(pushCourseCertificateEvent, {
       action: 'download',
       title: courseData.name,
       solution: courseData.solution,
@@ -228,11 +228,11 @@ async function downloadCertificate(canvas, courseData, downloadButton) {
 /**
  * Shares the course completion to LinkedIn
  */
-function shareToLinkedIn(courseData, linkedInShareBtn) {
+async function shareToLinkedIn(courseData, linkedInShareBtn) {
   const shareUrl = getCourseLandingPageUrl();
   if (!shareUrl) return;
 
-  queueAnalyticsEvent(pushCourseCertificateEvent, {
+  await queueAnalyticsEvent(pushCourseCertificateEvent, {
     action: 'share',
     title: courseData.name,
     solution: courseData.solution,

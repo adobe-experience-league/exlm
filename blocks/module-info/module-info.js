@@ -36,9 +36,6 @@ export default async function decorate(block) {
     return;
   }
 
-  // Push stepsStart event to adobeDataLayer for non-quiz steps
-  queueAnalyticsEvent(pushStepsStartEvent, stepInfo);
-
   // If module is disabled, redirect to course page
   // Otherwise, update module status in profile
   if ((!moduleStatus || moduleStatus === MODULE_STATUS.DISABLED) && !isUEAuthorMode) {
@@ -47,8 +44,11 @@ export default async function decorate(block) {
       window.location.href = stepInfo.courseUrl;
     }, 3000);
   } else {
-    startModule();
+    await startModule();
   }
+
+  // Push stepsStart event to adobeDataLayer for non-quiz steps
+  await queueAnalyticsEvent(pushStepsStartEvent, stepInfo);
 
   // Clear existing content
   block.textContent = '';

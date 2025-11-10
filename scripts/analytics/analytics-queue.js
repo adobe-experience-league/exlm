@@ -75,8 +75,8 @@ const analyticsQueue = new AnalyticsQueue();
  * // Queue a steps start event
  * queueAnalyticsEvent(pushStepsStartEvent, stepInfo);
  */
-export function queueAnalyticsEvent(fn, ...args) {
-  analyticsQueue.add(fn, ...args);
+export async function queueAnalyticsEvent(fn, ...args) {
+  await analyticsQueue.add(fn, ...args);
 }
 
 /**
