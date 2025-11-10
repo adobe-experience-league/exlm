@@ -654,12 +654,12 @@ export async function buildCard(container, element, model) {
       currentElement = currentElement.parentElement;
       const cardsHeader = currentElement.querySelector('.browse-cards-block-title');
       const recCardsHeader = currentElement.querySelector('.rec-block-header');
-      
+
       if (cardsHeader && cardsHeader.children && cardsHeader.children.length > 0) {
         const immediateChild = cardsHeader.children[0];
         return immediateChild?.innerText?.trim() || '';
       }
-      
+
       if (recCardsHeader) {
         return recCardsHeader?.innerText?.trim() || '';
       }
