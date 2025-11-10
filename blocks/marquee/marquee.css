@@ -566,3 +566,9 @@ div.marquee-wrapper {
 body[class^='article-'] .marquee-content-container {
   background-color: var(--background-color);
 }
+
+/* Course hub marquee */
+
+.course-hub .section.marquee-container {
+  padding-bottom: 0;
+}

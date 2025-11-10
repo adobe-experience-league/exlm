@@ -77,6 +77,9 @@ export async function pushPageDataLayer(language, searchTrackingData) {
   let stepObj = null;
   let coursePreviousPageName = 'xl:learn:courses';
 
+  // Get the previous page URL from document.referrer
+  const referrerUrl = document.referrer ? document.referrer.replace(/^https?:\/\//, '').replace(/#.*$/, '') : '';
+
   if (courses) {
     const { getCurrentStepInfo, getCurrentCourseMeta } = await import('../courses/course-utils.js');
 
@@ -86,7 +89,10 @@ export async function pushPageDataLayer(language, searchTrackingData) {
 
     const courseTitle = courseMeta?.heading || '';
     const courseId = parts ? `${parts}` : '';
-    const courseSolution = courseMeta?.solution || '';
+
+    const courseFullSolution = courseMeta?.solution || '';
+    const courseSolution = courseFullSolution.split(',')[0].trim() || '';
+
     const courseRole = courseMeta?.role || '';
     const courseLevel = courseMeta?.level || '';
 
@@ -113,7 +119,14 @@ export async function pushPageDataLayer(language, searchTrackingData) {
     }
 
     if (courseId) {
-      courseObj = { title: courseTitle, id: courseId, solution: courseSolution, role: courseRole, level: courseLevel };
+      courseObj = {
+        title: courseTitle,
+        id: courseId,
+        solution: courseSolution,
+        fullSolution: courseFullSolution,
+        role: courseRole,
+        level: courseLevel,
+      };
     }
     if (moduleTitle) {
       moduleObj = { title: moduleTitle };
@@ -258,7 +271,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       pageName: name,
       pageType: 'webpage',
       pageViews: { value: 1 },
-      prevPage: courseObj ? coursePreviousPageName : localStorage.getItem('prevPage') || '',
+      prevPage: courseObj ? coursePreviousPageName : referrerUrl,
       userAgent: window.navigator.userAgent,
       server: window.location.host,
       siteSection: section,
@@ -523,7 +536,10 @@ export async function getEventInfo(stepType = 'content', existingStepInfo = null
 
     const courseTitle = courseMeta?.heading || '';
     const courseId = parts ? `/${parts}` : '';
-    const courseSolution = courseMeta?.solution || '';
+
+    const courseFullSolution = courseMeta?.solution || '';
+    const courseSolution = courseFullSolution.split(',')[0].trim() || '';
+
     const courseRole = courseMeta?.role || '';
     const courseLevel = courseMeta?.level || '';
 
@@ -545,6 +561,7 @@ export async function getEventInfo(stepType = 'content', existingStepInfo = null
         title: courseTitle,
         id: courseId,
         solution: courseSolution,
+        fullSolution: courseFullSolution,
         role: courseRole,
         level: courseLevel,
       },
@@ -559,7 +576,7 @@ export async function getEventInfo(stepType = 'content', existingStepInfo = null
   } catch (e) {
     console.error('Error getting event info:', e);
     return {
-      courses: { title: '', id: '', solution: '', role: '', level: '' },
+      courses: { title: '', id: '', solution: '', fullSolution: '', role: '', level: '' },
       module: { title: '' },
       steps: { title: '', type: stepType },
     };
@@ -715,10 +732,13 @@ export function pushBookmarkEvent(trackingInfo) {
   };
 
   if (trackingInfo.course) {
+    const courseSolutionFull = trackingInfo.course.fullSolution || trackingInfo.course.solution;
+
     dataLayerEntry.courses = {
       title: trackingInfo.course.title,
       id: trackingInfo.course.id,
       solution: trackingInfo.course.solution,
+      fullSolution: courseSolutionFull,
       role: trackingInfo.course.role,
     };
   }
@@ -750,6 +770,8 @@ export function pushCourseCertificateEvent(trackingData) {
     linkType = 'Share';
   }
 
+  const courseSolutionFull = trackingData.fullSolution || trackingData.solution;
+
   const dataLayerEntry = {
     event: eventName,
     link: {
@@ -762,6 +784,7 @@ export function pushCourseCertificateEvent(trackingData) {
       title: trackingData.title,
       id: trackingData.id,
       solution: trackingData.solution,
+      fullSolution: courseSolutionFull,
       role: trackingData.role,
     },
   };
@@ -894,9 +917,9 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
   const dataLayerEntry = {
     event: eventName,
     link: {
-      contentType: cardData.contentType || '',
-      destinationDomain: cardData.viewLink || '',
-      linkTitle: cardData.title || '',
+      contentType: cardData?.contentType?.toLowerCase().trim() || '',
+      destinationDomain: cardData?.viewLink || '',
+      linkTitle: cardData?.title || '',
       linkLocation: 'body',
       linkType: cardHeader,
       position: cardPosition,
