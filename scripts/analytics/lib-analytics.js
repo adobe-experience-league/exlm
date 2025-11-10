@@ -917,9 +917,9 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
   const dataLayerEntry = {
     event: eventName,
     link: {
-      contentType: cardData.contentType.toLowerCase().trim() || '',
-      destinationDomain: cardData.viewLink || '',
-      linkTitle: cardData.title || '',
+      contentType: cardData?.contentType?.toLowerCase().trim() || '',
+      destinationDomain: cardData?.viewLink || '',
+      linkTitle: cardData?.title || '',
       linkLocation: 'body',
       linkType: cardHeader,
       position: cardPosition,
