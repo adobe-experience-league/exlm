@@ -913,7 +913,7 @@ const loadMartech = async (headerPromise, footerPromise) => {
   // start datalayer work early
   // eslint-disable-next-line import/no-cycle
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
-  libAnalyticsPromise.then((libAnalyticsModule) => {
+  libAnalyticsPromise.then(async (libAnalyticsModule) => {
     const { pushPageDataLayer, pushLinkClick } = libAnalyticsModule;
     const { lang } = getPathDetails();
 
@@ -924,8 +924,8 @@ const loadMartech = async (headerPromise, footerPromise) => {
       signalReadyforAnalyticsEvents();
     } catch (e) {
       // eslint-disable-next-line no-console
-      .catch((e) => console.error('Error getting pageLoadModel:', e));
-
+      console.error('Error getting pageLoadModel:', e);
+    }
     Promise.allSettled([headerPromise, footerPromise]).then(() => {
       const linkClicked = document.querySelectorAll('a,.view-more-less span, .language-selector-popover span');
       const clickHandler = (e) => {
