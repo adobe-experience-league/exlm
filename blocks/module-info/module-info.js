@@ -5,6 +5,7 @@ import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { MODULE_STATUS, startModule, getModuleStatus } from '../../scripts/courses/course-profile.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { pushStepsStartEvent } from '../../scripts/analytics/lib-analytics.js';
+import { queueAnalyticsEvent } from '../../scripts/analytics/analytics-queue.js';
 
 export default async function decorate(block) {
   // Check if user is signed in, if not trigger sign in
@@ -35,9 +36,6 @@ export default async function decorate(block) {
     return;
   }
 
-  // Push stepsStart event to adobeDataLayer for non-quiz steps
-  await pushStepsStartEvent(stepInfo);
-
   // If module is disabled, redirect to course page
   // Otherwise, update module status in profile
   if ((!moduleStatus || moduleStatus === MODULE_STATUS.DISABLED) && !isUEAuthorMode) {
@@ -46,8 +44,11 @@ export default async function decorate(block) {
       window.location.href = stepInfo.courseUrl;
     }, 3000);
   } else {
-    startModule();
+    await startModule();
   }
+
+  // Push stepsStart event to adobeDataLayer for non-quiz steps
+  await queueAnalyticsEvent(pushStepsStartEvent, stepInfo);
 
   // Clear existing content
   block.textContent = '';
