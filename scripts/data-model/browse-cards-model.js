@@ -28,6 +28,9 @@ const browseCardDataModel = {
   viewLinkText: '',
   inProgressText: '',
   inProgressStatus: '',
+  el_course_duration: '',
+  el_course_module_count: '',
+  el_level: '',
 };
 
 export default browseCardDataModel;

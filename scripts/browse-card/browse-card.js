@@ -202,6 +202,91 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
   cardContent.appendChild(titleElement);
 };
 
+const buildCourseInfoContent = ({ el_course_duration, el_course_module_count, el_level, cardContent, meta }) => {
+  if (el_course_duration || el_level) {
+    const courseInfoElement = createTag('div', { class: 'browse-card-course-info' });
+    
+    // Create a single row for level and duration with the format "LEVEL | DURATION"
+    if (el_level || el_course_duration) {
+      const levelDurationElement = createTag('p', { class: 'course-info-level-duration' });
+      
+      let levelDurationText = '';
+      
+      // Format level in uppercase if available
+      if (el_level) {
+        // Ensure el_level is a string before calling toUpperCase()
+        levelDurationText += String(el_level).toUpperCase();
+      }
+      
+      // Add separator if both level and duration are available
+      if (el_level && el_course_duration) {
+        levelDurationText += ' | ';
+      }
+      
+      // Add duration in uppercase if available
+      if (el_course_duration) {
+        // Ensure el_course_duration is a string before calling toUpperCase()
+        levelDurationText += String(el_course_duration).toUpperCase();
+      }
+      
+      levelDurationElement.textContent = levelDurationText;
+      courseInfoElement.appendChild(levelDurationElement);
+    }
+    
+    cardContent.appendChild(courseInfoElement);
+  }
+  
+  // Don't add module count here - it will be added in the status row
+};
+
+// Update the course status section to include module count
+const buildCourseStatusContent = ({ meta, el_course_module_count, cardContent }) => {
+  if (meta?.courseInfo?.courseStatus) {
+    // Map course status to localized label
+    const statusMapping = {
+      [COURSE_STATUS.NOT_STARTED]: placeholders.courseStatusNotStarted || 'Not Started',
+      [COURSE_STATUS.IN_PROGRESS]: placeholders.courseStatusInProgress || 'In Progress',
+      [COURSE_STATUS.COMPLETED]: placeholders.courseStatusCompleted || 'Completed',
+    };
+
+    const courseStatusLabel = statusMapping[meta.courseInfo.courseStatus] || '';
+
+    if (courseStatusLabel) {
+      const statusRow = createTag('div', { class: 'browse-card-status-row' });
+      
+      // Left side - status indicator
+      const statusIndicator = createTag('div', { class: 'browse-card-status-indicator' });
+      statusIndicator.innerHTML = `<span class="status-badge status-${meta.courseInfo.courseStatus}"></span><span class="status-text">${courseStatusLabel}</span>`;
+      statusRow.appendChild(statusIndicator);
+      
+      // Right side - module count
+      if (el_course_module_count) {
+        const moduleCountElement = createTag('div', { class: 'browse-card-module-count' });
+        
+        // Determine completed modules count based on course status
+        let completedModules = 0;
+        if (meta.courseInfo.courseStatus === COURSE_STATUS.COMPLETED) {
+          // If course is completed, all modules are completed
+          completedModules = parseInt(el_course_module_count, 10);
+        } else if (meta.courseInfo.courseStatus === COURSE_STATUS.IN_PROGRESS) {
+          // For in-progress courses, count the number of completed modules
+          // In a real implementation, this would come from the course progress data
+          // For now, we'll use a placeholder value
+          completedModules = 1; // This would be replaced with actual data in a real implementation
+        }
+        
+        // Format the module count as "X of Y Complete"
+        const moduleCountText = `${completedModules} of ${el_course_module_count} Complete`;
+        moduleCountElement.textContent = moduleCountText;
+        
+        statusRow.appendChild(moduleCountElement);
+      }
+      
+      cardContent.appendChild(statusRow);
+    }
+  }
+};
+
 const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }) => {
   if (viewLinkText) {
     let icon = null;
@@ -263,22 +348,14 @@ const buildCardContent = async (card, model) => {
     cardContent.appendChild(descriptionElement);
   }
 
-  if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY && meta?.courseInfo?.courseStatus) {
-    // Map course status to localized label
-    const statusMapping = {
-      [COURSE_STATUS.NOT_STARTED]: placeholders.courseStatusNotStarted || 'Not Started',
-      [COURSE_STATUS.IN_PROGRESS]: placeholders.courseStatusInProgress || 'In Progress',
-      [COURSE_STATUS.COMPLETED]: placeholders.courseStatusCompleted || 'Completed',
-    };
-
-    const courseStatusLabel = statusMapping[meta.courseInfo.courseStatus] || '';
-
-    if (courseStatusLabel) {
-      const cardMeta = document.createElement('div');
-      cardMeta.classList.add('browse-card-meta-info', 'course-status-meta');
-      cardMeta.innerHTML = `<span class="status-badge status-${meta.courseInfo.courseStatus}"></span><span class="status-text">${courseStatusLabel}</span>`;
-      cardContent.appendChild(cardMeta);
-    }
+  if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY || 
+      contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY) {
+    // Use the new buildCourseStatusContent function to display status and module count
+    buildCourseStatusContent({
+      meta,
+      el_course_module_count: model.el_course_module_count,
+      cardContent
+    });
   }
 
   if (
@@ -591,6 +668,18 @@ export async function buildCard(container, element, model) {
     cardContent.appendChild(titleElement);
   }
   await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
+  
+  // For course content type, add level and duration info right after the title
+  if (type === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()) {
+    buildCourseInfoContent({ 
+      el_course_duration: model.el_course_duration, 
+      el_course_module_count: model.el_course_module_count,
+      el_level: model.el_level,
+      cardContent,
+      meta: model.meta
+    });
+  }
+  
   await buildCardContent(card, model);
 
   if (isVideoClip) {

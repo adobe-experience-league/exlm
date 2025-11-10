@@ -78,7 +78,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     const { raw, parentResult, title, excerpt, clickUri, uri } = result || {};
     /* eslint-disable camelcase */
 
-    const { el_id, el_contenttype, el_product, el_solution, el_type, role } = parentResult?.raw || raw || {};
+    const { el_id, el_contenttype, el_product, el_solution, el_type, role, el_course_duration, el_course_module_count, el_level } = parentResult?.raw || raw || {};
     let contentType;
     if (el_type) {
       contentType = el_type.trim();
@@ -128,6 +128,9 @@ const BrowseCardsCoveoDataAdaptor = (() => {
         type: raw?.author_type || '',
       },
       role,
+      el_course_duration: el_course_duration || '',
+      el_course_module_count: el_course_module_count || '',
+      el_level: el_level || '',
     };
   };
 

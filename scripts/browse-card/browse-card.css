@@ -204,6 +204,7 @@
   -webkit-line-clamp: 6;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  margin-bottom: 48px; /* Add space for the status row */
 }
 
 .browse-card.thumbnail-loaded .browse-card-description-text,
@@ -233,6 +234,7 @@
 .browse-card .browse-card-content {
   padding: 24px 16px 16px;
   background-color: var(--background-color);
+  position: relative;
 }
 
 .browse-card.video-clip-card .browse-card-content {
@@ -606,6 +608,36 @@
   font-style: italic;
 }
 
+.browse-card .browse-card-course-info {
+  margin-top: 4px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.browse-card .browse-card-course-info p {
+  margin: 0;
+  color: var(--spectrum-gray-700);
+  font-size: var(--spectrum-font-size-75);
+  line-height: var(--spectrum-line-height-s);
+}
+
+.browse-card .course-info-duration,
+.browse-card .course-info-modules,
+.browse-card .course-info-level,
+.browse-card .course-info-level-duration {
+  display: flex;
+  align-items: center;
+}
+
+.browse-card .course-info-level-duration {
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-semi-bold);
+  color: var(--spectrum-gray-700);
+  text-transform: uppercase;
+}
+
 .browse-card .browse-card-figure .play-button .icon {
   width: 56px;
   height: 56px;
@@ -684,6 +716,62 @@
   line-height: var(--spectrum-line-height-s);
   color: var(--non-spectrum-dark-gray);
   font-weight: var(--font-weight-bold);
+}
+
+/* Status row with module count */
+.browse-card .browse-card-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  bottom: 24px;
+  left: 16px;
+  right: 16px;
+  width: calc(100% - 32px);
+}
+
+.browse-card .browse-card-status-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.browse-card .browse-card-status-indicator .status-badge {
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+  display: inline-block;
+  background-color: transparent;
+  border-radius: 50%;
+  vertical-align: -1px;
+}
+
+.browse-card .browse-card-status-indicator .status-badge.status-not-started {
+  background-color: var(--non-spectrum-medium-gray);
+  border: none;
+}
+
+.browse-card .browse-card-status-indicator .status-badge.status-in-progress {
+  background-color: var(--non-spectrum-navy-blue);
+  border: none;
+}
+
+.browse-card .browse-card-status-indicator .status-badge.status-completed {
+  background-color: var(--non-spectrum-pass-green);
+  border: none;
+}
+
+.browse-card .browse-card-status-indicator .status-text {
+  font-size: var(--spectrum-font-size-100);
+  line-height: var(--spectrum-line-height-s);
+  color: var(--non-spectrum-dark-gray);
+  font-weight: var(--font-weight-bold);
+}
+
+.browse-card .browse-card-module-count {
+  font-size: var(--spectrum-font-size-100);
+  line-height: var(--spectrum-line-height-s);
+  color: var(--non-spectrum-dark-gray);
+  text-align: right;
 }
 
 /* Event Card Variant */
