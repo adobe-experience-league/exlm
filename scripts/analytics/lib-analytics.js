@@ -732,13 +732,13 @@ export function pushBookmarkEvent(trackingInfo) {
   };
 
   if (trackingInfo.course) {
-    const fullSolution = trackingInfo.course.fullSolution || trackingInfo.course.solution;
+    const courseSolutionFull = trackingInfo.course.fullSolution || trackingInfo.course.solution;
 
     dataLayerEntry.courses = {
       title: trackingInfo.course.title,
       id: trackingInfo.course.id,
       solution: trackingInfo.course.solution,
-      fullSolution: fullSolution,
+      fullSolution: courseSolutionFull,
       role: trackingInfo.course.role,
     };
   }
@@ -770,7 +770,7 @@ export function pushCourseCertificateEvent(trackingData) {
     linkType = 'Share';
   }
 
-  const fullSolution = trackingData.fullSolution || trackingData.solution;
+  const courseSolutionFull = trackingData.fullSolution || trackingData.solution;
 
   const dataLayerEntry = {
     event: eventName,
@@ -784,7 +784,7 @@ export function pushCourseCertificateEvent(trackingData) {
       title: trackingData.title,
       id: trackingData.id,
       solution: trackingData.solution,
-      fullSolution: fullSolution,
+      fullSolution: courseSolutionFull,
       role: trackingData.role,
     },
   };
