@@ -651,11 +651,17 @@ export async function buildCard(container, element, model) {
     let currentElement = element;
 
     while (currentElement?.parentElement) {
-      currentElement = currentElement?.parentElement;
-      const sectionHeader = currentElement.querySelector('.browse-cards-block-title');
-      if (sectionHeader) {
-        const immediateChild = sectionHeader.children[0];
+      currentElement = currentElement.parentElement;
+      const cardsHeader = currentElement.querySelector('.browse-cards-block-title');
+      const recCardsHeader = currentElement.querySelector('.rec-block-header');
+      
+      if (cardsHeader && cardsHeader.children && cardsHeader.children.length > 0) {
+        const immediateChild = cardsHeader.children[0];
         return immediateChild?.innerText?.trim() || '';
+      }
+      
+      if (recCardsHeader) {
+        return recCardsHeader?.innerText?.trim() || '';
       }
     }
 

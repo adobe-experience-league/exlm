@@ -4,6 +4,7 @@ import { hashAnswer } from '../../scripts/hash-utils.js';
 import { moveInstrumentation } from '../../scripts/utils/ue-utils.js';
 import { loadBlocks, decorateSections, decorateBlocks } from '../../scripts/lib-franklin.js';
 import { pushQuizEvent } from '../../scripts/analytics/lib-analytics.js';
+import { queueAnalyticsEvent } from '../../scripts/analytics/analytics-queue.js';
 
 /**
  * Checks if the selected answers for a question are correct
@@ -348,5 +349,5 @@ export default async function decorate(block) {
   block.appendChild(questionsContainer);
 
   // Trigger quiz start event when the quiz is loaded
-  await pushQuizEvent('quizStart');
+  await queueAnalyticsEvent(pushQuizEvent, 'quizStart');
 }

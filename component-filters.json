@@ -398,7 +398,7 @@
   },
   {
     "id": "teaser",
-    "components": ["teaser", "detailed-teaser"]
+    "components": ["teaser", "detailed-teaser", "media"]
   },
   {
     "id": "accordion",
