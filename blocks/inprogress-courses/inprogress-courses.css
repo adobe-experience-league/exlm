@@ -1,3 +1,7 @@
+.section.inprogress-courses-container {
+  padding: var(--spectrum-spacing-500) var(--spectrum-spacing-300);
+}
+
 .inprogress-courses-card-wrapper {
   display: flex;
   flex-direction: column;
@@ -19,6 +23,10 @@
   text-align: center;
 }
 
+.inprogress-courses-header-wrapper > * {
+  margin-top: 0;
+}
+
 .inprogress-courses-cta-wrapper button {
   margin: 0;
   padding: 8px 24px;
@@ -29,6 +37,10 @@
 }
 
 @media (min-width: 600px) {
+  .section.inprogress-courses-container {
+    padding: var(--spectrum-spacing-500) 24px;
+  }
+
   .inprogress-courses-card-wrapper {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -43,6 +55,10 @@
 }
 
 @media (min-width: 900px) {
+  .section.inprogress-courses-container {
+    padding: 56px 120px;
+  }
+
   .inprogress-courses-card-wrapper {
     gap: var(--spectrum-spacing-500) 24px;
   }
