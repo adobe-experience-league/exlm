@@ -1,6 +1,4 @@
-import { getConfig } from '../scripts.js';
-
-const { mpcApiBase, isProd } = getConfig();
+const MPC_API_BASE = `https://api.tv.adobe.com/videos`;
 
 /**
  * Languages currently supported for MPC videos
@@ -59,7 +57,7 @@ export async function fetchVideoCollections(videoId) {
     console.warn('Video ID is required for fetching collections');
     return null;
   }
-  const mpcApi = `${mpcApiBase}/${videoId}/collections`;
+  const mpcApi = `${MPC_API_BASE}/${videoId}/collections`;
 
   try {
     const response = await fetch(mpcApi, {
@@ -227,8 +225,5 @@ export default async function updateVideoUrl(url, lang) {
  * @returns {Promise<string>} - Localized video URL or original URL for English
  */
 export async function getLocalizedVideoUrl(url, lang = 'en') {
-  if (!isProd) {
-    return lang === 'en' ? url : updateVideoUrl(url, lang);
-  }
-  return url;
+  return lang === 'en' ? url : updateVideoUrl(url, lang);
 }
