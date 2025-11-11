@@ -3,6 +3,11 @@
   padding: 36px var(--spectrum-spacing-300);
 }
 
+/* Hide breadcrumb by default for small screens */
+.course-breadcrumb {
+  display: none;
+}
+
 /* Container styles */
 .course-breadcrumb .course-breadcrumb-container {
   width: 100%;
@@ -55,16 +60,27 @@
 
 /* Responsive adjustments */
 @media (min-width: 600px) {
+  /* Show breadcrumb for larger screens */
+  .course-breadcrumb {
+    display: block;
+  }
+
   .courses .course-breadcrumb-section.course-breadcrumb-container,
   .courses .section.course-breadcrumb-container {
     padding: 36px 24px;
   }
 
   .course-breadcrumb .course-breadcrumb-items a {
-    max-width: 250px;
+    max-width: 200px;
   }
 
   .course-breadcrumb .course-breadcrumb-current {
     max-width: none;
+  }
+}
+
+@media (min-width: 900px) {
+  .course-breadcrumb .course-breadcrumb-items a {
+    max-width: 250px;
   }
 }
