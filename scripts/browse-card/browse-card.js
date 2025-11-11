@@ -245,7 +245,7 @@ const buildCourseStatusContent = ({ meta, el_course_module_count, cardContent })
     }
 
     const moduleCountText = placeholders.courseModuleCompletedCount
-      ? placeholders.moduleCountTemplate.replace('{}', completedModules).replace('{}', el_course_module_count)
+      ? placeholders.courseModuleCompletedCount.replace('{}', completedModules).replace('{}', el_course_module_count)
       : `${completedModules} of ${el_course_module_count} Complete`;
 
     statusRow.appendChild(createTag('div', { class: 'browse-card-module-count' }, moduleCountText));
