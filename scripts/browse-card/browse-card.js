@@ -203,89 +203,54 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
   cardContent.appendChild(titleElement);
 };
 
-const buildCourseInfoContent = ({ el_course_duration, el_course_module_count, el_level, cardContent, meta }) => {
-  if (el_course_duration || el_level) {
-    const courseInfoElement = createTag('div', { class: 'browse-card-course-info' });
-
-    // Create a single row for level and duration with the format "LEVEL | DURATION"
-    if (el_level || el_course_duration) {
-      const levelDurationElement = createTag('p', { class: 'course-info-level-duration' });
-
-      let levelDurationText = '';
-
-      // Format level in uppercase if available
-      if (el_level) {
-        // Ensure el_level is a string before calling toUpperCase()
-        levelDurationText += String(el_level).toUpperCase();
-      }
-
-      // Add separator if both level and duration are available
-      if (el_level && el_course_duration) {
-        levelDurationText += ' | ';
-      }
-
-      // Add duration in uppercase if available
-      if (el_course_duration) {
-        // Ensure el_course_duration is a string before calling toUpperCase()
-        levelDurationText += String(el_course_duration).toUpperCase();
-      }
-
-      levelDurationElement.textContent = levelDurationText;
-      courseInfoElement.appendChild(levelDurationElement);
-    }
-
-    cardContent.appendChild(courseInfoElement);
-  }
-
-  // Don't add module count here - it will be added in the status row
+const buildCourseInfoContent = ({ el_course_duration, el_level, cardContent }) => {
+  if (!el_course_duration && !el_level) return;
+  
+  const levelText = el_level ? String(el_level).toUpperCase() : '';
+  const durationText = el_course_duration ? String(el_course_duration).toUpperCase() : '';
+  const separator = levelText && durationText ? ' | ' : '';
+  const levelDurationText = `${levelText}${separator}${durationText}`;
+  
+  const courseInfoElement = createTag('div', { class: 'browse-card-course-info' });
+  courseInfoElement.appendChild(createTag('p', { class: 'course-info-level-duration' }, levelDurationText));
+  cardContent.appendChild(courseInfoElement);
 };
 
-// Update the course status section to include module count
 const buildCourseStatusContent = ({ meta, el_course_module_count, cardContent }) => {
-  if (meta?.courseInfo?.courseStatus) {
-    // Map course status to localized label
-    const statusMapping = {
-      [COURSE_STATUS.NOT_STARTED]: placeholders.courseStatusNotStarted || 'Not Started',
-      [COURSE_STATUS.IN_PROGRESS]: placeholders.courseStatusInProgress || 'In Progress',
-      [COURSE_STATUS.COMPLETED]: placeholders.courseStatusCompleted || 'Completed',
-    };
-
-    const courseStatusLabel = statusMapping[meta.courseInfo.courseStatus] || '';
-
-    if (courseStatusLabel) {
-      const statusRow = createTag('div', { class: 'browse-card-status-row' });
-
-      // Left side - status indicator
-      const statusIndicator = createTag('div', { class: 'browse-card-status-indicator' });
-      statusIndicator.innerHTML = `<span class="status-badge status-${meta.courseInfo.courseStatus}"></span><span class="status-text">${courseStatusLabel}</span>`;
-      statusRow.appendChild(statusIndicator);
-
-      // Right side - module count
-      if (el_course_module_count) {
-        const moduleCountElement = createTag('div', { class: 'browse-card-module-count' });
-
-        // Determine completed modules count based on course status
-        let completedModules = 0;
-        if (meta.courseInfo.courseStatus === COURSE_STATUS.COMPLETED) {
-          // If course is completed, all modules are completed
-          completedModules = parseInt(el_course_module_count, 10);
-        } else if (meta.courseInfo.courseStatus === COURSE_STATUS.IN_PROGRESS) {
-          // For in-progress courses, count the number of completed modules
-          // In a real implementation, this would come from the course progress data
-          // For now, we'll use a placeholder value
-          completedModules = 1; // This would be replaced with actual data in a real implementation
-        }
-
-        // Format the module count as "X of Y Complete"
-        const moduleCountText = `${completedModules} of ${el_course_module_count} Complete`;
-        moduleCountElement.textContent = moduleCountText;
-
-        statusRow.appendChild(moduleCountElement);
-      }
-
-      cardContent.appendChild(statusRow);
+  const courseStatus = meta?.courseInfo?.courseStatus;
+  if (!courseStatus) return;
+  
+  const statusLabel = {
+    [COURSE_STATUS.NOT_STARTED]: placeholders?.courseStatusNotStarted || 'Not Started',
+    [COURSE_STATUS.IN_PROGRESS]: placeholders?.courseStatusInProgress || 'In Progress',
+    [COURSE_STATUS.COMPLETED]: placeholders?.courseStatusCompleted || 'Completed',
+  }[courseStatus] || '';
+  
+  if (!statusLabel) return;
+  
+  const statusRow = createTag('div', { class: 'browse-card-status-row' });
+  
+  // Status indicator
+  const statusIndicator = createTag('div', { class: 'browse-card-status-indicator' });
+  statusIndicator.innerHTML = `<span class="status-badge status-${courseStatus}"></span><span class="status-text">${statusLabel}</span>`;
+  statusRow.appendChild(statusIndicator);
+  
+  if (el_course_module_count) {
+    let completedModules = 0;
+    if (courseStatus === COURSE_STATUS.COMPLETED) {
+      completedModules = parseInt(el_course_module_count, 10);
+    } else if (courseStatus === COURSE_STATUS.IN_PROGRESS && meta.courseInfo.profileCourse?.modules) {
+      completedModules = meta.courseInfo.profileCourse.modules.filter(module => module.finishedAt).length;
     }
+    
+    const moduleCountText = `${completedModules} ${placeholders?.of || 'of'} ${el_course_module_count} ${placeholders?.courseComplete || 'Complete'}`;
+    
+    statusRow.appendChild(
+      createTag('div', { class: 'browse-card-module-count' }, moduleCountText)
+    );
   }
+  
+  cardContent.appendChild(statusRow);
 };
 
 const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }) => {
