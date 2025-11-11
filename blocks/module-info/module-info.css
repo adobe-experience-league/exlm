@@ -8,7 +8,7 @@
 .module-info .back-to-course {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--spectrum-spacing-75);
   border: none;
   border-radius: var(--spectrum-spacing-75);
   margin-top: 0;
@@ -38,7 +38,7 @@
   background-size: contain;
   width: 18px;
   height: 18px;
-  margin-right: 4px;
+  margin-right: var(--spectrum-spacing-75);
 }
 
 .module-info .back-to-course .back-to-course-label {
@@ -140,7 +140,7 @@
 /* Responsive design */
 @media (max-width: 900px) {
   .module-info {
-    padding: 40px 24px;
+    padding: var(--spectrum-spacing-600) var(--spectrum-spacing-400);
   }
 
   .module-info .module-content {

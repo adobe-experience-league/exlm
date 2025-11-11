@@ -10,7 +10,7 @@
 
 .courses-section,
 .courses.course-step .section:not(.notification-banner-container) {
-  padding: 16px 32px;
+  padding: var(--spectrum-spacing-300) var(--spectrum-spacing-500);
 }
 
 .courses.course-step .section.module-info-container {
@@ -53,7 +53,7 @@
 @media (min-width: 600px) {
   .courses-section,
   .courses.course-step .section:not(.notification-banner-container) {
-    padding: 24px 49px;
+    padding: var(--spectrum-spacing-400) var(var(--spectrum-spacing-600));
   }
 
   .courses.course-step .section.module-info-container {
