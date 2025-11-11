@@ -126,6 +126,7 @@
 
 .course-marquee .metadata-label {
   color: var(--spectrum-gray-50);
+  font-weight: var(--font-weight-bold);
   margin-right: 4px;
 }
 
