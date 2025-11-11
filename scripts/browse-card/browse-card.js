@@ -244,9 +244,9 @@ const buildCourseStatusContent = ({ meta, el_course_module_count, cardContent })
       completedModules = meta.courseInfo.profileCourse.modules.filter((module) => module.finishedAt).length;
     }
 
-    const moduleCountText = `${completedModules} ${placeholders?.of || 'of'} ${el_course_module_count} ${
-      placeholders?.courseComplete || 'Complete'
-    }`;
+    const moduleCountText = placeholders.courseModuleCompletedCount
+      ? placeholders.moduleCountTemplate.replace('{}', completedModules).replace('{}', el_course_module_count)
+      : `${completedModules} of ${el_course_module_count} Complete`;
 
     statusRow.appendChild(createTag('div', { class: 'browse-card-module-count' }, moduleCountText));
   }
