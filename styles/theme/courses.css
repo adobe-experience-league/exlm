@@ -51,13 +51,12 @@
 }
 
 @media (min-width: 600px) {
-.courses-section,
-.courses.course-step .section:not(.notification-banner-container) {
-  padding: 24px 49px;
-}
+  .courses-section,
+  .courses.course-step .section:not(.notification-banner-container) {
+    padding: 24px 49px;
+  }
 
-.courses.course-step .section.module-info-container {
-  padding-bottom: 20px;
-}
-
+  .courses.course-step .section.module-info-container {
+    padding-bottom: 20px;
+  }
 }
