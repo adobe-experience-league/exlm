@@ -22,13 +22,12 @@
 
 .question .question-block p:not(.question-text) {
   color: var(--non-spectrum-dark-gray);
-  line-height: var(--spectrum-line-height-xl);
+  line-height: 125%;
 }
 
 .question .question-text {
-  font-weight: var(--font-weight-normal);
   font-size: var(--spectrum-font-size-400);
-  line-height: var(--spectrum-line-height-s);
+  line-height: 150%;
   position: relative;
   padding-bottom: 30px;
   margin-top: var(--spectrum-spacing-300);
@@ -36,9 +35,8 @@
 }
 
 .question .answer-option {
-  font-weight: var(--font-weight-normal);
-  font-size: var(--spectrum-font-size-200);
-  line-height: var(--spectrum-line-height-s);
+  font-size: var(--spectrum-font-size-300);
+  line-height: 150%;
   display: flex;
   align-items: center;
   margin-bottom: var(--spectrum-spacing-400);
