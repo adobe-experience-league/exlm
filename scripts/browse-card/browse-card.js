@@ -205,12 +205,12 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
 
 const buildCourseInfoContent = ({ el_course_duration, el_level, cardContent }) => {
   if (!el_course_duration && !el_level) return;
-  
+
   const levelText = el_level ? String(el_level).toUpperCase() : '';
   const durationText = el_course_duration ? String(el_course_duration).toUpperCase() : '';
   const separator = levelText && durationText ? ' | ' : '';
   const levelDurationText = `${levelText}${separator}${durationText}`;
-  
+
   const courseInfoElement = createTag('div', { class: 'browse-card-course-info' });
   courseInfoElement.appendChild(createTag('p', { class: 'course-info-level-duration' }, levelDurationText));
   cardContent.appendChild(courseInfoElement);
@@ -219,37 +219,38 @@ const buildCourseInfoContent = ({ el_course_duration, el_level, cardContent }) =
 const buildCourseStatusContent = ({ meta, el_course_module_count, cardContent }) => {
   const courseStatus = meta?.courseInfo?.courseStatus;
   if (!courseStatus) return;
-  
-  const statusLabel = {
-    [COURSE_STATUS.NOT_STARTED]: placeholders?.courseStatusNotStarted || 'Not Started',
-    [COURSE_STATUS.IN_PROGRESS]: placeholders?.courseStatusInProgress || 'In Progress',
-    [COURSE_STATUS.COMPLETED]: placeholders?.courseStatusCompleted || 'Completed',
-  }[courseStatus] || '';
-  
+
+  const statusLabel =
+    {
+      [COURSE_STATUS.NOT_STARTED]: placeholders?.courseStatusNotStarted || 'Not Started',
+      [COURSE_STATUS.IN_PROGRESS]: placeholders?.courseStatusInProgress || 'In Progress',
+      [COURSE_STATUS.COMPLETED]: placeholders?.courseStatusCompleted || 'Completed',
+    }[courseStatus] || '';
+
   if (!statusLabel) return;
-  
+
   const statusRow = createTag('div', { class: 'browse-card-status-row' });
-  
+
   // Status indicator
   const statusIndicator = createTag('div', { class: 'browse-card-status-indicator' });
   statusIndicator.innerHTML = `<span class="status-badge status-${courseStatus}"></span><span class="status-text">${statusLabel}</span>`;
   statusRow.appendChild(statusIndicator);
-  
+
   if (el_course_module_count) {
     let completedModules = 0;
     if (courseStatus === COURSE_STATUS.COMPLETED) {
       completedModules = parseInt(el_course_module_count, 10);
     } else if (courseStatus === COURSE_STATUS.IN_PROGRESS && meta.courseInfo.profileCourse?.modules) {
-      completedModules = meta.courseInfo.profileCourse.modules.filter(module => module.finishedAt).length;
+      completedModules = meta.courseInfo.profileCourse.modules.filter((module) => module.finishedAt).length;
     }
-    
-    const moduleCountText = `${completedModules} ${placeholders?.of || 'of'} ${el_course_module_count} ${placeholders?.courseComplete || 'Complete'}`;
-    
-    statusRow.appendChild(
-      createTag('div', { class: 'browse-card-module-count' }, moduleCountText)
-    );
+
+    const moduleCountText = `${completedModules} ${placeholders?.of || 'of'} ${el_course_module_count} ${
+      placeholders?.courseComplete || 'Complete'
+    }`;
+
+    statusRow.appendChild(createTag('div', { class: 'browse-card-module-count' }, moduleCountText));
   }
-  
+
   cardContent.appendChild(statusRow);
 };
 

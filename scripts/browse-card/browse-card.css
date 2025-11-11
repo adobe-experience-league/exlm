@@ -671,22 +671,26 @@
   vertical-align: -1px;
 }
 
-.browse-card .browse-card-status-indicator .status-badge.status-not-started {
+.browse-card .browse-card-status-indicator .status-badge.status-not-started,
+.browse-card.course-card .browse-card-meta-info .status-badge.status-not-started {
   background-color: var(--non-spectrum-medium-gray);
   border: none;
 }
 
-.browse-card .browse-card-status-indicator .status-badge.status-in-progress {
+.browse-card .browse-card-status-indicator .status-badge.status-in-progress,
+.browse-card.course-card .browse-card-meta-info .status-badge.status-in-progress {
   background-color: var(--non-spectrum-navy-blue);
   border: none;
 }
 
-.browse-card .browse-card-status-indicator .status-badge.status-completed {
+.browse-card .browse-card-status-indicator .status-badge.status-completed,
+.browse-card.course-card .browse-card-meta-info .status-badge.status-completed {
   background-color: var(--non-spectrum-pass-green);
   border: none;
 }
 
-.browse-card .browse-card-status-indicator .status-text {
+.browse-card .browse-card-status-indicator .status-text,
+.browse-card.course-card .browse-card-meta-info .status-text {
   font-size: var(--spectrum-font-size-100);
   line-height: var(--spectrum-line-height-s);
   color: var(--non-spectrum-dark-gray);
@@ -752,27 +756,7 @@
   vertical-align: -1px;
 }
 
-.browse-card.course-card .browse-card-meta-info .status-badge.status-not-started {
-  background-color: var(--non-spectrum-medium-gray);
-  border: none;
-}
 
-.browse-card.course-card .browse-card-meta-info .status-badge.status-in-progress {
-  background-color: var(--non-spectrum-navy-blue);
-  border: none;
-}
-
-.browse-card.course-card .browse-card-meta-info .status-badge.status-completed {
-  background-color: var(--non-spectrum-pass-green);
-  border: none;
-}
-
-.browse-card.course-card .browse-card-meta-info .status-text {
-  font-size: var(--spectrum-font-size-100);
-  line-height: var(--spectrum-line-height-s);
-  color: var(--non-spectrum-dark-gray);
-  font-weight: var(--font-weight-bold);
-}
 
 /* Event Card Variant */
 .browse-card.event-card .browse-card-banner,

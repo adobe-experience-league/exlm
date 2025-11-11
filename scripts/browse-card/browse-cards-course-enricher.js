@@ -68,7 +68,7 @@ const BrowseCardsCourseEnricher = (() => {
 
       const cardPath = extractCoursePathFromUrl(card.viewLink);
       const profileCourse = courses?.find((c) => c.courseId === cardPath);
-      
+
       return {
         ...card,
         meta: {
