@@ -4,7 +4,7 @@
 }
 
 /* Hide breadcrumb by default for small screens */
-.course-breadcrumb {
+.course-breadcrumb-container {
   display: none;
 }
 
@@ -61,7 +61,7 @@
 /* Responsive adjustments */
 @media (min-width: 600px) {
   /* Show breadcrumb for larger screens */
-  .course-breadcrumb {
+  .course-breadcrumb-container {
     display: block;
   }
 
