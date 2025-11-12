@@ -59,7 +59,6 @@
 .course-breakdown .course-breakdown-info-card > div:first-child h4,
 .course-breakdown .course-breakdown-info-card > div:first-child h5,
 .course-breakdown .course-breakdown-info-card > div:first-child h6 {
-  font-size: var(--spectrum-font-size-400);
   margin: 0;
   margin-right: var(--spectrum-spacing-400);
 }
@@ -109,7 +108,7 @@
   align-items: flex-start;
   gap: var(--spectrum-spacing-300);
   margin-bottom: var(--spectrum-spacing-400);
-  padding-bottom: var(--spectrum-spacing-300);
+  padding-bottom: var(--spectrum-spacing-400);
   border-bottom: 2px solid var(--spectrum-gray-200);
 }
 
@@ -154,37 +153,28 @@
 
 .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn {
   margin: 0;
-  padding: 0 var(--spectrum-spacing-300);
+  padding: 0 18px;
   width: 100%;
   white-space: nowrap;
   overflow: visible;
-}
-
-.course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn a {
   color: var(--spectrum-gray-50);
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-normal);
 }
 
 .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn.disabled {
+  color: var(--spectrum-gray-400);
+  pointer-events: none;
   cursor: not-allowed;
   background: transparent;
   border: 2px solid var(--spectrum-gray-400);
 }
 
-.course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn.disabled a {
-  color: var(--spectrum-gray-400);
-  pointer-events: none;
-}
-
 .course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn.completed {
-  background: transparent;
-  border: 2px solid var(--spectrum-gray-900);
-}
-
-.course-breakdown .course-breakdown-module-card .cb-module-header .cb-start-btn.completed a {
   color: var(--spectrum-gray-900);
   font-weight: var(--font-weight-medium);
+  background: transparent;
+  border: 2px solid var(--spectrum-gray-900);
 }
 
 .course-breakdown .course-breakdown-module-card .cb-steps-info {
