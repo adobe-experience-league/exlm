@@ -742,7 +742,12 @@ export async function buildCard(container, element, model) {
   };
 
   const cardHeader = findCardHeader(card);
-  const cardPosition = String(Array.from(element.parentElement?.children).indexOf(element) + 1);
+  let cardPosition = '';
+
+  if (element?.parentElement?.children) {
+    const siblings = Array.from(element.parentElement.children);
+    cardPosition = String(siblings.indexOf(element) + 1);
+  }
 
   // DataLayer - Browse card click event
   element.querySelector('a:not(.browse-card-options)')?.addEventListener(
