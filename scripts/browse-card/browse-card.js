@@ -705,6 +705,9 @@ export async function buildCard(container, element, model) {
     card.parentElement?.parentElement?.parentElement?.parentElement
       ?.querySelector('.rec-block-header')
       ?.innerText.trim() ||
+    card.parentElement?.parentElement?.parentElement?.parentElement
+      ?.querySelector('.inprogress-courses-header-wrapper')
+      ?.innerText.trim() ||
     '';
   const cardPosition = String(Array.from(element.parentElement.children).indexOf(element) + 1);
 
