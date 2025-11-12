@@ -385,8 +385,8 @@ const buildCardContent = async (card, model) => {
     const lang = document.querySelector('html').lang || 'en';
     const [, courseId] = model.viewLink?.split(`/${lang}/`) || [];
 
-    const solution = model?.product[0] || '';
-    const fullSolution = model?.product?.join(',') || '';
+    const solution = model?.product?.length ? model?.product[0] : '';
+    const fullSolution = model?.product?.length ? model?.product?.join(',') : '';
 
     trackingInfo = {
       destinationDomain: model.viewLink,
