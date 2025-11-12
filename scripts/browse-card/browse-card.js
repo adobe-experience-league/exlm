@@ -699,14 +699,23 @@ export async function buildCard(container, element, model) {
   }
 
   const cardHeader =
-    card.parentElement?.parentElement?.parentElement?.parentElement?.parentElement
-      ?.querySelector('div > div.browse-cards-block-title')
-      ?.innerText.trim() ||
-    card.parentElement?.parentElement?.parentElement?.parentElement
-      ?.querySelector('.rec-block-header')
-      ?.innerText.trim() ||
+    card.closest('.block')?.querySelector('.browse-cards-block-title')?.innerText.trim() ||
+    card.closest('.block')?.querySelector('.rec-block-header')?.innerText.trim() ||
+    card.closest('.block')?.querySelector('.inprogress-courses-header-wrapper')?.innerText.trim() ||
+    card
+      .closest('.block')
+      ?.getAttribute('data-block-name')
+      ?.trim()
+      ?.split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ') ||
     '';
-  const cardPosition = String(Array.from(element.parentElement.children).indexOf(element) + 1);
+
+  let cardPosition = '';
+  if (element?.parentElement?.children) {
+    const siblings = Array.from(element.parentElement.children);
+    cardPosition = String(siblings.indexOf(element) + 1);
+  }
 
   // DataLayer - Browse card click event
   element.querySelector('a:not(.browse-card-options)')?.addEventListener(
