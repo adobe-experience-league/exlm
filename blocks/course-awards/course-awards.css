@@ -17,6 +17,7 @@
   align-items: center;
   text-align: center;
   gap: var(--spectrum-spacing-300);
+  min-height: 390px;
 }
 
 .course-awards .course-badge {
@@ -25,7 +26,7 @@
   display: grid;
   place-items: center;
   border-radius: var(--spectrum-spacing-300);
-  background-color: var(--non-spectrum-rose-red);
+  background-color: var(--spectrum-gray-900);
 }
 
 .course-awards .course-badge .icon {
