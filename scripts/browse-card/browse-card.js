@@ -698,52 +698,20 @@ export async function buildCard(container, element, model) {
     element.appendChild(card);
   }
 
-  /**
-   * Finds the card header by checking specific parent levels (4th and 5th) for header selectors
-   * @param {HTMLElement} startElement - The starting element (card)
-   * @returns {string} The header text or empty string if not found
-   */
-  const findCardHeader = (startElement) => {
-    const headerSelectors = ['.browse-cards-block-title', '.rec-block-header', '.inprogress-courses-header-wrapper'];
+  const cardHeader =
+    card.closest('.block')?.querySelector('.browse-cards-block-title')?.innerText.trim() ||
+    card.closest('.block')?.querySelector('.rec-block-header')?.innerText.trim() ||
+    card.closest('.block')?.querySelector('.inprogress-courses-header-wrapper')?.innerText.trim() ||
+    card
+      .closest('.block')
+      ?.getAttribute('data-block-name')
+      ?.trim()
+      ?.split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ') ||
+    '';
 
-    // Get 4th level parent element
-    const fourthParent = startElement.parentElement?.parentElement?.parentElement?.parentElement;
-
-    // Get 5th level parent element
-    const fifthParent = fourthParent?.parentElement;
-
-    const elementsToCheck = [fourthParent, fifthParent].filter(Boolean);
-
-    // Check header selectors on both levels
-    let elementIndex = 0;
-    while (elementIndex < elementsToCheck.length) {
-      const currentElement = elementsToCheck[elementIndex];
-
-      let selectorIndex = 0;
-      while (selectorIndex < headerSelectors.length) {
-        const selector = headerSelectors[selectorIndex];
-        const headerElement = currentElement.querySelector?.(selector);
-        if (headerElement?.innerText?.trim()) {
-          return headerElement.innerText.trim();
-        }
-        selectorIndex += 1;
-      }
-
-      // Check data-block-name attribute
-      const attrValue = currentElement.getAttribute?.('data-block-name');
-      if (attrValue?.trim()) {
-        return attrValue.trim();
-      }
-
-      elementIndex += 1;
-    }
-
-    return '';
-  };
-
-  const cardHeader = findCardHeader(card);
   let cardPosition = '';
-
   if (element?.parentElement?.children) {
     const siblings = Array.from(element.parentElement.children);
     cardPosition = String(siblings.indexOf(element) + 1);
