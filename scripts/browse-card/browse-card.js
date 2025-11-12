@@ -702,13 +702,7 @@ export async function buildCard(container, element, model) {
     card.closest('.block')?.querySelector('.browse-cards-block-title')?.innerText.trim() ||
     card.closest('.block')?.querySelector('.rec-block-header')?.innerText.trim() ||
     card.closest('.block')?.querySelector('.inprogress-courses-header-wrapper')?.innerText.trim() ||
-    card
-      .closest('.block')
-      ?.getAttribute('data-block-name')
-      ?.trim()
-      ?.split('-')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ') ||
+    card.closest('.block')?.getAttribute('data-block-name')?.trim() ||
     '';
 
   let cardPosition = '';
