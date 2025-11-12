@@ -16,10 +16,9 @@ function certificateCard(props) {
   return `
         <div class="course-awards-card">
             <div class="course-badge">
-                <span class="icon icon-course-badge-red"></span>
+                <span class="icon icon-course-badge"></span>
             </div>
                 <h4 class="course-awards-card-title">${props?.name}</h4>
-                <div class="course-tag">${placeholders?.courseAwardCertificateLabel || 'Certificate'}</div>
                 <div class="course-awards-card-footer">
                   <div class="course-awards-card-timestamp">${
                     placeholders?.courseAwardCertificateCompletedLabel || 'Completed'

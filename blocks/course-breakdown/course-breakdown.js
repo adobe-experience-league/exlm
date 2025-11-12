@@ -51,6 +51,7 @@ function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
       [MODULE_STATUS.COMPLETED]: placeholder?.courseBreakdownButtonCompleted || 'Review Course',
     };
     startButton.textContent = startButtonTextMap[courseStatus] || 'Start Course';
+    startButton.href = '#';
 
     // Set the href asynchronously
     getLastAddedModule().then(async (lastAddedModuleUrl) => {
@@ -178,9 +179,9 @@ function moduleCard({ modulePromise, index, open = false, placeholders }) {
             </span>
           <h3 class="cb-module-title">${moduleMeta?.moduleHeader || 'Module Title'}</h3>
         </div>
-        <button class="button cb-start-btn ${moduleStatus}" >
-          <a href="${moduleMeta?.moduleSteps[0].url || '#'}">${startButtonText}</a>
-        </button>
+        <a class="button cb-start-btn ${moduleStatus}" href="${moduleMeta?.moduleSteps[0].url || '#'}">
+            ${startButtonText}
+        </a>
       </div>
         <div class="cb-steps-info ${open ? 'open' : ''}">
           <span class="cb-steps-info-text">${placeholders?.courseBreakdownModuleDetails || 'Module details'}</span>
