@@ -698,17 +698,50 @@ export async function buildCard(container, element, model) {
     element.appendChild(card);
   }
 
-  const cardHeader =
-    card.parentElement?.parentElement?.parentElement?.parentElement?.parentElement
-      ?.querySelector('div > div.browse-cards-block-title')
-      ?.innerText.trim() ||
-    card.parentElement?.parentElement?.parentElement?.parentElement
-      ?.querySelector('.rec-block-header')
-      ?.innerText.trim() ||
-    card.parentElement?.parentElement?.parentElement?.parentElement
-      ?.querySelector('.inprogress-courses-header-wrapper')
-      ?.innerText.trim() ||
-    '';
+  /**
+   * Finds the card header by checking specific parent levels (4th and 5th) for header selectors
+   * @param {HTMLElement} startElement - The starting element (card)
+   * @returns {string} The header text or empty string if not found
+   */
+  const findCardHeader = (startElement) => {
+    const headerSelectors = ['.browse-cards-block-title', '.rec-block-header', '.inprogress-courses-header-wrapper'];
+
+    // Get 4th level parent element
+    const fourthParent = startElement.parentElement?.parentElement?.parentElement?.parentElement;
+
+    // Get 5th level parent element
+    const fifthParent = fourthParent?.parentElement;
+
+    const elementsToCheck = [fourthParent, fifthParent].filter(Boolean);
+
+    // Check header selectors on both levels
+    let elementIndex = 0;
+    while (elementIndex < elementsToCheck.length) {
+      const currentElement = elementsToCheck[elementIndex];
+
+      let selectorIndex = 0;
+      while (selectorIndex < headerSelectors.length) {
+        const selector = headerSelectors[selectorIndex];
+        const headerElement = currentElement.querySelector?.(selector);
+        if (headerElement?.innerText?.trim()) {
+          return headerElement.innerText.trim();
+        }
+        selectorIndex += 1;
+      }
+
+      // Check data-block-name attribute
+      const attrValue = currentElement.getAttribute?.('data-block-name');
+      if (attrValue?.trim()) {
+        return attrValue.trim();
+      }
+
+      elementIndex += 1;
+    }
+
+    return '';
+  };
+
+  const cardHeader = findCardHeader(card);
   const cardPosition = String(Array.from(element.parentElement.children).indexOf(element) + 1);
 
   // DataLayer - Browse card click event
