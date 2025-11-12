@@ -914,10 +914,18 @@ export function pushCourseStartEvent(courseData) {
 export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
+  const cardFullSolution = Array.isArray(cardData?.product) ? cardData.product.join(',') : cardData?.product || '';
+
+  const cardSolution = Array.isArray(cardData?.product)
+    ? cardData.product[0]
+    : cardData?.product?.split(',')[0]?.trim() || '';
+
   const dataLayerEntry = {
     event: eventName,
     link: {
       contentType: cardData?.contentType?.toLowerCase().trim() || '',
+      fullSolution: cardFullSolution,
+      solution: cardSolution,
       destinationDomain: cardData?.viewLink || '',
       linkTitle: cardData?.title || '',
       linkLocation: 'body',
