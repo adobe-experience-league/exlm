@@ -380,16 +380,21 @@ const buildCardContent = async (card, model) => {
 
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
-  let bookmarkTrackingInfo;
+  let trackingInfo;
   if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
     const lang = document.querySelector('html').lang || 'en';
     const [, courseId] = model.viewLink?.split(`/${lang}/`) || [];
-    bookmarkTrackingInfo = {
+
+    const solution = model?.product[0] || '';
+    const fullSolution = model?.product?.join(',') || '';
+
+    trackingInfo = {
       destinationDomain: model.viewLink,
       course: {
         id: courseId || model.id,
         title: model.title,
-        solution: model.product,
+        solution,
+        fullSolution,
         role: model.role,
       },
     };
@@ -402,7 +407,7 @@ const buildCardContent = async (card, model) => {
     link: copyLink,
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
     copyConfig: failedToLoad ? false : undefined,
-    bookmarkTrackingInfo,
+    trackingInfo,
   });
 
   cardAction.decorate();
