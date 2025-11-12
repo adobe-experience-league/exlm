@@ -352,8 +352,7 @@ export async function extractCourseMeta(fragment) {
   const marqueeMeta = fragment.querySelector('.course-marquee');
   const courseBreakdownMeta = fragment.querySelector('.course-breakdown');
 
-  const [headingElement, descriptionElement] = marqueeMeta?.children || [];
-  const heading = headingElement?.textContent?.trim() || '';
+  const descriptionElement = marqueeMeta?.children?.[1];
   const description = descriptionElement?.innerHTML || '';
 
   const [, totalTimeElement, , , courseCompletionElement, ...moduleElements] = courseBreakdownMeta?.children || [];
@@ -362,6 +361,7 @@ export async function extractCourseMeta(fragment) {
 
   const modules = moduleElements.map((child) => child.querySelector('a')?.getAttribute('href') || '');
 
+  const heading = fragment.querySelector('meta[property="og:title"]')?.content || '';
   const role = fragment.querySelector('meta[name="role"]')?.content || '';
   const solution = fragment.querySelector('meta[name="solution"]')?.content || '';
   const level = fragment.querySelector('meta[name="level"]')?.content || '';
