@@ -7,8 +7,12 @@
   display: flex;
   gap: var(--spectrum-spacing-200);
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+}
+
+.courses.course-step:has(.quiz-scorecard) .module-nav-buttons {
+  justify-content: center;
 }
 
 .module-nav-button.disabled,
@@ -20,6 +24,10 @@
 
 @media (min-width: 600px) {
   .module-nav-buttons {
+    justify-content: space-between;
+  }
+
+  .courses.course-step:has(.quiz-scorecard) .module-nav-buttons {
     justify-content: space-between;
   }
 }
