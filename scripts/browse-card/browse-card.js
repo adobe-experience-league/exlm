@@ -395,7 +395,7 @@ const buildCardContent = async (card, model) => {
         title: model.title,
         solution,
         fullSolution,
-        role: model.role,
+        role: model.role || '',
       },
     };
   }
