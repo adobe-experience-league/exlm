@@ -408,6 +408,12 @@ const buildCardContent = async (card, model) => {
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
     copyConfig: failedToLoad ? false : undefined,
     trackingInfo,
+    bookmarkCallback: (linkType, position) => {
+      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, linkType, position);
+    },
+    copyCallback: (linkType, position) => {
+      pushBrowseCardClickEvent('copyLinkBrowseCard', model, linkType, position);
+    },
   });
 
   cardAction.decorate();
@@ -726,33 +732,23 @@ export async function buildCard(container, element, model) {
     cardPosition = String(siblings.indexOf(element) + 1);
   }
 
+  // Update the UserActions callbacks with the calculated values
+  const cardOptions = card.querySelector('.browse-card-options');
+  if (cardOptions) {
+    // Store the calculated values on the card element for the handlers to access
+    card.dataset.cardHeader = cardHeader || '';
+    card.dataset.cardPosition = cardPosition || '';
+  }
+
   // DataLayer - Browse card click event
-  element.querySelector('a:not(.browse-card-options)')?.addEventListener(
+  element.querySelector('a')?.addEventListener(
     'click',
-    () => {
+    (e) => {
+      // Don't trigger browseCardClicked if clicking on user actions (bookmark/copy link)
+      if (e.target && e.target.closest('.user-actions')) {
+        return;
+      }
       pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
-    },
-    { once: true },
-  );
-
-  // DataLayer - Browse card click event for Bookmark
-  element.querySelector('.browse-card-options .user-actions .bookmark')?.addEventListener(
-    'click',
-    (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, cardHeader, cardPosition);
-    },
-    { once: true },
-  );
-
-  // DataLayer - Browse card click event for Copy Link
-  element.querySelector('.browse-card-options .user-actions .copy-link')?.addEventListener(
-    'click',
-    (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
     },
     { once: true },
   );
