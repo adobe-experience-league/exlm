@@ -206,8 +206,8 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
 const buildCourseInfoContent = ({ el_course_duration, el_level, cardContent }) => {
   if (!el_course_duration && !el_level) return;
 
-  const levelText = el_level ? String(el_level).toUpperCase() : '';
-  const durationText = el_course_duration ? String(el_course_duration).toUpperCase() : '';
+  const levelText = el_level ? String(el_level)?.split(',')?.filter(Boolean)?.join(', ')?.toUpperCase() : '';
+  const durationText = el_course_duration ? String(el_course_duration)?.toUpperCase() : '';
   const separator = levelText && durationText ? ' | ' : '';
   const levelDurationText = `${levelText}${separator}${durationText}`;
 
@@ -245,7 +245,7 @@ const buildCourseStatusContent = ({ meta, el_course_module_count, cardContent })
     }
 
     const moduleCountText = placeholders.courseModuleCompletedCount
-      ? placeholders.courseModuleCompletedCount.replace('{}', completedModules).replace('{}', el_course_module_count)
+      ? placeholders?.courseModuleCompletedCount?.replace('{}', completedModules).replace('{}', el_course_module_count)
       : `${completedModules} of ${el_course_module_count} Complete`;
 
     statusRow.appendChild(createTag('div', { class: 'browse-card-module-count' }, moduleCountText));
@@ -380,17 +380,22 @@ const buildCardContent = async (card, model) => {
 
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
-  let bookmarkTrackingInfo;
+  let trackingInfo;
   if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
     const lang = document.querySelector('html').lang || 'en';
     const [, courseId] = model.viewLink?.split(`/${lang}/`) || [];
-    bookmarkTrackingInfo = {
+
+    const solution = model?.product?.length ? model?.product[0] : '';
+    const fullSolution = model?.product?.length ? model?.product?.join(',') : '';
+
+    trackingInfo = {
       destinationDomain: model.viewLink,
       course: {
         id: courseId || model.id,
         title: model.title,
-        solution: model.product,
-        role: model.role,
+        solution,
+        fullSolution,
+        role: model.role || '',
       },
     };
   }
@@ -402,7 +407,7 @@ const buildCardContent = async (card, model) => {
     link: copyLink,
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
     copyConfig: failedToLoad ? false : undefined,
-    bookmarkTrackingInfo,
+    trackingInfo,
     bookmarkCallback: (linkType, position) => {
       pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, linkType, position);
     },
@@ -704,29 +709,28 @@ export async function buildCard(container, element, model) {
     element.appendChild(card);
   }
 
-  // Find the closest section header for this specific card
-  const cardHeader = (() => {
-    let currentElement = element;
+  // DataLayer - Browse Cards
 
-    while (currentElement?.parentElement) {
-      currentElement = currentElement.parentElement;
-      const cardsHeader = currentElement.querySelector('.browse-cards-block-title');
-      const recCardsHeader = currentElement.querySelector('.rec-block-header');
+  let cardHeader = '';
+  const currentBlock = card.closest('.block');
+  const headerEl = currentBlock?.querySelector(
+    '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
+  );
+  if (headerEl) {
+    const cloned = headerEl.cloneNode(true);
+    // Remove any PII or masked spans
+    cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
+    // Get cleaned text
+    cardHeader = cloned.innerText.trim();
+  }
 
-      if (cardsHeader && cardsHeader.children && cardsHeader.children.length > 0) {
-        const immediateChild = cardsHeader.children[0];
-        return immediateChild?.innerText?.trim() || '';
-      }
+  cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
 
-      if (recCardsHeader) {
-        return recCardsHeader?.innerText?.trim() || '';
-      }
-    }
-
-    return '';
-  })();
-
-  const cardPosition = String(Array.from(element.parentElement.children).indexOf(element) + 1);
+  let cardPosition = '';
+  if (element?.parentElement?.children) {
+    const siblings = Array.from(element.parentElement.children);
+    cardPosition = String(siblings.indexOf(element) + 1);
+  }
 
   // Update the UserActions callbacks with the calculated values
   const cardOptions = card.querySelector('.browse-card-options');

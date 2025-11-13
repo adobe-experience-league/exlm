@@ -10,13 +10,13 @@ import { assetInteractionModel } from '../analytics/lib-analytics.js';
  * @param {string} params.text - Text to be copied to the clipboard.
  * @param {string} params.toastText - Text to be displayed in a toast notification.
  */
-export function copyToClipboard({ assetId = '', text, toastText }) {
+export function copyToClipboard({ assetId = '', text, toastText, trackingInfo }) {
   try {
     navigator.clipboard.writeText(text);
     if (toastText) {
       sendNotice(toastText);
     }
-    assetInteractionModel(assetId, 'Copy');
+    assetInteractionModel(assetId, 'Copy', { trackingInfo });
   } catch (err) {
     /* eslint-disable-next-line no-console */
     console.error('Error copying link to clipboard:', err);
@@ -33,7 +33,7 @@ export function copyToClipboard({ assetId = '', text, toastText }) {
  * @param {Function} config.callback - Optional callback function to be called after copy action.
  */
 export function copyHandler(config) {
-  const { id, link, tooltip, callback, linkType, position, element } = config;
+  const { id, link, tooltip, trackingInfo, callback, linkType, position, element } = config;
 
   // Get cardHeader and cardPosition from the card element if not provided
   const card = element?.closest?.('.browse-card');
@@ -45,6 +45,7 @@ export function copyHandler(config) {
       assetId: id,
       text,
       toastText: tooltip?.copyToastText,
+      trackingInfo,
     });
     if (callback) callback(finalLinkType, finalPosition);
   }

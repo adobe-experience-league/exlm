@@ -43,9 +43,9 @@ let placeholders = {};
  */
 function getTextWrapConfig(text) {
   const len = text.length;
-  if (len >= 70) return { charLength: 30, fontSize: 16 };
-  if (len >= 60) return { charLength: 30, fontSize: 18 };
-  if (len >= 40) return { charLength: 30, fontSize: 20 };
+  if (len >= 70) return { charLength: 40, fontSize: 16 };
+  if (len >= 60) return { charLength: 36, fontSize: 18 };
+  if (len >= 40) return { charLength: 31, fontSize: 20 };
   return { charLength: 25, fontSize: 23 };
 }
 

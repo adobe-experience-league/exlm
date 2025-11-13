@@ -23,7 +23,7 @@ try {
  * @param {Object} config.bookmarkConfig - Bookmark configuration for label and icons.
  * @param {Object} config.copyConfig - Copy configuration for label and icons.
  * @param {Function} config.callback - Callback function to be called on button click.
- * @param {Object} config.bookmarkTrackingInfo - tracking configuration for the bookmark action.
+ * @param {Object} config.trackingInfo - tracking configuration for the bookmark action.
  *
  * @returns {Object} - Object with a decorate method to render user actions.
  */
@@ -36,7 +36,7 @@ const UserActions = (config) => {
     bookmarkConfig,
     copyConfig,
     callback,
-    bookmarkTrackingInfo,
+    trackingInfo,
     bookmarkCallback,
     copyCallback,
   } = config;
@@ -122,7 +122,7 @@ const UserActions = (config) => {
                 placeholders?.profileNotUpdated ||
                 'An error occurred during profile update. Please try again at a later time.',
             },
-            bookmarkTrackingInfo,
+            trackingInfo,
             callback: bookmarkCallback,
           }),
       });
@@ -149,6 +149,7 @@ const UserActions = (config) => {
             },
             callback: copyCallback,
             element,
+            trackingInfo,
           }),
       });
     }

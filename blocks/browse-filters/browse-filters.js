@@ -752,7 +752,7 @@ async function handleSearchEngineSubscription(block) {
       if (!filterResultsEl.classList.contains('browse-hide-section')) {
         const analyticsFilters = generateAnalyticsFilters(block, response.totalCount);
         if (analyticsFilters) {
-          assetInteractionModel(null, 'Browse Filters', analyticsFilters);
+          assetInteractionModel(null, 'Browse Filters', { filters: analyticsFilters });
         }
       }
 
@@ -780,7 +780,7 @@ async function handleSearchEngineSubscription(block) {
     ) {
       const analyticsFilters = generateAnalyticsFilters(block, response.totalCount);
       if (analyticsFilters) {
-        assetInteractionModel(null, 'Browse Filters', analyticsFilters);
+        assetInteractionModel(null, 'Browse Filters', { filters: analyticsFilters });
         filterResultsEl.classList.add('analytics-interaction');
       }
     }
