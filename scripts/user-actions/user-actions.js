@@ -23,12 +23,12 @@ try {
  * @param {Object} config.bookmarkConfig - Bookmark configuration for label and icons.
  * @param {Object} config.copyConfig - Copy configuration for label and icons.
  * @param {Function} config.callback - Callback function to be called on button click.
- * @param {Object} config.bookmarkTrackingInfo - tracking configuration for the bookmark action.
+ * @param {Object} config.trackingInfo - tracking configuration for the bookmark action.
  *
  * @returns {Object} - Object with a decorate method to render user actions.
  */
 const UserActions = (config) => {
-  const { container, id, bookmarkPath, link, bookmarkConfig, copyConfig, callback, bookmarkTrackingInfo } = config;
+  const { container, id, bookmarkPath, link, bookmarkConfig, copyConfig, callback, trackingInfo } = config;
 
   /**
    * Renders an icon as an HTML string.
@@ -111,7 +111,7 @@ const UserActions = (config) => {
                 placeholders?.profileNotUpdated ||
                 'An error occurred during profile update. Please try again at a later time.',
             },
-            bookmarkTrackingInfo,
+            trackingInfo,
           }),
       });
     }
@@ -135,6 +135,7 @@ const UserActions = (config) => {
             tooltip: {
               copyToastText: placeholders?.userActionCopylinkToastText || 'URL copied',
             },
+            trackingInfo,
           }),
       });
     }

@@ -1,7 +1,7 @@
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { getPathDetails, htmlToElement, getConfig } from '../scripts.js';
 import { sendNotice } from '../toast/toast.js';
-import { assetInteractionModel, pushBookmarkEvent } from '../analytics/lib-analytics.js';
+import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import getEmitter from '../events.js';
 import { rewriteDocsPath } from '../utils/path-utils.js';
 
@@ -42,9 +42,6 @@ export async function bookmarkHandler(config) {
   if (idValue.includes(`/${languageCode}`)) {
     id = idValue.replace(`/${languageCode}`, '');
   }
-  if (bookmarkTrackingInfo) {
-    pushBookmarkEvent(bookmarkTrackingInfo);
-  }
   const { bookmarks = [] } = profileData;
   const targetBookmarkItem = bookmarks.find((bookmarkIdInfo) => isBookmarkSelected(bookmarkIdInfo, id));
   const newBookmarks = bookmarks.filter((bookmarkIdInfo) => !isBookmarkSelected(bookmarkIdInfo, id));
@@ -56,7 +53,7 @@ export async function bookmarkHandler(config) {
         element.dataset.bookmarked = true;
         bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
         sendNotice(tooltips?.bookmarkToastText);
-        assetInteractionModel(id, 'Bookmarked');
+        assetInteractionModel(id, 'Bookmarked', { trackingInfo: bookmarkTrackingInfo });
       })
       .catch(() => sendNotice(tooltips?.profileNotUpdated, 'error'));
   } else {
@@ -66,7 +63,7 @@ export async function bookmarkHandler(config) {
         element.dataset.bookmarked = false;
         bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
         sendNotice(tooltips?.removeBookmarkToastText);
-        assetInteractionModel(id, 'Bookmark Removed');
+        assetInteractionModel(id, 'Bookmark Removed', { trackingInfo: bookmarkTrackingInfo });
       })
       .catch(() => {
         sendNotice(tooltips?.profileNotUpdated, 'error');
