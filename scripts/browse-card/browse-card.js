@@ -206,8 +206,8 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
 const buildCourseInfoContent = ({ el_course_duration, el_level, cardContent }) => {
   if (!el_course_duration && !el_level) return;
 
-  const levelText = el_level ? String(el_level).toUpperCase() : '';
-  const durationText = el_course_duration ? String(el_course_duration).toUpperCase() : '';
+  const levelText = el_level ? String(el_level)?.split(',')?.filter(Boolean)?.join(', ')?.toUpperCase() : '';
+  const durationText = el_course_duration ? String(el_course_duration)?.toUpperCase() : '';
   const separator = levelText && durationText ? ' | ' : '';
   const levelDurationText = `${levelText}${separator}${durationText}`;
 
@@ -380,17 +380,22 @@ const buildCardContent = async (card, model) => {
 
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
-  let bookmarkTrackingInfo;
+  let trackingInfo;
   if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
     const lang = document.querySelector('html').lang || 'en';
     const [, courseId] = model.viewLink?.split(`/${lang}/`) || [];
-    bookmarkTrackingInfo = {
+
+    const solution = model?.product?.length ? model?.product[0] : '';
+    const fullSolution = model?.product?.length ? model?.product?.join(',') : '';
+
+    trackingInfo = {
       destinationDomain: model.viewLink,
       course: {
         id: courseId || model.id,
         title: model.title,
-        solution: model.product,
-        role: model.role,
+        solution,
+        fullSolution,
+        role: model.role || '',
       },
     };
   }
@@ -402,7 +407,7 @@ const buildCardContent = async (card, model) => {
     link: copyLink,
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
     copyConfig: failedToLoad ? false : undefined,
-    bookmarkTrackingInfo,
+    trackingInfo,
   });
 
   cardAction.decorate();
@@ -698,12 +703,22 @@ export async function buildCard(container, element, model) {
     element.appendChild(card);
   }
 
-  const cardHeader =
-    card.closest('.block')?.querySelector('.browse-cards-block-title')?.innerText.trim() ||
-    card.closest('.block')?.querySelector('.rec-block-header')?.innerText.trim() ||
-    card.closest('.block')?.querySelector('.inprogress-courses-header-wrapper')?.innerText.trim() ||
-    card.closest('.block')?.getAttribute('data-block-name')?.trim() ||
-    '';
+  // DataLayer - Browse Cards
+
+  let cardHeader = '';
+  const currentBlock = card.closest('.block');
+  const headerEl = currentBlock?.querySelector(
+    '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
+  );
+  if (headerEl) {
+    const cloned = headerEl.cloneNode(true);
+    // Remove any PII or masked spans
+    cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
+    // Get cleaned text
+    cardHeader = cloned.innerText.trim();
+  }
+
+  cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
 
   let cardPosition = '';
   if (element?.parentElement?.children) {

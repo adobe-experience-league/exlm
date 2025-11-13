@@ -444,7 +444,8 @@ export function pushVideoEvent(video, event = 'videoPlay') {
   });
 }
 
-export function assetInteractionModel(id, assetInteractionType, filters) {
+export function assetInteractionModel(id, assetInteractionType, options) {
+  const { filters, trackingInfo } = options || {};
   window.adobeDataLayer = window.adobeDataLayer || [];
   const dataLayerFilters = { ...UEFilters };
   Object.assign(dataLayerFilters, filters);
@@ -459,6 +460,7 @@ export function assetInteractionModel(id, assetInteractionType, filters) {
       linkType: '',
       solution: '',
     },
+    ...(trackingInfo?.course && { courses: trackingInfo.course }),
     ...dataLayerFilters,
     event: 'assetInteraction',
     asset: {
@@ -706,44 +708,6 @@ export async function pushStepsStartEvent(stepInfo) {
     // Log error but don't throw to prevent breaking the user experience
     console.error('Error pushing stepsStart event:', e);
   }
-}
-
-/**
- * Used to push a bookmark event to the Adobe data layer.
- * @param {Object} trackingInfo - Tracking information
- * @param {Object} [trackingInfo.course] - Course information (optional)
- * @param {string} trackingInfo.course.title - Title of the course
- * @param {string} trackingInfo.course.id - ID of the course
- * @param {string} trackingInfo.course.solution - Solution related to the course
- * @param {string} trackingInfo.course.role - Role associated with the course
- * @param {string} trackingInfo.destinationDomain - Destination domain for the link
- */
-export function pushBookmarkEvent(trackingInfo) {
-  window.adobeDataLayer = window.adobeDataLayer || [];
-
-  const dataLayerEntry = {
-    event: 'linkClicked',
-    link: {
-      linkTitle: 'Bookmark Collection',
-      linkLocation: 'header',
-      linkType: 'Custom',
-      destinationDomain: trackingInfo.destinationDomain,
-    },
-  };
-
-  if (trackingInfo.course) {
-    const courseSolutionFull = trackingInfo.course.fullSolution || trackingInfo.course.solution;
-
-    dataLayerEntry.courses = {
-      title: trackingInfo.course.title,
-      id: trackingInfo.course.id,
-      solution: trackingInfo.course.solution,
-      fullSolution: courseSolutionFull,
-      role: trackingInfo.course.role,
-    };
-  }
-
-  window.adobeDataLayer.push(dataLayerEntry);
 }
 
 /**

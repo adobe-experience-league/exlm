@@ -1,7 +1,7 @@
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { getPathDetails, htmlToElement, getConfig } from '../scripts.js';
 import { sendNotice } from '../toast/toast.js';
-import { assetInteractionModel, pushBookmarkEvent } from '../analytics/lib-analytics.js';
+import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import getEmitter from '../events.js';
 import { rewriteDocsPath } from '../utils/path-utils.js';
 
@@ -32,18 +32,15 @@ async function isBookmarked(bookmarkId) {
  * @param {HTMLElement} config.element - The element representing the bookmark button.
  * @param {string} config.id - Unique identifier for the asset to be bookmarked.
  * @param {string} config.tooltips - tooltips object to be displayed in a toast notification.
- * @param {Object} config.bookmarkTrackingInfo - Tracking configuration.
+ * @param {Object} config.trackingInfo - Tracking configuration.
  */
 export async function bookmarkHandler(config) {
-  const { element, id: idValue, bookmarkPath, tooltips, bookmarkTrackingInfo } = config;
+  const { element, id: idValue, bookmarkPath, tooltips, trackingInfo } = config;
   const { lang: languageCode } = getPathDetails();
   const profileData = await defaultProfileClient.getMergedProfile(true);
   let id = bookmarkPath || idValue;
   if (idValue.includes(`/${languageCode}`)) {
     id = idValue.replace(`/${languageCode}`, '');
-  }
-  if (bookmarkTrackingInfo) {
-    pushBookmarkEvent(bookmarkTrackingInfo);
   }
   const { bookmarks = [] } = profileData;
   const targetBookmarkItem = bookmarks.find((bookmarkIdInfo) => isBookmarkSelected(bookmarkIdInfo, id));
@@ -56,7 +53,7 @@ export async function bookmarkHandler(config) {
         element.dataset.bookmarked = true;
         bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
         sendNotice(tooltips?.bookmarkToastText);
-        assetInteractionModel(id, 'Bookmarked');
+        assetInteractionModel(id, 'Bookmarked', { trackingInfo });
       })
       .catch(() => sendNotice(tooltips?.profileNotUpdated, 'error'));
   } else {
@@ -66,7 +63,7 @@ export async function bookmarkHandler(config) {
         element.dataset.bookmarked = false;
         bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
         sendNotice(tooltips?.removeBookmarkToastText);
-        assetInteractionModel(id, 'Bookmark Removed');
+        assetInteractionModel(id, 'Bookmark Removed', { trackingInfo });
       })
       .catch(() => {
         sendNotice(tooltips?.profileNotUpdated, 'error');
