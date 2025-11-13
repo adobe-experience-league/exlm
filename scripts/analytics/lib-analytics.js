@@ -877,19 +877,17 @@ export function pushCourseStartEvent(courseData) {
  */
 export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition) {
   window.adobeDataLayer = window.adobeDataLayer || [];
+  const product = cardData?.product;
+  const cardFullSolution = Array.isArray(product) ? product.join(',') : product || '';
 
-  const cardFullSolution = Array.isArray(cardData?.product) ? cardData.product.join(',') : cardData?.product || '';
-
-  const cardSolution = Array.isArray(cardData?.product)
-    ? cardData.product[0]
-    : cardData?.product?.split(',')[0]?.trim() || '';
+  const cardSolution = Array.isArray(product) ? product[0] : product?.split(',')[0]?.trim() || '';
 
   const dataLayerEntry = {
     event: eventName,
     link: {
       contentType: cardData?.contentType?.toLowerCase().trim() || '',
       fullSolution: cardFullSolution,
-      solution: cardSolution,
+      solution: cardSolution || '',
       destinationDomain: cardData?.viewLink || '',
       linkTitle: cardData?.title || '',
       linkLocation: 'body',
