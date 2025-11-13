@@ -10,13 +10,13 @@ import { assetInteractionModel } from '../analytics/lib-analytics.js';
  * @param {string} params.text - Text to be copied to the clipboard.
  * @param {string} params.toastText - Text to be displayed in a toast notification.
  */
-export function copyToClipboard({ assetId = '', text, toastText }) {
+export function copyToClipboard({ assetId = '', text, toastText, trackingInfo }) {
   try {
     navigator.clipboard.writeText(text);
     if (toastText) {
       sendNotice(toastText);
     }
-    assetInteractionModel(assetId, 'Copy');
+    assetInteractionModel(assetId, 'Copy', { trackingInfo });
   } catch (err) {
     /* eslint-disable-next-line no-console */
     console.error('Error copying link to clipboard:', err);
@@ -32,13 +32,14 @@ export function copyToClipboard({ assetId = '', text, toastText }) {
  * @param {string} config.tooltip - Tooltip to be displayed in a toast notification.
  */
 export function copyHandler(config) {
-  const { id, link, tooltip } = config;
+  const { id, link, tooltip, trackingInfo } = config;
   if (link) {
     const text = link.startsWith('/') ? `${window.location.origin}${link}` : link;
     copyToClipboard({
       assetId: id,
       text,
       toastText: tooltip?.copyToastText,
+      trackingInfo,
     });
   }
 }
