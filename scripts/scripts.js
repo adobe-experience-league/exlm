@@ -975,6 +975,14 @@ async function loadLazy(doc) {
   const main = doc.querySelector('main');
   const preMain = doc.body.querySelector(':scope > aside');
   loadIms(); // start it early, asyncronously
+  
+  // Prefetch Coveo token early (non-blocking, parallel with blocks)
+  // All pages use Coveo for header search query suggestions
+  // Uses requestIdleCallback to avoid blocking - token ready before user interacts
+  import('./data-service/coveo/coveo-token-prefetch.js')
+    .then((module) => module.default())
+    .catch(() => {}); // Silent fail - blocks will fetch token themselves if needed
+  
   await loadThemes();
   if (preMain) await loadBlocks(preMain);
   await loadBlocks(main);
