@@ -206,8 +206,8 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
 const buildCourseInfoContent = ({ el_course_duration, el_level, cardContent }) => {
   if (!el_course_duration && !el_level) return;
 
-  const levelText = el_level ? String(el_level).toUpperCase() : '';
-  const durationText = el_course_duration ? String(el_course_duration).toUpperCase() : '';
+  const levelText = el_level ? String(el_level)?.split(',')?.filter(Boolean)?.join(', ')?.toUpperCase() : '';
+  const durationText = el_course_duration ? String(el_course_duration)?.toUpperCase() : '';
   const separator = levelText && durationText ? ' | ' : '';
   const levelDurationText = `${levelText}${separator}${durationText}`;
 
