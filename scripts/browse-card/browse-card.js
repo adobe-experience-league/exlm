@@ -698,12 +698,22 @@ export async function buildCard(container, element, model) {
     element.appendChild(card);
   }
 
-  const cardHeader =
-    card.closest('.block')?.querySelector('.browse-cards-block-title')?.innerText.trim() ||
-    card.closest('.block')?.querySelector('.rec-block-header')?.innerText.trim() ||
-    card.closest('.block')?.querySelector('.inprogress-courses-header-wrapper')?.innerText.trim() ||
-    card.closest('.block')?.getAttribute('data-block-name')?.trim() ||
-    '';
+  // DataLayer - Browse Cards
+
+  let cardHeader = '';
+  const currentBlock = card.closest('.block');
+  const headerEl = currentBlock?.querySelector(
+    '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
+  );
+  if (headerEl) {
+    const cloned = headerEl.cloneNode(true);
+    // Remove any PII or masked spans
+    cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
+    // Get cleaned text
+    cardHeader = cloned.innerText.trim();
+  }
+
+  cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
 
   let cardPosition = '';
   if (element?.parentElement?.children) {
