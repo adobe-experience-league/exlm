@@ -49,12 +49,13 @@ export default async function decorate(block) {
   const courseLink = getMetadata('og:url') || window.location.href;
 
   const [, courseIdFromLink] = courseLink?.split(`/${lang}/`) || [];
-  const bookmarkTrackingInfo = {
+  const trackingInfo = {
     destinationDomain: courseLink,
     course: {
       id: courseIdFromLink,
       title: courseName,
-      solution: solution.split(',').filter(Boolean),
+      solution: solution.split(',')[0].trim() || '',
+      fullSolution: solution || '',
       role,
     },
   };
@@ -113,8 +114,7 @@ export default async function decorate(block) {
   const bookmarkContainer = block.querySelector('.course-marquee-bookmark');
 
   // Add UserActions for bookmark functionality
-  window.addEventListener('delayed-load', async () => {
-    const { default: UserActions } = await import('../../scripts/user-actions/user-actions.js');
+  import('../../scripts/user-actions/user-actions.js').then(({ default: UserActions }) => {
     if (UserActions) {
       const { pathname } = window.location;
       const cardAction = UserActions({
@@ -127,7 +127,7 @@ export default async function decorate(block) {
           icons: ['bookmark-new', 'bookmark-active'],
         },
         copyConfig: false,
-        bookmarkTrackingInfo,
+        trackingInfo,
       });
       cardAction.decorate();
     }
