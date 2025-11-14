@@ -77,9 +77,9 @@ function wrapText(text, maxLength = 25) {
 
 function getCourseLandingPageUrl() {
   const parts = window.location.pathname.split('/').filter(Boolean);
-  if (parts.length >= 2) {
+  if (parts.length >= 3) {
     const url = new URL(window.location.origin);
-    url.pathname = `/${parts[0]}/${parts[1]}`;
+    url.pathname = `/${parts[0]}/${parts[1]}/${parts[2]}`;
     return url.toString();
   }
   return null;
