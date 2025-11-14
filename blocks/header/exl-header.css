@@ -491,6 +491,7 @@ button > .search-picker-label {
   background-color: var(--color-white);
   position: relative;
   z-index: 10;
+  height: 4rem;
 }
 
 @media (min-width: 1024px) {
