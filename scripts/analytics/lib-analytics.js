@@ -159,6 +159,22 @@ export async function pushPageDataLayer(language, searchTrackingData) {
     const { defaultProfileClient } = await import('../auth/profile.js');
     const userData = await defaultProfileClient.getMergedProfile();
     if (userData) {
+      // Transform industry IDs to titles for dataLayer
+      let industryTitles = userData.industryInterests || [];
+      if (industryTitles.length > 0) {
+        try {
+          const { fetchIndustryOptions } = await import('../profile/profile.js');
+          const industryOptions = await fetchIndustryOptions();
+
+          industryTitles = industryTitles.map((industryId) => {
+            const industry = industryOptions.find((option) => option.id === industryId);
+            return industry ? industry.Name : industryId;
+          });
+        } catch (error) {
+          console.error('Error fetching industry options for analytics:', error);
+        }
+      }
+
       user.userDetails = {
         ...user.userDetails,
         userAccountType: userData.account_type,
@@ -170,7 +186,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
         experienceLevel: userData.level || [],
         solutionLevel: userData.solutionLevels || [],
         certifications: userData.certifications || [],
-        industry: userData.industryInterests || [],
+        industry: industryTitles,
         notificationPref: userData.emailOptIn === true,
         org: userData.org || '',
         orgs: userData.orgs || [],
