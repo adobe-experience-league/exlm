@@ -75,8 +75,10 @@ export function generateQuestionDOM(block, displayIndex, totalQuestions, questio
 
     const inputWithLabel = htmlToElement(`
       <div>
-        <input type="${inputType}" name="${inputName}" id="${inputId}" value="${inputValue}" class="answer-input">
-        <label for="${inputId}" class="answer-label">${answer}</label>
+        <label class="answer-option-label">
+          <input type="${inputType}" name="${inputName}" id="${inputId}" value="${inputValue}" class="answer-input">
+          <span class="answer-label">${answer}</span>
+        </label>
       </div>
     `);
 
