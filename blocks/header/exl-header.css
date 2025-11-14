@@ -1,6 +1,7 @@
 /* stylelint-enforce-no-external-css-vars - this is used in header when included externally, it has to be all-inclusive, including variables */
 
 @charset "UTF-8";
+
 /* stylelint-disable  color-hex-length */
 :host {
   --header-padding-x: 16px;
@@ -1103,6 +1104,7 @@ button:focus {
     height: 100%;
     padding: var(--nav-root-item-padding);
     border-bottom: none;
+    line-height: 21px;
   }
 }
 
