@@ -3285,7 +3285,7 @@
         "name": "contentURL",
         "value": "",
         "label": "Content URL",
-        "description": "Provide a link to one of the following content types: Playlist, Tutorial, Documentation, Troubleshooting, On-Demand Event, Certification or Perspective"
+        "description": "Provide a link to one of the following content types: Course, Playlist, Tutorial, Documentation, Troubleshooting, On-Demand Event, Certification or Perspective"
       }
     ]
   },
