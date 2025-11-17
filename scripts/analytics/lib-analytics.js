@@ -784,7 +784,7 @@ export async function pushCourseCompletionEvent(courseId, currentCourses) {
   }
 
   const courseFullSolution = courseMeta?.solution || '';
-  const courseSolution = courseFullSolution.split(',')[0].trim() || '';
+  const courseSolution = courseFullSolution?.split(',')[0].trim() || '';
 
   window.adobeDataLayer.push({
     event: 'coursesCompleted',
@@ -810,7 +810,7 @@ export async function pushModuleStartEvent(courseId) {
   const stepInfo = await getCurrentStepInfo();
 
   const courseFullSolution = courseMeta?.solution || '';
-  const courseSolution = courseFullSolution.split(',')[0].trim() || '';
+  const courseSolution = courseFullSolution?.split(',')[0].trim() || '';
 
   window.adobeDataLayer.push({
     event: 'moduleStart',
@@ -837,7 +837,7 @@ export async function pushModuleCompletionEvent(courseId) {
   const stepInfo = await getCurrentStepInfo();
 
   const courseFullSolution = courseMeta?.solution || '';
-  const courseSolution = courseFullSolution.split(',')[0].trim() || '';
+  const courseSolution = courseFullSolution?.split(',')[0].trim() || '';
 
   window.adobeDataLayer.push({
     event: 'moduleCompleted',

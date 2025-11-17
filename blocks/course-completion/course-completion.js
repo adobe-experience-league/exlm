@@ -126,7 +126,7 @@ async function fetchCertificateData() {
 
   // Return certificate data with fallbacks for null values
   const courseFullSolution = courseMeta?.solution || '';
-  const courseSolution = courseFullSolution.split(',')[0].trim() || '';
+  const courseSolution = courseFullSolution?.split(',')[0].trim() || '';
 
   return {
     name: courseMeta?.heading || 'Course Title',

@@ -248,7 +248,7 @@ async function startModule(url = window.location.pathname) {
     // push course start event
     if (isFirstModule) {
       const courseFullSolution = courseMeta.solution || '';
-      const courseSolution = courseFullSolution.split(',')[0].trim() || '';
+      const courseSolution = courseFullSolution?.split(',')[0].trim() || '';
 
       await queueAnalyticsEvent(pushCourseStartEvent, {
         title: courseMeta.heading,
@@ -274,7 +274,7 @@ async function startModule(url = window.location.pathname) {
     // push course start event
     if (isFirstModule) {
       const courseFullSolution = courseMeta.solution || '';
-      const courseSolution = courseFullSolution.split(',')[0].trim() || '';
+      const courseSolution = courseFullSolution?.split(',')[0].trim() || '';
 
       await queueAnalyticsEvent(pushCourseStartEvent, {
         title: courseMeta.heading,
