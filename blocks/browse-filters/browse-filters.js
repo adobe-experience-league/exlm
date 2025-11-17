@@ -36,6 +36,9 @@ import {
   coveoFacetMap,
   dropdownOptions,
 } from './browse-topics.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
+import { getCurrentCourses } from '../../scripts/courses/course-profile.js';
+import BrowseCardsCourseEnricher from '../../scripts/browse-card/browse-cards-course-enricher.js';
 
 let placeholders = {};
 try {
@@ -737,7 +740,13 @@ async function handleSearchEngineSubscription(block) {
   const { results, searchResponseId, response } = search;
   if (results.length > 0) {
     try {
-      const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
+      let cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
+
+      // Enrich cards with course status information for signed-in users
+      if (await isSignedInUser()) {
+        const currentCourses = await getCurrentCourses();
+        cardsData = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus(cardsData, currentCourses);
+      }
       const renderCards =
         !filterResultsEl.dataset.searchresponseid ||
         (filterResultsEl.dataset.searchresponseid && filterResultsEl.dataset.searchresponseid !== searchResponseId) ||
@@ -761,6 +770,29 @@ async function handleSearchEngineSubscription(block) {
         const cardDiv = document.createElement('div');
         cardDiv.classList.add('browse-filter-card-item');
         buildCard(filterResultsEl, cardDiv, cardData);
+
+        // Add course-info-level-duration to all browse filter cards
+        const card = cardDiv.querySelector('.browse-card');
+        if (card && (cardData.el_course_duration || cardData.el_level)) {
+          const cardContent = card.querySelector('.browse-card-content');
+          const titleElement = cardContent.querySelector('.browse-card-title-text');
+
+          if (titleElement && !cardContent.querySelector('.browse-card-course-info')) {
+            const levelText = cardData.el_level
+              ? String(cardData.el_level)?.split(',')?.filter(Boolean)?.join(', ')?.toUpperCase()
+              : '';
+            const durationText = cardData.el_course_duration ? String(cardData.el_course_duration)?.toUpperCase() : '';
+            const separator = levelText && durationText ? ' | ' : '';
+            const levelDurationText = `${levelText}${separator}${durationText}`;
+
+            const courseInfoElement = createTag('div', { class: 'browse-card-course-info' });
+            courseInfoElement.appendChild(createTag('p', { class: 'course-info-level-duration' }, levelDurationText));
+
+            // Insert after the title element
+            titleElement.insertAdjacentElement('afterend', courseInfoElement);
+          }
+        }
+
         filterResultsEl.appendChild(cardDiv);
       });
       browseFilterForm.classList.add('is-result');
