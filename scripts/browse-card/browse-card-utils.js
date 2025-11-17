@@ -111,7 +111,7 @@ export const getCardData = async (articlePath, placeholders) => {
     viewLink: fullURL,
     viewLinkText: placeholders[viewLinkPlaceholderKey] ? placeholders[viewLinkPlaceholderKey] : `View ${type}`,
     // Course-specific metadata
-    el_level: getMetadata('loc-level', doc),
+    el_level: getMetadata('level', doc),
     el_course_duration: getMetadata('course-duration', doc),
     el_course_module_count: getMetadata('course-module-count', doc),
   };
