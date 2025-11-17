@@ -247,11 +247,16 @@ async function startModule(url = window.location.pathname) {
 
     // push course start event
     if (isFirstModule) {
+      const courseFullSolution = courseMeta.solution || '';
+      const courseSolution = courseFullSolution.split(',')[0].trim() || '';
+
       await queueAnalyticsEvent(pushCourseStartEvent, {
         title: courseMeta.heading,
         id: courseId,
-        solution: courseMeta.solution,
+        solution: courseSolution,
+        fullSolution: courseFullSolution,
         role: courseMeta.role,
+        level: courseMeta.level || '',
         startTime,
       });
     }
@@ -268,11 +273,16 @@ async function startModule(url = window.location.pathname) {
 
     // push course start event
     if (isFirstModule) {
+      const courseFullSolution = courseMeta.solution || '';
+      const courseSolution = courseFullSolution.split(',')[0].trim() || '';
+
       await queueAnalyticsEvent(pushCourseStartEvent, {
         title: courseMeta.heading,
         id: courseId,
-        solution: courseMeta.solution,
+        solution: courseSolution,
+        fullSolution: courseFullSolution,
         role: courseMeta.role,
+        level: courseMeta.level || '',
         startTime,
       });
     }

@@ -125,13 +125,18 @@ async function fetchCertificateData() {
   }
 
   // Return certificate data with fallbacks for null values
+  const courseFullSolution = courseMeta?.solution || '';
+  const courseSolution = courseFullSolution.split(',')[0].trim() || '';
+
   return {
     name: courseMeta?.heading || 'Course Title',
     completionTimeInHrs: completionHours || '',
     userName: userName || 'User',
     completionDate: completionDate || '',
-    solution: courseMeta?.solution || '',
+    solution: courseSolution,
+    fullSolution: courseFullSolution,
     role: courseMeta?.role || '',
+    level: courseMeta?.level || '',
     id: courseId || '',
   };
 }
@@ -200,7 +205,9 @@ async function downloadCertificate(canvas, courseData, downloadButton) {
       action: 'download',
       title: courseData.name,
       solution: courseData.solution,
+      fullSolution: courseData.fullSolution,
       role: courseData.role,
+      level: courseData.level,
       linkTitle: downloadButton.textContent?.trim(),
       destinationDomain: window.location.href,
       id: courseData.id,
@@ -236,7 +243,9 @@ async function shareToLinkedIn(courseData, linkedInShareBtn) {
     action: 'share',
     title: courseData.name,
     solution: courseData.solution,
+    fullSolution: courseData.fullSolution,
     role: courseData.role,
+    level: courseData.level,
     linkTitle: linkedInShareBtn.textContent?.trim(),
     destinationDomain: window.location.href,
     id: courseData.id,
