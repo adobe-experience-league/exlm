@@ -882,6 +882,10 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
 
   const cardSolution = Array.isArray(product) ? product[0] : product?.split(',')[0]?.trim() || '';
 
+  // Determining if the card is in list or grid view
+  const block = document.querySelector('.upcoming-event-block');
+  const viewType = block?.classList.contains('list') ? 'List' : 'grid';
+
   const dataLayerEntry = {
     event: eventName,
     link: {
@@ -891,7 +895,7 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
       destinationDomain: cardData?.viewLink || '',
       linkTitle: cardData?.title || '',
       linkLocation: 'body',
-      linkType: cardHeader,
+      linkType: `${viewType} | ${cardHeader}`,
       position: cardPosition,
     },
   };
