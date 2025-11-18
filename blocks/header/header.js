@@ -103,11 +103,10 @@ const brandDecorator = (brandBlock, decoratorOptions) => {
   simplifySingleCellBlock(brandBlock);
   const brandLink = brandBlock.querySelector('a');
   brandBlock.replaceChildren(brandLink);
-  const { lang } = getPathDetails();
   updateLinks(brandBlock, (currentHref) => {
     let link = currentHref;
-    if (link === '/' && lang !== 'en') {
-      link = `/${lang}`;
+    if (link === '/' && decoratorOptions.lang !== 'en') {
+      link = `/${decoratorOptions.lang}`;
     }
     const url = new URL(link, decoratorOptions.navLinkOrigin);
     return url.href;
@@ -634,11 +633,10 @@ const adobeLogoDecorator = async (adobeLogoBlock, decoratorOptions) => {
   simplifySingleCellBlock(adobeLogoBlock);
   decorateIcons(adobeLogoBlock);
   adobeLogoBlock.querySelector('a').setAttribute('aria-label', 'Adobe Experience League'); // a11y
-  const { lang } = getPathDetails();
   updateLinks(adobeLogoBlock, (currentHref) => {
     let link = currentHref;
-    if (link === '/' && lang !== 'en') {
-      link = `/${lang}`;
+    if (link === '/' && decoratorOptions.lang !== 'en') {
+      link = `/${decoratorOptions.lang}`;
     }
     const url = new URL(link, decoratorOptions.navLinkOrigin);
     return url.href;
