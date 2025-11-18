@@ -771,28 +771,6 @@ async function handleSearchEngineSubscription(block) {
         cardDiv.classList.add('browse-filter-card-item');
         buildCard(filterResultsEl, cardDiv, cardData);
 
-        // Add course-info-level-duration to all browse filter cards
-        const card = cardDiv.querySelector('.browse-card');
-        if (card && (cardData.el_course_duration || cardData.el_level)) {
-          const cardContent = card.querySelector('.browse-card-content');
-          const titleElement = cardContent.querySelector('.browse-card-title-text');
-
-          if (titleElement && !cardContent.querySelector('.browse-card-course-info')) {
-            const levelText = cardData.el_level
-              ? String(cardData.el_level)?.split(',')?.filter(Boolean)?.join(', ')?.toUpperCase()
-              : '';
-            const durationText = cardData.el_course_duration ? String(cardData.el_course_duration)?.toUpperCase() : '';
-            const separator = levelText && durationText ? ' | ' : '';
-            const levelDurationText = `${levelText}${separator}${durationText}`;
-
-            const courseInfoElement = createTag('div', { class: 'browse-card-course-info' });
-            courseInfoElement.appendChild(createTag('p', { class: 'course-info-level-duration' }, levelDurationText));
-
-            // Insert after the title element
-            titleElement.insertAdjacentElement('afterend', courseInfoElement);
-          }
-        }
-
         filterResultsEl.appendChild(cardDiv);
       });
       browseFilterForm.classList.add('is-result');
