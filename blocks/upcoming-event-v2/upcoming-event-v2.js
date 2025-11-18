@@ -11,11 +11,19 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 
 const eventTypeDropdownOptions = [
   { value: CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY, title: CONTENT_TYPES.UPCOMING_EVENT.LABEL },
   { value: CONTENT_TYPES.EVENT.MAPPING_KEY, title: CONTENT_TYPES.EVENT.LABEL },
 ];
+
+const SORT_KEY_MAP = {
+  descending: COVEO_SORT_OPTIONS.MOST_RECENT,
+  ascending: COVEO_SORT_OPTIONS.OLDEST,
+};
+
+const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
 /**
  * Retrieves a list of unique product focus items from live events data.
@@ -188,14 +196,16 @@ export default async function decorate(block) {
   const contentTypesFromUrl = urlParams.get('contentTypes')
     ? urlParams.get('contentTypes').split(',').map(xssSanitizeQueryParamValue)
     : [];
+  const sortFromUrl = urlParams.get('sort') ? SORT_KEY_MAP[urlParams.get('sort')] : undefined;
 
   const filterConfig = {
     numberOfResults: 16,
     contentTypes: contentTypesFromUrl,
     products: productsFromUrl,
-    sort: '', // TODO :: wire up sort parameter to API.
+    sort: sortFromUrl,
   };
-  const buildCardsShimmer = new BrowseCardShimmer();
+  const mobileVIew = isMobile();
+  const buildCardsShimmer = new BrowseCardShimmer(mobileVIew ? 4 : 6);
   block.innerHTML = '';
   block.classList.add('upcoming-event-block');
 
@@ -238,11 +248,12 @@ export default async function decorate(block) {
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
   block.appendChild(contentDiv);
 
-  async function fetchCardsData({ products = [], contentTypes = [], numberOfResults = 16 }) {
+  async function fetchCardsData({ products = [], contentTypes = [], numberOfResults = 16, sort }) {
     const param = {
       contentType: contentTypes.length > 0 ? contentTypes : [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY],
       ...(products.length > 0 && { product: products }),
       noOfResults: numberOfResults,
+      sortCriteria: sort,
     };
     updateUrlParams();
     const data = await BrowseCardsDelegate.fetchCardData(param);
@@ -251,7 +262,7 @@ export default async function decorate(block) {
 
   function updateUrlParams() {
     const url = new URL(window.location);
-    const { products, contentTypes } = filterConfig;
+    const { products, contentTypes, sort } = filterConfig;
     if (products.length > 0) {
       url.searchParams.set('products', products.join(','));
     } else {
@@ -261,6 +272,12 @@ export default async function decorate(block) {
       url.searchParams.set('contentTypes', contentTypes.join(','));
     } else {
       url.searchParams.delete('contentTypes');
+    }
+    const sortKey = sort ? Object.keys(SORT_KEY_MAP).find((key) => SORT_KEY_MAP[key] === sort) : null;
+    if (sort) {
+      url.searchParams.set('sort', sortKey);
+    } else {
+      url.searchParams.delete('sort');
     }
     window.history.pushState({}, '', url.toString());
   }
@@ -314,10 +331,10 @@ export default async function decorate(block) {
     });
   }
 
-  async function fetchAndRenderCards({ products, contentTypes, numberOfResults }) {
+  async function fetchAndRenderCards({ products, contentTypes, numberOfResults, sort }) {
     buildCardsShimmer.addShimmer(block);
     contentDiv.innerHTML = '';
-    const cardModels = await fetchCardsData({ products, contentTypes, numberOfResults });
+    const cardModels = await fetchCardsData({ products, contentTypes, numberOfResults, sort });
     updateTags();
     if (cardModels?.length > 0) {
       contentDiv.style.display = '';
@@ -326,6 +343,7 @@ export default async function decorate(block) {
         buildCard(contentDiv, cardDiv, cardData);
         contentDiv.appendChild(cardDiv);
       });
+      buildUpdatedCards(block, contentDiv, cardModels, placeholders);
       handleGridViewButtons();
     } else {
       const existingError = block.querySelector('.event-no-results');
@@ -457,7 +475,11 @@ export default async function decorate(block) {
       .map((item) => item.trim())
       .filter(Boolean);
     filterConfig.products = selectedFilters;
-    fetchAndRenderCards({ products: selectedFilters, contentTypes: filterConfig.contentTypes });
+    fetchAndRenderCards({
+      products: selectedFilters,
+      contentTypes: filterConfig.contentTypes,
+      sort: filterConfig.sort,
+    });
   });
 
   contentTypeDropdown.handleOnChange((selectedValues) => {
@@ -465,7 +487,7 @@ export default async function decorate(block) {
       .map((item) => item.trim())
       .filter(Boolean);
     filterConfig.contentTypes = selectedFilters;
-    fetchAndRenderCards({ products: filterConfig.products, contentTypes: selectedFilters });
+    fetchAndRenderCards({ products: filterConfig.products, contentTypes: selectedFilters, sort: filterConfig.sort });
   });
 
   /**
@@ -498,18 +520,23 @@ export default async function decorate(block) {
   function renderSortContainerForUpcomingEvents(data) {
     const wrapper = block.querySelector('.browse-sort-container');
     if (!wrapper) return;
-
+    const sortKey = filterConfig.sort
+      ? Object.keys(SORT_KEY_MAP).find((key) => SORT_KEY_MAP[key] === filterConfig.sort)
+      : 'descending';
+    const newestLabel = placeholders?.filterSortNewestLabel || 'Newest';
+    const oldestLabel = placeholders?.filterSortOldestLabel || 'Oldest';
+    const defaultLabel = sortKey === 'descending' ? newestLabel : oldestLabel;
     const sortContainer = htmlToElement(`
       <div class="sort-container">
       <span>${placeholders?.filterSortLabel || 'Sort by'}:</span>
-    <button class="sort-drop-btn">${placeholders?.filterSortNewestLabel || 'Newest'}</button>
+    <button class="sort-drop-btn">${defaultLabel}</button>
     <div class="sort-dropdown-content">
-      <a href="/" data-sort-criteria="descending" data-sort-caption="${
-        placeholders?.filterSortNewestLabel || 'Newest'
-      }">${placeholders?.filterSortNewestLabel || 'Newest'}</a>
-      <a href="/" data-sort-criteria="ascending" data-sort-caption="${
-        placeholders?.filterSortOldestLabel || 'Oldest'
-      }">${placeholders?.filterSortOldestLabel || 'Oldest'}</a>
+      <a href="/" class="${
+        sortKey === 'descending' ? 'selected' : ''
+      }" data-sort-criteria="descending" data-sort-caption="${newestLabel}">${newestLabel}</a>
+      <a href="/" class="${
+        sortKey === 'ascending' ? 'selected' : ''
+      }" data-sort-criteria="ascending" data-sort-caption="${oldestLabel}">${oldestLabel}</a>
     </div>
     </div>
   `);
@@ -518,8 +545,6 @@ export default async function decorate(block) {
     const dropDownBtn = sortContainer.querySelector('.sort-drop-btn');
     const sortDropdown = sortContainer.querySelector('.sort-dropdown-content');
     const sortLinks = sortDropdown.querySelectorAll('a');
-
-    sortLinks[0].classList.add('selected');
 
     dropDownBtn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -553,16 +578,16 @@ export default async function decorate(block) {
 
         sortLinks.forEach((a) => a.classList.remove('selected'));
         link.classList.add('selected');
-
-        const selectedFilters = [...block.querySelectorAll('.browse-tags')].map((tag) => tag.getAttribute('value'));
-
-        const sortedData = fetchFilteredCardData(data, selectedFilters, sortCriteria);
-        contentDiv.innerHTML = '';
-        buildUpdatedCards(block, contentDiv, sortedData, placeholders);
+        const sortValue = SORT_KEY_MAP[sortCriteria];
+        filterConfig.sort = sortValue;
+        fetchAndRenderCards({
+          products: filterConfig.products,
+          contentTypes: filterConfig.contentTypes,
+          sort: sortValue,
+        });
       });
     });
   }
 
-  // TODO :: wire up sort parameter to API.
   renderSortContainerForUpcomingEvents(initCardModels);
 }
