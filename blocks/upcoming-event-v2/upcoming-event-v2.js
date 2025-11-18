@@ -4,12 +4,18 @@ import {
   htmlToElement,
   getConfig,
   xssSanitizeQueryParamValue,
+  createTag,
 } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+
+const eventTypeDropdownOptions = [
+  { value: CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY, title: CONTENT_TYPES.UPCOMING_EVENT.LABEL },
+  { value: CONTENT_TYPES.EVENT.MAPPING_KEY, title: CONTENT_TYPES.EVENT.LABEL },
+];
 
 /**
  * Retrieves a list of unique product focus items from live events data.
@@ -175,6 +181,21 @@ export default async function decorate(block) {
     (row) => row.firstElementChild,
   );
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const productsFromUrl = urlParams.get('products')
+    ? urlParams.get('products').split(',').map(xssSanitizeQueryParamValue)
+    : [];
+  const contentTypesFromUrl = urlParams.get('contentTypes')
+    ? urlParams.get('contentTypes').split(',').map(xssSanitizeQueryParamValue)
+    : [];
+
+  const filterConfig = {
+    numberOfResults: 16,
+    contentTypes: contentTypesFromUrl,
+    products: productsFromUrl,
+    sort: '', // TODO :: wire up sort parameter to API.
+  };
+  const buildCardsShimmer = new BrowseCardShimmer();
   block.innerHTML = '';
   block.classList.add('upcoming-event-block');
 
@@ -209,81 +230,46 @@ export default async function decorate(block) {
 
   decorateIcons(headerDiv.querySelector('.view-switcher'));
 
-  const tagsContainer = document.createElement('div');
-  tagsContainer.classList.add('browse-card-tags');
+  const tagsContainer = createTag('div', { class: 'browse-card-tags' });
   headerDiv.appendChild(tagsContainer);
 
   block.appendChild(headerDiv);
-  const products = await getListofProducts();
-  const productsList = [];
-  products.forEach((product) => {
-    productsList.push({
-      title: product,
-    });
-  });
 
-  // Initialize the dropdown with product options
-  const productDropdown = new Dropdown(
-    block.querySelector('.browse-card-dropdown'),
-    `${placeholders?.filterProductLabel || 'Product'}`,
-    productsList,
-    'multi-select',
-  );
+  const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
+  block.appendChild(contentDiv);
 
-  const contentDiv = document.createElement('div');
-  contentDiv.classList.add('browse-cards-block-content');
-
-  const parameters = {
-    contentType: CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
-  };
-
-  const buildCardsShimmer = new BrowseCardShimmer();
-  buildCardsShimmer.addShimmer(block);
-  let browseCardsContent;
-  try {
-    browseCardsContent = await BrowseCardsDelegate.fetchCardData(parameters);
-    // eslint-disable-next-line no-use-before-define
-    const filteredLiveEventsData = fetchFilteredCardData(browseCardsContent, []);
-
-    buildCardsShimmer.removeShimmer();
-
-    if (filteredLiveEventsData?.length) {
-      filteredLiveEventsData.forEach((cardData) => {
-        const cardDiv = document.createElement('div');
-        buildCard(contentDiv, cardDiv, cardData);
-        contentDiv.appendChild(cardDiv);
-      });
-      block.appendChild(contentDiv);
-    }
-  } catch (err) {
-    buildCardsShimmer.removeShimmer();
-    // eslint-disable-next-line no-console
-    console.error('Error loading upcoming event cards:', err);
+  async function fetchCardsData({ products = [], contentTypes = [], numberOfResults = 16 }) {
+    const param = {
+      contentType: contentTypes.length > 0 ? contentTypes : [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY],
+      ...(products.length > 0 && { product: products }),
+      noOfResults: numberOfResults,
+    };
+    updateUrlParams();
+    const data = await BrowseCardsDelegate.fetchCardData(param);
+    return data;
   }
 
-  // Extract filters from URL
-  // Extract and sanitize filters from URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const urlFilters = urlParams.get('filters')
-    ? urlParams.get('filters').split(',').map(xssSanitizeQueryParamValue)
-    : [];
-
-  const updateFiltersAndCards = (selectedFilters) => {
-    // Update URL params
+  function updateUrlParams() {
     const url = new URL(window.location);
-    if (selectedFilters.length) {
-      url.searchParams.set('filters', selectedFilters.join(','));
+    const { products, contentTypes } = filterConfig;
+    if (products.length > 0) {
+      url.searchParams.set('products', products.join(','));
     } else {
-      url.searchParams.delete('filters');
+      url.searchParams.delete('products');
+    }
+    if (contentTypes.length > 0) {
+      url.searchParams.set('contentTypes', contentTypes.join(','));
+    } else {
+      url.searchParams.delete('contentTypes');
     }
     window.history.pushState({}, '', url.toString());
+  }
 
-    // Update tags
-    tagsContainer.innerHTML = '';
+  function renderTags(selectedFilters = [], filterType) {
     selectedFilters.forEach((filter) => {
       const tagElement = htmlToElement(`
         <button class="browse-tags" value="${filter}">
-          <span>${placeholders?.filterProductLabel || 'Product'}: ${filter}</span>
+          <span>${filterType}: ${filter}</span>
           <span class="icon icon-close"></span>
         </button>
       `);
@@ -296,7 +282,18 @@ export default async function decorate(block) {
         });
       });
     });
+  }
 
+  function updateTags() {
+    // Update tags
+    tagsContainer.innerHTML = '';
+    const { products, contentTypes } = filterConfig;
+    renderTags(products, placeholders?.filterProductLabel || 'Product');
+    // TODO : Render the contentType labels instead of values here.
+    renderTags(contentTypes, placeholders?.filterEventTypeLabel || 'Event type');
+  }
+
+  function handleGridViewButtons() {
     const gridViewBtn = block.querySelector('.view-btn.grid-view');
     const listViewBtn = block.querySelector('.view-btn.list-view');
 
@@ -315,28 +312,131 @@ export default async function decorate(block) {
         setupExpandableDescription(card, placeholders);
       });
     });
+  }
 
-    // eslint-disable-next-line no-use-before-define
-    const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
-
+  async function fetchAndRenderCards({ products, contentTypes, numberOfResults }) {
+    buildCardsShimmer.addShimmer(block);
     contentDiv.innerHTML = '';
+    const cardModels = await fetchCardsData({ products, contentTypes, numberOfResults });
+    updateTags();
+    if (cardModels?.length > 0) {
+      contentDiv.style.display = '';
+      cardModels.forEach((cardData) => {
+        const cardDiv = createTag('div');
+        buildCard(contentDiv, cardDiv, cardData);
+        contentDiv.appendChild(cardDiv);
+      });
+      handleGridViewButtons();
+    } else {
+      const existingError = block.querySelector('.event-no-results');
+      if (existingError) existingError.remove(); // Prevent duplicate error message
 
-    const existingError = block.querySelector('.event-no-results');
-    if (existingError) existingError.remove(); // Prevent duplicate error message
-
-    // Show error message if selected product has no events
-    if (updatedData.length === 0) {
       const noResultsText =
         placeholders.noResultsTextBrowse ||
         'We are sorry, no results found matching the criteria. Try adjusting your search to view more content.';
       const errorMsg = htmlToElement(`
-    <div class="event-no-results">${noResultsText}</div>
-  `);
-
+        <div class="event-no-results">${noResultsText}</div>
+      `);
       contentDiv.style.display = 'none';
       block.appendChild(errorMsg);
-      return;
     }
+    buildCardsShimmer.removeShimmer();
+    return cardModels;
+  }
+
+  // TODO :: Refactor to remove block level await.
+  const [products, initCardModels] = await Promise.all([getListofProducts(), fetchAndRenderCards(filterConfig)]);
+  const productsList = [];
+  products.forEach((product) => {
+    productsList.push({
+      title: product,
+    });
+  });
+
+  // Initialize the dropdown with product options
+  const productDropdown = new Dropdown(
+    block.querySelector('.browse-card-dropdown'),
+    `${placeholders?.filterProductLabel || 'Product'}`,
+    productsList,
+    'multi-select',
+  );
+
+  const contentTypeDropdown = new Dropdown(
+    block.querySelector('.browse-card-dropdown'),
+    `${placeholders?.filterEventTypeLabel || 'Event type'}`,
+    eventTypeDropdownOptions,
+    'multi-select',
+  );
+
+  const updateFiltersAndCards = (selectedFilters) => {
+    // Update URL params
+    const url = new URL(window.location);
+    if (selectedFilters.length) {
+      url.searchParams.set('filters', selectedFilters.join(','));
+    } else {
+      url.searchParams.delete('filters');
+    }
+    window.history.pushState({}, '', url.toString());
+
+    // Update tags
+    // tagsContainer.innerHTML = '';
+    // selectedFilters.forEach((filter) => {
+    //   const tagElement = htmlToElement(`
+    //     <button class="browse-tags" value="${filter}">
+    //       <span>${placeholders?.filterProductLabel || 'Product'}: ${filter}</span>
+    //       <span class="icon icon-close"></span>
+    //     </button>
+    //   `);
+    //   tagsContainer.appendChild(tagElement);
+    //   decorateIcons(tagElement);
+    //   tagElement.addEventListener('click', () => {
+    //     tagElement.remove();
+    //     [...block.querySelectorAll('.browse-card-dropdown .custom-checkbox input')].forEach((checkbox) => {
+    //       if (checkbox.value === filter) checkbox.click();
+    //     });
+    //   });
+    // });
+
+    // const gridViewBtn = block.querySelector('.view-btn.grid-view');
+    // const listViewBtn = block.querySelector('.view-btn.list-view');
+
+    // gridViewBtn.addEventListener('click', () => {
+    //   block.classList.remove('list');
+    //   setActiveToggle(gridViewBtn, listViewBtn, 'active');
+    // });
+
+    // listViewBtn.addEventListener('click', () => {
+    //   block.classList.add('list');
+    //   setActiveToggle(listViewBtn, gridViewBtn, 'active');
+
+    //   const cards = block.querySelectorAll('.browse-card');
+    //   cards.forEach((card) => {
+    //     addCardDateInfo(card);
+    //     setupExpandableDescription(card, placeholders);
+    //   });
+    // });
+
+    // eslint-disable-next-line no-use-before-define
+    const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
+
+    //   contentDiv.innerHTML = '';
+
+    //   const existingError = block.querySelector('.event-no-results');
+    //   if (existingError) existingError.remove(); // Prevent duplicate error message
+
+    //   // Show error message if selected product has no events
+    //   if (updatedData.length === 0) {
+    //     const noResultsText =
+    //       placeholders.noResultsTextBrowse ||
+    //       'We are sorry, no results found matching the criteria. Try adjusting your search to view more content.';
+    //     const errorMsg = htmlToElement(`
+    //   <div class="event-no-results">${noResultsText}</div>
+    // `);
+
+    //     contentDiv.style.display = 'none';
+    //     block.appendChild(errorMsg);
+    //     return;
+    //   }
 
     contentDiv.style.display = '';
     buildUpdatedCards(block, contentDiv, updatedData, placeholders);
@@ -344,18 +444,28 @@ export default async function decorate(block) {
 
   // Pre-select checkboxes from URL filters
   [...block.querySelectorAll('.browse-card-dropdown .custom-checkbox input')]
-    .filter((input) => urlFilters.includes(input.value) && !input.checked)
+    .filter(
+      (input) => (productsFromUrl.includes(input.value) || contentTypesFromUrl.includes(input.value)) && !input.checked,
+    )
     .forEach((input) => input.click());
 
-  updateFiltersAndCards(urlFilters);
+  // updateFiltersAndCards(productsFromUrl);
 
   // Dropdown selection change handler
   productDropdown.handleOnChange((selectedValues) => {
     const selectedFilters = (Array.isArray(selectedValues) ? selectedValues : selectedValues.split(','))
       .map((item) => item.trim())
       .filter(Boolean);
+    filterConfig.products = selectedFilters;
+    fetchAndRenderCards({ products: selectedFilters, contentTypes: filterConfig.contentTypes });
+  });
 
-    updateFiltersAndCards(selectedFilters);
+  contentTypeDropdown.handleOnChange((selectedValues) => {
+    const selectedFilters = (Array.isArray(selectedValues) ? selectedValues : selectedValues.split(','))
+      .map((item) => item.trim())
+      .filter(Boolean);
+    filterConfig.contentTypes = selectedFilters;
+    fetchAndRenderCards({ products: filterConfig.products, contentTypes: selectedFilters });
   });
 
   /**
@@ -453,5 +563,6 @@ export default async function decorate(block) {
     });
   }
 
-  renderSortContainerForUpcomingEvents(browseCardsContent);
+  // TODO :: wire up sort parameter to API.
+  renderSortContainerForUpcomingEvents(initCardModels);
 }
