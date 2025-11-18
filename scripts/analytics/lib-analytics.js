@@ -904,7 +904,7 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
 
   // Determining if the card is in list or grid view
   const eventsBlock = document.querySelector('.upcoming-event-block');
-  const viewType = eventsBlock?.classList.contains('list') ? 'List' : 'grid';
+  const viewType = eventsBlock?.classList.contains('list') ? 'List' : 'Grid';
 
   const dataLayerEntry = {
     event: eventName,
