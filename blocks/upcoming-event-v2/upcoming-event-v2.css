@@ -1,100 +1,5 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 
-/** Sort styles start **/
-.upcoming-event-v2 .browse-cards-block-header .browse-upcoming-event-filter {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: space-between;
-}
-
-.upcoming-event-v2 .browse-cards-block-header .browse-sort-container {
-  margin-top: 24px;
-  align-self: flex-end;
-  display: flex;
-}
-
-.upcoming-event-v2 .browse-cards-block-header .sort-container {
-  display: flex;
-  align-items: center;
-  color: var(--spectrum-gray-700);
-  font-size: var(--spectrum-font-size-75);
-  justify-content: flex-end;
-  line-height: 15.6px;
-  position: relative;
-  text-align: right;
-}
-
-.upcoming-event-v2 .browse-cards-block-header .sort-drop-btn {
-  background: transparent;
-  cursor: pointer;
-  color: var(--spectrum-gray-700);
-  border: 0 none;
-  border-radius: 4px;
-  font-size: var(--spectrum-font-size-100);
-  font-weight: normal;
-  line-height: 17px;
-  margin: 0 0 0 8px;
-  padding: 0 20px 0 0;
-  position: relative;
-  text-align: left;
-}
-
-.upcoming-event-v2 .browse-cards-block-header .sort-drop-btn::after {
-  background-image: url('../../icons/down-arrow.svg');
-  background-position: 0 0;
-  background-repeat: no-repeat;
-  background-size: 8px;
-  content: '';
-  height: 6px;
-  position: absolute;
-  right: 0;
-  top: 7px;
-  width: 10px;
-}
-
-.upcoming-event-v2 .browse-cards-block-header .sort-container .sort-dropdown-content {
-  background: var(--spectrum-gray-50);
-  border: 1px solid var(--spectrum-gray-400);
-  border-radius: 4px;
-  color: var(--non-spectrum-input-text);
-  cursor: pointer;
-  display: none;
-  font-size: var(--spectrum-font-size-100);
-  font-weight: normal;
-  position: absolute;
-  right: 0;
-  text-align: left;
-  top: 25px;
-  width: 120px;
-  z-index: 15;
-}
-
-.upcoming-event-v2 .browse-cards-block-header .sort-container .sort-dropdown-content.show {
-  display: block;
-}
-
-.upcoming-event-v2 .browse-cards-block-header .sort-container .sort-dropdown-content a {
-  border: none;
-  color: var(--non-spectrum-charcoal-gray);
-  display: block;
-  font-size: var(--spectrum-font-size-100);
-  font-weight: normal;
-  text-decoration: none;
-  margin: 0;
-  padding: 5px 15px;
-  text-transform: capitalize;
-}
-
-.upcoming-event-v2 .browse-cards-block-header .sort-container .sort-dropdown-content a.selected {
-  background-image: url('../../icons/checkmark.svg');
-  background-position: 93% 12px;
-  background-repeat: no-repeat;
-  background-size: 12px;
-}
-
-/** Sort styles end **/
-
 .section.upcoming-event-v2-container {
   padding-bottom: 0;
 }
@@ -167,10 +72,6 @@
   margin-bottom: 24px;
 }
 
-.upcoming-event-v2 .browse-cards-block-title h2 {
-  color: var(--spectrum-gray-800);
-}
-
 .upcoming-event-v2 .browse-cards-block-content > div {
   min-height: 284px;
   flex: 0 0 320px;
@@ -195,18 +96,6 @@
 .upcoming-event-v2.featured-card-hidden-features .browse-cards-block-view,
 .upcoming-event-v2.featured-card-hidden-features .browse-cards-block-content {
   display: none;
-}
-
-.upcoming-event-v2 .browse-card.upcoming-event-card {
-  background-color: var(--spectrum-gray-50);
-}
-
-.upcoming-event-v2 .browse-card.upcoming-event-card .browse-card-banner {
-  background-color: var(--non-spectrum-adobe-red) !important;
-}
-
-.upcoming-event-v2 .browse-card.upcoming-event-card .browse-card-figure {
-  background-color: var(--spectrum-gray-900);
 }
 
 /** List view styles start **/
@@ -388,6 +277,8 @@
     flex-direction: column;
     align-items: center;
     gap: 4px;
+    margin-top: 50px;
+    margin-bottom: 10px;
   }
 
   .upcoming-event-v2.list .browse-card-figure .card-figure-date .date-display {
@@ -457,7 +348,6 @@
   .upcoming-event-v2.list .browse-card .browse-card-footer .browse-card-options {
     order: 2;
     align-self: flex-start;
-    margin: 3px;
   }
 
   .upcoming-event-v2.list .browse-card .browse-card-footer .browse-card-cta-element {
@@ -517,6 +407,7 @@
   .upcoming-event-v2.list .browse-cards-block-content > div .browse-card .browse-card-description-text.text-expanded {
     -webkit-line-clamp: 2;
     max-height: unset;
+    display: -webkit-box;
   }
 
   .upcoming-event-v2.list .browse-cards-block-content > div .browse-card .show-more,
@@ -549,6 +440,66 @@
 
   .upcoming-event-v2.list .browse-cards-block-content > div .browse-card.expanded .show-more {
     display: none;
+  }
+
+  /* Styling for location type with icon in list view */
+  .upcoming-event-v2.list .browse-card .browse-card-footer .location-type {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16.5px;
+    position: unset;
+    align-self: flex-start;
+    padding: 0;
+    color: var(--non-spectrum-dark-charcoal);
+    font-size: var(--spectrum-font-size-75);
+    font-weight: bold;
+    text-transform: none;
+  }
+
+  .upcoming-event-v2.list .browse-card .browse-card-footer .location-type span::first-letter {
+    text-transform: uppercase;
+  }
+
+  .upcoming-event-v2.list .browse-card .browse-card-footer .location-type .icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 5px;
+  }
+
+  .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner,
+  .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
+    text-align: center;
+    font-size: 16px;
+    color: var(--spectrum-gray-50);
+    opacity: 1;
+    position: relative;
+    padding: 10px 10%;
+    margin: 0;
+    order: 1;
+  }
+
+  .upcoming-event-v2.list
+    .browse-card.upcoming-event-card
+    .browse-card-figure
+    .event-series-banner-no-speakers::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    right: 0;
+    height: 3px;
+    background-color: #f00;
+    width: 80%;
+    transform: translateX(-50%);
+  }
+
+  .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after {
+    display: none;
+  }
+
+  .upcoming-event-v2.list .browse-card .browse-card-description-text {
+    display: block;
+    -webkit-line-clamp: unset;
   }
 
   /** List view styles end **/
