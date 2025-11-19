@@ -3,7 +3,12 @@
  */
 
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
-import { extractCourseModuleIds, getCurrentCourseMeta, getCourseCompletionPageUrl, urlContainsModule } from './course-utils.js';
+import {
+  extractCourseModuleIds,
+  getCurrentCourseMeta,
+  getCourseCompletionPageUrl,
+  urlContainsModule,
+} from './course-utils.js';
 import {
   pushModuleStartEvent,
   pushModuleCompletionEvent,
@@ -167,10 +172,11 @@ async function getModuleStatus(url = window.location.pathname) {
   }
 
   // Check if previous module is finished
-  const moduleIndex = courseMeta?.modules?.findIndex((moduleUrl) => {
-    const { moduleId: metaModuleId } = extractCourseModuleIds(moduleUrl);
-    return metaModuleId === moduleId;
-  }) ?? -1;
+  const moduleIndex =
+    courseMeta?.modules?.findIndex((moduleUrl) => {
+      const { moduleId: metaModuleId } = extractCourseModuleIds(moduleUrl);
+      return metaModuleId === moduleId;
+    }) ?? -1;
 
   if (moduleIndex > 0) {
     const prevModuleUrl = courseMeta.modules?.[moduleIndex - 1];
