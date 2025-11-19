@@ -12,7 +12,12 @@
  */
 
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { fetchLanguagePlaceholders, htmlToElement, xssSanitizeQueryParamValue } from '../../scripts/scripts.js';
+import {
+  fetchLanguagePlaceholders,
+  htmlToElement,
+  xssSanitizeQueryParamValue,
+  getPathDetails,
+} from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
@@ -68,7 +73,8 @@ const DROPDOWN_TYPE = 'multi-select';
  */
 async function getProductList() {
   try {
-    const courseIndex = await fetchCourseIndex();
+    const { lang } = getPathDetails();
+    const courseIndex = await fetchCourseIndex(lang);
 
     const products = courseIndex.reduce((acc, curr) => {
       if (curr?.coveoSolution) {

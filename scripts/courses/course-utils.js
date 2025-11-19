@@ -23,6 +23,18 @@ export function extractCourseModuleIds(url = window.location.pathname) {
 }
 
 /**
+ * Checks if a URL contains a specific module by comparing extracted module IDs
+ * @param {string} url - The URL to check
+ * @param {string} moduleId - The module ID to match against
+ * @returns {boolean} True if the URL contains the exact module ID
+ */
+export function urlContainsModule(url, moduleId) {
+  if (!url || !moduleId) return false;
+  const { moduleId: urlModuleId } = extractCourseModuleIds(url);
+  return urlModuleId === moduleId;
+}
+
+/**
  * Extracts the module fragment URL from the current page path.
  * For a path like /{locale}/courses/{collection}/{fragment}/{step}/...,
  * returns /{locale}/courses/{collection}/{fragment}
@@ -453,26 +465,28 @@ export async function getNextModuleFirstStep(url = window.location.pathname) {
     return null;
   }
 
-  // Extract the current module path from the URL
-  const pathParts = url.split('/');
-  const currentModulePath = pathParts.length > 4 ? pathParts[4] : '';
+  // Extract the current module ID from the URL
+  const { moduleId: currentModuleId } = extractCourseModuleIds(url);
 
-  if (!currentModulePath) {
+  if (!currentModuleId) {
     return null;
   }
 
-  // Find the current module index
-  const currentModuleIndex = courseInfo.modules.findIndex((moduleUrl) => moduleUrl.includes(currentModulePath));
+  // Find the current module index by comparing extracted module IDs
+  const currentModuleIndex = courseInfo.modules.findIndex((moduleUrl) => {
+    const { moduleId } = extractCourseModuleIds(moduleUrl);
+    return moduleId === currentModuleId;
+  });
 
   // If there's a next module, get its first step
   if (currentModuleIndex !== -1 && currentModuleIndex < courseInfo.modules.length - 1) {
-    const nextModuleUrl = courseInfo.modules[currentModuleIndex + 1];
+    const nextModuleUrl = courseInfo.modules?.[currentModuleIndex + 1];
 
     const nextModuleMeta = await getModuleMeta(nextModuleUrl);
 
     // If we have module steps, return the first one
-    if (nextModuleMeta && nextModuleMeta.moduleSteps && nextModuleMeta.moduleSteps.length > 0) {
-      return nextModuleMeta.moduleSteps[0].url;
+    if (nextModuleMeta?.moduleSteps?.length > 0) {
+      return nextModuleMeta.moduleSteps?.[0]?.url;
     }
   }
 
@@ -568,13 +582,15 @@ export async function isLastModuleOfCourse(url = window.location.pathname) {
   if (!courseInfo || !courseInfo.modules || !Array.isArray(courseInfo.modules) || courseInfo.modules.length === 0) {
     return false;
   }
-  const pathParts = url.split('/');
-  const currentModulePath = pathParts.length > 4 ? pathParts[4] : '';
+  const { moduleId: currentModuleId } = extractCourseModuleIds(url);
 
-  if (!currentModulePath) {
+  if (!currentModuleId) {
     return false;
   }
 
-  const currentModuleIndex = courseInfo.modules.findIndex((moduleUrl) => moduleUrl.includes(currentModulePath));
+  const currentModuleIndex = courseInfo.modules.findIndex((moduleUrl) => {
+    const { moduleId } = extractCourseModuleIds(moduleUrl);
+    return moduleId === currentModuleId;
+  });
   return currentModuleIndex === courseInfo.modules.length - 1;
 }
