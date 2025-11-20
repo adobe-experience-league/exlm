@@ -797,12 +797,11 @@ export function getConfig() {
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
-    coveoTokenUrl: `${cdnOrigin}/api/coveo-token?lang=${lang}`,
+    coveoTokenUrl: `${cdnOrigin}/api/action/coveo-token?lang=${lang}`,
     coveoSearchResultsUrl: isProd
       ? 'https://platform.cloud.coveo.com/rest/search/v2'
       : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
     coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
-    coveoToken: isProd ? 'xx937144af-8882-494f-8a5e-96460f4f25d4' : 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99',
     upcomingEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
@@ -968,6 +967,17 @@ async function loadThemes() {
   return Promise.allSettled(themeNames.map((theme) => loadCSS(`${window.hlx.codeBasePath}/styles/theme/${theme}.css`)));
 }
 
+/** load and execute the default export of the given js module path */
+async function loadDefaultModule(jsPath) {
+  try {
+    const mod = await import(jsPath);
+    if (mod.default) await mod.default();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(`failed to load module for ${jsPath}`, error);
+  }
+}
+
 /**
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
@@ -976,6 +986,13 @@ async function loadLazy(doc) {
   const main = doc.querySelector('main');
   const preMain = doc.body.querySelector(':scope > aside');
   loadIms(); // start it early, asyncronously
+
+  // Prefetch Coveo token early (non-blocking, parallel with blocks)
+  // All pages use Coveo for header search query suggestions
+  // Uses requestIdleCallback to avoid blocking - token ready before user interacts
+
+  loadDefaultModule('./data-service/coveo/coveo-token-prefetch.js');
+
   await loadThemes();
   if (preMain) await loadBlocks(preMain);
   await loadBlocks(main);
@@ -1021,17 +1038,6 @@ function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   window.setTimeout(() => import('./delayed.js'), 3000);
   // load anything that can be postponed to the latest here
-}
-
-/** load and execute the default export of the given js module path */
-async function loadDefaultModule(jsPath) {
-  try {
-    const mod = await import(jsPath);
-    if (mod.default) await mod.default();
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(`failed to load module for ${jsPath}`, error);
-  }
 }
 
 /**
