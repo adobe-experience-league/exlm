@@ -13,6 +13,7 @@ try {
 export const COVEO_SORT_OPTIONS = Object.freeze({
   RELEVANCE: 'relevancy',
   MOST_RECENT: 'date descending',
+  OLDEST: 'date ascending',
   MOST_POPULAR: '@el_view_count descending',
 });
 
