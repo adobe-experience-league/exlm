@@ -157,6 +157,7 @@ export default function decorate(block) {
         Tutorial: placeholders.searchContentTypeTutorialLabel || 'Tutorial',
         Event: placeholders.searchContentTypeEventLabel || 'Event',
         Playlist: placeholders.searchContentTypePlaylistLabel || 'Playlist',
+        Course: placeholders.searchContentTypeCourseLabel || 'Course',
         Perspective: placeholders.searchContentTypePerspectiveLabel || 'Perspective',
         Certification: placeholders.searchContentTypeCertificationLabel || 'Certification',
         Blogs: placeholders.searchContentTypeCommunityBlogsLabel || 'Blogs',
