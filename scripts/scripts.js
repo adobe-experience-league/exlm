@@ -167,6 +167,7 @@ export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 export const isCourseStep = matchesAnyTheme(/course-step/);
 export const isCertificatePage = () => !!document.querySelector('.course-completion'); // Checking for presence of course-completion block
+export const isPlaylistPage = () => window.location.pathname.includes('/playlists');
 
 /**
  * add a section for the left rail when on a browse page.
@@ -980,15 +981,7 @@ async function loadLazy(doc) {
   // All pages use Coveo for header search query suggestions
   // Uses requestIdleCallback to avoid blocking - token ready before user interacts
 
-  const pageURL = window.location.pathname;
-
-  const excludePages = ["/docs", "/playlists"];
-  
-  const shouldLoad = !excludePages.some(page => {
-    return pageURL.includes(page);
-  });
-  
-  if (shouldLoad) {
+  if (!isDocPage && !isPlaylistPage()) {
     import("./data-service/coveo/coveo-token-prefetch.js")
       .then((module) => module.default())
       .catch(() => {});
