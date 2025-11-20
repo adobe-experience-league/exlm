@@ -12,8 +12,7 @@
 
 import loadCoveoToken from './coveo-token-service.js';
 
-
- // Prefetch Coveo token during idle time, Skips if token is already cached.
+// Prefetch Coveo token during idle time, Skips if token is already cached.
 
 function prefetchCoveoTokenIdle() {
   // Check if token is already cached
@@ -28,7 +27,7 @@ function prefetchCoveoTokenIdle() {
   const prefetch = () => {
     // eslint-disable-next-line no-console
     console.info('[Coveo Prefetch] Starting token prefetch...');
-    
+
     loadCoveoToken()
       .then(() => {
         // eslint-disable-next-line no-console
@@ -41,7 +40,7 @@ function prefetchCoveoTokenIdle() {
   };
 
   // Use idle time to avoid impacting main thread; fallback to setTimeout
-  
+
   if ('requestIdleCallback' in window) {
     requestIdleCallback(prefetch, { timeout: 1000 });
   } else {
@@ -56,4 +55,3 @@ export default function initCoveoPrefetch() {
   // Start prefetch immediately - don't wait for 'load' event
   prefetchCoveoTokenIdle();
 }
-

@@ -10,6 +10,58 @@ import { COVEO_TOKEN } from '../../session-keys.js';
 let tokenFetchPromise = null;
 
 /**
+ * Fetches token from AIO Runtime service
+ * @returns {Promise<string>} The Coveo search token
+ * @private
+ */
+async function fetchCoveoTokenFromService() {
+  const { coveoTokenUrl } = getConfig();
+
+  try {
+    // eslint-disable-next-line no-console
+    console.debug('[Coveo Token] Fetching token from service:', coveoTokenUrl);
+
+    const response = await fetch(coveoTokenUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // Use default credentials to send cookies/origin headers
+      credentials: 'same-origin',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Token service returned ${response.status}: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.token) {
+      throw new Error('Token service returned empty token');
+    }
+
+    // Cache the token in sessionStorage for subsequent page loads
+    try {
+      sessionStorage.setItem(COVEO_TOKEN, data.token);
+      // eslint-disable-next-line no-console
+      console.debug('[Coveo Token] Token cached successfully in sessionStorage');
+    } catch (e) {
+      // sessionStorage might be full or disabled
+      // eslint-disable-next-line no-console
+      console.warn('[Coveo Token] Failed to cache token:', e.message);
+    }
+
+    // eslint-disable-next-line no-console
+    console.info('[Coveo Token] Token fetched successfully from service');
+    return data.token;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('[Coveo Token] Failed to fetch token from service:', error);
+    throw new Error(`Failed to load Coveo token: ${error.message}`);
+  }
+}
+
+/**
  * Fetches Coveo token from AIO Runtime service with session caching
  * @returns {Promise<string>} The Coveo search token
  * @throws {Error} If token fetch fails after all attempts
@@ -45,59 +97,5 @@ export default async function loadCoveoToken() {
   } finally {
     // Clear the promise cache after completion (success or failure)
     tokenFetchPromise = null;
-  }
-}
-
-/**
- * Fetches token from AIO Runtime service
- * @returns {Promise<string>} The Coveo search token
- * @private
- */
-async function fetchCoveoTokenFromService() {
-  const { coveoTokenUrl } = getConfig();
-
-  try {
-    // eslint-disable-next-line no-console
-    console.debug('[Coveo Token] Fetching token from service:', coveoTokenUrl);
-
-    const response = await fetch(coveoTokenUrl, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      // Use default credentials to send cookies/origin headers
-      credentials: 'same-origin',
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `Token service returned ${response.status}: ${response.statusText}`,
-      );
-    }
-
-    const data = await response.json();
-
-    if (!data.token) {
-      throw new Error('Token service returned empty token');
-    }
-
-    // Cache the token in sessionStorage for subsequent page loads
-    try {
-      sessionStorage.setItem(COVEO_TOKEN, data.token);
-      // eslint-disable-next-line no-console
-      console.debug('[Coveo Token] Token cached successfully in sessionStorage');
-    } catch (e) {
-      // sessionStorage might be full or disabled
-      // eslint-disable-next-line no-console
-      console.warn('[Coveo Token] Failed to cache token:', e.message);
-    }
-
-    // eslint-disable-next-line no-console
-    console.info('[Coveo Token] Token fetched successfully from service');
-    return data.token;
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('[Coveo Token] Failed to fetch token from service:', error);
-    throw new Error(`Failed to load Coveo token: ${error.message}`);
   }
 }

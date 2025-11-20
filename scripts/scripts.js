@@ -967,6 +967,17 @@ async function loadThemes() {
   return Promise.allSettled(themeNames.map((theme) => loadCSS(`${window.hlx.codeBasePath}/styles/theme/${theme}.css`)));
 }
 
+/** load and execute the default export of the given js module path */
+async function loadDefaultModule(jsPath) {
+  try {
+    const mod = await import(jsPath);
+    if (mod.default) await mod.default();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(`failed to load module for ${jsPath}`, error);
+  }
+}
+
 /**
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
@@ -975,13 +986,12 @@ async function loadLazy(doc) {
   const main = doc.querySelector('main');
   const preMain = doc.body.querySelector(':scope > aside');
   loadIms(); // start it early, asyncronously
-  
+
   // Prefetch Coveo token early (non-blocking, parallel with blocks)
   // All pages use Coveo for header search query suggestions
   // Uses requestIdleCallback to avoid blocking - token ready before user interacts
 
-
-  loadDefaultModule("./data-service/coveo/coveo-token-prefetch.js");
+  loadDefaultModule('./data-service/coveo/coveo-token-prefetch.js');
 
   await loadThemes();
   if (preMain) await loadBlocks(preMain);
@@ -1028,17 +1038,6 @@ function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   window.setTimeout(() => import('./delayed.js'), 3000);
   // load anything that can be postponed to the latest here
-}
-
-/** load and execute the default export of the given js module path */
-async function loadDefaultModule(jsPath) {
-  try {
-    const mod = await import(jsPath);
-    if (mod.default) await mod.default();
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(`failed to load module for ${jsPath}`, error);
-  }
 }
 
 /**
