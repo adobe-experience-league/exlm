@@ -82,6 +82,8 @@ const BrowseCardsDelegate = (() => {
    */
   let param = {};
 
+  const resultsCountData = {};
+
   /**
    * Handles Coveo data service to fetch card data.
    * @returns {Array} Array of card data.
@@ -90,7 +92,7 @@ const BrowseCardsDelegate = (() => {
    */
   const handleCoveoService = async () => {
     const { contentType } = param;
-
+    const paramsKey = JSON.stringify(param);
     if (contentType?.includes(CONTENT_TYPES.COMMUNITY.MAPPING_KEY)) {
       if (param?.role) {
         param.role = [];
@@ -107,6 +109,7 @@ const BrowseCardsDelegate = (() => {
       throw new Error('An error occurred');
     }
     if (cardData?.results?.length) {
+      resultsCountData[paramsKey] = cardData.totalCount || 0;
       return BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(cardData.results, cardData.searchUid);
     }
     return [];
@@ -280,8 +283,28 @@ const BrowseCardsDelegate = (() => {
         });
     });
 
+  const fetchCoveoFacetFields = (field) => new Promise((resolve, reject) => {
+      const dataSource = getExlPipelineDataSourceParams({ field, fetchFacets: true }, []);
+      const coveoService = new CoveoDataService(dataSource);
+      coveoService.fetchDataFromSource()
+        .then(async (facetsResponse) => {
+          const facets = facetsResponse?.values?.map((facet) => facet.value)?.filter(Boolean) || [];
+          resolve(facets);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+
+  const getTotalResultsCount = (params) => {
+    const paramsKey = JSON.stringify(params);
+    return resultsCountData[paramsKey] || 0;
+  }
+
   return {
     fetchCardData,
+    fetchCoveoFacetFields,
+    getTotalResultsCount,
   };
 })();
 

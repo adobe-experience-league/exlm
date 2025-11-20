@@ -1,5 +1,10 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 
+.upcoming-event-v2.block {
+  display: flex;
+  flex-direction: column;
+}
+
 /** Sort styles start **/
 .upcoming-event-v2 .browse-cards-block-header .browse-upcoming-event-filter {
   display: flex;
@@ -121,6 +126,7 @@
   justify-content: center;
   flex-direction: column;
   align-items: center;
+  order: 1;
 }
 
 .upcoming-event-v2 .browse-cards-block-header .browse-card-tags {
@@ -165,12 +171,22 @@
   gap: 32px;
   min-height: 284px;
   margin-bottom: 24px;
+  order: 2;
 }
 
 .upcoming-event-v2 .browse-card-shimmer {
   display: grid;
   grid-template-columns: 1fr;
   gap: 32px;
+  order: 3;
+}
+
+.upcoming-event-v2 .pagination {
+  order: 4;
+}
+
+.upcoming-event-v2 .event-no-results {
+  order: 5;
 }
 
 .upcoming-event-v2 .browse-cards-block-title h2 {
@@ -287,12 +303,15 @@
     padding-bottom: 40px;
   }
 
+  .upcoming-event-v2.block {
+    margin-bottom: 84px;
+  }
+
   .upcoming-event-v2 .browse-cards-block-content {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 32px;
     text-align: center;
-    margin-bottom: 84px;
   }
 
   .upcoming-event-v2 .browse-card-shimmer {

@@ -23,6 +23,7 @@ const fieldsToInclude = [
   'documenttype',
   'el_author_type',
   'el_contenttype',
+  'el_event_series',
   'el_id',
   'el_interactionstyle',
   'el_kudo_status',
@@ -55,7 +56,7 @@ const fieldsToInclude = [
   'sysdocumenttype',
   'type',
   'urihash',
-  'video_url',
+  'video_url'
 ];
 
 /**
@@ -134,6 +135,7 @@ export function getFacets(param) {
     ...(param.role ? [{ id: 'el_role', type: 'specific', currentValues: param.role }] : []),
     ...(param.authorType ? [{ id: 'author_type', type: 'specific', currentValues: param.authorType }] : []),
     ...(param.level ? [{ id: 'el_level', type: 'specific', currentValues: param.level }] : []),
+    ...(param.eventSeries ? [{ id: 'el_event_series', type: 'specific', currentValues: param.eventSeries }] : []),
   ];
 
   return constructCoveoFacet(facets);
@@ -167,6 +169,7 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
       ...(!param.feature ? { facets: getFacets(param) } : ''),
       ...(param.feature ? { aq: constructCoveoAdvancedQuery(param) } : ''),
       ...(param.aq ? { aq: param.aq } : ''),
+      ...(param.field ? { field: param.field } : ''),
       fieldsToInclude: fields,
     },
   };
@@ -174,6 +177,10 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
   // Set to select page
   if (param.firstResult) {
     dataSource.param.firstResult = param.firstResult;
+  }
+
+  if (param.fetchFacets) {
+    dataSource.url += '/values'
   }
 
   return dataSource;

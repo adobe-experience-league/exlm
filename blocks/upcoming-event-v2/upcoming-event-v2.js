@@ -12,8 +12,9 @@ import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeli
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
+import Pagination from '../../scripts/pagination/pagination.js';
 
-const eventTypeDropdownOptions = [
+const contentTypeDropdownOptions = [
   { value: CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY, title: CONTENT_TYPES.UPCOMING_EVENT.LABEL },
   { value: CONTENT_TYPES.EVENT.MAPPING_KEY, title: CONTENT_TYPES.EVENT.LABEL },
 ];
@@ -194,18 +195,28 @@ export default async function decorate(block) {
     ? urlParams.get('products').split(',').map(xssSanitizeQueryParamValue)
     : [];
   const contentTypesFromUrl = urlParams.get('contentTypes')
-    ? urlParams.get('contentTypes').split(',').map(xssSanitizeQueryParamValue)
+    ? urlParams.get('contentTypes').split(',').map(xssSanitizeQueryParamValue)?.map((key) => Object.values(CONTENT_TYPES).find((contentTypeConfig) => xssSanitizeQueryParamValue(contentTypeConfig.MAPPING_KEY) === key)?.MAPPING_KEY || key)
     : [];
   const sortFromUrl = urlParams.get('sort') ? SORT_KEY_MAP[urlParams.get('sort')] : undefined;
+  const eventSeriesFromUrl = urlParams.get('eventSeries')
+    ? urlParams.get('eventSeries').split(',').map(xssSanitizeQueryParamValue)
+    : [];
+  const firstResultFromUrl = urlParams.get('firstResult');
+
+  const mobileVIew = isMobile();
 
   const filterConfig = {
-    numberOfResults: 16,
+    numberOfResults: 3, // mobileVIew ? 8 : 16,
     contentTypes: contentTypesFromUrl,
     products: productsFromUrl,
     sort: sortFromUrl,
+    eventSeries: eventSeriesFromUrl,
+    firstResult: firstResultFromUrl && !isNaN(Number(firstResultFromUrl)) ? +firstResultFromUrl : 0,
   };
-  const mobileVIew = isMobile();
-  const buildCardsShimmer = new BrowseCardShimmer(mobileVIew ? 4 : 6);
+
+  console.log("********** filterConfig::", filterConfig);
+
+  const buildCardsShimmer = new BrowseCardShimmer(filterConfig.numberOfResults);
   block.innerHTML = '';
   block.classList.add('upcoming-event-block');
 
@@ -248,30 +259,65 @@ export default async function decorate(block) {
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
   block.appendChild(contentDiv);
 
-  async function fetchCardsData({ products = [], contentTypes = [], numberOfResults = 16, sort }) {
+  const pgNum = Math.floor(filterConfig.firstResult / filterConfig.numberOfResults);
+  const renderItems = ({ pgNum }) => {
+    console.log("******* render...pgNum::", pgNum);
+    const firstResult = pgNum * filterConfig.numberOfResults;
+    filterConfig.firstResult = firstResult;
+    fetchAndRenderCards({ firstResult });
+  };
+
+  const pagination = new Pagination({ wrapper: block, identifier: 'upcoming-event-v2', renderItems, pgNumber: pgNum, totalPages: 1 });
+
+
+
+
+  function resetPaginationStatus() {
+    filterConfig.firstResult = 0;
+    pagination.setCurrentPaginationStatus({ currentPageNumber: 0 });
+    pagination.updatePageNumberStyles();
+  }
+
+  async function fetchCardsData({ products = [], contentTypes = [], numberOfResults = filterConfig.numberOfResults, sort, eventSeries, firstResult }) {
     const param = {
       contentType: contentTypes.length > 0 ? contentTypes : [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY],
       ...(products.length > 0 && { product: products }),
       noOfResults: numberOfResults,
       sortCriteria: sort,
+      eventSeries,
+      firstResult
     };
     updateUrlParams();
+    console.log("------------- param::", param);
     const data = await BrowseCardsDelegate.fetchCardData(param);
-    return data;
+    const total = BrowseCardsDelegate.getTotalResultsCount(param);
+    const totalPages = Math.ceil(total / filterConfig.numberOfResults) || 1;
+    console.log("-------------- total::", total);
+    return { cards: data, totalCount: total, totalPages };
   }
 
   function updateUrlParams() {
     const url = new URL(window.location);
-    const { products, contentTypes, sort } = filterConfig;
+    const { products, contentTypes, sort, eventSeries, firstResult } = filterConfig;
     if (products.length > 0) {
       url.searchParams.set('products', products.join(','));
     } else {
       url.searchParams.delete('products');
     }
     if (contentTypes.length > 0) {
-      url.searchParams.set('contentTypes', contentTypes.join(','));
+      url.searchParams.set('contentTypes', contentTypes.map(xssSanitizeQueryParamValue).join(','));
     } else {
       url.searchParams.delete('contentTypes');
+    }
+    if (eventSeries.length > 0) {
+      url.searchParams.set('eventSeries', eventSeries.join(','));
+    } else {
+      url.searchParams.delete('eventSeries');
+    }
+    if (firstResult > 0) {
+      url.searchParams.set('firstResult', firstResult);
+    } else {
+      url.searchParams.delete('firstResult');
     }
     const sortKey = sort ? Object.keys(SORT_KEY_MAP).find((key) => SORT_KEY_MAP[key] === sort) : null;
     if (sort) {
@@ -282,11 +328,11 @@ export default async function decorate(block) {
     window.history.pushState({}, '', url.toString());
   }
 
-  function renderTags(selectedFilters = [], filterType) {
-    selectedFilters.forEach((filter) => {
+  function renderTags(tags = [], filterType) {
+    tags.forEach(({ value: filter, title }) => {
       const tagElement = htmlToElement(`
         <button class="browse-tags" value="${filter}">
-          <span>${filterType}: ${filter}</span>
+          <span>${filterType}: ${title}</span>
           <span class="icon icon-close"></span>
         </button>
       `);
@@ -304,10 +350,16 @@ export default async function decorate(block) {
   function updateTags() {
     // Update tags
     tagsContainer.innerHTML = '';
-    const { products, contentTypes } = filterConfig;
-    renderTags(products, placeholders?.filterProductLabel || 'Product');
-    // TODO : Render the contentType labels instead of values here.
-    renderTags(contentTypes, placeholders?.filterEventTypeLabel || 'Event type');
+    const { products, contentTypes, eventSeries } = filterConfig;
+    const productTags = products.map(p => ({ title: p, value: p }));
+    const contentTags = contentTypes.map(c => {
+      const title = contentTypeDropdownOptions.find(({ value }) => c === value)?.title;
+      return { title: title || c, value: c };
+    });
+    const eventTags = eventSeries.map(e => ({ title: e, value: e }));
+    renderTags(productTags, placeholders?.filterProductLabel || 'Product');
+    renderTags(contentTags, placeholders?.filterEventTypeLabel || 'Event type');
+    renderTags(eventTags, placeholders?.filterEventSeriesLabel || 'Event series');
   }
 
   function handleGridViewButtons() {
@@ -331,23 +383,19 @@ export default async function decorate(block) {
     });
   }
 
-  async function fetchAndRenderCards({ products, contentTypes, numberOfResults, sort }) {
+  async function fetchAndRenderCards({ products = filterConfig.products, contentTypes = filterConfig.contentTypes, numberOfResults, sort = filterConfig.sort, eventSeries = filterConfig.eventSeries, firstResult = filterConfig.firstResult }) {
     buildCardsShimmer.addShimmer(block);
     contentDiv.innerHTML = '';
-    const cardModels = await fetchCardsData({ products, contentTypes, numberOfResults, sort });
+    const existingError = block.querySelector('.event-no-results');
+    if (existingError) existingError.remove(); // Prevent duplicate error message
+    const { cards: cardModels, totalPages } = await fetchCardsData({ products, contentTypes, numberOfResults, sort, eventSeries, firstResult });
     updateTags();
     if (cardModels?.length > 0) {
       contentDiv.style.display = '';
-      cardModels.forEach((cardData) => {
-        const cardDiv = createTag('div');
-        buildCard(contentDiv, cardDiv, cardData);
-        contentDiv.appendChild(cardDiv);
-      });
       buildUpdatedCards(block, contentDiv, cardModels, placeholders);
       handleGridViewButtons();
     } else {
-      const existingError = block.querySelector('.event-no-results');
-      if (existingError) existingError.remove(); // Prevent duplicate error message
+
 
       const noResultsText =
         placeholders.noResultsTextBrowse ||
@@ -358,18 +406,22 @@ export default async function decorate(block) {
       contentDiv.style.display = 'none';
       block.appendChild(errorMsg);
     }
+    pagination.setCurrentPaginationStatus({ totalPageNumbers: totalPages });
+    pagination.updatePageNumberStyles();
     buildCardsShimmer.removeShimmer();
-    return cardModels;
+    return { cards: cardModels, totalPages };
   }
 
   // TODO :: Refactor to remove block level await.
-  const [products, initCardModels] = await Promise.all([getListofProducts(), fetchAndRenderCards(filterConfig)]);
+  const [products, { cards: initCardModels, totalPages }, eventSeriesList] = await Promise.all([getListofProducts(), fetchAndRenderCards(filterConfig), BrowseCardsDelegate.fetchCoveoFacetFields('el_event_series')]);
   const productsList = [];
   products.forEach((product) => {
     productsList.push({
       title: product,
     });
   });
+
+
 
   // Initialize the dropdown with product options
   const productDropdown = new Dropdown(
@@ -382,92 +434,27 @@ export default async function decorate(block) {
   const contentTypeDropdown = new Dropdown(
     block.querySelector('.browse-card-dropdown'),
     `${placeholders?.filterEventTypeLabel || 'Event type'}`,
-    eventTypeDropdownOptions,
+    contentTypeDropdownOptions,
     'multi-select',
   );
 
-  const updateFiltersAndCards = (selectedFilters) => {
-    // Update URL params
-    const url = new URL(window.location);
-    if (selectedFilters.length) {
-      url.searchParams.set('filters', selectedFilters.join(','));
-    } else {
-      url.searchParams.delete('filters');
-    }
-    window.history.pushState({}, '', url.toString());
-
-    // Update tags
-    // tagsContainer.innerHTML = '';
-    // selectedFilters.forEach((filter) => {
-    //   const tagElement = htmlToElement(`
-    //     <button class="browse-tags" value="${filter}">
-    //       <span>${placeholders?.filterProductLabel || 'Product'}: ${filter}</span>
-    //       <span class="icon icon-close"></span>
-    //     </button>
-    //   `);
-    //   tagsContainer.appendChild(tagElement);
-    //   decorateIcons(tagElement);
-    //   tagElement.addEventListener('click', () => {
-    //     tagElement.remove();
-    //     [...block.querySelectorAll('.browse-card-dropdown .custom-checkbox input')].forEach((checkbox) => {
-    //       if (checkbox.value === filter) checkbox.click();
-    //     });
-    //   });
-    // });
-
-    // const gridViewBtn = block.querySelector('.view-btn.grid-view');
-    // const listViewBtn = block.querySelector('.view-btn.list-view');
-
-    // gridViewBtn.addEventListener('click', () => {
-    //   block.classList.remove('list');
-    //   setActiveToggle(gridViewBtn, listViewBtn, 'active');
-    // });
-
-    // listViewBtn.addEventListener('click', () => {
-    //   block.classList.add('list');
-    //   setActiveToggle(listViewBtn, gridViewBtn, 'active');
-
-    //   const cards = block.querySelectorAll('.browse-card');
-    //   cards.forEach((card) => {
-    //     addCardDateInfo(card);
-    //     setupExpandableDescription(card, placeholders);
-    //   });
-    // });
-
-    // eslint-disable-next-line no-use-before-define
-    const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
-
-    //   contentDiv.innerHTML = '';
-
-    //   const existingError = block.querySelector('.event-no-results');
-    //   if (existingError) existingError.remove(); // Prevent duplicate error message
-
-    //   // Show error message if selected product has no events
-    //   if (updatedData.length === 0) {
-    //     const noResultsText =
-    //       placeholders.noResultsTextBrowse ||
-    //       'We are sorry, no results found matching the criteria. Try adjusting your search to view more content.';
-    //     const errorMsg = htmlToElement(`
-    //   <div class="event-no-results">${noResultsText}</div>
-    // `);
-
-    //     contentDiv.style.display = 'none';
-    //     block.appendChild(errorMsg);
-    //     return;
-    //   }
-
-    contentDiv.style.display = '';
-    buildUpdatedCards(block, contentDiv, updatedData, placeholders);
-  };
+  const eventSeriesDropdown = new Dropdown(
+    block.querySelector('.browse-card-dropdown'),
+    `${placeholders?.filterEventSeriesLabel || 'Event series'}`,
+    eventSeriesList.map((value) => ({
+        title: value,
+        value
+      })),
+    'multi-select',
+  );
 
   // Pre-select checkboxes from URL filters
   [...block.querySelectorAll('.browse-card-dropdown .custom-checkbox input')]
     .filter(
-      (input) => (productsFromUrl.includes(input.value) || contentTypesFromUrl.includes(input.value)) && !input.checked,
+      (input) => (productsFromUrl.includes(input.value) || contentTypesFromUrl.includes(input.value)  || eventSeriesFromUrl.includes(input.value)) && !input.checked,
     )
     .forEach((input) => input.click());
 
-  // updateFiltersAndCards(productsFromUrl);
 
   // Dropdown selection change handler
   productDropdown.handleOnChange((selectedValues) => {
@@ -475,10 +462,9 @@ export default async function decorate(block) {
       .map((item) => item.trim())
       .filter(Boolean);
     filterConfig.products = selectedFilters;
+    resetPaginationStatus();
     fetchAndRenderCards({
-      products: selectedFilters,
-      contentTypes: filterConfig.contentTypes,
-      sort: filterConfig.sort,
+      products: selectedFilters
     });
   });
 
@@ -487,35 +473,20 @@ export default async function decorate(block) {
       .map((item) => item.trim())
       .filter(Boolean);
     filterConfig.contentTypes = selectedFilters;
-    fetchAndRenderCards({ products: filterConfig.products, contentTypes: selectedFilters, sort: filterConfig.sort });
+    resetPaginationStatus();
+    fetchAndRenderCards({ contentTypes: selectedFilters });
   });
 
-  /**
-   * Fetches filtered card data based on selected parameters.
-   * @param {Array} data - List of card data objects.
-   * @param {Array} params - Selected filter parameters.
-   * @returns {Array} - Filtered and sorted card data.
-   */
-  function fetchFilteredCardData(data, params = [], sortOrder = 'descending') {
-    if (!data) return [];
-    const solutionsList = Array.isArray(params) ? params : [params];
-
-    // If no filters are selected, return all data sorted by event time
-    const filtered = solutionsList.length
-      ? data.filter((event) => {
-          const productArray = Array.isArray(event.product) ? event.product : [event.product];
-          return solutionsList.some((filter) => productArray.includes(filter));
-        })
-      : data;
-
-    return filtered
-      .filter((card) => card.event?.time)
-      .sort((a, b) => {
-        const dateA = new Date(a.event.time);
-        const dateB = new Date(b.event.time);
-        return sortOrder === 'descending' ? dateB - dateA : dateA - dateB;
-      });
-  }
+  eventSeriesDropdown.handleOnChange((selectedValues) => {
+    const selectedFilters = (Array.isArray(selectedValues) ? selectedValues : selectedValues.split(','))
+      .map((item) => item.trim())
+      .filter(Boolean);
+    filterConfig.eventSeries = selectedFilters;
+    resetPaginationStatus();
+    fetchAndRenderCards({
+      eventSeries: selectedFilters,
+    });
+  });
 
   function renderSortContainerForUpcomingEvents(data) {
     const wrapper = block.querySelector('.browse-sort-container');
@@ -531,11 +502,9 @@ export default async function decorate(block) {
       <span>${placeholders?.filterSortLabel || 'Sort by'}:</span>
     <button class="sort-drop-btn">${defaultLabel}</button>
     <div class="sort-dropdown-content">
-      <a href="/" class="${
-        sortKey === 'descending' ? 'selected' : ''
+      <a href="/" class="${sortKey === 'descending' ? 'selected' : ''
       }" data-sort-criteria="descending" data-sort-caption="${newestLabel}">${newestLabel}</a>
-      <a href="/" class="${
-        sortKey === 'ascending' ? 'selected' : ''
+      <a href="/" class="${sortKey === 'ascending' ? 'selected' : ''
       }" data-sort-criteria="ascending" data-sort-caption="${oldestLabel}">${oldestLabel}</a>
     </div>
     </div>
@@ -581,8 +550,6 @@ export default async function decorate(block) {
         const sortValue = SORT_KEY_MAP[sortCriteria];
         filterConfig.sort = sortValue;
         fetchAndRenderCards({
-          products: filterConfig.products,
-          contentTypes: filterConfig.contentTypes,
           sort: sortValue,
         });
       });
