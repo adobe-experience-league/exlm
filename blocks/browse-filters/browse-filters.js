@@ -37,8 +37,6 @@ import {
   dropdownOptions,
 } from './browse-topics.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
-import { getCurrentCourses } from '../../scripts/courses/course-profile.js';
-import BrowseCardsCourseEnricher from '../../scripts/browse-card/browse-cards-course-enricher.js';
 
 let placeholders = {};
 try {
@@ -744,6 +742,10 @@ async function handleSearchEngineSubscription(block) {
 
       // Enrich cards with course status information for signed-in users
       if (await isSignedInUser()) {
+        const { getCurrentCourses } = await import('../../scripts/courses/course-profile.js');
+        const { default: BrowseCardsCourseEnricher } = await import(
+          '../../scripts/browse-card/browse-cards-course-enricher.js'
+        );
         const currentCourses = await getCurrentCourses();
         cardsData = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus(cardsData, currentCourses);
       }

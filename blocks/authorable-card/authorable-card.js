@@ -4,8 +4,6 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import { getCardData } from '../../scripts/browse-card/browse-card-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
-import { getCurrentCourses } from '../../scripts/courses/course-profile.js';
-import BrowseCardsCourseEnricher from '../../scripts/browse-card/browse-cards-course-enricher.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 
 /**
@@ -58,8 +56,12 @@ export default async function decorate(block) {
   }
 
   // Check if user is signed in and get course data for enrichment
+  let userCourses = [];
   const isUserSignedIn = await isSignedInUser();
-  const userCourses = isUserSignedIn ? await getCurrentCourses() : [];
+  if (isUserSignedIn) {
+    const { getCurrentCourses } = await import('../../scripts/courses/course-profile.js');
+    userCourses = await getCurrentCourses();
+  }
 
   const cardLoading$ = Promise.all(
     linksContainer.map(async (linkContainer) => {
@@ -78,6 +80,9 @@ export default async function decorate(block) {
             isUserSignedIn &&
             cardData?.contentType?.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()
           ) {
+            const { default: BrowseCardsCourseEnricher } = await import(
+              '../../scripts/browse-card/browse-cards-course-enricher.js'
+            );
             const [enrichedCard] = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus([cardData], userCourses);
             cardData = enrichedCard;
           }
