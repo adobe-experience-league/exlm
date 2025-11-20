@@ -750,6 +750,7 @@ export function pushCourseCertificateEvent(trackingData) {
       solution: trackingData.solution,
       fullSolution: courseSolutionFull,
       role: trackingData.role,
+      level: trackingData.level || '',
     },
   };
 
@@ -782,13 +783,18 @@ export async function pushCourseCompletionEvent(courseId, currentCourses) {
     }
   }
 
+  const courseFullSolution = courseMeta?.solution || '';
+  const courseSolution = courseFullSolution?.split(',')[0].trim() || '';
+
   window.adobeDataLayer.push({
     event: 'coursesCompleted',
     courses: {
       title: courseMeta?.heading || '',
       id: courseId,
-      solution: courseMeta?.solution || '',
+      solution: courseSolution,
+      fullSolution: courseFullSolution,
       role: courseMeta?.role || '',
+      level: courseMeta?.level || '',
       finishTime,
       duration: courseDuration,
     },
@@ -803,6 +809,9 @@ export async function pushModuleStartEvent(courseId) {
   const courseMeta = await getCurrentCourseMeta();
   const stepInfo = await getCurrentStepInfo();
 
+  const courseFullSolution = courseMeta?.solution || '';
+  const courseSolution = courseFullSolution?.split(',')[0].trim() || '';
+
   window.adobeDataLayer.push({
     event: 'moduleStart',
     module: {
@@ -811,8 +820,10 @@ export async function pushModuleStartEvent(courseId) {
     courses: {
       title: courseMeta?.heading || '',
       id: courseId || '',
-      solution: courseMeta?.solution || '',
+      solution: courseSolution,
+      fullSolution: courseFullSolution,
       role: courseMeta?.role || '',
+      level: courseMeta?.level || '',
     },
   });
 }
@@ -825,6 +836,9 @@ export async function pushModuleCompletionEvent(courseId) {
   const courseMeta = await getCurrentCourseMeta();
   const stepInfo = await getCurrentStepInfo();
 
+  const courseFullSolution = courseMeta?.solution || '';
+  const courseSolution = courseFullSolution?.split(',')[0].trim() || '';
+
   window.adobeDataLayer.push({
     event: 'moduleCompleted',
     module: {
@@ -833,8 +847,10 @@ export async function pushModuleCompletionEvent(courseId) {
     courses: {
       title: courseMeta?.heading || '',
       id: courseId || '',
-      solution: courseMeta?.solution || '',
+      solution: courseSolution,
+      fullSolution: courseFullSolution,
       role: courseMeta?.role || '',
+      level: courseMeta?.level || '',
     },
   });
 }
@@ -845,7 +861,9 @@ export async function pushModuleCompletionEvent(courseId) {
  * @param {string} courseData.title - Title of the course
  * @param {string} courseData.id - ID of the course
  * @param {string} courseData.solution - Solution related to the course
+ * @param {string} courseData.fullSolution - Full solution (comma-separated)
  * @param {string} courseData.role - Role associated with the course
+ * @param {string} courseData.level - Level (comma-separated)
  * @param {string} courseData.startTime - Start time of the course
  */
 export function pushCourseStartEvent(courseData) {
@@ -857,7 +875,9 @@ export function pushCourseStartEvent(courseData) {
       title: courseData.title,
       id: courseData.id,
       solution: courseData.solution,
+      fullSolution: courseData.fullSolution || courseData.solution,
       role: courseData.role,
+      level: courseData.level || '',
       startTime: courseData.startTime,
     },
   });
@@ -877,11 +897,17 @@ export function pushCourseStartEvent(courseData) {
  */
 export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition) {
   window.adobeDataLayer = window.adobeDataLayer || [];
+  const product = cardData?.product;
+  const cardFullSolution = Array.isArray(product) ? product.join(',') : product || '';
+
+  const cardSolution = Array.isArray(product) ? product[0] : product?.split(',')[0]?.trim() || '';
 
   const dataLayerEntry = {
     event: eventName,
     link: {
       contentType: cardData?.contentType?.toLowerCase().trim() || '',
+      fullSolution: cardFullSolution,
+      solution: cardSolution || '',
       destinationDomain: cardData?.viewLink || '',
       linkTitle: cardData?.title || '',
       linkLocation: 'body',

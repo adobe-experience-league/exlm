@@ -204,7 +204,12 @@
   -webkit-line-clamp: 6;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin-bottom: 48px; /* Add space for the status row */
+}
+
+/* Adding space for the status row in course cards */
+.browse-card.course-card .browse-card-description-text,
+.browse-card.course-card .browse-card-description-text * {
+  margin-bottom: 48px;
 }
 
 .browse-card.thumbnail-loaded .browse-card-description-text,
@@ -234,7 +239,6 @@
 .browse-card .browse-card-content {
   padding: 24px 16px 16px;
   background-color: var(--background-color);
-  position: relative;
 }
 
 .browse-card.video-clip-card .browse-card-content {

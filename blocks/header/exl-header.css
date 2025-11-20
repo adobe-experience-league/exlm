@@ -1103,6 +1103,7 @@ button:focus {
     height: 100%;
     padding: var(--nav-root-item-padding);
     border-bottom: none;
+    line-height: 21px;
   }
 }
 
