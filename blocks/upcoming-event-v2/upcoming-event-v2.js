@@ -123,6 +123,64 @@ function addLocationTypeWithIcon(card) {
   decorateIcons(locationTypeClone);
 }
 
+function addSpeakersToFooter(card) {
+  const cardFigure = card.querySelector('.browse-card-figure');
+  const footer = card.querySelector('.browse-card-footer');
+
+  if (!cardFigure || !footer) return;
+
+  const speakersContainer = cardFigure.querySelector('.event-speakers-container');
+  if (!speakersContainer) return;
+
+  if (footer.querySelector('.footer-speakers-section')) return;
+
+  const speakersSection = document.createElement('div');
+  speakersSection.className = 'footer-speakers-section';
+
+  const speakersHeading = document.createElement('p');
+  speakersHeading.className = 'speakers-heading';
+  speakersHeading.textContent = 'Speakers';
+  speakersSection.appendChild(speakersHeading);
+
+  const speakerImages = speakersContainer.querySelectorAll('.speaker-profile-container');
+
+  const speakersList = document.createElement('div');
+  speakersList.className = 'speakers-list';
+
+  speakerImages.forEach((speakerContainer) => {
+    const speakerImg = speakerContainer.querySelector('img');
+    if (!speakerImg) return;
+
+    const speakerItem = document.createElement('div');
+    speakerItem.className = 'speaker-item';
+
+    const speakerImgContainer = document.createElement('div');
+    speakerImgContainer.className = 'speaker-img-container';
+
+    const imgClone = speakerImg.cloneNode(true);
+    speakerImgContainer.appendChild(imgClone);
+
+    const speakerInfo = document.createElement('div');
+    speakerInfo.className = 'speaker-info';
+
+    const speakerName = document.createElement('div');
+    speakerName.className = 'speaker-name';
+    const altParts = speakerImg.alt.split(',');
+    speakerName.textContent = altParts[0].trim();
+
+    speakerInfo.appendChild(speakerName);
+
+    speakerItem.appendChild(speakerImgContainer);
+    speakerItem.appendChild(speakerInfo);
+
+    speakersList.appendChild(speakerItem);
+  });
+
+  speakersSection.appendChild(speakersList);
+
+  footer.appendChild(speakersSection);
+}
+
 export default async function decorate(block) {
   let placeholders = {};
   try {
@@ -138,7 +196,6 @@ export default async function decorate(block) {
 
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
-      <div class="browse-upcoming-event-filter">
         <div class="view-switcher">
           <button type="button" class="view-btn grid-view active" aria-label="Grid view">
             ${placeholders?.gridViewLabel || 'Grid'}
@@ -151,7 +208,6 @@ export default async function decorate(block) {
             <span class="icon icon-list-view-white"></span>
           </button>
         </div>
-      </div>
     </div>
   `);
 
@@ -213,6 +269,7 @@ export default async function decorate(block) {
       addCardDateInfo(card);
       setupExpandableDescription(card, placeholders);
       addLocationTypeWithIcon(card); // Add desktop icon for location type
+      addSpeakersToFooter(card); // Add speakers to footer in list view
     });
   });
 }
