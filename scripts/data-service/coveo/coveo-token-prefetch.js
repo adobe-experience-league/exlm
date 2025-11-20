@@ -1,33 +1,20 @@
 /**
- * Coveo Token Prefetch Strategy for Lighthouse Performance Optimization
- * 
- * Strategy: Start prefetch EARLY (during loadLazy) but NON-BLOCKING
- * - Runs in parallel with block initialization (not after 3 seconds)
- * - Uses requestIdleCallback to avoid blocking main thread
- * - Token ready by the time user interacts with search
- * 
- * Timing:
- * - Starts immediately when called (~500ms after page load)
- * - Runs in browser idle time (non-blocking)
- * - Completes in ~50-100ms
- * - Blocks can load in parallel without waiting
- * 
- * Impact on Lighthouse:
- * - No blocking of LCP (uses idle callback)
- * - No blocking of FCP (non-blocking fetch)
- * - Parallel with block loading (not sequential)
- * - Token ready before user types in header search
- * 
- * Note: All pages use Coveo for header search query suggestions,
- * so token is always needed and should be prefetched universally.
- */
+ * Coveo Token Prefetch (Performance Optimized)
+ *
+ * - Prefetches token early (called from loadLazy) using requestIdleCallback
+ * - Runs in browser idle time → non-blocking for LCP/FCP
+ * - Executes in parallel with block loading
+ * - Ensures token is ready before user interacts with header search
+ *
+ * Note: Header search uses Coveo everywhere, so prefetch is required globally.
+ 
+*/
 
 import loadCoveoToken from './coveo-token-service.js';
 
-/**
- * Prefetch Coveo token during idle time
- * Starts immediately but uses requestIdleCallback for non-blocking execution
- */
+
+ // Prefetch Coveo token during idle time, Skips if token is already cached.
+
 function prefetchCoveoTokenIdle() {
   // Check if token is already cached
   const cached = sessionStorage.getItem('coveoToken');
@@ -48,15 +35,13 @@ function prefetchCoveoTokenIdle() {
         console.info('[Coveo Prefetch] Token prefetched and cached successfully');
       })
       .catch((error) => {
-        // Don't throw - this is a prefetch optimization, not critical
-        // Blocks will fetch token themselves if prefetch fails
         // eslint-disable-next-line no-console
         console.warn('[Coveo Prefetch] Prefetch failed (blocks will fetch when needed):', error.message);
       });
   };
 
-  // Use requestIdleCallback if available for optimal performance
-  // Short timeout to ensure it runs soon (not waiting indefinitely)
+  // Use idle time to avoid impacting main thread; fallback to setTimeout
+  
   if ('requestIdleCallback' in window) {
     requestIdleCallback(prefetch, { timeout: 1000 });
   } else {
@@ -65,10 +50,8 @@ function prefetchCoveoTokenIdle() {
   }
 }
 
-/**
- * Initialize prefetch strategy
- * Call this EARLY (from loadLazy, not delayed) to prefetch before blocks need it
- */
+// Initialize token prefetch early (called from loadLazy).
+
 export default function initCoveoPrefetch() {
   // Start prefetch immediately - don't wait for 'load' event
   prefetchCoveoTokenIdle();
