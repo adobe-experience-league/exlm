@@ -183,6 +183,15 @@ function addSpeakersToFooter(card, placeholders) {
   footer.appendChild(speakersSection);
 }
 
+function applyListViewEnhancements(card, placeholders) {
+  if (!card) return;
+
+  addCardDateInfo(card);
+  setupExpandableDescription(card, placeholders);
+  addLocationTypeInfo(card);
+  addSpeakersToFooter(card, placeholders);
+}
+
 export default async function decorate(block) {
   let placeholders = {};
   try {
@@ -390,10 +399,7 @@ export default async function decorate(block) {
 
       const cards = block.querySelectorAll('.browse-card');
       cards.forEach((card) => {
-        addCardDateInfo(card);
-        setupExpandableDescription(card, placeholders);
-        addLocationTypeInfo(card);
-        addSpeakersToFooter(card, placeholders);
+        applyListViewEnhancements(card, placeholders);
       });
     });
   }
@@ -423,7 +429,12 @@ export default async function decorate(block) {
       contentDiv.style.display = '';
       cardModels.forEach((cardData) => {
         const cardDiv = document.createElement('div');
-        buildCard(contentDiv, cardDiv, cardData);
+        buildCard(contentDiv, cardDiv, cardData).then(() => {
+          if (block.classList.contains('list')) {
+            const card = cardDiv.querySelector('.browse-card');
+            applyListViewEnhancements(card, placeholders);
+          }
+        });
         contentDiv.appendChild(cardDiv);
       });
       block.appendChild(contentDiv);
