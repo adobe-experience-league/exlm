@@ -727,7 +727,7 @@ export async function buildCard(container, element, model) {
   }
 
   // DataLayer - Browse card click event
-  element.querySelector('a:not(.browse-card-options)')?.addEventListener(
+  element.querySelector('a:not(.browse-card-options):not(.browse-card-cta-element)')?.addEventListener(
     'click',
     () => {
       pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
@@ -753,6 +753,16 @@ export async function buildCard(container, element, model) {
       e.preventDefault();
       e.stopPropagation();
       pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
+    },
+    { once: true },
+  );
+
+  // DataLayer - Browse card CTA click event
+  element.querySelector('.browse-card-cta-element')?.addEventListener(
+    'click',
+    (e) => {
+      e.stopPropagation();
+      pushBrowseCardClickEvent('browseCardCTAClick', model, cardHeader, cardPosition);
     },
     { once: true },
   );
