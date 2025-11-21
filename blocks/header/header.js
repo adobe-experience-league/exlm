@@ -104,7 +104,11 @@ const brandDecorator = (brandBlock, decoratorOptions) => {
   const brandLink = brandBlock.querySelector('a');
   brandBlock.replaceChildren(brandLink);
   updateLinks(brandBlock, (currentHref) => {
-    const url = new URL(currentHref, decoratorOptions.navLinkOrigin);
+    let link = currentHref;
+    if (link === '/' && decoratorOptions.lang !== 'en') {
+      link = `/${decoratorOptions.lang}`;
+    }
+    const url = new URL(link, decoratorOptions.navLinkOrigin);
     return url.href;
   });
   return brandBlock;
@@ -625,10 +629,18 @@ const productGridDecorator = async (productGridBlock, decoratorOptions) => {
  * Decorates the adobe-logo block
  * @param {HTMLElement} adobeLogoBlock
  */
-const adobeLogoDecorator = async (adobeLogoBlock) => {
+const adobeLogoDecorator = async (adobeLogoBlock, decoratorOptions) => {
   simplifySingleCellBlock(adobeLogoBlock);
   decorateIcons(adobeLogoBlock);
   adobeLogoBlock.querySelector('a').setAttribute('aria-label', 'Adobe Experience League'); // a11y
+  updateLinks(adobeLogoBlock, (currentHref) => {
+    let link = currentHref;
+    if (link === '/' && decoratorOptions.lang !== 'en') {
+      link = `/${decoratorOptions.lang}`;
+    }
+    const url = new URL(link, decoratorOptions.navLinkOrigin);
+    return url.href;
+  });
   return adobeLogoBlock;
 };
 
