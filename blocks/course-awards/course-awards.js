@@ -7,7 +7,25 @@ let placeholders = {};
 function certificateCard(props) {
   const { lang } = getPathDetails();
   const date = new Date(props?.awards?.timestamp);
-  const dateStr = date.toLocaleDateString('en-US', {
+
+  // convert lang code to locale code
+  const localeMap = {
+    de: 'de-DE',
+    en: 'en-US',
+    es: 'es-ES',
+    fr: 'fr-FR',
+    it: 'it-IT',
+    nl: 'nl-NL',
+    'pt-br': 'pt-BR',
+    sv: 'sv-SE',
+    'zh-hans': 'zh-CN',
+    'zh-hant': 'zh-TW',
+    ja: 'ja-JP',
+    ko: 'ko-KR',
+  };
+
+  const locale = localeMap[lang] || 'en-US';
+  const dateStr = date.toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
