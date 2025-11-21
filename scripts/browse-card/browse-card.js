@@ -470,7 +470,6 @@ const getVideoClipModal = () => {
 export const processUpcomingEventsData = (events) => {
   if (!Array.isArray(events)) return events;
 
-  // Set contentType, badgeTitle, and viewLinkText for each event
   const processedEvents = events.map((event) => ({
     ...event,
     contentType: CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
@@ -478,7 +477,6 @@ export const processUpcomingEventsData = (events) => {
     viewLinkText: 'Register',
   }));
 
-  // Sort events by date in ascending order (oldest first)
   processedEvents.sort((a, b) => {
     const dateA = new Date(a.event?.time || a.startTime || a.el_event_start_time || 0);
     const dateB = new Date(b.event?.time || b.startTime || b.el_event_start_time || 0);
@@ -499,29 +497,28 @@ const decorateUpcomingEvents = (card, model) => {
   const cardFigure = card.querySelector('.browse-card-figure');
   if (!cardFigure) return;
 
-  // Case 1: If we have both speaker name and profile picture
-  // Display speaker profile pictures in the black section
-  if (model.event?.speakers?.name && model.event?.speakers?.profilePictureURL) {
-    // Create speaker images container if it doesn't exist
+  const { event } = model;
+  const hasSpeakers = event?.speakers?.name && event?.speakers?.profilePictureURL;
+  const hasSeries = event?.series;
+  const seriesText = hasSeries ? event.series : null;
+
+  if (hasSpeakers) {
     let speakersContainer = cardFigure.querySelector('.event-speakers-container');
     if (!speakersContainer) {
       speakersContainer = createTag('div', { class: 'event-speakers-container' });
       cardFigure.appendChild(speakersContainer);
     } else {
-      // Clear existing speaker images
       speakersContainer.innerHTML = '';
     }
 
-    // Split speaker names and profile pictures
-    const speakerNames = Array.isArray(model.event.speakers.name)
-      ? model.event.speakers.name
-      : model.event.speakers.name.split(',').map((name) => name.trim());
+    const speakerNames = Array.isArray(event.speakers.name)
+      ? event.speakers.name
+      : event.speakers.name.split(',').map((name) => name.trim());
 
-    const profilePictures = Array.isArray(model.event.speakers.profilePictureURL)
-      ? model.event.speakers.profilePictureURL
-      : model.event.speakers.profilePictureURL.split(',').map((url) => url.trim());
+    const profilePictures = Array.isArray(event.speakers.profilePictureURL)
+      ? event.speakers.profilePictureURL
+      : event.speakers.profilePictureURL.split(',').map((url) => url.trim());
 
-    // Create speaker images (up to 3)
     const maxSpeakers = Math.min(speakerNames.length, profilePictures.length, 3);
     for (let i = 0; i < maxSpeakers; i += 1) {
       const speakerImgContainer = createTag('div', { class: 'speaker-profile-container' });
@@ -533,70 +530,30 @@ const decorateUpcomingEvents = (card, model) => {
       speakerImgContainer.appendChild(speakerImg);
       speakersContainer.appendChild(speakerImgContainer);
     }
-
-    // Add event series banner below speaker images if available
-    if (model.event?.series) {
-      const seriesText = model.event.series;
-      if (seriesText) {
-        // Remove any existing event series banner
-        const existingSeriesBanner = cardFigure.querySelector('.event-series-banner');
-        if (existingSeriesBanner) {
-          existingSeriesBanner.remove();
-        }
-
-        const seriesBanner = createTag('div', { class: 'event-series-banner' });
-        seriesBanner.textContent = seriesText;
-        cardFigure.appendChild(seriesBanner);
-      }
-    }
-  }
-  // Case 2 & 3: If we have speaker name but no profile picture OR if we don't have speaker name
-  // Display event series with red lines above and below
-  else if (model.event?.series) {
-    const seriesText = model.event?.series;
-    if (seriesText) {
-      // Remove any existing speaker images
-      const existingSpeakers = cardFigure.querySelector('.event-speakers-container');
-      if (existingSpeakers) {
-        existingSpeakers.remove();
-      }
-
-      // Create event series banner if it doesn't exist
-      if (!cardFigure.querySelector('.event-series-banner-no-speakers')) {
-        const seriesBanner = createTag('div', { class: 'event-series-banner event-series-banner-no-speakers' });
-        seriesBanner.textContent = seriesText;
-        cardFigure.appendChild(seriesBanner);
-      }
+  } else if (hasSeries) {
+    const existingSpeakers = cardFigure.querySelector('.event-speakers-container');
+    if (existingSpeakers) {
+      existingSpeakers.remove();
     }
   }
 
-  // Add location type (VIRTUAL, IN-PERSON, etc.) if available
-  if (model.event?.type) {
-    const locationType = model.event.type;
-    if (locationType) {
-      if (!cardFigure.querySelector('.location-type')) {
-        const locationTypeElement = createTag('div', { class: 'location-type' });
-        locationTypeElement.textContent = locationType;
-        cardFigure.appendChild(locationTypeElement);
-      }
+  if (seriesText) {
+    const existingSeriesBanner = cardFigure.querySelector('.event-series-banner, .event-series-banner-no-speakers');
+    if (existingSeriesBanner) {
+      existingSeriesBanner.remove();
+    }
+
+    const bannerClass = hasSpeakers ? 'event-series-banner' : 'event-series-banner event-series-banner-no-speakers';
+
+    if (!cardFigure.querySelector(`.${bannerClass.replace(' ', '.')}`)) {
+      cardFigure.appendChild(createTag('div', { class: bannerClass }, seriesText));
     }
   }
 
-  // Add "UPCOMING EVENT" banner in top left if not already present
-  if (!cardFigure.querySelector('.browse-card-banner')) {
-    const upcomingEventBanner = createTag('div', { class: 'browse-card-banner' });
-    upcomingEventBanner.textContent = 'UPCOMING EVENT';
-    cardFigure.appendChild(upcomingEventBanner);
-  }
-
-  // Set viewLinkText to "Register" for upcoming events
-  const cardFooter = card.querySelector('.browse-card-footer');
-  const ctaElement = cardFooter?.querySelector('.browse-card-cta-element');
-  if (ctaElement) {
-    const iconElement = ctaElement.querySelector('.icon');
-    ctaElement.textContent = 'Register ';
-    if (iconElement) {
-      ctaElement.appendChild(iconElement);
+  if (event?.type) {
+    const locationType = event.type;
+    if (locationType && !cardFigure.querySelector('.location-type')) {
+      cardFigure.appendChild(createTag('div', { class: 'location-type' }, locationType));
     }
   }
 };
@@ -905,7 +862,6 @@ export async function buildCard(container, element, model) {
     { once: true },
   );
 
-  // Apply special decorations for upcoming events
   if (model.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY) {
     const cardElement = element.querySelector('.browse-card');
     if (cardElement) {

@@ -483,7 +483,6 @@
     display: none;
   }
 
-  /* Styling for location type with icon in list view */
   .upcoming-event-v2.list .browse-card .browse-card-footer .location-type {
     display: flex;
     align-items: center;
@@ -493,8 +492,9 @@
     padding: 0;
     color: var(--non-spectrum-dark-charcoal);
     font-size: var(--spectrum-font-size-75);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     text-transform: none;
+    gap: var(--spectrum-spacing-75);
   }
 
   .upcoming-event-v2.list .browse-card .browse-card-footer .location-type span::first-letter {
@@ -504,13 +504,12 @@
   .upcoming-event-v2.list .browse-card .browse-card-footer .location-type .icon {
     width: 18px;
     height: 18px;
-    margin-right: 5px;
   }
 
   .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner,
   .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
     text-align: center;
-    font-size: 16px;
+    font-size: var(--spectrum-font-size-200);
     color: var(--spectrum-gray-50);
     opacity: 1;
     position: relative;
@@ -541,7 +540,6 @@
     -webkit-line-clamp: unset;
   }
 
-  /* Styling for speakers in footer */
   .upcoming-event-v2.list .browse-card .browse-card-footer .footer-speakers-section {
     order: 4;
     align-self: flex-start;
@@ -549,7 +547,7 @@
   }
 
   .upcoming-event-v2.list .browse-card .browse-card-footer .footer-speakers-section .speakers-heading {
-    font-size: 16px;
+    font-size: var(--spectrum-font-size-200);
     font-weight: var(--font-weight-bold);
     margin-bottom: 15px;
     color: #000;
@@ -570,7 +568,7 @@
   .upcoming-event-v2.list .browse-card .browse-card-footer .footer-speakers-section .speakers-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 14px;
   }
 
   .upcoming-event-v2.list .browse-card .browse-card-footer .footer-speakers-section .speaker-item {
@@ -599,8 +597,8 @@
   }
 
   .upcoming-event-v2.list .browse-card .browse-card-footer .footer-speakers-section .speaker-name {
-    font-size: 12px;
-    font-weight: bold;
+    font-size: var(--spectrum-font-size-75);
+    font-weight: var(--font-weight-bold);
     color: var(--non-spectrum-dark-gray);
   }
 

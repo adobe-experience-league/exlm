@@ -117,8 +117,6 @@ const BrowseCardsDelegate = (() => {
     return [];
   };
 
-  // Removed handleUpcomingEventsService as we're now using Coveo for upcoming events
-
   /**
    * Constructs search parameters for ADLS data service.
    * @returns {URLSearchParams} Constructed URLSearchParams object.
@@ -207,8 +205,6 @@ const BrowseCardsDelegate = (() => {
    */
   const getServiceForContentType = (contentType) => {
     const contentTypesServices = {
-      // Using Coveo for upcoming events instead of JSON
-      // [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY]: handleUpcomingEventsService,
       [CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY]: handleADLSService,
       [RECOMMENDED_COURSES_CONSTANTS.PATHS.MAPPING_KEY]: handlePathsService,
     };

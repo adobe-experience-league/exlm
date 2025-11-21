@@ -115,9 +115,7 @@ function addCardDateInfo(card) {
     footer.appendChild(clonedEventInfo);
   }
 }
-
-// Function to add location type with icon in list view
-function addLocationTypeWithIcon(card) {
+function addLocationTypeInfo(card) {
   const footer = card.querySelector('.browse-card-footer');
   const locationType = card.querySelector('.location-type');
 
@@ -128,22 +126,17 @@ function addLocationTypeWithIcon(card) {
   const iconName = locationText.toUpperCase() !== 'VIRTUAL' ? 'user' : 'desktop';
 
   locationTypeClone.innerHTML = '';
-  const iconSpan = document.createElement('span');
-  iconSpan.className = `icon icon-${iconName}`;
-  iconSpan.style.marginRight = '5px';
-
+  const iconSpan = createTag('span', { class: `icon icon-${iconName}` });
   locationTypeClone.appendChild(iconSpan);
 
-  // Wrap the text in a span element
-  const textSpan = document.createElement('span');
-  textSpan.textContent = locationText;
+  const textSpan = createTag('span', {}, locationText);
   locationTypeClone.appendChild(textSpan);
 
   footer.appendChild(locationTypeClone);
   decorateIcons(locationTypeClone);
 }
 
-function addSpeakersToFooter(card) {
+function addSpeakersToFooter(card, placeholders) {
   const cardFigure = card.querySelector('.browse-card-figure');
   const footer = card.querySelector('.browse-card-footer');
 
@@ -154,42 +147,32 @@ function addSpeakersToFooter(card) {
 
   if (footer.querySelector('.footer-speakers-section')) return;
 
-  const speakersSection = document.createElement('div');
-  speakersSection.className = 'footer-speakers-section';
-
-  const speakersHeading = document.createElement('p');
-  speakersHeading.className = 'speakers-heading';
-  speakersHeading.textContent = 'Speakers';
+  const speakersSection = createTag('div', { class: 'footer-speakers-section' });
+  const speakersHeading = createTag('p', { class: 'speakers-heading' }, placeholders?.speakersLabel || 'Speakers');
   speakersSection.appendChild(speakersHeading);
 
   const speakerImages = speakersContainer.querySelectorAll('.speaker-profile-container');
-
-  const speakersList = document.createElement('div');
-  speakersList.className = 'speakers-list';
+  const speakersList = createTag('div', { class: 'speakers-list' });
 
   speakerImages.forEach((speakerContainer) => {
-    const speakerImg = speakerContainer.querySelector('img');
-    if (!speakerImg) return;
+    const speakerImgElement = speakerContainer.querySelector('img');
+    if (!speakerImgElement) return;
 
-    const speakerItem = document.createElement('div');
-    speakerItem.className = 'speaker-item';
+    const speakerNameText = speakerImgElement.alt.trim();
 
-    const speakerImgContainer = document.createElement('div');
-    speakerImgContainer.className = 'speaker-img-container';
+    const speakerImgContainer = createTag('div', { class: 'speaker-img-container' });
+    const speakerImg = createTag('img', {
+      src: speakerImgElement.src,
+      alt: speakerNameText,
+      class: speakerImgElement.className,
+    });
+    speakerImgContainer.appendChild(speakerImg);
 
-    const imgClone = speakerImg.cloneNode(true);
-    speakerImgContainer.appendChild(imgClone);
-
-    const speakerInfo = document.createElement('div');
-    speakerInfo.className = 'speaker-info';
-
-    const speakerName = document.createElement('div');
-    speakerName.className = 'speaker-name';
-    const altParts = speakerImg.alt.split(',');
-    speakerName.textContent = altParts[0].trim();
-
+    const speakerName = createTag('div', { class: 'speaker-name' }, speakerNameText);
+    const speakerInfo = createTag('div', { class: 'speaker-info' });
     speakerInfo.appendChild(speakerName);
 
+    const speakerItem = createTag('div', { class: 'speaker-item' });
     speakerItem.appendChild(speakerImgContainer);
     speakerItem.appendChild(speakerInfo);
 
@@ -197,7 +180,6 @@ function addSpeakersToFooter(card) {
   });
 
   speakersSection.appendChild(speakersList);
-
   footer.appendChild(speakersSection);
 }
 
@@ -410,8 +392,8 @@ export default async function decorate(block) {
       cards.forEach((card) => {
         addCardDateInfo(card);
         setupExpandableDescription(card, placeholders);
-        addLocationTypeWithIcon(card); // Add desktop icon for location type
-        addSpeakersToFooter(card); // Add speakers to footer in list view
+        addLocationTypeInfo(card);
+        addSpeakersToFooter(card, placeholders);
       });
     });
   }
