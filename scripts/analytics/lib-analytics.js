@@ -904,8 +904,13 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
 
   // Determining if the card is in list or grid view
   const eventsBlock = document.activeElement?.closest('.upcoming-event-v2, .upcoming-event');
-  const viewType = eventsBlock?.classList?.contains('list') ? 'List' : 'Grid';
-  const hasViewSwitcher = eventsBlock ? eventsBlock.querySelector('.view-switcher') !== null : false;
+  let viewType = null;
+  let hasViewSwitcher = false;
+
+  if (eventsBlock) {
+    viewType = eventsBlock.classList.contains('list') ? 'List' : 'Grid';
+    hasViewSwitcher = !!eventsBlock.querySelector('.view-switcher');
+  }
 
   const dataLayerEntry = {
     event: eventName,
@@ -916,7 +921,7 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
       destinationDomain: cardData?.viewLink || '',
       linkTitle: cardData?.title || '',
       linkLocation: 'body',
-      linkType: hasViewSwitcher ? `${viewType} | ${cardHeader}` : cardHeader,
+      linkType: hasViewSwitcher && viewType ? `${viewType} | ${cardHeader}` : cardHeader,
       position: cardPosition,
     },
   };
