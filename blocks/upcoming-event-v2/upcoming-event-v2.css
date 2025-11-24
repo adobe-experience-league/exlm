@@ -170,8 +170,6 @@
 .upcoming-event-v2 .browse-cards-block-content > div .browse-card .show-more,
 .upcoming-event-v2 .browse-cards-block-content > div .browse-card .show-less,
 .upcoming-event-v2 .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info,
-.upcoming-event-v2.list .browse-card-figure .event-speakers-container,
-.upcoming-event-v2:not(.list) .browse-card .browse-card-footer .footer-speakers-section,
 .upcoming-event-v2.list .browse-card.upcoming-event-card .location-type {
   display: none;
 }
@@ -300,6 +298,14 @@
   background-position: 93% 12px;
   background-repeat: no-repeat;
   background-size: 12px;
+}
+
+.upcoming-event-v2.list .browse-card-figure .event-speakers-container {
+  display: flex;
+}
+
+.upcoming-event-v2 .browse-card-footer .footer-speakers-section {
+  display: none;
 }
 
 @media only screen and (min-width: 600px) {
@@ -528,7 +534,8 @@
     margin-bottom: 16.5px;
   }
 
-  .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-content .browse-card-event-info {
+  .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-content .browse-card-event-info,
+  .upcoming-event-v2.list .browse-card-figure .event-speakers-container {
     display: none;
   }
 
@@ -716,6 +723,7 @@
     order: 4;
     align-self: flex-start;
     width: 100%;
+    display: block;
   }
 
   .upcoming-event-v2.list .browse-card .browse-card-footer .footer-speakers-section .speakers-heading {
