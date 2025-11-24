@@ -903,9 +903,14 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
   const cardSolution = Array.isArray(product) ? product[0] : product?.split(',')[0]?.trim() || '';
 
   // Determining if the card is in list or grid view
-  const eventsBlock = document?.querySelector('.upcoming-event-v2, .upcoming-event');
-  const viewType = eventsBlock?.classList?.contains('list') ? 'List' : 'Grid';
-  const hasViewSwitcher = eventsBlock?.querySelector('.view-switcher') !== null;
+  const eventsBlock = document.activeElement?.closest('.upcoming-event-v2, .upcoming-event');
+  let viewType = null;
+  let hasViewSwitcher = false;
+
+  if (eventsBlock) {
+    viewType = eventsBlock.classList.contains('list') ? 'List' : 'Grid';
+    hasViewSwitcher = !!eventsBlock.querySelector('.view-switcher');
+  }
 
   const dataLayerEntry = {
     event: eventName,
@@ -916,7 +921,7 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
       destinationDomain: cardData?.viewLink || '',
       linkTitle: cardData?.title || '',
       linkLocation: 'body',
-      linkType: hasViewSwitcher ? `${viewType} | ${cardHeader}` : cardHeader,
+      linkType: hasViewSwitcher && viewType ? `${viewType} | ${cardHeader}` : cardHeader,
       position: cardPosition,
     },
   };
