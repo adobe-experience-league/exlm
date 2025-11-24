@@ -54,7 +54,7 @@ export default async function decorate(block) {
     // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
   }
-
+  const isUserSignedIn = await isSignedInUser();
   const cardLoading$ = Promise.all(
     linksContainer.map(async (linkContainer) => {
       let link = linkContainer.textContent?.trim();
@@ -70,8 +70,8 @@ export default async function decorate(block) {
           if (cardData) {
             // Enrich course cards with status information for signed-in users
             if (
-              cardData?.contentType?.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase() &&
-              (await isSignedInUser())
+              isUserSignedIn &&
+              cardData?.contentType?.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()
             ) {
               const { getCurrentCourses } = await import('../../scripts/courses/course-profile.js');
               const { default: BrowseCardsCourseEnricher } = await import(
