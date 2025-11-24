@@ -1,5 +1,7 @@
 import { getConfig } from '../scripts.js';
 
+const MPC_ORIGIN = 'https://video.tv.adobe.com';
+
 /**
  * Languages currently supported for MPC videos
  * Maps language codes to MPC caption language identifiers
@@ -100,7 +102,7 @@ function findTranslatedVideo(videos, targetLocale) {
   return (
     videos.find(
       (video) =>
-        video.videoType === VIDEO_COLLECTION_CONSTANTS.TRANSLATED && hasTargetLanguageCaptions(video, targetLocale),
+        video?.videoType === VIDEO_COLLECTION_CONSTANTS.TRANSLATED && hasTargetLanguageCaptions(video, targetLocale),
     ) || null
   );
 }
@@ -113,8 +115,8 @@ function findTranslatedVideo(videos, targetLocale) {
  */
 function findLocalizedVideoId(collectionsData, lang) {
   const targetLocale = MPC_LANGUAGES_MAP[lang];
-  const localizationCollection = collectionsData.collections.find(
-    (collection) => collection.collectionType === VIDEO_COLLECTION_CONSTANTS.LOCALIZATION,
+  const localizationCollection = collectionsData?.collections?.find(
+    (collection) => collection?.collectionType === VIDEO_COLLECTION_CONSTANTS.LOCALIZATION,
   );
   // Early return for invalid input
   if (!collectionsData?.collections?.length || !targetLocale || !localizationCollection?.videos?.length) {
@@ -145,13 +147,56 @@ function findLocalizedVideoId(collectionsData, lang) {
 }
 
 /**
+ * Checks if a URL is an MPC video URL
+ * @param {string} url - URL to check
+ * @returns {boolean} - True if URL is an MPC video URL
+ */
+function isMpcVideoUrl(url) {
+  try {
+    const urlObj = new URL(url);
+    const hasMpcOrigin = urlObj.origin === MPC_ORIGIN;
+    const hasV = urlObj.pathname.startsWith('/v/');
+    const has2PartsOrMore = urlObj.pathname.split('/').length >= 2;
+    return hasMpcOrigin && hasV && has2PartsOrMore;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error parsing MPC URL, skipping', e);
+    return false;
+  }
+}
+
+/**
  * Extracts video ID from URL
  * @param {string} url - Video URL to extract ID from
  * @returns {string|null} - Extracted video ID or null if not found
  */
 function extractVideoId(url) {
+  if (!isMpcVideoUrl(url)) return null;
   const match = url.match(/\/v\/(\d+)/);
   return match ? match[1] : null;
+}
+
+/**
+ * Checks whether a video exists by querying its JSON metadata endpoint.
+ * @param {string} videoURL - The video URL to check.
+ * @returns {Promise<boolean>} `true` if the video exists or cannot be confirmed missing;
+ *                             `false` only when the JSON endpoint explicitly returns 404.
+ */
+async function checkVideoExistsJSON(videoURL) {
+  // Only handle URL inputs
+  if (!isMpcVideoUrl(videoURL) || typeof videoURL !== 'string') {
+    return false;
+  }
+  try {
+    const urlObj = new URL(videoURL);
+    urlObj.searchParams.set('format', 'json');
+    const res = await fetch(urlObj.href, { method: 'GET' });
+    if (res.status === 404) return false;
+    return true;
+  } catch (e) {
+    // Return true for network errors to avoid false negatives
+    return true;
+  }
 }
 
 /**
@@ -172,24 +217,6 @@ function addLanguageParameter(url, lang) {
     // eslint-disable-next-line no-console
     console.error('Error parsing URL:', error);
     return url;
-  }
-}
-
-/**
- * Checks whether a video exists by querying its JSON metadata endpoint.
- * @param {number|string} videoId - The video ID to check.
- * @returns {Promise<boolean>} `true` if the video exists or cannot be confirmed missing;
- *                             `false` only when the JSON endpoint explicitly returns 404.
- */
-async function checkVideoExistsJSON(videoId) {
-  const jsonUrl = `https://video.tv.adobe.com/v/${videoId}?format=json`;
-
-  try {
-    const res = await fetch(jsonUrl, { method: 'GET' });
-    if (res.status === 404) return false;
-    return true;
-  } catch (e) {
-    return true;
   }
 }
 
@@ -230,8 +257,7 @@ export default async function updateVideoUrl(url, lang) {
 
     // Case 3: 404 fallback to EN when localized (or caption) URL is 404
     if (lang !== 'en') {
-      const finalVideoId = extractVideoId(localizedUrl);
-      const exists = await checkVideoExistsJSON(finalVideoId);
+      const exists = await checkVideoExistsJSON(localizedUrl);
 
       if (!exists) {
         return updateVideoUrl(url, 'en');
