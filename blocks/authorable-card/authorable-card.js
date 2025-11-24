@@ -78,7 +78,8 @@ export default async function decorate(block) {
                 '../../scripts/browse-card/browse-cards-course-enricher.js'
               );
               const currentCourses = await getCurrentCourses();
-              cardData = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus(cardData, currentCourses);
+              const [enrichedCard] = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus([cardData], currentCourses);
+              cardData = enrichedCard;
             }
 
             await buildCard(contentDiv, linkContainer, cardData);
