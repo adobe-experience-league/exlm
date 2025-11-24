@@ -7,7 +7,7 @@ import {
   createTag,
   xssSanitizeQueryParamValue,
 } from '../../scripts/scripts.js';
-import { buildCard, processUpcomingEventsData } from '../../scripts/browse-card/browse-card.js';
+import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
@@ -355,7 +355,6 @@ export default async function decorate(block) {
     };
     updateUrlParams();
     const data = await BrowseCardsDelegate.fetchCardData(param);
-    // const cards = processUpcomingEventsData(data);
     const total = BrowseCardsDelegate.getTotalResultsCount(param);
     const totalPages = Math.ceil(total / filterConfig.numberOfResults) || 1;
     return { cards: data, totalCount: total, totalPages };

@@ -1,6 +1,6 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement } from '../../scripts/scripts.js';
-import { buildCard, processUpcomingEventsData } from '../../scripts/browse-card/browse-card.js';
+import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
@@ -74,10 +74,8 @@ export default async function decorate(block) {
   const browseCardsContent = BrowseCardsDelegate.fetchCardData(parameters);
   browseCardsContent
     .then((data) => {
-      const processedData = processUpcomingEventsData(data);
-
       // eslint-disable-next-line no-use-before-define
-      const filteredLiveEventsData = fetchFilteredCardData(processedData, solutionsParam);
+      const filteredLiveEventsData = fetchFilteredCardData(data, solutionsParam);
       buildCardsShimmer.removeShimmer();
       if (filteredLiveEventsData?.length) {
         for (let i = 0; i < Math.min(noOfResults, filteredLiveEventsData.length); i += 1) {

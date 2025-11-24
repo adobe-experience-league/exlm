@@ -462,29 +462,17 @@ const getVideoClipModal = () => {
   return videoClipModalPromise;
 };
 
-/**
- * Processes upcoming events data to set required properties
- * @param {Array} events - Array of event data objects
- * @returns {Array} - Processed event data with required properties set
- */
-export const processUpcomingEventsData = (events) => {
-  if (!Array.isArray(events)) return events;
+function normalizeUpcomingEventModel(model) {
+  const isUpcoming = model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
+  if (!isUpcoming) return model;
 
-  const processedEvents = events.map((event) => ({
-    ...event,
-    contentType: CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
+  return {
+    ...model,
     badgeTitle: CONTENT_TYPES.UPCOMING_EVENT.LABEL,
     viewLinkText: 'Register',
-  }));
-
-  processedEvents.sort((a, b) => {
-    const dateA = new Date(a.event?.time || a.startTime || a.el_event_start_time || 0);
-    const dateB = new Date(b.event?.time || b.startTime || b.el_event_start_time || 0);
-    return dateA - dateB;
-  });
-
-  return processedEvents;
-};
+    viewLink: model.viewLink || '#',
+  };
+}
 
 /**
  * Decorates upcoming event cards with additional features
@@ -498,7 +486,7 @@ const decorateUpcomingEvents = (card, model) => {
   if (!cardFigure) return;
 
   const { event } = model;
-  const hasSpeakers = event?.speakers?.name && event?.speakers?.profilePictureURL;
+  const hasSpeakers = event?.speakers?.name.length > 0 && event?.speakers?.profilePictureURL.length > 0;
   const hasSeries = event?.series;
   const seriesText = hasSeries ? event.series : null;
 
@@ -577,7 +565,16 @@ const decorateUpcomingEvents = (card, model) => {
  */
 
 export async function buildCard(container, element, model) {
-  const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
+  const normalizedModel = normalizeUpcomingEventModel(model);
+  const {
+    thumbnail,
+    product,
+    title,
+    contentType,
+    badgeTitle,
+    inProgressStatus,
+    failedToLoad = false,
+  } = normalizedModel;
 
   element.setAttribute('data-analytics-content-type', contentType);
   // lowercase all urls - because all of our urls are lower-case

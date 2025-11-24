@@ -807,7 +807,7 @@
 .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after {
   content: '';
   position: absolute;
-  height: 4px;
+  height: 3px;
   background-color: var(--non-spectrum-adobe-red);
 }
 
