@@ -24,6 +24,7 @@ const SORT_KEY_MAP = {
 };
 
 const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
+const isLargeDesktop = () => window.matchMedia('(min-width: 1400px)').matches;
 
 function toggleClassState(element, className) {
   if (!element || !className) return;
@@ -226,9 +227,13 @@ export default async function decorate(block) {
   const firstResultFromUrl = urlParams.get('firstResult');
 
   const mobileVIew = isMobile();
+  let defaultNumberOfResults = 4;
+  if (!mobileVIew) {
+    defaultNumberOfResults = isLargeDesktop() ? 16 : 12;
+  }
 
   const filterConfig = {
-    numberOfResults: mobileVIew ? 6 : 12,
+    numberOfResults: defaultNumberOfResults,
     contentTypes: contentTypesFromUrl,
     products: productsFromUrl,
     sort: sortFromUrl,
@@ -350,10 +355,10 @@ export default async function decorate(block) {
     };
     updateUrlParams();
     const data = await BrowseCardsDelegate.fetchCardData(param);
-    const cards = processUpcomingEventsData(data);
+    // const cards = processUpcomingEventsData(data);
     const total = BrowseCardsDelegate.getTotalResultsCount(param);
     const totalPages = Math.ceil(total / filterConfig.numberOfResults) || 1;
-    return { cards, totalCount: total, totalPages };
+    return { cards: data, totalCount: total, totalPages };
   }
 
   function renderTags(tags = [], filterType = '') {

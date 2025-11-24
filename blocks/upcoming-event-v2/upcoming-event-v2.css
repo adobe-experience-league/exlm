@@ -294,7 +294,7 @@
   }
 
   .upcoming-event-v2 .browse-card-shimmer {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr;
   }
 
   .upcoming-event-v2 .browse-cards-block-view {
@@ -347,6 +347,10 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 32px;
     text-align: center;
+  }
+
+  .upcoming-event-v2 .browse-card-shimmer {
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .upcoming-event-v2 .browse-cards-block-view {
@@ -757,6 +761,10 @@
 
 @media (min-width: 1400px) {
   .upcoming-event-v2 .browse-cards-block-content {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .upcoming-event-v2 .browse-card-shimmer {
     grid-template-columns: repeat(4, 1fr);
   }
 }
