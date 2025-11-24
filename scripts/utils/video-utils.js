@@ -182,7 +182,7 @@ function extractVideoId(url) {
  * @returns {Promise<boolean>} `true` if the video exists or cannot be confirmed missing;
  *                             `false` only when the JSON endpoint explicitly returns 404.
  */
-async function checkVideoExistsJSON(videoURL) {
+async function checkVideoJSONExists(videoURL) {
   // Only handle URL inputs
   if (!isMpcVideoUrl(videoURL) || typeof videoURL !== 'string') {
     return false;
@@ -195,7 +195,7 @@ async function checkVideoExistsJSON(videoURL) {
     return true;
   } catch (e) {
     // Return true for network errors to avoid false negatives
-    return true;
+    return false;
   }
 }
 
@@ -257,7 +257,7 @@ export default async function updateVideoUrl(url, lang) {
 
     // Case 3: 404 fallback to EN when localized (or caption) URL is 404
     if (lang !== 'en') {
-      const exists = await checkVideoExistsJSON(localizedUrl);
+      const exists = await checkVideoJSONExists(localizedUrl);
 
       if (!exists) {
         return updateVideoUrl(url, 'en');
