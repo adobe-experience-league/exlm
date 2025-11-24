@@ -462,18 +462,6 @@ const getVideoClipModal = () => {
   return videoClipModalPromise;
 };
 
-function normalizeUpcomingEventModel(model) {
-  const isUpcoming = model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
-  if (!isUpcoming) return model;
-
-  return {
-    ...model,
-    badgeTitle: CONTENT_TYPES.UPCOMING_EVENT.LABEL,
-    viewLinkText: 'Register',
-    viewLink: model.viewLink || '#',
-  };
-}
-
 /**
  * Decorates upcoming event cards with additional features
  * @param {HTMLElement} card - The card element to decorate
@@ -565,16 +553,7 @@ const decorateUpcomingEvents = (card, model) => {
  */
 
 export async function buildCard(container, element, model) {
-  const normalizedModel = normalizeUpcomingEventModel(model);
-  const {
-    thumbnail,
-    product,
-    title,
-    contentType,
-    badgeTitle,
-    inProgressStatus,
-    failedToLoad = false,
-  } = normalizedModel;
+  const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
 
   element.setAttribute('data-analytics-content-type', contentType);
   // lowercase all urls - because all of our urls are lower-case

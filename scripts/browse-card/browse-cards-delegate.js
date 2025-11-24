@@ -4,7 +4,7 @@ import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import PathsDataService from '../data-service/paths-data-service.js';
-import { URL_SPECIAL_CASE_LOCALES, getConfig, getPathDetails } from '../scripts.js';
+import { URL_SPECIAL_CASE_LOCALES, getConfig, getPathDetails, fetchLanguagePlaceholders } from '../scripts.js';
 import { getExlPipelineDataSourceParams } from '../data-service/coveo/coveo-exl-pipeline-helpers.js';
 import { RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import { createDateCriteria } from './browse-card-utils.js';
@@ -72,6 +72,26 @@ const fieldsToInclude = [
   'el_event_speakers_name',
   'el_event_speakers_profile_picture_url',
 ];
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
+
+export function normalizeUpcomingEventModel(model) {
+  const isUpcoming = model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
+  if (!isUpcoming) return model;
+
+  return {
+    ...model,
+    badgeTitle: CONTENT_TYPES.UPCOMING_EVENT.LABEL,
+    viewLinkText: placeholders.browseCardUpcomingEventViewLabel || 'Register',
+    viewLink: model.viewLink || '#',
+  };
+}
 
 /**
  * @module BrowseCardsDelegate
@@ -211,6 +231,12 @@ const BrowseCardsDelegate = (() => {
 
     // If the content type is an array, use the handleCoveoService (Works only with Coveo related content types)
     if (Array.isArray(contentType)) {
+      if (contentType.includes(CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY)) {
+        return async () => {
+          const cards = await handleCoveoService();
+          return cards.map(normalizeUpcomingEventModel);
+        };
+      }
       return handleCoveoService;
     }
 
