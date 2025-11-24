@@ -176,10 +176,31 @@ function addLanguageParameter(url, lang) {
 }
 
 /**
- * Updates the video URL with a localized video ID (if available)
- * @param {string} url - The original video URL (e.g., https://video.host/v/16419)
- * @param {string} lang - The target language (e.g., 'de')
- * @returns {Promise<string>} - Updated video URL with localized ID or same URL with language param
+ * Checks whether a video exists by querying its JSON metadata endpoint.
+ * @param {number|string} videoId - The video ID to check.
+ * @returns {Promise<boolean>} `true` if the video exists or cannot be confirmed missing;
+ *                             `false` only when the JSON endpoint explicitly returns 404.
+ */
+async function checkVideoExistsJSON(videoId) {
+  const jsonUrl = `https://video.tv.adobe.com/v/${videoId}?format=json`;
+
+  try {
+    const res = await fetch(jsonUrl, { method: 'GET' });
+    if (res.status === 404) return false;
+    return true;
+  } catch (e) {
+    return true;
+  }
+}
+
+/**
+ * Updates a video URL to its localized version based on the target language.
+ * @param {string} url - Original video URL (e.g. "https://video.host/v/16419").
+ * @param {string} lang - Target language code (e.g. "de").
+ * @returns {Promise<string>} A Promise resolving to:
+ *   - the localized video URL,
+ *   - or the original URL with a `lang` parameter,
+ *   - or the English fallback URL if the localized version is unavailable.
  */
 export default async function updateVideoUrl(url, lang) {
   if (!url || typeof url !== 'string' || !lang) {
@@ -187,34 +208,40 @@ export default async function updateVideoUrl(url, lang) {
   }
 
   const originalId = extractVideoId(url);
-  if (!originalId) {
-    return url;
-  }
+  if (!originalId) return url;
 
   try {
     const collectionsData = await fetchVideoCollections(originalId);
+    if (!collectionsData) return url;
 
-    if (!collectionsData) {
-      return url;
-    }
     const { localizedId, hasTargetLanguage } = findLocalizedVideoId(collectionsData, lang);
 
-    // Replace with localized video ID (separate translated video)
-    if (localizedId && localizedId !== parseInt(originalId, 10)) {
-      return url.replace(`/v/${originalId}`, `/v/${localizedId}`);
+    let localizedUrl = url;
+    const numericOriginalId = Number(originalId);
+
+    // Case 1: separate localized video
+    if (localizedId && localizedId !== numericOriginalId) {
+      localizedUrl = url.replace(`/v/${originalId}`, `/v/${localizedId}`);
+    }
+    // Case 2: same video, multiple captions
+    else if (hasTargetLanguage) {
+      localizedUrl = addLanguageParameter(url, lang);
     }
 
-    // Single video with multiple captions - add language param if target language is available
-    if (hasTargetLanguage) {
-      return addLanguageParameter(url, lang);
+    // Case 3: 404 fallback to EN when localized (or caption) URL is 404
+    if (lang !== 'en') {
+      const finalVideoId = extractVideoId(localizedUrl);
+      const exists = await checkVideoExistsJSON(finalVideoId);
+
+      if (!exists) {
+        return updateVideoUrl(url, 'en');
+      }
     }
 
-    // If no target language available, return original URL
-    return url;
+    return localizedUrl;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.warn(`Failed to fetch localized video ID for ${originalId}:`, error);
-    // In case of any error, return original URL
     return url;
   }
 }
