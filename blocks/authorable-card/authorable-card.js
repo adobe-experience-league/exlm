@@ -55,14 +55,6 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
-  // Check if user is signed in and get course data for enrichment
-  let userCourses = [];
-  const isUserSignedIn = await isSignedInUser();
-  if (isUserSignedIn) {
-    const { getCurrentCourses } = await import('../../scripts/courses/course-profile.js');
-    userCourses = await getCurrentCourses();
-  }
-
   const cardLoading$ = Promise.all(
     linksContainer.map(async (linkContainer) => {
       let link = linkContainer.textContent?.trim();
@@ -78,14 +70,15 @@ export default async function decorate(block) {
           if (cardData) {
             // Enrich course cards with status information for signed-in users
             if (
-              isUserSignedIn &&
-              cardData?.contentType?.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()
+              cardData?.contentType?.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase() &&
+              (await isSignedInUser())
             ) {
+              const { getCurrentCourses } = await import('../../scripts/courses/course-profile.js');
               const { default: BrowseCardsCourseEnricher } = await import(
                 '../../scripts/browse-card/browse-cards-course-enricher.js'
               );
-              const [enrichedCard] = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus([cardData], userCourses);
-              cardData = enrichedCard;
+              const currentCourses = await getCurrentCourses();
+              cardData = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus(cardData, currentCourses);
             }
 
             await buildCard(contentDiv, linkContainer, cardData);

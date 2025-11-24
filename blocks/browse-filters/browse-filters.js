@@ -37,6 +37,7 @@ import {
   dropdownOptions,
 } from './browse-topics.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
+import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 
 let placeholders = {};
 try {
@@ -741,7 +742,10 @@ async function handleSearchEngineSubscription(block) {
       let cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
 
       // Enrich cards with course status information for signed-in users
-      if (await isSignedInUser()) {
+      if (
+        cardsData?.contentType?.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase() &&
+        (await isSignedInUser())
+      ) {
         const { getCurrentCourses } = await import('../../scripts/courses/course-profile.js');
         const { default: BrowseCardsCourseEnricher } = await import(
           '../../scripts/browse-card/browse-cards-course-enricher.js'
