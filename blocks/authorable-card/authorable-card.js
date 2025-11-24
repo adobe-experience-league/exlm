@@ -75,19 +75,25 @@ export default async function decorate(block) {
         try {
           let cardData = await getCardData(link, placeholders);
 
-          // Enrich course cards with status information for signed-in users
-          if (
-            isUserSignedIn &&
-            cardData?.contentType?.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()
-          ) {
-            const { default: BrowseCardsCourseEnricher } = await import(
-              '../../scripts/browse-card/browse-cards-course-enricher.js'
-            );
-            const [enrichedCard] = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus([cardData], userCourses);
-            cardData = enrichedCard;
-          }
+          // Only proceed if cardData is valid
+          if (cardData) {
+            // Enrich course cards with status information for signed-in users
+            if (
+              isUserSignedIn &&
+              cardData?.contentType?.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()
+            ) {
+              const { default: BrowseCardsCourseEnricher } = await import(
+                '../../scripts/browse-card/browse-cards-course-enricher.js'
+              );
+              const [enrichedCard] = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus([cardData], userCourses);
+              cardData = enrichedCard;
+            }
 
-          await buildCard(contentDiv, linkContainer, cardData);
+            await buildCard(contentDiv, linkContainer, cardData);
+          } else {
+            // eslint-disable-next-line no-console
+            console.warn(`Failed to load card data for link: ${link}`);
+          }
         } catch (err) {
           // eslint-disable-next-line no-console
           console.error(err);
