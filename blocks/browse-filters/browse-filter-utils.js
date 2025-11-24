@@ -73,6 +73,12 @@ const contentTypes = [
     description: 'Questions, answers, ideas, and expertise shared from Adobe customers and experts growing together.',
   },
   {
+    id: 'Course',
+    value: 'Course',
+    title: 'Courses',
+    description: 'Skill-building courses with sharable completion certificates.',
+  },
+  {
     id: 'Documentation',
     value: 'Documentation',
     title: 'Documentation',

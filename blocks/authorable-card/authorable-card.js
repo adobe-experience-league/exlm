@@ -3,6 +3,8 @@ import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { getCardData } from '../../scripts/browse-card/browse-card-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
+import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -53,6 +55,14 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
+  // Check if user is signed in and get course data for enrichment
+  let userCourses = [];
+  const isUserSignedIn = await isSignedInUser();
+  if (isUserSignedIn) {
+    const { getCurrentCourses } = await import('../../scripts/courses/course-profile.js');
+    userCourses = await getCurrentCourses();
+  }
+
   const cardLoading$ = Promise.all(
     linksContainer.map(async (linkContainer) => {
       let link = linkContainer.textContent?.trim();
@@ -63,7 +73,20 @@ export default async function decorate(block) {
       linkContainer.innerHTML = '';
       if (link) {
         try {
-          const cardData = await getCardData(link, placeholders);
+          let cardData = await getCardData(link, placeholders);
+
+          // Enrich course cards with status information for signed-in users
+          if (
+            isUserSignedIn &&
+            cardData?.contentType?.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()
+          ) {
+            const { default: BrowseCardsCourseEnricher } = await import(
+              '../../scripts/browse-card/browse-cards-course-enricher.js'
+            );
+            const [enrichedCard] = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus([cardData], userCourses);
+            cardData = enrichedCard;
+          }
+
           await buildCard(contentDiv, linkContainer, cardData);
         } catch (err) {
           // eslint-disable-next-line no-console

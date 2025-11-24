@@ -36,6 +36,7 @@ import {
   coveoFacetMap,
   dropdownOptions,
 } from './browse-topics.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 let placeholders = {};
 try {
@@ -737,7 +738,17 @@ async function handleSearchEngineSubscription(block) {
   const { results, searchResponseId, response } = search;
   if (results.length > 0) {
     try {
-      const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
+      let cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
+
+      // Enrich cards with course status information for signed-in users
+      if (await isSignedInUser()) {
+        const { getCurrentCourses } = await import('../../scripts/courses/course-profile.js');
+        const { default: BrowseCardsCourseEnricher } = await import(
+          '../../scripts/browse-card/browse-cards-course-enricher.js'
+        );
+        const currentCourses = await getCurrentCourses();
+        cardsData = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus(cardsData, currentCourses);
+      }
       const renderCards =
         !filterResultsEl.dataset.searchresponseid ||
         (filterResultsEl.dataset.searchresponseid && filterResultsEl.dataset.searchresponseid !== searchResponseId) ||
@@ -761,6 +772,7 @@ async function handleSearchEngineSubscription(block) {
         const cardDiv = document.createElement('div');
         cardDiv.classList.add('browse-filter-card-item');
         buildCard(filterResultsEl, cardDiv, cardData);
+
         filterResultsEl.appendChild(cardDiv);
       });
       browseFilterForm.classList.add('is-result');
