@@ -34,6 +34,23 @@
   order: 1;
 }
 
+.upcoming-event-v2 .browse-upcoming-filter-wrapper {
+  display: flex;
+  gap: 16px;
+}
+
+.upcoming-event-v2 .browse-card-clear-filter {
+  font-weight: var(--font-weight-medium);
+  font-size: var(--spectrum-body-size-s);
+  white-space: nowrap;
+  grid-area: clear;
+}
+
+.upcoming-event-v2 .browse-card-clear-filter.disabled {
+  color: var(--non-spectrum-smoke);
+  cursor: default;
+}
+
 .upcoming-event-v2 .browse-cards-block-header .browse-card-tags {
   margin-top: 1em;
   align-self: flex-start;
@@ -108,6 +125,7 @@
 }
 
 .upcoming-event-v2 .browse-card-dropdown {
+  grid-area: filter;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -115,6 +133,23 @@
   width: 100%;
   margin-bottom: 8px;
   gap: 16px;
+}
+
+.upcoming-event-v2 .upcoming-event-options {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.upcoming-event-v2 .view-switcher {
+  grid-area: list;
+}
+
+.upcoming-event-v2 .browse-upcoming-event-filter > label {
+  grid-area: label;
+  margin-bottom: 12px;
 }
 
 .upcoming-event-v2 .browse-card-dropdown > label {
@@ -153,6 +188,102 @@
 
 /** List view styles end **/
 
+.upcoming-event-v2 .browse-cards-block-header .browse-upcoming-event-filter {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    'label label'
+    'filter filter'
+    'clear sort';
+  width: 100%;
+  justify-content: space-between;
+}
+
+.upcoming-event-v2 .browse-cards-block-header .browse-sort-container {
+  display: flex;
+  grid-area: sort;
+  justify-content: flex-end;
+}
+
+.upcoming-event-v2 .browse-cards-block-header .sort-container {
+  display: flex;
+  align-items: center;
+  color: var(--spectrum-gray-700);
+  font-size: var(--spectrum-font-size-75);
+  justify-content: flex-end;
+  line-height: 15.6px;
+  position: relative;
+  text-align: right;
+}
+
+.upcoming-event-v2 .browse-cards-block-header .sort-drop-btn {
+  background: transparent;
+  cursor: pointer;
+  color: var(--spectrum-gray-700);
+  border: 0 none;
+  border-radius: 4px;
+  font-size: var(--spectrum-font-size-100);
+  font-weight: normal;
+  line-height: 17px;
+  margin: 0 0 0 8px;
+  padding: 0 20px 0 0;
+  position: relative;
+  text-align: left;
+}
+
+.upcoming-event-v2 .browse-cards-block-header .sort-drop-btn::after {
+  background-image: url('../../icons/down-arrow.svg');
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  background-size: 8px;
+  content: '';
+  height: 6px;
+  position: absolute;
+  right: 0;
+  top: 7px;
+  width: 10px;
+}
+
+.upcoming-event-v2 .browse-cards-block-header .sort-container .sort-dropdown-content {
+  background: var(--spectrum-gray-50);
+  border: 1px solid var(--spectrum-gray-400);
+  border-radius: 4px;
+  color: var(--non-spectrum-input-text);
+  cursor: pointer;
+  display: none;
+  font-size: var(--spectrum-font-size-100);
+  font-weight: normal;
+  position: absolute;
+  right: 0;
+  text-align: left;
+  top: 40px;
+  width: 120px;
+  z-index: 15;
+}
+
+.upcoming-event-v2 .browse-cards-block-header .sort-container .sort-dropdown-content.show {
+  display: block;
+}
+
+.upcoming-event-v2 .browse-cards-block-header .sort-container .sort-dropdown-content a {
+  border: none;
+  color: var(--non-spectrum-charcoal-gray);
+  display: block;
+  font-size: var(--spectrum-font-size-100);
+  font-weight: normal;
+  text-decoration: none;
+  margin: 0;
+  padding: 5px 15px;
+  text-transform: capitalize;
+}
+
+.upcoming-event-v2 .browse-cards-block-header .sort-container .sort-dropdown-content a.selected {
+  background-image: url('../../icons/checkmark.svg');
+  background-position: 93% 12px;
+  background-repeat: no-repeat;
+  background-size: 12px;
+}
+
 @media only screen and (min-width: 600px) {
   .section.upcoming-event-v2-container {
     padding-bottom: 30px;
@@ -170,12 +301,27 @@
     text-align: center;
   }
 
+  .upcoming-event-v2 .browse-upcoming-event-filter > label {
+    margin-bottom: 0;
+    height: 24px;
+    align-self: center;
+  }
+
   .upcoming-event-v2 .upcoming-event-v2 .browse-cards-block-content > div {
     flex: 0 0 286px;
   }
 
   .upcoming-event-v2 .browse-cards-block-header .browse-card-description-text {
     margin-bottom: 36px;
+  }
+
+  .upcoming-event-v2 .browse-cards-block-header .browse-upcoming-event-filter {
+    grid-template-columns: auto 1fr auto auto;
+    grid-template-areas:
+      'label label label label'
+      'filter filter filter clear'
+      'sort sort sort sort';
+    column-gap: 24px;
   }
 
   .upcoming-event-v2 .browse-card-dropdown {
@@ -216,6 +362,10 @@
     margin-bottom: 0;
   }
 
+  .upcoming-event-v2 .upcoming-event-options {
+    margin: 0;
+  }
+
   .upcoming-event-v2 .browse-card {
     text-align: left;
   }
@@ -233,10 +383,10 @@
   }
 
   .upcoming-event-v2 .browse-cards-block-header .browse-upcoming-event-filter {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: space-between;
+    grid-template-columns: auto 1fr auto auto;
+    grid-template-areas:
+      'label filter filter clear'
+      'sort sort list list';
   }
 
   /** List view styles start **/

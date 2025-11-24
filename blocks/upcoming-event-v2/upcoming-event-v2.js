@@ -1,5 +1,5 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import Dropdown from '../../scripts/dropdown/dropdown.js';
+import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 import Pagination from '../../scripts/pagination/pagination.js';
 import {
   fetchLanguagePlaceholders,
@@ -242,12 +242,17 @@ export default async function decorate(block) {
   block.innerHTML = '';
   block.classList.add('upcoming-event-block');
 
+  const clearFilterText = placeholders?.filterClearLabel || 'Clear filters';
+
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
       <div class="browse-upcoming-event-filter">
-        <form class="browse-card-dropdown">
-          <label>${filterLabelElement?.innerHTML}</label>
-        </form>
+        <label>${filterLabelElement?.innerHTML}</label>
+        <form class="browse-card-dropdown"></form>
+        <a href="#" class="browse-card-clear-filter" aria-label="${clearFilterText}">
+          ${clearFilterText}
+        </a>
+        <div class="browse-sort-container"></div>
         <div class="view-switcher">
           <button type="button" class="view-btn grid-view active" aria-label="Grid view">
             ${placeholders?.gridViewLabel || 'Grid'}
@@ -384,6 +389,22 @@ export default async function decorate(block) {
     renderTags(eventTags, placeholders?.filterEventSeriesLabel || 'Event series');
   }
 
+  function updateClearFilterButtonState() {
+    const clearFilterButton = block.querySelector('.browse-card-clear-filter');
+    if (!clearFilterButton) return;
+
+    const { products, eventSeries, contentTypes } = filterConfig;
+    const hasActiveFilters = products.length > 0 || contentTypes.length > 0 || eventSeries.length > 0;
+
+    if (hasActiveFilters) {
+      clearFilterButton.removeAttribute('disabled');
+      clearFilterButton.classList.remove('disabled');
+    } else {
+      clearFilterButton.setAttribute('disabled', 'true');
+      clearFilterButton.classList.add('disabled');
+    }
+  }
+
   function handleGridViewButtons() {
     const gridViewBtn = block.querySelector('.view-btn.grid-view');
     const listViewBtn = block.querySelector('.view-btn.list-view');
@@ -425,6 +446,7 @@ export default async function decorate(block) {
       firstResult,
     });
     updateTags();
+    updateClearFilterButtonState();
     if (cardModels?.length > 0) {
       contentDiv.style.display = '';
       cardModels.forEach((cardData) => {
@@ -455,17 +477,123 @@ export default async function decorate(block) {
     return { cards: cardModels, totalPages };
   }
 
-  Promise.all([fetchAndRenderCards(filterConfig), BrowseCardsDelegate.fetchCoveoFacetFields('el_event_series')])
-    .then(([, eventSeriesList]) => {
+  function renderSortContainer() {
+    const wrapper = block.querySelector('.browse-sort-container');
+    if (!wrapper) return;
+    const sortKey = filterConfig.sort
+      ? Object.keys(SORT_KEY_MAP).find((key) => SORT_KEY_MAP[key] === filterConfig.sort)
+      : 'descending';
+    const newestLabel = placeholders?.filterSortNewestLabel || 'Newest';
+    const oldestLabel = placeholders?.filterSortOldestLabel || 'Oldest';
+    const defaultLabel = sortKey === 'descending' ? newestLabel : oldestLabel;
+    const sortContainer = htmlToElement(`
+      <div class="sort-container">
+      <span>${placeholders?.filterSortLabel || 'Sort by'}</span>
+    <button class="sort-drop-btn">${defaultLabel}</button>
+    <div class="sort-dropdown-content">
+      <a href="/" class="${
+        sortKey === 'descending' ? 'selected' : ''
+      }" data-sort-criteria="descending" data-sort-caption="${newestLabel}">${newestLabel}</a>
+      <a href="/" class="${
+        sortKey === 'ascending' ? 'selected' : ''
+      }" data-sort-criteria="ascending" data-sort-caption="${oldestLabel}">${oldestLabel}</a>
+    </div>
+    </div>
+  `);
+    wrapper.appendChild(sortContainer);
+
+    const dropDownBtn = sortContainer.querySelector('.sort-drop-btn');
+    const sortDropdown = sortContainer.querySelector('.sort-dropdown-content');
+    const sortLinks = sortDropdown.querySelectorAll('a');
+
+    dropDownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropDownBtn.classList.toggle('active');
+      sortDropdown.classList.toggle('show');
+
+      setTimeout(() => {
+        document.addEventListener(
+          'click',
+          (event) => {
+            if (!sortDropdown.contains(event.target) && event.target !== dropDownBtn) {
+              sortDropdown.classList.remove('show');
+              dropDownBtn.classList.remove('active');
+            }
+          },
+          { once: true },
+        );
+      });
+    });
+
+    sortLinks.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const sortCriteria = link.getAttribute('data-sort-criteria');
+        const sortCaption = link.getAttribute('data-sort-caption');
+
+        dropDownBtn.textContent = sortCaption;
+        sortDropdown.classList.remove('show');
+        dropDownBtn.classList.remove('active');
+
+        sortLinks.forEach((a) => a.classList.remove('selected'));
+        link.classList.add('selected');
+        const sortValue = SORT_KEY_MAP[sortCriteria];
+        filterConfig.sort = sortValue;
+        fetchAndRenderCards({
+          sort: sortValue,
+        });
+      });
+    });
+  }
+
+  Promise.all([
+    fetchAndRenderCards(filterConfig),
+    BrowseCardsDelegate.fetchCoveoFacetFields(['el_event_series', 'el_product']),
+  ])
+    .then(([, facetDetails]) => {
+      const eventSeriesList = facetDetails.el_event_series || [];
+      const productsList = facetDetails.el_product || [];
+      const dropdownWrapper = block.querySelector('.browse-card-dropdown');
+
+      const productDropdown = new Dropdown(
+        dropdownWrapper,
+        `${placeholders?.filterProductLabel || 'Product'}`,
+        productsList.map((item) => ({
+          title: item,
+          value: item,
+        })),
+        DROPDOWN_VARIANTS.MULTISELECT,
+      );
+
+      productsFromUrl.forEach((selectedProduct) => {
+        productDropdown.updateDropdownValue(selectedProduct);
+      });
+
       const eventSeriesDropdown = new Dropdown(
-        block.querySelector('.browse-card-dropdown'),
+        dropdownWrapper,
         `${placeholders?.filterEventSeriesLabel || 'Event series'}`,
         eventSeriesList.map((value) => ({
           title: value,
           value,
         })),
-        'multi-select',
+        DROPDOWN_VARIANTS.MULTISELECT,
       );
+
+      eventSeriesFromUrl.forEach((selectedEvent) => {
+        eventSeriesDropdown.updateDropdownValue(selectedEvent);
+      });
+
+      const contentTypeDropdown = new Dropdown(
+        dropdownWrapper,
+        `${placeholders?.filterEventTypeLabel || 'Event type'}`,
+        contentTypeDropdownOptions,
+        DROPDOWN_VARIANTS.MULTISELECT,
+      );
+
+      contentTypesFromUrl.forEach((selectedContentType) => {
+        contentTypeDropdown.updateDropdownValue(selectedContentType);
+      });
 
       eventSeriesDropdown.handleOnChange((selectedValues) => {
         const selectedFilters = (Array.isArray(selectedValues) ? selectedValues : selectedValues.split(','))
@@ -477,6 +605,54 @@ export default async function decorate(block) {
           eventSeries: selectedFilters,
         });
       });
+
+      contentTypeDropdown.handleOnChange((selectedValues) => {
+        const selectedFilters = (Array.isArray(selectedValues) ? selectedValues : selectedValues.split(','))
+          .map((item) => item.trim())
+          .filter(Boolean);
+        filterConfig.contentTypes = selectedFilters;
+        resetPaginationStatus();
+        fetchAndRenderCards({ contentTypes: selectedFilters });
+      });
+
+      productDropdown.handleOnChange((selectedValues) => {
+        const selectedFilters = (Array.isArray(selectedValues) ? selectedValues : selectedValues.split(','))
+          .map((item) => item.trim())
+          .filter(Boolean);
+        filterConfig.products = selectedFilters;
+        resetPaginationStatus();
+        fetchAndRenderCards({
+          products: selectedFilters,
+        });
+      });
+
+      function setupClearFilterHandler() {
+        const clearFilterButton = block.querySelector('.browse-card-clear-filter');
+
+        if (clearFilterButton) {
+          clearFilterButton.addEventListener('click', async (event) => {
+            event.preventDefault();
+
+            // Don't proceed if button is disabled
+            if (clearFilterButton.hasAttribute('disabled')) {
+              return;
+            }
+
+            filterConfig.contentTypes = [];
+            filterConfig.eventSeries = [];
+            filterConfig.firstResult = 0;
+            filterConfig.products = [];
+            filterConfig.sort = COVEO_SORT_OPTIONS.MOST_RECENT;
+            fetchAndRenderCards({});
+            productDropdown.reset();
+            contentTypeDropdown.reset();
+            eventSeriesDropdown.reset();
+          });
+        }
+      }
+
+      renderSortContainer();
+      setupClearFilterHandler();
     })
     .catch((err) => {
       // eslint-disable-next-line no-console

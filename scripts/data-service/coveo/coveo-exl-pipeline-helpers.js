@@ -168,7 +168,7 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
       ...(!param.feature ? { facets: getFacets(param) } : ''),
       ...(param.feature ? { aq: constructCoveoAdvancedQuery(param) } : ''),
       ...(param.aq ? { aq: param.aq } : ''),
-      ...(param.field ? { field: param.field } : ''),
+      ...(param.fields?.length > 0 ? { batch: param.fields.map((field) => ({ field })) } : ''),
       fieldsToInclude: fields,
     },
   };
@@ -179,7 +179,7 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
   }
 
   if (param.fetchFacets) {
-    dataSource.url += '/values';
+    dataSource.url += '/values/batch';
   }
 
   return dataSource;
