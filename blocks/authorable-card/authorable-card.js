@@ -75,7 +75,6 @@ export default async function decorate(block) {
         try {
           let cardData = await getCardData(link, placeholders);
 
-          // Only proceed if cardData is valid
           if (cardData) {
             // Enrich course cards with status information for signed-in users
             if (
