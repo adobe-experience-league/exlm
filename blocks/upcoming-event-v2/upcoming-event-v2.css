@@ -176,14 +176,32 @@
   display: none;
 }
 
-.upcoming-event-v2:has(.browse-card-shimmer) .browse-cards-block-content,
-.upcoming-event-v2:has(.browse-card-shimmer) .event-no-results {
-  display: none;
-}
-
 .upcoming-event-v2 .browse-cards-block-content > .event-no-results {
   min-height: unset;
   height: 170px;
+}
+
+.upcoming-event-v2:has(.browse-card-shimmer) .browse-cards-block-content,
+.upcoming-event-v2:has(.browse-card-shimmer) .event-no-results,
+.upcoming-event-v2.list:has(.browse-card-shimmer) .browse-cards-block-content,
+.upcoming-event-v2.list:has(.browse-card-shimmer) .event-no-results {
+  display: none;
+}
+
+.upcoming-event-v2.list .browse-card-shimmer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.upcoming-event-v2.list .browse-card-shimmer > .loading-shimmer {
+  max-height: 236px;
+}
+
+.upcoming-event-v2.list .browse-card-shimmer .browse-card-shimmer-text-wrapper,
+.upcoming-event-v2.list .browse-card-shimmer .browse-card-shimmer-cta-wrapper {
+  display: none;
 }
 
 /** List view styles end **/
