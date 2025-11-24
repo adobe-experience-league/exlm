@@ -27,7 +27,11 @@ import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
-import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
+import {
+  assetInteractionModel,
+  pushBrowseFilterSearchEvent,
+  pushBrowseFilterSearchClearEvent,
+} from '../../scripts/analytics/lib-analytics.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import {
   formattedTags,
@@ -495,6 +499,8 @@ function handleCoveoHeadlessSearch(
   if (!browseFiltersSection) {
     return;
   }
+
+  // We'll handle analytics in renderSearchQuerySummary function
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
   const searchIcon = filterInputSection.querySelector('.icon-search');
   const clearIcon = filterInputSection.querySelector('.icon-clear');
@@ -548,6 +554,10 @@ function handleCoveoHeadlessSearch(
     filterResultsEl.style.display = '';
     filtersPaginationEl.style.display = '';
     buildCardsShimmer.removeShimmer();
+
+    // Reset analytics trigger flag when search is complete
+    // This allows the next search to trigger analytics again
+    delete filterResultsEl.dataset.analyticsTriggered;
   });
 
   handleUriHash();
@@ -634,6 +644,13 @@ function handleSearchBoxSubscription() {
   wrapper.replaceWith(suggestionsElement);
 }
 
+// Global flag to track analytics events
+window.browseFilterAnalyticsState = {
+  lastSearchId: null,
+  eventsTriggered: {},
+  resultsCount: 0,
+};
+
 /**
  * Renders the search query summary showing the total results count.
  *
@@ -645,6 +662,7 @@ function renderSearchQuerySummary() {
   if (!window.headlessQuerySummary || !queryEl) {
     return;
   }
+
   const numberFormat = new Intl.NumberFormat('en-US');
   const resultsCount = window.headlessQuerySummary.state.total;
   let assetString;
@@ -657,6 +675,9 @@ function renderSearchQuerySummary() {
     assetString = placeholders.showAssets?.replace('{x}', formattedCount) || `Showing ${formattedCount} assets`;
   }
   queryEl.textContent = assetString;
+
+  // Store the results count for use in the analytics event
+  window.browseFilterAnalyticsState.resultsCount = resultsCount;
 }
 
 /**
@@ -724,6 +745,66 @@ function generateAnalyticsFilters(block, totalCount) {
 }
 
 /**
+ * Determines the search type based on active filters and search input.
+ *
+ * @param {HTMLElement} block - The container block element
+ * @returns {string} - "filter", "search", or "filter+search"
+ */
+function determineSearchType(block) {
+  const searchEl = block.querySelector('.filter-input-search > .search-input');
+  const hasSearchValue = searchEl && searchEl.value.trim() !== '';
+
+  const hasActiveFilters = tagsProxy && tagsProxy.length > 0;
+  const hasActiveTopics = block.querySelectorAll('.browse-topics-item-active').length > 0;
+
+  if ((hasActiveFilters || hasActiveTopics) && hasSearchValue) {
+    return 'filter+search';
+  } else if (hasActiveFilters || hasActiveTopics) {
+    return 'filter';
+  } else if (hasSearchValue) {
+    return 'search';
+  }
+
+  return 'filter'; // Default case
+}
+
+/**
+ * Gets filter types and values from active filters.
+ *
+ * @param {HTMLElement} block - The container block element
+ * @returns {Object} - Object with filterType and filterValue properties
+ */
+function getFilterTypesAndValues(block) {
+  const filterTypes = [];
+  const filterValues = [];
+
+  // Get filter types and values from dropdown selections
+  if (tagsProxy && tagsProxy.length > 0) {
+    // Process each tag individually to maintain the exact order
+    tagsProxy.forEach((tag) => {
+      // Add each tag's name and value directly to the arrays
+      filterTypes.push(tag.name);
+      filterValues.push(tag.value);
+    });
+  }
+
+  // Add topics if any are selected
+  const selectedTopics = block.querySelectorAll('.browse-topics-item-active');
+  if (selectedTopics.length > 0) {
+    // Add each topic individually
+    Array.from(selectedTopics).forEach((topic) => {
+      filterTypes.push('Topics');
+      filterValues.push(topic.textContent.trim());
+    });
+  }
+
+  return {
+    filterType: filterTypes.join(', '),
+    filterValue: filterValues.join(', '),
+  };
+}
+
+/**
  * Handles the search engine subscription and updates the browse filter results.
  *
  * @param {HTMLElement} block - The container block element for managing the browse filters.
@@ -737,6 +818,36 @@ async function handleSearchEngineSubscription(block) {
   // eslint-disable-next-line
   const search = window.headlessSearchEngine.state.search;
   const { results, searchResponseId, response } = search;
+
+  // Trigger analytics event for search/filter interaction
+  // Use the search response ID to ensure we only trigger once per unique search
+  const currentSearchId = searchResponseId;
+
+  if (
+    isFilterSelectionActive(block) &&
+    window.browseFilterAnalyticsState.lastSearchId !== currentSearchId &&
+    response?.totalCount !== undefined
+  ) {
+    const searchType = determineSearchType(block);
+    const searchEl = block.querySelector('.filter-input-search > .search-input');
+    const searchValue = searchEl ? searchEl.value.trim() : '';
+    const { filterType, filterValue } = getFilterTypesAndValues(block);
+
+    // Only trigger if we have valid data
+    if (
+      (searchType === 'filter' && filterType) ||
+      (searchType === 'search' && searchValue) ||
+      (searchType === 'filter+search' && filterType && searchValue)
+    ) {
+      // Update the last search ID to prevent duplicate events
+      window.browseFilterAnalyticsState.lastSearchId = currentSearchId;
+
+      // Use a timeout to ensure this runs after the current execution context
+      setTimeout(() => {
+        pushBrowseFilterSearchEvent(searchType, filterType, filterValue, searchValue, response.totalCount);
+      }, 0);
+    }
+  }
   if (results.length > 0) {
     try {
       let cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
@@ -1225,6 +1336,25 @@ function clearSearchQuery(block) {
 }
 
 function clearSelectedFilters(block) {
+  // Capture filter state before clearing for analytics
+  if (isFilterSelectionActive(block)) {
+    const searchType = determineSearchType(block);
+    const searchEl = block.querySelector('.filter-input-search > .search-input');
+    const searchValue = searchEl ? searchEl.value.trim() : '';
+    const { filterType, filterValue } = getFilterTypesAndValues(block);
+    const resultsCount = window.headlessQuerySummary?.state?.total || 0;
+
+    // Only trigger the event if we have valid data
+    if (
+      (searchType === 'filter' && filterType) ||
+      (searchType === 'search' && searchValue) ||
+      (searchType === 'filter+search' && filterType && searchValue)
+    ) {
+      // Trigger the clear filters analytics event
+      pushBrowseFilterSearchClearEvent(searchType, filterType, filterValue, searchValue, resultsCount);
+    }
+  }
+
   removeTopicSelections(block);
   uncheckAllFiltersFromDropdown(block);
   clearAllSelectedTag(block);

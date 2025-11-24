@@ -895,6 +895,74 @@ export function pushCourseStartEvent(courseData) {
  * @param {string} cardHeader - The header or category associated with the card (used as `linkType`).
  * @param {number} cardPosition - The index or position of the card within the list/grid.
  */
+/**
+ * Pushes a browse filter search event to the Adobe Data Layer.
+ * This event is fired when users interact with search and filter functionality.
+ *
+ * @param {string} searchType - Type of search: "filter", "search", or "filter+search"
+ * @param {string} [filterType] - Comma-separated list of filter categories (required for "filter" and "filter+search")
+ * @param {string} [filterValue] - Comma-separated list of filter values aligned with filterType (required for "filter" and "filter+search")
+ * @param {string} [searchValue] - Keyword entered by user (required for "search" and "filter+search")
+ * @param {number} results - Integer count of results returned
+ */
+export function pushBrowseFilterSearchEvent(searchType, filterType, filterValue, searchValue, results) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const dataLayerEntry = {
+    event: 'browseFilterSearch',
+    input: {
+      searchType,
+      results,
+    },
+  };
+
+  // Add appropriate properties based on searchType
+  if (searchType === 'filter' || searchType === 'filter+search') {
+    dataLayerEntry.input.filterType = filterType;
+    dataLayerEntry.input.filterValue = filterValue;
+  }
+
+  if (searchType === 'search' || searchType === 'filter+search') {
+    dataLayerEntry.input.searchValue = searchValue;
+  }
+
+  window.adobeDataLayer.push(dataLayerEntry);
+}
+
+/**
+ * Pushes a browse filter search clear event to the Adobe Data Layer.
+ * This event is fired when users click the Clear Filters button.
+ *
+ * @param {string} searchType - Type of search that was used before clearing
+ * @param {string} [filterType] - Comma-separated list of filter categories before clearing
+ * @param {string} [filterValue] - Comma-separated list of filter values before clearing
+ * @param {string} [searchValue] - Keyword entered before clearing
+ * @param {number} results - Integer count of results before clearing
+ */
+export function pushBrowseFilterSearchClearEvent(searchType, filterType, filterValue, searchValue, results) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const dataLayerEntry = {
+    event: 'browseFilterSearchClear',
+    input: {
+      searchType,
+      results,
+    },
+  };
+
+  // Add appropriate properties based on searchType
+  if (searchType === 'filter' || searchType === 'filter+search') {
+    dataLayerEntry.input.filterType = filterType;
+    dataLayerEntry.input.filterValue = filterValue;
+  }
+
+  if (searchType === 'search' || searchType === 'filter+search') {
+    dataLayerEntry.input.searchValue = searchValue;
+  }
+
+  window.adobeDataLayer.push(dataLayerEntry);
+}
+
 export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition) {
   window.adobeDataLayer = window.adobeDataLayer || [];
   const product = cardData?.product;
