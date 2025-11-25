@@ -64,9 +64,6 @@ export default class Dropdown {
       count = checkbox.checked ? count + 1 : count;
       if (checkbox.value === value) {
         const label = this.dropdown.querySelector('button > span');
-        if (!checkbox.checked) {
-          count += 1;
-        }
         checkbox.checked = true;
         this.dropdown.dataset.selected = value;
         if (this.variant === DROPDOWN_VARIANTS.MULTISELECT) {
