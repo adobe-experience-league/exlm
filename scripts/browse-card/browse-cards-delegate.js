@@ -90,8 +90,8 @@ export function normalizeUpcomingEventModel(model) {
   return {
     ...model,
     badgeTitle: CONTENT_TYPES.UPCOMING_EVENT.LABEL,
-    viewLinkText: placeholders.browseCardUpcomingEventViewLabel || 'Register',
-    viewLink: model.viewLink || '#',
+    viewLinkText: placeholders?.browseCardUpcomingEventViewLabel || 'Register',
+    viewLink: model?.viewLink || '#',
   };
 }
 

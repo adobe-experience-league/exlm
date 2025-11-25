@@ -97,14 +97,14 @@ function addCardDateInfo(card) {
 }
 
 function addLocationTypeInfo(card) {
-  const footer = card.querySelector('.browse-card-footer');
-  const locationType = card.querySelector('.location-type');
+  const footer = card?.querySelector('.browse-card-footer');
+  const locationType = card?.querySelector('.location-type');
 
-  if (!footer || !locationType || footer.querySelector('.location-type')) return;
+  if (!footer || !locationType || footer?.querySelector('.location-type')) return;
 
   const locationTypeClone = locationType.cloneNode(true);
-  const locationText = locationTypeClone.textContent.trim();
-  const iconName = locationText.toUpperCase() !== 'VIRTUAL' ? 'user' : 'desktop';
+  const locationText = locationTypeClone?.textContent?.trim();
+  const iconName = locationText?.toUpperCase() !== 'VIRTUAL' ? 'user' : 'desktop';
 
   locationTypeClone.innerHTML = '';
   const iconSpan = createTag('span', { class: `icon icon-${iconName}` });
@@ -118,34 +118,34 @@ function addLocationTypeInfo(card) {
 }
 
 function addSpeakersToFooter(card, placeholders) {
-  const cardFigure = card.querySelector('.browse-card-figure');
-  const footer = card.querySelector('.browse-card-footer');
+  const cardFigure = card?.querySelector('.browse-card-figure');
+  const footer = card?.querySelector('.browse-card-footer');
 
   if (!cardFigure || !footer) return;
 
-  const speakersContainer = cardFigure.querySelector('.event-speakers-container');
+  const speakersContainer = cardFigure?.querySelector('.event-speakers-container');
   if (!speakersContainer) return;
 
-  if (footer.querySelector('.footer-speakers-section')) return;
+  if (footer?.querySelector('.footer-speakers-section')) return;
 
   const speakersSection = createTag('div', { class: 'footer-speakers-section' });
   const speakersHeading = createTag('p', { class: 'speakers-heading' }, placeholders?.speakersLabel || 'Speakers');
   speakersSection.appendChild(speakersHeading);
 
-  const speakerImages = speakersContainer.querySelectorAll('.speaker-profile-container');
+  const speakerImages = speakersContainer?.querySelectorAll('.speaker-profile-container');
   const speakersList = createTag('div', { class: 'speakers-list' });
 
-  speakerImages.forEach((speakerContainer) => {
-    const speakerImgElement = speakerContainer.querySelector('img');
+  speakerImages?.forEach((speakerContainer) => {
+    const speakerImgElement = speakerContainer?.querySelector('img');
     if (!speakerImgElement) return;
 
-    const speakerNameText = speakerImgElement.alt.trim();
+    const speakerNameText = speakerImgElement?.alt?.trim();
 
     const speakerImgContainer = createTag('div', { class: 'speaker-img-container' });
     const speakerImg = createTag('img', {
-      src: speakerImgElement.src,
+      src: speakerImgElement?.src,
       alt: speakerNameText,
-      class: speakerImgElement.className,
+      class: speakerImgElement?.className,
     });
     speakerImgContainer.appendChild(speakerImg);
 
