@@ -43,9 +43,11 @@ let placeholders = {};
  */
 function getTextWrapConfig(text) {
   const len = text.length;
-  if (len >= 70) return { charLength: 40, fontSize: 16 };
-  if (len >= 60) return { charLength: 36, fontSize: 18 };
-  if (len >= 40) return { charLength: 31, fontSize: 20 };
+  if (len >= 120) return { charLength: 42, fontSize: 12 };
+  if (len >= 102) return { charLength: 40, fontSize: 14 };
+  if (len >= 65) return { charLength: 34, fontSize: 16 };
+  if (len >= 60) return { charLength: 32, fontSize: 18 };
+  if (len >= 50) return { charLength: 30, fontSize: 20 };
   return { charLength: 25, fontSize: 23 };
 }
 
@@ -63,7 +65,16 @@ function wrapText(text, maxLength = 25) {
   let currentLine = '';
 
   words.forEach((word) => {
-    if ((currentLine + word).length <= maxLength) {
+    // If word itself is longer than maxLength, break it by characters
+    if (word.length > maxLength) {
+      if (currentLine) {
+        lines.push(currentLine);
+        currentLine = '';
+      }
+      for (let i = 0; i < word.length; i += maxLength) {
+        lines.push(word.substring(i, i + maxLength));
+      }
+    } else if ((currentLine + (currentLine ? ' ' : '') + word).length <= maxLength) {
       currentLine += (currentLine ? ' ' : '') + word;
     } else {
       if (currentLine) lines.push(currentLine);
@@ -286,6 +297,12 @@ async function createCertificateContainer(courseData) {
   const courseName = courseData.name || '';
   const textConfig = getTextWrapConfig(courseName);
 
+  // Wrap userName and check if it spans multiple lines
+  const userName = courseData.userName || '';
+  const wrappedUserName = wrapText(userName, 40);
+  const hasMultipleLines = wrappedUserName.includes('\n');
+  const dateYPosition = hasMultipleLines ? 195 : 180;
+
   const certificateText = [
     {
       content: wrapText(courseName, textConfig.charLength), // Dynamic character-based wrapping
@@ -302,7 +319,7 @@ async function createCertificateContainer(courseData) {
       align: 'center',
     },
     {
-      content: courseData.userName || '',
+      content: wrappedUserName,
       position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 155 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${16 * CONFIG.CERTIFICATE.SCALE}px`, weight: 'bold' },
       color: '#2C2C2C',
@@ -312,7 +329,7 @@ async function createCertificateContainer(courseData) {
       content: courseData.completionDate
         ? `${placeholders?.courseIssuedDateText || 'ISSUED'} ${courseData.completionDate}`
         : '',
-      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 180 * CONFIG.CERTIFICATE.SCALE },
+      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: dateYPosition * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${8.5 * CONFIG.CERTIFICATE.SCALE}px` },
       color: '#686868',
       align: 'center',
