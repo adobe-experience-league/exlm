@@ -172,12 +172,20 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
+  const [headingElement, descriptionElement] = [...block.children].map((row) => row.firstElementChild);
+
   // Clear the block content
   block.innerHTML = '';
   block.classList.add('upcoming-event-block');
 
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
+    <div class="browse-cards-block-title">
+          ${headingElement?.innerHTML || ''}
+        </div>
+        <div class="browse-card-description-text">
+          ${descriptionElement?.innerHTML || ''}
+        </div>
         <div class="view-switcher">
           <button type="button" class="view-btn grid-view active" aria-label="Grid view">
             ${placeholders?.gridViewLabel || 'Grid'}
