@@ -196,7 +196,13 @@ function isFilterSelectionActive(block) {
     return false;
   }
   const searchEl = block.querySelector('.filter-input-search > .search-input');
-  if (tagsProxy?.length !== 0 || searchEl.value) {
+  const selectedTopics = Array.from(block.querySelectorAll('.browse-topics-item-active')).reduce((acc, curr) => {
+    const id = curr.dataset.topicname;
+    acc.push(id);
+    return acc;
+  }, []);
+  const hasActiveTopics = block.querySelector('.browse-topics') !== null && selectedTopics.length > 0;
+  if (hasActiveTopics || tagsProxy?.length !== 0 || searchEl.value) {
     return true;
   }
   return false;
