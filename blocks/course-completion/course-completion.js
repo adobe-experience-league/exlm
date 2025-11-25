@@ -1,4 +1,4 @@
-import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
 import createCanvas from '../../scripts/utils/canvas-utils.js';
 import { canvasToPDF } from '../../scripts/utils/canvas-pdf-utils.js';
 import { launchConfetti } from '../../scripts/utils/confetti-utils.js';
@@ -115,9 +115,10 @@ async function fetchCertificateData() {
     const course = courses?.find((c) => c.courseId === courseId);
     if (course?.awards?.timestamp) {
       // Convert timestamp to readable date
+      const { lang } = getPathDetails();
       const awardDate = new Date(course.awards.timestamp);
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      completionDate = awardDate.toLocaleDateString('en-US', options);
+      completionDate = awardDate.toLocaleDateString(lang || 'en-US', options);
     }
   } catch (e) {
     // eslint-disable-next-line no-console

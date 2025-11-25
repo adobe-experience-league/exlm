@@ -7,7 +7,9 @@ let placeholders = {};
 function certificateCard(props) {
   const { lang } = getPathDetails();
   const date = new Date(props?.awards?.timestamp);
-  const dateStr = date.toLocaleDateString('en-US', {
+
+  const locale = lang || 'en-US';
+  const dateStr = date.toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
