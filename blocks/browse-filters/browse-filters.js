@@ -765,10 +765,9 @@ function determineSearchType(block) {
 /**
  * Gets filter types and values from active filters.
  *
- * @param {HTMLElement} block - The container block element
  * @returns {Object} - Object with filterType and filterValue properties
  */
-function getFilterTypesAndValues(block) {
+function getFilterTypesAndValues() {
   const filterTypes = [];
   const filterValues = [];
 
@@ -816,7 +815,7 @@ async function handleSearchEngineSubscription(block) {
     const searchType = determineSearchType(block);
     const searchEl = block.querySelector('.filter-input-search > .search-input');
     const searchValue = searchEl ? searchEl.value.trim() : '';
-    const { filterType, filterValue } = getFilterTypesAndValues(block);
+    const { filterType, filterValue } = getFilterTypesAndValues();
 
     // Only trigger if we have valid data
     if (
@@ -1326,7 +1325,7 @@ function clearSelectedFilters(block) {
     const searchType = determineSearchType(block);
     const searchEl = block.querySelector('.filter-input-search > .search-input');
     const searchValue = searchEl ? searchEl.value.trim() : '';
-    const { filterType, filterValue } = getFilterTypesAndValues(block);
+    const { filterType, filterValue } = getFilterTypesAndValues();
     const resultsCount = window.headlessQuerySummary?.state?.total || 0;
 
     // Only trigger the event if we have valid data
