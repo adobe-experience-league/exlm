@@ -86,7 +86,7 @@ function addCardDateInfo(card) {
   const eventInfo = card.querySelector('.browse-card-event-info');
   const footer = card.querySelector('.browse-card-footer');
 
-  if (!eventInfo || !footer || cardFigure.querySelector('.card-figure-date')) return;
+  if (!eventInfo || !footer || cardFigure?.querySelector('.card-figure-date')) return;
 
   const eventTimeText = eventInfo.querySelector('.browse-card-event-time h6')?.textContent;
   if (!eventTimeText || !eventTimeText.includes('|')) return;
@@ -281,12 +281,14 @@ export default async function decorate(block) {
 
   // Create content div for cards
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
+  const filterSection = block.querySelector('.browse-upcoming-event-filter');
   block.appendChild(contentDiv);
 
   const pgNum = Math.floor(filterConfig.firstResult / filterConfig.numberOfResults);
   const renderItems = ({ pgNum: targetPgNum }) => {
     const firstResult = targetPgNum * filterConfig.numberOfResults;
     filterConfig.firstResult = firstResult;
+    filterSection?.scrollIntoView({ behavior: 'smooth' });
     // eslint-disable-next-line no-use-before-define
     fetchAndRenderCards({ firstResult });
   };
@@ -309,7 +311,7 @@ export default async function decorate(block) {
     const url = new URL(window.location);
     const { products, contentTypes, sort, eventSeries, firstResult } = filterConfig;
     if (products.length > 0) {
-      url.searchParams.set('products', products.join(','));
+      url.searchParams.set('products', products.map(xssSanitizeQueryParamValue).join(','));
     } else {
       url.searchParams.delete('products');
     }
@@ -437,48 +439,55 @@ export default async function decorate(block) {
     eventSeries = filterConfig.eventSeries,
     firstResult = filterConfig.firstResult,
   }) {
-    buildCardsShimmer.addShimmer(block);
-    contentDiv.innerHTML = '';
-    const existingError = block.querySelector('.event-no-results');
-    if (existingError) existingError.remove(); // Prevent duplicate error message
-    const { cards: cardModels, totalPages } = await fetchCardsData({
-      products,
-      contentTypes,
-      numberOfResults,
-      sort,
-      eventSeries,
-      firstResult,
-    });
-    updateTags();
-    updateClearFilterButtonState();
-    if (cardModels?.length > 0) {
-      contentDiv.style.display = '';
-      cardModels.forEach((cardData) => {
-        const cardDiv = document.createElement('div');
-        buildCard(contentDiv, cardDiv, cardData).then(() => {
-          if (block.classList.contains('list')) {
-            const card = cardDiv.querySelector('.browse-card');
-            applyListViewEnhancements(card, placeholders);
-          }
-        });
-        contentDiv.appendChild(cardDiv);
+    try {
+      buildCardsShimmer.addShimmer(block);
+      contentDiv.innerHTML = '';
+      const existingError = block.querySelector('.event-no-results');
+      if (existingError) existingError.remove(); // Prevent duplicate error message
+      const { cards: cardModels, totalPages } = await fetchCardsData({
+        products,
+        contentTypes,
+        numberOfResults,
+        sort,
+        eventSeries,
+        firstResult,
       });
-      block.appendChild(contentDiv);
-      handleGridViewButtons();
-    } else {
-      const noResultsText =
-        placeholders.noResultsTextBrowse ||
-        'We are sorry, no results found matching the criteria. Try adjusting your search to view more content.';
-      const errorMsg = htmlToElement(`
+      updateTags();
+      updateClearFilterButtonState();
+      if (cardModels?.length > 0) {
+        contentDiv.style.display = '';
+        cardModels.forEach((cardData) => {
+          const cardDiv = document.createElement('div');
+          buildCard(contentDiv, cardDiv, cardData).then(() => {
+            if (block.classList.contains('list')) {
+              const card = cardDiv.querySelector('.browse-card');
+              applyListViewEnhancements(card, placeholders);
+            }
+          });
+          contentDiv.appendChild(cardDiv);
+        });
+        block.appendChild(contentDiv);
+        handleGridViewButtons();
+      } else {
+        const noResultsText =
+          placeholders.noResultsTextBrowse ||
+          'We are sorry, no results found matching the criteria. Try adjusting your search to view more content.';
+        const errorMsg = htmlToElement(`
         <div class="event-no-results">${noResultsText}</div>
       `);
-      contentDiv.style.display = 'none';
-      block.appendChild(errorMsg);
+        contentDiv.style.display = 'none';
+        block.appendChild(errorMsg);
+      }
+      pagination.setCurrentPaginationStatus({ totalPageNumbers: totalPages });
+      pagination.updatePageNumberStyles();
+      buildCardsShimmer.removeShimmer();
+      return { cards: cardModels, totalPages };
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('failed to fetch and render upcoming events card data:', err);
+      buildCardsShimmer.removeShimmer();
+      return { cards: [], totalPages: 0 };
     }
-    pagination.setCurrentPaginationStatus({ totalPageNumbers: totalPages });
-    pagination.updatePageNumberStyles();
-    buildCardsShimmer.removeShimmer();
-    return { cards: cardModels, totalPages };
   }
 
   function renderSortContainer() {
@@ -551,13 +560,28 @@ export default async function decorate(block) {
     });
   }
 
-  Promise.all([
-    fetchAndRenderCards(filterConfig),
-    BrowseCardsDelegate.fetchCoveoFacetFields(['el_event_series', 'el_product']),
-  ])
-    .then(([, facetDetails]) => {
+  BrowseCardsDelegate.fetchCoveoFacetFields(['el_event_series', 'el_product'])
+    .then((facetDetails) => {
       const eventSeriesList = facetDetails.el_event_series || [];
       const productsList = facetDetails.el_product || [];
+
+      const sanitizedProducts = productsList.map(xssSanitizeQueryParamValue);
+      const sanitizedEventSeries = eventSeriesList.map(xssSanitizeQueryParamValue);
+      filterConfig.products = filterConfig.products.map((productKey) => {
+        const productIndex = sanitizedProducts.findIndex((sanitizedProduct) => sanitizedProduct === productKey);
+        if (productIndex !== -1) {
+          return productsList[productIndex];
+        }
+        return productKey;
+      });
+      filterConfig.eventSeries = filterConfig.eventSeries.map((eventSeriesKey) => {
+        const eventSeriesIndex = sanitizedEventSeries.findIndex((sanitizedEvent) => sanitizedEvent === eventSeriesKey);
+        if (eventSeriesIndex !== -1) {
+          return eventSeriesList[eventSeriesIndex];
+        }
+        return eventSeriesKey;
+      });
+
       const dropdownWrapper = block.querySelector('.browse-card-dropdown');
 
       const productDropdown = new Dropdown(
@@ -630,36 +654,40 @@ export default async function decorate(block) {
         });
       });
 
-      function setupClearFilterHandler() {
-        const clearFilterButton = block.querySelector('.browse-card-clear-filter');
+      // fetch initial cards data
+      fetchAndRenderCards(filterConfig).then(() => {
+        function setupClearFilterHandler() {
+          const clearFilterButton = block.querySelector('.browse-card-clear-filter');
 
-        if (clearFilterButton) {
-          clearFilterButton.addEventListener('click', async (event) => {
-            event.preventDefault();
+          if (clearFilterButton) {
+            clearFilterButton.addEventListener('click', async (event) => {
+              event.preventDefault();
 
-            // Don't proceed if button is disabled
-            if (clearFilterButton.hasAttribute('disabled')) {
-              return;
-            }
+              // Don't proceed if button is disabled
+              if (clearFilterButton.hasAttribute('disabled')) {
+                return;
+              }
 
-            filterConfig.contentTypes = [];
-            filterConfig.eventSeries = [];
-            filterConfig.firstResult = 0;
-            filterConfig.products = [];
-            filterConfig.sort = COVEO_SORT_OPTIONS.MOST_RECENT;
-            fetchAndRenderCards({});
-            productDropdown.reset();
-            contentTypeDropdown.reset();
-            eventSeriesDropdown.reset();
-          });
+              filterConfig.contentTypes = [];
+              filterConfig.eventSeries = [];
+              filterConfig.firstResult = 0;
+              filterConfig.products = [];
+              filterConfig.sort = COVEO_SORT_OPTIONS.MOST_RECENT;
+              fetchAndRenderCards({});
+              productDropdown.reset();
+              contentTypeDropdown.reset();
+              eventSeriesDropdown.reset();
+            });
+          }
         }
-      }
 
-      renderSortContainer();
-      setupClearFilterHandler();
+        renderSortContainer();
+        setupClearFilterHandler();
+      });
     })
     .catch((err) => {
       // eslint-disable-next-line no-console
-      console.error('failed to fetch and render upcoming events card data:', err);
+      console.error('failed to fetch facets filters from coveo:', err);
+      fetchAndRenderCards(filterConfig);
     });
 }

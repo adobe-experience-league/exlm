@@ -474,7 +474,7 @@ const decorateUpcomingEvents = (card, model) => {
   if (!cardFigure) return;
 
   const { event } = model;
-  const hasSpeakers = event?.speakers?.name.length > 0 && event?.speakers?.profilePictureURL.length > 0;
+  const hasSpeakers = event?.speakers?.name?.length > 0 && event?.speakers?.profilePictureURL?.length > 0;
   const hasSeries = event?.series;
   const seriesText = hasSeries ? event.series : null;
 

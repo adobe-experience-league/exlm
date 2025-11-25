@@ -3,6 +3,7 @@
 .upcoming-event-v2.block {
   display: flex;
   flex-direction: column;
+  margin-bottom: 40px;
 }
 
 .section.upcoming-event-v2-container {
@@ -48,7 +49,7 @@
 
 .upcoming-event-v2 .browse-card-clear-filter.disabled {
   color: var(--non-spectrum-smoke);
-  cursor: default;
+  cursor: not-allowed;
 }
 
 .upcoming-event-v2 .browse-cards-block-header .browse-card-tags {
