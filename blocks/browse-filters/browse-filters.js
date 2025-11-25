@@ -196,13 +196,7 @@ function isFilterSelectionActive(block) {
     return false;
   }
   const searchEl = block.querySelector('.filter-input-search > .search-input');
-  const selectedTopics = Array.from(block.querySelectorAll('.browse-topics-item-active')).reduce((acc, curr) => {
-    const id = curr.dataset.topicname;
-    acc.push(id);
-    return acc;
-  }, []);
-  const hasActiveTopics = block.querySelector('.browse-topics') !== null && selectedTopics.length > 0;
-  if (hasActiveTopics || tagsProxy?.length !== 0 || searchEl.value) {
+  if (tagsProxy?.length !== 0 || searchEl.value) {
     return true;
   }
   return false;
@@ -500,7 +494,6 @@ function handleCoveoHeadlessSearch(
     return;
   }
 
-  // We'll handle analytics in renderSearchQuerySummary function
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
   const searchIcon = filterInputSection.querySelector('.icon-search');
   const clearIcon = filterInputSection.querySelector('.icon-clear');
@@ -554,10 +547,6 @@ function handleCoveoHeadlessSearch(
     filterResultsEl.style.display = '';
     filtersPaginationEl.style.display = '';
     buildCardsShimmer.removeShimmer();
-
-    // Reset analytics trigger flag when search is complete
-    // This allows the next search to trigger analytics again
-    delete filterResultsEl.dataset.analyticsTriggered;
   });
 
   handleUriHash();
@@ -644,10 +633,8 @@ function handleSearchBoxSubscription() {
   wrapper.replaceWith(suggestionsElement);
 }
 
-// Global flag to track analytics events
 window.browseFilterAnalyticsState = {
   lastSearchId: null,
-  eventsTriggered: {},
   resultsCount: 0,
 };
 
@@ -676,7 +663,7 @@ function renderSearchQuerySummary() {
   }
   queryEl.textContent = assetString;
 
-  // Store the results count for use in the analytics event
+  // Store the results count for analytics
   window.browseFilterAnalyticsState.resultsCount = resultsCount;
 }
 
@@ -755,11 +742,10 @@ function determineSearchType(block) {
   const hasSearchValue = searchEl && searchEl.value.trim() !== '';
 
   const hasActiveFilters = tagsProxy && tagsProxy.length > 0;
-  const hasActiveTopics = block.querySelectorAll('.browse-topics-item-active').length > 0;
 
-  if ((hasActiveFilters || hasActiveTopics) && hasSearchValue) {
+  if (hasActiveFilters && hasSearchValue) {
     return 'filter+search';
-  } else if (hasActiveFilters || hasActiveTopics) {
+  } else if (hasActiveFilters) {
     return 'filter';
   } else if (hasSearchValue) {
     return 'search';
@@ -785,16 +771,6 @@ function getFilterTypesAndValues(block) {
       // Add each tag's name and value directly to the arrays
       filterTypes.push(tag.name);
       filterValues.push(tag.value);
-    });
-  }
-
-  // Add topics if any are selected
-  const selectedTopics = block.querySelectorAll('.browse-topics-item-active');
-  if (selectedTopics.length > 0) {
-    // Add each topic individually
-    Array.from(selectedTopics).forEach((topic) => {
-      filterTypes.push('Topics');
-      filterValues.push(topic.textContent.trim());
     });
   }
 
@@ -825,8 +801,9 @@ async function handleSearchEngineSubscription(block) {
 
   if (
     isFilterSelectionActive(block) &&
+    response?.totalCount !== undefined &&
     window.browseFilterAnalyticsState.lastSearchId !== currentSearchId &&
-    response?.totalCount !== undefined
+    response.totalCount < 10000
   ) {
     const searchType = determineSearchType(block);
     const searchEl = block.querySelector('.filter-input-search > .search-input');
@@ -1354,6 +1331,9 @@ function clearSelectedFilters(block) {
       pushBrowseFilterSearchClearEvent(searchType, filterType, filterValue, searchValue, resultsCount);
     }
   }
+
+  // Reset the lastSearchId to ensure the next search triggers analytics
+  window.browseFilterAnalyticsState.lastSearchId = null;
 
   removeTopicSelections(block);
   uncheckAllFiltersFromDropdown(block);
