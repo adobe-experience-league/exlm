@@ -730,49 +730,33 @@ export async function buildCard(container, element, model) {
   };
 
   // Browse card click event
-  element.querySelector('a:not(.browse-card-options):not(.browse-card-cta-element)')?.addEventListener(
-    'click',
-    () => {
-      const { cardHeader, cardPosition } = cardHeaderAndPosition();
-      pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
-    },
-    { once: true },
-  );
+  element.querySelector('a:not(.browse-card-options):not(.browse-card-cta-element)')?.addEventListener('click', () => {
+    const { cardHeader, cardPosition } = cardHeaderAndPosition();
+    pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
+  });
 
   // Browse card click event for Bookmark
-  element.querySelector('.browse-card-options .user-actions .bookmark')?.addEventListener(
-    'click',
-    (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const { cardHeader, cardPosition } = cardHeaderAndPosition();
-      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, cardHeader, cardPosition);
-    },
-    { once: true },
-  );
+  element.querySelector('.browse-card-options .user-actions .bookmark')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const { cardHeader, cardPosition } = cardHeaderAndPosition();
+    pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, cardHeader, cardPosition);
+  });
 
   // Browse card click event for Copy Link
-  element.querySelector('.browse-card-options .user-actions .copy-link')?.addEventListener(
-    'click',
-    (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const { cardHeader, cardPosition } = cardHeaderAndPosition();
-      pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
-    },
-    { once: true },
-  );
+  element.querySelector('.browse-card-options .user-actions .copy-link')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const { cardHeader, cardPosition } = cardHeaderAndPosition();
+    pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
+  });
 
   // Browse card CTA click event
-  element.querySelector('.browse-card-cta-element')?.addEventListener(
-    'click',
-    (e) => {
-      e.stopPropagation();
-      const { cardHeader, cardPosition } = cardHeaderAndPosition();
-      pushBrowseCardClickEvent('browseCardCTAClick', model, cardHeader, cardPosition);
-    },
-    { once: true },
-  );
+  element.querySelector('.browse-card-cta-element')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const { cardHeader, cardPosition } = cardHeaderAndPosition();
+    pushBrowseCardClickEvent('browseCardCTAClick', model, cardHeader, cardPosition);
+  });
 
   element.querySelector('a').addEventListener(
     'click',
