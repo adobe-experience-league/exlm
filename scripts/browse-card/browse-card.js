@@ -729,8 +729,8 @@ export async function buildCard(container, element, model) {
     return { cardHeader, cardPosition };
   };
 
-  // Combined event delegation for all browse card click events
-  element.addEventListener('click', (e) => {
+  // Browse card click event handler
+  element.querySelector('a')?.addEventListener('click', (e) => {
     const { cardHeader, cardPosition } = cardHeaderAndPosition();
 
     // Bookmark click
@@ -751,15 +751,13 @@ export async function buildCard(container, element, model) {
       return;
     }
 
-    // Card link click (excluding options and CTA)
-    const clickedLink = e.target.closest('a');
-    if (clickedLink && !e.target.closest('.browse-card-options') && !e.target.closest('.browse-card-cta-element')) {
+    // Card click (excluding options and CTA)
+    if (e.target.closest('a:not(.browse-card-options):not(.browse-card-cta-element)')) {
       pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
     }
   });
 
-  // Single Coveo click event for any card click (triggered once)
-  element.addEventListener(
+  element.querySelector('a').addEventListener(
     'click',
     () => {
       sendCoveoClickEvent('browse-card', model);
