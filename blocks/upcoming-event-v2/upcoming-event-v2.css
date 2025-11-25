@@ -1,4 +1,5 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
+@import '../../scripts/browse-card/browse-card-upcoming-event.css';
 
 .upcoming-event-v2.block {
   display: flex;
@@ -172,6 +173,10 @@
 .upcoming-event-v2 .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info,
 .upcoming-event-v2.list .browse-card.upcoming-event-card .location-type {
   display: none;
+}
+
+.upcoming-event-v2 .browse-card.upcoming-event-card {
+  background-color: var(--spectrum-gray-50);
 }
 
 .upcoming-event-v2 .browse-cards-block-content > .event-no-results {

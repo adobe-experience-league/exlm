@@ -8,8 +8,10 @@ import { URL_SPECIAL_CASE_LOCALES, getConfig, getPathDetails, fetchLanguagePlace
 import { getExlPipelineDataSourceParams } from '../data-service/coveo/coveo-exl-pipeline-helpers.js';
 import { RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import { createDateCriteria } from './browse-card-utils.js';
+import BrowseCardsUpcomingEventsAdaptor from './browse-cards-upcoming-events-adaptor.js';
+import UpcomingEventsDataService from '../data-service/upcoming-events-data-service.js';
 
-const { adlsUrl, pathsUrl } = getConfig();
+const { upcomingEventsUrl, adlsUrl, pathsUrl } = getConfig();
 
 const { lang } = getPathDetails();
 
@@ -218,6 +220,25 @@ const BrowseCardsDelegate = (() => {
   };
 
   /**
+   * Handles Upcoming Events data service to fetch card data.
+   * @returns {Array} Array of card data.
+   * @throws {Error} Throws an error if an issue occurs during data fetching.
+   * @private
+   */
+
+  const handleUpcomingEventsService = async () => {
+    const upcomingEventsService = new UpcomingEventsDataService(upcomingEventsUrl);
+    const events = await upcomingEventsService.fetchDataFromSource();
+    if (!events) {
+      throw new Error('An error occurred');
+    }
+    if (events?.length) {
+      return BrowseCardsUpcomingEventsAdaptor.mapResultsToCardsData(events);
+    }
+    return [];
+  };
+
+  /**
    * Retrieves the appropriate service function based on the content type.
    * @param {string} contentType - The content type for which the service is needed.
    * @returns {Function} The corresponding service function for the content type.
@@ -225,6 +246,7 @@ const BrowseCardsDelegate = (() => {
    */
   const getServiceForContentType = (contentType) => {
     const contentTypesServices = {
+      [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY]: handleUpcomingEventsService,
       [CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY]: handleADLSService,
       [RECOMMENDED_COURSES_CONSTANTS.PATHS.MAPPING_KEY]: handlePathsService,
     };
