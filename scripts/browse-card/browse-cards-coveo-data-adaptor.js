@@ -89,6 +89,11 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       el_course_duration,
       el_course_module_count,
       el_level,
+      el_event_series,
+      el_event_start_time,
+      el_event_type,
+      el_event_speakers_name,
+      el_event_speakers_profile_picture_url,
     } = parentResult?.raw || raw || {};
     let contentType;
     if (el_type) {
@@ -106,6 +111,20 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     let url = parentResult?.clickUri || parentResult?.uri || clickUri || uri || '';
     url = rewriteDocsPath(url);
     const contentTypeTitleCase = convertToTitleCase(contentType?.toLowerCase()).replace(/\s+/g, '');
+
+    const eventSeries = raw?.el_event_series || el_event_series || '';
+    const eventTime = raw?.el_event_start_time || el_event_start_time || '';
+    const eventType = raw?.el_event_type || el_event_type || '';
+    const eventSpeakersName = raw?.el_event_speakers_name || el_event_speakers_name || '';
+    const eventSpeakersProfile =
+      raw?.el_event_speakers_profile_picture_url || el_event_speakers_profile_picture_url || '';
+
+    let eventDate = '';
+    if (raw?.el_event_start_time) {
+      eventDate = new Date(raw.el_event_start_time).toISOString();
+    } else if (el_event_start_time) {
+      eventDate = new Date(el_event_start_time).toISOString();
+    }
 
     return {
       ...browseCardDataModel,
@@ -134,6 +153,17 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       permanentid: raw?.permanentid,
       searchUid,
       index,
+
+      event: {
+        series: eventSeries,
+        time: eventTime,
+        type: eventType,
+        speakers: {
+          name: eventSpeakersName,
+          profilePictureURL: eventSpeakersProfile,
+        },
+        date: eventDate,
+      },
       authorInfo: {
         name: raw?.author_name || '',
         type: raw?.author_type || '',
