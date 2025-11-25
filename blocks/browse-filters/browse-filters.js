@@ -499,7 +499,6 @@ function handleCoveoHeadlessSearch(
   if (!browseFiltersSection) {
     return;
   }
-
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
   const searchIcon = filterInputSection.querySelector('.icon-search');
   const clearIcon = filterInputSection.querySelector('.icon-clear');
@@ -655,7 +654,6 @@ function renderSearchQuerySummary() {
   if (!window.headlessQuerySummary || !queryEl) {
     return;
   }
-
   const numberFormat = new Intl.NumberFormat('en-US');
   const resultsCount = window.headlessQuerySummary.state.total;
   let assetString;
@@ -751,9 +749,13 @@ function determineSearchType(block) {
 
   if (hasActiveFilters && hasSearchValue) {
     return 'filter+search';
-  } else if (hasActiveFilters) {
+  }
+
+  if (hasActiveFilters) {
     return 'filter';
-  } else if (hasSearchValue) {
+  }
+
+  if (hasSearchValue) {
     return 'search';
   }
 
