@@ -1,7 +1,12 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
+@import '../../scripts/browse-card/browse-card-upcoming-events.css';
 
 .section.upcoming-event-v2-container {
   padding-bottom: 0;
+}
+
+.upcoming-event-v2.block {
+  margin-top: 32px;
 }
 
 .upcoming-event-v2 .browse-cards-block-header .browse-card-description-text {
@@ -28,38 +33,6 @@
   align-items: center;
 }
 
-.upcoming-event-v2 .browse-cards-block-header .browse-card-tags {
-  margin-top: 1em;
-  align-self: flex-start;
-}
-
-.upcoming-event-v2 .browse-cards-block-header .browse-tags {
-  border-radius: 4px;
-  background: var(--background-color);
-  border: 1px solid var(--spectrum-gray-500);
-  margin-right: 10px;
-  padding: 4px 25px 5px 12px;
-  margin-bottom: 10px;
-  font-weight: normal;
-  font-size: 12px;
-  text-align: left;
-  color: var(--spectrum-gray-500);
-  line-height: normal;
-  display: inline-flex;
-  align-items: center;
-  position: relative;
-  margin-top: 0;
-}
-
-.upcoming-event-v2 .browse-cards-block-header .browse-tags .icon-close {
-  width: 13px;
-  height: auto;
-  position: absolute;
-  right: 6px;
-  top: 50%;
-  transform: translateY(-6px);
-}
-
 .upcoming-event-v2 .browse-cards-block-view {
   text-align: center;
 }
@@ -77,22 +50,6 @@
   flex: 0 0 320px;
 }
 
-.upcoming-event-v2 .browse-card-dropdown {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 8px;
-  gap: 16px;
-}
-
-.upcoming-event-v2 .browse-card-dropdown > label {
-  font-size: var(--spectrum-body-size-l);
-  font-weight: var(--font-weight-bold);
-  color: #363636;
-}
-
 .upcoming-event-v2.featured-card-hidden-features .browse-cards-block-view,
 .upcoming-event-v2.featured-card-hidden-features .browse-cards-block-content {
   display: none;
@@ -104,7 +61,8 @@
 .upcoming-event-v2 .card-figure-date,
 .upcoming-event-v2 .browse-cards-block-content > div .browse-card .show-more,
 .upcoming-event-v2 .browse-cards-block-content > div .browse-card .show-less,
-.upcoming-event-v2 .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info {
+.upcoming-event-v2 .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info,
+.upcoming-event-v2.list .browse-card.upcoming-event-card .location-type {
   display: none;
 }
 
@@ -122,6 +80,14 @@
 .upcoming-event-v2 .browse-cards-block-content > .event-no-results {
   min-height: unset;
   height: 170px;
+}
+
+.upcoming-event-v2.list .browse-card-figure .event-speakers-container {
+  display: flex;
+}
+
+.upcoming-event-v2 .browse-card-footer .footer-speakers-section {
+  display: none;
 }
 
 /** List view styles end **/
@@ -145,14 +111,6 @@
 
   .upcoming-event-v2 .browse-cards-block-header .browse-card-description-text {
     margin-bottom: 36px;
-  }
-
-  .upcoming-event-v2 .browse-card-dropdown {
-    flex-direction: row;
-  }
-
-  .upcoming-event-v2 .custom-filter-dropdown {
-    max-width: 200px;
   }
 }
 
@@ -178,10 +136,6 @@
     margin-bottom: 7px;
   }
 
-  .upcoming-event-v2 .browse-card-dropdown {
-    margin-bottom: 0;
-  }
-
   .upcoming-event-v2 .browse-card {
     text-align: left;
   }
@@ -190,15 +144,15 @@
     flex: 0 0 295px;
   }
 
-  .upcoming-event-v2 .custom-filter-dropdown {
-    max-width: 300px;
-  }
-
   .upcoming-event-v2 .browse-cards-block-header .browse-card-description-text {
     margin-bottom: 16px;
   }
 
   /** List view styles start **/
+
+  .upcoming-event-v2 .browse-card.upcoming-event-card {
+    background-color: var(--spectrum-gray-50);
+  }
 
   .upcoming-event-v2 .view-switcher {
     display: flex;
@@ -315,7 +269,8 @@
     margin-bottom: 16.5px;
   }
 
-  .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-content .browse-card-event-info {
+  .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-content .browse-card-event-info,
+  .upcoming-event-v2.list .browse-card-figure .event-speakers-containe {
     display: none;
   }
 
@@ -352,7 +307,7 @@
 
   .upcoming-event-v2.list .browse-card .browse-card-footer .browse-card-cta-element {
     order: 3;
-    margin-top: 30px;
+    margin: 20px 0;
     background: var(--spectrum-blue-900) 0% 0% no-repeat padding-box;
     border-radius: 16px;
     text-align: left;
@@ -442,7 +397,6 @@
     display: none;
   }
 
-  /* Styling for location type with icon in list view */
   .upcoming-event-v2.list .browse-card .browse-card-footer .location-type {
     display: flex;
     align-items: center;
@@ -452,8 +406,9 @@
     padding: 0;
     color: var(--non-spectrum-dark-charcoal);
     font-size: var(--spectrum-font-size-75);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     text-transform: none;
+    gap: var(--spectrum-spacing-75);
   }
 
   .upcoming-event-v2.list .browse-card .browse-card-footer .location-type span::first-letter {
@@ -463,13 +418,12 @@
   .upcoming-event-v2.list .browse-card .browse-card-footer .location-type .icon {
     width: 18px;
     height: 18px;
-    margin-right: 5px;
   }
 
   .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner,
   .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
     text-align: center;
-    font-size: 16px;
+    font-size: var(--spectrum-font-size-200);
     color: var(--spectrum-gray-50);
     opacity: 1;
     position: relative;
@@ -478,10 +432,8 @@
     order: 1;
   }
 
-  .upcoming-event-v2.list
-    .browse-card.upcoming-event-card
-    .browse-card-figure
-    .event-series-banner-no-speakers::before {
+  .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::before,
+  .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner::before {
     content: '';
     position: absolute;
     top: 0;
@@ -500,6 +452,69 @@
   .upcoming-event-v2.list .browse-card .browse-card-description-text {
     display: block;
     -webkit-line-clamp: unset;
+  }
+
+  .upcoming-event-v2.list .browse-card .browse-card-footer .footer-speakers-section {
+    order: 4;
+    align-self: flex-start;
+    width: 100%;
+    display: block;
+  }
+
+  .upcoming-event-v2.list .browse-card .browse-card-footer .footer-speakers-section .speakers-heading {
+    font-size: var(--spectrum-font-size-200);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: 15px;
+    color: #000;
+    position: relative;
+    padding-bottom: 8px;
+  }
+
+  .upcoming-event-v2.list .browse-card .browse-card-footer .footer-speakers-section .speakers-heading::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    background-color: var(--non-spectrum-unicorn-silver);
+  }
+
+  .upcoming-event-v2.list .browse-card .browse-card-footer .footer-speakers-section .speakers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .upcoming-event-v2.list .browse-card .browse-card-footer .footer-speakers-section .speaker-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .upcoming-event-v2.list .browse-card .browse-card-footer .footer-speakers-section .speaker-img-container {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .upcoming-event-v2.list .browse-card .browse-card-footer .footer-speakers-section .speaker-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .upcoming-event-v2.list .browse-card .browse-card-footer .footer-speakers-section .speaker-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .upcoming-event-v2.list .browse-card .browse-card-footer .footer-speakers-section .speaker-name {
+    font-size: var(--spectrum-font-size-75);
+    font-weight: var(--font-weight-bold);
+    color: var(--non-spectrum-dark-gray);
   }
 
   /** List view styles end **/

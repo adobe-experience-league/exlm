@@ -1,6 +1,6 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
-import { buildCard, processUpcomingEventsData } from '../../scripts/browse-card/browse-card.js';
+import { fetchLanguagePlaceholders, htmlToElement, createTag } from '../../scripts/scripts.js';
+import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
@@ -96,8 +96,7 @@ function addCardDateInfo(card) {
   }
 }
 
-// Function to add location type with icon in list view
-function addLocationTypeWithIcon(card) {
+function addLocationTypeInfo(card) {
   const footer = card.querySelector('.browse-card-footer');
   const locationType = card.querySelector('.location-type');
 
@@ -108,21 +107,62 @@ function addLocationTypeWithIcon(card) {
   const iconName = locationText.toUpperCase() !== 'VIRTUAL' ? 'user' : 'desktop';
 
   locationTypeClone.innerHTML = '';
-  const iconSpan = document.createElement('span');
-  iconSpan.className = `icon icon-${iconName}`;
-  iconSpan.style.marginRight = '5px';
-
+  const iconSpan = createTag('span', { class: `icon icon-${iconName}` });
   locationTypeClone.appendChild(iconSpan);
 
-  // Wrap the text in a span element
-  const textSpan = document.createElement('span');
-  textSpan.textContent = locationText;
+  const textSpan = createTag('span', {}, locationText);
   locationTypeClone.appendChild(textSpan);
 
   footer.appendChild(locationTypeClone);
   decorateIcons(locationTypeClone);
 }
 
+function addSpeakersToFooter(card, placeholders) {
+  const cardFigure = card.querySelector('.browse-card-figure');
+  const footer = card.querySelector('.browse-card-footer');
+
+  if (!cardFigure || !footer) return;
+
+  const speakersContainer = cardFigure.querySelector('.event-speakers-container');
+  if (!speakersContainer) return;
+
+  if (footer.querySelector('.footer-speakers-section')) return;
+
+  const speakersSection = createTag('div', { class: 'footer-speakers-section' });
+  const speakersHeading = createTag('p', { class: 'speakers-heading' }, placeholders?.speakersLabel || 'Speakers');
+  speakersSection.appendChild(speakersHeading);
+
+  const speakerImages = speakersContainer.querySelectorAll('.speaker-profile-container');
+  const speakersList = createTag('div', { class: 'speakers-list' });
+
+  speakerImages.forEach((speakerContainer) => {
+    const speakerImgElement = speakerContainer.querySelector('img');
+    if (!speakerImgElement) return;
+
+    const speakerNameText = speakerImgElement.alt.trim();
+
+    const speakerImgContainer = createTag('div', { class: 'speaker-img-container' });
+    const speakerImg = createTag('img', {
+      src: speakerImgElement.src,
+      alt: speakerNameText,
+      class: speakerImgElement.className,
+    });
+    speakerImgContainer.appendChild(speakerImg);
+
+    const speakerName = createTag('div', { class: 'speaker-name' }, speakerNameText);
+    const speakerInfo = createTag('div', { class: 'speaker-info' });
+    speakerInfo.appendChild(speakerName);
+
+    const speakerItem = createTag('div', { class: 'speaker-item' });
+    speakerItem.appendChild(speakerImgContainer);
+    speakerItem.appendChild(speakerInfo);
+
+    speakersList.appendChild(speakerItem);
+  });
+
+  speakersSection.appendChild(speakersList);
+  footer.appendChild(speakersSection);
+}
 export default async function decorate(block) {
   let placeholders = {};
   try {
@@ -138,7 +178,6 @@ export default async function decorate(block) {
 
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
-      <div class="browse-upcoming-event-filter">
         <div class="view-switcher">
           <button type="button" class="view-btn grid-view active" aria-label="Grid view">
             ${placeholders?.gridViewLabel || 'Grid'}
@@ -150,7 +189,6 @@ export default async function decorate(block) {
             <span class="icon icon-list-view-black"></span>
             <span class="icon icon-list-view-white"></span>
           </button>
-        </div>
       </div>
     </div>
   `);
@@ -164,21 +202,16 @@ export default async function decorate(block) {
 
   // Fetch upcoming events data from Coveo
   const parameters = {
-    contentType: [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY], // Must be an array for Coveo facets
-    sortCriteria: 'date ascending', // Sort by date ascending (oldest first)
+    contentType: [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY],
+    sortCriteria: 'date ascending',
   };
 
   const buildCardsShimmer = new BrowseCardShimmer();
   buildCardsShimmer.addShimmer(block);
-  let browseCardsContent;
 
   try {
     // Fetch upcoming events data from Coveo
-    browseCardsContent = await BrowseCardsDelegate.fetchCardData(parameters);
-
-    // Process the data using the shared function from browse-card.js
-    browseCardsContent = processUpcomingEventsData(browseCardsContent);
-
+    const browseCardsContent = await BrowseCardsDelegate.fetchCardData(parameters);
     buildCardsShimmer.removeShimmer();
 
     if (browseCardsContent?.length) {
@@ -212,7 +245,8 @@ export default async function decorate(block) {
     cards.forEach((card) => {
       addCardDateInfo(card);
       setupExpandableDescription(card, placeholders);
-      addLocationTypeWithIcon(card); // Add desktop icon for location type
+      addLocationTypeInfo(card);
+      addSpeakersToFooter(card, placeholders);
     });
   });
 }

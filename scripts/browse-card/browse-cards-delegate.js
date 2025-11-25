@@ -4,12 +4,14 @@ import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import PathsDataService from '../data-service/paths-data-service.js';
-import { URL_SPECIAL_CASE_LOCALES, getConfig, getPathDetails } from '../scripts.js';
+import { URL_SPECIAL_CASE_LOCALES, getConfig, getPathDetails, fetchLanguagePlaceholders } from '../scripts.js';
 import { getExlPipelineDataSourceParams } from '../data-service/coveo/coveo-exl-pipeline-helpers.js';
 import { RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import { createDateCriteria } from './browse-card-utils.js';
+import UpcomingEventsDataService from '../data-service/upcoming-events-data-service.js';
+import BrowseCardsUpcomingEventsAdaptor from './browse-cards-upcoming-events-adaptor.js';
 
-const { adlsUrl, pathsUrl } = getConfig();
+const { upcomingEventsUrl, adlsUrl, pathsUrl } = getConfig();
 
 const { lang } = getPathDetails();
 
@@ -72,6 +74,26 @@ const fieldsToInclude = [
   'el_event_speakers_name',
   'el_event_speakers_profile_picture_url',
 ];
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
+
+export function normalizeUpcomingEventModel(model) {
+  const isUpcoming = model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
+  if (!isUpcoming) return model;
+
+  return {
+    ...model,
+    badgeTitle: CONTENT_TYPES.UPCOMING_EVENT.LABEL,
+    viewLinkText: placeholders.browseCardUpcomingEventViewLabel || 'Register',
+    viewLink: model.viewLink || '#',
+  };
+}
 
 /**
  * @module BrowseCardsDelegate
@@ -198,6 +220,25 @@ const BrowseCardsDelegate = (() => {
   };
 
   /**
+   * Handles Upcoming Events data service to fetch card data.
+   * @returns {Array} Array of card data.
+   * @throws {Error} Throws an error if an issue occurs during data fetching.
+   * @private
+   */
+
+  const handleUpcomingEventsService = async () => {
+    const upcomingEventsService = new UpcomingEventsDataService(upcomingEventsUrl);
+    const events = await upcomingEventsService.fetchDataFromSource();
+    if (!events) {
+      throw new Error('An error occurred');
+    }
+    if (events?.length) {
+      return BrowseCardsUpcomingEventsAdaptor.mapResultsToCardsData(events);
+    }
+    return [];
+  };
+
+  /**
    * Retrieves the appropriate service function based on the content type.
    * @param {string} contentType - The content type for which the service is needed.
    * @returns {Function} The corresponding service function for the content type.
@@ -206,13 +247,19 @@ const BrowseCardsDelegate = (() => {
   const getServiceForContentType = (contentType) => {
     const contentTypesServices = {
       // Using Coveo for upcoming events instead of JSON
-      // [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY]: handleUpcomingEventsService,
+      [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY]: handleUpcomingEventsService,
       [CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY]: handleADLSService,
       [RECOMMENDED_COURSES_CONSTANTS.PATHS.MAPPING_KEY]: handlePathsService,
     };
 
     // If the content type is an array, use the handleCoveoService (Works only with Coveo related content types)
     if (Array.isArray(contentType)) {
+      if (contentType.includes(CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY)) {
+        return async () => {
+          const cards = await handleCoveoService();
+          return cards.map(normalizeUpcomingEventModel);
+        };
+      }
       return handleCoveoService;
     }
 
