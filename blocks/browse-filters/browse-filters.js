@@ -27,7 +27,11 @@ import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
-import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
+import {
+  assetInteractionModel,
+  pushBrowseFilterSearchEvent,
+  pushBrowseFilterSearchClearEvent,
+} from '../../scripts/analytics/lib-analytics.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import {
   formattedTags,
@@ -634,6 +638,11 @@ function handleSearchBoxSubscription() {
   wrapper.replaceWith(suggestionsElement);
 }
 
+window.browseFilterAnalyticsState = {
+  lastSearchId: null,
+  resultsCount: 0,
+};
+
 /**
  * Renders the search query summary showing the total results count.
  *
@@ -657,6 +666,9 @@ function renderSearchQuerySummary() {
     assetString = placeholders.showAssets?.replace('{x}', formattedCount) || `Showing ${formattedCount} assets`;
   }
   queryEl.textContent = assetString;
+
+  // Storing the results count for analytics
+  window.browseFilterAnalyticsState.resultsCount = resultsCount;
 }
 
 /**
@@ -724,6 +736,58 @@ function generateAnalyticsFilters(block, totalCount) {
 }
 
 /**
+ * Determines the search type based on active filters and search input.
+ *
+ * @param {HTMLElement} block - The container block element
+ * @returns {string} - "filter", "search", or "filter+search"
+ */
+function determineSearchType(block) {
+  const searchEl = block.querySelector('.filter-input-search > .search-input');
+  const hasSearchValue = searchEl && searchEl.value.trim() !== '';
+
+  const hasActiveFilters = tagsProxy && tagsProxy.length > 0;
+
+  if (hasActiveFilters && hasSearchValue) {
+    return 'filter+search';
+  }
+
+  if (hasActiveFilters) {
+    return 'filter';
+  }
+
+  if (hasSearchValue) {
+    return 'search';
+  }
+
+  return 'filter'; // Default case
+}
+
+/**
+ * Gets filter types and values from active filters.
+ *
+ * @returns {Object} - Object with filterType and filterValue properties
+ */
+function getFilterTypesAndValues() {
+  const filterTypes = [];
+  const filterValues = [];
+
+  // Get filter types and values from dropdown selections
+  if (tagsProxy && tagsProxy.length > 0) {
+    // Process each tag individually to maintain the exact order
+    tagsProxy.forEach((tag) => {
+      // Add each tag's name and value directly to the arrays
+      filterTypes.push(tag.name);
+      filterValues.push(tag.value);
+    });
+  }
+
+  return {
+    filterType: filterTypes.join(', '),
+    filterValue: filterValues.join(', '),
+  };
+}
+
+/**
  * Handles the search engine subscription and updates the browse filter results.
  *
  * @param {HTMLElement} block - The container block element for managing the browse filters.
@@ -737,6 +801,36 @@ async function handleSearchEngineSubscription(block) {
   // eslint-disable-next-line
   const search = window.headlessSearchEngine.state.search;
   const { results, searchResponseId, response } = search;
+
+  // Trigger analytics event for search/filter interaction
+  // Using search response ID to ensure we only trigger once per unique search
+  const currentSearchId = searchResponseId;
+
+  if (
+    isFilterSelectionActive(block) &&
+    response?.totalCount !== undefined &&
+    window.browseFilterAnalyticsState.lastSearchId !== currentSearchId
+  ) {
+    const searchType = determineSearchType(block);
+    const searchEl = block.querySelector('.filter-input-search > .search-input');
+    const searchValue = searchEl ? searchEl.value.trim() : '';
+    const { filterType, filterValue } = getFilterTypesAndValues();
+
+    // Only trigger if we have valid data
+    if (
+      (searchType === 'filter' && filterType) ||
+      (searchType === 'search' && searchValue) ||
+      (searchType === 'filter+search' && filterType && searchValue)
+    ) {
+      // Update the last search ID to prevent duplicate events
+      window.browseFilterAnalyticsState.lastSearchId = currentSearchId;
+
+      // Timeout to ensure this runs after the current execution context
+      setTimeout(() => {
+        pushBrowseFilterSearchEvent(searchType, filterType, filterValue, searchValue, response.totalCount);
+      }, 0);
+    }
+  }
   if (results.length > 0) {
     try {
       let cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
@@ -1225,6 +1319,28 @@ function clearSearchQuery(block) {
 }
 
 function clearSelectedFilters(block) {
+  // Capturing filter state before clearing for analytics
+  if (isFilterSelectionActive(block)) {
+    const searchType = determineSearchType(block);
+    const searchEl = block.querySelector('.filter-input-search > .search-input');
+    const searchValue = searchEl ? searchEl.value.trim() : '';
+    const { filterType, filterValue } = getFilterTypesAndValues();
+    const resultsCount = window.headlessQuerySummary?.state?.total || 0;
+
+    // Only trigger the event if we have valid data
+    if (
+      (searchType === 'filter' && filterType) ||
+      (searchType === 'search' && searchValue) ||
+      (searchType === 'filter+search' && filterType && searchValue)
+    ) {
+      // Trigger the clear filters analytics event
+      pushBrowseFilterSearchClearEvent(searchType, filterType, filterValue, searchValue, resultsCount);
+    }
+  }
+
+  // Reset the lastSearchId to ensure the next search triggers analytics
+  window.browseFilterAnalyticsState.lastSearchId = null;
+
   removeTopicSelections(block);
   uncheckAllFiltersFromDropdown(block);
   clearAllSelectedTag(block);
