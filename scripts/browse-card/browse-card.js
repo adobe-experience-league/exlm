@@ -463,6 +463,78 @@ const getVideoClipModal = () => {
 };
 
 /**
+ * Decorates upcoming event cards with additional features
+ * @param {HTMLElement} card - The card element to decorate
+ * @param {Object} model - The data model for the card
+ */
+const decorateUpcomingEvents = (card, model) => {
+  if (!card || !model || model.contentType?.toLowerCase() !== CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY) return;
+
+  const cardFigure = card?.querySelector('.browse-card-figure');
+  if (!cardFigure) return;
+
+  const { event } = model;
+  const hasSpeakers = event?.speakers?.name?.length > 0 && event?.speakers?.profilePictureURL?.length > 0;
+  const hasSeries = event?.series;
+  const seriesText = hasSeries ? event?.series : null;
+
+  if (hasSpeakers) {
+    let speakersContainer = cardFigure?.querySelector('.event-speakers-container');
+    if (!speakersContainer) {
+      speakersContainer = createTag('div', { class: 'event-speakers-container' });
+      cardFigure.appendChild(speakersContainer);
+    } else {
+      speakersContainer.innerHTML = '';
+    }
+
+    const speakerNames = Array.isArray(event?.speakers?.name)
+      ? event?.speakers?.name
+      : event?.speakers?.name?.split(',')?.map((name) => name?.trim());
+
+    const profilePictures = Array.isArray(event?.speakers?.profilePictureURL)
+      ? event?.speakers?.profilePictureURL
+      : event?.speakers?.profilePictureURL?.split(',')?.map((url) => url?.trim());
+
+    const maxSpeakers = Math.min(speakerNames?.length || 0, profilePictures?.length || 0, 3);
+    for (let i = 0; i < maxSpeakers; i += 1) {
+      const speakerImgContainer = createTag('div', { class: 'speaker-profile-container' });
+      const speakerImg = createTag('img', {
+        src: profilePictures?.[i],
+        alt: speakerNames?.[i],
+        class: 'speaker-profile-image',
+      });
+      speakerImgContainer.appendChild(speakerImg);
+      speakersContainer.appendChild(speakerImgContainer);
+    }
+  } else if (hasSeries) {
+    const existingSpeakers = cardFigure?.querySelector('.event-speakers-container');
+    if (existingSpeakers) {
+      existingSpeakers.remove();
+    }
+  }
+
+  if (seriesText) {
+    const existingSeriesBanner = cardFigure?.querySelector('.event-series-banner, .event-series-banner-no-speakers');
+    if (existingSeriesBanner) {
+      existingSeriesBanner.remove();
+    }
+
+    const bannerClass = hasSpeakers ? 'event-series-banner' : 'event-series-banner event-series-banner-no-speakers';
+
+    if (!cardFigure?.querySelector(`.${bannerClass.replace(' ', '.')}`)) {
+      cardFigure.appendChild(createTag('div', { class: bannerClass }, seriesText));
+    }
+  }
+
+  if (event?.type) {
+    const locationType = event?.type;
+    if (locationType && !cardFigure?.querySelector('.location-type')) {
+      cardFigure.appendChild(createTag('div', { class: 'location-type' }, locationType));
+    }
+  }
+};
+
+/**
  * Builds a browse card element with various components based on the provided model data.
  *
  * @param {HTMLElement} container - The container element for the browse card.
@@ -479,6 +551,7 @@ const getVideoClipModal = () => {
  * @param {string} [model.copyLink] - URL link for a copy/share action on the card.
  * @returns {Promise<void>} Resolves when the card is fully built and added to the DOM.
  */
+
 export async function buildCard(container, element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
 
@@ -729,33 +802,32 @@ export async function buildCard(container, element, model) {
     return { cardHeader, cardPosition };
   };
 
-  // Browse card click event
-  element.querySelector('a:not(.browse-card-options):not(.browse-card-cta-element)')?.addEventListener('click', () => {
+  // Browse card click event handler
+  element.querySelector('a')?.addEventListener('click', (e) => {
     const { cardHeader, cardPosition } = cardHeaderAndPosition();
-    pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
-  });
 
-  // Browse card click event for Bookmark
-  element.querySelector('.browse-card-options .user-actions .bookmark')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const { cardHeader, cardPosition } = cardHeaderAndPosition();
-    pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, cardHeader, cardPosition);
-  });
+    // Bookmark click
+    if (e.target.closest('.browse-card-options .user-actions .bookmark')) {
+      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, cardHeader, cardPosition);
+      return;
+    }
 
-  // Browse card click event for Copy Link
-  element.querySelector('.browse-card-options .user-actions .copy-link')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const { cardHeader, cardPosition } = cardHeaderAndPosition();
-    pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
-  });
+    // Copy link click
+    if (e.target.closest('.browse-card-options .user-actions .copy-link')) {
+      pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
+      return;
+    }
 
-  // Browse card CTA click event
-  element.querySelector('.browse-card-cta-element')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const { cardHeader, cardPosition } = cardHeaderAndPosition();
-    pushBrowseCardClickEvent('browseCardCTAClick', model, cardHeader, cardPosition);
+    // CTA element click
+    if (e.target.closest('.browse-card-cta-element')) {
+      pushBrowseCardClickEvent('browseCardCTAClick', model, cardHeader, cardPosition);
+      return;
+    }
+
+    // Card click (excluding options and CTA)
+    if (e.target.closest('a:not(.browse-card-options):not(.browse-card-cta-element)')) {
+      pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
+    }
   });
 
   element.querySelector('a').addEventListener(
@@ -765,4 +837,12 @@ export async function buildCard(container, element, model) {
     },
     { once: true },
   );
+
+  // Apply special decorations for upcoming events
+  if (model.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY) {
+    const cardElement = element.querySelector('.browse-card');
+    if (cardElement) {
+      decorateUpcomingEvents(cardElement, model);
+    }
+  }
 }

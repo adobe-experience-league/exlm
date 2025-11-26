@@ -43,9 +43,11 @@ let placeholders = {};
  */
 function getTextWrapConfig(text) {
   const len = text.length;
-  if (len >= 70) return { charLength: 40, fontSize: 16 };
-  if (len >= 60) return { charLength: 36, fontSize: 18 };
-  if (len >= 40) return { charLength: 31, fontSize: 20 };
+  if (len >= 120) return { charLength: 42, fontSize: 12 };
+  if (len >= 102) return { charLength: 40, fontSize: 14 };
+  if (len >= 65) return { charLength: 34, fontSize: 16 };
+  if (len >= 60) return { charLength: 32, fontSize: 18 };
+  if (len >= 50) return { charLength: 30, fontSize: 20 };
   return { charLength: 25, fontSize: 23 };
 }
 
@@ -63,7 +65,16 @@ function wrapText(text, maxLength = 25) {
   let currentLine = '';
 
   words.forEach((word) => {
-    if ((currentLine + word).length <= maxLength) {
+    // If word itself is longer than maxLength, break it by characters
+    if (word.length > maxLength) {
+      if (currentLine) {
+        lines.push(currentLine);
+        currentLine = '';
+      }
+      for (let i = 0; i < word.length; i += maxLength) {
+        lines.push(word.substring(i, i + maxLength));
+      }
+    } else if ((currentLine + (currentLine ? ' ' : '') + word).length <= maxLength) {
       currentLine += (currentLine ? ' ' : '') + word;
     } else {
       if (currentLine) lines.push(currentLine);
@@ -73,6 +84,23 @@ function wrapText(text, maxLength = 25) {
 
   if (currentLine) lines.push(currentLine);
   return lines.join('\n');
+}
+
+/**
+ * Wraps text and calculates Y position based on line count
+ * @param {string} text - Text to wrap
+ * @param {number} maxLength - Maximum characters per line
+ * @param {number} defaultY - Default Y position for single line
+ * @param {number} multiLineY - Y position when text wraps to multiple lines
+ * @returns {Object} Object with wrapped text and Y position
+ */
+function wrapWithPos(text, maxLength, defaultY, multiLineY) {
+  const wrapped = wrapText(text, maxLength);
+  const hasMultipleLines = wrapped.includes('\n');
+  return {
+    text: wrapped,
+    y: hasMultipleLines ? multiLineY : defaultY,
+  };
 }
 
 function getCourseLandingPageUrl() {
@@ -286,6 +314,16 @@ async function createCertificateContainer(courseData) {
   const courseName = courseData.name || '';
   const textConfig = getTextWrapConfig(courseName);
 
+  // Wrap userName with dynamic positioning
+  const userNameWrapped = wrapWithPos(courseData.userName || '', 40, 180, 195);
+
+  // Wrap completion time text with dynamic positioning
+  const completionTimeText = (placeholders?.courseCompletionTimeText || 'Time to complete: [hours] hours').replace(
+    '[hours]',
+    courseData.completionTimeInHrs,
+  );
+  const completionTimeWrapped = wrapWithPos(completionTimeText, 30, 250, 240);
+
   const certificateText = [
     {
       content: wrapText(courseName, textConfig.charLength), // Dynamic character-based wrapping
@@ -302,7 +340,7 @@ async function createCertificateContainer(courseData) {
       align: 'center',
     },
     {
-      content: courseData.userName || '',
+      content: userNameWrapped.text,
       position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 155 * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${16 * CONFIG.CERTIFICATE.SCALE}px`, weight: 'bold' },
       color: '#2C2C2C',
@@ -312,17 +350,14 @@ async function createCertificateContainer(courseData) {
       content: courseData.completionDate
         ? `${placeholders?.courseIssuedDateText || 'ISSUED'} ${courseData.completionDate}`
         : '',
-      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: 180 * CONFIG.CERTIFICATE.SCALE },
+      position: { x: 185 * CONFIG.CERTIFICATE.SCALE, y: userNameWrapped.y * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${8.5 * CONFIG.CERTIFICATE.SCALE}px` },
       color: '#686868',
       align: 'center',
     },
     {
-      content: (placeholders?.courseCompletionTimeText || 'Time to complete: [hours] hours').replace(
-        '[hours]',
-        courseData.completionTimeInHrs,
-      ),
-      position: { x: 300 * CONFIG.CERTIFICATE.SCALE, y: 250 * CONFIG.CERTIFICATE.SCALE },
+      content: completionTimeWrapped.text,
+      position: { x: 295 * CONFIG.CERTIFICATE.SCALE, y: completionTimeWrapped.y * CONFIG.CERTIFICATE.SCALE },
       font: { size: `${7.5 * CONFIG.CERTIFICATE.SCALE}px` },
       color: '#2C2C2C',
       align: 'center',

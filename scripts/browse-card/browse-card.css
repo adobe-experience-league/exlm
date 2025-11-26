@@ -78,12 +78,12 @@
   background-color: var(--browse-card-color-troubleshooting-secondary);
 }
 
-.browse-card.upcoming-event-card {
-  background-color: var(--browse-card-color-upcoming-event-secondary);
-}
-
 .browse-card.event-card {
   background-color: var(--browse-card-color-event-secondary);
+}
+
+.browse-card.upcoming-event-card {
+  background-color: var(--browse-card-color-upcoming-event-secondary);
 }
 
 .browse-card.instructor-led-training-card {
