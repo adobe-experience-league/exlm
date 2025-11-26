@@ -885,6 +885,7 @@ export function pushCourseStartEvent(courseData) {
 
 /**
  * Pushes a browse card click event to the Adobe Data Layer.
+ * This event is fired whenever a user clicks on any part of a browse card.
  *
  * @param {string} eventName - The name of the event to be pushed (e.g., "browseCardClicked").
  * @param {Object} cardData - The data object representing the browse card.
