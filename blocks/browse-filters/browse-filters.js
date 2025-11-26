@@ -952,7 +952,7 @@ async function handleSearchEngineSubscription(block) {
 }
 
 async function loadCoveoHeadlessScript(block) {
-  const [{ default: initiateCoveoHeadlessSearch }, isUserLoggedIn] = await Promise.all([
+  const [{ default: initiateCoveoHeadlessSearch }] = await Promise.all([
     import('../../scripts/coveo-headless/index.js'),
     isSignedInUser(),
   ]);
