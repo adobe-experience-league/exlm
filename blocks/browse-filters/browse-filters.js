@@ -828,7 +828,7 @@ function getFilterTypesAndValues() {
  *
  * @param {HTMLElement} block - The container block element for managing the browse filters.
  */
-async function handleSearchEngineSubscription(block, isUserLoggedIn) {
+async function handleSearchEngineSubscription(block) {
   const browseFilterForm = (block || document).querySelector(CLASS_BROWSE_FILTER_FORM);
   const filterResultsEl = browseFilterForm?.querySelector('.browse-filters-results');
   if (!filterResultsEl || window.headlessStatusControllers?.state?.isLoading) {
@@ -959,7 +959,7 @@ async function loadCoveoHeadlessScript(block) {
   if (initiateCoveoHeadlessSearch) {
     isCoveoHeadlessLoaded = true;
     initiateCoveoHeadlessSearch({
-      handleSearchEngineSubscription: () => handleSearchEngineSubscription(block, isUserLoggedIn),
+      handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
       renderPageNumbers,
       numberOfResults: getBrowseFiltersResultCount(),
       renderSearchQuerySummary,
