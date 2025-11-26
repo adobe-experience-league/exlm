@@ -896,6 +896,7 @@ export function pushCourseStartEvent(courseData) {
  */
 /**
  * Pushes a browse filter search event to the Adobe Data Layer.
+ * This event is fired whenever a user clicks on any part of a browse card.
  * This event is fired when users interact with search and filter functionality.
  *
  * @param {string} searchType - Type of search: "filter", "search", or "filter+search"

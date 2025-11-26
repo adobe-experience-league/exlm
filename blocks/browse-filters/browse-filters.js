@@ -208,42 +208,6 @@ function isFilterSelectionActive(block) {
   return false;
 }
 
-function isCurrentSearchResponse(block, searchResponse) {
-  try {
-    const dropdownOptionsWrapperEl = block.querySelector('.browse-filters-input-container');
-    const selectedOptions = dropdownOptions.reduce((acc, option) => {
-      const dropdownEl = dropdownOptionsWrapperEl.querySelector(`.filter-dropdown[data-filter-type="${option.id}"]`);
-      acc[option.id] = Array.from(dropdownEl.querySelectorAll('input:checked')).map((inputEl) => inputEl.value);
-      return acc;
-    }, {});
-    const { facets } = searchResponse;
-    const mismatchedFacet = facets.find((facet) => {
-      const { facetId } = facet;
-      const selectedOptionList = selectedOptions[facetId];
-      if (!selectedOptionList) return false;
-      const selectedFacets = facet.values?.filter((option) => option.state === 'selected') || [];
-      if (selectedOptionList.length === selectedFacets.length) {
-        const misMatch = !!selectedFacets.find((selectedFacet) => {
-          const optionItem = selectedFacet.value;
-          if (selectedOptionList.includes(optionItem)) {
-            return false;
-          }
-          return true;
-        });
-        return !!misMatch;
-      }
-      return true;
-    });
-    if (mismatchedFacet) {
-      // When we have mismatched facets, it means the search response we got from coveo headless sdk does not match the current UI filter selection.
-      return false;
-    }
-    return true;
-  } catch {
-    return true;
-  }
-}
-
 /**
  * Updates the status of the clear filter button and filter-related UI elements based on the current state.
  * It also dispatches a coveo query if necessary.
@@ -843,10 +807,9 @@ async function handleSearchEngineSubscription(block) {
   const currentSearchId = searchResponseId;
 
   if (
-    response?.totalCount !== undefined &&
     isFilterSelectionActive(block) &&
-    window.browseFilterAnalyticsState.lastSearchId !== currentSearchId &&
-    isCurrentSearchResponse(block, response)
+    response?.totalCount !== undefined &&
+    window.browseFilterAnalyticsState.lastSearchId !== currentSearchId
   ) {
     const searchType = determineSearchType(block);
     const searchEl = block.querySelector('.filter-input-search > .search-input');
@@ -952,10 +915,7 @@ async function handleSearchEngineSubscription(block) {
 }
 
 async function loadCoveoHeadlessScript(block) {
-  const [{ default: initiateCoveoHeadlessSearch }] = await Promise.all([
-    import('../../scripts/coveo-headless/index.js'),
-    isSignedInUser(),
-  ]);
+  const { default: initiateCoveoHeadlessSearch } = await import('../../scripts/coveo-headless/index.js');
   if (initiateCoveoHeadlessSearch) {
     isCoveoHeadlessLoaded = true;
     initiateCoveoHeadlessSearch({
