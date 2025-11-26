@@ -1,5 +1,5 @@
 /* Upcoming event grid variant */
-.browse-card.upcoming-event-card {
+.browse-cards-block-content .browse-card.upcoming-event-card {
   background-color: var(--spectrum-gray-50);
 }
 
