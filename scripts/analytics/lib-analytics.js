@@ -894,6 +894,40 @@ export function pushCourseStartEvent(courseData) {
  * @param {string} cardHeader - The header or category associated with the card (used as `linkType`).
  * @param {number} cardPosition - The index or position of the card within the list/grid.
  */
+export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+  const product = cardData?.product;
+  const cardFullSolution = Array.isArray(product) ? product.join(',') : product || '';
+
+  const cardSolution = Array.isArray(product) ? product[0] : product?.split(',')[0]?.trim() || '';
+
+  // Determining if the card is in list or grid view
+  const eventsBlock = document.activeElement?.closest('.upcoming-event-v2, .upcoming-event');
+  let viewType = null;
+  let hasViewSwitcher = false;
+
+  if (eventsBlock) {
+    viewType = eventsBlock.classList.contains('list') ? 'List' : 'Grid';
+    hasViewSwitcher = !!eventsBlock.querySelector('.view-switcher');
+  }
+
+  const dataLayerEntry = {
+    event: eventName,
+    link: {
+      contentType: cardData?.contentType?.toLowerCase().trim() || '',
+      fullSolution: cardFullSolution,
+      solution: cardSolution || '',
+      destinationDomain: cardData?.viewLink || '',
+      linkTitle: cardData?.title || '',
+      linkLocation: 'body',
+      linkType: hasViewSwitcher && viewType ? `${viewType} | ${cardHeader}` : cardHeader,
+      position: cardPosition,
+    },
+  };
+
+  window.adobeDataLayer.push(dataLayerEntry);
+}
+
 /**
  * Pushes a browse filter search event to the Adobe Data Layer.
  * This event is fired whenever a user clicks on any part of a browse card.
@@ -959,40 +993,6 @@ export function pushBrowseFilterSearchClearEvent(searchType, filterType, filterV
   if (searchType === 'search' || searchType === 'filter+search') {
     dataLayerEntry.input.searchValue = searchValue;
   }
-
-  window.adobeDataLayer.push(dataLayerEntry);
-}
-
-export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition) {
-  window.adobeDataLayer = window.adobeDataLayer || [];
-  const product = cardData?.product;
-  const cardFullSolution = Array.isArray(product) ? product.join(',') : product || '';
-
-  const cardSolution = Array.isArray(product) ? product[0] : product?.split(',')[0]?.trim() || '';
-
-  // Determining if the card is in list or grid view
-  const eventsBlock = document.activeElement?.closest('.upcoming-event-v2, .upcoming-event');
-  let viewType = null;
-  let hasViewSwitcher = false;
-
-  if (eventsBlock) {
-    viewType = eventsBlock.classList.contains('list') ? 'List' : 'Grid';
-    hasViewSwitcher = !!eventsBlock.querySelector('.view-switcher');
-  }
-
-  const dataLayerEntry = {
-    event: eventName,
-    link: {
-      contentType: cardData?.contentType?.toLowerCase().trim() || '',
-      fullSolution: cardFullSolution,
-      solution: cardSolution || '',
-      destinationDomain: cardData?.viewLink || '',
-      linkTitle: cardData?.title || '',
-      linkLocation: 'body',
-      linkType: hasViewSwitcher && viewType ? `${viewType} | ${cardHeader}` : cardHeader,
-      position: cardPosition,
-    },
-  };
 
   window.adobeDataLayer.push(dataLayerEntry);
 }
