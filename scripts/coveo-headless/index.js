@@ -47,6 +47,11 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
       'documenttype',
       'el_author_type',
       'el_contenttype',
+      'el_event_series',
+      'el_event_start_time',
+      'el_event_type',
+      'el_event_speakers_name',
+      'el_event_speakers_profile_picture_url',
       'el_id',
       'el_interactionstyle',
       'el_kudo_status',
@@ -157,6 +162,13 @@ export default async function initiateCoveoHeadlessSearch({
         const headlessAuthorTypeFacet = module.buildFacet(headlessSearchEngine, {
           options: {
             field: 'author_type',
+          },
+          numberOfValues: 8,
+        });
+
+        const headlessEventSeriesFacet = module.buildFacet(headlessSearchEngine, {
+          options: {
+            field: 'el_event_series',
           },
           numberOfValues: 8,
         });
@@ -290,6 +302,7 @@ export default async function initiateCoveoHeadlessSearch({
         window.headlessExperienceFacet = headlessExperienceFacet;
         window.headlessProductFacet = headlessProductFacet;
         window.headlessAuthorTypeFacet = headlessAuthorTypeFacet;
+        window.headlessEventSeriesFacet = headlessEventSeriesFacet;
         window.headlessStatusControllers = statusControllers;
         window.headlessPager = headlessPager;
         window.headlessResultsPerPage = headlessResultsPerPage;
