@@ -885,7 +885,6 @@ export function pushCourseStartEvent(courseData) {
 
 /**
  * Pushes a browse card click event to the Adobe Data Layer.
- * This event is fired whenever a user clicks on any part of a browse card.
  *
  * @param {string} eventName - The name of the event to be pushed (e.g., "browseCardClicked").
  * @param {Object} cardData - The data object representing the browse card.
@@ -900,9 +899,9 @@ export function pushCourseStartEvent(courseData) {
  * This event is fired when users interact with search and filter functionality.
  *
  * @param {string} searchType - Type of search: "filter", "search", or "filter+search"
- * @param {string} [filterType] - Comma-separated list of filter categories (required for "filter" and "filter+search")
- * @param {string} [filterValue] - Comma-separated list of filter values aligned with filterType (required for "filter" and "filter+search")
- * @param {string} [searchValue] - Keyword entered by user (required for "search" and "filter+search")
+ * @param {string} [filterType] - Comma-separated list of filter categories
+ * @param {string} [filterValue] - Comma-separated list of filter values aligned with filterType
+ * @param {string} [searchValue] - Keyword entered by user
  * @param {number} results - Integer count of results returned
  */
 export function pushBrowseFilterSearchEvent(searchType, filterType, filterValue, searchValue, results) {
@@ -916,7 +915,7 @@ export function pushBrowseFilterSearchEvent(searchType, filterType, filterValue,
     },
   };
 
-  // Add appropriate properties based on searchType
+  // Adding appropriate properties based on searchType
   if (searchType === 'filter' || searchType === 'filter+search') {
     dataLayerEntry.input.filterType = filterType;
     dataLayerEntry.input.filterValue = filterValue;
@@ -950,7 +949,7 @@ export function pushBrowseFilterSearchClearEvent(searchType, filterType, filterV
     },
   };
 
-  // Add appropriate properties based on searchType
+  // Adding appropriate properties based on searchType
   if (searchType === 'filter' || searchType === 'filter+search') {
     dataLayerEntry.input.filterType = filterType;
     dataLayerEntry.input.filterValue = filterValue;

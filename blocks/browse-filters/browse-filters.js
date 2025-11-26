@@ -703,7 +703,7 @@ function renderSearchQuerySummary() {
   }
   queryEl.textContent = assetString;
 
-  // Store the results count for analytics
+  // Storing the results count for analytics
   window.browseFilterAnalyticsState.resultsCount = resultsCount;
 }
 
@@ -839,7 +839,7 @@ async function handleSearchEngineSubscription(block) {
   const { results, searchResponseId, response } = search;
 
   // Trigger analytics event for search/filter interaction
-  // Use the search response ID to ensure we only trigger once per unique search
+  // Using search response ID to ensure we only trigger once per unique search
   const currentSearchId = searchResponseId;
 
   if (
@@ -862,7 +862,7 @@ async function handleSearchEngineSubscription(block) {
       // Update the last search ID to prevent duplicate events
       window.browseFilterAnalyticsState.lastSearchId = currentSearchId;
 
-      // Use a timeout to ensure this runs after the current execution context
+      // Timeout to ensure this runs after the current execution context
       setTimeout(() => {
         pushBrowseFilterSearchEvent(searchType, filterType, filterValue, searchValue, response.totalCount);
       }, 0);
@@ -1359,7 +1359,7 @@ function clearSearchQuery(block) {
 }
 
 function clearSelectedFilters(block) {
-  // Capture filter state before clearing for analytics
+  // Capturing filter state before clearing for analytics
   if (isFilterSelectionActive(block)) {
     const searchType = determineSearchType(block);
     const searchEl = block.querySelector('.filter-input-search > .search-input');
