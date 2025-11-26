@@ -809,8 +809,7 @@ async function handleSearchEngineSubscription(block) {
   if (
     isFilterSelectionActive(block) &&
     response?.totalCount !== undefined &&
-    window.browseFilterAnalyticsState.lastSearchId !== currentSearchId &&
-    response.totalCount < 10000
+    window.browseFilterAnalyticsState.lastSearchId !== currentSearchId
   ) {
     const searchType = determineSearchType(block);
     const searchEl = block.querySelector('.filter-input-search > .search-input');
