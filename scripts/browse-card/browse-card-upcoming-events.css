@@ -114,6 +114,10 @@
   -webkit-line-clamp: 2;
 }
 
+.browse-card.upcoming-event-card .browse-card-footer {
+  justify-content: flex-end;
+}
+
 /** List view styles start **/
 
 .list .browse-card-figure .event-speakers-container {
@@ -242,11 +246,6 @@
   .list .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info .icon {
     width: 18px;
     height: 18px;
-  }
-
-  .list .browse-card.upcoming-event-card .browse-card-footer .browse-card-options {
-    order: 2;
-    align-self: flex-start;
   }
 
   .list .browse-card.upcoming-event-card .browse-card-footer .browse-card-cta-element {

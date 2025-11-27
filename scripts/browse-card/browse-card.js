@@ -470,6 +470,12 @@ const getVideoClipModal = () => {
 const decorateUpcomingEvents = (card, model) => {
   if (!card || !model || model.contentType?.toLowerCase() !== CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY) return;
 
+  // Remove the browse-card-options div from upcoming event cards
+  const cardOptions = card.querySelector('.browse-card-options');
+  if (cardOptions) {
+    cardOptions.remove();
+  }
+
   const cardFigure = card?.querySelector('.browse-card-figure');
   if (!cardFigure) return;
 
