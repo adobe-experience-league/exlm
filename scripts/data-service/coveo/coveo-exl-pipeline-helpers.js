@@ -134,6 +134,7 @@ export function getFacets(param) {
     ...(param.role ? [{ id: 'el_role', type: 'specific', currentValues: param.role }] : []),
     ...(param.authorType ? [{ id: 'author_type', type: 'specific', currentValues: param.authorType }] : []),
     ...(param.level ? [{ id: 'el_level', type: 'specific', currentValues: param.level }] : []),
+    ...(param.eventSeries ? [{ id: 'el_event_series', type: 'specific', currentValues: param.eventSeries }] : []),
   ];
 
   return constructCoveoFacet(facets);
@@ -167,6 +168,7 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
       ...(!param.feature ? { facets: getFacets(param) } : ''),
       ...(param.feature ? { aq: constructCoveoAdvancedQuery(param) } : ''),
       ...(param.aq ? { aq: param.aq } : ''),
+      ...(param.fields?.length > 0 ? { batch: param.fields.map((field) => ({ field })) } : ''),
       fieldsToInclude: fields,
     },
   };
@@ -174,6 +176,10 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
   // Set to select page
   if (param.firstResult) {
     dataSource.param.firstResult = param.firstResult;
+  }
+
+  if (param.fetchFacets) {
+    dataSource.url += '/values/batch';
   }
 
   return dataSource;

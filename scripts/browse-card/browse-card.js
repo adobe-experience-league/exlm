@@ -802,33 +802,32 @@ export async function buildCard(container, element, model) {
     return { cardHeader, cardPosition };
   };
 
-  // Browse card click event
-  element.querySelector('a:not(.browse-card-options):not(.browse-card-cta-element)')?.addEventListener('click', () => {
+  // Browse card click event handler
+  element.querySelector('a')?.addEventListener('click', (e) => {
     const { cardHeader, cardPosition } = cardHeaderAndPosition();
-    pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
-  });
 
-  // Browse card click event for Bookmark
-  element.querySelector('.browse-card-options .user-actions .bookmark')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const { cardHeader, cardPosition } = cardHeaderAndPosition();
-    pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, cardHeader, cardPosition);
-  });
+    // Bookmark click
+    if (e.target.closest('.browse-card-options .user-actions .bookmark')) {
+      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, cardHeader, cardPosition);
+      return;
+    }
 
-  // Browse card click event for Copy Link
-  element.querySelector('.browse-card-options .user-actions .copy-link')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const { cardHeader, cardPosition } = cardHeaderAndPosition();
-    pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
-  });
+    // Copy link click
+    if (e.target.closest('.browse-card-options .user-actions .copy-link')) {
+      pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
+      return;
+    }
 
-  // Browse card CTA click event
-  element.querySelector('.browse-card-cta-element')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const { cardHeader, cardPosition } = cardHeaderAndPosition();
-    pushBrowseCardClickEvent('browseCardCTAClick', model, cardHeader, cardPosition);
+    // CTA element click
+    if (e.target.closest('.browse-card-cta-element')) {
+      pushBrowseCardClickEvent('browseCardCTAClick', model, cardHeader, cardPosition);
+      return;
+    }
+
+    // Card click (excluding options and CTA)
+    if (e.target.closest('a:not(.browse-card-options):not(.browse-card-cta-element)')) {
+      pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
+    }
   });
 
   element.querySelector('a').addEventListener(
