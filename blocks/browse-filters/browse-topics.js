@@ -1,5 +1,13 @@
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
-import { getCoveoFacets, roleOptions, contentTypeOptions, productTypeOptions } from './browse-filter-utils.js';
+import {
+  getCoveoFacets,
+  roleOptions,
+  contentTypeOptions,
+  productTypeOptions,
+  eventSeriesOptions,
+  eventTypeOptions,
+  isUpcomingEventBlockExists,
+} from './browse-filter-utils.js';
 
 export const coveoFacetMap = {
   el_role: 'headlessRoleFacet',
@@ -7,9 +15,12 @@ export const coveoFacetMap = {
   el_level: 'headlessExperienceFacet',
   el_product: 'headlessProductFacet',
   author_type: 'headlessAuthorTypeFacet',
+  el_event_series: 'headlessEventSeriesFacet',
 };
 
-export const dropdownOptions = [roleOptions, contentTypeOptions];
+export const dropdownOptions = isUpcomingEventBlockExists()
+  ? [productTypeOptions, eventSeriesOptions, eventTypeOptions]
+  : [roleOptions, contentTypeOptions];
 
 /**
  * formattedTags returns the array of base64 encoded tags after extracting from the tags selected in dialog
