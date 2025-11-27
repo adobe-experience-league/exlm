@@ -1,5 +1,7 @@
 import { getConfig } from '../scripts.js';
 
+const MPC_ORIGIN = 'https://video.tv.adobe.com';
+
 /**
  * Languages currently supported for MPC videos
  * Maps language codes to MPC caption language identifiers
@@ -100,7 +102,7 @@ function findTranslatedVideo(videos, targetLocale) {
   return (
     videos.find(
       (video) =>
-        video.videoType === VIDEO_COLLECTION_CONSTANTS.TRANSLATED && hasTargetLanguageCaptions(video, targetLocale),
+        video?.videoType === VIDEO_COLLECTION_CONSTANTS.TRANSLATED && hasTargetLanguageCaptions(video, targetLocale),
     ) || null
   );
 }
@@ -113,8 +115,8 @@ function findTranslatedVideo(videos, targetLocale) {
  */
 function findLocalizedVideoId(collectionsData, lang) {
   const targetLocale = MPC_LANGUAGES_MAP[lang];
-  const localizationCollection = collectionsData.collections.find(
-    (collection) => collection.collectionType === VIDEO_COLLECTION_CONSTANTS.LOCALIZATION,
+  const localizationCollection = collectionsData?.collections?.find(
+    (collection) => collection?.collectionType === VIDEO_COLLECTION_CONSTANTS.LOCALIZATION,
   );
   // Early return for invalid input
   if (!collectionsData?.collections?.length || !targetLocale || !localizationCollection?.videos?.length) {
@@ -145,13 +147,56 @@ function findLocalizedVideoId(collectionsData, lang) {
 }
 
 /**
+ * Checks if a URL is an MPC video URL
+ * @param {string} url - URL to check
+ * @returns {boolean} - True if URL is an MPC video URL
+ */
+function isMpcVideoUrl(url) {
+  try {
+    const urlObj = new URL(url);
+    const hasMpcOrigin = urlObj.origin === MPC_ORIGIN;
+    const hasV = urlObj.pathname.startsWith('/v/');
+    const has2PartsOrMore = urlObj.pathname.split('/').length >= 2;
+    return hasMpcOrigin && hasV && has2PartsOrMore;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error parsing MPC URL, skipping', e);
+    return false;
+  }
+}
+
+/**
  * Extracts video ID from URL
  * @param {string} url - Video URL to extract ID from
  * @returns {string|null} - Extracted video ID or null if not found
  */
 function extractVideoId(url) {
+  if (!isMpcVideoUrl(url)) return null;
   const match = url.match(/\/v\/(\d+)/);
   return match ? match[1] : null;
+}
+
+/**
+ * Checks whether a video exists by querying its JSON metadata endpoint.
+ * @param {string} videoURL - The video URL to check.
+ * @returns {Promise<boolean>} `true` if the video exists or cannot be confirmed missing;
+ *                             `false` only when the JSON endpoint explicitly returns 404.
+ */
+async function checkVideoJSONExists(videoURL) {
+  // Only handle URL inputs
+  if (!isMpcVideoUrl(videoURL) || typeof videoURL !== 'string') {
+    return false;
+  }
+  try {
+    const urlObj = new URL(videoURL);
+    urlObj.searchParams.set('format', 'json');
+    const res = await fetch(urlObj.href, { method: 'GET' });
+    if (res.status === 404) return false;
+    return true;
+  } catch (e) {
+    // Return true for network errors to avoid false negatives
+    return false;
+  }
 }
 
 /**
@@ -176,10 +221,13 @@ function addLanguageParameter(url, lang) {
 }
 
 /**
- * Updates the video URL with a localized video ID (if available)
- * @param {string} url - The original video URL (e.g., https://video.host/v/16419)
- * @param {string} lang - The target language (e.g., 'de')
- * @returns {Promise<string>} - Updated video URL with localized ID or same URL with language param
+ * Updates a video URL to its localized version based on the target language.
+ * @param {string} url - Original video URL (e.g. "https://video.host/v/16419").
+ * @param {string} lang - Target language code (e.g. "de").
+ * @returns {Promise<string>} A Promise resolving to:
+ *   - the localized video URL,
+ *   - or the original URL with a `lang` parameter,
+ *   - or the English fallback URL if the localized version is unavailable.
  */
 export default async function updateVideoUrl(url, lang) {
   if (!url || typeof url !== 'string' || !lang) {
@@ -187,34 +235,39 @@ export default async function updateVideoUrl(url, lang) {
   }
 
   const originalId = extractVideoId(url);
-  if (!originalId) {
-    return url;
-  }
+  if (!originalId) return url;
 
   try {
     const collectionsData = await fetchVideoCollections(originalId);
+    if (!collectionsData) return url;
 
-    if (!collectionsData) {
-      return url;
-    }
     const { localizedId, hasTargetLanguage } = findLocalizedVideoId(collectionsData, lang);
 
-    // Replace with localized video ID (separate translated video)
-    if (localizedId && localizedId !== parseInt(originalId, 10)) {
-      return url.replace(`/v/${originalId}`, `/v/${localizedId}`);
+    let localizedUrl = url;
+    const numericOriginalId = Number(originalId);
+
+    // Case 1: separate localized video
+    if (localizedId && localizedId !== numericOriginalId) {
+      localizedUrl = url.replace(`/v/${originalId}`, `/v/${localizedId}`);
+    }
+    // Case 2: same video, multiple captions
+    else if (hasTargetLanguage) {
+      localizedUrl = addLanguageParameter(url, lang);
     }
 
-    // Single video with multiple captions - add language param if target language is available
-    if (hasTargetLanguage) {
-      return addLanguageParameter(url, lang);
+    // Case 3: 404 fallback to EN when localized (or caption) URL is 404
+    if (lang !== 'en') {
+      const exists = await checkVideoJSONExists(localizedUrl);
+
+      if (!exists) {
+        return updateVideoUrl(url, 'en');
+      }
     }
 
-    // If no target language available, return original URL
-    return url;
+    return localizedUrl;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.warn(`Failed to fetch localized video ID for ${originalId}:`, error);
-    // In case of any error, return original URL
     return url;
   }
 }
