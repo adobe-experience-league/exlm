@@ -22,16 +22,20 @@ import {
   handleCoverSearchSubmit,
   authorOptions,
   fetchPerspectiveIndex,
+  isUpcomingEventBlockExists,
 } from './browse-filter-utils.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
 import {
   assetInteractionModel,
   pushBrowseFilterSearchEvent,
   pushBrowseFilterSearchClearEvent,
 } from '../../scripts/analytics/lib-analytics.js';
+import {
+  BASE_COVEO_ADVANCED_QUERY,
+  BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT,
+} from '../../scripts/browse-card/browse-cards-constants.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import {
   formattedTags,
@@ -42,6 +46,7 @@ import {
 } from './browse-topics.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
+import BrowseCardsDelegate, { normalizeUpcomingEventModel } from '../../scripts/browse-card/browse-cards-delegate.js';
 
 let placeholders = {};
 try {
@@ -53,6 +58,7 @@ try {
 
 const SCROLL_ADJUSTMENT_OFFSET = -12;
 let isCoveoHeadlessLoaded = false;
+let isCoveoReady = false;
 let coveoHeadlessPromise = null;
 const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
 
@@ -683,6 +689,8 @@ function getSelectedDropdownLabels(block, field) {
     el_contenttype:
       '.filter-dropdown[data-filter-type="el_contenttype"] .custom-checkbox input[type="checkbox"]:checked',
     el_level: '.filter-dropdown[data-filter-type="el_level"] .custom-checkbox input[type="checkbox"]:checked',
+    el_event_series:
+      '.filter-dropdown[data-filter-type="el_event_series"] .custom-checkbox input[type="checkbox"]:checked',
     search: '.filter-input-search .search-input',
     topics: '.browse-topics .browse-topics-item-active',
   };
@@ -712,6 +720,7 @@ function generateAnalyticsFilters(block, totalCount) {
     el_role: 'Role',
     el_contenttype: 'ContentType',
     el_level: 'ExperienceLevel',
+    el_event_series: 'EventSeries',
     search: 'KeywordSearch',
     topics: 'BrowseByTopic',
   };
@@ -834,7 +843,11 @@ async function handleSearchEngineSubscription(block) {
   if (results.length > 0) {
     try {
       let cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
-
+      cardsData = cardsData.map((model) =>
+        model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY
+          ? normalizeUpcomingEventModel(model)
+          : model,
+      );
       // Enrich cards with course status information for signed-in users
       const isUserSignedIn = await isSignedInUser();
       const hasCourseCard = cardsData?.some(
@@ -927,6 +940,7 @@ async function loadCoveoHeadlessScript(block) {
     })
       .then(
         (data) => {
+          isCoveoReady = true;
           handleCoveoHeadlessSearch(block, data);
           const tagsContainerEl = block.querySelector('.browse-tags-container');
           if (tagsContainerEl && !tagsContainerEl.querySelector(`[data-icon-name="close"]`)) {
@@ -1597,14 +1611,52 @@ function decorateBrowseTopics(block) {
 }
 
 export default async function decorate(block) {
-  window.headlessBaseSolutionQuery = BASE_COVEO_ADVANCED_QUERY;
+  const isUpcomingEventFlow = isUpcomingEventBlockExists();
+  window.headlessBaseSolutionQuery = isUpcomingEventFlow
+    ? BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT
+    : BASE_COVEO_ADVANCED_QUERY;
   enableTagsAsProxy(block);
   appendFormEl(block);
   constructFilterInputContainer(block);
   addLabel(block);
-  dropdownOptions.forEach((options, index) => {
-    constructMultiSelectDropdown(block, options, index + 1);
-  });
+  if (isUpcomingEventFlow) {
+    BrowseCardsDelegate.fetchCoveoFacetFields(['el_event_series', 'el_product'])
+      .then((facetDetails) => {
+        dropdownOptions.forEach((options, index) => {
+          const optionId = options.id;
+          const optionItems = facetDetails[optionId] || [];
+          if (optionItems.length > 0) {
+            options.items = optionItems.map((item) => ({
+              id: item,
+              value: item,
+              title: item.split('|').join(' | '),
+              description: '',
+            }));
+          }
+          const dropdownEl = constructMultiSelectDropdown(block, options, index + 1);
+          const { parentElement } = dropdownEl;
+          parentElement.removeChild(dropdownEl);
+          const labelElement = parentElement.querySelector('.browse-filters-label');
+          labelElement.after(dropdownEl);
+          decorateIcons(dropdownEl);
+        });
+        if (isCoveoReady && isCoveoHeadlessLoaded) {
+          handleUriHash();
+          const tagsContainerEl = block.querySelector('.browse-tags-container');
+          if (tagsContainerEl && !tagsContainerEl.querySelector(`[data-icon-name="close"]`)) {
+            decorateIcons(tagsContainerEl);
+          }
+        }
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error('Error fetching facet details:', error);
+      });
+  } else {
+    dropdownOptions.forEach((options, index) => {
+      constructMultiSelectDropdown(block, options, index + 1);
+    });
+  }
   constructKeywordSearchEl(block);
   constructClearFilterBtn(block);
   appendToForm(block, renderTags());
@@ -1617,6 +1669,7 @@ export default async function decorate(block) {
   handleTagsClick(block);
   updateClearFilterStatus(block);
   renderSortContainer(block);
+
   const hash = fragment();
   if (hash && !isCoveoHeadlessLoaded) {
     loadCoveoHeadless(block);

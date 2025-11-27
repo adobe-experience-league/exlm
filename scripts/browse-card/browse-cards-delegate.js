@@ -315,8 +315,29 @@ const BrowseCardsDelegate = (() => {
         });
     });
 
+  const fetchCoveoFacetFields = (fields) =>
+    new Promise((resolve, reject) => {
+      const facets = {};
+      const dataSource = getExlPipelineDataSourceParams({ fields, fetchFacets: true }, []);
+      const coveoService = new CoveoDataService(dataSource);
+      coveoService
+        .fetchDataFromSource()
+        .then(async (facetsResponse) => {
+          const batches = facetsResponse?.batch || [];
+          batches.forEach((batch, i) => {
+            const field = fields[i];
+            facets[field] = batch?.map((facet) => facet.value)?.filter(Boolean) || [];
+          });
+          resolve(facets);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+
   return {
     fetchCardData,
+    fetchCoveoFacetFields,
   };
 })();
 
