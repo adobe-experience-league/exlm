@@ -3,7 +3,12 @@
  */
 
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
-import { extractCourseModuleIds, getCurrentCourseMeta, getCourseCompletionPageUrl } from './course-utils.js';
+import {
+  extractCourseModuleIds,
+  getCurrentCourseMeta,
+  getCourseCompletionPageUrl,
+  urlContainsModule,
+} from './course-utils.js';
 import {
   pushModuleStartEvent,
   pushModuleCompletionEvent,
@@ -78,26 +83,26 @@ async function getLastAddedModule() {
     !currentCourse.modules ||
     currentCourse.modules.length === 0
   ) {
-    return courseMeta.modules[0];
+    return courseMeta?.modules?.[0];
   }
 
   let latestModuleId = null;
   let latestStartTime = null;
 
   currentCourse.modules.forEach((module) => {
-    if (module.startedAt && (!latestStartTime || new Date(module.startedAt) > new Date(latestStartTime))) {
+    if (module?.startedAt && (!latestStartTime || new Date(module.startedAt) > new Date(latestStartTime))) {
       latestStartTime = module.startedAt;
-      latestModuleId = module.moduleId;
+      latestModuleId = module?.moduleId;
     }
   });
 
   if (!latestModuleId) {
-    return courseMeta.modules[0];
+    return courseMeta?.modules?.[0];
   }
 
-  const moduleUrl = courseMeta.modules.find((url) => url.includes(latestModuleId));
+  const moduleUrl = courseMeta?.modules?.find((url) => urlContainsModule(url, latestModuleId));
 
-  return moduleUrl || courseMeta.modules[0];
+  return moduleUrl || courseMeta?.modules?.[0];
 }
 
 /**
@@ -158,24 +163,27 @@ async function getModuleStatus(url = window.location.pathname) {
 
   if (!course || !course.modules || course.modules.length === 0) {
     // If the module is the first module of the course, return not started
-    if (courseMeta.modules[0].includes(url) || url.includes(courseMeta.modules[0])) {
+    const firstModuleUrl = courseMeta?.modules?.[0];
+    const firstModuleId = firstModuleUrl ? extractCourseModuleIds(firstModuleUrl)?.moduleId : null;
+    if (firstModuleId && urlContainsModule(url, firstModuleId)) {
       return MODULE_STATUS.NOT_STARTED;
     }
     return MODULE_STATUS.DISABLED;
   }
 
   // Check if previous module is finished
-  const moduleIndex = courseMeta.modules.findIndex((moduleUrl) => {
-    const { moduleId: metaModuleId } = extractCourseModuleIds(moduleUrl);
-    return metaModuleId === moduleId;
-  });
+  const moduleIndex =
+    courseMeta?.modules?.findIndex((moduleUrl) => {
+      const { moduleId: metaModuleId } = extractCourseModuleIds(moduleUrl);
+      return metaModuleId === moduleId;
+    }) ?? -1;
 
   if (moduleIndex > 0) {
-    const prevModuleUrl = courseMeta.modules[moduleIndex - 1];
+    const prevModuleUrl = courseMeta.modules?.[moduleIndex - 1];
     const { moduleId: prevModuleId } = extractCourseModuleIds(prevModuleUrl);
     const prevModule = findModule(course, prevModuleId);
 
-    if (!prevModule || !prevModule.finishedAt) {
+    if (!prevModule || !prevModule?.finishedAt) {
       return MODULE_STATUS.DISABLED;
     }
   }
@@ -243,15 +251,21 @@ async function startModule(url = window.location.pathname) {
     };
     course.modules.push(module);
 
-    const isFirstModule = courseMeta.modules?.[0]?.includes(moduleId);
+    const firstModuleUrl = courseMeta.modules?.[0];
+    const isFirstModule = firstModuleUrl && urlContainsModule(firstModuleUrl, moduleId);
 
     // push course start event
     if (isFirstModule) {
+      const courseFullSolution = courseMeta.solution || '';
+      const courseSolution = courseFullSolution?.split(',')[0].trim() || '';
+
       await queueAnalyticsEvent(pushCourseStartEvent, {
         title: courseMeta.heading,
         id: courseId,
-        solution: courseMeta.solution,
+        solution: courseSolution,
+        fullSolution: courseFullSolution,
         role: courseMeta.role,
+        level: courseMeta.level || '',
         startTime,
       });
     }
@@ -264,15 +278,21 @@ async function startModule(url = window.location.pathname) {
     // Module exists but no start time - update it
     module.startedAt = startTime;
 
-    const isFirstModule = courseMeta.modules?.[0]?.includes(moduleId);
+    const firstModuleUrl = courseMeta.modules?.[0];
+    const isFirstModule = firstModuleUrl && urlContainsModule(firstModuleUrl, moduleId);
 
     // push course start event
     if (isFirstModule) {
+      const courseFullSolution = courseMeta.solution || '';
+      const courseSolution = courseFullSolution?.split(',')[0].trim() || '';
+
       await queueAnalyticsEvent(pushCourseStartEvent, {
         title: courseMeta.heading,
         id: courseId,
-        solution: courseMeta.solution,
+        solution: courseSolution,
+        fullSolution: courseFullSolution,
         role: courseMeta.role,
+        level: courseMeta.level || '',
         startTime,
       });
     }

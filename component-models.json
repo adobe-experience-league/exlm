@@ -1638,6 +1638,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -3281,7 +3285,7 @@
         "name": "contentURL",
         "value": "",
         "label": "Content URL",
-        "description": "Provide a link to one of the following content types: Playlist, Tutorial, Documentation, Troubleshooting, On-Demand Event, Certification or Perspective"
+        "description": "Provide a link to one of the following content types: Course, Playlist, Tutorial, Documentation, Troubleshooting, On-Demand Event, Certification or Perspective"
       }
     ]
   },
@@ -3359,6 +3363,10 @@
           {
             "name": "Communities",
             "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
           },
           {
             "name": "Documentation",
@@ -3454,6 +3462,10 @@
           {
             "name": "Communities",
             "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
           },
           {
             "name": "Documentation",
@@ -4172,6 +4184,10 @@
           {
             "name": "Certification",
             "value": "certification"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
           },
           {
             "name": "Perspectives",
@@ -5871,6 +5887,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -5915,6 +5935,10 @@
           {
             "name": "Communities",
             "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
           },
           {
             "name": "Documentation",
@@ -5963,6 +5987,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -6007,6 +6035,10 @@
           {
             "name": "Communities",
             "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
           },
           {
             "name": "Documentation",
@@ -6233,6 +6265,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -6277,6 +6313,10 @@
           {
             "name": "Communities",
             "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
           },
           {
             "name": "Documentation",
@@ -6325,6 +6365,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -6371,6 +6415,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -6415,6 +6463,10 @@
           {
             "name": "Communities",
             "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
           },
           {
             "name": "Documentation",
@@ -7261,14 +7313,6 @@
         "value": "",
         "label": "Description",
         "description": "Sets the description for the Upcoming Events."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "filterLabel",
-        "value": "",
-        "label": "Filter Label",
-        "description": "Sets the text for Products filter label in dropdown."
       }
     ]
   },
@@ -7406,7 +7450,7 @@
         "component": "richtext",
         "valueType": "string",
         "name": "list",
-        "value": "<ul><li>All:All</li><li>Certification:Certification</li><li>Community:Community</li><li>Documentation:Documentation</li><li>Events:Event</li><li>Perspectives:Perspective</li><li>Playlists:Playlist</li><li>Troubleshooting:Troubleshooting</li><li>Tutorials:Tutorial</li></ul>",
+        "value": "<ul><li>All:All</li><li>Certification:Certification</li><li>Community:Community</li><li>Courses:Course</li><li>Documentation:Documentation</li><li>Events:Event</li><li>Perspectives:Perspective</li><li>Playlists:Playlist</li><li>Troubleshooting:Troubleshooting</li><li>Tutorials:Tutorial</li></ul>",
         "label": "Seach Dropdown list",
         "description": "a list of items shown in the search dropdown"
       }

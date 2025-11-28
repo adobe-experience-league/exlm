@@ -13,9 +13,11 @@ const urlMap = {
   tutorial: `/${lang}/docs/home-tutorials`,
   documentation: `/${lang}/docs`,
   troubleshooting: `/${lang}/docs`,
-  event: `/events?lang=${lang}#ondemandevents`,
+  event: `/${lang}/docs/events/experience-league-recorded-events/overview`,
   community: 'https://experienceleaguecommunities.adobe.com',
-  certification: `/${lang}/docs/certification/program/overview`,
+  certification: `/${lang}/certification-home`,
+  perspective: `/${lang}/perspectives`,
+  course: `/${lang}/courses`,
 };
 
 /**

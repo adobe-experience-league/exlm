@@ -1,6 +1,6 @@
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
-import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { createTag, fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
 
 const DEFAULT_NUM_COURSES = 2;
 
@@ -95,7 +95,7 @@ export default function decorate(block) {
           const firstName = convertToTitleCase(profileResult?.first_name);
           const maskedFirstName = `<span data-cs-mask>${firstName}</span>`;
           headerEl.innerHTML = configuredHeadingText ? replaceProfileText(configuredHeadingText, maskedFirstName) : '';
-          const lang = document.querySelector('html').lang || 'en';
+          const { lang } = getPathDetails();
           const allCourses = await fetchCourseIndex(lang);
           const courseIds = courseIdentifiers.map((id) => `/${lang}/${id}`);
           const filteredCourses = allCourses.filter((course) => courseIds.includes(course.path));
