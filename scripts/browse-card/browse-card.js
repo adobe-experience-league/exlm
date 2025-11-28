@@ -845,10 +845,9 @@ export async function buildCard(container, element, model) {
   );
 
   // Apply special decorations for upcoming events
-  if (model.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY) {
-    const cardElement = element.querySelector('.browse-card');
-    if (cardElement) {
-      decorateUpcomingEvents(cardElement, model);
-    }
+  const isV2 = card.closest('.upcoming-event-v2');
+
+  if (isV2 && model.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY) {
+    decorateUpcomingEvents(card, model);
   }
 }
