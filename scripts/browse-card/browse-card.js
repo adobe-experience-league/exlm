@@ -470,6 +470,12 @@ const getVideoClipModal = () => {
 const decorateUpcomingEvents = (card, model) => {
   if (!card || !model || model.contentType?.toLowerCase() !== CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY) return;
 
+  // Remove the browse-card-options div from upcoming event cards
+  const cardOptions = card.querySelector('.browse-card-options');
+  if (cardOptions) {
+    cardOptions.remove();
+  }
+
   const cardFigure = card?.querySelector('.browse-card-figure');
   if (!cardFigure) return;
 
@@ -838,8 +844,10 @@ export async function buildCard(container, element, model) {
     { once: true },
   );
 
-  // Apply special decorations for upcoming events
-  if (model.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY) {
+  // Apply special decorations for upcoming events v2 - change for all upcoming events later
+  const isV2 = card.closest('.upcoming-event-v2');
+
+  if (isV2 && model.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY) {
     const cardElement = element.querySelector('.browse-card');
     if (cardElement) {
       decorateUpcomingEvents(cardElement, model);
