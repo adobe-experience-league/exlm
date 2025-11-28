@@ -73,6 +73,12 @@ const contentTypes = [
     description: 'Questions, answers, ideas, and expertise shared from Adobe customers and experts growing together.',
   },
   {
+    id: 'Course',
+    value: 'Course',
+    title: 'Courses',
+    description: 'Skill-building courses with sharable completion certificates.',
+  },
+  {
     id: 'Documentation',
     value: 'Documentation',
     title: 'Documentation',
@@ -176,6 +182,29 @@ const authorTypes = [
   }),
 }));
 
+const eventTypes = [
+  {
+    id: 'Event',
+    value: 'event',
+    title: 'On-Demand Events',
+    description: '',
+  },
+  {
+    id: 'Upcoming-Event',
+    value: 'upcoming-event',
+    title: 'Upcoming Events',
+    description: '',
+  },
+].map((eventType) => ({
+  ...eventType,
+  ...(placeholders[`filterContentType${eventType.id.replace('-', '')}Title`] && {
+    title: placeholders[`filterContentType${eventType.id.replace('-', '')}Title`],
+  }),
+  ...(placeholders[`filterContentType${eventType.id.replace('-', '')}Description`] && {
+    description: placeholders[`filterContentType${eventType.id.replace('-', '')}Description`],
+  }),
+}));
+
 export const roleOptions = {
   id: 'el_role',
   name: placeholders.filterRoleLabel || 'Role',
@@ -208,6 +237,20 @@ export const authorOptions = {
   id: 'author_type',
   name: placeholders.filterAuthorLabel || 'Author Type',
   items: authorTypes,
+  selected: 0,
+};
+
+export const eventSeriesOptions = {
+  id: 'el_event_series',
+  name: placeholders.filterEventSeriesLabel || 'Event Series',
+  items: [],
+  selected: 0,
+};
+
+export const eventTypeOptions = {
+  id: 'el_contenttype',
+  name: placeholders.filterEventTypeLabel || 'Event Type',
+  items: eventTypes,
   selected: 0,
 };
 
@@ -425,3 +468,5 @@ export async function fetchPerspectiveIndex(prefix = 'en') {
   await window.perspectiveIndex[`${prefix}-loaded`];
   return window.perspectiveIndex[prefix];
 }
+
+export const isUpcomingEventBlockExists = () => !!document.querySelector('main .upcoming-event-v2.block');

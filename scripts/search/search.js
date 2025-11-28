@@ -310,7 +310,7 @@ export default class Search {
   }
 
   onSearchInputClick(e) {
-    if (!this.searchInput.value && this.savedDefaultSuggestions) {
+    if (!this.searchInput.value && this.savedDefaultSuggestions?.completions?.length > 0) {
       this.renderSearchSuggestions(this.savedDefaultSuggestions);
       this.onShowSearchSuggestions(e);
     }

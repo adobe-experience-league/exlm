@@ -50,6 +50,10 @@
   line-height: normal;
 }
 
+.courses ol > li {
+  color: var(--spectrum-gray-800);
+}
+
 @media (min-width: 600px) {
   .courses-section,
   .courses.course-step .section:not(.notification-banner-container) {

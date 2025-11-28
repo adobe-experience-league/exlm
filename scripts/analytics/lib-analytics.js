@@ -750,6 +750,7 @@ export function pushCourseCertificateEvent(trackingData) {
       solution: trackingData.solution,
       fullSolution: courseSolutionFull,
       role: trackingData.role,
+      level: trackingData.level || '',
     },
   };
 
@@ -782,13 +783,18 @@ export async function pushCourseCompletionEvent(courseId, currentCourses) {
     }
   }
 
+  const courseFullSolution = courseMeta?.solution || '';
+  const courseSolution = courseFullSolution?.split(',')[0].trim() || '';
+
   window.adobeDataLayer.push({
     event: 'coursesCompleted',
     courses: {
       title: courseMeta?.heading || '',
       id: courseId,
-      solution: courseMeta?.solution || '',
+      solution: courseSolution,
+      fullSolution: courseFullSolution,
       role: courseMeta?.role || '',
+      level: courseMeta?.level || '',
       finishTime,
       duration: courseDuration,
     },
@@ -803,6 +809,9 @@ export async function pushModuleStartEvent(courseId) {
   const courseMeta = await getCurrentCourseMeta();
   const stepInfo = await getCurrentStepInfo();
 
+  const courseFullSolution = courseMeta?.solution || '';
+  const courseSolution = courseFullSolution?.split(',')[0].trim() || '';
+
   window.adobeDataLayer.push({
     event: 'moduleStart',
     module: {
@@ -811,8 +820,10 @@ export async function pushModuleStartEvent(courseId) {
     courses: {
       title: courseMeta?.heading || '',
       id: courseId || '',
-      solution: courseMeta?.solution || '',
+      solution: courseSolution,
+      fullSolution: courseFullSolution,
       role: courseMeta?.role || '',
+      level: courseMeta?.level || '',
     },
   });
 }
@@ -825,6 +836,9 @@ export async function pushModuleCompletionEvent(courseId) {
   const courseMeta = await getCurrentCourseMeta();
   const stepInfo = await getCurrentStepInfo();
 
+  const courseFullSolution = courseMeta?.solution || '';
+  const courseSolution = courseFullSolution?.split(',')[0].trim() || '';
+
   window.adobeDataLayer.push({
     event: 'moduleCompleted',
     module: {
@@ -833,8 +847,10 @@ export async function pushModuleCompletionEvent(courseId) {
     courses: {
       title: courseMeta?.heading || '',
       id: courseId || '',
-      solution: courseMeta?.solution || '',
+      solution: courseSolution,
+      fullSolution: courseFullSolution,
       role: courseMeta?.role || '',
+      level: courseMeta?.level || '',
     },
   });
 }
@@ -845,7 +861,9 @@ export async function pushModuleCompletionEvent(courseId) {
  * @param {string} courseData.title - Title of the course
  * @param {string} courseData.id - ID of the course
  * @param {string} courseData.solution - Solution related to the course
+ * @param {string} courseData.fullSolution - Full solution (comma-separated)
  * @param {string} courseData.role - Role associated with the course
+ * @param {string} courseData.level - Level (comma-separated)
  * @param {string} courseData.startTime - Start time of the course
  */
 export function pushCourseStartEvent(courseData) {
@@ -857,7 +875,9 @@ export function pushCourseStartEvent(courseData) {
       title: courseData.title,
       id: courseData.id,
       solution: courseData.solution,
+      fullSolution: courseData.fullSolution || courseData.solution,
       role: courseData.role,
+      level: courseData.level || '',
       startTime: courseData.startTime,
     },
   });
@@ -882,6 +902,16 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
 
   const cardSolution = Array.isArray(product) ? product[0] : product?.split(',')[0]?.trim() || '';
 
+  // Determining if the card is in list or grid view
+  const eventsBlock = document.activeElement?.closest('.upcoming-event-v2, .upcoming-event');
+  let viewType = null;
+  let hasViewSwitcher = false;
+
+  if (eventsBlock) {
+    viewType = eventsBlock.classList.contains('list') ? 'List' : 'Grid';
+    hasViewSwitcher = !!eventsBlock.querySelector('.view-switcher');
+  }
+
   const dataLayerEntry = {
     event: eventName,
     link: {
@@ -891,10 +921,79 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
       destinationDomain: cardData?.viewLink || '',
       linkTitle: cardData?.title || '',
       linkLocation: 'body',
-      linkType: cardHeader,
+      linkType: hasViewSwitcher && viewType ? `${viewType} | ${cardHeader}` : cardHeader,
       position: cardPosition,
     },
   };
+
+  window.adobeDataLayer.push(dataLayerEntry);
+}
+
+/**
+ * Pushes a browse filter search event to the Adobe Data Layer.
+ * This event is fired whenever a user clicks on any part of a browse card.
+ * This event is fired when users interact with search and filter functionality.
+ *
+ * @param {string} searchType - Type of search: "filter", "search", or "filter+search"
+ * @param {string} [filterType] - Comma-separated list of filter categories
+ * @param {string} [filterValue] - Comma-separated list of filter values aligned with filterType
+ * @param {string} [searchValue] - Keyword entered by user
+ * @param {number} results - Integer count of results returned
+ */
+export function pushBrowseFilterSearchEvent(searchType, filterType, filterValue, searchValue, results) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const dataLayerEntry = {
+    event: 'browseFilterSearch',
+    input: {
+      searchType,
+      results,
+    },
+  };
+
+  // Adding appropriate properties based on searchType
+  if (searchType === 'filter' || searchType === 'filter+search') {
+    dataLayerEntry.input.filterType = filterType;
+    dataLayerEntry.input.filterValue = filterValue;
+  }
+
+  if (searchType === 'search' || searchType === 'filter+search') {
+    dataLayerEntry.input.searchValue = searchValue;
+  }
+
+  window.adobeDataLayer.push(dataLayerEntry);
+}
+
+/**
+ * Pushes a browse filter search clear event to the Adobe Data Layer.
+ * This event is fired when users click the Clear Filters button.
+ *
+ * @param {string} searchType - Type of search that was used before clearing
+ * @param {string} [filterType] - Comma-separated list of filter categories before clearing
+ * @param {string} [filterValue] - Comma-separated list of filter values before clearing
+ * @param {string} [searchValue] - Keyword entered before clearing
+ * @param {number} results - Integer count of results before clearing
+ */
+export function pushBrowseFilterSearchClearEvent(searchType, filterType, filterValue, searchValue, results) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const dataLayerEntry = {
+    event: 'browseFilterSearchClear',
+    input: {
+      searchType,
+      results,
+    },
+  };
+
+  // Adding appropriate properties based on searchType
+  if (searchType === 'filter' || searchType === 'filter+search') {
+    dataLayerEntry.input.filterType = filterType;
+    dataLayerEntry.input.filterValue = filterValue;
+  }
+
+  if (searchType === 'search' || searchType === 'filter+search') {
+    dataLayerEntry.input.searchValue = searchValue;
+  }
 
   window.adobeDataLayer.push(dataLayerEntry);
 }

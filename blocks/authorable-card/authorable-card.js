@@ -3,6 +3,8 @@ import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { getCardData } from '../../scripts/browse-card/browse-card-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
+import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -52,7 +54,7 @@ export default async function decorate(block) {
     // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
   }
-
+  const isUserSignedIn = await isSignedInUser();
   const cardLoading$ = Promise.all(
     linksContainer.map(async (linkContainer) => {
       let link = linkContainer.textContent?.trim();
@@ -63,8 +65,28 @@ export default async function decorate(block) {
       linkContainer.innerHTML = '';
       if (link) {
         try {
-          const cardData = await getCardData(link, placeholders);
-          await buildCard(contentDiv, linkContainer, cardData);
+          let cardData = await getCardData(link, placeholders);
+
+          if (cardData) {
+            // Enrich course cards with status information for signed-in users
+            if (
+              isUserSignedIn &&
+              cardData?.contentType?.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()
+            ) {
+              const { getCurrentCourses } = await import('../../scripts/courses/course-profile.js');
+              const { default: BrowseCardsCourseEnricher } = await import(
+                '../../scripts/browse-card/browse-cards-course-enricher.js'
+              );
+              const currentCourses = await getCurrentCourses();
+              const [enrichedCard] = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus([cardData], currentCourses);
+              cardData = enrichedCard;
+            }
+
+            await buildCard(contentDiv, linkContainer, cardData);
+          } else {
+            // eslint-disable-next-line no-console
+            console.warn(`Failed to load card data for link: ${link}`);
+          }
         } catch (err) {
           // eslint-disable-next-line no-console
           console.error(err);
