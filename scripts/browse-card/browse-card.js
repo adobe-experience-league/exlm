@@ -844,10 +844,13 @@ export async function buildCard(container, element, model) {
     { once: true },
   );
 
-  // Apply special decorations for upcoming events
+  // Apply special decorations for upcoming events v2 - change for all upcoming events later
   const isV2 = card.closest('.upcoming-event-v2');
 
   if (isV2 && model.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY) {
-    decorateUpcomingEvents(card, model);
+    const cardElement = element.querySelector('.browse-card');
+    if (cardElement) {
+      decorateUpcomingEvents(cardElement, model);
+    }
   }
 }
