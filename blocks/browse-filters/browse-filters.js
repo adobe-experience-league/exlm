@@ -214,6 +214,13 @@ function isFilterSelectionActive(block) {
   return false;
 }
 
+function redecorateTagsContainer(block) {
+  const tagsContainerEl = block.querySelector('.browse-tags-container');
+  if (tagsContainerEl && !tagsContainerEl.querySelector(`[data-icon-name="close"]`)) {
+    decorateIcons(tagsContainerEl);
+  }
+}
+
 /**
  * Updates the status of the clear filter button and filter-related UI elements based on the current state.
  * It also dispatches a coveo query if necessary.
@@ -294,7 +301,7 @@ function uncheckAllFiltersFromDropdown(block) {
 /**
  * Handles the parsing and updating of filters, search terms, and pagination from the URL hash.
  */
-function handleUriHash() {
+function handleUriHash(isInitialLoad) {
   const browseFiltersSection = document.querySelector('.browse-filters-form');
   if (!browseFiltersSection) {
     return;
@@ -315,6 +322,7 @@ function handleUriHash() {
   let containsSearchQuery = false;
   const filtersInfo = decodedHash.split('&').filter((s) => !!s);
   let pageNumber = 1;
+  const isOnPageLoad = isInitialLoad === true;
 
   filtersInfo.forEach((filterInfo) => {
     const [facetKeys, facetValueInfo] = filterInfo.split('=');
@@ -401,6 +409,9 @@ function handleUriHash() {
     const resetPageIndex = pageNumber === 1;
     const fireSelection = true;
     handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex, pageNumber);
+  }
+  if (!isOnPageLoad) {
+    redecorateTagsContainer(browseFiltersSection);
   }
   updateClearFilterStatus(browseFiltersSection);
   window.headlessSearchEngine.executeFirstSearch();
@@ -560,7 +571,7 @@ function handleCoveoHeadlessSearch(
     buildCardsShimmer.removeShimmer();
   });
 
-  handleUriHash();
+  handleUriHash(true);
   renderPageNumbers();
 }
 
@@ -942,10 +953,7 @@ async function loadCoveoHeadlessScript(block) {
         (data) => {
           isCoveoReady = true;
           handleCoveoHeadlessSearch(block, data);
-          const tagsContainerEl = block.querySelector('.browse-tags-container');
-          if (tagsContainerEl && !tagsContainerEl.querySelector(`[data-icon-name="close"]`)) {
-            decorateIcons(tagsContainerEl);
-          }
+          redecorateTagsContainer(block);
         },
         (err) => {
           throw new Error(err);
@@ -1642,10 +1650,7 @@ export default async function decorate(block) {
         });
         if (isCoveoReady && isCoveoHeadlessLoaded) {
           handleUriHash();
-          const tagsContainerEl = block.querySelector('.browse-tags-container');
-          if (tagsContainerEl && !tagsContainerEl.querySelector(`[data-icon-name="close"]`)) {
-            decorateIcons(tagsContainerEl);
-          }
+          redecorateTagsContainer(block);
         }
       })
       .catch((error) => {
