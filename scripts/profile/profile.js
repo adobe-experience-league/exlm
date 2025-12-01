@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-cycle
 import { fetchLanguagePlaceholders, getConfig } from '../scripts.js';
 import { defaultProfileClient } from '../auth/profile.js';
 
