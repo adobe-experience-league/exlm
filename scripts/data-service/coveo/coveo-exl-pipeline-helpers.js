@@ -4,6 +4,7 @@ import CoveoDataService from './coveo-data-service.js';
 import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET } from './coveo-exl-pipeline-constants.js';
 
 const { coveoSearchResultsUrl } = getConfig();
+const MAX_NUMBER_OF_VALUES_PER_BATCH = 100;
 
 // Most of these are copied from an existing call. I do not believe we need all of them, so this list could probably be pruned.
 const fieldsToInclude = [
@@ -168,7 +169,9 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
       ...(!param.feature ? { facets: getFacets(param) } : ''),
       ...(param.feature ? { aq: constructCoveoAdvancedQuery(param) } : ''),
       ...(param.aq ? { aq: param.aq } : ''),
-      ...(param.fields?.length > 0 ? { batch: param.fields.map((field) => ({ field })) } : ''),
+      ...(param.fields?.length > 0
+        ? { batch: param.fields.map((field) => ({ field, maximumNumberOfValues: MAX_NUMBER_OF_VALUES_PER_BATCH })) }
+        : ''),
       fieldsToInclude: fields,
     },
   };

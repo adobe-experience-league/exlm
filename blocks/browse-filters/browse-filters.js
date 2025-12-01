@@ -956,6 +956,7 @@ async function loadCoveoHeadlessScript(block) {
           redecorateTagsContainer(block);
         },
         (err) => {
+          block.classList.add('browse-hide-section');
           throw new Error(err);
         },
       )
@@ -1656,6 +1657,7 @@ export default async function decorate(block) {
       .catch((error) => {
         // eslint-disable-next-line no-console
         console.error('Error fetching facet details:', error);
+        block.classList.add('browse-hide-section');
       });
   } else {
     dropdownOptions.forEach((options, index) => {
