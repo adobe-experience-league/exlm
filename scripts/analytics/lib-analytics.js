@@ -926,7 +926,7 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
 
   if (eventsBlock) {
     viewType = eventsBlock.classList.contains('list') ? 'List' : 'Grid';
-    hasViewSwitcher = !!eventsBlock.querySelector('.view-switcher');
+    hasViewSwitcher = !!eventsBlock.querySelector('.browse-cards-view-switcher');
   }
 
   const dataLayerEntry = {
