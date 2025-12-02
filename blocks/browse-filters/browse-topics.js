@@ -6,8 +6,8 @@ import {
   productTypeOptions,
   eventSeriesOptions,
   eventTypeOptions,
-  isUpcomingEventBlockExists,
 } from './browse-filter-utils.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 export const coveoFacetMap = {
   el_role: 'headlessRoleFacet',
@@ -18,7 +18,7 @@ export const coveoFacetMap = {
   el_event_series: 'headlessEventSeriesFacet',
 };
 
-export const dropdownOptions = isUpcomingEventBlockExists()
+export const dropdownOptions = isFeatureEnabled('isEventsV2')
   ? [productTypeOptions, eventSeriesOptions, eventTypeOptions]
   : [roleOptions, contentTypeOptions];
 
