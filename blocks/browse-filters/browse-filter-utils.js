@@ -92,6 +92,12 @@ const contentTypes = [
     description: 'Recordings of learning and skill enablement events. Watch and learn from Adobe experts and peers.',
   },
   {
+    id: 'Upcoming Event',
+    value: 'Upcoming Event',
+    title: 'Upcoming Events',
+    description: 'Learn fresh new skills and discover even better solutions for your business when you attend upcoming events.',
+  },
+  {
     id: 'Perspective',
     value: 'Perspective',
     title: 'Perspectives',

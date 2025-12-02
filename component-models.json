@@ -1650,6 +1650,10 @@
             "value": "event"
           },
           {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
+          },
+          {
             "name": "Perspectives",
             "value": "perspective"
           },
@@ -3377,6 +3381,10 @@
             "value": "event"
           },
           {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
+          },
+          {
             "name": "Perspectives",
             "value": "perspective"
           },
@@ -3474,6 +3482,10 @@
           {
             "name": "On-Demand Event",
             "value": "event"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           },
           {
             "name": "Perspectives",
@@ -4176,6 +4188,10 @@
           {
             "name": "On-Demand Events",
             "value": "event"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           },
           {
             "name": "Community Posts",
@@ -5899,6 +5915,10 @@
             "value": "event"
           },
           {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
+          },
+          {
             "name": "Playlists",
             "value": "playlist"
           },
@@ -5947,6 +5967,9 @@
           {
             "name": "On-Demand Event",
             "value": "event"
+          },{
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           },
           {
             "name": "Playlists",
@@ -5999,6 +6022,10 @@
             "value": "event"
           },
           {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
+          },
+          {
             "name": "Playlists",
             "value": "playlist"
           },
@@ -6047,6 +6074,10 @@
           {
             "name": "On-Demand Event",
             "value": "event"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           },
           {
             "name": "Playlists",
@@ -6277,6 +6308,10 @@
             "value": "event"
           },
           {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
+          },
+          {
             "name": "Playlists",
             "value": "playlist"
           },
@@ -6325,6 +6360,10 @@
           {
             "name": "On-Demand Event",
             "value": "event"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           },
           {
             "name": "Playlists",
@@ -6377,6 +6416,10 @@
             "value": "event"
           },
           {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
+          },
+          {
             "name": "Playlists",
             "value": "playlist"
           },
@@ -6427,6 +6470,10 @@
             "value": "event"
           },
           {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
+          },
+          {
             "name": "Playlists",
             "value": "playlist"
           },
@@ -6475,6 +6522,10 @@
           {
             "name": "On-Demand Event",
             "value": "event"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           },
           {
             "name": "Playlists",
