@@ -72,6 +72,8 @@ function isArticleLandingPage() {
   return matchesAnyTheme(/^article-.*/);
 }
 
+const isEventsPage = matchesAnyTheme(/event/);
+
 /**
  * debounce fn execution
  */
@@ -1622,7 +1624,7 @@ function decorateBrowseTopics(block) {
 }
 
 export default async function decorate(block) {
-  const isUpcomingEventFlow = isFeatureEnabled('isEventsV2');
+  const isUpcomingEventFlow = isEventsPage && isFeatureEnabled('isEventsV2');
   window.headlessBaseSolutionQuery = isUpcomingEventFlow
     ? BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT
     : BASE_COVEO_ADVANCED_QUERY;
