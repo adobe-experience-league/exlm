@@ -8601,5 +8601,18 @@
         "description": "Sets the description of course summary from the current module. Make sure all the take aways are mentioned as bullet points."
       }
     ]
+  },
+  {
+    "id": "slides",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "slideId",
+        "value": "",
+        "label": "Slide ID",
+        "description": "ID of the slide to render. Use the ID of the slide from the URL."
+      }
+    ]
   }
 ]
