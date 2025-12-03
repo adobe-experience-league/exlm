@@ -110,12 +110,14 @@ export class BrowseCardVideoClipModal {
 
   async createModal() {
     const { title, videoURL, parentName, parentURL, product, failedToLoad = false } = this.model;
+
     const { lang = 'en' } = getPathDetails() || {};
     let videoSrc = videoURL;
+    videoSrc = await getLocalizedVideoUrl(videoURL, lang);
+
     if (this.miniPlayerMode) {
       const hasParams = videoSrc?.includes('?');
       if (videoSrc) {
-        videoSrc = await getLocalizedVideoUrl(videoURL, lang);
         videoSrc = `${videoSrc}${hasParams ? '&' : '?'}autoplay=1`;
       }
     }
@@ -382,7 +384,7 @@ export class BrowseCardVideoClipModal {
       parentURL,
       viewLinkText = BrowseCardVideoClipModal.placeholders?.watchFullVideo || 'Watch full video',
     } = this.model;
-    const { lang = 'en' } = getPathDetails() || {};
+
     const titleElement = this.modal.querySelector('.browse-card-video-clip-info-title');
     if (titleElement) {
       titleElement.textContent = title || '';
@@ -395,9 +397,11 @@ export class BrowseCardVideoClipModal {
         existingIframe.remove();
       }
 
+      const { lang = 'en' } = getPathDetails() || {};
       let videoSrc = videoURL;
+      videoSrc = await getLocalizedVideoUrl(videoSrc, lang);
+
       if (this.miniPlayerMode) {
-        videoSrc = await getLocalizedVideoUrl(videoSrc, lang);
         const hasParams = videoSrc.includes('?');
         videoSrc = `${videoSrc}${hasParams ? '&' : '?'}autoplay=1`;
       }
