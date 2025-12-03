@@ -1,146 +1,157 @@
 /* Upcoming event grid variant */
-.browse-cards-block-content .browse-card.upcoming-event-card {
-  background-color: var(--spectrum-gray-50);
-}
 
-.browse-card.upcoming-event-card .browse-card-figure {
-  background-color: var(--spectrum-gray-900);
-  max-height: none;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  flex: 0 0 45%;
-}
+/* TODO - Remove events-v2 scope during clean */
 
-.browse-card.upcoming-event-card .browse-card-banner {
-  background-color: var(--non-spectrum-adobe-red) !important;
-  letter-spacing: 0.2px;
-}
+.events-v2 {
+  .browse-cards-block-content .browse-card.upcoming-event-card {
+    background-color: var(--spectrum-gray-50);
+    min-height: 450px;
+  }
 
-.browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
-  position: relative;
-  padding: 10px 0;
-  margin: 40px 0 20px;
-  color: var(--spectrum-gray-50);
-  font-size: var(--spectrum-font-size-400);
-  font-weight: var(--font-weight-bold);
-  text-align: left;
-  width: 100%;
-  box-sizing: border-box;
-  padding-left: 10%;
-  padding-right: 10%;
-  letter-spacing: 0.2px;
-}
+  .browse-card.upcoming-event-card .browse-card-figure {
+    background-color: var(--spectrum-gray-900);
+    max-height: none;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 45%;
+  }
 
-.browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::before,
-.browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after {
-  content: '';
-  position: absolute;
-  height: 3px;
-  background-color: var(--non-spectrum-adobe-red);
-}
+  .browse-card.upcoming-event-card .browse-card-banner {
+    background-color: var(--non-spectrum-adobe-red) !important;
+    letter-spacing: 0.2px;
+  }
 
-.browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::before {
-  top: -5px;
-  left: 0;
-  width: 90%;
-}
+  .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
+    position: relative;
+    padding: 10px 0;
+    margin: 40px 0 20px;
+    color: var(--spectrum-gray-50);
+    font-size: var(--spectrum-font-size-400);
+    font-weight: var(--font-weight-bold);
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+    padding-left: 10%;
+    padding-right: 10%;
+    letter-spacing: 0.2px;
+  }
 
-.browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after {
-  bottom: -5px;
-  right: 0;
-  width: 90%;
-}
+  .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::before,
+  .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after {
+    content: '';
+    position: absolute;
+    height: 3px;
+    background-color: var(--non-spectrum-adobe-red);
+  }
 
-.browse-card.upcoming-event-card .location-type {
-  position: absolute;
-  top: 13px;
-  right: 0;
-  background-color: transparent;
-  color: var(--spectrum-gray-50);
-  padding: var(--spectrum-spacing-75) var(--spectrum-spacing-100);
-  font-size: var(--spectrum-font-size-50);
-  font-weight: var(--font-weight-heavy);
-  line-height: var(--spectrum-line-height-s);
-  text-transform: uppercase;
-  letter-spacing: 0.2px;
-}
+  .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::before {
+    top: -5px;
+    left: 0;
+    width: 90%;
+  }
 
-.browse-filters:not(:has(.list)) .browse-card.upcoming-event-card .location-type span {
-  display: none;
-}
+  .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after {
+    bottom: -5px;
+    right: 0;
+    width: 90%;
+  }
 
-.browse-card.upcoming-event-card .event-speakers-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 40px 0 20px;
-}
+  .browse-card.upcoming-event-card .location-type {
+    position: absolute;
+    top: 13px;
+    right: 0;
+    background-color: transparent;
+    color: var(--spectrum-gray-50);
+    padding: var(--spectrum-spacing-75) var(--spectrum-spacing-100);
+    font-size: var(--spectrum-font-size-50);
+    font-weight: var(--font-weight-heavy);
+    line-height: var(--spectrum-line-height-s);
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+  }
 
-.browse-card.upcoming-event-card .speaker-profile-container {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  overflow: hidden;
-  margin-right: -15px;
-  box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
-}
+  .browse-filters:not(:has(.list)) .browse-card.upcoming-event-card .location-type span {
+    display: none;
+  }
 
-.browse-card.upcoming-event-card .speaker-profile-container:last-child {
-  margin-right: 0;
-}
+  .browse-card.upcoming-event-card .event-speakers-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 40px 0 20px;
+  }
 
-.browse-card.upcoming-event-card .speaker-profile-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+  .browse-card.upcoming-event-card .speaker-profile-container {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: -15px;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+  }
 
-.browse-card.upcoming-event-card .event-series-banner {
-  color: var(--spectrum-gray-50);
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-bold);
-  text-align: center;
-  padding: 0 10px;
-  width: 100%;
-  letter-spacing: 0.2px;
-}
+  .browse-card.upcoming-event-card .speaker-profile-container:last-child {
+    margin-right: 0;
+  }
 
-.browse-card.upcoming-event-card .browse-card-description-text,
-.browse-card.upcoming-event-card .browse-card-description-text * {
-  max-height: none;
-  -webkit-line-clamp: 2;
-}
+  .browse-card.upcoming-event-card .speaker-profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
-.browse-card.upcoming-event-card .browse-card-footer {
-  justify-content: flex-end;
+  .browse-card.upcoming-event-card .event-series-banner {
+    color: var(--spectrum-gray-50);
+    font-size: var(--spectrum-font-size-100);
+    font-weight: var(--font-weight-bold);
+    text-align: center;
+    padding: 0 10px;
+    width: 100%;
+    letter-spacing: 0.2px;
+  }
+
+  .browse-card.upcoming-event-card .browse-card-description-text,
+  .browse-card.upcoming-event-card .browse-card-description-text * {
+    max-height: none;
+    -webkit-line-clamp: 2;
+  }
+
+  .browse-card.upcoming-event-card .browse-card-footer {
+    justify-content: flex-end;
+  }
+
+  .browse-card.upcoming-event-card .browse-card-footer .footer-speakers-section {
+    display: none;
+  }
+
+  .browse-card.upcoming-event-card .card-figure-date,
+  .browse-filters-results .browse-card.upcoming-event-card .show-more,
+  .browse-filters-results .browse-card.upcoming-event-card .show-less,
+  .browse-cards-block-content > div .browse-card.upcoming-event-card .show-more,
+  .browse-cards-block-content > div .browse-card.upcoming-event-card .show-less,
+  .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info {
+    display: none;
+  }
 }
 
 /** List view styles start **/
 
-.list .browse-card-figure .event-speakers-container {
+.list .browse-card.upcoming-event-card .browse-card-figure .event-speakers-container {
   display: flex;
 }
 
-.browse-card.upcoming-event-card .browse-card-footer .footer-speakers-section {
-  display: none;
-}
-
-.browse-card.upcoming-event-card .card-figure-date,
-.browse-filters-results .browse-card.upcoming-event-card .show-more,
-.browse-filters-results .browse-card.upcoming-event-card .show-less,
-.browse-cards-block-content > div .browse-card.upcoming-event-card .show-more,
-.browse-cards-block-content > div .browse-card.upcoming-event-card .show-less,
-.browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info,
 .list .browse-card.upcoming-event-card .location-type {
   display: none;
 }
 
 @media only screen and (min-width: 900px) {
-  .browse-card.upcoming-event-card {
-    text-align: left;
+  .events-v2 {
+    .browse-card.upcoming-event-card {
+      text-align: left;
+    }
   }
 
   /** List view styles start **/
