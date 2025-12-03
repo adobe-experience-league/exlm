@@ -1,6 +1,7 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
-import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
+import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { pushVideoEvent } from '../analytics/lib-analytics.js';
+import { getLocalizedVideoUrl } from '../utils/video-utils.js';
 
 export const isCompactUIMode = () => window.matchMedia('(max-width: 1023px)').matches;
 
@@ -107,13 +108,14 @@ export class BrowseCardVideoClipModal {
     this.updateModalDimensions();
   }
 
-  createModal() {
+  async createModal() {
     const { title, videoURL, parentName, parentURL, product, failedToLoad = false } = this.model;
-
+    const { lang = 'en' } = getPathDetails() || {};
     let videoSrc = videoURL;
     if (this.miniPlayerMode) {
       const hasParams = videoSrc?.includes('?');
       if (videoSrc) {
+        videoSrc = await getLocalizedVideoUrl(videoURL, lang);
         videoSrc = `${videoSrc}${hasParams ? '&' : '?'}autoplay=1`;
       }
     }
@@ -370,7 +372,7 @@ export class BrowseCardVideoClipModal {
     }
   }
 
-  updateContent(model) {
+  async updateContent(model) {
     this.model = model;
 
     const {
@@ -380,7 +382,7 @@ export class BrowseCardVideoClipModal {
       parentURL,
       viewLinkText = BrowseCardVideoClipModal.placeholders?.watchFullVideo || 'Watch full video',
     } = this.model;
-
+    const { lang = 'en' } = getPathDetails() || {};
     const titleElement = this.modal.querySelector('.browse-card-video-clip-info-title');
     if (titleElement) {
       titleElement.textContent = title || '';
@@ -395,6 +397,7 @@ export class BrowseCardVideoClipModal {
 
       let videoSrc = videoURL;
       if (this.miniPlayerMode) {
+        videoSrc = await getLocalizedVideoUrl(videoSrc, lang);
         const hasParams = videoSrc.includes('?');
         videoSrc = `${videoSrc}${hasParams ? '&' : '?'}autoplay=1`;
       }
