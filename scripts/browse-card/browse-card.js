@@ -11,6 +11,7 @@ import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
+import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 const bookmarkExclusionContentypes = [
   CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
@@ -470,7 +471,7 @@ const getVideoClipModal = () => {
 const decorateUpcomingEvents = (card, model) => {
   if (!card || !model || model.contentType?.toLowerCase() !== CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY) return;
 
-  loadCSS('/scripts/browse-card/browse-card-upcoming-events.css');
+  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-upcoming-events.css`);
 
   // Remove the browse-card-options div from upcoming event cards
   const cardOptions = card.querySelector('.browse-card-options');
@@ -540,6 +541,41 @@ const decorateUpcomingEvents = (card, model) => {
       cardFigure.appendChild(createTag('div', { class: 'location-type' }, locationType));
     }
   }
+};
+
+const decorateOnDemandEvents = (card, model) => {
+  if (!card || !model || model.contentType?.toLowerCase() !== CONTENT_TYPES.EVENT.MAPPING_KEY) return;
+
+  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-on-demand-events.css`);
+
+  const { event } = model;
+  const cardFigure = card.querySelector('.browse-card-figure');
+  if (!cardFigure) return;
+
+  const cardContent = card.querySelector('.browse-card-content');
+
+  cardFigure.querySelector('.laptop-container')?.remove();
+  const img = cardFigure.querySelector('img');
+  img?.remove();
+
+  cardFigure.querySelector('.play-button')?.remove();
+
+  img?.addEventListener('load', () => {
+    cardFigure.querySelector('.play-button')?.remove();
+  });
+
+  cardFigure.querySelector('.event-series-banner')?.remove();
+
+  buildEventContent({
+    event,
+    contentType: model.contentType,
+    cardContent,
+    card,
+  });
+
+  const seriesText = event?.series || 'On Demand Event Series';
+  const banner = createTag('div', { class: 'event-series-banner' }, seriesText);
+  cardFigure.appendChild(banner);
 };
 
 /**
@@ -861,5 +897,10 @@ export async function buildCard(container, element, model) {
   const cardEl = element.querySelector('.browse-card');
   if (cardEl && (v2 || isBrowseFiltersUpcoming)) {
     decorateUpcomingEvents(cardEl, model);
+  }
+
+  if (model.contentType?.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY && isFeatureEnabled('isEventsV2')) {
+    const cardElement = element.querySelector('.browse-card');
+    decorateOnDemandEvents(cardElement, model);
   }
 }

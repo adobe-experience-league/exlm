@@ -1,0 +1,65 @@
+/* On demand event css */
+
+.browse-cards-block-content:has(.event-card) {
+  min-height: 450px;
+  display: grid;
+  gap: 32px;
+  margin-bottom: 84px;
+}
+
+.browse-card.event-card {
+  min-height: 450px;
+  background-color: var(--spectrum-gray-50);
+}
+
+.browse-card.event-card .browse-card-figure {
+  max-height: none;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 0 0 45%;
+  background-color: #ebebeb;
+}
+
+.browse-card.event-card .browse-card-figure .event-series-banner {
+  position: relative;
+  padding: 10px 0;
+  margin: 40px 0 21px;
+  color: var(--spectrum-gray-900);
+  font-size: var(--spectrum-font-size-400);
+  font-weight: var(--font-weight-bold);
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: 10%;
+  padding-right: 10%;
+  letter-spacing: 0.2px;
+}
+
+.browse-card.event-card .browse-card-figure .event-series-banner::before,
+.browse-card.event-card .browse-card-figure .event-series-banner::after {
+  content: '';
+  position: absolute;
+  height: 3px;
+  background-color: var(--non-spectrum-adobe-red);
+}
+
+.browse-card.event-card .browse-card-figure .event-series-banner::before {
+  top: -5px;
+  left: 0;
+  width: 90%;
+}
+
+.browse-card.event-card .browse-card-figure .event-series-banner::after {
+  bottom: -5px;
+  right: 0;
+  width: 90%;
+}
+
+.browse-card.event-card .browse-card-description-text,
+.browse-card.event-card .browse-card-description-text * {
+  max-height: none;
+  -webkit-line-clamp: 2;
+}
