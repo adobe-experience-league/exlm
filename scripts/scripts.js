@@ -690,8 +690,8 @@ export function getConfig() {
       env: 'PROD',
       cdn: 'experienceleague.adobe.com',
       authorUrl: 'author-p122525-e1219150.adobeaemcloud.com',
-      hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.hlx.page$/,
-      hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.hlx.live$/,
+      hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).page$/,
+      hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities.adobe.com',
     },
     {
