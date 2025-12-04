@@ -1,5 +1,6 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
+import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 
 export default class BrowseCardViewSwitcher {
   static placeholders = {};
@@ -120,7 +121,7 @@ export default class BrowseCardViewSwitcher {
     const height = description.offsetHeight;
     const lines = Math.round(height / lineHeight);
 
-    if (lines > 2) {
+    if (lines > 0) {
       description.classList.add('text-expanded');
     } else {
       showMoreBtn.style.display = 'none';
@@ -131,12 +132,32 @@ export default class BrowseCardViewSwitcher {
       e.preventDefault();
       e.stopPropagation();
       BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
+      
+      // Track showMoreClicks event
+      if (card.classList.contains('expanded')) {
+        const cardElement = card.closest('a');
+        if (cardElement) {
+          const cardData = this.getCardData(card);
+          const { cardHeader, cardPosition } = this.getCardHeaderAndPosition(card);
+          pushBrowseCardClickEvent('showMoreClicks', cardData, cardHeader, cardPosition);
+        }
+      }
     };
 
     const showLessHandler = (e) => {
       e.preventDefault();
       e.stopPropagation();
       BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
+      
+      // Track showLessClicks event
+      if (!card.classList.contains('expanded')) {
+        const cardElement = card.closest('a');
+        if (cardElement) {
+          const cardData = this.getCardData(card);
+          const { cardHeader, cardPosition } = this.getCardHeaderAndPosition(card);
+          pushBrowseCardClickEvent('showLessClicks', cardData, cardHeader, cardPosition);
+        }
+      }
     };
 
     showMoreBtn.addEventListener('click', showMoreHandler);
@@ -392,6 +413,60 @@ export default class BrowseCardViewSwitcher {
     if (container && this.viewSwitcher) {
       container.appendChild(this.viewSwitcher);
     }
+  }
+
+  /**
+   * Get card data for analytics tracking
+   * @param {HTMLElement} card - The card element
+   * @returns {Object} Card data for analytics
+   */
+  getCardData(card) {
+    const cardElement = card.closest('a');
+    const title = card.querySelector('.browse-card-title-text')?.textContent || '';
+    const viewLink = cardElement?.getAttribute('href') || '';
+    const contentType = card.classList.contains('upcoming-event-card') ? 'upcoming-event' : '';
+    
+    // Get product information if available
+    const productElement = card.querySelector('.browse-card-solution-text');
+    const product = productElement ? [productElement.textContent.trim()] : [];
+    
+    return {
+      title,
+      viewLink,
+      contentType,
+      product
+    };
+  }
+  
+  /**
+   * Get card header and position for analytics tracking
+   * @param {HTMLElement} card - The card element
+   * @returns {Object} Card header and position
+   */
+  getCardHeaderAndPosition(card) {
+    const cardElement = card.closest('a');
+    if (!cardElement) return { cardHeader: '', cardPosition: '' };
+    
+    const parentElement = cardElement.parentElement;
+    const cardPosition = parentElement ? Array.from(parentElement.parentElement.children).indexOf(parentElement) + 1 : '';
+    
+    let cardHeader = '';
+    const currentBlock = card.closest('.block');
+    const headerEl = currentBlock?.querySelector(
+      '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper'
+    );
+    
+    if (headerEl) {
+      const cloned = headerEl.cloneNode(true);
+      // Remove any PII or masked spans
+      cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
+      // Get cleaned text
+      cardHeader = cloned.innerText.trim();
+    }
+    
+    cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
+    
+    return { cardHeader, cardPosition: String(cardPosition) };
   }
 
   /**
