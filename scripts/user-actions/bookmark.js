@@ -33,9 +33,11 @@ async function isBookmarked(bookmarkId) {
  * @param {string} config.id - Unique identifier for the asset to be bookmarked.
  * @param {string} config.tooltips - tooltips object to be displayed in a toast notification.
  * @param {Object} config.trackingInfo - Tracking configuration.
+ * @param {Function} config.callback - Optional callback function to be called after bookmark action.
  */
 export async function bookmarkHandler(config) {
-  const { element, id: idValue, bookmarkPath, tooltips, trackingInfo } = config;
+  const { element, id: idValue, bookmarkPath, tooltips, trackingInfo, linkType, position, callback } = config;
+
   const { lang: languageCode } = getPathDetails();
   const profileData = await defaultProfileClient.getMergedProfile(true);
   let id = bookmarkPath || idValue;
@@ -54,6 +56,7 @@ export async function bookmarkHandler(config) {
         bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
         sendNotice(tooltips?.bookmarkToastText);
         assetInteractionModel(id, 'Bookmarked', { trackingInfo });
+        if (callback) callback(linkType, position);
       })
       .catch(() => sendNotice(tooltips?.profileNotUpdated, 'error'));
   } else {
@@ -64,6 +67,7 @@ export async function bookmarkHandler(config) {
         bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
         sendNotice(tooltips?.removeBookmarkToastText);
         assetInteractionModel(id, 'Bookmark Removed', { trackingInfo });
+        if (callback) callback(linkType, position);
       })
       .catch(() => {
         sendNotice(tooltips?.profileNotUpdated, 'error');
