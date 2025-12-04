@@ -280,6 +280,32 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
 
 const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
+// Function to calculate cardHeader and cardPosition
+const getCardHeaderAndPosition = (card, element) => {
+  let cardHeader = '';
+  const currentBlock = card.closest('.block');
+  const headerEl = currentBlock?.querySelector(
+    '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
+  );
+  if (headerEl) {
+    const cloned = headerEl.cloneNode(true);
+    // Remove any PII or masked spans
+    cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
+    // Get cleaned text
+    cardHeader = cloned.innerText.trim();
+  }
+
+  cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
+
+  let cardPosition = '';
+  if (element?.parentElement?.children) {
+    const siblings = Array.from(element.parentElement.children);
+    cardPosition = String(siblings.indexOf(element) + 1);
+  }
+
+  return { cardHeader, cardPosition };
+};
+
 const buildCardContent = async (card, model, element) => {
   const {
     id,
@@ -400,32 +426,6 @@ const buildCardContent = async (card, model, element) => {
     };
   }
 
-  // Function to calculate cardHeader and cardPosition
-  const getCardHeaderAndPosition = () => {
-    let cardHeader = '';
-    const currentBlock = card.closest('.block');
-    const headerEl = currentBlock?.querySelector(
-      '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
-    );
-    if (headerEl) {
-      const cloned = headerEl.cloneNode(true);
-      // Remove any PII or masked spans
-      cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
-      // Get cleaned text
-      cardHeader = cloned.innerText.trim();
-    }
-
-    cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
-
-    let cardPosition = '';
-    if (element?.parentElement?.children) {
-      const siblings = Array.from(element.parentElement.children);
-      cardPosition = String(siblings.indexOf(element) + 1);
-    }
-
-    return { cardHeader, cardPosition };
-  };
-
   const cardAction = UserActions({
     container: cardOptions,
     id: getBookmarkId({ id, viewLink, contentType }),
@@ -436,14 +436,14 @@ const buildCardContent = async (card, model, element) => {
     trackingInfo,
     bookmarkCallback: (linkType, position) => {
       // Calculate cardHeader and cardPosition dynamically when callback is called
-      const { cardHeader, cardPosition } = getCardHeaderAndPosition();
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
       const finalLinkType = linkType || cardHeader || '';
       const finalPosition = position || cardPosition || '';
       pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, finalLinkType, finalPosition);
     },
     copyCallback: (linkType, position) => {
       // Calculate cardHeader and cardPosition dynamically when callback is called
-      const { cardHeader, cardPosition } = getCardHeaderAndPosition();
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
       const finalLinkType = linkType || cardHeader || '';
       const finalPosition = position || cardPosition || '';
       pushBrowseCardClickEvent('copyLinkBrowseCard', model, finalLinkType, finalPosition);
@@ -824,35 +824,9 @@ export async function buildCard(element, model) {
     element.appendChild(card);
   }
 
-  // DataLayer - Browse Cards
-  const cardHeaderAndPosition = () => {
-    let cardHeader = '';
-    const currentBlock = card.closest('.block');
-    const headerEl = currentBlock?.querySelector(
-      '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
-    );
-    if (headerEl) {
-      const cloned = headerEl.cloneNode(true);
-      // Remove any PII or masked spans
-      cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
-      // Get cleaned text
-      cardHeader = cloned.innerText.trim();
-    }
-
-    cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
-
-    let cardPosition = '';
-    if (element?.parentElement?.children) {
-      const siblings = Array.from(element.parentElement.children);
-      cardPosition = String(siblings.indexOf(element) + 1);
-    }
-
-    return { cardHeader, cardPosition };
-  };
-
   // Browse card click event handler
   element.querySelector('a')?.addEventListener('click', (e) => {
-    const { cardHeader, cardPosition } = cardHeaderAndPosition();
+    const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
 
     const cardOptions = card.querySelector('.browse-card-options');
     if (cardOptions) {
