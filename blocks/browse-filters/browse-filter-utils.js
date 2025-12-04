@@ -93,6 +93,12 @@ const contentTypes = [
     description: 'Recordings of learning and skill enablement events. Watch and learn from Adobe experts and peers.',
   },
   {
+    id: 'Upcoming Event',
+    value: 'Upcoming Event',
+    title: placeholders.filterContentTypeUpcomingEventTitle || 'Upcoming Events',
+    description: 'Upcoming events description',
+  },
+  {
     id: 'Perspective',
     value: 'Perspective',
     title: 'Perspectives',
@@ -216,19 +222,10 @@ export const roleOptions = {
 const contentTypeOptionsupdated = {
   id: 'el_contenttype',
   name: placeholders.filterContentTypeLabel || 'Content Type',
-  items: [...contentTypes],
+  // Filter out Upcoming Event if feature flag is not enabled
+  items: contentTypes.filter((item) => item.id !== 'Upcoming Event' || isFeatureEnabled('isEventsV2')),
   selected: 0,
 };
-
-// add Upcoming Event based on feature flag
-if (isFeatureEnabled('isEventsV2')) {
-  contentTypeOptionsupdated.items.splice(5, 0, {
-    id: 'Upcoming Event',
-    value: 'Upcoming Event',
-    title: placeholders.filterContentTypeUpcomingEventTitle || 'Upcoming Events',
-    description: placeholders.filterContentTypeUpcomingEventDescription || 'Upcoming events description',
-  });
-}
 
 export const contentTypeOptions = contentTypeOptionsupdated;
 
