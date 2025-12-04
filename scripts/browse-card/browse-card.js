@@ -510,6 +510,8 @@ const getVideoClipModal = () => {
 const decorateUpcomingEvents = (card, model) => {
   if (!card || !model || model.contentType?.toLowerCase() !== CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY) return;
 
+  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-upcoming-events.css`);
+
   // Remove the browse-card-options div from upcoming event cards
   const cardOptions = card.querySelector('.browse-card-options');
   if (cardOptions) {
@@ -883,12 +885,19 @@ export async function buildCard(container, element, model) {
   );
 
   // Apply special decorations for upcoming events v2 - change for all upcoming events later
-  const isV2 = card.closest('.upcoming-event-v2');
+  const v2 = card.closest('.upcoming-event-v2');
+  const browseFilters = card.closest('.browse-filters');
+  const isBrowseFiltersUpcoming = browseFilters && card.classList.contains('upcoming-event-card');
 
-  if (isV2 && model.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY) {
-    const cardElement = element.querySelector('.browse-card');
-    if (cardElement) {
-      decorateUpcomingEvents(cardElement, model);
-    }
+  /* TODO - Remove events-v2 scope during clean up */
+  if (v2) {
+    v2.classList.add('events-v2');
+  } else if (isBrowseFiltersUpcoming) {
+    browseFilters.classList.add('events-v2');
+  }
+
+  const cardEl = element.querySelector('.browse-card');
+  if (cardEl && (v2 || isBrowseFiltersUpcoming)) {
+    decorateUpcomingEvents(cardEl, model);
   }
 }

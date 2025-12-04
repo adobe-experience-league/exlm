@@ -468,5 +468,3 @@ export async function fetchPerspectiveIndex(prefix = 'en') {
   await window.perspectiveIndex[`${prefix}-loaded`];
   return window.perspectiveIndex[prefix];
 }
-
-export const isUpcomingEventBlockExists = () => !!document.querySelector('main .upcoming-event-v2.block');

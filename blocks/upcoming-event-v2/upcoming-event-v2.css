@@ -1,5 +1,4 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
-@import '../../scripts/browse-card/browse-card-upcoming-events.css';
 
 /* Upcoming events alignment css */
 
@@ -43,7 +42,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 32px;
-  min-height: 417px;
+  min-height: 450px;
   margin-bottom: 24px;
 }
 
