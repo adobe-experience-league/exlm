@@ -12,6 +12,7 @@ export default async function decorate(block) {
   // Clear the block content
   block.innerHTML = '';
   block.classList.add('upcoming-event-block');
+  block.classList.add('browse-cards-block');
 
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
@@ -37,7 +38,7 @@ export default async function decorate(block) {
   contentDiv.classList.add('browse-cards-block-content');
 
   const buildCardsShimmer = new BrowseCardShimmer();
-  buildCardsShimmer.addShimmer(contentDiv);
+  buildCardsShimmer.addShimmer(block);
 
   const parameters = {
     contentType: [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY],
