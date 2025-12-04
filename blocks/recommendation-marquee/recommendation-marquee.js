@@ -1044,7 +1044,7 @@ export default async function decorate(block) {
               cardsToBeReplaced.forEach((responseInfo) => {
                 const { data = [] } = responseInfo;
 
-                data.forEach(({ shimmers, wrappers, contentDiv: contentWrapper }) => {
+                data.forEach(({ shimmers, wrappers }) => {
                   wrappers.forEach((wrapper, index) => {
                     const model = getSavedCardModel(dataConfiguration, lowercaseOptionType);
                     shimmers[index].removeShimmer();
