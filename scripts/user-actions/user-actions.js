@@ -147,8 +147,8 @@ const UserActions = (config) => {
             tooltip: {
               copyToastText: placeholders?.userActionCopylinkToastText || 'URL copied',
             },
-            callback: copyCallback,
             trackingInfo,
+            callback: copyCallback,
           }),
       });
     }
