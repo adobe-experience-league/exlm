@@ -418,7 +418,7 @@ export default async function decorate(block) {
                     if (cardModel && cardModel.id) {
                       dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardModel.id);
                     }
-                    buildCard(contentDiv, wrapperDiv, cardModel);
+                    buildCard(wrapperDiv, cardModel);
                   }
                   cardModelsList.push(cardModel);
                 });
@@ -435,7 +435,7 @@ export default async function decorate(block) {
               if (cardData.id) {
                 dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardData.id);
               }
-              buildCard(contentDiv, cardDiv, cardData);
+              buildCard(cardDiv, cardData);
             }
             resolve([cardData]);
           }
@@ -942,7 +942,7 @@ export default async function decorate(block) {
                     const model = getSavedCardModel(dataConfiguration, lowercaseOptionType);
                     shimmers[index].removeShimmer();
                     if (model) {
-                      cardReplacementPromises.push(buildCard(contentWrapper, wrapper, model));
+                      cardReplacementPromises.push(buildCard(wrapper, model));
                     }
                   });
                 });

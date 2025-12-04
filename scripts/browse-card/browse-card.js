@@ -600,7 +600,7 @@ const decorateUpcomingEvents = (card, model) => {
  * @returns {Promise<void>} Resolves when the card is fully built and added to the DOM.
  */
 
-export async function buildCard(container, element, model) {
+export async function buildCard(element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
 
   element.setAttribute('data-analytics-content-type', contentType);
