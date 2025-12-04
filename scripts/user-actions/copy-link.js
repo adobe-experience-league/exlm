@@ -33,7 +33,7 @@ export function copyToClipboard({ assetId = '', text, toastText, trackingInfo })
  * @param {Function} config.callback - Optional callback function to be called after copy action.
  */
 export function copyHandler(config) {
-  const { id, link, tooltip, trackingInfo, callback, linkType, position } = config;
+  const { id, link, tooltip, trackingInfo, linkType, position, callback } = config;
 
   if (link) {
     const text = link.startsWith('/') ? `${window.location.origin}${link}` : link;

@@ -36,7 +36,7 @@ async function isBookmarked(bookmarkId) {
  * @param {Function} config.callback - Optional callback function to be called after bookmark action.
  */
 export async function bookmarkHandler(config) {
-  const { element, id: idValue, bookmarkPath, tooltips, trackingInfo, callback, linkType, position } = config;
+  const { element, id: idValue, bookmarkPath, tooltips, trackingInfo, linkType, position, callback } = config;
 
   const { lang: languageCode } = getPathDetails();
   const profileData = await defaultProfileClient.getMergedProfile(true);
