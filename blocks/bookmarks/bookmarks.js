@@ -131,7 +131,7 @@ async function renderCards(block) {
         cardDiv.innerHTML = '';
         cardDiv.className = '';
         cardDiv.classList.add('bookmarks-card');
-        await buildCard(wrapper, cardDiv, parsedCard);
+        await buildCard(cardDiv, parsedCard);
       }
     });
   }

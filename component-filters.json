@@ -88,6 +88,7 @@
       "inprogress-courses",
       "browse-courses",
       "course-recap",
+      "slides",
       "quiz-scorecard"
     ]
   },
@@ -355,7 +356,8 @@
       "note",
       "qualtrics",
       "code",
-      "announcement-ribbon"
+      "announcement-ribbon",
+      "slides"
     ]
   },
   {

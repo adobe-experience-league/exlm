@@ -443,7 +443,7 @@ export default async function decorate(block) {
                       dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardModel.id);
                       cardModel.truncateDescription = false;
                     }
-                    buildCard(contentDiv, wrapperDiv, cardModel);
+                    buildCard(wrapperDiv, cardModel);
                   }
                   cardModelsList.push(cardModel);
                 });
@@ -461,7 +461,7 @@ export default async function decorate(block) {
                 cardData.truncateDescription = false;
                 dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardData.id);
               }
-              buildCard(contentDiv, cardDiv, cardData);
+              buildCard(cardDiv, cardData);
             }
             resolve([cardData]);
           }
@@ -1044,12 +1044,12 @@ export default async function decorate(block) {
               cardsToBeReplaced.forEach((responseInfo) => {
                 const { data = [] } = responseInfo;
 
-                data.forEach(({ shimmers, wrappers, contentDiv: contentWrapper }) => {
+                data.forEach(({ shimmers, wrappers }) => {
                   wrappers.forEach((wrapper, index) => {
                     const model = getSavedCardModel(dataConfiguration, lowercaseOptionType);
                     shimmers[index].removeShimmer();
                     if (model) {
-                      cardReplacementPromises.push(buildCard(contentWrapper, wrapper, model));
+                      cardReplacementPromises.push(buildCard(wrapper, model));
                     }
                   });
                 });
