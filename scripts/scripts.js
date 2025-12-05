@@ -166,6 +166,8 @@ export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 export const isCourseStep = matchesAnyTheme(/course-step/);
+export const isOnDemandEventPage = matchesAnyTheme(/on-demand-event/);
+
 export const isCertificatePage = () => !!document.querySelector('.course-completion'); // Checking for presence of course-completion block
 
 /**
@@ -1044,7 +1046,7 @@ function loadDelayed() {
  * Custom - Loads the right and left rails for doc pages only.
  */
 async function loadRails() {
-  if (isDocPage) {
+  if (isDocPage || isOnDemandEventPage) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/rails/rails.css`);
     loadDefaultModule('./rails/rails.js');
   }

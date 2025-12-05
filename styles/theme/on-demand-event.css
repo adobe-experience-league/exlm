@@ -4,6 +4,7 @@
   padding: 0 20px;
   padding-bottom: 3em;
   max-width: 1700px;
+  background-color: #fff;
 
   --desktop-column-gap: 20px;
   --desktop-row-gap: 15px;
@@ -87,7 +88,7 @@
 @media (min-width: 1024px) {
   .on-demand-event main {
     display: grid;
-    grid-template-columns: 2fr 2fr 1fr;
+    grid-template-columns: 2fr 4fr 1fr;
     grid-template-rows: auto auto;
     gap: var(--desktop-row-gap) var(--desktop-column-gap);
   }
@@ -113,6 +114,8 @@
   .on-demand-event .section.event-secondary {
     grid-column: 1; /* first half */
     grid-row: 2;
+    border-radius: 16px;
+    padding: 24px;
   }
 
   .on-demand-event .section.event-primary {
@@ -124,7 +127,7 @@
   .on-demand-event main > div.event-rail {
     grid-column: 3; /* 1fr column */
     grid-row: 1 / span 2;
-    background-color: rgb(236 235 235 / 70%);
+    background-color: #fff;
     display: initial;
     display: flex;
     align-items: center;
@@ -146,5 +149,9 @@
     color: #333;
     pointer-events: none;
     z-index: 1;
+  }
+
+  .on-demand-event main.rail-right-closed {
+    grid-template-columns: 0 5fr 0;
   }
 }
