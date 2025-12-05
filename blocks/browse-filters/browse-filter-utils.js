@@ -95,7 +95,7 @@ const contentTypes = [
   {
     id: 'Upcoming Event',
     value: 'Upcoming Event',
-    title: placeholders.filterContentTypeUpcomingEventTitle || 'Upcoming Events',
+    title: 'Upcoming Events',
     description: 'Upcoming events description',
   },
   {
