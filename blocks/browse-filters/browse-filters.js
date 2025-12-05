@@ -897,7 +897,7 @@ async function handleSearchEngineSubscription(block) {
       cardsData.forEach((cardData) => {
         const cardDiv = document.createElement('div');
         cardDiv.classList.add('browse-filter-card-item');
-        buildCard(filterResultsEl, cardDiv, cardData);
+        buildCard(cardDiv, cardData);
 
         filterResultsEl.appendChild(cardDiv);
       });

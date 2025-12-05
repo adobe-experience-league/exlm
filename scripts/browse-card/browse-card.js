@@ -280,7 +280,33 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
 
 const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
-const buildCardContent = async (card, model) => {
+// Function to calculate cardHeader and cardPosition
+const getCardHeaderAndPosition = (card, element) => {
+  let cardHeader = '';
+  const currentBlock = card.closest('.block');
+  const headerEl = currentBlock?.querySelector(
+    '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
+  );
+  if (headerEl) {
+    const cloned = headerEl.cloneNode(true);
+    // Remove any PII or masked spans
+    cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
+    // Get cleaned text
+    cardHeader = cloned.innerText.trim();
+  }
+
+  cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
+
+  let cardPosition = '';
+  if (element?.parentElement?.children) {
+    const siblings = Array.from(element.parentElement.children);
+    cardPosition = String(siblings.indexOf(element) + 1);
+  }
+
+  return { cardHeader, cardPosition };
+};
+
+const buildCardContent = async (card, model, element) => {
   const {
     id,
     description,
@@ -408,6 +434,20 @@ const buildCardContent = async (card, model) => {
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
     copyConfig: failedToLoad ? false : undefined,
     trackingInfo,
+    bookmarkCallback: (linkType, position) => {
+      // Calculate cardHeader and cardPosition dynamically when callback is called
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+      const finalLinkType = linkType || cardHeader || '';
+      const finalPosition = position || cardPosition || '';
+      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, finalLinkType, finalPosition);
+    },
+    copyCallback: (linkType, position) => {
+      // Calculate cardHeader and cardPosition dynamically when callback is called
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+      const finalLinkType = linkType || cardHeader || '';
+      const finalPosition = position || cardPosition || '';
+      pushBrowseCardClickEvent('copyLinkBrowseCard', model, finalLinkType, finalPosition);
+    },
   });
 
   cardAction.decorate();
@@ -560,7 +600,7 @@ const decorateUpcomingEvents = (card, model) => {
  * @returns {Promise<void>} Resolves when the card is fully built and added to the DOM.
  */
 
-export async function buildCard(container, element, model) {
+export async function buildCard(element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
 
   element.setAttribute('data-analytics-content-type', contentType);
@@ -735,7 +775,7 @@ export async function buildCard(container, element, model) {
     });
   }
 
-  await buildCardContent(card, model);
+  await buildCardContent(card, model, element);
 
   if (isVideoClip) {
     const cardOptions = card.querySelector('.browse-card-options');
@@ -784,45 +824,17 @@ export async function buildCard(container, element, model) {
     element.appendChild(card);
   }
 
-  // DataLayer - Browse Cards
-  const cardHeaderAndPosition = () => {
-    let cardHeader = '';
-    const currentBlock = card.closest('.block');
-    const headerEl = currentBlock?.querySelector(
-      '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
-    );
-    if (headerEl) {
-      const cloned = headerEl.cloneNode(true);
-      // Remove any PII or masked spans
-      cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
-      // Get cleaned text
-      cardHeader = cloned.innerText.trim();
-    }
-
-    cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
-
-    let cardPosition = '';
-    if (element?.parentElement?.children) {
-      const siblings = Array.from(element.parentElement.children);
-      cardPosition = String(siblings.indexOf(element) + 1);
-    }
-
-    return { cardHeader, cardPosition };
-  };
-
   // Browse card click event handler
   element.querySelector('a')?.addEventListener('click', (e) => {
-    const { cardHeader, cardPosition } = cardHeaderAndPosition();
+    const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
 
-    // Bookmark click
-    if (e.target.closest('.browse-card-options .user-actions .bookmark')) {
-      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, cardHeader, cardPosition);
-      return;
+    const cardOptions = card.querySelector('.browse-card-options');
+    if (cardOptions) {
+      card.dataset.cardHeader = cardHeader || '';
+      card.dataset.cardPosition = cardPosition || '';
     }
 
-    // Copy link click
-    if (e.target.closest('.browse-card-options .user-actions .copy-link')) {
-      pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
+    if (e.target.closest('.user-actions')) {
       return;
     }
 
