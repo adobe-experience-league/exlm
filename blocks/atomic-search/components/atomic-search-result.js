@@ -492,6 +492,20 @@ export default function atomicResultHandler(block, placeholders) {
   }
   const shadow = baseElement.shadowRoot;
   const container = shadow?.querySelector('[part="result-list"]');
+  
+  // Create reverse i18n mapping to get original field value from translated label
+  const i18nReverseMap = {
+    [placeholders.searchContentTypeCommunityLabel || 'Community']: 'community',
+    [placeholders.searchContentTypeDocumentationLabel || 'Documentation']: 'documentation',
+    [placeholders.searchContentTypeTroubleshootingLabel || 'Troubleshooting']: 'troubleshooting',
+    [placeholders.searchContentTypeTutorialLabel || 'Tutorial']: 'tutorial',
+    [placeholders.searchContentTypeEventLabel || 'Event']: 'event',
+    [placeholders.searchContentTypePlaylistLabel || 'Playlist']: 'playlist',
+    [placeholders.searchContentTypeCourseLabel || 'Course']: 'course',
+    [placeholders.searchContentTypeUpcomingEventLabel || 'Upcoming Event']: 'upcoming event',
+    [placeholders.searchContentTypePerspectiveLabel || 'Perspective']: 'perspective',
+    [placeholders.searchContentTypeCertificationLabel || 'Certification']: 'certification',
+  };
 
   if (!container) {
     waitFor(() => {
@@ -859,8 +873,28 @@ export default function atomicResultHandler(block, placeholders) {
           li.appendChild(link);
         });
 
-        contentTypeElements.forEach((contentTypeEl) => {
-          const contentType = contentTypeEl.textContent.toLowerCase().trim();
+        // Get all raw content type values once before iterating
+        const rawContentTypes = resultEl.result?.raw?.el_contenttype;
+        const rawContentTypesArray = Array.isArray(rawContentTypes) ? rawContentTypes : (rawContentTypes ? [rawContentTypes] : []);
+        
+        contentTypeElements.forEach((contentTypeEl, index) => {
+          // Get the original field value from the atomic-result element (before i18n translation)
+          // Match by index if multiple content types exist
+          const rawContentType = rawContentTypesArray[index] || rawContentTypesArray[0] || rawContentTypes;
+          
+          // Normalize the raw field value for icon lookup
+          let contentType = '';
+          if (rawContentType) {
+            const rawValue = Array.isArray(rawContentType) ? rawContentType[0] : rawContentType;
+            contentType = String(rawValue).toLowerCase().trim();
+            // Convert hyphens to spaces to match ContentTypeIcons keys (e.g., 'upcoming-event' -> 'upcoming event')
+            contentType = contentType.replace(/-/g, ' ');
+          } else {
+            // Fallback: Use reverse i18n mapping to get original key from translated label
+            const displayedText = contentTypeEl.textContent.trim();
+            contentType = i18nReverseMap[displayedText] || displayedText.toLowerCase().trim();
+          }
+          
           if (contentType.includes('|')) {
             contentTypeEl.style.cssText = `display: none !important`;
             const slotEl = contentTypeEl.firstElementChild;
