@@ -152,6 +152,6 @@
   }
 
   .on-demand-event main.rail-right-closed {
-    grid-template-columns: 0 4fr 0;
+    grid-template-columns: 0 5fr 0;
   }
 }
