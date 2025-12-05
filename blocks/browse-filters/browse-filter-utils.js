@@ -219,15 +219,20 @@ export const roleOptions = {
   selected: 0,
 };
 
-const contentTypeOptionsupdated = {
+// Filter out Upcoming Event if feature flag is not enabled
+const updatedContentTypes = contentTypes.filter((contentType) => {
+  if (contentType.id === 'Upcoming Event') {
+    return isFeatureEnabled('isEventsV2');
+  }
+  return true;
+});
+
+export const contentTypeOptions = {
   id: 'el_contenttype',
   name: placeholders.filterContentTypeLabel || 'Content Type',
-  // Filter out Upcoming Event if feature flag is not enabled
-  items: contentTypes.filter((item) => item.id !== 'Upcoming Event' || isFeatureEnabled('isEventsV2')),
+  items: updatedContentTypes,
   selected: 0,
 };
-
-export const contentTypeOptions = contentTypeOptionsupdated;
 
 export const expTypeOptions = {
   id: 'el_level',
