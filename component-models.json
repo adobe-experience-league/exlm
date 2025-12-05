@@ -1664,6 +1664,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -3391,6 +3395,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       }
@@ -3490,6 +3498,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -4176,6 +4188,10 @@
           {
             "name": "On-Demand Events",
             "value": "event"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           },
           {
             "name": "Community Posts",
@@ -5913,6 +5929,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -5963,6 +5983,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -6013,6 +6037,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -6063,6 +6091,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -6291,6 +6323,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -6341,6 +6377,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -6391,6 +6431,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -6441,6 +6485,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -6491,6 +6539,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },

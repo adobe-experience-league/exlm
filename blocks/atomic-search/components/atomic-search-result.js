@@ -860,7 +860,9 @@ export default function atomicResultHandler(block, placeholders) {
         });
 
         contentTypeElements.forEach((contentTypeEl) => {
-          const contentType = contentTypeEl.textContent.toLowerCase().trim();
+          const contentType = (resultEl.result?.result?.raw?.el_contenttype || contentTypeEl.textContent)
+            .toLowerCase()
+            .trim();
           if (contentType.includes('|')) {
             contentTypeEl.style.cssText = `display: none !important`;
             const slotEl = contentTypeEl.firstElementChild;

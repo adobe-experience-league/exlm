@@ -8,6 +8,7 @@ export const ContentTypeIcons = {
   perspective: `atomic-search-perspective`,
   certification: 'atomic-search-certification',
   course: 'atomic-search-course',
+  'upcoming-event': `atomic-search-event`,
 };
 
 export const nextNavigationArrow = `<svg xmlns='http://www.w3.org/2000/svg' width='8' height='14' viewBox='0 0 8 14'>
