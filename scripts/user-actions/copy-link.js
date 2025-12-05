@@ -30,9 +30,11 @@ export function copyToClipboard({ assetId = '', text, toastText, trackingInfo })
  * @param {string} config.id - Page Id
  * @param {string} config.link - The link to be copied.
  * @param {string} config.tooltip - Tooltip to be displayed in a toast notification.
+ * @param {Function} config.callback - Optional callback function to be called after copy action.
  */
 export function copyHandler(config) {
-  const { id, link, tooltip, trackingInfo } = config;
+  const { id, link, tooltip, trackingInfo, linkType, position, callback } = config;
+
   if (link) {
     const text = link.startsWith('/') ? `${window.location.origin}${link}` : link;
     copyToClipboard({
@@ -41,6 +43,7 @@ export function copyHandler(config) {
       toastText: tooltip?.copyToastText,
       trackingInfo,
     });
+    if (callback) callback(linkType, position);
   }
 }
 

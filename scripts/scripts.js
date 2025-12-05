@@ -690,8 +690,8 @@ export function getConfig() {
       env: 'PROD',
       cdn: 'experienceleague.adobe.com',
       authorUrl: 'author-p122525-e1219150.adobeaemcloud.com',
-      hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.hlx.page$/,
-      hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.hlx.live$/,
+      hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).page$/,
+      hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities.adobe.com',
     },
     {
@@ -1548,10 +1548,6 @@ async function loadPage() {
     } else {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
-        // Applying data-cs-mask for signed-in profile-settings page
-        if (window.location.pathname === `/${lang}/home/profile-settings`) {
-          document.body.setAttribute('data-cs-mask', '');
-        }
         loadPage();
         loadTarget(signedIn);
       } else {

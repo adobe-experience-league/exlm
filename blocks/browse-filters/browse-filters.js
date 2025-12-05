@@ -22,8 +22,8 @@ import {
   handleCoverSearchSubmit,
   authorOptions,
   fetchPerspectiveIndex,
-  isUpcomingEventBlockExists,
 } from './browse-filter-utils.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
@@ -71,6 +71,8 @@ const buildCardsShimmer = new BrowseCardShimmer(getBrowseFiltersResultCount());
 function isArticleLandingPage() {
   return matchesAnyTheme(/^article-.*/);
 }
+
+const isEventsPage = matchesAnyTheme(/event/);
 
 /**
  * debounce fn execution
@@ -895,7 +897,7 @@ async function handleSearchEngineSubscription(block) {
       cardsData.forEach((cardData) => {
         const cardDiv = document.createElement('div');
         cardDiv.classList.add('browse-filter-card-item');
-        buildCard(filterResultsEl, cardDiv, cardData);
+        buildCard(cardDiv, cardData);
 
         filterResultsEl.appendChild(cardDiv);
       });
@@ -907,7 +909,9 @@ async function handleSearchEngineSubscription(block) {
       // eslint-disable-next-line no-console
       console.log('*** failed to create card because of the error:', err);
     }
-  } else {
+  }
+
+  if (results.length === 0) {
     /* Analytics */
     if (
       !filterResultsEl.classList.contains('no-results') &&
@@ -956,6 +960,7 @@ async function loadCoveoHeadlessScript(block) {
           redecorateTagsContainer(block);
         },
         (err) => {
+          block.classList.add('browse-hide-section');
           throw new Error(err);
         },
       )
@@ -1619,7 +1624,7 @@ function decorateBrowseTopics(block) {
 }
 
 export default async function decorate(block) {
-  const isUpcomingEventFlow = isUpcomingEventBlockExists();
+  const isUpcomingEventFlow = isEventsPage && isFeatureEnabled('isEventsV2');
   window.headlessBaseSolutionQuery = isUpcomingEventFlow
     ? BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT
     : BASE_COVEO_ADVANCED_QUERY;
@@ -1656,6 +1661,7 @@ export default async function decorate(block) {
       .catch((error) => {
         // eslint-disable-next-line no-console
         console.error('Error fetching facet details:', error);
+        block.classList.add('browse-hide-section');
       });
   } else {
     dropdownOptions.forEach((options, index) => {
