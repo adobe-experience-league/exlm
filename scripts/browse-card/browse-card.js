@@ -12,6 +12,32 @@ import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
+// DataLayer - Browse Cards
+export const cardHeaderAndPosition = (card, element) => {
+  let cardHeader = '';
+  const currentBlock = card.closest('.block');
+  const headerEl = currentBlock?.querySelector(
+    '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
+  );
+  if (headerEl) {
+    const cloned = headerEl.cloneNode(true);
+    // Remove any PII or masked spans
+    cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
+    // Get cleaned text
+    cardHeader = cloned.innerText.trim();
+  }
+
+  cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
+
+  let cardPosition = '';
+  if (element?.parentElement?.children) {
+    const siblings = Array.from(element.parentElement.children);
+    cardPosition = String(siblings.indexOf(element) + 1);
+  }
+
+  return { cardHeader, cardPosition };
+};
+
 const bookmarkExclusionContentypes = [
   CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
   CONTENT_TYPES.COMMUNITY.MAPPING_KEY,
@@ -638,7 +664,13 @@ export async function buildCard(element, model) {
 
   const card = createTag(
     'div',
-    { class: `browse-card ${type}-card ${failedToLoad ? 'browse-card-frozen' : ''}` },
+    {
+      class: `browse-card ${type}-card ${failedToLoad ? 'browse-card-frozen' : ''}`,
+      'data-content-type': contentType || '',
+      'data-title': title || '',
+      'data-view-link': model.viewLink || '',
+      'data-product': product ? product.join('|') : '',
+    },
     `<div class="browse-card-figure"></div>${
       showVideoIconOnly ? `<div class="browse-card-video-clip"></div>` : ''
     }<div class="browse-card-content"></div><div class="browse-card-footer"></div>`,
@@ -824,9 +856,22 @@ export async function buildCard(element, model) {
     element.appendChild(card);
   }
 
+  const { cardHeader, cardPosition } = cardHeaderAndPosition(card, element);
+
   // Browse card click event handler
   element.querySelector('a')?.addEventListener('click', (e) => {
-    const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+    // Get product data and compute solution and fullSolution
+    const productString = card.dataset.product || '';
+    const product = productString ? productString.split('|') : [];
+
+    const solution = product.length ? product[0] : '';
+    const fullSolution = product.length ? product.join(',') : '';
+
+    // Add solution and fullSolution to model
+    model.solution = solution;
+    model.fullSolution = fullSolution;
+
+    const { cardHeader, cardPosition } = cardHeaderAndPosition(card, element);
 
     const cardOptions = card.querySelector('.browse-card-options');
     if (cardOptions) {

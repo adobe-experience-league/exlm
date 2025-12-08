@@ -1,5 +1,7 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
+import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
+import { cardHeaderAndPosition } from './browse-card.js';
 
 export default class BrowseCardViewSwitcher {
   static placeholders = {};
@@ -93,6 +95,35 @@ export default class BrowseCardViewSwitcher {
   }
 
   /**
+   * Helper function to track card events
+   * @param {HTMLElement} card - The card element
+   * @param {string} eventName - The event name to track
+   */
+  trackCardEvent(card, eventName) {
+    const cardElement = card.closest('a')?.parentElement || card.parentElement;
+
+    // Get product data and compute solution and fullSolution
+    const productString = card.dataset.product || '';
+    const product = productString ? productString.split('|') : [];
+
+    const solution = product.length ? product[0] : '';
+    const fullSolution = product.length ? product.join(',') : '';
+
+    // Create cardData object
+    const cardData = {
+      contentType: card.dataset.contentType || '',
+      title: card.dataset.title || '',
+      viewLink: card.dataset.viewLink || '',
+      solution,
+      fullSolution,
+      product,
+    };
+
+    const { cardHeader, cardPosition } = cardHeaderAndPosition(card, cardElement);
+    pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition);
+  }
+
+  /**
    * Setup expandable description for a card
    * @param {HTMLElement} card - The card element
    */
@@ -131,12 +162,14 @@ export default class BrowseCardViewSwitcher {
       e.preventDefault();
       e.stopPropagation();
       BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
+      this.trackCardEvent(card, 'browseCardShowMore');
     };
 
     const showLessHandler = (e) => {
       e.preventDefault();
       e.stopPropagation();
       BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
+      this.trackCardEvent(card, 'browseCardShowLess');
     };
 
     showMoreBtn.addEventListener('click', showMoreHandler);
