@@ -82,7 +82,7 @@ export default async function decorate(block) {
               cardData = enrichedCard;
             }
 
-            await buildCard(contentDiv, linkContainer, cardData);
+            await buildCard(linkContainer, cardData);
           } else {
             // eslint-disable-next-line no-console
             console.warn(`Failed to load card data for link: ${link}`);
