@@ -862,16 +862,18 @@ export async function buildCard(element, model) {
   element.querySelector('a')?.addEventListener('click', (e) => {
     // Get product data and compute solution and fullSolution
     const productString = card.dataset.product || '';
-    const product = productString ? productString.split('|') : [];
+    const productArray = productString ? productString.split('|') : [];
 
-    const solution = product.length ? product[0] : '';
-    const fullSolution = product.length ? product.join(',') : '';
+    const solution = productArray.length ? productArray[0] : '';
+    const fullSolution = productArray.length ? productArray.join(',') : '';
 
     // Add solution and fullSolution to model
     model.solution = solution;
     model.fullSolution = fullSolution;
 
-    const { cardHeader, cardPosition } = cardHeaderAndPosition(card, element);
+    const headerAndPosition = cardHeaderAndPosition(card, element);
+    const cardHeader = headerAndPosition.cardHeader;
+    const cardPosition = headerAndPosition.cardPosition;
 
     const cardOptions = card.querySelector('.browse-card-options');
     if (cardOptions) {
