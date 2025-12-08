@@ -281,7 +281,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
 const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
 // Function to calculate cardHeader and cardPosition
-export const getCardHeaderAndPosition = (card, element) => {
+const getCardHeaderAndPosition = (card, element) => {
   let cardHeader = '';
   const currentBlock = card.closest('.block');
   const headerEl = currentBlock?.querySelector(
@@ -582,6 +582,27 @@ const decorateUpcomingEvents = (card, model) => {
   }
 };
 
+// Event listener to handle show more/less clicks in upcoming event blocks
+document.querySelectorAll('.upcoming-event-v2, .upcoming-event').forEach((container) => {
+  container?.addEventListener(
+    'click',
+    (e) => {
+      if (e.target?.classList?.contains('show-more') || e.target?.classList?.contains('show-less')) {
+        const card = e.target.closest('.browse-card');
+        if (!card?.classList?.contains('upcoming-event-card')) return;
+        const element = card.closest('a')?.parentElement;
+        if (!element?._model) return;
+        const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+
+        // Determine which event to trigger based on the button's class name
+        const eventName = e.target.classList.contains('show-more') ? 'browseCardShowMore' : 'browseCardShowLess';
+        pushBrowseCardClickEvent(eventName, element._model, cardHeader, cardPosition);
+      }
+    },
+    true,
+  );
+});
+
 /**
  * Builds a browse card element with various components based on the provided model data.
  *
@@ -823,6 +844,9 @@ export async function buildCard(element, model) {
   } else {
     element.appendChild(card);
   }
+
+  // Store the model data on the element for access by the view switcher events
+  element._model = model;
 
   // Browse card click event handler
   element.querySelector('a')?.addEventListener('click', (e) => {

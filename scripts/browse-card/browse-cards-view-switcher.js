@@ -1,7 +1,5 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
-import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
-import { getCardHeaderAndPosition } from './browse-card.js';
 
 export default class BrowseCardViewSwitcher {
   static placeholders = {};
@@ -104,64 +102,41 @@ export default class BrowseCardViewSwitcher {
 
     if (!description || !cardContent || !card.classList.contains('upcoming-event-card')) return;
 
-    if (cardContent.querySelector('.show-more')) return;
+    if (cardContent.querySelector('.show-more, .show-less')) return;
 
-    const showMoreBtn = document.createElement('span');
-    showMoreBtn.classList.add('show-more');
-    showMoreBtn.innerHTML = BrowseCardViewSwitcher.placeholders?.showMore || 'Show more';
-
-    const showLessBtn = document.createElement('span');
-    showLessBtn.classList.add('show-less');
-    showLessBtn.innerHTML = BrowseCardViewSwitcher.placeholders?.showLess || 'Show Less';
-
-    cardContent.appendChild(showMoreBtn);
-    cardContent.appendChild(showLessBtn);
-
+    // Calculate if the description has more than 2 lines
     const computedStyle = window.getComputedStyle(description);
     const lineHeight = parseFloat(computedStyle.lineHeight);
     const height = description.offsetHeight;
     const lines = Math.round(height / lineHeight);
 
-    if (lines > 2) {
-      description.classList.add('text-expanded');
-    } else {
-      showMoreBtn.style.display = 'none';
-      showLessBtn.style.display = 'none';
-    }
+    if (lines <= 2) return;
 
-    const showMoreHandler = (e) => {
+    description.classList.add('text-expanded');
+
+    const placeholders = BrowseCardViewSwitcher.placeholders || {};
+    const SHOW_MORE = placeholders.showMore || 'Show more';
+    const SHOW_LESS = placeholders.showLess || 'Show Less';
+
+    const toggleBtn = document.createElement('span');
+    toggleBtn.className = 'show-more';
+    toggleBtn.innerHTML = SHOW_MORE;
+
+    const toggleHandler = (e) => {
       e.preventDefault();
       e.stopPropagation();
+
       BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
 
-      // Show more event for analytics
-      const cardElement = card.closest('a')?.parentElement;
-      if (cardElement) {
-        const cardData = BrowseCardViewSwitcher.getCardDataForAnalytics(card);
-        const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, cardElement);
-        pushBrowseCardClickEvent('browseCardShowMore', cardData, cardHeader, cardPosition);
-      }
+      const expanded = card.classList.contains('expanded');
+      toggleBtn.innerHTML = expanded ? SHOW_LESS : SHOW_MORE;
+      toggleBtn.className = expanded ? 'show-less' : 'show-more';
     };
 
-    const showLessHandler = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
+    toggleBtn.addEventListener('click', toggleHandler);
+    this.eventListeners.push({ element: toggleBtn, type: 'click', handler: toggleHandler });
 
-      // Show less event for analytics
-      const cardElement = card.closest('a')?.parentElement;
-      if (cardElement) {
-        const cardData = BrowseCardViewSwitcher.getCardDataForAnalytics(card);
-        const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, cardElement);
-        pushBrowseCardClickEvent('browseCardShowLess', cardData, cardHeader, cardPosition);
-      }
-    };
-
-    showMoreBtn.addEventListener('click', showMoreHandler);
-    showLessBtn.addEventListener('click', showLessHandler);
-
-    this.eventListeners.push({ element: showMoreBtn, type: 'click', handler: showMoreHandler });
-    this.eventListeners.push({ element: showLessBtn, type: 'click', handler: showLessHandler });
+    cardContent.appendChild(toggleBtn);
   }
 
   /**
@@ -427,41 +402,6 @@ export default class BrowseCardViewSwitcher {
   /**
    * Destroy the view switcher instance
    */
-  /**
-   * Get card data for analytics tracking
-   * @param {HTMLElement} card - The card element
-   * @returns {Object} Card data for analytics
-   */
-  static getCardDataForAnalytics(card) {
-    const title = card.querySelector('.browse-card-title-text')?.textContent || '';
-    const contentType =
-      Array.from(card.classList)
-        .find((cls) => cls.endsWith('-card') && cls !== 'browse-card')
-        ?.replace('-card', '') || '';
-    const viewLink = card.closest('a')?.getAttribute('href') || '';
-
-    // Get product information
-    let product = [];
-    const productElement = card.querySelector('.browse-card-solution-text');
-    const tooltipText = card.querySelector('.tooltip-text');
-
-    if (tooltipText) {
-      // If there's a tooltip, it contains the full list of solutions
-      const fullSolutionText = tooltipText.textContent.trim();
-      product = fullSolutionText.split(',').map((s) => s.trim());
-    } else if (productElement) {
-      // Otherwise use the text from the product element
-      product = [productElement.textContent.trim()];
-    }
-
-    return {
-      title,
-      contentType,
-      viewLink,
-      product,
-    };
-  }
-
   destroy() {
     this.removeEventListeners();
     if (this.resizeObserver) {
