@@ -838,7 +838,7 @@ export async function buildCard(container, element, model) {
     }
   });
 
-  element.querySelector('a').addEventListener(
+  element.querySelector('a')?.addEventListener(
     'click',
     () => {
       sendCoveoClickEvent('browse-card', model);

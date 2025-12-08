@@ -53,22 +53,41 @@ async function getListofProducts() {
   }
 }
 
-export default async function decorate(block) {
-  let placeholders = {};
-  try {
-    placeholders = await fetchLanguagePlaceholders();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
+/**
+ * Filters card data based on selected parameters.
+ * @param {Array} data - List of card data objects.
+ * @param {Array} params - Selected filter parameters.
+ * @returns {Array} - Filtered and sorted card data.
+ */
+function filterCardData(data, params) {
+  if (!data) return [];
+  const solutionsList = Array.isArray(params) ? params : [params];
+
+  // If no filters are selected, return all data sorted by event time
+  if (solutionsList.length === 0) {
+    return data.filter((card) => card.event?.time).sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
   }
 
+  // Filter events that match any of the selected filters
+  return data
+    .filter((event) => {
+      const productArray = Array.isArray(event.product) ? event.product : [event.product];
+      return solutionsList.some((filter) => productArray.includes(filter));
+    })
+    .filter((card) => card.event?.time) // Ensure valid event time
+    .sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
+}
+
+export default function decorate(block) {
+  // Extract elements before clearing block
   const [headingElement, descriptionElement, filterLabelElement] = [...block.children].map(
     (row) => row.firstElementChild,
   );
 
   block.innerHTML = '';
-  block.classList.add('upcoming-event-block');
+  block.classList.add('upcoming-event-block', 'browse-cards-block');
 
+  // Build header structure immediately
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
         <div class="browse-cards-block-title">
@@ -78,7 +97,7 @@ export default async function decorate(block) {
           ${descriptionElement?.innerHTML || ''}
         </div>
       <form class="browse-card-dropdown">
-      <label>${filterLabelElement?.innerHTML}</label>
+      <label>${filterLabelElement?.innerHTML || ''}</label>
       </form>
     </div>
   `);
@@ -86,56 +105,21 @@ export default async function decorate(block) {
   const tagsContainer = document.createElement('div');
   tagsContainer.classList.add('browse-card-tags');
   headerDiv.appendChild(tagsContainer);
-
   block.appendChild(headerDiv);
-  const products = await getListofProducts();
-  const productsList = [];
-  products.forEach((product) => {
-    productsList.push({
-      title: product,
-    });
-  });
 
-  // Initialize the dropdown with product options
-  const productDropdown = new Dropdown(
-    block.querySelector('.browse-card-dropdown'),
-    `${placeholders?.filterProductLabel || 'Product'}`,
-    productsList,
-    'multi-select',
-  );
-
+  // Create content container and show shimmer immediately
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');
-
-  const parameters = {
-    contentType: CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
-  };
+  block.appendChild(contentDiv);
 
   const buildCardsShimmer = new BrowseCardShimmer();
-  buildCardsShimmer.addShimmer(block);
-  let browseCardsContent;
-  try {
-    browseCardsContent = await BrowseCardsDelegate.fetchCardData(parameters);
-    // eslint-disable-next-line no-use-before-define
-    const filteredLiveEventsData = fetchFilteredCardData(browseCardsContent, []);
+  buildCardsShimmer.addShimmer(contentDiv);
 
-    buildCardsShimmer.removeShimmer();
+  // State to hold data and dropdown reference
+  let browseCardsContent = null;
+  let productDropdown = null;
+  let placeholders = {};
 
-    if (filteredLiveEventsData?.length) {
-      filteredLiveEventsData.forEach((cardData) => {
-        const cardDiv = document.createElement('div');
-        buildCard(contentDiv, cardDiv, cardData);
-        contentDiv.appendChild(cardDiv);
-      });
-      block.appendChild(contentDiv);
-    }
-  } catch (err) {
-    buildCardsShimmer.removeShimmer();
-    // eslint-disable-next-line no-console
-    console.error('Error loading upcoming event cards:', err);
-  }
-
-  // Extract filters from URL
   // Extract and sanitize filters from URL
   const urlParams = new URLSearchParams(window.location.search);
   const urlFilters = urlParams.get('filters')
@@ -143,6 +127,8 @@ export default async function decorate(block) {
     : [];
 
   const updateFiltersAndCards = (selectedFilters) => {
+    if (!browseCardsContent) return; // Data not loaded yet
+
     // Update URL params
     const url = new URL(window.location);
     if (selectedFilters.length) {
@@ -171,12 +157,11 @@ export default async function decorate(block) {
       });
     });
 
-    // eslint-disable-next-line no-use-before-define
-    const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
+    const updatedData = filterCardData(browseCardsContent, selectedFilters);
 
     contentDiv.innerHTML = ''; // Clear previous cards
     const existingError = block.querySelector('.event-no-results');
-    if (existingError) existingError.remove(); // Prevent duplicate error message
+    if (existingError) existingError.remove();
 
     // Show error message if selected product has no events
     if (updatedData.length === 0) {
@@ -184,8 +169,8 @@ export default async function decorate(block) {
         placeholders.noResultsTextBrowse ||
         'We are sorry, no results found matching the criteria. Try adjusting your search to view more content.';
       const errorMsg = htmlToElement(`
-    <div class="event-no-results">${noResultsText}</div>
-  `);
+        <div class="event-no-results">${noResultsText}</div>
+      `);
 
       contentDiv.style.display = 'none';
       block.appendChild(errorMsg);
@@ -193,51 +178,73 @@ export default async function decorate(block) {
     }
 
     contentDiv.style.display = '';
-    updatedData.forEach((cardData) => {
-      const cardDiv = document.createElement('div');
-      buildCard(contentDiv, cardDiv, cardData);
-      contentDiv.appendChild(cardDiv);
-    });
+    Promise.all(
+      updatedData.map((cardData) => {
+        const cardDiv = document.createElement('div');
+        contentDiv.appendChild(cardDiv);
+        return buildCard(contentDiv, cardDiv, cardData);
+      }),
+    );
   };
 
-  // Pre-select checkboxes from URL filters
-  [...block.querySelectorAll('.browse-card-dropdown .custom-checkbox input')]
-    .filter((input) => urlFilters.includes(input.value) && !input.checked)
-    .forEach((input) => input.click());
+  // Fetch all data in parallel (non-blocking)
+  const parameters = { contentType: CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY };
 
-  updateFiltersAndCards(urlFilters);
+  Promise.all([
+    fetchLanguagePlaceholders().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching placeholders:', err);
+      return {};
+    }),
+    getListofProducts(),
+    BrowseCardsDelegate.fetchCardData(parameters),
+  ])
+    .then(([fetchedPlaceholders, products, cardsContent]) => {
+      placeholders = fetchedPlaceholders;
+      browseCardsContent = cardsContent;
 
-  // Dropdown selection change handler
-  productDropdown.handleOnChange((selectedValues) => {
-    const selectedFilters = (Array.isArray(selectedValues) ? selectedValues : selectedValues.split(','))
-      .map((item) => item.trim())
-      .filter(Boolean);
+      // Initialize dropdown with products
+      const productsList = products.map((product) => ({ title: product }));
+      productDropdown = new Dropdown(
+        block.querySelector('.browse-card-dropdown'),
+        `${placeholders?.filterProductLabel || 'Product'}`,
+        productsList,
+        'multi-select',
+      );
 
-    updateFiltersAndCards(selectedFilters);
-  });
+      // Remove shimmer and render cards
+      buildCardsShimmer.removeShimmer();
 
-  /**
-   * Fetches filtered card data based on selected parameters.
-   * @param {Array} data - List of card data objects.
-   * @param {Array} params - Selected filter parameters.
-   * @returns {Array} - Filtered and sorted card data.
-   */
-  function fetchFilteredCardData(data, params) {
-    if (!data) return [];
-    const solutionsList = Array.isArray(params) ? params : [params];
+      const filteredData = filterCardData(browseCardsContent, []);
+      if (filteredData?.length) {
+        Promise.all(
+          filteredData.map((cardData) => {
+            const cardDiv = document.createElement('div');
+            contentDiv.appendChild(cardDiv);
+            return buildCard(contentDiv, cardDiv, cardData);
+          }),
+        );
+      }
 
-    // If no filters are selected, return all data sorted by event time
-    if (solutionsList.length === 0) {
-      return data.filter((card) => card.event?.time).sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
-    }
+      // Pre-select checkboxes from URL filters
+      [...block.querySelectorAll('.browse-card-dropdown .custom-checkbox input')]
+        .filter((input) => urlFilters.includes(input.value) && !input.checked)
+        .forEach((input) => input.click());
 
-    // Filter events that match any of the selected filters
-    return data
-      .filter((event) => {
-        const productArray = Array.isArray(event.product) ? event.product : [event.product];
-        return solutionsList.some((filter) => productArray.includes(filter));
-      })
-      .filter((card) => card.event?.time) // Ensure valid event time
-      .sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
-  }
+      updateFiltersAndCards(urlFilters);
+
+      // Dropdown selection change handler
+      productDropdown.handleOnChange((selectedValues) => {
+        const selectedFilters = (Array.isArray(selectedValues) ? selectedValues : selectedValues.split(','))
+          .map((item) => item.trim())
+          .filter(Boolean);
+
+        updateFiltersAndCards(selectedFilters);
+      });
+    })
+    .catch((err) => {
+      buildCardsShimmer.removeShimmer();
+      // eslint-disable-next-line no-console
+      console.error('Error loading upcoming event cards:', err);
+    });
 }
