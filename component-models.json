@@ -8601,5 +8601,34 @@
         "description": "Sets the description of course summary from the current module. Make sure all the take aways are mentioned as bullet points."
       }
     ]
+  },
+  {
+    "id": "generative-search",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "Placeholder",
+        "value": "",
+        "label": "Placeholder",
+        "description": "Sets the placeholder for the search input."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "Sublabel",
+        "value": "",
+        "label": "Sublabel",
+        "description": "Sets the label under the search input."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "noResultsText",
+        "value": "",
+        "label": "No results text",
+        "description": "Sets the text to be shown when no results are found."
+      }
+    ]
   }
 ]
