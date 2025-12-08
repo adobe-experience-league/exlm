@@ -63,3 +63,15 @@
   max-height: none;
   -webkit-line-clamp: 2;
 }
+
+@media only screen and (min-width: 900px) {
+  .browse-cards-block-content:has(.event-card) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1400px) {
+  .browse-cards-block-content:has(.event-card) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
