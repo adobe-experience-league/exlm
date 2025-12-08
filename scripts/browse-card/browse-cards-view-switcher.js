@@ -110,7 +110,7 @@ export default class BrowseCardViewSwitcher {
     const height = description.offsetHeight;
     const lines = Math.round(height / lineHeight);
 
-    if (lines > 1) {
+    if (lines > 2) {
       description.classList.add('text-expanded');
 
       const toggleBtn = document.createElement('span');
