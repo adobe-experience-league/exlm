@@ -871,12 +871,14 @@ export async function buildCard(element, model) {
     model.solution = solution;
     model.fullSolution = fullSolution;
 
-    const { cardHeader, cardPosition } = cardHeaderAndPosition(card, element);
+    const headerAndPositionData = cardHeaderAndPosition(card, element);
+    const headerValue = headerAndPositionData.cardHeader;
+    const positionValue = headerAndPositionData.cardPosition;
 
     const cardOptions = card.querySelector('.browse-card-options');
     if (cardOptions) {
-      card.dataset.cardHeader = cardHeader || '';
-      card.dataset.cardPosition = cardPosition || '';
+      card.dataset.cardHeader = headerValue || '';
+      card.dataset.cardPosition = positionValue || '';
     }
 
     if (e.target.closest('.user-actions')) {
@@ -885,13 +887,13 @@ export async function buildCard(element, model) {
 
     // CTA element click
     if (e.target.closest('.browse-card-cta-element')) {
-      pushBrowseCardClickEvent('browseCardCTAClick', model, cardHeader, cardPosition);
+      pushBrowseCardClickEvent('browseCardCTAClick', model, headerValue, positionValue);
       return;
     }
 
     // Card click (excluding options and CTA)
     if (e.target.closest('a:not(.browse-card-options):not(.browse-card-cta-element)')) {
-      pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
+      pushBrowseCardClickEvent('browseCardClicked', model, headerValue, positionValue);
     }
   });
 
