@@ -102,48 +102,43 @@ export default class BrowseCardViewSwitcher {
 
     if (!description || !cardContent || !card.classList.contains('upcoming-event-card')) return;
 
-    if (cardContent.querySelector('.show-more')) return;
+    if (cardContent.querySelector('.show-more') || cardContent.querySelector('.show-less')) return;
 
-    const showMoreBtn = document.createElement('span');
-    showMoreBtn.classList.add('show-more');
-    showMoreBtn.innerHTML = BrowseCardViewSwitcher.placeholders?.showMore || 'Show more';
-
-    const showLessBtn = document.createElement('span');
-    showLessBtn.classList.add('show-less');
-    showLessBtn.innerHTML = BrowseCardViewSwitcher.placeholders?.showLess || 'Show Less';
-
-    cardContent.appendChild(showMoreBtn);
-    cardContent.appendChild(showLessBtn);
-
+    // Calculate if the description has more than 2 lines
     const computedStyle = window.getComputedStyle(description);
     const lineHeight = parseFloat(computedStyle.lineHeight);
     const height = description.offsetHeight;
     const lines = Math.round(height / lineHeight);
 
-    if (lines > 2) {
+    if (lines > 1) {
       description.classList.add('text-expanded');
-    } else {
-      showMoreBtn.style.display = 'none';
-      showLessBtn.style.display = 'none';
+
+      const toggleBtn = document.createElement('span');
+      toggleBtn.classList.add('show-more');
+      toggleBtn.innerHTML = BrowseCardViewSwitcher.placeholders?.showMore || 'Show more';
+
+      const toggleHandler = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
+
+        if (card.classList.contains('expanded')) {
+          toggleBtn.innerHTML = BrowseCardViewSwitcher.placeholders?.showLess || 'Show Less';
+          toggleBtn.classList.remove('show-more');
+          toggleBtn.classList.add('show-less');
+        } else {
+          toggleBtn.innerHTML = BrowseCardViewSwitcher.placeholders?.showMore || 'Show more';
+          toggleBtn.classList.remove('show-less');
+          toggleBtn.classList.add('show-more');
+        }
+      };
+
+      toggleBtn.addEventListener('click', toggleHandler);
+      this.eventListeners.push({ element: toggleBtn, type: 'click', handler: toggleHandler });
+
+      cardContent.appendChild(toggleBtn);
     }
-
-    const showMoreHandler = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
-    };
-
-    const showLessHandler = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
-    };
-
-    showMoreBtn.addEventListener('click', showMoreHandler);
-    showLessBtn.addEventListener('click', showLessHandler);
-
-    this.eventListeners.push({ element: showMoreBtn, type: 'click', handler: showMoreHandler });
-    this.eventListeners.push({ element: showLessBtn, type: 'click', handler: showLessHandler });
   }
 
   /**
