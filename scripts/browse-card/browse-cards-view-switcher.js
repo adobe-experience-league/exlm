@@ -102,7 +102,7 @@ export default class BrowseCardViewSwitcher {
 
     if (!description || !cardContent || !card.classList.contains('upcoming-event-card')) return;
 
-    if (cardContent.querySelector('.show-more') || cardContent.querySelector('.show-less')) return;
+    if (cardContent.querySelector('.show-more, .show-less')) return;
 
     // Calculate if the description has more than 2 lines
     const computedStyle = window.getComputedStyle(description);
@@ -110,35 +110,33 @@ export default class BrowseCardViewSwitcher {
     const height = description.offsetHeight;
     const lines = Math.round(height / lineHeight);
 
-    if (lines > 2) {
-      description.classList.add('text-expanded');
+    if (lines <= 2) return;
 
-      const toggleBtn = document.createElement('span');
-      toggleBtn.classList.add('show-more');
-      toggleBtn.innerHTML = BrowseCardViewSwitcher.placeholders?.showMore || 'Show more';
+    description.classList.add('text-expanded');
 
-      const toggleHandler = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+    const placeholders = BrowseCardViewSwitcher.placeholders || {};
+    const SHOW_MORE = placeholders.showMore || 'Show more';
+    const SHOW_LESS = placeholders.showLess || 'Show Less';
 
-        BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
+    const toggleBtn = document.createElement('span');
+    toggleBtn.className = 'show-more';
+    toggleBtn.innerHTML = SHOW_MORE;
 
-        if (card.classList.contains('expanded')) {
-          toggleBtn.innerHTML = BrowseCardViewSwitcher.placeholders?.showLess || 'Show Less';
-          toggleBtn.classList.remove('show-more');
-          toggleBtn.classList.add('show-less');
-        } else {
-          toggleBtn.innerHTML = BrowseCardViewSwitcher.placeholders?.showMore || 'Show more';
-          toggleBtn.classList.remove('show-less');
-          toggleBtn.classList.add('show-more');
-        }
-      };
+    const toggleHandler = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-      toggleBtn.addEventListener('click', toggleHandler);
-      this.eventListeners.push({ element: toggleBtn, type: 'click', handler: toggleHandler });
+      BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
 
-      cardContent.appendChild(toggleBtn);
-    }
+      const expanded = card.classList.contains('expanded');
+      toggleBtn.innerHTML = expanded ? SHOW_LESS : SHOW_MORE;
+      toggleBtn.className = expanded ? 'show-less' : 'show-more';
+    };
+
+    toggleBtn.addEventListener('click', toggleHandler);
+    this.eventListeners.push({ element: toggleBtn, type: 'click', handler: toggleHandler });
+
+    cardContent.appendChild(toggleBtn);
   }
 
   /**
