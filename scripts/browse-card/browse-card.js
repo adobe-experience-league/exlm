@@ -591,12 +591,12 @@ document.querySelectorAll('.upcoming-event-v2, .upcoming-event').forEach((contai
         const card = e.target.closest('.browse-card');
         if (!card?.classList?.contains('upcoming-event-card')) return;
         const element = card.closest('a')?.parentElement;
-        if (!element?._model) return;
+        if (!element?.cardModel) return;
         const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
 
         // Determine which event to trigger based on the button's class name
         const eventName = e.target.classList.contains('show-more') ? 'browseCardShowMore' : 'browseCardShowLess';
-        pushBrowseCardClickEvent(eventName, element._model, cardHeader, cardPosition);
+        pushBrowseCardClickEvent(eventName, element.cardModel, cardHeader, cardPosition);
       }
     },
     true,
@@ -846,7 +846,7 @@ export async function buildCard(element, model) {
   }
 
   // Store the model data on the element for access by the view switcher events
-  element._model = model;
+  element.cardModel = model;
 
   // Browse card click event handler
   element.querySelector('a')?.addEventListener('click', (e) => {
