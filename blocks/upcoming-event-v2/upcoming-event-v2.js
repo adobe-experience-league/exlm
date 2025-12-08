@@ -51,7 +51,7 @@ export default async function decorate(block) {
     if (browseCardsContent?.length) {
       browseCardsContent.forEach((cardData) => {
         const cardDiv = document.createElement('div');
-        buildCard(contentDiv, cardDiv, cardData);
+        buildCard(cardDiv, cardData);
         contentDiv.appendChild(cardDiv);
       });
       block.appendChild(contentDiv);

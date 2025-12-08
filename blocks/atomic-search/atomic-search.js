@@ -158,6 +158,7 @@ export default function decorate(block) {
         Event: placeholders.searchContentTypeEventLabel || 'Event',
         Playlist: placeholders.searchContentTypePlaylistLabel || 'Playlist',
         Course: placeholders.searchContentTypeCourseLabel || 'Course',
+        'upcoming-event': placeholders.searchContentTypeUpcomingEventLabel || 'Upcoming Event',
         Perspective: placeholders.searchContentTypePerspectiveLabel || 'Perspective',
         Certification: placeholders.searchContentTypeCertificationLabel || 'Certification',
         Blogs: placeholders.searchContentTypeCommunityBlogsLabel || 'Blogs',

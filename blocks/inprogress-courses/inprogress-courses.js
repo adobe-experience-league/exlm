@@ -19,7 +19,7 @@ export default function decorate(block) {
 
     coursesToRender.forEach((cardData) => {
       const cardDiv = document.createElement('div');
-      buildCard(contentDiv, cardDiv, cardData);
+      buildCard(cardDiv, cardData);
       fragment.appendChild(cardDiv);
     });
 

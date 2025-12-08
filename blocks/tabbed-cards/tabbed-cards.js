@@ -18,6 +18,7 @@ const urlMap = {
   certification: `/${lang}/certification-home`,
   perspective: `/${lang}/perspectives`,
   course: `/${lang}/courses`,
+  'upcoming-event': `/${lang}/events`,
 };
 
 /**
@@ -108,7 +109,7 @@ export default async function decorate(block) {
           for (let i = 0; i < Math.min(numberOfResults, data.length); i += 1) {
             const cardData = data[i];
             const cardDiv = document.createElement('div');
-            buildCard(contentDiv, cardDiv, cardData);
+            buildCard(cardDiv, cardData);
             contentDiv.appendChild(cardDiv);
           }
           // Append content div to shimmer card parent and decorate icons
