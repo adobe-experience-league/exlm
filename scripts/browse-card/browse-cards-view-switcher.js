@@ -1,5 +1,7 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
+import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
+import { getCardHeaderAndPosition } from './browse-card.js';
 
 export default class BrowseCardViewSwitcher {
   static placeholders = {};
@@ -120,7 +122,7 @@ export default class BrowseCardViewSwitcher {
     const height = description.offsetHeight;
     const lines = Math.round(height / lineHeight);
 
-    if (lines > 2) {
+    if (lines > 0) {
       description.classList.add('text-expanded');
     } else {
       showMoreBtn.style.display = 'none';
@@ -131,12 +133,28 @@ export default class BrowseCardViewSwitcher {
       e.preventDefault();
       e.stopPropagation();
       BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
+
+      // Show more event for analytics
+      const cardElement = card.closest('a')?.parentElement;
+      if (cardElement) {
+        const cardData = this.getCardDataForAnalytics(card);
+        const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, cardElement);
+        pushBrowseCardClickEvent('browseCardShowMore', cardData, cardHeader, cardPosition);
+      }
     };
 
     const showLessHandler = (e) => {
       e.preventDefault();
       e.stopPropagation();
       BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
+
+      // Show less event for analytics
+      const cardElement = card.closest('a')?.parentElement;
+      if (cardElement) {
+        const cardData = this.getCardDataForAnalytics(card);
+        const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, cardElement);
+        pushBrowseCardClickEvent('browseCardShowLess', cardData, cardHeader, cardPosition);
+      }
     };
 
     showMoreBtn.addEventListener('click', showMoreHandler);
@@ -409,6 +427,41 @@ export default class BrowseCardViewSwitcher {
   /**
    * Destroy the view switcher instance
    */
+  /**
+   * Get card data for analytics tracking
+   * @param {HTMLElement} card - The card element
+   * @returns {Object} Card data for analytics
+   */
+  getCardDataForAnalytics(card) {
+    const title = card.querySelector('.browse-card-title-text')?.textContent || '';
+    const contentType =
+      Array.from(card.classList)
+        .find((cls) => cls.endsWith('-card') && cls !== 'browse-card')
+        ?.replace('-card', '') || '';
+    const viewLink = card.closest('a')?.getAttribute('href') || '';
+
+    // Get product information
+    let product = [];
+    const productElement = card.querySelector('.browse-card-solution-text');
+    const tooltipText = card.querySelector('.tooltip-text');
+
+    if (tooltipText) {
+      // If there's a tooltip, it contains the full list of solutions
+      const fullSolutionText = tooltipText.textContent.trim();
+      product = fullSolutionText.split(',').map((s) => s.trim());
+    } else if (productElement) {
+      // Otherwise use the text from the product element
+      product = [productElement.textContent.trim()];
+    }
+
+    return {
+      title,
+      contentType,
+      viewLink,
+      product,
+    };
+  }
+
   destroy() {
     this.removeEventListeners();
     if (this.resizeObserver) {

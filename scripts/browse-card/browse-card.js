@@ -281,7 +281,7 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
 const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
 // Function to calculate cardHeader and cardPosition
-const getCardHeaderAndPosition = (card, element) => {
+export const getCardHeaderAndPosition = (card, element) => {
   let cardHeader = '';
   const currentBlock = card.closest('.block');
   const headerEl = currentBlock?.querySelector(
