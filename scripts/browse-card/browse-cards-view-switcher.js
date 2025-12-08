@@ -122,7 +122,7 @@ export default class BrowseCardViewSwitcher {
     const height = description.offsetHeight;
     const lines = Math.round(height / lineHeight);
 
-    if (lines > 0) {
+    if (lines > 2) {
       description.classList.add('text-expanded');
     } else {
       showMoreBtn.style.display = 'none';
@@ -137,7 +137,7 @@ export default class BrowseCardViewSwitcher {
       // Show more event for analytics
       const cardElement = card.closest('a')?.parentElement;
       if (cardElement) {
-        const cardData = this.getCardDataForAnalytics(card);
+        const cardData = BrowseCardViewSwitcher.getCardDataForAnalytics(card);
         const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, cardElement);
         pushBrowseCardClickEvent('browseCardShowMore', cardData, cardHeader, cardPosition);
       }
@@ -151,7 +151,7 @@ export default class BrowseCardViewSwitcher {
       // Show less event for analytics
       const cardElement = card.closest('a')?.parentElement;
       if (cardElement) {
-        const cardData = this.getCardDataForAnalytics(card);
+        const cardData = BrowseCardViewSwitcher.getCardDataForAnalytics(card);
         const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, cardElement);
         pushBrowseCardClickEvent('browseCardShowLess', cardData, cardHeader, cardPosition);
       }
@@ -432,7 +432,7 @@ export default class BrowseCardViewSwitcher {
    * @param {HTMLElement} card - The card element
    * @returns {Object} Card data for analytics
    */
-  getCardDataForAnalytics(card) {
+  static getCardDataForAnalytics(card) {
     const title = card.querySelector('.browse-card-title-text')?.textContent || '';
     const contentType =
       Array.from(card.classList)
