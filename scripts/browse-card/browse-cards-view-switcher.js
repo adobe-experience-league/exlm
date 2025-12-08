@@ -98,8 +98,9 @@ export default class BrowseCardViewSwitcher {
    * Helper function to track card events
    * @param {HTMLElement} card - The card element
    * @param {string} eventName - The event name to track
+   * @static
    */
-  trackCardEvent(card, eventName) {
+  static trackCardEvent(card, eventName) {
     const cardElement = card.closest('a')?.parentElement || card.parentElement;
 
     // Get product data and compute solution and fullSolution
@@ -162,14 +163,14 @@ export default class BrowseCardViewSwitcher {
       e.preventDefault();
       e.stopPropagation();
       BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
-      this.trackCardEvent(card, 'browseCardShowMore');
+      BrowseCardViewSwitcher.trackCardEvent(card, 'browseCardShowMore');
     };
 
     const showLessHandler = (e) => {
       e.preventDefault();
       e.stopPropagation();
       BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
-      this.trackCardEvent(card, 'browseCardShowLess');
+      BrowseCardViewSwitcher.trackCardEvent(card, 'browseCardShowLess');
     };
 
     showMoreBtn.addEventListener('click', showMoreHandler);

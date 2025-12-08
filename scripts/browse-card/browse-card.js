@@ -871,9 +871,7 @@ export async function buildCard(element, model) {
     model.solution = solution;
     model.fullSolution = fullSolution;
 
-    const headerAndPosition = cardHeaderAndPosition(card, element);
-    const cardHeader = headerAndPosition.cardHeader;
-    const cardPosition = headerAndPosition.cardPosition;
+    const { cardHeader, cardPosition } = cardHeaderAndPosition(card, element);
 
     const cardOptions = card.querySelector('.browse-card-options');
     if (cardOptions) {
