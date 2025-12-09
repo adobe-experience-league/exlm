@@ -27,7 +27,7 @@ const formatOnDemandEventDate = (dateString) => {
  * @param {HTMLElement} params.cardContent - Card content element
  * @param {HTMLElement} params.card - Card element
  */
-const buildOnDemandEventContent = ({ event, contentType, cardContent, card }) => {
+const buildOnDemandEventContent = ({ event, cardContent, card }) => {
   const { time, duration } = event;
   const durationText = duration || '30 min';
   const formattedDateTime = formatOnDemandEventDate(time);
