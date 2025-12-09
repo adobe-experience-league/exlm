@@ -4,7 +4,7 @@ function generateFilteredEventURL(filterType, label) {
     product: 'f-el_product',
     series: 'f-el_event_series',
   };
-  
+
   const key = filterType?.toLowerCase();
   const mappedFilter = filterMap[key];
 
