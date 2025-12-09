@@ -7,9 +7,9 @@
   padding-bottom: 3em;
   max-width: 1700px;
   background-color: #fff;
+  overflow-x: hidden;
 
   --desktop-column-gap: 24px;
-  --highlight-light-background-color: #fff;
 }
 
 .on-demand-event main > div.section:first-child {
@@ -23,9 +23,23 @@
   }
 }
 
+.on-demand-event .section .breadcrumbs-wrapper {
+  background-color: #fff;
+  padding: 32px 20px 0;
+}
+
+.on-demand-event .section .default-content-wrapper,
+.on-demand-event .section .video-transcript-wrapper {
+  padding: 0 20px;
+  background-color: #fff;
+
+  h1 {
+    margin: 16px 0;
+  }
+}
+
 .on-demand-event main > div.section:first-child .embed-wrapper {
   order: -2;
-  margin-left: -20px;
   width: 100vw;
 }
 
@@ -34,7 +48,7 @@
 }
 
 .on-demand-event h1 + p {
-  font-size: 1.25em;
+  font-size: 12px;
   color: var(--spectrum-gray-600); /* must use this for a11y contrast */
   margin: 0 0 1rem;
 }
@@ -47,8 +61,14 @@
   padding: 0;
 }
 
+.on-demand-event .section.event-primary {
+  padding: 0 20px;
+}
+
 .on-demand-event .section.event-primary,
 .on-demand-event .section.event-secondary {
+  background-color: #fff;
+
   h3,
   h2 {
     border-bottom: 2px solid #e0e0e0; /* grey underline */
@@ -58,6 +78,12 @@
     font-size: 22px;
     height: 32px;
   }
+}
+
+.on-demand-event .section.event-secondary {
+  background-color: #f8f8f8;
+  margin: 24px 20px;
+  border-radius: 16px;
 }
 
 @media (min-width: 1024px) {
@@ -73,9 +99,8 @@
 
 @media (min-width: 600px) and (max-width: 1023px) {
   .on-demand-event .section.event-secondary {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    display: flex;
+    background-color: #f8f8f8;
     align-items: stretch; /* Ensure all items in a row match height */
   }
 
@@ -99,6 +124,12 @@
     grid-template-rows: auto auto;
     margin: 58px 0 0 130px;
     gap: var(--desktop-row-gap) var(--desktop-column-gap);
+  }
+
+  .on-demand-event .section .breadcrumbs-wrapper,
+  .on-demand-event .section .default-content-wrapper,
+  .on-demand-event .section .video-transcript-wrapper {
+    padding: 0;
   }
 
   .on-demand-event main > div.section:first-child .embed-wrapper {
