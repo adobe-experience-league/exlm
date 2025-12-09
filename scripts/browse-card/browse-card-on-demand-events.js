@@ -53,6 +53,8 @@ const buildOnDemandEventContent = ({ event, contentType, cardContent, card }) =>
 export const decorateOnDemandEvents = (card, model) => {
   if (!card || !model || model.contentType?.toLowerCase() !== CONTENT_TYPES.EVENT.MAPPING_KEY) return;
 
+  if (card.closest('.recommendation-marquee')) return;
+
   loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-on-demand-events.css`);
 
   const { event } = model;
