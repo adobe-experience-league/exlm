@@ -1,0 +1,20 @@
+.at-a-glance-wrapper p {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.at-a-glance-wrapper p:first-child {
+  margin-top: 18px;
+}
+
+.at-a-glance-wrapper a {
+  text-decoration: underline;
+  color: #1473e6;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.on-demand-event .section.event-secondary .at-a-glance-wrapper {
+  margin: 24px;
+}

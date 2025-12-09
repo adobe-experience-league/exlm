@@ -14,7 +14,15 @@
   .on-demand-event main .section.rail {
     position: relative;
     box-sizing: border-box;
+  }
+
+  .docs main .section.rail {
     padding: 46px 0.75rem 0.75rem;
+  }
+
+  .on-demand-event main .section.rail {
+    padding: 24px;
+    margin-left: 30px;
   }
 
   .docs main .section.rail .rail-content {

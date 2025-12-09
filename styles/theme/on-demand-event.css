@@ -1,13 +1,15 @@
+.on-demand-event {
+  background-color: #fff;
+}
+
 .on-demand-event main {
   display: grid;
-  margin: 0 auto;
-  padding: 0 20px;
   padding-bottom: 3em;
   max-width: 1700px;
   background-color: #fff;
 
-  --desktop-column-gap: 20px;
-  --desktop-row-gap: 15px;
+  --desktop-column-gap: 24px;
+  --highlight-light-background-color: #fff;
 }
 
 .on-demand-event main > div.section:first-child {
@@ -34,8 +36,7 @@
 .on-demand-event h1 + p {
   font-size: 1.25em;
   color: var(--spectrum-gray-600); /* must use this for a11y contrast */
-  margin-top: 0.5em;
-  margin-bottom: 1.5em;
+  margin: 0 0 1rem;
 }
 
 .on-demand-event main > div.right-rail {
@@ -51,9 +52,11 @@
   h3,
   h2 {
     border-bottom: 2px solid #e0e0e0; /* grey underline */
-    padding-bottom: 15px;
+    padding-bottom: 10px;
     line-height: 40px;
-    margin-bottom: 15px;
+    margin: 0;
+    font-size: 22px;
+    height: 32px;
   }
 }
 
@@ -61,6 +64,10 @@
   .on-demand-event main > div.section:first-child .embed-wrapper {
     margin-left: unset;
     width: unset;
+  }
+
+  .on-demand-event .section .breadcrumbs-wrapper {
+    margin-bottom: 32px;
   }
 }
 
@@ -88,8 +95,9 @@
 @media (min-width: 1024px) {
   .on-demand-event main {
     display: grid;
-    grid-template-columns: 2fr 4fr 1fr;
+    grid-template-columns: 2fr 4fr 1.5fr;
     grid-template-rows: auto auto;
+    margin: 58px 0 0 130px;
     gap: var(--desktop-row-gap) var(--desktop-column-gap);
   }
 
@@ -102,6 +110,7 @@
     grid-column: 1 / span 2; /* span 2 columns */
     grid-row: 1;
     width: 100%;
+    background-color: #fff;
   }
 
   .on-demand-event .section.event-primary,
@@ -115,12 +124,38 @@
     grid-column: 1; /* first half */
     grid-row: 2;
     border-radius: 16px;
-    padding: 24px;
+    margin: 24px 24px 24px 0;
+    height: fit-content;
+    background-color: #f8f8f8;
   }
 
   .on-demand-event .section.event-primary {
     grid-column: 2; /* second half */
     grid-row: 2;
+    background-color: #fff;
+
+    .default-content-wrapper {
+      margin-top: 16px;
+
+      h2 {
+        color: #000;
+        font-size: 18px;
+      }
+
+      p {
+        margin: 24px 0 32px;
+      }
+    }
+
+    .list-wrapper {
+      ul {
+        margin-left: 16px;
+      }
+
+      li {
+        margin: 16px 0;
+      }
+    }
   }
 
   /* Event Right Rail */
@@ -152,6 +187,6 @@
   }
 
   .on-demand-event main.rail-right-closed {
-    grid-template-columns: 0 5fr 0;
+    grid-template-columns: 2fr 4fr;
   }
 }
