@@ -634,6 +634,7 @@ function setupStatusDropdownHandler(dropdown, block, shimmer, state) {
 /**
  * Updates the status dropdown with new options based on current course data
  * Recreates the dropdown and sets up its handler
+ * Preserves previously selected status filters if they still exist in new options
  * @param {HTMLElement} block - The main block element
  * @param {Array} courseData - Current course data
  * @param {BrowseCardShimmer} shimmer - The shimmer loading instance
@@ -669,6 +670,32 @@ function updateStatusDropdown(block, courseData, shimmer, state) {
 
   // Setup handler for new dropdown
   setupStatusDropdownHandler(statusDropdown, block, shimmer, state);
+
+  // Restore previously selected status filters if they still exist in new options
+  if (state.currentStatusFilters?.length > 0) {
+    const availableValues = statusList.map((option) => option.value);
+    const validFilters = state.currentStatusFilters.filter((status) => availableValues.includes(status));
+
+    if (validFilters.length > 0) {
+      // Update checkbox states directly without triggering events
+      validFilters.forEach((statusValue) => {
+        const checkbox = statusContainer.querySelector(`input[type="checkbox"][value="${statusValue}"]`);
+        if (checkbox) {
+          checkbox.checked = true;
+        }
+      });
+
+      // Update dropdown's data-selected attribute
+      statusDropdown.dropdown.dataset.selected = validFilters.join(',');
+
+      // Update button label to show count
+      const buttonLabel = statusDropdown.dropdown.querySelector('button > span.custom-filter-dropdown-name');
+      if (buttonLabel) {
+        const statusLabel = placeholders?.filterCourseStatusLabel || 'Status';
+        buttonLabel.textContent = `${statusLabel} (${validFilters.length})`;
+      }
+    }
+  }
 
   return statusDropdown;
 }
