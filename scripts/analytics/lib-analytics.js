@@ -999,3 +999,35 @@ export function pushBrowseFilterSearchClearEvent(searchType, filterType, filterV
 
   window.adobeDataLayer.push(dataLayerEntry);
 }
+
+/**
+ * Pushes a grid toggle event to the Adobe Data Layer.
+ * This event is fired when users switch to grid view.
+ * @param {string} cardHeader - The header associated with the block.
+ */
+export function pushGridToggleEvent(cardHeader) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'browseCardGridToggle',
+    link: {
+      linkType: cardHeader,
+    },
+  });
+}
+
+/**
+ * Pushes a list toggle event to the Adobe Data Layer.
+ * This event is fired when users switch to list view.
+ * @param {string} cardHeader - The header associated with the block.
+ */
+export function pushListToggleEvent(cardHeader) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'browseCardListToggle',
+    link: {
+      linkType: cardHeader,
+    },
+  });
+}
