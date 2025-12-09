@@ -796,8 +796,10 @@ export default async function decorate(block) {
           context: showDefaultOptions ? {} : { interests: [interest], experience: [expLevel], role: profileRoles },
         };
 
-        // Only add role if content type is not upcoming-event
-        if (contentTypes.indexOf('upcoming-event') === -1) {
+        // exclude role property if all content types are upcoming-event
+        const onlyUpcomingEvents = contentTypes.length > 0 && contentTypes.every((type) => type === 'upcoming-event');
+
+        if (!onlyUpcomingEvents) {
           params.role = role?.length ? role : profileRoles;
         }
 
