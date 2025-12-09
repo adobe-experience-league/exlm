@@ -829,7 +829,6 @@ export default async function decorate(block) {
           product: clonedProducts,
           feature: showDefaultOptions && features.length ? [...new Set(features)] : null,
           version: showDefaultOptions && versions.length ? [...new Set(versions)] : null,
-          role: role?.length ? role : profileRoles,
           sortCriteria,
           noOfResults: numberOfResults,
           aq:
@@ -838,6 +837,11 @@ export default async function decorate(block) {
               : undefined,
           context: showDefaultOptions ? {} : { interests: [interest], experience: [expLevel], role: profileRoles },
         };
+
+        // Only add role if content type is not upcoming-event
+        if (contentTypes.indexOf('upcoming-event') === -1) {
+          params.role = role?.length ? role : profileRoles;
+        }
 
         if (args.renderCards) {
           resetContentDiv(contentDiv);
