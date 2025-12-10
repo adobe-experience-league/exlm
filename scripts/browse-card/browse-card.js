@@ -840,10 +840,8 @@ export async function buildCard(element, model) {
 
     // show more/less anlytics events
     if (e.target?.classList?.contains('show-more') || e.target?.classList?.contains('show-less')) {
-      if (card?.classList?.contains('upcoming-event-card')) {
-        const eventName = e.target.classList.contains('show-less') ? 'browseCardShowMore' : 'browseCardShowLess';
-        pushBrowseCardClickEvent(eventName, model, cardHeader, cardPosition);
-      }
+      const eventName = e.target.classList.contains('show-less') ? 'browseCardShowMore' : 'browseCardShowLess';
+      pushBrowseCardClickEvent(eventName, model, cardHeader, cardPosition);
       return;
     }
 
