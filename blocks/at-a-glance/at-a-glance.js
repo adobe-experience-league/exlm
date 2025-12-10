@@ -6,21 +6,16 @@ function generateFilteredEventURL(filterType, label, baseURL) {
     series: 'f-el_event_series',
   };
 
-  const key = filterType?.toLowerCase();
-  const mappedFilter = filterMap[key];
-
-  if (!mappedFilter) {
-    return baseURL;
-  }
-  return `${baseURL}#${mappedFilter}=${encodeURIComponent(label)}`;
+  const mappedFilter = filterMap[filterType?.toLowerCase()];
+  return mappedFilter ? `${baseURL}#${mappedFilter}=${encodeURIComponent(label)}` : baseURL;
 }
 
 export default function decorate(block) {
   const pTags = block.querySelectorAll('.at-a-glance-wrapper p');
 
-  const { cdnOrigin } = getConfig();
+  const { eventsURL } = getConfig();
 
-  pTags.forEach((p) => {
+  pTags?.forEach((p) => {
     const text = p.textContent;
     const [label, values] = text.split(':');
 
@@ -34,7 +29,7 @@ export default function decorate(block) {
     items.forEach((value, index) => {
       const a = document.createElement('a');
       a.textContent = value;
-      a.href = generateFilteredEventURL(label, value, `${cdnOrigin}/en/test-folder/events`);
+      a.href = generateFilteredEventURL(label, value, eventsURL);
       a.target = '_blank';
       p.appendChild(a);
       if (index < items.length - 1) {

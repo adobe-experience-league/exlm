@@ -1,6 +1,6 @@
 .at-a-glance-wrapper p {
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-100);
   margin-bottom: 10px;
 }
 
@@ -11,10 +11,6 @@
 .at-a-glance-wrapper a {
   text-decoration: underline;
   color: var(--non-spectrum-navy-blue);
-  font-weight: 500;
-  font-size: 14px;
-}
-
-.on-demand-event .section.event-secondary .at-a-glance-wrapper {
-  margin: 24px;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--spectrum-font-size-100);
 }

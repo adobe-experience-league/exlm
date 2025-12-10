@@ -834,6 +834,8 @@ export function getConfig() {
       : `https://experienceleaguecommunities-dev.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`,
     // MPC API Base
     mpcApiBase: `https://api.tv.adobe.com/videos`,
+    // Events URL
+    eventsURL: `${cdnOrigin}/${lang}/test-folder/events`,
   };
   return window.exlm.config;
 }

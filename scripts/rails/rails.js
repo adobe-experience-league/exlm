@@ -39,8 +39,7 @@ async function decorateRail(railSection, position) {
 export default async function decorateRails() {
   const main = document.querySelector('main');
   const leftRail = document.querySelector('main .toc-container');
-  const rightRail = document.querySelector('main .mini-toc-container');
-  const eventRightRail = document.querySelector('main .event-rail');
+  const rightRail = document.querySelector('main .mini-toc-container, main .event-rail');
 
   if (leftRail) {
     await decorateRail(leftRail, 'left');
@@ -50,10 +49,6 @@ export default async function decorateRails() {
 
   if (rightRail) {
     await decorateRail(rightRail, 'right');
-  } else if (eventRightRail) {
-    await decorateRail(eventRightRail, 'right');
-    main.classList.remove('rail-right-closed');
-    main.classList.remove('rail-left-closed');
   } else {
     main.classList.add('rail-right-closed');
   }
