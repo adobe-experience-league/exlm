@@ -777,6 +777,13 @@ export async function buildCard(element, model) {
       return;
     }
 
+    // show more/less anlytics events
+    if (e.target?.classList?.contains('show-more') || e.target?.classList?.contains('show-less')) {
+      const eventName = e.target.classList.contains('show-less') ? 'browseCardShowMore' : 'browseCardShowLess';
+      pushBrowseCardClickEvent(eventName, model, cardHeader, cardPosition);
+      return;
+    }
+
     // CTA element click
     if (e.target.closest('.browse-card-cta-element')) {
       pushBrowseCardClickEvent('browseCardCTAClick', model, cardHeader, cardPosition);
