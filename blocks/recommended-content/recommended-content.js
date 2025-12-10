@@ -864,6 +864,11 @@ export default async function decorate(block) {
             if (contentType) {
               payload.contentType = [contentType];
             }
+
+            // Remove role for upcoming-event
+            if (contentType === 'upcoming-event') {
+              payload.role = null;
+            }
             if (contentTypesFetchMap[contentType]) {
               payload.noOfResults = contentTypesFetchMap[contentType];
             }
