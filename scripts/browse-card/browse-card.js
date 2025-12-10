@@ -824,9 +824,6 @@ export async function buildCard(element, model) {
     element.appendChild(card);
   }
 
-  // Store the model data on the element for access by the view switcher events
-  element.cardModel = model;
-
   // Browse card click event handler
   element.querySelector('a')?.addEventListener('click', (e) => {
     const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
