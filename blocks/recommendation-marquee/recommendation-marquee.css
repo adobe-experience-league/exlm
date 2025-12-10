@@ -140,6 +140,8 @@
   align-items: center;
   justify-content: center;
   background-color: unset;
+  flex: 0 0 auto;
+  flex-direction: unset;
 }
 
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card .browse-card-figure {
