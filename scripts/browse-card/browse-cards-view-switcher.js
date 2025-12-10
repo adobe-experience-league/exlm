@@ -124,7 +124,6 @@ export default class BrowseCardViewSwitcher {
 
     const toggleHandler = (e) => {
       e.preventDefault();
-      e.stopPropagation();
 
       BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
 
