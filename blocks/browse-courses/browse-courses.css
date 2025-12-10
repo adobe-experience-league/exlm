@@ -230,7 +230,7 @@
   .browse-courses .browse-card-dropdown {
     align-items: center;
     display: flex;
-    gap: 24px;
+    flex-wrap: wrap;
     width: auto;
     margin: 0;
   }
