@@ -73,6 +73,7 @@ const fieldsToInclude = [
   'el_event_type',
   'el_event_speakers_name',
   'el_event_speakers_profile_picture_url',
+  'el_event_duration',
 ];
 
 let placeholders = {};

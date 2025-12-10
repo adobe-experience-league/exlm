@@ -123,6 +123,27 @@
   order: 2;
 }
 
+/* On demand event cards variant */
+
+.recommendation-marquee .browse-card.event-card {
+  background-color: var(--spectrum-gray-150);
+}
+
+.recommendation-marquee .browse-card.event-card .browse-card-figure {
+  border-radius: 15px 15px 0 0;
+  height: 54px;
+  max-height: 54px;
+  overflow: hidden;
+  position: relative;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: unset;
+  flex: 0 0 auto;
+  flex-direction: unset;
+}
+
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card .browse-card-figure {
   order: 3;
   height: 54px;
