@@ -1300,7 +1300,7 @@ button:focus {
 
 .header .community-action-is-marked {
   position: relative;
-  box-sizing: conten-box;
+  box-sizing: content-box;
 }
 
 .header .community-action-is-marked::before {
@@ -1450,3 +1450,19 @@ profile-block {
   animation: shimmer 1.5s infinite;
   display: inline-block;
 }
+
+/* ====================================================================
+   Gainsight Community Integration (COMM-3306)
+   ==================================================================== */
+
+/* Primary selectors for Gainsight header components
+  TODO: Remove when a Gainsight Option disable this element from UI
+  */
+/* stylelint-disable-next-line */
+.widget-container--header_navigation {
+  display: none !important;
+}
+
+/* ====================================================================
+  End Gainsight Integration
+   ==================================================================== */

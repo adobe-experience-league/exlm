@@ -1,6 +1,7 @@
-import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, htmlToElement, getConfig } from '../../scripts/scripts.js';
 import { isMobile, registerHeaderResizeHandler, simplifySingleCellBlock } from './header-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { buildGainsightSSOUrl } from '../../scripts/gainsight/gainsight-api.js';
 
 const communityLocalesMap = new Map([
   ['de', 'de'],
@@ -171,6 +172,9 @@ export default class ProfileMenu extends HTMLElement {
 
       menuSection(placeholders?.headerLearningLabel || 'Learning', learnLinks);
 
+      const { useGainsightCommunity, gainsightCustomer, communityHost } = getConfig();
+      const platform = useGainsightCommunity ? 'gainsight' : 'khoros';
+
       const communitySection = menuSection(placeholders?.headerCommunityLabel || 'Community', communityPlaceholders);
 
       signoutLink.dataset.id = 'sign-out';
@@ -179,33 +183,53 @@ export default class ProfileMenu extends HTMLElement {
       });
       profileMenuBlock.append(signoutLink);
 
-      fetchCommunityProfileData(this.decoratorOptions.khorosProfileUrl)
-        .then((res) => {
-          if (res) {
-            const communityLinks = communitySection.querySelector('.profile-menu-links');
-            communityLinks.innerHTML = '';
+      // Fetch community profile data with platform parameter (COMM-3306)
+      this.decoratorOptions.defaultProfileClient
+        .fetchCommunityProfileDetails(platform)
+        .then((communityData) => {
+          const communityLinks = communitySection.querySelector('.profile-menu-links');
+          communityLinks.innerHTML = '';
+
+          // Handle empty or missing data
+          if (!communityData || !communityData.menu || communityData.menu.length === 0) {
+            // Fallback: show generic community link
             const locale =
               communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
-            if (res.data.menu.length > 0) {
-              res.data.menu.forEach((item) => {
-                if (item.title && item.url) {
-                  const link = htmlToElement(`<a href="${item.url}" title="">${item.title}</a>`);
-                  communityLinks.append(link);
-                }
-              });
-            } else {
-              const link = htmlToElement(
-                `<a href="https://experienceleaguecommunities.adobe.com/?profile.language=${locale}">${
-                  placeholders?.communityLink || 'Community'
-                }</a>`,
-              );
-              communitySection.appendChild(link);
-            }
+            const fallbackUrl = useGainsightCommunity
+              ? buildGainsightSSOUrl('/', gainsightCustomer)
+              : `https://${communityHost}/?profile.language=${locale}`;
+
+            const fallbackLink = htmlToElement(
+              `<a href="${fallbackUrl}">${placeholders?.communityLink || 'Visit Community'}</a>`,
+            );
+            communityLinks.append(fallbackLink);
+            return;
           }
+
+          // Build links from backend data
+          communityData.menu.forEach((item) => {
+            if (item.title && item.url) {
+              // For Gainsight: wrap relative URLs with SSO
+              // For Khoros: use URLs directly from backend
+              const linkUrl = useGainsightCommunity ? buildGainsightSSOUrl(item.url, gainsightCustomer) : item.url;
+
+              const link = htmlToElement(`<a href="${linkUrl}" title="">${item.title}</a>`);
+              communityLinks.append(link);
+            }
+          });
         })
         .catch((err) => {
+          // Error handling: show fallback link
           /* eslint-disable-next-line no-console */
-          console.error(err);
+          console.error(`[ExL Profile Menu] Error loading ${platform} community links:`, err);
+
+          const communityLinks = communitySection.querySelector('.profile-menu-links');
+          const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
+          const fallbackUrl = useGainsightCommunity
+            ? buildGainsightSSOUrl('/', gainsightCustomer)
+            : `https://${communityHost}/?profile.language=${locale}`;
+
+          communityLinks.innerHTML = `<a href="${fallbackUrl}">${placeholders?.communityFallback || 'Community'}</a>`;
         });
     } else {
       const isProfileMenu = document.querySelector('.profile-menu');

@@ -693,6 +693,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities.adobe.com',
+      gainsightCustomer: 'TBD', // TODO: Customer ID for prod (Because we are behind a custom Adobe domain on prod, need to confirm with Gainsight team)
     },
     {
       env: 'STAGE',
@@ -701,6 +702,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-dev.adobe.com',
+      gainsightCustomer: 'adobedx-en-sandbox', // TODO: Customer ID for stage)
     },
     {
       env: 'DEV',
@@ -709,6 +711,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-dev.adobe.com',
+      gainsightCustomer: 'adobedx-en-sandbox', // TODO: Customer ID for dev
     },
   ];
 
@@ -777,6 +780,21 @@ export function getConfig() {
   const signUpFlowConfigDate = '2024-08-15T00:00:00.762Z';
   const modalReDisplayDuration = '3'; // in months
 
+  // Feature flag: Check query parameter or sessionStorage for Gainsight migration
+  const urlParams = new URLSearchParams(window.location.search);
+  const gainsightQueryParam = urlParams.get('gainsight') === 'true';
+  const gainsightSessionStorage =
+    typeof window.sessionStorage !== 'undefined' && window.sessionStorage.getItem('useGainsight') === 'true';
+  const useGainsightCommunity = gainsightQueryParam || gainsightSessionStorage;
+
+  // If query param is set, persist to sessionStorage for subsequent page loads
+  if (gainsightQueryParam && typeof window.sessionStorage !== 'undefined') {
+    window.sessionStorage.setItem('useGainsight', 'true');
+  }
+
+  const gainsightCustomer = currentEnv?.gainsightCustomer || defaultEnv.gainsightCustomer;
+  const communityPlatform = useGainsightCommunity ? 'gainsight' : 'khoros';
+
   window.exlm = window.exlm || {};
   window.exlm.config = {
     isProd,
@@ -832,6 +850,10 @@ export function getConfig() {
       : `https://experienceleaguecommunities-dev.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`,
     // MPC API Base
     mpcApiBase: `https://api.tv.adobe.com/videos`,
+    // Gainsight community migration (COMM-3306)
+    gainsightCustomer,
+    useGainsightCommunity,
+    communityPlatform,
   };
   return window.exlm.config;
 }

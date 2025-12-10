@@ -169,14 +169,18 @@ class ProfileClient {
   }
 
   // Fetches the community profile details of the specific logged in user
-  async fetchCommunityProfileDetails() {
+  async fetchCommunityProfileDetails(platform = 'khoros') {
     const signedIn = await this.isSignedIn;
     if (!signedIn) return null;
 
     const accountId = (await window.adobeIMS.getProfile()).userId;
 
+    // Add platform parameter to API call for Gainsight migration (COMM-3306)
+    const platformParam = platform === 'gainsight' ? '&platform=gainsight' : '';
+    const apiUrl = `${khorosProfileDetailsUrl}?user=${accountId}${platformParam}`;
+
     try {
-      const response = await fetch(`${khorosProfileDetailsUrl}?user=${accountId}`, {
+      const response = await fetch(apiUrl, {
         method: 'GET',
         headers: {
           'x-ims-token': await window.adobeIMS?.getAccessToken().token,
@@ -187,11 +191,25 @@ class ProfileClient {
         const data = await response.json();
         return data && data.data ? data.data : null;
       }
+
+      // Handle specific error codes
+      if (response.status === 404) {
+        // eslint-disable-next-line no-console
+        console.warn(`[ExL Community] User not found in ${platform} community`);
+
+        return null;
+      }
+
+      // Other errors
+      // eslint-disable-next-line no-console
+      console.error(`[ExL Community] API error: ${response.status} ${response.statusText}`);
+      return null;
     } catch (err) {
-      // eslint-disable-next-line
-      console.log('Error fetching data!!', err);
+      // eslint-disable-next-line no-console
+      console.error(`[ExL Community] Error fetching ${platform} profile data:`, err);
+
+      return null;
     }
-    return null;
   }
 
   /**

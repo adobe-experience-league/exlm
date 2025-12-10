@@ -13,6 +13,7 @@ import {
   fetchGlobalFragment,
   fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
+import { buildGainsightSSOUrl } from '../../scripts/gainsight/gainsight-api.js';
 import getProducts from '../../scripts/utils/product-utils.js';
 import {
   decoratorState,
@@ -687,9 +688,25 @@ class ExlHeader extends HTMLElement {
     options.onSignOut = options.onSignOut || doSignOut;
     options.onSignIn = options.onSignIn || doSignIn;
     options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
+    // Community platform migration (COMM-3306)
+    const { useGainsightCommunity, gainsightCustomer } = getConfig();
+
     options.community = options.community ?? { active: false };
-    options.community.notificationsUrl = options.community.notificationsUrl || '/t5/notificationfeed/page';
-    options.community.messagesUrl = options.community.messagesUrl || '/t5/notes/privatenotespage';
+
+    if (useGainsightCommunity) {
+      // Gainsight: Use SSO URLs for notifications and messages
+      options.community.notificationsUrl =
+        options.community.notificationsUrl || buildGainsightSSOUrl('/notifications', gainsightCustomer);
+
+      options.community.messagesUrl =
+        options.community.messagesUrl || buildGainsightSSOUrl('/inbox/overview', gainsightCustomer);
+    } else {
+      // Khoros: Use existing relative paths (legacy)
+      options.community.notificationsUrl = options.community.notificationsUrl || '/t5/notificationfeed/page';
+
+      options.community.messagesUrl = options.community.messagesUrl || '/t5/notes/privatenotespage';
+    }
+
     options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
     options.lang = options.lang || getPathDetails().lang || 'en';
     options.navLinkOrigin = options.navLinkOrigin || window.location.origin;
