@@ -10,7 +10,7 @@
 
 .at-a-glance-wrapper a {
   text-decoration: underline;
-  color: #1473e6;
+  color: var(--non-spectrum-navy-blue);
   font-weight: 500;
   font-size: 14px;
 }

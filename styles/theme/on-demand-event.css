@@ -1,12 +1,12 @@
 .on-demand-event {
-  background-color: #fff;
+  background-color: var(--color-white);
 }
 
 .on-demand-event main {
   display: grid;
   padding-bottom: 3em;
   max-width: 1700px;
-  background-color: #fff;
+  background-color: var(--color-white);
   overflow-x: hidden;
 
   --desktop-column-gap: 24px;
@@ -24,14 +24,14 @@
 }
 
 .on-demand-event .section .breadcrumbs-wrapper {
-  background-color: #fff;
+  background-color: color(--color-white);
   padding: 32px 20px 0;
 }
 
 .on-demand-event .section .default-content-wrapper,
 .on-demand-event .section .video-transcript-wrapper {
   padding: 0 20px;
-  background-color: #fff;
+  background-color: var(--color-white);
 
   h1 {
     margin: 16px 0;
@@ -67,11 +67,11 @@
 
 .on-demand-event .section.event-primary,
 .on-demand-event .section.event-secondary {
-  background-color: #fff;
+  background-color: var(--color-white);
 
   h3,
   h2 {
-    border-bottom: 2px solid #e0e0e0; /* grey underline */
+    border-bottom: 2px solid var(--non-spectrum-divider-gray); /* grey underline */
     padding-bottom: 10px;
     line-height: 40px;
     margin: 0;
@@ -81,7 +81,7 @@
 }
 
 .on-demand-event .section.event-secondary {
-  background-color: #f8f8f8;
+  background-color: var(--spectrum-gray-100);
   margin: 24px 20px;
   border-radius: 16px;
 }
@@ -100,7 +100,7 @@
 @media (min-width: 600px) and (max-width: 1023px) {
   .on-demand-event .section.event-secondary {
     display: flex;
-    background-color: #f8f8f8;
+    background-color: var(--spectrum-gray-100);
     align-items: stretch; /* Ensure all items in a row match height */
   }
 
@@ -141,7 +141,7 @@
     grid-column: 1 / span 2; /* span 2 columns */
     grid-row: 1;
     width: 100%;
-    background-color: #fff;
+    background-color: var(--color-white);
   }
 
   .on-demand-event .section.event-primary,
@@ -157,19 +157,19 @@
     border-radius: 16px;
     margin: 24px 24px 24px 0;
     height: fit-content;
-    background-color: #f8f8f8;
+    background-color: var(--spectrum-gray-100);
   }
 
   .on-demand-event .section.event-primary {
     grid-column: 2; /* second half */
     grid-row: 2;
-    background-color: #fff;
+    background-color: var(--color-white);
 
     .default-content-wrapper {
       margin-top: 16px;
 
       h2 {
-        color: #000;
+        color: var(--text-color);
         font-size: 18px;
       }
 
@@ -193,18 +193,16 @@
   .on-demand-event main > div.event-rail {
     grid-column: 3; /* 1fr column */
     grid-row: 1 / span 2;
-    background-color: #fff;
+    background-color: var(--color-white);
     display: initial;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    content: 'target content';
     position: relative;
   }
 
   .on-demand-event main > div.event-rail::before {
-    content: 'target content';
     position: absolute;
     left: 50%;
     top: 50%;
@@ -212,7 +210,7 @@
     width: 100%;
     text-align: center;
     font-size: 1.2em;
-    color: #333;
+    color: var(--non-spectrum-grey-333);
     pointer-events: none;
     z-index: 1;
   }
