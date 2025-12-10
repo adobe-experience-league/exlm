@@ -183,25 +183,28 @@ function getLevelFiltersFromUrl() {
 }
 
 /**
- * Updates URL parameters with selected product filters
- * @param {string[]} selectedFilters - Array of selected product filter values
- * @example
- * updateUrlParams(['Analytics', 'Commerce'])
- * // URL becomes: ?product=Analytics,Commerce
- *
- * updateUrlParams([])
- * // URL parameter is removed
+ * Updates a URL parameter and pushes to browser history
+ * @param {string} paramName - The URL parameter name
+ * @param {string[]} values - Array of values to set (empty array removes the param)
  */
-function updateUrlParams(selectedFilters) {
+function pushUrlParam(paramName, values) {
   const url = new URL(window.location);
 
-  if (selectedFilters.length > 0) {
-    url.searchParams.set(URL_PARAMS.FILTERS, selectedFilters.join(','));
+  if (values.length > 0) {
+    url.searchParams.set(paramName, values.join(','));
   } else {
-    url.searchParams.delete(URL_PARAMS.FILTERS);
+    url.searchParams.delete(paramName);
   }
 
   window.history.pushState({}, '', url.toString());
+}
+
+/**
+ * Updates URL parameters with selected product filters
+ * @param {string[]} selectedFilters - Array of selected product filter values
+ */
+function updateUrlParams(selectedFilters) {
+  pushUrlParam(URL_PARAMS.FILTERS, selectedFilters);
 }
 
 /**
@@ -209,15 +212,7 @@ function updateUrlParams(selectedFilters) {
  * @param {string[]} selectedLevels - Array of selected level filter values
  */
 function updateLevelUrlParams(selectedLevels) {
-  const url = new URL(window.location);
-
-  if (selectedLevels.length > 0) {
-    url.searchParams.set(URL_PARAMS.LEVEL, selectedLevels.join(','));
-  } else {
-    url.searchParams.delete(URL_PARAMS.LEVEL);
-  }
-
-  window.history.pushState({}, '', url.toString());
+  pushUrlParam(URL_PARAMS.LEVEL, selectedLevels);
 }
 
 /**
