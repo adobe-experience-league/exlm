@@ -1,5 +1,11 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { decoratePlaceholders, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import {
+  decorateInlineAttributes,
+  decoratePlaceholders,
+  fetchLanguagePlaceholders,
+  getConfig,
+  getPathDetails,
+} from '../../scripts/scripts.js';
 
 import {
   generateVisualConfig,
@@ -212,7 +218,21 @@ function html(content, placeholders) {
         </div>`;
 }
 
-export default async function decorate(block) {
+async function fetchSlideById(slideId) {
+  const { lang } = getPathDetails();
+  const { cdnOrigin } = getConfig();
+  try {
+    const response = await fetch(`${cdnOrigin}/api/v2/slides/${slideId}?lang=${lang}`);
+    const json = await response.json();
+    return json.data;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching slides data', error);
+    return null;
+  }
+}
+
+async function renderSlideBlock(block) {
   import('../../scripts/coachmark/coachmark.js'); // async load it.
 
   // Set default autoplay preference if not already set
@@ -350,4 +370,30 @@ export default async function decorate(block) {
   decorateIcons(block);
   decoratePlaceholders(block);
   return block;
+}
+
+export default async function decorate(block) {
+  const slideId = block.childElementCount === 1 ? block.firstElementChild.textContent?.trim() : '';
+  if (slideId) {
+    block.classList.add('hide-slides');
+    fetchSlideById(slideId).then((slideResponse) => {
+      const htmlContent = slideResponse?.transformedContent?.find(
+        (content) => content.contentType === 'text/html',
+      )?.raw;
+      if (!htmlContent) {
+        return;
+      }
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlContent, 'text/html');
+      const contentElement = doc.querySelector('.slides');
+      if (contentElement) {
+        decorateInlineAttributes(contentElement);
+        block.innerHTML = contentElement.innerHTML;
+        block.classList.remove('hide-slides');
+        renderSlideBlock(block);
+      }
+    });
+  } else {
+    renderSlideBlock(block);
+  }
 }

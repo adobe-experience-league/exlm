@@ -4,6 +4,7 @@ import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import BrowseCardViewSwitcher from '../../scripts/browse-card/browse-cards-view-switcher.js';
+import { loadCSS } from '../../scripts/lib-franklin.js';
 
 export default async function decorate(block) {
   const [headingElement, descriptionElement] = [...block.children].map((row) => row.firstElementChild);
@@ -11,6 +12,7 @@ export default async function decorate(block) {
   // Clear the block content
   block.innerHTML = '';
   block.classList.add('upcoming-event-block');
+  block.classList.add('browse-cards-block');
 
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
@@ -30,36 +32,35 @@ export default async function decorate(block) {
     viewSwitcher.appendTo(headerDiv);
   });
 
-  // Create content div for cards
+  await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-upcoming-events.css`);
+
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');
 
-  // Fetch upcoming events data from Coveo
+  const buildCardsShimmer = new BrowseCardShimmer();
+  buildCardsShimmer.addShimmer(block);
+
   const parameters = {
     contentType: [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY],
     sortCriteria: 'date ascending',
   };
 
-  const buildCardsShimmer = new BrowseCardShimmer();
-  buildCardsShimmer.addShimmer(block);
+  BrowseCardsDelegate.fetchCardData(parameters)
+    .then((results) => {
+      buildCardsShimmer.removeShimmer();
 
-  try {
-    // Fetch upcoming events data from Coveo
-    const browseCardsContent = await BrowseCardsDelegate.fetchCardData(parameters);
-    buildCardsShimmer.removeShimmer();
+      if (!results?.length) return;
 
-    if (browseCardsContent?.length) {
-      browseCardsContent.forEach((cardData) => {
+      results.forEach((cardData) => {
         const cardDiv = document.createElement('div');
-        buildCard(contentDiv, cardDiv, cardData);
+        buildCard(cardDiv, cardData);
         contentDiv.appendChild(cardDiv);
       });
       block.appendChild(contentDiv);
-    }
-  } catch (err) {
-    buildCardsShimmer.removeShimmer();
-    // eslint-disable-next-line no-console
-    console.error('Error loading upcoming event cards:', err);
-    // Exit early if there's an error
-  }
+    })
+    .catch((err) => {
+      buildCardsShimmer.removeShimmer();
+      // eslint-disable-next-line no-console
+      console.error('Error loading upcoming event cards:', err);
+    });
 }

@@ -858,9 +858,13 @@ export default function atomicResultHandler(block, placeholders) {
           li.innerHTML = '';
           li.appendChild(link);
         });
-
+        const rawContentType = resultEl.result?.result?.raw?.el_contenttype;
+        const contentTypeValues = Array.isArray(rawContentType) ? structuredClone(rawContentType) : null;
         contentTypeElements.forEach((contentTypeEl) => {
-          const contentType = contentTypeEl.textContent.toLowerCase().trim();
+          const isSeparator = contentTypeEl?.className.includes('separator');
+          const contentTypeValue =
+            Array.isArray(contentTypeValues) && !isSeparator ? contentTypeValues.shift() : rawContentType;
+          const contentType = isSeparator ? '' : (contentTypeValue || contentTypeEl.textContent).toLowerCase().trim();
           if (contentType.includes('|')) {
             contentTypeEl.style.cssText = `display: none !important`;
             const slotEl = contentTypeEl.firstElementChild;

@@ -357,7 +357,7 @@ export default async function decorate(block) {
         });
     });
 
-  const renderCardsBlock = (cardModels, payloadConfig, contentDiv) => {
+  const renderCardsBlock = (cardModels, payloadConfig) => {
     const { renderCards = true, lowercaseOptionType, targetSupport } = payloadConfig;
     const cardModelsToRender = cardModels
       .filter((model, index) => {
@@ -418,7 +418,7 @@ export default async function decorate(block) {
                     if (cardModel && cardModel.id) {
                       dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardModel.id);
                     }
-                    buildCard(contentDiv, wrapperDiv, cardModel);
+                    buildCard(wrapperDiv, cardModel);
                   }
                   cardModelsList.push(cardModel);
                 });
@@ -435,7 +435,7 @@ export default async function decorate(block) {
               if (cardData.id) {
                 dataConfiguration[lowercaseOptionType].renderedCardIds.push(cardData.id);
               }
-              buildCard(contentDiv, cardDiv, cardData);
+              buildCard(cardDiv, cardData);
             }
             resolve([cardData]);
           }
@@ -840,7 +840,7 @@ export default async function decorate(block) {
                   const cardModels = await parseCardResponseData(resp, payloadConfig);
                   let renderedCardModels = [];
                   if (cardModels?.length) {
-                    const targetCardRenderPromises = renderCardsBlock(cardModels, payloadConfig, contentDiv);
+                    const targetCardRenderPromises = renderCardsBlock(cardModels, payloadConfig);
                     renderedCardModels = await Promise.all(targetCardRenderPromises);
                   }
                   resolve({
@@ -863,6 +863,11 @@ export default async function decorate(block) {
             };
             if (contentType) {
               payload.contentType = [contentType];
+            }
+
+            // Remove role for upcoming-event
+            if (contentType === 'upcoming-event') {
+              payload.role = null;
             }
             if (contentTypesFetchMap[contentType]) {
               payload.noOfResults = contentTypesFetchMap[contentType];
@@ -905,7 +910,7 @@ export default async function decorate(block) {
                 const cardModels = await parseCardResponseData(resp, payloadConfig);
                 let renderedCardModels = [];
                 if (cardModels?.length) {
-                  const renderPromises = renderCardsBlock(cardModels, payloadConfig, contentDiv);
+                  const renderPromises = renderCardsBlock(cardModels, payloadConfig);
                   renderedCardModels = await Promise.all(renderPromises);
                 }
                 resolve({
@@ -937,12 +942,12 @@ export default async function decorate(block) {
               cardsToBeReplaced.forEach((responseInfo) => {
                 const { data = [] } = responseInfo;
 
-                data.forEach(({ shimmers, wrappers, contentDiv: contentWrapper }) => {
+                data.forEach(({ shimmers, wrappers }) => {
                   wrappers.forEach((wrapper, index) => {
                     const model = getSavedCardModel(dataConfiguration, lowercaseOptionType);
                     shimmers[index].removeShimmer();
                     if (model) {
-                      cardReplacementPromises.push(buildCard(contentWrapper, wrapper, model));
+                      cardReplacementPromises.push(buildCard(wrapper, model));
                     }
                   });
                 });

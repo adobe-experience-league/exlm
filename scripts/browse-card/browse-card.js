@@ -11,6 +11,7 @@ import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
+import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 const bookmarkExclusionContentypes = [
   CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
@@ -280,7 +281,33 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
 
 const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
-const buildCardContent = async (card, model) => {
+// Function to calculate cardHeader and cardPosition
+const getCardHeaderAndPosition = (card, element) => {
+  let cardHeader = '';
+  const currentBlock = card.closest('.block');
+  const headerEl = currentBlock?.querySelector(
+    '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
+  );
+  if (headerEl) {
+    const cloned = headerEl.cloneNode(true);
+    // Remove any PII or masked spans
+    cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
+    // Get cleaned text
+    cardHeader = cloned.innerText.trim();
+  }
+
+  cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
+
+  let cardPosition = '';
+  if (element?.parentElement?.children) {
+    const siblings = Array.from(element.parentElement.children);
+    cardPosition = String(siblings.indexOf(element) + 1);
+  }
+
+  return { cardHeader, cardPosition };
+};
+
+const buildCardContent = async (card, model, element) => {
   const {
     id,
     description,
@@ -408,6 +435,20 @@ const buildCardContent = async (card, model) => {
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
     copyConfig: failedToLoad ? false : undefined,
     trackingInfo,
+    bookmarkCallback: (linkType, position) => {
+      // Calculate cardHeader and cardPosition dynamically when callback is called
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+      const finalLinkType = linkType || cardHeader || '';
+      const finalPosition = position || cardPosition || '';
+      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, finalLinkType, finalPosition);
+    },
+    copyCallback: (linkType, position) => {
+      // Calculate cardHeader and cardPosition dynamically when callback is called
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+      const finalLinkType = linkType || cardHeader || '';
+      const finalPosition = position || cardPosition || '';
+      pushBrowseCardClickEvent('copyLinkBrowseCard', model, finalLinkType, finalPosition);
+    },
   });
 
   cardAction.decorate();
@@ -462,84 +503,22 @@ const getVideoClipModal = () => {
   return videoClipModalPromise;
 };
 
-/**
- * Decorates upcoming event cards with additional features
- * @param {HTMLElement} card - The card element to decorate
- * @param {Object} model - The data model for the card
- */
-const decorateUpcomingEvents = (card, model) => {
-  if (!card || !model || model.contentType?.toLowerCase() !== CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY) return;
+// Dynamic imports for event decorators
+let upcomingEventsPromise = null;
+let onDemandEventsPromise = null;
 
-  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-upcoming-events.css`);
-
-  // Remove the browse-card-options div from upcoming event cards
-  const cardOptions = card.querySelector('.browse-card-options');
-  if (cardOptions) {
-    cardOptions.remove();
+const getUpcomingEventsDecorator = () => {
+  if (!upcomingEventsPromise) {
+    upcomingEventsPromise = import('./browse-card-upcoming-events.js');
   }
+  return upcomingEventsPromise;
+};
 
-  const cardFigure = card?.querySelector('.browse-card-figure');
-  if (!cardFigure) return;
-
-  const { event } = model;
-  const hasSpeakers = event?.speakers?.name?.length > 0 && event?.speakers?.profilePictureURL?.length > 0;
-  const hasSeries = event?.series;
-  const seriesText = hasSeries ? event?.series : null;
-
-  if (hasSpeakers) {
-    let speakersContainer = cardFigure?.querySelector('.event-speakers-container');
-    if (!speakersContainer) {
-      speakersContainer = createTag('div', { class: 'event-speakers-container' });
-      cardFigure.appendChild(speakersContainer);
-    } else {
-      speakersContainer.innerHTML = '';
-    }
-
-    const speakerNames = Array.isArray(event?.speakers?.name)
-      ? event?.speakers?.name
-      : event?.speakers?.name?.split(',')?.map((name) => name?.trim());
-
-    const profilePictures = Array.isArray(event?.speakers?.profilePictureURL)
-      ? event?.speakers?.profilePictureURL
-      : event?.speakers?.profilePictureURL?.split(',')?.map((url) => url?.trim());
-
-    const maxSpeakers = Math.min(speakerNames?.length || 0, profilePictures?.length || 0, 3);
-    for (let i = 0; i < maxSpeakers; i += 1) {
-      const speakerImgContainer = createTag('div', { class: 'speaker-profile-container' });
-      const speakerImg = createTag('img', {
-        src: profilePictures?.[i],
-        alt: speakerNames?.[i],
-        class: 'speaker-profile-image',
-      });
-      speakerImgContainer.appendChild(speakerImg);
-      speakersContainer.appendChild(speakerImgContainer);
-    }
-  } else if (hasSeries) {
-    const existingSpeakers = cardFigure?.querySelector('.event-speakers-container');
-    if (existingSpeakers) {
-      existingSpeakers.remove();
-    }
+const getOnDemandEventsDecorator = () => {
+  if (!onDemandEventsPromise) {
+    onDemandEventsPromise = import('./browse-card-on-demand-events.js');
   }
-
-  if (seriesText) {
-    const existingSeriesBanner = cardFigure?.querySelector('.event-series-banner, .event-series-banner-no-speakers');
-    if (existingSeriesBanner) {
-      existingSeriesBanner.remove();
-    }
-
-    const bannerClass = hasSpeakers ? 'event-series-banner' : 'event-series-banner event-series-banner-no-speakers';
-
-    if (!cardFigure?.querySelector(`.${bannerClass.replace(' ', '.')}`)) {
-      cardFigure.appendChild(createTag('div', { class: bannerClass }, seriesText));
-    }
-  }
-
-  if (event?.type) {
-    const locationType = event?.type;
-    if (locationType && !cardFigure?.querySelector('.location-type')) {
-      cardFigure.appendChild(createTag('div', { class: 'location-type' }, locationType));
-    }
-  }
+  return onDemandEventsPromise;
 };
 
 /**
@@ -560,7 +539,7 @@ const decorateUpcomingEvents = (card, model) => {
  * @returns {Promise<void>} Resolves when the card is fully built and added to the DOM.
  */
 
-export async function buildCard(container, element, model) {
+export async function buildCard(element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
 
   element.setAttribute('data-analytics-content-type', contentType);
@@ -735,7 +714,7 @@ export async function buildCard(container, element, model) {
     });
   }
 
-  await buildCardContent(card, model);
+  await buildCardContent(card, model, element);
 
   if (isVideoClip) {
     const cardOptions = card.querySelector('.browse-card-options');
@@ -784,45 +763,24 @@ export async function buildCard(container, element, model) {
     element.appendChild(card);
   }
 
-  // DataLayer - Browse Cards
-  const cardHeaderAndPosition = () => {
-    let cardHeader = '';
-    const currentBlock = card.closest('.block');
-    const headerEl = currentBlock?.querySelector(
-      '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
-    );
-    if (headerEl) {
-      const cloned = headerEl.cloneNode(true);
-      // Remove any PII or masked spans
-      cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
-      // Get cleaned text
-      cardHeader = cloned.innerText.trim();
-    }
-
-    cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
-
-    let cardPosition = '';
-    if (element?.parentElement?.children) {
-      const siblings = Array.from(element.parentElement.children);
-      cardPosition = String(siblings.indexOf(element) + 1);
-    }
-
-    return { cardHeader, cardPosition };
-  };
-
   // Browse card click event handler
   element.querySelector('a')?.addEventListener('click', (e) => {
-    const { cardHeader, cardPosition } = cardHeaderAndPosition();
+    const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
 
-    // Bookmark click
-    if (e.target.closest('.browse-card-options .user-actions .bookmark')) {
-      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, cardHeader, cardPosition);
+    const cardOptions = card.querySelector('.browse-card-options');
+    if (cardOptions) {
+      card.dataset.cardHeader = cardHeader || '';
+      card.dataset.cardPosition = cardPosition || '';
+    }
+
+    if (e.target.closest('.user-actions')) {
       return;
     }
 
-    // Copy link click
-    if (e.target.closest('.browse-card-options .user-actions .copy-link')) {
-      pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
+    // show more/less anlytics events
+    if (e.target?.classList?.contains('show-more') || e.target?.classList?.contains('show-less')) {
+      const eventName = e.target.classList.contains('show-less') ? 'browseCardShowMore' : 'browseCardShowLess';
+      pushBrowseCardClickEvent(eventName, model, cardHeader, cardPosition);
       return;
     }
 
@@ -860,6 +818,17 @@ export async function buildCard(container, element, model) {
 
   const cardEl = element.querySelector('.browse-card');
   if (cardEl && (v2 || isBrowseFiltersUpcoming)) {
-    decorateUpcomingEvents(cardEl, model);
+    // Dynamically import and use the upcoming events decorator
+    getUpcomingEventsDecorator().then(({ decorateUpcomingEvents }) => {
+      decorateUpcomingEvents(cardEl, model);
+    });
+  }
+
+  if (model.contentType?.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY && isFeatureEnabled('isEventsV2')) {
+    const cardElement = element.querySelector('.browse-card');
+    // Dynamically import and use the on-demand events decorator
+    getOnDemandEventsDecorator().then(({ decorateOnDemandEvents }) => {
+      decorateOnDemandEvents(cardElement, model);
+    });
   }
 }

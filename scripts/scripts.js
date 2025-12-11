@@ -166,6 +166,8 @@ export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 export const isCourseStep = matchesAnyTheme(/course-step/);
+export const isOnDemandEventPage = matchesAnyTheme(/on-demand-event/);
+
 export const isCertificatePage = () => !!document.querySelector('.course-completion'); // Checking for presence of course-completion block
 
 /**
@@ -832,6 +834,8 @@ export function getConfig() {
       : `https://experienceleaguecommunities-dev.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`,
     // MPC API Base
     mpcApiBase: `https://api.tv.adobe.com/videos`,
+    // Events URL
+    eventsURL: `${cdnOrigin}/${lang}/test-folder/events`,
   };
   return window.exlm.config;
 }
@@ -1044,7 +1048,7 @@ function loadDelayed() {
  * Custom - Loads the right and left rails for doc pages only.
  */
 async function loadRails() {
-  if (isDocPage) {
+  if (isDocPage || isOnDemandEventPage) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/rails/rails.css`);
     loadDefaultModule('./rails/rails.js');
   }
@@ -1548,10 +1552,6 @@ async function loadPage() {
     } else {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
-        // Applying data-cs-mask for signed-in profile-settings page
-        if (window.location.pathname === `/${lang}/home/profile-settings`) {
-          document.body.setAttribute('data-cs-mask', '');
-        }
         loadPage();
         loadTarget(signedIn);
       } else {

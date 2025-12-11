@@ -1,4 +1,4 @@
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 // API Configuration - Change this to your production URL when deploying
@@ -103,16 +103,29 @@ function formatContent(content) {
 }
 
 /**
+ * Animates content appearing line by line
+ * @param {HTMLElement} container - The container with content to animate
+ */
+function animateContent(container) {
+  const elements = container.querySelectorAll('.answer-content > *, .generative-search-sources, .generative-search-usage');
+  elements.forEach((el, index) => {
+    el.classList.add('animate-line');
+    el.style.animationDelay = `${index * 0.1}s`;
+  });
+}
+
+/**
  * Renders the search results in the container
  * @param {HTMLElement} container - The results container element
  * @param {object} data - The API response data
+ * @param {string} noResultsMessage - Custom message when no results found
+ * @param {object} placeholders - Language placeholders
  */
-function renderResults(container, data) {
+function renderResults(container, data, noResultsMessage, placeholders) {
   container.innerHTML = '';
 
   if (!data.summary) {
-    container.innerHTML = '<p class="no-results">No results found. Please try a different query.</p>';
-    container.hidden = false;
+    container.innerHTML = `<p class="no-results">${noResultsMessage}</p>`;
     return;
   }
 
@@ -159,78 +172,135 @@ function renderResults(container, data) {
     </div>
   ` : '';
 
+  const showMoreLabel = placeholders?.genSearchShowMore || 'Show more';
+  const showLessLabel = placeholders?.genSearchShowLess || 'Show less';
+
   container.innerHTML = `
     <div class="generative-search-answer">
-      <div class="answer-content">
-        ${formattedContent}
+      <div class="answer-content-wrapper">
+        <div class="answer-content">
+          ${formattedContent}
+        </div>
+        <div class="answer-content-fade"></div>
       </div>
+      <button class="generative-search-show-more" data-show-more="${showMoreLabel}" data-show-less="${showLessLabel}">
+        <span>${showMoreLabel}</span>
+      </button>
       ${sourcesHtml}
       ${usageHtml}
     </div>
   `;
-  container.hidden = false;
+
+  // Setup show more/less functionality
+  const answerWrapper = container.querySelector('.answer-content-wrapper');
+  const showMoreBtn = container.querySelector('.generative-search-show-more');
+
+  // Check if content exceeds the collapsed height
+  requestAnimationFrame(() => {
+    const answerContent = container.querySelector('.answer-content');
+    const isOverflowing = answerContent.scrollHeight > 200;
+
+    if (isOverflowing) {
+      answerWrapper.classList.add('is-collapsed');
+    } else {
+      showMoreBtn.hidden = true;
+    }
+
+    // Animate content appearing
+    animateContent(container);
+  });
+
+  showMoreBtn?.addEventListener('click', () => {
+    const isCollapsed = answerWrapper.classList.contains('is-collapsed');
+    answerWrapper.classList.toggle('is-collapsed');
+    showMoreBtn.querySelector('span').textContent = isCollapsed ? showLessLabel : showMoreLabel;
+    showMoreBtn.classList.toggle('is-expanded', isCollapsed);
+  });
 }
 
 /**
- * Shows loading state
- * @param {HTMLElement} loadingEl - The loading element
- * @param {HTMLElement} resultsEl - The results element
+ * Creates shimmer loading placeholder
+ * @returns {string} - HTML string for shimmer
  */
-function showLoading(loadingEl, resultsEl) {
-  loadingEl.hidden = false;
-  resultsEl.hidden = true;
-}
-
-/**
- * Hides loading state
- * @param {HTMLElement} loadingEl - The loading element
- */
-function hideLoading(loadingEl) {
-  loadingEl.hidden = true;
-}
-
-/**
- * Shows error message
- * @param {HTMLElement} container - The results container
- * @param {string} message - The error message
- */
-function showError(container, message) {
-  container.innerHTML = `
-    <div class="generative-search-error">
-      <p>${message}</p>
+function createShimmerHTML() {
+  const widths = [100, 95, 80, 100, 60];
+  return `
+    <div class="generative-search-shimmer">
+      ${widths.map((w) => `<p class="loading-shimmer" style="--placeholder-width: ${w}%"></p>`).join('')}
     </div>
   `;
-  container.hidden = false;
 }
 
-export default function decorate(block) {
+/**
+ * Shows shimmer loading state
+ * @param {HTMLElement} resultsEl - The results container element
+ * @param {HTMLElement} resultsWrapper - The results wrapper element
+ */
+function showShimmer(resultsEl, resultsWrapper) {
+  resultsEl.innerHTML = createShimmerHTML();
+  resultsEl.classList.add('is-loading');
+  resultsWrapper.hidden = false;
+}
+
+/**
+ * Hides shimmer loading state
+ * @param {HTMLElement} resultsEl - The results container element
+ */
+function hideShimmer(resultsEl) {
+  resultsEl.classList.remove('is-loading');
+  const shimmer = resultsEl.querySelector('.generative-search-shimmer');
+  if (shimmer) shimmer.remove();
+}
+
+/**
+ * Shows error/no-results message
+ * @param {HTMLElement} container - The results container
+ * @param {string} message - The message to display
+ */
+function showError(container, message) {
+  container.innerHTML = `<p class="no-results">${message}</p>`;
+}
+
+export default async function decorate(block) {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
+  // Extract configuration from block's HTML structure
+  const [placeholderText, resultsSubtitle, noResultsMessage] = [...block.children].map(
+    (row) => row?.querySelector('div')?.textContent?.trim() || '',
+  );
+
+  const resultsLabel = placeholders?.genSearchLabel || 'Search Results';
+
   const search = `
     <div class="generative-search-container">
-      <div class="generative-search-header">
-        <h2>Generative Search</h2>
-        <p class="generative-search-subtitle">Ask questions about Adobe Experience League</p>
-      </div>
       <form class="generative-search-form" role="search">
         <div class="search-input-wrapper">
           <span class="icon icon-search search-icon"></span>
           <input 
             type="search" 
-            placeholder="Ask a question..." 
+            placeholder="${placeholderText}" 
             role="searchbox" 
             class="generative-search-input"
             aria-label="Search"
           />
           <button type="button" class="generative-search-clear-button" hidden>
-            <span class="icon icon-clear"></span>
+            <span class="icon icon-close"></span>
           </button>
         </div>
-        <button type="submit" class="generative-search-button">Search</button>
       </form>
-      <div class="generative-search-loading" hidden>
-        <div class="loading-spinner"></div>
-        <p>Generating response...</p>
+      <div class="generative-search-results-wrapper" hidden>
+        <div class="generative-search-results-header">
+          <h2 class="generative-search-results-label">${resultsLabel}</h2>
+          ${resultsSubtitle ? `<p class="generative-search-results-subtitle">${resultsSubtitle}</p>` : ''}
+        </div>
+        <div class="generative-search-results" aria-live="polite"></div>
       </div>
-      <div class="generative-search-results" hidden aria-live="polite"></div>
     </div>
   `;
 
@@ -242,7 +312,7 @@ export default function decorate(block) {
   const form = block.querySelector('.generative-search-form');
   const searchInput = block.querySelector('.generative-search-input');
   const clearButton = block.querySelector('.generative-search-clear-button');
-  const loadingEl = block.querySelector('.generative-search-loading');
+  const resultsWrapper = block.querySelector('.generative-search-results-wrapper');
   const resultsEl = block.querySelector('.generative-search-results');
 
   // Handle form submission
@@ -252,15 +322,15 @@ export default function decorate(block) {
     if (!query) return;
 
     try {
-      showLoading(loadingEl, resultsEl);
+      showShimmer(resultsEl, resultsWrapper);
       const data = await fetchSearchResults(query);
-      renderResults(resultsEl, data);
+      hideShimmer(resultsEl);
+      renderResults(resultsEl, data, noResultsMessage, placeholders);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Search error:', error);
-      showError(resultsEl, 'Sorry, something went wrong. Please try again.');
-    } finally {
-      hideLoading(loadingEl);
+      hideShimmer(resultsEl);
+      showError(resultsEl, noResultsMessage);
     }
   });
 
@@ -273,7 +343,7 @@ export default function decorate(block) {
   clearButton?.addEventListener('click', () => {
     searchInput.value = '';
     clearButton.hidden = true;
-    resultsEl.hidden = true;
+    resultsWrapper.hidden = true;
     resultsEl.innerHTML = '';
     searchInput.focus();
   });

@@ -1,5 +1,6 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
+import { pushGridToggleEvent, pushListToggleEvent } from '../analytics/lib-analytics.js';
 
 export default class BrowseCardViewSwitcher {
   static placeholders = {};
@@ -102,48 +103,40 @@ export default class BrowseCardViewSwitcher {
 
     if (!description || !cardContent || !card.classList.contains('upcoming-event-card')) return;
 
-    if (cardContent.querySelector('.show-more')) return;
+    if (cardContent.querySelector('.show-more, .show-less')) return;
 
-    const showMoreBtn = document.createElement('span');
-    showMoreBtn.classList.add('show-more');
-    showMoreBtn.innerHTML = BrowseCardViewSwitcher.placeholders?.showMore || 'Show more';
-
-    const showLessBtn = document.createElement('span');
-    showLessBtn.classList.add('show-less');
-    showLessBtn.innerHTML = BrowseCardViewSwitcher.placeholders?.showLess || 'Show Less';
-
-    cardContent.appendChild(showMoreBtn);
-    cardContent.appendChild(showLessBtn);
-
+    // Calculate if the description has more than 2 lines
     const computedStyle = window.getComputedStyle(description);
     const lineHeight = parseFloat(computedStyle.lineHeight);
     const height = description.offsetHeight;
     const lines = Math.round(height / lineHeight);
 
-    if (lines > 2) {
-      description.classList.add('text-expanded');
-    } else {
-      showMoreBtn.style.display = 'none';
-      showLessBtn.style.display = 'none';
-    }
+    if (lines <= 2) return;
 
-    const showMoreHandler = (e) => {
+    description.classList.add('text-expanded');
+
+    const placeholders = BrowseCardViewSwitcher.placeholders || {};
+    const SHOW_MORE = placeholders.showMore || 'Show more';
+    const SHOW_LESS = placeholders.showLess || 'Show Less';
+
+    const toggleBtn = document.createElement('span');
+    toggleBtn.className = 'show-more';
+    toggleBtn.innerHTML = SHOW_MORE;
+
+    const toggleHandler = (e) => {
       e.preventDefault();
-      e.stopPropagation();
+
       BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
+
+      const expanded = card.classList.contains('expanded');
+      toggleBtn.innerHTML = expanded ? SHOW_LESS : SHOW_MORE;
+      toggleBtn.className = expanded ? 'show-less' : 'show-more';
     };
 
-    const showLessHandler = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
-    };
+    toggleBtn.addEventListener('click', toggleHandler);
+    this.eventListeners.push({ element: toggleBtn, type: 'click', handler: toggleHandler });
 
-    showMoreBtn.addEventListener('click', showMoreHandler);
-    showLessBtn.addEventListener('click', showLessHandler);
-
-    this.eventListeners.push({ element: showMoreBtn, type: 'click', handler: showMoreHandler });
-    this.eventListeners.push({ element: showLessBtn, type: 'click', handler: showLessHandler });
+    cardContent.appendChild(toggleBtn);
   }
 
   /**
@@ -333,6 +326,15 @@ export default class BrowseCardViewSwitcher {
   }
 
   /**
+   * Get the header text from the block
+   * @returns {string} The header text
+   */
+  getBlockHeader() {
+    const headerEl = this.block?.querySelector('.browse-cards-block-title');
+    return (headerEl?.innerText || this.block?.getAttribute('data-block-name') || '').trim();
+  }
+
+  /**
    * Switch to grid view
    */
   switchToGridView() {
@@ -340,6 +342,9 @@ export default class BrowseCardViewSwitcher {
       this.block.classList.remove('list');
       BrowseCardViewSwitcher.setActiveToggle(this.gridViewBtn, this.listViewBtn, 'active');
       this.isListView = false;
+      // Push grid toggle event to analytics with block header
+      const cardHeader = this.getBlockHeader();
+      pushGridToggleEvent(cardHeader);
       if (this.onViewSwitch && typeof this.onViewSwitch === 'function') {
         this.onViewSwitch('grid');
       }
@@ -356,6 +361,10 @@ export default class BrowseCardViewSwitcher {
       this.isListView = true;
 
       this.enhanceCardsForListView();
+
+      // Push list toggle event to analytics with block header
+      const cardHeader = this.getBlockHeader();
+      pushListToggleEvent(cardHeader);
 
       if (this.onViewSwitch && typeof this.onViewSwitch === 'function') {
         this.onViewSwitch('list');

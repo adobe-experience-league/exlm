@@ -13,7 +13,7 @@
 
 .generative-search-header h2 {
   margin: 0 0 8px;
-  font-size: 2rem;
+  font-size: var(--spectrum-font-size-800);
   color: var(--spectrum-gray-900);
 }
 
@@ -59,11 +59,10 @@
   border: none !important;
   background: transparent !important;
   padding: 14px 12px;
-  font-size: 1rem;
+  font-size: var(--spectrum-font-size-200);
+  margin-bottom: 0;
   outline: none !important;
   box-shadow: none !important;
-  appearance: none;
-  appearance: none;
   appearance: none;
 }
 
@@ -89,6 +88,7 @@
   background: none;
   border: none;
   padding: 4px;
+  margin: 0;
   cursor: pointer;
 }
 
@@ -96,6 +96,10 @@
   width: 18px;
   height: 18px;
   color: var(--spectrum-gray-600);
+}
+
+.generative-search-clear-button:hover {
+  background: none;
 }
 
 .generative-search-clear-button:hover .icon {
@@ -109,7 +113,7 @@
   border: none;
   border-radius: 8px;
   padding: 14px 24px;
-  font-size: 1rem;
+  font-size: var(--spectrum-font-size-200);
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -124,44 +128,54 @@
 }
 
 /* Hidden elements */
-.generative-search-loading[hidden],
-.generative-search-results[hidden],
-.generative-search-clear-button[hidden] {
+.generative-search-results-wrapper[hidden],
+.generative-search-clear-button[hidden],
+.generative-search-show-more[hidden] {
   display: none !important;
 }
 
-/* Loading */
-.generative-search-loading {
+/* Shimmer Loading */
+.generative-search-shimmer {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  padding: 40px;
+  gap: 12px;
+  padding: 8px 0;
 }
 
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--spectrum-gray-300);
-  border-top-color: var(--spectrum-blue-900);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.generative-search-loading p {
+.generative-search-shimmer .loading-shimmer {
+  height: 16px;
+  border-radius: 4px;
   margin: 0;
-  color: var(--spectrum-gray-700);
+}
+
+.generative-search-results.is-loading {
+  min-height: 150px;
+}
+
+/* Results Header */
+.generative-search-results-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.generative-search-results-label {
+  margin: 0;
+  font-size: var(--spectrum-font-size-700);
+  font-weight: 700;
+  color: var(--spectrum-gray-900);
+}
+
+.generative-search-results-subtitle {
+  margin: 0;
+  font-size: var(--spectrum-font-size-100);
+  color: var(--spectrum-gray-600);
 }
 
 /* Results */
 .generative-search-results {
-  background: var(--background-color);
+  background: #f4f6fa;
   border: 1px solid var(--spectrum-gray-300);
   border-radius: 12px;
   padding: 24px 28px;
@@ -180,15 +194,90 @@
   }
 }
 
+/* Collapsible Answer Wrapper */
+.answer-content-wrapper {
+  position: relative;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+
+.answer-content-wrapper.is-collapsed {
+  max-height: 200px;
+}
+
+.answer-content-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent 0%, #f4f6fa 100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.answer-content-wrapper.is-collapsed .answer-content-fade {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Show More Button */
+.generative-search-show-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  background: transparent;
+  border: 1px dashed var(--spectrum-gray-400);
+  border-radius: 8px;
+  color: var(--spectrum-gray-700);
+  font-size: var(--spectrum-font-size-100);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.generative-search-show-more:hover {
+  background: var(--spectrum-gray-100);
+  border-color: var(--spectrum-gray-500);
+  color: var(--spectrum-gray-900);
+}
+
+.generative-search-show-more.is-expanded {
+  margin-top: 16px;
+}
+
+/* Line by Line Animation */
+@keyframes line-appear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-line {
+  opacity: 0;
+  animation: line-appear 0.4s ease forwards;
+}
+
 /* Answer Content */
 .answer-content {
-  font-size: 1rem;
+  font-size: var(--spectrum-font-size-200);
   line-height: 1.75;
   color: var(--spectrum-gray-800);
 }
 
 .answer-content h3 {
-  font-size: 1.1rem;
+  font-size: var(--spectrum-font-size-300);
   font-weight: 600;
   color: var(--spectrum-gray-900);
   margin: 24px 0 12px;
@@ -246,7 +335,7 @@
 
 .generative-search-sources h4 {
   margin: 0 0 16px;
-  font-size: 0.8rem;
+  font-size: var(--spectrum-font-size-75);
   font-weight: 600;
   color: var(--spectrum-gray-600);
   text-transform: uppercase;
@@ -283,11 +372,11 @@
   flex: 1;
   color: var(--spectrum-gray-900);
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: var(--spectrum-font-size-100);
 }
 
 .source-type {
-  font-size: 0.7rem;
+  font-size: var(--spectrum-font-size-50);
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 12px;
@@ -489,7 +578,7 @@
   padding: 6px 12px;
   background: var(--spectrum-gray-100);
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: var(--spectrum-font-size-75);
 }
 
 .generative-search-usage .usage-label {
@@ -505,7 +594,7 @@
 
 .generative-search-usage .usage-unit {
   color: var(--spectrum-gray-500);
-  font-size: 0.7rem;
+  font-size: var(--spectrum-font-size-50);
 }
 
 .generative-search-usage .usage-total {
@@ -554,7 +643,16 @@
   }
 
   .generative-search-header h2 {
-    font-size: 1.5rem;
+    font-size: var(--spectrum-font-size-600);
+  }
+
+  .generative-search-results-header {
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+
+  .generative-search-results-label {
+    font-size: var(--spectrum-font-size-500);
   }
 
   .generative-search-container {
@@ -582,6 +680,6 @@
 
   .generative-search-usage .usage-item {
     padding: 4px 8px;
-    font-size: 0.75rem;
+    font-size: var(--spectrum-font-size-75);
   }
 }
