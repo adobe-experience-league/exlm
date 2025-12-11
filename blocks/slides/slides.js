@@ -1,5 +1,11 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { decoratePlaceholders, fetchLanguagePlaceholders, getConfig, getPathDetails } from '../../scripts/scripts.js';
+import {
+  decorateInlineAttributes,
+  decoratePlaceholders,
+  fetchLanguagePlaceholders,
+  getConfig,
+  getPathDetails,
+} from '../../scripts/scripts.js';
 
 import {
   generateVisualConfig,
@@ -381,6 +387,7 @@ export default async function decorate(block) {
       const doc = parser.parseFromString(htmlContent, 'text/html');
       const contentElement = doc.querySelector('.slides');
       if (contentElement) {
+        decorateInlineAttributes(contentElement);
         block.innerHTML = contentElement.innerHTML;
         block.classList.remove('hide-slides');
         renderSlideBlock(block);

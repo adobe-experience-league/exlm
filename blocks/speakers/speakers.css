@@ -17,8 +17,8 @@
   p:nth-child(1) {
     grid-column: 1;
     grid-row: 1 / span 2;
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     padding: 4px;
     border: 2px solid #000;
@@ -43,10 +43,12 @@
   p:nth-child(2) {
     grid-column: 2;
     grid-row: 1;
+    font-size: var(--spectrum-font-size-100);
   }
 
   p:nth-child(3) {
     grid-column: 2;
     grid-row: 2;
+    font-size: var(--spectrum-font-size-75);
   }
 }
