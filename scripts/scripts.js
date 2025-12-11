@@ -1034,6 +1034,17 @@ export function createTag(tag, attributes, html) {
   return el;
 }
 
+export function enlargeImages() {
+  document.querySelectorAll('picture').forEach((imgElement) => {
+    imgElement.setAttribute('modal', 'regular');
+    imgElement.addEventListener('click', () => {
+      // eslint-disable-next-line import/no-cycle
+      const promises = [loadCSS(`${window.hlx.codeBasePath}/styles/image-modal.css`), import('./image-modal.js')];
+      Promise.all(promises).then(([, mod]) => mod.default(imgElement.querySelector('img')));
+    });
+  });
+}
+
 /**
  * Loads everything that happens a lot later,
  * without impacting the user experience.
@@ -1061,6 +1072,7 @@ export async function loadArticles() {
   if (isPerspectivePage) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/articles/articles.css`);
     loadDefaultModule('./articles/articles.js');
+    enlargeImages();
   }
 }
 
