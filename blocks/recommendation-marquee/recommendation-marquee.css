@@ -113,6 +113,16 @@
   box-shadow: var(--box-shadow-2);
 }
 
+.recommendation-marquee.block .browse-card.course-card .browse-card-content {
+  padding-top: 24px;
+}
+
+.recommendation-marquee.block .browse-card.course-card .browse-card-icon {
+  width: 44px;
+  height: 44px;
+  top: 5px;
+}
+
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card .browse-card-content {
   border-radius: 16px 16px 0 0;
   order: 1;
