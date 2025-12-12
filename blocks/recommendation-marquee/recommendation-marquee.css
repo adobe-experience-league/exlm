@@ -354,6 +354,16 @@
   }
 
   .recommendation-marquee.block
+    .browse-cards-block-content
+    .card-wrapper:first-child
+    .browse-card.course-card
+    .browse-card-icon {
+    width: 64px;
+    height: 64px;
+    top: 15px;
+  }
+
+  .recommendation-marquee.block
     .browse-cards-block-content.recommendation-marquee-wrap
     .card-wrapper:first-child
     .browse-card
