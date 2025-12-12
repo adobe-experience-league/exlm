@@ -26,9 +26,9 @@
 .browse-card.event-card .browse-card-figure .event-series-banner {
   position: relative;
   padding: 10px 0;
-  margin: 40px 0 21px;
+  margin: 30px 0 21px;
   color: var(--spectrum-gray-900);
-  font-size: var(--spectrum-font-size-400);
+  font-size: var(--spectrum-font-size-700);
   font-weight: var(--font-weight-bold);
   text-align: left;
   width: 100%;
@@ -42,7 +42,7 @@
 .browse-card.event-card .browse-card-figure .event-series-banner::after {
   content: '';
   position: absolute;
-  height: 3px;
+  height: 4px;
   background-color: var(--non-spectrum-adobe-red);
 }
 
@@ -62,4 +62,16 @@
 .browse-card.event-card .browse-card-description-text * {
   max-height: none;
   -webkit-line-clamp: 2;
+}
+
+@media only screen and (min-width: 1024px) {
+  .browse-card.event-card .browse-card-figure .event-series-banner {
+    font-size: 24px;
+  }
+}
+
+@media only screen and (min-width: 1440px) {
+  .browse-card.event-card .browse-card-figure .event-series-banner {
+    font-size: var(--spectrum-font-size-700);
+  }
 }
