@@ -21,17 +21,3 @@
     padding-bottom: 0;
   }
 }
-
-/* Events V2 variant */
-
-body.browse-all .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers,
-body.browse-all .browse-card.event-card .browse-card-figure .event-series-banner {
-  font-size: var(--spectrum-font-size-700);
-}
-
-@media only screen and (min-width: 1440px) {
-  body.browse-all .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers,
-  body.browse-all .browse-card.event-card .browse-card-figure .event-series-banner {
-    font-size: 24px;
-  }
-}
