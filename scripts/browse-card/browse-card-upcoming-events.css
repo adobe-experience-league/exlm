@@ -147,6 +147,14 @@
   display: none;
 }
 
+@media only screen and (min-width: 600px) {
+  .events-v2 {
+    .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
+      font-size: 24px;
+    }
+  }
+}
+
 @media only screen and (min-width: 900px) {
   .events-v2 {
     .browse-card.upcoming-event-card {
@@ -457,5 +465,13 @@
     font-size: var(--spectrum-font-size-75);
     font-weight: var(--font-weight-bold);
     color: var(--non-spectrum-dark-gray);
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .events-v2 {
+    .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
+      font-size: var(--spectrum-font-size-700);
+    }
   }
 }
