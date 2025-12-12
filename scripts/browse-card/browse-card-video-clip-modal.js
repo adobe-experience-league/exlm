@@ -112,8 +112,7 @@ export class BrowseCardVideoClipModal {
     const { title, videoURL, parentName, parentURL, product, failedToLoad = false } = this.model;
 
     const { lang = 'en' } = getPathDetails() || {};
-    let videoSrc = videoURL;
-    videoSrc = await getLocalizedVideoUrl(videoURL, lang);
+    let videoSrc = await getLocalizedVideoUrl(videoURL, lang);
 
     if (this.miniPlayerMode) {
       const hasParams = videoSrc?.includes('?');
@@ -398,8 +397,7 @@ export class BrowseCardVideoClipModal {
       }
 
       const { lang = 'en' } = getPathDetails() || {};
-      let videoSrc = videoURL;
-      videoSrc = await getLocalizedVideoUrl(videoSrc, lang);
+      let videoSrc = await getLocalizedVideoUrl(videoURL, lang);
 
       if (this.miniPlayerMode) {
         const hasParams = videoSrc.includes('?');
