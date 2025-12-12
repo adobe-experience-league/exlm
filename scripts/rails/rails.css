@@ -1,17 +1,28 @@
-.docs main .section.rail {
+.docs main .section.rail,
+.on-demand-event main .section.rail {
   --rail-toggler-y: 15px;
   --rail-toggler-x: 20px;
 }
 
-.docs main .section.rail .rail-toggle {
+.docs main .section.rail .rail-toggle,
+.on-demand-event main .section.rail .rail-toggle {
   display: none;
 }
 
 @media (width >= 900px) {
-  .docs main .section.rail {
+  .docs main .section.rail,
+  .on-demand-event main .section.rail {
     position: relative;
     box-sizing: border-box;
+  }
+
+  .docs main .section.rail {
     padding: 46px 0.75rem 0.75rem;
+  }
+
+  .on-demand-event main .section.rail {
+    padding: 24px;
+    margin-left: 30px;
   }
 
   .docs main .section.rail .rail-content {
@@ -20,7 +31,8 @@
     padding-bottom: 50px;
   }
 
-  .docs main .section.rail .rail-toggle {
+  .docs main .section.rail .rail-toggle,
+  .on-demand-event main .section.rail .rail-toggle {
     background: none;
     display: block;
     position: absolute;
@@ -31,12 +43,14 @@
     padding: 0 12px;
   }
 
-  .docs main .section.rail .rail-toggle .icon {
+  .docs main .section.rail .rail-toggle .icon,
+  .on-demand-event main .section.rail .rail-toggle .icon {
     width: 16px;
     height: 16px;
   }
 
-  .docs main .section.rail.rail-right .rail-toggle {
+  .docs main .section.rail.rail-right .rail-toggle,
+  .on-demand-event main .section.rail.rail-right .rail-toggle {
     left: 0;
     transform: scaleX(-1);
   }
@@ -59,7 +73,8 @@
     display: none;
   }
 
-  .docs main .section.rail.closed.rail-right .rail-toggle {
+  .docs main .section.rail.closed.rail-right .rail-toggle,
+  .on-demand-event main .section.rail.closed.rail-right .rail-toggle {
     left: unset;
     right: 0;
     transform: scaleX(1);

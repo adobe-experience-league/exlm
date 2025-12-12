@@ -60,6 +60,7 @@ const CSS_CLASSES = {
  */
 const URL_PARAMS = {
   FILTERS: 'product',
+  LEVEL: 'level',
 };
 
 /**
@@ -92,6 +93,35 @@ async function getProductList() {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error fetching product list:', error);
+    return [];
+  }
+}
+
+/**
+ * Fetches the list of levels from the course index JSON
+ * @returns {Promise<string[]>} Array of unique level names
+ */
+async function getLevelList() {
+  try {
+    const { lang } = getPathDetails();
+    const courseIndex = await fetchCourseIndex(lang);
+
+    const levels = courseIndex.reduce((acc, curr) => {
+      if (curr?.coveoLevel) {
+        // Split by "," and trim spaces
+        const items = curr.coveoLevel.split(',').map((s) => s.trim());
+        acc.push(...items);
+      }
+      return acc;
+    }, []);
+
+    // Remove duplicates
+    const uniqueLevels = [...new Set(levels)];
+
+    return uniqueLevels;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching level list:', error);
     return [];
   }
 }
@@ -140,34 +170,59 @@ function getFiltersFromUrl() {
 }
 
 /**
- * Updates URL parameters with selected product filters
- * @param {string[]} selectedFilters - Array of selected product filter values
- * @example
- * updateUrlParams(['Analytics', 'Commerce'])
- * // URL becomes: ?product=Analytics,Commerce
- *
- * updateUrlParams([])
- * // URL parameter is removed
+ * Extracts and sanitizes level filters from URL parameters
+ * @returns {string[]} Array of sanitized level filter values
  */
-function updateUrlParams(selectedFilters) {
+function getLevelFiltersFromUrl() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const levelParam = urlParams.get(URL_PARAMS.LEVEL)
+    ? urlParams.get(URL_PARAMS.LEVEL).split(',').map(xssSanitizeQueryParamValue)
+    : [];
+
+  return levelParam;
+}
+
+/**
+ * Updates a URL parameter and pushes to browser history
+ * @param {string} paramName - The URL parameter name
+ * @param {string[]} values - Array of values to set (empty array removes the param)
+ */
+function pushUrlParam(paramName, values) {
   const url = new URL(window.location);
 
-  if (selectedFilters.length > 0) {
-    url.searchParams.set(URL_PARAMS.FILTERS, selectedFilters.join(','));
+  if (values.length > 0) {
+    url.searchParams.set(paramName, values.join(','));
   } else {
-    url.searchParams.delete(URL_PARAMS.FILTERS);
+    url.searchParams.delete(paramName);
   }
 
   window.history.pushState({}, '', url.toString());
 }
 
 /**
+ * Updates URL parameters with selected product filters
+ * @param {string[]} selectedFilters - Array of selected product filter values
+ */
+function updateUrlParams(selectedFilters) {
+  pushUrlParam(URL_PARAMS.FILTERS, selectedFilters);
+}
+
+/**
+ * Updates URL parameters with selected level filters
+ * @param {string[]} selectedLevels - Array of selected level filter values
+ */
+function updateLevelUrlParams(selectedLevels) {
+  pushUrlParam(URL_PARAMS.LEVEL, selectedLevels);
+}
+
+/**
  * Creates filter tags based on selected filters
  * Uses module-level placeholders for internationalization
  * @param {HTMLElement} block - The main block element
- * @param {string[]} selectedFilters - Array of selected filter values
+ * @param {string[]} selectedFilters - Array of selected product filter values
+ * @param {string[]} selectedLevels - Array of selected level filter values (optional)
  */
-function updateTags(block, selectedFilters) {
+function updateTags(block, selectedFilters, selectedLevels = []) {
   const tagsContainer = block.querySelector(`.${CSS_CLASSES.TAGS}`);
 
   if (!tagsContainer) {
@@ -178,18 +233,19 @@ function updateTags(block, selectedFilters) {
   tagsContainer.textContent = '';
 
   // Early return if no filters
-  if (!selectedFilters.length) {
+  if (!selectedFilters.length && !selectedLevels.length) {
     return;
   }
 
   // Use document fragment for better performance
   const fragment = document.createDocumentFragment();
   const productLabel = placeholders?.filterProductLabel || 'Product';
+  const levelLabel = placeholders?.filterLevelLabel || 'Level';
 
-  // Create new tags for each selected filter
+  // Create new tags for each selected product filter
   selectedFilters.forEach((filter) => {
     const tagElement = htmlToElement(`
-      <button class="browse-tags" value="${filter}" type="button" aria-label="Remove ${filter} filter">
+      <button class="browse-tags" value="${filter}" data-type="product" type="button" aria-label="Remove ${filter} filter">
         <span>${productLabel}: ${filter}</span>
         <span class="icon icon-close" aria-hidden="true"></span>
       </button>
@@ -205,6 +261,33 @@ function updateTags(block, selectedFilters) {
 
       // Find and uncheck the corresponding checkbox more efficiently
       const checkbox = block.querySelector(`${SELECTORS.CHECKBOX_INPUT}[value="${filter}"]`);
+      if (checkbox?.checked) {
+        checkbox.click();
+      }
+    });
+
+    fragment.appendChild(tagElement);
+  });
+
+  // Create new tags for each selected level filter
+  selectedLevels.forEach((level) => {
+    const tagElement = htmlToElement(`
+      <button class="browse-tags" value="${level}" data-type="level" type="button" aria-label="Remove ${level} filter">
+        <span>${levelLabel}: ${level}</span>
+        <span class="icon icon-close" aria-hidden="true"></span>
+      </button>
+    `);
+
+    // Decorate icons in the tag element
+    decorateIcons(tagElement);
+
+    // Add click handler to remove tag and uncheck corresponding checkbox
+    tagElement.addEventListener('click', (event) => {
+      event.preventDefault();
+      tagElement.remove();
+
+      // Find and uncheck the corresponding checkbox in level dropdown
+      const checkbox = block.querySelector(`.level-dropdown-container .custom-checkbox input[value="${level}"]`);
       if (checkbox?.checked) {
         checkbox.click();
       }
@@ -236,6 +319,15 @@ function preselectFiltersFromUrl(block, urlFilters) {
  */
 function transformProductsForDropdown(products) {
   return products.map((product) => ({ title: product }));
+}
+
+/**
+ * Transforms levels array into dropdown-compatible format
+ * @param {string[]} levels - Array of level names
+ * @returns {Object[]} Array of objects with title property
+ */
+function transformLevelsForDropdown(levels) {
+  return levels.map((level) => ({ title: level }));
 }
 
 /**
@@ -301,7 +393,7 @@ async function renderCards(block, courseData, shimmer) {
 
       courseData.forEach((cardData) => {
         const cardDiv = document.createElement('div');
-        buildCard(contentDiv, cardDiv, cardData);
+        buildCard(cardDiv, cardData);
         fragment.appendChild(cardDiv);
       });
 
@@ -325,16 +417,18 @@ async function renderCards(block, courseData, shimmer) {
 /**
  * Fetches course data from the API
  * @param {string[]} selectedFilters - Array of selected product filter values (optional)
+ * @param {string[]} selectedLevels - Array of selected level filter values (optional)
  * @returns {Promise<Array>} Course data with meta.courseInfo.courseStatus (auto-enriched by delegate for signed-in users)
  * @description
  * Fetches course cards from API based on filters.
  * BrowseCardsDelegate automatically enriches with meta.courseInfo.courseStatus for signed-in users.
  */
-async function fetchCourseData(selectedFilters = []) {
+async function fetchCourseData(selectedFilters = [], selectedLevels = []) {
   // Build API parameters
   const param = {
     contentType: CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase().split(','),
     ...(selectedFilters.length > 0 && { product: selectedFilters }),
+    ...(selectedLevels.length > 0 && { level: selectedLevels }),
     noOfResults: numberOfResults,
   };
 
@@ -435,23 +529,58 @@ function createStatusDropdownContainer(dropdownForm) {
 }
 
 /**
+ * Creates a dedicated container for the level dropdown
+ * @param {HTMLElement} dropdownForm - The dropdown form element
+ * @returns {HTMLElement} The level dropdown container
+ */
+function createLevelDropdownContainer(dropdownForm) {
+  // Check if container already exists
+  let container = dropdownForm.querySelector('.level-dropdown-container');
+  if (container) {
+    container.innerHTML = ''; // Clear existing content
+    return container;
+  }
+
+  // Create new container
+  container = document.createElement('div');
+  container.className = 'level-dropdown-container';
+  dropdownForm.appendChild(container);
+  return container;
+}
+
+/**
  * Updates the clear filter button state (enabled/disabled) based on active filters
  * @param {HTMLElement} block - The main block element
- * @param {Object} state - Mutable state object containing currentStatusFilters
+ * @param {Object} state - Mutable state object containing currentStatusFilters and currentLevelFilters
  */
 function updateClearFilterButtonState(block, state) {
   const clearFilterButton = block.querySelector(`.${CSS_CLASSES.CLEAR_FILTER}`);
   if (!clearFilterButton) return;
 
-  // Check if any product filters are selected
-  const checkedProductInputs = [...block.querySelectorAll(`${SELECTORS.CHECKBOX_INPUT}:checked`)];
-  const hasProductFilters = checkedProductInputs.length > 0;
+  // Check if any product filters are selected (exclude level dropdown container)
+  const productDropdownContainer = block.querySelector(SELECTORS.DROPDOWN);
+  const levelContainer = block.querySelector('.level-dropdown-container');
+  const statusContainer = block.querySelector('.status-dropdown-container');
+
+  let hasProductFilters = false;
+  if (productDropdownContainer) {
+    const allCheckedInputs = [...productDropdownContainer.querySelectorAll(`${SELECTORS.CHECKBOX_INPUT}:checked`)];
+    // Filter out level and status checkboxes
+    hasProductFilters = allCheckedInputs.some((input) => {
+      const isInLevelContainer = levelContainer?.contains(input);
+      const isInStatusContainer = statusContainer?.contains(input);
+      return !isInLevelContainer && !isInStatusContainer;
+    });
+  }
 
   // Check if any status filters are selected
   const hasStatusFilters = state.currentStatusFilters?.length > 0;
 
+  // Check if any level filters are selected
+  const hasLevelFilters = state.currentLevelFilters?.length > 0;
+
   // Disable button if no filters are active
-  const hasActiveFilters = hasProductFilters || hasStatusFilters;
+  const hasActiveFilters = hasProductFilters || hasStatusFilters || hasLevelFilters;
 
   if (hasActiveFilters) {
     clearFilterButton.removeAttribute('disabled');
@@ -472,7 +601,7 @@ function updateClearFilterButtonState(block, state) {
  * @param {Object} state - Mutable state object containing courseData and currentStatusFilters
  */
 function setupStatusDropdownHandler(dropdown, block, shimmer, state) {
-  dropdown.handleOnChange(async (selectedValues) => {
+  dropdown.handleOnChange((selectedValues) => {
     // Parse selected values (contains COURSE_STATUS constant values)
     state.currentStatusFilters = (Array.isArray(selectedValues) ? selectedValues : selectedValues.split(','))
       .map((item) => item.trim())
@@ -490,16 +619,17 @@ function setupStatusDropdownHandler(dropdown, block, shimmer, state) {
           )
         : state.courseData;
 
-    await renderCards(block, filteredData, shimmer);
-
-    // Update clear button state after filter change
-    updateClearFilterButtonState(block, state);
+    renderCards(block, filteredData, shimmer).then(() => {
+      // Update clear button state after filter change
+      updateClearFilterButtonState(block, state);
+    });
   });
 }
 
 /**
  * Updates the status dropdown with new options based on current course data
  * Recreates the dropdown and sets up its handler
+ * Preserves previously selected status filters if they still exist in new options
  * @param {HTMLElement} block - The main block element
  * @param {Array} courseData - Current course data
  * @param {BrowseCardShimmer} shimmer - The shimmer loading instance
@@ -536,7 +666,107 @@ function updateStatusDropdown(block, courseData, shimmer, state) {
   // Setup handler for new dropdown
   setupStatusDropdownHandler(statusDropdown, block, shimmer, state);
 
+  // Restore previously selected status filters if they still exist in new options
+  if (state.currentStatusFilters?.length > 0) {
+    const availableValues = statusList.map((option) => option.value);
+    const validFilters = state.currentStatusFilters.filter((status) => availableValues.includes(status));
+
+    if (validFilters.length > 0) {
+      // Update checkbox states directly without triggering events
+      validFilters.forEach((statusValue) => {
+        const checkbox = statusContainer.querySelector(`input[type="checkbox"][value="${statusValue}"]`);
+        if (checkbox) {
+          checkbox.checked = true;
+        }
+      });
+
+      // Update dropdown's data-selected attribute
+      statusDropdown.dropdown.dataset.selected = validFilters.join(',');
+
+      // Update button label to show count
+      const buttonLabel = statusDropdown.dropdown.querySelector('button > span.custom-filter-dropdown-name');
+      if (buttonLabel) {
+        const statusLabel = placeholders?.filterCourseStatusLabel || 'Status';
+        buttonLabel.textContent = `${statusLabel} (${validFilters.length})`;
+      }
+    }
+  }
+
   return statusDropdown;
+}
+
+/**
+ * Gets current product filters from state or checkboxes
+ * @param {HTMLElement} block - The main block element
+ * @returns {string[]} Array of selected product filter values
+ */
+function getCurrentProductFilters(block) {
+  const productDropdownContainer = block.querySelector(SELECTORS.DROPDOWN);
+  const levelContainer = block.querySelector('.level-dropdown-container');
+  const statusContainer = block.querySelector('.status-dropdown-container');
+
+  if (!productDropdownContainer) return [];
+
+  const allCheckedInputs = [...productDropdownContainer.querySelectorAll(`${SELECTORS.CHECKBOX_INPUT}:checked`)];
+  // Filter out level and status checkboxes
+  return allCheckedInputs
+    .filter((input) => {
+      const isInLevelContainer = levelContainer?.contains(input);
+      const isInStatusContainer = statusContainer?.contains(input);
+      return !isInLevelContainer && !isInStatusContainer;
+    })
+    .map((input) => input.value);
+}
+
+/**
+ * Sets up level dropdown change handler
+ * Fetches new data from Coveo API when level filters change
+ * @param {Dropdown} dropdown - The level dropdown instance
+ * @param {HTMLElement} block - The main block element
+ * @param {BrowseCardShimmer} shimmer - The shimmer loading instance
+ * @param {Object} state - Mutable state object containing courseData and currentLevelFilters
+ */
+function setupLevelDropdownHandler(dropdown, block, shimmer, state) {
+  dropdown.handleOnChange((selectedValues) => {
+    // Parse selected values
+    state.currentLevelFilters = (Array.isArray(selectedValues) ? selectedValues : selectedValues.split(','))
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    // Update URL and tags
+    updateLevelUrlParams(state.currentLevelFilters);
+
+    // Get current product filters
+    const productFilters = getCurrentProductFilters(block);
+    updateTags(block, productFilters, state.currentLevelFilters);
+
+    // Show loading state
+    shimmer.updateCount(getResponsiveShimmerCount());
+    addShimmerWrapper(block, shimmer);
+
+    // Fetch new data from Coveo API with level filters
+    fetchCourseData(productFilters, state.currentLevelFilters).then((courseData) => {
+      state.courseData = courseData;
+
+      // Update status dropdown to reflect available statuses in filtered data (only for signed-in users)
+      if (state.isSignedIn) {
+        state.statusDropdown = updateStatusDropdown(block, state.courseData, shimmer, state);
+      }
+
+      // Re-apply current status filters to new data (if any)
+      const dataToRender =
+        state.isSignedIn && state.currentStatusFilters.length > 0
+          ? state.courseData.filter((course) =>
+              state.currentStatusFilters.includes(course.meta?.courseInfo?.courseStatus),
+            )
+          : state.courseData;
+
+      renderCards(block, dataToRender, shimmer).then(() => {
+        // Update clear button state after filter change
+        updateClearFilterButtonState(block, state);
+      });
+    });
+  });
 }
 
 /**
@@ -546,67 +776,69 @@ function updateStatusDropdown(block, courseData, shimmer, state) {
  * @param {Dropdown} dropdown - The product dropdown instance
  * @param {HTMLElement} block - The main block element
  * @param {BrowseCardShimmer} shimmer - The shimmer loading instance
- * @param {Object} state - Mutable state object containing courseData, currentStatusFilters, statusDropdown, and isSignedIn
+ * @param {Object} state - Mutable state object containing courseData, currentStatusFilters, currentLevelFilters, statusDropdown, and isSignedIn
  */
 function setupProductDropdownHandler(dropdown, block, shimmer, state) {
-  dropdown.handleOnChange(async (selectedValues) => {
+  dropdown.handleOnChange((selectedValues) => {
     const selectedFilters = (Array.isArray(selectedValues) ? selectedValues : selectedValues.split(','))
       .map((item) => item.trim())
       .filter(Boolean);
 
-    // Update URL and tag display
+    // Update URL and tag display (include level filters in tags)
     updateUrlParams(selectedFilters);
-    updateTags(block, selectedFilters);
+    updateTags(block, selectedFilters, state.currentLevelFilters || []);
 
     // Show loading state
     shimmer.updateCount(getResponsiveShimmerCount());
     addShimmerWrapper(block, shimmer);
 
-    // Fetch new data from API with selected product filters
-    state.courseData = await fetchCourseData(selectedFilters);
+    // Fetch new data from API with selected product and level filters
+    fetchCourseData(selectedFilters, state.currentLevelFilters || []).then((courseData) => {
+      state.courseData = courseData;
 
-    // Update status dropdown to reflect available statuses in filtered data (only for signed-in users)
-    if (state.isSignedIn) {
-      // Reset current status filters if they don't exist in new data
-      const availableStatuses = analyzeCourseStatuses(state.courseData);
-      state.currentStatusFilters = state.currentStatusFilters.filter((status) => {
-        if (status === COURSE_STATUS.NOT_STARTED) return availableStatuses.hasNotStarted;
-        if (status === COURSE_STATUS.IN_PROGRESS) return availableStatuses.hasInProgress;
-        if (status === COURSE_STATUS.COMPLETED) return availableStatuses.hasCompleted;
-        return false;
+      // Update status dropdown to reflect available statuses in filtered data (only for signed-in users)
+      if (state.isSignedIn) {
+        // Reset current status filters if they don't exist in new data
+        const availableStatuses = analyzeCourseStatuses(state.courseData);
+        state.currentStatusFilters = state.currentStatusFilters.filter((status) => {
+          if (status === COURSE_STATUS.NOT_STARTED) return availableStatuses.hasNotStarted;
+          if (status === COURSE_STATUS.IN_PROGRESS) return availableStatuses.hasInProgress;
+          if (status === COURSE_STATUS.COMPLETED) return availableStatuses.hasCompleted;
+          return false;
+        });
+
+        // Update the status dropdown with new options
+        state.statusDropdown = updateStatusDropdown(block, state.courseData, shimmer, state);
+      }
+
+      // Re-apply current status filters to new data (if any) - only for signed-in users
+      const dataToRender =
+        state.isSignedIn && state.currentStatusFilters.length > 0
+          ? state.courseData.filter((course) =>
+              state.currentStatusFilters.includes(course.meta?.courseInfo?.courseStatus),
+            )
+          : state.courseData;
+
+      renderCards(block, dataToRender, shimmer).then(() => {
+        // Update clear button state after filter change
+        updateClearFilterButtonState(block, state);
       });
-
-      // Update the status dropdown with new options
-      state.statusDropdown = updateStatusDropdown(block, state.courseData, shimmer, state);
-    }
-
-    // Re-apply current status filters to new data (if any) - only for signed-in users
-    const dataToRender =
-      state.isSignedIn && state.currentStatusFilters.length > 0
-        ? state.courseData.filter((course) =>
-            state.currentStatusFilters.includes(course.meta?.courseInfo?.courseStatus),
-          )
-        : state.courseData;
-
-    await renderCards(block, dataToRender, shimmer);
-
-    // Update clear button state after filter change
-    updateClearFilterButtonState(block, state);
+    });
   });
 }
 
 /**
  * Sets up clear filter button click handler
- * Resets all filters (product and status) and shows all courses
+ * Resets all filters (product, status, and level) and shows all courses
  * @param {HTMLElement} block - The main block element
  * @param {BrowseCardShimmer} shimmer - The shimmer loading instance
- * @param {Object} state - Mutable state object containing courseData, currentStatusFilters, statusDropdown, isSignedIn, and productDropdown
+ * @param {Object} state - Mutable state object containing courseData, currentStatusFilters, currentLevelFilters, statusDropdown, levelDropdown, isSignedIn, and productDropdown
  */
 function setupClearFilterHandler(block, shimmer, state) {
   const clearFilterButton = block.querySelector(`.${CSS_CLASSES.CLEAR_FILTER}`);
 
   if (clearFilterButton) {
-    clearFilterButton.addEventListener('click', async (event) => {
+    clearFilterButton.addEventListener('click', (event) => {
       event.preventDefault();
 
       // Don't proceed if button is disabled
@@ -616,6 +848,7 @@ function setupClearFilterHandler(block, shimmer, state) {
 
       // IMPORTANT: Reset ALL filter state FIRST before any other operations
       state.currentStatusFilters = [];
+      state.currentLevelFilters = [];
 
       // Clear product dropdown using the reusable reset() method
       if (state.productDropdown) {
@@ -627,36 +860,59 @@ function setupClearFilterHandler(block, shimmer, state) {
         state.statusDropdown.reset();
       }
 
+      // Clear level dropdown using the reusable reset() method
+      if (state.levelDropdown) {
+        state.levelDropdown.reset();
+      }
+
       // Clear URL parameters
       updateUrlParams([]);
+      updateLevelUrlParams([]);
 
       // Clear filter tags display
-      updateTags(block, []);
+      updateTags(block, [], []);
 
       // Show loading state
       shimmer.updateCount(getResponsiveShimmerCount());
       addShimmerWrapper(block, shimmer);
 
       // Fetch all courses without any filters
-      state.courseData = await fetchCourseData([]);
+      fetchCourseData([], []).then((courseData) => {
+        state.courseData = courseData;
 
-      // Update status dropdown to reflect all available statuses (only for signed-in users)
-      if (state.isSignedIn) {
-        state.statusDropdown = updateStatusDropdown(block, state.courseData, shimmer, state);
-      }
+        // Update status dropdown to reflect all available statuses (only for signed-in users)
+        if (state.isSignedIn) {
+          state.statusDropdown = updateStatusDropdown(block, state.courseData, shimmer, state);
+        }
 
-      const dataToRender = state.courseData;
-      await renderCards(block, dataToRender, shimmer);
-
-      // Update clear button state
-      updateClearFilterButtonState(block, state);
+        renderCards(block, state.courseData, shimmer).then(() => {
+          // Update clear button state
+          updateClearFilterButtonState(block, state);
+        });
+      });
     });
   }
 }
 
 /**
+ * Pre-selects level checkboxes based on URL filters
+ * @param {HTMLElement} block - The main block element
+ * @param {string[]} urlLevelFilters - Array of level filters from URL
+ */
+function preselectLevelFiltersFromUrl(block, urlLevelFilters) {
+  const levelContainer = block.querySelector('.level-dropdown-container');
+  if (!levelContainer) return;
+
+  const checkboxInputs = [...levelContainer.querySelectorAll('input[type="checkbox"]')];
+
+  checkboxInputs
+    .filter((input) => urlLevelFilters.includes(input.value) && !input.checked)
+    .forEach((input) => input.click());
+}
+
+/**
  * Main decoration function for the browse-courses block
- * Initializes the course browsing interface with product and status filters
+ * Initializes the course browsing interface with product, level, and status filters
  * @param {HTMLElement} block - The block element to decorate
  * @description
  * Status dropdown is only shown for signed-in users with course progress data.
@@ -685,15 +941,27 @@ export default async function decorate(block) {
   // Check if user is signed in (required for status dropdown)
   const isUserSignedIn = await isSignedInUser();
 
-  // Fetch products and create product dropdown
-  const products = await getProductList();
+  // Fetch products and levels in parallel
+  const [products, levels] = await Promise.all([getProductList(), getLevelList()]);
   const productsList = transformProductsForDropdown(products);
+  const levelsList = transformLevelsForDropdown(levels);
 
   // Initialize product filter dropdown
   const productDropdown = new Dropdown(
     block.querySelector(SELECTORS.DROPDOWN),
     placeholders?.filterProductLabel || 'Product',
     productsList,
+    DROPDOWN_TYPE,
+  );
+
+  // Initialize level filter dropdown
+  const dropdownForm = block.querySelector(SELECTORS.DROPDOWN);
+  const levelContainer = createLevelDropdownContainer(dropdownForm);
+
+  const levelDropdown = new Dropdown(
+    levelContainer,
+    placeholders?.filterLevelLabel || 'Level',
+    levelsList,
     DROPDOWN_TYPE,
   );
 
@@ -707,53 +975,59 @@ export default async function decorate(block) {
   // Fetch and render initial course data based on URL filters
   // BrowseCardsDelegate automatically enriches with meta.courseInfo.courseStatus for signed-in users
   const urlFilters = getFiltersFromUrl();
-  const courseData = await fetchCourseData(urlFilters);
-
-  // Initialize status filter dropdown - ONLY for signed-in users
-  let statusDropdown = null;
-  if (isUserSignedIn) {
-    const statusList = createStatusFilterOptions(courseData);
-
-    // Only create dropdown if there are status options
-    if (statusList.length > 0) {
-      const dropdownForm = block.querySelector(SELECTORS.DROPDOWN);
-      const statusContainer = createStatusDropdownContainer(dropdownForm);
-
-      statusDropdown = new Dropdown(
-        statusContainer,
-        placeholders?.filterCourseStatusLabel || 'Status',
-        statusList,
-        DROPDOWN_TYPE,
-      );
-    }
-  }
+  const urlLevelFilters = getLevelFiltersFromUrl();
 
   // Create mutable state object to share between handlers
   const state = {
-    courseData,
+    courseData: [],
     currentStatusFilters: [],
-    statusDropdown, // Store reference to allow updates
-    productDropdown, // Store product dropdown reference
-    isSignedIn: isUserSignedIn, // Track signed-in status
+    currentLevelFilters: urlLevelFilters,
+    statusDropdown: null,
+    levelDropdown,
+    productDropdown,
+    isSignedIn: isUserSignedIn,
   };
 
-  await renderCards(block, state.courseData, buildCardsShimmer);
-
-  // Restore URL filter state to UI
-  preselectFiltersFromUrl(block, urlFilters);
-  updateUrlParams(urlFilters);
-  updateTags(block, urlFilters);
-
-  // Setup event handlers
+  // Setup event handlers first (before data loads)
   setupProductDropdownHandler(productDropdown, block, buildCardsShimmer, state);
-
-  // Only setup status dropdown handler if dropdown was created (signed-in users only)
-  if (statusDropdown) {
-    setupStatusDropdownHandler(statusDropdown, block, buildCardsShimmer, state);
-  }
-
+  setupLevelDropdownHandler(levelDropdown, block, buildCardsShimmer, state);
   setupClearFilterHandler(block, buildCardsShimmer, state);
 
-  // Initialize clear button state based on current filters
-  updateClearFilterButtonState(block, state);
+  // Fetch data non-blocking (include level filters from URL)
+  fetchCourseData(urlFilters, urlLevelFilters).then((courseData) => {
+    state.courseData = courseData;
+
+    // Initialize status filter dropdown - ONLY for signed-in users
+    if (isUserSignedIn) {
+      const statusList = createStatusFilterOptions(courseData);
+
+      // Only create dropdown if there are status options
+      if (statusList.length > 0) {
+        const statusDropdownForm = block.querySelector(SELECTORS.DROPDOWN);
+        const statusContainer = createStatusDropdownContainer(statusDropdownForm);
+
+        state.statusDropdown = new Dropdown(
+          statusContainer,
+          placeholders?.filterCourseStatusLabel || 'Status',
+          statusList,
+          DROPDOWN_TYPE,
+        );
+
+        // Setup status dropdown handler after creation
+        setupStatusDropdownHandler(state.statusDropdown, block, buildCardsShimmer, state);
+      }
+    }
+
+    renderCards(block, courseData, buildCardsShimmer);
+
+    // Restore URL filter state to UI
+    preselectFiltersFromUrl(block, urlFilters);
+    preselectLevelFiltersFromUrl(block, urlLevelFilters);
+    updateUrlParams(urlFilters);
+    updateLevelUrlParams(urlLevelFilters);
+    updateTags(block, urlFilters, urlLevelFilters);
+
+    // Initialize clear button state based on current filters
+    updateClearFilterButtonState(block, state);
+  });
 }

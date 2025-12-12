@@ -159,11 +159,13 @@ export async function pushPageDataLayer(language, searchTrackingData) {
     const { defaultProfileClient } = await import('../auth/profile.js');
     const userData = await defaultProfileClient.getMergedProfile();
     if (userData) {
+      // Prefer IMS authId so userID remains stable across org/account switches
+      const stableAuthId = userData?.authId || userData?.userId || '';
       user.userDetails = {
         ...user.userDetails,
         userAccountType: userData.account_type,
         userAuthenticatedStatus: 'logged in',
-        userID: userData.userId || '',
+        userID: stableAuthId,
         userLanguageSetting: userData.preferred_languages || ['en-us'],
         learningInterest: userData.interests || [],
         role: userData.role || [],
@@ -177,11 +179,13 @@ export async function pushPageDataLayer(language, searchTrackingData) {
         userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
       };
 
-      // get a list of all courses titles with awards.timestamp property
-      const coursesWithAwards = (userData?.courses_v2 || [])
-        .filter((course) => course?.awards?.timestamp && course.name)
-        .map((course) => course.name);
-      user.userDetails.courses = coursesWithAwards.length ? coursesWithAwards : [];
+      // get a list of all courses titles and ids with awards.timestamp property
+      // Get arrays of completed courses names and their IDs (where awards.timestamp and course.name exist)
+      const completedCourses = (userData?.courses_v2 || []).filter(
+        (course) => course?.awards?.timestamp && course.name,
+      );
+      user.userDetails.courses = completedCourses.length ? completedCourses.map((course) => course.name) : [];
+      user.userDetails.coursesID = completedCourses.length ? completedCourses.map((course) => course.courseId) : [];
 
       const courseInfo = (userData.courses_v2 || []).find((c) => c.courseId === courseObj?.id);
       if (courseInfo) {
@@ -996,4 +1000,36 @@ export function pushBrowseFilterSearchClearEvent(searchType, filterType, filterV
   }
 
   window.adobeDataLayer.push(dataLayerEntry);
+}
+
+/**
+ * Pushes a grid toggle event to the Adobe Data Layer.
+ * This event is fired when users switch to grid view.
+ * @param {string} cardHeader - The header associated with the block.
+ */
+export function pushGridToggleEvent(cardHeader) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'browseCardGridToggle',
+    link: {
+      linkType: cardHeader,
+    },
+  });
+}
+
+/**
+ * Pushes a list toggle event to the Adobe Data Layer.
+ * This event is fired when users switch to list view.
+ * @param {string} cardHeader - The header associated with the block.
+ */
+export function pushListToggleEvent(cardHeader) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'browseCardListToggle',
+    link: {
+      linkType: cardHeader,
+    },
+  });
 }

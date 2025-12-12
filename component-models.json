@@ -1664,6 +1664,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -3391,6 +3395,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       }
@@ -4176,6 +4184,10 @@
           {
             "name": "On-Demand Events",
             "value": "event"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           },
           {
             "name": "Community Posts",
@@ -5913,6 +5925,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -5963,6 +5979,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -6013,6 +6033,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -6063,6 +6087,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -6341,6 +6369,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -6391,6 +6423,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -6441,6 +6477,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -6491,6 +6531,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -8599,6 +8643,19 @@
         "value": "",
         "label": "Description",
         "description": "Sets the description of course summary from the current module. Make sure all the take aways are mentioned as bullet points."
+      }
+    ]
+  },
+  {
+    "id": "slides",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "slideId",
+        "value": "",
+        "label": "Slide ID",
+        "description": "ID of the slide to render. Use the ID of the slide from the URL."
       }
     ]
   }

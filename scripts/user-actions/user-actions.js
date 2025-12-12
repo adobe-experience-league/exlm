@@ -28,7 +28,18 @@ try {
  * @returns {Object} - Object with a decorate method to render user actions.
  */
 const UserActions = (config) => {
-  const { container, id, bookmarkPath, link, bookmarkConfig, copyConfig, callback, trackingInfo } = config;
+  const {
+    container,
+    id,
+    bookmarkPath,
+    link,
+    bookmarkConfig,
+    copyConfig,
+    callback,
+    trackingInfo,
+    bookmarkCallback,
+    copyCallback,
+  } = config;
 
   /**
    * Renders an icon as an HTML string.
@@ -112,6 +123,7 @@ const UserActions = (config) => {
                 'An error occurred during profile update. Please try again at a later time.',
             },
             trackingInfo,
+            callback: bookmarkCallback,
           }),
       });
     }
@@ -136,6 +148,7 @@ const UserActions = (config) => {
               copyToastText: placeholders?.userActionCopylinkToastText || 'URL copied',
             },
             trackingInfo,
+            callback: copyCallback,
           }),
       });
     }
