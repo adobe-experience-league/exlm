@@ -56,7 +56,10 @@ export class BrowseCardVideoClipModal {
 
       // If different video clip and in mini-player mode, update the existing instance
       if (BrowseCardVideoClipModal.activeInstance.miniPlayerMode) {
-        BrowseCardVideoClipModal.activeInstance.updateContent(options?.model || {});
+        BrowseCardVideoClipModal.activeInstance.updateContent(options?.model || {}).catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error('Error updating modal content:', err);
+        });
         // eslint-disable-next-line no-constructor-return
         return BrowseCardVideoClipModal.activeInstance;
       }
@@ -80,7 +83,10 @@ export class BrowseCardVideoClipModal {
 
     this.isCompactMode = isCompactUIMode();
     this.loadStyles();
-    this.createModal();
+    this.createModal().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Error creating modal:', err);
+    });
     this.setupEventListeners();
   }
 
