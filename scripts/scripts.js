@@ -764,10 +764,13 @@ export function getConfig() {
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
   const isProd = currentEnv?.env === 'PROD' || currentEnv?.authorUrl === 'author-p122525-e1219150.adobeaemcloud.com';
   const isStage = currentEnv?.env === 'STAGE' || currentEnv?.authorUrl === 'author-p122525-e1219192.adobeaemcloud.com';
-  const ppsOrigin = isProd ? 'https://pps.adobe.io' : 'https://pps-stage.adobe.io';
+  // EXLM-4452 - Temporary solution to update the IMS configuration to Prod for Premium Learning site in the Dev environment.
+  const urlParams = new URLSearchParams(window.location.search);
+  const enableProdIms = !isProd && !isStage && urlParams.get('ims') === 'prod';
+  const ppsOrigin = isProd || enableProdIms ? 'https://pps.adobe.io' : 'https://pps-stage.adobe.io';
   const ims = {
     client_id: 'ExperienceLeague',
-    environment: isProd ? 'prod' : 'stg1',
+    environment: isProd || enableProdIms ? 'prod' : 'stg1',
     debug: !isProd,
   };
 
