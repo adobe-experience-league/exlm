@@ -45,6 +45,9 @@
         "description": "APi Key"
       },
       {
+        "condition": {
+          "===": [{ "var": "type" }, "authored"]
+        },
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
@@ -53,6 +56,9 @@
         "multi": false
       },
       {
+        "condition": {
+          "===": [{ "var": "type" }, "authored"]
+        },
         "component": "text",
         "valueType": "string",
         "name": "title",
@@ -61,6 +67,9 @@
         "description": "Sets the main title of the teaser."
       },
       {
+        "condition": {
+          "===": [{ "var": "type" }, "authored"]
+        },
         "component": "select",
         "valueType": "string",
         "name": "titleType",
@@ -94,6 +103,9 @@
         ]
       },
       {
+        "condition": {
+          "===": [{ "var": "type" }, "authored"]
+        },
         "component": "richtext",
         "valueType": "string",
         "name": "longDescr",
@@ -102,6 +114,9 @@
         "description": "The description shown in Desktop and Tablet view."
       },
       {
+        "condition": {
+          "===": [{ "var": "type" }, "authored"]
+        },
         "component": "richtext",
         "valueType": "string",
         "name": "shortDescr",
