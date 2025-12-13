@@ -1,6 +1,17 @@
 {
   "groups": [
     {
+      "id": "carousel-new",
+      "resourceType": "core/franklin/components/block/v1/block",
+      "models": ["carousel"],
+      "filters": ["carousel"]
+    },
+    {
+      "id": "carousel-slide",
+      "resourceType": "core/franklin/components/block/v1/block",
+      "models": ["carousel-slide"]
+    },
+    {
       "title": "Default Content",
       "id": "default",
       "components": [

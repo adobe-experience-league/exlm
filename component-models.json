@@ -1,42 +1,160 @@
 [
   {
     "id": "carousel-new",
+    "label": "Carousel New",
     "fields": [
       {
-        "component": "multifield",
-        "name": "slides",
-        "label": "Slides",
-        "itemLabel": "Slide",
-        "fields": [
-          {
-            "component": "select",
-            "name": "type",
-            "label": "Slide type",
-            "options": [
-              { "label": "Authored", "value": "authored" },
-              { "label": "API", "value": "api" }
-            ],
-            "value": "authored"
-          },
-          {
-            "component": "text",
-            "name": "apiId",
-            "label": "API ID",
-            "visibleWhen": { "field": "type", "equals": "api" }
-          },
-          {
-            "component": "text",
-            "name": "title",
-            "label": "Title",
-            "visibleWhen": { "field": "type", "equals": "authored" }
-          },
-          {
-            "component": "aem-content",
-            "name": "image",
-            "label": "Image",
-            "visibleWhen": { "field": "type", "equals": "authored" }
-          }
-        ]
+        "component": "text",
+        "name": "title",
+        "label": "Internal name",
+        "description": "Optional label used in UE only; not rendered on page.",
+        "value": ""
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Carousel options",
+        "description": "Controls carousel layout and behavior using block options.",
+        "options": [
+          { "label": "Autoplay",               "value": "autoplay" },
+          { "label": "Disable autoplay",       "value": "autoplay-off" },
+
+          { "label": "Speed: slow",            "value": "speed-slow" },
+          { "label": "Speed: medium (default)","value": "speed-medium" },
+          { "label": "Speed: fast",            "value": "speed-fast" },
+
+          { "label": "Max items: 1",           "value": "max-1" },
+          { "label": "Max items: 2",           "value": "max-2" },
+          { "label": "Max items: 3",           "value": "max-3" },
+          { "label": "Max items: 4",           "value": "max-4" },
+          { "label": "Max items: 5",           "value": "max-5" },
+
+          { "label": "Loop slides",            "value": "loop" },
+          { "label": "No loop",                "value": "no-loop" },
+
+          { "label": "Pause on hover",         "value": "pause-on-hover" },
+          { "label": "Never pause on hover",   "value": "no-pause-on-hover" },
+
+          { "label": "Navigation: arrows",     "value": "nav-arrows" },
+          { "label": "Navigation: dots",       "value": "nav-dots" },
+          { "label": "Navigation: arrows & dots", "value": "nav-both" },
+          { "label": "Navigation: none",       "value": "nav-none" },
+
+          { "label": "Nav style: inside",      "value": "nav-inside" },
+          { "label": "Nav style: outside",     "value": "nav-outside" },
+          { "label": "Nav style: compact",     "value": "nav-compact" },
+
+          { "label": "Layout: large",          "value": "carousel-large" },
+          { "label": "Layout: compact",        "value": "carousel-compact" },
+          { "label": "Layout: peek next slide","value": "carousel-peek" },
+          { "label": "Layout: full width",     "value": "carousel-fullwidth" }
+        ],
+        "value": ["speed-medium", "max-3"]
+      }
+    ]
+  },
+  {
+    "id": "carousel-slide",
+    "label": "Carousel slide",
+    "fields": [
+      {
+        "component": "select",
+        "name": "type",
+        "label": "Slide type",
+        "description": "Choose whether this slide is authored content or loaded from an API.",
+        "options": [
+          { "label": "Authored", "value": "authored" },
+          { "label": "API",      "value": "api" }
+        ],
+        "value": "authored"
+      },
+      {
+        "component": "text",
+        "name": "apiId",
+        "label": "API ID",
+        "description": "Identifier used to fetch slide data from your API (e.g. product ID).",
+        "visibleWhen": {
+          "field": "type",
+          "equals": "api"
+        },
+        "value": ""
+      },
+      {
+        "component": "text",
+        "name": "apiVariant",
+        "label": "API variant",
+        "description": "Optional variant key for the API (e.g. promo, default).",
+        "visibleWhen": {
+          "field": "type",
+          "equals": "api"
+        },
+        "value": ""
+      },
+
+      {
+        "component": "text",
+        "name": "eyebrow",
+        "label": "Eyebrow",
+        "description": "Optional short label above the title.",
+        "visibleWhen": {
+          "field": "type",
+          "equals": "authored"
+        },
+        "value": ""
+      },
+      {
+        "component": "text",
+        "name": "title",
+        "label": "Title",
+        "description": "Main heading for the slide.",
+        "visibleWhen": {
+          "field": "type",
+          "equals": "authored"
+        },
+        "value": ""
+      },
+      {
+        "component": "textarea",
+        "name": "body",
+        "label": "Body",
+        "description": "Optional descriptive text.",
+        "visibleWhen": {
+          "field": "type",
+          "equals": "authored"
+        },
+        "value": ""
+      },
+      {
+        "component": "aem-content",
+        "name": "image",
+        "label": "Image",
+        "description": "Slide image (AEM asset reference).",
+        "visibleWhen": {
+          "field": "type",
+          "equals": "authored"
+        }
+      },
+      {
+        "component": "text",
+        "name": "ctaLabel",
+        "label": "CTA label",
+        "description": "Button label (optional).",
+        "visibleWhen": {
+          "field": "type",
+          "equals": "authored"
+        },
+        "value": ""
+      },
+      {
+        "component": "text",
+        "name": "ctaUrl",
+        "label": "CTA URL",
+        "description": "URL for the CTA link.",
+        "visibleWhen": {
+          "field": "type",
+          "equals": "authored"
+        },
+        "value": ""
       }
     ]
   },
