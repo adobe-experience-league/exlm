@@ -406,6 +406,10 @@
     "components": ["teaser", "detailed-teaser", "media"]
   },
   {
+    "id": "carousel-new",
+    "components": ["carousel-slide"]
+  },
+  {
     "id": "accordion",
     "components": ["accordion"]
   },
