@@ -1,5 +1,46 @@
 [
   {
+    "id": "carousel-new",
+    "fields": [
+      {
+        "component": "multifield",
+        "name": "slides",
+        "label": "Slides",
+        "itemLabel": "Slide",
+        "fields": [
+          {
+            "component": "select",
+            "name": "type",
+            "label": "Slide type",
+            "options": [
+              { "label": "Authored", "value": "authored" },
+              { "label": "API", "value": "api" }
+            ],
+            "value": "authored"
+          },
+          {
+            "component": "text",
+            "name": "apiId",
+            "label": "API ID",
+            "visibleWhen": { "field": "type", "equals": "api" }
+          },
+          {
+            "component": "text",
+            "name": "title",
+            "label": "Title",
+            "visibleWhen": { "field": "type", "equals": "authored" }
+          },
+          {
+            "component": "aem-content",
+            "name": "image",
+            "label": "Image",
+            "visibleWhen": { "field": "type", "equals": "authored" }
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "teaser",
     "fields": [
       {
