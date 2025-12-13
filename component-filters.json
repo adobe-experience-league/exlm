@@ -1,10 +1,5 @@
 [
-  {
-    "id": "carousel-new",
-    "label": "Carousel container filter",
-    "resourceType": "core/franklin/components/section/v1/section",
-    "allowedChildren": ["carousel-slide"]
-  },
+  
   {
     "id": "empty",
     "components": []
