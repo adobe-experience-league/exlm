@@ -34,6 +34,17 @@
         "value": "authored"
       },
       {
+        "condition": {
+          "===": [{ "var": "type" }, "api"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "apikey",
+        "value": "",
+        "label": "Heading",
+        "description": "APi Key"
+      },
+      {
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
