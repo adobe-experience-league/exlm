@@ -28,8 +28,8 @@
         "label": "Slide type",
         "description": "Choose whether this slide is authored content or loaded from an API.",
         "options": [
-          { "label": "Authored", "value": "authored" },
-          { "label": "API",      "value": "api" }
+          { "name": "Authored", "value": "authored" },
+          { "name": "API", "value": "api" }
         ],
         "value": "authored"
       },
