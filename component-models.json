@@ -4,52 +4,17 @@
     "label": "Carousel New",
     "fields": [
       {
-        "component": "text",
-        "name": "title",
-        "label": "Internal name",
-        "description": "Optional label used in UE only; not rendered on page.",
-        "value": ""
-      },
-      {
         "component": "multiselect",
         "name": "classes",
         "label": "Carousel options",
         "description": "Controls carousel layout and behavior using block options.",
         "options": [
-          { "label": "Autoplay",               "value": "autoplay" },
-          { "label": "Disable autoplay",       "value": "autoplay-off" },
-
-          { "label": "Speed: slow",            "value": "speed-slow" },
-          { "label": "Speed: medium (default)","value": "speed-medium" },
-          { "label": "Speed: fast",            "value": "speed-fast" },
-
-          { "label": "Max items: 1",           "value": "max-1" },
-          { "label": "Max items: 2",           "value": "max-2" },
-          { "label": "Max items: 3",           "value": "max-3" },
-          { "label": "Max items: 4",           "value": "max-4" },
-          { "label": "Max items: 5",           "value": "max-5" },
-
-          { "label": "Loop slides",            "value": "loop" },
-          { "label": "No loop",                "value": "no-loop" },
-
-          { "label": "Pause on hover",         "value": "pause-on-hover" },
-          { "label": "Never pause on hover",   "value": "no-pause-on-hover" },
-
-          { "label": "Navigation: arrows",     "value": "nav-arrows" },
-          { "label": "Navigation: dots",       "value": "nav-dots" },
-          { "label": "Navigation: arrows & dots", "value": "nav-both" },
-          { "label": "Navigation: none",       "value": "nav-none" },
-
-          { "label": "Nav style: inside",      "value": "nav-inside" },
-          { "label": "Nav style: outside",     "value": "nav-outside" },
-          { "label": "Nav style: compact",     "value": "nav-compact" },
-
-          { "label": "Layout: large",          "value": "carousel-large" },
-          { "label": "Layout: compact",        "value": "carousel-compact" },
-          { "label": "Layout: peek next slide","value": "carousel-peek" },
-          { "label": "Layout: full width",     "value": "carousel-fullwidth" }
+          { "name": "Autoplay", "value": "autoplay" },
+          { "name": "Speed: slow", "value": "speed-slow" },
+          { "name": "Speed: medium (default)", "value": "speed-medium" },
+          { "name": "Speed: fast", "value": "speed-fast" }
         ],
-        "value": ["speed-medium", "max-3"]
+        "value": ["speed-medium"]
       }
     ]
   },
