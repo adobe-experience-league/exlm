@@ -1,13 +1,14 @@
 import { getConfig } from '../../scripts/scripts.js';
 
 function generateFilteredEventURL(filterType, label, baseURL) {
+  const contentTypeFilter = 'f-el_contenttype=event';
   const filterMap = {
     product: 'f-el_product',
     series: 'f-el_event_series',
   };
 
   const mappedFilter = filterMap[filterType?.toLowerCase()];
-  return mappedFilter ? `${baseURL}#${mappedFilter}=${encodeURIComponent(label)}` : baseURL;
+  return mappedFilter ? `${baseURL}#${contentTypeFilter}&${mappedFilter}=${encodeURIComponent(label)}` : baseURL;
 }
 
 export default function decorate(block) {
