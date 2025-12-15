@@ -271,6 +271,24 @@
               }
             }
           }
+        },
+        {
+          "title": "List Section",
+          "id": "list-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "name": "List Section",
+                  "model": "list-section",
+                  "filter": "list-section",
+                  "style": "list-section",
+                  "list-type": "ul"
+                }
+              }
+            }
+          }
         }
       ]
     },
@@ -655,6 +673,22 @@
                     "longDescr": "<p>Teaser Description</p>",
                     "classes": ["light", "left"]
                   }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "List Item",
+          "id": "list-item",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "List Item",
+                  "model": "list-item",
+                  "filter": "list-item"
                 }
               }
             }

@@ -1272,6 +1272,33 @@
     ]
   },
   {
+    "id": "list-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "list-type",
+        "value": "",
+        "label": "List Type",
+        "description": "Type of list to display",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Unordered List",
+            "value": "ul"
+          },
+          {
+            "name": "Ordered List",
+            "value": "ol"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "list-item",
+    "fields": []
+  },
+  {
     "id": "browse-rail-section",
     "fields": [
       {
