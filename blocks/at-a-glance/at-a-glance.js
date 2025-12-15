@@ -1,5 +1,10 @@
 import { getConfig } from '../../scripts/scripts.js';
 
+// Special characters like '&' must be double-encoded because hash params are split before decoding.
+function safeEncode(value) {
+  return encodeURIComponent(value).replace(/%26/g, '%2526');
+}
+
 function generateFilteredEventURL(filterType, label, baseURL) {
   const contentTypeFilter = 'f-el_contenttype=event';
   const filterMap = {
@@ -8,7 +13,9 @@ function generateFilteredEventURL(filterType, label, baseURL) {
   };
 
   const mappedFilter = filterMap[filterType?.toLowerCase()];
-  return mappedFilter ? `${baseURL}#${contentTypeFilter}&${mappedFilter}=${encodeURIComponent(label)}` : baseURL;
+  return mappedFilter
+    ? `${baseURL}#${contentTypeFilter}&${mappedFilter}=${safeEncode(label)}`
+    : `${baseURL}#${contentTypeFilter}`;
 }
 
 export default function decorate(block) {
