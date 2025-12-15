@@ -159,11 +159,13 @@ export async function pushPageDataLayer(language, searchTrackingData) {
     const { defaultProfileClient } = await import('../auth/profile.js');
     const userData = await defaultProfileClient.getMergedProfile();
     if (userData) {
+      // Prefer IMS authId so userID remains stable across org/account switches
+      const stableAuthId = userData?.authId || userData?.userId || '';
       user.userDetails = {
         ...user.userDetails,
         userAccountType: userData.account_type,
         userAuthenticatedStatus: 'logged in',
-        userID: userData.userId || '',
+        userID: stableAuthId,
         userLanguageSetting: userData.preferred_languages || ['en-us'],
         learningInterest: userData.interests || [],
         role: userData.role || [],
