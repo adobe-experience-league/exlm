@@ -93,12 +93,6 @@ const contentTypes = [
     description: 'Recordings of learning and skill enablement events. Watch and learn from Adobe experts and peers.',
   },
   {
-    id: 'Upcoming Event',
-    value: 'Upcoming Event',
-    title: 'Upcoming Events',
-    description: 'Upcoming events description',
-  },
-  {
     id: 'Perspective',
     value: 'Perspective',
     title: 'Perspectives',
@@ -122,6 +116,12 @@ const contentTypes = [
     title: 'Tutorial',
     description:
       'Brief instructional material with step-by-step instructions to learn a specific skill or accomplish a specific task.',
+  },
+  {
+    id: 'Upcoming Event',
+    value: 'Upcoming Event',
+    title: 'Upcoming Events',
+    description: 'Virtual and in-person events focused on product education and skill development.',
   },
 ].map((contentType) => ({
   ...contentType,
@@ -200,7 +200,7 @@ const eventTypes = [
     id: 'Upcoming-Event',
     value: 'upcoming-event',
     title: 'Upcoming Events',
-    description: '',
+    description: 'Virtual and in-person events focused on product education and skill development.',
   },
 ].map((eventType) => ({
   ...eventType,
