@@ -594,6 +594,8 @@ const productGridDecorator = async (productGridBlock, decoratorOptions) => {
     const productToggle = document.createElement('button');
     productToggle.classList.add('product-toggle');
     productToggle.setAttribute('aria-controls', 'product-dropdown');
+    productToggle.setAttribute('aria-expanded', 'false');
+    productToggle.setAttribute('aria-label', 'Product Grid');
     productToggle.innerHTML = `<span class="icon-grid"></span>`;
     productGridBlock.innerHTML = `${productToggle.outerHTML}${productDropdown.outerHTML}`;
     const gridToggler = productGridBlock.querySelector('.product-toggle');

@@ -1,5 +1,13 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { decoratePlaceholders, fetchLanguagePlaceholders, getConfig, getPathDetails } from '../../scripts/scripts.js';
+import {
+  decorateAnchors,
+  decorateExternalLinks,
+  decorateInlineAttributes,
+  decoratePlaceholders,
+  fetchLanguagePlaceholders,
+  getConfig,
+  getPathDetails,
+} from '../../scripts/scripts.js';
 
 import {
   generateVisualConfig,
@@ -304,8 +312,13 @@ async function renderSlideBlock(block) {
 
       const stepId = section.id ? `${section.id}__${titleId}` : titleId;
 
-      const audio = audioP ? `${audioP.querySelector('a')?.href}` || '' : '';
+      let audio = '';
       if (audioP) {
+        if (audioP.tagName === 'A' && audioP.href) {
+          audio = audioP.href;
+        } else {
+          audio = audioP.querySelector('a')?.href || '';
+        }
         audioP.remove();
       }
 
@@ -381,6 +394,10 @@ export default async function decorate(block) {
       const doc = parser.parseFromString(htmlContent, 'text/html');
       const contentElement = doc.querySelector('.slides');
       if (contentElement) {
+        decorateAnchors(contentElement);
+        decorateIcons(contentElement);
+        decorateInlineAttributes(contentElement);
+        decorateExternalLinks(contentElement);
         block.innerHTML = contentElement.innerHTML;
         block.classList.remove('hide-slides');
         renderSlideBlock(block);
