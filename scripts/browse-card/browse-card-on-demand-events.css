@@ -42,7 +42,8 @@
 .browse-card.event-card .browse-card-figure .event-series-banner::after {
   content: '';
   position: absolute;
-  height: 4px;
+  height: 8px;
+  transform: scaleY(0.5);
   background-color: var(--non-spectrum-adobe-red);
 }
 
