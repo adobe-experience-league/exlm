@@ -443,11 +443,12 @@ export function showSearchSuggestionsOnInputClick() {
 }
 
 export const handleCoverSearchSubmit = (targetSearchText) => {
+  const encodedSearchText = encodeURIComponent(targetSearchText || '');
   const [currentSearchString] = window.location.hash.match(/\bq=([^&#]*)/) || [];
   if (currentSearchString) {
-    window.location.hash = window.location.hash.replace(currentSearchString, `q=${targetSearchText || ''}`);
+    window.location.hash = window.location.hash.replace(currentSearchString, `q=${encodedSearchText}`);
   } else {
-    window.location.hash = `#q=${targetSearchText || ''}&${window.location.hash.slice(1)}`;
+    window.location.hash = `#q=${encodedSearchText}&${window.location.hash.slice(1)}`;
   }
 };
 
