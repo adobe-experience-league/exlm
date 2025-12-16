@@ -11,7 +11,7 @@ import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constant
  * @returns {string|null} - Formatted date string or null
  */
 const formatOnDemandEventDate = (dateString) => {
-  if (!dateString) return null;
+  if (!dateString) return '';
   const date = new Date(dateString);
   const optionsDate = { month: 'short', day: '2-digit', year: 'numeric' };
   const formattedDate = date.toLocaleDateString(undefined, optionsDate).toUpperCase();
@@ -29,7 +29,7 @@ const formatOnDemandEventDate = (dateString) => {
  */
 const buildOnDemandEventContent = ({ event, cardContent, card }) => {
   const { time, duration } = event || {};
-  const durationText = duration || '30 min';
+  const durationText = duration || '';
   const formattedDateTime = formatOnDemandEventDate(time);
 
   const eventInfo = htmlToElement(`
@@ -75,16 +75,20 @@ export const decorateOnDemandEvents = (card, model) => {
 
   cardFigure.querySelector('.event-series-banner')?.remove();
 
-  buildOnDemandEventContent({
-    event,
-    contentType: model.contentType,
-    cardContent,
-    card,
-  });
+  if (event?.time) {
+    buildOnDemandEventContent({
+      event,
+      contentType: model.contentType,
+      cardContent,
+      card,
+    });
+  }
 
-  const seriesText = event?.series || 'On Demand Event Series';
-  const banner = createTag('div', { class: 'event-series-banner' }, seriesText);
-  cardFigure.appendChild(banner);
+  const seriesText = event?.series;
+  if (seriesText) {
+    const banner = createTag('div', { class: 'event-series-banner' }, seriesText);
+    cardFigure.appendChild(banner);
+  }
 };
 
 export default decorateOnDemandEvents;
