@@ -369,9 +369,7 @@ function handleUriHash(isInitialLoad) {
 
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
   const searchInput = filterInputSection.querySelector('input');
-
   uncheckAllFiltersFromDropdown(browseFiltersSection);
-
   const hash = fragment();
   if (!hash) {
     clearAllSelectedTag(browseFiltersSection);
@@ -380,11 +378,9 @@ function handleUriHash(isInitialLoad) {
     return;
   }
 
-  const filtersInfo = hash.split('&').filter(Boolean);
-
   clearAllSelectedTag(browseFiltersSection);
-
   let containsSearchQuery = false;
+  const filtersInfo = hash.split('&').filter(Boolean);
   let pageNumber = 1;
   const isOnPageLoad = isInitialLoad === true;
 
@@ -399,19 +395,15 @@ function handleUriHash(isInitialLoad) {
 
     if (Object.keys(coveoFacetMap).includes(keyName)) {
       const filterOptionEl = browseFiltersSection.querySelector(`.filter-dropdown[data-filter-type="${keyName}"]`);
-
       if (filterOptionEl) {
         const ddObject = getObjectById(dropdownOptions, keyName);
         const { name } = ddObject;
-
         facetValues.forEach((facetValueString) => {
           const [facetValue] = facetValueString.split('|');
           const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
-
           if (inputEl && !inputEl.checked) {
             const label = inputEl.dataset.label || '';
             inputEl.checked = true;
-
             appendTag(
               browseFiltersSection,
               {
@@ -424,7 +416,6 @@ function handleUriHash(isInitialLoad) {
             );
           }
         });
-
         const btnEl = filterOptionEl.querySelector(':scope > button');
         const selectedCount = facetValues.reduce((acc, curr) => {
           const [key] = curr.split('|');
@@ -449,8 +440,7 @@ function handleUriHash(isInitialLoad) {
       const selectedTopics = getSelectedTopics(hash);
       const contentDiv = document.querySelector('.browse-topics');
       const buttons = contentDiv?.querySelectorAll('button') ?? [];
-
-      buttons.forEach((button) => {
+      Array.from(buttons).forEach((button) => {
         const matchFound = selectedTopics.find((topic) => button.dataset.label?.includes(topic));
         button.classList.toggle('browse-topics-item-active', !!matchFound);
       });
