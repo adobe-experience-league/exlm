@@ -307,9 +307,12 @@ export const getSelectedTopics = (decodedHash) => {
   if (!decodedHash) {
     return [];
   }
-  const hashesList = decodedHash.split('&');
-  const filterInfo = hashesList.find((hash) => hash.includes('aq='));
+  // Parse URL parameters properly to handle & in values
+  const urlParams = new URLSearchParams(decodedHash.startsWith('#') ? decodedHash.slice(1) : decodedHash);
   const selectedTopics = [];
+
+  // Get advanced query parameter
+  const filterInfo = urlParams.get('aq');
   if (filterInfo) {
     const solutionsCheck = filterInfo.match(/@el_solution=("[^"]*")/g) ?? [];
     const featuresCheck = filterInfo.match(/@el_features=("[^"]*")/g) ?? [];
@@ -325,9 +328,10 @@ export const getSelectedTopics = (decodedHash) => {
         return acc;
       }, selectedTopics);
   }
-  const elProductInfo = hashesList.find((hash) => hash.includes('f-el_product='));
-  if (elProductInfo) {
-    const [, productsListString] = elProductInfo.split('=');
+
+  // Get product filter parameter
+  const productsListString = urlParams.get('f-el_product');
+  if (productsListString) {
     productsListString.split(',').forEach((product) => {
       if (product) {
         selectedTopics.push(product);
