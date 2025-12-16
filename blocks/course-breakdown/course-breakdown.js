@@ -1,6 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { getModuleMeta } from '../../scripts/courses/course-utils.js';
+import { getCourseCompletionPageUrl, getModuleMeta } from '../../scripts/courses/course-utils.js';
 import {
   MODULE_STATUS,
   getCourseStatus,
@@ -21,7 +21,7 @@ function isModuleCompleted(moduleIndex) {
   return completedIndices.includes(moduleIndex);
 }
 
-function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
+function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder, courseCompletionPageUrl) {
   const header = document.createElement('div');
   header.classList.add('course-breakdown-header');
 
@@ -45,21 +45,28 @@ function headerDom(title, moduleCount, moduleTime, courseStatus, placeholder) {
 
   if (courseStatus) {
     // For signed-in users: Configure as a link with appropriate text
+    const showCertificateDownloadLink = !!courseCompletionPageUrl && courseStatus === MODULE_STATUS.COMPLETED;
+    const certificateDownloadLinkText = placeholder?.courseAwardCertificateLinkLabel || 'View Certificate';
     const startButtonTextMap = {
       [MODULE_STATUS.NOT_STARTED]: placeholder?.courseBreakdownButtonNotStarted || 'Start Course',
       [MODULE_STATUS.IN_PROGRESS]: placeholder?.courseBreakdownButtonInProgress || 'Continue Learning',
-      [MODULE_STATUS.COMPLETED]: placeholder?.courseBreakdownButtonCompleted || 'Review Course',
+      [MODULE_STATUS.COMPLETED]: showCertificateDownloadLink
+        ? certificateDownloadLinkText
+        : placeholder?.courseBreakdownButtonCompleted || 'Review Course',
     };
-    startButton.textContent = startButtonTextMap[courseStatus] || 'Start Course';
-    startButton.href = '#';
 
-    // Set the href asynchronously
-    getLastAddedModule().then(async (lastAddedModuleUrl) => {
-      const moduleMeta = await getModuleMeta(lastAddedModuleUrl, placeholder);
-      if (moduleMeta?.moduleSteps.length && moduleMeta?.moduleSteps[0]?.url) {
-        startButton.href = moduleMeta.moduleSteps[0].url;
-      }
-    });
+    startButton.textContent = startButtonTextMap[courseStatus] || 'Start Course';
+    startButton.href = showCertificateDownloadLink ? `${window.location.origin}${courseCompletionPageUrl}` : '#';
+
+    if (!showCertificateDownloadLink) {
+      // Set the href asynchronously
+      getLastAddedModule().then(async (lastAddedModuleUrl) => {
+        const moduleMeta = await getModuleMeta(lastAddedModuleUrl, placeholder);
+        if (moduleMeta?.moduleSteps.length && moduleMeta?.moduleSteps[0]?.url) {
+          startButton.href = moduleMeta.moduleSteps[0].url;
+        }
+      });
+    }
   } else {
     // For signed-out users: Configure as a link with sign-in functionality
     startButton.textContent = placeholder?.courseBreakdownInfoSignInButton || 'Sign In to Start';
@@ -232,11 +239,10 @@ export default async function decorate(block) {
     // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
   }
-
-  const courseStatus = await getCourseStatus();
+  const [courseCompletionPageUrl, courseStatus] = await Promise.all([getCourseCompletionPageUrl(), getCourseStatus()]);
 
   block.textContent = '';
-  block.append(headerDom(title, modules?.length, moduleTime, courseStatus, placeholders));
+  block.append(headerDom(title, modules?.length, moduleTime, courseStatus, placeholders, courseCompletionPageUrl));
   block.append(infoCardDom(infoTitle, infoDescription, courseStatus, placeholders));
 
   modules.forEach((module, index) => {
