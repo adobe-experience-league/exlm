@@ -426,15 +426,19 @@ function handleUriHash(isInitialLoad) {
         });
 
         const btnEl = filterOptionEl.querySelector(':scope > button');
-        const selectedCount = [...new Set(facetValues.map((v) => v.split('|')[0]))].length;
-
+        const selectedCount = facetValues.reduce((acc, curr) => {
+          const [key] = curr.split('|');
+          if (!acc.includes(key)) {
+            acc.push(key);
+          }
+          return acc;
+        }, []).length;
         ddObject.selected = selectedCount;
         btnEl.firstChild.textContent = selectedCount === 0 ? name : `${name} (${selectedCount})`;
       }
     } else if (keyName === 'q') {
       containsSearchQuery = true;
       const [searchValue] = facetValues;
-
       if (searchValue) {
         searchInput.value = searchValue.trim();
         filterInputSection.querySelector('.search-clear-icon')?.classList.add('search-icon-show');
@@ -454,7 +458,6 @@ function handleUriHash(isInitialLoad) {
       const firstResult = parseInt(facetValueInfo, 10);
       const resultsPerPage = getBrowseFiltersResultCount();
       const targetPageNumber = Math.floor(firstResult / resultsPerPage) + 1;
-
       pageNumber = window.headlessPager.state.maxPage
         ? Math.min(targetPageNumber, window.headlessPager.state.maxPage)
         : targetPageNumber;
@@ -464,19 +467,17 @@ function handleUriHash(isInitialLoad) {
       }
     }
   });
-
   if (!containsSearchQuery) {
     searchInput.value = '';
   }
-
   if (filtersInfo.length && window.headlessBaseSolutionQuery) {
-    handleTopicSelection(browseFiltersSection, true, pageNumber === 1, pageNumber);
+    const resetPageIndex = pageNumber === 1;
+    const fireSelection = true;
+    handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex, pageNumber);
   }
-
   if (!isOnPageLoad) {
     redecorateTagsContainer(browseFiltersSection);
   }
-
   updateClearFilterStatus(browseFiltersSection);
   window.headlessSearchEngine.executeFirstSearch();
 }
