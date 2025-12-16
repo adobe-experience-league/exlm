@@ -352,17 +352,26 @@ function uncheckAllFiltersFromDropdown(block) {
   });
 }
 
+function safeDecode(val) {
+  try {
+    return decodeURIComponent(decodeURIComponent(val));
+  } catch {
+    return val;
+  }
+}
+
 /**
  * Handles the parsing and updating of filters, search terms, and pagination from the URL hash.
  */
 function handleUriHash(isInitialLoad) {
   const browseFiltersSection = document.querySelector('.browse-filters-form');
-  if (!browseFiltersSection) {
-    return;
-  }
+  if (!browseFiltersSection) return;
+
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
   const searchInput = filterInputSection.querySelector('input');
+
   uncheckAllFiltersFromDropdown(browseFiltersSection);
+
   const hash = fragment();
   if (!hash) {
     clearAllSelectedTag(browseFiltersSection);
@@ -370,30 +379,39 @@ function handleUriHash(isInitialLoad) {
     searchInput.value = '';
     return;
   }
-  const decodedHash = decodeURIComponent(hash);
+
+  const filtersInfo = hash.split('&').filter(Boolean);
 
   clearAllSelectedTag(browseFiltersSection);
+
   let containsSearchQuery = false;
-  const filtersInfo = decodedHash.split('&').filter((s) => !!s);
   let pageNumber = 1;
   const isOnPageLoad = isInitialLoad === true;
 
   filtersInfo.forEach((filterInfo) => {
-    const [facetKeys, facetValueInfo] = filterInfo.split('=');
-    const facetValues = facetValueInfo.split(',');
+    const [facetKeys, facetValueInfo = ''] = filterInfo.split('=');
     const keyName = facetKeys.replace('f-', '');
+
+    const facetValues = facetValueInfo
+      .split(',')
+      .filter(Boolean)
+      .map((v) => safeDecode(v));
 
     if (Object.keys(coveoFacetMap).includes(keyName)) {
       const filterOptionEl = browseFiltersSection.querySelector(`.filter-dropdown[data-filter-type="${keyName}"]`);
+
       if (filterOptionEl) {
         const ddObject = getObjectById(dropdownOptions, keyName);
         const { name } = ddObject;
+
         facetValues.forEach((facetValueString) => {
-          const [facetValue] = decodeURIComponent(facetValueString).split('|');
+          const [facetValue] = facetValueString.split('|');
           const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
-          if (!inputEl.checked) {
-            const label = inputEl?.dataset.label || '';
+
+          if (inputEl && !inputEl.checked) {
+            const label = inputEl.dataset.label || '';
             inputEl.checked = true;
+
             appendTag(
               browseFiltersSection,
               {
@@ -406,47 +424,37 @@ function handleUriHash(isInitialLoad) {
             );
           }
         });
+
         const btnEl = filterOptionEl.querySelector(':scope > button');
-        const selectedCount = facetValues.reduce((acc, curr) => {
-          const [key] = curr.split('|');
-          if (!acc.includes(key)) {
-            acc.push(key);
-          }
-          return acc;
-        }, []).length;
+        const selectedCount = [...new Set(facetValues.map((v) => v.split('|')[0]))].length;
+
         ddObject.selected = selectedCount;
-        if (selectedCount === 0) {
-          btnEl.firstChild.textContent = name;
-        } else {
-          btnEl.firstChild.textContent = `${name} (${selectedCount})`;
-        }
+        btnEl.firstChild.textContent = selectedCount === 0 ? name : `${name} (${selectedCount})`;
       }
     } else if (keyName === 'q') {
       containsSearchQuery = true;
       const [searchValue] = facetValues;
+
       if (searchValue) {
         searchInput.value = searchValue.trim();
-        const clearIcon = filterInputSection.querySelector('.search-clear-icon');
-        clearIcon.classList.add('search-icon-show');
+        filterInputSection.querySelector('.search-clear-icon')?.classList.add('search-icon-show');
       } else {
         searchInput.value = '';
       }
     } else if (keyName === 'aq' && filterInfo) {
-      const selectedTopics = getSelectedTopics(decodedHash);
+      const selectedTopics = getSelectedTopics(hash);
       const contentDiv = document.querySelector('.browse-topics');
       const buttons = contentDiv?.querySelectorAll('button') ?? [];
-      Array.from(buttons).forEach((button) => {
+
+      buttons.forEach((button) => {
         const matchFound = selectedTopics.find((topic) => button.dataset.label?.includes(topic));
-        if (matchFound) {
-          button.classList.add('browse-topics-item-active');
-        } else {
-          button.classList.remove('browse-topics-item-active');
-        }
+        button.classList.toggle('browse-topics-item-active', !!matchFound);
       });
     } else if (keyName === 'firstResult' && window.headlessPager) {
       const firstResult = parseInt(facetValueInfo, 10);
       const resultsPerPage = getBrowseFiltersResultCount();
       const targetPageNumber = Math.floor(firstResult / resultsPerPage) + 1;
+
       pageNumber = window.headlessPager.state.maxPage
         ? Math.min(targetPageNumber, window.headlessPager.state.maxPage)
         : targetPageNumber;
@@ -456,17 +464,19 @@ function handleUriHash(isInitialLoad) {
       }
     }
   });
+
   if (!containsSearchQuery) {
     searchInput.value = '';
   }
+
   if (filtersInfo.length && window.headlessBaseSolutionQuery) {
-    const resetPageIndex = pageNumber === 1;
-    const fireSelection = true;
-    handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex, pageNumber);
+    handleTopicSelection(browseFiltersSection, true, pageNumber === 1, pageNumber);
   }
+
   if (!isOnPageLoad) {
     redecorateTagsContainer(browseFiltersSection);
   }
+
   updateClearFilterStatus(browseFiltersSection);
   window.headlessSearchEngine.executeFirstSearch();
 }
