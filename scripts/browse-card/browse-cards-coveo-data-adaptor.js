@@ -94,6 +94,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       el_event_type,
       el_event_speakers_name,
       el_event_speakers_profile_picture_url,
+      el_event_duration,
     } = parentResult?.raw || raw || {};
     let contentType;
     if (el_type) {
@@ -118,6 +119,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     const eventSpeakersName = raw?.el_event_speakers_name || el_event_speakers_name || '';
     const eventSpeakersProfile =
       raw?.el_event_speakers_profile_picture_url || el_event_speakers_profile_picture_url || '';
+    const eventDuration = raw?.el_event_duration || el_event_duration || '';
 
     let eventDate = '';
     if (raw?.el_event_start_time) {
@@ -163,6 +165,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
           profilePictureURL: eventSpeakersProfile,
         },
         date: eventDate,
+        duration: eventDuration,
       },
       authorInfo: {
         name: raw?.author_name || '',

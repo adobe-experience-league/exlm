@@ -1,5 +1,6 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
+import { pushGridToggleEvent, pushListToggleEvent } from '../analytics/lib-analytics.js';
 
 export default class BrowseCardViewSwitcher {
   static placeholders = {};
@@ -124,7 +125,6 @@ export default class BrowseCardViewSwitcher {
 
     const toggleHandler = (e) => {
       e.preventDefault();
-      e.stopPropagation();
 
       BrowseCardViewSwitcher.toggleClassState(card, 'expanded');
 
@@ -326,6 +326,15 @@ export default class BrowseCardViewSwitcher {
   }
 
   /**
+   * Get the header text from the block
+   * @returns {string} The header text
+   */
+  getBlockHeader() {
+    const headerEl = this.block?.querySelector('.browse-cards-block-title');
+    return (headerEl?.innerText || this.block?.getAttribute('data-block-name') || '').trim();
+  }
+
+  /**
    * Switch to grid view
    */
   switchToGridView() {
@@ -333,6 +342,9 @@ export default class BrowseCardViewSwitcher {
       this.block.classList.remove('list');
       BrowseCardViewSwitcher.setActiveToggle(this.gridViewBtn, this.listViewBtn, 'active');
       this.isListView = false;
+      // Push grid toggle event to analytics with block header
+      const cardHeader = this.getBlockHeader();
+      pushGridToggleEvent(cardHeader);
       if (this.onViewSwitch && typeof this.onViewSwitch === 'function') {
         this.onViewSwitch('grid');
       }
@@ -349,6 +361,10 @@ export default class BrowseCardViewSwitcher {
       this.isListView = true;
 
       this.enhanceCardsForListView();
+
+      // Push list toggle event to analytics with block header
+      const cardHeader = this.getBlockHeader();
+      pushListToggleEvent(cardHeader);
 
       if (this.onViewSwitch && typeof this.onViewSwitch === 'function') {
         this.onViewSwitch('list');

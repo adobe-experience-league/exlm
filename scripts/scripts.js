@@ -166,6 +166,8 @@ export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 export const isCourseStep = matchesAnyTheme(/course-step/);
+export const isOnDemandEventPage = matchesAnyTheme(/on-demand-event/);
+
 export const isCertificatePage = () => !!document.querySelector('.course-completion'); // Checking for presence of course-completion block
 
 /**
@@ -693,7 +695,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities.adobe.com',
-      gainsightCustomer: 'TBD', // TODO: Customer ID for prod (Because we are behind a custom Adobe domain on prod, need to confirm with Gainsight team)
+      gainsightCustomer: 'adobedx-en-sandbox', // TODO: Customer ID for prod (Because we are behind a custom Adobe domain on prod, need to confirm with Gainsight team)
     },
     {
       env: 'STAGE',
@@ -854,6 +856,8 @@ export function getConfig() {
     gainsightCustomer,
     useGainsightCommunity,
     communityPlatform,
+    // Events Page URL
+    eventsURL: `${cdnOrigin}/${lang}/events`,
   };
   return window.exlm.config;
 }
@@ -1066,7 +1070,7 @@ function loadDelayed() {
  * Custom - Loads the right and left rails for doc pages only.
  */
 async function loadRails() {
-  if (isDocPage) {
+  if (isDocPage || isOnDemandEventPage) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/rails/rails.css`);
     loadDefaultModule('./rails/rails.js');
   }

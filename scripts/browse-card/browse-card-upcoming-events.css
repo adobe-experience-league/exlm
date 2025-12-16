@@ -27,23 +27,24 @@
   .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
     position: relative;
     padding: 10px 0;
-    margin: 40px 0 20px;
+    margin: 30px 0 20px;
     color: var(--spectrum-gray-50);
-    font-size: var(--spectrum-font-size-400);
+    font-size: var(--spectrum-font-size-700);
     font-weight: var(--font-weight-bold);
     text-align: left;
     width: 100%;
     box-sizing: border-box;
     padding-left: 10%;
     padding-right: 10%;
-    letter-spacing: 0.2px;
+    letter-spacing: 1px;
   }
 
   .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::before,
   .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after {
     content: '';
     position: absolute;
-    height: 3px;
+    height: 8px;
+    transform: scaleY(0.5);
     background-color: var(--non-spectrum-adobe-red);
   }
 
@@ -143,8 +144,21 @@
   display: flex;
 }
 
-.list .browse-card.upcoming-event-card .location-type {
+.list .browse-card.upcoming-event-card .location-type,
+.browse-card.upcoming-event-card .browse-card-footer .location-type {
   display: none;
+}
+
+body[class^='browse-'] .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
+  font-size: var(--spectrum-font-size-700);
+}
+
+@media only screen and (min-width: 600px) {
+  .events-v2 {
+    .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
+      font-size: 24px;
+    }
+  }
 }
 
 @media only screen and (min-width: 900px) {
@@ -365,7 +379,7 @@
   .list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner,
   .list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
     text-align: center;
-    font-size: var(--spectrum-font-size-200);
+    font-size: var(--spectrum-font-size-100);
     color: var(--spectrum-gray-50);
     opacity: 1;
     position: relative;
@@ -457,5 +471,23 @@
     font-size: var(--spectrum-font-size-75);
     font-weight: var(--font-weight-bold);
     color: var(--non-spectrum-dark-gray);
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .events-v2 {
+    .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
+      font-size: var(--spectrum-font-size-700);
+    }
+  }
+
+  .list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
+    font-size: var(--spectrum-font-size-100);
+  }
+}
+
+@media only screen and (min-width: 1440px) {
+  body[class^='browse-'] .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
+    font-size: 24px;
   }
 }
