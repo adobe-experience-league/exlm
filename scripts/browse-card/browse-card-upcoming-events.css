@@ -43,7 +43,8 @@
   .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after {
     content: '';
     position: absolute;
-    height: 4px;
+    height: 8px;
+    transform: scaleY(0.5);
     background-color: var(--non-spectrum-adobe-red);
   }
 
@@ -143,7 +144,8 @@
   display: flex;
 }
 
-.list .browse-card.upcoming-event-card .location-type {
+.list .browse-card.upcoming-event-card .location-type,
+.browse-card.upcoming-event-card .browse-card-footer .location-type {
   display: none;
 }
 
@@ -377,7 +379,7 @@ body[class^='browse-'] .browse-card.upcoming-event-card .browse-card-figure .eve
   .list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner,
   .list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
     text-align: center;
-    font-size: var(--spectrum-font-size-200);
+    font-size: var(--spectrum-font-size-100);
     color: var(--spectrum-gray-50);
     opacity: 1;
     position: relative;
@@ -477,6 +479,10 @@ body[class^='browse-'] .browse-card.upcoming-event-card .browse-card-figure .eve
     .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
       font-size: var(--spectrum-font-size-700);
     }
+  }
+
+  .list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
+    font-size: var(--spectrum-font-size-100);
   }
 }
 

@@ -352,14 +352,22 @@ function uncheckAllFiltersFromDropdown(block) {
   });
 }
 
+// Special characters like '&' must be double-encoded because hash params are split before decoding.
+function safeDecode(val) {
+  try {
+    return decodeURIComponent(decodeURIComponent(val));
+  } catch {
+    return val;
+  }
+}
+
 /**
  * Handles the parsing and updating of filters, search terms, and pagination from the URL hash.
  */
 function handleUriHash(isInitialLoad) {
   const browseFiltersSection = document.querySelector('.browse-filters-form');
-  if (!browseFiltersSection) {
-    return;
-  }
+  if (!browseFiltersSection) return;
+
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
   const searchInput = filterInputSection.querySelector('input');
   uncheckAllFiltersFromDropdown(browseFiltersSection);
@@ -370,18 +378,21 @@ function handleUriHash(isInitialLoad) {
     searchInput.value = '';
     return;
   }
-  const decodedHash = decodeURIComponent(hash);
 
   clearAllSelectedTag(browseFiltersSection);
   let containsSearchQuery = false;
-  const filtersInfo = decodedHash.split('&').filter((s) => !!s);
+  const filtersInfo = hash.split('&').filter(Boolean);
   let pageNumber = 1;
   const isOnPageLoad = isInitialLoad === true;
 
   filtersInfo.forEach((filterInfo) => {
-    const [facetKeys, facetValueInfo] = filterInfo.split('=');
-    const facetValues = facetValueInfo.split(',');
+    const [facetKeys, facetValueInfo = ''] = filterInfo.split('=');
     const keyName = facetKeys.replace('f-', '');
+
+    const facetValues = facetValueInfo
+      .split(',')
+      .filter(Boolean)
+      .map((v) => safeDecode(v));
 
     if (Object.keys(coveoFacetMap).includes(keyName)) {
       const filterOptionEl = browseFiltersSection.querySelector(`.filter-dropdown[data-filter-type="${keyName}"]`);
@@ -389,10 +400,10 @@ function handleUriHash(isInitialLoad) {
         const ddObject = getObjectById(dropdownOptions, keyName);
         const { name } = ddObject;
         facetValues.forEach((facetValueString) => {
-          const [facetValue] = decodeURIComponent(facetValueString).split('|');
+          const [facetValue] = facetValueString.split('|');
           const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
-          if (!inputEl.checked) {
-            const label = inputEl?.dataset.label || '';
+          if (inputEl && !inputEl.checked) {
+            const label = inputEl.dataset.label || '';
             inputEl.checked = true;
             appendTag(
               browseFiltersSection,
@@ -415,33 +426,24 @@ function handleUriHash(isInitialLoad) {
           return acc;
         }, []).length;
         ddObject.selected = selectedCount;
-        if (selectedCount === 0) {
-          btnEl.firstChild.textContent = name;
-        } else {
-          btnEl.firstChild.textContent = `${name} (${selectedCount})`;
-        }
+        btnEl.firstChild.textContent = selectedCount === 0 ? name : `${name} (${selectedCount})`;
       }
     } else if (keyName === 'q') {
       containsSearchQuery = true;
       const [searchValue] = facetValues;
       if (searchValue) {
         searchInput.value = searchValue.trim();
-        const clearIcon = filterInputSection.querySelector('.search-clear-icon');
-        clearIcon.classList.add('search-icon-show');
+        filterInputSection.querySelector('.search-clear-icon')?.classList.add('search-icon-show');
       } else {
         searchInput.value = '';
       }
     } else if (keyName === 'aq' && filterInfo) {
-      const selectedTopics = getSelectedTopics(decodedHash);
+      const selectedTopics = getSelectedTopics(hash);
       const contentDiv = document.querySelector('.browse-topics');
       const buttons = contentDiv?.querySelectorAll('button') ?? [];
       Array.from(buttons).forEach((button) => {
         const matchFound = selectedTopics.find((topic) => button.dataset.label?.includes(topic));
-        if (matchFound) {
-          button.classList.add('browse-topics-item-active');
-        } else {
-          button.classList.remove('browse-topics-item-active');
-        }
+        button.classList.toggle('browse-topics-item-active', !!matchFound);
       });
     } else if (keyName === 'firstResult' && window.headlessPager) {
       const firstResult = parseInt(facetValueInfo, 10);
