@@ -1,6 +1,14 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { getPathDetails, fetchGlobalFragment, htmlToElement } from '../../scripts/scripts.js';
 
+/**
+ * @typedef {Object} FooterOptions
+ * @property {string} [lang] - Language code override
+ * @property {string} [navLinkOrigin] - Origin to prepend to relative links
+ * @property {boolean} [customCookies] - Enable custom OneTrust cookie consent handling for community/external pages
+ * @property {string} [context] - Context identifier (e.g., 'community')
+ */
+
 /** @param {HTMLElement} block  */
 const decorateFooterLinks = (block) => {
   const links = block.querySelectorAll('a[href*="@newtab"]');
@@ -168,10 +176,12 @@ function handleSocialIconStyles(footer) {
 /**
  * loads and decorates the footer
  * @param {Element} block The footer block element
+ * @param {FooterOptions} [options] Optional configuration for external/community usage
  */
-export default async function decorate(block) {
+export default async function decorate(block, options = {}) {
   // fetch footer content
-  const { lang } = getPathDetails();
+  const pathDetails = getPathDetails();
+  const lang = options.lang || pathDetails.lang;
   const footerMeta = 'footer-fragment';
   const fallback = '/en/global-fragments/footer';
   const footerFragment = await fetchGlobalFragment(footerMeta, fallback, lang);
@@ -187,5 +197,12 @@ export default async function decorate(block) {
     handleSocialIconStyles(footer);
     decorateCopyrightsMenu(footer);
     footer?.querySelector('.language-selector')?.remove();
+  }
+
+  // Initialize custom cookie handler if enabled (for community pages)
+  if (options.customCookies) {
+    import('../../scripts/custom-cookies/custom-cookies.js').then((module) => {
+      module.default();
+    });
   }
 }
