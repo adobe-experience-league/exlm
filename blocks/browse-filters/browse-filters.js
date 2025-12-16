@@ -352,6 +352,7 @@ function uncheckAllFiltersFromDropdown(block) {
   });
 }
 
+// Special characters like '&' must be double-encoded because hash params are split before decoding.
 function safeDecode(val) {
   try {
     return decodeURIComponent(decodeURIComponent(val));
