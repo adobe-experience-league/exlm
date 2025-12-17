@@ -5486,6 +5486,20 @@
       {
         "component": "select",
         "valueType": "string",
+        "name": "classes",
+        "label": "Classes",
+        "value": "note-identifier",
+        "options": [
+          {
+            "name": "Default",
+            "value": "note-identifier"
+          }
+        ],
+        "hidden": true
+      },
+      {
+        "component": "select",
+        "valueType": "string",
         "name": "note-type",
         "label": "Note Type",
         "value": "",

@@ -1436,7 +1436,7 @@
                 "template": {
                   "name": "Note",
                   "model": "note",
-                  "classes": "note-default"
+                  "classes": "note-identifier"
                 }
               }
             }
