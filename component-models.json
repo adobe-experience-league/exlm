@@ -2714,6 +2714,19 @@
     "id": "video-embed",
     "fields": [
       {
+        "component": "select",
+        "valueType": "string",
+        "name": "classes",
+        "label": "Classes",
+        "value": "default",
+        "options": [
+          {
+            "name": "Default",
+            "value": "default"
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "videoUrl",
@@ -5488,11 +5501,11 @@
         "valueType": "string",
         "name": "classes",
         "label": "Classes",
-        "value": "note-identifier",
+        "value": "default",
         "options": [
           {
             "name": "Default",
-            "value": "note-identifier"
+            "value": "default"
           }
         ]
       },
