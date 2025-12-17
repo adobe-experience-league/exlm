@@ -94,6 +94,7 @@ export class BrowseCardVideoClipModal {
       this.setupEventListeners();
       this.isInitialized = true;
     } catch (error) {
+      /* eslint-disable-next-line no-console */
       console.error('Error initializing modal:', error);
     }
   }
@@ -125,7 +126,7 @@ export class BrowseCardVideoClipModal {
   async createModal() {
     const { title, videoURL, parentName, parentURL, product, failedToLoad = false } = this.model;
 
-    const { lang } = getPathDetails();
+    const { lang = 'en' } = getPathDetails() || {};
     let videoSrc = await getLocalizedVideoUrl(videoURL, lang);
     if (this.miniPlayerMode) {
       const hasParams = videoSrc?.includes('?');
@@ -328,6 +329,7 @@ export class BrowseCardVideoClipModal {
 
     // Ensure backdrop exists before trying to append
     if (!this.backdrop) {
+      /* eslint-disable-next-line no-console */
       console.error('Modal backdrop not created yet');
       return;
     }
@@ -397,17 +399,16 @@ export class BrowseCardVideoClipModal {
     }
   }
 
-  updateContent(model) {
+  async updateContent(model) {
     this.model = model;
 
     const {
       title,
+      videoURL,
       parentName,
       parentURL,
       viewLinkText = BrowseCardVideoClipModal.placeholders?.watchFullVideo || 'Watch full video',
     } = this.model;
-
-    const videoURL = this.getLocalizedVideoURL();
 
     const titleElement = this.modal.querySelector('.browse-card-video-clip-info-title');
     if (titleElement) {
@@ -421,7 +422,8 @@ export class BrowseCardVideoClipModal {
         existingIframe.remove();
       }
 
-      let videoSrc = videoURL;
+      const { lang = 'en' } = getPathDetails() || {};
+      let videoSrc = await getLocalizedVideoUrl(videoURL, lang);
       if (this.miniPlayerMode) {
         const hasParams = videoSrc.includes('?');
         videoSrc = `${videoSrc}${hasParams ? '&' : '?'}autoplay=1`;
