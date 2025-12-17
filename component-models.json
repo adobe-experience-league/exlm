@@ -1299,6 +1299,49 @@
     "fields": []
   },
   {
+    "id": "list-content",
+    "fields": [
+      {
+        "component": "select",
+        "name": "listContentType",
+        "value": "text",
+        "label": "Content Type",
+        "description": "Choose type of this content",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Text",
+            "value": "text"
+          },
+          {
+            "name": "Image",
+            "value": "image"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "listContentType" }, "text"]
+        },
+        "component": "richtext",
+        "valueType": "string",
+        "name": "richtext",
+        "value": "<p>List text content</p>",
+        "label": "Text Content"
+      },
+      {
+        "condition": {
+          "===": [{ "var": "listContentType" }, "image"]
+        },
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "List image content",
+        "multi": false
+      }
+    ]
+  },
+  {
     "id": "browse-rail-section",
     "fields": [
       {

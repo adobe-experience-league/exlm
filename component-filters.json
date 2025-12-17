@@ -446,7 +446,7 @@
   },
   {
     "id": "list-item",
-    "components": ["text", "image", "button", "title", "code", "note", "video-embed"]
+    "components": ["list-content", "code", "note", "video-embed"]
   },
   {
     "id": "rte-custom-options",
