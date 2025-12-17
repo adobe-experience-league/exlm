@@ -766,8 +766,9 @@ export function getConfig() {
   const isStage = currentEnv?.env === 'STAGE' || currentEnv?.authorUrl === 'author-p122525-e1219192.adobeaemcloud.com';
   // EXLM-4452 - Temporary solution to update the IMS configuration to Prod for Premium Learning site in the Dev environment.
   const urlParams = new URLSearchParams(window.location.search);
-  const enableProdIms = !isProd && urlParams.get('ims') === 'prod';
-  if (enableProdIms) {
+  const isImsProd = !isProd && (urlParams?.get('ims') === 'prod' || sessionStorage.getItem('ims') === 'prod');
+
+  if (isImsProd) {
     isProd = true;
     cdnOrigin = `https://experienceleague.adobe.com`;
   }
@@ -894,7 +895,8 @@ export async function loadIms() {
   // if adobe IMS was loaded already, return. Especially useful when embedding this code outside this site.
   // eg. embedding header in community which has it's own IMS setup.
   if (!window.imsLoaded && window.adobeIMS) return Promise.resolve();
-  const { ims } = getConfig();
+  const { ims, isProd } = getConfig();
+  const urlParams = new URLSearchParams(window.location.search);
   window.imsLoaded =
     window.imsLoaded ||
     new Promise((resolve, reject) => {
@@ -909,6 +911,9 @@ export async function loadIms() {
         onReady: () => {
           // eslint-disable-next-line no-console
           console.log('Adobe IMS Ready!');
+          if (!isProd && urlParams.get('ims') === 'prod') {
+            sessionStorage.setItem('ims', 'prod');
+          }
           resolve(); // resolve the promise, consumers can now use window.adobeIMS
           clearTimeout(timeout);
         },
@@ -997,10 +1002,6 @@ async function loadLazy(doc) {
   const main = doc.querySelector('main');
   const preMain = doc.body.querySelector(':scope > aside');
   loadIms(); // start it early, asyncronously
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('ims') === 'prod') {
-    sessionStorage.setItem('ims', 'prod');
-  }
 
   // Prefetch Coveo token early (non-blocking, parallel with blocks)
   // All pages use Coveo for header search query suggestions
