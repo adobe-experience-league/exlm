@@ -48,18 +48,16 @@ export class BrowseCardVideoClipModal {
     this.model = options?.model || {};
 
     if (BrowseCardVideoClipModal.activeInstance) {
-      // If the same video clip is clicked (check by id), just return the existing instance
+      // If the same video clip is clicked (check by id), ensure it's visible and return the existing instance
       if (BrowseCardVideoClipModal.activeInstance.model.parentURL === this.model.parentURL) {
+        BrowseCardVideoClipModal.activeInstance.open();
         // eslint-disable-next-line no-constructor-return
         return BrowseCardVideoClipModal.activeInstance;
       }
 
       // If different video clip and in mini-player mode, update the existing instance
       if (BrowseCardVideoClipModal.activeInstance.miniPlayerMode) {
-        BrowseCardVideoClipModal.activeInstance.updateContent(options?.model || {}).catch((err) => {
-          // eslint-disable-next-line no-console
-          console.error('Error updating modal content:', err);
-        });
+        BrowseCardVideoClipModal.activeInstance.updateContent(options?.model || {});
         // eslint-disable-next-line no-constructor-return
         return BrowseCardVideoClipModal.activeInstance;
       }
@@ -72,6 +70,7 @@ export class BrowseCardVideoClipModal {
     BrowseCardVideoClipModal.activeInstance = this;
 
     this.eventListeners = [];
+    this.isInitialized = false;
 
     this.modal = null;
     this.backdrop = null;
@@ -82,12 +81,21 @@ export class BrowseCardVideoClipModal {
     this.miniPlayerLabel = null;
 
     this.isCompactMode = isCompactUIMode();
-    this.loadStyles();
-    this.createModal().catch((err) => {
-      // eslint-disable-next-line no-console
-      console.error('Error creating modal:', err);
-    });
-    this.setupEventListeners();
+    this.init();
+  }
+
+  /**
+   * Initialize the modal asynchronously
+   */
+  async init() {
+    try {
+      await this.loadStyles();
+      await this.createModal();
+      this.setupEventListeners();
+      this.isInitialized = true;
+    } catch (error) {
+      console.error('Error initializing modal:', error);
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -117,9 +125,8 @@ export class BrowseCardVideoClipModal {
   async createModal() {
     const { title, videoURL, parentName, parentURL, product, failedToLoad = false } = this.model;
 
-    const { lang = 'en' } = getPathDetails() || {};
+    const { lang } = getPathDetails();
     let videoSrc = await getLocalizedVideoUrl(videoURL, lang);
-
     if (this.miniPlayerMode) {
       const hasParams = videoSrc?.includes('?');
       if (videoSrc) {
@@ -308,9 +315,20 @@ export class BrowseCardVideoClipModal {
     this.resizeObserver.observe(this.backdrop);
   }
 
-  open() {
+  async open() {
+    // Wait for initialization if not complete
+    if (!this.isInitialized) {
+      await this.init();
+    }
+
     // If this instance is already in the DOM (specifically in document.body), just return
-    if (document.body.contains(this.backdrop)) {
+    if (this.backdrop && document.body.contains(this.backdrop)) {
+      return;
+    }
+
+    // Ensure backdrop exists before trying to append
+    if (!this.backdrop) {
+      console.error('Modal backdrop not created yet');
       return;
     }
 
@@ -379,16 +397,17 @@ export class BrowseCardVideoClipModal {
     }
   }
 
-  async updateContent(model) {
+  updateContent(model) {
     this.model = model;
 
     const {
       title,
-      videoURL,
       parentName,
       parentURL,
       viewLinkText = BrowseCardVideoClipModal.placeholders?.watchFullVideo || 'Watch full video',
     } = this.model;
+
+    const videoURL = this.getLocalizedVideoURL();
 
     const titleElement = this.modal.querySelector('.browse-card-video-clip-info-title');
     if (titleElement) {
@@ -402,9 +421,7 @@ export class BrowseCardVideoClipModal {
         existingIframe.remove();
       }
 
-      const { lang = 'en' } = getPathDetails() || {};
-      let videoSrc = await getLocalizedVideoUrl(videoURL, lang);
-
+      let videoSrc = videoURL;
       if (this.miniPlayerMode) {
         const hasParams = videoSrc.includes('?');
         videoSrc = `${videoSrc}${hasParams ? '&' : '?'}autoplay=1`;
