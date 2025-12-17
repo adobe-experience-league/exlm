@@ -5494,7 +5494,10 @@
             "name": "Default",
             "value": "note-identifier"
           }
-        ]
+        ],
+        "ui": {
+          "visible": false
+        }
       },
       {
         "component": "select",
