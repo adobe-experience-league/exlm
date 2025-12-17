@@ -309,6 +309,7 @@ function createConfettiCanvas() {
 async function createCertificateContainer(courseData) {
   const container = document.createElement('div');
   container.classList.add('course-completion-certificate-container');
+  container.setAttribute('data-cs-mask', '');
 
   // Create certificate text using API data with scale adjustment and placeholders
   const courseName = courseData.name || '';
