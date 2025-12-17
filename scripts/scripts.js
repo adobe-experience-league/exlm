@@ -895,8 +895,7 @@ export async function loadIms() {
   // if adobe IMS was loaded already, return. Especially useful when embedding this code outside this site.
   // eg. embedding header in community which has it's own IMS setup.
   if (!window.imsLoaded && window.adobeIMS) return Promise.resolve();
-  const { ims, isProd } = getConfig();
-  const urlParams = new URLSearchParams(window.location.search);
+  const { ims } = getConfig();
   window.imsLoaded =
     window.imsLoaded ||
     new Promise((resolve, reject) => {
@@ -911,9 +910,6 @@ export async function loadIms() {
         onReady: () => {
           // eslint-disable-next-line no-console
           console.log('Adobe IMS Ready!');
-          if (!isProd && urlParams.get('ims') === 'prod') {
-            sessionStorage.setItem('ims', 'prod');
-          }
           resolve(); // resolve the promise, consumers can now use window.adobeIMS
           clearTimeout(timeout);
         },
