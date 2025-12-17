@@ -1303,7 +1303,7 @@
     "fields": [
       {
         "component": "select",
-        "name": "listContentType",
+        "name": "style",
         "value": "text",
         "label": "Content Type",
         "description": "Choose type of this content",
@@ -1321,7 +1321,7 @@
       },
       {
         "condition": {
-          "===": [{ "var": "listContentType" }, "text"]
+          "===": [{ "var": "style" }, "text"]
         },
         "component": "richtext",
         "valueType": "string",
@@ -1331,7 +1331,7 @@
       },
       {
         "condition": {
-          "===": [{ "var": "listContentType" }, "image"]
+          "===": [{ "var": "style" }, "image"]
         },
         "component": "reference",
         "valueType": "string",
