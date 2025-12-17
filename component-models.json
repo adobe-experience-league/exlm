@@ -1302,27 +1302,6 @@
     "id": "list-content",
     "fields": [
       {
-        "component": "select",
-        "name": "style",
-        "value": "text",
-        "label": "Content Type",
-        "description": "Choose type of this content",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Text",
-            "value": "text"
-          },
-          {
-            "name": "Image",
-            "value": "image"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "style" }, "text"]
-        },
         "component": "richtext",
         "valueType": "string",
         "name": "richtext",
@@ -1330,9 +1309,6 @@
         "label": "Text Content"
       },
       {
-        "condition": {
-          "===": [{ "var": "style" }, "image"]
-        },
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
