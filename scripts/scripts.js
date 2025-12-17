@@ -766,7 +766,7 @@ export function getConfig() {
   const isStage = currentEnv?.env === 'STAGE' || currentEnv?.authorUrl === 'author-p122525-e1219192.adobeaemcloud.com';
   // EXLM-4452 - Temporary solution to update the IMS configuration to Prod for Premium Learning site in the Dev environment.
   const urlParams = new URLSearchParams(window.location.search);
-  const enableProdIms = !isProd && urlParams.get('auth') === 'prod';
+  const enableProdIms = !isProd && urlParams.get('ims') === 'prod';
   if (enableProdIms) {
     isProd = true;
     cdnOrigin = `https://experienceleague.adobe.com`;
@@ -997,6 +997,10 @@ async function loadLazy(doc) {
   const main = doc.querySelector('main');
   const preMain = doc.body.querySelector(':scope > aside');
   loadIms(); // start it early, asyncronously
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('ims') === 'prod') {
+    sessionStorage.setItem('ims', 'prod');
+  }
 
   // Prefetch Coveo token early (non-blocking, parallel with blocks)
   // All pages use Coveo for header search query suggestions
