@@ -1060,10 +1060,10 @@ async function loadImageModal() {
 
 export function openImageModal() {
   document.querySelectorAll('picture').forEach((picture) => {
-    picture.setAttribute('modal', 'regular');
+    picture?.setAttribute('modal', 'regular');
 
-    picture.addEventListener('click', async () => {
-      const img = picture.querySelector('img');
+    picture?.addEventListener('click', async () => {
+      const img = picture?.querySelector('img');
       if (!img) return;
 
       const [, mod] = await loadImageModal();
