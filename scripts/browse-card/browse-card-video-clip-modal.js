@@ -81,7 +81,7 @@ export class BrowseCardVideoClipModal {
 
     this.isCompactMode = isCompactUIMode();
     this.loadStyles();
-    this.initializeModal();
+    this.initPromise = this.initializeModal();
   }
 
   /**
@@ -311,11 +311,7 @@ export class BrowseCardVideoClipModal {
   }
 
   async open() {
-    // Wait for modal to be ready
-    if (!this.isModalReady) {
-      // Wait for modal initialization to complete
-      await this.waitForModalReady();
-    }
+    await this.initPromise;
 
     // If this instance is already in the DOM (specifically in document.body), just return
     if (document.body.contains(this.backdrop)) {
@@ -342,22 +338,6 @@ export class BrowseCardVideoClipModal {
 
     // Prevent body scrolling
     document.body.style.overflow = 'hidden';
-  }
-
-  /**
-   * Wait for modal to be ready
-   */
-  async waitForModalReady() {
-    return new Promise((resolve) => {
-      const checkReady = () => {
-        if (this.isModalReady) {
-          resolve();
-        } else {
-          setTimeout(checkReady, 10);
-        }
-      };
-      checkReady();
-    });
   }
 
   close() {
