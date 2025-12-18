@@ -3,11 +3,8 @@
 /* Upcoming events alignment css */
 
 .section.upcoming-event-v2-container {
+  padding-top: 0;
   padding-bottom: 0;
-}
-
-.upcoming-event-v2.block {
-  margin-top: 32px;
 }
 
 .upcoming-event-v2 .browse-cards-block-header .browse-card-description-text {
