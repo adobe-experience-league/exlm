@@ -1043,6 +1043,36 @@ export function createTag(tag, attributes, html) {
 }
 
 /**
+ * Enables image enlargement functionality for all picture elements on the page.
+ * Sets up click event listeners that load the image in a modal overlay.
+ */
+let imageModalLoader;
+
+async function loadImageModal() {
+  if (!imageModalLoader) {
+    imageModalLoader = Promise.all([
+      loadCSS(`${window.hlx.codeBasePath}/styles/image-modal.css`),
+      import('./image-modal.js'),
+    ]);
+  }
+  return imageModalLoader;
+}
+
+export function openImageModal() {
+  document.querySelectorAll('picture').forEach((picture) => {
+    picture?.setAttribute('modal', 'regular');
+
+    picture?.addEventListener('click', async () => {
+      const img = picture?.querySelector('img');
+      if (!img) return;
+
+      const [, mod] = await loadImageModal();
+      mod.default(img);
+    });
+  });
+}
+
+/**
  * Loads everything that happens a lot later,
  * without impacting the user experience.
  */
@@ -1069,6 +1099,7 @@ export async function loadArticles() {
   if (isPerspectivePage) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/articles/articles.css`);
     loadDefaultModule('./articles/articles.js');
+    openImageModal();
   }
 }
 
