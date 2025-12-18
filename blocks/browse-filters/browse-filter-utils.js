@@ -303,13 +303,16 @@ export const getBrowseFiltersResultCount = () => {
   return resultCount;
 };
 
-export const getSelectedTopics = (decodedHash) => {
-  if (!decodedHash) {
+export const getSelectedTopics = (hash) => {
+  if (!hash) {
     return [];
   }
-  const hashesList = decodedHash.split('&');
-  const filterInfo = hashesList.find((hash) => hash.includes('aq='));
+  // Parse URL parameters properly to handle & in values
+  const urlParams = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
   const selectedTopics = [];
+
+  // Get advanced query parameter
+  const filterInfo = urlParams?.get('aq');
   if (filterInfo) {
     const solutionsCheck = filterInfo.match(/@el_solution=("[^"]*")/g) ?? [];
     const featuresCheck = filterInfo.match(/@el_features=("[^"]*")/g) ?? [];
@@ -325,9 +328,10 @@ export const getSelectedTopics = (decodedHash) => {
         return acc;
       }, selectedTopics);
   }
-  const elProductInfo = hashesList.find((hash) => hash.includes('f-el_product='));
-  if (elProductInfo) {
-    const [, productsListString] = elProductInfo.split('=');
+
+  // Get product filter parameter
+  const productsListString = urlParams?.get('f-el_product');
+  if (productsListString) {
     productsListString.split(',').forEach((product) => {
       if (product) {
         selectedTopics.push(product);
@@ -443,11 +447,12 @@ export function showSearchSuggestionsOnInputClick() {
 }
 
 export const handleCoverSearchSubmit = (targetSearchText) => {
+  const encodedSearchText = encodeURIComponent(targetSearchText || '');
   const [currentSearchString] = window.location.hash.match(/\bq=([^&#]*)/) || [];
   if (currentSearchString) {
-    window.location.hash = window.location.hash.replace(currentSearchString, `q=${targetSearchText || ''}`);
+    window.location.hash = window.location.hash.replace(currentSearchString, `q=${encodedSearchText}`);
   } else {
-    window.location.hash = `#q=${targetSearchText || ''}&${window.location.hash.slice(1)}`;
+    window.location.hash = `#q=${encodedSearchText}&${window.location.hash.slice(1)}`;
   }
 };
 

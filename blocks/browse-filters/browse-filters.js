@@ -1658,9 +1658,9 @@ function decorateBrowseTopics(block) {
         updateClearFilterStatus(browseFiltersSection);
       }
     });
-    const decodedHash = decodeURIComponent(window.location.hash);
-    if (decodedHash) {
-      const selectedTopics = getSelectedTopics(decodedHash);
+    const hash = fragment();
+    if (hash) {
+      const selectedTopics = getSelectedTopics(hash);
       if (selectedTopics && selectedTopics.length > 0) {
         selectedTopics.forEach((topic) => {
           const element = contentDiv.querySelector(`.browse-topics-item[data-topicname*="${topic}"]`);

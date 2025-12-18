@@ -153,9 +153,10 @@ export function handleTopicSelection(block, fireSelection, resetPage, targetPage
     }
 
     if (selectedTopics.length) {
-      const decodedHash = window.location.hash ? decodeURIComponent(window.location.hash) : '';
-      const elProductHash = decodedHash.split('&').find((hashInfo) => hashInfo.includes('f-el_product='));
-      const [, productsList = ''] = elProductHash?.split('=') || [];
+      const { hash } = window.location;
+      // Parse URL parameters properly to handle & in values
+      const urlParams = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
+      const productsList = urlParams?.get('f-el_product') || '';
       const productsInUrl = productsList.split(',').filter(Boolean);
       const topicQueryItems = `${selectedTopics
         .map((topic) => {
