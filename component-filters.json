@@ -196,9 +196,7 @@
   },
   {
     "id": "list-section",
-    "components": [
-      "list-item"
-    ]
+    "components": ["list-item"]
   },
   {
     "id": "section-browse",
