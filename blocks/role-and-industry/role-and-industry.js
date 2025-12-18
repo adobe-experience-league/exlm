@@ -1,9 +1,8 @@
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, fetchIndustryOptions } from '../../scripts/scripts.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { sendNotice } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
-import { fetchIndustryOptions } from '../../scripts/profile/profile.js';
 import FormValidator from '../../scripts/form-validator.js';
 import getEmitter from '../../scripts/events.js';
 

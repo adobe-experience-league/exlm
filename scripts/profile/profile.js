@@ -1,10 +1,10 @@
 // eslint-disable-next-line import/no-cycle
-import { fetchLanguagePlaceholders, getConfig } from '../scripts.js';
+import { fetchLanguagePlaceholders, getConfig, fetchIndustryOptions, getIndustryNameById } from '../scripts.js';
 import { defaultProfileClient } from '../auth/profile.js';
 
 const EXL_PROFILE = 'exlProfile';
 const COMMUNITY_PROFILE = 'communityProfile';
-const { localizedCommunityProfileParam, industryUrl, adobeAccountURL, communityAccountURL } = getConfig();
+const { localizedCommunityProfileParam, adobeAccountURL, communityAccountURL } = getConfig();
 
 const fetchExlProfileData = async () => {
   const [profileData, ppsProfileData] = await Promise.allSettled([
@@ -18,30 +18,6 @@ const fetchExlProfileData = async () => {
   }
   // Return profileData and ppsProfileData (or empty object if ppsProfileData is rejected)
   return { profileData: profileData.value, ppsProfileData: ppsProfileData.value || {} };
-};
-
-export async function fetchIndustryOptions() {
-  try {
-    const response = await fetch(industryUrl);
-    const data = await response.json();
-    return data.data;
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('There was a problem with the fetch operation:', error);
-    return [];
-  }
-}
-
-export const getIndustryNameById = (industryId, industryOptionsArray) => {
-  let industry = {};
-  if (Array.isArray(industryId)) {
-    // If industryId is an array, find the first matching industry name for any ID in the array
-    industry = industryOptionsArray.find((option) => industryId.includes(option.id));
-  } else {
-    // If industryId is a string, find the matching industry name directly
-    industry = industryOptionsArray.find((option) => option.id === industryId);
-  }
-  return industry ? industry.Name : '';
 };
 
 const fetchCommunityProfileData = async () => defaultProfileClient.fetchCommunityProfileDetails();

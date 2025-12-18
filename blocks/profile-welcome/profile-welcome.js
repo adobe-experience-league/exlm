@@ -1,7 +1,6 @@
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, fetchIndustryOptions, getIndustryNameById } from '../../scripts/scripts.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { fetchIndustryOptions, getIndustryNameById } from '../../scripts/profile/profile.js';
 import getEmitter from '../../scripts/events.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 

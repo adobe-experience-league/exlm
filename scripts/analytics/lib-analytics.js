@@ -163,8 +163,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       let industryTitles = userData.industryInterests || [];
       if (industryTitles.length > 0) {
         try {
-          // eslint-disable-next-line import/no-cycle
-          const { fetchIndustryOptions } = await import('../profile/profile.js');
+          const { fetchIndustryOptions } = await import('../scripts.js');
           const industryOptions = await fetchIndustryOptions();
 
           industryTitles = industryTitles.map((industryId) => {

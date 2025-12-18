@@ -1407,6 +1407,31 @@ export function updateTQTagsMetadata() {
   });
 }
 
+export async function fetchIndustryOptions() {
+  const { industryUrl } = getConfig();
+  try {
+    const response = await fetch(industryUrl);
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('There was a problem with the fetch operation:', error);
+    return [];
+  }
+}
+
+export const getIndustryNameById = (industryId, industryOptionsArray) => {
+  let industry = {};
+  if (Array.isArray(industryId)) {
+    // If industryId is an array, find the first matching industry name for any ID in the array
+    industry = industryOptionsArray.find((option) => industryId.includes(option.id));
+  } else {
+    // If industryId is a string, find the matching industry name directly
+    industry = industryOptionsArray.find((option) => option.id === industryId);
+  }
+  return industry ? industry.Name : '';
+};
+
 /**
  * Fetch Json with fallback.
  */
