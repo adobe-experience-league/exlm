@@ -29,7 +29,7 @@ export async function isSignedInUser() {
  * @see: https://wiki.corp.adobe.com/display/ims/IMS+API+-+logout#IMSApi-logout-signout_options
  */
 export async function signOut() {
-  ['JWT', 'coveoToken', 'exl-profile', 'attributes', 'profile', 'pps-profile', 'ims'].forEach((key) =>
+  ['JWT', 'coveoToken', 'exl-profile', 'attributes', 'profile', 'pps-profile', 'alm_access_token'].forEach((key) =>
     sessionStorage.removeItem(key),
   );
 
