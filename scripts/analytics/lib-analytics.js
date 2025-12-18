@@ -175,12 +175,13 @@ export async function pushPageDataLayer(language, searchTrackingData) {
           console.error('Error fetching industry options for analytics:', error);
         }
       }
-
+      // Prefer IMS authId so userID remains stable across org/account switches
+      const stableAuthId = userData?.authId || userData?.userId || '';
       user.userDetails = {
         ...user.userDetails,
         userAccountType: userData.account_type,
         userAuthenticatedStatus: 'logged in',
-        userID: userData.userId || '',
+        userID: stableAuthId,
         userLanguageSetting: userData.preferred_languages || ['en-us'],
         learningInterest: userData.interests || [],
         role: userData.role || [],
@@ -1015,4 +1016,36 @@ export function pushBrowseFilterSearchClearEvent(searchType, filterType, filterV
   }
 
   window.adobeDataLayer.push(dataLayerEntry);
+}
+
+/**
+ * Pushes a grid toggle event to the Adobe Data Layer.
+ * This event is fired when users switch to grid view.
+ * @param {string} cardHeader - The header associated with the block.
+ */
+export function pushGridToggleEvent(cardHeader) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'browseCardGridToggle',
+    link: {
+      linkType: cardHeader,
+    },
+  });
+}
+
+/**
+ * Pushes a list toggle event to the Adobe Data Layer.
+ * This event is fired when users switch to list view.
+ * @param {string} cardHeader - The header associated with the block.
+ */
+export function pushListToggleEvent(cardHeader) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'browseCardListToggle',
+    link: {
+      linkType: cardHeader,
+    },
+  });
 }

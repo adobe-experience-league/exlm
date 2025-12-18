@@ -1,5 +1,6 @@
 import { COMMUNITY_SEARCH_FACET } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 const SUB_FACET_MAP = {
   Community: COMMUNITY_SEARCH_FACET,
@@ -116,6 +117,12 @@ const contentTypes = [
     description:
       'Brief instructional material with step-by-step instructions to learn a specific skill or accomplish a specific task.',
   },
+  {
+    id: 'Upcoming Event',
+    value: 'Upcoming Event',
+    title: 'Upcoming Events',
+    description: 'Virtual and in-person events focused on product education and skill development.',
+  },
 ].map((contentType) => ({
   ...contentType,
   ...(placeholders[`filterContentType${contentType.id}Title`] && {
@@ -193,7 +200,7 @@ const eventTypes = [
     id: 'Upcoming-Event',
     value: 'upcoming-event',
     title: 'Upcoming Events',
-    description: '',
+    description: 'Virtual and in-person events focused on product education and skill development.',
   },
 ].map((eventType) => ({
   ...eventType,
@@ -212,10 +219,18 @@ export const roleOptions = {
   selected: 0,
 };
 
+// Filter out Upcoming Event if feature flag is not enabled
+const updatedContentTypes = contentTypes.filter((contentType) => {
+  if (contentType.id === 'Upcoming Event') {
+    return isFeatureEnabled('isEventsV2');
+  }
+  return true;
+});
+
 export const contentTypeOptions = {
   id: 'el_contenttype',
   name: placeholders.filterContentTypeLabel || 'Content Type',
-  items: contentTypes,
+  items: updatedContentTypes,
   selected: 0,
 };
 

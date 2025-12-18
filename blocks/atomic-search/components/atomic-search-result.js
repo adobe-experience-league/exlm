@@ -379,8 +379,21 @@ export const atomicResultStyles = `
 
 export const atomicResultListStyles = `
                 <style>
+                  atomic-folded-result-list::part(result-list) {
+                    grid-row-gap: 0;
+                  }
                   atomic-folded-result-list::part(outline)::before {
                     background-color:var(--footer-border-color);
+                    display: block;
+                    content: ' ';
+                    height: 1px;
+                    margin: 1.5rem 0;
+                  }
+                  atomic-folded-result-list::part(first-result) {
+                    padding-top: 1rem;
+                  }
+                  atomic-folded-result-list::part(first-result)::before {
+                    display: none;
                   }
                   atomic-folded-result-list::part(skeleton) {
                     display: flex;
@@ -481,6 +494,11 @@ export const atomicResultListStyles = `
                     }
                   }
 
+                  @media(min-width: 1024px) {
+                    atomic-folded-result-list::part(first-result) {
+                      padding-top: 0;
+                    }
+                  }
                 </style>
 `;
 let isListenerAdded = false;
@@ -714,7 +732,10 @@ export default function atomicResultHandler(block, placeholders) {
     const results = container.querySelectorAll('atomic-result');
     const isMobileView = isMobile();
     container.dataset.view = isMobileView ? 'mobile' : 'desktop';
-    results.forEach((resultElement) => {
+    results.forEach((resultElement, index) => {
+      if (index === 0) {
+        resultElement.part.add('first-result');
+      }
       const hydrateResult = (resultEl) => {
         const resultShadow = resultEl.shadowRoot;
         if (!resultShadow) {
@@ -858,9 +879,13 @@ export default function atomicResultHandler(block, placeholders) {
           li.innerHTML = '';
           li.appendChild(link);
         });
-
+        const rawContentType = resultEl.result?.result?.raw?.el_contenttype;
+        const contentTypeValues = Array.isArray(rawContentType) ? structuredClone(rawContentType) : null;
         contentTypeElements.forEach((contentTypeEl) => {
-          const contentType = contentTypeEl.textContent.toLowerCase().trim();
+          const isSeparator = contentTypeEl?.className.includes('separator');
+          const contentTypeValue =
+            Array.isArray(contentTypeValues) && !isSeparator ? contentTypeValues.shift() : rawContentType;
+          const contentType = isSeparator ? '' : (contentTypeValue || contentTypeEl.textContent).toLowerCase().trim();
           if (contentType.includes('|')) {
             contentTypeEl.style.cssText = `display: none !important`;
             const slotEl = contentTypeEl.firstElementChild;
