@@ -1181,6 +1181,25 @@ const constructDropdownEl = (options, id) => {
   `);
 };
 
+/**
+ * Populates the dropdown content with new items after data is fetched
+ *
+ * @param {HTMLElement} dropdownEl - The dropdown element to populate
+ * @param {Object} options - The options object containing items
+ * @param {number} index - The index for generating unique IDs
+ */
+function populateDropdownContent(dropdownEl, options, index) {
+  const contentEl = dropdownEl.querySelector('.filter-dropdown-content');
+  if (contentEl && options.items && options.items.length > 0) {
+    // Generate new content with the fetched items
+    const newContent = options.items.map((item, itemIndex) => generateCheckboxItem(item, itemIndex, index)).join('');
+    contentEl.innerHTML = newContent;
+
+    // Decorate icons for the new content
+    decorateIcons(contentEl);
+  }
+}
+
 function appendToForm(block, target) {
   const formEl = block.querySelector('.browse-filters-form');
   formEl.append(target);
@@ -1699,25 +1718,41 @@ export default async function decorate(block) {
   constructFilterInputContainer(block);
   addLabel(block);
   if (isUpcomingEventFlow) {
+    // First, construct dropdowns with empty items
+    dropdownOptions.forEach((options, index) => {
+      if (!options.items || options.items.length === 0) {
+        options.items = [];
+      }
+      const dropdownEl = constructMultiSelectDropdown(block, options, index + 1);
+      const { parentElement } = dropdownEl;
+      parentElement.removeChild(dropdownEl);
+      const labelElement = parentElement.querySelector('.browse-filters-label');
+      labelElement.after(dropdownEl);
+    });
+
+    // Then, fetch data and populate the dropdowns
     BrowseCardsDelegate.fetchCoveoFacetFields(['el_event_series', 'el_product'])
       .then((facetDetails) => {
         dropdownOptions.forEach((options, index) => {
           const optionId = options.id;
           const optionItems = facetDetails[optionId] || [];
           if (optionItems.length > 0) {
+            // Update the options items
             options.items = optionItems.map((item) => ({
               id: item,
               value: item,
               title: item.split('|').join(' | '),
               description: '',
             }));
+
+            // Find the existing dropdown and update its content
+            const existingDropdown = block.querySelector(`.filter-dropdown[data-filter-type="${optionId}"]`);
+            if (existingDropdown) {
+              populateDropdownContent(existingDropdown, options, index + 1);
+              // Re-attach event listeners for the new content
+              handleCheckboxClick(block, existingDropdown, options);
+            }
           }
-          const dropdownEl = constructMultiSelectDropdown(block, options, index + 1);
-          const { parentElement } = dropdownEl;
-          parentElement.removeChild(dropdownEl);
-          const labelElement = parentElement.querySelector('.browse-filters-label');
-          labelElement.after(dropdownEl);
-          decorateIcons(dropdownEl);
         });
         if (isCoveoReady && isCoveoHeadlessLoaded) {
           handleUriHash();

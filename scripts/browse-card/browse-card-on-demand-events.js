@@ -3,8 +3,6 @@ import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
-/* TODO - Remove duration and event series placeholder during cleanup */
-
 /**
  * Format date for on-demand events display
  * @param {string} dateString - Date string to format
