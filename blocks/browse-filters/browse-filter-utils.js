@@ -303,16 +303,16 @@ export const getBrowseFiltersResultCount = () => {
   return resultCount;
 };
 
-export const getSelectedTopics = (decodedHash) => {
-  if (!decodedHash) {
+export const getSelectedTopics = (hash) => {
+  if (!hash) {
     return [];
   }
   // Parse URL parameters properly to handle & in values
-  const urlParams = new URLSearchParams(decodedHash.startsWith('#') ? decodedHash.slice(1) : decodedHash);
+  const urlParams = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
   const selectedTopics = [];
 
   // Get advanced query parameter
-  const filterInfo = urlParams.get('aq');
+  const filterInfo = urlParams?.get('aq');
   if (filterInfo) {
     const solutionsCheck = filterInfo.match(/@el_solution=("[^"]*")/g) ?? [];
     const featuresCheck = filterInfo.match(/@el_features=("[^"]*")/g) ?? [];
@@ -330,7 +330,7 @@ export const getSelectedTopics = (decodedHash) => {
   }
 
   // Get product filter parameter
-  const productsListString = urlParams.get('f-el_product');
+  const productsListString = urlParams?.get('f-el_product');
   if (productsListString) {
     productsListString.split(',').forEach((product) => {
       if (product) {
