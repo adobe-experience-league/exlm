@@ -120,10 +120,8 @@ export class BrowseCardVideoClipModal {
   async createModal() {
     const { title, videoURL, parentName, parentURL, product, failedToLoad = false } = this.model;
 
-    const { lang = 'en' } = getPathDetails || {};
-    const localizedVideoURL = videoURL ? await getLocalizedVideoUrl(videoURL, lang) : videoURL;
-
-    let videoSrc = localizedVideoURL;
+    const { lang = 'en' } = getPathDetails() || {};
+    let videoSrc = await getLocalizedVideoUrl(videoURL, lang);
     if (this.miniPlayerMode) {
       const hasParams = videoSrc?.includes('?');
       if (videoSrc) {
@@ -428,10 +426,8 @@ export class BrowseCardVideoClipModal {
         existingIframe.remove();
       }
 
-      const { lang = 'en' } = getPathDetails || {};
-      const localizedVideoURL = await getLocalizedVideoUrl(videoURL, lang);
-
-      let videoSrc = localizedVideoURL;
+      const { lang = 'en' } = getPathDetails() || {};
+      let videoSrc = await getLocalizedVideoUrl(videoURL, lang);
       if (this.miniPlayerMode) {
         const hasParams = videoSrc.includes('?');
         videoSrc = `${videoSrc}${hasParams ? '&' : '?'}autoplay=1`;
