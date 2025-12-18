@@ -755,15 +755,23 @@ export function getConfig() {
   );
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const communityHost = currentEnv?.community || defaultEnv.community;
-  const cdnOrigin = `https://${cdnHost}`;
+  let cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
   // Locale param for Community page URL
   const communityLocale = communityLangsMap.get(lang) || 'en';
   // Lang param for Adobe account URL
   const adobeAccountLang = adobeAccountLangsMap.get(lang) || 'en';
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
-  const isProd = currentEnv?.env === 'PROD' || currentEnv?.authorUrl === 'author-p122525-e1219150.adobeaemcloud.com';
+  let isProd = currentEnv?.env === 'PROD' || currentEnv?.authorUrl === 'author-p122525-e1219150.adobeaemcloud.com';
   const isStage = currentEnv?.env === 'STAGE' || currentEnv?.authorUrl === 'author-p122525-e1219192.adobeaemcloud.com';
+  // EXLM-4452 - Temporary solution to update the IMS configuration to Prod for Premium Learning site in the Dev environment.
+  const urlParams = new URLSearchParams(window.location.search);
+  const isImsProd = !isProd && (urlParams?.get('ims') === 'prod' || sessionStorage.getItem('ims') === 'prod');
+
+  if (isImsProd) {
+    isProd = true;
+    cdnOrigin = `https://experienceleague.adobe.com`;
+  }
   const ppsOrigin = isProd ? 'https://pps.adobe.io' : 'https://pps-stage.adobe.io';
   const ims = {
     client_id: 'ExperienceLeague',
@@ -834,8 +842,8 @@ export function getConfig() {
       : `https://experienceleaguecommunities-dev.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`,
     // MPC API Base
     mpcApiBase: `https://api.tv.adobe.com/videos`,
-    // Events URL : TODO - Update Events URL
-    eventsURL: `${cdnOrigin}/${lang}/test-folder/events`,
+    // Events Page URL
+    eventsURL: `${cdnOrigin}/${lang}/events`,
   };
   return window.exlm.config;
 }

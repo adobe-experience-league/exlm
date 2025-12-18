@@ -1,6 +1,7 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
-import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
+import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { pushVideoEvent } from '../analytics/lib-analytics.js';
+import { getLocalizedVideoUrl } from '../utils/video-utils.js';
 
 export const isCompactUIMode = () => window.matchMedia('(max-width: 1023px)').matches;
 
@@ -55,7 +56,10 @@ export class BrowseCardVideoClipModal {
 
       // If different video clip and in mini-player mode, update the existing instance
       if (BrowseCardVideoClipModal.activeInstance.miniPlayerMode) {
-        BrowseCardVideoClipModal.activeInstance.updateContent(options?.model || {});
+        BrowseCardVideoClipModal.activeInstance.updateContent(options?.model || {}).catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error('Error updating modal content:', err);
+        });
         // eslint-disable-next-line no-constructor-return
         return BrowseCardVideoClipModal.activeInstance;
       }
@@ -79,7 +83,10 @@ export class BrowseCardVideoClipModal {
 
     this.isCompactMode = isCompactUIMode();
     this.loadStyles();
-    this.createModal();
+    this.createModal().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Error creating modal:', err);
+    });
     this.setupEventListeners();
   }
 
@@ -107,10 +114,12 @@ export class BrowseCardVideoClipModal {
     this.updateModalDimensions();
   }
 
-  createModal() {
+  async createModal() {
     const { title, videoURL, parentName, parentURL, product, failedToLoad = false } = this.model;
 
-    let videoSrc = videoURL;
+    const { lang = 'en' } = getPathDetails() || {};
+    let videoSrc = await getLocalizedVideoUrl(videoURL, lang);
+
     if (this.miniPlayerMode) {
       const hasParams = videoSrc?.includes('?');
       if (videoSrc) {
@@ -370,7 +379,7 @@ export class BrowseCardVideoClipModal {
     }
   }
 
-  updateContent(model) {
+  async updateContent(model) {
     this.model = model;
 
     const {
@@ -393,7 +402,9 @@ export class BrowseCardVideoClipModal {
         existingIframe.remove();
       }
 
-      let videoSrc = videoURL;
+      const { lang = 'en' } = getPathDetails() || {};
+      let videoSrc = await getLocalizedVideoUrl(videoURL, lang);
+
       if (this.miniPlayerMode) {
         const hasParams = videoSrc.includes('?');
         videoSrc = `${videoSrc}${hasParams ? '&' : '?'}autoplay=1`;
