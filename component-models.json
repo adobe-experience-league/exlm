@@ -2722,7 +2722,7 @@
         "options": [
           {
             "name": "Default",
-            "value": "default"
+            "value": ""
           }
         ]
       },
@@ -5505,7 +5505,7 @@
         "options": [
           {
             "name": "Default",
-            "value": "default"
+          "value": ""
           }
         ]
       },
