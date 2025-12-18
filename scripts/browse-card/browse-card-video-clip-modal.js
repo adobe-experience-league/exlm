@@ -56,10 +56,7 @@ export class BrowseCardVideoClipModal {
 
       // If different video clip and in mini-player mode, update the existing instance
       if (BrowseCardVideoClipModal.activeInstance.miniPlayerMode) {
-        BrowseCardVideoClipModal.activeInstance.updateContent(options?.model || {}).catch((err) => {
-          // eslint-disable-next-line no-console
-          console.error('Error updating modal content:', err);
-        });
+        BrowseCardVideoClipModal.activeInstance.updateContent(options?.model || {});
         // eslint-disable-next-line no-constructor-return
         return BrowseCardVideoClipModal.activeInstance;
       }
@@ -80,14 +77,20 @@ export class BrowseCardVideoClipModal {
     this.miniPlayerMode = false;
     this.miniPlayerButton = null;
     this.miniPlayerLabel = null;
+    this.isModalReady = false;
 
     this.isCompactMode = isCompactUIMode();
     this.loadStyles();
-    this.createModal().catch((err) => {
-      // eslint-disable-next-line no-console
-      console.error('Error creating modal:', err);
-    });
+    this.initializeModal();
+  }
+
+  /**
+   * Initialize the modal asynchronously
+   */
+  async initializeModal() {
+    await this.createModal();
     this.setupEventListeners();
+    this.isModalReady = true;
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -119,7 +122,6 @@ export class BrowseCardVideoClipModal {
 
     const { lang = 'en' } = getPathDetails() || {};
     let videoSrc = await getLocalizedVideoUrl(videoURL, lang);
-
     if (this.miniPlayerMode) {
       const hasParams = videoSrc?.includes('?');
       if (videoSrc) {
@@ -308,7 +310,13 @@ export class BrowseCardVideoClipModal {
     this.resizeObserver.observe(this.backdrop);
   }
 
-  open() {
+  async open() {
+    // Wait for modal to be ready
+    if (!this.isModalReady) {
+      // Wait for modal initialization to complete
+      await this.waitForModalReady();
+    }
+
     // If this instance is already in the DOM (specifically in document.body), just return
     if (document.body.contains(this.backdrop)) {
       return;
@@ -334,6 +342,22 @@ export class BrowseCardVideoClipModal {
 
     // Prevent body scrolling
     document.body.style.overflow = 'hidden';
+  }
+
+  /**
+   * Wait for modal to be ready
+   */
+  async waitForModalReady() {
+    return new Promise((resolve) => {
+      const checkReady = () => {
+        if (this.isModalReady) {
+          resolve();
+        } else {
+          setTimeout(checkReady, 10);
+        }
+      };
+      checkReady();
+    });
   }
 
   close() {
@@ -404,7 +428,6 @@ export class BrowseCardVideoClipModal {
 
       const { lang = 'en' } = getPathDetails() || {};
       let videoSrc = await getLocalizedVideoUrl(videoURL, lang);
-
       if (this.miniPlayerMode) {
         const hasParams = videoSrc.includes('?');
         videoSrc = `${videoSrc}${hasParams ? '&' : '?'}autoplay=1`;
