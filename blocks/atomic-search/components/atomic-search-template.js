@@ -684,8 +684,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                  display: block;
                 }
                 atomic-folded-result-list::part(outline) {
-                  padding-left: 0;
-                  padding-right: 0;
+                  padding: 0;
                 }
                 .result-header-section {
                   display: none;
