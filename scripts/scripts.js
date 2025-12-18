@@ -766,7 +766,7 @@ export function getConfig() {
   const isStage = currentEnv?.env === 'STAGE' || currentEnv?.authorUrl === 'author-p122525-e1219192.adobeaemcloud.com';
   // EXLM-4452 - Temporary solution to update the IMS configuration to Prod for Premium Learning site in the Dev environment.
   const urlParams = new URLSearchParams(window.location.search);
-  const isImsProd = !isProd && (urlParams?.get('ims') === 'prod' || sessionStorage.getItem('ims') === 'prod');
+  const isImsProd = !isProd && (urlParams?.get('ims') === 'prod' || sessionStorage.getItem('alm_access_token'));
 
   if (isImsProd) {
     isProd = true;
