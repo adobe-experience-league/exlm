@@ -1272,6 +1272,76 @@
     ]
   },
   {
+    "id": "list-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "list-type",
+        "value": "",
+        "label": "List Type",
+        "description": "Type of list to display",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Unordered List",
+            "value": "ul"
+          },
+          {
+            "name": "Ordered List",
+            "value": "ol"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "list-item",
+    "fields": []
+  },
+  {
+    "id": "list-content",
+    "fields": [
+      {
+        "component": "select",
+        "name": "classes",
+        "value": "text",
+        "label": "Type of content",
+        "description": "Type of the list content",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Text",
+            "value": "text"
+          },
+          {
+            "name": "Image",
+            "value": "image"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "text"]
+        },
+        "component": "richtext",
+        "valueType": "string",
+        "name": "richtext",
+        "value": "<p>List text content</p>",
+        "label": "Text Content"
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "image"]
+        },
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "List image content",
+        "multi": false
+      }
+    ]
+  },
+  {
     "id": "browse-rail-section",
     "fields": [
       {
@@ -2643,6 +2713,15 @@
   {
     "id": "video-embed",
     "fields": [
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "classes",
+        "label": "Classes",
+        "value": "",
+        "options": [],
+        "hidden": true
+      },
       {
         "component": "text",
         "valueType": "string",
@@ -5413,6 +5492,15 @@
   {
     "id": "note",
     "fields": [
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "classes",
+        "label": "Classes",
+        "value": "",
+        "options": [],
+        "hidden": true
+      },
       {
         "component": "select",
         "valueType": "string",
