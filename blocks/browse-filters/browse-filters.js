@@ -1737,7 +1737,6 @@ export default async function decorate(block) {
   enableTagsAsProxy(block);
   appendFormEl(block);
   constructFilterInputContainer(block);
-  addLabel(block);
 
   // Show shimmer while dropdowns are loading
   showBrowseFiltersShimmer(block);
@@ -1748,6 +1747,8 @@ export default async function decorate(block) {
         // Hide shimmer once data is ready
         hideBrowseFiltersShimmer(block);
 
+        // Create actual elements after shimmer is hidden
+        addLabel(block);
         dropdownOptions.forEach((options, index) => {
           const optionId = options.id;
           const optionItems = facetDetails[optionId] || [];
@@ -1766,6 +1767,9 @@ export default async function decorate(block) {
           labelElement.after(dropdownEl);
           decorateIcons(dropdownEl);
         });
+        constructKeywordSearchEl(block);
+        constructClearFilterBtn(block);
+
         if (isCoveoReady && isCoveoHeadlessLoaded) {
           handleUriHash();
           redecorateTagsContainer(block);
@@ -1774,17 +1778,27 @@ export default async function decorate(block) {
       .catch((error) => {
         // Hide shimmer on error
         hideBrowseFiltersShimmer(block);
+        // Create actual elements even on error
+        addLabel(block);
+        constructKeywordSearchEl(block);
+        constructClearFilterBtn(block);
         // eslint-disable-next-line no-console
         console.error('Error fetching facet details:', error);
         block.classList.add('browse-hide-section');
       });
   } else {
+    // Hide shimmer once dropdowns are ready
+    hideBrowseFiltersShimmer(block);
+
+    // Create actual elements after shimmer is hidden
+    addLabel(block);
     dropdownOptions.forEach((options, index) => {
       constructMultiSelectDropdown(block, options, index + 1);
     });
+    constructKeywordSearchEl(block);
+    constructClearFilterBtn(block);
   }
-  constructKeywordSearchEl(block);
-  constructClearFilterBtn(block);
+
   appendToForm(block, renderTags());
   appendToForm(block, renderFilterResultsHeader());
   decorateBrowseTopics(block);
