@@ -160,7 +160,7 @@ async function appendTag(block, tag, source = 'checkboxChange') {
 }
 
 /**
- * Hides or shows sections within a filter block, excluding the 'browse-topics' section.
+ * Hides or shows sections within a filter block, excluding the 'browse-topics' section and 'browse-filters-input-container'.
  *
  * @param {HTMLElement} block - The parent element containing filter sections.
  * @param {boolean} show - If true, show the sections; otherwise, hide them.
@@ -170,7 +170,10 @@ function hideSectionsWithinFilter(block, show) {
 
   // eslint-disable-next-line no-plusplus
   for (let i = 1; i < siblings.length; i++) {
-    if (!siblings[i].classList.contains('browse-topics')) {
+    if (
+      !siblings[i].classList.contains('browse-topics') &&
+      !siblings[i].classList.contains('browse-filters-input-container')
+    ) {
       const classOp = show ? 'remove' : 'add';
       siblings[i].classList?.[classOp]('browse-hide-section');
     }
