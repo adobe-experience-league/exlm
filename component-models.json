@@ -2719,7 +2719,8 @@
         "name": "classes",
         "label": "Classes",
         "value": "",
-        "options": []
+        "options": [],
+        "hidden": true
       },
       {
         "component": "text",
@@ -5497,7 +5498,8 @@
         "name": "classes",
         "label": "Classes",
         "value": "",
-        "options": []
+        "options": [],
+        "hidden": true
       },
       {
         "component": "select",

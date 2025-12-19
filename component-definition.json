@@ -1436,7 +1436,7 @@
                 "template": {
                   "name": "Note",
                   "model": "note",
-                  "classes": ""
+                  "classes": "note"
                 }
               }
             }
@@ -2034,7 +2034,7 @@
                 "template": {
                   "name": "Video Embed",
                   "model": "video-embed",
-                  "classes": ""
+                  "classes": "video-embed"
                 }
               }
             }
