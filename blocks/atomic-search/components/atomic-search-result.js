@@ -379,8 +379,21 @@ export const atomicResultStyles = `
 
 export const atomicResultListStyles = `
                 <style>
+                  atomic-folded-result-list::part(result-list) {
+                    grid-row-gap: 0;
+                  }
                   atomic-folded-result-list::part(outline)::before {
                     background-color:var(--footer-border-color);
+                    display: block;
+                    content: ' ';
+                    height: 1px;
+                    margin: 1.5rem 0;
+                  }
+                  atomic-folded-result-list::part(first-result) {
+                    padding-top: 1rem;
+                  }
+                  atomic-folded-result-list::part(first-result)::before {
+                    display: none;
                   }
                   atomic-folded-result-list::part(skeleton) {
                     display: flex;
@@ -481,6 +494,11 @@ export const atomicResultListStyles = `
                     }
                   }
 
+                  @media(min-width: 1024px) {
+                    atomic-folded-result-list::part(first-result) {
+                      padding-top: 0;
+                    }
+                  }
                 </style>
 `;
 let isListenerAdded = false;
@@ -714,7 +732,10 @@ export default function atomicResultHandler(block, placeholders) {
     const results = container.querySelectorAll('atomic-result');
     const isMobileView = isMobile();
     container.dataset.view = isMobileView ? 'mobile' : 'desktop';
-    results.forEach((resultElement) => {
+    results.forEach((resultElement, index) => {
+      if (index === 0) {
+        resultElement.part.add('first-result');
+      }
       const hydrateResult = (resultEl) => {
         const resultShadow = resultEl.shadowRoot;
         if (!resultShadow) {
