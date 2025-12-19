@@ -31,7 +31,11 @@ export default function decorate(block) {
 
     listContent.classList.add(...classes);
     listContent.textContent = '';
-    listContent.append(...rows);
+    rows.forEach((row) => {
+      const wrapper = document.createElement('div');
+      wrapper.append(row);
+      listContent.append(wrapper);
+    });
 
     if (classes.includes('list-content')) {
       listContent.classList.add('default-content-wrapper');
