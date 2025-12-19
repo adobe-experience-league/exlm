@@ -28,6 +28,10 @@
   color: var(--non-spectrum-navy-blue);
 }
 
+.footer a.footer-invisible-anchor {
+  display: none;
+}
+
 @media (min-width: 900px) {
   .footer-wrapper {
     min-height: 527px;

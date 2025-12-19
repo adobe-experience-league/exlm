@@ -326,23 +326,28 @@ export default async function decorate(block, options = {}) {
         oneTrustAnchorCloneEl.setAttribute('aria-hidden', 'true');
         oneTrustAnchorCloneEl.setAttribute('tabindex', '-1');
         block.append(oneTrustAnchorCloneEl);
-
         let raf = 0;
         const syncOverlay = () => {
+          oneTrustAnchorElement.classList.remove('footer-invisible-anchor');
+          oneTrustAnchorCloneEl.classList.add('footer-invisible-anchor');
           if (raf) return;
           raf = window.requestAnimationFrame(() => {
             raf = 0;
+
             const t = oneTrustAnchorElement.getBoundingClientRect();
             const b = block.getBoundingClientRect();
             if (!t.width || !t.height) {
-              oneTrustAnchorCloneEl.style.display = 'none';
+              oneTrustAnchorCloneEl.classList.add('footer-invisible-anchor');
               return;
             }
-            oneTrustAnchorCloneEl.style.display = '';
+
             oneTrustAnchorCloneEl.style.top = `${t.top - b.top}px`;
             oneTrustAnchorCloneEl.style.left = `${t.left - b.left}px`;
             oneTrustAnchorCloneEl.style.width = `${t.width}px`;
             oneTrustAnchorCloneEl.style.height = `${t.height}px`;
+
+            oneTrustAnchorCloneEl.classList.remove('footer-invisible-anchor');
+            oneTrustAnchorElement.classList.add('footer-invisible-anchor');
           });
         };
 
