@@ -1477,6 +1477,43 @@ function constructClearFilterBtn(block) {
   appendToFormInputContainer(block, clearBtn);
 }
 
+/**
+ * Creates and shows a shimmer effect for the browse filters
+ * @param {HTMLElement} block - The browse filters block
+ */
+function showBrowseFiltersShimmer(block) {
+  const formEl = block.querySelector('.browse-filters-form');
+  if (!formEl || formEl.querySelector('.browse-filters-shimmer')) {
+    return; // Shimmer already exists
+  }
+
+  const shimmerEl = htmlToElement(`
+    <div class="browse-filters-shimmer">
+      <div class="browse-filters-shimmer-label"></div>
+      <div class="browse-filters-shimmer-dropdown"></div>
+      <div class="browse-filters-shimmer-dropdown"></div>
+      <div class="browse-filters-shimmer-dropdown"></div>
+      <div class="browse-filters-shimmer-search"></div>
+      <div class="browse-filters-shimmer-button"></div>
+    </div>
+  `);
+
+  // Insert shimmer at the beginning of the form without modifying actual elements
+  formEl.insertBefore(shimmerEl, formEl.firstChild);
+}
+
+/**
+ * Removes the shimmer effect from the browse filters
+ * @param {HTMLElement} block - The browse filters block
+ */
+function hideBrowseFiltersShimmer(block) {
+  const shimmerEl = block.querySelector('.browse-filters-shimmer');
+
+  if (shimmerEl) {
+    shimmerEl.remove();
+  }
+}
+
 function closeOpenDropdowns() {
   document.querySelectorAll('.filter-dropdown.open')?.forEach((dropdown) => {
     dropdown.classList.remove('open');
@@ -1698,9 +1735,16 @@ export default async function decorate(block) {
   appendFormEl(block);
   constructFilterInputContainer(block);
   addLabel(block);
+
+  // Show shimmer while dropdowns are loading
+  showBrowseFiltersShimmer(block);
+
   if (isUpcomingEventFlow) {
     BrowseCardsDelegate.fetchCoveoFacetFields(['el_event_series', 'el_product'])
       .then((facetDetails) => {
+        // Hide shimmer once data is ready
+        hideBrowseFiltersShimmer(block);
+
         dropdownOptions.forEach((options, index) => {
           const optionId = options.id;
           const optionItems = facetDetails[optionId] || [];
@@ -1725,6 +1769,8 @@ export default async function decorate(block) {
         }
       })
       .catch((error) => {
+        // Hide shimmer on error
+        hideBrowseFiltersShimmer(block);
         // eslint-disable-next-line no-console
         console.error('Error fetching facet details:', error);
         block.classList.add('browse-hide-section');

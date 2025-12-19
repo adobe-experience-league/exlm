@@ -311,6 +311,102 @@ button.browse-filters-clear:disabled:hover {
   display: none;
 }
 
+/* Browse Filters Shimmer */
+.browse-filters-shimmer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.browse-filters-shimmer-label {
+  height: 18px;
+  width: 60px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: shimmer 1.5s ease-in-out infinite;
+  margin-bottom: 8px;
+}
+
+.browse-filters-shimmer-dropdown {
+  height: 32px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.browse-filters-shimmer-search {
+  height: 32px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.browse-filters-shimmer-button {
+  height: 32px;
+  width: 80px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@media (min-width: 600px) {
+  .browse-filters-shimmer {
+    display: grid;
+    grid-template-areas:
+      'label label label label label label'
+      'dropdown1 dropdown1 dropdown2 dropdown2 dropdown3 dropdown3'
+      'search search search search search button';
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+  }
+
+  .browse-filters-shimmer .browse-filters-shimmer-label {
+    grid-area: label;
+  }
+
+  .browse-filters-shimmer .browse-filters-shimmer-dropdown:nth-child(2) {
+    grid-area: dropdown1;
+  }
+
+  .browse-filters-shimmer .browse-filters-shimmer-dropdown:nth-child(3) {
+    grid-area: dropdown2;
+  }
+
+  .browse-filters-shimmer .browse-filters-shimmer-dropdown:nth-child(4) {
+    grid-area: dropdown3;
+  }
+
+  .browse-filters-shimmer .browse-filters-shimmer-search {
+    grid-area: search;
+  }
+
+  .browse-filters-shimmer .browse-filters-shimmer-button {
+    grid-area: button;
+  }
+}
+
+@media (min-width: 900px) {
+  .browse-filters-shimmer {
+    grid-template-areas: 'label dropdown1 dropdown2 dropdown3 search button';
+    grid-template-columns: auto 1fr 1fr 1fr 2fr auto;
+  }
+}
+
 button.browse-tags:hover,
 button.browse-tags:focus {
   background-color: var(--background-color);
@@ -485,10 +581,6 @@ button.browse-tags:focus {
 
 .browse-filters-form.is-result .browse-filters-results-count {
   display: block;
-}
-
-.browse-filters-results.browse-cards-block-content.browse-hide-section {
-  display: none;
 }
 
 .browse-filters-results.no-results {
