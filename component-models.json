@@ -2718,13 +2718,8 @@
         "valueType": "string",
         "name": "classes",
         "label": "Classes",
-        "value": "default",
-        "options": [
-          {
-            "name": "Default",
-            "value": ""
-          }
-        ]
+        "value": "",
+        "options": []
       },
       {
         "component": "text",
@@ -5501,13 +5496,8 @@
         "valueType": "string",
         "name": "classes",
         "label": "Classes",
-        "value": "default",
-        "options": [
-          {
-            "name": "Default",
-            "value": ""
-          }
-        ]
+        "value": "",
+        "options": []
       },
       {
         "component": "select",
