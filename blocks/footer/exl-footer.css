@@ -13,6 +13,16 @@ a:any-link {
   margin-bottom: 16px;
 }
 
+ul > li {
+  font-family: var(--body-font-family);
+  font-size: var(--exlm-font-size-content);
+  font-weight: var(--font-weight-normal);
+  font-style: normal;
+  line-height: 27px;
+  margin-top: 1em;
+  margin-bottom: 2em;
+}
+
 .icon {
   display: inline-block;
   height: 24px;
