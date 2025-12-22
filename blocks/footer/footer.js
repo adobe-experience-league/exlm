@@ -363,6 +363,7 @@ export default async function decorate(block, options = {}) {
           exlFooter.removeEventListener('exl-onetrust-activate', onOneTrustActivate);
         };
       }
+      document.dispatchEvent(new CustomEvent('footer-ready', { bubbles: true }));
     },
     { once: true },
   );
