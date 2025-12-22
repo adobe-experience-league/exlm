@@ -344,8 +344,9 @@
 }
 
 .search-picker-label {
-  min-width: max-content;
   display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .search-picker-label span.icon img {
