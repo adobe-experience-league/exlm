@@ -955,9 +955,26 @@ const loadMartech = async (headerPromise, footerPromise) => {
     async: true,
   });
 
+  const footerRenderPromise = footerPromise.then(
+    () =>
+      new Promise((resolve) => {
+        if (document.querySelector('[href="#onetrust"]')) {
+          // Element exists - resolve immediately.
+          resolve();
+          return;
+        }
+
+        // Otherwise wait for footer-ready event
+        const handler = () => {
+          document.removeEventListener('footer-ready', handler);
+          resolve();
+        };
+        document.addEventListener('footer-ready', handler);
+      }),
+  );
+
   // footer and one trust loaded, add event listener to open one trust popup,
-  // footer and one trust loaded, add event listener to open one trust popup,
-  Promise.all([footerPromise, oneTrustPromise]).then(() => {
+  Promise.all([footerRenderPromise, oneTrustPromise]).then(() => {
     document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
       e.preventDefault();
       window.adobePrivacy.showConsentPopup();
