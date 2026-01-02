@@ -113,3 +113,63 @@
     grid-auto-flow: column;
   }
 }
+
+.column-toolbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: var(--spectrum-gray-50);
+  padding: 10px;
+  border: 1px solid var(--spectrum-gray-200);
+  border-radius: 5px;
+}
+
+.columns-block-1 img {
+  object-fit: cover;
+}
+
+.columns-block-2 img {
+  object-fit: contain;
+  object-position: left;
+}
+
+.columns-block-1 {
+  &.small {
+    img {
+      height: 200px;
+    }
+  }
+
+  &.medium {
+    img {
+      height: 400px;
+    }
+  }
+
+  &.large {
+    img {
+      height: 600px;
+    }
+  }
+}
+
+.columns-block-2 {
+  &.small {
+    img {
+      height: 200px;
+    }
+  }
+
+  &.medium {
+    img {
+      height: 400px;
+    }
+  }
+
+  &.large {
+    img {
+      height: 600px;
+    }
+  }
+}
