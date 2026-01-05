@@ -113,3 +113,33 @@
     grid-auto-flow: column;
   }
 }
+
+.columns-wrapper:nth-child(4) .columns.block img {
+  object-fit: cover;
+}
+
+.columns-wrapper:nth-child(6) .columns.block img {
+  object-fit: contain;
+  object-position: left;
+}
+
+.columns-wrapper:nth-child(4) .columns.block,
+.columns-wrapper:nth-child(6) .columns.block {
+  &.small {
+    img {
+      height: 200px;
+    }
+  }
+
+  &.medium {
+    img {
+      height: 400px;
+    }
+  }
+
+  &.large {
+    img {
+      height: 600px;
+    }
+  }
+}
