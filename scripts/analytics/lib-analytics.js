@@ -1033,3 +1033,67 @@ export function pushListToggleEvent(cardHeader) {
     },
   });
 }
+
+export function pushComponentImpression(data) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'componentImpression',
+
+    link: {
+      contentType: data.contentType || '',
+      component: data.component || '',
+      destinationDomain: data.destinationDomain || '',
+      linkLocation: 'body',
+      linkTitle: data.linkTitle || '',
+      linkType: data.linkType || '',
+      position: data.position || '1',
+    },
+
+    // IA taxonomy — USING GLOBAL VALUES FROM THIS FILE
+    productv2: productV2,
+    featurev2: featureV2,
+    subFeaturev2: subFeatureV2,
+    topicv2: topicV2,
+    industryv2: industryV2,
+    rolev2: roleV2,
+    levelv2: levelV2,
+  });
+}
+
+export function setupComponentImpressions() {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+
+        const el = entry.target;
+
+        // Get the header text for linkTitle (the title of the component)
+        const headerText = el.querySelector('h1,h2,h3,h4')?.innerText?.trim() || '';
+
+        // Get the link text for linkType (the text of the link)
+        const linkText = el.querySelector('a')?.innerText?.trim() || '';
+
+        pushComponentImpression({
+          component: el.dataset.blockName || 'unknown',
+          linkTitle: headerText,
+          linkType: linkText,
+          destinationDomain: el.querySelector('a')?.href || '',
+          position: [...el.parentNode.children].indexOf(el) + 1,
+          contentType: el.dataset.contentType || '',
+        });
+
+        observer.unobserve(el);
+      });
+    },
+    { threshold: 0.25 },
+  );
+
+  // Observe Marquee, Announcement ribbon, Media, Detailed teaser blocks
+  document
+    .querySelectorAll(
+      '[data-block-name="marquee"], [data-block-name="announcement-ribbon"], [data-block-name="media"], [data-block-name="detailed-teaser"]',
+    )
+    .forEach((el) => observer.observe(el));
+}
