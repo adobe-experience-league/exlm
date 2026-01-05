@@ -1589,12 +1589,34 @@
         "label": "Style Type",
         "options": [
           {
-            "name": "Border w/ alternating rows",
-            "value": "b-alt-row"
+            "name": "type",
+            "children": [
+              {
+                "name": "Border w/ alternating rows",
+                "value": "b-alt-row"
+              },
+              {
+                "name": "Align to middle",
+                "value": "align-middle"
+              }
+            ]
           },
           {
-            "name": "Align to middle",
-            "value": "align-middle"
+            "name": "Image height",
+            "children": [
+              {
+                "name": "Small",
+                "value": "small"
+              },
+              {
+                "name": "Medium",
+                "value": "medium"
+              },
+              {
+                "name": "Large",
+                "value": "large"
+              }
+            ]
           }
         ]
       }
