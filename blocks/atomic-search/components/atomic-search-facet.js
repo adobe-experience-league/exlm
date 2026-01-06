@@ -307,7 +307,13 @@ export default function atomicFacetHandler(block, placeholders) {
       facet.part.add('facet-option');
       facet.dataset.updated = 'true';
       if (contentType.includes('|')) {
-        const [parentName, facetName] = contentType.split('|');
+        const splitContent = contentType.split('|');
+        let parentName = splitContent[0];
+        const facetName = splitContent[1];
+        // Handle format like "Community;Community|Ideas" -> extract "Community" as parent
+        if (parentName.includes(';')) {
+          [parentName] = parentName.split(';');
+        }
         facet.dataset.parent = parentName;
         facet.dataset.childfacet = 'true';
         const spanElement = facet.querySelector('.value-label');
