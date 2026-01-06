@@ -19,6 +19,12 @@ export const COMMUNITY_CONTENT_TYPES = [
   'Community|Discussions',
   'Community|Ideas',
   'Community|User',
+  // Support new Coveo hierarchical format (Community;Community|X)
+  'Community;Community|Questions',
+  'Community;Community|Blogs',
+  'Community;Community|Discussions',
+  'Community;Community|Ideas',
+  'Community;Community|Community Resources',
 ];
 
 export const COMMUNITY_SUPPORTED_SORT_ELEMENTS = ['el_view_status', 'el_kudo_status', 'el_reply_status'];
