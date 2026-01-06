@@ -1,6 +1,8 @@
-import { fetchLanguagePlaceholders, htmlToElement, loadIms } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, htmlToElement, loadIms, getConfig } from '../../scripts/scripts.js';
 import { isMobile, registerHeaderResizeHandler, simplifySingleCellBlock } from './header-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+
+const { khorosProfileUrl } = getConfig();
 
 const communityLocalesMap = new Map([
   ['de', 'de'],
@@ -17,11 +19,11 @@ const communityLocalesMap = new Map([
   ['zh-hant', 'en'],
 ]);
 
-// eslint-disable-next-line
 async function fetchCommunityProfileData(url = khorosProfileUrl) {
   const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
+  const separator = url.includes('?') ? '&' : '?';
   try {
-    const response = await fetch(`${url}?lang=${locale}`, {
+    const response = await fetch(`${url}${separator}lang=${locale}`, {
       method: 'GET',
       headers: {
         'x-ims-token': await window.adobeIMS?.getAccessToken().token,
@@ -32,9 +34,11 @@ async function fetchCommunityProfileData(url = khorosProfileUrl) {
       const data = await response.json();
       return data;
     }
+    return null;
   } catch (err) {
     // eslint-disable-next-line
     console.log('Error fetching data!!', err);
+    return null;
   }
 }
 
