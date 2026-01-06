@@ -34,9 +34,11 @@ async function fetchCommunityProfileData(url = khorosProfileUrl) {
       const data = await response.json();
       return data;
     }
+    return null;
   } catch (err) {
     // eslint-disable-next-line
     console.log('Error fetching data!!', err);
+    return null;
   }
 }
 
