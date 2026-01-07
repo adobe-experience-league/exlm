@@ -160,7 +160,7 @@ async function appendTag(block, tag, source = 'checkboxChange') {
 }
 
 /**
- * Hides or shows sections within a filter block, excluding the 'browse-topics' section.
+ * Hides or shows sections within a filter block, excluding the 'browse-topics' section and 'browse-filters-input-container'.
  *
  * @param {HTMLElement} block - The parent element containing filter sections.
  * @param {boolean} show - If true, show the sections; otherwise, hide them.
@@ -170,7 +170,10 @@ function hideSectionsWithinFilter(block, show) {
 
   // eslint-disable-next-line no-plusplus
   for (let i = 1; i < siblings.length; i++) {
-    if (!siblings[i].classList.contains('browse-topics')) {
+    if (
+      !siblings[i].classList.contains('browse-topics') &&
+      !siblings[i].classList.contains('browse-filters-input-container')
+    ) {
       const classOp = show ? 'remove' : 'add';
       siblings[i].classList?.[classOp]('browse-hide-section');
     }
@@ -1477,6 +1480,43 @@ function constructClearFilterBtn(block) {
   appendToFormInputContainer(block, clearBtn);
 }
 
+/**
+ * Creates and shows a shimmer effect for the browse filters
+ * @param {HTMLElement} block - The browse filters block
+ */
+function showBrowseFiltersShimmer(block) {
+  const formEl = block.querySelector('.browse-filters-form');
+  if (!formEl || formEl.querySelector('.browse-filters-shimmer')) {
+    return; // Shimmer already exists
+  }
+
+  const shimmerEl = htmlToElement(`
+    <div class="browse-filters-shimmer">
+      <div class="browse-filters-shimmer-label"></div>
+      <div class="browse-filters-shimmer-dropdown"></div>
+      <div class="browse-filters-shimmer-dropdown"></div>
+      <div class="browse-filters-shimmer-dropdown"></div>
+      <div class="browse-filters-shimmer-search"></div>
+      <div class="browse-filters-shimmer-button"></div>
+    </div>
+  `);
+
+  // Insert shimmer at the beginning of the form without modifying actual elements
+  formEl.insertBefore(shimmerEl, formEl.firstChild);
+}
+
+/**
+ * Removes the shimmer effect from the browse filters
+ * @param {HTMLElement} block - The browse filters block
+ */
+function hideBrowseFiltersShimmer(block) {
+  const shimmerEl = block.querySelector('.browse-filters-shimmer');
+
+  if (shimmerEl) {
+    shimmerEl.remove();
+  }
+}
+
 function closeOpenDropdowns() {
   document.querySelectorAll('.filter-dropdown.open')?.forEach((dropdown) => {
     dropdown.classList.remove('open');
@@ -1697,10 +1737,18 @@ export default async function decorate(block) {
   enableTagsAsProxy(block);
   appendFormEl(block);
   constructFilterInputContainer(block);
-  addLabel(block);
+
+  // Show shimmer while dropdowns are loading
+  showBrowseFiltersShimmer(block);
+
   if (isUpcomingEventFlow) {
     BrowseCardsDelegate.fetchCoveoFacetFields(['el_event_series', 'el_product'])
       .then((facetDetails) => {
+        // Hide shimmer once data is ready
+        hideBrowseFiltersShimmer(block);
+
+        // Create actual elements after shimmer is hidden
+        addLabel(block);
         dropdownOptions.forEach((options, index) => {
           const optionId = options.id;
           const optionItems = facetDetails[optionId] || [];
@@ -1719,23 +1767,38 @@ export default async function decorate(block) {
           labelElement.after(dropdownEl);
           decorateIcons(dropdownEl);
         });
+        constructKeywordSearchEl(block);
+        constructClearFilterBtn(block);
+
         if (isCoveoReady && isCoveoHeadlessLoaded) {
           handleUriHash();
           redecorateTagsContainer(block);
         }
       })
       .catch((error) => {
+        // Hide shimmer on error
+        hideBrowseFiltersShimmer(block);
+        // Create actual elements even on error
+        addLabel(block);
+        constructKeywordSearchEl(block);
+        constructClearFilterBtn(block);
         // eslint-disable-next-line no-console
         console.error('Error fetching facet details:', error);
         block.classList.add('browse-hide-section');
       });
   } else {
+    // Hide shimmer once dropdowns are ready
+    hideBrowseFiltersShimmer(block);
+
+    // Create actual elements after shimmer is hidden
+    addLabel(block);
     dropdownOptions.forEach((options, index) => {
       constructMultiSelectDropdown(block, options, index + 1);
     });
+    constructKeywordSearchEl(block);
+    constructClearFilterBtn(block);
   }
-  constructKeywordSearchEl(block);
-  constructClearFilterBtn(block);
+
   appendToForm(block, renderTags());
   appendToForm(block, renderFilterResultsHeader());
   decorateBrowseTopics(block);
