@@ -459,9 +459,14 @@
       "advanced": [],
       "extensions": [],
       "editor": ["removeformat"],
-      "blocks": []
+      "blocks": [],
+      "actions": {
+        "bullet_list": {
+          "wrapInParagraphs": true
     }
-  },
+  }
+  }
+},
   {
     "id": "richtext",
     "rte": {
