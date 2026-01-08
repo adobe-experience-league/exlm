@@ -383,15 +383,22 @@
   {
     "id": "text",
     "rte": {
-      "format": ["bold", "italic"],
-      "alignment": [],
-      "indentation": [],
-      "sr_script": ["superscript", "subscript"],
-      "list": ["bullist", "numlist"],
-      "insert": ["link"],
-      "advanced": [],
-      "extensions": [],
-      "editor": ["removeformat"]
+      "toolbar": {
+        "format": ["bold", "italic"],
+        "alignment": [],
+        "indentation": [],
+        "sr_script": ["superscript", "subscript"],
+        "list": ["bullist", "numlist"],
+        "insert": ["link"],
+        "advanced": [],
+        "extensions": [],
+        "editor": ["removeformat"]
+      },
+      "actions": {
+        "bullet_list": {
+          "wrapInParagraphs": true
+        }
+      }
     }
   },
   {
@@ -463,19 +470,7 @@
       "actions": {
         "bullet_list": {
           "wrapInParagraphs": true
-    }
-  }
-  }
-},
-  {
-   "id": "richtext",
-   "components": [
-      "nav"
-    ],
-    "rte": {
-      "actions": {
-        "bullet_list": {
-          "wrapInParagraphs": true        }
+        }
       }
     }
   }
