@@ -384,18 +384,19 @@
     "id": "text",
     "rte": {
       "toolbar": {
-        "format": ["bold", "italic"],
-        "alignment": [],
-        "indentation": [],
+        "format": ["bold", "italic", "underline", "strike"],
+        "alignment": ["left", "center", "right", "justify"],
+        "direction": ["rtl", "ltr"],
+        "indentation": ["indent", "outdent"],
+        "blocks": ["paragraph", "h1", "h2", "h3", "h4", "h5", "h6", "code_block"],
+        "list": ["bullet_list", "ordered_list"],
+        "insert": ["link", "unlink", "image"],
         "sr_script": ["superscript", "subscript"],
-        "list": ["bullist", "numlist"],
-        "insert": ["link"],
-        "advanced": [],
-        "extensions": [],
-        "editor": ["removeformat"]
+        "editor": ["removeformat"],
+        "sections": ["format", "alignment", "list"]
       },
       "actions": {
-        "bullist": {
+        "bullet_list": {
           "wrapInParagraphs": true
         }
       }
