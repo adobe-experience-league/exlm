@@ -285,19 +285,34 @@ const buildNavItems = (ul, level = 0) => {
       buildNavItems(content, level + 1);
     } else {
       navItem.classList.add('nav-item-leaf');
-      // if nav item is a leaf, remove the <p> wrapper
       const firstEl = navItem.firstElementChild;
-      if (firstEl?.tagName === 'P') {
-        if (firstEl.firstElementChild?.tagName === 'A') {
-          firstEl.replaceWith(firstEl.firstElementChild);
+      if (firstEl?.tagName === 'P' && firstEl.firstElementChild?.tagName === 'A') {
+        firstEl.replaceWith(firstEl.firstElementChild);
+      }
+
+      const anchor = navItem.querySelector(':scope > a');
+      if (!anchor) return;
+
+      let subtitleHTML = null;
+      const subtitleP = navItem.querySelector(':scope > p');
+      if (subtitleP) {
+        subtitleHTML = subtitleP.innerHTML;
+        subtitleP.remove();
+      } else {
+        // Fallback: next text node after <a>
+        let node = anchor.nextSibling;
+        while (node && node.nodeType === Node.TEXT_NODE && !node.textContent.trim()) {
+          node = node.nextSibling;
+        }
+
+        if (node?.nodeType === Node.TEXT_NODE) {
+          subtitleHTML = node.textContent.trim();
+          node.remove();
         }
       }
-      // if nav item has a second element, it's a subtitle
-      const secondEl = navItem.children[1];
-      if (secondEl?.tagName === 'P') {
-        const subtitle = htmlToElement(`<span class="nav-item-subtitle">${secondEl.innerHTML}</span>`);
-        navItem.firstElementChild.appendChild(subtitle);
-        secondEl.remove();
+
+      if (subtitleHTML) {
+        anchor.appendChild(htmlToElement(`<span class="nav-item-subtitle">${subtitleHTML}</span>`));
       }
     }
   };
