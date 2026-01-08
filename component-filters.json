@@ -399,7 +399,8 @@
           "wrapInParagraphs": true
         }
       }
-    }
+    },
+    "components": ["text"]
   },
   {
     "id": "richtext",
@@ -420,7 +421,8 @@
           "wrapInParagraphs": true
         }
       }
-    }
+    },
+    "components": ["richtext"]
   },
   {
     "id": "cards",
