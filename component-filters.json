@@ -395,7 +395,7 @@
         "editor": ["removeformat"]
       },
       "actions": {
-        "bullet_list": {
+        "bullist": {
           "wrapInParagraphs": true
         }
       }
