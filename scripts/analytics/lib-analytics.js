@@ -339,6 +339,33 @@ export async function pushPageDataLayer(language, searchTrackingData) {
   }
 }
 
+export function pushComponentClick(data) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'componentClick',
+    component: data.component || '',
+    componentID: data.componentID || '',
+
+    link: {
+      contentType: type || '',
+      destinationDomain: data.destinationDomain || '',
+      fullSolution: fullSolution || '',
+      linkLocation: 'body',
+      linkTitle: data.linkTitle || '',
+      linkType: data.linkType || '',
+      solution: solution || '',
+      productv2: productV2 || '',
+      featurev2: featureV2 || '',
+      subFeaturev2: subFeatureV2 || '',
+      topicv2: topicV2 || '',
+      industryv2: industryV2 || '',
+      rolev2: roleV2 || '',
+      levelv2: levelV2 || '',
+    },
+  });
+}
+
 export async function pushLinkClick(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
@@ -457,11 +484,11 @@ export async function pushLinkClick(e) {
 
     const allComponentsOfType = document.querySelectorAll(`[data-block-name="${componentName}"]`);
     let instanceNumber = 1;
-    for (let i = 0; i < allComponentsOfType.length; i++) {
+    for (let i = 0; i < allComponentsOfType.length; i += 1) {
       if (allComponentsOfType[i] === component) {
         break;
       }
-      instanceNumber++;
+      instanceNumber += 1;
     }
 
     const componentID =
@@ -473,7 +500,7 @@ export async function pushLinkClick(e) {
     pushComponentClick({
       component: componentName,
       componentID,
-      linkTitle: linkTitle,
+      linkTitle,
       linkType: headerText,
       destinationDomain,
     });
@@ -1092,33 +1119,6 @@ export function pushListToggleEvent(cardHeader) {
     event: 'browseCardListToggle',
     link: {
       linkType: cardHeader,
-    },
-  });
-}
-
-export function pushComponentClick(data) {
-  window.adobeDataLayer = window.adobeDataLayer || [];
-
-  window.adobeDataLayer.push({
-    event: 'componentClick',
-    component: data.component || '',
-    componentID: data.componentID || '',
-
-    link: {
-      contentType: type || '',
-      destinationDomain: data.destinationDomain || '',
-      fullSolution: fullSolution || '',
-      linkLocation: 'body',
-      linkTitle: data.linkTitle || '',
-      linkType: data.linkType || '',
-      solution: solution || '',
-      productv2: productV2 || '',
-      featurev2: featureV2 || '',
-      subFeaturev2: subFeatureV2 || '',
-      topicv2: topicV2 || '',
-      industryv2: industryV2 || '',
-      rolev2: roleV2 || '',
-      levelv2: levelV2 || '',
     },
   });
 }
