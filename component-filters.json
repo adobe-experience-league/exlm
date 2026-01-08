@@ -400,7 +400,7 @@
         }
       }
     },
-    "components": ["text"]
+    "components": ["text", "nav"]
   },
   {
     "id": "richtext",
@@ -422,7 +422,7 @@
         }
       }
     },
-    "components": ["richtext"]
+    "components": ["richtext", "nav"]
   },
   {
     "id": "cards",
