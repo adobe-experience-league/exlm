@@ -290,28 +290,29 @@ const buildNavItems = (ul, level = 0) => {
         firstEl.replaceWith(firstEl.firstElementChild);
       }
 
-      // Ensure we have a <p> (fallback if missing)
+      const anchor = navItem.querySelector(':scope > a');
+      if (!anchor) return;
 
-      let subtitleP = navItem.querySelector(':scope > p');
-      if (!subtitleP) {
-        const anchor = navItem.querySelector(':scope > a');
-        let node = anchor?.nextSibling;
-        // skip empty whitespace nodes
+      let subtitleHTML = null;
+      const subtitleP = navItem.querySelector(':scope > p');
+      if (subtitleP) {
+        subtitleHTML = subtitleP.innerHTML;
+        subtitleP.remove();
+      } else {
+        // Fallback: next text node after <a>
+        let node = anchor.nextSibling;
         while (node && node.nodeType === Node.TEXT_NODE && !node.textContent.trim()) {
           node = node.nextSibling;
         }
+
         if (node?.nodeType === Node.TEXT_NODE) {
-          subtitleP = document.createElement('p');
-          subtitleP.textContent = node.textContent.trim();
-          navItem.insertBefore(subtitleP, node);
+          subtitleHTML = node.textContent.trim();
           node.remove();
         }
       }
 
-      if (subtitleP) {
-        const subtitleSpan = htmlToElement(`<span class="nav-item-subtitle">${subtitleP.innerHTML}</span>`);
-        navItem.querySelector(':scope > a')?.appendChild(subtitleSpan);
-        subtitleP.remove();
+      if (subtitleHTML) {
+        anchor.appendChild(htmlToElement(`<span class="nav-item-subtitle">${subtitleHTML}</span>`));
       }
     }
   };
