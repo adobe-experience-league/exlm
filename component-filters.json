@@ -461,5 +461,16 @@
       "editor": ["removeformat"],
       "blocks": []
     }
+  },
+  {
+    "id": "richtext",
+    "rte": {
+      "actions": {
+        "bullet_list": {
+          "wrapInParagraphs": true,
+          "label": "Bullet List"
+        }
+      }
+    }
   }
 ]
