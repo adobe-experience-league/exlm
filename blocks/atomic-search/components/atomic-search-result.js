@@ -173,7 +173,7 @@ export const atomicResultStyles = `
                     @media(min-width: 1024px) {
                       .result-item.desktop-only {
                         display: grid;
-                        grid-template-columns: 1.5fr 0.5fr 0.6fr 0.4fr;
+                        grid-template-columns: 1.5fr 0.7fr 0.6fr 0.4fr;
                         row-gap: 0;
                         margin-top: 8px;
                       }
