@@ -279,7 +279,10 @@ export default function atomicFacetHandler(block, placeholders) {
         if (contentType && parentCounts[contentType] !== undefined) {
           const countEl = facet.querySelector('.value-count');
           if (countEl) {
-            const totalCount = parentCounts[contentType];
+            // Get parent's original count
+            const parentCount = parseInt(countEl.textContent.replace(/[(),]/g, ''), 10) || 0;
+            // Add parent count to children counts
+            const totalCount = parentCount + parentCounts[contentType];
             countEl.textContent = `(${totalCount.toLocaleString()})`;
             facet.dataset.aggregatedcount = totalCount;
           }
