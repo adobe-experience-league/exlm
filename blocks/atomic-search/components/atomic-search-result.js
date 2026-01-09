@@ -898,8 +898,16 @@ export default function atomicResultHandler(block, placeholders) {
               [parentName] = parentName.split(';');
             }
 
-            // Update the displayed text to "Parent | Child" format
-            const displayText = `${parentName.trim()} | ${childName.trim()}`;
+            // Helper function to convert to title case
+            const toTitleCase = (str) =>
+              str
+                .trim()
+                .split(' ')
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ');
+
+            // Update the displayed text to "Parent | Child" format in title case
+            const displayText = `${toTitleCase(parentName)} | ${toTitleCase(childName)}`;
             const slotEl = contentTypeEl.firstElementChild;
             if (slotEl) {
               slotEl.textContent = displayText;
