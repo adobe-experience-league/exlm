@@ -890,31 +890,33 @@ export default function atomicResultHandler(block, placeholders) {
           // Handle hierarchical content types (e.g., "Community; Community|Community Pulse")
           if (contentType.includes('|')) {
             const splitContent = contentType.split('|');
-            let parentName = splitContent[0];
-            const childName = splitContent[1];
+            let parentName = splitContent[0]?.trim();
+            const childName = splitContent[1]?.trim();
 
             // Handle format like "Community;Community|Ideas" -> extract "Community" as parent
-            if (parentName.includes(';')) {
-              [parentName] = parentName.split(';');
+            if (parentName?.includes(';')) {
+              [parentName] = parentName.split(';').map((part) => part.trim());
             }
 
             // Helper function to convert to title case
             const toTitleCase = (str) =>
               str
-                .trim()
+                ?.trim()
                 .split(' ')
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
                 .join(' ');
 
             // Update the displayed text to "Parent | Child" format in title case
-            const displayText = `${toTitleCase(parentName)} | ${toTitleCase(childName)}`;
-            const slotEl = contentTypeEl.firstElementChild;
-            if (slotEl) {
-              slotEl.textContent = displayText;
-            }
+            if (parentName && childName) {
+              const displayText = `${toTitleCase(parentName)} | ${toTitleCase(childName)}`;
+              const slotEl = contentTypeEl.firstElementChild;
+              if (slotEl) {
+                slotEl.textContent = displayText;
+              }
 
-            // Use the parent name for icon/styling purposes
-            contentType = parentName.trim().toLowerCase();
+              // Use the parent name for icon/styling purposes
+              contentType = parentName.toLowerCase();
+            }
           }
 
           if (!isMobileView) {
