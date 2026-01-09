@@ -38,6 +38,13 @@ export default function atomicFacetHandler(block, placeholders) {
         if (facetParentButton) {
           facetParentButton.part.add('facet-parent-button');
         }
+
+        // Store child count on facet for later aggregation
+        const childCountEl = facet.querySelector('.value-count');
+        if (childCountEl) {
+          const childCount = parseInt(childCountEl.textContent.replace(/[(),]/g, ''), 10) || 0;
+          facet.dataset.childcount = childCount;
+        }
       } else {
         facet.part.add('facet-hide-element', 'facet-missing-parent');
         if (facet.querySelector('button.selected')) {
@@ -244,6 +251,49 @@ export default function atomicFacetHandler(block, placeholders) {
     finalList.forEach((item) => parentWrapper.appendChild(item));
   };
 
+  const updateParentFacetCounts = (parentWrapper) => {
+    if (!parentWrapper) return;
+
+    const facets = Array.from(parentWrapper.children);
+    const parentCounts = {};
+
+    // First pass: collect all child counts for each parent
+    facets.forEach((facet) => {
+      if (facet.dataset.childfacet === 'true') {
+        const parentName = facet.dataset.parent;
+        const countEl = facet.querySelector('.value-count');
+        if (countEl) {
+          const count = parseInt(countEl.textContent.replace(/[(),]/g, ''), 10) || 0;
+          if (!parentCounts[parentName]) {
+            parentCounts[parentName] = 0;
+          }
+          parentCounts[parentName] += count;
+        }
+      }
+    });
+
+    // Second pass: update parent facet counts
+    facets.forEach((facet) => {
+      if (facet.dataset.childfacet !== 'true') {
+        const contentType = facet.dataset.contenttype;
+        if (contentType && parentCounts[contentType] !== undefined) {
+          const countEl = facet.querySelector('.value-count');
+          if (countEl) {
+            // Store original count on first aggregation to prevent re-summing on re-renders
+            if (!facet.dataset.originalcount) {
+              facet.dataset.originalcount = parseInt(countEl.textContent.replace(/[(),]/g, ''), 10) || 0;
+            }
+            // Use stored original count to calculate total
+            const parentCount = parseInt(facet.dataset.originalcount, 10) || 0;
+            const totalCount = parentCount + parentCounts[contentType];
+            countEl.textContent = `(${totalCount.toLocaleString()})`;
+            facet.dataset.aggregatedcount = totalCount;
+          }
+        }
+      }
+    });
+  };
+
   const updateShowMoreVisibility = (facetParent) => {
     const facets = Array.from(facetParent.querySelector('[part="values"]').children);
     const existingBtn = facetParent.querySelector('.facet-show-more-btn');
@@ -371,6 +421,10 @@ export default function atomicFacetHandler(block, placeholders) {
       facets.forEach((facet) => {
         adjustChildElementsPosition(facet, atomicFacet);
       });
+
+      // Update parent facet counts with sum of child counts
+      updateParentFacetCounts(parentWrapper);
+
       const facetParent = atomicFacet.shadowRoot.querySelector('[part="facet"]');
       updateChildElementUI(parentWrapper, facetParent);
       updateShowMoreVisibility(facetParent);

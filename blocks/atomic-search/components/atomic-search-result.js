@@ -173,7 +173,7 @@ export const atomicResultStyles = `
                     @media(min-width: 1024px) {
                       .result-item.desktop-only {
                         display: grid;
-                        grid-template-columns: 1.5fr 0.5fr 0.6fr 0.4fr;
+                        grid-template-columns: 1.5fr 0.7fr 0.6fr 0.4fr;
                         row-gap: 0;
                         margin-top: 8px;
                       }
@@ -885,14 +885,41 @@ export default function atomicResultHandler(block, placeholders) {
           const isSeparator = contentTypeEl?.className.includes('separator');
           const contentTypeValue =
             Array.isArray(contentTypeValues) && !isSeparator ? contentTypeValues.shift() : rawContentType;
-          const contentType = isSeparator ? '' : (contentTypeValue || contentTypeEl.textContent).toLowerCase().trim();
+          let contentType = isSeparator ? '' : (contentTypeValue || contentTypeEl.textContent).toLowerCase().trim();
+
+          // Handle hierarchical content types (e.g., "Community; Community|Community Pulse")
           if (contentType.includes('|')) {
-            contentTypeEl.style.cssText = `display: none !important`;
-            const slotEl = contentTypeEl.firstElementChild;
-            if (slotEl) {
-              slotEl.style.cssText = `display: none`;
+            const splitContent = contentType.split('|');
+            let parentName = splitContent[0]?.trim();
+            const childName = splitContent[1]?.trim();
+
+            // Handle format like "Community;Community|Ideas" -> extract "Community" as parent
+            if (parentName?.includes(';')) {
+              [parentName] = parentName.split(';').map((part) => part.trim());
             }
-          } else if (!isMobileView) {
+
+            // Helper function to convert to title case
+            const toTitleCase = (str) =>
+              str
+                ?.trim()
+                .split(' ')
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ');
+
+            // Update the displayed text to "Parent | Child" format in title case
+            if (parentName && childName) {
+              const displayText = `${toTitleCase(parentName)} | ${toTitleCase(childName)}`;
+              const slotEl = contentTypeEl.firstElementChild;
+              if (slotEl) {
+                slotEl.textContent = displayText;
+              }
+
+              // Use the parent name for icon/styling purposes
+              contentType = parentName.toLowerCase();
+            }
+          }
+
+          if (!isMobileView) {
             // UI effect is only for desktop.
             const svgIcon = ContentTypeIcons[contentType] || '';
             if (contentType) resultContentType.classList.add(contentType.replace(/\s+/g, '-'));
