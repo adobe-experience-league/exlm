@@ -38,7 +38,7 @@ export default function atomicFacetHandler(block, placeholders) {
         if (facetParentButton) {
           facetParentButton.part.add('facet-parent-button');
         }
-        
+
         // Store child count on facet for later aggregation
         const childCountEl = facet.querySelector('.value-count');
         if (childCountEl) {
@@ -253,10 +253,10 @@ export default function atomicFacetHandler(block, placeholders) {
 
   const updateParentFacetCounts = (parentWrapper) => {
     if (!parentWrapper) return;
-    
+
     const facets = Array.from(parentWrapper.children);
     const parentCounts = {};
-    
+
     // First pass: collect all child counts for each parent
     facets.forEach((facet) => {
       if (facet.dataset.childfacet === 'true') {
@@ -271,7 +271,7 @@ export default function atomicFacetHandler(block, placeholders) {
         }
       }
     });
-    
+
     // Second pass: update parent facet counts
     facets.forEach((facet) => {
       if (facet.dataset.childfacet !== 'true') {
@@ -415,10 +415,10 @@ export default function atomicFacetHandler(block, placeholders) {
       facets.forEach((facet) => {
         adjustChildElementsPosition(facet, atomicFacet);
       });
-      
+
       // Update parent facet counts with sum of child counts
       updateParentFacetCounts(parentWrapper);
-      
+
       const facetParent = atomicFacet.shadowRoot.querySelector('[part="facet"]');
       updateChildElementUI(parentWrapper, facetParent);
       updateShowMoreVisibility(facetParent);

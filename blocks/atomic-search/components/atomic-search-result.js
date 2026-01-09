@@ -886,29 +886,29 @@ export default function atomicResultHandler(block, placeholders) {
           const contentTypeValue =
             Array.isArray(contentTypeValues) && !isSeparator ? contentTypeValues.shift() : rawContentType;
           let contentType = isSeparator ? '' : (contentTypeValue || contentTypeEl.textContent).toLowerCase().trim();
-          
+
           // Handle hierarchical content types (e.g., "Community; Community|Community Pulse")
           if (contentType.includes('|')) {
             const splitContent = contentType.split('|');
             let parentName = splitContent[0];
             const childName = splitContent[1];
-            
+
             // Handle format like "Community;Community|Ideas" -> extract "Community" as parent
             if (parentName.includes(';')) {
               [parentName] = parentName.split(';');
             }
-            
+
             // Update the displayed text to "Parent | Child" format
             const displayText = `${parentName.trim()} | ${childName.trim()}`;
             const slotEl = contentTypeEl.firstElementChild;
             if (slotEl) {
               slotEl.textContent = displayText;
             }
-            
+
             // Use the parent name for icon/styling purposes
             contentType = parentName.trim().toLowerCase();
           }
-          
+
           if (!isMobileView) {
             // UI effect is only for desktop.
             const svgIcon = ContentTypeIcons[contentType] || '';
