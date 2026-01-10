@@ -339,8 +339,48 @@ export async function pushPageDataLayer(language, searchTrackingData) {
   }
 }
 
+export function pushComponentClick(data) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'componentClick',
+    component: data.component || '',
+    componentID: data.componentID || '',
+
+    link: {
+      contentType: type || '',
+      destinationDomain: data.destinationDomain || '',
+      fullSolution: fullSolution || '',
+      linkLocation: 'body',
+      linkTitle: data.linkTitle || '',
+      linkType: data.linkType || '',
+      solution: solution || '',
+      productv2: productV2 || '',
+      featurev2: featureV2 || '',
+      subFeaturev2: subFeatureV2 || '',
+      topicv2: topicV2 || '',
+      industryv2: industryV2 || '',
+      rolev2: roleV2 || '',
+      levelv2: levelV2 || '',
+    },
+  });
+}
+
 export async function pushLinkClick(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const componentSelectors = [
+    '[data-block-name="marquee"]',
+    '[data-block-name="columns"]',
+    '[data-block-name="authorable-card"]',
+    '[data-block-name="carousel"]',
+    '[data-block-name="announcement-ribbon"]',
+    '[data-block-name="media"]',
+    '[data-block-name="detailed-teaser"]',
+  ];
+
+  // check if the click happened within any of target components
+  const component = e.target.closest(componentSelectors.join(','));
 
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
   const isCourseStartCTA = e.target.closest('.course-breakdown-header-start-button');
@@ -416,6 +456,55 @@ export async function pushLinkClick(e) {
       interactionType: '',
     },
   });
+
+  // If clicked inside a target component, trigger componentClick
+  if (component) {
+    let headerText = '';
+
+    if (component.dataset.blockName === 'authorable-card') {
+      headerText = component.querySelector('h1,h2,h3,h4')?.innerText?.trim() || '';
+    } else {
+      let currentElement = e.target;
+      while (currentElement && currentElement !== component) {
+        // Check if the element or any of its children has a header
+        const closestHeader = currentElement.querySelector('h1,h2,h3,h4');
+        if (closestHeader) {
+          headerText = closestHeader.innerText.trim();
+          break;
+        }
+        currentElement = currentElement.parentElement;
+      }
+    }
+
+    // Get the component name
+    const componentName = component.dataset.blockName || 'unknown';
+
+    // Generate componentID in the format: currentURL#componentName+position
+    const currentUrl = window.location.href.split('#')[0];
+
+    const allComponentsOfType = document.querySelectorAll(`[data-block-name="${componentName}"]`);
+    let instanceNumber = 1;
+    for (let i = 0; i < allComponentsOfType.length; i += 1) {
+      if (allComponentsOfType[i] === component) {
+        break;
+      }
+      instanceNumber += 1;
+    }
+
+    const componentID =
+      allComponentsOfType.length > 1
+        ? `${currentUrl}#${componentName}${instanceNumber}`
+        : `${currentUrl}#${componentName}`;
+
+    // Push the component click event
+    pushComponentClick({
+      component: componentName,
+      componentID,
+      linkTitle,
+      linkType: headerText,
+      destinationDomain,
+    });
+  }
 }
 
 /**

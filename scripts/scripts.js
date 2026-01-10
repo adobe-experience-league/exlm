@@ -803,8 +803,8 @@ export function getConfig() {
     cookieConsentName,
     targetCriteriaIds,
     quizPassingCriteria: 0.65, // 65% passing criteria for quizzes
-    khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
-    khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
+    khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list?platform=gainsight`,
+    khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`,
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `${cdnOrigin}/api/action/coveo-token?lang=${lang}`,
@@ -941,7 +941,9 @@ const loadMartech = async (headerPromise, footerPromise) => {
     Promise.allSettled([headerPromise, footerPromise]).then(() => {
       const linkClicked = document.querySelectorAll('a,.view-more-less span, .language-selector-popover span');
       const clickHandler = (e) => {
-        if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') pushLinkClick(e);
+        if (e.target.tagName === 'A' || e.target.tagName === 'SPAN' || e.target.closest('.block')) {
+          pushLinkClick(e);
+        }
       };
       linkClicked.forEach((e) => e.addEventListener('click', clickHandler));
     });
