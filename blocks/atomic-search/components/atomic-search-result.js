@@ -892,10 +892,9 @@ export default function atomicResultHandler(block, placeholders) {
             link.style.textDecoration = 'none';
             link.style.color = 'inherit';
 
-            li.innerHTML = '';
+            li.textContent = '';
             li.appendChild(link);
           } else {
-            li.innerHTML = '';
             li.textContent = label;
           }
         });
