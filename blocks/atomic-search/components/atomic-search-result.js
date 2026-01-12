@@ -10,10 +10,9 @@ import {
 } from './atomic-search-utils.js';
 import { ContentTypeIcons } from './atomic-search-icons.js';
 import { decorateIcons } from '../../../scripts/lib-franklin.js';
-import { htmlToElement, getConfig } from '../../../scripts/scripts.js';
+import { htmlToElement } from '../../../scripts/scripts.js';
 import { INITIAL_ATOMIC_RESULT_CHILDREN_COUNT } from './atomic-result-children.js';
 
-const { communityTopicsUrl } = getConfig();
 const MAX_HYDRATION_ATTEMPTS = 10;
 
 export const atomicResultStyles = `
@@ -864,20 +863,14 @@ export default function atomicResultHandler(block, placeholders) {
           }
 
           const slot = li.querySelector('slot');
-          if (!slot || li.querySelector('a')) return;
+          if (!slot) return;
 
           const label = slot.textContent.trim();
           if (!label) return;
 
-          const link = document.createElement('a');
-          link.href = `${communityTopicsUrl}${encodeURIComponent(label)}`;
-          link.textContent = label;
-          link.target = '_blank';
-          link.style.textDecoration = 'none';
-          link.style.color = 'inherit';
-
+          // Display as plain text without creating links
           li.innerHTML = '';
-          li.appendChild(link);
+          li.textContent = label;
         });
         const rawContentType = resultEl.result?.result?.raw?.el_contenttype;
         const contentTypeValues = Array.isArray(rawContentType) ? structuredClone(rawContentType) : null;
