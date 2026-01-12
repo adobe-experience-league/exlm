@@ -12,9 +12,8 @@ import { ContentTypeIcons } from './atomic-search-icons.js';
 import { decorateIcons } from '../../../scripts/lib-franklin.js';
 import { htmlToElement, getConfig } from '../../../scripts/scripts.js';
 import { INITIAL_ATOMIC_RESULT_CHILDREN_COUNT } from './atomic-result-children.js';
-import isFeatureEnabled from '../../../scripts/utils/feature-flag-utils.js';
 
-const { communityTopicsUrl } = getConfig();
+const { communityTopicsUrl, isProd } = getConfig();
 const MAX_HYDRATION_ATTEMPTS = 10;
 
 export const atomicResultStyles = `
@@ -884,7 +883,7 @@ export default function atomicResultHandler(block, placeholders) {
 
           const label = slot.textContent.trim();
           if (!label) return;
-          if (!isFeatureEnabled('isGainsight')) {
+          if (isProd) {
             const link = document.createElement('a');
             link.href = `${communityTopicsUrl}${encodeURIComponent(label)}`;
             link.textContent = label;
