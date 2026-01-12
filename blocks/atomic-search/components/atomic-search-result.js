@@ -822,19 +822,19 @@ export default function atomicResultHandler(block, placeholders) {
           resultRoot.classList.add('recommendation-badge');
         }
 
-        // Handle el_kudo_status field - support both legacy numeric and new semicolon-separated format
+        // Handle el_kudo_status field - support both legacy numeric and new user ID format
         // This needs to run on every re-render (mobile/desktop view switches)
         const kudoStatusEl = resultShadow?.querySelector('atomic-result-text[field="el_kudo_status"]');
         if (kudoStatusEl) {
           const rawKudoStatus = resultEl.result?.result?.raw?.el_kudo_status;
 
-          // Check if it's the new format (semicolon-separated user IDs)
-          if (typeof rawKudoStatus === 'string' && rawKudoStatus.includes(';')) {
+          // Check if it's the new format (string = user IDs, single or semicolon-separated)
+          if (typeof rawKudoStatus === 'string' && rawKudoStatus.trim() !== '') {
             const userIds = rawKudoStatus.split(';').filter((id) => id.trim() !== '');
             const count = userIds.length;
             kudoStatusEl.textContent = count.toString();
           }
-          // Legacy numeric format - no change needed, displays as-is
+          // Legacy numeric format (number type) - no change needed, displays as-is
         }
 
         if (resultItem.dataset.decorated && currentHydrationCount >= MAX_HYDRATION_ATTEMPTS) {
