@@ -10,9 +10,11 @@ import {
 } from './atomic-search-utils.js';
 import { ContentTypeIcons } from './atomic-search-icons.js';
 import { decorateIcons } from '../../../scripts/lib-franklin.js';
-import { htmlToElement } from '../../../scripts/scripts.js';
+import { htmlToElement, getConfig } from '../../../scripts/scripts.js';
 import { INITIAL_ATOMIC_RESULT_CHILDREN_COUNT } from './atomic-result-children.js';
+import isFeatureEnabled from '../../../scripts/utils/feature-flag-utils.js';
 
+const { communityTopicsUrl } = getConfig();
 const MAX_HYDRATION_ATTEMPTS = 10;
 
 export const atomicResultStyles = `
@@ -863,14 +865,24 @@ export default function atomicResultHandler(block, placeholders) {
           }
 
           const slot = li.querySelector('slot');
-          if (!slot) return;
+          if (!slot || li.querySelector('a')) return;
 
           const label = slot.textContent.trim();
           if (!label) return;
+          if (!isFeatureEnabled('isGainsight')) {
+            const link = document.createElement('a');
+            link.href = `${communityTopicsUrl}${encodeURIComponent(label)}`;
+            link.textContent = label;
+            link.target = '_blank';
+            link.style.textDecoration = 'none';
+            link.style.color = 'inherit';
 
-          // Display as plain text without creating links
-          li.innerHTML = '';
-          li.textContent = label;
+            li.innerHTML = '';
+            li.appendChild(link);
+          } else {
+            li.innerHTML = '';
+            li.textContent = label;
+          }
         });
         const rawContentType = resultEl.result?.result?.raw?.el_contenttype;
         const contentTypeValues = Array.isArray(rawContentType) ? structuredClone(rawContentType) : null;
