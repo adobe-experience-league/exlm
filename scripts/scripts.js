@@ -21,7 +21,6 @@ import {
   loadBlock,
 } from './lib-franklin.js';
 import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
-import isFeatureEnabled from './utils/feature-flag-utils.js';
 
 /**
  * please do not import any other modules here, as this file is used in the critical path.
@@ -804,12 +803,12 @@ export function getConfig() {
     cookieConsentName,
     targetCriteriaIds,
     quizPassingCriteria: 0.65, // 65% passing criteria for quizzes
-    khorosProfileUrl: isFeatureEnabled('isGainsight')
-      ? `${cdnOrigin}/api/action/khoros/profile-menu-list?platform=gainsight`
-      : `${cdnOrigin}/api/action/khoros/profile-menu-list`,
-    khorosProfileDetailsUrl: isFeatureEnabled('isGainsight')
-      ? `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`
-      : `${cdnOrigin}/api/action/khoros/profile-details`,
+    khorosProfileUrl: isProd
+      ? `${cdnOrigin}/api/action/khoros/profile-menu-list`
+      : `${cdnOrigin}/api/action/khoros/profile-menu-list?platform=gainsight`,
+    khorosProfileDetailsUrl: isProd
+      ? `${cdnOrigin}/api/action/khoros/profile-details`
+      : `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`,
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `${cdnOrigin}/api/action/coveo-token?lang=${lang}`,
