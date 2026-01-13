@@ -1,10 +1,10 @@
 /* Component Mapping Config Keys & Labels (Placeholder values) */
 
-// import { fetchLanguagePlaceholders } from '../scripts.js';
+import { fetchLanguagePlaceholders } from '../scripts.js';
 
 let placeholders = {};
 try {
-  placeholders = {};
+  placeholders = await fetchLanguagePlaceholders();
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
