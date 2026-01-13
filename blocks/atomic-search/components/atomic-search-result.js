@@ -728,6 +728,52 @@ export default function atomicResultHandler(block, placeholders) {
     }
   };
 
+  /**
+   * Filters out parent content type values when their child values are present.
+   * Handles both legacy (;) and new (|) separator formats.
+   * @param {Array|string} contentTypes - Array of content type values or single value
+   * @returns {Array} Filtered array with only the most specific content type values
+   */
+  const filterParentContentTypes = (contentTypes) => {
+    if (!Array.isArray(contentTypes)) {
+      return contentTypes;
+    }
+
+    // Extract all parent names from child values (those containing |)
+    const parentNamesFromChildren = new Set();
+    contentTypes.forEach((type) => {
+      const typeStr = String(type || '').trim();
+      if (typeStr.includes('|')) {
+        // Handle both "parent|child" and "parent;parent|child" formats
+        const parts = typeStr.split('|');
+        if (parts[0]) {
+          const parentPart = parts[0].trim();
+          // If parent part contains semicolon, extract the actual parent name
+          if (parentPart.includes(';')) {
+            const semicolonParts = parentPart.split(';').map((p) => p.trim());
+            // Add all parts before the pipe as potential parent names
+            semicolonParts.forEach((p) => {
+              if (p) parentNamesFromChildren.add(p.toLowerCase());
+            });
+          } else {
+            parentNamesFromChildren.add(parentPart.toLowerCase());
+          }
+        }
+      }
+    });
+
+    // Filter out parent values if their child values exist
+    return contentTypes.filter((type) => {
+      const typeStr = String(type || '').trim();
+      // Keep child values (those with |)
+      if (typeStr.includes('|')) {
+        return true;
+      }
+      // Keep parent values only if they don't have a corresponding child
+      return !parentNamesFromChildren.has(typeStr.toLowerCase());
+    });
+  };
+
   const updateAtomicResultUI = (callFrom) => {
     const results = container.querySelectorAll('atomic-result');
     const isMobileView = isMobile();
@@ -898,11 +944,70 @@ export default function atomicResultHandler(block, placeholders) {
           }
         });
         const rawContentType = resultEl.result?.result?.raw?.el_contenttype;
-        const contentTypeValues = Array.isArray(rawContentType) ? structuredClone(rawContentType) : null;
+        // Filter out parent values when child values are present to avoid duplicate rendering
+        const filteredContentType = filterParentContentTypes(rawContentType);
+        const contentTypeValues = Array.isArray(filteredContentType) ? structuredClone(filteredContentType) : null;
+
+        // Hide duplicate parent <li> elements when child elements exist
+        // The atomic component renders all values, so we need to hide duplicates in the DOM
+        if (Array.isArray(rawContentType) && contentTypeElements.length > 0) {
+          const childValues = new Set();
+          const parentToHide = new Set();
+
+          // First pass: identify all child values and their parent names
+          Array.from(contentTypeElements).forEach((li) => {
+            if (li.className?.includes('separator')) return;
+            const slotEl = li.firstElementChild;
+            const slotName = slotEl?.getAttribute('name') || '';
+            // Extract value from slot name (e.g., "result-multi-value-text-value-community|questions")
+            const value = slotName.replace('result-multi-value-text-value-', '');
+
+            if (value.includes('|')) {
+              childValues.add(value);
+              // Extract parent name from child value
+              const parts = value.split('|');
+              const parentPart = parts[0].trim().toLowerCase();
+              if (parentPart.includes(';')) {
+                parentPart.split(';').forEach((p) => {
+                  const trimmed = p.trim().toLowerCase();
+                  if (trimmed) parentToHide.add(trimmed);
+                });
+              } else {
+                parentToHide.add(parentPart);
+              }
+            }
+          });
+
+          // Second pass: hide parent elements if their child exists
+          Array.from(contentTypeElements).forEach((li) => {
+            if (li.className?.includes('separator')) return;
+            const slotEl = li.firstElementChild;
+            const slotName = slotEl?.getAttribute('name') || '';
+            const value = slotName.replace('result-multi-value-text-value-', '').toLowerCase();
+
+            // If this is a parent value and its child exists, hide it
+            if (!value.includes('|') && parentToHide.has(value)) {
+              li.part.add('multi-hidden');
+              li.style.setProperty('display', 'none', 'important');
+              li.dataset.hiddenDuplicate = 'true';
+              // Also hide the separator after this element if it exists
+              if (li.nextElementSibling?.classList?.contains('separator')) {
+                li.nextElementSibling.part.add('multi-hidden');
+                li.nextElementSibling.style.setProperty('display', 'none', 'important');
+              }
+            }
+          });
+        }
+
         contentTypeElements.forEach((contentTypeEl) => {
+          // Skip elements that were marked as hidden duplicates
+          if (contentTypeEl.dataset.hiddenDuplicate === 'true') {
+            return;
+          }
+
           const isSeparator = contentTypeEl?.className.includes('separator');
           const contentTypeValue =
-            Array.isArray(contentTypeValues) && !isSeparator ? contentTypeValues.shift() : rawContentType;
+            Array.isArray(contentTypeValues) && !isSeparator ? contentTypeValues.shift() : filteredContentType;
           let contentType = isSeparator ? '' : (contentTypeValue || contentTypeEl.textContent).toLowerCase().trim();
 
           // Handle hierarchical content types (e.g., "Community; Community|Community Pulse")
