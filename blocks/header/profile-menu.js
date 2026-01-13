@@ -208,11 +208,14 @@ export default class ProfileMenu extends HTMLElement {
               );
               communitySection.appendChild(link);
             }
+          } else {
+            communitySection.style.display = 'none';
           }
         })
         .catch((err) => {
           /* eslint-disable-next-line no-console */
           console.error(err);
+          communitySection.style.display = 'none';
         });
     } else {
       const isProfileMenu = document.querySelector('.profile-menu');
