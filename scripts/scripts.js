@@ -187,18 +187,18 @@ function addBrowseRail(main) {
   main.append(leftRailSection);
 }
 
-function addBrowseBreadCrumb(main) {
-  if (!main.querySelector('.browse-breadcrumb.block')) {
-    const section = main.querySelector('main > div');
-    if (section) {
-      section.prepend(buildBlock('browse-breadcrumb', []));
-    } else {
-      const newSection = document.createElement('div');
-      main.prepend(newSection);
-      newSection.append(buildBlock('browse-breadcrumb', []));
-    }
-  }
-}
+// function addBrowseBreadCrumb(main) {
+//   if (!main.querySelector('.browse-breadcrumb.block')) {
+//     const section = main.querySelector('main > div');
+//     if (section) {
+//       section.prepend(buildBlock('browse-breadcrumb', []));
+//     } else {
+//       const newSection = document.createElement('div');
+//       main.prepend(newSection);
+//       newSection.append(buildBlock('browse-breadcrumb', []));
+//     }
+//   }
+// }
 
 /**
  * Add a left rail to the profile page.
@@ -324,7 +324,7 @@ function buildAutoBlocks(main, isFragment = false) {
     if (!isFragment) {
       // Determine page type and add appropriate blocks
       if (isBrowsePage) {
-        addBrowseBreadCrumb(main);
+        // addBrowseBreadCrumb(main);
         addBrowseRail(main);
       } else if (isPerspectivePage) {
         addMiniToc(main);
