@@ -4,7 +4,7 @@ import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import PathsDataService from '../data-service/paths-data-service.js';
-import { URL_SPECIAL_CASE_LOCALES, getConfig, getPathDetails, fetchLanguagePlaceholders } from '../scripts.js';
+import { URL_SPECIAL_CASE_LOCALES, getConfig, getPathDetails } from '../scripts.js';
 import { getExlPipelineDataSourceParams } from '../data-service/coveo/coveo-exl-pipeline-helpers.js';
 import { RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import { createDateCriteria } from './browse-card-utils.js';
@@ -78,7 +78,7 @@ const fieldsToInclude = [
 
 let placeholders = {};
 try {
-  placeholders = await fetchLanguagePlaceholders();
+  placeholders = {};
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
