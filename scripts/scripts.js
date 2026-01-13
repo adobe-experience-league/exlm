@@ -15,7 +15,7 @@ import {
   getMetadata,
   loadScript,
   fetchPlaceholders,
-  // readBlockConfig,
+  readBlockConfig,
   createOptimizedPicture,
   toClassName,
   loadBlock,
@@ -173,32 +173,32 @@ export const isCertificatePage = () => !!document.querySelector('.course-complet
 /**
  * add a section for the left rail when on a browse page.
  */
-// function addBrowseRail(main) {
-//   // if there is already editable browse rail stored
-//   const browseRailSectionFound = [...main.querySelectorAll('.section-metadata')].find((sMeta) =>
-//     readBlockConfig(sMeta)?.style.split(',').includes('browse-rail-section'),
-//   );
-//   if (browseRailSectionFound) return;
+function addBrowseRail(main) {
+  // if there is already editable browse rail stored
+  const browseRailSectionFound = [...main.querySelectorAll('.section-metadata')].find((sMeta) =>
+    readBlockConfig(sMeta)?.style.split(',').includes('browse-rail-section'),
+  );
+  if (browseRailSectionFound) return;
 
-//   // default: create a dynamic uneditable browse rail
-//   const leftRailSection = document.createElement('div');
-//   leftRailSection.classList.add('browse-rail-section', isBrowsePage);
-//   leftRailSection.append(buildBlock('browse-rail', []));
-//   main.append(leftRailSection);
-// }
+  // default: create a dynamic uneditable browse rail
+  const leftRailSection = document.createElement('div');
+  leftRailSection.classList.add('browse-rail-section', isBrowsePage);
+  leftRailSection.append(buildBlock('browse-rail', []));
+  main.append(leftRailSection);
+}
 
-// function addBrowseBreadCrumb(main) {
-//   if (!main.querySelector('.browse-breadcrumb.block')) {
-//     const section = main.querySelector('main > div');
-//     if (section) {
-//       section.prepend(buildBlock('browse-breadcrumb', []));
-//     } else {
-//       const newSection = document.createElement('div');
-//       main.prepend(newSection);
-//       newSection.append(buildBlock('browse-breadcrumb', []));
-//     }
-//   }
-// }
+function addBrowseBreadCrumb(main) {
+  if (!main.querySelector('.browse-breadcrumb.block')) {
+    const section = main.querySelector('main > div');
+    if (section) {
+      section.prepend(buildBlock('browse-breadcrumb', []));
+    } else {
+      const newSection = document.createElement('div');
+      main.prepend(newSection);
+      newSection.append(buildBlock('browse-breadcrumb', []));
+    }
+  }
+}
 
 /**
  * Add a left rail to the profile page.
@@ -324,9 +324,8 @@ function buildAutoBlocks(main, isFragment = false) {
     if (!isFragment) {
       // Determine page type and add appropriate blocks
       if (isBrowsePage) {
-        // addBrowseBreadCrumb(main);
-        // addBrowseRail(main);
-        console.log("Test");
+        addBrowseBreadCrumb(main);
+        addBrowseRail(main);
       } else if (isPerspectivePage) {
         addMiniToc(main);
       } else if (isProfilePage) {
