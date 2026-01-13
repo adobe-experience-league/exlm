@@ -107,7 +107,7 @@ const BrowseCardsDelegate = (() => {
    * @private
    */
   let param = {};
-
+  const facetsInfo = {};
   /**
    * Handles Coveo data service to fetch card data.
    * @returns {Array} Array of card data.
@@ -132,6 +132,11 @@ const BrowseCardsDelegate = (() => {
     if (!cardData) {
       throw new Error('An error occurred');
     }
+    if (cardData?.facets) {
+      const paramsKey = JSON.stringify(param);
+      facetsInfo[paramsKey] = cardData.facets;
+    }
+
     if (cardData?.results?.length) {
       return BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(cardData.results, cardData.searchUid);
     }
@@ -336,9 +341,16 @@ const BrowseCardsDelegate = (() => {
         });
     });
 
+  const fetchFacetsData = (paramObj) => {
+    const paramsKey = JSON.stringify(paramObj);
+    const response = facetsInfo[paramsKey] || [];
+    return response;
+  };
+
   return {
     fetchCardData,
     fetchCoveoFacetFields,
+    fetchFacetsData,
   };
 })();
 
