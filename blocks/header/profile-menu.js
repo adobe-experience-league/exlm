@@ -209,13 +209,13 @@ export default class ProfileMenu extends HTMLElement {
               communitySection.appendChild(link);
             }
           } else {
-            communitySection.style.display = 'none';
+            communitySection.remove();
           }
         })
         .catch((err) => {
           /* eslint-disable-next-line no-console */
           console.error(err);
-          communitySection.style.display = 'none';
+          communitySection.remove();
         });
     } else {
       const isProfileMenu = document.querySelector('.profile-menu');
