@@ -1123,82 +1123,26 @@ export function pushListToggleEvent(cardHeader) {
   });
 }
 
-function formatComponentName(name) {
-  if (!name) return '';
-
-  return name
-    .split('-')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
-
-function pushComponentImpressionEvent(block, position) {
-  const link = block.querySelector('a');
-
+export function pushComponentImpressionEvent(data) {
   window.adobeDataLayer.push({
     event: 'componentImpression',
+    component: data.component || '',
+    componentID: data.componentID || '',
     link: {
-      component: formatComponentName(block.dataset.blockName) || 'unknown',
-      contentType: block.dataset.contentType || '',
-      linkTitle: link?.innerText?.trim() || '',
-      linkType: block.querySelector('h1,h2,h3,h4')?.innerText?.trim() || '',
-      destinationDomain: link?.href || '',
-      linkLocation: 'body',
-      position,
-
-      solution: solution || '',
-      fullSolution: fullSolution || '',
+      contentType: data.contentType || '',
+      destinationDomain: data.destinationDomain || '',
+      fullSolution: data.fullSolution || '',
+      linkLocation: data.linkLocation || '',
+      linkTitle: data.linkTitle || '',
+      linkType: data.linkType || '',
+      solution: data.solution || '',
+      productV2: '',
+      featureV2: '',
+      subFeatureV2: '',
+      topicV2: '',
+      industryV2: '',
+      roleV2: '',
+      levelV2: '',
     },
-
-    productv2: productV2 || '',
-    featurev2: featureV2 || '',
-    subFeaturev2: subFeatureV2 || '',
-    topicv2: topicV2 || '',
-    industryv2: industryV2 || '',
-    rolev2: roleV2 || '',
-    levelv2: levelV2 || '',
   });
-}
-
-export function setupComponentImpressions() {
-  window.adobeDataLayer = window.adobeDataLayer || [];
-
-  // Track whether a block is "currently in view"
-  const visibilityState = new WeakMap();
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        const block = entry.target;
-        const wasVisible = visibilityState.get(block) || false;
-        const isVisible = entry.isIntersecting;
-
-        // Became visible → FIRE impression
-        if (!wasVisible && isVisible) {
-          // const hasChildren = blockHasChildElements(block);
-          const position = '0';
-
-          pushComponentImpressionEvent(block, position);
-        }
-
-        // Update state (used to allow re-fire when user scrolls back later)
-        visibilityState.set(block, isVisible);
-      });
-    },
-    { threshold: 0.25 }, // 25% of component must be visible
-  );
-
-  document
-    .querySelectorAll(
-      `
-      [data-block-name="marquee"],
-      [data-block-name="columns"],
-      [data-block-name="authorable-card"],
-      [data-block-name="carousel"],
-      [data-block-name="announcement-ribbon"],
-      [data-block-name="media"],
-      [data-block-name="detailed-teaser"]
-    `,
-    )
-    .forEach((el) => observer.observe(el));
 }

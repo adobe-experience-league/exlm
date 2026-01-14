@@ -925,12 +925,11 @@ const loadMartech = async (headerPromise, footerPromise) => {
   // eslint-disable-next-line import/no-cycle
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
   libAnalyticsPromise.then(async (libAnalyticsModule) => {
-    const { pushPageDataLayer, pushLinkClick, setupComponentImpressions } = libAnalyticsModule;
+    const { pushPageDataLayer, pushLinkClick } = libAnalyticsModule;
     const { lang } = getPathDetails();
 
     try {
       await pushPageDataLayer(lang);
-      setupComponentImpressions();
       // Signal that analytics is ready and process queued events
       const { signalReadyforAnalyticsEvents } = await import('./analytics/analytics-queue.js');
       signalReadyforAnalyticsEvents();
@@ -1015,6 +1014,162 @@ async function loadDefaultModule(jsPath) {
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
  */
+function setupComponentImpressions(pushComponentImpressionEvent) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const visibilityState = new WeakMap();
+  const debounceTimers = new WeakMap();
+  const DEBOUNCE_TIME = 2000;
+
+  const componentSelectors = [
+    '[data-block-name="marquee"]',
+    '[data-block-name="columns"]',
+    '[data-block-name="announcement-ribbon"]',
+    '[data-block-name="media"]',
+    '[data-block-name="detailed-teaser"]',
+    '[data-block-name="carousel"] [data-panel]',
+    '[data-block-name="authorable-card"]',
+  ];
+
+  function fireImpression(unit) {
+    if (unit.hasAttribute('data-panel') && !unit.classList.contains('active')) return;
+
+    const currentUrl = window.location.href.split('#')[0];
+    const component = unit.closest('[data-block-name]');
+    const componentName = component?.dataset.blockName || 'unknown';
+    const cap = (s) => s.toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
+
+    let componentID = currentUrl;
+    if (component) {
+      const allComponentsOfType = document.querySelectorAll(`[data-block-name="${componentName}"]`);
+      let instanceNumber = 1;
+      for (let i = 0; i < allComponentsOfType.length; i += 1) {
+        if (allComponentsOfType[i] === component) break;
+        instanceNumber += 1;
+      }
+      componentID =
+        allComponentsOfType.length > 1
+          ? `${currentUrl}#${componentName}${instanceNumber}`
+          : `${currentUrl}#${componentName}`;
+    }
+
+    let links = [];
+    const isAuthorableCard = unit.classList.contains('browse-card');
+
+    if (isAuthorableCard) {
+      const anchor = unit.closest('a[href]');
+      if (anchor) links = [anchor];
+    } else {
+      links = unit.querySelectorAll('a[href]');
+    }
+
+    if (links.length) {
+      links.forEach((link) => {
+        let linkTitleText = '';
+        let contentType = '';
+        let solution = '';
+        let fullSolution = '';
+        let position = '';
+        let headerText = '';
+
+        if (isAuthorableCard) {
+          linkTitleText = unit.querySelector('.browse-card-title-text')?.textContent?.trim() || '';
+          headerText = linkTitleText;
+          contentType =
+            unit.closest('[data-analytics-content-type]')?.getAttribute('data-analytics-content-type') || '';
+
+          const allCards = Array.from(component.querySelectorAll('.browse-card'));
+          position = allCards.indexOf(unit) + 1;
+
+          const baseSol = unit.querySelector('.browse-card-solution-text')?.textContent?.trim() || '';
+          if (baseSol.toLowerCase() === 'multisolution') {
+            const tooltip = unit.querySelector('.tooltip-text')?.textContent?.trim() || '';
+            fullSolution = cap(tooltip);
+            solution = cap(tooltip.split(',')[0].trim());
+          } else {
+            solution = cap(baseSol);
+            fullSolution = cap(baseSol);
+          }
+        } else {
+          linkTitleText = link.textContent?.trim() || '';
+          headerText =
+            unit.querySelector('h1,h2,h3,h4')?.textContent?.trim() ||
+            component?.querySelector('h1,h2,h3,h4')?.textContent?.trim() ||
+            '';
+        }
+
+        pushComponentImpressionEvent({
+          component: componentName,
+          componentID,
+          linkTitle: linkTitleText,
+          linkType: headerText,
+          destinationDomain: link.href || '',
+          linkLocation: 'body',
+          contentType,
+          solution,
+          fullSolution,
+          position,
+        });
+      });
+    } else {
+      pushComponentImpressionEvent({ component: componentName, componentID });
+    }
+  }
+
+  function cancelDebounce(unit) {
+    const timer = debounceTimers.get(unit);
+    if (timer) {
+      clearTimeout(timer);
+      debounceTimers.delete(unit);
+    }
+  }
+
+  function startDebounce(unit) {
+    cancelDebounce(unit);
+    const timer = setTimeout(() => fireImpression(unit), DEBOUNCE_TIME);
+    debounceTimers.set(unit, timer);
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const unit = entry.target;
+        const isVisible = entry.isIntersecting;
+        const wasVisible = visibilityState.get(unit) || false;
+
+        if (unit.dataset.blockName === 'authorable-card') {
+          unit.querySelectorAll('.browse-card').forEach((card) => {
+            visibilityState.delete(card);
+            debounceTimers.delete(card);
+            observer.observe(card);
+          });
+          observer.unobserve(unit);
+          return;
+        }
+
+        if (!wasVisible && isVisible) {
+          visibilityState.set(unit, true);
+          startDebounce(unit);
+        } else if (wasVisible && !isVisible) {
+          visibilityState.set(unit, false);
+          cancelDebounce(unit);
+        }
+      });
+    },
+    { threshold: 0.6 },
+  );
+
+  document.querySelectorAll(componentSelectors.join(',')).forEach((el) => {
+    if (el.dataset.blockName === 'columns') {
+      el.querySelectorAll(':scope > div > div').forEach((col) => observer.observe(col));
+    } else if (el.dataset.blockName === 'carousel') {
+      el.querySelectorAll('[data-panel]').forEach((pan) => observer.observe(pan));
+    } else {
+      observer.observe(el);
+    }
+  });
+}
+
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
   const preMain = doc.body.querySelector(':scope > aside');
@@ -1029,6 +1184,8 @@ async function loadLazy(doc) {
   await loadThemes();
   if (preMain) await loadBlocks(preMain);
   await loadBlocks(main);
+  const { pushComponentImpressionEvent } = await import('./analytics/lib-analytics.js');
+  setupComponentImpressions(pushComponentImpressionEvent);
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
