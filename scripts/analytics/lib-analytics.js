@@ -339,6 +339,24 @@ export async function pushPageDataLayer(language, searchTrackingData) {
   }
 }
 
+/**
+ * Generates a component ID in the format: currentURL#componentName
+ */
+function generateComponentID(componentElement, componentName) {
+  const currentUrl = window.location.href.split('#')[0];
+  const allComponentsOfType = document.querySelectorAll(`[data-block-name="${componentName}"]`);
+  if (allComponentsOfType.length <= 1) return `${currentUrl}#${componentName}`;
+
+  // Find the instance number of this specific component
+  let instanceNumber = 1;
+  for (let i = 0; i < allComponentsOfType.length; i += 1) {
+    if (allComponentsOfType[i] === componentElement) break;
+    instanceNumber += 1;
+  }
+
+  return `${currentUrl}#${componentName}${instanceNumber}`;
+}
+
 export function pushComponentClick(data) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
@@ -348,13 +366,14 @@ export function pushComponentClick(data) {
     componentID: data.componentID || '',
 
     link: {
-      contentType: type || '',
+      contentType: data.contentType || '',
       destinationDomain: data.destinationDomain || '',
-      fullSolution: fullSolution || '',
+      fullSolution: data.fullSolution || '',
       linkLocation: 'body',
       linkTitle: data.linkTitle || '',
       linkType: data.linkType || '',
-      solution: solution || '',
+      solution: data.solution || '',
+      position: data.position || '',
       productv2: productV2 || '',
       featurev2: featureV2 || '',
       subFeaturev2: subFeatureV2 || '',
@@ -369,18 +388,7 @@ export function pushComponentClick(data) {
 export async function pushLinkClick(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
-  const componentSelectors = [
-    '[data-block-name="marquee"]',
-    '[data-block-name="columns"]',
-    '[data-block-name="authorable-card"]',
-    '[data-block-name="carousel"]',
-    '[data-block-name="announcement-ribbon"]',
-    '[data-block-name="media"]',
-    '[data-block-name="detailed-teaser"]',
-  ];
-
-  // check if the click happened within any of target components
-  const component = e.target.closest(componentSelectors.join(','));
+  const component = e.target.closest('[data-block-name]');
 
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
   const isCourseStartCTA = e.target.closest('.course-breakdown-header-start-button');
@@ -457,46 +465,39 @@ export async function pushLinkClick(e) {
     },
   });
 
-  // If clicked inside a target component, trigger componentClick
-  if (component) {
-    let headerText = '';
+  let headerText = '';
 
-    if (component.dataset.blockName === 'authorable-card') {
-      headerText = component.querySelector('h1,h2,h3,h4')?.innerText?.trim() || '';
-    } else {
-      let currentElement = e.target;
-      while (currentElement && currentElement !== component) {
-        // Check if the element or any of its children has a header
-        const closestHeader = currentElement.querySelector('h1,h2,h3,h4');
-        if (closestHeader) {
-          headerText = closestHeader.innerText.trim();
-          break;
-        }
-        currentElement = currentElement.parentElement;
-      }
-    }
-
-    // Get the component name
-    const componentName = component.dataset.blockName || 'unknown';
-
-    // Generate componentID in the format: currentURL#componentName+position
-    const currentUrl = window.location.href.split('#')[0];
-
-    const allComponentsOfType = document.querySelectorAll(`[data-block-name="${componentName}"]`);
-    let instanceNumber = 1;
-    for (let i = 0; i < allComponentsOfType.length; i += 1) {
-      if (allComponentsOfType[i] === component) {
+  if (component.dataset.blockName === 'authorable-card') {
+    headerText = component.querySelector('h1,h2,h3,h4')?.innerText?.trim() || '';
+  } else {
+    let currentElement = e.target;
+    while (currentElement && currentElement !== component) {
+      // Check if the element or any of its children has a header
+      const closestHeader = currentElement.querySelector('h1,h2,h3,h4');
+      if (closestHeader) {
+        headerText = closestHeader.innerText.trim();
         break;
       }
-      instanceNumber += 1;
+      currentElement = currentElement.parentElement;
     }
+  }
 
-    const componentID =
-      allComponentsOfType.length > 1
-        ? `${currentUrl}#${componentName}${instanceNumber}`
-        : `${currentUrl}#${componentName}`;
+  // Get the component name
+  const componentName = component.dataset.blockName || 'unknown';
 
-    // Push the component click event
+  // Generate componentID
+  const componentID = generateComponentID(component, componentName);
+
+  // Check if the component or any of its parent elements is inside a browse-cards-block-content container
+  const hasBrowseCardClass = (element) => {
+    if (!element) return false;
+    if (element.classList && element.classList.contains('browse-card')) return true;
+    return element.parentElement ? hasBrowseCardClass(element.parentElement) : false;
+  };
+
+  // Only trigger componentClick for non-browse-card components
+  if (!hasBrowseCardClass(component) && !hasBrowseCardClass(e.target)) {
+    console.log('Component click triggered from linkClicked event');
     pushComponentClick({
       component: componentName,
       componentID,
@@ -1020,6 +1021,31 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
   };
 
   window.adobeDataLayer.push(dataLayerEntry);
+
+  // Also trigger componentClick event for browse cards with all the relevant data
+  console.log('Component click triggered from browseCardClick event');
+
+  // Get the component name from the active element or its parent
+  let componentName = 'browse-card'; // Default fallback
+  const browseCardElement = document.activeElement?.closest('[data-block-name]');
+  if (browseCardElement && browseCardElement.dataset.blockName) {
+    componentName = browseCardElement.dataset.blockName;
+  }
+
+  // Generate componentID
+  const componentID = generateComponentID(browseCardElement, componentName);
+
+  pushComponentClick({
+    component: componentName,
+    componentID,
+    linkTitle: cardData?.title || '',
+    linkType: cardHeader,
+    destinationDomain: cardData?.viewLink || '',
+    contentType: cardData?.contentType?.toLowerCase().trim() || '',
+    solution: cardSolution || '',
+    fullSolution: cardFullSolution || '',
+    position: cardPosition,
+  });
 }
 
 /**
