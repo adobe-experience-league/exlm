@@ -13,7 +13,7 @@ import { decorateIcons } from '../../../scripts/lib-franklin.js';
 import { htmlToElement, getConfig } from '../../../scripts/scripts.js';
 import { INITIAL_ATOMIC_RESULT_CHILDREN_COUNT } from './atomic-result-children.js';
 
-const { communityTopicsUrl } = getConfig();
+const { communityTopicsUrl, isProd } = getConfig();
 const MAX_HYDRATION_ATTEMPTS = 10;
 
 export const atomicResultStyles = `
@@ -728,6 +728,52 @@ export default function atomicResultHandler(block, placeholders) {
     }
   };
 
+  /**
+   * Filters out parent content type values when their child values are present.
+   * Handles both legacy (;) and new (|) separator formats.
+   * @param {Array|string} contentTypes - Array of content type values or single value
+   * @returns {Array} Filtered array with only the most specific content type values
+   */
+  const filterParentContentTypes = (contentTypes) => {
+    if (!Array.isArray(contentTypes)) {
+      return contentTypes;
+    }
+
+    // Extract all parent names from child values (those containing |)
+    const parentNamesFromChildren = new Set();
+    contentTypes.forEach((type) => {
+      const typeStr = String(type || '').trim();
+      if (typeStr.includes('|')) {
+        // Handle both "parent|child" and "parent;parent|child" formats
+        const parts = typeStr.split('|');
+        if (parts[0]) {
+          const parentPart = parts[0].trim();
+          // If parent part contains semicolon, extract the actual parent name
+          if (parentPart.includes(';')) {
+            const semicolonParts = parentPart.split(';').map((p) => p.trim());
+            // Add all parts before the pipe as potential parent names
+            semicolonParts.forEach((p) => {
+              if (p) parentNamesFromChildren.add(p.toLowerCase());
+            });
+          } else {
+            parentNamesFromChildren.add(parentPart.toLowerCase());
+          }
+        }
+      }
+    });
+
+    // Filter out parent values if their child values exist
+    return contentTypes.filter((type) => {
+      const typeStr = String(type || '').trim();
+      // Keep child values (those with |)
+      if (typeStr.includes('|')) {
+        return true;
+      }
+      // Keep parent values only if they don't have a corresponding child
+      return !parentNamesFromChildren.has(typeStr.toLowerCase());
+    });
+  };
+
   const updateAtomicResultUI = (callFrom) => {
     const results = container.querySelectorAll('atomic-result');
     const isMobileView = isMobile();
@@ -821,6 +867,21 @@ export default function atomicResultHandler(block, placeholders) {
           resultRoot.classList.add('recommendation-badge');
         }
 
+        // Handle el_kudo_status field - support both legacy numeric and new user ID format
+        // This needs to run on every re-render (mobile/desktop view switches)
+        const kudoStatusEl = resultShadow?.querySelector('atomic-result-text[field="el_kudo_status"]');
+        if (kudoStatusEl) {
+          const rawKudoStatus = resultEl.result?.result?.raw?.el_kudo_status;
+
+          // Check if it's the new format (string = user IDs, single or semicolon-separated)
+          if (typeof rawKudoStatus === 'string' && rawKudoStatus.trim() !== '') {
+            const userIds = rawKudoStatus.split(';').filter((id) => id.trim() !== '');
+            const count = userIds.length;
+            kudoStatusEl.textContent = count.toString();
+          }
+          // Legacy numeric format (number type) - no change needed, displays as-is
+        }
+
         if (resultItem.dataset.decorated && currentHydrationCount >= MAX_HYDRATION_ATTEMPTS) {
           removeBlockSkeleton();
           return; // Return to avoid repeated hydrations endlessly.
@@ -868,23 +929,85 @@ export default function atomicResultHandler(block, placeholders) {
 
           const label = slot.textContent.trim();
           if (!label) return;
+          if (isProd) {
+            const link = document.createElement('a');
+            link.href = `${communityTopicsUrl}${encodeURIComponent(label)}`;
+            link.textContent = label;
+            link.target = '_blank';
+            link.style.textDecoration = 'none';
+            link.style.color = 'inherit';
 
-          const link = document.createElement('a');
-          link.href = `${communityTopicsUrl}${encodeURIComponent(label)}`;
-          link.textContent = label;
-          link.target = '_blank';
-          link.style.textDecoration = 'none';
-          link.style.color = 'inherit';
-
-          li.innerHTML = '';
-          li.appendChild(link);
+            li.textContent = '';
+            li.appendChild(link);
+          } else {
+            li.textContent = label;
+          }
         });
         const rawContentType = resultEl.result?.result?.raw?.el_contenttype;
-        const contentTypeValues = Array.isArray(rawContentType) ? structuredClone(rawContentType) : null;
+        // Filter out parent values when child values are present to avoid duplicate rendering
+        const filteredContentType = filterParentContentTypes(rawContentType);
+        const contentTypeValues = Array.isArray(filteredContentType) ? structuredClone(filteredContentType) : null;
+
+        // Hide duplicate parent <li> elements when child elements exist
+        // The atomic component renders all values, so we need to hide duplicates in the DOM
+        if (Array.isArray(rawContentType) && contentTypeElements.length > 0) {
+          const childValues = new Set();
+          const parentToHide = new Set();
+
+          // First pass: identify all child values and their parent names
+          Array.from(contentTypeElements).forEach((li) => {
+            if (li.className?.includes('separator')) return;
+            const slotEl = li.firstElementChild;
+            const slotName = slotEl?.getAttribute('name') || '';
+            // Extract value from slot name (e.g., "result-multi-value-text-value-community|questions")
+            const value = slotName.replace('result-multi-value-text-value-', '');
+
+            if (value.includes('|')) {
+              childValues.add(value);
+              // Extract parent name from child value
+              const parts = value.split('|');
+              const parentPart = parts[0].trim().toLowerCase();
+              if (parentPart.includes(';')) {
+                parentPart.split(';').forEach((p) => {
+                  const trimmed = p.trim().toLowerCase();
+                  if (trimmed) parentToHide.add(trimmed);
+                });
+              } else {
+                parentToHide.add(parentPart);
+              }
+            }
+          });
+
+          // Second pass: hide parent elements if their child exists
+          Array.from(contentTypeElements).forEach((li) => {
+            if (li.className?.includes('separator')) return;
+            const slotEl = li.firstElementChild;
+            const slotName = slotEl?.getAttribute('name') || '';
+            const value = slotName.replace('result-multi-value-text-value-', '').toLowerCase();
+
+            // If this is a parent value and its child exists, hide it
+            if (!value.includes('|') && parentToHide.has(value)) {
+              li.part.add('multi-hidden');
+              li.style.setProperty('display', 'none', 'important');
+              li.dataset.hiddenDuplicate = 'true';
+              // Also hide the separator after this element if it exists
+              if (li.nextElementSibling?.classList?.contains('separator')) {
+                li.nextElementSibling.part.add('multi-hidden');
+                li.nextElementSibling.style.setProperty('display', 'none', 'important');
+              }
+            }
+          });
+        }
+
         contentTypeElements.forEach((contentTypeEl) => {
+          // Skip elements that were marked as hidden duplicates
+          if (contentTypeEl.dataset.hiddenDuplicate === 'true') {
+            return;
+          }
+
           const isSeparator = contentTypeEl?.className.includes('separator');
           const contentTypeValue =
-            Array.isArray(contentTypeValues) && !isSeparator ? contentTypeValues.shift() : rawContentType;
+            Array.isArray(contentTypeValues) && !isSeparator ? contentTypeValues.shift() : filteredContentType;
           let contentType = isSeparator ? '' : (contentTypeValue || contentTypeEl.textContent).toLowerCase().trim();
 
           // Handle hierarchical content types (e.g., "Community; Community|Community Pulse")
