@@ -925,12 +925,11 @@ const loadMartech = async (headerPromise, footerPromise) => {
   // eslint-disable-next-line import/no-cycle
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
   libAnalyticsPromise.then(async (libAnalyticsModule) => {
-    const { pushPageDataLayer, pushLinkClick, setupComponentImpressions } = libAnalyticsModule;
+    const { pushPageDataLayer, pushLinkClick } = libAnalyticsModule;
     const { lang } = getPathDetails();
 
     try {
       await pushPageDataLayer(lang);
-      setupComponentImpressions();
       // Signal that analytics is ready and process queued events
       const { signalReadyforAnalyticsEvents } = await import('./analytics/analytics-queue.js');
       signalReadyforAnalyticsEvents();
