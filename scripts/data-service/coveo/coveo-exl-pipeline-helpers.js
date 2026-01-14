@@ -74,18 +74,31 @@ function contructDateAdvancedQuery(dateCriteria) {
  * @returns {Array} Array of Coveo facet objects.
  * @private
  */
-function constructCoveoFacet(facets) {
-  const facetsArray = facets.map((facet) => ({
-    facetId: `@${facet.id}`,
-    field: facet.id,
-    type: facet.type,
-    numberOfValues: facet.currentValues?.length || 2,
-    currentValues: facet.currentValues.map((value) => ({
-      value,
-      state: value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? 'idle' : 'selected',
-      ...(value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? { children: COMMUNITY_SEARCH_FACET } : []),
-    })),
-  }));
+function constructCoveoFacet(facets, param) {
+  const facetsArray = facets.map((facet) => {
+    const facetObject = {
+      facetId: `@${facet.id}`,
+      field: facet.id,
+      type: facet.type,
+    };
+    const isLevelFacet = facet.id === 'el_level';
+    const sourceValues = isLevelFacet && param.allLevels?.length ? param.allLevels : facet.currentValues || [];
+    facetObject.numberOfValues = sourceValues.length || 2;
+
+    facetObject.currentValues = sourceValues.map((value) => {
+      const isSelected = isLevelFacet
+        ? facet.currentValues?.includes(value)
+        : value !== CONTENT_TYPES.COMMUNITY.MAPPING_KEY;
+
+      return {
+        value,
+        state: isSelected ? 'selected' : 'idle',
+        ...(value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? { children: COMMUNITY_SEARCH_FACET } : {}),
+      };
+    });
+
+    return facetObject;
+  });
   return facetsArray;
 }
 
@@ -138,7 +151,7 @@ export function getFacets(param) {
     ...(param.eventSeries ? [{ id: 'el_event_series', type: 'specific', currentValues: param.eventSeries }] : []),
   ];
 
-  return constructCoveoFacet(facets);
+  return constructCoveoFacet(facets, param);
 }
 
 export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) {

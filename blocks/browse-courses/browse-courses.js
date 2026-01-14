@@ -63,6 +63,12 @@ const URL_PARAMS = {
   LEVEL: 'level',
 };
 
+const LEVEL_PRIORITY = {
+  Beginner: 0,
+  Intermediate: 1,
+  Experienced: 2,
+};
+
 /**
  * Dropdown configuration
  */
@@ -118,7 +124,13 @@ async function getLevelList() {
     // Remove duplicates
     const uniqueLevels = [...new Set(levels)];
 
-    return uniqueLevels;
+    const sortedLevels = uniqueLevels.sort((a, b) => {
+      const priorityA = LEVEL_PRIORITY[a] || -1;
+      const priorityB = LEVEL_PRIORITY[b] || -1;
+      return priorityA - priorityB;
+    });
+
+    return sortedLevels;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error fetching level list:', error);
@@ -423,17 +435,20 @@ async function renderCards(block, courseData, shimmer) {
  * Fetches course cards from API based on filters.
  * BrowseCardsDelegate automatically enriches with meta.courseInfo.courseStatus for signed-in users.
  */
-async function fetchCourseData(selectedFilters = [], selectedLevels = []) {
+async function fetchCourseData(selectedFilters = [], selectedLevels = [], state = {}) {
   // Build API parameters
   const param = {
     contentType: CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase().split(','),
     ...(selectedFilters.length > 0 && { product: selectedFilters }),
-    ...(selectedLevels.length > 0 && { level: selectedLevels }),
+    ...(selectedLevels.length > 0 && { level: selectedLevels, allLevels: state?.allLevels }),
     noOfResults: numberOfResults,
   };
 
   // Fetch browse cards data (automatically enriched by BrowseCardsDelegate for signed-in users)
   const data = await BrowseCardsDelegate.fetchCardData(param);
+  const facetsResponse = BrowseCardsDelegate.fetchFacetsData(param);
+  const levelFacets = facetsResponse.find((facet) => facet.field === 'el_level')?.values || [];
+  state.validLevels = levelFacets.filter((facet) => facet.numberOfResults > 0).map((facet) => facet.value);
 
   return data;
 }
@@ -787,7 +802,7 @@ function setupLevelDropdownHandler(dropdown, block, shimmer, state) {
     addShimmerWrapper(block, shimmer);
 
     // Fetch new data from Coveo API with level filters
-    fetchCourseData(productFilters, state.currentLevelFilters).then((courseData) => {
+    fetchCourseData(productFilters, state.currentLevelFilters, state).then((courseData) => {
       state.courseData = courseData;
 
       // Update status dropdown to reflect available statuses in filtered data (only for signed-in users)
@@ -827,7 +842,8 @@ function updateLevelDropdown(block, courseData, allLevels, shimmer, state) {
   if (!dropdownForm) {
     return { dropdown: null };
   }
-  const filteredLevels = filterLevelsForCourseData(allLevels, courseData);
+  const filteredLevels =
+    state.validLevels?.length > 0 ? state.validLevels : filterLevelsForCourseData(allLevels, courseData);
   const levelsList = transformLevelsForDropdown(filteredLevels);
   const levelsFound = levelsList.length > 0;
   const previousLevelFiltersRemoved =
@@ -864,7 +880,7 @@ function updateLevelDropdown(block, courseData, allLevels, shimmer, state) {
     const validFilters = state.currentLevelFilters.filter((level) => availableValues.includes(level));
 
     if (validFilters.length > 0 && levelContainer) {
-      state.currentLevelFilters = validFilters;
+      state.currentLevelFilters = state.validLevels?.length > 0 ? state.validLevels : validFilters;
       validFilters.forEach((levelValue) => {
         const checkbox = levelContainer.querySelector(`input[type="checkbox"][value="${levelValue}"]`);
         if (checkbox) {
@@ -969,10 +985,10 @@ function setupProductDropdownHandler(dropdown, block, shimmer, state) {
     addShimmerWrapper(block, shimmer);
 
     // Fetch new data from API with selected product and level filters
-    fetchCourseData(selectedFilters, state.currentLevelFilters || []).then((courseData) => {
+    fetchCourseData(selectedFilters, state.currentLevelFilters || [], state).then((courseData) => {
       const isFileterUpdated = renderCoursesOnFilterChange(block, courseData, shimmer, state);
       if (isFileterUpdated) {
-        fetchCourseData(selectedFilters, state.currentLevelFilters || []).then((updatedCourseData) => {
+        fetchCourseData(selectedFilters, state.currentLevelFilters || [], state).then((updatedCourseData) => {
           renderCoursesOnFilterChange(block, updatedCourseData, shimmer, state);
         });
       }
@@ -1030,7 +1046,7 @@ function setupClearFilterHandler(block, shimmer, state) {
       addShimmerWrapper(block, shimmer);
 
       // Fetch all courses without any filters
-      fetchCourseData([], []).then((courseData) => {
+      fetchCourseData([], [], state).then((courseData) => {
         state.courseData = courseData;
 
         if (state.allLevels) {
@@ -1147,7 +1163,7 @@ export default async function decorate(block) {
   setupClearFilterHandler(block, buildCardsShimmer, state);
 
   // Fetch data non-blocking (include level filters from URL)
-  fetchCourseData(urlFilters, state.currentLevelFilters).then((courseData) => {
+  fetchCourseData(urlFilters, state.currentLevelFilters, state).then((courseData) => {
     state.courseData = courseData;
 
     const filteredLevels = filterLevelsForCourseData(state.allLevels, courseData);
