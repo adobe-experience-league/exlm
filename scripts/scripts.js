@@ -1037,7 +1037,7 @@ function setupComponentImpressions(pushComponentImpressionEvent) {
     const currentUrl = window.location.href.split('#')[0];
     const component = unit.closest('[data-block-name]');
     const componentName = component?.dataset.blockName || 'unknown';
-    const cap = (s) => s.toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
+    const capitalise = (s) => s.toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
 
     let componentID = currentUrl;
     if (component) {
@@ -1069,7 +1069,6 @@ function setupComponentImpressions(pushComponentImpressionEvent) {
         let contentType = '';
         let solution = '';
         let fullSolution = '';
-        let position = '';
         let headerText = '';
 
         if (isAuthorableCard) {
@@ -1078,17 +1077,14 @@ function setupComponentImpressions(pushComponentImpressionEvent) {
           contentType =
             unit.closest('[data-analytics-content-type]')?.getAttribute('data-analytics-content-type') || '';
 
-          const allCards = Array.from(component.querySelectorAll('.browse-card'));
-          position = allCards.indexOf(unit) + 1;
-
           const baseSol = unit.querySelector('.browse-card-solution-text')?.textContent?.trim() || '';
           if (baseSol.toLowerCase() === 'multisolution') {
             const tooltip = unit.querySelector('.tooltip-text')?.textContent?.trim() || '';
-            fullSolution = cap(tooltip);
-            solution = cap(tooltip.split(',')[0].trim());
+            fullSolution = capitalise(tooltip);
+            solution = capitalise(tooltip.split(',')[0].trim());
           } else {
-            solution = cap(baseSol);
-            fullSolution = cap(baseSol);
+            solution = capitalise(baseSol);
+            fullSolution = capitalise(baseSol);
           }
         } else {
           linkTitleText = link.textContent?.trim() || '';
@@ -1108,7 +1104,6 @@ function setupComponentImpressions(pushComponentImpressionEvent) {
           contentType,
           solution,
           fullSolution,
-          position,
         });
       });
     } else {
