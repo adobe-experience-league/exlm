@@ -702,7 +702,7 @@ export function getConfig() {
       authorUrl: 'author-p122525-e1219192.adobeaemcloud.com',
       hlxPreview: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).live$/,
-      community: 'experienceleaguecommunities-dev.adobe.com',
+      community: 'experienceleaguecommunities-beta.adobe.com',
     },
     {
       env: 'DEV',
@@ -710,7 +710,7 @@ export function getConfig() {
       authorUrl: 'author-p122525-e1200861.adobeaemcloud.com',
       hlxPreview: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).live$/,
-      community: 'experienceleaguecommunities-dev.adobe.com',
+      community: 'experienceleaguecommunities-beta.adobe.com',
     },
   ];
 
@@ -803,8 +803,12 @@ export function getConfig() {
     cookieConsentName,
     targetCriteriaIds,
     quizPassingCriteria: 0.65, // 65% passing criteria for quizzes
-    khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list?platform=gainsight`,
-    khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`,
+    khorosProfileUrl: isProd
+      ? `${cdnOrigin}/api/action/khoros/profile-menu-list`
+      : `${cdnOrigin}/api/action/khoros/profile-menu-list?platform=gainsight`,
+    khorosProfileDetailsUrl: isProd
+      ? `${cdnOrigin}/api/action/khoros/profile-details`
+      : `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`,
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `${cdnOrigin}/api/action/coveo-token?lang=${lang}`,
@@ -833,13 +837,13 @@ export function getConfig() {
     // Community Account URL
     communityAccountURL: isProd
       ? `https://experienceleaguecommunities.adobe.com/?profile.language=${communityLocale}`
-      : `https://experienceleaguecommunities-dev.adobe.com/?profile.language=${communityLocale}`,
+      : `https://experienceleaguecommunities-beta.adobe.com/?profile.language=${communityLocale}`,
     interestsUrl: `${cdnOrigin}/api/interests?page_size=200&sort=Order`,
     // Param for localized Community Profile URL
     localizedCommunityProfileParam: `?profile.language=${communityLocale}`,
     communityTopicsUrl: isProd
       ? `https://experienceleaguecommunities.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`
-      : `https://experienceleaguecommunities-dev.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`,
+      : `https://experienceleaguecommunities-beta.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`,
     // MPC API Base
     mpcApiBase: `https://api.tv.adobe.com/videos`,
     // Events Page URL
@@ -940,9 +944,7 @@ const loadMartech = async (headerPromise, footerPromise) => {
     Promise.allSettled([headerPromise, footerPromise]).then(() => {
       const linkClicked = document.querySelectorAll('a,.view-more-less span, .language-selector-popover span');
       const clickHandler = (e) => {
-        if (e.target.tagName === 'A' || e.target.tagName === 'SPAN' || e.target.closest('.block')) {
-          pushLinkClick(e);
-        }
+        if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') pushLinkClick(e);
       };
       linkClicked.forEach((e) => e.addEventListener('click', clickHandler));
     });
