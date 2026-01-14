@@ -1032,31 +1032,41 @@ function setupComponentImpressions(pushComponentImpressionEvent) {
   ];
 
   function fireImpression(unit) {
-    if (unit.hasAttribute('data-panel') && !unit.classList.contains('active')) return;
+    if (unit.hasAttribute('data-panel') && !unit.classList.contains('active')) {
+      return;
+    }
 
     const currentUrl = window.location.href.split('#')[0];
     const component = unit.closest('[data-block-name]');
     const componentName = component?.dataset.blockName || 'unknown';
-    const capitalise = (s) => s.toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
 
     let componentID = currentUrl;
+
     if (component) {
       const allComponentsOfType = document.querySelectorAll(`[data-block-name="${componentName}"]`);
+
       let instanceNumber = 1;
       for (let i = 0; i < allComponentsOfType.length; i += 1) {
         if (allComponentsOfType[i] === component) break;
         instanceNumber += 1;
       }
+
       componentID =
         allComponentsOfType.length > 1
           ? `${currentUrl}#${componentName}${instanceNumber}`
           : `${currentUrl}#${componentName}`;
     }
 
-    let links = [];
-    const isAuthorableCard = unit.classList.contains('browse-card');
+    const headerText =
+      unit.querySelector('h1,h2,h3,h4')?.innerText?.trim() ||
+      component?.querySelector('h1,h2,h3,h4')?.innerText?.trim() ||
+      '';
 
-    if (isAuthorableCard) {
+    let links = [];
+    let isAuthorableCard = false;
+
+    if (unit.classList.contains('browse-card')) {
+      isAuthorableCard = true;
       const anchor = unit.closest('a[href]');
       if (anchor) links = [anchor];
     } else {
@@ -1069,35 +1079,29 @@ function setupComponentImpressions(pushComponentImpressionEvent) {
         let contentType = '';
         let solution = '';
         let fullSolution = '';
-        let headerText = '';
-
         if (isAuthorableCard) {
-          linkTitleText = unit.querySelector('.browse-card-title-text')?.textContent?.trim() || '';
-          headerText = linkTitleText;
+          linkTitleText = unit.querySelector('.browse-card-title-text')?.innerText?.trim() || '';
           contentType =
             unit.closest('[data-analytics-content-type]')?.getAttribute('data-analytics-content-type') || '';
+          const baseSolution = unit.querySelector('.browse-card-solution-text')?.innerText?.trim() || '';
 
-          const baseSol = unit.querySelector('.browse-card-solution-text')?.textContent?.trim() || '';
-          if (baseSol.toLowerCase() === 'multisolution') {
+          const capitalize = (s) => s.toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
+
+          if (baseSolution.toLowerCase() === 'multisolution') {
             const tooltip = unit.querySelector('.tooltip-text')?.textContent?.trim() || '';
-            fullSolution = capitalise(tooltip);
-            solution = capitalise(tooltip.split(',')[0].trim());
+            fullSolution = tooltip;
+            solution = tooltip.split(',')[0].trim();
           } else {
-            solution = capitalise(baseSol);
-            fullSolution = capitalise(baseSol);
+            solution = capitalize(baseSolution);
+            fullSolution = capitalize(baseSolution);
           }
         } else {
-          linkTitleText = link.textContent?.trim() || '';
-          headerText =
-            unit.querySelector('h1,h2,h3,h4')?.textContent?.trim() ||
-            component?.querySelector('h1,h2,h3,h4')?.textContent?.trim() ||
-            '';
+          linkTitleText = link.innerText?.trim() || '';
         }
-
         pushComponentImpressionEvent({
           component: componentName,
           componentID,
-          linkTitle: linkTitleText,
+          linkTitle: linkTitleText || '',
           linkType: headerText,
           destinationDomain: link.href || '',
           linkLocation: 'body',
@@ -1107,7 +1111,10 @@ function setupComponentImpressions(pushComponentImpressionEvent) {
         });
       });
     } else {
-      pushComponentImpressionEvent({ component: componentName, componentID });
+      pushComponentImpressionEvent({
+        component: componentName,
+        componentID,
+      });
     }
   }
 
@@ -1121,7 +1128,9 @@ function setupComponentImpressions(pushComponentImpressionEvent) {
 
   function startDebounce(unit) {
     cancelDebounce(unit);
-    const timer = setTimeout(() => fireImpression(unit), DEBOUNCE_TIME);
+    const timer = setTimeout(() => {
+      fireImpression(unit);
+    }, DEBOUNCE_TIME);
     debounceTimers.set(unit, timer);
   }
 
@@ -1133,7 +1142,9 @@ function setupComponentImpressions(pushComponentImpressionEvent) {
         const wasVisible = visibilityState.get(unit) || false;
 
         if (unit.dataset.blockName === 'authorable-card') {
-          unit.querySelectorAll('.browse-card').forEach((card) => {
+          const cards = unit.querySelectorAll('.browse-card');
+          if (!cards.length) return;
+          cards.forEach((card) => {
             visibilityState.delete(card);
             debounceTimers.delete(card);
             observer.observe(card);
@@ -1145,7 +1156,9 @@ function setupComponentImpressions(pushComponentImpressionEvent) {
         if (!wasVisible && isVisible) {
           visibilityState.set(unit, true);
           startDebounce(unit);
-        } else if (wasVisible && !isVisible) {
+        }
+
+        if (wasVisible && !isVisible) {
           visibilityState.set(unit, false);
           cancelDebounce(unit);
         }
@@ -1154,13 +1167,19 @@ function setupComponentImpressions(pushComponentImpressionEvent) {
     { threshold: 0.6 },
   );
 
-  document.querySelectorAll(componentSelectors.join(',')).forEach((el) => {
-    if (el.dataset.blockName === 'columns') {
-      el.querySelectorAll(':scope > div > div').forEach((col) => observer.observe(col));
-    } else if (el.dataset.blockName === 'carousel') {
-      el.querySelectorAll('[data-panel]').forEach((pan) => observer.observe(pan));
+  document.querySelectorAll(componentSelectors.join(',')).forEach((component) => {
+    if (component.dataset.blockName === 'authorable-card') {
+      observer.observe(component);
+    } else if (component.dataset.blockName === 'columns') {
+      component.querySelectorAll(':scope > div > div').forEach((col) => {
+        observer.observe(col);
+      });
+    } else if (component.dataset.blockName === 'carousel') {
+      component.querySelectorAll('[data-panel]').forEach((panel) => {
+        observer.observe(panel);
+      });
     } else {
-      observer.observe(el);
+      observer.observe(component);
     }
   });
 }
