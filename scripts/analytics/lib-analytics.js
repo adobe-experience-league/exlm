@@ -1033,3 +1033,27 @@ export function pushListToggleEvent(cardHeader) {
     },
   });
 }
+
+export function pushComponentImpressionEvent(data) {
+  window.adobeDataLayer.push({
+    event: 'componentImpression',
+    component: data.component || '',
+    componentID: data.componentID || '',
+    link: {
+      contentType: data.contentType || '',
+      destinationDomain: data.destinationDomain || '',
+      fullSolution: data.fullSolution || '',
+      linkLocation: data.linkLocation || '',
+      linkTitle: data.linkTitle || '',
+      linkType: data.linkType || '',
+      solution: data.solution || '',
+      productV2: '',
+      featureV2: '',
+      subFeatureV2: '',
+      topicV2: '',
+      industryV2: '',
+      roleV2: '',
+      levelV2: '',
+    },
+  });
+}
