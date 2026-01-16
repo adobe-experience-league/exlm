@@ -339,8 +339,49 @@ export async function pushPageDataLayer(language, searchTrackingData) {
   }
 }
 
+/**
+ * Generates a component ID in the format: currentURL#componentName
+ */
+function generateComponentID(componentElement, componentName) {
+  const url = window.location.href.split('#')[0];
+  const components = document.querySelectorAll(`[data-block-name="${componentName}"]`);
+  return components.length <= 1
+    ? `${url}#${componentName}`
+    : `${url}#${componentName}${[...components].indexOf(componentElement) + 1 || 1}`;
+}
+
+export function pushComponentClick(data) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'componentClick',
+    component: data.component || '',
+    componentID: data.componentID || '',
+
+    link: {
+      contentType: data.contentType || '',
+      destinationDomain: data.destinationDomain || '',
+      fullSolution: data.fullSolution || '',
+      linkLocation: 'body',
+      linkTitle: data.linkTitle || '',
+      linkType: data.linkType || '',
+      solution: data.solution || '',
+      position: data.position || '',
+      productV2: '',
+      featureV2: '',
+      subFeatureV2: '',
+      topicV2: '',
+      industryV2: '',
+      roleV2: '',
+      levelV2: '',
+    },
+  });
+}
+
 export async function pushLinkClick(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const component = e.target.closest('[data-block-name]');
 
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
   const isCourseStartCTA = e.target.closest('.course-breakdown-header-start-button');
@@ -416,6 +457,39 @@ export async function pushLinkClick(e) {
       interactionType: '',
     },
   });
+
+  let headerText = '';
+
+  let currentElement = e.target;
+  while (currentElement && currentElement !== component) {
+    const closestHeader = currentElement.querySelector('h1,h2,h3,h4');
+    if (closestHeader) {
+      headerText = closestHeader.innerText.trim();
+      break;
+    }
+    currentElement = currentElement.parentElement;
+  }
+
+  const componentName = component.dataset.blockName;
+  const componentID = generateComponentID(component, componentName);
+
+  // Check if the component is browse card
+  const hasBrowseCardClass = (element) => {
+    if (!element) return false;
+    if (element.classList && element.classList.contains('browse-card')) return true;
+    return element.parentElement ? hasBrowseCardClass(element.parentElement) : false;
+  };
+
+  // Only trigger componentClick here for non-browse-card components
+  if (!hasBrowseCardClass(component) && !hasBrowseCardClass(e.target)) {
+    pushComponentClick({
+      component: componentName,
+      componentID,
+      linkTitle,
+      linkType: headerText,
+      destinationDomain,
+    });
+  }
 }
 
 /**
@@ -931,6 +1005,33 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
   };
 
   window.adobeDataLayer.push(dataLayerEntry);
+
+  // Check if the click was on a user-action (bookmark or copy link buttons)
+  const isUserAction = document.activeElement?.closest('.user-actions') !== null;
+
+  // Only trigger componentClick event if not a user-action click
+  if (!isUserAction) {
+    // Get the component name
+    let componentName = 'browse-card';
+    const browseCardElement = document.activeElement?.closest('[data-block-name]');
+    if (browseCardElement && browseCardElement.dataset.blockName) {
+      componentName = browseCardElement.dataset.blockName;
+    }
+
+    const componentID = generateComponentID(browseCardElement, componentName);
+
+    pushComponentClick({
+      component: componentName,
+      componentID,
+      linkTitle: cardData?.title || '',
+      linkType: cardHeader,
+      destinationDomain: cardData?.viewLink || '',
+      contentType: cardData?.contentType?.toLowerCase().trim() || '',
+      solution: cardSolution || '',
+      fullSolution: cardFullSolution || '',
+      position: cardPosition,
+    });
+  }
 }
 
 /**
