@@ -722,15 +722,15 @@ export function getConfig() {
 
   const communityLangsMap = new Map([
     ...baseLocalesMap,
-    ['sv', 'en-us'],
-    ['nl', 'en-us'],
+    ['sv', 'en'],
+    ['nl', 'en'],
     ['zh-hans', 'zh'],
-    ['zh-hant', 'en-us'],
-    ['pt-br', 'pt-br'],
+    ['zh-hant', 'zh'],
+    ['pt-br', 'pt'],
     ['ja', 'ja'],
     ['ko', 'ko'],
-    ['en', 'en-us'],
-    ['it', 'en-us'],
+    ['en', 'en'],
+    ['it', 'en'],
   ]);
 
   const adobeAccountLangsMap = new Map([
@@ -1168,9 +1168,17 @@ export async function fetchGlobalFragment(metaName, fallback, lang) {
 export async function fetchLanguagePlaceholders(lang) {
   const { communityHost } = getConfig();
   const isCommunityDomain = window.location.origin.includes(communityHost);
+  const communityLang = new Map([
+    ['pt', 'pt-br'],
+    ['zh', 'zh-hans'],
+  ]);
 
   const langCode =
-    lang || (isCommunityDomain ? document.documentElement.lang?.toLowerCase() : getPathDetails()?.lang) || 'en';
+    lang ||
+    (isCommunityDomain
+      ? communityLang.get(document.documentElement.lang?.toLowerCase()) || document.documentElement.lang?.toLowerCase()
+      : getPathDetails()?.lang) ||
+    'en';
 
   try {
     // Try fetching placeholders with the specified language

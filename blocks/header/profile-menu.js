@@ -6,17 +6,17 @@ const { khorosProfileUrl } = getConfig();
 
 const communityLocalesMap = new Map([
   ['de', 'de'],
-  ['en', 'en-us'],
+  ['en', 'en'],
   ['ja', 'ja'],
   ['fr', 'fr'],
   ['es', 'es'],
-  ['pt-br', 'pt-br'],
+  ['pt-br', 'pt'],
   ['ko', 'ko'],
-  ['sv', 'en-us'],
-  ['nl', 'en-us'],
-  ['it', 'en-us'],
+  ['sv', 'en'],
+  ['nl', 'en'],
+  ['it', 'en'],
   ['zh-hans', 'zh'],
-  ['zh-hant', 'en-us'],
+  ['zh-hant', 'zh'],
 ]);
 
 async function fetchCommunityProfileData(url = khorosProfileUrl) {
