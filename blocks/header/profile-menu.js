@@ -10,7 +10,7 @@ const communityLocalesMap = new Map([
   ['ja', 'ja'],
   ['fr', 'fr'],
   ['es', 'es'],
-  ['pt-br', 'pt-br'],
+  ['pt-br', 'pt'],
   ['ko', 'ko'],
   ['sv', 'en'],
   ['nl', 'en'],

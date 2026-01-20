@@ -726,7 +726,7 @@ export function getConfig() {
     ['nl', 'en'],
     ['zh-hans', 'zh'],
     ['zh-hant', 'zh'],
-    ['pt-br', 'pt-br'],
+    ['pt-br', 'pt'],
     ['ja', 'ja'],
     ['ko', 'ko'],
     ['en', 'en'],
@@ -1168,9 +1168,17 @@ export async function fetchGlobalFragment(metaName, fallback, lang) {
 export async function fetchLanguagePlaceholders(lang) {
   const { communityHost } = getConfig();
   const isCommunityDomain = window.location.origin.includes(communityHost);
+  const communityLang = new Map([
+    ['pt', 'pt-br'],
+    ['zh', 'zh-hans'],
+  ]);
 
   const langCode =
-    lang || (isCommunityDomain ? document.documentElement.lang?.toLowerCase() : getPathDetails()?.lang) || 'en';
+    lang ||
+    (isCommunityDomain
+      ? communityLang.get(document.documentElement.lang?.toLowerCase()) || document.documentElement.lang?.toLowerCase()
+      : getPathDetails()?.lang) ||
+    'en';
 
   try {
     // Try fetching placeholders with the specified language
