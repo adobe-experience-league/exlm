@@ -7,15 +7,15 @@ const { khorosProfileUrl } = getConfig();
 const communityLocalesMap = new Map([
   ['de', 'de'],
   ['en', 'en-us'],
-  ['ja', 'ja-jp'],
+  ['ja', 'ja'],
   ['fr', 'fr'],
   ['es', 'es'],
   ['pt-br', 'pt-br'],
-  ['ko', 'ko-kr'],
+  ['ko', 'ko'],
   ['sv', 'en-us'],
   ['nl', 'en-us'],
   ['it', 'en-us'],
-  ['zh-hans', 'zh-cn'],
+  ['zh-hans', 'zh'],
   ['zh-hant', 'en-us'],
 ]);
 
