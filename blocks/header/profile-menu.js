@@ -16,7 +16,7 @@ const communityLocalesMap = new Map([
   ['nl', 'en'],
   ['it', 'en'],
   ['zh-hans', 'zh'],
-  ['zh-hant', 'en'],
+  ['zh-hant', 'zh'],
 ]);
 
 async function fetchCommunityProfileData(url = khorosProfileUrl) {

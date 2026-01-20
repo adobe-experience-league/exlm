@@ -725,7 +725,7 @@ export function getConfig() {
     ['sv', 'en'],
     ['nl', 'en'],
     ['zh-hans', 'zh'],
-    ['zh-hant', 'en'],
+    ['zh-hant', 'zh'],
     ['pt-br', 'pt-br'],
     ['ja', 'ja'],
     ['ko', 'ko'],
