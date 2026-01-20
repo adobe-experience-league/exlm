@@ -716,30 +716,34 @@ export function getConfig() {
 
   const baseLocalesMap = new Map([
     ['de', 'de'],
-    ['en', 'en'],
-    ['ja', 'ja'],
     ['fr', 'fr'],
     ['es', 'es'],
-    ['pt-br', 'pt'],
-    ['ko', 'ko'],
   ]);
 
   const communityLangsMap = new Map([
     ...baseLocalesMap,
-    ['sv', 'en'],
-    ['nl', 'en'],
-    ['it', 'en'],
-    ['zh-hans', 'en'],
-    ['zh-hant', 'en'],
+    ['sv', 'en-us'],
+    ['nl', 'en-us'],
+    ['zh-hans', 'zh-cn'],
+    ['zh-hant', 'en-us'],
+    ['pt-br', 'pt-br'],
+    ['ja', 'ja-jp'],
+    ['ko', 'ko-kr'],
+    ['en', 'en-us'],
+    ['it', 'en-us'],
   ]);
 
   const adobeAccountLangsMap = new Map([
     ...baseLocalesMap,
     ['sv', 'sv'],
     ['nl', 'nl'],
-    ['it', 'it'],
     ['zh-hant', 'zh-Hant'],
     ['zh-hans', 'zh-Hans'],
+    ['pt-br', 'pt'],
+    ['ja', 'ja'],
+    ['ko', 'ko'],
+    ['en', 'en'],
+    ['it', 'it'],
   ]);
   const cookieConsentName = 'OptanonConsent';
   const targetCriteriaIds = {
@@ -832,14 +836,11 @@ export function getConfig() {
       : `https://stage.account.adobe.com/?lang=${adobeAccountLang}`,
     // Community Account URL
     communityAccountURL: isProd
-      ? `https://experienceleaguecommunities.adobe.com/?profile.language=${communityLocale}`
-      : `https://experienceleaguecommunities-beta.adobe.com/?profile.language=${communityLocale}`,
+      ? `https://experienceleaguecommunities.adobe.com/?lang=${communityLocale}`
+      : `https://experienceleaguecommunities-beta.adobe.com/?lang=${communityLocale}`,
     interestsUrl: `${cdnOrigin}/api/interests?page_size=200&sort=Order`,
     // Param for localized Community Profile URL
-    localizedCommunityProfileParam: `?profile.language=${communityLocale}`,
-    communityTopicsUrl: isProd
-      ? `https://experienceleaguecommunities.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`
-      : `https://experienceleaguecommunities-beta.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`,
+    localizedCommunityProfileParam: `?lang=${communityLocale}`,
     // MPC API Base
     mpcApiBase: `https://api.tv.adobe.com/videos`,
     // Events Page URL
@@ -1167,14 +1168,9 @@ export async function fetchGlobalFragment(metaName, fallback, lang) {
 export async function fetchLanguagePlaceholders(lang) {
   const { communityHost } = getConfig();
   const isCommunityDomain = window.location.origin.includes(communityHost);
-  const communityLang = new Map([['pt', 'pt-br']]);
 
   const langCode =
-    lang ||
-    (isCommunityDomain
-      ? communityLang.get(document.documentElement.lang?.toLowerCase()) || document.documentElement.lang?.toLowerCase()
-      : getPathDetails()?.lang) ||
-    'en';
+    lang || (isCommunityDomain ? document.documentElement.lang?.toLowerCase() : getPathDetails()?.lang) || 'en';
 
   try {
     // Try fetching placeholders with the specified language

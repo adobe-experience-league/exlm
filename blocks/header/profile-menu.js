@@ -6,17 +6,17 @@ const { khorosProfileUrl } = getConfig();
 
 const communityLocalesMap = new Map([
   ['de', 'de'],
-  ['en', 'en'],
-  ['ja', 'ja'],
+  ['en', 'en-us'],
+  ['ja', 'ja-jp'],
   ['fr', 'fr'],
   ['es', 'es'],
-  ['pt-br', 'pt'],
-  ['ko', 'ko'],
-  ['sv', 'en'],
-  ['nl', 'en'],
-  ['it', 'en'],
-  ['zh-hans', 'en'],
-  ['zh-hant', 'en'],
+  ['pt-br', 'pt-br'],
+  ['ko', 'ko-kr'],
+  ['sv', 'en-us'],
+  ['nl', 'en-us'],
+  ['it', 'en-us'],
+  ['zh-hans', 'zh-cn'],
+  ['zh-hant', 'en-us'],
 ]);
 
 async function fetchCommunityProfileData(url = khorosProfileUrl) {
@@ -202,7 +202,7 @@ export default class ProfileMenu extends HTMLElement {
               });
             } else {
               const link = htmlToElement(
-                `<a href="https://experienceleaguecommunities.adobe.com/?profile.language=${locale}">${
+                `<a href="https://experienceleaguecommunities.adobe.com/?lang=${locale}">${
                   placeholders?.communityLink || 'Community'
                 }</a>`,
               );
