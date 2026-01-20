@@ -718,7 +718,6 @@ export function getConfig() {
     ['de', 'de'],
     ['fr', 'fr'],
     ['es', 'es'],
-    ['it', 'it'],
   ]);
 
   const communityLangsMap = new Map([
@@ -731,6 +730,7 @@ export function getConfig() {
     ['ja', 'ja-jp'],
     ['ko', 'ko-kr'],
     ['en', 'en-us'],
+    ['it', 'en-us'],
   ]);
 
   const adobeAccountLangsMap = new Map([
@@ -743,6 +743,7 @@ export function getConfig() {
     ['ja', 'ja'],
     ['ko', 'ko'],
     ['en', 'en'],
+    ['it', 'it'],
   ]);
   const cookieConsentName = 'OptanonConsent';
   const targetCriteriaIds = {
@@ -1167,14 +1168,9 @@ export async function fetchGlobalFragment(metaName, fallback, lang) {
 export async function fetchLanguagePlaceholders(lang) {
   const { communityHost } = getConfig();
   const isCommunityDomain = window.location.origin.includes(communityHost);
-  const communityLang = new Map([['pt', 'pt-br']]);
 
   const langCode =
-    lang ||
-    (isCommunityDomain
-      ? communityLang.get(document.documentElement.lang?.toLowerCase()) || document.documentElement.lang?.toLowerCase()
-      : getPathDetails()?.lang) ||
-    'en';
+    lang || (isCommunityDomain ? document.documentElement.lang?.toLowerCase() : getPathDetails()?.lang) || 'en';
 
   try {
     // Try fetching placeholders with the specified language
