@@ -722,15 +722,15 @@ export function getConfig() {
 
   const communityLangsMap = new Map([
     ...baseLocalesMap,
-    ['sv', 'en-us'],
-    ['nl', 'en-us'],
+    ['sv', 'en'],
+    ['nl', 'en'],
     ['zh-hans', 'zh'],
-    ['zh-hant', 'en-us'],
+    ['zh-hant', 'en'],
     ['pt-br', 'pt-br'],
     ['ja', 'ja'],
     ['ko', 'ko'],
-    ['en', 'en-us'],
-    ['it', 'en-us'],
+    ['en', 'en'],
+    ['it', 'en'],
   ]);
 
   const adobeAccountLangsMap = new Map([
