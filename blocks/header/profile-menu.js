@@ -197,13 +197,11 @@ export default class ProfileMenu extends HTMLElement {
               communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
             if (res.data.menu.length > 0) {
               res.data.menu.forEach((item) => {
-                if (item.title && item.url) {
+                if (item.title && item.url && item.id) {
+                  const menuTitle = placeholders?.[`community${formatTitleCase(item.id)}`] ?? item.title;
                   const link = htmlToElement(
-                    `<a href="${item.url}?lang=${locale}" title="">
-    ${placeholders?.[`community${formatTitleCase(item.id)}`] ?? item.title}
-  </a>`,
+                    `<a href="${item.url}?lang=${locale}" title="${menuTitle}">${menuTitle}</a>`,
                   );
-
                   communityLinks.append(link);
                 }
               });
