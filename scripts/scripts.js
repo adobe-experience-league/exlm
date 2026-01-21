@@ -429,8 +429,9 @@ export const decorateLinksWithinSection = (main) => {
 
     links?.forEach((link) => {
       const href = link.getAttribute('href');
-      if (href && !href.startsWith('#')) {
+      if (href && !href.startsWith('#') && !link.hasAttribute('target')) {
         link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'noopener noreferrer');
       }
     });
   });
