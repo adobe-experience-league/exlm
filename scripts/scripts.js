@@ -1013,6 +1013,7 @@ async function loadDefaultModule(jsPath) {
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
  */
+
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
   const preMain = doc.body.querySelector(':scope > aside');
@@ -1027,6 +1028,8 @@ async function loadLazy(doc) {
   await loadThemes();
   if (preMain) await loadBlocks(preMain);
   await loadBlocks(main);
+  const { setupComponentImpressions } = await import('./analytics/lib-analytics.js');
+  setupComponentImpressions();
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
