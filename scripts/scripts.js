@@ -623,25 +623,20 @@ export async function waitForLCPonMain(lcpBlocks) {
   document.body.style.display = null;
   const lcpCandidate = document.querySelector('main img');
   await new Promise((resolve) => {
-    if (!lcpCandidate) {
-      resolve();
-    }
-
-    if (lcpCandidate.complete && lcpCandidate.src === 'about:error') {
+    if (!lcpCandidate || (lcpCandidate.complete && lcpCandidate.src === 'about:error')) {
       resolve();
     }
 
     lcpCandidate.setAttribute('loading', 'eager');
 
-    // 🔑 Firefox-safe path
+    // Firefox-safe path
     if (lcpCandidate.decode) {
       lcpCandidate.decode().then(resolve).catch(resolve); // decode rejects on error
       return;
     }
 
-    const done = () => resolve();
-    lcpCandidate.addEventListener('load', done, { once: true });
-    lcpCandidate.addEventListener('error', done, { once: true });
+    lcpCandidate.addEventListener('load', resolve, { once: true });
+    lcpCandidate.addEventListener('error', resolve, { once: true });
   });
 }
 
