@@ -476,8 +476,8 @@ export async function pushLinkClick(e) {
   // Check if the component is browse card
   const hasBrowseCardClass = (element) => {
     if (!element) return false;
-    if (element.classList && element.classList.contains('browse-card')) return true;
-    return element.parentElement ? hasBrowseCardClass(element.parentElement) : false;
+    if (element.classList?.contains('browse-card')) return true;
+    return hasBrowseCardClass(element.parentElement);
   };
 
   // Only trigger componentClick here for non-browse-card components
