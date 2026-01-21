@@ -198,7 +198,7 @@ export default class ProfileMenu extends HTMLElement {
             if (res.data.menu.length > 0) {
               res.data.menu.forEach((item) => {
                 if (item.title && item.url && item.id) {
-                  const menuTitle = placeholders?.[`community${formatTitleCase(item.id)}`] ?? item.title;
+                  const menuTitle = placeholders?.[`community${formatTitleCase(item.id)}`] || item.title;
                   const link = htmlToElement(
                     `<a href="${item.url}?lang=${locale}" title="${menuTitle}">${menuTitle}</a>`,
                   );
