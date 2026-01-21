@@ -422,6 +422,7 @@ export const decorateLinks = (block) => {
  */
 export const decorateLinksWithinSection = (main) => {
   const newTabSections = main.querySelectorAll('.section[data-new-tab="true"]');
+  if (!newTabSections) return;
 
   newTabSections?.forEach((section) => {
     const links = section.querySelectorAll('a');
