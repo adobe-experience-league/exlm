@@ -470,6 +470,8 @@ export async function pushLinkClick(e) {
     currentElement = currentElement.parentElement;
   }
 
+  if (!component) return;
+
   const componentName = component.dataset.blockName;
   const componentID = generateComponentID(component, componentName);
 
