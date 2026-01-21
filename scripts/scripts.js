@@ -431,7 +431,9 @@ export const decorateLinksWithinSection = (main) => {
       const href = link.getAttribute('href');
       if (href && !href.startsWith('#') && !link.hasAttribute('target')) {
         link.setAttribute('target', '_blank');
-        link.setAttribute('rel', 'noopener noreferrer');
+        if (link.hostname !== window.location.hostname) {
+          link.setAttribute('rel', 'noopener noreferrer');
+        }
       }
     });
   });
