@@ -339,8 +339,49 @@ export async function pushPageDataLayer(language, searchTrackingData) {
   }
 }
 
+/**
+ * Generates a component ID in the format: currentURL#componentName
+ */
+function generateComponentID(componentElement, componentName) {
+  const url = window.location.href.split('#')[0];
+  const components = document.querySelectorAll(`[data-block-name="${componentName}"]`);
+  return components.length <= 1
+    ? `${url}#${componentName}`
+    : `${url}#${componentName}${[...components].indexOf(componentElement) + 1 || 1}`;
+}
+
+export function pushComponentClick(data) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'componentClick',
+    component: data.component || '',
+    componentID: data.componentID || '',
+
+    link: {
+      contentType: data.contentType || '',
+      destinationDomain: data.destinationDomain || '',
+      fullSolution: data.fullSolution || '',
+      linkLocation: 'body',
+      linkTitle: data.linkTitle || '',
+      linkType: data.linkType || '',
+      solution: data.solution || '',
+      position: data.position || '',
+      productV2: '',
+      featureV2: '',
+      subFeatureV2: '',
+      topicV2: '',
+      industryV2: '',
+      roleV2: '',
+      levelV2: '',
+    },
+  });
+}
+
 export async function pushLinkClick(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const component = e.target.closest('[data-block-name]');
 
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
   const isCourseStartCTA = e.target.closest('.course-breakdown-header-start-button');
@@ -416,6 +457,41 @@ export async function pushLinkClick(e) {
       interactionType: '',
     },
   });
+
+  let headerText = '';
+
+  let currentElement = e.target;
+  while (currentElement && currentElement !== component) {
+    const closestHeader = currentElement.querySelector('h1,h2,h3,h4');
+    if (closestHeader) {
+      headerText = closestHeader.innerText.trim();
+      break;
+    }
+    currentElement = currentElement.parentElement;
+  }
+
+  if (!component) return;
+
+  const componentName = component.dataset.blockName;
+  const componentID = generateComponentID(component, componentName);
+
+  // Check if the component is browse card
+  const hasBrowseCardClass = (element) => {
+    if (!element) return false;
+    if (element.classList?.contains('browse-card')) return true;
+    return hasBrowseCardClass(element.parentElement);
+  };
+
+  // Only trigger componentClick here for non-browse-card components
+  if (!hasBrowseCardClass(component) && !hasBrowseCardClass(e.target)) {
+    pushComponentClick({
+      component: componentName,
+      componentID,
+      linkTitle,
+      linkType: headerText,
+      destinationDomain,
+    });
+  }
 }
 
 /**
@@ -931,6 +1007,33 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
   };
 
   window.adobeDataLayer.push(dataLayerEntry);
+
+  // Check if the click was on a user-action (bookmark or copy link buttons)
+  const isUserAction = document.activeElement?.closest('.user-actions') !== null;
+
+  // Only trigger componentClick event if not a user-action click
+  if (!isUserAction) {
+    // Get the component name
+    let componentName = 'browse-card';
+    const browseCardElement = document.activeElement?.closest('[data-block-name]');
+    if (browseCardElement && browseCardElement.dataset.blockName) {
+      componentName = browseCardElement.dataset.blockName;
+    }
+
+    const componentID = generateComponentID(browseCardElement, componentName);
+
+    pushComponentClick({
+      component: componentName,
+      componentID,
+      linkTitle: cardData?.title || '',
+      linkType: cardHeader,
+      destinationDomain: cardData?.viewLink || '',
+      contentType: cardData?.contentType?.toLowerCase().trim() || '',
+      solution: cardSolution || '',
+      fullSolution: cardFullSolution || '',
+      position: cardPosition,
+    });
+  }
 }
 
 /**
@@ -1031,5 +1134,200 @@ export function pushListToggleEvent(cardHeader) {
     link: {
       linkType: cardHeader,
     },
+  });
+}
+
+function pushComponentImpressionEvent(data) {
+  window.adobeDataLayer.push({
+    event: 'componentImpression',
+    component: data.component || '',
+    componentID: data.componentID || '',
+    link: {
+      contentType: data.contentType || '',
+      destinationDomain: data.destinationDomain || '',
+      fullSolution: data.fullSolution || '',
+      linkLocation: data.linkLocation || '',
+      linkTitle: data.linkTitle || '',
+      linkType: data.linkType || '',
+      solution: data.solution || '',
+      productV2: '',
+      featureV2: '',
+      subFeatureV2: '',
+      topicV2: '',
+      industryV2: '',
+      roleV2: '',
+      levelV2: '',
+    },
+  });
+}
+
+export function setupComponentImpressions() {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  const visibilityState = new WeakMap();
+  const debounceTimers = new WeakMap();
+  const DEBOUNCE_TIME = 2000;
+
+  const componentSelectors = [
+    '[data-block-name="marquee"]',
+    '[data-block-name="columns"]',
+    '[data-block-name="announcement-ribbon"]',
+    '[data-block-name="media"]',
+    '[data-block-name="detailed-teaser"]',
+    '[data-block-name="carousel"] [data-panel]',
+    '[data-block-name="authorable-card"]',
+  ];
+
+  function fireImpression(unit) {
+    if (unit.hasAttribute('data-panel') && !unit.classList.contains('active')) {
+      return;
+    }
+
+    const currentUrl = window.location.href.split('#')[0];
+    const component = unit.closest('[data-block-name]');
+    const componentName = component?.dataset.blockName || 'unknown';
+
+    let componentID = currentUrl;
+
+    if (component) {
+      const allComponentsOfType = document.querySelectorAll(`[data-block-name="${componentName}"]`);
+
+      let instanceNumber = 1;
+      for (let i = 0; i < allComponentsOfType.length; i += 1) {
+        if (allComponentsOfType[i] === component) break;
+        instanceNumber += 1;
+      }
+
+      componentID =
+        allComponentsOfType.length > 1
+          ? `${currentUrl}#${componentName}${instanceNumber}`
+          : `${currentUrl}#${componentName}`;
+    }
+
+    let links = [];
+    let isAuthorableCard = false;
+
+    if (unit.classList.contains('browse-card')) {
+      isAuthorableCard = true;
+      const anchor = unit.closest('a[href]');
+      if (anchor) links = [anchor];
+    } else {
+      links = unit.querySelectorAll('a[href]');
+    }
+
+    if (links.length) {
+      links.forEach((link) => {
+        let linkTitleText = '';
+        let contentType = '';
+        let componentSolution = '';
+        let componentFullSolution = '';
+        let headerText = '';
+        if (isAuthorableCard) {
+          linkTitleText = unit.querySelector('.browse-card-title-text')?.innerText?.trim() || '';
+          headerText = component?.querySelector('h1,h2,h3,h4')?.textContent?.trim() || '';
+          contentType =
+            unit.closest('[data-analytics-content-type]')?.getAttribute('data-analytics-content-type') || '';
+          const baseSolution = unit.querySelector('.browse-card-solution-text')?.innerText?.trim() || '';
+
+          const capitalize = (s) => s.toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
+
+          if (baseSolution.toLowerCase() === 'multisolution') {
+            const tooltip = unit.querySelector('.tooltip-text')?.textContent?.trim() || '';
+            componentFullSolution = tooltip;
+            componentSolution = tooltip.split(',')[0].trim();
+          } else {
+            componentSolution = capitalize(baseSolution);
+            componentFullSolution = capitalize(baseSolution);
+          }
+        } else {
+          linkTitleText = link.innerText?.trim() || '';
+          headerText =
+            unit.querySelector('h1,h2,h3,h4')?.innerText?.trim() ||
+            component?.querySelector('h1,h2,h3,h4')?.innerText?.trim() ||
+            '';
+        }
+        pushComponentImpressionEvent({
+          component: componentName,
+          componentID,
+          linkTitle: linkTitleText || '',
+          linkType: headerText,
+          destinationDomain: link.href || '',
+          linkLocation: 'body',
+          contentType,
+          solution: componentSolution,
+          fullSolution: componentFullSolution,
+        });
+      });
+    } else {
+      pushComponentImpressionEvent({
+        component: componentName,
+        componentID,
+      });
+    }
+  }
+
+  function cancelDebounce(unit) {
+    const timer = debounceTimers.get(unit);
+    if (timer) {
+      clearTimeout(timer);
+      debounceTimers.delete(unit);
+    }
+  }
+
+  function startDebounce(unit) {
+    cancelDebounce(unit);
+    const timer = setTimeout(() => {
+      fireImpression(unit);
+    }, DEBOUNCE_TIME);
+    debounceTimers.set(unit, timer);
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const unit = entry.target;
+        const isVisible = entry.isIntersecting;
+        const wasVisible = visibilityState.get(unit) || false;
+
+        if (unit.dataset.blockName === 'authorable-card') {
+          const cards = unit.querySelectorAll('.browse-card');
+          if (!cards.length) return;
+          cards.forEach((card) => {
+            visibilityState.delete(card);
+            debounceTimers.delete(card);
+            observer.observe(card);
+          });
+          observer.unobserve(unit);
+          return;
+        }
+
+        if (!wasVisible && isVisible) {
+          visibilityState.set(unit, true);
+          startDebounce(unit);
+        }
+
+        if (wasVisible && !isVisible) {
+          visibilityState.set(unit, false);
+          cancelDebounce(unit);
+        }
+      });
+    },
+    { threshold: 0.6 },
+  );
+
+  document.querySelectorAll(componentSelectors.join(',')).forEach((component) => {
+    if (component.dataset.blockName === 'authorable-card') {
+      observer.observe(component);
+    } else if (component.dataset.blockName === 'columns') {
+      component.querySelectorAll(':scope > div > div').forEach((col) => {
+        observer.observe(col);
+      });
+    } else if (component.dataset.blockName === 'carousel') {
+      component.querySelectorAll('[data-panel]').forEach((panel) => {
+        observer.observe(panel);
+      });
+    } else {
+      observer.observe(component);
+    }
   });
 }
