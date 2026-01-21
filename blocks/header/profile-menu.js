@@ -15,8 +15,8 @@ const communityLocalesMap = new Map([
   ['sv', 'en'],
   ['nl', 'en'],
   ['it', 'en'],
-  ['zh-hans', 'en'],
-  ['zh-hant', 'en'],
+  ['zh-hans', 'zh'],
+  ['zh-hant', 'zh'],
 ]);
 
 async function fetchCommunityProfileData(url = khorosProfileUrl) {
@@ -202,7 +202,7 @@ export default class ProfileMenu extends HTMLElement {
               });
             } else {
               const link = htmlToElement(
-                `<a href="https://experienceleaguecommunities.adobe.com/?profile.language=${locale}">${
+                `<a href="https://experienceleaguecommunities.adobe.com/?lang=${locale}">${
                   placeholders?.communityLink || 'Community'
                 }</a>`,
               );

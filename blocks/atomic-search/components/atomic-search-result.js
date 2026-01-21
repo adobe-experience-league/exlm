@@ -10,10 +10,9 @@ import {
 } from './atomic-search-utils.js';
 import { ContentTypeIcons } from './atomic-search-icons.js';
 import { decorateIcons } from '../../../scripts/lib-franklin.js';
-import { htmlToElement, getConfig } from '../../../scripts/scripts.js';
+import { htmlToElement } from '../../../scripts/scripts.js';
 import { INITIAL_ATOMIC_RESULT_CHILDREN_COUNT } from './atomic-result-children.js';
 
-const { communityTopicsUrl, isProd } = getConfig();
 const MAX_HYDRATION_ATTEMPTS = 10;
 
 export const atomicResultStyles = `
@@ -929,19 +928,7 @@ export default function atomicResultHandler(block, placeholders) {
 
           const label = slot.textContent.trim();
           if (!label) return;
-          if (isProd) {
-            const link = document.createElement('a');
-            link.href = `${communityTopicsUrl}${encodeURIComponent(label)}`;
-            link.textContent = label;
-            link.target = '_blank';
-            link.style.textDecoration = 'none';
-            link.style.color = 'inherit';
-
-            li.textContent = '';
-            li.appendChild(link);
-          } else {
-            li.textContent = label;
-          }
+          li.textContent = label;
         });
         const rawContentType = resultEl.result?.result?.raw?.el_contenttype;
         // Filter out parent values when child values are present to avoid duplicate rendering

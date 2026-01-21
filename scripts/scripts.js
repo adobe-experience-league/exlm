@@ -716,30 +716,34 @@ export function getConfig() {
 
   const baseLocalesMap = new Map([
     ['de', 'de'],
-    ['en', 'en'],
-    ['ja', 'ja'],
     ['fr', 'fr'],
     ['es', 'es'],
-    ['pt-br', 'pt'],
-    ['ko', 'ko'],
   ]);
 
   const communityLangsMap = new Map([
     ...baseLocalesMap,
     ['sv', 'en'],
     ['nl', 'en'],
+    ['zh-hans', 'zh'],
+    ['zh-hant', 'zh'],
+    ['pt-br', 'pt'],
+    ['ja', 'ja'],
+    ['ko', 'ko'],
+    ['en', 'en'],
     ['it', 'en'],
-    ['zh-hans', 'en'],
-    ['zh-hant', 'en'],
   ]);
 
   const adobeAccountLangsMap = new Map([
     ...baseLocalesMap,
     ['sv', 'sv'],
     ['nl', 'nl'],
-    ['it', 'it'],
     ['zh-hant', 'zh-Hant'],
     ['zh-hans', 'zh-Hans'],
+    ['pt-br', 'pt'],
+    ['ja', 'ja'],
+    ['ko', 'ko'],
+    ['en', 'en'],
+    ['it', 'it'],
   ]);
   const cookieConsentName = 'OptanonConsent';
   const targetCriteriaIds = {
@@ -803,12 +807,8 @@ export function getConfig() {
     cookieConsentName,
     targetCriteriaIds,
     quizPassingCriteria: 0.65, // 65% passing criteria for quizzes
-    khorosProfileUrl: isProd
-      ? `${cdnOrigin}/api/action/khoros/profile-menu-list`
-      : `${cdnOrigin}/api/action/khoros/profile-menu-list?platform=gainsight`,
-    khorosProfileDetailsUrl: isProd
-      ? `${cdnOrigin}/api/action/khoros/profile-details`
-      : `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`,
+    khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list?platform=gainsight`,
+    khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`,
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `${cdnOrigin}/api/action/coveo-token?lang=${lang}`,
@@ -836,14 +836,11 @@ export function getConfig() {
       : `https://stage.account.adobe.com/?lang=${adobeAccountLang}`,
     // Community Account URL
     communityAccountURL: isProd
-      ? `https://experienceleaguecommunities.adobe.com/?profile.language=${communityLocale}`
-      : `https://experienceleaguecommunities-beta.adobe.com/?profile.language=${communityLocale}`,
+      ? `https://experienceleaguecommunities.adobe.com/?lang=${communityLocale}`
+      : `https://experienceleaguecommunities-beta.adobe.com/?lang=${communityLocale}`,
     interestsUrl: `${cdnOrigin}/api/interests?page_size=200&sort=Order`,
     // Param for localized Community Profile URL
-    localizedCommunityProfileParam: `?profile.language=${communityLocale}`,
-    communityTopicsUrl: isProd
-      ? `https://experienceleaguecommunities.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`
-      : `https://experienceleaguecommunities-beta.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`,
+    localizedCommunityProfileParam: `?lang=${communityLocale}`,
     // MPC API Base
     mpcApiBase: `https://api.tv.adobe.com/videos`,
     // Events Page URL
@@ -1331,7 +1328,7 @@ export async function fetchFragment(rePath, lang) {
 
 /** fetch fragment relative to /${lang}/global-fragments/ */
 export async function fetchGlobalFragment(metaName, fallback, lang) {
-  const fragmentPath = getMetadata(metaName) ?? fallback;
+  const fragmentPath = getMetadata(metaName) || fallback;
   const fragmentUrl = fragmentPath?.startsWith('/en/') ? fragmentPath.replace('/en/', `/${lang}/`) : fallback;
   const path = `${window.hlx.codeBasePath}${fragmentUrl}.plain.html`;
   const fallbackPath = `${window.hlx.codeBasePath}${fallback}.plain.html`;
@@ -1343,7 +1340,10 @@ export async function fetchGlobalFragment(metaName, fallback, lang) {
 export async function fetchLanguagePlaceholders(lang) {
   const { communityHost } = getConfig();
   const isCommunityDomain = window.location.origin.includes(communityHost);
-  const communityLang = new Map([['pt', 'pt-br']]);
+  const communityLang = new Map([
+    ['pt', 'pt-br'],
+    ['zh', 'zh-hans'],
+  ]);
 
   const langCode =
     lang ||
