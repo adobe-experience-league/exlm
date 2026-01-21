@@ -16,7 +16,6 @@ import {
   fetchLanguagePlaceholders,
   htmlToElement,
   xssSanitizeQueryParamValue,
-  getPathDetails,
   createTag,
 } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
@@ -26,7 +25,6 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import { COURSE_STATUS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
-import { fetchCourseIndex } from '../../scripts/courses/course-utils.js';
 
 /**
  * Module-level placeholders for internationalization
@@ -74,70 +72,6 @@ const LEVEL_PRIORITY = {
  * Dropdown configuration
  */
 const DROPDOWN_TYPE = 'multi-select';
-
-/**
- * Fetches the list of products from the course index JSON
- * @returns {Promise<string[]>} Array of product solution names
- */
-async function getProductList() {
-  try {
-    const { lang } = getPathDetails();
-    const courseIndex = await fetchCourseIndex(lang);
-
-    const products = courseIndex.reduce((acc, curr) => {
-      if (curr?.coveoSolution) {
-        // Split by ";" and trim spaces
-        const items = curr.coveoSolution.split(';').map((s) => s.trim());
-        acc.push(...items);
-      }
-      return acc;
-    }, []);
-
-    // Remove duplicates
-    const uniqueProducts = [...new Set(products)];
-
-    return uniqueProducts;
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching product list:', error);
-    return [];
-  }
-}
-
-/**
- * Fetches the list of levels from the course index JSON
- * @returns {Promise<string[]>} Array of unique level names
- */
-async function getLevelList() {
-  try {
-    const { lang } = getPathDetails();
-    const courseIndex = await fetchCourseIndex(lang);
-
-    const levels = courseIndex.reduce((acc, curr) => {
-      if (curr?.coveoLevel) {
-        // Split by "," and trim spaces
-        const items = curr.coveoLevel.split(',').map((s) => s.trim());
-        acc.push(...items);
-      }
-      return acc;
-    }, []);
-
-    // Remove duplicates
-    const uniqueLevels = [...new Set(levels)];
-
-    const sortedLevels = uniqueLevels.sort((a, b) => {
-      const priorityA = LEVEL_PRIORITY[a] || -1;
-      const priorityB = LEVEL_PRIORITY[b] || -1;
-      return priorityA - priorityB;
-    });
-
-    return sortedLevels;
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching level list:', error);
-    return [];
-  }
-}
 
 /**
  * Creates the header section with title, dropdown filter, and clear filter button
@@ -1383,8 +1317,10 @@ export default async function decorate(block) {
   // Check if user is signed in (required for status dropdown)
   const isUserSignedIn = await isSignedInUser();
 
-  // Fetch products and levels in parallel
-  const [products, levels] = await Promise.all([getProductList(), getLevelList()]);
+  // Fetch products and levels using Coveo facet fields
+  const facetDetails = await BrowseCardsDelegate.fetchCoveoFacetFields(['el_product', 'el_level']);
+  const products = facetDetails.el_product || [];
+  const levels = facetDetails.el_level || [];
 
   // Append content container to block first
   block.appendChild(contentDiv);
