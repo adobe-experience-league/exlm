@@ -623,15 +623,20 @@ export async function waitForLCPonMain(lcpBlocks) {
   document.body.style.display = null;
   const lcpCandidate = document.querySelector('main img');
   await new Promise((resolve) => {
-    if (lcpCandidate && lcpCandidate.src === 'about:error') {
-      resolve(); // error loading image
-    } else if (lcpCandidate && !lcpCandidate.complete) {
-      lcpCandidate.setAttribute('loading', 'eager');
-      lcpCandidate.addEventListener('load', resolve);
-      lcpCandidate.addEventListener('error', resolve);
-    } else {
+    if (!lcpCandidate || (lcpCandidate.complete && lcpCandidate.src === 'about:error')) {
       resolve();
     }
+
+    lcpCandidate.setAttribute('loading', 'eager');
+
+    // Firefox-safe path
+    if (lcpCandidate.decode) {
+      lcpCandidate.decode().then(resolve).catch(resolve); // decode rejects on error
+      return;
+    }
+
+    lcpCandidate.addEventListener('load', resolve, { once: true });
+    lcpCandidate.addEventListener('error', resolve, { once: true });
   });
 }
 
