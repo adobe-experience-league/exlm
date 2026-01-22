@@ -501,7 +501,10 @@ export async function pushLinkClick(e) {
  */
 export function pushVideoEvent(video, event = 'videoPlay') {
   const { title, description, url } = video;
+
   const videoDuration = video.duration || '';
+  const videoSolution = video.solution || solution || '';
+  const videoFullSolution = video.fullSolution || fullSolution || '';
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   window.adobeDataLayer.push({
@@ -511,6 +514,8 @@ export function pushVideoEvent(video, event = 'videoPlay') {
       description,
       url,
       duration: videoDuration,
+      solution: videoSolution,
+      fullSolution: videoFullSolution,
     },
     web: {
       webPageDetails: {
