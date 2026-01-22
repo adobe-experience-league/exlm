@@ -353,12 +353,14 @@ async function renderCards(block, courseData, shimmer) {
   }
 }
 
-function populateValideFacets(facetsResponse, state) {
-  const levelFacets = facetsResponse.find((facet) => facet.field === 'el_level')?.values || [];
-  state.validLevels = levelFacets.filter((facet) => facet.numberOfResults > 0).map((facet) => facet.value);
+function getValidFacets(facetsResponse, facetKey) {
+  const facets = facetsResponse.find((facet) => facet.field === facetKey)?.values || [];
+  return facets.filter((facet) => facet.numberOfResults > 0).map((facet) => facet.value);
+}
 
-  const productFacets = facetsResponse.find((facet) => facet.field === 'el_product')?.values || [];
-  state.validProducts = productFacets.filter((facet) => facet.numberOfResults > 0).map((facet) => facet.value);
+function populateValidFacets(facetsResponse, state) {
+  state.validLevels = getValidFacets(facetsResponse, 'el_level');
+  state.validProducts = getValidFacets(facetsResponse, 'el_product');
 }
 
 /**
@@ -384,7 +386,7 @@ async function fetchCourseData(selectedFilters = [], selectedLevels = [], state 
   const data = await BrowseCardsDelegate.fetchCardData(param);
   const facetsResponse = BrowseCardsDelegate.fetchFacetsData(param);
   state.facetsResponse = facetsResponse;
-  populateValideFacets(facetsResponse, state);
+  populateValidFacets(facetsResponse, state);
 
   return data;
 }
@@ -423,50 +425,32 @@ function analyzeCourseStatuses(courseData) {
 }
 
 /**
- * Analyzes course data to extract unique levels present in the dataset
- * @param {Array} courseData - Array of course data with el_level property (array of strings)
- * @returns {Set<string>} Set of unique level values found in courseData
+ * Analyzes course data to extract unique values for a specified property
+ * Handles both array and string property types
+ * @param {Array} courseData - Array of course data objects
+ * @param {string} propertyName - The property name to verify
+ * @returns {Set<string>} Set of unique values found in courseData for the property
  */
-function analyzeCourseDataLevels(courseData) {
-  const levelsSet = new Set();
+function analyzeCourseData(courseData, propertyName) {
+  const valuesSet = new Set();
 
   if (!courseData || courseData.length === 0) {
-    return levelsSet;
+    return valuesSet;
   }
 
   courseData.forEach((course) => {
-    if (course.el_level && Array.isArray(course.el_level)) {
-      course.el_level.forEach((level) => {
-        if (level && typeof level === 'string') {
-          levelsSet.add(level.trim());
+    if (Array.isArray(course[propertyName])) {
+      course[propertyName].forEach((value) => {
+        if (value) {
+          valuesSet.add(value.trim());
         }
       });
+    } else if (course[propertyName] && typeof course[propertyName] === 'string') {
+      valuesSet.add(course[propertyName].trim());
     }
   });
 
-  return levelsSet;
-}
-
-function analyzeCourseDataProducts(courseData) {
-  const productsSet = new Set();
-
-  if (!courseData || courseData.length === 0) {
-    return productsSet;
-  }
-
-  courseData.forEach((course) => {
-    if (Array.isArray(course.product)) {
-      course.product.forEach((product) => {
-        if (product) {
-          productsSet.add(product.trim());
-        }
-      });
-    } else if (course.product && typeof course.product === 'string') {
-      productsSet.add(course.product.trim());
-    }
-  });
-
-  return productsSet;
+  return valuesSet;
 }
 
 /**
@@ -507,84 +491,36 @@ function createStatusFilterOptions(courseData) {
 }
 
 /**
- * Filters levels list to only include levels present in courseData
- * @param {string[]} allLevels - Array of all possible level names
- * @param {Array} courseData - Array of course data with el_level property
- * @returns {string[]} Filtered array of levels that exist in courseData
+ * Filters items to only include those present in course data for a specified property
+ * @param {string[]} allItems - Array of all possible item values
+ * @param {Array} courseData - Array of course data objects
+ * @param {string} propertyName - The property name to analyze (e.g., 'el_level', 'product')
+ * @returns {string[]} Filtered array of items that exist in courseData for the specified property
  */
-function filterLevelsForCourseData(allLevels, courseData) {
-  const levelsInData = analyzeCourseDataLevels(courseData);
+function filterItemsForCourseData(allItems, courseData, propertyName) {
+  const itemsInData = analyzeCourseData(courseData, propertyName);
 
-  if (levelsInData.size === 0) {
+  if (itemsInData.size === 0) {
     return [];
   }
 
-  return allLevels.filter((level) => levelsInData.has(level));
-}
-
-function filterProductsForCourseData(allProducts, courseData) {
-  const productsInData = analyzeCourseDataProducts(courseData);
-
-  if (productsInData.size === 0) {
-    return [];
-  }
-
-  return allProducts.filter((product) => productsInData.has(product));
+  return allItems.filter((item) => itemsInData.has(item));
 }
 
 /**
- * Creates a dedicated container for the status dropdown
- * @param {HTMLElement} dropdownForm - The dropdown form element
- * @returns {HTMLElement} The status dropdown container
+ * Creates a dedicated container for dropdown elements
+ * @param {HTMLElement} dropdownForm - dropdown form element
+ * @param {string} containerClass - CSS class name for the container
+ * @returns {HTMLElement} dropdown container element
  */
-function createStatusDropdownContainer(dropdownForm) {
-  // Check if container already exists
-  let container = dropdownForm.querySelector('.status-dropdown-container');
-  if (container) {
-    container.innerHTML = ''; // Clear existing content
-    return container;
-  }
-
-  // Create new container
-  container = document.createElement('div');
-  container.className = 'status-dropdown-container';
-  dropdownForm.appendChild(container);
-  return container;
-}
-
-/**
- * Creates a dedicated container for the level dropdown
- * @param {HTMLElement} dropdownForm - The dropdown form element
- * @returns {HTMLElement} The level dropdown container
- */
-function createLevelDropdownContainer(dropdownForm) {
-  // Check if container already exists
-  let container = dropdownForm.querySelector('.level-dropdown-container');
-  if (container) {
-    container.innerHTML = ''; // Clear existing content
-    return container;
-  }
-
-  // Create new container
-  container = document.createElement('div');
-  container.className = 'level-dropdown-container';
-  dropdownForm.appendChild(container);
-  return container;
-}
-
-/**
- * Creates a dedicated container for the product dropdown
- * @param {HTMLElement} dropdownForm - The dropdown form element
- * @returns {HTMLElement} The product dropdown container
- */
-function createProductDropdownContainer(dropdownForm) {
-  let container = dropdownForm.querySelector('.product-dropdown-container');
+function createDropdownContainer(dropdownForm, containerClass) {
+  let container = dropdownForm.querySelector(`.${containerClass}`);
   if (container) {
     container.innerHTML = '';
     return container;
   }
 
-  container = createTag('div', { class: 'product-dropdown-container' });
+  container = createTag('div', { class: containerClass });
   dropdownForm.appendChild(container);
   return container;
 }
@@ -641,24 +577,24 @@ function setupStatusDropdownHandler(dropdown, block, shimmer, state) {
 
     // Filter existing course data by status (client-side, no API call)
     const statusFilterSelected = state.currentStatusFilters.length > 0;
-    const filteredData = statusFilterSelected
+    const statusFilteredCourses = statusFilterSelected
       ? state.courseData.filter((course) => state.currentStatusFilters.includes(course.meta?.courseInfo?.courseStatus))
       : state.courseData;
 
     if (statusFilterSelected) {
-      const productsInFilteredData = analyzeCourseDataProducts(filteredData);
-      const levelsInFilteredData = analyzeCourseDataLevels(filteredData);
+      const productsInFilteredData = analyzeCourseData(statusFilteredCourses, 'product');
+      const levelsInFilteredData = analyzeCourseData(statusFilteredCourses, 'el_level');
       state.validProducts = Array.from(productsInFilteredData);
       state.validLevels = Array.from(levelsInFilteredData);
     } else {
-      populateValideFacets(state.facetsResponse, state);
+      populateValidFacets(state.facetsResponse, state);
     }
 
     if (state.allProducts) {
       // eslint-disable-next-line no-use-before-define
       const { dropdown: productDropdown } = updateProductDropdown(
         block,
-        filteredData,
+        statusFilteredCourses,
         state.allProducts,
         shimmer,
         state,
@@ -668,11 +604,17 @@ function setupStatusDropdownHandler(dropdown, block, shimmer, state) {
 
     if (state.allLevels) {
       // eslint-disable-next-line no-use-before-define
-      const { dropdown: levelDropdown } = updateLevelDropdown(block, filteredData, state.allLevels, shimmer, state);
+      const { dropdown: levelDropdown } = updateLevelDropdown(
+        block,
+        statusFilteredCourses,
+        state.allLevels,
+        shimmer,
+        state,
+      );
       state.levelDropdown = levelDropdown;
     }
 
-    renderCards(block, filteredData, shimmer).then(() => {
+    renderCards(block, statusFilteredCourses, shimmer).then(() => {
       // Update clear button state after filter change
       updateClearFilterButtonState(block, state);
     });
@@ -697,7 +639,7 @@ function updateStatusDropdown(block, courseData, shimmer, state) {
   if (!dropdownForm) return null;
 
   // Get or create dedicated container for status dropdown
-  const statusContainer = createStatusDropdownContainer(dropdownForm);
+  const statusContainer = createDropdownContainer(dropdownForm, 'status-dropdown-container');
 
   // If no status options, clear container and return null
   if (statusList.length === 0) {
@@ -869,7 +811,7 @@ function updateLevelDropdown(block, courseData, allLevels, shimmer, state) {
     return { dropdown: null };
   }
   const filteredLevels =
-    state.validLevels?.length > 0 ? state.validLevels : filterLevelsForCourseData(allLevels, courseData);
+    state.validLevels?.length > 0 ? state.validLevels : filterItemsForCourseData(allLevels, courseData, 'el_level');
   const levelsList = transformLevelsForDropdown(filteredLevels);
   const levelsFound = levelsList.length > 0;
   const previousLevelFiltersRemoved =
@@ -917,14 +859,14 @@ function updateLevelDropdown(block, courseData, allLevels, shimmer, state) {
     } else {
       state.levelDropdown.remove();
       state.levelDropdown = null;
-      levelContainer = createLevelDropdownContainer(dropdownForm);
+      levelContainer = createDropdownContainer(dropdownForm, 'level-dropdown-container');
       if (levelContainer) {
         levelContainer.innerHTML = '';
       }
     }
   } else {
     if (levelsFound) {
-      levelContainer = createLevelDropdownContainer(dropdownForm);
+      levelContainer = createDropdownContainer(dropdownForm, 'level-dropdown-container');
       levelContainer.innerHTML = '';
       levelDropdown = new Dropdown(
         dropdownForm,
@@ -965,7 +907,7 @@ function updateLevelDropdown(block, courseData, allLevels, shimmer, state) {
         updateTags(block, getCurrentProductFilters(block), state.currentLevelFilters);
       }
     } else if (!levelsFound) {
-      levelContainer = createLevelDropdownContainer(dropdownForm);
+      levelContainer = createDropdownContainer(dropdownForm, 'level-dropdown-container');
       levelContainer.innerHTML = '';
     }
   }
@@ -1038,7 +980,9 @@ function updateProductDropdown(block, courseData, allProducts, shimmer, state) {
     return { dropdown: null };
   }
   const filteredProducts =
-    state.validProducts?.length > 0 ? state.validProducts : filterProductsForCourseData(allProducts, courseData);
+    state.validProducts?.length > 0
+      ? state.validProducts
+      : filterItemsForCourseData(allProducts, courseData, 'product');
   const productsList = transformProductsForDropdown(filteredProducts);
   const productsFound = productsList.length > 0;
   const previousProductFiltersRemoved =
@@ -1081,14 +1025,14 @@ function updateProductDropdown(block, courseData, allProducts, shimmer, state) {
     } else {
       state.productDropdown.remove();
       state.productDropdown = null;
-      productContainer = createProductDropdownContainer(dropdownForm);
+      productContainer = createDropdownContainer(dropdownForm, 'product-dropdown-container');
       if (productContainer) {
         productContainer.innerHTML = '';
       }
     }
   } else {
     if (productsFound) {
-      productContainer = createProductDropdownContainer(dropdownForm);
+      productContainer = createDropdownContainer(dropdownForm, 'product-dropdown-container');
       productContainer.innerHTML = '';
       productDropdown = new Dropdown(
         dropdownForm,
@@ -1119,7 +1063,7 @@ function updateProductDropdown(block, courseData, allProducts, shimmer, state) {
     }
 
     if (!productsFound) {
-      productContainer = createProductDropdownContainer(dropdownForm);
+      productContainer = createDropdownContainer(dropdownForm, 'product-dropdown-container');
       if (productContainer) {
         productContainer.innerHTML = '';
       }
@@ -1366,16 +1310,16 @@ export default async function decorate(block) {
       state.productDropdown = productDropdown;
     }
 
-    const filteredLevels = filterLevelsForCourseData(state.allLevels, courseData);
+    const filteredLevels = filterItemsForCourseData(state.allLevels, courseData, 'el_level');
     const filteredLevelsList = transformLevelsForDropdown(filteredLevels);
 
-    const availableLevels = analyzeCourseDataLevels(courseData);
+    const availableLevels = analyzeCourseData(courseData, 'el_level');
     state.currentLevelFilters = urlLevelFilters.filter((level) => availableLevels.has(level));
 
     // Only create dropdown if there are level options
     if (filteredLevelsList.length > 0) {
       const levelDropdownForm = block.querySelector(SELECTORS.DROPDOWN);
-      const levelContainer = createLevelDropdownContainer(levelDropdownForm);
+      const levelContainer = createDropdownContainer(levelDropdownForm, 'level-dropdown-container');
 
       state.levelDropdown = new Dropdown(
         levelContainer,
@@ -1395,7 +1339,7 @@ export default async function decorate(block) {
       // Only create dropdown if there are status options
       if (statusList.length > 0) {
         const statusDropdownForm = block.querySelector(SELECTORS.DROPDOWN);
-        const statusContainer = createStatusDropdownContainer(statusDropdownForm);
+        const statusContainer = createDropdownContainer(statusDropdownForm, 'status-dropdown-container');
 
         state.statusDropdown = new Dropdown(
           statusContainer,

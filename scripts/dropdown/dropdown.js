@@ -176,8 +176,8 @@ export default class Dropdown {
    * Removes the dropdown from DOM and cleans up
    */
   remove() {
-    if (this.dropdown && this.dropdown.parentElement) {
-      this.dropdown.parentElement.innerHTML = '';
+    if (this.dropdown?.parentElement) {
+      this.dropdown.parentElement.removeChild(this.dropdown);
     }
     this.dropdown = null;
   }
@@ -329,7 +329,7 @@ export default class Dropdown {
     dropdownContent.innerHTML = '';
 
     this.optionsArray.forEach((item, itemIndex) => {
-      const dropdownitem = htmlToElement(
+      const dropdownItem = htmlToElement(
         ` <div class="custom-checkbox">
                     <input type="checkbox" id="option-${this.id}-${itemIndex + 1}" value="${
                       item.value || item.title
@@ -345,8 +345,8 @@ export default class Dropdown {
                     </label>
                     </div>`,
       );
-      decorateIcons(dropdownitem);
-      dropdownContent.appendChild(dropdownitem);
+      decorateIcons(dropdownItem);
+      dropdownContent.appendChild(dropdownItem);
     });
   }
 
