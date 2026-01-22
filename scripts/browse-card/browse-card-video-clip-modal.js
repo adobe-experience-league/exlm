@@ -342,13 +342,15 @@ export class BrowseCardVideoClipModal {
     document.body.style.overflow = 'hidden';
 
     // Trigger browse card click event
+    const product = Array.isArray(this.model.product) ? this.model.product : [];
+
     pushBrowseCardClickEvent(
       'browseCardClicked',
       {
         contentType: 'video clip',
         viewLink: this.model.parentURL || this.model.videoURL || '',
         title: this.model.title || '',
-        product: this.model.product || [],
+        product,
       },
       this.cardHeader || 'video-clip-modal',
       this.cardPosition || '1',

@@ -231,19 +231,20 @@ const updateCards = (filters) => {
         const cardElement = newPlaylistCard(playlist);
         cards.append(cardElement);
 
+        const block = cardElement.closest('.block');
+        const cardHeader = block?.getAttribute('data-block-name') || 'playlist-browse';
+        const cardPosition = String(index + 1);
+        const product = playlist.solution ? playlist.solution.split(',').map((s) => s.trim()) : [];
+
         // Add click tracking
         cardElement.addEventListener('click', () => {
-          const block = cardElement.closest('.block');
-          const cardHeader = block?.getAttribute('data-block-name') || 'playlist-browse';
-          const cardPosition = String(index + 1);
-
           pushBrowseCardClickEvent(
             'browseCardClicked',
             {
               contentType: 'playlist',
               viewLink: playlist.path,
               title: playlist.title,
-              product: playlist.solution ? playlist.solution.split(',').map((s) => s.trim()) : [],
+              product,
             },
             cardHeader,
             cardPosition,

@@ -342,7 +342,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
 /**
  * Generates a component ID in the format: currentURL#componentName
  */
-function generateComponentID(componentElement, componentName) {
+export function generateComponentID(componentElement, componentName) {
   const url = window.location.href.split('#')[0];
   const components = document.querySelectorAll(`[data-block-name="${componentName}"]`);
   return components.length <= 1
