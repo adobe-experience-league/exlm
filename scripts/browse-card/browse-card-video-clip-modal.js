@@ -298,6 +298,8 @@ export class BrowseCardVideoClipModal {
             description: this.model.description || '',
             url: this.model.videoURL || '',
             duration: this.model.duration || '',
+            solution: this.model.product?.[0] || '',
+            fullSolution: this.model.product?.join(', ') || '',
           });
         }
       }
