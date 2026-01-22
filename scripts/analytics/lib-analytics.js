@@ -502,10 +502,10 @@ export async function pushLinkClick(e) {
 export function pushVideoEvent(video, event = 'videoPlay') {
   const { title, description, url } = video;
 
-  const cap = (s) => s.replace(/\b\w/g, (l) => l.toUpperCase());
+  const capitalize = (text) => text.replace(/\b\w/g, (firstLetter) => firstLetter.toUpperCase());
 
   const videoDuration = video.duration || '';
-  const videoSolution = video.solution || cap(solution) || '';
+  const videoSolution = video.solution || capitalize(solution) || '';
   const videoFullSolution = video.fullSolution || fullSolution || '';
   window.adobeDataLayer = window.adobeDataLayer || [];
 
