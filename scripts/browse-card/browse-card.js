@@ -725,9 +725,14 @@ export async function buildCard(element, model) {
       e.preventDefault();
       e.stopPropagation();
 
+      // Get card header and position for tracking
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+
       getVideoClipModal().then(async ({ BrowseCardVideoClipModal }) => {
         const modal = await BrowseCardVideoClipModal.create({
           model,
+          cardHeader,
+          cardPosition,
         });
         modal.open();
       });

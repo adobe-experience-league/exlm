@@ -8,6 +8,7 @@ import {
   xssSanitizeQueryParamValue,
 } from '../../scripts/scripts.js';
 import { newMultiSelect, newPagination, newShowHidePanel } from './dom-helpers.js';
+import { pushBrowseCardClickEvent } from '../../scripts/analytics/lib-analytics.js';
 
 const EXPERIENCE_LEVEL_PLACEHOLDERS = [
   {
@@ -226,7 +227,29 @@ const updateCards = (filters) => {
 
     const onPageChange = (page, ps) => {
       cards.innerHTML = '';
-      ps.forEach((playlist) => cards.append(newPlaylistCard(playlist)));
+      ps.forEach((playlist, index) => {
+        const cardElement = newPlaylistCard(playlist);
+        cards.append(cardElement);
+
+        // Add click tracking
+        cardElement.addEventListener('click', () => {
+          const block = cardElement.closest('.block');
+          const cardHeader = block?.getAttribute('data-block-name') || 'playlist-browse';
+          const cardPosition = String(index + 1);
+
+          pushBrowseCardClickEvent(
+            'browseCardClicked',
+            {
+              contentType: 'playlist',
+              viewLink: playlist.path,
+              title: playlist.title,
+              product: playlist.solution ? playlist.solution.split(',').map((s) => s.trim()) : [],
+            },
+            cardHeader,
+            cardPosition,
+          );
+        });
+      });
       window.scrollTo({ top: 0 });
     };
 
