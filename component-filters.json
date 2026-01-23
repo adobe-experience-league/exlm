@@ -402,7 +402,8 @@
           "wrapInParagraphs": true
         }
       }
-    }
+    },
+    "components": ["richtext"]
   },
   {
     "id": "cards",
