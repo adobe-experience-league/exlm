@@ -166,6 +166,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "longDescr",
         "value": "",
@@ -174,6 +175,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "shortDescr",
         "value": "",
@@ -773,6 +775,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -1331,6 +1334,7 @@
           "===": [{ "var": "classes" }, "text"]
         },
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "richtext",
         "value": "<p>List text content</p>",
@@ -1541,6 +1545,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "cardDescription",
         "value": "",
@@ -2081,6 +2086,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "longDescr",
         "value": "",
@@ -2641,6 +2647,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "longDescr",
         "value": "",
@@ -2870,6 +2877,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "body",
         "value": "",
@@ -2957,6 +2965,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -3536,6 +3545,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "name": "description",
         "value": "",
         "label": "Description",
@@ -3682,6 +3692,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -4352,6 +4363,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "content",
         "value": "",
@@ -4434,6 +4446,7 @@
     "fields": [
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "navigation",
         "value": "",
@@ -4912,6 +4925,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "block-quote",
         "value": "",
@@ -4925,6 +4939,7 @@
     "fields": [
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "first-callout-text",
         "value": "",
@@ -4950,6 +4965,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "second-callout-text",
         "value": "",
@@ -5021,6 +5037,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "author-description",
         "value": "",
@@ -5140,6 +5157,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "authors_description",
         "value": "",
@@ -5239,6 +5257,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "collect-data-description",
         "value": "",
@@ -5253,6 +5272,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "email-description",
         "value": "",
@@ -5260,6 +5280,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "legal",
         "value": "",
@@ -5414,6 +5435,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -5466,6 +5488,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -5563,6 +5586,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -5616,6 +5640,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -5727,6 +5752,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -5959,6 +5985,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -6361,6 +6388,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -6836,6 +6864,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -7318,6 +7347,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -7385,6 +7415,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -7447,6 +7478,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -7504,6 +7536,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -7532,6 +7565,7 @@
     "fields": [
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "text",
         "value": "<a href=\"/\">:adobe-red-logo:</a>",
@@ -7545,6 +7579,7 @@
     "fields": [
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "text",
         "value": "<a href=\"/\">Experience League</a>",
@@ -7558,6 +7593,7 @@
     "fields": [
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "text",
         "value": "",
@@ -7571,6 +7607,7 @@
     "fields": [
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "link",
         "value": "<a href=\"/en/search\">Search</a>",
@@ -7587,6 +7624,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "list",
         "value": "<ul><li>All:All</li><li>Certification:Certification</li><li>Community:Community</li><li>Courses:Course</li><li>Documentation:Documentation</li><li>Events:Event</li><li>Perspectives:Perspective</li><li>Playlists:Playlist</li><li>Troubleshooting:Troubleshooting</li><li>Tutorials:Tutorial</li></ul>",
@@ -7613,6 +7651,7 @@
     "fields": [
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "sign-in-link",
         "value": "<a href=\"#\">Sign in</a>",
@@ -7626,6 +7665,7 @@
     "fields": [
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "profile-menu-links",
         "value": "<a href=\"/en/home/profile-settings\" title=\"My learning profile\">My learning profile</a><a href=\"/en/home/bookmarks\" title=\"Bookmarked content\">Bookmarked content</a><a href=\"#\" title=\"Sign out\">Sign out</a>",
@@ -7639,6 +7679,7 @@
     "fields": [
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "product-grid-links",
         "value": "<a href=\"https://experience.adobe.com/\" title=\"Adobe Experience Cloud\">Adobe Experience Cloud</a><a href=\"https://documentcloud.adobe.com/link/home/\" title=\"Adobe Document Cloud\">Adobe Document Cloud</a>",
@@ -7757,6 +7798,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "code",
         "value": "",
@@ -7797,6 +7839,7 @@
     "fields": [
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "text",
         "value": "<a href='/'>Home</a><a data-id='footer-breadcrumb' href='/'>Experience League</a>",
@@ -7809,6 +7852,7 @@
     "fields": [
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "text",
         "value": "",
@@ -7822,6 +7866,7 @@
     "fields": [
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "text",
         "value": "",
@@ -7834,6 +7879,7 @@
     "fields": [
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "text",
         "value": "",
@@ -7862,6 +7908,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -7973,6 +8020,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "quizDescription",
         "value": "",
@@ -8024,6 +8072,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -8123,6 +8172,7 @@
     "fields": [
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "question",
         "value": "",
@@ -8138,6 +8188,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "answers",
         "value": "",
@@ -8204,6 +8255,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "cardDescription",
         "value": "",
@@ -8319,6 +8371,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "frontContent",
         "value": "",
@@ -8327,6 +8380,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "backContent",
         "value": "",
@@ -8430,6 +8484,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "courseInfoDescription",
         "value": "",
@@ -8511,6 +8566,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -8665,6 +8721,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -8733,6 +8790,7 @@
       },
       {
         "component": "richtext",
+        "filter": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
