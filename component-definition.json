@@ -38,7 +38,8 @@
               "page": {
                 "resourceType": "core/franklin/components/text/v1/text",
                 "template": {
-                  "text": "<p>Placeholder text</p>"
+                  "text": "<p>Placeholder text</p>",
+                  "filter": "text"
                 }
               }
             }
