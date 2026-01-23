@@ -556,7 +556,8 @@
                 "template": {
                   "name": "Block Quote",
                   "model": "block-quote",
-                  "title": "Block Quote"
+                  "title": "Block Quote",
+                  "filter": "text"
                 }
               }
             }
