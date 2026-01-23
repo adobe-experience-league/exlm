@@ -74,18 +74,47 @@ function contructDateAdvancedQuery(dateCriteria) {
  * @returns {Array} Array of Coveo facet objects.
  * @private
  */
-function constructCoveoFacet(facets) {
-  const facetsArray = facets.map((facet) => ({
-    facetId: `@${facet.id}`,
-    field: facet.id,
-    type: facet.type,
-    numberOfValues: facet.currentValues?.length || 2,
-    currentValues: facet.currentValues.map((value) => ({
-      value,
-      state: value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? 'idle' : 'selected',
-      ...(value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? { children: COMMUNITY_SEARCH_FACET } : []),
-    })),
-  }));
+function constructCoveoFacet(facets, param) {
+  const facetsArray = facets.map((facet) => {
+    const facetObject = {
+      facetId: `@${facet.id}`,
+      field: facet.id,
+      type: facet.type,
+    };
+    const sourceValues = param[`${facet.id}_all`]?.length ? param[`${facet.id}_all`] : facet.currentValues || [];
+    facetObject.numberOfValues = sourceValues.length || 2;
+
+    facetObject.currentValues = sourceValues.map((value) => {
+      const isSelected = value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? false : facet.currentValues?.includes(value);
+
+      return {
+        value,
+        state: isSelected ? 'selected' : 'idle',
+        ...(value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? { children: COMMUNITY_SEARCH_FACET } : {}),
+      };
+    });
+
+    return facetObject;
+  });
+  Object.keys(param).forEach((paramKey) => {
+    if (!paramKey.endsWith('_all')) return;
+
+    const facetKey = paramKey.replace('_all', '');
+    const facetExists = facetsArray.some((facetDetail) => facetDetail.field === facetKey);
+    if (facetExists) return;
+
+    const listOfValues = param[paramKey];
+    facetsArray.push({
+      facetId: `@${facetKey}`,
+      field: facetKey,
+      type: 'specific',
+      currentValues: listOfValues.map((value) => ({
+        value,
+        state: 'idle',
+      })),
+      numberOfValues: listOfValues.length || 2,
+    });
+  });
   return facetsArray;
 }
 
@@ -138,7 +167,7 @@ export function getFacets(param) {
     ...(param.eventSeries ? [{ id: 'el_event_series', type: 'specific', currentValues: param.eventSeries }] : []),
   ];
 
-  return constructCoveoFacet(facets);
+  return constructCoveoFacet(facets, param);
 }
 
 export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) {
