@@ -383,16 +383,27 @@
   {
     "id": "text",
     "rte": {
-      "format": ["bold", "italic"],
-      "alignment": [],
-      "indentation": [],
-      "sr_script": ["superscript", "subscript"],
-      "list": ["bullist", "numlist"],
-      "insert": ["link"],
-      "advanced": [],
-      "extensions": [],
-      "editor": ["removeformat"]
-    }
+      "toolbar": {
+        "format": ["bold", "italic"],
+        "alignment": [],
+        "indentation": [],
+        "sr_script": ["superscript", "subscript"],
+        "list": ["bullet_list", "ordered_list"],
+        "insert": ["link"],
+        "advanced": [],
+        "extensions": [],
+        "editor": ["removeformat"]
+      },
+      "actions": {
+        "bullet_list": {
+          "wrapInParagraphs": true
+        },
+        "ordered_list": {
+          "wrapInParagraphs": true
+        }
+      }
+    },
+    "components": ["richtext"]
   },
   {
     "id": "cards",

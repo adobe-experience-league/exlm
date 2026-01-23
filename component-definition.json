@@ -38,7 +38,8 @@
               "page": {
                 "resourceType": "core/franklin/components/text/v1/text",
                 "template": {
-                  "text": "<p>Placeholder text</p>"
+                  "text": "<p>Placeholder text</p>",
+                  "filter": "text"
                 }
               }
             }
@@ -78,6 +79,7 @@
                     "sling:resourceType": "core/franklin/components/text/v1/text",
                     "name": "Text",
                     "model": "text",
+                    "filter": "text",
                     "text": "<p>[Insert page summary here. 1-2 sentences are recommended for the page summary.]<br><br>To configure the page title, article author(s), and tags, navigate to Page-level properties by clicking Content Tree -&gt; Page -&gt; Properties. (remove this with text)</p>"
                   },
                   "article-tags": {
@@ -89,6 +91,7 @@
                     "sling:resourceType": "core/franklin/components/text/v1/text",
                     "name": "Text",
                     "model": "text",
+                    "filter": "text",
                     "text": "<p>[Insert article body content here. Add additional blocks below as needed]</p>"
                   },
                   "social-share": {
