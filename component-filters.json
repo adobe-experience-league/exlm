@@ -403,6 +403,31 @@
         }
       }
     },
+    "components": ["richtext"]
+  },
+  {
+    "id": "custom-rte",
+    "rte": {
+      "toolbar": {
+        "format": ["bold", "italic"],
+        "alignment": [],
+        "indentation": [],
+        "sr_script": ["superscript", "subscript"],
+        "list": ["bullet_list", "ordered_list"],
+        "insert": ["link"],
+        "advanced": [],
+        "extensions": [],
+        "editor": ["removeformat"]
+      },
+      "actions": {
+        "bullet_list": {
+          "wrapInParagraphs": true
+        },
+        "ordered_list": {
+          "wrapInParagraphs": true
+        }
+      }
+    },
     "components": ["richtext", "block-quote"]
   },
   {

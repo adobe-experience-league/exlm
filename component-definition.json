@@ -557,7 +557,7 @@
                   "name": "Block Quote",
                   "model": "block-quote",
                   "title": "Block Quote",
-                  "filter": "text"
+                  "filter": "custom-rte"
                 }
               }
             }
