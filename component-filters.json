@@ -403,7 +403,7 @@
         }
       }
     },
-    "components": ["richtext"]
+    "components": ["richtext", "block-quote"]
   },
   {
     "id": "cards",

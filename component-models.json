@@ -4892,7 +4892,6 @@
   },
   {
     "id": "block-quote",
-    "filter": "text",
     "fields": [
       {
         "component": "select",
