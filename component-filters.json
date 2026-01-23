@@ -388,17 +388,17 @@
         "alignment": [],
         "indentation": [],
         "sr_script": ["superscript", "subscript"],
-        "list": ["bullet_list", "ordered_list"],
+        "list": ["bullist", "numlist"],
         "insert": ["link"],
         "advanced": [],
         "extensions": [],
         "editor": ["removeformat"]
       },
       "actions": {
-        "bullet_list": {
+        "bullist": {
           "wrapInParagraphs": true
         },
-        "ordered_list": {
+        "numlist": {
           "wrapInParagraphs": true
         }
       }
