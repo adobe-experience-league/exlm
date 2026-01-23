@@ -4892,7 +4892,6 @@
   },
   {
     "id": "block-quote",
-    "filter": "text",
     "fields": [
       {
         "component": "select",
@@ -4923,7 +4922,6 @@
   },
   {
     "id": "callout",
-    "filter": "text",
     "fields": [
       {
         "component": "richtext",
