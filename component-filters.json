@@ -392,21 +392,17 @@
         "insert": ["link"],
         "advanced": [],
         "extensions": [],
-        "editor": ["removeformat"]
+        "editor": []
       },
       "actions": {
         "bullist": {
-          "wrapInParagraphs": true, // <ul><li><p>content</p></li></ul>
-          "shortcut": "Mod-Shift-8", // Custom shortcut
-          "label": "Bullet List" // Custom label
+          "wrapInParagraphs": true
         },
         "numlist": {
-          "wrapInParagraphs": true, // <ol><li>content</li></ol> (default)
-          "shortcut": "Mod-Shift-9"
+          "wrapInParagraphs": true
         }
       }
-    },
-    "components": ["text"]
+    }
   },
   {
     "id": "cards",
