@@ -1031,7 +1031,7 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
       component: componentName,
       componentID,
       linkTitle: cardData?.title || '',
-      linkType: cardHeader,
+      linkType: hasViewSwitcher && viewType ? `${viewType} | ${cardHeader}` : cardHeader,
       destinationDomain: cardData?.viewLink || '',
       contentType: cardData?.contentType?.toLowerCase().trim() || '',
       solution: cardSolution || '',
