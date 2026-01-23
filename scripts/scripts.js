@@ -21,6 +21,7 @@ import {
   loadBlock,
 } from './lib-franklin.js';
 import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
+import isFeatureEnabled from './utils/feature-flag-utils.js';
 
 /**
  * please do not import any other modules here, as this file is used in the critical path.
@@ -1057,8 +1058,10 @@ async function loadLazy(doc) {
   await loadThemes();
   if (preMain) await loadBlocks(preMain);
   await loadBlocks(main);
-  const { setupComponentImpressions } = await import('./analytics/lib-analytics.js');
-  setupComponentImpressions();
+  if (isFeatureEnabled('isComponentImpressionsEnabled')) {
+    const { setupComponentImpressions } = await import('./analytics/lib-analytics.js');
+    setupComponentImpressions();
+  }
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
