@@ -428,7 +428,7 @@
         }
       }
     },
-    "components": ["richtext", "block-quote"]
+    "components": []
   },
   {
     "id": "cards",
