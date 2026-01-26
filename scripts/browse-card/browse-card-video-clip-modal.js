@@ -1,6 +1,6 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
-import { pushVideoEvent } from '../analytics/lib-analytics.js';
+import { pushVideoEvent, pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 import { getLocalizedVideoUrl } from '../utils/video-utils.js';
 
 export const isCompactUIMode = () => window.matchMedia('(max-width: 1023px)').matches;
@@ -46,6 +46,8 @@ export class BrowseCardVideoClipModal {
    */
   constructor(options) {
     this.model = options?.model || {};
+    this.cardHeader = options?.cardHeader || '';
+    this.cardPosition = options?.cardPosition || '';
 
     if (BrowseCardVideoClipModal.activeInstance) {
       // If the same video clip is clicked (check by id), just return the existing instance
@@ -298,6 +300,8 @@ export class BrowseCardVideoClipModal {
             description: this.model.description || '',
             url: this.model.videoURL || '',
             duration: this.model.duration || '',
+            solution: this.model.product?.[0] || '',
+            fullSolution: this.model.product?.join(', ') || '',
           });
         }
       }
@@ -338,6 +342,21 @@ export class BrowseCardVideoClipModal {
 
     // Prevent body scrolling
     document.body.style.overflow = 'hidden';
+
+    // Trigger browse card click event
+    const product = Array.isArray(this.model.product) ? this.model.product : [];
+
+    pushBrowseCardClickEvent(
+      'browseCardClicked',
+      {
+        contentType: 'video clip',
+        viewLink: this.model.parentURL || this.model.videoURL || '',
+        title: this.model.title || '',
+        product,
+      },
+      this.cardHeader || 'video-clip-modal',
+      this.cardPosition || '1',
+    );
   }
 
   close() {

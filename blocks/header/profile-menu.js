@@ -15,9 +15,11 @@ const communityLocalesMap = new Map([
   ['sv', 'en'],
   ['nl', 'en'],
   ['it', 'en'],
-  ['zh-hans', 'en'],
-  ['zh-hant', 'en'],
+  ['zh-hans', 'zh'],
+  ['zh-hant', 'zh'],
 ]);
+
+export const formatTitleCase = (str) => str.replace(/[-\s]/g, '').replace(/\b\w/g, (match) => match.toUpperCase());
 
 async function fetchCommunityProfileData(url = khorosProfileUrl) {
   const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
@@ -195,14 +197,17 @@ export default class ProfileMenu extends HTMLElement {
               communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
             if (res.data.menu.length > 0) {
               res.data.menu.forEach((item) => {
-                if (item.title && item.url) {
-                  const link = htmlToElement(`<a href="${item.url}" title="">${item.title}</a>`);
+                if (item.title && item.url && item.id) {
+                  const menuTitle = placeholders?.[`community${formatTitleCase(item.id)}`] || item.title;
+                  const link = htmlToElement(
+                    `<a href="${item.url}?lang=${locale}" title="${menuTitle}">${menuTitle}</a>`,
+                  );
                   communityLinks.append(link);
                 }
               });
             } else {
               const link = htmlToElement(
-                `<a href="https://experienceleaguecommunities.adobe.com/?profile.language=${locale}">${
+                `<a href="https://experienceleaguecommunities.adobe.com/?lang=${locale}">${
                   placeholders?.communityLink || 'Community'
                 }</a>`,
               );
