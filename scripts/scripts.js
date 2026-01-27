@@ -969,7 +969,7 @@ const loadMartech = async (headerPromise, footerPromise) => {
       console.error('Error getting pageLoadModel:', e);
     }
 
-    if (isFeatureEnabled('isAimMetricsEnabled')) {
+    if (isFeatureEnabled('isComponentImpressionEnabled')) {
       setupComponentImpressions();
     }
 
