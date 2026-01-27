@@ -1,5 +1,3 @@
-import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
-
 export default async function decorate(block) {
   const cards = block.querySelectorAll('div > div');
   const allCards = Array.from(block.children);
@@ -22,34 +20,32 @@ export default async function decorate(block) {
       backFace.classList.add('active');
     }
 
-    if (isFeatureEnabled('isAimMetricsEnabled')) {
-      if (!card || !block) return;
+    if (!card || !block) return;
 
-      // Get the title from the active face
-      const activeFace = card.querySelector('.active');
-      const titleElement = activeFace?.querySelector('.flip-card-title');
-      const cardTitle = titleElement?.textContent?.trim() || '';
+    // Get the title from the active face
+    const activeFace = card.querySelector('.active');
+    const titleElement = activeFace?.querySelector('.flip-card-title');
+    const cardTitle = titleElement?.textContent?.trim() || '';
 
-      // Get card header for linkType
-      const cardHeaderElement = card.querySelector('h1, h2, h3, h4');
-      const blockHeader = cardHeaderElement?.textContent?.trim() || 'flip-card';
+    // Get card header for linkType
+    const cardHeaderElement = card.querySelector('h1, h2, h3, h4');
+    const blockHeader = cardHeaderElement?.textContent?.trim() || 'flip-card';
 
-      // Dynamic import for analytics functions
-      const { pushComponentClick, generateComponentID } = await import('../../scripts/analytics/lib-analytics.js');
-      const componentID = generateComponentID(block, 'flip-card');
+    // Dynamic import for analytics functions
+    const { pushComponentClick, generateComponentID } = await import('../../scripts/analytics/lib-analytics.js');
+    const componentID = generateComponentID(block, 'flip-card');
 
-      pushComponentClick({
-        component: 'flip-card',
-        componentID,
-        linkTitle: cardTitle,
-        linkType: blockHeader,
-        destinationDomain: '',
-        contentType: '',
-        solution: '',
-        fullSolution: '',
-        position: cardPosition,
-      });
-    }
+    pushComponentClick({
+      component: 'flip-card',
+      componentID,
+      linkTitle: cardTitle,
+      linkType: blockHeader,
+      destinationDomain: '',
+      contentType: '',
+      solution: '',
+      fullSolution: '',
+      position: cardPosition,
+    });
   }
 
   cards.forEach((card, index) => {

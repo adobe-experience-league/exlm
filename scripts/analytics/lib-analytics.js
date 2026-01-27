@@ -485,17 +485,14 @@ export async function pushLinkClick(e) {
   };
 
   // Only trigger componentClick here for non-browse-card components
-  // Check feature flag before executing componentClick logic
-  if (isFeatureEnabled('isAimMetricsEnabled')) {
-    if (!hasBrowseCardClass(component) && !hasBrowseCardClass(e.target)) {
-      pushComponentClick({
-        component: componentName,
-        componentID,
-        linkTitle,
-        linkType: headerText,
-        destinationDomain,
-      });
-    }
+  if (!hasBrowseCardClass(component) && !hasBrowseCardClass(e.target)) {
+    pushComponentClick({
+      component: componentName,
+      componentID,
+      linkTitle,
+      linkType: headerText,
+      destinationDomain,
+    });
   }
 }
 
@@ -1018,33 +1015,31 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
 
   window.adobeDataLayer.push(dataLayerEntry);
 
-  if (isFeatureEnabled('isAimMetricsEnabled')) {
-    // Check if the click was on a user-action (bookmark or copy link buttons)
-    const isUserAction = document.activeElement?.closest('.user-actions') !== null;
+  // Check if the click was on a user-action (bookmark or copy link buttons)
+  const isUserAction = document.activeElement?.closest('.user-actions') !== null;
 
-    // Only trigger componentClick event if not a user-action click
-    if (!isUserAction) {
-      // Get the component name
-      let componentName = 'browse-card';
-      const browseCardElement = document.activeElement?.closest('[data-block-name]');
-      if (browseCardElement && browseCardElement.dataset.blockName) {
-        componentName = browseCardElement.dataset.blockName;
-      }
-
-      const componentID = generateComponentID(browseCardElement, componentName);
-
-      pushComponentClick({
-        component: componentName,
-        componentID,
-        linkTitle: cardData?.title || '',
-        linkType: hasViewSwitcher && viewType ? `${viewType} | ${cardHeader}` : cardHeader,
-        destinationDomain: cardData?.viewLink || '',
-        contentType: cardData?.contentType?.toLowerCase().trim() || '',
-        solution: cardSolution || '',
-        fullSolution: cardFullSolution || '',
-        position: cardPosition,
-      });
+  // Only trigger componentClick event if not a user-action click
+  if (!isUserAction) {
+    // Get the component name
+    let componentName = 'browse-card';
+    const browseCardElement = document.activeElement?.closest('[data-block-name]');
+    if (browseCardElement && browseCardElement.dataset.blockName) {
+      componentName = browseCardElement.dataset.blockName;
     }
+
+    const componentID = generateComponentID(browseCardElement, componentName);
+
+    pushComponentClick({
+      component: componentName,
+      componentID,
+      linkTitle: cardData?.title || '',
+      linkType: hasViewSwitcher && viewType ? `${viewType} | ${cardHeader}` : cardHeader,
+      destinationDomain: cardData?.viewLink || '',
+      contentType: cardData?.contentType?.toLowerCase().trim() || '',
+      solution: cardSolution || '',
+      fullSolution: cardFullSolution || '',
+      position: cardPosition,
+    });
   }
 }
 
