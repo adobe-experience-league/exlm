@@ -486,7 +486,7 @@ export async function pushLinkClick(e) {
 
   // Only trigger componentClick here for non-browse-card components
   // Check feature flag before executing componentClick logic
-  if (isFeatureEnabled('isComponentclickEnabled')) {
+  if (isFeatureEnabled('isAimMetricsEnabled')) {
     if (!hasBrowseCardClass(component) && !hasBrowseCardClass(e.target)) {
       pushComponentClick({
         component: componentName,
@@ -1018,7 +1018,7 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
 
   window.adobeDataLayer.push(dataLayerEntry);
 
-  if (isFeatureEnabled('isComponentclickEnabled')) {
+  if (isFeatureEnabled('isAimMetricsEnabled')) {
     // Check if the click was on a user-action (bookmark or copy link buttons)
     const isUserAction = document.activeElement?.closest('.user-actions') !== null;
 
