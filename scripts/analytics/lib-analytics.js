@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 
+import isFeatureEnabled from '../utils/feature-flag-utils.js';
+
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 const lang = document.querySelector('html').lang || 'en';
 export const search = window.location.pathname === '/search.html' || window.location.pathname === `/${lang}/search`;
@@ -483,14 +485,17 @@ export async function pushLinkClick(e) {
   };
 
   // Only trigger componentClick here for non-browse-card components
-  if (!hasBrowseCardClass(component) && !hasBrowseCardClass(e.target)) {
-    pushComponentClick({
-      component: componentName,
-      componentID,
-      linkTitle,
-      linkType: headerText,
-      destinationDomain,
-    });
+  // Check feature flag before executing componentClick logic
+  if (isFeatureEnabled('isComponentclickEnabled')) {
+    if (!hasBrowseCardClass(component) && !hasBrowseCardClass(e.target)) {
+      pushComponentClick({
+        component: componentName,
+        componentID,
+        linkTitle,
+        linkType: headerText,
+        destinationDomain,
+      });
+    }
   }
 }
 
@@ -1013,31 +1018,33 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
 
   window.adobeDataLayer.push(dataLayerEntry);
 
-  // Check if the click was on a user-action (bookmark or copy link buttons)
-  const isUserAction = document.activeElement?.closest('.user-actions') !== null;
+  if (isFeatureEnabled('isComponentclickEnabled')) {
+    // Check if the click was on a user-action (bookmark or copy link buttons)
+    const isUserAction = document.activeElement?.closest('.user-actions') !== null;
 
-  // Only trigger componentClick event if not a user-action click
-  if (!isUserAction) {
-    // Get the component name
-    let componentName = 'browse-card';
-    const browseCardElement = document.activeElement?.closest('[data-block-name]');
-    if (browseCardElement && browseCardElement.dataset.blockName) {
-      componentName = browseCardElement.dataset.blockName;
+    // Only trigger componentClick event if not a user-action click
+    if (!isUserAction) {
+      // Get the component name
+      let componentName = 'browse-card';
+      const browseCardElement = document.activeElement?.closest('[data-block-name]');
+      if (browseCardElement && browseCardElement.dataset.blockName) {
+        componentName = browseCardElement.dataset.blockName;
+      }
+
+      const componentID = generateComponentID(browseCardElement, componentName);
+
+      pushComponentClick({
+        component: componentName,
+        componentID,
+        linkTitle: cardData?.title || '',
+        linkType: hasViewSwitcher && viewType ? `${viewType} | ${cardHeader}` : cardHeader,
+        destinationDomain: cardData?.viewLink || '',
+        contentType: cardData?.contentType?.toLowerCase().trim() || '',
+        solution: cardSolution || '',
+        fullSolution: cardFullSolution || '',
+        position: cardPosition,
+      });
     }
-
-    const componentID = generateComponentID(browseCardElement, componentName);
-
-    pushComponentClick({
-      component: componentName,
-      componentID,
-      linkTitle: cardData?.title || '',
-      linkType: hasViewSwitcher && viewType ? `${viewType} | ${cardHeader}` : cardHeader,
-      destinationDomain: cardData?.viewLink || '',
-      contentType: cardData?.contentType?.toLowerCase().trim() || '',
-      solution: cardSolution || '',
-      fullSolution: cardFullSolution || '',
-      position: cardPosition,
-    });
   }
 }
 

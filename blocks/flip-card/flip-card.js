@@ -1,4 +1,5 @@
 import { pushComponentClick, generateComponentID } from '../../scripts/analytics/lib-analytics.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 export default async function decorate(block) {
   const cards = block.querySelectorAll('div > div');
@@ -22,27 +23,29 @@ export default async function decorate(block) {
       backFace.classList.add('active');
     }
 
-    // Get the title from the active face
-    const activeFace = card.querySelector('.active');
-    const titleElement = activeFace?.querySelector('.flip-card-title');
-    const cardTitle = titleElement?.textContent?.trim() || '';
+    if (isFeatureEnabled('isComponentclickEnabled')) {
+      // Get the title from the active face
+      const activeFace = card.querySelector('.active');
+      const titleElement = activeFace?.querySelector('.flip-card-title');
+      const cardTitle = titleElement?.textContent?.trim() || '';
 
-    // Get block header for linkType
-    const blockHeader = block.querySelector('h1, h2, h3, h4')?.textContent?.trim() || 'flip-card';
+      // Get block header for linkType
+      const blockHeader = block.querySelector('h1, h2, h3, h4')?.textContent?.trim() || 'flip-card';
 
-    const componentID = generateComponentID(block, 'flip-card');
+      const componentID = generateComponentID(block, 'flip-card');
 
-    pushComponentClick({
-      component: 'flip-card',
-      componentID,
-      linkTitle: cardTitle,
-      linkType: blockHeader,
-      destinationDomain: '',
-      contentType: '',
-      solution: '',
-      fullSolution: '',
-      position: cardPosition,
-    });
+      pushComponentClick({
+        component: 'flip-card',
+        componentID,
+        linkTitle: cardTitle,
+        linkType: blockHeader,
+        destinationDomain: '',
+        contentType: '',
+        solution: '',
+        fullSolution: '',
+        position: cardPosition,
+      });
+    }
   }
 
   cards.forEach((card, index) => {
