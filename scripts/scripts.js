@@ -1058,7 +1058,7 @@ async function loadLazy(doc) {
   await loadThemes();
   if (preMain) await loadBlocks(preMain);
   await loadBlocks(main);
-  if (isFeatureEnabled('isComponentImpressionsEnabled')) {
+  if (isFeatureEnabled('isAimMetricsEnabled')) {
     const { setupComponentImpressions } = await import('./analytics/lib-analytics.js');
     setupComponentImpressions();
   }
