@@ -31,7 +31,7 @@ export default async function decorate(block) {
       const titleElement = activeFace?.querySelector('.flip-card-title');
       const cardTitle = titleElement?.textContent?.trim() || '';
 
-      // Get card header for linkType 
+      // Get card header for linkType
       const cardHeaderElement = card.querySelector('h1, h2, h3, h4');
       const blockHeader = cardHeaderElement?.textContent?.trim() || 'flip-card';
 
