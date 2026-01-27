@@ -956,7 +956,7 @@ const loadMartech = async (headerPromise, footerPromise) => {
   // eslint-disable-next-line import/no-cycle
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
   libAnalyticsPromise.then(async (libAnalyticsModule) => {
-    const { pushPageDataLayer, pushLinkClick } = libAnalyticsModule;
+    const { pushPageDataLayer, pushLinkClick, setupComponentImpressions } = libAnalyticsModule;
     const { lang } = getPathDetails();
 
     try {
@@ -968,6 +968,11 @@ const loadMartech = async (headerPromise, footerPromise) => {
       // eslint-disable-next-line no-console
       console.error('Error getting pageLoadModel:', e);
     }
+
+    if (isFeatureEnabled('isAimMetricsEnabled')) {
+      setupComponentImpressions();
+    }
+
     Promise.allSettled([headerPromise, footerPromise]).then(() => {
       const linkClicked = document.querySelectorAll('a,.view-more-less span, .language-selector-popover span');
       const clickHandler = (e) => {
@@ -1058,10 +1063,6 @@ async function loadLazy(doc) {
   await loadThemes();
   if (preMain) await loadBlocks(preMain);
   await loadBlocks(main);
-  if (isFeatureEnabled('isAimMetricsEnabled')) {
-    const { setupComponentImpressions } = await import('./analytics/lib-analytics.js');
-    setupComponentImpressions();
-  }
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
