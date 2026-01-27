@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 const lang = document.querySelector('html').lang || 'en';
 export const search = window.location.pathname === '/search.html' || window.location.pathname === `/${lang}/search`;
