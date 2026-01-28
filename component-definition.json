@@ -38,7 +38,8 @@
               "page": {
                 "resourceType": "core/franklin/components/text/v1/text",
                 "template": {
-                  "text": "<p>Placeholder text</p>"
+                  "text": "<p>Placeholder text</p>",
+                  "filter": "text"
                 }
               }
             }
@@ -78,6 +79,7 @@
                     "sling:resourceType": "core/franklin/components/text/v1/text",
                     "name": "Text",
                     "model": "text",
+                    "filter": "text",
                     "text": "<p>[Insert page summary here. 1-2 sentences are recommended for the page summary.]<br><br>To configure the page title, article author(s), and tags, navigate to Page-level properties by clicking Content Tree -&gt; Page -&gt; Properties. (remove this with text)</p>"
                   },
                   "article-tags": {
@@ -89,6 +91,7 @@
                     "sling:resourceType": "core/franklin/components/text/v1/text",
                     "name": "Text",
                     "model": "text",
+                    "filter": "text",
                     "text": "<p>[Insert article body content here. Add additional blocks below as needed]</p>"
                   },
                   "social-share": {
@@ -311,6 +314,7 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Accordion",
                     "model": "accordion",
+                    "filter": "text",
                     "heading": "Lorem ipsum",
                     "headingType": "h3",
                     "body": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
@@ -330,6 +334,7 @@
                 "template": {
                   "name": "Accordion",
                   "model": "accordion",
+                  "filter": "text",
                   "heading": "Lorem ipsum",
                   "body": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
                 }
@@ -454,7 +459,8 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Author Bio",
-                  "model": "author-bio"
+                  "model": "author-bio",
+                  "filter": "text"
                 }
               }
             }
@@ -552,7 +558,8 @@
                 "template": {
                   "name": "Block Quote",
                   "model": "block-quote",
-                  "title": "Block Quote"
+                  "title": "Block Quote",
+                  "filter": "text"
                 }
               }
             }
@@ -647,7 +654,8 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Callout",
-                  "model": "callout"
+                  "model": "callout",
+                  "filter": "text"
                 }
               }
             }
@@ -703,7 +711,8 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "List Content",
-                  "model": "list-content"
+                  "model": "list-content",
+                  "filter": "text"
                 }
               }
             }
@@ -838,6 +847,7 @@
                 "template": {
                   "name": "Course Recap",
                   "model": "course-recap",
+                  "filter": "text",
                   "title": "Course Recap",
                   "titleType": "h3",
                   "description": "<ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li><li>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</li><li>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</li></ul>"
@@ -1064,6 +1074,7 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Flip Card Item",
                     "model": "flip-card-item",
+                    "filter": "text",
                     "frontTitle": "Front Title",
                     "frontTitleType": "h3",
                     "backTitle": "Back Title",
@@ -1075,6 +1086,7 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Flip Card Item",
                     "model": "flip-card-item",
+                    "filter": "text",
                     "frontTitle": "Front Title",
                     "frontTitleType": "h3",
                     "backTitle": "Back Title",
@@ -1086,6 +1098,7 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Flip Card Item",
                     "model": "flip-card-item",
+                    "filter": "text",
                     "frontTitle": "Front Title",
                     "frontTitleType": "h3",
                     "backTitle": "Back Title",
@@ -1108,6 +1121,7 @@
                 "template": {
                   "name": "Flip Card Item",
                   "model": "flip-card-item",
+                  "filter": "text",
                   "frontTitle": "Front Title",
                   "frontTitleType": "h3",
                   "backTitle": "Back Title",
@@ -1158,7 +1172,8 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Footer Item",
-                  "model": "footer-item"
+                  "model": "footer-item",
+                  "filter": "text"
                 }
               }
             }
@@ -1352,6 +1367,7 @@
                 "template": {
                   "name": "Media",
                   "model": "media",
+                  "filter": "text",
                   "fileReference": "/content/dam/exlm/Community_headshot_single.png",
                   "title": "Lorem ipsum",
                   "titleType": "h3",
@@ -1420,7 +1436,8 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Nav",
-                  "model": "nav"
+                  "model": "nav",
+                  "filter": "text"
                 }
               }
             }
@@ -1436,6 +1453,7 @@
                 "template": {
                   "name": "Note",
                   "model": "note",
+                  "filter": "text",
                   "classes": "note"
                 }
               }
@@ -1585,6 +1603,7 @@
                 "template": {
                   "name": "Question",
                   "model": "question",
+                  "filter": "text",
                   "question": "Sample question text",
                   "isMultipleChoice": false,
                   "answers": "<ol><li>Answer 1</li><li>Answer 2</li><li>Answer 3</li></ol>",
@@ -1616,6 +1635,7 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Question",
                     "model": "question",
+                    "filter": "text",
                     "question": "Sample question text",
                     "isMultipleChoice": false,
                     "answers": "<ol><li>Answer 1</li><li>Answer 2</li><li>Answer 3</li></ol>",
@@ -1897,6 +1917,7 @@
                     "name": "Tab",
                     "model": "tab",
                     "title": "Tab",
+                    "filter": "text",
                     "content": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
                   }
                 }
@@ -1915,6 +1936,7 @@
                   "name": "Tab",
                   "model": "tab",
                   "title": "Tab",
+                  "filter": "text",
                   "content": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
                 }
               }
