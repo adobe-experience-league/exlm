@@ -20,8 +20,6 @@ export default async function decorate(block) {
       backFace.classList.add('active');
     }
 
-    if (!card || !block) return;
-
     // Get the title from the active face
     const activeFace = card.querySelector('.active');
     const titleElement = activeFace?.querySelector('.flip-card-title');
