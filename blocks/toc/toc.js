@@ -44,9 +44,14 @@ async function fetchV2Toc(tocID) {
     const ul = element.querySelector('ul');
 
     // cleanup: remove <p> tags that are wrapping <a> tags
+    // Preserve target attribute if it exists on the <p> tag
     ul.querySelectorAll('a').forEach((a) => {
       if (a.parentElement && a.parentElement.tagName.toLowerCase() === 'p') {
         const p = a.parentElement;
+        // Preserve target attribute from parent <p> to <a> if present
+        if (p.hasAttribute('target') && !a.hasAttribute('target')) {
+          a.setAttribute('target', p.getAttribute('target'));
+        }
         p.replaceWith(a);
       }
     });
@@ -214,10 +219,29 @@ function updateTocContent(tocHtml, tocContent) {
         ensureElementInView(tocTree, anchor);
       });
     } else {
+      // Handle #_blank pattern for new tab links
+      let finalHref = anchorHref;
+      if (anchorHref.includes('#_blank')) {
+        finalHref = anchorHref.replace('#_blank', '');
+        anchor.setAttribute('target', '_blank');
+      }
+
       // Rewrite docs path to fix language path
-      const rewritePath = rewriteDocsPath(anchorHref);
+      const rewritePath = rewriteDocsPath(finalHref);
       anchor.setAttribute('href', rewritePath);
       anchor.classList.add('toc-item');
+
+      // Set target="_blank" based on link type
+      if (!anchor.hasAttribute('target')) {
+        // Check if it's an external link
+        if (anchor.hostname && anchor.hostname !== window.location.hostname) {
+          anchor.setAttribute('target', '_blank');
+        } else {
+          // For internal links, only add target if explicitly marked in source HTML
+          // If you want ALL TOC links to open in new tabs, uncomment the line below:
+          // anchor.setAttribute('target', '_blank');
+        }
+      }
     }
   });
 }
@@ -449,6 +473,19 @@ export default async function decorate(block) {
   if (matchesAnyTheme(/kb-article/)) return;
   const tocID = block.querySelector('.toc > div > div').textContent;
   if (!tocID && document.querySelector('.toc-dropdown')) return;
+
+  // WORKAROUND: Auto-wrap TOC in toc-container if it's missing
+  const parentSection = block.closest('div');
+  if (parentSection && !parentSection.classList.contains('toc-container')) {
+    // Check if this is a plain div wrapper (not already a proper section)
+    const main = document.querySelector('main');
+    if (main && parentSection.parentElement === main) {
+      parentSection.classList.add('section', 'toc-container');
+      // eslint-disable-next-line no-console
+      console.debug('TOC: Auto-wrapped in toc-container');
+    }
+  }
+
   block.innerHTML = ''; // start clean
   const themeColor = getMetadata('theme-color');
   block.style.setProperty('--toc-theme-color', themeColor);
@@ -469,17 +506,27 @@ export default async function decorate(block) {
 
   const tocReady = fetchToc(tocID);
   // decorate TOC DOM
-  tocReady.then(({ HTML }) => {
-    updateTocContent(HTML, tocContent);
-    activateCurrentPage(tocContent);
-    initializeTocFilter();
+  tocReady
+    .then((data) => {
+      if (!data || !data.HTML) {
+        throw new Error('No TOC data returned');
+      }
+      updateTocContent(data.HTML, tocContent);
+      activateCurrentPage(tocContent);
+      initializeTocFilter();
 
-    // click event for TOC dropdown to open solutions
-    tocMobileDropdown.addEventListener('click', () => {
-      const isExpanded = tocMobileDropdown.getAttribute('aria-expanded') === 'true';
-      tocMobileDropdown.setAttribute('aria-expanded', !isExpanded);
+      // click event for TOC dropdown to open solutions
+      tocMobileDropdown.addEventListener('click', () => {
+        const isExpanded = tocMobileDropdown.getAttribute('aria-expanded') === 'true';
+        tocMobileDropdown.setAttribute('aria-expanded', !isExpanded);
+      });
+    })
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error('Failed to load TOC:', error);
+      // Show error message to user
+      tocContent.innerHTML = '<p class="toc-error">Failed to load table of contents. Please try again later.</p>';
     });
-  });
 
   const spectrumSwitch = document.querySelector('.spectrum-switch input');
 
