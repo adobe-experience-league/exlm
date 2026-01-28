@@ -43,6 +43,9 @@ async function fetchV2Toc(tocID) {
     const element = htmlToElement(html);
     const ul = element.querySelector('ul');
 
+    // TODO: TEMPORARY WORKAROUND - Remove after converter fix is deployed
+    // Converter sometimes wraps <a> tags in <p> tags, causing invalid HTML structure
+    // Fix in progress: exlm-converter (branch: feature/toc-v2-api-target-blank, commit: 691406c)
     // cleanup: remove <p> tags that are wrapping <a> tags
     // Preserve target attribute if it exists on the <p> tag
     ul.querySelectorAll('a').forEach((a) => {
@@ -233,14 +236,12 @@ function updateTocContent(tocHtml, tocContent) {
 
       // Set target="_blank" based on link type
       if (!anchor.hasAttribute('target')) {
-        // Check if it's an external link
+        // Automatically open external links in new tabs
         if (anchor.hostname && anchor.hostname !== window.location.hostname) {
           anchor.setAttribute('target', '_blank');
-        } else {
-          // For internal links, only add target if explicitly marked in source HTML
-          // If you want ALL TOC links to open in new tabs, uncomment the line below:
-          // anchor.setAttribute('target', '_blank');
         }
+        // Note: Internal links stay in same tab unless explicitly marked with target="_blank"
+        // To make ALL TOC links open in new tabs, add: anchor.setAttribute('target', '_blank');
       }
     }
   });
@@ -474,6 +475,9 @@ export default async function decorate(block) {
   const tocID = block.querySelector('.toc > div > div').textContent;
   if (!tocID && document.querySelector('.toc-dropdown')) return;
 
+  // TODO: TEMPORARY WORKAROUND - Remove after converter fix is deployed
+  // V2 TOC HTML is missing 'section toc-container' classes, preventing left nav rail from appearing
+  // Fix deployed: exlm-converter (branch: feature/toc-v2-api-target-blank, commit: 691406c)
   // WORKAROUND: Auto-wrap TOC in toc-container if it's missing
   const parentSection = block.closest('div');
   if (parentSection && !parentSection.classList.contains('toc-container')) {
