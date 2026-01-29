@@ -1,8 +1,10 @@
 import CoveoDataService from '../data-service/coveo/coveo-data-service.js';
 import ADLSDataService from '../data-service/adls-data-service.js';
+import ALMDataService from '../data-service/alm-data-service.js';
 import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
+import ALM_CONTENT_TYPES from '../data-service/alm/alm-constants.js';
 import PathsDataService from '../data-service/paths-data-service.js';
 import { URL_SPECIAL_CASE_LOCALES, getConfig, getPathDetails, fetchLanguagePlaceholders } from '../scripts.js';
 import { getExlPipelineDataSourceParams } from '../data-service/coveo/coveo-exl-pipeline-helpers.js';
@@ -11,7 +13,7 @@ import { createDateCriteria } from './browse-card-utils.js';
 import UpcomingEventsDataService from '../data-service/upcoming-events-data-service.js';
 import BrowseCardsUpcomingEventsAdaptor from './browse-cards-upcoming-events-adaptor.js';
 
-const { upcomingEventsUrl, adlsUrl, pathsUrl } = getConfig();
+const { upcomingEventsUrl, adlsUrl, pathsUrl, almUrl } = getConfig();
 
 const { lang } = getPathDetails();
 
@@ -193,6 +195,50 @@ const BrowseCardsDelegate = (() => {
   };
 
   /**
+   * Constructs search parameters for ALM data service.
+   * @returns {URLSearchParams} Constructed URLSearchParams object.
+   * @private
+   */
+  const constructALMSearchParams = () => {
+    const urlSearchParams = new URLSearchParams();
+    urlSearchParams.append('pageIndex', '1');
+    if (param.solutions) {
+      urlSearchParams.append('solution', param.solutions);
+    }
+    if (param.roles) {
+      urlSearchParams.append('role', param.roles);
+    }
+    if (param.sortBy) {
+      urlSearchParams.append('sort', param.sortBy);
+    }
+    return urlSearchParams;
+  };
+
+  /**
+   * Handles ALM data service to fetch card data.
+   * @returns {Array} Array of card data.
+   * @throws {Error} Throws an error if an issue occurs during data fetching.
+   * @private
+   */
+  const handleALMService = async () => {
+    const dataSource = {
+      url: almUrl,
+      param: constructALMSearchParams(),
+    };
+    const almService = new ALMDataService(dataSource);
+    const cardData = await almService.fetchDataFromSource();
+    if (!cardData) {
+      throw new Error('An error occurred');
+    }
+    // Return raw data for now - adapter will be created later
+    // When adapter is ready, call: BrowseCardsALMAdaptor.mapResultsToCardsData(cardData)
+    if (cardData?.results?.length) {
+      return cardData.results;
+    }
+    return [];
+  };
+
+  /**
    * Constructs search parameters for Paths data service.
    * @returns {URLSearchParams} Constructed URLSearchParams object.
    * @private
@@ -259,6 +305,8 @@ const BrowseCardsDelegate = (() => {
       [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY]: handleUpcomingEventsService,
       [CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY]: handleADLSService,
       [RECOMMENDED_COURSES_CONSTANTS.PATHS.MAPPING_KEY]: handlePathsService,
+      [ALM_CONTENT_TYPES.COHORT.MAPPING_KEY]: handleALMService,
+      [ALM_CONTENT_TYPES.COURSE.MAPPING_KEY]: handleALMService,
     };
 
     // If the content type is an array, use the handleCoveoService (Works only with Coveo related content types)
