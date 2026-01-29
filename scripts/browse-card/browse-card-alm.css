@@ -1,0 +1,75 @@
+/* Course Rating Badge - Bottom right of thumbnail */
+.browse-card.alm-course-card .browse-card-figure {
+  position: relative;
+}
+
+.browse-card-alm-rating-badge {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background-color: rgb(50 20 70 / 90%);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-bold);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 10;
+}
+
+.browse-card-alm-rating-badge .star {
+  color: #fff;
+}
+
+/* ALM Cohort Card - Info row with bullet separators */
+.browse-card-alm-info-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: var(--spectrum-font-size-100);
+  color: var(--text-color);
+}
+
+.browse-card-alm-info-row > span:not(:last-child)::after {
+  content: '•';
+  margin-left: 8px;
+  color: var(--spectrum-gray-600);
+}
+
+.browse-card-alm-info-row .alm-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.browse-card-alm-info-row .alm-rating .star {
+  color: #000;
+}
+
+/* Location Tags */
+.browse-card-alm-locations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.browse-card-alm-location-tag {
+  padding: 6px 12px;
+  background-color: var(--spectrum-gray-200);
+  border-radius: 16px;
+  font-size: var(--spectrum-font-size-75);
+  color: var(--text-color);
+}
+
+/* Course Eyebrow */
+.browse-card-alm-eyebrow {
+  font-size: var(--spectrum-font-size-75);
+  color: var(--spectrum-gray-700);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

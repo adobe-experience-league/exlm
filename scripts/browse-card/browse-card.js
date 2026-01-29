@@ -11,6 +11,7 @@ import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
+import ALM_CONTENT_TYPES from '../data-service/alm/alm-constants.js';
 import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 const bookmarkExclusionContentypes = [
@@ -255,6 +256,88 @@ const buildCourseStatusContent = ({ meta, el_course_module_count, cardContent })
   cardContent.appendChild(statusRow);
 };
 
+/**
+ * Builds ALM Cohort info row: "8 weeks • Advanced level • 4.8 ★"
+ */
+const buildALMCohortInfoRow = (meta, cardContent) => {
+  const parts = [];
+  
+  if (meta?.duration) {
+    parts.push(`<span>${meta.duration}</span>`);
+  }
+  
+  if (meta?.level) {
+    parts.push(`<span>${meta.level}</span>`);
+  }
+  
+  if (meta?.rating?.average) {
+    parts.push(`<span class="alm-rating">${meta.rating.average.toFixed(1)} <span class="star">★</span></span>`);
+  }
+  
+  if (parts.length === 0) return;
+  
+  const infoRow = htmlToElement(`
+    <div class="browse-card-alm-info-row">
+      ${parts.join('')}
+    </div>
+  `);
+  
+  cardContent.appendChild(infoRow);
+};
+
+/**
+ * Builds ALM Cohort location tags
+ */
+const buildALMLocationsContent = (locations, cardContent) => {
+  if (!locations?.length) return;
+
+  const locationsContainer = document.createElement('div');
+  locationsContainer.className = 'browse-card-alm-locations';
+
+  locations.forEach((location) => {
+    const tag = document.createElement('span');
+    tag.className = 'browse-card-alm-location-tag';
+    tag.textContent = location;
+    locationsContainer.appendChild(tag);
+  });
+
+  cardContent.appendChild(locationsContainer);
+};
+
+/**
+ * Builds ALM Course eyebrow text
+ */
+const buildALMEyebrowContent = (text, cardContent) => {
+  if (!text) return;
+  
+  const eyebrow = document.createElement('div');
+  eyebrow.className = 'browse-card-alm-eyebrow';
+  eyebrow.textContent = text;
+  
+  const titleElement = cardContent.querySelector('.browse-card-title-text');
+  if (titleElement) {
+    cardContent.insertBefore(eyebrow, titleElement);
+  }
+};
+
+/**
+ * Builds ALM Course rating badge (positioned in thumbnail area)
+ */
+const buildALMRatingBadge = (rating, card) => {
+  if (!rating?.average) return;
+  
+  const badge = htmlToElement(`
+    <div class="browse-card-alm-rating-badge">
+      ${rating.average.toFixed(1)} <span class="star">★</span>
+    </div>
+  `);
+  
+  const cardFigure = card.querySelector('.browse-card-figure');
+  if (cardFigure) {
+    cardFigure.appendChild(badge);
+  }
+};
+
 const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }) => {
   if (viewLinkText) {
     let icon = null;
@@ -403,6 +486,21 @@ const buildCardContent = async (card, model, element) => {
     }
 
     cardContent.appendChild(authorElement);
+  }
+
+  // ALM Cohort specific content (large card with info row and locations)
+  if (contentType === ALM_CONTENT_TYPES.COHORT.MAPPING_KEY) {
+    buildALMCohortInfoRow(meta, cardContent);
+    
+    if (meta?.locations?.length) {
+      buildALMLocationsContent(meta.locations, cardContent);
+    }
+  }
+
+  // ALM Course specific content (small card with eyebrow)
+  if (contentType === ALM_CONTENT_TYPES.COURSE.MAPPING_KEY) {
+    const eyebrowText = meta?.eyebrow || 'Eyebrow [~20 character]';
+    buildALMEyebrowContent(eyebrowText, cardContent);
   }
 
   const cardOptions = document.createElement('div');
@@ -659,6 +757,11 @@ export async function buildCard(element, model) {
     }
   }
 
+  // ALM Course rating badge in thumbnail
+  if (contentType === ALM_CONTENT_TYPES.COURSE.MAPPING_KEY && model.meta?.rating) {
+    buildALMRatingBadge(model.meta.rating, card);
+  }
+
   if (contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY) {
     buildInProgressBarContent({ inProgressStatus, cardFigure, card });
   }
@@ -702,6 +805,7 @@ export async function buildCard(element, model) {
     cardContent.appendChild(titleElement);
   }
   await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
+  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-alm.css`);
 
   // For course content type, add level and duration info right after the title
   if (type === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()) {
