@@ -79,7 +79,9 @@ const BrowseCardsTargetDataAdapter = (() => {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);
     }
-    let cardData = data.map((result) => mapResultsToCardsDataModel(result)).filter((item) => item !== null);
+    let cardData = Array.isArray(data)
+      ? data?.map((result) => mapResultsToCardsDataModel(result)).filter((item) => item !== null)
+      : [];
 
     // Enrich course cards with status information
     cardData = await enrichWithCourseStatus(cardData);
