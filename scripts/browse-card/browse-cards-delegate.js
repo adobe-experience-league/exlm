@@ -3,6 +3,7 @@ import ADLSDataService from '../data-service/adls-data-service.js';
 import ALMDataService from '../data-service/alm-data-service.js';
 import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
+import BrowseCardsALMAdaptor from './browse-cards-alm-adaptor.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import ALM_CONTENT_TYPES from '../data-service/alm/alm-constants.js';
 import PathsDataService from '../data-service/paths-data-service.js';
@@ -230,10 +231,8 @@ const BrowseCardsDelegate = (() => {
     if (!cardData) {
       throw new Error('An error occurred');
     }
-    // Return raw data for now - adapter will be created later
-    // When adapter is ready, call: BrowseCardsALMAdaptor.mapResultsToCardsData(cardData)
-    if (cardData?.results?.length) {
-      return cardData.results;
+    if (cardData?.length) {
+      return BrowseCardsALMAdaptor.mapResultsToCardsData(cardData);
     }
     return [];
   };
