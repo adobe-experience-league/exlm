@@ -164,7 +164,8 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       const stableAuthId = userData?.authId || userData?.userId || '';
 
       // Detect new signup: true if flag is set OR user hasn't seen signup modal yet
-      const isNewSignUp = userData.newSignUp === true || !userData.interactions?.some((i) => i.event === 'modalSeen');
+      const isNewSignUp =
+        userData.newSignUp === true || !userData.interactions?.some((interaction) => interaction.event === 'modalSeen');
 
       user.userDetails = {
         ...user.userDetails,
