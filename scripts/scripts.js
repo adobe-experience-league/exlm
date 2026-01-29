@@ -21,6 +21,7 @@ import {
   loadBlock,
 } from './lib-franklin.js';
 import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
+import isFeatureEnabled from './utils/feature-flag-utils.js';
 
 /**
  * please do not import any other modules here, as this file is used in the critical path.
@@ -955,7 +956,7 @@ const loadMartech = async (headerPromise, footerPromise) => {
   // eslint-disable-next-line import/no-cycle
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
   libAnalyticsPromise.then(async (libAnalyticsModule) => {
-    const { pushPageDataLayer, pushLinkClick } = libAnalyticsModule;
+    const { pushPageDataLayer, pushLinkClick, setupComponentImpressions } = libAnalyticsModule;
     const { lang } = getPathDetails();
 
     try {
@@ -967,6 +968,11 @@ const loadMartech = async (headerPromise, footerPromise) => {
       // eslint-disable-next-line no-console
       console.error('Error getting pageLoadModel:', e);
     }
+
+    if (isFeatureEnabled('isComponentImpressionEnabled')) {
+      setupComponentImpressions();
+    }
+
     Promise.allSettled([headerPromise, footerPromise]).then(() => {
       const linkClicked = document.querySelectorAll('a,.view-more-less span, .language-selector-popover span');
       const clickHandler = (e) => {
@@ -1057,8 +1063,6 @@ async function loadLazy(doc) {
   await loadThemes();
   if (preMain) await loadBlocks(preMain);
   await loadBlocks(main);
-  const { setupComponentImpressions } = await import('./analytics/lib-analytics.js');
-  setupComponentImpressions();
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;

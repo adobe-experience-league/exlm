@@ -32,7 +32,7 @@ const BrowseCardsADLSAdaptor = (() => {
       formattedPath = !path.startsWith('/') ? `/${path}` : path;
     } else if (paths && Array.isArray(paths) && paths.length > 0) {
       const firstPath = paths[0];
-      formattedPath = firstPath.replace('us-en:/content/athena/us/us-en', '');
+      formattedPath = firstPath.replace(firstPath.split('/courses')[0], '');
     }
 
     return {
