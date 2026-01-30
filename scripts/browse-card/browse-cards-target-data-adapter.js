@@ -84,7 +84,10 @@ const BrowseCardsTargetDataAdapter = (() => {
       : [];
 
     // Enrich course cards with status information
-    cardData = await enrichWithCourseStatus(cardData);
+    const hasCourseCard = cardData.some((card) => card?.contentType === 'course');
+    if (hasCourseCard) {
+      cardData = await enrichWithCourseStatus(cardData);
+    }
 
     return cardData;
   };
