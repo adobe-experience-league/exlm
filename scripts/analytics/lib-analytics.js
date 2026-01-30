@@ -161,6 +161,10 @@ export async function pushPageDataLayer(language, searchTrackingData) {
     if (userData) {
       // Prefer IMS authId so userID remains stable across org/account switches
       const stableAuthId = userData?.authId || userData?.userId || '';
+
+      // Detect new signup: true if user hasn't seen signup modal yet
+      const isNewSignUp = !userData.interactions?.some((interaction) => interaction.event === 'modalSeen');
+
       user.userDetails = {
         ...user.userDetails,
         userAccountType: userData.account_type,
@@ -177,6 +181,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
         org: userData.org || '',
         orgs: userData.orgs || [],
         userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
+        newSignUp: isNewSignUp,
       };
 
       // get a list of all courses titles and ids with awards.timestamp property
