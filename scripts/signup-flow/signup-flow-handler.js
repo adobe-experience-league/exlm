@@ -77,8 +77,6 @@ export default async function initSignupFlowHandler(signUpFlowConfigDate, modalR
     if (profileTimeStamp < todayStartTimeStamp) {
       SignupFlowDialog.init(SIGNUP_DIALOG_TYPE.INCOMPLETE_PROFILE);
     } else if (profileTimeStamp >= configDate) {
-      // Set newSignUp flag for new users
-      await defaultProfileClient.updateProfile('newSignUp', true, true);
       SignupFlowDialog.init(SIGNUP_DIALOG_TYPE.NEW_PROFILE);
     }
   }

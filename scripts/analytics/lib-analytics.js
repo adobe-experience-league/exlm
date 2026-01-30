@@ -162,9 +162,8 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       // Prefer IMS authId so userID remains stable across org/account switches
       const stableAuthId = userData?.authId || userData?.userId || '';
 
-      // Detect new signup: true if flag is set OR user hasn't seen signup modal yet
-      const isNewSignUp =
-        userData.newSignUp === true || !userData.interactions?.some((interaction) => interaction.event === 'modalSeen');
+      // Detect new signup: true if user hasn't seen signup modal yet
+      const isNewSignUp = !userData.interactions?.some((interaction) => interaction.event === 'modalSeen');
 
       user.userDetails = {
         ...user.userDetails,

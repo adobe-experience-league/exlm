@@ -122,16 +122,12 @@ export default class SignupFlowDialog {
         document.body.classList.remove('overflow-hidden');
         signupDialogEventEmitter.emit('signupDialogClose', { status: 'closed' });
         pushSignupEvent(e.target, 'complete');
-        // Reset newSignUp flag to false after completing signup
-        defaultProfileClient.updateProfile('newSignUp', false, true);
       });
     });
 
     this.signupDialog.addEventListener('cancel', () => {
       document.body.classList.remove('overflow-hidden');
       signupDialogEventEmitter.emit('signupDialogClose', { status: 'closed' });
-      // Reset newSignUp flag to false when dialog is cancelled
-      defaultProfileClient.updateProfile('newSignUp', false, true);
     });
   }
 
