@@ -211,9 +211,9 @@ const buildCourseInfoContent = ({ el_course_duration, el_level, cardContent }) =
   const translateLevel = (level) => {
     const levelLower = level?.toLowerCase().trim();
     const levelMap = {
-      beginner: placeholders?.filterExpLevelBeginnerTitle || 'BEGINNER',
-      intermediate: placeholders?.filterExpLevelIntermediateTitle || 'INTERMEDIATE',
-      experienced: placeholders?.filterExpLevelExperiencedTitle || 'EXPERIENCED',
+      beginner: placeholders?.filterExpLevelBeginnerTitle?.toUpperCase() || 'BEGINNER',
+      intermediate: placeholders?.filterExpLevelIntermediateTitle?.toUpperCase() || 'INTERMEDIATE',
+      experienced: placeholders?.filterExpLevelExperiencedTitle?.toUpperCase() || 'EXPERIENCED',
     };
     return levelMap[levelLower] || level?.toUpperCase();
   };
