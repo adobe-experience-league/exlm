@@ -151,7 +151,6 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       org: '',
       orgs: [],
       userCorporateName: '',
-      newSignUp: false,
     },
   };
 
