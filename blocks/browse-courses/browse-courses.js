@@ -266,7 +266,14 @@ function transformLevelsForDropdown(levels) {
     const priorityB = LEVEL_PRIORITY[b] ?? -1;
     return priorityA - priorityB;
   });
-  return sortedLevels.map((level) => ({ title: level }));
+  return sortedLevels.map((level) => {
+    const key = `filterExpLevel${level}Title`;
+
+    return {
+      title: placeholders?.[key] || level,
+      value: level,
+    };
+  });
 }
 
 /**
