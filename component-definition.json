@@ -698,7 +698,6 @@
                   "model": "list-item",
                   "filter": "list-item",
                   "list-content":{
-                "sling:resourceType": "core/franklin/components/block/v1/block",
                   "classes":"text",
                   "richtext":"<p>Placeholder textsss</p>",
                   "name": "List Content",
