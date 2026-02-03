@@ -30,14 +30,16 @@ export default function decorate(block) {
       .map((c) => c && c.trim())
       .filter((c) => !!c);
 
-    // Extract remaining rows before clearing
-    const rows = Array.from(listContent.children).slice(1);
+    // Extract remaining rows before clearing (clone to preserve content)
+    const rows = Array.from(listContent.children).slice(1).map(row => row.cloneNode(true));
     
-    // Clear the entire DOM immediately after reading class selection
-    listContent.innerHTML = '';
+    // Completely clear the block content like marquee does
+    listContent.textContent = '';
     
+    // Add classes to the cleared element
     listContent.classList.add(...classes);
     
+    // Rebuild with only the content rows
     rows.forEach((row) => {
       const wrapper = document.createElement('div');
       wrapper.append(row);
