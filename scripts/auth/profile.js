@@ -25,6 +25,29 @@ export async function isSignedInUser() {
 }
 
 /**
+ * Helper function to get root domain for cookie deletion
+ */
+function getRootDomain(hostname) {
+  const parts = hostname.split('.');
+  return parts.length > 2 ? parts.slice(-2).join('.') : hostname;
+}
+
+/**
+ * Delete ALM authentication cookies
+ */
+function deleteALMCookies() {
+  const almCookies = ['alm_access_token', 'alm_user_id', 'alm_user_role'];
+  const rootDomain = getRootDomain(window.location.hostname);
+
+  almCookies.forEach((name) => {
+    // Delete with root domain
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=.${rootDomain}`;
+    // Also delete without domain (for localhost)
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
+  });
+}
+
+/**
  * @see: https://git.corp.adobe.com/IMS/imslib2.js#documentation
  * @see: https://wiki.corp.adobe.com/display/ims/IMS+API+-+logout#IMSApi-logout-signout_options
  */
@@ -32,6 +55,9 @@ export async function signOut() {
   ['JWT', 'coveoToken', 'exl-profile', 'attributes', 'profile', 'pps-profile', 'alm_access_token'].forEach((key) =>
     sessionStorage.removeItem(key),
   );
+
+  // Delete ALM cookies
+  deleteALMCookies();
 
   // Clear all cache entries from both sessionStorage and localStorage
   Object.keys(sessionStorage).forEach((key) => {

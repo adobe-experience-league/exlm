@@ -22,6 +22,8 @@ import {
 } from './lib-franklin.js';
 import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
 import isFeatureEnabled from './utils/feature-flag-utils.js';
+// TODO: Future update - use modular ALM auth
+// import handleOAuthFlow from './alm-auth/alm-auth-handler.js';
 
 /**
  * please do not import any other modules here, as this file is used in the critical path.
@@ -1052,7 +1054,14 @@ async function loadDefaultModule(jsPath) {
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
   const preMain = doc.body.querySelector(':scope > aside');
-  loadIms(); // start it early, asyncronously
+
+  // Load IMS first, then call handleOAuthFlow
+  await loadIms();
+
+  // TODO: Future update - use modular ALM auth from ./alm-auth/alm-auth-handler.js
+  // await loadIms();
+  // const { default: handleOAuthFlow } = await import('./alm-auth/alm-auth-handler.js');
+  // handleOAuthFlow();
 
   // Prefetch Coveo token early (non-blocking, parallel with blocks)
   // All pages use Coveo for header search query suggestions
