@@ -197,20 +197,22 @@ const BrowseCardsDelegate = (() => {
 
   /**
    * Handles ALM data service to fetch card data.
-   * @returns {Array} Array of card data.
+   * @returns {Promise<Array>} Array of card data.
    * @throws {Error} Throws an error if an issue occurs during data fetching.
    * @private
    */
   const handleALMService = async () => {
-
     const almService = new ALMDataService(param);
     const cardData = await almService.fetchDataFromSource();
+    
     if (!cardData) {
-      throw new Error('An error occurred');
+      throw new Error('ALM service error: Unable to fetch data');
     }
+    
     if (cardData?.length) {
       return BrowseCardsALMAdaptor.mapResultsToCardsData(cardData);
     }
+    
     return [];
   };
 

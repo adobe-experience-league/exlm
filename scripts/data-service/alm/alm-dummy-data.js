@@ -1,3 +1,17 @@
+/**
+ * @fileoverview ALM API response dummy data for development and testing
+ * 
+ * WARNING: This file contains mock data for development purposes only.
+ * Do NOT use this data in production. It should only be used for:
+ * - Local development without ALM API access
+ * - Unit testing
+ * - UI prototyping
+ * 
+ * The data structure matches the actual ALM Prime API v2 response format.
+ * 
+ * @see https://learningmanager.adobe.com/primeapi/v2/docs
+ */
+
 export default {
   "links": {
     "self": "https://learningmanager.adobe.com/primeapi/v2/learningObjects?page[limit]=10&filter.loTypes=learningProgram",

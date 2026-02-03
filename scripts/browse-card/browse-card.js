@@ -544,10 +544,11 @@ const getOnDemandEventsDecorator = () => {
 export async function buildCard(element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
 
-  // Check if this is an ALM content type and use ALM-specific card builder
-  const isALMContent = contentType === ALM_CONTENT_TYPES.COURSE.MAPPING_KEY 
-    || contentType === ALM_CONTENT_TYPES.COHORT.MAPPING_KEY;
-  
+  // Delegate to ALM-specific card builder for ALM content types
+  const isALMContent =
+    contentType === ALM_CONTENT_TYPES.COURSE.MAPPING_KEY ||
+    contentType === ALM_CONTENT_TYPES.COHORT.MAPPING_KEY;
+
   if (isALMContent) {
     return buildALMCard(element, model);
   }

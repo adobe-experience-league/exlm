@@ -847,7 +847,10 @@ export function getConfig() {
     coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
     upcomingEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
-    almUrl: 'https://placeholder-alm-api.adobe.com/api/learning', // Placeholder URL
+    alm: {
+      apiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
+      oauthToken: '631849f083e56e0e4e692948284a653e', // OAuth token for ALM API (should be set via configuration)
+    },
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     articleUrl: `${cdnOrigin}/api/articles`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,

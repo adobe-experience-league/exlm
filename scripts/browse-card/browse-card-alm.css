@@ -1,17 +1,14 @@
-/* ALM Cards  */
+/**
+ * ALM Browse Card Styles
+ * Specialized styles for Adobe Learning Manager (ALM) browse cards
+ * Includes courses and cohorts (learning programs)
+ */
+
+/* ==========================================================================
+   Base Card Styles
+   ========================================================================== */
 
 .browse-card.alm-browse-card {
-  background-color: transparent;
-  border: none;
-}
-
-.browse-card.alm-browse-card:hover {
-  cursor: pointer;
-  box-shadow: none;
-}
-
-/* ALM Browse Card Specific Styles */
-.alm-browse-card {
   display: flex;
   flex-direction: column;
   background: var(--color-white);
@@ -20,11 +17,15 @@
   transition: box-shadow 0.3s ease;
 }
 
-.alm-browse-card:hover {
+.browse-card.alm-browse-card:hover {
+  cursor: pointer;
   box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
 }
 
-/* Thumbnail Container */
+/* ==========================================================================
+   Thumbnail Section
+   ========================================================================== */
+
 .alm-card-figure {
   position: relative;
   width: 100%;
@@ -35,6 +36,7 @@
   background-color: var(--color-gray-100);
 }
 
+/* Smaller thumbnail for course cards */
 .alm-browse-card.alm-course-card .alm-card-figure {
   min-height: 197px;
   max-height: 197px;
@@ -46,7 +48,27 @@
   object-fit: cover;
 }
 
-/* User Actions Overlay in Thumbnail */
+/* Thumbnail not loaded state */
+.alm-browse-card.alm-thumbnail-not-loaded .alm-card-figure {
+  background: linear-gradient(135deg, var(--color-gray-100) 0%, var(--color-gray-200) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alm-browse-card.alm-thumbnail-not-loaded .alm-card-figure::before {
+  content: '';
+  width: 60px;
+  height: 60px;
+  background: var(--color-gray-300);
+  mask: url('/icons/image.svg') no-repeat center;
+  mask-size: contain;
+}
+
+/* ==========================================================================
+   User Actions Overlay (Bookmark & Copy)
+   ========================================================================== */
+
 .alm-card-actions {
   position: absolute;
   top: 12px;
@@ -73,6 +95,7 @@
   background: var(--color-white);
 }
 
+/* Tooltip positioning for user actions */
 .alm-card-actions .action-tooltip {
   bottom: -150%;
   left: 100%;
@@ -92,22 +115,10 @@
   left: 10%;
 }
 
-/* Badge at bottom of thumbnail */
-.alm-card-badge {
-  position: absolute;
-  bottom: 12px;
-  left: 12px;
-  background: var(--color-gray-800);
-  color: var(--color-white);
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  z-index: 1;
-}
+/* ==========================================================================
+   Content Section
+   ========================================================================== */
 
-/* Card Content */
 .alm-card-content {
   padding-top: 16px;
   flex: 1;
@@ -124,7 +135,17 @@
   color: var(--color-gray-900);
 }
 
-/* Meta Information */
+.alm-card-description {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-gray-700);
+}
+
+/* ==========================================================================
+   Meta Information (Duration, Level, Rating)
+   ========================================================================== */
+
 .alm-card-meta {
   display: flex;
   flex-direction: column;
@@ -139,15 +160,10 @@
   align-items: center;
 }
 
-/* Description */
-.alm-card-description {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--color-gray-700);
-}
+/* ==========================================================================
+   Footer Section (CTAs)
+   ========================================================================== */
 
-/* Card Footer */
 .alm-card-footer {
   padding: 0 16px 16px;
 }
@@ -175,21 +191,4 @@
 .alm-card-cta-button .icon {
   display: flex;
   align-items: center;
-}
-
-/* Thumbnail not loaded state */
-.alm-browse-card.alm-thumbnail-not-loaded .alm-card-figure {
-  background: linear-gradient(135deg, var(--color-gray-100) 0%, var(--color-gray-200) 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.alm-browse-card.alm-thumbnail-not-loaded .alm-card-figure::before {
-  content: '';
-  width: 60px;
-  height: 60px;
-  background: var(--color-gray-300);
-  mask: url('/icons/image.svg') no-repeat center;
-  mask-size: contain;
 }

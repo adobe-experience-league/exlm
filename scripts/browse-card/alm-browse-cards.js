@@ -1,12 +1,16 @@
 /* eslint-disable camelcase, no-unused-vars */
-import { decorateIcons, loadCSS } from '../lib-franklin.js';
-import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
-import ALM_CONTENT_TYPES from '../data-service/alm/alm-constants.js';
+import { loadCSS } from '../lib-franklin.js';
+import { createTag, fetchLanguagePlaceholders } from '../scripts.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 
-/* Fetch data from the Placeholder.json */
+/**
+ * @fileoverview ALM (Adobe Learning Manager) specific browse card implementation
+ * Handles rendering of ALM courses and cohorts with specialized UI components
+ */
+
+/* Cached placeholders for localization */
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -16,44 +20,50 @@ try {
 }
 
 /**
- * Lowercases the url if it is the same origin, handles relative urls as well
- * @param {string} url - The url to lowercase
- * @returns {string} The lowercase url
+ * Normalizes URLs to lowercase for same-origin links
+ * @param {string} url - URL to normalize
+ * @returns {string} Normalized URL
+ * @private
  */
 function lowerCaseSameOriginUrls(url) {
-  if (url) {
-    let urlObj;
-    try {
-      urlObj = new URL(url, window.location.origin);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error('Error parsing url:', e);
-      return url; // gracefully handle malformed urls
-    }
-    if (urlObj.origin === window.location.origin) {
-      return urlObj.toString().toLowerCase();
-    }
+  if (!url) return url;
+
+  try {
+    const urlObj = new URL(url, window.location.origin);
+    return urlObj.origin === window.location.origin 
+      ? urlObj.toString().toLowerCase() 
+      : url;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error parsing URL:', e);
+    return url;
   }
-  return url;
 }
 
-// Function to calculate cardHeader and cardPosition
-const getCardHeaderAndPosition = (card, element) => {
-  let cardHeader = '';
+/**
+ * Extracts card header and position for analytics tracking
+ * @param {HTMLElement} card - Card element
+ * @param {HTMLElement} element - Container element
+ * @returns {{cardHeader: string, cardPosition: string}} Tracking information
+ * @private
+ */
+function getCardHeaderAndPosition(card, element) {
   const currentBlock = card.closest('.block');
+  
+  // Extract header text
   const headerEl = currentBlock?.querySelector(
     '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
   );
+  
+  let cardHeader = '';
   if (headerEl) {
     const cloned = headerEl.cloneNode(true);
-    // Remove any PII or masked spans
     cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
-    // Get cleaned text
     cardHeader = cloned.innerText.trim();
   }
-
   cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
 
+  // Calculate position
   let cardPosition = '';
   if (element?.parentElement?.children) {
     const siblings = Array.from(element.parentElement.children);
@@ -61,17 +71,34 @@ const getCardHeaderAndPosition = (card, element) => {
   }
 
   return { cardHeader, cardPosition };
-};
+}
 
 /**
- * Builds the thumbnail container with user actions (bookmark & copy) inside
- * @param {Object} params - Parameters for building thumbnail
- * @returns {HTMLElement} The card figure element
+ * Gets bookmark ID from either the id field or viewLink pathname
+ * @param {string} id - Content ID
+ * @param {string} viewLink - View link URL
+ * @returns {string} Bookmark identifier
+ * @private
  */
-const buildALMThumbnail = ({ thumbnail, title, badgeTitle, contentType, id, viewLink, copyLink, card, element, model }) => {
+function getBookmarkId(id, viewLink) {
+  if (id) return id;
+  try {
+    return viewLink ? new URL(viewLink).pathname : '';
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * Builds thumbnail container with image and user actions overlay
+ * @param {Object} params - Thumbnail parameters
+ * @returns {HTMLElement} Thumbnail figure element
+ * @private
+ */
+function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, element, model }) {
   const cardFigure = createTag('div', { class: 'alm-card-figure' });
 
-  // Add thumbnail image
+  // Create and configure thumbnail image
   if (thumbnail) {
     const img = document.createElement('img');
     img.src = thumbnail;
@@ -79,149 +106,163 @@ const buildALMThumbnail = ({ thumbnail, title, badgeTitle, contentType, id, view
     img.alt = title;
     img.width = 254;
     img.height = 153;
-    cardFigure.appendChild(img);
 
-    img.addEventListener('error', () => {
+    // Handle image load states
+    const handleImageError = () => {
       card.classList.add('alm-thumbnail-not-loaded');
       img.style.display = 'none';
-    });
+    };
 
+    const handleImageLoad = () => {
+      img.classList.add('img-loaded');
+    };
+
+    img.addEventListener('error', handleImageError);
+    img.addEventListener('load', handleImageLoad);
+    
     if (img.complete) {
       img.classList.add('img-loaded');
     }
 
-    img.addEventListener('load', () => {
-      img.classList.add('img-loaded');
-    });
+    cardFigure.appendChild(img);
   } else {
     card.classList.add('alm-thumbnail-not-loaded');
   }
 
-  // Add user actions (bookmark & copy) overlay inside thumbnail
+  // Add user actions overlay (bookmark & copy)
   const cardActions = createTag('div', { class: 'alm-card-actions' });
-  
-  const getBookmarkId = () => {
-    if (id) {
-      return id;
-    }
-    return viewLink ? new URL(viewLink).pathname : '';
-  };
+  const bookmarkId = getBookmarkId(id, viewLink);
 
-  const getBookmarkPath = () => viewLink ? new URL(viewLink).pathname : '';
+  const createAnalyticsCallback = (eventName) => (linkType, position) => {
+    const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+    pushBrowseCardClickEvent(
+      eventName,
+      model,
+      linkType || cardHeader || '',
+      position || cardPosition || '',
+    );
+  };
 
   const cardAction = UserActions({
     container: cardActions,
-    id: getBookmarkId(),
-    bookmarkPath: getBookmarkPath(),
+    id: bookmarkId,
+    bookmarkPath: bookmarkId,
     link: copyLink,
-    bookmarkConfig: {
-      icons: ['bookmark-white-fill'],
-    },
-    copyConfig: {
-      icons: ['copy-white-fill'],
-    },
-    bookmarkCallback: (linkType, position) => {
-      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
-      const finalLinkType = linkType || cardHeader || '';
-      const finalPosition = position || cardPosition || '';
-      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, finalLinkType, finalPosition);
-    },
-    copyCallback: (linkType, position) => {
-      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
-      const finalLinkType = linkType || cardHeader || '';
-      const finalPosition = position || cardPosition || '';
-      pushBrowseCardClickEvent('copyLinkBrowseCard', model, finalLinkType, finalPosition);
-    },
+    bookmarkConfig: { icons: ['bookmark-white-fill'] },
+    copyConfig: { icons: ['copy-white-fill'] },
+    bookmarkCallback: createAnalyticsCallback('bookmarkLinkBrowseCard'),
+    copyCallback: createAnalyticsCallback('copyLinkBrowseCard'),
   });
 
   cardAction.decorate();
   cardFigure.appendChild(cardActions);
 
   return cardFigure;
-};
+}
 
 /**
- * Builds the ALM-specific meta information section
- * @param {Object} params - Parameters for building meta info
- * @returns {HTMLElement} The meta info element
+ * Builds meta information section (duration, level, rating)
+ * @param {Object} meta - Metadata object from card model
+ * @returns {HTMLElement} Meta information container
+ * @private
  */
-const buildALMMetaInfo = ({ meta, contentType }) => {
+function buildALMMetaInfo(meta) {
   const metaContainer = createTag('div', { class: 'alm-card-meta' });
   const metaParts = [];
 
-  // Duration
-  if (meta?.duration) {
-    metaParts.push(meta.duration);
-  }
-
-  // Level (from meta)
-  if (meta?.level) {
-    metaParts.push(meta.level);
-  }
-
-  // Rating with star icon
+  // Collect available metadata
+  if (meta?.duration) metaParts.push(meta.duration);
+  if (meta?.level) metaParts.push(meta.level);
   if (meta?.rating?.average > 0) {
-    const ratingText = meta.rating.average.toFixed(1);
-    metaParts.push(`${ratingText} ★`);
+    metaParts.push(`${meta.rating.average.toFixed(1)} ★`);
   }
 
+  // Create meta text element if we have data
   if (metaParts.length > 0) {
-    const metaText = metaParts.join(' • ');
-    const metaElement = createTag('p', { class: 'alm-card-meta-text' });
-    metaElement.textContent = metaText;
+    const metaElement = createTag('p', { class: 'alm-card-meta-text' }, metaParts.join(' • '));
     metaContainer.appendChild(metaElement);
   }
 
   return metaContainer;
-};
+}
 
 /**
- * Builds an ALM browse card with ALM-specific DOM structure
- * @param {HTMLElement} element - The element where the card will be appended
- * @param {Object} model - The data model containing information about the card
+ * Attaches click event handlers for analytics tracking
+ * @param {HTMLElement} element - Container element
+ * @param {HTMLElement} card - Card element
+ * @param {Object} model - Card data model
+ * @private
+ */
+function attachClickHandlers(element, card, model) {
+  const anchor = element.querySelector('a');
+  if (!anchor) return;
+
+  // Handle card and CTA clicks
+  anchor.addEventListener('click', (e) => {
+    const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+
+    // Ignore user action clicks
+    if (e.target.closest('.user-actions')) return;
+
+    // Track CTA clicks
+    if (e.target.closest('.alm-card-cta-button')) {
+      pushBrowseCardClickEvent('browseCardCTAClick', model, cardHeader, cardPosition);
+      return;
+    }
+
+    // Track general card clicks
+    if (e.target.closest('a:not(.user-actions):not(.alm-card-cta-button)')) {
+      pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
+    }
+  });
+
+  // Send Coveo analytics event (once)
+  anchor.addEventListener('click', () => sendCoveoClickEvent('browse-card', model), { once: true });
+}
+
+/**
+ * Builds an ALM-specific browse card
+ * Creates specialized card layout for Adobe Learning Manager content (courses and cohorts)
+ * 
+ * @param {HTMLElement} element - Container element for the card
+ * @param {Object} model - Card data model from ALM adaptor
  * @returns {Promise<void>}
+ * @public
  */
 export async function buildALMCard(element, model) {
-  // eslint-disable-next-line no-console
-  // console.log('model', model);
   const {
     id,
     thumbnail,
     title,
-    description,
     contentType,
-    badgeTitle,
     viewLink,
-    viewLinkText,
     copyLink,
     meta,
     failedToLoad = false,
   } = model;
 
+  // Set analytics attribute
   element.setAttribute('data-analytics-content-type', contentType);
-  
-  // Lowercase all URLs
-  model.viewLink = lowerCaseSameOriginUrls(model.viewLink);
-  model.copyLink = lowerCaseSameOriginUrls(model.copyLink);
+
+  // Normalize URLs
+  model.viewLink = lowerCaseSameOriginUrls(viewLink);
+  model.copyLink = lowerCaseSameOriginUrls(copyLink);
 
   const type = contentType?.toLowerCase();
 
-  // Create main card container
+  // Create card structure
   const card = createTag(
     'div',
     { class: `browse-card alm-browse-card ${type}-card ${failedToLoad ? 'browse-card-frozen' : ''}` },
-    '',
   );
 
-  // Build thumbnail with user actions inside
+  // Build thumbnail section
   const cardFigure = buildALMThumbnail({
     thumbnail,
     title,
-    badgeTitle,
-    contentType,
     id,
-    viewLink,
-    copyLink,
+    viewLink: model.viewLink,
+    copyLink: model.copyLink,
     card,
     element,
     model,
@@ -231,75 +272,50 @@ export async function buildALMCard(element, model) {
   // Build content section
   const cardContent = createTag('div', { class: 'alm-card-content' });
 
-  // Add title
   if (title) {
     const titleElement = createTag('h3', { class: 'alm-card-title' });
     titleElement.innerHTML = title;
     cardContent.appendChild(titleElement);
   }
 
-  // Add meta information (duration, level, rating)
-  const metaInfo = buildALMMetaInfo({ meta, contentType });
+  // Add metadata
+  const metaInfo = buildALMMetaInfo(meta);
   if (metaInfo.children.length > 0) {
     cardContent.appendChild(metaInfo);
   }
 
   card.appendChild(cardContent);
 
-  // Build footer with CTA
+  // Build footer (reserved for future CTA buttons)
   const cardFooter = createTag('div', { class: 'alm-card-footer' });
   card.appendChild(cardFooter);
 
-  // Load ALM-specific CSS
-  await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
-  await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-alm.css`);
+  // Load required CSS
+  await Promise.all([
+    loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`),
+    loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-alm.css`),
+  ]);
 
-  // Wrap card in anchor tag
+  // Wrap card in anchor if we have a link
   if (model.viewLink) {
     const cardContainer = document.createElement('a');
-    cardContainer.setAttribute('href', model.viewLink);
-    
+    cardContainer.href = model.viewLink;
+
+    // Prevent navigation when clicking user actions
     cardContainer.addEventListener('click', (e) => {
-      // Prevent default link behavior for user actions
-      const preventLinkRedirection = !!(e.target && e.target.closest('.user-actions'));
-      if (preventLinkRedirection) {
+      if (e.target?.closest('.user-actions')) {
         e.preventDefault();
       }
     });
 
     cardContainer.appendChild(card);
     element.appendChild(cardContainer);
+
+    // Attach analytics handlers
+    attachClickHandlers(element, card, model);
   } else {
     element.appendChild(card);
   }
-
-  // Browse card click event handler
-  element.querySelector('a')?.addEventListener('click', (e) => {
-    const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
-
-    if (e.target.closest('.user-actions')) {
-      return;
-    }
-
-    // CTA element click
-    if (e.target.closest('.alm-card-cta-button')) {
-      pushBrowseCardClickEvent('browseCardCTAClick', model, cardHeader, cardPosition);
-      return;
-    }
-
-    // Card click (excluding options and CTA)
-    if (e.target.closest('a:not(.user-actions):not(.alm-card-cta-button)')) {
-      pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
-    }
-  });
-
-  element.querySelector('a')?.addEventListener(
-    'click',
-    () => {
-      sendCoveoClickEvent('browse-card', model);
-    },
-    { once: true },
-  );
 }
 
 export default { buildALMCard };
