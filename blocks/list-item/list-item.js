@@ -24,34 +24,18 @@ function setBlockNameFromClass(listContent) {
 export default function decorate(block) {
   const listContents = [...block.children];
   listContents.forEach(async (listContent) => {
-    // Extract class selection from first child
-    const classesText = listContent.children[0];
+    const [classesText, ...rows] = listContent.children;
     const classes = (classesText ? classesText.textContent.split(',') : [])
       .map((c) => c && c.trim())
       .filter((c) => !!c);
 
-    // Extract remaining rows - only if they have actual content (not placeholders)
-    const rows = Array.from(listContent.children).slice(1);
-    const hasActualContent = rows.some(row => {
-      const content = row.textContent.trim();
-      // Check if row has real content (not empty and not just placeholder text)
-      return content && !content.toLowerCase().includes('add') && row.querySelector('picture, img');
-    });
-    
-    // Completely clear the block content
-    listContent.textContent = '';
-    
-    // Add classes to the cleared element
     listContent.classList.add(...classes);
-    
-    // Only rebuild with rows if they contain actual content (images, etc), not placeholders
-    if (hasActualContent) {
-      rows.forEach((row) => {
-        const wrapper = document.createElement('div');
-        wrapper.append(row.cloneNode(true));
-        listContent.append(wrapper);
-      });
-    }
+    listContent.textContent = '';
+    rows.forEach((row) => {
+      const wrapper = document.createElement('div');
+      wrapper.append(row);
+      listContent.append(wrapper);
+    });
 
     if (classes.includes('list-content')) {
       listContent.classList.add('default-content-wrapper');
