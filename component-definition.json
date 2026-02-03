@@ -697,7 +697,15 @@
                   "text":"<p>Placeholder text</p>",
                   "name": "List Item",
                   "model": "list-item",
-                  "filter": "list-item"
+                  "filter": "list-item",
+                  "list-content":{
+                "sling:resourceType": "core/franklin/components/block/v1/block",
+                  "text":"<p>Placeholder text</p>",
+                  "name": "List Content",
+                  "model": "list-content",
+                  "filter": "text"
+                
+              }
                 }
               }
             }
