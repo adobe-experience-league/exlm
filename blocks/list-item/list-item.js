@@ -30,7 +30,12 @@ export default function decorate(block) {
       .filter((c) => !!c);
 
     listContent.classList.add(...classes);
-    listContent.textContent = '';
+    
+    // Clear all existing children to ensure clean slate when switching classes
+    while (listContent.firstChild) {
+      listContent.removeChild(listContent.firstChild);
+    }
+    
     rows.forEach((row) => {
       const wrapper = document.createElement('div');
       wrapper.append(row);
