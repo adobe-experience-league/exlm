@@ -1,4 +1,18 @@
 // Module utils
+import { getMetadata } from '../lib-franklin.js';
+
+/**
+ * Checks if the current page is an AIM (AI Marketing) training course.
+ * Detects by checking for "AI Training" in both solution and coveo-solution metadata.
+ *
+ * @returns {boolean} True if the current page is tagged with AI Training solution
+ */
+export function isAIMCourse() {
+  const coveoSolution = getMetadata('coveo-solution');
+  const solution = getMetadata('solution');
+  const allSolutions = `${coveoSolution},${solution}`.toLowerCase();
+  return allSolutions.includes('ai training');
+}
 
 /**
  * Extracts courseId and moduleId from a URL path
