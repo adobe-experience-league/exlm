@@ -1333,7 +1333,6 @@
         "component": "richtext",
         "valueType": "string",
         "name": "richtext",
-        "value": "<p>List text content</p>",
         "label": "Text Content"
       },
       {
