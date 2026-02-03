@@ -697,14 +697,13 @@
                   "name": "List Item",
                   "model": "list-item",
                   "filter": "list-item",
-                  "list-content":{
-                  "classes":"text",
-                  "richtext":"<p>Placeholder textsss</p>",
-                  "name": "List Content",
-                  "model": "list-content",
-                  "filter": "text"
-                
-              }
+                  "list-content": {
+                    "classes": "text",
+                    "richtext": "<p>List item content placeholder text</p>",
+                    "name": "List Content",
+                    "model": "list-content",
+                    "filter": "text"
+                  }
                 }
               }
             }
@@ -718,8 +717,8 @@
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "classes":"text",
-                  "richtext":"<p>Placeholder text</p>",
+                  "classes": "text",
+                  "richtext": "<p>List item content placeholder text</p>",
                   "name": "List Content",
                   "model": "list-content",
                   "filter": "text"
