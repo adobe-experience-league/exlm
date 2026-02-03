@@ -24,17 +24,19 @@ function setBlockNameFromClass(listContent) {
 export default function decorate(block) {
   const listContents = [...block.children];
   listContents.forEach(async (listContent) => {
-    const [classesText, ...rows] = listContent.children;
+    // Extract class selection from first child
+    const classesText = listContent.children[0];
     const classes = (classesText ? classesText.textContent.split(',') : [])
       .map((c) => c && c.trim())
       .filter((c) => !!c);
 
-    listContent.classList.add(...classes);
+    // Extract remaining rows before clearing
+    const rows = Array.from(listContent.children).slice(1);
     
-    // Clear all existing children to ensure clean slate when switching classes
-    while (listContent.firstChild) {
-      listContent.removeChild(listContent.firstChild);
-    }
+    // Clear the entire DOM immediately after reading class selection
+    listContent.innerHTML = '';
+    
+    listContent.classList.add(...classes);
     
     rows.forEach((row) => {
       const wrapper = document.createElement('div');
