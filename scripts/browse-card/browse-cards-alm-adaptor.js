@@ -76,6 +76,7 @@ const BrowseCardsALMAdaptor = (() => {
       id: id || '',
       contentType,
       badgeTitle: determineBadge(contentType),
+      thumbnail: attributes?.imageUrl || '',
       title: metadata.name || '',
       description: metadata.description || '',
       viewLink: links?.self || '',

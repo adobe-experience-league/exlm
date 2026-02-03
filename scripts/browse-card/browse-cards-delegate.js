@@ -14,7 +14,7 @@ import { createDateCriteria } from './browse-card-utils.js';
 import UpcomingEventsDataService from '../data-service/upcoming-events-data-service.js';
 import BrowseCardsUpcomingEventsAdaptor from './browse-cards-upcoming-events-adaptor.js';
 
-const { upcomingEventsUrl, adlsUrl, pathsUrl, almUrl } = getConfig();
+const { upcomingEventsUrl, adlsUrl, pathsUrl } = getConfig();
 
 const { lang } = getPathDetails();
 
@@ -196,37 +196,14 @@ const BrowseCardsDelegate = (() => {
   };
 
   /**
-   * Constructs search parameters for ALM data service.
-   * @returns {URLSearchParams} Constructed URLSearchParams object.
-   * @private
-   */
-  const constructALMSearchParams = () => {
-    const urlSearchParams = new URLSearchParams();
-    urlSearchParams.append('pageIndex', '1');
-    if (param.solutions) {
-      urlSearchParams.append('solution', param.solutions);
-    }
-    if (param.roles) {
-      urlSearchParams.append('role', param.roles);
-    }
-    if (param.sortBy) {
-      urlSearchParams.append('sort', param.sortBy);
-    }
-    return urlSearchParams;
-  };
-
-  /**
    * Handles ALM data service to fetch card data.
    * @returns {Array} Array of card data.
    * @throws {Error} Throws an error if an issue occurs during data fetching.
    * @private
    */
   const handleALMService = async () => {
-    const dataSource = {
-      url: almUrl,
-      param: constructALMSearchParams(),
-    };
-    const almService = new ALMDataService(dataSource);
+
+    const almService = new ALMDataService(param);
     const cardData = await almService.fetchDataFromSource();
     if (!cardData) {
       throw new Error('An error occurred');

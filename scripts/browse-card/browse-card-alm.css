@@ -1,75 +1,195 @@
-/* Course Rating Badge - Bottom right of thumbnail */
-.browse-card.alm-course-card .browse-card-figure {
+/* ALM Cards  */
+
+.browse-card.alm-browse-card {
+  background-color: transparent;
+  border: none;
+}
+
+.browse-card.alm-browse-card:hover {
+  cursor: pointer;
+  box-shadow: none;
+}
+
+/* ALM Browse Card Specific Styles */
+.alm-browse-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.alm-browse-card:hover {
+  box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+}
+
+/* Thumbnail Container */
+.alm-card-figure {
   position: relative;
+  width: 100%;
+  min-height: 312px;
+  max-height: 312px;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: var(--color-gray-100);
 }
 
-.browse-card-alm-rating-badge {
+.alm-browse-card.alm-course-card .alm-card-figure {
+  min-height: 197px;
+  max-height: 197px;
+}
+
+.alm-card-figure > img {
+  width: 100%;
+  height: 312px;
+  object-fit: cover;
+}
+
+/* User Actions Overlay in Thumbnail */
+.alm-card-actions {
   position: absolute;
-  bottom: 16px;
-  right: 16px;
-  background-color: rgb(50 20 70 / 90%);
-  color: #fff;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: var(--spectrum-font-size-200);
-  font-weight: var(--font-weight-bold);
+  top: 12px;
+  left: 12px;
   display: flex;
-  align-items: center;
-  gap: 4px;
-  z-index: 10;
-}
-
-.browse-card-alm-rating-badge .star {
-  color: #fff;
-}
-
-/* ALM Cohort Card - Info row with bullet separators */
-.browse-card-alm-info-row {
-  display: flex;
-  align-items: center;
   gap: 8px;
-  margin-top: 12px;
-  font-size: var(--spectrum-font-size-100);
-  color: var(--text-color);
+  z-index: 2;
 }
 
-.browse-card-alm-info-row > span:not(:last-child)::after {
-  content: '•';
-  margin-left: 8px;
+.alm-card-actions .user-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.alm-card-actions .user-action {
+  background: rgb(255 255 255 / 95%);
+  border-radius: 4px;
+  padding: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.alm-card-actions .user-action:hover {
+  background: var(--color-white);
+}
+
+.alm-card-actions .action-tooltip {
+  bottom: -150%;
+  left: 100%;
+}
+
+.alm-browse-card .alm-card-actions .action-tooltip.signedin-tooltip {
+  left: 0;
+  transform: translateX(0%);
+}
+
+.alm-card-actions .action-tooltip::after {
+  top: -25%;
+  transform: rotate(180deg);
+}
+
+.alm-browse-card .alm-card-actions .action-tooltip.signedin-tooltip::after {
+  left: 10%;
+}
+
+/* Badge at bottom of thumbnail */
+.alm-card-badge {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: var(--color-gray-800);
+  color: var(--color-white);
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+/* Card Content */
+.alm-card-content {
+  padding-top: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alm-card-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-gray-900);
+}
+
+/* Meta Information */
+.alm-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.alm-card-meta-text {
+  margin: 0;
+  font-size: 14px;
   color: var(--spectrum-gray-600);
+  display: flex;
+  align-items: center;
 }
 
-.browse-card-alm-info-row .alm-rating {
+/* Description */
+.alm-card-description {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-gray-700);
+}
+
+/* Card Footer */
+.alm-card-footer {
+  padding: 0 16px 16px;
+}
+
+.alm-card-cta {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.alm-card-cta-button {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-}
-
-.browse-card-alm-info-row .alm-rating .star {
-  color: #000;
-}
-
-/* Location Tags */
-.browse-card-alm-locations {
-  display: flex;
-  flex-wrap: wrap;
   gap: 8px;
-  margin-top: 12px;
+  color: var(--color-blue-600);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s ease;
 }
 
-.browse-card-alm-location-tag {
-  padding: 6px 12px;
-  background-color: var(--spectrum-gray-200);
-  border-radius: 16px;
-  font-size: var(--spectrum-font-size-75);
-  color: var(--text-color);
+.alm-card-cta-button:hover {
+  color: var(--color-blue-700);
 }
 
-/* Course Eyebrow */
-.browse-card-alm-eyebrow {
-  font-size: var(--spectrum-font-size-75);
-  color: var(--spectrum-gray-700);
-  margin-bottom: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.alm-card-cta-button .icon {
+  display: flex;
+  align-items: center;
+}
+
+/* Thumbnail not loaded state */
+.alm-browse-card.alm-thumbnail-not-loaded .alm-card-figure {
+  background: linear-gradient(135deg, var(--color-gray-100) 0%, var(--color-gray-200) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alm-browse-card.alm-thumbnail-not-loaded .alm-card-figure::before {
+  content: '';
+  width: 60px;
+  height: 60px;
+  background: var(--color-gray-300);
+  mask: url('/icons/image.svg') no-repeat center;
+  mask-size: contain;
 }
