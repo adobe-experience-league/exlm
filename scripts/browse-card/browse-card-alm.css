@@ -15,11 +15,11 @@
   border: 1px solid var(--color-gray-200);
   overflow: hidden;
   transition: box-shadow 0.3s ease;
+  color: var(--spectrum-gray-900);
 }
 
 .browse-card.alm-browse-card:hover {
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+  box-shadow: none;
 }
 
 /* ==========================================================================
@@ -48,6 +48,11 @@
   object-fit: cover;
 }
 
+.browse-card.alm-browse-card:hover .alm-card-figure img {
+  transform: scale(1.1);
+  transition: transform 0.5s ease-in-out;
+}
+
 /* Thumbnail not loaded state */
 .alm-browse-card.alm-thumbnail-not-loaded .alm-card-figure {
   background: linear-gradient(135deg, var(--color-gray-100) 0%, var(--color-gray-200) 100%);
@@ -63,6 +68,43 @@
   background: var(--color-gray-300);
   mask: url('/icons/image.svg') no-repeat center;
   mask-size: contain;
+}
+
+.alm-card-start-label-container {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+  background-color: var(--spectrum-gray-900);
+  padding: 4px 8px;
+  border-radius: 7px;
+}
+
+.alm-card-start-label {
+  font-size: 12px;
+  color: var(--spectrum-gray-50);
+  margin: 0;
+}
+
+.alm-card-new-tag-container {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+  background-color: var(--spectrum-yellow-400);
+  padding: 2px 8px;
+  border-radius: 7px;
+}
+
+.alm-card-new-tag {
+  font-size: 12px;
+  color: var(--spectrum-gray-900);
+  margin: 0;
+  font-weight: 600;
 }
 
 /* ==========================================================================

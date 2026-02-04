@@ -209,7 +209,7 @@ const BrowseCardsDelegate = (() => {
       throw new Error('ALM service error: Unable to fetch data');
     }
     
-    if (cardData?.length) {
+    if (cardData?.data?.length) {
       return BrowseCardsALMAdaptor.mapResultsToCardsData(cardData);
     }
     

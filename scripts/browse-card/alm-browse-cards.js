@@ -95,7 +95,7 @@ function getBookmarkId(id, viewLink) {
  * @returns {HTMLElement} Thumbnail figure element
  * @private
  */
-function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, element, model }) {
+function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, element, model, startLabel, isNew }) {
   const cardFigure = createTag('div', { class: 'alm-card-figure' });
 
   // Create and configure thumbnail image
@@ -156,6 +156,22 @@ function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, ele
 
   cardAction.decorate();
   cardFigure.appendChild(cardActions);
+
+  if (startLabel) {
+    const startLabelContainer = createTag('div', { class: 'alm-card-start-label-container' });
+    const startLabelElement = createTag('p', { class: 'alm-card-start-label' });
+    startLabelElement.innerHTML = startLabel;
+    startLabelContainer.appendChild(startLabelElement);
+    cardFigure.appendChild(startLabelContainer);
+  }
+
+  if (isNew) {
+    const newTagContainer = createTag('div', { class: 'alm-card-new-tag-container' });
+    const newTagElement = createTag('p', { class: 'alm-card-new-tag' });
+    newTagElement.innerHTML = 'New';
+    newTagContainer.appendChild(newTagElement);
+    cardFigure.appendChild(newTagContainer);
+  }
 
   return cardFigure;
 }
@@ -266,6 +282,8 @@ export async function buildALMCard(element, model) {
     card,
     element,
     model,
+    startLabel: meta?.startLabel,
+    isNew: meta?.isNew,
   });
   card.appendChild(cardFigure);
 
