@@ -363,7 +363,6 @@ button > .search-picker-label {
 .search-suggestions-popover {
   position: absolute;
   z-index: 1;
-  right: 15px;
   top: 32px;
   background-color: var(--background-color);
   box-shadow: 0 8px 8px rgb(10 10 10 / 10%);
