@@ -1016,7 +1016,10 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
     },
   };
 
-  window.adobeDataLayer.push(dataLayerEntry);
+  // Deprecated browseCardClicked event (using componentClick instead); other browseCard events(copy,bookmark,toggles) remain active
+  if (eventName !== 'browseCardClicked') {
+    window.adobeDataLayer.push(dataLayerEntry);
+  }
 
   // Check if the click was on a user-action (bookmark or copy link buttons)
   const isUserAction = document.activeElement?.closest('.user-actions') !== null;
