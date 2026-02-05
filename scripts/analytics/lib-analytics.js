@@ -985,7 +985,7 @@ export function pushCourseStartEvent(courseData) {
  * @param {string} cardHeader - The header or category associated with the card (used as `linkType`).
  * @param {number} cardPosition - The index or position of the card within the list/grid.
  */
-export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition) {
+export async function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition) {
   window.adobeDataLayer = window.adobeDataLayer || [];
   const product = cardData?.product;
   const cardFullSolution = Array.isArray(product) ? product.join(',') : product || '';
@@ -1016,7 +1016,16 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
     },
   };
 
-  window.adobeDataLayer.push(dataLayerEntry);
+  // Feature flag to deprecate browseCardClicked event - componentClick event now has the same values
+  const { default: isFeatureEnabled } = await import('../utils/feature-flag-utils.js');
+  const isBrowseCardClickDeprecated = await isFeatureEnabled('isDeprecateBrowseCardClick');
+
+  if (!isBrowseCardClickDeprecated && eventName === 'browseCardClicked') {
+    window.adobeDataLayer.push(dataLayerEntry);
+  } else if (eventName !== 'browseCardClicked') {
+    // Always push other browseCard events (bookmark, copy, toggles, etc.)
+    window.adobeDataLayer.push(dataLayerEntry);
+  }
 
   // Check if the click was on a user-action (bookmark or copy link buttons)
   const isUserAction = document.activeElement?.closest('.user-actions') !== null;
