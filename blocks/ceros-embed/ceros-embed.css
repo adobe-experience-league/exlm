@@ -1,0 +1,60 @@
+/* Ceros Embed Block Styles */
+
+.ceros-embed {
+  width: 100%;
+  margin: 2rem 0;
+}
+
+.ceros-embed > div {
+  width: 100%;
+  position: relative;
+}
+
+.ceros-embed.ceros-embed-loaded {
+  min-height: 400px;
+}
+
+/* Loading state */
+.ceros-embed:not(.ceros-embed-loaded) {
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--spectrum-gray-100, #f5f5f5);
+}
+
+.ceros-embed:not(.ceros-embed-loaded)::after {
+  content: 'Loading Ceros experience...';
+  color: var(--spectrum-gray-700, #6b6b6b);
+  font-size: 1rem;
+}
+
+/* Error state */
+.ceros-embed.error {
+  min-height: 200px;
+  padding: 2rem;
+  text-align: center;
+  background-color: var(--spectrum-red-100, #ffeef0);
+  color: var(--spectrum-red-900, #7d0000);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ceros-embed {
+    margin: 1.5rem 0;
+  }
+
+  .ceros-embed.ceros-embed-loaded {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ceros-embed {
+    margin: 1rem 0;
+  }
+
+  .ceros-embed.ceros-embed-loaded {
+    min-height: 250px;
+  }
+}

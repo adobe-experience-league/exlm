@@ -8753,5 +8753,18 @@
         "description": "ID of the slide to render. Use the ID of the slide from the URL."
       }
     ]
+  },
+  {
+    "id": "ceros-embed",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cerosUrl",
+        "value": "",
+        "label": "Ceros Experience URL",
+        "description": "Enter the full URL of the Ceros experience (e.g., https://adobe.ceros.site/test). This URL will be used to embed the interactive Ceros content."
+      }
+    ]
   }
 ]

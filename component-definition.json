@@ -687,6 +687,21 @@
           }
         },
         {
+          "title": "Ceros Embed",
+          "id": "ceros-embed",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Ceros Embed",
+                  "model": "ceros-embed"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "List Item",
           "id": "list-item",
           "plugins": {
