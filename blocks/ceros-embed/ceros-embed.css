@@ -7,3 +7,12 @@
   width: 100%;
   position: relative;
 }
+
+/* Ensure the embedded content maintains its aspect ratio */
+.section.ceros-embed-container {
+  padding: 0;
+
+  > div {
+    max-width: 100%;
+  }
+}
