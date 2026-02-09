@@ -575,7 +575,7 @@ button:focus {
     width: 100%;
     justify-content: initial;
     grid-template-areas: 'adobe-logo brand nav search community-actions language product-grid signed-in sign-in';
-    grid-template-columns: min-content min-content max-content auto max-content max-content max-content max-content max-content;
+    grid-template-columns: min-content min-content max-content auto max-content max-content max-content max-content min-content;
   }
 }
 
