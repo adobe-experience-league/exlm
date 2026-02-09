@@ -747,6 +747,26 @@ class ExlHeader extends HTMLElement {
   }
 
   async decorate() {
+    // Adobe Target Pre hiding snippet
+    const STYLE_ID = 'at-nav-prehide';
+    const addStyle = (parent, id, def) => {
+      if (!parent.getElementById(id)) {
+        const style = document.createElement('style');
+        style.id = id;
+        style.innerHTML = def;
+        parent.appendChild(style);
+      }
+    };
+    const removeStyle = (parent, id) => {
+      const style = parent.getElementById(id);
+      if (style) parent.removeChild(style);
+    };
+
+    addStyle(this.shadowRoot, STYLE_ID, '#nav-wrapper > ul {opacity: 0 !important}');
+    setTimeout(() => {
+      removeStyle(this.shadowRoot, STYLE_ID);
+    }, 5000);
+
     const headerMeta = 'header-fragment';
     const fallback = '/en/global-fragments/header';
     const headerFragment = await fetchGlobalFragment(headerMeta, fallback, this.decoratorOptions.lang);
