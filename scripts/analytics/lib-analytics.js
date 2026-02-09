@@ -593,6 +593,36 @@ export function pushSignupEvent(target, action) {
 }
 
 /**
+ * Pushes an analytics event when AIM course auto-signup occurs.
+ * Tracks when a user signs in from an AIM course and the signup modal is suppressed.
+ * @param {boolean} success - Whether the AI Training interest was successfully added to profile
+ */
+export function pushAIMAutoSignupEvent(success) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'aim-auto-signup',
+    eventType: 'web.webinteraction.profileUpdate',
+    aimSignup: {
+      action: 'auto-add ai training interest',
+      modalSuppressed: true,
+      success,
+    },
+    web: {
+      webInteraction: {
+        URL: window.location.href,
+        linkClicks: { value: 0 },
+        name: 'AIM course auto-signup',
+        type: 'other',
+      },
+      webPageDetails: {
+        pageViews: { value: 0 },
+      },
+    },
+  });
+}
+
+/**
  * Pushes video metadata to the data layer on page load,
  * including videoId, thumbnail URL, and video URL.
  * @param {string} videoId - The MPC video ID.
