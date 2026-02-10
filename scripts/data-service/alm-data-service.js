@@ -79,6 +79,10 @@ export default class ALMDataService {
     // Determine learning object types - support both course and cohort
     const loTypes = ALMDataService.determineLearningObjectTypes(contentType);
 
+    // Debug logging
+    console.log('ALM Data Service - Content Type:', contentType);
+    console.log('ALM Data Service - Determined LO Types:', loTypes);
+
     const body = {
       'filter.loTypes': loTypes,
       'filter.learnerState': ['notenrolled', 'enrolled', 'started', 'completed'],
@@ -95,6 +99,8 @@ export default class ALMDataService {
     if (tagName) {
       body['filter.tagName'] = tagName;
     }
+
+    console.log('ALM Data Service - Request Body:', JSON.stringify(body, null, 2));
 
     return body;
   }

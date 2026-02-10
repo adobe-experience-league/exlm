@@ -23,9 +23,12 @@ export default async function decorate(block) {
   // - 'both': Both courses and cohorts
   if (contentType === 'both') {
     contentType = ['alm-course', 'alm-cohort']; // Pass as array for both types
+    console.log('ALM Cards - "both" option detected, setting contentType to array:', contentType);
   } else if (contentType !== 'alm-cohort' && contentType !== 'alm-course') {
     contentType = 'alm-course'; // Default to alm-course if invalid
   }
+
+  console.log('ALM Cards - Final contentType:', contentType);
 
   const sortCriteria = COVEO_SORT_OPTIONS.RELEVANCE;
   const noOfResults = 4;
