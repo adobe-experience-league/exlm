@@ -17,8 +17,13 @@ export default async function decorate(block) {
   // Get content type from authoring, default to alm-course if not specified or invalid
   let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase() || 'alm-course';
   
-  // Validate that it's either alm-cohort or alm-course
-  if (contentType !== 'alm-cohort' && contentType !== 'alm-course') {
+  // Handle different content type options
+  // - 'alm-course': Only courses
+  // - 'alm-cohort': Only cohorts (learning programs)
+  // - 'both': Both courses and cohorts
+  if (contentType === 'both') {
+    contentType = ['alm-course', 'alm-cohort']; // Pass as array for both types
+  } else if (contentType !== 'alm-cohort' && contentType !== 'alm-course') {
     contentType = 'alm-course'; // Default to alm-course if invalid
   }
 
@@ -42,7 +47,7 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
 
   const param = {
-    contentType: contentType, // Pass as string, not array, to use ALM service
+    contentType: contentType, // Can be string ('alm-course' or 'alm-cohort') or array (['alm-course', 'alm-cohort'])
     sortCriteria,
     noOfResults,
   };
