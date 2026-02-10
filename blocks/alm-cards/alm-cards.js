@@ -5,8 +5,9 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { extractCapability, removeProductDuplicates } from '../../scripts/browse-card/browse-card-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+
 /**
- * Decorate function to process and log the mapped data.
+ * Decorate function to process and log the mapped data for ALM cards.
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
@@ -47,8 +48,23 @@ export default async function decorate(block) {
   // Appending header div to the block
   block.appendChild(headerDiv);
 
+  // Parse content types to support both alm-cohort and alm-course
+  let contentTypes = contentType && contentType.toLowerCase().split(',');
+  
+  // Filter to only allow alm-cohort and alm-course
+  if (contentTypes && contentTypes.length > 0) {
+    contentTypes = contentTypes.filter(type => 
+      type.trim() === 'alm-cohort' || type.trim() === 'alm-course'
+    );
+  }
+  
+  // Default to alm-cohort if no valid content types are specified
+  if (!contentTypes || contentTypes.length === 0) {
+    contentTypes = ['alm-cohort'];
+  }
+
   const param = {
-    contentType: "alm-cohort" ||contentType && contentType.toLowerCase().split(','),
+    contentType: contentTypes,
     product: products.length ? removeProductDuplicates(products) : null,
     feature: features.length ? [...new Set(features)] : null,
     version: versions.length ? [...new Set(versions)] : null,
