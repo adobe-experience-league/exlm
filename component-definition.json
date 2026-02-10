@@ -873,8 +873,10 @@
                 "template": {
                   "name": "ALM Cards",
                   "model": "alm-cards",
-                  "classes": ["header-left"],
-                  "headingType": "h2"
+                  "heading": "Premium learning search results",
+                  "linkText": "View all Premium Learning results",
+                  "link": "",
+                  "contentType": "alm-course"
                 }
               }
             }

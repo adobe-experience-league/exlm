@@ -3,8 +3,6 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
-import { extractCapability, removeProductDuplicates } from '../../scripts/browse-card/browse-card-utils.js';
-import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 /**
  * Decorate function to process and log the mapped data for ALM cards.
@@ -12,13 +10,14 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const [headingElement, toolTipElement, linkElement, ...configs] = [...block.children].map(
+  const [headingElement, linkElement, contentTypeElement] = [...block.children].map(
     (row) => row.firstElementChild,
   );
-  const [contentType, capabilities, role, level, authorType, sortBy] = configs.map((cell) => cell.textContent.trim());
-  const sortCriteria = COVEO_SORT_OPTIONS[sortBy?.toUpperCase() ?? 'RELEVANCE'];
+
+  // Hardcode content type to alm-course for now
+  const contentType = 'alm-course';
+  const sortCriteria = COVEO_SORT_OPTIONS.RELEVANCE;
   const noOfResults = 4;
-  const { products, features, versions } = extractCapability(capabilities);
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -33,44 +32,11 @@ export default async function decorate(block) {
     </div>
   `);
 
-  if (toolTipElement?.textContent?.trim()) {
-    const tooltip = htmlToElement(`
-    <div class="tooltip-placeholder">
-    <div class="tooltip tooltip-right">
-      <span class="icon icon-info"></span><span class="tooltip-text">${toolTipElement.textContent.trim()}</span>
-    </div>
-    </div>
-  `);
-    decorateIcons(tooltip);
-    headerDiv.querySelector('h1,h2,h3,h4,h5,h6')?.insertAdjacentElement('afterend', tooltip);
-  }
-
   // Appending header div to the block
   block.appendChild(headerDiv);
 
-  // Parse content types to support both alm-cohort and alm-course
-  let contentTypes = contentType && contentType.toLowerCase().split(',');
-  
-  // Filter to only allow alm-cohort and alm-course
-  if (contentTypes && contentTypes.length > 0) {
-    contentTypes = contentTypes.filter(type => 
-      type.trim() === 'alm-cohort' || type.trim() === 'alm-course'
-    );
-  }
-  
-  // Default to alm-cohort if no valid content types are specified
-  if (!contentTypes || contentTypes.length === 0) {
-    contentTypes = ['alm-cohort'];
-  }
-
   const param = {
-    contentType: contentTypes,
-    product: products.length ? removeProductDuplicates(products) : null,
-    feature: features.length ? [...new Set(features)] : null,
-    version: versions.length ? [...new Set(versions)] : null,
-    role: role && role.toLowerCase().split(','),
-    level: level && level.toLowerCase().split(','),
-    authorType: authorType && authorType.split(','),
+    contentType: [contentType],
     sortCriteria,
     noOfResults,
   };
