@@ -1878,8 +1878,8 @@
         "valueType": "string",
         "name": "contentType",
         "value": "alm-course",
-        "label": "Content Type (Dummy)",
-        "description": "Select content type (hardcoded to alm-course for now)",
+        "label": "Content Type",
+        "description": "Select which ALM content type(s) to display",
         "options": [
           {
             "name": "ALM Course",
@@ -1888,6 +1888,10 @@
           {
             "name": "ALM Cohort",
             "value": "alm-cohort"
+          },
+          {
+            "name": "Both (Course & Cohort)",
+            "value": "both"
           }
         ]
       }

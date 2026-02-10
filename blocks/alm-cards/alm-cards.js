@@ -14,8 +14,14 @@ export default async function decorate(block) {
     (row) => row.firstElementChild,
   );
 
-  // Hardcode content type to alm-course for now
-  const contentType = 'alm-course';
+  // Get content type from authoring, default to alm-course if not specified or invalid
+  let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase() || 'alm-course';
+  
+  // Validate that it's either alm-cohort or alm-course
+  if (contentType !== 'alm-cohort' && contentType !== 'alm-course') {
+    contentType = 'alm-course'; // Default to alm-course if invalid
+  }
+
   const sortCriteria = COVEO_SORT_OPTIONS.RELEVANCE;
   const noOfResults = 4;
 
@@ -36,7 +42,7 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
 
   const param = {
-    contentType: [contentType],
+    contentType: contentType, // Pass as string, not array, to use ALM service
     sortCriteria,
     noOfResults,
   };

@@ -76,11 +76,8 @@ export default class ALMDataService {
     const { contentType, tagName } = this.queryParams;
     const { catalogIds } = this.config;
 
-    // Determine learning object types
-    const loType = ALMDataService.determineLearningObjectType(contentType);
-    const loTypes = loType === ALMDataService.LO_TYPES.LEARNING_PROGRAM 
-      ? ['learningProgram'] 
-      : ['course'];
+    // Determine learning object types - support both course and cohort
+    const loTypes = ALMDataService.determineLearningObjectTypes(contentType);
 
     const body = {
       'filter.loTypes': loTypes,
@@ -103,7 +100,32 @@ export default class ALMDataService {
   }
 
   /**
-   * Determines the ALM learning object type from content type
+   * Determines the ALM learning object types from content type(s)
+   * Supports both single and multiple content types
+   * @private
+   * @param {string|Array<string>} contentType - Content type identifier(s)
+   * @returns {Array<string>} Array of learning object types for ALM API
+   */
+  static determineLearningObjectTypes(contentType) {
+    const types = Array.isArray(contentType) ? contentType : [contentType];
+    const loTypes = [];
+
+    types.forEach((type) => {
+      const normalizedType = type?.toLowerCase().trim();
+      if (normalizedType === 'alm-cohort' && !loTypes.includes('learningProgram')) {
+        loTypes.push('learningProgram');
+      } else if (normalizedType === 'alm-course' && !loTypes.includes('course')) {
+        loTypes.push('course');
+      }
+    });
+
+    // Default to course if no valid types found
+    return loTypes.length > 0 ? loTypes : ['course'];
+  }
+
+  /**
+   * Determines the ALM learning object type from content type (legacy method)
+   * @deprecated Use determineLearningObjectTypes instead
    * @private
    * @param {string|Array<string>} contentType - Content type identifier
    * @returns {string} Learning object type for ALM API
