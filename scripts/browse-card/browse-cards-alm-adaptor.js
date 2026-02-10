@@ -192,6 +192,19 @@ function formatSkillLevels(levels, placeholders = {}) {
   return labels.join(', ');
 }
 
+function buildInstances(cardData, included) {
+  const instances = cardData.relationships?.instances?.data;
+  if (!instances) return [];
+  return instances.map((instance) => {
+    const instanceData = included.find((i) => i.id === instance.id);
+    return {
+      id: instanceData.id,
+      name: instanceData.attributes?.localizedMetadata?.[0]?.name || '',
+      locale: instanceData.attributes?.localizedMetadata?.[0]?.locale || '',
+    };
+  });
+}
+
   /**
    * Maps a single ALM result to the BrowseCards data model.
    * @param {Object} result - The result object from ALM API.
@@ -212,6 +225,8 @@ function formatSkillLevels(levels, placeholders = {}) {
     const loSkillLevels = buildLearningObjectSkillLevels(included);
     const skillLevels = formatSkillLevels(loSkillLevels.get(id), placeholders);
 
+    const instances = buildInstances(cardData, included);
+    
     if (contentType === ALM_CONTENT_TYPES.COHORT.MAPPING_KEY) {
       const instanceId = cardData.relationships?.instances?.data?.[0]?.id;
 
@@ -242,7 +257,7 @@ function formatSkillLevels(levels, placeholders = {}) {
         startLabel,
         isNew,
         level: skillLevels, // TODO: Add when field is available in API
-        locations: [], // TODO: Add when field is available in API
+        instances, // TODO: Add when field is available in API
       },
     };
   };

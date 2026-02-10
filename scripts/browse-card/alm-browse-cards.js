@@ -1,6 +1,6 @@
 /* eslint-disable camelcase, no-unused-vars */
 import { loadCSS } from '../lib-franklin.js';
-import { createTag, fetchLanguagePlaceholders } from '../scripts.js';
+import { fetchLanguagePlaceholders } from '../scripts.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
@@ -96,7 +96,8 @@ function getBookmarkId(id, viewLink) {
  * @private
  */
 function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, element, model, startLabel, isNew }) {
-  const cardFigure = createTag('div', { class: 'alm-card-figure' });
+  const cardFigure = document.createElement('div');
+  cardFigure.className = 'alm-card-figure';
 
   // Create and configure thumbnail image
   if (thumbnail) {
@@ -130,7 +131,8 @@ function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, ele
   }
 
   // Add user actions overlay (bookmark & copy)
-  const cardActions = createTag('div', { class: 'alm-card-actions' });
+  const cardActions = document.createElement('div');
+  cardActions.className = 'alm-card-actions';
   const bookmarkId = getBookmarkId(id, viewLink);
 
   const createAnalyticsCallback = (eventName) => (linkType, position) => {
@@ -158,16 +160,20 @@ function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, ele
   cardFigure.appendChild(cardActions);
 
   if (startLabel) {
-    const startLabelContainer = createTag('div', { class: 'alm-card-start-label-container' });
-    const startLabelElement = createTag('p', { class: 'alm-card-start-label' });
+    const startLabelContainer = document.createElement('div');
+    startLabelContainer.className = 'alm-card-start-label-container';
+    const startLabelElement = document.createElement('p');
+    startLabelElement.className = 'alm-card-start-label';
     startLabelElement.innerHTML = startLabel;
     startLabelContainer.appendChild(startLabelElement);
     cardFigure.appendChild(startLabelContainer);
   }
 
   if (isNew) {
-    const newTagContainer = createTag('div', { class: 'alm-card-new-tag-container' });
-    const newTagElement = createTag('p', { class: 'alm-card-new-tag' });
+    const newTagContainer = document.createElement('div');
+    newTagContainer.className = 'alm-card-new-tag-container';
+    const newTagElement = document.createElement('p');
+    newTagElement.className = 'alm-card-new-tag';
     newTagElement.innerHTML = 'New';
     newTagContainer.appendChild(newTagElement);
     cardFigure.appendChild(newTagContainer);
@@ -183,7 +189,8 @@ function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, ele
  * @private
  */
 function buildALMMetaInfo(meta) {
-  const metaContainer = createTag('div', { class: 'alm-card-meta' });
+  const metaContainer = document.createElement('div');
+  metaContainer.className = 'alm-card-meta';
   const metaParts = [];
 
   // Collect available metadata
@@ -195,7 +202,9 @@ function buildALMMetaInfo(meta) {
 
   // Create meta text element if we have data
   if (metaParts.length > 0) {
-    const metaElement = createTag('p', { class: 'alm-card-meta-text' }, metaParts.join(' • '));
+    const metaElement = document.createElement('p');
+    metaElement.className = 'alm-card-meta-text';
+    metaElement.textContent = metaParts.join(' • ');
     metaContainer.appendChild(metaElement);
   }
 
@@ -267,10 +276,8 @@ export async function buildALMCard(element, model) {
   const type = contentType?.toLowerCase();
 
   // Create card structure
-  const card = createTag(
-    'div',
-    { class: `browse-card alm-browse-card ${type}-card ${failedToLoad ? 'browse-card-frozen' : ''}` },
-  );
+  const card = document.createElement('div');
+  card.className = `browse-card alm-browse-card ${type}-card ${failedToLoad ? 'browse-card-frozen' : ''}`;
 
   // Build thumbnail section
   const cardFigure = buildALMThumbnail({
@@ -288,10 +295,12 @@ export async function buildALMCard(element, model) {
   card.appendChild(cardFigure);
 
   // Build content section
-  const cardContent = createTag('div', { class: 'alm-card-content' });
+  const cardContent = document.createElement('div');
+  cardContent.className = 'alm-card-content';
 
   if (title) {
-    const titleElement = createTag('h3', { class: 'alm-card-title' });
+    const titleElement = document.createElement('h3');
+    titleElement.className = 'alm-card-title';
     titleElement.innerHTML = title;
     cardContent.appendChild(titleElement);
   }
@@ -305,8 +314,21 @@ export async function buildALMCard(element, model) {
   card.appendChild(cardContent);
 
   // Build footer (reserved for future CTA buttons)
-  const cardFooter = createTag('div', { class: 'alm-card-footer' });
+  const cardFooter = document.createElement('div');
+  cardFooter.className = 'alm-card-footer';
+  if(meta?.instances?.length > 0) {
+    const instancesContainer = document.createElement('div');
+    instancesContainer.className = 'alm-card-instances';
+    meta.instances.forEach((instance) => {
+      const instanceElement = document.createElement('p');
+      instanceElement.className = 'alm-card-instance';
+      instanceElement.innerHTML = instance.name;
+      instancesContainer.appendChild(instanceElement);
+    });
+    cardFooter.appendChild(instancesContainer);
+  }
   card.appendChild(cardFooter);
+
 
   // Load required CSS
   await Promise.all([

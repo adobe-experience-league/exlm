@@ -207,30 +207,19 @@
    ========================================================================== */
 
 .alm-card-footer {
-  padding: 0 16px 16px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--spectrum-gray-200);
 }
 
-.alm-card-cta {
+.alm-card-instances {
   display: flex;
-  justify-content: flex-start;
-}
-
-.alm-card-cta-button {
-  display: inline-flex;
-  align-items: center;
   gap: 8px;
-  color: var(--color-blue-600);
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: color 0.2s ease;
 }
 
-.alm-card-cta-button:hover {
-  color: var(--color-blue-700);
-}
-
-.alm-card-cta-button .icon {
-  display: flex;
-  align-items: center;
+.alm-card-instance {
+  font-size: 12px;
+  padding: 0 8px;
+  border-radius: 5px;
+  background-color: var(--spectrum-gray-200);
 }
