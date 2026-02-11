@@ -1852,17 +1852,17 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "heading",
+        "name": "title",
         "value": "",
-        "label": "Heading",
-        "description": "Sets the heading for the ALM cards section."
+        "label": "Title",
+        "description": "Sets the title for the ALM block."
       },
       {
         "component": "select",
         "valueType": "string",
-        "name": "headingType",
-        "value": "h2",
-        "label": "Heading Type",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Title Heading Type",
         "options": [
           {
             "name": "H1",
@@ -1892,10 +1892,10 @@
       },
       {
         "component": "select",
-        "name": "cta_Type",
+        "name": "cta1_Type",
         "value": "primary",
-        "label": "CTA Type",
-        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA.",
+        "label": "First CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text",
         "valueType": "string",
         "options": [
           {
@@ -1905,28 +1905,24 @@
           {
             "name": "Secondary",
             "value": "secondary"
-          },
-          {
-            "name": "Tertiary",
-            "value": "tertiary"
           }
         ]
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "linkText",
+        "name": "cta1_linkText",
         "value": "",
-        "label": "CTA Link Text",
-        "description": "Sets the text for the CTA link."
+        "label": "First CTA Text",
+        "description": "Text to be shown inside button."
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "link",
+        "name": "cta1_link",
         "value": "",
-        "label": "CTA Link URL",
-        "description": "Sets the URL for the CTA link."
+        "label": "First CTA Link",
+        "description": "What link to open when clicking the button."
       },
       {
         "component": "select",

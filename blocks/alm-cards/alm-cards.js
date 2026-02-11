@@ -3,6 +3,7 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
+import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 /**
  * Decorate function to process and log the mapped data for ALM cards.
@@ -10,11 +11,11 @@ import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-const
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const [headingElement, linkElement, contentTypeElement, ctaTypeElement] = [...block.children].map(
-    (row) => row.firstElementChild,
-  );
+  const blockElements = [...block.children].map((row) => row.firstElementChild);
+  const [headingElement, linkElement, contentTypeElement, ctaTypeElement] = blockElements;
 
   // Get CTA type from authoring (primary, secondary, tertiary)
+  // Default to 'primary' if not specified (for backward compatibility with existing blocks)
   const ctaType = ctaTypeElement?.textContent?.trim()?.toLowerCase() || 'primary';
 
   // Get content type from authoring, default to alm-course if not specified or invalid
@@ -51,23 +52,15 @@ export default async function decorate(block) {
   headingContainer.appendChild(headingNode);
   headerDiv.appendChild(headingContainer);
 
-  // Add CTA link with proper styling
+  // Add CTA link with proper styling using decorateCustomButtons
   if (linkElement && linkElement.innerHTML.trim()) {
     const ctaContainer = document.createElement('div');
     ctaContainer.className = 'browse-cards-block-cta';
-    const ctaLink = htmlToElement(linkElement.innerHTML);
     
-    // Add CTA type classes to the anchor tag for consistent styling
-    const anchorTag = ctaLink.querySelector('a') || ctaLink;
-    if (anchorTag.tagName === 'A') {
-      anchorTag.classList.add('cta');
-      // Apply CTA type class (primary, secondary, or tertiary)
-      if (ctaType && ['primary', 'secondary', 'tertiary'].includes(ctaType)) {
-        anchorTag.classList.add(ctaType);
-      }
-    }
+    // Pass the linkElement directly to decorateCustomButtons, similar to announcement-ribbon
+    // decorateCustomButtons will handle parsing the DOM element
+    ctaContainer.innerHTML = decorateCustomButtons(linkElement);
     
-    ctaContainer.appendChild(ctaLink);
     headerDiv.appendChild(ctaContainer);
   }
 
