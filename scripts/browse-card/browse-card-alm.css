@@ -107,6 +107,27 @@
   font-weight: 600;
 }
 
+/* Rating Overlay */
+.alm-card-rating-overlay {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 2;
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgb(0 0 0 / 30%);
+  line-height: 1;
+}
+
+.alm-card-rating-overlay .rating-star {
+  font-size: 20px;
+  color: var(--color-white);
+}
+
 /* ==========================================================================
    User Actions Overlay (Bookmark & Copy)
    ========================================================================== */

@@ -1,1 +1,53 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
+
+/* ALM Cards Block Header Styles */
+.alm-cards-block .browse-cards-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.alm-cards-block .browse-cards-block-title {
+  flex: 1;
+}
+
+.alm-cards-block .browse-cards-block-title h1,
+.alm-cards-block .browse-cards-block-title h2,
+.alm-cards-block .browse-cards-block-title h3,
+.alm-cards-block .browse-cards-block-title h4,
+.alm-cards-block .browse-cards-block-title h5,
+.alm-cards-block .browse-cards-block-title h6 {
+  margin: 0;
+  font-weight: 700;
+  color: var(--color-gray-900);
+}
+
+.alm-cards-block .browse-cards-block-cta {
+  flex-shrink: 0;
+}
+
+.alm-cards-block .browse-cards-block-cta a.cta {
+  text-decoration: none;
+  font-weight: 600;
+  color: var(--color-accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s ease;
+}
+
+.alm-cards-block .browse-cards-block-cta a.cta:hover {
+  color: var(--color-accent-hover);
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .alm-cards-block .browse-cards-block-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

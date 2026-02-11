@@ -1858,6 +1858,61 @@
         "description": "Sets the heading for the ALM cards section."
       },
       {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h2",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "cta_Type",
+        "value": "primary",
+        "label": "CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          },
+          {
+            "name": "Tertiary",
+            "value": "tertiary"
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "linkText",

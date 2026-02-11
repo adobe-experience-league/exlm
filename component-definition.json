@@ -874,6 +874,8 @@
                   "name": "ALM Cards",
                   "model": "alm-cards",
                   "heading": "Premium learning search results",
+                  "headingType": "h2",
+                  "cta_Type": "primary",
                   "linkText": "View all Premium Learning results",
                   "link": "",
                   "contentType": "alm-course"

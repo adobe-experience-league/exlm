@@ -184,11 +184,14 @@ function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, ele
 
 /**
  * Builds meta information section (duration, level, rating)
+ * Note: For courses, rating is displayed on thumbnail overlay
+ * For cohorts, rating is displayed in meta section
  * @param {Object} meta - Metadata object from card model
+ * @param {boolean} isCourseCar - Whether this is a course card (not cohort)
  * @returns {HTMLElement} Meta information container
  * @private
  */
-function buildALMMetaInfo(meta) {
+function buildALMMetaInfo(meta, isCourseCard = false) {
   const metaContainer = document.createElement('div');
   metaContainer.className = 'alm-card-meta';
   const metaParts = [];
@@ -196,7 +199,10 @@ function buildALMMetaInfo(meta) {
   // Collect available metadata
   if (meta?.duration) metaParts.push(meta.duration);
   if (meta?.level) metaParts.push(meta.level);
-  if (meta?.rating?.average > 0) {
+  
+  // For cohorts, include rating in meta section
+  // For courses, rating is shown on thumbnail overlay
+  if (!isCourseCard && meta?.rating?.average > 0) {
     metaParts.push(`${meta.rating.average.toFixed(1)} ★`);
   }
 
@@ -279,6 +285,9 @@ export async function buildALMCard(element, model) {
   const card = document.createElement('div');
   card.className = `browse-card alm-browse-card ${type}-card ${failedToLoad ? 'browse-card-frozen' : ''}`;
 
+  // Determine if this is a course card (for rating display logic)
+  const isCourseCard = type === 'alm-course';
+  
   // Build thumbnail section
   const cardFigure = buildALMThumbnail({
     thumbnail,
@@ -292,23 +301,51 @@ export async function buildALMCard(element, model) {
     startLabel: meta?.startLabel,
     isNew: meta?.isNew,
   });
+  
+  // Add rating overlay to thumbnail ONLY for courses (not cohorts)
+  if (isCourseCard && meta?.rating?.average > 0) {
+    const ratingOverlay = document.createElement('div');
+    ratingOverlay.className = 'alm-card-rating-overlay';
+    ratingOverlay.innerHTML = `${meta.rating.average.toFixed(1)} <span class="rating-star">★</span>`;
+    cardFigure.appendChild(ratingOverlay);
+  }
+  
   card.appendChild(cardFigure);
 
   // Build content section
   const cardContent = document.createElement('div');
   cardContent.className = 'alm-card-content';
 
-  if (title) {
-    const titleElement = document.createElement('h3');
-    titleElement.className = 'alm-card-title';
-    titleElement.innerHTML = title;
-    cardContent.appendChild(titleElement);
-  }
+  // For courses: meta comes before title
+  // For cohorts: title comes before meta
+  if (isCourseCard) {
+    // Add metadata first for courses
+    const metaInfo = buildALMMetaInfo(meta, isCourseCard);
+    if (metaInfo.children.length > 0) {
+      cardContent.appendChild(metaInfo);
+    }
 
-  // Add metadata
-  const metaInfo = buildALMMetaInfo(meta);
-  if (metaInfo.children.length > 0) {
-    cardContent.appendChild(metaInfo);
+    // Then add title
+    if (title) {
+      const titleElement = document.createElement('h3');
+      titleElement.className = 'alm-card-title';
+      titleElement.innerHTML = title;
+      cardContent.appendChild(titleElement);
+    }
+  } else {
+    // For cohorts: title first, then metadata
+    if (title) {
+      const titleElement = document.createElement('h3');
+      titleElement.className = 'alm-card-title';
+      titleElement.innerHTML = title;
+      cardContent.appendChild(titleElement);
+    }
+
+    // Add metadata
+    const metaInfo = buildALMMetaInfo(meta, isCourseCard);
+    if (metaInfo.children.length > 0) {
+      cardContent.appendChild(metaInfo);
+    }
   }
 
   card.appendChild(cardContent);

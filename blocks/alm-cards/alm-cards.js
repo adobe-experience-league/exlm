@@ -10,9 +10,12 @@ import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-const
  */
 export default async function decorate(block) {
   // Extracting elements from the block
-  const [headingElement, linkElement, contentTypeElement] = [...block.children].map(
+  const [headingElement, linkElement, contentTypeElement, ctaTypeElement] = [...block.children].map(
     (row) => row.firstElementChild,
   );
+
+  // Get CTA type from authoring (primary, secondary, tertiary)
+  const ctaType = ctaTypeElement?.textContent?.trim()?.toLowerCase() || 'primary';
 
   // Get content type from authoring, default to alm-course if not specified or invalid
   let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase() || 'alm-course';
@@ -35,16 +38,38 @@ export default async function decorate(block) {
 
   // Clearing the block's content
   block.innerHTML = '';
-  block.classList.add('browse-cards-block');
+  block.classList.add('browse-cards-block', 'alm-cards-block');
 
-  const headerDiv = htmlToElement(`
-    <div class="browse-cards-block-header">
-      <div class="browse-cards-block-title">
-        ${headingElement.innerHTML}
-      </div>
-      <div class="browse-cards-block-view">${linkElement.innerHTML}</div>
-    </div>
-  `);
+  // Create header section with proper heading element and CTA
+  const headerDiv = document.createElement('div');
+  headerDiv.className = 'browse-cards-block-header';
+
+  // Preserve the heading element structure (h1, h2, h3, etc.) from authoring
+  const headingContainer = document.createElement('div');
+  headingContainer.className = 'browse-cards-block-title';
+  const headingNode = htmlToElement(headingElement.innerHTML);
+  headingContainer.appendChild(headingNode);
+  headerDiv.appendChild(headingContainer);
+
+  // Add CTA link with proper styling
+  if (linkElement && linkElement.innerHTML.trim()) {
+    const ctaContainer = document.createElement('div');
+    ctaContainer.className = 'browse-cards-block-cta';
+    const ctaLink = htmlToElement(linkElement.innerHTML);
+    
+    // Add CTA type classes to the anchor tag for consistent styling
+    const anchorTag = ctaLink.querySelector('a') || ctaLink;
+    if (anchorTag.tagName === 'A') {
+      anchorTag.classList.add('cta');
+      // Apply CTA type class (primary, secondary, or tertiary)
+      if (ctaType && ['primary', 'secondary', 'tertiary'].includes(ctaType)) {
+        anchorTag.classList.add(ctaType);
+      }
+    }
+    
+    ctaContainer.appendChild(ctaLink);
+    headerDiv.appendChild(ctaContainer);
+  }
 
   // Appending header div to the block
   block.appendChild(headerDiv);
