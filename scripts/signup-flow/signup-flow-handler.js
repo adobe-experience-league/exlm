@@ -2,7 +2,6 @@
 import SignupFlowDialog from './signup-flow-dialog.js';
 // eslint-disable-next-line import/no-cycle
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
-import { pushAIMAutoSignupEvent } from '../analytics/lib-analytics.js';
 import { getMetadata } from '../lib-franklin.js';
 
 const AI_TRAINING_INTEREST_NAME = 'ai training';
@@ -119,8 +118,7 @@ export default async function initSignupFlowHandler(signUpFlowConfigDate, modalR
   }
 
   if (isAIMCourse()) {
-    const success = await addAITrainingInterestToProfile();
-    pushAIMAutoSignupEvent(success);
+    await addAITrainingInterestToProfile();
     return;
   }
 
