@@ -6,6 +6,7 @@ import {
   getConfig,
   matchesAnyTheme,
   fetchLanguagePlaceholders,
+  decorateExternalLinks,
 } from '../../scripts/scripts.js';
 import { rewriteDocsPath } from '../../scripts/utils/path-utils.js';
 import getSolutionByName from './toc-solutions.js';
@@ -220,6 +221,9 @@ function updateTocContent(tocHtml, tocContent) {
       anchor.classList.add('toc-item');
     }
   });
+
+  // Handle #_blank and external links (TOC loads async, so decorateExternalLinks never saw these)
+  decorateExternalLinks(tocTree);
 }
 
 /**
