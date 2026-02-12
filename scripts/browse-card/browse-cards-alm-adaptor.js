@@ -243,7 +243,6 @@ function buildInstances(cardData, included) {
       contentType,
       thumbnail: attributes?.imageUrl || '',
       title: metadata.name || '',
-      description: metadata.description || '',
       viewLink: createALMLinkfromID(contentType, id),
       copyLink: createALMLinkfromID(contentType, id),
       meta: {
@@ -254,6 +253,7 @@ function buildInstances(cardData, included) {
         duration: formatDuration(attributes?.duration),
         loFormat: attributes?.loFormat || '',
         loType: attributes?.loType || '',
+        description: metadata.description || '',
         startLabel,
         isNew,
         level: skillLevels, // TODO: Add when field is available in API

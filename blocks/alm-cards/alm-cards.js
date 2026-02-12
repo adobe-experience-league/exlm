@@ -10,66 +10,35 @@ import decorateCustomButtons from '../../scripts/utils/button-utils.js';
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
-  // Extracting elements from the block
-  const blockElements = [...block.children].map((row) => row.firstElementChild);
-  const [headingElement, linkElement, contentTypeElement, ctaTypeElement] = blockElements;
+  // Extracting elements from the block in authoring order
+  const [headingElement, ctaElement, contentTypeElement] = [...block.children];
 
-  // Get CTA type from authoring (primary, secondary, tertiary)
-  // Default to 'primary' if not specified (for backward compatibility with existing blocks)
-  const ctaType = ctaTypeElement?.textContent?.trim()?.toLowerCase() || 'primary';
-
-  // Get content type from authoring, default to alm-course if not specified or invalid
   let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase() || 'alm-course';
-  
-  // Handle different content type options
-  // - 'alm-course': Only courses
-  // - 'alm-cohort': Only cohorts (learning programs)
-  // - 'both': Both courses and cohorts
   if (contentType === 'both') {
     contentType = ['alm-course', 'alm-cohort']; // Pass as array for both types
-    console.log('ALM Cards - "both" option detected, setting contentType to array:', contentType);
-  } else if (contentType !== 'alm-cohort' && contentType !== 'alm-course') {
-    contentType = 'alm-course'; // Default to alm-course if invalid
   }
-
-  console.log('ALM Cards - Final contentType:', contentType);
-
-  const sortCriteria = COVEO_SORT_OPTIONS.RELEVANCE;
   const noOfResults = 4;
 
   // Clearing the block's content
   block.innerHTML = '';
   block.classList.add('browse-cards-block', 'alm-cards-block');
 
-  // Create header section with proper heading element and CTA
+  // Create header section with heading and CTA
   const headerDiv = document.createElement('div');
-  headerDiv.className = 'browse-cards-block-header';
-
-  // Preserve the heading element structure (h1, h2, h3, etc.) from authoring
-  const headingContainer = document.createElement('div');
-  headingContainer.className = 'browse-cards-block-title';
-  const headingNode = htmlToElement(headingElement.innerHTML);
-  headingContainer.appendChild(headingNode);
-  headerDiv.appendChild(headingContainer);
-
-  // Add CTA link with proper styling using decorateCustomButtons
-  if (linkElement && linkElement.innerHTML.trim()) {
-    const ctaContainer = document.createElement('div');
-    ctaContainer.className = 'browse-cards-block-cta';
-    
-    // Pass the linkElement directly to decorateCustomButtons, similar to announcement-ribbon
-    // decorateCustomButtons will handle parsing the DOM element
-    ctaContainer.innerHTML = decorateCustomButtons(linkElement);
-    
-    headerDiv.appendChild(ctaContainer);
-  }
-
-  // Appending header div to the block
+  headerDiv.className = 'alm-cards-block-header';
+  headerDiv.innerHTML = `
+    <div class="alm-cards-block-title">
+      ${headingElement?.innerHTML || ''}
+    </div>
+    <div class="alm-cards-block-cta">
+      ${decorateCustomButtons(ctaElement)}
+    </div>
+  `;
   block.appendChild(headerDiv);
 
   const param = {
     contentType: contentType, // Can be string ('alm-course' or 'alm-cohort') or array (['alm-course', 'alm-cohort'])
-    sortCriteria,
+
     noOfResults,
   };
 

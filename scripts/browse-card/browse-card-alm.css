@@ -88,23 +88,30 @@
   margin: 0;
 }
 
-.alm-card-new-tag-container {
+.alm-card-tags-container {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 8px;
+  right: 8px;
   display: flex;
   gap: 8px;
-  z-index: 2;
-  background-color: var(--spectrum-yellow-400);
-  padding: 2px 8px;
-  border-radius: 7px;
+}
+
+.alm-card-tag {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  margin: 0;
 }
 
 .alm-card-new-tag {
-  font-size: 12px;
-  color: var(--spectrum-gray-900);
-  margin: 0;
-  font-weight: 600;
+  background-color: var(--non-spectrum-new-label-yellow);
+  color: var(--spectrum-gray-50);
+}
+
+.alm-card-format-tag {
+  background-color: var(--background-color);
 }
 
 /* Rating Overlay */
@@ -202,7 +209,7 @@
   margin: 0;
   font-size: 14px;
   line-height: 1.5;
-  color: var(--color-gray-700);
+  color: var(--spectrum-gray-600);
 }
 
 /* ==========================================================================

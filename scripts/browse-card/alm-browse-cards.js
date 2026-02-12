@@ -95,7 +95,7 @@ function getBookmarkId(id, viewLink) {
  * @returns {HTMLElement} Thumbnail figure element
  * @private
  */
-function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, element, model, startLabel, isNew }) {
+function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, element, model, startLabel, isNew, loFormat, isCourseCard }) {
   const cardFigure = document.createElement('div');
   cardFigure.className = 'alm-card-figure';
 
@@ -169,14 +169,27 @@ function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, ele
     cardFigure.appendChild(startLabelContainer);
   }
 
-  if (isNew) {
-    const newTagContainer = document.createElement('div');
-    newTagContainer.className = 'alm-card-new-tag-container';
-    const newTagElement = document.createElement('p');
-    newTagElement.className = 'alm-card-new-tag';
-    newTagElement.innerHTML = 'New';
-    newTagContainer.appendChild(newTagElement);
-    cardFigure.appendChild(newTagContainer);
+  // Show New label for both courses and cohorts
+  // Show loFormat label only for courses
+  if (isNew || (isCourseCard && loFormat)) {
+    const tagsContainer = document.createElement('div');
+    tagsContainer.className = 'alm-card-tags-container';
+    
+    if (isNew) {
+      const newTagElement = document.createElement('p');
+      newTagElement.className = 'alm-card-tag alm-card-new-tag';
+      newTagElement.innerHTML = 'New';
+      tagsContainer.appendChild(newTagElement);
+    }
+    
+    if (isCourseCard && loFormat) {
+      const formatTagElement = document.createElement('p');
+      formatTagElement.className = 'alm-card-tag alm-card-format-tag';
+      formatTagElement.innerHTML = loFormat;
+      tagsContainer.appendChild(formatTagElement);
+    }
+    
+    cardFigure.appendChild(tagsContainer);
   }
 
   return cardFigure;
@@ -300,6 +313,8 @@ export async function buildALMCard(element, model) {
     model,
     startLabel: meta?.startLabel,
     isNew: meta?.isNew,
+    loFormat: meta?.loFormat,
+    isCourseCard,
   });
   
   // Add rating overlay to thumbnail ONLY for courses (not cohorts)
@@ -316,13 +331,18 @@ export async function buildALMCard(element, model) {
   const cardContent = document.createElement('div');
   cardContent.className = 'alm-card-content';
 
-  // For courses: meta comes before title
+  // For courses: description comes before title
   // For cohorts: title comes before meta
   if (isCourseCard) {
-    // Add metadata first for courses
-    const metaInfo = buildALMMetaInfo(meta, isCourseCard);
-    if (metaInfo.children.length > 0) {
-      cardContent.appendChild(metaInfo);
+    // Add description first for courses (truncated to 20 chars)
+    if (meta?.description) {
+      const descriptionElement = document.createElement('p');
+      descriptionElement.className = 'alm-card-description';
+      const truncatedDescription = meta.description.length > 20 
+        ? `${meta.description.substring(0, 20)}...` 
+        : meta.description;
+      descriptionElement.textContent = truncatedDescription;
+      cardContent.appendChild(descriptionElement);
     }
 
     // Then add title
@@ -350,10 +370,10 @@ export async function buildALMCard(element, model) {
 
   card.appendChild(cardContent);
 
-  // Build footer (reserved for future CTA buttons)
-  const cardFooter = document.createElement('div');
-  cardFooter.className = 'alm-card-footer';
-  if(meta?.instances?.length > 0) {
+  // Build footer with instances - only for cohorts, not for courses
+  if (!isCourseCard && meta?.instances?.length > 0) {
+    const cardFooter = document.createElement('div');
+    cardFooter.className = 'alm-card-footer';
     const instancesContainer = document.createElement('div');
     instancesContainer.className = 'alm-card-instances';
     meta.instances.forEach((instance) => {
@@ -363,8 +383,8 @@ export async function buildALMCard(element, model) {
       instancesContainer.appendChild(instanceElement);
     });
     cardFooter.appendChild(instancesContainer);
+    card.appendChild(cardFooter);
   }
-  card.appendChild(cardFooter);
 
 
   // Load required CSS

@@ -48,7 +48,7 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
 
   const param = {
-    contentType: "alm-cohort" ||contentType && contentType.toLowerCase().split(','),
+    contentType: 'alm-cohort' || (contentType && contentType.toLowerCase().split(',')),
     product: products.length ? removeProductDuplicates(products) : null,
     feature: features.length ? [...new Set(features)] : null,
     version: versions.length ? [...new Set(versions)] : null,
