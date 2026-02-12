@@ -574,8 +574,8 @@ button:focus {
   .header > nav {
     width: 100%;
     justify-content: initial;
-    grid-template-areas: 'adobe-logo brand nav sign-in search community-actions language product-grid signed-in';
-    grid-template-columns: min-content min-content max-content min-content auto max-content max-content max-content max-content;
+    grid-template-areas: 'adobe-logo brand nav search community-actions language product-grid signed-in sign-in';
+    grid-template-columns: min-content min-content max-content auto max-content max-content max-content max-content min-content;
   }
 }
 
@@ -638,7 +638,6 @@ button:focus {
 @media (min-width: 1024px) {
   .header .sign-in {
     padding-left: 0;
-    padding-right: 0;
   }
 }
 
