@@ -1,10 +1,8 @@
-import { pushComponentClick, generateComponentID } from '../../scripts/analytics/lib-analytics.js';
-
 export default async function decorate(block) {
   const cards = block.querySelectorAll('div > div');
   const allCards = Array.from(block.children);
 
-  function toggleCard(card, cardPosition) {
+  async function toggleCard(card, cardPosition) {
     const isCurrentlyFlipped = card.classList.contains('flipped');
     const [frontFace, backFace] = card.children;
 
@@ -27,9 +25,12 @@ export default async function decorate(block) {
     const titleElement = activeFace?.querySelector('.flip-card-title');
     const cardTitle = titleElement?.textContent?.trim() || '';
 
-    // Get block header for linkType
-    const blockHeader = block.querySelector('h1, h2, h3, h4')?.textContent?.trim() || 'flip-card';
+    // Get card header for linkType
+    const cardHeaderElement = card.querySelector('h1, h2, h3, h4');
+    const blockHeader = cardHeaderElement?.textContent?.trim() || 'flip-card';
 
+    // Dynamic import for analytics functions
+    const { pushComponentClick, generateComponentID } = await import('../../scripts/analytics/lib-analytics.js');
     const componentID = generateComponentID(block, 'flip-card');
 
     pushComponentClick({

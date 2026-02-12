@@ -209,7 +209,24 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
 const buildCourseInfoContent = ({ el_course_duration, el_level, cardContent }) => {
   if (!el_course_duration && !el_level) return;
 
-  const levelText = el_level ? String(el_level)?.split(',')?.filter(Boolean)?.join(', ')?.toUpperCase() : '';
+  // Translate level values using placeholders
+  const translateLevel = (level) => {
+    const levelLower = level?.toLowerCase().trim();
+    const levelMap = {
+      beginner: placeholders?.filterExpLevelBeginnerTitle?.toUpperCase() || 'BEGINNER',
+      intermediate: placeholders?.filterExpLevelIntermediateTitle?.toUpperCase() || 'INTERMEDIATE',
+      experienced: placeholders?.filterExpLevelExperiencedTitle?.toUpperCase() || 'EXPERIENCED',
+    };
+    return levelMap[levelLower] || level?.toUpperCase();
+  };
+
+  const levelText = el_level
+    ? String(el_level)
+        ?.split(',')
+        ?.filter(Boolean)
+        ?.map((level) => translateLevel(level))
+        ?.join(', ')
+    : '';
   const durationText = el_course_duration ? String(el_course_duration)?.toUpperCase() : '';
   const separator = levelText && durationText ? ' | ' : '';
   const levelDurationText = `${levelText}${separator}${durationText}`;
@@ -783,7 +800,11 @@ export async function buildCard(element, model) {
   // Browse card click event handler
   element.querySelector('a')?.addEventListener('click', (e) => {
     const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+    const shouldOpenInNewTab = element.closest('.section')?.getAttribute('data-new-tab') === 'true';
 
+    if (shouldOpenInNewTab) {
+      element.querySelector('a')?.setAttribute('target', '_blank');
+    }
     const cardOptions = card.querySelector('.browse-card-options');
     if (cardOptions) {
       card.dataset.cardHeader = cardHeader || '';
