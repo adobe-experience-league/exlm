@@ -287,26 +287,20 @@ const BrowseCardsDelegate = (() => {
       [ALM_CONTENT_TYPES.COURSE.MAPPING_KEY]: handleALMService,
     };
 
-    // If the content type is an array, determine the appropriate service
+    // If the content type is an array, use the handleCoveoService (Works only with Coveo related content types)
     if (Array.isArray(contentType)) {
-      console.log('BrowseCardsDelegate - Array content type detected:', contentType);
-      
       // Check if array contains ALM content types (alm-course or alm-cohort)
       const hasALMContent = contentType.some(type => 
         type?.toLowerCase() === ALM_CONTENT_TYPES.COHORT.MAPPING_KEY || 
         type?.toLowerCase() === ALM_CONTENT_TYPES.COURSE.MAPPING_KEY
       );
       
-      console.log('BrowseCardsDelegate - Has ALM content:', hasALMContent);
-      
       if (hasALMContent) {
-        console.log('BrowseCardsDelegate - Routing to ALM service');
         return handleALMService;
       }
       
       // Handle upcoming events with Coveo
       if (contentType.includes(CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY)) {
-        console.log('BrowseCardsDelegate - Routing to Coveo service for upcoming events');
         return async () => {
           const cards = await handleCoveoService();
           return cards.map(normalizeUpcomingEventModel);
@@ -314,7 +308,6 @@ const BrowseCardsDelegate = (() => {
       }
       
       // Default to Coveo for other array content types
-      console.log('BrowseCardsDelegate - Routing to Coveo service (default for arrays)');
       return handleCoveoService;
     }
 

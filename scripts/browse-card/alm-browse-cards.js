@@ -197,8 +197,6 @@ function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, ele
 
 /**
  * Builds meta information section (duration, level, rating)
- * Note: For courses, rating is displayed on thumbnail overlay
- * For cohorts, rating is displayed in meta section
  * @param {Object} meta - Metadata object from card model
  * @param {boolean} isCourseCar - Whether this is a course card (not cohort)
  * @returns {HTMLElement} Meta information container
@@ -213,8 +211,6 @@ function buildALMMetaInfo(meta, isCourseCard = false) {
   if (meta?.duration) metaParts.push(meta.duration);
   if (meta?.level) metaParts.push(meta.level);
   
-  // For cohorts, include rating in meta section
-  // For courses, rating is shown on thumbnail overlay
   if (!isCourseCard && meta?.rating?.average > 0) {
     metaParts.push(`${meta.rating.average.toFixed(1)} ★`);
   }
@@ -317,7 +313,7 @@ export async function buildALMCard(element, model) {
     isCourseCard,
   });
   
-  // Add rating overlay to thumbnail ONLY for courses (not cohorts)
+  // Add rating overlay to thumbnail ONLY for courses 
   if (isCourseCard && meta?.rating?.average > 0) {
     const ratingOverlay = document.createElement('div');
     ratingOverlay.className = 'alm-card-rating-overlay';
@@ -331,37 +327,26 @@ export async function buildALMCard(element, model) {
   const cardContent = document.createElement('div');
   cardContent.className = 'alm-card-content';
 
-  // For courses: description comes before title
-  // For cohorts: title comes before meta
-  if (isCourseCard) {
-    // Add description first for courses (truncated to 20 chars)
-    if (meta?.description) {
-      const descriptionElement = document.createElement('p');
-      descriptionElement.className = 'alm-card-description';
-      const truncatedDescription = meta.description.length > 20 
-        ? `${meta.description.substring(0, 20)}...` 
-        : meta.description;
-      descriptionElement.textContent = truncatedDescription;
-      cardContent.appendChild(descriptionElement);
-    }
+  // For courses: description before title; For cohorts: title before meta
+  if (isCourseCard && meta?.description) {
+    const descriptionElement = document.createElement('p');
+    descriptionElement.className = 'alm-card-description';
+    descriptionElement.textContent = meta.description.length > 20 
+      ? `${meta.description.substring(0, 20)}...` 
+      : meta.description;
+    cardContent.appendChild(descriptionElement);
+  }
 
-    // Then add title
-    if (title) {
-      const titleElement = document.createElement('h3');
-      titleElement.className = 'alm-card-title';
-      titleElement.innerHTML = title;
-      cardContent.appendChild(titleElement);
-    }
-  } else {
-    // For cohorts: title first, then metadata
-    if (title) {
-      const titleElement = document.createElement('h3');
-      titleElement.className = 'alm-card-title';
-      titleElement.innerHTML = title;
-      cardContent.appendChild(titleElement);
-    }
+  // Add title for both courses and cohorts
+  if (title) {
+    const titleElement = document.createElement('h3');
+    titleElement.className = 'alm-card-title';
+    titleElement.innerHTML = title;
+    cardContent.appendChild(titleElement);
+  }
 
-    // Add metadata
+  // Add metadata for cohorts only
+  if (!isCourseCard) {
     const metaInfo = buildALMMetaInfo(meta, isCourseCard);
     if (metaInfo.children.length > 0) {
       cardContent.appendChild(metaInfo);
