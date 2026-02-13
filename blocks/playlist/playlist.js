@@ -204,7 +204,7 @@ function newPlayer(playlist) {
  */
 function decoratePlaylistHeader(block, playlist) {
   const playlistSection = block.closest('.section');
-  const defaultContent = playlistSection.querySelector('.default-content-wrapper');
+  const defaultContent = playlistSection?.querySelector('.default-content-wrapper');
   if (!defaultContent) return;
 
   // set title and description
@@ -340,41 +340,47 @@ export default async function decorate(block) {
   if (playlistId) {
     block.classList.add('hide-playlist');
 
-    const data = await fetchPlaylistById(playlistId);
-    const html = getPlaylistHtml(data);
-    const parsed = parsePlaylistHtml(html);
+    try {
+      const data = await fetchPlaylistById(playlistId);
+      const html = getPlaylistHtml(data);
+      const parsed = parsePlaylistHtml(html);
 
-    if (!parsed || !parsed.playlistEl) return;
+      if (!parsed || !parsed.playlistEl) return;
 
-    // For API-loaded playlists, update localStorage key to include page name and playlistId
-    // This ensures different API playlists don't share localStorage data
-    const pathParts = window.location.pathname.split('/').filter((p) => p);
-    const pageSlug = pathParts[pathParts.length - 1] || 'playlist';
-    const cleanPlaylistId = playlistId.replace(/^\/+/, '').replace(/\//g, '-');
-    playlist.localStorageKey = `playlist-${pageSlug}-${cleanPlaylistId}`;
+      // For API-loaded playlists, update localStorage key to include page name and playlistId
+      // This ensures different API playlists don't share localStorage data
+      const pathParts = window.location.pathname.split('/').filter((p) => p);
+      const pageSlug = pathParts[pathParts.length - 1] || 'playlist';
+      const cleanPlaylistId = playlistId.replace(/^\/+/, '').replace(/\//g, '-');
+      playlist.localStorageKey = `playlist-${pageSlug}-${cleanPlaylistId}`;
 
-    const jsonLdScript = parsed.doc.querySelector('script[type="application/ld+json"]');
-    if (jsonLdScript) {
-      try {
-        const jsonLdData = JSON.parse(jsonLdScript.textContent);
-        jsonLdArray = Array.isArray(jsonLdData) ? jsonLdData : [jsonLdData];
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to parse jsonLd', e);
+      const jsonLdScript = parsed.doc.querySelector('script[type="application/ld+json"]');
+      if (jsonLdScript) {
+        try {
+          const jsonLdData = JSON.parse(jsonLdScript.textContent);
+          jsonLdArray = Array.isArray(jsonLdData) ? jsonLdData : [jsonLdData];
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.error('Failed to parse jsonLd', e);
+        }
       }
+
+      // Extract playlist title and description from the main content div
+      const mainDiv = parsed.doc.querySelector('main > div');
+      const playlistTitleH = mainDiv?.querySelector('h1, h2, h3, h4, h5, h6');
+      const playlistDescriptionP = mainDiv?.querySelector('p');
+
+      block.innerHTML = parsed.playlistEl.innerHTML;
+
+      // Store playlist metadata for API-loaded playlists
+      if (playlistTitleH) block.dataset.playlistTitle = playlistTitleH.textContent.trim();
+      if (playlistDescriptionP) block.dataset.playlistDescription = playlistDescriptionP.textContent.trim();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to load playlist', error);
+    } finally {
+      block.classList.remove('hide-playlist');
     }
-
-    // Extract playlist title and description from the main content div
-    const mainDiv = parsed.doc.querySelector('main > div');
-    const playlistTitleH = mainDiv?.querySelector('h1, h2, h3, h4, h5, h6');
-    const playlistDescriptionP = mainDiv?.querySelector('p');
-
-    block.innerHTML = parsed.playlistEl.innerHTML;
-    block.classList.remove('hide-playlist');
-
-    // Store playlist metadata for API-loaded playlists
-    if (playlistTitleH) block.dataset.playlistTitle = playlistTitleH.textContent;
-    if (playlistDescriptionP) block.dataset.playlistDescription = playlistDescriptionP.textContent;
   }
 
   if (!block.children.length) return;
