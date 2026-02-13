@@ -11,7 +11,9 @@ import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
+import ALM_CONTENT_TYPES from '../data-service/alm/alm-constants.js';
 import isFeatureEnabled from '../utils/feature-flag-utils.js';
+import { buildALMCard } from './alm-browse-cards.js';
 
 const bookmarkExclusionContentypes = [
   CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
@@ -559,6 +561,15 @@ const getOnDemandEventsDecorator = () => {
 export async function buildCard(element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
 
+  // Delegate to ALM-specific card builder for ALM content types
+  const isALMContent =
+    contentType === ALM_CONTENT_TYPES.COURSE.MAPPING_KEY ||
+    contentType === ALM_CONTENT_TYPES.COHORT.MAPPING_KEY;
+
+  if (isALMContent) {
+    return buildALMCard(element, model);
+  }
+
   element.setAttribute('data-analytics-content-type', contentType);
   // lowercase all urls - because all of our urls are lower-case
   model.viewLink = lowerCaseSameOriginUrls(model.viewLink);
@@ -719,6 +730,7 @@ export async function buildCard(element, model) {
     cardContent.appendChild(titleElement);
   }
   await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
+  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-alm.css`);
 
   // For course content type, add level and duration info right after the title
   if (type === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()) {
@@ -857,4 +869,6 @@ export async function buildCard(element, model) {
       decorateOnDemandEvents(cardElement, model);
     });
   }
+
+  return undefined;
 }
