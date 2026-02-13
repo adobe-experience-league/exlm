@@ -19,6 +19,7 @@ async function fetchPlaylistById(playlistId) {
     const json = await resp.json();
     return json.data;
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error('Failed to fetch playlist', e);
     return null;
   }
@@ -358,6 +359,7 @@ export default async function decorate(block) {
         const jsonLdData = JSON.parse(jsonLdScript.textContent);
         jsonLdArray = Array.isArray(jsonLdData) ? jsonLdData : [jsonLdData];
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.error('Failed to parse jsonLd', e);
       }
     }
