@@ -13,6 +13,7 @@ import atomicNotificationHandler from './components/atomic-search-notification.j
 import getCoveoAtomicMarkup from './components/atomic-search-template.js';
 import { CUSTOM_EVENTS, debounce, generateAdobeTrackingData } from './components/atomic-search-utils.js';
 import { isMobile } from '../header/header-utils.js';
+import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import createAtomicSkeleton from './components/atomic-search-skeleton.js';
 import atomicSearchBoxHandler from './components/atomic-search-box.js';
 import atomicResultPageHandler from './components/atomic-search-results-per-page.js';
@@ -99,6 +100,18 @@ export default function decorate(block) {
     await searchInterface.initialize({
       accessToken: coveoToken,
       organizationId: coveoOrganizationId,
+      preprocessRequest: (request, clientOrigin, metadata) => {
+        const { body } = request;
+        const bodyJSON = JSON.parse(body || '{}');
+        const preProcessEvent = new CustomEvent(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, {
+          detail: {
+            method: metadata?.method,
+            body: bodyJSON,
+          },
+        });
+        document.dispatchEvent(preProcessEvent);
+        return request;
+      },
     });
 
     // Trigger a first search
