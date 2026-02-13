@@ -1,3 +1,7 @@
+.playlist.hide-playlist {
+  display: none;
+}
+
 .playlist-page {
   --playlist-border: #d6d6d6 2px solid;
   --playlist-border-radius: 10px;

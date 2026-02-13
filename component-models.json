@@ -8753,5 +8753,18 @@
         "description": "ID of the slide to render. Use the ID of the slide from the URL."
       }
     ]
+  },
+  {
+    "id": "playlist",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "playlistId",
+        "value": "",
+        "label": "Playlist ID",
+        "description": "ID of the playlist to render. Use the ID of the playlist from the URL."
+      }
+    ]
   }
 ]
