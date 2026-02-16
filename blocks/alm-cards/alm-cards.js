@@ -1,5 +1,5 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { createTag } from '../../scripts/scripts.js';
+import { createTag, htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
@@ -136,7 +136,38 @@ export default async function decorate(block) {
   const buildCardsShimmer = new BrowseCardShimmer();
   buildCardsShimmer.addShimmer(block);
 
+  function renderNoResultsContent(blockElement) {
+    const headerNoResultText = 'No Premium Learning search results.';
+    const descriptionNoResultText =
+      'Try searching for a specific product or role, or explore all Premium learning content.';
+    const markup = `
+      <div class="alm-cards-no-results">
+        <div class="alm-cards-no-results-header">${headerNoResultText}</div>
+        <div class="alm-cards-no-results-description">${descriptionNoResultText}</div>
+        <div class="alm-cards-block-cta">
+          ${decorateCustomButtons(ctaElement)}
+        </div>
+      </div>
+    `;
+    const noResultsContent = htmlToElement(markup);
+    blockElement.appendChild(noResultsContent);
+  }
+
+  function toggleNoResultsContent(blockElement, show) {
+    if (show) {
+      renderNoResultsContent(blockElement);
+      headerDiv.classList.add('alm-cards-hide-content');
+    } else {
+      const noResultsContent = blockElement.querySelector('.alm-cards-no-results');
+      if (noResultsContent) {
+        blockElement.removeChild(noResultsContent);
+      }
+      headerDiv.classList.remove('alm-cards-hide-content');
+    }
+  }
+
   function fetchAndRenderCards(params) {
+    toggleNoResultsContent(block, false);
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(params);
     browseCardsContent
       .then((data) => {
@@ -150,6 +181,8 @@ export default async function decorate(block) {
             contentDiv.appendChild(cardDiv);
           }
           block.appendChild(contentDiv);
+        } else {
+          toggleNoResultsContent(block, true);
         }
       })
       .catch((err) => {
@@ -179,6 +212,25 @@ export default async function decorate(block) {
           const url = new URL(href);
           url.search = urlString;
           anchor.setAttribute('href', url.toString());
+        }
+      }
+    });
+    document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.SEARCH_DOM_READY, (e) => {
+      const searchInterfaceElement = e.detail?.searchInterface;
+      if (searchInterfaceElement) {
+        const searchBlockElement = e.detail?.block;
+        if (searchBlockElement) {
+          const delta = 30;
+          searchBlockElement.classList.add('atomic-search-with-premium-search');
+          searchBlockElement.style.setProperty(
+            '--atomic-search-skeleton-margin-top',
+            `${block.offsetHeight - delta}px`,
+          );
+        }
+        block.classList.add('alm-cards-atomic-search');
+        const premiumSearchWrapper = searchInterfaceElement.querySelector('.atomic-search-premium-search-wrapper');
+        if (premiumSearchWrapper) {
+          premiumSearchWrapper.appendChild(block);
         }
       }
     });

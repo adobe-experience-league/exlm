@@ -82,6 +82,14 @@ export default function decorate(block) {
   const handleAtomicLibLoad = async () => {
     await customElements.whenDefined('atomic-search-interface');
     const searchInterface = block.querySelector('atomic-search-interface');
+
+    const customEvent = new CustomEvent(COVEO_SEARCH_CUSTOM_EVENTS.SEARCH_DOM_READY, {
+      detail: {
+        searchInterface,
+        block,
+      },
+    });
+    document.dispatchEvent(customEvent);
     const { coveoOrganizationId } = getConfig();
     let { lang: languageCode } = getPathDetails();
 
