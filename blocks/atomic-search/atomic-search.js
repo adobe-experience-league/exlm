@@ -165,6 +165,26 @@ export default function decorate(block) {
         Discussions: placeholders.searchContentTypeCommunityDiscussionsLabel || 'Discussions',
         Ideas: placeholders.searchContentTypeCommunityIdeasLabel || 'Ideas',
         Questions: placeholders.searchContentTypeCommunityQuestionsLabel || 'Questions',
+        'Community|Questions': placeholders.searchContentTypeCommunityQuestionsLabel || 'Questions',
+        'Community|Blogs': placeholders.searchContentTypeCommunityBlogsLabel || 'Blogs',
+        'Community|Discussions': placeholders.searchContentTypeCommunityDiscussionsLabel || 'Discussions',
+        'Community|Ideas': placeholders.searchContentTypeCommunityIdeasLabel || 'Ideas',
+        'Community|Groups': placeholders.searchContentTypeCommunityGroupsLabel || 'Groups',
+        'Community|Releases': placeholders.searchContentTypeCommunityReleasesLabel || 'Releases',
+        'Community|Community Resources': placeholders.searchContentTypeCommunityResourcesLabel || 'Community Resources',
+        'Community|Community Pulse': placeholders.searchContentTypeCommunityPulseLabel || 'Community Pulse',
+        'Community|Conversations': placeholders.searchContentTypeCommunityConversationsLabel || 'Conversations',
+        'Community;Community|Questions': placeholders.searchContentTypeCommunityQuestionsLabel || 'Questions',
+        'Community;Community|Blogs': placeholders.searchContentTypeCommunityBlogsLabel || 'Blogs',
+        'Community;Community|Discussions': placeholders.searchContentTypeCommunityDiscussionsLabel || 'Discussions',
+        'Community;Community|Ideas': placeholders.searchContentTypeCommunityIdeasLabel || 'Ideas',
+        'Community;Community|Releases': placeholders.searchContentTypeCommunityReleasesLabel || 'Releases',
+        'Community;Community|Community Resources':
+          placeholders.searchContentTypeCommunityResourcesLabel || 'Community Resources',
+        'Community;Community|Groups': placeholders.searchContentTypeCommunityGroupsLabel || 'Groups',
+        'Community;Community|Community Pulse': placeholders.searchContentTypeCommunityPulseLabel || 'Community Pulse',
+        'Community;Community|Conversations':
+          placeholders.searchContentTypeCommunityConversationsLabel || 'Conversations',
       });
 
       searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_role', {
@@ -177,6 +197,8 @@ export default function decorate(block) {
       searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_status', {
         true: placeholders.searchResolvedLabel || 'Resolved',
         false: placeholders.searchUnresolvedLabel || 'Unresolved',
+        Solved: placeholders.searchResolvedLabel || 'Resolved',
+        UnSolved: placeholders.searchUnresolvedLabel || 'Unresolved',
       });
 
       searchInterface.i18n.addResourceBundle(languageCode, 'translation', {
