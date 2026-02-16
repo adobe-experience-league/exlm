@@ -32,6 +32,48 @@ export const COMMUNITY_SUPPORTED_SORT_ELEMENTS = ['el_view_status', 'el_kudo_sta
 // Mobile Only (Until 1024px)
 export const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
+export const extractFacetName = (fieldName) => {
+  const splitContent = fieldName.split('|');
+  let parentName = splitContent[0];
+  const facetName = splitContent[1];
+  // Handle format like "Community;Community|Ideas" -> extract "Community" as parent
+  if (parentName.includes(';')) {
+    [parentName] = parentName.split(';');
+  }
+  return {
+    parentName,
+    facetName,
+  };
+};
+
+export const sendIdleParentFacet = (facet, isResponse = false) => {
+  const facetFields = isResponse ? facet.values ?? [] : facet.currentValues ?? [];
+  const addedFields = [];
+  facet.currentValues = facetFields.reduce((acc, curr) => {
+    const fieldName = curr.value || '';
+    const { parentName } = extractFacetName(fieldName);
+    if (
+      parentName &&
+      parentName !== fieldName &&
+      !addedFields.includes(parentName) &&
+      !facetFields.some((item) => item.value === parentName)
+    ) {
+      addedFields.push(parentName);
+      const defaultFacet = {
+        value: parentName,
+        state: 'idle',
+      };
+      if (isResponse) {
+        defaultFacet.numberOfResults = 1;
+      }
+      acc.push(defaultFacet);
+    }
+    acc.push(curr);
+    return acc;
+  }, []);
+  return facet;
+};
+
 export const waitFor = (callback, delay = DEFAULT_WAIT_TIME) => {
   setTimeout(callback, delay);
 };

@@ -11,8 +11,14 @@ import atomicPagerHandler from './components/atomic-search-pager.js';
 import atomicNoResultHandler from './components/atomic-search-no-results.js';
 import atomicNotificationHandler from './components/atomic-search-notification.js';
 import getCoveoAtomicMarkup from './components/atomic-search-template.js';
-import { CUSTOM_EVENTS, debounce, generateAdobeTrackingData } from './components/atomic-search-utils.js';
+import {
+  CUSTOM_EVENTS,
+  debounce,
+  generateAdobeTrackingData,
+  sendIdleParentFacet,
+} from './components/atomic-search-utils.js';
 import { isMobile } from '../header/header-utils.js';
+import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import createAtomicSkeleton from './components/atomic-search-skeleton.js';
 import atomicSearchBoxHandler from './components/atomic-search-box.js';
 import atomicResultPageHandler from './components/atomic-search-results-per-page.js';
@@ -99,6 +105,32 @@ export default function decorate(block) {
     await searchInterface.initialize({
       accessToken: coveoToken,
       organizationId: coveoOrganizationId,
+      preprocessRequest: (request, clientOrigin, metadata) => {
+        const { body } = request;
+        const bodyJSON = JSON.parse(body || '{}');
+        const facets = bodyJSON?.facets || [];
+        facets.forEach((facet) => {
+          sendIdleParentFacet(facet);
+        });
+        request.body = JSON.stringify(bodyJSON);
+        const preProcessEvent = new CustomEvent(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, {
+          detail: {
+            method: metadata?.method,
+            body: bodyJSON,
+          },
+        });
+        document.dispatchEvent(preProcessEvent);
+        return request;
+      },
+      search: {
+        preprocessSearchResponseMiddleware: (response) => {
+          const facets = response.body.facets || [];
+          facets.forEach((facet) => {
+            sendIdleParentFacet(facet, true);
+          });
+          return response;
+        },
+      },
     });
 
     // Trigger a first search
