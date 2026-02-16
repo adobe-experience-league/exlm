@@ -68,11 +68,25 @@ async function addAITrainingInterestToProfile() {
       return false;
     }
 
+    const interactions = profileData?.interactions ?? [];
+    const modalSeenInteraction = interactions.find((interaction) => interaction.event === 'modalSeen');
+
     const solutionLevels = profileData?.solutionLevels || [];
     const newInterests = [...interests, aiTrainingInterest.Name];
     const newSolutionLevels = [...solutionLevels, `${aiTrainingInterest.id}:Beginner`];
 
-    await defaultProfileClient.updateProfile(['interests', 'solutionLevels'], [newInterests, newSolutionLevels], true);
+    const keysToUpdate = ['interests', 'solutionLevels'];
+    const valuesToUpdate = [newInterests, newSolutionLevels];
+
+    if (!modalSeenInteraction) {
+      const otherInteractions = interactions.filter((interaction) => interaction.event !== 'modalSeen');
+      otherInteractions.push({ event: 'modalSeen', timestamp: new Date().toISOString(), modalSeen: true });
+
+      valuesToUpdate.push(otherInteractions);
+      keysToUpdate.push('interactions');
+    }
+
+    await defaultProfileClient.updateProfile(keysToUpdate, valuesToUpdate, true);
     return true;
   } catch (error) {
     // eslint-disable-next-line no-console
