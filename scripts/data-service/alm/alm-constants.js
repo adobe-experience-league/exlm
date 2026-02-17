@@ -17,7 +17,7 @@ try {
 /**
  * ALM content type definitions
  * Maps ALM learning object types to internal content type identifiers
- * 
+ *
  * @constant {Object} ALM_CONTENT_TYPES
  * @property {Object} COHORT - Learning program/cohort type
  * @property {string} COHORT.MAPPING_KEY - Internal identifier for cohorts

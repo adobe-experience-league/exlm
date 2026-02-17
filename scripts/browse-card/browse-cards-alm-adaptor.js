@@ -57,9 +57,7 @@ const BrowseCardsALMAdaptor = (() => {
     3: 'Master',
   };
 
-
-
-    /**
+  /**
    * Normalize a date to midnight (00:00:00) for calendar day comparison
    * @param {Date} date - Date to normalize
    * @returns {Date} Normalized date at midnight
@@ -82,128 +80,124 @@ const BrowseCardsALMAdaptor = (() => {
   }
 
   /**
- * Compute the start label based on enrollment deadline.
- * Start date = enrollmentDeadline + 1 day.
- *
- * Rules:
- *  - Start date has passed or is today → return empty string
- *  - Start date within next 7 days → "Starts in X day(s)"
- *  - Start date beyond 7 days → "Starting soon"
- *
- * @param {string|Date} deadline - Enrollment deadline date
- * @returns {string} Start label text or empty string
- */
- function getStartLabelFromDeadline(deadline) {
-  if (!deadline) return '';
+   * Compute the start label based on enrollment deadline.
+   * Start date = enrollmentDeadline + 1 day.
+   *
+   * Rules:
+   *  - Start date has passed or is today → return empty string
+   *  - Start date within next 7 days → "Starts in X day(s)"
+   *  - Start date beyond 7 days → "Starting soon"
+   *
+   * @param {string|Date} deadline - Enrollment deadline date
+   * @returns {string} Start label text or empty string
+   */
+  function getStartLabelFromDeadline(deadline) {
+    if (!deadline) return '';
 
-  const startDate = new Date(new Date(deadline).getTime() + MILLISECONDS_PER_DAY);
-  const today = normalizeToMidnight(new Date());
-  const normalizedStartDate = normalizeToMidnight(startDate);
+    const startDate = new Date(new Date(deadline).getTime() + MILLISECONDS_PER_DAY);
+    const today = normalizeToMidnight(new Date());
+    const normalizedStartDate = normalizeToMidnight(startDate);
 
-  const daysUntilStart = getDaysDifference(today, normalizedStartDate);
+    const daysUntilStart = getDaysDifference(today, normalizedStartDate);
 
-  if (daysUntilStart <= 0) return '';
+    if (daysUntilStart <= 0) return '';
 
-  if (daysUntilStart <= DAYS_THRESHOLD_FOR_COUNTDOWN) {
-    const dayLabel = daysUntilStart === 1 ? 'day' : 'days';
-    return `Starts in ${daysUntilStart} ${dayLabel}`;
+    if (daysUntilStart <= DAYS_THRESHOLD_FOR_COUNTDOWN) {
+      const dayLabel = daysUntilStart === 1 ? 'day' : 'days';
+      return `Starts in ${daysUntilStart} ${dayLabel}`;
+    }
+
+    return 'Starting soon';
   }
 
-  return 'Starting soon';
-}
-
   const createALMLinkfromID = (contentType, id) => {
-
     const { cdnOrigin } = getConfig();
     const extractedID = id.split(':')?.[1] || '';
     const contentTypePath = contentType.split('-')[1] || '';
     const almLink = `${cdnOrigin}/en/premium/${contentTypePath}/${extractedID}`;
     return almLink || '';
+  };
+
+  /**
+   * Check if a course is new (created within the last 90 days)
+   * @param {Object} course - The course/learning object
+   * @returns {boolean} True if the course is new (created within 90 days)
+   */
+  function isNewCourse(course) {
+    const ONE_DAY_IN_SECONDS = 24 * 60 * 60;
+    const attrs = course.attributes || {};
+
+    // Premium Learning Shows nee tag for only courses but designs show the tag for only cohorts - confirm
+    // const isOnDemand = attrs.loType === 'course';
+    // if (!isOnDemand) return false;
+
+    const createdDate = attrs.dateCreated ? new Date(attrs.dateCreated) : null;
+
+    if (!createdDate) return false;
+
+    const now = Date.now();
+    const days90 = 90 * ONE_DAY_IN_SECONDS * 1000;
+
+    return now - createdDate.getTime() <= days90;
   }
 
   /**
- * Check if a course is new (created within the last 90 days)
- * @param {Object} course - The course/learning object
- * @returns {boolean} True if the course is new (created within 90 days)
- */
- function isNewCourse(course) {
-  const ONE_DAY_IN_SECONDS = 24 * 60 * 60;
-  const attrs = course.attributes || {};
+   * Build a map of learning object IDs to their skill levels
+   * @param {Array} included - The included array from API response
+   * @returns {Map} Map of learning object IDs to Sets of level numbers
+   */
+  function buildLearningObjectSkillLevels(included) {
+    const skillLevelById = new Map();
+    const loSkillLevels = new Map();
 
-  // Premium Learning Shows nee tag for only courses but designs show the tag for only cohorts - confirm 
-  // const isOnDemand = attrs.loType === 'course';
-  // if (!isOnDemand) return false;
-
-  const createdDate = attrs.dateCreated ? new Date(attrs.dateCreated) : null;
-
-  if (!createdDate) return false;
-
-  const now = Date.now();
-  const days90 = 90 * ONE_DAY_IN_SECONDS * 1000;
-
-
-  return now - createdDate.getTime() <= days90;
-}
-
-/**
- * Build a map of learning object IDs to their skill levels
- * @param {Array} included - The included array from API response
- * @returns {Map} Map of learning object IDs to Sets of level numbers
- */
-function buildLearningObjectSkillLevels(included) {
-  const skillLevelById = new Map();
-  const loSkillLevels = new Map();
-
-  included.forEach((item) => {
-    if (item.type === 'skillLevel') {
-      const levelNum = parseInt(item.attributes?.level, 10);
-      if (!Number.isNaN(levelNum)) {
-        skillLevelById.set(item.id, levelNum);
+    included.forEach((item) => {
+      if (item.type === 'skillLevel') {
+        const levelNum = parseInt(item.attributes?.level, 10);
+        if (!Number.isNaN(levelNum)) {
+          skillLevelById.set(item.id, levelNum);
+        }
       }
-    }
-  });
+    });
 
-  included.forEach((item) => {
-    if (item.type === 'learningObjectSkill') {
-      const loId = item.attributes?.learningObjectId;
-      const levelId = item.relationships?.skillLevel?.data?.id;
-      const levelNum = levelId ? skillLevelById.get(levelId) : null;
-      if (loId && levelNum) {
-        if (!loSkillLevels.has(loId)) loSkillLevels.set(loId, new Set());
-        loSkillLevels.get(loId).add(levelNum);
+    included.forEach((item) => {
+      if (item.type === 'learningObjectSkill') {
+        const loId = item.attributes?.learningObjectId;
+        const levelId = item.relationships?.skillLevel?.data?.id;
+        const levelNum = levelId ? skillLevelById.get(levelId) : null;
+        if (loId && levelNum) {
+          if (!loSkillLevels.has(loId)) loSkillLevels.set(loId, new Set());
+          loSkillLevels.get(loId).add(levelNum);
+        }
       }
-    }
-  });
+    });
 
-  return loSkillLevels;
-}
+    return loSkillLevels;
+  }
 
-/**
- * Format skill levels into readable labels
- * @param {Set} levels - Set of level numbers
- * @param {Object} placeholders - Placeholders object with levelTbd key
- * @returns {string} Formatted level labels (e.g., "Professional, Expert")
- */
-function formatSkillLevels(levels, placeholders = {}) {
-  if (!levels || levels.size === 0) return placeholders.levelTbd || '';
-  const labels = [...levels]
-    .sort((a, b) => a - b)
-    .map((lvl) => LEVEL_LABELS[lvl] || `Level ${lvl}`);
-  return labels.join(', ');
-}
+  /**
+   * Format skill levels into readable labels
+   * @param {Set} levels - Set of level numbers
+   * @param {Object} placeholders - Placeholders object with levelTbd key
+   * @returns {string} Formatted level labels (e.g., "Professional, Expert")
+   */
+  function formatSkillLevels(levels, placeholders = {}) {
+    if (!levels || levels.size === 0) return placeholders.levelTbd || '';
+    const labels = [...levels].sort((a, b) => a - b).map((lvl) => LEVEL_LABELS[lvl] || `Level ${lvl}`);
+    return labels.join(', ');
+  }
 
-function buildInstances(cardData, included) {
-  const instances = cardData.relationships?.instances?.data;
-  if (!instances) return [];
-  return instances.map((instance) => {
-    const instanceData = included.find((i) => i.id === instance.id);
-    return {
-      id: instanceData.id,
-      name: instanceData.attributes?.localizedMetadata?.[0]?.name || '',
-      locale: instanceData.attributes?.localizedMetadata?.[0]?.locale || '',
-    };
-  });
-}
+  function buildInstances(cardData, included) {
+    const instances = cardData.relationships?.instances?.data;
+    if (!instances) return [];
+    return instances.map((instance) => {
+      const instanceData = included.find((i) => i.id === instance.id);
+      return {
+        id: instanceData.id,
+        name: instanceData.attributes?.localizedMetadata?.[0]?.name || '',
+        locale: instanceData.attributes?.localizedMetadata?.[0]?.locale || '',
+      };
+    });
+  }
 
   /**
    * Maps a single ALM result to the BrowseCards data model.
@@ -214,7 +208,6 @@ function buildInstances(cardData, included) {
    * @private
    */
   const mapResultToCardsDataModel = (cardData, included, placeholders = {}) => {
-
     const result = cardData;
 
     const contentType = determineContentType(result);
@@ -226,7 +219,7 @@ function buildInstances(cardData, included) {
     const skillLevels = formatSkillLevels(loSkillLevels.get(id), placeholders);
 
     const instances = buildInstances(cardData, included);
-    
+
     if (contentType === ALM_CONTENT_TYPES.COHORT.MAPPING_KEY) {
       const instanceId = cardData.relationships?.instances?.data?.[0]?.id;
 

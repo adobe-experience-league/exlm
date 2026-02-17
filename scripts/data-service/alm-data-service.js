@@ -17,7 +17,7 @@ import { getConfig, getPathDetails } from '../scripts.js';
 /**
  * ALMDataService class for fetching data from ALM (Adobe Learning Manager) API.
  * Handles API communication with Adobe Learning Manager to retrieve learning objects.
- * 
+ *
  * @class ALMDataService
  * @example
  * const service = new ALMDataService({
@@ -107,7 +107,10 @@ export default class ALMDataService {
 
     // Add enforced fields and includes for comprehensive data
     params.append('enforcedFields[learningObject]', 'extensionOverrides');
-    params.append('include', 'instances.enrollment.loResourceGrades,instances.loResources.resources,instances.badge,supplementaryResources,enrollment.loResourceGrades,skills.skillLevel.skill');
+    params.append(
+      'include',
+      'instances.enrollment.loResourceGrades,instances.loResources.resources,instances.badge,supplementaryResources,enrollment.loResourceGrades,skills.skillLevel.skill',
+    );
 
     return params;
   }
@@ -123,7 +126,6 @@ export default class ALMDataService {
 
     // Determine learning object types - support both course and cohort
     const loTypes = ALMDataService.determineLearningObjectTypes(contentType);
-
 
     const body = {
       'filter.loTypes': loTypes,
@@ -141,7 +143,6 @@ export default class ALMDataService {
     if (tagName) {
       body['filter.tagName'] = tagName;
     }
-
 
     return body;
   }
@@ -179,9 +180,7 @@ export default class ALMDataService {
    */
   static determineLearningObjectType(contentType) {
     const typeStr = Array.isArray(contentType) ? contentType.join(',') : contentType;
-    return typeStr?.includes('alm-cohort')
-      ? ALMDataService.LO_TYPES.LEARNING_PROGRAM
-      : ALMDataService.LO_TYPES.COURSE;
+    return typeStr?.includes('alm-cohort') ? ALMDataService.LO_TYPES.LEARNING_PROGRAM : ALMDataService.LO_TYPES.COURSE;
   }
 
   /**
@@ -192,9 +191,9 @@ export default class ALMDataService {
   buildRequestHeaders() {
     const { oauthToken } = this.config;
     return {
-      'Accept': 'application/vnd.api+json',
+      Accept: 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json;charset=UTF-8',
-      'Authorization': oauthToken ? `oauth ${oauthToken}` : '',
+      Authorization: oauthToken ? `oauth ${oauthToken}` : '',
     };
   }
 

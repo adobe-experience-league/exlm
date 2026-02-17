@@ -563,8 +563,7 @@ export async function buildCard(element, model) {
 
   // Delegate to ALM-specific card builder for ALM content types
   const isALMContent =
-    contentType === ALM_CONTENT_TYPES.COURSE.MAPPING_KEY ||
-    contentType === ALM_CONTENT_TYPES.COHORT.MAPPING_KEY;
+    contentType === ALM_CONTENT_TYPES.COURSE.MAPPING_KEY || contentType === ALM_CONTENT_TYPES.COHORT.MAPPING_KEY;
 
   if (isALMContent) {
     return buildALMCard(element, model);

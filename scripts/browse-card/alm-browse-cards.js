@@ -30,9 +30,7 @@ function lowerCaseSameOriginUrls(url) {
 
   try {
     const urlObj = new URL(url, window.location.origin);
-    return urlObj.origin === window.location.origin 
-      ? urlObj.toString().toLowerCase() 
-      : url;
+    return urlObj.origin === window.location.origin ? urlObj.toString().toLowerCase() : url;
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('Error parsing URL:', e);
@@ -49,12 +47,12 @@ function lowerCaseSameOriginUrls(url) {
  */
 function getCardHeaderAndPosition(card, element) {
   const currentBlock = card.closest('.block');
-  
+
   // Extract header text
   const headerEl = currentBlock?.querySelector(
     '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
   );
-  
+
   let cardHeader = '';
   if (headerEl) {
     const cloned = headerEl.cloneNode(true);
@@ -95,7 +93,20 @@ function getBookmarkId(id, viewLink) {
  * @returns {HTMLElement} Thumbnail figure element
  * @private
  */
-function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, element, model, startLabel, isNew, loFormat, isCourseCard }) {
+function buildALMThumbnail({
+  thumbnail,
+  title,
+  id,
+  viewLink,
+  copyLink,
+  card,
+  element,
+  model,
+  startLabel,
+  isNew,
+  loFormat,
+  isCourseCard,
+}) {
   const cardFigure = document.createElement('div');
   cardFigure.className = 'alm-card-figure';
 
@@ -120,7 +131,7 @@ function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, ele
 
     img.addEventListener('error', handleImageError);
     img.addEventListener('load', handleImageLoad);
-    
+
     if (img.complete) {
       img.classList.add('img-loaded');
     }
@@ -137,12 +148,7 @@ function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, ele
 
   const createAnalyticsCallback = (eventName) => (linkType, position) => {
     const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
-    pushBrowseCardClickEvent(
-      eventName,
-      model,
-      linkType || cardHeader || '',
-      position || cardPosition || '',
-    );
+    pushBrowseCardClickEvent(eventName, model, linkType || cardHeader || '', position || cardPosition || '');
   };
 
   const cardAction = UserActions({
@@ -174,21 +180,21 @@ function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, ele
   if (isNew || (isCourseCard && loFormat)) {
     const tagsContainer = document.createElement('div');
     tagsContainer.className = 'alm-card-tags-container';
-    
+
     if (isNew) {
       const newTagElement = document.createElement('p');
       newTagElement.className = 'alm-card-tag alm-card-new-tag';
       newTagElement.innerHTML = 'New';
       tagsContainer.appendChild(newTagElement);
     }
-    
+
     if (isCourseCard && loFormat) {
       const formatTagElement = document.createElement('p');
       formatTagElement.className = 'alm-card-tag alm-card-format-tag';
       formatTagElement.innerHTML = loFormat;
       tagsContainer.appendChild(formatTagElement);
     }
-    
+
     cardFigure.appendChild(tagsContainer);
   }
 
@@ -210,7 +216,7 @@ function buildALMMetaInfo(meta, isCourseCard = false) {
   // Collect available metadata
   if (meta?.duration) metaParts.push(meta.duration);
   if (meta?.level) metaParts.push(meta.level);
-  
+
   if (!isCourseCard && meta?.rating?.average > 0) {
     metaParts.push(`${meta.rating.average.toFixed(1)} ★`);
   }
@@ -263,23 +269,14 @@ function attachClickHandlers(element, card, model) {
 /**
  * Builds an ALM-specific browse card
  * Creates specialized card layout for Adobe Learning Manager content (courses and cohorts)
- * 
+ *
  * @param {HTMLElement} element - Container element for the card
  * @param {Object} model - Card data model from ALM adaptor
  * @returns {Promise<void>}
  * @public
  */
 export async function buildALMCard(element, model) {
-  const {
-    id,
-    thumbnail,
-    title,
-    contentType,
-    viewLink,
-    copyLink,
-    meta,
-    failedToLoad = false,
-  } = model;
+  const { id, thumbnail, title, contentType, viewLink, copyLink, meta, failedToLoad = false } = model;
 
   // Set analytics attribute
   element.setAttribute('data-analytics-content-type', contentType);
@@ -296,7 +293,7 @@ export async function buildALMCard(element, model) {
 
   // Determine if this is a course card (for rating display logic)
   const isCourseCard = type === 'alm-course';
-  
+
   // Build thumbnail section
   const cardFigure = buildALMThumbnail({
     thumbnail,
@@ -312,15 +309,15 @@ export async function buildALMCard(element, model) {
     loFormat: meta?.loFormat,
     isCourseCard,
   });
-  
-  // Add rating overlay to thumbnail ONLY for courses 
+
+  // Add rating overlay to thumbnail ONLY for courses
   if (isCourseCard && meta?.rating?.average > 0) {
     const ratingOverlay = document.createElement('div');
     ratingOverlay.className = 'alm-card-rating-overlay';
     ratingOverlay.innerHTML = `${meta.rating.average.toFixed(1)} <span class="rating-star">★</span>`;
     cardFigure.appendChild(ratingOverlay);
   }
-  
+
   card.appendChild(cardFigure);
 
   // Build content section
@@ -331,9 +328,8 @@ export async function buildALMCard(element, model) {
   if (isCourseCard && meta?.description) {
     const descriptionElement = document.createElement('p');
     descriptionElement.className = 'alm-card-description';
-    descriptionElement.textContent = meta.description.length > 20 
-      ? `${meta.description.substring(0, 20)}...` 
-      : meta.description;
+    descriptionElement.textContent =
+      meta.description.length > 20 ? `${meta.description.substring(0, 20)}...` : meta.description;
     cardContent.appendChild(descriptionElement);
   }
 
@@ -370,7 +366,6 @@ export async function buildALMCard(element, model) {
     cardFooter.appendChild(instancesContainer);
     card.appendChild(cardFooter);
   }
-
 
   // Load required CSS
   await Promise.all([

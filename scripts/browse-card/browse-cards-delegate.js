@@ -204,15 +204,15 @@ const BrowseCardsDelegate = (() => {
   const handleALMService = async () => {
     const almService = new ALMDataService(param);
     const cardData = await almService.fetchDataFromSource();
-    
+
     if (!cardData) {
       throw new Error('ALM service error: Unable to fetch data');
     }
-    
+
     if (cardData?.data?.length) {
       return BrowseCardsALMAdaptor.mapResultsToCardsData(cardData);
     }
-    
+
     return [];
   };
 
@@ -290,15 +290,16 @@ const BrowseCardsDelegate = (() => {
     // If the content type is an array, use the handleCoveoService (Works only with Coveo related content types)
     if (Array.isArray(contentType)) {
       // Check if array contains ALM content types (alm-course or alm-cohort)
-      const hasALMContent = contentType.some(type => 
-        type?.toLowerCase() === ALM_CONTENT_TYPES.COHORT.MAPPING_KEY || 
-        type?.toLowerCase() === ALM_CONTENT_TYPES.COURSE.MAPPING_KEY
+      const hasALMContent = contentType.some(
+        (type) =>
+          type?.toLowerCase() === ALM_CONTENT_TYPES.COHORT.MAPPING_KEY ||
+          type?.toLowerCase() === ALM_CONTENT_TYPES.COURSE.MAPPING_KEY,
       );
-      
+
       if (hasALMContent) {
         return handleALMService;
       }
-      
+
       // Handle upcoming events with Coveo
       if (contentType.includes(CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY)) {
         return async () => {
@@ -306,7 +307,7 @@ const BrowseCardsDelegate = (() => {
           return cards.map(normalizeUpcomingEventModel);
         };
       }
-      
+
       // Default to Coveo for other array content types
       return handleCoveoService;
     }
