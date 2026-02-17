@@ -105,12 +105,9 @@ export default async function decorate(block) {
   // Extracting elements from the block in authoring order
   const [headingElement, ctaElement, contentTypeElement] = [...block.children];
 
-  // Handle multiselect content type - can be comma-separated string or already an array
+  // contentType is string if single selection,made into an array if multiple selections
   let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase();
-
-  // Parse content type from comma-separated string to array if needed
   if (contentType && contentType.includes(',')) {
-    // Split comma-separated values and clean up
     contentType = contentType
       .split(',')
       .map((type) => type.trim())
