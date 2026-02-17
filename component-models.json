@@ -1925,12 +1925,13 @@
         "description": "What link to open when clicking the button."
       },
       {
-        "component": "select",
+        "component": "multiselect",
         "valueType": "string",
         "name": "contentType",
         "value": "alm-course",
         "label": "Content Type",
         "description": "Select which ALM content type(s) to display",
+        "required": true,
         "options": [
           {
             "name": "ALM Course",
@@ -1939,10 +1940,6 @@
           {
             "name": "ALM Cohort",
             "value": "alm-cohort"
-          },
-          {
-            "name": "Both (Course & Cohort)",
-            "value": "both"
           }
         ]
       }

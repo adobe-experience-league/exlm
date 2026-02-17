@@ -105,10 +105,15 @@ export default async function decorate(block) {
   // Extracting elements from the block in authoring order
   const [headingElement, ctaElement, contentTypeElement] = [...block.children];
 
-  let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase() || 'alm-course';
-  if (contentType === 'both') {
-    contentType = ['alm-course', 'alm-cohort']; // Pass as array for both types
+  // contentType is string if single selection,made into an array if multiple selections
+  let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase();
+  if (contentType && contentType.includes(',')) {
+    contentType = contentType
+      .split(',')
+      .map((type) => type.trim())
+      .filter(Boolean);
   }
+
   const noOfResults = 4;
 
   // Clearing the block's content
