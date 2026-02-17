@@ -105,10 +105,18 @@ export default async function decorate(block) {
   // Extracting elements from the block in authoring order
   const [headingElement, ctaElement, contentTypeElement] = [...block.children];
 
-  let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase() || 'alm-course';
-  if (contentType === 'both') {
-    contentType = ['alm-course', 'alm-cohort']; // Pass as array for both types
+  // Handle multiselect content type - can be comma-separated string or already an array
+  let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase();
+
+  // Parse content type from comma-separated string to array if needed
+  if (contentType && contentType.includes(',')) {
+    // Split comma-separated values and clean up
+    contentType = contentType
+      .split(',')
+      .map((type) => type.trim())
+      .filter(Boolean);
   }
+
   const noOfResults = 4;
 
   // Clearing the block's content
