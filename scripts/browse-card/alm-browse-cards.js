@@ -1,8 +1,6 @@
 /* eslint-disable camelcase, no-unused-vars */
 import { loadCSS } from '../lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
-import { sendCoveoClickEvent } from '../coveo-analytics.js';
-import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 
 /**
@@ -41,39 +39,6 @@ function lowerCaseSameOriginUrls(url) {
 }
 
 /**
- * Extracts card header and position for analytics tracking
- * @param {HTMLElement} card - Card element
- * @param {HTMLElement} element - Container element
- * @returns {{cardHeader: string, cardPosition: string}} Tracking information
- * @private
- */
-function getCardHeaderAndPosition(card, element) {
-  const currentBlock = card.closest('.block');
-  
-  // Extract header text
-  const headerEl = currentBlock?.querySelector(
-    '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
-  );
-  
-  let cardHeader = '';
-  if (headerEl) {
-    const cloned = headerEl.cloneNode(true);
-    cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
-    cardHeader = cloned.innerText.trim();
-  }
-  cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
-
-  // Calculate position
-  let cardPosition = '';
-  if (element?.parentElement?.children) {
-    const siblings = Array.from(element.parentElement.children);
-    cardPosition = String(siblings.indexOf(element) + 1);
-  }
-
-  return { cardHeader, cardPosition };
-}
-
-/**
  * Gets bookmark ID from either the id field or viewLink pathname
  * @param {string} id - Content ID
  * @param {string} viewLink - View link URL
@@ -95,7 +60,7 @@ function getBookmarkId(id, viewLink) {
  * @returns {HTMLElement} Thumbnail figure element
  * @private
  */
-function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, element, model, startLabel, isNew }) {
+function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, startLabel, isNew }) {
   const cardFigure = document.createElement('div');
   cardFigure.className = 'alm-card-figure';
 
@@ -135,16 +100,6 @@ function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, ele
   cardActions.className = 'alm-card-actions';
   const bookmarkId = getBookmarkId(id, viewLink);
 
-  const createAnalyticsCallback = (eventName) => (linkType, position) => {
-    const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
-    pushBrowseCardClickEvent(
-      eventName,
-      model,
-      linkType || cardHeader || '',
-      position || cardPosition || '',
-    );
-  };
-
   const cardAction = UserActions({
     container: cardActions,
     id: bookmarkId,
@@ -152,8 +107,6 @@ function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, ele
     link: copyLink,
     bookmarkConfig: { icons: ['bookmark-white-fill'] },
     copyConfig: { icons: ['copy-white-fill'] },
-    bookmarkCallback: createAnalyticsCallback('bookmarkLinkBrowseCard'),
-    copyCallback: createAnalyticsCallback('copyLinkBrowseCard'),
   });
 
   cardAction.decorate();
@@ -174,7 +127,7 @@ function buildALMThumbnail({ thumbnail, title, id, viewLink, copyLink, card, ele
     newTagContainer.className = 'alm-card-new-tag-container';
     const newTagElement = document.createElement('p');
     newTagElement.className = 'alm-card-new-tag';
-    newTagElement.innerHTML = 'New';
+    newTagElement.textContent = placeholders.almBrowseCardNewTag || 'New';
     newTagContainer.appendChild(newTagElement);
     cardFigure.appendChild(newTagContainer);
   }
@@ -212,40 +165,6 @@ function buildALMMetaInfo(meta) {
 }
 
 /**
- * Attaches click event handlers for analytics tracking
- * @param {HTMLElement} element - Container element
- * @param {HTMLElement} card - Card element
- * @param {Object} model - Card data model
- * @private
- */
-function attachClickHandlers(element, card, model) {
-  const anchor = element.querySelector('a');
-  if (!anchor) return;
-
-  // Handle card and CTA clicks
-  anchor.addEventListener('click', (e) => {
-    const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
-
-    // Ignore user action clicks
-    if (e.target.closest('.user-actions')) return;
-
-    // Track CTA clicks
-    if (e.target.closest('.alm-card-cta-button')) {
-      pushBrowseCardClickEvent('browseCardCTAClick', model, cardHeader, cardPosition);
-      return;
-    }
-
-    // Track general card clicks
-    if (e.target.closest('a:not(.user-actions):not(.alm-card-cta-button)')) {
-      pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
-    }
-  });
-
-  // Send Coveo analytics event (once)
-  anchor.addEventListener('click', () => sendCoveoClickEvent('browse-card', model), { once: true });
-}
-
-/**
  * Builds an ALM-specific browse card
  * Creates specialized card layout for Adobe Learning Manager content (courses and cohorts)
  * 
@@ -266,9 +185,6 @@ export async function buildALMCard(element, model) {
     failedToLoad = false,
   } = model;
 
-  // Set analytics attribute
-  element.setAttribute('data-analytics-content-type', contentType);
-
   // Normalize URLs
   model.viewLink = lowerCaseSameOriginUrls(viewLink);
   model.copyLink = lowerCaseSameOriginUrls(copyLink);
@@ -287,8 +203,6 @@ export async function buildALMCard(element, model) {
     viewLink: model.viewLink,
     copyLink: model.copyLink,
     card,
-    element,
-    model,
     startLabel: meta?.startLabel,
     isNew: meta?.isNew,
   });
@@ -350,9 +264,6 @@ export async function buildALMCard(element, model) {
 
     cardContainer.appendChild(card);
     element.appendChild(cardContainer);
-
-    // Attach analytics handlers
-    attachClickHandlers(element, card, model);
   } else {
     element.appendChild(card);
   }
