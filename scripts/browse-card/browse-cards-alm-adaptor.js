@@ -1,6 +1,6 @@
 import browseCardDataModel from '../data-model/browse-cards-model.js';
 import ALM_CONTENT_TYPES from '../data-service/alm/alm-constants.js';
-import { fetchLanguagePlaceholders, getConfig } from '../scripts.js';
+import { fetchLanguagePlaceholders, getConfig, getPathDetails } from '../scripts.js';
 
 /**
  * Module that provides functionality for adapting ALM results to BrowseCards data model.
@@ -112,9 +112,10 @@ const BrowseCardsALMAdaptor = (() => {
 
   const createALMLinkfromID = (contentType, id) => {
     const { cdnOrigin } = getConfig();
+    const lang = getPathDetails()?.lang || 'en';
     const extractedID = id.split(':')?.[1] || '';
     const contentTypePath = contentType.split('-')[1] || '';
-    const almLink = `${cdnOrigin}/en/premium/${contentTypePath}/${extractedID}`;
+    const almLink = `${cdnOrigin}/${lang}/premium/${contentTypePath}/${extractedID}`;
     return almLink || '';
   };
 
