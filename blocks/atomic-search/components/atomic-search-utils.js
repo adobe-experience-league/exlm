@@ -33,11 +33,14 @@ export const COMMUNITY_SUPPORTED_SORT_ELEMENTS = ['el_view_status', 'el_kudo_sta
 export const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
 export const extractFacetName = (fieldName) => {
+  if (typeof fieldName !== 'string') {
+    return { parentName: undefined, facetName: undefined };
+  }
   const splitContent = fieldName.split('|');
   let parentName = splitContent[0];
   const facetName = splitContent[1];
   // Handle format like "Community;Community|Ideas" -> extract "Community" as parent
-  if (parentName.includes(';')) {
+  if (parentName && parentName.includes(';')) {
     [parentName] = parentName.split(';');
   }
   return {
@@ -48,17 +51,18 @@ export const extractFacetName = (fieldName) => {
 
 export const sendIdleParentFacet = (facet, isResponse = false) => {
   const facetFields = isResponse ? facet.values ?? [] : facet.currentValues ?? [];
-  const addedFields = [];
+  const addedFieldsSet = new Set();
+  const facetFieldValuesSet = new Set(facetFields.map((item) => item.value).filter(Boolean));
   facet.currentValues = facetFields.reduce((acc, curr) => {
     const fieldName = curr.value || '';
     const { parentName } = extractFacetName(fieldName);
     if (
       parentName &&
       parentName !== fieldName &&
-      !addedFields.includes(parentName) &&
-      !facetFields.some((item) => item.value === parentName)
+      !addedFieldsSet.has(parentName) &&
+      !facetFieldValuesSet.has(parentName)
     ) {
-      addedFields.push(parentName);
+      addedFieldsSet.add(parentName);
       const defaultFacet = {
         value: parentName,
         state: 'idle',
