@@ -107,28 +107,36 @@ export default function decorate(block) {
       organizationId: coveoOrganizationId,
       analytics: { analyticsMode: 'legacy' },
       preprocessRequest: (request, clientOrigin, metadata) => {
-        const { body } = request;
-        const bodyJSON = JSON.parse(body || '{}');
-        const facets = bodyJSON?.facets || [];
-        facets.forEach((facet) => {
-          sendIdleParentFacet(facet);
-        });
-        request.body = JSON.stringify(bodyJSON);
-        const preProcessEvent = new CustomEvent(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, {
-          detail: {
-            method: metadata?.method,
-            body: bodyJSON,
-          },
-        });
-        document.dispatchEvent(preProcessEvent);
+        try {
+          const { body } = request;
+          const bodyJSON = JSON.parse(body || '{}');
+          const facets = bodyJSON?.facets || [];
+          facets.forEach((facet) => {
+            sendIdleParentFacet(facet);
+          });
+          request.body = JSON.stringify(bodyJSON);
+          const preProcessEvent = new CustomEvent(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, {
+            detail: {
+              method: metadata?.method,
+              body: bodyJSON,
+            },
+          });
+          document.dispatchEvent(preProcessEvent);
+        } catch {
+          // Return request unchanged on parse/processing error
+        }
         return request;
       },
       search: {
         preprocessSearchResponseMiddleware: (response) => {
-          const facets = response.body.facets || [];
-          facets.forEach((facet) => {
-            sendIdleParentFacet(facet, true);
-          });
+          try {
+            const facets = response?.body?.facets || [];
+            facets.forEach((facet) => {
+              sendIdleParentFacet(facet, true);
+            });
+          } catch {
+            // Return response unchanged on error
+          }
           return response;
         },
       },
