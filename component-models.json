@@ -2442,6 +2442,96 @@
     ]
   },
   {
+    "id": "aim-marquee",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the main title of the aim-marquee."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h1",
+        "label": "Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description text."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "primaryCta_linkText",
+        "value": "",
+        "label": "Primary CTA Text",
+        "description": "Text to be shown inside primary button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "primaryCta_link",
+        "value": "",
+        "label": "Primary CTA Link",
+        "description": "Link for primary CTA. Use #SECTION-ID for jump links (e.g., #features)."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "secondaryCta_linkText",
+        "value": "",
+        "label": "Secondary CTA Text",
+        "description": "Text to be shown inside secondary button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "secondaryCta_link",
+        "value": "",
+        "label": "Secondary CTA Link",
+        "description": "Link for secondary CTA. Use #SECTION-ID for jump links (e.g., #pricing)."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "videoUrl",
+        "value": "",
+        "label": "Video URL (Desktop)",
+        "description": "URL for the background video shown on desktop and tablet devices."
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "mobileImage",
+        "label": "Image (Mobile)",
+        "description": "Background image shown on mobile devices.",
+        "multi": false
+      }
+    ]
+  },
+  {
     "id": "article-marquee",
     "fields": [
       {
