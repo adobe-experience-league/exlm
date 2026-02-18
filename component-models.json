@@ -8771,6 +8771,24 @@
     "id": "grid-card-block",
     "fields": [
       {
+        "component": "select",
+        "name": "classes",
+        "value": "grid-card-block-v1",
+        "label": "Style Variant",
+        "description": "Select the style variant for the grid card block",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Grid Card Block V1",
+            "value": "grid-card-block-v1"
+          },
+          {
+            "name": "Grid Card Block V2",
+            "value": "grid-card-block-v2"
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "eyebrow",
@@ -8799,24 +8817,6 @@
   {
     "id": "grid-card",
     "fields": [
-      {
-        "component": "select",
-        "name": "classes",
-        "value": "grid-card-v1",
-        "label": "Style Variant",
-        "description": "Select the style variant for the card",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Grid Card V1",
-            "value": "grid-card-v1"
-          },
-          {
-            "name": "Grid Card V2",
-            "value": "grid-card-v2"
-          }
-        ]
-      },
       {
         "component": "text",
         "valueType": "string",
@@ -8858,15 +8858,12 @@
         "description": "URL for the call-to-action link."
       },
       {
-        "condition": {
-          "===": [{ "var": "classes" }, "grid-card-v1"]
-        },
         "component": "text",
         "valueType": "string",
         "name": "ctaText",
         "value": "",
         "label": "CTA Text",
-        "description": "Text to be shown for the call-to-action button. Only visible for Grid Card V1 variant."
+        "description": "Text to be shown for the call-to-action button."
       }
     ]
   }
