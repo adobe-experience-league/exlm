@@ -1045,11 +1045,22 @@ async function loadDefaultModule(jsPath) {
 }
 
 function targetPreHiding() {
-  const styleEl = htmlToElement(`<style> header { opacity: 0 !important } </style>`);
-  document.head.appendChild(styleEl);
-
+  const interval = setInterval(() => {
+    const headerEl = document.querySelector('exl-header');
+    if (!headerEl || !headerEl.shadowRoot) return;
+    const navItem = headerEl.shadowRoot.querySelector('#nav-wrapper > ul > li:nth-of-type(2)');
+    if (navItem) {
+      navItem.style.display = 'none';
+    }
+    if (document.body.classList.contains('target-test-loaded')) {
+      clearInterval(interval);
+      if (navItem) {
+        navItem.style.display = '';
+      }
+    }
+  }, 50);
   setTimeout(() => {
-    styleEl.remove();
+    clearInterval(interval);
   }, 2000);
 }
 
