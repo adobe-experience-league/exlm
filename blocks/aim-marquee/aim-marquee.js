@@ -1,4 +1,18 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { getLocalizedVideoUrl } from '../../scripts/utils/video-utils.js';
+import { getPathDetails } from '../../scripts/scripts.js';
+
+const getDefaultEmbed = (url) => `
+  <div class="video-frame" style="position: absolute; inset: 0; width: 100%; height: 100%;">
+    <iframe 
+      src="${new URL(url).href}"
+      style="border: 0; width: 100%; height: 100%;"
+      allowfullscreen
+      allow="encrypted-media; autoplay"
+      title="Content from ${new URL(url).hostname}"
+      loading="lazy"></iframe>
+  </div>`;
 
 /**
  * Smooth scroll to a section on the page
@@ -32,6 +46,8 @@ function handleJumpLink(ctaLink) {
 }
 
 export default async function decorate(block) {
+  const { lang = 'en' } = getPathDetails() || {};
+
   // Extract properties from block structure
   const allDivs = [...block.querySelectorAll(':scope > div > div')];
 
@@ -42,73 +58,46 @@ export default async function decorate(block) {
   let videoDesktop;
   let imageMobile;
 
-  // Parse block content based on structure
+  // Parse block content - expect 6 rows
   if (allDivs.length >= 6) {
     [title, description, primaryCta, secondaryCta, videoDesktop, imageMobile] = allDivs;
   } else if (allDivs.length >= 4) {
+    // Fallback if only 4 rows provided (no video/image)
     [title, description, primaryCta, secondaryCta] = allDivs;
   }
 
   const titleText = title?.textContent?.trim() || '';
-  const descriptionText = description?.innerHTML?.trim() || '';
+  const descriptionHTML = description?.innerHTML?.trim() || '';
   const primaryCtaLink = primaryCta?.querySelector('a');
   const secondaryCtaLink = secondaryCta?.querySelector('a');
-  const videoUrl = videoDesktop?.querySelector('a')?.href || '';
-  const mobileImage = imageMobile?.querySelector('picture');
+  const videoUrl = videoDesktop?.querySelector('a')?.href?.trim() || '';
+  const mobileImagePicture = imageMobile?.querySelector('picture');
 
-  // Get title type from block metadata or default to h1
-  const titleType = block.dataset.titleType || block.getAttribute('data-title-type') || 'h1';
+  // Get localized video URL if video is provided
+  let localizedVideoUrl = '';
+  if (videoUrl) {
+    localizedVideoUrl = await getLocalizedVideoUrl(videoUrl, lang);
+  }
 
   // Build DOM structure
   const aimMarqueeDOM = document.createRange().createContextualFragment(`
-    <div class="aim-marquee-container">
-      <div class="aim-marquee-background">
-        ${
-          videoUrl
-            ? `
-          <div class="aim-marquee-video-wrapper">
-            <video class="aim-marquee-video" autoplay loop muted playsinline>
-              <source src="${videoUrl}" type="video/mp4">
-            </video>
-          </div>
-        `
-            : ''
-        }
-        ${
-          mobileImage
-            ? `
-          <div class="aim-marquee-image-mobile">
-            ${mobileImage.outerHTML}
-          </div>
-        `
-            : ''
-        }
-        <div class="aim-marquee-overlay"></div>
-      </div>
-      <div class="aim-marquee-content">
-        <${titleType} class="aim-marquee-title">${titleText}</${titleType}>
-        <div class="aim-marquee-description">${descriptionText}</div>
-        <div class="aim-marquee-cta-container">
-          ${
-            primaryCtaLink
-              ? `
-            <a href="${primaryCtaLink.href}" class="aim-marquee-cta primary">
-              ${primaryCtaLink.textContent}
-            </a>
-          `
-              : ''
-          }
-          ${
-            secondaryCtaLink
-              ? `
-            <a href="${secondaryCtaLink.href}" class="aim-marquee-cta secondary">
-              ${secondaryCtaLink.textContent}
-            </a>
-          `
-              : ''
-          }
+    <div class='aim-marquee-container'>
+      <div class='aim-marquee-content'>
+        <div class='aim-marquee-title'>${titleText}</div>
+        <div class='aim-marquee-description'>${descriptionHTML}</div>
+        <div class='aim-marquee-cta'>
+          ${decorateCustomButtons(primaryCta, secondaryCta)}
         </div>
       </div>
+      ${
+        mobileImagePicture
+          ? `
+        <div class="aim-marquee-image">
+          ${mobileImagePicture.outerHTML}
+        </div>
+      `
+          : ''
+      }
     </div>
   `);
 
@@ -116,17 +105,22 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(aimMarqueeDOM);
 
+  // Add video iframe if video URL is provided (same as marquee.js)
+  if (localizedVideoUrl) {
+    const container = block.querySelector('.aim-marquee-container');
+
+    const embedWrapper = document.createElement('div');
+    embedWrapper.classList.add('aim-marquee-video');
+    embedWrapper.innerHTML = getDefaultEmbed(localizedVideoUrl);
+
+    container.prepend(embedWrapper);
+  }
+
   // Setup jump link functionality for CTAs
-  const primaryCtaElement = block.querySelector('.aim-marquee-cta.primary');
-  const secondaryCtaElement = block.querySelector('.aim-marquee-cta.secondary');
-
-  if (primaryCtaElement) {
-    handleJumpLink(primaryCtaElement);
-  }
-
-  if (secondaryCtaElement) {
-    handleJumpLink(secondaryCtaElement);
-  }
+  const ctaLinks = block.querySelectorAll('.aim-marquee-cta a');
+  ctaLinks.forEach((ctaLink) => {
+    handleJumpLink(ctaLink);
+  });
 
   // Decorate icons if any
   decorateIcons(block);
