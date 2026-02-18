@@ -8766,5 +8766,108 @@
         "description": "ID of the playlist to render. Use the ID of the playlist from the URL."
       }
     ]
+  },
+  {
+    "id": "grid-card-block",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrow",
+        "value": "",
+        "label": "Eyebrow Text",
+        "description": "Sets the small pre-title above the title."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the main title of the grid card block."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description for the grid card block."
+      }
+    ]
+  },
+  {
+    "id": "grid-card",
+    "fields": [
+      {
+        "component": "select",
+        "name": "classes",
+        "value": "grid-card-v1",
+        "label": "Style Variant",
+        "description": "Select the style variant for the card",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Grid Card V1",
+            "value": "grid-card-v1"
+          },
+          {
+            "name": "Grid Card V2",
+            "value": "grid-card-v2"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the title for the card."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description for the card."
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Image",
+        "description": "The card image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "value": "",
+        "label": "Image Alt Text",
+        "description": "A descriptive text of the image."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaLink",
+        "value": "",
+        "label": "CTA Link",
+        "description": "URL for the call-to-action link."
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "grid-card-v1"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaText",
+        "value": "",
+        "label": "CTA Text",
+        "description": "Text to be shown for the call-to-action button. Only visible for Grid Card V1 variant."
+      }
+    ]
   }
 ]

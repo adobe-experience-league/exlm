@@ -81,6 +81,7 @@
       "quiz",
       "drill-in",
       "flip-card",
+      "grid-card-block",
       "course-breakdown",
       "course-marquee",
       "course-completion",
@@ -454,6 +455,10 @@
   {
     "id": "course-breakdown",
     "components": ["course-breakdown-item"]
+  },
+  {
+    "id": "grid-card-block",
+    "components": ["grid-card"]
   },
   {
     "id": "list-item",
