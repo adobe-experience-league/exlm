@@ -6965,9 +6965,6 @@
         ]
       },
       {
-        "condition": {
-          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "fill-image"] }]
-        },
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
@@ -6976,9 +6973,6 @@
         "multi": false
       },
       {
-        "condition": {
-          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "fill-image"] }]
-        },
         "component": "text",
         "valueType": "string",
         "name": "fileReferenceAlt",
