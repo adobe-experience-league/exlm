@@ -77,7 +77,6 @@ async function decorateRibbon({
   pagePath,
   ribbonId,
   dismissable,
-  bgImage,
   hexcode,
   firstCta,
   secondCta,
@@ -111,10 +110,6 @@ async function decorateRibbon({
   let bgColorVariable;
   const classes = block.classList;
   const backgroundColorClass = [...classes].find((cls) => cls.startsWith('bg-'));
-  if (block.classList.contains('fill-image')) {
-    block.style.background = bgImage;
-  }
-
   if (backgroundColorClass) {
     const bgSpectrumColor = backgroundColorClass.substr(3); // Remove 'bg-' prefix
     bgColorVariable = `var(--${bgSpectrumColor})`; // Use the CSS variable
@@ -164,19 +159,9 @@ async function decorateRibbon({
 }
 
 export default async function decorate(block) {
-  const allDivs = [...block.querySelectorAll(':scope div > div')];
-  let image;
-  let heading;
-  let description;
-  let bgImage;
-  let hexcode;
-  let firstCta;
-  let secondCta;
-  if (block.classList.contains('fill-image')) {
-    [image, heading, description, bgImage, firstCta, secondCta] = allDivs;
-  } else {
-    [image, heading, description, hexcode, firstCta, secondCta] = allDivs;
-  }
+  const [image, heading, description, hexcode, firstCta, secondCta] = [...block.children].map(
+    (row) => row.firstElementChild,
+  );
   const dismissable = block.classList.contains('dismissable');
   let pagePath = '';
   let ribbonId = '';
@@ -211,7 +196,6 @@ export default async function decorate(block) {
       pagePath,
       ribbonId,
       dismissable,
-      bgImage,
       hexcode,
       firstCta,
       secondCta,
