@@ -397,7 +397,11 @@ export default async function decorate(block) {
   let playerContainer = document.querySelector('[data-playlist-player-container]');
   if (!playerContainer) {
     playerContainer = htmlToElement('<div class="playlist-player-container" data-playlist-player-container></div>');
-    playlistSection.parentElement.prepend(playerContainer);
+    if (playlistId) {
+      playlistSection.before(playerContainer);
+    } else {
+      playlistSection.parentElement.prepend(playerContainer);
+    }
   }
 
   const activeVideoIndex = getQueryStringParameter('video') || 0;
