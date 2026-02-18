@@ -1059,7 +1059,7 @@ function targetPreHiding() {
 
   setTimeout(() => {
     styleEl.remove();
-  }, 2000);
+  }, 3000);
 }
 
 /**
