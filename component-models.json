@@ -2470,6 +2470,18 @@
           {
             "name": "H3",
             "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
           }
         ]
       },

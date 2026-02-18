@@ -16,10 +16,17 @@ const getDefaultEmbed = (url) => `
 
 /**
  * Smooth scroll to a section on the page
- * @param {string} targetId - The ID of the target section (without #)
+ * @param {string} targetId - The ID or data-section-id of the target section (without #)
  */
 function scrollToSection(targetId) {
-  const targetElement = document.getElementById(targetId);
+  // First try to find by id attribute
+  let targetElement = document.getElementById(targetId);
+  
+  // If not found, try to find by data-section-id attribute
+  if (!targetElement) {
+    targetElement = document.querySelector(`[data-section-id="${targetId}"]`);
+  }
+  
   if (targetElement) {
     targetElement.scrollIntoView({
       behavior: 'smooth',
@@ -43,33 +50,15 @@ function handleJumpLink(ctaLink) {
       scrollToSection(sectionId);
     });
   }
+  // If it's a regular URL, let it navigate normally (do nothing)
 }
 
 export default async function decorate(block) {
   const { lang = 'en' } = getPathDetails() || {};
 
-  // Extract properties from block structure
-  const allDivs = [...block.querySelectorAll(':scope > div > div')];
+  // Extract properties from block structure using destructuring
+  const [title, description, primaryCta, secondaryCta, videoDesktop, imageMobile] = [...block.children];
 
-  let title;
-  let description;
-  let primaryCta;
-  let secondaryCta;
-  let videoDesktop;
-  let imageMobile;
-
-  // Parse block content - expect 6 rows
-  if (allDivs.length >= 6) {
-    [title, description, primaryCta, secondaryCta, videoDesktop, imageMobile] = allDivs;
-  } else if (allDivs.length >= 4) {
-    // Fallback if only 4 rows provided (no video/image)
-    [title, description, primaryCta, secondaryCta] = allDivs;
-  }
-
-  const titleText = title?.textContent?.trim() || '';
-  const descriptionHTML = description?.innerHTML?.trim() || '';
-  const primaryCtaLink = primaryCta?.querySelector('a');
-  const secondaryCtaLink = secondaryCta?.querySelector('a');
   const videoUrl = videoDesktop?.querySelector('a')?.href?.trim() || '';
   const mobileImagePicture = imageMobile?.querySelector('picture');
 
@@ -79,25 +68,25 @@ export default async function decorate(block) {
     localizedVideoUrl = await getLocalizedVideoUrl(videoUrl, lang);
   }
 
-  // Build DOM structure
+  // Build DOM structure using template
   const aimMarqueeDOM = document.createRange().createContextualFragment(`
     <div class='aim-marquee-container'>
       <div class='aim-marquee-content'>
-        <div class='aim-marquee-title'>${titleText}</div>
-        <div class='aim-marquee-description'>${descriptionHTML}</div>
+        <div class='aim-marquee-title'>
+          ${title?.innerHTML || ''}
+        </div>
+        <div class='aim-marquee-description'>
+          ${description?.innerHTML || ''}
+        </div>
         <div class='aim-marquee-cta'>
           ${decorateCustomButtons(primaryCta, secondaryCta)}
         </div>
       </div>
-      ${
-        mobileImagePicture
-          ? `
+      ${mobileImagePicture ? `
         <div class="aim-marquee-image">
           ${mobileImagePicture.outerHTML}
         </div>
-      `
-          : ''
-      }
+      ` : ''}
     </div>
   `);
 
@@ -107,13 +96,13 @@ export default async function decorate(block) {
 
   // Add video iframe if video URL is provided (same as marquee.js)
   if (localizedVideoUrl) {
-    const container = block.querySelector('.aim-marquee-container');
+    const containerEl = block.querySelector('.aim-marquee-container');
 
     const embedWrapper = document.createElement('div');
     embedWrapper.classList.add('aim-marquee-video');
     embedWrapper.innerHTML = getDefaultEmbed(localizedVideoUrl);
 
-    container.prepend(embedWrapper);
+    containerEl.prepend(embedWrapper);
   }
 
   // Setup jump link functionality for CTAs
