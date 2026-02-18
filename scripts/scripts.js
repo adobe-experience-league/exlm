@@ -1045,22 +1045,20 @@ async function loadDefaultModule(jsPath) {
 }
 
 function targetPreHiding() {
-  const interval = setInterval(() => {
-    const headerEl = document.querySelector('exl-header');
-    if (!headerEl || !headerEl.shadowRoot) return;
-    const navItem = headerEl.shadowRoot.querySelector('#nav-wrapper > ul > li:nth-of-type(2)');
-    if (navItem) {
-      navItem.style.display = 'none';
+  const headerEl = document.querySelector('exl-header');
+  if (!headerEl || !headerEl.shadowRoot) return;
+
+  const styleEl = document.createElement('style');
+  styleEl.textContent = `
+    #nav-wrapper > ul {
+      display: none !important;
     }
-    if (document.body.classList.contains('target-test-loaded')) {
-      clearInterval(interval);
-      if (navItem) {
-        navItem.style.display = '';
-      }
-    }
-  }, 50);
+  `;
+
+  headerEl.shadowRoot.appendChild(styleEl);
+
   setTimeout(() => {
-    clearInterval(interval);
+    styleEl.remove();
   }, 2000);
 }
 
