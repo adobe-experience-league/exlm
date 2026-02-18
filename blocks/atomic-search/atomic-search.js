@@ -99,6 +99,7 @@ export default function decorate(block) {
     await searchInterface.initialize({
       accessToken: coveoToken,
       organizationId: coveoOrganizationId,
+      analytics: { analyticsMode: 'legacy' },
     });
 
     // Trigger a first search
