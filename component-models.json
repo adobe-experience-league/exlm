@@ -6847,7 +6847,7 @@
         "label": "Block options",
         "valueType": "string",
         "required": true,
-        "maxSize": 5,
+        "maxSize": 4,
         "options": [
           {
             "name": "Theme",
@@ -6877,19 +6877,6 @@
               {
                 "name": "Dismissable",
                 "value": "dismissable"
-              }
-            ]
-          },
-          {
-            "name": "Style Options",
-            "children": [
-              {
-                "name": "Add a background color",
-                "value": "fill-background"
-              },
-              {
-                "name": "Add a background image",
-                "value": "fill-image"
               }
             ]
           },
@@ -6963,22 +6950,6 @@
             ]
           }
         ]
-      },
-      {
-        "component": "reference",
-        "valueType": "string",
-        "name": "fileReference",
-        "label": "Image",
-        "description": "The background image",
-        "multi": false
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "fileReferenceAlt",
-        "value": "",
-        "label": "Image Alt Text",
-        "description": "A descriptive text of the image for accessibility"
       },
       {
         "condition": {
