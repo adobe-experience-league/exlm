@@ -21,12 +21,12 @@ const getDefaultEmbed = (url) => `
 function scrollToSection(targetId) {
   // First try to find by id attribute
   let targetElement = document.getElementById(targetId);
-  
+
   // If not found, try to find by data-section-id attribute
   if (!targetElement) {
     targetElement = document.querySelector(`[data-section-id="${targetId}"]`);
   }
-  
+
   if (targetElement) {
     targetElement.scrollIntoView({
       behavior: 'smooth',
@@ -82,11 +82,15 @@ export default async function decorate(block) {
           ${decorateCustomButtons(primaryCta, secondaryCta)}
         </div>
       </div>
-      ${mobileImagePicture ? `
+      ${
+        mobileImagePicture
+          ? `
         <div class="aim-marquee-image">
           ${mobileImagePicture.outerHTML}
         </div>
-      ` : ''}
+      `
+          : ''
+      }
     </div>
   `);
 
@@ -94,13 +98,73 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(aimMarqueeDOM);
 
-  // Add video iframe if video URL is provided (same as marquee.js)
+  // Add video if video URL is provided
   if (localizedVideoUrl) {
     const containerEl = block.querySelector('.aim-marquee-container');
 
     const embedWrapper = document.createElement('div');
     embedWrapper.classList.add('aim-marquee-video');
-    embedWrapper.innerHTML = getDefaultEmbed(localizedVideoUrl);
+
+    // Check if it's a direct MP4 video file
+    const videoUrlLower = localizedVideoUrl.toLowerCase();
+    const isMp4Video = videoUrlLower.endsWith('.mp4');
+
+    if (isMp4Video) {
+      // Use HTML5 video element for MP4 files
+      const video = document.createElement('video');
+      video.autoplay = true;
+      video.loop = true;
+      video.muted = true;
+      video.playsInline = true;
+      video.style.width = '100%';
+      video.style.height = '100%';
+      video.style.objectFit = 'cover';
+
+      const source = document.createElement('source');
+      source.src = localizedVideoUrl;
+      source.type = 'video/mp4';
+
+      video.appendChild(source);
+      embedWrapper.appendChild(video);
+
+      // Create custom play/pause button
+      const playPauseBtn = document.createElement('button');
+      playPauseBtn.className = 'aim-marquee-play-pause';
+      playPauseBtn.setAttribute('aria-label', 'Play/Pause video');
+
+      // SVG play icon
+      const playIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 5v14l11-7L8 5z" fill="currentColor"/>
+      </svg>`;
+
+      // SVG pause icon
+      const pauseIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" fill="currentColor"/>
+      </svg>`;
+
+      // Start with pause icon since video autoplays
+      playPauseBtn.innerHTML = pauseIcon;
+      playPauseBtn.dataset.state = 'playing';
+
+      // Add click handler
+      playPauseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (video.paused) {
+          video.play();
+          playPauseBtn.innerHTML = pauseIcon;
+          playPauseBtn.dataset.state = 'playing';
+        } else {
+          video.pause();
+          playPauseBtn.innerHTML = playIcon;
+          playPauseBtn.dataset.state = 'paused';
+        }
+      });
+
+      embedWrapper.appendChild(playPauseBtn);
+    } else {
+      // Use iframe for other video sources (YouTube, Vimeo, etc.)
+      embedWrapper.innerHTML = getDefaultEmbed(localizedVideoUrl);
+    }
 
     containerEl.prepend(embedWrapper);
   }
