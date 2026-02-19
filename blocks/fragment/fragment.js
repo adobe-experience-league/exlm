@@ -48,6 +48,6 @@ export default async function decorate(block) {
     }
   } else {
     // Remove site-wide-banner
-    block.closest('aside').remove();
+    block.closest('aside')?.remove();
   }
 }
