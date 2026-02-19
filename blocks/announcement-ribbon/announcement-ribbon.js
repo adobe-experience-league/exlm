@@ -111,9 +111,6 @@ async function decorateRibbon({
   let bgColorVariable;
   const classes = block.classList;
   const backgroundColorClass = [...classes].find((cls) => cls.startsWith('bg-'));
-  if (block.classList.contains('fill-image')) {
-    block.style.background = bgImage;
-  }
 
   if (backgroundColorClass) {
     const bgSpectrumColor = backgroundColorClass.substr(3); // Remove 'bg-' prefix
@@ -142,7 +139,17 @@ async function decorateRibbon({
 
   block.textContent = '';
   block.append(ribbonDom);
-  block.style.backgroundColor = bgColorVariable;
+  if (block.classList.contains('fill-image')) {
+    let bgImg;
+    const imageElement = bgImage.querySelector('img');
+    if (imageElement?.src) {
+      bgImg = `url("${imageElement.src}")`;
+    }
+
+    block.style.backgroundImage = bgImg;
+  } else {
+    block.style.backgroundColor = bgColorVariable;
+  }
 
   if (dismissable) {
     const icon = block.querySelector('.icon');

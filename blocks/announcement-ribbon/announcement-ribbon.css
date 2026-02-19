@@ -5,9 +5,22 @@
   justify-content: flex-start;
   background-color: var(--spectrum-gray-50);
   border: 1px solid var(--non-spectrum-pale-grey);
-  border-radius: 8px;
+  border-radius: 16px;
   padding: 24px;
   margin: 16px 0;
+}
+
+.announcement-ribbon.fill-image {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
+.announcement-ribbon.fill-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .announcement-ribbon .ribbon-image {
@@ -28,7 +41,7 @@
 }
 
 .announcement-ribbon .ribbon-description {
-  font-size: var(--spectrum-font-size-200);
+  font-size: var(--spectrum-font-size-500);
   color: var(--spectrum-gray-800);
   line-height: 19px;
 }
