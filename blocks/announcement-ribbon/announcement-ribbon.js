@@ -69,6 +69,36 @@ function extractAnchorData(cta) {
     : { href: '', text: '' };
 }
 
+/**
+ * Determines the background color for the ribbon block
+ * @param {Element} block - The ribbon block element
+ * @param {Element} hexcode - The hexcode element
+ * @returns {string} The background color CSS value
+ */
+function determineBackgroundColor(block, hexcode) {
+  const classes = block.classList;
+  const backgroundColorClass = [...classes].find((cls) => cls.startsWith('bg-'));
+
+  if (backgroundColorClass) {
+    const bgSpectrumColor = backgroundColorClass.substr(3); // Remove 'bg-' prefix
+    return `var(--${bgSpectrumColor})`; // Use the CSS variable
+  }
+  return `#${hexcode.innerHTML}`; // Use the hex code directly
+}
+
+/**
+ * Extracts the background image URL from the bgImage element
+ * @param {Element} bgImage - The element containing the background image
+ * @returns {string|undefined} The background image URL or undefined
+ */
+function getBackgroundImageUrl(bgImage) {
+  const imageElement = bgImage.querySelector('img');
+  if (imageElement?.src) {
+    return `url("${imageElement.src}")`;
+  }
+  return undefined;
+}
+
 async function decorateRibbon({
   block,
   image,
@@ -108,16 +138,6 @@ async function decorateRibbon({
 
   heading?.classList.add('ribbon-heading');
   description?.classList.add('ribbon-description');
-  let bgColorVariable;
-  const classes = block.classList;
-  const backgroundColorClass = [...classes].find((cls) => cls.startsWith('bg-'));
-
-  if (backgroundColorClass) {
-    const bgSpectrumColor = backgroundColorClass.substr(3); // Remove 'bg-' prefix
-    bgColorVariable = `var(--${bgSpectrumColor})`; // Use the CSS variable
-  } else {
-    bgColorVariable = `#${hexcode.innerHTML}`; // Use the hex code directly
-  }
 
   const dismissButton = `<span class="icon icon-close-black"></span>`;
 
@@ -140,14 +160,10 @@ async function decorateRibbon({
   block.textContent = '';
   block.append(ribbonDom);
   if (block.classList.contains('fill-image')) {
-    let bgImg;
-    const imageElement = bgImage.querySelector('img');
-    if (imageElement?.src) {
-      bgImg = `url("${imageElement.src}")`;
-    }
-
+    const bgImg = getBackgroundImageUrl(bgImage);
     block.style.backgroundImage = bgImg;
   } else {
+    const bgColorVariable = determineBackgroundColor(block, hexcode);
     block.style.backgroundColor = bgColorVariable;
   }
 

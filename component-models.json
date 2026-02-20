@@ -6884,10 +6884,6 @@
             "name": "Style Options",
             "children": [
               {
-                "name": "Add a background color",
-                "value": "fill-background"
-              },
-              {
                 "name": "Add a background image",
                 "value": "fill-image"
               }

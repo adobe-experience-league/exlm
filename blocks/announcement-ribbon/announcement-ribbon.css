@@ -29,6 +29,7 @@
 
 .announcement-ribbon :where(h1, h2, h3, h4, h5, h6) {
   margin: 0 0 4px;
+  line-height: 57.5px;
 }
 
 .announcement-ribbon .ribbon-default-content {
@@ -43,7 +44,7 @@
 .announcement-ribbon .ribbon-description {
   font-size: var(--spectrum-font-size-500);
   color: var(--spectrum-gray-800);
-  line-height: 19px;
+  line-height: 33px;
 }
 
 .announcement-ribbon .ribbon-button-container {
