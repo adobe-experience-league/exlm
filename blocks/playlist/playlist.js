@@ -396,9 +396,10 @@ export default async function decorate(block) {
   }
 
   let playerContainer = document.querySelector('[data-playlist-player-container]');
+  const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
   if (!playerContainer) {
     playerContainer = htmlToElement('<div class="playlist-player-container" data-playlist-player-container></div>');
-    if (playlistId) {
+    if (playlistId || UEAuthorMode) {
       const layoutWrapper = document.createElement('div');
       layoutWrapper.className = 'playlist-layout-wrapper playlist-page';
 
