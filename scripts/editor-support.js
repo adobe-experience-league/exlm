@@ -237,9 +237,6 @@ async function applyChanges(event) {
     const block =
       element.parentElement?.closest('.block[data-aue-resource]') || element?.closest('.block[data-aue-resource]');
     if (block) {
-      if (block.classList.contains('playlist')) {
-        document.querySelector('[data-playlist-player-container]')?.remove();
-      }
       const state = getState(block);
       const blockResource = block.getAttribute('data-aue-resource');
       const newBlock = parsedUpdate.querySelector(`[data-aue-resource="${blockResource}"]`);
