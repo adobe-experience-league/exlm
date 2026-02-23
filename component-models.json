@@ -2529,7 +2529,7 @@
         "name": "primaryCta_link",
         "value": "",
         "label": "Primary CTA Link",
-        "description": "Link for primary CTA. Use #SECTION-ID for jump links (e.g., #features)."
+        "description": "Link for primary CTA. Use #SECTION-ID for jump links."
       },
       {
         "component": "select",
@@ -2567,7 +2567,7 @@
         "name": "secondaryCta_link",
         "value": "",
         "label": "Secondary CTA Link",
-        "description": "Link for secondary CTA. Use #SECTION-ID for jump links (e.g., #pricing)."
+        "description": "Link for secondary CTA."
       },
       {
         "component": "text",
