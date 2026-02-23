@@ -8846,13 +8846,6 @@
     "id": "grid-card",
     "fields": [
       {
-        "component": "text-input",
-        "name": "variant",
-        "label": "Variant (internal)",
-        "valueType": "string",
-        "hidden": true
-      },
-      {
         "component": "text",
         "valueType": "string",
         "name": "cardTitle",
@@ -8902,20 +8895,14 @@
         "description": "Sets the description for the card."
       },
       {
-        "condition": {
-          "or": [{ "===": [{ "var": "variant" }, "card-v2"] }, { "===": [{ "var": "variant" }, "card-v3"] }]
-        },
         "component": "reference",
         "valueType": "string",
         "name": "cardImage",
         "label": "Card Image",
-        "description": "Image for the card (shown for Card V2 and Card V3 variants)",
+        "description": "Image for the card",
         "multi": false
       },
       {
-        "condition": {
-          "or": [{ "===": [{ "var": "variant" }, "card-v2"] }, { "===": [{ "var": "variant" }, "card-v3"] }]
-        },
         "component": "text",
         "valueType": "string",
         "name": "cardImageAlt",
@@ -8924,15 +8911,12 @@
         "description": "Alt text for the card image"
       },
       {
-        "condition": {
-          "or": [{ "===": [{ "var": "variant" }, "card-v1"] }, { "===": [{ "var": "variant" }, "card-v2"] }]
-        },
         "component": "text",
         "valueType": "string",
         "name": "ctaText",
         "value": "",
         "label": "CTA Text",
-        "description": "Text for the call-to-action button (shown for Card V1 and Card V2 variants)"
+        "description": "Text for the call-to-action button"
       },
       {
         "component": "text",
@@ -8940,7 +8924,7 @@
         "name": "ctaLink",
         "value": "",
         "label": "CTA Link",
-        "description": "URL for the call-to-action link (shown for all variants)"
+        "description": "URL for the call-to-action link"
       }
     ]
   }
