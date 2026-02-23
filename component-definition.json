@@ -1202,37 +1202,7 @@
                   "blockTitle": "Grid Card Block Title",
                   "blockTitleType": "h2",
                   "blockDescription": "<p>Grid card block description</p>",
-                  "variant": "card-v1",
-                  "item1": {
-                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
-                    "name": "Grid Card",
-                    "model": "grid-card",
-                    "cardTitle": "Card Title",
-                    "cardTitleType": "h3",
-                    "cardDescription": "<p>Card description</p>",
-                    "ctaText": "Learn More",
-                    "ctaLink": "/content/exlm/global/en"
-                  },
-                  "item2": {
-                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
-                    "name": "Grid Card",
-                    "model": "grid-card",
-                    "cardTitle": "Card Title",
-                    "cardTitleType": "h3",
-                    "cardDescription": "<p>Card description</p>",
-                    "ctaText": "Learn More",
-                    "ctaLink": "/content/exlm/global/en"
-                  },
-                  "item3": {
-                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
-                    "name": "Grid Card",
-                    "model": "grid-card",
-                    "cardTitle": "Card Title",
-                    "cardTitleType": "h3",
-                    "cardDescription": "<p>Card description</p>",
-                    "ctaText": "Learn More",
-                    "ctaLink": "/content/exlm/global/en"
-                  }
+                  "variant": "card-v1"
                 }
               }
             }
