@@ -395,7 +395,7 @@ export default async function decorate(block) {
     playlistSection.prepend(defaultContent);
   }
 
-  let playerContainer = document.querySelector('[data-playlist-player-container]');
+  let playerContainer = playlistSection.querySelector('[data-playlist-player-container]');
   const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
   if (!playerContainer) {
     playerContainer = htmlToElement('<div class="playlist-player-container" data-playlist-player-container></div>');
@@ -411,6 +411,19 @@ export default async function decorate(block) {
       layoutWrapper.append(contentWrapper);
       if (defaultContent) contentWrapper.append(defaultContent);
       if (playlistWrapper) contentWrapper.append(playlistWrapper);
+      if (playerContainer && playerContainer.innerHTML.trim() === '' && UEAuthorMode) {
+        const player = newPlayer(playlist);
+        if (player) {
+          const transcriptDetail = player.querySelector('[data-playlist-player-info-transcript]');
+          const transcriptUrl = transcriptDetail?.getAttribute('data-playlist-player-info-transcript');
+
+          if (transcriptUrl) {
+            updateTranscript(transcriptUrl, transcriptDetail);
+          }
+          playerContainer.innerHTML = '';
+          playerContainer.append(player);
+        }
+      }
     } else {
       const main = document.querySelector('main');
       main.classList.add('playlist-page');
