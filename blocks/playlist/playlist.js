@@ -421,10 +421,12 @@ export default async function decorate(block) {
   const activeVideoIndex = getQueryStringParameter('video') || 0;
 
   // Populate defaultContent with stored playlist metadata for API-loaded playlists
-  if (playlistId && defaultContent && block.dataset.playlistTitle) {
-    const titleH = htmlToElement(`<h3>${block.dataset.playlistTitle}</h3>`);
-    defaultContent.append(titleH);
-
+  if (playlistId && defaultContent) {
+    defaultContent.innerHTML = '';
+    if (block.dataset.playlistTitle) {
+      const titleH = htmlToElement(`<h3>${block.dataset.playlistTitle}</h3>`);
+      defaultContent.append(titleH);
+    }
     if (block.dataset.playlistDescription) {
       const descriptionP = htmlToElement(`<p>${block.dataset.playlistDescription}</p>`);
       defaultContent.append(descriptionP);
@@ -506,6 +508,7 @@ export default async function decorate(block) {
 
   // Only show playlist options if there are videos in the playlist
   if (playlist.length > 0) {
+    block.parentElement.querySelectorAll('.playlist-options').forEach((el) => el.remove());
     const playlistOptions = htmlToElement(`<div class="playlist-options">
       <div class="playlist-options-autoplay">
           <input type="checkbox" id="playlist-options-autoplay" checked=${playlist?.options?.autoplayNext || true}>
