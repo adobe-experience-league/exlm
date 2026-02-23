@@ -1,3 +1,7 @@
+.playlist.hide-playlist {
+  display: none;
+}
+
 .playlist-page {
   --playlist-border: #d6d6d6 2px solid;
   --playlist-border-radius: 10px;
@@ -288,4 +292,8 @@
 .playlist-now-viewing {
   color: var(--non-spectrum-grey-updated);
   font-size: var(--spectrum-font-size-75);
+}
+
+main.playlist-page > .section:not(.playlist-container) {
+  grid-column: 1 / -1;
 }

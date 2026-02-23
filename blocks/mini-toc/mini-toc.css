@@ -77,7 +77,6 @@
 .mini-toc-wrapper .mini-toc ul li a {
   font-size: var(--spectrum-font-size-100);
   line-height: 21px;
-  display: inline-flex;
   min-height: 32px;
   box-sizing: border-box;
   width: 100%;
