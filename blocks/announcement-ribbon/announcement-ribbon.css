@@ -29,28 +29,33 @@
 
 .announcement-ribbon :where(h1, h2, h3, h4, h5, h6) {
   margin: 0;
-  line-height: 57.5px;
+  line-height: 115%;
+  font-size: 50px;
+  font-weight: var(--font-weight-heavy);
 }
 
 .announcement-ribbon .ribbon-default-content {
   width: 100%;
 }
 
-.announcement-ribbon .ribbon-default-content,
-.announcement-ribbon .ribbon-description {
-  margin-bottom: 8px;
-}
-
 .announcement-ribbon .ribbon-description {
   font-size: var(--spectrum-font-size-500);
   color: var(--spectrum-gray-800);
-  line-height: 33px;
+  line-height: 150%;
+  font-weight: var(--font-weight-normal);
 }
 
 .announcement-ribbon .ribbon-button-container {
   display: flex;
   flex-direction: column-reverse;
   width: 100%;
+  border-radius: 20px;
+}
+
+.announcement-ribbon .ribbon-button-container .button {
+  padding: 12px 24px 14px;
+  align-items: center;
+  gap: 8px;
 }
 
 .announcement-ribbon .icon img {
@@ -119,7 +124,7 @@
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
-    gap: 16px;
+    gap: 23px;
     width: auto;
   }
 
