@@ -196,7 +196,7 @@ async function applyChanges(event) {
     const removedResource = event.detail?.resource;
     const block = document.querySelector(`.block[data-aue-resource="${removedResource}"]`);
     if (block?.classList.contains('playlist')) {
-      document.querySelector('.playlist-player-container')?.remove();
+      document.querySelector('.playlist-layout-wrapper')?.remove();
     }
   }
 
@@ -251,6 +251,18 @@ async function applyChanges(event) {
         block.remove();
         newBlock.style.display = null;
         restoreState(newBlock, state);
+        if (newBlock.classList.contains('playlist')) {
+          const section = newBlock.closest('.section');
+          const layoutWrapper = section?.querySelector('.playlist-layout-wrapper');
+          const contentWrapper = section?.querySelector('.playlist-content-container');
+          const defaultContent = section?.querySelector('.default-content-wrapper');
+
+          if (layoutWrapper && contentWrapper && defaultContent) {
+            if (!contentWrapper.contains(defaultContent)) {
+              contentWrapper.prepend(defaultContent);
+            }
+          }
+        }
         return true;
       }
     } else {
