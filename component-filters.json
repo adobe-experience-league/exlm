@@ -81,6 +81,7 @@
       "quiz",
       "drill-in",
       "flip-card",
+      "grid-card-block",
       "course-breakdown",
       "course-marquee",
       "course-completion",
@@ -459,6 +460,10 @@
   {
     "id": "list-item",
     "components": ["list-content", "code", "note", "video-embed"]
+  },
+  {
+    "id": "grid-card-block",
+    "components": ["grid-card"]
   },
   {
     "id": "rte-custom-options",
