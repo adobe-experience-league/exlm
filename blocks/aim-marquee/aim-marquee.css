@@ -1,4 +1,3 @@
-/* Remove section padding for full-width display */
 main .section.aim-marquee-container {
   padding: 0;
 }
@@ -6,11 +5,6 @@ main .section.aim-marquee-container {
 .aim-marquee {
   position: relative;
   width: 100vw;
-  min-height: 500px;
-  overflow: hidden;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
-  background-color: white;
 }
 
 .aim-marquee-container {
@@ -25,40 +19,45 @@ main .section.aim-marquee-container {
 .aim-marquee-content {
   position: relative;
   z-index: 3;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
+  text-align: center;
+  max-width: 486px;
   padding: 60px 32px;
-  max-width: 600px;
+  margin: 0 auto;
   color: var(--spectrum-gray-900);
 }
 
 .aim-marquee-title {
+  color: var(--non-spectrum-dark-gray);
   font-size: 48px;
-  font-weight: 700;
+  font-weight: var(--font-weight-heavy);
   line-height: 1.2;
   margin: 0 0 24px;
 }
 
+.aim-marquee-title :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--non-spectrum-dark-gray);
+}
+
 .aim-marquee-description {
   font-size: 18px;
-  line-height: 1.6;
+  line-height: 1.5;
   margin: 0 0 32px;
-  color: var(--spectrum-gray-800);
-}
-
-.aim-marquee-description p {
-  margin: 0 0 16px;
-}
-
-.aim-marquee-description p:last-child {
-  margin-bottom: 0;
+  color: var(--non-spectrum-dark-gray);
+  font-weight: var(--font-weight-normal);
 }
 
 .aim-marquee-cta {
   display: flex;
-  gap: 16px;
+  gap: 24px;
   flex-wrap: wrap;
+  justify-content: center;
+}
+
+.aim-marquee-cta a.button:any-link {
+  font-size: 19px;
+  line-height: 24px;
+  font-weight: var(--font-weight-bold);
+  margin: 0;
 }
 
 .aim-marquee-image {
@@ -70,15 +69,14 @@ main .section.aim-marquee-container {
   z-index: 1;
 }
 
-.aim-marquee-image picture {
+.aim-marquee-image picture,
+.aim-marquee-image img {
   width: 100%;
   height: 100%;
   display: block;
 }
 
 .aim-marquee-image img {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
 }
 
@@ -90,6 +88,12 @@ main .section.aim-marquee-container {
   height: 100%;
   z-index: 1;
   display: none;
+}
+
+.aim-marquee-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .aim-marquee-video .video-frame {
@@ -109,43 +113,42 @@ main .section.aim-marquee-container {
 .aim-marquee-play-pause {
   position: absolute;
   bottom: 20px;
-  right: 20px;
-  width: 44px;
-  height: 44px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  margin-right: 20px;
+  border: 2px solid #fff;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.9);
-  border: 2px solid rgba(0, 0, 0, 0.1);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 10;
-  transition: all 0.3s ease;
   padding: 0;
 }
 
-.aim-marquee-play-pause:hover {
-  background-color: rgba(255, 255, 255, 1);
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
 .aim-marquee-play-pause svg {
-  width: 24px;
-  height: 24px;
-  color: #2c2c2c;
+  width: 20px;
+  height: 20px;
+  display: block;
 }
 
-/* Tablet - video shows above 600px */
+.aim-marquee-play-pause .play-icon {
+  transform: scale(0.8);
+  padding-left: 5px;
+}
+
+.aim-marquee-play-pause .pause-icon {
+  transform: scale(1.4);
+}
+
+.aim-marquee-play-pause:hover,
+.aim-marquee-play-pause:focus {
+  background: transparent;
+}
+
 @media (min-width: 600px) {
-  .aim-marquee {
-    min-height: 600px;
-  }
-
-  .aim-marquee-container {
-    min-height: 600px;
-  }
-
   .aim-marquee-video {
     display: block;
   }
@@ -153,45 +156,41 @@ main .section.aim-marquee-container {
   .aim-marquee-image {
     display: none;
   }
+  .aim-marquee-cta {
+    justify-content: flex-start;
+  }
 
   .aim-marquee-content {
-    padding: 80px 48px;
-    max-width: 650px;
+    position: absolute;
+    left: 80px;
+    top: 108px;
+    bottom: 108px;
+    text-align: left;
+    max-width: 486px;
+    padding: 0;
+  }
+}
+
+@media (min-width: 900px) {
+  .aim-marquee-container {
+    min-height: 567px;
+  }
+
+  .aim-marquee-content {
+    max-width: 486px;
+    position: absolute;
+    left: 120px;
+    top: 108px;
+    bottom: 108px;
   }
 
   .aim-marquee-title {
-    font-size: 56px;
-    margin-bottom: 28px;
+    font-size: 60px;
+    margin-bottom: 16px;
   }
 
   .aim-marquee-description {
     font-size: 20px;
-    margin-bottom: 36px;
-  }
-}
-
-/* Desktop */
-@media (min-width: 900px) {
-  .aim-marquee {
-    min-height: 500px;
-  }
-
-  .aim-marquee-container {
-    min-height: 500px;
-  }
-
-  .aim-marquee-content {
-    padding: 100px 64px;
-    max-width: 700px;
-  }
-
-  .aim-marquee-title {
-    font-size: 64px;
     margin-bottom: 32px;
-  }
-
-  .aim-marquee-description {
-    font-size: 22px;
-    margin-bottom: 40px;
   }
 }
