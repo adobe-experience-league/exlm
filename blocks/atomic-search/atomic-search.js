@@ -111,9 +111,9 @@ export default function decorate(block) {
           const { body } = request;
           const bodyJSON = JSON.parse(body || '{}');
           const facets = bodyJSON?.facets || [];
-          facets.forEach((facet) => {
-            sendIdleParentFacet(facet);
-          });
+          // facets.forEach((facet) => {
+          //   sendIdleParentFacet(facet);
+          // });
           request.body = JSON.stringify(bodyJSON);
           const preProcessEvent = new CustomEvent(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, {
             detail: {
@@ -130,10 +130,10 @@ export default function decorate(block) {
       search: {
         preprocessSearchResponseMiddleware: (response) => {
           try {
-            const facets = response?.body?.facets || [];
-            facets.forEach((facet) => {
-              sendIdleParentFacet(facet, true);
-            });
+            // const facets = response?.body?.facets || [];
+            // facets.forEach((facet) => {
+            //   sendIdleParentFacet(facet, true);
+            // });
           } catch {
             // Return response unchanged on error
           }

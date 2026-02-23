@@ -7,7 +7,7 @@ export default function atomicFacetManagerHandler(baseElement) {
   let debounceTimer;
 
   const reorderFacets = () => {
-    const currentOrder = Array.from(baseElement.querySelectorAll('atomic-facet,atomic-timeframe-facet')).map(
+    const currentOrder = Array.from(baseElement.querySelectorAll('atomic-facet,atomic-timeframe-facet, atomic-category-facet')).map(
       (el) => el.id,
     );
     const isCorrectOrder = orderedFacetIds.every((id, index) => currentOrder[index] === id);

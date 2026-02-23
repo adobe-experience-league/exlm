@@ -317,106 +317,106 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(facet-parent-button) {
                   margin-top: 4px;
                 }
-                atomic-facet {
+                atomic-facet, atomic-category-facet {
                   border-bottom: 2px solid var(--footer-border-color);
                   border-radius: 1px;
                 }
-                atomic-facet::part(placeholder) {
+                atomic-facet::part(placeholder), atomic-category-facet::part(placeholder) {
                     border: none;
                 }
-                atomic-facet::part(search-wrapper) {
+                atomic-facet::part(search-wrapper), atomic-category-facet::part(search-wrapper) {
                   display: none;
                 }
-                atomic-facet::part(label-button), atomic-timeframe-facet::part(label-button) {
+                atomic-facet::part(label-button), atomic-timeframe-facet::part(label-button), atomic-category-facet::part(label-button) {
                   font-weight: 700;
                   color: var(--non-spectrum-input-text);
                   justify-content: flex-end;
                   flex-direction: row-reverse;
                   gap: 16px;
                 }
-                atomic-facet::part(label-button-icon), atomic-timeframe-facet::part(label-button-icon) {
+                atomic-facet::part(label-button-icon), atomic-timeframe-facet::part(label-button-icon), atomic-category-facet::part(label-button-icon) {
                   margin-left: 0;
                 }
-                atomic-facet::part(facet), atomic-timeframe-facet::part(facet) {
+                atomic-facet::part(facet), atomic-timeframe-facet::part(facet), atomic-category-facet::part(facet) {
                   padding-left: 0;
                   padding-right: 0;
                   border: none;
                 }
-                atomic-facet::part(values) {
+                atomic-facet::part(values), atomic-category-facet::part(values) {
                   overflow-y: auto;
                   margin-top: 0;
                   padding-right: 8px;
                 }
-                atomic-facet::part(show-more), atomic-facet::part(show-less) {
+                atomic-facet::part(show-more), atomic-facet::part(show-less), atomic-category-facet::part(show-more), atomic-category-facet::part(show-less) {
                   color: var(--non-spectrum-input-text);
                 }
-                atomic-facet::part(value-box) {
+                atomic-facet::part(value-box), atomic-category-facet::part(value-box) {
                   border: none;
                   display: flex;
                   gap: 4px;
                   padding: 4px 0;
                   color: var(--non-spectrum-input-text);
                 }
-                atomic-facet::part(value-checkbox) {
+                atomic-facet::part(value-checkbox), atomic-category-facet::part(value-checkbox) {
                   border: 2px solid #959595;
                   border-radius: 2px;
                   margin-top: 4px;
                 }
-                atomic-facet::part(value-checkbox-label) {
+                atomic-facet::part(value-checkbox-label), atomic-category-facet::part(value-checkbox-label) {
                   display: inline;
                   padding-top: 0;
                   padding-bottom: 0;
                 }
-                atomic-facet::part(value-checkbox-checked) {
+                atomic-facet::part(value-checkbox-checked), atomic-category-facet::part(value-checkbox-checked) {
                   background-color: var(--non-spectrum-grey-updated);
                   border-color: var(--non-spectrum-grey-updated);
                 }
-                atomic-facet::part(value-count), atomic-timeframe-facet::part(value-count) {
+                atomic-facet::part(value-count), atomic-timeframe-facet::part(value-count), atomic-category-facet::part(value-count) {
                   color: var(--non-spectrum-article-dark-gray);
                   width: auto;
                   margin: 0;
                 }
-                atomic-facet::part(value-label) {
+                atomic-facet::part(value-label), atomic-category-facet::part(value-label) {
                   overflow: initial;
                   text-overflow: unset;
                   white-space: normal;
                 }
-                atomic-facet::part(value-label), atomic-timeframe-facet::part(value-label) {
+                atomic-facet::part(value-label), atomic-timeframe-facet::part(value-label), atomic-category-facet::part(value-label) {
                   margin-right: 4px;
                   width: auto;
                   color: var(--non-spectrum-article-dark-gray);
                 }
-                atomic-facet::part(clear-button), atomic-timeframe-facet::part(clear-button) {
+                atomic-facet::part(clear-button), atomic-timeframe-facet::part(clear-button), atomic-category-facet::part(clear-button) {
                   display: none;
                 }
                 
-                atomic-facet::part(show-more-less-icon) atomic-component-error, atomic-facet::part(value-checkbox-icon) atomic-component-error, atomic-facet::part(value-checkbox) atomic-component-error, atomic-component-error, atomic-icon atomic-component-error {
+                atomic-facet::part(show-more-less-icon) atomic-component-error, atomic-facet::part(value-checkbox-icon) atomic-component-error, atomic-facet::part(value-checkbox) atomic-component-error, atomic-category-facet::part(value-checkbox-icon) atomic-component-error, atomic-category-facet::part(value-checkbox) atomic-component-error, atomic-component-error, atomic-icon atomic-component-error {
                   display: none !important;
                 }
                 @media (min-width: 1024px) {
-                  atomic-facet::part(values) {
+                  atomic-facet::part(values), atomic-category-facet::part(values) {
                     max-height: 500px;
                   }
-                  atomic-facet::part(only-facet-btn) {
+                  atomic-facet::part(only-facet-btn), atomic-category-facet::part(only-facet-btn) {
                     display: none;
                     right: 2px;
                     font-size: var(--spectrum-font-size-50);
                   }
-                  atomic-facet::part(only-facet-visible) {
+                  atomic-facet::part(only-facet-visible), atomic-category-facet::part(only-facet-visible) {
                     display: flex;
                     align-items: center;
                     height: 21px;
                   }
                 }
               </style>
-              <atomic-facet
+              <atomic-category-facet
                 id="facetContentType"
-                sort-criteria="alphanumericNatural"
+                sort-criteria="alphanumeric"
                 field="el_contenttype"
                 label="${placeholders.searchContentTypeLabel || 'Content Type'}"
                 number-of-values="50"
                 display-values-as="checkbox">
-              </atomic-facet>
+              </atomic-category-facet>
               <atomic-facet
                 id="facetStatus"
                 sort-criteria="alphanumericNatural"
