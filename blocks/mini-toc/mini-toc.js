@@ -83,7 +83,8 @@ function buildMiniToc(block, placeholders) {
 
   if (headers.length > 1) {
     const html = headers.map((i) => {
-      const cleanText = i.innerHTML.replace(/<span class="(badge|icon)[^>]*>.*?<\/span>\s*/gi, '');
+      const cleanHtml = i.innerHTML.replace(/<span class="(badge|icon)[^>]*>.*?<\/span>\s*/gi, '');
+      const cleanText = cleanHtml.replace(/<[^>]+>/g, '').trim();
       return `<li><a href="#${i.id}" class="${setPadding(i.nodeName)}">${cleanText}</a></li>`;
     });
     // eslint-disable-next-line no-restricted-globals
