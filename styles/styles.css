@@ -387,11 +387,11 @@
   --exlm-line-height-content: var(--spectrum-line-height-l);
 
   /* Live gradient background colors */
-  --lg-base-pink: rgb(250 74 162 / 20%);
-  --lg-base-blue: rgb(181 222 255 / 20%);
-  --lg-circle-blue: rgb(181 222 255 / 40%);
-  --lg-circle-pink: rgb(250 74 162 / 10%);
-  --lg-circle-orange: rgb(255 124 101 / 10%);
+  --lg-base-pink: rgb(250 74 162 / 20%); /* #FA4AA2 */
+  --lg-base-blue: rgb(181 222 255 / 20%); /* #B5DEFF */
+  --lg-circle-blue: rgb(181 222 255 / 40%); /* #B5DEFF */
+  --lg-circle-pink: rgb(250 74 162 / 10%); /* #FA4AA2 */
+  --lg-circle-orange: rgb(255 124 101 / 10%); /* #FF7C65 */
   --lg-blur: 60px;
 }
 
