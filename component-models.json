@@ -8766,5 +8766,151 @@
         "description": "ID of the playlist to render. Use the ID of the playlist from the URL."
       }
     ]
+  },
+  {
+    "id": "aim-marquee",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the title of the Marquee."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h1",
+        "label": "Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description text."
+      },
+      {
+        "component": "select",
+        "name": "primaryCta_Type",
+        "value": "primary",
+        "label": "Primary CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          },
+          {
+            "name": "Tertiary",
+            "value": "tertiary"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "primaryCta_linkText",
+        "value": "",
+        "label": "Primary CTA Text",
+        "description": "Text to be shown inside primary button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "primaryCta_link",
+        "value": "",
+        "label": "Primary CTA Link",
+        "description": "Link for primary CTA. Use #SECTION-ID for jump links."
+      },
+      {
+        "component": "select",
+        "name": "secondaryCta_Type",
+        "value": "secondary",
+        "label": "Secondary CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          },
+          {
+            "name": "Tertiary",
+            "value": "tertiary"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "secondaryCta_linkText",
+        "value": "",
+        "label": "Secondary CTA Text",
+        "description": "Text to be shown inside secondary button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "secondaryCta_link",
+        "value": "",
+        "label": "Secondary CTA Link",
+        "description": "Link for secondary CTA.."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "videoUrl",
+        "value": "",
+        "label": "Video URL (Desktop)",
+        "description": "URL for the background video shown on desktop and tablet devices."
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "mobileImage",
+        "label": "Image (Mobile)",
+        "description": "Background image shown on mobile devices.",
+        "multi": false
+      }
+    ]
   }
 ]
