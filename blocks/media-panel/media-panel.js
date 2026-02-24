@@ -9,11 +9,6 @@ export default function decorate(block) {
         highlightDescription
     ] = block.children || [];
 
-    if (!block.classList.contains('highlight-card')) {
-        highlightHeading.remove();
-        highlightDescription.remove();
-    }
-
     image.classList.add('image');
     eyebrow.classList.add('eyebrow');
     heading.classList.add('heading');
@@ -31,4 +26,9 @@ export default function decorate(block) {
     contentContainer.classList.add('content-container');
     block.append(contentContainer);
     contentContainer.append(eyebrow, heading, description, cta);
+
+    if (!block.classList.contains('highlight-card')) {
+        highlightHeading.remove();
+        highlightDescription.remove();
+    }
 }
