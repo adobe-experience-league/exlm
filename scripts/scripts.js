@@ -1044,24 +1044,6 @@ async function loadDefaultModule(jsPath) {
   }
 }
 
-function targetPreHiding() {
-  const headerEl = document.querySelector('exl-header');
-  if (!headerEl || !headerEl.shadowRoot) return;
-
-  const styleEl = document.createElement('style');
-  styleEl.textContent = `
-    #nav-wrapper > ul {
-      display: none !important;
-    }
-  `;
-
-  headerEl.shadowRoot.appendChild(styleEl);
-
-  setTimeout(() => {
-    styleEl.remove();
-  }, 3000);
-}
-
 /**
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
@@ -1085,9 +1067,7 @@ async function loadLazy(doc) {
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
-  const headerPromise = loadHeader(doc.querySelector('header')).then(() => {
-    targetPreHiding();
-  });
+  const headerPromise = loadHeader(doc.querySelector('header'));
   const footerPromise = loadFooter(doc.querySelector('footer'));
   // disable martech if martech=off is in the query string, this is used for testing ONLY
   if (window.location.search?.indexOf('martech=off') === -1) loadMartech(headerPromise, footerPromise);
