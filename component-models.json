@@ -3313,10 +3313,6 @@
             "name": "Variant",
             "children": [
               {
-                "name": "Default",
-                "value": "default"
-              },
-              {
                 "name": "Highlight Card",
                 "value": "highlight-card"
               }

@@ -1406,13 +1406,12 @@
                   "name": "Media Panel",
                   "model": "media-panel",
                   "filter": "media-panel",
-                  "fileReference": "/content/dam/exlm/Community_headshot_single.png",
-                  "classes": ["left", "default"],
+                  "classes": ["left"],
                   "eyebrow": "",
-                  "title": "Media Panel Heading",
+                  "title": "<h1>Media Panel Heading</h1>",
                   "description": "<p>Media panel description.</p>",
-                  "cta_linkText": "",
-                  "cta_link": ""
+                  "cta_linkText": "CTA Text",
+                  "cta_link": "http://experienceleague.adobe.com/"
                 }
               }
             }
