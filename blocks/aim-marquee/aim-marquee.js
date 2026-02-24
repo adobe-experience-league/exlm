@@ -31,17 +31,24 @@ function handleJumpLink(ctaLink) {
 export default async function decorate(block) {
   const allDivs = [...block.children];
 
-  const [title, description, videoTypeRow, videoFileRow, videoUrlRow, imageMobile, imgAlt, primaryCtaRow, secondaryCtaRow] =
-    allDivs;
+  const [
+    title,
+    description,
+    videoTypeRow,
+    videoFileRow,
+    videoUrlRow,
+    imageMobile,
+    primaryCtaRow,
+    secondaryCtaRow,
+    themeRow,
+  ] = allDivs;
 
   const isMP4 = videoTypeRow?.textContent?.trim() === 'mp4';
+  const theme = themeRow?.textContent?.trim() || '';
 
   const primaryCta = primaryCtaRow?.firstElementChild;
   const secondaryCta = secondaryCtaRow?.firstElementChild;
   const mobileImagePicture = imageMobile?.querySelector('picture');
-  const altText = imgAlt?.textContent?.trim() || '';
-
-  mobileImagePicture?.querySelector('img')?.setAttribute('alt', altText);
 
   // Extract video source based on type
   const isLocalhost = window.location.hostname.includes('localhost');
@@ -79,6 +86,7 @@ export default async function decorate(block) {
 
   block.textContent = '';
   block.append(aimMarqueeDOM);
+  if (theme) block.classList.add(theme);
 
   // Background Video for desktop view
   if (videoSrc) {

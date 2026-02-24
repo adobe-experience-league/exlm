@@ -413,7 +413,8 @@
                   "primaryCta_link": "#section-id",
                   "secondaryCta_Type": "secondary",
                   "secondaryCta_linkText": "Take the quiz",
-                  "secondaryCta_link": "#quiz"
+                  "secondaryCta_link": "#quiz",
+                  "theme": ""
                 }
               }
             }

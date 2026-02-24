@@ -200,3 +200,31 @@ main .section.aim-marquee-container {
     margin-bottom: 32px;
   }
 }
+
+/* Theme variations */
+.aim-marquee.dark .aim-marquee-title,
+.aim-marquee.dark .aim-marquee-title :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--non-spectrum-dark-gray);
+}
+
+.aim-marquee.dark .aim-marquee-description {
+  color: var(--non-spectrum-dark-gray);
+}
+
+.aim-marquee.dark .aim-marquee-cta a.button.secondary {
+  color: var(--non-spectrum-dark-gray);
+}
+
+/* Light theme: title, description, and secondary CTA text are white */
+.aim-marquee.light .aim-marquee-title,
+.aim-marquee.light .aim-marquee-title :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--spectrum-gray-50);
+}
+
+.aim-marquee.light .aim-marquee-description {
+  color: var(--spectrum-gray-50);
+}
+
+.aim-marquee.light .aim-marquee-cta a.button.secondary {
+  color: var(--spectrum-gray-50);
+}

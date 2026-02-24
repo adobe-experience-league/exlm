@@ -2624,6 +2624,24 @@
         "value": "",
         "label": "Secondary CTA Link",
         "description": "Link for secondary CTA."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "theme",
+        "value": "",
+        "label": "Theme",
+        "description": "Dark theme renders title, description, and secondary CTA text in black; Light theme renders them in white.",
+        "options": [
+          {
+            "name": "Dark",
+            "value": "dark"
+          },
+          {
+            "name": "Light",
+            "value": "light"
+          }
+        ]
       }
     ]
   },
