@@ -9,6 +9,11 @@ export default function decorate(block) {
         highlightDescription
     ] = block.children || [];
 
+    if (!block.classList.contains('highlight-card')) {
+        highlightHeading.remove();
+        highlightDescription.remove();
+    }
+
     image.classList.add('image');
     eyebrow.classList.add('eyebrow');
     heading.classList.add('heading');
