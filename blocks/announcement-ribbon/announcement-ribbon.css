@@ -5,9 +5,13 @@
   justify-content: flex-start;
   background-color: var(--spectrum-gray-50);
   border: 1px solid var(--non-spectrum-pale-grey);
-  border-radius: 16px;
+  border-radius: 8px;
   padding: 24px;
   margin: 16px 0;
+}
+
+.announcement-ribbon.medium {
+  border-radius: 16px;
 }
 
 .announcement-ribbon.fill-image {
@@ -28,6 +32,10 @@
 }
 
 .announcement-ribbon :where(h1, h2, h3, h4, h5, h6) {
+  margin: 0 0 4px;
+}
+
+.announcement-ribbon.medium :where(h1, h2, h3, h4, h5, h6) {
   margin: 0;
   line-height: 115%;
   font-size: var(--exlm-font-size-h1-plus);
@@ -38,9 +46,24 @@
   width: 100%;
 }
 
+.announcement-ribbon .ribbon-default-content,
 .announcement-ribbon .ribbon-description {
-  font-size: var(--spectrum-body-size-xxl);
+  margin-bottom: 8px;
+}
+
+.announcement-ribbon .ribbon-description {
+  font-size: var(--spectrum-font-size-200);
   color: var(--spectrum-gray-800);
+  line-height: 19px;
+}
+
+.announcement-ribbon.medium .ribbon-default-content,
+.announcement-ribbon.medium .ribbon-description {
+  margin-bottom: 0;
+}
+
+.announcement-ribbon.medium .ribbon-description {
+  font-size: var(--spectrum-body-size-xxl);
   line-height: 150%;
   font-weight: var(--font-weight-normal);
 }
@@ -49,10 +72,13 @@
   display: flex;
   flex-direction: column-reverse;
   width: 100%;
+}
+
+.announcement-ribbon.medium .ribbon-button-container {
   border-radius: 20px;
 }
 
-.announcement-ribbon .ribbon-button-container .button {
+.announcement-ribbon.medium .ribbon-button-container .button {
   padding: 12px 24px 14px;
   align-items: center;
   gap: 8px;
@@ -110,6 +136,11 @@
   .announcement-ribbon {
     flex-direction: row;
     align-items: center;
+    gap: 24px;
+    padding: 16px 24px;
+  }
+
+  .announcement-ribbon.medium {
     gap: 8px;
     padding: 57px 56px;
   }
@@ -124,8 +155,12 @@
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
-    gap: 23px;
+    gap: 16px;
     width: auto;
+  }
+
+  .announcement-ribbon.medium .ribbon-button-container {
+    gap: 23px;
   }
 
   .announcement-ribbon .icon-close-black,

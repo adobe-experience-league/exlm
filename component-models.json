@@ -6847,7 +6847,7 @@
         "label": "Block options",
         "valueType": "string",
         "required": true,
-        "maxSize": 5,
+        "maxSize": 6,
         "options": [
           {
             "name": "Theme",
@@ -6859,6 +6859,19 @@
               {
                 "name": "Dark",
                 "value": "dark"
+              }
+            ]
+          },
+          {
+            "name": "Size Variant",
+            "children": [
+              {
+                "name": "Small",
+                "value": ""
+              },
+              {
+                "name": "Medium",
+                "value": "medium"
               }
             ]
           },
