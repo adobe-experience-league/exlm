@@ -1199,6 +1199,7 @@
                   "filter": "grid-card-block",
                   "name": "Grid Card Block",
                   "model": "grid-card-block",
+                  "blockEyebrow": "Block Eyebrow",
                   "blockTitle": "Grid Card Block Title",
                   "blockTitleType": "h2",
                   "blockDescription": "<p>Grid card block description</p>",

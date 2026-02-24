@@ -8773,6 +8773,14 @@
       {
         "component": "text",
         "valueType": "string",
+        "name": "blockEyebrow",
+        "value": "",
+        "label": "Block Eyebrow",
+        "description": "Sets the eyebrow text above the block title."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
         "name": "blockTitle",
         "value": "",
         "label": "Block Title",
@@ -8851,7 +8859,7 @@
         "name": "cardTitle",
         "value": "",
         "label": "Card Title",
-        "description": "Sets the title for the card."
+        "description": "Sets the title for the card. Please limit the content to 2 lines."
       },
       {
         "component": "select",
@@ -8892,7 +8900,7 @@
         "name": "cardDescription",
         "value": "",
         "label": "Card Description",
-        "description": "Sets the description for the card."
+        "description": "Sets the description for the card. Please limit the content to 3 lines."
       },
       {
         "component": "reference",
