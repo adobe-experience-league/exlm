@@ -3273,6 +3273,121 @@
     ]
   },
   {
+    "id": "media-panel",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Image",
+        "description": "The media panel image."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "fileReferenceAlt",
+        "value": "",
+        "label": "Image Description",
+        "description": "A descriptive text of the image."
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Style",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Layout",
+            "children": [
+              {
+                "name": "Left",
+                "value": "left"
+              },
+              {
+                "name": "Right",
+                "value": "right"
+              }
+            ]
+          },
+          {
+            "name": "Variant",
+            "children": [
+              {
+                "name": "Default",
+                "value": "default"
+              },
+              {
+                "name": "Highlight Card",
+                "value": "highlight-card"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrow",
+        "value": "",
+        "label": "Eyebrow Text",
+        "description": "Sets the small pre-title above the heading."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the main heading."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_linkText",
+        "value": "",
+        "label": "CTA Text",
+        "description": "Text to be shown on the CTA button or link."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_link",
+        "value": "",
+        "label": "CTA Link",
+        "description": "URL to open when the CTA is clicked."
+      },
+      {
+        "condition": {
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "highlight-card"] }]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "highlightCardHeading",
+        "value": "",
+        "label": "Highlight Card Heading",
+        "description": "Heading for the highlight card variant."
+      },
+      {
+        "condition": {
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "highlight-card"] }]
+        },
+        "component": "richtext",
+        "valueType": "string",
+        "name": "highlightCardDescription",
+        "value": "",
+        "label": "Highlight Card Description",
+        "description": "Description for the highlight card variant."
+      }
+    ]
+  },
+  {
     "id": "authorable-card",
     "fields": [
       {
