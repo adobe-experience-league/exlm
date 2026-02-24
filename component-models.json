@@ -2570,12 +2570,12 @@
         "description": "Link for secondary CTA."
       },
       {
-        "component": "text",
+        "component": "reference",
         "valueType": "string",
         "name": "videoUrl",
-        "value": "",
-        "label": "Video URL (Desktop)",
-        "description": "URL for the background video shown on desktop and tablet devices."
+        "label": "Video File (Desktop)",
+        "description": "MP4 video file for the background video shown on desktop and tablet devices.",
+        "multi": false
       },
       {
         "component": "reference",
