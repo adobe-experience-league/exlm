@@ -30,35 +30,34 @@ function handleJumpLink(ctaLink) {
 
 export default async function decorate(block) {
   const allDivs = [...block.children];
-  const videoType = allDivs[4]?.textContent?.trim() || 'mp4';
-  const isMP4 = videoType === 'mp4';
-  
+
   let title;
   let description;
-  let primaryCtaRow;
-  let secondaryCtaRow;
   let videoFileRow;
   let videoUrlRow;
   let imageMobile;
-  
-  if (isMP4) {
-    [title, description, primaryCtaRow, secondaryCtaRow, , videoFileRow, imageMobile] = allDivs;
+  let primaryCtaRow;
+  let secondaryCtaRow;
+
+  if (allDivs[2]?.textContent?.trim() === 'mp4') {
+    [title, description, , videoFileRow, , imageMobile, primaryCtaRow, secondaryCtaRow] = allDivs;
   } else {
-    [title, description, primaryCtaRow, secondaryCtaRow, , videoUrlRow, imageMobile] = allDivs;
+    [title, description, , , videoUrlRow, imageMobile, primaryCtaRow, secondaryCtaRow] = allDivs;
   }
 
-  const primaryCta = primaryCtaRow?.firstElementChild;
-  const secondaryCta = secondaryCtaRow?.firstElementChild;
+  const primaryCta = primaryCtaRow?.querySelector('a');
+  const secondaryCta = secondaryCtaRow?.querySelector('a');
+  const mobileImagePicture = imageMobile?.querySelector('picture');
 
   // Extract video source based on type
   const isLocalhost = window.location.hostname.includes('localhost');
   const origin = isLocalhost ? 'https://experienceleague-dev.adobe.com' : window.location.origin;
-  
-  const videoSrc = isMP4
+
+  const videoSrc = videoFileRow
     ? `${origin}${new URL(videoFileRow?.querySelector('a')?.href).pathname}`
     : videoUrlRow?.querySelector('a')?.href?.trim() || '';
 
-  const mobileImagePicture = imageMobile?.querySelector('picture');
+  const isMP4 = !!videoFileRow;
 
   // Build structure
   const aimMarqueeDOM = document.createRange().createContextualFragment(`
