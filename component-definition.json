@@ -1406,11 +1406,13 @@
                   "name": "Media Panel",
                   "model": "media-panel",
                   "filter": "media-panel",
+                  "fileReference": "/content/dam/exlm/en/images/subjects/media-panel-sub.png",
+                  "fileReferenceAlt": "Subject Image Description",
                   "classes": ["left"],
-                  "eyebrow": "",
+                  "eyebrow": "Featured",
                   "title": "Media Panel Heading",
                   "titleType": "h3",
-                  "description": "<p>Media panel description.</p>",
+                  "description": "<p>Add a short description here. This media panel supports left or right image alignment and an optional highlight card variant.</p>",
                   "cta_linkText": "CTA Text",
                   "cta_link": "http://experienceleague.adobe.com/"
                 }
