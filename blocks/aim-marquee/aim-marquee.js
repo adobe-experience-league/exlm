@@ -31,19 +31,10 @@ function handleJumpLink(ctaLink) {
 export default async function decorate(block) {
   const allDivs = [...block.children];
 
-  let title;
-  let description;
-  let videoFileRow;
-  let videoUrlRow;
-  let imageMobile;
-  let primaryCtaRow;
-  let secondaryCtaRow;
+  const [title, description, videoTypeRow, videoFileRow, videoUrlRow, imageMobile, primaryCtaRow, secondaryCtaRow] =
+    allDivs;
 
-  if (allDivs[2]?.textContent?.trim() === 'mp4') {
-    [title, description, , videoFileRow, , imageMobile, primaryCtaRow, secondaryCtaRow] = allDivs;
-  } else {
-    [title, description, , , videoUrlRow, imageMobile, primaryCtaRow, secondaryCtaRow] = allDivs;
-  }
+  const isMP4 = videoTypeRow?.textContent?.trim() === 'mp4';
 
   const primaryCta = primaryCtaRow?.querySelector('a');
   const secondaryCta = secondaryCtaRow?.querySelector('a');
@@ -53,11 +44,9 @@ export default async function decorate(block) {
   const isLocalhost = window.location.hostname.includes('localhost');
   const origin = isLocalhost ? 'https://experienceleague-dev.adobe.com' : window.location.origin;
 
-  const videoSrc = videoFileRow
-    ? `${origin}${new URL(videoFileRow?.querySelector('a')?.href).pathname}`
+  const videoSrc = isMP4
+    ? videoFileRow?.querySelector('a')?.href && `${origin}${new URL(videoFileRow.querySelector('a').href).pathname}`
     : videoUrlRow?.querySelector('a')?.href?.trim() || '';
-
-  const isMP4 = !!videoFileRow;
 
   // Build structure
   const aimMarqueeDOM = document.createRange().createContextualFragment(`
