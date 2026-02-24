@@ -1411,10 +1411,11 @@
                   "classes": ["left"],
                   "eyebrow": "Featured",
                   "title": "Media Panel Heading",
-                  "titleType": "h3",
+                  "titleType": "h2",
                   "description": "<p>Add a short description here. This media panel supports left or right image alignment and an optional highlight card variant.</p>",
                   "cta_linkText": "CTA Text",
-                  "cta_link": "http://experienceleague.adobe.com/"
+                  "cta_link": "http://experienceleague.adobe.com/",
+                  "highlightCardHeadingType": "h3"
                 }
               }
             }

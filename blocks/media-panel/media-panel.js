@@ -17,10 +17,6 @@ export default function decorate(block) {
     highlightHeading.classList.add('highlight-heading');
     highlightDescription.classList.add('highlight-description');
 
-    if (block.classList.contains('left') && block.classList.contains('right')) {
-        block.classList.remove('left');
-    }
-
     const highlightContainer = document.createElement('div');
     highlightContainer.classList.add('highlight-container');
     block.append(highlightContainer);
