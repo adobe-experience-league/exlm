@@ -29,12 +29,36 @@ function handleJumpLink(ctaLink) {
 }
 
 export default async function decorate(block) {
-  const [title, description, primaryCtaRow, secondaryCtaRow, videoDesktop, imageMobile] = [...block.children];
+  const [title, description, primaryCtaRow, secondaryCtaRow, videoTypeRow, videoFileRow, videoUrlRow, imageMobile] = [...block.children];
 
   const primaryCta = primaryCtaRow?.firstElementChild;
   const secondaryCta = secondaryCtaRow?.firstElementChild;
 
-  const videoSrc = videoDesktop?.querySelector('a')?.href?.trim() || '';
+  // Extract video type (mp4 or mpc)
+  const videoType = videoTypeRow?.textContent?.trim() || 'mp4';
+  
+  // Extract video source based on type
+  let videoSrc = '';
+  let isMP4 = false;
+  
+  if (videoType === 'mp4') {
+    // For MP4 files, get from videoFileRow
+    const videoLink = videoFileRow?.querySelector('a');
+    if (videoLink) {
+      const href = videoLink.href?.trim() || '';
+      if (href.includes('/content/dam/')) {
+        // Extract the path and use window.location.origin
+        const url = new URL(href);
+        videoSrc = `${window.location.origin}${url.pathname}`;
+      }
+    }
+    isMP4 = true;
+  } else {
+    // For MPC videos, get from videoUrlRow
+    videoSrc = videoUrlRow?.querySelector('a')?.href?.trim() || '';
+    isMP4 = false;
+  }
+  
   const mobileImagePicture = imageMobile?.querySelector('picture');
 
   // Build structure
@@ -66,40 +90,48 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(aimMarqueeDOM);
 
-  // Background Video (MP4 only)
+  // Background Video for desktop view 
   if (videoSrc) {
+    const { lang = 'en' } = getPathDetails() || {};
     const containerEl = block.querySelector('.aim-marquee-container');
     const videoWrapper = document.createElement('div');
     videoWrapper.classList.add('aim-marquee-video');
 
-    // Always treat as MP4 video with play/pause button
-    const video = document.createElement('video');
-    Object.assign(video, {
-      src: videoSrc,
-      autoplay: true,
-      muted: true,
-      loop: true,
-    });
+    if (isMP4) {
+      // Create custom play/pause button
+      const video = document.createElement('video');
+      Object.assign(video, {
+        src: videoSrc,
+        autoplay: true,
+        muted: true,
+        loop: true,
+      });
 
-    const icons = {
-      pause: `<svg class="pause-icon" width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M7 5h4v14H7V5Z" fill="white"/><path d="M13 5h4v14h-4V5Z" fill="white"/></svg>`,
-      play: `<svg class="play-icon" width="40" height="40" viewBox="0 0 13.512 14"><path d="M4.73,2H3.5a.5.5,0,0,0-.5.5v13a.5.5,0,0,0,.5.5H4.73a1,1,0,0,0,.5-.136L16.265,9.431a.5.5,0,0,0,0-.862L5.234,2.136A1,1,0,0,0,4.73,2Z" transform="translate(-3 -2)" fill="white"/></svg>`,
-    };
+      const icons = {
+        pause: `<svg class="pause-icon" width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M7 5h4v14H7V5Z" fill="white"/><path d="M13 5h4v14h-4V5Z" fill="white"/></svg>`,
+        play: `<svg class="play-icon" width="40" height="40" viewBox="0 0 13.512 14"><path d="M4.73,2H3.5a.5.5,0,0,0-.5.5v13a.5.5,0,0,0,.5.5H4.73a1,1,0,0,0,.5-.136L16.265,9.431a.5.5,0,0,0,0-.862L5.234,2.136A1,1,0,0,0,4.73,2Z" transform="translate(-3 -2)" fill="white"/></svg>`,
+      };
 
-    const controlBtn = document.createElement('button');
-    controlBtn.className = 'aim-marquee-play-pause';
-    controlBtn.innerHTML = icons.pause;
-    controlBtn.setAttribute('aria-label', 'Pause video');
+      const controlBtn = document.createElement('button');
+      controlBtn.className = 'aim-marquee-play-pause';
+      controlBtn.innerHTML = icons.pause;
+      controlBtn.setAttribute('aria-label', 'Pause video');
 
-    controlBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isPaused = video.paused;
-      video[isPaused ? 'play' : 'pause']();
-      controlBtn.innerHTML = icons[isPaused ? 'pause' : 'play'];
-      controlBtn.setAttribute('aria-label', `${isPaused ? 'Pause' : 'Play'} video`);
-    });
+      controlBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isPaused = video.paused;
+        video[isPaused ? 'play' : 'pause']();
+        controlBtn.innerHTML = icons[isPaused ? 'pause' : 'play'];
+        controlBtn.setAttribute('aria-label', `${isPaused ? 'Pause' : 'Play'} video`);
+      });
 
-    videoWrapper.append(video, controlBtn);
+      videoWrapper.append(video, controlBtn);
+    } else {
+      // Embed video iframe for mpc video
+      const locVideoUrl = await getLocalizedVideoUrl(videoSrc, lang);
+      videoWrapper.innerHTML = getDefaultEmbed(locVideoUrl);
+    }
+
     containerEl.prepend(videoWrapper);
   }
 
