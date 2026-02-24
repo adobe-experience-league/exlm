@@ -30,7 +30,7 @@
 .announcement-ribbon :where(h1, h2, h3, h4, h5, h6) {
   margin: 0;
   line-height: 115%;
-  font-size: 50px;
+  font-size: var(--exlm-custom-header-font-size);
   font-weight: var(--font-weight-heavy);
 }
 

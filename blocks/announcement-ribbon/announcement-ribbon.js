@@ -92,7 +92,7 @@ function determineBackgroundColor(block, hexcode) {
  * @returns {string|undefined} The background image URL or undefined
  */
 function getBackgroundImageUrl(bgImage) {
-  const imageElement = bgImage.querySelector('img');
+  const imageElement = bgImage?.querySelector('img');
   if (imageElement?.src) {
     return `url("${imageElement.src}")`;
   }
@@ -159,8 +159,8 @@ async function decorateRibbon({
 
   block.textContent = '';
   block.append(ribbonDom);
-  if (block.classList.contains('fill-image')) {
-    const bgImg = getBackgroundImageUrl(bgImage);
+  const bgImg = getBackgroundImageUrl(bgImage);
+  if (block.classList.contains('fill-image') && bgImg) {
     block.style.backgroundImage = bgImg;
   } else {
     const bgColorVariable = determineBackgroundColor(block, hexcode);
