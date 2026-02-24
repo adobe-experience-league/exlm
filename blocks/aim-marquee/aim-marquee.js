@@ -29,18 +29,20 @@ function handleJumpLink(ctaLink) {
 }
 
 export default async function decorate(block) {
-  const [title, description, primaryCtaRow, secondaryCtaRow, videoTypeRow, videoFileRow, videoUrlRow, imageMobile] = [...block.children];
+  const [title, description, primaryCtaRow, secondaryCtaRow, videoTypeRow, videoFileRow, videoUrlRow, imageMobile] = [
+    ...block.children,
+  ];
 
   const primaryCta = primaryCtaRow?.firstElementChild;
   const secondaryCta = secondaryCtaRow?.firstElementChild;
 
   // Extract video type (mp4 or mpc)
   const videoType = videoTypeRow?.textContent?.trim() || 'mp4';
-  
+
   // Extract video source based on type
   let videoSrc = '';
   let isMP4 = false;
-  
+
   if (videoType === 'mp4') {
     // For MP4 files, get from videoFileRow
     const videoLink = videoFileRow?.querySelector('a');
@@ -58,7 +60,7 @@ export default async function decorate(block) {
     videoSrc = videoUrlRow?.querySelector('a')?.href?.trim() || '';
     isMP4 = false;
   }
-  
+
   const mobileImagePicture = imageMobile?.querySelector('picture');
 
   // Build structure
@@ -90,7 +92,7 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(aimMarqueeDOM);
 
-  // Background Video for desktop view 
+  // Background Video for desktop view
   if (videoSrc) {
     const { lang = 'en' } = getPathDetails() || {};
     const containerEl = block.querySelector('.aim-marquee-container');

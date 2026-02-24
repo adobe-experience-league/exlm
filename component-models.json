@@ -2495,6 +2495,54 @@
       },
       {
         "component": "select",
+        "valueType": "string",
+        "name": "videoType",
+        "value": "mp4",
+        "label": "Video Type",
+        "description": "Select the type of video to use",
+        "options": [
+          {
+            "name": "MP4 File",
+            "value": "mp4"
+          },
+          {
+            "name": "MPC Video URL",
+            "value": "mpc"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "videoType" }, "mp4"]
+        },
+        "component": "reference",
+        "valueType": "string",
+        "name": "videoFile",
+        "label": "Video File (MP4)",
+        "description": "Select MP4 video file from DAM for desktop and tablet devices.",
+        "multi": false
+      },
+      {
+        "condition": {
+          "===": [{ "var": "videoType" }, "mpc"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "videoUrl",
+        "value": "",
+        "label": "MPC Video URL",
+        "description": "Enter the MPC video URL for desktop and tablet devices."
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "mobileImage",
+        "label": "Image (Mobile)",
+        "description": "Background image shown on mobile devices.",
+        "multi": false
+      },
+      {
+        "component": "select",
         "name": "primaryCta_Type",
         "value": "primary",
         "label": "Primary CTA Type",
@@ -2568,54 +2616,6 @@
         "value": "",
         "label": "Secondary CTA Link",
         "description": "Link for secondary CTA."
-      },
-      {
-        "component": "select",
-        "valueType": "string",
-        "name": "videoType",
-        "value": "mp4",
-        "label": "Video Type",
-        "description": "Select the type of video to use",
-        "options": [
-          {
-            "name": "MP4 File",
-            "value": "mp4"
-          },
-          {
-            "name": "MPC Video URL",
-            "value": "mpc"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "videoType" }, "mp4"]
-        },
-        "component": "reference",
-        "valueType": "string",
-        "name": "videoFile",
-        "label": "Video File (MP4)",
-        "description": "Select MP4 video file for desktop and tablet devices.",
-        "multi": false
-      },
-      {
-        "condition": {
-          "===": [{ "var": "videoType" }, "mpc"]
-        },
-        "component": "text",
-        "valueType": "string",
-        "name": "videoUrl",
-        "value": "",
-        "label": "MPC Video URL",
-        "description": "Enter the MPC video URL for desktop and tablet devices."
-      },
-      {
-        "component": "reference",
-        "valueType": "string",
-        "name": "mobileImage",
-        "label": "Image (Mobile)",
-        "description": "Background image shown on mobile devices.",
-        "multi": false
       }
     ]
   },

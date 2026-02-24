@@ -403,14 +403,16 @@
                   "title": "Practical AI for marketers",
                   "titleType": "h1",
                   "description": "<p>Duis non quam et nisi tincidunt fermentum lorem ipsum pellentesque habitant morbi tristique senectus.</p>",
+                  "videoType": "mp4",
+                  "videoFile": "",
+                  "videoUrl": "",
+                  "mobileImage": "",
                   "primaryCta_Type": "primary",
                   "primaryCta_linkText": "CTA lorem ipsum",
                   "primaryCta_link": "#section-id",
                   "secondaryCta_Type": "secondary",
                   "secondaryCta_linkText": "Take the quiz",
-                  "secondaryCta_link": "#quiz",
-                  "videoUrl": "",
-                  "mobileImage": ""
+                  "secondaryCta_link": "#quiz"
                 }
               }
             }
