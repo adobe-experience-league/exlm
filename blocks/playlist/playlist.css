@@ -293,3 +293,7 @@
   color: var(--non-spectrum-grey-updated);
   font-size: var(--spectrum-font-size-75);
 }
+
+main.playlist-page > .section:not(.playlist-container) {
+  grid-column: 1 / -1;
+}
