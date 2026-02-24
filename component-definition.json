@@ -1408,7 +1408,8 @@
                   "filter": "media-panel",
                   "classes": ["left"],
                   "eyebrow": "",
-                  "title": "<h1>Media Panel Heading</h1>",
+                  "title": "Media Panel Heading",
+                  "titleType": "h3",
                   "description": "<p>Media panel description.</p>",
                   "cta_linkText": "CTA Text",
                   "cta_link": "http://experienceleague.adobe.com/"
