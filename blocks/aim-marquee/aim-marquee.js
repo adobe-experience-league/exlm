@@ -29,37 +29,34 @@ function handleJumpLink(ctaLink) {
 }
 
 export default async function decorate(block) {
-  const [title, description, primaryCtaRow, secondaryCtaRow, videoTypeRow, videoFileRow, videoUrlRow, imageMobile] = [
-    ...block.children,
-  ];
+  const allDivs = [...block.children];
+  const videoType = allDivs[4]?.textContent?.trim() || 'mp4';
+  const isMP4 = videoType === 'mp4';
+  
+  let title;
+  let description;
+  let primaryCtaRow;
+  let secondaryCtaRow;
+  let videoFileRow;
+  let videoUrlRow;
+  let imageMobile;
+  
+  if (isMP4) {
+    [title, description, primaryCtaRow, secondaryCtaRow, , videoFileRow, imageMobile] = allDivs;
+  } else {
+    [title, description, primaryCtaRow, secondaryCtaRow, , videoUrlRow, imageMobile] = allDivs;
+  }
 
   const primaryCta = primaryCtaRow?.firstElementChild;
   const secondaryCta = secondaryCtaRow?.firstElementChild;
 
-  // Extract video type (mp4 or mpc)
-  const videoType = videoTypeRow?.textContent?.trim() || 'mp4';
-
   // Extract video source based on type
-  let videoSrc = '';
-  let isMP4 = false;
-
-  if (videoType === 'mp4') {
-    // For MP4 files, get from videoFileRow
-    const videoLink = videoFileRow?.querySelector('a');
-    if (videoLink) {
-      const href = videoLink.href?.trim() || '';
-      if (href.includes('/content/dam/')) {
-        // Extract the path and use window.location.origin
-        const url = new URL(href);
-        videoSrc = `${window.location.origin}${url.pathname}`;
-      }
-    }
-    isMP4 = true;
-  } else {
-    // For MPC videos, get from videoUrlRow
-    videoSrc = videoUrlRow?.querySelector('a')?.href?.trim() || '';
-    isMP4 = false;
-  }
+  const isLocalhost = window.location.hostname.includes('localhost');
+  const origin = isLocalhost ? 'https://experienceleague-dev.adobe.com' : window.location.origin;
+  
+  const videoSrc = isMP4
+    ? `${origin}${new URL(videoFileRow?.querySelector('a')?.href).pathname}`
+    : videoUrlRow?.querySelector('a')?.href?.trim() || '';
 
   const mobileImagePicture = imageMobile?.querySelector('picture');
 
