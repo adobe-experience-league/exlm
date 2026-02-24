@@ -2542,6 +2542,14 @@
         "multi": false
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "mobileImageAlt",
+        "value": "",
+        "label": "Image (Mobile) Alt Text",
+        "description": "A descriptive text of the mobile image."
+      },
+      {
         "component": "select",
         "name": "primaryCta_Type",
         "value": "primary",

@@ -407,6 +407,7 @@
                   "videoFile": "",
                   "videoUrl": "",
                   "mobileImage": "",
+                  "imgAlt": "",
                   "primaryCta_Type": "primary",
                   "primaryCta_linkText": "CTA lorem ipsum",
                   "primaryCta_link": "#section-id",
