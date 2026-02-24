@@ -6,6 +6,7 @@ main .section.aim-marquee-container {
   margin: 0;
   max-width: 100%;
 }
+
 .aim-marquee {
   position: relative;
   width: 100vw;
@@ -160,6 +161,7 @@ main .section.aim-marquee-container {
   .aim-marquee-image {
     display: none;
   }
+
   .aim-marquee-cta {
     justify-content: flex-start;
   }
