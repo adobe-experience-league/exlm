@@ -392,14 +392,19 @@ export default async function decorate(block) {
     playlistSection.prepend(defaultContent);
   }
 
-  const main = document.querySelector('main');
-  main.classList.add('playlist-page');
+  const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
   let playerContainer = document.querySelector('[data-playlist-player-container]');
   if (!playerContainer) {
     playerContainer = htmlToElement('<div class="playlist-player-container" data-playlist-player-container></div>');
-    if (playlistId) {
-      playlistSection.before(playerContainer);
+    if (playlistId || UEAuthorMode) {
+      const div = document.createElement('div');
+      div.classList.add('playlist-page');
+
+      playlistSection.before(div);
+      div.append(playerContainer, playlistSection);
     } else {
+      const main = document.querySelector('main');
+      main.classList.add('playlist-page');
       playlistSection.parentElement.prepend(playerContainer);
     }
   }
