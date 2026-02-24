@@ -1045,12 +1045,21 @@ async function loadDefaultModule(jsPath) {
 }
 
 function targetPreHiding() {
-  const styleEl = htmlToElement(`<style> header { opacity: 0 !important } </style>`);
-  document.head.appendChild(styleEl);
+  const headerEl = document.querySelector('exl-header');
+  if (!headerEl || !headerEl.shadowRoot) return;
+
+  const styleEl = document.createElement('style');
+  styleEl.textContent = `
+    #nav-wrapper > ul {
+      display: none !important;
+    }
+  `;
+
+  headerEl.shadowRoot.appendChild(styleEl);
 
   setTimeout(() => {
     styleEl.remove();
-  }, 2000);
+  }, 3000);
 }
 
 /**
