@@ -226,6 +226,11 @@ async function applyChanges(event) {
       decorateMain(newMain);
       decorateRichtext(newMain);
       await loadBlocks(newMain);
+      const newPlaylistBlock = newMain.querySelector('.playlist.block');
+      if (newPlaylistBlock) {
+        delete newPlaylistBlock.dataset.blockStatus;
+        await loadBlock(newPlaylistBlock);
+      }
       element.remove();
       loadArticles();
       newMain.style.display = null;

@@ -255,11 +255,12 @@ function decoratePlaylistHeader(block, playlist) {
 function updatePlayer(playlist) {
   const video = playlist.getActiveVideo();
   if (!video) return;
-  const exisatingPlayer = document.querySelector('[data-playlist-player]');
+  const wrapper = video.el.closest('.playlist-page');
+  const exisatingPlayer = wrapper?.querySelector('[data-playlist-player]');
   if (exisatingPlayer?.querySelector('iframe')?.src?.startsWith(video.src)) return;
   const player = newPlayer(playlist);
   if (!player) return;
-  const playerContainer = document.querySelector('[data-playlist-player-container]');
+  const playerContainer = wrapper?.querySelector('[data-playlist-player-container]');
   const transcriptDetail = player.querySelector('[data-playlist-player-info-transcript]');
   const transcriptUrl = transcriptDetail.getAttribute('data-playlist-player-info-transcript');
 
@@ -393,7 +394,8 @@ export default async function decorate(block) {
   }
 
   const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
-  let playerContainer = playlistSection.querySelector('[data-playlist-player-container]');
+  const playlistBlockWrapper = playlistSection.closest('.playlist-page');
+  let playerContainer = playlistBlockWrapper?.querySelector('[data-playlist-player-container]');
   if (!playerContainer) {
     playerContainer = htmlToElement('<div class="playlist-player-container" data-playlist-player-container></div>');
     if (playlistId || UEAuthorMode) {
@@ -515,6 +517,10 @@ export default async function decorate(block) {
   }
 
   playlist.activateVideoByIndex(activeVideoIndex);
+
+  if (playerContainer && playerContainer.children.length === 0) {
+    updatePlayer(playlist);
+  }
 
   // handle browser back within history changes
   window.addEventListener('popstate', (event) => {
