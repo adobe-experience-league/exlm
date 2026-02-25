@@ -169,6 +169,11 @@ export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 export const isCourseStep = matchesAnyTheme(/course-step/);
 export const isOnDemandEventPage = matchesAnyTheme(/on-demand-event/);
 export const isLiveGradientBgPage = matchesAnyTheme(/page-bg-gradient/);
+export const isHomePage = (() => {
+  const { pathname } = window.location;
+  const lang = document.querySelector('html').lang || 'en';
+  return pathname === '/' || pathname === `/${lang}` || pathname === `/${lang}/`;
+})();
 
 export const isCertificatePage = () => !!document.querySelector('.course-completion'); // Checking for presence of course-completion block
 
@@ -872,6 +877,15 @@ export function getConfig() {
     mpcApiBase: `https://api.tv.adobe.com/videos`,
     // Events Page URL
     eventsURL: `${cdnOrigin}/${lang}/events`,
+    // Brand Concierge
+    bcDatastreamId: isProd ? 'PROD_BC_DATASTREAM_ID' : '20da110b-c092-4d86-9ee9-125da7b3bd0c',
+    bcOrgId: isProd ? 'PROD_BC_ORG_ID@AdobeOrg' : '0F211E64690BA86B0A494136@AdobeOrg',
+    bcAlloySdkUrl: 'https://cdn1.adoberesources.net/alloy/2.31.1/alloy.min.js',
+    bcWebClientUrl: isProd
+      ? 'https://experience.adobe.net/solutions/experience-platform-brand-concierge-web-agent/static-assets/main.js'
+      : 'https://experience-stage.adobe.net/solutions/experience-platform-brand-concierge-web-agent/static-assets/main.js',
+    bcEdgeDomain: isProd ? 'edge.adobedc.net' : 'edge-int.adobedc.net',
+    bcAuthRequired: false,
   };
   return window.exlm.config;
 }
