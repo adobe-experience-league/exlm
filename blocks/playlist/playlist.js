@@ -207,6 +207,9 @@ function decoratePlaylistHeader(block, playlist) {
   const defaultContent = playlistSection?.querySelector('.default-content-wrapper');
   if (!defaultContent) return;
 
+  defaultContent.querySelector('.playlist-info')?.remove();
+  defaultContent.querySelector('.playlist-now-viewing')?.remove();
+
   // set title and description
   const playlistTitleH = defaultContent.querySelector('h1, h2, h3, h4, h5, h6');
   const playlistDescriptionP = defaultContent.querySelector('p');
@@ -415,6 +418,7 @@ export default async function decorate(block) {
 
   // Populate defaultContent with stored playlist metadata for API-loaded playlists
   if (playlistId && defaultContent && block.dataset.playlistTitle) {
+    defaultContent.querySelectorAll('h3, p').forEach((el) => el.remove());
     const titleH = htmlToElement(`<h3>${block.dataset.playlistTitle}</h3>`);
     defaultContent.append(titleH);
 
@@ -509,6 +513,8 @@ export default async function decorate(block) {
     </div>`);
     decoratePlaceholders(playlistOptions);
     // bottom options
+    const existingOptions = block.parentElement.querySelector('.playlist-options');
+    if (existingOptions) existingOptions.remove();
     block.parentElement.append(playlistOptions);
 
     document.querySelector('#playlist-options-autoplay').addEventListener('change', (event) => {
