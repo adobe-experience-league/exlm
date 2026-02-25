@@ -83,7 +83,7 @@ function determineBackgroundColor(block, hexcode) {
     const bgSpectrumColor = backgroundColorClass.substr(3); // Remove 'bg-' prefix
     return `var(--${bgSpectrumColor})`; // Use the CSS variable
   }
-  return `#${hexcode.innerHTML}`; // Use the hex code directly
+  return `#${hexcode.textContent}`; // Use the hex code directly
 }
 
 /**
@@ -93,10 +93,7 @@ function determineBackgroundColor(block, hexcode) {
  */
 function getBackgroundImageUrl(bgImage) {
   const imageElement = bgImage?.querySelector('img');
-  if (imageElement?.src) {
-    return `url("${imageElement.src}")`;
-  }
-  return undefined;
+  return imageElement?.src;
 }
 
 async function decorateRibbon({
@@ -159,9 +156,9 @@ async function decorateRibbon({
 
   block.textContent = '';
   block.append(ribbonDom);
-  const bgImg = getBackgroundImageUrl(bgImage);
-  if (block.classList.contains('fill-image') && bgImg) {
-    block.style.backgroundImage = bgImg;
+  const bgImgUrl = getBackgroundImageUrl(bgImage);
+  if (block.classList.contains('fill-image') && bgImgUrl) {
+    block.style.backgroundImage = `url("${bgImgUrl}")`;
   } else {
     const bgColorVariable = determineBackgroundColor(block, hexcode);
     block.style.backgroundColor = bgColorVariable;
