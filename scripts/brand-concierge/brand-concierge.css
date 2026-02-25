@@ -1,0 +1,205 @@
+/* ── Floating trigger button (FAB) ─── */
+#bc-trigger {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: var(--non-spectrum-navy-blue);
+  color: #fff;
+  border: none;
+  border-radius: 100px;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0 0 0 / 20%);
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.1s ease;
+}
+
+#bc-trigger:hover {
+  background-color: var(--non-spectrum-dark-navy-blue);
+  box-shadow: 0 6px 16px rgba(0 0 0 / 25%);
+}
+
+#bc-trigger:active {
+  transform: scale(0.97);
+}
+
+#bc-trigger svg {
+  width: 18px;
+  height: 18px;
+  fill: currentcolor;
+  flex-shrink: 0;
+}
+
+/* ── Dialog shell ─── */
+#bc-dialog {
+  position: fixed;
+  inset: auto 24px 88px auto;
+  margin: 0;
+  width: 560px;
+  max-width: calc(100vw - 48px);
+
+  /* Fixed height gives BC's internal flex layout and scroll container
+   * a stable reference. overflow:hidden lets BC manage its own scrolling. */
+  height: min(680px, calc(100vh - 104px));
+  padding: 0;
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0 0 0 / 20%);
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+#bc-dialog[open] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#bc-dialog::backdrop {
+  background: rgba(0 0 0 / 30%);
+}
+
+/* ── Close button ─── */
+.bc-dialog-close {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  z-index: 10 !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(255 255 255 / 90%) !important;
+  border: none !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  color: var(--spectrum-gray-700) !important;
+  box-shadow: 0 1px 4px rgba(0 0 0 / 15%) !important;
+  transition: background-color 0.15s ease !important;
+}
+
+.bc-dialog-close .icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 0 !important;
+}
+
+.bc-dialog-close img {
+  width: 16px !important;
+  height: 16px !important;
+  display: block !important;
+  flex-shrink: 0 !important;
+}
+
+.bc-dialog-close:hover {
+  background: #fff !important;
+}
+
+/* Show focus ring only on keyboard navigation, not on click. */
+.bc-dialog-close:focus-visible {
+  outline: 2px solid var(--non-spectrum-navy-blue) !important;
+  outline-offset: 2px !important;
+}
+
+.bc-dialog-close:focus:not(:focus-visible) {
+  outline: none !important;
+}
+
+/* ── BC mount fills the full dialog ─── */
+#bc-dialog #brand-concierge-mount {
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Welcome screen ─── */
+#brand-concierge-mount .welcome-heading {
+  padding-top: 48px !important;
+}
+
+/* ── Welcome cards ─── */
+/* stylelint-disable-next-line selector-class-pattern -- BC internal BEM class */
+#brand-concierge-mount .bc-card__image:empty {
+  display: none !important;
+}
+
+/* stylelint-disable-next-line selector-class-pattern -- BC internal BEM class */
+#brand-concierge-mount .bc-card__text {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+}
+
+/* ── Input field ─── */
+#brand-concierge-mount .chat-input {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  width: auto !important;
+}
+
+/* ── Prompt pills ─── */
+#brand-concierge-mount .prompt-pills-container {
+  gap: 8px !important;
+}
+
+#brand-concierge-mount .bc-prompt-pill-button {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 10px 14px !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  text-align: left !important;
+}
+
+/* stylelint-disable-next-line selector-class-pattern -- BC internal BEM class */
+#brand-concierge-mount .bc-prompt-pill-button__text {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+}
+
+#brand-concierge-mount .submit-button {
+  background-color: var(--non-spectrum-navy-blue) !important;
+}
+
+#brand-concierge-mount .submit-button svg {
+  display: block !important;
+  width: 16px !important;
+  min-width: 16px !important;
+  height: 16px !important;
+  color: white !important;
+  flex-shrink: 0 !important;
+}
+
+#brand-concierge-mount .submit-button svg path {
+  fill: white !important;
+}
+
+#brand-concierge-mount .scroll-to-bottom svg {
+  display: block !important;
+  width: 20px !important;
+  min-width: 20px !important;
+  height: 20px !important;
+  flex-shrink: 0 !important;
+}
+
+#brand-concierge-mount .scroll-to-bottom svg path {
+  fill: currentcolor !important;
+}
