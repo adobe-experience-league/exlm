@@ -1053,6 +1053,36 @@ function targetPreHiding() {
   }, 2000);
 }
 
+function initLiveGradientBackground() {
+  const shouldCreateLiveGradient = () => {
+    const { body } = document;
+    if (!body) return false;
+    if (!body.classList.contains('live-gradient-bg')) return false;
+    if (!window.matchMedia?.('(min-width: 640px)').matches) return false;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return false;
+    if (body.querySelector('.bg-circle')) return false;
+    return true;
+  };
+
+  const createLiveGradientCircles = () => {
+    if (!shouldCreateLiveGradient()) return;
+
+    ['bg-blue', 'bg-pink', 'bg-orange'].forEach((colorClass) => {
+      const circle = document.createElement('div');
+      circle.className = `bg-circle ${colorClass}`;
+      circle.setAttribute('aria-hidden', 'true');
+      circle.setAttribute('role', 'presentation');
+      document.body.appendChild(circle);
+    });
+  };
+
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(createLiveGradientCircles, { timeout: 2000 });
+  } else {
+    window.setTimeout(createLiveGradientCircles, 1200);
+  }
+}
+
 /**
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
@@ -1083,6 +1113,7 @@ async function loadLazy(doc) {
   // disable martech if martech=off is in the query string, this is used for testing ONLY
   if (window.location.search?.indexOf('martech=off') === -1) loadMartech(headerPromise, footerPromise);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
+  initLiveGradientBackground();
   loadFonts();
 }
 
