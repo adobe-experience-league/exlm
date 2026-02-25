@@ -4,9 +4,38 @@ import {
   decoratePlaceholders,
   createPlaceholderSpan,
   fetchLanguagePlaceholders,
+  getConfig,
+  getPathDetails,
 } from '../../scripts/scripts.js';
 import { Playlist, LABELS } from './playlist-utils.js';
 import { updateTranscript, transcriptLoading } from '../video-transcript/video-transcript.js';
+
+async function fetchPlaylistById(playlistId) {
+  const { lang } = getPathDetails();
+  const { cdnOrigin } = getConfig();
+
+  try {
+    const resp = await fetch(`${cdnOrigin}/api/v2/playlists/${playlistId}?lang=${lang}`);
+    const json = await resp.json();
+    return json.data;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to fetch playlist', e);
+    return null;
+  }
+}
+
+function getPlaylistHtml(data) {
+  return data?.transformedContent?.find((c) => c.contentType === 'text/html')?.raw;
+}
+
+function parsePlaylistHtml(html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return {
+    playlistEl: doc.querySelector('.playlist'),
+    doc,
+  };
+}
 
 const removeLastSlash = (url) => url.replace(/\/$/, '');
 const isSameUrl = (a, b) => {
@@ -34,12 +63,19 @@ const findJsonLd = (videoUrl) => {
 };
 
 function getVideoThumbnailUrl(videoUrl, jsonLdString) {
-  const jsonLd = jsonLdString ? JSON.parse(jsonLdString) : findJsonLd(videoUrl);
-  const thumbnails = [jsonLd?.thumbnailUrl].flat();
+  try {
+    const jsonLd = jsonLdString ? JSON.parse(jsonLdString) : findJsonLd(videoUrl);
+    if (!jsonLd || !jsonLd.thumbnailUrl) return null;
 
-  const defaultThumbnail = thumbnails.sort()[jsonLd.length - 1]; // last one
-  const bestFit = thumbnails?.find((url) => url.includes('640x'));
-  return bestFit || defaultThumbnail;
+    const thumbnails = Array.isArray(jsonLd.thumbnailUrl) ? jsonLd.thumbnailUrl : [jsonLd.thumbnailUrl];
+
+    if (!thumbnails.length) return null;
+
+    const bestFit = thumbnails.find((url) => url.includes('640x'));
+    return bestFit || thumbnails[thumbnails.length - 1];
+  } catch (e) {
+    return null;
+  }
 }
 
 /**
@@ -168,7 +204,8 @@ function newPlayer(playlist) {
  */
 function decoratePlaylistHeader(block, playlist) {
   const playlistSection = block.closest('.section');
-  const defaultContent = playlistSection.querySelector('.default-content-wrapper');
+  const defaultContent = playlistSection?.querySelector('.default-content-wrapper');
+  if (!defaultContent) return;
 
   // set title and description
   const playlistTitleH = defaultContent.querySelector('h1, h2, h3, h4, h5, h6');
@@ -279,46 +316,111 @@ function updateProgress(videoIndex, playlist) {
   });
 }
 
-const playlist = new Playlist();
-playlist.onVideoChange((videos, vIndex) => {
-  const currentVideo = videos[vIndex];
-  const { active = false, el } = currentVideo;
-  const activeStatusChanged = currentVideo.active !== currentVideo?.el?.classList?.contains('active');
-  el.classList.toggle('active', active);
-  if (active && activeStatusChanged) el.parentElement.scrollTop = el.offsetTop - el.clientHeight / 2;
-  updatePlayer(playlist);
-  updateVideoIndexParam(playlist.getActiveVideoIndex());
-  updateProgress(vIndex, playlist);
-  return true;
-});
-
 /**
  * @param {HTMLElement} block
  */
-export default function decorate(block) {
-  const main = document.querySelector('main');
-  main.classList.add('playlist-page');
-  const playlistSection = block.closest('.section');
-  const playerContainer = htmlToElement(`<div class="playlist-player-container" data-playlist-player-container></div>`);
-  playlistSection.parentElement.prepend(playerContainer);
-
-  const playlistOptions = htmlToElement(`<div class="playlist-options">
-    <div class="playlist-options-autoplay">
-        <input type="checkbox" id="playlist-options-autoplay" checked=${playlist?.options?.autoplayNext || true}>
-        <label for="playlist-options-autoplay">
-          <span data-placeholder="${LABELS.autoPlayNextVideo}">Auto Play Next Video</span>
-        </label>
-    </div>
-  </div>`);
-  decoratePlaceholders(playlistOptions);
-  // bottom options
-  block.parentElement.append(playlistOptions);
-
-  document.querySelector('#playlist-options-autoplay').addEventListener('change', (event) => {
-    playlist.updateOptions({ autoplayNext: event.target.checked });
+export default async function decorate(block) {
+  const playlist = new Playlist();
+  playlist.onVideoChange((videos, vIndex) => {
+    const currentVideo = videos[vIndex];
+    const { active = false, el } = currentVideo;
+    const activeStatusChanged = currentVideo.active !== currentVideo?.el?.classList?.contains('active');
+    el.classList.toggle('active', active);
+    if (active && activeStatusChanged) el.parentElement.scrollTop = el.offsetTop - el.clientHeight / 2;
+    updatePlayer(playlist);
+    updateVideoIndexParam(playlist.getActiveVideoIndex());
+    updateProgress(vIndex, playlist);
+    return true;
   });
 
+  const playlistSection = block.closest('.section');
+  const playlistId = block.childElementCount === 1 ? block.firstElementChild.textContent?.trim() : '';
+  let jsonLdArray = [];
+  if (playlistId) {
+    block.classList.add('hide-playlist');
+
+    try {
+      const data = await fetchPlaylistById(playlistId);
+      const html = getPlaylistHtml(data);
+      const parsed = parsePlaylistHtml(html);
+
+      if (!parsed || !parsed.playlistEl) return;
+
+      // For API-loaded playlists, update localStorage key to include page name and playlistId
+      // This ensures different API playlists don't share localStorage data
+      const pathParts = window.location.pathname.split('/').filter((p) => p);
+      const pageSlug = pathParts[pathParts.length - 1] || 'playlist';
+      const cleanPlaylistId = playlistId.replace(/^\/+/, '').replace(/\//g, '-');
+      playlist.localStorageKey = `playlist-${pageSlug}-${cleanPlaylistId}`;
+
+      const jsonLdScript = parsed.doc.querySelector('script[type="application/ld+json"]');
+      if (jsonLdScript) {
+        try {
+          const jsonLdData = JSON.parse(jsonLdScript.textContent);
+          jsonLdArray = Array.isArray(jsonLdData) ? jsonLdData : [jsonLdData];
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.error('Failed to parse jsonLd', e);
+        }
+      }
+
+      // Extract playlist title and description from the main content div
+      const mainDiv = parsed.doc.querySelector('main > div');
+      const playlistTitleH = mainDiv?.querySelector('h1, h2, h3, h4, h5, h6');
+      const playlistDescriptionP = mainDiv?.querySelector('p');
+
+      block.innerHTML = parsed.playlistEl.innerHTML;
+
+      // Store playlist metadata for API-loaded playlists
+      if (playlistTitleH) block.dataset.playlistTitle = playlistTitleH.textContent.trim();
+      if (playlistDescriptionP) block.dataset.playlistDescription = playlistDescriptionP.textContent.trim();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to load playlist', error);
+    } finally {
+      block.classList.remove('hide-playlist');
+    }
+  }
+
+  if (!block.children.length) return;
+
+  let defaultContent = playlistSection.querySelector('.default-content-wrapper');
+  if (!defaultContent && playlistId) {
+    defaultContent = htmlToElement(`
+  <div class="default-content-wrapper"></div>
+`);
+    playlistSection.prepend(defaultContent);
+  }
+
+  const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+  let playerContainer = playlistSection.querySelector('[data-playlist-player-container]');
+  if (!playerContainer) {
+    playerContainer = htmlToElement('<div class="playlist-player-container" data-playlist-player-container></div>');
+    if (playlistId || UEAuthorMode) {
+      const div = document.createElement('div');
+      div.classList.add('playlist-page');
+
+      playlistSection.before(div);
+      div.append(playerContainer, playlistSection);
+    } else {
+      const main = document.querySelector('main');
+      main.classList.add('playlist-page');
+      playlistSection.parentElement.prepend(playerContainer);
+    }
+  }
+
   const activeVideoIndex = getQueryStringParameter('video') || 0;
+
+  // Populate defaultContent with stored playlist metadata for API-loaded playlists
+  if (playlistId && defaultContent && block.dataset.playlistTitle) {
+    const titleH = htmlToElement(`<h3>${block.dataset.playlistTitle}</h3>`);
+    defaultContent.append(titleH);
+
+    if (block.dataset.playlistDescription) {
+      const descriptionP = htmlToElement(`<p>${block.dataset.playlistDescription}</p>`);
+      defaultContent.append(descriptionP);
+    }
+  }
 
   decoratePlaylistHeader(block, playlist);
 
@@ -348,11 +450,23 @@ export default function decorate(block) {
     durationP.remove();
     transcriptP.remove();
 
-    jsonLdCell?.replaceWith(htmlToElement(`<script type="application/ld+json">${jsonLdCell.textContent}</script>`));
+    // Handle jsonLd for thumbnails
+    let jsonLdForVideo = null;
+
+    // For manual authoring: jsonLd is in the third cell
+    if (jsonLdCell) {
+      jsonLdCell.replaceWith(htmlToElement(`<script type="application/ld+json">${jsonLdCell.textContent}</script>`));
+      jsonLdForVideo = jsonLdCell.textContent;
+    }
+    // For API-loaded playlists: jsonLd is in the stored array
+    else if (jsonLdArray.length > 0 && jsonLdArray[videoIndex]) {
+      jsonLdForVideo = JSON.stringify(jsonLdArray[videoIndex]);
+    }
+
     // add thumbnail from jsonld if available
-    const thumbnailUrl = getVideoThumbnailUrl(video.src, jsonLdCell?.textContent);
+    const thumbnailUrl = getVideoThumbnailUrl(video.src, jsonLdForVideo);
     if (thumbnailUrl) {
-      videoCell.innerHTML = `<img src="${thumbnailUrl}" alt="${srcP.textContent}">`;
+      videoCell.innerHTML = `<img src="${thumbnailUrl}" alt="${video.title}">`;
     }
 
     // item bottom status
@@ -380,6 +494,26 @@ export default function decorate(block) {
   });
 
   decorateIcons(playlistSection);
+
+  // Only show playlist options if there are videos in the playlist
+  if (playlist.length > 0) {
+    const playlistOptions = htmlToElement(`<div class="playlist-options">
+      <div class="playlist-options-autoplay">
+          <input type="checkbox" id="playlist-options-autoplay" checked=${playlist?.options?.autoplayNext || true}>
+          <label for="playlist-options-autoplay">
+            <span data-placeholder="${LABELS.autoPlayNextVideo}">Auto Play Next Video</span>
+          </label>
+      </div>
+    </div>`);
+    decoratePlaceholders(playlistOptions);
+    // bottom options
+    block.parentElement.append(playlistOptions);
+
+    document.querySelector('#playlist-options-autoplay').addEventListener('change', (event) => {
+      playlist.updateOptions({ autoplayNext: event.target.checked });
+    });
+  }
+
   playlist.activateVideoByIndex(activeVideoIndex);
 
   // handle browser back within history changes

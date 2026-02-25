@@ -289,3 +289,7 @@
   color: var(--non-spectrum-grey-updated);
   font-size: var(--spectrum-font-size-75);
 }
+
+.playlist.hide-playlist {
+  display: none;
+}
