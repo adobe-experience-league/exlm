@@ -1069,14 +1069,17 @@ function initLiveGradientBackground() {
     if (!shouldCreateLiveGradient()) return;
     const main = document.querySelector('main');
     if (!main) return;
+    const circlesFragment = document.createDocumentFragment();
 
     ['bg-blue', 'bg-pink', 'bg-orange'].forEach((colorClass) => {
       const circle = document.createElement('div');
       circle.className = `bg-circle ${colorClass}`;
       circle.setAttribute('aria-hidden', 'true');
       circle.setAttribute('role', 'presentation');
-      main.appendChild(circle);
+      circlesFragment.appendChild(circle);
     });
+
+    main.prepend(circlesFragment);
   };
 
   if ('requestIdleCallback' in window) {
