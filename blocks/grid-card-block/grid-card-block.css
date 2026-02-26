@@ -128,7 +128,8 @@
 .grid-card-block.card-v1 .grid-cards-container .grid-card {
   padding: 24px;
   max-width: 384px;
-  height: 220px;
+  height: 240px;
+  min-height: 240px;
   width: 100%;
   display: flex;
   box-sizing: border-box;
@@ -185,7 +186,7 @@
 
 .grid-card-block.card-v3 .grid-cards-container .grid-card {
   padding: 24px;
-  max-width: 544px;
+  max-width: 588px;
   width: 100%;
   box-sizing: border-box;
   border: 2px solid var(--non-spectrum-transparent-white-60);
