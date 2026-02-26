@@ -14,10 +14,10 @@
 }
 
 .media-panel.block > .content-container {
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  flex: 1;
   max-width: 600px;
 }
 
@@ -45,7 +45,7 @@
   line-height: 150%;
 }
 
-.media-panel.block > .content-container > .cta a {
+.media-panel.block > .content-container > .cta a:not(.button) {
   display: inline-block;
   border-radius: 100px;
   border: 2px solid var(--non-spectrum-dark-gray);
@@ -60,8 +60,12 @@
   transition: background-color 0.3s ease;
 }
 
-.media-panel.block > .content-container > .cta a:hover {
+.media-panel.block > .content-container > .cta a:not(.button):hover {
   background-color: var(--overlay-background-color);
+}
+
+.media-panel.block > .content-container > .cta a.button {
+  margin: var(--spectrum-spacing-400) 0;
 }
 
 .media-panel.block > .podcast-container > .image img {

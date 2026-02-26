@@ -1,3 +1,5 @@
+import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+
 export default function decorate(block) {
   const [image, eyebrow, heading, description, cta, podcastHeading, podcastDescription] = block.children || [];
 
@@ -17,7 +19,13 @@ export default function decorate(block) {
   const contentContainer = document.createElement('div');
   contentContainer.classList.add('content-container');
   block.append(contentContainer);
-  contentContainer.append(eyebrow, heading, description, cta);
+  contentContainer.append(eyebrow, heading, description);
+
+  const hasButtonType = cta?.querySelector('a') && ['primary', 'secondary', 'tertiary', 'custom'].includes(cta.firstElementChild?.textContent?.trim());
+  if (hasButtonType) {
+    cta.innerHTML = decorateCustomButtons(cta);
+  }
+  contentContainer.append(cta);
 
   if (!block.classList.contains('podcast-card')) {
     podcastHeading.remove();
