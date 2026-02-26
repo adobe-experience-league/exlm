@@ -388,7 +388,7 @@ export default function atomicFacetHandler(block, placeholders) {
     }
   };
 
-  const handleAtomicFacetUI = (atomicFacet, facetField) => {
+  const handleAtomicFacetUI = (atomicFacet, forceUpdateUI = false) => {
     if (atomicFacet.getAttribute('id') === 'facetStatus') {
       // Hide the facetStatus if no filters are selected
       if (!hasContentTypeFilter()) {
@@ -407,7 +407,7 @@ export default function atomicFacetHandler(block, placeholders) {
       const facets = Array.from(parentWrapper.children);
       const searchState = searchInterface.engine?.state;
       const facetsResponse = searchState?.search?.response?.facets || [];
-      const facetResponse = facetsResponse.find((facet) => facet.field === facetField);
+      const facetResponse = facetsResponse.find((facet) => facet.field === atomicFacet.field);
       const fieldFacets =
         facetResponse?.values?.length > 0 && facetResponse.values.length === facets.length ? facetResponse.values : [];
       facets.forEach((facet, index) => {
@@ -419,7 +419,7 @@ export default function atomicFacetHandler(block, placeholders) {
         }
       });
       facets.forEach((facet) => {
-        updateFacetUI(facet, atomicFacet, false);
+        updateFacetUI(facet, atomicFacet, forceUpdateUI);
       });
       sortFacetsInOrder(parentWrapper);
       facets.forEach((facet) => {
@@ -459,7 +459,7 @@ export default function atomicFacetHandler(block, placeholders) {
       mutations.forEach((mutation) => {
         mutation.addedNodes.forEach((node) => {
           if (node.nodeType === Node.ELEMENT_NODE && node.matches('fieldset.contents')) {
-            handleAtomicFacetUI(atomicFacet, atomicFacet.field);
+            handleAtomicFacetUI(atomicFacet);
           }
         });
       });
@@ -475,7 +475,7 @@ export default function atomicFacetHandler(block, placeholders) {
     resultTimerId = setTimeout(() => {
       const atomicFacets = document.querySelectorAll('atomic-facet');
       atomicFacets.forEach((atomicFacet) => {
-        handleAtomicFacetUI(atomicFacet, atomicFacet.field);
+        handleAtomicFacetUI(atomicFacet, true);
         const shimmer = atomicFacet.shadowRoot.querySelector('.facet-shimmer');
         setTimeout(() => {
           shimmer?.part.remove('show-shimmer');
@@ -491,7 +491,7 @@ export default function atomicFacetHandler(block, placeholders) {
     const atomicFacets = document.querySelectorAll('atomic-facet');
     atomicFacets.forEach((atomicFacet) => {
       observeFacetValuesList(atomicFacet);
-      handleAtomicFacetUI(atomicFacet, atomicFacet.field);
+      handleAtomicFacetUI(atomicFacet);
     });
     document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onResultsUpdate);
   };
