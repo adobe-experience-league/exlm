@@ -1056,23 +1056,26 @@ function targetPreHiding() {
 function initLiveGradientBackground() {
   const shouldCreateLiveGradient = () => {
     const { body } = document;
-    if (!body) return false;
+    const main = document.querySelector('main');
+    if (!body || !main) return false;
     if (!body.classList.contains('live-gradient-bg')) return false;
     if (!window.matchMedia?.('(min-width: 640px)').matches) return false;
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return false;
-    if (body.querySelector('.bg-circle')) return false;
+    if (main.querySelector('.bg-circle')) return false;
     return true;
   };
 
   const createLiveGradientCircles = () => {
     if (!shouldCreateLiveGradient()) return;
+    const main = document.querySelector('main');
+    if (!main) return;
 
     ['bg-blue', 'bg-pink', 'bg-orange'].forEach((colorClass) => {
       const circle = document.createElement('div');
       circle.className = `bg-circle ${colorClass}`;
       circle.setAttribute('aria-hidden', 'true');
       circle.setAttribute('role', 'presentation');
-      document.body.appendChild(circle);
+      main.appendChild(circle);
     });
   };
 
