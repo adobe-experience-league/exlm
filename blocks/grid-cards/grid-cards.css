@@ -54,7 +54,8 @@
   font-size: var(--spectrum-font-size-400);
 }
 
-.grid-card-description {
+.grid-card-description,
+.grid-card-description > * {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
@@ -65,6 +66,7 @@
   font-size: var(--spectrum-font-size-100);
   line-height: 150%;
   font-weight: var(--font-weight-normal);
+  margin: 0;
 }
 
 .grid-cards .grid-card .grid-card-content .grid-card-cta {
@@ -214,6 +216,15 @@
 .grid-cards.wide .grid-card-container .grid-card .grid-card-content {
   justify-content: center;
   flex: 1;
+}
+
+.grid-cards.wide .grid-card-container .grid-card .grid-card-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  align-self: stretch;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (min-width: 900px) {
