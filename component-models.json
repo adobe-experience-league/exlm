@@ -3394,7 +3394,7 @@
       },
       {
         "condition": {
-          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "highlight-card"] }]
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "podcast-card"] }]
         },
         "component": "text",
         "valueType": "string",
@@ -3405,7 +3405,7 @@
       },
       {
         "condition": {
-          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "highlight-card"] }]
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "podcast-card"] }]
         },
         "component": "select",
         "valueType": "string",
@@ -3441,7 +3441,7 @@
       },
       {
         "condition": {
-          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "highlight-card"] }]
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "podcast-card"] }]
         },
         "component": "richtext",
         "valueType": "string",
