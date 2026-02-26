@@ -52,7 +52,7 @@ export default function decorate(block) {
   const [eyebrowRow, titleRow, descRow, variantRow, ...cardRows] = children;
 
   // Get variant from fourth row
-  const variant = variantRow?.textContent.trim().toLowerCase() || 'card-v1';
+  const variant = variantRow?.textContent.trim().toLowerCase() || 'minimal';
   block.classList.add(variant);
 
   // Create header wrapper div
@@ -103,7 +103,7 @@ export default function decorate(block) {
 
   // Create cards container
   const cardsContainer = document.createElement('div');
-  cardsContainer.classList.add('grid-cards-container');
+  cardsContainer.classList.add('grid-card-container');
 
   // Process each card based on variant
   cardRows.forEach((cardRow) => {
@@ -120,8 +120,8 @@ export default function decorate(block) {
     // Clear card
     cardRow.textContent = '';
 
-    if (variant === 'card-v1') {
-      // card-v1: Only title, description, and CTA (no image)
+    if (variant === 'minimal') {
+      // minimal: Only title, description, and CTA (no image)
       const contentWrapper = document.createElement('div');
       contentWrapper.classList.add('grid-card-content');
 
@@ -134,8 +134,8 @@ export default function decorate(block) {
       if (cta) contentWrapper.appendChild(cta);
 
       cardRow.appendChild(contentWrapper);
-    } else if (variant === 'card-v2') {
-      // card-v2: Image on top, then title, description, and CTA
+    } else if (variant === 'standard') {
+      // standard: Image on top, then title, description, and CTA
       const image = createCardImage(picture);
 
       const contentWrapper = document.createElement('div');
@@ -151,8 +151,8 @@ export default function decorate(block) {
 
       if (image) cardRow.appendChild(image);
       cardRow.appendChild(contentWrapper);
-    } else if (variant === 'card-v3') {
-      // card-v3: Horizontal - image on left, title and description on right - whole card is clickable
+    } else if (variant === 'wide') {
+      // wide: Horizontal - image on left, title and description on right - whole card is clickable
       const image = createCardImage(picture);
 
       const contentWrapper = document.createElement('div');

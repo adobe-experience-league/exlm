@@ -1,7 +1,7 @@
 .grid-cards {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: var(--spectrum-spacing-600);
   justify-content: center;
   align-items: center;
 }
@@ -9,14 +9,14 @@
 .grid-cards .grid-cards-header {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spectrum-spacing-100);
   text-align: center;
   max-width: 792px;
 
   .grid-cards-eyebrow {
     text-transform: uppercase;
-    font-size: 16px;
-    font-weight: 700;
+    font-size: var(--spectrum-font-size-200);
+    font-weight: var(--font-weight-bold);
     line-height: 125%;
     letter-spacing: 0.8px;
     margin: 0;
@@ -26,32 +26,32 @@
   .grid-cards-title {
     font-size: 44px;
     line-height: 125%;
-    font-weight: 900;
+    font-weight: var(--font-weight-heavy);
     margin: 0;
     color: var(--non-spectrum-dark-gray);
   }
 
   .grid-cards-description {
-    font-size: 20px;
+    font-size: var(--spectrum-font-size-400);
     line-height: 150%;
     font-weight: 400;
     color: var(--non-spectrum-dark-gray);
   }
 }
 
-.grid-cards-container {
+.grid-card-container {
   display: grid;
   grid-template-columns: 1fr;
 }
 
 .grid-card-title {
   margin: 0;
-  margin-bottom: 8px;
+  margin-bottom: var(--spectrum-spacing-100);
   align-self: stretch;
-  font-weight: 900;
+  font-weight: var(--font-weight-heavy);
   line-height: 125%;
   color: var(--text-color);
-  font-size: 20px;
+  font-size: var(--spectrum-font-size-400);
 }
 
 .grid-card-description {
@@ -62,9 +62,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
   color: var(--text-color);
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-100);
   line-height: 150%;
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
 }
 
 .grid-cards .grid-card .grid-card-content .grid-card-cta {
@@ -78,14 +78,14 @@
   color: var(--non-spectrum-dark-gray);
   font-size: 15px;
   text-align: center;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   line-height: 19px;
   background-color: unset;
   height: 30px;
   border: 2px solid var(--non-spectrum-dark-gray);
 }
 
-.grid-cards .grid-cards-container .grid-card .grid-card-content {
+.grid-cards .grid-card-container .grid-card .grid-card-content {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -95,67 +95,63 @@
 
 /* Tablet - 2 columns */
 @media (min-width: 600px) {
-  .grid-cards-container {
+  .grid-card-container {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 /* Desktop - 3 columns */
 @media (min-width: 900px) {
-  .grid-cards-container {
+  .grid-card-container {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-/* Variant 1 styling */
-
-.grid-cards.minimal {
-  margin-top: 56px;
-}
-
+/* Minimal card styling */
 .grid-cards.minimal .grid-cards-header {
   display: none;
 }
 
-.grid-cards.minimal .grid-cards-container {
+.grid-cards.minimal .grid-card-container {
   gap: 25px;
   justify-items: center;
+  width: 100%;
+  max-width: 1202px;
 }
 
-.grid-cards.minimal .grid-cards-container .grid-card {
-  padding: 24px;
-  max-width: 384px;
+.grid-cards.minimal .grid-card-container .grid-card {
+  padding: var(--spectrum-spacing-400);
   height: 240px;
   min-height: 240px;
   width: 100%;
   display: flex;
   box-sizing: border-box;
   border-radius: 16px;
-  border: 2px solid var(--non-spectrum-transparent-white-60);
-  background-color: var(--non-spectrum-transparent-white-50);
-  box-shadow: var(--box-shadow-soft);
+  border: 2px solid rgb(255 255 255 / 60%);
+  background-color: rgb(255 255 255 / 50%);
+  box-shadow: 0 0 8px 0 rgb(0 0 0 / 25%);
   backdrop-filter: blur(12px);
 }
 
-/* Variant 2 styling */
-.grid-cards.standard .grid-cards-container {
-  gap: 24px;
+/* Standard card styling */
+.grid-cards.standard .grid-card-container {
+  gap: var(--spectrum-spacing-400);
   justify-items: center;
+  max-width: 1200px;
 }
 
-.grid-cards.standard .grid-cards-container .grid-card {
-  padding: 24px;
-  max-width: 384px;
+.grid-cards.standard .grid-card-container .grid-card {
+  padding: var(--spectrum-spacing-400);
   width: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--spectrum-spacing-400);
   height: 436px;
   min-height: 430px;
-  border: 2px solid var(--non-spectrum-transparent-white-60);
-  background-color: var(--non-spectrum-transparent-white-50);
-  box-shadow: var(--box-shadow-soft);
+  border: 2px solid rgb(255 255 255 / 60%);
+  background-color: rgb(255 255 255 / 50%);
+  box-shadow: 0 0 8px 0 rgb(0 0 0 / 25%);
   backdrop-filter: blur(12px);
   border-radius: 16px;
 }
@@ -175,28 +171,29 @@
   display: block;
 }
 
-/* Variant 3 styling */
-.grid-cards.wide .grid-cards-container {
+/* Wide card styling */
+.grid-cards.wide .grid-card-container {
   grid-template-columns: 1fr;
-  gap: 24px;
+  gap: var(--spectrum-spacing-400);
+  width: 100%;
+  max-width: 1200px;
 }
 
-.grid-cards.wide .grid-cards-container .grid-card {
-  padding: 24px;
-  max-width: 588px;
+.grid-cards.wide .grid-card-container .grid-card {
+  padding: var(--spectrum-spacing-400);
   width: 100%;
   box-sizing: border-box;
-  border: 2px solid var(--non-spectrum-transparent-white-60);
-  background-color: var(--non-spectrum-transparent-white-50);
-  box-shadow: var(--box-shadow-soft);
+  border: 2px solid rgb(255 255 255 / 60%);
+  background-color: rgb(255 255 255 / 50%);
+  box-shadow: 0 0 8px 0 rgb(0 0 0 / 25%);
   backdrop-filter: blur(12px);
   border-radius: 16px;
 }
 
-.grid-cards.wide .grid-cards-container .grid-card > a {
+.grid-cards.wide .grid-card-container .grid-card > a {
   display: flex;
   margin: 0;
-  gap: 24px;
+  gap: var(--spectrum-spacing-400);
   align-items: stretch;
 }
 
@@ -214,13 +211,24 @@
   display: block;
 }
 
-.grid-cards.wide .grid-cards-container .grid-card .grid-card-content {
+.grid-cards.wide .grid-card-container .grid-card .grid-card-content {
   justify-content: center;
   flex: 1;
 }
 
 @media (min-width: 900px) {
-  .grid-cards.wide .grid-cards-container {
+  .grid-cards.wide .grid-card-container {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .grid-cards.minimal .grid-card-container .grid-card,
+  .grid-cards.standard .grid-card-container .grid-card {
+    max-width: 384px;
+  }
+
+  .grid-cards.wide .grid-card-container .grid-card {
+    max-width: 588px;
   }
 }

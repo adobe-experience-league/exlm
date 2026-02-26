@@ -8866,7 +8866,7 @@
         "valueType": "string",
         "name": "cardTitleType",
         "value": "h3",
-        "label": "Card Title Heading Type",
+        "label": "Card Title Heading Type.",
         "options": [
           {
             "name": "H1",
@@ -8900,14 +8900,14 @@
         "name": "cardDescription",
         "value": "",
         "label": "Card Description",
-        "description": "Sets the description for the card. Please limit the content to 3 lines."
+        "description": "Sets the description for the card. Please limit the content to 3 lines and 4 lines in case of Wide card variant."
       },
       {
         "component": "reference",
         "valueType": "string",
         "name": "cardImage",
         "label": "Card Image",
-        "description": "Image for the card",
+        "description": "Image for the card.",
         "multi": false
       },
       {
@@ -8916,7 +8916,7 @@
         "name": "cardImageAlt",
         "value": "",
         "label": "Card Image Alt Text",
-        "description": "Alt text for the card image"
+        "description": "Alt text for the card image."
       },
       {
         "component": "text",
@@ -8924,7 +8924,7 @@
         "name": "ctaText",
         "value": "",
         "label": "CTA Text",
-        "description": "Text for the call-to-action button"
+        "description": "Text to be shown inside button."
       },
       {
         "component": "text",
@@ -8932,7 +8932,7 @@
         "name": "ctaLink",
         "value": "",
         "label": "CTA Link",
-        "description": "URL for the call-to-action link"
+        "description": "What link to open when clicking the button."
       }
     ]
   }
