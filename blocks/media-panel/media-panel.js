@@ -20,11 +20,8 @@ export default function decorate(block) {
   contentContainer.classList.add('content-container');
   block.append(contentContainer);
   contentContainer.append(eyebrow, heading, description);
-
-  const hasButtonType = cta?.querySelector('a') && ['primary', 'secondary', 'tertiary', 'custom'].includes(cta.firstElementChild?.textContent?.trim());
-  if (hasButtonType) {
-    cta.innerHTML = decorateCustomButtons(cta);
-  }
+  cta.innerHTML = decorateCustomButtons(cta);
+  
   contentContainer.append(cta);
 
   if (!block.classList.contains('podcast-card')) {
