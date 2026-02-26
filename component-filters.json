@@ -90,7 +90,6 @@
       "browse-courses",
       "course-recap",
       "slides",
-      "playlist",
       "quiz-scorecard"
     ]
   },
@@ -177,8 +176,7 @@
       "article-tags",
       "qualtrics",
       "code",
-      "announcement-ribbon",
-      "playlist"
+      "announcement-ribbon"
     ]
   },
   {
@@ -369,8 +367,7 @@
       "qualtrics",
       "code",
       "announcement-ribbon",
-      "slides",
-      "playlist"
+      "slides"
     ]
   },
   {
