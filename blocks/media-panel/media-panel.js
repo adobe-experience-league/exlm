@@ -5,8 +5,8 @@ export default function decorate(block) {
         heading,
         description,
         cta,
-        highlightHeading,
-        highlightDescription
+        podcastHeading,
+        podcastDescription
     ] = block.children || [];
 
     image.classList.add('image');
@@ -14,21 +14,21 @@ export default function decorate(block) {
     heading.classList.add('heading');
     description.classList.add('description');
     cta.classList.add('cta');
-    highlightHeading.classList.add('highlight-heading');
-    highlightDescription.classList.add('highlight-description');
+    podcastHeading.classList.add('podcast-heading');
+    podcastDescription.classList.add('podcast-description');
 
-    const highlightContainer = document.createElement('div');
-    highlightContainer.classList.add('highlight-container');
-    block.append(highlightContainer);
-    highlightContainer.append(image, highlightHeading, highlightDescription);
+    const podcastContainer = document.createElement('div');
+    podcastContainer.classList.add('podcast-container');
+    block.append(podcastContainer);
+    podcastContainer.append(image, podcastHeading, podcastDescription);
 
     const contentContainer = document.createElement('div');
     contentContainer.classList.add('content-container');
     block.append(contentContainer);
     contentContainer.append(eyebrow, heading, description, cta);
 
-    if (!block.classList.contains('highlight-card')) {
-        highlightHeading.remove();
-        highlightDescription.remove();
+    if (!block.classList.contains('podcast-card')) {
+        podcastHeading.remove();
+        podcastDescription.remove();
     }
 }

@@ -1415,7 +1415,7 @@
                   "description": "<p>Add a short description here. This media panel supports left or right image alignment and an optional highlight card variant.</p>",
                   "cta_linkText": "CTA Text",
                   "cta_link": "http://experienceleague.adobe.com/",
-                  "highlightCardHeadingType": "h3"
+                  "podcastCardHeadingType": "h3"
                 }
               }
             }

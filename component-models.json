@@ -3313,8 +3313,8 @@
             "name": "Variant",
             "children": [
               {
-                "name": "Highlight Card",
-                "value": "highlight-card"
+                "name": "Podcast Card",
+                "value": "podcast-card"
               }
             ]
           }
@@ -3398,10 +3398,10 @@
         },
         "component": "text",
         "valueType": "string",
-        "name": "highlightCardHeading",
+        "name": "podcastCardHeading",
         "value": "",
-        "label": "Highlight Card Heading",
-        "description": "Heading for the highlight card variant."
+        "label": "Podcast Card Heading",
+        "description": "Heading for the podcast card variant."
       },
       {
         "condition": {
@@ -3409,9 +3409,9 @@
         },
         "component": "select",
         "valueType": "string",
-        "name": "highlightCardHeadingType",
+        "name": "podcastCardHeadingType",
         "value": "h4",
-        "label": "Highlight Card Heading Type",
+        "label": "Podcast Card Heading Type",
         "options": [
           {
             "name": "H1",
@@ -3445,10 +3445,10 @@
         },
         "component": "richtext",
         "valueType": "string",
-        "name": "highlightCardDescription",
+        "name": "podcastCardDescription",
         "value": "",
-        "label": "Highlight Card Description",
-        "description": "Description for the highlight card variant."
+        "label": "Podcast Card Description",
+        "description": "Description for the  podcast card variant."
       }
     ]
   },
