@@ -8,6 +8,7 @@ import {
   hasContentTypeFilter,
   updateHash,
   COMMUNITY_CONTENT_TYPES,
+  extractFacetName,
 } from './atomic-search-utils.js';
 
 const MAX_FACETS_WITHOUT_EXPANSION = 5;
@@ -16,6 +17,8 @@ export default function atomicFacetHandler(block, placeholders) {
   let baseObserver;
   let resultTimerId;
   const baseElement = block.querySelector('atomic-facet');
+  const searchInterface = block.querySelector('atomic-search-interface');
+
   const adjustChildElementsPosition = (facet, atomicElement) => {
     if (facet.dataset.childfacet === 'true') {
       const parentName = facet.dataset.parent;
@@ -357,13 +360,7 @@ export default function atomicFacetHandler(block, placeholders) {
       facet.part.add('facet-option');
       facet.dataset.updated = 'true';
       if (contentType.includes('|')) {
-        const splitContent = contentType.split('|');
-        let parentName = splitContent[0];
-        const facetName = splitContent[1];
-        // Handle format like "Community;Community|Ideas" -> extract "Community" as parent
-        if (parentName.includes(';')) {
-          [parentName] = parentName.split(';');
-        }
+        const { parentName, facetName } = extractFacetName(contentType);
         facet.dataset.parent = parentName;
         facet.dataset.childfacet = 'true';
         const spanElement = facet.querySelector('.value-label');
@@ -391,7 +388,7 @@ export default function atomicFacetHandler(block, placeholders) {
     }
   };
 
-  const handleAtomicFacetUI = (atomicFacet) => {
+  const handleAtomicFacetUI = (atomicFacet, forceUpdateUI = false) => {
     if (atomicFacet.getAttribute('id') === 'facetStatus') {
       // Hide the facetStatus if no filters are selected
       if (!hasContentTypeFilter()) {
@@ -408,14 +405,21 @@ export default function atomicFacetHandler(block, placeholders) {
     const parentWrapper = atomicFacet.shadowRoot.querySelector('[part="values"]');
     if (parentWrapper) {
       const facets = Array.from(parentWrapper.children);
-      facets.forEach((facet) => {
+      const searchState = searchInterface.engine?.state;
+      const facetsResponse = searchState?.search?.response?.facets || [];
+      const facetResponse = facetsResponse.find((facet) => facet.field === atomicFacet.field);
+      const fieldFacets =
+        facetResponse?.values?.length > 0 && facetResponse.values.length === facets.length ? facetResponse.values : [];
+      facets.forEach((facet, index) => {
         if (!facet.dataset.contenttype) {
-          const contentType = facet.dataset.contenttype || facet.querySelector('.value-label').title || '';
+          const facetValue = fieldFacets[index]?.value || '';
+          const contentType =
+            facet.dataset.contenttype || facetValue || facet.querySelector('.value-label').title || '';
           facet.dataset.contenttype = contentType;
         }
       });
       facets.forEach((facet) => {
-        updateFacetUI(facet, atomicFacet, false);
+        updateFacetUI(facet, atomicFacet, forceUpdateUI);
       });
       sortFacetsInOrder(parentWrapper);
       facets.forEach((facet) => {
@@ -471,7 +475,7 @@ export default function atomicFacetHandler(block, placeholders) {
     resultTimerId = setTimeout(() => {
       const atomicFacets = document.querySelectorAll('atomic-facet');
       atomicFacets.forEach((atomicFacet) => {
-        handleAtomicFacetUI(atomicFacet);
+        handleAtomicFacetUI(atomicFacet, true);
         const shimmer = atomicFacet.shadowRoot.querySelector('.facet-shimmer');
         setTimeout(() => {
           shimmer?.part.remove('show-shimmer');
