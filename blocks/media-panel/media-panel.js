@@ -20,7 +20,7 @@ export default function decorate(block) {
   contentContainer.classList.add('content-container');
   block.append(contentContainer);
   contentContainer.append(eyebrow, heading, description);
-  cta.innerHTML = decorateCustomButtons(cta);
+  cta.innerHTML = decorateCustomButtons(cta.firstElementChild);
   
   contentContainer.append(cta);
 

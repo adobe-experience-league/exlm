@@ -52,7 +52,7 @@
   display: -webkit-box;
 }
 
-.media-panel.block > .content-container > .cta a:not(.button) {
+.media-panel.block > .content-container > .cta a.secondary {
   display: inline-block;
   border-radius: 100px;
   border: 2px solid var(--non-spectrum-dark-gray);
@@ -67,7 +67,7 @@
   transition: background-color 0.3s ease;
 }
 
-.media-panel.block > .content-container > .cta a:not(.button):hover {
+.media-panel.block > .content-container > .cta a.secondary:hover {
   background-color: var(--overlay-background-color);
 }
 
