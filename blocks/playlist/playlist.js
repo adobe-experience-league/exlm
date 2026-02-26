@@ -255,22 +255,29 @@ function decoratePlaylistHeader(block, playlist) {
  * Shows the video at the given count
  * @param {import('./mpc-util.js').Video} video
  */
-function updatePlayer(playlist) {
+function updatePlayer(playlist, playlistId) {
   const video = playlist.getActiveVideo();
+  let wrapper;
   if (!video) return;
-  const wrapper = video.el.closest('.playlist-page');
-  const exisatingPlayer = wrapper?.querySelector('[data-playlist-player]');
+  let exisatingPlayer = document.querySelector('[data-playlist-player]');
+  if (playlistId) {
+    if (!video.el || !(video.el instanceof HTMLElement)) return;
+    wrapper = video.el.closest('.playlist-page');
+    if (!wrapper) return;
+    exisatingPlayer = wrapper?.querySelector('[data-playlist-player]');
+  }
   if (exisatingPlayer?.querySelector('iframe')?.src?.startsWith(video.src)) return;
   const player = newPlayer(playlist);
   if (!player) return;
-  const playerContainer = wrapper?.querySelector('[data-playlist-player-container]');
+  let playerContainer = document?.querySelector('[data-playlist-player-container]');
+  if (playlistId) playerContainer = wrapper?.querySelector('[data-playlist-player-container]');
   const transcriptDetail = player.querySelector('[data-playlist-player-info-transcript]');
   const transcriptUrl = transcriptDetail.getAttribute('data-playlist-player-info-transcript');
 
   updateTranscript(transcriptUrl, transcriptDetail);
   playerContainer.innerHTML = '';
   playerContainer.append(player);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (!playlistId) window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 /**
@@ -324,6 +331,8 @@ function updateProgress(videoIndex, playlist) {
  * @param {HTMLElement} block
  */
 export default async function decorate(block) {
+  const playlistSection = block.closest('.section');
+  const playlistId = block.childElementCount === 1 ? block.firstElementChild.textContent?.trim() : '';
   const playlist = new Playlist();
   playlist.onVideoChange((videos, vIndex) => {
     const currentVideo = videos[vIndex];
@@ -331,14 +340,12 @@ export default async function decorate(block) {
     const activeStatusChanged = currentVideo.active !== currentVideo?.el?.classList?.contains('active');
     el.classList.toggle('active', active);
     if (active && activeStatusChanged) el.parentElement.scrollTop = el.offsetTop - el.clientHeight / 2;
-    updatePlayer(playlist);
+    updatePlayer(playlist, playlistId);
     updateVideoIndexParam(playlist.getActiveVideoIndex());
     updateProgress(vIndex, playlist);
     return true;
   });
 
-  const playlistSection = block.closest('.section');
-  const playlistId = block.childElementCount === 1 ? block.firstElementChild.textContent?.trim() : '';
   let jsonLdArray = [];
   if (playlistId) {
     block.classList.add('hide-playlist');
@@ -517,7 +524,7 @@ export default async function decorate(block) {
     if (existingOptions) existingOptions.remove();
     block.parentElement.append(playlistOptions);
 
-    document.querySelector('#playlist-options-autoplay').addEventListener('change', (event) => {
+    playlistOptions.querySelector('#playlist-options-autoplay').addEventListener('change', (event) => {
       playlist.updateOptions({ autoplayNext: event.target.checked });
     });
   }
@@ -525,7 +532,7 @@ export default async function decorate(block) {
   playlist.activateVideoByIndex(activeVideoIndex);
 
   if (playerContainer && playerContainer.children.length === 0) {
-    updatePlayer(playlist);
+    updatePlayer(playlist, playlistId);
   }
 
   // handle browser back within history changes

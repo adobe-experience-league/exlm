@@ -53,7 +53,7 @@
 .section.playlist-container .default-content-wrapper {
   position: relative;
   padding: 1em;
-  margin: 0;
+  margin: 0 !important;
   border-bottom: var(--playlist-border);
   background-color: var(--spectrum-gray-50);
   border: var(--playlist-border);
