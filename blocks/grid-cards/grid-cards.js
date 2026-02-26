@@ -57,14 +57,14 @@ export default function decorate(block) {
 
   // Create header wrapper div
   const headerDiv = document.createElement('div');
-  headerDiv.classList.add('grid-card-block-header');
+  headerDiv.classList.add('grid-cards-header');
 
   // Process block eyebrow
   if (eyebrowRow) {
     const eyebrowText = eyebrowRow.textContent.trim();
     if (eyebrowText) {
       const eyebrow = document.createElement('p');
-      eyebrow.classList.add('grid-card-block-eyebrow');
+      eyebrow.classList.add('grid-cards-eyebrow');
       eyebrow.textContent = eyebrowText;
       headerDiv.appendChild(eyebrow);
     }
@@ -75,7 +75,7 @@ export default function decorate(block) {
   if (titleRow) {
     const heading = titleRow.querySelector('h1, h2, h3, h4, h5, h6');
     if (heading) {
-      heading.classList.add('grid-card-block-title');
+      heading.classList.add('grid-cards-title');
       headerDiv.appendChild(heading);
     }
     titleRow.remove();
@@ -85,7 +85,7 @@ export default function decorate(block) {
   if (descRow) {
     const desc = descRow.querySelector('div');
     if (desc && desc.textContent.trim()) {
-      desc.classList.add('grid-card-block-description');
+      desc.classList.add('grid-cards-description');
       headerDiv.appendChild(desc);
     }
     descRow.remove();

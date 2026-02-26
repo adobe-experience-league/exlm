@@ -8768,7 +8768,7 @@
     ]
   },
   {
-    "id": "grid-card-block",
+    "id": "grid-cards",
     "fields": [
       {
         "component": "text",
@@ -8832,19 +8832,19 @@
         "name": "variant",
         "label": "Style Variant",
         "valueType": "string",
-        "value": "card-v1",
+        "value": "minimal",
         "options": [
           {
-            "name": "Card V1",
-            "value": "card-v1"
+            "name": "Minimal Card Variant",
+            "value": "minimal"
           },
           {
-            "name": "Card V2",
-            "value": "card-v2"
+            "name": "Standard Card Variant",
+            "value": "standard"
           },
           {
-            "name": "Card V3",
-            "value": "card-v3"
+            "name": "Wide Card Variant",
+            "value": "wide"
           }
         ]
       }

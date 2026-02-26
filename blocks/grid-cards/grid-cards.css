@@ -1,4 +1,4 @@
-.grid-card-block {
+.grid-cards {
   display: flex;
   flex-direction: column;
   gap: 40px;
@@ -6,34 +6,36 @@
   align-items: center;
 }
 
-.grid-card-block .grid-card-block-header {
+.grid-cards .grid-cards-header {
   display: flex;
   flex-direction: column;
   gap: 8px;
   text-align: center;
-  color: var(--non-spectrum-dark-gray);
   max-width: 792px;
 
-  .grid-card-block-eyebrow {
+  .grid-cards-eyebrow {
     text-transform: uppercase;
     font-size: 16px;
     font-weight: 700;
     line-height: 125%;
     letter-spacing: 0.8px;
     margin: 0;
+    color: var(--non-spectrum-dark-gray);
   }
 
-  .grid-card-block-title {
+  .grid-cards-title {
     font-size: 44px;
     line-height: 125%;
     font-weight: 900;
     margin: 0;
+    color: var(--non-spectrum-dark-gray);
   }
 
-  .grid-card-block-description {
+  .grid-cards-description {
     font-size: 20px;
     line-height: 150%;
     font-weight: 400;
+    color: var(--non-spectrum-dark-gray);
   }
 }
 
@@ -45,12 +47,7 @@
 .grid-card-title {
   margin: 0;
   margin-bottom: 8px;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
   align-self: stretch;
-  overflow: hidden;
-  text-overflow: ellipsis;
   font-weight: 900;
   line-height: 125%;
   color: var(--text-color);
@@ -70,7 +67,7 @@
   font-weight: 400;
 }
 
-.grid-card-block .grid-card .grid-card-content .grid-card-cta {
+.grid-cards .grid-card .grid-card-content .grid-card-cta {
   margin-bottom: 0;
   margin-top: auto;
   display: flex;
@@ -88,7 +85,7 @@
   border: 2px solid var(--non-spectrum-dark-gray);
 }
 
-.grid-card-block .grid-cards-container .grid-card .grid-card-content {
+.grid-cards .grid-cards-container .grid-card .grid-card-content {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -112,20 +109,20 @@
 
 /* Variant 1 styling */
 
-.grid-card-block.card-v1 {
+.grid-cards.minimal {
   margin-top: 56px;
 }
 
-.grid-card-block.card-v1 .grid-card-block-header {
+.grid-cards.minimal .grid-cards-header {
   display: none;
 }
 
-.grid-card-block.card-v1 .grid-cards-container {
+.grid-cards.minimal .grid-cards-container {
   gap: 25px;
   justify-items: center;
 }
 
-.grid-card-block.card-v1 .grid-cards-container .grid-card {
+.grid-cards.minimal .grid-cards-container .grid-card {
   padding: 24px;
   max-width: 384px;
   height: 240px;
@@ -141,12 +138,12 @@
 }
 
 /* Variant 2 styling */
-.grid-card-block.card-v2 .grid-cards-container {
+.grid-cards.standard .grid-cards-container {
   gap: 24px;
   justify-items: center;
 }
 
-.grid-card-block.card-v2 .grid-cards-container .grid-card {
+.grid-cards.standard .grid-cards-container .grid-card {
   padding: 24px;
   max-width: 384px;
   width: 100%;
@@ -163,7 +160,7 @@
   border-radius: 16px;
 }
 
-.grid-card-block.card-v2 .grid-card-image {
+.grid-cards.standard .grid-card-image {
   width: 100%;
   aspect-ratio: 16 / 9;
   max-width: 336px;
@@ -171,7 +168,7 @@
   border-radius: 8px;
 }
 
-.grid-card-block.card-v2 .grid-card-image img {
+.grid-cards.standard .grid-card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -179,12 +176,12 @@
 }
 
 /* Variant 3 styling */
-.grid-card-block.card-v3 .grid-cards-container {
+.grid-cards.wide .grid-cards-container {
   grid-template-columns: 1fr;
   gap: 24px;
 }
 
-.grid-card-block.card-v3 .grid-cards-container .grid-card {
+.grid-cards.wide .grid-cards-container .grid-card {
   padding: 24px;
   max-width: 588px;
   width: 100%;
@@ -196,34 +193,34 @@
   border-radius: 16px;
 }
 
-.grid-card-block.card-v3 .grid-cards-container .grid-card > a {
+.grid-cards.wide .grid-cards-container .grid-card > a {
   display: flex;
   margin: 0;
   gap: 24px;
   align-items: stretch;
 }
 
-.grid-card-block.card-v3 .grid-card-image {
+.grid-cards.wide .grid-card-image {
   flex: 0 0 40%;
   max-width: 226px;
   overflow: hidden;
   border-radius: 8px;
 }
 
-.grid-card-block.card-v3 .grid-card-image img {
+.grid-cards.wide .grid-card-image img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  border-radius: 8px;
   display: block;
 }
 
-.grid-card-block.card-v3 .grid-cards-container .grid-card .grid-card-content {
+.grid-cards.wide .grid-cards-container .grid-card .grid-card-content {
   justify-content: center;
   flex: 1;
 }
 
 @media (min-width: 900px) {
-  .grid-card-block.card-v3 .grid-cards-container {
+  .grid-cards.wide .grid-cards-container {
     grid-template-columns: repeat(2, 1fr);
   }
 }
