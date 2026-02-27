@@ -12,13 +12,6 @@
   margin-bottom: 0;
 }
 
-/* Prevent Franklin's lazy-loading display:none from hiding the nav */
-.section.sticky-nav-section,
-.section.sticky-nav-section[style*='display: none'],
-.section.sticky-nav-section[style*='display:none'] {
-  display: block !important;
-}
-
 .sticky-nav {
   position: relative;
   display: block;
@@ -57,7 +50,6 @@
   display: none;
 }
 
-/* Override Franklin's first/last-child margin resets */
 .sticky-nav-item,
 .sticky-nav-item:first-child,
 .sticky-nav-item:last-child,
@@ -102,7 +94,6 @@
   border-bottom: 2px solid var(--non-spectrum-link);
 }
 
-/* Override Franklin's global first/last-child a styles */
 .section.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link,
 .section.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link,
 .section.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link,
@@ -174,6 +165,13 @@
 
 .sticky-nav ul > li:not(:last-child) {
   margin-bottom: 0;
+}
+
+/* Prevent Franklin's lazy-loading display:none from hiding the nav */
+.section.sticky-nav-section,
+.section.sticky-nav-section[style*='display: none'],
+.section.sticky-nav-section[style*='display:none'] {
+  display: block !important;
 }
 
 /* Sticky Nav — desktop-only (> 1024px) horizontal tab bar, hidden on mobile/tablet */
