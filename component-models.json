@@ -6866,8 +6866,8 @@
             "name": "Size Variant",
             "children": [
               {
-                "name": "Small",
-                "value": ""
+                "name": "Small (Default)",
+                "value": "small"
               },
               {
                 "name": "Medium",
