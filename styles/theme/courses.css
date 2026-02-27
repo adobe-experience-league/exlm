@@ -68,7 +68,8 @@
 
 /* Playlists */
 
-.courses .playlist-page:has(.courses-section) {
+.courses .playlist-page:has(.courses-section),
+.courses .playlist-page:has(.section) {
   max-width: 920px;
   margin: 0 auto;
 }
