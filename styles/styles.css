@@ -371,6 +371,7 @@
   --box-shadow-2: 0px 8px 16px #0000001a;
 
   /* exlm default fonts definition - Mobile */
+  --exlm-font-size-h1-plus: var(--spectrum-font-size-1200);
   --exlm-font-size-h1: var(--spectrum-heading-size-xl);
   --exlm-font-size-h2: var(--spectrum-heading-size-l);
   --exlm-font-size-h3: var(--spectrum-heading-size-m);

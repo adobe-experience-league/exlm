@@ -32,6 +32,23 @@ export const COMMUNITY_SUPPORTED_SORT_ELEMENTS = ['el_view_status', 'el_kudo_sta
 // Mobile Only (Until 1024px)
 export const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
+export const extractFacetName = (fieldName) => {
+  if (typeof fieldName !== 'string') {
+    return { parentName: undefined, facetName: undefined };
+  }
+  const splitContent = fieldName.split('|');
+  let parentName = splitContent[0];
+  const facetName = splitContent[1];
+  // Handle format like "Community;Community|Ideas" -> extract "Community" as parent
+  if (parentName && parentName.includes(';')) {
+    [parentName] = parentName.split(';');
+  }
+  return {
+    parentName,
+    facetName,
+  };
+};
+
 export const waitFor = (callback, delay = DEFAULT_WAIT_TIME) => {
   setTimeout(callback, delay);
 };

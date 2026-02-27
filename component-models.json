@@ -6847,7 +6847,7 @@
         "label": "Block options",
         "valueType": "string",
         "required": true,
-        "maxSize": 4,
+        "maxSize": 6,
         "options": [
           {
             "name": "Theme",
@@ -6859,6 +6859,19 @@
               {
                 "name": "Dark",
                 "value": "dark"
+              }
+            ]
+          },
+          {
+            "name": "Size Variant",
+            "children": [
+              {
+                "name": "Small",
+                "value": ""
+              },
+              {
+                "name": "Medium",
+                "value": "medium"
               }
             ]
           },
@@ -6877,6 +6890,15 @@
               {
                 "name": "Dismissable",
                 "value": "dismissable"
+              }
+            ]
+          },
+          {
+            "name": "Style Options",
+            "children": [
+              {
+                "name": "Add a background image",
+                "value": "fill-image"
               }
             ]
           },
@@ -6950,6 +6972,28 @@
             ]
           }
         ]
+      },
+      {
+        "condition": {
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "fill-image"] }]
+        },
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Image",
+        "description": "The background image",
+        "multi": false
+      },
+      {
+        "condition": {
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "fill-image"] }]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "fileReferenceAlt",
+        "value": "",
+        "label": "Image Alt Text",
+        "description": "A descriptive text of the image for accessibility"
       },
       {
         "condition": {
@@ -8751,19 +8795,6 @@
         "value": "",
         "label": "Slide ID",
         "description": "ID of the slide to render. Use the ID of the slide from the URL."
-      }
-    ]
-  },
-  {
-    "id": "playlist",
-    "fields": [
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "playlistId",
-        "value": "",
-        "label": "Playlist ID",
-        "description": "ID of the playlist to render. Use the ID of the playlist from the URL."
       }
     ]
   }
