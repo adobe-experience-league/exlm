@@ -30,19 +30,13 @@ function createCardDescription(description) {
 }
 
 // Helper function to create card CTA - reuses existing anchor if available
-function createCardCTA(ctaTextCell, ctaLinkCell) {
-  const existingAnchor = ctaLinkCell?.querySelector('a');
-  const ctaText = ctaTextCell?.textContent.trim();
+function createCardCTA(ctaCell) {
+  const anchor = ctaCell?.querySelector('a');
 
-  if (!existingAnchor || !existingAnchor.href) return null;
+  if (!anchor || !anchor.href) return null;
 
-  // If CTA text is provided, use it; otherwise keep the anchor's existing text
-  if (ctaText) {
-    existingAnchor.textContent = ctaText;
-  }
-
-  existingAnchor.classList.add('grid-card-cta', 'button');
-  return existingAnchor;
+  anchor.classList.add('grid-card-cta', 'button');
+  return anchor;
 }
 
 export default function decorate(block) {
@@ -110,7 +104,7 @@ export default function decorate(block) {
     cardRow.classList.add('grid-card');
 
     const cells = [...cardRow.children];
-    const [titleCell, descCell, imageCell, ctaTextCell, ctaLinkCell] = cells;
+    const [titleCell, descCell, imageCell, ctaCell] = cells;
 
     // Get card elements
     const picture = imageCell?.querySelector('picture');
@@ -127,7 +121,7 @@ export default function decorate(block) {
 
       const title = createCardTitle(heading);
       const desc = createCardDescription(description);
-      const cta = createCardCTA(ctaTextCell, ctaLinkCell);
+      const cta = createCardCTA(ctaCell);
 
       if (title) contentWrapper.appendChild(title);
       if (desc) contentWrapper.appendChild(desc);
@@ -143,7 +137,7 @@ export default function decorate(block) {
 
       const title = createCardTitle(heading);
       const desc = createCardDescription(description);
-      const cta = createCardCTA(ctaTextCell, ctaLinkCell);
+      const cta = createCardCTA(ctaCell);
 
       if (title) contentWrapper.appendChild(title);
       if (desc) contentWrapper.appendChild(desc);
@@ -165,7 +159,7 @@ export default function decorate(block) {
       if (desc) contentWrapper.appendChild(desc);
 
       // Get the existing anchor and use its href
-      const existingAnchor = ctaLinkCell?.querySelector('a');
+      const existingAnchor = ctaCell?.querySelector('a');
       if (existingAnchor && existingAnchor.href) {
         // Clear the existing content and reuse the anchor element
         existingAnchor.textContent = '';
