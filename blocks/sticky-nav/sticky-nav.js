@@ -4,119 +4,119 @@
  */
 
 function ensureAncestorsVisible(startEl) {
-    let el = startEl;
-    while (el && el !== document.body) {
-      if (el.style.display === 'none') el.style.removeProperty('display');
-      if (el.style.visibility === 'hidden') el.style.removeProperty('visibility');
-      el = el.parentElement;
-    }
+  let el = startEl;
+  while (el && el !== document.body) {
+    if (el.style.display === 'none') el.style.removeProperty('display');
+    if (el.style.visibility === 'hidden') el.style.removeProperty('visibility');
+    el = el.parentElement;
   }
-  
-  function assignSectionIds() {
-    document.querySelectorAll('main > div[data-section-id]').forEach((section) => {
-      const { sectionId } = section.dataset;
-      if (sectionId) section.id = sectionId;
+}
+
+function assignSectionIds() {
+  document.querySelectorAll('main > div[data-section-id]').forEach((section) => {
+    const { sectionId } = section.dataset;
+    if (sectionId) section.id = sectionId;
+  });
+}
+
+function setActiveLink(activeAnchor) {
+  document.querySelectorAll('.sticky-nav-link').forEach((link) => link.classList.remove('active'));
+  activeAnchor.classList.add('active');
+
+  const navList = activeAnchor.closest('.sticky-nav-list');
+  if (navList) {
+    const { offsetLeft, offsetWidth } = activeAnchor.parentElement;
+    navList.scrollTo({ left: offsetLeft - navList.offsetWidth / 2 + offsetWidth / 2, behavior: 'smooth' });
+  }
+}
+
+function buildNavList(rows, block) {
+  const navList = document.createElement('ul');
+  navList.className = 'sticky-nav-list';
+
+  [...rows].forEach((row) => {
+    const cells = [...row.children];
+    if (cells.length < 2) return;
+
+    const sectionIdValue = cells[0].textContent.trim();
+    const linkText = cells[1].textContent.trim();
+    if (!linkText) return;
+
+    const sectionId = sectionIdValue || linkText.toLowerCase().replace(/\s+/g, '-');
+
+    const anchor = document.createElement('a');
+    anchor.href = `#${sectionId}`;
+    anchor.textContent = linkText;
+    anchor.className = 'sticky-nav-link';
+    anchor.dataset.sectionTarget = sectionId;
+
+    anchor.addEventListener('click', (event) => {
+      event.preventDefault();
+      const target = document.getElementById(sectionId);
+      if (!target) return;
+      const navHeight = block.closest('.section')?.offsetHeight ?? block.offsetHeight ?? 0;
+      window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - navHeight, behavior: 'smooth' });
+      setActiveLink(anchor);
     });
-  }
-  
-  function setActiveLink(activeAnchor) {
-    document.querySelectorAll('.sticky-nav-link').forEach((link) => link.classList.remove('active'));
-    activeAnchor.classList.add('active');
-  
-    const navList = activeAnchor.closest('.sticky-nav-list');
-    if (navList) {
-      const { offsetLeft, offsetWidth } = activeAnchor.parentElement;
-      navList.scrollTo({ left: offsetLeft - navList.offsetWidth / 2 + offsetWidth / 2, behavior: 'smooth' });
-    }
-  }
-  
-  function buildNavList(rows, block) {
-    const navList = document.createElement('ul');
-    navList.className = 'sticky-nav-list';
-  
-    [...rows].forEach((row) => {
-      const cells = [...row.children];
-      if (cells.length < 2) return;
-  
-      const sectionIdValue = cells[0].textContent.trim();
-      const linkText = cells[1].textContent.trim();
-      if (!linkText) return;
-  
-      const sectionId = sectionIdValue || linkText.toLowerCase().replace(/\s+/g, '-');
-  
-      const anchor = document.createElement('a');
-      anchor.href = `#${sectionId}`;
-      anchor.textContent = linkText;
-      anchor.className = 'sticky-nav-link';
-      anchor.dataset.sectionTarget = sectionId;
-  
-      anchor.addEventListener('click', (event) => {
-        event.preventDefault();
-        const target = document.getElementById(sectionId);
-        if (!target) return;
-        const navHeight = block.closest('.section')?.offsetHeight ?? block.offsetHeight ?? 0;
-        window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - navHeight, behavior: 'smooth' });
-        setActiveLink(anchor);
-      });
-  
-      const item = document.createElement('li');
-      item.className = 'sticky-nav-item';
-      item.appendChild(anchor);
-      navList.appendChild(item);
-    });
-  
-    return navList;
-  }
-  
-  function setupScrollSpy(block, sectionEl) {
-    const navLinks = [...block.querySelectorAll('.sticky-nav-link[data-section-target]')];
-    if (navLinks.length === 0) return;
-  
-    const navHeight = (sectionEl || block).offsetHeight;
-    const sectionMap = new Map(
-      navLinks
-        .map((link) => [document.getElementById(link.dataset.sectionTarget), link])
-        .filter(([target]) => target !== null),
-    );
-  
-    if (sectionMap.size === 0) return;
-  
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const topmost = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((entryA, entryB) => entryA.boundingClientRect.top - entryB.boundingClientRect.top)[0];
-        if (topmost) {
-          const link = sectionMap.get(topmost.target);
-          if (link) requestAnimationFrame(() => setActiveLink(link));
-        }
-      },
-      { root: null, rootMargin: `-${navHeight}px 0px -50% 0px`, threshold: 0 },
-    );
-  
-    sectionMap.forEach((_, target) => observer.observe(target));
-  }
-  
-  export default function decorate(block) {
-    if (window.hlx?.aemRoot) return;
-  
-    ensureAncestorsVisible(block);
-    assignSectionIds();
-  
-    const nav = document.createElement('nav');
-    nav.className = 'sticky-nav-container';
-    nav.setAttribute('aria-label', 'Page sections');
-    nav.appendChild(buildNavList(block.children, block));
-  
-    block.textContent = '';
-    block.appendChild(nav);
-    block.classList.add('sticky-nav');
-  
-    const sectionEl = block.closest('main > div.section');
-    if (sectionEl) sectionEl.classList.add('sticky-nav-section');
-  
-    const firstLink = block.querySelector('.sticky-nav-link');
-    if (firstLink) firstLink.classList.add('active');
-  
-    setupScrollSpy(block, sectionEl);
-  }
+
+    const item = document.createElement('li');
+    item.className = 'sticky-nav-item';
+    item.appendChild(anchor);
+    navList.appendChild(item);
+  });
+
+  return navList;
+}
+
+function setupScrollSpy(block, sectionEl) {
+  const navLinks = [...block.querySelectorAll('.sticky-nav-link[data-section-target]')];
+  if (navLinks.length === 0) return;
+
+  const navHeight = (sectionEl || block).offsetHeight;
+  const sectionMap = new Map(
+    navLinks
+      .map((link) => [document.getElementById(link.dataset.sectionTarget), link])
+      .filter(([target]) => target !== null),
+  );
+
+  if (sectionMap.size === 0) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const topmost = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((entryA, entryB) => entryA.boundingClientRect.top - entryB.boundingClientRect.top)[0];
+      if (topmost) {
+        const link = sectionMap.get(topmost.target);
+        if (link) requestAnimationFrame(() => setActiveLink(link));
+      }
+    },
+    { root: null, rootMargin: `-${navHeight}px 0px -50% 0px`, threshold: 0 },
+  );
+
+  sectionMap.forEach((_, target) => observer.observe(target));
+}
+
+export default function decorate(block) {
+  if (window.hlx?.aemRoot) return;
+
+  ensureAncestorsVisible(block);
+  assignSectionIds();
+
+  const nav = document.createElement('nav');
+  nav.className = 'sticky-nav-container';
+  nav.setAttribute('aria-label', 'Page sections');
+  nav.appendChild(buildNavList(block.children, block));
+
+  block.textContent = '';
+  block.appendChild(nav);
+  block.classList.add('sticky-nav');
+
+  const sectionEl = block.closest('main > div.section');
+  if (sectionEl) sectionEl.classList.add('sticky-nav-section');
+
+  const firstLink = block.querySelector('.sticky-nav-link');
+  if (firstLink) firstLink.classList.add('active');
+
+  setupScrollSpy(block, sectionEl);
+}
