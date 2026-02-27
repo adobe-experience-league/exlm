@@ -5,6 +5,7 @@ export default function decorate(block) {
   const children = [...block.children];
   const [eyebrowRow, titleRow, descRow, ...cardRows] = children;
 
+  // Create header section for block
   const headerDiv = document.createElement('div');
   headerDiv.classList.add('grid-cards-header');
   eyebrowRow.classList.add('grid-cards-eyebrow');
@@ -21,6 +22,7 @@ export default function decorate(block) {
     block.appendChild(headerDiv);
   }
 
+  // Create card container and populate with cards
   const cardsContainer = document.createElement('div');
   cardsContainer.classList.add('grid-card-container');
   const isWide = block.classList.contains('wide');
@@ -43,16 +45,19 @@ export default function decorate(block) {
     contentWrapper.classList.add('grid-card-content');
     contentWrapper.append(cardHeading, descCell);
 
+    // Add picture to card if it's a wide or standard card, and add appropriate classes
     if ((isWide || isStandard) && picture) {
       picture.classList.add('grid-card-image');
     }
 
+    // add cta button if its not a wide card
     if (!isWide) {
       ctaCell.classList.add('grid-card-cta');
       ctaCell.innerHTML = decorateCustomButtons(ctaCell);
       contentWrapper.appendChild(ctaCell);
     }
 
+    // create clickable wrapper for wide card
     if (isWide) {
       const anchor = ctaCell?.querySelector('a');
       if (anchor?.href) {

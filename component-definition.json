@@ -1202,7 +1202,7 @@
                   "eyebrow": "Eyebrow Text",
                   "title": "Grid Cards Title",
                   "description": "Grid cards description text",
-                  "classes": "minimal",
+                  "classes": "standard",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Grid Card",

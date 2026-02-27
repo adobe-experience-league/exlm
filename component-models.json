@@ -9084,12 +9084,12 @@
         "maxSize": 1,
         "options": [
           {
-            "name": "Minimal Card Variant",
-            "value": "minimal"
-          },
-          {
             "name": "Standard Card Variant",
             "value": "standard"
+          },
+          {
+            "name": "Minimal Card Variant",
+            "value": "minimal"
           },
           {
             "name": "Wide Card Variant",
