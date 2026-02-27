@@ -7,13 +7,13 @@ export default function decorate(block) {
   eyebrow.classList.add('eyebrow');
   const headingTag = document.createElement('h2');
   headingTag.classList.add('heading');
-  headingTag.innerHTML = heading.innerHTML;
+  headingTag.innerHTML = heading.textContent;
   heading.replaceWith(headingTag);
   description.classList.add('description');
   cta.classList.add('cta');
   const podcastHeadingTag = document.createElement('h3');
   podcastHeadingTag.classList.add('podcast-heading');
-  podcastHeadingTag.innerHTML = podcastHeading.innerHTML;
+  podcastHeadingTag.innerHTML = podcastHeading.textContent;
   podcastHeading.replaceWith(podcastHeadingTag);
   podcastDescription.classList.add('podcast-description');
 

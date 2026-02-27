@@ -27,7 +27,7 @@
   text-transform: uppercase;
 }
 
-.media-panel.block > .content-container > .heading :where(h1, h2, h3, h4, h5) {
+.media-panel.block > .content-container > .heading:where(h1, h2, h3, h4, h5) {
   font-weight: 900;
   margin: var(--spectrum-spacing-100) 0;
   color: var(--non-spectrum-dark-gray);
@@ -97,7 +97,7 @@
   border: 2px solid rgb(255 255 255 / 50%);
 }
 
-.media-panel.block.podcast-card > .podcast-container > .podcast-heading :where(h1, h2, h3, h4, h5) {
+.media-panel.block.podcast-card > .podcast-container > .podcast-heading:where(h1, h2, h3, h4, h5) {
   color: var(--non-spectrum-dark-gray);
   font-style: normal;
   font-weight: var(--font-weight-heavy);
