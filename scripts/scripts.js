@@ -1058,17 +1058,21 @@ function initLiveGradientBackground() {
     if (!shouldCreateLiveGradient()) return;
     const main = document.querySelector('main');
     if (!main) return;
-    const circlesFragment = document.createDocumentFragment();
+    if (main.querySelector('.bg-circles')) return;
+    const circlesWrapper = document.createElement('div');
+    circlesWrapper.className = 'bg-circles';
+    circlesWrapper.setAttribute('aria-hidden', 'true');
+    circlesWrapper.setAttribute('role', 'presentation');
 
     ['bg-blue', 'bg-pink', 'bg-orange'].forEach((colorClass) => {
       const circle = document.createElement('div');
       circle.className = `bg-circle ${colorClass}`;
       circle.setAttribute('aria-hidden', 'true');
       circle.setAttribute('role', 'presentation');
-      circlesFragment.appendChild(circle);
+      circlesWrapper.appendChild(circle);
     });
 
-    main.prepend(circlesFragment);
+    main.prepend(circlesWrapper);
   };
 
   if ('requestIdleCallback' in window) {
