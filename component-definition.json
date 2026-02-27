@@ -1209,6 +1209,8 @@
                     "model": "grid-card",
                     "title": "Card Title",
                     "desc": "Card description text",
+                    "fileReference": "/content/dam/exlm/content-at-scale.png",
+                    "fileReferenceAlt": "Card image",
                     "cta_Type": "secondary",
                     "cta_linkText": "Learn More",
                     "cta_link": "http://experienceleague.adobe.com/"
@@ -1219,6 +1221,8 @@
                     "model": "grid-card",
                     "title": "Card Title",
                     "desc": "Card description text",
+                    "fileReference": "/content/dam/exlm/content-at-scale.png",
+                    "fileReferenceAlt": "Card image",
                     "cta_Type": "secondary",
                     "cta_linkText": "Learn More",
                     "cta_link": "http://experienceleague.adobe.com/"
@@ -1229,6 +1233,8 @@
                     "model": "grid-card",
                     "title": "Card Title",
                     "desc": "Card description text",
+                    "fileReference": "/content/dam/exlm/content-at-scale.png",
+                    "fileReferenceAlt": "Card image",
                     "cta_Type": "secondary",
                     "cta_linkText": "Learn More",
                     "cta_link": "http://experienceleague.adobe.com/"
@@ -1250,6 +1256,8 @@
                   "model": "grid-card",
                   "title": "Card Title",
                   "desc": "Card description text",
+                  "fileReference": "/content/dam/exlm/content-at-scale.png",
+                  "fileReferenceAlt": "Card image",
                   "cta_Type": "secondary",
                   "cta_linkText": "Learn More",
                   "cta_link": "http://experienceleague.adobe.com/"
