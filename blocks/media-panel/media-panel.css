@@ -28,7 +28,7 @@
 }
 
 .media-panel.block > .content-container > .heading:where(h1, h2, h3, h4, h5) {
-  font-weight: 900;
+  font-weight: var(--font-weight-heavy);
   margin: var(--spectrum-spacing-100) 0;
   color: var(--non-spectrum-dark-gray);
 }
