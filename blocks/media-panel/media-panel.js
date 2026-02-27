@@ -21,7 +21,7 @@ export default function decorate(block) {
   block.append(contentContainer);
   contentContainer.append(eyebrow, heading, description);
   cta.innerHTML = decorateCustomButtons(cta.firstElementChild);
-  
+
   contentContainer.append(cta);
 
   if (!block.classList.contains('podcast-card')) {
