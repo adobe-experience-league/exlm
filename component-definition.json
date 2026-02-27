@@ -1396,6 +1396,33 @@
           }
         },
         {
+          "title": "Media Panel",
+          "id": "media-panel",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Media Panel",
+                  "model": "media-panel",
+                  "filter": "media-panel",
+                  "fileReference": "/content/dam/exlm/en/images/subjects/media-panel-sub.png",
+                  "fileReferenceAlt": "Subject Image Description",
+                  "classes": ["left"],
+                  "eyebrow": "Featured",
+                  "title": "Media Panel Heading",
+                  "description": "<p>Add a short description here. This media panel supports left or right image alignment and an optional highlight card variant.</p>",
+                  "cta_linkText": "CTA Text",
+                  "cta_link": "http://experienceleague.adobe.com/",
+                  "cta_Type": "secondary",
+                  "podcastCardHeading": "Podcast Card Heading",
+                  "podcastCardDescription": "Podcast Card Description"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Module",
           "id": "module",
           "plugins": {
