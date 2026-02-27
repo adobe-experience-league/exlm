@@ -8783,7 +8783,7 @@
       },
       {
         "component": "select",
-        "name": "variant",
+        "name": "classes",
         "label": "Style Variant",
         "valueType": "string",
         "value": "minimal",
@@ -8838,22 +8838,6 @@
         "value": "",
         "label": "Card Image Alt Text",
         "description": "Alt text for the card image."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "cta_linkText",
-        "value": "",
-        "label": "CTA Text",
-        "description": "Text to be shown inside button."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "cta_link",
-        "value": "",
-        "label": "CTA Link",
-        "description": "What link to open when clicking the button."
       },
       {
         "component": "select",
@@ -8992,6 +8976,22 @@
             "value": "black"
           }
         ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_linkText",
+        "value": "",
+        "label": "CTA Text",
+        "description": "Text to be shown on the CTA button or link."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_link",
+        "value": "",
+        "label": "CTA Link",
+        "description": "URL to open when the CTA is clicked."
       }
     ]
   }
