@@ -8760,7 +8760,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "blockEyebrow",
+        "name": "eyebrow",
         "value": "",
         "label": "Block Eyebrow",
         "description": "Sets the eyebrow text above the block title."
@@ -8768,7 +8768,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "blockTitle",
+        "name": "title",
         "value": "",
         "label": "Block Title",
         "description": "Sets the title for the grid card block."
@@ -8776,7 +8776,7 @@
       {
         "component": "select",
         "valueType": "string",
-        "name": "blockTitleType",
+        "name": "titleType",
         "value": "h2",
         "label": "Block Title Heading Type",
         "options": [
@@ -8809,7 +8809,7 @@
       {
         "component": "richtext",
         "valueType": "string",
-        "name": "blockDescription",
+        "name": "description",
         "value": "",
         "label": "Block Description",
         "description": "Sets the description for the grid card block."
@@ -8892,7 +8892,7 @@
       {
         "component": "reference",
         "valueType": "string",
-        "name": "cardImage",
+        "name": "fileReference",
         "label": "Card Image",
         "description": "Image for the card.",
         "multi": false
@@ -8900,7 +8900,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "cardImageAlt",
+        "name": "fileReferenceAlt",
         "value": "",
         "label": "Card Image Alt Text",
         "description": "Alt text for the card image."
@@ -8908,7 +8908,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "ctaText",
+        "name": "cta_linkText",
         "value": "",
         "label": "CTA Text",
         "description": "Text to be shown inside button."
@@ -8916,7 +8916,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "ctaLink",
+        "name": "cta_link",
         "value": "",
         "label": "CTA Link",
         "description": "What link to open when clicking the button."

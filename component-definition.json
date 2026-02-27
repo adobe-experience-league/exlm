@@ -1199,46 +1199,46 @@
                   "filter": "grid-cards",
                   "name": "Grid Cards",
                   "model": "grid-cards",
-                  "blockEyebrow": "Block Eyebrow",
-                  "blockTitle": "Grid Card Block Title",
-                  "blockTitleType": "h2",
-                  "blockDescription": "<p>Grid card block description</p>",
+                  "eyebrow": "Block Eyebrow",
+                  "title": "Grid Card Block Title",
+                  "titleType": "h2",
+                  "description": "<p>Grid card block description</p>",
                   "variant": "minimal",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Grid Card",
                     "model": "grid-card",
                     "cardDescription": "<p>Card description</p>",
-                    "cardImage": "/content/dam/exlm/content-at-scale.png",
-                    "cardImageAlt": "Card image",
+                    "fileReference": "/content/dam/exlm/content-at-scale.png",
+                    "fileReferenceAlt": "Card image",
                     "cardTitle": "Card Title",
                     "cardTitleType": "h3",
-                    "ctaLink": "/content/exlm/global/en",
-                    "ctaText": "Learn More"
+                    "cta_link": "/content/exlm/global/en",
+                    "cta_linkText": "Learn More"
                   },
                   "item2": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Grid Card",
                     "model": "grid-card",
                     "cardDescription": "<p>Card description</p>",
-                    "cardImage": "/content/dam/exlm/content-at-scale.png",
-                    "cardImageAlt": "Card image",
+                    "fileReference": "/content/dam/exlm/content-at-scale.png",
+                    "fileReferenceAlt": "Card image",
                     "cardTitle": "Card Title",
                     "cardTitleType": "h3",
-                    "ctaLink": "/content/exlm/global/en",
-                    "ctaText": "Learn More"
+                    "cta_link": "/content/exlm/global/en",
+                    "cta_linkText": "Learn More"
                   },
                   "item3": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Grid Card",
                     "model": "grid-card",
                     "cardDescription": "<p>Card description</p>",
-                    "cardImage": "/content/dam/exlm/content-at-scale.png",
-                    "cardImageAlt": "Card image",
+                    "fileReference": "/content/dam/exlm/content-at-scale.png",
+                    "fileReferenceAlt": "Card image",
                     "cardTitle": "Card Title",
                     "cardTitleType": "h3",
-                    "ctaLink": "/content/exlm/global/en",
-                    "ctaText": "Learn More"
+                    "cta_link": "/content/exlm/global/en",
+                    "cta_linkText": "Learn More"
                   }
                 }
               }
@@ -1256,12 +1256,12 @@
                   "name": "Grid Card",
                   "model": "grid-card",
                   "cardDescription": "<p>Card description</p>",
-                  "cardImage": "/content/dam/exlm/content-at-scale.png",
-                  "cardImageAlt": "Card image",
+                  "fileReference": "/content/dam/exlm/content-at-scale.png",
+                  "fileReferenceAlt": "Card image",
                   "cardTitle": "Card Title",
                   "cardTitleType": "h3",
-                  "ctaLink": "/content/exlm/global/en",
-                  "ctaText": "Learn More"
+                  "cta_link": "/content/exlm/global/en",
+                  "cta_linkText": "Learn More"
                 }
               }
             }
