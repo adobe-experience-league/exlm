@@ -185,17 +185,23 @@ async function decorateRibbon({
 
 export default async function decorate(block) {
   const allDivs = [...block.querySelectorAll(':scope div > div')];
-  let image;
-  let heading;
-  let description;
-  let bgImage;
-  let hexcode;
-  let firstCta;
-  let secondCta;
-  if (block.classList.contains('fill-image')) {
-    [image, heading, description, bgImage, hexcode, firstCta, secondCta] = allDivs;
+  const isFillImage = block.classList.contains('fill-image');
+
+  if (allDivs.length === 6) {
+    allDivs.splice(4, 0, undefined);
+  }
+
+  const [image, heading, description, bgImageEl, hexcodeEl, firstCta, secondCta] = allDivs;
+
+  let bgImage = bgImageEl;
+  let hexcode = hexcodeEl;
+
+  if (isFillImage) {
+    if (hexcode) hexcode.remove();
+    hexcode = undefined;
   } else {
-    [image, heading, description, hexcode, firstCta, secondCta] = allDivs;
+    if (bgImage) bgImage.remove();
+    bgImage = undefined;
   }
   const dismissable = block.classList.contains('dismissable');
   let pagePath = '';
