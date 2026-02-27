@@ -8828,10 +8828,11 @@
       {
         "component": "multiselect",
         "name": "classes",
-        "value": "standard",
+        "value": "",
         "label": "Style",
         "description": "Sets the style variant for the grid cards.",
         "valueType": "string",
+        "maxSize": 1,
         "options": [
           {
             "name": "Minimal Card Variant",
@@ -8855,7 +8856,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "title",
+        "name": "cardTitle",
         "value": "",
         "label": "Title",
         "description": "Sets the title for the card. Please limit the content to 2 lines."
@@ -8863,7 +8864,7 @@
       {
         "component": "richtext",
         "valueType": "string",
-        "name": "desc",
+        "name": "cardDescription",
         "value": "",
         "label": "Description",
         "description": "Sets the description for the card. Please limit the content to 3 lines and 4 lines in case of Wide card variant."
