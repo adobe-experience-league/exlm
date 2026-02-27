@@ -13,9 +13,12 @@ const urlMap = {
   tutorial: `/${lang}/docs/home-tutorials`,
   documentation: `/${lang}/docs`,
   troubleshooting: `/${lang}/docs`,
-  event: `/events?lang=${lang}#ondemandevents`,
+  event: `/${lang}/docs/events/experience-league-recorded-events/overview`,
   community: 'https://experienceleaguecommunities.adobe.com',
-  certification: `/${lang}/docs/certification/program/overview`,
+  certification: `/${lang}/certification-home`,
+  perspective: `/${lang}/perspectives`,
+  course: `/${lang}/courses`,
+  'upcoming-event': `/${lang}/events`,
 };
 
 /**
@@ -106,7 +109,7 @@ export default async function decorate(block) {
           for (let i = 0; i < Math.min(numberOfResults, data.length); i += 1) {
             const cardData = data[i];
             const cardDiv = document.createElement('div');
-            buildCard(contentDiv, cardDiv, cardData);
+            buildCard(cardDiv, cardData);
             contentDiv.appendChild(cardDiv);
           }
           // Append content div to shimmer card parent and decorate icons

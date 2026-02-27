@@ -1,7 +1,8 @@
 export default async function decorate(block) {
   const cards = block.querySelectorAll('div > div');
+  const allCards = Array.from(block.children);
 
-  function toggleCard(card) {
+  async function toggleCard(card, cardPosition) {
     const isCurrentlyFlipped = card.classList.contains('flipped');
     const [frontFace, backFace] = card.children;
 
@@ -18,12 +19,39 @@ export default async function decorate(block) {
       frontFace.classList.remove('active');
       backFace.classList.add('active');
     }
+
+    // Get the title from the active face
+    const activeFace = card.querySelector('.active');
+    const titleElement = activeFace?.querySelector('.flip-card-title');
+    const cardTitle = titleElement?.textContent?.trim() || '';
+
+    // Get card header for linkType
+    const cardHeaderElement = card.querySelector('h1, h2, h3, h4');
+    const blockHeader = cardHeaderElement?.textContent?.trim() || 'flip-card';
+
+    // Dynamic import for analytics functions
+    const { pushComponentClick, generateComponentID } = await import('../../scripts/analytics/lib-analytics.js');
+    const componentID = generateComponentID(block, 'flip-card');
+
+    pushComponentClick({
+      component: 'flip-card',
+      componentID,
+      linkTitle: cardTitle,
+      linkType: blockHeader,
+      destinationDomain: '',
+      contentType: '',
+      solution: '',
+      fullSolution: '',
+      position: cardPosition,
+    });
   }
 
   cards.forEach((card, index) => {
     card.setAttribute('tabindex', '0');
     card.setAttribute('role', 'button');
     card.setAttribute('aria-label', `Flip card ${index + 1}`);
+
+    const cardPosition = String(allCards.indexOf(card) + 1);
 
     const cardDivs = Array.from(card.children);
 
@@ -61,13 +89,13 @@ export default async function decorate(block) {
 
     // Add click event to the entire card
     card.addEventListener('click', () => {
-      toggleCard(card);
+      toggleCard(card, cardPosition);
     });
 
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        toggleCard(card);
+        toggleCard(card, cardPosition);
       }
     });
   });

@@ -1,6 +1,7 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
-import { createTag, htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
-import { pushVideoEvent } from '../analytics/lib-analytics.js';
+import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
+import { pushVideoEvent, pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
+import { getLocalizedVideoUrl } from '../utils/video-utils.js';
 
 export const isCompactUIMode = () => window.matchMedia('(max-width: 1023px)').matches;
 
@@ -45,6 +46,8 @@ export class BrowseCardVideoClipModal {
    */
   constructor(options) {
     this.model = options?.model || {};
+    this.cardHeader = options?.cardHeader || '';
+    this.cardPosition = options?.cardPosition || '';
 
     if (BrowseCardVideoClipModal.activeInstance) {
       // If the same video clip is clicked (check by id), just return the existing instance
@@ -76,11 +79,20 @@ export class BrowseCardVideoClipModal {
     this.miniPlayerMode = false;
     this.miniPlayerButton = null;
     this.miniPlayerLabel = null;
+    this.isModalReady = false;
 
     this.isCompactMode = isCompactUIMode();
     this.loadStyles();
-    this.createModal();
+    this.initPromise = this.initializeModal();
+  }
+
+  /**
+   * Initialize the modal asynchronously
+   */
+  async initializeModal() {
+    await this.createModal();
     this.setupEventListeners();
+    this.isModalReady = true;
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -107,10 +119,11 @@ export class BrowseCardVideoClipModal {
     this.updateModalDimensions();
   }
 
-  createModal() {
+  async createModal() {
     const { title, videoURL, parentName, parentURL, product, failedToLoad = false } = this.model;
 
-    let videoSrc = videoURL;
+    const { lang = 'en' } = getPathDetails() || {};
+    let videoSrc = await getLocalizedVideoUrl(videoURL, lang);
     if (this.miniPlayerMode) {
       const hasParams = videoSrc?.includes('?');
       if (videoSrc) {
@@ -287,6 +300,8 @@ export class BrowseCardVideoClipModal {
             description: this.model.description || '',
             url: this.model.videoURL || '',
             duration: this.model.duration || '',
+            solution: this.model.product?.[0] || '',
+            fullSolution: this.model.product?.join(', ') || '',
           });
         }
       }
@@ -299,7 +314,9 @@ export class BrowseCardVideoClipModal {
     this.resizeObserver.observe(this.backdrop);
   }
 
-  open() {
+  async open() {
+    await this.initPromise;
+
     // If this instance is already in the DOM (specifically in document.body), just return
     if (document.body.contains(this.backdrop)) {
       return;
@@ -325,6 +342,21 @@ export class BrowseCardVideoClipModal {
 
     // Prevent body scrolling
     document.body.style.overflow = 'hidden';
+
+    // Trigger browse card click event
+    const product = Array.isArray(this.model.product) ? this.model.product : [];
+
+    pushBrowseCardClickEvent(
+      'browseCardClicked',
+      {
+        contentType: 'video clip',
+        viewLink: this.model.parentURL || this.model.videoURL || '',
+        title: this.model.title || '',
+        product,
+      },
+      this.cardHeader || 'video-clip-modal',
+      this.cardPosition || '1',
+    );
   }
 
   close() {
@@ -370,7 +402,7 @@ export class BrowseCardVideoClipModal {
     }
   }
 
-  updateContent(model) {
+  async updateContent(model) {
     this.model = model;
 
     const {
@@ -393,7 +425,8 @@ export class BrowseCardVideoClipModal {
         existingIframe.remove();
       }
 
-      let videoSrc = videoURL;
+      const { lang = 'en' } = getPathDetails() || {};
+      let videoSrc = await getLocalizedVideoUrl(videoURL, lang);
       if (this.miniPlayerMode) {
         const hasParams = videoSrc.includes('?');
         videoSrc = `${videoSrc}${hasParams ? '&' : '?'}autoplay=1`;

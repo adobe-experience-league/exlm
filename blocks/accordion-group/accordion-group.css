@@ -15,13 +15,16 @@
   line-height: var(--exlm-line-height-h4);
 }
 
-/* Course specific css */
-.courses .accordion-group > .accordion details div:not(:has(*)) {
+.accordion-group > .accordion details div:not(:has(*)) {
   font-family: var(--body-font-family);
   font-weight: var(--font-weight-normal);
   font-size: var(--exlm-font-size-content);
   font-style: normal;
   line-height: normal;
-  color: var(--text-color);
   margin-top: 14px;
+}
+
+/* Course specific css */
+.courses .accordion-group > .accordion details div:not(:has(*)) {
+  color: var(--text-color);
 }

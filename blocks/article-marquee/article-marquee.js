@@ -137,6 +137,7 @@ async function createBreadcrumb(container) {
             elem.setAttribute('href', getLink(fullCrumbPath));
           } else {
             elem = document.createElement('span');
+            elem.setAttribute('title', indexEntry.title);
           }
           elem.innerText = indexEntry.title;
           // append the a element

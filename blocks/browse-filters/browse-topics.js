@@ -1,5 +1,14 @@
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
-import { getCoveoFacets, roleOptions, contentTypeOptions, productTypeOptions } from './browse-filter-utils.js';
+import {
+  getCoveoFacets,
+  roleOptions,
+  contentTypeOptions,
+  productTypeOptions,
+  eventSeriesOptions,
+  eventTypeOptions,
+} from './browse-filter-utils.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
+import { matchesAnyTheme } from '../../scripts/scripts.js';
 
 export const coveoFacetMap = {
   el_role: 'headlessRoleFacet',
@@ -7,9 +16,14 @@ export const coveoFacetMap = {
   el_level: 'headlessExperienceFacet',
   el_product: 'headlessProductFacet',
   author_type: 'headlessAuthorTypeFacet',
+  el_event_series: 'headlessEventSeriesFacet',
 };
 
-export const dropdownOptions = [roleOptions, contentTypeOptions];
+const isEventsPage = matchesAnyTheme(/event/);
+export const dropdownOptions =
+  isEventsPage && isFeatureEnabled('isEventsV2')
+    ? [productTypeOptions, eventSeriesOptions, eventTypeOptions]
+    : [roleOptions, contentTypeOptions];
 
 /**
  * formattedTags returns the array of base64 encoded tags after extracting from the tags selected in dialog
@@ -139,9 +153,10 @@ export function handleTopicSelection(block, fireSelection, resetPage, targetPage
     }
 
     if (selectedTopics.length) {
-      const decodedHash = window.location.hash ? decodeURIComponent(window.location.hash) : '';
-      const elProductHash = decodedHash.split('&').find((hashInfo) => hashInfo.includes('f-el_product='));
-      const [, productsList = ''] = elProductHash?.split('=') || [];
+      const { hash } = window.location;
+      // Parse URL parameters properly to handle & in values
+      const urlParams = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
+      const productsList = urlParams?.get('f-el_product') || '';
       const productsInUrl = productsList.split(',').filter(Boolean);
       const topicQueryItems = `${selectedTopics
         .map((topic) => {

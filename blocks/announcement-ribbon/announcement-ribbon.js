@@ -69,6 +69,33 @@ function extractAnchorData(cta) {
     : { href: '', text: '' };
 }
 
+/**
+ * Determines the background color for the ribbon block
+ * @param {Element} block - The ribbon block element
+ * @param {Element} hexcode - The hexcode element
+ * @returns {string} The background color CSS value
+ */
+function determineBackgroundColor(block, hexcode) {
+  const classes = block.classList;
+  const backgroundColorClass = [...classes].find((cls) => cls.startsWith('bg-'));
+
+  if (backgroundColorClass) {
+    const bgSpectrumColor = backgroundColorClass.substr(3); // Remove 'bg-' prefix
+    return `var(--${bgSpectrumColor})`; // Use the CSS variable
+  }
+  return `#${hexcode.textContent}`; // Use the hex code directly
+}
+
+/**
+ * Extracts the background image URL from the bgImage element
+ * @param {Element} bgImage - The element containing the background image
+ * @returns {string|undefined} The background image URL or undefined
+ */
+function getBackgroundImageUrl(bgImage) {
+  const imageElement = bgImage?.querySelector('img');
+  return imageElement?.src;
+}
+
 async function decorateRibbon({
   block,
   image,
@@ -77,6 +104,7 @@ async function decorateRibbon({
   pagePath,
   ribbonId,
   dismissable,
+  bgImage,
   hexcode,
   firstCta,
   secondCta,
@@ -107,15 +135,6 @@ async function decorateRibbon({
 
   heading?.classList.add('ribbon-heading');
   description?.classList.add('ribbon-description');
-  let bgColorVariable;
-  const classes = block.classList;
-  const backgroundColorClass = [...classes].find((cls) => cls.startsWith('bg-'));
-  if (backgroundColorClass) {
-    const bgSpectrumColor = backgroundColorClass.substr(3); // Remove 'bg-' prefix
-    bgColorVariable = `var(--${bgSpectrumColor})`; // Use the CSS variable
-  } else {
-    bgColorVariable = `#${hexcode.innerHTML}`; // Use the hex code directly
-  }
 
   const dismissButton = `<span class="icon icon-close-black"></span>`;
 
@@ -137,7 +156,13 @@ async function decorateRibbon({
 
   block.textContent = '';
   block.append(ribbonDom);
-  block.style.backgroundColor = bgColorVariable;
+  const bgImgUrl = getBackgroundImageUrl(bgImage);
+  if (block.classList.contains('fill-image') && bgImgUrl) {
+    block.style.backgroundImage = `url("${bgImgUrl}")`;
+  } else {
+    const bgColorVariable = determineBackgroundColor(block, hexcode);
+    block.style.backgroundColor = bgColorVariable;
+  }
 
   if (dismissable) {
     const icon = block.querySelector('.icon');
@@ -159,9 +184,13 @@ async function decorateRibbon({
 }
 
 export default async function decorate(block) {
-  const [image, heading, description, hexcode, firstCta, secondCta] = [...block.children].map(
-    (row) => row.firstElementChild,
-  );
+  const allDivs = block.querySelectorAll(':scope div > div');
+  const isFillImage = block.classList.contains('fill-image');
+
+  const [image, heading, description, backgroundConfig, firstCta, secondCta] = allDivs;
+
+  const bgImage = isFillImage ? backgroundConfig : undefined;
+  const hexcode = !isFillImage ? backgroundConfig : undefined;
   const dismissable = block.classList.contains('dismissable');
   let pagePath = '';
   let ribbonId = '';
@@ -196,6 +225,7 @@ export default async function decorate(block) {
       pagePath,
       ribbonId,
       dismissable,
+      bgImage,
       hexcode,
       firstCta,
       secondCta,

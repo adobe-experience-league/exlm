@@ -104,7 +104,11 @@ const brandDecorator = (brandBlock, decoratorOptions) => {
   const brandLink = brandBlock.querySelector('a');
   brandBlock.replaceChildren(brandLink);
   updateLinks(brandBlock, (currentHref) => {
-    const url = new URL(currentHref, decoratorOptions.navLinkOrigin);
+    let link = currentHref;
+    if (link === '/' && decoratorOptions.lang !== 'en') {
+      link = `/${decoratorOptions.lang}`;
+    }
+    const url = new URL(link, decoratorOptions.navLinkOrigin);
     return url.href;
   });
   return brandBlock;
@@ -281,19 +285,34 @@ const buildNavItems = (ul, level = 0) => {
       buildNavItems(content, level + 1);
     } else {
       navItem.classList.add('nav-item-leaf');
-      // if nav item is a leaf, remove the <p> wrapper
       const firstEl = navItem.firstElementChild;
-      if (firstEl?.tagName === 'P') {
-        if (firstEl.firstElementChild?.tagName === 'A') {
-          firstEl.replaceWith(firstEl.firstElementChild);
+      if (firstEl?.tagName === 'P' && firstEl.firstElementChild?.tagName === 'A') {
+        firstEl.replaceWith(firstEl.firstElementChild);
+      }
+
+      const anchor = navItem.querySelector(':scope > a');
+      if (!anchor) return;
+
+      let subtitleHTML = null;
+      const subtitleP = navItem.querySelector(':scope > p');
+      if (subtitleP) {
+        subtitleHTML = subtitleP.innerHTML;
+        subtitleP.remove();
+      } else {
+        // Fallback: next text node after <a>
+        let node = anchor.nextSibling;
+        while (node && node.nodeType === Node.TEXT_NODE && !node.textContent.trim()) {
+          node = node.nextSibling;
+        }
+
+        if (node?.nodeType === Node.TEXT_NODE) {
+          subtitleHTML = node.textContent.trim();
+          node.remove();
         }
       }
-      // if nav item has a second element, it's a subtitle
-      const secondEl = navItem.children[1];
-      if (secondEl?.tagName === 'P') {
-        const subtitle = htmlToElement(`<span class="nav-item-subtitle">${secondEl.innerHTML}</span>`);
-        navItem.firstElementChild.appendChild(subtitle);
-        secondEl.remove();
+
+      if (subtitleHTML) {
+        anchor.appendChild(htmlToElement(`<span class="nav-item-subtitle">${subtitleHTML}</span>`));
       }
     }
   };
@@ -590,6 +609,8 @@ const productGridDecorator = async (productGridBlock, decoratorOptions) => {
     const productToggle = document.createElement('button');
     productToggle.classList.add('product-toggle');
     productToggle.setAttribute('aria-controls', 'product-dropdown');
+    productToggle.setAttribute('aria-expanded', 'false');
+    productToggle.setAttribute('aria-label', 'Product Grid');
     productToggle.innerHTML = `<span class="icon-grid"></span>`;
     productGridBlock.innerHTML = `${productToggle.outerHTML}${productDropdown.outerHTML}`;
     const gridToggler = productGridBlock.querySelector('.product-toggle');
@@ -625,10 +646,18 @@ const productGridDecorator = async (productGridBlock, decoratorOptions) => {
  * Decorates the adobe-logo block
  * @param {HTMLElement} adobeLogoBlock
  */
-const adobeLogoDecorator = async (adobeLogoBlock) => {
+const adobeLogoDecorator = async (adobeLogoBlock, decoratorOptions) => {
   simplifySingleCellBlock(adobeLogoBlock);
   decorateIcons(adobeLogoBlock);
   adobeLogoBlock.querySelector('a').setAttribute('aria-label', 'Adobe Experience League'); // a11y
+  updateLinks(adobeLogoBlock, (currentHref) => {
+    let link = currentHref;
+    if (link === '/' && decoratorOptions.lang !== 'en') {
+      link = `/${decoratorOptions.lang}`;
+    }
+    const url = new URL(link, decoratorOptions.navLinkOrigin);
+    return url.href;
+  });
   return adobeLogoBlock;
 };
 

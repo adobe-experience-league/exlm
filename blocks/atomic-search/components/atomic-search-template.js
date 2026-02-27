@@ -389,10 +389,6 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(clear-button), atomic-timeframe-facet::part(clear-button) {
                   display: none;
                 }
-
-                atomic-facet::part(facet-parent-hide-ui) {
-                  padding-bottom: 0.625rem;
-                }
                 
                 atomic-facet::part(show-more-less-icon) atomic-component-error, atomic-facet::part(value-checkbox-icon) atomic-component-error, atomic-facet::part(value-checkbox) atomic-component-error, atomic-component-error, atomic-icon atomic-component-error {
                   display: none !important;
@@ -688,8 +684,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                  display: block;
                 }
                 atomic-folded-result-list::part(outline) {
-                  padding-left: 0;
-                  padding-right: 0;
+                  padding: 0;
                 }
                 .result-header-section {
                   display: none;
@@ -711,7 +706,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 @media(min-width: 1024px) {
                   .result-header-section {
                     display: grid;
-                    grid-template-columns: 1.5fr 0.5fr 0.6fr 0.4fr;
+                    grid-template-columns: 1.5fr 0.7fr 0.6fr 0.4fr;
                   }
                 }
               </style>

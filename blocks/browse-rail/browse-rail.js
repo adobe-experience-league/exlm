@@ -221,7 +221,7 @@ async function displayProductNav(block, currentPagePath, results, lang) {
       sortFirstLevelList('.subPages');
     } else {
       // In case of no sub-pages, show all products
-      await displayAllProducts(block);
+      await displayAllProducts(block, lang);
     }
   }
 
@@ -290,7 +290,7 @@ export default async function decorate(block) {
     if (manualNav) {
       displayManualNav(manualNav, block);
     } else {
-      displayAllProducts(block, lang);
+      await displayAllProducts(block, lang);
     }
   }
 

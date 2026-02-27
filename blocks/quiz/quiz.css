@@ -25,9 +25,7 @@
 }
 
 .quiz .quiz-description li {
-  font-weight: var(--font-weight-normal);
-  font-size: var(--spectrum-font-size-200);
-  line-height: var(--spectrum-line-height-xs);
+  line-height: 100%;
   margin-bottom: var(--spectrum-spacing-100);
   margin-top: 0;
 }

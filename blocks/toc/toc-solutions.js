@@ -19,7 +19,7 @@ const solutionMap = new Map([
   ['Customer Experience Management', { class: 'ExperienceManager', name: 'Customer Experience Management' }],
   ['Customer Journey Analytics', { class: 'UserAnalytics', name: 'Customer Journey Analytics' }],
   ['Data Collection', { class: 'Launch', name: 'Data Collection' }],
-  ['Document Cloud', { class: 'CircleExperienceCloud', name: 'Document Cloud' }],
+  ['Document Cloud', { class: 'DocumentCloud', name: 'Document Cloud' }],
   ['Dynamic Media Classic', { class: 'Asset', name: 'Dynamic Media Classic' }],
   ['Experience Cloud', { class: 'CircleExpCloud', name: 'Experience Cloud' }],
   ['Experience Cloud Services', { class: 'CircleExpCloud', name: 'Experience Cloud Services' }],

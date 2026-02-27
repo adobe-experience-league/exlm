@@ -1,6 +1,8 @@
-import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, htmlToElement, loadIms, getConfig } from '../../scripts/scripts.js';
 import { isMobile, registerHeaderResizeHandler, simplifySingleCellBlock } from './header-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+
+const { khorosProfileUrl } = getConfig();
 
 const communityLocalesMap = new Map([
   ['de', 'de'],
@@ -13,15 +15,17 @@ const communityLocalesMap = new Map([
   ['sv', 'en'],
   ['nl', 'en'],
   ['it', 'en'],
-  ['zh-hans', 'en'],
-  ['zh-hant', 'en'],
+  ['zh-hans', 'zh'],
+  ['zh-hant', 'zh'],
 ]);
 
-// eslint-disable-next-line
+export const formatTitleCase = (str) => str.replace(/[-\s]/g, '').replace(/\b\w/g, (match) => match.toUpperCase());
+
 async function fetchCommunityProfileData(url = khorosProfileUrl) {
   const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
+  const separator = url.includes('?') ? '&' : '?';
   try {
-    const response = await fetch(`${url}?lang=${locale}`, {
+    const response = await fetch(`${url}${separator}lang=${locale}`, {
       method: 'GET',
       headers: {
         'x-ims-token': await window.adobeIMS?.getAccessToken().token,
@@ -32,9 +36,11 @@ async function fetchCommunityProfileData(url = khorosProfileUrl) {
       const data = await response.json();
       return data;
     }
+    return null;
   } catch (err) {
     // eslint-disable-next-line
     console.log('Error fetching data!!', err);
+    return null;
   }
 }
 
@@ -179,6 +185,9 @@ export default class ProfileMenu extends HTMLElement {
       });
       profileMenuBlock.append(signoutLink);
 
+      if (this.decoratorOptions.khorosProfileUrl && this.decoratorOptions.loadExLIms) {
+        await loadIms();
+      }
       fetchCommunityProfileData(this.decoratorOptions.khorosProfileUrl)
         .then((res) => {
           if (res) {
@@ -188,24 +197,30 @@ export default class ProfileMenu extends HTMLElement {
               communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
             if (res.data.menu.length > 0) {
               res.data.menu.forEach((item) => {
-                if (item.title && item.url) {
-                  const link = htmlToElement(`<a href="${item.url}" title="">${item.title}</a>`);
+                if (item.title && item.url && item.id) {
+                  const menuTitle = placeholders?.[`community${formatTitleCase(item.id)}`] || item.title;
+                  const link = htmlToElement(
+                    `<a href="${item.url}?lang=${locale}" title="${menuTitle}">${menuTitle}</a>`,
+                  );
                   communityLinks.append(link);
                 }
               });
             } else {
               const link = htmlToElement(
-                `<a href="https://experienceleaguecommunities.adobe.com/?profile.language=${locale}">${
+                `<a href="https://experienceleaguecommunities.adobe.com/?lang=${locale}">${
                   placeholders?.communityLink || 'Community'
                 }</a>`,
               );
               communitySection.appendChild(link);
             }
+          } else {
+            communitySection.remove();
           }
         })
         .catch((err) => {
           /* eslint-disable-next-line no-console */
           console.error(err);
+          communitySection.remove();
         });
     } else {
       const isProfileMenu = document.querySelector('.profile-menu');

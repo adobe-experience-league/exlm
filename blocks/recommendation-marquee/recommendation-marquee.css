@@ -113,6 +113,16 @@
   box-shadow: var(--box-shadow-2);
 }
 
+.recommendation-marquee.block .browse-card.course-card .browse-card-content {
+  padding-top: 24px;
+}
+
+.recommendation-marquee.block .browse-card.course-card .browse-card-icon {
+  width: 44px;
+  height: 44px;
+  top: 5px;
+}
+
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card .browse-card-content {
   border-radius: 16px 16px 0 0;
   order: 1;
@@ -121,6 +131,27 @@
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card .browse-card-footer {
   border-radius: 0;
   order: 2;
+}
+
+/* On demand event cards variant */
+
+.recommendation-marquee .browse-card.event-card {
+  background-color: var(--spectrum-gray-150);
+}
+
+.recommendation-marquee .browse-card.event-card .browse-card-figure {
+  border-radius: 15px 15px 0 0;
+  height: 54px;
+  max-height: 54px;
+  overflow: hidden;
+  position: relative;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: unset;
+  flex: 0 0 auto;
+  flex-direction: unset;
 }
 
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card .browse-card-figure {
@@ -320,6 +351,16 @@
     padding: 9px 20px 11px;
     height: 40px;
     margin-right: 28px;
+  }
+
+  .recommendation-marquee.block
+    .browse-cards-block-content
+    .card-wrapper:first-child
+    .browse-card.course-card
+    .browse-card-icon {
+    width: 64px;
+    height: 64px;
+    top: 15px;
   }
 
   .recommendation-marquee.block

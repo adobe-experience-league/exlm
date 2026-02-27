@@ -14,60 +14,65 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 /**
  * Retrieves a list of unique product focus items from live events data.
  */
-async function getListofProducts() {
-  try {
-    let data;
-    const { upcomingEventsUrl } = getConfig();
-    const response = await fetch(upcomingEventsUrl, {
-      method: 'GET',
+function getListofProducts() {
+  const { upcomingEventsUrl } = getConfig();
+  return fetch(upcomingEventsUrl, { method: 'GET' })
+    .then((response) => (response.ok ? response.json() : null))
+    .then((data) => {
+      const events = data?.eventList?.events || [];
+      const currentDate = new Date();
+
+      const filteredEvents = events.filter((event) => {
+        if (!event.startTime || !event.endTime || !event.time) {
+          // eslint-disable-next-line no-console
+          console.error(`Event ${event.eventTitle} has invalid format. Missing startTime, endTime or time attribute.`);
+          return false;
+        }
+        const eventStartTime = new Date(event.startTime);
+        const eventEndTime = new Date(event.endTime);
+        return currentDate >= eventStartTime && currentDate <= eventEndTime;
+      });
+
+      return Array.from(new Set(filteredEvents.flatMap((event) => event.productFocus || []))).sort();
+    })
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching data', error);
+      return [];
     });
-
-    if (response.ok) {
-      data = await response.json();
-    }
-
-    const events = data?.eventList?.events || [];
-
-    const currentDate = new Date();
-
-    // Filter events within their own show window
-    const filteredEvents = events.filter((event) => {
-      if (!event.startTime || !event.endTime || !event.time) {
-        // eslint-disable-next-line no-console
-        console.error(`Event ${event.eventTitle} has invalid format. Missing startTime, endTime or time attribute.`);
-        return false;
-      }
-      const eventStartTime = new Date(event.startTime);
-      const eventEndTime = new Date(event.endTime);
-      return currentDate >= eventStartTime && currentDate <= eventEndTime;
-    });
-
-    // Extract unique productFocus items and sort alphabetically
-    const products = Array.from(new Set(filteredEvents.flatMap((event) => event.productFocus || []))).sort();
-
-    return products;
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching data', error);
-    return [];
-  }
 }
 
-export default async function decorate(block) {
-  let placeholders = {};
-  try {
-    placeholders = await fetchLanguagePlaceholders();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
+/**
+ * Fetches filtered card data based on selected parameters.
+ * @param {Array} data - List of card data objects.
+ * @param {Array} params - Selected filter parameters.
+ * @returns {Array} - Filtered and sorted card data.
+ */
+function fetchFilteredCardData(data, params) {
+  if (!data) return [];
+  const solutionsList = Array.isArray(params) ? params : [params];
+
+  if (solutionsList.length === 0) {
+    return data.filter((card) => card.event?.time).sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
   }
 
+  return data
+    .filter((event) => {
+      const productArray = Array.isArray(event.product) ? event.product : [event.product];
+      return solutionsList.some((filter) => productArray.includes(filter));
+    })
+    .filter((card) => card.event?.time)
+    .sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
+}
+
+export default function decorate(block) {
   const [headingElement, descriptionElement, filterLabelElement] = [...block.children].map(
     (row) => row.firstElementChild,
   );
 
   block.innerHTML = '';
   block.classList.add('upcoming-event-block');
+  block.classList.add('browse-cards-block');
 
   const headerDiv = htmlToElement(`
     <div class="browse-cards-block-header">
@@ -87,63 +92,25 @@ export default async function decorate(block) {
   tagsContainer.classList.add('browse-card-tags');
   headerDiv.appendChild(tagsContainer);
 
-  block.appendChild(headerDiv);
-  const products = await getListofProducts();
-  const productsList = [];
-  products.forEach((product) => {
-    productsList.push({
-      title: product,
-    });
-  });
-
-  // Initialize the dropdown with product options
-  const productDropdown = new Dropdown(
-    block.querySelector('.browse-card-dropdown'),
-    `${placeholders?.filterProductLabel || 'Product'}`,
-    productsList,
-    'multi-select',
-  );
-
   const contentDiv = document.createElement('div');
   contentDiv.classList.add('browse-cards-block-content');
 
-  const parameters = {
-    contentType: CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
-  };
+  block.appendChild(headerDiv);
 
   const buildCardsShimmer = new BrowseCardShimmer();
   buildCardsShimmer.addShimmer(block);
-  let browseCardsContent;
-  try {
-    browseCardsContent = await BrowseCardsDelegate.fetchCardData(parameters);
-    // eslint-disable-next-line no-use-before-define
-    const filteredLiveEventsData = fetchFilteredCardData(browseCardsContent, []);
 
-    buildCardsShimmer.removeShimmer();
+  // State
+  let browseCardsContent = [];
+  let placeholders = {};
+  let productDropdown = null;
 
-    if (filteredLiveEventsData?.length) {
-      filteredLiveEventsData.forEach((cardData) => {
-        const cardDiv = document.createElement('div');
-        buildCard(contentDiv, cardDiv, cardData);
-        contentDiv.appendChild(cardDiv);
-      });
-      block.appendChild(contentDiv);
-    }
-  } catch (err) {
-    buildCardsShimmer.removeShimmer();
-    // eslint-disable-next-line no-console
-    console.error('Error loading upcoming event cards:', err);
-  }
-
-  // Extract filters from URL
-  // Extract and sanitize filters from URL
   const urlParams = new URLSearchParams(window.location.search);
   const urlFilters = urlParams.get('filters')
     ? urlParams.get('filters').split(',').map(xssSanitizeQueryParamValue)
     : [];
 
-  const updateFiltersAndCards = (selectedFilters) => {
-    // Update URL params
+  const updateFiltersAndCards = async (selectedFilters) => {
     const url = new URL(window.location);
     if (selectedFilters.length) {
       url.searchParams.set('filters', selectedFilters.join(','));
@@ -152,7 +119,6 @@ export default async function decorate(block) {
     }
     window.history.pushState({}, '', url.toString());
 
-    // Update tags
     tagsContainer.innerHTML = '';
     selectedFilters.forEach((filter) => {
       const tagElement = htmlToElement(`
@@ -171,7 +137,6 @@ export default async function decorate(block) {
       });
     });
 
-    // eslint-disable-next-line no-use-before-define
     const updatedData = fetchFilteredCardData(browseCardsContent, selectedFilters);
 
     contentDiv.innerHTML = ''; // Clear previous cards
@@ -193,51 +158,71 @@ export default async function decorate(block) {
     }
 
     contentDiv.style.display = '';
-    updatedData.forEach((cardData) => {
-      const cardDiv = document.createElement('div');
-      buildCard(contentDiv, cardDiv, cardData);
-      contentDiv.appendChild(cardDiv);
-    });
+    await Promise.all(
+      updatedData.map(async (cardData) => {
+        const cardDiv = document.createElement('div');
+        await buildCard(cardDiv, cardData);
+        contentDiv.appendChild(cardDiv);
+      }),
+    );
   };
 
-  // Pre-select checkboxes from URL filters
-  [...block.querySelectorAll('.browse-card-dropdown .custom-checkbox input')]
-    .filter((input) => urlFilters.includes(input.value) && !input.checked)
-    .forEach((input) => input.click());
+  // Non-blocking data fetch
+  Promise.all([
+    fetchLanguagePlaceholders().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching placeholders:', err);
+      return {};
+    }),
+    getListofProducts(),
+    BrowseCardsDelegate.fetchCardData({ contentType: CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY }).catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Error loading upcoming event cards:', err);
+      return [];
+    }),
+  ]).then(async ([fetchedPlaceholders, products, cardsData]) => {
+    placeholders = fetchedPlaceholders;
+    browseCardsContent = cardsData;
 
-  updateFiltersAndCards(urlFilters);
+    buildCardsShimmer.removeShimmer();
 
-  // Dropdown selection change handler
-  productDropdown.handleOnChange((selectedValues) => {
-    const selectedFilters = (Array.isArray(selectedValues) ? selectedValues : selectedValues.split(','))
-      .map((item) => item.trim())
-      .filter(Boolean);
+    // Initialize dropdown
+    const productsList = products.map((product) => ({ title: product }));
+    productDropdown = new Dropdown(
+      block.querySelector('.browse-card-dropdown'),
+      `${placeholders?.filterProductLabel || 'Product'}`,
+      productsList,
+      'multi-select',
+    );
 
-    updateFiltersAndCards(selectedFilters);
-  });
-
-  /**
-   * Fetches filtered card data based on selected parameters.
-   * @param {Array} data - List of card data objects.
-   * @param {Array} params - Selected filter parameters.
-   * @returns {Array} - Filtered and sorted card data.
-   */
-  function fetchFilteredCardData(data, params) {
-    if (!data) return [];
-    const solutionsList = Array.isArray(params) ? params : [params];
-
-    // If no filters are selected, return all data sorted by event time
-    if (solutionsList.length === 0) {
-      return data.filter((card) => card.event?.time).sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
+    // Render initial cards
+    const filteredData = fetchFilteredCardData(browseCardsContent, []);
+    if (filteredData?.length) {
+      await Promise.all(
+        filteredData.map(async (cardData) => {
+          const cardDiv = document.createElement('div');
+          await buildCard(cardDiv, cardData);
+          contentDiv.appendChild(cardDiv);
+        }),
+      );
+      block.appendChild(contentDiv);
     }
 
-    // Filter events that match any of the selected filters
-    return data
-      .filter((event) => {
-        const productArray = Array.isArray(event.product) ? event.product : [event.product];
-        return solutionsList.some((filter) => productArray.includes(filter));
-      })
-      .filter((card) => card.event?.time) // Ensure valid event time
-      .sort((a, b) => new Date(a.event.time) - new Date(b.event.time));
-  }
+    // Pre-select checkboxes from URL filters
+    [...block.querySelectorAll('.browse-card-dropdown .custom-checkbox input')]
+      .filter((input) => urlFilters.includes(input.value) && !input.checked)
+      .forEach((input) => input.click());
+
+    if (urlFilters.length) {
+      await updateFiltersAndCards(urlFilters);
+    }
+
+    // Dropdown change handler
+    productDropdown.handleOnChange(async (selectedValues) => {
+      const selectedFilters = (Array.isArray(selectedValues) ? selectedValues : selectedValues.split(','))
+        .map((item) => item.trim())
+        .filter(Boolean);
+      await updateFiltersAndCards(selectedFilters);
+    });
+  });
 }

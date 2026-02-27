@@ -87,6 +87,8 @@ export const getCardData = async (articlePath, placeholders) => {
     solutions = coveoSolution.split(';').map((s) => s.trim());
   }
   const viewLinkPlaceholderKey = `browseCard${convertToTitleCase(type)}ViewLabel`.replace(/\s+/g, '');
+  const eventSeries = getMetadata('series', doc);
+  const eventTime = getMetadata('promostarttime', doc);
 
   return {
     id: getMetadata('id', doc),
@@ -110,6 +112,16 @@ export const getCardData = async (articlePath, placeholders) => {
     bookmarkLink: '',
     viewLink: fullURL,
     viewLinkText: placeholders[viewLinkPlaceholderKey] ? placeholders[viewLinkPlaceholderKey] : `View ${type}`,
+    // Course-specific metadata
+    el_level: getMetadata('level', doc),
+    el_course_duration: getMetadata('course-duration', doc),
+    el_course_module_count: getMetadata('course-module-count', doc),
+
+    /* TODO - add duration */
+    event: {
+      series: eventSeries,
+      time: eventTime,
+    },
   };
 };
 

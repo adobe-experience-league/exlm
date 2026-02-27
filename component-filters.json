@@ -5,15 +5,15 @@
   },
   {
     "id": "main",
-    "components": ["section", "tab-section"]
+    "components": ["section", "tab-section", "list-section"]
   },
   {
     "id": "main-browse",
-    "components": ["section", "browse-rail-section", "tab-section"]
+    "components": ["section", "browse-rail-section", "tab-section", "list-section"]
   },
   {
     "id": "main-article",
-    "components": ["article-content-section", "article-header-section", "section", "tab-section"]
+    "components": ["article-content-section", "article-header-section", "section", "tab-section", "list-section"]
   },
   {
     "id": "main-profile",
@@ -25,11 +25,11 @@
   },
   {
     "id": "main-courses",
-    "components": ["section", "courses-section", "tab-section"]
+    "components": ["section", "courses-section", "tab-section", "list-section"]
   },
   {
     "id": "main-course-hub",
-    "components": ["section", "course-hub-section", "tab-section"]
+    "components": ["section", "course-hub-section", "tab-section", "list-section"]
   },
   {
     "id": "section",
@@ -52,6 +52,7 @@
       "secondary-search",
       "accordion-group",
       "media",
+      "media-panel",
       "authorable-card",
       "featured-cards",
       "events-cards",
@@ -88,6 +89,7 @@
       "inprogress-courses",
       "browse-courses",
       "course-recap",
+      "slides",
       "quiz-scorecard"
     ]
   },
@@ -112,6 +114,7 @@
       "secondary-search",
       "accordion-group",
       "media",
+      "media-panel",
       "authorable-card",
       "featured-cards",
       "events-cards",
@@ -153,6 +156,7 @@
       "secondary-search",
       "accordion-group",
       "media",
+      "media-panel",
       "authorable-card",
       "featured-cards",
       "events-cards",
@@ -188,10 +192,15 @@
       "detailed-teaser",
       "video-embed",
       "media",
+      "media-panel",
       "block-quote",
       "callout",
       "note"
     ]
+  },
+  {
+    "id": "list-section",
+    "components": ["list-item"]
   },
   {
     "id": "section-browse",
@@ -211,6 +220,7 @@
       "secondary-search",
       "accordion-group",
       "media",
+      "media-panel",
       "authorable-card",
       "browse-filters",
       "featured-cards",
@@ -344,6 +354,7 @@
       "sign-up",
       "video-embed",
       "media",
+      "media-panel",
       "block-quote",
       "callout",
       "article-tags",
@@ -355,7 +366,8 @@
       "note",
       "qualtrics",
       "code",
-      "announcement-ribbon"
+      "announcement-ribbon",
+      "slides"
     ]
   },
   {
@@ -377,16 +389,27 @@
   {
     "id": "text",
     "rte": {
-      "format": ["bold", "italic"],
-      "alignment": [],
-      "indentation": [],
-      "sr_script": ["superscript", "subscript"],
-      "list": ["bullist", "numlist"],
-      "insert": ["link"],
-      "advanced": [],
-      "extensions": [],
-      "editor": ["removeformat"]
-    }
+      "toolbar": {
+        "format": ["bold", "italic"],
+        "alignment": [],
+        "indentation": [],
+        "sr_script": ["superscript", "subscript"],
+        "list": ["bullet_list", "ordered_list"],
+        "insert": ["link"],
+        "advanced": [],
+        "extensions": [],
+        "editor": ["removeformat"]
+      },
+      "actions": {
+        "bullet_list": {
+          "wrapInParagraphs": true
+        },
+        "ordered_list": {
+          "wrapInParagraphs": true
+        }
+      }
+    },
+    "components": ["richtext"]
   },
   {
     "id": "cards",
@@ -399,6 +422,10 @@
   {
     "id": "teaser",
     "components": ["teaser", "detailed-teaser", "media"]
+  },
+  {
+    "id": "media-panel",
+    "components": []
   },
   {
     "id": "accordion",
@@ -435,6 +462,10 @@
   {
     "id": "course-breakdown",
     "components": ["course-breakdown-item"]
+  },
+  {
+    "id": "list-item",
+    "components": ["list-content", "code", "note", "video-embed"]
   },
   {
     "id": "rte-custom-options",

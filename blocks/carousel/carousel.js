@@ -7,14 +7,23 @@ function updateButtons(entries) {
   entries.forEach((entry) => {
     // if panel has become > 60% visible
     if (entry.isIntersecting) {
-      // get the buttons
-      const carouselButtons = entry.target.parentNode.parentNode.querySelector('.button-container');
+      // get the buttons and panels
+      const carousel = entry.target.parentNode.parentNode;
+      const carouselButtons = carousel.querySelector('.button-container');
+      const panelContainer = carousel.querySelector('.panel-container');
+
       // remove selected state from whatever button has it
       [...carouselButtons.querySelectorAll(':scope button')].forEach((b) => b.classList.remove('selected'));
+      // remove active state from whatever panel has it
+      [...panelContainer.querySelectorAll(':scope > div')].forEach((p) => p.classList.remove('active'));
+
       // add selected state to proper button
       carouselButtons
         .querySelector(`:scope button[data-panel='${entry.target.dataset.panel}']`)
         .classList.add('selected');
+
+      // add active state to the current panel
+      entry.target.classList.add('active');
     }
   });
 }
@@ -68,6 +77,8 @@ export default function decorate(block) {
     panel.classList.add(blockType, 'block');
     classes.forEach((c) => panel.classList.add(c.trim()));
     panel.dataset.panel = `panel_${i}`;
+    // Add active class to the first panel by default
+    if (!i) panel.classList.add('active');
     panel.append(contentDOM);
     panelContainer.append(panel);
 
@@ -83,6 +94,10 @@ export default function decorate(block) {
 
       // add event listener to button
       button.addEventListener('click', () => {
+        // Remove active class from all panels
+        [...panelContainer.querySelectorAll(':scope > div')].forEach((p) => p.classList.remove('active'));
+        // Add active class to the selected panel
+        panel.classList.add('active');
         panelContainer.scrollTo({ top: 0, left: panel.offsetLeft - panel.parentNode.offsetLeft, behavior: 'smooth' });
       });
     }

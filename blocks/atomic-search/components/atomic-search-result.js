@@ -10,10 +10,9 @@ import {
 } from './atomic-search-utils.js';
 import { ContentTypeIcons } from './atomic-search-icons.js';
 import { decorateIcons } from '../../../scripts/lib-franklin.js';
-import { htmlToElement, getConfig } from '../../../scripts/scripts.js';
+import { htmlToElement } from '../../../scripts/scripts.js';
 import { INITIAL_ATOMIC_RESULT_CHILDREN_COUNT } from './atomic-result-children.js';
 
-const { communityTopicsUrl } = getConfig();
 const MAX_HYDRATION_ATTEMPTS = 10;
 
 export const atomicResultStyles = `
@@ -173,7 +172,7 @@ export const atomicResultStyles = `
                     @media(min-width: 1024px) {
                       .result-item.desktop-only {
                         display: grid;
-                        grid-template-columns: 1.5fr 0.5fr 0.6fr 0.4fr;
+                        grid-template-columns: 1.5fr 0.7fr 0.6fr 0.4fr;
                         row-gap: 0;
                         margin-top: 8px;
                       }
@@ -379,8 +378,21 @@ export const atomicResultStyles = `
 
 export const atomicResultListStyles = `
                 <style>
+                  atomic-folded-result-list::part(result-list) {
+                    grid-row-gap: 0;
+                  }
                   atomic-folded-result-list::part(outline)::before {
                     background-color:var(--footer-border-color);
+                    display: block;
+                    content: ' ';
+                    height: 1px;
+                    margin: 1.5rem 0;
+                  }
+                  atomic-folded-result-list::part(first-result) {
+                    padding-top: 1rem;
+                  }
+                  atomic-folded-result-list::part(first-result)::before {
+                    display: none;
                   }
                   atomic-folded-result-list::part(skeleton) {
                     display: flex;
@@ -481,6 +493,11 @@ export const atomicResultListStyles = `
                     }
                   }
 
+                  @media(min-width: 1024px) {
+                    atomic-folded-result-list::part(first-result) {
+                      padding-top: 0;
+                    }
+                  }
                 </style>
 `;
 let isListenerAdded = false;
@@ -710,11 +727,60 @@ export default function atomicResultHandler(block, placeholders) {
     }
   };
 
+  /**
+   * Filters out parent content type values when their child values are present.
+   * Handles both legacy (;) and new (|) separator formats.
+   * @param {Array|string} contentTypes - Array of content type values or single value
+   * @returns {Array} Filtered array with only the most specific content type values
+   */
+  const filterParentContentTypes = (contentTypes) => {
+    if (!Array.isArray(contentTypes)) {
+      return contentTypes;
+    }
+
+    // Extract all parent names from child values (those containing |)
+    const parentNamesFromChildren = new Set();
+    contentTypes.forEach((type) => {
+      const typeStr = String(type || '').trim();
+      if (typeStr.includes('|')) {
+        // Handle both "parent|child" and "parent;parent|child" formats
+        const parts = typeStr.split('|');
+        if (parts[0]) {
+          const parentPart = parts[0].trim();
+          // If parent part contains semicolon, extract the actual parent name
+          if (parentPart.includes(';')) {
+            const semicolonParts = parentPart.split(';').map((p) => p.trim());
+            // Add all parts before the pipe as potential parent names
+            semicolonParts.forEach((p) => {
+              if (p) parentNamesFromChildren.add(p.toLowerCase());
+            });
+          } else {
+            parentNamesFromChildren.add(parentPart.toLowerCase());
+          }
+        }
+      }
+    });
+
+    // Filter out parent values if their child values exist
+    return contentTypes.filter((type) => {
+      const typeStr = String(type || '').trim();
+      // Keep child values (those with |)
+      if (typeStr.includes('|')) {
+        return true;
+      }
+      // Keep parent values only if they don't have a corresponding child
+      return !parentNamesFromChildren.has(typeStr.toLowerCase());
+    });
+  };
+
   const updateAtomicResultUI = (callFrom) => {
     const results = container.querySelectorAll('atomic-result');
     const isMobileView = isMobile();
     container.dataset.view = isMobileView ? 'mobile' : 'desktop';
-    results.forEach((resultElement) => {
+    results.forEach((resultElement, index) => {
+      if (index === 0) {
+        resultElement.part.add('first-result');
+      }
       const hydrateResult = (resultEl) => {
         const resultShadow = resultEl.shadowRoot;
         if (!resultShadow) {
@@ -800,6 +866,21 @@ export default function atomicResultHandler(block, placeholders) {
           resultRoot.classList.add('recommendation-badge');
         }
 
+        // Handle el_kudo_status field - support both legacy numeric and new user ID format
+        // This needs to run on every re-render (mobile/desktop view switches)
+        const kudoStatusEl = resultShadow?.querySelector('atomic-result-text[field="el_kudo_status"]');
+        if (kudoStatusEl) {
+          const rawKudoStatus = resultEl.result?.result?.raw?.el_kudo_status;
+
+          // Check if it's the new format (string = user IDs, single or semicolon-separated)
+          if (typeof rawKudoStatus === 'string' && rawKudoStatus.trim() !== '') {
+            const userIds = rawKudoStatus.split(';').filter((id) => id.trim() !== '');
+            const count = userIds.length;
+            kudoStatusEl.textContent = count.toString();
+          }
+          // Legacy numeric format (number type) - no change needed, displays as-is
+        }
+
         if (resultItem.dataset.decorated && currentHydrationCount >= MAX_HYDRATION_ATTEMPTS) {
           removeBlockSkeleton();
           return; // Return to avoid repeated hydrations endlessly.
@@ -847,27 +928,108 @@ export default function atomicResultHandler(block, placeholders) {
 
           const label = slot.textContent.trim();
           if (!label) return;
-
-          const link = document.createElement('a');
-          link.href = `${communityTopicsUrl}${encodeURIComponent(label)}`;
-          link.textContent = label;
-          link.target = '_blank';
-          link.style.textDecoration = 'none';
-          link.style.color = 'inherit';
-
-          li.innerHTML = '';
-          li.appendChild(link);
+          li.textContent = label;
         });
+        const rawContentType = resultEl.result?.result?.raw?.el_contenttype;
+        // Filter out parent values when child values are present to avoid duplicate rendering
+        const filteredContentType = filterParentContentTypes(rawContentType);
+        const contentTypeValues = Array.isArray(filteredContentType) ? structuredClone(filteredContentType) : null;
+
+        // Hide duplicate parent <li> elements when child elements exist
+        // The atomic component renders all values, so we need to hide duplicates in the DOM
+        if (Array.isArray(rawContentType) && contentTypeElements.length > 0) {
+          const childValues = new Set();
+          const parentToHide = new Set();
+
+          // First pass: identify all child values and their parent names
+          Array.from(contentTypeElements).forEach((li) => {
+            if (li.className?.includes('separator')) return;
+            const slotEl = li.firstElementChild;
+            const slotName = slotEl?.getAttribute('name') || '';
+            // Extract value from slot name (e.g., "result-multi-value-text-value-community|questions")
+            const value = slotName.replace('result-multi-value-text-value-', '');
+
+            if (value.includes('|')) {
+              childValues.add(value);
+              // Extract parent name from child value
+              const parts = value.split('|');
+              const parentPart = parts[0].trim().toLowerCase();
+              if (parentPart.includes(';')) {
+                parentPart.split(';').forEach((p) => {
+                  const trimmed = p.trim().toLowerCase();
+                  if (trimmed) parentToHide.add(trimmed);
+                });
+              } else {
+                parentToHide.add(parentPart);
+              }
+            }
+          });
+
+          // Second pass: hide parent elements if their child exists
+          Array.from(contentTypeElements).forEach((li) => {
+            if (li.className?.includes('separator')) return;
+            const slotEl = li.firstElementChild;
+            const slotName = slotEl?.getAttribute('name') || '';
+            const value = slotName.replace('result-multi-value-text-value-', '').toLowerCase();
+
+            // If this is a parent value and its child exists, hide it
+            if (!value.includes('|') && parentToHide.has(value)) {
+              li.part.add('multi-hidden');
+              li.style.setProperty('display', 'none', 'important');
+              li.dataset.hiddenDuplicate = 'true';
+              // Also hide the separator after this element if it exists
+              if (li.nextElementSibling?.classList?.contains('separator')) {
+                li.nextElementSibling.part.add('multi-hidden');
+                li.nextElementSibling.style.setProperty('display', 'none', 'important');
+              }
+            }
+          });
+        }
 
         contentTypeElements.forEach((contentTypeEl) => {
-          const contentType = contentTypeEl.textContent.toLowerCase().trim();
+          // Skip elements that were marked as hidden duplicates
+          if (contentTypeEl.dataset.hiddenDuplicate === 'true') {
+            return;
+          }
+
+          const isSeparator = contentTypeEl?.className.includes('separator');
+          const contentTypeValue =
+            Array.isArray(contentTypeValues) && !isSeparator ? contentTypeValues.shift() : filteredContentType;
+          let contentType = isSeparator ? '' : (contentTypeValue || contentTypeEl.textContent).toLowerCase().trim();
+
+          // Handle hierarchical content types (e.g., "Community; Community|Community Pulse")
           if (contentType.includes('|')) {
-            contentTypeEl.style.cssText = `display: none !important`;
-            const slotEl = contentTypeEl.firstElementChild;
-            if (slotEl) {
-              slotEl.style.cssText = `display: none`;
+            const splitContent = contentType.split('|');
+            let parentName = splitContent[0]?.trim();
+            const childName = splitContent[1]?.trim();
+
+            // Handle format like "Community;Community|Ideas" -> extract "Community" as parent
+            if (parentName?.includes(';')) {
+              [parentName] = parentName.split(';').map((part) => part.trim());
             }
-          } else if (!isMobileView) {
+
+            // Helper function to convert to title case
+            const toTitleCase = (str) =>
+              str
+                ?.trim()
+                .split(' ')
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ');
+
+            // Update the displayed text to "Parent | Child" format in title case
+            if (parentName && childName) {
+              const displayText = `${toTitleCase(parentName)} | ${toTitleCase(childName)}`;
+              const slotEl = contentTypeEl.firstElementChild;
+              if (slotEl) {
+                slotEl.textContent = displayText;
+              }
+
+              // Use the parent name for icon/styling purposes
+              contentType = parentName.toLowerCase();
+            }
+          }
+
+          if (!isMobileView) {
             // UI effect is only for desktop.
             const svgIcon = ContentTypeIcons[contentType] || '';
             if (contentType) resultContentType.classList.add(contentType.replace(/\s+/g, '-'));

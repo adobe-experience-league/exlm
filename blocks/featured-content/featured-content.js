@@ -76,7 +76,7 @@ async function buildFeaturedContent(block, contentArray) {
 
   const link = cta.querySelector('a');
   const contentInfo = await getContentReference(link.href);
-  const contentDescription = desc.textContent || contentInfo.contentDescription.replace(/^SUMMARY: /, '');
+  const contentDescription = desc.textContent || contentInfo.contentDescription?.replace(/^SUMMARY: /, '');
   desc.parentElement.remove();
 
   const contentDiv = htmlToElement(`

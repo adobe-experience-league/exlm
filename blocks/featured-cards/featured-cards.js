@@ -297,7 +297,7 @@ export default async function decorate(block) {
           for (let i = 0; i < Math.min(4, data.length); i += 1) {
             const cardData = data[i];
             const cardDiv = document.createElement('div');
-            buildCard(contentDiv, cardDiv, cardData);
+            buildCard(cardDiv, cardData);
             contentDiv.appendChild(cardDiv);
           }
         } else {

@@ -1,4 +1,5 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
+@import '../../scripts/browse-card/browse-card-shimmer.css';
 
 .section.inprogress-courses-container {
   padding: var(--spectrum-spacing-500) var(--spectrum-spacing-300);
@@ -36,6 +37,21 @@
 
 .inprogress-courses.block.inprogress-courses-hidden {
   display: none;
+}
+
+.inprogress-courses-card-wrapper .browse-card-shimmer {
+  margin-top: 0;
+  grid-column: 1 / -1;
+}
+
+.inprogress-courses-card-wrapper .browse-card-shimmer-wrapper {
+  min-height: 380px;
+}
+
+@media (min-width: 600px) {
+  .inprogress-courses-card-wrapper .browse-card-shimmer {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (min-width: 600px) {

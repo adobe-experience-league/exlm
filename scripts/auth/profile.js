@@ -29,7 +29,7 @@ export async function isSignedInUser() {
  * @see: https://wiki.corp.adobe.com/display/ims/IMS+API+-+logout#IMSApi-logout-signout_options
  */
 export async function signOut() {
-  ['JWT', 'coveoToken', 'exl-profile', 'attributes', 'profile', 'pps-profile'].forEach((key) =>
+  ['JWT', 'coveoToken', 'exl-profile', 'attributes', 'profile', 'pps-profile', 'alm_access_token'].forEach((key) =>
     sessionStorage.removeItem(key),
   );
 
@@ -174,9 +174,10 @@ class ProfileClient {
     if (!signedIn) return null;
 
     const accountId = (await window.adobeIMS.getProfile()).userId;
+    const separator = khorosProfileDetailsUrl.includes('?') ? '&' : '?';
 
     try {
-      const response = await fetch(`${khorosProfileDetailsUrl}?user=${accountId}`, {
+      const response = await fetch(`${khorosProfileDetailsUrl}${separator}user=${accountId}`, {
         method: 'GET',
         headers: {
           'x-ims-token': await window.adobeIMS?.getAccessToken().token,

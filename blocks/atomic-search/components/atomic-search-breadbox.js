@@ -29,12 +29,22 @@ export default function atomicBreadBoxHandler(baseElement) {
         element.dataset.facetkey = facetKey;
         const isParentKey = facetKey ? !facetKey.includes('|') : false;
         if (!isParentKey) {
-          const [parentKey] = facetKey.split('|');
+          let [parentKey] = facetKey.split('|');
+          // Handle format like "Community;Community|Ideas" -> extract "Community" as parent
+          if (parentKey.includes(';')) {
+            [parentKey] = parentKey.split(';');
+          }
           element.dataset.parent = parentKey;
           const labelElement = element.querySelector('[part="breadcrumb-value"]');
           if (labelElement?.textContent?.includes('|')) {
-            const [parentType, childType] = labelElement.textContent.split('|');
-            labelElement.textContent = `${parentType} | ${childType}`;
+            const splitLabel = labelElement.textContent.split('|');
+            let parentType = splitLabel[0];
+            const childType = splitLabel[1];
+            // Remove "Community;" prefix from parent type for cleaner display
+            if (parentType.includes(';')) {
+              [parentType] = parentType.split(';');
+            }
+            labelElement.textContent = `${parentType.trim()} | ${childType.trim()}`;
           }
         }
         element.addEventListener('click', (e) => {

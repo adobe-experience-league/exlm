@@ -22,6 +22,7 @@ const communityProducts = [
   'Experience Platform',
   'Experience Cloud',
   'Journey Optimizer',
+  'Marketo',
   'Marketo Engage',
   'Workfront',
   'Target',
@@ -34,7 +35,9 @@ let solution = '';
 // This will break infuture and that's also acceptable
 if (isCommunityDomain) {
   // Get solution from breadcrumb
-  const breadcrumbItems = document.querySelectorAll('#breadcrumbs .spectrum-Breadcrumbs-item');
+  const breadcrumbItems = document.querySelectorAll(
+    '#breadcrumbs .spectrum-Breadcrumbs-item, #breadcrumbs-target .breadcrumb .breadcrumb-item',
+  );
   if (breadcrumbItems.length >= 3) {
     // product name is the 3rd breadcrumb (index 2)
     solution = breadcrumbItems[2].textContent.trim();
@@ -310,7 +313,7 @@ export default class Search {
   }
 
   onSearchInputClick(e) {
-    if (!this.searchInput.value && this.savedDefaultSuggestions) {
+    if (!this.searchInput.value && this.savedDefaultSuggestions?.completions?.length > 0) {
       this.renderSearchSuggestions(this.savedDefaultSuggestions);
       this.onShowSearchSuggestions(e);
     }

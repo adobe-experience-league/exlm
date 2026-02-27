@@ -230,7 +230,7 @@
   .browse-courses .browse-card-dropdown {
     align-items: center;
     display: flex;
-    gap: 24px;
+    flex-wrap: wrap;
     width: auto;
     margin: 0;
   }
@@ -255,9 +255,13 @@
 
   .browse-courses .custom-filter-dropdown,
   .browse-courses .status-dropdown-container {
-    min-width: 300px;
+    min-width: 160px;
     flex: none;
     width: auto;
+  }
+
+  .browse-courses .product-dropdown-container {
+    min-width: 250px;
   }
 
   .browse-courses .browse-card-shimmer {

@@ -11,6 +11,7 @@ import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
+import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 const bookmarkExclusionContentypes = [
   CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
@@ -203,89 +204,72 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
   cardContent.appendChild(titleElement);
 };
 
-const buildCourseInfoContent = ({ el_course_duration, el_course_module_count, el_level, cardContent, meta }) => {
-  if (el_course_duration || el_level) {
-    const courseInfoElement = createTag('div', { class: 'browse-card-course-info' });
+const buildCourseInfoContent = ({ el_course_duration, el_level, cardContent }) => {
+  if (!el_course_duration && !el_level) return;
 
-    // Create a single row for level and duration with the format "LEVEL | DURATION"
-    if (el_level || el_course_duration) {
-      const levelDurationElement = createTag('p', { class: 'course-info-level-duration' });
+  // Translate level values using placeholders
+  const translateLevel = (level) => {
+    const levelLower = level?.toLowerCase().trim();
+    const levelMap = {
+      beginner: placeholders?.filterExpLevelBeginnerTitle?.toUpperCase() || 'BEGINNER',
+      intermediate: placeholders?.filterExpLevelIntermediateTitle?.toUpperCase() || 'INTERMEDIATE',
+      experienced: placeholders?.filterExpLevelExperiencedTitle?.toUpperCase() || 'EXPERIENCED',
+    };
+    return levelMap[levelLower] || level?.toUpperCase();
+  };
 
-      let levelDurationText = '';
+  const levelText = el_level
+    ? String(el_level)
+        ?.split(',')
+        ?.filter(Boolean)
+        ?.map((level) => translateLevel(level))
+        ?.join(', ')
+    : '';
+  const durationText = el_course_duration ? String(el_course_duration)?.toUpperCase() : '';
+  const separator = levelText && durationText ? ' | ' : '';
+  const levelDurationText = `${levelText}${separator}${durationText}`;
 
-      // Format level in uppercase if available
-      if (el_level) {
-        // Ensure el_level is a string before calling toUpperCase()
-        levelDurationText += String(el_level).toUpperCase();
-      }
-
-      // Add separator if both level and duration are available
-      if (el_level && el_course_duration) {
-        levelDurationText += ' | ';
-      }
-
-      // Add duration in uppercase if available
-      if (el_course_duration) {
-        // Ensure el_course_duration is a string before calling toUpperCase()
-        levelDurationText += String(el_course_duration).toUpperCase();
-      }
-
-      levelDurationElement.textContent = levelDurationText;
-      courseInfoElement.appendChild(levelDurationElement);
-    }
-
-    cardContent.appendChild(courseInfoElement);
-  }
-
-  // Don't add module count here - it will be added in the status row
+  const courseInfoElement = createTag('div', { class: 'browse-card-course-info' });
+  courseInfoElement.appendChild(createTag('p', { class: 'course-info-level-duration' }, levelDurationText));
+  cardContent.appendChild(courseInfoElement);
 };
 
-// Update the course status section to include module count
 const buildCourseStatusContent = ({ meta, el_course_module_count, cardContent }) => {
-  if (meta?.courseInfo?.courseStatus) {
-    // Map course status to localized label
-    const statusMapping = {
-      [COURSE_STATUS.NOT_STARTED]: placeholders.courseStatusNotStarted || 'Not Started',
-      [COURSE_STATUS.IN_PROGRESS]: placeholders.courseStatusInProgress || 'In Progress',
-      [COURSE_STATUS.COMPLETED]: placeholders.courseStatusCompleted || 'Completed',
-    };
+  const courseStatus = meta?.courseInfo?.courseStatus;
+  if (!courseStatus) return;
 
-    const courseStatusLabel = statusMapping[meta.courseInfo.courseStatus] || '';
+  const statusLabel =
+    {
+      [COURSE_STATUS.NOT_STARTED]: placeholders?.courseStatusNotStarted || 'Not Started',
+      [COURSE_STATUS.IN_PROGRESS]: placeholders?.courseStatusInProgress || 'In Progress',
+      [COURSE_STATUS.COMPLETED]: placeholders?.courseStatusCompleted || 'Completed',
+    }[courseStatus] || '';
 
-    if (courseStatusLabel) {
-      const statusRow = createTag('div', { class: 'browse-card-status-row' });
+  if (!statusLabel) return;
 
-      // Left side - status indicator
-      const statusIndicator = createTag('div', { class: 'browse-card-status-indicator' });
-      statusIndicator.innerHTML = `<span class="status-badge status-${meta.courseInfo.courseStatus}"></span><span class="status-text">${courseStatusLabel}</span>`;
-      statusRow.appendChild(statusIndicator);
+  const statusRow = createTag('div', { class: 'browse-card-status-row' });
 
-      // Right side - module count
-      if (el_course_module_count) {
-        const moduleCountElement = createTag('div', { class: 'browse-card-module-count' });
+  // Status indicator
+  const statusIndicator = createTag('div', { class: 'browse-card-status-indicator' });
+  statusIndicator.innerHTML = `<span class="status-badge status-${courseStatus}"></span><span class="status-text">${statusLabel}</span>`;
+  statusRow.appendChild(statusIndicator);
 
-        // Determine completed modules count based on course status
-        let completedModules = 0;
-        if (meta.courseInfo.courseStatus === COURSE_STATUS.COMPLETED) {
-          // If course is completed, all modules are completed
-          completedModules = parseInt(el_course_module_count, 10);
-        } else if (meta.courseInfo.courseStatus === COURSE_STATUS.IN_PROGRESS) {
-          // For in-progress courses, count the number of completed modules
-          // In a real implementation, this would come from the course progress data
-          // For now, we'll use a placeholder value
-          completedModules = 1; // This would be replaced with actual data in a real implementation
-        }
-
-        // Format the module count as "X of Y Complete"
-        const moduleCountText = `${completedModules} of ${el_course_module_count} Complete`;
-        moduleCountElement.textContent = moduleCountText;
-
-        statusRow.appendChild(moduleCountElement);
-      }
-
-      cardContent.appendChild(statusRow);
+  if (el_course_module_count) {
+    let completedModules = 0;
+    if (courseStatus === COURSE_STATUS.COMPLETED) {
+      completedModules = parseInt(el_course_module_count, 10);
+    } else if (courseStatus === COURSE_STATUS.IN_PROGRESS && meta.courseInfo.profileCourse?.modules) {
+      completedModules = meta.courseInfo.profileCourse.modules.filter((module) => module.finishedAt).length;
     }
+
+    const moduleCountText = placeholders.courseModuleCompletedCount
+      ? placeholders?.courseModuleCompletedCount?.replace('{}', completedModules).replace('{}', el_course_module_count)
+      : `${completedModules} of ${el_course_module_count} Complete`;
+
+    statusRow.appendChild(createTag('div', { class: 'browse-card-module-count' }, moduleCountText));
   }
+
+  cardContent.appendChild(statusRow);
 };
 
 const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }) => {
@@ -314,7 +298,33 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
 
 const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
-const buildCardContent = async (card, model) => {
+// Function to calculate cardHeader and cardPosition
+const getCardHeaderAndPosition = (card, element) => {
+  let cardHeader = '';
+  const currentBlock = card.closest('.block');
+  const headerEl = currentBlock?.querySelector(
+    '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
+  );
+  if (headerEl) {
+    const cloned = headerEl.cloneNode(true);
+    // Remove any PII or masked spans
+    cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
+    // Get cleaned text
+    cardHeader = cloned.innerText.trim();
+  }
+
+  cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
+
+  let cardPosition = '';
+  if (element?.parentElement?.children) {
+    const siblings = Array.from(element.parentElement.children);
+    cardPosition = String(siblings.indexOf(element) + 1);
+  }
+
+  return { cardHeader, cardPosition };
+};
+
+const buildCardContent = async (card, model, element) => {
   const {
     id,
     description,
@@ -414,17 +424,22 @@ const buildCardContent = async (card, model) => {
 
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
-  let bookmarkTrackingInfo;
+  let trackingInfo;
   if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
     const lang = document.querySelector('html').lang || 'en';
     const [, courseId] = model.viewLink?.split(`/${lang}/`) || [];
-    bookmarkTrackingInfo = {
+
+    const solution = model?.product?.length ? model?.product[0] : '';
+    const fullSolution = model?.product?.length ? model?.product?.join(',') : '';
+
+    trackingInfo = {
       destinationDomain: model.viewLink,
       course: {
         id: courseId || model.id,
         title: model.title,
-        solution: model.product,
-        role: model.role,
+        solution,
+        fullSolution,
+        role: model.role || '',
       },
     };
   }
@@ -436,7 +451,21 @@ const buildCardContent = async (card, model) => {
     link: copyLink,
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
     copyConfig: failedToLoad ? false : undefined,
-    bookmarkTrackingInfo,
+    trackingInfo,
+    bookmarkCallback: (linkType, position) => {
+      // Calculate cardHeader and cardPosition dynamically when callback is called
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+      const finalLinkType = linkType || cardHeader || '';
+      const finalPosition = position || cardPosition || '';
+      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, finalLinkType, finalPosition);
+    },
+    copyCallback: (linkType, position) => {
+      // Calculate cardHeader and cardPosition dynamically when callback is called
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+      const finalLinkType = linkType || cardHeader || '';
+      const finalPosition = position || cardPosition || '';
+      pushBrowseCardClickEvent('copyLinkBrowseCard', model, finalLinkType, finalPosition);
+    },
   });
 
   cardAction.decorate();
@@ -491,6 +520,24 @@ const getVideoClipModal = () => {
   return videoClipModalPromise;
 };
 
+// Dynamic imports for event decorators
+let upcomingEventsPromise = null;
+let onDemandEventsPromise = null;
+
+const getUpcomingEventsDecorator = () => {
+  if (!upcomingEventsPromise) {
+    upcomingEventsPromise = import('./browse-card-upcoming-events.js');
+  }
+  return upcomingEventsPromise;
+};
+
+const getOnDemandEventsDecorator = () => {
+  if (!onDemandEventsPromise) {
+    onDemandEventsPromise = import('./browse-card-on-demand-events.js');
+  }
+  return onDemandEventsPromise;
+};
+
 /**
  * Builds a browse card element with various components based on the provided model data.
  *
@@ -508,7 +555,8 @@ const getVideoClipModal = () => {
  * @param {string} [model.copyLink] - URL link for a copy/share action on the card.
  * @returns {Promise<void>} Resolves when the card is fully built and added to the DOM.
  */
-export async function buildCard(container, element, model) {
+
+export async function buildCard(element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
 
   element.setAttribute('data-analytics-content-type', contentType);
@@ -683,7 +731,7 @@ export async function buildCard(container, element, model) {
     });
   }
 
-  await buildCardContent(card, model);
+  await buildCardContent(card, model, element);
 
   if (isVideoClip) {
     const cardOptions = card.querySelector('.browse-card-options');
@@ -694,9 +742,14 @@ export async function buildCard(container, element, model) {
       e.preventDefault();
       e.stopPropagation();
 
+      // Get card header and position for tracking
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+
       getVideoClipModal().then(async ({ BrowseCardVideoClipModal }) => {
         const modal = await BrowseCardVideoClipModal.create({
           model,
+          cardHeader,
+          cardPosition,
         });
         modal.open();
       });
@@ -732,46 +785,42 @@ export async function buildCard(container, element, model) {
     element.appendChild(card);
   }
 
-  const cardHeader =
-    card.parentElement?.parentElement?.parentElement?.parentElement?.parentElement
-      ?.querySelector('div > div.browse-cards-block-title')
-      ?.innerText.trim() ||
-    card.parentElement?.parentElement?.parentElement?.parentElement
-      ?.querySelector('.rec-block-header')
-      ?.innerText.trim() ||
-    '';
-  const cardPosition = String(Array.from(element.parentElement.children).indexOf(element) + 1);
+  // Browse card click event handler
+  element.querySelector('a')?.addEventListener('click', (e) => {
+    const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+    const shouldOpenInNewTab = element.closest('.section')?.getAttribute('data-new-tab') === 'true';
 
-  // DataLayer - Browse card click event
-  element.querySelector('a:not(.browse-card-options)')?.addEventListener(
-    'click',
-    () => {
+    if (shouldOpenInNewTab) {
+      element.querySelector('a')?.setAttribute('target', '_blank');
+    }
+    const cardOptions = card.querySelector('.browse-card-options');
+    if (cardOptions) {
+      card.dataset.cardHeader = cardHeader || '';
+      card.dataset.cardPosition = cardPosition || '';
+    }
+
+    if (e.target.closest('.user-actions')) {
+      return;
+    }
+
+    // show more/less anlytics events
+    if (e.target?.classList?.contains('show-more') || e.target?.classList?.contains('show-less')) {
+      const eventName = e.target.classList.contains('show-less') ? 'browseCardShowMore' : 'browseCardShowLess';
+      pushBrowseCardClickEvent(eventName, model, cardHeader, cardPosition);
+      return;
+    }
+
+    // CTA element click
+    if (e.target.closest('.browse-card-cta-element')) {
+      pushBrowseCardClickEvent('browseCardCTAClick', model, cardHeader, cardPosition);
+      return;
+    }
+
+    // Card click (excluding options and CTA)
+    if (e.target.closest('a:not(.browse-card-options):not(.browse-card-cta-element)')) {
       pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
-    },
-    { once: true },
-  );
-
-  // DataLayer - Browse card click event for Bookmark
-  element.querySelector('.browse-card-options .user-actions .bookmark')?.addEventListener(
-    'click',
-    (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, cardHeader, cardPosition);
-    },
-    { once: true },
-  );
-
-  // DataLayer - Browse card click event for Copy Link
-  element.querySelector('.browse-card-options .user-actions .copy-link')?.addEventListener(
-    'click',
-    (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      pushBrowseCardClickEvent('copyLinkBrowseCard', model, cardHeader, cardPosition);
-    },
-    { once: true },
-  );
+    }
+  });
 
   element.querySelector('a').addEventListener(
     'click',
@@ -780,4 +829,32 @@ export async function buildCard(container, element, model) {
     },
     { once: true },
   );
+
+  // Apply special decorations for upcoming events v2 - change for all upcoming events later
+  const v2 = card.closest('.upcoming-event-v2');
+  const browseFilters = card.closest('.browse-filters');
+  const isBrowseFiltersUpcoming = browseFilters && card.classList.contains('upcoming-event-card');
+
+  /* TODO - Remove events-v2 scope during clean up */
+  if (v2) {
+    v2.classList.add('events-v2');
+  } else if (isBrowseFiltersUpcoming) {
+    browseFilters.classList.add('events-v2');
+  }
+
+  const cardEl = element.querySelector('.browse-card');
+  if (cardEl && (v2 || isBrowseFiltersUpcoming)) {
+    // Dynamically import and use the upcoming events decorator
+    getUpcomingEventsDecorator().then(({ decorateUpcomingEvents }) => {
+      decorateUpcomingEvents(cardEl, model);
+    });
+  }
+
+  if (model.contentType?.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY && isFeatureEnabled('isEventsV2')) {
+    const cardElement = element.querySelector('.browse-card');
+    // Dynamically import and use the on-demand events decorator
+    getOnDemandEventsDecorator().then(({ decorateOnDemandEvents }) => {
+      decorateOnDemandEvents(cardElement, model);
+    });
+  }
 }

@@ -1,7 +1,15 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { getPathDetails, fetchGlobalFragment, htmlToElement } from '../../scripts/scripts.js';
 
-/** @param {HTMLElement} block  */
+const FOOTER_CSS = '/blocks/footer/exl-footer.css';
+
+/**
+ * @typedef {Object} FooterOptions
+ * @property {string} [lang] - Language code override
+ * @property {string} [navLinkOrigin] - Origin to prepend to relative links
+ * @property {boolean} [customCookies] - Enable custom OneTrust cookie consent handling for community/external pages
+ * @property {string} [context] - Context identifier (e.g., 'community')
+ */
 const decorateFooterLinks = (block) => {
   const links = block.querySelectorAll('a[href*="@newtab"]');
   links.forEach((link) => {
@@ -165,27 +173,199 @@ function handleSocialIconStyles(footer) {
   });
 }
 
-/**
- * loads and decorates the footer
- * @param {Element} block The footer block element
- */
-export default async function decorate(block) {
-  // fetch footer content
-  const { lang } = getPathDetails();
-  const footerMeta = 'footer-fragment';
-  const fallback = '/en/global-fragments/footer';
-  const footerFragment = await fetchGlobalFragment(footerMeta, fallback, lang);
+class ExlFooter extends HTMLElement {
+  isLoaded = false;
 
-  if (footerFragment) {
-    // decorate footer DOM
-    const footer = document.createElement('div');
-    footer.innerHTML = footerFragment;
-    block.append(footer);
-    await decorateSocial(footer);
-    decorateBreadcrumb(footer);
-    await decorateMenu(footer);
-    handleSocialIconStyles(footer);
-    decorateCopyrightsMenu(footer);
-    footer?.querySelector('.language-selector')?.remove();
+  /**
+   * @param {{ lang?: string }} options
+   */
+  constructor(options = {}) {
+    super();
+    this.options = options;
+    this.attachShadow({ mode: 'open' });
   }
+
+  /**
+   * Loads a CSS file into the shadow root.
+   * @param {string} href URL to the CSS file
+   */
+  loadCSS(href, media) {
+    return new Promise((resolve, reject) => {
+      if (!this.shadowRoot.querySelector(`link[href="${href}"]`)) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        if (media) link.media = media;
+        link.onload = resolve;
+        link.onerror = reject;
+        this.shadowRoot.append(link);
+      } else {
+        resolve();
+      }
+    });
+  }
+
+  ensureShadowStyleShim() {
+    if (this.shadowRoot.querySelector('style[data-exl-footer-shim]')) return;
+    const style = document.createElement('style');
+    style.setAttribute('data-exl-footer-shim', 'true');
+    style.textContent = ':host { display: block; }';
+    this.shadowRoot.append(style);
+  }
+
+  async loadStyles() {
+    this.ensureShadowStyleShim();
+    return Promise.allSettled([this.loadCSS(`${window.hlx.codeBasePath}${FOOTER_CSS}`)]);
+  }
+
+  async decorate() {
+    try {
+      const { lang: pathLang } = getPathDetails();
+      const lang = this.options.lang || pathLang || 'en';
+      const footerMeta = 'footer-fragment';
+      const fallback = '/en/global-fragments/footer';
+      const footerFragment = await fetchGlobalFragment(footerMeta, fallback, lang);
+
+      if (footerFragment) {
+        const footer = document.createElement('div');
+        footer.innerHTML = footerFragment;
+        this.shadowRoot.append(footer);
+        await decorateSocial(footer);
+        decorateBreadcrumb(footer);
+        await decorateMenu(footer);
+        handleSocialIconStyles(footer);
+        decorateCopyrightsMenu(footer);
+        footer.querySelector('.language-selector')?.remove();
+        // Initialize custom cookie handler if enabled (for community pages)
+        if (this.options.customCookies) {
+          import('../../scripts/custom-cookies/custom-cookies.js').then((module) => {
+            module.default();
+          });
+        }
+        this.dispatchEvent(new Event('footer-decorated'));
+      }
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Error decorating footer', err);
+    }
+  }
+
+  async connectedCallback() {
+    if (this.isLoaded) return;
+    this.style.display = 'none';
+    await Promise.allSettled([this.loadStyles(), this.decorate()]);
+    this.style.display = '';
+    this.isLoaded = true;
+
+    const oneTrustAnchorElement = this.shadowRoot.querySelector('[href="#onetrust"]');
+    if (oneTrustAnchorElement) {
+      oneTrustAnchorElement.addEventListener('click', (evt) => {
+        evt.preventDefault();
+        evt.stopPropagation();
+      });
+
+      oneTrustAnchorElement.addEventListener('keydown', (evt) => {
+        const isActivateKey = evt.key === 'Enter' || evt.key === ' ';
+        if (!isActivateKey) return;
+        evt.preventDefault();
+        evt.stopPropagation();
+        this.dispatchEvent(
+          new CustomEvent('exl-onetrust-activate', {
+            bubbles: true,
+            composed: true,
+          }),
+        );
+      });
+
+      const footerContainer = this.shadowRoot.querySelector('.footer-container');
+      if (footerContainer) {
+        this.resizeObserver = new ResizeObserver(() => {
+          this.dispatchEvent(new CustomEvent('exl-footer-resize', { bubbles: true, composed: true }));
+        });
+        this.resizeObserver.observe(footerContainer);
+      }
+    }
+
+    this.dispatchEvent(
+      new CustomEvent('footer-loaded', {
+        detail: { oneTrustAnchorElement: oneTrustAnchorElement || null },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  disconnectedCallback() {
+    this.resizeObserver?.disconnect();
+  }
+}
+
+if (!customElements.get('exl-footer')) {
+  customElements.define('exl-footer', ExlFooter);
+}
+
+/**
+ * Create footer web component and attach to the DOM
+ * @param {Element} block The footer block element
+ * @param {FooterOptions} [options] Optional configuration for external/community usage
+ */
+export default async function decorate(block, options = {}) {
+  const exlFooter = new ExlFooter(options);
+  exlFooter.addEventListener(
+    'footer-loaded',
+    (e) => {
+      const oneTrustAnchorElement = e.detail?.oneTrustAnchorElement;
+      if (oneTrustAnchorElement) {
+        block.classList.add('footer-container');
+        oneTrustAnchorElement.classList.add('footer-invisible-anchor');
+        const existing = block.querySelector('[data-exl-onetrust-anchor="true"]');
+        if (existing?.exlCleanup) existing.exlCleanup();
+        existing?.remove();
+
+        const oneTrustAnchorCloneEl = oneTrustAnchorElement.cloneNode(true);
+        oneTrustAnchorCloneEl.setAttribute('aria-hidden', 'true');
+        oneTrustAnchorCloneEl.setAttribute('tabindex', '-1');
+        block.append(oneTrustAnchorCloneEl);
+        let raf = 0;
+        const syncOverlay = () => {
+          oneTrustAnchorElement.classList.remove('footer-invisible-anchor');
+          oneTrustAnchorCloneEl.classList.add('footer-invisible-anchor');
+          if (raf) return;
+          raf = window.requestAnimationFrame(() => {
+            raf = 0;
+
+            const t = oneTrustAnchorElement.getBoundingClientRect();
+            const b = block.getBoundingClientRect();
+            if (!t.width || !t.height) {
+              oneTrustAnchorCloneEl.classList.add('footer-invisible-anchor');
+              return;
+            }
+
+            oneTrustAnchorCloneEl.style.top = `${t.top - b.top}px`;
+            oneTrustAnchorCloneEl.style.left = `${t.left - b.left}px`;
+            oneTrustAnchorCloneEl.style.width = `${t.width}px`;
+            oneTrustAnchorCloneEl.style.height = `${t.height}px`;
+
+            oneTrustAnchorCloneEl.classList.remove('footer-invisible-anchor');
+            oneTrustAnchorElement.classList.add('footer-invisible-anchor');
+          });
+        };
+
+        const onFooterResize = () => syncOverlay();
+        const onOneTrustActivate = () => oneTrustAnchorCloneEl.click();
+        exlFooter.addEventListener('exl-footer-resize', onFooterResize);
+        exlFooter.addEventListener('exl-onetrust-activate', onOneTrustActivate);
+
+        syncOverlay();
+        oneTrustAnchorCloneEl.exlCleanup = () => {
+          if (raf) window.cancelAnimationFrame(raf);
+          exlFooter.removeEventListener('exl-footer-resize', onFooterResize);
+          exlFooter.removeEventListener('exl-onetrust-activate', onOneTrustActivate);
+        };
+      }
+      document.dispatchEvent(new CustomEvent('footer-ready', { bubbles: true }));
+    },
+    { once: true },
+  );
+  block.replaceChildren(exlFooter);
 }

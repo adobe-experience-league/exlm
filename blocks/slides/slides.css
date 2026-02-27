@@ -96,6 +96,10 @@
   box-sizing: border-box;
 }
 
+.slides.hide-slides {
+  display: none;
+}
+
 .slides .container {
   display: flex;
   flex-direction: column;

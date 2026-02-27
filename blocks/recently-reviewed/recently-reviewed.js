@@ -205,7 +205,7 @@ export default async function decorate(block) {
       cardData.slice(noOfCards, noOfCards + DEFAULT_NUM_CARDS).forEach((item) => {
         const cardDiv = document.createElement('div');
         cardDiv.classList.add('card-wrapper');
-        buildCard(contentDiv, cardDiv, item);
+        buildCard(cardDiv, item);
         contentDiv.appendChild(cardDiv);
       });
       if (!cardData[noOfCards + DEFAULT_NUM_CARDS]) {

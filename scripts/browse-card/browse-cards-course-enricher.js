@@ -66,12 +66,16 @@ const BrowseCardsCourseEnricher = (() => {
         courseStatus = determineCourseStatus(courseProgress);
       }
 
+      const cardPath = extractCoursePathFromUrl(card.viewLink);
+      const profileCourse = courses?.find((c) => c.courseId === cardPath);
+
       return {
         ...card,
         meta: {
           ...card.meta,
           courseInfo: {
             courseStatus,
+            profileCourse, // Include the profile course data for module completion counting
           },
         },
       };

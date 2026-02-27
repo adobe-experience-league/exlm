@@ -1,6 +1,7 @@
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
-import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { createTag, fetchLanguagePlaceholders, getPathDetails } from '../../scripts/scripts.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 
 const DEFAULT_NUM_COURSES = 2;
 
@@ -19,7 +20,7 @@ export default function decorate(block) {
 
     coursesToRender.forEach((cardData) => {
       const cardDiv = document.createElement('div');
-      buildCard(contentDiv, cardDiv, cardData);
+      buildCard(cardDiv, cardData);
       fragment.appendChild(cardDiv);
     });
 
@@ -74,11 +75,16 @@ export default function decorate(block) {
         block.classList.add('inprogress-courses-hidden');
         return;
       }
+
+      const shimmer = new BrowseCardShimmer(DEFAULT_NUM_COURSES);
+      shimmer.addShimmer(contentDiv);
+
       const { getCurrentCourses, COURSE_STATUS } = await import('../../scripts/courses/course-profile.js');
-      Promise.all([getCurrentCourses(), defaultProfileClient.getMergedProfile()]).then(
-        async ([profileCourses, profileResult]) => {
+      Promise.all([getCurrentCourses(), defaultProfileClient.getMergedProfile()])
+        .then(async ([profileCourses, profileResult]) => {
           const courseIdentifiers = profileCourses.map((c) => c.courseId);
           if (!courseIdentifiers?.length) {
+            shimmer.removeShimmer();
             block.classList.add('inprogress-courses-hidden');
             return;
           }
@@ -95,7 +101,7 @@ export default function decorate(block) {
           const firstName = convertToTitleCase(profileResult?.first_name);
           const maskedFirstName = `<span data-cs-mask>${firstName}</span>`;
           headerEl.innerHTML = configuredHeadingText ? replaceProfileText(configuredHeadingText, maskedFirstName) : '';
-          const lang = document.querySelector('html').lang || 'en';
+          const { lang } = getPathDetails();
           const allCourses = await fetchCourseIndex(lang);
           const courseIds = courseIdentifiers.map((id) => `/${lang}/${id}`);
           const filteredCourses = allCourses.filter((course) => courseIds.includes(course.path));
@@ -123,6 +129,7 @@ export default function decorate(block) {
           );
 
           if (inProgressCourses.length === 0) {
+            shimmer.removeShimmer();
             block.classList.add('inprogress-courses-hidden');
             return;
           }
@@ -140,10 +147,16 @@ export default function decorate(block) {
           // Sort courses by latest module start time (most recent first)
           inProgressCourses.sort((a, b) => b.latestModuleStartTime - a.latestModuleStartTime);
 
+          shimmer.removeShimmer();
           const ctaSectionWrapper = block.querySelector('.inprogress-courses-cta-wrapper');
           setupCoursesUI(ctaSectionWrapper, inProgressCourses, contentDiv, placeholders);
-        },
-      );
+        })
+        .catch((err) => {
+          shimmer.removeShimmer();
+          block.classList.add('inprogress-courses-hidden');
+          // eslint-disable-next-line no-console
+          console.error('In Progress Courses:', err);
+        });
     });
   }
 }
