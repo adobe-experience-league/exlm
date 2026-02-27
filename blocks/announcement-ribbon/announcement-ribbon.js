@@ -184,13 +184,19 @@ async function decorateRibbon({
 }
 
 export default async function decorate(block) {
-  const allDivs = block.querySelectorAll(':scope div > div');
-  const isFillImage = block.classList.contains('fill-image');
-
-  const [image, heading, description, backgroundConfig, firstCta, secondCta] = allDivs;
-
-  const bgImage = isFillImage ? backgroundConfig : undefined;
-  const hexcode = !isFillImage ? backgroundConfig : undefined;
+  const allDivs = [...block.querySelectorAll(':scope div > div')];
+  let image;
+  let heading;
+  let description;
+  let bgImage;
+  let hexcode;
+  let firstCta;
+  let secondCta;
+  if (block.classList.contains('fill-image')) {
+    [image, heading, description, bgImage, hexcode, firstCta, secondCta] = allDivs;
+  } else {
+    [image, heading, description, hexcode, firstCta, secondCta] = allDivs;
+  }
   const dismissable = block.classList.contains('dismissable');
   let pagePath = '';
   let ribbonId = '';
