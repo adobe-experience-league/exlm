@@ -52,6 +52,7 @@
       "secondary-search",
       "accordion-group",
       "media",
+      "media-panel",
       "authorable-card",
       "featured-cards",
       "events-cards",
@@ -114,6 +115,7 @@
       "secondary-search",
       "accordion-group",
       "media",
+      "media-panel",
       "authorable-card",
       "featured-cards",
       "events-cards",
@@ -155,6 +157,7 @@
       "secondary-search",
       "accordion-group",
       "media",
+      "media-panel",
       "authorable-card",
       "featured-cards",
       "events-cards",
@@ -190,6 +193,7 @@
       "detailed-teaser",
       "video-embed",
       "media",
+      "media-panel",
       "block-quote",
       "callout",
       "note"
@@ -217,6 +221,7 @@
       "secondary-search",
       "accordion-group",
       "media",
+      "media-panel",
       "authorable-card",
       "browse-filters",
       "featured-cards",
@@ -350,6 +355,7 @@
       "sign-up",
       "video-embed",
       "media",
+      "media-panel",
       "block-quote",
       "callout",
       "article-tags",
@@ -421,6 +427,10 @@
   {
     "id": "teaser",
     "components": ["teaser", "detailed-teaser", "media"]
+  },
+  {
+    "id": "media-panel",
+    "components": []
   },
   {
     "id": "accordion",
