@@ -1,0 +1,187 @@
+.section.sticky-nav-section .sticky-nav-wrapper {
+  margin: 0 120px;
+  max-width: unset;
+}
+
+.section.sticky-nav-section {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--background-color);
+  padding: 0;
+  margin-bottom: 0;
+}
+
+/* Prevent Franklin's lazy-loading display:none from hiding the nav */
+.section.sticky-nav-section,
+.section.sticky-nav-section[style*='display: none'],
+.section.sticky-nav-section[style*='display:none'] {
+  display: block !important;
+}
+
+.sticky-nav {
+  position: relative;
+  display: block;
+  width: 100%;
+  background-color: var(--spectrum-gray-50);
+  border-radius: 0;
+}
+
+.sticky-nav-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: var(--nav-height);
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.sticky-nav-list {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 32px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+}
+
+.sticky-nav-list::-webkit-scrollbar {
+  display: none;
+}
+
+/* Override Franklin's first/last-child margin resets */
+.sticky-nav-item,
+.sticky-nav-item:first-child,
+.sticky-nav-item:last-child,
+.sticky-nav-item:first-of-type,
+.sticky-nav-item:last-of-type {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Base link styles */
+.section.sticky-nav-section .sticky-nav-list .sticky-nav-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 20px 0;
+  text-decoration: none;
+  font-family: var(--body-font-family);
+  color: var(--spectrum-gray-600);
+  font-size: var(--spectrum-font-size-300);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--spectrum-line-height-m);
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.section.sticky-nav-section .sticky-nav-list .sticky-nav-link:hover {
+  color: var(--text-color);
+  font-weight: var(--font-weight-bold);
+  border-bottom-color: transparent;
+}
+
+.section.sticky-nav-section .sticky-nav-list .sticky-nav-link.active {
+  color: var(--text-color);
+  font-weight: var(--font-weight-bold);
+  border-bottom: 2px solid var(--non-spectrum-link);
+}
+
+/* Override Franklin's global first/last-child a styles */
+.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link,
+.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link,
+.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link,
+.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 20px 0;
+  text-decoration: none;
+  font-family: var(--body-font-family);
+  color: var(--spectrum-gray-600);
+  font-size: var(--spectrum-font-size-300);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--spectrum-line-height-m);
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link:hover,
+.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link:hover,
+.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link:hover,
+.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link:hover {
+  color: var(--text-color);
+  font-weight: var(--font-weight-bold);
+  border-bottom-color: transparent;
+}
+
+.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link.active,
+.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link.active,
+.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link.active,
+.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link.active {
+  color: var(--text-color);
+  font-weight: var(--font-weight-bold);
+  border-bottom: 2px solid var(--non-spectrum-link);
+}
+
+/* Authoring mode — block not yet decorated by JS, show raw table as horizontal preview */
+.sticky-nav:not(:has(.sticky-nav-container)) {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 32px;
+  padding: 0 24px;
+  overflow-x: auto;
+  box-sizing: border-box;
+}
+
+.sticky-nav:not(:has(.sticky-nav-container)) > div {
+  display: contents;
+}
+
+.sticky-nav:not(:has(.sticky-nav-container)) > div > div:first-child {
+  display: none;
+}
+
+.sticky-nav:not(:has(.sticky-nav-container)) > div > div:last-child {
+  flex-shrink: 0;
+  padding: 12px 0;
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-300);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--spectrum-line-height-m);
+  white-space: nowrap;
+  color: var(--spectrum-gray-600);
+}
+
+.sticky-nav ul > li:not(:last-child) {
+  margin-bottom: 0;
+}
+
+/* Sticky Nav — desktop-only (> 1024px) horizontal tab bar, hidden on mobile/tablet */
+
+@media (max-width: 1024px) {
+  .section.sticky-nav-section,
+  .sticky-nav-wrapper,
+  .sticky-nav {
+    display: none !important;
+  }
+}

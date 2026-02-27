@@ -90,7 +90,8 @@
       "browse-courses",
       "course-recap",
       "slides",
-      "quiz-scorecard"
+      "quiz-scorecard",
+       "sticky-nav"
     ]
   },
   {
@@ -236,6 +237,10 @@
       "qualtrics",
       "announcement-ribbon"
     ]
+  },
+  {
+    "id": "sticky-nav-section",
+    "components": ["sticky-nav"]
   },
   {
     "id": "section-author-bio",
@@ -466,6 +471,10 @@
   {
     "id": "list-item",
     "components": ["list-content", "code", "note", "video-embed"]
+  },
+  {
+    "id": "sticky-nav",
+    "components": ["sticky-nav-item"]
   },
   {
     "id": "rte-custom-options",

@@ -1212,6 +1212,14 @@
     "id": "section",
     "fields": [
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "section-id",
+        "value": "",
+        "label": "Section ID (Optional)",
+        "description": "Optional. A unique identifier for this section used for anchor links and navigation."
+      },
+      {
         "component": "select",
         "name": "style",
         "value": "",
@@ -9044,6 +9052,27 @@
         "value": "",
         "label": "Slide ID",
         "description": "ID of the slide to render. Use the ID of the slide from the URL."
+      }
+    ]
+  },
+  {
+    "id": "sticky-nav-item",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "sectionId",
+        "value": "",
+        "label": "Section ID",
+        "description": "The ID of the section this navigation item links to (without #)."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "linkText",
+        "value": "",
+        "label": "Link Text",
+        "description": "The text to display for this navigation link."
       }
     ]
   }
