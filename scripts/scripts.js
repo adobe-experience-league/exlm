@@ -1074,7 +1074,7 @@ async function loadLazy(doc) {
   if (window.location.search?.indexOf('martech=off') === -1) loadMartech(headerPromise, footerPromise);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   if (isLiveGradientBgPage) {
-    loadDefaultModule('./live-gradient-bg/live-gradient-bg.js');
+    loadDefaultModule('./page-bg-gradient/page-bg-gradient.js');
   }
   loadFonts();
 }
