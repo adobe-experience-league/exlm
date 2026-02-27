@@ -186,22 +186,3 @@
     margin: 0;
   }
 }
-
-/* To be removed */
-
-@media (min-width: 900px) {
-  .articles-wrapper > .playlist-page {
-    padding-left: 111px;
-    padding-right: 104px;
-    max-width: 890px;
-    box-sizing: border-box;
-    margin: 0;
-  }
-}
-
-@media (min-width: 1440px) {
-  .articles-wrapper > .playlist-page {
-    max-width: calc(var(--default-max-width) - 80px);
-    margin: 0 auto;
-  }
-}

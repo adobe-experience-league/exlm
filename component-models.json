@@ -9054,7 +9054,7 @@
         "component": "text",
         "valueType": "string",
         "name": "playlistId",
-        "value": "",
+        "value": "analytics-configure-and-manage-traffic-variables",
         "label": "Playlist ID",
         "description": "ID of the playlist to render. Use the ID of the playlist from the URL."
       }
