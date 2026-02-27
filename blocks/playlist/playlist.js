@@ -288,12 +288,16 @@ function updatePlayer(playlist, playlistId) {
  */
 function updateProgress(videoIndex, playlist) {
   const { el, currentTime, duration, completed } = playlist.getVideo(videoIndex);
+
+  const wrapper = el.closest('.playlist-page');
+  if (!wrapper) return;
+
   // now viewing count
-  const nowViewingCount = document.querySelector('[data-playlist-now-viewing-count]');
+  const nowViewingCount = wrapper?.querySelector('[data-playlist-now-viewing-count]');
   if (nowViewingCount) nowViewingCount.textContent = parseInt(videoIndex, 10) + 1;
 
   // total count
-  [...document.querySelectorAll('[data-playlist-length]')].forEach((span) => {
+  [...wrapper.querySelectorAll('[data-playlist-length]')].forEach((span) => {
     span.textContent = playlist.length;
   });
 
@@ -302,7 +306,7 @@ function updateProgress(videoIndex, playlist) {
   progressBox.style.setProperty('--playlist-item-progress', `${((currentTime || 0) / duration) * 100}%`);
 
   // update overall progress
-  const playlistProgressBox = document.querySelector('[data-playlist-progress-box]');
+  const playlistProgressBox = wrapper?.querySelector('[data-playlist-progress-box]');
   const completedVideos = playlist.getVideos().filter((v) => v.currentTime >= v.duration - 1).length;
   playlistProgressBox.style.setProperty('--playlist-progress', `${(completedVideos / playlist.length) * 100}%`);
 
