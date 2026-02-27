@@ -1059,9 +1059,7 @@ function initLiveGradientBackground() {
     const main = document.querySelector('main');
     if (!body || !main) return false;
     if (!body.classList.contains('live-gradient-bg')) return false;
-    if (!window.matchMedia?.('(min-width: 640px)').matches) return false;
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return false;
-    if (main.querySelector('.bg-circle')) return false;
     return true;
   };
 

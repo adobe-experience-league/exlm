@@ -1,0 +1,119 @@
+body.live-gradient-bg {
+  position: relative;
+  background: transparent;
+}
+
+/* Layer 1 — Base Linear Gradient (cheap paint) */
+body.live-gradient-bg::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -4;
+  pointer-events: none;
+  background: linear-gradient(135deg, var(--lg-base-pink) 0%, var(--lg-base-blue) 100%);
+}
+
+/* Shared circle styles */
+body.live-gradient-bg .bg-circle {
+  position: fixed;
+  width: 60vw;
+  height: 60vw;
+  border-radius: 50%;
+  filter: blur(var(--lg-blur));
+  pointer-events: none;
+  z-index: -3;
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Individual color circles */
+body.live-gradient-bg .bg-blue {
+  background: radial-gradient(circle, var(--lg-circle-blue) 0%, rgb(181 222 255 / 0%) 100%);
+  animation: live-gradient-move-blue 90s ease-in-out infinite alternate;
+}
+
+body.live-gradient-bg .bg-pink {
+  background: radial-gradient(circle, var(--lg-circle-pink) 0%, rgb(250 74 162 / 0%) 100%);
+  animation: live-gradient-move-pink 120s ease-in-out infinite alternate;
+}
+
+body.live-gradient-bg .bg-orange {
+  background: radial-gradient(circle, var(--lg-circle-orange) 0%, rgb(255 124 101 / 0%) 100%);
+  animation: live-gradient-move-orange 150s ease-in-out infinite alternate;
+}
+
+/* Movement animations (kebab-case names) */
+@keyframes live-gradient-move-blue {
+  0% {
+    transform: translate3d(-20vw, -10vh, 0);
+  }
+
+  50% {
+    transform: translate3d(30vw, 20vh, 0);
+  }
+
+  100% {
+    transform: translate3d(-10vw, 40vh, 0);
+  }
+}
+
+@keyframes live-gradient-move-pink {
+  0% {
+    transform: translate3d(20vw, 50vh, 0);
+  }
+
+  50% {
+    transform: translate3d(-30vw, -20vh, 0);
+  }
+
+  100% {
+    transform: translate3d(10vw, -40vh, 0);
+  }
+}
+
+@keyframes live-gradient-move-orange {
+  0% {
+    transform: translate3d(40vw, -30vh, 0);
+  }
+
+  50% {
+    transform: translate3d(-40vw, 30vh, 0);
+  }
+
+  100% {
+    transform: translate3d(20vw, 50vh, 0);
+  }
+}
+
+/* Optional blur overlay (modern syntax only) */
+@supports (backdrop-filter: blur(1px)) {
+  body.live-gradient-bg::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background: rgb(255 255 255 / 6%);
+    backdrop-filter: blur(80px);
+  }
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  body.live-gradient-bg .bg-circle {
+    animation: none;
+    filter: none;
+  }
+
+  body.live-gradient-bg::after {
+    backdrop-filter: none;
+  }
+}
+
+/* Hide heavy visuals on small viewports */
+@media (max-width: 639px) {
+  body.live-gradient-bg .bg-circle,
+  body.live-gradient-bg::after {
+    display: none;
+  }
+}
