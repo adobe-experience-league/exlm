@@ -1201,7 +1201,6 @@
                   "model": "grid-cards",
                   "eyebrow": "Block Eyebrow",
                   "title": "Grid Card Block Title",
-                  "titleType": "h2",
                   "description": "<p>Grid card block description</p>",
                   "variant": "minimal",
                   "item1": {
@@ -1212,9 +1211,9 @@
                     "fileReference": "/content/dam/exlm/content-at-scale.png",
                     "fileReferenceAlt": "Card image",
                     "cardTitle": "Card Title",
-                    "cardTitleType": "h3",
                     "cta_link": "/content/exlm/global/en",
-                    "cta_linkText": "Learn More"
+                    "cta_linkText": "Learn More",
+                    "cta_Type": "secondary"
                   },
                   "item2": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
@@ -1224,9 +1223,9 @@
                     "fileReference": "/content/dam/exlm/content-at-scale.png",
                     "fileReferenceAlt": "Card image",
                     "cardTitle": "Card Title",
-                    "cardTitleType": "h3",
                     "cta_link": "/content/exlm/global/en",
-                    "cta_linkText": "Learn More"
+                    "cta_linkText": "Learn More",
+                    "cta_Type": "secondary"
                   },
                   "item3": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
@@ -1236,9 +1235,9 @@
                     "fileReference": "/content/dam/exlm/content-at-scale.png",
                     "fileReferenceAlt": "Card image",
                     "cardTitle": "Card Title",
-                    "cardTitleType": "h3",
                     "cta_link": "/content/exlm/global/en",
-                    "cta_linkText": "Learn More"
+                    "cta_linkText": "Learn More",
+                    "cta_Type": "secondary"
                   }
                 }
               }
@@ -1259,9 +1258,9 @@
                   "fileReference": "/content/dam/exlm/content-at-scale.png",
                   "fileReferenceAlt": "Card image",
                   "cardTitle": "Card Title",
-                  "cardTitleType": "h3",
                   "cta_link": "/content/exlm/global/en",
-                  "cta_linkText": "Learn More"
+                  "cta_linkText": "Learn More",
+                  "cta_Type": "secondary"
                 }
               }
             }
