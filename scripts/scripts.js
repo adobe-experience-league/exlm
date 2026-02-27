@@ -1419,13 +1419,13 @@ export function setMetadata(name, content) {
  */
 export function updateTQTagsForCoveo() {
   const keyMapping = {
-    'role_v2': 'role',
-    'level_v2': 'level',
-    'product_v2': 'coveo-solution',
-    'feature_v2': 'feature',
-    'subfeature_v2': 'sub-feature',
-    'industry_v2': 'industry',
-    'topic_v2': 'topic',
+    role_v2: 'role',
+    level_v2: 'level',
+    product_v2: 'coveo-solution',
+    feature_v2: 'feature',
+    subfeature_v2: 'sub-feature',
+    industry_v2: 'industry',
+    topic_v2: 'topic',
   };
 
   Object.entries(keyMapping).forEach(([originalName, metaName]) => {
@@ -1456,13 +1456,13 @@ export function updateTQTagsForCoveo() {
  */
 export function updateTQTagsMetadata(document) {
   const keyMapping = {
-    'role_v2': 'role-v2',
-    'level_v2': 'level-v2',
-    'product_v2': 'product-v2',
-    'feature_v2': 'feature-v2',
-    'subfeature_v2': 'subfeature-v2',
-    'industry_v2': 'industry-v2',
-    'topic_v2': 'topic-v2',
+    role_v2: 'role-v2',
+    level_v2: 'level-v2',
+    product_v2: 'product-v2',
+    feature_v2: 'feature-v2',
+    subfeature_v2: 'subfeature-v2',
+    industry_v2: 'industry-v2',
+    topic_v2: 'topic-v2',
   };
 
   Object.entries(keyMapping).forEach(([key, newKey]) => {
