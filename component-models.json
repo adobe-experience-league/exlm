@@ -3337,39 +3337,6 @@
         "description": "Sets the main heading."
       },
       {
-        "component": "select",
-        "valueType": "string",
-        "name": "titleType",
-        "value": "h3",
-        "label": "Heading Type",
-        "options": [
-          {
-            "name": "H1",
-            "value": "h1"
-          },
-          {
-            "name": "H2",
-            "value": "h2"
-          },
-          {
-            "name": "H3",
-            "value": "h3"
-          },
-          {
-            "name": "H4",
-            "value": "h4"
-          },
-          {
-            "name": "H5",
-            "value": "h5"
-          },
-          {
-            "name": "H6",
-            "value": "h6"
-          }
-        ]
-      },
-      {
         "component": "richtext",
         "valueType": "string",
         "name": "description",
@@ -3540,42 +3507,6 @@
         "value": "",
         "label": "Podcast Card Heading",
         "description": "Heading for the podcast card variant."
-      },
-      {
-        "condition": {
-          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "podcast-card"] }]
-        },
-        "component": "select",
-        "valueType": "string",
-        "name": "podcastCardHeadingType",
-        "value": "h4",
-        "label": "Podcast Card Heading Type",
-        "options": [
-          {
-            "name": "H1",
-            "value": "h1"
-          },
-          {
-            "name": "H2",
-            "value": "h2"
-          },
-          {
-            "name": "H3",
-            "value": "h3"
-          },
-          {
-            "name": "H4",
-            "value": "h4"
-          },
-          {
-            "name": "H5",
-            "value": "h5"
-          },
-          {
-            "name": "H6",
-            "value": "h6"
-          }
-        ]
       },
       {
         "condition": {

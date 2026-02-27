@@ -5,27 +5,33 @@ export default function decorate(block) {
 
   image.classList.add('image');
   eyebrow.classList.add('eyebrow');
-  heading.classList.add('heading');
+  const headingTag = document.createElement('h2');
+  headingTag.classList.add('heading');
+  headingTag.innerHTML = heading.innerHTML;
+  heading.replaceWith(headingTag);
   description.classList.add('description');
   cta.classList.add('cta');
-  podcastHeading.classList.add('podcast-heading');
+  const podcastHeadingTag = document.createElement('h3');
+  podcastHeadingTag.classList.add('podcast-heading');
+  podcastHeadingTag.innerHTML = podcastHeading.innerHTML;
+  podcastHeading.replaceWith(podcastHeadingTag);
   podcastDescription.classList.add('podcast-description');
 
   const podcastContainer = document.createElement('div');
   podcastContainer.classList.add('podcast-container');
   block.append(podcastContainer);
-  podcastContainer.append(image, podcastHeading, podcastDescription);
+  podcastContainer.append(image, podcastHeadingTag, podcastDescription);
 
   const contentContainer = document.createElement('div');
   contentContainer.classList.add('content-container');
   block.append(contentContainer);
-  contentContainer.append(eyebrow, heading, description);
+  contentContainer.append(eyebrow, headingTag, description);
   cta.innerHTML = decorateCustomButtons(cta.firstElementChild);
 
   contentContainer.append(cta);
 
   if (!block.classList.contains('podcast-card')) {
-    podcastHeading.remove();
+    podcastHeadingTag.remove();
     podcastDescription.remove();
   }
 }
