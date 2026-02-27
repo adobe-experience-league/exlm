@@ -8797,5 +8797,247 @@
         "description": "ID of the slide to render. Use the ID of the slide from the URL."
       }
     ]
+  },
+  {
+    "id": "grid-cards",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrow",
+        "value": "",
+        "label": "Eyebrow",
+        "description": "Sets the small pre-title above the title."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the main title of the grid cards."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description for the grid cards."
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "value": "standard",
+        "label": "Style",
+        "description": "Sets the style variant for the grid cards.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Minimal Card Variant",
+            "value": "minimal"
+          },
+          {
+            "name": "Standard Card Variant",
+            "value": "standard"
+          },
+          {
+            "name": "Wide Card Variant",
+            "value": "wide"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "grid-card",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the title for the card. Please limit the content to 2 lines."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "desc",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description for the card. Please limit the content to 3 lines and 4 lines in case of Wide card variant."
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Image",
+        "description": "Sets the image for the card.",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "fileReferenceAlt",
+        "value": "",
+        "label": "Image Alt Text",
+        "description": "A descriptive text of the image."
+      },
+      {
+        "component": "select",
+        "name": "cta_Type",
+        "value": "primary",
+        "label": "CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          },
+          {
+            "name": "Tertiary",
+            "value": "tertiary"
+          },
+          {
+            "name": "Custom",
+            "value": "custom"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "cta_Type" }, "custom"]
+        },
+        "component": "select",
+        "name": "cta_customBgColor",
+        "value": "",
+        "label": "CTA Background Color",
+        "description": "Select CTA background color. Select 'Custom Hexcode' to enter the custom color",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Gray",
+            "value": "--spectrum-gray-700"
+          },
+          {
+            "name": "Blue",
+            "value": "--spectrum-blue-700"
+          },
+          {
+            "name": "Green",
+            "value": "--spectrum-green-700"
+          },
+          {
+            "name": "Orange",
+            "value": "--spectrum-orange-700"
+          },
+          {
+            "name": "Red",
+            "value": "--spectrum-red-700"
+          },
+          {
+            "name": "Celery",
+            "value": "--spectrum-celery-700"
+          },
+          {
+            "name": "Chartreuse",
+            "value": "--spectrum-chartreuse-700"
+          },
+          {
+            "name": "Cyan",
+            "value": "--spectrum-cyan-700"
+          },
+          {
+            "name": "Fuchsia",
+            "value": "--spectrum-fuchsia-700"
+          },
+          {
+            "name": "Indigo",
+            "value": "--spectrum-indigo-700"
+          },
+          {
+            "name": "Magenta",
+            "value": "--spectrum-magenta-700"
+          },
+          {
+            "name": "Purple",
+            "value": "--spectrum-purple-700"
+          },
+          {
+            "name": "Seafoam",
+            "value": "--spectrum-seafoam-700"
+          },
+          {
+            "name": "Yellow",
+            "value": "--spectrum-yellow-700"
+          },
+          {
+            "name": "Adobe Red",
+            "value": "--non-spectrum-adobe-red"
+          },
+          {
+            "name": "Custom Hexcode",
+            "value": "custom-hexcode"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "and": [
+            { "===": [{ "var": "cta_customBgColor" }, "custom-hexcode"] },
+            { "===": [{ "var": "cta_Type" }, "custom"] }
+          ]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_customBgHexCode",
+        "value": "",
+        "label": "CTA Custom Background Hexcode",
+        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
+      },
+      {
+        "condition": {
+          "===": [{ "var": "cta_Type" }, "custom"]
+        },
+        "component": "select",
+        "valueType": "string",
+        "name": "cta_textColor",
+        "value": "white",
+        "label": "CTA Text Color",
+        "description": "Select the text color",
+        "options": [
+          {
+            "name": "White",
+            "value": "white"
+          },
+          {
+            "name": "Black",
+            "value": "black"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_link",
+        "value": "",
+        "label": "CTA Link",
+        "description": "What link to open when clicking the button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_linkText",
+        "value": "",
+        "label": "CTA Text",
+        "description": "Text to be shown inside button."
+      }
+    ]
   }
 ]
