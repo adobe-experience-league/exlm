@@ -4,16 +4,15 @@ export default function initLiveGradientBackground() {
   const shouldCreateLiveGradient = () => {
     const { body } = document;
     const main = document.querySelector('main');
-    if (!body || !main) return false;
-    if (!body.classList.contains('live-gradient-bg')) return false;
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return false;
+    if (!body?.classList.contains('live-gradient-bg') || !main) {
+      return false;
+    }
     return true;
   };
 
   const createLiveGradientCircles = () => {
     if (!shouldCreateLiveGradient()) return;
     const main = document.querySelector('main');
-    if (!main) return;
     if (main.querySelector('.bg-circles-wrapper')) return;
 
     const circlesWrapper = document.createElement('div');
