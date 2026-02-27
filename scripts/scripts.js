@@ -168,6 +168,7 @@ export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 export const isCourseStep = matchesAnyTheme(/course-step/);
 export const isOnDemandEventPage = matchesAnyTheme(/on-demand-event/);
+export const isLiveGradientBgPage = matchesAnyTheme(/live-gradient-bg/);
 
 export const isCertificatePage = () => !!document.querySelector('.course-completion'); // Checking for presence of course-completion block
 
@@ -1044,44 +1045,6 @@ async function loadDefaultModule(jsPath) {
   }
 }
 
-function initLiveGradientBackground() {
-  const shouldCreateLiveGradient = () => {
-    const { body } = document;
-    const main = document.querySelector('main');
-    if (!body || !main) return false;
-    if (!body.classList.contains('live-gradient-bg')) return false;
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return false;
-    return true;
-  };
-
-  const createLiveGradientCircles = () => {
-    if (!shouldCreateLiveGradient()) return;
-    const main = document.querySelector('main');
-    if (!main) return;
-    if (main.querySelector('.bg-circles')) return;
-    const circlesWrapper = document.createElement('div');
-    circlesWrapper.className = 'bg-circles';
-    circlesWrapper.setAttribute('aria-hidden', 'true');
-    circlesWrapper.setAttribute('role', 'presentation');
-
-    ['bg-blue', 'bg-pink', 'bg-orange'].forEach((colorClass) => {
-      const circle = document.createElement('div');
-      circle.className = `bg-circle ${colorClass}`;
-      circle.setAttribute('aria-hidden', 'true');
-      circle.setAttribute('role', 'presentation');
-      circlesWrapper.appendChild(circle);
-    });
-
-    main.prepend(circlesWrapper);
-  };
-
-  if ('requestIdleCallback' in window) {
-    window.requestIdleCallback(createLiveGradientCircles, { timeout: 2000 });
-  } else {
-    window.setTimeout(createLiveGradientCircles, 1200);
-  }
-}
-
 /**
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
@@ -1110,7 +1073,9 @@ async function loadLazy(doc) {
   // disable martech if martech=off is in the query string, this is used for testing ONLY
   if (window.location.search?.indexOf('martech=off') === -1) loadMartech(headerPromise, footerPromise);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
-  initLiveGradientBackground();
+  if (isLiveGradientBgPage) {
+    loadDefaultModule('./live-gradient-bg/live-gradient-bg.js');
+  }
   loadFonts();
 }
 
