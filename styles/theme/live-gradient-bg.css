@@ -33,7 +33,7 @@ body.live-gradient-bg .bg-circles-wrapper {
 }
 
 /* Shared circle styles */
-body.live-gradient-bg .bg-circle {
+body.live-gradient-bg .bg-circles-wrapper > div {
   position: fixed;
   width: 60vw;
   height: 60vw;
@@ -117,7 +117,7 @@ body.live-gradient-bg::after {
 
 /* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
-  body.live-gradient-bg .bg-circle {
+  body.live-gradient-bg .bg-circles-wrapper > div {
     animation: none;
     filter: none;
   }

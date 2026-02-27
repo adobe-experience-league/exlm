@@ -23,7 +23,7 @@ export default function initLiveGradientBackground() {
 
     ['bg-blue', 'bg-pink', 'bg-orange'].forEach((colorClass) => {
       const circle = document.createElement('div');
-      circle.className = `bg-circle ${colorClass}`;
+      circle.className = colorClass;
       circle.setAttribute('aria-hidden', 'true');
       circle.setAttribute('role', 'presentation');
       circlesWrapper.appendChild(circle);
