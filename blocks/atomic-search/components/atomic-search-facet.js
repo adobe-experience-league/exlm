@@ -9,6 +9,7 @@ import {
   updateHash,
   COMMUNITY_CONTENT_TYPES,
   extractFacetName,
+  buildI18nResourceBundles,
 } from './atomic-search-utils.js';
 
 const MAX_FACETS_WITHOUT_EXPANSION = 5;
@@ -17,7 +18,7 @@ export default function atomicFacetHandler(block, placeholders) {
   let baseObserver;
   let resultTimerId;
   const baseElement = block.querySelector('atomic-facet');
-  const searchInterface = block.querySelector('atomic-search-interface');
+  const bundles = buildI18nResourceBundles(placeholders);
 
   const adjustChildElementsPosition = (facet, atomicElement) => {
     if (facet.dataset.childfacet === 'true') {
@@ -388,6 +389,11 @@ export default function atomicFacetHandler(block, placeholders) {
     }
   };
 
+  const getFacetValueFromDOM = (facet) => {
+    const labelEl = facet.querySelector('.value-label');
+    return labelEl?.title?.trim() || labelEl?.textContent?.trim() || '';
+  };
+
   const handleAtomicFacetUI = (atomicFacet, forceUpdateUI = false) => {
     if (atomicFacet.getAttribute('id') === 'facetStatus') {
       // Hide the facetStatus if no filters are selected
@@ -405,17 +411,12 @@ export default function atomicFacetHandler(block, placeholders) {
     const parentWrapper = atomicFacet.shadowRoot.querySelector('[part="values"]');
     if (parentWrapper) {
       const facets = Array.from(parentWrapper.children);
-      const searchState = searchInterface.engine?.state;
-      const facetsResponse = searchState?.search?.response?.facets || [];
-      const facetResponse = facetsResponse.find((facet) => facet.field === atomicFacet.field);
-      const fieldFacets =
-        facetResponse?.values?.length > 0 && facetResponse.values.length === facets.length ? facetResponse.values : [];
-      facets.forEach((facet, index) => {
+      const rawBundle = bundles[atomicFacet.field] || {};
+      const translationBundle = Object.fromEntries(Object.entries(rawBundle).map(([key, value]) => [value, key]));
+      facets.forEach((facet) => {
         if (!facet.dataset.contenttype) {
-          const facetValue = fieldFacets[index]?.value || '';
-          const contentType =
-            facet.dataset.contenttype || facetValue || facet.querySelector('.value-label').title || '';
-          facet.dataset.contenttype = contentType;
+          const domValue = getFacetValueFromDOM(facet);
+          facet.dataset.contenttype = translationBundle[domValue] ?? domValue;
         }
       });
       facets.forEach((facet) => {
