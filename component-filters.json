@@ -54,6 +54,7 @@
       "media",
       "media-panel",
       "authorable-card",
+      "aim-events-cards",
       "featured-cards",
       "events-cards",
       "adls-cards",
@@ -117,6 +118,7 @@
       "media",
       "media-panel",
       "authorable-card",
+      "aim-events-cards",
       "featured-cards",
       "events-cards",
       "adls-cards",
@@ -159,6 +161,7 @@
       "media",
       "media-panel",
       "authorable-card",
+      "aim-events-cards",
       "featured-cards",
       "events-cards",
       "adls-cards",
@@ -223,6 +226,7 @@
       "media",
       "media-panel",
       "authorable-card",
+      "aim-events-cards",
       "browse-filters",
       "featured-cards",
       "events-cards",
@@ -463,6 +467,10 @@
   {
     "id": "flip-card",
     "components": ["flip-card-item"]
+  },
+  {
+    "id": "aim-events-cards",
+    "components": ["aim-events-card-item"]
   },
   {
     "id": "course-breakdown",
