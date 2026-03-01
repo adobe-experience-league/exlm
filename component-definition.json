@@ -1189,6 +1189,84 @@
           }
         },
         {
+          "title": "Grid Cards",
+          "id": "grid-cards",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Grid Cards",
+                  "model": "grid-cards",
+                  "filter": "grid-cards",
+                  "eyebrow": "Eyebrow Text",
+                  "title": "Grid Cards Title",
+                  "description": "Grid cards description text",
+                  "classes": "standard",
+                  "item1": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Grid Card",
+                    "model": "grid-card",
+                    "cardTitle": "Card Title",
+                    "cardDescription": "Card description text",
+                    "fileReference": "/content/dam/exlm/content-at-scale.png",
+                    "fileReferenceAlt": "Card image",
+                    "cta_Type": "secondary",
+                    "cta_linkText": "Learn More",
+                    "cta_link": "http://experienceleague.adobe.com/"
+                  },
+                  "item2": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Grid Card",
+                    "model": "grid-card",
+                    "cardTitle": "Card Title",
+                    "cardDescription": "Card description text",
+                    "fileReference": "/content/dam/exlm/content-at-scale.png",
+                    "fileReferenceAlt": "Card image",
+                    "cta_Type": "secondary",
+                    "cta_linkText": "Learn More",
+                    "cta_link": "http://experienceleague.adobe.com/"
+                  },
+                  "item3": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Grid Card",
+                    "model": "grid-card",
+                    "cardTitle": "Card Title",
+                    "cardDescription": "Card description text",
+                    "fileReference": "/content/dam/exlm/content-at-scale.png",
+                    "fileReferenceAlt": "Card image",
+                    "cta_Type": "secondary",
+                    "cta_linkText": "Learn More",
+                    "cta_link": "http://experienceleague.adobe.com/"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Grid Card",
+          "id": "grid-card",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Grid Card",
+                  "model": "grid-card",
+                  "cardTitle": "Card Title",
+                  "cardDescription": "Card description text",
+                  "fileReference": "/content/dam/exlm/content-at-scale.png",
+                  "fileReferenceAlt": "Card image",
+                  "cta_Type": "secondary",
+                  "cta_linkText": "Learn More",
+                  "cta_link": "http://experienceleague.adobe.com/"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "HTML App",
           "id": "html-app",
           "plugins": {
