@@ -21,7 +21,12 @@ export default async function decorate(block) {
 
   const [title, description, videoFileRow, imageMobile, primaryCtaRow, secondaryCtaRow] = allDivs;
 
-  const theme = block.classList.contains('dark') ? 'dark' : block.classList.contains('light') ? 'light' : '';
+  let theme = '';
+  if (block.classList.contains('dark')) {
+    theme = 'dark';
+  } else if (block.classList.contains('light')) {
+    theme = 'light';
+  }
 
   const primaryCta = primaryCtaRow?.firstElementChild;
   const secondaryCta = secondaryCtaRow?.firstElementChild;
@@ -34,22 +39,22 @@ export default async function decorate(block) {
 
   // Build structure
   const aimMarqueeDOM = document.createRange().createContextualFragment(`
-    <div class='aim-marquee-container'>
-      <div class='aim-marquee-content'>
-        <div class='aim-marquee-title'>
+    <div class='marquee-video-full-bleed-container'>
+      <div class='marquee-video-full-bleed-content'>
+        <div class='marquee-video-full-bleed-title'>
           <h1>${title?.textContent || ''}</h1>
         </div>
-        <div class='aim-marquee-description'>
+        <div class='marquee-video-full-bleed-description'>
           ${description?.innerHTML || ''}
         </div>
-        <div class='aim-marquee-cta'>
+        <div class='marquee-video-full-bleed-cta'>
           ${decorateCustomButtons(primaryCta, secondaryCta)}
         </div>
       </div>
       ${
         mobileImagePicture
           ? `
-        <div class="aim-marquee-image">
+        <div class="marquee-video-full-bleed-image">
           ${mobileImagePicture.outerHTML}
         </div>
       `
@@ -64,9 +69,9 @@ export default async function decorate(block) {
 
   // Background Video for desktop view
   if (videoSrc) {
-    const containerEl = block.querySelector('.aim-marquee-container');
+    const containerEl = block.querySelector('.marquee-video-full-bleed-container');
     const videoWrapper = document.createElement('div');
-    videoWrapper.classList.add('aim-marquee-video');
+    videoWrapper.classList.add('marquee-video-full-bleed-video');
 
     // Create custom play/pause button for mp4 video
     const video = document.createElement('video');
@@ -79,7 +84,7 @@ export default async function decorate(block) {
     const playIcon = `<svg class="play-icon" width="40" height="40" viewBox="0 0 13.512 14"><path d="M4.73,2H3.5a.5.5,0,0,0-.5.5v13a.5.5,0,0,0,.5.5H4.73a1,1,0,0,0,.5-.136L16.265,9.431a.5.5,0,0,0,0-.862L5.234,2.136A1,1,0,0,0,4.73,2Z" transform="translate(-3 -2)" fill="white"/></svg>`;
 
     const controlBtn = document.createElement('button');
-    controlBtn.className = 'aim-marquee-play-pause';
+    controlBtn.className = 'marquee-video-full-bleed-play-pause';
     controlBtn.innerHTML = pauseIcon;
     controlBtn.setAttribute('aria-label', 'Pause video');
 
@@ -100,7 +105,7 @@ export default async function decorate(block) {
     containerEl.prepend(videoWrapper);
   }
 
-  const ctaLinks = block.querySelectorAll('.aim-marquee-cta a');
+  const ctaLinks = block.querySelectorAll('.marquee-video-full-bleed-cta a');
   ctaLinks.forEach((ctaLink) => {
     handleJumpLink(ctaLink);
   });

@@ -2442,7 +2442,7 @@
     ]
   },
   {
-    "id": "aim-marquee",
+    "id": "marquee-video-full-bleed",
     "fields": [
       {
         "component": "text",
@@ -2450,7 +2450,7 @@
         "name": "title",
         "value": "",
         "label": "Title",
-        "description": "Sets the main title of the aim-marquee."
+        "description": "Sets the main title of the marquee-video-full-bleed block."
       },
       {
         "component": "richtext",
@@ -2558,7 +2558,7 @@
         "name": "secondaryCta_link",
         "value": "",
         "label": "Secondary CTA Link",
-        "description": "Link for secondary CTA."
+        "description": "Link for secondary CTA.Use #SECTION-ID for jump links."
       },
       {
         "component": "select",
