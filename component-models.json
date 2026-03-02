@@ -2450,6 +2450,7 @@
         "label": "Block options",
         "valueType": "string",
         "required": true,
+        "maxSize": 1,
         "options": [
           {
             "name": "Theme",
