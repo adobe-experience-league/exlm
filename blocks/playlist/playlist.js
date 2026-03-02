@@ -30,11 +30,24 @@ function getPlaylistHtml(data) {
 }
 
 function parsePlaylistHtml(html) {
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  return {
-    playlistEl: doc.querySelector('.playlist'),
-    doc,
-  };
+  try {
+    if (!html) return { playlistEl: null, doc: null };
+
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+
+    return {
+      playlistEl: doc.querySelector('.playlist'),
+      doc,
+    };
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to parse playlist HTML', error);
+
+    return {
+      playlistEl: null,
+      doc: null,
+    };
+  }
 }
 
 const removeLastSlash = (url) => url.replace(/\/$/, '');
@@ -257,16 +270,12 @@ function decoratePlaylistHeader(block, playlist) {
  */
 function updatePlayer(playlist, playlistId) {
   const video = playlist.getActiveVideo();
-  let wrapper;
   if (!video) return;
-  let exisatingPlayer = document.querySelector('[data-playlist-player]');
-  if (playlistId) {
-    if (!video.el || !(video.el instanceof HTMLElement)) return;
-    wrapper = video.el.closest('.playlist-page');
-    if (!wrapper) return;
-    exisatingPlayer = wrapper?.querySelector('[data-playlist-player]');
-  }
-  if (exisatingPlayer?.querySelector('iframe')?.src?.startsWith(video.src)) return;
+  if (!video.el || !(video.el instanceof HTMLElement)) return;
+  const wrapper = video.el.closest('.playlist-page');
+  if (!wrapper) return;
+  const currentPlayer = wrapper?.querySelector('[data-playlist-player]');
+  if (currentPlayer?.querySelector('iframe')?.src?.startsWith(video.src)) return;
   const player = newPlayer(playlist);
   if (!player) return;
   let playerContainer = document?.querySelector('[data-playlist-player-container]');

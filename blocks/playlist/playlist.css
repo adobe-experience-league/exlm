@@ -50,10 +50,10 @@
   height: 16px;
 }
 
-.section.playlist-container .default-content-wrapper {
+.playlist-page .section.playlist-container .default-content-wrapper {
   position: relative;
   padding: 1em;
-  margin: 0 !important;
+  margin: 0;
   border-bottom: var(--playlist-border);
   background-color: var(--spectrum-gray-50);
   border: var(--playlist-border);
