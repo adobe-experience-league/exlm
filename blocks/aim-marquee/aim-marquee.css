@@ -203,10 +203,7 @@ main .section.aim-marquee-container {
 
 /* Theme variations */
 .aim-marquee.dark .aim-marquee-title,
-.aim-marquee.dark .aim-marquee-title :where(h1, h2, h3, h4, h5, h6) {
-  color: var(--non-spectrum-dark-gray);
-}
-
+.aim-marquee.dark .aim-marquee-title :where(h1, h2, h3, h4, h5, h6),
 .aim-marquee.dark .aim-marquee-description {
   color: var(--non-spectrum-dark-gray);
 }

@@ -2453,39 +2453,6 @@
         "description": "Sets the main title of the aim-marquee."
       },
       {
-        "component": "select",
-        "valueType": "string",
-        "name": "titleType",
-        "value": "h1",
-        "label": "Title Heading Type",
-        "options": [
-          {
-            "name": "H1",
-            "value": "h1"
-          },
-          {
-            "name": "H2",
-            "value": "h2"
-          },
-          {
-            "name": "H3",
-            "value": "h3"
-          },
-          {
-            "name": "H4",
-            "value": "h4"
-          },
-          {
-            "name": "H5",
-            "value": "h5"
-          },
-          {
-            "name": "H6",
-            "value": "h6"
-          }
-        ]
-      },
-      {
         "component": "richtext",
         "valueType": "string",
         "name": "description",
@@ -2494,44 +2461,12 @@
         "description": "Sets the description text."
       },
       {
-        "component": "select",
-        "valueType": "string",
-        "name": "videoType",
-        "value": "mp4",
-        "label": "Video Type",
-        "description": "Select the type of video to use",
-        "options": [
-          {
-            "name": "MP4 File",
-            "value": "mp4"
-          },
-          {
-            "name": "MPC Video URL",
-            "value": "mpc"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "videoType" }, "mp4"]
-        },
         "component": "reference",
         "valueType": "string",
         "name": "videoFile",
         "label": "Video File (MP4)",
         "description": "Select MP4 video file from DAM for desktop and tablet devices.",
         "multi": false
-      },
-      {
-        "condition": {
-          "===": [{ "var": "videoType" }, "mpc"]
-        },
-        "component": "text",
-        "valueType": "string",
-        "name": "videoUrl",
-        "value": "",
-        "label": "MPC Video URL",
-        "description": "Enter the MPC video URL for desktop and tablet devices."
       },
       {
         "component": "reference",
@@ -2628,7 +2563,7 @@
       {
         "component": "select",
         "valueType": "string",
-        "name": "theme",
+        "name": "classes",
         "value": "",
         "label": "Theme",
         "description": "Dark theme renders title, description, and secondary CTA text in black; Light theme renders them in white.",
