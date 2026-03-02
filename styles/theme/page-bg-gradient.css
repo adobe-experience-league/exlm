@@ -1,0 +1,128 @@
+.page-bg-gradient {
+  /* Live gradient background colors */
+  --lg-base-pink: rgb(250 74 162 / 20%);
+  --lg-base-blue: rgb(181 222 255 / 20%);
+  --lg-circle-blue: rgb(181 222 255 / 40%);
+  --lg-circle-pink: rgb(250 74 162 / 10%);
+  --lg-circle-orange: rgb(255 124 101 / 10%);
+  --lg-blur: 80px;
+}
+
+body.page-bg-gradient {
+  position: relative;
+  isolation: isolate; /* prevents stacking conflicts */
+  background: transparent;
+}
+
+/* Layer 1 — Base Linear Gradient */
+body.page-bg-gradient .gradient-layer::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -4;
+  pointer-events: none;
+  background: linear-gradient(135deg, var(--lg-base-pink) 0%, var(--lg-base-blue) 100%);
+}
+
+/* Layer 2 — Circles Wrapper */
+body.page-bg-gradient .gradient-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+}
+
+/* Shared circle styles */
+body.page-bg-gradient .gradient-layer > .gradient-circle {
+  position: fixed;
+  width: 60vw;
+  height: 60vw;
+  border-radius: 50%;
+  filter: blur(var(--lg-blur));
+  pointer-events: none;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  transform-origin: center center;
+}
+
+/* Individual color circles */
+body.page-bg-gradient .gradient-circle-blue {
+  background: radial-gradient(circle, var(--lg-circle-blue) 0%, rgb(181 222 255 / 0%) 100%);
+  animation: live-gradient-move-blue 30s linear infinite;
+}
+
+body.page-bg-gradient .gradient-circle-pink {
+  background: radial-gradient(circle, var(--lg-circle-pink) 0%, rgb(250 74 162 / 0%) 100%);
+  animation: live-gradient-move-pink 45s linear infinite;
+}
+
+body.page-bg-gradient .gradient-circle-orange {
+  background: radial-gradient(circle, var(--lg-circle-orange) 0%, rgb(255 124 101 / 0%) 100%);
+  animation: live-gradient-move-orange 60s linear infinite;
+}
+
+/* Movement animations */
+@keyframes live-gradient-move-blue {
+  0% {
+    transform: translate3d(-20vw, -10vh, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate3d(30vw, 20vh, 0) rotate(180deg);
+  }
+
+  100% {
+    transform: translate3d(-10vw, 40vh, 0) rotate(360deg);
+  }
+}
+
+@keyframes live-gradient-move-pink {
+  0% {
+    transform: translate3d(20vw, 50vh, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate3d(-30vw, -20vh, 0) rotate(-180deg);
+  }
+
+  100% {
+    transform: translate3d(10vw, -40vh, 0) rotate(-360deg);
+  }
+}
+
+@keyframes live-gradient-move-orange {
+  0% {
+    transform: translate3d(40vw, -30vh, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate3d(-40vw, 30vh, 0) rotate(180deg);
+  }
+
+  100% {
+    transform: translate3d(20vw, 50vh, 0) rotate(360deg);
+  }
+}
+
+/* Layer 3 — White Blur Overlay */
+body.page-bg-gradient .gradient-layer::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: rgb(255 255 255 / 10%);
+  backdrop-filter: blur(80px);
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  body.page-bg-gradient .gradient-layer > .gradient-circle {
+    animation: none;
+    filter: none;
+  }
+
+  body.page-bg-gradient::after {
+    backdrop-filter: none;
+  }
+}
