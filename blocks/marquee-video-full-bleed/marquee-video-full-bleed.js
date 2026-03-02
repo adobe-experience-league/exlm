@@ -21,13 +21,6 @@ export default async function decorate(block) {
 
   const [title, description, videoFileRow, imageMobile, primaryCtaRow, secondaryCtaRow] = allDivs;
 
-  let theme = '';
-  if (block.classList.contains('dark')) {
-    theme = 'dark';
-  } else if (block.classList.contains('light')) {
-    theme = 'light';
-  }
-
   const primaryCta = primaryCtaRow?.firstElementChild;
   const secondaryCta = secondaryCtaRow?.firstElementChild;
   const mobileImagePicture = imageMobile?.querySelector('picture');
@@ -65,7 +58,6 @@ export default async function decorate(block) {
 
   block.textContent = '';
   block.append(aimMarqueeDOM);
-  if (theme) block.classList.add(theme);
 
   // Background Video for desktop view
   if (videoSrc) {
