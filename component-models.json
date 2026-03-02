@@ -4196,8 +4196,16 @@
     ]
   },
   {
-    "id": "aim-events-cards",
+    "id": "events",
     "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrowText",
+        "value": "",
+        "label": "Eyebrow Text",
+        "description": "Optional small label displayed above the block title."
+      },
       {
         "component": "text",
         "valueType": "string",
@@ -4295,29 +4303,66 @@
         "value": "",
         "label": "Block-level CTA Link",
         "description": "What link to open when clicking the button."
+      }
+    ]
+  },
+  {
+    "id": "event-item",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "tag",
+        "value": "",
+        "label": "Tag",
+        "description": "Tag for the event card."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "dateText",
+        "value": "",
+        "label": "Date Text",
+        "description": "Date text for the event."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eventTypeText",
+        "value": "",
+        "label": "Type of Event",
+        "description": "Type of event text."
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "title",
         "value": "",
-        "label": "Featured Card Title",
-        "description": "Sets the main title of the featured event card."
+        "label": "Title",
+        "description": "Title for the event card item."
       },
       {
         "component": "richtext",
         "valueType": "string",
         "name": "description",
         "value": "",
-        "label": "Featured Card Description",
-        "description": "Description for the featured event card."
+        "label": "Description",
+        "description": "Description for the event card item."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eventUrl",
+        "value": "",
+        "label": "Event URL",
+        "description": "URL for the event. When set, the card title becomes a link to this URL."
       },
       {
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",
         "label": "Image",
-        "description": "The featured event card image.",
+        "description": "Card image (used for the featured card).",
         "multi": false
       },
       {
@@ -4327,30 +4372,6 @@
         "value": "",
         "label": "Image Description",
         "description": "A descriptive text of the image."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "dateText",
-        "value": "",
-        "label": "Date Text",
-        "description": "Date text for the event (e.g. Feb 27, 2025)."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "tag",
-        "value": "",
-        "label": "Tag",
-        "description": "Tag for the featured event."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "eventType",
-        "value": "",
-        "label": "Type of Event",
-        "description": "Type of event for the featured card."
       },
       {
         "component": "select",
@@ -4433,51 +4454,6 @@
         "value": "",
         "label": "CTA Link",
         "description": "What link to open when clicking the button."
-      }
-    ]
-  },
-  {
-    "id": "aim-events-card-item",
-    "fields": [
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "tag",
-        "value": "",
-        "label": "Tag",
-        "description": "Tag for the event card."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "dateText",
-        "value": "",
-        "label": "Date Text",
-        "description": "Date text for the event."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "eventTypeText",
-        "value": "",
-        "label": "Type of Event",
-        "description": "Type of event text."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "title",
-        "value": "",
-        "label": "Title",
-        "description": "Title for the small event card."
-      },
-      {
-        "component": "richtext",
-        "valueType": "string",
-        "name": "description",
-        "value": "",
-        "label": "Description",
-        "description": "Description for the small event card."
       }
     ]
   },
