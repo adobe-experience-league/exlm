@@ -92,6 +92,7 @@
       "slides",
       "quiz-scorecard",
       "sticky-nav"
+      "grid-cards"
     ]
   },
   {
@@ -415,6 +416,10 @@
   {
     "id": "cards",
     "components": ["card"]
+  },
+  {
+    "id": "grid-cards",
+    "components": ["grid-card"]
   },
   {
     "id": "icon-block",
