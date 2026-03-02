@@ -20,13 +20,6 @@
   background-size: cover;
 }
 
-.announcement-ribbon.fill-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
 .announcement-ribbon .ribbon-image {
   display: none;
 }
