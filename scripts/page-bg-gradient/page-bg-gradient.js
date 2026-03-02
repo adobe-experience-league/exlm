@@ -1,6 +1,4 @@
 export default function initLiveGradientBackground() {
-  document.body?.classList.add('live-gradient-bg');
-
   const shouldCreateLiveGradient = () => {
     const { body } = document;
     const main = document.querySelector('main');
