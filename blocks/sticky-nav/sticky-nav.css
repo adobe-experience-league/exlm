@@ -174,9 +174,9 @@
   display: block !important;
 }
 
-/* Sticky Nav — desktop-only (> 1024px) horizontal tab bar, hidden on mobile/tablet */
+/* Sticky Nav — desktop-only (> 900px) horizontal tab bar, hidden on mobile/tablet */
 
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
   .section.sticky-nav-section,
   .sticky-nav-wrapper,
   .sticky-nav {

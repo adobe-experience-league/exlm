@@ -19,8 +19,8 @@ function assignSectionIds() {
   });
 }
 
-function setActiveLink(activeAnchor) {
-  document.querySelectorAll('.sticky-nav-link').forEach((link) => link.classList.remove('active'));
+function setActiveLink(activeAnchor, block) {
+  block.querySelectorAll('.sticky-nav-link').forEach((link) => link.classList.remove('active'));
   activeAnchor.classList.add('active');
 
   const navList = activeAnchor.closest('.sticky-nav-list');
@@ -56,7 +56,7 @@ function buildNavList(rows, block) {
       if (!target) return;
       const navHeight = block.closest('.section')?.offsetHeight ?? block.offsetHeight ?? 0;
       window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - navHeight, behavior: 'smooth' });
-      setActiveLink(anchor);
+      setActiveLink(anchor, block);
     });
 
     const item = document.createElement('li');
@@ -88,7 +88,7 @@ function setupScrollSpy(block, sectionEl) {
         .sort((entryA, entryB) => entryA.boundingClientRect.top - entryB.boundingClientRect.top)[0];
       if (topmost) {
         const link = sectionMap.get(topmost.target);
-        if (link) requestAnimationFrame(() => setActiveLink(link));
+        if (link) requestAnimationFrame(() => setActiveLink(link, block));
       }
     },
     { root: null, rootMargin: `-${navHeight}px 0px -50% 0px`, threshold: 0 },
@@ -103,9 +103,10 @@ export default function decorate(block) {
   ensureAncestorsVisible(block);
   assignSectionIds();
 
-  const nav = document.createElement('nav');
+  const nav = document.createElement('div');
   nav.className = 'sticky-nav-container';
   nav.setAttribute('aria-label', 'Page sections');
+  nav.setAttribute('role', 'navigation');
   nav.appendChild(buildNavList(block.children, block));
 
   block.textContent = '';

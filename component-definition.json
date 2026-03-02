@@ -2108,7 +2108,28 @@
                 "template": {
                   "name": "Sticky Nav",
                   "model": "sticky-nav",
-                  "filter": "sticky-nav"
+                   "filter": "sticky-nav",
+                  "item1": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Sticky Nav Item",
+                    "model": "sticky-nav-item",
+                    "sectionId": "section-1",
+                    "linkText": "Nav Item 1"
+                  },
+                  "item2": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Sticky Nav Item",
+                    "model": "sticky-nav-item",
+                    "sectionId": "section-2",
+                    "linkText": "Nav Item 2"
+                  },
+                  "item3": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Sticky Nav Item",
+                    "model": "sticky-nav-item",
+                    "sectionId": "section-3",
+                    "linkText": "Nav Item 3"
+                  }
                 }
               }
             }

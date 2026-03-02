@@ -9071,7 +9071,7 @@
         "valueType": "string",
         "name": "linkText",
         "value": "",
-        "label": "Link Text",
+        "label": "Nav Label",
         "description": "The text to display for this navigation link."
       }
     ]

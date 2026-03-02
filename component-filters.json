@@ -239,10 +239,6 @@
     ]
   },
   {
-    "id": "sticky-nav-section",
-    "components": ["sticky-nav"]
-  },
-  {
     "id": "section-author-bio",
     "components": ["author-bio"]
   },
