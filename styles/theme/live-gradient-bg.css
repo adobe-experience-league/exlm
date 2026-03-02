@@ -105,7 +105,7 @@ body.live-gradient-bg .bg-orange {
 }
 
 /* Layer 3 — White Blur Overlay */
-body.live-gradient-bg::after {
+body.live-gradient-bg .bg-circles-wrapper::after {
   content: '';
   position: fixed;
   inset: 0;

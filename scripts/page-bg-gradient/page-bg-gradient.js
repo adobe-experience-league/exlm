@@ -1,16 +1,10 @@
 export default function initLiveGradientBackground() {
-  const shouldCreateLiveGradient = () => {
-    const { body } = document;
-    const main = document.querySelector('main');
-    if (!body?.classList.contains('live-gradient-bg') || !main) {
-      return false;
-    }
-    return true;
-  };
+  const { body } = document;
+  const main = document.querySelector('main');
+
+  if (!body?.classList.contains('live-gradient-bg') || !main) return;
 
   const createLiveGradientCircles = () => {
-    if (!shouldCreateLiveGradient()) return;
-    const main = document.querySelector('main');
     if (main.querySelector('.bg-circles-wrapper')) return;
 
     const circlesWrapper = document.createElement('div');
