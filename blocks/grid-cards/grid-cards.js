@@ -51,10 +51,20 @@ export default function decorate(block) {
     }
 
     // add cta button if its not a wide card
-    if (!isWide) {
-      ctaCell.classList.add('grid-card-cta');
-      ctaCell.innerHTML = decorateCustomButtons(ctaCell);
-      contentWrapper.appendChild(ctaCell);
+    if (!isWide && ctaCell) {
+      const anchor = ctaCell.querySelector('a');
+
+      if (anchor) {
+        const text = anchor.textContent.trim();
+        const href = anchor.getAttribute('href')?.trim();
+
+        // Only show CTA if author provided real label text
+        if (text && href && text !== href) {
+          ctaCell.classList.add('grid-card-cta');
+          ctaCell.innerHTML = decorateCustomButtons(ctaCell);
+          contentWrapper.appendChild(ctaCell);
+        }
+      }
     }
 
     // create clickable wrapper for wide card
