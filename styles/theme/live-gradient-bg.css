@@ -15,7 +15,7 @@ body.live-gradient-bg {
 }
 
 /* Layer 1 — Base Linear Gradient */
-body.live-gradient-bg::before {
+body.live-gradient-bg .bg-circles-wrapper::before {
   content: '';
   position: fixed;
   inset: 0;
