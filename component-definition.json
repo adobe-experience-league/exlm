@@ -2186,7 +2186,7 @@
                 "template": {
                   "name": "Sticky Nav",
                   "model": "sticky-nav",
-                   "filter": "sticky-nav",
+                  "filter": "sticky-nav",
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Sticky Nav Item",
