@@ -1,15 +1,15 @@
-body.aim-hub .section:not(.sign-up-flow-section) {
+body.aim-hub .section {
   background-color: unset;
   color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-100);
   line-height: var(--spectrum-line-height-l);
 }
 
-body.aim-hub .section.bg-white:not(.sign-up-flow-section) {
+body.aim-hub .section.bg-white {
   background-color: var(--background-color);
 }
 
-body.aim-hub .section.bg-dark-gray:not(.sign-up-flow-section) {
+body.aim-hub .section.bg-dark-gray {
   background-color: var(--highlight-dark-background-color);
 }
 
@@ -31,11 +31,11 @@ body.aim-hub .section > .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) 
 }
 
 @media (min-width: 900px) {
-  body.aim-hub .section:not(.sign-up-flow-section) {
+  body.aim-hub .section {
     padding: 60px 40px;
   }
 
-  body.aim-hub .section.marquee-container:not(.sign-up-flow-section) {
+  body.aim-hub .section.marquee-container {
     padding: 0 56px;
   }
 }
