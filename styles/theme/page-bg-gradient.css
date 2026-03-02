@@ -15,7 +15,7 @@ body.page-bg-gradient {
 }
 
 /* Layer 1 — Base Linear Gradient */
-body.page-bg-gradient .bg-circles-wrapper::before {
+body.page-bg-gradient .gradient-layer::before {
   content: '';
   position: fixed;
   inset: 0;
@@ -25,7 +25,7 @@ body.page-bg-gradient .bg-circles-wrapper::before {
 }
 
 /* Layer 2 — Circles Wrapper */
-body.page-bg-gradient .bg-circles-wrapper {
+body.page-bg-gradient .gradient-layer {
   position: fixed;
   inset: 0;
   z-index: -3;
@@ -33,7 +33,7 @@ body.page-bg-gradient .bg-circles-wrapper {
 }
 
 /* Shared circle styles */
-body.page-bg-gradient .bg-circles-wrapper > div {
+body.page-bg-gradient .gradient-layer > .gradient-circle {
   position: fixed;
   width: 60vw;
   height: 60vw;
@@ -46,17 +46,17 @@ body.page-bg-gradient .bg-circles-wrapper > div {
 }
 
 /* Individual color circles */
-body.page-bg-gradient .bg-blue {
+body.page-bg-gradient .gradient-circle-blue {
   background: radial-gradient(circle, var(--lg-circle-blue) 0%, rgb(181 222 255 / 0%) 100%);
   animation: live-gradient-move-blue 30s linear infinite;
 }
 
-body.page-bg-gradient .bg-pink {
+body.page-bg-gradient .gradient-circle-pink {
   background: radial-gradient(circle, var(--lg-circle-pink) 0%, rgb(250 74 162 / 0%) 100%);
   animation: live-gradient-move-pink 45s linear infinite;
 }
 
-body.page-bg-gradient .bg-orange {
+body.page-bg-gradient .gradient-circle-orange {
   background: radial-gradient(circle, var(--lg-circle-orange) 0%, rgb(255 124 101 / 0%) 100%);
   animation: live-gradient-move-orange 60s linear infinite;
 }
@@ -105,7 +105,7 @@ body.page-bg-gradient .bg-orange {
 }
 
 /* Layer 3 — White Blur Overlay */
-body.page-bg-gradient .bg-circles-wrapper::after {
+body.page-bg-gradient .gradient-layer::after {
   content: '';
   position: fixed;
   inset: 0;
@@ -117,7 +117,7 @@ body.page-bg-gradient .bg-circles-wrapper::after {
 
 /* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
-  body.page-bg-gradient .bg-circles-wrapper > div {
+  body.page-bg-gradient .gradient-layer > .gradient-circle {
     animation: none;
     filter: none;
   }

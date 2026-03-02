@@ -5,14 +5,14 @@ export default function initLiveGradientBackground() {
   if (!body?.classList.contains('page-bg-gradient') || !main) return;
 
   const createLiveGradientCircles = () => {
-    if (main.querySelector('.bg-circles-wrapper')) return;
+    if (main.querySelector('.gradient-layer')) return;
 
     const circlesWrapper = document.createElement('div');
-    circlesWrapper.className = 'bg-circles-wrapper';
+    circlesWrapper.className = 'gradient-layer';
     circlesWrapper.setAttribute('aria-hidden', 'true');
     circlesWrapper.setAttribute('role', 'presentation');
 
-    ['bg-blue', 'bg-pink', 'bg-orange'].forEach((colorClass) => {
+    ['gradient-circle-blue', 'gradient-circle-pink', 'gradient-circle-orange'].forEach((colorClass) => {
       const circle = document.createElement('div');
       circle.className = colorClass;
       circle.setAttribute('aria-hidden', 'true');
