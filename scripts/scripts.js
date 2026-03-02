@@ -168,7 +168,7 @@ export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 export const isCourseStep = matchesAnyTheme(/course-step/);
 export const isOnDemandEventPage = matchesAnyTheme(/on-demand-event/);
-export const isLiveGradientBgPage = matchesAnyTheme(/live-gradient-bg/);
+export const isLiveGradientBgPage = matchesAnyTheme(/page-bg-gradient/);
 
 export const isCertificatePage = () => !!document.querySelector('.course-completion'); // Checking for presence of course-completion block
 

@@ -2,7 +2,7 @@ export default function initLiveGradientBackground() {
   const { body } = document;
   const main = document.querySelector('main');
 
-  if (!body?.classList.contains('live-gradient-bg') || !main) return;
+  if (!body?.classList.contains('page-bg-gradient') || !main) return;
 
   const createLiveGradientCircles = () => {
     if (main.querySelector('.bg-circles-wrapper')) return;
