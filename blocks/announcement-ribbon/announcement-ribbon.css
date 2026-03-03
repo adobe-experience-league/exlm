@@ -121,7 +121,7 @@
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .announcement-ribbon.medium {
     gap: 8px;
     padding: 57px 56px;
