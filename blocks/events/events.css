@@ -26,6 +26,7 @@
   font-size: var(--spectrum-font-size-400);
   color: var(--non-spectrum-dark-gray);
   line-height: 1.5;
+  text-align: center;
 }
 
 .events-content {

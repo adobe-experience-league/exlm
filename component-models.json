@@ -4268,14 +4268,6 @@
         "description": "Description for the event card item."
       },
       {
-        "component": "text",
-        "valueType": "string",
-        "name": "eventUrl",
-        "value": "",
-        "label": "Event URL",
-        "description": "URL for the event. When set, the card title becomes a link to this URL."
-      },
-      {
         "component": "reference",
         "valueType": "string",
         "name": "fileReference",

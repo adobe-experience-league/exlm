@@ -3,17 +3,15 @@ import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 const getText = (cell) => (cell?.textContent ?? '').trim();
 
-const getLink = (cell) => cell?.querySelector('a')?.getAttribute('href') ?? getText(cell) ?? '';
-
 function parseListItemCells(cells) {
-  const [tagCell, dateCell, typeCell, titleCell, descCell, urlCell] = [...(cells ?? [])];
+  const [tagCell, dateCell, typeCell, titleCell, descCell] = [...(cells ?? [])];
   return {
     tag: getText(tagCell),
     date: getText(dateCell),
     type: getText(typeCell),
     title: getText(titleCell),
     desc: getText(descCell),
-    url: getLink(urlCell).trim(),
+    url: '',
   };
 }
 
@@ -24,7 +22,7 @@ export default function decorate(block) {
   const blockTitle = getText(blockTitleDiv?.firstElementChild);
   const blockDescription = getText(blockDescDiv?.firstElementChild);
 
-  const [tagCell, dateCell, typeCell, titleCell, descCell, , imgCell, ctaCell] = [...(featuredRow?.children ?? [])];
+  const [tagCell, dateCell, typeCell, titleCell, descCell, imgCell, , ctaCell] = [...(featuredRow?.children ?? [])];
 
   const tag = getText(tagCell);
   const dateText = getText(dateCell);
