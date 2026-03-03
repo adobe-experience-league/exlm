@@ -13,7 +13,14 @@
   },
   {
     "id": "main-article",
-    "components": ["article-content-section", "article-header-section", "section", "tab-section", "list-section", "sticky-nav-section"]
+    "components": [
+      "article-content-section",
+      "article-header-section",
+      "section",
+      "tab-section",
+      "list-section",
+      "sticky-nav-section"
+    ]
   },
   {
     "id": "main-profile",
