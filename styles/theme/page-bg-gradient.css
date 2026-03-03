@@ -14,10 +14,6 @@
 
 /* Layer 1 — Base Linear Gradient */
 .page-bg-gradient main {
-  content: '';
-  inset: 0;
-  z-index: -4;
-  pointer-events: none;
   background: linear-gradient(135deg, var(--lg-base-pink) 0%, var(--lg-base-blue) 100%);
 }
 
