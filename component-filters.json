@@ -5,15 +5,15 @@
   },
   {
     "id": "main",
-    "components": ["section", "tab-section", "list-section"]
+    "components": ["section", "tab-section", "list-section", "sticky-nav-section"]
   },
   {
     "id": "main-browse",
-    "components": ["section", "browse-rail-section", "tab-section", "list-section"]
+    "components": ["section", "browse-rail-section", "tab-section", "list-section", "sticky-nav-section"]
   },
   {
     "id": "main-article",
-    "components": ["article-content-section", "article-header-section", "section", "tab-section", "list-section"]
+    "components": ["article-content-section", "article-header-section", "section", "tab-section", "list-section", "sticky-nav-section"]
   },
   {
     "id": "main-profile",
@@ -25,11 +25,11 @@
   },
   {
     "id": "main-courses",
-    "components": ["section", "courses-section", "tab-section", "list-section"]
+    "components": ["section", "courses-section", "tab-section", "list-section", "sticky-nav-section"]
   },
   {
     "id": "main-course-hub",
-    "components": ["section", "course-hub-section", "tab-section", "list-section"]
+    "components": ["section", "course-hub-section", "tab-section", "list-section", "sticky-nav-section"]
   },
   {
     "id": "section",
@@ -204,6 +204,10 @@
     "components": ["list-item"]
   },
   {
+    "id": "sticky-nav-section",
+    "components": ["sticky-nav"]
+  },
+  {
     "id": "section-browse",
     "components": [
       "text",
@@ -241,10 +245,6 @@
   {
     "id": "section-author-bio",
     "components": ["author-bio"]
-  },
-  {
-    "id": "section-sticky-nav",
-    "components": ["sticky-nav"]
   },
   {
     "id": "section-header",

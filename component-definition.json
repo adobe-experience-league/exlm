@@ -292,6 +292,23 @@
               }
             }
           }
+        },
+        {
+          "title": "Sticky Nav Section",
+          "id": "sticky-nav-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "name": "Sticky Nav Section",
+                  "model": "sticky-nav-section",
+                  "filter": "sticky-nav-section",
+                  "style": "sticky-nav-section"
+                }
+              }
+            }
+          }
         }
       ]
     },
