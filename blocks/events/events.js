@@ -4,15 +4,10 @@ import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 const getText = (cell) => (cell?.textContent ?? '').trim();
 
 function parseListItemCells(cells) {
-  const [tagCell, dateCell, typeCell, titleCell, descCell] = [...(cells ?? [])];
-  return {
-    tag: getText(tagCell),
-    date: getText(dateCell),
-    type: getText(typeCell),
-    title: getText(titleCell),
-    desc: getText(descCell),
-    url: '',
-  };
+  const cellArr = [...(cells ?? [])];
+  const [tag, date, type, title, desc] = cellArr.splice(0, 5).map(getText);
+  const url = cellArr.pop()?.querySelector('a')?.href?.trim() ?? '';
+  return { tag, date, type, title, desc, url };
 }
 
 export default function decorate(block) {
@@ -21,17 +16,11 @@ export default function decorate(block) {
   const blockEyebrowText = getText(blockEyebrowDiv?.firstElementChild);
   const blockTitle = getText(blockTitleDiv?.firstElementChild);
   const blockDescription = getText(blockDescDiv?.firstElementChild);
+  const featuredEventCells = [...(featuredRow?.children ?? [])];
+  const [tag, dateText, eventTypeText, title, description] = featuredEventCells.splice(0, 5).map(getText);
+  const [imgCell, ctaContainer] = featuredEventCells;
 
-  const [tagCell, dateCell, typeCell, titleCell, descCell, imgCell, , ctaCell] = [...(featuredRow?.children ?? [])];
-
-  const tag = getText(tagCell);
-  const dateText = getText(dateCell);
-  const eventTypeText = getText(typeCell);
-  const title = getText(titleCell);
-  const description = getText(descCell);
-  const picture = imgCell?.querySelector('picture') ?? featuredRow?.querySelector('picture');
   const imageAlt = imgCell?.querySelector('img')?.getAttribute('alt') ?? '';
-  const ctaContainer = ctaCell ?? null;
   if (ctaContainer) {
     const link = ctaContainer.querySelector('a');
     const titleAttr = link?.getAttribute('title')?.trim();
@@ -40,7 +29,8 @@ export default function decorate(block) {
     }
   }
   const ctaHtml = ctaContainer ? decorateCustomButtons(ctaContainer) : '';
-  const featuredMediaHtml = picture ? picture.outerHTML : '';
+  const featuredMediaHtml = (imgCell?.querySelector('picture') ?? featuredRow?.querySelector('picture'))?.outerHTML ?? '';
+  const featuredUrl = (ctaContainer?.querySelector('a')?.getAttribute('href') ?? '').trim();
 
   const metaLine = [dateText, eventTypeText].filter(Boolean).join(' • ');
 
@@ -55,13 +45,23 @@ export default function decorate(block) {
   `
       : '';
 
+  let featuredTitleHtml = '';
+  if (title) {
+    featuredTitleHtml = featuredUrl
+      ? `<h3 class="events-featured-title"><a href="${featuredUrl.replace(
+          /"/g,
+          '&quot;',
+        )}" class="events-item-title-link">${title}</a></h3>`
+      : `<h3 class="events-featured-title">${title}</h3>`;
+  }
+
   const featuredInnerHtml = `
     <div class="events-featured-content">
       <div class="events-featured-header">
         ${tag ? `<span class="events-featured-tag">${tag}</span>` : ''}
         ${metaLine ? `<span class="events-featured-meta">${metaLine}</span>` : ''}
       </div>
-      ${title ? `<h3 class="events-featured-title">${title}</h3>` : ''}
+      ${featuredTitleHtml}
       ${description ? `<div class="events-featured-description">${description}</div>` : ''}
       ${ctaHtml ? `<div class="events-featured-cta">${ctaHtml}</div>` : ''}
     </div>
