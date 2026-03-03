@@ -8139,6 +8139,19 @@
     "fields": []
   },
   {
+    "id": "playlist",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "playlistId",
+        "value": "",
+        "label": "Playlist ID",
+        "description": "Enter the playlist ID."
+      }
+    ]
+  },
+  {
     "id": "atomic-search",
     "fields": []
   },
@@ -9041,7 +9054,7 @@
         "component": "text",
         "valueType": "string",
         "name": "slideId",
-        "value": "",
+        "value": "analytics-get-started-2",
         "label": "Slide ID",
         "description": "ID of the slide to render. Use the ID of the slide from the URL."
       }
