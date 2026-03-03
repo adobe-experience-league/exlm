@@ -1,5 +1,6 @@
 main .section.marquee-video-full-bleed-container {
   padding: 0;
+  overflow: hidden;
 }
 
 .section.marquee-video-full-bleed-container > div {
