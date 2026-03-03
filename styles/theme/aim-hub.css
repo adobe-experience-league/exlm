@@ -20,7 +20,7 @@ body.aim-hub .glass-bg {
   backdrop-filter: blur(12px);
 }
 
-body.aim-hub .section:not(.sticky-nav-section) > div:not(.marquee-video-full-bleed-wrapper) {
+body.aim-hub .section > div:not(.marquee-video-full-bleed-wrapper, .sticky-nav-wrapper) {
   margin: auto;
   max-width: 1200px;
 }
