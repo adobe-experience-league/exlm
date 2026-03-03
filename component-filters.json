@@ -91,7 +91,6 @@
       "course-recap",
       "slides",
       "quiz-scorecard",
-      "sticky-nav",
       "grid-cards"
     ]
   },
@@ -242,6 +241,10 @@
   {
     "id": "section-author-bio",
     "components": ["author-bio"]
+  },
+  {
+    "id": "section-sticky-nav",
+    "components": ["sticky-nav"]
   },
   {
     "id": "section-header",
