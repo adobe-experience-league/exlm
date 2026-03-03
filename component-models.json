@@ -9651,18 +9651,18 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "cta_link",
-        "value": "",
-        "label": "CTA Link",
-        "description": "What link to open when clicking the button."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
         "name": "cta_linkText",
         "value": "",
         "label": "CTA Text",
         "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_link",
+        "value": "",
+        "label": "CTA Link",
+        "description": "What link to open when clicking the button."
       }
     ]
   }
