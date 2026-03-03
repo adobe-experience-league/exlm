@@ -18,12 +18,11 @@ function parseListItemCells(cells) {
 }
 
 export default function decorate(block) {
-  const [blockEyebrowDiv, blockTitleDiv, blockDescDiv, blockCtaDiv, featuredRow, ...itemRows] = [...block.children];
+  const [blockEyebrowDiv, blockTitleDiv, blockDescDiv, featuredRow, ...itemRows] = [...block.children];
 
   const blockEyebrowText = getText(blockEyebrowDiv?.firstElementChild);
   const blockTitle = getText(blockTitleDiv?.firstElementChild);
   const blockDescription = getText(blockDescDiv?.firstElementChild);
-  const blockCtaHtml = blockCtaDiv ? decorateCustomButtons(blockCtaDiv.firstElementChild || blockCtaDiv) : '';
 
   const [tagCell, dateCell, typeCell, titleCell, descCell, , imgCell, ctaCell] = [...(featuredRow?.children ?? [])];
 
@@ -71,7 +70,7 @@ export default function decorate(block) {
     <div class="events-featured-media">${featuredMediaHtml}</div>
   `;
 
-  [blockEyebrowDiv, blockTitleDiv, blockDescDiv, blockCtaDiv].forEach((el) => el?.remove());
+  [blockEyebrowDiv, blockTitleDiv, blockDescDiv].forEach((el) => el?.remove());
 
   block.classList.add('events-block');
   if (headerHtml) block.insertAdjacentHTML('afterbegin', headerHtml);
@@ -106,9 +105,6 @@ export default function decorate(block) {
   });
 
   contentWrapper.appendChild(listWrapper);
-  if (blockCtaHtml) {
-    contentWrapper.appendChild(createTag('div', { class: 'events-block-cta' }, blockCtaHtml));
-  }
   block.appendChild(contentWrapper);
 
   if (featuredMediaHtml && imageAlt) {
