@@ -256,3 +256,88 @@ export const generateAdobeTrackingData = (searchState) => {
   };
   return data;
 };
+
+/**
+ * Builds i18n resource bundle objects from placeholders for Coveo atomic search.
+ * Returned object has keys: el_product, el_contenttype, date, el_role, el_status, translation.
+ * Used with searchInterface.i18n.addResourceBundle(languageCode, namespace, bundles[key]).
+ * @param {Object} placeholders - Placeholders from fetchLanguagePlaceholders() (may be {})
+ * @returns {{ el_product: Object, el_contenttype: Object, date: Object, el_role: Object, el_status: Object, translation: Object }}
+ */
+export function buildI18nResourceBundles(placeholders = {}) {
+  const contentTypeBundle = {
+    Community: placeholders.searchContentTypeCommunityLabel || 'Community',
+    Documentation: placeholders.searchContentTypeDocumentationLabel || 'Documentation',
+    Troubleshooting: placeholders.searchContentTypeTroubleshootingLabel || 'Troubleshooting',
+    Tutorial: placeholders.searchContentTypeTutorialLabel || 'Tutorial',
+    Event: placeholders.searchContentTypeEventLabel || 'Event',
+    Playlist: placeholders.searchContentTypePlaylistLabel || 'Playlist',
+    Course: placeholders.searchContentTypeCourseLabel || 'Course',
+    'upcoming-event': placeholders.searchContentTypeUpcomingEventLabel || 'Upcoming Event',
+    Perspective: placeholders.searchContentTypePerspectiveLabel || 'Perspective',
+    Certification: placeholders.searchContentTypeCertificationLabel || 'Certification',
+    Blogs: placeholders.searchContentTypeCommunityBlogsLabel || 'Blogs',
+    Discussions: placeholders.searchContentTypeCommunityDiscussionsLabel || 'Discussions',
+    Ideas: placeholders.searchContentTypeCommunityIdeasLabel || 'Ideas',
+    Questions: placeholders.searchContentTypeCommunityQuestionsLabel || 'Questions',
+    'Community|Questions': placeholders.searchContentTypeCommunityQuestionsLabel || 'Questions',
+    'Community|Blogs': placeholders.searchContentTypeCommunityBlogsLabel || 'Blogs',
+    'Community|Discussions': placeholders.searchContentTypeCommunityDiscussionsLabel || 'Discussions',
+    'Community|Ideas': placeholders.searchContentTypeCommunityIdeasLabel || 'Ideas',
+    'Community|Groups': placeholders.searchContentTypeCommunityGroupsLabel || 'Groups',
+    'Community|Releases': placeholders.searchContentTypeCommunityReleasesLabel || 'Releases',
+    'Community|Community Resources': placeholders.searchContentTypeCommunityResourcesLabel || 'Community Resources',
+    'Community|Community Pulse': placeholders.searchContentTypeCommunityPulseLabel || 'Community Pulse',
+    'Community|Conversations': placeholders.searchContentTypeCommunityConversationsLabel || 'Conversations',
+    'Community;Community|Questions': placeholders.searchContentTypeCommunityQuestionsLabel || 'Questions',
+    'Community;Community|Blogs': placeholders.searchContentTypeCommunityBlogsLabel || 'Blogs',
+    'Community;Community|Discussions': placeholders.searchContentTypeCommunityDiscussionsLabel || 'Discussions',
+    'Community;Community|Ideas': placeholders.searchContentTypeCommunityIdeasLabel || 'Ideas',
+    'Community;Community|Releases': placeholders.searchContentTypeCommunityReleasesLabel || 'Releases',
+    'Community;Community|Community Resources':
+      placeholders.searchContentTypeCommunityResourcesLabel || 'Community Resources',
+    'Community;Community|Groups': placeholders.searchContentTypeCommunityGroupsLabel || 'Groups',
+    'Community;Community|Community Pulse': placeholders.searchContentTypeCommunityPulseLabel || 'Community Pulse',
+    'Community;Community|Conversations': placeholders.searchContentTypeCommunityConversationsLabel || 'Conversations',
+  };
+
+  const roleBundle = {
+    Admin: placeholders.searchRoleAdminLabel || 'Admin',
+    Developer: placeholders.searchRoleDeveloperLabel || 'Developer',
+    Leader: placeholders.searchRoleLeaderLabel || 'Leader',
+    User: placeholders.searchRoleUserLabel || 'User',
+  };
+
+  const statusBundle = {
+    true: placeholders.searchResolvedLabel || 'Resolved',
+    false: placeholders.searchUnresolvedLabel || 'Unresolved',
+    Solved: placeholders.searchResolvedLabel || 'Solved',
+    Unsolved: placeholders.searchUnresolvedLabel || 'Unsolved',
+  };
+
+  const translation = {
+    Name: placeholders.searchNameLabel || 'Name',
+    'Content Type': placeholders.searchContentTypeLabel || 'Content Type',
+    Content: placeholders.searchContentLabel || 'Content',
+    Product: placeholders.searchProductLabel || 'Product',
+    Updated: placeholders.searchUpdatedLabel || 'Updated',
+    Role: placeholders.searchRoleLabel || 'Role',
+    Date: placeholders.searchDateLabel || 'Date',
+    'Newest First': placeholders.searchNewestFirstLabel || 'Newest First',
+    'Oldest First': placeholders.searchOldestFirstLabel || 'Oldest First',
+    'Most Likes': placeholders.searchMostLikesLabel || 'Most Likes',
+    'Most Replies': placeholders.searchMostRepliesLabel || 'Most Replies',
+    'Most Views': placeholders.searchMostViewsLabel || 'Most Views',
+    clear: placeholders.searchClearLabel || 'Clear',
+    filters: placeholders.searchFiltersLabel || 'Filters',
+  };
+
+  return {
+    el_product: {},
+    el_contenttype: contentTypeBundle,
+    date: {},
+    el_role: roleBundle,
+    el_status: statusBundle,
+    translation,
+  };
+}
