@@ -23,9 +23,15 @@
 .sticky-nav-container {
   align-items: center;
   width: 100%;
-  height: var(--nav-height);
   margin: 0 auto;
   box-sizing: border-box;
+  overflow: auto hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.sticky-nav-container::-webkit-scrollbar {
+  display: none;
 }
 
 .sticky-nav-list {
