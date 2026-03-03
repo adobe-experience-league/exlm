@@ -70,19 +70,17 @@ main .section.marquee-video-full-bleed-container {
   position: relative;
   width: 100%;
   z-index: 1;
-  max-height: 300px;
-  overflow: hidden;
 }
 
 .marquee-video-full-bleed-image picture,
 .marquee-video-full-bleed-image img {
   width: 100%;
-  height: 100%;
+  height: auto;
   display: block;
 }
 
 .marquee-video-full-bleed-image img {
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .marquee-video-full-bleed-video {
