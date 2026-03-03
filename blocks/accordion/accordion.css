@@ -1,0 +1,102 @@
+.accordion details {
+  display: block;
+  background-color: var(--spectrum-gray-100);
+  color: var(--non-spectrum-grey);
+  padding: 0 16px;
+}
+
+.accordion details summary {
+  box-sizing: content-box;
+  cursor: pointer;
+  list-style: none;
+  padding: 16px 0;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--spectrum-font-size-100);
+  line-height: 21px;
+}
+
+.accordion details summary :where(h2, h3, h4, h5, h6) {
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  display: inline;
+}
+
+.accordion details summary::before {
+  content: url('../../icons/chevron_right.svg');
+  position: relative;
+  top: 3.5px;
+  left: -4.2px;
+  margin-right: -2px;
+}
+
+.accordion details summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion details summary::marker {
+  content: none;
+}
+
+.accordion details > div > div {
+  color: var(--non-spectrum-raisin-black);
+  font-size: var(--spectrum-font-size-200);
+  line-height: var(--spectrum-line-height-m);
+  margin-left: 14px;
+  margin-top: 14px;
+}
+
+.accordion details h1,
+.accordion details h2,
+.accordion details h3 {
+  margin-top: 14px;
+}
+
+.accordion p:last-child {
+  margin-bottom: 0;
+}
+
+.accordion ul {
+  margin-top: 14px;
+}
+
+.accordion ul li {
+  margin-top: 0;
+}
+
+.accordion ul li:last-child {
+  margin-bottom: 0;
+}
+
+ol .accordion ul {
+  margin-bottom: 14px;
+}
+
+.accordion ul li ul {
+  margin-bottom: 14px;
+}
+
+ol .accordion summary {
+  font-size: var(--spectrum-font-size-200);
+}
+
+.accordion details .accordion {
+  margin: 0;
+}
+
+.accordion details details summary {
+  font-size: var(--spectrum-font-size-200);
+  line-height: 24px;
+}
+
+.accordion details[open] {
+  padding-bottom: 16px;
+}
+
+.accordion details[open] summary::before {
+  content: url('../../icons/chevron-down.svg');
+}
+
+.shade-box .accordion-wrapper:first-child details {
+  padding-top: 16px;
+}
