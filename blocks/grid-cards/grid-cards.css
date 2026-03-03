@@ -128,10 +128,11 @@
 }
 
 .grid-cards.minimal .grid-card-container {
-  gap: 25px;
+  gap: var(--spectrum-spacing-400);
   justify-items: center;
   width: 100%;
-  max-width: 1202px;
+  max-width: 1200px;
+  grid-template-columns: minmax(0, 384px);
 }
 
 .grid-cards.minimal .grid-card {
@@ -146,6 +147,7 @@
   gap: var(--spectrum-spacing-400);
   justify-items: center;
   max-width: 1200px;
+  grid-template-columns: minmax(0, 384px);
 }
 
 .grid-cards.standard .grid-card {
@@ -173,10 +175,10 @@
 
 /* Wide card styling */
 .grid-cards.wide .grid-card-container {
-  grid-template-columns: 1fr;
   gap: var(--spectrum-spacing-400);
   width: 100%;
   max-width: 1200px;
+  grid-template-columns: minmax(0, 588px);
 }
 
 .grid-cards.wide .grid-card > a {
