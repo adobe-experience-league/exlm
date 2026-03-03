@@ -1505,6 +1505,9 @@
                   "cta_linkText": "CTA Text",
                   "cta_link": "http://experienceleague.adobe.com/",
                   "cta_Type": "secondary",
+                  "cta_customBgColor": "--spectrum-gray-700",
+                  "cta_textColor": "white",
+                  "cta_customBgHexCode": "000000",
                   "podcastCardHeading": "Podcast Card Heading",
                   "podcastCardDescription": "Podcast Card Description"
                 }
