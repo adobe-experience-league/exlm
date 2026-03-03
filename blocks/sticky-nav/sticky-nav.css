@@ -1,20 +1,20 @@
-.section:has(.sticky-nav) .sticky-nav-wrapper {
-  margin: 0 120px;
-  max-width: unset;
+.sticky-nav-section .sticky-nav-wrapper {
+  margin: 0 120px !important;
 }
 
-.section:has(.sticky-nav) {
+.sticky-nav-section {
+  display: none;
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: var(--background-color);
-  padding: 0;
-  margin-bottom: 0;
+  background-color: var(--background-color) !important;
+  padding: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 .sticky-nav {
   position: relative;
-  display: block;
+  display: none;
   width: 100%;
   background-color: var(--spectrum-gray-50);
   border-radius: 0;
@@ -68,7 +68,7 @@
 }
 
 /* Base link styles */
-.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-link {
+.sticky-nav-section .sticky-nav-list .sticky-nav-link {
   display: inline-flex;
   align-items: center;
   padding: 20px 0;
@@ -87,22 +87,23 @@
   text-transform: none;
 }
 
-.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-link:hover {
+.sticky-nav-section .sticky-nav-list .sticky-nav-link:hover {
   color: var(--text-color);
   font-weight: var(--font-weight-bold);
   border-bottom-color: transparent;
+  text-decoration: none;
 }
 
-.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-link.active {
+.sticky-nav-section .sticky-nav-list .sticky-nav-link.active {
   color: var(--text-color);
   font-weight: var(--font-weight-bold);
   border-bottom: 2px solid var(--non-spectrum-link);
 }
 
-.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link,
-.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link,
-.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link,
-.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link {
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link,
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link,
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link,
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link {
   display: inline-flex;
   align-items: center;
   padding: 20px 0;
@@ -121,19 +122,20 @@
   text-transform: none;
 }
 
-.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link:hover,
-.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link:hover,
-.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link:hover,
-.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link:hover {
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link:hover,
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link:hover,
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link:hover,
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link:hover {
   color: var(--text-color);
   font-weight: var(--font-weight-bold);
   border-bottom-color: transparent;
+  text-decoration: none;
 }
 
-.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link.active,
-.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link.active,
-.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link.active,
-.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link.active {
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link.active,
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link.active,
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link.active,
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link.active {
   color: var(--text-color);
   font-weight: var(--font-weight-bold);
   border-bottom: 2px solid var(--non-spectrum-link);
@@ -174,10 +176,10 @@
 
 /* Sticky Nav — desktop-only (> 900px) horizontal tab bar, hidden on mobile/tablet */
 
-@media (max-width: 900px) {
-  .section:has(.sticky-nav),
+@media (min-width: 900px) {
+  .sticky-nav-section,
   .sticky-nav-wrapper,
   .sticky-nav {
-    display: none;
+    display: block;
   }
 }

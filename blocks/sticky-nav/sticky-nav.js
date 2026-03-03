@@ -12,13 +12,6 @@ function ensureAncestorsVisible(startEl) {
   }
 }
 
-function assignSectionIds() {
-  document.querySelectorAll('main > div[data-section-id]').forEach((section) => {
-    const { sectionId } = section.dataset;
-    if (sectionId) section.id = sectionId;
-  });
-}
-
 function setActiveLink(activeAnchor, block) {
   block.querySelectorAll('.sticky-nav-link').forEach((link) => link.classList.remove('active'));
   activeAnchor.classList.add('active');
@@ -37,7 +30,7 @@ function buildNavList(rows, block) {
   [...rows].forEach((row) => {
     const cells = [...row.children];
     if (cells.length < 2) return;
-
+    row.textContent = '';
     const sectionIdValue = cells[0].textContent.trim();
     const linkText = cells[1].textContent.trim();
     if (!linkText) return;
@@ -52,7 +45,7 @@ function buildNavList(rows, block) {
 
     anchor.addEventListener('click', (event) => {
       event.preventDefault();
-      const target = document.getElementById(sectionId);
+      const target = document.querySelector(`[data-section-id="${sectionId}"]`);
       if (!target) return;
       const navHeight = block.closest('.section')?.offsetHeight ?? block.offsetHeight ?? 0;
       window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - navHeight, behavior: 'smooth' });
@@ -62,7 +55,8 @@ function buildNavList(rows, block) {
     const item = document.createElement('li');
     item.className = 'sticky-nav-item';
     item.appendChild(anchor);
-    navList.appendChild(item);
+    row.appendChild(item);
+    navList.appendChild(row);
   });
 
   return navList;
@@ -75,7 +69,7 @@ function setupScrollSpy(block, sectionEl) {
   const navHeight = (sectionEl || block).offsetHeight;
   const sectionMap = new Map(
     navLinks
-      .map((link) => [document.getElementById(link.dataset.sectionTarget), link])
+      .map((link) => [document.querySelector(`[data-section-id="${link.dataset.sectionTarget}"]`), link])
       .filter(([target]) => target !== null),
   );
 
@@ -98,23 +92,16 @@ function setupScrollSpy(block, sectionEl) {
 }
 
 export default function decorate(block) {
-  if (window.hlx?.aemRoot) return;
-
   ensureAncestorsVisible(block);
-  assignSectionIds();
-
   const nav = document.createElement('div');
   nav.className = 'sticky-nav-container';
   nav.setAttribute('aria-label', 'Page sections');
   nav.setAttribute('role', 'navigation');
   nav.appendChild(buildNavList(block.children, block));
 
-  block.textContent = '';
   block.appendChild(nav);
-  block.classList.add('sticky-nav');
 
-  const sectionEl = block.closest('main > div.section');
-  // if (sectionEl) sectionEl.classList.add('sticky-nav-section');
+  const sectionEl = block.closest('.section');
 
   const firstLink = block.querySelector('.sticky-nav-link');
   if (firstLink) firstLink.classList.add('active');
