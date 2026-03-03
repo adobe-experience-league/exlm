@@ -2,7 +2,6 @@
   display: block;
   background-color: var(--spectrum-gray-100);
   color: var(--non-spectrum-grey);
-  padding: 0 16px;
 }
 
 .accordion details summary {
