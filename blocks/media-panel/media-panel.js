@@ -33,5 +33,7 @@ export default function decorate(block) {
   if (!block.classList.contains('podcast-card')) {
     podcastHeadingTag.remove();
     podcastDescription.remove();
+  } else {
+    podcastContainer.classList.add('glass-bg');
   }
 }

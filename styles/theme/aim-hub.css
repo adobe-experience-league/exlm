@@ -1,0 +1,37 @@
+body.aim-hub .section {
+  background-color: unset;
+  color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-100);
+  line-height: var(--spectrum-line-height-l);
+}
+
+body.aim-hub .section.bg-white {
+  background-color: var(--background-color);
+}
+
+body.aim-hub .section.bg-dark-gray {
+  background-color: var(--highlight-dark-background-color);
+}
+
+body.aim-hub .glass-bg {
+  border: 2px solid rgb(255 255 255 / 60%);
+  background: rgb(255 255 255 / 50%);
+  box-shadow: 0 0 8px 0 rgb(0 0 0 / 25%);
+  backdrop-filter: blur(12px);
+}
+
+body.aim-hub .section > div:not(.marquee-video-full-bleed-wrapper) {
+  margin: auto;
+  max-width: 1200px;
+}
+
+body.aim-hub .section > .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--non-spectrum-dark-gray);
+  font-weight: var(--font-weight-heavy);
+}
+
+@media (min-width: 900px) {
+  body.aim-hub .section {
+    padding: 60px 40px;
+  }
+}
