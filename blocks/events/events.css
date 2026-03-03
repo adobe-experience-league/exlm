@@ -1,10 +1,10 @@
-.events-header {
+.events .events-header {
   margin-bottom: 40px;
   display: flex;
   flex-direction: column;
 }
 
-.events-header-eyebrow {
+.events .events-header-eyebrow {
   font-size: var(--spectrum-font-size-200);
   font-weight: var(--font-weight-bold);
   letter-spacing: 0.8px;
@@ -13,7 +13,7 @@
   text-align: center;
 }
 
-.events-header-title {
+.events .events-header-title {
   font-size: var(--spectrum-font-size-1100);
   font-weight: var(--font-weight-heavy);
   color: var(--non-spectrum-dark-gray);
@@ -22,56 +22,65 @@
   line-height: 1.25;
 }
 
-.events-header-description {
+.events .events-header-description {
   font-size: var(--spectrum-font-size-400);
   color: var(--non-spectrum-dark-gray);
   line-height: 1.5;
   text-align: center;
 }
 
-.events-content {
+/* Mobile-first: content is a stack container, no card styling */
+.events .events-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Mobile: card treatment for featured and items - identical look */
+.events .events-featured,
+.events .events-item {
   background: var(--spectrum-gray-50);
   border-radius: 16px;
   box-shadow: 0 0 8px 0 rgb(0 0 0 / 25%);
-  backdrop-filter: blur(12px);
-  padding: 40px;
+  padding: 24px;
 }
 
-.events-featured {
+.events .events-featured {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
-  margin-bottom: 2rem;
+  margin-bottom: 0;
 }
 
-.events-featured-media {
+.events .events-featured-media {
+  display: none;
   border-radius: 16px;
   border: 2px solid rgb(255 255 255 / 50%);
   overflow: hidden;
 }
 
-.events-featured-media picture,
-.events-featured-media img {
+.events .events-featured-media picture,
+.events .events-featured-media img {
   width: 100%;
   height: auto;
   object-fit: cover;
   display: block;
 }
 
-.events-featured-content {
+.events .events-featured-content {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--spectrum-spacing-75);
 }
 
-.events-featured-header {
+.events .events-featured-header {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-flow: column wrap;
+  align-items: flex-start;
   gap: 8px;
 }
 
-.events-featured-tag {
+.events .events-featured-tag {
   display: flex;
   align-items: center;
   padding: 0 8px;
@@ -89,7 +98,7 @@
   text-align: center;
 }
 
-.events-featured-meta {
+.events .events-featured-meta {
   font-size: var(--spectrum-font-size-100);
   line-height: normal;
   color: var(--non-spectrum-dark-gray);
@@ -98,117 +107,123 @@
   text-transform: uppercase;
 }
 
-.events-featured-title {
-  font-size: var(--spectrum-font-size-700);
+.events .events-featured-title,
+.events .events-featured-title a {
+  font-size: var(--spectrum-font-size-400);
+  line-height: 125%;
   font-weight: var(--font-weight-heavy);
   color: var(--non-spectrum-dark-gray);
   margin: 0;
 }
 
-.events-featured-description {
-  font-size: var(--spectrum-font-size-200);
-  color: var(--non-spectrum-dark-gray);
+.events .events-featured-description,
+.events .events-featured-cta {
+  display: none;
 }
 
-.events-featured-cta {
+.events .events-featured-cta {
   text-align: center;
 }
 
-.events-featured-cta a.button {
+.events .events-featured-cta a.button {
   margin-top: 8px;
   font-size: 17px;
   font-weight: var(--font-weight-bold);
   margin-bottom: 0;
 }
 
-.events-list {
-  display: grid;
+.events .events-list {
+  display: flex;
+  flex-direction: column;
   gap: 24px;
-  border-top: 1px solid #d4d4d4;
-  padding-top: 24px;
 }
 
-.events-item {
-  padding: 0;
-  border-radius: 4px;
+.events .events-item {
   display: flex;
   flex-direction: column;
 }
 
-.events-item .events-featured-meta {
+.events .events-item .events-featured-meta {
   margin: 8px 0 2px;
 }
 
-.events-item-title a,
-.events-item-title {
+.events .events-item-title a,
+.events .events-item-title {
   font-size: var(--spectrum-font-size-400);
   font-weight: var(--font-weight-heavy);
   color: var(--non-spectrum-dark-gray);
   line-height: 125%;
 }
 
-.events-item-title-link {
+.events .events-item-title-link {
   color: inherit;
   text-decoration: none;
   cursor: pointer;
 }
 
-.events-item-description {
+.events .events-item-description {
   display: none;
 }
 
-/* Mobile: hide featured image, treat all cards as normal */
-@media only screen and (max-width: 599px) {
-  .events-featured-content {
-    gap: var(--spectrum-spacing-75);
-  }
-
-  .events-featured-media {
-    display: none;
-  }
-
-  .events-featured-description,
-  .events-featured-cta {
-    display: none;
-  }
-
-  .events-featured-title {
-    font-size: var(--spectrum-font-size-400);
-    line-height: 125%;
-  }
-
-  .events-featured-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .events-featured {
-    margin-bottom: 24px;
-  }
-
-  .events-list {
-    border-top: none;
-    padding-top: 0;
-  }
-}
-
 @media (min-width: 600px) {
-  .events-list {
-    grid-template-columns: repeat(2, 1fr);
+  .events .events-content {
+    background: var(--spectrum-gray-50);
+    border-radius: 16px;
+    box-shadow: 0 0 8px 0 rgb(0 0 0 / 25%);
+    backdrop-filter: blur(12px);
+    padding: 40px;
   }
 
-  .events-featured-cta {
+  .events .events-featured,
+  .events .events-item {
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .events .events-featured {
+    margin-bottom: 2rem;
+  }
+
+  .events .events-featured-media {
+    display: block;
+  }
+
+  .events .events-featured-description,
+  .events .events-featured-cta {
+    display: block;
+  }
+
+  .events .events-featured-title,
+  .events .events-featured-title a {
+    font-size: var(--spectrum-font-size-700);
+  }
+
+  .events .events-featured-header {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .events .events-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-top: 1px solid #d4d4d4;
+    padding-top: 24px;
+  }
+
+  .events .events-featured-cta {
     text-align: left;
   }
 }
 
 @media (min-width: 900px) {
-  .events-featured {
+  .events .events-featured {
     grid-template-columns: 1fr 1fr;
     align-items: center;
   }
 
-  .events-list {
+  .events .events-list {
     grid-template-columns: repeat(3, 1fr);
   }
 }
