@@ -195,6 +195,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 </atomic-search-box>
               </div>
             </div>
+            <div class="atomic-search-premium-search-wrapper"></div>
           </atomic-layout-section>
           <atomic-layout-section section="facets">
             <style>
