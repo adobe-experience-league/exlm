@@ -1,5 +1,5 @@
 .sticky-nav-section .sticky-nav-wrapper {
-  margin: 0 120px !important;
+  margin: 0 120px;
 }
 
 .sticky-nav-section {
@@ -7,9 +7,9 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: var(--background-color) !important;
-  padding: 0 !important;
-  margin-bottom: 0 !important;
+  background-color: var(--background-color);
+  padding: 0;
+  margin-bottom: 0;
 }
 
 .sticky-nav {
@@ -142,7 +142,7 @@
 }
 
 /* Authoring mode — block not yet decorated by JS, show raw table as horizontal preview */
-.sticky-nav:not(:has(.sticky-nav-container)) {
+.sticky-nav:not([data-block-status='loaded']) {
   display: flex;
   flex-flow: row nowrap;
   gap: 32px;
@@ -151,15 +151,15 @@
   box-sizing: border-box;
 }
 
-.sticky-nav:not(:has(.sticky-nav-container)) > div {
+.sticky-nav:not([data-block-status='loaded']) > div {
   display: contents;
 }
 
-.sticky-nav:not(:has(.sticky-nav-container)) > div > div:first-child {
+.sticky-nav:not([data-block-status='loaded']) > div > div:first-child {
   display: none;
 }
 
-.sticky-nav:not(:has(.sticky-nav-container)) > div > div:last-child {
+.sticky-nav:not([data-block-status='loaded']) > div > div:last-child {
   flex-shrink: 0;
   padding: 12px 0;
   font-family: var(--body-font-family);
