@@ -1378,18 +1378,12 @@
                   "model": "marquee-video-full-bleed",
                   "title": "Your place for everything AI.",
                   "description": "<p>Discover all the ways AI can empower you to do your best work. Dig into articles, hands-on learning, events, and more to level up your capabilities and double down on your impact.</p>",
-                  "videoType": "mp4",
-                  "videoFile": "",
-                  "videoUrl": "",
-                  "mobileImage": "",
-                  "imgAlt": "",
                   "primaryCta_Type": "primary",
                   "primaryCta_linkText": "CTA lorem ipsum",
                   "primaryCta_link": "#section-id",
                   "secondaryCta_Type": "secondary",
                   "secondaryCta_linkText": "Take the quiz",
-                  "secondaryCta_link": "#quiz",
-                  "classes": ""
+                  "secondaryCta_link": "#quiz"
                 }
               }
             }
