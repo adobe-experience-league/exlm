@@ -9676,6 +9676,25 @@
     ]
   },
   {
+    "id": "sticky-nav",
+    "fields": [] 
+  },
+  {
+    "id": "sticky-nav-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Style",
+        "description": "The section style",
+        "valueType": "string",
+        "hidden": true,
+        "options": []
+      }
+    ]
+  },
+  {
     "title": "Sticky Nav Item",
     "id": "sticky-nav-item",
     "fields": [
