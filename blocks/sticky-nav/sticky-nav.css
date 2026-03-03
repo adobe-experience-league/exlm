@@ -1,9 +1,9 @@
-.section.sticky-nav-section .sticky-nav-wrapper {
+.section:has(.sticky-nav) .sticky-nav-wrapper {
   margin: 0 120px;
   max-width: unset;
 }
 
-.section.sticky-nav-section {
+.section:has(.sticky-nav) {
   position: sticky;
   top: 0;
   z-index: 100;
@@ -21,7 +21,6 @@
 }
 
 .sticky-nav-container {
-  display: flex;
   align-items: center;
   width: 100%;
   height: var(--nav-height);
@@ -33,7 +32,7 @@
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
-  align-items: stretch;
+  height: stretch;
   gap: 32px;
   list-style: none;
   margin: 0;
@@ -63,7 +62,7 @@
 }
 
 /* Base link styles */
-.section.sticky-nav-section .sticky-nav-list .sticky-nav-link {
+.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-link {
   display: inline-flex;
   align-items: center;
   padding: 20px 0;
@@ -82,22 +81,22 @@
   text-transform: none;
 }
 
-.section.sticky-nav-section .sticky-nav-list .sticky-nav-link:hover {
+.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-link:hover {
   color: var(--text-color);
   font-weight: var(--font-weight-bold);
   border-bottom-color: transparent;
 }
 
-.section.sticky-nav-section .sticky-nav-list .sticky-nav-link.active {
+.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-link.active {
   color: var(--text-color);
   font-weight: var(--font-weight-bold);
   border-bottom: 2px solid var(--non-spectrum-link);
 }
 
-.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link,
-.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link,
-.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link,
-.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link {
+.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link,
+.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link,
+.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link,
+.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link {
   display: inline-flex;
   align-items: center;
   padding: 20px 0;
@@ -116,19 +115,19 @@
   text-transform: none;
 }
 
-.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link:hover,
-.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link:hover,
-.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link:hover,
-.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link:hover {
+.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link:hover,
+.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link:hover,
+.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link:hover,
+.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link:hover {
   color: var(--text-color);
   font-weight: var(--font-weight-bold);
   border-bottom-color: transparent;
 }
 
-.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link.active,
-.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link.active,
-.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link.active,
-.section.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link.active {
+.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link.active,
+.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link.active,
+.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link.active,
+.section:has(.sticky-nav) .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link.active {
   color: var(--text-color);
   font-weight: var(--font-weight-bold);
   border-bottom: 2px solid var(--non-spectrum-link);
@@ -167,19 +166,12 @@
   margin-bottom: 0;
 }
 
-/* Prevent Franklin's lazy-loading display:none from hiding the nav */
-.section.sticky-nav-section,
-.section.sticky-nav-section[style*='display: none'],
-.section.sticky-nav-section[style*='display:none'] {
-  display: block !important;
-}
-
 /* Sticky Nav — desktop-only (> 900px) horizontal tab bar, hidden on mobile/tablet */
 
 @media (max-width: 900px) {
-  .section.sticky-nav-section,
+  .section:has(.sticky-nav),
   .sticky-nav-wrapper,
   .sticky-nav {
-    display: none !important;
+    display: none;
   }
 }

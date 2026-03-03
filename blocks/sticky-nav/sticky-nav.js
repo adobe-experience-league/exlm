@@ -114,7 +114,7 @@ export default function decorate(block) {
   block.classList.add('sticky-nav');
 
   const sectionEl = block.closest('main > div.section');
-  if (sectionEl) sectionEl.classList.add('sticky-nav-section');
+  // if (sectionEl) sectionEl.classList.add('sticky-nav-section');
 
   const firstLink = block.querySelector('.sticky-nav-link');
   if (firstLink) firstLink.classList.add('active');
