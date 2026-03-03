@@ -6,18 +6,15 @@
   --lg-circle-pink: rgb(250 74 162 / 10%);
   --lg-circle-orange: rgb(255 124 101 / 10%);
   --lg-blur: 80px;
-}
 
-body.page-bg-gradient {
   position: relative;
   isolation: isolate; /* prevents stacking conflicts */
   background: transparent;
 }
 
 /* Layer 1 — Base Linear Gradient */
-body.page-bg-gradient .gradient-layer::before {
+body.page-bg-gradient main::before {
   content: '';
-  position: fixed;
   inset: 0;
   z-index: -4;
   pointer-events: none;
@@ -105,14 +102,14 @@ body.page-bg-gradient .gradient-circle-orange {
 }
 
 /* Layer 3 — White Blur Overlay */
-body.page-bg-gradient .gradient-layer::after {
+body.page-bg-gradient main::after {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -2;
   pointer-events: none;
   background: rgb(255 255 255 / 10%);
-  backdrop-filter: blur(80px);
+  backdrop-filter: blur(var(--lg-blur));
 }
 
 /* Reduce motion */
