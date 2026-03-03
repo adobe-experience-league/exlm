@@ -120,7 +120,7 @@
     filter: none;
   }
 
-  .page-bg-gradient::after {
+  .page-bg-gradient main::after {
     backdrop-filter: none;
   }
 }
