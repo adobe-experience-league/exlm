@@ -2063,7 +2063,7 @@
                   "name": "Sticky Nav Item",
                   "model": "sticky-nav-item",
                   "sectionId": "",
-                  "linkText": "Nav Item"
+                  "navLabel": "Nav Item"
                 }
               }
             }
