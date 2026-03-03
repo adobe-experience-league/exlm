@@ -25,16 +25,7 @@ export default function decorate(block) {
   const blockDescription = getText(blockDescDiv?.firstElementChild);
   const blockCtaHtml = blockCtaDiv ? decorateCustomButtons(blockCtaDiv.firstElementChild || blockCtaDiv) : '';
 
-  const [
-    tagCell,
-    dateCell,
-    typeCell,
-    titleCell,
-    descCell,
-    ,
-    imgCell,
-    ctaCell,
-  ] = [...(featuredRow?.children ?? [])];
+  const [tagCell, dateCell, typeCell, titleCell, descCell, , imgCell, ctaCell] = [...(featuredRow?.children ?? [])];
 
   const tag = getText(tagCell);
   const dateText = getText(dateCell);
