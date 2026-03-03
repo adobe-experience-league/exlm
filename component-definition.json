@@ -1269,7 +1269,10 @@
                   "fileReferenceAlt": "Card image",
                   "cta_Type": "secondary",
                   "cta_linkText": "Learn More",
-                  "cta_link": "http://experienceleague.adobe.com/"
+                  "cta_link": "http://experienceleague.adobe.com/",
+                  "cta_customBgColor": "--spectrum-gray-700",
+                  "cta_textColor": "white",
+                  "cta_customBgHexCode": "000000"
                 }
               }
             }
