@@ -20,7 +20,7 @@ body.aim-hub .glass-bg {
   backdrop-filter: blur(12px);
 }
 
-body.aim-hub .section > div:not(.marquee-video-full-bleed-wrapper, .sticky-nav-wrapper) {
+body.aim-hub .section > div:not(.marquee-video-full-bleed-wrapper) {
   margin: auto;
   max-width: 1200px;
 }
@@ -36,7 +36,7 @@ body.aim-hub .section > .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) 
   }
 
   body.aim-hub .section.sticky-nav-section {
-    padding: 0;
+    padding: 0 40px;
     margin-bottom: 0;
     background-color: var(--background-color);
   }
