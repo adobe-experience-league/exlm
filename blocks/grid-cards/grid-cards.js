@@ -5,21 +5,43 @@ export default function decorate(block) {
   const children = [...block.children];
   const [eyebrowRow, titleRow, descRow, ...cardRows] = children;
 
-  // Create header section for block
-  const headerDiv = document.createElement('div');
-  headerDiv.classList.add('grid-cards-header');
-  eyebrowRow.classList.add('grid-cards-eyebrow');
+  // Create header section for block only if at least one element has content
+  const hasEyebrow = eyebrowRow.textContent.trim();
+  const hasTitle = titleRow.textContent.trim();
+  const hasDesc = descRow.textContent.trim();
 
-  const headingTag = document.createElement('h2');
-  headingTag.classList.add('grid-cards-title');
-  headingTag.innerHTML = titleRow.textContent;
-  titleRow.replaceWith(headingTag);
+  if (hasEyebrow || hasTitle || hasDesc) {
+    const headerDiv = document.createElement('div');
+    headerDiv.classList.add('grid-cards-header');
 
-  descRow.classList.add('grid-cards-description');
-  headerDiv.append(eyebrowRow, headingTag, descRow);
+    if (hasEyebrow) {
+      eyebrowRow.classList.add('grid-cards-eyebrow');
+      headerDiv.appendChild(eyebrowRow);
+    } else {
+      eyebrowRow.remove();
+    }
 
-  if (headerDiv.children.length > 0) {
+    if (hasTitle) {
+      const headingTag = document.createElement('h2');
+      headingTag.classList.add('grid-cards-title');
+      headingTag.innerHTML = titleRow.textContent;
+      headerDiv.appendChild(headingTag);
+    } else {
+      titleRow.remove();
+    }
+
+    if (hasDesc) {
+      descRow.classList.add('grid-cards-description');
+      headerDiv.appendChild(descRow);
+    } else {
+      descRow.remove();
+    }
+
     block.appendChild(headerDiv);
+  } else {
+    eyebrowRow.remove();
+    titleRow.remove();
+    descRow.remove();
   }
 
   // Create card container and populate with cards
@@ -35,15 +57,22 @@ export default function decorate(block) {
 
     cardRow.textContent = '';
 
-    const cardHeading = document.createElement('h3');
-    cardHeading.classList.add('grid-card-title');
-    cardHeading.innerHTML = titleCell.textContent;
-
-    descCell.classList.add('grid-card-description');
-
     const contentWrapper = document.createElement('div');
     contentWrapper.classList.add('grid-card-content');
-    contentWrapper.append(cardHeading, descCell);
+
+    // Only add title if it has content
+    if (titleCell?.textContent.trim()) {
+      const cardHeading = document.createElement('h3');
+      cardHeading.classList.add('grid-card-title');
+      cardHeading.innerHTML = titleCell.textContent;
+      contentWrapper.appendChild(cardHeading);
+    }
+
+    // Only add description if it has content
+    if (descCell?.textContent.trim()) {
+      descCell.classList.add('grid-card-description');
+      contentWrapper.appendChild(descCell);
+    }
 
     // Add picture to card if it's a wide or standard card, and add appropriate classes
     if ((isWide || isStandard) && picture) {
