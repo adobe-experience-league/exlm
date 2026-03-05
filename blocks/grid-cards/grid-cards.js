@@ -57,22 +57,15 @@ export default function decorate(block) {
 
     cardRow.textContent = '';
 
+    const cardHeading = document.createElement('h3');
+    cardHeading.classList.add('grid-card-title');
+    cardHeading.innerHTML = titleCell.textContent;
+
+    descCell.classList.add('grid-card-description');
+
     const contentWrapper = document.createElement('div');
     contentWrapper.classList.add('grid-card-content');
-
-    // Only add title if it has content
-    if (titleCell?.textContent.trim()) {
-      const cardHeading = document.createElement('h3');
-      cardHeading.classList.add('grid-card-title');
-      cardHeading.innerHTML = titleCell.textContent;
-      contentWrapper.appendChild(cardHeading);
-    }
-
-    // Only add description if it has content
-    if (descCell?.textContent.trim()) {
-      descCell.classList.add('grid-card-description');
-      contentWrapper.appendChild(descCell);
-    }
+    contentWrapper.append(cardHeading, descCell);
 
     // Add picture to card if it's a wide or standard card, and add appropriate classes
     if ((isWide || isStandard) && picture) {
