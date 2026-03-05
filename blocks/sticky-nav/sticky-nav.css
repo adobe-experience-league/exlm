@@ -68,7 +68,6 @@
 .sticky-nav-section .sticky-nav-list .sticky-nav-link {
   display: inline-flex;
   align-items: center;
-  padding: 20px 0;
   text-decoration: none;
   font-family: var(--body-font-family);
   color: var(--spectrum-gray-600);
@@ -77,11 +76,13 @@
   line-height: var(--spectrum-line-height-m);
   white-space: nowrap;
   border-bottom: 2px solid transparent;
+  padding-bottom: 8px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   box-sizing: border-box;
   letter-spacing: 0;
   text-transform: none;
+  margin-bottom: 0;
 }
 
 .sticky-nav-section .sticky-nav-list .sticky-nav-link:hover {
@@ -95,28 +96,6 @@
   color: var(--text-color);
   font-weight: var(--font-weight-bold);
   border-bottom: 2px solid var(--non-spectrum-link);
-}
-
-.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link,
-.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link,
-.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link,
-.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link {
-  display: inline-flex;
-  align-items: center;
-  padding: 20px 0;
-  text-decoration: none;
-  font-family: var(--body-font-family);
-  color: var(--spectrum-gray-600);
-  font-size: var(--spectrum-font-size-300);
-  font-weight: var(--font-weight-normal);
-  line-height: var(--spectrum-line-height-m);
-  white-space: nowrap;
-  border-bottom: 2px solid transparent;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  box-sizing: border-box;
-  letter-spacing: 0;
-  text-transform: none;
 }
 
 .sticky-nav-section .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link:hover,
