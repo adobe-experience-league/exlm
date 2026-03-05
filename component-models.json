@@ -1212,6 +1212,14 @@
     "id": "section",
     "fields": [
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "section-id",
+        "value": "",
+        "label": "Section ID (Optional)",
+        "description": "Optional. A unique identifier for this section used for anchor links and navigation."
+      },
+      {
         "component": "select",
         "name": "style",
         "value": "",
@@ -9437,6 +9445,7 @@
       {
         "component": "text",
         "valueType": "string",
+
         "name": "title",
         "value": "",
         "label": "Title",
@@ -9663,6 +9672,47 @@
         "value": "",
         "label": "CTA Link",
         "description": "What link to open when clicking the button."
+      }
+    ]
+  },
+  {
+    "id": "sticky-nav",
+    "fields": []
+  },
+  {
+    "id": "sticky-nav-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Style",
+        "description": "The section style",
+        "valueType": "string",
+        "hidden": true,
+        "options": []
+      }
+    ]
+  },
+  {
+    "title": "Sticky Nav Item",
+    "id": "sticky-nav-item",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "sectionId",
+        "value": "",
+        "label": "Section ID",
+        "description": "The ID of the section this nav item navigates to. Must match the Section ID set on the target section."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "navLabel",
+        "value": "",
+        "label": "Nav Label",
+        "description": "The label displayed in the sticky navigation bar for this item."
       }
     ]
   }
