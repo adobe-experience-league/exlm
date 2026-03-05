@@ -30,6 +30,7 @@ export default function decorate(block) {
 
   cardRows.forEach((cardRow) => {
     cardRow.classList.add('grid-card');
+    cardRow.classList.add('glass-bg');
     const [titleCell, descCell, imageCell, ctaCell] = cardRow.children;
     const picture = imageCell?.querySelector('picture');
 

@@ -113,10 +113,6 @@
 .grid-cards .grid-card {
   box-sizing: border-box;
   border-radius: 16px;
-  border: 2px solid rgb(255 255 255 / 60%);
-  background-color: rgb(255 255 255 / 50%);
-  box-shadow: 0 0 8px 0 rgb(0 0 0 / 25%);
-  backdrop-filter: blur(12px);
   margin: 0 auto;
   padding: var(--spectrum-spacing-400);
   width: 100%;
