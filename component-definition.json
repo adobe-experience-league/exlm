@@ -292,6 +292,23 @@
               }
             }
           }
+        },
+        {
+          "title": "Sticky Nav Section",
+          "id": "sticky-nav-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "name": "Sticky Nav Section",
+                  "model": "sticky-nav-section",
+                  "filter": "sticky-nav-section",
+                  "style": "sticky-nav-section"
+                }
+              }
+            }
+          }
         }
       ]
     },
@@ -1310,7 +1327,10 @@
                     "fileReferenceAlt": "Card image",
                     "cta_Type": "secondary",
                     "cta_linkText": "Learn More",
-                    "cta_link": "http://experienceleague.adobe.com/"
+                    "cta_link": "http://experienceleague.adobe.com/",
+                    "cta_customBgColor": "--spectrum-gray-700",
+                    "cta_textColor": "white",
+                    "cta_customBgHexCode": "000000"
                   },
                   "item2": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
@@ -1322,7 +1342,10 @@
                     "fileReferenceAlt": "Card image",
                     "cta_Type": "secondary",
                     "cta_linkText": "Learn More",
-                    "cta_link": "http://experienceleague.adobe.com/"
+                    "cta_link": "http://experienceleague.adobe.com/",
+                    "cta_customBgColor": "--spectrum-gray-700",
+                    "cta_textColor": "white",
+                    "cta_customBgHexCode": "000000"
                   },
                   "item3": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
@@ -1334,7 +1357,10 @@
                     "fileReferenceAlt": "Card image",
                     "cta_Type": "secondary",
                     "cta_linkText": "Learn More",
-                    "cta_link": "http://experienceleague.adobe.com/"
+                    "cta_link": "http://experienceleague.adobe.com/",
+                    "cta_customBgColor": "--spectrum-gray-700",
+                    "cta_textColor": "white",
+                    "cta_customBgHexCode": "000000"
                   }
                 }
               }
@@ -1357,7 +1383,10 @@
                   "fileReferenceAlt": "Card image",
                   "cta_Type": "secondary",
                   "cta_linkText": "Learn More",
-                  "cta_link": "http://experienceleague.adobe.com/"
+                  "cta_link": "http://experienceleague.adobe.com/",
+                  "cta_customBgColor": "--spectrum-gray-700",
+                  "cta_textColor": "white",
+                  "cta_customBgHexCode": "000000"
                 }
               }
             }
@@ -1542,6 +1571,29 @@
           }
         },
         {
+          "title": "Marquee Video Full-Bleed",
+          "id": "marquee-video-full-bleed",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Marquee Video Full-Bleed",
+                  "model": "marquee-video-full-bleed",
+                  "title": "Your place for everything AI.",
+                  "description": "<p>Discover all the ways AI can empower you to do your best work. Dig into articles, hands-on learning, events, and more to level up your capabilities and double down on your impact.</p>",
+                  "primaryCta_Type": "primary",
+                  "primaryCta_linkText": "CTA lorem ipsum",
+                  "primaryCta_link": "#section-id",
+                  "secondaryCta_Type": "secondary",
+                  "secondaryCta_linkText": "Take the quiz",
+                  "secondaryCta_link": "#quiz"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Media",
           "id": "media",
           "plugins": {
@@ -1590,6 +1642,9 @@
                   "cta_linkText": "CTA Text",
                   "cta_link": "http://experienceleague.adobe.com/",
                   "cta_Type": "secondary",
+                  "cta_customBgColor": "--spectrum-gray-700",
+                  "cta_textColor": "white",
+                  "cta_customBgHexCode": "000000",
                   "podcastCardHeading": "Podcast Card Heading",
                   "podcastCardDescription": "Podcast Card Description"
                 }
@@ -2090,6 +2145,60 @@
                   "name": "Step",
                   "model": "step",
                   "step_url": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Sticky Nav",
+          "id": "sticky-nav",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Sticky Nav",
+                  "model": "sticky-nav",
+                  "filter": "sticky-nav",
+                  "item1": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Sticky Nav Item",
+                    "model": "sticky-nav-item",
+                    "sectionId": "section-1",
+                    "navLabel": "Nav Item 1"
+                  },
+                  "item2": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Sticky Nav Item",
+                    "model": "sticky-nav-item",
+                    "sectionId": "section-2",
+                    "navLabel": "Nav Item 2"
+                  },
+                  "item3": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Sticky Nav Item",
+                    "model": "sticky-nav-item",
+                    "sectionId": "section-3",
+                    "navLabel": "Nav Item 3"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Sticky Nav Item",
+          "id": "sticky-nav-item",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Sticky Nav Item",
+                  "model": "sticky-nav-item",
+                  "sectionId": "",
+                  "navLabel": "Nav Item"
                 }
               }
             }
