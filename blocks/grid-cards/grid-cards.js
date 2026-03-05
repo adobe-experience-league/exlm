@@ -25,6 +25,7 @@ export default function decorate(block) {
       const headingTag = document.createElement('h2');
       headingTag.classList.add('grid-cards-title');
       headingTag.innerHTML = titleRow.textContent;
+      titleRow.replaceWith(headingTag);
       headerDiv.appendChild(headingTag);
     } else {
       titleRow.remove();
