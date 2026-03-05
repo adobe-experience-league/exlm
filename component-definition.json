@@ -1057,19 +1057,10 @@
                   "name": "Event Card Item",
                   "model": "event-item",
                   "filter": "events",
-                  "tag": "",
-                  "dateText": "",
-                  "eventTypeText": "",
-                  "title": "",
-                  "description": "",
-                  "fileReference": "",
-                  "fileReferenceAlt": "",
                   "cta1_Type": "primary",
                   "cta1_customBgColor": "--spectrum-gray-700",
                   "cta1_textColor": "white",
-                  "cta1_customBgHexCode": "000000",
-                  "cta1_linkText": "",
-                  "cta1_link": ""
+                  "cta1_customBgHexCode": "000000"
                 }
               }
             }
