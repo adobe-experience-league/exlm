@@ -168,6 +168,7 @@ export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 export const isCourseStep = matchesAnyTheme(/course-step/);
 export const isOnDemandEventPage = matchesAnyTheme(/on-demand-event/);
+export const isLiveGradientBgPage = matchesAnyTheme(/page-bg-gradient/);
 
 export const isCertificatePage = () => !!document.querySelector('.course-completion'); // Checking for presence of course-completion block
 
@@ -1072,6 +1073,9 @@ async function loadLazy(doc) {
   // disable martech if martech=off is in the query string, this is used for testing ONLY
   if (window.location.search?.indexOf('martech=off') === -1) loadMartech(headerPromise, footerPromise);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
+  if (isLiveGradientBgPage) {
+    loadDefaultModule('./page-bg-gradient/page-bg-gradient.js');
+  }
   loadFonts();
 }
 

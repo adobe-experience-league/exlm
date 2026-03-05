@@ -1,0 +1,157 @@
+.sticky-nav-section {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.sticky-nav {
+  position: relative;
+  display: none;
+  width: 100%;
+  background-color: var(--spectrum-gray-50);
+  border-radius: 0;
+}
+
+.sticky-nav-container {
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  overflow: auto hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.sticky-nav-container::-webkit-scrollbar {
+  display: none;
+}
+
+.sticky-nav-list {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  height: stretch;
+  gap: 32px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+}
+
+.sticky-nav-list::-webkit-scrollbar {
+  display: none;
+}
+
+.sticky-nav-item,
+.sticky-nav-item:first-child,
+.sticky-nav-item:last-child,
+.sticky-nav-item:first-of-type,
+.sticky-nav-item:last-of-type {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Base link styles */
+.sticky-nav-section .sticky-nav-list .sticky-nav-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  font-family: var(--body-font-family);
+  color: var(--non-spectrum-smoke);
+  font-size: var(--spectrum-font-size-300);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--spectrum-line-height-m);
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  letter-spacing: 0;
+  text-transform: none;
+  margin-bottom: 0;
+}
+
+.sticky-nav-section .sticky-nav-list .sticky-nav-link:hover {
+  color: var(--text-color);
+  font-weight: var(--font-weight-bold);
+  border-bottom-color: transparent;
+  text-decoration: none;
+}
+
+.sticky-nav-section .sticky-nav-list .sticky-nav-link.active {
+  color: var(--text-color);
+  font-weight: var(--font-weight-bold);
+  border-bottom: 2px solid var(--non-spectrum-navy-blue);
+}
+
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link:hover,
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link:hover,
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link:hover,
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link:hover {
+  color: var(--text-color);
+  font-weight: var(--font-weight-bold);
+  border-bottom-color: transparent;
+  text-decoration: none;
+}
+
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link.active,
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-child .sticky-nav-link.active,
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:first-of-type .sticky-nav-link.active,
+.sticky-nav-section .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link.active {
+  color: var(--text-color);
+  font-weight: var(--font-weight-bold);
+  border-bottom: 2px solid var(--non-spectrum-navy-blue);
+}
+
+/* Authoring mode — block not yet decorated by JS, show raw table as horizontal preview */
+.sticky-nav:not([data-block-status='loaded']) {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 32px;
+  padding: 0 24px;
+  overflow-x: auto;
+  box-sizing: border-box;
+}
+
+.sticky-nav:not([data-block-status='loaded']) > div {
+  display: contents;
+}
+
+.sticky-nav:not([data-block-status='loaded']) > div > div:first-child {
+  display: none;
+}
+
+.sticky-nav:not([data-block-status='loaded']) > div > div:last-child {
+  flex-shrink: 0;
+  padding: 12px 0;
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-font-size-300);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--spectrum-line-height-m);
+  white-space: nowrap;
+  color: var(--spectrum-gray-600);
+}
+
+.sticky-nav ul > li:not(:last-child) {
+  margin-bottom: 0;
+}
+
+/* Sticky Nav — desktop-only (> 900px) horizontal tab bar, hidden on mobile/tablet */
+
+@media (min-width: 900px) {
+  .sticky-nav-section,
+  .sticky-nav-wrapper,
+  .sticky-nav {
+    display: block;
+  }
+}
