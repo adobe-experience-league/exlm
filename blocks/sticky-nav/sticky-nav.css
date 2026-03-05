@@ -66,7 +66,7 @@
   align-items: center;
   text-decoration: none;
   font-family: var(--body-font-family);
-  color: var(--spectrum-gray-600);
+  color: var(--non-spectrum-smoke);
   font-size: var(--spectrum-font-size-300);
   font-weight: var(--font-weight-bold);
   line-height: var(--spectrum-line-height-m);
@@ -91,7 +91,7 @@
 .sticky-nav-section .sticky-nav-list .sticky-nav-link.active {
   color: var(--text-color);
   font-weight: var(--font-weight-bold);
-  border-bottom: 2px solid var(--non-spectrum-link);
+  border-bottom: 2px solid var(--non-spectrum-navy-blue);
 }
 
 .sticky-nav-section .sticky-nav-list .sticky-nav-item:first-child .sticky-nav-link:hover,
@@ -110,7 +110,7 @@
 .sticky-nav-section .sticky-nav-list .sticky-nav-item:last-of-type .sticky-nav-link.active {
   color: var(--text-color);
   font-weight: var(--font-weight-bold);
-  border-bottom: 2px solid var(--non-spectrum-link);
+  border-bottom: 2px solid var(--non-spectrum-navy-blue);
 }
 
 /* Authoring mode — block not yet decorated by JS, show raw table as horizontal preview */
