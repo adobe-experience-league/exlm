@@ -5,9 +5,9 @@ const getText = (cell) => (cell?.textContent ?? '').trim();
 
 function parseListItemCells(cells) {
   const cellArr = [...(cells ?? [])];
-  const [tag, date, type, title, desc] = cellArr.splice(0, 5).map(getText);
+  const [tagText, date, type, title, desc] = cellArr.splice(0, 5).map(getText);
   const url = cellArr.pop()?.querySelector('a')?.href?.trim() ?? '';
-  return { tag, date, type, title, desc, url };
+  return { tagText, date, type, title, desc, url };
 }
 
 export default function decorate(block) {
@@ -17,7 +17,7 @@ export default function decorate(block) {
   const blockTitle = getText(blockTitleDiv);
   const blockDescription = getText(blockDescDiv);
   const featuredEventCells = [...(featuredRow?.children ?? [])];
-  const [tag, dateText, eventTypeText, title, description] = featuredEventCells.splice(0, 5).map(getText);
+  const [tagText, dateText, eventTypeText, title, description] = featuredEventCells.splice(0, 5).map(getText);
   const [imgCell, ctaContainer] = featuredEventCells;
 
   const imageAlt = imgCell?.querySelector('img')?.getAttribute('alt') ?? '';
@@ -59,7 +59,7 @@ export default function decorate(block) {
   const featuredInnerHtml = `
     <div class="events-featured-content">
       <div class="events-featured-header">
-        ${tag ? `<span class="events-featured-tag">${tag}</span>` : ''}
+        ${tagText ? `<span class="events-featured-tag">${tagText}</span>` : ''}
         ${metaLine ? `<span class="events-featured-meta">${metaLine}</span>` : ''}
       </div>
       ${featuredTitleHtml}
@@ -93,7 +93,7 @@ export default function decorate(block) {
         : item.title;
 
     const itemHtml = `
-      ${item.tag ? `<span class="events-featured-tag">${item.tag}</span>` : ''}
+      ${item.tagText ? `<span class="events-featured-tag">${item.tagText}</span>` : ''}
       ${itemMetaLine ? `<span class="events-featured-meta">${itemMetaLine}</span>` : ''}
       ${titleContent ? `<div class="events-item-title">${titleContent}</div>` : ''}
       ${item.desc ? `<div class="events-item-description">${item.desc}</div>` : ''}

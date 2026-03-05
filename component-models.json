@@ -4614,10 +4614,10 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "tag",
+        "name": "tagText",
         "value": "",
-        "label": "Tag",
-        "description": "Tag for the event card."
+        "label": "Tag Text",
+        "description": "Tag text for the event card."
       },
       {
         "component": "text",
