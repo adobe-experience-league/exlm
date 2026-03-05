@@ -1230,7 +1230,10 @@
                     "fileReferenceAlt": "Card image",
                     "cta_Type": "secondary",
                     "cta_linkText": "Learn More",
-                    "cta_link": "http://experienceleague.adobe.com/"
+                    "cta_link": "http://experienceleague.adobe.com/",
+                    "cta_customBgColor": "--spectrum-gray-700",
+                    "cta_textColor": "white",
+                    "cta_customBgHexCode": "000000"
                   },
                   "item2": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
@@ -1242,7 +1245,10 @@
                     "fileReferenceAlt": "Card image",
                     "cta_Type": "secondary",
                     "cta_linkText": "Learn More",
-                    "cta_link": "http://experienceleague.adobe.com/"
+                    "cta_link": "http://experienceleague.adobe.com/",
+                    "cta_customBgColor": "--spectrum-gray-700",
+                    "cta_textColor": "white",
+                    "cta_customBgHexCode": "000000"
                   },
                   "item3": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
@@ -1254,7 +1260,10 @@
                     "fileReferenceAlt": "Card image",
                     "cta_Type": "secondary",
                     "cta_linkText": "Learn More",
-                    "cta_link": "http://experienceleague.adobe.com/"
+                    "cta_link": "http://experienceleague.adobe.com/",
+                    "cta_customBgColor": "--spectrum-gray-700",
+                    "cta_textColor": "white",
+                    "cta_customBgHexCode": "000000"
                   }
                 }
               }
@@ -1277,7 +1286,10 @@
                   "fileReferenceAlt": "Card image",
                   "cta_Type": "secondary",
                   "cta_linkText": "Learn More",
-                  "cta_link": "http://experienceleague.adobe.com/"
+                  "cta_link": "http://experienceleague.adobe.com/",
+                  "cta_customBgColor": "--spectrum-gray-700",
+                  "cta_textColor": "white",
+                  "cta_customBgHexCode": "000000"
                 }
               }
             }
@@ -1533,6 +1545,9 @@
                   "cta_linkText": "CTA Text",
                   "cta_link": "http://experienceleague.adobe.com/",
                   "cta_Type": "secondary",
+                  "cta_customBgColor": "--spectrum-gray-700",
+                  "cta_textColor": "white",
+                  "cta_customBgHexCode": "000000",
                   "podcastCardHeading": "Podcast Card Heading",
                   "podcastCardDescription": "Podcast Card Description"
                 }
