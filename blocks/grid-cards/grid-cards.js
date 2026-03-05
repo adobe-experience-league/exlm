@@ -29,7 +29,7 @@ export default function decorate(block) {
   const isStandard = block.classList.contains('standard');
 
   cardRows.forEach((cardRow) => {
-    cardRow.classList.add('grid-card');
+    cardRow.classList.add('grid-card', 'glass-bg');
     const [titleCell, descCell, imageCell, ctaCell] = cardRow.children;
     const picture = imageCell?.querySelector('picture');
 
