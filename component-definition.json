@@ -1004,7 +1004,7 @@
                     "name": "Event Card Item",
                     "model": "event-item",
                     "filter": "events",
-                    "fileReference": "/content/dam/exlm/content-at-scale.png",
+                    "fileReference": "/content/dam/exlm/aim-featured-event-image.png",
                     "fileReferenceAlt": "Featured Image",
                     "cta1_Type": "primary",
                     "cta1_customBgColor": "--spectrum-gray-700",
