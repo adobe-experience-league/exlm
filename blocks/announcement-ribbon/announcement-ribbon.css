@@ -10,10 +10,6 @@
   margin: 16px 0;
 }
 
-.announcement-ribbon.medium {
-  border-radius: 16px;
-}
-
 .announcement-ribbon.fill-image {
   background-repeat: no-repeat;
   background-position: center center;
@@ -26,13 +22,6 @@
 
 .announcement-ribbon :where(h1, h2, h3, h4, h5, h6) {
   margin: 0 0 4px;
-}
-
-.announcement-ribbon.medium :where(h1, h2, h3, h4, h5, h6) {
-  margin: 0;
-  line-height: 115%;
-  font-size: var(--exlm-font-size-h1-plus);
-  font-weight: var(--font-weight-heavy);
 }
 
 .announcement-ribbon .ribbon-default-content {
@@ -50,31 +39,10 @@
   line-height: 19px;
 }
 
-.announcement-ribbon.medium .ribbon-default-content,
-.announcement-ribbon.medium .ribbon-description {
-  margin-bottom: 0;
-}
-
-.announcement-ribbon.medium .ribbon-description {
-  font-size: var(--spectrum-body-size-xxl);
-  line-height: 150%;
-  font-weight: var(--font-weight-normal);
-}
-
 .announcement-ribbon .ribbon-button-container {
   display: flex;
   flex-direction: column-reverse;
   width: 100%;
-}
-
-.announcement-ribbon.medium .ribbon-button-container {
-  border-radius: 20px;
-}
-
-.announcement-ribbon.medium .ribbon-button-container .button {
-  padding: 12px 24px 14px;
-  align-items: center;
-  gap: 8px;
 }
 
 .announcement-ribbon .icon img {
@@ -133,11 +101,6 @@
     padding: 16px 24px;
   }
 
-  .announcement-ribbon.medium {
-    gap: 8px;
-    padding: 57px 56px;
-  }
-
   .announcement-ribbon .ribbon-content-container {
     display: flex;
     gap: 24px;
@@ -152,12 +115,45 @@
     width: auto;
   }
 
-  .announcement-ribbon.medium .ribbon-button-container {
-    gap: 23px;
-  }
-
   .announcement-ribbon .icon-close-black,
   .announcement-ribbon .icon-close-light {
     margin: 0 12px 0 16px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .announcement-ribbon.medium {
+    gap: 8px;
+    padding: 57px 56px;
+    border-radius: 16px;
+  }
+
+  .announcement-ribbon.medium .ribbon-button-container {
+    gap: 23px;
+    border-radius: 20px;
+  }
+
+  .announcement-ribbon.medium :where(h1, h2, h3, h4, h5, h6) {
+    margin: 0;
+    line-height: 115%;
+    font-size: var(--exlm-font-size-h1-plus);
+    font-weight: var(--font-weight-heavy);
+  }
+
+  .announcement-ribbon.medium .ribbon-default-content,
+  .announcement-ribbon.medium .ribbon-description {
+    margin-bottom: 0;
+  }
+
+  .announcement-ribbon.medium .ribbon-description {
+    font-size: var(--spectrum-body-size-xxl);
+    line-height: 150%;
+    font-weight: var(--font-weight-normal);
+  }
+
+  .announcement-ribbon.medium .ribbon-button-container .button {
+    padding: 12px 24px 14px;
+    align-items: center;
+    gap: 8px;
   }
 }

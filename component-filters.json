@@ -5,15 +5,22 @@
   },
   {
     "id": "main",
-    "components": ["section", "tab-section", "list-section"]
+    "components": ["section", "tab-section", "list-section", "sticky-nav-section"]
   },
   {
     "id": "main-browse",
-    "components": ["section", "browse-rail-section", "tab-section", "list-section"]
+    "components": ["section", "browse-rail-section", "tab-section", "list-section", "sticky-nav-section"]
   },
   {
     "id": "main-article",
-    "components": ["article-content-section", "article-header-section", "section", "tab-section", "list-section"]
+    "components": [
+      "article-content-section",
+      "article-header-section",
+      "section",
+      "tab-section",
+      "list-section",
+      "sticky-nav-section"
+    ]
   },
   {
     "id": "main-profile",
@@ -25,11 +32,11 @@
   },
   {
     "id": "main-courses",
-    "components": ["section", "courses-section", "tab-section", "list-section"]
+    "components": ["section", "courses-section", "tab-section", "list-section", "sticky-nav-section"]
   },
   {
     "id": "main-course-hub",
-    "components": ["section", "course-hub-section", "tab-section", "list-section"]
+    "components": ["section", "course-hub-section", "tab-section", "list-section", "sticky-nav-section"]
   },
   {
     "id": "section",
@@ -43,6 +50,7 @@
       "curated-cards",
       "teaser",
       "detailed-teaser",
+      "marquee-video-full-bleed",
       "marquee",
       "carousel",
       "sign-up",
@@ -107,6 +115,7 @@
       "curated-cards",
       "teaser",
       "detailed-teaser",
+      "marquee-video-full-bleed",
       "marquee",
       "carousel",
       "sign-up",
@@ -151,6 +160,7 @@
       "curated-cards",
       "teaser",
       "detailed-teaser",
+      "marquee-video-full-bleed",
       "marquee",
       "carousel",
       "sign-up",
@@ -205,6 +215,10 @@
     "components": ["list-item"]
   },
   {
+    "id": "sticky-nav-section",
+    "components": ["sticky-nav"]
+  },
+  {
     "id": "section-browse",
     "components": [
       "text",
@@ -216,6 +230,7 @@
       "curated-cards",
       "teaser",
       "detailed-teaser",
+      "marquee-video-full-bleed",
       "marquee",
       "sign-up",
       "video-embed",
@@ -317,6 +332,7 @@
       "button",
       "image",
       "announcement-ribbon",
+      "marquee-video-full-bleed",
       "marquee",
       "inprogress-courses",
       "browse-courses"
@@ -351,6 +367,7 @@
       "curated-cards",
       "teaser",
       "detailed-teaser",
+      "marquee-video-full-bleed",
       "marquee",
       "carousel",
       "sign-up",
@@ -472,6 +489,10 @@
   {
     "id": "list-item",
     "components": ["list-content", "code", "note", "video-embed"]
+  },
+  {
+    "id": "sticky-nav",
+    "components": ["sticky-nav-item"]
   },
   {
     "id": "rte-custom-options",
