@@ -1,7 +1,3 @@
-.section.sticky-nav-section .sticky-nav-wrapper {
-  margin: 0 120px;
-}
-
 .sticky-nav-section {
   display: none;
   position: sticky;
