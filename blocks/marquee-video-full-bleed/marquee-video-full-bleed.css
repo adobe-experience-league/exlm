@@ -110,7 +110,7 @@ main .section.marquee-video-full-bleed-container {
   margin-right: 20px;
   border: 2px solid #fff;
   border-radius: 50%;
-  background: transparent;
+  background: var(--non-spectrum-dark-gray);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -136,7 +136,7 @@ main .section.marquee-video-full-bleed-container {
 
 .marquee-video-full-bleed-play-pause:hover,
 .marquee-video-full-bleed-play-pause:focus {
-  background: transparent;
+  background: var(--non-spectrum-dark-gray);
 }
 
 @media (min-width: 600px) {
