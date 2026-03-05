@@ -192,6 +192,14 @@ async function applyChanges(event) {
   // redecorate default content and blocks on patches (in the properties rail)
   const { detail } = event;
 
+  if (event.type === 'aue:content-remove') {
+    const removedResource = event.detail?.resource;
+    const block = document.querySelector(`.block[data-aue-resource="${removedResource}"]`);
+    if (block?.classList.contains('playlist')) {
+      document.querySelector('.playlist-player-container')?.remove();
+    }
+  }
+
   const resource =
     detail?.request?.target?.resource || // update, patch components
     detail?.request?.target?.container?.resource || // update, patch, add to sections
@@ -218,6 +226,11 @@ async function applyChanges(event) {
       decorateMain(newMain);
       decorateRichtext(newMain);
       await loadBlocks(newMain);
+      const newPlaylistBlock = newMain.querySelector('.playlist.block');
+      if (newPlaylistBlock) {
+        delete newPlaylistBlock.dataset.blockStatus;
+        await loadBlock(newPlaylistBlock);
+      }
       element.remove();
       loadArticles();
       newMain.style.display = null;

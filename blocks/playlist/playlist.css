@@ -50,7 +50,7 @@
   height: 16px;
 }
 
-.section.playlist-container .default-content-wrapper {
+.playlist-page .section.playlist-container .default-content-wrapper {
   position: relative;
   padding: 1em;
   margin: 0;
@@ -288,4 +288,8 @@
 .playlist-now-viewing {
   color: var(--non-spectrum-grey-updated);
   font-size: var(--spectrum-font-size-75);
+}
+
+.playlist.hide-playlist {
+  display: none;
 }

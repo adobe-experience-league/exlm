@@ -175,3 +175,14 @@
     margin: 0 auto;
   }
 }
+
+/* Playlists */
+
+@media (min-width: 900px) {
+  .articles-wrapper .article-content-container > .playlist-page {
+    grid-column: 1;
+    padding: 3em 3em 3em 3.5em;
+    max-width: 765px;
+    margin: 0;
+  }
+}
