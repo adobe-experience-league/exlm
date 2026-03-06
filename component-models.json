@@ -9728,18 +9728,5 @@
         "description": "The label displayed in the sticky navigation bar for this item."
       }
     ]
-  },
-  {
-    "id": "fragment",
-    "fields": [
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "fragmentPath",
-        "value": "",
-        "label": "Fragment Path",
-        "description": "Path to the fragment content to include."
-      }
-    ]
   }
 ]
