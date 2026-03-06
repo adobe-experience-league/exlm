@@ -1344,3 +1344,15 @@ export function setupComponentImpressions() {
     }
   });
 }
+
+export function pushTopNavSearchEvent(contentTypeDropDown, searchTerm) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'topNavSearch',
+    search: {
+      contentTypeDropDown: contentTypeDropDown || '',
+      searchTerm: searchTerm || '',
+    },
+  });
+}
