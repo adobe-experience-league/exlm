@@ -1478,10 +1478,14 @@ export function updateTQTagsMetadata(document) {
       const parsed = JSON.parse(decoded);
 
       if (Array.isArray(parsed)) {
-        const updatedTags = parsed
-          .map((item) => (item.uri && item.label ? `${item.uri}|${item.label}` : null))
-          .filter(Boolean)
-          .join(', ');
+        const updatedTags = JSON.stringify(
+          parsed
+            .filter((item) => item.uri && item.label)
+            .map((item) => ({
+              id: item.uri,
+              'internal-label': item.label,
+            })),
+        );
         if (updatedTags) {
           setMetadata(document, key, updatedTags);
           // Extract labels (the part after |) and join by comma
