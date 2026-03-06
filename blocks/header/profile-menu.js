@@ -1,4 +1,4 @@
-import { fetchLanguagePlaceholders, htmlToElement, loadIms, getConfig } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, htmlToElement, getConfig } from '../../scripts/scripts.js';
 import { isMobile, registerHeaderResizeHandler, simplifySingleCellBlock } from './header-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
@@ -185,9 +185,6 @@ export default class ProfileMenu extends HTMLElement {
       });
       profileMenuBlock.append(signoutLink);
 
-      if (this.decoratorOptions.khorosProfileUrl && this.decoratorOptions.loadExLIms) {
-        await loadIms();
-      }
       fetchCommunityProfileData(this.decoratorOptions.khorosProfileUrl)
         .then((res) => {
           if (res) {
