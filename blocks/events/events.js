@@ -3,6 +3,20 @@ import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 const getText = (cell) => (cell?.textContent ?? '').trim();
 
+const DESKTOP_BREAKPOINT = '(min-width: 600px)';
+
+export const debounce = (ms, fn) => {
+  let timer;
+  // eslint-disable-next-line func-names
+  return function (...args) {
+    const ctx = this;
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(ctx, args);
+    }, ms);
+  };
+};
+
 function parseListItemCells(cells) {
   const cellArr = [...(cells ?? [])];
   const [tagText, date, type, title, desc] = cellArr.splice(0, 5).map(getText);
@@ -105,6 +119,21 @@ export default function decorate(block) {
 
   contentWrapper.appendChild(listWrapper);
   block.appendChild(contentWrapper);
+
+  function updateGlassBg() {
+    const isDesktop = window.matchMedia(DESKTOP_BREAKPOINT).matches;
+    contentWrapper.classList.toggle('glass-bg', isDesktop);
+    const featured = block.querySelector('.events-featured');
+    const items = block.querySelectorAll('.events-item');
+    [featured, ...items].filter(Boolean).forEach((el) => {
+      el.classList.toggle('glass-bg', !isDesktop);
+    });
+  }
+
+  updateGlassBg();
+
+  const resizeObserver = new ResizeObserver(debounce(150, updateGlassBg));
+  resizeObserver.observe(block);
 
   if (featuredMediaHtml && imageAlt) {
     block.querySelector('.events-featured-media img')?.setAttribute('alt', imageAlt);
