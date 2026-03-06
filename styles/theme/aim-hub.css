@@ -30,7 +30,7 @@ body.aim-hub .section > .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) 
   font-weight: var(--font-weight-heavy);
 }
 
-body.aim-hub .section > div[class$='-wrapper'] + div[class$='-wrapper'] {
+body.aim-hub .section > div[class$='-wrapper']:not(:first-child) {
   margin-top: 56px;
 }
 
