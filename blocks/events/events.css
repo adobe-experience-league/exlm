@@ -44,9 +44,7 @@
 /* Mobile: card treatment for featured and items - identical look */
 .events .events-featured,
 .events .events-item {
-  background: var(--spectrum-gray-50);
   border-radius: 16px;
-  box-shadow: 0 0 8px 0 rgb(0 0 0 / 25%);
   padding: 24px;
 }
 
@@ -171,10 +169,8 @@
 
 @media (min-width: 600px) {
   .events .events-content {
-    background: var(--spectrum-gray-50);
+    gap: 0;
     border-radius: 16px;
-    box-shadow: 0 0 8px 0 rgb(0 0 0 / 25%);
-    backdrop-filter: blur(12px);
     padding: 40px;
   }
 
@@ -187,7 +183,7 @@
   }
 
   .events .events-featured {
-    margin-bottom: 2rem;
+    margin-bottom: 40px;
   }
 
   .events .events-featured-media {
@@ -197,6 +193,12 @@
   .events .events-featured-description,
   .events .events-featured-cta {
     display: block;
+  }
+
+  .events .events-featured-description {
+    font-size: var(--spectrum-font-size-200);
+    line-height: 1.5;
+    color: var(--non-spectrum-dark-gray);
   }
 
   .events .events-featured-title,
@@ -218,6 +220,7 @@
 
   .events .events-featured-cta {
     text-align: left;
+    margin-top: 24px;
   }
 }
 
