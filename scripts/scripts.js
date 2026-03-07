@@ -1458,7 +1458,7 @@ export function updateTQTagsForCoveo() {
  * Update TQ Tags metadata
  * @param {Document} document
  */
-export function updateTQTagsMetadata(document) {
+export function updateTQTagsMetadata() {
   const keyMapping = {
     role_v2: 'role-v2',
     level_v2: 'level-v2',
@@ -1470,7 +1470,7 @@ export function updateTQTagsMetadata(document) {
   };
 
   Object.entries(keyMapping).forEach(([key, newKey]) => {
-    const metaTag = getMetadata(document, key);
+    const metaTag = getMetadata(key);
     if (!metaTag) return;
 
     try {
@@ -1493,14 +1493,14 @@ export function updateTQTagsMetadata(document) {
           .join(',');
 
         if (updatedTags) {
-          setMetadata(document, key, updatedTags);
+          setMetadata(key, updatedTags);
 
           const labels = parsed
             .map((item) => item.label)
             .filter(Boolean)
             .join(', ');
 
-          setMetadata(document, newKey, labels);
+          setMetadata(newKey, labels);
         }
       }
     } catch (e) {
