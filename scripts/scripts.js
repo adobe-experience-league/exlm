@@ -1478,20 +1478,25 @@ export function updateTQTagsMetadata(document) {
       const parsed = JSON.parse(decoded);
 
       if (Array.isArray(parsed)) {
-        const updatedTags = JSON.stringify(
-          parsed
-            .filter((item) => item.uri && item.label)
-            .map((item) => ({
-              id: item.uri,
-              'internal-label': item.label,
-            })),
-        );
+        const updatedTags = parsed
+          .map((item) => {
+            if (item.uri && item.label) {
+              const id = item.uri.split('/').pop(); // extract TQ ID
+              return JSON.stringify({
+                id,
+                'internal-label': item.label,
+              });
+            }
+            return null;
+          })
+          .filter(Boolean)
+          .join(',');
+
         if (updatedTags) {
           setMetadata(document, key, updatedTags);
-          // Extract labels (the part after |) and join by comma
-          const labels = updatedTags
-            .split(',')
-            .map((tag) => tag.split('|')[1]?.trim())
+
+          const labels = parsed
+            .map((item) => item.label)
             .filter(Boolean)
             .join(', ');
 
