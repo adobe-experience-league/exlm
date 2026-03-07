@@ -5323,8 +5323,8 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-roles",
-        "label": "Role(s)",
+        "name": "role_v2",
+        "label": "Role(s) V2",
         "valueType": "string",
         "description": "Sets the role(s) in page meta.",
         "dataSource": {
@@ -5340,8 +5340,8 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-levels",
-        "label": "Experience Level(s)",
+        "name": "level_v2",
+        "label": "Experience Level(s) V2",
         "valueType": "string",
         "description": "Sets the level(s) in page meta.",
         "dataSource": {
@@ -5357,8 +5357,8 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-products",
-        "label": "Product(s)",
+        "name": "product_v2",
+        "label": "Product(s) V2",
         "valueType": "string",
         "description": "Sets the products(s) in page meta.",
         "dataSource": {
@@ -5374,8 +5374,8 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-features",
-        "label": "Feature(s)",
+        "name": "feature_v2",
+        "label": "Feature(s) V2",
         "valueType": "string",
         "description": "Sets the feature(s) in page meta.",
         "dataSource": {
@@ -5389,17 +5389,17 @@
         },
         "options": {
           "dependentField": {
-            "name": "tq-products",
+            "name": "product_v2",
             "taxonomyType": "product"
           },
-          "requiredTagsToEnable": ["tq-products"]
+          "requiredTagsToEnable": ["product_v2"]
         },
         "extensionId": "exl-ue-extension"
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-subfeatures",
-        "label": "Sub Feature(s)",
+        "name": "subfeature_v2",
+        "label": "Sub Feature(s) V2",
         "valueType": "string",
         "description": "Sets the subfeature(s) in page meta.",
         "dataSource": {
@@ -5413,17 +5413,17 @@
         },
         "options": {
           "dependentField": {
-            "name": "tq-features",
+            "name": "feature_v2",
             "taxonomyType": "feature"
           },
-          "requiredTagsToEnable": ["tq-features"]
+          "requiredTagsToEnable": ["feature_v2"]
         },
         "extensionId": "exl-ue-extension"
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-industries",
-        "label": "Industries",
+        "name": "industry_v2",
+        "label": "Industries V2",
         "valueType": "string",
         "description": "Sets the industries in page meta.",
         "dataSource": {
@@ -5439,8 +5439,8 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-topics",
-        "label": "Topic(s)",
+        "name": "topic_v2",
+        "label": "Topic(s) V2",
         "valueType": "string",
         "description": "Sets the topic(s) in page meta.",
         "dataSource": {
@@ -5532,8 +5532,8 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-roles",
-        "label": "Role(s)",
+        "name": "role_v2",
+        "label": "Role(s) V2",
         "valueType": "string",
         "description": "Sets the role(s) in page meta.",
         "dataSource": {
@@ -5549,8 +5549,8 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-levels",
-        "label": "Experience Level(s)",
+        "name": "level_v2",
+        "label": "Experience Level(s) V2",
         "valueType": "string",
         "description": "Sets the level(s) in page meta.",
         "dataSource": {
@@ -5566,8 +5566,8 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-products",
-        "label": "Product(s)",
+        "name": "product_v2",
+        "label": "Product(s) V2",
         "valueType": "string",
         "description": "Sets the products(s) in page meta.",
         "dataSource": {
@@ -5583,8 +5583,8 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-features",
-        "label": "Feature(s)",
+        "name": "feature_v2",
+        "label": "Feature(s) V2",
         "valueType": "string",
         "description": "Sets the feature(s) in page meta.",
         "dataSource": {
@@ -5598,17 +5598,17 @@
         },
         "options": {
           "dependentField": {
-            "name": "tq-products",
+            "name": "product_v2",
             "taxonomyType": "product"
           },
-          "requiredTagsToEnable": ["tq-products"]
+          "requiredTagsToEnable": ["product_v2"]
         },
         "extensionId": "exl-ue-extension"
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-subfeatures",
-        "label": "Sub Feature(s)",
+        "name": "subfeature_v2",
+        "label": "Sub Feature(s) V2",
         "valueType": "string",
         "description": "Sets the subfeature(s) in page meta.",
         "dataSource": {
@@ -5622,17 +5622,17 @@
         },
         "options": {
           "dependentField": {
-            "name": "tq-features",
+            "name": "feature_v2",
             "taxonomyType": "feature"
           },
-          "requiredTagsToEnable": ["tq-features"]
+          "requiredTagsToEnable": ["feature_v2"]
         },
         "extensionId": "exl-ue-extension"
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-industries",
-        "label": "Industries",
+        "name": "industry_v2",
+        "label": "Industries V2",
         "valueType": "string",
         "description": "Sets the industries in page meta.",
         "dataSource": {
@@ -5648,8 +5648,8 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-topics",
-        "label": "Topic(s)",
+        "name": "topic_v2",
+        "label": "Topic(s) V2",
         "valueType": "string",
         "description": "Sets the topic(s) in page meta.",
         "dataSource": {

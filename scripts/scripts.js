@@ -1410,56 +1410,46 @@ export function setMetadata(name, content) {
 }
 
 /**
- * Update TQ Tags metadata directly in meta tags
+ * Update TQ Tags metadata for Coveo
  * @param {Document} document
  */
 export function updateTQTagsForCoveo() {
   const keyMapping = {
-    'tq-roles': 'role',
-    'tq-levels': 'level',
-    'tq-products': 'coveo-solution',
-    'tq-features': 'feature',
-    'tq-subfeatures': 'sub-feature',
-    'tq-industries': 'industry',
-    'tq-topics': 'topic',
+    role_v2: 'role',
+    level_v2: 'level',
+    product_v2: 'coveo-solution',
+    feature_v2: 'feature',
+    subfeature_v2: 'sub-feature',
+    industry_v2: 'industry',
+    topic_v2: 'topic',
   };
 
-  Object.entries(keyMapping).forEach(([originalName, metaName]) => {
-    const metaTag = document.querySelector(`meta[name="${originalName}"]`);
-    if (!metaTag) return;
+  Object.entries(keyMapping).forEach(([sourceKey, targetKey]) => {
+    const value = getMetadata(sourceKey);
+    if (!value) return;
 
-    try {
-      const decoded = decodeHtmlEntities(metaTag.content);
-      const parsed = JSON.parse(decoded);
+    let formatted = value.trim();
 
-      if (Array.isArray(parsed)) {
-        const separator = originalName === 'tq-products' ? ';' : ',';
-        const labels = [...new Set(parsed.map((item) => item.label?.trim()).filter(Boolean))].join(separator);
-
-        if (labels) {
-          setMetadata(metaName, labels);
-        }
-      }
-    } catch (e) {
-      console.error(`Failed to parse metadata for ${originalName}:`, e, metaTag);
+    // Only product needs different separator
+    if (sourceKey === 'product_v2') {
+      formatted = formatted
+        .split(',')
+        .map((v) => v.trim())
+        .filter(Boolean)
+        .join(';');
     }
+
+    setMetadata(targetKey, formatted);
   });
 }
 
 /**
  * Update TQ Tags metadata
+ * Converts JSON metadata -> label-only metadata
  * @param {Document} document
  */
 export function updateTQTagsMetadata() {
-  const keysToUpdate = [
-    'tq-roles',
-    'tq-levels',
-    'tq-products',
-    'tq-features',
-    'tq-subfeatures',
-    'tq-industries',
-    'tq-topics',
-  ];
+  const keysToUpdate = ['role_v2', 'level_v2', 'product_v2', 'feature_v2', 'subfeature_v2', 'industry_v2', 'topic_v2'];
 
   keysToUpdate.forEach((key) => {
     const metaTag = getMetadata(key);
@@ -1469,25 +1459,15 @@ export function updateTQTagsMetadata() {
       const decoded = decodeHtmlEntities(metaTag);
       const parsed = JSON.parse(decoded);
 
-      if (Array.isArray(parsed)) {
-        const updatedTags = parsed
-          .map((item) => (item.uri && item.label ? `${item.uri}|${item.label}` : null))
-          .filter(Boolean)
-          .join(', ');
-        if (updatedTags) {
-          setMetadata(`${key}`, updatedTags);
-          // Extract labels (the part after |) and join by comma
-          const labels = updatedTags
-            .split(',')
-            .map((tag) => tag.split('|')[1]?.trim())
-            .filter(Boolean)
-            .join(', ');
+      if (!Array.isArray(parsed)) return;
 
-          setMetadata(`${key}-labels`, labels);
-        }
+      const labels = [...new Set(parsed.map((item) => item.label?.trim()).filter(Boolean))];
+
+      if (labels.length) {
+        setMetadata(key, labels.join(','));
       }
     } catch (e) {
-      console.error(`Failed to parse metadata for ${key}:`, e);
+      console.error(`Failed to parse metadata for ${key}:`, e, metaTag);
     }
   });
 }
