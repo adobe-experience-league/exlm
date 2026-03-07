@@ -30,6 +30,10 @@ body.aim-hub .section > .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) 
   font-weight: var(--font-weight-heavy);
 }
 
+body.aim-hub .section > div[class$='-wrapper']:not(:first-child) {
+  margin-top: 56px;
+}
+
 @media (min-width: 900px) {
   body.aim-hub .section {
     padding: 60px 40px;
