@@ -8695,6 +8695,19 @@
     "fields": []
   },
   {
+    "id": "playlist-v2",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "playlistId",
+        "value": "",
+        "label": "Playlist ID",
+        "description": "Enter the playlist ID."
+      }
+    ]
+  },
+  {
     "id": "atomic-search",
     "fields": []
   },
