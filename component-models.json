@@ -1732,7 +1732,7 @@
           },
           {
             "name": "On-Demand Event",
-            "value": "event"
+            "value": "Event|on-demand-event"
           },
           {
             "name": "Perspectives",
@@ -1752,7 +1752,7 @@
           },
           {
             "name": "Upcoming Event",
-            "value": "upcoming-event"
+            "value": "Event|upcoming-event"
           }
         ]
       },
@@ -4097,7 +4097,7 @@
           },
           {
             "name": "On-Demand Event",
-            "value": "event"
+            "value": "on-demand-event"
           },
           {
             "name": "Perspectives",
@@ -4200,7 +4200,7 @@
           },
           {
             "name": "On-Demand Event",
-            "value": "event"
+            "value": "on-demand-event"
           },
           {
             "name": "Perspectives",
@@ -5074,7 +5074,7 @@
           },
           {
             "name": "On-Demand Events",
-            "value": "event"
+            "value": "on-demand-event"
           },
           {
             "name": "Upcoming Event",
@@ -6808,7 +6808,7 @@
           },
           {
             "name": "On-Demand Event",
-            "value": "event"
+            "value": "on-demand-event"
           },
           {
             "name": "Playlists",
@@ -6862,7 +6862,7 @@
           },
           {
             "name": "On-Demand Event",
-            "value": "event"
+            "value": "on-demand-event"
           },
           {
             "name": "Playlists",
@@ -6916,7 +6916,7 @@
           },
           {
             "name": "On-Demand Event",
-            "value": "event"
+            "value": "on-demand-event"
           },
           {
             "name": "Playlists",
@@ -6970,7 +6970,7 @@
           },
           {
             "name": "On-Demand Event",
-            "value": "event"
+            "value": "on-demand-event"
           },
           {
             "name": "Playlists",

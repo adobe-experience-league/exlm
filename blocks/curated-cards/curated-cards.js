@@ -47,8 +47,24 @@ export default async function decorate(block) {
   // Appending header div to the block
   block.appendChild(headerDiv);
 
+  let contentTypeArray = contentType && contentType.toLowerCase().split(',');
+  console.log('[curated-cards] Content type received:', contentTypeArray);
+  
+  // Handle hierarchical content types (e.g., "Event|on-demand-event" -> "on-demand-event")
+  if (contentTypeArray) {
+    contentTypeArray = contentTypeArray.map((ct) => {
+      if (ct.includes('|')) {
+        const splitContent = ct.split('|');
+        const childName = splitContent[1]?.trim();
+        console.log('[curated-cards] Hierarchical type detected:', ct, '-> using child:', childName);
+        return childName || ct;
+      }
+      return ct;
+    });
+  }
+  
   const param = {
-    contentType: contentType && contentType.toLowerCase().split(','),
+    contentType: contentTypeArray,
     product: products.length ? removeProductDuplicates(products) : null,
     feature: features.length ? [...new Set(features)] : null,
     version: versions.length ? [...new Set(versions)] : null,

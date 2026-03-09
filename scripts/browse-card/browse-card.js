@@ -557,7 +557,36 @@ const getOnDemandEventsDecorator = () => {
  */
 
 export async function buildCard(element, model) {
-  const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
+  const { thumbnail, product, title, badgeTitle, inProgressStatus, failedToLoad = false } = model;
+  let { contentType } = model;
+
+  // Handle hierarchical content types (e.g., "Event|on-demand-event")
+  let displayContentType = contentType;
+  let parentContentType = contentType;
+  let childContentType = null;
+  
+  if (contentType && contentType.includes('|')) {
+    const splitContent = contentType.split('|');
+    parentContentType = splitContent[0]?.trim();
+    childContentType = splitContent[1]?.trim();
+    
+    // Helper function to convert to title case
+    const toTitleCase = (str) =>
+      str
+        ?.trim()
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    
+    // Create display text as "Parent | Child" in title case
+    if (parentContentType && childContentType) {
+      displayContentType = `${toTitleCase(parentContentType)} | ${toTitleCase(childContentType)}`;
+      console.log('[browse-card] Hierarchical type detected:', contentType, '-> Display:', displayContentType, 'Using parent for styling:', parentContentType);
+    }
+    
+    // Use parent for contentType (for styling, icons, etc.)
+    contentType = parentContentType;
+  }
 
   element.setAttribute('data-analytics-content-type', contentType);
   // lowercase all urls - because all of our urls are lower-case

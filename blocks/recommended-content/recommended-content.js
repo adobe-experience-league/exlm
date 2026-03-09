@@ -865,8 +865,13 @@ export default async function decorate(block) {
               payload.contentType = [contentType];
             }
 
-            // Remove role for upcoming-event
-            if (contentType === 'upcoming-event') {
+            // Remove role for upcoming-event and on-demand-event (handle both hierarchical and non-hierarchical formats)
+            const isEventType = contentType === 'upcoming-event' || 
+                               contentType === 'on-demand-event' ||
+                               contentType === 'Event|upcoming-event' || 
+                               contentType === 'Event|on-demand-event';
+            if (isEventType) {
+              console.log('[recommended-content] Removing role for content type:', contentType);
               payload.role = null;
             }
             if (contentTypesFetchMap[contentType]) {

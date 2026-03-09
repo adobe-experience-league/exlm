@@ -41,7 +41,14 @@ function createFilteredResult({
   contentTypeClass = contentType?.toLowerCase() || '';
 
   let iconSrc = '';
-  switch (contentType.toLowerCase()) {
+  console.log('[filtered-results] Processing content type:', contentType.toLowerCase());
+  
+  // Handle hierarchical content types (e.g., "Event|on-demand-event")
+  const normalizedContentType = contentType.toLowerCase();
+  const isHierarchical = normalizedContentType.includes('|');
+  const contentTypeToCheck = isHierarchical ? normalizedContentType.split('|')[1] : normalizedContentType;
+  
+  switch (contentTypeToCheck) {
     case 'tutorial':
       contentTypeClass = 'tutorial';
       iconSrc = '../icons/tutorial.svg';
@@ -54,7 +61,8 @@ function createFilteredResult({
       contentTypeClass = 'community';
       iconSrc = '../icons/community.svg';
       break;
-    case 'event':
+    case 'on-demand-event':
+    case 'upcoming-event':
       contentTypeClass = 'event';
       iconSrc = '../icons/event.svg';
       break;

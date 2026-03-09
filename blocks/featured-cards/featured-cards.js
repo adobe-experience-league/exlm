@@ -123,7 +123,17 @@ export default async function decorate(block) {
     (row) => row.firstElementChild,
   );
   const [keyword, sortBy] = configs.map((cell) => cell.textContent.trim());
-  const contentType = confContentType.textContent.trim().toLowerCase();
+  let contentType = confContentType.textContent.trim().toLowerCase();
+  console.log('[featured-cards] Content type received:', contentType);
+  
+  // Handle hierarchical content types (e.g., "Event|on-demand-event" -> "on-demand-event")
+  if (contentType && contentType.includes('|')) {
+    const splitContent = contentType.split('|');
+    const childName = splitContent[1]?.trim();
+    console.log('[featured-cards] Hierarchical type detected:', contentType, '-> using child:', childName);
+    contentType = childName || contentType;
+  }
+  
   const sortCriteria = COVEO_SORT_OPTIONS[sortBy];
   const noOfResults = 16;
 

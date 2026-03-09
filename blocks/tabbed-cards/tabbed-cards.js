@@ -92,12 +92,23 @@ export default async function decorate(block) {
 
   // Function to fetch data and render block
   const fetchDataAndRenderBlock = (contentType) => {
+    let processedContentType = contentType;
+    
+    // Handle hierarchical content types (e.g., "Event|on-demand-event" -> "on-demand-event")
+    if (processedContentType && processedContentType.includes('|')) {
+      const splitContent = processedContentType.split('|');
+      const childName = splitContent[1]?.trim();
+      console.log('[tabbed-cards] Hierarchical type detected:', processedContentType, '-> using child:', childName);
+      processedContentType = childName || processedContentType;
+    }
+    
     const params = {
-      contentType: contentType && contentType.split(','),
+      contentType: processedContentType && processedContentType.split(','),
       sortCriteria,
       numberOfResults,
       dateCriteria: dateList && createDateCriteria(dateList),
     };
+    console.log('[tabbed-cards] Content type:', contentType, 'Processed:', processedContentType, 'Params contentType:', params.contentType);
 
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(params);
     browseCardsContent
