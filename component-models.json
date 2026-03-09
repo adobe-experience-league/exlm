@@ -5293,7 +5293,7 @@
         "component": "aem-tag",
         "valueType": "string",
         "name": "coveo-solution",
-        "label": "Solution(s)",
+        "label": "Legacy Solution(s)",
         "rootPath": "/content/cq:tags/exl/solution",
         "description": "Sets the Coveo Solution(s) in page meta."
       },
@@ -5324,9 +5324,9 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-roles",
-        "label": "Role(s)",
+        "label": "Role(s) v2",
         "valueType": "string",
-        "description": "Sets the role(s) in page meta.",
+        "description": "Sets the Top Quadrant role(s) tags in page meta.",
         "dataSource": {
           "type": "action",
           "config": {
@@ -5341,9 +5341,9 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-levels",
-        "label": "Experience Level(s)",
+        "label": "Experience Level(s) v2",
         "valueType": "string",
-        "description": "Sets the level(s) in page meta.",
+        "description": "Sets the Top Quadrant level(s) tags in page meta.",
         "dataSource": {
           "type": "action",
           "config": {
@@ -5358,9 +5358,9 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-products",
-        "label": "Product(s)",
+        "label": "Product(s) v2",
         "valueType": "string",
-        "description": "Sets the products(s) in page meta.",
+        "description": "Sets the Top Quadrant products(s) tags in page meta.",
         "dataSource": {
           "type": "action",
           "config": {
@@ -5375,9 +5375,9 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-features",
-        "label": "Feature(s)",
+        "label": "Feature(s) v2",
         "valueType": "string",
-        "description": "Sets the feature(s) in page meta.",
+        "description": "Sets the Top Quadrant feature(s) tags in page meta.",
         "dataSource": {
           "type": "action",
           "config": {
@@ -5399,9 +5399,9 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-subfeatures",
-        "label": "Sub Feature(s)",
+        "label": "Sub Feature(s) v2",
         "valueType": "string",
-        "description": "Sets the subfeature(s) in page meta.",
+        "description": "Sets the Top Quadrant subfeature(s) tags in page meta.",
         "dataSource": {
           "type": "action",
           "config": {
@@ -5423,9 +5423,9 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-industries",
-        "label": "Industries",
+        "label": "Industries v2",
         "valueType": "string",
-        "description": "Sets the industries in page meta.",
+        "description": "Sets the Top Quadrant industries tags in page meta.",
         "dataSource": {
           "type": "action",
           "config": {
@@ -5440,9 +5440,9 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-topics",
-        "label": "Topic(s)",
+        "label": "Topic(s) v2",
         "valueType": "string",
-        "description": "Sets the topic(s) in page meta.",
+        "description": "Sets the Top Quadrant topic(s) tags in page meta.",
         "dataSource": {
           "type": "action",
           "config": {
@@ -5502,7 +5502,7 @@
         "component": "aem-tag",
         "valueType": "string",
         "name": "coveo-solution",
-        "label": "Solution(s)",
+        "label": "Legacy Solution(s)",
         "rootPath": "/content/cq:tags/exl/solution",
         "description": "Sets the Coveo Solution(s) in page meta."
       },
@@ -5533,9 +5533,9 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-roles",
-        "label": "Role(s)",
+        "label": "Role(s) v2",
         "valueType": "string",
-        "description": "Sets the role(s) in page meta.",
+        "description": "Sets the Top Quadrant role(s) tags in page meta.",
         "dataSource": {
           "type": "action",
           "config": {
@@ -5550,9 +5550,9 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-levels",
-        "label": "Experience Level(s)",
+        "label": "Experience Level(s) v2",
         "valueType": "string",
-        "description": "Sets the level(s) in page meta.",
+        "description": "Sets the Top Quadrant level(s) tags in page meta.",
         "dataSource": {
           "type": "action",
           "config": {
@@ -5567,9 +5567,9 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-products",
-        "label": "Product(s)",
+        "label": "Product(s) v2",
         "valueType": "string",
-        "description": "Sets the products(s) in page meta.",
+        "description": "Sets the Top Quadrant products(s) tags in page meta.",
         "dataSource": {
           "type": "action",
           "config": {
@@ -5584,9 +5584,9 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-features",
-        "label": "Feature(s)",
+        "label": "Feature(s) v2",
         "valueType": "string",
-        "description": "Sets the feature(s) in page meta.",
+        "description": "Sets the Top Quadrant feature(s) tags in page meta.",
         "dataSource": {
           "type": "action",
           "config": {
@@ -5608,9 +5608,9 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-subfeatures",
-        "label": "Sub Feature(s)",
+        "label": "Sub Feature(s) v2",
         "valueType": "string",
-        "description": "Sets the subfeature(s) in page meta.",
+        "description": "Sets the Top Quadrant subfeature(s) tags in page meta.",
         "dataSource": {
           "type": "action",
           "config": {
@@ -5632,9 +5632,9 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-industries",
-        "label": "Industries",
+        "label": "Industries v2",
         "valueType": "string",
-        "description": "Sets the industries in page meta.",
+        "description": "Sets the Top Quadrant industries tags in page meta.",
         "dataSource": {
           "type": "action",
           "config": {
@@ -5649,9 +5649,9 @@
       {
         "component": "custom-aem-tag",
         "name": "tq-topics",
-        "label": "Topic(s)",
+        "label": "Topic(s) v2",
         "valueType": "string",
-        "description": "Sets the topic(s) in page meta.",
+        "description": "Sets the Top Quadrant topic(s) tags in page meta.",
         "dataSource": {
           "type": "action",
           "config": {
