@@ -66,6 +66,8 @@ const fetchProfileData = async (profileFlags) => {
       interests: UEAuthorMode ? ['User Interests'] : profileData?.interests || [],
       profilePicture: ppsProfileData?.images?.['100'] || '',
       company: UEAuthorMode ? 'User Company' : ppsProfileData?.company || '',
+      city: UEAuthorMode ? '' : profileData?.city || '',
+      country: UEAuthorMode ? '' : profileData?.country || '',
     }),
     ...(profileFlags.includes(COMMUNITY_PROFILE) && {
       communityUserName: UEAuthorMode ? 'Community User Name' : communityProfileDetails?.username || '',
@@ -246,5 +248,6 @@ export const generateProfileDOM = async (profileFlags) => {
     adobeAccountDOM,
     additionalProfileInfoDOM,
     communityAccountDOM,
+    locationData: hasExlProfileFlag ? { city: profileData.city, country: profileData.country } : null,
   };
 };
