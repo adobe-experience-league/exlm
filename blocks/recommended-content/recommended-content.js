@@ -688,6 +688,9 @@ export default async function decorate(block) {
         let contentTypes = contentTypesEl?.map((contentTypeEL) => contentTypeEL?.innerText?.trim()).reverse() || [];
         contentTypes = contentTypes.slice(0, DEFAULT_NUM_CARDS);
         const contentTypeIsEmpty = contentTypes?.length === 0;
+        
+        // Log selected content types for Recommended Content
+        console.log('[Recommended Content] Selected Content Types:', contentTypes);
         let noOfRows = parseInt(block.dataset.browseCardRows, 10);
         if (!noOfRows) noOfRows = 1;
         const numberOfResults = contentTypeIsEmpty ? DEFAULT_NUM_CARDS * noOfRows : 1 * noOfRows;

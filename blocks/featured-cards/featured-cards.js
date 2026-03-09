@@ -168,13 +168,16 @@ export default async function decorate(block) {
   const productQueryParamValue = updateParamValues(DEFAULT_OPTIONS.PRODUCT.toLowerCase());
 
   const param = {
-    contentType: contentType && contentType.split(','),
+    contentType: contentType && contentType.split(',').map(ct => ct.trim()),
     role: [],
     product: [],
     q: keyword,
     sortCriteria,
     noOfResults,
   };
+
+  // Log selected content types for Featured Cards
+  console.log('[Featured Cards] Selected Content Types:', param.contentType);
 
   const linkDiv = htmlToElement(
     linkTextElement.textContent.length > 0

@@ -29,10 +29,10 @@
           {
             "name": "Theme",
             "children": [
-              {
-                "name": "Light",
-                "value": "light"
-              },
+        {
+          "label": "On-Demand Event",
+          "value": "Event | on_demand_event"
+        },
               {
                 "name": "Dark",
                 "value": "dark"
@@ -42,10 +42,10 @@
           {
             "name": "Alignment",
             "children": [
-              {
-                "name": "Left",
-                "value": "left"
-              },
+        {
+          "label": "Upcoming Event",
+          "value": "Event | upcoming_event"
+        },
               {
                 "name": "Right",
                 "value": "right"
@@ -1732,7 +1732,7 @@
           },
           {
             "name": "On-Demand Event",
-            "value": "event"
+            "value": "Event | on_demand_event"
           },
           {
             "name": "Perspectives",
@@ -1752,7 +1752,7 @@
           },
           {
             "name": "Upcoming Event",
-            "value": "upcoming-event"
+            "value": "Event | upcoming_event"
           }
         ]
       },

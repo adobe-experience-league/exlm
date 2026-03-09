@@ -93,11 +93,14 @@ export default async function decorate(block) {
   // Function to fetch data and render block
   const fetchDataAndRenderBlock = (contentType) => {
     const params = {
-      contentType: contentType && contentType.split(','),
+      contentType: contentType && contentType.split(',').map(ct => ct.trim()),
       sortCriteria,
       numberOfResults,
       dateCriteria: dateList && createDateCriteria(dateList),
     };
+
+    // Log selected content types for Tabbed Cards
+    console.log('[Tabbed Cards] Selected Content Types:', params.contentType);
 
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(params);
     browseCardsContent

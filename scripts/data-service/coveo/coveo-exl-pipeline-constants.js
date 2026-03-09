@@ -45,7 +45,7 @@ export const CONTENT_TYPES = Object.freeze({
     LABEL: placeholders.browseCardTroubleshootingLabel || 'Troubleshooting',
   },
   EVENT: {
-    MAPPING_KEY: 'event',
+    MAPPING_KEY: 'Event | on_demand_event',
     LABEL: placeholders.browseCardEventLabel || 'On-Demand Event',
   },
   COMMUNITY: {
@@ -57,7 +57,7 @@ export const CONTENT_TYPES = Object.freeze({
     LABEL: placeholders.browseCardCertificationLabel || 'Certification',
   },
   UPCOMING_EVENT: {
-    MAPPING_KEY: 'upcoming-event',
+    MAPPING_KEY: 'Event | upcoming_event',
     LABEL: placeholders.browseCardUpcomingEventLabel || 'Upcoming Event',
   },
   INSTRUCTOR_LED: {

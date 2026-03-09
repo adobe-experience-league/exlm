@@ -48,7 +48,7 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
 
   const param = {
-    contentType: contentType && contentType.toLowerCase().split(','),
+    contentType: contentType && contentType.split(',').map(ct => ct.trim()),
     product: products.length ? removeProductDuplicates(products) : null,
     feature: features.length ? [...new Set(features)] : null,
     version: versions.length ? [...new Set(versions)] : null,
@@ -58,6 +58,9 @@ export default async function decorate(block) {
     sortCriteria,
     noOfResults,
   };
+
+  // Log selected content types for Curated Cards
+  console.log('[Curated Cards] Selected Content Types:', param.contentType);
 
   const buildCardsShimmer = new BrowseCardShimmer();
   buildCardsShimmer.addShimmer(block);

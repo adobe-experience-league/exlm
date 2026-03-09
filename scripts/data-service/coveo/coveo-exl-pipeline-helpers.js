@@ -149,12 +149,24 @@ function constructCoveoAdvancedQuery(param) {
  * @returns
  */
 export function getFacets(param) {
+  // Determine if el_contenttype should be hierarchical
+  // It should be hierarchical for community and event-related types
+  let contentTypeFacetType = 'specific';
+  if (param.contentType) {
+    const hasHierarchicalType = param.contentType.some(type => 
+      type.includes('|') || type.includes(CONTENT_TYPES.COMMUNITY.MAPPING_KEY)
+    );
+    if (hasHierarchicalType) {
+      contentTypeFacetType = 'hierarchical';
+    }
+  }
+
   const facets = [
     ...(param.contentType
       ? [
           {
             id: 'el_contenttype',
-            type: param.contentType[0].includes(CONTENT_TYPES.COMMUNITY.MAPPING_KEY) ? 'hierarchical' : 'specific',
+            type: contentTypeFacetType,
             currentValues: param.contentType,
           },
         ]
