@@ -185,10 +185,12 @@ function ensureElementInView(tocContent, element, tocHeaderSelector = '.toc .toc
  * @param {HTMLElement} tocContent
  */
 function updateTocContent(tocHtml, tocContent) {
+  const nav = document.createElement('nav');
   const tocTree = document.createElement('div');
   tocTree.classList.add('toc-tree');
   tocTree.insertAdjacentHTML('beforeend', tocHtml);
-  tocContent.appendChild(tocTree);
+  nav.appendChild(tocTree);
+  tocContent.appendChild(nav);
 
   // prepare links and submenus
   let submenuIdCount = 0;
