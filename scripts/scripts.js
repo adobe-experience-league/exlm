@@ -1468,20 +1468,13 @@ export function updateTQTagsMetadata() {
       const parsed = JSON.parse(decoded);
 
       if (Array.isArray(parsed)) {
-        const updatedTags = parsed
-          .map((item) => (item.uri && item.label ? `${item.uri}|${item.label}` : null))
+        const labels = parsed
+          .map((item) => item?.label)
           .filter(Boolean)
           .join(', ');
-        if (updatedTags) {
-          setMetadata(`${key}`, updatedTags);
-          // Extract labels (the part after |) and join by comma
-          const labels = updatedTags
-            .split(',')
-            .map((tag) => tag.split('|')[1]?.trim())
-            .filter(Boolean)
-            .join(', ');
 
-          setMetadata(`${newKey}`, labels);
+        if (labels) {
+          setMetadata(newKey, labels);
         }
       }
     } catch (e) {
