@@ -748,11 +748,10 @@ export function getConfig() {
     recentlyViewed: 'exl-hp-auth-recs-3',
   };
 
-  const currentHost = window.location.hostname;
+  // const currentHost = window.location.hostname;
   const defaultEnv = HOSTS.find((hostObj) => hostObj.env === 'DEV');
-  const currentEnv = HOSTS.find((hostObj) =>
-    Object.values(hostObj).some((val) => (val instanceof RegExp ? val.test(currentHost) : val === currentHost)),
-  );
+  const currentEnv = HOSTS[0]; // .find((hostObj) => Object.values(hostObj).includes(currentHost));
+
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const communityHost = currentEnv?.community || defaultEnv.community;
   let cdnOrigin = `https://${cdnHost}`;
@@ -811,11 +810,12 @@ export function getConfig() {
       : `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`,
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
-    coveoTokenUrl: `${cdnOrigin}/api/action/coveo-token?lang=${lang}`,
-    coveoSearchResultsUrl: isProd
+    coveoTokenUrl: `https://experienceleague.adobe.com/api/action/coveo-token?lang=${lang}`,
+    coveoSearchResultsUrl: isProd || true
       ? 'https://platform.cloud.coveo.com/rest/search/v2'
       : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
-    coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
+    coveoOrganizationId: isProd || true ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
+    coveoToken: isProd || true ? 'xx1be0f8e5-64ed-45a2-a208-892919f6e897' : 'xxcfe1b6e9-3628-49b5-948d-ed50d3fa6c99',
     upcomingEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
