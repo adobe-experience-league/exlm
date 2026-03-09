@@ -6,6 +6,8 @@ const browseCardDataModel = {
   product: [],
   title: '',
   description: '',
+  meta: {},
+  // TODO: Cleanup all the meta properties and add it under meta object dynamically based on the contentType
   tags: [],
   event: {
     time: '',
@@ -26,6 +28,9 @@ const browseCardDataModel = {
   viewLinkText: '',
   inProgressText: '',
   inProgressStatus: '',
+  el_course_duration: '',
+  el_course_module_count: '',
+  el_level: '',
 };
 
 export default browseCardDataModel;

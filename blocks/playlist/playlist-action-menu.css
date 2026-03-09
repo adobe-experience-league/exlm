@@ -152,7 +152,7 @@
 
 .playlist-actions [data-action='copy'] .playlist-action-tooltip-label,
 .playlist-actions [data-action='info'] .playlist-action-tooltip-label {
-  left: 0;
+  left: 50%;
 }
 
 .playlist-actions [data-action] .playlist-action-tooltip-label::after {

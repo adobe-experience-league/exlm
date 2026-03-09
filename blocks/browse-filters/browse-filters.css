@@ -65,6 +65,7 @@
 
 .filter-input > input {
   padding-left: 28px;
+  cursor: text;
 }
 
 .filter-input > input::placeholder {
@@ -81,6 +82,7 @@
   width: 14px;
   height: 14px;
   line-height: 15px;
+  cursor: pointer;
 }
 
 .filter-input .icon-search svg {
@@ -100,7 +102,7 @@
 .search-picker-popover,
 .search-suggestions-popover {
   position: absolute;
-  z-index: 1;
+  z-index: 10;
   right: 0;
   top: 32px;
   background-color: var(--background-color);
@@ -125,6 +127,19 @@
 
 .browse-filters-search .icon.search-clear-icon {
   display: none;
+  width: 6px;
+  height: 6px;
+  padding: 4px;
+  background: var(--non-spectrum-silver-mist);
+  border-radius: 100%;
+  right: 8px;
+  cursor: pointer;
+  position: absolute;
+  top: 8px;
+}
+
+.browse-filters-search .search-clear-icon.search-icon-show {
+  display: flex;
 }
 
 .filter-dropdown .filter-dropdown-content {
@@ -311,6 +326,7 @@ button.browse-tags:focus {
 
 .browse-filters-form .filter-input-search {
   display: flex;
+  position: relative;
 }
 
 .browse-filters-pagination span {
@@ -469,6 +485,10 @@ button.browse-tags:focus {
 
 .browse-filters-form.is-result .browse-filters-results-count {
   display: block;
+}
+
+.browse-filters-results.browse-cards-block-content.browse-hide-section {
+  display: none;
 }
 
 .browse-filters-results.no-results {

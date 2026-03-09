@@ -1,14 +1,23 @@
+/* eslint-disable camelcase, no-unused-vars */
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
-import { AUTHOR_TYPE, RECOMMENDED_COURSES_CONSTANTS, VIDEO_THUMBNAIL_FORMAT } from './browse-cards-constants.js';
+import {
+  AUTHOR_TYPE,
+  RECOMMENDED_COURSES_CONSTANTS,
+  VIDEO_THUMBNAIL_FORMAT,
+  COURSE_STATUS,
+} from './browse-cards-constants.js';
 import { sendCoveoClickEvent } from '../coveo-analytics.js';
+import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
+import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 const bookmarkExclusionContentypes = [
   CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
   CONTENT_TYPES.COMMUNITY.MAPPING_KEY,
   CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
+  CONTENT_TYPES['VIDEO CLIP'].MAPPING_KEY,
 ];
 
 /* Fetch data from the Placeholder.json */
@@ -195,6 +204,74 @@ const buildCourseDurationContent = ({ inProgressStatus, inProgressText, cardCont
   cardContent.appendChild(titleElement);
 };
 
+const buildCourseInfoContent = ({ el_course_duration, el_level, cardContent }) => {
+  if (!el_course_duration && !el_level) return;
+
+  // Translate level values using placeholders
+  const translateLevel = (level) => {
+    const levelLower = level?.toLowerCase().trim();
+    const levelMap = {
+      beginner: placeholders?.filterExpLevelBeginnerTitle?.toUpperCase() || 'BEGINNER',
+      intermediate: placeholders?.filterExpLevelIntermediateTitle?.toUpperCase() || 'INTERMEDIATE',
+      experienced: placeholders?.filterExpLevelExperiencedTitle?.toUpperCase() || 'EXPERIENCED',
+    };
+    return levelMap[levelLower] || level?.toUpperCase();
+  };
+
+  const levelText = el_level
+    ? String(el_level)
+        ?.split(',')
+        ?.filter(Boolean)
+        ?.map((level) => translateLevel(level))
+        ?.join(', ')
+    : '';
+  const durationText = el_course_duration ? String(el_course_duration)?.toUpperCase() : '';
+  const separator = levelText && durationText ? ' | ' : '';
+  const levelDurationText = `${levelText}${separator}${durationText}`;
+
+  const courseInfoElement = createTag('div', { class: 'browse-card-course-info' });
+  courseInfoElement.appendChild(createTag('p', { class: 'course-info-level-duration' }, levelDurationText));
+  cardContent.appendChild(courseInfoElement);
+};
+
+const buildCourseStatusContent = ({ meta, el_course_module_count, cardContent }) => {
+  const courseStatus = meta?.courseInfo?.courseStatus;
+  if (!courseStatus) return;
+
+  const statusLabel =
+    {
+      [COURSE_STATUS.NOT_STARTED]: placeholders?.courseStatusNotStarted || 'Not Started',
+      [COURSE_STATUS.IN_PROGRESS]: placeholders?.courseStatusInProgress || 'In Progress',
+      [COURSE_STATUS.COMPLETED]: placeholders?.courseStatusCompleted || 'Completed',
+    }[courseStatus] || '';
+
+  if (!statusLabel) return;
+
+  const statusRow = createTag('div', { class: 'browse-card-status-row' });
+
+  // Status indicator
+  const statusIndicator = createTag('div', { class: 'browse-card-status-indicator' });
+  statusIndicator.innerHTML = `<span class="status-badge status-${courseStatus}"></span><span class="status-text">${statusLabel}</span>`;
+  statusRow.appendChild(statusIndicator);
+
+  if (el_course_module_count) {
+    let completedModules = 0;
+    if (courseStatus === COURSE_STATUS.COMPLETED) {
+      completedModules = parseInt(el_course_module_count, 10);
+    } else if (courseStatus === COURSE_STATUS.IN_PROGRESS && meta.courseInfo.profileCourse?.modules) {
+      completedModules = meta.courseInfo.profileCourse.modules.filter((module) => module.finishedAt).length;
+    }
+
+    const moduleCountText = placeholders.courseModuleCompletedCount
+      ? placeholders?.courseModuleCompletedCount?.replace('{}', completedModules).replace('{}', el_course_module_count)
+      : `${completedModules} of ${el_course_module_count} Complete`;
+
+    statusRow.appendChild(createTag('div', { class: 'browse-card-module-count' }, moduleCountText));
+  }
+
+  cardContent.appendChild(statusRow);
+};
+
 const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }) => {
   if (viewLinkText) {
     let icon = null;
@@ -221,10 +298,37 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
 
 const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
-const buildCardContent = async (card, model) => {
+// Function to calculate cardHeader and cardPosition
+const getCardHeaderAndPosition = (card, element) => {
+  let cardHeader = '';
+  const currentBlock = card.closest('.block');
+  const headerEl = currentBlock?.querySelector(
+    '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
+  );
+  if (headerEl) {
+    const cloned = headerEl.cloneNode(true);
+    // Remove any PII or masked spans
+    cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
+    // Get cleaned text
+    cardHeader = cloned.innerText.trim();
+  }
+
+  cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
+
+  let cardPosition = '';
+  if (element?.parentElement?.children) {
+    const siblings = Array.from(element.parentElement.children);
+    cardPosition = String(siblings.indexOf(element) + 1);
+  }
+
+  return { cardHeader, cardPosition };
+};
+
+const buildCardContent = async (card, model, element) => {
   const {
     id,
     description,
+    meta,
     contentType: type,
     viewLink,
     viewLinkText,
@@ -236,8 +340,13 @@ const buildCardContent = async (card, model) => {
     inProgressStatus = {},
     failedToLoad = false,
     truncateDescription = false,
+    badgeTitle,
   } = model;
-  const contentType = type?.toLowerCase();
+  let contentType = type?.toLowerCase();
+  const isVideoClip = badgeTitle?.toUpperCase() === CONTENT_TYPES['VIDEO CLIP'].LABEL.toUpperCase();
+  if (isVideoClip) {
+    contentType = CONTENT_TYPES['VIDEO CLIP'].MAPPING_KEY;
+  }
   const cardContent = card.querySelector('.browse-card-content');
   const cardFooter = card.querySelector('.browse-card-footer');
 
@@ -250,15 +359,27 @@ const buildCardContent = async (card, model) => {
     cardContent.appendChild(descriptionElement);
   }
 
-  const cardMeta = document.createElement('div');
-  cardMeta.classList.add('browse-card-meta-info');
+  if (
+    contentType === CONTENT_TYPES.COURSE.MAPPING_KEY ||
+    contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY
+  ) {
+    // Use the new buildCourseStatusContent function to display status and module count
+    buildCourseStatusContent({
+      meta,
+      el_course_module_count: model.el_course_module_count,
+      cardContent,
+    });
+  }
 
   if (
     contentType === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
     contentType === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ||
     contentType === RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY
   ) {
+    const cardMeta = document.createElement('div');
+    cardMeta.classList.add('browse-card-meta-info');
     buildTagsContent(cardMeta, tags);
+    cardContent.appendChild(cardMeta);
   }
 
   if (contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY) {
@@ -266,8 +387,6 @@ const buildCardContent = async (card, model) => {
       buildCourseDurationContent({ inProgressStatus, inProgressText, cardContent });
     }
   }
-
-  cardContent.appendChild(cardMeta);
 
   if (
     contentType === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY ||
@@ -290,9 +409,9 @@ const buildCardContent = async (card, model) => {
     }
 
     let authorBadge = '';
-    if (authorInfo?.type[0] === AUTHOR_TYPE.ADOBE) {
+    if (authorInfo?.type.includes(AUTHOR_TYPE.ADOBE)) {
       authorBadge = createTag('span', { class: 'browse-card-author-badge' }, placeholders?.articleAdobeTag);
-    } else if (authorInfo?.type[0] === AUTHOR_TYPE.EXTERNAL) {
+    } else if (authorInfo?.type.includes(AUTHOR_TYPE.EXTERNAL)) {
       authorBadge = createTag('span', { class: 'browse-card-author-badge' }, placeholders?.articleExternalTag);
       authorBadge.classList.add('author-badge-external');
     }
@@ -305,6 +424,25 @@ const buildCardContent = async (card, model) => {
 
   const cardOptions = document.createElement('div');
   cardOptions.classList.add('browse-card-options');
+  let trackingInfo;
+  if (contentType === CONTENT_TYPES.COURSE.MAPPING_KEY) {
+    const lang = document.querySelector('html').lang || 'en';
+    const [, courseId] = model.viewLink?.split(`/${lang}/`) || [];
+
+    const solution = model?.product?.length ? model?.product[0] : '';
+    const fullSolution = model?.product?.length ? model?.product?.join(',') : '';
+
+    trackingInfo = {
+      destinationDomain: model.viewLink,
+      course: {
+        id: courseId || model.id,
+        title: model.title,
+        solution,
+        fullSolution,
+        role: model.role || '',
+      },
+    };
+  }
 
   const cardAction = UserActions({
     container: cardOptions,
@@ -313,6 +451,21 @@ const buildCardContent = async (card, model) => {
     link: copyLink,
     bookmarkConfig: !bookmarkExclusionContentypes.includes(contentType),
     copyConfig: failedToLoad ? false : undefined,
+    trackingInfo,
+    bookmarkCallback: (linkType, position) => {
+      // Calculate cardHeader and cardPosition dynamically when callback is called
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+      const finalLinkType = linkType || cardHeader || '';
+      const finalPosition = position || cardPosition || '';
+      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, finalLinkType, finalPosition);
+    },
+    copyCallback: (linkType, position) => {
+      // Calculate cardHeader and cardPosition dynamically when callback is called
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+      const finalLinkType = linkType || cardHeader || '';
+      const finalPosition = position || cardPosition || '';
+      pushBrowseCardClickEvent('copyLinkBrowseCard', model, finalLinkType, finalPosition);
+    },
   });
 
   cardAction.decorate();
@@ -358,6 +511,33 @@ function lowerCaseSameOriginUrls(url) {
   return url;
 }
 
+let videoClipModalPromise = null;
+
+const getVideoClipModal = () => {
+  if (!videoClipModalPromise) {
+    videoClipModalPromise = import('./browse-card-video-clip-modal.js');
+  }
+  return videoClipModalPromise;
+};
+
+// Dynamic imports for event decorators
+let upcomingEventsPromise = null;
+let onDemandEventsPromise = null;
+
+const getUpcomingEventsDecorator = () => {
+  if (!upcomingEventsPromise) {
+    upcomingEventsPromise = import('./browse-card-upcoming-events.js');
+  }
+  return upcomingEventsPromise;
+};
+
+const getOnDemandEventsDecorator = () => {
+  if (!onDemandEventsPromise) {
+    onDemandEventsPromise = import('./browse-card-on-demand-events.js');
+  }
+  return onDemandEventsPromise;
+};
+
 /**
  * Builds a browse card element with various components based on the provided model data.
  *
@@ -375,7 +555,8 @@ function lowerCaseSameOriginUrls(url) {
  * @param {string} [model.copyLink] - URL link for a copy/share action on the card.
  * @returns {Promise<void>} Resolves when the card is fully built and added to the DOM.
  */
-export async function buildCard(container, element, model) {
+
+export async function buildCard(element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
 
   element.setAttribute('data-analytics-content-type', contentType);
@@ -383,10 +564,14 @@ export async function buildCard(container, element, model) {
   model.viewLink = lowerCaseSameOriginUrls(model.viewLink);
   model.copyLink = lowerCaseSameOriginUrls(model.copyLink);
 
+  const isVideoClip = badgeTitle?.toUpperCase() === CONTENT_TYPES['VIDEO CLIP'].LABEL.toUpperCase();
+
   let type = contentType?.toLowerCase();
   const inProgressMappingKey = RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY.toLowerCase();
   const recommededMappingKey = RECOMMENDED_COURSES_CONSTANTS.RECOMMENDED.MAPPING_KEY.toLowerCase();
-  if (contentType === inProgressMappingKey || contentType === recommededMappingKey) {
+  if (isVideoClip) {
+    type = CONTENT_TYPES['VIDEO CLIP'].MAPPING_KEY;
+  } else if (contentType === inProgressMappingKey || contentType === recommededMappingKey) {
     const mappingKey = Object.keys(CONTENT_TYPES).find(
       (key) => CONTENT_TYPES[key].LABEL.toUpperCase() === badgeTitle.toUpperCase(),
     );
@@ -395,15 +580,36 @@ export async function buildCard(container, element, model) {
       type = mappingKey.toLowerCase();
     }
   }
+
+  const clickableLink = !(isVideoClip && !model.parentURL);
+  const showVideoIconOnly = isVideoClip;
+
+  if (isVideoClip) {
+    const link = model.parentURL || model.videoURL;
+    if (link) {
+      model.copyLink = lowerCaseSameOriginUrls(link);
+      model.viewLink = lowerCaseSameOriginUrls(link);
+    }
+  }
+
   const card = createTag(
     'div',
     { class: `browse-card ${type}-card ${failedToLoad ? 'browse-card-frozen' : ''}` },
-    `<div class="browse-card-figure"></div><div class="browse-card-content"></div><div class="browse-card-footer"></div>`,
+    `<div class="browse-card-figure"></div>${
+      showVideoIconOnly ? `<div class="browse-card-video-clip"></div>` : ''
+    }<div class="browse-card-content"></div><div class="browse-card-footer"></div>`,
   );
   const cardFigure = card.querySelector('.browse-card-figure');
   const cardContent = card.querySelector('.browse-card-content');
 
-  if (thumbnail) {
+  if (showVideoIconOnly) {
+    const cardClipContainer = card.querySelector('.browse-card-video-clip');
+    const playButton = document.createElement('div');
+    playButton.classList.add('play-button');
+    playButton.innerHTML = '<span class="icon icon-play-outline-white"></span>';
+    cardClipContainer.appendChild(playButton);
+    decorateIcons(playButton);
+  } else if (thumbnail) {
     const laptopContainer = document.createElement('div');
     laptopContainer.classList.add('laptop-container');
     const laptopScreen = document.createElement('div');
@@ -438,7 +644,9 @@ export async function buildCard(container, element, model) {
       if (
         VIDEO_THUMBNAIL_FORMAT.test(thumbnail) ||
         type === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
-        type === CONTENT_TYPES.TUTORIAL.MAPPING_KEY
+        type === CONTENT_TYPES.TUTORIAL.MAPPING_KEY ||
+        type === CONTENT_TYPES.EVENT.MAPPING_KEY ||
+        type === CONTENT_TYPES['VIDEO CLIP'].MAPPING_KEY
       ) {
         const playButton = document.createElement('div');
         playButton.classList.add('play-button');
@@ -451,10 +659,21 @@ export async function buildCard(container, element, model) {
     card.classList.add('thumbnail-not-loaded');
   }
   if (badgeTitle || failedToLoad) {
-    const bannerElement = createTag('h3', { class: 'browse-card-banner' });
-    bannerElement.innerText = badgeTitle || '';
-    bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
-    cardFigure.appendChild(bannerElement);
+    if (type === CONTENT_TYPES.COURSE.MAPPING_KEY) {
+      const bannerElement = htmlToElement(`<div class="browse-card-icon">
+        <span class="icon icon-course-badge"></span
+      </div>`);
+      decorateIcons(bannerElement);
+      cardFigure.appendChild(bannerElement);
+      const hiddenBanner = createTag('h3', { class: 'browse-card-banner visually-hidden' });
+      hiddenBanner.innerText = badgeTitle || '';
+      cardFigure.appendChild(hiddenBanner);
+    } else {
+      const bannerElement = createTag('h3', { class: 'browse-card-banner' });
+      bannerElement.innerText = badgeTitle || '';
+      bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
+      cardFigure.appendChild(bannerElement);
+    }
   }
 
   if (contentType === RECOMMENDED_COURSES_CONSTANTS.IN_PROGRESS.MAPPING_KEY) {
@@ -468,7 +687,9 @@ export async function buildCard(container, element, model) {
     const tagElement = createTag(
       'div',
       { class: 'browse-card-tag-text' },
-      `<h4>${isMultiSolution ? placeholders.multiSolutionText || 'multisolution' : tagText}</h4>`,
+      `<div class="browse-card-solution-text">${
+        isMultiSolution ? placeholders.multiSolutionText || 'multisolution' : tagText
+      }</div>`,
     );
 
     if (isMultiSolution) {
@@ -493,18 +714,61 @@ export async function buildCard(container, element, model) {
   }
 
   if (title) {
-    const titleElement = createTag('h5', { class: 'browse-card-title-text' });
+    const titleElement = createTag('h3', { class: 'browse-card-title-text' });
     titleElement.innerHTML = title;
     cardContent.appendChild(titleElement);
   }
   await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
-  await buildCardContent(card, model);
+
+  // For course content type, add level and duration info right after the title
+  if (type === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()) {
+    buildCourseInfoContent({
+      el_course_duration: model.el_course_duration,
+      el_course_module_count: model.el_course_module_count,
+      el_level: model.el_level,
+      cardContent,
+      meta: model.meta,
+    });
+  }
+
+  await buildCardContent(card, model, element);
+
+  if (isVideoClip) {
+    const cardOptions = card.querySelector('.browse-card-options');
+    card.addEventListener('click', (e) => {
+      if (cardOptions?.contains(e.target)) {
+        return;
+      }
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Get card header and position for tracking
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+
+      getVideoClipModal().then(async ({ BrowseCardVideoClipModal }) => {
+        const modal = await BrowseCardVideoClipModal.create({
+          model,
+          cardHeader,
+          cardPosition,
+        });
+        modal.open();
+      });
+    });
+  }
+
   if (model.viewLink) {
     const cardContainer = document.createElement('a');
-    cardContainer.setAttribute('href', model.viewLink);
+    if (clickableLink) {
+      cardContainer.setAttribute('href', model.viewLink);
+    }
     cardContainer.addEventListener('click', (e) => {
       const preventLinkRedirection = !!(e.target && e.target.closest('.user-actions'));
-      if (preventLinkRedirection) {
+
+      // Prevent default link behavior for user actions and video clips
+      if (
+        preventLinkRedirection ||
+        (isVideoClip && (e.target.closest('.browse-card-figure') || e.target.closest('.play-button')))
+      ) {
         e.preventDefault();
       }
     });
@@ -521,6 +785,43 @@ export async function buildCard(container, element, model) {
     element.appendChild(card);
   }
 
+  // Browse card click event handler
+  element.querySelector('a')?.addEventListener('click', (e) => {
+    const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+    const shouldOpenInNewTab = element.closest('.section')?.getAttribute('data-new-tab') === 'true';
+
+    if (shouldOpenInNewTab) {
+      element.querySelector('a')?.setAttribute('target', '_blank');
+    }
+    const cardOptions = card.querySelector('.browse-card-options');
+    if (cardOptions) {
+      card.dataset.cardHeader = cardHeader || '';
+      card.dataset.cardPosition = cardPosition || '';
+    }
+
+    if (e.target.closest('.user-actions')) {
+      return;
+    }
+
+    // show more/less anlytics events
+    if (e.target?.classList?.contains('show-more') || e.target?.classList?.contains('show-less')) {
+      const eventName = e.target.classList.contains('show-less') ? 'browseCardShowMore' : 'browseCardShowLess';
+      pushBrowseCardClickEvent(eventName, model, cardHeader, cardPosition);
+      return;
+    }
+
+    // CTA element click
+    if (e.target.closest('.browse-card-cta-element')) {
+      pushBrowseCardClickEvent('browseCardCTAClick', model, cardHeader, cardPosition);
+      return;
+    }
+
+    // Card click (excluding options and CTA)
+    if (e.target.closest('a:not(.browse-card-options):not(.browse-card-cta-element)')) {
+      pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
+    }
+  });
+
   element.querySelector('a').addEventListener(
     'click',
     () => {
@@ -528,4 +829,32 @@ export async function buildCard(container, element, model) {
     },
     { once: true },
   );
+
+  // Apply special decorations for upcoming events v2 - change for all upcoming events later
+  const v2 = card.closest('.upcoming-event-v2');
+  const browseFilters = card.closest('.browse-filters');
+  const isBrowseFiltersUpcoming = browseFilters && card.classList.contains('upcoming-event-card');
+
+  /* TODO - Remove events-v2 scope during clean up */
+  if (v2) {
+    v2.classList.add('events-v2');
+  } else if (isBrowseFiltersUpcoming) {
+    browseFilters.classList.add('events-v2');
+  }
+
+  const cardEl = element.querySelector('.browse-card');
+  if (cardEl && (v2 || isBrowseFiltersUpcoming)) {
+    // Dynamically import and use the upcoming events decorator
+    getUpcomingEventsDecorator().then(({ decorateUpcomingEvents }) => {
+      decorateUpcomingEvents(cardEl, model);
+    });
+  }
+
+  if (model.contentType?.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY && isFeatureEnabled('isEventsV2')) {
+    const cardElement = element.querySelector('.browse-card');
+    // Dynamically import and use the on-demand events decorator
+    getOnDemandEventsDecorator().then(({ decorateOnDemandEvents }) => {
+      decorateOnDemandEvents(cardElement, model);
+    });
+  }
 }

@@ -49,10 +49,11 @@
   line-height: 18.2px;
   color: var(--spectrum-gray-700);
   text-overflow: ellipsis;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 6;
   -webkit-box-orient: vertical;
   overflow: hidden;
   display: -webkit-box;
+  flex: 1;
 }
 
 .icon-block .icon-link,

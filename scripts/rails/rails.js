@@ -9,6 +9,7 @@ async function decorateRail(railSection, position) {
   // wrap content in a wrapper div
   const content = document.createElement('div');
   content.classList.add('rail-content');
+
   content.replaceChildren(...railSection.children);
   railSection.replaceChildren(content);
 
@@ -38,7 +39,7 @@ async function decorateRail(railSection, position) {
 export default async function decorateRails() {
   const main = document.querySelector('main');
   const leftRail = document.querySelector('main .toc-container');
-  const rightRail = document.querySelector('main .mini-toc-container');
+  const rightRail = document.querySelector('main .mini-toc-container, main .event-rail');
 
   if (leftRail) {
     await decorateRail(leftRail, 'left');

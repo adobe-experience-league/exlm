@@ -58,6 +58,7 @@ export function highlight(replace = false, isAnchorScroll = false) {
         }
 
         const scrollableDivBlock = ctx.querySelector('.scrollable-div');
+
         const anchorTopPos = anchorElement.offsetTop;
         anchorElement.classList.add('is-active');
         scrollableDivBlock.scrollTop = anchorTopPos - 30;

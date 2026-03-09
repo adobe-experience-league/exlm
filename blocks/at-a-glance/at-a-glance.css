@@ -1,0 +1,16 @@
+.at-a-glance-wrapper p {
+  font-weight: 600;
+  font-size: var(--spectrum-font-size-100);
+  margin-bottom: 10px;
+}
+
+.at-a-glance-wrapper p:first-child {
+  margin-top: 18px;
+}
+
+.at-a-glance-wrapper a {
+  text-decoration: underline;
+  color: var(--non-spectrum-navy-blue);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--spectrum-font-size-100);
+}

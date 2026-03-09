@@ -1,5 +1,14 @@
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
-import { getCoveoFacets, roleOptions, contentTypeOptions, productTypeOptions } from './browse-filter-utils.js';
+import {
+  getCoveoFacets,
+  roleOptions,
+  contentTypeOptions,
+  productTypeOptions,
+  eventSeriesOptions,
+  eventTypeOptions,
+} from './browse-filter-utils.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
+import { matchesAnyTheme } from '../../scripts/scripts.js';
 
 export const coveoFacetMap = {
   el_role: 'headlessRoleFacet',
@@ -7,9 +16,14 @@ export const coveoFacetMap = {
   el_level: 'headlessExperienceFacet',
   el_product: 'headlessProductFacet',
   author_type: 'headlessAuthorTypeFacet',
+  el_event_series: 'headlessEventSeriesFacet',
 };
 
-export const dropdownOptions = [roleOptions, contentTypeOptions];
+const isEventsPage = matchesAnyTheme(/event/);
+export const dropdownOptions =
+  isEventsPage && isFeatureEnabled('isEventsV2')
+    ? [productTypeOptions, eventSeriesOptions, eventTypeOptions]
+    : [roleOptions, contentTypeOptions];
 
 /**
  * formattedTags returns the array of base64 encoded tags after extracting from the tags selected in dialog
@@ -59,10 +73,11 @@ export const generateQuery = (topic) => {
   };
 };
 
-export function dispatchCoveoAdvancedQuery({ query, fireSelection = true, resetPage = true }) {
+export function dispatchCoveoAdvancedQuery({ query, fireSelection = true, resetPage = true, targetPageNumber }) {
   if (!window.headlessQueryActionCreators) {
     return;
   }
+  const selectedPageNumber = typeof targetPageNumber === 'number' ? targetPageNumber : undefined;
   const advancedQueryAction = window.headlessQueryActionCreators.updateAdvancedSearchQueries({
     aq: query,
   });
@@ -70,8 +85,9 @@ export function dispatchCoveoAdvancedQuery({ query, fireSelection = true, resetP
   const isQueryDispatchable = !!query || window.headlessStatusControllers?.state?.firstSearchExecuted;
   if (window.headlessSearchActionCreators && fireSelection && isQueryDispatchable) {
     const searchAction = window.headlessSearchActionCreators.executeSearch(window.logSearchboxSubmit());
-    if (window.headlessPager && resetPage) {
-      window.headlessPager.selectPage(1);
+    if (window.headlessPager && (resetPage || selectedPageNumber !== undefined)) {
+      const pgNum = selectedPageNumber !== undefined ? selectedPageNumber : 1;
+      window.headlessPager.selectPage(pgNum);
     }
     window.headlessSearchEngine.dispatch(searchAction);
   }
@@ -104,12 +120,16 @@ const reInitTopicSelection = () => {
     });
   });
   if (fireSelection) {
+    let targetPageNumber;
+    if (window.headlessPager?.state?.currentPage) {
+      targetPageNumber = window.headlessPager.state.currentPage;
+    }
     // eslint-disable-next-line no-use-before-define
-    handleTopicSelection();
+    handleTopicSelection(undefined, undefined, undefined, targetPageNumber);
   }
 };
 
-export function handleTopicSelection(block, fireSelection, resetPage) {
+export function handleTopicSelection(block, fireSelection, resetPage, targetPageNumber) {
   const wrapper = block || document;
   const selectedTopics = Array.from(wrapper.querySelectorAll('.browse-topics-item-active')).reduce((acc, curr) => {
     const id = curr.dataset.topicname;
@@ -133,9 +153,10 @@ export function handleTopicSelection(block, fireSelection, resetPage) {
     }
 
     if (selectedTopics.length) {
-      const decodedHash = window.location.hash ? decodeURIComponent(window.location.hash) : '';
-      const elProductHash = decodedHash.split('&').find((hashInfo) => hashInfo.includes('f-el_product='));
-      const [, productsList = ''] = elProductHash?.split('=') || [];
+      const { hash } = window.location;
+      // Parse URL parameters properly to handle & in values
+      const urlParams = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
+      const productsList = urlParams?.get('f-el_product') || '';
       const productsInUrl = productsList.split(',').filter(Boolean);
       const topicQueryItems = `${selectedTopics
         .map((topic) => {
@@ -160,7 +181,7 @@ export function handleTopicSelection(block, fireSelection, resetPage) {
         query = topicsQuery;
       }
     }
-    dispatchCoveoAdvancedQuery({ query, fireSelection, resetPage });
+    dispatchCoveoAdvancedQuery({ query, fireSelection, resetPage, targetPageNumber });
   } else {
     document.removeEventListener(COVEO_SEARCH_CUSTOM_EVENTS.READY, reInitTopicSelection);
     document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.READY, reInitTopicSelection);

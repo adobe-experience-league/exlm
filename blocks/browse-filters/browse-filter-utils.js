@@ -1,5 +1,6 @@
 import { COMMUNITY_SEARCH_FACET } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 const SUB_FACET_MAP = {
   Community: COMMUNITY_SEARCH_FACET,
@@ -73,6 +74,12 @@ const contentTypes = [
     description: 'Questions, answers, ideas, and expertise shared from Adobe customers and experts growing together.',
   },
   {
+    id: 'Course',
+    value: 'Course',
+    title: 'Courses',
+    description: 'Skill-building courses with sharable completion certificates.',
+  },
+  {
     id: 'Documentation',
     value: 'Documentation',
     title: 'Documentation',
@@ -109,6 +116,12 @@ const contentTypes = [
     title: 'Tutorial',
     description:
       'Brief instructional material with step-by-step instructions to learn a specific skill or accomplish a specific task.',
+  },
+  {
+    id: 'Upcoming Event',
+    value: 'Upcoming Event',
+    title: 'Upcoming Events',
+    description: 'Virtual and in-person events focused on product education and skill development.',
   },
 ].map((contentType) => ({
   ...contentType,
@@ -176,6 +189,29 @@ const authorTypes = [
   }),
 }));
 
+const eventTypes = [
+  {
+    id: 'Event',
+    value: 'event',
+    title: 'On-Demand Events',
+    description: '',
+  },
+  {
+    id: 'Upcoming-Event',
+    value: 'upcoming-event',
+    title: 'Upcoming Events',
+    description: 'Virtual and in-person events focused on product education and skill development.',
+  },
+].map((eventType) => ({
+  ...eventType,
+  ...(placeholders[`filterContentType${eventType.id.replace('-', '')}Title`] && {
+    title: placeholders[`filterContentType${eventType.id.replace('-', '')}Title`],
+  }),
+  ...(placeholders[`filterContentType${eventType.id.replace('-', '')}Description`] && {
+    description: placeholders[`filterContentType${eventType.id.replace('-', '')}Description`],
+  }),
+}));
+
 export const roleOptions = {
   id: 'el_role',
   name: placeholders.filterRoleLabel || 'Role',
@@ -183,10 +219,18 @@ export const roleOptions = {
   selected: 0,
 };
 
+// Filter out Upcoming Event if feature flag is not enabled
+const updatedContentTypes = contentTypes.filter((contentType) => {
+  if (contentType.id === 'Upcoming Event') {
+    return isFeatureEnabled('isEventsV2');
+  }
+  return true;
+});
+
 export const contentTypeOptions = {
   id: 'el_contenttype',
   name: placeholders.filterContentTypeLabel || 'Content Type',
-  items: contentTypes,
+  items: updatedContentTypes,
   selected: 0,
 };
 
@@ -208,6 +252,20 @@ export const authorOptions = {
   id: 'author_type',
   name: placeholders.filterAuthorLabel || 'Author Type',
   items: authorTypes,
+  selected: 0,
+};
+
+export const eventSeriesOptions = {
+  id: 'el_event_series',
+  name: placeholders.filterEventSeriesLabel || 'Event Series',
+  items: [],
+  selected: 0,
+};
+
+export const eventTypeOptions = {
+  id: 'el_contenttype',
+  name: placeholders.filterEventTypeLabel || 'Event Type',
+  items: eventTypes,
   selected: 0,
 };
 
@@ -245,27 +303,35 @@ export const getBrowseFiltersResultCount = () => {
   return resultCount;
 };
 
-export const getSelectedTopics = (decodedHash) => {
-  if (!decodedHash) {
+export const getSelectedTopics = (hash) => {
+  if (!hash) {
     return [];
   }
-  const hashesList = decodedHash.split('&');
-  const filterInfo = hashesList.find((hash) => hash.includes('aq='));
+  // Parse URL parameters properly to handle & in values
+  const urlParams = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
   const selectedTopics = [];
+
+  // Get advanced query parameter
+  const filterInfo = urlParams?.get('aq');
   if (filterInfo) {
     const solutionsCheck = filterInfo.match(/@el_solution=("[^"]*")/g) ?? [];
     const featuresCheck = filterInfo.match(/@el_features=("[^"]*")/g) ?? [];
-    featuresCheck.concat(solutionsCheck).reduce((acc, curr) => {
-      const [, featureName] = curr.split('=');
-      if (featureName) {
-        acc.push(featureName.trim().replace(/"/g, ''));
-      }
-      return acc;
-    }, selectedTopics);
+    const versionsCheck = filterInfo.match(/@el_version=("[^"]*")/g) ?? [];
+    featuresCheck
+      .concat(solutionsCheck)
+      .concat(versionsCheck)
+      .reduce((acc, curr) => {
+        const [, featureName] = curr.split('=');
+        if (featureName) {
+          acc.push(featureName.trim().replace(/"/g, ''));
+        }
+        return acc;
+      }, selectedTopics);
   }
-  const elProductInfo = hashesList.find((hash) => hash.includes('f-el_product='));
-  if (elProductInfo) {
-    const [, productsListString] = elProductInfo.split('=');
+
+  // Get product filter parameter
+  const productsListString = urlParams?.get('f-el_product');
+  if (productsListString) {
     productsListString.split(',').forEach((product) => {
       if (product) {
         selectedTopics.push(product);
@@ -381,11 +447,12 @@ export function showSearchSuggestionsOnInputClick() {
 }
 
 export const handleCoverSearchSubmit = (targetSearchText) => {
+  const encodedSearchText = encodeURIComponent(targetSearchText || '');
   const [currentSearchString] = window.location.hash.match(/\bq=([^&#]*)/) || [];
   if (currentSearchString) {
-    window.location.hash = window.location.hash.replace(currentSearchString, `q=${targetSearchText || ''}`);
+    window.location.hash = window.location.hash.replace(currentSearchString, `q=${encodedSearchText}`);
   } else {
-    window.location.hash = `#q=${targetSearchText || ''}&${window.location.hash.slice(1)}`;
+    window.location.hash = `#q=${encodedSearchText}&${window.location.hash.slice(1)}`;
   }
 };
 

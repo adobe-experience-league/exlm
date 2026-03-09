@@ -11,12 +11,18 @@ import atomicPagerHandler from './components/atomic-search-pager.js';
 import atomicNoResultHandler from './components/atomic-search-no-results.js';
 import atomicNotificationHandler from './components/atomic-search-notification.js';
 import getCoveoAtomicMarkup from './components/atomic-search-template.js';
-import { CUSTOM_EVENTS, debounce, handleHeaderSearchVisibility } from './components/atomic-search-utils.js';
+import {
+  CUSTOM_EVENTS,
+  debounce,
+  generateAdobeTrackingData,
+  buildI18nResourceBundles,
+} from './components/atomic-search-utils.js';
 import { isMobile } from '../header/header-utils.js';
 import createAtomicSkeleton from './components/atomic-search-skeleton.js';
 import atomicSearchBoxHandler from './components/atomic-search-box.js';
 import atomicResultPageHandler from './components/atomic-search-results-per-page.js';
 import loadCoveoToken from '../../scripts/data-service/coveo/coveo-token-service.js';
+import { pushPageDataLayer } from '../../scripts/analytics/lib-analytics.js';
 
 let placeholders = {};
 
@@ -81,26 +87,37 @@ export default function decorate(block) {
     await customElements.whenDefined('atomic-search-interface');
     const searchInterface = block.querySelector('atomic-search-interface');
     const { coveoOrganizationId } = getConfig();
-    const { lang: languageCode } = getPathDetails();
+    let { lang: languageCode } = getPathDetails();
+
+    const atomicLanguagesMap = {
+      es: 'es-ES',
+      'pt-br': 'pt-BR',
+      'zh-hans': 'zh-CN',
+      'zh-hant': 'zh-TW',
+    };
+
+    languageCode = atomicLanguagesMap[languageCode] || languageCode;
+
     const coveoToken = await coveoTokenPromise;
 
     // Initialization
     await searchInterface.initialize({
       accessToken: coveoToken,
       organizationId: coveoOrganizationId,
+      analytics: { analyticsMode: 'legacy' },
     });
 
     // Trigger a first search
     searchInterface.executeFirstSearch();
 
     const commonActionHandler = () => {
-      atomicFacetHandler(block.querySelector('atomic-facet'), placeholders);
+      atomicFacetHandler(block, placeholders);
       atomicSearchBoxHandler(block);
       atomicResultHandler(block, placeholders);
       atomicSortDropdownHandler(block.querySelector('atomic-sort-dropdown'));
       atomicFacetManagerHandler(block.querySelector('atomic-facet-manager'));
       atomicNotificationHandler(block.querySelector('atomic-notifications'));
-      atomicQuerySummaryHandler(block.querySelector('atomic-query-summary'), placeholders);
+      atomicQuerySummaryHandler(block, placeholders);
       atomicBreadBoxHandler(block.querySelector('atomic-breadbox'));
       atomicPagerHandler(block.querySelector('atomic-pager'));
       atomicResultPageHandler(block.querySelector('atomic-results-per-page'));
@@ -122,8 +139,8 @@ export default function decorate(block) {
     ]).then(() => {
       atomicNoResultHandler(block, placeholders);
       commonActionHandler();
-      handleHeaderSearchVisibility();
       decorateIcons(block);
+      let eventFiredOnPageLoad = false;
 
       const onResize = () => {
         const isMobileView = isMobile();
@@ -139,49 +156,11 @@ export default function decorate(block) {
       resizeObserver.observe(searchInterface);
 
       searchInterface.language = languageCode;
-      searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_contenttype', {
-        Community: placeholders.searchContentTypeCommunityLabel || 'Community',
-        Documentation: placeholders.searchContentTypeDocumentationLabel || 'Documentation',
-        Troubleshooting: placeholders.searchContentTypeTroubleshootingLabel || 'Troubleshooting',
-        Tutorial: placeholders.searchContentTypeTutorialLabel || 'Tutorial',
-        Event: placeholders.searchContentTypeEventLabel || 'Event',
-        Playlist: placeholders.searchContentTypePlaylistLabel || 'Playlist',
-        Perspective: placeholders.searchContentTypePerspectiveLabel || 'Perspective',
-        Certification: placeholders.searchContentTypeCertificationLabel || 'Certification',
-        Blogs: placeholders.searchContentTypeCommunityBlogsLabel || 'Blogs',
-        Discussions: placeholders.searchContentTypeCommunityDiscussionsLabel || 'Discussions',
-        Ideas: placeholders.searchContentTypeCommunityIdeasLabel || 'Ideas',
-        Questions: placeholders.searchContentTypeCommunityQuestionsLabel || 'Questions',
-      });
-
-      searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_role', {
-        Admin: placeholders.searchRoleAdminLabel || 'Admin',
-        Developer: placeholders.searchRoleDeveloperLabel || 'Developer',
-        Leader: placeholders.searchRoleLeaderLabel || 'Leader',
-        User: placeholders.searchRoleUserLabel || 'User',
-      });
-
-      searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_status', {
-        true: placeholders.searchResolvedLabel || 'Resolved',
-        false: placeholders.searchUnresolvedLabel || 'Unresolved',
-      });
-
-      searchInterface.i18n.addResourceBundle(languageCode, 'translation', {
-        Name: placeholders.searchNameLabel || 'Name',
-        'Content Type': placeholders.searchContentTypeLabel || 'Content Type',
-        Content: placeholders.searchContentLabel || 'Content',
-        Product: placeholders.searchProductLabel || 'Product',
-        Updated: placeholders.searchUpdatedLabel || 'Updated',
-        Role: placeholders.searchRoleLabel || 'Role',
-        Date: placeholders.searchDateLabel || 'Date',
-        'Newest First': placeholders.searchNewestFirstLabel || 'Newest First',
-        'Oldest First': placeholders.searchOldesFirstLabel || 'Oldest First',
-        'Most Likes': placeholders.searchMostLikesLabel || 'Most Likes',
-        'Most Replies': placeholders.searchMostRepliesLabel || 'Most Replies',
-        'Most Views': placeholders.searchMostViewsLabel || 'Most Views',
-        clear: placeholders.searchClearLabel || 'Clear',
-        filters: placeholders.searchFiltersLabel || 'Filters',
-      });
+      const bundles = buildI18nResourceBundles(placeholders);
+      searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_contenttype', bundles.el_contenttype);
+      searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_role', bundles.el_role);
+      searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_status', bundles.el_status);
+      searchInterface.i18n.addResourceBundle(languageCode, 'translation', bundles.translation);
 
       document.addEventListener(
         CUSTOM_EVENTS.FACET_LOADED,
@@ -194,6 +173,29 @@ export default function decorate(block) {
         { once: true },
       );
 
+      const trackingHandler = (event) => {
+        const isResizeAction = event?.detail?.callFrom === 'resize';
+        if (isResizeAction) {
+          return;
+        }
+        const searchState = searchInterface.engine?.state;
+        const trackingData = searchState && generateAdobeTrackingData(searchState);
+        if (trackingData) {
+          if (!eventFiredOnPageLoad) {
+            eventFiredOnPageLoad = true;
+            const pageloadEvent = new CustomEvent(CUSTOM_EVENTS.PAGE_LOAD_EVENT, {
+              detail: {
+                trackingData,
+              },
+            });
+            document.dispatchEvent(pageloadEvent);
+          } else {
+            const { lang } = getPathDetails();
+            pushPageDataLayer(lang, trackingData);
+          }
+        }
+      };
+
       document.addEventListener(CUSTOM_EVENTS.NO_RESULT_FOUND, () => {
         const skeleton = block.querySelector('.atomic-search-load-skeleton');
         if (skeleton) {
@@ -203,6 +205,7 @@ export default function decorate(block) {
         if (baseSummaryQueryEl) {
           baseSummaryQueryEl.dataset.observed = '';
         }
+        trackingHandler();
       });
 
       document.addEventListener(CUSTOM_EVENTS.RESULT_FOUND, () => {
@@ -213,6 +216,8 @@ export default function decorate(block) {
           commonActionHandler();
         }, 200);
       });
+
+      document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, trackingHandler);
     });
   };
 

@@ -1,12 +1,30 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import state from './slider-state.js';
-import { generateVisualConfig, getPreference, showAllSteps, showStep, addEventHandlers } from './slider-utils.js';
+import {
+  decorateAnchors,
+  decorateExternalLinks,
+  decorateInlineAttributes,
+  decoratePlaceholders,
+  fetchLanguagePlaceholders,
+  getConfig,
+  getPathDetails,
+} from '../../scripts/scripts.js';
+
+import {
+  generateVisualConfig,
+  preferences,
+  showAllSteps,
+  showStep,
+  addEventHandlers,
+  isDesktopView,
+  state,
+} from './slider-utils.js';
 
 function html(content, placeholders) {
-  const initialView = getPreference('view') || 'as-slides';
-  const autoplayAudio = getPreference('autoplayAudio') || false;
-  const muted = getPreference('muteStatus') || false;
+  const isDesktopUI = isDesktopView();
+  const initialView = isDesktopUI ? preferences.get('view') || 'as-slides' : 'as-docs';
+
+  const autoplayAudio = preferences.get('autoplayAudio') !== undefined ? preferences.get('autoplayAudio') : true;
+  const muted = preferences.get('muteStatus') || false;
 
   return `
         <div class="container ${initialView}" data-block-id="${content.id}">
@@ -41,10 +59,10 @@ function html(content, placeholders) {
 
                       <!-- Visuals -->
                       <div class="visual-wrapper">
+                        <span class="step-counter">${stepIndex + 1}<span class="slash">/</span>${
+                          section.steps.length
+                        }</span>
                         <div class="visual ${step.visual.code ? 'code' : 'image'}">
-                            <span class="step-counter">${stepIndex + 1}<span class="slash">/</span>${
-                              section.steps.length
-                            }</span>
 
                             ${
                               step.visual.image
@@ -54,34 +72,11 @@ function html(content, placeholders) {
                                   ?.filter((callout) => !callout.toast)
                                   .map(
                                     (callout) => `
-                                    <span class="callout callout-${callout.type ?? ''}" data-callout>
-                                        <span class="indicator ${callout.clickable ? 'clickable' : ''}" 
-                                                ${
-                                                  !callout.button && callout.clickable === 'next'
-                                                    ? 'data-next-step'
-                                                    : ''
-                                                } 
-                                                data-callout-indicator="${callout.type}"
-                                                data-callout-indicator-width="${callout.width}"
-                                                data-callout-indicator-height="${callout.height}"
-                                                data-callout-indicator-x="${callout.x}"
-                                                data-callout-indicator-y="${callout.y}">
-                                                    <i></i>
-                                                    ${
-                                                      callout.button
-                                                        ? `<button ${
-                                                            callout.clickable === 'next' ? 'data-next-step' : ''
-                                                          } data-callout-button>${callout.button}</button>`
-                                                        : ''
-                                                    }
-                                        </span>
-                                        ${
-                                          callout.tooltip
-                                            ? `<p class="tooltip" data-callout-tooltip>${callout.tooltip}</p>`
-                                            : ''
-                                        }
-                                      
-                                    </span>
+                                    <exl-coachmark  ${Object.entries(callout.attributes)
+                                      .map(([key, value]) => `${key}="${value}"`)
+                                      .join(' ')}>
+                                        <span slot="title">${callout.tooltip}</span>
+                                      </exl-coachmark>
                                 `,
                                   )
                                   .join('')}
@@ -109,21 +104,27 @@ function html(content, placeholders) {
                         </div>
                       </div>
                       <div class="content-info doc-content-info">
-                        <label class="step-label">Step ${step.number} of ${section.steps.length}</label>
+                       <label class="step-label">${
+                         placeholders.slidesStepProgress
+                           ? `${placeholders.slidesStepProgress
+                               .replace('{}', step.number)
+                               .replace('{}', section.steps.length)}`
+                           : `Step ${step.number} of ${section.steps.length}`
+                       }</label>
                         <div class="copy-icon" data-copystep="${step.id}">
                             <span class="icon icon-copy-link"></span>
-                            <label>${placeholders?.userActionCopylinkLabel || 'Copy link'}</label>
+                            <span data-placeholder="userActionCopylinkLabel">Copy link</span>
                         </div>
                       </div>
                       <!-- Slide Controls -->
                       <div class="controls">
                           <div class="controls-bar">
-                              <button class="previous-button secondary" data-previous-step="previous-button">${
-                                placeholders.playlistPreviousLabel
-                              }</button>
-                              <button class="next-button" data-next-step="next-button">${
-                                placeholders.playlistNextLabel
-                              }</button>
+                              <button class="previous-button secondary" data-previous-step="previous-button">
+                                <span data-placeholder="playlistPreviousLabel">Previous</span>
+                              </button>
+                              <button class="next-button" data-next-step="next-button">
+                                <span data-placeholder="playlistNextLabel">Next</span>
+                              </button>
 
                               <audio 
                                   class="audio-player" data-audio-controls
@@ -148,22 +149,26 @@ function html(content, placeholders) {
                                 >
                                   <span class="auto-play-thumb"></span>
                                 </button>
-                                <label class="auto-play-label">${placeholders?.autoPlayLabel || 'Autoplay'}</label>
+                                <label class="auto-play-label">
+                                  <span data-placeholder="autoPlayLabel">Autoplay</span>
+                                </label>
                               </span>
 
                           </div >
                           
                           <div class="content-info slides-content-info">
                             <label class="step-label">${
-                              placeholders.signupStepProgress
-                                ? `${placeholders.signupStepProgress
+                              placeholders.slidesStepProgress
+                                ? `${placeholders.slidesStepProgress
                                     .replace('{}', step.number)
                                     .replace('{}', section.steps.length)}`
                                 : `Step ${step.number} of ${section.steps.length}`
                             }</label>
                             <div class="copy-icon" data-copystep="${step.id}">
                                 <span class="icon icon-copy-link"></span>
-                                <label>${placeholders?.userActionCopylinkLabel || 'Copy link'}</label>
+                                <label>
+                                  <span data-placeholder="userActionCopylinkLabel">Copy link</span>
+                                </label>
                             </div>
                           </div>
                           <div class="step-name" data-step-name>
@@ -201,9 +206,9 @@ function html(content, placeholders) {
                       <!-- Step body -->
                       <div class="content" itemprop="description">
                           ${step.body}
-                          <button class="button secondary" data-toggle-view="as-docs">${
-                            placeholders?.expandAllStepsLabel || 'Expand all steps'
-                          }</button>
+                          <button class="button secondary" data-toggle-view="as-docs">
+                            <span data-placeholder="expandAllStepsLabel">Expand all steps</span>
+                          </button>
                       </div>
                   </div>`,
                 )
@@ -215,7 +220,28 @@ function html(content, placeholders) {
         </div>`;
 }
 
-export default async function decorate(block) {
+async function fetchSlideById(slideId) {
+  const { lang } = getPathDetails();
+  const { cdnOrigin } = getConfig();
+  try {
+    const response = await fetch(`${cdnOrigin}/api/v2/slides/${slideId}?lang=${lang}`);
+    const json = await response.json();
+    return json.data;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching slides data', error);
+    return null;
+  }
+}
+
+async function renderSlideBlock(block) {
+  import('../../scripts/coachmark/coachmark.js'); // async load it.
+
+  // Set default autoplay preference if not already set
+  if (preferences.get('autoplayAudio') === undefined) {
+    preferences.set('autoplayAudio', true);
+  }
+
   const placeHolderPromise = fetchLanguagePlaceholders();
   const [firstChildBlock, ...restOfBlock] = block.children;
   const baseHeadingElement = firstChildBlock.querySelector('h2');
@@ -243,90 +269,141 @@ export default async function decorate(block) {
   block.style.visibility = 'hidden';
 
   // Process rows 2 to n; these may be sections or steps
-  const promise = Promise.all(
-    restOfBlock.map(async (row) => {
-      // Every row except the first ...
-      if (row.querySelector(':scope > div:last-child').innerHTML.trim() === '') {
-        // Sections have nothing in the right/last cell
-        if (section.id) {
-          // the start of a new section marks the end of an old section
-          sections.push(section);
-        }
-        // Row's with h3 are sections
-        section = {
-          id: row.querySelector(':scope > div:first-child > h3, h4').id,
-          number: sections.length + 1,
-          title: row.querySelector(':scope > div:first-child > h3, h4').textContent,
-          description: [...row.querySelectorAll(':scope > div:first-child > :not(h3, h4)')]
-            .map((el) => el.outerHTML)
-            .join(''),
-          steps: [],
-        };
-      } else {
-        // const visual = row.querySelector(':scope > div:last-child');
-        const slideWrapper = row.querySelector(':scope > div');
-        const [, , audioP, titleElement, ...rest] = slideWrapper?.children || [];
-        const titleId = titleElement?.id || titleElement?.textContent?.split(' ')?.join('-')?.toLowerCase() || '';
-        if (titleElement) {
-          titleElement.id = titleId;
-        }
-
-        const stepId = section.id ? `${section.id}__${titleId}` : titleId;
-
-        const audio = `${audioP?.querySelector('a')?.href}` || '';
-        audioP.remove();
-
-        section.steps.push({
-          id: stepId,
-          number: null, // Must be computed after all steps are collected
-          active: window.location.hash === `#${blockId}=${stepId}`,
-          title: titleElement?.textContent,
-          body: Array.from(rest)
-            .filter((el) => !el.matches('h3, h4'))
-            .map((el) => el.outerHTML)
-            .join(' '),
-          visual: generateVisualConfig(slideWrapper),
-          audio,
-        });
+  restOfBlock.forEach((row) => {
+    // Every row except the first ...
+    if (row.querySelector(':scope > div:last-child').innerHTML.trim() === '') {
+      // Sections have nothing in the right/last cell
+      if (section.id) {
+        // the start of a new section marks the end of an old section
+        sections.push(section);
       }
-    }),
-  );
-
-  promise.then(async () => {
-    if (section.steps.length > 0) {
-      // Handle the last section
-      sections.push(section);
-    }
-
-    // Handle the case where no step is active
-    if (!sections.flatMap((sec) => sec.steps).some((step) => step.active)) {
-      sections[0].steps[0].active = true;
-    }
-
-    sections.forEach((s) => {
-      s.steps.forEach((step, index) => {
-        step.number = index + 1;
-      });
-    });
-
-    content.sections = sections || [];
-    const placeholders = await placeHolderPromise;
-    block.innerHTML = html(content, placeholders);
-
-    addEventHandlers(block, placeholders);
-
-    state.currentStep = content.sections.flatMap((sec) => sec.steps).find((step) => step.active).id;
-
-    if (getPreference('view') === 'as-docs') {
-      showAllSteps(block);
+      // Row's with h3 are sections
+      section = {
+        id: row.querySelector(':scope > div:first-child > h3, h4').id,
+        number: sections.length + 1,
+        title: row.querySelector(':scope > div:first-child > h3, h4').textContent,
+        description: [...row.querySelectorAll(':scope > div:first-child > :not(h3, h4)')]
+          .map((el) => el.outerHTML)
+          .join(''),
+        steps: [],
+      };
     } else {
-      showStep(block, state.currentStep);
-    }
+      // const visual = row.querySelector(':scope > div:last-child');
+      const slideWrapper = row.querySelector(':scope > div');
+      const children = Array.from(slideWrapper?.children || []);
 
-    block.style.display = 'block';
-    block.style.visibility = '';
-    decorateIcons(block);
+      // Check if the second element is a UL (callout)
+      const hasCallout = children.length > 1 && children[1].tagName === 'UL';
+
+      // Directly destructure based on whether there's a callout
+      let audioP;
+      let titleElement;
+      let rest;
+      if (hasCallout) {
+        [, , audioP, titleElement, ...rest] = children;
+      } else {
+        [, audioP, titleElement, ...rest] = children;
+      }
+
+      const titleId = titleElement?.id || titleElement?.textContent?.split(' ')?.join('-')?.toLowerCase() || '';
+      if (titleElement) {
+        titleElement.id = titleId;
+      }
+
+      const stepId = section.id ? `${section.id}__${titleId}` : titleId;
+
+      let audio = '';
+      if (audioP) {
+        if (audioP.tagName === 'A' && audioP.href) {
+          audio = audioP.href;
+        } else {
+          audio = audioP.querySelector('a')?.href || '';
+        }
+        audioP.remove();
+      }
+
+      section.steps.push({
+        id: stepId,
+        number: null, // Must be computed after all steps are collected
+        active: window.location.hash === `#${blockId}=${stepId}`,
+        title: titleElement?.textContent,
+        body: Array.from(rest)
+          .filter((el) => !el.matches('h3, h4'))
+          .map((el) => el.outerHTML)
+          .join(' '),
+        visual: generateVisualConfig(slideWrapper),
+        audio,
+      });
+    }
   });
 
+  if (section.steps.length > 0) {
+    // Handle the last section
+    sections.push(section);
+  }
+
+  // Handle the case where no step is active
+  if (!sections.flatMap((sec) => sec.steps).some((step) => step.active)) {
+    sections[0].steps[0].active = true;
+  }
+
+  sections.forEach((s) => {
+    s.steps.forEach((step, index) => {
+      step.number = index + 1;
+    });
+  });
+
+  await customElements.whenDefined('exl-coachmark');
+
+  content.sections = sections || [];
+  const placeholders = await placeHolderPromise;
+  block.innerHTML = html(content, placeholders);
+  block.querySelectorAll('.step .image img').forEach((imgElement) => {
+    imgElement.loading = 'eager';
+  });
+
+  addEventHandlers(block, placeholders);
+
+  state.currentStep = content.sections.flatMap((sec) => sec.steps).find((step) => step.active).id;
+
+  if (preferences.get('view') === 'as-docs' || !isDesktopView()) {
+    showAllSteps(block);
+  } else {
+    showStep(block, state.currentStep);
+  }
+
+  block.style.display = 'block';
+  block.style.visibility = '';
+  decorateIcons(block);
+  decoratePlaceholders(block);
   return block;
+}
+
+export default async function decorate(block) {
+  const slideId = block.childElementCount === 1 ? block.firstElementChild.textContent?.trim() : '';
+  if (slideId) {
+    block.classList.add('hide-slides');
+    fetchSlideById(slideId).then((slideResponse) => {
+      const htmlContent = slideResponse?.transformedContent?.find(
+        (content) => content.contentType === 'text/html',
+      )?.raw;
+      if (!htmlContent) {
+        return;
+      }
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlContent, 'text/html');
+      const contentElement = doc.querySelector('.slides');
+      if (contentElement) {
+        decorateAnchors(contentElement);
+        decorateIcons(contentElement);
+        decorateInlineAttributes(contentElement);
+        decorateExternalLinks(contentElement);
+        block.innerHTML = contentElement.innerHTML;
+        block.classList.remove('hide-slides');
+        renderSlideBlock(block);
+      }
+    });
+  } else {
+    renderSlideBlock(block);
+  }
 }

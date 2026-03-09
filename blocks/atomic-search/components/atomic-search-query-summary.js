@@ -1,6 +1,10 @@
-import { waitFor, waitForChildElement, CUSTOM_EVENTS, isMobile } from './atomic-search-utils.js';
+import { htmlToElement } from '../../../scripts/scripts.js';
+import { waitFor, waitForChildElement, CUSTOM_EVENTS, isMobile, escapeHtml } from './atomic-search-utils.js';
 
-export default function atomicQuerySummaryHandler(baseElement, placeholders) {
+export default function atomicQuerySummaryHandler(block, placeholders) {
+  const baseElement = block.querySelector('atomic-query-summary');
+  const searchInterface = block.querySelector('atomic-search-interface');
+
   baseElement.dataset.view = isMobile() ? 'mobile' : 'desktop';
 
   const updateQuerySummaryUI = () => {
@@ -19,29 +23,47 @@ export default function atomicQuerySummaryHandler(baseElement, placeholders) {
 
   const handlerSummaryTextChanges = () => {
     const target = baseElement.shadowRoot.querySelector('[part~="container"]');
-    const summaryText = target?.textContent;
+    const summaryText = target?.textContent ? escapeHtml(target?.textContent) : '';
     if (!target) {
       waitFor(handlerSummaryTextChanges);
       return;
     }
     if (summaryText) {
-      const normalized = summaryText.replace(/\s+/g, ' ');
-      const match = normalized.match(/Results?\s+((?:\d+-\d+|\d+) of [\d,]+)(?: for(.*?))? in\b/i);
-      if (match) {
-        const [, pageText, searchQuery = ''] = match;
+      const searchState = searchInterface.engine?.state;
+      const { pagination, query } = searchState || {};
+      const noOfResultsPerPage = pagination?.numberOfResults || 0;
+      if (noOfResultsPerPage > 0) {
+        const countTill = Math.min(pagination.firstResult + noOfResultsPerPage, pagination.totalCountFiltered);
+        const resultCountText = `${pagination.firstResult + 1}${countTill > 1 ? `-${countTill}` : ''}`;
+        const totalCount = Intl.NumberFormat().format(pagination.totalCountFiltered);
+        const searchQuery = query?.q || '';
+        const prefix = searchQuery
+          ? `${placeholders.atomicSearchResultText || 'Search Results for'} ${searchQuery}`
+          : placeholders.atomicSearchNoQueryResultText || 'Search Results';
+        const ofText = placeholders.atomicSearchOfLabel || 'of';
         const queryElementWrap = baseElement.shadowRoot.querySelector('.result-query');
         if (
           queryElementWrap &&
           queryElementWrap.dataset.searchkey === searchQuery &&
-          queryElementWrap.dataset.pagekey === pageText
+          queryElementWrap.dataset.pagekey === resultCountText
         ) {
           return;
         }
         const resultTextElement = queryElementWrap || document.createElement('div');
-        const resultText = searchQuery
-          ? placeholders.atomicSearchResultText || 'Search Results for'
-          : placeholders.atomicSearchNoQueryResultText || 'Search Results';
-        resultTextElement.innerHTML = `<span style="margin-right: 8px;" class="search-result-left">${resultText}: ${searchQuery}</span> <span class="search-right">${pageText}</span>`;
+
+        resultTextElement.innerHTML = '';
+
+        const leftSpan = htmlToElement(`<span class="search-result-left" style="margin-right:8px"></span>`);
+        leftSpan.textContent = prefix; // XSS protection - textContent is a safe sink, do not use innerHTML. UGP-13611
+
+        const pageText = `${resultCountText} ${ofText} ${totalCount}`;
+
+        const rightSpan = htmlToElement(`<span class="search-right"></span>`);
+        rightSpan.textContent = pageText;
+
+        resultTextElement.appendChild(leftSpan);
+        resultTextElement.appendChild(rightSpan);
+
         resultTextElement.dataset.searchkey = searchQuery;
         resultTextElement.dataset.pagekey = pageText;
         if (!queryElementWrap) {

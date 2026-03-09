@@ -1,15 +1,15 @@
 import CoveoDataService from '../data-service/coveo/coveo-data-service.js';
-import UpcomingEventsDataService from '../data-service/upcoming-events-data-service.js';
 import ADLSDataService from '../data-service/adls-data-service.js';
 import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
-import BrowseCardsUpcomingEventsAdaptor from './browse-cards-upcoming-events-adaptor.js';
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import PathsDataService from '../data-service/paths-data-service.js';
-import { URL_SPECIAL_CASE_LOCALES, getConfig, getPathDetails } from '../scripts.js';
+import { URL_SPECIAL_CASE_LOCALES, getConfig, getPathDetails, fetchLanguagePlaceholders } from '../scripts.js';
 import { getExlPipelineDataSourceParams } from '../data-service/coveo/coveo-exl-pipeline-helpers.js';
 import { RECOMMENDED_COURSES_CONSTANTS } from './browse-cards-constants.js';
 import { createDateCriteria } from './browse-card-utils.js';
+import UpcomingEventsDataService from '../data-service/upcoming-events-data-service.js';
+import BrowseCardsUpcomingEventsAdaptor from './browse-cards-upcoming-events-adaptor.js';
 
 const { upcomingEventsUrl, adlsUrl, pathsUrl } = getConfig();
 
@@ -32,6 +32,9 @@ const fieldsToInclude = [
   'documenttype',
   'el_author_type',
   'el_contenttype',
+  'el_level',
+  'el_course_duration',
+  'el_course_module_count',
   'el_id',
   'el_interactionstyle',
   'el_kudo_status',
@@ -65,7 +68,33 @@ const fieldsToInclude = [
   'type',
   'urihash',
   'video_url',
+  'el_event_series',
+  'el_event_start_time',
+  'el_event_type',
+  'el_event_speakers_name',
+  'el_event_speakers_profile_picture_url',
+  'el_event_duration',
 ];
+
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
+
+export function normalizeUpcomingEventModel(model) {
+  const isUpcoming = model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
+  if (!isUpcoming) return model;
+
+  return {
+    ...model,
+    badgeTitle: CONTENT_TYPES.UPCOMING_EVENT.LABEL,
+    viewLinkText: placeholders?.browseCardUpcomingEventViewLabel || 'Register',
+    viewLink: model?.viewLink || '#',
+  };
+}
 
 /**
  * @module BrowseCardsDelegate
@@ -78,6 +107,9 @@ const BrowseCardsDelegate = (() => {
    * @private
    */
   let param = {};
+  const facetsInfo = {};
+
+  const getParamsKey = (paramObj) => JSON.stringify(paramObj);
 
   /**
    * Handles Coveo data service to fetch card data.
@@ -103,29 +135,18 @@ const BrowseCardsDelegate = (() => {
     if (!cardData) {
       throw new Error('An error occurred');
     }
+    if (cardData?.facets) {
+      const paramsKey = getParamsKey(param);
+      facetsInfo[paramsKey] = cardData.facets;
+    }
+
     if (cardData?.results?.length) {
       return BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(cardData.results, cardData.searchUid);
     }
     return [];
   };
 
-  /**
-   * Handles Upcoming Events data service to fetch card data.
-   * @returns {Array} Array of card data.
-   * @throws {Error} Throws an error if an issue occurs during data fetching.
-   * @private
-   */
-  const handleUpcomingEventsService = async () => {
-    const upcomingEventsService = new UpcomingEventsDataService(upcomingEventsUrl);
-    const events = await upcomingEventsService.fetchDataFromSource();
-    if (!events) {
-      throw new Error('An error occurred');
-    }
-    if (events?.length) {
-      return BrowseCardsUpcomingEventsAdaptor.mapResultsToCardsData(events);
-    }
-    return [];
-  };
+  // Removed handleUpcomingEventsService as we're now using Coveo for upcoming events
 
   /**
    * Constructs search parameters for ADLS data service.
@@ -208,6 +229,25 @@ const BrowseCardsDelegate = (() => {
   };
 
   /**
+   * Handles Upcoming Events data service to fetch card data.
+   * @returns {Array} Array of card data.
+   * @throws {Error} Throws an error if an issue occurs during data fetching.
+   * @private
+   */
+
+  const handleUpcomingEventsService = async () => {
+    const upcomingEventsService = new UpcomingEventsDataService(upcomingEventsUrl);
+    const events = await upcomingEventsService.fetchDataFromSource();
+    if (!events) {
+      throw new Error('An error occurred');
+    }
+    if (events?.length) {
+      return BrowseCardsUpcomingEventsAdaptor.mapResultsToCardsData(events);
+    }
+    return [];
+  };
+
+  /**
    * Retrieves the appropriate service function based on the content type.
    * @param {string} contentType - The content type for which the service is needed.
    * @returns {Function} The corresponding service function for the content type.
@@ -215,6 +255,7 @@ const BrowseCardsDelegate = (() => {
    */
   const getServiceForContentType = (contentType) => {
     const contentTypesServices = {
+      // Using Coveo for upcoming events instead of JSON
       [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY]: handleUpcomingEventsService,
       [CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY]: handleADLSService,
       [RECOMMENDED_COURSES_CONSTANTS.PATHS.MAPPING_KEY]: handlePathsService,
@@ -222,6 +263,12 @@ const BrowseCardsDelegate = (() => {
 
     // If the content type is an array, use the handleCoveoService (Works only with Coveo related content types)
     if (Array.isArray(contentType)) {
+      if (contentType.includes(CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY)) {
+        return async () => {
+          const cards = await handleCoveoService();
+          return cards.map(normalizeUpcomingEventModel);
+        };
+      }
       return handleCoveoService;
     }
 
@@ -242,22 +289,71 @@ const BrowseCardsDelegate = (() => {
       param = paramObj;
       const { contentType } = param;
       const cardDataService = getServiceForContentType(contentType);
-      if (cardDataService) {
-        const cardDataPromise = cardDataService();
-        cardDataPromise
-          .then((data) => {
-            resolve(data);
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      } else {
+
+      if (!cardDataService) {
         reject(new Error('Service Unavailable'));
+        return;
       }
+
+      cardDataService()
+        .then(async (cardData) => {
+          // Enrich course data with user progress if applicable
+          if (contentType?.includes(CONTENT_TYPES.COURSE.MAPPING_KEY)) {
+            try {
+              const { isSignedInUser } = await import('../auth/profile.js');
+              const isSignedIn = await isSignedInUser();
+              if (isSignedIn) {
+                const [{ getCurrentCourses }, { default: BrowseCardsCourseEnricher }] = await Promise.all([
+                  import('../courses/course-profile.js'),
+                  import('./browse-cards-course-enricher.js'),
+                ]);
+                const courses = await getCurrentCourses();
+                resolve(BrowseCardsCourseEnricher.enrichCardsWithCourseStatus(cardData, courses));
+                return;
+              }
+            } catch (error) {
+              // eslint-disable-next-line no-console
+              console.warn('Course enrichment failed:', error);
+            }
+          }
+
+          resolve(cardData);
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
+
+  const fetchCoveoFacetFields = (fields) =>
+    new Promise((resolve, reject) => {
+      const facets = {};
+      const dataSource = getExlPipelineDataSourceParams({ fields, fetchFacets: true }, []);
+      const coveoService = new CoveoDataService(dataSource);
+      coveoService
+        .fetchDataFromSource()
+        .then(async (facetsResponse) => {
+          const batches = facetsResponse?.batch || [];
+          batches.forEach((batch, i) => {
+            const field = fields[i];
+            facets[field] = batch?.map((facet) => facet.value)?.filter(Boolean) || [];
+          });
+          resolve(facets);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+
+  const fetchFacetsData = (paramObj) => {
+    const paramsKey = getParamsKey(paramObj);
+    const response = facetsInfo[paramsKey] || [];
+    return response;
+  };
 
   return {
     fetchCardData,
+    fetchCoveoFacetFields,
+    fetchFacetsData,
   };
 })();
 

@@ -132,13 +132,13 @@
   }
 }
 
-.browse-cards-block-content > div:first-child .browse-card .user-actions .action-tooltip {
+.browse-cards-block-content .browse-card .user-actions .action-tooltip {
   left: 100%;
   transform: translateX(-20%);
-}
 
-.browse-cards-block-content > div:first-child .browse-card .user-actions .action-tooltip::after {
-  left: 10%;
+  &::after {
+    left: 10%;
+  }
 }
 
 @media only screen and (min-width: 600px) {
@@ -150,6 +150,15 @@
     gap: 25px;
     margin-bottom: 56px;
     margin-top: 16px;
+  }
+
+  .browse-cards-block-content .browse-card .user-actions .action-tooltip {
+    left: 50%;
+    transform: translateX(-50%);
+
+    &::after {
+      left: 50%;
+    }
   }
 }
 

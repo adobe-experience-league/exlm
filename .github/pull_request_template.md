@@ -14,19 +14,18 @@ Jira ID:
 
 Test URLs:
 
-- Before: https://main--exlm--adobe-experience-league.aem.page
+- Before: https://main--exlm--adobe-experience-league.aem.live
 
 $
-$/en/docs?martech=off
+$/en/browse?martech=off
+$/en/browse/analytics?martech=off
 $/en/docs?martech=off
 $/en/docs/analytics?martech=off
 $/en/docs/analytics/analyze/admin-overview/analytics-overview?martech=off
+$/en/events?martech=off
 $/en/playlists?martech=off
 $/en/playlists/acrobat-sign-perform-advanced-tasks-administrators?martech=off
-$/en/docs/home-tutorials?martech=off
-$/en/docs/analytics-learn/tutorials/overview?martech=off
 $/en/perspectives?martech=off
 $/en/perspectives/drive-success-with-executive-summary-dashboards?martech=off
 $/en/certification-home?martech=off
-$/en/browse?martech=off
-$/en/browse/analytics?martech=off
+$/en/search?martech=off

@@ -1,0 +1,13 @@
+body.event .section .browse-cards-block-content {
+  margin-bottom: 48px;
+}
+
+body.event .section > div > h2 {
+  margin-top: 0;
+}
+
+@media only screen and (min-width: 900px) {
+  body.event .section .browse-cards-block-content {
+    margin-bottom: 3rem;
+  }
+}

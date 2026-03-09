@@ -1,0 +1,33 @@
+.module-nav-wrapper {
+  width: 100%;
+  margin-top: var(--spectrum-spacing-400);
+}
+
+.module-nav-buttons {
+  display: flex;
+  gap: var(--spectrum-spacing-200);
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.courses.course-step:has(.quiz-scorecard) .module-nav-buttons {
+  justify-content: center;
+}
+
+.module-nav-button.disabled,
+.module-nav-button.disabled:hover {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+@media (min-width: 600px) {
+  .module-nav-buttons {
+    justify-content: space-between;
+  }
+
+  .courses.course-step:has(.quiz-scorecard) .module-nav-buttons {
+    justify-content: space-between;
+  }
+}

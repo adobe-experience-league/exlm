@@ -3,7 +3,9 @@
 /* Browse card colors */
 :root {
   --browse-card-color-playlist-primary: #30a7ff;
+  --browse-card-color-video-clip-primary: #30a7ff;
   --browse-card-color-playlist-secondary: #d6edff;
+  --browse-card-color-video-clip-secondary: #d6edff;
   --browse-card-color-tutorial-primary: #10cfa9;
   --browse-card-color-tutorial-secondary: #cff5ee;
   --browse-card-color-documentation-primary: #0aa35b;
@@ -16,8 +18,8 @@
   --browse-card-color-troubleshooting-secondary: #fff3df;
   --browse-card-color-upcoming-event-primary: #eb1000;
   --browse-card-color-upcoming-event-secondary: #ffc0c0;
-  --browse-card-color-event-primary: #ff709f;
-  --browse-card-color-event-secondary: #ffe2ec;
+  --browse-card-color-event-primary: #eb1000;
+  --browse-card-color-event-secondary: #ffc0c0;
   --browse-card-color-instructor-led-training-primary: #7a6afd;
   --browse-card-color-instructor-led-training-secondary: #e4e1ff;
   --browse-card-color-perspective-primary: #c844dc;
@@ -52,6 +54,10 @@
   background-color: var(--browse-card-color-playlist-secondary);
 }
 
+.browse-card.video-clip-card {
+  background-color: var(--browse-card-color-video-clip-secondary);
+}
+
 .browse-card.tutorial-card {
   background-color: var(--browse-card-color-tutorial-secondary);
 }
@@ -72,12 +78,12 @@
   background-color: var(--browse-card-color-troubleshooting-secondary);
 }
 
-.browse-card.upcoming-event-card {
-  background-color: var(--browse-card-color-upcoming-event-secondary);
-}
-
 .browse-card.event-card {
   background-color: var(--browse-card-color-event-secondary);
+}
+
+.browse-card.upcoming-event-card {
+  background-color: var(--browse-card-color-upcoming-event-secondary);
 }
 
 .browse-card.instructor-led-training-card {
@@ -122,6 +128,12 @@
   display: flex;
 }
 
+.browse-card .browse-card-banner.visually-hidden {
+  position: absolute;
+  padding: 0;
+  margin: -1px;
+}
+
 .browse-card.browse-card-frozen .browse-card-tag-text {
   height: 21px;
   width: 100px;
@@ -136,7 +148,7 @@
   );
 }
 
-.browse-card .browse-card-tag-text h4 {
+.browse-card .browse-card-tag-text .browse-card-solution-text {
   text-transform: uppercase;
   margin: 0;
   font-size: var(--spectrum-font-size-75);
@@ -194,6 +206,12 @@
   overflow: hidden;
 }
 
+/* Adding space for the status row in course cards */
+.browse-card.course-card .browse-card-description-text,
+.browse-card.course-card .browse-card-description-text * {
+  margin-bottom: 48px;
+}
+
 .browse-card.thumbnail-loaded .browse-card-description-text,
 .browse-card.thumbnail-loaded .browse-card-description-text * {
   -webkit-line-clamp: 2;
@@ -209,6 +227,42 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.browse-card .browse-card-video-clip {
+  padding: 24px 16px 0;
+  background-color: var(--background-color);
+  height: 64px;
+  flex-grow: 0;
+}
+
+.browse-card .browse-card-content {
+  padding: 24px 16px 16px;
+  background-color: var(--background-color);
+}
+
+.browse-card.video-clip-card .browse-card-content {
+  padding-top: 16px;
+}
+
+.browse-card .browse-card-video-clip .play-button {
+  width: fit-content;
+}
+
+.browse-card .browse-card-event-info .icon {
+  height: 16px;
+  width: 16px;
+  margin-top: 2px;
+}
+
+.browse-card .user-actions button .icon {
+  height: 24px; /* a11y touch target must be 24px */
+  width: 24px; /* a11y touch target must be 24px */
+}
+
+.browse-card .browse-card-video-clip .play-button .icon {
+  height: 40px;
+  width: 40px;
 }
 
 .browse-card .browse-card-figure.img-custom-height {
@@ -283,11 +337,6 @@
   height: 204px;
 }
 
-.browse-card .browse-card-content {
-  padding: 24px 16px 16px;
-  background-color: var(--background-color);
-}
-
 .browse-card .browse-card-meta-info {
   display: flex;
   gap: 12px;
@@ -298,12 +347,6 @@
   color: var(--non-spectrum-grey-updated);
   font-size: var(--spectrum-font-size-75);
   line-height: var(--spectrum-line-height-s);
-}
-
-.browse-card .browse-card-event-info .icon {
-  height: 16px;
-  width: 16px;
-  margin-top: 2px;
 }
 
 .browse-card .browse-card-author-info {
@@ -345,7 +388,7 @@
 }
 
 .browse-card .browse-card-footer {
-  padding: 0 16px 24px;
+  padding: 0 16px 24px 10px;
   background-color: var(--background-color);
   display: flex;
   flex-grow: 0;
@@ -371,11 +414,6 @@
   font-weight: var(--font-weight-semi-bold);
   font-size: var(--spectrum-font-size-100);
   line-height: var(--spectrum-line-height-s);
-}
-
-.browse-card .user-actions button .icon {
-  height: 23px;
-  width: 23px;
 }
 
 .browse-card .browse-card-footer .browse-card-cta-element .icon {
@@ -574,17 +612,161 @@
   font-style: italic;
 }
 
+.browse-card .browse-card-course-info {
+  margin-top: 4px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.browse-card .browse-card-course-info p {
+  margin: 0;
+  color: var(--spectrum-gray-700);
+  font-size: var(--spectrum-font-size-75);
+  line-height: var(--spectrum-line-height-s);
+}
+
+.browse-card .course-info-duration,
+.browse-card .course-info-modules,
+.browse-card .course-info-level,
+.browse-card .course-info-level-duration {
+  display: flex;
+  align-items: center;
+}
+
+.browse-card .course-info-level-duration {
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-semi-bold);
+  color: var(--spectrum-gray-700);
+  text-transform: uppercase;
+}
+
 .browse-card .browse-card-figure .play-button .icon {
   width: 56px;
   height: 56px;
   transition: transform 0.2s;
 }
 
-.browse-card .browse-card-figure:hover .play-button .icon {
-  display: none;
+/* Status row with module count */
+.browse-card .browse-card-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  bottom: 24px;
+  left: 16px;
+  right: 16px;
+  width: calc(100% - 32px);
 }
 
+.browse-card .browse-card-status-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.browse-card .browse-card-status-indicator .status-badge {
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+  display: inline-block;
+  background-color: transparent;
+  border-radius: 50%;
+  vertical-align: -1px;
+}
+
+.browse-card .browse-card-status-indicator .status-badge.status-not-started,
+.browse-card.course-card .browse-card-meta-info .status-badge.status-not-started {
+  background-color: var(--non-spectrum-medium-gray);
+  border: none;
+}
+
+.browse-card .browse-card-status-indicator .status-badge.status-in-progress,
+.browse-card.course-card .browse-card-meta-info .status-badge.status-in-progress {
+  background-color: var(--non-spectrum-navy-blue);
+  border: none;
+}
+
+.browse-card .browse-card-status-indicator .status-badge.status-completed,
+.browse-card.course-card .browse-card-meta-info .status-badge.status-completed {
+  background-color: var(--non-spectrum-pass-green);
+  border: none;
+}
+
+.browse-card .browse-card-status-indicator .status-text,
+.browse-card.course-card .browse-card-meta-info .status-text {
+  font-size: var(--spectrum-font-size-100);
+  line-height: var(--spectrum-line-height-s);
+  color: var(--non-spectrum-dark-gray);
+  font-weight: var(--font-weight-bold);
+}
+
+.browse-card .browse-card-module-count {
+  font-size: var(--spectrum-font-size-100);
+  line-height: var(--spectrum-line-height-s);
+  color: var(--non-spectrum-dark-gray);
+  text-align: right;
+}
+
+/* Course Card Variant */
+.browse-card.course-card .browse-card-figure {
+  background: linear-gradient(
+    90deg,
+    #ffb199 0%,
+    /* peach */ #ffcad4 30%,
+    /* pink */ #e9d7fa 80%,
+    /* light purple */ #d6e9ff 100% /* light blue */
+  );
+  overflow: visible;
+  z-index: 1;
+}
+
+.browse-card.course-card .browse-card-icon {
+  width: 64px;
+  height: 64px;
+  background-color: var(--spectrum-gray-900);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 16px;
+  top: 50%;
+}
+
+.browse-card.course-card .browse-card-icon .icon {
+  width: 32px;
+  height: 32px;
+}
+
+.browse-card.course-card .browse-card-content {
+  padding-top: 56px;
+  position: relative;
+}
+
+.browse-card.course-card .browse-card-meta-info {
+  display: block;
+  position: absolute;
+  bottom: 10px;
+}
+
+.browse-card.course-card .browse-card-meta-info .status-badge {
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+  display: inline-block;
+  background-color: transparent;
+  border-radius: 50%;
+  vertical-align: -1px;
+}
+
+/* Event Card Variant */
 .browse-card.event-card .browse-card-banner,
 .browse-card.upcoming-event-card .browse-card-banner {
   color: var(--spectrum-gray-50);
+}
+
+/* CSS Specificity */
+.browse-card .browse-card-figure:hover .play-button .icon {
+  display: none;
 }

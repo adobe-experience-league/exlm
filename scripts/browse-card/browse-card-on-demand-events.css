@@ -1,0 +1,86 @@
+/* On demand event css */
+
+.browse-cards-block-content:has(.event-card) {
+  min-height: 450px;
+  display: grid;
+  gap: 32px;
+  margin-bottom: 84px;
+}
+
+.browse-card.event-card {
+  min-height: 450px;
+  background-color: var(--spectrum-gray-50);
+}
+
+.browse-card.event-card .browse-card-figure {
+  max-height: none;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 0 0 45%;
+  background-color: var(--spectrum-gray-150);
+}
+
+.browse-card.event-card .browse-card-figure .event-series-banner {
+  position: relative;
+  padding: 10px 0;
+  margin: 30px 0 20px;
+  color: var(--spectrum-gray-900);
+  font-size: var(--spectrum-font-size-700);
+  font-weight: var(--font-weight-bold);
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: 10%;
+  padding-right: 10%;
+  letter-spacing: 1px;
+}
+
+.browse-card.event-card .browse-card-figure .event-series-banner::before,
+.browse-card.event-card .browse-card-figure .event-series-banner::after {
+  content: '';
+  position: absolute;
+  height: 8px;
+  transform: scaleY(0.5);
+  background-color: var(--non-spectrum-adobe-red);
+}
+
+.browse-card.event-card .browse-card-figure .event-series-banner::before {
+  top: -5px;
+  left: 0;
+  width: 90%;
+}
+
+.browse-card.event-card .browse-card-figure .event-series-banner::after {
+  bottom: -5px;
+  right: 0;
+  width: 90%;
+}
+
+.browse-card.event-card .browse-card-description-text,
+.browse-card.event-card .browse-card-description-text * {
+  max-height: none;
+  -webkit-line-clamp: 2;
+}
+
+body[class^='browse-'] .browse-card.event-card .browse-card-figure .event-series-banner {
+  font-size: var(--spectrum-font-size-700);
+}
+
+@media only screen and (min-width: 1024px) {
+  .browse-card.event-card .browse-card-figure .event-series-banner {
+    font-size: 24px;
+  }
+}
+
+@media only screen and (min-width: 1440px) {
+  .browse-card.event-card .browse-card-figure .event-series-banner {
+    font-size: var(--spectrum-font-size-700);
+  }
+
+  body[class^='browse-'] .browse-card.event-card .browse-card-figure .event-series-banner {
+    font-size: 24px;
+  }
+}

@@ -15,7 +15,14 @@ const CACHE_EXPIRATION_TIME = 5000; // 5 seconds
 
 const cacheKeyPrefix = 'exl-fetch-cache';
 const cacheTimestampPrefix = 'exl-fetch-cache-timestamp';
-const base64String = (data) => btoa(JSON.stringify(data));
+const base64String = (data) => {
+  // Convert to base64 in a Unicode-safe way
+  const jsonString = JSON.stringify(data);
+  // Use TextEncoder to convert the string to UTF-8 bytes, then encode to base64
+  const bytes = new TextEncoder().encode(jsonString);
+  const binString = String.fromCodePoint(...bytes);
+  return btoa(binString);
+};
 const getCacheKey = (url, options) => `${cacheKeyPrefix}_${url}_${base64String(options)}`;
 const getCacheTimestampKey = (url, options) => `${cacheTimestampPrefix}_${url}_${base64String(options)}`;
 

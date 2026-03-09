@@ -20,6 +20,10 @@
   box-sizing: border-box;
 }
 
+.atomic-search.block {
+  --atomic-search-facet-padding: 40px;
+}
+
 .atomic-search > div {
   width: 100%;
   display: flex;
@@ -117,8 +121,12 @@
 
 .atomic-search button.facet-close-btn {
   position: sticky;
-  left: calc(100% - 16px);
+  left: calc(100% - 50px);
   top: 8px;
+  background: var(--background-color);
+  border: 1px solid var(--non-spectrum-grey-updated);
+  padding: 5px;
+  z-index: 2;
 }
 
 .atomic-load-skeleton-main {
@@ -354,13 +362,13 @@
 
 @media only screen and (min-width: 1024px) {
   .atomic-search atomic-search-interface atomic-search-layout[id^='atomic-search-layout'] {
-    grid-template-columns: 0 18% 82% !important;
+    grid-template-columns: 0 20% 80% !important;
     grid-column-gap: 16px;
   }
 
   .atomic-load-skeleton-main {
     display: grid;
-    grid-template-columns: 0 18% 82% !important;
+    grid-template-columns: 0 20% 80% !important;
   }
 
   .atomic-load-skeleton-head {

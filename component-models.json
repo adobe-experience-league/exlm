@@ -1212,6 +1212,14 @@
     "id": "section",
     "fields": [
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "section-id",
+        "value": "",
+        "label": "Section ID (Optional)",
+        "description": "Optional. A unique identifier for this section used for anchor links and navigation."
+      },
+      {
         "component": "select",
         "name": "style",
         "value": "",
@@ -1246,6 +1254,13 @@
         "name": "always-show",
         "label": "Do NOT hide on browse filter results?",
         "description": "When browse-filter block is used, on browse-filter results, all sections below the browse-filter is hidden. Above toggle makes an exception to show this section even if the browse filter results are displayed."
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "new-tab",
+        "label": "Open Links in a New Tab?",
+        "description": "Enabling this option will open all links in the blocks within this section in a new tab."
       }
     ]
   },
@@ -1272,6 +1287,76 @@
     ]
   },
   {
+    "id": "list-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "list-type",
+        "value": "",
+        "label": "List Type",
+        "description": "Type of list to display",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Unordered List",
+            "value": "ul"
+          },
+          {
+            "name": "Ordered List",
+            "value": "ol"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "list-item",
+    "fields": []
+  },
+  {
+    "id": "list-content",
+    "fields": [
+      {
+        "component": "select",
+        "name": "classes",
+        "value": "text",
+        "label": "Type of content",
+        "description": "Type of the list content",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Text",
+            "value": "text"
+          },
+          {
+            "name": "Image",
+            "value": "image"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "text"]
+        },
+        "component": "richtext",
+        "valueType": "string",
+        "name": "richtext",
+        "value": "",
+        "label": "Text Content"
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "image"]
+        },
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "List image content",
+        "multi": false
+      }
+    ]
+  },
+  {
     "id": "browse-rail-section",
     "fields": [
       {
@@ -1283,6 +1368,74 @@
         "valueType": "string",
         "hidden": true,
         "options": []
+      }
+    ]
+  },
+  {
+    "id": "courses-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Background Color",
+        "description": "Section background color",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Default",
+            "value": ["courses-section", "default"]
+          },
+          {
+            "name": "White",
+            "value": ["courses-section", "bg-white"]
+          },
+          {
+            "name": "Dark Gray",
+            "value": ["courses-section", "bg-dark-gray"]
+          }
+        ]
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "center-aligned",
+        "label": "Align the default blocks in this section to the center.",
+        "description": "Enabling this option will align the default blocks in this section to the center."
+      }
+    ]
+  },
+  {
+    "id": "course-hub-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Background Color",
+        "description": "Section background color",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Default",
+            "value": ["course-hub-section", "default"]
+          },
+          {
+            "name": "White",
+            "value": ["course-hub-section", "bg-white"]
+          },
+          {
+            "name": "Dark Gray",
+            "value": ["course-hub-section", "bg-dark-gray"]
+          }
+        ]
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "center-aligned",
+        "label": "Align the default blocks in this section to the center.",
+        "description": "Enabling this option will align the default blocks in this section to the center."
       }
     ]
   },
@@ -1445,18 +1598,18 @@
         "label": "Rows"
       },
       {
-        "component": "select",
+        "component": "multiselect",
         "valueType": "string",
         "name": "classes",
         "label": "Style Type",
         "options": [
           {
-            "name": "Default",
-            "value": ""
-          },
-          {
             "name": "Border w/ alternating rows",
             "value": "b-alt-row"
+          },
+          {
+            "name": "Align to middle",
+            "value": "align-middle"
           }
         ]
       }
@@ -1570,6 +1723,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -1592,6 +1749,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -1706,6 +1867,7 @@
         "label": "Style",
         "valueType": "string",
         "required": true,
+        "maxSize": 6,
         "options": [
           {
             "name": "Size Variant",
@@ -1743,6 +1905,10 @@
               {
                 "name": "Fill marquee with given background color",
                 "value": "fill-background"
+              },
+              {
+                "name": "Fill marquee with given gradient colors",
+                "value": "fill-gradient"
               },
               {
                 "name": "Select to insert a video as background",
@@ -1822,21 +1988,33 @@
                 "value": "custom"
               }
             ]
+          },
+          {
+            "name": "Text Color",
+            "children": [
+              {
+                "name": "Black",
+                "value": "text-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "text-spectrum-gray-50"
+              }
+            ]
           }
         ]
       },
       {
         "condition": {
-          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "custom"] }]
+          "some": [{ "var": "classes" }, { "in": [{ "var": "" }, ["custom", "fill-gradient"]] }]
         },
         "component": "text",
         "valueType": "string",
         "name": "customHexCode",
         "value": "",
-        "label": "Custom Background Color",
-        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
+        "label": "Custom Background & Gradient Colors",
+        "description": "Enter a custom hex code (e.g., FFFFFF, without the #). For gradients, enter multiple hex codes separated by commas."
       },
-
       {
         "condition": {
           "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "video"] }]
@@ -2272,6 +2450,382 @@
     ]
   },
   {
+    "id": "marquee-video-full-bleed",
+    "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Block options",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Theme",
+            "children": [
+              {
+                "name": "Light",
+                "value": "light"
+              },
+              {
+                "name": "Dark",
+                "value": "dark"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the main title of the marquee-video-full-bleed block."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description text."
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "videoFile",
+        "label": "Video File (MP4)",
+        "description": "Select MP4 video file from DAM for desktop and tablet devices.",
+        "multi": false
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "mobileImage",
+        "label": "Image (Mobile)",
+        "description": "Background image shown on mobile devices.",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "mobileImageAlt",
+        "value": "",
+        "label": "Image (Mobile) Alt Text",
+        "description": "A descriptive text of the mobile image."
+      },
+      {
+        "component": "select",
+        "name": "primaryCta_Type",
+        "value": "primary",
+        "label": "Primary CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          },
+          {
+            "name": "Tertiary",
+            "value": "tertiary"
+          },
+          {
+            "name": "Custom",
+            "value": "custom"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "primaryCta_Type" }, "custom"]
+        },
+        "component": "select",
+        "name": "primaryCta_customBgColor",
+        "value": "",
+        "label": "Primary CTA Background Color",
+        "description": "Select Primary CTA background color. Select 'Custom Hexcode' to enter the custom color",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Gray",
+            "value": "--spectrum-gray-700"
+          },
+          {
+            "name": "Blue",
+            "value": "--spectrum-blue-700"
+          },
+          {
+            "name": "Green",
+            "value": "--spectrum-green-700"
+          },
+          {
+            "name": "Orange",
+            "value": "--spectrum-orange-700"
+          },
+          {
+            "name": "Red",
+            "value": "--spectrum-red-700"
+          },
+          {
+            "name": "Celery",
+            "value": "--spectrum-celery-700"
+          },
+          {
+            "name": "Chartreuse",
+            "value": "--spectrum-chartreuse-700"
+          },
+          {
+            "name": "Cyan",
+            "value": "--spectrum-cyan-700"
+          },
+          {
+            "name": "Fuchsia",
+            "value": "--spectrum-fuchsia-700"
+          },
+          {
+            "name": "Indigo",
+            "value": "--spectrum-indigo-700"
+          },
+          {
+            "name": "Magenta",
+            "value": "--spectrum-magenta-700"
+          },
+          {
+            "name": "Purple",
+            "value": "--spectrum-purple-700"
+          },
+          {
+            "name": "Seafoam",
+            "value": "--spectrum-seafoam-700"
+          },
+          {
+            "name": "Yellow",
+            "value": "--spectrum-yellow-700"
+          },
+          {
+            "name": "Adobe Red",
+            "value": "--non-spectrum-adobe-red"
+          },
+          {
+            "name": "Custom Hexcode",
+            "value": "custom-hexcode"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "and": [
+            { "===": [{ "var": "primaryCta_customBgColor" }, "custom-hexcode"] },
+            { "===": [{ "var": "primaryCta_Type" }, "custom"] }
+          ]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "primaryCta_customBgHexCode",
+        "value": "",
+        "label": "Primary CTA Custom Background Hexcode",
+        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
+      },
+      {
+        "condition": {
+          "===": [{ "var": "primaryCta_Type" }, "custom"]
+        },
+        "component": "select",
+        "valueType": "string",
+        "name": "primaryCta_textColor",
+        "value": "white",
+        "label": "Primary CTA Text Color",
+        "description": "Select the text color",
+        "options": [
+          {
+            "name": "White",
+            "value": "white"
+          },
+          {
+            "name": "Black",
+            "value": "black"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "primaryCta_linkText",
+        "value": "",
+        "label": "Primary CTA Text",
+        "description": "Text to be shown inside primary button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "primaryCta_link",
+        "value": "",
+        "label": "Primary CTA Link",
+        "description": "Link for primary CTA. Use #SECTION-ID for jump links."
+      },
+      {
+        "component": "select",
+        "name": "secondaryCta_Type",
+        "value": "secondary",
+        "label": "Secondary CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          },
+          {
+            "name": "Tertiary",
+            "value": "tertiary"
+          },
+          {
+            "name": "Custom",
+            "value": "custom"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "secondaryCta_Type" }, "custom"]
+        },
+        "component": "select",
+        "name": "secondaryCta_customBgColor",
+        "value": "",
+        "label": "Secondary CTA Background Color",
+        "description": "Select Secondary CTA background color. Select 'Custom Hexcode' to enter the custom color",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Gray",
+            "value": "--spectrum-gray-700"
+          },
+          {
+            "name": "Blue",
+            "value": "--spectrum-blue-700"
+          },
+          {
+            "name": "Green",
+            "value": "--spectrum-green-700"
+          },
+          {
+            "name": "Orange",
+            "value": "--spectrum-orange-700"
+          },
+          {
+            "name": "Red",
+            "value": "--spectrum-red-700"
+          },
+          {
+            "name": "Celery",
+            "value": "--spectrum-celery-700"
+          },
+          {
+            "name": "Chartreuse",
+            "value": "--spectrum-chartreuse-700"
+          },
+          {
+            "name": "Cyan",
+            "value": "--spectrum-cyan-700"
+          },
+          {
+            "name": "Fuchsia",
+            "value": "--spectrum-fuchsia-700"
+          },
+          {
+            "name": "Indigo",
+            "value": "--spectrum-indigo-700"
+          },
+          {
+            "name": "Magenta",
+            "value": "--spectrum-magenta-700"
+          },
+          {
+            "name": "Purple",
+            "value": "--spectrum-purple-700"
+          },
+          {
+            "name": "Seafoam",
+            "value": "--spectrum-seafoam-700"
+          },
+          {
+            "name": "Yellow",
+            "value": "--spectrum-yellow-700"
+          },
+          {
+            "name": "Adobe Red",
+            "value": "--non-spectrum-adobe-red"
+          },
+          {
+            "name": "Custom Hexcode",
+            "value": "custom-hexcode"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "and": [
+            { "===": [{ "var": "secondaryCta_customBgColor" }, "custom-hexcode"] },
+            { "===": [{ "var": "secondaryCta_Type" }, "custom"] }
+          ]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "secondaryCta_customBgHexCode",
+        "value": "",
+        "label": "Secondary CTA Custom Background Hexcode",
+        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
+      },
+      {
+        "condition": {
+          "===": [{ "var": "secondaryCta_Type" }, "custom"]
+        },
+        "component": "select",
+        "valueType": "string",
+        "name": "secondaryCta_textColor",
+        "value": "white",
+        "label": "Secondary CTA Text Color",
+        "description": "Select the text color",
+        "options": [
+          {
+            "name": "White",
+            "value": "white"
+          },
+          {
+            "name": "Black",
+            "value": "black"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "secondaryCta_linkText",
+        "value": "",
+        "label": "Secondary CTA Text",
+        "description": "Text to be shown inside secondary button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "secondaryCta_link",
+        "value": "",
+        "label": "Secondary CTA Link",
+        "description": "Link for secondary CTA.Use #SECTION-ID for jump links."
+      }
+    ]
+  },
+  {
     "id": "article-marquee",
     "fields": [
       {
@@ -2550,6 +3104,15 @@
   {
     "id": "video-embed",
     "fields": [
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "classes",
+        "label": "Classes",
+        "value": "",
+        "options": [],
+        "hidden": true
+      },
       {
         "component": "text",
         "valueType": "string",
@@ -3094,6 +3657,255 @@
     ]
   },
   {
+    "id": "media-panel",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Image",
+        "description": "The media panel image."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "fileReferenceAlt",
+        "value": "",
+        "label": "Image Description",
+        "description": "A descriptive text of the image."
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Style",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Layout",
+            "children": [
+              {
+                "name": "Left",
+                "value": "left"
+              },
+              {
+                "name": "Right",
+                "value": "right"
+              }
+            ]
+          },
+          {
+            "name": "Variant",
+            "children": [
+              {
+                "name": "Podcast Card",
+                "value": "podcast-card"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrow",
+        "value": "",
+        "label": "Eyebrow Text",
+        "description": "Sets the small pre-title above the heading."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the main heading."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description"
+      },
+      {
+        "component": "select",
+        "name": "cta_Type",
+        "value": "primary",
+        "label": "CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          },
+          {
+            "name": "Tertiary",
+            "value": "tertiary"
+          },
+          {
+            "name": "Custom",
+            "value": "custom"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "cta_Type" }, "custom"]
+        },
+        "component": "select",
+        "name": "cta_customBgColor",
+        "value": "",
+        "label": "CTA Background Color",
+        "description": "Select CTA background color. Select 'Custom Hexcode' to enter the custom color",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Gray",
+            "value": "--spectrum-gray-700"
+          },
+          {
+            "name": "Blue",
+            "value": "--spectrum-blue-700"
+          },
+          {
+            "name": "Green",
+            "value": "--spectrum-green-700"
+          },
+          {
+            "name": "Orange",
+            "value": "--spectrum-orange-700"
+          },
+          {
+            "name": "Red",
+            "value": "--spectrum-red-700"
+          },
+          {
+            "name": "Celery",
+            "value": "--spectrum-celery-700"
+          },
+          {
+            "name": "Chartreuse",
+            "value": "--spectrum-chartreuse-700"
+          },
+          {
+            "name": "Cyan",
+            "value": "--spectrum-cyan-700"
+          },
+          {
+            "name": "Fuchsia",
+            "value": "--spectrum-fuchsia-700"
+          },
+          {
+            "name": "Indigo",
+            "value": "--spectrum-indigo-700"
+          },
+          {
+            "name": "Magenta",
+            "value": "--spectrum-magenta-700"
+          },
+          {
+            "name": "Purple",
+            "value": "--spectrum-purple-700"
+          },
+          {
+            "name": "Seafoam",
+            "value": "--spectrum-seafoam-700"
+          },
+          {
+            "name": "Yellow",
+            "value": "--spectrum-yellow-700"
+          },
+          {
+            "name": "Adobe Red",
+            "value": "--non-spectrum-adobe-red"
+          },
+          {
+            "name": "Custom Hexcode",
+            "value": "custom-hexcode"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "and": [
+            { "===": [{ "var": "cta_customBgColor" }, "custom-hexcode"] },
+            { "===": [{ "var": "cta_Type" }, "custom"] }
+          ]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_customBgHexCode",
+        "value": "",
+        "label": "CTA Custom Background Hexcode",
+        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
+      },
+      {
+        "condition": {
+          "===": [{ "var": "cta_Type" }, "custom"]
+        },
+        "component": "select",
+        "valueType": "string",
+        "name": "cta_textColor",
+        "value": "white",
+        "label": "CTA Text Color",
+        "description": "Select the text color",
+        "options": [
+          {
+            "name": "White",
+            "value": "white"
+          },
+          {
+            "name": "Black",
+            "value": "black"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_linkText",
+        "value": "",
+        "label": "CTA Text",
+        "description": "Text to be shown on the CTA button or link."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_link",
+        "value": "",
+        "label": "CTA Link",
+        "description": "URL to open when the CTA is clicked."
+      },
+      {
+        "condition": {
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "podcast-card"] }]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "podcastCardHeading",
+        "value": "",
+        "label": "Podcast Card Heading",
+        "description": "Heading for the podcast card variant."
+      },
+      {
+        "condition": {
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "podcast-card"] }]
+        },
+        "component": "richtext",
+        "valueType": "string",
+        "name": "podcastCardDescription",
+        "value": "",
+        "label": "Podcast Card Description",
+        "description": "Description for the  podcast card variant."
+      }
+    ]
+  },
+  {
     "id": "authorable-card",
     "fields": [
       {
@@ -3196,7 +4008,7 @@
         "name": "contentURL",
         "value": "",
         "label": "Content URL",
-        "description": "Provide a link to one of the following content types: Playlist, Tutorial, Documentation, Troubleshooting, On-Demand Event, Certification or Perspective"
+        "description": "Provide a link to one of the following content types: Course, Playlist, Tutorial, Documentation, Troubleshooting, On-Demand Event, Certification or Perspective"
       }
     ]
   },
@@ -3276,6 +4088,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -3298,6 +4114,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       }
@@ -3369,6 +4189,10 @@
           {
             "name": "Communities",
             "value": "community"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
           },
           {
             "name": "Documentation",
@@ -3756,6 +4580,178 @@
     ]
   },
   {
+    "id": "events",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrowText",
+        "value": "",
+        "label": "Eyebrow Text",
+        "description": "Optional small label displayed above the block title."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "blockTitle",
+        "value": "",
+        "label": "Block Title",
+        "description": "Section title for the whole block, displayed above the featured card."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "blockDescription",
+        "value": "",
+        "label": "Block Description",
+        "description": "Section description for the whole block, displayed above the featured card."
+      }
+    ]
+  },
+  {
+    "id": "event-item",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "tagText",
+        "value": "",
+        "label": "Tag Text",
+        "description": "Tag text for the event card."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "dateText",
+        "value": "",
+        "label": "Date Text",
+        "description": "Date text for the event."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eventTypeText",
+        "value": "",
+        "label": "Type of Event",
+        "description": "Type of event text."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Title for the event card item."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Description for the event card item."
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Image",
+        "description": "Card image (used for the featured card).",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "fileReferenceAlt",
+        "value": "",
+        "label": "Image Description",
+        "description": "A descriptive text of the image."
+      },
+      {
+        "component": "select",
+        "name": "cta1_Type",
+        "value": "primary",
+        "label": "CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
+        "valueType": "string",
+        "options": [
+          { "name": "Primary", "value": "primary" },
+          { "name": "Secondary", "value": "secondary" },
+          { "name": "Tertiary", "value": "tertiary" },
+          { "name": "Custom", "value": "custom" }
+        ]
+      },
+      {
+        "condition": { "===": [{ "var": "cta1_Type" }, "custom"] },
+        "component": "select",
+        "name": "cta1_customBgColor",
+        "value": "",
+        "label": "CTA Background Color",
+        "valueType": "string",
+        "options": [
+          { "name": "Gray", "value": "--spectrum-gray-700" },
+          { "name": "Blue", "value": "--spectrum-blue-700" },
+          { "name": "Green", "value": "--spectrum-green-700" },
+          { "name": "Orange", "value": "--spectrum-orange-700" },
+          { "name": "Red", "value": "--spectrum-red-700" },
+          { "name": "Celery", "value": "--spectrum-celery-700" },
+          { "name": "Chartreuse", "value": "--spectrum-chartreuse-700" },
+          { "name": "Cyan", "value": "--spectrum-cyan-700" },
+          { "name": "Fuchsia", "value": "--spectrum-fuchsia-700" },
+          { "name": "Indigo", "value": "--spectrum-indigo-700" },
+          { "name": "Magenta", "value": "--spectrum-magenta-700" },
+          { "name": "Purple", "value": "--spectrum-purple-700" },
+          { "name": "Seafoam", "value": "--spectrum-seafoam-700" },
+          { "name": "Yellow", "value": "--spectrum-yellow-700" },
+          { "name": "Adobe Red", "value": "--non-spectrum-adobe-red" },
+          { "name": "Custom Hexcode", "value": "custom-hexcode" }
+        ]
+      },
+      {
+        "condition": {
+          "and": [
+            { "===": [{ "var": "cta1_customBgColor" }, "custom-hexcode"] },
+            { "===": [{ "var": "cta1_Type" }, "custom"] }
+          ]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_customBgHexCode",
+        "value": "",
+        "label": "CTA Custom Background Hexcode",
+        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
+      },
+      {
+        "condition": { "===": [{ "var": "cta1_Type" }, "custom"] },
+        "component": "select",
+        "valueType": "string",
+        "name": "cta1_textColor",
+        "value": "white",
+        "label": "CTA Text Color",
+        "options": [
+          { "name": "White", "value": "white" },
+          { "name": "Black", "value": "black" }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_linkText",
+        "value": "",
+        "label": "CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_link",
+        "value": "",
+        "label": "CTA Link",
+        "description": "What link to open when clicking the button."
+      }
+    ]
+  },
+  {
     "id": "adls-cards",
     "fields": [
       {
@@ -4081,12 +5077,20 @@
             "value": "event"
           },
           {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
+          },
+          {
             "name": "Community Posts",
             "value": "community"
           },
           {
             "name": "Certification",
             "value": "certification"
+          },
+          {
+            "name": "Courses",
+            "value": "course"
           },
           {
             "name": "Perspectives",
@@ -4255,6 +5259,27 @@
       },
       {
         "component": "aem-content",
+        "valueType": "string",
+        "name": "signout-redirect-url",
+        "label": "Sign out Redirect URL",
+        "validation": {
+          "rootPath": "/content/exlm/global"
+        }
+      }
+    ]
+  },
+  {
+    "id": "article-metadata",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      },
+      {
+        "component": "aem-content",
         "valueType": "string[]",
         "value": [],
         "name": "author-bio-page",
@@ -4276,14 +5301,14 @@
         "component": "aem-tag",
         "valueType": "string",
         "name": "feature",
-        "label": "Feature(s)",
+        "label": "Legacy Feature(s)",
         "rootPath": "/content/cq:tags/exl/feature",
         "description": "Sets the Coveo Feature(s) in page meta."
       },
       {
         "component": "aem-tag",
         "name": "role",
-        "label": "Role(s)",
+        "label": "Legacy Role(s)",
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl/role",
         "description": "Sets the role(s) in page meta."
@@ -4291,10 +5316,373 @@
       {
         "component": "aem-tag",
         "name": "level",
-        "label": "Experience Level(s)",
+        "label": "Legacy Experience Level(s)",
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl/experience-level",
         "description": "Sets the level(s) in page meta."
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-roles",
+        "label": "Role(s)",
+        "valueType": "string",
+        "description": "Sets the role(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "role"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-levels",
+        "label": "Experience Level(s)",
+        "valueType": "string",
+        "description": "Sets the level(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "level"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-products",
+        "label": "Product(s)",
+        "valueType": "string",
+        "description": "Sets the products(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "product"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-features",
+        "label": "Feature(s)",
+        "valueType": "string",
+        "description": "Sets the feature(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "feature"
+            }
+          }
+        },
+        "options": {
+          "dependentField": {
+            "name": "tq-products",
+            "taxonomyType": "product"
+          },
+          "requiredTagsToEnable": ["tq-products"]
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-subfeatures",
+        "label": "Sub Feature(s)",
+        "valueType": "string",
+        "description": "Sets the subfeature(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "subfeature"
+            }
+          }
+        },
+        "options": {
+          "dependentField": {
+            "name": "tq-features",
+            "taxonomyType": "feature"
+          },
+          "requiredTagsToEnable": ["tq-features"]
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-industries",
+        "label": "Industries",
+        "valueType": "string",
+        "description": "Sets the industries in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "industry"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-topics",
+        "label": "Topic(s)",
+        "valueType": "string",
+        "description": "Sets the topic(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "topic"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "signout-redirect-url",
+        "label": "Sign out Redirect URL",
+        "validation": {
+          "rootPath": "/content/exlm/global"
+        }
+      }
+    ]
+  },
+  {
+    "id": "author-metadata",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      }
+    ]
+  },
+  {
+    "id": "course-metadata",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string[]",
+        "value": [],
+        "name": "instructor-page",
+        "multi": true,
+        "label": "Instructor page URL",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/courses/instructors"
+        }
+      },
+      {
+        "component": "aem-tag",
+        "valueType": "string",
+        "name": "coveo-solution",
+        "label": "Solution(s)",
+        "rootPath": "/content/cq:tags/exl/solution",
+        "description": "Sets the Coveo Solution(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "valueType": "string",
+        "name": "feature",
+        "label": "Legacy Feature(s)",
+        "rootPath": "/content/cq:tags/exl/feature",
+        "description": "Sets the Coveo Feature(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "name": "role",
+        "label": "Legacy Role(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/role",
+        "description": "Sets the role(s) in page meta."
+      },
+      {
+        "component": "aem-tag",
+        "name": "level",
+        "label": "Legacy Experience Level(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl/experience-level",
+        "description": "Sets the level(s) in page meta."
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-roles",
+        "label": "Role(s)",
+        "valueType": "string",
+        "description": "Sets the role(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "role"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-levels",
+        "label": "Experience Level(s)",
+        "valueType": "string",
+        "description": "Sets the level(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "level"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-products",
+        "label": "Product(s)",
+        "valueType": "string",
+        "description": "Sets the products(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "product"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-features",
+        "label": "Feature(s)",
+        "valueType": "string",
+        "description": "Sets the feature(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "feature"
+            }
+          }
+        },
+        "options": {
+          "dependentField": {
+            "name": "tq-products",
+            "taxonomyType": "product"
+          },
+          "requiredTagsToEnable": ["tq-products"]
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-subfeatures",
+        "label": "Sub Feature(s)",
+        "valueType": "string",
+        "description": "Sets the subfeature(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "subfeature"
+            }
+          }
+        },
+        "options": {
+          "dependentField": {
+            "name": "tq-features",
+            "taxonomyType": "feature"
+          },
+          "requiredTagsToEnable": ["tq-features"]
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-industries",
+        "label": "Industries",
+        "valueType": "string",
+        "description": "Sets the industries in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "industry"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-topics",
+        "label": "Topic(s)",
+        "valueType": "string",
+        "description": "Sets the topic(s) in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "topic"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "signout-redirect-url",
+        "label": "Sign out Redirect URL",
+        "validation": {
+          "rootPath": "/content/exlm/global"
+        }
+      }
+    ]
+  },
+  {
+    "id": "course-hub-metadata",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Sets the title of the page in page meta."
       },
       {
         "component": "aem-content",
@@ -4919,6 +6307,15 @@
       {
         "component": "select",
         "valueType": "string",
+        "name": "classes",
+        "label": "Classes",
+        "value": "",
+        "options": [],
+        "hidden": true
+      },
+      {
+        "component": "select",
+        "valueType": "string",
         "name": "note-type",
         "label": "Note Type",
         "value": "",
@@ -5402,6 +6799,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -5424,6 +6825,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -5448,6 +6853,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -5470,6 +6879,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -5494,6 +6907,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -5516,6 +6933,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -5540,6 +6961,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -5562,6 +6987,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -5764,6 +7193,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -5810,6 +7243,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -5832,6 +7269,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -5856,6 +7297,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -5878,6 +7323,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -5902,6 +7351,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -5924,6 +7377,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -5948,6 +7405,10 @@
             "value": "community"
           },
           {
+            "name": "Courses",
+            "value": "course"
+          },
+          {
             "name": "Documentation",
             "value": "documentation"
           },
@@ -5970,6 +7431,10 @@
           {
             "name": "Tutorials",
             "value": "tutorial"
+          },
+          {
+            "name": "Upcoming Event",
+            "value": "upcoming-event"
           }
         ]
       },
@@ -6187,7 +7652,7 @@
         "label": "Block options",
         "valueType": "string",
         "required": true,
-        "maxSize": 4,
+        "maxSize": 6,
         "options": [
           {
             "name": "Theme",
@@ -6199,6 +7664,19 @@
               {
                 "name": "Dark",
                 "value": "dark"
+              }
+            ]
+          },
+          {
+            "name": "Size Variant",
+            "children": [
+              {
+                "name": "Small (Default)",
+                "value": "small"
+              },
+              {
+                "name": "Medium",
+                "value": "medium"
               }
             ]
           },
@@ -6217,6 +7695,15 @@
               {
                 "name": "Dismissable",
                 "value": "dismissable"
+              }
+            ]
+          },
+          {
+            "name": "Style Options",
+            "children": [
+              {
+                "name": "Add a background image",
+                "value": "fill-image"
               }
             ]
           },
@@ -6290,6 +7777,28 @@
             ]
           }
         ]
+      },
+      {
+        "condition": {
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "fill-image"] }]
+        },
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Image",
+        "description": "The background image",
+        "multi": false
+      },
+      {
+        "condition": {
+          "some": [{ "var": "classes" }, { "===": [{ "var": "" }, "fill-image"] }]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "fileReferenceAlt",
+        "value": "",
+        "label": "Image Alt Text",
+        "description": "A descriptive text of the image for accessibility"
       },
       {
         "condition": {
@@ -6792,14 +8301,6 @@
         "value": "",
         "label": "Description",
         "description": "Sets the description for the Upcoming Events."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "filterLabel",
-        "value": "",
-        "label": "Filter Label",
-        "description": "Sets the text for Products filter label in dropdown."
       }
     ]
   },
@@ -6921,7 +8422,7 @@
         "component": "richtext",
         "valueType": "string",
         "name": "link",
-        "value": "<a href=\"/search.html\">Search</a>",
+        "value": "<a href=\"/en/search\">Search</a>",
         "label": "Seach Link/Text",
         "description": "Should be a link to the search page. The text should be the search label."
       },
@@ -6937,7 +8438,7 @@
         "component": "richtext",
         "valueType": "string",
         "name": "list",
-        "value": "<ul><li>All:All</li><li>Certification:Certification</li><li>Community:Community</li><li>Documentation:Documentation</li><li>Events:Event</li><li>Perspectives:Perspective</li><li>Playlists:Playlist</li><li>Troubleshooting:Troubleshooting</li><li>Tutorials:Tutorial</li></ul>",
+        "value": "<ul><li>All:All</li><li>Certification:Certification</li><li>Community:Community</li><li>Courses:Course</li><li>Documentation:Documentation</li><li>Events:Event</li><li>Perspectives:Perspective</li><li>Playlists:Playlist</li><li>Troubleshooting:Troubleshooting</li><li>Tutorials:Tutorial</li></ul>",
         "label": "Seach Dropdown list",
         "description": "a list of items shown in the search dropdown"
       }
@@ -7196,5 +8697,1195 @@
   {
     "id": "atomic-search",
     "fields": []
+  },
+  {
+    "id": "module-meta",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the title for the module."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description for the module."
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "recap_url",
+        "value": "",
+        "label": "Recap URL",
+        "description": "URL to recap",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/courses"
+        }
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "quiz_url",
+        "value": "",
+        "label": "Quiz page URL",
+        "description": "URL to the quiz page",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/courses"
+        }
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "time",
+        "value": "",
+        "label": "Estimated time to complete (in minutes/hours)"
+      }
+    ]
+  },
+  {
+    "id": "module",
+    "fields": []
+  },
+  {
+    "id": "step",
+    "fields": [
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "step_url",
+        "value": "",
+        "label": "Step Page URL",
+        "description": "URL to the step",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/courses"
+        }
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Step Page Title",
+        "description": "Page title of the step"
+      }
+    ]
+  },
+  {
+    "id": "quiz",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Quiz Title",
+        "description": "Enter the module quiz title"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h2",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "quizDescription",
+        "value": "",
+        "label": "Quiz Description",
+        "description": "Enter the module quiz description"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "pass-page-url",
+        "label": "Quiz pass page url"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "fail-page-url",
+        "label": "Quiz fail page url"
+      }
+    ]
+  },
+  {
+    "id": "quiz-scorecard",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "resultText",
+        "value": "",
+        "label": "Result text",
+        "description": "Result of the quiz scorecard"
+      },
+      {
+        "component": "select",
+        "name": "classes",
+        "value": "pass",
+        "label": "Quiz classes",
+        "description": "Sets whether this is a pass or fail scorecard",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Pass",
+            "value": "pass"
+          },
+          {
+            "name": "Fail",
+            "value": "fail"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description text that appears below the score"
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "fail"]
+        },
+        "component": "select",
+        "name": "cta1_Type",
+        "value": "primary",
+        "label": "First CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "fail"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_linkText",
+        "value": "",
+        "label": "First CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "fail"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_link",
+        "value": "",
+        "label": "First CTA Link",
+        "description": "What link to open when clicking the button."
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "fail"]
+        },
+        "component": "select",
+        "name": "cta2_Type",
+        "value": "secondary",
+        "label": "Second CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "fail"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta2_linkText",
+        "value": "",
+        "label": "Second CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "condition": {
+          "===": [{ "var": "classes" }, "fail"]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta2_link",
+        "value": "",
+        "label": "Second CTA Link",
+        "description": "What link to open when clicking the button."
+      }
+    ]
+  },
+  {
+    "id": "question",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "question",
+        "value": "",
+        "label": "Question",
+        "description": "Enter the question text"
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "isMultipleChoice",
+        "label": "Multiple Choice Question",
+        "description": "Toggle on for multiple choice question, off for single choice question"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "answers",
+        "value": "",
+        "label": "Answers",
+        "description": "Enter the answer as an ordered list upto maximum 10 options"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "correctAnswers",
+        "value": "",
+        "label": "Correct Answers",
+        "description": "Enter the correct answer numbers as comma-delimited values (e.g., '3,5')"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "correctFeedback",
+        "value": "",
+        "label": "Correct Answer Feedback",
+        "description": "Enter the feedback message to display when the answer is correct"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "incorrectFeedback",
+        "value": "",
+        "label": "Incorrect Answer Feedback",
+        "description": "Enter the feedback message to display when the answer is incorrect"
+      }
+    ]
+  },
+  {
+    "id": "drill-in",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Image",
+        "description": "The main image for the drill-in block",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "fileReferenceAlt",
+        "value": "",
+        "label": "Image Alt Text",
+        "description": "A descriptive text of the image for accessibility"
+      }
+    ]
+  },
+  {
+    "id": "drill-in-callout",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cardTitle",
+        "value": "",
+        "label": "Card Title",
+        "description": "Title for the pop-out card"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "cardDescription",
+        "value": "",
+        "label": "Card Description",
+        "description": "Description text for the pop-out card"
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "positionX",
+        "value": "50",
+        "label": "X Position",
+        "description": "Horizontal position of the callout, measured from the top-left corner (0–100%)"
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "positionY",
+        "value": "50",
+        "label": "Y Position",
+        "description": "Vertical position of the callout, measured from the top-left corner (0–100%)"
+      }
+    ]
+  },
+  {
+    "id": "flip-card",
+    "fields": []
+  },
+  {
+    "id": "flip-card-item",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "frontTitle",
+        "value": "",
+        "label": "Front Title",
+        "description": "Optional title for the front of the flip card. If provided, it will be displayed with an underline."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "frontTitleType",
+        "value": "h3",
+        "label": "Front Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "backTitle",
+        "value": "",
+        "label": "Back Title",
+        "description": "Optional title for the back of the flip card. If provided, it will be displayed with an underline."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "backTitleType",
+        "value": "h3",
+        "label": "Back Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "frontContent",
+        "value": "",
+        "label": "Front Content",
+        "description": "Content displayed on the front of the flip card."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "backContent",
+        "value": "",
+        "label": "Back Content",
+        "description": "Content displayed on the back of the flip card when flipped."
+      }
+    ]
+  },
+  {
+    "id": "course-breakdown",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Title for the course breakdown"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h1",
+        "label": "Title Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "moduleTimeText",
+        "value": "",
+        "label": "Module Time",
+        "description": "Time Taken to Complete the module"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "courseInfoTitle",
+        "value": "",
+        "label": "Course info Title",
+        "description": "Title for the course Breadown info section"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "courseInfoTitleType",
+        "value": "h2",
+        "label": "Course info Title Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "courseInfoDescription",
+        "value": "",
+        "label": "Course info Description",
+        "description": "Description for the course Breadown info section"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "courseCompletionPage",
+        "value": "",
+        "label": "Course Completion Page",
+        "description": "URL to the course completion page",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/courses"
+        }
+      }
+    ]
+  },
+  {
+    "id": "course-breakdown-item",
+    "fields": [
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "skill_track_url",
+        "value": "",
+        "label": "Module Page URL",
+        "description": "URL to the Module",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/courses"
+        }
+      }
+    ]
+  },
+  {
+    "id": "course-marquee",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the title for the course."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description for the course. Please keep content brief as it will be limited to 3 lines in display."
+      }
+    ]
+  },
+  {
+    "id": "browse-courses",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Sets the headline for Upcoming events."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "filterLabel",
+        "value": "",
+        "label": "Filter Label",
+        "description": "Sets the text for Products filter label in dropdown."
+      }
+    ]
+  },
+  {
+    "id": "inprogress-courses",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the heading for the inprogress courses block."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h3",
+        "label": "Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "course-completion",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the title for the course completion block."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description for the course completion block."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "shareButtonText",
+        "value": "",
+        "label": "Button text for share button"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "downloadButtonText",
+        "value": "",
+        "label": "Button text for download certificate"
+      }
+    ]
+  },
+  {
+    "id": "course-recap",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the title for the course summary."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description of course summary from the current module. Make sure all the take aways are mentioned as bullet points."
+      }
+    ]
+  },
+  {
+    "id": "slides",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "slideId",
+        "value": "",
+        "label": "Slide ID",
+        "description": "ID of the slide to render. Use the ID of the slide from the URL."
+      }
+    ]
+  },
+  {
+    "id": "grid-cards",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrow",
+        "value": "",
+        "label": "Eyebrow",
+        "description": "Sets the small pre-title above the title."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the main title of the grid cards."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description for the grid cards."
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "value": "",
+        "label": "Style",
+        "description": "Sets the style variant for the grid cards.",
+        "valueType": "string",
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Standard Card Variant",
+            "value": "standard"
+          },
+          {
+            "name": "Minimal Card Variant",
+            "value": "minimal"
+          },
+          {
+            "name": "Wide Card Variant",
+            "value": "wide"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "grid-card",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cardTitle",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the title for the card. Please limit the content to 2 lines."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "cardDescription",
+        "value": "",
+        "label": "Description",
+        "description": "Sets the description for the card. Please limit the content to 3 lines and 4 lines in case of Wide card variant."
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Image",
+        "description": "Sets the image for the card.",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "fileReferenceAlt",
+        "value": "",
+        "label": "Image Alt Text",
+        "description": "A descriptive text of the image."
+      },
+      {
+        "component": "select",
+        "name": "cta_Type",
+        "value": "primary",
+        "label": "CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          },
+          {
+            "name": "Tertiary",
+            "value": "tertiary"
+          },
+          {
+            "name": "Custom",
+            "value": "custom"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "cta_Type" }, "custom"]
+        },
+        "component": "select",
+        "name": "cta_customBgColor",
+        "value": "",
+        "label": "CTA Background Color",
+        "description": "Select CTA background color. Select 'Custom Hexcode' to enter the custom color",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Gray",
+            "value": "--spectrum-gray-700"
+          },
+          {
+            "name": "Blue",
+            "value": "--spectrum-blue-700"
+          },
+          {
+            "name": "Green",
+            "value": "--spectrum-green-700"
+          },
+          {
+            "name": "Orange",
+            "value": "--spectrum-orange-700"
+          },
+          {
+            "name": "Red",
+            "value": "--spectrum-red-700"
+          },
+          {
+            "name": "Celery",
+            "value": "--spectrum-celery-700"
+          },
+          {
+            "name": "Chartreuse",
+            "value": "--spectrum-chartreuse-700"
+          },
+          {
+            "name": "Cyan",
+            "value": "--spectrum-cyan-700"
+          },
+          {
+            "name": "Fuchsia",
+            "value": "--spectrum-fuchsia-700"
+          },
+          {
+            "name": "Indigo",
+            "value": "--spectrum-indigo-700"
+          },
+          {
+            "name": "Magenta",
+            "value": "--spectrum-magenta-700"
+          },
+          {
+            "name": "Purple",
+            "value": "--spectrum-purple-700"
+          },
+          {
+            "name": "Seafoam",
+            "value": "--spectrum-seafoam-700"
+          },
+          {
+            "name": "Yellow",
+            "value": "--spectrum-yellow-700"
+          },
+          {
+            "name": "Adobe Red",
+            "value": "--non-spectrum-adobe-red"
+          },
+          {
+            "name": "Custom Hexcode",
+            "value": "custom-hexcode"
+          }
+        ]
+      },
+      {
+        "condition": {
+          "and": [
+            { "===": [{ "var": "cta_customBgColor" }, "custom-hexcode"] },
+            { "===": [{ "var": "cta_Type" }, "custom"] }
+          ]
+        },
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_customBgHexCode",
+        "value": "",
+        "label": "CTA Custom Background Hexcode",
+        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
+      },
+      {
+        "condition": {
+          "===": [{ "var": "cta_Type" }, "custom"]
+        },
+        "component": "select",
+        "valueType": "string",
+        "name": "cta_textColor",
+        "value": "white",
+        "label": "CTA Text Color",
+        "description": "Select the text color",
+        "options": [
+          {
+            "name": "White",
+            "value": "white"
+          },
+          {
+            "name": "Black",
+            "value": "black"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_linkText",
+        "value": "",
+        "label": "CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_link",
+        "value": "",
+        "label": "CTA Link",
+        "description": "What link to open when clicking the button."
+      }
+    ]
+  },
+  {
+    "id": "sticky-nav",
+    "fields": []
+  },
+  {
+    "id": "sticky-nav-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Style",
+        "description": "The section style",
+        "valueType": "string",
+        "hidden": true,
+        "options": []
+      }
+    ]
+  },
+  {
+    "title": "Sticky Nav Item",
+    "id": "sticky-nav-item",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "sectionId",
+        "value": "",
+        "label": "Section ID",
+        "description": "The ID of the section this nav item navigates to. Must match the Section ID set on the target section."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "navLabel",
+        "value": "",
+        "label": "Nav Label",
+        "description": "The label displayed in the sticky navigation bar for this item."
+      }
+    ]
   }
 ]

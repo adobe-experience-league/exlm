@@ -113,6 +113,16 @@
   box-shadow: var(--box-shadow-2);
 }
 
+.recommendation-marquee.block .browse-card.course-card .browse-card-content {
+  padding-top: 24px;
+}
+
+.recommendation-marquee.block .browse-card.course-card .browse-card-icon {
+  width: 44px;
+  height: 44px;
+  top: 5px;
+}
+
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card .browse-card-content {
   border-radius: 16px 16px 0 0;
   order: 1;
@@ -123,10 +133,49 @@
   order: 2;
 }
 
+/* On demand event cards variant */
+
+.recommendation-marquee .browse-card.event-card {
+  background-color: var(--spectrum-gray-150);
+}
+
+.recommendation-marquee .browse-card.event-card .browse-card-figure {
+  border-radius: 15px 15px 0 0;
+  height: 54px;
+  max-height: 54px;
+  overflow: hidden;
+  position: relative;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: unset;
+  flex: 0 0 auto;
+  flex-direction: unset;
+}
+
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card .browse-card-figure {
   order: 3;
   height: 54px;
   border-radius: 0 0 16px 16px;
+}
+
+.recommendation-marquee.block
+  .browse-cards-block-content
+  .card-wrapper
+  .browse-card.video-clip-card
+  .browse-card-video-clip {
+  order: 3;
+  padding-top: 0;
+  height: auto;
+}
+
+.recommendation-marquee.block
+  .browse-cards-block-content
+  .card-wrapper
+  .browse-card.video-clip-card
+  .browse-card-figure {
+  order: 4;
 }
 
 .recommendation-marquee.block
@@ -305,6 +354,16 @@
   }
 
   .recommendation-marquee.block
+    .browse-cards-block-content
+    .card-wrapper:first-child
+    .browse-card.course-card
+    .browse-card-icon {
+    width: 64px;
+    height: 64px;
+    top: 15px;
+  }
+
+  .recommendation-marquee.block
     .browse-cards-block-content.recommendation-marquee-wrap
     .card-wrapper:first-child
     .browse-card
@@ -366,6 +425,7 @@
     .card-wrapper:first-child
     .browse-card {
     display: block;
+    position: relative;
   }
 
   .recommendation-marquee.block
@@ -406,6 +466,25 @@
     margin-bottom: 16px;
     background-color: var(--spectrum-gray-50);
     border-radius: 0 0 8px 8px;
+  }
+
+  .recommendation-marquee.block
+    .browse-cards-block-content.recommendation-marquee-wrap
+    .card-wrapper:first-child
+    .browse-card.video-clip-card
+    .browse-card-video-clip {
+    height: 0;
+  }
+
+  .recommendation-marquee.block
+    .browse-cards-block-content.recommendation-marquee-wrap
+    .card-wrapper:first-child
+    .browse-card.video-clip-card
+    .browse-card-video-clip
+    .play-button {
+    position: absolute;
+    top: calc(50% - 20px);
+    left: calc(25% - 20px);
   }
 
   .recommendation-marquee.block

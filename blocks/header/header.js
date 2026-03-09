@@ -11,6 +11,7 @@ import {
   getLink,
   getPathDetails,
   fetchGlobalFragment,
+  fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
 import {
@@ -103,7 +104,11 @@ const brandDecorator = (brandBlock, decoratorOptions) => {
   const brandLink = brandBlock.querySelector('a');
   brandBlock.replaceChildren(brandLink);
   updateLinks(brandBlock, (currentHref) => {
-    const url = new URL(currentHref, decoratorOptions.navLinkOrigin);
+    let link = currentHref;
+    if (link === '/' && decoratorOptions.lang !== 'en') {
+      link = `/${decoratorOptions.lang}`;
+    }
+    const url = new URL(link, decoratorOptions.navLinkOrigin);
     return url.href;
   });
   return brandBlock;
@@ -280,27 +285,43 @@ const buildNavItems = (ul, level = 0) => {
       buildNavItems(content, level + 1);
     } else {
       navItem.classList.add('nav-item-leaf');
-      // if nav item is a leaf, remove the <p> wrapper
       const firstEl = navItem.firstElementChild;
-      if (firstEl?.tagName === 'P') {
-        if (firstEl.firstElementChild?.tagName === 'A') {
-          firstEl.replaceWith(firstEl.firstElementChild);
+      if (firstEl?.tagName === 'P' && firstEl.firstElementChild?.tagName === 'A') {
+        firstEl.replaceWith(firstEl.firstElementChild);
+      }
+
+      const anchor = navItem.querySelector(':scope > a');
+      if (!anchor) return;
+
+      let subtitleHTML = null;
+      const subtitleP = navItem.querySelector(':scope > p');
+      if (subtitleP) {
+        subtitleHTML = subtitleP.innerHTML;
+        subtitleP.remove();
+      } else {
+        // Fallback: next text node after <a>
+        let node = anchor.nextSibling;
+        while (node && node.nodeType === Node.TEXT_NODE && !node.textContent.trim()) {
+          node = node.nextSibling;
+        }
+
+        if (node?.nodeType === Node.TEXT_NODE) {
+          subtitleHTML = node.textContent.trim();
+          node.remove();
         }
       }
-      // if nav item has a second element, it's a subtitle
-      const secondEl = navItem.children[1];
-      if (secondEl?.tagName === 'P') {
-        const subtitle = htmlToElement(`<span class="nav-item-subtitle">${secondEl.innerHTML}</span>`);
-        navItem.firstElementChild.appendChild(subtitle);
-        secondEl.remove();
+
+      if (subtitleHTML) {
+        anchor.appendChild(htmlToElement(`<span class="nav-item-subtitle">${subtitleHTML}</span>`));
       }
     }
   };
 
   if (level === 0) {
-    // add search link (visible on mobile only)
-    ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
-
+    // add search link (visible on mobile only excluding Search page)
+    if (!document.body.classList.contains('search')) {
+      ul.appendChild(htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`));
+    }
     const addMobileLangSelector = async () => {
       // add language select (visible on mobile only)
 
@@ -404,6 +425,13 @@ const navDecorator = async (navBlock, decoratorOptions) => {
  * @param {DecoratorOptions} decoratorOptions
  */
 const searchDecorator = async (searchBlock, decoratorOptions) => {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
   // save this for later use in mobile nav.
   const searchLink = getCell(searchBlock, 1, 1)?.firstChild;
   decoratorState.searchLinkHtml = searchLink.outerHTML;
@@ -418,17 +446,17 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
   const searchWrapper = htmlToElement(
     `<div class="search-wrapper">
       <div class="search-short">
-        <a href="https://experienceleague.adobe.com/search.html" aria-label="Search">
-          <span title="Search" class="icon icon-search"></span>
+        <a href="${searchLink?.href}" aria-label="Search">
+          <span title="${placeholders?.search || 'Search'}" class="icon icon-search"></span>
         </a>
       </div>
       <div class="search-full">
         <div class="search-container">
-          <span title="Search" class="icon icon-search"></span>
-          <input autocomplete="off" class="search-input" type="text" aria-label="top-nav-combo-search" aria-expanded="false" title="Insert a query. Press enter to send" role="combobox" placeholder="${
-            searchPlaceholder.textContent
-          }">
-          <span title="Clear" class="icon icon-clear search-clear-icon"></span>
+          <span title="${placeholders?.search || 'Search'}" class="icon icon-search"></span>
+          <input autocomplete="off" class="search-input" type="text" aria-label="top-nav-combo-search" aria-expanded="false" title="${
+            placeholders?.searchPlaceholderTitle || 'Insert a query. Press enter to send'
+          }" role="combobox" placeholder="${searchPlaceholder.textContent}">
+          <span title="${placeholders?.searchClearLabel || 'Clear'}" class="icon icon-clear search-clear-icon"></span>
           <div class="search-suggestions-popover">
             <ul role="listbox">
             </ul>
@@ -581,6 +609,8 @@ const productGridDecorator = async (productGridBlock, decoratorOptions) => {
     const productToggle = document.createElement('button');
     productToggle.classList.add('product-toggle');
     productToggle.setAttribute('aria-controls', 'product-dropdown');
+    productToggle.setAttribute('aria-expanded', 'false');
+    productToggle.setAttribute('aria-label', 'Product Grid');
     productToggle.innerHTML = `<span class="icon-grid"></span>`;
     productGridBlock.innerHTML = `${productToggle.outerHTML}${productDropdown.outerHTML}`;
     const gridToggler = productGridBlock.querySelector('.product-toggle');
@@ -616,9 +646,18 @@ const productGridDecorator = async (productGridBlock, decoratorOptions) => {
  * Decorates the adobe-logo block
  * @param {HTMLElement} adobeLogoBlock
  */
-const adobeLogoDecorator = async (adobeLogoBlock) => {
+const adobeLogoDecorator = async (adobeLogoBlock, decoratorOptions) => {
   simplifySingleCellBlock(adobeLogoBlock);
   decorateIcons(adobeLogoBlock);
+  adobeLogoBlock.querySelector('a').setAttribute('aria-label', 'Adobe Experience League'); // a11y
+  updateLinks(adobeLogoBlock, (currentHref) => {
+    let link = currentHref;
+    if (link === '/' && decoratorOptions.lang !== 'en') {
+      link = `/${decoratorOptions.lang}`;
+    }
+    const url = new URL(link, decoratorOptions.navLinkOrigin);
+    return url.href;
+  });
   return adobeLogoBlock;
 };
 
@@ -734,18 +773,28 @@ class ExlHeader extends HTMLElement {
       await decorateCommunityBlock(header, this.decoratorOptions);
 
       const decorateHeaderBlock = async (className, decorator, options) => {
-        const block = nav.querySelector(`:scope > .${className}`);
-        block.style.visibility = 'hidden';
-        await decorator(block, options);
-        block.style.visibility = 'visible';
-        this.dispatchEvent(new Event(`${className}-decorated`));
+        try {
+          const block = nav.querySelector(`:scope > .${className}`);
+          block.style.visibility = 'hidden';
+          await decorator(block, options);
+          block.style.visibility = 'visible';
+          this.dispatchEvent(new Event(`${className}-decorated`));
+        } catch (err) {
+          // eslint-disable-next-line no-console
+          console.error(`Error decorating header block: ${className}`, err);
+        }
       };
 
       // Do this first to ensure all links are decorated correctly before they are used.
       decorateLinks(header);
       const logoP = decorateHeaderBlock('adobe-logo', this.adobeLogoDecorator, this.decoratorOptions);
       const brandP = decorateHeaderBlock('brand', this.brandDecorator, this.decoratorOptions);
-      const searchP = decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
+      let searchP;
+      if (!document.body.classList.contains('search')) {
+        searchP = await decorateHeaderBlock('search', this.searchDecorator, this.decoratorOptions);
+      } else {
+        nav?.querySelector(`:scope > .search`)?.remove();
+      }
       const languageP = decorateHeaderBlock('language-selector', this.languageDecorator, this.decoratorOptions);
       const productGridP = decorateHeaderBlock('product-grid', this.productGridDecorator, this.decoratorOptions);
       const signInP = decorateHeaderBlock('sign-in', this.signInDecorator, this.decoratorOptions);

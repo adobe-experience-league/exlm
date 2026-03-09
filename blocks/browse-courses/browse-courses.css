@@ -1,0 +1,280 @@
+@import '../../scripts/browse-card/browse-cards-block.css';
+
+.section.browse-courses-container {
+  padding: var(--spectrum-spacing-500) var(--spectrum-spacing-300) var(--spectrum-spacing-600);
+}
+
+.browse-courses .browse-cards-block-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.browse-courses .browse-cards-block-title {
+  margin-bottom: 32px;
+}
+
+.browse-courses .browse-filter-controls {
+  position: relative;
+}
+
+.browse-courses .browse-card-dropdown > label {
+  color: var(--non-spectrum-dark-gray);
+  display: inline-block;
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-bold);
+  line-height: 150%;
+}
+
+.browse-courses .custom-filter-dropdown {
+  margin-top: var(--spectrum-spacing-100);
+}
+
+.browse-courses .custom-filter-dropdown button,
+.browse-courses .status-dropdown-container button {
+  padding: var(--spectrum-spacing-100) var(--spectrum-spacing-300);
+  color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-normal);
+  line-height: normal;
+  display: flex;
+  align-items: center;
+}
+
+.browse-courses .status-dropdown-container {
+  width: 100%;
+  margin-top: var(--spectrum-spacing-100);
+}
+
+.browse-courses .status-dropdown-container:empty {
+  display: none;
+}
+
+.browse-courses .browse-card-clear-filter {
+  color: var(--spectrum-blue-900);
+  cursor: pointer;
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+  position: absolute;
+  line-height: 150%;
+  right: 0;
+  top: 0;
+  transition:
+    opacity 0.2s ease,
+    color 0.2s ease;
+  white-space: nowrap;
+}
+
+.browse-courses .browse-card-clear-filter:hover:not([disabled]) {
+  color: var(--spectrum-blue-900);
+}
+
+.browse-courses .browse-card-clear-filter[disabled],
+.browse-courses .browse-card-clear-filter.disabled {
+  color: var(--non-spectrum-smoke);
+  cursor: not-allowed;
+  font-weight: var(--font-weight-bold);
+  pointer-events: none;
+  font-size: var(--spectrum-font-size-100);
+  line-height: 150%;
+}
+
+.browse-courses .browse-cards-block-header .browse-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 32px 0 0;
+}
+
+.browse-courses .browse-cards-block-header .browse-card-tags:empty {
+  display: none;
+}
+
+.browse-courses .browse-cards-block-header .browse-tags {
+  align-items: center;
+  background: var(--background-color);
+  border: 1px solid var(--spectrum-gray-500);
+  border-radius: 4px;
+  color: var(--spectrum-gray-500);
+  display: inline-flex;
+  font-size: var(--spectrum-font-size-75);
+  font-weight: normal;
+  line-height: normal;
+  margin: 0;
+  padding: 4px 25px 5px 12px;
+  position: relative;
+  text-align: left;
+}
+
+.browse-courses .browse-cards-block-header .browse-tags .icon-close {
+  height: auto;
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-6px);
+  width: 13px;
+}
+
+.browse-courses .browse-cards-block-view {
+  text-align: center;
+}
+
+.browse-courses .browse-cards-block-content {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1fr;
+  margin: 32px 0 0;
+  min-height: 284px;
+}
+
+.browse-courses .course-no-results {
+  align-items: center;
+  background-color: var(--spectrum-gray-200);
+  box-sizing: border-box;
+  color: var(--non-spectrum-grey);
+  display: flex;
+  font-size: var(--spectrum-font-size-200);
+  grid-column: 1 / -1;
+  justify-content: center;
+  padding: 72px 0;
+  text-align: center;
+  width: 100%;
+}
+
+/* Browse-courses specific shimmer grid layout */
+.browse-courses .shimmer-grid-wrapper {
+  grid-column: 1 / -1;
+}
+
+.browse-courses .browse-card-shimmer {
+  gap: 32px;
+  margin: 0;
+}
+
+.browse-courses .browse-card-shimmer-wrapper {
+  width: 100%;
+}
+
+@media only screen and (min-width: 600px) {
+  .section.browse-courses-container {
+    padding-bottom: 30px;
+  }
+
+  .browse-courses .browse-filter-controls {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .browse-courses .browse-filter-controls::before {
+    content: '';
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: var(--spectrum-spacing-300);
+  }
+
+  .browse-courses .browse-card-dropdown > label {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .browse-courses .browse-card-dropdown {
+    width: 100%;
+    gap: var(--spectrum-spacing-100);
+    display: flex;
+    margin-top: var(--spectrum-spacing-100);
+  }
+
+  .browse-courses .custom-filter-dropdown,
+  .browse-courses .status-dropdown-container {
+    margin: 0;
+    min-width: 180px;
+    flex: 1;
+  }
+
+  .browse-courses .browse-card-clear-filter {
+    position: absolute;
+    word-wrap: break-word;
+    max-width: none;
+    top: 0;
+    right: 0;
+  }
+
+  .browse-courses .browse-cards-block-content {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .browse-courses .browse-card-shimmer {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media only screen and (min-width: 900px) {
+  .section.browse-courses-container {
+    padding: var(--spectrum-spacing-1100) 148px;
+  }
+
+  .browse-courses .browse-filter-controls {
+    align-items: center;
+    display: flex;
+    gap: 24px;
+    flex-direction: row;
+  }
+
+  .browse-courses .browse-filter-controls::before {
+    display: none;
+  }
+
+  .browse-courses .browse-card-dropdown {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    width: auto;
+    margin: 0;
+  }
+
+  .browse-courses .browse-card-clear-filter {
+    position: static;
+    max-width: 100px;
+  }
+
+  .browse-courses .browse-card-dropdown > label {
+    position: unset;
+  }
+
+  .browse-courses .browse-cards-block-content {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spectrum-spacing-500) 24px;
+  }
+
+  .browse-courses .browse-cards-block-content > div {
+    flex: 0 0 295px;
+  }
+
+  .browse-courses .custom-filter-dropdown,
+  .browse-courses .status-dropdown-container {
+    min-width: 160px;
+    flex: none;
+    width: auto;
+  }
+
+  .browse-courses .product-dropdown-container {
+    min-width: 250px;
+  }
+
+  .browse-courses .browse-card-shimmer {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1400px) {
+  .browse-courses .browse-cards-block-content {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .browse-courses .browse-card-shimmer {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

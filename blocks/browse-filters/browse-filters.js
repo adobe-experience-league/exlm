@@ -23,11 +23,19 @@ import {
   authorOptions,
   fetchPerspectiveIndex,
 } from './browse-filter-utils.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import { BASE_COVEO_ADVANCED_QUERY } from '../../scripts/browse-card/browse-cards-constants.js';
-import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
+import {
+  assetInteractionModel,
+  pushBrowseFilterSearchEvent,
+  pushBrowseFilterSearchClearEvent,
+} from '../../scripts/analytics/lib-analytics.js';
+import {
+  BASE_COVEO_ADVANCED_QUERY,
+  BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT,
+} from '../../scripts/browse-card/browse-cards-constants.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import {
   formattedTags,
@@ -36,6 +44,9 @@ import {
   coveoFacetMap,
   dropdownOptions,
 } from './browse-topics.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
+import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
+import BrowseCardsDelegate, { normalizeUpcomingEventModel } from '../../scripts/browse-card/browse-cards-delegate.js';
 
 let placeholders = {};
 try {
@@ -47,6 +58,7 @@ try {
 
 const SCROLL_ADJUSTMENT_OFFSET = -12;
 let isCoveoHeadlessLoaded = false;
+let isCoveoReady = false;
 let coveoHeadlessPromise = null;
 const CLASS_BROWSE_FILTER_FORM = '.browse-filters-form';
 
@@ -59,6 +71,8 @@ const buildCardsShimmer = new BrowseCardShimmer(getBrowseFiltersResultCount());
 function isArticleLandingPage() {
   return matchesAnyTheme(/^article-.*/);
 }
+
+const isEventsPage = matchesAnyTheme(/event/);
 
 /**
  * debounce fn execution
@@ -202,6 +216,61 @@ function isFilterSelectionActive(block) {
   return false;
 }
 
+function redecorateTagsContainer(block) {
+  const tagsContainerEl = block.querySelector('.browse-tags-container');
+  if (tagsContainerEl && !tagsContainerEl.querySelector(`[data-icon-name="close"]`)) {
+    decorateIcons(tagsContainerEl);
+  }
+}
+
+function isCurrentSearchResponse(block, search) {
+  try {
+    const { response: searchResponse, queryExecuted } = search;
+    const dropdownOptionsWrapperEl = block.querySelector('.browse-filters-input-container');
+    const selectedOptions = dropdownOptions.reduce((acc, option) => {
+      const dropdownEl = dropdownOptionsWrapperEl.querySelector(`.filter-dropdown[data-filter-type="${option.id}"]`);
+      acc[option.id] = Array.from(dropdownEl.querySelectorAll('input:checked')).map((inputEl) => inputEl.value);
+      return acc;
+    }, {});
+    const { facets } = searchResponse;
+    const mismatchedFacet = facets.find((facet) => {
+      const { facetId } = facet;
+      const selectedOptionList = selectedOptions[facetId];
+      if (!selectedOptionList) return false;
+      const selectedFacetsList = selectedOptionList.reduce((acc, curr) => {
+        const coveoFacet = getCoveoFacets(curr);
+        coveoFacet.forEach(({ value: facetValue }) => {
+          acc.push(facetValue);
+        });
+        return acc;
+      }, []);
+      const selectedFacets = facet.values?.filter((option) => option.state === 'selected') || [];
+      if (selectedFacetsList.length === selectedFacets.length) {
+        const misMatch = !!selectedFacets.find((selectedFacet) => {
+          const optionItem = selectedFacet.value;
+          if (selectedFacetsList.includes(optionItem)) {
+            return false;
+          }
+          return true;
+        });
+        return !!misMatch;
+      }
+      return true;
+    });
+    if (mismatchedFacet) {
+      // When we have mismatched facets, it means the search response we got from coveo headless sdk does not match the current UI filter selection.
+      return false;
+    }
+    const inputSearchQuery = block.querySelector('.filter-input-search > .search-input')?.value?.trim() || '';
+    if (typeof queryExecuted === 'string' && inputSearchQuery !== queryExecuted) {
+      return false;
+    }
+    return true;
+  } catch {
+    return true;
+  }
+}
+
 /**
  * Updates the status of the clear filter button and filter-related UI elements based on the current state.
  * It also dispatches a coveo query if necessary.
@@ -234,6 +303,10 @@ function updateClearFilterStatus(block) {
     }
     hideSectionsWithinFilter(browseFiltersSection, true);
   } else {
+    const queryEl = browseFiltersSection?.querySelector('.browse-filters-results-count');
+    if (queryEl) {
+      queryEl.innerHTML = '';
+    }
     dispatchCoveoQuery = true;
     clearFilterBtn.disabled = true;
     hideSectionsBelowFilter(block, true);
@@ -279,14 +352,22 @@ function uncheckAllFiltersFromDropdown(block) {
   });
 }
 
+// Special characters like '&' must be double-encoded because hash params are split before decoding.
+function safeDecode(val) {
+  try {
+    return decodeURIComponent(decodeURIComponent(val));
+  } catch {
+    return val;
+  }
+}
+
 /**
  * Handles the parsing and updating of filters, search terms, and pagination from the URL hash.
  */
-function handleUriHash() {
+function handleUriHash(isInitialLoad) {
   const browseFiltersSection = document.querySelector('.browse-filters-form');
-  if (!browseFiltersSection) {
-    return;
-  }
+  if (!browseFiltersSection) return;
+
   const filterInputSection = browseFiltersSection.querySelector('.filter-input-search');
   const searchInput = filterInputSection.querySelector('input');
   uncheckAllFiltersFromDropdown(browseFiltersSection);
@@ -297,17 +378,21 @@ function handleUriHash() {
     searchInput.value = '';
     return;
   }
-  const decodedHash = decodeURIComponent(hash);
 
   clearAllSelectedTag(browseFiltersSection);
   let containsSearchQuery = false;
-  const filtersInfo = decodedHash.split('&').filter((s) => !!s);
+  const filtersInfo = hash.split('&').filter(Boolean);
   let pageNumber = 1;
+  const isOnPageLoad = isInitialLoad === true;
 
   filtersInfo.forEach((filterInfo) => {
-    const [facetKeys, facetValueInfo] = filterInfo.split('=');
-    const facetValues = facetValueInfo.split(',');
+    const [facetKeys, facetValueInfo = ''] = filterInfo.split('=');
     const keyName = facetKeys.replace('f-', '');
+
+    const facetValues = facetValueInfo
+      .split(',')
+      .filter(Boolean)
+      .map((v) => safeDecode(v));
 
     if (Object.keys(coveoFacetMap).includes(keyName)) {
       const filterOptionEl = browseFiltersSection.querySelector(`.filter-dropdown[data-filter-type="${keyName}"]`);
@@ -315,10 +400,10 @@ function handleUriHash() {
         const ddObject = getObjectById(dropdownOptions, keyName);
         const { name } = ddObject;
         facetValues.forEach((facetValueString) => {
-          const [facetValue] = decodeURIComponent(facetValueString).split('|');
+          const [facetValue] = facetValueString.split('|');
           const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
-          if (!inputEl.checked) {
-            const label = inputEl?.dataset.label || '';
+          if (inputEl && !inputEl.checked) {
+            const label = inputEl.dataset.label || '';
             inputEl.checked = true;
             appendTag(
               browseFiltersSection,
@@ -341,33 +426,24 @@ function handleUriHash() {
           return acc;
         }, []).length;
         ddObject.selected = selectedCount;
-        if (selectedCount === 0) {
-          btnEl.firstChild.textContent = name;
-        } else {
-          btnEl.firstChild.textContent = `${name} (${selectedCount})`;
-        }
+        btnEl.firstChild.textContent = selectedCount === 0 ? name : `${name} (${selectedCount})`;
       }
     } else if (keyName === 'q') {
       containsSearchQuery = true;
       const [searchValue] = facetValues;
       if (searchValue) {
         searchInput.value = searchValue.trim();
-        const clearIcon = filterInputSection.querySelector('.search-clear-icon');
-        clearIcon.classList.add('search-icon-show');
+        filterInputSection.querySelector('.search-clear-icon')?.classList.add('search-icon-show');
       } else {
         searchInput.value = '';
       }
     } else if (keyName === 'aq' && filterInfo) {
-      const selectedTopics = getSelectedTopics(decodedHash);
+      const selectedTopics = getSelectedTopics(hash);
       const contentDiv = document.querySelector('.browse-topics');
       const buttons = contentDiv?.querySelectorAll('button') ?? [];
       Array.from(buttons).forEach((button) => {
         const matchFound = selectedTopics.find((topic) => button.dataset.label?.includes(topic));
-        if (matchFound) {
-          button.classList.add('browse-topics-item-active');
-        } else {
-          button.classList.remove('browse-topics-item-active');
-        }
+        button.classList.toggle('browse-topics-item-active', !!matchFound);
       });
     } else if (keyName === 'firstResult' && window.headlessPager) {
       const firstResult = parseInt(facetValueInfo, 10);
@@ -388,7 +464,10 @@ function handleUriHash() {
   if (filtersInfo.length && window.headlessBaseSolutionQuery) {
     const resetPageIndex = pageNumber === 1;
     const fireSelection = true;
-    handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex);
+    handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex, pageNumber);
+  }
+  if (!isOnPageLoad) {
+    redecorateTagsContainer(browseFiltersSection);
   }
   updateClearFilterStatus(browseFiltersSection);
   window.headlessSearchEngine.executeFirstSearch();
@@ -427,7 +506,8 @@ function constructFilterPagination(block) {
         window.headlessPager.selectPage(newPageNumber);
         const fireSelection = true;
         const resetPageIndex = false;
-        handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex);
+        const targetPageNumber = newPageNumber;
+        handleTopicSelection(browseFiltersSection, fireSelection, resetPageIndex, targetPageNumber);
       }
     });
   });
@@ -447,6 +527,8 @@ function constructFilterPagination(block) {
           e.target.value = window.headlessPager?.state?.currentPage || 1;
         } else {
           window.headlessPager.selectPage(newPageNum);
+          const searchAction = window.headlessSearchActionCreators.executeSearch(window.logSearchboxSubmit());
+          window.headlessSearchEngine.dispatch(searchAction);
         }
       }
     });
@@ -461,6 +543,8 @@ function constructFilterPagination(block) {
       }
       if (e.key === 'Enter') {
         window.headlessPager.selectPage(+e.target.value);
+        const searchAction = window.headlessSearchActionCreators.executeSearch(window.logSearchboxSubmit());
+        window.headlessSearchEngine.dispatch(searchAction);
       }
     });
   }
@@ -543,7 +627,7 @@ function handleCoveoHeadlessSearch(
     buildCardsShimmer.removeShimmer();
   });
 
-  handleUriHash();
+  handleUriHash(true);
   renderPageNumbers();
 }
 
@@ -627,6 +711,11 @@ function handleSearchBoxSubscription() {
   wrapper.replaceWith(suggestionsElement);
 }
 
+window.browseFilterAnalyticsState = {
+  lastSearchId: null,
+  resultsCount: 0,
+};
+
 /**
  * Renders the search query summary showing the total results count.
  *
@@ -634,8 +723,17 @@ function handleSearchBoxSubscription() {
  * based on the total number of results from the `headlessQuerySummary` state.
  */
 function renderSearchQuerySummary() {
-  const queryEl = document.querySelector('.browse-filters-results-count');
+  const browseFilterForm = document.querySelector(CLASS_BROWSE_FILTER_FORM);
+  const queryEl = browseFilterForm?.querySelector('.browse-filters-results-count');
   if (!window.headlessQuerySummary || !queryEl) {
+    return;
+  }
+  const search = window.headlessSearchEngine?.state?.search || {};
+  const { response: searchResponse } = search;
+  if (
+    (searchResponse?.totalCount !== undefined && !isCurrentSearchResponse(browseFilterForm, search)) ||
+    !isFilterSelectionActive(browseFilterForm)
+  ) {
     return;
   }
   const numberFormat = new Intl.NumberFormat('en-US');
@@ -650,6 +748,9 @@ function renderSearchQuerySummary() {
     assetString = placeholders.showAssets?.replace('{x}', formattedCount) || `Showing ${formattedCount} assets`;
   }
   queryEl.textContent = assetString;
+
+  // Storing the results count for analytics
+  window.browseFilterAnalyticsState.resultsCount = resultsCount;
 }
 
 /**
@@ -664,6 +765,8 @@ function getSelectedDropdownLabels(block, field) {
     el_contenttype:
       '.filter-dropdown[data-filter-type="el_contenttype"] .custom-checkbox input[type="checkbox"]:checked',
     el_level: '.filter-dropdown[data-filter-type="el_level"] .custom-checkbox input[type="checkbox"]:checked',
+    el_event_series:
+      '.filter-dropdown[data-filter-type="el_event_series"] .custom-checkbox input[type="checkbox"]:checked',
     search: '.filter-input-search .search-input',
     topics: '.browse-topics .browse-topics-item-active',
   };
@@ -693,6 +796,7 @@ function generateAnalyticsFilters(block, totalCount) {
     el_role: 'Role',
     el_contenttype: 'ContentType',
     el_level: 'ExperienceLevel',
+    el_event_series: 'EventSeries',
     search: 'KeywordSearch',
     topics: 'BrowseByTopic',
   };
@@ -717,11 +821,63 @@ function generateAnalyticsFilters(block, totalCount) {
 }
 
 /**
+ * Determines the search type based on active filters and search input.
+ *
+ * @param {HTMLElement} block - The container block element
+ * @returns {string} - "filter", "search", or "filter+search"
+ */
+function determineSearchType(block) {
+  const searchEl = block.querySelector('.filter-input-search > .search-input');
+  const hasSearchValue = searchEl && searchEl.value.trim() !== '';
+
+  const hasActiveFilters = tagsProxy && tagsProxy.length > 0;
+
+  if (hasActiveFilters && hasSearchValue) {
+    return 'filter+search';
+  }
+
+  if (hasActiveFilters) {
+    return 'filter';
+  }
+
+  if (hasSearchValue) {
+    return 'search';
+  }
+
+  return 'filter'; // Default case
+}
+
+/**
+ * Gets filter types and values from active filters.
+ *
+ * @returns {Object} - Object with filterType and filterValue properties
+ */
+function getFilterTypesAndValues() {
+  const filterTypes = [];
+  const filterValues = [];
+
+  // Get filter types and values from dropdown selections
+  if (tagsProxy && tagsProxy.length > 0) {
+    // Process each tag individually to maintain the exact order
+    tagsProxy.forEach((tag) => {
+      // Add each tag's name and value directly to the arrays
+      filterTypes.push(tag.name);
+      filterValues.push(tag.value);
+    });
+  }
+
+  return {
+    filterType: filterTypes.join(', '),
+    filterValue: filterValues.join(', '),
+  };
+}
+
+/**
  * Handles the search engine subscription and updates the browse filter results.
  *
  * @param {HTMLElement} block - The container block element for managing the browse filters.
  */
-async function handleSearchEngineSubscription(block) {
+async function handleSearchEngineSubscription(block, isUserSignedIn) {
   const browseFilterForm = (block || document).querySelector(CLASS_BROWSE_FILTER_FORM);
   const filterResultsEl = browseFilterForm?.querySelector('.browse-filters-results');
   if (!filterResultsEl || window.headlessStatusControllers?.state?.isLoading) {
@@ -730,9 +886,58 @@ async function handleSearchEngineSubscription(block) {
   // eslint-disable-next-line
   const search = window.headlessSearchEngine.state.search;
   const { results, searchResponseId, response } = search;
+
+  // Trigger analytics event for search/filter interaction
+  // Using search response ID to ensure we only trigger once per unique search
+  const currentSearchId = searchResponseId;
+
+  if (
+    response?.totalCount !== undefined &&
+    isFilterSelectionActive(block) &&
+    window.browseFilterAnalyticsState.lastSearchId !== currentSearchId &&
+    isCurrentSearchResponse(block, search)
+  ) {
+    const searchType = determineSearchType(block);
+    const searchEl = block.querySelector('.filter-input-search > .search-input');
+    const searchValue = searchEl ? searchEl.value.trim() : '';
+    const { filterType, filterValue } = getFilterTypesAndValues();
+
+    // Only trigger if we have valid data
+    if (
+      (searchType === 'filter' && filterType) ||
+      (searchType === 'search' && searchValue) ||
+      (searchType === 'filter+search' && filterType && searchValue)
+    ) {
+      // Update the last search ID to prevent duplicate events
+      window.browseFilterAnalyticsState.lastSearchId = currentSearchId;
+
+      // Timeout to ensure this runs after the current execution context
+      setTimeout(() => {
+        pushBrowseFilterSearchEvent(searchType, filterType, filterValue, searchValue, response.totalCount);
+      }, 0);
+    }
+  }
   if (results.length > 0) {
     try {
-      const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
+      let cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
+      cardsData = cardsData.map((model) =>
+        model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY
+          ? normalizeUpcomingEventModel(model)
+          : model,
+      );
+      // Enrich cards with course status information for signed-in users
+      const hasCourseCard = cardsData?.some(
+        (card) => card?.contentType?.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase(),
+      );
+
+      if (hasCourseCard && isUserSignedIn) {
+        const { getCurrentCourses } = await import('../../scripts/courses/course-profile.js');
+        const { default: BrowseCardsCourseEnricher } = await import(
+          '../../scripts/browse-card/browse-cards-course-enricher.js'
+        );
+        const currentCourses = await getCurrentCourses();
+        cardsData = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus(cardsData, currentCourses);
+      }
       const renderCards =
         !filterResultsEl.dataset.searchresponseid ||
         (filterResultsEl.dataset.searchresponseid && filterResultsEl.dataset.searchresponseid !== searchResponseId) ||
@@ -747,7 +952,7 @@ async function handleSearchEngineSubscription(block) {
       if (!filterResultsEl.classList.contains('browse-hide-section')) {
         const analyticsFilters = generateAnalyticsFilters(block, response.totalCount);
         if (analyticsFilters) {
-          assetInteractionModel(null, 'Browse Filters', analyticsFilters);
+          assetInteractionModel(null, 'Browse Filters', { filters: analyticsFilters });
         }
       }
 
@@ -755,7 +960,8 @@ async function handleSearchEngineSubscription(block) {
       cardsData.forEach((cardData) => {
         const cardDiv = document.createElement('div');
         cardDiv.classList.add('browse-filter-card-item');
-        buildCard(filterResultsEl, cardDiv, cardData);
+        buildCard(cardDiv, cardData);
+
         filterResultsEl.appendChild(cardDiv);
       });
       browseFilterForm.classList.add('is-result');
@@ -766,7 +972,9 @@ async function handleSearchEngineSubscription(block) {
       // eslint-disable-next-line no-console
       console.log('*** failed to create card because of the error:', err);
     }
-  } else {
+  }
+
+  if (results.length === 0) {
     /* Analytics */
     if (
       !filterResultsEl.classList.contains('no-results') &&
@@ -775,7 +983,7 @@ async function handleSearchEngineSubscription(block) {
     ) {
       const analyticsFilters = generateAnalyticsFilters(block, response.totalCount);
       if (analyticsFilters) {
-        assetInteractionModel(null, 'Browse Filters', analyticsFilters);
+        assetInteractionModel(null, 'Browse Filters', { filters: analyticsFilters });
         filterResultsEl.classList.add('analytics-interaction');
       }
     }
@@ -798,11 +1006,14 @@ async function handleSearchEngineSubscription(block) {
 }
 
 async function loadCoveoHeadlessScript(block) {
-  const { default: initiateCoveoHeadlessSearch } = await import('../../scripts/coveo-headless/index.js');
+  const [{ default: initiateCoveoHeadlessSearch }, isUserLoggedIn] = await Promise.all([
+    import('../../scripts/coveo-headless/index.js'),
+    isSignedInUser(),
+  ]);
   if (initiateCoveoHeadlessSearch) {
     isCoveoHeadlessLoaded = true;
     initiateCoveoHeadlessSearch({
-      handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
+      handleSearchEngineSubscription: () => handleSearchEngineSubscription(block, isUserLoggedIn),
       renderPageNumbers,
       numberOfResults: getBrowseFiltersResultCount(),
       renderSearchQuerySummary,
@@ -810,13 +1021,12 @@ async function loadCoveoHeadlessScript(block) {
     })
       .then(
         (data) => {
+          isCoveoReady = true;
           handleCoveoHeadlessSearch(block, data);
-          const tagsContainerEl = block.querySelector('.browse-tags-container');
-          if (tagsContainerEl && !tagsContainerEl.querySelector(`[data-icon-name="close"]`)) {
-            decorateIcons(tagsContainerEl);
-          }
+          redecorateTagsContainer(block);
         },
         (err) => {
+          block.classList.add('browse-hide-section');
           throw new Error(err);
         },
       )
@@ -1202,6 +1412,28 @@ function clearSearchQuery(block) {
 }
 
 function clearSelectedFilters(block) {
+  // Capturing filter state before clearing for analytics
+  if (isFilterSelectionActive(block)) {
+    const searchType = determineSearchType(block);
+    const searchEl = block.querySelector('.filter-input-search > .search-input');
+    const searchValue = searchEl ? searchEl.value.trim() : '';
+    const { filterType, filterValue } = getFilterTypesAndValues();
+    const resultsCount = window.headlessQuerySummary?.state?.total || 0;
+
+    // Only trigger the event if we have valid data
+    if (
+      (searchType === 'filter' && filterType) ||
+      (searchType === 'search' && searchValue) ||
+      (searchType === 'filter+search' && filterType && searchValue)
+    ) {
+      // Trigger the clear filters analytics event
+      pushBrowseFilterSearchClearEvent(searchType, filterType, filterValue, searchValue, resultsCount);
+    }
+  }
+
+  // Reset the lastSearchId to ensure the next search triggers analytics
+  window.browseFilterAnalyticsState.lastSearchId = null;
+
   removeTopicSelections(block);
   uncheckAllFiltersFromDropdown(block);
   clearAllSelectedTag(block);
@@ -1426,9 +1658,9 @@ function decorateBrowseTopics(block) {
         updateClearFilterStatus(browseFiltersSection);
       }
     });
-    const decodedHash = decodeURIComponent(window.location.hash);
-    if (decodedHash) {
-      const selectedTopics = getSelectedTopics(decodedHash);
+    const hash = fragment();
+    if (hash) {
+      const selectedTopics = getSelectedTopics(hash);
       if (selectedTopics && selectedTopics.length > 0) {
         selectedTopics.forEach((topic) => {
           const element = contentDiv.querySelector(`.browse-topics-item[data-topicname*="${topic}"]`);
@@ -1458,14 +1690,50 @@ function decorateBrowseTopics(block) {
 }
 
 export default async function decorate(block) {
-  window.headlessBaseSolutionQuery = BASE_COVEO_ADVANCED_QUERY;
+  const isUpcomingEventFlow = isEventsPage && isFeatureEnabled('isEventsV2');
+  window.headlessBaseSolutionQuery = isUpcomingEventFlow
+    ? BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT
+    : BASE_COVEO_ADVANCED_QUERY;
   enableTagsAsProxy(block);
   appendFormEl(block);
   constructFilterInputContainer(block);
   addLabel(block);
-  dropdownOptions.forEach((options, index) => {
-    constructMultiSelectDropdown(block, options, index + 1);
-  });
+  if (isUpcomingEventFlow) {
+    BrowseCardsDelegate.fetchCoveoFacetFields(['el_event_series', 'el_product'])
+      .then((facetDetails) => {
+        dropdownOptions.forEach((options, index) => {
+          const optionId = options.id;
+          const optionItems = facetDetails[optionId] || [];
+          if (optionItems.length > 0) {
+            options.items = optionItems.map((item) => ({
+              id: item,
+              value: item,
+              title: item.split('|').join(' | '),
+              description: '',
+            }));
+          }
+          const dropdownEl = constructMultiSelectDropdown(block, options, index + 1);
+          const { parentElement } = dropdownEl;
+          parentElement.removeChild(dropdownEl);
+          const labelElement = parentElement.querySelector('.browse-filters-label');
+          labelElement.after(dropdownEl);
+          decorateIcons(dropdownEl);
+        });
+        if (isCoveoReady && isCoveoHeadlessLoaded) {
+          handleUriHash();
+          redecorateTagsContainer(block);
+        }
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error('Error fetching facet details:', error);
+        block.classList.add('browse-hide-section');
+      });
+  } else {
+    dropdownOptions.forEach((options, index) => {
+      constructMultiSelectDropdown(block, options, index + 1);
+    });
+  }
   constructKeywordSearchEl(block);
   constructClearFilterBtn(block);
   appendToForm(block, renderTags());
@@ -1478,6 +1746,7 @@ export default async function decorate(block) {
   handleTagsClick(block);
   updateClearFilterStatus(block);
   renderSortContainer(block);
+
   const hash = fragment();
   if (hash && !isCoveoHeadlessLoaded) {
     loadCoveoHeadless(block);

@@ -5,16 +5,13 @@ import {
   createPlaceholderSpan,
   getConfig,
   matchesAnyTheme,
+  fetchLanguagePlaceholders,
+  decorateExternalLinks,
 } from '../../scripts/scripts.js';
 import { rewriteDocsPath } from '../../scripts/utils/path-utils.js';
 import getSolutionByName from './toc-solutions.js';
 
-/**
- * fetch toc html from service
- * @param {string} tocID
- * @returns {Promise<string>}
- */
-async function fetchToc(tocID) {
+async function fetchV1Toc(tocID) {
   const lang = (await getLanguageCode()) || 'en';
   const { cdnOrigin } = getConfig();
   try {
@@ -28,17 +25,70 @@ async function fetchToc(tocID) {
   }
 }
 
+async function fetchV2Toc(tocID) {
+  const lang = (await getLanguageCode()) || 'en';
+  const tocPath = `/${lang}/toc/${tocID}.plain.html`;
+  try {
+    const response = await fetch(tocPath);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch toc data from ${tocPath}: ${response.statusText}`);
+    }
+
+    const html = await response.text();
+
+    if (!html) {
+      throw new Error('Failed to fetch toc data: no html');
+    }
+
+    const element = htmlToElement(html);
+    const ul = element.querySelector('ul');
+
+    // cleanup: remove <p> tags that are wrapping <a> tags
+    ul.querySelectorAll('a').forEach((a) => {
+      if (a.parentElement && a.parentElement.tagName.toLowerCase() === 'p') {
+        const p = a.parentElement;
+        p.replaceWith(a);
+      }
+    });
+
+    return {
+      HTML: ul.outerHTML,
+    };
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching toc data', error);
+    return null;
+  }
+}
+
+function isUUIDV4(id) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+}
+
+/**
+ * fetch toc html from service
+ * @param {string} tocID
+ * @returns {Promise<string>}
+ */
+async function fetchToc(tocID) {
+  if (isUUIDV4(tocID)) {
+    return fetchV1Toc(tocID); // legacy toc ids are always UUIDv4
+  }
+  return fetchV2Toc(tocID); // new toc ids are not UUIDv4
+}
+
 /**
  * @returns {string} product name from metadata
  */
 function getProductName() {
-  const productNames = getMetadata('original-solution');
+  const productNames = getMetadata('original-solution') || getMetadata('solution');
   return productNames.includes(',') ? productNames.split(',')[0].trim() : productNames;
 }
 
 // The TOC additional UI elements
 // TODO: Localizable strings, move to a separate file if needed
-const tocActions = () => `
+const tocActions = (placeholders) => `
   <div class="toc-header-actions">
     <!-- TOC Filter Bar -->
     <div class="toc-filter-wrapper">
@@ -46,8 +96,10 @@ const tocActions = () => `
         <span title="Filter" class="icon icon-icon-filter toc-filter-icon"></span>
         <input autocomplete="off" class="toc-filter-input" type="text" 
           aria-label="Filter by keyword" aria-expanded="false" 
-          title="Type to filter" role="textbox" placeholder="Filter by keyword" />
-        <span title="Clear" class="icon icon-icon-clear toc-clear-icon"/>
+          title="${placeholders?.typeToFilter || 'Type to filter'}" role="textbox" placeholder="${
+            placeholders?.filterByKeyword || 'Filter by keyword'
+          }" />
+        <span title="${placeholders?.searchClearLabel || 'Clear'}" class="icon icon-icon-clear toc-clear-icon"/>
       </div>
     </div>
 
@@ -55,12 +107,14 @@ const tocActions = () => `
     <div class="spectrum-switch">
       <input type="checkbox" class="spectrum-switch-input" id="custom-switch" />
       <span class="spectrum-switch-switch"></span>
-      <label class="spectrum-switch-label" for="custom-switch">Expand all sections</label>
+      <label class="spectrum-switch-label" for="custom-switch">${
+        placeholders?.expandAllSections || 'Expand all sections'
+      }</label>
     </div>
   </div>
 `;
 
-function buildProductHeader() {
+function buildProductHeader(placeholders) {
   const productName = getProductName();
   const solutionInfo = getSolutionByName(productName);
   return htmlToElement(`
@@ -69,7 +123,7 @@ function buildProductHeader() {
         <span class="icon icon-${solutionInfo.class}"></span>
         <h3>${solutionInfo.name}</h3>
       </div>
-      ${tocActions()}
+      ${tocActions(placeholders)}
     </div>
   `);
 }
@@ -167,6 +221,9 @@ function updateTocContent(tocHtml, tocContent) {
       anchor.classList.add('toc-item');
     }
   });
+
+  // Handle #_blank and external links (TOC loads async, so decorateExternalLinks never saw these)
+  decorateExternalLinks(tocTree);
 }
 
 /**
@@ -385,6 +442,14 @@ function initializeTocFilter() {
  * @param {Element} block The toc block element
  */
 export default async function decorate(block) {
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
   if (matchesAnyTheme(/kb-article/)) return;
   const tocID = block.querySelector('.toc > div > div').textContent;
   if (!tocID && document.querySelector('.toc-dropdown')) return;
@@ -397,7 +462,7 @@ export default async function decorate(block) {
   tocContent.classList.add('toc-content');
   tocContent.id = 'toc-dropdown-popover';
 
-  const productHeader = buildProductHeader();
+  const productHeader = buildProductHeader(placeholders);
   decorateIcons(productHeader.querySelector('.toc-header-content'), '/solutions');
   decorateIcons(productHeader.querySelector('.toc-header-actions'));
   const tocMobileDropdown = buildTocMobileDropdown();

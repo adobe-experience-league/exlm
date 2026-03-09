@@ -5,16 +5,14 @@ import {
   debounce,
   CUSTOM_EVENTS,
   isMobile,
-  handleHeaderSearchVisibility,
   disconnectShadowObserver,
   observeShadowRoot,
 } from './atomic-search-utils.js';
 import { ContentTypeIcons } from './atomic-search-icons.js';
 import { decorateIcons } from '../../../scripts/lib-franklin.js';
-import { htmlToElement, getConfig } from '../../../scripts/scripts.js';
+import { htmlToElement } from '../../../scripts/scripts.js';
 import { INITIAL_ATOMIC_RESULT_CHILDREN_COUNT } from './atomic-result-children.js';
 
-const { communityTopicsUrl } = getConfig();
 const MAX_HYDRATION_ATTEMPTS = 10;
 
 export const atomicResultStyles = `
@@ -28,12 +26,8 @@ export const atomicResultStyles = `
                       --content-type-troubleshooting-color: #ffa213;
                       --content-type-event-color: #ff709f;
                       --content-type-perspective-color: #c844dc;
-                      --content-type-default-color: #000000
-                    }
-                    .result-root {
-                      @media(max-width: 1024px) {
-                        max-width: calc(100% - 40px);
-                      }
+                      --content-type-default-color: #000000;
+                      --search-visited-link-color: #93219E;
                     }
 
                     .result-description atomic-result-multi-value-text::part(result-multi-value-text-list) {
@@ -74,6 +68,7 @@ export const atomicResultStyles = `
                     }
                     .atomic-search-result-item .result-field.text-thumbnail:not(:has(.result-thumbnail)) {
                       gap: 0;
+                      display: block;
                     }
                     .atomic-search-result-item .result-field.text-thumbnail:has(.result-thumbnail) .result-text {
                       flex: 0 0 56%;
@@ -97,15 +92,95 @@ export const atomicResultStyles = `
                       width: 40px;
                       height: 40px;
                     }
+                    .atomic-search-result-item .result-product .result-field-multi {
+                      display: flex;
+                      gap: 6px;
+                      align-items: center;
+                    }
+                    .atomic-search-result-item .result-product .hidden {
+                      display: none;
+                    }
+                    .atomic-search-result-item .result-product .result-field-title {
+                      font-size: var(--spectrum-font-size-75);
+                      text-transform: capitalize;
+                    }
+                    .atomic-search-result-item .tooltip-placeholder {
+                      line-height: 0;
+                      margin-top: 2px;
+                    }
+                    .atomic-search-result-item .tooltip {
+                      display: inline;
+                      position: relative;
+                      margin: 2px 0 0 5px;
+                    }
+                    .atomic-search-result-item .tooltip .icon-info {
+                      width: 14px;
+                      height: 14px;
+                    }
+                    .atomic-search-result-item .tooltip svg {
+                      pointer-events: none;
+                    }
+                    .atomic-search-result-item .tooltip .tooltip-text {
+                      background-color: var(--non-spectrum-dim-gray);
+                      border-radius: 4px;
+                      color: var(--spectrum-gray-50);
+                      display: inline-block;
+                      font-size: var(--spectrum-font-size-50);
+                      font-weight: normal;
+                      line-height: var(--spectrum-line-height-xs);
+                      margin-left: 10px;
+                      opacity: 0;
+                      padding: 4px 9px 5px 10px;
+                      position: absolute;
+                      top: 0;
+                      transition: opacity 0.3s;
+                      visibility: hidden;
+                      width: max-content;
+                      max-width: 155px;
+                      z-index: 11;
+                    }
+                    .atomic-search-result-item .tooltip-top .tooltip-text {
+                      display: block;
+                      bottom: 20px;
+                      transform: translateX(calc(-50% + 12px));
+                      top: unset;
+                      margin: 0 0 2px;
+                    }
+                    .atomic-search-result-item .tooltip .tooltip-text::before {
+                      border-color: transparent var(--non-spectrum-dim-gray) transparent transparent;
+                      border-style: solid;
+                      border-width: 4px;
+                      content: '';
+                      display: inline-block;
+                      margin-top: -4px;
+                      position: absolute;
+                      right: 100%;
+                      top: 50%;
+                    }
+                    .atomic-search-result-item .tooltip-top .tooltip-text::before {
+                      margin-top: 0;
+                      right: unset;
+                      top: unset;
+                      left: calc(50% - 7px);
+                      bottom: -7px;
+                      transform: rotate(-90deg);
+                    }
+                    .atomic-search-result-item .tooltip:hover .tooltip-text {
+                      visibility: visible;
+                      opacity: 1;
+                    }
                     @media(min-width: 1024px) {
                       .result-item.desktop-only {
                         display: grid;
-                        grid-template-columns: 1.5fr 0.5fr 0.6fr 0.4fr;
+                        grid-template-columns: 1.5fr 0.7fr 0.6fr 0.4fr;
                         row-gap: 0;
                         margin-top: 8px;
                       }
                       .result-item.mobile-only {
                         display: none;
+                      }
+                      .atomic-search-result-item .result-product .result-field-title {
+                        font-size: var(--spectrum-font-size-100);
                       }
                     }
                     .result-title {
@@ -127,12 +202,12 @@ export const atomicResultStyles = `
                       max-width: 90vw;
                     }
                     atomic-result-section-excerpt atomic-result-text {
-                      color: #959595;
+                      color: #505050;
                       font-size: var(--spectrum-font-size-75);
                     }
                     .result-title atomic-result-text, .mobile-result-title atomic-result-text {
                       font-size: var(--spectrum-font-size-100);
-                      color: var(--non-spectrum-dark-charcoal);
+                      color: var(--non-spectrum-link);
                       font-weight: bold;
                       overflow: hidden;
                       max-width: 90vw;
@@ -159,6 +234,9 @@ export const atomicResultStyles = `
                       position: relative;
                       max-height: 18px
                     }
+                    atomic-result-multi-value-text::part(multi-hidden) {
+                      display: none;
+                    }
                     .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-list) {
                       margin: 0 8px 0 0;
                       display: flex;
@@ -172,40 +250,20 @@ export const atomicResultStyles = `
                       white-space: pre;
                       white-space: nowrap;
                     }
-
-                    @media(min-width: 1024px) {
-                      .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                        border: 1px solid var(--content-type-default-color);
-                        border-radius: 4px;
-                        padding: 4px 8px;
-                        color: var(--content-type-default-color);
-                        display: flex;
-                        align-items: center;
-                        flex-direction: row-reverse;
-                        gap: 4px;
-                        border: 1px solid #959595;
-                        color: var(--non-spectrum-grey-updated);
-                      }
-                    }
-                    
                     .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-separator) {
                       display: none;
                     }
-                    .result-product atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                    .result-product > atomic-result-multi-value-text::part(result-multi-value-text-value) {
                       font-size: var(--spectrum-font-size-100);
                       color: var(--non-spectrum-web-gray);
                       display: block;
                     }
-                    .result-product atomic-result-multi-value-text::part(result-multi-value-text-list) {
+                    .result-product > atomic-result-multi-value-text::part(result-multi-value-text-list) {
                       flex-wrap: wrap;
                       gap: 4px;
                     }
-                    .result-product atomic-result-multi-value-text::part(result-multi-value-text-separator) {
-                      display: none;
-                    }
                     .result-updated {
-                      font-size: var(--spectrum-font-size-100);
-                      color: var(--non-spectrum-web-gray);
+                      font-size: var(--spectrum-font-size-75);
                       text-align: left;
                     }
                     atomic-result-link {
@@ -214,9 +272,23 @@ export const atomicResultStyles = `
                       font-size: var(--spectrum-font-size-50);
                       cursor: pointer;
                     }
+                    atomic-result-link a {
+                      text-decoration: none !important;
+                    }
                     atomic-result-link > a:not([slot="label"]) {
-                      position: absolute;
                       left: 0;
+                    }
+                    .result-title atomic-result-link:has(a), .mobile-result-title atomic-result-link:has(a) {
+                      width: 100%;
+                      overflow: hidden;
+                      max-width: 90vw;
+                      display: -webkit-box;
+                      -webkit-line-clamp: 2; 
+                      -webkit-box-orient: vertical;
+                      text-overflow: ellipsis;
+                    }
+                    .result-title atomic-result-link a:visited > atomic-result-text {
+                      color:  var(--search-visited-link-color);
                     }
                     atomic-result-link > a img {
                       display: inline-block;
@@ -225,8 +297,8 @@ export const atomicResultStyles = `
                       height: 14px;
                       width: 14px;
                     }
-                    atomic-result-link > a > atomic-result-text {
-                      visibility: hidden
+                    atomic-result-link .icon-external-link {
+                      display: none;
                     }
                     .result-icons-wrapper {
                       display: flex;
@@ -251,17 +323,21 @@ export const atomicResultStyles = `
                       display: flex;
                       align-items: center;
                       gap: 12px;
+                      justify-content: flex-start;
                     }
                     .mobile-result-title {
                         position: relative;
-                     }
+                     }    
+                    .result-item.mobile-only .mobile-result-title atomic-result-link a:visited > atomic-result-text {
+                      color:  var(--search-visited-link-color);
+                    }
                     .result-item.mobile-only .mobile-result-title atomic-result-text {
                       font-size: var(--spectrum-font-size-200);
                       font-weight: bold;
-                      color: var(--non-spectrum-dark-gray);
+                      color: var(--non-spectrum-link);
                     }
-                    .mobile-result-info .result-field atomic-result-multi-value-text, .mobile-result-info .atomic-result-date, .mobile-result-info .result-product atomic-result-multi-value-text::part(result-multi-value-text-value) {
-                      color: var(--non-spectrum-web-gray);
+                    .mobile-result-info .result-field atomic-result-multi-value-text, .mobile-result-info .atomic-result-date, 
+                    .mobile-result-info .result-product > atomic-result-multi-value-text::part(result-multi-value-text-value) {
                       font-size: var(--spectrum-font-size-75);
                     }
                     .mobile-result-info .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-value) {
@@ -269,25 +345,54 @@ export const atomicResultStyles = `
                     }
                     .mobile-description atomic-result-section-excerpt atomic-result-text {
                       font-size: var(--spectrum-font-size-75);
-                      color: #959595;
+                      color: #505050;
                     }
-
-                     .result-title .atomic-recommendation-badge, .mobile-result-title .atomic-recommendation-badge {
-                        position: absolute;
-                        background-color: var(--non-spectrum-dim-gray);
-                        padding: 2px 8px;
+                    .result-title .atomic-recommendation-badge, .mobile-result-title .atomic-recommendation-badge {
+                      position: absolute;
+                      background-color: var(--non-spectrum-dim-gray);
+                      padding: 2px 8px;
+                      border-radius: 4px;
+                      font-size: var(--spectrum-font-size-75);
+                      color: var(--spectrum-gray-50);
+                      top: -28px;
+                    }
+                    @media(min-width: 1024px) {
+                      .result-content-type atomic-result-multi-value-text::part(result-multi-value-text-value) {
+                        border: 1px solid var(--content-type-default-color);
                         border-radius: 4px;
-                        font-size: var(--spectrum-font-size-75);
-                        color: var(--spectrum-gray-50);
-                        top: -28px;
-                     }
+                        padding: 4px 8px;
+                        color: var(--content-type-default-color);
+                        display: flex;
+                        align-items: center;
+                        flex-direction: row-reverse;
+                        gap: 4px;
+                        border: 1px solid #959595;
+                        color: var(--non-spectrum-grey-updated);
+                      }
+                      .result-updated {
+                        font-size: var(--spectrum-font-size-100);
+                      }
+                    }
                   </style>
 `;
 
 export const atomicResultListStyles = `
                 <style>
+                  atomic-folded-result-list::part(result-list) {
+                    grid-row-gap: 0;
+                  }
                   atomic-folded-result-list::part(outline)::before {
                     background-color:var(--footer-border-color);
+                    display: block;
+                    content: ' ';
+                    height: 1px;
+                    margin: 1.5rem 0;
+                  }
+                  atomic-folded-result-list::part(first-result) {
+                    padding-top: 1rem;
+                  }
+                  atomic-folded-result-list::part(first-result)::before {
+                    display: none;
                   }
                   atomic-folded-result-list::part(skeleton) {
                     display: flex;
@@ -388,6 +493,11 @@ export const atomicResultListStyles = `
                     }
                   }
 
+                  @media(min-width: 1024px) {
+                    atomic-folded-result-list::part(first-result) {
+                      padding-top: 0;
+                    }
+                  }
                 </style>
 `;
 let isListenerAdded = false;
@@ -413,7 +523,6 @@ export default function atomicResultHandler(block, placeholders) {
   const skeletonWrapper = htmlToElement(`<div class="skeleton-wrapper" part="skeleton"></div>`);
   skeletonWrapper.innerHTML = renderAtomicSekeletonUI();
   container.parentElement.appendChild(skeletonWrapper);
-  handleHeaderSearchVisibility();
 
   function onClearBtnClick() {
     const atomicBreadBox = document.querySelector('atomic-breadbox');
@@ -602,11 +711,76 @@ export default function atomicResultHandler(block, placeholders) {
     }
   }
 
-  const updateAtomicResultUI = () => {
+  const sanitizeProductTypes = (resultFieldValue) => {
+    const allProductItems = resultFieldValue?.firstElementChild?.shadowRoot?.querySelectorAll('li');
+    if (allProductItems && allProductItems.length > 0) {
+      Array.from(allProductItems).forEach((item, index) => {
+        const textLabel = item.firstElementChild?.textContent;
+        if (textLabel?.includes('|')) {
+          const [parentName] = textLabel.split('|');
+          item.firstElementChild.textContent = parentName;
+        }
+        if (index > 0) {
+          item.part.add('multi-hidden');
+        }
+      });
+    }
+  };
+
+  /**
+   * Filters out parent content type values when their child values are present.
+   * Handles both legacy (;) and new (|) separator formats.
+   * @param {Array|string} contentTypes - Array of content type values or single value
+   * @returns {Array} Filtered array with only the most specific content type values
+   */
+  const filterParentContentTypes = (contentTypes) => {
+    if (!Array.isArray(contentTypes)) {
+      return contentTypes;
+    }
+
+    // Extract all parent names from child values (those containing |)
+    const parentNamesFromChildren = new Set();
+    contentTypes.forEach((type) => {
+      const typeStr = String(type || '').trim();
+      if (typeStr.includes('|')) {
+        // Handle both "parent|child" and "parent;parent|child" formats
+        const parts = typeStr.split('|');
+        if (parts[0]) {
+          const parentPart = parts[0].trim();
+          // If parent part contains semicolon, extract the actual parent name
+          if (parentPart.includes(';')) {
+            const semicolonParts = parentPart.split(';').map((p) => p.trim());
+            // Add all parts before the pipe as potential parent names
+            semicolonParts.forEach((p) => {
+              if (p) parentNamesFromChildren.add(p.toLowerCase());
+            });
+          } else {
+            parentNamesFromChildren.add(parentPart.toLowerCase());
+          }
+        }
+      }
+    });
+
+    // Filter out parent values if their child values exist
+    return contentTypes.filter((type) => {
+      const typeStr = String(type || '').trim();
+      // Keep child values (those with |)
+      if (typeStr.includes('|')) {
+        return true;
+      }
+      // Keep parent values only if they don't have a corresponding child
+      return !parentNamesFromChildren.has(typeStr.toLowerCase());
+    });
+  };
+
+  const updateAtomicResultUI = (callFrom) => {
     const results = container.querySelectorAll('atomic-result');
     const isMobileView = isMobile();
     container.dataset.view = isMobileView ? 'mobile' : 'desktop';
-    results.forEach((resultElement) => {
+    results.forEach((resultElement, index) => {
+      if (index === 0) {
+        resultElement.part.add('first-result');
+      }
       const hydrateResult = (resultEl) => {
         const resultShadow = resultEl.shadowRoot;
         if (!resultShadow) {
@@ -636,17 +810,81 @@ export default function atomicResultHandler(block, placeholders) {
           block.removeChild(blockLevelSkeleton);
         }
 
+        const currentHydrationCount = +(resultEl.dataset.hydration || '0');
+        resultEl.dataset.hydration = `${currentHydrationCount + 1}`;
+        const resultFieldMulti = resultItem?.querySelector('.result-product .result-field-multi');
+        const resultFieldValue = resultItem?.querySelector('.result-product .result-field-value');
+        const productList = resultFieldValue?.firstElementChild?.shadowRoot?.querySelectorAll('li');
+        const productCount = productList ? productList.length : 0;
+        if (productList && productList.length === 0) {
+          waitFor(() => {
+            hydrateResult(resultEl);
+          }, 100);
+          return;
+        }
+        if (productCount > 1) {
+          const tooltipBaseElement = resultFieldMulti.querySelector('atomic-result-multi-value-text');
+          const liElements = tooltipBaseElement?.shadowRoot?.firstElementChild
+            ? Array.from(tooltipBaseElement.shadowRoot.querySelectorAll(`li`))
+            : [];
+          const uniqueProductListItems = liElements.filter((item) => !item.classList.contains('separator'));
+          const uniqueParentItems = uniqueProductListItems.reduce((acc, li) => {
+            const currentText = li.textContent;
+            const isChild = currentText.includes('|');
+            if (isChild) {
+              li.part.add('multi-hidden');
+              if (li.nextElementSibling?.part?.contains('result-multi-value-text-separator')) {
+                li.nextElementSibling.part.add('multi-hidden');
+              }
+            } else {
+              acc.push(li);
+            }
+            return acc;
+          }, []);
+          if (uniqueParentItems.length <= 1) {
+            resultFieldMulti?.classList.add('hidden');
+            resultFieldValue?.classList.remove('hidden');
+            sanitizeProductTypes(resultFieldValue);
+          } else {
+            resultFieldMulti?.classList.remove('hidden');
+            resultFieldValue?.classList.add('hidden');
+            const visibleElements = tooltipBaseElement.shadowRoot.querySelectorAll(`li:not([part~="multi-hidden"])`);
+            const lastVisibleElment = visibleElements[visibleElements.length - 1];
+            if (lastVisibleElment?.classList?.contains('separator')) {
+              lastVisibleElment.part.add('multi-hidden');
+            }
+          }
+        } else {
+          resultFieldMulti?.classList.add('hidden');
+          resultFieldValue?.classList.remove('hidden');
+          sanitizeProductTypes(resultFieldValue);
+        }
+
         const recommendationBadgeExists = !!resultItem.querySelector('.atomic-recommendation-badge');
         if (recommendationBadgeExists) {
           const resultRoot = resultShadow.querySelector('.result-root');
           resultRoot.classList.add('recommendation-badge');
         }
-        const currentHydrationCount = +(resultEl.dataset.hydration || '0');
-        if (currentHydrationCount >= MAX_HYDRATION_ATTEMPTS) {
+
+        // Handle el_kudo_status field - support both legacy numeric and new user ID format
+        // This needs to run on every re-render (mobile/desktop view switches)
+        const kudoStatusEl = resultShadow?.querySelector('atomic-result-text[field="el_kudo_status"]');
+        if (kudoStatusEl) {
+          const rawKudoStatus = resultEl.result?.result?.raw?.el_kudo_status;
+
+          // Check if it's the new format (string = user IDs, single or semicolon-separated)
+          if (typeof rawKudoStatus === 'string' && rawKudoStatus.trim() !== '') {
+            const userIds = rawKudoStatus.split(';').filter((id) => id.trim() !== '');
+            const count = userIds.length;
+            kudoStatusEl.textContent = count.toString();
+          }
+          // Legacy numeric format (number type) - no change needed, displays as-is
+        }
+
+        if (resultItem.dataset.decorated && currentHydrationCount >= MAX_HYDRATION_ATTEMPTS) {
           removeBlockSkeleton();
           return; // Return to avoid repeated hydrations endlessly.
         }
-        resultEl.dataset.hydration = `${currentHydrationCount + 1}`;
 
         if (!contentTypeElWrap) {
           waitFor(() => {
@@ -673,8 +911,6 @@ export default function atomicResultHandler(block, placeholders) {
         const atomicResultChildren = resultItem.querySelector('atomic-result-children');
         handleAtomicResultChildrenUI(atomicResultChildren);
 
-        const productElWrap = resultItem?.querySelector('.result-product')?.firstElementChild?.shadowRoot;
-        const productElements = productElWrap?.querySelectorAll('li') || [];
         const contentTypeElements = contentTypeElParent?.querySelectorAll('li') || [];
 
         const topicElements =
@@ -692,30 +928,111 @@ export default function atomicResultHandler(block, placeholders) {
 
           const label = slot.textContent.trim();
           if (!label) return;
-
-          const link = document.createElement('a');
-          link.href = `${communityTopicsUrl}${encodeURIComponent(label)}`;
-          link.textContent = label;
-          link.target = '_blank';
-          link.style.textDecoration = 'none';
-          link.style.color = 'inherit';
-
-          li.innerHTML = '';
-          li.appendChild(link);
+          li.textContent = label;
         });
+        const rawContentType = resultEl.result?.result?.raw?.el_contenttype;
+        // Filter out parent values when child values are present to avoid duplicate rendering
+        const filteredContentType = filterParentContentTypes(rawContentType);
+        const contentTypeValues = Array.isArray(filteredContentType) ? structuredClone(filteredContentType) : null;
+
+        // Hide duplicate parent <li> elements when child elements exist
+        // The atomic component renders all values, so we need to hide duplicates in the DOM
+        if (Array.isArray(rawContentType) && contentTypeElements.length > 0) {
+          const childValues = new Set();
+          const parentToHide = new Set();
+
+          // First pass: identify all child values and their parent names
+          Array.from(contentTypeElements).forEach((li) => {
+            if (li.className?.includes('separator')) return;
+            const slotEl = li.firstElementChild;
+            const slotName = slotEl?.getAttribute('name') || '';
+            // Extract value from slot name (e.g., "result-multi-value-text-value-community|questions")
+            const value = slotName.replace('result-multi-value-text-value-', '');
+
+            if (value.includes('|')) {
+              childValues.add(value);
+              // Extract parent name from child value
+              const parts = value.split('|');
+              const parentPart = parts[0].trim().toLowerCase();
+              if (parentPart.includes(';')) {
+                parentPart.split(';').forEach((p) => {
+                  const trimmed = p.trim().toLowerCase();
+                  if (trimmed) parentToHide.add(trimmed);
+                });
+              } else {
+                parentToHide.add(parentPart);
+              }
+            }
+          });
+
+          // Second pass: hide parent elements if their child exists
+          Array.from(contentTypeElements).forEach((li) => {
+            if (li.className?.includes('separator')) return;
+            const slotEl = li.firstElementChild;
+            const slotName = slotEl?.getAttribute('name') || '';
+            const value = slotName.replace('result-multi-value-text-value-', '').toLowerCase();
+
+            // If this is a parent value and its child exists, hide it
+            if (!value.includes('|') && parentToHide.has(value)) {
+              li.part.add('multi-hidden');
+              li.style.setProperty('display', 'none', 'important');
+              li.dataset.hiddenDuplicate = 'true';
+              // Also hide the separator after this element if it exists
+              if (li.nextElementSibling?.classList?.contains('separator')) {
+                li.nextElementSibling.part.add('multi-hidden');
+                li.nextElementSibling.style.setProperty('display', 'none', 'important');
+              }
+            }
+          });
+        }
 
         contentTypeElements.forEach((contentTypeEl) => {
-          const contentType = contentTypeEl.textContent.toLowerCase().trim();
+          // Skip elements that were marked as hidden duplicates
+          if (contentTypeEl.dataset.hiddenDuplicate === 'true') {
+            return;
+          }
+
+          const isSeparator = contentTypeEl?.className.includes('separator');
+          const contentTypeValue =
+            Array.isArray(contentTypeValues) && !isSeparator ? contentTypeValues.shift() : filteredContentType;
+          let contentType = isSeparator ? '' : (contentTypeValue || contentTypeEl.textContent).toLowerCase().trim();
+
+          // Handle hierarchical content types (e.g., "Community; Community|Community Pulse")
           if (contentType.includes('|')) {
-            contentTypeEl.style.cssText = `display: none !important`;
-            const slotEl = contentTypeEl.firstElementChild;
-            if (slotEl) {
-              slotEl.style.cssText = `display: none`;
+            const splitContent = contentType.split('|');
+            let parentName = splitContent[0]?.trim();
+            const childName = splitContent[1]?.trim();
+
+            // Handle format like "Community;Community|Ideas" -> extract "Community" as parent
+            if (parentName?.includes(';')) {
+              [parentName] = parentName.split(';').map((part) => part.trim());
             }
-          } else if (!isMobileView) {
+
+            // Helper function to convert to title case
+            const toTitleCase = (str) =>
+              str
+                ?.trim()
+                .split(' ')
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ');
+
+            // Update the displayed text to "Parent | Child" format in title case
+            if (parentName && childName) {
+              const displayText = `${toTitleCase(parentName)} | ${toTitleCase(childName)}`;
+              const slotEl = contentTypeEl.firstElementChild;
+              if (slotEl) {
+                slotEl.textContent = displayText;
+              }
+
+              // Use the parent name for icon/styling purposes
+              contentType = parentName.toLowerCase();
+            }
+          }
+
+          if (!isMobileView) {
             // UI effect is only for desktop.
             const svgIcon = ContentTypeIcons[contentType] || '';
-            if (contentType) resultContentType.classList.add(contentType);
+            if (contentType) resultContentType.classList.add(contentType.replace(/\s+/g, '-'));
             const svgElement = contentTypeEl.querySelector('span.svg-element');
             if (svgElement) {
               contentTypeEl.removeChild(svgElement);
@@ -732,17 +1049,6 @@ export default function atomicResultHandler(block, placeholders) {
         if (contentTypeElements.length) {
           decorateIcons(contentTypeElParent);
         }
-
-        productElements.forEach((productElement) => {
-          const product = productElement.textContent.toLowerCase().trim();
-          if (product?.includes('|')) {
-            productElement.style.cssText = `display: none`;
-            const slotEl = productElement.firstElementChild;
-            if (slotEl) {
-              slotEl.style.cssText = `display: none`;
-            }
-          }
-        });
 
         const anchorTag = resultItem?.querySelector('atomic-result-link > a');
         const hasSpan = anchorTag?.querySelector('span');
@@ -807,7 +1113,11 @@ export default function atomicResultHandler(block, placeholders) {
     }
     const searchLayoutEl = block.querySelector('atomic-search-layout');
     searchLayoutEl.dataset.result = 'found';
-    const event = new CustomEvent(CUSTOM_EVENTS.RESULT_UPDATED);
+    const event = new CustomEvent(CUSTOM_EVENTS.RESULT_UPDATED, {
+      detail: {
+        callFrom,
+      },
+    });
     document.dispatchEvent(event);
   };
 
@@ -815,7 +1125,7 @@ export default function atomicResultHandler(block, placeholders) {
     const isMobileView = isMobile();
     const view = isMobileView ? 'mobile' : 'desktop';
     if (view !== container.dataset.view) {
-      updateAtomicResultUI();
+      updateAtomicResultUI('resize');
     }
   };
   const debouncedResize = debounce(200, onResize);

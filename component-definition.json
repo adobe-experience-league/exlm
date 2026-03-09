@@ -38,7 +38,8 @@
               "page": {
                 "resourceType": "core/franklin/components/text/v1/text",
                 "template": {
-                  "text": "<p>Placeholder text</p>"
+                  "text": "<p>Placeholder text</p>",
+                  "filter": "text"
                 }
               }
             }
@@ -78,6 +79,7 @@
                     "sling:resourceType": "core/franklin/components/text/v1/text",
                     "name": "Text",
                     "model": "text",
+                    "filter": "text",
                     "text": "<p>[Insert page summary here. 1-2 sentences are recommended for the page summary.]<br><br>To configure the page title, article author(s), and tags, navigate to Page-level properties by clicking Content Tree -&gt; Page -&gt; Properties. (remove this with text)</p>"
                   },
                   "article-tags": {
@@ -89,6 +91,7 @@
                     "sling:resourceType": "core/franklin/components/text/v1/text",
                     "name": "Text",
                     "model": "text",
+                    "filter": "text",
                     "text": "<p>[Insert article body content here. Add additional blocks below as needed]</p>"
                   },
                   "social-share": {
@@ -148,6 +151,40 @@
                     "model": "browse-rail",
                     "navigation": "<ul><li><a href='/content/exlm/global/en/browse.html'>Title with Link</a><br><ul><li><a href='/content/exlm/global/en/browse.html'>Subtitle with link</a></li></ul></li><li>Title with no link<ul><li>Subtitle with no link</li></ul></li></ul>"
                   }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Courses Section",
+          "id": "courses-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "filter": "courses-section",
+                  "name": "Courses Section",
+                  "model": "courses-section",
+                  "style": ["courses-section", "default"]
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Course Hub Section",
+          "id": "course-hub-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "filter": "course-hub-section",
+                  "name": "Course Hub Section",
+                  "model": "course-hub-section",
+                  "style": ["course-hub-section", "default"]
                 }
               }
             }
@@ -237,6 +274,41 @@
               }
             }
           }
+        },
+        {
+          "title": "List Section",
+          "id": "list-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "name": "List Section",
+                  "model": "list-section",
+                  "filter": "list-section",
+                  "style": "list-section",
+                  "list-type": "ul"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Sticky Nav Section",
+          "id": "sticky-nav-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "name": "Sticky Nav Section",
+                  "model": "sticky-nav-section",
+                  "filter": "sticky-nav-section",
+                  "style": "sticky-nav-section"
+                }
+              }
+            }
+          }
         }
       ]
     },
@@ -259,6 +331,7 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Accordion",
                     "model": "accordion",
+                    "filter": "text",
                     "heading": "Lorem ipsum",
                     "headingType": "h3",
                     "body": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
@@ -278,6 +351,7 @@
                 "template": {
                   "name": "Accordion",
                   "model": "accordion",
+                  "filter": "text",
                   "heading": "Lorem ipsum",
                   "body": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
                 }
@@ -402,7 +476,8 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Author Bio",
-                  "model": "author-bio"
+                  "model": "author-bio",
+                  "filter": "text"
                 }
               }
             }
@@ -500,7 +575,8 @@
                 "template": {
                   "name": "Block Quote",
                   "model": "block-quote",
-                  "title": "Block Quote"
+                  "title": "Block Quote",
+                  "filter": "text"
                 }
               }
             }
@@ -532,6 +608,22 @@
                 "template": {
                   "name": "Brand",
                   "model": "brand"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Browse Courses",
+          "id": "browse-courses",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Browse Courses",
+                  "model": "browse-courses",
+                  "headingType": "h2"
                 }
               }
             }
@@ -579,7 +671,8 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Callout",
-                  "model": "callout"
+                  "model": "callout",
+                  "filter": "text"
                 }
               }
             }
@@ -611,6 +704,47 @@
           }
         },
         {
+          "title": "List Item",
+          "id": "list-item",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "List Item",
+                  "model": "list-item",
+                  "filter": "list-item",
+                  "list-content": {
+                    "classes": "text",
+                    "richtext": "<p>List item content placeholder text</p>",
+                    "name": "List Content",
+                    "model": "list-content",
+                    "filter": "text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "List Content",
+          "id": "list-content",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "classes": "text",
+                  "richtext": "<p>List item content placeholder text</p>",
+                  "name": "List Content",
+                  "model": "list-content",
+                  "filter": "text"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Code",
           "id": "code",
           "plugins": {
@@ -633,6 +767,117 @@
               "page": {
                 "resourceType": "core/franklin/components/columns/v1/columns",
                 "template": {}
+              }
+            }
+          }
+        },
+        {
+          "title": "Course Awards",
+          "id": "course-awards",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Course Awards"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Course Breakdown",
+          "id": "course-breakdown",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Course Breakdown",
+                  "model": "course-breakdown",
+                  "filter": "course-breakdown",
+                  "title": "In this Course",
+                  "titleType": "h1",
+                  "moduleTimeText": "1 Hour",
+                  "courseInfoTitle": "Skills you'll gain from this Course",
+                  "courseInfoTitleType": "h2",
+                  "courseInfoDescription": "Course Info Description",
+                  "courseCompletionPage": "",
+                  "item": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Course Breakdown Item",
+                    "model": "course-breakdown-item",
+                    "skill_track_url": "/content/exlm/global/en/courses/"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Course Completion",
+          "id": "course-completion",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Course Completion",
+                  "model": "course-completion"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Course Breakdown Item",
+          "id": "course-breakdown-item",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Course Breakdown Item",
+                  "model": "course-breakdown-item",
+                  "skill_track_url": "/content/exlm/global/en/courses/"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Course Marquee",
+          "id": "course-marquee",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Course Marquee",
+                  "model": "course-marquee",
+                  "title": "Course Title",
+                  "titleType": "h3",
+                  "description": "Course description that will be limited to 3 lines in display."
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Course Recap",
+          "id": "course-recap",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Course Recap",
+                  "model": "course-recap",
+                  "filter": "text",
+                  "title": "Course Recap",
+                  "titleType": "h3",
+                  "description": "<ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li><li>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</li><li>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</li></ul>"
+                }
               }
             }
           }
@@ -702,6 +947,50 @@
           }
         },
         {
+          "title": "Drill In",
+          "id": "drill-in",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Drill In",
+                  "model": "drill-in",
+                  "filter": "drill-in",
+                  "fileReference": "/content/dam/exlm/drill-in-default.png",
+                  "fileReferenceAlt": "Drill In Image",
+                  "item": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Drill In Callout",
+                    "model": "drill-in-callout",
+                    "cardTitle": "Sample Card Title",
+                    "cardDescription": "Sample card description text goes here."
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Drill In Callout",
+          "id": "drill-in-callout",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Drill In Callout",
+                  "model": "drill-in-callout",
+                  "cardTitle": "Sample Card Title",
+                  "cardDescription": "Sample card description text goes here.",
+                  "positionX": "50",
+                  "positionY": "50"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Email Card",
           "id": "email-card",
           "plugins": {
@@ -711,6 +1000,103 @@
                 "template": {
                   "name": "Email Card",
                   "model": "email-card"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Events",
+          "id": "events",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "filter": "events",
+                  "name": "Events",
+                  "model": "events",
+                  "item1": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Event Card Item",
+                    "model": "event-item",
+                    "filter": "events",
+                    "tagText": "Summit Session",
+                    "dateText": "TUESDAY APRIL 21, 4:30 PDT",
+                    "eventTypeText": "LIVE",
+                    "title": "AI B2B Real Talk: From Use Case to Realized Value",
+                    "description": "Join us as we cut through the hype about AI and get real about what makes it work in modern B2B marketing. Presenters will share real examples to show what works and what doesn't.",
+                    "fileReference": "/content/dam/exlm/aim-featured-event-image.png",
+                    "fileReferenceAlt": "Featured Image",
+                    "cta1_Type": "primary",
+                    "cta1_customBgColor": "--spectrum-gray-700",
+                    "cta1_textColor": "white",
+                    "cta1_customBgHexCode": "000000",
+                    "cta1_linkText": "View event",
+                    "cta1_link": "http://experienceleague.adobe.com/"
+                  },
+                  "item2": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Event Card Item",
+                    "model": "event-item",
+                    "filter": "events",
+                    "tagText": "Summit Session",
+                    "dateText": "MONDAY APRIL 20, 11:30 AM PDT",
+                    "eventTypeText": "LIVE",
+                    "title": "AI to Activation: How Microsoft is Reimagining Marketing at Scale",
+                    "cta1_Type": "primary",
+                    "cta1_customBgColor": "--spectrum-gray-700",
+                    "cta1_textColor": "white",
+                    "cta1_customBgHexCode": "000000"
+                  },
+                  "item3": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Event Card Item",
+                    "model": "event-item",
+                    "filter": "events",
+                    "tagText": "AI forum",
+                    "dateText": "VARIOUS DATES",
+                    "eventTypeText": "LIVE",
+                    "title": "AI Forum Event Series: Discover What's Next for AI Marketing",
+                    "cta1_Type": "primary",
+                    "cta1_customBgColor": "--spectrum-gray-700",
+                    "cta1_textColor": "white",
+                    "cta1_customBgHexCode": "000000"
+                  },
+                  "item4": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Event Card Item",
+                    "model": "event-item",
+                    "filter": "events",
+                    "tagText": "Webinar",
+                    "dateText": "ON DEMAND",
+                    "eventTypeText": "ON DEMAND",
+                    "title": "AI Agents in AEP: An Overview",
+                    "cta1_Type": "primary",
+                    "cta1_customBgColor": "--spectrum-gray-700",
+                    "cta1_textColor": "white",
+                    "cta1_customBgHexCode": "000000"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Event Card Item",
+          "id": "event-item",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Event Card Item",
+                  "model": "event-item",
+                  "filter": "events",
+                  "cta1_Type": "primary",
+                  "cta1_customBgColor": "--spectrum-gray-700",
+                  "cta1_textColor": "white",
+                  "cta1_customBgHexCode": "000000"
                 }
               }
             }
@@ -794,6 +1180,83 @@
           }
         },
         {
+          "title": "Flip Card",
+          "id": "flip-card",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Flip Card",
+                  "model": "flip-card",
+                  "filter": "flip-card",
+                  "heading": "Flip Card Section",
+                  "headingType": "h2",
+                  "description": "Interactive flip cards with front and back content",
+                  "item1": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Flip Card Item",
+                    "model": "flip-card-item",
+                    "filter": "text",
+                    "frontTitle": "Front Title",
+                    "frontTitleType": "h3",
+                    "backTitle": "Back Title",
+                    "backTitleType": "h3",
+                    "frontContent": "<p>Front content of the flip card</p>",
+                    "backContent": "<p>Back content of the flip card</p>"
+                  },
+                  "item2": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Flip Card Item",
+                    "model": "flip-card-item",
+                    "filter": "text",
+                    "frontTitle": "Front Title",
+                    "frontTitleType": "h3",
+                    "backTitle": "Back Title",
+                    "backTitleType": "h3",
+                    "frontContent": "<p>Front content of the flip card</p>",
+                    "backContent": "<p>Back content of the flip card</p>"
+                  },
+                  "item3": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Flip Card Item",
+                    "model": "flip-card-item",
+                    "filter": "text",
+                    "frontTitle": "Front Title",
+                    "frontTitleType": "h3",
+                    "backTitle": "Back Title",
+                    "backTitleType": "h3",
+                    "frontContent": "<p>Front content of the flip card</p>",
+                    "backContent": "<p>Back content of the flip card</p>"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Flip Card Item",
+          "id": "flip-card-item",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Flip Card Item",
+                  "model": "flip-card-item",
+                  "filter": "text",
+                  "frontTitle": "Front Title",
+                  "frontTitleType": "h3",
+                  "backTitle": "Back Title",
+                  "backTitleType": "h3",
+                  "frontContent": "<p>Front content of the flip card</p>",
+                  "backContent": "<p>Back content of the flip card</p>"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Footer Breadcrumb",
           "id": "footer-breadcrumb",
           "plugins": {
@@ -832,7 +1295,98 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Footer Item",
-                  "model": "footer-item"
+                  "model": "footer-item",
+                  "filter": "text"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Grid Cards",
+          "id": "grid-cards",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Grid Cards",
+                  "model": "grid-cards",
+                  "filter": "grid-cards",
+                  "eyebrow": "Eyebrow Text",
+                  "title": "Grid Cards Title",
+                  "description": "Grid cards description text",
+                  "classes": "standard",
+                  "item1": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Grid Card",
+                    "model": "grid-card",
+                    "cardTitle": "Card Title",
+                    "cardDescription": "Card description text",
+                    "fileReference": "/content/dam/exlm/content-at-scale.png",
+                    "fileReferenceAlt": "Card image",
+                    "cta_Type": "secondary",
+                    "cta_linkText": "Learn More",
+                    "cta_link": "http://experienceleague.adobe.com/",
+                    "cta_customBgColor": "--spectrum-gray-700",
+                    "cta_textColor": "white",
+                    "cta_customBgHexCode": "000000"
+                  },
+                  "item2": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Grid Card",
+                    "model": "grid-card",
+                    "cardTitle": "Card Title",
+                    "cardDescription": "Card description text",
+                    "fileReference": "/content/dam/exlm/content-at-scale.png",
+                    "fileReferenceAlt": "Card image",
+                    "cta_Type": "secondary",
+                    "cta_linkText": "Learn More",
+                    "cta_link": "http://experienceleague.adobe.com/",
+                    "cta_customBgColor": "--spectrum-gray-700",
+                    "cta_textColor": "white",
+                    "cta_customBgHexCode": "000000"
+                  },
+                  "item3": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Grid Card",
+                    "model": "grid-card",
+                    "cardTitle": "Card Title",
+                    "cardDescription": "Card description text",
+                    "fileReference": "/content/dam/exlm/content-at-scale.png",
+                    "fileReferenceAlt": "Card image",
+                    "cta_Type": "secondary",
+                    "cta_linkText": "Learn More",
+                    "cta_link": "http://experienceleague.adobe.com/",
+                    "cta_customBgColor": "--spectrum-gray-700",
+                    "cta_textColor": "white",
+                    "cta_customBgHexCode": "000000"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Grid Card",
+          "id": "grid-card",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Grid Card",
+                  "model": "grid-card",
+                  "cardTitle": "Card Title",
+                  "cardDescription": "Card description text",
+                  "fileReference": "/content/dam/exlm/content-at-scale.png",
+                  "fileReferenceAlt": "Card image",
+                  "cta_Type": "secondary",
+                  "cta_linkText": "Learn More",
+                  "cta_link": "http://experienceleague.adobe.com/",
+                  "cta_customBgColor": "--spectrum-gray-700",
+                  "cta_textColor": "white",
+                  "cta_customBgHexCode": "000000"
                 }
               }
             }
@@ -959,6 +1513,21 @@
           }
         },
         {
+          "title": "Inprogress Courses",
+          "id": "inprogress-courses",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Inprogress Courses",
+                  "model": "inprogress-courses"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Language Selector",
           "id": "language-selector",
           "plugins": {
@@ -983,7 +1552,7 @@
                 "template": {
                   "name": "Marquee",
                   "model": "marquee",
-                  "classes": ["medium", "curved", "bg-spectrum-gray-700"],
+                  "classes": ["medium", "curved", "bg-spectrum-gray-700", "text-spectrum-gray-900"],
                   "fileReference": "/content/dam/exlm/en/images/subjects/Community_headshot_single.png",
                   "title": "Marquee Title",
                   "titleType": "h2",
@@ -1002,6 +1571,29 @@
           }
         },
         {
+          "title": "Marquee Video Full-Bleed",
+          "id": "marquee-video-full-bleed",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Marquee Video Full-Bleed",
+                  "model": "marquee-video-full-bleed",
+                  "title": "Your place for everything AI.",
+                  "description": "<p>Discover all the ways AI can empower you to do your best work. Dig into articles, hands-on learning, events, and more to level up your capabilities and double down on your impact.</p>",
+                  "primaryCta_Type": "primary",
+                  "primaryCta_linkText": "CTA lorem ipsum",
+                  "primaryCta_link": "#section-id",
+                  "secondaryCta_Type": "secondary",
+                  "secondaryCta_linkText": "Take the quiz",
+                  "secondaryCta_link": "#quiz"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Media",
           "id": "media",
           "plugins": {
@@ -1011,6 +1603,7 @@
                 "template": {
                   "name": "Media",
                   "model": "media",
+                  "filter": "text",
                   "fileReference": "/content/dam/exlm/Community_headshot_single.png",
                   "title": "Lorem ipsum",
                   "titleType": "h3",
@@ -1030,6 +1623,77 @@
           }
         },
         {
+          "title": "Media Panel",
+          "id": "media-panel",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Media Panel",
+                  "model": "media-panel",
+                  "filter": "media-panel",
+                  "fileReference": "/content/dam/exlm/en/images/subjects/media-panel-sub.png",
+                  "fileReferenceAlt": "Subject Image Description",
+                  "classes": ["left"],
+                  "eyebrow": "Featured",
+                  "title": "Media Panel Heading",
+                  "description": "<p>Add a short description here. This media panel supports left or right image alignment and an optional highlight card variant.</p>",
+                  "cta_linkText": "CTA Text",
+                  "cta_link": "http://experienceleague.adobe.com/",
+                  "cta_Type": "secondary",
+                  "cta_customBgColor": "--spectrum-gray-700",
+                  "cta_textColor": "white",
+                  "cta_customBgHexCode": "000000",
+                  "podcastCardHeading": "Podcast Card Heading",
+                  "podcastCardDescription": "Podcast Card Description"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Module",
+          "id": "module",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Module",
+                  "model": "module",
+                  "filter": "module",
+                  "item": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Step",
+                    "model": "step",
+                    "step_url": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Module Meta",
+          "id": "module-meta",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Module Meta",
+                  "model": "module-meta",
+                  "title": "Module Title",
+                  "description": "Module Description",
+                  "recap_url": "",
+                  "quiz_url": ""
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Nav",
           "id": "nav",
           "plugins": {
@@ -1038,7 +1702,8 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Nav",
-                  "model": "nav"
+                  "model": "nav",
+                  "filter": "text"
                 }
               }
             }
@@ -1053,7 +1718,9 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Note",
-                  "model": "note"
+                  "model": "note",
+                  "filter": "text",
+                  "classes": "note"
                 }
               }
             }
@@ -1187,6 +1854,85 @@
                 "template": {
                   "name": "Qualtrics",
                   "model": "qualtrics"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Question",
+          "id": "question",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Question",
+                  "model": "question",
+                  "filter": "text",
+                  "question": "Sample question text",
+                  "isMultipleChoice": false,
+                  "answers": "<ol><li>Answer 1</li><li>Answer 2</li><li>Answer 3</li></ol>",
+                  "correctAnswers": "1",
+                  "correctFeedback": "Your answer is correct",
+                  "incorrectFeedback": "Your answer is incorrect"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Quiz",
+          "id": "quiz",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Quiz",
+                  "model": "quiz",
+                  "filter": "quiz",
+                  "title": "Module Quiz",
+                  "titleType": "h2",
+                  "quizDescription": "<ul><li>End of module quizzes are pass/fail</li><li>A \"passing\" grade is based on a total score of 80%</li><li>Quizzes are not timed</li><li>You can retake quizzes as many times as necessary</li><li>Questions may be in the form of multiple choice, multi select, and ordering in bullet points</li></ul>",
+                  "pass-page-url": "",
+                  "fail-page-url": "",
+                  "item1": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Question",
+                    "model": "question",
+                    "filter": "text",
+                    "question": "Sample question text",
+                    "isMultipleChoice": false,
+                    "answers": "<ol><li>Answer 1</li><li>Answer 2</li><li>Answer 3</li></ol>",
+                    "correctAnswers": "1",
+                    "correctFeedback": "Your answer is correct",
+                    "incorrectFeedback": "Your answer is incorrect"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Quiz Scorecard",
+          "id": "quiz-scorecard",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Quiz Scorecard",
+                  "model": "quiz-scorecard",
+                  "resultText": "",
+                  "description": "",
+                  "classes": "pass",
+                  "cta1_Type": "",
+                  "cta1_linkText": "Back to Step 1",
+                  "cta1_link": "",
+                  "cta2_Type": "",
+                  "cta2_linkText": "Retake the quiz",
+                  "cta2_link": ""
                 }
               }
             }
@@ -1344,6 +2090,21 @@
           }
         },
         {
+          "title": "Slides",
+          "id": "slides",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Slides",
+                  "model": "slides"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Social",
           "id": "social",
           "plugins": {
@@ -1368,6 +2129,76 @@
                 "template": {
                   "name": "Social Share",
                   "model": "social-share"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Step",
+          "id": "step",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Step",
+                  "model": "step",
+                  "step_url": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Sticky Nav",
+          "id": "sticky-nav",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Sticky Nav",
+                  "model": "sticky-nav",
+                  "filter": "sticky-nav",
+                  "item1": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Sticky Nav Item",
+                    "model": "sticky-nav-item",
+                    "sectionId": "section-1",
+                    "navLabel": "Nav Item 1"
+                  },
+                  "item2": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Sticky Nav Item",
+                    "model": "sticky-nav-item",
+                    "sectionId": "section-2",
+                    "navLabel": "Nav Item 2"
+                  },
+                  "item3": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Sticky Nav Item",
+                    "model": "sticky-nav-item",
+                    "sectionId": "section-3",
+                    "navLabel": "Nav Item 3"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Sticky Nav Item",
+          "id": "sticky-nav-item",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Sticky Nav Item",
+                  "model": "sticky-nav-item",
+                  "sectionId": "",
+                  "navLabel": "Nav Item"
                 }
               }
             }
@@ -1406,6 +2237,7 @@
                     "name": "Tab",
                     "model": "tab",
                     "title": "Tab",
+                    "filter": "text",
                     "content": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
                   }
                 }
@@ -1424,6 +2256,7 @@
                   "name": "Tab",
                   "model": "tab",
                   "title": "Tab",
+                  "filter": "text",
                   "content": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
                 }
               }
@@ -1542,7 +2375,8 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Video Embed",
-                  "model": "video-embed"
+                  "model": "video-embed",
+                  "classes": "video-embed"
                 }
               }
             }

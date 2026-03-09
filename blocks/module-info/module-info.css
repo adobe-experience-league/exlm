@@ -1,0 +1,164 @@
+.module-info {
+  background-color: var(--spectrum-gray-100);
+  border-radius: 16px;
+  padding: 40px 64px;
+  border: 1px solid var(--non-spectrum-unicorn-silver);
+}
+
+.module-info .back-to-course {
+  display: flex;
+  align-items: center;
+  gap: var(--spectrum-spacing-75);
+  border: none;
+  border-radius: var(--spectrum-spacing-75);
+  margin-top: 0;
+  color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-75);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.module-info .back-to-course .icon {
+  width: 32px;
+  height: 32px;
+}
+
+.module-info .back-to-course .icon-collection-icon {
+  background-image: url('../../icons/collection-icon.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.module-info .back-to-course .icon-back-arrow {
+  background-image: url('../../icons/back-arrow.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  width: 18px;
+  height: 18px;
+  margin-right: var(--spectrum-spacing-75);
+}
+
+.module-info .back-to-course .back-to-course-label {
+  color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-100);
+  line-height: 1.25;
+  font-weight: var(--font-weight-bold);
+}
+
+/* Title */
+.module-info .module-title {
+  font-size: var(--spectrum-font-size-600);
+  color: var(--non-spectrum-dark-gray);
+  margin: 0;
+  line-height: 1.25;
+  flex: 1;
+  font-weight: var(--font-weight-bold);
+}
+
+/* Progress section */
+.module-info .progress-section {
+  margin-top: var(--spectrum-spacing-400);
+}
+
+.module-info .step-selector-container {
+  max-width: 311px;
+}
+
+.module-info .custom-filter-dropdown button {
+  width: 100%;
+  border: 1px solid var(--spectrum-gray-300);
+  border-radius: var(--spectrum-spacing-75);
+  background: var(--background-color);
+  font-size: var(--spectrum-font-size-100);
+  cursor: pointer;
+}
+
+.module-info .custom-filter-dropdown button > span:first-child {
+  color: var(--non-spectrum-dark-gray);
+  margin-right: 20px;
+}
+
+.module-info .custom-filter-dropdown button:hover {
+  border-color: var(--spectrum-blue-700);
+}
+
+.module-info .custom-filter-dropdown .icon-chevron {
+  width: var(--spectrum-spacing-200);
+  height: var(--spectrum-spacing-200);
+  color: var(--spectrum-gray-500);
+  transition: transform 0.2s ease;
+}
+
+.module-info .custom-filter-dropdown.open .icon-chevron {
+  transform: translateY(-50%) rotate(180deg);
+  margin-bottom: 10px;
+}
+
+.module-info .filter-dropdown-content {
+  border: 1px solid var(--spectrum-gray-300);
+  border-top: none;
+  border-radius: 0 0 var(--spectrum-spacing-75) var(--spectrum-spacing-75);
+  box-shadow: var(--box-shadow-2);
+}
+
+.module-info .custom-checkbox {
+  padding: var(--spectrum-spacing-100) var(--spectrum-spacing-200);
+  font-size: var(--spectrum-font-size-100);
+  color: var(--spectrum-gray-700);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.module-info .custom-checkbox:hover {
+  background: var(--spectrum-gray-100);
+}
+
+.module-info .custom-checkbox input[type='checkbox'] {
+  display: none;
+}
+
+.module-info .custom-checkbox label {
+  display: flex;
+  cursor: pointer;
+  width: 100%;
+}
+
+.module-info .custom-filter-dropdown .custom-checkbox .title {
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
+  line-height: var(--spectrum-line-height-s);
+}
+
+.module-info .custom-checkbox .title:hover {
+  color: var(--spectrum-blue-700);
+}
+
+/* Responsive design */
+@media (max-width: 900px) {
+  .module-info {
+    padding: var(--spectrum-spacing-600) var(--spectrum-spacing-400);
+  }
+
+  .module-info .module-content {
+    flex-direction: column;
+    gap: var(--spectrum-spacing-300);
+  }
+
+  .module-info .progress-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spectrum-spacing-300);
+  }
+
+  .module-info .step-selector-container {
+    width: 100%;
+  }
+
+  .module-info .module-title {
+    font-size: var(--spectrum-font-size-600);
+  }
+}

@@ -1,5 +1,5 @@
 .signup-dialog {
-  background: var(--highlight-light-background-color);
+  background: var(--spectrum-gray-100);
   border: 0;
   border-radius: 16px;
   box-shadow: 0 3px 24px rgb(0 0 0 / 16%);

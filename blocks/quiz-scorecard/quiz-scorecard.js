@@ -1,0 +1,103 @@
+import { decorateIcons } from '../../scripts/lib-franklin.js';
+import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import { getCurrentStepInfo } from '../../scripts/courses/course-utils.js';
+import { pushLinkClick } from '../../scripts/analytics/lib-analytics.js';
+
+/**
+ * Decorate the quiz scorecard block
+ * @param {Element} block The quiz scorecard block element
+ */
+export default async function decorate(block) {
+  // Fetch language placeholders
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+  // Extract properties using array destructuring
+  const [resultDiv, descriptionDiv, cta1Div, cta2Div] = [...block.children];
+
+  // Extract data from divs
+  const description = descriptionDiv?.textContent?.trim() || '';
+
+  // Clear the block content
+  block.textContent = '';
+
+  // Get score values from data attributes
+  const correctAnswers = block.dataset.correctAnswers || '0';
+  const totalQuestions = block.dataset.totalQuestions || '0';
+
+  // Prepare CTA HTML if needed
+  let ctaHTML = '';
+  if (block.classList.contains('fail')) {
+    const cta1Container = cta1Div.querySelector('div');
+    const cta2Container = cta2Div.querySelector('div');
+
+    // Add retake-quiz-button class
+    cta2Container.querySelector('a')?.classList.add('retake-quiz-button');
+
+    ctaHTML = `
+      <div class="quiz-scorecard-cta-container">
+        ${decorateCustomButtons(cta1Container, cta2Container)}
+      </div>
+    `;
+  }
+
+  // Create the entire scorecard structure using htmlToElement
+  const scorecardHTML = `
+    <div class="quiz-scorecard-container">
+      <div class="quiz-scorecard-icon-container">
+        <span class="icon icon-${block.classList.contains('pass') ? 'correct' : 'wrong'}"></span>
+      </div>
+      <div class="quiz-scorecard-content">
+        <div class="quiz-scorecard-text">${resultDiv.innerHTML || ''}</div>
+        <div class="quiz-scorecard-result">${
+          placeholders?.courseScorecardResult
+            ? `${placeholders?.courseScorecardResult.replace('{}', correctAnswers).replace('{}', totalQuestions)}`
+            : `${correctAnswers} out of ${totalQuestions} correct`
+        }</div>
+        <div class="quiz-scorecard-description">${description}</div>
+        ${ctaHTML}
+      </div>
+    </div>
+  `;
+
+  const scorecardElement = htmlToElement(scorecardHTML);
+  block.appendChild(scorecardElement);
+  decorateIcons(scorecardElement);
+
+  const retakeButton = scorecardElement.querySelector('.retake-quiz-button');
+  if (retakeButton) {
+    retakeButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.reload();
+    });
+  }
+
+  // Set href for "Back to step one" button
+  const backToStepOneButton = scorecardElement.querySelector(
+    '.quiz-scorecard-cta-container a:not(.retake-quiz-button)',
+  );
+  if (!backToStepOneButton) return;
+
+  // Fetch the first step URL and assign it to the href attribute
+  try {
+    getCurrentStepInfo().then((stepInfo) => {
+      const firstStepUrl = stepInfo?.moduleSteps?.[0]?.url;
+      if (firstStepUrl) {
+        backToStepOneButton.href = firstStepUrl;
+
+        // calling pushLinkClick explicitly
+        backToStepOneButton.addEventListener('click', (e) => {
+          pushLinkClick(e);
+        });
+      }
+    });
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error setting href for the first step:', error);
+  }
+}

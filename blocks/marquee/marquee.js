@@ -1,6 +1,8 @@
 /* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { getLocalizedVideoUrl } from '../../scripts/utils/video-utils.js';
+import { getPathDetails } from '../../scripts/scripts.js';
 
 const getDefaultEmbed = (url) => `
   <div class="video-frame" style="position: absolute; inset: 0; width: 100%; height: 100%;">
@@ -13,9 +15,17 @@ const getDefaultEmbed = (url) => `
       loading="lazy"></iframe>
   </div>`;
 
-function handleVideoLinks(videoLinkElems, block) {
-  videoLinkElems.forEach((videoLinkElem) => {
+async function handleVideoLinks(videoLinkElems, block, lang) {
+  const videoPromises = Array.from(videoLinkElems).map(async (videoLinkElem) => {
     const videoLink = videoLinkElem.getAttribute('href');
+    const locVideoLink = await getLocalizedVideoUrl(videoLink, lang);
+
+    return { videoLinkElem, locVideoLink };
+  });
+
+  const videoResults = await Promise.all(videoPromises);
+
+  videoResults.forEach(({ videoLinkElem, locVideoLink }) => {
     videoLinkElem.setAttribute('href', '#');
     videoLinkElem.removeAttribute('target');
 
@@ -44,7 +54,7 @@ function handleVideoLinks(videoLinkElems, block) {
       if (!modal.querySelector('iframe')) {
         const iframeContainer = document.createElement('div');
         iframeContainer.classList.add('iframe-container');
-        iframeContainer.innerHTML = `<iframe src="${videoLink}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+        iframeContainer.innerHTML = `<iframe src="${locVideoLink}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
         modal.append(iframeContainer);
       }
     });
@@ -74,6 +84,7 @@ function handleSigninLinks(block) {
 }
 
 export default async function decorate(block) {
+  const { lang = 'en' } = getPathDetails() || {};
   // Extract properties
   const allDivs = [...block.querySelectorAll(':scope div > div')];
   let customBgColor;
@@ -111,14 +122,38 @@ export default async function decorate(block) {
   const isLargeVariant = block.classList.contains('large');
   const marqueeVideoVariant = isVideoVariant && isLargeVariant && isStraightVariant;
   const bgColorCls = [...block.classList].find((cls) => cls.startsWith('bg-'));
-  const bgColor = bgColorCls ? `var(--${bgColorCls.substr(3)})` : `#${customBgColor?.textContent?.trim() || 'FFFFFF'}`;
+  const textColorCls = [...block.classList].find((cls) => cls.startsWith('text-'));
+
+  const customColor = customBgColor?.textContent?.trim() || '';
+  const colors = customColor
+    .split(',')
+    .map((c) => `#${c.trim()}`)
+    .filter(Boolean);
+
+  // Default background (non-gradient)
+  const bgColor = bgColorCls ? `var(--${bgColorCls.slice(3)})` : colors[0] || '#FFFFFF';
+  let gradientColor;
+  if (block.classList.contains('fill-gradient')) {
+    if (colors.length >= 2) {
+      const [first, second] = colors;
+      gradientColor = `linear-gradient(to right, ${first} 0%, ${first} 55%, ${second} 100%)`;
+    } else if (colors.length === 1) {
+      gradientColor = `${colors[0]}`;
+    } else {
+      gradientColor = bgColorCls ? `var(--${bgColorCls.slice(3)})` : '#FFFFFF';
+    }
+    block.style.backgroundColor = bgColor;
+    block.querySelector('img').style.background = gradientColor;
+  }
+
+  const textColor = textColorCls ? `var(--${textColorCls.substring(5)})` : `var(--spectrum-gray-900)`;
   const eyebrowText = eyebrow?.textContent?.trim() || '';
 
   // Build DOM
   const marqueeDOM = document.createRange().createContextualFragment(`
     <div class='marquee-content-container'>
     <div class='marquee-foreground'>
-      <div class='marquee-text'>
+      <div class='marquee-text' style="color: ${textColor}">
         ${eyebrowText !== '' ? `<div class='marquee-eyebrow'>${eyebrowText?.toUpperCase()}</div>` : ``}
         <div class='marquee-title'>${title.innerHTML}</div>
         <div class='marquee-long-description'>${longDescr.innerHTML}</div>
@@ -169,6 +204,7 @@ export default async function decorate(block) {
   block.append(marqueeDOM);
 
   if (isVideoVariant && videoUrl) {
+    const locVideoUrl = await getLocalizedVideoUrl(videoUrl, lang);
     const bgFillerEl = block.querySelector('.marquee-bg-filler');
     if (bgFillerEl) bgFillerEl.style.display = 'none';
 
@@ -177,7 +213,7 @@ export default async function decorate(block) {
 
     const embedWrapper = document.createElement('div');
     embedWrapper.style.backgroundColor = bgColor;
-    embedWrapper.innerHTML = getDefaultEmbed(videoUrl);
+    embedWrapper.innerHTML = getDefaultEmbed(locVideoUrl);
 
     bgContainer.appendChild(embedWrapper);
   } else if (subjectPicture) {
@@ -215,6 +251,6 @@ export default async function decorate(block) {
 
   if (isVideoLinkType) {
     const videoLinkElems = block.querySelectorAll('.marquee-cta > .video');
-    handleVideoLinks(videoLinkElems, block);
+    await handleVideoLinks(videoLinkElems, block, lang);
   }
 }

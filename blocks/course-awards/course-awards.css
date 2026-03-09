@@ -1,0 +1,71 @@
+.course-awards {
+  display: flex;
+  gap: 23px;
+  flex-wrap: wrap;
+}
+
+.course-awards .course-awards-card {
+  box-sizing: border-box;
+  padding: var(--spectrum-spacing-400);
+  padding-top: var(--spectrum-spacing-600);
+  background-color: var(--spectrum-gray-50);
+  border: 1px solid var(--non-spectrum-unicorn-silver);
+  border-radius: var(--spectrum-spacing-300);
+  max-width: 287px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spectrum-spacing-300);
+  min-height: 390px;
+}
+
+.course-awards .course-badge {
+  width: var(--spectrum-spacing-1100);
+  height: var(--spectrum-spacing-1100);
+  display: grid;
+  place-items: center;
+  border-radius: var(--spectrum-spacing-300);
+  background-color: var(--spectrum-gray-900);
+}
+
+.course-awards .course-badge .icon {
+  width: 35px;
+  height: 43px;
+}
+
+.course-awards .course-awards-card-title {
+  color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-400);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--spectrum-line-height-m);
+  margin: 0;
+}
+
+.course-awards .course-tag {
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  background-color: var(--non-spectrum-rose-red);
+  padding: var(--spectrum-spacing-100);
+  border-radius: var(--spectrum-spacing-100);
+  margin-bottom: var(--spectrum-spacing-300);
+}
+
+.course-awards .course-awards-card-footer {
+  margin-top: auto;
+}
+
+.course-awards .course-awards-card-timestamp {
+  color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.course-awards .course-awards-card-link.button.secondary {
+  width: 100%;
+  color: var(--non-spectrum-dark-gray);
+}

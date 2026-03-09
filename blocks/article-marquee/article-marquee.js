@@ -61,7 +61,9 @@ function createOptions(container, readTimeText) {
 
   const readTime = document.createElement('div');
   readTime.classList.add('article-marquee-read-time');
-  readTime.innerHTML = `<span class="icon icon-time"></span> <span>${readTimeText} ${placeholders.articleMarqueeReadTimeText}</span>`;
+  readTime.innerHTML = `<span class="icon icon-time"></span> <span>${
+    placeholders?.readingTime || 'Reading Time'
+  }: ${readTimeText}</span>`;
   decorateIcons(readTime);
 
   const options = document.createElement('div');
@@ -135,6 +137,7 @@ async function createBreadcrumb(container) {
             elem.setAttribute('href', getLink(fullCrumbPath));
           } else {
             elem = document.createElement('span');
+            elem.setAttribute('title', indexEntry.title);
           }
           elem.innerText = indexEntry.title;
           // append the a element

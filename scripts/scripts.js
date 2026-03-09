@@ -21,13 +21,21 @@ import {
   loadBlock,
 } from './lib-franklin.js';
 import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
+import isFeatureEnabled from './utils/feature-flag-utils.js';
 
 /**
  * please do not import any other modules here, as this file is used in the critical path.
  * Load files async using import() if you must.
  */
 
-const LCP_BLOCKS = ['video-embed', 'marquee', 'article-marquee', 'personalized-content-placeholder', 'atomic-search']; // add your LCP blocks to the list
+const LCP_BLOCKS = [
+  'video-embed',
+  'marquee',
+  'article-marquee',
+  'personalized-content-placeholder',
+  'atomic-search',
+  'slides',
+]; // add your LCP blocks to the list
 
 /**
  * load fonts.css and set a session storage flag
@@ -158,6 +166,11 @@ export const isPerspectivePage = matchesAnyTheme(/articles/);
 export const isProfilePage = matchesAnyTheme(/^profile.*/);
 export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
+export const isCourseStep = matchesAnyTheme(/course-step/);
+export const isOnDemandEventPage = matchesAnyTheme(/on-demand-event/);
+export const isLiveGradientBgPage = matchesAnyTheme(/page-bg-gradient/);
+
+export const isCertificatePage = () => !!document.querySelector('.course-completion'); // Checking for presence of course-completion block
 
 /**
  * add a section for the left rail when on a browse page.
@@ -216,6 +229,48 @@ function addMiniToc(main) {
 }
 
 /**
+ * Add module info block to course step pages.
+ * @param {HTMLElement} main
+ */
+function addModuleInfo(main) {
+  // Check if module-info block already exists
+  if (!main.querySelector('.module-info.block')) {
+    const moduleInfoSection = document.createElement('div');
+    moduleInfoSection.classList.add('module-info-section');
+    moduleInfoSection.append(buildBlock('module-info', []));
+    main.prepend(moduleInfoSection);
+  }
+}
+
+/**
+ * Add module navigation block to course step pages.
+ * @param {HTMLElement} main
+ */
+function addModuleNav(main) {
+  // Check if module-nav block already exists
+  if (!main.querySelector('.module-nav.block')) {
+    const moduleNavSection = document.createElement('div');
+    moduleNavSection.classList.add('module-nav-section');
+    moduleNavSection.append(buildBlock('module-nav', []));
+    main.append(moduleNavSection);
+  }
+}
+
+/**
+ * Add course breadcrumb block to course step pages.
+ * @param {HTMLElement} main
+ */
+function addCourseBreadcrumb(main) {
+  // Check if course-breadcrumb block already exists
+  if (!main.querySelector('.course-breadcrumb.block')) {
+    const courseBreadcrumbSection = document.createElement('div');
+    courseBreadcrumbSection.classList.add('course-breadcrumb-section');
+    courseBreadcrumbSection.append(buildBlock('course-breadcrumb', []));
+    main.prepend(courseBreadcrumbSection);
+  }
+}
+
+/**
  * Tabbed layout for Tab section
  * @param {HTMLElement} main
  */
@@ -269,16 +324,22 @@ function buildAutoBlocks(main, isFragment = false) {
       buildTabSection(main);
     }
     if (!isFragment) {
-      // if we are on a product browse page
+      // Determine page type and add appropriate blocks
       if (isBrowsePage) {
         addBrowseBreadCrumb(main);
         addBrowseRail(main);
-      }
-      if (isPerspectivePage) {
+      } else if (isPerspectivePage) {
         addMiniToc(main);
-      }
-      if (isProfilePage) {
+      } else if (isProfilePage) {
         addProfileRail(main);
+      } else if (isCourseStep) {
+        // if we are on a course step page
+        addModuleInfo(main);
+        addCourseBreadcrumb(main);
+        addModuleNav(main);
+      } else if (isCertificatePage()) {
+        // if we are on a certificate page
+        addCourseBreadcrumb(main);
       }
     }
   } catch (error) {
@@ -358,6 +419,29 @@ export const decorateLinks = (block) => {
 };
 
 /**
+ * Decorates links within sections marked with data-new-tab="true" to open in new tab
+ * @param {HTMLElement} main - The main container element
+ */
+export const decorateLinksWithinSection = (main) => {
+  const newTabSections = main.querySelectorAll('.section[data-new-tab="true"]');
+  if (newTabSections.length === 0) return;
+
+  newTabSections?.forEach((section) => {
+    const links = section.querySelectorAll('a');
+
+    links?.forEach((link) => {
+      const href = link.getAttribute('href');
+      if (href && !href.startsWith('#') && !link.hasAttribute('target')) {
+        link.setAttribute('target', '_blank');
+        if (link.hostname !== window.location.hostname) {
+          link.setAttribute('rel', 'noopener noreferrer');
+        }
+      }
+    });
+  });
+};
+
+/**
  * see: https://github.com/adobe-experience-league/exlm-converter/pull/208
  * @param {HTMLElement} main
  */
@@ -432,9 +516,7 @@ export function decorateInlineText(textNode) {
   if (textContent.includes('[') && textContent.includes(']{')) {
     const span = document.createElement('span');
     span.innerHTML = getDecoratedInlineHtml(textContent);
-    window.requestAnimationFrame(() => {
-      textNode.replaceWith(...span.childNodes);
-    });
+    textNode.replaceWith(...span.childNodes);
   }
 }
 
@@ -497,14 +579,22 @@ export function decoratePreviousImage(textNode) {
 export function decorateInlineAttributes(element) {
   const ignoredElements = ['pre', 'code', 'script', 'style'];
   const isParentIgnored = (node) => ignoredElements.includes(node?.parentElement?.tagName?.toLowerCase());
+
+  // Collect all text nodes first to avoid TreeWalker issues when DOM changes
+  const textNodes = [];
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, (node) =>
     isParentIgnored(node) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
   );
+
   while (walker.nextNode()) {
-    const { currentNode } = walker;
-    decorateInlineText(currentNode);
-    decoratePreviousImage(currentNode);
+    textNodes.push(walker.currentNode);
   }
+
+  // Process all collected text nodes
+  textNodes.forEach((textNode) => {
+    decorateInlineText(textNode);
+    decoratePreviousImage(textNode);
+  });
 }
 
 /**
@@ -558,15 +648,20 @@ export async function waitForLCPonMain(lcpBlocks) {
   document.body.style.display = null;
   const lcpCandidate = document.querySelector('main img');
   await new Promise((resolve) => {
-    if (lcpCandidate && lcpCandidate.src === 'about:error') {
-      resolve(); // error loading image
-    } else if (lcpCandidate && !lcpCandidate.complete) {
-      lcpCandidate.setAttribute('loading', 'eager');
-      lcpCandidate.addEventListener('load', resolve);
-      lcpCandidate.addEventListener('error', resolve);
-    } else {
+    if (!lcpCandidate || (lcpCandidate.complete && lcpCandidate.src === 'about:error')) {
       resolve();
     }
+
+    lcpCandidate.setAttribute('loading', 'eager');
+
+    // Firefox-safe path
+    if (lcpCandidate.decode) {
+      lcpCandidate.decode().then(resolve).catch(resolve); // decode rejects on error
+      return;
+    }
+
+    lcpCandidate.addEventListener('load', resolve, { once: true });
+    lcpCandidate.addEventListener('error', resolve, { once: true });
   });
 }
 
@@ -588,6 +683,7 @@ export function decorateMain(main, isFragment = false) {
   decorateSections(main);
   decorateBlocks(main);
   buildSectionBasedAutoBlocks(main);
+  decorateLinksWithinSection(main);
 }
 
 /**
@@ -627,54 +723,58 @@ export function getConfig() {
       env: 'PROD',
       cdn: 'experienceleague.adobe.com',
       authorUrl: 'author-p122525-e1219150.adobeaemcloud.com',
-      hlxPreview: 'main--exlm-prod--adobe-experience-league.hlx.page',
-      hlxLive: 'main--exlm-prod--adobe-experience-league.hlx.live',
+      hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).page$/,
+      hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities.adobe.com',
     },
     {
       env: 'STAGE',
       cdn: 'experienceleague-stage.adobe.com',
       authorUrl: 'author-p122525-e1219192.adobeaemcloud.com',
-      hlxPreview: 'main--exlm-stage--adobe-experience-league.hlx.page',
-      hlxLive: 'main--exlm-stage--adobe-experience-league.live',
-      community: 'experienceleaguecommunities-dev.adobe.com',
+      hlxPreview: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).page$/,
+      hlxLive: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).live$/,
+      community: 'experienceleaguecommunities-beta.adobe.com',
     },
     {
       env: 'DEV',
       cdn: 'experienceleague-dev.adobe.com',
       authorUrl: 'author-p122525-e1200861.adobeaemcloud.com',
-      hlxPreview: 'main--exlm--adobe-experience-league.hlx.page',
-      hlxLive: 'main--exlm--adobe-experience-league.hlx.live',
-      community: 'experienceleaguecommunities-dev.adobe.com',
+      hlxPreview: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).page$/,
+      hlxLive: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).live$/,
+      community: 'experienceleaguecommunities-beta.adobe.com',
     },
   ];
 
   const baseLocalesMap = new Map([
     ['de', 'de'],
-    ['en', 'en'],
-    ['ja', 'ja'],
     ['fr', 'fr'],
     ['es', 'es'],
-    ['pt-br', 'pt'],
-    ['ko', 'ko'],
   ]);
 
   const communityLangsMap = new Map([
     ...baseLocalesMap,
     ['sv', 'en'],
     ['nl', 'en'],
+    ['zh-hans', 'zh'],
+    ['zh-hant', 'zh'],
+    ['pt-br', 'pt'],
+    ['ja', 'ja'],
+    ['ko', 'ko'],
+    ['en', 'en'],
     ['it', 'en'],
-    ['zh-hans', 'en'],
-    ['zh-hant', 'en'],
   ]);
 
   const adobeAccountLangsMap = new Map([
     ...baseLocalesMap,
     ['sv', 'sv'],
     ['nl', 'nl'],
-    ['it', 'it'],
     ['zh-hant', 'zh-Hant'],
     ['zh-hans', 'zh-Hans'],
+    ['pt-br', 'pt'],
+    ['ja', 'ja'],
+    ['ko', 'ko'],
+    ['en', 'en'],
+    ['it', 'it'],
   ]);
   const cookieConsentName = 'OptanonConsent';
   const targetCriteriaIds = {
@@ -727,9 +827,9 @@ export function getConfig() {
     modalReDisplayDuration,
     cookieConsentName,
     targetCriteriaIds,
-    khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list`,
-    khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details`,
-    privacyScript: `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`,
+    quizPassingCriteria: 0.65, // 65% passing criteria for quizzes
+    khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list?platform=gainsight`,
+    khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`,
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `https://experienceleague.adobe.com/api/coveo-token?lang=${lang}`,
@@ -758,14 +858,15 @@ export function getConfig() {
       : `https://stage.account.adobe.com/?lang=${adobeAccountLang}`,
     // Community Account URL
     communityAccountURL: isProd
-      ? `https://experienceleaguecommunities.adobe.com/?profile.language=${communityLocale}`
-      : `https://experienceleaguecommunities-dev.adobe.com/?profile.language=${communityLocale}`,
+      ? `https://experienceleaguecommunities.adobe.com/?lang=${communityLocale}`
+      : `https://experienceleaguecommunities-beta.adobe.com/?lang=${communityLocale}`,
     interestsUrl: `${cdnOrigin}/api/interests?page_size=200&sort=Order`,
     // Param for localized Community Profile URL
-    localizedCommunityProfileParam: `?profile.language=${communityLocale}`,
-    communityTopicsUrl: isProd
-      ? `https://experienceleaguecommunities.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`
-      : `https://experienceleaguecommunities-dev.adobe.com//t5/custom/page/page-id/Community-TopicsPage?profile.language=${communityLocale}&topic=`,
+    localizedCommunityProfileParam: `?lang=${communityLocale}`,
+    // MPC API Base
+    mpcApiBase: `https://api.tv.adobe.com/videos`,
+    // Events Page URL
+    eventsURL: `${cdnOrigin}/${lang}/events`,
   };
   return window.exlm.config;
 }
@@ -780,7 +881,11 @@ function loadOneTrust() {
     window.location.host.split('.').length === 3 ? '' : '-test'
   }`;
   window.fedsConfig.privacy.footerLinkSelector = '.footer [href="#onetrust"]';
-  const { privacyScript } = getConfig();
+  const { isProd, cdnOrigin } = getConfig();
+  // @see: https://wiki.corp.adobe.com/display/adobedotcom/Privacy
+  const privacyScript = isProd
+    ? `${cdnOrigin}/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`
+    : `https://www.stage.adobe.com/etc.clientlibs/globalnav/clientlibs/base/privacy-standalone.js`;
   return loadScript(privacyScript, {
     async: true,
     defer: true,
@@ -821,6 +926,8 @@ export async function loadIms() {
       window.adobeid = {
         scope:
           'AdobeID,additional_info.company,additional_info.ownerOrg,avatar,openid,read_organizations,read_pc,session,account_cluster.read,pps.read',
+        autoValidateToken: true,
+        alwaysRemoveTokenFromUrl: true,
         locale: locales.get(document.querySelector('html').lang) || locales.get('en'),
         ...ims,
         onReady: () => {
@@ -840,13 +947,23 @@ const loadMartech = async (headerPromise, footerPromise) => {
   // start datalayer work early
   // eslint-disable-next-line import/no-cycle
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
-  libAnalyticsPromise.then((libAnalyticsModule) => {
-    const { pushPageDataLayer, pushLinkClick, pageName } = libAnalyticsModule;
+  libAnalyticsPromise.then(async (libAnalyticsModule) => {
+    const { pushPageDataLayer, pushLinkClick, setupComponentImpressions } = libAnalyticsModule;
     const { lang } = getPathDetails();
-    pushPageDataLayer(lang)
+
+    try {
+      await pushPageDataLayer(lang);
+      // Signal that analytics is ready and process queued events
+      const { signalReadyforAnalyticsEvents } = await import('./analytics/analytics-queue.js');
+      signalReadyforAnalyticsEvents();
+    } catch (e) {
       // eslint-disable-next-line no-console
-      .catch((e) => console.error('Error getting pageLoadModel:', e));
-    localStorage.setItem('prevPage', pageName(lang));
+      console.error('Error getting pageLoadModel:', e);
+    }
+
+    if (isFeatureEnabled('isComponentImpressionEnabled')) {
+      setupComponentImpressions();
+    }
 
     Promise.allSettled([headerPromise, footerPromise]).then(() => {
       const linkClicked = document.querySelectorAll('a,.view-more-less span, .language-selector-popover span');
@@ -866,8 +983,26 @@ const loadMartech = async (headerPromise, footerPromise) => {
     async: true,
   });
 
+  const footerRenderPromise = footerPromise.then(
+    () =>
+      new Promise((resolve) => {
+        if (document.querySelector('[href="#onetrust"]')) {
+          // Element exists - resolve immediately.
+          resolve();
+          return;
+        }
+
+        // Otherwise wait for footer-ready event
+        const handler = () => {
+          document.removeEventListener('footer-ready', handler);
+          resolve();
+        };
+        document.addEventListener('footer-ready', handler);
+      }),
+  );
+
   // footer and one trust loaded, add event listener to open one trust popup,
-  Promise.all([footerPromise, oneTrustPromise]).then(() => {
+  Promise.all([footerRenderPromise, oneTrustPromise]).then(() => {
     document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
       e.preventDefault();
       window.adobePrivacy.showConsentPopup();
@@ -890,14 +1025,33 @@ async function loadThemes() {
   return Promise.allSettled(themeNames.map((theme) => loadCSS(`${window.hlx.codeBasePath}/styles/theme/${theme}.css`)));
 }
 
+/** load and execute the default export of the given js module path */
+async function loadDefaultModule(jsPath) {
+  try {
+    const mod = await import(jsPath);
+    if (mod.default) await mod.default();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(`failed to load module for ${jsPath}`, error);
+  }
+}
+
 /**
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
  */
+
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
   const preMain = doc.body.querySelector(':scope > aside');
   loadIms(); // start it early, asyncronously
+
+  // Prefetch Coveo token early (non-blocking, parallel with blocks)
+  // All pages use Coveo for header search query suggestions
+  // Uses requestIdleCallback to avoid blocking - token ready before user interacts
+
+  loadDefaultModule('./data-service/coveo/coveo-token-prefetch.js');
+
   await loadThemes();
   if (preMain) await loadBlocks(preMain);
   await loadBlocks(main);
@@ -910,6 +1064,9 @@ async function loadLazy(doc) {
   // disable martech if martech=off is in the query string, this is used for testing ONLY
   if (window.location.search?.indexOf('martech=off') === -1) loadMartech(headerPromise, footerPromise);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
+  if (isLiveGradientBgPage) {
+    loadDefaultModule('./page-bg-gradient/page-bg-gradient.js');
+  }
   loadFonts();
 }
 
@@ -936,6 +1093,36 @@ export function createTag(tag, attributes, html) {
 }
 
 /**
+ * Enables image enlargement functionality for all picture elements on the page.
+ * Sets up click event listeners that load the image in a modal overlay.
+ */
+let imageModalLoader;
+
+async function loadImageModal() {
+  if (!imageModalLoader) {
+    imageModalLoader = Promise.all([
+      loadCSS(`${window.hlx.codeBasePath}/styles/image-modal.css`),
+      import('./image-modal.js'),
+    ]);
+  }
+  return imageModalLoader;
+}
+
+export function openImageModal() {
+  document.querySelectorAll('picture').forEach((picture) => {
+    picture?.setAttribute('modal', 'regular');
+
+    picture?.addEventListener('click', async () => {
+      const img = picture?.querySelector('img');
+      if (!img) return;
+
+      const [, mod] = await loadImageModal();
+      mod.default(img);
+    });
+  });
+}
+
+/**
  * Loads everything that happens a lot later,
  * without impacting the user experience.
  */
@@ -945,22 +1132,11 @@ function loadDelayed() {
   // load anything that can be postponed to the latest here
 }
 
-/** load and execute the default export of the given js module path */
-async function loadDefaultModule(jsPath) {
-  try {
-    const mod = await import(jsPath);
-    if (mod.default) await mod.default();
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(`failed to load module for ${jsPath}`, error);
-  }
-}
-
 /**
  * Custom - Loads the right and left rails for doc pages only.
  */
 async function loadRails() {
-  if (isDocPage) {
+  if (isDocPage || isOnDemandEventPage) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/rails/rails.css`);
     loadDefaultModule('./rails/rails.js');
   }
@@ -973,6 +1149,7 @@ export async function loadArticles() {
   if (isPerspectivePage) {
     loadCSS(`${window.hlx.codeBasePath}/scripts/articles/articles.css`);
     loadDefaultModule('./articles/articles.js');
+    openImageModal();
   }
 }
 
@@ -1010,7 +1187,7 @@ export async function fetchFragment(rePath, lang) {
 
 /** fetch fragment relative to /${lang}/global-fragments/ */
 export async function fetchGlobalFragment(metaName, fallback, lang) {
-  const fragmentPath = getMetadata(metaName) ?? fallback;
+  const fragmentPath = getMetadata(metaName) || fallback;
   const fragmentUrl = fragmentPath?.startsWith('/en/') ? fragmentPath.replace('/en/', `/${lang}/`) : fallback;
   const path = `${window.hlx.codeBasePath}${fragmentUrl}.plain.html`;
   const fallbackPath = `${window.hlx.codeBasePath}${fallback}.plain.html`;
@@ -1020,7 +1197,20 @@ export async function fetchGlobalFragment(metaName, fallback, lang) {
 
 /* fetch language specific placeholders, fallback to english */
 export async function fetchLanguagePlaceholders(lang) {
-  const langCode = lang || getPathDetails()?.lang || 'en';
+  const { communityHost } = getConfig();
+  const isCommunityDomain = window.location.origin.includes(communityHost);
+  const communityLang = new Map([
+    ['pt', 'pt-br'],
+    ['zh', 'zh-hans'],
+  ]);
+
+  const langCode =
+    lang ||
+    (isCommunityDomain
+      ? communityLang.get(document.documentElement.lang?.toLowerCase()) || document.documentElement.lang?.toLowerCase()
+      : getPathDetails()?.lang) ||
+    'en';
+
   try {
     // Try fetching placeholders with the specified language
     return await fetchPlaceholders(`${window.hlx.codeBasePath}/${langCode}`);
@@ -1112,12 +1302,25 @@ function formatPageMetaTags(inputString) {
     .map((part) => part.trim());
 }
 
+function decodeAemCqMetaTags() {
+  const cqTagsMeta = document.querySelector(`meta[name="cq-tags"]`);
+  if (cqTagsMeta) {
+    const segments = cqTagsMeta.content.split(', ');
+    const decodedCQTags = segments.map((segment) =>
+      segment
+        .split('/')
+        .map((part, index) => (index > 0 ? atob(part) : part))
+        .join('/'),
+    );
+    cqTagsMeta.content = decodedCQTags.join(', ');
+  }
+}
+
 function decodeAemPageMetaTags() {
   const solutionMeta = document.querySelector(`meta[name="coveo-solution"]`);
   const roleMeta = document.querySelector(`meta[name="role"]`);
   const levelMeta = document.querySelector(`meta[name="level"]`);
   const featureMeta = document.querySelector(`meta[name="feature"]`);
-  const cqTagsMeta = document.querySelector(`meta[name="cq-tags"]`);
 
   const solutions = solutionMeta ? formatPageMetaTags(solutionMeta.content) : [];
   const features = featureMeta ? formatPageMetaTags(featureMeta.content) : [];
@@ -1176,16 +1379,116 @@ function decodeAemPageMetaTags() {
   if (levelMeta) {
     levelMeta.content = decodedLevels.join(',');
   }
-  if (cqTagsMeta) {
-    const segments = cqTagsMeta.content.split(', ');
-    const decodedCQTags = segments.map((segment) =>
-      segment
-        .split('/')
-        .map((part, index) => (index > 0 ? atob(part) : part))
-        .join('/'),
-    );
-    cqTagsMeta.content = decodedCQTags.join(', ');
+}
+
+// HTML entity decoder utility
+function decodeHtmlEntities(str) {
+  if (!str || typeof str !== 'string') return str;
+
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = str;
+  return textarea.value;
+}
+
+export function setMetadata(name, content) {
+  const attr = name && name.includes(':') ? 'property' : 'name';
+  const existingMetaTags = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)];
+
+  if (existingMetaTags.length === 0) {
+    // Create a new meta tag if it doesn't exist
+    const newMetaTag = document.createElement('meta');
+    newMetaTag.setAttribute(attr, name);
+    newMetaTag.setAttribute('content', content);
+    document.head.appendChild(newMetaTag);
+  } else {
+    // Update existing meta tags
+    existingMetaTags.forEach((metaTag) => {
+      metaTag.content = content;
+    });
   }
+}
+
+/**
+ * Update TQ Tags metadata directly in meta tags
+ * @param {Document} document
+ */
+export function updateTQTagsForCoveo() {
+  const keyMapping = {
+    'tq-roles': 'role',
+    'tq-levels': 'level',
+    'tq-products': 'coveo-solution',
+    'tq-features': 'feature',
+    'tq-subfeatures': 'sub-feature',
+    'tq-industries': 'industry',
+    'tq-topics': 'topic',
+  };
+
+  Object.entries(keyMapping).forEach(([originalName, metaName]) => {
+    const metaTag = document.querySelector(`meta[name="${originalName}"]`);
+    if (!metaTag) return;
+
+    try {
+      const decoded = decodeHtmlEntities(metaTag.content);
+      const parsed = JSON.parse(decoded);
+
+      if (Array.isArray(parsed)) {
+        const separator = originalName === 'tq-products' ? ';' : ',';
+        const labels = [...new Set(parsed.map((item) => item.label?.trim()).filter(Boolean))].join(separator);
+
+        if (labels) {
+          setMetadata(metaName, labels);
+        }
+      }
+    } catch (e) {
+      console.error(`Failed to parse metadata for ${originalName}:`, e, metaTag);
+    }
+  });
+}
+
+/**
+ * Update TQ Tags metadata
+ * @param {Document} document
+ */
+export function updateTQTagsMetadata() {
+  const keysToUpdate = [
+    'tq-roles',
+    'tq-levels',
+    'tq-products',
+    'tq-features',
+    'tq-subfeatures',
+    'tq-industries',
+    'tq-topics',
+  ];
+
+  keysToUpdate.forEach((key) => {
+    const metaTag = getMetadata(key);
+    if (!metaTag) return;
+
+    try {
+      const decoded = decodeHtmlEntities(metaTag);
+      const parsed = JSON.parse(decoded);
+
+      if (Array.isArray(parsed)) {
+        const updatedTags = parsed
+          .map((item) => (item.uri && item.label ? `${item.uri}|${item.label}` : null))
+          .filter(Boolean)
+          .join(', ');
+        if (updatedTags) {
+          setMetadata(`${key}`, updatedTags);
+          // Extract labels (the part after |) and join by comma
+          const labels = updatedTags
+            .split(',')
+            .map((tag) => tag.split('|')[1]?.trim())
+            .filter(Boolean)
+            .join(', ');
+
+          setMetadata(`${key}-labels`, labels);
+        }
+      }
+    } catch (e) {
+      console.error(`Failed to parse metadata for ${key}:`, e);
+    }
+  });
 }
 
 /**
@@ -1196,6 +1499,10 @@ export async function fetchJson(url, fallbackUrl) {
     .then((response) => (!response.ok && fallbackUrl ? fetch(fallbackUrl) : response))
     .then((response) => (response.ok ? response.json() : null))
     .then((json) => json?.data || []);
+}
+
+export function xssSanitizeQueryParamValue(value) {
+  return value?.replace(/[^a-zA-Z0-9\s.]/g, '');
 }
 
 export function getCookie(cookieName) {
@@ -1298,6 +1605,8 @@ async function loadPage() {
 
   // For AEM Author mode, decode the tags value
   if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+    decodeAemCqMetaTags();
+    updateTQTagsMetadata();
     decodeAemPageMetaTags();
   }
 
@@ -1335,9 +1644,6 @@ async function loadPage() {
     } else {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
-        // Applying data-cs-mask for signed-in profile pages
-        document.body.setAttribute('data-cs-mask', '');
-
         loadPage();
         loadTarget(signedIn);
       } else {

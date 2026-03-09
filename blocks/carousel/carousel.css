@@ -1,5 +1,6 @@
 @import '../teaser/teaser.css';
 @import '../detailed-teaser/detailed-teaser.css';
+@import '../media/media.css';
 
 /* carousel wrapper stretches over complete width */
 .section div.carousel-wrapper {
@@ -29,7 +30,8 @@
 
 /* teaser inside carousel have same height and texts are centered */
 .carousel.block > .panel-container > .detailed-teaser.block,
-.carousel.block > .panel-container > .teaser.block {
+.carousel.block > .panel-container > .teaser.block,
+.carousel.block > .panel-container > .media.block {
   flex-shrink: 0;
   scroll-snap-align: start;
   height: auto;

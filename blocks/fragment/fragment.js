@@ -46,5 +46,8 @@ export default async function decorate(block) {
       block.closest('.section').classList.add(...fragmentSection.classList);
       block.closest('.fragment').replaceWith(...fragmentSection.childNodes);
     }
+  } else {
+    // Remove site-wide-banner
+    block.closest('aside')?.remove();
   }
 }

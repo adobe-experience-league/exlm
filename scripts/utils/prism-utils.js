@@ -17,7 +17,7 @@ export async function loadPrism(document) {
   window.PrismLoadPromise = import('../prism.js')
     .then(() => {
       // see: https://prismjs.com/plugins/autoloader/
-      window.Prism.plugins.autoloader.languages_path = '/scripts/prism-grammars/';
+      window.Prism.plugins.autoloader.languages_path = `${window.hlx.codeBasePath}/scripts/prism-grammars/`;
       // Insert button in toolbar
       window.Prism.plugins.toolbar.registerButton('toggle-wrap', (env) => {
         const button = document.createElement('button');

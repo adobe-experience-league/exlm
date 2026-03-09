@@ -5,8 +5,10 @@ import {
   getPathDetails,
   htmlToElement,
   fetchWithFallback,
+  xssSanitizeQueryParamValue,
 } from '../../scripts/scripts.js';
 import { newMultiSelect, newPagination, newShowHidePanel } from './dom-helpers.js';
+import { pushBrowseCardClickEvent } from '../../scripts/analytics/lib-analytics.js';
 
 const EXPERIENCE_LEVEL_PLACEHOLDERS = [
   {
@@ -178,9 +180,10 @@ const filterPlaylists = (playlists, filters) => {
  */
 function readFiltersFromUrl() {
   const url = new URL(window.location.href);
-  const solution = url.searchParams.getAll('solution');
-  const role = url.searchParams.getAll('role') || [];
-  const level = url.searchParams.getAll('level') || [];
+  const solution = url.searchParams.getAll('solution')?.map(xssSanitizeQueryParamValue);
+  const role = url.searchParams.getAll('role')?.map(xssSanitizeQueryParamValue) || [];
+  const level = url.searchParams.getAll('level')?.map(xssSanitizeQueryParamValue) || [];
+
   return { solution, role, level } || [];
 }
 
@@ -224,7 +227,30 @@ const updateCards = (filters) => {
 
     const onPageChange = (page, ps) => {
       cards.innerHTML = '';
-      ps.forEach((playlist) => cards.append(newPlaylistCard(playlist)));
+      ps.forEach((playlist, index) => {
+        const cardElement = newPlaylistCard(playlist);
+        cards.append(cardElement);
+
+        const block = cardElement.closest('.block');
+        const cardHeader = block?.getAttribute('data-block-name') || 'playlist-browse';
+        const cardPosition = String(index + 1);
+        const product = playlist.solution ? playlist.solution.split(',').map((s) => s.trim()) : [];
+
+        // Add click tracking
+        cardElement.addEventListener('click', () => {
+          pushBrowseCardClickEvent(
+            'browseCardClicked',
+            {
+              contentType: 'playlist',
+              viewLink: playlist.path,
+              title: playlist.title,
+              product,
+            },
+            cardHeader,
+            cardPosition,
+          );
+        });
+      });
       window.scrollTo({ top: 0 });
     };
 
