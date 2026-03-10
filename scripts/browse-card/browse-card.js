@@ -15,6 +15,7 @@ import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 const bookmarkExclusionContentypes = [
   CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
+  CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY,
   CONTENT_TYPES.COMMUNITY.MAPPING_KEY,
   CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
   CONTENT_TYPES['VIDEO CLIP'].MAPPING_KEY,
@@ -277,9 +278,11 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
     let icon = null;
     const isLeftPlacement = false;
     if (
-      [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
-        contentType?.toLowerCase(),
-      )
+      [
+        CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
+        CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY,
+        CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
+      ].includes(contentType?.toLowerCase())
     ) {
       icon = 'new-tab-blue';
     } else {
@@ -390,6 +393,7 @@ const buildCardContent = async (card, model, element) => {
 
   if (
     contentType === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY ||
+    contentType === CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY ||
     contentType === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY
   ) {
     buildEventContent({ event, contentType, cardContent, card });
@@ -646,6 +650,7 @@ export async function buildCard(element, model) {
         type === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
         type === CONTENT_TYPES.TUTORIAL.MAPPING_KEY ||
         type === CONTENT_TYPES.EVENT.MAPPING_KEY ||
+        type === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY ||
         type === CONTENT_TYPES['VIDEO CLIP'].MAPPING_KEY
       ) {
         const playButton = document.createElement('div');
@@ -773,9 +778,11 @@ export async function buildCard(element, model) {
       }
     });
     if (
-      [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
-        contentType?.toLowerCase(),
-      )
+      [
+        CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
+        CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY,
+        CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
+      ].includes(contentType?.toLowerCase())
     ) {
       cardContainer.setAttribute('target', '_blank');
     }
@@ -850,7 +857,11 @@ export async function buildCard(element, model) {
     });
   }
 
-  if (model.contentType?.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY && isFeatureEnabled('isEventsV2')) {
+  if (
+    (model.contentType?.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY ||
+      model.contentType?.toLowerCase() === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY) &&
+    isFeatureEnabled('isEventsV2')
+  ) {
     const cardElement = element.querySelector('.browse-card');
     // Dynamically import and use the on-demand events decorator
     getOnDemandEventsDecorator().then(({ decorateOnDemandEvents }) => {

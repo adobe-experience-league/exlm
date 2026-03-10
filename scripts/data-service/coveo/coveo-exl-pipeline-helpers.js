@@ -311,7 +311,21 @@ export async function exlPipelineCoveoDataAdaptor(params) {
     if (el_type) {
       contentType = el_type.trim();
     } else {
-      contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
+      const rawContentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
+      // Handle hierarchical content types like "Event;Event|On Demand Event" or "Event;Event|Upcoming Event"
+      if (rawContentType && rawContentType.includes(';') && rawContentType.includes('|')) {
+        // Split by semicolon first, then get the hierarchical part
+        const [, hierarchicalPart] = rawContentType.split(';');
+        if (hierarchicalPart && hierarchicalPart.includes('|')) {
+          const parts = hierarchicalPart.split('|').map(part => part.trim());
+          // Use the second part (specific type): "Event|On Demand Event" → "On Demand Event"
+          contentType = parts[1] || parts[0];
+        } else {
+          contentType = rawContentType;
+        }
+      } else {
+        contentType = rawContentType;
+      }
     }
     let products;
     if (el_solution) {

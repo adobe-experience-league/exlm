@@ -2,8 +2,23 @@ import { COMMUNITY_SEARCH_FACET } from '../../scripts/data-service/coveo/coveo-e
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
+
+
+// Event sub-facets for hierarchical filtering
+const EVENT_SEARCH_FACET = Object.freeze([
+  {
+    value: 'Event|On Demand Event',
+    state: 'selected',
+  },
+  {
+    value: 'Event|Upcoming Event',
+    state: 'selected',
+  },
+]);
+
 const SUB_FACET_MAP = {
   Community: COMMUNITY_SEARCH_FACET,
+  Event: EVENT_SEARCH_FACET,
 };
 
 let placeholders = {};
@@ -88,7 +103,7 @@ const contentTypes = [
   },
   {
     id: 'Event',
-    value: 'Event',
+    value: 'Event|On Demand Event',
     title: 'On-Demand Events',
     description: 'Recordings of learning and skill enablement events. Watch and learn from Adobe experts and peers.',
   },
@@ -119,7 +134,7 @@ const contentTypes = [
   },
   {
     id: 'Upcoming Event',
-    value: 'Upcoming Event',
+    value: 'Event|Upcoming Event',
     title: 'Upcoming Events',
     description: 'Virtual and in-person events focused on product education and skill development.',
   },
@@ -192,13 +207,13 @@ const authorTypes = [
 const eventTypes = [
   {
     id: 'Event',
-    value: 'event',
+    value: 'Event|On Demand Event',
     title: 'On-Demand Events',
     description: '',
   },
   {
     id: 'Upcoming-Event',
-    value: 'upcoming-event',
+    value: 'Event|Upcoming Event',
     title: 'Upcoming Events',
     description: 'Virtual and in-person events focused on product education and skill development.',
   },

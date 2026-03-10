@@ -45,7 +45,11 @@ export const CONTENT_TYPES = Object.freeze({
     LABEL: placeholders.browseCardTroubleshootingLabel || 'Troubleshooting',
   },
   EVENT: {
-    MAPPING_KEY: 'event',
+    MAPPING_KEY: 'on-demand-event',
+    LABEL: placeholders.browseCardEventLabel || 'On-Demand Event',
+  },
+  ON_DEMAND_EVENT: {
+    MAPPING_KEY: 'on-demand-event',
     LABEL: placeholders.browseCardEventLabel || 'On-Demand Event',
   },
   COMMUNITY: {
@@ -57,6 +61,10 @@ export const CONTENT_TYPES = Object.freeze({
     LABEL: placeholders.browseCardCertificationLabel || 'Certification',
   },
   UPCOMING_EVENT: {
+    MAPPING_KEY: 'upcoming-event',
+    LABEL: placeholders.browseCardUpcomingEventLabel || 'Upcoming Event',
+  },
+  UPCOMING_EVENT_V2: {
     MAPPING_KEY: 'upcoming-event',
     LABEL: placeholders.browseCardUpcomingEventLabel || 'Upcoming Event',
   },
@@ -77,3 +85,46 @@ export const CONTENT_TYPES = Object.freeze({
     LABEL: placeholders.browseCardCourseLabel || 'Course',
   },
 });
+
+/**
+ * Parses hierarchical Coveo content type values
+ * Handles: "Event|On Demand Event" -> "on-demand-event"
+ * Handles: "Event|Upcoming Event" -> "upcoming-event"
+ */
+export function parseContentType(contentTypeValue) {
+  if (!contentTypeValue || typeof contentTypeValue !== 'string') {
+    return '';
+  }
+
+  // Handle hierarchical format: "Event|On Demand Event" or "Event|Upcoming Event"
+  if (contentTypeValue.includes('|')) {
+    const parts = contentTypeValue.split('|');
+    const result = parts[parts.length - 1].trim().toLowerCase().replace(/\s+/g, '-');
+    // eslint-disable-next-line no-console
+    console.log('[parseContentType] Input:', contentTypeValue, '-> Output:', result);
+    return result;
+  }
+
+  // Backward compatibility: simple format
+  const result = contentTypeValue.trim().toLowerCase().replace(/\s+/g, '-');
+  // eslint-disable-next-line no-console
+  console.log('[parseContentType] Simple format Input:', contentTypeValue, '-> Output:', result);
+  return result;
+}
+
+/**
+ * Gets display value from hierarchical content type
+ * "Event|On Demand Event" -> "On Demand Event"
+ */
+export function getContentTypeDisplayValue(contentTypeValue) {
+  if (!contentTypeValue || typeof contentTypeValue !== 'string') {
+    return '';
+  }
+
+  if (contentTypeValue.includes('|')) {
+    const parts = contentTypeValue.split('|');
+    return parts[parts.length - 1].trim();
+  }
+
+  return contentTypeValue.trim();
+}
