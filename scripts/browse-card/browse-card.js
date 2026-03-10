@@ -13,7 +13,6 @@ import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import ALM_CONTENT_TYPES from '../data-service/alm/alm-constants.js';
 import isFeatureEnabled from '../utils/feature-flag-utils.js';
-import { buildALMCard } from './alm-browse-cards.js';
 
 const bookmarkExclusionContentypes = [
   CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
@@ -566,6 +565,7 @@ export async function buildCard(element, model) {
     contentType === ALM_CONTENT_TYPES.COURSE.MAPPING_KEY || contentType === ALM_CONTENT_TYPES.COHORT.MAPPING_KEY;
 
   if (isALMContent) {
+    const { buildALMCard } = await import('./alm-browse-cards.js');
     return buildALMCard(element, model);
   }
 
