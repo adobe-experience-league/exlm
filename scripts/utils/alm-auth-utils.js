@@ -1,9 +1,12 @@
-// eslint-disable-next-line import/no-cycle
-import { getConfig, loadIms } from '../scripts.js';
 import { setCookie, getCookie, deleteCookie } from './cookie-utils.js';
 
 const LEARNER_TOKEN_COOKIE = 'alm_access_token';
 const LEARNER_USER_ID_COOKIE = 'alm_user_id';
+
+/** Returns the ExL config object directly from window, avoiding a circular import with scripts.js */
+function getConfig() {
+  return window.exlm?.config || {};
+}
 
 export function setAlmAccessToken(token, expiresInSeconds = 86400) {
   if (token) setCookie(LEARNER_TOKEN_COOKIE, token, expiresInSeconds);
@@ -77,6 +80,7 @@ export function hasLearnerTokenCookie() {
 async function exchangeImsTokenForAlmToken(imsToken) {
   try {
     const { adobeIOAlmEndpoint } = getConfig();
+    if (!adobeIOAlmEndpoint) return false;
     const response = await fetch(adobeIOAlmEndpoint, {
       method: 'GET',
       headers: { Authorization: `Bearer ${imsToken}` },
@@ -90,48 +94,6 @@ async function exchangeImsTokenForAlmToken(imsToken) {
     const expiresIn = tokenResponse.expires_in || 86400;
     setAlmAccessToken(tokenResponse.access_token, expiresIn);
     if (tokenResponse.user_id) setAlmUserId(tokenResponse.user_id, expiresIn);
-
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
-
-/**
- * Fetches an anonymous learner token from the AIO endpoint.
- * @param {string|null} email
- * @returns {Promise<boolean>}
- */
-async function fetchAnonymousLearnerToken(email = null) {
-  try {
-    const { adobeIOAlmEndpoint } = getConfig();
-    const ioUrl = new URL(adobeIOAlmEndpoint);
-
-    if (email) {
-      ioUrl.searchParams.set('email', email);
-    } else {
-      ioUrl.searchParams.set('auth', 'false');
-    }
-
-    const response = await fetch(ioUrl.toString(), {
-      method: 'GET',
-      headers: { Accept: '*/*' },
-    });
-
-    if (!response.ok) throw new Error(`Anonymous auth failed: ${response.status}`);
-
-    const tokenResponse = await response.json();
-    if (!tokenResponse.access_token) return false;
-
-    const expiresIn = tokenResponse.expires_in || 86400;
-    setAlmAccessToken(tokenResponse.access_token, expiresIn);
-    if (tokenResponse.user_id) setAlmUserId(tokenResponse.user_id, expiresIn);
-
-    // Remove auth/email params from URL
-    const cleanUrl = new URL(window.location);
-    cleanUrl.searchParams.delete('auth');
-    cleanUrl.searchParams.delete('email');
-    window.history.replaceState({}, '', cleanUrl.toString());
 
     return true;
   } catch (error) {
@@ -161,20 +123,15 @@ export async function initializePremiumLearning(imsToken) {
 
 /**
  * Auth flow for Premium Learning application.
- * - Anonymous/email path: fetches anonymous token.
  * - Case B (cookie exists): validates cookie, returns true immediately.
  * - Case A (no cookie): exchanges IMS token via AIO.
  * @param {string|null} imsToken
- * @param {boolean} isAnonymous
- * @param {string|null} email
  * @returns {Promise<boolean>}
  */
-export async function runAuthFlow(imsToken, isAnonymous = false, email = null) {
+export async function runAuthFlow(imsToken) {
   try {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('error')) return false;
-
-    if (isAnonymous) return fetchAnonymousLearnerToken(email);
 
     // Case B: existing valid cookie — skip AIO call
     const existingToken = getAlmAccessToken();
@@ -197,25 +154,16 @@ export async function runAuthFlow(imsToken, isAnonymous = false, email = null) {
 
 /**
  * Main entry point for Premium Learning app authentication.
- * Reads URL params to decide anonymous vs IMS flow, then calls runAuthFlow.
+ * Exchanges IMS token via AIO for an ALM learner token.
  * @returns {Promise<boolean>}
  */
 export async function initializeAuthentication() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const authFlag = urlParams.get('auth');
-  const emailParam = urlParams.get('email');
-  const isAnonymous = authFlag === 'false' || emailParam !== null;
-
   let imsToken = null;
-  if (!isAnonymous) {
-    try {
-      await loadIms();
-      const isSignedIn = window?.adobeIMS?.isSignedInUser();
-      if (isSignedIn) imsToken = window.adobeIMS.getAccessToken()?.token || null;
-    } catch (e) {
-      // IMS init failed — proceed without token
-    }
+  try {
+    const isSignedIn = window?.adobeIMS?.isSignedInUser();
+    if (isSignedIn) imsToken = window.adobeIMS.getAccessToken()?.token || null;
+  } catch (e) {
+    // IMS not available — proceed without token
   }
-
-  return runAuthFlow(imsToken, isAnonymous, emailParam);
+  return runAuthFlow(imsToken);
 }

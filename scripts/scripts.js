@@ -23,9 +23,6 @@ import {
 import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
 import isFeatureEnabled from './utils/feature-flag-utils.js';
 
-// eslint-disable-next-line import/no-cycle
-import {initializeAuthentication} from './utils/alm-auth-utils.js' ;
-
 /**
  * please do not import any other modules here, as this file is used in the critical path.
  * Load files async using import() if you must.
@@ -728,8 +725,6 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities.adobe.com',
-      // To be added once get the Prod URL
-      adobeIOAlmEndpoint: '',
     },
     {
       env: 'STAGE',
@@ -738,8 +733,6 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-beta.adobe.com',
-      adobeIOAlmEndpoint:
-        'https://51837-570cornsilkbat-development.adobeioruntime.net/api/v1/web/alm/authentication',
     },
     {
       env: 'DEV',
@@ -748,8 +741,6 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-beta.adobe.com',
-      adobeIOAlmEndpoint:
-        'https://51837-570cornsilkbat-development.adobeioruntime.net/api/v1/web/alm/authentication',
     },
   ];
 
@@ -809,7 +800,7 @@ export function getConfig() {
   const isStage = currentEnv?.env === 'STAGE' || currentEnv?.authorUrl === 'author-p122525-e1219192.adobeaemcloud.com';
   // EXLM-4452 - Temporary solution to update the IMS configuration to Prod for Premium Learning site in the Dev environment.
   const urlParams = new URLSearchParams(window.location.search);
-  const isImsProd = !isProd && (urlParams?.get('ims') === 'prod' || sessionStorage.getItem('alm_access_token'));
+  const isImsProd = !isProd && urlParams?.get('ims') === 'prod';
 
   if (isImsProd) {
     isProd = true;
@@ -856,7 +847,9 @@ export function getConfig() {
       : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
     coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
     upcomingEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
-    adobeIOAlmEndpoint: currentEnv?.adobeIOAlmEndpoint || defaultEnv.adobeIOAlmEndpoint,
+    adobeIOAlmEndpoint: isProd
+      ? ''
+      : 'https://51837-570cornsilkbat-development.adobeioruntime.net/api/v1/web/alm/authentication',
     almApiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
@@ -1662,7 +1655,10 @@ async function loadPage() {
       if (signedIn) {
         loadPage();
         loadTarget(signedIn);
-        initializeAuthentication();
+        if (isFeatureEnabled('isPremiumLearningEnabled')) {
+          const { initializeAuthentication } = await import('./utils/alm-auth-utils.js');
+          await initializeAuthentication();
+        }
       } else {
         await window?.adobeIMS?.signIn();
       }

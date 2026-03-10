@@ -23,7 +23,9 @@ export function setCookie(name, value, expiresInSeconds = 86400) {
   const expires = new Date();
   expires.setTime(expires.getTime() + expiresInSeconds * 1000);
   const secure = window.location.protocol === 'https:' ? '; Secure' : '';
-  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires.toUTCString()}; path=/${secure}; SameSite=Lax`;
+  document.cookie = `${name}=${encodeURIComponent(
+    value,
+  )}; expires=${expires.toUTCString()}; path=/${secure}; SameSite=Lax`;
 }
 
 /**
