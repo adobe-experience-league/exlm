@@ -198,8 +198,8 @@ export default function decorate(block) {
       searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_status', {
         true: placeholders.searchResolvedLabel || 'Resolved',
         false: placeholders.searchUnresolvedLabel || 'Unresolved',
-        Solved: placeholders.searchResolvedLabel || 'Solved',
-        Unsolved: placeholders.searchUnresolvedLabel || 'Unsolved',
+        Solved: placeholders.searchResolvedLabel || 'Resolved',
+        UnSolved: placeholders.searchUnresolvedLabel || 'Unresolved',
       });
 
       searchInterface.i18n.addResourceBundle(languageCode, 'translation', {
