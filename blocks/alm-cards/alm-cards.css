@@ -2,7 +2,7 @@
 
 .alm-cards-no-results {
   background-color: var(--spectrum-gray-200);
-  color: var(--spectrum-gray-700);
+  color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-200);
   padding: 72px 0;
   text-align: center;
@@ -12,7 +12,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   border-radius: 20px;
   margin-top: 16px;
   padding-inline: 16px;
@@ -24,7 +24,7 @@
 }
 
 .alm-cards-no-results-description {
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 /* ALM Cards Block Header Styles */
@@ -37,6 +37,15 @@
 
 .alm-cards .alm-cards-hide-content {
   display: none;
+}
+
+.alm-cards .alm-cards-clear-search {
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: var(--spectrum-font-size-300);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.5;
+  color: #274dea;
 }
 
 .alm-cards.alm-cards-atomic-search .browse-cards-block-content,
@@ -62,6 +71,10 @@
 
 .alm-cards-block-cta a.button:any-link {
   margin-top: 0;
+  margin-bottom: 12px;
+  height: 40px;
+  background-color: var(--non-spectrum-navy-blue);
+  padding-block: 2px;
 }
 
 /* Desktop styles */

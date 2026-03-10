@@ -850,7 +850,7 @@ export function getConfig() {
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     alm: {
       apiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
-      oauthToken: 'bfbd1a1730d30842388a1a105fc67cf4', // OAuth token for ALM API (should be set via configuration)
+      oauthToken: 'c425d53c3782b7b335d488a14213af0a', // OAuth token for ALM API (should be set via configuration)
     },
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     articleUrl: `${cdnOrigin}/api/articles`,

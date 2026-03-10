@@ -1,5 +1,5 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { createTag, htmlToElement } from '../../scripts/scripts.js';
+import { createTag, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
@@ -97,6 +97,14 @@ function transformCoveoFacetsToAlmSearch(param, body) {
   return urlParams.toString();
 }
 
+const fragment = () => window.location.hash.slice(1);
+
+const updateHash = (filterCondition, joinWith = '&') => {
+  const currentHash = fragment();
+  const updatedParts = currentHash.split('&').filter(filterCondition);
+  window.location.hash = updatedParts.join(joinWith);
+};
+
 /**
  * Decorate function to process and log the mapped data for ALM cards.
  * @param {HTMLElement} block - The block of data to process.
@@ -133,6 +141,14 @@ export default async function decorate(block) {
   `;
   block.appendChild(headerDiv);
 
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
   const param = {
     contentType, // Can be string ('alm-course' or 'alm-cohort') or array (['alm-course', 'alm-cohort'])
     noOfResults,
@@ -141,10 +157,18 @@ export default async function decorate(block) {
   const buildCardsShimmer = new BrowseCardShimmer();
   buildCardsShimmer.addShimmer(block);
 
-  function renderNoResultsContent(blockElement) {
-    const headerNoResultText = 'No Premium Learning search results.';
-    const descriptionNoResultText =
+  function renderNoResultsContent(blockElement, searchText = '') {
+    const searchTextExists = searchText?.trim()?.length > 0;
+    const noSearchDescription =
+      placeholders.almCardsNoSearchDescription ||
       'Try searching for a specific product or role, or explore all Premium learning content.';
+    const searchDescription =
+      placeholders.almCardsSearchDescription || 'Try a different keyword, or explore all Premium Learning content.';
+    const noSearchHeader = placeholders.almCardsNoSearchHeader || 'No Premium Learning search results.';
+    const searchHeader = placeholders.almCardsSearchHeader || 'No Premium Learning search results for “{}”.';
+    const headerNoResultText = searchTextExists ? searchHeader.replace('{}', searchText) : noSearchHeader;
+    const descriptionNoResultText = searchTextExists ? searchDescription : noSearchDescription;
+    const clearSearchText = placeholders.almCardsClearSearchText || 'Clear search';
     const markup = `
       <div class="alm-cards-no-results">
         <div class="alm-cards-no-results-header">${headerNoResultText}</div>
@@ -152,15 +176,22 @@ export default async function decorate(block) {
         <div class="alm-cards-block-cta">
           ${decorateCustomButtons(ctaElement)}
         </div>
+        ${searchTextExists ? `<div class="alm-cards-clear-search">${clearSearchText}</div>` : ''}
       </div>
     `;
     const noResultsContent = htmlToElement(markup);
+    const clearBtn = noResultsContent.querySelector('.alm-cards-clear-search');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        updateHash((key) => !key.includes('q='), '&');
+      });
+    }
     blockElement.appendChild(noResultsContent);
   }
 
   function toggleNoResultsContent(blockElement, show) {
     if (show) {
-      renderNoResultsContent(blockElement);
+      renderNoResultsContent(blockElement, param.q);
       headerDiv.classList.add('alm-cards-hide-content');
     } else {
       const noResultsContent = blockElement.querySelector('.alm-cards-no-results');
