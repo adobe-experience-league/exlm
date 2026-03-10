@@ -257,7 +257,7 @@ function updateProgress(videoIndex, playlist, container) {
 }
 
 /**
- * Fetch playlist data from API
+ * Fetch data from API
  * @param {string} playlistId
  * @param {string} lang
  */
@@ -411,13 +411,8 @@ export default async function decorate(block) {
     return;
   }
 
-  // Create playlist instance
-  // Clear any old localStorage data for this playlist first
-  const playlistIdForStorage = window.location.pathname.split('/').join('-');
-  const localStorageKey = `playlist-${playlistIdForStorage}`;
-  localStorage.removeItem(localStorageKey);
-
-  const playlist = new Playlist();
+  // Create playlist instance with unique ID for localStorage
+  const playlist = new Playlist({ playlistId });
 
   // Create player container inside block
   const playerContainer = htmlToElement(`<div class="playlist-player-container" data-playlist-player-container></div>`);

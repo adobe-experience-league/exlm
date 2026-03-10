@@ -10,11 +10,9 @@
   --playlist-max-height: calc(100vh - 1em - var(--nav-height) - 1em);
   --playlist-header-size: var(--spectrum-font-size-500);
 
-  max-width: 1440px;
   margin: 0 auto;
   display: grid;
   gap: 1em;
-  padding: 1em;
   grid-template-columns: 1fr;
 }
 
