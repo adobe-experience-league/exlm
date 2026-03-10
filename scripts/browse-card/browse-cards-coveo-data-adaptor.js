@@ -103,10 +103,15 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
     }
     let products;
+
     if (el_solution) {
-      products = Array.isArray(el_solution) ? el_solution : el_solution.split(/,\s*/);
+      products = Array.isArray(el_solution)
+        ? el_solution.flatMap((item) => item.split(/,\s*/))
+        : el_solution.split(/,\s*/);
     } else if (el_product) {
-      products = Array.isArray(el_product) ? el_product : el_product.split(/,\s*/);
+      products = Array.isArray(el_product)
+        ? el_product.flatMap((item) => item.split(/,\s*/))
+        : el_product.split(/,\s*/);
     }
     const tags = createTags(result, contentType?.toLowerCase());
     let url = parentResult?.clickUri || parentResult?.uri || clickUri || uri || '';

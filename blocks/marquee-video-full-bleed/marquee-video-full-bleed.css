@@ -1,0 +1,207 @@
+main .section.marquee-video-full-bleed-container {
+  padding: 0;
+  overflow: hidden;
+}
+
+.section.marquee-video-full-bleed-container > div {
+  margin: 0;
+  max-width: 100%;
+}
+
+.marquee-video-full-bleed {
+  position: relative;
+  width: 100vw;
+}
+
+.marquee-video-full-bleed-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: flex-start;
+}
+
+.marquee-video-full-bleed.light .marquee-video-full-bleed-container {
+  background-color: var(--background-color);
+}
+
+.marquee-video-full-bleed.dark .marquee-video-full-bleed-container {
+  background-color: var(--text-color);
+}
+
+.marquee-video-full-bleed-content {
+  position: relative;
+  z-index: 3;
+  text-align: left;
+  padding: 40px;
+  margin: 0;
+}
+
+.marquee-video-full-bleed-title {
+  font-size: 36px;
+  font-weight: var(--font-weight-heavy);
+  line-height: 1.2;
+  margin: 0 0 24px;
+}
+
+.marquee-video-full-bleed-title h1 {
+  font-weight: var(--font-weight-heavy);
+}
+
+.marquee-video-full-bleed-description {
+  font-size: 18px;
+  line-height: 1.5;
+  margin: 0 0 32px;
+  font-weight: var(--font-weight-normal);
+}
+
+.marquee-video-full-bleed-cta {
+  display: flex;
+  gap: 24px;
+  flex-flow: column wrap;
+  align-items: stretch;
+}
+
+.marquee-video-full-bleed-cta a.button:any-link {
+  font-size: 19px;
+  line-height: 24px;
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+  width: 100%;
+}
+
+.marquee-video-full-bleed-image {
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+
+.marquee-video-full-bleed-image picture,
+.marquee-video-full-bleed-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.marquee-video-full-bleed-image img {
+  object-fit: contain;
+}
+
+.marquee-video-full-bleed-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: none;
+}
+
+.marquee-video-full-bleed-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Custom play/pause button */
+.marquee-video-full-bleed-play-pause {
+  position: absolute;
+  bottom: 20px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  margin-right: 20px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--non-spectrum-dark-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  padding: 0;
+}
+
+.marquee-video-full-bleed-play-pause svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.marquee-video-full-bleed-play-pause .play-icon {
+  transform: scale(0.8);
+  padding-left: 5px;
+}
+
+.marquee-video-full-bleed-play-pause .pause-icon {
+  transform: scale(1.4);
+}
+
+.marquee-video-full-bleed-play-pause:hover,
+.marquee-video-full-bleed-play-pause:focus {
+  background: var(--non-spectrum-dark-gray);
+}
+
+@media (min-width: 600px) {
+  .marquee-video-full-bleed-cta {
+    flex-direction: row;
+  }
+
+  .marquee-video-full-bleed-cta a.button:any-link {
+    width: auto;
+  }
+}
+
+@media (min-width: 1200px) {
+  .marquee-video-full-bleed-video {
+    display: block;
+  }
+
+  .marquee-video-full-bleed-image {
+    display: none;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .marquee-video-full-bleed-container {
+    aspect-ratio: 18 / 7;
+    background-color: transparent;
+  }
+
+  .marquee-video-full-bleed-content {
+    max-width: calc(100vw * 0.33);
+    position: absolute;
+    left: calc((100vw - 1200px) / 2 + 40px);
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: left;
+    padding: 0;
+  }
+
+  .marquee-video-full-bleed-title {
+    margin-bottom: 16px;
+  }
+
+  .marquee-video-full-bleed-title h1 {
+    font-size: 60px;
+  }
+
+  .marquee-video-full-bleed-description {
+    font-size: 20px;
+    margin-bottom: 32px;
+  }
+}
+
+/* Theme variations */
+.marquee-video-full-bleed.dark .marquee-video-full-bleed-title h1,
+.marquee-video-full-bleed.dark .marquee-video-full-bleed-description,
+.marquee-video-full-bleed.dark .marquee-video-full-bleed-cta a.button.secondary {
+  color: var(--spectrum-gray-50);
+}
+
+.marquee-video-full-bleed.light .marquee-video-full-bleed-title h1,
+.marquee-video-full-bleed.light .marquee-video-full-bleed-description,
+.marquee-video-full-bleed.light .marquee-video-full-bleed-cta a.button.secondary {
+  color: var(--non-spectrum-dark-gray);
+}
