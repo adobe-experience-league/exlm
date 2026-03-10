@@ -8,8 +8,6 @@ import {
   hasContentTypeFilter,
   updateHash,
   COMMUNITY_CONTENT_TYPES,
-  extractFacetName,
-  buildI18nResourceBundles,
 } from './atomic-search-utils.js';
 
 const MAX_FACETS_WITHOUT_EXPANSION = 5;
@@ -18,8 +16,6 @@ export default function atomicFacetHandler(block, placeholders) {
   let baseObserver;
   let resultTimerId;
   const baseElement = block.querySelector('atomic-facet');
-  const bundles = buildI18nResourceBundles(placeholders);
-
   const adjustChildElementsPosition = (facet, atomicElement) => {
     if (facet.dataset.childfacet === 'true') {
       const parentName = facet.dataset.parent;
@@ -361,7 +357,13 @@ export default function atomicFacetHandler(block, placeholders) {
       facet.part.add('facet-option');
       facet.dataset.updated = 'true';
       if (contentType.includes('|')) {
-        const { parentName, facetName } = extractFacetName(contentType);
+        const splitContent = contentType.split('|');
+        let parentName = splitContent[0];
+        const facetName = splitContent[1];
+        // Handle format like "Community;Community|Ideas" -> extract "Community" as parent
+        if (parentName.includes(';')) {
+          [parentName] = parentName.split(';');
+        }
         facet.dataset.parent = parentName;
         facet.dataset.childfacet = 'true';
         const spanElement = facet.querySelector('.value-label');
@@ -389,12 +391,7 @@ export default function atomicFacetHandler(block, placeholders) {
     }
   };
 
-  const getFacetValueFromDOM = (facet) => {
-    const labelEl = facet.querySelector('.value-label');
-    return labelEl?.title?.trim() || labelEl?.textContent?.trim() || '';
-  };
-
-  const handleAtomicFacetUI = (atomicFacet, forceUpdateUI = false) => {
+  const handleAtomicFacetUI = (atomicFacet) => {
     if (atomicFacet.getAttribute('id') === 'facetStatus') {
       // Hide the facetStatus if no filters are selected
       if (!hasContentTypeFilter()) {
@@ -411,16 +408,14 @@ export default function atomicFacetHandler(block, placeholders) {
     const parentWrapper = atomicFacet.shadowRoot.querySelector('[part="values"]');
     if (parentWrapper) {
       const facets = Array.from(parentWrapper.children);
-      const rawBundle = bundles[atomicFacet.field] || {};
-      const translationBundle = Object.fromEntries(Object.entries(rawBundle).map(([key, value]) => [value, key]));
       facets.forEach((facet) => {
         if (!facet.dataset.contenttype) {
-          const domValue = getFacetValueFromDOM(facet);
-          facet.dataset.contenttype = translationBundle[domValue] ?? domValue;
+          const contentType = facet.dataset.contenttype || facet.querySelector('.value-label').title || '';
+          facet.dataset.contenttype = contentType;
         }
       });
       facets.forEach((facet) => {
-        updateFacetUI(facet, atomicFacet, forceUpdateUI);
+        updateFacetUI(facet, atomicFacet, false);
       });
       sortFacetsInOrder(parentWrapper);
       facets.forEach((facet) => {
@@ -476,7 +471,7 @@ export default function atomicFacetHandler(block, placeholders) {
     resultTimerId = setTimeout(() => {
       const atomicFacets = document.querySelectorAll('atomic-facet');
       atomicFacets.forEach((atomicFacet) => {
-        handleAtomicFacetUI(atomicFacet, true);
+        handleAtomicFacetUI(atomicFacet);
         const shimmer = atomicFacet.shadowRoot.querySelector('.facet-shimmer');
         setTimeout(() => {
           shimmer?.part.remove('show-shimmer');
