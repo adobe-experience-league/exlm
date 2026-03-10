@@ -24,7 +24,16 @@ function getProductNamespace() {
 
 const brandConciergeConfig = {
   // destructured out in brand-concierge.js before forwarding to bootstrap().
-  stickySession: false,
+  stickyBehavior: true,
+
+  behavior: {
+    chatTranscript: {
+      enabled: true,
+      maxSessions: 1,
+      maxMessagesPerSession: 10,
+      cleanupInterval: 24,
+    },
+  },
 
   metadata: {
     brandName: 'Experience League',

@@ -97,8 +97,9 @@
   transform: translateX(0);
 }
 
+/* Page remains scrollable when the drawer is open. */
 body:has(#bc-dialog[open]) {
-  overflow: hidden;
+  overflow: auto;
 }
 
 #bc-dialog::backdrop {
