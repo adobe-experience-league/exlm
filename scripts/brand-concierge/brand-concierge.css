@@ -1,4 +1,20 @@
-/* ── Floating trigger button (FAB) ─── */
+/*
+ * Experience League — Brand Concierge overrides.
+ *
+ * !important is required in sections 2–3: BC injects a <style> inside <body>
+ * after our <head> <link>, giving BC document-order precedence at equal
+ * specificity. Section 1 (our shell) needs no !important.
+ *
+ * Sections:
+ *   1. DIALOG CHROME  — trigger button, <dialog> shell, and header.
+ *   2. BC OVERRIDES   — layout and visual adaptations for the drawer context.
+ *   3. BC BUG FIXES   — workarounds for known BC rendering bugs (TODOed).
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * 1. DIALOG CHROME
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
 #bc-trigger {
   position: fixed;
   bottom: 24px;
@@ -7,175 +23,359 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 20px;
-  background-color: var(--non-spectrum-navy-blue);
-  color: #fff;
-  border: none;
+  padding: 10px 18px;
+
+  /* gradient border: white padding-box fill, gradient visible through the
+   * transparent border. Requires a gradient (not a color) as the image layer
+   * so background-clip: padding-box applies correctly. */
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(to right, var(--bc-gradient-start), var(--bc-gradient-end)) border-box;
+  border: 2px solid transparent;
   border-radius: 100px;
+  color: var(--spectrum-gray-800);
   font-family: var(--body-font-family);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0 0 0 / 20%);
+  box-shadow: 0 2px 8px rgba(0 0 0 / 12%);
   transition:
-    background-color 0.2s ease,
     box-shadow 0.2s ease,
     transform 0.1s ease;
 }
 
 #bc-trigger:hover {
-  background-color: var(--non-spectrum-dark-navy-blue);
-  box-shadow: 0 6px 16px rgba(0 0 0 / 25%);
+  box-shadow: 0 6px 20px rgba(0 0 0 / 15%);
 }
 
 #bc-trigger:active {
   transform: scale(0.97);
 }
 
-#bc-trigger svg {
-  width: 18px;
-  height: 18px;
-  fill: currentcolor;
+#bc-trigger .icon {
+  display: flex;
+  align-items: center;
+  line-height: 0;
+}
+
+#bc-trigger img {
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
 }
 
-/* ── Dialog shell ─── */
-#bc-dialog {
-  position: fixed;
-  inset: auto 24px 88px auto;
-  margin: 0;
-  width: 560px;
-  max-width: calc(100vw - 48px);
+/* hide the FAB while the drawer is open — both anchor to the right edge. */
+#bc-trigger[aria-expanded='true'] {
+  display: none;
+}
 
-  /* Fixed height gives BC's internal flex layout and scroll container
-   * a stable reference. overflow:hidden lets BC manage its own scrolling. */
-  height: min(680px, calc(100vh - 104px));
+#bc-dialog {
+  /* defined here so it cascades to both .exl-bc-header and #brand-concierge-mount. */
+  --bc-dialog-header-height: 48px;
+
+  position: fixed;
+  inset: 0 0 0 auto;
+  margin: 0;
+  width: 420px;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh; /* overrides UA default of calc(100% - 6px - 2em) on <dialog> */
   padding: 0;
   border: none;
-  border-radius: 16px;
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0 0 0 / 20%);
+  box-shadow: -4px 0 24px rgba(0 0 0 / 15%);
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateX(100%);
   transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
+    opacity 0.25s ease,
+    transform 0.25s ease;
 }
 
 #bc-dialog[open] {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateX(0);
+}
+
+body:has(#bc-dialog[open]) {
+  overflow: hidden;
 }
 
 #bc-dialog::backdrop {
-  background: rgba(0 0 0 / 30%);
+  background: rgba(0 0 0 / 40%);
 }
 
-/* ── Close button ─── */
-.bc-dialog-close {
-  position: absolute !important;
-  top: 14px !important;
-  right: 14px !important;
-  z-index: 10 !important;
-  width: 32px !important;
-  height: 32px !important;
-  min-width: 32px !important;
-  padding: 0 !important;
+/* ── Dialog header ─────────────────────────────────────────────────────────
+ * prefixed exl-bc- to avoid colliding with BC's injected bc- class names.
+ * Using bc-dialog-header caused BC to inject padding: 40px onto this element. */
+.exl-bc-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--bc-dialog-header-height);
+  padding: 5px 20px;
+  border-bottom: 1px solid var(--spectrum-gray-200);
+  background: #fff;
+  flex-shrink: 0;
+}
+
+/* stylelint-disable-next-line no-descending-specificity -- distinct from #bc-trigger .icon */
+.exl-bc-header .icon {
+  display: flex;
+  align-items: center;
+  line-height: 0;
+}
+
+/* stylelint-disable-next-line no-descending-specificity -- distinct from #bc-trigger img */
+.exl-bc-header img {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.exl-bc-header-title {
+  flex: 1;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--spectrum-gray-800);
+}
+
+/* BC's globally-injected <style> bleeds onto buttons outside #brand-concierge-mount. */
+.exl-bc-header-close {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  background: rgba(255 255 255 / 90%) !important;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  padding: 0 !important;
+  background: none !important;
   border: none !important;
   border-radius: 50% !important;
   cursor: pointer !important;
   color: var(--spectrum-gray-700) !important;
-  box-shadow: 0 1px 4px rgba(0 0 0 / 15%) !important;
+  box-shadow: none !important;
   transition: background-color 0.15s ease !important;
 }
 
-.bc-dialog-close .icon {
+/* stylelint-disable-next-line no-descending-specificity -- distinct from #bc-trigger .icon */
+.exl-bc-header-close .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+/* stylelint-disable-next-line no-descending-specificity -- distinct from #bc-trigger img */
+.exl-bc-header-close img {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.exl-bc-header-close:hover {
+  background: var(--spectrum-gray-100) !important;
+}
+
+.exl-bc-header-close:focus-visible {
+  outline: 2px solid var(--non-spectrum-navy-blue);
+  outline-offset: 2px;
+}
+
+.exl-bc-header-close:focus:not(:focus-visible) {
+  outline: none;
+}
+
+#bc-dialog #brand-concierge-mount {
+  position: relative;
+  width: 100%;
+  height: calc(100% - var(--bc-dialog-header-height, 48px));
+  overflow: hidden;
+}
+
+#brand-concierge-mount .brand-concierge-flex-wrapper {
+  position: absolute !important;
+  inset: 0 !important;
   display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  line-height: 0 !important;
-}
-
-.bc-dialog-close img {
-  width: 16px !important;
-  height: 16px !important;
-  display: block !important;
-  flex-shrink: 0 !important;
-}
-
-.bc-dialog-close:hover {
+  flex-direction: column !important;
+  overflow: hidden !important;
   background: #fff !important;
 }
 
-/* Show focus ring only on keyboard navigation, not on click. */
-.bc-dialog-close:focus-visible {
-  outline: 2px solid var(--non-spectrum-navy-blue) !important;
-  outline-offset: 2px !important;
+#brand-concierge-mount .brand-concierge-container,
+#brand-concierge-mount .chat-interface {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  min-height: 0 !important;
+  background: #fff !important;
 }
 
-.bc-dialog-close:focus:not(:focus-visible) {
+#brand-concierge-mount .chat-interface {
+  position: relative !important;
+
+  --bc-input-overlay-height: 180px;
+}
+
+#brand-concierge-mount .chat-history {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  min-height: 0 !important;
+  padding-bottom: var(--bc-input-overlay-height) !important;
+}
+
+/* bc's .message-blocker renders its own scroll-fade; our ::after replaces it. */
+#brand-concierge-mount .message-blocker {
+  background: transparent !important;
+}
+
+#brand-concierge-mount .chat-interface::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--bc-input-overlay-height);
+  background: radial-gradient(
+      ellipse 60% 50% at 15% 100%,
+      color-mix(in srgb, var(--bc-gradient-start, #ff6a54) 30%, white) 0%,
+      transparent 100%
+    ),
+    radial-gradient(ellipse 80% 60% at 50% 100%, var(--bc-gradient-blue, #b5deff) 0%, transparent 100%),
+    linear-gradient(to bottom, transparent, color-mix(in srgb, var(--bc-gradient-end, #5d4ada) 15%, white));
+  pointer-events: none;
+  z-index: 5;
+}
+
+#brand-concierge-mount .input-section {
+  position: absolute !important;
+  inset: auto 0 0 !important;
+  z-index: 10 !important;
+  background: transparent !important;
+  padding: 96px 28px 28px !important;
+}
+
+/* bc's JS injects height:75px inline on the textarea on every render;
+ * max-height clips the container back to the intended single-line pill size. */
+#brand-concierge-mount .input-container {
+  align-items: center !important;
+  max-height: 56px !important;
+  overflow: hidden !important;
+  background: #fff !important;
+}
+
+#brand-concierge-mount .input-container:focus-within {
   outline: none !important;
+  border-color: var(--spectrum-gray-300) !important;
 }
 
-/* ── BC mount fills the full dialog ─── */
-#bc-dialog #brand-concierge-mount {
-  width: 100%;
-  height: 100%;
+#brand-concierge-mount .chat-input-wrapper {
+  max-height: 40px !important;
+  overflow: hidden !important;
 }
 
-/* ── Welcome screen ─── */
-#brand-concierge-mount .welcome-heading {
-  padding-top: 48px !important;
+/* height:36px overrides BC's dynamically injected inline style. */
+/* stylelint-disable-next-line selector-class-pattern -- BC internal BEM modifier */
+#brand-concierge-mount .chat-input--input {
+  height: 36px !important;
+  max-height: 36px !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  resize: none !important;
 }
 
-/* ── Welcome cards ─── */
-/* stylelint-disable-next-line selector-class-pattern -- BC internal BEM class */
+/* Voice is disabled; BC has no config flag for this. */
+#brand-concierge-mount .mic-button {
+  display: none !important;
+}
+
+/* ── BC internal class overrides ───────────────────────────────────────────
+ * stylelint-disable covers all BC BEM class names (bc-*) in this block. */
+/* stylelint-disable selector-class-pattern */
+
 #brand-concierge-mount .bc-card__image:empty {
   display: none !important;
 }
 
-/* stylelint-disable-next-line selector-class-pattern -- BC internal BEM class */
 #brand-concierge-mount .bc-card__text {
   white-space: normal !important;
   overflow: visible !important;
   text-overflow: unset !important;
 }
 
-/* ── Input field ─── */
-#brand-concierge-mount .chat-input {
-  flex: 1 1 0% !important;
-  min-width: 0 !important;
-  width: auto !important;
-}
-
-/* ── Prompt pills ─── */
 #brand-concierge-mount .prompt-pills-container {
-  gap: 8px !important;
+  gap: 6px !important;
 }
 
-#brand-concierge-mount .bc-prompt-pill-button {
+/* shared compact sizing for welcome pills and post-response suggestions. */
+#brand-concierge-mount .bc-prompt-pill-button,
+#brand-concierge-mount .bc-prompt-suggestion-button {
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 !important;
-  padding: 10px 14px !important;
+  gap: 8px !important;
+  padding: 8px 12px !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
   white-space: normal !important;
   overflow: visible !important;
   text-overflow: unset !important;
   text-align: left !important;
 }
 
-/* stylelint-disable-next-line selector-class-pattern -- BC internal BEM class */
+/* bc may set font-size directly on the text span; match the button value. */
 #brand-concierge-mount .bc-prompt-pill-button__text {
-  white-space: normal !important;
-  overflow: visible !important;
-  text-overflow: unset !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
 }
 
+#brand-concierge-mount .bc-response-footer {
+  border-top: 1px solid var(--spectrum-gray-200) !important;
+  margin-top: 12px !important;
+  padding-top: 12px !important;
+}
+
+/* stylelint-enable selector-class-pattern */
+
+/* ai responses are plain text — no card background, full available width. */
+#brand-concierge-mount .concierge-message,
+#brand-concierge-mount .concierge-message .message-content,
+#brand-concierge-mount .concierge-message .message-text {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+#brand-concierge-mount .concierge-message .message-content {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+/* bubble background requires dark text for contrast. */
+#brand-concierge-mount .user-message .message-text {
+  color: var(--spectrum-gray-800) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * 3. BC bug fixes
+ * BC sets width:0 on SVG icons inside certain buttons after state changes.
+ * TODO: remove once BC fixes the icon animation bug.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
 #brand-concierge-mount .submit-button {
+  flex-shrink: 0 !important;
+  width: 36px !important;
+  min-width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   background-color: var(--non-spectrum-navy-blue) !important;
 }
 

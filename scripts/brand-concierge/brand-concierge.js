@@ -3,14 +3,12 @@ import { getConfig } from '../scripts.js';
 import { loadScript, decorateIcon } from '../lib-franklin.js';
 import brandConciergeConfig from './brand-concierge-config.js';
 
-// Use a separate named instance to avoid conflicting with the alloy instance
-// already initialised by the ExL Launch DTM bundle (window.alloy).
+// separate alloy instance to avoid conflicting with the Launch-owned window.alloy.
 const ALLOY_INSTANCE_NAME = 'alloyBC';
 const MOUNT_SELECTOR = '#brand-concierge-mount';
 const DIALOG_ID = 'bc-dialog';
 const TRIGGER_ID = 'bc-trigger';
 
-// Only log in non-production environments to avoid console noise in prod.
 const isDev = !['experienceleague.adobe.com'].includes(window.location.hostname);
 // eslint-disable-next-line no-console
 const log = (...args) => isDev && console.log('[BC]', ...args);
@@ -19,55 +17,61 @@ const warn = (...args) => console.warn('[BC]', ...args);
 // eslint-disable-next-line no-console
 const error = (...args) => console.error('[BC]', ...args);
 
-// Holds a reference to the injected stylesheet so destroyBrandConcierge can
-// remove it and prevent a resource leak on SPA navigation.
+// reference held so destroyBrandConcierge can clean up on SPA navigation.
 let cssLinkEl = null;
 
 /**
- * Builds the BC shell: a fixed floating trigger button and a <dialog> that
- * contains the BC mount point. BC bootstraps inside the mount as normal;
- * the dialog is just a lightweight wrapper that handles open/close.
- *
- * Follows the same native <dialog> + showModal() pattern used elsewhere in
- * the ExL codebase (image-modal.js, signup-flow-dialog.js, etc.).
+ * builds and mounts the BC trigger button, dialog shell, and header.
+ * uses the native <dialog> + showModal() pattern (same as image-modal.js).
  */
 function createMountPoint() {
   if (document.getElementById(DIALOG_ID)) return;
 
-  // ── Floating trigger button ────────────────────────────────────────────
   const trigger = document.createElement('button');
   trigger.id = TRIGGER_ID;
   trigger.setAttribute('aria-label', 'Open AI assistant');
   trigger.setAttribute('aria-expanded', 'false');
   trigger.setAttribute('aria-controls', DIALOG_ID);
-  // Chat bubble icon (inline SVG, no external dependency)
-  trigger.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/>
-    </svg>
-    <span>Ask AI</span>`;
 
-  // ── Dialog shell ───────────────────────────────────────────────────────
+  const triggerIcon = document.createElement('span');
+  triggerIcon.className = 'icon icon-concierge-icon';
+  const triggerLabel = document.createElement('span');
+  triggerLabel.textContent = 'Ask';
+  trigger.append(triggerIcon, triggerLabel);
+  // decorateIcon() → <img> preserves the brand icon's fixed colours on hover.
+  decorateIcon(triggerIcon);
+
   const dialog = document.createElement('dialog');
   dialog.id = DIALOG_ID;
   dialog.setAttribute('aria-label', 'AI assistant');
 
+  const header = document.createElement('div');
+  header.className = 'exl-bc-header';
+
+  const headerIcon = document.createElement('span');
+  headerIcon.className = 'icon icon-concierge-icon';
+  decorateIcon(headerIcon);
+
+  const headerTitle = document.createElement('span');
+  headerTitle.className = 'exl-bc-header-title';
+  headerTitle.textContent = 'Concierge';
+
   const closeBtn = document.createElement('button');
-  closeBtn.className = 'bc-dialog-close';
+  closeBtn.className = 'exl-bc-header-close';
   closeBtn.setAttribute('aria-label', 'Close AI assistant');
-  closeBtn.setAttribute('aria-controls', DIALOG_ID);
   const closeIcon = document.createElement('span');
   closeIcon.className = 'icon icon-close';
   closeBtn.append(closeIcon);
   decorateIcon(closeIcon);
 
+  header.append(headerIcon, headerTitle, closeBtn);
+
   const mount = document.createElement('div');
   mount.id = 'brand-concierge-mount';
 
-  dialog.append(closeBtn, mount);
+  dialog.append(header, mount);
   document.body.append(trigger, dialog);
 
-  // ── Event wiring ───────────────────────────────────────────────────────
   trigger.addEventListener('click', () => {
     dialog.showModal();
     trigger.setAttribute('aria-expanded', 'true');
@@ -81,21 +85,18 @@ function createMountPoint() {
 
   closeBtn.addEventListener('click', closeDialog);
 
-  // Click on the backdrop (dialog itself, not its content) closes it.
   dialog.addEventListener('click', (e) => {
     if (e.target === dialog) closeDialog();
   });
 
-  // Sync aria-expanded when dialog is dismissed via Escape key.
   dialog.addEventListener('close', () => {
     trigger.setAttribute('aria-expanded', 'false');
   });
 }
 
 /**
- * Configures and initialises the AEP Web SDK (alloy) instance.
- * Both the configure() and the initial sendEvent() are awaited so the Edge
- * Network session is fully registered before the BC bootstrap call fires.
+ * configures the AEP Web SDK alloy instance and registers an Edge Network
+ * session before BC bootstrap fires.
  */
 async function configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain) {
   await window[ALLOY_INSTANCE_NAME]('configure', {
@@ -108,23 +109,15 @@ async function configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain) {
     thirdPartyCookiesEnabled: false,
   });
 
-  // Await the initial interact so the Edge Network session is registered and
-  // BC runtime can match the correct concierge for this surface before bootstrap.
   await window[ALLOY_INSTANCE_NAME]('sendEvent', {});
 }
 
-/**
- * Calls window.adobe.concierge.bootstrap() after the Web Client script has loaded.
- * `stickySession` is pulled from the config so it lives in one place.
- * The top-level `stickySession` key is stripped before passing the rest of the
- * config object as `stylingConfigurations`.
- */
+/** calls window.adobe.concierge.bootstrap() after the Web Client loads. */
 function bootstrapWebClient() {
   if (typeof window.adobe?.concierge?.bootstrap !== 'function') {
     warn('bootstrap not available — confirm the datastream is enabled for Brand Concierge');
     return;
   }
-  // Separate the bootstrap-level option from the styling payload.
   const { stickySession = false, ...stylingConfigurations } = brandConciergeConfig;
   log('bootstrap called', { instanceName: ALLOY_INSTANCE_NAME, selector: MOUNT_SELECTOR });
   window.adobe.concierge.bootstrap({
@@ -136,17 +129,12 @@ function bootstrapWebClient() {
 }
 
 /**
- * Injects the AEP Web SDK queue stub so alloy() calls made before
- * alloy.min.js finishes loading are queued and replayed automatically.
+ * injects the AEP Web SDK queue stub so alloy() calls before alloy.min.js
+ * loads are queued and replayed automatically.
  *
- * We intentionally REPLACE (not append to) window.__alloyNS so that when
- * the CDN alloy.min.js loads it only initialises our `alloyBC` instance.
- * Appending would cause alloy.min.js to also attempt to re-initialise the
- * Launch-owned `window.alloy` instance which has no `.q` queue and throws.
- *
- * Timing assumption: this function runs inside delayed.js, by which point the
- * Launch DTM bundle has fully initialised `window.alloy`. Replacing __alloyNS
- * is therefore safe — the freshly-loaded alloy.min.js only needs to set up `alloyBC`.
+ * Replaces (not appends to) window.__alloyNS — appending would cause the CDN
+ * alloy.min.js to re-initialise the Launch-owned window.alloy, which has no
+ * .q queue and throws.
  */
 function injectAlloyStub() {
   if (window[ALLOY_INSTANCE_NAME]) return;
@@ -162,12 +150,8 @@ function injectAlloyStub() {
 }
 
 /**
- * Removes the Brand Concierge dialog, trigger button, and stylesheet from the
- * DOM. Call this on client-side navigation to prevent the widget and its
- * styles from persisting across page transitions.
- *
- * Note: the alloyBC Web SDK instance does not expose a public destroy API and
- * will remain on window; only the UI elements are torn down here.
+ * removes the BC dialog, trigger, and stylesheet from the DOM.
+ * call on client-side navigation to prevent UI persistence across page transitions.
  */
 export function destroyBrandConcierge() {
   document.getElementById(DIALOG_ID)?.remove();
@@ -176,13 +160,6 @@ export function destroyBrandConcierge() {
   cssLinkEl = null;
 }
 
-/**
- * Brand Concierge integration entry point.
- * Loads the AEP Web SDK and BC Web Client, then bootstraps the chat UI.
- *
- * Called from scripts/delayed.js. Can also be imported directly:
- *   import { initBrandConcierge } from '../scripts/brand-concierge/brand-concierge.js';
- */
 export async function initBrandConcierge() {
   const { bcAlloySdkUrl, bcDatastreamId, bcOrgId, bcWebClientUrl, bcEdgeDomain } = getConfig();
 
@@ -200,9 +177,8 @@ export async function initBrandConcierge() {
     log('Web Client loaded — calling bootstrap');
     bootstrapWebClient();
 
-    // BC injects its own <style> inside #brand-concierge-mount during bootstrap().
-    // Appending our <link> to <head> after bootstrap() ensures it comes later in
-    // document order than BC's injected <style>, so our overrides win the cascade.
+    // append after bootstrap() so our <link> comes after BC's injected <style>
+    // in document order, giving our overrides cascading priority.
     cssLinkEl = document.createElement('link');
     cssLinkEl.rel = 'stylesheet';
     cssLinkEl.href = `${window.hlx.codeBasePath}/scripts/brand-concierge/brand-concierge.css`;
