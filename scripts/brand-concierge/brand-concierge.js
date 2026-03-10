@@ -118,8 +118,11 @@ function bootstrapWebClient() {
     warn('bootstrap not available — confirm the datastream is enabled for Brand Concierge');
     return;
   }
+
   const { stickySession = false, ...stylingConfigurations } = brandConciergeConfig;
+
   log('bootstrap called', { instanceName: ALLOY_INSTANCE_NAME, selector: MOUNT_SELECTOR });
+
   window.adobe.concierge.bootstrap({
     instanceName: ALLOY_INSTANCE_NAME,
     stylingConfigurations,
