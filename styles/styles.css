@@ -1071,6 +1071,14 @@ body[class^="browse-"] .browse-filters-full-container .browse-filters-one-pg-res
   display: none;
 }
 
+.glass-bg {
+  border: 2px solid rgb(255 255 255 / 60%);
+  background: rgb(255 255 255 / 50%);
+  box-shadow: 0 0 8px 0 rgb(0 0 0 / 25%);
+  backdrop-filter: blur(12px);
+}
+
+
 @media (min-width: 600px) {
   body[class^="browse-"] .browse-filters-full-container .browse-filters-pagination,
   body[class^="browse-"] .browse-filters-full-container .browse-filters-one-pg-result {
