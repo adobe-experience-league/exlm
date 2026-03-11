@@ -1,32 +1,5 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 
-.alm-cards-no-results {
-  background-color: var(--spectrum-gray-200);
-  color: var(--non-spectrum-dark-gray);
-  font-size: var(--spectrum-font-size-200);
-  padding: 72px 0;
-  text-align: center;
-  width: 100%;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  border-radius: 20px;
-  margin-top: 16px;
-  padding-inline: 16px;
-}
-
-.alm-cards-no-results-header {
-  font-size: var(--exlm-font-size-h3);
-  font-weight: var(--font-weight-bold);
-}
-
-.alm-cards-no-results-description {
-  margin-bottom: 12px;
-}
-
 /* ALM Cards Block Header Styles */
 .alm-cards-block .alm-cards-block-header {
   margin-top: 20px;
@@ -46,6 +19,24 @@
   font-weight: var(--font-weight-bold);
   line-height: 1.5;
   color: #274dea;
+}
+
+.alm-cards .alm-cards-no-results {
+  background-color: var(--spectrum-gray-200);
+  color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-200);
+  padding: 72px 0;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 20px;
+  margin-top: 16px;
+  padding-inline: 16px;
 }
 
 .alm-cards.alm-cards-atomic-search .browse-cards-block-content,
@@ -75,6 +66,15 @@
   height: 40px;
   background-color: var(--non-spectrum-navy-blue);
   padding-block: 2px;
+}
+
+.alm-cards .alm-cards-no-results-header {
+  font-size: var(--exlm-font-size-h3);
+  font-weight: var(--font-weight-bold);
+}
+
+.alm-cards .alm-cards-no-results-description {
+  margin-bottom: 12px;
 }
 
 /* Tablet styles */
