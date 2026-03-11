@@ -1679,8 +1679,8 @@ async function loadPage() {
   if (!window.hlx.aemRoot && !window.location.href.includes('.html') && isFeatureEnabled('isPremiumLearningEnabled')) {
     const signedIn = await isUserSignedIn();
     if (signedIn) {
-      const { initializeAuthentication } = await import('./utils/alm-auth-utils.js');
-      initializeAuthentication();
+      const initializeAuthentication = await import('./utils/alm-auth-utils.js');
+      await initializeAuthentication();
     }
   }
 

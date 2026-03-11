@@ -44,7 +44,7 @@ async function isTokenValid(token) {
  * Stores the result in cookies.
  * @param {string} imsToken
  */
-async function exchangeImsTokenForAlmToken(imsToken) {
+async function retriveAlmToken(imsToken) {
   try {
     const { adobeIOAlmEndpoint } = getConfig();
     if (!adobeIOAlmEndpoint) return;
@@ -74,7 +74,6 @@ async function exchangeImsTokenForAlmToken(imsToken) {
  * Validates the existing ALM cookie. Clears auth data if invalid.
  * @returns {Promise<boolean>} true if a valid cookie exists
  */
-
 async function validateExistingToken() {
   const existingToken = getCookie(LEARNER_TOKEN_COOKIE);
   if (!existingToken) return false;
@@ -83,14 +82,16 @@ async function validateExistingToken() {
   return isValid;
 }
 
-// Processes the ALM authentication flow for the Premium Learning application.
-
-export async function processAlmAuthFlow(imsToken) {
+/**
+ * Processes the ALM authentication flow for the Premium Learning application.
+ * @param {string} imsToken
+ */
+async function processAlmAuthFlow(imsToken) {
   try {
     // existing valid cookie — skip AIO call
     if (await validateExistingToken()) return;
     // exchange IMS token
-    if (imsToken) exchangeImsTokenForAlmToken(imsToken);
+    if (imsToken) await retriveAlmToken(imsToken);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Authentication initialization failed:', err);
@@ -101,8 +102,7 @@ export async function processAlmAuthFlow(imsToken) {
  * Main entry point for Premium Learning app authentication.
  * Called only for signed-in users — retrieves IMS token and processes ALM auth flow.
  */
-
-export async function initializeAuthentication() {
+export default async function initializeAuthentication() {
   const imsToken = window.adobeIMS.getAccessToken()?.token || null;
-  processAlmAuthFlow(imsToken);
+  await processAlmAuthFlow(imsToken);
 }
