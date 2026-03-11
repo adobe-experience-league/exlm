@@ -2458,7 +2458,6 @@
         "label": "Block options",
         "valueType": "string",
         "required": true,
-        "maxSize": 1,
         "options": [
           {
             "name": "Theme",
@@ -9651,7 +9650,6 @@
         "label": "Style",
         "description": "Sets the style variant for the grid cards.",
         "valueType": "string",
-        "maxSize": 1,
         "options": [
           {
             "name": "Standard Card Variant",
