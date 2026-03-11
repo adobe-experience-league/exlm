@@ -31,8 +31,9 @@ function isSameInteger(a, b) {
 function updateQueryStringParameter(key, value) {
   if (value < 0) return;
   const url = new URL(window.location.href);
+
   // do not update if same value
-  if (url.searchParams.get(key) === value) return;
+  if (url.searchParams.get(key) === String(value)) return;
   if (value === undefined || value === null) {
     url.searchParams.delete(key);
     window.history.pushState({ [key]: 0 }, '', url);
@@ -42,17 +43,17 @@ function updateQueryStringParameter(key, value) {
   }
 }
 
-function updateVideoIndexParam(activeIndex) {
+function updateVideoIndexParam(activeIndex, param) {
   const url = new URL(window.location.href);
-  const currentVideoIndexParam = url.searchParams.get('video');
+  const currentVideoIndexParam = url.searchParams.get(param);
   if (isSameInteger(currentVideoIndexParam, activeIndex)) return;
 
   // if the active index is 0, remove the video query param
   if (isSameInteger(activeIndex, 0)) {
-    updateQueryStringParameter('video', null);
+    updateQueryStringParameter(param, null);
   } else {
     // if the active index is not 0, update the video query param
-    updateQueryStringParameter('video', activeIndex);
+    updateQueryStringParameter(param, activeIndex);
   }
 }
 
@@ -283,7 +284,7 @@ async function fetchPlaylistData(playlistId, lang) {
  * @param {Object} apiData
  */
 function transformApiDataToPlaylistItems(apiData) {
-  if (!apiData || !apiData.data || !apiData.data.videos) {
+  if (!apiData?.data?.videos) {
     return [];
   }
 
@@ -425,6 +426,11 @@ export default async function decorate(block) {
   const playlistWrapper = htmlToElement(`<div class="playlist-wrapper"><div class="playlist"></div></div>`);
   const playlistDiv = playlistWrapper.querySelector('.playlist');
 
+  // determine query param for this playlist
+  const allPlaylistBlocks = [...document.querySelectorAll('.block.playlist-v2')];
+  const playlistIndex = allPlaylistBlocks.indexOf(block);
+  const videoParam = allPlaylistBlocks.length === 1 ? 'video' : `video${playlistIndex + 1}`;
+
   // Setup playlist change handler
   playlist.onVideoChange((videos, vIndex) => {
     const currentVideo = videos[vIndex];
@@ -433,12 +439,12 @@ export default async function decorate(block) {
     el.classList.toggle('active', active);
     if (active && activeStatusChanged) itemsContainer.scrollTop = el.offsetTop - el.clientHeight / 2;
     updatePlayer(playlist, playerContainer);
-    updateVideoIndexParam(playlist.getActiveVideoIndex());
+    updateVideoIndexParam(playlist.getActiveVideoIndex(), videoParam);
     updateProgress(vIndex, playlist, block);
     return true;
   });
 
-  const activeVideoIndex = getQueryStringParameter('video') || 0;
+  const activeVideoIndex = getQueryStringParameter(videoParam) || 0;
 
   // Get playlist title and description from API data
   const playlistTitle = apiData.data?.title || '';
@@ -474,12 +480,9 @@ export default async function decorate(block) {
   playlist.activateVideoByIndex(activeVideoIndex);
 
   // handle browser back within history changes
-  window.addEventListener('popstate', (event) => {
-    if (event.state?.video) {
-      playlist.activateVideoByIndex(event.state.video);
-    } else if (!event.state) {
-      playlist.activateVideoByIndex(0);
-    }
+  window.addEventListener('popstate', () => {
+    const index = getQueryStringParameter(videoParam) || 0;
+    playlist.activateVideoByIndex(index);
   });
 
   // if the url contains "redirected" query param, show a toast message and remove the query param.
