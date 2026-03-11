@@ -100,7 +100,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     if (el_type) {
       contentType = el_type.trim();
     } else {
-      contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
+      contentType = Array.isArray(el_contenttype) ? el_contenttype[1]?.trim() : el_contenttype?.trim();
     }
     let products;
 
