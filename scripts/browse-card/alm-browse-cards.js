@@ -114,7 +114,7 @@ function buildALMThumbnail({
     id: bookmarkId,
     bookmarkPath: bookmarkId,
     link: copyLink,
-    bookmarkConfig: { icons: ['bookmark-white-fill'] },
+    bookmarkConfig: false,
     copyConfig: { icons: ['copy-white-fill'] },
   });
 
