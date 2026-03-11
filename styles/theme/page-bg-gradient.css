@@ -12,22 +12,29 @@
 
 /* Layer 1 — Base Linear Gradient */
 .page-bg-gradient main {
+  position: relative;
   background: var(--lg-base-bg);
 }
 
 /* Layer 2 — Circles Wrapper */
 .page-bg-gradient .gradient-layer {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  z-index: -3;
+  z-index: 0;
+  overflow: hidden;
   pointer-events: none;
+}
+
+.page-bg-gradient main > :not(.gradient-layer) {
+  position: relative;
+  z-index: 1;
 }
 
 /* Shared circle styles */
 .page-bg-gradient .gradient-layer > .gradient-circle {
-  position: fixed;
-  width: 60vw;
-  height: 60vw;
+  position: absolute;
+  width: 1755px;
+  height: 1756px;
   border-radius: 50%;
   pointer-events: none;
   will-change: transform;
