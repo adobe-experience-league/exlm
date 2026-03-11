@@ -5,7 +5,7 @@ import loadJWT from './jwt.js';
 import csrf from './csrf.js';
 import { getMetadata } from '../lib-franklin.js';
 import fetchStaleWhileRevalidate from './fetch-stale-while-revalidate.js';
-import isFeatureEnabled from '../utils/feature-flag-utils.js';
+import { deleteCookie } from '../utils/cookie-utils.js';
 
 // NOTE: to keep this viatl utility small, please do not increase the number of imports or use dynamic imports when needed.
 
@@ -30,14 +30,11 @@ export async function isSignedInUser() {
  * @see: https://wiki.corp.adobe.com/display/ims/IMS+API+-+logout#IMSApi-logout-signout_options
  */
 export async function signOut() {
-  if (isFeatureEnabled('isPremiumLearningEnabled')) {
-    const { clearAllAlmAuthData } = await import('../utils/alm-auth-utils.js');
-    clearAllAlmAuthData();
-  }
-
   ['JWT', 'coveoToken', 'exl-profile', 'attributes', 'profile', 'pps-profile'].forEach((key) =>
     sessionStorage.removeItem(key),
   );
+
+  ['alm_access_token', 'alm_user_id'].forEach((cookie) => deleteCookie(cookie));
 
   // Clear all cache entries from both sessionStorage and localStorage
   Object.keys(sessionStorage).forEach((key) => {

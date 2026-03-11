@@ -1651,10 +1651,6 @@ async function loadPage() {
       if (signedIn) {
         loadPage();
         loadTarget(signedIn);
-        if (isFeatureEnabled('isPremiumLearningEnabled')) {
-          const { initializeAuthentication } = await import('./utils/alm-auth-utils.js');
-          await initializeAuthentication();
-        }
       } else {
         await window?.adobeIMS?.signIn();
       }
@@ -1677,6 +1673,15 @@ async function loadPage() {
   const containsAtomicSearch = !!document.querySelector(`main .atomic-search`);
   if (containsAtomicSearch) {
     initiateCoveoAtomicSearch();
+  }
+
+  // Initialize Premium Learning auth for all signed-in users, excluding UE Authoring pages
+  if (!window.hlx.aemRoot && !window.location.href.includes('.html') && isFeatureEnabled('isPremiumLearningEnabled')) {
+    const signedIn = await isUserSignedIn();
+    if (signedIn) {
+      const { initializeAuthentication } = await import('./utils/alm-auth-utils.js');
+      initializeAuthentication();
+    }
   }
 
   if (isProfilePage) {
