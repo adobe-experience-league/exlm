@@ -137,7 +137,7 @@ body:has(#bc-dialog[open]) {
 .exl-bc-header-title {
   flex: 1;
   font-family: var(--body-font-family);
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--spectrum-gray-800);
 }
@@ -202,6 +202,10 @@ body:has(#bc-dialog[open]) {
   flex-direction: column !important;
   overflow: hidden !important;
   background: #fff !important;
+}
+
+#brand-concierge-mount .header-section {
+  padding-top: 20px;
 }
 
 #brand-concierge-mount .brand-concierge-container,
@@ -333,9 +337,10 @@ body:has(#bc-dialog[open]) {
 }
 
 #brand-concierge-mount .bc-response-footer {
-  border-top: 1px solid var(--spectrum-gray-200) !important;
+  border-top: none !important;
   margin-top: 12px !important;
-  padding-top: 12px !important;
+  padding-top: 0 !important;
+  font-size: 14px !important;
 }
 
 /* stylelint-enable selector-class-pattern */
@@ -346,6 +351,7 @@ body:has(#bc-dialog[open]) {
 #brand-concierge-mount .concierge-message .message-text {
   width: 100% !important;
   max-width: 100% !important;
+  font-size: 16px !important;
 }
 
 #brand-concierge-mount .concierge-message .message-content {
@@ -359,6 +365,7 @@ body:has(#bc-dialog[open]) {
 /* bubble background requires dark text for contrast. */
 #brand-concierge-mount .user-message .message-text {
   color: var(--spectrum-gray-800) !important;
+  font-size: 16px !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
