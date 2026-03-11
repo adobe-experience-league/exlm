@@ -840,6 +840,10 @@ export function getConfig() {
       : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
     coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
     upcomingEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
+    adobeIOAlmEndpoint: isProd
+      ? ''
+      : 'https://51837-570cornsilkbat-development.adobeioruntime.net/api/v1/web/alm/authentication',
+    almApiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     articleUrl: `${cdnOrigin}/api/articles`,
@@ -1660,6 +1664,15 @@ async function loadPage() {
   const containsAtomicSearch = !!document.querySelector(`main .atomic-search`);
   if (containsAtomicSearch) {
     initiateCoveoAtomicSearch();
+  }
+
+  // Initialize Premium Learning auth for all signed-in users, excluding UE Authoring pages
+  if (!window.hlx.aemRoot && !window.location.href.includes('.html') && isFeatureEnabled('isPremiumLearningEnabled')) {
+    const signedIn = await isUserSignedIn();
+    if (signedIn) {
+      const initializeAuthentication = await import('./utils/alm-auth-utils.js');
+      await initializeAuthentication();
+    }
   }
 
   if (isProfilePage) {
