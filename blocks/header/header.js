@@ -14,6 +14,7 @@ import {
   fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
+import { isPremiumLearner } from '../../scripts/utils/alm-auth-utils.js';
 import {
   decoratorState,
   isMobile,
@@ -410,6 +411,17 @@ const navDecorator = async (navBlock, decoratorOptions) => {
   // build navItems
   const ul = navWrapper.querySelector(':scope > ul');
   buildNavItems(ul);
+
+  if (isPremiumLearner()) {
+    const { premiumHomeUrl } = getConfig();
+    ul.appendChild(
+      htmlToElement(
+        `<li class="nav-item nav-item-root nav-item-leaf">
+          <a href="${premiumHomeUrl}" title="Premium Learning">Premium Learning</a>
+        </li>`,
+      ),
+    );
+  }
 
   // build featured products nav links
   buildFeaturedProductsNavLinks(navBlock, decoratorOptions.lang).then(() => {
