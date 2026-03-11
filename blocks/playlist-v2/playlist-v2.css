@@ -92,7 +92,6 @@
   margin: 0 !important;
 }
 
-/* Playlist div - scrollable container for items */
 .playlist-v2 .playlist {
   background-color: #eaeaea;
   padding: 1em;
@@ -106,11 +105,14 @@
   scroll-behavior: smooth;
 }
 
-/* Make label a flex container to maintain layout with input inside */
 .playlist-v2 .playlist-options-autoplay label {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 0.5em;
   cursor: pointer;
+}
+
+.playlist-v2 .playlist-item-thumbnail {
+  overflow: hidden;
 }
