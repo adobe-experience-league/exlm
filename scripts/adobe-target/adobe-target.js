@@ -1,5 +1,5 @@
 import { buildBlock, decorateBlock, decorateSections, loadBlock, updateSectionsStatus } from '../lib-franklin.js';
-import getCookie from '../utils/cookie-utils.js';
+import { getCookie } from '../utils/cookie-utils.js';
 import getEmitter from '../events.js';
 
 const targetEventEmitter = getEmitter('loadTargetBlocks');
