@@ -208,7 +208,9 @@ export default class ALMDataService {
     const params = new URLSearchParams();
 
     params.append('page[limit]', noOfResults || ALMDataService.DEFAULT_SEARCH_RESULTS_COUNT);
-    params.append('sort', sort);
+    if (sort) {
+      params.append('sort', sort);
+    }
 
     if (hasQuery) {
       params.append(
@@ -317,8 +319,6 @@ export default class ALMDataService {
         url = new URL(`${apiBaseUrl}${ALMDataService.SEARCH_ENDPOINT}`);
         url.search = this.buildSearchUrlParams(hasQuery).toString();
         body = this.buildSearchRequestBody(hasQuery);
-
-        console.log('ALM Data Service - Using search endpoint:', url.toString());
       } else {
         // Use query endpoint
         url = new URL(`${apiBaseUrl}${ALMDataService.QUERY_ENDPOINT}`);
