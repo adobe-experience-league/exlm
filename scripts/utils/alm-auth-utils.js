@@ -111,7 +111,7 @@ export function isPremiumLearner() {
  * Main entry point for Premium Learning app authentication.
  * Called only for signed-in users — retrieves IMS token and processes ALM auth flow.
  */
-export default async function initializeAuthentication() {
+export default async function initializeALMAuthentication() {
   const imsToken = window.adobeIMS.getAccessToken()?.token || null;
   await processAlmAuthFlow(imsToken);
 }
