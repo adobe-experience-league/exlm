@@ -381,6 +381,14 @@ async function renderSlideBlock(block) {
 
 export default async function decorate(block) {
   const slideId = block.childElementCount === 1 ? block.firstElementChild.textContent?.trim() : '';
+  if (!slideId) {
+    // UGP-14675 Anchor fallback for transitional pages 
+    const anchor = block.querySelector('a[href*="/slides/"]');
+    if (anchor) {
+      const href = anchor.getAttribute('href');
+      slideId = href.split('/slides/').pop() || '';
+    }
+  }
   if (slideId) {
     block.classList.add('hide-slides');
     fetchSlideById(slideId).then((slideResponse) => {
