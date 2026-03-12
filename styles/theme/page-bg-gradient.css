@@ -4,7 +4,8 @@
   --lg-circle-blue: rgb(181 222 255);
   --lg-circle-pink: rgb(250 74 162);
   --lg-circle-orange: rgb(255 124 101);
-  --lg-blur: 80px;
+
+  /* --lg-blur: 80px; */
   --lg-circle-size: 1755px;
 
   position: relative;
@@ -75,7 +76,7 @@
   }
 
   100% {
-    transform: translate3d(-8%, 34%, 0) rotate(360deg);
+    transform: translate3d(-18%, -14%, 0) rotate(360deg);
   }
 }
 
@@ -89,7 +90,7 @@
   }
 
   100% {
-    transform: translate3d(10%, -30%, 0) rotate(-360deg);
+    transform: translate3d(16%, 28%, 0) rotate(-360deg);
   }
 }
 
@@ -103,7 +104,7 @@
   }
 
   100% {
-    transform: translate3d(14%, 38%, 0) rotate(360deg);
+    transform: translate3d(30%, -20%, 0) rotate(360deg);
   }
 }
 
