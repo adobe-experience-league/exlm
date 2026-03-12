@@ -64,18 +64,6 @@
   animation: live-gradient-move-orange 60s linear infinite;
 }
 
-/* Layer 3 — White Blur Overlay */
-.page-bg-gradient main::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  pointer-events: none;
-  background: rgb(255 255 255 / 10%);
-  backdrop-filter: blur(var(--lg-blur));
-  margin-top: 64px; /* Account for fixed header */
-}
-
 /* Movement animations */
 @keyframes live-gradient-move-blue {
   0% {
@@ -117,6 +105,18 @@
   100% {
     transform: translate3d(14%, 38%, 0) rotate(360deg);
   }
+}
+
+/* Layer 3 — White Blur Overlay */
+.page-bg-gradient main::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: rgb(255 255 255 / 10%);
+  backdrop-filter: blur(var(--lg-blur));
+  margin-top: 64px; /* Account for fixed header */
 }
 
 /* Reduce motion */
