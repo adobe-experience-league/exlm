@@ -85,7 +85,8 @@ try {
 }
 
 export function normalizeUpcomingEventModel(model) {
-  const isUpcoming = model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
+  const isUpcoming = model?.contentType === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
+  console.log("yesss")
   if (!isUpcoming) return model;
 
   return {
@@ -263,10 +264,12 @@ const BrowseCardsDelegate = (() => {
 
     // If the content type is an array, use the handleCoveoService (Works only with Coveo related content types)
     if (Array.isArray(contentType)) {
-      if (contentType.includes(CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY)) {
+      if (contentType.includes(CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase())) {
         return async () => {
           const cards = await handleCoveoService();
+
           return cards.map(normalizeUpcomingEventModel);
+          
         };
       }
       return handleCoveoService;

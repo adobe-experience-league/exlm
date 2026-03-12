@@ -580,6 +580,9 @@ export async function buildCard(element, model) {
       type = mappingKey.toLowerCase();
     }
   }
+  
+  // Sanitize type for CSS class names - replace pipes and spaces with hyphens
+  const cssType = type?.replace(/[|\s]+/g, '-');
 
   const clickableLink = !(isVideoClip && !model.parentURL);
   const showVideoIconOnly = isVideoClip;
@@ -594,7 +597,7 @@ export async function buildCard(element, model) {
 
   const card = createTag(
     'div',
-    { class: `browse-card ${type}-card ${failedToLoad ? 'browse-card-frozen' : ''}` },
+    { class: `browse-card ${cssType}-card ${failedToLoad ? 'browse-card-frozen' : ''}` },
     `<div class="browse-card-figure"></div>${
       showVideoIconOnly ? `<div class="browse-card-video-clip"></div>` : ''
     }<div class="browse-card-content"></div><div class="browse-card-footer"></div>`,
@@ -659,7 +662,7 @@ export async function buildCard(element, model) {
     card.classList.add('thumbnail-not-loaded');
   }
   if (badgeTitle || failedToLoad) {
-    if (type === CONTENT_TYPES.COURSE.MAPPING_KEY) {
+    if (type === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()) {
       const bannerElement = htmlToElement(`<div class="browse-card-icon">
         <span class="icon icon-course-badge"></span
       </div>`);
@@ -671,7 +674,7 @@ export async function buildCard(element, model) {
     } else {
       const bannerElement = createTag('h3', { class: 'browse-card-banner' });
       bannerElement.innerText = badgeTitle || '';
-      bannerElement.style.backgroundColor = `var(--browse-card-color-${type}-primary)`;
+      bannerElement.style.backgroundColor = `var(--browse-card-color-${cssType}-primary)`;
       cardFigure.appendChild(bannerElement);
     }
   }
@@ -830,31 +833,31 @@ export async function buildCard(element, model) {
     { once: true },
   );
 
-  // Apply special decorations for upcoming events v2 - change for all upcoming events later
-  const v2 = card.closest('.upcoming-event-v2');
-  const browseFilters = card.closest('.browse-filters');
-  const isBrowseFiltersUpcoming = browseFilters && card.classList.contains('upcoming-event-card');
+  // Apply special decorations for upcoming events
+  const isUpcomingEvent = model.contentType === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
 
-  /* TODO - Remove events-v2 scope during clean up */
-  if (v2) {
-    v2.classList.add('events-v2');
-  } else if (isBrowseFiltersUpcoming) {
-    browseFilters.classList.add('events-v2');
+  if (isUpcomingEvent) {
+    // Add events-v2 class to the closest block container for styling
+    const blockContainer = card.closest('.block') || card.closest('[class*="cards"]');
+    if (blockContainer) {
+      blockContainer.classList.add('events-v2');
+    }
+
+    const cardEl = element.querySelector('.browse-card');
+    if (cardEl) {
+      // Dynamically import and use the upcoming events decorator
+      getUpcomingEventsDecorator().then(({ decorateUpcomingEvents }) => {
+        decorateUpcomingEvents(cardEl, model);
+      });
+    }
   }
 
-  const cardEl = element.querySelector('.browse-card');
-  if (cardEl && (v2 || isBrowseFiltersUpcoming)) {
-    // Dynamically import and use the upcoming events decorator
-    getUpcomingEventsDecorator().then(({ decorateUpcomingEvents }) => {
-      decorateUpcomingEvents(cardEl, model);
-    });
-  }
-
-  if (
-    model.contentType?.toLowerCase() === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY &&
-    isFeatureEnabled('isEventsV2')
-  ) {
+  // Check for on-demand events - support both old and new format
+  const isOnDemandEvent = model.contentType === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY;
+  
+  if (isOnDemandEvent && isFeatureEnabled('isEventsV2')) {
     const cardElement = element.querySelector('.browse-card');
+    console.log('[Browse Card] Calling on-demand decorator for:', model.contentType);
     // Dynamically import and use the on-demand events decorator
     getOnDemandEventsDecorator().then(({ decorateOnDemandEvents }) => {
       decorateOnDemandEvents(cardElement, model);
