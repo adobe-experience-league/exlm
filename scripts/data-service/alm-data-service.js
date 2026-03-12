@@ -88,7 +88,6 @@ export default class ALMDataService {
    */
   constructor(queryParams) {
     this.queryParams = queryParams;
-    this.config = getConfig().alm;
   }
 
   /**
@@ -123,7 +122,7 @@ export default class ALMDataService {
    */
   buildRequestBody() {
     const { contentType, tagName } = this.queryParams;
-    const { catalogIds } = this.config;
+    const { catalogIds } = getConfig().alm ?? {};
 
     // Determine learning object types - support both course and cohort
     const loTypes = ALMDataService.determineLearningObjectTypes(contentType);
@@ -241,7 +240,7 @@ export default class ALMDataService {
    */
   buildSearchRequestBody(hasQuery = false) {
     const { contentType, q, products, solutions, roles, durationRange, learnerState } = this.queryParams;
-    const { recommendationProducts } = this.config;
+    const { recommendationProducts } = getConfig().alm ?? {};
     const loTypes = ALMDataService.determineLearningObjectTypes(contentType);
 
     const body = {
@@ -306,7 +305,7 @@ export default class ALMDataService {
    */
   async fetchDataFromSource() {
     try {
-      const { apiBaseUrl } = this.config;
+      const apiBaseUrl = getConfig().almApiBaseUrl;
       const { q, searchMode } = this.queryParams;
       const isSearchMode = searchMode || !!q;
 

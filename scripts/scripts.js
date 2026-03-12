@@ -845,9 +845,6 @@ export function getConfig() {
       : 'https://51837-570cornsilkbat-development.adobeioruntime.net/api/v1/web/alm/authentication',
     almApiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
-    alm: {
-      apiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
-    },
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     articleUrl: `${cdnOrigin}/api/articles`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
