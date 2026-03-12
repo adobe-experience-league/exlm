@@ -24,7 +24,7 @@ function setPremiumUserId(userId, expiresInSeconds = 86400) {
 }
 
 /**
- * Validates a learner token against the ALM API.
+ * Validates a learner token against the Premium Learning API.
  * @param {string} token
  * @returns {Promise<boolean>}
  */
@@ -40,7 +40,7 @@ async function isTokenPLValid(token) {
 }
 
 /**
- * Exchanges an IMS token for an ALM learner token via the AIO endpoint.
+ * Exchanges an IMS token for an Premium learner token via the AIO endpoint.
  * Stores the result in cookies.
  * @param {string} imsToken
  */
@@ -71,7 +71,7 @@ async function retrivePLToken(imsToken) {
 }
 
 /**
- * Validates the existing ALM cookie. Clears auth data if invalid.
+ * Validates the existing PL cookie. Clears auth data if invalid.
  * @returns {Promise<boolean>} true if a valid cookie exists
  */
 async function validateExistingPLToken() {
@@ -83,7 +83,7 @@ async function validateExistingPLToken() {
 }
 
 /**
- * Processes the ALM authentication flow for the Premium Learning application.
+ * Processes the PL authentication flow for the Premium Learning application.
  * @param {string} imsToken
  */
 async function processPLAuthFlow(imsToken) {
@@ -100,7 +100,7 @@ async function processPLAuthFlow(imsToken) {
 
 /**
  * Main entry point for Premium Learning app authentication.
- * Called only for signed-in users — retrieves IMS token and processes ALM auth flow.
+ * Called only for signed-in users — retrieves IMS token and processes PL auth flow.
  */
 export default async function initializePLAuthentication() {
   const imsToken = window.adobeIMS.getAccessToken()?.token || null;

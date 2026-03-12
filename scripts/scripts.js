@@ -1684,7 +1684,7 @@ async function loadPage() {
         await initializePLAuthentication();
       }
     } catch (error) {
-      console.error('Error initializing ALM authentication:', error);
+      console.error('Error initializing Premium Learning authentication:', error);
     }
   }
 
