@@ -1,15 +1,15 @@
 import browseCardDataModel from '../data-model/browse-cards-model.js';
-import ALM_CONTENT_TYPES from '../data-service/alm/alm-constants.js';
+import PL_CONTENT_TYPES from '../data-service/premium-learning/premium-learning-constants.js';
 import { fetchLanguagePlaceholders, getConfig, getPathDetails } from '../scripts.js';
 
 /**
- * Module that provides functionality for adapting ALM results to BrowseCards data model.
- * @module BrowseCardsALMAdaptor
+ * Module that provides functionality for adapting premium-learning results to BrowseCards data model.
+ * @module BrowseCardsPLAdaptor
  */
-const BrowseCardsALMAdaptor = (() => {
+const BrowseCardsPLAdaptor = (() => {
   /**
    * Helper function to determine content type based on loType field.
-   * @param {Object} result - The result object from ALM API.
+   * @param {Object} result - The result object from premium-learning API.
    * @returns {string} The content type mapping key.
    * @private
    */
@@ -17,10 +17,10 @@ const BrowseCardsALMAdaptor = (() => {
     const loType = result?.attributes?.loType;
 
     if (loType === 'learningProgram') {
-      return ALM_CONTENT_TYPES.COHORT.MAPPING_KEY;
+      return PL_CONTENT_TYPES.COHORT.MAPPING_KEY;
     }
 
-    return ALM_CONTENT_TYPES.COURSE.MAPPING_KEY;
+    return PL_CONTENT_TYPES.COURSE.MAPPING_KEY;
   };
 
   /**
@@ -110,13 +110,13 @@ const BrowseCardsALMAdaptor = (() => {
     return 'Starting soon';
   }
 
-  const createALMLinkfromID = (contentType, id) => {
+  const createPLLinkfromID = (contentType, id) => {
     const { cdnOrigin } = getConfig();
     const lang = getPathDetails()?.lang || 'en';
     const extractedID = id.split(':')?.[1] || '';
     const contentTypePath = contentType.split('-')[1] || '';
-    const almLink = `${cdnOrigin}/${lang}/premium/${contentTypePath}/${extractedID}`;
-    return almLink || '';
+    const premiumlearningLink = `${cdnOrigin}/${lang}/premium/${contentTypePath}/${extractedID}`;
+    return premiumlearningLink || '';
   };
 
   /**
@@ -201,9 +201,9 @@ const BrowseCardsALMAdaptor = (() => {
   }
 
   /**
-   * Maps a single ALM result to the BrowseCards data model.
-   * @param {Object} result - The result object from ALM API.
-   * @param {Array} included - The included data from ALM API.
+   * Maps a single Premium learning result to the BrowseCards data model.
+   * @param {Object} result - The result object from Premium learning API.
+   * @param {Array} included - The included data from Premium learning API.
    * @param {Object} placeholders - Language placeholders.
    * @returns {Object} The BrowseCards data model.
    * @private
@@ -221,7 +221,7 @@ const BrowseCardsALMAdaptor = (() => {
 
     const instances = buildInstances(cardData, included);
 
-    if (contentType === ALM_CONTENT_TYPES.COHORT.MAPPING_KEY) {
+    if (contentType === PL_CONTENT_TYPES.COHORT.MAPPING_KEY) {
       const instanceId = cardData.relationships?.instances?.data?.[0]?.id;
 
       const instance = included.find((i) => i.id === instanceId);
@@ -237,8 +237,8 @@ const BrowseCardsALMAdaptor = (() => {
       contentType,
       thumbnail: attributes?.imageUrl || '',
       title: metadata.name || '',
-      viewLink: createALMLinkfromID(contentType, id),
-      copyLink: createALMLinkfromID(contentType, id),
+      viewLink: createPLLinkfromID(contentType, id),
+      copyLink: createPLLinkfromID(contentType, id),
       meta: {
         rating: {
           average: attributes?.rating?.averageRating || 0,
@@ -257,8 +257,8 @@ const BrowseCardsALMAdaptor = (() => {
   };
 
   /**
-   * Maps an array of ALM results to an array of BrowseCards data models.
-   * @param {Array} data - The array of result objects from ALM API.
+   * Maps an array of Premium learning results to an array of BrowseCards data models.
+   * @param {Array} data - The array of result objects from Premium learning API.
    * @returns {Promise<Array>} A promise that resolves with an array of BrowseCards data models.
    */
   const mapResultsToCardsData = async (data) => {
@@ -278,4 +278,4 @@ const BrowseCardsALMAdaptor = (() => {
   };
 })();
 
-export default BrowseCardsALMAdaptor;
+export default BrowseCardsPLAdaptor;

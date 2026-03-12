@@ -1,6 +1,6 @@
 /**
- * @fileoverview ALM (Adobe Learning Manager) content type constants
- * Defines content type identifiers and labels for ALM learning objects
+ * @fileoverview Premium Learningcontent type constants
+ * Defines content type identifiers and labels for Premium Learning objects
  */
 
 import { fetchLanguagePlaceholders } from '../../scripts.js';
@@ -15,10 +15,10 @@ try {
 }
 
 /**
- * ALM content type definitions
- * Maps ALM learning object types to internal content type identifiers
+ * Premium Learning content type definitions
+ * Maps Premium Learning object types to internal content type identifiers
  *
- * @constant {Object} ALM_CONTENT_TYPES
+ * @constant {Object} PL_CONTENT_TYPES
  * @property {Object} COHORT - Learning program/cohort type
  * @property {string} COHORT.MAPPING_KEY - Internal identifier for cohorts
  * @property {string} COHORT.LABEL - Display label for cohorts
@@ -26,15 +26,15 @@ try {
  * @property {string} COURSE.MAPPING_KEY - Internal identifier for courses
  * @property {string} COURSE.LABEL - Display label for courses
  */
-const ALM_CONTENT_TYPES = Object.freeze({
+const PL_CONTENT_TYPES = Object.freeze({
   COHORT: {
-    MAPPING_KEY: 'alm-cohort',
-    LABEL: placeholders.browseCardPremiumLearningCohortLabel || 'ALM Cohort',
+    MAPPING_KEY: 'premium-learning-cohort',
+    LABEL: placeholders.browseCardPremiumLearningCohortLabel || 'Premium Learning Cohort',
   },
   COURSE: {
-    MAPPING_KEY: 'alm-course',
-    LABEL: placeholders.browseCardPremiumLearningCourseLabel || 'ALM Course',
+    MAPPING_KEY: 'premium-learning-course',
+    LABEL: placeholders.browseCardPremiumLearningCourseLabel || 'Premium Learning Course',
   },
 });
 
-export default ALM_CONTENT_TYPES;
+export default PL_CONTENT_TYPES;

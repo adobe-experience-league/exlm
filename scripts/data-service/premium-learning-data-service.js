@@ -1,10 +1,10 @@
 import { getConfig, getPathDetails } from '../scripts.js';
-import { getAlmAccessToken } from '../utils/alm-auth-utils.js';
+import { getPLAccessToken } from '../utils/premium-learning-auth-utils.js';
 
 /**
- * @typedef {Object} ALMQueryParams
+ * @typedef {Object} PLQueryParams
  * @property {number} noOfResults - Number of results to fetch
- * @property {string|Array<string>} [contentType] - Content type filter (alm-cohort or alm-course)
+ * @property {string|Array<string>} [contentType] - Content type filter (premium-learning-cohort or premium-learning-course)
  * @property {string} [sort] - Sort order
  * @property {string} [tagName] - Tag filter
  * @property {string} [q] - Search query string (triggers search endpoint)
@@ -16,20 +16,20 @@ import { getAlmAccessToken } from '../utils/alm-auth-utils.js';
  */
 
 /**
- * ALMDataService class for fetching data from ALM (Adobe Learning Manager) API.
+ * PLDataService class for fetching data from premium-learning API.
  * Handles API communication with Adobe Learning Manager to retrieve learning objects.
  *
- * @class ALMDataService
+ * @class PLDataService
  * @example
- * const service = new ALMDataService({
+ * const service = new PLDataService({
  *   noOfResults: 10,
- *   contentType: 'alm-cohort'
+ *   contentType: 'premium-learning-cohort'
  * });
  * const data = await service.fetchDataFromSource();
  */
-export default class ALMDataService {
+export default class PLDataService {
   /**
-   * Learning object types supported by ALM API
+   * Learning object types supported by premium-learning API
    * @private
    */
   static LO_TYPES = {
@@ -38,7 +38,7 @@ export default class ALMDataService {
   };
 
   /**
-   * Default sort order for ALM API queries
+   * Default sort order for premium-learning API queries
    * @private
    */
   static DEFAULT_SORT = 'name';
@@ -83,15 +83,15 @@ export default class ALMDataService {
   ];
 
   /**
-   * Creates an instance of ALMDataService.
-   * @param {ALMQueryParams} queryParams - Query parameters for ALM API request
+   * Creates an instance of PLDataService.
+   * @param {PLQueryParams} queryParams - Query parameters for premium-learning API request
    */
   constructor(queryParams) {
     this.queryParams = queryParams;
   }
 
   /**
-   * Builds URL search parameters for ALM API request
+   * Builds URL search parameters for premium-learning API request
    * @private
    * @returns {URLSearchParams} Constructed URL search parameters
    */
@@ -103,7 +103,7 @@ export default class ALMDataService {
     params.append('page[limit]', noOfResults || 10);
 
     // Add sort parameter
-    params.append('sort', sort || ALMDataService.DEFAULT_SORT);
+    params.append('sort', sort || PLDataService.DEFAULT_SORT);
 
     // Add enforced fields and includes for comprehensive data
     params.append('enforcedFields[learningObject]', 'extensionOverrides');
@@ -116,16 +116,16 @@ export default class ALMDataService {
   }
 
   /**
-   * Builds request body with filters for ALM API POST request
+   * Builds request body with filters for premium-learning API POST request
    * @private
    * @returns {Object} Request body object
    */
   buildRequestBody() {
     const { contentType, tagName } = this.queryParams;
-    const { catalogIds } = getConfig().alm ?? {};
+    const { catalogIds } = getConfig().premium-learning ?? {};
 
     // Determine learning object types - support both course and cohort
-    const loTypes = ALMDataService.determineLearningObjectTypes(contentType);
+    const loTypes = PLDataService.determineLearningObjectTypes(contentType);
 
     const body = {
       'filter.loTypes': loTypes,
@@ -148,11 +148,11 @@ export default class ALMDataService {
   }
 
   /**
-   * Determines the ALM learning object types from content type(s)
+   * Determines the premium-learning object types from content type(s)
    * Supports both single and multiple content types
    * @private
    * @param {string|Array<string>} contentType - Content type identifier(s)
-   * @returns {Array<string>} Array of learning object types for ALM API
+   * @returns {Array<string>} Array of learning object types for premium-learning API
    */
   static determineLearningObjectTypes(contentType) {
     const types = Array.isArray(contentType) ? contentType : [contentType];
@@ -160,9 +160,9 @@ export default class ALMDataService {
 
     types.forEach((type) => {
       const normalizedType = type?.toLowerCase().trim();
-      if (normalizedType === 'alm-cohort' && !loTypes.includes('learningProgram')) {
+      if (normalizedType === 'premium-learning-cohort' && !loTypes.includes('learningProgram')) {
         loTypes.push('learningProgram');
-      } else if (normalizedType === 'alm-course' && !loTypes.includes('course')) {
+      } else if (normalizedType === 'premium-learning-course' && !loTypes.includes('course')) {
         loTypes.push('course');
       }
     });
@@ -172,24 +172,26 @@ export default class ALMDataService {
   }
 
   /**
-   * Determines the ALM learning object type from content type (legacy method)
+   * Determines the PL learning object type from content type (legacy method)
    * @deprecated Use determineLearningObjectTypes instead
    * @private
    * @param {string|Array<string>} contentType - Content type identifier
-   * @returns {string} Learning object type for ALM API
+   * @returns {string} Learning object type for premium-learning API
    */
   static determineLearningObjectType(contentType) {
     const typeStr = Array.isArray(contentType) ? contentType.join(',') : contentType;
-    return typeStr?.includes('alm-cohort') ? ALMDataService.LO_TYPES.LEARNING_PROGRAM : ALMDataService.LO_TYPES.COURSE;
+    return typeStr?.includes('premium-learning-cohort')
+      ? PLDataService.LO_TYPES.LEARNING_PROGRAM
+      : PLDataService.LO_TYPES.COURSE;
   }
 
   /**
-   * Builds request headers for ALM API
+   * Builds request headers for premium-learning API
    * @private
    * @returns {Object} Request headers
    */
   static buildRequestHeaders() {
-    const token = getAlmAccessToken();
+    const token = getPLAccessToken();
     return {
       Accept: 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json;charset=UTF-8',
@@ -198,7 +200,7 @@ export default class ALMDataService {
   }
 
   /**
-   * Builds URL search parameters for ALM search endpoint
+   * Builds URL search parameters for premium-learning search endpoint
    * @private
    * @param {boolean} hasQuery - Whether query string (q) is present
    * @returns {URLSearchParams} Constructed URL search parameters for search endpoint
@@ -207,7 +209,7 @@ export default class ALMDataService {
     const { noOfResults, sort } = this.queryParams;
     const params = new URLSearchParams();
 
-    params.append('page[limit]', noOfResults || ALMDataService.DEFAULT_SEARCH_RESULTS_COUNT);
+    params.append('page[limit]', noOfResults || PLDataService.DEFAULT_SEARCH_RESULTS_COUNT);
     if (sort) {
       params.append('sort', sort);
     }
@@ -233,15 +235,15 @@ export default class ALMDataService {
   }
 
   /**
-   * Builds request body for ALM search endpoint
+   * Builds request body for premium-learning search endpoint
    * @private
    * @param {boolean} hasQuery - Whether query string (q) is present
    * @returns {Object} Request body object for search endpoint
    */
   buildSearchRequestBody(hasQuery = false) {
     const { contentType, q, products, solutions, roles, durationRange, learnerState } = this.queryParams;
-    const { recommendationProducts } = getConfig().alm ?? {};
-    const loTypes = ALMDataService.determineLearningObjectTypes(contentType);
+    const { recommendationProducts } = getConfig().premium-learning ?? {};
+    const loTypes = PLDataService.determineLearningObjectTypes(contentType);
 
     const body = {
       'filter.loTypes': loTypes,
@@ -258,7 +260,7 @@ export default class ALMDataService {
         matchType: 'phrase_and_match',
         stemmed: true,
         'filter.ignoreHigherOrderLOEnrollments': false,
-        'filter.snippetTypes': ALMDataService.SNIPPET_TYPES,
+        'filter.snippetTypes': PLDataService.SNIPPET_TYPES,
         language: [languageCode],
       });
     }
@@ -305,23 +307,23 @@ export default class ALMDataService {
    */
   async fetchDataFromSource() {
     try {
-      const apiBaseUrl = getConfig().almApiBaseUrl;
+      const apiBaseUrl = getConfig().premium-learningApiBaseUrl;
       const { q, searchMode } = this.queryParams;
       const isSearchMode = searchMode || !!q;
 
       let url;
-      const headers = ALMDataService.buildRequestHeaders();
+      const headers = PLDataService.buildRequestHeaders();
       let body;
 
       if (isSearchMode) {
         // Use search endpoint
         const hasQuery = !!q;
-        url = new URL(`${apiBaseUrl}${ALMDataService.SEARCH_ENDPOINT}`);
+        url = new URL(`${apiBaseUrl}${PLDataService.SEARCH_ENDPOINT}`);
         url.search = this.buildSearchUrlParams(hasQuery).toString();
         body = this.buildSearchRequestBody(hasQuery);
       } else {
         // Use query endpoint
-        url = new URL(`${apiBaseUrl}${ALMDataService.QUERY_ENDPOINT}`);
+        url = new URL(`${apiBaseUrl}${PLDataService.QUERY_ENDPOINT}`);
         url.search = this.buildUrlParams().toString();
         body = this.buildRequestBody();
       }
@@ -334,7 +336,7 @@ export default class ALMDataService {
       });
 
       if (!response.ok) {
-        throw new Error(`ALM API request failed: ${response.status} ${response.statusText}`);
+        throw new Error(`Premium learning API request failed: ${response.status} ${response.statusText}`);
       }
 
       const responseData = await response.json();
@@ -379,7 +381,7 @@ export default class ALMDataService {
       return responseData;
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error('Error fetching ALM data:', error);
+      console.error('Error fetching premium learning data:', error);
       return null;
     }
   }

@@ -11,7 +11,7 @@ import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
-import ALM_CONTENT_TYPES from '../data-service/alm/alm-constants.js';
+import PL_CONTENT_TYPES from '../data-service/premium-learning/premium-learning-constants.js';
 import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 const bookmarkExclusionContentypes = [
@@ -560,13 +560,13 @@ const getOnDemandEventsDecorator = () => {
 export async function buildCard(element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
 
-  // Delegate to ALM-specific card builder for ALM content types
-  const isALMContent =
-    contentType === ALM_CONTENT_TYPES.COURSE.MAPPING_KEY || contentType === ALM_CONTENT_TYPES.COHORT.MAPPING_KEY;
+  // Delegate to PL-specific card builder for premium-learning content types
+  const isPLContent =
+    contentType === PL_CONTENT_TYPES.COURSE.MAPPING_KEY || contentType === PL_CONTENT_TYPES.COHORT.MAPPING_KEY;
 
-  if (isALMContent) {
-    const { buildALMCard } = await import('./alm-browse-cards.js');
-    return buildALMCard(element, model);
+  if (isPLContent) {
+    const { buildPLCard } = await import('./browse-cards-premium-learning.js');
+    return buildPLCard(element, model);
   }
 
   element.setAttribute('data-analytics-content-type', contentType);
@@ -729,7 +729,7 @@ export async function buildCard(element, model) {
     cardContent.appendChild(titleElement);
   }
   await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
-  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-alm.css`);
+  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-premium-learning.css`);
 
   // For course content type, add level and duration info right after the title
   if (type === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()) {

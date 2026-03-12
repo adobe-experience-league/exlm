@@ -13,7 +13,7 @@ const isSearchPage = document.querySelector('meta[name="theme"]')?.content.inclu
  * @param {Object} body - The body object containing facets and query
  * @returns {string} URL search parameters string (e.g., "q=aem")
  */
-function transformCoveoFacetsToAlmSearch(param, body) {
+function transformCoveoFacetsToPlSearch(param, body) {
   param.q = body.q ?? '';
   const urlParams = new URLSearchParams();
   if (param.q) {
@@ -31,7 +31,7 @@ const updateHash = (filterCondition, joinWith = '&') => {
 };
 
 /**
- * Decorate function to process and log the mapped data for ALM cards.
+ * Decorate function to process and log the mapped data for premium-learning cards.
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
@@ -51,16 +51,16 @@ export default async function decorate(block) {
 
   // Clearing the block's content
   block.innerHTML = '';
-  block.classList.add('browse-cards-block', 'alm-cards-block');
+  block.classList.add('browse-cards-block', 'premium-learning-cards-block');
 
   // Create header section with heading and CTA
   const headerDiv = document.createElement('div');
-  headerDiv.className = 'alm-cards-block-header';
+  headerDiv.className = 'premium-learning-cards-block-header';
   headerDiv.innerHTML = `
-    <div class="alm-cards-block-title">
+    <div class="premium-learning-cards-block-title">
       ${headingElement?.innerHTML || ''}
     </div>
-    <div class="alm-cards-block-cta">
+    <div class="premium-learning-cards-block-cta">
       ${decorateCustomButtons(ctaElement)}
     </div>
   `;
@@ -75,7 +75,7 @@ export default async function decorate(block) {
   }
 
   const param = {
-    contentType, // Can be string ('alm-course' or 'alm-cohort') or array (['alm-course', 'alm-cohort'])
+    contentType, // Can be string ('premium-learning-course' or 'premium-learning-cohort') or array (['premium-learning-course', 'premium-learning-cohort'])
     noOfResults,
   };
 
@@ -97,17 +97,17 @@ export default async function decorate(block) {
     const descriptionNoResultText = searchTextExists ? searchDescription : noSearchDescription;
     const clearSearchText = placeholders.premiumLearningCardsClearSearchText || 'Clear search';
     const markup = `
-      <div class="alm-cards-no-results">
-        <div class="alm-cards-no-results-header">${headerNoResultText}</div>
-        <div class="alm-cards-no-results-description">${descriptionNoResultText}</div>
-        <div class="alm-cards-block-cta">
+      <div class="premium-learning-cards-no-results">
+        <div class="premium-learning-cards-no-results-header">${headerNoResultText}</div>
+        <div class="premium-learning-cards-no-results-description">${descriptionNoResultText}</div>
+        <div class="premium-learning-cards-block-cta">
           ${decorateCustomButtons(ctaElement)}
         </div>
-        ${searchTextExists ? `<div class="alm-cards-clear-search">${clearSearchText}</div>` : ''}
+        ${searchTextExists ? `<div class="premium-learning-cards-clear-search">${clearSearchText}</div>` : ''}
       </div>
     `;
     const noResultsContent = htmlToElement(markup);
-    const clearBtn = noResultsContent.querySelector('.alm-cards-clear-search');
+    const clearBtn = noResultsContent.querySelector('.premium-learning-cards-clear-search');
     if (clearBtn) {
       clearBtn.addEventListener('click', () => {
         updateHash((key) => !key.includes('q='), '&');
@@ -119,13 +119,13 @@ export default async function decorate(block) {
   function toggleNoResultsContent(blockElement, show) {
     if (show) {
       renderNoResultsContent(blockElement, param.q);
-      headerDiv.classList.add('alm-cards-hide-content');
+      headerDiv.classList.add('premium-learning-cards-hide-content');
     } else {
-      const noResultsContent = blockElement.querySelector('.alm-cards-no-results');
+      const noResultsContent = blockElement.querySelector('.premium-learning-cards-no-results');
       if (noResultsContent) {
         blockElement.removeChild(noResultsContent);
       }
-      headerDiv.classList.remove('alm-cards-hide-content');
+      headerDiv.classList.remove('premium-learning-cards-hide-content');
     }
   }
 
@@ -149,7 +149,7 @@ export default async function decorate(block) {
         }
       })
       .catch((err) => {
-        block.classList.add('alm-cards-hide-content');
+        block.classList.add('premium-learning-cards-hide-content');
         buildCardsShimmer.removeShimmer();
         /* eslint-disable-next-line no-console */
         console.error(err);
@@ -160,7 +160,7 @@ export default async function decorate(block) {
     document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
       const { body, method = '' } = e.detail;
       if (method === 'search') {
-        const urlString = transformCoveoFacetsToAlmSearch(param, body);
+        const urlString = transformCoveoFacetsToPlSearch(param, body);
         param.searchMode = true;
         const contentWrapper = block.querySelector('.browse-cards-block-content');
         if (contentWrapper) {
@@ -169,7 +169,7 @@ export default async function decorate(block) {
         buildCardsShimmer.addShimmer(block);
         fetchAndRenderCards(param);
 
-        const ctaWrapper = block.querySelector('.alm-cards-block-cta');
+        const ctaWrapper = block.querySelector('.premium-learning-cards-block-cta');
         const anchor = ctaWrapper?.querySelector('a');
         if (anchor) {
           const href = anchor.getAttribute('href');
@@ -191,7 +191,7 @@ export default async function decorate(block) {
             `${block.offsetHeight - delta}px`,
           );
         }
-        block.classList.add('alm-cards-atomic-search');
+        block.classList.add('premium-learning-cards-atomic-search');
         const premiumSearchWrapper = searchInterfaceElement.querySelector('.atomic-search-premium-search-wrapper');
         if (premiumSearchWrapper) {
           premiumSearchWrapper.appendChild(block);

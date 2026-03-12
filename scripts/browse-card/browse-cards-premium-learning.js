@@ -4,8 +4,8 @@ import { fetchLanguagePlaceholders } from '../scripts.js';
 import UserActions from '../user-actions/user-actions.js';
 
 /**
- * @fileoverview ALM (Adobe Learning Manager) specific browse card implementation
- * Handles rendering of ALM courses and cohorts with specialized UI components
+ * @fileoverview premium-learning specific browse card implementation
+ * Handles rendering of premium-learning courses and cohorts with specialized UI components
  */
 
 /* Cached placeholders for localization */
@@ -58,7 +58,7 @@ function getBookmarkId(id, viewLink) {
  * @returns {HTMLElement} Thumbnail figure element
  * @private
  */
-function buildALMThumbnail({
+function buildPLThumbnail({
   thumbnail,
   title,
   id,
@@ -71,7 +71,7 @@ function buildALMThumbnail({
   isCourseCard,
 }) {
   const cardFigure = document.createElement('div');
-  cardFigure.className = 'alm-card-figure';
+  cardFigure.className = 'premium-learning-card-figure';
 
   // Create and configure thumbnail image
   if (thumbnail) {
@@ -84,7 +84,7 @@ function buildALMThumbnail({
 
     // Handle image load states
     const handleImageError = () => {
-      card.classList.add('alm-thumbnail-not-loaded');
+      card.classList.add('premium-learning-thumbnail-not-loaded');
       img.style.display = 'none';
     };
 
@@ -101,12 +101,12 @@ function buildALMThumbnail({
 
     cardFigure.appendChild(img);
   } else {
-    card.classList.add('alm-thumbnail-not-loaded');
+    card.classList.add('premium-learning-thumbnail-not-loaded');
   }
 
   // Add user actions overlay (bookmark & copy)
   const cardActions = document.createElement('div');
-  cardActions.className = 'alm-card-actions';
+  cardActions.className = 'premium-learning-card-actions';
   const bookmarkId = getBookmarkId(id, viewLink);
 
   const cardAction = UserActions({
@@ -123,9 +123,9 @@ function buildALMThumbnail({
 
   if (startLabel) {
     const startLabelContainer = document.createElement('div');
-    startLabelContainer.className = 'alm-card-start-label-container';
+    startLabelContainer.className = 'premium-learning-card-start-label-container';
     const startLabelElement = document.createElement('p');
-    startLabelElement.className = 'alm-card-start-label';
+    startLabelElement.className = 'premium-learning-card-start-label';
     startLabelElement.innerHTML = startLabel;
     startLabelContainer.appendChild(startLabelElement);
     cardFigure.appendChild(startLabelContainer);
@@ -135,18 +135,18 @@ function buildALMThumbnail({
   // Show loFormat label only for courses
   if (isNew || (isCourseCard && loFormat)) {
     const tagsContainer = document.createElement('div');
-    tagsContainer.className = 'alm-card-tags-container';
+    tagsContainer.className = 'premium-learning-card-tags-container';
 
     if (isNew) {
       const newTagElement = document.createElement('p');
-      newTagElement.className = 'alm-card-tag alm-card-new-tag';
+      newTagElement.className = 'premium-learning-card-tag premium-learning-card-new-tag';
       newTagElement.textContent = placeholders.premiumLearningBrowseCardNewTag || 'New';
       tagsContainer.appendChild(newTagElement);
     }
 
     if (isCourseCard && loFormat) {
       const formatTagElement = document.createElement('p');
-      formatTagElement.className = 'alm-card-tag alm-card-format-tag';
+      formatTagElement.className = 'premium-learning-card-tag premium-learning-card-format-tag';
       formatTagElement.innerHTML = loFormat;
       tagsContainer.appendChild(formatTagElement);
     }
@@ -164,9 +164,9 @@ function buildALMThumbnail({
  * @returns {HTMLElement} Meta information container
  * @private
  */
-function buildALMMetaInfo(meta, isCourseCard = false) {
+function buildPLMetaInfo(meta, isCourseCard = false) {
   const metaContainer = document.createElement('div');
-  metaContainer.className = 'alm-card-meta';
+  metaContainer.className = 'premium-learning-card-meta';
   const metaParts = [];
 
   // Collect available metadata
@@ -180,7 +180,7 @@ function buildALMMetaInfo(meta, isCourseCard = false) {
   // Create meta text element if we have data
   if (metaParts.length > 0) {
     const metaElement = document.createElement('p');
-    metaElement.className = 'alm-card-meta-text';
+    metaElement.className = 'premium-learning-card-meta-text';
     metaElement.textContent = metaParts.join(' • ');
     metaContainer.appendChild(metaElement);
   }
@@ -189,15 +189,15 @@ function buildALMMetaInfo(meta, isCourseCard = false) {
 }
 
 /**
- * Builds an ALM-specific browse card
+ * Builds an premium-learning-specific browse card
  * Creates specialized card layout for Adobe Learning Manager content (courses and cohorts)
  *
  * @param {HTMLElement} element - Container element for the card
- * @param {Object} model - Card data model from ALM adaptor
+ * @param {Object} model - Card data model from premium-learning adaptor
  * @returns {Promise<void>}
  * @public
  */
-export async function buildALMCard(element, model) {
+export async function buildPLCard(element, model) {
   const { id, thumbnail, title, contentType, viewLink, copyLink, meta, failedToLoad = false } = model;
 
   // Normalize URLs
@@ -208,13 +208,13 @@ export async function buildALMCard(element, model) {
 
   // Create card structure
   const card = document.createElement('div');
-  card.className = `browse-card alm-browse-card ${type}-card ${failedToLoad ? 'browse-card-frozen' : ''}`;
+  card.className = `browse-card premium-learning-browse-card ${type}-card ${failedToLoad ? 'browse-card-frozen' : ''}`;
 
   // Determine if this is a course card (for rating display logic)
-  const isCourseCard = type === 'alm-course';
+  const isCourseCard = type === 'premium-learning-course';
 
   // Build thumbnail section
-  const cardFigure = buildALMThumbnail({
+  const cardFigure = buildPLThumbnail({
     thumbnail,
     title,
     id,
@@ -230,7 +230,7 @@ export async function buildALMCard(element, model) {
   // Add rating overlay to thumbnail ONLY for courses
   if (isCourseCard && meta?.rating?.average > 0) {
     const ratingOverlay = document.createElement('div');
-    ratingOverlay.className = 'alm-card-rating-overlay';
+    ratingOverlay.className = 'premium-learning-card-rating-overlay';
     ratingOverlay.innerHTML = `${meta.rating.average.toFixed(1)} <span class="rating-star">★</span>`;
     cardFigure.appendChild(ratingOverlay);
   }
@@ -239,12 +239,12 @@ export async function buildALMCard(element, model) {
 
   // Build content section
   const cardContent = document.createElement('div');
-  cardContent.className = 'alm-card-content';
+  cardContent.className = 'premium-learning-card-content';
 
   // For courses: description before title; For cohorts: title before meta
   if (isCourseCard && meta?.description) {
     const descriptionElement = document.createElement('p');
-    descriptionElement.className = 'alm-card-description';
+    descriptionElement.className = 'premium-learning-card-description';
     descriptionElement.textContent =
       meta.description.length > 20 ? `${meta.description.substring(0, 20)}...` : meta.description;
     cardContent.appendChild(descriptionElement);
@@ -253,14 +253,14 @@ export async function buildALMCard(element, model) {
   // Add title for both courses and cohorts
   if (title) {
     const titleElement = document.createElement('h3');
-    titleElement.className = 'alm-card-title';
+    titleElement.className = 'premium-learning-card-title';
     titleElement.innerHTML = title;
     cardContent.appendChild(titleElement);
   }
 
   // Add metadata for cohorts only
   if (!isCourseCard) {
-    const metaInfo = buildALMMetaInfo(meta, isCourseCard);
+    const metaInfo = buildPLMetaInfo(meta, isCourseCard);
     if (metaInfo.children.length > 0) {
       cardContent.appendChild(metaInfo);
     }
@@ -271,12 +271,12 @@ export async function buildALMCard(element, model) {
   // Build footer with instances - only for cohorts, not for courses
   if (!isCourseCard && meta?.instances?.length > 0) {
     const cardFooter = document.createElement('div');
-    cardFooter.className = 'alm-card-footer';
+    cardFooter.className = 'premium-learning-card-footer';
     const instancesContainer = document.createElement('div');
-    instancesContainer.className = 'alm-card-instances';
+    instancesContainer.className = 'premium-learning-card-instances';
     meta.instances.forEach((instance) => {
       const instanceElement = document.createElement('p');
-      instanceElement.className = 'alm-card-instance';
+      instanceElement.className = 'premium-learning-card-instance';
       instanceElement.innerHTML = instance.name;
       instancesContainer.appendChild(instanceElement);
     });
@@ -287,7 +287,7 @@ export async function buildALMCard(element, model) {
   // Load required CSS
   await Promise.all([
     loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`),
-    loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-alm.css`),
+    loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-premium-learning.css`),
   ]);
 
   // Wrap card in anchor if we have a link
@@ -309,4 +309,4 @@ export async function buildALMCard(element, model) {
   }
 }
 
-export default { buildALMCard };
+export default { buildPLCard };

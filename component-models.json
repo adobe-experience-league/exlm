@@ -1855,7 +1855,7 @@
     ]
   },
   {
-    "id": "alm-cards",
+    "id": "premium-learning-cards",
     "fields": [
       {
         "component": "text",
@@ -1863,7 +1863,7 @@
         "name": "title",
         "value": "",
         "label": "Title",
-        "description": "Sets the title for the ALM block."
+        "description": "Sets the title for the Premium learning block."
       },
       {
         "component": "select",
@@ -1936,18 +1936,18 @@
         "component": "multiselect",
         "valueType": "string",
         "name": "contentType",
-        "value": "alm-course",
+        "value": "premium-learning-course",
         "label": "Content Type",
-        "description": "Select which ALM content type(s) to display",
+        "description": "Select which premium learning content type(s) to display",
         "required": true,
         "options": [
           {
-            "name": "ALM Course",
-            "value": "alm-course"
+            "name": "Premium Learning Course",
+            "value": "premium-learning-course"
           },
           {
-            "name": "ALM Cohort",
-            "value": "alm-cohort"
+            "name": "Premium Learning Cohort",
+            "value": "premium-learning-cohort"
           }
         ]
       }

@@ -1,11 +1,11 @@
 import CoveoDataService from '../data-service/coveo/coveo-data-service.js';
 import ADLSDataService from '../data-service/adls-data-service.js';
-import ALMDataService from '../data-service/alm-data-service.js';
+import PLDataService from '../data-service/premium-learning-data-service.js';
 import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
-import BrowseCardsALMAdaptor from './browse-cards-alm-adaptor.js';
+import BrowseCardsPLAdaptor from './browse-cards-premium-learning-adaptor.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
-import ALM_CONTENT_TYPES from '../data-service/alm/alm-constants.js';
+import PL_CONTENT_TYPES from '../data-service/alm/premium-learning-constants.js';
 import PathsDataService from '../data-service/paths-data-service.js';
 import { URL_SPECIAL_CASE_LOCALES, getConfig, getPathDetails, fetchLanguagePlaceholders } from '../scripts.js';
 import { getExlPipelineDataSourceParams } from '../data-service/coveo/coveo-exl-pipeline-helpers.js';
@@ -196,21 +196,21 @@ const BrowseCardsDelegate = (() => {
   };
 
   /**
-   * Handles ALM data service to fetch card data.
+   * Handles premium learning data service to fetch card data.
    * @returns {Promise<Array>} Array of card data.
    * @throws {Error} Throws an error if an issue occurs during data fetching.
    * @private
    */
-  const handleALMService = async () => {
-    const almService = new ALMDataService(param);
-    const cardData = await almService.fetchDataFromSource();
+  const handlePLService = async () => {
+    const premiumlearningService = new PLDataService(param);
+    const cardData = await premiumlearningService.fetchDataFromSource();
 
     if (!cardData) {
-      throw new Error('ALM service error: Unable to fetch data');
+      throw new Error(' Premium learning service error: Unable to fetch data');
     }
 
     if (cardData?.data?.length) {
-      return BrowseCardsALMAdaptor.mapResultsToCardsData(cardData);
+      return BrowseCardsPLAdaptor.mapResultsToCardsData(cardData);
     }
 
     return [];
@@ -283,21 +283,21 @@ const BrowseCardsDelegate = (() => {
       [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY]: handleUpcomingEventsService,
       [CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY]: handleADLSService,
       [RECOMMENDED_COURSES_CONSTANTS.PATHS.MAPPING_KEY]: handlePathsService,
-      [ALM_CONTENT_TYPES.COHORT.MAPPING_KEY]: handleALMService,
-      [ALM_CONTENT_TYPES.COURSE.MAPPING_KEY]: handleALMService,
+      [PL_CONTENT_TYPES.COHORT.MAPPING_KEY]: handlePLService,
+      [PL_CONTENT_TYPES.COURSE.MAPPING_KEY]: handlePLService,
     };
 
     // If the content type is an array, use the handleCoveoService (Works only with Coveo related content types)
     if (Array.isArray(contentType)) {
-      // Check if array contains ALM content types (alm-course or alm-cohort)
-      const hasALMContent = contentType.some(
+      // Check if array contains premium-learning content types (premium-learning-course or premium-learning-cohort)
+      const hasPLContent = contentType.some(
         (type) =>
-          type?.toLowerCase() === ALM_CONTENT_TYPES.COHORT.MAPPING_KEY ||
-          type?.toLowerCase() === ALM_CONTENT_TYPES.COURSE.MAPPING_KEY,
+          type?.toLowerCase() === PL_CONTENT_TYPES.COHORT.MAPPING_KEY ||
+          type?.toLowerCase() === PL_CONTENT_TYPES.COURSE.MAPPING_KEY,
       );
 
-      if (hasALMContent) {
-        return handleALMService;
+      if (hasPLContent) {
+        return handlePLService;
       }
 
       // Handle upcoming events with Coveo

@@ -1,6 +1,6 @@
 /**
- * ALM Browse Card Styles
- * Specialized styles for Adobe Learning Manager (ALM) browse cards
+ * Premium learning Browse Card Styles
+ * Specialized styles for Premium learning browse cards
  * Includes courses and cohorts (learning programs)
  */
 
@@ -8,7 +8,7 @@
    Base Card Styles
    ========================================================================== */
 
-.browse-card.alm-browse-card {
+.browse-card.premium-learning-browse-card {
   display: flex;
   flex-direction: column;
   background: var(--color-white);
@@ -18,11 +18,11 @@
   color: var(--spectrum-gray-900);
 }
 
-.browse-card.alm-browse-card:hover {
+.browse-card.premium-learning-browse-card:hover {
   box-shadow: none;
 }
 
-.browse-card.alm-browse-card.alm-course-card {
+.browse-card.premium-learning-browse-card.premium-learning-course-card {
   min-height: auto;
 }
 
@@ -30,7 +30,7 @@
    Thumbnail Section
    ========================================================================== */
 
-.browse-card.alm-browse-card .alm-card-figure {
+.browse-card.premium-learning-browse-card .premium-learning-card-figure {
   position: relative;
   width: 100%;
   min-height: 312px;
@@ -41,31 +41,31 @@
 }
 
 /* Smaller thumbnail for course cards */
-.browse-card.alm-browse-card.alm-course-card .alm-card-figure {
+.browse-card.premium-learning-browse-card.premium-learning-course-card .premium-learning-card-figure {
   min-height: 197px;
   max-height: 197px;
 }
 
-.browse-card.alm-browse-card .alm-card-figure > img {
+.browse-card.premium-learning-browse-card .premium-learning-card-figure > img {
   width: 100%;
   height: 312px;
   object-fit: cover;
 }
 
-.browse-card.alm-browse-card:hover .alm-card-figure img {
+.browse-card.premium-learning-browse-card:hover .premium-learning-card-figure img {
   transform: scale(1.1);
   transition: transform 0.5s ease-in-out;
 }
 
 /* Thumbnail not loaded state */
-.browse-card.alm-browse-card.alm-thumbnail-not-loaded .alm-card-figure {
+.browse-card.premium-learning-browse-card.premium-learning-thumbnail-not-loaded .premium-learning-card-figure {
   background: linear-gradient(135deg, var(--color-gray-100) 0%, var(--color-gray-200) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.browse-card.alm-browse-card.alm-thumbnail-not-loaded .alm-card-figure::before {
+.browse-card.premium-learning-browse-card.premium-learning-thumbnail-not-loaded .premium-learning-card-figure::before {
   content: '';
   width: 60px;
   height: 60px;
@@ -74,7 +74,7 @@
   mask-size: contain;
 }
 
-.browse-card.alm-browse-card .alm-card-start-label-container {
+.browse-card.premium-learning-browse-card .premium-learning-card-start-label-container {
   position: absolute;
   bottom: 12px;
   left: 12px;
@@ -86,13 +86,13 @@
   border-radius: 7px;
 }
 
-.browse-card.alm-browse-card .alm-card-start-label {
+.browse-card.premium-learning-browse-card .premium-learning-card-start-label {
   font-size: 12px;
   color: var(--spectrum-gray-50);
   margin: 0;
 }
 
-.browse-card.alm-browse-card .alm-card-tags-container {
+.browse-card.premium-learning-browse-card .premium-learning-card-tags-container {
   position: absolute;
   top: 12px;
   right: 12px;
@@ -100,7 +100,7 @@
   gap: 8px;
 }
 
-.browse-card.alm-browse-card .alm-card-tag {
+.browse-card.premium-learning-browse-card .premium-learning-card-tag {
   padding: 4px 8px;
   border-radius: 8px;
   font-size: 12px;
@@ -109,17 +109,17 @@
   margin: 0;
 }
 
-.browse-card.alm-browse-card .alm-card-new-tag {
+.browse-card.premium-learning-browse-card .premium-learning-card-new-tag {
   background-color: var(--non-spectrum-warm-yellow);
   color: var(--spectrum-gray-50);
 }
 
-.browse-card.alm-browse-card .alm-card-format-tag {
+.browse-card.premium-learning-browse-card .premium-learning-card-format-tag {
   background-color: var(--background-color);
 }
 
 /* Rating Overlay */
-.browse-card.alm-browse-card .alm-card-rating-overlay {
+.browse-card.premium-learning-browse-card .premium-learning-card-rating-overlay {
   position: absolute;
   bottom: 10px;
   right: 12px;
@@ -132,7 +132,7 @@
   line-height: 1.5;
 }
 
-.browse-card.alm-browse-card .alm-card-rating-overlay .rating-star {
+.browse-card.premium-learning-browse-card .premium-learning-card-rating-overlay .rating-star {
   font-size: 20px;
   color: var(--color-white);
 }
@@ -141,7 +141,7 @@
    User Actions Overlay (Bookmark & Copy)
    ========================================================================== */
 
-.browse-card.alm-browse-card .alm-card-actions {
+.browse-card.premium-learning-browse-card .premium-learning-card-actions {
   position: absolute;
   top: 12px;
   left: 12px;
@@ -150,12 +150,12 @@
   z-index: 2;
 }
 
-.browse-card.alm-browse-card .alm-card-actions .user-actions button .icon {
+.browse-card.premium-learning-browse-card .premium-learning-card-actions .user-actions button .icon {
   height: 20px;
   width: 20px;
 }
 
-.browse-card.alm-browse-card .alm-card-actions .user-action {
+.browse-card.premium-learning-browse-card .premium-learning-card-actions .user-action {
   background: rgb(255 255 255 / 95%);
   border-radius: 4px;
   padding: 8px;
@@ -163,27 +163,27 @@
   transition: background-color 0.2s ease;
 }
 
-.browse-card.alm-browse-card .alm-card-actions .user-actions button:hover .icon {
+.browse-card.premium-learning-browse-card .premium-learning-card-actions .user-actions button:hover .icon {
   background-color: transparent;
 }
 
 /* Tooltip positioning for user actions */
-.browse-card.alm-browse-card .alm-card-actions .action-tooltip {
+.browse-card.premium-learning-browse-card .premium-learning-card-actions .action-tooltip {
   bottom: -150%;
   left: 100%;
 }
 
-.browse-card.alm-browse-card .alm-card-actions .action-tooltip.signedin-tooltip {
+.browse-card.premium-learning-browse-card .premium-learning-card-actions .action-tooltip.signedin-tooltip {
   left: 0;
   transform: translateX(0%);
 }
 
-.browse-card.alm-browse-card .alm-card-actions .action-tooltip::after {
+.browse-card.premium-learning-browse-card .premium-learning-card-actions .action-tooltip::after {
   top: -25%;
   transform: rotate(180deg);
 }
 
-.browse-card.alm-browse-card .alm-card-actions .action-tooltip.signedin-tooltip::after {
+.browse-card.premium-learning-browse-card .premium-learning-card-actions .action-tooltip.signedin-tooltip::after {
   left: 10%;
 }
 
@@ -191,7 +191,7 @@
    Content Section
    ========================================================================== */
 
-.browse-card.alm-browse-card .alm-card-content {
+.browse-card.premium-learning-browse-card .premium-learning-card-content {
   padding-top: 16px;
   flex: 1;
   display: flex;
@@ -199,7 +199,7 @@
   gap: 8px;
 }
 
-.browse-card.alm-browse-card .alm-card-title {
+.browse-card.premium-learning-browse-card .premium-learning-card-title {
   margin: 0;
   font-size: var(--spectrum-font-size-400);
   font-weight: 700;
@@ -208,7 +208,7 @@
   text-align: left;
 }
 
-.browse-card.alm-browse-card .alm-card-description {
+.browse-card.premium-learning-browse-card .premium-learning-card-description {
   margin: 0;
   font-size: var(--spectrum-font-size-100);
   line-height: 1.25;
@@ -219,13 +219,13 @@
    Meta Information (Duration, Level, Rating)
    ========================================================================== */
 
-.browse-card.alm-browse-card .alm-card-meta {
+.browse-card.premium-learning-browse-card .premium-learning-card-meta {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.browse-card.alm-browse-card .alm-card-meta-text {
+.browse-card.premium-learning-browse-card .premium-learning-card-meta-text {
   margin: 0;
   font-size: 14px;
   color: var(--spectrum-gray-600);
@@ -237,18 +237,18 @@
    Footer Section (CTAs)
    ========================================================================== */
 
-.browse-card.alm-browse-card .alm-card-footer {
+.browse-card.premium-learning-browse-card .premium-learning-card-footer {
   margin-top: 8px;
   padding-top: 8px;
   border-top: 1px solid var(--spectrum-gray-200);
 }
 
-.browse-card.alm-browse-card .alm-card-instances {
+.browse-card.premium-learning-browse-card .premium-learning-card-instances {
   display: flex;
   gap: 8px;
 }
 
-.browse-card.alm-browse-card .alm-card-instance {
+.browse-card.premium-learning-browse-card .premium-learning-card-instance {
   font-size: 12px;
   padding: 0 8px;
   border-radius: 5px;

@@ -13,7 +13,7 @@ function setAlmAccessToken(token, expiresInSeconds = 86400) {
   if (token) setCookie(LEARNER_TOKEN_COOKIE, token, expiresInSeconds);
 }
 
-export function getAlmAccessToken() {
+export function getPLAccessToken() {
   return getCookie(LEARNER_TOKEN_COOKIE);
 }
 
