@@ -1679,10 +1679,14 @@ async function loadPage() {
 
   // Initialize Premium Learning auth for all signed-in users, excluding UE Authoring pages
   if (!window.hlx.aemRoot && !window.location.href.includes('.html') && isFeatureEnabled('isPremiumLearningEnabled')) {
-    const signedIn = await isUserSignedIn();
-    if (signedIn) {
-      const { default: initializeALMAuthentication } = await import('./utils/alm-auth-utils.js');
-      await initializeALMAuthentication();
+    try {
+      const signedIn = await isUserSignedIn();
+      if (signedIn) {
+        const { default: initializeALMAuthentication } = await import('./utils/alm-auth-utils.js');
+        await initializeALMAuthentication();
+      }
+    } catch (error) {
+      console.error('Error initializing ALM authentication:', error);
     }
   }
 
