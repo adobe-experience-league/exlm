@@ -24,7 +24,7 @@ function getProductNamespace() {
 
 const brandConciergeConfig = {
   // destructured out in brand-concierge.js before forwarding to bootstrap().
-  stickyBehavior: true,
+  stickySession: true,
 
   behavior: {
     chatTranscript: {

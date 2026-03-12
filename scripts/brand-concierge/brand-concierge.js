@@ -1,9 +1,10 @@
 // eslint-disable-next-line import/no-cycle
 import { getConfig } from '../scripts.js';
 import { loadScript, decorateIcon } from '../lib-franklin.js';
+import { openDrawer } from '../dialog/dialog.js';
 import brandConciergeConfig from './brand-concierge-config.js';
 
-// separate alloy instance to avoid conflicting with the Launch-owned window.alloy.
+// Separate alloy instance avoids conflicting with the Launch-owned window.alloy.
 const ALLOY_INSTANCE_NAME = 'alloyBC';
 const MOUNT_SELECTOR = '#brand-concierge-mount';
 const DIALOG_ID = 'bc-dialog';
@@ -17,15 +18,11 @@ const warn = (...args) => console.warn('[BC]', ...args);
 // eslint-disable-next-line no-console
 const error = (...args) => console.error('[BC]', ...args);
 
-// reference held so destroyBrandConcierge can clean up on SPA navigation.
 let cssLinkEl = null;
+let drawerHandle = null;
 
-/**
- * builds and mounts the BC trigger button, dialog shell, and header.
- * uses the native <dialog> + showModal() pattern (same as image-modal.js).
- */
 function createMountPoint() {
-  if (document.getElementById(DIALOG_ID)) return;
+  if (document.getElementById(DIALOG_ID)) return document.getElementById(DIALOG_ID);
 
   const trigger = document.createElement('button');
   trigger.id = TRIGGER_ID;
@@ -38,66 +35,33 @@ function createMountPoint() {
   const triggerLabel = document.createElement('span');
   triggerLabel.textContent = 'Ask';
   trigger.append(triggerIcon, triggerLabel);
-  // decorateIcon() → <img> preserves the brand icon's fixed colours on hover.
   decorateIcon(triggerIcon);
-
-  const dialog = document.createElement('dialog');
-  dialog.id = DIALOG_ID;
-  dialog.setAttribute('aria-label', 'AI assistant');
-
-  const header = document.createElement('div');
-  header.className = 'exl-bc-header';
-
-  const headerIcon = document.createElement('span');
-  headerIcon.className = 'icon icon-concierge-icon';
-  decorateIcon(headerIcon);
-
-  const headerTitle = document.createElement('span');
-  headerTitle.className = 'exl-bc-header-title';
-  headerTitle.textContent = 'Concierge';
-
-  const closeBtn = document.createElement('button');
-  closeBtn.className = 'exl-bc-header-close';
-  closeBtn.setAttribute('aria-label', 'Close AI assistant');
-  const closeIcon = document.createElement('span');
-  closeIcon.className = 'icon icon-close';
-  closeBtn.append(closeIcon);
-  decorateIcon(closeIcon);
-
-  header.append(headerIcon, headerTitle, closeBtn);
+  document.body.append(trigger);
 
   const mount = document.createElement('div');
   mount.id = 'brand-concierge-mount';
 
-  dialog.append(header, mount);
-  document.body.append(trigger, dialog);
+  drawerHandle = openDrawer({
+    id: DIALOG_ID,
+    ariaLabel: 'AI assistant',
+    title: 'Concierge',
+    titleIcon: 'concierge-icon',
+    content: mount,
+    canExpand: true,
+    triggerEl: trigger,
+    onClose: () => trigger.setAttribute('aria-expanded', 'false'),
+  });
+
+  const { element: dialog } = drawerHandle;
 
   trigger.addEventListener('click', () => {
     dialog.showModal();
     trigger.setAttribute('aria-expanded', 'true');
   });
 
-  const closeDialog = () => {
-    dialog.close();
-    trigger.setAttribute('aria-expanded', 'false');
-    trigger.focus();
-  };
-
-  closeBtn.addEventListener('click', closeDialog);
-
-  dialog.addEventListener('click', (e) => {
-    if (e.target === dialog) closeDialog();
-  });
-
-  dialog.addEventListener('close', () => {
-    trigger.setAttribute('aria-expanded', 'false');
-  });
+  return dialog;
 }
 
-/**
- * configures the AEP Web SDK alloy instance and registers an Edge Network
- * session before BC bootstrap fires.
- */
 async function configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain) {
   await window[ALLOY_INSTANCE_NAME]('configure', {
     defaultConsent: 'in',
@@ -112,7 +76,6 @@ async function configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain) {
   await window[ALLOY_INSTANCE_NAME]('sendEvent', {});
 }
 
-/** calls window.adobe.concierge.bootstrap() after the Web Client loads. */
 function bootstrapWebClient() {
   if (typeof window.adobe?.concierge?.bootstrap !== 'function') {
     warn('bootstrap not available — confirm the datastream is enabled for Brand Concierge');
@@ -132,12 +95,10 @@ function bootstrapWebClient() {
 }
 
 /**
- * injects the AEP Web SDK queue stub so alloy() calls before alloy.min.js
- * loads are queued and replayed automatically.
+ * Queues alloy() calls made before alloy.min.js loads.
  *
- * Replaces (not appends to) window.__alloyNS — appending would cause the CDN
- * alloy.min.js to re-initialise the Launch-owned window.alloy, which has no
- * .q queue and throws.
+ * Replaces (not appends to) window.__alloyNS — appending would re-initialise the
+ * Launch-owned window.alloy, which has no .q and throws.
  */
 function injectAlloyStub() {
   if (window[ALLOY_INSTANCE_NAME]) return;
@@ -152,12 +113,10 @@ function injectAlloyStub() {
   window[ALLOY_INSTANCE_NAME].q = [];
 }
 
-/**
- * removes the BC dialog, trigger, and stylesheet from the DOM.
- * call on client-side navigation to prevent UI persistence across page transitions.
- */
+/** Call on SPA navigation to prevent the UI persisting across page transitions. */
 export function destroyBrandConcierge() {
-  document.getElementById(DIALOG_ID)?.remove();
+  drawerHandle?.destroy();
+  drawerHandle = null;
   document.getElementById(TRIGGER_ID)?.remove();
   cssLinkEl?.remove();
   cssLinkEl = null;
@@ -180,8 +139,8 @@ export async function initBrandConcierge() {
     log('Web Client loaded — calling bootstrap');
     bootstrapWebClient();
 
-    // append after bootstrap() so our <link> comes after BC's injected <style>
-    // in document order, giving our overrides cascading priority.
+    // Appended after bootstrap() so this <link> follows BC's injected <style> in document
+    // order, giving our overrides cascade priority at equal specificity.
     cssLinkEl = document.createElement('link');
     cssLinkEl.rel = 'stylesheet';
     cssLinkEl.href = `${window.hlx.codeBasePath}/scripts/brand-concierge/brand-concierge.css`;
