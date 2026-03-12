@@ -168,6 +168,7 @@ export const isBrowsePage = matchesAnyTheme(/^browse-.*/);
 export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 export const isCourseStep = matchesAnyTheme(/course-step/);
 export const isOnDemandEventPage = matchesAnyTheme(/on-demand-event/);
+export const isLiveGradientBgPage = matchesAnyTheme(/page-bg-gradient/);
 
 export const isCertificatePage = () => !!document.querySelector('.course-completion'); // Checking for presence of course-completion block
 
@@ -789,23 +790,15 @@ export function getConfig() {
   );
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const communityHost = currentEnv?.community || defaultEnv.community;
-  let cdnOrigin = `https://${cdnHost}`;
+  const cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
   // Locale param for Community page URL
   const communityLocale = communityLangsMap.get(lang) || 'en';
   // Lang param for Adobe account URL
   const adobeAccountLang = adobeAccountLangsMap.get(lang) || 'en';
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
-  let isProd = currentEnv?.env === 'PROD' || currentEnv?.authorUrl === 'author-p122525-e1219150.adobeaemcloud.com';
+  const isProd = currentEnv?.env === 'PROD' || currentEnv?.authorUrl === 'author-p122525-e1219150.adobeaemcloud.com';
   const isStage = currentEnv?.env === 'STAGE' || currentEnv?.authorUrl === 'author-p122525-e1219192.adobeaemcloud.com';
-  // EXLM-4452 - Temporary solution to update the IMS configuration to Prod for Premium Learning site in the Dev environment.
-  const urlParams = new URLSearchParams(window.location.search);
-  const isImsProd = !isProd && (urlParams?.get('ims') === 'prod' || sessionStorage.getItem('alm_access_token'));
-
-  if (isImsProd) {
-    isProd = true;
-    cdnOrigin = `https://experienceleague.adobe.com`;
-  }
   const ppsOrigin = isProd ? 'https://pps.adobe.io' : 'https://pps-stage.adobe.io';
   const ims = {
     client_id: 'ExperienceLeague',
@@ -847,6 +840,10 @@ export function getConfig() {
       : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
     coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
     upcomingEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
+    adobeIOAlmEndpoint: isProd
+      ? ''
+      : 'https://51837-570cornsilkbat-development.adobeioruntime.net/api/v1/web/alm/authentication',
+    almApiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     alm: {
       apiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
@@ -1048,15 +1045,6 @@ async function loadDefaultModule(jsPath) {
   }
 }
 
-function targetPreHiding() {
-  const styleEl = htmlToElement(`<style> header { opacity: 0 !important } </style>`);
-  document.head.appendChild(styleEl);
-
-  setTimeout(() => {
-    styleEl.remove();
-  }, 2000);
-}
-
 /**
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
@@ -1080,13 +1068,14 @@ async function loadLazy(doc) {
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
-  const headerPromise = loadHeader(doc.querySelector('header')).then(() => {
-    targetPreHiding();
-  });
+  const headerPromise = loadHeader(doc.querySelector('header'));
   const footerPromise = loadFooter(doc.querySelector('footer'));
   // disable martech if martech=off is in the query string, this is used for testing ONLY
   if (window.location.search?.indexOf('martech=off') === -1) loadMartech(headerPromise, footerPromise);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
+  if (isLiveGradientBgPage) {
+    loadDefaultModule('./page-bg-gradient/page-bg-gradient.js');
+  }
   loadFonts();
 }
 
@@ -1688,6 +1677,15 @@ async function loadPage() {
   const containsAtomicSearch = !!document.querySelector(`main .atomic-search`);
   if (containsAtomicSearch) {
     initiateCoveoAtomicSearch();
+  }
+
+  // Initialize Premium Learning auth for all signed-in users, excluding UE Authoring pages
+  if (!window.hlx.aemRoot && !window.location.href.includes('.html') && isFeatureEnabled('isPremiumLearningEnabled')) {
+    const signedIn = await isUserSignedIn();
+    if (signedIn) {
+      const { default: initializeALMAuthentication } = await import('./utils/alm-auth-utils.js');
+      await initializeALMAuthentication();
+    }
   }
 
   if (isProfilePage) {

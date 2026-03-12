@@ -1,6 +1,7 @@
 import { getMetadata } from '../lib-franklin.js';
 import { htmlToElement, loadIms, getLanguageCode, getPathDetails, getConfig } from '../scripts.js';
 import SearchDelegate from './search-delegate.js';
+import { pushTopNavSearchEvent } from '../analytics/lib-analytics.js';
 
 const { communityHost } = getConfig();
 const isCommunityDomain = window.location.origin.includes(communityHost);
@@ -82,6 +83,8 @@ if (!contentType) {
 
 // Redirects to the search page based on the provided search input and filters
 export const redirectToSearchPage = (searchUrl, searchInput, filters = '') => {
+  pushTopNavSearchEvent(filters, searchInput);
+
   const isLegacySearch = searchUrl.includes('.html');
   let targetUrlWithLanguage = isLegacySearch ? `${searchUrl}?lang=${languageCode}` : searchUrl;
   const filterValue = filters?.toLowerCase() === 'all' ? '' : filters;

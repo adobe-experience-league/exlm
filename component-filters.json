@@ -5,15 +5,22 @@
   },
   {
     "id": "main",
-    "components": ["section", "tab-section", "list-section"]
+    "components": ["section", "tab-section", "list-section", "sticky-nav-section"]
   },
   {
     "id": "main-browse",
-    "components": ["section", "browse-rail-section", "tab-section", "list-section"]
+    "components": ["section", "browse-rail-section", "tab-section", "list-section", "sticky-nav-section"]
   },
   {
     "id": "main-article",
-    "components": ["article-content-section", "article-header-section", "section", "tab-section", "list-section"]
+    "components": [
+      "article-content-section",
+      "article-header-section",
+      "section",
+      "tab-section",
+      "list-section",
+      "sticky-nav-section"
+    ]
   },
   {
     "id": "main-profile",
@@ -25,11 +32,11 @@
   },
   {
     "id": "main-courses",
-    "components": ["section", "courses-section", "tab-section", "list-section"]
+    "components": ["section", "courses-section", "tab-section", "list-section", "sticky-nav-section"]
   },
   {
     "id": "main-course-hub",
-    "components": ["section", "course-hub-section", "tab-section", "list-section"]
+    "components": ["section", "course-hub-section", "tab-section", "list-section", "sticky-nav-section"]
   },
   {
     "id": "section",
@@ -44,6 +51,7 @@
       "alm-cards",
       "teaser",
       "detailed-teaser",
+      "marquee-video-full-bleed",
       "marquee",
       "carousel",
       "sign-up",
@@ -53,7 +61,9 @@
       "secondary-search",
       "accordion-group",
       "media",
+      "media-panel",
       "authorable-card",
+      "events",
       "featured-cards",
       "events-cards",
       "adls-cards",
@@ -90,8 +100,8 @@
       "browse-courses",
       "course-recap",
       "slides",
-      "playlist",
-      "quiz-scorecard"
+      "quiz-scorecard",
+      "grid-cards"
     ]
   },
   {
@@ -106,6 +116,7 @@
       "curated-cards",
       "teaser",
       "detailed-teaser",
+      "marquee-video-full-bleed",
       "marquee",
       "carousel",
       "sign-up",
@@ -115,7 +126,9 @@
       "secondary-search",
       "accordion-group",
       "media",
+      "media-panel",
       "authorable-card",
+      "events",
       "featured-cards",
       "events-cards",
       "adls-cards",
@@ -149,6 +162,7 @@
       "curated-cards",
       "teaser",
       "detailed-teaser",
+      "marquee-video-full-bleed",
       "marquee",
       "carousel",
       "sign-up",
@@ -156,7 +170,9 @@
       "secondary-search",
       "accordion-group",
       "media",
+      "media-panel",
       "authorable-card",
+      "events",
       "featured-cards",
       "events-cards",
       "adls-cards",
@@ -175,8 +191,7 @@
       "article-tags",
       "qualtrics",
       "code",
-      "announcement-ribbon",
-      "playlist"
+      "announcement-ribbon"
     ]
   },
   {
@@ -192,6 +207,7 @@
       "detailed-teaser",
       "video-embed",
       "media",
+      "media-panel",
       "block-quote",
       "callout",
       "note"
@@ -200,6 +216,10 @@
   {
     "id": "list-section",
     "components": ["list-item"]
+  },
+  {
+    "id": "sticky-nav-section",
+    "components": ["sticky-nav"]
   },
   {
     "id": "section-browse",
@@ -213,13 +233,16 @@
       "curated-cards",
       "teaser",
       "detailed-teaser",
+      "marquee-video-full-bleed",
       "marquee",
       "sign-up",
       "video-embed",
       "secondary-search",
       "accordion-group",
       "media",
+      "media-panel",
       "authorable-card",
+      "events",
       "browse-filters",
       "featured-cards",
       "events-cards",
@@ -313,6 +336,7 @@
       "button",
       "image",
       "announcement-ribbon",
+      "marquee-video-full-bleed",
       "marquee",
       "inprogress-courses",
       "browse-courses"
@@ -347,11 +371,13 @@
       "curated-cards",
       "teaser",
       "detailed-teaser",
+      "marquee-video-full-bleed",
       "marquee",
       "carousel",
       "sign-up",
       "video-embed",
       "media",
+      "media-panel",
       "block-quote",
       "callout",
       "article-tags",
@@ -364,8 +390,7 @@
       "qualtrics",
       "code",
       "announcement-ribbon",
-      "slides",
-      "playlist"
+      "slides"
     ]
   },
   {
@@ -414,12 +439,20 @@
     "components": ["card"]
   },
   {
+    "id": "grid-cards",
+    "components": ["grid-card"]
+  },
+  {
     "id": "icon-block",
     "components": ["icon-card"]
   },
   {
     "id": "teaser",
     "components": ["teaser", "detailed-teaser", "media"]
+  },
+  {
+    "id": "media-panel",
+    "components": []
   },
   {
     "id": "accordion",
@@ -454,12 +487,20 @@
     "components": ["flip-card-item"]
   },
   {
+    "id": "events",
+    "components": ["event-item"]
+  },
+  {
     "id": "course-breakdown",
     "components": ["course-breakdown-item"]
   },
   {
     "id": "list-item",
     "components": ["list-content", "code", "note", "video-embed"]
+  },
+  {
+    "id": "sticky-nav",
+    "components": ["sticky-nav-item"]
   },
   {
     "id": "rte-custom-options",
