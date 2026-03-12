@@ -123,5 +123,10 @@
 @media (prefers-reduced-motion: reduce) {
   .page-bg-gradient .gradient-layer > .gradient-circle {
     animation: none;
+    filter: none;
+  }
+
+  .page-bg-gradient main::after {
+    backdrop-filter: none;
   }
 }
