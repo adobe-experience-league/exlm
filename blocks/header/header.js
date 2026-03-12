@@ -14,7 +14,7 @@ import {
   fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
-import { isPremiumLearner } from '../../scripts/utils/alm-auth-utils.js';
+import { isPremiumLearner } from '../../scripts/utils/pl-auth-utils.js';
 import {
   decoratorState,
   isMobile,
