@@ -39,8 +39,6 @@ async function loadBrandConcierge() {
     if (!window.adobeIMS?.isSignedInUser()) return;
   }
 
-  // eslint-disable-next-line no-console
-  console.log('[BC] initialising Brand Concierge');
   const { default: initBrandConcierge } = await import('./brand-concierge/brand-concierge.js');
   await initBrandConcierge();
 }
