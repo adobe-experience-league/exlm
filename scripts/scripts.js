@@ -1680,7 +1680,7 @@ async function loadPage() {
     try {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
-        const { default: initializePLAuthentication } = await import('./utils/alm-auth-utils.js');
+        const { default: initializePLAuthentication } = await import('./utils/pl-auth-utils.js');
         await initializePLAuthentication();
       }
     } catch (error) {

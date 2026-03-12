@@ -94,7 +94,7 @@ async function processPLAuthFlow(imsToken) {
     if (imsToken) await retrivePLToken(imsToken);
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error('Authentication initialization failed:', err);
+    console.error('Premium Learning Authentication initialization failed:', err);
   }
 }
 
