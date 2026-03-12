@@ -13,13 +13,6 @@ body.aim-hub .section.bg-dark-gray {
   background-color: var(--highlight-dark-background-color);
 }
 
-body.aim-hub .glass-bg {
-  border: 2px solid rgb(255 255 255 / 60%);
-  background: rgb(255 255 255 / 50%);
-  box-shadow: 0 0 8px 0 rgb(0 0 0 / 25%);
-  backdrop-filter: blur(12px);
-}
-
 body.aim-hub .section > div:not(.marquee-video-full-bleed-wrapper) {
   margin: auto;
   max-width: 1200px;
