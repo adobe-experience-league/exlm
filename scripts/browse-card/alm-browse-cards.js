@@ -140,7 +140,7 @@ function buildALMThumbnail({
     if (isNew) {
       const newTagElement = document.createElement('p');
       newTagElement.className = 'alm-card-tag alm-card-new-tag';
-      newTagElement.textContent = placeholders.almBrowseCardNewTag || 'New';
+      newTagElement.textContent = placeholders.premiumLearningBrowseCardNewTag || 'New';
       tagsContainer.appendChild(newTagElement);
     }
 

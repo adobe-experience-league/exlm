@@ -85,15 +85,17 @@ export default async function decorate(block) {
   function renderNoResultsContent(blockElement, searchText = '') {
     const searchTextExists = searchText?.trim()?.length > 0;
     const noSearchDescription =
-      placeholders.almCardsNoSearchDescription ||
+      placeholders.premiumLearningCardsNoSearchDescription ||
       'Try searching for a specific product or role, or explore all Premium learning content.';
     const searchDescription =
-      placeholders.almCardsSearchDescription || 'Try a different keyword, or explore all Premium Learning content.';
-    const noSearchHeader = placeholders.almCardsNoSearchHeader || 'No Premium Learning search results.';
-    const searchHeader = placeholders.almCardsSearchHeader || 'No Premium Learning search results for “{}”.';
+      placeholders.premiumLearningCardsSearchDescription ||
+      'Try a different keyword, or explore all Premium Learning content.';
+    const noSearchHeader = placeholders.premiumLearningCardsNoSearchHeader || 'No Premium Learning search results.';
+    const searchHeader =
+      placeholders.premiumLearningCardsSearchHeader || 'No Premium Learning search results for “{}”.';
     const headerNoResultText = searchTextExists ? searchHeader.replace('{}', searchText) : noSearchHeader;
     const descriptionNoResultText = searchTextExists ? searchDescription : noSearchDescription;
-    const clearSearchText = placeholders.almCardsClearSearchText || 'Clear search';
+    const clearSearchText = placeholders.premiumLearningCardsClearSearchText || 'Clear search';
     const markup = `
       <div class="alm-cards-no-results">
         <div class="alm-cards-no-results-header">${headerNoResultText}</div>

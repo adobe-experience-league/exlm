@@ -29,11 +29,11 @@ try {
 const ALM_CONTENT_TYPES = Object.freeze({
   COHORT: {
     MAPPING_KEY: 'alm-cohort',
-    LABEL: placeholders.browseCardAlmCohortLabel || 'ALM Cohort',
+    LABEL: placeholders.browseCardPremiumLearningCohortLabel || 'ALM Cohort',
   },
   COURSE: {
     MAPPING_KEY: 'alm-course',
-    LABEL: placeholders.browseCardAlmCourseLabel || 'ALM Course',
+    LABEL: placeholders.browseCardPremiumLearningCourseLabel || 'ALM Course',
   },
 });
 
