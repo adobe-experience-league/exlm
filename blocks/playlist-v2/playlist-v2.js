@@ -16,8 +16,12 @@ import { updateTranscript, transcriptLoading } from '../video-transcript/video-t
  */
 function toTimeInMinutes(seconds) {
   const secondsNumber = parseInt(seconds, 10);
+  if (Number.isNaN(secondsNumber)) {
+    return '0:00';
+  }
+
   const minutes = Math.floor(secondsNumber / 60);
-  const remainingSeconds = seconds % 60;
+  const remainingSeconds = secondsNumber % 60;
   return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
 }
 
@@ -125,8 +129,13 @@ function newPlayer(playlist) {
   decoratePlaceholders(player);
 
   const iframe = player.querySelector('iframe');
-  iframe.addEventListener('load', () => {
-    iframe.contentWindow.postMessage({ type: 'mpcAction', action: 'play' }, '*');
+  iframe?.addEventListener('load', () => {
+    try {
+      iframe?.contentWindow?.postMessage({ type: 'mpcAction', action: 'play' }, '*');
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error posting message to iframe:', error);
+    }
   });
   return player;
 }
@@ -225,7 +234,7 @@ function updateProgress(videoIndex, playlist, container) {
 
   // progress bar
   const progressBox = el.querySelector('[data-playlist-item-progress-box]');
-  if (progressBox) {
+  if (progressBox && duration > 0) {
     progressBox.style.setProperty('--playlist-item-progress', `${((currentTime || 0) / duration) * 100}%`);
   }
 
@@ -236,7 +245,7 @@ function updateProgress(videoIndex, playlist, container) {
     playlistProgressBox.style.setProperty('--playlist-progress', `${(completedVideos / playlist.length) * 100}%`);
   }
 
-  // update completed status - completed means a vides has been watched till the end, at-least once.
+  // update completed status - completed means a videos has been watched till the end, at-least once.
   if (currentTime >= duration - 1 && !completed) {
     playlist.updateVideoByIndex(videoIndex, { completed: true });
   }
@@ -444,11 +453,16 @@ export default async function decorate(block) {
     return true;
   });
 
-  const activeVideoIndex = getQueryStringParameter(videoParam) || 0;
+  const activeVideoIndex = Number(getQueryStringParameter(videoParam)) || 0;
 
   // Get playlist title and description from API data
   const playlistTitle = apiData.data?.title || '';
   const playlistDescription = apiData.data?.description || '';
+
+  // Set title and description on playlist instance (needed for action menu)
+  playlist.title = playlistTitle;
+  playlist.description = playlistDescription;
+
   buildPlaylistItems(playlistDiv, playlistItems, playlist);
   decoratePlaylistHeader(itemsContainer, playlist, playlistTitle, playlistDescription);
 
@@ -481,7 +495,7 @@ export default async function decorate(block) {
 
   // handle browser back within history changes
   window.addEventListener('popstate', () => {
-    const index = getQueryStringParameter(videoParam) || 0;
+    const index = Number(getQueryStringParameter(videoParam)) || 0;
     playlist.activateVideoByIndex(index);
   });
 
