@@ -413,11 +413,19 @@ const navDecorator = async (navBlock, decoratorOptions) => {
   buildNavItems(ul);
 
   if (isPremiumLearner()) {
+    let placeholders = {};
+    try {
+      placeholders = await fetchLanguagePlaceholders(decoratorOptions.lang);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching placeholders:', err);
+    }
+    const premiumLearningLabel = placeholders?.premiumLearningHeaderLabel || 'Premium Learning';
     const { premiumHomeUrl } = getConfig();
     ul.appendChild(
       htmlToElement(
         `<li class="nav-item nav-item-root nav-item-leaf">
-          <a href="${premiumHomeUrl}" title="Premium Learning">Premium Learning</a>
+          <a href="${premiumHomeUrl}" title="${premiumLearningLabel}">${premiumLearningLabel}</a>
         </li>`,
       ),
     );
