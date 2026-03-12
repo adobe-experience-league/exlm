@@ -5,6 +5,7 @@
   --lg-circle-pink: rgb(250 74 162);
   --lg-circle-orange: rgb(255 124 101);
   --lg-blur: 80px;
+  --lg-circle-size: 1755px;
 
   position: relative;
   isolation: isolate; /* prevents stacking conflicts */
@@ -34,8 +35,8 @@
 /* Shared circle styles */
 .page-bg-gradient .gradient-layer > .gradient-circle {
   position: absolute;
-  width: 1755px;
-  height: 1756px;
+  width: var(--lg-circle-size);
+  height: var(--lg-circle-size);
   border-radius: 50%;
   filter: blur(var(--lg-blur));
   pointer-events: none;
@@ -78,43 +79,43 @@
 /* Movement animations */
 @keyframes live-gradient-move-blue {
   0% {
-    transform: translate3d(-20vw, -10vh, 0) rotate(0deg);
+    transform: translate3d(-18%, -14%, 0) rotate(0deg);
   }
 
   50% {
-    transform: translate3d(30vw, 20vh, 0) rotate(180deg);
+    transform: translate3d(24%, 18%, 0) rotate(180deg);
   }
 
   100% {
-    transform: translate3d(-10vw, 40vh, 0) rotate(360deg);
+    transform: translate3d(-8%, 34%, 0) rotate(360deg);
   }
 }
 
 @keyframes live-gradient-move-pink {
   0% {
-    transform: translate3d(20vw, 50vh, 0) rotate(0deg);
+    transform: translate3d(16%, 28%, 0) rotate(0deg);
   }
 
   50% {
-    transform: translate3d(-30vw, -20vh, 0) rotate(-180deg);
+    transform: translate3d(-26%, -16%, 0) rotate(-180deg);
   }
 
   100% {
-    transform: translate3d(10vw, -40vh, 0) rotate(-360deg);
+    transform: translate3d(10%, -30%, 0) rotate(-360deg);
   }
 }
 
 @keyframes live-gradient-move-orange {
   0% {
-    transform: translate3d(40vw, -30vh, 0) rotate(0deg);
+    transform: translate3d(30%, -20%, 0) rotate(0deg);
   }
 
   50% {
-    transform: translate3d(-40vw, 30vh, 0) rotate(180deg);
+    transform: translate3d(-28%, 24%, 0) rotate(180deg);
   }
 
   100% {
-    transform: translate3d(20vw, 50vh, 0) rotate(360deg);
+    transform: translate3d(14%, 38%, 0) rotate(360deg);
   }
 }
 
