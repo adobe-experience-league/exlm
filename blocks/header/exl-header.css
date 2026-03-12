@@ -490,7 +490,7 @@ button > .search-picker-label {
   /* header is always white */
   background-color: var(--color-white);
   position: relative;
-  z-index: 10;
+  z-index: 999;
   height: 4rem;
 }
 
