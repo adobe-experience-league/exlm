@@ -9,17 +9,17 @@ function getConfig() {
   return window.exlm?.config || {};
 }
 
-function setAlmAccessToken(token, expiresInSeconds = 86400) {
+function setPLAccessToken(token, expiresInSeconds = 86400) {
   if (token) setCookie(LEARNER_TOKEN_COOKIE, token, expiresInSeconds);
 }
 
 /** Clears learner token and user ID cookies. Call on sign-out or invalid token. */
-function clearAllAlmAuthData() {
+function clearAllPLAuthData() {
   [LEARNER_TOKEN_COOKIE, LEARNER_USER_ID_COOKIE].forEach((cookie) => deleteCookie(cookie));
 }
 
 /** @param {string} userId @param {number} expiresInSeconds */
-function setAlmUserId(userId, expiresInSeconds = 86400) {
+function setPremiumUserId(userId, expiresInSeconds = 86400) {
   if (userId) setCookie(LEARNER_USER_ID_COOKIE, userId, expiresInSeconds);
 }
 
@@ -28,11 +28,11 @@ function setAlmUserId(userId, expiresInSeconds = 86400) {
  * @param {string} token
  * @returns {Promise<boolean>}
  */
-async function isTokenValid(token) {
+async function isTokenPLValid(token) {
   try {
-    const { almApiBaseUrl } = getConfig();
+    const { plApiBaseUrl } = getConfig();
     const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.api+json' };
-    const res = await fetch(`${almApiBaseUrl}/user`, { headers });
+    const res = await fetch(`${plApiBaseUrl}/user`, { headers });
     return res.ok;
   } catch (e) {
     return false;
@@ -44,11 +44,11 @@ async function isTokenValid(token) {
  * Stores the result in cookies.
  * @param {string} imsToken
  */
-async function retriveAlmToken(imsToken) {
+async function retrivePLToken(imsToken) {
   try {
-    const { adobeIOAlmEndpoint } = getConfig();
-    if (!adobeIOAlmEndpoint) return;
-    const response = await fetch(adobeIOAlmEndpoint, {
+    const { adobeIOPLEndpoint } = getConfig();
+    if (!adobeIOPLEndpoint) return;
+    const response = await fetch(adobeIOPLEndpoint, {
       method: 'POST',
       headers: { Authorization: `Bearer ${imsToken}` },
     });
@@ -62,11 +62,11 @@ async function retriveAlmToken(imsToken) {
     } = await response.json();
     if (!accessToken) return;
 
-    setAlmAccessToken(accessToken, expiresIn);
-    if (userId) setAlmUserId(userId, expiresIn);
+    setPLAccessToken(accessToken, expiresIn);
+    if (userId) setPremiumUserId(userId, expiresIn);
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error('Failed to exchange IMS token for ALM token:', error);
+    console.error('Failed to exchange IMS token for Premium Learning token:', error);
   }
 }
 
@@ -74,11 +74,11 @@ async function retriveAlmToken(imsToken) {
  * Validates the existing ALM cookie. Clears auth data if invalid.
  * @returns {Promise<boolean>} true if a valid cookie exists
  */
-async function validateExistingToken() {
-  const existingToken = getCookie(LEARNER_TOKEN_COOKIE);
-  if (!existingToken) return false;
-  const isValid = await isTokenValid(existingToken);
-  if (!isValid) clearAllAlmAuthData();
+async function validateExistingPLToken() {
+  const existingPLToken = getCookie(LEARNER_TOKEN_COOKIE);
+  if (!existingPLToken) return false;
+  const isValid = await isTokenPLValid(existingPLToken);
+  if (!isValid) clearAllPLAuthData();
   return isValid;
 }
 
@@ -86,12 +86,12 @@ async function validateExistingToken() {
  * Processes the ALM authentication flow for the Premium Learning application.
  * @param {string} imsToken
  */
-async function processAlmAuthFlow(imsToken) {
+async function processPLAuthFlow(imsToken) {
   try {
     // existing valid cookie — skip AIO call
-    if (await validateExistingToken()) return;
+    if (await validateExistingPLToken()) return;
     // exchange IMS token
-    if (imsToken) await retriveAlmToken(imsToken);
+    if (imsToken) await retrivePLToken(imsToken);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Authentication initialization failed:', err);
@@ -102,7 +102,7 @@ async function processAlmAuthFlow(imsToken) {
  * Main entry point for Premium Learning app authentication.
  * Called only for signed-in users — retrieves IMS token and processes ALM auth flow.
  */
-export default async function initializeALMAuthentication() {
+export default async function initializePLAuthentication() {
   const imsToken = window.adobeIMS.getAccessToken()?.token || null;
-  await processAlmAuthFlow(imsToken);
+  await processPLAuthFlow(imsToken);
 }

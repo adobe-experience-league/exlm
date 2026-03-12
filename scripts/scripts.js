@@ -840,10 +840,10 @@ export function getConfig() {
       : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
     coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
     upcomingEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
-    adobeIOAlmEndpoint: isProd
+    adobeIOPLEndpoint: isProd
       ? ''
       : 'https://51837-570cornsilkbat-development.adobeioruntime.net/api/v1/web/alm/authentication',
-    almApiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
+    plApiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     articleUrl: `${cdnOrigin}/api/articles`,
@@ -1680,8 +1680,8 @@ async function loadPage() {
     try {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
-        const { default: initializeALMAuthentication } = await import('./utils/alm-auth-utils.js');
-        await initializeALMAuthentication();
+        const { default: initializePLAuthentication } = await import('./utils/alm-auth-utils.js');
+        await initializePLAuthentication();
       }
     } catch (error) {
       console.error('Error initializing ALM authentication:', error);
