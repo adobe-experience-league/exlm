@@ -11,12 +11,7 @@ import atomicPagerHandler from './components/atomic-search-pager.js';
 import atomicNoResultHandler from './components/atomic-search-no-results.js';
 import atomicNotificationHandler from './components/atomic-search-notification.js';
 import getCoveoAtomicMarkup from './components/atomic-search-template.js';
-import {
-  CUSTOM_EVENTS,
-  debounce,
-  generateAdobeTrackingData,
-  buildI18nResourceBundles,
-} from './components/atomic-search-utils.js';
+import { CUSTOM_EVENTS, debounce, generateAdobeTrackingData } from './components/atomic-search-utils.js';
 import { isMobile } from '../header/header-utils.js';
 import createAtomicSkeleton from './components/atomic-search-skeleton.js';
 import atomicSearchBoxHandler from './components/atomic-search-box.js';
@@ -156,11 +151,51 @@ export default function decorate(block) {
       resizeObserver.observe(searchInterface);
 
       searchInterface.language = languageCode;
-      const bundles = buildI18nResourceBundles(placeholders);
-      searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_contenttype', bundles.el_contenttype);
-      searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_role', bundles.el_role);
-      searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_status', bundles.el_status);
-      searchInterface.i18n.addResourceBundle(languageCode, 'translation', bundles.translation);
+      searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_contenttype', {
+        Community: placeholders.searchContentTypeCommunityLabel || 'Community',
+        Documentation: placeholders.searchContentTypeDocumentationLabel || 'Documentation',
+        Troubleshooting: placeholders.searchContentTypeTroubleshootingLabel || 'Troubleshooting',
+        Tutorial: placeholders.searchContentTypeTutorialLabel || 'Tutorial',
+        Event: placeholders.searchContentTypeEventLabel || 'Event',
+        Playlist: placeholders.searchContentTypePlaylistLabel || 'Playlist',
+        Course: placeholders.searchContentTypeCourseLabel || 'Course',
+        'upcoming-event': placeholders.searchContentTypeUpcomingEventLabel || 'Upcoming Event',
+        Perspective: placeholders.searchContentTypePerspectiveLabel || 'Perspective',
+        Certification: placeholders.searchContentTypeCertificationLabel || 'Certification',
+        Blogs: placeholders.searchContentTypeCommunityBlogsLabel || 'Blogs',
+        Discussions: placeholders.searchContentTypeCommunityDiscussionsLabel || 'Discussions',
+        Ideas: placeholders.searchContentTypeCommunityIdeasLabel || 'Ideas',
+        Questions: placeholders.searchContentTypeCommunityQuestionsLabel || 'Questions',
+      });
+
+      searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_role', {
+        Admin: placeholders.searchRoleAdminLabel || 'Admin',
+        Developer: placeholders.searchRoleDeveloperLabel || 'Developer',
+        Leader: placeholders.searchRoleLeaderLabel || 'Leader',
+        User: placeholders.searchRoleUserLabel || 'User',
+      });
+
+      searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_status', {
+        true: placeholders.searchResolvedLabel || 'Resolved',
+        false: placeholders.searchUnresolvedLabel || 'Unresolved',
+      });
+
+      searchInterface.i18n.addResourceBundle(languageCode, 'translation', {
+        Name: placeholders.searchNameLabel || 'Name',
+        'Content Type': placeholders.searchContentTypeLabel || 'Content Type',
+        Content: placeholders.searchContentLabel || 'Content',
+        Product: placeholders.searchProductLabel || 'Product',
+        Updated: placeholders.searchUpdatedLabel || 'Updated',
+        Role: placeholders.searchRoleLabel || 'Role',
+        Date: placeholders.searchDateLabel || 'Date',
+        'Newest First': placeholders.searchNewestFirstLabel || 'Newest First',
+        'Oldest First': placeholders.searchOldestFirstLabel || 'Oldest First',
+        'Most Likes': placeholders.searchMostLikesLabel || 'Most Likes',
+        'Most Replies': placeholders.searchMostRepliesLabel || 'Most Replies',
+        'Most Views': placeholders.searchMostViewsLabel || 'Most Views',
+        clear: placeholders.searchClearLabel || 'Clear',
+        filters: placeholders.searchFiltersLabel || 'Filters',
+      });
 
       document.addEventListener(
         CUSTOM_EVENTS.FACET_LOADED,
