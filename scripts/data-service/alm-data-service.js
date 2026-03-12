@@ -1,4 +1,5 @@
 import { getConfig, getPathDetails } from '../scripts.js';
+import { getAlmAccessToken } from '../utils/alm-auth-utils.js';
 
 /**
  * @typedef {Object} ALMQueryParams
@@ -188,12 +189,12 @@ export default class ALMDataService {
    * @private
    * @returns {Object} Request headers
    */
-  buildRequestHeaders() {
-    const { oauthToken } = this.config;
+  static buildRequestHeaders() {
+    const token = getAlmAccessToken();
     return {
       Accept: 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json;charset=UTF-8',
-      Authorization: oauthToken ? `oauth ${oauthToken}` : '',
+      Authorization: token ? `oauth ${token}` : '',
     };
   }
 
@@ -310,7 +311,7 @@ export default class ALMDataService {
       const isSearchMode = searchMode || !!q;
 
       let url;
-      const headers = this.buildRequestHeaders();
+      const headers = ALMDataService.buildRequestHeaders();
       let body;
 
       if (isSearchMode) {

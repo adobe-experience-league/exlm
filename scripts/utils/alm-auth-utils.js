@@ -13,6 +13,10 @@ function setAlmAccessToken(token, expiresInSeconds = 86400) {
   if (token) setCookie(LEARNER_TOKEN_COOKIE, token, expiresInSeconds);
 }
 
+export function getAlmAccessToken() {
+  return getCookie(LEARNER_TOKEN_COOKIE);
+}
+
 /** Clears learner token and user ID cookies. Call on sign-out or invalid token. */
 function clearAllAlmAuthData() {
   [LEARNER_TOKEN_COOKIE, LEARNER_USER_ID_COOKIE].forEach((cookie) => deleteCookie(cookie));

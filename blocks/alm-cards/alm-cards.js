@@ -147,6 +147,7 @@ export default async function decorate(block) {
         }
       })
       .catch((err) => {
+        block.classList.add('alm-cards-hide-content');
         buildCardsShimmer.removeShimmer();
         /* eslint-disable-next-line no-console */
         console.error(err);

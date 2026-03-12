@@ -8,7 +8,8 @@
   align-items: flex-start;
 }
 
-.alm-cards .alm-cards-hide-content {
+.alm-cards .alm-cards-hide-content,
+.alm-cards.alm-cards-hide-content {
   display: none;
 }
 
