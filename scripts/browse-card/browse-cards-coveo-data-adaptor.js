@@ -3,6 +3,7 @@ import browseCardDataModel from '../data-model/browse-cards-model.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
 import { rewriteDocsPath } from '../utils/path-utils.js';
+import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 /**
  * Module that provides functionality for adapting Coveo search results to BrowseCards data model.
@@ -100,7 +101,11 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     if (el_type) {
       contentType = el_type.trim();
     } else {
-      contentType = Array.isArray(el_contenttype) ? el_contenttype[1]?.trim() : el_contenttype?.trim();
+      contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
+
+      if (isFeatureEnabled('isEventsV2') && contentType?.toLowerCase() === 'event') {
+        contentType = Array.isArray(el_contenttype) ? el_contenttype[1]?.trim() : el_contenttype?.trim();
+      }
     }
     let products;
 

@@ -233,21 +233,12 @@ export default async function decorate(block) {
       .split(',')
       .map((type) => {
         const trimmedType = type.trim().toUpperCase();
-        
-        // Check if this content type exists in CONTENT_TYPES
+
         if (CONTENT_TYPES[trimmedType]) {
-          const mappedValue = toPascalCase(CONTENT_TYPES[trimmedType].MAPPING_KEY);
-          console.log('[1st case] CONTENT_TYPES found for', trimmedType, '→', mappedValue);
-          return mappedValue;
+          return toPascalCase(CONTENT_TYPES[trimmedType].MAPPING_KEY);
         }
-        
-        // Fallback: use the contentType from the data as-is (match what Coveo returns)
-        // Get the first item's contentType to use as reference
-        if (data.length > 0 && data[0].contentType) {
-          const coveoValue = data[0].contentType.trim();
-          console.log('[2nd case] Using Coveo data contentType for', trimmedType, '→', coveoValue);
-          return coveoValue;
-        }
+
+        return data[0]?.contentType?.trim();
       })
       .filter(Boolean);
 
@@ -310,11 +301,9 @@ export default async function decorate(block) {
         if (data?.length) {
           for (let i = 0; i < Math.min(4, data.length); i += 1) {
             const cardData = data[i];
-            if (cardData) {
-              const cardDiv = document.createElement('div');
-              buildCard(cardDiv, cardData);
-              contentDiv.appendChild(cardDiv);
-            }
+            const cardDiv = document.createElement('div');
+            buildCard(cardDiv, cardData);
+            contentDiv.appendChild(cardDiv);
           }
         } else {
           /* Add No Results Content and Remove Card Content View Info and Shimmer */
