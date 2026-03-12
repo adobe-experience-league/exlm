@@ -466,10 +466,13 @@ export default async function decorate(block) {
   decorateIcons(productHeader.querySelector('.toc-header-content'), '/solutions');
   decorateIcons(productHeader.querySelector('.toc-header-actions'));
   const tocMobileDropdown = buildTocMobileDropdown();
+  const tocNav = document.createElement('nav');
+  tocNav.setAttribute('aria-label', 'Table of contents');
 
-  block.appendChild(tocMobileDropdown);
   tocContent.appendChild(productHeader);
-  block.appendChild(tocContent);
+  tocNav.appendChild(tocMobileDropdown);
+  tocNav.appendChild(tocContent);
+  block.appendChild(tocNav);
 
   const tocReady = fetchToc(tocID);
   // decorate TOC DOM
