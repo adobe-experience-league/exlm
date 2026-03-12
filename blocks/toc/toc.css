@@ -174,8 +174,8 @@
   margin-bottom: 12px;
 }
 
-.toc-content > .toc-tree > ul {
-  margin-left: 0 !important;
+.toc-content > nav > .toc-tree > ul {
+  margin-left: 0;
 }
 
 .toc a.toc-toggle[aria-expanded='false'] + ul {
