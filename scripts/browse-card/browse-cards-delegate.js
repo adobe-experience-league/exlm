@@ -5,7 +5,7 @@ import BrowseCardsCoveoDataAdaptor from './browse-cards-coveo-data-adaptor.js';
 import BrowseCardsADLSAdaptor from './browse-cards-adls-adaptor.js';
 import BrowseCardsPLAdaptor from './browse-cards-premium-learning-adaptor.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
-import PL_CONTENT_TYPES from '../data-service/alm/premium-learning-constants.js';
+import PL_CONTENT_TYPES from '../data-service/premium-learning/premium-learning-constants.js';
 import PathsDataService from '../data-service/paths-data-service.js';
 import { URL_SPECIAL_CASE_LOCALES, getConfig, getPathDetails, fetchLanguagePlaceholders } from '../scripts.js';
 import { getExlPipelineDataSourceParams } from '../data-service/coveo/coveo-exl-pipeline-helpers.js';
