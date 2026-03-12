@@ -4,6 +4,7 @@
   --lg-circle-blue: rgb(181 222 255);
   --lg-circle-pink: rgb(250 74 162);
   --lg-circle-orange: rgb(255 124 101);
+  --lg-blur: 80px;
 
   position: relative;
   isolation: isolate; /* prevents stacking conflicts */
@@ -36,6 +37,7 @@
   width: 1755px;
   height: 1756px;
   border-radius: 50%;
+  filter: blur(var(--lg-blur));
   pointer-events: none;
   will-change: transform;
   transform: translate3d(0, 0, 0);
@@ -59,6 +61,18 @@
   background: radial-gradient(circle at center, var(--lg-circle-orange) 0%, rgb(255 124 101 / 0%) 100%);
   opacity: 0.15;
   animation: live-gradient-move-orange 60s linear infinite;
+}
+
+/* Layer 3 — White Blur Overlay */
+.page-bg-gradient main::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: rgb(255 255 255 / 10%);
+  backdrop-filter: blur(var(--lg-blur));
+  margin-top: 64px; /* Account for fixed header */
 }
 
 /* Movement animations */
