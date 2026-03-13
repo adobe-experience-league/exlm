@@ -1,0 +1,96 @@
+@import '../../scripts/browse-card/browse-cards-block.css';
+
+/* premium-learning Cards Block Header Styles */
+.premium-learning-cards-block .premium-learning-cards-block-header {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.premium-learning-cards .premium-learning-cards-hide-content,
+.premium-learning-cards.premium-learning-cards-hide-content {
+  display: none;
+}
+
+.premium-learning-cards .premium-learning-cards-clear-search {
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: var(--spectrum-font-size-300);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.5;
+  color: #274dea;
+}
+
+.premium-learning-cards .premium-learning-cards-no-results {
+  background-color: var(--spectrum-gray-200);
+  color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-200);
+  padding: 72px 0;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 20px;
+  margin-top: 16px;
+  padding-inline: 16px;
+}
+
+.premium-learning-cards.premium-learning-cards-atomic-search .browse-cards-block-content,
+.premium-learning-cards.premium-learning-cards-atomic-search .premium-learning-cards-no-results {
+  margin-bottom: 32px;
+}
+
+.premium-learning-cards.browse-cards-block.premium-learning-cards-atomic-search {
+  min-height: auto;
+}
+
+.premium-learning-cards-block-cta a::before {
+  content: '';
+  width: 21px;
+  height: 21px;
+  position: relative;
+  top: 4px;
+  margin-right: 8px;
+  display: inline-block;
+  background-color: var(--background-color);
+  mask: url('/icons/link-out.svg') no-repeat center / contain;
+}
+
+.premium-learning-cards-block-cta a.button:any-link {
+  margin-top: 0;
+  margin-bottom: 12px;
+  height: 40px;
+  background-color: var(--non-spectrum-navy-blue);
+  padding-block: 2px;
+}
+
+.premium-learning-cards .premium-learning-cards-no-results-header {
+  font-size: var(--exlm-font-size-h3);
+  font-weight: var(--font-weight-bold);
+}
+
+.premium-learning-cards .premium-learning-cards-no-results-description {
+  margin-bottom: 12px;
+}
+
+/* Tablet styles */
+@media (min-width: 600px) {
+  .premium-learning-cards-no-results-header {
+    font-size: var(--spectrum-font-size-800);
+  }
+
+  .premium-learning-cards-block .premium-learning-cards-block-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .premium-learning-cards.premium-learning-cards-atomic-search .browse-cards-block-content {
+    margin-bottom: 0;
+  }
+}

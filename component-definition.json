@@ -408,6 +408,27 @@
           }
         },
         {
+          "title": "Premium Learning Cards",
+          "id": "premium-learning-cards",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Premium Learning Cards",
+                  "model": "premium-learning-cards",
+                  "heading": "Premium learning search results",
+                  "headingType": "h2",
+                  "cta_Type": "primary",
+                  "linkText": "View all Premium Learning results",
+                  "link": "",
+                  "contentType": "premium-learning-course"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Announcement Ribbon",
           "id": "announcement-ribbon",
           "plugins": {
