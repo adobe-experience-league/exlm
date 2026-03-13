@@ -406,7 +406,7 @@ export default async function decorate(block) {
   if (!playlistId) {
     return;
   }
-  block.innerHTML = '';
+  block.textContent = '';
 
   const { lang } = getPathDetails();
   const apiData = await fetchPlaylistData(playlistId, lang);
