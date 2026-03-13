@@ -49,61 +49,73 @@
 .page-bg-gradient .gradient-circle-blue {
   background: radial-gradient(circle at center, var(--lg-circle-blue) 0%, rgb(181 222 255 / 0%) 100%);
   opacity: 0.5;
-  animation: live-gradient-move-blue 10s linear infinite;
+  animation: live-gradient-move-blue 18s ease-in-out infinite alternate;
 }
 
 .page-bg-gradient .gradient-circle-pink {
   background: radial-gradient(circle at center, var(--lg-circle-pink) 0%, rgb(250 74 162 / 0%) 100%);
   opacity: 0.15;
-  animation: live-gradient-move-pink 15s linear infinite;
+  animation: live-gradient-move-pink 24s ease-in-out infinite alternate;
 }
 
 .page-bg-gradient .gradient-circle-orange {
   background: radial-gradient(circle at center, var(--lg-circle-orange) 0%, rgb(255 124 101 / 0%) 100%);
   opacity: 0.15;
-  animation: live-gradient-move-orange 20s linear infinite;
+  animation: live-gradient-move-orange 30s ease-in-out infinite alternate;
 }
 
 /* Movement animations */
 @keyframes live-gradient-move-blue {
   0% {
-    transform: translate3d(-18%, -14%, 0) rotate(0deg);
+    transform: translate3d(-18%, -14%, 0) scale(1);
   }
 
-  50% {
-    transform: translate3d(24%, 18%, 0) rotate(180deg);
+  35% {
+    transform: translate3d(10%, -6%, 0) scale(1.08);
+  }
+
+  70% {
+    transform: translate3d(24%, 18%, 0) scale(0.96);
   }
 
   100% {
-    transform: translate3d(-18%, -14%, 0) rotate(360deg);
+    transform: translate3d(4%, 10%, 0) scale(1.04);
   }
 }
 
 @keyframes live-gradient-move-pink {
   0% {
-    transform: translate3d(16%, 28%, 0) rotate(0deg);
+    transform: translate3d(16%, 28%, 0) scale(1);
   }
 
-  50% {
-    transform: translate3d(-26%, -16%, 0) rotate(-180deg);
+  30% {
+    transform: translate3d(0%, 8%, 0) scale(1.05);
+  }
+
+  65% {
+    transform: translate3d(-26%, -16%, 0) scale(0.94);
   }
 
   100% {
-    transform: translate3d(16%, 28%, 0) rotate(-360deg);
+    transform: translate3d(-8%, 12%, 0) scale(1.02);
   }
 }
 
 @keyframes live-gradient-move-orange {
   0% {
-    transform: translate3d(30%, -20%, 0) rotate(0deg);
+    transform: translate3d(30%, -20%, 0) scale(1);
   }
 
-  50% {
-    transform: translate3d(-28%, 24%, 0) rotate(180deg);
+  40% {
+    transform: translate3d(8%, 6%, 0) scale(1.06);
+  }
+
+  75% {
+    transform: translate3d(-28%, 24%, 0) scale(0.95);
   }
 
   100% {
-    transform: translate3d(30%, -20%, 0) rotate(360deg);
+    transform: translate3d(-6%, -4%, 0) scale(1.03);
   }
 }
 
