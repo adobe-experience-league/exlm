@@ -63,7 +63,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  margin: 0 !important;
+  margin: 0;
 }
 
 .playlist-v2 .playlist {
@@ -130,7 +130,7 @@
 }
 
 .playlist-v2 .playlist-player-info-transcript a {
-  color: inherit !important;
+  color: inherit;
 }
 
 /* Playlist items */
