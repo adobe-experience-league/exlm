@@ -307,7 +307,7 @@ export default class PLDataService {
    */
   async fetchDataFromSource() {
     try {
-      const apiBaseUrl = getConfig()?.['premium-learningApiBaseUrl'];
+      const apiBaseUrl = getConfig()?.plApiBaseUrl;
       const { q, searchMode } = this.queryParams;
       const isSearchMode = searchMode || !!q;
 
