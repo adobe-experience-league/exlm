@@ -503,7 +503,7 @@ export async function pushLinkClick(e) {
 
     // Only add position for grid-cards component
     if (componentName === 'grid-cards' && cardPosition) {
-      componentClickData.position = parseInt(cardPosition, 10);
+      componentClickData.position = cardPosition;
     }
 
     pushComponentClick(componentClickData);
