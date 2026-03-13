@@ -93,7 +93,9 @@ function buildMiniToc(block, placeholders) {
 
     render(() => {
       const tocHeadingDivNode = `<div><h2>${miniTOCHeading}</h2></div>`;
-      block.innerHTML = `${tocHeadingDivNode}\n<div class='scrollable-div'><ul>${html.join('\n')}</ul></div>`;
+      block.innerHTML = `<nav>${tocHeadingDivNode}\n<div class='scrollable-div'><ul>${html.join(
+        '\n',
+      )}</ul></div></nav>`;
 
       let lactive = false;
       const anchors = Array.from(block.querySelectorAll('a'));

@@ -23,11 +23,11 @@ export default async function decorate(block) {
           return parts.length > 1 ? parts[1].trim() : item.trim();
         }),
       ),
-    ].join(',') || getMetadata('tq-products-labels');
+    ].join(',') || getMetadata('product_v2');
 
-  const features = getPreferredMetadata('loc-feature', 'feature', 'tq-features-labels');
-  const roles = getPreferredMetadata('loc-role', 'role', 'tq-roles-labels');
-  const experienceLevels = getPreferredMetadata('loc-level', 'level', 'tq-levels-labels');
+  const features = getPreferredMetadata('loc-feature', 'feature', 'feature_v2');
+  const roles = getPreferredMetadata('loc-role', 'role', 'role_v2');
+  const experienceLevels = getPreferredMetadata('loc-level', 'level', 'level_v2');
 
   function createTagsHTML(values) {
     return values
