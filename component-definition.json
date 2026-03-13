@@ -1775,6 +1775,22 @@
           }
         },
         {
+          "title": "Playlist V2",
+          "id": "playlist-v2",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Playlist V2",
+                  "model": "playlist-v2",
+                  "playlistId": "acrobat-get-started-business-users"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Product Grid",
           "id": "product-grid",
           "plugins": {
