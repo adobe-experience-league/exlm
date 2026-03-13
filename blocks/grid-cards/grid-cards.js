@@ -51,8 +51,9 @@ export default function decorate(block) {
   const isWide = block.classList.contains('wide');
   const isStandard = block.classList.contains('standard');
 
-  cardRows.forEach((cardRow) => {
+  cardRows.forEach((cardRow, index) => {
     cardRow.classList.add('grid-card', 'glass-bg');
+    cardRow.dataset.cardPosition = index + 1;
     const [titleCell, descCell, imageCell, ctaCell] = cardRow.children;
     const picture = imageCell?.querySelector('picture');
 
@@ -99,6 +100,21 @@ export default function decorate(block) {
         if (picture) anchor.appendChild(picture);
         anchor.appendChild(contentWrapper);
         cardRow.appendChild(anchor);
+
+        // Add componentClick tracking for wide variant
+        anchor.addEventListener('click', async () => {
+          const { pushComponentClick, generateComponentID } = await import('../../scripts/analytics/lib-analytics.js');
+          const componentID = generateComponentID(block, 'grid-cards');
+
+          pushComponentClick({
+            component: 'grid-cards',
+            componentID,
+            linkTitle: cardHeading.textContent.trim(),
+            linkType: cardHeading.textContent.trim(),
+            destinationDomain: anchor.href,
+            position: index + 1,
+          });
+        });
       }
     } else {
       if (isStandard && picture) cardRow.appendChild(picture);
