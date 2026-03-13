@@ -1,5 +1,6 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { createTag, fetchLanguagePlaceholders, htmlToElement, getMetadata } from '../../scripts/scripts.js';
+import { createTag, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import { getMetadata } from '../../scripts/lib-franklin.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
