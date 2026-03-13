@@ -361,7 +361,11 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
   }
 
   .list .browse-cards-block-content > div .browse-card.upcoming-event-card .browse-card-description-text.text-expanded,
-  .list .browse-cards-block-content > div .browse-card.event-upcoming-event-card .browse-card-description-text.text-expanded {
+  .list
+    .browse-cards-block-content
+    > div
+    .browse-card.event-upcoming-event-card
+    .browse-card-description-text.text-expanded {
     -webkit-line-clamp: 2;
     max-height: unset;
     display: -webkit-box;

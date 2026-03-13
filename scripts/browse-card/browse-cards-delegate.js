@@ -85,14 +85,25 @@ try {
 }
 
 export function normalizeUpcomingEventModel(model) {
-  const isUpcoming = model?.contentType === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
-  console.log("yesss")
+  const isUpcoming = model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase();
   if (!isUpcoming) return model;
 
   return {
     ...model,
     badgeTitle: CONTENT_TYPES.UPCOMING_EVENT.LABEL,
     viewLinkText: placeholders?.browseCardUpcomingEventViewLabel || 'Register',
+    viewLink: model?.viewLink || '#',
+  };
+}
+
+export function normalizeOnDemandEventModel(model) {
+  const isOnDemand = model?.contentType?.toLowerCase() === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase();
+  if (!isOnDemand) return model;
+
+  return {
+    ...model,
+    badgeTitle: CONTENT_TYPES.ON_DEMAND_EVENT.LABEL,
+    viewLinkText: placeholders?.browseCardOnDemandEventViewLabel || 'Watch Now',
     viewLink: model?.viewLink || '#',
   };
 }
@@ -269,7 +280,12 @@ const BrowseCardsDelegate = (() => {
           const cards = await handleCoveoService();
 
           return cards.map(normalizeUpcomingEventModel);
-          
+        };
+      }
+      if (contentType.includes(CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase())) {
+        return async () => {
+          const cards = await handleCoveoService();
+          return cards.map(normalizeOnDemandEventModel);
         };
       }
       return handleCoveoService;
@@ -300,6 +316,19 @@ const BrowseCardsDelegate = (() => {
 
       cardDataService()
         .then(async (cardData) => {
+          // Normalize event cards regardless of how contentType was passed
+          let normalizedCardData = cardData.map((card) => {
+            // Normalize upcoming events
+            if (card.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase()) {
+              return normalizeUpcomingEventModel(card);
+            }
+            // Normalize on-demand events
+            if (card.contentType?.toLowerCase() === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase()) {
+              return normalizeOnDemandEventModel(card);
+            }
+            return card;
+          });
+
           // Enrich course data with user progress if applicable
           if (contentType?.includes(CONTENT_TYPES.COURSE.MAPPING_KEY)) {
             try {
@@ -311,7 +340,7 @@ const BrowseCardsDelegate = (() => {
                   import('./browse-cards-course-enricher.js'),
                 ]);
                 const courses = await getCurrentCourses();
-                resolve(BrowseCardsCourseEnricher.enrichCardsWithCourseStatus(cardData, courses));
+                resolve(BrowseCardsCourseEnricher.enrichCardsWithCourseStatus(normalizedCardData, courses));
                 return;
               }
             } catch (error) {
@@ -320,7 +349,7 @@ const BrowseCardsDelegate = (() => {
             }
           }
 
-          resolve(cardData);
+          resolve(normalizedCardData);
         })
         .catch((err) => {
           reject(err);

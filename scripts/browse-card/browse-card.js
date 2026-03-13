@@ -276,10 +276,10 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
   if (viewLinkText) {
     let icon = null;
     const isLeftPlacement = false;
+    const contentTypeLower = contentType?.toLowerCase();
     if (
-      [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY, CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
-        contentType?.toLowerCase(),
-      )
+      contentTypeLower === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase() ||
+      contentTypeLower === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY.toLowerCase()
     ) {
       icon = 'new-tab-blue';
     } else {
@@ -389,8 +389,10 @@ const buildCardContent = async (card, model, element) => {
   }
 
   if (
-    contentType === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY ||
-    contentType === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY
+    (contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase() ||
+      contentType?.toLowerCase() === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase() ||
+      contentType?.toLowerCase() === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY.toLowerCase()) &&
+    event?.time
   ) {
     buildEventContent({ event, contentType, cardContent, card });
   }
@@ -580,7 +582,7 @@ export async function buildCard(element, model) {
       type = mappingKey.toLowerCase();
     }
   }
-  
+
   // Sanitize type for CSS class names - replace pipes and spaces with hyphens
   const cssType = type?.replace(/[|\s]+/g, '-');
 
@@ -833,16 +835,25 @@ export async function buildCard(element, model) {
     { once: true },
   );
 
-  // Apply special decorations for upcoming events
-  const isUpcomingEvent = model.contentType === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
+  // Preload event CSS immediately to prevent FOUC
+  const isUpcomingEvent = contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase();
+  const isOnDemandEvent = contentType?.toLowerCase() === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase();
 
   if (isUpcomingEvent) {
-    // Add events-v2 class to the closest block container for styling
+    loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-upcoming-events.css`);
+  }
+  if (isOnDemandEvent && isFeatureEnabled('isEventsV2')) {
+    loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-on-demand-events.css`);
+  }
+
+  if (isUpcomingEvent) {
     const blockContainer = card.closest('.block') || card.closest('[class*="cards"]');
     if (blockContainer) {
       blockContainer.classList.add('events-v2');
     }
+  }
 
+  if (isUpcomingEvent) {
     const cardEl = element.querySelector('.browse-card');
     if (cardEl) {
       // Dynamically import and use the upcoming events decorator
@@ -852,9 +863,6 @@ export async function buildCard(element, model) {
     }
   }
 
-  // Check for on-demand events - support both old and new format
-  const isOnDemandEvent = model.contentType === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY;
-  
   if (isOnDemandEvent && isFeatureEnabled('isEventsV2')) {
     const cardElement = element.querySelector('.browse-card');
     console.log('[Browse Card] Calling on-demand decorator for:', model.contentType);

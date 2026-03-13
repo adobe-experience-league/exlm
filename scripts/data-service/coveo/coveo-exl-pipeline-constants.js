@@ -61,7 +61,7 @@ export const CONTENT_TYPES = Object.freeze({
     LABEL: placeholders.browseCardCertificationLabel || 'Certification',
   },
   UPCOMING_EVENT: {
-    MAPPING_KEY: 'event|upcoming event',
+    MAPPING_KEY: 'Event|Upcoming Event',
     LABEL: placeholders.browseCardUpcomingEventLabel || 'Upcoming Event',
   },
   INSTRUCTOR_LED: {
