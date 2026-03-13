@@ -122,7 +122,7 @@ export default class PLDataService {
    */
   buildRequestBody() {
     const { contentType, tagName } = this.queryParams;
-    const { catalogIds } = getConfig()?.["premium-learning"] ?? {};
+    const { catalogIds } = getConfig()?.['premium-learning'] ?? {};
 
     // Determine learning object types - support both course and cohort
     const loTypes = PLDataService.determineLearningObjectTypes(contentType);
@@ -242,7 +242,7 @@ export default class PLDataService {
    */
   buildSearchRequestBody(hasQuery = false) {
     const { contentType, q, products, solutions, roles, durationRange, learnerState } = this.queryParams;
-    const { recommendationProducts } = getConfig()?.["premium-learning"] ?? {};
+    const { recommendationProducts } = getConfig()?.['premium-learning'] ?? {};
     const loTypes = PLDataService.determineLearningObjectTypes(contentType);
 
     const body = {
@@ -307,7 +307,7 @@ export default class PLDataService {
    */
   async fetchDataFromSource() {
     try {
-      const apiBaseUrl = getConfig()?.["premium-learningApiBaseUrl"];
+      const apiBaseUrl = getConfig()?.['premium-learningApiBaseUrl'];
       const { q, searchMode } = this.queryParams;
       const isSearchMode = searchMode || !!q;
 
