@@ -99,6 +99,15 @@ async function processPLAuthFlow(imsToken) {
 }
 
 /**
+ * Returns whether the premium learner cookie (ALM access token) is present.
+ * Use this to show Premium Learning nav/links only when the user has ALM auth.
+ * @returns {boolean}
+ */
+export function isPremiumLearner() {
+  return !!getCookie(LEARNER_TOKEN_COOKIE);
+}
+
+/**
  * Main entry point for Premium Learning app authentication.
  * Called only for signed-in users — retrieves IMS token and processes PL auth flow.
  */

@@ -872,6 +872,8 @@ export function getConfig() {
     mpcApiBase: `https://api.tv.adobe.com/videos`,
     // Events Page URL
     eventsURL: `${cdnOrigin}/${lang}/events`,
+    // Premium Learning home (for premium learner nav link)
+    premiumHomeUrl: `${cdnOrigin}/${lang}/premium/home`,
   };
   return window.exlm.config;
 }
