@@ -1,11 +1,11 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { createTag, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import { createTag, fetchLanguagePlaceholders, htmlToElement, getMetadata } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 
-const isSearchPage = document.querySelector('meta[name="theme"]')?.content.includes('search') || false;
+const isSearchPage = getMetadata('theme')?.includes('search') || false;
 
 /**
  * Extracts selected values from facets, populates param object, and generates URL search parameters
