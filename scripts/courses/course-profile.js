@@ -102,7 +102,21 @@ async function getLastAddedModule() {
 
   const moduleUrl = courseMeta?.modules?.find((url) => urlContainsModule(url, latestModuleId));
 
-  return moduleUrl || courseMeta?.modules?.[0];
+  if (moduleUrl) {
+    return moduleUrl;
+  }
+
+  // Latest module was removed from content. Return first module in content that user has not completed.
+  for (const url of courseMeta?.modules || []) {
+    const { moduleId: mid } = extractCourseModuleIds(url);
+    const mod = findModule(currentCourse, mid);
+    if (!mod?.finishedAt) {
+      return url;
+    }
+  }
+
+  // All modules completed; return last module for "Review"
+  return courseMeta?.modules?.[courseMeta.modules.length - 1] || courseMeta?.modules?.[0];
 }
 
 /**
