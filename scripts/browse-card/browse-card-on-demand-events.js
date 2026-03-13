@@ -51,34 +51,14 @@ const buildOnDemandEventContent = ({ event, cardContent, card }) => {
  * @param {Object} model - The data model for the card
  */
 export const decorateOnDemandEvents = (card, model) => {
-  console.log('[On-Demand Events Decorator] Called with:', {
-    card: !!card,
-    model: !!model,
-    contentType: model?.contentType,
-    contentTypeLower: model?.contentType?.toLowerCase(),
-    expectedMappingKey: CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY,
-  });
-
-  if (!card) {
-    console.log('[On-Demand Events] Failed: No card element');
+  const contentTypeLower = model.contentType?.toLowerCase();
+  if (
+    !card ||
+    !model ||
+    (contentTypeLower !== CONTENT_TYPES.EVENT.MAPPING_KEY &&
+      contentTypeLower !== CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase())
+  )
     return;
-  }
-
-  if (!model) {
-    console.log('[On-Demand Events] Failed: No model');
-    return;
-  }
-
-  // Check if contentType contains "on demand" (case-insensitive)
-  if (!model.contentType?.toLowerCase().includes('on demand')) {
-    console.log(
-      '[On-Demand Events] Failed: ContentType does not include "on demand" -',
-      model.contentType?.toLowerCase(),
-    );
-    return;
-  }
-
-  console.log('[On-Demand Events] All checks passed, decorating card');
 
   if (card.closest('.recommendation-marquee')) return;
 

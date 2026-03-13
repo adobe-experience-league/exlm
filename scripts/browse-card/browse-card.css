@@ -768,7 +768,6 @@
 .browse-card.upcoming-event-card .browse-card-banner,
 .browse-card.event-upcoming-event-card .browse-card-banner,
 .browse-card.event-on-demand-event-card .browse-card-banner {
-  background-color: var(--non-spectrum-adobe-red);
   color: var(--spectrum-gray-50);
 }
 

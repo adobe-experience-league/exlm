@@ -278,7 +278,6 @@ const BrowseCardsDelegate = (() => {
       if (contentType.includes(CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase())) {
         return async () => {
           const cards = await handleCoveoService();
-
           return cards.map(normalizeUpcomingEventModel);
         };
       }
@@ -316,7 +315,6 @@ const BrowseCardsDelegate = (() => {
 
       cardDataService()
         .then(async (cardData) => {
-          // Normalize event cards regardless of how contentType was passed
           let normalizedCardData = cardData.map((card) => {
             // Normalize upcoming events
             if (card.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase()) {

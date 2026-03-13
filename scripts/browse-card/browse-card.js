@@ -276,10 +276,10 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
   if (viewLinkText) {
     let icon = null;
     const isLeftPlacement = false;
-    const contentTypeLower = contentType?.toLowerCase();
     if (
-      contentTypeLower === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase() ||
-      contentTypeLower === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY.toLowerCase()
+      [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase(), CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY].includes(
+        contentType?.toLowerCase(),
+      )
     ) {
       icon = 'new-tab-blue';
     } else {
@@ -389,10 +389,9 @@ const buildCardContent = async (card, model, element) => {
   }
 
   if (
-    (contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase() ||
-      contentType?.toLowerCase() === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase() ||
-      contentType?.toLowerCase() === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY.toLowerCase()) &&
-    event?.time
+    contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase() ||
+    contentType?.toLowerCase() === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase() ||
+    contentType?.toLowerCase() === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY
   ) {
     buildEventContent({ event, contentType, cardContent, card });
   }
@@ -583,8 +582,11 @@ export async function buildCard(element, model) {
     }
   }
 
-  // Sanitize type for CSS class names - replace pipes and spaces with hyphens
-  const cssType = type?.replace(/[|\s]+/g, '-');
+  // CSS class names for event types to handle pipes
+  let cssType = type;
+  if (type?.toLowerCase().includes('event')) {
+    cssType = type.replace(/[|\s]+/g, '-');
+  }
 
   const clickableLink = !(isVideoClip && !model.parentURL);
   const showVideoIconOnly = isVideoClip;
@@ -664,7 +666,7 @@ export async function buildCard(element, model) {
     card.classList.add('thumbnail-not-loaded');
   }
   if (badgeTitle || failedToLoad) {
-    if (type === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()) {
+    if (type === CONTENT_TYPES.COURSE.MAPPING_KEY) {
       const bannerElement = htmlToElement(`<div class="browse-card-icon">
         <span class="icon icon-course-badge"></span
       </div>`);
@@ -835,16 +837,8 @@ export async function buildCard(element, model) {
     { once: true },
   );
 
-  // Preload event CSS immediately to prevent FOUC
   const isUpcomingEvent = contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase();
   const isOnDemandEvent = contentType?.toLowerCase() === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase();
-
-  if (isUpcomingEvent) {
-    loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-upcoming-events.css`);
-  }
-  if (isOnDemandEvent && isFeatureEnabled('isEventsV2')) {
-    loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-on-demand-events.css`);
-  }
 
   if (isUpcomingEvent) {
     const blockContainer = card.closest('.block') || card.closest('[class*="cards"]');
@@ -856,6 +850,7 @@ export async function buildCard(element, model) {
   if (isUpcomingEvent) {
     const cardEl = element.querySelector('.browse-card');
     if (cardEl) {
+      loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-upcoming-events.css`);
       // Dynamically import and use the upcoming events decorator
       getUpcomingEventsDecorator().then(({ decorateUpcomingEvents }) => {
         decorateUpcomingEvents(cardEl, model);
@@ -865,8 +860,8 @@ export async function buildCard(element, model) {
 
   if (isOnDemandEvent && isFeatureEnabled('isEventsV2')) {
     const cardElement = element.querySelector('.browse-card');
-    console.log('[Browse Card] Calling on-demand decorator for:', model.contentType);
     // Dynamically import and use the on-demand events decorator
+    loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-on-demand-events.css`);
     getOnDemandEventsDecorator().then(({ decorateOnDemandEvents }) => {
       decorateOnDemandEvents(cardElement, model);
     });
