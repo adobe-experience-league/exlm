@@ -164,7 +164,6 @@
   background-color: transparent;
 }
 
-/* Hide tooltip for user actions */
 .browse-card.premium-learning-browse-card .premium-learning-card-actions .action-tooltip {
   display: none;
 }

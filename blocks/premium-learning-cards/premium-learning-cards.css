@@ -40,13 +40,14 @@
   padding-inline: 16px;
 }
 
-.premium-learning-cards.premium-learning-cards-atomic-search .browse-cards-block-content,
-.premium-learning-cards.premium-learning-cards-atomic-search .premium-learning-cards-no-results {
-  margin-bottom: 32px;
-}
 .premium-learning-cards .browse-cards-block-content {
   align-items: start;
   min-height: auto;
+}
+
+.premium-learning-cards.premium-learning-cards-atomic-search .browse-cards-block-content,
+.premium-learning-cards.premium-learning-cards-atomic-search .premium-learning-cards-no-results {
+  margin-bottom: 32px;
 }
 
 .premium-learning-cards.browse-cards-block.premium-learning-cards-atomic-search {
@@ -94,7 +95,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 20px;
   margin-top: 16px;
 }
 
