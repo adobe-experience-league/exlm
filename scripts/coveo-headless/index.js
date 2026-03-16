@@ -159,6 +159,13 @@ export default async function initiateCoveoHeadlessSearch({
           numberOfValues: 8,
         });
 
+        const headlessSolutionFacet = module.buildFacet(headlessSearchEngine, {
+          options: {
+            field: 'el_solution',
+          },
+          numberOfValues: 8,
+        });
+
         const headlessAuthorTypeFacet = module.buildFacet(headlessSearchEngine, {
           options: {
             field: 'author_type',
@@ -301,6 +308,7 @@ export default async function initiateCoveoHeadlessSearch({
         window.headlessRoleFacet = headlessRoleFacet;
         window.headlessExperienceFacet = headlessExperienceFacet;
         window.headlessProductFacet = headlessProductFacet;
+        window.headlessSolutionFacet = headlessSolutionFacet;
         window.headlessAuthorTypeFacet = headlessAuthorTypeFacet;
         window.headlessEventSeriesFacet = headlessEventSeriesFacet;
         window.headlessStatusControllers = statusControllers;

@@ -124,13 +124,23 @@ function constructCoveoFacet(facets, param) {
  * @private
  */
 function constructCoveoAdvancedQuery(param) {
-  const featureQuery = param.feature ? `(${param.feature.map((type) => `@el_features=="${type}"`).join(' OR ')})` : '';
   const contentTypeQuery = param.contentType
-    ? `AND (${param.contentType.map((type) => `@el_contenttype=="${type}"`).join(' OR ')})`
+    ? `(${param.contentType.map((type) => `@el_contenttype=="${type}"`).join(' OR ')})`
     : '';
-  const productQuery = param.product
-    ? `AND (${param.product.map((type) => `@el_product=="${type}"`).join(' OR ')})`
-    : '';
+
+  // Handle product/solutions to support both el_product and el_solution fields
+  let productSolutionQuery = '';
+  if (param.product || param.solutions) {
+    const productParts = [];
+    if (param.product) {
+      productParts.push(...param.product.map((type) => `@el_product=="${type}"`));
+    }
+    if (param.solutions) {
+      productParts.push(...param.solutions.map((type) => `@el_solution=="${type}"`));
+    }
+    productSolutionQuery = `AND (${productParts.join(' OR ')})`;
+  }
+
   const versionQuery = param.version
     ? `AND (${param.version.map((type) => `@el_version=="${type}"`).join(' OR ')})`
     : '';
@@ -139,8 +149,8 @@ function constructCoveoAdvancedQuery(param) {
   const authorTypeQuery = param.authorType
     ? `AND (${param.authorType.map((type) => `@author_type=="${type}"`).join(' OR ')})`
     : '';
-  const query = `${featureQuery} ${contentTypeQuery} ${productQuery} ${versionQuery} ${roleQuery} ${levelQuery} ${authorTypeQuery}`;
-  return query;
+  const query = `${contentTypeQuery} ${productSolutionQuery} ${versionQuery} ${roleQuery} ${levelQuery} ${authorTypeQuery}`;
+  return query.trim();
 }
 
 /**
@@ -160,6 +170,7 @@ export function getFacets(param) {
         ]
       : []),
     ...(param.product ? [{ id: 'el_product', type: 'specific', currentValues: param.product }] : []),
+    ...(param.solutions ? [{ id: 'el_solution', type: 'specific', currentValues: param.solutions }] : []),
     ...(param.version ? [{ id: 'el_version', type: 'specific', currentValues: param.version }] : []),
     ...(param.role ? [{ id: 'el_role', type: 'specific', currentValues: param.role }] : []),
     ...(param.authorType ? [{ id: 'author_type', type: 'specific', currentValues: param.authorType }] : []),

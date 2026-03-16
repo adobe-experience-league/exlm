@@ -238,6 +238,11 @@ function isCurrentSearchResponse(block, search) {
     const { facets } = searchResponse;
     const mismatchedFacet = facets.find((facet) => {
       const { facetId } = facet;
+
+      if (facetId === 'el_product' && window.headlessProductORQuery) {
+        return false;
+      }
+
       const selectedOptionList = selectedOptions[facetId];
       if (!selectedOptionList) return false;
       const selectedFacetsList = selectedOptionList.reduce((acc, curr) => {
@@ -1264,20 +1269,43 @@ function handleTagsClick(block) {
       const name = isTag.querySelector('span:nth-child(1)').textContent.trim();
       const dropDownObj = getObjectByName(dropdownOptions, name);
       const { value } = isTag;
-      const coveoFacetKey = coveoFacetMap[dropDownObj.id];
-      const coveoFacet = window[coveoFacetKey];
-      if (coveoFacet) {
-        const facets = getCoveoFacets(value, false);
-        facets.forEach(({ state, value: facetValue }) => {
-          coveoFacet.toggleSelect({
-            state,
-            value: facetValue,
+      const isProductFilter = dropDownObj.id === 'el_product';
+
+      if (isProductFilter) {
+        // For product filters update query
+        removeFromTags(block, value);
+        updateCountAndCheckedState(block, name, value);
+
+        const productDropdown = block.querySelector('.filter-dropdown[data-filter-type="el_product"]');
+        const selectedProducts = Array.from(productDropdown.querySelectorAll('input:checked')).map(
+          (input) => input.value,
+        );
+
+        // Store product OR query for pagination
+        if (selectedProducts.length > 0) {
+          const productParts = selectedProducts.map((prod) => `(@el_product=="${prod}" OR @el_solution=="${prod}")`);
+          window.headlessProductORQuery = productParts.length > 1 ? `(${productParts.join(' OR ')})` : productParts[0];
+        } else {
+          window.headlessProductORQuery = '';
+        }
+
+        handleTopicSelection(block, true, true);
+      } else {
+        const coveoFacetKey = coveoFacetMap[dropDownObj.id];
+        const coveoFacet = window[coveoFacetKey];
+        if (coveoFacet) {
+          const facets = getCoveoFacets(value, false);
+          facets.forEach(({ state, value: facetValue }) => {
+            coveoFacet.toggleSelect({
+              state,
+              value: facetValue,
+            });
           });
-        });
+        }
+        removeFromTags(block, value);
+        // TODO: Update checked state and numbers
+        updateCountAndCheckedState(block, name, value);
       }
-      removeFromTags(block, value);
-      // TODO: Update checked state and numbers
-      updateCountAndCheckedState(block, name, value);
     }
   });
 }
@@ -1296,6 +1324,8 @@ function handleCheckboxClick(block, el, options) {
     const { name } = dropDownObj;
     const coveoFacetKey = coveoFacetMap[dropDownObj.id];
     const coveoFacet = window[coveoFacetKey];
+    const isProductFilter = filterType === 'el_product';
+
     if (isChecked) {
       options.selected += 1;
       appendTag(block, {
@@ -1305,7 +1335,7 @@ function handleCheckboxClick(block, el, options) {
         value,
       });
 
-      if (coveoFacet) {
+      if (!isProductFilter && coveoFacet) {
         const facets = getCoveoFacets(value, true);
         facets.forEach(({ state, value: facetValue }) => {
           coveoFacet.toggleSelect({
@@ -1318,7 +1348,7 @@ function handleCheckboxClick(block, el, options) {
       options.selected -= 1;
       removeFromTags(block, value);
 
-      if (coveoFacet) {
+      if (!isProductFilter && coveoFacet) {
         const facets = getCoveoFacets(value, false);
         facets.forEach(({ state, value: facetValue }) => {
           coveoFacet.toggleSelect({
@@ -1328,10 +1358,23 @@ function handleCheckboxClick(block, el, options) {
         });
       }
     }
-    const optionsAreSelected = !!dropdownOptions.find((opt) => opt.selected > 0);
-    if (optionsAreSelected) {
-      handleTopicSelection();
+
+    // For product filters rebuild query with OR logic
+    if (isProductFilter) {
+      const productDropdown = block.querySelector('.filter-dropdown[data-filter-type="el_product"]');
+      const selectedProducts = Array.from(productDropdown.querySelectorAll('input:checked')).map(
+        (input) => input.value,
+      );
+
+      if (selectedProducts.length > 0) {
+        const productParts = selectedProducts.map((prod) => `(@el_product=="${prod}" OR @el_solution=="${prod}")`);
+        window.headlessProductORQuery = productParts.length > 1 ? `(${productParts.join(' OR ')})` : productParts[0];
+      } else {
+        window.headlessProductORQuery = '';
+      }
+      handleTopicSelection(block, true, true);
     }
+
     if (options.selected !== 0) btnEl.firstChild.textContent = `${options.name} (${options.selected})`;
     if (options.selected === 0) btnEl.firstChild.textContent = `${options.name}`;
   }

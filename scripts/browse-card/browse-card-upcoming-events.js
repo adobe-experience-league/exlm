@@ -9,7 +9,8 @@ import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constant
  * @param {Object} model - The data model for the card
  */
 export const decorateUpcomingEvents = (card, model) => {
-  if (!card || !model || model.contentType !== CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY) return;
+  if (!card || !model || model.contentType?.toLowerCase() !== CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase())
+    return;
 
   loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-upcoming-events.css`);
 

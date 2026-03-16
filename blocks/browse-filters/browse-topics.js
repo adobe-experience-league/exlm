@@ -181,6 +181,12 @@ export function handleTopicSelection(block, fireSelection, resetPage, targetPage
         query = topicsQuery;
       }
     }
+
+    // Include product filter OR query if it exists
+    if (window.headlessProductORQuery) {
+      query = query ? `${query} AND ${window.headlessProductORQuery}` : window.headlessProductORQuery;
+    }
+
     dispatchCoveoAdvancedQuery({ query, fireSelection, resetPage, targetPageNumber });
   } else {
     document.removeEventListener(COVEO_SEARCH_CUSTOM_EVENTS.READY, reInitTopicSelection);

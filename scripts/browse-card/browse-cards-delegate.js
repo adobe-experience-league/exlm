@@ -103,7 +103,7 @@ export function normalizeOnDemandEventModel(model) {
   return {
     ...model,
     badgeTitle: CONTENT_TYPES.ON_DEMAND_EVENT.LABEL,
-    viewLinkText: placeholders?.browseCardOnDemandEventViewLabel || 'Watch Now',
+    viewLinkText: placeholders?.browseCardEventViewLabel || 'Watch Now',
     viewLink: model?.viewLink || '#',
   };
 }
