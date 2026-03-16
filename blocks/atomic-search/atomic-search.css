@@ -22,6 +22,7 @@
 
 .atomic-search.block {
   --atomic-search-facet-padding: 40px;
+  --atomic-search-skeleton-margin-top: 0px;
 }
 
 .atomic-search > div {
@@ -136,6 +137,7 @@
   width: 100%;
   pointer-events: all;
   touch-action: all;
+  margin-top: var(--atomic-search-skeleton-margin-top);
 }
 
 .atomic-load-skeleton-head {
@@ -351,6 +353,21 @@
 
   .atomic-search input {
     font-size: var(--spectrum-font-size-200);
+  }
+
+  .atomic-search
+    atomic-layout-section[section='search']:has(.atomic-search-premium-search-wrapper .premium-learning-cards) {
+    width: 100% !important;
+    max-width: min(90vw, var(--default-max-width)) !important;
+    grid-column: 1 / -1;
+    margin: 0 auto;
+  }
+
+  .atomic-search
+    atomic-layout-section[section='search']:has(.atomic-search-premium-search-wrapper .premium-learning-cards)
+    .atomic-search-box-wrapper {
+    width: 80%;
+    margin: 20px auto !important;
   }
 }
 
