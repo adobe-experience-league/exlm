@@ -7,6 +7,7 @@ import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 
 const isSearchPage = getMetadata('theme')?.includes('search') || false;
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
 /**
  * Extracts selected values from facets, populates param object, and generates URL search parameters
@@ -157,7 +158,7 @@ export default async function decorate(block) {
       });
   }
 
-  if (isSearchPage) {
+  if (isSearchPage && !UEAuthorMode) {
     document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
       const { body, method = '' } = e.detail;
       if (method === 'search') {
