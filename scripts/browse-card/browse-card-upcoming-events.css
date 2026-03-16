@@ -148,17 +148,17 @@
   }
 
   .browse-card.upcoming-event-card .card-figure-date,
-  .browse-filters-results .browse-card.upcoming-event-card .show-more,
-  .browse-filters-results .browse-card.upcoming-event-card .show-less,
-  .browse-cards-block-content > div .browse-card.upcoming-event-card .show-more,
-  .browse-cards-block-content > div .browse-card.upcoming-event-card .show-less,
   .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info,
   .browse-card.event-upcoming-event-card .card-figure-date,
+  .browse-card.event-upcoming-event-card .browse-card-footer .browse-card-event-info,
+  .browse-filters-results .browse-card.upcoming-event-card .show-more,
+  .browse-filters-results .browse-card.upcoming-event-card .show-less,
   .browse-filters-results .browse-card.event-upcoming-event-card .show-more,
   .browse-filters-results .browse-card.event-upcoming-event-card .show-less,
+  .browse-cards-block-content > div .browse-card.upcoming-event-card .show-more,
+  .browse-cards-block-content > div .browse-card.upcoming-event-card .show-less,
   .browse-cards-block-content > div .browse-card.event-upcoming-event-card .show-more,
-  .browse-cards-block-content > div .browse-card.event-upcoming-event-card .show-less,
-  .browse-card.event-upcoming-event-card .browse-card-footer .browse-card-event-info {
+  .browse-cards-block-content > div .browse-card.event-upcoming-event-card .show-less {
     display: none;
   }
 }

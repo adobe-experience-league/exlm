@@ -119,7 +119,7 @@ const contentTypes = [
   },
   {
     id: 'Upcoming Event',
-    value: isFeatureEnabled('isEventsV2') ? 'Event|Upcoming Event' : 'Event',
+    value: 'Event|Upcoming Event',
     title: 'Upcoming Events',
     description: 'Virtual and in-person events focused on product education and skill development.',
   },
@@ -198,7 +198,7 @@ const eventTypes = [
   },
   {
     id: 'Upcoming-Event',
-    value: isFeatureEnabled('isEventsV2') ? 'Event|Upcoming Event' : 'Event',
+    value: 'Event|Upcoming Event',
     title: 'Upcoming Events',
     description: 'Virtual and in-person events focused on product education and skill development.',
   },
