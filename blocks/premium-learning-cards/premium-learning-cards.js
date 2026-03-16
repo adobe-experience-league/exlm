@@ -151,7 +151,9 @@ export default async function decorate(block) {
         }
       })
       .catch((err) => {
-        block.classList.add('premium-learning-cards-hide-content');
+        if (!UEAuthorMode) {
+          block.remove();
+        }
         buildCardsShimmer.removeShimmer();
         /* eslint-disable-next-line no-console */
         console.error(err);
