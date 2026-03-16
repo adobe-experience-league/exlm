@@ -146,7 +146,8 @@
   background-color: var(--spectrum-sidenav-item-background-color-hover, var(--spectrum-alias-highlight-hover));
 }
 
-.toc div > ul > li:first-child a:not(.toc-toggle) {
+.toc div > ul > li:first-child a:not(.toc-toggle),
+.toc .toc-tree > ul > li:first-child a:not(.toc-toggle) {
   font-weight: var(--font-weight-extra-bold);
 }
 
@@ -165,6 +166,10 @@
 .toc ul li ul {
   margin-left: 12px;
   margin-bottom: 12px;
+}
+
+.toc .toc-content > .toc-tree > ul {
+  margin-left: 0;
 }
 
 .toc a.toc-toggle[aria-expanded='false'] + ul {

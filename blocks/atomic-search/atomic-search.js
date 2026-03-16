@@ -13,6 +13,7 @@ import atomicNotificationHandler from './components/atomic-search-notification.j
 import getCoveoAtomicMarkup from './components/atomic-search-template.js';
 import { CUSTOM_EVENTS, debounce, generateAdobeTrackingData } from './components/atomic-search-utils.js';
 import { isMobile } from '../header/header-utils.js';
+import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import createAtomicSkeleton from './components/atomic-search-skeleton.js';
 import atomicSearchBoxHandler from './components/atomic-search-box.js';
 import atomicResultPageHandler from './components/atomic-search-results-per-page.js';
@@ -81,6 +82,14 @@ export default function decorate(block) {
   const handleAtomicLibLoad = async () => {
     await customElements.whenDefined('atomic-search-interface');
     const searchInterface = block.querySelector('atomic-search-interface');
+
+    const customEvent = new CustomEvent(COVEO_SEARCH_CUSTOM_EVENTS.SEARCH_DOM_READY, {
+      detail: {
+        searchInterface,
+        block,
+      },
+    });
+    document.dispatchEvent(customEvent);
     const { coveoOrganizationId } = getConfig();
     let { lang: languageCode } = getPathDetails();
 
@@ -100,6 +109,18 @@ export default function decorate(block) {
       accessToken: coveoToken,
       organizationId: coveoOrganizationId,
       analytics: { analyticsMode: 'legacy' },
+      preprocessRequest: (request, clientOrigin, metadata) => {
+        const { body } = request;
+        const bodyJSON = JSON.parse(body || '{}');
+        const preProcessEvent = new CustomEvent(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, {
+          detail: {
+            method: metadata?.method,
+            body: bodyJSON,
+          },
+        });
+        document.dispatchEvent(preProcessEvent);
+        return request;
+      },
     });
 
     // Trigger a first search

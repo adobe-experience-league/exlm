@@ -39,8 +39,8 @@ export default async function decorate(block) {
           return parts.length > 1 ? parts[1].trim() : item.trim();
         }),
       ),
-    ].join(', ') || getMetadata('tq-products-labels');
-  const experienceLevel = getPreferredMetadata('loc-level', 'level', 'tq-levels-labels')
+    ].join(', ') || getMetadata('product_v2');
+  const experienceLevel = getPreferredMetadata('loc-level', 'level', 'level_v2')
     .split(',')
     .map((item) => item.trim())
     .join(', ');
