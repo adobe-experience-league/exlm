@@ -6,7 +6,7 @@ export default function decorate(block) {
   image.classList.add('image');
   eyebrow.classList.add('eyebrow');
   const headingTag = document.createElement('h2');
-  headingTag.classList.add('heading');
+  headingTag.classList.add('heading', 'h1');
   headingTag.innerHTML = heading.textContent;
   heading.replaceWith(headingTag);
   description.classList.add('description');

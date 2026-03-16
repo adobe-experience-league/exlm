@@ -24,7 +24,6 @@
   }
 
   .grid-cards-title {
-    font-size: var(--spectrum-font-size-1100);
     line-height: 125%;
     font-weight: var(--font-weight-heavy);
     margin: 0;
@@ -47,13 +46,13 @@
 }
 
 .grid-card-title {
+  font-size: var(--spectrum-font-size-400);
   margin: 0;
   margin-bottom: var(--spectrum-spacing-100);
   align-self: stretch;
   font-weight: var(--font-weight-heavy);
   line-height: 125%;
   color: var(--text-color);
-  font-size: var(--spectrum-body-size-xl);
 }
 
 .grid-card-description {
@@ -85,7 +84,7 @@
   align-items: center;
   border-radius: 20px;
   padding: 5px 18px 6px;
-  font-size: 15px;
+  font-size: var(--spectrum-font-size-100);
   text-align: center;
   font-weight: var(--font-weight-bold);
   line-height: 19px;

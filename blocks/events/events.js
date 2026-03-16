@@ -54,7 +54,7 @@ export default function decorate(block) {
       ? `
     <div class="events-header">
       ${blockEyebrowText ? `<div class="events-header-eyebrow">${blockEyebrowText}</div>` : ''}
-      ${blockTitle ? `<h2 class="events-header-title">${blockTitle}</h2>` : ''}
+      ${blockTitle ? `<h2 class="events-header-title h1">${blockTitle}</h2>` : ''}
       ${blockDescription ? `<div class="events-header-description">${blockDescription}</div>` : ''}
     </div>
   `
