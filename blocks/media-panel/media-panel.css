@@ -28,7 +28,6 @@
 }
 
 .media-panel.block > .content-container > h2 {
-  font-size: var(--spectrum-heading-size-xxl);
   font-weight: var(--font-weight-heavy);
   margin: var(--spectrum-spacing-100) 0;
   color: var(--non-spectrum-dark-gray);
@@ -57,7 +56,7 @@
   padding: var(--spectrum-spacing-100) 18px;
   color: var(--non-spectrum-dark-gray);
   text-align: center;
-  font-size: 17px;
+  font-size: var(--spectrum-font-size-300);
   font-style: normal;
   font-weight: var(--font-weight-bold);
   line-height: 21px; /* 123.529% */
@@ -94,7 +93,7 @@
   border: 2px solid rgb(255 255 255 / 50%);
 }
 
-.media-panel.block.podcast-card > .podcast-container > .podcast-heading:where(h1, h2, h3, h4, h5) {
+.media-panel.block.podcast-card > .podcast-container > .podcast-heading {
   color: var(--non-spectrum-dark-gray);
   font-style: normal;
   font-weight: var(--font-weight-heavy);
