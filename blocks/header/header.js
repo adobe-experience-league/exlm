@@ -14,6 +14,7 @@ import {
   fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
+import { isPremiumLearner } from '../../scripts/utils/pl-auth-utils.js';
 import {
   decoratorState,
   isMobile,
@@ -49,6 +50,7 @@ import ProfileMenu from './profile-menu.js';
  * @property {string} navLinkOrigin - origin to be added to relative links in the nav
  * @property {import('../language/language.js').Language[]} languages - array of languages to dispay in language selector
  * @property {(lang: string) => void} onLanguageChange - called when language is changed
+ * @property {Object} [placeholders] - language placeholders object
  */
 
 const HEADER_CSS = `/blocks/header/exl-header.css`;
@@ -411,6 +413,19 @@ const navDecorator = async (navBlock, decoratorOptions) => {
   const ul = navWrapper.querySelector(':scope > ul');
   buildNavItems(ul);
 
+  if (isPremiumLearner()) {
+    const placeholders = decoratorOptions.placeholders ?? {};
+    const premiumLearningLabel = placeholders?.premiumLearningHeaderLabel || 'Premium Learning';
+    const { premiumHomeUrl } = getConfig();
+    ul.appendChild(
+      htmlToElement(
+        `<li class="nav-item nav-item-root nav-item-leaf">
+          <a href="${premiumHomeUrl}" title="${premiumLearningLabel}">${premiumLearningLabel}</a>
+        </li>`,
+      ),
+    );
+  }
+
   // build featured products nav links
   buildFeaturedProductsNavLinks(navBlock, decoratorOptions.lang).then(() => {
     // this needs to run at the end of navDecorator,
@@ -425,13 +440,7 @@ const navDecorator = async (navBlock, decoratorOptions) => {
  * @param {DecoratorOptions} decoratorOptions
  */
 const searchDecorator = async (searchBlock, decoratorOptions) => {
-  let placeholders = {};
-  try {
-    placeholders = await fetchLanguagePlaceholders();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
-  }
+  const placeholders = decoratorOptions.placeholders ?? {};
   // save this for later use in mobile nav.
   const searchLink = getCell(searchBlock, 1, 1)?.firstChild;
   decoratorState.searchLinkHtml = searchLink.outerHTML;
@@ -771,6 +780,14 @@ class ExlHeader extends HTMLElement {
       nav.ariaLabel = 'Main navigation';
 
       await decorateCommunityBlock(header, this.decoratorOptions);
+
+      try {
+        this.decoratorOptions.placeholders = await fetchLanguagePlaceholders(this.decoratorOptions.lang);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Error fetching placeholders:', err);
+        this.decoratorOptions.placeholders = {};
+      }
 
       const decorateHeaderBlock = async (className, decorator, options) => {
         try {

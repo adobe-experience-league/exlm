@@ -11,6 +11,7 @@ import { sendCoveoClickEvent } from '../coveo-analytics.js';
 import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
+import PL_CONTENT_TYPES from '../data-service/premium-learning/premium-learning-constants.js';
 import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 const bookmarkExclusionContentypes = [
@@ -559,6 +560,15 @@ const getOnDemandEventsDecorator = () => {
 export async function buildCard(element, model) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
 
+  // Delegate to PL-specific card builder for premium-learning content types
+  const isPLContent =
+    contentType === PL_CONTENT_TYPES.COURSE.MAPPING_KEY || contentType === PL_CONTENT_TYPES.COHORT.MAPPING_KEY;
+
+  if (isPLContent) {
+    const { buildPLCard } = await import('./browse-cards-premium-learning.js');
+    return buildPLCard(element, model);
+  }
+
   element.setAttribute('data-analytics-content-type', contentType);
   // lowercase all urls - because all of our urls are lower-case
   model.viewLink = lowerCaseSameOriginUrls(model.viewLink);
@@ -719,6 +729,7 @@ export async function buildCard(element, model) {
     cardContent.appendChild(titleElement);
   }
   await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`);
+  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-premium-learning.css`);
 
   // For course content type, add level and duration info right after the title
   if (type === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()) {
@@ -857,4 +868,6 @@ export async function buildCard(element, model) {
       decorateOnDemandEvents(cardElement, model);
     });
   }
+
+  return undefined;
 }

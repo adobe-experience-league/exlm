@@ -489,13 +489,24 @@ export async function pushLinkClick(e) {
 
   // Only trigger componentClick here for non-browse-card components
   if (!hasBrowseCardClass(component) && !hasBrowseCardClass(e.target)) {
-    pushComponentClick({
+    // Check if the clicked element is within a grid-card and get its position
+    const gridCard = e.target.closest('.grid-card');
+    const cardPosition = gridCard?.dataset?.cardPosition;
+
+    const componentClickData = {
       component: componentName,
       componentID,
       linkTitle,
       linkType: headerText,
       destinationDomain,
-    });
+    };
+
+    // Only add position for grid-cards component
+    if (componentName === 'grid-cards' && cardPosition) {
+      componentClickData.position = cardPosition;
+    }
+
+    pushComponentClick(componentClickData);
   }
 }
 

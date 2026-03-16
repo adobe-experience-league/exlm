@@ -13,6 +13,10 @@ function setPLAccessToken(token, expiresInSeconds = 86400) {
   if (token) setCookie(LEARNER_TOKEN_COOKIE, token, expiresInSeconds);
 }
 
+export function getPLAccessToken() {
+  return getCookie(LEARNER_TOKEN_COOKIE);
+}
+
 /** Clears learner token and user ID cookies. Call on sign-out or invalid token. */
 function clearAllPLAuthData() {
   [LEARNER_TOKEN_COOKIE, LEARNER_USER_ID_COOKIE].forEach((cookie) => deleteCookie(cookie));
@@ -96,6 +100,15 @@ async function processPLAuthFlow(imsToken) {
     // eslint-disable-next-line no-console
     console.error('Premium Learning Authentication initialization failed:', err);
   }
+}
+
+/**
+ * Returns whether the premium learner cookie (ALM access token) is present.
+ * Use this to show Premium Learning nav/links only when the user has ALM auth.
+ * @returns {boolean}
+ */
+export function isPremiumLearner() {
+  return !!getCookie(LEARNER_TOKEN_COOKIE);
 }
 
 /**

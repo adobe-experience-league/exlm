@@ -87,9 +87,11 @@ export class Playlist {
   description = '';
 
   constructor(options) {
-    this.options = options || { autoplayNext: true };
-    const playlistId = window.location.pathname.split('/').join('-');
-    this.localStorageKey = `playlist-${playlistId}`;
+    this.options = { autoplayNext: true, ...options };
+    const pathBasedId = window.location.pathname.split('/').join('-');
+    // If playlistId is provided in options, append it to make key unique per playlist
+    const uniqueId = options?.playlistId ? `${pathBasedId}-${options.playlistId}` : pathBasedId;
+    this.localStorageKey = `playlist-${uniqueId}`;
     let storedPlaylist = {
       videos: [],
     };
