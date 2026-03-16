@@ -23,7 +23,7 @@ export default function decorate(block) {
 
     if (hasTitle) {
       const headingTag = document.createElement('h2');
-      headingTag.classList.add('grid-cards-title');
+      headingTag.classList.add('grid-cards-title', 'h1');
       headingTag.innerHTML = titleRow.textContent;
       titleRow.replaceWith(headingTag);
       headerDiv.appendChild(headingTag);
