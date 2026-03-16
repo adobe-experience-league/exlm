@@ -84,19 +84,6 @@
   margin-bottom: 12px;
 }
 
-.premium-learning-cards .premium-learning-cards-ue-message {
-  background-color: var(--spectrum-gray-200);
-  color: var(--non-spectrum-dark-gray);
-  font-size: var(--spectrum-font-size-200);
-  padding: 72px 0;
-  text-align: center;
-  width: 100%;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 16px;
-}
 
 /* Tablet styles */
 @media (min-width: 600px) {

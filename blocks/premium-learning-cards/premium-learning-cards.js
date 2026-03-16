@@ -155,11 +155,9 @@ export default async function decorate(block) {
         if (!UEAuthorMode) {
           block.remove();
         } else {
-          const ueMessage = createTag('div', { class: 'premium-learning-cards-ue-message' });
-          ueMessage.textContent =
-            placeholders.premiumLearningUeMsg ||
-            'This block will load the Premium learning content  on the search page for Premium users only.';
-          block.appendChild(ueMessage);
+          const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
+          contentDiv.textContent = 'This block will load the Premium learning content on the search page for Premium users only.';
+          block.appendChild(contentDiv);
         }
         /* eslint-disable-next-line no-console */
         console.error(err);
