@@ -114,7 +114,8 @@ const BrowseCardsPLAdaptor = (() => {
     const { cdnOrigin } = getConfig();
     const lang = getPathDetails()?.lang || 'en';
     const extractedID = id.split(':')?.[1] || '';
-    const contentTypePath = contentType.split('-')[1] || '';
+    const contentTypeParts = contentType.split('-');
+    const contentTypePath = contentTypeParts[contentTypeParts.length - 1] || '';
     const premiumlearningLink = `${cdnOrigin}/${lang}/premium/${contentTypePath}/${extractedID}`;
     return premiumlearningLink || '';
   };

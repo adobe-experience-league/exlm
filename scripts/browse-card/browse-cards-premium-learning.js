@@ -241,15 +241,6 @@ export async function buildPLCard(element, model) {
   const cardContent = document.createElement('div');
   cardContent.className = 'premium-learning-card-content';
 
-  // For courses: description before title; For cohorts: title before meta
-  if (isCourseCard && meta?.description) {
-    const descriptionElement = document.createElement('p');
-    descriptionElement.className = 'premium-learning-card-description';
-    descriptionElement.textContent =
-      meta.description.length > 20 ? `${meta.description.substring(0, 20)}...` : meta.description;
-    cardContent.appendChild(descriptionElement);
-  }
-
   // Add title for both courses and cohorts
   if (title) {
     const titleElement = document.createElement('h3');

@@ -154,6 +154,12 @@ export default async function decorate(block) {
         buildCardsShimmer.removeShimmer();
         if (!UEAuthorMode) {
           block.remove();
+        } else {
+          const ueMessage = createTag('div', { class: 'premium-learning-cards-ue-message' });
+          ueMessage.textContent =
+            placeholders.premiumLearningUeMsg ||
+            'This block will load the Premium learning content  on the search page for Premium users only.';
+          block.appendChild(ueMessage);
         }
         /* eslint-disable-next-line no-console */
         console.error(err);
