@@ -21,13 +21,13 @@ const docType = document.querySelector('meta[name="doc-type"]')?.content || '';
 const duration = document.querySelector('meta[name="duration"]')?.content || '';
 
 // TQ Tags
-const productV2 = document.querySelector('meta[name="tq-products-labels"]')?.content || '';
-const subFeatureV2 = document.querySelector('meta[name="tq-subfeatures-labels"]')?.content.toLowerCase() || '';
-const featureV2 = document.querySelector('meta[name="tq-features-labels"]')?.content.toLowerCase() || '';
-const roleV2 = document.querySelector('meta[name="tq-roles-labels"]')?.content || '';
-const levelV2 = document.querySelector('meta[name="tq-levels-labels"]')?.content || '';
-const topicV2 = document.querySelector('meta[name="tq-topics-labels"]')?.content || '';
-const industryV2 = document.querySelector('meta[name="tq-industries-labels"]')?.content || '';
+const productV2 = document.querySelector('meta[name="product_v2"]')?.content || '';
+const subFeatureV2 = document.querySelector('meta[name="subfeature_v2"]')?.content.toLowerCase() || '';
+const featureV2 = document.querySelector('meta[name="feature_v2"]')?.content.toLowerCase() || '';
+const roleV2 = document.querySelector('meta[name="role_v2"]')?.content || '';
+const levelV2 = document.querySelector('meta[name="level_v2"]')?.content || '';
+const topicV2 = document.querySelector('meta[name="topic_v2"]')?.content || '';
+const industryV2 = document.querySelector('meta[name="industry_v2"]')?.content || '';
 
 const UEFilters = {
   Role: '',
@@ -489,13 +489,24 @@ export async function pushLinkClick(e) {
 
   // Only trigger componentClick here for non-browse-card components
   if (!hasBrowseCardClass(component) && !hasBrowseCardClass(e.target)) {
-    pushComponentClick({
+    // Check if the clicked element is within a grid-card and get its position
+    const gridCard = e.target.closest('.grid-card');
+    const cardPosition = gridCard?.dataset?.cardPosition;
+
+    const componentClickData = {
       component: componentName,
       componentID,
       linkTitle,
       linkType: headerText,
       destinationDomain,
-    });
+    };
+
+    // Only add position for grid-cards component
+    if (componentName === 'grid-cards' && cardPosition) {
+      componentClickData.position = cardPosition;
+    }
+
+    pushComponentClick(componentClickData);
   }
 }
 
