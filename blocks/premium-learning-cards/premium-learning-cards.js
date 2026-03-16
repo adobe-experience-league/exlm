@@ -151,10 +151,10 @@ export default async function decorate(block) {
         }
       })
       .catch((err) => {
+        buildCardsShimmer.removeShimmer();
         if (!UEAuthorMode) {
           block.remove();
         }
-        buildCardsShimmer.removeShimmer();
         /* eslint-disable-next-line no-console */
         console.error(err);
       });
