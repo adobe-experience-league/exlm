@@ -11,7 +11,7 @@
   flex-direction: column;
   gap: var(--spectrum-spacing-100);
   text-align: center;
-  max-width: 792px;
+  max-width: 846px;
 
   .grid-cards-eyebrow {
     text-transform: uppercase;
@@ -126,8 +126,7 @@
   gap: var(--spectrum-spacing-400);
   justify-items: center;
   width: 100%;
-  max-width: 1200px;
-  grid-template-columns: minmax(0, 384px);
+  grid-template-columns: 1fr;
 }
 
 .grid-cards.minimal .grid-card {
@@ -141,8 +140,7 @@
 .grid-cards.standard .grid-card-container {
   gap: var(--spectrum-spacing-400);
   justify-items: center;
-  max-width: 1200px;
-  grid-template-columns: minmax(0, 384px);
+  grid-template-columns: 1fr;
 }
 
 .grid-cards.standard .grid-card {
@@ -156,7 +154,6 @@
 .grid-cards.standard .grid-card-image {
   width: 100%;
   aspect-ratio: 16 / 9;
-  max-width: 336px;
   overflow: hidden;
   border-radius: 8px;
 }
@@ -172,8 +169,7 @@
 .grid-cards.wide .grid-card-container {
   gap: var(--spectrum-spacing-400);
   width: 100%;
-  max-width: 1200px;
-  grid-template-columns: minmax(0, 588px);
+  grid-template-columns: 1fr;
 }
 
 .grid-cards.wide .grid-card > a {
@@ -185,7 +181,6 @@
 
 .grid-cards.wide .grid-card-image {
   flex: 0 0 40%;
-  max-width: 226px;
   overflow: hidden;
   border-radius: 8px;
 }
@@ -214,28 +209,17 @@
 @media (min-width: 600px) {
   .grid-cards.standard .grid-card-container,
   .grid-cards.minimal .grid-card-container {
-    grid-template-columns: repeat(2, minmax(0, 384px));
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .grid-cards.wide .grid-card-container {
-    grid-template-columns: repeat(2, minmax(0, 588px));
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (min-width: 900px) {
   .grid-cards.standard .grid-card-container,
   .grid-cards.minimal .grid-card-container {
-    grid-template-columns: repeat(3, minmax(0, 384px));
-  }
-}
-
-@media (min-width: 1200px) {
-  .grid-cards.minimal .grid-card-container,
-  .grid-cards.standard .grid-card-container {
-    max-width: 1200px;
-  }
-
-  .grid-cards.wide .grid-card-container {
-    max-width: 1202px;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
