@@ -154,6 +154,11 @@ export default async function decorate(block) {
         buildCardsShimmer.removeShimmer();
         if (!UEAuthorMode) {
           block.remove();
+        } else {
+          const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
+          contentDiv.textContent =
+            'This block will load the Premium learning content on the search page for Premium users only.';
+          block.appendChild(contentDiv);
         }
         /* eslint-disable-next-line no-console */
         console.error(err);
