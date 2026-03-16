@@ -231,11 +231,6 @@
 }
 
 @media (min-width: 1200px) {
-  .grid-cards.minimal .grid-card-container,
-  .grid-cards.standard .grid-card-container {
-    max-width: 1200px;
-  }
-
   .grid-cards.wide .grid-card-container {
     max-width: 1202px;
   }

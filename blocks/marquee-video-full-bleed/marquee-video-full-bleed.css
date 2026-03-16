@@ -172,7 +172,7 @@ main .section.marquee-video-full-bleed-container {
   .marquee-video-full-bleed-content {
     max-width: calc(100vw * 0.33);
     position: absolute;
-    left: calc((100vw - 1200px) / 2 + 40px);
+    left: calc((100vw - 1280px) / 2 + 40px);
     top: 50%;
     transform: translateY(-50%);
     text-align: left;

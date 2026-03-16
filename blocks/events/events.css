@@ -233,4 +233,9 @@
   .events .events-list {
     grid-template-columns: repeat(3, 1fr);
   }
+
+  .aim-hub .section .events-block {
+    width: calc(982 / 1280 * 100%);
+    margin: 0 auto;
+  }
 }
