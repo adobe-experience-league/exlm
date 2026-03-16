@@ -235,7 +235,7 @@
   }
 
   .aim-hub .section .events-block {
-    width: calc(982 / 1280 * 100%);
+    max-width: 1062px;
     margin: 0 auto;
   }
 }
