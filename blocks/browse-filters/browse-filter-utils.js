@@ -88,7 +88,7 @@ const contentTypes = [
   },
   {
     id: 'Event',
-    value: 'Event|On Demand Event',
+    value: isFeatureEnabled('isEventsV2') ? 'Event|On Demand Event' : 'Event',
     title: 'On-Demand Events',
     description: 'Recordings of learning and skill enablement events. Watch and learn from Adobe experts and peers.',
   },
@@ -119,7 +119,7 @@ const contentTypes = [
   },
   {
     id: 'Upcoming Event',
-    value: 'Event|Upcoming Event',
+    value: isFeatureEnabled('isEventsV2') ? 'Event|Upcoming Event' : 'Event',
     title: 'Upcoming Events',
     description: 'Virtual and in-person events focused on product education and skill development.',
   },
@@ -192,13 +192,13 @@ const authorTypes = [
 const eventTypes = [
   {
     id: 'Event',
-    value: 'Event|On Demand Event',
+    value: isFeatureEnabled('isEventsV2') ? 'Event|On Demand Event' : 'Event',
     title: 'On-Demand Events',
     description: '',
   },
   {
     id: 'Upcoming-Event',
-    value: 'Event|Upcoming Event',
+    value: isFeatureEnabled('isEventsV2') ? 'Event|Upcoming Event' : 'Event',
     title: 'Upcoming Events',
     description: 'Virtual and in-person events focused on product education and skill development.',
   },

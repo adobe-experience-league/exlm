@@ -315,7 +315,7 @@ const BrowseCardsDelegate = (() => {
 
       cardDataService()
         .then(async (cardData) => {
-          let normalizedCardData = cardData.map((card) => {
+          const normalizedCardData = cardData.map((card) => {
             // Normalize upcoming events
             if (card.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase()) {
               return normalizeUpcomingEventModel(card);

@@ -171,7 +171,7 @@ export default async function decorate(block) {
     contentType: contentType && contentType.split(','),
     role: [],
     product: [],
-    solutions: [],
+    feature: [],
     q: keyword,
     sortCriteria,
     noOfResults,
@@ -195,8 +195,6 @@ export default async function decorate(block) {
 
   if (productQueryParamValue.length > 0 && productQueryParamValue[0] !== DEFAULT_OPTIONS.PRODUCT) {
     param.product = [productQueryParamValue];
-    param.solutions = [productQueryParamValue];
-    param.feature = ['product-solution-filter'];
     productDropdown.updateDropdownValue(productQueryParamValue);
     updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.PRODUCT.toLowerCase(), productQueryParamValue);
   }
@@ -349,8 +347,7 @@ export default async function decorate(block) {
   productDropdown.handleOnChange((value) => {
     const productValue = value === defaultProductLabel ? [] : [value];
     param.product = productValue;
-    param.solutions = productValue;
-    param.feature = productValue.length > 0 ? ['product-solution-filter'] : [];
+
     /* Update the URL Query Param with Selected Product Value */
     updateURLWithSelectedFilters(DEFAULT_OPTIONS.PRODUCT.toLowerCase(), value);
     updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.PRODUCT.toLowerCase(), value);
