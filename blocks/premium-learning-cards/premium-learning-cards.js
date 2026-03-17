@@ -5,6 +5,7 @@ import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 const isSearchPage = getMetadata('theme')?.includes('search') || false;
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
@@ -31,6 +32,13 @@ const updateHash = (filterCondition, joinWith = '&') => {
   const updatedParts = currentHash.split('&').filter(filterCondition);
   window.location.hash = updatedParts.join(joinWith);
 };
+
+function showFallbackContentInUEMode(blockElement) {
+  const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
+  contentDiv.textContent =
+    'This block will load the Premium learning content on the search page for Premium users only.';
+  blockElement.appendChild(contentDiv);
+}
 
 /**
  * Decorate function to process and log the mapped data for premium-learning cards.
@@ -68,12 +76,18 @@ export default async function decorate(block) {
   `;
   block.appendChild(headerDiv);
 
-  let placeholders = {};
-  try {
-    placeholders = await fetchLanguagePlaceholders();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
+  const [signInUser, placeholders] = await Promise.all([
+    isSignedInUser(),
+    fetchLanguagePlaceholders().catch(() => ({})),
+  ]);
+
+  if (!signInUser) {
+    if (UEAuthorMode) {
+      showFallbackContentInUEMode(block);
+    } else {
+      block.remove();
+    }
+    return;
   }
 
   const param = {
@@ -155,10 +169,7 @@ export default async function decorate(block) {
         if (!UEAuthorMode) {
           block.remove();
         } else {
-          const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
-          contentDiv.textContent =
-            'This block will load the Premium learning content on the search page for Premium users only.';
-          block.appendChild(contentDiv);
+          showFallbackContentInUEMode(block);
         }
         /* eslint-disable-next-line no-console */
         console.error(err);
@@ -166,9 +177,16 @@ export default async function decorate(block) {
   }
 
   if (isSearchPage && !UEAuthorMode) {
+    let lastSearchQuery = null;
     document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
       const { body, method = '' } = e.detail;
       if (method === 'search') {
+        const newQuery = (body?.q ?? '').trim();
+        if (lastSearchQuery === newQuery) {
+          return;
+        }
+        lastSearchQuery = newQuery;
+
         const urlString = transformCoveoFacetsToPlSearch(param, body);
         param.searchMode = true;
         const contentWrapper = block.querySelector('.browse-cards-block-content');
