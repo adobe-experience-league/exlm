@@ -47,7 +47,7 @@ function buildNavList(rows, block) {
       event.preventDefault();
       const target = document.querySelector(`[data-section-id="${sectionId}"]`);
       if (!target) return;
-      const navHeight = block.closest('.section')?.offsetHeight ?? block.offsetHeight ?? 0;
+      const navHeight = block.querySelector('.sticky-nav-container')?.offsetHeight ?? 0;
       window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - navHeight, behavior: 'smooth' });
       setActiveLink(anchor, block);
     });
@@ -62,11 +62,11 @@ function buildNavList(rows, block) {
   return navList;
 }
 
-function setupScrollSpy(block, sectionEl) {
+function setupScrollSpy(block) {
   const navLinks = [...block.querySelectorAll('.sticky-nav-link[data-section-target]')];
   if (navLinks.length === 0) return;
 
-  const navHeight = (sectionEl || block).offsetHeight;
+  const navHeight = block.querySelector('.sticky-nav-container')?.offsetHeight ?? 0;
   const sectionMap = new Map(
     navLinks
       .map((link) => [document.querySelector(`[data-section-id="${link.dataset.sectionTarget}"]`), link])
@@ -75,20 +75,39 @@ function setupScrollSpy(block, sectionEl) {
 
   if (sectionMap.size === 0) return;
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      const topmost = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((entryA, entryB) => entryA.boundingClientRect.top - entryB.boundingClientRect.top)[0];
-      if (topmost) {
-        const link = sectionMap.get(topmost.target);
-        if (link) requestAnimationFrame(() => setActiveLink(link, block));
-      }
-    },
-    { root: null, rootMargin: `-${navHeight}px 0px -50% 0px`, threshold: 0 },
-  );
+  const sections = [...sectionMap.keys()];
+
+  const getVisibleRatio = (target) => {
+    const rect = target.getBoundingClientRect();
+    const viewportHeight = Math.max(window.innerHeight - navHeight, 1);
+    const visibleTop = Math.max(rect.top, navHeight);
+    const visibleBottom = Math.min(rect.bottom, window.innerHeight);
+    const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+    const comparableHeight = Math.min(rect.height, viewportHeight);
+
+    return comparableHeight > 0 ? visibleHeight / comparableHeight : 0;
+  };
+
+  const updateActiveSection = () => {
+    const activeSection = sections
+      .filter((section) => getVisibleRatio(section) >= 0.9)
+      .sort((sectionA, sectionB) => sectionA.getBoundingClientRect().top - sectionB.getBoundingClientRect().top)[0];
+
+    if (activeSection) {
+      const link = sectionMap.get(activeSection);
+      if (link) requestAnimationFrame(() => setActiveLink(link, block));
+    }
+  };
+
+  const observer = new IntersectionObserver(updateActiveSection, {
+    root: null,
+    rootMargin: `-${navHeight}px 0px -50% 0px`,
+    threshold: [0, 0.9],
+  });
 
   sectionMap.forEach((_, target) => observer.observe(target));
+
+  window.addEventListener('scroll', updateActiveSection, { passive: true });
 }
 
 export default function decorate(block) {
@@ -101,10 +120,8 @@ export default function decorate(block) {
 
   block.appendChild(nav);
 
-  const sectionEl = block.closest('.section');
-
   const firstLink = block.querySelector('.sticky-nav-link');
   if (firstLink) firstLink.classList.add('active');
 
-  setupScrollSpy(block, sectionEl);
+  setupScrollSpy(block);
 }
