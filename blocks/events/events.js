@@ -99,21 +99,28 @@ export default function decorate(block) {
 
   itemRows.forEach((row) => {
     if (!row?.parentElement) return;
+    const anchor = row.children[row.children.length - 1]?.querySelector('a');
     const item = parseListItemCells(row.children);
     const itemMetaLine = [item.date, item.type].filter(Boolean).join(' • ');
-    const titleContent =
-      item.title && item.url
-        ? `<a href="${item.url.replace(/"/g, '&quot;')}" class="events-item-title-link">${item.title}</a>`
-        : item.title;
 
-    const itemHtml = `
+    row.className = 'events-item';
+    row.innerHTML = `
       ${item.tagText ? `<span class="events-featured-tag">${item.tagText}</span>` : ''}
       ${itemMetaLine ? `<span class="events-featured-meta">${itemMetaLine}</span>` : ''}
-      ${titleContent ? `<div class="events-item-title">${titleContent}</div>` : ''}
       ${item.desc ? `<div class="events-item-description">${item.desc}</div>` : ''}
     `;
-    row.className = 'events-item';
-    row.innerHTML = itemHtml;
+
+    if (item.title) {
+      const titleDiv = createTag('div', { class: 'events-item-title' });
+      if (anchor?.href?.trim()) {
+        anchor.textContent = item.title;
+        anchor.classList.add('events-item-title-link');
+        titleDiv.appendChild(anchor);
+      } else {
+        titleDiv.textContent = item.title;
+      }
+      row.insertBefore(titleDiv, row.querySelector('.events-item-description') || null);
+    }
     listWrapper.appendChild(row);
   });
 
