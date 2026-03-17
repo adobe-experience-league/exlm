@@ -1374,7 +1374,6 @@ function handleCheckboxClick(block, el, options) {
       }
       handleTopicSelection(block, true, true);
     }
-
     if (options.selected !== 0) btnEl.firstChild.textContent = `${options.name} (${options.selected})`;
     if (options.selected === 0) btnEl.firstChild.textContent = `${options.name}`;
   }

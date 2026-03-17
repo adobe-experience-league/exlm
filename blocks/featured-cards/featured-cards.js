@@ -347,7 +347,6 @@ export default async function decorate(block) {
   productDropdown.handleOnChange((value) => {
     const productValue = value === defaultProductLabel ? [] : [value];
     param.product = productValue;
-
     /* Update the URL Query Param with Selected Product Value */
     updateURLWithSelectedFilters(DEFAULT_OPTIONS.PRODUCT.toLowerCase(), value);
     updateBrowseMoreWithSelectedFilters(block, DEFAULT_OPTIONS.PRODUCT.toLowerCase(), value);
