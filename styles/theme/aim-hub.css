@@ -18,7 +18,7 @@ body.aim-hub .section > div:not(.marquee-video-full-bleed-wrapper) {
 }
 
 body.aim-hub .section.marquee-container {
-  padding: 0px;
+        padding: 0;
 }
 
 body.aim-hub .section .accordion-group,
