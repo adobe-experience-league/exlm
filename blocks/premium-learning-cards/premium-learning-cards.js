@@ -166,9 +166,16 @@ export default async function decorate(block) {
   }
 
   if (isSearchPage && !UEAuthorMode) {
+    let lastSearchQuery = null;
     document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
       const { body, method = '' } = e.detail;
       if (method === 'search') {
+        const newQuery = (body?.q ?? '').trim();
+        if (lastSearchQuery === newQuery) {
+          return;
+        }
+        lastSearchQuery = newQuery;
+
         const urlString = transformCoveoFacetsToPlSearch(param, body);
         param.searchMode = true;
         const contentWrapper = block.querySelector('.browse-cards-block-content');
