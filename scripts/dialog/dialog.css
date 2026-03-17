@@ -136,7 +136,7 @@ dialog[data-type='drawer'][open] {
 dialog[data-type='drawer'].exl-dialog-expanded {
   inset: 0;
   margin: auto;
-  width: 90vw;
+  width: 80vw;
   height: 90dvh;
   border-radius: 12px;
   transform: none;
