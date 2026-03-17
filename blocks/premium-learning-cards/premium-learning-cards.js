@@ -95,7 +95,7 @@ export default async function decorate(block) {
     noOfResults,
   };
 
-  const buildCardsShimmer = new BrowseCardShimmer();
+  const buildCardsShimmer = new BrowseCardShimmer(noOfResults, contentType);
   buildCardsShimmer.addShimmer(block);
 
   function renderNoResultsContent(blockElement, searchText = '') {

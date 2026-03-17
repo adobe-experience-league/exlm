@@ -17,6 +17,10 @@ body.aim-hub .section > div:not(.marquee-video-full-bleed-wrapper) {
   margin: auto;
 }
 
+body.aim-hub .section.marquee-container {
+  padding: 0px;
+}
+
 body.aim-hub .section .accordion-group,
 body.aim-hub .section .accordion-group > .accordion details {
   background-color: transparent;
