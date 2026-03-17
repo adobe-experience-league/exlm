@@ -431,7 +431,7 @@ export const decorateLinksWithinSection = (main) => {
 
     links?.forEach((link) => {
       const href = link.getAttribute('href');
-      if (href && !href.startsWith('#') && !link.hasAttribute('target')) {
+      if (href && !href.startsWith('#')) {
         link.setAttribute('target', '_blank');
         if (link.hostname !== window.location.hostname) {
           link.setAttribute('rel', 'noopener noreferrer');
