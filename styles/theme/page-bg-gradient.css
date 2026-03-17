@@ -49,19 +49,19 @@
 .page-bg-gradient .gradient-circle-blue {
   background: radial-gradient(circle at center, var(--lg-circle-blue) 0%, rgb(181 222 255 / 0%) 100%);
   opacity: 0.5;
-  animation: live-gradient-move-blue 18s ease-in-out infinite alternate;
+  animation: live-gradient-move-blue 10s ease-in-out infinite alternate;
 }
 
 .page-bg-gradient .gradient-circle-pink {
   background: radial-gradient(circle at center, var(--lg-circle-pink) 0%, rgb(250 74 162 / 0%) 100%);
-  opacity: 0.15;
-  animation: live-gradient-move-pink 24s ease-in-out infinite alternate;
+  opacity: 0.3;
+  animation: live-gradient-move-pink 14s ease-in-out infinite alternate;
 }
 
 .page-bg-gradient .gradient-circle-orange {
   background: radial-gradient(circle at center, var(--lg-circle-orange) 0%, rgb(255 124 101 / 0%) 100%);
-  opacity: 0.15;
-  animation: live-gradient-move-orange 30s ease-in-out infinite alternate;
+  opacity: 0.3;
+  animation: live-gradient-move-orange 18s ease-in-out infinite alternate;
 }
 
 /* Movement animations */
