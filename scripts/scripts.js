@@ -1615,6 +1615,7 @@ function createCssEffectsToolbar() {
     circlePink: 10,
     circleOrange: 10,
     blur: 80,
+    duration: 30,
   };
 
   const overlayStyleId = 'css-effects-toolbar-overlay';
@@ -1686,6 +1687,18 @@ function createCssEffectsToolbar() {
       box-shadow: -2px 0 8px rgb(0 0 0 / 1%);
     }
     .css-effects-toolbar-toggle:hover { background: rgb(240 240 240); }
+    .css-effects-toolbar-clear {
+      width: 100%;
+      margin-top: 10px;
+      padding: 6px 10px;
+      font-size: 12px;
+      color: #333;
+      background: rgb(240 240 240);
+      border: 1px solid rgb(0 0 0 / 15%);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .css-effects-toolbar-clear:hover { background: rgb(230 230 230); }
   `;
   document.head.appendChild(styleEl);
 
@@ -1739,6 +1752,7 @@ function createCssEffectsToolbar() {
     root.style.setProperty('--lg-circle-pink', `rgb(250 74 162 / ${g.circlePink}%)`);
     root.style.setProperty('--lg-circle-orange', `rgb(255 124 101 / ${g.circleOrange}%)`);
     root.style.setProperty('--lg-blur', `${g.blur}px`);
+    root.style.setProperty('--lg-duration', `${g.duration}s`);
   }
 
   function addSlider(parent, label, key, group, min, max, suffix = '') {
@@ -1790,6 +1804,43 @@ function createCssEffectsToolbar() {
   addSlider(panel, 'Circle pink', 'circlePink', 'gradient', 0, 100, '%');
   addSlider(panel, 'Circle orange', 'circleOrange', 'gradient', 0, 100, '%');
   addSlider(panel, 'Blur', 'blur', 'gradient', 20, 150, 'px');
+  addSlider(panel, 'Anim speed', 'duration', 'gradient', 5, 120, 's');
+
+  const sliderOrder = [
+    { group: 'glass', key: 'borderOpacity', suffix: '%' },
+    { group: 'glass', key: 'backgroundOpacity', suffix: '%' },
+    { group: 'glass', key: 'shadowOpacity', suffix: '%' },
+    { group: 'glass', key: 'backdropBlur', suffix: 'px' },
+    { group: 'gradient', key: 'basePink', suffix: '%' },
+    { group: 'gradient', key: 'baseBlue', suffix: '%' },
+    { group: 'gradient', key: 'circleBlue', suffix: '%' },
+    { group: 'gradient', key: 'circlePink', suffix: '%' },
+    { group: 'gradient', key: 'circleOrange', suffix: '%' },
+    { group: 'gradient', key: 'blur', suffix: 'px' },
+    { group: 'gradient', key: 'duration', suffix: 's' },
+  ];
+
+  function resetToDefaults() {
+    state.glass = { ...GLASS_DEFAULTS };
+    state.gradient = { ...GRADIENT_DEFAULTS };
+    const inputs = panel.querySelectorAll('input[type="range"]');
+    const vals = panel.querySelectorAll('.css-effects-toolbar-row .val');
+    sliderOrder.forEach(({ group, key, suffix }, i) => {
+      const v = state[group][key];
+      if (inputs[i]) inputs[i].value = String(v);
+      if (vals[i]) vals[i].textContent = v + suffix;
+    });
+    applyGlassOverrides();
+    applyGradientOverrides();
+    writeState(state);
+  }
+
+  const clearBtn = document.createElement('button');
+  clearBtn.type = 'button';
+  clearBtn.className = 'css-effects-toolbar-clear';
+  clearBtn.textContent = 'Clear (defaults)';
+  clearBtn.addEventListener('click', resetToDefaults);
+  panel.appendChild(clearBtn);
 
   const toggleBtn = document.createElement('button');
   toggleBtn.type = 'button';
