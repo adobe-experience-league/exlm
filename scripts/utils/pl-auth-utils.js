@@ -50,9 +50,9 @@ async function isTokenPLValid(token) {
  */
 async function retrivePLToken(imsToken) {
   try {
-    const { adobeIOPLEndpoint } = getConfig();
-    if (!adobeIOPLEndpoint) return;
-    const response = await fetch(adobeIOPLEndpoint, {
+    const { premiumLearningAuthAPI } = getConfig();
+    if (!premiumLearningAuthAPI) return;
+    const response = await fetch(premiumLearningAuthAPI, {
       method: 'POST',
       headers: { Authorization: `Bearer ${imsToken}` },
     });

@@ -726,7 +726,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities.adobe.com',
-      adobeIOPL: 'https://51837-570cornsilkbat.adobeio-static.net/api/v1/web/alm/authentication',
+      premiumLearningAuthUrl: 'https://51837-570cornsilkbat.adobeio-static.net/api/v1/web/alm/authentication',
     },
     {
       env: 'STAGE',
@@ -735,7 +735,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-beta.adobe.com',
-      adobeIOPL: 'https://51837-570cornsilkbat-stage.adobeio-static.net/api/v1/web/alm/authentication',
+      premiumLearningAuthUrl: 'https://51837-570cornsilkbat-stage.adobeio-static.net/api/v1/web/alm/authentication',
     },
     {
       env: 'DEV',
@@ -744,7 +744,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-beta.adobe.com',
-      adobeIOPL: 'https://51837-570cornsilkbat-qa.adobeio-static.net/api/v1/web/alm/authentication',
+      premiumLearningAuthUrl: 'https://51837-570cornsilkbat-qa.adobeio-static.net/api/v1/web/alm/authentication',
     },
   ];
 
@@ -793,7 +793,7 @@ export function getConfig() {
   );
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const communityHost = currentEnv?.community || defaultEnv.community;
-  const adobeIOPLEndpoint = currentEnv?.adobeIOPL || defaultEnv.adobeIOPL;
+  const premiumLearningAuthAPI = currentEnv?.premiumLearningAuthUrl || defaultEnv.premiumLearningAuthUrl;
   const cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
   // Locale param for Community page URL
@@ -833,7 +833,7 @@ export function getConfig() {
     modalReDisplayDuration,
     cookieConsentName,
     targetCriteriaIds,
-    adobeIOPLEndpoint,
+    premiumLearningAuthAPI,
     quizPassingCriteria: 0.65, // 65% passing criteria for quizzes
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list?platform=gainsight`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`,
