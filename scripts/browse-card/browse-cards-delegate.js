@@ -88,7 +88,9 @@ try {
 }
 
 export function normalizeUpcomingEventModel(model) {
-  const isUpcoming = model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase();
+  const isUpcoming =
+    model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase() ||
+    CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase();
   if (!isUpcoming) return model;
 
   return {
@@ -313,7 +315,7 @@ const BrowseCardsDelegate = (() => {
       }
 
       // Handle upcoming events with Coveo
-      if (contentType.includes(CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase())) {
+      if (contentType.includes(CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase())) {
         return async () => {
           const cards = await handleCoveoService();
           return cards.map(normalizeUpcomingEventModel);
@@ -357,7 +359,7 @@ const BrowseCardsDelegate = (() => {
         .then(async (cardData) => {
           const normalizedCardData = cardData.map((card) => {
             // Normalize upcoming events
-            if (card.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase()) {
+            if (card.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase()) {
               return normalizeUpcomingEventModel(card);
             }
             // Normalize on-demand events

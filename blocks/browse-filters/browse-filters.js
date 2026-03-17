@@ -930,7 +930,7 @@ async function handleSearchEngineSubscription(block, isUserSignedIn) {
       let cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
       cardsData = cardsData.map((model) => {
         // Normalize upcoming events
-        if (model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase()) {
+        if (model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase()) {
           return normalizeUpcomingEventModel(model);
         }
         // Normalize on-demand events

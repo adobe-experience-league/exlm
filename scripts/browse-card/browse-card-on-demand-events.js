@@ -1,5 +1,5 @@
 /* eslint-disable camelcase, no-unused-vars */
-import { decorateIcons, loadCSS } from '../lib-franklin.js';
+import { decorateIcons } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
@@ -61,8 +61,6 @@ export const decorateOnDemandEvents = (card, model) => {
     return;
 
   if (card.closest('.recommendation-marquee')) return;
-
-  // CSS is already loaded upfront in browse-card.js
 
   const { event } = model;
   const cardFigure = card.querySelector('.browse-card-figure');

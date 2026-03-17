@@ -1,5 +1,4 @@
 import { fetchLanguagePlaceholders } from '../../scripts.js';
-import isFeatureEnabled from '../../utils/feature-flag-utils.js';
 
 let placeholders = {};
 try {
@@ -62,7 +61,11 @@ export const CONTENT_TYPES = Object.freeze({
     LABEL: placeholders.browseCardCertificationLabel || 'Certification',
   },
   UPCOMING_EVENT: {
-    MAPPING_KEY: isFeatureEnabled('isEventsV2') ? 'Event|Upcoming Event' : 'upcoming-event',
+    MAPPING_KEY: 'upcoming-event',
+    LABEL: placeholders.browseCardUpcomingEventLabel || 'Upcoming Event',
+  },
+  UPCOMING_EVENT_V2: {
+    MAPPING_KEY: 'Event|Upcoming Event',
     LABEL: placeholders.browseCardUpcomingEventLabel || 'Upcoming Event',
   },
   INSTRUCTOR_LED: {

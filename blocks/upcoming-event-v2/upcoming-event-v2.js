@@ -41,7 +41,7 @@ export default async function decorate(block) {
   buildCardsShimmer.addShimmer(block);
 
   const parameters = {
-    contentType: [CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY],
+    contentType: [CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY],
     sortCriteria: 'date ascending',
   };
 
