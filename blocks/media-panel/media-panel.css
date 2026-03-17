@@ -71,7 +71,6 @@
 .media-panel.block > .podcast-container > .image img {
   width: 100%;
   height: auto;
-  object-fit: cover;
 }
 
 .media-panel.block.podcast-card > .podcast-container {
