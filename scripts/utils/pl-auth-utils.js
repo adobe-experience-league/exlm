@@ -44,15 +44,15 @@ async function isTokenPLValid(token) {
 }
 
 /**
- * Exchanges an IMS token for an Premium learner token via the AIO endpoint.
+ * Exchanges an IMS token for an Premium learner token via the Premium Learning Auth endpoint.
  * Stores the result in cookies.
  * @param {string} imsToken
  */
 async function retrivePLToken(imsToken) {
   try {
-    const { adobeIOPLEndpoint } = getConfig();
-    if (!adobeIOPLEndpoint) return;
-    const response = await fetch(adobeIOPLEndpoint, {
+    const { premiumLearningAuthAPI } = getConfig();
+    if (!premiumLearningAuthAPI) return;
+    const response = await fetch(premiumLearningAuthAPI, {
       method: 'POST',
       headers: { Authorization: `Bearer ${imsToken}` },
     });
@@ -92,7 +92,7 @@ async function validateExistingPLToken() {
  */
 async function processPLAuthFlow(imsToken) {
   try {
-    // existing valid cookie — skip AIO call
+    // existing valid cookie — skip Premium Learning Auth call
     if (await validateExistingPLToken()) return;
     // exchange IMS token
     if (imsToken) await retrivePLToken(imsToken);
