@@ -1597,6 +1597,219 @@ async function loadPage() {
   }
 }
 
+/**
+ * Creates a floating, fixed toolbar to edit .glass-bg and .page-bg-gradient CSS effects.
+ * Injects override styles and updates CSS custom properties on the page.
+ */
+function createCssEffectsToolbar() {
+  const GLASS_DEFAULTS = {
+    borderOpacity: 60,
+    backgroundOpacity: 50,
+    shadowOpacity: 25,
+    backdropBlur: 12,
+  };
+  const GRADIENT_DEFAULTS = {
+    basePink: 20,
+    baseBlue: 20,
+    circleBlue: 40,
+    circlePink: 10,
+    circleOrange: 10,
+    blur: 80,
+  };
+
+  const overlayStyleId = 'css-effects-toolbar-overlay';
+  const glassOverridesId = 'css-effects-toolbar-glass-overrides';
+  const storageKey = 'exlm-css-effects-toolbar';
+
+  if (document.getElementById(overlayStyleId)) return;
+
+  const glassOverridesEl = document.createElement('style');
+  glassOverridesEl.id = glassOverridesId;
+  document.head.appendChild(glassOverridesEl);
+
+  const styleEl = document.createElement('style');
+  styleEl.id = overlayStyleId;
+  styleEl.textContent = `
+    .css-effects-toolbar {
+      position: fixed;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      z-index: 9999;
+      font-family: system-ui, sans-serif;
+      font-size: 12px;
+      background: rgb(255 255 255 / 95%);
+      border: 1px solid rgb(0 0 0 / 12%);
+      border-right: none;
+      border-radius: 8px 0 0 8px;
+      box-shadow: -4px 0 16px rgb(0 0 0 / 15%);
+      padding: 10px 12px;
+      min-width: 200px;
+      max-width: 260px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .css-effects-toolbar-tab {
+      margin: 0 0 8px 0;
+      padding: 4px 0;
+      border-bottom: 1px solid rgb(0 0 0 / 10%);
+      font-weight: 600;
+      color: #333;
+    }
+    .css-effects-toolbar-tab:last-of-type { margin-bottom: 0; border-bottom: none; }
+    .css-effects-toolbar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .css-effects-toolbar-row label { flex: 0 0 90px; color: #444; }
+    .css-effects-toolbar-row input[type="range"] { flex: 1; min-width: 0; }
+    .css-effects-toolbar-row .val { flex: 0 0 36px; text-align: right; color: #666; }
+    .css-effects-toolbar-toggle {
+      position: fixed;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      z-index: 9998;
+      width: 28px;
+      height: 56px;
+      border: 1px solid rgb(0 0 0 / 12%);
+      border-right: none;
+      border-radius: 6px 0 0 6px;
+      background: rgb(248 248 248);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      box-shadow: -2px 0 8px rgb(0 0 0 / 1%);
+    }
+    .css-effects-toolbar-toggle:hover { background: rgb(240 240 240); }
+  `;
+  document.head.appendChild(styleEl);
+
+  function readState() {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        return {
+          glass: { ...GLASS_DEFAULTS, ...parsed.glass },
+          gradient: { ...GRADIENT_DEFAULTS, ...parsed.gradient },
+        };
+      }
+    } catch (_) {
+      /* ignore */
+    }
+    return {
+      glass: { ...GLASS_DEFAULTS },
+      gradient: { ...GRADIENT_DEFAULTS },
+    };
+  }
+
+  function writeState(state) {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    } catch (_) {
+      /* ignore */
+    }
+  }
+
+  const state = readState();
+
+  function applyGlassOverrides() {
+    const g = state.glass;
+    glassOverridesEl.textContent = `
+      .glass-bg {
+        border-color: rgb(255 255 255 / ${g.borderOpacity}%);
+        background: rgb(255 255 255 / ${g.backgroundOpacity}%);
+        box-shadow: 0 0 8px 0 rgb(0 0 0 / ${g.shadowOpacity}%);
+        backdrop-filter: blur(${g.backdropBlur}px);
+      }
+    `;
+  }
+
+  function applyGradientOverrides() {
+    const root = document.body?.classList.contains('page-bg-gradient') ? document.body : document.documentElement;
+    const g = state.gradient;
+    root.style.setProperty('--lg-base-pink', `rgb(250 74 162 / ${g.basePink}%)`);
+    root.style.setProperty('--lg-base-blue', `rgb(181 222 255 / ${g.baseBlue}%)`);
+    root.style.setProperty('--lg-circle-blue', `rgb(181 222 255 / ${g.circleBlue}%)`);
+    root.style.setProperty('--lg-circle-pink', `rgb(250 74 162 / ${g.circlePink}%)`);
+    root.style.setProperty('--lg-circle-orange', `rgb(255 124 101 / ${g.circleOrange}%)`);
+    root.style.setProperty('--lg-blur', `${g.blur}px`);
+  }
+
+  function addSlider(parent, label, key, group, min, max, suffix = '') {
+    const row = document.createElement('div');
+    row.className = 'css-effects-toolbar-row';
+    const valSpan = document.createElement('span');
+    valSpan.className = 'val';
+    const value = state[group][key];
+    valSpan.textContent = value + suffix;
+    const input = document.createElement('input');
+    input.type = 'range';
+    input.min = String(min);
+    input.max = String(max);
+    input.value = String(value);
+    input.addEventListener('input', () => {
+      const v = Number(input.value);
+      state[group][key] = v;
+      valSpan.textContent = v + suffix;
+      if (group === 'glass') applyGlassOverrides();
+      else applyGradientOverrides();
+      writeState(state);
+    });
+    row.appendChild(document.createElement('label')).textContent = label;
+    row.appendChild(input);
+    row.appendChild(valSpan);
+    parent.appendChild(row);
+  }
+
+  const panel = document.createElement('div');
+  panel.className = 'css-effects-toolbar';
+  panel.id = 'css-effects-toolbar-panel';
+
+  const glassHeading = document.createElement('div');
+  glassHeading.className = 'css-effects-toolbar-tab';
+  glassHeading.textContent = 'Glass BG';
+  panel.appendChild(glassHeading);
+  addSlider(panel, 'Border', 'borderOpacity', 'glass', 0, 100, '%');
+  addSlider(panel, 'Background', 'backgroundOpacity', 'glass', 0, 100, '%');
+  addSlider(panel, 'Shadow', 'shadowOpacity', 'glass', 0, 100, '%');
+  addSlider(panel, 'Blur', 'backdropBlur', 'glass', 0, 40, 'px');
+
+  const gradientHeading = document.createElement('div');
+  gradientHeading.className = 'css-effects-toolbar-tab';
+  gradientHeading.textContent = 'Page gradient';
+  panel.appendChild(gradientHeading);
+  addSlider(panel, 'Base pink', 'basePink', 'gradient', 0, 100, '%');
+  addSlider(panel, 'Base blue', 'baseBlue', 'gradient', 0, 100, '%');
+  addSlider(panel, 'Circle blue', 'circleBlue', 'gradient', 0, 100, '%');
+  addSlider(panel, 'Circle pink', 'circlePink', 'gradient', 0, 100, '%');
+  addSlider(panel, 'Circle orange', 'circleOrange', 'gradient', 0, 100, '%');
+  addSlider(panel, 'Blur', 'blur', 'gradient', 20, 150, 'px');
+
+  const toggleBtn = document.createElement('button');
+  toggleBtn.type = 'button';
+  toggleBtn.className = 'css-effects-toolbar-toggle';
+  toggleBtn.setAttribute('aria-label', 'Toggle CSS effects toolbar');
+  toggleBtn.textContent = '◀';
+  let visible = true;
+  toggleBtn.addEventListener('click', () => {
+    visible = !visible;
+    panel.style.display = visible ? '' : 'none';
+    toggleBtn.textContent = visible ? '◀' : '▶';
+  });
+
+  document.body.appendChild(toggleBtn);
+  document.body.appendChild(panel);
+
+  applyGlassOverrides();
+  applyGradientOverrides();
+}
+
 // load the page unless DO_NOT_LOAD_PAGE is set - used for existing EXLM pages POC
 (async () => {
   if (window.hlx.DO_NOT_LOAD_PAGE) return;
@@ -1689,4 +1902,7 @@ async function loadPage() {
     loadPage();
     loadTarget();
   }
+
+  // Create a small toolbar that allow user to change the css effects of a page
+  createCssEffectsToolbar();
 })();
