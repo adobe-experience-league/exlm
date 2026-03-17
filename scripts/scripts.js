@@ -431,7 +431,7 @@ export const decorateLinksWithinSection = (main) => {
 
     links?.forEach((link) => {
       const href = link.getAttribute('href');
-      if (href && !href.startsWith('#') && !link.hasAttribute('target')) {
+      if (href && !href.startsWith('#')) {
         link.setAttribute('target', '_blank');
         if (link.hostname !== window.location.hostname) {
           link.setAttribute('rel', 'noopener noreferrer');
@@ -726,6 +726,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities.adobe.com',
+      premiumLearningAuthUrl: 'https://51837-570cornsilkbat.adobeio-static.net/api/v1/web/alm/authentication',
     },
     {
       env: 'STAGE',
@@ -734,6 +735,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-beta.adobe.com',
+      premiumLearningAuthUrl: 'https://51837-570cornsilkbat-stage.adobeio-static.net/api/v1/web/alm/authentication',
     },
     {
       env: 'DEV',
@@ -742,6 +744,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-beta.adobe.com',
+      premiumLearningAuthUrl: 'https://51837-570cornsilkbat-qa.adobeio-static.net/api/v1/web/alm/authentication',
     },
   ];
 
@@ -790,6 +793,7 @@ export function getConfig() {
   );
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const communityHost = currentEnv?.community || defaultEnv.community;
+  const premiumLearningAuthAPI = currentEnv?.premiumLearningAuthUrl || defaultEnv.premiumLearningAuthUrl;
   const cdnOrigin = `https://${cdnHost}`;
   const lang = document.querySelector('html').lang || 'en';
   // Locale param for Community page URL
@@ -829,6 +833,7 @@ export function getConfig() {
     modalReDisplayDuration,
     cookieConsentName,
     targetCriteriaIds,
+    premiumLearningAuthAPI,
     quizPassingCriteria: 0.65, // 65% passing criteria for quizzes
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list?platform=gainsight`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`,
@@ -840,9 +845,6 @@ export function getConfig() {
       : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
     coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
     upcomingEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
-    adobeIOPLEndpoint: isProd
-      ? ''
-      : 'https://51837-570cornsilkbat-development.adobeioruntime.net/api/v1/web/alm/authentication',
     plApiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,

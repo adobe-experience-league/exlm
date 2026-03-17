@@ -39,18 +39,18 @@ main .section.marquee-video-full-bleed-container {
 }
 
 .marquee-video-full-bleed-title {
-  font-size: 36px;
   font-weight: var(--font-weight-heavy);
   line-height: 1.2;
   margin: 0 0 24px;
 }
 
 .marquee-video-full-bleed-title h1 {
+  font-size: var(--exlm-font-size-h1-max);
   font-weight: var(--font-weight-heavy);
 }
 
 .marquee-video-full-bleed-description {
-  font-size: 18px;
+  font-size: var(--spectrum-font-size-500);
   line-height: 1.5;
   margin: 0 0 32px;
   font-weight: var(--font-weight-normal);
@@ -64,7 +64,7 @@ main .section.marquee-video-full-bleed-container {
 }
 
 .marquee-video-full-bleed-cta a.button:any-link {
-  font-size: 19px;
+  font-size: var(--spectrum-font-size-300);
   line-height: 24px;
   font-weight: var(--font-weight-bold);
   margin: 0;
@@ -172,7 +172,7 @@ main .section.marquee-video-full-bleed-container {
   .marquee-video-full-bleed-content {
     max-width: calc(100vw * 0.33);
     position: absolute;
-    left: calc((100vw - 1200px) / 2 + 40px);
+    left: calc((100vw - 1280px) / 2 + 40px);
     top: 50%;
     transform: translateY(-50%);
     text-align: left;
@@ -183,12 +183,8 @@ main .section.marquee-video-full-bleed-container {
     margin-bottom: 16px;
   }
 
-  .marquee-video-full-bleed-title h1 {
-    font-size: 60px;
-  }
-
   .marquee-video-full-bleed-description {
-    font-size: 20px;
+    font-size: var(--spectrum-font-size-400);
     margin-bottom: 32px;
   }
 }

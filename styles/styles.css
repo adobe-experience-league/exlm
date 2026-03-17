@@ -372,8 +372,9 @@
   --box-shadow-2: 0px 8px 16px #0000001a;
 
   /* exlm default fonts definition - Mobile */
-  --exlm-font-size-h1-plus: var(--spectrum-font-size-1200);
   --exlm-font-size-h1: var(--spectrum-heading-size-xl);
+  --exlm-font-size-h1-plus: var(--spectrum-font-size-1000);
+  --exlm-font-size-h1-max: var(--spectrum-font-size-1100);
   --exlm-font-size-h2: var(--spectrum-heading-size-l);
   --exlm-font-size-h3: var(--spectrum-heading-size-m);
   --exlm-font-size-h4: var(--spectrum-heading-size-s);
@@ -523,6 +524,8 @@ strong:not(a strong) {
   /* exlm default fonts definition - Desktop Large */
   :root {
     --exlm-font-size-h1: var(--spectrum-heading-size-xxl);
+    --exlm-font-size-h1-plus: var(--spectrum-font-size-1200);
+    --exlm-font-size-h1-max: var(--spectrum-font-size-1300);
     --exlm-font-size-h2: var(--spectrum-heading-size-xl);
     --exlm-font-size-h3: var(--spectrum-heading-size-l);
     --exlm-font-size-h4: var(--spectrum-heading-size-m);

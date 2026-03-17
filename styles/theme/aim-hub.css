@@ -15,7 +15,6 @@ body.aim-hub .section.bg-dark-gray {
 
 body.aim-hub .section > div:not(.marquee-video-full-bleed-wrapper) {
   margin: auto;
-  max-width: 1200px;
 }
 
 body.aim-hub .section .accordion-group,
