@@ -63,10 +63,6 @@
   transition: background-color 0.3s ease;
 }
 
-.media-panel.block > .content-container > .cta a.secondary:hover {
-  background-color: var(--overlay-background-color);
-}
-
 .media-panel.block > .content-container > .cta a.button {
   margin: var(--spectrum-spacing-400) 0;
 }
