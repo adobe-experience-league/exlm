@@ -853,14 +853,13 @@ export async function buildCard(element, model) {
   const isUpcomingEvent = contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase();
   const isOnDemandEvent = contentType?.toLowerCase() === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase();
 
-  if (isUpcomingEvent) {
+  // Only apply v2 decorations when feature flag is enabled (content type will be 'Event|Upcoming Event')
+  if (isUpcomingEvent && isFeatureEnabled('isEventsV2')) {
     const blockContainer = card.closest('.block') || card.closest('[class*="cards"]');
     if (blockContainer) {
       blockContainer.classList.add('events-v2');
     }
-  }
 
-  if (isUpcomingEvent) {
     const cardEl = element.querySelector('.browse-card');
     if (cardEl) {
       loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-upcoming-events.css`);

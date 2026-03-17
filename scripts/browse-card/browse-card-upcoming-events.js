@@ -12,8 +12,7 @@ export const decorateUpcomingEvents = (card, model) => {
   if (!card || !model || model.contentType?.toLowerCase() !== CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase())
     return;
 
-  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-upcoming-events.css`);
-
+  // CSS is already loaded upfront in browse-card.js
   // Remove the browse-card-options div from upcoming event cards
   const cardOptions = card.querySelector('.browse-card-options');
   if (cardOptions) {

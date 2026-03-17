@@ -62,7 +62,7 @@ export const decorateOnDemandEvents = (card, model) => {
 
   if (card.closest('.recommendation-marquee')) return;
 
-  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-on-demand-events.css`);
+  // CSS is already loaded upfront in browse-card.js
 
   const { event } = model;
   const cardFigure = card.querySelector('.browse-card-figure');

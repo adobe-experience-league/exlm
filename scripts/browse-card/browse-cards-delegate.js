@@ -326,6 +326,7 @@ const BrowseCardsDelegate = (() => {
           return cards.map(normalizeOnDemandEventModel);
         };
       }
+      // Default to Coveo for other array content types
       return handleCoveoService;
     }
 

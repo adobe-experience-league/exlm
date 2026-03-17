@@ -103,6 +103,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     } else {
       contentType = Array.isArray(el_contenttype) ? el_contenttype[0]?.trim() : el_contenttype?.trim();
 
+      // TODO: Remove this condition once Events v2 is live
       if (isFeatureEnabled('isEventsV2') && contentType?.toLowerCase() === 'event') {
         contentType = Array.isArray(el_contenttype) ? el_contenttype[1]?.trim() : el_contenttype?.trim();
       }

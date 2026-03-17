@@ -192,7 +192,7 @@ const authorTypes = [
 const eventTypes = [
   {
     id: 'Event',
-    value: isFeatureEnabled('isEventsV2') ? 'Event|On Demand Event' : 'Event',
+    value: 'Event|On Demand Event',
     title: 'On-Demand Events',
     description: '',
   },
