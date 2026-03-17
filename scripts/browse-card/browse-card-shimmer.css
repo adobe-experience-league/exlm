@@ -74,63 +74,63 @@
 }
 
 /* ==========================================================================
-   Course variant – matches .premium-learning-course-card (smaller figure)
+   Medium card variant – matches medium-sized cards (smaller figure)
    ========================================================================== */
 
-.browse-card-shimmer-wrapper-course {
+.browse-card-shimmer-wrapper-medium-card {
   display: flex;
   flex-direction: column;
   border-radius: 0;
   border: 1px solid var(--color-gray-200);
 }
 
-.browse-card-shimmer-wrapper-course .browse-card-shimmer-figure {
+.browse-card-shimmer-wrapper-medium-card .browse-card-shimmer-figure {
   width: 100%;
   overflow: hidden;
   border-radius: 8px;
 }
 
-.browse-card-shimmer-wrapper-course .browse-card-shimmer-figure .loading-shimmer {
+.browse-card-shimmer-wrapper-medium-card .browse-card-shimmer-figure .loading-shimmer {
   border-radius: 8px;
 }
 
-.browse-card-shimmer-wrapper-course .browse-card-shimmer-text-wrapper {
+.browse-card-shimmer-wrapper-medium-card .browse-card-shimmer-text-wrapper {
   margin: 0;
   gap: 2px;
 }
 
-.browse-card-shimmer-wrapper-course .browse-card-shimmer-text-wrapper p {
+.browse-card-shimmer-wrapper-medium-card .browse-card-shimmer-text-wrapper p {
   margin: 0;
 }
 
 /* ==========================================================================
-   Cohort variant – matches cohort card (larger figure, meta, footer instances)
+   Long card variant – matches long cards (larger figure, meta, footer)
    ========================================================================== */
 
-.browse-card-shimmer-wrapper-cohort {
+.browse-card-shimmer-wrapper-long-card {
   display: flex;
   flex-direction: column;
   border-radius: 0;
   border: 1px solid var(--color-gray-200);
 }
 
-.browse-card-shimmer-wrapper-cohort .browse-card-shimmer-figure {
+.browse-card-shimmer-wrapper-long-card .browse-card-shimmer-figure {
   width: 100%;
   overflow: hidden;
   border-radius: 8px;
 }
 
-.browse-card-shimmer-wrapper-cohort .browse-card-shimmer-figure .loading-shimmer {
+.browse-card-shimmer-wrapper-long-card .browse-card-shimmer-figure .loading-shimmer {
   border-radius: 8px;
 }
 
-.browse-card-shimmer-wrapper-cohort .browse-card-shimmer-text-wrapper {
+.browse-card-shimmer-wrapper-long-card .browse-card-shimmer-text-wrapper {
   margin: 0 16px;
   padding-top: 16px;
   gap: 8px;
 }
 
-.browse-card-shimmer-wrapper-cohort .browse-card-shimmer-footer {
+.browse-card-shimmer-wrapper-long-card .browse-card-shimmer-footer {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -139,7 +139,7 @@
   border-top: 1px solid var(--spectrum-gray-200);
 }
 
-.browse-card-shimmer-wrapper-cohort .browse-card-shimmer-footer .loading-shimmer {
+.browse-card-shimmer-wrapper-long-card .browse-card-shimmer-footer .loading-shimmer {
   border-radius: 5px;
 }
 
