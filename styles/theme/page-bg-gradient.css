@@ -38,20 +38,20 @@
   transform-origin: center center;
 }
 
-/* Individual color circles */
+/* Individual color circles — alternate = seamless back-and-forth (no jump) */
 .page-bg-gradient .gradient-circle-blue {
   background: radial-gradient(circle, var(--lg-circle-blue) 0%, rgb(181 222 255 / 0%) 100%);
-  animation: live-gradient-move-blue 30s linear infinite;
+  animation: live-gradient-move-blue 30s linear infinite alternate;
 }
 
 .page-bg-gradient .gradient-circle-pink {
   background: radial-gradient(circle, var(--lg-circle-pink) 0%, rgb(250 74 162 / 0%) 100%);
-  animation: live-gradient-move-pink 45s linear infinite;
+  animation: live-gradient-move-pink 45s linear infinite alternate;
 }
 
 .page-bg-gradient .gradient-circle-orange {
   background: radial-gradient(circle, var(--lg-circle-orange) 0%, rgb(255 124 101 / 0%) 100%);
-  animation: live-gradient-move-orange 60s linear infinite;
+  animation: live-gradient-move-orange 60s linear infinite alternate;
 }
 
 /* Movement animations */
