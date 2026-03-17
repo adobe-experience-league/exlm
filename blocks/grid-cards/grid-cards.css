@@ -195,6 +195,7 @@
 .grid-cards.wide .grid-card .grid-card-content {
   justify-content: center;
   flex: 1;
+  min-width: 0;
 }
 
 .grid-cards.wide .grid-card .grid-card-description {
