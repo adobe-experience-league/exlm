@@ -7,6 +7,7 @@
 
 .media-panel.block > .podcast-container {
   flex: 1;
+  margin: auto 0;
 }
 
 .media-panel.block > .content-container {
@@ -63,19 +64,13 @@
   transition: background-color 0.3s ease;
 }
 
-.media-panel.block > .content-container > .cta a.secondary:hover {
-  background-color: var(--overlay-background-color);
-}
-
 .media-panel.block > .content-container > .cta a.button {
   margin: var(--spectrum-spacing-400) 0;
 }
 
 .media-panel.block > .podcast-container > .image img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  max-height: 440px;
+  height: auto;
 }
 
 .media-panel.block.podcast-card > .podcast-container {
@@ -88,7 +83,6 @@
 
 .media-panel.block.podcast-card > .podcast-container > .image img {
   display: block;
-  max-height: 230px;
   border-radius: var(--spectrum-spacing-100);
   border: 2px solid rgb(255 255 255 / 50%);
 }
