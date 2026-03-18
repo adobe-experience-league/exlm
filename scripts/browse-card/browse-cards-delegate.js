@@ -88,9 +88,7 @@ try {
 }
 
 export function normalizeUpcomingEventModel(model) {
-  const isUpcoming =
-    model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase() ||
-    CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase();
+  const isUpcoming = model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase();
   if (!isUpcoming) return model;
 
   return {

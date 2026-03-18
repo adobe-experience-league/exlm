@@ -138,14 +138,7 @@ export function handleTopicSelection(block, fireSelection, resetPage, targetPage
   }, []);
 
   if (window.headlessQueryActionCreators) {
-    const hasActiveTags = document.querySelectorAll('.browse-tags').length > 0;
-    const hasSearchValue = document.querySelector('.filter-input-search > .search-input')?.value?.trim();
-
-    // Only use base query if there are active filters, topics, or productORQuery
-    let query =
-      hasActiveTags || hasSearchValue || selectedTopics.length || window.headlessProductORQuery
-        ? window.headlessBaseSolutionQuery || ''
-        : '';
+    let query = window.headlessBaseSolutionQuery || '';
     const currentProductFacetValues = window.headlessProductFacet?.state?.values || [];
     const productTypeDropdownExists = !!dropdownOptions.find((opt) => opt.id === productTypeOptions.id);
     if (currentProductFacetValues.length && !productTypeDropdownExists) {
@@ -187,11 +180,6 @@ export function handleTopicSelection(block, fireSelection, resetPage, targetPage
       } else {
         query = topicsQuery;
       }
-    }
-
-    // Include product filter OR query if it exists
-    if (window.headlessProductORQuery) {
-      query = query ? `(${query}) AND ${window.headlessProductORQuery}` : window.headlessProductORQuery;
     }
 
     dispatchCoveoAdvancedQuery({ query, fireSelection, resetPage, targetPageNumber });

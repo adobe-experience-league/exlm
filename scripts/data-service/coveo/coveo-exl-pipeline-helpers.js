@@ -133,7 +133,6 @@ function constructCoveoAdvancedQuery(param) {
   const productQuery = param.product
     ? `AND (${param.product.map((type) => `(@el_product=="${type}" OR @el_solution=="${type}")`).join(' OR ')})`
     : '';
-
   const versionQuery = param.version
     ? `AND (${param.version.map((type) => `@el_version=="${type}"`).join(' OR ')})`
     : '';
