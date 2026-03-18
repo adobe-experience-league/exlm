@@ -26,6 +26,10 @@ body.aim-hub .section .accordion-group > .accordion details {
   background-color: transparent;
 }
 
+body.aim-hub .section .announcement-ribbon {
+  margin: 0;
+}
+
 body.aim-hub .section > .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) {
   color: var(--non-spectrum-dark-gray);
   font-weight: var(--font-weight-heavy);
@@ -33,6 +37,10 @@ body.aim-hub .section > .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) 
 
 body.aim-hub .section > div[class$='-wrapper']:not(:first-child) {
   margin-top: 56px;
+}
+
+body.aim-hub .section > div.default-content-wrapper + div[class$='-wrapper'] {
+  margin-top: 0;
 }
 
 @media (min-width: 900px) {
