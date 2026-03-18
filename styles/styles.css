@@ -1082,7 +1082,7 @@ body[class^="browse-"] .browse-filters-full-container .browse-filters-one-pg-res
   backdrop-filter: blur(12px);
 }
 
-.aim-block-header {
+.block-header {
   display: flex;
   flex-direction: column;
   gap: var(--spectrum-spacing-100);
