@@ -171,6 +171,7 @@ export default async function decorate(block) {
     contentType: contentType && contentType.split(','),
     role: [],
     product: [],
+    feature: [],
     q: keyword,
     sortCriteria,
     noOfResults,
@@ -233,7 +234,12 @@ export default async function decorate(block) {
       .split(',')
       .map((type) => {
         const trimmedType = type.trim().toUpperCase();
-        return toPascalCase(CONTENT_TYPES[trimmedType]?.MAPPING_KEY);
+
+        if (CONTENT_TYPES[trimmedType]) {
+          return toPascalCase(CONTENT_TYPES[trimmedType].MAPPING_KEY);
+        }
+
+        return data[0]?.contentType?.trim();
       })
       .filter(Boolean);
 

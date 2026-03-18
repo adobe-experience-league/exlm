@@ -1,5 +1,5 @@
 /* eslint-disable camelcase, no-unused-vars */
-import { decorateIcons, loadCSS } from '../lib-franklin.js';
+import { decorateIcons } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
@@ -51,11 +51,16 @@ const buildOnDemandEventContent = ({ event, cardContent, card }) => {
  * @param {Object} model - The data model for the card
  */
 export const decorateOnDemandEvents = (card, model) => {
-  if (!card || !model || model.contentType?.toLowerCase() !== CONTENT_TYPES.EVENT.MAPPING_KEY) return;
+  const contentTypeLower = model.contentType?.toLowerCase();
+  if (
+    !card ||
+    !model ||
+    (contentTypeLower !== CONTENT_TYPES.EVENT.MAPPING_KEY &&
+      contentTypeLower !== CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase())
+  )
+    return;
 
   if (card.closest('.recommendation-marquee')) return;
-
-  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-on-demand-events.css`);
 
   const { event } = model;
   const cardFigure = card.querySelector('.browse-card-figure');

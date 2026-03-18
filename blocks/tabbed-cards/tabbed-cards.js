@@ -18,7 +18,7 @@ const urlMap = {
   certification: `/${lang}/certification-home`,
   perspective: `/${lang}/perspectives`,
   course: `/${lang}/courses`,
-  'upcoming-event': `/${lang}/events`,
+  'event|upcoming event': `/${lang}/events`,
 };
 
 /**

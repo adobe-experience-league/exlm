@@ -128,8 +128,10 @@ function constructCoveoAdvancedQuery(param) {
   const contentTypeQuery = param.contentType
     ? `AND (${param.contentType.map((type) => `@el_contenttype=="${type}"`).join(' OR ')})`
     : '';
+
+  // Handle product with OR logic to search both el_product and el_solution fields
   const productQuery = param.product
-    ? `AND (${param.product.map((type) => `@el_product=="${type}"`).join(' OR ')})`
+    ? `AND (${param.product.map((type) => `(@el_product=="${type}" OR @el_solution=="${type}")`).join(' OR ')})`
     : '';
   const versionQuery = param.version
     ? `AND (${param.version.map((type) => `@el_version=="${type}"`).join(' OR ')})`
@@ -160,6 +162,7 @@ export function getFacets(param) {
         ]
       : []),
     ...(param.product ? [{ id: 'el_product', type: 'specific', currentValues: param.product }] : []),
+    ...(param.solutions ? [{ id: 'el_solution', type: 'specific', currentValues: param.solutions }] : []),
     ...(param.version ? [{ id: 'el_version', type: 'specific', currentValues: param.version }] : []),
     ...(param.role ? [{ id: 'el_role', type: 'specific', currentValues: param.role }] : []),
     ...(param.authorType ? [{ id: 'author_type', type: 'specific', currentValues: param.authorType }] : []),

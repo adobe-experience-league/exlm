@@ -1,5 +1,4 @@
 /* eslint-disable camelcase, no-unused-vars */
-import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag } from '../scripts.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
@@ -9,9 +8,8 @@ import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constant
  * @param {Object} model - The data model for the card
  */
 export const decorateUpcomingEvents = (card, model) => {
-  if (!card || !model || model.contentType?.toLowerCase() !== CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY) return;
-
-  loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-upcoming-events.css`);
+  if (!card || !model || model.contentType?.toLowerCase() !== CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase())
+    return;
 
   // Remove the browse-card-options div from upcoming event cards
   const cardOptions = card.querySelector('.browse-card-options');

@@ -46,7 +46,10 @@ import {
 } from './browse-topics.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
-import BrowseCardsDelegate, { normalizeUpcomingEventModel } from '../../scripts/browse-card/browse-cards-delegate.js';
+import BrowseCardsDelegate, {
+  normalizeUpcomingEventModel,
+  normalizeOnDemandEventModel,
+} from '../../scripts/browse-card/browse-cards-delegate.js';
 
 let placeholders = {};
 try {
@@ -920,11 +923,17 @@ async function handleSearchEngineSubscription(block, isUserSignedIn) {
   if (results.length > 0) {
     try {
       let cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
-      cardsData = cardsData.map((model) =>
-        model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY
-          ? normalizeUpcomingEventModel(model)
-          : model,
-      );
+      cardsData = cardsData.map((model) => {
+        // Normalize upcoming events
+        if (model?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase()) {
+          return normalizeUpcomingEventModel(model);
+        }
+        // Normalize on-demand events
+        if (model?.contentType?.toLowerCase() === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase()) {
+          return normalizeOnDemandEventModel(model);
+        }
+        return model;
+      });
       // Enrich cards with course status information for signed-in users
       const hasCourseCard = cardsData?.some(
         (card) => card?.contentType?.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase(),
