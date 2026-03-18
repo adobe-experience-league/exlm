@@ -12,7 +12,7 @@ export default function decorate(block) {
 
   if (hasEyebrow || hasTitle || hasDesc) {
     const headerDiv = document.createElement('div');
-    headerDiv.classList.add('grid-cards-header');
+    headerDiv.classList.add('grid-cards-header', 'block-header');
 
     if (hasEyebrow) {
       eyebrowRow.classList.add('grid-cards-eyebrow');

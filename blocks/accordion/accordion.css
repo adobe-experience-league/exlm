@@ -99,3 +99,7 @@ ol .accordion summary {
 .shade-box .accordion-wrapper:first-child details {
   padding-top: 16px;
 }
+
+.section > .default-content-wrapper:has(+ .accordion-group-wrapper) > * {
+  margin: 0;
+}
