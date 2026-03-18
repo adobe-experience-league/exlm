@@ -11,7 +11,6 @@
   grid-template-columns: 1fr;
   gap: 16px;
   transition: all 0.5s ease-in-out;
-  min-height: 400px;
   margin: 0;
   z-index: 1;
   margin-top: 16px;
@@ -74,9 +73,74 @@
   border: 1px solid var(--spectrum-gray-200);
 }
 
-.browse-filters-wrapper .browse-card-shimmer-wrapper,
-.featured-cards .browse-card-shimmer-wrapper {
-  min-height: 380px;
+/* ==========================================================================
+   Medium card variant – matches medium-sized cards (smaller figure)
+   ========================================================================== */
+
+.browse-card-shimmer-wrapper-medium-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+  border: 1px solid var(--color-gray-200);
+}
+
+.browse-card-shimmer-wrapper-medium-card .browse-card-shimmer-figure {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.browse-card-shimmer-wrapper-medium-card .browse-card-shimmer-figure .loading-shimmer {
+  border-radius: 8px;
+}
+
+.browse-card-shimmer-wrapper-medium-card .browse-card-shimmer-text-wrapper {
+  margin: 0;
+  gap: 2px;
+}
+
+.browse-card-shimmer-wrapper-medium-card .browse-card-shimmer-text-wrapper p {
+  margin: 0;
+}
+
+/* ==========================================================================
+   Long card variant – matches long cards (larger figure, meta, footer)
+   ========================================================================== */
+
+.browse-card-shimmer-wrapper-long-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+  border: 1px solid var(--color-gray-200);
+}
+
+.browse-card-shimmer-wrapper-long-card .browse-card-shimmer-figure {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.browse-card-shimmer-wrapper-long-card .browse-card-shimmer-figure .loading-shimmer {
+  border-radius: 8px;
+}
+
+.browse-card-shimmer-wrapper-long-card .browse-card-shimmer-text-wrapper {
+  margin: 0 16px;
+  padding-top: 16px;
+  gap: 8px;
+}
+
+.browse-card-shimmer-wrapper-long-card .browse-card-shimmer-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 16px 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--spectrum-gray-200);
+}
+
+.browse-card-shimmer-wrapper-long-card .browse-card-shimmer-footer .loading-shimmer {
+  border-radius: 5px;
 }
 
 @media only screen and (min-width: 600px) {

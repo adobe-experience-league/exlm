@@ -52,7 +52,7 @@
 
 .premium-learning-cards.browse-cards-block.premium-learning-cards-atomic-search {
   min-height: auto;
-  padding-bottom: 16px;
+  padding-bottom: 32px;
 }
 
 .premium-learning-cards-block-cta a::before {
@@ -60,7 +60,7 @@
   width: 21px;
   height: 21px;
   position: relative;
-  top: 4px;
+  top: 2px;
   margin-right: 8px;
   display: inline-block;
   background-color: var(--background-color);
@@ -70,9 +70,19 @@
 .premium-learning-cards-block-cta a.button:any-link {
   margin-top: 0;
   margin-bottom: 12px;
-  height: 40px;
+  font-size: var(--spectrum-font-size-200);
+  height: auto;
   background-color: var(--non-spectrum-navy-blue);
-  padding-block: 2px;
+  padding-inline: 16px;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 .premium-learning-cards .premium-learning-cards-no-results-header {
@@ -88,7 +98,7 @@
 @media (min-width: 600px) {
   .premium-learning-cards.browse-cards-block.premium-learning-cards-atomic-search {
     min-height: auto;
-    padding-bottom: 56px;
+    padding-bottom: 80px;
   }
 
   .premium-learning-cards-no-results-header {
@@ -99,6 +109,12 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .premium-learning-cards-block-cta a.button:any-link {
+    width: auto;
+    min-width: max-content;
+    font-size: var(--spectrum-font-size-300);
   }
 
   .premium-learning-cards.premium-learning-cards-atomic-search .browse-cards-block-content {
