@@ -89,6 +89,7 @@
 
 .media-panel.block.podcast-card > .podcast-container > .podcast-heading {
   color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-400);
   font-style: normal;
   font-weight: var(--font-weight-heavy);
   line-height: 125%; /* 35px */
@@ -128,5 +129,9 @@
 @media (min-width: 900px) {
   .media-panel.block {
     gap: 126px;
+  }
+
+  .media-panel.block.podcast-card > .podcast-container > .podcast-heading {
+    font-size: var(--spectrum-font-size-700);
   }
 }
