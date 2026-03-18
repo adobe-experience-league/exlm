@@ -726,7 +726,6 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities.adobe.com',
-      premiumLearningAuthUrl: 'https://51837-570cornsilkbat.adobeio-static.net/api/v1/web/alm/authentication',
     },
     {
       env: 'STAGE',
@@ -735,7 +734,6 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-beta.adobe.com',
-      premiumLearningAuthUrl: 'https://51837-570cornsilkbat-stage.adobeio-static.net/api/v1/web/alm/authentication',
     },
     {
       env: 'DEV',
@@ -744,7 +742,6 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-beta.adobe.com',
-      premiumLearningAuthUrl: 'https://51837-570cornsilkbat-qa.adobeio-static.net/api/v1/web/alm/authentication',
     },
   ];
 
@@ -793,8 +790,8 @@ export function getConfig() {
   );
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const communityHost = currentEnv?.community || defaultEnv.community;
-  const premiumLearningAuthAPI = currentEnv?.premiumLearningAuthUrl || defaultEnv.premiumLearningAuthUrl;
   const cdnOrigin = `https://${cdnHost}`;
+  const premiumLearningAuthAPI = `${cdnOrigin}/api/v1/web/alm/authentication`;
   const lang = document.querySelector('html').lang || 'en';
   // Locale param for Community page URL
   const communityLocale = communityLangsMap.get(lang) || 'en';
