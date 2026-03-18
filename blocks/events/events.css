@@ -1,7 +1,5 @@
 .events .events-header {
   margin-bottom: 40px;
-  display: flex;
-  flex-direction: column;
 }
 
 .events .events-header-eyebrow {
@@ -16,7 +14,7 @@
 .events .events-header-title {
   font-weight: var(--font-weight-heavy);
   color: var(--non-spectrum-dark-gray);
-  margin: 0 0 8px;
+  margin: 0;
   text-align: center;
 }
 
