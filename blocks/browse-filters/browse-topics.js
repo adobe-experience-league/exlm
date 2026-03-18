@@ -181,7 +181,6 @@ export function handleTopicSelection(block, fireSelection, resetPage, targetPage
         query = topicsQuery;
       }
     }
-
     dispatchCoveoAdvancedQuery({ query, fireSelection, resetPage, targetPageNumber });
   } else {
     document.removeEventListener(COVEO_SEARCH_CUSTOM_EVENTS.READY, reInitTopicSelection);
