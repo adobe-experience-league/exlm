@@ -123,7 +123,9 @@
 }
 
 @media (min-width: 1024px) {
-  .premium-learning-cards .premium-learning-cards-no-results {
+  body:has(atomic-search-interface.atomic-search-interface-no-results.hydrated)
+    .premium-learning-cards
+    .premium-learning-cards-no-results {
     width: 75%;
   }
 }
