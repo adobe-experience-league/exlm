@@ -394,6 +394,19 @@
     grid-column-gap: 16px;
   }
 
+  .atomic-search
+    atomic-search-interface.atomic-search-interface-no-results
+    atomic-search-layout[id^='atomic-search-layout'] {
+    grid-template-columns: 0 0 1fr 0 !important;
+  }
+
+  .atomic-search
+    atomic-search-interface.atomic-search-interface-no-results
+    atomic-layout-section[section='search']:has(.atomic-search-premium-search-wrapper .premium-learning-cards) {
+    max-width: none !important;
+    width: 100% !important;
+  }
+
   .atomic-load-skeleton-main {
     display: grid;
     grid-template-columns: 0 20% 80% !important;
