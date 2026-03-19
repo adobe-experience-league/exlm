@@ -1080,6 +1080,10 @@ const getCoveoAtomicMarkup = (placeholders) => {
             atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='query'] {
               display: none;
             }
+              atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='main'].atomic-no-result {
+                width: 100%;
+              }
+            
             @media only screen and (min-width: 1024px) {
               atomic-search-layout atomic-layout-section[section='main'] {
                 position: relative;
@@ -1102,6 +1106,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   }
                   atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='main'].atomic-no-result {
                     border: none;
+                    width: 75%;
                   }
                 }
         </style>
