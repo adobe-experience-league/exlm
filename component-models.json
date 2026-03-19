@@ -5454,16 +5454,6 @@
         "extensionId": "exl-ue-extension"
       },
       {
-        "component": "tq-action-button",
-        "name": "generateTQTags",
-        "label": "Generate TQ Tags",
-        "valueType": "string",
-        "extensionId": "exl-ue-extension",
-        "options": {
-          "requiredTagsToEnable": ["tq-roles", "tq-levels"]
-        }
-      },
-      {
         "component": "custom-aem-tag",
         "name": "tq-products",
         "label": "Product(s) v2",
@@ -5479,6 +5469,16 @@
           }
         },
         "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "tq-action-button",
+        "name": "generateTQTags",
+        "label": "Generate TQ Tags",
+        "valueType": "string",
+        "extensionId": "exl-ue-extension",
+        "options": {
+          "requiredTagsToEnable": ["tq-roles", "tq-levels", "tq-products"]
+        }
       },
       {
         "component": "custom-aem-tag",
@@ -5673,16 +5673,6 @@
         "extensionId": "exl-ue-extension"
       },
       {
-        "component": "tq-action-button",
-        "name": "generateTQTags",
-        "label": "Generate TQ Tags",
-        "valueType": "string",
-        "extensionId": "exl-ue-extension",
-        "options": {
-          "requiredTagsToEnable": ["tq-roles", "tq-levels"]
-        }
-      },
-      {
         "component": "custom-aem-tag",
         "name": "tq-products",
         "label": "Product(s) v2",
@@ -5698,6 +5688,16 @@
           }
         },
         "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "tq-action-button",
+        "name": "generateTQTags",
+        "label": "Generate TQ Tags",
+        "valueType": "string",
+        "extensionId": "exl-ue-extension",
+        "options": {
+          "requiredTagsToEnable": ["tq-roles", "tq-levels", "tq-products"]
+        }
       },
       {
         "component": "custom-aem-tag",
