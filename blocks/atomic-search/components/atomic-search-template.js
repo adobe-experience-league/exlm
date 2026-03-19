@@ -1106,7 +1106,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   }
                   atomic-search-interface.atomic-search-interface-no-results atomic-search-layout atomic-layout-section[section='main'].atomic-no-result {
                     border: none;
-                    width:75%
+                    width: 75%;
                   }
                 }
         </style>
