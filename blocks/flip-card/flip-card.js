@@ -33,7 +33,11 @@ export default async function decorate(block) {
     const { pushComponentClick, generateComponentID } = await import('../../scripts/analytics/lib-analytics.js');
     const componentID = generateComponentID(block, 'flip-card');
 
-    pushComponentClick({
+    // Find the section ID that this component belongs to
+    const section = block.closest('.section');
+    const sectionID = section?.dataset?.sectionId;
+
+    const componentClickData = {
       component: 'flip-card',
       componentID,
       linkTitle: cardTitle,
@@ -43,7 +47,13 @@ export default async function decorate(block) {
       solution: '',
       fullSolution: '',
       position: cardPosition,
-    });
+    };
+
+    if (sectionID) {
+      componentClickData.sectionID = sectionID;
+    }
+
+    pushComponentClick(componentClickData);
   }
 
   cards.forEach((card, index) => {
