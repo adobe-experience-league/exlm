@@ -121,3 +121,9 @@
     margin-bottom: 0;
   }
 }
+
+@media (min-width: 1024px) {
+  .premium-learning-cards .premium-learning-cards-no-results {
+    width: 75%;
+  }
+}
