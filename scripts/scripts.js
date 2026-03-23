@@ -1608,14 +1608,14 @@ function createCssEffectsToolbar() {
     shadowOpacity: 25,
     backdropBlur: 12,
   };
+  /* Match defaults in styles/theme/page-bg-gradient.css (toolbar uses gradient base only when pink/blue > 0) */
   const GRADIENT_DEFAULTS = {
-    basePink: 20,
-    baseBlue: 20,
-    circleBlue: 40,
-    circlePink: 10,
-    circleOrange: 10,
+    basePink: 0,
+    baseBlue: 0,
+    circleBlue: 100,
+    circlePink: 100,
+    circleOrange: 100,
     blur: 80,
-    duration: 30,
   };
 
   const overlayStyleId = 'css-effects-toolbar-overlay';
@@ -1746,13 +1746,49 @@ function createCssEffectsToolbar() {
   function applyGradientOverrides() {
     const root = document.body?.classList.contains('page-bg-gradient') ? document.body : document.documentElement;
     const g = state.gradient;
-    root.style.setProperty('--lg-base-pink', `rgb(250 74 162 / ${g.basePink}%)`);
-    root.style.setProperty('--lg-base-blue', `rgb(181 222 255 / ${g.baseBlue}%)`);
-    root.style.setProperty('--lg-circle-blue', `rgb(181 222 255 / ${g.circleBlue}%)`);
-    root.style.setProperty('--lg-circle-pink', `rgb(250 74 162 / ${g.circlePink}%)`);
-    root.style.setProperty('--lg-circle-orange', `rgb(255 124 101 / ${g.circleOrange}%)`);
-    root.style.setProperty('--lg-blur', `${g.blur}px`);
-    root.style.setProperty('--lg-duration', `${g.duration}s`);
+
+    root.style.removeProperty('--lg-base-pink');
+    root.style.removeProperty('--lg-base-blue');
+    root.style.removeProperty('--lg-duration');
+
+    if (g.basePink === 0 && g.baseBlue === 0) {
+      root.style.removeProperty('--lg-base-bg');
+    } else {
+      root.style.setProperty(
+        '--lg-base-bg',
+        `linear-gradient(135deg, rgb(250 74 162 / ${g.basePink}%), rgb(181 222 255 / ${g.baseBlue}%))`,
+      );
+    }
+
+    if (g.circleBlue === 100) root.style.removeProperty('--lg-circle-blue');
+    else root.style.setProperty('--lg-circle-blue', `rgb(181 222 255 / ${g.circleBlue}%)`);
+
+    if (g.circlePink === 100) root.style.removeProperty('--lg-circle-pink');
+    else root.style.setProperty('--lg-circle-pink', `rgb(250 74 162 / ${g.circlePink}%)`);
+
+    if (g.circleOrange === 100) root.style.removeProperty('--lg-circle-orange');
+    else root.style.setProperty('--lg-circle-orange', `rgb(255 124 101 / ${g.circleOrange}%)`);
+
+    if (g.blur === 80) root.style.removeProperty('--lg-blur');
+    else root.style.setProperty('--lg-blur', `${g.blur}px`);
+
+    const d = g.duration;
+    if (d == null || !Number.isFinite(Number(d))) {
+      root.style.removeProperty('--lg-duration-blue');
+      root.style.removeProperty('--lg-duration-pink');
+      root.style.removeProperty('--lg-duration-orange');
+    } else {
+      const ds = `${d}s`;
+      root.style.setProperty('--lg-duration-blue', ds);
+      root.style.setProperty('--lg-duration-pink', ds);
+      root.style.setProperty('--lg-duration-orange', ds);
+    }
+  }
+
+  function gradientSliderValue(key) {
+    const v = state.gradient[key];
+    if (key === 'duration' && (v == null || !Number.isFinite(Number(v)))) return 14;
+    return v;
   }
 
   function addSlider(parent, label, key, group, min, max, suffix = '') {
@@ -1760,7 +1796,7 @@ function createCssEffectsToolbar() {
     row.className = 'css-effects-toolbar-row';
     const valSpan = document.createElement('span');
     valSpan.className = 'val';
-    const value = state[group][key];
+    const value = group === 'gradient' ? gradientSliderValue(key) : state[group][key];
     valSpan.textContent = value + suffix;
     const input = document.createElement('input');
     input.type = 'range';
@@ -1769,7 +1805,8 @@ function createCssEffectsToolbar() {
     input.value = String(value);
     input.addEventListener('input', () => {
       const v = Number(input.value);
-      state[group][key] = v;
+      if (group === 'gradient' && key === 'duration') state.gradient.duration = v;
+      else state[group][key] = v;
       valSpan.textContent = v + suffix;
       if (group === 'glass') applyGlassOverrides();
       else applyGradientOverrides();
@@ -1823,10 +1860,11 @@ function createCssEffectsToolbar() {
   function resetToDefaults() {
     state.glass = { ...GLASS_DEFAULTS };
     state.gradient = { ...GRADIENT_DEFAULTS };
+    delete state.gradient.duration;
     const inputs = panel.querySelectorAll('input[type="range"]');
     const vals = panel.querySelectorAll('.css-effects-toolbar-row .val');
     sliderOrder.forEach(({ group, key, suffix }, i) => {
-      const v = state[group][key];
+      const v = group === 'gradient' ? gradientSliderValue(key) : state[group][key];
       if (inputs[i]) inputs[i].value = String(v);
       if (vals[i]) vals[i].textContent = v + suffix;
     });
