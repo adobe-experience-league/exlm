@@ -3,6 +3,10 @@ export default function initLiveGradientBackground() {
   const main = document.querySelector('main');
 
   if (!body?.classList.contains('page-bg-gradient') || !main) return;
+  const updateCircleSize = () => {
+    const circleSize = `${main.offsetHeight * 0.6}px`;
+    body.style.setProperty('--lg-circle-size', circleSize);
+  };
 
   const createLiveGradientCircles = () => {
     if (main.querySelector('.gradient-layer')) return;
@@ -22,6 +26,8 @@ export default function initLiveGradientBackground() {
 
     main.prepend(circlesWrapper);
   };
+
+  updateCircleSize();
 
   if ('requestIdleCallback' in window) {
     window.requestIdleCallback(createLiveGradientCircles, { timeout: 2000 });
