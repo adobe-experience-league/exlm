@@ -20,6 +20,7 @@ const error = (...args) => console.error('[BC]', ...args);
 
 let cssLinkEl = null;
 let drawerHandle = null;
+let chatObserver = null;
 
 function createMountPoint() {
   if (document.getElementById(DIALOG_ID)) return document.getElementById(DIALOG_ID);
@@ -60,6 +61,19 @@ function createMountPoint() {
   });
 
   return dialog;
+}
+
+// scroll the container to the bottom each time.
+function watchChatHistory(mount) {
+  const history = mount.querySelector('.chat-history');
+  if (!history) return null;
+
+  const observer = new MutationObserver(() => {
+    history.scrollTo({ top: history.scrollHeight, behavior: 'smooth' });
+  });
+
+  observer.observe(history, { childList: true });
+  return observer;
 }
 
 async function configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain) {
@@ -115,6 +129,8 @@ function injectAlloyStub() {
 
 /** Call on SPA navigation to prevent the UI persisting across page transitions. */
 export function destroyBrandConcierge() {
+  chatObserver?.disconnect();
+  chatObserver = null;
   drawerHandle?.destroy();
   drawerHandle = null;
   document.getElementById(TRIGGER_ID)?.remove();
@@ -138,6 +154,7 @@ export async function initBrandConcierge() {
     await loadScript(bcWebClientUrl);
     log('Web Client loaded — calling bootstrap');
     bootstrapWebClient();
+    chatObserver = watchChatHistory(document.getElementById('brand-concierge-mount'));
 
     // Appended after bootstrap() so this <link> follows BC's injected <style> in document
     // order, giving our overrides cascade priority at equal specificity.

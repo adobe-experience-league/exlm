@@ -113,8 +113,6 @@ const brandConciergeConfig = {
     '--welcome-padding': '12px 0',
     '--card-width': '300px',
 
-    '--chat-history-padding-top-expanded': '0px',
-
     '--prompt-suggestions-button-width': '100%',
     '--prompt-suggestions-button-width-max': '100%',
 

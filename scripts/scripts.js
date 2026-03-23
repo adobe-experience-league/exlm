@@ -879,13 +879,12 @@ export function getConfig() {
     // Premium Learning home (for premium learner nav link)
     premiumHomeUrl: `${cdnOrigin}/${lang}/premium/home`,
     // Brand Concierge
-    bcDatastreamId: isProd ? 'PROD_BC_DATASTREAM_ID' : '20da110b-c092-4d86-9ee9-125da7b3bd0c',
-    bcOrgId: isProd ? 'PROD_BC_ORG_ID@AdobeOrg' : '0F211E64690BA86B0A494136@AdobeOrg',
+    bcDatastreamId: '87ae6de9-a49c-4734-a88a-17ec707ded09',
+    bcOrgId: 'E4722728699EC56A0A495CA2@AdobeOrg',
     bcAlloySdkUrl: 'https://cdn1.adoberesources.net/alloy/2.31.1/alloy.min.js',
-    bcWebClientUrl: isProd
-      ? 'https://experience.adobe.net/solutions/experience-platform-brand-concierge-web-agent/static-assets/main.js'
-      : 'https://experience-stage.adobe.net/solutions/experience-platform-brand-concierge-web-agent/static-assets/main.js',
-    bcEdgeDomain: isProd ? 'edge.adobedc.net' : 'edge-int.adobedc.net',
+    bcWebClientUrl:
+      'https://experience.adobe.net/solutions/experience-platform-brand-concierge-web-agent/static-assets/main.js',
+    bcEdgeDomain: 'edge.adobedc.net',
     bcAuthRequired: false,
   };
   return window.exlm.config;

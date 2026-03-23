@@ -149,7 +149,11 @@ body:has(dialog[data-type='drawer'][open]) {
 }
 
 dialog[data-type='drawer']::backdrop {
-  background: rgb(0 0 0 / 40%);
+  background: transparent;
+}
+
+dialog[data-type='drawer'].exl-dialog-expanded::backdrop {
+  background: rgb(0 0 0 / 60%);
 }
 
 dialog[data-type='drawer'] .exl-dialog-body {
