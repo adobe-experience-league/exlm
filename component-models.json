@@ -1759,7 +1759,7 @@
       {
         "component": "aem-tag",
         "name": "tags",
-        "label": "Solution(s) or Feature(s)",
+        "label": "Legacy Solution(s) or Feature(s)",
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl",
         "description": "Optional - all are included if no selection is made."
@@ -1767,7 +1767,7 @@
       {
         "component": "multiselect",
         "name": "roles",
-        "label": "Role(s)",
+        "label": "Legacy Role(s)",
         "valueType": "string",
         "description": "Sets the Role(s).",
         "options": [
@@ -1792,7 +1792,7 @@
       {
         "component": "multiselect",
         "name": "experienceLevels",
-        "label": "Experience Level(s)",
+        "label": "Legacy Experience Level(s)",
         "valueType": "string",
         "description": "Sets the Experience Level(s).",
         "options": [
@@ -1851,6 +1851,105 @@
             "value": "MOST_POPULAR"
           }
         ]
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-products",
+        "label": "Product(s) v2",
+        "valueType": "string",
+        "description": "Optional - all are included if no selection is made.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "product"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-features",
+        "label": "Feature(s) v2",
+        "valueType": "string",
+        "description": "Optional - all are included if no selection is made.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "feature"
+            }
+          }
+        },
+        "options": {
+          "dependentField": {
+            "name": "tq-products",
+            "taxonomyType": "product"
+          },
+          "requiredTagsToEnable": ["tq-products"]
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-subfeatures",
+        "label": "Sub Feature(s) v2",
+        "valueType": "string",
+        "description": "Optional - all are included if no selection is made.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "subfeature"
+            }
+          }
+        },
+        "options": {
+          "dependentField": {
+            "name": "tq-features",
+            "taxonomyType": "feature"
+          },
+          "requiredTagsToEnable": ["tq-features"]
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-roles",
+        "label": "Role(s) v2",
+        "valueType": "string",
+        "description": "Optional - all are included if no selection is made.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "role"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-levels",
+        "label": "Experience Level(s) v2",
+        "valueType": "string",
+        "description": "Optional - all are included if no selection is made.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "level"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
       }
     ]
   },

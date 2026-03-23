@@ -1488,6 +1488,29 @@ export function updateTQTagsMetadata() {
   });
 }
 
+export function getv2TagLabels(tag) {
+  if (!tag) return '';
+
+  let labels = '';
+
+  try {
+    const decoded = decodeHtmlEntities(tag);
+    const parsed = JSON.parse(decoded);
+
+    if (Array.isArray(parsed)) {
+      labels = parsed
+        .map((item) => item?.label)
+        .filter(Boolean)
+        .join(', ');
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to parse metadata:', e, tag);
+  }
+
+  return labels;
+}
+
 /**
  * Fetch Json with fallback.
  */
