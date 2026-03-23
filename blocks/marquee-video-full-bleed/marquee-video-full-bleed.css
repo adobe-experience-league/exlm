@@ -18,7 +18,6 @@ main .section.marquee-video-full-bleed-container {
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: left;
   justify-content: flex-start;
 }
 
@@ -89,7 +88,6 @@ main .section.marquee-video-full-bleed-container {
 }
 
 .marquee-video-full-bleed-video {
-  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -100,8 +98,7 @@ main .section.marquee-video-full-bleed-container {
 
 .marquee-video-full-bleed-video video {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
 }
 
 /* Custom play/pause button */
@@ -165,14 +162,15 @@ main .section.marquee-video-full-bleed-container {
   }
 
   .marquee-video-full-bleed-container {
-    aspect-ratio: 18 / 7;
+    display: block;
+    aspect-ratio: 24 / 7;
     background-color: transparent;
   }
 
   .marquee-video-full-bleed-content {
     max-width: calc(100vw * 0.33);
     position: absolute;
-    left: calc((100vw - 1280px) / 2 + 40px);
+    left: max(40px, calc((100vw - 1280px) / 2 + 40px));
     top: 50%;
     transform: translateY(-50%);
     text-align: left;
