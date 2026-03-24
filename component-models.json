@@ -8793,7 +8793,7 @@
     "fields": []
   },
   {
-    "id": "playlist-v2",
+    "id": "playlist-embed",
     "fields": [
       {
         "component": "text",

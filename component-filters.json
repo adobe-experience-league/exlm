@@ -102,7 +102,7 @@
       "slides",
       "quiz-scorecard",
       "grid-cards",
-      "playlist-v2"
+      "playlist-embed"
     ]
   },
   {
@@ -193,7 +193,7 @@
       "qualtrics",
       "code",
       "announcement-ribbon",
-      "playlist-v2"
+      "playlist-embed"
     ]
   },
   {
@@ -328,7 +328,7 @@
       "inprogress-courses",
       "browse-courses",
       "quiz-scorecard",
-      "playlist-v2"
+      "playlist-embed"
     ]
   },
   {
@@ -394,7 +394,7 @@
       "code",
       "announcement-ribbon",
       "slides",
-      "playlist-v2"
+      "playlist-embed"
     ]
   },
   {
