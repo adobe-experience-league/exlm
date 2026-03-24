@@ -46,7 +46,7 @@ function showFallbackContentInUEMode(blockElement) {
  */
 export default async function decorate(block) {
   // Extracting elements from the block in authoring order
-  const [headingElement, ctaElement, contentTypeElement] = [...block.children];
+  const [headingElement, ctaElement, contentTypeElement, productsElement] = [...block.children];
 
   // contentType is string if single selection,made into an array if multiple selections
   let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase();
@@ -54,6 +54,15 @@ export default async function decorate(block) {
     contentType = contentType
       .split(',')
       .map((type) => type.trim())
+      .filter(Boolean);
+  }
+
+  // products can be a string if single selection, or an array if multiple selections
+  let products = productsElement?.textContent?.trim();
+  if (products && products.includes(',')) {
+    products = products
+      .split(',')
+      .map((product) => product.trim())
       .filter(Boolean);
   }
 
@@ -94,6 +103,11 @@ export default async function decorate(block) {
     contentType, // Can be string ('premium-learning-course' or 'premium-learning-cohort') or array (['premium-learning-course', 'premium-learning-cohort'])
     noOfResults,
   };
+
+  // Add products filter if provided
+  if (products) {
+    param.products = products;
+  }
 
   const buildCardsShimmer = new BrowseCardShimmer(noOfResults, contentType);
   buildCardsShimmer.addShimmer(block);

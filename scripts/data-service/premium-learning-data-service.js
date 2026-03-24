@@ -121,8 +121,8 @@ export default class PLDataService {
    * @returns {Object} Request body object
    */
   buildRequestBody() {
-    const { contentType, tagName } = this.queryParams;
-    const { catalogIds } = getConfig()?.['premium-learning'] ?? {};
+    const { contentType, tagName, products, solutions } = this.queryParams;
+    const { catalogIds, recommendationProducts } = getConfig()?.['premium-learning'] ?? {};
 
     // Determine learning object types - support both course and cohort
     const loTypes = PLDataService.determineLearningObjectTypes(contentType);
@@ -131,8 +131,23 @@ export default class PLDataService {
       'filter.loTypes': loTypes,
       'filter.learnerState': ['notenrolled', 'enrolled', 'started', 'completed'],
       'filter.ignoreEnhancedLP': false,
-      'filter.recommendationProducts': [{ name: 'Acrobat', levels: [] }],
     };
+
+    // Add product filter - prioritize products/solutions parameter, then config, then default to Acrobat
+    const productParam = products || solutions;
+    if (productParam) {
+      const productArray = Array.isArray(productParam) ? productParam : [productParam];
+      body['filter.recommendationProducts'] = productArray.map((product) => ({
+        name: product,
+        levels: [],
+      }));
+    } else if (recommendationProducts) {
+      body['filter.recommendationProducts'] = Array.isArray(recommendationProducts)
+        ? recommendationProducts
+        : [{ name: recommendationProducts, levels: [] }];
+    } else {
+      body['filter.recommendationProducts'] = [{ name: 'Acrobat', levels: [] }];
+    }
 
     // Add catalog IDs if configured
     if (catalogIds) {

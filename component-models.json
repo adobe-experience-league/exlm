@@ -1950,6 +1950,14 @@
             "value": "premium-learning-cohort"
           }
         ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "products",
+        "value": "",
+        "label": "Product Filter(s)",
+        "description": "Optional: Enter one or more product names to filter content (comma-separated for multiple products, e.g., 'Acrobat' or 'Acrobat, AEM, Photoshop'). Leave empty to use default configuration."
       }
     ]
   },
