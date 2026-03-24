@@ -169,7 +169,7 @@ function buildPLMetaInfo(meta, isCourseCard = false) {
   metaContainer.className = 'premium-learning-card-meta';
   const metaParts = [];
 
-  // Collect available metadata (duration and level only, rating is now shown on thumbnail for both courses and cohorts)
+  // Collect available metadata
   if (meta?.duration) metaParts.push(meta.duration);
   if (meta?.level) metaParts.push(meta.level);
 
@@ -206,7 +206,7 @@ export async function buildPLCard(element, model) {
   const card = document.createElement('div');
   card.className = `browse-card premium-learning-browse-card ${type}-card ${failedToLoad ? 'browse-card-frozen' : ''}`;
 
-  // Determine if this is a course card (for format tag display logic)
+  // Determine if this is a course card
   const isCourseCard = type === 'premium-learning-course';
 
   // Build thumbnail section
