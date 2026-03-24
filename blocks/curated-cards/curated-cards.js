@@ -63,13 +63,29 @@ export default async function decorate(block) {
 
   let param;
   if (isFeatureEnabled('isV2TagsEnabled')) {
+    const productsv2 = productv2
+      ? getv2TagLabels(productv2)
+          .split(',')
+          .map((p) => p.trim())
+      : [];
+    const featuresv2 = featurev2
+      ? getv2TagLabels(featurev2)
+          .split(',')
+          .map((f) => f.trim())
+      : [];
+    const versionsv2 = subfeaturev2
+      ? getv2TagLabels(subfeaturev2)
+          .split(',')
+          .map((v) => v.trim())
+      : [];
+
     param = {
       contentType: contentType && contentType.toLowerCase().split(','),
-      product: productv2 ? getv2TagLabels(productv2) : null,
-      feature: featurev2 ? getv2TagLabels(featurev2) : null,
-      version: subfeaturev2 ? getv2TagLabels(subfeaturev2) : null,
-      role: rolev2 ? getv2TagLabels(rolev2) : null,
-      level: levelv2 ? getv2TagLabels(levelv2) : null,
+      product: productsv2.length ? removeProductDuplicates(productsv2) : null,
+      feature: featuresv2.length ? [...new Set(featuresv2)] : null,
+      version: versionsv2.length ? [...new Set(versionsv2)] : null,
+      role: rolev2 && getv2TagLabels(rolev2).toLowerCase().split(','),
+      level: levelv2 && getv2TagLabels(levelv2).toLowerCase().split(','),
       authorType: authorType && authorType.split(','),
       sortCriteria,
       noOfResults,

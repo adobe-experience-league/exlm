@@ -4317,6 +4317,40 @@
             "value": "Event|Upcoming Event"
           }
         ]
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-products",
+        "label": "Product(s) v2",
+        "valueType": "string",
+        "description": "Optional - all are included if no selection is made.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "product"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-topics",
+        "label": "Topic(s) v2",
+        "valueType": "string",
+        "description": "Sets the Top Quadrant topic(s) tags in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "topic"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
       }
     ]
   },
@@ -4773,6 +4807,23 @@
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl/solution",
         "description": "Optional - all are included if no selection is made."
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-products",
+        "label": "Product(s) v2",
+        "valueType": "string",
+        "description": "Sets the Top Quadrant products(s) tags in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "product"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
       }
     ]
   },
@@ -7314,6 +7365,70 @@
             "value": "coveo-only"
           }
         ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "filterProductBy" }, "specific_products"]
+        },
+        "component": "custom-aem-tag",
+        "name": "tq-products",
+        "label": "Product(s) v2",
+        "valueType": "string",
+        "description": "Optional - all are included if no selection is made.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "product"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "condition": {
+          "===": [{ "var": "filterProductBy" }, "specific_products"]
+        },
+        "component": "custom-aem-tag",
+        "name": "tq-features",
+        "label": "Feature(s) v2",
+        "valueType": "string",
+        "description": "Optional - all are included if no selection is made.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "feature"
+            }
+          }
+        },
+        "options": {
+          "dependentField": {
+            "name": "tq-products",
+            "taxonomyType": "product"
+          },
+          "requiredTagsToEnable": ["tq-products"]
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-roles",
+        "label": "Role(s) v2",
+        "valueType": "string",
+        "description": "Optional - all are included if no selection is made.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "role"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
       }
     ]
   },
@@ -7758,6 +7873,70 @@
             "value": "coveo-only"
           }
         ]
+      },
+      {
+        "condition": {
+          "===": [{ "var": "filterProductBy" }, "specific_products"]
+        },
+        "component": "custom-aem-tag",
+        "name": "tq-products",
+        "label": "Product(s) v2",
+        "valueType": "string",
+        "description": "Optional - all are included if no selection is made.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "product"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "condition": {
+          "===": [{ "var": "filterProductBy" }, "specific_products"]
+        },
+        "component": "custom-aem-tag",
+        "name": "tq-features",
+        "label": "Feature(s) v2",
+        "valueType": "string",
+        "description": "Optional - all are included if no selection is made.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "feature"
+            }
+          }
+        },
+        "options": {
+          "dependentField": {
+            "name": "tq-products",
+            "taxonomyType": "product"
+          },
+          "requiredTagsToEnable": ["tq-products"]
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
+        "name": "tq-roles",
+        "label": "Role(s) v2",
+        "valueType": "string",
+        "description": "Optional - all are included if no selection is made.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "role"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
       }
     ]
   },
