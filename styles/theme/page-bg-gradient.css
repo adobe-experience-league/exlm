@@ -54,7 +54,7 @@
   left: -18%;
   background: radial-gradient(ellipse at center, var(--lg-circle-blue) 0%, rgb(181 222 255 / 0%) 100%);
   opacity: 0.5;
-  animation: live-gradient-move-blue 10s ease-in-out infinite alternate;
+  animation: live-gradient-move-blue 6s ease-in-out infinite alternate;
 }
 
 .page-bg-gradient .gradient-circle-pink {
@@ -65,7 +65,7 @@
   bottom: -38%;
   background: radial-gradient(ellipse at center, var(--lg-circle-pink) 0%, rgb(250 74 162 / 0%) 100%);
   opacity: 0.3;
-  animation: live-gradient-move-pink 14s ease-in-out infinite alternate;
+  animation: live-gradient-move-pink 9s ease-in-out infinite alternate;
 }
 
 .page-bg-gradient .gradient-circle-orange {
@@ -76,7 +76,7 @@
   right: -26%;
   background: radial-gradient(ellipse at center, var(--lg-circle-orange) 0%, rgb(255 124 101 / 0%) 100%);
   opacity: 0.3;
-  animation: live-gradient-move-orange 18s ease-in-out infinite alternate;
+  animation: live-gradient-move-orange 12s ease-in-out infinite alternate;
 }
 
 /* Movement animations */
