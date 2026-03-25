@@ -5,3 +5,15 @@
 @import '../tabs/tabs.css';
 
 /* ^ Provides .tab-list, button.tab-title, [aria-selected='true'] styles */
+
+/* Override the tablet+ row layout — this block has no CTA, header stays stacked */
+.premium-learning-recommended-content-block.premium-learning-cards-block .premium-learning-cards-block-header {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.premium-learning-recommended-content-description {
+  font-size: var(--spectrum-font-size-200);
+  color: var(--non-spectrum-dark-gray);
+  margin-top: 4px;
+}

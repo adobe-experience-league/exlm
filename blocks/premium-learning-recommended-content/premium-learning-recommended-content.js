@@ -1,14 +1,8 @@
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import {
-  createTag,
-  fetchLanguagePlaceholders,
-  htmlToElement,
-  getConfig,
-  getPathDetails,
-} from '../../scripts/scripts.js';
+import BrowseCardsPLAdaptor from '../../scripts/browse-card/browse-cards-premium-learning-adaptor.js';
+import { createTag, fetchLanguagePlaceholders, htmlToElement, getConfig } from '../../scripts/scripts.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { getPLAccessToken } from '../../scripts/utils/pl-auth-utils.js';
 import { getCookie } from '../../scripts/utils/cookie-utils.js';
 
@@ -19,49 +13,6 @@ function showFallbackContentInUEMode(blockElement) {
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
   contentDiv.textContent = 'This block will load personalized recommended learning content for signed-in users only.';
   blockElement.appendChild(contentDiv);
-}
-
-function formatDuration(seconds) {
-  if (!seconds) return '';
-  const totalMin = Math.floor(parseInt(seconds, 10) / 60);
-  const hours = Math.floor(totalMin / 60);
-  const days = Math.floor(hours / 24);
-  const weeks = Math.floor(days / 7);
-  if (weeks > 0) return `${weeks} week${weeks > 1 ? 's' : ''}`;
-  if (days > 0) return `${days} day${days > 1 ? 's' : ''}`;
-  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''}`;
-  return `${totalMin} minute${totalMin > 1 ? 's' : ''}`;
-}
-
-function normalizeCard(item) {
-  const attrs = item.attributes || {};
-  const metadata = attrs.localizedMetadata?.[0] || {};
-  const loType = attrs.loType || '';
-  const contentType = loType === 'learningProgram' ? 'premium-learning-cohort' : 'premium-learning-course';
-  const id = item.id || '';
-  const { cdnOrigin } = getConfig();
-  const lang = getPathDetails()?.lang || 'en';
-  const extractedID = id.split(':')?.[1] || '';
-  const contentTypePart = contentType.split('-').pop();
-  const viewLink = `${cdnOrigin}/${lang}/premium/${contentTypePart}/${extractedID}`;
-
-  return {
-    id,
-    contentType,
-    thumbnail: attrs.imageUrl || attrs.bannerUrl || '',
-    title: metadata.name ?? '',
-    description: metadata.overview ?? metadata.description ?? '',
-    viewLink,
-    copyLink: viewLink,
-    tags: attrs.tags ?? [],
-    products: attrs.products?.map((p) => p.name) ?? [],
-    roles: attrs.roles?.map((r) => r.name) ?? [],
-    meta: {
-      duration: formatDuration(attrs.duration),
-      loFormat: attrs.loFormat || '',
-      loType,
-    },
-  };
 }
 
 function renderCards(contentDiv, cards) {
@@ -79,7 +30,7 @@ function renderCards(contentDiv, cards) {
  * @param {HTMLElement} block - The block element to decorate.
  */
 export default async function decorate(block) {
-  const [headingElement, ctaElement] = [...block.children];
+  const [headingElement, descriptionElement] = [...block.children];
 
   block.innerHTML = '';
   block.classList.add('browse-cards-block', 'premium-learning-cards-block', 'premium-learning-recommended-content-block');
@@ -90,8 +41,8 @@ export default async function decorate(block) {
     <div class="premium-learning-cards-block-title">
       ${headingElement?.innerHTML || ''}
     </div>
-    <div class="premium-learning-cards-block-cta">
-      ${decorateCustomButtons(ctaElement)}
+    <div class="premium-learning-recommended-content-description">
+      ${descriptionElement?.innerHTML || ''}
     </div>
   `;
   block.appendChild(headerDiv);
@@ -131,9 +82,6 @@ export default async function decorate(block) {
       <div class="premium-learning-cards-no-results">
         <div class="premium-learning-cards-no-results-header">${noResultsHeader}</div>
         <div class="premium-learning-cards-no-results-description">${noResultsDescription}</div>
-        <div class="premium-learning-cards-block-cta">
-          ${decorateCustomButtons(ctaElement)}
-        </div>
       </div>
     `;
     block.appendChild(htmlToElement(markup));
@@ -182,7 +130,7 @@ export default async function decorate(block) {
 
     shimmer.removeShimmer();
 
-    const allCards = (loData.data ?? []).map(normalizeCard);
+    const allCards = await BrowseCardsPLAdaptor.mapResultsToCardsData(loData);
 
     if (!allCards.length) {
       renderNoResultsContent();
@@ -190,9 +138,14 @@ export default async function decorate(block) {
     }
 
     // Build tabsData: { 'All': allCards, '<ProductName>': filteredCards, ... }
+    // Filter by matching against raw loData.data since adapted cards don't carry a products array
     const tabsData = { All: allCards };
     products.forEach((p) => {
-      tabsData[p.name] = allCards.filter((card) => card.products.includes(p.name));
+      const filtered = (loData.data ?? []).reduce((acc, item, i) => {
+        if (item.attributes?.products?.some((prod) => prod.name === p.name)) acc.push(allCards[i]);
+        return acc;
+      }, []);
+      tabsData[p.name] = filtered;
     });
 
     // Render tab list (mirrors aria-selected pattern from tabs.js)

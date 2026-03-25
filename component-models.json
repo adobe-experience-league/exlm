@@ -1980,32 +1980,12 @@
         ]
       },
       {
-        "component": "select",
-        "name": "cta1_Type",
-        "value": "primary",
-        "label": "CTA Type",
-        "description": "'Primary' renders a filled blue CTA, 'Secondary' renders a white CTA with black border.",
+        "component": "richtext",
         "valueType": "string",
-        "options": [
-          { "name": "Primary", "value": "primary" },
-          { "name": "Secondary", "value": "secondary" }
-        ]
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "cta1_linkText",
+        "name": "description",
         "value": "",
-        "label": "CTA Text",
-        "description": "Text to display inside the CTA button."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "cta1_link",
-        "value": "",
-        "label": "CTA Link",
-        "description": "URL to open when the CTA button is clicked."
+        "label": "Description",
+        "description": "Subtitle text shown below the heading, e.g. 'Recommended learning based on your activity and progress.'"
       }
     ]
   },
