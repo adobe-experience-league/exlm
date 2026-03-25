@@ -125,18 +125,18 @@ export default function initLiveGradientBackground() {
     });
 
     // Blur control
-    addSection('Blur');
-    addSlider({
-      label: 'Intensity',
-      min: 0,
-      max: 200,
-      step: 5,
-      defaultValue: 120,
-      onInput: (value) => {
-        body.style.setProperty('--lg-blur', `${value}px`);
-        return `${value}px`;
-      },
-    });
+    // addSection('Blur');
+    // addSlider({
+    //   label: 'Intensity',
+    //   min: 0,
+    //   max: 200,
+    //   step: 5,
+    //   defaultValue: 120,
+    //   onInput: (value) => {
+    //     body.style.setProperty('--lg-blur', `${value}px`);
+    //     return `${value}px`;
+    //   },
+    // });
 
     panel.appendChild(content);
 
