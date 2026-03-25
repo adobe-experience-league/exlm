@@ -1671,9 +1671,21 @@ async function loadPage() {
   if (!window.hlx.aemRoot && !window.location.href.includes('.html') && isFeatureEnabled('isPremiumLearningEnabled')) {
     try {
       const signedIn = await isUserSignedIn();
+
+      // Helper function to remove premium learning sections
+      const removePremiumLearningSections = () => {
+        document.querySelectorAll('.premium-learning-section').forEach((section) => section.remove());
+      };
+
+      // Only keep premium learning sections for signed-in premium learners
       if (signedIn) {
-        const { default: initializePLAuthentication } = await import('./utils/pl-auth-utils.js');
+        const { default: initializePLAuthentication, isPremiumLearner } = await import('./utils/pl-auth-utils.js');
         await initializePLAuthentication();
+        if (!isPremiumLearner()) {
+          removePremiumLearningSections();
+        }
+      } else {
+        removePremiumLearningSections();
       }
     } catch (error) {
       console.error('Error initializing Premium Learning authentication:', error);

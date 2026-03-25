@@ -9,7 +9,14 @@
   },
   {
     "id": "main-browse",
-    "components": ["section", "browse-rail-section", "tab-section", "list-section", "sticky-nav-section", "premium-learning-section"]
+    "components": [
+      "section",
+      "browse-rail-section",
+      "tab-section",
+      "list-section",
+      "sticky-nav-section",
+      "premium-learning-section"
+    ]
   },
   {
     "id": "main-article",
