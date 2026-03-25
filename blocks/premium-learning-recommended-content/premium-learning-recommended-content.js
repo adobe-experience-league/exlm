@@ -96,7 +96,19 @@ export default async function decorate(block) {
   `;
   block.appendChild(headerDiv);
 
-  const [signedIn, placeholders] = await Promise.all([isSignedInUser(), fetchLanguagePlaceholders().catch(() => ({}))]);
+  // Load local dev config (config.json is git-ignored; only present in local dev environments)
+  let localConfig = null;
+  try {
+    const configRes = await fetch(new URL('./config.json', import.meta.url));
+    if (configRes.ok) localConfig = await configRes.json();
+  } catch { /* not available in non-local environments */ }
+
+  const isLocalDev = localConfig?.localDev === true;
+
+  const [signedIn, placeholders] = await Promise.all([
+    isLocalDev ? Promise.resolve(true) : isSignedInUser(),
+    fetchLanguagePlaceholders().catch(() => ({})),
+  ]);
 
   if (!signedIn) {
     if (UEAuthorMode) {
@@ -128,34 +140,45 @@ export default async function decorate(block) {
   }
 
   try {
-    const { plApiBaseUrl } = getConfig();
-    const token = getPLAccessToken();
-    const userId = getCookie('alm_user_id');
-    const headers = {
-      Authorization: `oauth ${token}`,
-      Accept: 'application/vnd.api+json',
-    };
+    let prefsData;
+    let loData;
 
-    // Step 1: fetch recommendation preferences
-    const prefsRes = await fetch(`${plApiBaseUrl}/users/${userId}/recommendationPreferences`, { headers });
-    if (!prefsRes.ok) throw new Error(`Preferences fetch failed: ${prefsRes.status}`);
-    const prefsData = await prefsRes.json();
+    if (isLocalDev) {
+      // Use mock API responses from config.json for local development
+      prefsData = localConfig.api1;
+      loData = localConfig.api2;
+    } else {
+      const { plApiBaseUrl } = getConfig();
+      const token = getPLAccessToken();
+      const userId = getCookie('alm_user_id');
+      const headers = {
+        Authorization: `oauth ${token}`,
+        Accept: 'application/vnd.api+json',
+      };
+
+      // Step 1: fetch recommendation preferences
+      const prefsRes = await fetch(`${plApiBaseUrl}/users/${userId}/recommendationPreferences`, { headers });
+      if (!prefsRes.ok) throw new Error(`Preferences fetch failed: ${prefsRes.status}`);
+      prefsData = await prefsRes.json();
+
+      const products = prefsData.data?.attributes?.products ?? [];
+      const roles = prefsData.data?.attributes?.roles ?? [];
+
+      // Step 2: fetch learning objects using preferences as filters
+      const loParams = new URLSearchParams();
+      loParams.append('page[limit]', '10');
+      loParams.append('sort', '-recommendationScore');
+      loParams.append('enforcedFields[learningObject]', 'products,roles,extensionOverrides,effectivenessData');
+      loParams.append('include', 'instances.loResources.resources');
+      products.forEach((p) => loParams.append('filter.recommendationProductIds', p.id));
+      roles.forEach((r) => loParams.append('filter.recommendationRoleIds', r.id));
+
+      const loRes = await fetch(`${plApiBaseUrl}/learningObjects/query?${loParams}`, { headers });
+      if (!loRes.ok) throw new Error(`Learning objects fetch failed: ${loRes.status}`);
+      loData = await loRes.json();
+    }
 
     const products = prefsData.data?.attributes?.products ?? [];
-    const roles = prefsData.data?.attributes?.roles ?? [];
-
-    // Step 2: fetch learning objects using preferences as filters
-    const loParams = new URLSearchParams();
-    loParams.append('page[limit]', '10');
-    loParams.append('sort', '-recommendationScore');
-    loParams.append('enforcedFields[learningObject]', 'products,roles,extensionOverrides,effectivenessData');
-    loParams.append('include', 'instances.loResources.resources');
-    products.forEach((p) => loParams.append('filter.recommendationProductIds', p.id));
-    roles.forEach((r) => loParams.append('filter.recommendationRoleIds', r.id));
-
-    const loRes = await fetch(`${plApiBaseUrl}/learningObjects/query?${loParams}`, { headers });
-    if (!loRes.ok) throw new Error(`Learning objects fetch failed: ${loRes.status}`);
-    const loData = await loRes.json();
 
     shimmer.removeShimmer();
 
