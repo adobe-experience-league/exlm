@@ -6273,6 +6273,40 @@
     ]
   },
   {
+    "id": "premium-learning-section",
+    "fields": [
+      {
+        "component": "select",
+        "name": "style",
+        "value": "",
+        "label": "Background Color",
+        "description": "Section background color",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Default",
+            "value": ["premium-learning-section", "default"]
+          },
+          {
+            "name": "White",
+            "value": ["premium-learning-section", "bg-white"]
+          },
+          {
+            "name": "Dark Gray",
+            "value": ["premium-learning-section", "bg-dark-gray"]
+          }
+        ]
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "center-aligned",
+        "label": "Align the default blocks in this section to the center.",
+        "description": "Enabling this option will align the default blocks in this section to the center."
+      }
+    ]
+  },
+  {
     "id": "product-interests",
     "fields": [
       {
