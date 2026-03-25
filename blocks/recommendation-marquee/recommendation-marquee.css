@@ -135,11 +135,13 @@
 
 /* On demand event cards variant */
 
-.recommendation-marquee .browse-card.event-card {
+.recommendation-marquee .browse-card.event-card,
+.recommendation-marquee .browse-card.event-on-demand-event-card {
   background-color: var(--spectrum-gray-150);
 }
 
-.recommendation-marquee .browse-card.event-card .browse-card-figure {
+.recommendation-marquee .browse-card.event-card .browse-card-figure,
+.recommendation-marquee .browse-card.event-on-demand-event-card .browse-card-figure {
   border-radius: 15px 15px 0 0;
   height: 54px;
   max-height: 54px;

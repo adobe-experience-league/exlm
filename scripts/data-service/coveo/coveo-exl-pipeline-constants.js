@@ -45,7 +45,7 @@ export const CONTENT_TYPES = Object.freeze({
     LABEL: placeholders.browseCardTroubleshootingLabel || 'Troubleshooting',
   },
   EVENT: {
-    MAPPING_KEY: 'Event',
+    MAPPING_KEY: 'event',
     LABEL: placeholders.browseCardEventLabel || 'On-Demand Event',
   },
   ON_DEMAND_EVENT: {
