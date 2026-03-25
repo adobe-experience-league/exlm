@@ -5,6 +5,7 @@ import { createTag, fetchLanguagePlaceholders, htmlToElement, getConfig } from '
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { getPLAccessToken } from '../../scripts/utils/pl-auth-utils.js';
 import { getCookie } from '../../scripts/utils/cookie-utils.js';
+import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const MAX_CARDS = 4;
@@ -148,46 +149,33 @@ export default async function decorate(block) {
       tabsData[p.name] = filtered;
     });
 
-    // Render tab list (mirrors aria-selected pattern from tabs.js)
-    const tabList = createTag('div', { class: 'tab-list', role: 'tablist' });
-    Object.keys(tabsData).forEach((label, i) => {
-      const btn = createTag('button', {
-        class: 'tab-title',
-        role: 'tab',
-        'aria-selected': i === 0 ? 'true' : 'false',
-        'aria-label': label,
-      });
-      btn.textContent = label;
-      tabList.appendChild(btn);
-    });
-    block.appendChild(tabList);
+    const tabsWrapper = createTag('div', { class: 'premium-learning-tabs-wrapper' });
+    block.appendChild(tabsWrapper);
 
-    // Render initial cards content div (All tab active by default)
     const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
     block.appendChild(contentDiv);
-    renderCards(contentDiv, allCards);
 
-    // Tab click handler — no API calls, filter from in-memory tabsData
-    tabList.addEventListener('click', (e) => {
-      const tabBtn = e.target.closest('[role="tab"]');
-      if (!tabBtn) return;
+    const items = Object.keys(tabsData).map((label) => ({ value: label, title: label }));
 
-      tabList.querySelectorAll('[aria-selected="true"]').forEach((t) => t.setAttribute('aria-selected', 'false'));
-      tabBtn.setAttribute('aria-selected', 'true');
-
-      const label = tabBtn.textContent;
-      const filtered = tabsData[label] ?? [];
-
-      const existingNoResults = block.querySelector('.premium-learning-cards-no-results');
-      if (existingNoResults) existingNoResults.remove();
-
-      contentDiv.innerHTML = '';
-
-      if (filtered.length) {
-        renderCards(contentDiv, filtered);
-      } else {
-        renderNoResultsContent();
-      }
+    // eslint-disable-next-line no-new
+    new ResponsiveList({
+      wrapper: tabsWrapper,
+      items,
+      defaultSelected: 'All',
+      onInitCallback: () => {
+        renderCards(contentDiv, allCards);
+      },
+      onSelectCallback: (label) => {
+        const existingNoResults = block.querySelector('.premium-learning-cards-no-results');
+        if (existingNoResults) existingNoResults.remove();
+        contentDiv.innerHTML = '';
+        const filtered = tabsData[label] ?? [];
+        if (filtered.length) {
+          renderCards(contentDiv, filtered);
+        } else {
+          renderNoResultsContent();
+        }
+      },
     });
   } catch (err) {
     shimmer.removeShimmer();

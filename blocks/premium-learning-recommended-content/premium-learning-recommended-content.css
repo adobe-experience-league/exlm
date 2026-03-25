@@ -2,9 +2,7 @@
 
 /* ^ This already imports browse-cards-block.css internally */
 
-@import '../tabs/tabs.css';
-
-/* ^ Provides .tab-list, button.tab-title, [aria-selected='true'] styles */
+/* ResponsiveList loads its own CSS (responsive-list.css) internally via loadCSS */
 
 /* Override the tablet+ row layout — this block has no CTA, header stays stacked */
 .premium-learning-recommended-content-block.premium-learning-cards-block .premium-learning-cards-block-header {
