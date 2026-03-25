@@ -21,6 +21,16 @@ if (window.location.search?.indexOf('martech=off') === -1) {
   sendCoveoPageViewEvent();
 }
 
+async function isAdobeEmployee() {
+  if (!window.adobeIMS?.isSignedInUser()) return false;
+  try {
+    const profile = await window.adobeIMS.getProfile();
+    return profile?.email?.toLowerCase().endsWith('@adobe.com') === true;
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Loads Brand Concierge on eligible page types.
  * Guards:
@@ -34,9 +44,8 @@ async function loadBrandConcierge() {
 
   const { bcAuthRequired } = getConfig();
   if (bcAuthRequired) {
-    // await the shared window.imsLoaded promise — does not re-trigger the script load
     await loadIms();
-    if (!window.adobeIMS?.isSignedInUser()) return;
+    if (!(await isAdobeEmployee())) return;
   }
 
   const { default: initBrandConcierge } = await import('./brand-concierge/brand-concierge.js');
