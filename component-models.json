@@ -4215,7 +4215,7 @@
       {
         "component": "aem-tag",
         "name": "solutions",
-        "label": "Results solution filter",
+        "label": "Results legacy solution filter",
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl/solution",
         "description": "Optional - filter results to specific solution(s)."
@@ -4264,7 +4264,7 @@
       {
         "component": "aem-tag",
         "name": "tags",
-        "label": "Topics buttons",
+        "label": "Legacy Topics buttons",
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl",
         "description": "Select up to 15 topics or features."
@@ -4340,7 +4340,7 @@
         "name": "tq-topics",
         "label": "Topic(s) v2",
         "valueType": "string",
-        "description": "Sets the Top Quadrant topic(s) tags in page meta.",
+        "description": "Select up to 15 topics or features.",
         "dataSource": {
           "type": "action",
           "config": {
@@ -4803,7 +4803,7 @@
       {
         "component": "aem-tag",
         "name": "tags",
-        "label": "Solution(s)",
+        "label": "Legacy Solution(s)",
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl/solution",
         "description": "Optional - all are included if no selection is made."
@@ -4813,7 +4813,7 @@
         "name": "tq-products",
         "label": "Product(s) v2",
         "valueType": "string",
-        "description": "Sets the Top Quadrant products(s) tags in page meta.",
+        "description": "Optional - all are included if no selection is made.",
         "dataSource": {
           "type": "action",
           "config": {
@@ -7269,7 +7269,7 @@
         },
         "component": "aem-tag",
         "name": "tags",
-        "label": "Solution(s) or Feature(s)",
+        "label": "Legacy Solution(s) or Feature(s)",
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl",
         "description": "Optional - based on Profile Context if no selection is made."
@@ -7277,7 +7277,7 @@
       {
         "component": "multiselect",
         "name": "roles",
-        "label": "Role(s)",
+        "label": "Legacy Role(s)",
         "valueType": "string",
         "description": "Sets the Role(s).",
         "options": [
@@ -7777,7 +7777,7 @@
         },
         "component": "aem-tag",
         "name": "tags",
-        "label": "Solution(s) or Feature(s)",
+        "label": "Legacy Solution(s) or Feature(s)",
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl",
         "description": "Optional - based on Profile Context if no selection is made."
@@ -7785,7 +7785,7 @@
       {
         "component": "multiselect",
         "name": "roles",
-        "label": "Role(s)",
+        "label": "Legacy Role(s)",
         "valueType": "string",
         "description": "Sets the Role(s).",
         "options": [

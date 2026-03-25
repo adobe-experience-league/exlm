@@ -1505,7 +1505,7 @@ export function getv2TagLabels(tag) {
     }
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.error('Failed to parse metadata:', e, tag);
+    console.error('Failed to parse tag:', e, tag);
   }
 
   return labels;
