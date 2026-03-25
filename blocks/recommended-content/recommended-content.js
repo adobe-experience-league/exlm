@@ -476,13 +476,9 @@ export default async function decorate(block) {
     const contentDiv = document.createElement('div');
     contentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section');
     parentDiv.appendChild(contentDiv);
+    resultTextEl?.classList.add('recommended-content-discover-resource');
 
-    if (resultTextEl) {
-      resultTextEl.classList.add('recommended-content-discover-resource');
-    }
-    if (linkEl) {
-      linkEl.classList.add('recommended-content-result-link');
-    }
+    linkEl?.classList.add('recommended-content-result-link');
     if ((linkEl && linkEl.innerHTML) || (resultTextEl && resultTextEl.innerHTML)) {
       const seeMoreEl = document.createElement('div');
       seeMoreEl.classList.add('recommended-content-result-text');

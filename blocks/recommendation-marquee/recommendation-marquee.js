@@ -510,13 +510,17 @@ export default async function decorate(block) {
       'recommendation-marquee-wrap',
     );
     parentDiv.appendChild(contentDiv);
-    resultTextEl.classList.add('recommendation-marquee-discover-resource');
-    linkEl.classList.add('recommendation-marquee-result-link');
-    if (linkEl.innerHTML || resultTextEl.innerHTML) {
+    resultTextEl?.classList.add('recommendation-marquee-discover-resource');
+    linkEl?.classList.add('recommendation-marquee-result-link');
+    if ((linkEl && linkEl.innerHTML) || (resultTextEl && resultTextEl.innerHTML)) {
       const seeMoreEl = document.createElement('div');
       seeMoreEl.classList.add('recommendation-marquee-result-text');
-      seeMoreEl.appendChild(resultTextEl);
-      seeMoreEl.appendChild(linkEl);
+      if (resultTextEl) {
+        seeMoreEl.appendChild(resultTextEl);
+      }
+      if (linkEl) {
+        seeMoreEl.appendChild(linkEl);
+      }
       parentDiv.appendChild(seeMoreEl);
     }
   };
@@ -923,7 +927,13 @@ export default async function decorate(block) {
                     }
                   }
                   if (resp?.data) {
-                    updateCopyFromTarget(resp, headerContainer, descriptionContainer, linkEl, resultTextEl);
+                    updateCopyFromTarget(
+                      resp,
+                      headerContainer,
+                      descriptionContainer,
+                      linkEl || null,
+                      resultTextEl || null,
+                    );
                     headerContainer.id = formatId(headerContainer.innerHTML);
                     block.style.display = 'block';
                     setTargetDataAsBlockAttribute(block, resp);
