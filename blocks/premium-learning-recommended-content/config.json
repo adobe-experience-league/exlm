@@ -634,6 +634,191 @@
             ]
           }
         }
+      },
+            {
+        "id": "learningProgram:163673",
+        "type": "learningObject",
+        "attributes": {
+          "dateCreated": "2026-03-09T05:07:25.000Z",
+          "dateUpdated": "2026-03-17T15:41:05.000Z",
+          "downloadable": false,
+          "duration": 46800,
+          "effectiveModifiedDate": "2026-03-21T08:03:48.000Z",
+          "enrollmentType": "Self Enroll",
+          "hasPreview": false,
+          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/learningplans/163673/2026-03-09%2005:07:27.275470876b92e9fb6433545a6063bcf4a0548daf06ac4832b%20(1)_322e66f0592047f1ad5175fd34d82348.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzQ5NDEzMDIsImlhdCI6MTc3NDMzNjUwMiwicmlkIjoiMjM3NzEyODMiLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImQ0MjQ4MWQ2MmNhNjdhMjMzMGRiOTc1OWRhYzk3YzllIiwib3JpZ2luYWxVcmxIYXNoIjoiZjhiOWYzZjA2OTk3ZDc2MDU2YzEwY2I1MTc5NmYwNjk0ZTE3NTMwOCJ9.y7LCxv2NR07qgCfXTXkRs9iOaneuyIeTyD6z7cviV8w",
+          "isBookmarked": false,
+          "isEnhancedLP": false,
+          "isExternal": false,
+          "isMqaEnabled": false,
+          "isPrerequisiteEnforced": false,
+          "isSubLoOrderEnforced": true,
+          "loFormat": "Virtual Classroom",
+          "loType": "learningProgram",
+          "moduleResetEnabled": false,
+          "showAggregatedResources": false,
+          "state": "Published",
+          "tags": ["Cohort", "Test Silpa"],
+          "unenrollmentAllowed": true,
+          "catalogLabels": [
+            {
+              "catalogLabelValueIds": [
+                {
+                  "name": "true",
+                  "id": "catalogLabel:5203_14637"
+                }
+              ],
+              "description": "",
+              "mandatory": true,
+              "name": "Public",
+              "values": ["true"]
+            }
+          ],
+          "localizedMetadata": [
+            {
+              "description": "Modern IDE and chat applications use MCP as a way for an LLM to call tools exposed behind MCP servers. Instead of writing code against low-level API specifications, customers can describe their intent in natural language (“update the hero banner for this campaign across all pages”) and let the LLM invoke the appropriate MCP tools, which in turn interact with AEM’s APIs.asdsd",
+              "locale": "en-US",
+              "name": "Seat Limit Cohort -Silpa",
+              "overview": "Requests to AEM MCP tools run under the authenticated user’s identity, and each tool enforces the user’s existing AEM permissions. AI-assisted operations follow the same access rules as manual work in AEM.",
+              "richTextOverview": "<p style=\"margin: 0.6em 0px;\">Requests to AEM MCP tools run under the authenticated user’s identity, and each tool enforces the user’s existing AEM permissions. AI-assisted operations follow the same access rules as manual work in AEM.</p>"
+            }
+          ],
+          "products": [
+            {
+              "id": "recommendationProduct:932",
+              "name": "Acrobat"
+            },
+            {
+              "id": "recommendationProduct:933",
+              "name": "Acrobat Services"
+            },
+            {
+              "id": "recommendationProduct:934",
+              "name": "Adobe"
+            },
+            {
+              "id": "recommendationProduct:935",
+              "name": "Acrobat Sign"
+            },
+            {
+              "id": "recommendationProduct:1024",
+              "name": "Advertising"
+            }
+          ],
+          "rating": {
+            "averageRating": 0,
+            "ratingsCount": 0
+          },
+          "roles": [
+            {
+              "id": "recommendationRole:866",
+              "levels": ["ADVANCED"],
+              "name": "Business User"
+            },
+            {
+              "id": "recommendationRole:867",
+              "levels": ["INTERMEDIATE"],
+              "name": "Business leader"
+            },
+            {
+              "id": "recommendationRole:868",
+              "levels": ["BEGINNER"],
+              "name": "Administrator"
+            }
+          ],
+          "sections": [
+            {
+              "loIds": ["course:15844613"],
+              "mandatory": true,
+              "mandatoryLOCount": 1,
+              "sectionId": "190420",
+              "localizedMetadata": [
+                {
+                  "locale": "en-US",
+                  "name": "Test Sear Limit with Virtual Class module"
+                }
+              ]
+            }
+          ]
+        },
+        "relationships": {
+          "instances": {
+            "data": [
+              {
+                "id": "learningProgram:163673_229825",
+                "type": "learningObjectInstance"
+              }
+            ]
+          },
+          "recommendationProducts": {
+            "data": [
+              {
+                "id": "recommendationProduct:932",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:933",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:934",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:935",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:1024",
+                "type": "recommendationProduct"
+              }
+            ]
+          },
+          "recommendationRoles": {
+            "data": [
+              {
+                "id": "recommendationRole:866",
+                "type": "recommendationRole"
+              },
+              {
+                "id": "recommendationRole:867",
+                "type": "recommendationRole"
+              },
+              {
+                "id": "recommendationRole:868",
+                "type": "recommendationRole"
+              }
+            ]
+          },
+          "skills": {
+            "data": [
+              {
+                "id": "course:15844613_577673",
+                "type": "learningObjectSkill"
+              },
+              {
+                "id": "course:15844613_577675",
+                "type": "learningObjectSkill"
+              },
+              {
+                "id": "learningProgram:163673_577673",
+                "type": "learningObjectSkill"
+              },
+              {
+                "id": "learningProgram:163673_577675",
+                "type": "learningObjectSkill"
+              }
+            ]
+          },
+          "subLOs": {
+            "data": [
+              {
+                "id": "course:15844613",
+                "type": "learningObject"
+              }
+            ]
+          }
+        }
       }
     ],
     "included": [
