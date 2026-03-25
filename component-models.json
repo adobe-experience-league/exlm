@@ -1467,15 +1467,15 @@
         "options": [
           {
             "name": "Default",
-            "value": ["article-content-section", "default"]
+            "value": "default"
           },
           {
             "name": "White",
-            "value": ["article-content-section", "bg-white"]
+            "value": "bg-white"
           },
           {
             "name": "Dark Gray",
-            "value": ["article-content-section", "bg-dark-gray"]
+            "value": "bg-dark-gray"
           }
         ]
       },
@@ -8793,7 +8793,7 @@
     "fields": []
   },
   {
-    "id": "playlist-v2",
+    "id": "playlist-embed",
     "fields": [
       {
         "component": "text",
