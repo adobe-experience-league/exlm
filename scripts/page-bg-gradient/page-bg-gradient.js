@@ -124,6 +124,31 @@ export default function initLiveGradientBackground() {
       });
     });
 
+    // Size controls
+    addSection('Size');
+    addSlider({
+      label: 'Width',
+      min: 0.3,
+      max: 2.5,
+      step: 0.05,
+      defaultValue: 1,
+      onInput: (value) => {
+        body.style.setProperty('--lg-oval-width', value);
+        return `${value}x`;
+      },
+    });
+    addSlider({
+      label: 'Height',
+      min: 0.3,
+      max: 2.5,
+      step: 0.05,
+      defaultValue: 1,
+      onInput: (value) => {
+        body.style.setProperty('--lg-oval-height', value);
+        return `${value}x`;
+      },
+    });
+
     // Blur control
     // addSection('Blur');
     // addSlider({

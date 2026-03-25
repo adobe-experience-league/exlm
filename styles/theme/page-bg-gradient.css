@@ -40,8 +40,8 @@
 /* Shared circle styles */
 .page-bg-gradient .gradient-layer > .gradient-circle {
   position: absolute;
-  width: calc(var(--lg-circle-size) * var(--lg-circle-width-scale, 1));
-  height: calc(var(--lg-circle-size) * var(--lg-circle-height-scale, 1));
+  width: calc(var(--lg-circle-size) * var(--lg-circle-width-scale, 1) * var(--lg-oval-width, 1));
+  height: calc(var(--lg-circle-size) * var(--lg-circle-height-scale, 1) * var(--lg-oval-height, 1));
   border-radius: 50%;
   filter: blur(var(--lg-blur));
   pointer-events: none;
