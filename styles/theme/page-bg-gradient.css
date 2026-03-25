@@ -8,9 +8,9 @@
   --lg-circle-size: 1755px;
 
   /* Animation durations (overridable via JS control panel) */
-  --lg-anim-duration-blue: 2s;
-  --lg-anim-duration-pink: 4s;
-  --lg-anim-duration-orange: 6s;
+  --lg-anim-duration-blue: 10s;
+  --lg-anim-duration-pink: 14s;
+  --lg-anim-duration-orange: 18s;
 
   position: relative;
   isolation: isolate; /* prevents stacking conflicts */
