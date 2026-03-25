@@ -1,0 +1,7 @@
+@import '../premium-learning-cards/premium-learning-cards.css';
+
+/* ^ This already imports browse-cards-block.css internally */
+
+@import '../tabs/tabs.css';
+
+/* ^ Provides .tab-list, button.tab-title, [aria-selected='true'] styles */

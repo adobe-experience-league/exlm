@@ -1,0 +1,864 @@
+{
+    "links": {
+        "self": "https://learningmanager.adobe.com/primeapi/v2/learningObjects/query?page[limit]=10&include=instances.loResources.resources&enforcedFields[learningObject]=products,roles,extensionOverrides,effectivenessData&sort=-recommendationScore"
+    },
+    "data": [
+        {
+            "id": "learningProgram:163323",
+            "type": "learningObject",
+            "attributes": {
+                "bannerUrl": "https://cpcontents.adobe.com/protected/account/136804/banners/learningplans/163323/2026-03-03%2014:19:48.445918086Slim%20Banner_%20Content%20Supply%20Chain_1740x500.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzQ5NDEzMDIsImlhdCI6MTc3NDMzNjUwMiwicmlkIjoiMjM3NzEyODMiLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImQ0MjQ4MWQ2MmNhNjdhMjMzMGRiOTc1OWRhYzk3YzllIiwib3JpZ2luYWxVcmxIYXNoIjoiM2I0NWRlMTIxZjhjZDE1NWRhMzIzMjU1ZjhmMDU1NmRlZDFkNzJhYiJ9.yyZizY5T9gIwh2lfAPX7uIuBFpwsogIYE1iXnmZ_Prw",
+                "dateCreated": "2026-03-03T14:19:44.000Z",
+                "dateUpdated": "2026-03-23T08:50:10.000Z",
+                "downloadable": false,
+                "duration": 38500,
+                "effectiveModifiedDate": "2026-03-24T07:10:27.000Z",
+                "enrollmentType": "Self Enroll",
+                "hasPreview": false,
+                "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/learningplans/163323/2026-03-03%2014:19:45.489459281Expanded%20tile_AEM%20Sites_fee19967e34e465387e5abbd531805f5.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzQ5NDEzMDIsImlhdCI6MTc3NDMzNjUwMiwicmlkIjoiMjM3NzEyODMiLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImQ0MjQ4MWQ2MmNhNjdhMjMzMGRiOTc1OWRhYzk3YzllIiwib3JpZ2luYWxVcmxIYXNoIjoiNGZlMGZiZjg2Y2NhMzBjZDU0ZDhmOTZlYzZmYjI2NGU0MzBlMzIyYSJ9.yv4Sj26SsZU89rInrhLPSGA7sqaAAzpts8zSHrwE1gA",
+                "isBookmarked": false,
+                "isEnhancedLP": true,
+                "isExternal": false,
+                "isMqaEnabled": false,
+                "isPrerequisiteEnforced": false,
+                "isSubLoOrderEnforced": false,
+                "loFormat": "Blended",
+                "loType": "learningProgram",
+                "moduleResetEnabled": false,
+                "showAggregatedResources": false,
+                "state": "Published",
+                "tags": [
+                    "AEM",
+                    "Workfront"
+                ],
+                "unenrollmentAllowed": true,
+                "catalogLabels": [
+                    {
+                        "catalogLabelValueIds": [
+                            {
+                                "name": "true",
+                                "id": "catalogLabel:5203_14637"
+                            }
+                        ],
+                        "description": "",
+                        "mandatory": true,
+                        "name": "Public",
+                        "values": [
+                            "true"
+                        ]
+                    }
+                ],
+                "localizedMetadata": [
+                    {
+                        "description": "\nThis cohort provides distinct learning paths tailored to multiple roles that use Adobe Workfront Workflow:\n\nProject Managers: Learn to create and manage project timelines, how to collaborate effectively through the project, and monitor ongoing project work with Adobe Workfront. Follow a basic workflow that starts with reviewing a work request before creating and planning a project to manage related work. After launching the project, look at work progress indicators and how to troubleshoot situations that may arise. Finally, ensure all work is complete before closing the project.\nSystem Administrators",
+                        "locale": "en-US",
+                        "name": "Adobe Workfront Workflow Learning Cohort",
+                        "overview": "Join a six-week guided learning experience designed to help you master the essentials of Adobe Workfront Workflow through live sessions, hands-on labs, and peer collaboration. Explore how other organizations are using Workfront with guest speakers and thought leadership sessions. Capstone projects prepare you to confidently use Adobe Workfront as a project manager or system administrator",
+                        "richTextOverview": "<p>Join a six-week guided learning experience designed to help you master the essentials of Adobe Workfront Workflow through live sessions, hands-on labs, and peer collaboration. Explore how other organizations are using Workfront with guest speakers and thought leadership sessions. Capstone projects prepare you to confidently use Adobe Workfront as a project manager or system administrator<\/p>"
+                    }
+                ],
+                "products": [
+                    {
+                        "id": "recommendationProduct:931",
+                        "name": "AEM"
+                    },
+                    {
+                        "id": "recommendationProduct:934",
+                        "name": "Adobe"
+                    },
+                    {
+                        "id": "recommendationProduct:1041",
+                        "name": "Workfront"
+                    }
+                ],
+                "rating": {
+                    "averageRating": 0,
+                    "ratingsCount": 0
+                },
+                "roles": [
+                    {
+                        "id": "recommendationRole:866",
+                        "levels": [
+                            "BEGINNER"
+                        ],
+                        "name": "Business User"
+                    },
+                    {
+                        "id": "recommendationRole:867",
+                        "levels": [
+                            "BEGINNER"
+                        ],
+                        "name": "Business leader"
+                    },
+                    {
+                        "id": "recommendationRole:868",
+                        "levels": [
+                            "BEGINNER"
+                        ],
+                        "name": "Administrator"
+                    }
+                ],
+                "sections": [
+                    {
+                        "loIds": [
+                            "course:14812890",
+                            "course:15135053",
+                            "course:15135050"
+                        ],
+                        "mandatory": true,
+                        "mandatoryLOCount": 3,
+                        "sectionId": "191459",
+                        "localizedMetadata": [
+                            {
+                                "locale": "en-US",
+                                "name": "Week 1"
+                            }
+                        ]
+                    },
+                    {
+                        "loIds": [
+                            "course:15851162"
+                        ],
+                        "mandatory": true,
+                        "mandatoryLOCount": 1,
+                        "sectionId": "191464",
+                        "localizedMetadata": [
+                            {
+                                "locale": "en-US",
+                                "name": "Week 2"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "relationships": {
+                "instances": {
+                    "data": [
+                        {
+                            "id": "learningProgram:163323_229482",
+                            "type": "learningObjectInstance"
+                        },
+                        {
+                            "id": "learningProgram:163323_229493",
+                            "type": "learningObjectInstance"
+                        }
+                    ]
+                },
+                "recommendationProducts": {
+                    "data": [
+                        {
+                            "id": "recommendationProduct:931",
+                            "type": "recommendationProduct"
+                        },
+                        {
+                            "id": "recommendationProduct:934",
+                            "type": "recommendationProduct"
+                        },
+                        {
+                            "id": "recommendationProduct:1041",
+                            "type": "recommendationProduct"
+                        }
+                    ]
+                },
+                "recommendationRoles": {
+                    "data": [
+                        {
+                            "id": "recommendationRole:866",
+                            "type": "recommendationRole"
+                        },
+                        {
+                            "id": "recommendationRole:867",
+                            "type": "recommendationRole"
+                        },
+                        {
+                            "id": "recommendationRole:868",
+                            "type": "recommendationRole"
+                        }
+                    ]
+                },
+                "skills": {
+                    "data": [
+                        {
+                            "id": "course:14812890_577674",
+                            "type": "learningObjectSkill"
+                        },
+                        {
+                            "id": "course:14812890_577675",
+                            "type": "learningObjectSkill"
+                        },
+                        {
+                            "id": "course:14812890_577676",
+                            "type": "learningObjectSkill"
+                        },
+                        {
+                            "id": "course:15135050_577675",
+                            "type": "learningObjectSkill"
+                        },
+                        {
+                            "id": "course:15135053_587430",
+                            "type": "learningObjectSkill"
+                        },
+                        {
+                            "id": "course:15851162_577678",
+                            "type": "learningObjectSkill"
+                        },
+                        {
+                            "id": "course:15851162_577679",
+                            "type": "learningObjectSkill"
+                        },
+                        {
+                            "id": "learningProgram:163323_577675",
+                            "type": "learningObjectSkill"
+                        },
+                        {
+                            "id": "learningProgram:163323_577679",
+                            "type": "learningObjectSkill"
+                        }
+                    ]
+                },
+                "subLOs": {
+                    "data": [
+                        {
+                            "id": "course:14812890",
+                            "type": "learningObject"
+                        },
+                        {
+                            "id": "course:15135050",
+                            "type": "learningObject"
+                        },
+                        {
+                            "id": "course:15135053",
+                            "type": "learningObject"
+                        },
+                        {
+                            "id": "course:15851162",
+                            "type": "learningObject"
+                        }
+                    ]
+                },
+                "supplementaryLOs": {
+                    "data": [
+                        {
+                            "id": "jobAid:88610",
+                            "type": "learningObject"
+                        },
+                        {
+                            "id": "jobAid:88619",
+                            "type": "learningObject"
+                        },
+                        {
+                            "id": "jobAid:88621",
+                            "type": "learningObject"
+                        },
+                        {
+                            "id": "jobAid:88623",
+                            "type": "learningObject"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "learningProgram:161554",
+            "type": "learningObject",
+            "attributes": {
+                "dateCreated": "2026-01-07T10:58:34.000Z",
+                "dateUpdated": "2026-03-24T06:01:01.000Z",
+                "downloadable": false,
+                "duration": 930,
+                "effectiveModifiedDate": "2026-03-24T06:09:31.000Z",
+                "enrollmentType": "Self Enroll",
+                "hasPreview": false,
+                "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/learningplans/161554/2026-01-07%2010:58:35.75840044232159aa6478b5967131e43c2361c16abcbbdbd22_46348b5db5674a54a8890d40865cace1.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzQ5NDEzMDIsImlhdCI6MTc3NDMzNjUwMiwicmlkIjoiMjM3NzEyODMiLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImQ0MjQ4MWQ2MmNhNjdhMjMzMGRiOTc1OWRhYzk3YzllIiwib3JpZ2luYWxVcmxIYXNoIjoiYmRjZTI2OThhZmI5MWQyY2I5OWE2ODgxNjE0YWRiYzIzNTA1ZjJlNSJ9.NPrNabNoUc1jAt8tswaXpu5BqXJpHqd_Ebwq2vwKrA0",
+                "isBookmarked": false,
+                "isEnhancedLP": false,
+                "isExternal": false,
+                "isMqaEnabled": false,
+                "isPrerequisiteEnforced": false,
+                "isSubLoOrderEnforced": true,
+                "loFormat": "Self Paced",
+                "loType": "learningProgram",
+                "moduleResetEnabled": false,
+                "showAggregatedResources": false,
+                "state": "Published",
+                "unenrollmentAllowed": true,
+                "catalogLabels": [
+                    {
+                        "catalogLabelValueIds": [
+                            {
+                                "name": "true",
+                                "id": "catalogLabel:5203_14637"
+                            }
+                        ],
+                        "description": "",
+                        "mandatory": true,
+                        "name": "Public",
+                        "values": [
+                            "true"
+                        ]
+                    }
+                ],
+                "localizedMetadata": [
+                    {
+                        "description": "xperience Manager 6.5 LTS product updates are delivered through Service Packs. These Service Packs include new features, enhancements, and bug fixes. For details about the latest released service pack,",
+                        "locale": "en-US",
+                        "name": "Cumulative Fix Packs (CFPs)2",
+                        "overview": "Product updates in terms of new features, enhancements, and bug fixes for supported Experience Manager on-premise and Managed Services are delivered through Service Packs and Cumulative Fix Packs (CFPs).",
+                        "richTextOverview": "<p><span style=\"color: rgb(34, 34, 34);\">Product updates in terms of new features, enhancements, and bug fixes for supported Experience Manager on-premise and Managed Services are delivered through Service Packs and Cumulative Fix Packs (CFPs).<\/span><\/p>"
+                    }
+                ],
+                "products": [
+                    {
+                        "id": "recommendationProduct:932",
+                        "name": "Acrobat"
+                    },
+                    {
+                        "id": "recommendationProduct:933",
+                        "name": "Acrobat Services"
+                    },
+                    {
+                        "id": "recommendationProduct:935",
+                        "name": "Acrobat Sign"
+                    },
+                    {
+                        "id": "recommendationProduct:941",
+                        "name": "AEM Assets"
+                    }
+                ],
+                "rating": {
+                    "averageRating": 3,
+                    "ratingsCount": 1
+                },
+                "roles": [
+                    {
+                        "id": "recommendationRole:865",
+                        "levels": [
+                            "ADVANCED"
+                        ],
+                        "name": "Developer"
+                    },
+                    {
+                        "id": "recommendationRole:867",
+                        "levels": [
+                            "BEGINNER"
+                        ],
+                        "name": "Business leader"
+                    }
+                ],
+                "sections": [
+                    {
+                        "loIds": [
+                            "course:15135053"
+                        ],
+                        "mandatory": true,
+                        "mandatoryLOCount": 1,
+                        "sectionId": "185979",
+                        "localizedMetadata": [
+                            {
+                                "locale": "en-US",
+                                "name": "Product updates"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "relationships": {
+                "instances": {
+                    "data": [
+                        {
+                            "id": "learningProgram:161554_226703",
+                            "type": "learningObjectInstance"
+                        },
+                        {
+                            "id": "learningProgram:161554_227780",
+                            "type": "learningObjectInstance"
+                        }
+                    ]
+                },
+                "recommendationProducts": {
+                    "data": [
+                        {
+                            "id": "recommendationProduct:932",
+                            "type": "recommendationProduct"
+                        },
+                        {
+                            "id": "recommendationProduct:933",
+                            "type": "recommendationProduct"
+                        },
+                        {
+                            "id": "recommendationProduct:935",
+                            "type": "recommendationProduct"
+                        },
+                        {
+                            "id": "recommendationProduct:941",
+                            "type": "recommendationProduct"
+                        }
+                    ]
+                },
+                "recommendationRoles": {
+                    "data": [
+                        {
+                            "id": "recommendationRole:865",
+                            "type": "recommendationRole"
+                        },
+                        {
+                            "id": "recommendationRole:867",
+                            "type": "recommendationRole"
+                        }
+                    ]
+                },
+                "skills": {
+                    "data": [
+                        {
+                            "id": "course:15135053_587430",
+                            "type": "learningObjectSkill"
+                        },
+                        {
+                            "id": "learningProgram:161554_577675",
+                            "type": "learningObjectSkill"
+                        },
+                        {
+                            "id": "learningProgram:161554_587430",
+                            "type": "learningObjectSkill"
+                        }
+                    ]
+                },
+                "subLOs": {
+                    "data": [
+                        {
+                            "id": "course:15135053",
+                            "type": "learningObject"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "learningProgram:163673",
+            "type": "learningObject",
+            "attributes": {
+                "dateCreated": "2026-03-09T05:07:25.000Z",
+                "dateUpdated": "2026-03-17T15:41:05.000Z",
+                "downloadable": false,
+                "duration": 46800,
+                "effectiveModifiedDate": "2026-03-21T08:03:48.000Z",
+                "enrollmentType": "Self Enroll",
+                "hasPreview": false,
+                "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/learningplans/163673/2026-03-09%2005:07:27.275470876b92e9fb6433545a6063bcf4a0548daf06ac4832b%20(1)_322e66f0592047f1ad5175fd34d82348.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzQ5NDEzMDIsImlhdCI6MTc3NDMzNjUwMiwicmlkIjoiMjM3NzEyODMiLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImQ0MjQ4MWQ2MmNhNjdhMjMzMGRiOTc1OWRhYzk3YzllIiwib3JpZ2luYWxVcmxIYXNoIjoiZjhiOWYzZjA2OTk3ZDc2MDU2YzEwY2I1MTc5NmYwNjk0ZTE3NTMwOCJ9.y7LCxv2NR07qgCfXTXkRs9iOaneuyIeTyD6z7cviV8w",
+                "isBookmarked": false,
+                "isEnhancedLP": false,
+                "isExternal": false,
+                "isMqaEnabled": false,
+                "isPrerequisiteEnforced": false,
+                "isSubLoOrderEnforced": true,
+                "loFormat": "Virtual Classroom",
+                "loType": "learningProgram",
+                "moduleResetEnabled": false,
+                "showAggregatedResources": false,
+                "state": "Published",
+                "tags": [
+                    "Cohort",
+                    "Test Silpa"
+                ],
+                "unenrollmentAllowed": true,
+                "catalogLabels": [
+                    {
+                        "catalogLabelValueIds": [
+                            {
+                                "name": "true",
+                                "id": "catalogLabel:5203_14637"
+                            }
+                        ],
+                        "description": "",
+                        "mandatory": true,
+                        "name": "Public",
+                        "values": [
+                            "true"
+                        ]
+                    }
+                ],
+                "localizedMetadata": [
+                    {
+                        "description": "Modern IDE and chat applications use MCP as a way for an LLM to call tools exposed behind MCP servers. Instead of writing code against low-level API specifications, customers can describe their intent in natural language (“update the hero banner for this campaign across all pages”) and let the LLM invoke the appropriate MCP tools, which in turn interact with AEM’s APIs.asdsd",
+                        "locale": "en-US",
+                        "name": "Seat Limit Cohort -Silpa",
+                        "overview": "Requests to AEM MCP tools run under the authenticated user’s identity, and each tool enforces the user’s existing AEM permissions. AI-assisted operations follow the same access rules as manual work in AEM.",
+                        "richTextOverview": "<p style=\"margin: 0.6em 0px;\">Requests to AEM MCP tools run under the authenticated user’s identity, and each tool enforces the user’s existing AEM permissions. AI-assisted operations follow the same access rules as manual work in AEM.<\/p>"
+                    }
+                ],
+                "products": [
+                    {
+                        "id": "recommendationProduct:932",
+                        "name": "Acrobat"
+                    },
+                    {
+                        "id": "recommendationProduct:933",
+                        "name": "Acrobat Services"
+                    },
+                    {
+                        "id": "recommendationProduct:934",
+                        "name": "Adobe"
+                    },
+                    {
+                        "id": "recommendationProduct:935",
+                        "name": "Acrobat Sign"
+                    },
+                    {
+                        "id": "recommendationProduct:1024",
+                        "name": "Advertising"
+                    }
+                ],
+                "rating": {
+                    "averageRating": 0,
+                    "ratingsCount": 0
+                },
+                "roles": [
+                    {
+                        "id": "recommendationRole:866",
+                        "levels": [
+                            "ADVANCED"
+                        ],
+                        "name": "Business User"
+                    },
+                    {
+                        "id": "recommendationRole:867",
+                        "levels": [
+                            "INTERMEDIATE"
+                        ],
+                        "name": "Business leader"
+                    },
+                    {
+                        "id": "recommendationRole:868",
+                        "levels": [
+                            "BEGINNER"
+                        ],
+                        "name": "Administrator"
+                    }
+                ],
+                "sections": [
+                    {
+                        "loIds": [
+                            "course:15844613"
+                        ],
+                        "mandatory": true,
+                        "mandatoryLOCount": 1,
+                        "sectionId": "190420",
+                        "localizedMetadata": [
+                            {
+                                "locale": "en-US",
+                                "name": "Test Sear Limit with Virtual Class module"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "relationships": {
+                "instances": {
+                    "data": [
+                        {
+                            "id": "learningProgram:163673_229825",
+                            "type": "learningObjectInstance"
+                        }
+                    ]
+                },
+                "recommendationProducts": {
+                    "data": [
+                        {
+                            "id": "recommendationProduct:932",
+                            "type": "recommendationProduct"
+                        },
+                        {
+                            "id": "recommendationProduct:933",
+                            "type": "recommendationProduct"
+                        },
+                        {
+                            "id": "recommendationProduct:934",
+                            "type": "recommendationProduct"
+                        },
+                        {
+                            "id": "recommendationProduct:935",
+                            "type": "recommendationProduct"
+                        },
+                        {
+                            "id": "recommendationProduct:1024",
+                            "type": "recommendationProduct"
+                        }
+                    ]
+                },
+                "recommendationRoles": {
+                    "data": [
+                        {
+                            "id": "recommendationRole:866",
+                            "type": "recommendationRole"
+                        },
+                        {
+                            "id": "recommendationRole:867",
+                            "type": "recommendationRole"
+                        },
+                        {
+                            "id": "recommendationRole:868",
+                            "type": "recommendationRole"
+                        }
+                    ]
+                },
+                "skills": {
+                    "data": [
+                        {
+                            "id": "course:15844613_577673",
+                            "type": "learningObjectSkill"
+                        },
+                        {
+                            "id": "course:15844613_577675",
+                            "type": "learningObjectSkill"
+                        },
+                        {
+                            "id": "learningProgram:163673_577673",
+                            "type": "learningObjectSkill"
+                        },
+                        {
+                            "id": "learningProgram:163673_577675",
+                            "type": "learningObjectSkill"
+                        }
+                    ]
+                },
+                "subLOs": {
+                    "data": [
+                        {
+                            "id": "course:15844613",
+                            "type": "learningObject"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "included": [
+        {
+            "id": "learningProgram:163323_229482",
+            "type": "learningObjectInstance",
+            "attributes": {
+                "completionDeadline": "2026-06-30T18:29:59.000Z",
+                "dateCreated": "2026-03-03T14:51:16.000Z",
+                "enabledL1FeedbackForEachCourse": false,
+                "enrollmentDeadline": "2026-06-01T18:29:59.000Z",
+                "gamificationEnabled": false,
+                "isAET": false,
+                "isDefault": true,
+                "isFlexible": false,
+                "locale": "en-US",
+                "state": "Retired",
+                "localizedMetadata": [
+                    {
+                        "locale": "en-US",
+                        "name": "7 | EMEA"
+                    }
+                ]
+            },
+            "relationships": {
+                "learningObject": {
+                    "data": {
+                        "id": "learningProgram:163323",
+                        "type": "learningObject"
+                    }
+                },
+                "subLoInstances": {
+                    "data": [
+                        {
+                            "id": "course:14812890_15532604",
+                            "type": "learningObjectInstance"
+                        },
+                        {
+                            "id": "course:15135050_15859920",
+                            "type": "learningObjectInstance"
+                        },
+                        {
+                            "id": "course:15135053_15859923",
+                            "type": "learningObjectInstance"
+                        },
+                        {
+                            "id": "course:15851162_16591020",
+                            "type": "learningObjectInstance"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "learningProgram:163323_229493",
+            "type": "learningObjectInstance",
+            "attributes": {
+                "completionDeadline": "2026-06-29T18:29:59.000Z",
+                "dateCreated": "2026-03-03T15:47:53.000Z",
+                "enabledL1FeedbackForEachCourse": false,
+                "enrollmentDeadline": "2026-06-02T18:29:59.000Z",
+                "gamificationEnabled": false,
+                "isAET": false,
+                "isDefault": false,
+                "isFlexible": false,
+                "locale": "en-US",
+                "state": "Retired",
+                "localizedMetadata": [
+                    {
+                        "locale": "en-US",
+                        "name": "433 | US "
+                    }
+                ]
+            },
+            "relationships": {
+                "learningObject": {
+                    "data": {
+                        "id": "learningProgram:163323",
+                        "type": "learningObject"
+                    }
+                },
+                "subLoInstances": {
+                    "data": [
+                        {
+                            "id": "course:14812890_15532604",
+                            "type": "learningObjectInstance"
+                        },
+                        {
+                            "id": "course:15135050_15859920",
+                            "type": "learningObjectInstance"
+                        },
+                        {
+                            "id": "course:15135053_15859923",
+                            "type": "learningObjectInstance"
+                        },
+                        {
+                            "id": "course:15851162_16591020",
+                            "type": "learningObjectInstance"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "learningProgram:161554_226703",
+            "type": "learningObjectInstance",
+            "attributes": {
+                "completionDeadline": "2026-03-31T18:29:59.000Z",
+                "dateCreated": "2026-01-07T10:59:23.000Z",
+                "enabledL1FeedbackForEachCourse": false,
+                "enrollmentDeadline": "2026-03-19T18:29:59.000Z",
+                "gamificationEnabled": false,
+                "isAET": false,
+                "isDefault": true,
+                "isFlexible": false,
+                "locale": "en-US",
+                "state": "Retired",
+                "unenrollmentDeadline": "2026-03-20T18:29:59.000Z",
+                "localizedMetadata": [
+                    {
+                        "locale": "en-US",
+                        "name": "433 | USA & CA"
+                    }
+                ]
+            },
+            "relationships": {
+                "badge": {
+                    "data": {
+                        "id": "1336452",
+                        "type": "badge"
+                    }
+                },
+                "learningObject": {
+                    "data": {
+                        "id": "learningProgram:161554",
+                        "type": "learningObject"
+                    }
+                },
+                "subLoInstances": {
+                    "data": [
+                        {
+                            "id": "course:15135053_15859923",
+                            "type": "learningObjectInstance"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "learningProgram:161554_227780",
+            "type": "learningObjectInstance",
+            "attributes": {
+                "completionDeadline": "2026-03-31T18:29:59.000Z",
+                "dateCreated": "2026-01-28T06:02:45.000Z",
+                "enabledL1FeedbackForEachCourse": false,
+                "enrollmentDeadline": "2026-03-19T18:29:59.000Z",
+                "gamificationEnabled": false,
+                "isAET": false,
+                "isDefault": false,
+                "isFlexible": false,
+                "locale": "en-US",
+                "state": "Retired",
+                "localizedMetadata": [
+                    {
+                        "locale": "en-US",
+                        "name": "433 | USA"
+                    }
+                ]
+            },
+            "relationships": {
+                "badge": {
+                    "data": {
+                        "id": "1336446",
+                        "type": "badge"
+                    }
+                },
+                "learningObject": {
+                    "data": {
+                        "id": "learningProgram:161554",
+                        "type": "learningObject"
+                    }
+                },
+                "subLoInstances": {
+                    "data": [
+                        {
+                            "id": "course:15135053_15859923",
+                            "type": "learningObjectInstance"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "learningProgram:163673_229825",
+            "type": "learningObjectInstance",
+            "attributes": {
+                "dateCreated": "2026-03-09T05:08:05.000Z",
+                "enabledL1FeedbackForEachCourse": false,
+                "gamificationEnabled": false,
+                "isAET": false,
+                "isDefault": true,
+                "isFlexible": false,
+                "state": "Active",
+                "localizedMetadata": [
+                    {
+                        "locale": "en-US",
+                        "name": "Default Instance | 433"
+                    }
+                ]
+            },
+            "relationships": {
+                "learningObject": {
+                    "data": {
+                        "id": "learningProgram:163673",
+                        "type": "learningObject"
+                    }
+                },
+                "subLoInstances": {
+                    "data": [
+                        {
+                            "id": "course:15844613_16584414",
+                            "type": "learningObjectInstance"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "meta": {
+        "count": 3
+    }
+}

@@ -1954,6 +1954,62 @@
     ]
   },
   {
+    "id": "premium-learning-recommended-content",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the heading text for the Recommended Learning block."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h2",
+        "label": "Title Heading Type",
+        "options": [
+          { "name": "H1", "value": "h1" },
+          { "name": "H2", "value": "h2" },
+          { "name": "H3", "value": "h3" },
+          { "name": "H4", "value": "h4" },
+          { "name": "H5", "value": "h5" },
+          { "name": "H6", "value": "h6" }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "cta1_Type",
+        "value": "primary",
+        "label": "CTA Type",
+        "description": "'Primary' renders a filled blue CTA, 'Secondary' renders a white CTA with black border.",
+        "valueType": "string",
+        "options": [
+          { "name": "Primary", "value": "primary" },
+          { "name": "Secondary", "value": "secondary" }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_linkText",
+        "value": "",
+        "label": "CTA Text",
+        "description": "Text to display inside the CTA button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_link",
+        "value": "",
+        "label": "CTA Link",
+        "description": "URL to open when the CTA button is clicked."
+      }
+    ]
+  },
+  {
     "id": "carousel",
     "fields": []
   },

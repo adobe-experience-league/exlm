@@ -1,0 +1,44 @@
+{
+    "links": {
+        "self": "https://learningmanager.adobe.com/primeapi/v2/users/30720685/recommendationPreferences"
+    },
+    "data": {
+        "id": "userRecommendationPreferences:30720685",
+        "type": "userRecommendationPreferences",
+        "attributes": {
+            "products": [
+                {
+                    "id": "recommendationProduct:935",
+                    "name": "Acrobat Sign"
+                },
+                {
+                    "id": "recommendationProduct:933",
+                    "name": "Acrobat Services"
+                }
+            ],
+            "roles": [
+                {
+                    "id": "recommendationRole:866",
+                    "levels": [
+                        "ADVANCED"
+                    ],
+                    "name": "Business User"
+                },
+                {
+                    "id": "recommendationRole:867",
+                    "levels": [
+                        "ADVANCED"
+                    ],
+                    "name": "Business leader"
+                },
+                {
+                    "id": "recommendationRole:865",
+                    "levels": [
+                        "ADVANCED"
+                    ],
+                    "name": "Developer"
+                }
+            ]
+        }
+    }
+}
