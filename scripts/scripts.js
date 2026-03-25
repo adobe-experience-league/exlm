@@ -987,6 +987,10 @@ const loadMartech = async (headerPromise, footerPromise) => {
         }
       };
       linkClicked.forEach((e) => e.addEventListener('click', clickHandler));
+      const headerEl = document.querySelector('exl-header');
+      headerEl?.shadowRoot?.addEventListener('click', clickHandler);
+      const footerEl = document.querySelector('exl-footer');
+      footerEl?.shadowRoot?.addEventListener('click', clickHandler);
     });
   });
 
