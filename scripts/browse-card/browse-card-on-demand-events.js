@@ -52,13 +52,7 @@ const buildOnDemandEventContent = ({ event, cardContent, card }) => {
  */
 export const decorateOnDemandEvents = (card, model) => {
   const contentTypeLower = model.contentType?.toLowerCase();
-  if (
-    !card ||
-    !model ||
-    (contentTypeLower !== CONTENT_TYPES.EVENT.MAPPING_KEY &&
-      contentTypeLower !== CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase())
-  )
-    return;
+  if (!card || !model || contentTypeLower !== CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase()) return;
 
   if (card.closest('.recommendation-marquee')) return;
 
