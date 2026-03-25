@@ -7,6 +7,11 @@
   --lg-blur: 120px;
   --lg-circle-size: 1755px;
 
+  /* Animation durations (overridable via JS control panel) */
+  --lg-anim-duration-blue: 10s;
+  --lg-anim-duration-pink: 14s;
+  --lg-anim-duration-orange: 18s;
+
   position: relative;
   isolation: isolate; /* prevents stacking conflicts */
   background: transparent;
@@ -54,7 +59,7 @@
   left: -18%;
   background: radial-gradient(ellipse at center, var(--lg-circle-blue) 0%, rgb(181 222 255 / 0%) 100%);
   opacity: 0.5;
-  animation: live-gradient-move-blue 10s ease-in-out infinite alternate;
+  animation: live-gradient-move-blue var(--lg-anim-duration-blue) ease-in-out infinite alternate;
 }
 
 .page-bg-gradient .gradient-circle-pink {
@@ -65,7 +70,7 @@
   bottom: -38%;
   background: radial-gradient(ellipse at center, var(--lg-circle-pink) 0%, rgb(250 74 162 / 0%) 100%);
   opacity: 0.3;
-  animation: live-gradient-move-pink 14s ease-in-out infinite alternate;
+  animation: live-gradient-move-pink var(--lg-anim-duration-pink) ease-in-out infinite alternate;
 }
 
 .page-bg-gradient .gradient-circle-orange {
@@ -76,7 +81,7 @@
   right: -26%;
   background: radial-gradient(ellipse at center, var(--lg-circle-orange) 0%, rgb(255 124 101 / 0%) 100%);
   opacity: 0.3;
-  animation: live-gradient-move-orange 18s ease-in-out infinite alternate;
+  animation: live-gradient-move-orange var(--lg-anim-duration-orange) ease-in-out infinite alternate;
 }
 
 /* Movement animations */
@@ -174,4 +179,150 @@
 .low-gpu.page-bg-gradient main::after {
   backdrop-filter: none;
   background: transparent;
+}
+
+/* ============================================================
+   Control Panel
+   ============================================================ */
+.gradient-control-panel {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  z-index: 9999;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.4;
+  color: rgb(255 255 255 / 90%);
+  filter: drop-shadow(-4px 0 16px rgb(0 0 0 / 30%));
+}
+
+.gradient-control-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 6px;
+  background: rgb(20 20 30 / 80%);
+  backdrop-filter: blur(12px);
+  border-radius: 8px 0 0 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.gradient-control-title {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 60%);
+  white-space: nowrap;
+}
+
+.gradient-control-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  color: rgb(255 255 255 / 70%);
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.gradient-control-toggle:hover {
+  color: #fff;
+}
+
+.gradient-control-content {
+  width: 200px;
+  padding: 14px 14px 16px;
+  background: rgb(20 20 30 / 85%);
+  backdrop-filter: blur(12px);
+  border-radius: 8px 0 0 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+
+.gradient-control-panel[data-collapsed] .gradient-control-content {
+  display: none;
+}
+
+.gradient-control-panel[data-collapsed] .gradient-control-header {
+  border-radius: 8px 0 0 8px;
+}
+
+.gradient-control-section {
+  margin: 8px 0 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 40%);
+}
+
+.gradient-control-section:first-child {
+  margin-top: 0;
+}
+
+.gradient-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gradient-control-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 12px;
+  color: rgb(255 255 255 / 80%);
+}
+
+.gradient-control-value {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: rgb(255 255 255 / 50%);
+}
+
+.gradient-control-slider {
+  width: 100%;
+  height: 4px;
+  appearance: none;
+  background: rgb(255 255 255 / 20%);
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+}
+
+.gradient-control-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.gradient-control-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.gradient-control-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
 }
