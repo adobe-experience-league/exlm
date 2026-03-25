@@ -35,9 +35,9 @@ export default function initLiveGradientBackground() {
     if (body.querySelector('.gradient-control-panel')) return;
 
     const CIRCLES = [
-      { key: 'blue', label: 'Blue', defaultDuration: 10 },
-      { key: 'pink', label: 'Pink', defaultDuration: 14 },
-      { key: 'orange', label: 'Orange', defaultDuration: 18 },
+      { key: 'blue', label: 'Blue', defaultDuration: 2 },
+      { key: 'pink', label: 'Pink', defaultDuration: 4 },
+      { key: 'orange', label: 'Orange', defaultDuration: 6 },
     ];
 
     const panel = document.createElement('div');
