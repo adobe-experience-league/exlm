@@ -224,7 +224,7 @@ export async function buildPLCard(element, model) {
   });
 
   // Add rating overlay to thumbnail for both courses and cohorts
-  if (meta?.rating?.average > 0) {
+  if (typeof meta?.rating?.average === 'number' && meta.rating.average > 0) {
     const ratingOverlay = document.createElement('div');
     ratingOverlay.className = 'premium-learning-card-rating-overlay';
     ratingOverlay.innerHTML = `${meta.rating.average.toFixed(1)} <span class="rating-star">★</span>`;
