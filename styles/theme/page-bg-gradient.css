@@ -161,3 +161,17 @@
     backdrop-filter: none;
   }
 }
+
+/* Low-end GPU: hide circles, use flat linear gradient instead */
+.low-gpu.page-bg-gradient main {
+  background: linear-gradient(135deg, rgb(250 74 162 / 20%) 0%, rgb(181 222 255 / 20%) 100%);
+}
+
+.low-gpu.page-bg-gradient .gradient-layer {
+  display: none;
+}
+
+.low-gpu.page-bg-gradient main::after {
+  backdrop-filter: none;
+  background: transparent;
+}

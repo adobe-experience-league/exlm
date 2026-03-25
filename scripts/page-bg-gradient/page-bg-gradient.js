@@ -3,6 +3,10 @@ export default function initLiveGradientBackground() {
   const main = document.querySelector('main');
 
   if (!body?.classList.contains('page-bg-gradient') || !main) return;
+
+  const isLowEnd = (navigator.hardwareConcurrency ?? 8) <= 4 || (navigator.deviceMemory ?? 8) <= 4;
+  if (isLowEnd) body.classList.add('low-gpu');
+
   const updateCircleSize = () => {
     const circleSize = `${main.offsetHeight * 0.6}px`;
     body.style.setProperty('--lg-circle-size', circleSize);
