@@ -885,7 +885,7 @@ export function getConfig() {
     bcWebClientUrl:
       'https://experience.adobe.net/solutions/experience-platform-brand-concierge-web-agent/static-assets/main.js',
     bcEdgeDomain: 'edge.adobedc.net',
-    bcAuthRequired: false,
+    bcAuthRequired: true,
   };
   return window.exlm.config;
 }

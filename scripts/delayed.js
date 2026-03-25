@@ -43,6 +43,9 @@ async function loadBrandConcierge() {
   await initBrandConcierge();
 }
 
-loadBrandConcierge();
+loadBrandConcierge().catch((e) => {
+  // eslint-disable-next-line no-console
+  console.warn('[BC] failed to load:', e?.message || e);
+});
 
 window.dispatchEvent(new Event('delayed-load'));

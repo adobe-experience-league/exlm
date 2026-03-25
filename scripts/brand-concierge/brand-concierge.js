@@ -144,16 +144,17 @@ export async function initBrandConcierge() {
   createMountPoint();
   injectAlloyStub();
 
-  log('loading Web SDK (alloyBC instance)', { bcEdgeDomain, bcDatastreamId });
-  await loadScript(bcAlloySdkUrl);
-  await configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain);
-  log('Web SDK configured');
-
-  log('loading Web Client', bcWebClientUrl);
   try {
+    log('[BC] loading Web SDK (alloyBC instance)', { bcEdgeDomain, bcDatastreamId });
+    await loadScript(bcAlloySdkUrl);
+    await configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain);
+    log('[BC] Web SDK configured');
+
+    log('[BC] loading Web Client', bcWebClientUrl);
     await loadScript(bcWebClientUrl);
-    log('Web Client loaded — calling bootstrap');
+    log('[BC] Web Client loaded — calling bootstrap');
     bootstrapWebClient();
+    log('[BC] bootstrapWebClient called');
     chatObserver = watchChatHistory(document.getElementById('brand-concierge-mount'));
 
     // Appended after bootstrap() so this <link> follows BC's injected <style> in document
@@ -163,7 +164,8 @@ export async function initBrandConcierge() {
     cssLinkEl.href = `${window.hlx.codeBasePath}/scripts/brand-concierge/brand-concierge.css`;
     document.head.append(cssLinkEl);
   } catch (e) {
-    error('Web Client failed to load', bcWebClientUrl, e);
+    error('[BC] failed to initialise', e?.message || e);
+    destroyBrandConcierge();
   }
 }
 
