@@ -50,6 +50,26 @@ function setIdsforRTETitles(articleContentSection) {
     });
 }
 
+function dedupeHeadingIds(root) {
+  const headings = Array.from(root.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+  const byId = new Map();
+  headings.forEach((heading) => {
+    const id = (heading.getAttribute('id') ?? '').trim();
+    if (!id) {
+      heading.classList.add('no-mtoc');
+      return;
+    }
+    if (!byId.has(id)) byId.set(id, []);
+    byId.get(id).push(heading);
+  });
+  byId.forEach((group) => {
+    if (group.length <= 1) return;
+    for (let i = 1; i < group.length; i += 1) {
+      group[i].classList.add('no-mtoc');
+    }
+  });
+}
+
 // set the filter for an UE editable
 function setUEFilter(element, filter) {
   element.dataset.aueFilter = filter;
@@ -210,9 +230,7 @@ async function applyChanges(event) {
       const newMain = parsedUpdate.querySelector(`[data-aue-resource="${resource}"]`);
       newMain.style.display = 'none';
       if (isPerspectivePage) {
-        element.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
-          heading.classList.add('no-mtoc');
-        });
+        dedupeHeadingIds(element);
       }
       element.insertAdjacentElement('afterend', newMain);
       decorateMain(newMain);
@@ -285,7 +303,7 @@ async function applyChanges(event) {
           decorateRichtext(newSection);
           await loadBlocks(parentElement);
           element.remove();
-          if (articleContentContainer) {
+          if (articleContentContainer && !parentElement.classList.contains('article-content-container')) {
             parentElement
               .querySelector('.article-content-container')
               .insertAdjacentElement('afterend', articleContentContainer);

@@ -436,7 +436,7 @@ export default async function decorate(block) {
   const playlistDiv = playlistWrapper.querySelector('.playlist');
 
   // determine query param for this playlist
-  const allPlaylistBlocks = [...document.querySelectorAll('.block.playlist-v2')];
+  const allPlaylistBlocks = [...document.querySelectorAll('.block.playlist-embed')];
   const playlistIndex = allPlaylistBlocks.indexOf(block);
   const videoParam = allPlaylistBlocks.length === 1 ? 'video' : `video${playlistIndex + 1}`;
 
