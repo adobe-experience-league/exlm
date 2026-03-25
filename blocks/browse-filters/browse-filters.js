@@ -2,6 +2,7 @@ import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import {
   createTag,
   htmlToElement,
+  getv2TagLabels,
   getPathDetails,
   fetchLanguagePlaceholders,
   matchesAnyTheme,
@@ -1580,17 +1581,38 @@ function decorateBrowseTopics(block) {
   const { lang } = getPathDetails();
   const [...configs] = [...block.children].map((row) => row.firstElementChild);
   // 'customElement' can either be a Form Element or localized tag values returned by the converter.
-  const [solutionsElement, headingElement, topicsElement, contentTypeElement, customElement] = configs.map(
-    (cell) => cell,
-  );
-  const [solutionsContent, headingContent, topicsContent, contentTypeContent] = configs.map(
+  const [
+    solutionsElement,
+    headingElement,
+    topicsElement,
+    contentTypeElement,
+    solutionsv2Element,
+    topicsv2Element,
+    customElement,
+  ] = configs.map((cell) => cell);
+  const [solutionsContent, headingContent, topicsContent, contentTypeContent, solutionsv2, topicsv2] = configs.map(
     (cell) => cell?.textContent?.trim() ?? '',
   );
   const isFormElement = customElement?.classList?.contains('browse-filters-input-container');
   const localizedTopicsContent = isFormElement ? '' : customElement?.textContent?.trim() ?? '';
-  // eslint-disable-next-line no-unused-vars
-  const allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
-  const allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
+  let allSolutionsTags;
+  let allTopicsTags;
+  if (isFeatureEnabled('isV2TagsEnabled')) {
+    allSolutionsTags = solutionsv2
+      ? getv2TagLabels(solutionsv2)
+          .split(',')
+          .map((p) => p.trim())
+      : [];
+    allTopicsTags = topicsv2
+      ? getv2TagLabels(topicsv2)
+          .split(',')
+          .map((p) => p.trim())
+      : [];
+  } else {
+    // eslint-disable-next-line no-unused-vars
+    allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
+    allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
+  }
   const localizedTopicsTags = localizedTopicsContent
     ? localizedTopicsContent.split(',')?.reduce((acc, pair) => {
         const [key, value] = pair.split(':').map((str) => str.trim());
@@ -1635,12 +1657,12 @@ function decorateBrowseTopics(block) {
     allTopicsTags
       .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
-        const parts = topicsButtonTitle.split('/');
-        const topicName = parts[parts.length - 1];
+        const isV2Enabled = isFeatureEnabled('isV2TagsEnabled');
+        const topicName = isV2Enabled ? topicsButtonTitle : topicsButtonTitle.split('/').pop();
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
         topicsButtonDiv.dataset.topicname = topicsButtonTitle;
         topicsButtonDiv.dataset.label = topicName;
-        if (lang === 'en' || window.location.href.includes('.html') || localizedTopicsTags === '') {
+        if (isV2Enabled || lang === 'en' || window.location.href.includes('.html') || localizedTopicsTags === '') {
           topicsButtonDiv.innerHTML = topicName;
         } else {
           const topicTag = topicsButtonTitle.slice(4); // Remove "exl:" prefix
@@ -1696,6 +1718,8 @@ function decorateBrowseTopics(block) {
   if (!isFormElement) {
     (customElement?.parentNode || customElement)?.remove();
   }
+  (solutionsv2Element.parentNode || solutionsv2Element).remove();
+  (topicsv2Element.parentNode || topicsv2Element).remove();
 }
 
 export default async function decorate(block) {
