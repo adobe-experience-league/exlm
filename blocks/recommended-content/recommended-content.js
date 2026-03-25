@@ -477,13 +477,21 @@ export default async function decorate(block) {
     contentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section');
     parentDiv.appendChild(contentDiv);
 
-    resultTextEl.classList.add('recommended-content-discover-resource');
-    linkEl.classList.add('recommended-content-result-link');
-    if (linkEl.innerHTML || resultTextEl.innerHTML) {
+    if (resultTextEl) {
+      resultTextEl.classList.add('recommended-content-discover-resource');
+    }
+    if (linkEl) {
+      linkEl.classList.add('recommended-content-result-link');
+    }
+    if ((linkEl && linkEl.innerHTML) || (resultTextEl && resultTextEl.innerHTML)) {
       const seeMoreEl = document.createElement('div');
       seeMoreEl.classList.add('recommended-content-result-text');
-      seeMoreEl.appendChild(resultTextEl);
-      seeMoreEl.appendChild(linkEl);
+      if (resultTextEl) {
+        seeMoreEl.appendChild(resultTextEl);
+      }
+      if (linkEl) {
+        seeMoreEl.appendChild(linkEl);
+      }
       parentDiv.appendChild(seeMoreEl);
     }
   };
@@ -554,12 +562,16 @@ export default async function decorate(block) {
       let features;
 
       if (isFeatureEnabled('isV2TagsEnabled') && encodedSolutionsv2Text) {
-        const productsv2 = getv2TagLabels(encodedSolutionsv2Text)
-          .split(',')
-          .map((p) => p.trim());
-        const featuresv2 = getv2TagLabels(encodedFeaturesv2Text)
-          .split(',')
-          .map((p) => p.trim());
+        const productsv2 = encodedSolutionsv2Text
+          ? getv2TagLabels(encodedSolutionsv2Text)
+              .split(',')
+              .map((p) => p.trim())
+          : [];
+        const featuresv2 = encodedFeaturesv2Text
+          ? getv2TagLabels(encodedFeaturesv2Text)
+              .split(',')
+              .map((p) => p.trim())
+          : [];
         products = productsv2.length ? removeProductDuplicates(productsv2) : [];
         versions = [];
         features = featuresv2.length ? removeProductDuplicates(featuresv2) : [];
@@ -587,7 +599,7 @@ export default async function decorate(block) {
       const filterProductByOption = filterProductByOptionEl?.innerText?.trim() ?? '';
 
       let role;
-      if (isFeatureEnabled('isV2TagsEnabled')) {
+      if (isFeatureEnabled('isV2TagsEnabled') && rolev2El) {
         const rolev2Text = rolev2El?.innerText?.trim() ?? '';
         role = !rolev2Text
           ? profileRoles
@@ -882,7 +894,13 @@ export default async function decorate(block) {
                     }
                   }
                   if (resp?.data) {
-                    updateCopyFromTarget(resp, headerContainer, descriptionContainer, linkEl, resultTextEl);
+                    updateCopyFromTarget(
+                      resp,
+                      headerContainer,
+                      descriptionContainer,
+                      linkEl || null,
+                      resultTextEl || null,
+                    );
                     headerContainer.id = formatId(headerContainer.innerHTML);
                     block.style.display = 'block';
                     setTargetDataAsBlockAttribute(block, resp);

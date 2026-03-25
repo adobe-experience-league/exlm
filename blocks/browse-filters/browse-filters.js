@@ -1590,24 +1590,22 @@ function decorateBrowseTopics(block) {
     topicsv2Element,
     customElement,
   ] = configs.map((cell) => cell);
-  const [solutionsContent, headingContent, topicsContent, contentTypeContent, solutionsv2, topicsv2] = configs.map(
-    (cell) => cell?.textContent?.trim() ?? '',
-  );
+
+  const solutionsContent = solutionsElement?.textContent?.trim() ?? '';
+  const headingContent = headingElement?.textContent?.trim() ?? '';
+  const topicsContent = topicsElement?.textContent?.trim() ?? '';
+  const contentTypeContent = contentTypeElement?.textContent?.trim() ?? '';
   const isFormElement = customElement?.classList?.contains('browse-filters-input-container');
   const localizedTopicsContent = isFormElement ? '' : customElement?.textContent?.trim() ?? '';
   let allSolutionsTags;
   let allTopicsTags;
   if (isFeatureEnabled('isV2TagsEnabled')) {
-    allSolutionsTags = solutionsv2
-      ? getv2TagLabels(solutionsv2)
-          .split(',')
-          .map((p) => p.trim())
-      : [];
-    allTopicsTags = topicsv2
-      ? getv2TagLabels(topicsv2)
-          .split(',')
-          .map((p) => p.trim())
-      : [];
+    const solutionsv2Content = solutionsv2Element?.textContent?.trim() ?? '';
+    const solutionsv2Labels = solutionsv2Content ? getv2TagLabels(solutionsv2Content) : '';
+    allSolutionsTags = solutionsv2Labels ? solutionsv2Labels.split(',').map((p) => p.trim()) : [];
+    const topicsv2Content = topicsv2Element?.textContent?.trim() ?? '';
+    const topicsv2Labels = topicsv2Content ? getv2TagLabels(topicsv2Content) : '';
+    allTopicsTags = topicsv2Labels ? topicsv2Labels.split(',').map((p) => p.trim()) : [];
   } else {
     // eslint-disable-next-line no-unused-vars
     allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
@@ -1623,10 +1621,18 @@ function decorateBrowseTopics(block) {
 
   const supportedProducts = [];
   if (allSolutionsTags.length) {
-    const { query: additionalQuery, products, productKey } = getParsedSolutionsQuery(allSolutionsTags);
-    products.forEach((p) => supportedProducts.push(p));
-    window.headlessSolutionProductKey = productKey;
-    window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
+    if (isFeatureEnabled('isV2TagsEnabled')) {
+      // V2 tags are plain text labels, construct query directly
+      const productsQuery = allSolutionsTags.map((product) => `@el_product="${product}"`).join(' OR ');
+      window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND (${productsQuery}))`;
+      allSolutionsTags.forEach((p) => supportedProducts.push(p));
+    } else {
+      // Legacy tags use the old format
+      const { query: additionalQuery, products, productKey } = getParsedSolutionsQuery(allSolutionsTags);
+      products.forEach((p) => supportedProducts.push(p));
+      window.headlessSolutionProductKey = productKey;
+      window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
+    }
   }
 
   if (contentTypeContent.length) {
@@ -1711,15 +1717,27 @@ function decorateBrowseTopics(block) {
     const filtersFormEl = block.querySelector('.browse-filters-form');
     filtersFormEl.insertBefore(div, filtersFormEl.children[4]);
   }
-  (solutionsElement.parentNode || solutionsElement).remove();
-  (headingElement.parentNode || headingElement).remove();
-  (topicsElement.parentNode || topicsElement).remove();
-  (contentTypeElement.parentNode || contentTypeElement).remove();
-  if (!isFormElement) {
-    (customElement?.parentNode || customElement)?.remove();
+  if (solutionsElement) {
+    (solutionsElement.parentNode || solutionsElement).remove();
   }
-  (solutionsv2Element.parentNode || solutionsv2Element).remove();
-  (topicsv2Element.parentNode || topicsv2Element).remove();
+  if (headingElement) {
+    (headingElement.parentNode || headingElement).remove();
+  }
+  if (topicsElement) {
+    (topicsElement.parentNode || topicsElement).remove();
+  }
+  if (contentTypeElement) {
+    (contentTypeElement.parentNode || contentTypeElement).remove();
+  }
+  if (!isFormElement && customElement) {
+    (customElement.parentNode || customElement).remove();
+  }
+  if (solutionsv2Element) {
+    (solutionsv2Element.parentNode || solutionsv2Element).remove();
+  }
+  if (topicsv2Element) {
+    (topicsv2Element.parentNode || topicsv2Element).remove();
+  }
 }
 
 export default async function decorate(block) {

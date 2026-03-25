@@ -618,7 +618,7 @@ export default async function decorate(block) {
       const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase() ?? 'MOST_POPULAR'];
       const filterProductByOption = filterProductByOptionEl?.innerText?.trim() ?? '';
       let role;
-      if (isFeatureEnabled('isV2TagsEnabled')) {
+      if (isFeatureEnabled('isV2TagsEnabled') && rolev2El) {
         const rolev2Text = rolev2El?.innerText?.trim() ?? '';
         role = !rolev2Text
           ? profileRoles
