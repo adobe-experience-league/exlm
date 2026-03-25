@@ -50,7 +50,7 @@ function setIdsforRTETitles(articleContentSection) {
     });
 }
 
-function applyPerspectiveNoMtocToHeadings(root) {
+function dedupeHeadingIds(root) {
   const headings = Array.from(root.querySelectorAll('h1, h2, h3, h4, h5, h6'));
   const byId = new Map();
   headings.forEach((heading) => {
@@ -230,7 +230,7 @@ async function applyChanges(event) {
       const newMain = parsedUpdate.querySelector(`[data-aue-resource="${resource}"]`);
       newMain.style.display = 'none';
       if (isPerspectivePage) {
-        applyPerspectiveNoMtocToHeadings(element);
+        dedupeHeadingIds(element);
       }
       element.insertAdjacentElement('afterend', newMain);
       decorateMain(newMain);
