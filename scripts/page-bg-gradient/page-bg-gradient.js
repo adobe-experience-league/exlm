@@ -7,6 +7,35 @@ export default function initLiveGradientBackground() {
   const isLowEnd = (navigator.hardwareConcurrency ?? 8) <= 4 || (navigator.deviceMemory ?? 8) <= 4;
   if (isLowEnd) body.classList.add('low-gpu');
 
+  const applyQueryParams = () => {
+    const params = new URLSearchParams(window.location.search);
+    const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
+
+    const parseDuration = (key) => {
+      const v = parseFloat(params.get(key));
+      return Number.isFinite(v) ? `${clamp(v, 2, 20)}s` : null;
+    };
+
+    const parseScale = (key) => {
+      const v = parseFloat(params.get(key));
+      return Number.isFinite(v) ? clamp(v, 0.2, 3) : null;
+    };
+
+    const blue = parseDuration('blue');
+    const pink = parseDuration('pink');
+    const orange = parseDuration('orange');
+    const width = parseScale('width');
+    const height = parseScale('height');
+
+    if (blue) body.style.setProperty('--lg-blue-duration', blue);
+    if (pink) body.style.setProperty('--lg-pink-duration', pink);
+    if (orange) body.style.setProperty('--lg-orange-duration', orange);
+    if (width !== null) body.style.setProperty('--lg-circle-width-scale', width);
+    if (height !== null) body.style.setProperty('--lg-circle-height-scale', height);
+  };
+
+  applyQueryParams();
+
   const updateCircleSize = () => {
     const circleSize = `${main.offsetHeight * 0.6}px`;
     body.style.setProperty('--lg-circle-size', circleSize);

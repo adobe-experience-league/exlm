@@ -6,6 +6,11 @@
   --lg-circle-orange: rgb(255 124 101);
   --lg-blur: 120px;
   --lg-circle-size: 1755px;
+  --lg-circle-width-scale: 1;
+  --lg-circle-height-scale: 1;
+  --lg-blue-duration: 10s;
+  --lg-pink-duration: 14s;
+  --lg-orange-duration: 18s;
 
   position: relative;
   isolation: isolate; /* prevents stacking conflicts */
@@ -35,8 +40,8 @@
 /* Shared circle styles */
 .page-bg-gradient .gradient-layer > .gradient-circle {
   position: absolute;
-  width: calc(var(--lg-circle-size) * var(--lg-circle-width-scale, 1));
-  height: calc(var(--lg-circle-size) * var(--lg-circle-height-scale, 1));
+  width: calc(var(--lg-circle-size) * var(--lg-circle-width-scale, 1) * var(--lg-circle-width-ratio, 1));
+  height: calc(var(--lg-circle-size) * var(--lg-circle-height-scale, 1) * var(--lg-circle-height-ratio, 1));
   border-radius: 50%;
   filter: blur(var(--lg-blur));
   pointer-events: none;
@@ -47,36 +52,36 @@
 
 /* Individual color circles */
 .page-bg-gradient .gradient-circle-blue {
-  --lg-circle-width-scale: 0.66;
-  --lg-circle-height-scale: 1.14;
+  --lg-circle-width-ratio: 0.66;
+  --lg-circle-height-ratio: 1.14;
 
   top: -32%;
   left: -18%;
   background: radial-gradient(ellipse at center, var(--lg-circle-blue) 0%, rgb(181 222 255 / 0%) 100%);
   opacity: 0.5;
-  animation: live-gradient-move-blue 10s ease-in-out infinite alternate;
+  animation: live-gradient-move-blue var(--lg-blue-duration) ease-in-out infinite alternate;
 }
 
 .page-bg-gradient .gradient-circle-pink {
-  --lg-circle-width-scale: 0.62;
-  --lg-circle-height-scale: 1.18;
+  --lg-circle-width-ratio: 0.62;
+  --lg-circle-height-ratio: 1.18;
 
   right: -20%;
   bottom: -38%;
   background: radial-gradient(ellipse at center, var(--lg-circle-pink) 0%, rgb(250 74 162 / 0%) 100%);
   opacity: 0.3;
-  animation: live-gradient-move-pink 14s ease-in-out infinite alternate;
+  animation: live-gradient-move-pink var(--lg-pink-duration) ease-in-out infinite alternate;
 }
 
 .page-bg-gradient .gradient-circle-orange {
-  --lg-circle-width-scale: 0.64;
-  --lg-circle-height-scale: 1.1;
+  --lg-circle-width-ratio: 0.64;
+  --lg-circle-height-ratio: 1.1;
 
   top: 2%;
   right: -26%;
   background: radial-gradient(ellipse at center, var(--lg-circle-orange) 0%, rgb(255 124 101 / 0%) 100%);
   opacity: 0.3;
-  animation: live-gradient-move-orange 18s ease-in-out infinite alternate;
+  animation: live-gradient-move-orange var(--lg-orange-duration) ease-in-out infinite alternate;
 }
 
 /* Movement animations */
