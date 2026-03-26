@@ -1683,14 +1683,30 @@ async function loadPage() {
 
   // Initialize Premium Learning auth for all signed-in users, excluding UE Authoring pages
   if (!window.hlx.aemRoot && !window.location.href.includes('.html') && isFeatureEnabled('isPremiumLearningEnabled')) {
+    // Helper function to remove premium learning sections
+    const removePremiumLearningSections = () => {
+      document.querySelectorAll('.premium-learning-section').forEach((section) => section.remove());
+    };
+
     try {
       const signedIn = await isUserSignedIn();
-      if (signedIn) {
-        const { default: initializePLAuthentication } = await import('./utils/pl-auth-utils.js');
-        await initializePLAuthentication();
+
+      // If not signed in remove section immediately
+      if (!signedIn) {
+        removePremiumLearningSections();
+      }
+
+      const { default: initializePLAuthentication, isPremiumLearner } = await import('./utils/pl-auth-utils.js');
+
+      await initializePLAuthentication();
+
+      // Remove if not a premium learner
+      if (!isPremiumLearner()) {
+        removePremiumLearningSections();
       }
     } catch (error) {
       console.error('Error initializing Premium Learning authentication:', error);
+      removePremiumLearningSections();
     }
   }
 
