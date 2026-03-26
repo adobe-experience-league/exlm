@@ -954,7 +954,7 @@ const loadMartech = async (headerPromise, footerPromise) => {
   // eslint-disable-next-line import/no-cycle
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
   libAnalyticsPromise.then(async (libAnalyticsModule) => {
-    const { pushPageDataLayer, pushLinkClick, setupComponentImpressions } = libAnalyticsModule;
+    const { pushPageDataLayer, pushLinkClick, handleComponentClick, setupComponentImpressions } = libAnalyticsModule;
     const { lang } = getPathDetails();
 
     try {
@@ -974,9 +974,23 @@ const loadMartech = async (headerPromise, footerPromise) => {
     Promise.allSettled([headerPromise, footerPromise]).then(() => {
       const linkClicked = document.querySelectorAll('a,.view-more-less span, .language-selector-popover span');
       const clickHandler = (e) => {
-        if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') pushLinkClick(e);
+        if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
+          // Check if click is within a component (block)
+          const component = e.target.closest('[data-block-name]');
+          if (component) {
+            // Fire componentClick for block clicks
+            handleComponentClick(e);
+          } else {
+            // Fire linkClick for non-component clicks (header, footer, text links, etc)
+            pushLinkClick(e);
+          }
+        }
       };
       linkClicked.forEach((e) => e.addEventListener('click', clickHandler));
+      const headerEl = document.querySelector('exl-header');
+      headerEl?.shadowRoot?.addEventListener('click', clickHandler);
+      const footerEl = document.querySelector('exl-footer');
+      footerEl?.shadowRoot?.addEventListener('click', clickHandler);
     });
   });
 

@@ -74,7 +74,7 @@
                   "filter": "article-content-section",
                   "name": "Article Content Section",
                   "model": "article-content-section",
-                  "style": "article-content-section",
+                  "style": ["article-content-section", "default"],
                   "text1": {
                     "sling:resourceType": "core/franklin/components/text/v1/text",
                     "name": "Text",

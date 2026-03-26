@@ -106,14 +106,24 @@ export default function decorate(block) {
           const { pushComponentClick, generateComponentID } = await import('../../scripts/analytics/lib-analytics.js');
           const componentID = generateComponentID(block, 'grid-cards');
 
-          pushComponentClick({
+          // Find the section ID that this component belongs to
+          const section = block.closest('.section');
+          const sectionID = section?.dataset?.sectionId;
+
+          const componentClickData = {
             component: 'grid-cards',
             componentID,
             linkTitle: cardHeading.textContent.trim(),
             linkType: cardHeading.textContent.trim(),
             destinationDomain: anchor.href,
             position: index + 1,
-          });
+          };
+
+          if (sectionID) {
+            componentClickData.sectionID = sectionID;
+          }
+
+          pushComponentClick(componentClickData);
         });
       }
     } else {
