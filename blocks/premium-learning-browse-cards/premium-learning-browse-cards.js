@@ -42,7 +42,7 @@ const DEFAULT_NUM_RESULTS = 16;
  * Example: ['Acrobat', 'Photoshop', 'Illustrator']
  * Leave as empty array to use config default or show all products
  */
-const DEFAULT_PRODUCT_FILTERS = [];
+const DEFAULT_PRODUCT_FILTERS = ['Acrobat'];
 
 /**
  * Creates the header section with title and description
