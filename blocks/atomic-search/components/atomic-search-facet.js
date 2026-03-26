@@ -50,8 +50,7 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
         const inParentGroup =
           previousSiblingEl &&
           (previousSiblingEl === facetParentEl ||
-            (previousSiblingEl.dataset.childfacet === 'true' &&
-              previousSiblingEl.dataset.parent === parentName));
+            (previousSiblingEl.dataset.childfacet === 'true' && previousSiblingEl.dataset.parent === parentName));
         if (!inParentGroup) {
           facetParentEl.insertAdjacentElement('afterend', facet);
         }
@@ -140,8 +139,7 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
           }
         } else {
           // Parent facet click — use raw facet value so localized labels still sync children.
-          const parentFacetType =
-            parentFacet.dataset.facetRawValue || parentFacet.dataset.contenttype;
+          const parentFacetType = parentFacet.dataset.facetRawValue || parentFacet.dataset.contenttype;
           const parentFacetValue = parentFacetIsSelected ? 'true' : 'false';
           const allChildFacets = facet.parentElement.querySelectorAll(`[data-parent="${parentFacetType}"]`);
           allChildFacets.forEach((childFacet) => {
