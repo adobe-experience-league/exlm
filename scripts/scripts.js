@@ -1691,17 +1691,15 @@ async function loadPage() {
     try {
       const signedIn = await isUserSignedIn();
 
-      // If not signed in remove section immediately
-      if (!signedIn) {
-        removePremiumLearningSections();
-      }
+      if (signedIn) {
+        const { default: initializePLAuthentication, isPremiumLearner } = await import('./utils/pl-auth-utils.js');
 
-      const { default: initializePLAuthentication, isPremiumLearner } = await import('./utils/pl-auth-utils.js');
+        await initializePLAuthentication();
 
-      await initializePLAuthentication();
-
-      // Remove if not a premium learner
-      if (!isPremiumLearner()) {
+        if (!isPremiumLearner()) {
+          removePremiumLearningSections();
+        }
+      } else {
         removePremiumLearningSections();
       }
     } catch (error) {
