@@ -309,6 +309,23 @@
               }
             }
           }
+        },
+        {
+          "title": "Premium Learning Section",
+          "id": "premium-learning-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "name": "Premium Learning Section",
+                  "model": "premium-learning-section",
+                  "style": ["premium-learning-section", "default"],
+                  "filter": "premium-learning-section"
+                }
+              }
+            }
+          }
         }
       ]
     },
