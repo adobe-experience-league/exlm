@@ -8,7 +8,8 @@ import { getPLAccessToken } from '../utils/pl-auth-utils.js';
  * @property {string} [sort] - Sort order
  * @property {string} [tagName] - Tag filter
  * @property {string} [q] - Search query string (triggers search endpoint)
- * @property {string|Array<string>} [products] - Product filter (e.g., 'Acrobat' or ['Acrobat', 'AEM'])
+ * @property {Array<string>} [product] - Product filter array from tags (e.g., ['Acrobat', 'AEM']) - used in query endpoint
+ * @property {string|Array<string>} [products] - Product filter (e.g., 'Acrobat' or ['Acrobat', 'AEM']) - used in search endpoint
  * @property {string|Array<string>} [solutions] - Product filter alias (same as products, used by BrowseCardsDelegate)
  * @property {string|Array<string>} [roles] - Role filter (e.g., 'Administrator' or ['Administrator', 'Business User'])
  * @property {string|Array<string>} [durationRange] - Duration range filter (e.g., '0-1800' or ['0-1800', '1800-3600'])
@@ -121,7 +122,7 @@ export default class PLDataService {
    * @returns {Object} Request body object
    */
   buildRequestBody() {
-    const { contentType, tagName } = this.queryParams;
+    const { contentType, tagName, product } = this.queryParams;
     const { catalogIds } = getConfig()?.['premium-learning'] ?? {};
 
     // Determine learning object types - support both course and cohort
@@ -131,8 +132,15 @@ export default class PLDataService {
       'filter.loTypes': loTypes,
       'filter.learnerState': ['notenrolled', 'enrolled', 'started', 'completed'],
       'filter.ignoreEnhancedLP': false,
-      'filter.recommendationProducts': [{ name: 'Acrobat', levels: [] }],
     };
+
+    // Add product filter if provided (from tags/solutions)
+    if (product && Array.isArray(product) && product.length > 0) {
+      body['filter.recommendationProducts'] = product.map((productName) => ({
+        name: productName,
+        levels: [],
+      }));
+    }
 
     // Add catalog IDs if configured
     if (catalogIds) {
