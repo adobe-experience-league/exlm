@@ -34,7 +34,11 @@ export default async function decorate(block) {
   const [headingElement, descriptionElement] = [...block.children];
 
   block.innerHTML = '';
-  block.classList.add('browse-cards-block', 'premium-learning-cards-block', 'premium-learning-recommended-content-block');
+  block.classList.add(
+    'browse-cards-block',
+    'premium-learning-cards-block',
+    'premium-learning-recommended-content-block',
+  );
 
   const headerDiv = document.createElement('div');
   headerDiv.className = 'premium-learning-cards-block-header';
@@ -53,7 +57,9 @@ export default async function decorate(block) {
   try {
     const configRes = await fetch(new URL('./config.json', import.meta.url));
     if (configRes.ok) localConfig = await configRes.json();
-  } catch { /* not available in non-local environments */ }
+  } catch {
+    /* not available in non-local environments */
+  }
 
   const isLocalDev = localConfig?.localDev === true;
 
