@@ -1467,15 +1467,15 @@
         "options": [
           {
             "name": "Default",
-            "value": "default"
+            "value": ["article-content-section", "default"]
           },
           {
             "name": "White",
-            "value": "bg-white"
+            "value": ["article-content-section", "bg-white"]
           },
           {
             "name": "Dark Gray",
-            "value": "bg-dark-gray"
+            "value": ["article-content-section", "bg-dark-gray"]
           }
         ]
       },
