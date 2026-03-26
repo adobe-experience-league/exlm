@@ -148,6 +148,48 @@ export default class PLDataService {
   }
 
   /**
+   * Builds request body with filters for premium-learning browse cards API POST request
+   * Supports product filtering via filter.recommendationProducts
+   * @private
+   * @returns {Object} Request body object
+   */
+  buildBrowseRequestBody() {
+    const { contentType, tagName, products } = this.queryParams;
+    const { catalogIds } = getConfig()?.['premium-learning'] ?? {};
+
+    // Determine learning object types - support both course and cohort
+    const loTypes = PLDataService.determineLearningObjectTypes(contentType);
+
+    const body = {
+      'filter.loTypes': loTypes,
+      'filter.learnerState': ['notenrolled', 'enrolled', 'started', 'completed'],
+      'filter.ignoreEnhancedLP': false,
+    };
+
+    // Build product filter from queryParams
+    const productParam = products;
+    if (productParam) {
+      const productArray = Array.isArray(productParam) ? productParam : [productParam];
+      body['filter.recommendationProducts'] = productArray.map((product) => ({
+        name: product,
+        levels: [],
+      }));
+    }
+
+    // Add catalog IDs if configured
+    if (catalogIds) {
+      body['filter.catalogIds'] = Array.isArray(catalogIds) ? catalogIds : [catalogIds];
+    }
+
+    // Add tag filter if provided
+    if (tagName) {
+      body['filter.tagName'] = tagName;
+    }
+
+    return body;
+  }
+
+  /**
    * Determines the premium-learning object types from content type(s)
    * Supports both single and multiple content types
    * @private
