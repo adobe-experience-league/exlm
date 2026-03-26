@@ -173,10 +173,6 @@ function buildPLMetaInfo(meta, isCourseCard = false) {
   if (meta?.duration) metaParts.push(meta.duration);
   if (meta?.level) metaParts.push(meta.level);
 
-  if (!isCourseCard && meta?.rating?.average > 0) {
-    metaParts.push(`${meta.rating.average.toFixed(1)} ★`);
-  }
-
   // Create meta text element if we have data
   if (metaParts.length > 0) {
     const metaElement = document.createElement('p');
@@ -210,7 +206,7 @@ export async function buildPLCard(element, model) {
   const card = document.createElement('div');
   card.className = `browse-card premium-learning-browse-card ${type}-card ${failedToLoad ? 'browse-card-frozen' : ''}`;
 
-  // Determine if this is a course card (for rating display logic)
+  // Determine if this is a course card
   const isCourseCard = type === 'premium-learning-course';
 
   // Build thumbnail section
@@ -227,8 +223,8 @@ export async function buildPLCard(element, model) {
     isCourseCard,
   });
 
-  // Add rating overlay to thumbnail ONLY for courses
-  if (isCourseCard && meta?.rating?.average > 0) {
+  // Add rating overlay to thumbnail for both courses and cohorts
+  if (typeof meta?.rating?.average === 'number' && meta.rating.average > 0) {
     const ratingOverlay = document.createElement('div');
     ratingOverlay.className = 'premium-learning-card-rating-overlay';
     ratingOverlay.innerHTML = `${meta.rating.average.toFixed(1)} <span class="rating-star">★</span>`;
@@ -249,31 +245,7 @@ export async function buildPLCard(element, model) {
     cardContent.appendChild(titleElement);
   }
 
-  // Add metadata for cohorts only
-  if (!isCourseCard) {
-    const metaInfo = buildPLMetaInfo(meta, isCourseCard);
-    if (metaInfo.children.length > 0) {
-      cardContent.appendChild(metaInfo);
-    }
-  }
-
   card.appendChild(cardContent);
-
-  // Build footer with instances - only for cohorts, not for courses
-  if (!isCourseCard && meta?.instances?.length > 0) {
-    const cardFooter = document.createElement('div');
-    cardFooter.className = 'premium-learning-card-footer';
-    const instancesContainer = document.createElement('div');
-    instancesContainer.className = 'premium-learning-card-instances';
-    meta.instances.forEach((instance) => {
-      const instanceElement = document.createElement('p');
-      instanceElement.className = 'premium-learning-card-instance';
-      instanceElement.innerHTML = instance.name;
-      instancesContainer.appendChild(instanceElement);
-    });
-    cardFooter.appendChild(instancesContainer);
-    card.appendChild(cardFooter);
-  }
 
   // Load required CSS
   await Promise.all([
