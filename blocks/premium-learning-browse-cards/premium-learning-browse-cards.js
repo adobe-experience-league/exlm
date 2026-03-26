@@ -1,7 +1,7 @@
 /**
  * Premium Learning Browse Cards Block
  * Displays a grid of premium learning content (courses and cohorts)
- *
+ * 
  * Features:
  * - Displays premium learning courses and cohorts
  * - Configurable heading and description
@@ -10,11 +10,10 @@
  * - Responsive card layout
  */
 
-import PLDataService from '../../scripts/data-service/premium-learning-data-service.js';
+import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import { transformPremiumLearningData } from '../../scripts/browse-card/browse-card-adapter.js';
 
 /**
  * Module-level placeholders for internationalization
@@ -35,7 +34,7 @@ const CSS_CLASSES = {
 /**
  * Default number of results to fetch
  */
-const DEFAULT_NUM_RESULTS = 4;
+const DEFAULT_NUM_RESULTS = 16;
 
 /**
  * Default product filter configuration
@@ -111,45 +110,30 @@ function renderCards(contentDiv, data, shimmer) {
 }
 
 /**
- * Fetches premium learning data from the API using PLDataService
+ * Fetches premium learning data from the API using BrowseCardsDelegate
  * @param {string} contentType - Content type to filter by
  * @param {Array<string>} products - Product names to filter by
  * @returns {Promise<Array>} Premium learning data
  */
 async function fetchPremiumLearningData(contentType, products = []) {
-  const contentTypes = contentType ? contentType.split(',').map((type) => type.trim()) : [];
-
-  // Build query parameters for PLDataService
-  const queryParams = {
+  const contentTypes = contentType ? contentType.split(',').map(type => type.trim()) : [];
+  
+  // Build parameters for BrowseCardsDelegate
+  const param = {
     contentType: contentTypes,
     noOfResults: DEFAULT_NUM_RESULTS,
     sort: 'name',
+    useBrowseRequestBody: true, // Use buildBrowseRequestBody() for product filtering
   };
 
   // Add product filter if specified
   if (products && products.length > 0) {
-    queryParams.products = products;
+    param.products = products;
   }
 
-  // Create PLDataService instance with custom buildBrowseRequestBody method
-  const plService = new PLDataService(queryParams);
-
-  // Override the buildRequestBody to use buildBrowseRequestBody for product filtering
-  const originalBuildRequestBody = plService.buildRequestBody.bind(plService);
-  plService.buildRequestBody = function () {
-    return this.buildBrowseRequestBody();
-  };
-
-  // Fetch data from Premium Learning API
-  const responseData = await plService.fetchDataFromSource();
-
-  if (!responseData || !responseData.data) {
-    return [];
-  }
-
-  // Transform the data to match browse card format
-  const transformedData = transformPremiumLearningData(responseData);
-  return transformedData;
+  // Fetch data using BrowseCardsDelegate which handles transformation
+  const data = await BrowseCardsDelegate.fetchCardData(param);
+  return data || [];
 }
 
 /**

@@ -117,6 +117,7 @@ export default class PLDataService {
 
   /**
    * Builds request body with filters for premium-learning API POST request
+   * Used by premium-learning-cards block
    * @private
    * @returns {Object} Request body object
    */
@@ -149,6 +150,7 @@ export default class PLDataService {
 
   /**
    * Builds request body with filters for premium-learning browse cards API POST request
+   * Used by premium-learning-browse-cards block
    * Supports product filtering via filter.recommendationProducts
    * @private
    * @returns {Object} Request body object
@@ -367,7 +369,8 @@ export default class PLDataService {
         // Use query endpoint
         url = new URL(`${apiBaseUrl}${PLDataService.QUERY_ENDPOINT}`);
         url.search = this.buildUrlParams().toString();
-        body = this.buildRequestBody();
+        // Check if useBrowseRequestBody flag is set to use browse-specific request body
+        body = this.queryParams.useBrowseRequestBody ? this.buildBrowseRequestBody() : this.buildRequestBody();
       }
 
       const response = await fetch(url.toString(), {
