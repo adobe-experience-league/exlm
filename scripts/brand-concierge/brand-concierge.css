@@ -294,3 +294,18 @@
 #brand-concierge-mount .scroll-to-bottom svg path {
   fill: currentcolor !important;
 }
+
+#brand-concierge-mount .citations-link {
+  margin: 0 !important;
+  font-size: 13px !important;
+  word-break: break-word !important;
+}
+
+#brand-concierge-mount .citations-source-item {
+  gap: 4px !important;
+  align-items: center !important;
+}
+
+#brand-concierge-mount .citations-number-container {
+  margin-top: 0 !important;
+}

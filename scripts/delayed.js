@@ -34,12 +34,11 @@ async function isAdobeEmployee() {
 /**
  * Loads Brand Concierge on eligible page types.
  * Guards:
- *   - ?bc=off  → skip entirely (for Lighthouse / page-speed audits)
- *   - page type → only doc pages and the homepage by default
- *   - bcAuthRequired → when true, waits for IMS and skips unauthenticated users
+ *   - ?bc=on         → must be present to enable BC at all (opt-in POC flag)
+ *   - bcAuthRequired → when true, user must be signed in AND be an @adobe.com employee
  */
 async function loadBrandConcierge() {
-  if (window.location.search?.includes('bc=off')) return;
+  if (!window.location.search?.includes('bc=on')) return;
   if (!isDocPage && !isHomePage) return;
 
   const { bcAuthRequired } = getConfig();
