@@ -441,7 +441,8 @@
                   "cta_Type": "primary",
                   "linkText": "View all Premium Learning results",
                   "link": "",
-                  "contentType": "premium-learning-course"
+                  "contentType": "premium-learning-course",
+                  "tags": ""
                 }
               }
             }

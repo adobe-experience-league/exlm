@@ -6,6 +6,7 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
+import { extractCapability, removeProductDuplicates } from '../../scripts/browse-card/browse-card-utils.js';
 
 const isSearchPage = getMetadata('theme')?.includes('search') || false;
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
@@ -46,7 +47,7 @@ function showFallbackContentInUEMode(blockElement) {
  */
 export default async function decorate(block) {
   // Extracting elements from the block in authoring order
-  const [headingElement, ctaElement, contentTypeElement] = [...block.children];
+  const [headingElement, ctaElement, contentTypeElement, tagsElement] = [...block.children];
 
   // contentType is string if single selection,made into an array if multiple selections
   let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase();
@@ -56,6 +57,10 @@ export default async function decorate(block) {
       .map((type) => type.trim())
       .filter(Boolean);
   }
+
+  // Extract products, features, and versions from tags using the same logic as curated-cards
+  const tags = tagsElement?.textContent?.trim() || '';
+  const { products, features, versions } = extractCapability(tags);
 
   const noOfResults = 4;
 
@@ -93,6 +98,10 @@ export default async function decorate(block) {
   const param = {
     contentType, // Can be string ('premium-learning-course' or 'premium-learning-cohort') or array (['premium-learning-course', 'premium-learning-cohort'])
     noOfResults,
+    product: products.length > 0 ? removeProductDuplicates(products) : undefined, // Product filter with deduplication
+    feature: features.length > 0 ? [...new Set(features)] : undefined, // Feature filter
+    version: versions.length > 0 ? [...new Set(versions)] : undefined, // Version filter
+    useBrowseRequestBody: true, // Use browse request body with product filtering
   };
 
   const buildCardsShimmer = new BrowseCardShimmer(noOfResults, contentType);
