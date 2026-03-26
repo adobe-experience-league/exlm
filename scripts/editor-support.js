@@ -115,6 +115,9 @@ function updateUEInstrumentation() {
   if (getMetadata('theme') === 'articles') {
     // update available sections
     setUEFilter(main, 'main-article');
+    main.querySelectorAll('div[data-aue-model^="article-content-section"]').forEach((el) => {
+      el.classList.add('article-content-section');
+    });
     // update available blocks for article content sections
     const articleContentSection = main.querySelector('.article-content-section');
     if (articleContentSection) {
