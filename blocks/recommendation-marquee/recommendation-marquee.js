@@ -321,10 +321,9 @@ export default async function decorate(block) {
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
 
   // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
-  // Check if v2 elements are present by looking at the expected positions
+  // New blocks have 12+ elements, old blocks have 9 or fewer elements
   const reversedElements = htmlElementData.reverse();
-  const hasV2Elements = reversedElements.length > 9;
-  if (!hasV2Elements) {
+  if (reversedElements.length > 9) {
     reversedElements.splice(0, 0, undefined, undefined, undefined);
   }
 

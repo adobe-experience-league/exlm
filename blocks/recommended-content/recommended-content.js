@@ -322,8 +322,7 @@ export default async function decorate(block) {
 
   // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
   // Check if v2 elements are present by looking at the expected positions
-  const hasV2Elements = reversedDomElements.length > 9;
-  if (!hasV2Elements) {
+  if (reversedDomElements.length > 9) {
     reversedDomElements.splice(0, 0, undefined, undefined, undefined);
   }
 
