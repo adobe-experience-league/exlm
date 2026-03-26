@@ -1,46 +1,46 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 
-.section.premium-learning-browse-cards-container {
+.section.browse-cards-container {
   padding: var(--spectrum-spacing-500) var(--spectrum-spacing-300) var(--spectrum-spacing-600);
 }
 
-.premium-learning-browse-cards-block {
+.browse-cards-block {
   width: 100%;
 }
 
-.premium-learning-browse-cards-header {
+.browse-cards-header {
   display: flex;
   flex-direction: column;
   margin-bottom: 32px;
 }
 
-.premium-learning-browse-cards-title {
+.browse-cards-title {
   margin-bottom: 16px;
 }
 
-.premium-learning-browse-cards-title h1,
-.premium-learning-browse-cards-title h2,
-.premium-learning-browse-cards-title h3,
-.premium-learning-browse-cards-title h4,
-.premium-learning-browse-cards-title h5,
-.premium-learning-browse-cards-title h6 {
+.browse-cards-title h1,
+.browse-cards-title h2,
+.browse-cards-title h3,
+.browse-cards-title h4,
+.browse-cards-title h5,
+.browse-cards-title h6 {
   margin: 0;
 }
 
-.premium-learning-browse-cards-description {
+.browse-cards-description {
   color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-200);
   line-height: 150%;
 }
 
-.premium-learning-browse-cards-content {
+.browse-cards-content {
   display: grid;
   gap: 24px;
   grid-template-columns: 1fr;
   min-height: 284px;
 }
 
-.premium-learning-browse-cards-content .no-results {
+.browse-cards-content .no-results {
   align-items: center;
   background-color: var(--spectrum-gray-200);
   box-sizing: border-box;
@@ -55,57 +55,57 @@
 }
 
 /* Shimmer loading state */
-.premium-learning-browse-cards-content .browse-card-shimmer {
+.browse-cards-content .browse-card-shimmer {
   gap: 32px;
   margin: 0;
 }
 
-.premium-learning-browse-cards-content .browse-card-shimmer-wrapper {
+.browse-cards-content .browse-card-shimmer-wrapper {
   width: 100%;
 }
 
 /* Tablet and up */
 @media only screen and (min-width: 600px) {
-  .section.premium-learning-browse-cards-container {
+  .section.browse-cards-container {
     padding-bottom: 30px;
   }
 
-  .premium-learning-browse-cards-content {
+  .browse-cards-content {
     grid-template-columns: 1fr 1fr;
   }
 
-  .premium-learning-browse-cards-content .browse-card-shimmer {
+  .browse-cards-content .browse-card-shimmer {
     grid-template-columns: 1fr 1fr;
   }
 }
 
 /* Desktop */
 @media only screen and (min-width: 900px) {
-  .section.premium-learning-browse-cards-container {
+  .section.browse-cards-container {
     padding: var(--spectrum-spacing-1100) 148px;
   }
 
-  .premium-learning-browse-cards-content {
+  .browse-cards-content {
     grid-template-columns: repeat(3, 1fr);
     gap: var(--spectrum-spacing-500) 24px;
   }
 
-  .premium-learning-browse-cards-content > div {
+  .browse-cards-content > div {
     flex: 0 0 295px;
   }
 
-  .premium-learning-browse-cards-content .browse-card-shimmer {
+  .browse-cards-content .browse-card-shimmer {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
 /* Large desktop */
 @media (min-width: 1400px) {
-  .premium-learning-browse-cards-content {
+  .browse-cards-content {
     grid-template-columns: repeat(4, 1fr);
   }
 
-  .premium-learning-browse-cards-content .browse-card-shimmer {
+  .browse-cards-content .browse-card-shimmer {
     grid-template-columns: repeat(4, 1fr);
   }
 }

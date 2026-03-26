@@ -149,8 +149,8 @@ export default class PLDataService {
   }
 
   /**
-   * Builds request body with filters for premium-learning browse cards API POST request
-   * Used by premium-learning-browse-cards block
+   * Builds request body with filters for browse cards API POST request
+   * Used by browse-cards block
    * Supports product filtering via filter.recommendationProducts
    * @private
    * @returns {Object} Request body object

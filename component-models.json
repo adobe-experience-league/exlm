@@ -9999,7 +9999,7 @@
     ]
   },
   {
-    "id": "premium-learning-browse-cards",
+    "id": "browse-cards",
     "fields": [
       {
         "component": "text",
@@ -10071,13 +10071,13 @@
         ]
       },
       {
-          "component": "aem-tag",
-          "name": "tags",
-          "label": "Solution(s) or Feature(s)",
-          "valueType": "string",
-          "rootPath": "/content/cq:tags/exl",
-          "description": "Optional - all are included if no selection is made."
-        }
+        "component": "aem-tag",
+        "name": "tags",
+        "label": "Solution(s) or Feature(s)",
+        "valueType": "string",
+        "rootPath": "/content/cq:tags/exl",
+        "description": "Optional - all are included if no selection is made."
+      }
     ]
   }
 ]

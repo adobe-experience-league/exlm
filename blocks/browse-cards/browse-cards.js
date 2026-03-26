@@ -1,7 +1,7 @@
 /**
- * Premium Learning Browse Cards Block
+ * Browse Cards Block
  * Displays a grid of premium learning content (courses and cohorts)
- * 
+ *
  * Features:
  * - Displays premium learning courses and cohorts
  * - Configurable heading and description
@@ -25,11 +25,11 @@ let placeholders = {};
  * CSS class names for block elements
  */
 const CSS_CLASSES = {
-  BLOCK: 'premium-learning-browse-cards-block',
-  HEADER: 'premium-learning-browse-cards-header',
-  TITLE: 'premium-learning-browse-cards-title',
-  DESCRIPTION: 'premium-learning-browse-cards-description',
-  CONTENT: 'premium-learning-browse-cards-content',
+  BLOCK: 'browse-cards-block',
+  HEADER: 'browse-cards-header',
+  TITLE: 'browse-cards-title',
+  DESCRIPTION: 'browse-cards-description',
+  CONTENT: 'browse-cards-content',
 };
 
 /**
@@ -96,16 +96,16 @@ function renderCards(contentDiv, data, shimmer) {
       contentDiv.appendChild(fragment);
     } else {
       // Show no results message
-      const noResultsMessage = placeholders?.premiumLearningNoResults || 'No premium learning content found.';
+      const noResultsMessage = placeholders?.browseCardsNoResults || 'No content found.';
       contentDiv.innerHTML = `<div class="no-results">${noResultsMessage}</div>`;
     }
   } catch (error) {
     shimmer.removeShimmer();
     // eslint-disable-next-line no-console
-    console.error('Error rendering premium learning cards:', error);
+    console.error('Error rendering browse cards:', error);
 
     // Show error message
-    const errorMessage = placeholders?.premiumLearningLoadError || 'Failed to load premium learning content.';
+    const errorMessage = placeholders?.browseCardsLoadError || 'Failed to load content.';
     contentDiv.innerHTML = `<div class="no-results">${errorMessage}</div>`;
   }
 }
@@ -119,8 +119,8 @@ function renderCards(contentDiv, data, shimmer) {
  * @returns {Promise<Array>} Premium learning data
  */
 async function fetchPremiumLearningData(contentType, products = [], features = [], versions = []) {
-  const contentTypes = contentType ? contentType.split(',').map(type => type.trim()) : [];
-  
+  const contentTypes = contentType ? contentType.split(',').map((type) => type.trim()) : [];
+
   // Build parameters for BrowseCardsDelegate
   const param = {
     contentType: contentTypes,
@@ -150,7 +150,7 @@ async function fetchPremiumLearningData(contentType, products = [], features = [
 }
 
 /**
- * Main decoration function for the premium-learning-browse-cards block
+ * Main decoration function for the browse-cards block
  * @param {HTMLElement} block - The block element to decorate
  */
 export default async function decorate(block) {
