@@ -90,7 +90,19 @@ function buildDefaultHeader({ title, titleIcon, canExpand }, dialog) {
  * @returns {{ element: HTMLDialogElement, destroy: function }}
  */
 function createDialog(type, options) {
-  const { id, ariaLabel, title, titleIcon, canExpand, header: customHeader, closeSelector, content, footer, triggerEl, onClose } = options;
+  const {
+    id,
+    ariaLabel,
+    title,
+    titleIcon,
+    canExpand,
+    header: customHeader,
+    closeSelector,
+    content,
+    footer,
+    triggerEl,
+    onClose,
+  } = options;
 
   const existing = document.getElementById(id);
   if (existing) {
@@ -131,7 +143,9 @@ function createDialog(type, options) {
   const closeDialog = () => dialog.close();
 
   if (closeBtn) closeBtn.addEventListener('click', closeDialog);
-  dialog.addEventListener('click', (e) => { if (e.target === dialog) closeDialog(); });
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) closeDialog();
+  });
   dialog.addEventListener('close', () => {
     setExpanded(false);
     if (triggerEl) triggerEl.focus();
@@ -139,7 +153,9 @@ function createDialog(type, options) {
   });
 
   let cssLinkEl = null;
-  ensureStyles().then((link) => { cssLinkEl = link; });
+  ensureStyles().then((link) => {
+    cssLinkEl = link;
+  });
 
   return {
     element: dialog,
