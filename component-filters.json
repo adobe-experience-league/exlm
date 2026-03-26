@@ -415,7 +415,7 @@
   },
   {
     "id": "premium-learning-section",
-    "components": ["text", "title", "button", "image", "premium-learning-cards"]
+    "components": ["text", "title", "button", "image", "premium-learning-search"]
   },
   {
     "id": "columns",
