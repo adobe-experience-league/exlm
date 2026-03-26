@@ -1855,7 +1855,7 @@
     ]
   },
   {
-    "id": "premium-learning-cards",
+    "id": "premium-learning-search",
     "fields": [
       {
         "component": "text",
