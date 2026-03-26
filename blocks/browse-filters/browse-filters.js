@@ -1579,7 +1579,14 @@ function renderSortContainer(block) {
  */
 function decorateBrowseTopics(block) {
   const { lang } = getPathDetails();
-  const [...configs] = [...block.children].map((row) => row.firstElementChild);
+  const allDivs = [...block.children].map((row) => row.firstElementChild);
+
+  // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
+  // New blocks have 7 elements, old blocks have 5 elements
+  if (allDivs.length === 5) {
+    allDivs.splice(4, 0, undefined, undefined);
+  }
+
   // 'customElement' can either be a Form Element or localized tag values returned by the converter.
   const [
     solutionsElement,
@@ -1589,7 +1596,7 @@ function decorateBrowseTopics(block) {
     solutionsv2Element,
     topicsv2Element,
     customElement,
-  ] = configs.map((cell) => cell);
+  ] = allDivs;
 
   const solutionsContent = solutionsElement?.textContent?.trim() ?? '';
   const headingContent = headingElement?.textContent?.trim() ?? '';
@@ -1599,7 +1606,8 @@ function decorateBrowseTopics(block) {
   const localizedTopicsContent = isFormElement ? '' : customElement?.textContent?.trim() ?? '';
   let allSolutionsTags;
   let allTopicsTags;
-  if (isFeatureEnabled('isV2TagsEnabled')) {
+  // When TQ tags are authored and FF is enabled.
+  if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Element) {
     const solutionsv2Content = solutionsv2Element?.textContent?.trim() ?? '';
     const solutionsv2Labels = solutionsv2Content ? getv2TagLabels(solutionsv2Content) : '';
     allSolutionsTags = solutionsv2Labels ? solutionsv2Labels.split(',').map((p) => p.trim()) : [];
@@ -1607,6 +1615,7 @@ function decorateBrowseTopics(block) {
     const topicsv2Labels = topicsv2Content ? getv2TagLabels(topicsv2Content) : '';
     allTopicsTags = topicsv2Labels ? topicsv2Labels.split(',').map((p) => p.trim()) : [];
   } else {
+    // Legacy tags
     // eslint-disable-next-line no-unused-vars
     allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
     allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
@@ -1621,7 +1630,7 @@ function decorateBrowseTopics(block) {
 
   const supportedProducts = [];
   if (allSolutionsTags.length) {
-    if (isFeatureEnabled('isV2TagsEnabled')) {
+    if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Element) {
       // V2 tags are plain text labels, construct query directly
       const productsQuery = allSolutionsTags.map((product) => `@el_product="${product}"`).join(' OR ');
       window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND (${productsQuery}))`;
@@ -1663,7 +1672,7 @@ function decorateBrowseTopics(block) {
     allTopicsTags
       .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
-        const isV2Enabled = isFeatureEnabled('isV2TagsEnabled');
+        const isV2Enabled = isFeatureEnabled('isV2TagsEnabled') && topicsv2Element;
         const topicName = isV2Enabled ? topicsButtonTitle : topicsButtonTitle.split('/').pop();
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
         topicsButtonDiv.dataset.topicname = topicsButtonTitle;

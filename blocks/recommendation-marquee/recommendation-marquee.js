@@ -320,6 +320,14 @@ export default async function decorate(block) {
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
 
+  // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
+  // Check if v2 elements are present by looking at the expected positions
+  const reversedElements = htmlElementData.reverse();
+  const hasV2Elements = reversedElements.length > 9;
+  if (!hasV2Elements) {
+    reversedElements.splice(0, 0, undefined, undefined, undefined);
+  }
+
   const [
     rolev2El,
     featurev2El,
@@ -331,7 +339,7 @@ export default async function decorate(block) {
     solutionEl,
     filterProductByOptionEl,
     ...restOfEl
-  ] = htmlElementData.reverse();
+  ] = reversedElements;
 
   const showOnlyCoveo = block.classList.contains('coveo-only');
 
