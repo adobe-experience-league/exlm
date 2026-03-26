@@ -42,9 +42,7 @@ const elContentTypeHierarchicalCaptionMap = (ph) => ({
   'Community|Articles': ph.searchContentTypeCommunityArticlesLabel || 'Articles',
   'Event|On Demand Event': ph.searchContentTypeEventOnDemandEventLabel || 'On Demand Event',
   'Event|Upcoming Event':
-    ph.searchContentTypeEventUpcomingEventLabel ||
-    ph.searchContentTypeUpcomingEventLabel ||
-    'Upcoming Event',
+    ph.searchContentTypeEventUpcomingEventLabel || ph.searchContentTypeUpcomingEventLabel || 'Upcoming Event',
 });
 
 /**
@@ -162,9 +160,7 @@ export function applyFacetRawValuesToDom(parentWrapper, engineValues, placeholde
 
   lis.forEach((li) => {
     const display =
-      li.dataset.contenttype?.trim() ||
-      li.querySelector('.value-label')?.getAttribute('title')?.trim() ||
-      '';
+      li.dataset.contenttype?.trim() || li.querySelector('.value-label')?.getAttribute('title')?.trim() || '';
     const raw = resolve(display);
     if (!raw) return;
     if (li.dataset.facetRawValue && li.dataset.facetRawValue !== raw) {
