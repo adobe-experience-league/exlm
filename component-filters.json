@@ -5,18 +5,11 @@
   },
   {
     "id": "main",
-    "components": ["section", "tab-section", "list-section", "sticky-nav-section", "premium-learning-section"]
+    "components": ["section", "tab-section", "list-section", "sticky-nav-section"]
   },
   {
     "id": "main-browse",
-    "components": [
-      "section",
-      "browse-rail-section",
-      "tab-section",
-      "list-section",
-      "sticky-nav-section",
-      "premium-learning-section"
-    ]
+    "components": ["section", "browse-rail-section", "tab-section", "list-section", "sticky-nav-section"]
   },
   {
     "id": "main-article",
@@ -26,13 +19,12 @@
       "section",
       "tab-section",
       "list-section",
-      "sticky-nav-section",
-      "premium-learning-section"
+      "sticky-nav-section"
     ]
   },
   {
     "id": "main-profile",
-    "components": ["section", "profile-section", "profile-bottom-section", "premium-learning-section"]
+    "components": ["section", "profile-section", "profile-bottom-section"]
   },
   {
     "id": "main-signup",
@@ -412,10 +404,6 @@
   {
     "id": "article-header-section",
     "components": []
-  },
-  {
-    "id": "premium-learning-section",
-    "components": ["text", "title", "button", "image", "premium-learning-search"]
   },
   {
     "id": "columns",
