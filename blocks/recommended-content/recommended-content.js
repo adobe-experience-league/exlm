@@ -900,8 +900,8 @@ export default async function decorate(block) {
                       resp,
                       headerContainer,
                       descriptionContainer,
-                      linkEl || null,
-                      resultTextEl || null,
+                      linkEl,
+                      resultTextEl,
                     );
                     headerContainer.id = formatId(headerContainer.innerHTML);
                     block.style.display = 'block';

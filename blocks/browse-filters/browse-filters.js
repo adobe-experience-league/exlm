@@ -1673,11 +1673,12 @@ function decorateBrowseTopics(block) {
       .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
         const isV2Enabled = isFeatureEnabled('isV2TagsEnabled') && topicsv2Element;
+        // v2 tags are plain text labels
         const topicName = isV2Enabled ? topicsButtonTitle : topicsButtonTitle.split('/').pop();
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
         topicsButtonDiv.dataset.topicname = topicsButtonTitle;
         topicsButtonDiv.dataset.label = topicName;
-        if (isV2Enabled || lang === 'en' || window.location.href.includes('.html') || localizedTopicsTags === '') {
+        if (lang === 'en' || window.location.href.includes('.html') || localizedTopicsTags === '') {
           topicsButtonDiv.innerHTML = topicName;
         } else {
           const topicTag = topicsButtonTitle.slice(4); // Remove "exl:" prefix

@@ -1515,6 +1515,11 @@ export function updateTQTagsMetadata() {
   });
 }
 
+/**
+ * Extracts and returns a comma-separated string of label values from a JSON-encoded tag string.
+ * @param {string} tag - A JSON string (possibly HTML-encoded) representing an array of objects with `label` properties.
+ * @returns {string} A comma-separated string of labels, or an empty string if parsing fails or input is invalid.
+ */
 export function getv2TagLabels(tag) {
   if (!tag) return '';
 

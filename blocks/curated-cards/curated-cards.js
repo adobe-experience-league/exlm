@@ -62,7 +62,8 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
 
   let param;
-  if (isFeatureEnabled('isV2TagsEnabled')) {
+  // If FF is enabled, use V2 tags
+  if (isFeatureEnabled('isV2TagsEnabled') && productv2) {
     const productsv2 = productv2
       ? getv2TagLabels(productv2)
           .split(',')
@@ -91,6 +92,7 @@ export default async function decorate(block) {
       noOfResults,
     };
   } else {
+    // Legacy tags
     param = {
       contentType: contentType && contentType.toLowerCase().split(','),
       product: products.length ? removeProductDuplicates(products) : null,

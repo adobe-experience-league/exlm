@@ -33,13 +33,15 @@ export default async function decorate(block) {
   const contentType = CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
   const noOfResults = 4;
   let solutionsParam = '';
-  if (isFeatureEnabled('isV2TagsEnabled')) {
+  // If FF is enabled, use V2 tags
+  if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2) {
     solutionsParam = solutionsv2
       ? getv2TagLabels(solutionsv2)
           .split(',')
           .map((p) => p.trim())
       : '';
   } else {
+    // Legacy tags
     solutionsParam = solutions !== '' ? formattedSolutionTags(solutions) : '';
   }
   // Clearing the block's content
