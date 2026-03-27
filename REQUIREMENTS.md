@@ -235,7 +235,7 @@ Add a new entry with `"id": "premium-learning-recommended-content"` and the foll
       "name": "learningType",
       "value": "both",
       "label": "Learning Type",
-      "description": "Filter recommended learning objects by type. 'Course' shows only courses, 'Cohort' shows only cohorts/learning programs, 'Both' shows all types.",
+      "description": "Filter recommended learning objects by type. 'Course' shows only courses, 'Cohort' shows only cohorts/courses, 'Both' shows all types.",
       "options": [
         { "name": "Course", "value": "course" },
         { "name": "Cohort", "value": "learningProgram" },
