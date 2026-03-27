@@ -10005,7 +10005,8 @@
         "description": "The label displayed in the sticky navigation bar for this item."
       }
     ]
-  },{
+  },
+  {
     "id": "premium-learning-browse",
     "fields": [
       {
@@ -10048,7 +10049,8 @@
             "value": "h6"
           }
         ]
-      },{
+      },
+      {
         "component": "richtext",
         "valueType": "string",
         "name": "description",

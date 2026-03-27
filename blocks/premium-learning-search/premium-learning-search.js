@@ -105,7 +105,8 @@ export default async function decorate(block) {
     );
     const { products } = extractCapability(tags);
     if (products.length > 0) {
-      param.product = removeProductDuplicates(products);
+      // Use 'products' for search mode compatibility
+      param.products = removeProductDuplicates(products);
     }
   }
 

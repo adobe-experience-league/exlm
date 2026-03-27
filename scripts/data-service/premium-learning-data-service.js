@@ -122,7 +122,7 @@ export default class PLDataService {
    * @returns {Object} Request body object
    */
   buildRequestBody() {
-    const { contentType, tagName, product } = this.queryParams;
+    const { contentType, tagName, product, products, solutions } = this.queryParams;
     const { catalogIds } = getConfig()?.['premium-learning'] ?? {};
 
     // Determine learning object types - support both course and cohort
@@ -134,9 +134,10 @@ export default class PLDataService {
       'filter.ignoreEnhancedLP': false,
     };
 
-    // Add product filter if provided (from tags/solutions)
-    if (product && Array.isArray(product) && product.length > 0) {
-      body['filter.recommendationProducts'] = product.map((productName) => ({
+    // Add product filter if provided (support both 'product', 'products', and 'solutions' for compatibility)
+    const productParam = product || products || solutions;
+    if (productParam && Array.isArray(productParam) && productParam.length > 0) {
+      body['filter.recommendationProducts'] = productParam.map((productName) => ({
         name: productName,
         levels: [],
       }));
