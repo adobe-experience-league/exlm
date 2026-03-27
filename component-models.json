@@ -1986,6 +1986,19 @@
         "value": "",
         "label": "Description",
         "description": "Subtitle text shown below the heading, e.g. 'Recommended learning based on your activity and progress.'"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "learningType",
+        "value": "both",
+        "label": "Learning Type",
+        "description": "Filter recommended learning objects by type. 'Course' shows only courses, 'Cohort' shows only cohorts/learning programs, 'Both' shows all types.",
+        "options": [
+          { "name": "Course", "value": "course" },
+          { "name": "Cohort", "value": "learningProgram" },
+          { "name": "Both", "value": "both" }
+        ]
       }
     ]
   },

@@ -40,6 +40,21 @@
       }
     }
   },
+  "payload": {
+    "filter.loTypes": ["course"],
+    "filter.ignoreEnhancedLP": false,
+    "filter.learnerState": ["notenrolled"],
+    "filter.catalogIds": ["208425"],
+    "filter.recommendationProducts": [
+      { "name": "Acrobat" },
+      { "name": "Acrobat Sign" },
+      { "name": "Acrobat Services" },
+      { "name": "Adobe" },
+      { "name": "AEM" },
+      { "name": "Journey Optimizer" }
+    ],
+    "filter.recommendationRoles": [{ "name": "Developer", "levels": ["BEGINNER"] }]
+  },
   "api2": {
     "links": {
       "self": "https://learningmanager.adobe.com/primeapi/v2/learningObjects/query?page[limit]=10&include=instances.loResources.resources&enforcedFields[learningObject]=products,roles,extensionOverrides,effectivenessData&sort=-recommendationScore",

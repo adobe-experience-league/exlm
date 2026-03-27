@@ -30,8 +30,16 @@ function renderCards(contentDiv, cards) {
  * Displays personalized learning recommendations based on user preferences.
  * @param {HTMLElement} block - The block element to decorate.
  */
+// Maps the authored learningType value to the filter.loTypes array for API 2.
+function getLoTypes(learningType) {
+  if (learningType === 'course') return ['course'];
+  if (learningType === 'learningProgram') return ['learningProgram'];
+  return ['course', 'learningProgram']; // 'both' default
+}
+
 export default async function decorate(block) {
-  const [headingElement, descriptionElement] = [...block.children];
+  const [headingElement, descriptionElement, learningTypeElement] = [...block.children];
+  const learningType = learningTypeElement?.textContent?.trim() || 'both';
 
   block.innerHTML = '';
   block.classList.add(
@@ -119,16 +127,28 @@ export default async function decorate(block) {
       const products = prefsData.data?.attributes?.products ?? [];
       const roles = prefsData.data?.attributes?.roles ?? [];
 
-      // Step 2: fetch learning objects using preferences as filters
-      const loParams = new URLSearchParams();
-      loParams.append('page[limit]', '10');
-      loParams.append('sort', '-recommendationScore');
-      loParams.append('enforcedFields[learningObject]', 'products,roles,extensionOverrides,effectivenessData');
-      loParams.append('include', 'instances.loResources.resources');
-      products.forEach((p) => loParams.append('filter.recommendationProductIds', p.id));
-      roles.forEach((r) => loParams.append('filter.recommendationRoleIds', r.id));
+      // Step 2: POST learning objects using preferences + authored learningType as filters
+      const loQueryParams = new URLSearchParams({
+        'page[limit]': '10',
+        sort: '-recommendationScore',
+        'enforcedFields[learningObject]': 'products,roles,extensionOverrides,effectivenessData',
+        include: 'instances.loResources.resources',
+      });
 
-      const loRes = await fetch(`${plApiBaseUrl}/learningObjects/query?${loParams}`, { headers });
+      const loPayload = {
+        'filter.recommendationProducts': products.map((p) => ({ name: p.name })),
+        'filter.recommendationRoles': roles.map((r) => ({ name: r.name, levels: r.levels ?? [] })),
+        'filter.loTypes': getLoTypes(learningType),
+        'filter.ignoreEnhancedLP': false,
+        'filter.learnerState': ['notenrolled'],
+        'filter.catalogIds': ['208422'],
+      };
+
+      const loRes = await fetch(`${plApiBaseUrl}/learningObjects/query?${loQueryParams}`, {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/vnd.api+json' },
+        body: JSON.stringify(loPayload),
+      });
       if (!loRes.ok) throw new Error(`Learning objects fetch failed: ${loRes.status}`);
       loData = await loRes.json();
     }
