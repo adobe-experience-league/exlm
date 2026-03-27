@@ -129,7 +129,8 @@
 
   atomic-search-interface:not(.atomic-search-interface-no-results)
     .premium-learning-search
-    .premium-learning-search-no-results {
+    .premium-learning-search-no-results,
+  atomic-search-interface:not(:has(.all-facets-hidden)) .premium-learning-search .premium-learning-search-no-results {
     width: 90%;
     margin: 0 auto;
   }
