@@ -16,11 +16,12 @@ const IGNORE_ENHANCED_LP = false;
 
 // ─── DOM helpers ────────────────────────────────────────────────────────────
 
+/* TODO: Re-usability */
 function buildBlockHeader(headingHTML, descriptionHTML) {
   const headerDiv = document.createElement('div');
-  headerDiv.className = 'premium-learning-search-block-header';
+  headerDiv.className = 'premium-learning-recommended-content-header';
   headerDiv.innerHTML = `
-    <div class="premium-learning-search-block-title">
+    <div class="premium-learning-recommended-content-title">
       ${headingHTML}
     </div>
     <div class="premium-learning-recommended-content-description">
@@ -39,10 +40,11 @@ function renderCards(contentDiv, cards) {
   }
 }
 
+/* TODO: Re-usability and Placeholder naming */
 function renderNoResultsContent(block, placeholders) {
-  const noResultsHeader = placeholders.premiumLearningCardsNoSearchHeader || 'No Premium Learning search results.';
+  const noResultsHeader = placeholders.premiumLearningCardsRecsHeader || 'No Premium Learning recommended results.';
   const noResultsDescription =
-    placeholders.premiumLearningCardsNoSearchDescription ||
+    placeholders.premiumLearningCardsRecsDescription ||
     'Try searching for a specific product or role, or explore all Premium learning content.';
   const markup = `
     <div class="premium-learning-search-no-results">
@@ -62,11 +64,12 @@ function renderTabs(block, tabsData, allCards, placeholders) {
 
   const items = Object.keys(tabsData).map((label) => ({ value: label, title: label }));
 
+  const forYouLabel = Object.keys(tabsData)[0];
   // eslint-disable-next-line no-new
   new ResponsiveList({
     wrapper: tabsWrapper,
     items,
-    defaultSelected: 'All',
+    defaultSelected: forYouLabel,
     onInitCallback: () => {
       renderCards(contentDiv, allCards);
     },
@@ -163,8 +166,8 @@ async function fetchApiData(localConfig, learningType) {
 }
 
 // Builds the tabs map: { All: allCards, '<ProductName>': filteredCards, … }
-function buildTabsData(allCards, loData, products) {
-  const tabsData = { All: allCards };
+function buildTabsData(allCards, loData, products, forYouLabel) {
+  const tabsData = { [forYouLabel]: allCards };
   products.forEach((p) => {
     const filtered = (loData.data ?? []).reduce((acc, item, i) => {
       if (item.attributes?.products?.some((prod) => prod.name === p.name)) acc.push(allCards[i]);
@@ -213,14 +216,16 @@ export default async function decorate(block) {
 
     shimmer.removeShimmer();
 
-    const allCards = await BrowseCardsPLAdaptor.mapResultsToCardsData(loData);
+    const safeLoData = { ...loData, data: loData?.data ?? [], included: loData?.included ?? [] };
+    const allCards = await BrowseCardsPLAdaptor.mapResultsToCardsData(safeLoData);
 
     if (!allCards.length) {
       renderNoResultsContent(block, placeholders);
       return;
     }
 
-    const tabsData = buildTabsData(allCards, loData, products);
+    const forYouLabel = placeholders.premiumLearningTabForYou || 'For you';
+    const tabsData = buildTabsData(allCards, loData, products, forYouLabel);
     renderTabs(block, tabsData, allCards, placeholders);
   } catch (err) {
     shimmer.removeShimmer();
