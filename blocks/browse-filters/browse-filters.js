@@ -1582,8 +1582,7 @@ function decorateBrowseTopics(block) {
   const allDivs = [...block.children].map((row) => row.firstElementChild);
 
   // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
-  // New blocks have 7 elements, old blocks have 5 elements
-  if (allDivs.length === 5) {
+  if (allDivs.length >= 5) {
     allDivs.splice(4, 0, undefined, undefined);
   }
 
