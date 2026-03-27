@@ -314,6 +314,19 @@
   --non-spectrum-link: #0268e3;
   --non-spectrum-navy-blue: #1473e6;
   --non-spectrum-dark-navy-blue: #0265dc;
+  --non-spectrum-navy-blue-alpha: rgb(20 115 230 / 25%);
+
+  /* ── Brand Concierge ──────────────────────────────────────────────────── */
+
+  /* Gradient palette — derived from the concierge-icon.svg brand gradient. */
+  --bc-gradient-start: #ff6a54;
+  --bc-gradient-end: #5d4ada;
+  --bc-gradient-blue: #b5deff;
+
+  /* User message bubble background — #5258E3 at 15% opacity. */
+  --bc-user-bubble: #5258e326;
+
+   /* ── Brand Concierge ──────────────────────────────────────────────────── */
   --non-spectrum-article-light-gray: #d3d3d3;
   --non-spectrum-article-dark-gray: #505050;
   --non-spectrum-bg: #fafafa;

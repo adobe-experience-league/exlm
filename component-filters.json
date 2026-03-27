@@ -5,11 +5,18 @@
   },
   {
     "id": "main",
-    "components": ["section", "tab-section", "list-section", "sticky-nav-section"]
+    "components": ["section", "tab-section", "list-section", "sticky-nav-section", "premium-learning-section"]
   },
   {
     "id": "main-browse",
-    "components": ["section", "browse-rail-section", "tab-section", "list-section", "sticky-nav-section"]
+    "components": [
+      "section",
+      "browse-rail-section",
+      "tab-section",
+      "list-section",
+      "sticky-nav-section",
+      "premium-learning-section"
+    ]
   },
   {
     "id": "main-article",
@@ -19,12 +26,13 @@
       "section",
       "tab-section",
       "list-section",
-      "sticky-nav-section"
+      "sticky-nav-section",
+      "premium-learning-section"
     ]
   },
   {
     "id": "main-profile",
-    "components": ["section", "profile-section", "profile-bottom-section"]
+    "components": ["section", "profile-section", "profile-bottom-section", "premium-learning-section"]
   },
   {
     "id": "main-signup",
@@ -32,11 +40,25 @@
   },
   {
     "id": "main-courses",
-    "components": ["section", "courses-section", "tab-section", "list-section", "sticky-nav-section"]
+    "components": [
+      "section",
+      "courses-section",
+      "tab-section",
+      "list-section",
+      "sticky-nav-section",
+      "premium-learning-section"
+    ]
   },
   {
     "id": "main-course-hub",
-    "components": ["section", "course-hub-section", "tab-section", "list-section", "sticky-nav-section"]
+    "components": [
+      "section",
+      "course-hub-section",
+      "tab-section",
+      "list-section",
+      "sticky-nav-section",
+      "premium-learning-section"
+    ]
   },
   {
     "id": "section",
@@ -404,6 +426,10 @@
   {
     "id": "article-header-section",
     "components": []
+  },
+  {
+    "id": "premium-learning-section",
+    "components": ["text", "title", "button", "image", "premium-learning-search"]
   },
   {
     "id": "columns",
