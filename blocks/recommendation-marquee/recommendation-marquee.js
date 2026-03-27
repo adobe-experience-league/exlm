@@ -320,10 +320,10 @@ export default async function decorate(block) {
   // Extracting elements from the block
   const htmlElementData = [...block.children].map((row) => row.firstElementChild);
 
-  // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
-  // New blocks have 12+ elements, old blocks have 9 or fewer elements
   const reversedElements = htmlElementData.reverse();
-  if (reversedElements.length > 9) {
+
+  // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
+  if (reversedElements.length <= 13) {
     reversedElements.splice(0, 0, undefined, undefined, undefined);
   }
 
