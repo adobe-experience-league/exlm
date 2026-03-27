@@ -1,4 +1,10 @@
-import { createTag, fetchLanguagePlaceholders, getConfig, htmlToElement } from '../../scripts/scripts.js';
+import {
+  createTag,
+  fetchLanguagePlaceholders,
+  getConfig,
+  htmlToElement,
+  getv2TagLabels,
+} from '../../scripts/scripts.js';
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
@@ -15,6 +21,7 @@ import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
 import { setTargetDataAsBlockAttribute, setCoveoAnalyticsAttribute } from '../../scripts/utils/analytics-utils.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 let placeholders = {};
 try {
@@ -312,8 +319,24 @@ export default async function decorate(block) {
   const headerContainer = block.querySelector('.recommended-content-header');
   const descriptionContainer = block.querySelector('.recommended-content-description');
   const reversedDomElements = remainingElements.reverse();
-  const [linkEl, resultTextEl, sortEl, roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] =
-    reversedDomElements;
+
+  // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
+  if (reversedDomElements.length <= 12) {
+    reversedDomElements.splice(0, 0, undefined, undefined, undefined);
+  }
+
+  const [
+    rolev2El,
+    featurev2El,
+    solutionv2El,
+    linkEl,
+    resultTextEl,
+    sortEl,
+    roleEl,
+    solutionEl,
+    filterProductByOptionEl,
+    ...contentTypesEl
+  ] = reversedDomElements;
   const showOnlyCoveo = block.classList.contains('coveo-only');
   const targetCriteriaId = block.dataset.targetScope;
   const profileDataPromise = defaultProfileClient.getMergedProfile();
@@ -448,7 +471,7 @@ export default async function decorate(block) {
     const recommendedContentNoResultsElement = block.querySelector('.browse-card-no-results');
     const noResultsText =
       placeholders?.recommendedContentNoResultsText ||
-      `We couldn’t find specific matches, but here are the latest tutorials/articles that others are loving right now!`;
+      `We couldn't find specific matches, but here are the latest tutorials/articles that others are loving right now!`;
     recommendedContentNoResultsElement.innerHTML = noResultsText;
   };
 
@@ -459,14 +482,18 @@ export default async function decorate(block) {
     const contentDiv = document.createElement('div');
     contentDiv.classList.add('browse-cards-block-content', 'recommended-content-block-section');
     parentDiv.appendChild(contentDiv);
+    resultTextEl?.classList.add('recommended-content-discover-resource');
 
-    resultTextEl.classList.add('recommended-content-discover-resource');
-    linkEl.classList.add('recommended-content-result-link');
-    if (linkEl.innerHTML || resultTextEl.innerHTML) {
+    linkEl?.classList.add('recommended-content-result-link');
+    if ((linkEl && linkEl.innerHTML) || (resultTextEl && resultTextEl.innerHTML)) {
       const seeMoreEl = document.createElement('div');
       seeMoreEl.classList.add('recommended-content-result-text');
-      seeMoreEl.appendChild(resultTextEl);
-      seeMoreEl.appendChild(linkEl);
+      if (resultTextEl) {
+        seeMoreEl.appendChild(resultTextEl);
+      }
+      if (linkEl) {
+        seeMoreEl.appendChild(linkEl);
+      }
       parentDiv.appendChild(seeMoreEl);
     }
   };
@@ -528,8 +555,35 @@ export default async function decorate(block) {
 
       const sortByContent = sortEl?.innerText?.trim();
 
-      const encodedSolutionsText = solutionEl.innerText?.trim() ?? '';
-      const { products, versions, features } = extractCapability(encodedSolutionsText);
+      const encodedSolutionsText = solutionEl?.innerText?.trim() ?? '';
+      const encodedSolutionsv2Text = solutionv2El?.innerText?.trim() ?? '';
+      const encodedFeaturesv2Text = featurev2El?.innerText?.trim() ?? '';
+
+      let products;
+      let versions;
+      let features;
+
+      if (isFeatureEnabled('isV2TagsEnabled') && encodedSolutionsv2Text) {
+        const productsv2 = encodedSolutionsv2Text
+          ? getv2TagLabels(encodedSolutionsv2Text)
+              .split(',')
+              .map((p) => p.trim())
+          : [];
+        const featuresv2 = encodedFeaturesv2Text
+          ? getv2TagLabels(encodedFeaturesv2Text)
+              .split(',')
+              .map((p) => p.trim())
+          : [];
+        products = productsv2.length ? removeProductDuplicates(productsv2) : [];
+        versions = [];
+        features = featuresv2.length ? removeProductDuplicates(featuresv2) : [];
+      } else {
+        const extracted = extractCapability(encodedSolutionsText);
+        products = extracted.products;
+        versions = extracted.versions;
+        features = extracted.features;
+      }
+
       const sortedProfileInterests = profileInterests.sort();
       const experienceLevels = sortedProfileInterests.map((interestName) => {
         const interest = (interestsDataArray || []).find((int) => int.Name === interestName);
@@ -545,10 +599,20 @@ export default async function decorate(block) {
       });
       const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase() ?? 'MOST_POPULAR'];
       const filterProductByOption = filterProductByOptionEl?.innerText?.trim() ?? '';
-      const role = roleEl?.innerText?.trim()?.includes('profile_context')
-        ? profileRoles
-        : roleEl?.innerText?.trim().split(',').filter(Boolean);
 
+      let role;
+      if (isFeatureEnabled('isV2TagsEnabled') && rolev2El) {
+        const rolev2Text = rolev2El?.innerText?.trim() ?? '';
+        role = !rolev2Text
+          ? profileRoles
+          : getv2TagLabels(rolev2Text)
+              .split(',')
+              .map((p) => p.trim());
+      } else {
+        role = roleEl?.innerText?.trim()?.includes('profile_context')
+          ? profileRoles
+          : roleEl?.innerText?.trim().split(',').filter(Boolean);
+      }
       const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests, targetCriteriaScopeId);
       if (filterOptions.length <= 1 && !UEAuthorMode) {
         filterSectionElement.style.display = 'none';
