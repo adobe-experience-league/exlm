@@ -1,7 +1,8 @@
 {
   "localDev": true,
+  "localDevAuth": true,
   "userId": 36216747,
-  "token": "be4e2fc79e09cffcdc652a666d8ef5fc",
+  "token": "<token>",
   "api1": {
     "links": {
       "self": "https://learningmanager.adobe.com/primeapi/v2/users/30720685/recommendationPreferences"
@@ -57,8 +58,8 @@
   },
   "api2": {
     "links": {
-      "self": "https://learningmanager.adobe.com/primeapi/v2/learningObjects/query?page[limit]=10&include=instances.loResources.resources&enforcedFields[learningObject]=products,roles,extensionOverrides,effectivenessData&sort=-recommendationScore",
-      "next": "https://learningmanager.adobe.com/primeapi/v2/learningObjects/query?page[limit]=10&include=instances.loResources.resources&enforcedFields[learningObject]=products,roles,extensionOverrides,effectivenessData&sort=-recommendationScore&page[cursor]=nc_6acc274c-588f-4b24-8162-503ce4a215d5;10"
+      "self": "https://learningmanager.adobe.com/primeapi/v2/learningObjects/query?page[limit]=9&include=instances,enrollment.loResourceGrades,skills.skillLevel.skill&enforcedFields[learningObject]=products,roles,extensionOverrides,effectivenessData&sort=-recommendationScore",
+      "next": "https://learningmanager.adobe.com/primeapi/v2/learningObjects/query?page[limit]=9&include=instances,enrollment.loResourceGrades,skills.skillLevel.skill&enforcedFields[learningObject]=products,roles,extensionOverrides,effectivenessData&sort=-recommendationScore&page[cursor]=nc_f69aae88-278b-4163-8688-713d3d8bca7a;9"
     },
     "data": [
       {
@@ -68,15 +69,15 @@
           "authorNames": ["Chandan"],
           "dateCreated": "2025-12-18T08:37:15.000Z",
           "datePublished": "2025-12-18T08:38:35.000Z",
-          "dateUpdated": "2026-03-23T05:42:57.000Z",
+          "dateUpdated": "2026-03-27T11:42:28.000Z",
           "downloadable": false,
           "duration": 1090,
-          "effectiveModifiedDate": "2026-03-23T05:42:57.000Z",
+          "effectiveModifiedDate": "2026-03-27T11:42:28.000Z",
           "enableSocial": false,
           "enrollmentType": "Self Enroll",
           "hasOptionalLoResources": false,
           "hasPreview": false,
-          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/courses/15135050/2025-12-18%2008:37:16.740303722Frame%202018779495_91af620fd79f4ec1bbd947567696d022.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiMzQ2ZGVhOTBhN2E2MTc2OGU5NDc3ZWIyMTZiOTRiOWVmNTQ2NTBjNiJ9.cA01-vxSIO2CdUBfesMYV0G2FlHMwz6ohPzcaLCqdy0",
+          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/courses/15135050/2025-12-18%2008:37:16.740303722Frame%202018779495_91af620fd79f4ec1bbd947567696d022.png",
           "instanceSwitchEnabled": false,
           "isBookmarked": false,
           "isExternal": false,
@@ -110,18 +111,6 @@
               "description": "",
               "mandatory": true,
               "name": "Public",
-              "values": ["true"]
-            },
-            {
-              "catalogLabelValueIds": [
-                {
-                  "name": "true",
-                  "id": "catalogLabel:5204_14638"
-                }
-              ],
-              "description": "Private",
-              "mandatory": true,
-              "name": "Private",
               "values": ["true"]
             }
           ],
@@ -160,6 +149,12 @@
                 "type": "user"
               }
             ]
+          },
+          "enrollment": {
+            "data": {
+              "id": "course:15135050_15859920_36216747",
+              "type": "learningObjectInstanceEnrollment"
+            }
           },
           "instances": {
             "data": [
@@ -200,7 +195,7 @@
         "type": "learningObject",
         "attributes": {
           "authorNames": ["Abhishek"],
-          "bannerUrl": "https://cpcontents.adobe.com/protected/account/136804/banners/courses/15895480/2026-03-24%2013:09:42.1403849272026-03-05%2005_30_00.732041876Expanded%20tile_Commerce_e9ff34f1def3481aae22d4c00fdaf368.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiNWNjNzUxZDYxNzZmNGVlZmMzODM2Y2YwNjAwYjEzODA3MTI3MTdkNSJ9.G5QK9BF_S-DY2ZDo4vI6HQk-T12bUw5Upxj7hDCOzro",
+          "bannerUrl": "https://cpcontents.adobe.com/protected/account/136804/banners/courses/15895480/2026-03-24%2013:09:42.1403849272026-03-05%2005_30_00.732041876Expanded%20tile_Commerce_e9ff34f1def3481aae22d4c00fdaf368.png",
           "dateCreated": "2026-03-24T13:09:40.000Z",
           "datePublished": "2026-03-24T13:13:13.000Z",
           "dateUpdated": "2026-03-24T13:13:13.000Z",
@@ -211,7 +206,7 @@
           "enrollmentType": "Self Enroll",
           "hasOptionalLoResources": false,
           "hasPreview": false,
-          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/courses/15895480/2026-03-24%2013:09:40.5956853372026-03-05%2005_30_00.732041876Expanded%20tile_Commerce_e9ff34f1def3481aae22d4c00fdaf368_785470c65d274be8a7d46a36b9f1d1fa.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiOTE1MmZjMjkzZDY0N2Y3MGZhNjI3NzY3YmQ4MzU5ZjYyMWQ1NTVhYSJ9.sSW9aHt6MaJuwbcMDfFo7Wuy7lZ2XBxBIfB78hcivro",
+          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/courses/15895480/2026-03-24%2013:09:40.5956853372026-03-05%2005_30_00.732041876Expanded%20tile_Commerce_e9ff34f1def3481aae22d4c00fdaf368_785470c65d274be8a7d46a36b9f1d1fa.png",
           "instanceSwitchEnabled": false,
           "isBookmarked": false,
           "isExternal": false,
@@ -310,17 +305,17 @@
             {
               "id": "recommendationRole:866",
               "levels": ["BEGINNER"],
-              "name": "Business user"
+              "name": "User"
             },
             {
               "id": "recommendationRole:867",
               "levels": ["BEGINNER"],
-              "name": "Business leader"
+              "name": "Leader"
             },
             {
               "id": "recommendationRole:868",
               "levels": ["BEGINNER"],
-              "name": "Administrator"
+              "name": "Admin"
             }
           ]
         },
@@ -332,6 +327,12 @@
                 "type": "user"
               }
             ]
+          },
+          "enrollment": {
+            "data": {
+              "id": "course:15895480_16637840_36216747",
+              "type": "learningObjectInstanceEnrollment"
+            }
           },
           "instances": {
             "data": [
@@ -416,597 +417,11 @@
         }
       },
       {
-        "id": "course:15899677",
-        "type": "learningObject",
-        "attributes": {
-          "authorNames": ["cod54250"],
-          "bannerUrl": "https://cpcontents.adobe.com/protected/account/136804/banners/courses/15899677/2026-03-25%2013:43:33.620835636Screenshot%202026-03-20%20160220.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiNDkwMWU2ZjQzYTQ2YTM2YzdhYmEyOTc3MmVhYmJiY2IwYjNiMDExNSJ9.fiaLFa0GcoCE4VES66hGyg-1Rml16zSWp9gXZap0FKE",
-          "dateCreated": "2026-03-25T13:43:29.000Z",
-          "datePublished": "2026-03-25T13:44:29.000Z",
-          "dateUpdated": "2026-03-26T05:54:42.000Z",
-          "downloadable": false,
-          "duration": 0,
-          "effectiveModifiedDate": "2026-03-26T05:54:42.000Z",
-          "enableSocial": false,
-          "enrollmentType": "Self Enroll",
-          "hasOptionalLoResources": false,
-          "hasPreview": false,
-          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/courses/15899677/2026-03-25%2013:43:31.434979641Screenshot%202026-03-20%20160220_3e8d8af9a54b42b79f214b42770bdd95.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiOWFiNTdjZDkwZWM0OTE2NjNjYWJjNGZjZDgwMTE4NzQyMjExMzhkYiJ9.MrU-Dq5JjTBiLgTWPNz7x7Epf3FPZE022zyXbRHURv4",
-          "instanceSwitchEnabled": false,
-          "isBookmarked": false,
-          "isExternal": false,
-          "isMqaEnabled": false,
-          "isPrerequisiteEnforced": false,
-          "isSubLoOrderEnforced": false,
-          "loFormat": "Virtual Classroom",
-          "loResourceCompletionCount": 1,
-          "loType": "course",
-          "moduleResetEnabled": false,
-          "multienrollmentEnabled": false,
-          "state": "Published",
-          "tags": ["Live Session"],
-          "unenrollmentAllowed": false,
-          "whoShouldTake": ["admin"],
-          "authorDetails": [
-            {
-              "authorId": "35741956",
-              "authorName": "cod54250",
-              "authorType": "Internal"
-            }
-          ],
-          "catalogLabels": [
-            {
-              "catalogLabelValueIds": [
-                {
-                  "name": "true",
-                  "id": "catalogLabel:5203_14637"
-                }
-              ],
-              "description": "",
-              "mandatory": true,
-              "name": "Public",
-              "values": ["true"]
-            }
-          ],
-          "localizedMetadata": [
-            {
-              "description": "xperience Manager 6.5 LTS product updates are delivered through Service Packs. These Service Packs include new features, enhancements.",
-              "locale": "en-US",
-              "name": "Cumulative Fix Packs Seat Limit",
-              "overview": "Product updates in terms of new features, enhancements, and bug fixes for supported Experience Manager on-premise and Managed Services are delivered through Service Packs and Cumulative Fix Packs (CFPs).",
-              "richTextOverview": "<p><span style=\"color: rgb(41, 41, 41);\">Product updates in terms of new features, enhancements, and bug fixes for supported Experience Manager on-premise and Managed Services are delivered through Service Packs and Cumulative Fix Packs (CFPs).</span></p>"
-            }
-          ],
-          "products": [
-            {
-              "id": "recommendationProduct:931",
-              "name": "AEM"
-            },
-            {
-              "id": "recommendationProduct:932",
-              "name": "Acrobat"
-            },
-            {
-              "id": "recommendationProduct:933",
-              "name": "Acrobat Services"
-            },
-            {
-              "id": "recommendationProduct:934",
-              "name": "Adobe"
-            },
-            {
-              "id": "recommendationProduct:935",
-              "name": "Acrobat Sign"
-            },
-            {
-              "id": "recommendationProduct:1024",
-              "name": "Advertising"
-            },
-            {
-              "id": "recommendationProduct:1027",
-              "name": "Campaign Classic"
-            },
-            {
-              "id": "recommendationProduct:1031",
-              "name": "Campaign Classic v7"
-            },
-            {
-              "id": "recommendationProduct:1035",
-              "name": "Experience Manager Forms"
-            },
-            {
-              "id": "recommendationProduct:1040",
-              "name": "Experience Manager Sites"
-            }
-          ],
-          "rating": {
-            "averageRating": 0,
-            "ratingsCount": 0
-          },
-          "roles": [
-            {
-              "id": "recommendationRole:867",
-              "levels": ["ADVANCED"],
-              "name": "Business leader"
-            }
-          ]
-        },
-        "relationships": {
-          "authors": {
-            "data": [
-              {
-                "id": "35741956",
-                "type": "user"
-              }
-            ]
-          },
-          "instances": {
-            "data": [
-              {
-                "id": "course:15899677_16642250",
-                "type": "learningObjectInstance"
-              },
-              {
-                "id": "course:15899677_16642257",
-                "type": "learningObjectInstance"
-              }
-            ]
-          },
-          "recommendationProducts": {
-            "data": [
-              {
-                "id": "recommendationProduct:931",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:932",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:933",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:934",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:935",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:1024",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:1027",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:1031",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:1035",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:1040",
-                "type": "recommendationProduct"
-              }
-            ]
-          },
-          "recommendationRoles": {
-            "data": [
-              {
-                "id": "recommendationRole:867",
-                "type": "recommendationRole"
-              }
-            ]
-          },
-          "skills": {
-            "data": [
-              {
-                "id": "course:15899677_587430",
-                "type": "learningObjectSkill"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15899594",
-        "type": "learningObject",
-        "attributes": {
-          "authorNames": ["cod54250"],
-          "bannerUrl": "https://cpcontents.adobe.com/protected/account/136804/banners/courses/15899594/2026-03-25%2012:56:09.975416039Screenshot%202026-03-20%20160220.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiOWM3MGZlNGVjODU3YzNiMTFiNDUzZTdhYjNmMDFiNTc5NDlmM2EyOSJ9._Vr3-CHk7bOpC6Z0sxpqjahX6AclELQfbfzBZQ7nTO8",
-          "dateCreated": "2026-03-25T12:56:01.000Z",
-          "datePublished": "2026-03-25T12:57:22.000Z",
-          "dateUpdated": "2026-03-25T13:13:13.000Z",
-          "downloadable": false,
-          "duration": 0,
-          "effectiveModifiedDate": "2026-03-25T13:21:41.000Z",
-          "enableSocial": false,
-          "enrollmentType": "Self Enroll",
-          "hasOptionalLoResources": false,
-          "hasPreview": false,
-          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/courses/15899594/2026-03-25%2012:56:05.059401751Screenshot%202026-03-20%20160220_f56ea76a5c05473cb5ebf13e9647198c.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiZDllZThkNWU2YTQwZjQ1MTBmZTc1YTM2MTA2ZGNkMzc1NDk2MGM5ZiJ9.2bnNVJkKvrQCeS1xp-iuHYeT19bgN4oKBQf0P2HkLY8",
-          "instanceSwitchEnabled": false,
-          "isBookmarked": false,
-          "isExternal": false,
-          "isMqaEnabled": false,
-          "isPrerequisiteEnforced": false,
-          "isSubLoOrderEnforced": false,
-          "loFormat": "Virtual Classroom",
-          "loResourceCompletionCount": 1,
-          "loType": "course",
-          "moduleResetEnabled": false,
-          "multienrollmentEnabled": false,
-          "state": "Published",
-          "unenrollmentAllowed": true,
-          "whoShouldTake": ["admin"],
-          "authorDetails": [
-            {
-              "authorId": "35741956",
-              "authorName": "cod54250",
-              "authorType": "Internal"
-            }
-          ],
-          "catalogLabels": [
-            {
-              "catalogLabelValueIds": [
-                {
-                  "name": "true",
-                  "id": "catalogLabel:5203_14637"
-                }
-              ],
-              "description": "",
-              "mandatory": true,
-              "name": "Public",
-              "values": ["true"]
-            }
-          ],
-          "localizedMetadata": [
-            {
-              "description": "Adobe - VILT Seat Limit",
-              "locale": "en-US",
-              "name": "Adobe - VILT Seat Limit",
-              "overview": "Adobe - VILT Seat Limit",
-              "richTextOverview": "<p>Adobe - VILT Seat Limit</p>"
-            }
-          ],
-          "products": [
-            {
-              "id": "recommendationProduct:932",
-              "name": "Acrobat"
-            },
-            {
-              "id": "recommendationProduct:933",
-              "name": "Acrobat Services"
-            },
-            {
-              "id": "recommendationProduct:934",
-              "name": "Adobe"
-            },
-            {
-              "id": "recommendationProduct:935",
-              "name": "Acrobat Sign"
-            },
-            {
-              "id": "recommendationProduct:1024",
-              "name": "Advertising"
-            },
-            {
-              "id": "recommendationProduct:1035",
-              "name": "Experience Manager Forms"
-            },
-            {
-              "id": "recommendationProduct:1036",
-              "name": "Experience Manager Assets"
-            },
-            {
-              "id": "recommendationProduct:1038",
-              "name": "Journey Optimizer"
-            },
-            {
-              "id": "recommendationProduct:1040",
-              "name": "Experience Manager Sites"
-            }
-          ],
-          "rating": {
-            "averageRating": 0,
-            "ratingsCount": 0
-          },
-          "roles": [
-            {
-              "id": "recommendationRole:868",
-              "levels": ["ADVANCED"],
-              "name": "Administrator"
-            }
-          ]
-        },
-        "relationships": {
-          "authors": {
-            "data": [
-              {
-                "id": "35741956",
-                "type": "user"
-              }
-            ]
-          },
-          "instances": {
-            "data": [
-              {
-                "id": "course:15899594_16642155",
-                "type": "learningObjectInstance"
-              }
-            ]
-          },
-          "recommendationProducts": {
-            "data": [
-              {
-                "id": "recommendationProduct:932",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:933",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:934",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:935",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:1024",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:1035",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:1036",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:1038",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:1040",
-                "type": "recommendationProduct"
-              }
-            ]
-          },
-          "recommendationRoles": {
-            "data": [
-              {
-                "id": "recommendationRole:868",
-                "type": "recommendationRole"
-              }
-            ]
-          },
-          "skills": {
-            "data": [
-              {
-                "id": "course:15899594_577677",
-                "type": "learningObjectSkill"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15899521",
-        "type": "learningObject",
-        "attributes": {
-          "authorNames": ["cod54250"],
-          "dateCreated": "2026-03-25T10:52:41.000Z",
-          "datePublished": "2026-03-25T10:55:54.000Z",
-          "dateUpdated": "2026-03-25T10:55:54.000Z",
-          "downloadable": false,
-          "duration": 0,
-          "effectiveModifiedDate": "2026-03-25T11:00:40.000Z",
-          "enableSocial": false,
-          "enrollmentType": "Self Enroll",
-          "hasOptionalLoResources": false,
-          "hasPreview": false,
-          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/courses/15899521/2026-03-25%2010:52:42.849263341Screenshot%202026-03-20%20160324_333e0b6fa5e849be970b80f559d5573a.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiZDU3MzU5OTU0YTY1ZDVlOGJlMzM5YzFhMmI3NzlkMjRkZTljMWNiZSJ9.wlg-tJI1Zqv4lHv2vzAPrnPGiIj-6Ch-43eQCTLy9W4",
-          "instanceSwitchEnabled": false,
-          "isBookmarked": false,
-          "isExternal": false,
-          "isMqaEnabled": false,
-          "isPrerequisiteEnforced": false,
-          "isSubLoOrderEnforced": false,
-          "loFormat": "Activity",
-          "loResourceCompletionCount": 1,
-          "loType": "course",
-          "moduleResetEnabled": false,
-          "multienrollmentEnabled": false,
-          "state": "Published",
-          "unenrollmentAllowed": true,
-          "whoShouldTake": ["admin"],
-          "authorDetails": [
-            {
-              "authorId": "35741956",
-              "authorName": "cod54250",
-              "authorType": "Internal"
-            }
-          ],
-          "catalogLabels": [
-            {
-              "catalogLabelValueIds": [
-                {
-                  "name": "true",
-                  "id": "catalogLabel:5203_14637"
-                }
-              ],
-              "description": "",
-              "mandatory": true,
-              "name": "Public",
-              "values": ["true"]
-            }
-          ],
-          "localizedMetadata": [
-            {
-              "description": "A cohort is a group of people sharing common characteristics over a specified period. A Cohort table visualization is useful",
-              "locale": "en-US",
-              "name": "Cohort table overview |  Adobe Analytics version of this article 777",
-              "overview": "This video demonstrates the functionality using Adobe Analytics. However, the functionality is similarly available in Customer Journey Analytics. Be aware of the differences in terminology between Adobe Analytics and Customer Journey Analytics (for example visits versus sessions)...",
-              "richTextOverview": "<p>This video demonstrates the functionality using Adobe Analytics. However, the functionality is similarly available in Customer Journey Analytics. Be aware of the differences in terminology between Adobe Analytics and Customer Journey Analytics (for example visits versus sessions)...</p>"
-            }
-          ],
-          "products": [
-            {
-              "id": "recommendationProduct:932",
-              "name": "Acrobat"
-            },
-            {
-              "id": "recommendationProduct:933",
-              "name": "Acrobat Services"
-            },
-            {
-              "id": "recommendationProduct:934",
-              "name": "Adobe"
-            },
-            {
-              "id": "recommendationProduct:935",
-              "name": "Acrobat Sign"
-            },
-            {
-              "id": "recommendationProduct:1024",
-              "name": "Advertising"
-            },
-            {
-              "id": "recommendationProduct:1025",
-              "name": "AI Training"
-            },
-            {
-              "id": "recommendationProduct:1026",
-              "name": "Analytics"
-            },
-            {
-              "id": "recommendationProduct:1033",
-              "name": "Customer Journey Analytics"
-            },
-            {
-              "id": "recommendationProduct:1040",
-              "name": "Experience Manager Sites"
-            },
-            {
-              "id": "recommendationProduct:1043",
-              "name": "Experience Manager Screens"
-            }
-          ],
-          "rating": {
-            "averageRating": 0,
-            "ratingsCount": 0
-          },
-          "roles": [
-            {
-              "id": "recommendationRole:867",
-              "levels": ["ADVANCED"],
-              "name": "Business leader"
-            }
-          ]
-        },
-        "relationships": {
-          "authors": {
-            "data": [
-              {
-                "id": "35741956",
-                "type": "user"
-              }
-            ]
-          },
-          "instances": {
-            "data": [
-              {
-                "id": "course:15899521_16642073",
-                "type": "learningObjectInstance"
-              }
-            ]
-          },
-          "recommendationProducts": {
-            "data": [
-              {
-                "id": "recommendationProduct:932",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:933",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:934",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:935",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:1024",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:1025",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:1026",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:1033",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:1040",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:1043",
-                "type": "recommendationProduct"
-              }
-            ]
-          },
-          "recommendationRoles": {
-            "data": [
-              {
-                "id": "recommendationRole:867",
-                "type": "recommendationRole"
-              }
-            ]
-          },
-          "skills": {
-            "data": [
-              {
-                "id": "course:15899521_577677",
-                "type": "learningObjectSkill"
-              },
-              {
-                "id": "course:15899521_577679",
-                "type": "learningObjectSkill"
-              },
-              {
-                "id": "course:15899521_587430",
-                "type": "learningObjectSkill"
-              }
-            ]
-          }
-        }
-      },
-      {
         "id": "course:15884870",
         "type": "learningObject",
         "attributes": {
           "authorNames": ["cod54250"],
-          "bannerUrl": "https://cpcontents.adobe.com/protected/account/136804/banners/courses/15884870/2026-03-20%2010:34:24.33022803Screenshot%202026-03-20%20160324.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiMTFlYTYxN2VmYzNmZjMwYmQ1ODJmMjRhNDlkZThlMjU1NmRhYjA2NyJ9.RY5_DixVexfsYU-6oh_eCuStYPPDi2K9PLI-CToEygE",
+          "bannerUrl": "https://cpcontents.adobe.com/protected/account/136804/banners/courses/15884870/2026-03-20%2010:34:24.33022803Screenshot%202026-03-20%20160324.png",
           "dateCreated": "2026-03-20T10:34:19.000Z",
           "datePublished": "2026-03-20T10:37:19.000Z",
           "dateUpdated": "2026-03-26T09:42:19.000Z",
@@ -1017,7 +432,7 @@
           "enrollmentType": "Self Enroll",
           "hasOptionalLoResources": false,
           "hasPreview": false,
-          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/courses/15884870/2026-03-20%2010:34:22.121407635Screenshot%202026-03-20%20160220_f9be2ccda686459ea4cb050feda9954b.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiMjI0NjNjZTFmYmUzMDRlMTMxNDQ4N2U5ZWJjZDE3N2VkNTk4MWUyOSJ9.FNccCA7bMNzn-j-Ms4vN81an6F9WCMQuCpAO-brIdUU",
+          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/courses/15884870/2026-03-20%2010:34:22.121407635Screenshot%202026-03-20%20160220_f9be2ccda686459ea4cb050feda9954b.png",
           "instanceSwitchEnabled": false,
           "isBookmarked": false,
           "isExternal": false,
@@ -1093,7 +508,7 @@
             {
               "id": "recommendationRole:867",
               "levels": ["BEGINNER"],
-              "name": "Business leader"
+              "name": "Leader"
             }
           ]
         },
@@ -1173,7 +588,7 @@
         "type": "learningObject",
         "attributes": {
           "authorNames": ["Silpa"],
-          "bannerUrl": "https://cpcontents.adobe.com/protected/account/136804/banners/courses/15835265/2026-03-06%2005:10:30.093910135d228a8c41cc423dd3548e9e9c2a347f284a45419.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiODc1ZWQxMWRmOGYxNDY4YTA1ZGVhNGFlMGQ4NDM4YjJkYWZjZjg1YiJ9.17ysA1R5kL4VA4kg-5ZNJp2S5ng7GshxLVpEou6Prks",
+          "bannerUrl": "https://cpcontents.adobe.com/protected/account/136804/banners/courses/15835265/2026-03-06%2005:10:30.093910135d228a8c41cc423dd3548e9e9c2a347f284a45419.png",
           "dateCreated": "2026-03-06T05:10:26.000Z",
           "datePublished": "2026-03-06T05:14:34.000Z",
           "dateUpdated": "2026-03-19T14:15:46.000Z",
@@ -1184,7 +599,7 @@
           "enrollmentType": "Self Enroll",
           "hasOptionalLoResources": false,
           "hasPreview": false,
-          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/courses/15835265/2026-03-06%2005:10:27.6576185075b74af9d292fb0132ad8244f3d1ccc4e899d444b_e6d62ef560b54aa3998c78fb971a324d.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiNTRiMTliNmQxMDIwNTZlZThkZjBhMTc2N2EyYzAyYTlhMTNmOWIwNCJ9.BPTDDRLtf65s6xWHgnef8W6hUi_AZNHiwwGDIN6ro9M",
+          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/courses/15835265/2026-03-06%2005:10:27.6576185075b74af9d292fb0132ad8244f3d1ccc4e899d444b_e6d62ef560b54aa3998c78fb971a324d.png",
           "instanceSwitchEnabled": false,
           "isBookmarked": false,
           "isExternal": false,
@@ -1245,7 +660,7 @@
             {
               "id": "recommendationRole:868",
               "levels": ["BEGINNER"],
-              "name": "Administrator"
+              "name": "Admin"
             }
           ]
         },
@@ -1317,148 +732,11 @@
         }
       },
       {
-        "id": "course:14812890",
-        "type": "learningObject",
-        "attributes": {
-          "authorNames": ["Chandan"],
-          "dateCreated": "2025-11-13T13:51:08.000Z",
-          "datePublished": "2025-11-13T13:51:08.000Z",
-          "dateUpdated": "2026-03-19T14:15:13.000Z",
-          "downloadable": false,
-          "duration": 480,
-          "effectiveModifiedDate": "2026-03-19T14:15:13.000Z",
-          "enableSocial": false,
-          "enrollmentType": "Self Enroll",
-          "hasOptionalLoResources": false,
-          "hasPreview": false,
-          "imageUrl": "https://cpcontents.adobe.com/public/images/default_courses/8.png",
-          "instanceSwitchEnabled": false,
-          "isBookmarked": false,
-          "isExternal": false,
-          "isMqaEnabled": false,
-          "isPrerequisiteEnforced": false,
-          "isSubLoOrderEnforced": true,
-          "loFormat": "Blended",
-          "loResourceCompletionCount": 7,
-          "loType": "course",
-          "moduleResetEnabled": false,
-          "multienrollmentEnabled": false,
-          "state": "Published",
-          "tags": ["Admin", "Digital Content Creaters", "Digital Marketing", "Marketing Mangers", "Test Tags 123"],
-          "unenrollmentAllowed": false,
-          "authorDetails": [
-            {
-              "authorId": "30697905",
-              "authorName": "Chandan",
-              "authorType": "Internal"
-            }
-          ],
-          "catalogLabels": [
-            {
-              "catalogLabelValueIds": [
-                {
-                  "name": "true",
-                  "id": "catalogLabel:5204_14638"
-                }
-              ],
-              "description": "Private",
-              "mandatory": true,
-              "name": "Private",
-              "values": ["true"]
-            }
-          ],
-          "localizedMetadata": [
-            {
-              "description": "Body 120 character Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
-              "locale": "en-US",
-              "name": "Animating Emotions: Using Movement to Convey a Feeling!",
-              "overview": "After completing this course, you will be able to::\nExplain data flow and architecture in Experience Platform\nNavigate through the Experience Platform UI\n Verify customer data ingestion in Experience Platform\n Verify application of data governance policies on the ingested data\n Retrieve data by using Query Services\n Create and activate audiences from Real-Time Customer Profile data\n Leverage Application Services to create real-time customer experiences\n Explain dataflow from Experience Platform to Intelligent Services\n Explain data flow and architecture in Experience Platform\n Navigate through the Experience Platform UI\n Verify customer data ingestion in Experience Platform\n",
-              "richTextOverview": "<p>After completing this course, you will be able to::</p>\n<ol>\n <li>Explain data flow and architecture in Experience Platform</li>\n</ol>\n<ul>\n <li>Navigate through the Experience Platform UI</li>\n <li>Verify customer data ingestion in Experience Platform</li>\n <li>Verify application of data governance policies on the ingested data</li>\n <li>Retrieve data by using Query Services</li>\n <li>Create and activate audiences from Real-Time Customer Profile data</li>\n <li>Leverage Application Services to create real-time customer experiences</li>\n <li>Explain dataflow from Experience Platform to Intelligent Services</li>\n <li>Explain data flow and architecture in Experience Platform</li>\n <li>Navigate through the Experience Platform UI</li>\n <li>Verify customer data ingestion in Experience Platform</li>\n</ul>"
-            }
-          ],
-          "products": [
-            {
-              "id": "recommendationProduct:932",
-              "name": "Acrobat"
-            },
-            {
-              "id": "recommendationProduct:935",
-              "name": "Acrobat Sign"
-            }
-          ],
-          "rating": {
-            "averageRating": 0,
-            "ratingsCount": 0
-          },
-          "roles": [
-            {
-              "id": "recommendationRole:865",
-              "levels": ["ADVANCED"],
-              "name": "Developer"
-            }
-          ]
-        },
-        "relationships": {
-          "authors": {
-            "data": [
-              {
-                "id": "30697905",
-                "type": "user"
-              }
-            ]
-          },
-          "instances": {
-            "data": [
-              {
-                "id": "course:14812890_15532604",
-                "type": "learningObjectInstance"
-              }
-            ]
-          },
-          "recommendationProducts": {
-            "data": [
-              {
-                "id": "recommendationProduct:932",
-                "type": "recommendationProduct"
-              },
-              {
-                "id": "recommendationProduct:935",
-                "type": "recommendationProduct"
-              }
-            ]
-          },
-          "recommendationRoles": {
-            "data": [
-              {
-                "id": "recommendationRole:865",
-                "type": "recommendationRole"
-              }
-            ]
-          },
-          "skills": {
-            "data": [
-              {
-                "id": "course:14812890_577674",
-                "type": "learningObjectSkill"
-              },
-              {
-                "id": "course:14812890_577675",
-                "type": "learningObjectSkill"
-              },
-              {
-                "id": "course:14812890_577676",
-                "type": "learningObjectSkill"
-              }
-            ]
-          }
-        }
-      },
-      {
         "id": "course:15844527",
         "type": "learningObject",
         "attributes": {
           "authorNames": ["Sneha"],
-          "bannerUrl": "https://cpcontents.adobe.com/protected/account/136804/banners/courses/15844527/2026-03-09%2002:58:06.989356545Slim%20Banner_%20Content%20Supply%20Chain_1740x500.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiNWEwYzFjMjFkZjExYTU2MWJmYTE2ZDE4NDViYjE5NmNjM2IyNzE5OCJ9.ZXKM3OAtrhWmSr6OTL-2oCMy0lgbq4E-SGUHOWqQlrQ",
+          "bannerUrl": "https://cpcontents.adobe.com/protected/account/136804/banners/courses/15844527/2026-03-09%2002:58:06.989356545Slim%20Banner_%20Content%20Supply%20Chain_1740x500.png",
           "dateCreated": "2026-03-09T02:58:03.000Z",
           "datePublished": "2026-03-09T02:59:36.000Z",
           "dateUpdated": "2026-03-19T12:20:21.000Z",
@@ -1469,7 +747,7 @@
           "enrollmentType": "Self Enroll",
           "hasOptionalLoResources": false,
           "hasPreview": false,
-          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/courses/15844527/2026-03-09%2002:58:04.345212147Expanded%20tile_AEM%20Sites_a8ac104922134c3b92f5c2236cafbbfc.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiYjA5ZDA4N2JmY2M2ZmM4YzI0YTI2YjZhZmYxOTU4ZDNlOGI1NTg2MyJ9.ezQysHDMYV5UKdk3wcbONR3t0WjypK5Veg1J8-vxWjQ",
+          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/courses/15844527/2026-03-09%2002:58:04.345212147Expanded%20tile_AEM%20Sites_a8ac104922134c3b92f5c2236cafbbfc.png",
           "instanceSwitchEnabled": false,
           "isBookmarked": false,
           "isExternal": false,
@@ -1533,7 +811,7 @@
             {
               "id": "recommendationRole:867",
               "levels": ["BEGINNER"],
-              "name": "Business leader"
+              "name": "Leader"
             }
           ]
         },
@@ -1545,6 +823,12 @@
                 "type": "user"
               }
             ]
+          },
+          "enrollment": {
+            "data": {
+              "id": "course:15844527_16584324_36216747",
+              "type": "learningObjectInstanceEnrollment"
+            }
           },
           "instances": {
             "data": [
@@ -1593,7 +877,7 @@
         "type": "learningObject",
         "attributes": {
           "authorNames": ["Chandan"],
-          "bannerUrl": "https://cpcontents.adobe.com/protected/account/136804/banners/courses/15687218/2026-02-26%2006:17:00.051108318Slim%20Banner_Commerce.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiYjIzOGYwYmMwNmM3YmRlOTFhNjhlZTgxYTlmNzRlNmNmMjI3MGM2MyJ9.A04e1rZWlXPLQx21mCTHShxWDgxd_hLgxaoXxrphHeg",
+          "bannerUrl": "https://cpcontents.adobe.com/protected/account/136804/banners/courses/15687218/2026-02-26%2006:17:00.051108318Slim%20Banner_Commerce.png",
           "dateCreated": "2026-02-26T06:16:56.000Z",
           "datePublished": "2026-02-26T06:17:42.000Z",
           "dateUpdated": "2026-02-26T06:29:44.000Z",
@@ -1604,7 +888,7 @@
           "enrollmentType": "Self Enroll",
           "hasOptionalLoResources": false,
           "hasPreview": false,
-          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/courses/15687218/2026-02-26%2006:16:57.979890004Expanded%20tile_Commerce_b18c41f19b1848ee8204186e7025857e.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiMDA1MDMwNmU2NDZmNzE0MjE3ZGYxOGQyNTIyMjE0MTM1NDU1ZWQ4NCJ9.tOxOtVuZ4G-RcuetFS9xZFwgVlK-OAkuT10Rm6hJ7ws",
+          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/courses/15687218/2026-02-26%2006:16:57.979890004Expanded%20tile_Commerce_b18c41f19b1848ee8204186e7025857e.png",
           "instanceSwitchEnabled": false,
           "isBookmarked": false,
           "isExternal": false,
@@ -1649,7 +933,7 @@
             {
               "id": "recommendationRole:868",
               "levels": ["BEGINNER"],
-              "name": "Administrator"
+              "name": "Admin"
             }
           ]
         },
@@ -1695,6 +979,505 @@
             ]
           }
         }
+      },
+      {
+        "id": "course:15135053",
+        "type": "learningObject",
+        "attributes": {
+          "authorNames": ["Chandan"],
+          "dateCreated": "2025-12-18T08:42:03.000Z",
+          "datePublished": "2025-12-18T08:42:57.000Z",
+          "dateUpdated": "2026-01-19T05:42:55.000Z",
+          "downloadable": false,
+          "duration": 930,
+          "effectiveModifiedDate": "2026-01-19T05:42:55.000Z",
+          "enableSocial": false,
+          "enrollmentType": "Self Enroll",
+          "hasOptionalLoResources": false,
+          "hasPreview": false,
+          "imageUrl": "https://cpcontents.adobe.com/protected/account/136804/thumbnails/courses/15135053/2025-12-18%2008:42:06.924515535Digital%20collaboration%20in%20action_0ba7d00da6144aa484b128cb8585f436.png",
+          "instanceSwitchEnabled": false,
+          "isBookmarked": false,
+          "isExternal": false,
+          "isMqaEnabled": false,
+          "isPrerequisiteEnforced": false,
+          "isSubLoOrderEnforced": false,
+          "loFormat": "Self Paced",
+          "loResourceCompletionCount": 5,
+          "loType": "course",
+          "moduleResetEnabled": false,
+          "multienrollmentEnabled": false,
+          "state": "Published",
+          "tags": ["Course Test"],
+          "unenrollmentAllowed": true,
+          "whoShouldTake": ["admin"],
+          "authorDetails": [
+            {
+              "authorId": "30697905",
+              "authorName": "Chandan",
+              "authorType": "Internal"
+            }
+          ],
+          "localizedMetadata": [
+            {
+              "description": "This course focuses on developing clear and professional communication skills for remote and distributed teams. Learners will understand bes",
+              "locale": "en-US",
+              "name": "Effective Communication Skills for Remote Work_",
+              "overview": "This course focuses on developing clear and professional communication skills for remote and distributed teams. Learners will understand best practices for virtual meetings, written communication, and online collaboration. The course helps improve clarity, engagement, and teamwork in digital-first work environments.",
+              "richTextOverview": "<p>This course focuses on developing clear and professional communication skills for remote and distributed teams. Learners will understand best practices for virtual meetings, written communication, and online collaboration. The course helps improve clarity, engagement, and teamwork in digital-first work environments.</p>"
+            }
+          ],
+          "products": [
+            {
+              "id": "recommendationProduct:933",
+              "name": "Acrobat Services"
+            }
+          ],
+          "rating": {
+            "averageRating": 4,
+            "ratingsCount": 1
+          },
+          "roles": [
+            {
+              "id": "recommendationRole:867",
+              "levels": ["BEGINNER"],
+              "name": "Leader"
+            }
+          ]
+        },
+        "relationships": {
+          "authors": {
+            "data": [
+              {
+                "id": "30697905",
+                "type": "user"
+              }
+            ]
+          },
+          "instances": {
+            "data": [
+              {
+                "id": "course:15135053_15859923",
+                "type": "learningObjectInstance"
+              }
+            ]
+          },
+          "recommendationProducts": {
+            "data": [
+              {
+                "id": "recommendationProduct:933",
+                "type": "recommendationProduct"
+              }
+            ]
+          },
+          "recommendationRoles": {
+            "data": [
+              {
+                "id": "recommendationRole:867",
+                "type": "recommendationRole"
+              }
+            ]
+          },
+          "skills": {
+            "data": [
+              {
+                "id": "course:15135053_587430",
+                "type": "learningObjectSkill"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "course:15900888",
+        "type": "learningObject",
+        "attributes": {
+          "authorNames": ["cod54250"],
+          "dateCreated": "2026-03-26T14:06:52.000Z",
+          "datePublished": "2026-03-26T14:07:44.000Z",
+          "dateUpdated": "2026-03-27T11:40:50.000Z",
+          "downloadable": false,
+          "duration": 3700,
+          "effectiveModifiedDate": "2026-03-27T11:50:01.000Z",
+          "enableSocial": false,
+          "enrollmentType": "Self Enroll",
+          "hasOptionalLoResources": false,
+          "hasPreview": false,
+          "instanceSwitchEnabled": false,
+          "isBookmarked": false,
+          "isExternal": false,
+          "isMqaEnabled": false,
+          "isPrerequisiteEnforced": false,
+          "isSubLoOrderEnforced": false,
+          "loFormat": "Blended",
+          "loResourceCompletionCount": 4,
+          "loType": "course",
+          "moduleResetEnabled": false,
+          "multienrollmentEnabled": false,
+          "state": "Published",
+          "unenrollmentAllowed": false,
+          "whoShouldTake": ["admin"],
+          "authorDetails": [
+            {
+              "authorId": "35741956",
+              "authorName": "cod54250",
+              "authorType": "Internal"
+            }
+          ],
+          "catalogLabels": [
+            {
+              "catalogLabelValueIds": [
+                {
+                  "name": "true",
+                  "id": "catalogLabel:5203_14637"
+                }
+              ],
+              "description": "",
+              "mandatory": true,
+              "name": "Public",
+              "values": ["true"]
+            }
+          ],
+          "localizedMetadata": [
+            {
+              "description": "VLIT Multiple Session",
+              "locale": "en-US",
+              "name": "VLIT Multiple Session",
+              "overview": "VLIT Multiple Session",
+              "richTextOverview": "<p>VLIT Multiple Session</p>"
+            }
+          ],
+          "products": [
+            {
+              "id": "recommendationProduct:932",
+              "name": "Acrobat"
+            },
+            {
+              "id": "recommendationProduct:933",
+              "name": "Acrobat Services"
+            },
+            {
+              "id": "recommendationProduct:934",
+              "name": "Adobe"
+            },
+            {
+              "id": "recommendationProduct:935",
+              "name": "Acrobat Sign"
+            },
+            {
+              "id": "recommendationProduct:1024",
+              "name": "Advertising"
+            },
+            {
+              "id": "recommendationProduct:1028",
+              "name": "Audience Manager"
+            },
+            {
+              "id": "recommendationProduct:1029",
+              "name": "Campaign Standard"
+            },
+            {
+              "id": "recommendationProduct:1031",
+              "name": "Campaign Classic v7"
+            },
+            {
+              "id": "recommendationProduct:1032",
+              "name": "Campaign v8"
+            },
+            {
+              "id": "recommendationProduct:1033",
+              "name": "Customer Journey Analytics"
+            }
+          ],
+          "rating": {
+            "averageRating": 0,
+            "ratingsCount": 0
+          },
+          "roles": [
+            {
+              "id": "recommendationRole:868",
+              "levels": ["INTERMEDIATE"],
+              "name": "Admin"
+            }
+          ]
+        },
+        "relationships": {
+          "authors": {
+            "data": [
+              {
+                "id": "35741956",
+                "type": "user"
+              }
+            ]
+          },
+          "instances": {
+            "data": [
+              {
+                "id": "course:15900888_16643647",
+                "type": "learningObjectInstance"
+              },
+              {
+                "id": "course:15900888_16643666",
+                "type": "learningObjectInstance"
+              }
+            ]
+          },
+          "recommendationProducts": {
+            "data": [
+              {
+                "id": "recommendationProduct:932",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:933",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:934",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:935",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:1024",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:1028",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:1029",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:1031",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:1032",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:1033",
+                "type": "recommendationProduct"
+              }
+            ]
+          },
+          "recommendationRoles": {
+            "data": [
+              {
+                "id": "recommendationRole:868",
+                "type": "recommendationRole"
+              }
+            ]
+          },
+          "skills": {
+            "data": [
+              {
+                "id": "course:15900888_577675",
+                "type": "learningObjectSkill"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "course:15895457",
+        "type": "learningObject",
+        "attributes": {
+          "authorNames": ["Abhishek"],
+          "dateCreated": "2026-03-24T12:04:12.000Z",
+          "datePublished": "2026-03-24T12:05:49.000Z",
+          "dateUpdated": "2026-03-27T12:36:26.000Z",
+          "downloadable": false,
+          "duration": 3600,
+          "effectiveModifiedDate": "2026-03-27T12:50:24.000Z",
+          "enableSocial": false,
+          "enrollmentType": "Self Enroll",
+          "hasOptionalLoResources": false,
+          "hasPreview": false,
+          "instanceSwitchEnabled": false,
+          "isBookmarked": false,
+          "isExternal": false,
+          "isMqaEnabled": false,
+          "isPrerequisiteEnforced": false,
+          "isSubLoOrderEnforced": false,
+          "loFormat": "Virtual Classroom",
+          "loResourceCompletionCount": 1,
+          "loType": "course",
+          "moduleResetEnabled": false,
+          "multienrollmentEnabled": false,
+          "state": "Published",
+          "tags": ["Live Session"],
+          "unenrollmentAllowed": false,
+          "whoShouldTake": ["admin"],
+          "authorDetails": [
+            {
+              "authorId": "35784727",
+              "authorName": "Abhishek",
+              "authorType": "Internal"
+            }
+          ],
+          "catalogLabels": [
+            {
+              "catalogLabelValueIds": [
+                {
+                  "name": "true",
+                  "id": "catalogLabel:5203_14637"
+                }
+              ],
+              "description": "",
+              "mandatory": true,
+              "name": "Public",
+              "values": ["true"]
+            }
+          ],
+          "localizedMetadata": [
+            {
+              "description": "Test VILT description ",
+              "locale": "en-US",
+              "name": "Test VILT course"
+            }
+          ],
+          "products": [
+            {
+              "id": "recommendationProduct:931",
+              "name": "AEM"
+            },
+            {
+              "id": "recommendationProduct:932",
+              "name": "Acrobat"
+            },
+            {
+              "id": "recommendationProduct:933",
+              "name": "Acrobat Services"
+            },
+            {
+              "id": "recommendationProduct:934",
+              "name": "Adobe"
+            },
+            {
+              "id": "recommendationProduct:935",
+              "name": "Acrobat Sign"
+            },
+            {
+              "id": "recommendationProduct:941",
+              "name": "AEM Assets"
+            },
+            {
+              "id": "recommendationProduct:1024",
+              "name": "Advertising"
+            },
+            {
+              "id": "recommendationProduct:1025",
+              "name": "AI Training"
+            },
+            {
+              "id": "recommendationProduct:1026",
+              "name": "Analytics"
+            },
+            {
+              "id": "recommendationProduct:1028",
+              "name": "Audience Manager"
+            }
+          ],
+          "rating": {
+            "averageRating": 0,
+            "ratingsCount": 0
+          },
+          "roles": [
+            {
+              "id": "recommendationRole:868",
+              "levels": ["BEGINNER"],
+              "name": "Admin"
+            }
+          ]
+        },
+        "relationships": {
+          "authors": {
+            "data": [
+              {
+                "id": "35784727",
+                "type": "user"
+              }
+            ]
+          },
+          "instances": {
+            "data": [
+              {
+                "id": "course:15895457_16637805",
+                "type": "learningObjectInstance"
+              },
+              {
+                "id": "course:15895457_16644914",
+                "type": "learningObjectInstance"
+              }
+            ]
+          },
+          "recommendationProducts": {
+            "data": [
+              {
+                "id": "recommendationProduct:931",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:932",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:933",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:934",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:935",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:941",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:1024",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:1025",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:1026",
+                "type": "recommendationProduct"
+              },
+              {
+                "id": "recommendationProduct:1028",
+                "type": "recommendationProduct"
+              }
+            ]
+          },
+          "recommendationRoles": {
+            "data": [
+              {
+                "id": "recommendationRole:868",
+                "type": "recommendationRole"
+              }
+            ]
+          },
+          "skills": {
+            "data": [
+              {
+                "id": "course:15895457_577673",
+                "type": "learningObjectSkill"
+              }
+            ]
+          }
+        }
       }
     ],
     "included": [
@@ -1715,6 +1498,12 @@
           ]
         },
         "relationships": {
+          "enrollment": {
+            "data": {
+              "id": "course:15135050_15859920_36216747",
+              "type": "learningObjectInstanceEnrollment"
+            }
+          },
           "learningObject": {
             "data": {
               "id": "course:15135050",
@@ -1768,6 +1557,12 @@
           ]
         },
         "relationships": {
+          "enrollment": {
+            "data": {
+              "id": "course:15895480_16637840_36216747",
+              "type": "learningObjectInstanceEnrollment"
+            }
+          },
           "learningObject": {
             "data": {
               "id": "course:15895480",
@@ -1778,174 +1573,6 @@
             "data": [
               {
                 "id": "course:15895480_16637840_21346474_0",
-                "type": "learningObjectResource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15899677_16642250",
-        "type": "learningObjectInstance",
-        "attributes": {
-          "completionDeadline": "2026-04-30T18:29:59.000Z",
-          "dateCreated": "2026-03-25T13:43:34.000Z",
-          "enrollmentDeadline": "2026-03-26T18:29:59.000Z",
-          "isAET": false,
-          "isDefault": true,
-          "isFlexible": false,
-          "seatLimit": 20,
-          "state": "Active",
-          "unenrollmentDeadline": "2026-03-27T18:29:59.000Z",
-          "localizedMetadata": [
-            {
-              "locale": "en-US",
-              "name": " 332 |  Asia"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15899677",
-              "type": "learningObject"
-            }
-          },
-          "loResources": {
-            "data": [
-              {
-                "id": "course:15899677_16642250_21350751_0",
-                "type": "learningObjectResource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15899677_16642257",
-        "type": "learningObjectInstance",
-        "attributes": {
-          "completionDeadline": "2026-04-15T18:29:59.000Z",
-          "dateCreated": "2026-03-25T13:50:25.000Z",
-          "enrollmentDeadline": "2026-04-12T18:29:59.000Z",
-          "isAET": false,
-          "isDefault": false,
-          "isFlexible": false,
-          "state": "Active",
-          "unenrollmentDeadline": "2026-04-12T18:29:59.000Z",
-          "localizedMetadata": [
-            {
-              "locale": "en-US",
-              "name": "314 |  Eastern European Time"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15899677",
-              "type": "learningObject"
-            }
-          },
-          "loResources": {
-            "data": [
-              {
-                "id": "course:15899677_16642257_21350751_0",
-                "type": "learningObjectResource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15899594_16642155",
-        "type": "learningObjectInstance",
-        "attributes": {
-          "completionDeadline": "2026-03-31T18:29:59.000Z",
-          "dateCreated": "2026-03-25T12:56:10.000Z",
-          "enrollmentDeadline": "2026-03-27T18:29:59.000Z",
-          "isAET": false,
-          "isDefault": true,
-          "isFlexible": false,
-          "seatLimit": 20,
-          "state": "Active",
-          "unenrollmentDeadline": "2026-03-28T18:29:59.000Z",
-          "localizedMetadata": [
-            {
-              "locale": "en-US",
-              "name": " 363 |  South Africa "
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15899594",
-              "type": "learningObject"
-            }
-          },
-          "loResources": {
-            "data": [
-              {
-                "id": "course:15899594_16642155_21350610_0",
-                "type": "learningObjectResource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15899521_16642073",
-        "type": "learningObjectInstance",
-        "attributes": {
-          "dateCreated": "2026-03-25T10:52:44.000Z",
-          "isAET": false,
-          "isDefault": true,
-          "isFlexible": false,
-          "seatLimit": 20,
-          "state": "Active",
-          "localizedMetadata": [
-            {
-              "locale": "en-US",
-              "name": "Default Instance"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15899521",
-              "type": "learningObject"
-            }
-          },
-          "loResources": {
-            "data": [
-              {
-                "id": "course:15899521_16642073_21350482_0",
-                "type": "learningObjectResource"
-              },
-              {
-                "id": "course:15899521_16642073_21350483_0",
-                "type": "learningObjectResource"
-              },
-              {
-                "id": "course:15899521_16642073_21350484_0",
-                "type": "learningObjectResource"
-              },
-              {
-                "id": "course:15899521_16642073_21350486_0",
-                "type": "learningObjectResource"
-              },
-              {
-                "id": "course:15899521_16642073_21350485_0",
-                "type": "learningObjectResource"
-              },
-              {
-                "id": "course:15899521_16642073_21350487_0",
-                "type": "learningObjectResource"
-              },
-              {
-                "id": "course:15899521_16642073_21350488_0",
                 "type": "learningObjectResource"
               }
             ]
@@ -2211,63 +1838,6 @@
         }
       },
       {
-        "id": "course:14812890_15532604",
-        "type": "learningObjectInstance",
-        "attributes": {
-          "dateCreated": "2025-11-13T13:51:08.000Z",
-          "isAET": false,
-          "isDefault": true,
-          "isFlexible": false,
-          "state": "Active",
-          "localizedMetadata": [
-            {
-              "locale": "en-US",
-              "name": "Default instance"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:14812890",
-              "type": "learningObject"
-            }
-          },
-          "loResources": {
-            "data": [
-              {
-                "id": "course:14812890_15532604_20436701_0",
-                "type": "learningObjectResource"
-              },
-              {
-                "id": "course:14812890_15532604_20436700_0",
-                "type": "learningObjectResource"
-              },
-              {
-                "id": "course:14812890_15532604_20436699_0",
-                "type": "learningObjectResource"
-              },
-              {
-                "id": "course:14812890_15532604_20436704_0",
-                "type": "learningObjectResource"
-              },
-              {
-                "id": "course:14812890_15532604_20436702_0",
-                "type": "learningObjectResource"
-              },
-              {
-                "id": "course:14812890_15532604_20436703_0",
-                "type": "learningObjectResource"
-              },
-              {
-                "id": "course:14812890_15532604_20446381_0",
-                "type": "learningObjectResource"
-              }
-            ]
-          }
-        }
-      },
-      {
         "id": "course:15844527_16584324",
         "type": "learningObjectInstance",
         "attributes": {
@@ -2285,6 +1855,12 @@
           ]
         },
         "relationships": {
+          "enrollment": {
+            "data": {
+              "id": "course:15844527_16584324_36216747",
+              "type": "learningObjectInstanceEnrollment"
+            }
+          },
           "learningObject": {
             "data": {
               "id": "course:15844527",
@@ -2377,849 +1953,807 @@
         }
       },
       {
-        "id": "course:15899594_16642155_21350610_0_resource",
-        "type": "resource",
+        "id": "course:15135053_15859923",
+        "type": "learningObjectInstance",
         "attributes": {
-          "avatarUrls": ["https://cpcontents.adobe.com/public/images/default_user_avatar.svg"],
-          "contentType": "Virtual Classroom",
-          "desiredDuration": 0,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": ["cod54250"],
+          "dateCreated": "2025-12-18T08:42:08.000Z",
+          "isAET": false,
           "isDefault": true,
-          "locale": "en-US",
-          "name": "Adobe - VILT Seat Limit",
-          "onlyQuiz": false,
-          "reportingType": "NONE",
-          "seatLimit": 20
-        }
-      },
-      {
-        "id": "17328567_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 100,
-          "avatarUrls": [],
-          "contentType": "VIDEO",
-          "dateCreated": "2025-11-13T13:51:08.000Z",
-          "desiredDuration": 100,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 18897434,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Introduction-Digital Poster Designs Using Adobe Photoshop",
-          "onlyQuiz": false,
-          "reportingInfo": "{\"CCCriteria\":\"launch_content\",\"CCData\":{\"viewPercent\":0,\"quizData\":null},\"SCCriteria\":\"launch_content\",\"SCData\":{\"viewPercent\":0,\"quizData\":null}}",
-          "reportingType": "CAPI"
-        }
-      },
-      {
-        "id": "course:15884870_16626823_21352272_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": [],
-          "contentType": "Virtual Classroom",
-          "desiredDuration": 0,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": [],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "Test for Module 1",
-          "onlyQuiz": false,
-          "reportingType": "NONE"
-        }
-      },
-      {
-        "id": "17328576_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 310,
-          "avatarUrls": [],
-          "contentType": "VIDEO",
-          "dateCreated": "2025-11-13T13:51:08.000Z",
-          "desiredDuration": 310,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 18897443,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Using Movement to Convey a Feeling",
-          "onlyQuiz": false,
-          "reportingInfo": "{\"CCCriteria\":\"launch_content\",\"CCData\":{\"viewPercent\":0,\"quizData\":null},\"SCCriteria\":\"launch_content\",\"SCData\":{\"viewPercent\":0,\"quizData\":null}}",
-          "reportingType": "CAPI"
-        }
-      },
-      {
-        "id": "17780860_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 50,
-          "avatarUrls": [],
-          "contentType": "OTHER",
-          "dateCreated": "2026-02-13T08:03:05.000Z",
-          "desiredDuration": 15,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 19366503,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Test for Joshua",
-          "onlyQuiz": false
-        }
-      },
-      {
-        "id": "course:14812890_15532604_20436702_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": [],
-          "contentType": "Classroom",
-          "desiredDuration": 0,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": [],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "QA",
-          "onlyQuiz": false,
-          "reportingType": "NONE"
-        }
-      },
-      {
-        "id": "course:15884870_16633983_21334360_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": [],
-          "completionDeadline": "2026-03-24T21:00:00.000Z",
-          "contentType": "Virtual Classroom",
-          "dateStart": "2026-03-24T20:00:00.000Z",
-          "desiredDuration": 3600,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": [],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "BLR - Test 1",
-          "onlyQuiz": false,
-          "reportingType": "NONE"
-        }
-      },
-      {
-        "id": "17883256_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 50,
-          "avatarUrls": [],
-          "contentType": "OTHER",
-          "dateCreated": "2026-02-20T15:49:07.000Z",
-          "desiredDuration": 15,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 19471825,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Customer Journey Analytics Learning Program",
-          "onlyQuiz": false
-        }
-      },
-      {
-        "id": "course:15899677_16642257_21350751_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": [],
-          "contentType": "Virtual Classroom",
-          "desiredDuration": 0,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": [],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "Cumulative Fix Packs (CFPs)2",
-          "onlyQuiz": false,
-          "reportingType": "NONE"
-        }
-      },
-      {
-        "id": "course:14812890_15532604_20436703_0_resource",
-        "type": "resource",
-        "attributes": {
-          "CCCriteria": "mark_complete",
-          "avatarUrls": [],
-          "contentType": "Activity",
-          "desiredDuration": 0,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": [],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "Chandan Module",
-          "onlyQuiz": false,
-          "reportingType": "NONE"
-        }
-      },
-      {
-        "id": "course:15884870_16626820_21352272_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": ["https://cpcontents.adobe.com/public/images/default_user_avatar.svg"],
-          "contentType": "Virtual Classroom",
-          "desiredDuration": 0,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": ["cod54250"],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "Test for Module 1",
-          "onlyQuiz": false,
-          "reportingType": "NONE",
-          "seatLimit": 20
-        }
-      },
-      {
-        "id": "17780859_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 50,
-          "avatarUrls": [],
-          "contentType": "OTHER",
-          "dateCreated": "2026-02-13T08:03:05.000Z",
-          "desiredDuration": 15,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 19366502,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Adobe Certified Professional - Adobe Marketo Engage Digital Marketer",
-          "onlyQuiz": false
-        }
-      },
-      {
-        "id": "17780858_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 50,
-          "avatarUrls": [],
-          "contentType": "OTHER",
-          "dateCreated": "2026-02-13T08:03:05.000Z",
-          "desiredDuration": 15,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 19366501,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Adobe Certified Professional - Adobe Target Optimization Specialist",
-          "onlyQuiz": false
-        }
-      },
-      {
-        "id": "course:15899677_16642250_21350751_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": ["https://cpcontents.adobe.com/public/images/default_user_avatar.svg"],
-          "contentType": "Virtual Classroom",
-          "desiredDuration": 0,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": ["cod54250"],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "Cumulative Fix Packs (CFPs)2",
-          "onlyQuiz": false,
-          "reportingType": "NONE",
-          "seatLimit": 20
-        }
-      },
-      {
-        "id": "17328572_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 80,
-          "avatarUrls": [],
-          "contentType": "VIDEO",
-          "dateCreated": "2025-11-13T13:51:08.000Z",
-          "desiredDuration": 80,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 18897439,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Photoshop fundamentals",
-          "onlyQuiz": false,
-          "reportingInfo": "{\"CCCriteria\":\"launch_content\",\"CCData\":{\"viewPercent\":0,\"quizData\":null},\"SCCriteria\":\"launch_content\",\"SCData\":{\"viewPercent\":0,\"quizData\":null}}",
-          "reportingType": "CAPI"
-        }
-      },
-      {
-        "id": "course:15884870_16626821_21352272_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": [],
-          "contentType": "Virtual Classroom",
-          "desiredDuration": 0,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": [],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "Test for Module 1",
-          "onlyQuiz": false,
-          "reportingType": "NONE"
-        }
-      },
-      {
-        "id": "course:15884870_16626820_21334360_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": [],
-          "completionDeadline": "2026-05-06T20:30:00.000Z",
-          "contentType": "Virtual Classroom",
-          "dateStart": "2026-03-19T19:30:00.000Z",
-          "desiredDuration": 126000,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": [],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "BLR - Test 1",
-          "onlyQuiz": false,
-          "reportingType": "NONE",
-          "seatLimit": 20
-        }
-      },
-      {
-        "id": "course:15884870_16626821_21334360_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": [],
-          "contentType": "Virtual Classroom",
-          "desiredDuration": 0,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": [],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "BLR - Test 1",
-          "onlyQuiz": false,
-          "reportingType": "NONE"
-        }
-      },
-      {
-        "id": "17328568_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 250,
-          "avatarUrls": [],
-          "contentType": "VIDEO",
-          "dateCreated": "2025-11-13T13:51:08.000Z",
-          "desiredDuration": 250,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 18897435,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Digital Poster Designs Using Adobe Photoshop",
-          "onlyQuiz": false,
-          "reportingInfo": "{\"CCCriteria\":\"launch_content\",\"CCData\":{\"viewPercent\":0,\"quizData\":null},\"SCCriteria\":\"launch_content\",\"SCData\":{\"viewPercent\":0,\"quizData\":null}}",
-          "reportingType": "CAPI"
-        }
-      },
-      {
-        "id": "course:15884870_16633983_21352272_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": [],
-          "contentType": "Virtual Classroom",
-          "desiredDuration": 0,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": [],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "Test for Module 1",
-          "onlyQuiz": false,
-          "reportingType": "NONE"
-        }
-      },
-      {
-        "id": "17328591_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 300,
-          "avatarUrls": [],
-          "contentType": "CP",
-          "contentZipSize": 26836943,
-          "dateCreated": "2025-11-13T13:51:08.000Z",
-          "desiredDuration": 300,
-          "hasQuiz": true,
-          "hasToc": false,
-          "internalResourceId": 18897457,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Uploading modules and compartmentalization",
-          "onlyQuiz": false,
-          "reportingInfo": "{\"CCCriteria\":\"view_percent\",\"SCCriteria\":\"view_percent\",\"CCData\":{\"viewPercent\":\"100\",\"quizData\":null},\"SCData\":{\"viewPercent\":\"100\",\"quizData\":null}}",
-          "reportingType": "CAPI"
-        }
-      },
-      {
-        "id": "course:15687218_16425609_21155627_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": [
-            "https://cpcontents.adobe.com/protected/account/136804/accountassets/136804/userassets/30697905/1764152554260_Frame 2018779495.png"
-          ],
-          "completionDeadline": "2026-02-26T06:35:00.000Z",
-          "contentType": "Virtual Classroom",
-          "dateStart": "2026-02-26T06:25:00.000Z",
-          "desiredDuration": 600,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": ["Chandan"],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "Test VILT",
-          "onlyQuiz": false,
-          "reportingType": "NONE",
-          "seatLimit": 20
-        }
-      },
-      {
-        "id": "course:15844527_16584324_21293718_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": [
-            "https://cpcontents.adobe.com/public/images/default_user_avatar.svg",
-            "https://cpcontents.adobe.com/public/images/default_user_avatar.svg",
-            "https://cpcontents.adobe.com/public/images/default_user_avatar.svg"
-          ],
-          "completionDeadline": "2026-03-20T18:00:00.000Z",
-          "contentType": "Virtual Classroom",
-          "dateStart": "2026-03-16T16:00:00.000Z",
-          "desiredDuration": 36000,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": ["Sneha", "Silpa Yanamala", "Chandan"],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "Test 1 VILT",
-          "onlyQuiz": false,
-          "reportingType": "NONE",
-          "seatLimit": 20
-        }
-      },
-      {
-        "id": "17328575_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 90,
-          "avatarUrls": [],
-          "contentType": "VIDEO",
-          "dateCreated": "2025-11-13T13:51:08.000Z",
-          "desiredDuration": 90,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 18897442,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Introduction-Animating Emotions: Using Movement to Convey a Feeling",
-          "onlyQuiz": false,
-          "reportingInfo": "{\"CCCriteria\":\"launch_content\",\"CCData\":{\"viewPercent\":0,\"quizData\":null},\"SCCriteria\":\"launch_content\",\"SCData\":{\"viewPercent\":0,\"quizData\":null}}",
-          "reportingType": "CAPI"
-        }
-      },
-      {
-        "id": "course:14812890_15532604_20436704_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": [],
-          "contentType": "Virtual Classroom",
-          "desiredDuration": 0,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": [],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "Test_Chandan",
-          "onlyQuiz": false,
-          "reportingType": "NONE"
-        }
-      },
-      {
-        "id": "course:14812890_15532604_20446381_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": [
-            "https://cpcontents.adobe.com/protected/account/136804/accountassets/136804/userassets/30697905/1764152554260_Frame 2018779495.png"
-          ],
-          "contentType": "Virtual Classroom",
-          "desiredDuration": 0,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": ["Chandan"],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "QA Instructor ",
-          "onlyQuiz": false,
-          "reportingType": "NONE"
-        }
-      },
-      {
-        "id": "17328573_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 60,
-          "avatarUrls": [],
-          "contentType": "VIDEO",
-          "dateCreated": "2025-11-13T13:51:08.000Z",
-          "desiredDuration": 60,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 18897440,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Introduction-Vector Illustration Drawing with the Pen Tool",
-          "onlyQuiz": false,
-          "reportingInfo": "{\"CCCriteria\":\"launch_content\",\"CCData\":{\"viewPercent\":0,\"quizData\":null},\"SCCriteria\":\"launch_content\",\"SCData\":{\"viewPercent\":0,\"quizData\":null}}",
-          "reportingType": "CAPI"
-        }
-      },
-      {
-        "id": "17328574_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 300,
-          "avatarUrls": [],
-          "contentType": "VIDEO",
-          "dateCreated": "2025-11-13T13:51:08.000Z",
-          "desiredDuration": 300,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 18897441,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Streaming with Adobe tools",
-          "onlyQuiz": false,
-          "reportingInfo": "{\"CCCriteria\":\"launch_content\",\"CCData\":{\"viewPercent\":0,\"quizData\":null},\"SCCriteria\":\"launch_content\",\"SCData\":{\"viewPercent\":0,\"quizData\":null}}",
-          "reportingType": "CAPI"
-        }
-      },
-      {
-        "id": "course:15884870_16626823_21334360_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": [],
-          "contentType": "Virtual Classroom",
-          "desiredDuration": 0,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": [],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "BLR - Test 1",
-          "onlyQuiz": false,
-          "reportingType": "NONE"
-        }
-      },
-      {
-        "id": "17780857_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 50,
-          "avatarUrls": [],
-          "contentType": "OTHER",
-          "dateCreated": "2026-02-13T08:03:05.000Z",
-          "desiredDuration": 15,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 19366500,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Adobe Certified Professional - Adobe Experience Manager Sites Content Author",
-          "onlyQuiz": false
-        }
-      },
-      {
-        "id": "course:15687218_16425609_21155630_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": [
-            "https://cpcontents.adobe.com/protected/account/136804/accountassets/136804/userassets/30697905/1764152554260_Frame%202018779495.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzUyMDMwMTcsImlhdCI6MTc3NDU5ODIxNywicmlkIjoiMjM3NTg3MTciLCJjaWQiOiIzMTM2IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY4ZTJjODBmMmJiYTY3N2Q0NTJiMThiODJmZjljYzkwIiwib3JpZ2luYWxVcmxIYXNoIjoiM2MxNGM4OTQ2NDc5MTBlYWUwNjc0MTljMmY2Y2RjNTNjMDJjOTkxMiJ9.vB_qr-sAcUoxNxhxQwlu4gUvfdoCePUzk3uV-5diyVw"
-          ],
-          "completionDeadline": "2026-02-26T06:40:00.000Z",
-          "contentType": "Classroom",
-          "dateStart": "2026-02-26T06:36:00.000Z",
-          "desiredDuration": 240,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": ["Chandan"],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "Test Classrom",
-          "onlyQuiz": false,
-          "reportingType": "NONE",
-          "seatLimit": 20
-        }
-      },
-      {
-        "id": "course:15844527_16584325_21293718_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": [
-            "https://cpcontents.adobe.com/public/images/default_user_avatar.svg",
-            "https://cpcontents.adobe.com/public/images/default_user_avatar.svg"
-          ],
-          "completionDeadline": "2026-03-27T09:30:00.000Z",
-          "contentType": "Virtual Classroom",
-          "dateStart": "2026-03-23T08:30:00.000Z",
-          "desiredDuration": 18000,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": ["Sneha", "Silpa Yanamala"],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "Test 1 VILT",
-          "onlyQuiz": false,
-          "reportingType": "NONE",
-          "seatLimit": 20
-        }
-      },
-      {
-        "id": "course:15899521_16642073_21350488_0_resource",
-        "type": "resource",
-        "attributes": {
-          "CCCriteria": "mark_complete",
-          "avatarUrls": [],
-          "contentType": "Activity",
-          "desiredDuration": 0,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": [],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "Cohort table overview",
-          "onlyQuiz": false,
-          "reportingType": "NONE"
-        }
-      },
-      {
-        "id": "17780849_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 50,
-          "avatarUrls": [],
-          "contentType": "OTHER",
-          "dateCreated": "2026-02-13T08:03:04.000Z",
-          "desiredDuration": 15,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 19366492,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Adobe Certified Expert - Adobe Customer Journey Analytics Developer",
-          "onlyQuiz": false
-        }
-      },
-      {
-        "id": "17780856_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 50,
-          "avatarUrls": [],
-          "contentType": "OTHER",
-          "dateCreated": "2026-02-13T08:03:05.000Z",
-          "desiredDuration": 15,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 19366499,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Adobe Certified Professional - Adobe Experience Manager Digital Librarian",
-          "onlyQuiz": false
-        }
-      },
-      {
-        "id": "17780831_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 50,
-          "avatarUrls": [],
-          "contentType": "OTHER",
-          "dateCreated": "2026-02-13T08:03:03.000Z",
-          "desiredDuration": 15,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 19366474,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Adobe Certified Expert - Adobe Workfront Core Developer",
-          "onlyQuiz": false
-        }
-      },
-      {
-        "id": "17780850_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 50,
-          "avatarUrls": [],
-          "contentType": "OTHER",
-          "dateCreated": "2026-02-13T08:03:04.000Z",
-          "desiredDuration": 15,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 19366493,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Adobe Certified Professional - Adobe Document Cloud Business Practitioner",
-          "onlyQuiz": false
-        }
-      },
-      {
-        "id": "course:15899521_16642073_21350487_0_resource",
-        "type": "resource",
-        "attributes": {
-          "avatarUrls": ["https://cpcontents.adobe.com/public/images/default_user_avatar.svg"],
-          "contentType": "Virtual Classroom",
-          "desiredDuration": 0,
-          "hasQuiz": false,
-          "hasToc": false,
-          "instructorNames": ["cod54250"],
-          "isDefault": true,
-          "locale": "en-US",
-          "name": "Cohort table overview |  Adobe Analytics version of this article - 777",
-          "onlyQuiz": false,
-          "reportingType": "NONE",
-          "seatLimit": 20
-        }
-      },
-      {
-        "id": "17780852_1_en-US",
-        "type": "resource",
-        "attributes": {
-          "authorDesiredDuration": 50,
-          "avatarUrls": [],
-          "contentType": "OTHER",
-          "dateCreated": "2026-02-13T08:03:04.000Z",
-          "desiredDuration": 15,
-          "hasQuiz": false,
-          "hasToc": false,
-          "internalResourceId": 19366495,
-          "isDefault": false,
-          "locale": "en-US",
-          "name": "Adobe Certified Professional - Adobe Journey Optimizer Business Practitioner",
-          "onlyQuiz": false
-        }
-      },
-      {
-        "id": "course:15687218_16425609_21155630_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Classroom",
-          "submissionEnabled": false,
+          "isFlexible": false,
+          "state": "Active",
           "localizedMetadata": [
             {
-              "description": "",
               "locale": "en-US",
-              "name": "Test Classrom"
+              "name": "Default Instance"
             }
           ]
         },
         "relationships": {
           "learningObject": {
             "data": {
-              "id": "course:15687218",
+              "id": "course:15135053",
               "type": "learningObject"
             }
           },
-          "loInstance": {
-            "data": {
-              "id": "course:15687218_16425609",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
+          "loResources": {
             "data": [
               {
-                "id": "course:15687218_16425609_21155630_0_resource",
-                "type": "resource"
+                "id": "course:15135053_15859923_20608095_0",
+                "type": "learningObjectResource"
+              },
+              {
+                "id": "course:15135053_15859923_20608097_0",
+                "type": "learningObjectResource"
+              },
+              {
+                "id": "course:15135053_15859923_20608096_0",
+                "type": "learningObjectResource"
+              },
+              {
+                "id": "course:15135053_15859923_20608098_0",
+                "type": "learningObjectResource"
+              },
+              {
+                "id": "course:15135053_15859923_20608099_0",
+                "type": "learningObjectResource"
               }
             ]
           }
         }
       },
       {
-        "id": "course:15687218_16425609_21155627_0",
-        "type": "learningObjectResource",
+        "id": "course:15900888_16643647",
+        "type": "learningObjectInstance",
         "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "vcHostingSystem": "OTHERS",
+          "dateCreated": "2026-03-26T14:06:52.000Z",
+          "isAET": false,
+          "isDefault": true,
+          "isFlexible": false,
+          "seatLimit": 1,
+          "state": "Active",
           "localizedMetadata": [
             {
-              "description": "",
               "locale": "en-US",
-              "name": "Test VILT"
+              "name": "Default Instance"
             }
           ]
         },
         "relationships": {
           "learningObject": {
             "data": {
-              "id": "course:15687218",
+              "id": "course:15900888",
               "type": "learningObject"
             }
           },
-          "loInstance": {
-            "data": {
-              "id": "course:15687218_16425609",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
+          "loResources": {
             "data": [
               {
-                "id": "course:15687218_16425609_21155627_0_resource",
-                "type": "resource"
+                "id": "course:15900888_16643647_21353772_0",
+                "type": "learningObjectResource"
+              },
+              {
+                "id": "course:15900888_16643647_21353773_0",
+                "type": "learningObjectResource"
+              },
+              {
+                "id": "course:15900888_16643647_21353774_0",
+                "type": "learningObjectResource"
+              },
+              {
+                "id": "course:15900888_16643647_21352550_0",
+                "type": "learningObjectResource"
+              },
+              {
+                "id": "course:15900888_16643647_21352549_0",
+                "type": "learningObjectResource"
+              },
+              {
+                "id": "course:15900888_16643647_21353786_0",
+                "type": "learningObjectResource"
+              },
+              {
+                "id": "course:15900888_16643647_21353787_0",
+                "type": "learningObjectResource"
               }
             ]
           }
         }
       },
       {
-        "id": "course:15135050_15859920_20608087_0",
-        "type": "learningObjectResource",
+        "id": "course:15900888_16643666",
+        "type": "learningObjectInstance",
         "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
+          "completionDeadline": "2026-03-31T18:29:59.000Z",
+          "dateCreated": "2026-03-26T14:34:47.000Z",
+          "enrollmentDeadline": "2026-03-29T18:29:59.000Z",
+          "isAET": false,
+          "isDefault": false,
+          "isFlexible": false,
+          "state": "Active",
+          "unenrollmentDeadline": "2026-03-30T18:29:59.000Z",
           "localizedMetadata": [
             {
               "locale": "en-US",
-              "name": "Uploading modules and compartmentalization"
+              "name": "7 | South "
             }
-          ],
-          "multipleAttempt": {
-            "attemptDuration": 0,
-            "attemptEndCriteria": "NONE",
-            "infiniteAttempts": true,
-            "maxAttemptCount": 0,
-            "stopAttemptOnSuccessfulComplete": false,
-            "timeBetweenAttempts": 0
-          }
+          ]
         },
         "relationships": {
+          "learningObject": {
+            "data": {
+              "id": "course:15900888",
+              "type": "learningObject"
+            }
+          },
+          "loResources": {
+            "data": [
+              {
+                "id": "course:15900888_16643666_21353772_0",
+                "type": "learningObjectResource"
+              },
+              {
+                "id": "course:15900888_16643666_21353773_0",
+                "type": "learningObjectResource"
+              },
+              {
+                "id": "course:15900888_16643666_21353774_0",
+                "type": "learningObjectResource"
+              },
+              {
+                "id": "course:15900888_16643666_21352550_0",
+                "type": "learningObjectResource"
+              },
+              {
+                "id": "course:15900888_16643666_21352549_0",
+                "type": "learningObjectResource"
+              },
+              {
+                "id": "course:15900888_16643666_21353786_0",
+                "type": "learningObjectResource"
+              },
+              {
+                "id": "course:15900888_16643666_21353787_0",
+                "type": "learningObjectResource"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "course:15895457_16637805",
+        "type": "learningObjectInstance",
+        "attributes": {
+          "completionDeadline": "2026-04-30T18:29:59.000Z",
+          "dateCreated": "2026-03-24T12:04:12.000Z",
+          "isAET": false,
+          "isDefault": true,
+          "isFlexible": false,
+          "seatLimit": 20,
+          "state": "Active",
+          "localizedMetadata": [
+            {
+              "locale": "en-US",
+              "name": "433  | Default Instance"
+            }
+          ]
+        },
+        "relationships": {
+          "learningObject": {
+            "data": {
+              "id": "course:15895457",
+              "type": "learningObject"
+            }
+          },
+          "loResources": {
+            "data": [
+              {
+                "id": "course:15895457_16637805_21345976_0",
+                "type": "learningObjectResource"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "course:15895457_16644914",
+        "type": "learningObjectInstance",
+        "attributes": {
+          "completionDeadline": "2026-04-30T18:29:59.000Z",
+          "dateCreated": "2026-03-27T12:32:03.000Z",
+          "isAET": false,
+          "isDefault": false,
+          "isFlexible": false,
+          "seatLimit": 20,
+          "state": "Active",
+          "localizedMetadata": [
+            {
+              "locale": "en-US",
+              "name": "7 | Africa"
+            }
+          ]
+        },
+        "relationships": {
+          "learningObject": {
+            "data": {
+              "id": "course:15895457",
+              "type": "learningObject"
+            }
+          },
+          "loResources": {
+            "data": [
+              {
+                "id": "course:15895457_16644914_21345976_0",
+                "type": "learningObjectResource"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "course:15135050_15859920_20608087_0_36216747",
+        "type": "learningObjectResourceGrade",
+        "attributes": {
+          "completed": false,
+          "duration": 0,
+          "hasPassed": false,
+          "highestScore": 0,
+          "maxScore": 0,
+          "progressPercent": 0,
+          "score": 0
+        },
+        "relationships": {
+          "loResource": {
+            "data": {
+              "id": "course:15135050_15859920_20608087_0",
+              "type": "learningObjectResource"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15135050_15859920_20608088_0_36216747",
+        "type": "learningObjectResourceGrade",
+        "attributes": {
+          "completed": false,
+          "duration": 0,
+          "hasPassed": false,
+          "highestScore": 0,
+          "maxScore": 0,
+          "progressPercent": 0,
+          "score": 0
+        },
+        "relationships": {
+          "loResource": {
+            "data": {
+              "id": "course:15135050_15859920_20608088_0",
+              "type": "learningObjectResource"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15135050_15859920_20608089_0_36216747",
+        "type": "learningObjectResourceGrade",
+        "attributes": {
+          "completed": false,
+          "duration": 0,
+          "hasPassed": false,
+          "highestScore": 0,
+          "maxScore": 0,
+          "progressPercent": 0,
+          "score": 0
+        },
+        "relationships": {
+          "loResource": {
+            "data": {
+              "id": "course:15135050_15859920_20608089_0",
+              "type": "learningObjectResource"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15135050_15859920_20608090_0_36216747",
+        "type": "learningObjectResourceGrade",
+        "attributes": {
+          "completed": false,
+          "duration": 0,
+          "hasPassed": false,
+          "highestScore": 0,
+          "maxScore": 0,
+          "progressPercent": 0,
+          "score": 0
+        },
+        "relationships": {
+          "loResource": {
+            "data": {
+              "id": "course:15135050_15859920_20608090_0",
+              "type": "learningObjectResource"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15135050_15859920_20608091_0_36216747",
+        "type": "learningObjectResourceGrade",
+        "attributes": {
+          "completed": false,
+          "duration": 0,
+          "hasPassed": false,
+          "highestScore": 0,
+          "maxScore": 0,
+          "progressPercent": 0,
+          "score": 0
+        },
+        "relationships": {
+          "loResource": {
+            "data": {
+              "id": "course:15135050_15859920_20608091_0",
+              "type": "learningObjectResource"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15135050_15859920_20608092_0_36216747",
+        "type": "learningObjectResourceGrade",
+        "attributes": {
+          "completed": false,
+          "duration": 0,
+          "hasPassed": false,
+          "highestScore": 0,
+          "maxScore": 0,
+          "progressPercent": 0,
+          "score": 0
+        },
+        "relationships": {
+          "loResource": {
+            "data": {
+              "id": "course:15135050_15859920_20608092_0",
+              "type": "learningObjectResource"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15895480_16637840_21346474_0_36216747",
+        "type": "learningObjectResourceGrade",
+        "attributes": {
+          "completed": false,
+          "duration": 0,
+          "hasPassed": false,
+          "highestScore": 0,
+          "maxScore": 0,
+          "progressPercent": 0,
+          "score": 0
+        },
+        "relationships": {
+          "loResource": {
+            "data": {
+              "id": "course:15895480_16637840_21346474_0",
+              "type": "learningObjectResource"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15844527_16584324_21293718_0_36216747",
+        "type": "learningObjectResourceGrade",
+        "attributes": {
+          "completed": false,
+          "duration": 0,
+          "hasPassed": false,
+          "highestScore": 0,
+          "maxScore": 0,
+          "progressPercent": 0,
+          "score": 0
+        },
+        "relationships": {
+          "loResource": {
+            "data": {
+              "id": "course:15844527_16584324_21293718_0",
+              "type": "learningObjectResource"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15135050_577675",
+        "type": "learningObjectSkill",
+        "attributes": {
+          "credits": 50,
+          "learningObjectId": "course:15135050"
+        },
+        "relationships": {
+          "skillLevel": {
+            "data": {
+              "id": "577675_1",
+              "type": "skillLevel"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15895480_577673",
+        "type": "learningObjectSkill",
+        "attributes": {
+          "credits": 1,
+          "learningObjectId": "course:15895480"
+        },
+        "relationships": {
+          "skillLevel": {
+            "data": {
+              "id": "577673_1",
+              "type": "skillLevel"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15884870_577673",
+        "type": "learningObjectSkill",
+        "attributes": {
+          "credits": 1,
+          "learningObjectId": "course:15884870"
+        },
+        "relationships": {
+          "skillLevel": {
+            "data": {
+              "id": "577673_1",
+              "type": "skillLevel"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15835265_577677",
+        "type": "learningObjectSkill",
+        "attributes": {
+          "credits": 100,
+          "learningObjectId": "course:15835265"
+        },
+        "relationships": {
+          "skillLevel": {
+            "data": {
+              "id": "577677_1",
+              "type": "skillLevel"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15835265_577679",
+        "type": "learningObjectSkill",
+        "attributes": {
+          "credits": 100,
+          "learningObjectId": "course:15835265"
+        },
+        "relationships": {
+          "skillLevel": {
+            "data": {
+              "id": "577679_1",
+              "type": "skillLevel"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15835265_587430",
+        "type": "learningObjectSkill",
+        "attributes": {
+          "credits": 1,
+          "learningObjectId": "course:15835265"
+        },
+        "relationships": {
+          "skillLevel": {
+            "data": {
+              "id": "587430_1",
+              "type": "skillLevel"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15844527_577673",
+        "type": "learningObjectSkill",
+        "attributes": {
+          "credits": 1,
+          "learningObjectId": "course:15844527"
+        },
+        "relationships": {
+          "skillLevel": {
+            "data": {
+              "id": "577673_1",
+              "type": "skillLevel"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15687218_587430",
+        "type": "learningObjectSkill",
+        "attributes": {
+          "credits": 3,
+          "learningObjectId": "course:15687218"
+        },
+        "relationships": {
+          "skillLevel": {
+            "data": {
+              "id": "587430_3",
+              "type": "skillLevel"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15135053_587430",
+        "type": "learningObjectSkill",
+        "attributes": {
+          "credits": 2,
+          "learningObjectId": "course:15135053"
+        },
+        "relationships": {
+          "skillLevel": {
+            "data": {
+              "id": "587430_3",
+              "type": "skillLevel"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15900888_577675",
+        "type": "learningObjectSkill",
+        "attributes": {
+          "credits": 100,
+          "learningObjectId": "course:15900888"
+        },
+        "relationships": {
+          "skillLevel": {
+            "data": {
+              "id": "577675_1",
+              "type": "skillLevel"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15895457_577673",
+        "type": "learningObjectSkill",
+        "attributes": {
+          "credits": 1,
+          "learningObjectId": "course:15895457"
+        },
+        "relationships": {
+          "skillLevel": {
+            "data": {
+              "id": "577673_1",
+              "type": "skillLevel"
+            }
+          }
+        }
+      },
+      {
+        "id": "577677",
+        "type": "skill",
+        "attributes": {
+          "description": "Lightroom Fundamentals",
+          "name": "Lightroom",
+          "state": "Active"
+        },
+        "relationships": {
+          "levels": {
+            "data": [
+              {
+                "id": "577677_1",
+                "type": "skillLevel"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "577675",
+        "type": "skill",
+        "attributes": {
+          "description": "After Effects",
+          "name": "After Effects",
+          "state": "Active"
+        },
+        "relationships": {
+          "levels": {
+            "data": [
+              {
+                "id": "577675_1",
+                "type": "skillLevel"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "587430",
+        "type": "skill",
+        "attributes": {
+          "name": "AOA Premium",
+          "state": "Active"
+        },
+        "relationships": {
+          "levels": {
+            "data": [
+              {
+                "id": "587430_1",
+                "type": "skillLevel"
+              },
+              {
+                "id": "587430_2",
+                "type": "skillLevel"
+              },
+              {
+                "id": "587430_3",
+                "type": "skillLevel"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "577679",
+        "type": "skill",
+        "attributes": {
+          "description": "LMS Basics",
+          "name": "LMS Basics",
+          "state": "Active"
+        },
+        "relationships": {
+          "levels": {
+            "data": [
+              {
+                "id": "577679_1",
+                "type": "skillLevel"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "577673",
+        "type": "skill",
+        "attributes": {
+          "name": "General",
+          "state": "Active"
+        },
+        "relationships": {
+          "levels": {
+            "data": [
+              {
+                "id": "577673_1",
+                "type": "skillLevel"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "577673_1",
+        "type": "skillLevel",
+        "attributes": {
+          "level": "1",
+          "maxCredits": 1,
+          "name": "Level 1"
+        },
+        "relationships": {
+          "skill": {
+            "data": {
+              "id": "577673",
+              "type": "skill"
+            }
+          }
+        }
+      },
+      {
+        "id": "577677_1",
+        "type": "skillLevel",
+        "attributes": {
+          "level": "1",
+          "maxCredits": 100,
+          "name": "Level 1"
+        },
+        "relationships": {
+          "skill": {
+            "data": {
+              "id": "577677",
+              "type": "skill"
+            }
+          }
+        }
+      },
+      {
+        "id": "577679_1",
+        "type": "skillLevel",
+        "attributes": {
+          "level": "1",
+          "maxCredits": 100,
+          "name": "Level 1"
+        },
+        "relationships": {
+          "skill": {
+            "data": {
+              "id": "577679",
+              "type": "skill"
+            }
+          }
+        }
+      },
+      {
+        "id": "577675_1",
+        "type": "skillLevel",
+        "attributes": {
+          "level": "1",
+          "maxCredits": 100,
+          "name": "Level 1"
+        },
+        "relationships": {
+          "skill": {
+            "data": {
+              "id": "577675",
+              "type": "skill"
+            }
+          }
+        }
+      },
+      {
+        "id": "587430_1",
+        "type": "skillLevel",
+        "attributes": {
+          "level": "1",
+          "maxCredits": 1,
+          "name": "Level 1"
+        },
+        "relationships": {
+          "skill": {
+            "data": {
+              "id": "587430",
+              "type": "skill"
+            }
+          }
+        }
+      },
+      {
+        "id": "587430_3",
+        "type": "skillLevel",
+        "attributes": {
+          "level": "3",
+          "maxCredits": 3,
+          "name": "Level 3"
+        },
+        "relationships": {
+          "skill": {
+            "data": {
+              "id": "587430",
+              "type": "skill"
+            }
+          }
+        }
+      },
+      {
+        "id": "course:15135050_15859920_36216747",
+        "type": "learningObjectInstanceEnrollment",
+        "attributes": {
+          "dateEnrolled": "2026-03-25T09:20:27.000Z",
+          "enrollmentSource": "SELF_ENROLL",
+          "hasPassed": false,
+          "progressPercent": 0,
+          "score": 0,
+          "state": "ENROLLED"
+        },
+        "relationships": {
+          "learner": {
+            "data": {
+              "id": "36216747",
+              "type": "user"
+            }
+          },
           "learningObject": {
             "data": {
               "id": "course:15135050",
@@ -3232,283 +2766,54 @@
               "type": "learningObjectInstance"
             }
           },
-          "resources": {
+          "loResourceGrades": {
             "data": [
               {
-                "id": "17328591_1_en-US",
-                "type": "resource"
+                "id": "course:15135050_15859920_20608087_0_36216747",
+                "type": "learningObjectResourceGrade"
+              },
+              {
+                "id": "course:15135050_15859920_20608088_0_36216747",
+                "type": "learningObjectResourceGrade"
+              },
+              {
+                "id": "course:15135050_15859920_20608089_0_36216747",
+                "type": "learningObjectResourceGrade"
+              },
+              {
+                "id": "course:15135050_15859920_20608090_0_36216747",
+                "type": "learningObjectResourceGrade"
+              },
+              {
+                "id": "course:15135050_15859920_20608091_0_36216747",
+                "type": "learningObjectResourceGrade"
+              },
+              {
+                "id": "course:15135050_15859920_20608092_0_36216747",
+                "type": "learningObjectResourceGrade"
               }
             ]
           }
         }
       },
       {
-        "id": "course:15135050_15859920_20608088_0",
-        "type": "learningObjectResource",
+        "id": "course:15895480_16637840_36216747",
+        "type": "learningObjectInstanceEnrollment",
         "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "locale": "en-US",
-              "name": "Introduction-Digital Poster Designs Using Adobe Photoshop"
-            }
-          ]
+          "dateEnrolled": "2026-03-27T07:46:11.000Z",
+          "enrollmentSource": "SELF_ENROLL",
+          "hasPassed": false,
+          "progressPercent": 0,
+          "score": 0,
+          "state": "ENROLLED"
         },
         "relationships": {
-          "learningObject": {
+          "learner": {
             "data": {
-              "id": "course:15135050",
-              "type": "learningObject"
+              "id": "36216747",
+              "type": "user"
             }
           },
-          "loInstance": {
-            "data": {
-              "id": "course:15135050_15859920",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17328567_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15135050_15859920_20608089_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "locale": "en-US",
-              "name": "Digital Poster Designs Using Adobe Photoshop"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15135050",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15135050_15859920",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17328568_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15135050_15859920_20608090_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "locale": "en-US",
-              "name": "Streaming with Adobe tools"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15135050",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15135050_15859920",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17328574_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15135050_15859920_20608091_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "locale": "en-US",
-              "name": "Photoshop fundamentals"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15135050",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15135050_15859920",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17328572_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15135050_15859920_20608092_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "locale": "en-US",
-              "name": "Introduction-Vector Illustration Drawing with the Pen Tool"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15135050",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15135050_15859920",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17328573_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15899677_16642257_21350751_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "vcHostingSystem": "OTHERS",
-          "localizedMetadata": [
-            {
-              "description": "",
-              "locale": "en-US",
-              "name": "Cumulative Fix Packs (CFPs)2"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15899677",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15899677_16642257",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:15899677_16642257_21350751_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15895480_16637840_21346474_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Adobe Certified Professional - Adobe Experience Manager Sites Content Author",
-              "locale": "en-US",
-              "name": "Adobe Certified Professional - Adobe Experience Manager Sites Content Author"
-            }
-          ]
-        },
-        "relationships": {
           "learningObject": {
             "data": {
               "id": "course:15895480",
@@ -3521,413 +2826,34 @@
               "type": "learningObjectInstance"
             }
           },
-          "resources": {
+          "loResourceGrades": {
             "data": [
               {
-                "id": "17780857_1_en-US",
-                "type": "resource"
+                "id": "course:15895480_16637840_21346474_0_36216747",
+                "type": "learningObjectResourceGrade"
               }
             ]
           }
         }
       },
       {
-        "id": "course:15884870_16633983_21350465_0",
-        "type": "learningObjectResource",
+        "id": "course:15844527_16584324_36216747",
+        "type": "learningObjectInstanceEnrollment",
         "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Customer Journey Analytics Learning Program",
-              "locale": "en-US",
-              "name": "Customer Journey Analytics Learning Program"
-            }
-          ]
+          "dateEnrolled": "2026-03-25T09:22:48.000Z",
+          "enrollmentSource": "SELF_ENROLL",
+          "hasPassed": false,
+          "progressPercent": 0,
+          "score": 0,
+          "state": "ENROLLED"
         },
         "relationships": {
-          "learningObject": {
+          "learner": {
             "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
+              "id": "36216747",
+              "type": "user"
             }
           },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16633983",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17883256_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16633983_21350467_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Test for Joshua",
-              "locale": "en-US",
-              "name": "Test for Joshua"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16633983",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780860_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16633983_21350466_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Adobe Certified Professional - Adobe Marketo Engage Digital Marketer",
-              "locale": "en-US",
-              "name": "Adobe Certified Professional - Adobe Marketo Engage Digital Marketer"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16633983",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780859_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16633983_21350464_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Adobe Certified Professional - Adobe Target Optimization Specialist",
-              "locale": "en-US",
-              "name": "Adobe Certified Professional - Adobe Target Optimization Specialist"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16633983",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780858_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16633983_21334360_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "vcHostingSystem": "OTHERS",
-          "localizedMetadata": [
-            {
-              "description": "BLR - Test 1",
-              "locale": "en-US",
-              "name": "BLR - Test 1"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16633983",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:15884870_16633983_21334360_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16633983_21352272_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "localizedMetadata": [
-            {
-              "description": "",
-              "locale": "en-US",
-              "name": "Test for Module 1"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16633983",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:15884870_16633983_21352272_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15835265_16574770_21288413_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Adobe Certified Professional - Adobe Experience Manager Sites Content Author",
-              "locale": "en-US",
-              "name": "Adobe Certified Professional - Adobe Experience Manager Sites Content Author"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15835265",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15835265_16574770",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780857_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15835265_16574770_21288414_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Adobe Certified Professional - Adobe Target Optimization Specialist",
-              "locale": "en-US",
-              "name": "Adobe Certified Professional - Adobe Target Optimization Specialist"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15835265",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15835265_16574770",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780858_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15844527_16584325_21293718_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "vcHostingSystem": "OTHERS",
-          "localizedMetadata": [
-            {
-              "description": "this is VILT new course",
-              "locale": "en-US",
-              "name": "Test 1 VILT"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15844527",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15844527_16584325",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:15844527_16584325_21293718_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15844527_16584324_21293718_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "vcHostingSystem": "OTHERS",
-          "localizedMetadata": [
-            {
-              "description": "this is VILT new course",
-              "locale": "en-US",
-              "name": "Test 1 VILT"
-            }
-          ]
-        },
-        "relationships": {
           "learningObject": {
             "data": {
               "id": "course:15844527",
@@ -3940,1433 +2866,11 @@
               "type": "learningObjectInstance"
             }
           },
-          "resources": {
+          "loResourceGrades": {
             "data": [
               {
-                "id": "course:15844527_16584324_21293718_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626823_21350465_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Customer Journey Analytics Learning Program",
-              "locale": "en-US",
-              "name": "Customer Journey Analytics Learning Program"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626823",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17883256_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626823_21350467_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Test for Joshua",
-              "locale": "en-US",
-              "name": "Test for Joshua"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626823",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780860_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626823_21350466_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Adobe Certified Professional - Adobe Marketo Engage Digital Marketer",
-              "locale": "en-US",
-              "name": "Adobe Certified Professional - Adobe Marketo Engage Digital Marketer"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626823",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780859_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626823_21350464_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Adobe Certified Professional - Adobe Target Optimization Specialist",
-              "locale": "en-US",
-              "name": "Adobe Certified Professional - Adobe Target Optimization Specialist"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626823",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780858_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626823_21334360_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "vcHostingSystem": "OTHERS",
-          "localizedMetadata": [
-            {
-              "description": "BLR - Test 1",
-              "locale": "en-US",
-              "name": "BLR - Test 1"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626823",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:15884870_16626823_21334360_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626823_21352272_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "localizedMetadata": [
-            {
-              "description": "",
-              "locale": "en-US",
-              "name": "Test for Module 1"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626823",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:15884870_16626823_21352272_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626820_21350465_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Customer Journey Analytics Learning Program",
-              "locale": "en-US",
-              "name": "Customer Journey Analytics Learning Program"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626820",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17883256_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626820_21350467_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Test for Joshua",
-              "locale": "en-US",
-              "name": "Test for Joshua"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626820",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780860_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626820_21350466_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Adobe Certified Professional - Adobe Marketo Engage Digital Marketer",
-              "locale": "en-US",
-              "name": "Adobe Certified Professional - Adobe Marketo Engage Digital Marketer"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626820",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780859_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626820_21350464_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Adobe Certified Professional - Adobe Target Optimization Specialist",
-              "locale": "en-US",
-              "name": "Adobe Certified Professional - Adobe Target Optimization Specialist"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626820",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780858_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626820_21334360_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "vcHostingSystem": "OTHERS",
-          "localizedMetadata": [
-            {
-              "description": "BLR - Test 1",
-              "locale": "en-US",
-              "name": "BLR - Test 1"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626820",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:15884870_16626820_21334360_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626820_21352272_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "vcHostingSystem": "OTHERS",
-          "localizedMetadata": [
-            {
-              "description": "",
-              "locale": "en-US",
-              "name": "Test for Module 1"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626820",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:15884870_16626820_21352272_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626821_21350465_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Customer Journey Analytics Learning Program",
-              "locale": "en-US",
-              "name": "Customer Journey Analytics Learning Program"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626821",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17883256_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626821_21350467_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Test for Joshua",
-              "locale": "en-US",
-              "name": "Test for Joshua"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626821",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780860_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626821_21350466_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Adobe Certified Professional - Adobe Marketo Engage Digital Marketer",
-              "locale": "en-US",
-              "name": "Adobe Certified Professional - Adobe Marketo Engage Digital Marketer"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626821",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780859_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626821_21350464_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Adobe Certified Professional - Adobe Target Optimization Specialist",
-              "locale": "en-US",
-              "name": "Adobe Certified Professional - Adobe Target Optimization Specialist"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626821",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780858_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626821_21334360_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "vcHostingSystem": "OTHERS",
-          "localizedMetadata": [
-            {
-              "description": "BLR - Test 1",
-              "locale": "en-US",
-              "name": "BLR - Test 1"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626821",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:15884870_16626821_21334360_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15884870_16626821_21352272_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "localizedMetadata": [
-            {
-              "description": "",
-              "locale": "en-US",
-              "name": "Test for Module 1"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15884870",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15884870_16626821",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:15884870_16626821_21352272_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15899677_16642250_21350751_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "vcHostingSystem": "OTHERS",
-          "localizedMetadata": [
-            {
-              "description": "",
-              "locale": "en-US",
-              "name": "Cumulative Fix Packs (CFPs)2"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15899677",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15899677_16642250",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:15899677_16642250_21350751_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15899594_16642155_21350610_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "vcHostingSystem": "OTHERS",
-          "localizedMetadata": [
-            {
-              "description": "Adobe - VILT Seat Limit",
-              "locale": "en-US",
-              "name": "Adobe - VILT Seat Limit"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15899594",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15899594_16642155",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:15899594_16642155_21350610_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:14812890_15532604_20436701_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "locale": "en-US",
-              "name": "Introduction-Animating Emotions: Using Movement to Convey a Feeling"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:14812890",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:14812890_15532604",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17328575_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:14812890_15532604_20436700_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "locale": "en-US",
-              "name": "Using Movement to Convey a Feeling"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:14812890",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:14812890_15532604",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17328576_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:14812890_15532604_20436699_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "locale": "en-US",
-              "name": "Photoshop fundamentals"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:14812890",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:14812890_15532604",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17328572_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:14812890_15532604_20436704_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "vcHostingSystem": "OTHERS",
-          "localizedMetadata": [
-            {
-              "description": "",
-              "locale": "en-US",
-              "name": "Test_Chandan"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:14812890",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:14812890_15532604",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:14812890_15532604_20436704_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:14812890_15532604_20436702_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Classroom",
-          "submissionEnabled": false,
-          "localizedMetadata": [
-            {
-              "description": "",
-              "locale": "en-US",
-              "name": "QA"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:14812890",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:14812890_15532604",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:14812890_15532604_20436702_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:14812890_15532604_20436703_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceSubType": "NONE",
-          "resourceType": "Activity",
-          "submissionEnabled": false,
-          "localizedMetadata": [
-            {
-              "description": "",
-              "locale": "en-US",
-              "name": "Chandan Module"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:14812890",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:14812890_15532604",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:14812890_15532604_20436703_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:14812890_15532604_20446381_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "vcHostingSystem": "OTHERS",
-          "localizedMetadata": [
-            {
-              "description": "",
-              "locale": "en-US",
-              "name": "QA Instructor "
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:14812890",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:14812890_15532604",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:14812890_15532604_20446381_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15899521_16642073_21350482_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Adobe Certified Professional - Adobe Experience Manager Digital Librarian",
-              "locale": "en-US",
-              "name": "Adobe Certified Professional - Adobe Experience Manager Digital Librarian"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15899521",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15899521_16642073",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780856_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15899521_16642073_21350483_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Adobe Certified Expert - Adobe Customer Journey Analytics Developer",
-              "locale": "en-US",
-              "name": "Adobe Certified Expert - Adobe Customer Journey Analytics Developer"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15899521",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15899521_16642073",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780849_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15899521_16642073_21350484_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Adobe Certified Professional - Adobe Document Cloud Business Practitioner",
-              "locale": "en-US",
-              "name": "Adobe Certified Professional - Adobe Document Cloud Business Practitioner"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15899521",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15899521_16642073",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780850_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15899521_16642073_21350486_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Adobe Certified Professional - Adobe Journey Optimizer Business Practitioner",
-              "locale": "en-US",
-              "name": "Adobe Certified Professional - Adobe Journey Optimizer Business Practitioner"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15899521",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15899521_16642073",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780852_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15899521_16642073_21350485_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Pre Work",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Elearning",
-          "submissionEnabled": false,
-          "version": 1,
-          "localizedMetadata": [
-            {
-              "description": "Adobe Certified Expert - Adobe Workfront Core Developer",
-              "locale": "en-US",
-              "name": "Adobe Certified Expert - Adobe Workfront Core Developer"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15899521",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15899521_16642073",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "17780831_1_en-US",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15899521_16642073_21350487_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Test Out",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceType": "Virtual Classroom",
-          "submissionEnabled": false,
-          "vcHostingSystem": "OTHERS",
-          "localizedMetadata": [
-            {
-              "description": "A cohort is a group of people sharing common characteristics over a specified period. A Cohort table visualization is useful, for example, when you want to learn how a cohort engages with a brand..",
-              "locale": "en-US",
-              "name": "Cohort table overview |  Adobe Analytics version of this article - 777"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15899521",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15899521_16642073",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:15899521_16642073_21350487_0_resource",
-                "type": "resource"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "id": "course:15899521_16642073_21350488_0",
-        "type": "learningObjectResource",
-        "attributes": {
-          "externalReporting": false,
-          "loResourceType": "Content",
-          "multipleAttemptEnabled": false,
-          "previewEnabled": false,
-          "resourceSubType": "NONE",
-          "resourceType": "Activity",
-          "submissionEnabled": false,
-          "localizedMetadata": [
-            {
-              "description": "A cohort is a group of people sharing common characteristics over a specified period. A Cohort table visualization is useful, for example, when you want to learn how a cohort engages with a brand..",
-              "locale": "en-US",
-              "name": "Cohort table overview"
-            }
-          ]
-        },
-        "relationships": {
-          "learningObject": {
-            "data": {
-              "id": "course:15899521",
-              "type": "learningObject"
-            }
-          },
-          "loInstance": {
-            "data": {
-              "id": "course:15899521_16642073",
-              "type": "learningObjectInstance"
-            }
-          },
-          "resources": {
-            "data": [
-              {
-                "id": "course:15899521_16642073_21350488_0_resource",
-                "type": "resource"
+                "id": "course:15844527_16584324_21293718_0_36216747",
+                "type": "learningObjectResourceGrade"
               }
             ]
           }
@@ -5374,7 +2878,7 @@
       }
     ],
     "meta": {
-      "count": 127
+      "count": 54
     }
   }
 }

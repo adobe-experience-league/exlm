@@ -121,7 +121,7 @@ function buildLearningObjectsPayload(products, roles, learningType) {
     'filter.loTypes': getLoTypes(learningType),
     'filter.ignoreEnhancedLP': IGNORE_ENHANCED_LP,
     'filter.learnerState': RECOMMENDED_LEARNER_STATES,
-    'filter.catalogIds': RECOMMENDED_CATALOG_IDS,
+    'filter.catalogIds': RECOMMENDED_CATALOG_IDS
   };
 }
 
@@ -149,8 +149,9 @@ async function fetchApiData(localConfig, learningType) {
   }
 
   const { plApiBaseUrl } = getConfig();
-  const token = getPLAccessToken();
-  const userId = getCookie('alm_user_id');
+  // localDevAuth: use token/userId from config.json to make real API calls without a browser session
+  const token = localConfig?.localDevAuth === true ? localConfig.token : getPLAccessToken();
+  const userId = localConfig?.localDevAuth === true ? localConfig.userId : getCookie('alm_user_id');
   const headers = {
     Authorization: `oauth ${token}`,
     Accept: 'application/vnd.api+json',
@@ -195,9 +196,10 @@ export default async function decorate(block) {
 
   const localConfig = await loadLocalConfig();
   const isLocalDev = localConfig?.localDev === true;
+  const isLocalDevAuth = localConfig?.localDevAuth === true;
 
   const [signedIn, placeholders] = await Promise.all([
-    isLocalDev ? Promise.resolve(true) : isSignedInUser(),
+    isLocalDev || isLocalDevAuth ? Promise.resolve(true) : isSignedInUser(),
     fetchLanguagePlaceholders().catch(() => ({})),
   ]);
 
