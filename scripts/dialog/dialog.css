@@ -1,0 +1,192 @@
+/* ── Header ─────────────────────────────────────────────────────────────── */
+
+dialog[data-type] {
+  --exl-dialog-header-height: 48px;
+}
+
+.exl-dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--exl-dialog-header-height);
+  padding: 5px 20px;
+  border-bottom: 1px solid var(--spectrum-gray-200);
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.exl-dialog-header .icon {
+  display: flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.exl-dialog-header img {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.exl-dialog-header-title {
+  flex: 1;
+  font-family: var(--body-font-family);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--spectrum-gray-800);
+}
+
+.exl-dialog-header-expand,
+.exl-dialog-header-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--spectrum-gray-700);
+  box-shadow: none;
+  transition: background-color 0.15s ease;
+}
+
+/* styles.css declares `button:focus { background-color: var(--link-hover-color) }` without
+ * a :focus-visible guard, which bleeds the brand blue onto these buttons on programmatic
+ * focus (e.g. showModal()). Reset here, then restore the outline for keyboard-only. */
+.exl-dialog-header-expand:focus,
+.exl-dialog-header-close:focus {
+  background: none;
+  outline: none;
+}
+
+.exl-dialog-header-expand .icon,
+.exl-dialog-header-close .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.exl-dialog-header-expand img,
+.exl-dialog-header-close img {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.exl-dialog-header-expand:hover,
+.exl-dialog-header-close:hover {
+  background: var(--spectrum-gray-100);
+}
+
+.exl-dialog-header-expand:focus-visible,
+.exl-dialog-header-close:focus-visible {
+  outline: 2px solid var(--non-spectrum-navy-blue);
+  outline-offset: 2px;
+}
+
+/* ── Body / Footer ───────────────────────────────────────────────────────── */
+
+.exl-dialog-body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  position: relative;
+}
+
+.exl-dialog-footer {
+  flex-shrink: 0;
+  border-top: 1px solid var(--spectrum-gray-200);
+  background: #fff;
+}
+
+/* ── Drawer ──────────────────────────────────────────────────────────────── */
+
+dialog[data-type='drawer'] {
+  position: fixed;
+  inset: 0 0 0 auto;
+  margin: 0;
+  width: 420px;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh; /* UA default is calc(100% - 6px - 2em); override to fill viewport */
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 24px rgb(0 0 0 / 15%);
+  opacity: 0;
+  transform: translateX(100%);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+dialog[data-type='drawer'][open] {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Expand re-positions the drawer as a centred modal. */
+dialog[data-type='drawer'].exl-dialog-expanded {
+  inset: 0;
+  margin: auto;
+  width: 80vw;
+  height: 90dvh;
+  border-radius: 12px;
+  transform: none;
+  box-shadow: 0 8px 40px rgb(0 0 0 / 25%);
+}
+
+/* Keep the page scrollable behind the drawer; the backdrop is semi-transparent by design. */
+body:has(dialog[data-type='drawer'][open]) {
+  overflow: auto;
+}
+
+dialog[data-type='drawer']::backdrop {
+  background: transparent;
+}
+
+dialog[data-type='drawer'].exl-dialog-expanded::backdrop {
+  background: rgb(0 0 0 / 60%);
+}
+
+dialog[data-type='drawer'] .exl-dialog-body {
+  overflow: hidden;
+}
+
+/* ── Modal ───────────────────────────────────────────────────────────────── */
+
+dialog[data-type='modal'] {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: clamp(320px, 90vw, 800px);
+  max-height: 90dvh;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 40px rgb(0 0 0 / 25%);
+  opacity: 0;
+  scale: 0.96;
+  transition:
+    opacity 0.2s ease,
+    scale 0.2s ease;
+}
+
+dialog[data-type='modal'][open] {
+  opacity: 1;
+  scale: 1;
+}
+
+dialog[data-type='modal']::backdrop {
+  background: rgb(0 0 0 / 60%);
+}
