@@ -19,6 +19,7 @@ import atomicSearchBoxHandler from './components/atomic-search-box.js';
 import atomicResultPageHandler from './components/atomic-search-results-per-page.js';
 import loadCoveoToken from '../../scripts/data-service/coveo/coveo-token-service.js';
 import { pushPageDataLayer } from '../../scripts/analytics/lib-analytics.js';
+import { buildCaptionElContentTypeResourceBundle } from './components/atomic-facet-engine-helpers.js';
 
 let placeholders = {};
 
@@ -127,7 +128,7 @@ export default function decorate(block) {
     searchInterface.executeFirstSearch();
 
     const commonActionHandler = () => {
-      atomicFacetHandler(block, placeholders);
+      atomicFacetHandler(block, placeholders, searchInterface);
       atomicSearchBoxHandler(block);
       atomicResultHandler(block, placeholders);
       atomicSortDropdownHandler(block.querySelector('atomic-sort-dropdown'));
@@ -172,22 +173,11 @@ export default function decorate(block) {
       resizeObserver.observe(searchInterface);
 
       searchInterface.language = languageCode;
-      searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_contenttype', {
-        Community: placeholders.searchContentTypeCommunityLabel || 'Community',
-        Documentation: placeholders.searchContentTypeDocumentationLabel || 'Documentation',
-        Troubleshooting: placeholders.searchContentTypeTroubleshootingLabel || 'Troubleshooting',
-        Tutorial: placeholders.searchContentTypeTutorialLabel || 'Tutorial',
-        Event: placeholders.searchContentTypeEventLabel || 'Event',
-        Playlist: placeholders.searchContentTypePlaylistLabel || 'Playlist',
-        Course: placeholders.searchContentTypeCourseLabel || 'Course',
-        'upcoming-event': placeholders.searchContentTypeUpcomingEventLabel || 'Upcoming Event',
-        Perspective: placeholders.searchContentTypePerspectiveLabel || 'Perspective',
-        Certification: placeholders.searchContentTypeCertificationLabel || 'Certification',
-        Blogs: placeholders.searchContentTypeCommunityBlogsLabel || 'Blogs',
-        Discussions: placeholders.searchContentTypeCommunityDiscussionsLabel || 'Discussions',
-        Ideas: placeholders.searchContentTypeCommunityIdeasLabel || 'Ideas',
-        Questions: placeholders.searchContentTypeCommunityQuestionsLabel || 'Questions',
-      });
+      searchInterface.i18n.addResourceBundle(
+        languageCode,
+        'caption-el_contenttype',
+        buildCaptionElContentTypeResourceBundle(placeholders),
+      );
 
       searchInterface.i18n.addResourceBundle(languageCode, 'caption-el_role', {
         Admin: placeholders.searchRoleAdminLabel || 'Admin',

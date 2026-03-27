@@ -9,25 +9,49 @@ import {
   updateHash,
   COMMUNITY_CONTENT_TYPES,
 } from './atomic-search-utils.js';
+import {
+  applyFacetRawValuesToDom,
+  getRegularFacetValuesForField,
+  getLocalizedElContentTypeChildLabel,
+  EL_CONTENTTYPE_FIELD,
+} from './atomic-facet-engine-helpers.js';
 
 const MAX_FACETS_WITHOUT_EXPANSION = 5;
 
-export default function atomicFacetHandler(block, placeholders) {
+const FACET_CONTENT_TYPE_ID = 'facetContentType';
+
+/** Parent row for hierarchical facet: prefer data-facet-raw-value (engine) over localized data-contenttype. */
+const findParentFacetRow = (parentWrapper, parentKey, preferRawValueAttr) => {
+  if (!parentWrapper || !parentKey) return null;
+  const escaped = CSS.escape(parentKey);
+  if (preferRawValueAttr) {
+    const byRaw = parentWrapper.querySelector(`:scope > li[data-facet-raw-value="${escaped}"]`);
+    if (byRaw && byRaw.dataset.childfacet !== 'true') return byRaw;
+  }
+  const byDisplay = parentWrapper.querySelector(`:scope > li[data-contenttype="${escaped}"]`);
+  if (byDisplay && byDisplay.dataset.childfacet !== 'true') return byDisplay;
+  return null;
+};
+
+const isContentTypeFacet = (atomicFacet) => atomicFacet?.getAttribute('id') === FACET_CONTENT_TYPE_ID;
+
+export default function atomicFacetHandler(block, placeholders, searchInterface) {
   let baseObserver;
   let resultTimerId;
   const baseElement = block.querySelector('atomic-facet');
   const adjustChildElementsPosition = (facet, atomicElement) => {
     if (facet.dataset.childfacet === 'true') {
       const parentName = facet.dataset.parent;
-      const facetParentEl = facet.parentElement.querySelector(`[data-contenttype="${parentName}"]`);
+      const valuesHost = facet.parentElement;
+      const facetParentEl = findParentFacetRow(valuesHost, parentName, isContentTypeFacet(atomicElement));
       if (facetParentEl) {
         facet.part.remove('facet-hide-element', 'facet-missing-parent');
         const previousSiblingEl = facet.previousElementSibling;
-        if (
-          !previousSiblingEl ||
-          (!previousSiblingEl.dataset.childfacet && previousSiblingEl.dataset.contenttype !== parentName) ||
-          (previousSiblingEl.dataset.childfacet && previousSiblingEl.dataset.parent !== parentName)
-        ) {
+        const inParentGroup =
+          previousSiblingEl &&
+          (previousSiblingEl === facetParentEl ||
+            (previousSiblingEl.dataset.childfacet === 'true' && previousSiblingEl.dataset.parent === parentName));
+        if (!inParentGroup) {
           facetParentEl.insertAdjacentElement('afterend', facet);
         }
         const facetParentLabel = facetParentEl.querySelector('label');
@@ -64,8 +88,9 @@ export default function atomicFacetHandler(block, placeholders) {
         shimmer?.part.add('show-shimmer');
         const isChildFacet = facet.dataset.childfacet === 'true';
         const isSelected = facet.firstElementChild.ariaChecked === 'false'; // Will take some to update the state.
+        const valuesList = facet.parentElement;
         const parentFacet = isChildFacet
-          ? facet.parentElement.querySelector(`[data-contenttype="${facet.dataset.parent}"]`)
+          ? findParentFacetRow(valuesList, facet.dataset.parent, isContentTypeFacet(atomicElement))
           : facet;
         const parentFacetIsSelected = isChildFacet
           ? parentFacet?.firstElementChild?.ariaChecked === 'true'
@@ -74,7 +99,7 @@ export default function atomicFacetHandler(block, placeholders) {
         if (isChildFacet) {
           // child facet click.
           if (onlyOptionClicked === true) {
-            const parentFacetType = parentFacet.dataset.contenttype;
+            const parentFacetType = facet.dataset.parent;
             const allChildFacets = facet.parentElement.querySelectorAll(`[data-parent="${parentFacetType}"]`);
             if (parentFacetIsSelected) {
               filtersChanged = true;
@@ -113,8 +138,8 @@ export default function atomicFacetHandler(block, placeholders) {
             }
           }
         } else {
-          // Parent facet click.
-          const parentFacetType = parentFacet.dataset.contenttype;
+          // Parent facet click — use raw facet value so localized labels still sync children.
+          const parentFacetType = parentFacet.dataset.facetRawValue || parentFacet.dataset.contenttype;
           const parentFacetValue = parentFacetIsSelected ? 'true' : 'false';
           const allChildFacets = facet.parentElement.querySelectorAll(`[data-parent="${parentFacetType}"]`);
           allChildFacets.forEach((childFacet) => {
@@ -272,11 +297,11 @@ export default function atomicFacetHandler(block, placeholders) {
       }
     });
 
-    // Second pass: update parent facet counts
+    // Second pass: update parent facet counts (canonical key from engine / raw value)
     facets.forEach((facet) => {
       if (facet.dataset.childfacet !== 'true') {
-        const contentType = facet.dataset.contenttype;
-        if (contentType && parentCounts[contentType] !== undefined) {
+        const canonicalParentKey = facet.dataset.facetRawValue || facet.dataset.contenttype;
+        if (canonicalParentKey && parentCounts[canonicalParentKey] !== undefined) {
           const countEl = facet.querySelector('.value-count');
           if (countEl) {
             // Store original count on first aggregation to prevent re-summing on re-renders
@@ -285,7 +310,7 @@ export default function atomicFacetHandler(block, placeholders) {
             }
             // Use stored original count to calculate total
             const parentCount = parseInt(facet.dataset.originalcount, 10) || 0;
-            const totalCount = parentCount + parentCounts[contentType];
+            const totalCount = parentCount + parentCounts[canonicalParentKey];
             countEl.textContent = `(${totalCount.toLocaleString()})`;
             facet.dataset.aggregatedcount = totalCount;
           }
@@ -350,10 +375,12 @@ export default function atomicFacetHandler(block, placeholders) {
   const updateFacetUI = (facet, atomicElement, forceUpdate = false) => {
     const forceUpdateElement = forceUpdate === true;
     if (facet && (facet.dataset.updated !== 'true' || forceUpdateElement)) {
-      const contentType = facet.dataset.contenttype || facet.querySelector('.value-label').title || '';
-      if (!facet.dataset.contenttype) {
-        facet.dataset.contenttype = contentType;
+      const labelTitle = facet.querySelector('.value-label')?.getAttribute('title') || '';
+      if (!facet.dataset.contenttype && labelTitle) {
+        facet.dataset.contenttype = labelTitle;
       }
+      // Hierarchy uses Coveo raw value (data-facet-raw-value) when set from engine; captions stay on data-contenttype.
+      const contentType = facet.dataset.facetRawValue || facet.dataset.contenttype || labelTitle || '';
       facet.part.add('facet-option');
       facet.dataset.updated = 'true';
       if (contentType.includes('|')) {
@@ -371,7 +398,7 @@ export default function atomicFacetHandler(block, placeholders) {
         const onlyFilterEl = htmlToElement(`<span part="only-facet-btn">${onlyLabel}</span>`);
         facet.appendChild(onlyFilterEl);
         if (spanElement) {
-          spanElement.textContent = facetName;
+          spanElement.textContent = getLocalizedElContentTypeChildLabel(contentType, facetName, placeholders);
           facet.part.add('facet-child-element');
           const labelElement = facet.querySelector('label');
           labelElement.part.add('facet-child-label');
@@ -410,10 +437,17 @@ export default function atomicFacetHandler(block, placeholders) {
       const facets = Array.from(parentWrapper.children);
       facets.forEach((facet) => {
         if (!facet.dataset.contenttype) {
-          const contentType = facet.dataset.contenttype || facet.querySelector('.value-label').title || '';
-          facet.dataset.contenttype = contentType;
+          const ct = facet.querySelector('.value-label')?.getAttribute('title') || '';
+          if (ct) facet.dataset.contenttype = ct;
         }
       });
+
+      const engine = searchInterface?.engine;
+      const engineValues = isContentTypeFacet(atomicFacet)
+        ? getRegularFacetValuesForField(engine, EL_CONTENTTYPE_FIELD)
+        : [];
+      applyFacetRawValuesToDom(parentWrapper, engineValues, placeholders, atomicFacet.getAttribute('id'));
+
       facets.forEach((facet) => {
         updateFacetUI(facet, atomicFacet, false);
       });

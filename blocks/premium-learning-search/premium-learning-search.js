@@ -61,16 +61,16 @@ export default async function decorate(block) {
 
   // Clearing the block's content
   block.innerHTML = '';
-  block.classList.add('browse-cards-block', 'premium-learning-cards-block');
+  block.classList.add('browse-cards-block', 'premium-learning-search-block');
 
   // Create header section with heading and CTA
   const headerDiv = document.createElement('div');
-  headerDiv.className = 'premium-learning-cards-block-header';
+  headerDiv.className = 'premium-learning-search-block-header';
   headerDiv.innerHTML = `
-    <div class="premium-learning-cards-block-title">
+    <div class="premium-learning-search-block-title">
       ${headingElement?.innerHTML || ''}
     </div>
-    <div class="premium-learning-cards-block-cta">
+    <div class="premium-learning-search-block-cta">
       ${decorateCustomButtons(ctaElement)}
     </div>
   `;
@@ -113,17 +113,17 @@ export default async function decorate(block) {
     const descriptionNoResultText = searchTextExists ? searchDescription : noSearchDescription;
     const clearSearchText = placeholders.premiumLearningCardsClearSearchText || 'Clear search';
     const markup = `
-      <div class="premium-learning-cards-no-results">
-        <div class="premium-learning-cards-no-results-header">${headerNoResultText}</div>
-        <div class="premium-learning-cards-no-results-description">${descriptionNoResultText}</div>
-        <div class="premium-learning-cards-block-cta">
+      <div class="premium-learning-search-no-results">
+        <div class="premium-learning-search-no-results-header">${headerNoResultText}</div>
+        <div class="premium-learning-search-no-results-description">${descriptionNoResultText}</div>
+        <div class="premium-learning-search-block-cta">
           ${decorateCustomButtons(ctaElement)}
         </div>
-        ${searchTextExists ? `<div class="premium-learning-cards-clear-search">${clearSearchText}</div>` : ''}
+        ${searchTextExists ? `<div class="premium-learning-search-clear-search">${clearSearchText}</div>` : ''}
       </div>
     `;
     const noResultsContent = htmlToElement(markup);
-    const clearBtn = noResultsContent.querySelector('.premium-learning-cards-clear-search');
+    const clearBtn = noResultsContent.querySelector('.premium-learning-search-clear-search');
     if (clearBtn) {
       clearBtn.addEventListener('click', () => {
         updateHash((key) => !key.includes('q='), '&');
@@ -135,13 +135,13 @@ export default async function decorate(block) {
   function toggleNoResultsContent(blockElement, show) {
     if (show) {
       renderNoResultsContent(blockElement, param.q);
-      headerDiv.classList.add('premium-learning-cards-hide-content');
+      headerDiv.classList.add('premium-learning-search-hide-content');
     } else {
-      const noResultsContent = blockElement.querySelector('.premium-learning-cards-no-results');
+      const noResultsContent = blockElement.querySelector('.premium-learning-search-no-results');
       if (noResultsContent) {
         blockElement.removeChild(noResultsContent);
       }
-      headerDiv.classList.remove('premium-learning-cards-hide-content');
+      headerDiv.classList.remove('premium-learning-search-hide-content');
     }
   }
 
@@ -196,7 +196,7 @@ export default async function decorate(block) {
         buildCardsShimmer.addShimmer(block);
         fetchAndRenderCards(param);
 
-        const ctaWrapper = block.querySelector('.premium-learning-cards-block-cta');
+        const ctaWrapper = block.querySelector('.premium-learning-search-block-cta');
         const anchor = ctaWrapper?.querySelector('a');
         if (anchor) {
           const href = anchor.getAttribute('href');
@@ -218,7 +218,7 @@ export default async function decorate(block) {
             `${block.offsetHeight - delta}px`,
           );
         }
-        block.classList.add('premium-learning-cards-atomic-search');
+        block.classList.add('premium-learning-search-atomic-search');
         const premiumSearchWrapper = searchInterfaceElement.querySelector('.atomic-search-premium-search-wrapper');
         if (premiumSearchWrapper) {
           premiumSearchWrapper.appendChild(block);

@@ -362,7 +362,7 @@ export function pushComponentClick(data) {
     event: 'componentClick',
     component: data.component || '',
     componentID: data.componentID || '',
-
+    sectionID: data.sectionID || '',
     link: {
       contentType: data.contentType || '',
       destinationDomain: data.destinationDomain || '',
@@ -386,8 +386,6 @@ export function pushComponentClick(data) {
 export async function pushLinkClick(e) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
-  const component = e.target.closest('[data-block-name]');
-
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
   const isCourseStartCTA = e.target.closest('.course-breakdown-header-start-button');
 
@@ -398,7 +396,7 @@ export async function pushLinkClick(e) {
     linkLocation = 'toc';
   } else if (e.target.closest('.header')) {
     linkLocation = 'header';
-  } else if (e.target.closest('.footer')) {
+  } else if (e.target.closest('.footer-container')) {
     linkLocation = 'footer';
   } else if (e.target.closest('main') && docs) {
     linkLocation = 'body';
@@ -462,23 +460,11 @@ export async function pushLinkClick(e) {
       interactionType: '',
     },
   });
+}
 
-  let headerText = '';
-
-  let currentElement = e.target;
-  while (currentElement && currentElement !== component) {
-    const closestHeader = currentElement.querySelector('h1,h2,h3,h4');
-    if (closestHeader) {
-      headerText = closestHeader.innerText.trim();
-      break;
-    }
-    currentElement = currentElement.parentElement;
-  }
-
+export function handleComponentClick(e) {
+  const component = e.target.closest('[data-block-name]');
   if (!component) return;
-
-  const componentName = component.dataset.blockName;
-  const componentID = generateComponentID(component, componentName);
 
   // Check if the component is browse card
   const hasBrowseCardClass = (element) => {
@@ -487,15 +473,34 @@ export async function pushLinkClick(e) {
     return hasBrowseCardClass(element.parentElement);
   };
 
-  // Only trigger componentClick here for non-browse-card components
+  // Only trigger componentClick for non-browse-card components
   if (!hasBrowseCardClass(component) && !hasBrowseCardClass(e.target)) {
-    // Check if the clicked element is within a grid-card and get its position
+    let headerText = '';
+    let currentElement = e.target;
+    while (currentElement && currentElement !== component) {
+      const closestHeader = currentElement.querySelector('h1,h2,h3,h4');
+      if (closestHeader) {
+        headerText = closestHeader.innerText.trim();
+        break;
+      }
+      currentElement = currentElement.parentElement;
+    }
+
+    const componentName = component.dataset.blockName;
+    const componentID = generateComponentID(component, componentName);
     const gridCard = e.target.closest('.grid-card');
     const cardPosition = gridCard?.dataset?.cardPosition;
+    const linkTitle = e.target.innerHTML || '';
+    const destinationDomain = e.target.href;
+
+    // Find the section ID that this component belongs to
+    const section = component.closest('.section');
+    const sectionID = section?.dataset?.sectionId || '';
 
     const componentClickData = {
       component: componentName,
       componentID,
+      sectionID,
       linkTitle,
       linkType: headerText,
       destinationDomain,
@@ -1046,7 +1051,11 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
 
     const componentID = generateComponentID(browseCardElement, componentName);
 
-    pushComponentClick({
+    // Find the section ID that this component belongs to
+    const section = browseCardElement?.closest('.section');
+    const sectionID = section?.dataset?.sectionId;
+
+    const componentClickData = {
       component: componentName,
       componentID,
       linkTitle: cardData?.title || '',
@@ -1056,7 +1065,13 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
       solution: cardSolution || '',
       fullSolution: cardFullSolution || '',
       position: cardPosition,
-    });
+    };
+
+    if (sectionID) {
+      componentClickData.sectionID = sectionID;
+    }
+
+    pushComponentClick(componentClickData);
   }
 }
 

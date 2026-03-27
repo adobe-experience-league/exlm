@@ -17,15 +17,12 @@
   overflow: hidden;
   transition: none;
   color: var(--spectrum-gray-900);
+  min-height: auto;
 }
 
 .browse-card.premium-learning-browse-card:hover {
   box-shadow: none;
   transform: none;
-}
-
-.browse-card.premium-learning-browse-card.premium-learning-course-card {
-  min-height: auto;
 }
 
 /* ==========================================================================
@@ -35,22 +32,15 @@
 .browse-card.premium-learning-browse-card .premium-learning-card-figure {
   position: relative;
   width: 100%;
-  min-height: 312px;
-  max-height: 312px;
+  height: 197px;
   overflow: hidden;
   border-radius: 8px;
   background-color: var(--color-gray-100);
 }
 
-/* Smaller thumbnail for course cards */
-.browse-card.premium-learning-browse-card.premium-learning-course-card .premium-learning-card-figure {
-  min-height: 197px;
-  max-height: 197px;
-}
-
 .browse-card.premium-learning-browse-card .premium-learning-card-figure > img {
   width: 100%;
-  height: 312px;
+  height: 197px;
   object-fit: cover;
 }
 

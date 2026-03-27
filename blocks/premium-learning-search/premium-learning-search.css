@@ -1,19 +1,19 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 
 /* premium-learning Cards Block Header Styles */
-.premium-learning-cards-block .premium-learning-cards-block-header {
+.premium-learning-search-block .premium-learning-search-block-header {
   margin-top: 20px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
-.premium-learning-cards .premium-learning-cards-hide-content,
-.premium-learning-cards.premium-learning-cards-hide-content {
+.premium-learning-search .premium-learning-search-hide-content,
+.premium-learning-search.premium-learning-search-hide-content {
   display: none;
 }
 
-.premium-learning-cards .premium-learning-cards-clear-search {
+.premium-learning-search .premium-learning-search-clear-search {
   cursor: pointer;
   text-decoration: underline;
   font-size: var(--spectrum-font-size-300);
@@ -22,7 +22,7 @@
   color: #274dea;
 }
 
-.premium-learning-cards .premium-learning-cards-no-results {
+.premium-learning-search .premium-learning-search-no-results {
   background-color: var(--spectrum-gray-200);
   color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-200);
@@ -40,22 +40,22 @@
   padding-inline: 16px;
 }
 
-.premium-learning-cards .browse-cards-block-content {
+.premium-learning-search .browse-cards-block-content {
   align-items: start;
   min-height: auto;
 }
 
-.premium-learning-cards.premium-learning-cards-atomic-search .browse-cards-block-content,
-.premium-learning-cards.premium-learning-cards-atomic-search .premium-learning-cards-no-results {
+.premium-learning-search.premium-learning-search-atomic-search .browse-cards-block-content,
+.premium-learning-search.premium-learning-search-atomic-search .premium-learning-search-no-results {
   margin-bottom: 32px;
 }
 
-.premium-learning-cards.browse-cards-block.premium-learning-cards-atomic-search {
+.premium-learning-search.browse-cards-block.premium-learning-search-atomic-search {
   min-height: auto;
   padding-bottom: 32px;
 }
 
-.premium-learning-cards-block-cta a::before {
+.premium-learning-search-block-cta a::before {
   content: '';
   width: 21px;
   height: 21px;
@@ -67,7 +67,7 @@
   mask: url('/icons/link-out.svg') no-repeat center / contain;
 }
 
-.premium-learning-cards-block-cta a.button:any-link {
+.premium-learning-search-block-cta a.button:any-link {
   margin-top: 0;
   margin-bottom: 12px;
   font-size: var(--spectrum-font-size-200);
@@ -85,45 +85,52 @@
   text-overflow: clip;
 }
 
-.premium-learning-cards .premium-learning-cards-no-results-header {
+.premium-learning-search .premium-learning-search-no-results-header {
   font-size: var(--exlm-font-size-h3);
   font-weight: var(--font-weight-bold);
 }
 
-.premium-learning-cards .premium-learning-cards-no-results-description {
+.premium-learning-search .premium-learning-search-no-results-description {
   margin-bottom: 12px;
 }
 
 /* Tablet styles */
 @media (min-width: 600px) {
-  .premium-learning-cards.browse-cards-block.premium-learning-cards-atomic-search {
+  .premium-learning-search.browse-cards-block.premium-learning-search-atomic-search {
     min-height: auto;
     padding-bottom: 80px;
   }
 
-  .premium-learning-cards-no-results-header {
+  .premium-learning-search-no-results-header {
     font-size: var(--spectrum-font-size-800);
   }
 
-  .premium-learning-cards-block .premium-learning-cards-block-header {
+  .premium-learning-search-block .premium-learning-search-block-header {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
 
-  .premium-learning-cards-block-cta a.button:any-link {
+  .premium-learning-search-block-cta a.button:any-link {
     width: auto;
     min-width: max-content;
     font-size: var(--spectrum-font-size-300);
   }
 
-  .premium-learning-cards.premium-learning-cards-atomic-search .browse-cards-block-content {
+  .premium-learning-search.premium-learning-search-atomic-search .browse-cards-block-content {
     margin-bottom: 0;
   }
 }
 
 @media (min-width: 1024px) {
-  .premium-learning-cards .premium-learning-cards-no-results {
+  .premium-learning-search .premium-learning-search-no-results {
     width: 75%;
+  }
+
+  atomic-search-interface:not(.atomic-search-interface-no-results)
+    .premium-learning-search
+    .premium-learning-search-no-results {
+    width: 90%;
+    margin: 0 auto;
   }
 }
