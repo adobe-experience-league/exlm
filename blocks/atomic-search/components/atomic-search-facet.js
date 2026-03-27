@@ -38,6 +38,7 @@ const isContentTypeFacet = (atomicFacet) => atomicFacet?.getAttribute('id') === 
 export default function atomicFacetHandler(block, placeholders, searchInterface) {
   let baseObserver;
   let resultTimerId;
+  let noResultFoundTimerId;
   const baseElement = block.querySelector('atomic-facet');
   const adjustChildElementsPosition = (facet, atomicElement) => {
     if (facet.dataset.childfacet === 'true') {
@@ -308,9 +309,7 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
             if (!facet.dataset.originalcount) {
               facet.dataset.originalcount = parseInt(countEl.textContent.replace(/[(),]/g, ''), 10) || 0;
             }
-            // Use stored original count to calculate total
-            const parentCount = parseInt(facet.dataset.originalcount, 10) || 0;
-            const totalCount = parentCount + parentCounts[canonicalParentKey];
+            const totalCount = parentCounts[canonicalParentKey];
             countEl.textContent = `(${totalCount.toLocaleString()})`;
             facet.dataset.aggregatedcount = totalCount;
           }
@@ -452,7 +451,8 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
         updateFacetUI(facet, atomicFacet, false);
       });
       sortFacetsInOrder(parentWrapper);
-      facets.forEach((facet) => {
+      const sortedFacets = Array.from(parentWrapper.children);
+      sortedFacets.forEach((facet) => {
         adjustChildElementsPosition(facet, atomicFacet);
       });
 
@@ -514,6 +514,22 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     }, 100);
   };
 
+  const onNoResultFoundUpdate = () => {
+    if (noResultFoundTimerId) {
+      clearTimeout(noResultFoundTimerId);
+      noResultFoundTimerId = 0;
+    }
+    noResultFoundTimerId = setTimeout(() => {
+      const atomicFacets = document.querySelectorAll('atomic-facet');
+      atomicFacets.forEach((atomicFacet) => {
+        const shimmer = atomicFacet.shadowRoot.querySelector('.facet-shimmer');
+        setTimeout(() => {
+          shimmer?.part.remove('show-shimmer');
+        }, 50);
+      });
+    }, 100);
+  };
+
   const initAtomicFacetUI = () => {
     const event = new CustomEvent(CUSTOM_EVENTS.FACET_LOADED);
     document.dispatchEvent(event);
@@ -524,6 +540,7 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
       handleAtomicFacetUI(atomicFacet);
     });
     document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onResultsUpdate);
+    document.addEventListener(CUSTOM_EVENTS.NO_RESULT_FOUND, onNoResultFoundUpdate);
   };
   waitForChildElement(baseElement, initAtomicFacetUI);
 }
