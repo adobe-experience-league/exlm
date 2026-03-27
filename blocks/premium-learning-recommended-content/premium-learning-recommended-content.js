@@ -20,9 +20,9 @@ function showFallbackContentInUEMode(blockElement) {
 
 function buildBlockHeader(headingHTML, descriptionHTML) {
   const headerDiv = document.createElement('div');
-  headerDiv.className = 'premium-learning-cards-block-header';
+  headerDiv.className = 'premium-learning-search-block-header';
   headerDiv.innerHTML = `
-    <div class="premium-learning-cards-block-title">
+    <div class="premium-learning-search-block-title">
       ${headingHTML}
     </div>
     <div class="premium-learning-recommended-content-description">
@@ -47,9 +47,9 @@ function renderNoResultsContent(block, placeholders) {
     placeholders.premiumLearningCardsNoSearchDescription ||
     'Try searching for a specific product or role, or explore all Premium learning content.';
   const markup = `
-    <div class="premium-learning-cards-no-results">
-      <div class="premium-learning-cards-no-results-header">${noResultsHeader}</div>
-      <div class="premium-learning-cards-no-results-description">${noResultsDescription}</div>
+    <div class="premium-learning-search-no-results">
+      <div class="premium-learning-search-no-results-header">${noResultsHeader}</div>
+      <div class="premium-learning-search-no-results-description">${noResultsDescription}</div>
     </div>
   `;
   block.appendChild(htmlToElement(markup));
@@ -73,7 +73,7 @@ function renderTabs(block, tabsData, allCards, placeholders) {
       renderCards(contentDiv, allCards);
     },
     onSelectCallback: (label) => {
-      const existingNoResults = block.querySelector('.premium-learning-cards-no-results');
+      const existingNoResults = block.querySelector('.premium-learning-search-no-results');
       if (existingNoResults) existingNoResults.remove();
       contentDiv.innerHTML = '';
       const filtered = tabsData[label] ?? [];
@@ -189,7 +189,7 @@ export default async function decorate(block) {
   const learningType = learningTypeElement?.textContent?.trim() || 'both';
 
   block.innerHTML = '';
-  block.classList.add('browse-cards-block', 'premium-learning-cards-block', 'premium-learning-recommended-content-block');
+  block.classList.add('browse-cards-block', 'premium-learning-search-block', 'premium-learning-recommended-content-block');
   block.appendChild(buildBlockHeader(headingElement?.innerHTML || '', descriptionElement?.innerHTML || ''));
 
   const localConfig = await loadLocalConfig();
