@@ -896,13 +896,7 @@ export default async function decorate(block) {
                     }
                   }
                   if (resp?.data) {
-                    updateCopyFromTarget(
-                      resp,
-                      headerContainer,
-                      descriptionContainer,
-                      linkEl,
-                      resultTextEl,
-                    );
+                    updateCopyFromTarget(resp, headerContainer, descriptionContainer, linkEl, resultTextEl);
                     headerContainer.id = formatId(headerContainer.innerHTML);
                     block.style.display = 'block';
                     setTargetDataAsBlockAttribute(block, resp);
