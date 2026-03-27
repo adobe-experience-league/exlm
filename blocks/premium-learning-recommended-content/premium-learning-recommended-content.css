@@ -5,13 +5,6 @@
 /* ResponsiveList loads its own CSS (responsive-list.css) internally via loadCSS */
 
 /* Override the tablet+ row layout — this block has no CTA, header stays stacked */
-.premium-learning-recommended-content-block.premium-learning-cards-block .premium-learning-cards-block-header {
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.premium-learning-recommended-content-description {
-  font-size: var(--spectrum-font-size-200);
-  color: var(--non-spectrum-dark-gray);
-  margin-top: 4px;
+.premium-learning-recommended-content .premium-learning-tabs-wrapper {
+  margin-top: 15px;
 }
