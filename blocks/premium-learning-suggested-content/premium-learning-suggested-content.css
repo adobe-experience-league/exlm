@@ -1,0 +1,50 @@
+@import '../../scripts/browse-card/browse-cards-block.css';
+@import '../../scripts/browse-card/browse-card-premium-learning.css';
+
+.premium-learning-suggested-content-block .premium-learning-suggested-content-header {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.premium-learning-suggested-content-block .premium-learning-suggested-content-title :is(h1, h2, h3, h4, h5, h6) {
+  margin-bottom: 0;
+}
+
+.premium-learning-suggested-content-block .premium-learning-suggested-content-description {
+  color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-200);
+  margin-top: 8px;
+}
+
+.premium-learning-suggested-content-block .premium-learning-suggested-content-description p {
+  margin: 0;
+}
+
+.premium-learning-suggested-content-block .premium-learning-suggested-content-tab-header {
+  margin: 16px 0 0;
+  max-width: 100%;
+}
+
+.premium-learning-suggested-content-block .premium-learning-suggested-content-tab-header .custom-filter-dropdown {
+  width: 100%;
+}
+
+.premium-learning-suggested-content-block
+  .premium-learning-suggested-content-tab-header
+  .custom-filter-dropdown
+  > button {
+  height: 40px;
+  padding: 9px 40px 9px 15px;
+}
+
+.premium-learning-suggested-content-block .premium-learning-suggested-content-panel {
+  margin-top: 32px;
+}
+
+.premium-learning-suggested-content-block .premium-learning-suggested-content-content {
+  align-items: start;
+  min-height: auto;
+}

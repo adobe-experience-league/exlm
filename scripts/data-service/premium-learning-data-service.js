@@ -62,6 +62,12 @@ export default class PLDataService {
   static QUERY_ENDPOINT = '/learningObjects/query';
 
   /**
+   * Suggested cohort endpoint path
+   * @private
+   */
+  static SUGGESTED_CONTENT_ENDPOINT = '/learningObjects';
+
+  /**
    * Snippet types for search endpoint
    * @private
    */
@@ -197,6 +203,51 @@ export default class PLDataService {
       'Content-Type': 'application/vnd.api+json;charset=UTF-8',
       Authorization: token ? `oauth ${token}` : '',
     };
+  }
+
+  /**
+   * Builds request headers for GET-based suggested content API
+   * @private
+   * @returns {Object} Request headers
+   */
+  static buildSuggestedContentHeaders() {
+    const token = getPLAccessToken();
+    return {
+      Accept: 'application/vnd.api+json',
+      Authorization: token ? `oauth ${token}` : '',
+    };
+  }
+
+  /**
+   * Builds URL search parameters for the Suggested Content GET endpoint.
+   * This is intentionally separate from the existing POST query/search flow.
+   * @returns {URLSearchParams} Constructed URL search parameters
+   */
+  buildSuggestedContentUrlParams() {
+    const { noOfResults, learningType } = this.queryParams;
+    const { publicPLCatalogId } = getConfig() ?? {};
+    const { lang } = getPathDetails();
+    const params = new URLSearchParams();
+
+    // Resolve loTypes from authored learningType; fall back to learningProgram (cohort)
+    const loTypes = learningType
+      ? PLDataService.determineLearningObjectTypes(learningType)
+      : [PLDataService.LO_TYPES.LEARNING_PROGRAM];
+
+    params.set('include', 'instances,enrollment.loResourceGrades,skills.skillLevel.skill');
+    params.set('page[limit]', noOfResults || 10);
+    params.set('filter.loTypes', loTypes.join(','));
+    params.set('sort', PLDataService.DEFAULT_SORT);
+    params.set('language', lang || 'en');
+    params.set('enforcedFields[learningObject]', 'products');
+    params.set('filter.ignoreEnhancedLP', 'true');
+    params.set('filter.learnerState', 'notenrolled');
+
+    if (publicPLCatalogId) {
+      params.set('filter.catalogIds', publicPLCatalogId);
+    }
+
+    return params;
   }
 
   /**
@@ -382,6 +433,35 @@ export default class PLDataService {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error fetching premium learning data:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Fetches Suggested Content using the dedicated GET /learningObjects endpoint.
+   * Leaves the existing browse-cards POST flows untouched.
+   * @returns {Promise<Object|null>} Suggested content API response
+   */
+  async fetchSuggestedContent() {
+    try {
+      const apiBaseUrl = getConfig()?.plApiBaseUrl;
+      const url = new URL(`${apiBaseUrl}${PLDataService.SUGGESTED_CONTENT_ENDPOINT}`);
+      url.search = this.buildSuggestedContentUrlParams().toString();
+
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        headers: PLDataService.buildSuggestedContentHeaders(),
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Suggested content API request failed: ${response.status} ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching suggested content:', error);
       return null;
     }
   }
