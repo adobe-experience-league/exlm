@@ -2006,7 +2006,7 @@
         "label": "Description",
         "description": "Description text displayed below the heading."
       },
-       {
+      {
         "component": "multiselect",
         "valueType": "string",
         "name": "learningType",

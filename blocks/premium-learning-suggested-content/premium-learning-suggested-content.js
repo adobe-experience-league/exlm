@@ -63,8 +63,8 @@ function getUniqueProductsInOrder(suggestedContentItems) {
  */
 function sortContentItems(items) {
   return [...items].sort((itemA, itemB) => {
-    const aIsComingSoon = !!(itemA.meta?.startLabel);
-    const bIsComingSoon = !!(itemB.meta?.startLabel);
+    const aIsComingSoon = !!itemA.meta?.startLabel;
+    const bIsComingSoon = !!itemB.meta?.startLabel;
     if (aIsComingSoon && bIsComingSoon) {
       const aDeadline = itemA.meta.enrollmentDeadline instanceof Date ? itemA.meta.enrollmentDeadline : null;
       const bDeadline = itemB.meta.enrollmentDeadline instanceof Date ? itemB.meta.enrollmentDeadline : null;
@@ -245,17 +245,21 @@ function initializeResponsiveTabs({ tabHeader, listItems, defaultTab, tabsById, 
 }
 
 export default async function decorate(block) {
-
   const { headingMarkup, descriptionMarkup, ctaMarkup, ctaElement, learningType } = parseAuthoredContent(block);
 
-  const { tabHeader, contentContainer } = buildSuggestedContentLayout(block, headingMarkup, descriptionMarkup, ctaMarkup);
+  const { tabHeader, contentContainer } = buildSuggestedContentLayout(
+    block,
+    headingMarkup,
+    descriptionMarkup,
+    ctaMarkup,
+  );
 
   const [signInUser, placeholders] = await Promise.all([
     isSignedInUser(),
     fetchLanguagePlaceholders().catch(() => ({})),
   ]);
 
-if (!signInUser) {
+  if (!signInUser) {
     if (UE_AUTHOR_MODE) {
       showFallbackContentInUEMode(block);
     } else {
