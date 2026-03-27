@@ -1954,6 +1954,54 @@
     ]
   },
   {
+    "id": "premium-learning-recommended-content",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the heading text for the Recommended Learning block."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h2",
+        "label": "Title Heading Type",
+        "options": [
+          { "name": "H1", "value": "h1" },
+          { "name": "H2", "value": "h2" },
+          { "name": "H3", "value": "h3" },
+          { "name": "H4", "value": "h4" },
+          { "name": "H5", "value": "h5" },
+          { "name": "H6", "value": "h6" }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Subtitle text shown below the heading, e.g. 'Recommended learning based on your activity and progress.'"
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string[]",
+        "name": "learningType",
+        "value": [],
+        "label": "Learning Type",
+        "description": "Filter recommended learning objects by type. 'Course' shows only courses, 'Cohort' shows only cohorts, selecting all shows all types.",
+        "options": [
+          { "name": "Course", "value": "course" },
+          { "name": "Cohort", "value": "learningProgram" }
+        ]
+      }
+    ]
+  },
+  {
     "id": "carousel",
     "fields": []
   },

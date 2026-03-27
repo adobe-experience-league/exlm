@@ -33,7 +33,7 @@ const updateHash = (filterCondition, joinWith = '&') => {
   window.location.hash = updatedParts.join(joinWith);
 };
 
-function showFallbackContentInUEMode(blockElement) {
+export function showFallbackContentInUEMode(blockElement) {
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
   contentDiv.textContent =
     'This block will load the Premium learning content on the search page for Premium users only.';
