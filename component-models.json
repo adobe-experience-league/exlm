@@ -1993,7 +1993,7 @@
         "name": "learningType",
         "value": [],
         "label": "Learning Type",
-        "description": "Filter recommended learning objects by type. 'Course' shows only courses, 'Cohort' shows only cohorts, selecting both shows all types.",
+        "description": "Filter recommended learning objects by type. 'Course' shows only courses, 'Cohort' shows only cohorts, selecting all shows all types.",
         "options": [
           { "name": "Course", "value": "course" },
           { "name": "Cohort", "value": "learningProgram" }

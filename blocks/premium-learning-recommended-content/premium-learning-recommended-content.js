@@ -6,17 +6,15 @@ import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { getPLAccessToken } from '../../scripts/utils/pl-auth-utils.js';
 import { getCookie } from '../../scripts/utils/cookie-utils.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
+import { showFallbackContentInUEMode } from '../premium-learning-search/premium-learning-search.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const MAX_CARDS = 4;
+const RECOMMENDED_CATALOG_IDS = ['208422'];
+const RECOMMENDED_LEARNER_STATES = ['notenrolled'];
+const IGNORE_ENHANCED_LP = false;
 
 // ─── DOM helpers ────────────────────────────────────────────────────────────
-
-function showFallbackContentInUEMode(blockElement) {
-  const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
-  contentDiv.textContent = 'This block will load personalized recommended learning content for signed-in users only.';
-  blockElement.appendChild(contentDiv);
-}
 
 function buildBlockHeader(headingHTML, descriptionHTML) {
   const headerDiv = document.createElement('div');
@@ -118,9 +116,9 @@ function buildLearningObjectsPayload(products, roles, learningType) {
     'filter.recommendationProducts': products.map((p) => ({ name: p.name })),
     'filter.recommendationRoles': roles.map((r) => ({ name: r.name, levels: r.levels ?? [] })),
     'filter.loTypes': getLoTypes(learningType),
-    'filter.ignoreEnhancedLP': false,
-    'filter.learnerState': ['notenrolled'],
-    'filter.catalogIds': ['208422'],
+    'filter.ignoreEnhancedLP': IGNORE_ENHANCED_LP,
+    'filter.learnerState': RECOMMENDED_LEARNER_STATES,
+    'filter.catalogIds': RECOMMENDED_CATALOG_IDS,
   };
 }
 
