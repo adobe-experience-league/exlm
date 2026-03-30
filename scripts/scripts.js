@@ -1668,8 +1668,54 @@ async function loadPage() {
     } else {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
-        loadPage();
+        const pageLoadPromise = loadPage();
         loadTarget(signedIn);
+
+        if (isProfilePage) {
+          // Hide blocks with CSS before page loads
+          const hideStyle = document.createElement('style');
+          hideStyle.textContent =
+            '.premium-learning-active-content-wrapper, .premium-learning-suggested-content-wrapper { display: none !important; }';
+          document.head.appendChild(hideStyle);
+
+          pageLoadPromise.then(async () => {
+            await window.adobeIMS?.getAccessToken();
+
+            const activeContentWrapper = document.querySelector('.premium-learning-active-content-wrapper');
+            const suggestedContentWrapper = document.querySelector('.premium-learning-suggested-content-wrapper');
+            const targetSection =
+              activeContentWrapper?.closest('.section') || suggestedContentWrapper?.closest('.section');
+
+            let loader;
+            if (targetSection) {
+              loader = htmlToElement('<div class="profile-shimmer"><span></span></div>');
+              targetSection.prepend(loader);
+            }
+
+            const { fetchUserEnrollments } = await import('./data-service/premium-learning-data-service.js');
+            const enrollmentData = await fetchUserEnrollments(getConfig, 'learningProgram', 10);
+            const hasEnrollments = enrollmentData?.data?.length > 0;
+
+            // Remove loader
+            if (loader && loader.parentElement) {
+              loader.remove();
+            }
+
+            // Remove the hide style
+            if (hideStyle && hideStyle.parentElement) {
+              hideStyle.remove();
+            }
+
+            // Remove the incorrect block
+            if (hasEnrollments) {
+              if (suggestedContentWrapper) {
+                suggestedContentWrapper.remove();
+              }
+            } else if (activeContentWrapper) {
+              activeContentWrapper.remove();
+            }
+          });
+        }
       } else {
         await window?.adobeIMS?.signIn();
       }

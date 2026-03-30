@@ -1,4 +1,3 @@
-import { getConfig, getPathDetails } from '../scripts.js';
 import { getPLAccessToken } from '../utils/pl-auth-utils.js';
 
 /**
@@ -21,10 +20,15 @@ import { getPLAccessToken } from '../utils/pl-auth-utils.js';
  *
  * @class PLDataService
  * @example
- * const service = new PLDataService({
- *   noOfResults: 10,
- *   contentType: 'premium-learning-cohort'
- * });
+ * import { getConfig, getPathDetails } from './scripts.js';
+ * const service = new PLDataService(
+ *   {
+ *     noOfResults: 10,
+ *     contentType: 'premium-learning-cohort'
+ *   },
+ *   getConfig,
+ *   getPathDetails
+ * );
  * const data = await service.fetchDataFromSource();
  */
 export default class PLDataService {
@@ -62,6 +66,12 @@ export default class PLDataService {
   static QUERY_ENDPOINT = '/learningObjects/query';
 
   /**
+   * Enrollments endpoint path
+   * @private
+   */
+  static ENROLLMENTS_ENDPOINT = '/enrollments';
+
+  /**
    * Snippet types for search endpoint
    * @private
    */
@@ -85,9 +95,13 @@ export default class PLDataService {
   /**
    * Creates an instance of PLDataService.
    * @param {PLQueryParams} queryParams - Query parameters for premium-learning API request
+   * @param {Function} getConfigFn - Function to get config (from scripts.js)
+   * @param {Function} getPathDetailsFn - Function to get path details (from scripts.js)
    */
-  constructor(queryParams) {
+  constructor(queryParams, getConfigFn, getPathDetailsFn) {
     this.queryParams = queryParams;
+    this.getConfig = getConfigFn;
+    this.getPathDetails = getPathDetailsFn;
   }
 
   /**
@@ -122,7 +136,7 @@ export default class PLDataService {
    */
   buildRequestBody() {
     const { contentType, tagName } = this.queryParams;
-    const { catalogIds } = getConfig()?.['premium-learning'] ?? {};
+    const { catalogIds } = this.getConfig()?.['premium-learning'] ?? {};
 
     // Determine learning object types - support both course and cohort
     const loTypes = PLDataService.determineLearningObjectTypes(contentType);
@@ -242,7 +256,7 @@ export default class PLDataService {
    */
   buildSearchRequestBody(hasQuery = false) {
     const { contentType, q, products, solutions, roles, durationRange, learnerState } = this.queryParams;
-    const { recommendationProducts } = getConfig()?.['premium-learning'] ?? {};
+    const { recommendationProducts } = this.getConfig()?.['premium-learning'] ?? {};
     const loTypes = PLDataService.determineLearningObjectTypes(contentType);
 
     const body = {
@@ -250,7 +264,7 @@ export default class PLDataService {
       'filter.ignoreEnhancedLP': false,
     };
     if (hasQuery) {
-      const { lang } = getPathDetails();
+      const { lang } = this.getPathDetails();
       const languageCode = lang || 'en-US';
 
       Object.assign(body, {
@@ -307,7 +321,7 @@ export default class PLDataService {
    */
   async fetchDataFromSource() {
     try {
-      const apiBaseUrl = getConfig()?.plApiBaseUrl;
+      const apiBaseUrl = this.getConfig()?.plApiBaseUrl;
       const { q, searchMode } = this.queryParams;
       const isSearchMode = searchMode || !!q;
 
@@ -384,5 +398,50 @@ export default class PLDataService {
       console.error('Error fetching premium learning data:', error);
       return null;
     }
+  }
+}
+
+/**
+ * Checks if user has any enrollments in Adobe Learning Manager
+ * Standalone utility function that can be used without instantiating PLDataService
+ * @param {string} loType - Learning object type ('course' or 'learningProgram')
+ * @param {number} noOfResults - Number of results to fetch (default: 10)
+ * @param {Function} getConfigFn - Function to get config
+ * @returns {Promise<Object|null>} Enrollment data or null on error
+ * @example
+ * import { checkUserEnrollments } from './data-service/premium-learning-data-service.js';
+ * const enrollments = await checkUserEnrollments('learningProgram', 10, getConfig);
+ * const hasEnrollments = enrollments?.data?.length > 0;
+ */
+export async function fetchUserEnrollments(getConfigFn, loType = 'learningProgram', noOfResults = 10) {
+  try {
+    const apiBaseUrl = getConfigFn()?.plApiBaseUrl;
+    const url = new URL(`${apiBaseUrl}/enrollments`);
+
+    const params = new URLSearchParams({
+      'page[limit]': noOfResults,
+      'filter.loTypes': loType,
+      includeHierarchicalEnrollments: 'false',
+      sort: 'dateEnrolled',
+    });
+
+    url.search = params.toString();
+    const headers = PLDataService.buildRequestHeaders();
+
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers,
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Enrollments API request failed: ${response.status} ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error checking user enrollments:', error);
+    return null;
   }
 }
