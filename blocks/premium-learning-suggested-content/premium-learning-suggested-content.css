@@ -1,3 +1,5 @@
+@import '../../scripts/browse-card/browse-cards-block.css';
+
 .premium-learning-suggested-content .premium-learning-suggested-content-header {
   gap: 16px;
   margin-top: 20px;
@@ -51,7 +53,7 @@
 }
 
 @media (min-width: 1024px) {
-  .premium-learning-recommended-content .premium-learning-suggested-content-no-results {
+  .premium-learning-suggested-content .premium-learning-suggested-content-no-results {
     width: 75%;
   }
 }
