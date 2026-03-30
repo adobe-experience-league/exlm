@@ -8,6 +8,17 @@ import { getPLAccessToken } from '../../scripts/utils/pl-auth-utils.js';
 import { getCookie } from '../../scripts/utils/cookie-utils.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 
+// ─── Local dev config ────────────────────────────────────────────────────────
+let localDevConfig = null;
+try {
+  const resp = await fetch(new URL('./config.json', import.meta.url));
+  if (resp.ok) localDevConfig = await resp.json();
+} catch {
+  // config.json is optional; silently ignore if absent
+}
+const LOCAL_DEV = localDevConfig?.localDev === true;
+const LOCAL_DEV_AUTH = localDevConfig?.localDevAuth === true;
+
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const MAX_CARDS = 4;
 const RECOMMENDED_CATALOG_IDS = ['208425']; /* TODO: fetch from config */
@@ -109,8 +120,12 @@ function buildRecommendedContentPayload(contentType, products, roles) {
 
 // Orchestrates the two-step API flow via PLDataService. Returns { prefsData, loData }.
 async function fetchApiData(contentType) {
-  const token = getPLAccessToken();
-  const userId = getCookie('alm_user_id');
+  if (LOCAL_DEV) {
+    return { prefsData: localDevConfig.api1, loData: localDevConfig.api2 };
+  }
+
+  const token = LOCAL_DEV_AUTH ? localDevConfig.token : getPLAccessToken();
+  const userId = LOCAL_DEV_AUTH ? localDevConfig.userId : getCookie('alm_user_id');
 
   const prefsData = await PLDataService.fetchRecommendationPreferences(userId, token);
   const products = prefsData.data?.attributes?.products ?? [];
@@ -150,7 +165,7 @@ export default async function decorate(block) {
   block.appendChild(buildBlockHeader(headingElement?.innerHTML || '', descriptionElement?.innerHTML || ''));
 
   const [signedIn, placeholders] = await Promise.all([
-    isSignedInUser(),
+    LOCAL_DEV_AUTH ? Promise.resolve(true) : isSignedInUser(),
     fetchLanguagePlaceholders().catch(() => ({})),
   ]);
 
