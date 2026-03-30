@@ -1,21 +1,57 @@
-@import '../../scripts/browse-card/browse-cards-block.css';
-@import '../../scripts/browse-card/browse-card-premium-learning.css';
-
-.premium-learning-suggested-content-block .premium-learning-suggested-content-header {
+.premium-learning-suggested-content .premium-learning-suggested-content-header {
   gap: 16px;
   margin-top: 20px;
 }
 
-.premium-learning-suggested-content-block .premium-learning-suggested-content-description {
+.premium-learning-suggested-content .premium-learning-suggested-content-description {
   color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-200);
   margin-top: 8px;
 }
 
-.premium-learning-suggested-content-block .premium-learning-suggested-content-tab-header {
+.premium-learning-suggested-content .premium-learning-suggested-content-tab-header {
   margin: 16px 0 0;
 }
 
-.premium-learning-suggested-content-block .premium-learning-suggested-content-panel {
+.premium-learning-suggested-content .premium-learning-suggested-content-panel {
   margin-top: 32px;
+}
+
+.premium-learning-suggested-content .premium-learning-recommended-content-no-results {
+  background-color: var(--spectrum-gray-200);
+  color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-200);
+  padding: 72px 0;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 20px;
+  margin-top: 16px;
+  padding-inline: 16px;
+}
+
+.premium-learning-suggested-content .premium-learning-recommended-content-no-results-header {
+  font-size: var(--exlm-font-size-h3);
+  font-weight: var(--font-weight-bold);
+}
+
+.premium-learning-suggested-content .premium-learning-recommended-content-no-results-description {
+  margin-bottom: 12px;
+}
+
+@media (min-width: 600px) {
+  .premium-learning-suggested-content .premium-learning-recommended-content-no-results-header {
+    font-size: var(--spectrum-font-size-800);
+  }
+}
+
+@media (min-width: 1024px) {
+  .premium-learning-recommended-content .premium-learning-recommended-content-no-results {
+    width: 75%;
+  }
 }

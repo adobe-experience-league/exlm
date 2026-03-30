@@ -13,6 +13,7 @@ import { getPLAccessToken } from '../utils/pl-auth-utils.js';
  * @property {string|Array<string>} [roles] - Role filter (e.g., 'Administrator' or ['Administrator', 'Business User'])
  * @property {string|Array<string>} [durationRange] - Duration range filter (e.g., '0-1800' or ['0-1800', '1800-3600'])
  * @property {string|Array<string>} [learnerState] - Learner state filter (e.g., 'enrolled' or ['enrolled', 'completed', 'started', 'notenrolled'])
+ * @property {boolean} [suggestedContent] - Whether to use the suggested-content endpoint
  */
 
 /**
@@ -224,14 +225,14 @@ export default class PLDataService {
    * @returns {URLSearchParams} Constructed URL search parameters
    */
   buildSuggestedContentUrlParams() {
-    const { noOfResults, learningType } = this.queryParams;
+    const { noOfResults, contentType } = this.queryParams;
     const { plPublicCatalogId } = getConfig() ?? {};
     const { lang } = getPathDetails();
     const params = new URLSearchParams();
 
-    // Resolve loTypes from authored learningType; fall back to learningProgram (cohort)
-    const loTypes = learningType
-      ? PLDataService.determineLearningObjectTypes(learningType)
+    // Resolve loTypes from contentType; fall back to learningProgram (cohort)
+    const loTypes = contentType
+      ? PLDataService.determineLearningObjectTypes(contentType)
       : [PLDataService.LO_TYPES.LEARNING_PROGRAM];
 
     params.set('include', 'instances,enrollment.loResourceGrades,skills.skillLevel.skill');
@@ -354,6 +355,10 @@ export default class PLDataService {
    */
   async fetchDataFromSource() {
     try {
+      if (this.queryParams?.suggestedContent) {
+        return this.fetchSuggestedContent();
+      }
+
       const apiBaseUrl = getConfig()?.plApiBaseUrl;
       const { q, searchMode } = this.queryParams;
       const isSearchMode = searchMode || !!q;

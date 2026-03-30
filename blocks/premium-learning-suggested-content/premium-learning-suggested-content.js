@@ -1,6 +1,5 @@
-import PLDataService from '../../scripts/data-service/premium-learning-data-service.js';
 import PL_CONTENT_TYPES from '../../scripts/data-service/premium-learning/premium-learning-constants.js';
-import BrowseCardsPLAdaptor from '../../scripts/browse-card/browse-cards-premium-learning-adaptor.js';
+import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTag, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
@@ -9,17 +8,16 @@ import { isSignedInUser } from '../../scripts/auth/profile.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 
 const UE_AUTHOR_MODE = window.hlx.aemRoot || window.location.href.includes('.html');
-const DEFAULT_TAB = 'For you';
 const MAX_VISIBLE_COHORTS = 4;
 const FETCH_LIMIT = 10;
 
 function parseAuthoredContent(block) {
-  const [headingElement, descriptionElement, ctaElement, learningTypeElement] = [...block.children];
+  const [headingElement, descriptionElement, ctaElement, contentTypeElement] = [...block.children];
 
-  let learningType = [];
-  if (learningTypeElement) {
-    const rawText = learningTypeElement.textContent?.trim() || '';
-    learningType = rawText
+  let contentType = [];
+  if (contentTypeElement) {
+    const rawText = contentTypeElement.textContent?.trim() || '';
+    contentType = rawText
       .split(',')
       .map((v) => v.trim())
       .filter(Boolean);
@@ -30,7 +28,7 @@ function parseAuthoredContent(block) {
     descriptionMarkup: descriptionElement?.innerHTML || '',
     ctaMarkup: ctaElement?.innerHTML ? decorateCustomButtons(ctaElement) : '',
     ctaElement,
-    learningType,
+    contentType,
   };
 }
 
@@ -81,7 +79,7 @@ function sortContentItems(items) {
 
 function getTabDefinitions(suggestedContentItems, placeholders) {
   const uniqueProducts = getUniqueProductsInOrder(suggestedContentItems);
-  const defaultTab = placeholders.premiumLearningCohortTabsDefaultTabLabel || DEFAULT_TAB;
+  const defaultTab = placeholders.premiumLearningCohortTabsDefaultTabLabel || 'For you';
   const defaultTabItems = sortContentItems(suggestedContentItems).slice(0, MAX_VISIBLE_COHORTS);
 
   if (!defaultTabItems.length) {
@@ -209,13 +207,12 @@ function buildSuggestedContentLayout(block, headingMarkup, descriptionMarkup, ct
   return { tabHeader, contentContainer };
 }
 
-function fetchSuggestedContentResponse(learningType) {
-  const premiumLearningService = new PLDataService({
+function fetchSuggestedContentCards(contentType) {
+  return BrowseCardsDelegate.fetchCardData({
+    contentType: contentType?.length ? contentType : PL_CONTENT_TYPES.COHORT.MAPPING_KEY,
     noOfResults: FETCH_LIMIT,
-    ...(learningType?.length ? { learningType } : {}),
+    suggestedContent: true,
   });
-
-  return premiumLearningService.fetchSuggestedContent();
 }
 
 function initializeResponsiveTabs({ tabHeader, listItems, defaultTab, tabsById, contentDiv }) {
@@ -245,7 +242,7 @@ function initializeResponsiveTabs({ tabHeader, listItems, defaultTab, tabsById, 
 }
 
 export default async function decorate(block) {
-  const { headingMarkup, descriptionMarkup, ctaMarkup, ctaElement, learningType } = parseAuthoredContent(block);
+  const { headingMarkup, descriptionMarkup, ctaMarkup, ctaElement, contentType } = parseAuthoredContent(block);
 
   const { tabHeader, contentContainer } = buildSuggestedContentLayout(
     block,
@@ -272,15 +269,14 @@ export default async function decorate(block) {
   shimmer.addShimmer(contentContainer);
 
   try {
-    const response = await fetchSuggestedContentResponse(learningType);
+    const suggestedContentItems = await fetchSuggestedContentCards(contentType);
     shimmer.removeShimmer();
 
-    if (!response?.data?.length) {
+    if (!suggestedContentItems?.length) {
       renderEmptyState(contentContainer, ctaElement, placeholders);
       return;
     }
 
-    const suggestedContentItems = await BrowseCardsPLAdaptor.mapResultsToCardsData(response);
     const tabs = getTabDefinitions(suggestedContentItems, placeholders);
 
     if (!tabs.length) {
