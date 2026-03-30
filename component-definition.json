@@ -1912,7 +1912,7 @@
                   "title": "Suggested cohorts to join",
                   "titleType": "h3",
                   "description": "",
-                  "learningType": ["learningProgram"]
+                  "contentType": ["premium-learning-cohort"]
                 }
               }
             }

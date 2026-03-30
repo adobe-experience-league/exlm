@@ -544,7 +544,8 @@
       "insert": ["link"],
       "advanced": [],
       "extensions": [],
-      "editor": ["removeformat"]
+      "editor": ["removeformat"],
+      "blocks": []
     }
   },
   {

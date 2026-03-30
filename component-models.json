@@ -1898,7 +1898,6 @@
           }
         ]
       },
-
       {
         "component": "select",
         "name": "cta1_Type",
@@ -2006,22 +2005,22 @@
         "label": "Description",
         "description": "Description text displayed below the heading."
       },
-      {
+       {
         "component": "multiselect",
         "valueType": "string",
-        "name": "learningType",
+        "name": "contentType",
         "value": "premium-learning-cohort",
         "label": "Learning Type",
         "description": "Select which premium learning learning type(s) to display",
         "required": true,
         "options": [
           {
-            "name": "Suggeted Courses",
-            "value": "course"
+            "name": "Premium Learning Course",
+            "value": "premium-learning-course"
           },
           {
-            "name": "Suggeted Cohorts",
-            "value": "learningProgram"
+            "name": "Premium Learning Cohort",
+            "value": "premium-learning-cohort"
           }
         ]
       }
