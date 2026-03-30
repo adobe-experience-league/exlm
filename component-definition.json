@@ -1911,7 +1911,6 @@
                   "filter": "rte-no-headings",
                   "title": "Suggested cohorts to join",
                   "titleType": "h3",
-                  "description": "",
                   "contentType": ["premium-learning-cohort"]
                 }
               }
