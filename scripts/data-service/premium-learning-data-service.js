@@ -62,6 +62,30 @@ export default class PLDataService {
   static QUERY_ENDPOINT = '/learningObjects/query';
 
   /**
+   * Recommendation preferences endpoint path
+   * @private
+   */
+  static RECOMMENDATION_PREFERENCES_ENDPOINT = '/users';
+
+  /**
+   * Default catalog IDs for recommended content
+   * @private
+   */
+  static RECOMMENDED_CATALOG_IDS = ['208425']; /* TODO: fetch from config */
+
+  /**
+   * Default learner states for recommended content
+   * @private
+   */
+  static RECOMMENDED_LEARNER_STATES = ['notenrolled'];
+
+  /**
+   * Whether to ignore enhanced LP for recommended content
+   * @private
+   */
+  static RECOMMENDED_IGNORE_ENHANCED_LP = false;
+
+  /**
    * Snippet types for search endpoint
    * @private
    */
@@ -296,6 +320,92 @@ export default class PLDataService {
       body['filter.learnerState'] = stateArray;
     }
     return body;
+  }
+
+  /**
+   * Maps authored learningType value to filter.loTypes array.
+   * Handles 'course', 'learningProgram', and 'both' (default).
+   * @private
+   * @param {string} learningType - Authored learning type
+   * @returns {Array<string>} Array of LO types
+   */
+  static getRecommendedLoTypes(learningType) {
+    if (learningType === 'course') return ['course'];
+    if (learningType === 'learningProgram') return ['learningProgram'];
+    return ['course', 'learningProgram'];
+  }
+
+  /**
+   * Builds URL search parameters for the recommended content query endpoint.
+   * @private
+   * @returns {URLSearchParams} Constructed URL search parameters
+   */
+  static buildRecommendedContentUrlParams() {
+    return new URLSearchParams({
+      'page[limit]': '10',
+      sort: '-recommendationScore',
+      'enforcedFields[learningObject]': 'products,roles,extensionOverrides,effectivenessData',
+      include: 'instances.loResources.resources',
+    });
+  }
+
+  /**
+   * Builds request body for the recommended content query endpoint.
+   * @private
+   * @param {Array} products - Product preferences from user profile
+   * @param {Array} roles - Role preferences from user profile
+   * @returns {Object} Request body object
+   */
+  buildRecommendedContentRequestBody(products, roles) {
+    const { learningType } = this.queryParams;
+    return {
+      'filter.recommendationProducts': products.map((p) => ({ name: p.name })),
+      'filter.recommendationRoles': roles.map((r) => ({ name: r.name, levels: r.levels ?? [] })),
+      'filter.loTypes': PLDataService.getRecommendedLoTypes(learningType),
+      'filter.ignoreEnhancedLP': PLDataService.RECOMMENDED_IGNORE_ENHANCED_LP,
+      'filter.learnerState': PLDataService.RECOMMENDED_LEARNER_STATES,
+      'filter.catalogIds': PLDataService.RECOMMENDED_CATALOG_IDS,
+    };
+  }
+
+  /**
+   * Fetches personalized recommended learning objects via a two-step API flow:
+   * 1. GET /users/{userId}/recommendationPreferences
+   * 2. POST /learningObjects/query with derived filters
+   * @param {string} userId - The learner's user ID
+   * @param {string} token - OAuth access token
+   * @returns {Promise<{prefsData: Object, loData: Object}>}
+   * @throws {Error} If either API request fails
+   */
+  async fetchRecommendedContent(userId, token) {
+    const apiBaseUrl = getConfig()?.plApiBaseUrl;
+    const headers = {
+      Authorization: `oauth ${token}`,
+      Accept: 'application/vnd.api+json',
+    };
+
+    const prefsRes = await fetch(
+      `${apiBaseUrl}${PLDataService.RECOMMENDATION_PREFERENCES_ENDPOINT}/${userId}/recommendationPreferences`,
+      { headers },
+    );
+    if (!prefsRes.ok) throw new Error(`Preferences fetch failed: ${prefsRes.status}`);
+    const prefsData = await prefsRes.json();
+
+    const products = prefsData.data?.attributes?.products ?? [];
+    const roles = prefsData.data?.attributes?.roles ?? [];
+    const payload = this.buildRecommendedContentRequestBody(products, roles);
+    const queryParams = PLDataService.buildRecommendedContentUrlParams();
+
+    const loRes = await fetch(`${apiBaseUrl}${PLDataService.QUERY_ENDPOINT}?${queryParams}`, {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/vnd.api+json' },
+      body: JSON.stringify(payload),
+      credentials: 'include',
+    });
+    if (!loRes.ok) throw new Error(`Learning objects fetch failed: ${loRes.status}`);
+    const loData = await loRes.json();
+
+    return { prefsData, loData };
   }
 
   /**

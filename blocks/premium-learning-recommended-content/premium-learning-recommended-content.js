@@ -1,7 +1,8 @@
+import PLDataService from '../../scripts/data-service/premium-learning-data-service.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import BrowseCardsPLAdaptor from '../../scripts/browse-card/browse-cards-premium-learning-adaptor.js';
-import { createTag, fetchLanguagePlaceholders, htmlToElement, getConfig } from '../../scripts/scripts.js';
+import { createTag, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { getPLAccessToken } from '../../scripts/utils/pl-auth-utils.js';
 import { getCookie } from '../../scripts/utils/cookie-utils.js';
@@ -10,9 +11,6 @@ import { showFallbackContentInUEMode } from '../premium-learning-search/premium-
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const MAX_CARDS = 4;
-const RECOMMENDED_CATALOG_IDS = ['208422'];
-const RECOMMENDED_LEARNER_STATES = ['notenrolled'];
-const IGNORE_ENHANCED_LP = false;
 
 // ─── DOM helpers ────────────────────────────────────────────────────────────
 
@@ -89,13 +87,6 @@ function renderTabs(block, tabsData, allCards, placeholders) {
 
 // ─── Data helpers ────────────────────────────────────────────────────────────
 
-// Maps the authored learningType value to the filter.loTypes array for API 2.
-function getLoTypes(learningType) {
-  if (learningType === 'course') return ['course'];
-  if (learningType === 'learningProgram') return ['learningProgram'];
-  return ['course', 'learningProgram']; // 'both' default
-}
-
 // Loads config.json present only in local dev environments (git-ignored).
 async function loadLocalConfig() {
   try {
@@ -106,64 +97,18 @@ async function loadLocalConfig() {
   }
 }
 
-// Step 1: GET /users/{userId}/recommendationPreferences
-async function fetchRecommendationPreferences(plApiBaseUrl, userId, headers) {
-  const res = await fetch(`${plApiBaseUrl}/users/${userId}/recommendationPreferences`, { headers });
-  if (!res.ok) throw new Error(`Preferences fetch failed: ${res.status}`);
-  return res.json();
-}
-
-// Builds the JSON body for the Step 2 POST request.
-function buildLearningObjectsPayload(products, roles, learningType) {
-  return {
-    'filter.recommendationProducts': products.map((p) => ({ name: p.name })),
-    'filter.recommendationRoles': roles.map((r) => ({ name: r.name, levels: r.levels ?? [] })),
-    'filter.loTypes': getLoTypes(learningType),
-    'filter.ignoreEnhancedLP': IGNORE_ENHANCED_LP,
-    'filter.learnerState': RECOMMENDED_LEARNER_STATES,
-    'filter.catalogIds': RECOMMENDED_CATALOG_IDS
-  };
-}
-
-// Step 2: POST /learningObjects/query with dynamic payload.
-async function fetchLearningObjects(plApiBaseUrl, payload, headers) {
-  const queryParams = new URLSearchParams({
-    'page[limit]': '10',
-    sort: '-recommendationScore',
-    'enforcedFields[learningObject]': 'products,roles,extensionOverrides,effectivenessData',
-    include: 'instances.loResources.resources',
-  });
-  const res = await fetch(`${plApiBaseUrl}/learningObjects/query?${queryParams}`, {
-    method: 'POST',
-    headers: { ...headers, 'Content-Type': 'application/vnd.api+json' },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) throw new Error(`Learning objects fetch failed: ${res.status}`);
-  return res.json();
-}
-
-// Orchestrates the two-step API flow. Returns { prefsData, loData }.
+// Orchestrates the two-step API flow via PLDataService. Returns { prefsData, loData }.
 async function fetchApiData(localConfig, learningType) {
   if (localConfig?.localDev === true) {
     return { prefsData: localConfig.api1, loData: localConfig.api2 };
   }
 
-  const { plApiBaseUrl } = getConfig();
   // localDevAuth: use token/userId from config.json to make real API calls without a browser session
   const token = localConfig?.localDevAuth === true ? localConfig.token : getPLAccessToken();
   const userId = localConfig?.localDevAuth === true ? localConfig.userId : getCookie('alm_user_id');
-  const headers = {
-    Authorization: `oauth ${token}`,
-    Accept: 'application/vnd.api+json',
-  };
 
-  const prefsData = await fetchRecommendationPreferences(plApiBaseUrl, userId, headers);
-  const products = prefsData.data?.attributes?.products ?? [];
-  const roles = prefsData.data?.attributes?.roles ?? [];
-  const payload = buildLearningObjectsPayload(products, roles, learningType);
-  const loData = await fetchLearningObjects(plApiBaseUrl, payload, headers);
-
-  return { prefsData, loData };
+  const service = new PLDataService({ learningType });
+  return service.fetchRecommendedContent(userId, token);
 }
 
 // Builds the tabs map: { All: allCards, '<ProductName>': filteredCards, … }
