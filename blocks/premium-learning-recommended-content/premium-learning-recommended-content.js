@@ -98,7 +98,7 @@ async function loadLocalConfig() {
 }
 
 // Orchestrates the two-step API flow via PLDataService. Returns { prefsData, loData }.
-async function fetchApiData(localConfig, learningType) {
+async function fetchApiData(localConfig, contentType) {
   if (localConfig?.localDev === true) {
     return { prefsData: localConfig.api1, loData: localConfig.api2 };
   }
@@ -107,7 +107,7 @@ async function fetchApiData(localConfig, learningType) {
   const token = localConfig?.localDevAuth === true ? localConfig.token : getPLAccessToken();
   const userId = localConfig?.localDevAuth === true ? localConfig.userId : getCookie('alm_user_id');
 
-  const service = new PLDataService({ learningType });
+  const service = new PLDataService({ contentType });
   return service.fetchRecommendedContent(userId, token);
 }
 
@@ -132,8 +132,9 @@ function buildTabsData(allCards, loData, products, forYouLabel) {
  * @param {HTMLElement} block - The block element to decorate.
  */
 export default async function decorate(block) {
-  const [headingElement, descriptionElement, learningTypeElement] = [...block.children];
-  const learningType = learningTypeElement?.textContent?.trim() || 'both';
+  const [headingElement, descriptionElement, contentTypeElement] = [...block.children];
+  const contentTypeRaw = contentTypeElement?.textContent?.trim() || '';
+  const contentType = contentTypeRaw ? contentTypeRaw.split(',').map((s) => s.trim()) : [];
 
   block.innerHTML = '';
   block.classList.add('browse-cards-block', 'premium-learning-recommended-content-block');
@@ -158,7 +159,7 @@ export default async function decorate(block) {
   shimmer.addShimmer(block);
 
   try {
-    const { prefsData, loData } = await fetchApiData(localConfig, learningType);
+    const { prefsData, loData } = await fetchApiData(localConfig, contentType);
     const products = prefsData.data?.attributes?.products ?? [];
 
     shimmer.removeShimmer();

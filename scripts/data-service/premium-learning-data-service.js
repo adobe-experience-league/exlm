@@ -323,19 +323,6 @@ export default class PLDataService {
   }
 
   /**
-   * Maps authored learningType value to filter.loTypes array.
-   * Handles 'course', 'learningProgram', and 'both' (default).
-   * @private
-   * @param {string} learningType - Authored learning type
-   * @returns {Array<string>} Array of LO types
-   */
-  static getRecommendedLoTypes(learningType) {
-    if (learningType === 'course') return ['course'];
-    if (learningType === 'learningProgram') return ['learningProgram'];
-    return ['course', 'learningProgram'];
-  }
-
-  /**
    * Builds URL search parameters for the recommended content query endpoint.
    * @private
    * @returns {URLSearchParams} Constructed URL search parameters
@@ -357,11 +344,11 @@ export default class PLDataService {
    * @returns {Object} Request body object
    */
   buildRecommendedContentRequestBody(products, roles) {
-    const { learningType } = this.queryParams;
+    const { contentType } = this.queryParams;
     return {
       'filter.recommendationProducts': products.map((p) => ({ name: p.name })),
       'filter.recommendationRoles': roles.map((r) => ({ name: r.name, levels: r.levels ?? [] })),
-      'filter.loTypes': PLDataService.getRecommendedLoTypes(learningType),
+      'filter.loTypes': PLDataService.determineLearningObjectTypes(contentType),
       'filter.ignoreEnhancedLP': PLDataService.RECOMMENDED_IGNORE_ENHANCED_LP,
       'filter.learnerState': PLDataService.RECOMMENDED_LEARNER_STATES,
       'filter.catalogIds': PLDataService.RECOMMENDED_CATALOG_IDS,

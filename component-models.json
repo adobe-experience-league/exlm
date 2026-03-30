@@ -1989,14 +1989,21 @@
       },
       {
         "component": "multiselect",
-        "valueType": "string[]",
-        "name": "learningType",
-        "value": [],
+        "valueType": "string",
+        "name": "contentType",
+        "value": "premium-learning-cohort",
         "label": "Learning Type",
-        "description": "Filter recommended learning objects by type. 'Course' shows only courses, 'Cohort' shows only cohorts, selecting all shows all types.",
+        "description": "Select which premium learning learning type(s) to display",
+        "required": true,
         "options": [
-          { "name": "Course", "value": "course" },
-          { "name": "Cohort", "value": "learningProgram" }
+          {
+            "name": "Premium Learning Course",
+            "value": "premium-learning-course"
+          },
+          {
+            "name": "Premium Learning Cohort",
+            "value": "premium-learning-cohort"
+          }
         ]
       }
     ]
