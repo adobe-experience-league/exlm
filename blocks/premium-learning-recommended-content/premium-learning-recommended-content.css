@@ -37,8 +37,9 @@
   }
 }
 
-@media (min-width: 1024px) {
-  .premium-learning-recommended-content .premium-learning-recommended-content-no-results {
-    width: 75%;
+@media (min-width: 420px) {
+  .recommended-content.block .custom-filter-dropdown {
+    min-width: 360px;
+    width: fit-content;
   }
 }
