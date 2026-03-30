@@ -47,10 +47,4 @@ body.aim-hub .section > div.default-content-wrapper + div[class$='-wrapper'] {
   body.aim-hub .section {
     padding: 60px 40px;
   }
-
-  body.aim-hub .section.sticky-nav-section {
-    padding: 0 40px;
-    margin-bottom: 0;
-    background-color: var(--background-color);
-  }
 }
