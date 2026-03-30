@@ -38,16 +38,15 @@ function renderCards(contentDiv, cards) {
   }
 }
 
-/* TODO: Re-usability and Placeholder naming */
 function renderNoResultsContent(block, placeholders) {
   const noResultsHeader = placeholders.premiumLearningCardsRecsHeader || 'No Premium Learning recommended results.';
   const noResultsDescription =
     placeholders.premiumLearningCardsRecsDescription ||
     'Try searching for a specific product or role, or explore all Premium learning content.';
   const markup = `
-    <div class="premium-learning-search-no-results">
-      <div class="premium-learning-search-no-results-header">${noResultsHeader}</div>
-      <div class="premium-learning-search-no-results-description">${noResultsDescription}</div>
+    <div class="premium-learning-recommended-content-no-results">
+      <div class="premium-learning-recommended-content-no-results-header">${noResultsHeader}</div>
+      <div class="premium-learning-recommended-content-no-results-description">${noResultsDescription}</div>
     </div>
   `;
   block.appendChild(htmlToElement(markup));
@@ -72,13 +71,15 @@ function renderTabs(block, tabsData, allCards, placeholders) {
       renderCards(contentDiv, allCards);
     },
     onSelectCallback: (label) => {
-      const existingNoResults = block.querySelector('.premium-learning-search-no-results');
+      const existingNoResults = block.querySelector('.premium-learning-recommended-content-no-results');
       if (existingNoResults) existingNoResults.remove();
       contentDiv.innerHTML = '';
       const filtered = tabsData[label] ?? [];
       if (filtered.length) {
+        contentDiv.style.display = '';
         renderCards(contentDiv, filtered);
       } else {
+        contentDiv.style.display = 'none';
         renderNoResultsContent(block, placeholders);
       }
     },
@@ -136,7 +137,7 @@ export default async function decorate(block) {
   const learningType = learningTypeElement?.textContent?.trim() || 'both';
 
   block.innerHTML = '';
-  block.classList.add('browse-cards-block', 'premium-learning-search-block', 'premium-learning-recommended-content-block');
+  block.classList.add('browse-cards-block', 'premium-learning-recommended-content-block');
   block.appendChild(buildBlockHeader(headingElement?.innerHTML || '', descriptionElement?.innerHTML || ''));
 
   const localConfig = await loadLocalConfig();
