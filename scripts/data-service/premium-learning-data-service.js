@@ -375,7 +375,43 @@ export default class PLDataService {
   async fetchDataFromSource() {
     try {
       const apiBaseUrl = getConfig()?.plApiBaseUrl;
-      const { q, searchMode } = this.queryParams;
+      const { q, searchMode, recommendationMode } = this.queryParams;
+
+      if (recommendationMode) {
+        const { products = [], roles = [], contentType, noOfResults } = this.queryParams;
+        const { catalogIds } = getConfig()?.['premium-learning'] ?? {};
+        const token = getPLAccessToken();
+        const payload = {
+          'filter.recommendationProducts': products.map((p) => ({ name: p.name })),
+          'filter.recommendationRoles': roles.map((r) => ({ name: r.name, levels: r.levels ?? [] })),
+          'filter.loTypes': PLDataService.determineLearningObjectTypes(contentType),
+          'filter.ignoreEnhancedLP': false,
+          'filter.learnerState': ['notenrolled'],
+        };
+        if (catalogIds) {
+          payload['filter.catalogIds'] = Array.isArray(catalogIds) ? catalogIds : [catalogIds];
+        }
+        const queryParams = new URLSearchParams({
+          'page[limit]': String(noOfResults || PLDataService.DEFAULT_SEARCH_RESULTS_COUNT),
+          sort: '-recommendationScore',
+          'enforcedFields[learningObject]': 'products,roles,extensionOverrides,effectivenessData',
+          include: 'instances.loResources.resources',
+        });
+        const headers = {
+          Authorization: `oauth ${token}`,
+          Accept: 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+        };
+        const loRes = await fetch(`${apiBaseUrl}${PLDataService.QUERY_ENDPOINT}?${queryParams}`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(payload),
+          credentials: 'include',
+        });
+        if (!loRes.ok) throw new Error(`Learning objects fetch failed: ${loRes.status}`);
+        return loRes.json();
+      }
+
       const isSearchMode = searchMode || !!q;
 
       let url;

@@ -240,6 +240,7 @@ const BrowseCardsPLAdaptor = (() => {
       title: metadata.name || '',
       viewLink: createPLLinkfromID(contentType, id),
       copyLink: createPLLinkfromID(contentType, id),
+      products: attributes?.products ?? [],
       meta: {
         rating: {
           average: attributes?.rating?.averageRating || 0,
