@@ -68,24 +68,6 @@ export default class PLDataService {
   static RECOMMENDATION_PREFERENCES_ENDPOINT = '/users';
 
   /**
-   * Default catalog IDs for recommended content
-   * @private
-   */
-  static RECOMMENDED_CATALOG_IDS = ['208425']; /* TODO: fetch from config */
-
-  /**
-   * Default learner states for recommended content
-   * @private
-   */
-  static RECOMMENDED_LEARNER_STATES = ['notenrolled'];
-
-  /**
-   * Whether to ignore enhanced LP for recommended content
-   * @private
-   */
-  static RECOMMENDED_IGNORE_ENHANCED_LP = false;
-
-  /**
    * Snippet types for search endpoint
    * @private
    */
@@ -337,34 +319,13 @@ export default class PLDataService {
   }
 
   /**
-   * Builds request body for the recommended content query endpoint.
-   * @private
-   * @param {Array} products - Product preferences from user profile
-   * @param {Array} roles - Role preferences from user profile
-   * @returns {Object} Request body object
-   */
-  buildRecommendedContentRequestBody(products, roles) {
-    const { contentType } = this.queryParams;
-    return {
-      'filter.recommendationProducts': products.map((p) => ({ name: p.name })),
-      'filter.recommendationRoles': roles.map((r) => ({ name: r.name, levels: r.levels ?? [] })),
-      'filter.loTypes': PLDataService.determineLearningObjectTypes(contentType),
-      'filter.ignoreEnhancedLP': PLDataService.RECOMMENDED_IGNORE_ENHANCED_LP,
-      'filter.learnerState': PLDataService.RECOMMENDED_LEARNER_STATES,
-      'filter.catalogIds': PLDataService.RECOMMENDED_CATALOG_IDS,
-    };
-  }
-
-  /**
-   * Fetches personalized recommended learning objects via a two-step API flow:
-   * 1. GET /users/{userId}/recommendationPreferences
-   * 2. POST /learningObjects/query with derived filters
+   * Fetches the user's recommendation preferences from Adobe Learning Manager.
    * @param {string} userId - The learner's user ID
    * @param {string} token - OAuth access token
-   * @returns {Promise<{prefsData: Object, loData: Object}>}
-   * @throws {Error} If either API request fails
+   * @returns {Promise<Object>} Parsed preferences response
+   * @throws {Error} If the API request fails
    */
-  async fetchRecommendedContent(userId, token) {
+  static async fetchRecommendationPreferences(userId, token) {
     const apiBaseUrl = getConfig()?.plApiBaseUrl;
     const headers = {
       Authorization: `oauth ${token}`,
@@ -376,11 +337,22 @@ export default class PLDataService {
       { headers },
     );
     if (!prefsRes.ok) throw new Error(`Preferences fetch failed: ${prefsRes.status}`);
-    const prefsData = await prefsRes.json();
+    return prefsRes.json();
+  }
 
-    const products = prefsData.data?.attributes?.products ?? [];
-    const roles = prefsData.data?.attributes?.roles ?? [];
-    const payload = this.buildRecommendedContentRequestBody(products, roles);
+  /**
+   * Fetches recommended learning objects using a pre-built payload.
+   * @param {string} token - OAuth access token
+   * @param {Object} payload - Request body built by the caller
+   * @returns {Promise<Object>} Parsed learning objects response
+   * @throws {Error} If the API request fails
+   */
+  static async fetchRecommendedLearningObjects(token, payload) {
+    const apiBaseUrl = getConfig()?.plApiBaseUrl;
+    const headers = {
+      Authorization: `oauth ${token}`,
+      Accept: 'application/vnd.api+json',
+    };
     const queryParams = PLDataService.buildRecommendedContentUrlParams();
 
     const loRes = await fetch(`${apiBaseUrl}${PLDataService.QUERY_ENDPOINT}?${queryParams}`, {
@@ -390,9 +362,7 @@ export default class PLDataService {
       credentials: 'include',
     });
     if (!loRes.ok) throw new Error(`Learning objects fetch failed: ${loRes.status}`);
-    const loData = await loRes.json();
-
-    return { prefsData, loData };
+    return loRes.json();
   }
 
   /**

@@ -11,6 +11,9 @@ import { showFallbackContentInUEMode } from '../premium-learning-search/premium-
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const MAX_CARDS = 4;
+const RECOMMENDED_CATALOG_IDS = ['208425']; /* TODO: fetch from config */
+const RECOMMENDED_LEARNER_STATES = ['notenrolled'];
+const RECOMMENDED_IGNORE_ENHANCED_LP = false;
 
 // ─── DOM helpers ────────────────────────────────────────────────────────────
 
@@ -97,6 +100,17 @@ async function loadLocalConfig() {
   }
 }
 
+function buildRecommendedContentPayload(contentType, products, roles) {
+  return {
+    'filter.recommendationProducts': products.map((p) => ({ name: p.name })),
+    'filter.recommendationRoles': roles.map((r) => ({ name: r.name, levels: r.levels ?? [] })),
+    'filter.loTypes': PLDataService.determineLearningObjectTypes(contentType),
+    'filter.ignoreEnhancedLP': RECOMMENDED_IGNORE_ENHANCED_LP,
+    'filter.learnerState': RECOMMENDED_LEARNER_STATES,
+    'filter.catalogIds': RECOMMENDED_CATALOG_IDS,
+  };
+}
+
 // Orchestrates the two-step API flow via PLDataService. Returns { prefsData, loData }.
 async function fetchApiData(localConfig, contentType) {
   if (localConfig?.localDev === true) {
@@ -107,8 +121,12 @@ async function fetchApiData(localConfig, contentType) {
   const token = localConfig?.localDevAuth === true ? localConfig.token : getPLAccessToken();
   const userId = localConfig?.localDevAuth === true ? localConfig.userId : getCookie('alm_user_id');
 
-  const service = new PLDataService({ contentType });
-  return service.fetchRecommendedContent(userId, token);
+  const prefsData = await PLDataService.fetchRecommendationPreferences(userId, token);
+  const products = prefsData.data?.attributes?.products ?? [];
+  const roles = prefsData.data?.attributes?.roles ?? [];
+  const payload = buildRecommendedContentPayload(contentType, products, roles);
+  const loData = await PLDataService.fetchRecommendedLearningObjects(token, payload);
+  return { prefsData, loData };
 }
 
 // Builds the tabs map: { All: allCards, '<ProductName>': filteredCards, … }
