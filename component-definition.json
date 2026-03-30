@@ -455,11 +455,11 @@
                 "template": {
                   "name": "Premium Learning Recommended Content",
                   "model": "premium-learning-recommended-content",
+                  "filter": "rte-no-headings",
                   "title": "Based on previous learnings",
-                  "titleType": "h2",
-                  "cta1_Type": "primary",
-                  "cta1_linkText": "",
-                  "cta1_link": ""
+                  "titleType": "h3",
+                  "description": "",
+                  "contentType": ["premium-learning-course"]
                 }
               }
             }
