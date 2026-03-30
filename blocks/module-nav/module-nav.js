@@ -95,7 +95,7 @@ async function handleQuizNextButton(e) {
     const errorMessage = document.createElement('div');
     errorMessage.style.color = 'red';
     errorMessage.style.textAlign = 'right';
-    errorMessage.textContent = 'An error occurred while completing the Module, Please try again later.';
+    errorMessage.textContent = 'Something went wrong while completing the module. Please try again later.';
     nextButton.parentElement.insertAdjacentElement('afterend', errorMessage);
   }
 }
