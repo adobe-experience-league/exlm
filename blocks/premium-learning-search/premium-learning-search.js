@@ -46,7 +46,7 @@ function showFallbackContentInUEMode(blockElement) {
  */
 export default async function decorate(block) {
   // Extracting elements from the block in authoring order
-  const [headingElement, ctaElement, contentTypeElement, tagsElement] = [...block.children];
+  const [headingElement, ctaElement, contentTypeElement] = [...block.children];
 
   // contentType is string if single selection,made into an array if multiple selections
   let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase();
@@ -56,9 +56,6 @@ export default async function decorate(block) {
       .map((type) => type.trim())
       .filter(Boolean);
   }
-
-  // Extract and process tags for product filtering
-  const tags = tagsElement?.textContent?.trim();
 
   const noOfResults = 4;
 
@@ -97,18 +94,6 @@ export default async function decorate(block) {
     contentType, // Can be string ('premium-learning-course' or 'premium-learning-cohort') or array (['premium-learning-course', 'premium-learning-cohort'])
     noOfResults,
   };
-
-  // Add product filtering if tags are provided
-  if (tags) {
-    const { extractCapability, removeProductDuplicates } = await import(
-      '../../scripts/browse-card/browse-card-utils.js'
-    );
-    const { products } = extractCapability(tags);
-    if (products.length > 0) {
-      // Use 'products' for search mode compatibility
-      param.products = removeProductDuplicates(products);
-    }
-  }
 
   const buildCardsShimmer = new BrowseCardShimmer(noOfResults, contentType);
   buildCardsShimmer.addShimmer(block);

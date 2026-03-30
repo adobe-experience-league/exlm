@@ -10064,7 +10064,7 @@
         "name": "contentType",
         "value": "premium-learning-course",
         "label": "Content Type",
-        "description": "Select which premium learning content type to display",
+        "description": "Select which premium learning learning type to display",
         "required": true,
         "options": [
           {

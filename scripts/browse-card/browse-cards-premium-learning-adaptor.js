@@ -222,11 +222,12 @@ const BrowseCardsPLAdaptor = (() => {
 
     const instances = buildInstances(cardData, included);
 
+    let deadline = null;
     if (contentType === PL_CONTENT_TYPES.COHORT.MAPPING_KEY) {
       const instanceId = cardData.relationships?.instances?.data?.[0]?.id;
 
       const instance = included.find((i) => i.id === instanceId);
-      const deadline = instance?.attributes?.enrollmentDeadline;
+      deadline = instance?.attributes?.enrollmentDeadline;
       startLabel = getStartLabelFromDeadline(deadline);
     }
 
@@ -253,6 +254,7 @@ const BrowseCardsPLAdaptor = (() => {
         isNew,
         level: skillLevels, // TODO: Add when field is available in API
         instances, // TODO: Add when field is available in API
+        deadline,
       },
     };
   };
