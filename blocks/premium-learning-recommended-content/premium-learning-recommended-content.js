@@ -39,10 +39,9 @@ function renderCards(contentDiv, cards) {
 }
 
 function renderNoResultsContent(block, placeholders) {
-  const noResultsHeader = placeholders.premiumLearningCardsRecsHeader || 'No Premium Learning recommended results.';
-  const noResultsDescription =
-    placeholders.premiumLearningCardsRecsDescription ||
-    'Try searching for a specific product or role, or explore all Premium learning content.';
+  const noResultsHeader = placeholders.premiumLearningRecommendedContentNoResultsHeader || 'No Premium Learning recommended results.';
+  const noResultsDescription = placeholders.premiumLearningRecommendedContentNoResultsDescription
+    || 'Try searching for a specific product or role, or explore all Premium learning content.';
   const markup = `
     <div class="premium-learning-recommended-content-no-results">
       <div class="premium-learning-recommended-content-no-results-header">${noResultsHeader}</div>
