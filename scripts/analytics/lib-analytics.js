@@ -396,7 +396,7 @@ export async function pushLinkClick(e) {
     linkLocation = 'toc';
   } else if (e.target.closest('.header')) {
     linkLocation = 'header';
-  } else if (e.target.closest('.footer')) {
+  } else if (e.target.closest('.footer-container')) {
     linkLocation = 'footer';
   } else if (e.target.closest('main') && docs) {
     linkLocation = 'body';

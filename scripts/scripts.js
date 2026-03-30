@@ -169,6 +169,11 @@ export const isSignUpPage = matchesAnyTheme(/^signup.*/);
 export const isCourseStep = matchesAnyTheme(/course-step/);
 export const isOnDemandEventPage = matchesAnyTheme(/on-demand-event/);
 export const isLiveGradientBgPage = matchesAnyTheme(/page-bg-gradient/);
+export const isHomePage = (() => {
+  const { pathname } = window.location;
+  const lang = document.querySelector('html').lang || 'en';
+  return pathname === '/' || pathname === `/${lang}` || pathname === `/${lang}/`;
+})();
 
 export const isCertificatePage = () => !!document.querySelector('.course-completion'); // Checking for presence of course-completion block
 
@@ -873,6 +878,14 @@ export function getConfig() {
     eventsURL: `${cdnOrigin}/${lang}/events`,
     // Premium Learning home (for premium learner nav link)
     premiumHomeUrl: `${cdnOrigin}/${lang}/premium/home`,
+    // Brand Concierge
+    bcDatastreamId: '87ae6de9-a49c-4734-a88a-17ec707ded09',
+    bcOrgId: 'E4722728699EC56A0A495CA2@AdobeOrg',
+    bcAlloySdkUrl: 'https://cdn1.adoberesources.net/alloy/2.31.1/alloy.min.js',
+    bcWebClientUrl:
+      'https://experience.adobe.net/solutions/experience-platform-brand-concierge-web-agent/static-assets/main.js',
+    bcEdgeDomain: 'edge.adobedc.net',
+    bcAuthRequired: true,
   };
   return window.exlm.config;
 }
