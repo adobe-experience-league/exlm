@@ -90,16 +90,6 @@ function renderTabs(block, tabsData, allCards, placeholders) {
 
 // ─── Data helpers ────────────────────────────────────────────────────────────
 
-// Loads config.json present only in local dev environments (git-ignored).
-async function loadLocalConfig() {
-  try {
-    const res = await fetch(new URL('./config.json', import.meta.url));
-    return res.ok ? res.json() : null;
-  } catch {
-    return null;
-  }
-}
-
 function buildRecommendedContentPayload(contentType, products, roles) {
   return {
     'filter.recommendationProducts': products.map((p) => ({ name: p.name })),
@@ -112,14 +102,9 @@ function buildRecommendedContentPayload(contentType, products, roles) {
 }
 
 // Orchestrates the two-step API flow via PLDataService. Returns { prefsData, loData }.
-async function fetchApiData(localConfig, contentType) {
-  if (localConfig?.localDev === true) {
-    return { prefsData: localConfig.api1, loData: localConfig.api2 };
-  }
-
-  // localDevAuth: use token/userId from config.json to make real API calls without a browser session
-  const token = localConfig?.localDevAuth === true ? localConfig.token : getPLAccessToken();
-  const userId = localConfig?.localDevAuth === true ? localConfig.userId : getCookie('alm_user_id');
+async function fetchApiData(contentType) {
+  const token = getPLAccessToken();
+  const userId = getCookie('alm_user_id');
 
   const prefsData = await PLDataService.fetchRecommendationPreferences(userId, token);
   const products = prefsData.data?.attributes?.products ?? [];
@@ -158,12 +143,8 @@ export default async function decorate(block) {
   block.classList.add('browse-cards-block', 'premium-learning-recommended-content-block');
   block.appendChild(buildBlockHeader(headingElement?.innerHTML || '', descriptionElement?.innerHTML || ''));
 
-  const localConfig = await loadLocalConfig();
-  const isLocalDev = localConfig?.localDev === true;
-  const isLocalDevAuth = localConfig?.localDevAuth === true;
-
   const [signedIn, placeholders] = await Promise.all([
-    isLocalDev || isLocalDevAuth ? Promise.resolve(true) : isSignedInUser(),
+    isSignedInUser(),
     fetchLanguagePlaceholders().catch(() => ({})),
   ]);
 
@@ -177,7 +158,7 @@ export default async function decorate(block) {
   shimmer.addShimmer(block);
 
   try {
-    const { prefsData, loData } = await fetchApiData(localConfig, contentType);
+    const { prefsData, loData } = await fetchApiData(contentType);
     const products = prefsData.data?.attributes?.products ?? [];
 
     shimmer.removeShimmer();
