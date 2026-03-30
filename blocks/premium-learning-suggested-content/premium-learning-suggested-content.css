@@ -17,7 +17,7 @@
   margin-top: 32px;
 }
 
-.premium-learning-suggested-content .premium-learning-recommended-content-no-results {
+.premium-learning-suggested-content .premium-learning-suggested-content-no-results {
   background-color: var(--spectrum-gray-200);
   color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-200);
@@ -35,23 +35,23 @@
   padding-inline: 16px;
 }
 
-.premium-learning-suggested-content .premium-learning-recommended-content-no-results-header {
+.premium-learning-suggested-content .premium-learning-suggested-content-no-results-header {
   font-size: var(--exlm-font-size-h3);
   font-weight: var(--font-weight-bold);
 }
 
-.premium-learning-suggested-content .premium-learning-recommended-content-no-results-description {
+.premium-learning-suggested-content .premium-learning-suggested-content-no-results-description {
   margin-bottom: 12px;
 }
 
 @media (min-width: 600px) {
-  .premium-learning-suggested-content .premium-learning-recommended-content-no-results-header {
+  .premium-learning-suggested-content .premium-learning-suggested-content-no-results-header {
     font-size: var(--spectrum-font-size-800);
   }
 }
 
 @media (min-width: 1024px) {
-  .premium-learning-recommended-content .premium-learning-recommended-content-no-results {
+  .premium-learning-recommended-content .premium-learning-suggested-content-no-results {
     width: 75%;
   }
 }

@@ -226,7 +226,7 @@ export default class PLDataService {
    */
   buildSuggestedContentUrlParams() {
     const { noOfResults, contentType } = this.queryParams;
-    const { plPublicCatalogId } = getConfig() ?? {};
+    const { plPublicCatalogIds } = getConfig() ?? {};
     const { lang } = getPathDetails();
     const params = new URLSearchParams();
 
@@ -243,7 +243,7 @@ export default class PLDataService {
     params.set('enforcedFields[learningObject]', 'products');
     params.set('filter.ignoreEnhancedLP', 'true');
     params.set('filter.learnerState', 'notenrolled');
-    params.set('filter.catalogIds', plPublicCatalogId.join(','));
+    params.set('filter.catalogIds', plPublicCatalogIds.join(','));
     return params;
   }
 

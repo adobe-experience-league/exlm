@@ -126,11 +126,11 @@ function buildEmptyStateMarkup(ctaElement, placeholders) {
   const ctaMarkup = ctaElement?.innerHTML ? decorateCustomButtons(ctaElement) : '';
 
   return `
-    <div class="premium-learning-suggested-content-empty">
-      <div class="premium-learning-suggested-content-empty-title">
+    <div class="premium-learning-suggested-content-no-results">
+      <div class="premium-learning-suggested-content-no-results-header">
         ${placeholders.premiumLearningCohortTabsEmptyTitle || 'No cohort tabs are available right now.'}
       </div>
-      <div class="premium-learning-suggested-content-empty-description">
+      <div class="premium-learning-suggested-content-no-results-description">
         ${
           placeholders.premiumLearningCohortTabsEmptyDescription ||
           'We could not map products for the available cohorts. Please try again later.'
@@ -143,7 +143,7 @@ function buildEmptyStateMarkup(ctaElement, placeholders) {
 
 function clearRenderedContent(container) {
   container
-    .querySelectorAll('.premium-learning-suggested-content-panel, .premium-learning-suggested-content-empty')
+    .querySelectorAll('.premium-learning-suggested-content-panel, .premium-learning-suggested-content-no-results')
     .forEach((element) => element.remove());
 }
 
@@ -177,7 +177,7 @@ async function renderContentItems(suggestedContentItems, contentDiv) {
 
 function buildSuggestedContentLayout(block, headingMarkup, descriptionMarkup, ctaMarkup) {
   block.innerHTML = '';
-  block.classList.add('browse-cards-block', 'premium-learning-suggested-content-block');
+  block.classList.add('browse-cards-block', 'premium-learning-suggested-content');
 
   const headerDiv = document.createElement('div');
   headerDiv.className = 'premium-learning-suggested-content-header';
