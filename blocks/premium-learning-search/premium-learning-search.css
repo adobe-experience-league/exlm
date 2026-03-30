@@ -133,17 +133,4 @@
     width: 90%;
     margin: 0 auto;
   }
-
-  .premium-learning-search.premium-learning-search-atomic-search .browse-cards-block-content {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 25px;
-  }
-
-  .premium-learning-search.premium-learning-search-atomic-search .browse-cards-block-content > div {
-    flex: 0 0 calc((100% - 75px) / 4);
-    max-width: calc((100% - 75px) / 4);
-    box-sizing: border-box;
-  }
 }
