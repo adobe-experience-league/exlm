@@ -13,7 +13,6 @@ const DEFAULT_CONTENT_TYPES = ['premium-learning-course'];
 
 // ─── DOM helpers ────────────────────────────────────────────────────────────
 
-/* TODO: Re-usability */
 function buildBlockHeader(headingHTML, descriptionHTML) {
   const headerDiv = document.createElement('div');
   headerDiv.className = 'premium-learning-recommended-content-header';
