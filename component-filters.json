@@ -70,7 +70,6 @@
       "columns",
       "icon-block",
       "curated-cards",
-      "premium-learning-cards",
       "premium-learning-recommended-content",
       "premium-learning-search",
       "teaser",
@@ -431,7 +430,7 @@
   },
   {
     "id": "premium-learning-section",
-    "components": ["text", "title", "button", "image", "premium-learning-search"]
+    "components": ["text", "title", "button", "image", "premium-learning-search", "premium-learning-recommended-content"]
   },
   {
     "id": "columns",
