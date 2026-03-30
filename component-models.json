@@ -10033,7 +10033,7 @@
     ]
   },
   {
-    "id": "premium-learning-browse",
+    "id": "premium-learning-browse-cards",
     "fields": [
       {
         "component": "text",
@@ -10041,7 +10041,7 @@
         "name": "title",
         "value": "",
         "label": "Title",
-        "description": "Sets the title for the Premium learning browse block."
+        "description": "Sets the title for the Premium learning browse cards block."
       },
       {
         "component": "select",
@@ -10082,7 +10082,7 @@
         "name": "description",
         "value": "",
         "label": "Long Description",
-        "description": "Sets the description of Premium learning browse block."
+        "description": "Sets the description of Premium learning browse cards block."
       },
       {
         "component": "multiselect",
@@ -10090,7 +10090,7 @@
         "name": "contentType",
         "value": "premium-learning-course",
         "label": "Content Type",
-        "description": "Select which premium learning learning type to display",
+        "description": "Select which premium learning learning type(s) to display",
         "required": true,
         "options": [
           {

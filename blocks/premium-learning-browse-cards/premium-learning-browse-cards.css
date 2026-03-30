@@ -1,21 +1,21 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 @import '../../scripts/browse-card/browse-card-premium-learning.css';
 
-.premium-learning-browse-title {
+.premium-learning-browse-cards-title {
   margin-bottom: 8px;
 }
 
-.premium-learning-browse-title * {
+.premium-learning-browse-cards-title * {
   margin: 0;
 }
 
-.premium-learning-browse-description {
+.premium-learning-browse-cards-description {
   font-size: 16px;
   font-weight: 400;
   line-height: 1.5;
 }
 
-.premium-learning-browse .browse-cards-block-content {
+.premium-learning-browse-cards .browse-cards-block-content {
   min-height: auto;
   margin-top: 32px;
   margin-bottom: 56px;

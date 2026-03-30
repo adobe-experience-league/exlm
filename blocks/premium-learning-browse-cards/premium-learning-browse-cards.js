@@ -40,13 +40,13 @@ export default async function decorate(block) {
   const noOfResults = 4;
 
   block.innerHTML = '';
-  block.classList.add('browse-cards-block', 'premium-learning-browse');
+  block.classList.add('browse-cards-block', 'premium-learning-browse-cards');
 
   const headerDiv = document.createElement('div');
-  headerDiv.className = 'premium-learning-browse-header';
+  headerDiv.className = 'premium-learning-browse-cards-header';
   headerDiv.innerHTML = `
-    ${title ? `<div class="premium-learning-browse-title">${titleElement?.innerHTML || ''}</div>` : ''}
-    ${description ? `<div class="premium-learning-browse-description">${description}</div>` : ''}
+    ${title ? `<div class="premium-learning-browse-cards-title">${titleElement?.innerHTML || ''}</div>` : ''}
+    ${description ? `<div class="premium-learning-browse-cards-description">${description}</div>` : ''}
   `;
   block.appendChild(headerDiv);
 
