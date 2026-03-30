@@ -1,8 +1,7 @@
-import PLDataService from '../../scripts/data-service/premium-learning-data-service.js';
+import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import BrowseCardsPLAdaptor from '../../scripts/browse-card/browse-cards-premium-learning-adaptor.js';
-import { createTag, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import { createTag, fetchLanguagePlaceholders, getConfig, htmlToElement } from '../../scripts/scripts.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { getPLAccessToken } from '../../scripts/utils/pl-auth-utils.js';
 import { getCookie } from '../../scripts/utils/cookie-utils.js';
@@ -16,18 +15,15 @@ try {
 } catch {
   // config.json is optional; silently ignore if absent
 }
-const LOCAL_DEV = localDevConfig?.localDev === true;
+// const LOCAL_DEV = localDevConfig?.localDev === true;
 const LOCAL_DEV_AUTH = localDevConfig?.localDevAuth === true;
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const MAX_CARDS = 4;
-const RECOMMENDED_CATALOG_IDS = ['208425']; /* TODO: fetch from config */
-const RECOMMENDED_LEARNER_STATES = ['notenrolled'];
-const RECOMMENDED_IGNORE_ENHANCED_LP = false;
+const DEFAULT_CONTENT_TYPES = ['premium-learning-course'];
 
 // ─── DOM helpers ────────────────────────────────────────────────────────────
 
-/* TODO: Re-usability */
 function buildBlockHeader(headingHTML, descriptionHTML) {
   const headerDiv = document.createElement('div');
   headerDiv.className = 'premium-learning-recommended-content-header';
@@ -107,42 +103,23 @@ function renderTabs(block, tabsData, allCards, placeholders) {
 
 // ─── Data helpers ────────────────────────────────────────────────────────────
 
-function buildRecommendedContentPayload(contentType, products, roles) {
-  return {
-    'filter.recommendationProducts': products.map((p) => ({ name: p.name })),
-    'filter.recommendationRoles': roles.map((r) => ({ name: r.name, levels: r.levels ?? [] })),
-    'filter.loTypes': PLDataService.determineLearningObjectTypes(contentType),
-    'filter.ignoreEnhancedLP': RECOMMENDED_IGNORE_ENHANCED_LP,
-    'filter.learnerState': RECOMMENDED_LEARNER_STATES,
-    'filter.catalogIds': RECOMMENDED_CATALOG_IDS,
-  };
+// Fetches the user's recommendation preferences (products/roles) from the PL API.
+async function fetchRecommendationPreferences() {
+  const token = LOCAL_DEV_AUTH ? localDevConfig?.token : getPLAccessToken();
+  const userId = LOCAL_DEV_AUTH ? localDevConfig?.userId : getCookie('alm_user_id');
+  if (!userId) throw new Error('PL user ID not available');
+  const apiBaseUrl = getConfig()?.plApiBaseUrl;
+  const headers = { Authorization: `oauth ${token}`, Accept: 'application/vnd.api+json' };
+  const res = await fetch(`${apiBaseUrl}/users/${userId}/recommendationPreferences`, { headers });
+  if (!res.ok) throw new Error(`Preferences fetch failed: ${res.status}`);
+  return res.json();
 }
 
-// Orchestrates the two-step API flow via PLDataService. Returns { prefsData, loData }.
-async function fetchApiData(contentType) {
-  if (LOCAL_DEV) {
-    return { prefsData: localDevConfig.api1, loData: localDevConfig.api2 };
-  }
-
-  const token = LOCAL_DEV_AUTH ? localDevConfig.token : getPLAccessToken();
-  const userId = LOCAL_DEV_AUTH ? localDevConfig.userId : getCookie('alm_user_id');
-
-  const prefsData = await PLDataService.fetchRecommendationPreferences(userId, token);
-  const products = prefsData.data?.attributes?.products ?? [];
-  const roles = prefsData.data?.attributes?.roles ?? [];
-  const payload = buildRecommendedContentPayload(contentType, products, roles);
-  const loData = await PLDataService.fetchRecommendedLearningObjects(token, payload);
-  return { prefsData, loData };
-}
-
-// Builds the tabs map: { All: allCards, '<ProductName>': filteredCards, … }
-function buildTabsData(allCards, loData, products, forYouLabel) {
+// Builds the tabs map: { 'For you': allCards, '<ProductName>': filteredCards, … }
+function buildTabsData(allCards, products, forYouLabel) {
   const tabsData = { [forYouLabel]: allCards };
   products.forEach((p) => {
-    const filtered = (loData.data ?? []).reduce((acc, item, i) => {
-      if (item.attributes?.products?.some((prod) => prod.name === p.name)) acc.push(allCards[i]);
-      return acc;
-    }, []);
+    const filtered = allCards.filter((card) => card.products?.some((prod) => prod.name === p.name));
     tabsData[p.name] = filtered;
   });
   return tabsData;
@@ -158,7 +135,7 @@ function buildTabsData(allCards, loData, products, forYouLabel) {
 export default async function decorate(block) {
   const [headingElement, descriptionElement, contentTypeElement] = [...block.children];
   const contentTypeRaw = contentTypeElement?.textContent?.trim() || '';
-  const contentType = contentTypeRaw ? contentTypeRaw.split(',').map((s) => s.trim()) : [];
+  const contentType = contentTypeRaw ? contentTypeRaw.split(',').map((s) => s.trim()) : DEFAULT_CONTENT_TYPES;
 
   block.innerHTML = '';
   block.classList.add('browse-cards-block', 'premium-learning-recommended-content-block');
@@ -179,13 +156,20 @@ export default async function decorate(block) {
   shimmer.addShimmer(block);
 
   try {
-    const { prefsData, loData } = await fetchApiData(contentType);
+    const prefsData = await fetchRecommendationPreferences();
     const products = prefsData.data?.attributes?.products ?? [];
+    const roles = prefsData.data?.attributes?.roles ?? [];
+
+    const allCards = await BrowseCardsDelegate.fetchCardData({
+      contentType,
+      recommendationMode: true,
+      products,
+      roles,
+      noOfResults: MAX_CARDS,
+      ...(LOCAL_DEV_AUTH && { token: localDevConfig?.token }),
+    });
 
     shimmer.removeShimmer();
-
-    const safeLoData = { ...loData, data: loData?.data ?? [], included: loData?.included ?? [] };
-    const allCards = await BrowseCardsPLAdaptor.mapResultsToCardsData(safeLoData);
 
     if (!allCards.length) {
       renderNoResultsContent(block, placeholders);
@@ -193,7 +177,7 @@ export default async function decorate(block) {
     }
 
     const forYouLabel = placeholders.premiumLearningTabForYou || 'For you';
-    const tabsData = buildTabsData(allCards, loData, products, forYouLabel);
+    const tabsData = buildTabsData(allCards, products, forYouLabel);
     renderTabs(block, tabsData, allCards, placeholders);
   } catch (err) {
     shimmer.removeShimmer();

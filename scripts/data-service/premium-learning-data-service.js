@@ -128,7 +128,7 @@ export default class PLDataService {
    */
   buildRequestBody() {
     const { contentType, tagName } = this.queryParams;
-    const { catalogIds } = getConfig()?.['premium-learning'] ?? {};
+    const catalogIds = getConfig()?.plPrivateCatalogIds;
 
     // Determine learning object types - support both course and cohort
     const loTypes = PLDataService.determineLearningObjectTypes(contentType);
@@ -379,8 +379,8 @@ export default class PLDataService {
 
       if (recommendationMode) {
         const { products = [], roles = [], contentType, noOfResults } = this.queryParams;
-        const { catalogIds } = getConfig()?.['premium-learning'] ?? {};
-        const token = getPLAccessToken();
+        const catalogIds = getConfig()?.plPrivateCatalogIds;
+        const token = this.queryParams.token || getPLAccessToken();
         const payload = {
           'filter.recommendationProducts': products.map((p) => ({ name: p.name })),
           'filter.recommendationRoles': roles.map((r) => ({ name: r.name, levels: r.levels ?? [] })),
