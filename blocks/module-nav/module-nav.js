@@ -75,19 +75,28 @@ async function handleQuizNextButton(e) {
   // Check if this is the last step in the module
   if (!(await isLastStep())) return;
 
-  // Check if this is the last module of the course and complete the course
-  if (await isLastModuleOfCourse()) {
-    await completeCourse();
-    const url = await getCourseCompletionPageUrl();
-    if (url) e.target.href = url;
-  } else {
-    await finishModule();
-    const url = await getNextModuleFirstStep();
-    if (url) e.target.href = url;
-  }
-
-  if (nextButton) {
-    nextButton.classList.remove('disabled');
+  try {
+    // Check if this is the last module of the course and complete the course
+    if (await isLastModuleOfCourse()) {
+      await completeCourse();
+      const url = await getCourseCompletionPageUrl();
+      if (url) e.target.href = url;
+    } else {
+      await finishModule();
+      const url = await getNextModuleFirstStep();
+      if (url) e.target.href = url;
+    }
+    if (nextButton) {
+      nextButton.classList.remove('disabled');
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error completing course:', error);
+    const errorMessage = document.createElement('div');
+    errorMessage.style.color = 'red';
+    errorMessage.style.textAlign = 'right';
+    errorMessage.textContent = 'Something went wrong while completing the module. Please try again later.';
+    nextButton.parentElement.insertAdjacentElement('afterend', errorMessage);
   }
 }
 
