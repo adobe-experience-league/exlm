@@ -223,3 +223,18 @@
   border-radius: 5px;
   background-color: var(--spectrum-gray-200);
 }
+
+@media (min-width: 900px) {
+  .browse-cards-block-content:has(.premium-learning-browse-card) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+  }
+
+  .browse-cards-block-content:has(.premium-learning-browse-card) > div {
+    flex: 0 0 calc((100% - 75px) / 4);
+    max-width: calc((100% - 75px) / 4);
+    box-sizing: border-box;
+  }
+}

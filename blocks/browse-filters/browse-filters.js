@@ -2,6 +2,7 @@ import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import {
   createTag,
   htmlToElement,
+  getv2TagLabels,
   getPathDetails,
   fetchLanguagePlaceholders,
   matchesAnyTheme,
@@ -1578,19 +1579,46 @@ function renderSortContainer(block) {
  */
 function decorateBrowseTopics(block) {
   const { lang } = getPathDetails();
-  const [...configs] = [...block.children].map((row) => row.firstElementChild);
+  const allDivs = [...block.children].map((row) => row.firstElementChild);
+
+  // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
+  if (allDivs.length >= 5) {
+    allDivs.splice(4, 0, undefined, undefined);
+  }
+
   // 'customElement' can either be a Form Element or localized tag values returned by the converter.
-  const [solutionsElement, headingElement, topicsElement, contentTypeElement, customElement] = configs.map(
-    (cell) => cell,
-  );
-  const [solutionsContent, headingContent, topicsContent, contentTypeContent] = configs.map(
-    (cell) => cell?.textContent?.trim() ?? '',
-  );
+  const [
+    solutionsElement,
+    headingElement,
+    topicsElement,
+    contentTypeElement,
+    solutionsv2Element,
+    topicsv2Element,
+    customElement,
+  ] = allDivs;
+
+  const solutionsContent = solutionsElement?.textContent?.trim() ?? '';
+  const headingContent = headingElement?.textContent?.trim() ?? '';
+  const topicsContent = topicsElement?.textContent?.trim() ?? '';
+  const contentTypeContent = contentTypeElement?.textContent?.trim() ?? '';
   const isFormElement = customElement?.classList?.contains('browse-filters-input-container');
   const localizedTopicsContent = isFormElement ? '' : customElement?.textContent?.trim() ?? '';
-  // eslint-disable-next-line no-unused-vars
-  const allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
-  const allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
+  let allSolutionsTags;
+  let allTopicsTags;
+  // When TQ tags are authored and FF is enabled.
+  if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Element) {
+    const solutionsv2Content = solutionsv2Element?.textContent?.trim() ?? '';
+    const solutionsv2Labels = solutionsv2Content ? getv2TagLabels(solutionsv2Content) : '';
+    allSolutionsTags = solutionsv2Labels ? solutionsv2Labels.split(',').map((p) => p.trim()) : [];
+    const topicsv2Content = topicsv2Element?.textContent?.trim() ?? '';
+    const topicsv2Labels = topicsv2Content ? getv2TagLabels(topicsv2Content) : '';
+    allTopicsTags = topicsv2Labels ? topicsv2Labels.split(',').map((p) => p.trim()) : [];
+  } else {
+    // Legacy tags
+    // eslint-disable-next-line no-unused-vars
+    allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
+    allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
+  }
   const localizedTopicsTags = localizedTopicsContent
     ? localizedTopicsContent.split(',')?.reduce((acc, pair) => {
         const [key, value] = pair.split(':').map((str) => str.trim());
@@ -1601,10 +1629,18 @@ function decorateBrowseTopics(block) {
 
   const supportedProducts = [];
   if (allSolutionsTags.length) {
-    const { query: additionalQuery, products, productKey } = getParsedSolutionsQuery(allSolutionsTags);
-    products.forEach((p) => supportedProducts.push(p));
-    window.headlessSolutionProductKey = productKey;
-    window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
+    if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Element) {
+      // V2 tags are plain text labels, construct query directly
+      const productsQuery = allSolutionsTags.map((product) => `@el_product="${product}"`).join(' OR ');
+      window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND (${productsQuery}))`;
+      allSolutionsTags.forEach((p) => supportedProducts.push(p));
+    } else {
+      // Legacy tags use the old format
+      const { query: additionalQuery, products, productKey } = getParsedSolutionsQuery(allSolutionsTags);
+      products.forEach((p) => supportedProducts.push(p));
+      window.headlessSolutionProductKey = productKey;
+      window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND ${additionalQuery})`;
+    }
   }
 
   if (contentTypeContent.length) {
@@ -1635,8 +1671,9 @@ function decorateBrowseTopics(block) {
     allTopicsTags
       .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
-        const parts = topicsButtonTitle.split('/');
-        const topicName = parts[parts.length - 1];
+        const isV2Enabled = isFeatureEnabled('isV2TagsEnabled') && topicsv2Element;
+        // v2 tags are plain text labels
+        const topicName = isV2Enabled ? topicsButtonTitle : topicsButtonTitle.split('/').pop();
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
         topicsButtonDiv.dataset.topicname = topicsButtonTitle;
         topicsButtonDiv.dataset.label = topicName;
@@ -1689,12 +1726,26 @@ function decorateBrowseTopics(block) {
     const filtersFormEl = block.querySelector('.browse-filters-form');
     filtersFormEl.insertBefore(div, filtersFormEl.children[4]);
   }
-  (solutionsElement.parentNode || solutionsElement).remove();
-  (headingElement.parentNode || headingElement).remove();
-  (topicsElement.parentNode || topicsElement).remove();
-  (contentTypeElement.parentNode || contentTypeElement).remove();
-  if (!isFormElement) {
-    (customElement?.parentNode || customElement)?.remove();
+  if (solutionsElement) {
+    (solutionsElement.parentNode || solutionsElement).remove();
+  }
+  if (headingElement) {
+    (headingElement.parentNode || headingElement).remove();
+  }
+  if (topicsElement) {
+    (topicsElement.parentNode || topicsElement).remove();
+  }
+  if (contentTypeElement) {
+    (contentTypeElement.parentNode || contentTypeElement).remove();
+  }
+  if (!isFormElement && customElement) {
+    (customElement.parentNode || customElement).remove();
+  }
+  if (solutionsv2Element) {
+    (solutionsv2Element.parentNode || solutionsv2Element).remove();
+  }
+  if (topicsv2Element) {
+    (topicsv2Element.parentNode || topicsv2Element).remove();
   }
 }
 
