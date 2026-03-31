@@ -16,7 +16,7 @@ export default function initLiveGradientBackground() {
     circlesWrapper.setAttribute('aria-hidden', 'true');
     circlesWrapper.setAttribute('role', 'presentation');
 
-    ['gradient-circle-blue', 'gradient-circle-pink', 'gradient-circle-orange'].forEach((colorClass) => {
+    ['gradient-circle-primary', 'gradient-circle-secondary', 'gradient-circle-accent'].forEach((colorClass) => {
       const circle = document.createElement('div');
       circle.className = `gradient-circle ${colorClass}`;
       circle.setAttribute('aria-hidden', 'true');

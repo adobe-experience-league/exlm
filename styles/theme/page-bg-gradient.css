@@ -1,16 +1,16 @@
 .page-bg-gradient {
   /* Live gradient background colors */
   --gradient-base-bg: rgb(240 241 246);
-  --gradient-circle-blue: rgb(181 222 255);
-  --gradient-circle-pink: rgb(250 74 162);
-  --gradient-circle-orange: rgb(255 124 101);
+  --gradient-primary: rgb(181 222 255);
+  --gradient-secondary: rgb(250 74 162);
+  --gradient-accent: rgb(255 124 101);
   --gradient-blur: 120px;
   --gradient-circle-size: 1755px;
   --gradient-circle-width-scale: 0.65;
   --gradient-circle-height-scale: 1.8;
-  --gradient-blue-duration: 8s;
-  --gradient-pink-duration: 10s;
-  --gradient-orange-duration: 6s;
+  --gradient-duration-primary: 8s;
+  --gradient-duration-secondary: 10s;
+  --gradient-duration-accent: 6s;
 
   position: relative;
   isolation: isolate; /* prevents stacking conflicts */
@@ -55,43 +55,43 @@
 }
 
 /* Individual color circles */
-.page-bg-gradient .gradient-circle-blue {
+.page-bg-gradient .gradient-circle-primary {
   --gradient-circle-width-ratio: 0.66;
   --gradient-circle-height-ratio: 1.14;
 
   top: -32%;
   left: -18%;
-  background: radial-gradient(ellipse at center, var(--gradient-circle-blue) 0%, rgb(181 222 255 / 0%) 100%);
+  background: radial-gradient(ellipse at center, var(--gradient-primary) 0%, rgb(181 222 255 / 0%) 100%);
   opacity: 0.5;
-  animation: live-gradient-move-blue var(--gradient-blue-duration) ease-in-out infinite alternate;
+  animation: gradient-motion-primary var(--gradient-duration-primary) ease-in-out infinite alternate;
 }
 
-.page-bg-gradient .gradient-circle-pink {
+.page-bg-gradient .gradient-circle-secondary {
   --gradient-circle-width-ratio: 0.62;
   --gradient-circle-height-ratio: 1.18;
 
   right: -20%;
   bottom: -38%;
-  background: radial-gradient(ellipse at center, var(--gradient-circle-pink) 0%, rgb(250 74 162 / 0%) 100%);
+  background: radial-gradient(ellipse at center, var(--gradient-secondary) 0%, rgb(250 74 162 / 0%) 100%);
   opacity: 0.3;
-  animation: live-gradient-move-pink var(--gradient-pink-duration) ease-in-out infinite alternate;
+  animation: gradient-motion-secondary var(--gradient-duration-secondary) ease-in-out infinite alternate;
 }
 
-.page-bg-gradient .gradient-circle-orange {
+.page-bg-gradient .gradient-circle-accent {
   --gradient-circle-width-ratio: 0.64;
   --gradient-circle-height-ratio: 1.1;
 
   top: 2%;
   right: -26%;
-  background: radial-gradient(ellipse at center, var(--gradient-circle-orange) 0%, rgb(255 124 101 / 0%) 100%);
+  background: radial-gradient(ellipse at center, var(--gradient-accent) 0%, rgb(255 124 101 / 0%) 100%);
   opacity: 0.3;
-  animation: live-gradient-move-orange var(--gradient-orange-duration) ease-in-out infinite alternate;
+  animation: gradient-motion-accent var(--gradient-duration-accent) ease-in-out infinite alternate;
 }
 
 /* Movement animations */
 
 /* Blue: enters from the left, drifts inward and slightly downward */
-@keyframes live-gradient-move-blue {
+@keyframes gradient-motion-primary {
   0% {
     transform: translate3d(-20%, -4%, 0) rotate(-12deg) scale(1);
   }
@@ -110,7 +110,7 @@
 }
 
 /* Pink: enters from the bottom, rises upward and shifts left */
-@keyframes live-gradient-move-pink {
+@keyframes gradient-motion-secondary {
   0% {
     transform: translate3d(6%, 22%, 0) rotate(10deg) scale(1);
   }
@@ -129,7 +129,7 @@
 }
 
 /* Orange: enters from the top-right, sweeps left and downward */
-@keyframes live-gradient-move-orange {
+@keyframes gradient-motion-accent {
   0% {
     transform: translate3d(16%, -22%, 0) rotate(18deg) scale(1);
   }
