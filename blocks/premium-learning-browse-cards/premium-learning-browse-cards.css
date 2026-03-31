@@ -10,8 +10,8 @@
 }
 
 .premium-learning-browse-cards-description {
-  font-size: 16px;
-  font-weight: 400;
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-normal);
   line-height: 1.5;
 }
 

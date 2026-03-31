@@ -4,8 +4,7 @@
  * Includes courses and cohorts (learning programs)
  */
 
-.premium-learning-browse.browse-cards-block,
-.premium-learning-search.browse-cards-block {
+.browse-cards-block {
   min-height: auto;
 }
 

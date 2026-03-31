@@ -2,6 +2,7 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { createTag, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
@@ -17,7 +18,7 @@ export default async function decorate(block) {
   const title = titleElement?.textContent?.trim();
   const description = descriptionElement?.innerHTML?.trim();
   let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase();
-  if (contentType && contentType.includes(',')) {
+  if (contentType?.includes(',')) {
     contentType = contentType
       .split(',')
       .map((type) => type.trim())
@@ -50,16 +51,26 @@ export default async function decorate(block) {
   `;
   block.appendChild(headerDiv);
 
-  const placeholders = await fetchLanguagePlaceholders().catch(() => ({}));
+  const [signInUser, placeholders] = await Promise.all([
+    isSignedInUser(),
+    fetchLanguagePlaceholders().catch(() => ({})),
+  ]);
+
+  if (!signInUser) {
+    if (UEAuthorMode) {
+      showFallbackContentInUEMode(block);
+    } else {
+      block.remove();
+    }
+    return;
+  }
 
   const param = {
     contentType,
     noOfResults,
     browseMode: true,
+    ...(products?.length > 0 && { products }),
   };
-  if (products.length > 0) {
-    param.products = products;
-  }
 
   const buildCardsShimmer = new BrowseCardShimmer(noOfResults, contentType);
   buildCardsShimmer.addShimmer(block);
@@ -75,7 +86,7 @@ export default async function decorate(block) {
 
         if (isCohortContent) {
           const withLabel = data
-            .filter((item) => item.meta?.startLabel && item.meta.startLabel.trim().length > 0)
+            .filter((item) => item.meta?.startLabel?.trim())
             .sort((a, b) => {
               const deadlineA = a.meta?.deadline;
               const deadlineB = b.meta?.deadline;
@@ -84,9 +95,7 @@ export default async function decorate(block) {
               }
               return 0;
             });
-          const withoutLabel = data.filter(
-            (item) => !item.meta?.startLabel || item.meta.startLabel.trim().length === 0,
-          );
+          const withoutLabel = data.filter((item) => !item.meta?.startLabel?.trim());
           sortedData = [...withLabel, ...withoutLabel];
         }
 
