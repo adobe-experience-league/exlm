@@ -5491,7 +5491,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "feature"
+              "taxonomyType": "feature",
+              "validation": true
             }
           }
         },
