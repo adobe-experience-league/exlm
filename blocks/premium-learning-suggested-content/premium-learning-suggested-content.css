@@ -52,6 +52,14 @@
   }
 }
 
+@media (min-width: 900px) {
+  .premium-learning-suggested-content.browse-cards-block
+    .premium-learning-suggested-content-panel
+    .browse-cards-block-content {
+    justify-content: flex-start;
+  }
+}
+
 @media (min-width: 1024px) {
   .premium-learning-suggested-content .premium-learning-suggested-content-no-results {
     width: 75%;
