@@ -43,3 +43,9 @@
     width: fit-content;
   }
 }
+
+@media (min-width: 900px) {
+  .premium-learning-recommended-content .browse-cards-block-content:has(.premium-learning-browse-card) {
+    justify-content: flex-start;
+  }
+}

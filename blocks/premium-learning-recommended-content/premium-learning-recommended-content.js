@@ -9,6 +9,7 @@ import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const MAX_CARDS = 4;
+const NO_OF_RESULTS = 10; 
 const DEFAULT_CONTENT_TYPES = ['premium-learning-course'];
 
 // ─── DOM helpers ────────────────────────────────────────────────────────────
@@ -153,7 +154,7 @@ export default async function decorate(block) {
       recommendationMode: true,
       products,
       roles,
-      noOfResults: MAX_CARDS,
+      noOfResults: NO_OF_RESULTS,
     });
 
     shimmer.removeShimmer();
