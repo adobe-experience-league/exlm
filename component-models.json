@@ -2053,6 +2053,79 @@
     ]
   },
   {
+    "id": "premium-learning-suggested-content",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the title for the Premium learning suggested content block."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Description text displayed below the heading."
+      },
+      {
+        "component": "multiselect",
+        "valueType": "string",
+        "name": "contentType",
+        "value": "premium-learning-cohort",
+        "label": "Learning Type",
+        "description": "Select which premium learning learning type(s) to display",
+        "required": true,
+        "options": [
+          {
+            "name": "Premium Learning Course",
+            "value": "premium-learning-course"
+          },
+          {
+            "name": "Premium Learning Cohort",
+            "value": "premium-learning-cohort"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "carousel",
     "fields": []
   },

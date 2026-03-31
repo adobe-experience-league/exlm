@@ -215,6 +215,7 @@ const BrowseCardsPLAdaptor = (() => {
     const contentType = determineContentType(result);
     const { id, attributes } = result || {};
     const metadata = attributes?.localizedMetadata?.[0] || {};
+    const products = (attributes?.products || []).map((product) => product?.name).filter(Boolean);
     let startLabel = '';
 
     const loSkillLevels = buildLearningObjectSkillLevels(included);
@@ -237,8 +238,10 @@ const BrowseCardsPLAdaptor = (() => {
       ...browseCardDataModel,
       id: id || '',
       contentType,
+      product: products,
       thumbnail: attributes?.imageUrl || '',
       title: metadata.name || '',
+      description: metadata.overview || metadata.description || '',
       viewLink: createPLLinkfromID(contentType, id),
       copyLink: createPLLinkfromID(contentType, id),
       meta: {
@@ -255,6 +258,7 @@ const BrowseCardsPLAdaptor = (() => {
         level: skillLevels, // TODO: Add when field is available in API
         instances, // TODO: Add when field is available in API
         deadline,
+        products,
       },
     };
   };

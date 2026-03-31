@@ -430,7 +430,15 @@
   },
   {
     "id": "premium-learning-section",
-    "components": ["text", "title", "button", "image", "premium-learning-search", "premium-learning-browse-cards"]
+    "components": [
+      "text",
+      "title",
+      "button",
+      "image",
+      "premium-learning-search",
+      "premium-learning-browse-cards",
+      "premium-learning-suggested-content"
+    ]
   },
   {
     "id": "columns",
@@ -547,6 +555,30 @@
       "extensions": [],
       "editor": ["removeformat"],
       "blocks": []
+    }
+  },
+  {
+    "id": "rte-no-headings",
+    "components": [],
+    "rte": {
+      "toolbar": {
+        "format": ["bold", "italic", "underline"],
+        "blocks": ["paragraph"],
+        "alignment": [],
+        "indentation": [],
+        "sr_script": ["superscript", "subscript"],
+        "list": ["bullet_list", "ordered_list"],
+        "insert": ["link"],
+        "editor": ["removeformat"]
+      },
+      "actions": {
+        "bullet_list": {
+          "wrapInParagraphs": true
+        },
+        "ordered_list": {
+          "wrapInParagraphs": true
+        }
+      }
     }
   }
 ]
