@@ -5,7 +5,13 @@ export default function initLiveGradientBackground() {
   if (!body?.classList.contains('page-bg-gradient') || !main) return;
   const updateCircleSize = () => {
     const circleSize = `${main.offsetHeight * 0.6}px`;
-    body.style.setProperty('--gradient-circle-size', circleSize);
+    let sizeStyle = document.head.querySelector('#gradient-circle-size-override');
+    if (!sizeStyle) {
+      sizeStyle = document.createElement('style');
+      sizeStyle.id = 'gradient-circle-size-override';
+      document.head.append(sizeStyle);
+    }
+    sizeStyle.textContent = `.page-bg-gradient { --gradient-circle-size: ${circleSize}; }`;
   };
 
   const createLiveGradientCircles = () => {
