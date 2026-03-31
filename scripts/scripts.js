@@ -723,21 +723,6 @@ export function getConfig() {
     return window.exlm.config;
   }
 
-  const PREMIUM_LEARNING_CATALOG_IDS = {
-    PROD: {
-      plPrivateCatalogIds: [], // TODO: update once configured in ALM
-      plPublicCatalogIds: [], // TODO: update once configured in ALM
-    },
-    STAGE: {
-      plPrivateCatalogIds: ['208426'],
-      plPublicCatalogIds: ['208427'],
-    },
-    DEV: {
-      plPrivateCatalogIds: ['208424'],
-      plPublicCatalogIds: ['208425'],
-    },
-  };
-
   const HOSTS = [
     {
       env: 'PROD',
@@ -808,8 +793,6 @@ export function getConfig() {
   const currentEnv = HOSTS.find((hostObj) =>
     Object.values(hostObj).some((val) => (val instanceof RegExp ? val.test(currentHost) : val === currentHost)),
   );
-  const premiumLearningCatalogIds =
-    PREMIUM_LEARNING_CATALOG_IDS[currentEnv?.env] || PREMIUM_LEARNING_CATALOG_IDS[defaultEnv.env];
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const communityHost = currentEnv?.community || defaultEnv.community;
   const cdnOrigin = `https://${cdnHost}`;
@@ -834,6 +817,18 @@ export function getConfig() {
   else if (isStage)
     launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-102059c3cf0a-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
+  let plPrivateCatalogIds;
+  let plPublicCatalogIds;
+  if (isProd) {
+    plPrivateCatalogIds = []; // TODO: update once configured in ALM
+    plPublicCatalogIds = []; // TODO: update once configured in ALM
+  } else if (isStage) {
+    plPrivateCatalogIds = ['208426'];
+    plPublicCatalogIds = ['208427'];
+  } else {
+    plPrivateCatalogIds = ['208424'];
+    plPublicCatalogIds = ['208425'];
+  }
   const signUpFlowConfigDate = '2024-08-15T00:00:00.762Z';
   const modalReDisplayDuration = '3'; // in months
 
@@ -864,8 +859,8 @@ export function getConfig() {
       : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
     coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
     upcomingEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
-    plPrivateCatalogIds: premiumLearningCatalogIds.plPrivateCatalogIds,
-    plPublicCatalogIds: premiumLearningCatalogIds.plPublicCatalogIds,
+    plPrivateCatalogIds,
+    plPublicCatalogIds,
     plApiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,

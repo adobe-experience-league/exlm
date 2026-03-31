@@ -1,29 +1,29 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 
 .premium-learning-suggested-content .premium-learning-suggested-content-header {
-  gap: 16px;
+  gap: var(--spectrum-spacing-300);
   margin-top: 20px;
 }
 
 .premium-learning-suggested-content .premium-learning-suggested-content-description {
   color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-200);
-  margin-top: 8px;
+  margin-top: var(--spectrum-spacing-100);
 }
 
 .premium-learning-suggested-content .premium-learning-suggested-content-tab-header {
-  margin: 16px 0 0;
+  margin: var(--spectrum-spacing-300) 0 0;
 }
 
 .premium-learning-suggested-content .premium-learning-suggested-content-panel {
-  margin-top: 32px;
+  margin-top: var(--spectrum-spacing-500);
 }
 
 .premium-learning-suggested-content .premium-learning-suggested-content-no-results {
   background-color: var(--spectrum-gray-200);
   color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-200);
-  padding: 72px 0;
+  padding: var(--spectrum-spacing-1000) 0;
   text-align: center;
   width: 100%;
   box-sizing: border-box;
@@ -33,8 +33,8 @@
   justify-content: center;
   gap: 6px;
   border-radius: 20px;
-  margin-top: 16px;
-  padding-inline: 16px;
+  margin-top: var(--spectrum-spacing-300);
+  padding-inline: var(--spectrum-spacing-300);
 }
 
 .premium-learning-suggested-content .premium-learning-suggested-content-no-results-header {
@@ -43,7 +43,7 @@
 }
 
 .premium-learning-suggested-content .premium-learning-suggested-content-no-results-description {
-  margin-bottom: 12px;
+  margin-bottom: var(--spectrum-spacing-200);
 }
 
 @media (min-width: 600px) {

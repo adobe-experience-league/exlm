@@ -8,8 +8,7 @@ import { isSignedInUser } from '../../scripts/auth/profile.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 
 const UE_AUTHOR_MODE = window.hlx.aemRoot || window.location.href.includes('.html');
-const MAX_VISIBLE_COHORTS = 4;
-const FETCH_LIMIT = 10;
+const FETCH_LIMIT = 4;
 
 function parseAuthoredContent(block) {
   const [headingElement, descriptionElement, ctaElement, contentTypeElement] = [...block.children];
@@ -55,32 +54,10 @@ function getUniqueProductsInOrder(suggestedContentItems) {
   return uniqueProducts;
 }
 
-/** *
- * @param {Array} items - Array of mapped card data objects
- * @returns {Array} New sorted array
- */
-function sortContentItems(items) {
-  return [...items].sort((itemA, itemB) => {
-    const aIsComingSoon = !!itemA.meta?.startLabel;
-    const bIsComingSoon = !!itemB.meta?.startLabel;
-    if (aIsComingSoon && bIsComingSoon) {
-      const aDeadline = itemA.meta.enrollmentDeadline instanceof Date ? itemA.meta.enrollmentDeadline : null;
-      const bDeadline = itemB.meta.enrollmentDeadline instanceof Date ? itemB.meta.enrollmentDeadline : null;
-      if (aDeadline && bDeadline) return aDeadline - bDeadline;
-      if (aDeadline) return -1;
-      if (bDeadline) return 1;
-      return 0;
-    }
-    if (aIsComingSoon) return -1;
-    if (bIsComingSoon) return 1;
-    return 0;
-  });
-}
-
 function getTabDefinitions(suggestedContentItems, placeholders) {
   const uniqueProducts = getUniqueProductsInOrder(suggestedContentItems);
   const defaultTab = placeholders.premiumLearningCohortTabsDefaultTabLabel || 'For you';
-  const defaultTabItems = sortContentItems(suggestedContentItems).slice(0, MAX_VISIBLE_COHORTS);
+  const defaultTabItems = suggestedContentItems.slice(0, FETCH_LIMIT);
 
   if (!defaultTabItems.length) {
     return [];
@@ -90,7 +67,7 @@ function getTabDefinitions(suggestedContentItems, placeholders) {
     {
       id: defaultTab,
       label: defaultTab,
-      items: sortContentItems(suggestedContentItems).slice(0, MAX_VISIBLE_COHORTS),
+      items: defaultTabItems,
     },
   ];
 
@@ -99,9 +76,9 @@ function getTabDefinitions(suggestedContentItems, placeholders) {
   }
 
   uniqueProducts.forEach((productName) => {
-    const matchingItems = sortContentItems(
-      suggestedContentItems.filter((contentItem) => (contentItem.product || []).includes(productName)),
-    ).slice(0, MAX_VISIBLE_COHORTS);
+    const matchingItems = suggestedContentItems
+      .filter((contentItem) => (contentItem.product || []).includes(productName))
+      .slice(0, FETCH_LIMIT);
 
     if (matchingItems.length) {
       tabs.push({
@@ -265,7 +242,7 @@ export default async function decorate(block) {
     return;
   }
 
-  const shimmer = new BrowseCardShimmer(MAX_VISIBLE_COHORTS, PL_CONTENT_TYPES.COHORT.MAPPING_KEY);
+  const shimmer = new BrowseCardShimmer(FETCH_LIMIT, PL_CONTENT_TYPES.COHORT.MAPPING_KEY);
   shimmer.addShimmer(contentContainer);
 
   try {
