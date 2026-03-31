@@ -5430,7 +5430,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "role"
+              "taxonomyType": "role",
+              "validation": true
             }
           }
         },
@@ -5447,7 +5448,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "level"
+              "taxonomyType": "level",
+              "validation": true
             }
           }
         },
@@ -5464,7 +5466,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "product"
+              "taxonomyType": "product",
+              "validation": true
             }
           }
         },
@@ -5516,7 +5519,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "subfeature"
+              "taxonomyType": "subfeature",
+              "validation": true
             }
           }
         },
@@ -5540,7 +5544,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "industry"
+              "taxonomyType": "industry",
+              "validation": true
             }
           }
         },
@@ -5557,7 +5562,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "topic"
+              "taxonomyType": "topic",
+              "validation": true
             }
           }
         },
@@ -5650,7 +5656,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "role"
+              "taxonomyType": "role",
+              "validation": true
             }
           }
         },
@@ -5667,7 +5674,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "level"
+              "taxonomyType": "level",
+              "validation": true
             }
           }
         },
@@ -5684,7 +5692,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "product"
+              "taxonomyType": "product",
+              "validation": true
             }
           }
         },
@@ -5711,7 +5720,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "feature"
+              "taxonomyType": "feature",
+              "validation": true
             }
           }
         },
@@ -5735,7 +5745,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "subfeature"
+              "taxonomyType": "subfeature",
+              "validation": true
             }
           }
         },
@@ -5759,7 +5770,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "industry"
+              "taxonomyType": "industry",
+              "validation": true
             }
           }
         },
@@ -5776,7 +5788,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "topic"
+              "taxonomyType": "topic",
+              "validation": true
             }
           }
         },
