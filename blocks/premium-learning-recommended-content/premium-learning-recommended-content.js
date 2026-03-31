@@ -109,7 +109,7 @@ function buildTabsData(allCards, products, forYouLabel) {
   const tabsData = { [forYouLabel]: allCards };
   products.forEach((p) => {
     const filtered = allCards.filter((card) => card.products?.some((prod) => prod.name === p.name));
-    tabsData[p.name] = filtered;
+    if (filtered.length) tabsData[p.name] = filtered;
   });
   return tabsData;
 }
