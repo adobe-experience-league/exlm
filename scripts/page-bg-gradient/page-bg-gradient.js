@@ -5,7 +5,7 @@ export default function initLiveGradientBackground() {
   if (!body?.classList.contains('page-bg-gradient') || !main) return;
   const updateCircleSize = () => {
     const circleSize = `${main.offsetHeight * 0.6}px`;
-    body.style.setProperty('--lg-circle-size', circleSize);
+    body.style.setProperty('--gradient-circle-size', circleSize);
   };
 
   const createLiveGradientCircles = () => {
