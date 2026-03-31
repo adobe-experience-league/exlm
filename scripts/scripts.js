@@ -817,7 +817,6 @@ export function getConfig() {
   else if (isStage)
     launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-102059c3cf0a-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
-
   let plPrivateCatalogIds;
   let plPublicCatalogIds;
   if (isProd) {
