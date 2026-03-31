@@ -114,24 +114,44 @@ export default async function decorate(block) {
     const headerNoResultText = searchTextExists ? searchHeader.replace('{}', searchText) : noSearchHeader;
     const descriptionNoResultText = searchTextExists ? searchDescription : noSearchDescription;
     const clearSearchText = placeholders.premiumLearningCardsClearSearchText || 'Clear search';
-    const markup = `
+
+    let root = blockElement.querySelector('.premium-learning-search-no-results');
+    if (!root) {
+      const markup = `
       <div class="premium-learning-search-no-results">
-        <div class="premium-learning-search-no-results-header">${headerNoResultText}</div>
-        <div class="premium-learning-search-no-results-description">${descriptionNoResultText}</div>
+        <div class="premium-learning-search-no-results-header"></div>
+        <div class="premium-learning-search-no-results-description"></div>
         <div class="premium-learning-search-no-results-cta-slot"></div>
-        ${searchTextExists ? `<div class="premium-learning-search-clear-search">${clearSearchText}</div>` : ''}
+        <div class="premium-learning-search-clear-search"></div>
       </div>
     `;
-    const noResultsContent = htmlToElement(markup);
-    const clearBtn = noResultsContent.querySelector('.premium-learning-search-clear-search');
-    if (clearBtn) {
-      clearBtn.addEventListener('click', () => {
-        updateHash((key) => !key.includes('q='), '&');
+      root = htmlToElement(markup);
+      root.addEventListener('click', (e) => {
+        if (e.target.closest('.premium-learning-search-clear-search')) {
+          updateHash((key) => !key.includes('q='), '&');
+        }
       });
+      blockElement.appendChild(root);
     }
-    blockElement.appendChild(noResultsContent);
-    const noResultsCtaSlot = noResultsContent.querySelector('.premium-learning-search-no-results-cta-slot');
-    noResultsCtaSlot.appendChild(ctaWrapper);
+
+    const headerEl = root.querySelector('.premium-learning-search-no-results-header');
+    const descEl = root.querySelector('.premium-learning-search-no-results-description');
+    const noResultsCtaSlot = root.querySelector('.premium-learning-search-no-results-cta-slot');
+    const clearEl = root.querySelector('.premium-learning-search-clear-search');
+    if (headerEl) headerEl.textContent = headerNoResultText;
+    if (descEl) descEl.textContent = descriptionNoResultText;
+    if (clearEl) {
+      clearEl.textContent = clearSearchText;
+      if (searchTextExists) {
+        clearEl.classList.remove('premium-learning-search-hide-content');
+      } else {
+        clearEl.classList.add('premium-learning-search-hide-content');
+      }
+    }
+    if (noResultsCtaSlot) {
+      noResultsCtaSlot.appendChild(ctaWrapper);
+    }
+    root.classList.remove('premium-learning-search-hide-content');
   }
 
   function toggleNoResultsContent(blockElement, show) {
@@ -139,10 +159,10 @@ export default async function decorate(block) {
       renderNoResultsContent(blockElement, param.q);
       headerDiv.classList.add('premium-learning-search-hide-content');
     } else {
-      const noResultsContent = blockElement.querySelector('.premium-learning-search-no-results');
-      if (noResultsContent) {
-        headerCtaSlot.appendChild(ctaWrapper);
-        blockElement.removeChild(noResultsContent);
+      headerCtaSlot.appendChild(ctaWrapper);
+      const noResultsRoot = blockElement.querySelector('.premium-learning-search-no-results');
+      if (noResultsRoot) {
+        noResultsRoot.classList.add('premium-learning-search-hide-content');
       }
       headerDiv.classList.remove('premium-learning-search-hide-content');
     }

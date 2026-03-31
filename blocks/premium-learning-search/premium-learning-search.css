@@ -45,6 +45,12 @@
   min-height: auto;
 }
 
+@container browse-cards-block (min-width: 900px) {
+  .premium-learning-search .browse-card-shimmer {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 .premium-learning-search.premium-learning-search-atomic-search .browse-cards-block-content,
 .premium-learning-search.premium-learning-search-atomic-search .premium-learning-search-no-results {
   margin-bottom: 32px;
@@ -94,6 +100,10 @@
   margin-bottom: 12px;
 }
 
+.premium-learning-search .premium-learning-search-no-results.premium-learning-search-hide-content {
+  display: none;
+}
+
 /* Tablet styles */
 @media (min-width: 600px) {
   .premium-learning-search.browse-cards-block.premium-learning-search-atomic-search {
@@ -133,18 +143,5 @@
   atomic-search-interface:not(:has(.all-facets-hidden)) .premium-learning-search .premium-learning-search-no-results {
     width: 90%;
     margin: 0 auto;
-  }
-
-  .premium-learning-search.premium-learning-search-atomic-search .browse-cards-block-content {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 25px;
-  }
-
-  .premium-learning-search.premium-learning-search-atomic-search .browse-cards-block-content > div {
-    flex: 0 0 calc((100% - 75px) / 4);
-    max-width: calc((100% - 75px) / 4);
-    box-sizing: border-box;
   }
 }
