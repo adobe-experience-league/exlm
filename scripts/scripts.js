@@ -1516,6 +1516,34 @@ export function updateTQTagsMetadata() {
 }
 
 /**
+ * Extracts and returns a comma-separated string of label values from a JSON-encoded tag string.
+ * @param {string} tag - A JSON string (possibly HTML-encoded) representing an array of objects with `label` properties.
+ * @returns {string} A comma-separated string of labels, or an empty string if parsing fails or input is invalid.
+ */
+export function getv2TagLabels(tag) {
+  if (!tag) return '';
+
+  let labels = '';
+
+  try {
+    const decoded = decodeHtmlEntities(tag);
+    const parsed = JSON.parse(decoded);
+
+    if (Array.isArray(parsed)) {
+      labels = parsed
+        .map((item) => item?.label)
+        .filter(Boolean)
+        .join(', ');
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to parse tag:', e, tag);
+  }
+
+  return labels;
+}
+
+/**
  * Fetch Json with fallback.
  */
 export async function fetchJson(url, fallbackUrl) {
@@ -1696,14 +1724,28 @@ async function loadPage() {
 
   // Initialize Premium Learning auth for all signed-in users, excluding UE Authoring pages
   if (!window.hlx.aemRoot && !window.location.href.includes('.html') && isFeatureEnabled('isPremiumLearningEnabled')) {
+    // Helper function to remove premium learning sections
+    const removePremiumLearningSections = () => {
+      document.querySelectorAll('.premium-learning-section').forEach((section) => section.remove());
+    };
+
     try {
       const signedIn = await isUserSignedIn();
+
       if (signedIn) {
-        const { default: initializePLAuthentication } = await import('./utils/pl-auth-utils.js');
+        const { default: initializePLAuthentication, isPremiumLearner } = await import('./utils/pl-auth-utils.js');
+
         await initializePLAuthentication();
+
+        if (!isPremiumLearner()) {
+          removePremiumLearningSections();
+        }
+      } else {
+        removePremiumLearningSections();
       }
     } catch (error) {
       console.error('Error initializing Premium Learning authentication:', error);
+      removePremiumLearningSections();
     }
   }
 

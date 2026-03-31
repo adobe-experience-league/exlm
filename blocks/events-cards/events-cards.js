@@ -1,9 +1,10 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, getv2TagLabels } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 /**
  * formattedSolutionTags returns the solution type by stripping off the exl:solution/ string
@@ -27,12 +28,22 @@ export default async function decorate(block) {
     (row) => row.firstElementChild,
   );
 
-  const [solutions] = configs.map((cell) => cell.textContent.trim());
+  const [solutions, solutionsv2] = configs.map((cell) => cell.textContent.trim());
 
   const contentType = CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
   const noOfResults = 4;
-  const solutionsParam = solutions !== '' ? formattedSolutionTags(solutions) : '';
-
+  let solutionsParam = '';
+  // If FF is enabled, use V2 tags
+  if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2) {
+    solutionsParam = solutionsv2
+      ? getv2TagLabels(solutionsv2)
+          .split(',')
+          .map((p) => p.trim())
+      : '';
+  } else {
+    // Legacy tags
+    solutionsParam = solutions !== '' ? formattedSolutionTags(solutions) : '';
+  }
   // Clearing the block's content
   block.innerHTML = '';
   block.classList.add('browse-cards-block');
