@@ -90,7 +90,7 @@
 
 /* Movement animations */
 
-/* Blue: enters from the left, drifts inward and slightly downward */
+/* Primary: enters from the left, drifts inward and slightly downward */
 @keyframes gradient-motion-primary {
   0% {
     transform: translate3d(-20%, -4%, 0) rotate(-12deg) scale(1);
@@ -109,7 +109,7 @@
   }
 }
 
-/* Pink: enters from the bottom, rises upward and shifts left */
+/* Secondary: enters from the bottom, rises upward and shifts left */
 @keyframes gradient-motion-secondary {
   0% {
     transform: translate3d(6%, 22%, 0) rotate(10deg) scale(1);
@@ -128,7 +128,7 @@
   }
 }
 
-/* Orange: enters from the top-right, sweeps left and downward */
+/* Accent: enters from the top-right, sweeps left and downward */
 @keyframes gradient-motion-accent {
   0% {
     transform: translate3d(16%, -22%, 0) rotate(18deg) scale(1);
