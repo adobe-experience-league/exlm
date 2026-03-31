@@ -1,0 +1,22 @@
+@import '../../scripts/browse-card/browse-cards-block.css';
+@import '../../scripts/browse-card/browse-card-premium-learning.css';
+
+.premium-learning-browse-cards-title {
+  margin-bottom: 8px;
+}
+
+.premium-learning-browse-cards-title * {
+  margin: 0;
+}
+
+.premium-learning-browse-cards-description {
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.5;
+}
+
+.premium-learning-browse-cards .browse-cards-block-content {
+  min-height: auto;
+  margin-top: 32px;
+  margin-bottom: 56px;
+}
