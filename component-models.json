@@ -5580,7 +5580,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "role"
+              "taxonomyType": "role",
+              "validation": true
             }
           }
         },
@@ -5597,7 +5598,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "level"
+              "taxonomyType": "level",
+              "validation": true
             }
           }
         },
@@ -5614,11 +5616,22 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "product"
+              "taxonomyType": "product",
+              "validation": true
             }
           }
         },
         "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "tq-action-button",
+        "name": "generateTQTags",
+        "label": "Generate TQ Tags",
+        "valueType": "string",
+        "extensionId": "exl-ue-extension",
+        "options": {
+          "requiredTagsToEnable": ["tq-roles", "tq-levels", "tq-products"]
+        }
       },
       {
         "component": "custom-aem-tag",
@@ -5631,7 +5644,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "feature"
+              "taxonomyType": "feature",
+              "validation": true
             }
           }
         },
@@ -5655,7 +5669,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "subfeature"
+              "taxonomyType": "subfeature",
+              "validation": true
             }
           }
         },
@@ -5679,7 +5694,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "industry"
+              "taxonomyType": "industry",
+              "validation": true
             }
           }
         },
@@ -5696,7 +5712,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "topic"
+              "taxonomyType": "topic",
+              "validation": true
             }
           }
         },
@@ -5789,7 +5806,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "role"
+              "taxonomyType": "role",
+              "validation": true
             }
           }
         },
@@ -5806,7 +5824,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "level"
+              "taxonomyType": "level",
+              "validation": true
             }
           }
         },
@@ -5823,11 +5842,22 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "product"
+              "taxonomyType": "product",
+              "validation": true
             }
           }
         },
         "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "tq-action-button",
+        "name": "generateTQTags",
+        "label": "Generate TQ Tags",
+        "valueType": "string",
+        "extensionId": "exl-ue-extension",
+        "options": {
+          "requiredTagsToEnable": ["tq-roles", "tq-levels", "tq-products"]
+        }
       },
       {
         "component": "custom-aem-tag",
@@ -5840,7 +5870,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "feature"
+              "taxonomyType": "feature",
+              "validation": true
             }
           }
         },
@@ -5864,7 +5895,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "subfeature"
+              "taxonomyType": "subfeature",
+              "validation": true
             }
           }
         },
@@ -5888,7 +5920,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "industry"
+              "taxonomyType": "industry",
+              "validation": true
             }
           }
         },
@@ -5905,7 +5938,8 @@
           "config": {
             "name": "getTQTags",
             "params": {
-              "taxonomyType": "topic"
+              "taxonomyType": "topic",
+              "validation": true
             }
           }
         },
