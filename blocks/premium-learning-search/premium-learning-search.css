@@ -45,6 +45,12 @@
   min-height: auto;
 }
 
+@container browse-cards-block (min-width: 900px) {
+  .premium-learning-search .browse-card-shimmer {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 .premium-learning-search.premium-learning-search-atomic-search .browse-cards-block-content,
 .premium-learning-search.premium-learning-search-atomic-search .premium-learning-search-no-results {
   margin-bottom: 32px;
@@ -92,6 +98,10 @@
 
 .premium-learning-search .premium-learning-search-no-results-description {
   margin-bottom: 12px;
+}
+
+.premium-learning-search .premium-learning-search-no-results.premium-learning-search-hide-content {
+  display: none;
 }
 
 /* Tablet styles */
