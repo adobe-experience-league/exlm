@@ -430,7 +430,7 @@
   },
   {
     "id": "premium-learning-section",
-    "components": ["text", "title", "button", "image", "premium-learning-search", "premium-learning-browse"]
+    "components": ["text", "title", "button", "image", "premium-learning-search", "premium-learning-browse-cards"]
   },
   {
     "id": "columns",

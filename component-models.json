@@ -10089,7 +10089,7 @@
         "valueType": "string",
         "name": "contentType",
         "value": "premium-learning-course",
-        "label": "Content Type",
+        "label": "Learning Type",
         "description": "Select which premium learning learning type(s) to display",
         "required": true,
         "options": [
