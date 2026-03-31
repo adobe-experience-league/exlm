@@ -1,11 +1,16 @@
 .page-bg-gradient {
   /* Live gradient background colors */
-  --lg-base-pink: rgb(250 74 162 / 20%);
-  --lg-base-blue: rgb(181 222 255 / 20%);
-  --lg-circle-blue: rgb(181 222 255 / 40%);
-  --lg-circle-pink: rgb(250 74 162 / 10%);
-  --lg-circle-orange: rgb(255 124 101 / 10%);
-  --lg-blur: 80px;
+  --gradient-base-bg: rgb(240 241 246);
+  --gradient-primary: rgb(181 222 255);
+  --gradient-secondary: rgb(250 74 162);
+  --gradient-accent: rgb(255 124 101);
+  --gradient-blur: 120px;
+  --gradient-circle-size: 4150px;
+  --gradient-circle-width-scale: 0.65;
+  --gradient-circle-height-scale: 1.8;
+  --gradient-duration-primary: 8s;
+  --gradient-duration-secondary: 10s;
+  --gradient-duration-accent: 6s;
 
   position: relative;
   isolation: isolate; /* prevents stacking conflicts */
@@ -14,24 +19,35 @@
 
 /* Layer 1 — Base Linear Gradient */
 .page-bg-gradient main {
-  background: linear-gradient(135deg, var(--lg-base-pink) 0%, var(--lg-base-blue) 100%);
+  position: relative;
+  background: var(--gradient-base-bg);
 }
 
 /* Layer 2 — Circles Wrapper */
 .page-bg-gradient .gradient-layer {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  z-index: -3;
+  z-index: 0;
+  overflow: hidden;
   pointer-events: none;
+}
+
+.page-bg-gradient main > :not(.gradient-layer) {
+  position: relative;
+  z-index: 1;
 }
 
 /* Shared circle styles */
 .page-bg-gradient .gradient-layer > .gradient-circle {
-  position: fixed;
-  width: 60vw;
-  height: 60vw;
+  position: absolute;
+  width: calc(
+    var(--gradient-circle-size) * var(--gradient-circle-width-scale, 1) * var(--gradient-circle-width-ratio, 1)
+  );
+  height: calc(
+    var(--gradient-circle-size) * var(--gradient-circle-height-scale, 1) * var(--gradient-circle-height-ratio, 1)
+  );
   border-radius: 50%;
-  filter: blur(var(--lg-blur));
+  filter: blur(var(--gradient-blur));
   pointer-events: none;
   will-change: transform;
   transform: translate3d(0, 0, 0);
@@ -39,61 +55,95 @@
 }
 
 /* Individual color circles */
-.page-bg-gradient .gradient-circle-blue {
-  background: radial-gradient(circle, var(--lg-circle-blue) 0%, rgb(181 222 255 / 0%) 100%);
-  animation: live-gradient-move-blue 30s linear infinite;
+.page-bg-gradient .gradient-circle-primary {
+  --gradient-circle-width-ratio: 0.66;
+  --gradient-circle-height-ratio: 1.14;
+
+  top: -32%;
+  left: -18%;
+  background: radial-gradient(ellipse at center, var(--gradient-primary) 0%, rgb(181 222 255 / 0%) 100%);
+  opacity: 0.5;
+  animation: gradient-motion-primary var(--gradient-duration-primary) ease-in-out infinite alternate;
 }
 
-.page-bg-gradient .gradient-circle-pink {
-  background: radial-gradient(circle, var(--lg-circle-pink) 0%, rgb(250 74 162 / 0%) 100%);
-  animation: live-gradient-move-pink 45s linear infinite;
+.page-bg-gradient .gradient-circle-secondary {
+  --gradient-circle-width-ratio: 0.62;
+  --gradient-circle-height-ratio: 1.18;
+
+  right: -20%;
+  bottom: -38%;
+  background: radial-gradient(ellipse at center, var(--gradient-secondary) 0%, rgb(250 74 162 / 0%) 100%);
+  opacity: 0.3;
+  animation: gradient-motion-secondary var(--gradient-duration-secondary) ease-in-out infinite alternate;
 }
 
-.page-bg-gradient .gradient-circle-orange {
-  background: radial-gradient(circle, var(--lg-circle-orange) 0%, rgb(255 124 101 / 0%) 100%);
-  animation: live-gradient-move-orange 60s linear infinite;
+.page-bg-gradient .gradient-circle-accent {
+  --gradient-circle-width-ratio: 0.64;
+  --gradient-circle-height-ratio: 1.1;
+
+  top: 2%;
+  right: -26%;
+  background: radial-gradient(ellipse at center, var(--gradient-accent) 0%, rgb(255 124 101 / 0%) 100%);
+  opacity: 0.3;
+  animation: gradient-motion-accent var(--gradient-duration-accent) ease-in-out infinite alternate;
 }
 
 /* Movement animations */
-@keyframes live-gradient-move-blue {
+
+/* Primary: enters from the left, drifts inward and slightly downward */
+@keyframes gradient-motion-primary {
   0% {
-    transform: translate3d(-20vw, -10vh, 0) rotate(0deg);
+    transform: translate3d(-20%, -4%, 0) rotate(-12deg) scale(1);
   }
 
-  50% {
-    transform: translate3d(30vw, 20vh, 0) rotate(180deg);
+  30% {
+    transform: translate3d(4%, 6%, 0) rotate(-6deg) scale(1.05);
+  }
+
+  68% {
+    transform: translate3d(18%, 18%, 0) rotate(4deg) scale(0.97);
   }
 
   100% {
-    transform: translate3d(-10vw, 40vh, 0) rotate(360deg);
+    transform: translate3d(10%, 28%, 0) rotate(10deg) scale(1.03);
   }
 }
 
-@keyframes live-gradient-move-pink {
+/* Secondary: enters from the bottom, rises upward and shifts left */
+@keyframes gradient-motion-secondary {
   0% {
-    transform: translate3d(20vw, 50vh, 0) rotate(0deg);
+    transform: translate3d(6%, 22%, 0) rotate(10deg) scale(1);
   }
 
-  50% {
-    transform: translate3d(-30vw, -20vh, 0) rotate(-180deg);
+  33% {
+    transform: translate3d(-8%, 4%, 0) rotate(4deg) scale(1.05);
+  }
+
+  70% {
+    transform: translate3d(-24%, -16%, 0) rotate(-8deg) scale(0.95);
   }
 
   100% {
-    transform: translate3d(10vw, -40vh, 0) rotate(-360deg);
+    transform: translate3d(-38%, -6%, 0) rotate(-14deg) scale(1.02);
   }
 }
 
-@keyframes live-gradient-move-orange {
+/* Accent: enters from the top-right, sweeps left and downward */
+@keyframes gradient-motion-accent {
   0% {
-    transform: translate3d(40vw, -30vh, 0) rotate(0deg);
+    transform: translate3d(16%, -22%, 0) rotate(18deg) scale(1);
   }
 
-  50% {
-    transform: translate3d(-40vw, 30vh, 0) rotate(180deg);
+  36% {
+    transform: translate3d(-4%, -6%, 0) rotate(8deg) scale(1.06);
+  }
+
+  72% {
+    transform: translate3d(-20%, 14%, 0) rotate(-4deg) scale(0.96);
   }
 
   100% {
-    transform: translate3d(20vw, 50vh, 0) rotate(360deg);
+    transform: translate3d(-10%, 34%, 0) rotate(-10deg) scale(1.02);
   }
 }
 
@@ -105,7 +155,7 @@
   z-index: -2;
   pointer-events: none;
   background: rgb(255 255 255 / 10%);
-  backdrop-filter: blur(var(--lg-blur));
+  backdrop-filter: blur(var(--gradient-blur));
   margin-top: 64px; /* Account for fixed header */
 }
 

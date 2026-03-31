@@ -70,11 +70,13 @@ export default async function decorate(block) {
     <div class="premium-learning-search-block-title">
       ${headingElement?.innerHTML || ''}
     </div>
-    <div class="premium-learning-search-block-cta">
-      ${decorateCustomButtons(ctaElement)}
-    </div>
+    <div class="premium-learning-search-header-cta-slot"></div>
   `;
   block.appendChild(headerDiv);
+  const headerCtaSlot = headerDiv.querySelector('.premium-learning-search-header-cta-slot');
+  const ctaWrapper = createTag('div', { class: 'premium-learning-search-block-cta' });
+  ctaWrapper.innerHTML = decorateCustomButtons(ctaElement);
+  headerCtaSlot.appendChild(ctaWrapper);
 
   const [signInUser, placeholders] = await Promise.all([
     isSignedInUser(),
@@ -112,24 +114,44 @@ export default async function decorate(block) {
     const headerNoResultText = searchTextExists ? searchHeader.replace('{}', searchText) : noSearchHeader;
     const descriptionNoResultText = searchTextExists ? searchDescription : noSearchDescription;
     const clearSearchText = placeholders.premiumLearningCardsClearSearchText || 'Clear search';
-    const markup = `
+
+    let root = blockElement.querySelector('.premium-learning-search-no-results');
+    if (!root) {
+      const markup = `
       <div class="premium-learning-search-no-results">
-        <div class="premium-learning-search-no-results-header">${headerNoResultText}</div>
-        <div class="premium-learning-search-no-results-description">${descriptionNoResultText}</div>
-        <div class="premium-learning-search-block-cta">
-          ${decorateCustomButtons(ctaElement)}
-        </div>
-        ${searchTextExists ? `<div class="premium-learning-search-clear-search">${clearSearchText}</div>` : ''}
+        <div class="premium-learning-search-no-results-header"></div>
+        <div class="premium-learning-search-no-results-description"></div>
+        <div class="premium-learning-search-no-results-cta-slot"></div>
+        <div class="premium-learning-search-clear-search"></div>
       </div>
     `;
-    const noResultsContent = htmlToElement(markup);
-    const clearBtn = noResultsContent.querySelector('.premium-learning-search-clear-search');
-    if (clearBtn) {
-      clearBtn.addEventListener('click', () => {
-        updateHash((key) => !key.includes('q='), '&');
+      root = htmlToElement(markup);
+      root.addEventListener('click', (e) => {
+        if (e.target.closest('.premium-learning-search-clear-search')) {
+          updateHash((key) => !key.includes('q='), '&');
+        }
       });
+      blockElement.appendChild(root);
     }
-    blockElement.appendChild(noResultsContent);
+
+    const headerEl = root.querySelector('.premium-learning-search-no-results-header');
+    const descEl = root.querySelector('.premium-learning-search-no-results-description');
+    const noResultsCtaSlot = root.querySelector('.premium-learning-search-no-results-cta-slot');
+    const clearEl = root.querySelector('.premium-learning-search-clear-search');
+    if (headerEl) headerEl.textContent = headerNoResultText;
+    if (descEl) descEl.textContent = descriptionNoResultText;
+    if (clearEl) {
+      clearEl.textContent = clearSearchText;
+      if (searchTextExists) {
+        clearEl.classList.remove('premium-learning-search-hide-content');
+      } else {
+        clearEl.classList.add('premium-learning-search-hide-content');
+      }
+    }
+    if (noResultsCtaSlot) {
+      noResultsCtaSlot.appendChild(ctaWrapper);
+    }
+    root.classList.remove('premium-learning-search-hide-content');
   }
 
   function toggleNoResultsContent(blockElement, show) {
@@ -137,9 +159,10 @@ export default async function decorate(block) {
       renderNoResultsContent(blockElement, param.q);
       headerDiv.classList.add('premium-learning-search-hide-content');
     } else {
-      const noResultsContent = blockElement.querySelector('.premium-learning-search-no-results');
-      if (noResultsContent) {
-        blockElement.removeChild(noResultsContent);
+      headerCtaSlot.appendChild(ctaWrapper);
+      const noResultsRoot = blockElement.querySelector('.premium-learning-search-no-results');
+      if (noResultsRoot) {
+        noResultsRoot.classList.add('premium-learning-search-hide-content');
       }
       headerDiv.classList.remove('premium-learning-search-hide-content');
     }
@@ -196,11 +219,10 @@ export default async function decorate(block) {
         buildCardsShimmer.addShimmer(block);
         fetchAndRenderCards(param);
 
-        const ctaWrapper = block.querySelector('.premium-learning-search-block-cta');
-        const anchor = ctaWrapper?.querySelector('a');
-        if (anchor) {
-          const href = anchor.getAttribute('href');
-          const url = new URL(href);
+        const anchor = ctaWrapper.querySelector('a');
+        const href = anchor?.getAttribute('href');
+        if (href) {
+          const url = new URL(href, document.baseURI);
           url.search = urlString;
           anchor.setAttribute('href', url.toString());
         }
