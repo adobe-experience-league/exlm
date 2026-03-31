@@ -56,7 +56,7 @@ function getUniqueProductsInOrder(suggestedContentItems) {
 
 function getTabDefinitions(suggestedContentItems, placeholders) {
   const uniqueProducts = getUniqueProductsInOrder(suggestedContentItems);
-  const defaultTab = placeholders.premiumLearningCohortTabsDefaultTabLabel || 'For you';
+  const defaultTab = placeholders.premiumLearningTabForYou || 'For you';
   const defaultTabItems = suggestedContentItems.slice(0, FETCH_LIMIT);
 
   if (!defaultTabItems.length) {

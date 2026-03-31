@@ -430,7 +430,15 @@
   },
   {
     "id": "premium-learning-section",
-    "components": ["text", "title", "button", "image", "premium-learning-search", "premium-learning-browse-cards", "premium-learning-suggested-content"]
+    "components": [
+      "text",
+      "title",
+      "button",
+      "image",
+      "premium-learning-search",
+      "premium-learning-browse-cards",
+      "premium-learning-suggested-content"
+    ]
   },
   {
     "id": "columns",
