@@ -16,6 +16,11 @@
   container-name: playlist-embed;
 }
 
+.section > div:has(> .playlist-embed) {
+  container-type: inline-size;
+  container-name: playlist-embed;
+}
+
 /* Player container styles */
 .playlist-embed .playlist-player-container {
   width: 100%;
@@ -290,8 +295,7 @@
   font-size: var(--spectrum-font-size-75);
 }
 
-/* Container queries: layout follows .playlist-embed width, not viewport */
-@container playlist-embed (min-width: 600px) {
+@container playlist-embed (min-width: 766px) {
   .playlist-embed {
     grid-template-columns: 1fr 250px;
   }
@@ -301,14 +305,18 @@
   }
 }
 
-@container playlist-embed (min-width: 900px) {
-  .playlist-embed {
-    grid-template-columns: 1fr 275px;
+@media (min-width: 900px) {
+  @container playlist-embed (min-width: 766px) {
+    .playlist-embed {
+      grid-template-columns: 1fr 275px;
+    }
   }
 }
 
-@container playlist-embed (min-width: 1024px) {
-  .playlist-embed {
-    grid-template-columns: 1fr 300px;
+@media (min-width: 1024px) {
+  @container playlist-embed (min-width: 766px) {
+    .playlist-embed {
+      grid-template-columns: 1fr 300px;
+    }
   }
 }
