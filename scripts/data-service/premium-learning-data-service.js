@@ -8,6 +8,8 @@ import { getPLAccessToken } from '../utils/pl-auth-utils.js';
  * @property {string} [sort] - Sort order
  * @property {string} [tagName] - Tag filter
  * @property {string} [q] - Search query string (triggers search endpoint)
+ * @property {boolean} [browseMode] - Browse mode flag (triggers query endpoint with product filtering)
+ * @property {Array<string>} [product] - Product filter array (e.g., ['Acrobat', 'AEM'])
  * @property {string|Array<string>} [products] - Product filter (e.g., 'Acrobat' or ['Acrobat', 'AEM'])
  * @property {string|Array<string>} [solutions] - Product filter alias (same as products, used by BrowseCardsDelegate)
  * @property {string|Array<string>} [roles] - Role filter (e.g., 'Administrator' or ['Administrator', 'Business User'])
@@ -137,6 +139,38 @@ export default class PLDataService {
     // Add catalog IDs if configured
     if (catalogIds) {
       body['filter.catalogIds'] = Array.isArray(catalogIds) ? catalogIds : [catalogIds];
+    }
+
+    // Add tag filter if provided
+    if (tagName) {
+      body['filter.tagName'] = tagName;
+    }
+
+    return body;
+  }
+
+  buildBrowseRequestBody() {
+    const { contentType, tagName, products } = this.queryParams;
+    const catalogIds = getConfig()?.plPrivateCatalogIds;
+
+    // Determine learning object types - support both course and cohort
+    const loTypes = PLDataService.determineLearningObjectTypes(contentType);
+
+    const body = {
+      'filter.loTypes': loTypes,
+      'filter.learnerState': ['notenrolled', 'enrolled', 'started', 'completed'],
+      'filter.ignoreEnhancedLP': false,
+    };
+
+    if (products && Array.isArray(products) && products.length > 0) {
+      body['filter.recommendationProducts'] = products.map((productName) => ({
+        name: productName,
+        levels: [],
+      }));
+    }
+
+    if (catalogIds) {
+      body['filter.catalogIds'] = catalogIds.join(',');
     }
 
     // Add tag filter if provided
@@ -308,7 +342,7 @@ export default class PLDataService {
   async fetchDataFromSource() {
     try {
       const apiBaseUrl = getConfig()?.plApiBaseUrl;
-      const { q, searchMode } = this.queryParams;
+      const { q, searchMode, browseMode } = this.queryParams;
       const isSearchMode = searchMode || !!q;
 
       let url;
@@ -321,6 +355,11 @@ export default class PLDataService {
         url = new URL(`${apiBaseUrl}${PLDataService.SEARCH_ENDPOINT}`);
         url.search = this.buildSearchUrlParams(hasQuery).toString();
         body = this.buildSearchRequestBody(hasQuery);
+      } else if (browseMode) {
+        // Use query endpoint (browse mode)
+        url = new URL(`${apiBaseUrl}${PLDataService.QUERY_ENDPOINT}`);
+        url.search = this.buildUrlParams().toString();
+        body = this.buildBrowseRequestBody();
       } else {
         // Use query endpoint
         url = new URL(`${apiBaseUrl}${PLDataService.QUERY_ENDPOINT}`);
