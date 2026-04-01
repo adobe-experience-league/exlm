@@ -158,7 +158,7 @@
 /* Mobile: disable backdrop-filter to prevent GPU compositor layer creation
    flash on initial CSS load. The 10% white overlay is also removed since
    it has no blur to blend with on mobile. Desktop (≥900px) is unaffected. */
-@media (max-width: 899px) {
+@media (max-width: 900px) {
   .page-bg-gradient main::after {
     backdrop-filter: none;
     background: transparent;
