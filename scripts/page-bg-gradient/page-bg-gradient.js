@@ -33,7 +33,12 @@ export default function initLiveGradientBackground() {
     main.prepend(circlesWrapper);
   };
 
-  updateCircleSize();
+  // Skip on mobile (<900px): main is single-column and tall, so the override
+  // produces a circle size larger than the CSS default, causing a visible
+  // size-jump flicker. The 4150px CSS default is sufficient for mobile.
+  if (window.innerWidth >= 900) {
+    updateCircleSize();
+  }
 
   if ('requestIdleCallback' in window) {
     window.requestIdleCallback(createLiveGradientCircles, { timeout: 2000 });
