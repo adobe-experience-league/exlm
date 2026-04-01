@@ -1100,6 +1100,9 @@ async function loadLazy(doc) {
   loadDefaultModule('./data-service/coveo/coveo-token-prefetch.js');
 
   await loadThemes();
+  if (isLiveGradientBgPage) {
+    loadDefaultModule('./page-bg-gradient/page-bg-gradient.js');
+  }
   if (preMain) await loadBlocks(preMain);
   await loadBlocks(main);
 
@@ -1111,9 +1114,6 @@ async function loadLazy(doc) {
   // disable martech if martech=off is in the query string, this is used for testing ONLY
   if (window.location.search?.indexOf('martech=off') === -1) loadMartech(headerPromise, footerPromise);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
-  if (isLiveGradientBgPage) {
-    loadDefaultModule('./page-bg-gradient/page-bg-gradient.js');
-  }
   loadFonts();
 }
 
