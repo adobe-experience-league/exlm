@@ -5,11 +5,7 @@
   --gradient-secondary: rgb(250 74 162);
   --gradient-accent: rgb(255 124 101);
   --gradient-blur: 120px;
-  --gradient-circle-size: clamp(
-    2500px,
-    80vh,
-    9000px
-  ); /* Fallback for browsers without cqh support, set to 60% of a very tall viewport */
+  --gradient-circle-size: clamp(2500px, 80vh, 9000px);
   --gradient-circle-width-scale: 0.65;
   --gradient-circle-height-scale: 1.8;
   --gradient-duration-primary: 8s;
@@ -157,15 +153,6 @@
   background: rgb(255 255 255 / 10%);
   backdrop-filter: blur(var(--gradient-blur));
   margin-top: 64px; /* Account for fixed header */
-}
-
-/* Mobile: disable backdrop-filter to prevent GPU compositor layer creation
-   flash on initial CSS load. The 10% white overlay is also removed since
-   it has no blur to blend with on mobile. Desktop (≥900px) is unaffected. */
-@media (max-width: 900px) {
-  .page-bg-gradient main::after {
-    backdrop-filter: none;
-  }
 }
 
 /* Reduce motion */
