@@ -147,16 +147,15 @@
   }
 }
 
-/* Layer 3 — White Blur Overlay */
+/* Layer 3 — White Overlay */
 .page-bg-gradient main::after {
   content: '';
   position: fixed;
-  inset: 0;
+  inset: 64px 0 0; /* Account for fixed header; explicit top avoids margin-top quirk on iOS fixed elements */
   z-index: -2;
   pointer-events: none;
   background: rgb(255 255 255 / 10%);
-  backdrop-filter: blur(var(--gradient-blur));
-  margin-top: 64px; /* Account for fixed header */
+  transform: translateZ(0); /* Promotes to own GPU layer, prevents iOS Safari flicker during scroll */
 }
 
 /* Reduce motion */
@@ -167,6 +166,6 @@
   }
 
   .page-bg-gradient main::after {
-    backdrop-filter: none;
+    transform: none;
   }
 }
