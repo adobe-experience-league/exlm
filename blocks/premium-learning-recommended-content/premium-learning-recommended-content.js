@@ -126,7 +126,7 @@ export default async function decorate(block) {
   const contentTypeRaw = contentTypeElement?.textContent?.trim() || '';
   const contentType = contentTypeRaw ? contentTypeRaw.split(',').map((s) => s.trim()) : DEFAULT_CONTENT_TYPES;
 
-  block.innerHTML = '';
+  block.textContent = '';
   block.classList.add('browse-cards-block', 'premium-learning-recommended-content-block');
   block.appendChild(buildBlockHeader(headingElement?.innerHTML || '', descriptionElement?.innerHTML || ''));
 
