@@ -1,4 +1,3 @@
-import { getConfig, getPathDetails } from '../scripts.js';
 import { getPLAccessToken } from '../utils/pl-auth-utils.js';
 
 /**
@@ -21,14 +20,6 @@ import { getPLAccessToken } from '../utils/pl-auth-utils.js';
 /**
  * PLDataService class for fetching data from premium-learning API.
  * Handles API communication with Adobe Learning Manager to retrieve learning objects.
- *
- * @class PLDataService
- * @example
- * const service = new PLDataService({
- *   noOfResults: 10,
- *   contentType: 'premium-learning-cohort'
- * });
- * const data = await service.fetchDataFromSource();
  */
 export default class PLDataService {
   /**
@@ -71,6 +62,12 @@ export default class PLDataService {
   static SUGGESTED_CONTENT_ENDPOINT = '/learningObjects';
 
   /**
+   * Enrollments endpoint path
+   * @private
+   */
+  static ENROLLMENTS_ENDPOINT = '/enrollments';
+
+  /**
    * Snippet types for search endpoint
    * @private
    */
@@ -94,9 +91,13 @@ export default class PLDataService {
   /**
    * Creates an instance of PLDataService.
    * @param {PLQueryParams} queryParams - Query parameters for premium-learning API request
+   * @param {Object} config - Config object (from getConfig())
+   * @param {Object} pathDetails - Path details object (from getPathDetails())
    */
-  constructor(queryParams) {
+  constructor(queryParams, config, pathDetails) {
     this.queryParams = queryParams;
+    this.config = config;
+    this.pathDetails = pathDetails;
   }
 
   /**
@@ -131,7 +132,7 @@ export default class PLDataService {
    */
   buildRequestBody() {
     const { contentType, tagName } = this.queryParams;
-    const { catalogIds } = getConfig()?.['premium-learning'] ?? {};
+    const { catalogIds } = this.config?.['premium-learning'] ?? {};
 
     // Determine learning object types - support both course and cohort
     const loTypes = PLDataService.determineLearningObjectTypes(contentType);
@@ -158,7 +159,7 @@ export default class PLDataService {
 
   buildBrowseRequestBody() {
     const { contentType, tagName, products } = this.queryParams;
-    const catalogIds = getConfig()?.plPublicCatalogIds;
+    const catalogIds = this.config?.plPublicCatalogIds;
 
     // Determine learning object types - support both course and cohort
     const loTypes = PLDataService.determineLearningObjectTypes(contentType);
@@ -260,8 +261,8 @@ export default class PLDataService {
    */
   buildSuggestedContentUrlParams() {
     const { noOfResults, contentType } = this.queryParams;
-    const { plPublicCatalogIds } = getConfig() ?? {};
-    const { lang } = getPathDetails();
+    const { plPublicCatalogIds } = this.config ?? {};
+    const { lang } = this.pathDetails;
     const params = new URLSearchParams();
 
     // Resolve loTypes from contentType; fall back to learningProgram (cohort)
@@ -324,7 +325,7 @@ export default class PLDataService {
    */
   buildSearchRequestBody(hasQuery = false) {
     const { contentType, q, products, solutions, roles, durationRange, learnerState } = this.queryParams;
-    const { recommendationProducts } = getConfig()?.['premium-learning'] ?? {};
+    const { recommendationProducts } = this.config?.['premium-learning'] ?? {};
     const loTypes = PLDataService.determineLearningObjectTypes(contentType);
 
     const body = {
@@ -332,7 +333,7 @@ export default class PLDataService {
       'filter.ignoreEnhancedLP': false,
     };
     if (hasQuery) {
-      const { lang } = getPathDetails();
+      const { lang } = this.pathDetails;
       const languageCode = lang || 'en-US';
 
       Object.assign(body, {
@@ -393,7 +394,7 @@ export default class PLDataService {
         return this.fetchSuggestedContent();
       }
 
-      const apiBaseUrl = getConfig()?.plApiBaseUrl;
+      const apiBaseUrl = this.config?.plApiBaseUrl;
       const { q, searchMode, browseMode } = this.queryParams;
       const isSearchMode = searchMode || !!q;
 
@@ -484,7 +485,7 @@ export default class PLDataService {
    */
   async fetchSuggestedContent() {
     try {
-      const apiBaseUrl = getConfig()?.plApiBaseUrl;
+      const apiBaseUrl = this.config?.plApiBaseUrl;
       const url = new URL(`${apiBaseUrl}${PLDataService.SUGGESTED_CONTENT_ENDPOINT}`);
       url.search = this.buildSuggestedContentUrlParams().toString();
 
@@ -504,5 +505,51 @@ export default class PLDataService {
       console.error('Error fetching suggested content:', error);
       return null;
     }
+  }
+}
+
+/**
+ * Checks if user has any enrollments in Adobe Learning Manager
+ * Standalone utility function that can be used without instantiating PLDataService
+ * @param {Object} config - Config object (from getConfig())
+ * @param {string} loType - Learning object type ('course' or 'learningProgram')
+ * @param {number} noOfResults - Number of results to fetch (default: 10)
+ * @returns {Promise<Object|null>} Enrollment data or null on error
+ * @example
+ * import { fetchUserEnrollments } from './data-service/premium-learning-data-service.js';
+ * const config = getConfig();
+ * const enrollments = await fetchUserEnrollments(config, 'learningProgram', 10);
+ * const hasEnrollments = enrollments?.data?.length > 0;
+ */
+export async function fetchUserEnrollments(config, loType = 'learningProgram', noOfResults = 10) {
+  try {
+    const apiBaseUrl = config?.plApiBaseUrl;
+    const url = new URL(`${apiBaseUrl}/enrollments`);
+
+    const params = new URLSearchParams({
+      'page[limit]': noOfResults,
+      'filter.loTypes': loType,
+      includeHierarchicalEnrollments: 'false',
+      sort: 'dateEnrolled',
+    });
+
+    url.search = params.toString();
+    const headers = PLDataService.buildRequestHeaders();
+
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers,
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Enrollments API request failed: ${response.status} ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error checking user enrollments:', error);
+    return null;
   }
 }

@@ -214,7 +214,9 @@ const BrowseCardsDelegate = (() => {
    * @private
    */
   const handlePLService = async () => {
-    const premiumlearningService = new PLDataService(param);
+    const config = getConfig();
+    const pathDetails = getPathDetails();
+    const premiumlearningService = new PLDataService(param, config, pathDetails);
     const cardData = await premiumlearningService.fetchDataFromSource();
 
     if (!cardData) {
