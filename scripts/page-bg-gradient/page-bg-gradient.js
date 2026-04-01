@@ -3,6 +3,7 @@ export default function initLiveGradientBackground() {
   const main = document.querySelector('main');
 
   if (!body?.classList.contains('page-bg-gradient') || !main) return;
+
   const updateCircleSize = () => {
     const circleSize = `${main.offsetHeight * 0.6}px`;
     let sizeStyle = document.head.querySelector('#gradient-circle-size-override');
@@ -33,6 +34,19 @@ export default function initLiveGradientBackground() {
     main.prepend(circlesWrapper);
   };
 
-  updateCircleSize();
+  // Inject the gradient layer immediately so it's visible as soon as the CSS applies.
+  // Skip updateCircleSize here — main.offsetHeight is too small before blocks render.
   createLiveGradientCircles();
+
+  // Recalculate circle size once the page has fully rendered (blocks loaded).
+  // ResizeObserver fires after each layout change; disconnect on first stable measurement.
+  const ro = new ResizeObserver(() => {
+    if (main.offsetHeight > 0) {
+      updateCircleSize();
+    }
+  });
+  ro.observe(main);
+
+  // Disconnect after page load to stop observing layout shifts.
+  window.addEventListener('load', () => ro.disconnect(), { once: true });
 }
