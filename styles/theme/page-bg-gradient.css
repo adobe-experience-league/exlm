@@ -20,6 +20,7 @@
 /* Layer 1 — Base Linear Gradient */
 .page-bg-gradient main {
   position: relative;
+  isolation: isolate; /* creates stacking context so z-index: -1 children stay within main */
   background: var(--gradient-base-bg);
 }
 
@@ -27,14 +28,9 @@
 .page-bg-gradient .gradient-layer {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: -1; /* sits behind all sibling content without needing to lift siblings */
   overflow: hidden;
   pointer-events: none;
-}
-
-.page-bg-gradient main > :not(.gradient-layer) {
-  position: relative;
-  z-index: 1;
 }
 
 /* Shared circle styles */
