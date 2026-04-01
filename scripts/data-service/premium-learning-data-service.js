@@ -20,18 +20,6 @@ import { getPLAccessToken } from '../utils/pl-auth-utils.js';
 /**
  * PLDataService class for fetching data from premium-learning API.
  * Handles API communication with Adobe Learning Manager to retrieve learning objects.
- *
- * @class PLDataService
- * @example
- * const service = new PLDataService(
- *   {
- *     noOfResults: 10,
- *     contentType: 'premium-learning-cohort'
- *   },
- *   getConfig,
- *   getPathDetails
- * );
- * const data = await service.fetchDataFromSource();
  */
 export default class PLDataService {
   /**
