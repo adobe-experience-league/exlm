@@ -1,4 +1,5 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
+@import '../../scripts/browse-card/browse-card.css';
 
 .premium-learning-suggested-content .premium-learning-suggested-content-header {
   gap: var(--spectrum-spacing-300);
