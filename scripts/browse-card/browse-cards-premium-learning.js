@@ -1,5 +1,5 @@
 /* eslint-disable camelcase, no-unused-vars */
-import { loadCSS } from '../lib-franklin.js';
+import { loadCSS, decorateIcons } from '../lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
 import UserActions from '../user-actions/user-actions.js';
 
@@ -124,10 +124,16 @@ function buildPLThumbnail({
   if (startLabel) {
     const startLabelContainer = document.createElement('div');
     startLabelContainer.className = 'premium-learning-card-start-label-container';
+
+    const calendarIcon = document.createElement('span');
+    calendarIcon.className = 'icon icon-calendar-white';
+    startLabelContainer.appendChild(calendarIcon);
+
     const startLabelElement = document.createElement('p');
     startLabelElement.className = 'premium-learning-card-start-label';
     startLabelElement.innerHTML = startLabel;
     startLabelContainer.appendChild(startLabelElement);
+    decorateIcons(startLabelContainer);
     cardFigure.appendChild(startLabelContainer);
   }
 

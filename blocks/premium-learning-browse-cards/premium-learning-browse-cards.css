@@ -20,9 +20,8 @@
 }
 
 .premium-learning-browse-cards.browse-cards-block .browse-cards-block-content {
-  display: flex;
-  flex-wrap: wrap;
   justify-content: flex-start;
   min-height: auto;
   margin-top: 32px;
+  margin-bottom: 0;
 }
