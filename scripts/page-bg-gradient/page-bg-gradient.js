@@ -3,17 +3,6 @@ export default function initLiveGradientBackground() {
   const main = document.querySelector('main');
 
   if (!body?.classList.contains('page-bg-gradient') || !main) return;
-  const updateCircleSize = () => {
-    const circleSize = `${main.offsetHeight * 0.6}px`;
-    let sizeStyle = document.head.querySelector('#gradient-circle-size-override');
-    if (!sizeStyle) {
-      sizeStyle = document.createElement('style');
-      sizeStyle.id = 'gradient-circle-size-override';
-      document.head.append(sizeStyle);
-    }
-    sizeStyle.textContent = `.page-bg-gradient { --gradient-circle-size: ${circleSize}; }`;
-  };
-
   const createLiveGradientCircles = () => {
     if (main.querySelector('.gradient-layer')) return;
 
@@ -32,13 +21,6 @@ export default function initLiveGradientBackground() {
 
     main.prepend(circlesWrapper);
   };
-
-  // Skip on mobile (<900px): main is single-column and tall, so the override
-  // produces a circle size larger than the CSS default, causing a visible
-  // size-jump flicker. The 4150px CSS default is sufficient for mobile.
-  if (window.innerWidth >= 900) {
-    updateCircleSize();
-  }
 
   if ('requestIdleCallback' in window) {
     window.requestIdleCallback(createLiveGradientCircles, { timeout: 2000 });
