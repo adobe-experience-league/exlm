@@ -103,13 +103,13 @@ export default class PLDataService {
   /**
    * Creates an instance of PLDataService.
    * @param {PLQueryParams} queryParams - Query parameters for premium-learning API request
-   * @param {Function} getConfigFn - Function to get config (from scripts.js)
-   * @param {Function} getPathDetailsFn - Function to get path details (from scripts.js)
+   * @param {Object} config - Config object (from getConfig())
+   * @param {Object} pathDetails - Path details object (from getPathDetails())
    */
-  constructor(queryParams, getConfigFn, getPathDetailsFn) {
+  constructor(queryParams, config, pathDetails) {
     this.queryParams = queryParams;
-    this.getConfig = getConfigFn;
-    this.getPathDetails = getPathDetailsFn;
+    this.config = config;
+    this.pathDetails = pathDetails;
   }
 
   /**
@@ -144,7 +144,7 @@ export default class PLDataService {
    */
   buildRequestBody() {
     const { contentType, tagName } = this.queryParams;
-    const { catalogIds } = this.getConfig()?.['premium-learning'] ?? {};
+    const { catalogIds } = this.config?.['premium-learning'] ?? {};
 
     // Determine learning object types - support both course and cohort
     const loTypes = PLDataService.determineLearningObjectTypes(contentType);
@@ -171,7 +171,7 @@ export default class PLDataService {
 
   buildBrowseRequestBody() {
     const { contentType, tagName, products } = this.queryParams;
-    const catalogIds = this.getConfig()?.plPrivateCatalogIds;
+    const catalogIds = this.config?.plPrivateCatalogIds;
 
     // Determine learning object types - support both course and cohort
     const loTypes = PLDataService.determineLearningObjectTypes(contentType);
@@ -273,8 +273,8 @@ export default class PLDataService {
    */
   buildSuggestedContentUrlParams() {
     const { noOfResults, contentType } = this.queryParams;
-    const { plPublicCatalogIds } = this.getConfig() ?? {};
-    const { lang } = this.getPathDetails();
+    const { plPublicCatalogIds } = this.config ?? {};
+    const { lang } = this.pathDetails;
     const params = new URLSearchParams();
 
     // Resolve loTypes from contentType; fall back to learningProgram (cohort)
@@ -337,7 +337,7 @@ export default class PLDataService {
    */
   buildSearchRequestBody(hasQuery = false) {
     const { contentType, q, products, solutions, roles, durationRange, learnerState } = this.queryParams;
-    const { recommendationProducts } = this.getConfig()?.['premium-learning'] ?? {};
+    const { recommendationProducts } = this.config?.['premium-learning'] ?? {};
     const loTypes = PLDataService.determineLearningObjectTypes(contentType);
 
     const body = {
@@ -345,7 +345,7 @@ export default class PLDataService {
       'filter.ignoreEnhancedLP': false,
     };
     if (hasQuery) {
-      const { lang } = this.getPathDetails();
+      const { lang } = this.pathDetails;
       const languageCode = lang || 'en-US';
 
       Object.assign(body, {
@@ -406,7 +406,7 @@ export default class PLDataService {
         return this.fetchSuggestedContent();
       }
 
-      const apiBaseUrl = this.getConfig()?.plApiBaseUrl;
+      const apiBaseUrl = this.config?.plApiBaseUrl;
       const { q, searchMode, browseMode } = this.queryParams;
       const isSearchMode = searchMode || !!q;
 
@@ -497,7 +497,7 @@ export default class PLDataService {
    */
   async fetchSuggestedContent() {
     try {
-      const apiBaseUrl = this.getConfig()?.plApiBaseUrl;
+      const apiBaseUrl = this.config?.plApiBaseUrl;
       const url = new URL(`${apiBaseUrl}${PLDataService.SUGGESTED_CONTENT_ENDPOINT}`);
       url.search = this.buildSuggestedContentUrlParams().toString();
 
@@ -523,18 +523,19 @@ export default class PLDataService {
 /**
  * Checks if user has any enrollments in Adobe Learning Manager
  * Standalone utility function that can be used without instantiating PLDataService
+ * @param {Object} config - Config object (from getConfig())
  * @param {string} loType - Learning object type ('course' or 'learningProgram')
  * @param {number} noOfResults - Number of results to fetch (default: 10)
- * @param {Function} getConfigFn - Function to get config
  * @returns {Promise<Object|null>} Enrollment data or null on error
  * @example
- * import { checkUserEnrollments } from './data-service/premium-learning-data-service.js';
- * const enrollments = await checkUserEnrollments('learningProgram', 10, getConfig);
+ * import { fetchUserEnrollments } from './data-service/premium-learning-data-service.js';
+ * const config = getConfig();
+ * const enrollments = await fetchUserEnrollments(config, 'learningProgram', 10);
  * const hasEnrollments = enrollments?.data?.length > 0;
  */
-export async function fetchUserEnrollments(getConfigFn, loType = 'learningProgram', noOfResults = 10) {
+export async function fetchUserEnrollments(config, loType = 'learningProgram', noOfResults = 10) {
   try {
-    const apiBaseUrl = getConfigFn()?.plApiBaseUrl;
+    const apiBaseUrl = config?.plApiBaseUrl;
     const url = new URL(`${apiBaseUrl}/enrollments`);
 
     const params = new URLSearchParams({

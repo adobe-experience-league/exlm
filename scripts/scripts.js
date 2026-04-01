@@ -1732,7 +1732,8 @@ async function loadPage() {
         // Only fetch enrollments if user is BOTH a PL member AND on profile page
         if (plMember && isProfilePage) {
           const { fetchUserEnrollments } = await import('./data-service/premium-learning-data-service.js');
-          const enrollmentData = await fetchUserEnrollments(getConfig, 'learningProgram', 10);
+          const config = getConfig();
+          const enrollmentData = await fetchUserEnrollments(config, 'learningProgram', 10);
           const hasEnrollments = enrollmentData?.data?.length > 0;
 
           const activeContentBlock = document.querySelector('.premium-learning-active-content');
