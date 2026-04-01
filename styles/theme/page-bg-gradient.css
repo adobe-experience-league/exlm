@@ -143,12 +143,27 @@
   }
 }
 
+/* Layer 3 — White Blur Overlay */
+.page-bg-gradient main::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: rgb(255 255 255 / 10%);
+  backdrop-filter: blur(var(--gradient-blur));
+  margin-top: 64px; /* Account for fixed header */
+}
+
 /* Mobile: halve the blur radius to prevent GPU overload and scroll repaints.
    filter: blur(120px) on composited layers is ~4x heavier than 60px and
    causes visible compositing flicker on mobile GPUs. */
 @media (hover: none) and (pointer: coarse) {
   .page-bg-gradient {
     --gradient-blur: 60px;
+
+    backdrop-filter: none;
+    background: rgb(255 255 255 / 8%); /* simple fallback, no blur */
   }
 }
 
