@@ -9,7 +9,7 @@ import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const MAX_CARDS = 4;
-const NO_OF_RESULTS = 10; 
+const NO_OF_RESULTS = 10;
 const DEFAULT_CONTENT_TYPES = ['premium-learning-course'];
 
 // ─── DOM helpers ────────────────────────────────────────────────────────────
@@ -38,16 +38,14 @@ function renderCards(contentDiv, cards) {
 }
 
 function renderNoResultsContent(block, placeholders) {
-  const noResultsText =
-    placeholders.noResultsTextBrowse || 'We are sorry, no results found matching the criteria.';
+  const noResultsText = placeholders.noResultsTextBrowse || 'We are sorry, no results found matching the criteria.';
   const noResultsDiv = htmlToElement(`<div class="browse-card-no-results">${noResultsText}</div>`);
   block.appendChild(noResultsDiv);
 }
 
 function showFallbackContentInUEMode(blockElement) {
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
-  contentDiv.textContent =
-    'This block will load the Premium learning content for Premium users only.';
+  contentDiv.textContent = 'This block will load the Premium learning content for Premium users only.';
   blockElement.appendChild(contentDiv);
 }
 
@@ -124,10 +122,7 @@ export default async function decorate(block) {
   block.classList.add('browse-cards-block', 'premium-learning-recommended-content-block');
   block.appendChild(buildBlockHeader(headingElement?.innerHTML || '', descriptionElement?.innerHTML || ''));
 
-  const [signedIn, placeholders] = await Promise.all([
-    isSignedInUser(),
-    fetchLanguagePlaceholders().catch(() => ({})),
-  ]);
+  const [signedIn, placeholders] = await Promise.all([isSignedInUser(), fetchLanguagePlaceholders().catch(() => ({}))]);
 
   if (!signedIn) {
     if (UEAuthorMode) showFallbackContentInUEMode(block);
