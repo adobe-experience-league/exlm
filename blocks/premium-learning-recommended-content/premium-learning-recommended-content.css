@@ -35,9 +35,7 @@
   .premium-learning-recommended-content .premium-learning-recommended-content-no-results-header {
     font-size: var(--spectrum-font-size-800);
   }
-}
 
-@media (min-width: 420px) {
   .premium-learning-recommended-content .custom-filter-dropdown {
     min-width: 360px;
     width: fit-content;
