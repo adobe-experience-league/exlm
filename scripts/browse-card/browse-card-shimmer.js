@@ -12,9 +12,10 @@ export default class BrowseCardShimmer {
   constructor(count = DEFAULT_SHIMMER_COUNT, contentType = BROWSE_CARD_SHIMMER_VARIANTS.DEFAULT) {
     this.count = count;
     const type = (Array.isArray(contentType) ? contentType[0] : contentType)?.toLowerCase?.() ?? '';
-    if (type.includes('cohort')) this.variant = BROWSE_CARD_SHIMMER_VARIANTS.LONG_CARD;
-    else if (type.includes('course')) this.variant = BROWSE_CARD_SHIMMER_VARIANTS.MEDIUM_CARD;
-    else this.variant = BROWSE_CARD_SHIMMER_VARIANTS.DEFAULT;
+    this.variant =
+      type.includes('cohort') || type.includes('course')
+        ? BROWSE_CARD_SHIMMER_VARIANTS.MEDIUM_CARD
+        : BROWSE_CARD_SHIMMER_VARIANTS.DEFAULT;
     this.shimmerContainer = document.createElement('div');
     this.shimmerContainer.className = `browse-card-shimmer browse-card-shimmer-${this.variant}`;
     BrowseCardShimmer.loadCSS();

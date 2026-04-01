@@ -215,6 +215,7 @@ const BrowseCardsPLAdaptor = (() => {
     const contentType = determineContentType(result);
     const { id, attributes } = result || {};
     const metadata = attributes?.localizedMetadata?.[0] || {};
+    const products = (attributes?.products || []).map((product) => product?.name).filter(Boolean);
     let startLabel = '';
 
     const loSkillLevels = buildLearningObjectSkillLevels(included);
@@ -222,11 +223,12 @@ const BrowseCardsPLAdaptor = (() => {
 
     const instances = buildInstances(cardData, included);
 
+    let deadline = null;
     if (contentType === PL_CONTENT_TYPES.COHORT.MAPPING_KEY) {
       const instanceId = cardData.relationships?.instances?.data?.[0]?.id;
 
       const instance = included.find((i) => i.id === instanceId);
-      const deadline = instance?.attributes?.enrollmentDeadline;
+      deadline = instance?.attributes?.enrollmentDeadline;
       startLabel = getStartLabelFromDeadline(deadline);
     }
 
@@ -236,8 +238,10 @@ const BrowseCardsPLAdaptor = (() => {
       ...browseCardDataModel,
       id: id || '',
       contentType,
+      product: products,
       thumbnail: attributes?.imageUrl || '',
       title: metadata.name || '',
+      description: metadata.overview || metadata.description || '',
       viewLink: createPLLinkfromID(contentType, id),
       copyLink: createPLLinkfromID(contentType, id),
       meta: {
@@ -253,6 +257,8 @@ const BrowseCardsPLAdaptor = (() => {
         isNew,
         level: skillLevels, // TODO: Add when field is available in API
         instances, // TODO: Add when field is available in API
+        deadline,
+        products,
       },
     };
   };

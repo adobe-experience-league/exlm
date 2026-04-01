@@ -7,11 +7,14 @@ import { getPLAccessToken } from '../utils/pl-auth-utils.js';
  * @property {string} [sort] - Sort order
  * @property {string} [tagName] - Tag filter
  * @property {string} [q] - Search query string (triggers search endpoint)
+ * @property {boolean} [browseMode] - Browse mode flag (triggers query endpoint with product filtering)
+ * @property {Array<string>} [product] - Product filter array (e.g., ['Acrobat', 'AEM'])
  * @property {string|Array<string>} [products] - Product filter (e.g., 'Acrobat' or ['Acrobat', 'AEM'])
  * @property {string|Array<string>} [solutions] - Product filter alias (same as products, used by BrowseCardsDelegate)
  * @property {string|Array<string>} [roles] - Role filter (e.g., 'Administrator' or ['Administrator', 'Business User'])
  * @property {string|Array<string>} [durationRange] - Duration range filter (e.g., '0-1800' or ['0-1800', '1800-3600'])
  * @property {string|Array<string>} [learnerState] - Learner state filter (e.g., 'enrolled' or ['enrolled', 'completed', 'started', 'notenrolled'])
+ * @property {boolean} [suggestedContent] - Whether to use the suggested-content endpoint
  */
 
 /**
@@ -64,6 +67,12 @@ export default class PLDataService {
    * @private
    */
   static QUERY_ENDPOINT = '/learningObjects/query';
+
+  /**
+   * Suggested cohort endpoint path
+   * @private
+   */
+  static SUGGESTED_CONTENT_ENDPOINT = '/learningObjects';
 
   /**
    * Enrollments endpoint path
@@ -161,6 +170,38 @@ export default class PLDataService {
     return body;
   }
 
+  buildBrowseRequestBody() {
+    const { contentType, tagName, products } = this.queryParams;
+    const catalogIds = this.getConfig()?.plPrivateCatalogIds;
+
+    // Determine learning object types - support both course and cohort
+    const loTypes = PLDataService.determineLearningObjectTypes(contentType);
+
+    const body = {
+      'filter.loTypes': loTypes,
+      'filter.learnerState': ['notenrolled', 'enrolled', 'started', 'completed'],
+      'filter.ignoreEnhancedLP': false,
+    };
+
+    if (products && Array.isArray(products) && products.length > 0) {
+      body['filter.recommendationProducts'] = products.map((productName) => ({
+        name: productName,
+        levels: [],
+      }));
+    }
+
+    if (catalogIds) {
+      body['filter.catalogIds'] = catalogIds.join(',');
+    }
+
+    // Add tag filter if provided
+    if (tagName) {
+      body['filter.tagName'] = tagName;
+    }
+
+    return body;
+  }
+
   /**
    * Determines the premium-learning object types from content type(s)
    * Supports both single and multiple content types
@@ -211,6 +252,47 @@ export default class PLDataService {
       'Content-Type': 'application/vnd.api+json;charset=UTF-8',
       Authorization: token ? `oauth ${token}` : '',
     };
+  }
+
+  /**
+   * Builds request headers for GET-based suggested content API
+   * @private
+   * @returns {Object} Request headers
+   */
+  static buildSuggestedContentHeaders() {
+    const token = getPLAccessToken();
+    return {
+      Accept: 'application/vnd.api+json',
+      Authorization: token ? `oauth ${token}` : '',
+    };
+  }
+
+  /**
+   * Builds URL search parameters for the Suggested Content GET endpoint.
+   * This is intentionally separate from the existing POST query/search flow.
+   * @returns {URLSearchParams} Constructed URL search parameters
+   */
+  buildSuggestedContentUrlParams() {
+    const { noOfResults, contentType } = this.queryParams;
+    const { plPublicCatalogIds } = this.getConfig() ?? {};
+    const { lang } = this.getPathDetails();
+    const params = new URLSearchParams();
+
+    // Resolve loTypes from contentType; fall back to learningProgram (cohort)
+    const loTypes = contentType
+      ? PLDataService.determineLearningObjectTypes(contentType)
+      : [PLDataService.LO_TYPES.LEARNING_PROGRAM];
+
+    params.set('include', 'instances,enrollment.loResourceGrades,skills.skillLevel.skill');
+    params.set('page[limit]', noOfResults || 10);
+    params.set('filter.loTypes', loTypes.join(','));
+    params.set('sort', PLDataService.DEFAULT_SORT);
+    params.set('language', lang || 'en');
+    params.set('enforcedFields[learningObject]', 'products');
+    params.set('filter.ignoreEnhancedLP', 'true');
+    params.set('filter.learnerState', 'notenrolled');
+    params.set('filter.catalogIds', plPublicCatalogIds.join(','));
+    return params;
   }
 
   /**
@@ -321,8 +403,12 @@ export default class PLDataService {
    */
   async fetchDataFromSource() {
     try {
+      if (this.queryParams?.suggestedContent) {
+        return this.fetchSuggestedContent();
+      }
+
       const apiBaseUrl = this.getConfig()?.plApiBaseUrl;
-      const { q, searchMode } = this.queryParams;
+      const { q, searchMode, browseMode } = this.queryParams;
       const isSearchMode = searchMode || !!q;
 
       let url;
@@ -335,6 +421,11 @@ export default class PLDataService {
         url = new URL(`${apiBaseUrl}${PLDataService.SEARCH_ENDPOINT}`);
         url.search = this.buildSearchUrlParams(hasQuery).toString();
         body = this.buildSearchRequestBody(hasQuery);
+      } else if (browseMode) {
+        // Use query endpoint (browse mode)
+        url = new URL(`${apiBaseUrl}${PLDataService.QUERY_ENDPOINT}`);
+        url.search = this.buildUrlParams().toString();
+        body = this.buildBrowseRequestBody();
       } else {
         // Use query endpoint
         url = new URL(`${apiBaseUrl}${PLDataService.QUERY_ENDPOINT}`);
@@ -396,6 +487,35 @@ export default class PLDataService {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error fetching premium learning data:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Fetches Suggested Content using the dedicated GET /learningObjects endpoint.
+   * Leaves the existing browse-cards POST flows untouched.
+   * @returns {Promise<Object|null>} Suggested content API response
+   */
+  async fetchSuggestedContent() {
+    try {
+      const apiBaseUrl = this.getConfig()?.plApiBaseUrl;
+      const url = new URL(`${apiBaseUrl}${PLDataService.SUGGESTED_CONTENT_ENDPOINT}`);
+      url.search = this.buildSuggestedContentUrlParams().toString();
+
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        headers: PLDataService.buildSuggestedContentHeaders(),
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Suggested content API request failed: ${response.status} ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching suggested content:', error);
       return null;
     }
   }

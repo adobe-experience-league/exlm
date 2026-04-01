@@ -817,6 +817,18 @@ export function getConfig() {
   else if (isStage)
     launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-102059c3cf0a-staging.min.js';
   else launchScriptSrc = 'https://assets.adobedtm.com/d4d114c60e50/9f881954c8dc/launch-caabfb728852-development.js';
+  let plPrivateCatalogIds;
+  let plPublicCatalogIds;
+  if (isProd) {
+    plPrivateCatalogIds = []; // TODO: update once configured in ALM
+    plPublicCatalogIds = []; // TODO: update once configured in ALM
+  } else if (isStage) {
+    plPrivateCatalogIds = ['208426'];
+    plPublicCatalogIds = ['208427'];
+  } else {
+    plPrivateCatalogIds = ['208424'];
+    plPublicCatalogIds = ['208425'];
+  }
   const signUpFlowConfigDate = '2024-08-15T00:00:00.762Z';
   const modalReDisplayDuration = '3'; // in months
 
@@ -847,6 +859,8 @@ export function getConfig() {
       : 'https://adobesystemsincorporatednonprod1.org.coveo.com/rest/search/v2',
     coveoOrganizationId: isProd ? 'adobev2prod9e382h1q' : 'adobesystemsincorporatednonprod1',
     upcomingEventsUrl: `${prodAssetsCdnOrigin}/thumb/upcoming-events.json`,
+    plPrivateCatalogIds,
+    plPublicCatalogIds,
     plApiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
@@ -1770,14 +1784,28 @@ async function loadPage() {
 
   // Initialize Premium Learning auth for all signed-in users, excluding UE Authoring pages
   if (!window.hlx.aemRoot && !window.location.href.includes('.html') && isFeatureEnabled('isPremiumLearningEnabled')) {
+    // Helper function to remove premium learning sections
+    const removePremiumLearningSections = () => {
+      document.querySelectorAll('.premium-learning-section').forEach((section) => section.remove());
+    };
+
     try {
       const signedIn = await isUserSignedIn();
+
       if (signedIn) {
-        const { default: initializePLAuthentication } = await import('./utils/pl-auth-utils.js');
+        const { default: initializePLAuthentication, isPremiumLearner } = await import('./utils/pl-auth-utils.js');
+
         await initializePLAuthentication();
+
+        if (!isPremiumLearner()) {
+          removePremiumLearningSections();
+        }
+      } else {
+        removePremiumLearningSections();
       }
     } catch (error) {
       console.error('Error initializing Premium Learning authentication:', error);
+      removePremiumLearningSections();
     }
   }
 
