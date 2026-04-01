@@ -103,10 +103,14 @@ function updateUEInstrumentation() {
       });
     }
 
-    // Update available blocks for default sections excluding browse-rail-section and tab-section
-    main.querySelectorAll('.section:not(.browse-rail-section):not([data-aue-model^="tab-section"])').forEach((elem) => {
-      setUEFilter(elem, 'section-browse');
-    });
+    // Update available blocks for default sections excluding browse-rail-section, tab-section and premium-learning-section
+    main
+      .querySelectorAll(
+        '.section:not(.browse-rail-section):not([data-aue-model^="tab-section"]):not([data-aue-model^="premium-learning-section"])',
+      )
+      .forEach((elem) => {
+        setUEFilter(elem, 'section-browse');
+      });
 
     return;
   }
@@ -132,10 +136,10 @@ function updateUEInstrumentation() {
       });
     }
 
-    // Update available blocks for default sections excluding article-header-section, article-content-section and tab-section
+    // Update available blocks for default sections excluding article-header-section, article-content-section, tab-section and premium-learning-section
     main
       .querySelectorAll(
-        '.section:not(.article-content-section):not(.article-header-section):not([data-aue-model^="tab-section"])',
+        '.section:not(.article-content-section):not(.article-header-section):not([data-aue-model^="tab-section"]):not([data-aue-model^="premium-learning-section"])',
       )
       .forEach((elem) => {
         setUEFilter(elem, 'section-article');

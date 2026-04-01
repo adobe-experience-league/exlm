@@ -1685,6 +1685,22 @@ async function loadPage() {
     return window?.adobeIMS?.isSignedInUser();
   };
 
+  /**
+   * Initializes Premium Learning authentication and checks membership status.
+   * @returns {Promise<boolean>} True if user is a PL member, false otherwise
+   */
+  const isPLMember = async () => {
+    try {
+      await window.adobeIMS?.getAccessToken();
+      const { default: initializePLAuthentication, isPremiumLearner } = await import('./utils/pl-auth-utils.js');
+      await initializePLAuthentication();
+      return isPremiumLearner();
+    } catch (error) {
+      console.error('Error checking Premium Learning status:', error);
+      return false;
+    }
+  };
+
   const loadTarget = async (isAlreadySignedIn = false) => {
     const targetSupportedPaths = ['/perspectives', '/home'];
     if (targetSupportedPaths.includes(currentPagePath)) {
@@ -1710,6 +1726,28 @@ async function loadPage() {
     } else {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
+        // Check PL membership status for signed-in users
+        const plMember = await isPLMember();
+
+        // Only fetch enrollments if user is BOTH a PL member AND on profile page
+        if (plMember && isProfilePage) {
+          const { fetchUserEnrollments } = await import('./data-service/premium-learning-data-service.js');
+          const config = getConfig();
+          const enrollmentData = await fetchUserEnrollments(config, 'learningProgram', 10);
+          const hasEnrollments = enrollmentData?.data?.length > 0;
+
+          const activeContentBlock = document.querySelector('.premium-learning-active-content');
+          const suggestedContentBlock = document.querySelector('.premium-learning-suggested-content');
+
+          if (hasEnrollments) {
+            // User has enrollments - remove suggested content block
+            suggestedContentBlock?.remove();
+          } else {
+            // User has no enrollments - remove active content block
+            activeContentBlock?.remove();
+          }
+        }
+
         loadPage();
         loadTarget(signedIn);
       } else {
@@ -1747,11 +1785,9 @@ async function loadPage() {
       const signedIn = await isUserSignedIn();
 
       if (signedIn) {
-        const { default: initializePLAuthentication, isPremiumLearner } = await import('./utils/pl-auth-utils.js');
+        const plMember = await isPLMember();
 
-        await initializePLAuthentication();
-
-        if (!isPremiumLearner()) {
+        if (!plMember) {
           removePremiumLearningSections();
         }
       } else {
