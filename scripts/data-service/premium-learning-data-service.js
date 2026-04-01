@@ -68,6 +68,12 @@ export default class PLDataService {
   static ENROLLMENTS_ENDPOINT = '/enrollments';
 
   /**
+   * Recommendation preferences endpoint path
+   * @private
+   */
+  static RECOMMENDATION_PREFERENCES_ENDPOINT = '/users';
+
+  /**
    * Snippet types for search endpoint
    * @private
    */
@@ -382,6 +388,67 @@ export default class PLDataService {
   }
 
   /**
+   * Builds URL search parameters for the recommended content query endpoint.
+   * @private
+   * @returns {URLSearchParams} Constructed URL search parameters
+   */
+  static buildRecommendedContentUrlParams() {
+    return new URLSearchParams({
+      'page[limit]': '10',
+      sort: '-recommendationScore',
+      'enforcedFields[learningObject]': 'products,roles,extensionOverrides,effectivenessData',
+      include: 'instances.loResources.resources',
+    });
+  }
+
+  /**
+   * Fetches the user's recommendation preferences from Adobe Learning Manager.
+   * @param {string} userId - The learner's user ID
+   * @param {string} token - OAuth access token
+   * @returns {Promise<Object>} Parsed preferences response
+   * @throws {Error} If the API request fails
+   */
+  static async fetchRecommendationPreferences(userId, token) {
+    const apiBaseUrl = this.config?.plApiBaseUrl;
+    const headers = {
+      Authorization: `oauth ${token}`,
+      Accept: 'application/vnd.api+json',
+    };
+
+    const prefsRes = await fetch(
+      `${apiBaseUrl}${PLDataService.RECOMMENDATION_PREFERENCES_ENDPOINT}/${userId}/recommendationPreferences`,
+      { headers },
+    );
+    if (!prefsRes.ok) throw new Error(`Preferences fetch failed: ${prefsRes.status}`);
+    return prefsRes.json();
+  }
+
+  /**
+   * Fetches recommended learning objects using a pre-built payload.
+   * @param {string} token - OAuth access token
+   * @param {Object} payload - Request body built by the caller
+   * @returns {Promise<Object>} Parsed learning objects response
+   * @throws {Error} If the API request fails
+   */
+  static async fetchRecommendedLearningObjects(token, payload) {
+    const apiBaseUrl = this.config?.plApiBaseUrl;
+    const headers = {
+      Authorization: `oauth ${token}`,
+      Accept: 'application/vnd.api+json',
+    };
+    const queryParams = PLDataService.buildRecommendedContentUrlParams();
+
+    const loRes = await fetch(`${apiBaseUrl}${PLDataService.QUERY_ENDPOINT}?${queryParams}`, {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/vnd.api+json' },
+      body: JSON.stringify(payload),
+      credentials: 'include',
+    });
+    if (!loRes.ok) throw new Error(`Learning objects fetch failed: ${loRes.status}`);
+    return loRes.json();
+  }
+
+  /**
    * Fetches learning objects from Adobe Learning Manager API
    * Routes to search endpoint if during search mode, otherwise uses query endpoint
    *
@@ -395,7 +462,43 @@ export default class PLDataService {
       }
 
       const apiBaseUrl = this.config?.plApiBaseUrl;
-      const { q, searchMode, browseMode } = this.queryParams;
+      const { q, searchMode, browseMode, recommendationMode } = this.queryParams;
+
+      if (recommendationMode) {
+        const { products = [], roles = [], contentType, noOfResults } = this.queryParams;
+        const catalogIds = this.config?.plPrivateCatalogIds;
+        const token = getPLAccessToken();
+        const payload = {
+          'filter.recommendationProducts': products.map((p) => ({ name: p.name })),
+          'filter.recommendationRoles': roles.map((r) => ({ name: r.name, levels: r.levels ?? [] })),
+          'filter.loTypes': PLDataService.determineLearningObjectTypes(contentType),
+          'filter.ignoreEnhancedLP': false,
+          'filter.learnerState': ['notenrolled'],
+        };
+        if (catalogIds) {
+          payload['filter.catalogIds'] = Array.isArray(catalogIds) ? catalogIds : [catalogIds];
+        }
+        const queryParams = new URLSearchParams({
+          'page[limit]': String(noOfResults || PLDataService.DEFAULT_SEARCH_RESULTS_COUNT),
+          sort: '-recommendationScore',
+          'enforcedFields[learningObject]': 'products,roles,extensionOverrides,effectivenessData',
+          include: 'instances.loResources.resources',
+        });
+        const headers = {
+          Authorization: `oauth ${token}`,
+          Accept: 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+        };
+        const loRes = await fetch(`${apiBaseUrl}${PLDataService.QUERY_ENDPOINT}?${queryParams}`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(payload),
+          credentials: 'include',
+        });
+        if (!loRes.ok) throw new Error(`Learning objects fetch failed: ${loRes.status}`);
+        return loRes.json();
+      }
+
       const isSearchMode = searchMode || !!q;
 
       let url;
