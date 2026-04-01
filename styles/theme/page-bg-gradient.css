@@ -28,20 +28,9 @@
 .page-bg-gradient .gradient-layer {
   position: absolute;
   inset: 0;
-  z-index: -1; /* sits behind all sibling content without needing to lift siblings */
+  z-index: -1;
   overflow: hidden;
   pointer-events: none;
-  animation: gradient-layer-fadein 0.5s ease-out both;
-}
-
-@keyframes gradient-layer-fadein {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
 }
 
 /* Shared circle styles */

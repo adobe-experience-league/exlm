@@ -594,13 +594,6 @@ body.appear {
   display: unset;
 }
 
-/* Pre-set gradient page background in the eager stylesheet so main already has
-   the correct color when body.appear fires, preventing a white-to-gray flash
-   before the theme CSS loads in the lazy phase. */
-body.page-bg-gradient main {
-  background: rgb(240 241 246);
-}
-
 header {
   height: var(--nav-height);
   border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
