@@ -38,15 +38,9 @@ export default function initLiveGradientBackground() {
   // Skip updateCircleSize here — main.offsetHeight is too small before blocks render.
   createLiveGradientCircles();
 
-  // Recalculate circle size once the page has fully rendered (blocks loaded).
-  // ResizeObserver fires after each layout change; disconnect on first stable measurement.
-  const ro = new ResizeObserver(() => {
-    if (main.offsetHeight > 0) {
-      updateCircleSize();
-    }
-  });
-  ro.observe(main);
-
-  // Disconnect after page load to stop observing layout shifts.
-  window.addEventListener('load', () => ro.disconnect(), { once: true });
+  // Update circle size exactly once after all blocks are loaded and the page height
+  // is stable. Using window.load instead of ResizeObserver avoids repeated GPU layer
+  // repaints on every block load (each repaint of a filter:blur composited element
+  // is expensive, especially on mobile GPUs).
+  window.addEventListener('load', updateCircleSize, { once: true });
 }

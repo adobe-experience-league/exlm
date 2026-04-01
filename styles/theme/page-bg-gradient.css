@@ -154,6 +154,15 @@
   }
 }
 
+/* Mobile: halve the blur radius to prevent GPU overload and scroll repaints.
+   filter: blur(120px) on composited layers is ~4x heavier than 60px and
+   causes visible compositing flicker on mobile GPUs. */
+@media (hover: none) and (pointer: coarse) {
+  .page-bg-gradient {
+    --gradient-blur: 60px;
+  }
+}
+
 /* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
   .page-bg-gradient .gradient-layer > .gradient-circle {
