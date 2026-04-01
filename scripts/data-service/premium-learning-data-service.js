@@ -23,7 +23,6 @@ import { getPLAccessToken } from '../utils/pl-auth-utils.js';
  *
  * @class PLDataService
  * @example
- * import { getConfig, getPathDetails } from './scripts.js';
  * const service = new PLDataService(
  *   {
  *     noOfResults: 10,
