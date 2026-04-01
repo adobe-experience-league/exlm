@@ -161,7 +161,6 @@
 @media (max-width: 900px) {
   .page-bg-gradient main::after {
     backdrop-filter: none;
-    background: transparent;
   }
 }
 
