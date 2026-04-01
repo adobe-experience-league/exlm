@@ -1,5 +1,5 @@
 /* eslint-disable camelcase, no-unused-vars */
-import { loadCSS } from '../lib-franklin.js';
+import { loadCSS, decorateIcons } from '../lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
 import UserActions from '../user-actions/user-actions.js';
 
@@ -133,6 +133,7 @@ function buildPLThumbnail({
     startLabelElement.className = 'premium-learning-card-start-label';
     startLabelElement.innerHTML = startLabel;
     startLabelContainer.appendChild(startLabelElement);
+    decorateIcons(startLabelContainer);
     cardFigure.appendChild(startLabelContainer);
   }
 
