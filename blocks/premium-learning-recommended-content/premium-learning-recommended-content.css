@@ -1,0 +1,19 @@
+@import '../../scripts/browse-card/browse-cards-block.css';
+@import '../../scripts/browse-card/browse-card.css';
+
+.premium-learning-recommended-content .premium-learning-tabs-wrapper {
+  margin-top: 15px;
+}
+
+@media (min-width: 600px) {
+  .premium-learning-recommended-content .custom-filter-dropdown {
+    min-width: 360px;
+    width: fit-content;
+  }
+}
+
+@media (min-width: 900px) {
+  .premium-learning-recommended-content .browse-cards-block-content:has(.premium-learning-browse-card) {
+    justify-content: flex-start;
+  }
+}

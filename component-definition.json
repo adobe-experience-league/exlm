@@ -425,27 +425,6 @@
           }
         },
         {
-          "title": "Premium Learning Search",
-          "id": "premium-learning-search",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block",
-                "template": {
-                  "name": "Premium Learning Search",
-                  "model": "premium-learning-search",
-                  "heading": "Premium learning search results",
-                  "headingType": "h2",
-                  "cta_Type": "primary",
-                  "linkText": "View all Premium Learning results",
-                  "link": "",
-                  "contentType": "premium-learning-course"
-                }
-              }
-            }
-          }
-        },
-        {
           "title": "Announcement Ribbon",
           "id": "announcement-ribbon",
           "plugins": {
@@ -1839,6 +1818,46 @@
                   "name": "Premium Learning Browse Cards",
                   "model": "premium-learning-browse-cards",
                   "headingType": "h2",
+                  "contentType": "premium-learning-course"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Premium Learning Recommended Content",
+          "id": "premium-learning-recommended-content",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Premium Learning Recommended Content",
+                  "model": "premium-learning-recommended-content",
+                  "filter": "rte-no-headings",
+                  "title": "Based on previous learnings",
+                  "titleType": "h3",
+                  "contentType": ["premium-learning-course"]
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Premium Learning Search",
+          "id": "premium-learning-search",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Premium Learning Search",
+                  "model": "premium-learning-search",
+                  "heading": "Premium learning search results",
+                  "headingType": "h2",
+                  "cta_Type": "primary",
+                  "linkText": "View all Premium Learning results",
+                  "link": "",
                   "contentType": "premium-learning-course"
                 }
               }
