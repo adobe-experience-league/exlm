@@ -154,37 +154,10 @@
   }
 }
 
-/* Layer 3 — White Blur Overlay */
-.page-bg-gradient main::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  pointer-events: none;
-  background: rgb(255 255 255 / 10%);
-  backdrop-filter: blur(var(--gradient-blur));
-  margin-top: 64px; /* Account for fixed header */
-}
-
-/* Mobile: reduce GPU cost to prevent flicker and scroll repaints */
-@media (hover: none) and (pointer: coarse) {
-  .page-bg-gradient {
-    --gradient-blur: 60px; /* 120px is too heavy for mobile GPU */
-  }
-
-  .page-bg-gradient main::after {
-    backdrop-filter: none; /* fixed + backdrop-filter causes full-page compositing on mobile */
-  }
-}
-
 /* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
   .page-bg-gradient .gradient-layer > .gradient-circle {
     animation: none;
     filter: none;
-  }
-
-  .page-bg-gradient main::after {
-    backdrop-filter: none;
   }
 }
