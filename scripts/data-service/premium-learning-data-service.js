@@ -158,7 +158,7 @@ export default class PLDataService {
 
   buildBrowseRequestBody() {
     const { contentType, tagName, products } = this.queryParams;
-    const catalogIds = getConfig()?.plPrivateCatalogIds;
+    const catalogIds = getConfig()?.plPublicCatalogIds;
 
     // Determine learning object types - support both course and cohort
     const loTypes = PLDataService.determineLearningObjectTypes(contentType);
@@ -177,7 +177,7 @@ export default class PLDataService {
     }
 
     if (catalogIds) {
-      body['filter.catalogIds'] = catalogIds.join(',');
+      body['filter.catalogIds'] = Array.isArray(catalogIds) ? catalogIds : [catalogIds];
     }
 
     // Add tag filter if provided
