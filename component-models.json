@@ -4448,7 +4448,7 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-products",
+        "name": "v2-products",
         "label": "Product(s) v2",
         "valueType": "string",
         "description": "Optional - all are included if no selection is made.",
@@ -4465,7 +4465,7 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-topics",
+        "name": "v2-topics",
         "label": "Topic(s) v2",
         "valueType": "string",
         "description": "Select up to 15 topics or features.",
