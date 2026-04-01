@@ -34,10 +34,5 @@ export default function initLiveGradientBackground() {
   };
 
   updateCircleSize();
-
-  if ('requestIdleCallback' in window) {
-    window.requestIdleCallback(createLiveGradientCircles, { timeout: 2000 });
-  } else {
-    window.setTimeout(createLiveGradientCircles, 1200);
-  }
+  createLiveGradientCircles();
 }
