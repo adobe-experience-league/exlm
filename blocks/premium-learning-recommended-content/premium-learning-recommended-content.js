@@ -38,16 +38,10 @@ function renderCards(contentDiv, cards) {
 }
 
 function renderNoResultsContent(block, placeholders) {
-  const noResultsHeader = placeholders.premiumLearningRecommendedContentNoResultsHeader || 'No Premium Learning recommended results.';
-  const noResultsDescription = placeholders.premiumLearningRecommendedContentNoResultsDescription
-    || 'Try searching for a specific product or role, or explore all Premium learning content.';
-  const markup = `
-    <div class="premium-learning-recommended-content-no-results">
-      <div class="premium-learning-recommended-content-no-results-header">${noResultsHeader}</div>
-      <div class="premium-learning-recommended-content-no-results-description">${noResultsDescription}</div>
-    </div>
-  `;
-  block.appendChild(htmlToElement(markup));
+  const noResultsText =
+    placeholders.noResultsTextBrowse || 'We are sorry, no results found matching the criteria.';
+  const noResultsDiv = htmlToElement(`<div class="browse-card-no-results">${noResultsText}</div>`);
+  block.appendChild(noResultsDiv);
 }
 
 function showFallbackContentInUEMode(blockElement) {
