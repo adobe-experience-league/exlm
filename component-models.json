@@ -4938,7 +4938,7 @@
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-products",
+        "name": "products-v2",
         "label": "Product(s) v2",
         "valueType": "string",
         "description": "Optional - all are included if no selection is made.",
@@ -7567,7 +7567,7 @@
           "===": [{ "var": "filterProductBy" }, "specific_products"]
         },
         "component": "custom-aem-tag",
-        "name": "tq-products",
+        "name": "products-tq",
         "label": "Product(s) v2",
         "valueType": "string",
         "description": "Optional - all are included if no selection is made.",
@@ -7587,7 +7587,7 @@
           "===": [{ "var": "filterProductBy" }, "specific_products"]
         },
         "component": "custom-aem-tag",
-        "name": "tq-features",
+        "name": "features-tq",
         "label": "Feature(s) v2",
         "valueType": "string",
         "description": "Optional - all are included if no selection is made.",
@@ -7602,16 +7602,16 @@
         },
         "options": {
           "dependentField": {
-            "name": "tq-products",
+            "name": "products-tq",
             "taxonomyType": "product"
           },
-          "requiredTagsToEnable": ["tq-products"]
+          "requiredTagsToEnable": ["products-tq"]
         },
         "extensionId": "exl-ue-extension"
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-roles",
+        "name": "roles-tq",
         "label": "Role(s) v2",
         "valueType": "string",
         "description": "Optional - roles from profile will be picked if no selection is made.",
@@ -8075,7 +8075,7 @@
           "===": [{ "var": "filterProductBy" }, "specific_products"]
         },
         "component": "custom-aem-tag",
-        "name": "tq-products",
+        "name": "product-tq",
         "label": "Product(s) v2",
         "valueType": "string",
         "description": "Optional - all are included if no selection is made.",
@@ -8095,7 +8095,7 @@
           "===": [{ "var": "filterProductBy" }, "specific_products"]
         },
         "component": "custom-aem-tag",
-        "name": "tq-features",
+        "name": "feature-tq",
         "label": "Feature(s) v2",
         "valueType": "string",
         "description": "Optional - all are included if no selection is made.",
@@ -8110,16 +8110,16 @@
         },
         "options": {
           "dependentField": {
-            "name": "tq-products",
+            "name": "product-tq",
             "taxonomyType": "product"
           },
-          "requiredTagsToEnable": ["tq-products"]
+          "requiredTagsToEnable": ["product-tq"]
         },
         "extensionId": "exl-ue-extension"
       },
       {
         "component": "custom-aem-tag",
-        "name": "tq-roles",
+        "name": "role-tq",
         "label": "Role(s) v2",
         "valueType": "string",
         "description": "Optional - roles from profile will be picked if no selection is made.",
