@@ -26,7 +26,6 @@ function parseAuthoredContent(block) {
     headingMarkup: headingElement?.innerHTML || '',
     descriptionMarkup: descriptionElement?.innerHTML || '',
     ctaMarkup: ctaElement?.innerHTML ? decorateCustomButtons(ctaElement) : '',
-    ctaElement,
     contentType,
   };
 }
@@ -99,28 +98,17 @@ function buildResponsiveListItems(tabs) {
   }));
 }
 
-function buildEmptyStateMarkup(ctaElement, placeholders) {
-  const ctaMarkup = ctaElement?.innerHTML ? decorateCustomButtons(ctaElement) : '';
-
+function buildEmptyStateMarkup(placeholders) {
   return `
-    <div class="premium-learning-suggested-content-no-results">
-      <div class="premium-learning-suggested-content-no-results-header">
-        ${placeholders.premiumLearningCohortTabsEmptyTitle || 'No cohort tabs are available right now.'}
-      </div>
-      <div class="premium-learning-suggested-content-no-results-description">
-        ${
-          placeholders.premiumLearningCohortTabsEmptyDescription ||
-          'We could not map products for the available cohorts. Please try again later.'
-        }
-      </div>
-      ${ctaMarkup ? `<div class="premium-learning-suggested-content-cta">${ctaMarkup}</div>` : ''}
+    <div class="browse-card-no-results">
+      ${placeholders.noResultsTextBrowse || 'We are sorry, no results found matching the criteria.'}
     </div>
   `;
 }
 
 function clearRenderedContent(container) {
   container
-    .querySelectorAll('.premium-learning-suggested-content-panel, .premium-learning-suggested-content-no-results')
+    .querySelectorAll('.premium-learning-suggested-content-panel, .browse-card-no-results')
     .forEach((element) => element.remove());
 }
 
@@ -133,9 +121,9 @@ function createContentPanel() {
   return { panel, contentDiv };
 }
 
-function renderEmptyState(container, ctaElement, placeholders) {
+function renderEmptyState(container, placeholders) {
   clearRenderedContent(container);
-  container.appendChild(htmlToElement(buildEmptyStateMarkup(ctaElement, placeholders)));
+  container.appendChild(htmlToElement(buildEmptyStateMarkup(placeholders)));
 }
 
 async function renderContentItems(suggestedContentItems, contentDiv) {
@@ -219,7 +207,7 @@ function initializeResponsiveTabs({ tabHeader, listItems, defaultTab, tabsById, 
 }
 
 export default async function decorate(block) {
-  const { headingMarkup, descriptionMarkup, ctaMarkup, ctaElement, contentType } = parseAuthoredContent(block);
+  const { headingMarkup, descriptionMarkup, ctaMarkup, contentType } = parseAuthoredContent(block);
 
   const { tabHeader, contentContainer } = buildSuggestedContentLayout(
     block,
@@ -250,14 +238,14 @@ export default async function decorate(block) {
     shimmer.removeShimmer();
 
     if (!suggestedContentItems?.length) {
-      renderEmptyState(contentContainer, ctaElement, placeholders);
+      renderEmptyState(contentContainer, placeholders);
       return;
     }
 
     const tabs = getTabDefinitions(suggestedContentItems, placeholders);
 
     if (!tabs.length) {
-      renderEmptyState(contentContainer, ctaElement, placeholders);
+      renderEmptyState(contentContainer, placeholders);
       return;
     }
 
@@ -280,7 +268,7 @@ export default async function decorate(block) {
   } catch (err) {
     shimmer.removeShimmer();
     if (!UE_AUTHOR_MODE) {
-      renderEmptyState(contentContainer, ctaElement, placeholders);
+      renderEmptyState(contentContainer, placeholders);
     } else {
       showFallbackContentInUEMode(block);
     }

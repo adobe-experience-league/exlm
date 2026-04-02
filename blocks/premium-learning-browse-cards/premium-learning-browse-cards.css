@@ -15,8 +15,13 @@
   line-height: 1.5;
 }
 
-.premium-learning-browse-cards .browse-cards-block-content {
+.premium-learning-browse-cards.browse-cards-block {
+  margin-bottom: 56px;
+}
+
+.premium-learning-browse-cards.browse-cards-block .browse-cards-block-content {
+  justify-content: flex-start;
   min-height: auto;
   margin-top: 32px;
-  margin-bottom: 56px;
+  margin-bottom: 0;
 }
