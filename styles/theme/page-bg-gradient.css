@@ -31,6 +31,7 @@
   z-index: -1;
   overflow: hidden;
   pointer-events: none;
+  contain: layout style; /* isolate from outside layout recalculations */
 }
 
 /* Shared circle styles */
@@ -153,6 +154,16 @@
   background: rgb(255 255 255 / 10%);
   backdrop-filter: blur(var(--gradient-blur));
   margin-top: 64px; /* Account for fixed header */
+}
+
+/* Mobile: remove backdrop-filter on the overlay — blur(120px) on a full-screen
+   fixed element forces the GPU to re-composite on every scroll frame, which
+   causes visual flicker and scroll jank on mobile devices. The gradient circles
+   remain fully visible without it. */
+@media (max-width: 767px) {
+  .page-bg-gradient main::after {
+    backdrop-filter: none;
+  }
 }
 
 /* Reduce motion */
