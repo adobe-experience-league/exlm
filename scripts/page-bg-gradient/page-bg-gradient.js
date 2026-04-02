@@ -3,27 +3,19 @@ export default function initLiveGradientBackground() {
   const main = document.querySelector('main');
 
   if (!body?.classList.contains('page-bg-gradient') || !main) return;
-  let rafId = null;
-  let retryCount = 0;
-  const MAX_RETRIES = 10;
+
+  const MOBILE_BREAKPOINT = 768;
+  const MOBILE_PRESET_HEIGHT = 900;
 
   const updateCircleSize = () => {
-    const height = main.offsetHeight;
+    const measuredHeight = main.offsetHeight;
+    const isMobileViewport = window.innerWidth < MOBILE_BREAKPOINT;
+    const fallbackHeight = isMobileViewport ? MOBILE_PRESET_HEIGHT : 0;
+    const height = Math.max(measuredHeight, fallbackHeight);
 
     if (height > 0) {
       body.style.setProperty('--gradient-circle-size', `${height * 0.6}px`);
-      retryCount = 0;
-      return;
     }
-
-    if (retryCount >= MAX_RETRIES) return;
-    retryCount += 1;
-    rafId = requestAnimationFrame(updateCircleSize);
-  };
-
-  const scheduleUpdate = () => {
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(updateCircleSize);
   };
 
   const createLiveGradientCircles = () => {
@@ -46,18 +38,12 @@ export default function initLiveGradientBackground() {
   };
 
   createLiveGradientCircles();
-  scheduleUpdate();
+  updateCircleSize();
 
-  let resizeTimeoutId = null;
-  const onResize = () => {
-    if (resizeTimeoutId) clearTimeout(resizeTimeoutId);
-    resizeTimeoutId = setTimeout(scheduleUpdate, 120);
-  };
-
-  window.addEventListener('resize', onResize, { passive: true });
-  window.addEventListener('orientationchange', scheduleUpdate, { passive: true });
-  window.addEventListener('pageshow', scheduleUpdate, { passive: true });
+  window.addEventListener('resize', updateCircleSize);
+  window.addEventListener('orientationchange', updateCircleSize);
+  window.addEventListener('pageshow', updateCircleSize);
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') scheduleUpdate();
+    if (document.visibilityState === 'visible') updateCircleSize();
   });
 }
