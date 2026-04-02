@@ -20,6 +20,18 @@
   margin-top: var(--spectrum-spacing-500);
 }
 
+.premium-learning-suggested-content .premium-learning-suggested-content-content {
+  min-height: auto;
+  margin-bottom: 0;
+}
+
+@media (min-width: 600px) {
+  .premium-learning-suggested-content .custom-filter-dropdown {
+    min-width: 360px;
+    width: fit-content;
+  }
+}
+
 @media (min-width: 900px) {
   .premium-learning-suggested-content.browse-cards-block
     .premium-learning-suggested-content-panel
