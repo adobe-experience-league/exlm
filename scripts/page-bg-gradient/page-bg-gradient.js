@@ -1,10 +1,22 @@
+function isNarrowViewport() {
+  return window.matchMedia('(max-width: 900px)').matches;
+}
+
+function cappedGradientCircleBasePx(mainHeightPx) {
+  const raw = Math.round(mainHeightPx * 0.6);
+  if (!isNarrowViewport()) return raw;
+  const vvh = window.visualViewport?.height ?? window.innerHeight;
+  const cap = Math.max(1400, Math.round(vvh * 3.5));
+  return Math.min(raw, cap);
+}
+
 export default function initLiveGradientBackground() {
   const { body } = document;
   const main = document.querySelector('main');
 
   if (!body?.classList.contains('page-bg-gradient') || !main) return;
   const updateCircleSize = () => {
-    const circleSize = `${main.offsetHeight * 0.6}px`;
+    const circleSize = `${cappedGradientCircleBasePx(main.offsetHeight)}px`;
     let sizeStyle = document.head.querySelector('#gradient-circle-size-override');
     if (!sizeStyle) {
       sizeStyle = document.createElement('style');
