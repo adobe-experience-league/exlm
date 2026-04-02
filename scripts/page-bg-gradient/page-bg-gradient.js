@@ -5,14 +5,14 @@ export default function initLiveGradientBackground() {
   if (!body?.classList.contains('page-bg-gradient') || !main) return;
 
   const MOBILE_BREAKPOINT = 768;
-  const MOBILE_PRESET_HEIGHT = 900;
 
   const updateCircleSize = () => {
-    const measuredHeight = main.offsetHeight;
-    const isMobileViewport = window.innerWidth < MOBILE_BREAKPOINT;
-    const fallbackHeight = isMobileViewport ? MOBILE_PRESET_HEIGHT : 0;
-    const height = Math.max(measuredHeight, fallbackHeight);
+    if (window.innerWidth < MOBILE_BREAKPOINT) {
+      body.style.removeProperty('--gradient-circle-size');
+      return;
+    }
 
+    const height = main.offsetHeight;
     if (height > 0) {
       body.style.setProperty('--gradient-circle-size', `${height * 0.6}px`);
     }

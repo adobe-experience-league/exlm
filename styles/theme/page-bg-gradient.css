@@ -157,6 +157,21 @@
   background: rgb(255 255 255 / 10%);
   backdrop-filter: blur(var(--gradient-blur));
   margin-top: 64px; /* Account for fixed header */
+
+  /* Stable compositing layer — reduces scroll / toolbar repaint flicker on mobile */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/*
+ * Mobile: size circles from stable viewport units (svh), not dynamic toolbar height.
+ * JS does not set --gradient-circle-size here — avoids resize loops when Chrome UI shows/hides after scroll.
+ */
+@media (max-width: 768px) {
+  .page-bg-gradient {
+    --gradient-circle-size: calc(max(900px, 100svh) * 0.6);
+  }
 }
 
 /* Reduce motion */
