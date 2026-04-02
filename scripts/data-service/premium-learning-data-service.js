@@ -466,7 +466,7 @@ export default class PLDataService {
 
       if (recommendationMode) {
         const { products = [], roles = [], contentType, noOfResults } = this.queryParams;
-        const catalogIds = this.config?.plPrivateCatalogIds;
+        const catalogIds = this.config?.plPublicCatalogIds;
         const token = getPLAccessToken();
         const payload = {
           'filter.recommendationProducts': products.map((p) => ({ name: p.name })),
