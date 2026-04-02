@@ -21,20 +21,16 @@
 .page-bg-gradient main {
   position: relative;
   background: var(--gradient-base-bg);
+  isolation: isolate;
 }
 
 /* Layer 2 — Circles Wrapper */
 .page-bg-gradient .gradient-layer {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
   overflow: hidden;
   pointer-events: none;
-}
-
-.page-bg-gradient main > :not(.gradient-layer) {
-  position: relative;
-  z-index: 1;
 }
 
 /* Shared circle styles */
