@@ -282,7 +282,7 @@ export default class PLDataService {
     params.set('sort', PLDataService.DEFAULT_SORT);
     params.set('language', lang || 'en');
     params.set('enforcedFields[learningObject]', 'products');
-    params.set('filter.ignoreEnhancedLP', 'true');
+    params.set('filter.ignoreEnhancedLP', 'false');
     params.set('filter.learnerState', 'notenrolled');
     params.set('filter.catalogIds', plPublicCatalogIds.join(','));
     return params;
