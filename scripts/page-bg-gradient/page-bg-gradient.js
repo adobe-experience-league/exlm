@@ -1,8 +1,37 @@
+const observedMains = new WeakSet();
+
 export default function initLiveGradientBackground() {
   const { body } = document;
   const main = document.querySelector('main');
 
   if (!body?.classList.contains('page-bg-gradient') || !main) return;
+
+  let lastCircleSizePx = '';
+  let debounceTimer;
+
+  const applyCircleSizeFromMain = () => {
+    const circleSize = `${Math.round(main.offsetHeight * 0.6)}px`;
+    if (circleSize === lastCircleSizePx) return;
+    lastCircleSizePx = circleSize;
+    body.style.setProperty('--gradient-circle-size', circleSize);
+  };
+
+  const scheduleCircleSizeFromMain = () => {
+    window.clearTimeout(debounceTimer);
+    debounceTimer = window.setTimeout(applyCircleSizeFromMain, 150);
+  };
+
+  const bindMainResizeSizing = () => {
+    applyCircleSizeFromMain();
+    if (observedMains.has(main)) return;
+    observedMains.add(main);
+    if (typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(scheduleCircleSizeFromMain);
+      ro.observe(main);
+    } else {
+      window.addEventListener('resize', scheduleCircleSizeFromMain, { passive: true });
+    }
+  };
 
   const createLiveGradientCircles = () => {
     if (main.querySelector('.gradient-layer')) return;
@@ -23,9 +52,14 @@ export default function initLiveGradientBackground() {
     main.prepend(circlesWrapper);
   };
 
+  const run = () => {
+    createLiveGradientCircles();
+    bindMainResizeSizing();
+  };
+
   if ('requestIdleCallback' in window) {
-    window.requestIdleCallback(createLiveGradientCircles, { timeout: 2000 });
+    window.requestIdleCallback(run, { timeout: 2000 });
   } else {
-    window.setTimeout(createLiveGradientCircles, 1200);
+    window.setTimeout(run, 1200);
   }
 }

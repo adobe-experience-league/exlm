@@ -23,14 +23,6 @@
   background: var(--gradient-base-bg);
 }
 
-@media (max-width: 900px) {
-  .page-bg-gradient main {
-    container-type: size;
-
-    --gradient-circle-size: clamp(240px, 60cqh, 1755px);
-  }
-}
-
 /* Layer 2 — Circles Wrapper */
 .page-bg-gradient .gradient-layer {
   position: absolute;
