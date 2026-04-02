@@ -3,6 +3,7 @@ import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { loadScript } from '../lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
 import { getPathDetails } from '../scripts.js';
+import { isPremiumLearner } from '../utils/pl-auth-utils.js';
 
 // lang code mappings specific to gainsight.
 const langMap = {
@@ -41,6 +42,7 @@ function identify(data) {
       emailOptIns: data.emailOptIn || false,
       emailVerified: data.emailVerified || false,
       mrktPerm: data.mrktPerm || '',
+      premiumLearner: isPremiumLearner(),
     },
     {
       id: org,
