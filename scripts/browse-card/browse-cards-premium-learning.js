@@ -126,7 +126,7 @@ function buildPLThumbnail({
     startLabelContainer.className = 'premium-learning-card-start-label-container';
 
     const calendarIcon = document.createElement('span');
-    calendarIcon.className = 'icon icon-calendar-white';
+    calendarIcon.className = 'icon icon-pl-calender';
     startLabelContainer.appendChild(calendarIcon);
 
     const startLabelElement = document.createElement('p');
