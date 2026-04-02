@@ -5,7 +5,7 @@
   --gradient-secondary: rgb(250 74 162);
   --gradient-accent: rgb(255 124 101);
   --gradient-blur: 120px;
-  --gradient-circle-size: clamp(2500px, 80vh, 9000px);
+  --gradient-circle-size: 4150px;
   --gradient-circle-width-scale: 0.65;
   --gradient-circle-height-scale: 1.8;
   --gradient-duration-primary: 8s;
