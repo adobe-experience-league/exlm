@@ -282,7 +282,7 @@ export default class PLDataService {
     params.set('sort', PLDataService.DEFAULT_SORT);
     params.set('language', lang || 'en');
     params.set('enforcedFields[learningObject]', 'products');
-    params.set('filter.ignoreEnhancedLP', 'true');
+    params.set('filter.ignoreEnhancedLP', 'false');
     params.set('filter.learnerState', 'notenrolled');
     params.set('filter.catalogIds', plPublicCatalogIds.join(','));
     return params;
@@ -466,7 +466,7 @@ export default class PLDataService {
 
       if (recommendationMode) {
         const { products = [], roles = [], contentType, noOfResults } = this.queryParams;
-        const catalogIds = this.config?.plPrivateCatalogIds;
+        const catalogIds = this.config?.plPublicCatalogIds;
         const token = getPLAccessToken();
         const payload = {
           'filter.recommendationProducts': products.map((p) => ({ name: p.name })),
