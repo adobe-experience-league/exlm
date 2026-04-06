@@ -32,10 +32,17 @@ function createMountPoint() {
   trigger.setAttribute('aria-controls', DIALOG_ID);
 
   const triggerIcon = document.createElement('span');
-  triggerIcon.className = 'icon icon-concierge-icon';
-  const triggerLabel = document.createElement('span');
-  triggerLabel.textContent = 'Ask';
-  trigger.append(triggerIcon, triggerLabel);
+  triggerIcon.className = 'icon icon-bc-ask-sparkles';
+  const triggerAsk = document.createElement('span');
+  triggerAsk.className = 'bc-trigger-ask';
+  triggerAsk.textContent = 'Ask';
+  trigger.append(triggerIcon, triggerAsk);
+  // add beta badge
+  const betaBadge = document.createElement('span');
+  betaBadge.className = 'bc-trigger-beta';
+  betaBadge.textContent = 'BETA';
+  trigger.append(betaBadge);
+  // end add beta badge
   decorateIcon(triggerIcon);
   document.body.append(trigger);
 
@@ -45,8 +52,9 @@ function createMountPoint() {
   drawerHandle = openDrawer({
     id: DIALOG_ID,
     ariaLabel: 'AI assistant',
-    title: 'Concierge',
-    titleIcon: 'concierge-icon',
+    title: 'Ask',
+    titleBadge: 'BETA',
+    titleIcon: 'bc-ask-sparkles',
     content: mount,
     canExpand: true,
     triggerEl: trigger,

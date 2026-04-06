@@ -35,12 +35,37 @@
   display: flex;
   align-items: center;
   line-height: 0;
+
+  /* Pull “Ask” closer than flex gap allows without tightening Ask–BETA */
+  margin-inline-end: -4px;
 }
 
 #bc-trigger img {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
+}
+
+#bc-trigger .bc-trigger-ask {
+  font-size: 16px;
+  font-weight: 700;
+  color: #000;
+  letter-spacing: -0.01em;
+}
+
+#bc-trigger .bc-trigger-beta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -2px;
+  padding: 3px 5px;
+  border-radius: 5px;
+  background-color: #ebebef;
+  color: #9d59b7;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1;
 }
 
 #bc-trigger[aria-expanded='true'] {
@@ -207,6 +232,21 @@
   margin-top: 12px !important;
   padding-top: 0 !important;
   font-size: 14px !important;
+}
+
+/* styles.css sets button:focus { background: link-hover-color } without :focus-visible.
+ * After toggling Sources, the accordion keeps focus so the blue “stuck” state appears.
+ * Reset to match dialog controls; outline only for keyboard users. */
+
+#brand-concierge-mount .citations-accordion-button:focus {
+  background: none !important;
+  background-color: transparent !important;
+  outline: none;
+}
+
+#brand-concierge-mount .citations-accordion-button:focus-visible {
+  outline: 2px solid var(--non-spectrum-navy-blue);
+  outline-offset: 2px;
 }
 
 /* stylelint-enable selector-class-pattern */
