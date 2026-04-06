@@ -22,6 +22,7 @@
   transition: none;
   color: var(--spectrum-gray-900);
   min-height: auto;
+  height: auto;
 }
 
 .browse-card.premium-learning-browse-card:hover {
@@ -245,7 +246,9 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: flex-start;
     gap: 25px;
+    min-height: auto;
   }
 
   .browse-cards-block-content:has(.premium-learning-browse-card) > div {
