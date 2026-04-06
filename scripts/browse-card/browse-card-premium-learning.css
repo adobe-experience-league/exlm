@@ -248,6 +248,7 @@
     align-items: flex-start;
     gap: 25px;
     min-height: auto;
+    margin-bottom: var(--spectrum-spacing-300);
   }
 
   .browse-cards-block-content:has(.premium-learning-browse-card) > div {
