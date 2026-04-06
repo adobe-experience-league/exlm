@@ -3,10 +3,6 @@ import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { loadScript } from '../lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
 import { getPathDetails } from '../scripts.js';
-import { getCookie } from '../utils/cookie-utils.js';
-
-const GAINSIGHT_TAG_ID = 'AP-PCBATQJJQHRG-2';
-const LEARNER_TOKEN_COOKIE = 'alm_access_token';
 
 // lang code mappings specific to gainsight.
 const langMap = {
@@ -45,7 +41,6 @@ function identify(data) {
       emailOptIns: data.emailOptIn || false,
       emailVerified: data.emailVerified || false,
       mrktPerm: data.mrktPerm || '',
-      premiumLearner: !!getCookie(LEARNER_TOKEN_COOKIE),
     },
     {
       id: org,
@@ -55,7 +50,7 @@ function identify(data) {
 
 // an identical version of what gainsight admin gives, unminified, more readable and modern APIs
 // see: README.md
-async function loadGainsightScript(tagId, co) {
+async function loadGinsightScript(tagId, co) {
   window.aptrinsic =
     window.aptrinsic ||
     function aptrinsic(...args) {
@@ -70,7 +65,7 @@ export default async function loadGainsight() {
   const isSignedIn = await isSignedInUser();
   if (isSignedIn) {
     const profilePromise = defaultProfileClient.getMergedProfile();
-    const loadGainsightPromise = loadGainsightScript(GAINSIGHT_TAG_ID);
+    const loadGainsightPromise = loadGinsightScript('AP-PCBATQJJQHRG-2');
     Promise.all([profilePromise, loadGainsightPromise]).then(([profileData]) => {
       identify(profileData);
     });
