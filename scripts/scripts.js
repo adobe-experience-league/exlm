@@ -1686,6 +1686,22 @@ async function loadPage() {
   };
 
   /**
+   * Resolves with fallback if the promise does not settle in time (e.g. hung PL API).
+   * @template T
+   * @param {Promise<T>} promise
+   * @param {number} ms
+   * @param {T} fallback
+   * @returns {Promise<T>}
+   */
+  const withTimeout = (promise, ms, fallback) =>
+    Promise.race([
+      promise,
+      new Promise((resolve) => {
+        setTimeout(() => resolve(fallback), ms);
+      }),
+    ]);
+
+  /**
    * Initializes Premium Learning authentication and checks membership status.
    * @returns {Promise<boolean>} True if user is a PL member, false otherwise
    */
@@ -1727,7 +1743,7 @@ async function loadPage() {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
         // Check PL membership status for signed-in users
-        const plMember = await isPLMember();
+        const plMember = await withTimeout(isPLMember(), 10000, false);
 
         // Only fetch enrollments if user is BOTH a PL member AND on profile page
         if (plMember && isProfilePage) {
@@ -1785,7 +1801,7 @@ async function loadPage() {
       const signedIn = await isUserSignedIn();
 
       if (signedIn) {
-        const plMember = await isPLMember();
+        const plMember = await withTimeout(isPLMember(), 10000, false);
 
         if (!plMember) {
           removePremiumLearningSections();
