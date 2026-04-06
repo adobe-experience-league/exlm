@@ -137,13 +137,13 @@ function buildPLThumbnail({
     cardFigure.appendChild(startLabelContainer);
   }
 
-  // Show New label for both courses and cohorts
+  // Show New label only for cohorts
   // Show loFormat label only for courses
   if (isNew || (isCourseCard && loFormat)) {
     const tagsContainer = document.createElement('div');
     tagsContainer.className = 'premium-learning-card-tags-container';
 
-    if (isNew) {
+    if (isNew && !isCourseCard) {
       const newTagElement = document.createElement('p');
       newTagElement.className = 'premium-learning-card-tag premium-learning-card-new-tag';
       newTagElement.textContent = placeholders.premiumLearningBrowseCardNewTag || 'New';
