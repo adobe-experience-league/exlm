@@ -185,7 +185,7 @@
    ========================================================================== */
 
 .browse-card.premium-learning-browse-card .premium-learning-card-content {
-  padding-top: 16px;
+  padding-top: var(--spectrum-spacing-75);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -238,6 +238,12 @@
   padding: 0 8px;
   border-radius: 5px;
   background-color: var(--spectrum-gray-200);
+}
+
+@media (min-width: 600px) {
+  .browse-card.premium-learning-browse-card .premium-learning-card-content {
+    padding-top: var(--spectrum-spacing-300);
+  }
 }
 
 @media (min-width: 900px) {
