@@ -7,6 +7,7 @@ import {
   isMobile,
   disconnectShadowObserver,
   observeShadowRoot,
+  resolveBlockLevelSkeleton,
 } from './atomic-search-utils.js';
 import { ContentTypeIcons } from './atomic-search-icons.js';
 import { decorateIcons } from '../../../scripts/lib-franklin.js';
@@ -805,10 +806,7 @@ export default function atomicResultHandler(block, placeholders) {
           return;
         }
 
-        const blockLevelSkeleton = block.querySelector('.atomic-search-load-skeleton');
-        if (blockLevelSkeleton) {
-          block.removeChild(blockLevelSkeleton);
-        }
+        resolveBlockLevelSkeleton(block);
 
         const currentHydrationCount = +(resultEl.dataset.hydration || '0');
         resultEl.dataset.hydration = `${currentHydrationCount + 1}`;
