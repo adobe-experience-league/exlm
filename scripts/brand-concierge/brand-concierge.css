@@ -5,42 +5,122 @@
   z-index: 9000;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 18px;
-  background:
-    linear-gradient(white, white) padding-box,
-    linear-gradient(to right, var(--bc-gradient-start), var(--bc-gradient-end)) border-box;
-  border: 2px solid transparent;
+  gap: 10px;
+  min-width: 218px;
+  padding: 7px 14px 7px 16px;
   border-radius: 100px;
-  color: var(--spectrum-gray-800);
+  border: none;
   font-family: var(--body-font-family);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
+  color: var(--spectrum-gray-600);
+  background-color: rgb(255 255 255 / 50%);
+  box-shadow:
+    0 8px 28px rgb(0 0 0 / 9%),
+    0 2px 8px rgb(0 0 0 / 5%),
+    inset 0 1px 0 rgb(255 255 255 / 58%),
+    inset 0 -1px 0 rgb(255 255 255 / 20%);
+  backdrop-filter: blur(16px) saturate(135%);
+  isolation: isolate;
   transition:
-    box-shadow 0.2s ease,
-    transform 0.1s ease;
+    box-shadow 0.22s ease,
+    transform 0.22s ease,
+    background-color 0.2s ease,
+    backdrop-filter 0.2s ease;
 }
 
-#bc-trigger:hover {
-  box-shadow: 0 6px 20px rgb(0 0 0 / 15%);
+#bc-trigger::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 100px;
+  padding: 2px;
+  background: linear-gradient(to right, var(--bc-gradient-start), var(--bc-gradient-end));
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#bc-trigger > * {
+  position: relative;
+  z-index: 1;
 }
 
 #bc-trigger:active {
   transform: scale(0.97);
+  box-shadow:
+    0 4px 14px rgb(0 0 0 / 12%),
+    0 2px 6px rgb(0 0 0 / 8%);
 }
 
 #bc-trigger .icon {
   display: flex;
   align-items: center;
   line-height: 0;
+
+  /* Pull “Ask” closer than flex gap allows without tightening Ask–BETA */
+  margin-inline-end: -8px;
 }
 
 #bc-trigger img {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
+}
+
+#bc-trigger .bc-trigger-ask {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--spectrum-gray-500);
+  letter-spacing: -0.01em;
+  transition: color 0.2s ease;
+}
+
+#bc-trigger .bc-trigger-beta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -6px;
+  padding: 2px 5px;
+  border-radius: 5px;
+  background-color: #ebebef;
+  color: #9d59b7;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+#bc-trigger .bc-trigger-send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  line-height: 0;
+  flex-shrink: 0;
+}
+
+#bc-trigger:hover:not(:active) {
+  background-color: #fff;
+  backdrop-filter: none;
+  transform: translateY(-3px);
+  box-shadow:
+    0 18px 50px rgb(0 0 0 / 18%),
+    0 8px 20px rgb(0 0 0 / 12%),
+    0 0 0 1px rgb(0 0 0 / 8%);
+}
+
+#bc-trigger:hover::before {
+  filter: brightness(1.12) saturate(1.08);
+}
+
+#bc-trigger:hover .bc-trigger-ask {
+  color: var(--spectrum-gray-800);
 }
 
 #bc-trigger[aria-expanded='true'] {
@@ -141,6 +221,13 @@
   background: #fff !important;
 }
 
+#brand-concierge-mount label.ai-chat-label .bc-input-label-sparkle {
+  display: block !important;
+  width: 20px !important;
+  height: 20px !important;
+  flex-shrink: 0 !important;
+}
+
 #brand-concierge-mount .input-container:focus-within {
   outline: none !important;
   border-color: var(--spectrum-gray-300) !important;
@@ -178,6 +265,15 @@
   text-overflow: unset !important;
 }
 
+#brand-concierge-mount .bc-card__icon img.bc-sparkle-img,
+#brand-concierge-mount .bc-prompt-pill-button__icon img.bc-sparkle-img,
+#brand-concierge-mount .bc-prompt-suggestion-button__icon img.bc-sparkle-img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+}
+
 #brand-concierge-mount .prompt-pills-container {
   gap: 6px !important;
 }
@@ -207,6 +303,21 @@
   margin-top: 12px !important;
   padding-top: 0 !important;
   font-size: 14px !important;
+}
+
+/* styles.css sets button:focus { background: link-hover-color } without :focus-visible.
+ * After toggling Sources, the accordion keeps focus so the blue “stuck” state appears.
+ * Reset to match dialog controls; outline only for keyboard users. */
+
+#brand-concierge-mount .citations-accordion-button:focus {
+  background: none !important;
+  background-color: transparent !important;
+  outline: none;
+}
+
+#brand-concierge-mount .citations-accordion-button:focus-visible {
+  outline: 2px solid var(--non-spectrum-navy-blue);
+  outline-offset: 2px;
 }
 
 /* stylelint-enable selector-class-pattern */
@@ -253,8 +364,48 @@
   width: 100% !important;
 }
 
+/* Expanded: hide only BC’s duplicate welcome *cards* (carousel/grid). Do not hide `.cards-section`
+ * — it can wrap other welcome content; hiding it removed the prompt-pill row too.
+ * Keep the prompt-pill row (ExL card-style rules below + sparkle icons). */
+#bc-dialog.exl-dialog-expanded #brand-concierge-mount .bc-card-carousel,
+#bc-dialog.exl-dialog-expanded #brand-concierge-mount .bc-card-grid {
+  display: none !important;
+}
+
+/* Expanded only: full-width prompt area; taller, half-width welcome pill cards (not in the narrow drawer). */
 #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container {
-  max-width: 50% !important;
+  max-width: 100% !important;
+}
+
+#bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container .prompt-pills-container,
+#bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-pills-container:has(> :nth-child(4):last-child) {
+  display: flex !important;
+  flex-flow: row wrap !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+#bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container .bc-prompt-pill-button,
+#bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container .bc-prompt-suggestion-button,
+#bc-dialog.exl-dialog-expanded
+  #brand-concierge-mount
+  .prompt-pills-container:has(> :nth-child(4):last-child)
+  .bc-prompt-pill-button,
+#bc-dialog.exl-dialog-expanded
+  #brand-concierge-mount
+  .prompt-pills-container:has(> :nth-child(4):last-child)
+  .bc-prompt-suggestion-button {
+  --bc-prompt-pill-gap-count: 3;
+  --bc-prompt-pill-gap: 8px;
+
+  flex: 0 1 calc((100% - var(--bc-prompt-pill-gap-count) * var(--bc-prompt-pill-gap)) / 8) !important;
+  width: calc((100% - var(--bc-prompt-pill-gap-count) * var(--bc-prompt-pill-gap)) / 8) !important;
+  max-width: calc((100% - var(--bc-prompt-pill-gap-count) * var(--bc-prompt-pill-gap)) / 8) !important;
+  box-sizing: border-box !important;
+  min-height: calc((16px + 1.4 * 13px) * 3) !important;
+  padding: 24px 12px !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
 }
 
 #brand-concierge-mount .submit-button {
