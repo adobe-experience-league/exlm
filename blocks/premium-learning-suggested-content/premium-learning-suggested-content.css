@@ -28,10 +28,6 @@
   margin-bottom: 0;
 }
 
-.premium-learning-suggested-content .premium-learning-suggested-content-cta:empty {
-  display: none;
-}
-
 .premium-learning-suggested-content .premium-learning-suggested-content-cta a::before {
   content: '';
   width: 21px;
@@ -45,8 +41,6 @@
 }
 
 .premium-learning-suggested-content .premium-learning-suggested-content-cta a.button:any-link {
-  margin-top: 0;
-  margin-bottom: 0;
   font-size: var(--spectrum-font-size-200);
   height: auto;
   background-color: var(--non-spectrum-navy-blue);
@@ -58,8 +52,6 @@
   text-align: center;
   gap: 8px;
   white-space: normal;
-  overflow: visible;
-  text-overflow: clip;
 }
 
 @media (min-width: 600px) {
