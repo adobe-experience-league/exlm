@@ -21,6 +21,82 @@ const error = (...args) => console.error('[BC]', ...args);
 let cssLinkEl = null;
 let drawerHandle = null;
 let chatObserver = null;
+let inputLabelIconObserver = null;
+
+/**
+ * BC renders inline SVG sparkles in several places; swap them for icons/bc-ask-sparkles.svg.
+ */
+function patchBcSparkleIcons(mount) {
+  if (!mount) return;
+
+  const run = () => {
+    const sparkleSrc = `${window.hlx.codeBasePath}/icons/bc-ask-sparkles.svg`;
+    const labelSvg = mount.querySelector('label.ai-chat-label svg');
+    if (labelSvg) {
+      const img = document.createElement('img');
+      img.src = sparkleSrc;
+      img.alt = '';
+      img.width = 20;
+      img.height = 20;
+      img.setAttribute('aria-hidden', 'true');
+      img.className = 'bc-input-label-sparkle';
+      labelSvg.replaceWith(img);
+    }
+
+    mount
+      .querySelectorAll('.bc-card__icon svg, .bc-prompt-pill-button__icon svg, .bc-prompt-suggestion-button__icon svg')
+      .forEach((svg) => {
+        /* In-chat follow-up suggestions: keep BC’s default icon (do not swap). */
+        if (svg.closest('.chat-history') && svg.closest('.bc-prompt-suggestion-button')) {
+          return;
+        }
+        const img = document.createElement('img');
+        img.src = sparkleSrc;
+        img.alt = '';
+        img.setAttribute('aria-hidden', 'true');
+        img.className = 'bc-sparkle-img';
+        svg.replaceWith(img);
+      });
+  };
+
+  run();
+  inputLabelIconObserver?.disconnect();
+  inputLabelIconObserver = new MutationObserver(run);
+  inputLabelIconObserver.observe(mount, { childList: true, subtree: true });
+}
+
+/**
+ * Focus the BC message field once it exists (injected after web client bootstrap).
+ */
+function focusBcChatInputWhenReady(mount) {
+  if (!mount) return;
+
+  let timeoutId;
+  let obs;
+
+  const cleanup = () => {
+    obs?.disconnect();
+    if (timeoutId) window.clearTimeout(timeoutId);
+  };
+
+  const tryFocus = () => {
+    const input = mount.querySelector('.chat-input--input');
+    if (input && document.contains(input) && typeof input.focus === 'function') {
+      input.focus({ preventScroll: true });
+      cleanup();
+      return true;
+    }
+    return false;
+  };
+
+  if (tryFocus()) return;
+
+  obs = new MutationObserver(() => {
+    tryFocus();
+  });
+  obs.observe(mount, { childList: true, subtree: true });
+  timeoutId = window.setTimeout(cleanup, 8000);
+}
 
 function createMountPoint() {
   if (document.getElementById(DIALOG_ID)) return document.getElementById(DIALOG_ID);
@@ -32,11 +108,20 @@ function createMountPoint() {
   trigger.setAttribute('aria-controls', DIALOG_ID);
 
   const triggerIcon = document.createElement('span');
-  triggerIcon.className = 'icon icon-concierge-icon';
-  const triggerLabel = document.createElement('span');
-  triggerLabel.textContent = 'Ask';
-  trigger.append(triggerIcon, triggerLabel);
+  triggerIcon.className = 'icon icon-bc-ask-sparkles';
+  const triggerAsk = document.createElement('span');
+  triggerAsk.className = 'bc-trigger-ask';
+  triggerAsk.textContent = 'Ask a question';
+  trigger.append(triggerIcon, triggerAsk);
+  const betaBadge = document.createElement('span');
+  betaBadge.className = 'bc-trigger-beta';
+  betaBadge.textContent = 'BETA';
+  const sendIcon = document.createElement('span');
+  sendIcon.className = 'icon icon-bc-message-send bc-trigger-send';
+  sendIcon.setAttribute('aria-hidden', 'true');
+  trigger.append(betaBadge, sendIcon);
   decorateIcon(triggerIcon);
+  decorateIcon(sendIcon);
   document.body.append(trigger);
 
   const mount = document.createElement('div');
@@ -45,8 +130,9 @@ function createMountPoint() {
   drawerHandle = openDrawer({
     id: DIALOG_ID,
     ariaLabel: 'AI assistant',
-    title: 'Concierge',
-    titleIcon: 'concierge-icon',
+    title: 'Ask',
+    titleBadge: 'BETA',
+    titleIcon: 'bc-ask-sparkles',
     content: mount,
     canExpand: true,
     triggerEl: trigger,
@@ -58,6 +144,11 @@ function createMountPoint() {
   trigger.addEventListener('click', () => {
     dialog.showModal();
     trigger.setAttribute('aria-expanded', 'true');
+    focusBcChatInputWhenReady(mount);
+  });
+
+  dialog.querySelector('.exl-dialog-header-expand')?.addEventListener('click', () => {
+    focusBcChatInputWhenReady(mount);
   });
 
   return dialog;
@@ -131,6 +222,8 @@ function injectAlloyStub() {
 export function destroyBrandConcierge() {
   chatObserver?.disconnect();
   chatObserver = null;
+  inputLabelIconObserver?.disconnect();
+  inputLabelIconObserver = null;
   drawerHandle?.destroy();
   drawerHandle = null;
   document.getElementById(TRIGGER_ID)?.remove();
@@ -155,7 +248,9 @@ export async function initBrandConcierge() {
     log('[BC] Web Client loaded — calling bootstrap');
     bootstrapWebClient();
     log('[BC] bootstrapWebClient called');
-    chatObserver = watchChatHistory(document.getElementById('brand-concierge-mount'));
+    const bcMount = document.getElementById('brand-concierge-mount');
+    chatObserver = watchChatHistory(bcMount);
+    patchBcSparkleIcons(bcMount);
 
     // Appended after bootstrap() so this <link> follows BC's injected <style> in document
     // order, giving our overrides cascade priority at equal specificity.

@@ -34,11 +34,10 @@ async function isAdobeEmployee() {
 /**
  * Loads Brand Concierge on eligible page types.
  * Guards:
- *   - ?bc=on         → must be present to enable BC at all (opt-in POC flag)
+ *   - doc or home page only
  *   - bcAuthRequired → when true, user must be signed in AND be an @adobe.com employee
  */
 async function loadBrandConcierge() {
-  if (!window.location.search?.includes('bc=on')) return;
   if (!isDocPage && !isHomePage) return;
 
   const { bcAuthRequired } = getConfig();
