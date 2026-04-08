@@ -19,6 +19,9 @@ dialog[data-type] {
   display: flex;
   align-items: center;
   line-height: 0;
+
+  /* Pull “Ask” closer than flex gap allows without tightening Ask–BETA */
+  margin-inline-end: -4px;
 }
 
 .exl-dialog-header img {
@@ -30,9 +33,33 @@ dialog[data-type] {
 .exl-dialog-header-title {
   flex: 1;
   font-family: var(--body-font-family);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   color: var(--spectrum-gray-800);
+}
+
+.exl-dialog-header-title-with-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.exl-dialog-header-title-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 9px;
+  border-radius: 5px;
+  background-color: #ebebef;
+  color: #9d59b7;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.message-content .citation-number a {
+  font-size: 12px;
 }
 
 .exl-dialog-header-expand,
