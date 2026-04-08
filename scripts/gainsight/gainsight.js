@@ -4,6 +4,7 @@ import { loadScript } from '../lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
 import { getPathDetails } from '../scripts.js';
 import { getCookie } from '../utils/cookie-utils.js';
+import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 const GAINSIGHT_TAG_ID = 'AP-PCBATQJJQHRG-2';
 const LEARNER_TOKEN_COOKIE = 'alm_access_token';
@@ -45,7 +46,9 @@ function identify(data) {
       emailOptIns: data.emailOptIn || false,
       emailVerified: data.emailVerified || false,
       mrktPerm: data.mrktPerm || '',
-      premiumLearner: !!getCookie(LEARNER_TOKEN_COOKIE),
+      ...(isFeatureEnabled('isPremiumLearningEnabled') && {
+        premiumLearner: !!getCookie(LEARNER_TOKEN_COOKIE),
+      }),
     },
     {
       id: org,
