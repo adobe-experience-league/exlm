@@ -185,7 +185,7 @@
    ========================================================================== */
 
 .browse-card.premium-learning-browse-card .premium-learning-card-content {
-  padding-top: 16px;
+  padding-top: var(--spectrum-spacing-75);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -240,12 +240,21 @@
   background-color: var(--spectrum-gray-200);
 }
 
+@media (min-width: 600px) {
+  .browse-card.premium-learning-browse-card .premium-learning-card-content {
+    padding-top: var(--spectrum-spacing-300);
+  }
+}
+
 @media (min-width: 900px) {
   .browse-cards-block-content:has(.premium-learning-browse-card) {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: flex-start;
     gap: 25px;
+    min-height: auto;
+    margin-bottom: var(--spectrum-spacing-300);
   }
 
   .browse-cards-block-content:has(.premium-learning-browse-card) > div {
