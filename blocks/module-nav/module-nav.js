@@ -7,7 +7,7 @@ import {
   getCourseFragmentUrl,
 } from '../../scripts/courses/course-utils.js';
 import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
-import { submitQuizHandler } from '../quiz/quiz.js';
+import { submitQuizHandler, fetchPageContent } from '../quiz/quiz.js';
 import { finishModule, completeCourse } from '../../scripts/courses/course-profile.js';
 
 let placeholders = {};
@@ -28,11 +28,20 @@ async function updateBackButtonToCourseUrl(button, placeholdersObj) {
   }
 }
 
+async function showQuizProgressFailure() {
+  const quizBlock = document.querySelector('.block.quiz');
+  const errorPageUrl = quizBlock?.dataset?.quizErrorPageUrl;
+  if (errorPageUrl) {
+    await fetchPageContent(errorPageUrl, quizBlock);
+  }
+}
+
 async function handleQuizNextButton(e) {
   e.preventDefault();
+  const anchor = e.currentTarget;
 
   // Disable the button immediately to prevent multiple submissions
-  e.target.classList.add('disabled');
+  anchor.classList.add('disabled');
 
   // Call the quiz submission handler if it exists
   const handler = submitQuizHandler();
@@ -61,7 +70,7 @@ async function handleQuizNextButton(e) {
       input.addEventListener(
         'change',
         () => {
-          e.target.classList.remove('disabled');
+          anchor.classList.remove('disabled');
         },
         { once: true },
       );
@@ -70,7 +79,7 @@ async function handleQuizNextButton(e) {
   }
 
   // Remove the event listener when quiz is passed
-  e.target.removeEventListener('click', handleQuizNextButton);
+  anchor.removeEventListener('click', handleQuizNextButton);
 
   // Check if this is the last step in the module
   if (!(await isLastStep())) return;
@@ -80,11 +89,11 @@ async function handleQuizNextButton(e) {
     if (await isLastModuleOfCourse()) {
       await completeCourse();
       const url = await getCourseCompletionPageUrl();
-      if (url) e.target.href = url;
+      if (url) anchor.href = url;
     } else {
       await finishModule();
       const url = await getNextModuleFirstStep();
-      if (url) e.target.href = url;
+      if (url) anchor.href = url;
     }
     if (nextButton) {
       nextButton.classList.remove('disabled');
@@ -92,11 +101,7 @@ async function handleQuizNextButton(e) {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error completing course:', error);
-    const errorMessage = document.createElement('div');
-    errorMessage.style.color = 'red';
-    errorMessage.style.textAlign = 'right';
-    errorMessage.textContent = 'Something went wrong while completing the module. Please try again later.';
-    nextButton.parentElement.insertAdjacentElement('afterend', errorMessage);
+    await showQuizProgressFailure();
   }
 }
 
@@ -178,20 +183,27 @@ export default async function decorate(block) {
   // Check if this is the last step - maintaining the original condition exactly
   if ((!isQuiz || skipQuiz) && (await isLastStep())) {
     nextLink.classList.add('disabled');
-    if (await isLastModuleOfCourse()) {
-      await completeCourse();
-      const courseCompletionPageUrl = await getCourseCompletionPageUrl();
-      if (courseCompletionPageUrl) {
-        nextLink.href = courseCompletionPageUrl;
+    try {
+      if (await isLastModuleOfCourse()) {
+        await completeCourse();
+        const courseCompletionPageUrl = await getCourseCompletionPageUrl();
+        if (courseCompletionPageUrl) {
+          nextLink.href = courseCompletionPageUrl;
+        }
+      } else {
+        await finishModule();
+        const nextModuleFirstStepUrl = await getNextModuleFirstStep();
+        if (nextModuleFirstStepUrl) {
+          nextLink.href = nextModuleFirstStepUrl;
+        }
       }
-    } else {
-      await finishModule();
-      const nextModuleFirstStepUrl = await getNextModuleFirstStep();
-      if (nextModuleFirstStepUrl) {
-        nextLink.href = nextModuleFirstStepUrl;
-      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error completing course:', error);
+      await showQuizProgressFailure();
+    } finally {
+      nextLink.classList.remove('disabled');
     }
-    nextLink.classList.remove('disabled');
   }
 
   // Check if quiz-scorecard block is present on page load

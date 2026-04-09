@@ -35,7 +35,8 @@
   --text-color: var(--non-spectrum-dark-gray);
 }
 
-.quiz-scorecard.fail {
+.quiz-scorecard.fail,
+.quiz-scorecard.error {
   border: 2px solid var(--non-spectrum-adobe-dark-red);
 
   --color: var(--non-spectrum-adobe-dark-red);
