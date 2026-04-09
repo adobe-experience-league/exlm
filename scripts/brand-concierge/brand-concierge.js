@@ -9,6 +9,10 @@ const ALLOY_INSTANCE_NAME = 'alloyBC';
 const MOUNT_SELECTOR = '#brand-concierge-mount';
 const DIALOG_ID = 'bc-dialog';
 const TRIGGER_ID = 'bc-trigger';
+const PANEL_DISCLAIMER_ID = 'bc-panel-disclaimer';
+
+const PRIVACY_POLICY_URL = 'https://www.adobe.com/privacy/policy.html';
+const GENERATIVE_AI_TERMS_URL = 'https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html';
 
 const isDev = !['experienceleague.adobe.com'].includes(window.location.hostname);
 // eslint-disable-next-line no-console
@@ -22,6 +26,7 @@ let cssLinkEl = null;
 let drawerHandle = null;
 let chatObserver = null;
 let inputLabelIconObserver = null;
+let panelDisclaimerObserver = null;
 
 /**
  * BC renders inline SVG sparkles in several places; swap them for icons/bc-ask-sparkles.svg.
@@ -63,6 +68,53 @@ function patchBcSparkleIcons(mount) {
   inputLabelIconObserver?.disconnect();
   inputLabelIconObserver = new MutationObserver(run);
   inputLabelIconObserver.observe(mount, { childList: true, subtree: true });
+}
+
+function buildPanelDisclaimer() {
+  const disclaimer = document.createElement('p');
+  disclaimer.id = PANEL_DISCLAIMER_ID;
+  disclaimer.className = 'bc-panel-disclaimer';
+
+  const privacyLink = document.createElement('a');
+  privacyLink.href = PRIVACY_POLICY_URL;
+  privacyLink.target = '_blank';
+  privacyLink.rel = 'noopener noreferrer';
+  privacyLink.textContent = 'Privacy Policy';
+
+  const termsLink = document.createElement('a');
+  termsLink.href = GENERATIVE_AI_TERMS_URL;
+  termsLink.target = '_blank';
+  termsLink.rel = 'noopener noreferrer';
+  termsLink.textContent = 'Generative AI Terms';
+
+  disclaimer.append(
+    document.createTextNode("Use of this beta AI chatbot is subject to Adobe's "),
+    privacyLink,
+    document.createTextNode(
+      ". Don't share sensitive data. AI responses are not your Content, may be inaccurate, and any offers provided are non-binding. ",
+    ),
+    termsLink,
+    document.createTextNode('.'),
+  );
+
+  return disclaimer;
+}
+
+/**
+ * Legal copy below the chat input (drawer + expanded); re-inserts if BC re-renders the panel.
+ */
+function installPanelDisclaimer(mount) {
+  if (!mount) return;
+  const inputSection = mount.querySelector('.input-section');
+  if (!inputSection || inputSection.querySelector(`#${PANEL_DISCLAIMER_ID}`)) return;
+  inputSection.append(buildPanelDisclaimer());
+}
+
+function watchPanelDisclaimer(mount) {
+  installPanelDisclaimer(mount);
+  panelDisclaimerObserver?.disconnect();
+  panelDisclaimerObserver = new MutationObserver(() => installPanelDisclaimer(mount));
+  panelDisclaimerObserver.observe(mount, { childList: true, subtree: true });
 }
 
 /**
@@ -224,6 +276,8 @@ export function destroyBrandConcierge() {
   chatObserver = null;
   inputLabelIconObserver?.disconnect();
   inputLabelIconObserver = null;
+  panelDisclaimerObserver?.disconnect();
+  panelDisclaimerObserver = null;
   drawerHandle?.destroy();
   drawerHandle = null;
   document.getElementById(TRIGGER_ID)?.remove();
@@ -251,6 +305,7 @@ export async function initBrandConcierge() {
     const bcMount = document.getElementById('brand-concierge-mount');
     chatObserver = watchChatHistory(bcMount);
     patchBcSparkleIcons(bcMount);
+    watchPanelDisclaimer(bcMount);
 
     // Appended after bootstrap() so this <link> follows BC's injected <style> in document
     // order, giving our overrides cascade priority at equal specificity.
@@ -258,6 +313,10 @@ export async function initBrandConcierge() {
     cssLinkEl.rel = 'stylesheet';
     cssLinkEl.href = `${window.hlx.codeBasePath}/scripts/brand-concierge/brand-concierge.css`;
     document.head.append(cssLinkEl);
+
+    /* Later scripts may append fixed layers; keep the trigger button last in body stacking order. */
+    const triggerEl = document.getElementById(TRIGGER_ID);
+    if (triggerEl) document.body.append(triggerEl);
   } catch (e) {
     error('[BC] failed to initialise', e?.message || e);
     destroyBrandConcierge();
