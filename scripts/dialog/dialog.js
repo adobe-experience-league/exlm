@@ -8,7 +8,7 @@ async function ensureStyles() {
   return document.querySelector(`head > link[href="${DIALOG_CSS}"]`);
 }
 
-function buildDefaultHeader({ title, titleIcon, canExpand }, dialog) {
+function buildDefaultHeader({ title, titleIcon, titleBadge, canExpand }, dialog) {
   const header = document.createElement('div');
   header.className = 'exl-dialog-header';
 
@@ -21,7 +21,16 @@ function buildDefaultHeader({ title, titleIcon, canExpand }, dialog) {
 
   const titleEl = document.createElement('span');
   titleEl.className = 'exl-dialog-header-title';
-  titleEl.textContent = title || '';
+  if (titleBadge) {
+    titleEl.classList.add('exl-dialog-header-title-with-badge');
+    titleEl.append(title || '');
+    const badgeEl = document.createElement('span');
+    badgeEl.className = 'exl-dialog-header-title-badge';
+    badgeEl.textContent = titleBadge;
+    titleEl.append(badgeEl);
+  } else {
+    titleEl.textContent = title || '';
+  }
   header.append(titleEl);
 
   let setExpanded = () => {};
@@ -79,6 +88,7 @@ function buildDefaultHeader({ title, titleIcon, canExpand }, dialog) {
  * @param {string}       options.id              - ID for the <dialog>; prevents duplicates.
  * @param {string}       options.ariaLabel       - Accessible label for the dialog element.
  * @param {string}       [options.title]         - Default header title.
+ * @param {string}       [options.titleBadge]    - Optional pill label after the title (e.g. BETA).
  * @param {string}       [options.titleIcon]     - Default header icon class suffix.
  * @param {boolean}      [options.canExpand]     - Drawer only: show expand/collapse toggle.
  * @param {HTMLElement}  [options.header]        - Custom header; replaces the default.
@@ -94,6 +104,7 @@ function createDialog(type, options) {
     id,
     ariaLabel,
     title,
+    titleBadge,
     titleIcon,
     canExpand,
     header: customHeader,
@@ -122,7 +133,15 @@ function createDialog(type, options) {
     if (closeSelector) closeBtn = customHeader.querySelector(closeSelector);
   } else {
     // canExpand is drawer-only; ignored silently for modals.
-    const built = buildDefaultHeader({ title, titleIcon, canExpand: type === 'drawer' && canExpand }, dialog);
+    const built = buildDefaultHeader(
+      {
+        title,
+        titleBadge,
+        titleIcon,
+        canExpand: type === 'drawer' && canExpand,
+      },
+      dialog,
+    );
     dialog.append(built.header);
     closeBtn = built.closeBtn;
     setExpanded = built.setExpanded;

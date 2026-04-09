@@ -16,7 +16,11 @@
 }
 
 .premium-learning-recommended-content .premium-learning-tabs-wrapper {
-  margin-top: 15px;
+  margin: var(--spectrum-spacing-300) 0 0;
+}
+
+.premium-learning-recommended-content .browse-cards-block-content {
+  margin-top: var(--spectrum-spacing-500);
 }
 
 .premium-learning-recommended-content .premium-learning-recommended-content-cta a::before {
