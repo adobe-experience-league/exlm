@@ -88,7 +88,7 @@ function buildPanelDisclaimer() {
   termsLink.textContent = 'Generative AI Terms';
 
   disclaimer.append(
-    document.createTextNode('Use of this beta AI chatbot is subject to Adobe\'s '),
+    document.createTextNode("Use of this beta AI chatbot is subject to Adobe's "),
     privacyLink,
     document.createTextNode(
       ". Don't share sensitive data. AI responses are not your Content, may be inaccurate, and any offers provided are non-binding. ",

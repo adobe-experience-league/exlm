@@ -34,10 +34,7 @@ async function isAdobeEmployee() {
 /** Paths like /en/support, /fr/premium (communities use a separate origin). */
 function isBrandConciergeExcludedPath() {
   const { pathname } = window.location;
-  return (
-    /^\/[^/]+\/(support|premium)(\/|$)/i.test(pathname) ||
-    /^\/(support|premium)(\/|$)/i.test(pathname)
-  );
+  return /^\/[^/]+\/(support|premium)(\/|$)/i.test(pathname) || /^\/(support|premium)(\/|$)/i.test(pathname);
 }
 
 /**
