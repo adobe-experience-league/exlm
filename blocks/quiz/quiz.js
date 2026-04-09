@@ -147,7 +147,7 @@ function shuffleArray(array) {
 }
 
 // Fetch page content and insert it into the current page
-const fetchPageContent = async (url, block) => {
+export const fetchPageContent = async (url, block) => {
   try {
     // Fetch the content
     const response = await fetch(`${url}.plain.html`);
@@ -210,11 +210,25 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
 
+  const [titleElement, textElement, ...rest] = [...block.children];
+
+  const { urlSlots, questionsOriginal } = rest.reduce(
+    (acc, el) => {
+      if (el.querySelector('a') && acc.urlSlots.length < 3) acc.urlSlots.push(el);
+      else acc.questionsOriginal.push(el);
+      return acc;
+    },
+    { urlSlots: [], questionsOriginal: [] },
+  );
+  const [passPageUrlElement, failPageUrlElement, errorPageUrlElement] = urlSlots;
+
+  const errorPageUrl = errorPageUrlElement?.querySelector('a')?.href;
+  if (errorPageUrl) {
+    block.dataset.quizErrorPageUrl = errorPageUrl;
+  }
+
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
-
-  // Get title, text, pass page URL, fail page URL, and questions from block children
-  const [titleElement, textElement, passPageUrlElement, failPageUrlElement, ...questionsOriginal] = [...block.children];
 
   const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
