@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 const lang = document.querySelector('html').lang || 'en';
@@ -8,27 +9,50 @@ export const courses = document.querySelector('meta[name="theme"]')?.content.inc
 export const browse = document.querySelector('meta[name="theme"]')?.content.includes('browse-') || false;
 export const browseProduct = document.querySelector('meta[name="theme"]')?.content.includes('browse-product') || false;
 export const playlist = window.location.pathname.indexOf('/playlists') !== -1;
-export const solution = document.querySelector('meta[name="solution"]')?.content?.split(',')[0].toLowerCase() || '';
 export const type = document.querySelector('meta[name="type"]')?.content?.toLowerCase() || '';
 
-const fullSolution = document.querySelector('meta[name="solution"]')?.content || '';
-const feature = document.querySelector('meta[name="feature"]')?.content.toLowerCase() || '';
 const featureAttribute = document.querySelector('meta[name="feature-attribute"]')?.content.toLowerCase() || '';
 const subSolution = document.querySelector('meta[name="sub-solution"]')?.content || '';
 const solutionVersion = document.querySelector('meta[name="version"]')?.content || '';
-const role = document.querySelector('meta[name="role"]')?.content || '';
 const docType = document.querySelector('meta[name="doc-type"]')?.content || '';
 const duration = document.querySelector('meta[name="duration"]')?.content || '';
 
-// TQ Tags
-const productV2 = document.querySelector('meta[name="product_v2"]')?.content || '';
-const subFeatureV2 = document.querySelector('meta[name="subfeature_v2"]')?.content.toLowerCase() || '';
-const featureV2 = document.querySelector('meta[name="feature_v2"]')?.content.toLowerCase() || '';
-const roleV2 = document.querySelector('meta[name="role_v2"]')?.content || '';
-const levelV2 = document.querySelector('meta[name="level_v2"]')?.content || '';
-const topicV2 = document.querySelector('meta[name="topic_v2"]')?.content || '';
-const industryV2 = document.querySelector('meta[name="industry_v2"]')?.content || '';
-
+let solution = '';
+let fullSolution = '';
+let feature = '';
+let role = '';
+let productV2 = '';
+let subFeatureV2 = '';
+let featureV2 = '';
+let roleV2 = '';
+let levelV2 = '';
+let topicV2 = '';
+let industryV2 = '';
+if (isFeatureEnabled('isV2TagsEnabled')) {
+  solution = document.querySelector('meta[name="solution_v1"]')?.content?.split(',')[0].toLowerCase() || '';
+  fullSolution = document.querySelector('meta[name="solution_v1"]')?.content || '';
+  feature = document.querySelector('meta[name="feature_v1"]')?.content.toLowerCase() || '';
+  role = document.querySelector('meta[name="role_v1"]')?.content || '';
+  productV2 = document.querySelector('meta[name="solution"]')?.content || '';
+  subFeatureV2 = document.querySelector('meta[name="sub-feature"]')?.content.toLowerCase() || '';
+  featureV2 = document.querySelector('meta[name="feature"]')?.content.toLowerCase() || '';
+  roleV2 = document.querySelector('meta[name="role"]')?.content || '';
+  levelV2 = document.querySelector('meta[name="level"]')?.content || '';
+  topicV2 = document.querySelector('meta[name="topic"]')?.content || '';
+  industryV2 = document.querySelector('meta[name="industry"]')?.content || '';
+} else {
+  solution = document.querySelector('meta[name="solution"]')?.content?.split(',')[0].toLowerCase() || '';
+  fullSolution = document.querySelector('meta[name="solution"]')?.content || '';
+  feature = document.querySelector('meta[name="feature"]')?.content.toLowerCase() || '';
+  role = document.querySelector('meta[name="role"]')?.content || '';
+  productV2 = document.querySelector('meta[name="product_v2"]')?.content || '';
+  subFeatureV2 = document.querySelector('meta[name="subfeature_v2"]')?.content.toLowerCase() || '';
+  featureV2 = document.querySelector('meta[name="feature_v2"]')?.content.toLowerCase() || '';
+  roleV2 = document.querySelector('meta[name="role_v2"]')?.content || '';
+  levelV2 = document.querySelector('meta[name="level_v2"]')?.content || '';
+  topicV2 = document.querySelector('meta[name="topic_v2"]')?.content || '';
+  industryV2 = document.querySelector('meta[name="industry_v2"]')?.content || '';
+}
 const UEFilters = {
   Role: '',
   ContentType: '',
