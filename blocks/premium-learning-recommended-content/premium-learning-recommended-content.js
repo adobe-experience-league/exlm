@@ -27,7 +27,11 @@ function buildBlockHeader(headingHTML, descriptionHTML, ctaMarkup) {
         ${descriptionHTML}
       </div>
     </div>
-    ${ctaMarkup ? `<div class="premium-learning-recommended-content-cta">${ctaMarkup}</div>` : ''}
+    ${
+      ctaMarkup
+        ? `<div class="premium-learning-content-block-cta">${ctaMarkup}</div>`
+        : ''
+    }
   `;
   return headerDiv;
 }

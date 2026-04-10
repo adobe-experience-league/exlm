@@ -155,7 +155,11 @@ function buildSuggestedContentLayout(block, headingMarkup, descriptionMarkup, ct
           : ''
       }
     </div>
-    ${ctaMarkup ? `<div class="premium-learning-suggested-content-cta">${ctaMarkup}</div>` : ''}
+    ${
+      ctaMarkup
+        ? `<div class="premium-learning-content-block-cta">${ctaMarkup}</div>`
+        : ''
+    }
   `;
   block.appendChild(headerDiv);
 
