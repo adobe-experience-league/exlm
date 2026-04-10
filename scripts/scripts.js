@@ -1745,6 +1745,9 @@ async function loadPage() {
    * @returns {Promise<boolean>} True if user is a PL member, false otherwise
    */
   const isPLMember = async () => {
+    if (!isFeatureEnabled('isPremiumLearningEnabled')) {
+      return false;
+    }
     try {
       await window.adobeIMS?.getAccessToken();
       const { default: initializePLAuthentication, isPremiumLearner } = await import('./utils/pl-auth-utils.js');
