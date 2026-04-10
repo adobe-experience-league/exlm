@@ -4,6 +4,7 @@ import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import getEmitter from '../events.js';
 import { rewriteDocsPath } from '../utils/path-utils.js';
+import { getPLAccessToken } from '../utils/pl-auth-utils.js';
 
 const bookmarksEventEmitter = getEmitter('bookmarks');
 
@@ -179,5 +180,153 @@ export async function sanitizeBookmarks() {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error sanitizing bookmarks:', error);
+  }
+}
+
+// ========== PREMIUM LEARNING BOOKMARKS ==========
+
+/**
+ * Fetches PL bookmarks or checks if a specific item is bookmarked
+ * @param {string} [loId] - Optional learning object ID to check
+ * @returns {Promise<Array|boolean>} Returns all bookmarks array if no loId, or boolean if loId provided
+ */
+export async function fetchPremiumLearningBookmarks(loId = null) {
+  try {
+    const { plApiBaseUrl } = getConfig();
+    const token = getPLAccessToken();
+
+    if (!token) return loId ? false : [];
+
+    const response = await fetch(
+      `${plApiBaseUrl}/learningObjects?filter.bookmarks=true&filter.loTypes=course,learningProgram`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/vnd.api+json',
+        },
+      },
+    );
+
+    if (!response.ok) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to fetch PL bookmarks:', response.status);
+      return loId ? false : [];
+    }
+
+    const data = await response.json();
+    const bookmarks = data?.data || [];
+
+    // If loId provided, return true/false
+    if (loId) {
+      return bookmarks.some((bookmark) => bookmark.id === loId);
+    }
+
+    // Otherwise return all bookmarks
+    return bookmarks;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching PL bookmarks:', error);
+    return loId ? false : [];
+  }
+}
+
+/**
+ * Decorates a PL bookmark button (reuses decorateBookmark logic for consistency)
+ *
+ * @param {Object} config
+ * @param {HTMLElement} config.element - Bookmark button element
+ * @param {string} config.loId - Learning object ID
+ * @param {Object} config.tooltips - Tooltip texts
+ */
+export async function decoratePremiumLearningBookmark(config) {
+  const { element, loId, tooltips } = config;
+  const token = getPLAccessToken();
+
+  element.dataset.plBookmark = 'true';
+  element.dataset.signedIn = !!token;
+
+  if (!token) {
+    element.dataset.bookmarked = 'false';
+    const signInTooltip = htmlToElement(
+      `<span class="action-tooltip signedin-tooltip">${
+        tooltips?.signInToBookmarkTooltip || 'Sign in to bookmark'
+      }</span>`,
+    );
+    element.appendChild(signInTooltip);
+    element.disabled = true;
+    return;
+  }
+
+  // Check if already bookmarked
+  const plBookmarked = await fetchPremiumLearningBookmarks(loId);
+  element.dataset.bookmarked = String(plBookmarked);
+
+  const bookmarkTooltip = htmlToElement(
+    `<span class="action-tooltip bookmark-tooltip">${tooltips?.bookmarkTooltip || 'Bookmark'}</span>`,
+  );
+  const removeBookmarkTooltip = htmlToElement(
+    `<span class="action-tooltip remove-bookmark-tooltip">${
+      tooltips?.removeBookmarkTooltip || 'Remove Bookmark'
+    }</span>`,
+  );
+  element.appendChild(bookmarkTooltip);
+  element.appendChild(removeBookmarkTooltip);
+}
+
+/**
+ * Handles PL bookmark toggle (add/remove) - separate from profile bookmarks
+ *
+ * @param {Object} config
+ * @param {HTMLElement} config.element - Bookmark button element
+ * @param {string} config.loId - Learning object ID (e.g., "course:559757")
+ * @param {Object} config.tooltips - Toast notification texts
+ * @param {Function} config.callback - Optional callback after action
+ */
+export async function premiumLearningBookmarkHandler(config) {
+  const { element, loId, tooltips, callback } = config;
+
+  const token = getPLAccessToken();
+  if (!token) {
+    sendNotice(tooltips?.signInRequired || 'Please sign in to bookmark', 'error');
+    return;
+  }
+
+  const isCurrentlyBookmarked = element.dataset.bookmarked === 'true';
+  const { plApiBaseUrl } = getConfig();
+
+  try {
+    const method = isCurrentlyBookmarked ? 'DELETE' : 'POST';
+    const response = await fetch(`${plApiBaseUrl}/learningObjects/${loId}/bookmark`, {
+      method,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.api+json',
+      },
+    });
+
+    if (response.ok) {
+      element.dataset.bookmarked = String(!isCurrentlyBookmarked);
+      const message = isCurrentlyBookmarked
+        ? tooltips?.removeBookmarkToastText || 'Bookmark removed'
+        : tooltips?.bookmarkToastText || 'Successfully bookmarked';
+      sendNotice(message);
+      assetInteractionModel(loId, isCurrentlyBookmarked ? 'Bookmark Removed' : 'Bookmarked');
+
+      // Emit event to trigger UI updates in pl-bookmarks block
+      const plBookmarksEventEmitter = getEmitter('pl-bookmarks');
+      plBookmarksEventEmitter.emit('bookmark_changed', {
+        loId,
+        bookmarked: !isCurrentlyBookmarked,
+        timestamp: Date.now(),
+      });
+
+      if (callback) callback();
+    } else {
+      throw new Error(`Failed to update bookmark: ${response.status}`);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error handling PL bookmark:', error);
+    sendNotice(tooltips?.profileNotUpdated || 'Failed to update bookmark', 'error');
   }
 }
