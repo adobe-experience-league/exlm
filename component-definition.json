@@ -1837,6 +1837,9 @@
                   "filter": "rte-no-headings",
                   "title": "Based on previous learnings",
                   "titleType": "h3",
+                  "cta_Type": "primary",
+                  "linkText": "View all Premium Learning results",
+                  "link": "",
                   "contentType": ["premium-learning-course"]
                 }
               }
@@ -1877,6 +1880,9 @@
                   "filter": "rte-no-headings",
                   "title": "Suggested cohorts to join",
                   "titleType": "h3",
+                  "cta_Type": "primary",
+                  "linkText": "View all Premium Learning results",
+                  "link": "",
                   "contentType": ["premium-learning-cohort"]
                 }
               }
