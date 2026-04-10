@@ -177,4 +177,28 @@ export function applyFacetRawValuesToDom(parentWrapper, engineValues, placeholde
   });
 }
 
+/**
+ * URL hash segment for a single top-level facet value (not a hierarchical child row).
+ * Matches {@link buildElContentTypeDisplayToRawResolver} single-segment handling.
+ */
+export function isParentOnlyFacetSegment(value) {
+  if (value == null || value === '') return false;
+  return !String(value).includes('|');
+}
+
+/**
+ * Whether `facetValue` is a hierarchical child of `parentRaw` (Parent|…, Parent;Parent|…).
+ */
+export function isHierarchicalFacetChildValue(parentRaw, facetValue) {
+  if (!parentRaw || !facetValue || facetValue === parentRaw) return false;
+  const v = String(facetValue);
+  if (!v.includes('|')) return false;
+  const beforePipe = v.split('|')[0];
+  let parentName = beforePipe;
+  if (parentName.includes(';')) {
+    [parentName] = parentName.split(';');
+  }
+  return String(parentName).trim().toLowerCase() === String(parentRaw).trim().toLowerCase();
+}
+
 export { EL_CONTENTTYPE_FIELD };

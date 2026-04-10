@@ -114,9 +114,40 @@ export const hasContentTypeFilter = (contentTypes = []) => {
 /**
  * Updates the URL hash by filtering its current parts based on a provided condition.
  */
-export const updateHash = (filterCondition, joinWith = '&') => {
+export const updateHash = (filterCondition, joinWith = '&', facetHashString = '') => {
   const currentHash = fragment();
   const updatedParts = currentHash.split('&').filter(filterCondition);
+  if (facetHashString) {
+    updatedParts.push(facetHashString);
+  }
+  window.location.hash = updatedParts.join(joinWith);
+};
+
+/** @param {string} segment e.g. f-el_contenttype=Community,Community|Ideas */
+const getFacetParamKeyFromSegment = (segment) => {
+  const m = segment.match(/^f-([^=]+)=/);
+  return m ? m[1] : null;
+};
+
+/**
+ * Removes existing `f-{facetId}=…` segments for each replacement’s facetId, then appends the new segments. Single hash write.
+ * Same flow as updateHash: fragment → split → filter → push → join.
+ *
+ * @param {{ facetId: string, targetFacetKeys: string[] }[]} replacements
+ * @param {string} [joinWith]
+ */
+export const replaceFacetParamsInHash = (replacements, joinWith = '&') => {
+  if (!replacements?.length) return;
+  const facetIds = new Set(replacements.map(({ facetId }) => facetId));
+  const updatedParts = fragment()
+    .split('&')
+    .filter((segment) => {
+      const key = getFacetParamKeyFromSegment(segment);
+      return key === null || !facetIds.has(key);
+    });
+  replacements.forEach(({ facetId, targetFacetKeys }) => {
+    updatedParts.push(`f-${facetId}=${targetFacetKeys.join(',')}`);
+  });
   window.location.hash = updatedParts.join(joinWith);
 };
 
@@ -198,6 +229,92 @@ export function isUserClick(e) {
   return e.detail > 0;
 }
 
+const FACET_CONTENT_TYPE_ID = 'facetContentType';
+
+/** Parent row for hierarchical facet: prefer data-facet-raw-value (engine) over localized data-contenttype. */
+export function findParentFacetRow(parentWrapper, parentKey, preferRawValueAttr) {
+  if (!parentWrapper || !parentKey) return null;
+  const escaped = CSS.escape(parentKey);
+  if (preferRawValueAttr) {
+    const byRaw = parentWrapper.querySelector(`:scope > li[data-facet-raw-value="${escaped}"]`);
+    if (byRaw && byRaw.dataset.childfacet !== 'true') return byRaw;
+  }
+  const byDisplay = parentWrapper.querySelector(`:scope > li[data-contenttype="${escaped}"]`);
+  if (byDisplay && byDisplay.dataset.childfacet !== 'true') return byDisplay;
+  return null;
+}
+
+export function isContentTypeFacet(atomicFacet) {
+  return atomicFacet?.getAttribute('id') === FACET_CONTENT_TYPE_ID;
+}
+
+/**
+ * Keeps parent/child content-type facet selections in sync after a user click.
+ * @returns {boolean} true if any programmatic .click() ran to change filters
+ */
+export function syncFacetParentChildFilters({ facet, atomicElement, onlyOptionClicked = false }) {
+  const isChildFacet = facet.dataset.childfacet === 'true';
+  const isSelected = facet.firstElementChild.ariaChecked === 'false'; // Will take some to update the state.
+  const valuesList = facet.parentElement;
+  const parentFacet = isChildFacet
+    ? findParentFacetRow(valuesList, facet.dataset.parent, isContentTypeFacet(atomicElement))
+    : facet;
+  const parentFacetIsSelected = isChildFacet ? parentFacet?.firstElementChild?.ariaChecked === 'true' : isSelected;
+  let filtersChanged = false;
+  if (isChildFacet) {
+    // child facet click.
+    if (onlyOptionClicked === true) {
+      const parentFacetType = facet.dataset.parent;
+      const allChildFacets = facet.parentElement.querySelectorAll(`[data-parent="${parentFacetType}"]`);
+      if (parentFacetIsSelected) {
+        filtersChanged = true;
+        parentFacet.firstElementChild.click();
+      }
+      allChildFacets.forEach((childFacet) => {
+        const isCurrentFacet = childFacet === facet;
+        if (
+          (!isCurrentFacet && childFacet.firstElementChild.ariaChecked === 'true') ||
+          (isCurrentFacet && childFacet.firstElementChild.ariaChecked === 'false')
+        ) {
+          filtersChanged = true;
+          childFacet.firstElementChild.click();
+        }
+      });
+      setTimeout(() => {
+        facet.dataset.filterclick = '';
+      }, 0);
+    } else if (!isSelected && parentFacetIsSelected) {
+      parentFacet?.firstElementChild.click();
+    } else if (isSelected && !parentFacetIsSelected) {
+      // Now check if all child facets excluding the current one is selected.
+      const parentFacetType = facet.dataset.parent;
+      const allChildFacets = Array.from(facet.parentElement.querySelectorAll(`[data-parent="${parentFacetType}"]`));
+      const selectedCount = allChildFacets.reduce((acc, curr) => {
+        if (curr.firstElementChild.ariaChecked === 'true') {
+          return acc + 1;
+        }
+        return acc;
+      }, 1);
+      if (selectedCount === allChildFacets.length) {
+        filtersChanged = true;
+        parentFacet.firstElementChild.click();
+      }
+    }
+  } else {
+    // Parent facet click — use raw facet value so localized labels still sync children.
+    const parentFacetType = parentFacet.dataset.facetRawValue || parentFacet.dataset.contenttype;
+    const parentFacetValue = parentFacetIsSelected ? 'true' : 'false';
+    const allChildFacets = facet.parentElement.querySelectorAll(`[data-parent="${parentFacetType}"]`);
+    allChildFacets.forEach((childFacet) => {
+      if (childFacet.firstElementChild.ariaChecked !== parentFacetValue) {
+        filtersChanged = true;
+        childFacet.firstElementChild.click();
+      }
+    });
+  }
+  return filtersChanged;
+}
+
 export function escapeHtml(unsafe) {
   return unsafe
     .replace(/&/g, '&amp;')
@@ -239,3 +356,26 @@ export const generateAdobeTrackingData = (searchState) => {
   };
   return data;
 };
+
+export const BLOCK_SKELETON_PARTIAL_CLASS = 'atomic-skeleton-partial-results-ready';
+
+function areBlockFacetsRendered(block) {
+  const facets = block.querySelectorAll('atomic-facet');
+  if (facets.length === 0) {
+    return true;
+  }
+  return [...facets].every((facet) => facet.dataset.rendered === 'true');
+}
+
+export function resolveBlockLevelSkeleton(block) {
+  const skeleton = block.querySelector('.atomic-search-load-skeleton');
+  if (!skeleton) {
+    return;
+  }
+  if (areBlockFacetsRendered(block)) {
+    skeleton.classList.remove(BLOCK_SKELETON_PARTIAL_CLASS);
+    skeleton.remove();
+  } else if (!skeleton.classList.contains(BLOCK_SKELETON_PARTIAL_CLASS)) {
+    skeleton.classList.add(BLOCK_SKELETON_PARTIAL_CLASS);
+  }
+}
