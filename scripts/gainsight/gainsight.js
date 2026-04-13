@@ -47,7 +47,7 @@ function identify(data) {
       emailVerified: data.emailVerified || false,
       mrktPerm: data.mrktPerm || '',
       ...(isFeatureEnabled('isPremiumLearningEnabled') && {
-        premiumLearner: !!getCookie(LEARNER_TOKEN_COOKIE),
+        premiumLearner: getCookie(LEARNER_TOKEN_COOKIE) ? 'TRUE' : 'FALSE',
       }),
     },
     {
