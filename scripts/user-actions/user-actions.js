@@ -1,7 +1,13 @@
 import { htmlToElement, fetchLanguagePlaceholders } from '../scripts.js';
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
-import { decorateBookmark, bookmarkHandler } from './bookmark.js';
+import {
+  decorateBookmark,
+  bookmarkHandler,
+  decoratePremiumLearningBookmark,
+  premiumLearningBookmarkHandler,
+} from './bookmark.js';
 import { copyHandler, decorateCopyLink } from './copy-link.js';
+import PL_CONTENT_TYPES from '../data-service/premium-learning/premium-learning-constants.js';
 
 await loadCSS(`${window.hlx.codeBasePath}/scripts/user-actions/user-actions.css`);
 
@@ -92,40 +98,75 @@ const UserActions = (config) => {
     const actionDefinitions = [];
 
     if (bookmarkConfig !== false) {
-      actionDefinitions.push({
-        name: 'bookmark',
-        icons: bookmarkConfig?.icons || ['bookmark', 'bookmark-active'],
-        label: bookmarkConfig?.label,
-        onButtonReady: (element) =>
-          decorateBookmark({
-            element,
-            id,
-            bookmarkPath,
-            tooltips: {
-              bookmarkTooltip: placeholders?.userActionBookmarkTooltip || 'Bookmark page',
-              removeBookmarkTooltip: placeholders?.userActionRemoveBookmarkTooltip || 'Remove Bookmark',
-              signInToBookmarkTooltip: placeholders?.userActionSigninBookmarkTooltip || 'Sign-in to bookmark',
-            },
-          }),
-        onButtonClick: (element) =>
-          bookmarkHandler({
-            element,
-            id,
-            bookmarkPath,
-            tooltips: {
-              bookmarkToastText:
-                placeholders?.userActionBookmarkToastText || 'Success! This is bookmarked to your profile.',
-              removeBookmarkToastText:
-                placeholders?.userActionRemoveBookmarkToastText ||
-                'Success! This is no longer bookmarked to your profile.',
-              profileNotUpdated:
-                placeholders?.profileNotUpdated ||
-                'An error occurred during profile update. Please try again at a later time.',
-            },
-            trackingInfo,
-            callback: bookmarkCallback,
-          }),
-      });
+      // Detect PL content: use contentType if provided, otherwise fallback to id format check
+      const isPLContent =
+        config.contentType === PL_CONTENT_TYPES.COURSE.MAPPING_KEY ||
+        config.contentType === PL_CONTENT_TYPES.COHORT.MAPPING_KEY;
+
+      if (isPLContent) {
+        actionDefinitions.push({
+          name: 'bookmark',
+          icons: bookmarkConfig?.icons || ['bookmark', 'bookmark-active-white'],
+          label: bookmarkConfig?.label,
+          onButtonReady: (element) =>
+            decoratePremiumLearningBookmark({
+              element,
+              loId: id,
+              tooltips: {
+                bookmarkTooltip: placeholders?.userActionBookmarkTooltip || 'Bookmark',
+                removeBookmarkTooltip: placeholders?.userActionRemoveBookmarkTooltip || 'Remove Bookmark',
+                signInToBookmarkTooltip: placeholders?.userActionSigninBookmarkTooltip || 'Sign in to bookmark',
+              },
+            }),
+          onButtonClick: (element) =>
+            premiumLearningBookmarkHandler({
+              element,
+              loId: id,
+              tooltips: {
+                bookmarkToastText: placeholders?.userActionBookmarkToastText || 'Successfully bookmarked',
+                removeBookmarkToastText: placeholders?.userActionRemoveBookmarkToastText || 'Bookmark removed',
+                profileNotUpdated: 'Failed to update bookmark',
+                signInRequired: 'Please sign in to bookmark',
+              },
+              callback: bookmarkCallback,
+            }),
+        });
+      } else {
+        actionDefinitions.push({
+          name: 'bookmark',
+          icons: bookmarkConfig?.icons || ['bookmark', 'bookmark-active'],
+          label: bookmarkConfig?.label,
+          onButtonReady: (element) =>
+            decorateBookmark({
+              element,
+              id,
+              bookmarkPath,
+              tooltips: {
+                bookmarkTooltip: placeholders?.userActionBookmarkTooltip || 'Bookmark page',
+                removeBookmarkTooltip: placeholders?.userActionRemoveBookmarkTooltip || 'Remove Bookmark',
+                signInToBookmarkTooltip: placeholders?.userActionSigninBookmarkTooltip || 'Sign-in to bookmark',
+              },
+            }),
+          onButtonClick: (element) =>
+            bookmarkHandler({
+              element,
+              id,
+              bookmarkPath,
+              tooltips: {
+                bookmarkToastText:
+                  placeholders?.userActionBookmarkToastText || 'Success! This is bookmarked to your profile.',
+                removeBookmarkToastText:
+                  placeholders?.userActionRemoveBookmarkToastText ||
+                  'Success! This is no longer bookmarked to your profile.',
+                profileNotUpdated:
+                  placeholders?.profileNotUpdated ||
+                  'An error occurred during profile update. Please try again at a later time.',
+              },
+              trackingInfo,
+              callback: bookmarkCallback,
+            }),
+        });
+      }
     }
 
     if (copyConfig !== false) {

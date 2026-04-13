@@ -18,7 +18,7 @@
   background: var(--color-white);
   border: 1px solid var(--color-gray-200);
   border-radius: 0;
-  overflow: hidden;
+  overflow: visible;
   transition: none;
   color: var(--spectrum-gray-900);
   min-height: auto;
@@ -39,7 +39,7 @@
   height: 197px;
   min-height: 197px;
   max-height: 197px;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 8px;
   background-color: var(--color-gray-100);
 }
@@ -174,10 +174,6 @@
 
 .browse-card.premium-learning-browse-card .premium-learning-card-actions .user-actions button:hover .icon {
   background-color: transparent;
-}
-
-.browse-card.premium-learning-browse-card .premium-learning-card-actions .action-tooltip {
-  display: none;
 }
 
 /* ==========================================================================
