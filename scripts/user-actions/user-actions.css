@@ -114,3 +114,13 @@ button:disabled:hover {
 .user-actions .bookmark[data-bookmarked='true']:hover .remove-bookmark-tooltip {
   display: block;
 }
+
+/* Premium Learning bookmark - hide white icon by default */
+.user-actions .bookmark .icon-bookmark-active-white {
+  display: none;
+}
+
+/* Premium Learning bookmark - when bookmarked, hide regular and show white */
+.user-actions .bookmark[data-bookmarked='true'] .icon-bookmark-active-white {
+  display: block;
+}

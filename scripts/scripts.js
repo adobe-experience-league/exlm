@@ -1456,11 +1456,30 @@ export function setMetadata(name, content) {
 }
 
 /**
- * Update TQ Tags metadata for Coveo
+ * Update Legacy and TQ Tags metadata when isV2TagsEnabled FF is enabled
  * @param {Document} document
  */
-export function updateTQTagsForCoveo() {
-  const keyMapping = {
+export function updateLegacyAndV2Tags() {
+  // First, migrate legacy tags to _v1
+  const legacyToV1Mapping = {
+    role: 'role_v1',
+    level: 'level_v1',
+    'coveo-solution': 'product_v1',
+    feature: 'feature_v1',
+    'sub-feature': 'subfeature_v1',
+    industry: 'industry_v1',
+    topic: 'topic_v1',
+  };
+
+  Object.entries(legacyToV1Mapping).forEach(([legacyKey, v1Key]) => {
+    const value = getMetadata(legacyKey);
+    if (value) {
+      setMetadata(v1Key, value);
+    }
+  });
+
+  // Then, migrate _v2 tags to legacy (without suffix)
+  const v2ToLegacyMapping = {
     role_v2: 'role',
     level_v2: 'level',
     product_v2: 'coveo-solution',
@@ -1470,7 +1489,7 @@ export function updateTQTagsForCoveo() {
     topic_v2: 'topic',
   };
 
-  Object.entries(keyMapping).forEach(([sourceKey, targetKey]) => {
+  Object.entries(v2ToLegacyMapping).forEach(([sourceKey, targetKey]) => {
     const value = getMetadata(sourceKey);
     if (!value) return;
 
@@ -1486,6 +1505,22 @@ export function updateTQTagsForCoveo() {
     }
 
     setMetadata(targetKey, formatted);
+  });
+
+  // Remove _v2 tags after processing
+  const v2TagsToRemove = [
+    'role_v2',
+    'level_v2',
+    'product_v2',
+    'feature_v2',
+    'subfeature_v2',
+    'industry_v2',
+    'topic_v2',
+  ];
+
+  v2TagsToRemove.forEach((tag) => {
+    const metaTags = document.head.querySelectorAll(`meta[name="${tag}"]`);
+    metaTags.forEach((metaTag) => metaTag.remove());
   });
 }
 
@@ -1674,6 +1709,10 @@ async function loadPage() {
     decodeAemCqMetaTags();
     updateTQTagsMetadata();
     decodeAemPageMetaTags();
+
+    if (isFeatureEnabled('isV2TagsEnabled')) {
+      updateLegacyAndV2Tags();
+    }
   }
 
   const { suffix: currentPagePath, lang } = getPathDetails();
@@ -1706,6 +1745,9 @@ async function loadPage() {
    * @returns {Promise<boolean>} True if user is a PL member, false otherwise
    */
   const isPLMember = async () => {
+    if (!isFeatureEnabled('isPremiumLearningEnabled')) {
+      return false;
+    }
     try {
       await window.adobeIMS?.getAccessToken();
       const { default: initializePLAuthentication, isPremiumLearner } = await import('./utils/pl-auth-utils.js');

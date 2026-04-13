@@ -1,0 +1,79 @@
+.premium-learning-bookmarks .premium-learning-bookmarks-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(318px, 1fr));
+  place-items: center;
+  align-items: stretch;
+  gap: 16px;
+  padding-bottom: 32px;
+}
+
+.premium-learning-bookmarks-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: flex-start;
+  padding-bottom: 18px;
+  margin-bottom: 48px;
+  border-bottom: 1px solid var(--spectrum-gray-300);
+}
+
+.premium-learning-bookmarks-content .premium-learning-bookmarks-card,
+.premium-learning-bookmarks-content .premium-learning-bookmarks-card .browse-card {
+  width: 318px;
+}
+
+body.profile
+  .premium-learning-bookmarks-wrapper
+  .premium-learning-bookmarks
+  .premium-learning-bookmarks-header
+  > *:first-child {
+  margin: 0;
+}
+
+body.profile .section:not(.profile-rail-section) > div.premium-learning-bookmarks-wrapper {
+  border: none;
+}
+
+body.profile:not(.profile-home-page)
+  .section:not(.profile-rail-section, .sign-up-flow-section)
+  > div.premium-learning-bookmarks-wrapper {
+  border-top: none;
+}
+
+@media (min-width: 600px) {
+  .premium-learning-bookmarks .premium-learning-bookmarks-content {
+    gap: 32px;
+  }
+
+  .premium-learning-bookmarks-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 26px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--spectrum-gray-300);
+  }
+
+  .premium-learning-bookmarks .browse-card-shimmer {
+    overflow-x: hidden;
+  }
+
+  .premium-learning-bookmarks .browse-card-shimmer-wrapper {
+    margin: 0;
+    border: none;
+  }
+}
+
+@media (min-width: 900px) {
+  .premium-learning-bookmarks .premium-learning-bookmarks-content {
+    grid-template-columns: repeat(auto-fit, minmax(256px, 1fr));
+    place-items: center;
+    align-items: stretch;
+  }
+
+  .premium-learning-bookmarks-content .premium-learning-bookmarks-card,
+  .premium-learning-bookmarks .browse-card-shimmer-wrapper,
+  .premium-learning-bookmarks-content .premium-learning-bookmarks-card .browse-card {
+    width: 256px;
+  }
+}

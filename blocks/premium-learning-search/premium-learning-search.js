@@ -40,11 +40,19 @@ function showFallbackContentInUEMode(blockElement) {
   blockElement.appendChild(contentDiv);
 }
 
+function handleEmptyPremiumLearningSection(section) {
+  if (section && !UEAuthorMode && !section.querySelector('.block')) {
+    section.remove();
+  }
+}
+
 /**
  * Decorate function to process and log the mapped data for premium-learning cards.
  * @param {HTMLElement} block - The block of data to process.
  */
 export default async function decorate(block) {
+  const premiumLearningSection = block.closest('.premium-learning-section');
+
   // Extracting elements from the block in authoring order
   const [headingElement, ctaElement, contentTypeElement] = [...block.children];
 
@@ -88,6 +96,7 @@ export default async function decorate(block) {
       showFallbackContentInUEMode(block);
     } else {
       block.remove();
+      handleEmptyPremiumLearningSection(premiumLearningSection);
     }
     return;
   }
@@ -191,6 +200,7 @@ export default async function decorate(block) {
         buildCardsShimmer.removeShimmer();
         if (!UEAuthorMode) {
           block.remove();
+          handleEmptyPremiumLearningSection(premiumLearningSection);
         } else {
           showFallbackContentInUEMode(block);
         }
@@ -244,6 +254,7 @@ export default async function decorate(block) {
         const premiumSearchWrapper = searchInterfaceElement.querySelector('.atomic-search-premium-search-wrapper');
         if (premiumSearchWrapper) {
           premiumSearchWrapper.appendChild(block);
+          handleEmptyPremiumLearningSection(premiumLearningSection);
         }
       }
     });

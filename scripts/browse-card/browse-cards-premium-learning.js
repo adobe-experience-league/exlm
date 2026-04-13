@@ -69,6 +69,7 @@ function buildPLThumbnail({
   isNew,
   loFormat,
   isCourseCard,
+  contentType,
 }) {
   const cardFigure = document.createElement('div');
   cardFigure.className = 'premium-learning-card-figure';
@@ -114,7 +115,8 @@ function buildPLThumbnail({
     id: bookmarkId,
     bookmarkPath: bookmarkId,
     link: copyLink,
-    bookmarkConfig: false,
+    contentType,
+    bookmarkConfig: true,
     copyConfig: { icons: ['copy-white-fill'] },
   });
 
@@ -227,6 +229,7 @@ export async function buildPLCard(element, model) {
     isNew: meta?.isNew,
     loFormat: meta?.loFormat,
     isCourseCard,
+    contentType,
   });
 
   // Add rating overlay to thumbnail for both courses and cohorts

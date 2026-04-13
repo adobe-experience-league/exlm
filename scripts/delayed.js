@@ -6,7 +6,7 @@ import loadQualtrics from './qualtrics.js';
 import { sendCoveoPageViewEvent } from './coveo-analytics.js';
 import { loadPrism } from './utils/prism-utils.js';
 // eslint-disable-next-line import/no-cycle
-import { getConfig, isDocPage, isHomePage, loadIms } from './scripts.js';
+import { getConfig, loadIms } from './scripts.js';
 
 // add more delayed functionality here
 
@@ -31,15 +31,20 @@ async function isAdobeEmployee() {
   }
 }
 
+/** Paths like /en/support, /fr/premium (communities use a separate origin). */
+function isBrandConciergeExcludedPath() {
+  const { pathname } = window.location;
+  return /^\/[^/]+\/(support|premium)(\/|$)/i.test(pathname) || /^\/(support|premium)(\/|$)/i.test(pathname);
+}
+
 /**
  * Loads Brand Concierge on eligible page types.
  * Guards:
- *   - ?bc=on         → must be present to enable BC at all (opt-in POC flag)
+ *   - hidden on Support and Premium Learning routes
  *   - bcAuthRequired → when true, user must be signed in AND be an @adobe.com employee
  */
 async function loadBrandConcierge() {
-  if (!window.location.search?.includes('bc=on')) return;
-  if (!isDocPage && !isHomePage) return;
+  if (isBrandConciergeExcludedPath()) return;
 
   const { bcAuthRequired } = getConfig();
   if (bcAuthRequired) {

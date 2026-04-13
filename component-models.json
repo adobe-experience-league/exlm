@@ -2087,6 +2087,40 @@
         "description": "Subtitle text shown below the heading, e.g. 'Recommended learning based on your activity and progress.'"
       },
       {
+        "component": "select",
+        "name": "cta1_Type",
+        "value": "primary",
+        "label": "First CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_linkText",
+        "value": "",
+        "label": "First CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_link",
+        "value": "",
+        "label": "First CTA Link",
+        "description": "What link to open when clicking the button."
+      },
+      {
         "component": "multiselect",
         "valueType": "string",
         "name": "contentType",
@@ -2158,6 +2192,40 @@
         "value": "",
         "label": "Description",
         "description": "Description text displayed below the heading."
+      },
+      {
+        "component": "select",
+        "name": "cta1_Type",
+        "value": "primary",
+        "label": "First CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_linkText",
+        "value": "",
+        "label": "First CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_link",
+        "value": "",
+        "label": "First CTA Link",
+        "description": "What link to open when clicking the button."
       },
       {
         "component": "multiselect",
@@ -10550,6 +10618,58 @@
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl",
         "description": "Select the product for which courses/cohorts should be displayed."
+      }
+    ]
+  },
+  {
+    "id": "premium-learning-bookmarks",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h3",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description"
       }
     ]
   }

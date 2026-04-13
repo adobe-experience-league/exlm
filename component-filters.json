@@ -70,8 +70,6 @@
       "columns",
       "icon-block",
       "curated-cards",
-      "premium-learning-browse-cards",
-      "premium-learning-recommended-content",
       "premium-learning-search",
       "teaser",
       "detailed-teaser",
@@ -439,7 +437,8 @@
       "premium-learning-search",
       "premium-learning-browse-cards",
       "premium-learning-suggested-content",
-      "premium-learning-recommended-content"
+      "premium-learning-recommended-content",
+      "premium-learning-bookmarks"
     ]
   },
   {

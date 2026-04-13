@@ -169,6 +169,14 @@
   touch-action: none;
 }
 
+.atomic-search-load-skeleton.atomic-skeleton-partial-results-ready .atomic-load-skeleton-right,
+.atomic-search-load-skeleton.atomic-skeleton-partial-results-ready .atomic-load-mobile-header,
+.atomic-search-load-skeleton.atomic-skeleton-partial-results-ready .atomic-load-facet-header {
+  visibility: hidden;
+  pointer-events: none;
+  touch-action: none;
+}
+
 .atomic-load-skeleton-left .atomic-load-mobile-query {
   margin-bottom: 24px;
   display: flex;
