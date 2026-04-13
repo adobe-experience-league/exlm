@@ -156,10 +156,9 @@ async function renderCards(block, bookmarks) {
  * @param {HTMLElement} block - The block element to decorate
  */
 export default async function decorate(block) {
-  const [headerWrapper, order] = block.children;
+  const [headerWrapper] = block.children;
   const header = headerWrapper?.firstElementChild?.firstElementChild;
   const headerHTML = header?.outerHTML || '<h2>My Bookmarks</h2>';
-  const orderText = order?.textContent || '';
 
   block.innerHTML = '';
 
@@ -167,7 +166,6 @@ export default async function decorate(block) {
     <div>
         <div class="premium-learning-bookmarks-header">
             ${headerHTML}
-            <div>${orderText}</div>
         </div>
     </div>
   `);
