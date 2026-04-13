@@ -10,6 +10,8 @@ permissions:
 
 jobs:
   review:
+    # Only the canonical exlm repo (not exlm-stage or other copies). Includes PRs from forks into exlm.
+    if: github.repository == 'adobe-experience-league/exlm'
     runs-on: ubuntu-latest
     steps:
       # Required: the action runs git against the workspace (e.g. fetch origin/main for trusted files).
