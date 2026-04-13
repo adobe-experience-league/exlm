@@ -10663,13 +10663,6 @@
             "value": "h6"
           }
         ]
-      },
-      {
-        "component": "richtext",
-        "valueType": "string",
-        "name": "description",
-        "value": "",
-        "label": "Description"
       }
     ]
   }
