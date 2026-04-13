@@ -65,7 +65,8 @@
 }
 
 /* Quiz result styles */
-.quiz-scorecard-result {
+.quiz-scorecard-result,
+.quiz-scorecard.error .quiz-scorecard-text {
   font-size: var(--spectrum-font-size-1100);
   font-weight: var(--font-weight-bold);
   line-height: 1.2;
