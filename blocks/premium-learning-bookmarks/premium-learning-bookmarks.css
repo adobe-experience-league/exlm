@@ -44,7 +44,6 @@ body.profile:not(.profile-home-page)
   .premium-learning-bookmarks-header {
     padding-bottom: 26px;
     margin-bottom: 32px;
-    border-bottom: 1px solid var(--spectrum-gray-300);
   }
 
   .premium-learning-bookmarks .browse-card-shimmer {
