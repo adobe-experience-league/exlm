@@ -1,5 +1,6 @@
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { getMetadata } from '../../scripts/lib-franklin.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 function getPreferredMetadata(tqMetaKey, locLegacyMetaKey, legacyMetaKey) {
   return getMetadata(tqMetaKey) || getMetadata(locLegacyMetaKey) || getMetadata(legacyMetaKey);
@@ -15,19 +16,40 @@ export default async function decorate(block) {
   }
 
   const coveosolutions = getMetadata('coveo-solution');
-  const solutions =
-    [
-      ...new Set(
-        coveosolutions.split(';').map((item) => {
-          const parts = item.split('|');
-          return parts.length > 1 ? parts[1].trim() : item.trim();
-        }),
-      ),
-    ].join(',') || getMetadata('product_v2');
+  let solutions;
+  let roles;
+  let features;
+  let experienceLevels;
 
-  const features = getPreferredMetadata('loc-feature', 'feature', 'feature_v2');
-  const roles = getPreferredMetadata('loc-role', 'role', 'role_v2');
-  const experienceLevels = getPreferredMetadata('loc-level', 'level', 'level_v2');
+  if (isFeatureEnabled('isV2TagsEnabled')) {
+    solutions =
+      [
+        ...new Set(
+          coveosolutions.split(';').map((item) => {
+            const parts = item.split('|');
+            return parts.length > 1 ? parts[1].trim() : item.trim();
+          }),
+        ),
+      ].join(',') || getMetadata('product_v1');
+
+    features = getPreferredMetadata('feature', 'feature_v1');
+    roles = getPreferredMetadata('role', 'role_v1');
+    experienceLevels = getPreferredMetadata('level', 'level_v1');
+  } else {
+    solutions =
+      [
+        ...new Set(
+          coveosolutions.split(';').map((item) => {
+            const parts = item.split('|');
+            return parts.length > 1 ? parts[1].trim() : item.trim();
+          }),
+        ),
+      ].join(',') || getMetadata('product_v2');
+
+    features = getPreferredMetadata('loc-legacy-feature', 'feature', 'feature_v2');
+    roles = getPreferredMetadata('loc-legacy-role', 'role', 'role_v2');
+    experienceLevels = getPreferredMetadata('loc-legacy-level', 'level', 'level_v2');
+  }
 
   function createTagsHTML(values) {
     return values

@@ -1,6 +1,20 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 @import '../../scripts/browse-card/browse-card.css';
 
+.premium-learning-recommended-content .premium-learning-recommended-content-header {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spectrum-spacing-300);
+  margin-top: 20px;
+}
+
+.premium-learning-recommended-content .premium-learning-recommended-content-description {
+  color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-200);
+  margin-top: var(--spectrum-spacing-100);
+}
+
 .premium-learning-recommended-content .premium-learning-tabs-wrapper {
   margin: var(--spectrum-spacing-300) 0 0;
 }
@@ -13,6 +27,12 @@
   .premium-learning-recommended-content .custom-filter-dropdown {
     min-width: 360px;
     width: fit-content;
+  }
+
+  .premium-learning-recommended-content .premium-learning-recommended-content-header {
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
   }
 }
 
