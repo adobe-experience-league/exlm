@@ -8,10 +8,6 @@
 }
 
 .premium-learning-bookmarks-header {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  justify-content: flex-start;
   padding-bottom: 18px;
   margin-bottom: 48px;
   border-bottom: 1px solid var(--spectrum-gray-300);
@@ -46,12 +42,8 @@ body.profile:not(.profile-home-page)
   }
 
   .premium-learning-bookmarks-header {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
     padding-bottom: 26px;
     margin-bottom: 32px;
-    border-bottom: 1px solid var(--spectrum-gray-300);
   }
 
   .premium-learning-bookmarks .browse-card-shimmer {
