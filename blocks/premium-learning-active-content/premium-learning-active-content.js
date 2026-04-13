@@ -1,122 +1,264 @@
-import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { getConfig } from '../../scripts/lib-franklin.js';
-import { buildCard } from '../../scripts/browse-card/browse-card.js';
-import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
+import { createTag, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
-import { fetchUserEnrollments } from '../../scripts/data-service/premium-learning-data-service.js';
-import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
+import {
+  fetchUserEnrollments,
+  fetchCohortProgress,
+  getEngagementBoardId,
+  fetchBoardPosts,
+} from '../../scripts/data-service/premium-learning-data-service.js';
+import { buildCard } from '../../scripts/browse-card/browse-card.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+const placeholders = await fetchLanguagePlaceholders().catch(() => ({}));
+const config = getConfig();
+const { getPathDetails } = await import('../../scripts/scripts.js');
+const pathDetails = getPathDetails();
 
-function showFallbackContentInUEMode(blockElement) {
-  const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
-  contentDiv.textContent =
-    'This block will load the Premium learning active content (enrolled cohorts) for Premium users only.';
-  blockElement.appendChild(contentDiv);
+function calculateTotalReplies(postsData) {
+  if (!postsData?.data) return 0;
+  const posts = postsData.data.length;
+  const comments = postsData.data.reduce((sum, post) => sum + (post.attributes?.commentCount || 0), 0);
+  return posts + comments;
 }
 
-/**
- * Decorate function to display premium-learning-active-content with enrolled cohorts.
- * @param {HTMLElement} block - The block of data to process.
- */
-export default async function decorate(block) {
-  // Extracting elements from the block in authoring order
-  const [headingElement, descriptionElement, ctaElement] = [...block.children];
+function extractProgressData(cohortData) {
+  if (!cohortData?.data) return null;
 
-  // Clearing the block's content
-  block.innerHTML = '';
-  block.classList.add('browse-cards-block', 'premium-learning-active-content-block');
+  const { data, included = [] } = cohortData;
+  const lpEnrollment = included.find(
+    (item) =>
+      item.type === 'learningObjectInstanceEnrollment' && item.relationships?.learningObject?.data?.id === data.id,
+  );
 
-  // Create header section with heading, description and CTA
-  const headerDiv = document.createElement('div');
-  headerDiv.className = 'premium-learning-active-content-block-header';
-  headerDiv.innerHTML = `
-    <div class="premium-learning-active-content-block-title">
-      ${headingElement?.innerHTML || ''}
+  const progress = lpEnrollment?.attributes?.progressPercent || 0;
+  const totalWeeks = data.attributes?.sections?.length || 0;
+
+  const resourceGrades = included.filter((item) => item.type === 'learningObjectResourceGrade');
+  const totalModules = resourceGrades.length;
+  const completedModules = resourceGrades.filter((g) => g.attributes?.completed).length;
+  const modulesRemaining = Math.max(0, totalModules - completedModules);
+  const currentWeek = totalWeeks > 0 ? Math.ceil((progress / 100) * totalWeeks) || 1 : 1;
+
+  return { progress, currentWeek, totalWeeks, modulesRemaining, totalModules, completedModules };
+}
+
+async function buildCarouselSlide(cardData, cohortId, instanceId, progressData, totalReplies) {
+  const slide = createTag('div', { class: 'carousel-slide' });
+
+  const cohortCardWrapper = createTag('div', { class: 'cohort-card-wrapper' });
+  await buildCard(cohortCardWrapper, cardData);
+
+  // Add metadata below title: Week X of Y • Level • Rating
+  const titleElement = cohortCardWrapper.querySelector('.premium-learning-card-title');
+  const { duration, level, rating } = cardData.meta || {};
+
+  const metaParts = [duration, level, rating?.average > 0 ? `${rating.average.toFixed(1)} ★` : null].filter(Boolean);
+
+  if (titleElement && metaParts.length > 0) {
+    const metaElement = createTag('p', { class: 'premium-learning-card-meta-text' });
+    metaElement.textContent = metaParts.join(' • ');
+    titleElement.insertAdjacentElement('afterend', metaElement);
+  }
+
+  slide.appendChild(cohortCardWrapper);
+
+  const progressCard = buildProgressCard(cardData, progressData, totalReplies);
+  slide.appendChild(progressCard);
+
+  return slide;
+}
+
+function buildProgressCard(cardData, progressData, totalReplies = 0) {
+  const progress = progressData?.progress ?? 0;
+  const currentWeek = progressData?.currentWeek ?? 1;
+  const totalWeeks = progressData?.totalWeeks ?? 1;
+  const modulesRemaining = progressData?.modulesRemaining ?? 0;
+  const totalModules = progressData?.totalModules ?? 0;
+
+  const progressCard = createTag('div', { class: 'progress-card' });
+
+  // Build current focus section
+  const focusSection = `
+    <div class="focus-section">
+      <div class="status-label">Current focus</div>
+      <div class="status-detail">Week ${currentWeek} of ${totalWeeks}</div>
       ${
-        descriptionElement?.innerHTML
-          ? `<div class="premium-learning-active-content-block-description">${descriptionElement.innerHTML}</div>`
+        totalModules > 0
+          ? `<ul class="status-list"><li>${modulesRemaining} ${
+              modulesRemaining === 1 ? 'module' : 'modules'
+            } remaining</li></ul>`
           : ''
       }
     </div>
-    <div class="premium-learning-active-content-block-cta">
-      ${ctaElement?.innerHTML ? decorateCustomButtons(ctaElement) : ''}
+  `;
+
+  // Build activity section with total replies (only show if replies exist)
+  const activitySection =
+    totalReplies > 0
+      ? `
+    <div class="activity-section">
+      <div class="status-label">Activity</div>
+      <div class="status-replies">${totalReplies} total ${totalReplies === 1 ? 'reply' : 'replies'}</div>
+    </div>
+  `
+      : '';
+
+  progressCard.innerHTML = `
+  <div class="progress-card-content">
+    <h4>Your cohort status</h4>
+      <div class="progress-section">
+        <div class="status-label">Overall progress</div>
+        <div class="progress-bar-wrapper">
+          <div class="progress-bar-container">
+            <div class="progress-bar" style="width: ${progress}%"></div>
+          </div>
+          <div class="progress-text">${progress}%</div>
+        </div>
+      </div>
+    ${focusSection}
+    ${activitySection}
+    <p class="button-container"><a href="${cardData?.viewLink}" class="button">Go to cohort</a></p>
+    </div>
+  `;
+
+  return progressCard;
+}
+
+/**
+ * Initialize carousel navigation with ResizeObserver
+ * Carousel only active on desktop (≥600px), stacked on mobile
+ */
+function initCarousel(container) {
+  const track = container.querySelector('.carousel-track');
+  const slides = track.querySelectorAll('.carousel-slide');
+  const prevBtn = container.querySelector('.carousel-btn.prev');
+  const nextBtn = container.querySelector('.carousel-btn.next');
+
+  let currentIndex = 0;
+
+  const updateCarousel = () => {
+    const isMobile = window.innerWidth < 600;
+
+    if (isMobile) {
+      track.style.transform = 'none';
+      currentIndex = 0;
+    } else {
+      const slideWidth = slides[0].offsetWidth;
+      track.style.transform = `translateX(-${currentIndex * (slideWidth + 24)}px)`;
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === slides.length - 1;
+    }
+  };
+
+  prevBtn.addEventListener('click', () => {
+    if (window.innerWidth >= 600 && currentIndex > 0) {
+      currentIndex -= 1;
+      updateCarousel();
+    }
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if (window.innerWidth >= 600 && currentIndex < slides.length - 1) {
+      currentIndex += 1;
+      updateCarousel();
+    }
+  });
+
+  new ResizeObserver(updateCarousel).observe(container);
+  updateCarousel();
+}
+
+/**
+ * Decorate function
+ */
+export default async function decorate(block) {
+  const [headingElement, descriptionElement, ctaElement] = [...block.children];
+
+  block.innerHTML = '';
+
+  const description = descriptionElement?.innerHTML
+    ? `<div class="premium-learning-active-content-header-description">${descriptionElement.innerHTML}</div>`
+    : '';
+  const cta = ctaElement?.innerHTML ? decorateCustomButtons(ctaElement) : '';
+
+  const headerDiv = createTag('div', { class: 'premium-learning-active-content-header' });
+  headerDiv.innerHTML = `
+    <div class="premium-learning-active-content-header-content">
+      <div class="premium-learning-active-content-header-text">
+        ${headingElement?.innerHTML || ''}
+        ${description}
+      </div>
+      <div class="premium-learning-active-content-cta">
+        ${cta}
+      </div>
     </div>
   `;
   block.appendChild(headerDiv);
 
-  const placeholders = await fetchLanguagePlaceholders().catch(() => ({}));
-  const config = getConfig();
-  const noOfResults = 10;
-
-  // Show shimmer while loading
-  const buildCardsShimmer = new BrowseCardShimmer(4, 'premium-learning-cohort');
-  buildCardsShimmer.addShimmer(block);
-
   try {
-    // Fetch enrolled cohorts (learningProgram)
-    const enrollmentData = await fetchUserEnrollments(config, 'learningProgram', noOfResults);
+    const enrollmentData = await fetchUserEnrollments(
+      config,
+      'learningProgram',
+      10,
+      'learningObject,learningObject.instances',
+    );
 
-    buildCardsShimmer.removeShimmer();
+    // Get ALL enrolled cohorts (no filtering)
+    const allEnrollments = enrollmentData?.data || [];
+    const enrolledLearningObjects = enrollmentData?.included?.filter((item) => item.type === 'learningObject') || [];
 
-    if (enrollmentData?.data?.length) {
-      // Extract learning object IDs from enrollments
-      const enrolledCohortIds = enrollmentData.data
-        .map((enrollment) => enrollment.relationships?.learningObject?.data?.id)
-        .filter(Boolean);
+    // Map to card data
+    const { default: BrowseCardsPLAdaptor } = await import(
+      '../../scripts/browse-card/browse-cards-premium-learning-adaptor.js'
+    );
+    const cardsData = await BrowseCardsPLAdaptor.mapResultsToCardsData({
+      data: enrolledLearningObjects,
+      included: enrollmentData.included,
+    });
 
-      if (enrolledCohortIds.length > 0) {
-        // Fetch full card data for these cohorts using BrowseCardsDelegate
-        const cardDataPromises = enrolledCohortIds.slice(0, 4).map(async (cohortId) => {
-          // Fetch individual cohort data - you may need to adjust this based on your API
-          const cohortData = await BrowseCardsDelegate.fetchCardData({
-            contentType: 'premium-learning-cohort',
-            noOfResults: 1,
-            cohortId,
-          });
-          return cohortData?.[0];
-        });
+    // Build carousel
+    const carouselContainer = createTag('div', { class: 'carousel-container' });
+    const carouselTrack = createTag('div', { class: 'carousel-track' });
 
-        const cardsData = (await Promise.all(cardDataPromises)).filter(Boolean);
+    for (let i = 0; i < cardsData.length; i += 1) {
+      const cohortId = enrolledLearningObjects[i]?.id;
+      const instanceId = allEnrollments[i]?.relationships?.loInstance?.data?.id;
 
-        if (cardsData.length > 0) {
-          const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
-          for (let i = 0; i < cardsData.length; i += 1) {
-            const cardData = cardsData[i];
-            const cardDiv = document.createElement('div');
-            await buildCard(cardDiv, cardData);
-            contentDiv.appendChild(cardDiv);
-          }
-          block.appendChild(contentDiv);
-        } else {
-          // Show no results message
-          const noResultsDiv = createTag('div', { class: 'premium-learning-active-content-no-results' });
-          noResultsDiv.textContent =
-            placeholders.premiumLearningActiveContentNoResults || 'No active enrolled content available at this time.';
-          block.appendChild(noResultsDiv);
-        }
-      } else {
-        // No enrolled cohorts
-        const noResultsDiv = createTag('div', { class: 'premium-learning-active-content-no-results' });
-        noResultsDiv.textContent =
-          placeholders.premiumLearningActiveContentNoResults || 'No active enrolled content available at this time.';
-        block.appendChild(noResultsDiv);
+      const boardId = await getEngagementBoardId(cohortId, instanceId);
+      const boardPostsData = await fetchBoardPosts(boardId);
+      const totalReplies = calculateTotalReplies(boardPostsData);
+
+      const cohortProgressData = await fetchCohortProgress(cohortId);
+      const progressData = extractProgressData(cohortProgressData);
+
+      // Inject progress data as duration in card meta
+      const cardData = cardsData[i];
+      if (progressData && cardData.meta) {
+        cardData.meta.duration = `Week ${progressData.currentWeek} of ${progressData.totalWeeks}`;
       }
-    } else {
-      // No enrollments found
-      const noResultsDiv = createTag('div', { class: 'premium-learning-active-content-no-results' });
-      noResultsDiv.textContent =
-        placeholders.premiumLearningActiveContentNoResults || 'No active enrolled content available at this time.';
-      block.appendChild(noResultsDiv);
+
+      const slide = await buildCarouselSlide(cardData, cohortId, instanceId, progressData, totalReplies);
+      carouselTrack.appendChild(slide);
     }
+
+    carouselContainer.appendChild(carouselTrack);
+    carouselContainer.insertAdjacentHTML(
+      'beforeend',
+      `
+      <div class="carousel-nav">
+        <button class="carousel-btn prev" aria-label="Previous">‹</button>
+        <button class="carousel-btn next" aria-label="Next">›</button>
+      </div>
+    `,
+    );
+
+    block.appendChild(carouselContainer);
+    initCarousel(carouselContainer);
   } catch (err) {
-    buildCardsShimmer.removeShimmer();
     if (!UEAuthorMode) {
       block.remove();
-    } else {
-      showFallbackContentInUEMode(block);
     }
-    /* eslint-disable-next-line no-console */
+    // eslint-disable-next-line no-console
     console.error('Error fetching active content:', err);
   }
 }
