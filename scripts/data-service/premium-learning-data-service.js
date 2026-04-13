@@ -138,7 +138,7 @@ export default class PLDataService {
    */
   buildRequestBody() {
     const { contentType, tagName } = this.queryParams;
-    const { catalogIds } = this.config?.['premium-learning'] ?? {};
+    const catalogIds = this.config?.plPublicCatalogIds;
 
     // Determine learning object types - support both course and cohort
     const loTypes = PLDataService.determineLearningObjectTypes(contentType);
@@ -332,12 +332,19 @@ export default class PLDataService {
   buildSearchRequestBody(hasQuery = false) {
     const { contentType, q, products, solutions, roles, durationRange, learnerState } = this.queryParams;
     const { recommendationProducts } = this.config?.['premium-learning'] ?? {};
+    const catalogIds = this.config?.plPublicCatalogIds;
     const loTypes = PLDataService.determineLearningObjectTypes(contentType);
 
     const body = {
       'filter.loTypes': loTypes,
       'filter.ignoreEnhancedLP': false,
     };
+
+    // Add catalog IDs if configured
+    if (catalogIds) {
+      body['filter.catalogIds'] = Array.isArray(catalogIds) ? catalogIds : [catalogIds];
+    }
+
     if (hasQuery) {
       const { lang } = this.pathDetails;
       const languageCode = lang || 'en-US';
