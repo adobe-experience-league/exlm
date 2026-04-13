@@ -17,7 +17,7 @@ const BATCH_SIZE = 6;
  * @returns {boolean} True if created within 90 days
  */
 function isNewContent(learningObject) {
-  const ONE_DAY_IN_SECONDS = 24 * 60 * 60;
+  const ONE_DAY_IN_SECONDS = 86400;
   const attrs = learningObject.attributes || {};
 
   const createdDate = attrs.dateCreated ? new Date(attrs.dateCreated) : null;
@@ -123,8 +123,8 @@ async function renderCards(block, bookmarks) {
         const cardDiv = shimmerWrappers[index];
         if (cardDiv) {
           const cardModel = transformToCardModel(bookmark);
-          cardDiv.innerHTML = '';
-          cardDiv.className = '';
+          cardDiv.textContent = '';
+          cardDiv.classList.remove('browse-card-shimmer-wrapper-medium-card', 'browse-card-shimmer-wrapper');
           cardDiv.classList.add('premium-learning-bookmarks-card');
           await buildPLCard(cardDiv, cardModel);
 
@@ -166,7 +166,7 @@ export default async function decorate(block) {
   const content = htmlToElement(`
     <div>
         <div class="premium-learning-bookmarks-header">
-            <div>${headerHTML}</div>
+            ${headerHTML}
             <div>${orderText}</div>
         </div>
     </div>
