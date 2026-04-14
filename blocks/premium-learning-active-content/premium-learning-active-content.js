@@ -9,10 +9,6 @@ import {
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
-const placeholders = await fetchLanguagePlaceholders().catch(() => ({}));
-const config = getConfig();
-const { getPathDetails } = await import('../../scripts/scripts.js');
-const pathDetails = getPathDetails();
 
 function calculateTotalReplies(postsData) {
   if (!postsData?.data) return 0;
@@ -42,7 +38,7 @@ function extractProgressData(cohortData) {
   return { progress, currentWeek, totalWeeks, modulesRemaining, totalModules, completedModules };
 }
 
-async function buildCarouselSlide(cardData, cohortId, instanceId, progressData, totalReplies) {
+async function buildCarouselSlide(cardData, progressData, totalReplies, placeholders) {
   const slide = createTag('div', { class: 'carousel-slide' });
 
   const cohortCardWrapper = createTag('div', { class: 'cohort-card-wrapper' });
@@ -86,13 +82,13 @@ async function buildCarouselSlide(cardData, cohortId, instanceId, progressData, 
 
   slide.appendChild(cohortCardWrapper);
 
-  const progressCard = buildProgressCard(cardData, progressData, totalReplies);
+  const progressCard = buildProgressCard(cardData, progressData, totalReplies, placeholders);
   slide.appendChild(progressCard);
 
   return slide;
 }
 
-function buildProgressCard(cardData, progressData, totalReplies = 0) {
+function buildProgressCard(cardData, progressData, totalReplies = 0, placeholders) {
   const progress = progressData?.progress ?? 0;
   const currentWeek = progressData?.currentWeek ?? 1;
   const totalWeeks = progressData?.totalWeeks ?? 1;
@@ -221,6 +217,8 @@ function initCarousel(container) {
  * Decorate function
  */
 export default async function decorate(block) {
+  const placeholders = await fetchLanguagePlaceholders().catch(() => ({}));
+  const config = getConfig();
   const [headingElement, descriptionElement, ctaElement] = [...block.children];
 
   block.innerHTML = '';
@@ -292,26 +290,32 @@ export default async function decorate(block) {
     const carouselContainer = createTag('div', { class: 'carousel-container' });
     const carouselTrack = createTag('div', { class: 'carousel-track' });
 
-    for (let i = 0; i < cardsData.length; i += 1) {
-      const cohortId = enrolledLearningObjects[i]?.id;
-      const instanceId = allEnrollments[i]?.relationships?.loInstance?.data?.id;
+    const slides = await Promise.all(
+      cardsData.map(async (cardData, i) => {
+        const cohortId = enrolledLearningObjects[i]?.id;
+        const enrollment = allEnrollments.find((e) => e.relationships?.learningObject?.data?.id === cohortId);
+        const instanceId = enrollment?.relationships?.loInstance?.data?.id;
 
-      const boardId = await getEngagementBoardId(cohortId, instanceId);
-      const boardPostsData = await fetchBoardPosts(boardId);
-      const totalReplies = calculateTotalReplies(boardPostsData);
+        const [boardId, cohortProgressData] = await Promise.all([
+          getEngagementBoardId(cohortId, instanceId),
+          fetchCohortProgress(cohortId),
+        ]);
 
-      const cohortProgressData = await fetchCohortProgress(cohortId);
-      const progressData = extractProgressData(cohortProgressData);
+        const boardPostsData = await fetchBoardPosts(boardId);
+        const totalReplies = calculateTotalReplies(boardPostsData);
+        const progressData = extractProgressData(cohortProgressData);
 
-      // Include progress data as duration in card meta
-      const cardData = cardsData[i];
-      if (progressData && cardData.meta) {
-        cardData.meta.duration = `Week ${progressData.currentWeek} of ${progressData.totalWeeks}`;
-      }
+        if (progressData && cardData.meta) {
+          cardData.meta.duration = `${placeholders?.premiumLearningWeek || 'Week'} ${progressData.currentWeek} ${
+            placeholders?.of || 'of'
+          } ${progressData.totalWeeks}`;
+        }
 
-      const slide = await buildCarouselSlide(cardData, cohortId, instanceId, progressData, totalReplies);
-      carouselTrack.appendChild(slide);
-    }
+        return buildCarouselSlide(cardData, progressData, totalReplies, placeholders);
+      }),
+    );
+
+    slides.forEach((slide) => carouselTrack.appendChild(slide));
 
     carouselContainer.appendChild(carouselTrack);
     carouselContainer.insertAdjacentHTML(

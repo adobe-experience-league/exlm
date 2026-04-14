@@ -75,8 +75,8 @@
   max-height: 313px;
 }
 
-.browse-card.premium-learning-browse-card .premium-learning-card-figure > img {
-  height: 313px !important;
+.premium-learning-active-content .browse-card.premium-learning-browse-card .premium-learning-card-figure > img {
+  height: 313px;
 }
 
 .premium-learning-active-content .cohort-progress-label {
@@ -106,7 +106,10 @@
   gap: 8px;
 }
 
-.browse-card.premium-learning-browse-card .cohort-labels-wrapper .premium-learning-card-start-label-container {
+.premium-learning-active-content
+  .browse-card.premium-learning-browse-card
+  .cohort-labels-wrapper
+  .premium-learning-card-start-label-container {
   position: static;
   align-items: center;
 }
