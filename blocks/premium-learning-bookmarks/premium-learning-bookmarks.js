@@ -80,6 +80,8 @@ async function renderCards(block, response) {
   });
 }
 
+let onBookmarkChanged = null;
+
 /**
  * Decorates the premium learning bookmarks block
  * @param {HTMLElement} block - The block element to decorate
@@ -108,33 +110,39 @@ export default async function decorate(block) {
   renderCards(block, { data: [], included: [] });
 
   // Fetch and render bookmarks
-  fetchPremiumLearningBookmarks().then((response) => {
-    const { data: bookmarks = [] } = response;
+  fetchPremiumLearningBookmarks()
+    .then((response) => {
+      const { data: bookmarks = [] } = response;
 
-    if (bookmarks.length === 0) {
-      // Remove shimmer content when there are no bookmarks
-      block.querySelector('.premium-learning-bookmarks-content')?.remove();
-      block.classList.add('pl-bookmarks-empty');
-      return;
-    }
-
-    // Store bookmarks in event emitter for potential updates
-    bookmarksEventEmitter.set('bookmark_data', response);
-
-    // Listen for bookmark changes
-    bookmarksEventEmitter.on('bookmark_changed', async () => {
-      const updatedBookmarks = await fetchPremiumLearningBookmarks();
-      const existingContent = block.querySelector('.premium-learning-bookmarks-content');
-      if (!updatedBookmarks?.data || updatedBookmarks.data.length === 0) {
-        if (existingContent) existingContent.remove();
+      if (bookmarks.length === 0) {
+        // Remove shimmer content when there are no bookmarks
+        block.querySelector('.premium-learning-bookmarks-content')?.remove();
         block.classList.add('pl-bookmarks-empty');
-      } else {
-        block.classList.remove('pl-bookmarks-empty');
-        await renderCards(block, updatedBookmarks);
+        return;
       }
-    });
 
-    // Render actual cards
-    renderCards(block, response);
-  });
+      // Store bookmarks in event emitter for potential updates
+      bookmarksEventEmitter.set('bookmark_data', response);
+
+      // Listen for bookmark changes
+      onBookmarkChanged = async () => {
+        const updatedBookmarks = await fetchPremiumLearningBookmarks();
+        const existingContent = block.querySelector('.premium-learning-bookmarks-content');
+        if (!updatedBookmarks?.data || updatedBookmarks.data.length === 0) {
+          if (existingContent) existingContent.remove();
+          block.classList.add('pl-bookmarks-empty');
+        } else {
+          block.classList.remove('pl-bookmarks-empty');
+          await renderCards(block, updatedBookmarks);
+        }
+      };
+      bookmarksEventEmitter.on('bookmark_changed', onBookmarkChanged);
+
+      // Render actual cards
+      renderCards(block, response);
+    })
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Error loading PL bookmarks:', err);
+    });
 }
