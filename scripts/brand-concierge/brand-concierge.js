@@ -1,8 +1,8 @@
 // eslint-disable-next-line import/no-cycle
-import { getConfig } from '../scripts.js';
+import { getConfig, getPathDetails } from '../scripts.js';
 import { loadScript, decorateIcon } from '../lib-franklin.js';
 import { openDrawer } from '../dialog/dialog.js';
-import brandConciergeConfig from './brand-concierge-config.js';
+import brandConciergeConfig, { resolveBrandConciergeLocale } from './brand-concierge-config.js';
 
 // Separate alloy instance avoids conflicting with the Launch-owned window.alloy.
 const ALLOY_INSTANCE_NAME = 'alloyBC';
@@ -27,6 +27,56 @@ let drawerHandle = null;
 let chatObserver = null;
 let inputLabelIconObserver = null;
 let panelDisclaimerObserver = null;
+
+let bcFetchInterceptorInstalled = false;
+/** @type {typeof fetch | null} */
+let bcOriginalFetch = null;
+
+/**
+ * Optional Edge interact URL rewrite (POC pattern) when a locale defines interceptDatastreamId.
+ * Must run before alloy.min.js loads.
+ */
+function installBcEdgeFetchInterceptor(datastreamId, interceptDatastreamId) {
+  if (!interceptDatastreamId || !datastreamId || bcFetchInterceptorInstalled) return;
+  bcOriginalFetch = window.fetch.bind(window);
+  bcFetchInterceptorInstalled = true;
+  const src = `configId=${datastreamId}`;
+  const dst = `configId=${interceptDatastreamId}`;
+  window.fetch = (url, options) => {
+    let nextUrl = url;
+    if (
+      typeof nextUrl === 'string'
+      && nextUrl.includes('edge.adobedc.net')
+      && nextUrl.includes('/v1/interact')
+      && nextUrl.includes(src)
+    ) {
+      nextUrl = nextUrl.replace(src, dst);
+    }
+    return bcOriginalFetch(nextUrl, options);
+  };
+}
+
+function removeBcEdgeFetchInterceptor() {
+  if (bcFetchInterceptorInstalled && bcOriginalFetch) {
+    window.fetch = bcOriginalFetch;
+    bcOriginalFetch = null;
+    bcFetchInterceptorInstalled = false;
+  }
+}
+
+/** Merge path-locale overlays (text, arrays, metadata.language) onto base BC config. */
+function buildStylingConfigurations(locale, base) {
+  const { stickySession: _s, ...rest } = base;
+  return {
+    ...rest,
+    metadata: {
+      ...rest.metadata,
+      ...(locale.language ? { language: locale.language } : {}),
+    },
+    text: { ...rest.text, ...locale.text },
+    arrays: { ...rest.arrays, ...locale.arrays },
+  };
+}
 
 /**
  * BC renders inline SVG sparkles in several places; swap them for icons/bc-ask-sparkles.svg.
@@ -233,13 +283,11 @@ async function configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain) {
   await window[ALLOY_INSTANCE_NAME]('sendEvent', {});
 }
 
-function bootstrapWebClient() {
+function bootstrapWebClient(stylingConfigurations, stickySession) {
   if (typeof window.adobe?.concierge?.bootstrap !== 'function') {
     warn('bootstrap not available — confirm the datastream is enabled for Brand Concierge');
     return;
   }
-
-  const { stickySession = false, ...stylingConfigurations } = brandConciergeConfig;
 
   log('bootstrap called', { instanceName: ALLOY_INSTANCE_NAME, selector: MOUNT_SELECTOR });
 
@@ -272,6 +320,7 @@ function injectAlloyStub() {
 
 /** Call on SPA navigation to prevent the UI persisting across page transitions. */
 export function destroyBrandConcierge() {
+  removeBcEdgeFetchInterceptor();
   chatObserver?.disconnect();
   chatObserver = null;
   inputLabelIconObserver?.disconnect();
@@ -287,20 +336,32 @@ export function destroyBrandConcierge() {
 
 export async function initBrandConcierge() {
   const { bcAlloySdkUrl, bcDatastreamId, bcOrgId, bcWebClientUrl, bcEdgeDomain } = getConfig();
+  const { lang: pathLang } = getPathDetails();
+  const locale = resolveBrandConciergeLocale(pathLang);
+  const resolvedDatastreamId = locale.datastreamId ?? bcDatastreamId;
+
+  installBcEdgeFetchInterceptor(resolvedDatastreamId, locale.interceptDatastreamId);
+
+  const { stickySession = false } = brandConciergeConfig;
+  const stylingConfigurations = buildStylingConfigurations(locale, brandConciergeConfig);
 
   createMountPoint();
   injectAlloyStub();
 
   try {
-    log('[BC] loading Web SDK (alloyBC instance)', { bcEdgeDomain, bcDatastreamId });
+    log('[BC] loading Web SDK (alloyBC instance)', {
+      bcEdgeDomain,
+      bcDatastreamId: resolvedDatastreamId,
+      locale: locale.key,
+    });
     await loadScript(bcAlloySdkUrl);
-    await configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain);
+    await configureWebSdk(resolvedDatastreamId, bcOrgId, bcEdgeDomain);
     log('[BC] Web SDK configured');
 
     log('[BC] loading Web Client', bcWebClientUrl);
     await loadScript(bcWebClientUrl);
     log('[BC] Web Client loaded — calling bootstrap');
-    bootstrapWebClient();
+    bootstrapWebClient(stylingConfigurations, stickySession);
     log('[BC] bootstrapWebClient called');
     const bcMount = document.getElementById('brand-concierge-mount');
     chatObserver = watchChatHistory(bcMount);
