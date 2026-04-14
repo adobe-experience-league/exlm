@@ -96,7 +96,9 @@ export default async function decorate(block) {
     .then(async (responseData) => {
       // Transform API response using adaptor
       const cardModels = await BrowseCardsPLAdaptor.mapResultsToCardsData(
-        responseData?.data ? responseData : { data: [], included: [] },
+        responseData?.data?.length
+          ? { data: responseData.data, included: responseData.included ?? [] }
+          : { data: [], included: [] },
       );
 
       if (cardModels.length === 0) {
@@ -114,7 +116,9 @@ export default async function decorate(block) {
         try {
           const updatedResponseData = await fetchPremiumLearningBookmarks();
           const updatedCardModels = await BrowseCardsPLAdaptor.mapResultsToCardsData(
-            updatedResponseData?.data ? updatedResponseData : { data: [], included: [] },
+            updatedResponseData?.data?.length
+              ? { data: updatedResponseData.data, included: updatedResponseData.included ?? [] }
+              : { data: [], included: [] },
           );
           const existingContent = block.querySelector('.premium-learning-bookmarks-content');
           if (updatedCardModels.length === 0) {
