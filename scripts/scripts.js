@@ -781,6 +781,12 @@ export function getConfig() {
     ['en', 'en'],
     ['it', 'it'],
   ]);
+  const bcDatastreamIds = new Map([
+    ['en', { id: '87ae6de9-a49c-4734-a88a-17ec707ded09' }],
+    ['zh-hans', { id: 'exl-bc-multilingual-test-zh-hans', interceptId: '9899e6af-7021-4b72-87a6-fee1584078a0' }],
+    ['fr', { id: '1ff7592c-77b2-49c4-8599-f70b99c969e1' }],
+    ['pt-br', { id: '8c0ae8f8-d82c-4cc8-ac2a-30cb1009d4f8' }],
+  ]);
   const cookieConsentName = 'OptanonConsent';
   const targetCriteriaIds = {
     mostPopular: 'exl-hp-auth-recs-2',
@@ -892,14 +898,14 @@ export function getConfig() {
     eventsURL: `${cdnOrigin}/${lang}/events`,
     // Premium Learning home (for premium learner nav link)
     premiumHomeUrl: `${cdnOrigin}/${lang}/premium/home`,
-    // Brand Concierge
-    bcDatastreamId: '87ae6de9-a49c-4734-a88a-17ec707ded09',
+    // Brand Concierge — per-language datastream routing (Approach 2)
+    bcDatastreamId: (bcDatastreamIds.get(lang) || { id: '87ae6de9-a49c-4734-a88a-17ec707ded09' }).id,
+    bcDatastreamInterceptId: (bcDatastreamIds.get(lang) || {}).interceptId || null,
     bcOrgId: 'E4722728699EC56A0A495CA2@AdobeOrg',
-    bcAlloySdkUrl: 'https://cdn1.adoberesources.net/alloy/2.31.1/alloy.min.js',
-    bcWebClientUrl:
-      'https://experience.adobe.net/solutions/experience-platform-brand-concierge-web-agent/static-assets/main.js',
+    bcAlloySdkUrl: 'http://localhost:8081/alloy.min.js',
+    bcWebClientUrl: 'http://localhost:8081/main.js',
     bcEdgeDomain: 'edge.adobedc.net',
-    bcAuthRequired: true,
+    bcAuthRequired: false,
   };
   return window.exlm.config;
 }

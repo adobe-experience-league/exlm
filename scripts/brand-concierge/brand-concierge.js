@@ -285,10 +285,35 @@ export function destroyBrandConcierge() {
   cssLinkEl = null;
 }
 
+/**
+ * For locales that use a named datastream ID (e.g. zh-hans), the standard edge
+ * endpoint (/v1/interact) needs the UUID while the BC endpoint
+ * (/brand-concierge/conversations) resolves the named ID on its own.
+ * This interceptor rewrites /v1/interact requests only.
+ */
+function installDatastreamInterceptor(namedId, uuid) {
+  const src = `configId=${namedId}`;
+  const dst = `configId=${uuid}`;
+  const originalFetch = window.fetch;
+  window.fetch = function fetchInterceptor(url, options) {
+    const resolvedUrl = (typeof url === 'string'
+      && url.includes('edge.adobedc.net')
+      && url.includes('/v1/interact')
+      && url.includes(src))
+      ? url.replace(src, dst)
+      : url;
+    return originalFetch.call(this, resolvedUrl, options);
+  };
+}
+
 export async function initBrandConcierge() {
-  const { bcAlloySdkUrl, bcDatastreamId, bcOrgId, bcWebClientUrl, bcEdgeDomain } = getConfig();
+  const { bcAlloySdkUrl, bcDatastreamId, bcDatastreamInterceptId, bcOrgId, bcWebClientUrl, bcEdgeDomain } = getConfig();
 
   createMountPoint();
+  if (bcDatastreamInterceptId) {
+    installDatastreamInterceptor(bcDatastreamId, bcDatastreamInterceptId);
+    log('fetch interceptor installed', { named: bcDatastreamId, uuid: bcDatastreamInterceptId });
+  }
   injectAlloyStub();
 
   try {
