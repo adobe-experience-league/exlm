@@ -290,15 +290,12 @@
     flex-direction: row;
     gap: 24px;
     margin-right: calc(18% + 24px);
+    opacity: 0;
+    pointer-events: none;
   }
 
   .premium-learning-active-content .carousel-slide:last-child {
     margin-right: 0;
-  }
-
-  .premium-learning-active-content .carousel-slide {
-    opacity: 0;
-    pointer-events: none;
   }
 
   .premium-learning-active-content .carousel-slide.active {
