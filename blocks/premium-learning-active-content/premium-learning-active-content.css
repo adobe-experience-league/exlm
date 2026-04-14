@@ -280,32 +280,42 @@
 
   .premium-learning-active-content .carousel-track {
     flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .premium-learning-active-content .carousel-slide {
+    flex: 0 0 calc(50% - 12px);
+    max-width: calc(50% - 12px);
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 900px) {
+  .premium-learning-active-content .carousel-container {
+    overflow: hidden;
+  }
+
+  .premium-learning-active-content .carousel-track {
+    flex-wrap: nowrap;
     gap: 0;
   }
 
   .premium-learning-active-content .carousel-slide {
-    min-width: 82%;
-    max-width: 82%;
-    flex-shrink: 0;
+    min-width: 75%;
+    max-width: 75%;
+    flex: 0 0 75%;
+    margin-right: calc(25% + 24px);
     flex-direction: row;
     gap: 24px;
-    margin-right: calc(18% + 24px);
-    opacity: 0;
-    pointer-events: none;
   }
 
   .premium-learning-active-content .carousel-slide:last-child {
     margin-right: 0;
   }
 
-  .premium-learning-active-content .carousel-slide.active {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
   .premium-learning-active-content .cohort-card-wrapper {
-    flex: 0 0 calc(60% - 12px);
-    width: calc(60% - 12px);
+    flex: 0 0 calc(66.67% - 12px);
+    width: calc(66.67% - 12px);
     min-width: 0;
   }
 
@@ -313,8 +323,8 @@
     display: flex;
     flex-direction: column;
     height: 313px;
-    flex: 0 0 calc(40% - 12px);
-    width: calc(40% - 12px);
+    flex: 0 0 calc(33.33% - 12px);
+    width: calc(33.33% - 12px);
     background: var(--spectrum-gray-50);
     border: 1px solid var(--non-spectrum-unicorn-silver);
     border-radius: 12px;
@@ -327,32 +337,6 @@
     gap: 12px;
     align-items: center;
     position: absolute;
-    left: auto;
-    right: 0;
-    top: 330px;
-    z-index: 10;
-  }
-}
-
-/* Desktop styles */
-@media (min-width: 900px) {
-  .premium-learning-active-content .carousel-slide {
-    min-width: 75%;
-    max-width: 75%;
-    margin-right: calc(25% + 24px);
-  }
-
-  .premium-learning-active-content .cohort-card-wrapper {
-    flex: 0 0 calc(66.67% - 12px);
-    width: calc(66.67% - 12px);
-  }
-
-  .premium-learning-active-content .progress-card {
-    flex: 0 0 calc(33.33% - 12px);
-    width: calc(33.33% - 12px);
-  }
-
-  .premium-learning-active-content .carousel-nav {
     left: calc(75% + 24px);
     right: auto;
     top: 40%;

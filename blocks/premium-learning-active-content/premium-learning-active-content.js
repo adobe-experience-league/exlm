@@ -176,51 +176,38 @@ function initCarousel(container) {
 
   if (slides.length <= 1) {
     if (nav) nav.style.display = 'none';
-    if (slides.length === 1) {
-      slides[0].classList.add('active');
-    }
     return;
   }
 
   const updateCarousel = () => {
-    const isMobile = window.innerWidth < 600;
-    const isTablet = window.innerWidth >= 600 && window.innerWidth < 900;
+    const isDesktop = window.innerWidth >= 900;
 
-    // Mark active slide
-    slides.forEach((slide, index) => {
-      if (index === currentIndex) {
-        slide.classList.add('active');
-      } else {
-        slide.classList.remove('active');
-      }
-    });
-
-    if (isMobile) {
+    if (!isDesktop) {
       track.style.transform = 'none';
       currentIndex = 0;
-      prevBtn.style.display = 'none';
-      nextBtn.style.display = 'none';
-    } else if (slides.length > 0) {
-      const containerWidth = container.offsetWidth;
-      const slideWidth = containerWidth * (isTablet ? 0.82 : 0.75);
-      const spacing = containerWidth * (isTablet ? 0.18 : 0.25) + 24;
-
-      track.style.transform = `translateX(-${currentIndex * (slideWidth + spacing)}px)`;
-
-      prevBtn.style.display = currentIndex === 0 ? 'none' : 'flex';
-      nextBtn.style.display = currentIndex === slides.length - 1 ? 'none' : 'flex';
+      return;
     }
+
+    // Desktop: Carousel behavior
+    const containerWidth = container.offsetWidth;
+    const slideWidth = containerWidth * 0.75;
+    const spacing = containerWidth * 0.25 + 24;
+
+    track.style.transform = `translateX(-${currentIndex * (slideWidth + spacing)}px)`;
+
+    prevBtn.style.display = currentIndex === 0 ? 'none' : 'flex';
+    nextBtn.style.display = currentIndex === slides.length - 1 ? 'none' : 'flex';
   };
 
   prevBtn.addEventListener('click', () => {
-    if (window.innerWidth >= 600 && currentIndex > 0) {
+    if (window.innerWidth >= 900 && currentIndex > 0) {
       currentIndex -= 1;
       updateCarousel();
     }
   });
 
   nextBtn.addEventListener('click', () => {
-    if (window.innerWidth >= 600 && currentIndex < slides.length - 1) {
+    if (window.innerWidth >= 900 && currentIndex < slides.length - 1) {
       currentIndex += 1;
       updateCarousel();
     }
