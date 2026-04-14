@@ -17,30 +17,7 @@ const BATCH_SIZE = 6;
  * @param {Object} response - Response object with data and included arrays
  */
 async function renderCards(block, response) {
-  block.querySelector('.premium-learning-bookmarks-content')?.remove();
-
-  const { data: bookmarks = [], included = [] } = response;
-
-  // Use fixed count and type for shimmer
-  const buildCardsShimmer = new BrowseCardShimmer(
-    bookmarks.length || SHIMMER_COUNT,
-    PL_CONTENT_TYPES.COURSE.MAPPING_KEY,
-  );
-  buildCardsShimmer.addShimmer(block.firstElementChild);
-  buildCardsShimmer.shimmerContainer.classList.add('premium-learning-bookmarks-content');
-
-  const wrapper = block.querySelector('.premium-learning-bookmarks-content');
-
-  // Map to card data using the adaptor
-  const { default: BrowseCardsPLAdaptor } = await import(
-    '../../scripts/browse-card/browse-cards-premium-learning-adaptor.js'
-  );
-  const cardsData = await BrowseCardsPLAdaptor.mapResultsToCardsData({
-    data: bookmarks,
-    included,
-  });
-
-  async function processBatch(bookmarkBatch) {
+  async function processBatch(bookmarkBatch, wrapper) {
     const shimmerWrappers = wrapper.querySelectorAll('.browse-card-shimmer-wrapper');
     await Promise.all(
       bookmarkBatch.map(async (bookmark, index) => {
@@ -64,23 +41,52 @@ async function renderCards(block, response) {
     );
   }
 
-  buildCardsShimmer.shimmerContainer.classList.remove('browse-card-shimmer');
-
-  async function processBookmarksInBatches(bookmarksData) {
+  async function processBookmarksInBatches(bookmarksData, wrapper) {
     for (let i = 0; i < bookmarksData.length; i += BATCH_SIZE) {
       const batch = bookmarksData.slice(i, i + BATCH_SIZE);
       // eslint-disable-next-line no-await-in-loop
-      await processBatch(batch);
+      await processBatch(batch, wrapper);
     }
   }
 
-  processBookmarksInBatches(cardsData).catch((err) => {
+  try {
+    block.querySelector('.premium-learning-bookmarks-content')?.remove();
+
+    const { data: bookmarks = [], included = [] } = response;
+
+    // Use fixed count and type for shimmer
+    const buildCardsShimmer = new BrowseCardShimmer(
+      bookmarks.length || SHIMMER_COUNT,
+      PL_CONTENT_TYPES.COURSE.MAPPING_KEY,
+    );
+    buildCardsShimmer.addShimmer(block.firstElementChild);
+    buildCardsShimmer.shimmerContainer.classList.add('premium-learning-bookmarks-content');
+
+    const wrapper = block.querySelector('.premium-learning-bookmarks-content');
+
+    // Map to card data using the adaptor
+    if (bookmarks.length === 0) {
+      return;
+    }
+
+    const { default: BrowseCardsPLAdaptor } = await import(
+      '../../scripts/browse-card/browse-cards-premium-learning-adaptor.js'
+    );
+    const cardsData = await BrowseCardsPLAdaptor.mapResultsToCardsData({
+      data: bookmarks,
+      included,
+    });
+
+    buildCardsShimmer.shimmerContainer.classList.remove('browse-card-shimmer');
+
+    await processBookmarksInBatches(cardsData, wrapper);
+  } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Error rendering bookmark cards:', err);
-  });
+  }
 }
 
-let onBookmarkChanged = null;
+let onBookmarkChanged;
 
 /**
  * Decorates the premium learning bookmarks block
@@ -107,7 +113,10 @@ export default async function decorate(block) {
   if (!getPLAccessToken()) return;
 
   // Trigger shimmer immediately by calling renderCards with empty response
-  renderCards(block, { data: [], included: [] });
+  renderCards(block, { data: [], included: [] }).catch((err) => {
+    // eslint-disable-next-line no-console
+    console.error('Error initialising bookmark shimmer:', err);
+  });
 
   // Fetch and render bookmarks
   fetchPremiumLearningBookmarks()
@@ -125,7 +134,13 @@ export default async function decorate(block) {
       bookmarksEventEmitter.set('bookmark_data', response);
 
       // Listen for bookmark changes
+      if (onBookmarkChanged) bookmarksEventEmitter.off('bookmark_changed', onBookmarkChanged);
       onBookmarkChanged = async () => {
+        // Check if block is still in the DOM before manipulating
+        if (!block.isConnected) {
+          bookmarksEventEmitter.off('bookmark_changed', onBookmarkChanged);
+          return;
+        }
         const updatedBookmarks = await fetchPremiumLearningBookmarks();
         const existingContent = block.querySelector('.premium-learning-bookmarks-content');
         if (!updatedBookmarks?.data || updatedBookmarks.data.length === 0) {
@@ -133,13 +148,19 @@ export default async function decorate(block) {
           block.classList.add('pl-bookmarks-empty');
         } else {
           block.classList.remove('pl-bookmarks-empty');
-          await renderCards(block, updatedBookmarks);
+          renderCards(block, updatedBookmarks).catch((err) => {
+            // eslint-disable-next-line no-console
+            console.error('Error rendering PL bookmark cards:', err);
+          });
         }
       };
       bookmarksEventEmitter.on('bookmark_changed', onBookmarkChanged);
 
       // Render actual cards
-      renderCards(block, response);
+      renderCards(block, response).catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error('Error rendering bookmark cards:', err);
+      });
     })
     .catch((err) => {
       // eslint-disable-next-line no-console

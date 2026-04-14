@@ -191,14 +191,17 @@ const BrowseCardsPLAdaptor = (() => {
   function buildInstances(cardData, included) {
     const instances = cardData.relationships?.instances?.data;
     if (!instances) return [];
-    return instances.map((instance) => {
-      const instanceData = included.find((i) => i.id === instance.id);
-      return {
-        id: instanceData.id,
-        name: instanceData.attributes?.localizedMetadata?.[0]?.name || '',
-        locale: instanceData.attributes?.localizedMetadata?.[0]?.locale || '',
-      };
-    });
+    return instances
+      .map((instance) => {
+        const instanceData = included.find((i) => i.id === instance.id);
+        if (!instanceData) return null;
+        return {
+          id: instanceData.id,
+          name: instanceData.attributes?.localizedMetadata?.[0]?.name || '',
+          locale: instanceData.attributes?.localizedMetadata?.[0]?.locale || '',
+        };
+      })
+      .filter(Boolean);
   }
 
   /**

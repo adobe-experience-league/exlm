@@ -188,7 +188,7 @@ export async function sanitizeBookmarks() {
 /**
  * Fetches PL bookmarks or checks if a specific item is bookmarked
  * @param {string} [loId] - Optional learning object ID to check
- * @returns {Promise<Array|boolean>} Returns all bookmarks array if no loId, or boolean if loId provided
+ * @returns {Promise<{data: Array, included: Array}|boolean>} Returns response object if no loId, or boolean if loId provided
  */
 export async function fetchPremiumLearningBookmarks(loId = null) {
   try {
