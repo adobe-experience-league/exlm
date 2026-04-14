@@ -61,7 +61,7 @@ async function renderCards(block, cardModels) {
     }
   }
 
-  processCardsInBatches(cardModels);
+  await processCardsInBatches(cardModels);
 }
 
 /**
@@ -94,7 +94,9 @@ export default async function decorate(block) {
   // Fetch and render bookmarks
   fetchPremiumLearningBookmarks().then(async (responseData) => {
     // Transform API response using adaptor
-    const cardModels = await BrowseCardsPLAdaptor.mapResultsToCardsData(responseData);
+    const cardModels = await BrowseCardsPLAdaptor.mapResultsToCardsData(
+      responseData?.data ? responseData : { data: [], included: [] },
+    );
 
     if (cardModels.length === 0) {
       // Remove shimmer content if no bookmarks
@@ -109,7 +111,9 @@ export default async function decorate(block) {
     // Listen for bookmark changes
     bookmarksEventEmitter.on('bookmark_changed', async () => {
       const updatedResponseData = await fetchPremiumLearningBookmarks();
-      const updatedCardModels = await BrowseCardsPLAdaptor.mapResultsToCardsData(updatedResponseData);
+      const updatedCardModels = await BrowseCardsPLAdaptor.mapResultsToCardsData(
+        updatedResponseData?.data ? updatedResponseData : { data: [], included: [] },
+      );
       const existingContent = block.querySelector('.premium-learning-bookmarks-content');
       if (updatedCardModels.length === 0) {
         if (existingContent) existingContent.remove();
@@ -121,6 +125,6 @@ export default async function decorate(block) {
     });
 
     // Render actual cards
-    renderCards(block, cardModels);
+    await renderCards(block, cardModels);
   });
 }
