@@ -1,5 +1,4 @@
 import { getPLAccessToken } from '../utils/pl-auth-utils.js';
-import { getConfig } from '../scripts.js';
 
 /**
  * @typedef {Object} PLQueryParams
@@ -672,12 +671,12 @@ export async function fetchUserEnrollments(config, loType = 'learningProgram', n
 
 /**
  * Fetches cohort/learning object progress details with enrollment grades
- * @param {string} cohortId - Learning object ID (e.g., 'learningProgram:12345')
+ * @param {string} cohortId - Learning object ID
+ * @param {Object} config - Config object (from getConfig())
  * @returns {Promise<Object|null>} Learning object details or null on error
  */
-export async function fetchCohortProgress(cohortId) {
+export async function fetchCohortProgress(cohortId, config) {
   try {
-    const config = getConfig();
     const url = new URL(`${config?.plApiBaseUrl}/learningObjects/${cohortId}`);
     url.searchParams.set(
       'include',
@@ -707,12 +706,12 @@ export async function fetchCohortProgress(cohortId) {
 
 /**
  * Fetches board ID from Adobe I/O Runtime engagement endpoint
- * @param {string} learningObjectId - Learning object ID (e.g., 'learningProgram:164053')
- * @param {string} loInstanceId - Instance ID (e.g., 'learningProgram:164053_230339')
+ * @param {string} learningObjectId - Learning object ID
+ * @param {string} loInstanceId - Instance ID
+ * @param {Object} config - Config object (from getConfig())
  * @returns {Promise<string|null>} Board ID or null if not found
  */
-export async function getEngagementBoardId(learningObjectId, loInstanceId) {
-  const config = getConfig();
+export async function getEngagementBoardId(learningObjectId, loInstanceId, config) {
   const endpoint = config?.premiumLearningAuthAPI?.replace(/\/authentication\/?$/, '/engagement');
   if (!endpoint) return null;
 
@@ -734,13 +733,13 @@ export async function getEngagementBoardId(learningObjectId, loInstanceId) {
 /**
  * Fetches board posts from ALM API
  * @param {string} boardId - Board ID
+ * @param {Object} config - Config object (from getConfig())
  * @returns {Promise<Object|null>} Posts data with comments or null on error
  */
-export async function fetchBoardPosts(boardId) {
+export async function fetchBoardPosts(boardId, config) {
   if (!boardId) return null;
 
   try {
-    const config = getConfig();
     const url = new URL(`${config?.plApiBaseUrl}/boards/${boardId}/posts`);
     url.searchParams.set('filter.state', 'ACTIVE');
 

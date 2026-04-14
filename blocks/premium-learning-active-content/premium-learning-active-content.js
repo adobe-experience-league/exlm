@@ -297,11 +297,11 @@ export default async function decorate(block) {
         const instanceId = enrollment?.relationships?.loInstance?.data?.id;
 
         const [boardId, cohortProgressData] = await Promise.all([
-          getEngagementBoardId(cohortId, instanceId),
-          fetchCohortProgress(cohortId),
+          getEngagementBoardId(cohortId, instanceId, config),
+          fetchCohortProgress(cohortId, config),
         ]);
 
-        const boardPostsData = await fetchBoardPosts(boardId);
+        const boardPostsData = await fetchBoardPosts(boardId, config);
         const totalReplies = calculateTotalReplies(boardPostsData);
         const progressData = extractProgressData(cohortProgressData);
 
