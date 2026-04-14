@@ -1821,8 +1821,7 @@
                   "headingType": "h2",
                   "description": "View your active enrolled cohorts",
                   "cta_Type": "primary",
-                  "cta_linkText": "View all Active Cohorts",
-                  "cta_link": ""
+                  "cta_linkText": "View all Active Cohorts"
                 }
               }
             }

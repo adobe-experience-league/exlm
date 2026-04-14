@@ -1,15 +1,13 @@
-/* Block Header - matching premium-learning-search */
-.premium-learning-active-content .premium-learning-active-content-header {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
+/* Block Header */
 .premium-learning-active-content .premium-learning-active-content-header-content {
   display: flex;
   flex-direction: column;
   gap: 16px;
   width: 100%;
+}
+
+.premium-learning-active-content .premium-learning-active-content-header-text h3 {
+  margin: 0;
 }
 
 .premium-learning-active-content .premium-learning-active-content-header-description {
@@ -20,13 +18,7 @@
 }
 
 .premium-learning-active-content .premium-learning-active-content-cta a.button:any-link {
-  margin-top: 0;
-  margin-bottom: 12px;
-  font-size: var(--spectrum-font-size-200);
-  height: auto;
-  background-color: var(--non-spectrum-navy-blue);
-  padding-inline: 16px;
-  width: 100%;
+  margin: 0 0 12px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -52,51 +44,73 @@
 /* Carousel Container */
 .premium-learning-active-content .carousel-container {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   margin-top: 32px;
 }
 
 .premium-learning-active-content .carousel-track {
   display: flex;
+  flex-direction: column;
   gap: 24px;
   transition: transform 0.3s ease;
 }
 
-/* Carousel Slide - contains cohort card + status card */
 .premium-learning-active-content .carousel-slide {
-  min-width: 100%;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Make card exactly 313px total */
-.premium-learning-active-content .cohort-card-wrapper .browse-card.premium-learning-browse-card {
-  /* height: 313px !important; */
-  /* min-height: 313px; */
-  /* max-height: 313px; */
-  box-sizing: border-box;
-  display: flex !important;
-  flex-direction: column;
-  overflow: hidden;
+.premium-learning-active-content .carousel-nav {
+  display: none;
 }
 
-/* Control the figure height - 200px for image area */
+/* Card Styling */
+
 .premium-learning-active-content
   .cohort-card-wrapper
   .browse-card.premium-learning-browse-card
   .premium-learning-card-figure {
-  height: 313px !important;
   min-height: 313px;
   max-height: 313px;
-  flex-shrink: 0;
 }
 
 .browse-card.premium-learning-browse-card .premium-learning-card-figure > img {
   height: 313px !important;
 }
 
-/* Card content padding */
+.premium-learning-active-content .cohort-progress-label {
+  width: 70px;
+  height: 24px;
+  background-color: var(--spectrum-gray-900);
+  color: var(--spectrum-gray-50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.premium-learning-active-content .premium-learning-card-figure > .cohort-progress-label {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+}
+
+.premium-learning-active-content .cohort-labels-wrapper {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.browse-card.premium-learning-browse-card .cohort-labels-wrapper .premium-learning-card-start-label-container {
+  position: static;
+  align-items: center;
+}
+
 .premium-learning-active-content
   .cohort-card-wrapper
   .browse-card.premium-learning-browse-card
@@ -105,29 +119,36 @@
   gap: 12px;
 }
 
-/* Metadata text styling */
 .premium-learning-active-content
   .cohort-card-wrapper
   .browse-card.premium-learning-browse-card
   .premium-learning-card-meta-text {
   font-size: 12px;
   line-height: 1.25;
-}
-
-/* Hide rating overlay on thumbnail (rating shows in metadata instead) */
-.premium-learning-active-content .premium-learning-card-rating-overlay {
-  display: none;
-}
-
-/* Progress Card - separate card on the right */
-.premium-learning-active-content .progress-card {
-  background: white;
-  border: 1px solid var(--non-spectrum-unicorn-silver);
-  border-radius: 12px;
-  box-shadow: 0px 8px 16px 0px #0000001a;
   display: flex;
-  flex-direction: column;
-  height: 313px;
+  align-items: center;
+  gap: 12px;
+}
+
+.premium-learning-active-content
+  .cohort-card-wrapper
+  .browse-card.premium-learning-browse-card
+  .premium-learning-card-meta-text
+  .meta-bullet {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background-color: currentColor;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.premium-learning-active-content .cohort-card-wrapper .premium-learning-card-rating-overlay {
+  display: none !important;
+}
+
+.premium-learning-active-content .progress-card {
+  display: none;
 }
 
 .premium-learning-active-content .progress-card-content {
@@ -137,11 +158,10 @@
 }
 
 .premium-learning-active-content .progress-card h4 {
-  margin-bottom: 8px;
+  margin: 0 0 8px;
   font-size: 20px;
   font-weight: 700;
   line-height: 1.3;
-  margin-top: 0;
 }
 
 .premium-learning-active-content .progress-section {
@@ -186,8 +206,7 @@
 
 .premium-learning-active-content .progress-bar {
   height: 100%;
-  background: #3b82f6;
-  transition: width 0.3s ease;
+  background: var(--non-spectrum-bright-blue);
 }
 
 .premium-learning-active-content .progress-text {
@@ -209,6 +228,10 @@
   color: var(--non-spectrum-dark-gray);
 }
 
+.premium-learning-active-content .status-number {
+  font-weight: 700;
+}
+
 .premium-learning-active-content .button-container {
   position: absolute;
   bottom: 0;
@@ -220,113 +243,112 @@
   width: 100%;
 }
 
-/* Carousel Navigation */
-.premium-learning-active-content .carousel-nav {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 24px;
-}
-
+/* Navigation Buttons */
 .premium-learning-active-content .carousel-btn {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: 2px solid var(--spectrum-gray-300);
-  background: white;
+  border: none;
+  background: var(--spectrum-gray-200);
   cursor: pointer;
-  font-size: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  margin: 0;
+  padding: 0;
 }
 
-.premium-learning-active-content .carousel-btn:hover:not(:disabled) {
-  background: var(--spectrum-gray-100);
-  border-color: var(--spectrum-gray-400);
+.premium-learning-active-content .carousel-btn img {
+  width: 20px;
+  height: 20px;
 }
 
-.premium-learning-active-content .carousel-btn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
+.premium-learning-active-content .carousel-btn.prev img {
+  transform: scaleX(-1);
 }
 
-/* No Results */
-.premium-learning-active-content .no-results {
-  padding: 48px;
-  text-align: center;
-  color: var(--non-spectrum-dark-gray);
-  background: var(--spectrum-gray-75);
-  border-radius: 12px;
-}
-
-/* Mobile - Stack Cards Vertically (No Carousel) */
-@media (max-width: 599px) {
-  .premium-learning-active-content .progress-card {
-    display: none;
-  }
-
-  .premium-learning-active-content .carousel-container {
-    overflow: visible;
-  }
-
-  .premium-learning-active-content .carousel-track {
-    transform: none !important;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  .premium-learning-active-content .carousel-slide {
-    min-width: 100%;
-    width: 100%;
-  }
-
-  .premium-learning-active-content .cohort-card-wrapper {
-    width: 100%;
-    flex: 1;
-  }
-
-  .premium-learning-active-content .carousel-nav {
-    display: none;
-  }
-}
-
-/* Tablet & Desktop - Side by Side Layout */
 @media (min-width: 600px) {
-  .premium-learning-active-content .premium-learning-active-content-header {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-
   .premium-learning-active-content .premium-learning-active-content-header-content {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
 
-  .premium-learning-active-content .premium-learning-active-content-cta a.button:any-link {
-    width: auto;
-    min-width: max-content;
-    font-size: var(--spectrum-font-size-300);
+  .premium-learning-active-content .carousel-container {
+    overflow: hidden;
+  }
+
+  .premium-learning-active-content .carousel-track {
+    flex-direction: row;
+    gap: 0;
   }
 
   .premium-learning-active-content .carousel-slide {
+    min-width: 82%;
+    max-width: 82%;
+    flex-shrink: 0;
     flex-direction: row;
     gap: 24px;
-    align-items: stretch;
+    margin-right: calc(18% + 24px);
+  }
+
+  .premium-learning-active-content .carousel-slide:last-child {
+    margin-right: 0;
   }
 
   .premium-learning-active-content .cohort-card-wrapper {
-    flex: 0 0 calc(50% - 12px);
-    width: calc(50% - 12px);
+    flex: 0 0 calc(60% - 12px);
+    width: calc(60% - 12px);
     min-width: 0;
   }
 
   .premium-learning-active-content .progress-card {
-    flex: 0 0 calc(25% - 12px);
-    width: calc(25% - 12px);
     display: flex;
+    flex-direction: column;
+    height: 313px;
+    flex: 0 0 calc(40% - 12px);
+    width: calc(40% - 12px);
+    background: var(--spectrum-gray-50);
+    border: 1px solid var(--non-spectrum-unicorn-silver);
+    border-radius: 12px;
+    box-shadow: 0 8px 16px 0 #0000001a;
+  }
+
+  .premium-learning-active-content .carousel-nav {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+    position: absolute;
+    left: auto;
+    right: 0;
+    top: 330px;
+    z-index: 10;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 900px) {
+  .premium-learning-active-content .carousel-slide {
+    min-width: 75%;
+    max-width: 75%;
+    margin-right: calc(25% + 24px);
+  }
+
+  .premium-learning-active-content .cohort-card-wrapper {
+    flex: 0 0 calc(66.67% - 12px);
+    width: calc(66.67% - 12px);
+  }
+
+  .premium-learning-active-content .progress-card {
+    flex: 0 0 calc(33.33% - 12px);
+    width: calc(33.33% - 12px);
+  }
+
+  .premium-learning-active-content .carousel-nav {
+    left: calc(75% + 24px);
+    right: auto;
+    top: 40%;
+    transform: translateY(-50%);
   }
 }
