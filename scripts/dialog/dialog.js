@@ -8,7 +8,7 @@ async function ensureStyles() {
   return document.querySelector(`head > link[href="${DIALOG_CSS}"]`);
 }
 
-function buildDefaultHeader({ title, titleIcon, titleBadge, canExpand }, dialog) {
+function buildDefaultHeader({ title, titleIcon, titleBadge, canExpand, beforeExpandButton }, dialog) {
   const header = document.createElement('div');
   header.className = 'exl-dialog-header';
 
@@ -19,7 +19,7 @@ function buildDefaultHeader({ title, titleIcon, titleBadge, canExpand }, dialog)
     header.append(icon);
   }
 
-  const titleEl = document.createElement('span');
+  const titleEl = document.createElement('h2');
   titleEl.className = 'exl-dialog-header-title';
   if (titleBadge) {
     titleEl.classList.add('exl-dialog-header-title-with-badge');
@@ -32,6 +32,10 @@ function buildDefaultHeader({ title, titleIcon, titleBadge, canExpand }, dialog)
     titleEl.textContent = title || '';
   }
   header.append(titleEl);
+
+  if (beforeExpandButton) {
+    header.append(beforeExpandButton);
+  }
 
   let setExpanded = () => {};
 
@@ -91,6 +95,7 @@ function buildDefaultHeader({ title, titleIcon, titleBadge, canExpand }, dialog)
  * @param {string}       [options.titleBadge]    - Optional pill label after the title (e.g. BETA).
  * @param {string}       [options.titleIcon]     - Default header icon class suffix.
  * @param {boolean}      [options.canExpand]     - Drawer only: show expand/collapse toggle.
+ * @param {HTMLElement}  [options.beforeExpandButton] - Drawer only: inserted left of expand (before expand when canExpand).
  * @param {HTMLElement}  [options.header]        - Custom header; replaces the default.
  * @param {string}       [options.closeSelector] - Selector for the close trigger inside a custom header.
  * @param {HTMLElement}  [options.content]       - Scrollable body content.
@@ -107,6 +112,7 @@ function createDialog(type, options) {
     titleBadge,
     titleIcon,
     canExpand,
+    beforeExpandButton,
     header: customHeader,
     closeSelector,
     content,
@@ -139,6 +145,7 @@ function createDialog(type, options) {
         titleBadge,
         titleIcon,
         canExpand: type === 'drawer' && canExpand,
+        beforeExpandButton: type === 'drawer' && canExpand ? beforeExpandButton : undefined,
       },
       dialog,
     );
