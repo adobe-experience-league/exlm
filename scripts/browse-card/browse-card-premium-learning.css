@@ -18,7 +18,7 @@
   background: var(--color-white);
   border: 1px solid var(--color-gray-200);
   border-radius: 0;
-  overflow: hidden;
+  overflow: visible;
   transition: none;
   color: var(--spectrum-gray-900);
   min-height: auto;
@@ -39,7 +39,7 @@
   height: 197px;
   min-height: 197px;
   max-height: 197px;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 8px;
   background-color: var(--color-gray-100);
 }
@@ -176,16 +176,12 @@
   background-color: transparent;
 }
 
-.browse-card.premium-learning-browse-card .premium-learning-card-actions .action-tooltip {
-  display: none;
-}
-
 /* ==========================================================================
    Content Section
    ========================================================================== */
 
 .browse-card.premium-learning-browse-card .premium-learning-card-content {
-  padding-top: 16px;
+  padding-top: var(--spectrum-spacing-75);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -240,12 +236,21 @@
   background-color: var(--spectrum-gray-200);
 }
 
+@media (min-width: 600px) {
+  .browse-card.premium-learning-browse-card .premium-learning-card-content {
+    padding-top: var(--spectrum-spacing-300);
+  }
+}
+
 @media (min-width: 900px) {
   .browse-cards-block-content:has(.premium-learning-browse-card) {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: flex-start;
     gap: 25px;
+    min-height: auto;
+    margin-bottom: var(--spectrum-spacing-300);
   }
 
   .browse-cards-block-content:has(.premium-learning-browse-card) > div {

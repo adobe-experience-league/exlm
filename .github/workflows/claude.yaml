@@ -1,0 +1,38 @@
+name: Claude PR Review
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  review:
+    # Only the canonical exlm repo (not exlm-stage or other copies). Includes PRs from forks into exlm.
+    if: github.repository == 'adobe-experience-league/exlm'
+    runs-on: ubuntu-latest
+    steps:
+      # Required: the action runs git against the workspace (e.g. fetch origin/main for trusted files).
+      # Without checkout there is no .git and git fetch fails.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            Review this PR for code quality, bugs, and security issues.
+            Post findings as inline review comments where they map to specific lines.
+
+            Note: The PR branch is already checked out in the current working directory.
+            Use `mcp__github_inline_comment__create_inline_comment` (with `confirmed: true`) for line-specific issues.
+            Use `gh pr comment` for summary feedback if helpful.
+          claude_args: |
+            --max-turns 25
+            --allowedTools "Read,mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"

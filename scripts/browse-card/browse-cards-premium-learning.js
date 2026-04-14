@@ -69,6 +69,7 @@ function buildPLThumbnail({
   isNew,
   loFormat,
   isCourseCard,
+  contentType,
 }) {
   const cardFigure = document.createElement('div');
   cardFigure.className = 'premium-learning-card-figure';
@@ -114,7 +115,8 @@ function buildPLThumbnail({
     id: bookmarkId,
     bookmarkPath: bookmarkId,
     link: copyLink,
-    bookmarkConfig: false,
+    contentType,
+    bookmarkConfig: true,
     copyConfig: { icons: ['copy-white-fill'] },
   });
 
@@ -137,13 +139,13 @@ function buildPLThumbnail({
     cardFigure.appendChild(startLabelContainer);
   }
 
-  // Show New label for both courses and cohorts
+  // Show New label only for cohorts
   // Show loFormat label only for courses
   if (isNew || (isCourseCard && loFormat)) {
     const tagsContainer = document.createElement('div');
     tagsContainer.className = 'premium-learning-card-tags-container';
 
-    if (isNew) {
+    if (isNew && !isCourseCard) {
       const newTagElement = document.createElement('p');
       newTagElement.className = 'premium-learning-card-tag premium-learning-card-new-tag';
       newTagElement.textContent = placeholders.premiumLearningBrowseCardNewTag || 'New';
@@ -227,6 +229,7 @@ export async function buildPLCard(element, model) {
     isNew: meta?.isNew,
     loFormat: meta?.loFormat,
     isCourseCard,
+    contentType,
   });
 
   // Add rating overlay to thumbnail for both courses and cohorts

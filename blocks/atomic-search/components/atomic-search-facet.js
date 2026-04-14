@@ -8,37 +8,29 @@ import {
   hasContentTypeFilter,
   updateHash,
   COMMUNITY_CONTENT_TYPES,
+  findParentFacetRow,
+  isContentTypeFacet,
+  syncFacetParentChildFilters,
+  getFiltersFromUrl,
+  resolveBlockLevelSkeleton,
+  replaceFacetParamsInHash,
 } from './atomic-search-utils.js';
 import {
   applyFacetRawValuesToDom,
   getRegularFacetValuesForField,
   getLocalizedElContentTypeChildLabel,
   EL_CONTENTTYPE_FIELD,
+  isParentOnlyFacetSegment,
+  isHierarchicalFacetChildValue,
 } from './atomic-facet-engine-helpers.js';
 
 const MAX_FACETS_WITHOUT_EXPANSION = 5;
-
-const FACET_CONTENT_TYPE_ID = 'facetContentType';
-
-/** Parent row for hierarchical facet: prefer data-facet-raw-value (engine) over localized data-contenttype. */
-const findParentFacetRow = (parentWrapper, parentKey, preferRawValueAttr) => {
-  if (!parentWrapper || !parentKey) return null;
-  const escaped = CSS.escape(parentKey);
-  if (preferRawValueAttr) {
-    const byRaw = parentWrapper.querySelector(`:scope > li[data-facet-raw-value="${escaped}"]`);
-    if (byRaw && byRaw.dataset.childfacet !== 'true') return byRaw;
-  }
-  const byDisplay = parentWrapper.querySelector(`:scope > li[data-contenttype="${escaped}"]`);
-  if (byDisplay && byDisplay.dataset.childfacet !== 'true') return byDisplay;
-  return null;
-};
-
-const isContentTypeFacet = (atomicFacet) => atomicFacet?.getAttribute('id') === FACET_CONTENT_TYPE_ID;
 
 export default function atomicFacetHandler(block, placeholders, searchInterface) {
   let baseObserver;
   let resultTimerId;
   let noResultFoundTimerId;
+  const autoApplyChildFacet = {};
   const baseElement = block.querySelector('atomic-facet');
   const adjustChildElementsPosition = (facet, atomicElement) => {
     if (facet.dataset.childfacet === 'true') {
@@ -87,69 +79,7 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
 
         const shimmer = atomicElement.shadowRoot.querySelector('.facet-shimmer');
         shimmer?.part.add('show-shimmer');
-        const isChildFacet = facet.dataset.childfacet === 'true';
-        const isSelected = facet.firstElementChild.ariaChecked === 'false'; // Will take some to update the state.
-        const valuesList = facet.parentElement;
-        const parentFacet = isChildFacet
-          ? findParentFacetRow(valuesList, facet.dataset.parent, isContentTypeFacet(atomicElement))
-          : facet;
-        const parentFacetIsSelected = isChildFacet
-          ? parentFacet?.firstElementChild?.ariaChecked === 'true'
-          : isSelected;
-        let filtersChanged = false;
-        if (isChildFacet) {
-          // child facet click.
-          if (onlyOptionClicked === true) {
-            const parentFacetType = facet.dataset.parent;
-            const allChildFacets = facet.parentElement.querySelectorAll(`[data-parent="${parentFacetType}"]`);
-            if (parentFacetIsSelected) {
-              filtersChanged = true;
-              parentFacet.firstElementChild.click();
-            }
-            allChildFacets.forEach((childFacet) => {
-              const isCurrentFacet = childFacet === facet;
-              if (
-                (!isCurrentFacet && childFacet.firstElementChild.ariaChecked === 'true') ||
-                (isCurrentFacet && childFacet.firstElementChild.ariaChecked === 'false')
-              ) {
-                filtersChanged = true;
-                childFacet.firstElementChild.click();
-              }
-            });
-            setTimeout(() => {
-              facet.dataset.filterclick = '';
-            }, 0);
-          } else if (!isSelected && parentFacetIsSelected) {
-            parentFacet?.firstElementChild.click();
-          } else if (isSelected && !parentFacetIsSelected) {
-            // Now check if all child facets excluding the current one is selected.
-            const parentFacetType = facet.dataset.parent;
-            const allChildFacets = Array.from(
-              facet.parentElement.querySelectorAll(`[data-parent="${parentFacetType}"]`),
-            );
-            const selectedCount = allChildFacets.reduce((acc, curr) => {
-              if (curr.firstElementChild.ariaChecked === 'true') {
-                return acc + 1;
-              }
-              return acc;
-            }, 1);
-            if (selectedCount === allChildFacets.length) {
-              filtersChanged = true;
-              parentFacet.firstElementChild.click();
-            }
-          }
-        } else {
-          // Parent facet click — use raw facet value so localized labels still sync children.
-          const parentFacetType = parentFacet.dataset.facetRawValue || parentFacet.dataset.contenttype;
-          const parentFacetValue = parentFacetIsSelected ? 'true' : 'false';
-          const allChildFacets = facet.parentElement.querySelectorAll(`[data-parent="${parentFacetType}"]`);
-          allChildFacets.forEach((childFacet) => {
-            if (childFacet.firstElementChild.ariaChecked !== parentFacetValue) {
-              filtersChanged = true;
-              childFacet.firstElementChild.click();
-            }
-          });
-        }
+        const filtersChanged = syncFacetParentChildFilters({ facet, atomicElement, onlyOptionClicked });
         if (!filtersChanged && shimmer) {
           shimmer.part.remove('show-shimmer');
         }
@@ -530,11 +460,18 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     }, 100);
   };
 
-  const initAtomicFacetUI = () => {
+  const initAtomicFacetUI = (removeSkeleton = false) => {
+    const atomicFacets = document.querySelectorAll('atomic-facet');
+    atomicFacets.forEach((atomicFacet) => {
+      atomicFacet.dataset.rendered = 'true';
+    });
+    if (removeSkeleton) {
+      resolveBlockLevelSkeleton(block);
+    }
+
     const event = new CustomEvent(CUSTOM_EVENTS.FACET_LOADED);
     document.dispatchEvent(event);
 
-    const atomicFacets = document.querySelectorAll('atomic-facet');
     atomicFacets.forEach((atomicFacet) => {
       observeFacetValuesList(atomicFacet);
       handleAtomicFacetUI(atomicFacet);
@@ -542,5 +479,53 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onResultsUpdate);
     document.addEventListener(CUSTOM_EVENTS.NO_RESULT_FOUND, onNoResultFoundUpdate);
   };
-  waitForChildElement(baseElement, initAtomicFacetUI);
+
+  const onAtomicFacetUIReady = () => {
+    const atomicFacets = document.querySelectorAll('atomic-facet');
+    const facetSet = searchInterface.engine.state?.facetSet || {};
+    const facetHashUpdates = [];
+    atomicFacets.forEach((atomicFacet) => {
+      const { facetId } = atomicFacet;
+      if (facetId && autoApplyChildFacet[facetId] && facetSet[facetId]) {
+        const facets = facetSet[facetId].request?.currentValues || [];
+        const [parentFromUrl] = autoApplyChildFacet[facetId];
+        if (facets.length > 1 && parentFromUrl) {
+          const childFacets = facets.filter((facet) => isHierarchicalFacetChildValue(parentFromUrl, facet.value));
+          if (childFacets.length > 0 && childFacets.length === childFacets.filter((f) => f.state === 'idle').length) {
+            const childFacetKeys = childFacets.map((facet) => encodeURI(facet.value));
+            const parentCanonical =
+              facets.find((f) => String(f.value).toLowerCase() === String(parentFromUrl).toLowerCase())?.value ??
+              parentFromUrl;
+            const targetFacetKeys = [parentCanonical].concat(childFacetKeys);
+            facetHashUpdates.push({ facetId, targetFacetKeys });
+          }
+        }
+      }
+    });
+    const facetAutoSelected = facetHashUpdates.length > 0;
+    if (facetAutoSelected) {
+      // facet got changed, so wait for the new coveo response.
+      replaceFacetParamsInHash(facetHashUpdates);
+      document.addEventListener(
+        CUSTOM_EVENTS.RESULT_UPDATED,
+        () => {
+          initAtomicFacetUI(true);
+        },
+        { once: true },
+      );
+      return;
+    }
+    initAtomicFacetUI();
+  };
+
+  const filters = getFiltersFromUrl();
+  Object.keys(filters).forEach((key) => {
+    if (filters[key]?.length === 1) {
+      const [value] = filters[key];
+      if (value && isParentOnlyFacetSegment(value)) {
+        autoApplyChildFacet[key] = [value];
+      }
+    }
+  });
+  waitForChildElement(baseElement, onAtomicFacetUIReady);
 }

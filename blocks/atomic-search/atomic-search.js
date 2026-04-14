@@ -11,7 +11,12 @@ import atomicPagerHandler from './components/atomic-search-pager.js';
 import atomicNoResultHandler from './components/atomic-search-no-results.js';
 import atomicNotificationHandler from './components/atomic-search-notification.js';
 import getCoveoAtomicMarkup from './components/atomic-search-template.js';
-import { CUSTOM_EVENTS, debounce, generateAdobeTrackingData } from './components/atomic-search-utils.js';
+import {
+  CUSTOM_EVENTS,
+  debounce,
+  generateAdobeTrackingData,
+  resolveBlockLevelSkeleton,
+} from './components/atomic-search-utils.js';
 import { isMobile } from '../header/header-utils.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import createAtomicSkeleton from './components/atomic-search-skeleton.js';
@@ -211,10 +216,7 @@ export default function decorate(block) {
       document.addEventListener(
         CUSTOM_EVENTS.FACET_LOADED,
         () => {
-          const skeleton = block.querySelector('.atomic-search-load-skeleton');
-          if (skeleton) {
-            block.removeChild(skeleton);
-          }
+          resolveBlockLevelSkeleton(block);
         },
         { once: true },
       );

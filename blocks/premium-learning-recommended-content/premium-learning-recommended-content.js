@@ -6,6 +6,7 @@ import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { getPLAccessToken } from '../../scripts/utils/pl-auth-utils.js';
 import { getCookie } from '../../scripts/utils/cookie-utils.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
+import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const MAX_CARDS = 4;
@@ -14,16 +15,19 @@ const DEFAULT_CONTENT_TYPES = ['premium-learning-course'];
 
 // ─── DOM helpers ────────────────────────────────────────────────────────────
 
-function buildBlockHeader(headingHTML, descriptionHTML) {
+function buildBlockHeader(headingHTML, descriptionHTML, ctaMarkup) {
   const headerDiv = document.createElement('div');
   headerDiv.className = 'premium-learning-recommended-content-header';
   headerDiv.innerHTML = `
-    <div class="premium-learning-recommended-content-title">
-      ${headingHTML}
+    <div class="premium-learning-recommended-content-title-wrap">
+      <div class="premium-learning-recommended-content-title">
+        ${headingHTML}
+      </div>
+      <div class="premium-learning-recommended-content-description">
+        ${descriptionHTML}
+      </div>
     </div>
-    <div class="premium-learning-recommended-content-description">
-      ${descriptionHTML}
-    </div>
+    ${ctaMarkup ? `<div class="premium-learning-content-block-cta">${ctaMarkup}</div>` : ''}
   `;
   return headerDiv;
 }
@@ -114,13 +118,14 @@ function buildTabsData(allCards, products, forYouLabel) {
  * @param {HTMLElement} block - The block element to decorate.
  */
 export default async function decorate(block) {
-  const [headingElement, descriptionElement, contentTypeElement] = [...block.children];
+  const [headingElement, descriptionElement, ctaElement, contentTypeElement] = [...block.children];
   const contentTypeRaw = contentTypeElement?.textContent?.trim() || '';
   const contentType = contentTypeRaw ? contentTypeRaw.split(',').map((s) => s.trim()) : DEFAULT_CONTENT_TYPES;
+  const ctaMarkup = ctaElement?.innerHTML ? decorateCustomButtons(ctaElement) : '';
 
   block.textContent = '';
   block.classList.add('browse-cards-block', 'premium-learning-recommended-content-block');
-  block.appendChild(buildBlockHeader(headingElement?.innerHTML || '', descriptionElement?.innerHTML || ''));
+  block.appendChild(buildBlockHeader(headingElement?.innerHTML || '', descriptionElement?.innerHTML || '', ctaMarkup));
 
   const [signedIn, placeholders] = await Promise.all([isSignedInUser(), fetchLanguagePlaceholders().catch(() => ({}))]);
 
