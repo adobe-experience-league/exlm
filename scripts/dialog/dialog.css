@@ -30,11 +30,15 @@ dialog[data-type] {
   flex-shrink: 0;
 }
 
-.exl-dialog-header-title {
+/* Match ExL heading scale (.h3): bold, stands out; compact line-height for the 48px header bar */
+.exl-dialog-header .exl-dialog-header-title {
   flex: 1;
+  margin: 0;
   font-family: var(--body-font-family);
-  font-size: 20px;
-  font-weight: 600;
+  font-size: var(--exlm-font-size-h3);
+  font-weight: var(--font-weight-bold);
+  font-style: normal;
+  line-height: 1.2;
   color: var(--spectrum-gray-800);
 }
 
@@ -63,7 +67,8 @@ dialog[data-type] {
 }
 
 .exl-dialog-header-expand,
-.exl-dialog-header-close {
+.exl-dialog-header-close,
+.exl-dialog-header-clear {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -80,12 +85,47 @@ dialog[data-type] {
   transition: background-color 0.15s ease;
 }
 
+/* Text control (e.g. Clear) — secondary outline button, distinct from icon-only controls */
+.exl-dialog-header-clear {
+  width: auto;
+  min-width: auto;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid var(--spectrum-gray-300);
+  background: var(--spectrum-gray-50);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 6%);
+  font-family: var(--body-font-family);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--spectrum-gray-800);
+}
+
+.exl-dialog-header-clear:hover {
+  background: var(--spectrum-gray-100);
+  border-color: var(--spectrum-gray-400);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+}
+
+.exl-dialog-header-clear:active {
+  background: var(--spectrum-gray-200);
+  border-color: var(--spectrum-gray-500);
+  box-shadow: none;
+}
+
 /* styles.css declares `button:focus { background-color: var(--link-hover-color) }` without
  * a :focus-visible guard, which bleeds the brand blue onto these buttons on programmatic
  * focus (e.g. showModal()). Reset here, then restore the outline for keyboard-only. */
 .exl-dialog-header-expand:focus,
 .exl-dialog-header-close:focus {
   background: none;
+  outline: none;
+}
+
+.exl-dialog-header-clear:focus {
+  background: var(--spectrum-gray-50);
+  border-color: var(--spectrum-gray-300);
   outline: none;
 }
 
@@ -110,7 +150,8 @@ dialog[data-type] {
 }
 
 .exl-dialog-header-expand:focus-visible,
-.exl-dialog-header-close:focus-visible {
+.exl-dialog-header-close:focus-visible,
+.exl-dialog-header-clear:focus-visible {
   outline: 2px solid var(--non-spectrum-navy-blue);
   outline-offset: 2px;
 }

@@ -71,9 +71,9 @@ const brandConciergeConfig = {
 
   arrays: {
     'welcome.examples': [
-      { text: 'Get started with Adobe Experience Manager' },
+      { text: 'Where can I go to learn about AI on Experience League?' },
+      { text: 'Getting started with Experience Manager' },
       { text: 'Set up an Adobe Analytics report suite' },
-      { text: 'Troubleshoot my Adobe Campaign delivery' },
       { text: 'Explain Adobe Target A/B testing' },
     ],
     'feedback.positive.options': [
