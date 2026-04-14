@@ -47,12 +47,12 @@ async function renderCards(block, response) {
         const cardDiv = shimmerWrappers[index];
         if (cardDiv) {
           // Mark as bookmarked since this is from bookmarks list
-          bookmark.bookmarked = true;
+          const cardModel = { ...bookmark, bookmarked: true };
 
           cardDiv.textContent = '';
           cardDiv.classList.remove('browse-card-shimmer-wrapper-medium-card', 'browse-card-shimmer-wrapper');
           cardDiv.classList.add('premium-learning-bookmarks-card');
-          await buildPLCard(cardDiv, bookmark);
+          await buildPLCard(cardDiv, cardModel);
 
           // Set bookmarked state immediately to prevent white icon flash
           const bookmarkBtn = cardDiv.querySelector('.bookmark[data-pl-bookmark="true"]');
@@ -74,7 +74,10 @@ async function renderCards(block, response) {
     }
   }
 
-  processBookmarksInBatches(cardsData);
+  processBookmarksInBatches(cardsData).catch((err) => {
+    // eslint-disable-next-line no-console
+    console.error('Error rendering bookmark cards:', err);
+  });
 }
 
 /**
@@ -122,7 +125,7 @@ export default async function decorate(block) {
     bookmarksEventEmitter.on('bookmark_changed', async () => {
       const updatedBookmarks = await fetchPremiumLearningBookmarks();
       const existingContent = block.querySelector('.premium-learning-bookmarks-content');
-      if (updatedBookmarks.data?.length === 0) {
+      if (!updatedBookmarks?.data || updatedBookmarks.data.length === 0) {
         if (existingContent) existingContent.remove();
         block.classList.add('pl-bookmarks-empty');
       } else {

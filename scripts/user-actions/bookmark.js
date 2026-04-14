@@ -195,7 +195,7 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
     const { plApiBaseUrl } = getConfig();
     const token = getPLAccessToken();
 
-    if (!token) return loId ? false : [];
+    if (!token) return loId ? false : { data: [], included: [] };
 
     const response = await fetch(
       `${plApiBaseUrl}/learningObjects?include=instances&filter.bookmarks=true&filter.loTypes=course,learningProgram`,
@@ -210,7 +210,7 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
     if (!response.ok) {
       // eslint-disable-next-line no-console
       console.error('Failed to fetch PL bookmarks:', response.status);
-      return loId ? false : [];
+      return loId ? false : { data: [], included: [] };
     }
 
     const data = await response.json();
@@ -229,7 +229,7 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error fetching PL bookmarks:', error);
-    return loId ? false : [];
+    return loId ? false : { data: [], included: [] };
   }
 }
 
