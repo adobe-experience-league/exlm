@@ -91,22 +91,6 @@ export default async function decorate(block) {
   // Trigger shimmer immediately by calling renderCards with empty array
   renderCards(block, []).catch(() => {});
 
-  // Listen for bookmark changes - register before fetch so it works even with initial empty state
-  bookmarksEventEmitter.on('bookmark_changed', async () => {
-    const updatedResponseData = await fetchPremiumLearningBookmarks();
-    const updatedCardModels = await BrowseCardsPLAdaptor.mapResultsToCardsData(
-      updatedResponseData?.data ? updatedResponseData : { data: [], included: [] },
-    );
-    const existingContent = block.querySelector('.premium-learning-bookmarks-content');
-    if (updatedCardModels.length === 0) {
-      if (existingContent) existingContent.remove();
-      block.classList.add('pl-bookmarks-empty');
-    } else {
-      block.classList.remove('pl-bookmarks-empty');
-      await renderCards(block, updatedCardModels);
-    }
-  });
-
   // Fetch and render bookmarks
   fetchPremiumLearningBookmarks()
     .then(async (responseData) => {
@@ -124,6 +108,27 @@ export default async function decorate(block) {
 
       // Store bookmarks in event emitter for potential updates
       bookmarksEventEmitter.set('bookmark_data', cardModels);
+
+      // Listen for bookmark changes
+      bookmarksEventEmitter.on('bookmark_changed', async () => {
+        try {
+          const updatedResponseData = await fetchPremiumLearningBookmarks();
+          const updatedCardModels = await BrowseCardsPLAdaptor.mapResultsToCardsData(
+            updatedResponseData?.data ? updatedResponseData : { data: [], included: [] },
+          );
+          const existingContent = block.querySelector('.premium-learning-bookmarks-content');
+          if (updatedCardModels.length === 0) {
+            if (existingContent) existingContent.remove();
+            block.classList.add('pl-bookmarks-empty');
+          } else {
+            block.classList.remove('pl-bookmarks-empty');
+            await renderCards(block, updatedCardModels);
+          }
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error('Error updating PL bookmarks after change:', error);
+        }
+      });
 
       // Render actual cards
       await renderCards(block, cardModels);
