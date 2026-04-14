@@ -9517,7 +9517,7 @@
         "name": "classes",
         "value": "pass",
         "label": "Quiz classes",
-        "description": "Sets whether this is a pass, fail or error  scorecard",
+        "description": "Sets whether this is a pass, fail or error scorecard",
         "valueType": "string",
         "options": [
           {

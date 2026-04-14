@@ -6,6 +6,8 @@ import { loadBlocks, decorateSections, decorateBlocks } from '../../scripts/lib-
 import { pushQuizEvent } from '../../scripts/analytics/lib-analytics.js';
 import { queueAnalyticsEvent } from '../../scripts/analytics/analytics-queue.js';
 
+const QUIZ_FRAGMENT_PATH = '/quiz-completion-fragments/quiz-';
+
 /**
  * Checks if the selected answers for a question are correct
  * @param {number[]} selectedAnswerIndices Array of selected answer indices
@@ -214,8 +216,13 @@ export default async function decorate(block) {
 
   const { urlSlots, questionsOriginal } = rest.reduce(
     (acc, el) => {
-      if (el.querySelector('a') && acc.urlSlots.length < 3) acc.urlSlots.push(el);
-      else acc.questionsOriginal.push(el);
+      const anchor = el.querySelector('a');
+      const href = anchor?.getAttribute('href');
+      if (href?.includes(QUIZ_FRAGMENT_PATH)) {
+        acc.urlSlots.push(el);
+      } else {
+        acc.questionsOriginal.push(el);
+      }
       return acc;
     },
     { urlSlots: [], questionsOriginal: [] },

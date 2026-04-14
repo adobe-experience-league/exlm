@@ -33,6 +33,16 @@ async function showQuizProgressFailure() {
   const errorPageUrl = quizBlock?.dataset?.quizErrorPageUrl;
   if (errorPageUrl) {
     await fetchPageContent(errorPageUrl, quizBlock);
+    return;
+  }
+
+  const nextButton = document.querySelector('.module-nav-button.module-nav-submit');
+  if (nextButton) {
+    const errorMessage = document.createElement('div');
+    errorMessage.style.color = 'red';
+    errorMessage.style.textAlign = 'right';
+    errorMessage.textContent = 'Something went wrong while completing the module. Please try again later.';
+    nextButton.parentElement.insertAdjacentElement('afterend', errorMessage);
   }
 }
 

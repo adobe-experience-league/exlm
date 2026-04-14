@@ -34,7 +34,7 @@ export default async function decorate(block) {
   const totalQuestions = block.dataset.totalQuestions || '0';
 
   let ctaHTML = '';
-  if (isFail) {
+  if (isFail && cta1Div && cta2Div) {
     const cta1Container = cta1Div.querySelector('div');
     const cta2Container = cta2Div.querySelector('div');
 
