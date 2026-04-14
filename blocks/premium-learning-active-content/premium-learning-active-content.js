@@ -38,57 +38,7 @@ function extractProgressData(cohortData) {
   return { progress, currentWeek, totalWeeks, modulesRemaining, totalModules, completedModules };
 }
 
-async function buildCarouselSlide(cardData, progressData, totalReplies, placeholders) {
-  const slide = createTag('div', { class: 'carousel-slide' });
-
-  const cohortCardWrapper = createTag('div', { class: 'cohort-card-wrapper' });
-  await buildCard(cohortCardWrapper, cardData);
-
-  // Add "In Progress" label to thumbnail
-  const figureElement = cohortCardWrapper.querySelector('.premium-learning-card-figure');
-  if (figureElement) {
-    const progressLabel = createTag('div', { class: 'cohort-progress-label' });
-    progressLabel.textContent = placeholders?.premiumLearningInProgress || 'In Progress';
-
-    const startLabelContainer = figureElement.querySelector('.premium-learning-card-start-label-container');
-    if (startLabelContainer) {
-      const labelsWrapper = createTag('div', { class: 'cohort-labels-wrapper' });
-      labelsWrapper.appendChild(startLabelContainer.cloneNode(true));
-      labelsWrapper.appendChild(progressLabel);
-      startLabelContainer.replaceWith(labelsWrapper);
-    } else {
-      figureElement.appendChild(progressLabel);
-    }
-  }
-
-  // Add metadata below card title
-  const titleElement = cohortCardWrapper.querySelector('.premium-learning-card-title');
-  const metaParts = [
-    cardData.meta?.duration,
-    cardData.meta?.level,
-    cardData.meta?.rating?.average > 0 ? `${cardData.meta.rating.average.toFixed(1)} ★` : null,
-  ].filter(Boolean);
-
-  if (titleElement && metaParts.length > 0) {
-    const metaElement = createTag('p', { class: 'premium-learning-card-meta-text' });
-    metaParts.forEach((part, index) => {
-      metaElement.appendChild(createTag('span', { class: 'meta-part' }, part));
-      if (index < metaParts.length - 1) {
-        metaElement.appendChild(createTag('span', { class: 'meta-bullet' }, '•'));
-      }
-    });
-    titleElement.insertAdjacentElement('afterend', metaElement);
-  }
-
-  slide.appendChild(cohortCardWrapper);
-
-  const progressCard = buildProgressCard(cardData, progressData, totalReplies, placeholders);
-  slide.appendChild(progressCard);
-
-  return slide;
-}
-
-function buildProgressCard(cardData, progressData, totalReplies = 0, placeholders) {
+function buildProgressCard(cardData, progressData, placeholders, totalReplies = 0) {
   const progress = progressData?.progress ?? 0;
   const currentWeek = progressData?.currentWeek ?? 1;
   const totalWeeks = progressData?.totalWeeks ?? 1;
@@ -154,6 +104,56 @@ function buildProgressCard(cardData, progressData, totalReplies = 0, placeholder
   `;
 
   return progressCard;
+}
+
+async function buildCarouselSlide(cardData, progressData, totalReplies, placeholders) {
+  const slide = createTag('div', { class: 'carousel-slide' });
+
+  const cohortCardWrapper = createTag('div', { class: 'cohort-card-wrapper' });
+  await buildCard(cohortCardWrapper, cardData);
+
+  // Add "In Progress" label to thumbnail
+  const figureElement = cohortCardWrapper.querySelector('.premium-learning-card-figure');
+  if (figureElement) {
+    const progressLabel = createTag('div', { class: 'cohort-progress-label' });
+    progressLabel.textContent = placeholders?.premiumLearningInProgress || 'In Progress';
+
+    const startLabelContainer = figureElement.querySelector('.premium-learning-card-start-label-container');
+    if (startLabelContainer) {
+      const labelsWrapper = createTag('div', { class: 'cohort-labels-wrapper' });
+      labelsWrapper.appendChild(startLabelContainer.cloneNode(true));
+      labelsWrapper.appendChild(progressLabel);
+      startLabelContainer.replaceWith(labelsWrapper);
+    } else {
+      figureElement.appendChild(progressLabel);
+    }
+  }
+
+  // Add metadata below card title
+  const titleElement = cohortCardWrapper.querySelector('.premium-learning-card-title');
+  const metaParts = [
+    cardData.meta?.duration,
+    cardData.meta?.level,
+    cardData.meta?.rating?.average > 0 ? `${cardData.meta.rating.average.toFixed(1)} ★` : null,
+  ].filter(Boolean);
+
+  if (titleElement && metaParts.length > 0) {
+    const metaElement = createTag('p', { class: 'premium-learning-card-meta-text' });
+    metaParts.forEach((part, index) => {
+      metaElement.appendChild(createTag('span', { class: 'meta-part' }, part));
+      if (index < metaParts.length - 1) {
+        metaElement.appendChild(createTag('span', { class: 'meta-bullet' }, '•'));
+      }
+    });
+    titleElement.insertAdjacentElement('afterend', metaElement);
+  }
+
+  slide.appendChild(cohortCardWrapper);
+
+  const progressCard = buildProgressCard(cardData, progressData, placeholders, totalReplies);
+  slide.appendChild(progressCard);
+
+  return slide;
 }
 
 /**
