@@ -70,6 +70,10 @@
       "columns",
       "icon-block",
       "curated-cards",
+      "premium-learning-active-content",
+      "premium-learning-suggested-content",
+      "premium-learning-browse-cards",
+      "premium-learning-recommended-content",
       "premium-learning-search",
       "teaser",
       "detailed-teaser",
@@ -436,6 +440,7 @@
       "image",
       "premium-learning-search",
       "premium-learning-browse-cards",
+      "premium-learning-active-content",
       "premium-learning-suggested-content",
       "premium-learning-recommended-content",
       "premium-learning-bookmarks"

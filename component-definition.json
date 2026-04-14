@@ -1824,6 +1824,26 @@
           }
         },
         {
+          "title": "Premium Learning Active Content",
+          "id": "premium-learning-active-content",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Premium Learning Active Content",
+                  "model": "premium-learning-active-content",
+                  "heading": "Continue your cohort",
+                  "headingType": "h2",
+                  "description": "View your active enrolled cohorts",
+                  "cta_Type": "primary",
+                  "cta_linkText": "View all Active Cohorts"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Premium Learning Browse Cards",
           "id": "premium-learning-browse-cards",
           "plugins": {
