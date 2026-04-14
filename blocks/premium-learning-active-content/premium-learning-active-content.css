@@ -17,6 +17,18 @@
   line-height: 1.5;
 }
 
+/* Button Styling - Lower specificity selectors first */
+.premium-learning-active-content .button-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.premium-learning-active-content .button-container a.button {
+  width: 100%;
+}
+
 .premium-learning-active-content .premium-learning-active-content-cta a.button:any-link {
   margin: 0 0 12px;
   display: flex;
@@ -63,6 +75,30 @@
 
 .premium-learning-active-content .carousel-nav {
   display: none;
+}
+
+/* Navigation Buttons - Lower specificity selectors first */
+.premium-learning-active-content .carousel-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--spectrum-gray-200);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+.premium-learning-active-content .carousel-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.premium-learning-active-content .carousel-btn.prev img {
+  transform: scaleX(-1);
 }
 
 /* Card Styling */
@@ -141,7 +177,7 @@
   display: inline-block;
   width: 4px;
   height: 4px;
-  background-color: currentColor;
+  background-color: var(--spectrum-gray-600);
   border-radius: 50%;
   overflow: hidden;
 }
@@ -233,41 +269,6 @@
 
 .premium-learning-active-content .status-number {
   font-weight: 700;
-}
-
-.premium-learning-active-content .button-container {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
-
-.premium-learning-active-content .button-container a.button {
-  width: 100%;
-}
-
-/* Navigation Buttons */
-.premium-learning-active-content .carousel-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  background: var(--spectrum-gray-200);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  padding: 0;
-}
-
-.premium-learning-active-content .carousel-btn img {
-  width: 20px;
-  height: 20px;
-}
-
-.premium-learning-active-content .carousel-btn.prev img {
-  transform: scaleX(-1);
 }
 
 @media (min-width: 600px) {
