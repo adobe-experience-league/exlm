@@ -279,8 +279,7 @@
   }
 
   .premium-learning-active-content .carousel-track {
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-flow: row wrap;
   }
 
   .premium-learning-active-content .carousel-slide {
@@ -296,7 +295,7 @@
   }
 
   .premium-learning-active-content .carousel-track {
-    flex-wrap: nowrap;
+    flex-flow: row nowrap;
     gap: 0;
   }
 
