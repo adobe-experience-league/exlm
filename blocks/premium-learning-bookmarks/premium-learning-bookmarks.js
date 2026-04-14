@@ -83,16 +83,18 @@ async function renderCards(block, response) {
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Error rendering bookmark cards:', err);
+    // Remove stale shimmer so the block doesn't appear stuck loading
+    block.querySelector('.premium-learning-bookmarks-content')?.remove();
+    block.classList.add('pl-bookmarks-empty');
   }
 }
-
-let onBookmarkChanged;
 
 /**
  * Decorates the premium learning bookmarks block
  * @param {HTMLElement} block - The block element to decorate
  */
 export default async function decorate(block) {
+  let onBookmarkChanged;
   const [headerWrapper] = block.children;
   const header = headerWrapper?.firstElementChild?.firstElementChild;
   const headerHTML = header?.outerHTML || '<h2>My Bookmarks</h2>';
