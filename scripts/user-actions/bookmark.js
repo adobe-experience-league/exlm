@@ -188,17 +188,17 @@ export async function sanitizeBookmarks() {
 /**
  * Fetches PL bookmarks or checks if a specific item is bookmarked
  * @param {string} [loId] - Optional learning object ID to check
- * @returns {Promise<Array|boolean>} Returns all bookmarks array if no loId, or boolean if loId provided
+ * @returns {Promise<Object|boolean>} Returns full response data if no loId, or boolean if loId provided
  */
 export async function fetchPremiumLearningBookmarks(loId = null) {
   try {
     const { plApiBaseUrl } = getConfig();
     const token = getPLAccessToken();
 
-    if (!token) return loId ? false : [];
+    if (!token) return loId ? false : { data: [], included: [] };
 
     const response = await fetch(
-      `${plApiBaseUrl}/learningObjects?filter.bookmarks=true&filter.loTypes=course,learningProgram`,
+      `${plApiBaseUrl}/learningObjects?include=instances&page[limit]=10&filter.loTypes=course,learningProgram&filter.bookmarks=true&sort=name&filter.ignoreEnhancedLP=true`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -210,23 +210,23 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
     if (!response.ok) {
       // eslint-disable-next-line no-console
       console.error('Failed to fetch PL bookmarks:', response.status);
-      return loId ? false : [];
+      return loId ? false : { data: [], included: [] };
     }
 
     const data = await response.json();
-    const bookmarks = data?.data || [];
 
     // If loId provided, return true/false
     if (loId) {
+      const bookmarks = data?.data || [];
       return bookmarks.some((bookmark) => bookmark.id === loId);
     }
 
-    // Otherwise return all bookmarks
-    return bookmarks;
+    // Otherwise return full response data for adaptor processing
+    return data;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error fetching PL bookmarks:', error);
-    return loId ? false : [];
+    return loId ? false : { data: [], included: [] };
   }
 }
 
