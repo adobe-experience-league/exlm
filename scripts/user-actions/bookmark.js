@@ -198,7 +198,7 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
     if (!token) return loId ? false : [];
 
     const response = await fetch(
-      `${plApiBaseUrl}/learningObjects?filter.bookmarks=true&filter.loTypes=course,learningProgram`,
+      `${plApiBaseUrl}/learningObjects?include=instances&filter.bookmarks=true&filter.loTypes=course,learningProgram`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -221,8 +221,11 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
       return bookmarks.some((bookmark) => bookmark.id === loId);
     }
 
-    // Otherwise return all bookmarks
-    return bookmarks;
+    // Otherwise return full response with data and included arrays
+    return {
+      data: bookmarks,
+      included: data?.included || [],
+    };
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error fetching PL bookmarks:', error);
