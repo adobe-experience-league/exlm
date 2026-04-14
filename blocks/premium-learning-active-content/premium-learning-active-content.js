@@ -97,11 +97,16 @@ function buildProgressCard(cardData, progressData, placeholders, totalReplies = 
       </div>
     ${focusSection}
     ${activitySection}
-    <p class="button-container"><a href="${cardData?.viewLink}" class="button">${
-      placeholders?.premiumLearningGoToCohort || 'Go to cohort'
-    }</a></p>
     </div>
   `;
+
+  const goBtn = createTag('a', { class: 'button' }, placeholders?.premiumLearningGoToCohort || 'Go to cohort');
+  const viewLink = cardData?.viewLink || '';
+  if (viewLink.startsWith('https://') || viewLink.startsWith('http://') || viewLink.startsWith('/')) {
+    goBtn.href = viewLink;
+  }
+  const buttonContainer = createTag('p', { class: 'button-container' }, goBtn);
+  progressCard.querySelector('.progress-card-content').appendChild(buttonContainer);
 
   return progressCard;
 }
@@ -171,12 +176,24 @@ function initCarousel(container) {
 
   if (slides.length <= 1) {
     if (nav) nav.style.display = 'none';
+    if (slides.length === 1) {
+      slides[0].classList.add('active');
+    }
     return;
   }
 
   const updateCarousel = () => {
     const isMobile = window.innerWidth < 600;
     const isTablet = window.innerWidth >= 600 && window.innerWidth < 900;
+
+    // Mark active slide
+    slides.forEach((slide, index) => {
+      if (index === currentIndex) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
 
     if (isMobile) {
       track.style.transform = 'none';

@@ -278,10 +278,6 @@
     align-items: center;
   }
 
-  .premium-learning-active-content .carousel-container {
-    overflow: hidden;
-  }
-
   .premium-learning-active-content .carousel-track {
     flex-direction: row;
     gap: 0;
@@ -298,6 +294,16 @@
 
   .premium-learning-active-content .carousel-slide:last-child {
     margin-right: 0;
+  }
+
+  .premium-learning-active-content .carousel-slide {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .premium-learning-active-content .carousel-slide.active {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .premium-learning-active-content .cohort-card-wrapper {
