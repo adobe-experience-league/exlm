@@ -226,7 +226,17 @@ function initCarousel(container) {
     }
   });
 
-  new ResizeObserver(updateCarousel).observe(container);
+  const ro = new ResizeObserver(updateCarousel);
+  ro.observe(container);
+
+  // Disconnect observer when container is removed from DOM
+  new MutationObserver((_, mo) => {
+    if (!document.contains(container)) {
+      ro.disconnect();
+      mo.disconnect();
+    }
+  }).observe(document.body, { childList: true, subtree: true });
+
   updateCarousel();
 }
 
