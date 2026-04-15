@@ -139,7 +139,9 @@ async function buildCarouselSlide(cardData, progressData, totalReplies, placehol
   const metaParts = [
     cardData.meta?.duration,
     cardData.meta?.level,
-    cardData.meta?.rating?.average > 0 ? `${cardData.meta.rating.average.toFixed(1)} ★` : null,
+    cardData.meta?.rating?.average > 0
+      ? `${cardData.meta.rating.average.toFixed(1)} <span class="rating-star">★</span>`
+      : null,
   ].filter(Boolean);
 
   if (titleElement && metaParts.length > 0) {
@@ -260,7 +262,7 @@ export default async function decorate(block) {
     const enrollmentData = await fetchUserEnrollments(
       config,
       'learningProgram',
-      10,
+      4,
       'learningObject,learningObject.instances',
     );
 
@@ -307,17 +309,21 @@ export default async function decorate(block) {
     const slides = await Promise.all(
       cardsData.map(async (cardData, i) => {
         const cohortId = enrolledLearningObjects[i]?.id;
-        const enrollment = allEnrollments.find((e) => e.relationships?.learningObject?.data?.id === cohortId);
-        const instanceId = enrollment?.relationships?.loInstance?.data?.id;
+        const cohortProgressData = await fetchCohortProgress(cohortId, config);
 
-        const [boardId, cohortProgressData] = await Promise.all([
-          getEngagementBoardId(cohortId, instanceId, config),
-          fetchCohortProgress(cohortId, config),
-        ]);
+        const defaultInstance = cohortProgressData?.included?.find(
+          (item) =>
+            item.type === 'learningObjectInstance' &&
+            item.attributes?.isDefault === true &&
+            item.relationships?.learningObject?.data?.id === cohortId,
+        );
 
+        const instanceId = defaultInstance?.id;
+        const boardId = await getEngagementBoardId(cohortId, instanceId, config);
+
+        const progressData = extractProgressData(cohortProgressData);
         const boardPostsData = await fetchBoardPosts(boardId, config);
         const totalReplies = calculateTotalReplies(boardPostsData);
-        const progressData = extractProgressData(cohortProgressData);
 
         if (progressData && cardData.meta) {
           cardData.meta.duration = `${placeholders?.premiumLearningWeek || 'Week'} ${progressData.currentWeek} ${

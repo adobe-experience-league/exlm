@@ -720,7 +720,15 @@ export async function getEngagementBoardId(learningObjectId, loInstanceId, confi
     url.searchParams.set('learningObjectId', learningObjectId);
     url.searchParams.set('loInstanceId', loInstanceId);
 
-    const response = await fetch(url.toString());
+    const token = getPLAccessToken();
+    if (!token) return null;
+    const response = await fetch(url.toString(), {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `oauth ${token}`,
+      },
+      credentials: 'include',
+    });
     if (!response.ok) return null;
 
     const data = await response.json();
