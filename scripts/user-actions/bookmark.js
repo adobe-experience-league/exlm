@@ -185,18 +185,19 @@ export async function sanitizeBookmarks() {
 
 // ========== PREMIUM LEARNING BOOKMARKS ==========
 
+let allPLBookmarkIdsPromise = null;
+
 /**
- * Fetches PL bookmarks or checks if a specific item is bookmarked
+ * Fetches all PL bookmarks with pagination
  * Automatically handles pagination to fetch all bookmarks (max 10 per page)
- * @param {string} [loId] - Optional learning object ID to check
- * @returns {Promise<Object|boolean>} Returns full response data if no loId, or boolean if loId provided
+ * @returns {Promise<Object>} Returns { data: [], included: [] }
  */
-export async function fetchPremiumLearningBookmarks(loId = null) {
+export async function fetchPremiumLearningBookmarks() {
   try {
     const { plApiBaseUrl } = getConfig();
     const token = getPLAccessToken();
 
-    if (!token) return loId ? false : { data: [], included: [] };
+    if (!token) return { data: [], included: [] };
 
     const allData = [];
     const allIncluded = [];
@@ -225,11 +226,6 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
 
       // eslint-disable-next-line no-await-in-loop
       const data = await response.json();
-
-      // If loId provided, check if it exists in current page or accumulated bookmarks
-      if (loId) {
-        if (data?.data?.some((bookmark) => bookmark.id === loId)) return true;
-      }
 
       // Accumulate data and included resources (with deduplication using Sets for O(n) performance)
       if (data?.data?.length > 0) {
@@ -260,16 +256,29 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
       console.warn('fetchPremiumLearningBookmarks: pagination cap of 100 pages reached; results may be incomplete');
     }
 
-    // If loId provided and not found, return false
-    if (loId) return false;
-
-    // Otherwise return full combined response data for adaptor processing
+    // Return full combined response data for adaptor processing
     return { data: allData, included: allIncluded };
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error fetching PL bookmarks:', error);
-    return loId ? false : { data: [], included: [] };
+    return { data: [], included: [] };
   }
+}
+
+/**
+ * Gets all PL bookmark IDs as a Set (cached per page load)
+ * Caches the Promise to prevent multiple simultaneous fetches
+ * @returns {Promise<Set>} Set of bookmark IDs
+ */
+async function getAllPLBookmarkIds() {
+  if (!allPLBookmarkIdsPromise) {
+    // Start the fetch and cache the Promise
+    allPLBookmarkIdsPromise = fetchPremiumLearningBookmarks().then(
+      (result) => new Set((result?.data ?? []).map((b) => b.id)),
+    );
+  }
+  // All calls wait for the same Promise
+  return allPLBookmarkIdsPromise;
 }
 
 /**
@@ -299,10 +308,10 @@ export async function decoratePremiumLearningBookmark(config) {
     return;
   }
 
-  // Check if already bookmarked
-  const plBookmarked = await fetchPremiumLearningBookmarks(loId);
-  element.dataset.bookmarked = String(plBookmarked);
+  // Set initial state immediately to prevent delay in UI
+  element.dataset.bookmarked = 'false';
 
+  // Add tooltips immediately
   const bookmarkTooltip = htmlToElement(
     `<span class="action-tooltip bookmark-tooltip">${tooltips?.bookmarkTooltip || 'Bookmark'}</span>`,
   );
@@ -313,6 +322,11 @@ export async function decoratePremiumLearningBookmark(config) {
   );
   element.appendChild(bookmarkTooltip);
   element.appendChild(removeBookmarkTooltip);
+
+  // Check if already bookmarked using cached IDs (much faster!)
+  const ids = await getAllPLBookmarkIds();
+  const plBookmarked = ids.has(loId);
+  element.dataset.bookmarked = String(plBookmarked);
 }
 
 /**
@@ -353,6 +367,9 @@ export async function premiumLearningBookmarkHandler(config) {
         : tooltips?.bookmarkToastText || 'Successfully bookmarked';
       sendNotice(message);
       assetInteractionModel(loId, isCurrentlyBookmarked ? 'Bookmark Removed' : 'Bookmarked');
+
+      // Invalidate cache on bookmark change
+      allPLBookmarkIdsPromise = null;
 
       // Emit event to trigger UI updates in pl-bookmarks block
       const plBookmarksEventEmitter = getEmitter('pl-bookmarks');
