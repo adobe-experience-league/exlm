@@ -319,9 +319,11 @@ export default async function decorate(block) {
         const instanceId = defaultInstance?.id;
         const boardId = await getEngagementBoardId(cohortId, instanceId, config);
 
-        const boardPostsData = await fetchBoardPosts(boardId, config);
+        const [boardPostsData, progressData] = await Promise.all([
+          fetchBoardPosts(boardId, config),
+          Promise.resolve(extractProgressData(cohortProgressData)),
+        ]);
         const totalReplies = calculateTotalReplies(boardPostsData);
-        const progressData = extractProgressData(cohortProgressData);
 
         if (progressData && cardData.meta) {
           cardData.meta.duration = `${placeholders?.premiumLearningWeek || 'Week'} ${progressData.currentWeek} ${
