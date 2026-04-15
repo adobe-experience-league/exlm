@@ -141,6 +141,21 @@
   }
 }
 
+/* Common CTA CSS for Premium Learning block */
+.premium-learning-content-block-cta a.button:any-link {
+  font-size: var(--spectrum-font-size-200);
+  height: auto;
+  background-color: var(--non-spectrum-navy-blue);
+  padding-inline: 16px;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+  white-space: normal;
+}
+
 @media only screen and (min-width: 600px) {
   .browse-cards-block-title {
     max-width: 90%;
@@ -159,6 +174,12 @@
     &::after {
       left: 50%;
     }
+  }
+
+  .premium-learning-content-block-cta a.button:any-link {
+    width: auto;
+    min-width: max-content;
+    font-size: var(--spectrum-font-size-300);
   }
 }
 
