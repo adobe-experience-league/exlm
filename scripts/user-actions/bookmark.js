@@ -215,22 +215,36 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
         },
       });
 
-      if (!response.ok) break;
+      if (!response.ok) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to fetch PL bookmarks:', response.status);
+        break;
+      }
 
       // eslint-disable-next-line no-await-in-loop
       const data = await response.json();
 
-      // Accumulate data and included resources (with deduplication)
+      // If loId provided, check if it exists in current page or accumulated bookmarks
+      if (loId) {
+        if (data?.data?.some((bookmark) => bookmark.id === loId)) return true;
+      }
+
+      // Accumulate data and included resources (with deduplication using Sets for O(n) performance)
       if (data?.data?.length > 0) {
+        const seenDataIds = new Set(allData.map((i) => i.id));
         data.data.forEach((item) => {
-          if (!allData.find((existing) => existing.id === item.id)) {
+          if (!seenDataIds.has(item.id)) {
+            seenDataIds.add(item.id);
             allData.push(item);
           }
         });
 
         if (data?.included?.length > 0) {
+          const seenIncludedKeys = new Set(allIncluded.map((i) => `${i.id}:${i.type}`));
           data.included.forEach((item) => {
-            if (!allIncluded.find((existing) => existing.id === item.id && existing.type === item.type)) {
+            const key = `${item.id}:${item.type}`;
+            if (!seenIncludedKeys.has(key)) {
+              seenIncludedKeys.add(key);
               allIncluded.push(item);
             }
           });
@@ -244,10 +258,13 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
       if (!data?.data?.length) break;
     }
 
-    // If loId provided, check if it exists in all accumulated bookmarks
-    if (loId) {
-      return allData.some((bookmark) => bookmark.id === loId);
+    if (pageCount >= 100 && nextUrl) {
+      // eslint-disable-next-line no-console
+      console.warn('fetchPremiumLearningBookmarks: pagination cap of 100 pages reached; results may be incomplete');
     }
+
+    // If loId provided and not found, return false
+    if (loId) return false;
 
     // Otherwise return full combined response data for adaptor processing
     return { data: allData, included: allIncluded };
