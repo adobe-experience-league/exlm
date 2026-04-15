@@ -260,7 +260,7 @@ export default async function decorate(block) {
     const enrollmentData = await fetchUserEnrollments(
       config,
       'learningProgram',
-      10,
+      4,
       'learningObject,learningObject.instances',
     );
 
@@ -307,13 +307,17 @@ export default async function decorate(block) {
     const slides = await Promise.all(
       cardsData.map(async (cardData, i) => {
         const cohortId = enrolledLearningObjects[i]?.id;
-        const enrollment = allEnrollments.find((e) => e.relationships?.learningObject?.data?.id === cohortId);
-        const instanceId = enrollment?.relationships?.loInstance?.data?.id;
+        const cohortProgressData = await fetchCohortProgress(cohortId, config);
 
-        const [boardId, cohortProgressData] = await Promise.all([
-          getEngagementBoardId(cohortId, instanceId, config),
-          fetchCohortProgress(cohortId, config),
-        ]);
+        const defaultInstance = cohortProgressData?.included?.find(
+          (item) =>
+            item.type === 'learningObjectInstance' &&
+            item.attributes?.isDefault === true &&
+            item.relationships?.learningObject?.data?.id === cohortId,
+        );
+
+        const instanceId = defaultInstance?.id;
+        const boardId = await getEngagementBoardId(cohortId, instanceId, config);
 
         const boardPostsData = await fetchBoardPosts(boardId, config);
         const totalReplies = calculateTotalReplies(boardPostsData);
