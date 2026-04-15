@@ -9492,6 +9492,12 @@
         "valueType": "string",
         "name": "fail-page-url",
         "label": "Quiz fail page url"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "error-page-url",
+        "label": "Quiz error page url"
       }
     ]
   },
@@ -9511,7 +9517,7 @@
         "name": "classes",
         "value": "pass",
         "label": "Quiz classes",
-        "description": "Sets whether this is a pass or fail scorecard",
+        "description": "Sets whether this is a pass, fail or error scorecard",
         "valueType": "string",
         "options": [
           {
@@ -9521,6 +9527,10 @@
           {
             "name": "Fail",
             "value": "fail"
+          },
+          {
+            "name": "Error",
+            "value": "error"
           }
         ]
       },
