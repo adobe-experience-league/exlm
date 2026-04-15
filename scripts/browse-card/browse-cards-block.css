@@ -142,16 +142,6 @@
 }
 
 /* Common CTA CSS for Premium Learning block */
-.premium-learning-content-block-cta a::before {
-  content: '';
-  width: 21px;
-  height: 21px;
-  margin-right: 8px;
-  display: inline-block;
-  background-color: var(--background-color);
-  mask: url('/icons/link-out.svg') no-repeat center / contain;
-}
-
 .premium-learning-content-block-cta a.button:any-link {
   font-size: var(--spectrum-font-size-200);
   height: auto;
