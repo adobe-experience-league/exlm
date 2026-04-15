@@ -139,7 +139,9 @@ async function buildCarouselSlide(cardData, progressData, totalReplies, placehol
   const metaParts = [
     cardData.meta?.duration,
     cardData.meta?.level,
-    cardData.meta?.rating?.average > 0 ? `${cardData.meta.rating.average.toFixed(1)} ★` : null,
+    cardData.meta?.rating?.average > 0
+      ? `${cardData.meta.rating.average.toFixed(1)} <span class="rating-star">★</span>`
+      : null,
   ].filter(Boolean);
 
   if (titleElement && metaParts.length > 0) {
@@ -319,10 +321,8 @@ export default async function decorate(block) {
         const instanceId = defaultInstance?.id;
         const boardId = await getEngagementBoardId(cohortId, instanceId, config);
 
-        const [boardPostsData, progressData] = await Promise.all([
-          fetchBoardPosts(boardId, config),
-          Promise.resolve(extractProgressData(cohortProgressData)),
-        ]);
+        const progressData = extractProgressData(cohortProgressData);
+        const boardPostsData = await fetchBoardPosts(boardId, config);
         const totalReplies = calculateTotalReplies(boardPostsData);
 
         if (progressData && cardData.meta) {

@@ -171,6 +171,14 @@
   overflow: hidden;
 }
 
+.premium-learning-active-content
+  .cohort-card-wrapper
+  .browse-card.premium-learning-browse-card
+  .premium-learning-card-meta-text
+  .rating-star {
+  color: var(--non-spectrum-darker-gray);
+}
+
 .premium-learning-active-content .cohort-card-wrapper .premium-learning-card-rating-overlay {
   display: none !important;
 }
