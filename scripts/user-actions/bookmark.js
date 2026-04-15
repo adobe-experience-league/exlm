@@ -187,6 +187,7 @@ export async function sanitizeBookmarks() {
 
 /**
  * Fetches PL bookmarks or checks if a specific item is bookmarked
+ * Automatically handles pagination to fetch all bookmarks (max 10 per page)
  * @param {string} [loId] - Optional learning object ID to check
  * @returns {Promise<Object|boolean>} Returns full response data if no loId, or boolean if loId provided
  */
@@ -197,32 +198,59 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
 
     if (!token) return loId ? false : { data: [], included: [] };
 
-    const response = await fetch(
-      `${plApiBaseUrl}/learningObjects?include=instances&page[limit]=10&filter.loTypes=course,learningProgram&filter.bookmarks=true&sort=name&filter.ignoreEnhancedLP=true`,
-      {
+    const allData = [];
+    const allIncluded = [];
+    let pageCount = 0;
+    let nextUrl = `${plApiBaseUrl}/learningObjects?include=instances&page[limit]=10&filter.loTypes=course,learningProgram&filter.bookmarks=true&sort=name&filter.ignoreEnhancedLP=true`;
+
+    // Fetch all pages using cursor-based pagination
+    while (nextUrl && pageCount < 100) {
+      pageCount += 1;
+
+      // eslint-disable-next-line no-await-in-loop
+      const response = await fetch(nextUrl, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/vnd.api+json',
         },
-      },
-    );
+      });
 
-    if (!response.ok) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to fetch PL bookmarks:', response.status);
-      return loId ? false : { data: [], included: [] };
+      if (!response.ok) break;
+
+      // eslint-disable-next-line no-await-in-loop
+      const data = await response.json();
+
+      // Accumulate data and included resources (with deduplication)
+      if (data?.data?.length > 0) {
+        data.data.forEach((item) => {
+          if (!allData.find((existing) => existing.id === item.id)) {
+            allData.push(item);
+          }
+        });
+
+        if (data?.included?.length > 0) {
+          data.included.forEach((item) => {
+            if (!allIncluded.find((existing) => existing.id === item.id && existing.type === item.type)) {
+              allIncluded.push(item);
+            }
+          });
+        }
+      }
+
+      // Get the next page URL from links (cursor-based pagination)
+      nextUrl = data?.links?.next || null;
+
+      // Stop if no more data returned
+      if (!data?.data?.length) break;
     }
 
-    const data = await response.json();
-
-    // If loId provided, return true/false
+    // If loId provided, check if it exists in all accumulated bookmarks
     if (loId) {
-      const bookmarks = data?.data || [];
-      return bookmarks.some((bookmark) => bookmark.id === loId);
+      return allData.some((bookmark) => bookmark.id === loId);
     }
 
-    // Otherwise return full response data for adaptor processing
-    return data;
+    // Otherwise return full combined response data for adaptor processing
+    return { data: allData, included: allIncluded };
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error fetching PL bookmarks:', error);
