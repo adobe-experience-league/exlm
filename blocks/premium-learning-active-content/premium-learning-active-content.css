@@ -49,10 +49,9 @@
 
 .premium-learning-active-content .carousel-track {
   display: flex;
-  flex-direction: column;
+  flex-flow: row wrap;
   gap: 24px;
   transition: transform 0.3s ease;
-  flex-flow: row wrap;
   overflow: visible;
   margin-top: 32px;
 }
