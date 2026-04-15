@@ -35,7 +35,8 @@
   --text-color: var(--non-spectrum-dark-gray);
 }
 
-.quiz-scorecard.fail {
+.quiz-scorecard.fail,
+.quiz-scorecard.error {
   border: 2px solid var(--non-spectrum-adobe-dark-red);
 
   --color: var(--non-spectrum-adobe-dark-red);
@@ -64,7 +65,8 @@
 }
 
 /* Quiz result styles */
-.quiz-scorecard-result {
+.quiz-scorecard-result,
+.quiz-scorecard.error .quiz-scorecard-text {
   font-size: var(--spectrum-font-size-1100);
   font-weight: var(--font-weight-bold);
   line-height: 1.2;
