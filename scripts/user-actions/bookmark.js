@@ -200,6 +200,8 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
 
     const allData = [];
     const allIncluded = [];
+    const seenDataIds = new Set();
+    const seenIncludedKeys = new Set();
     let pageCount = 0;
     let nextUrl = `${plApiBaseUrl}/learningObjects?include=instances&page[limit]=10&filter.loTypes=course,learningProgram&filter.bookmarks=true&sort=name&filter.ignoreEnhancedLP=true`;
 
@@ -231,7 +233,6 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
 
       // Accumulate data and included resources (with deduplication using Sets for O(n) performance)
       if (data?.data?.length > 0) {
-        const seenDataIds = new Set(allData.map((i) => i.id));
         data.data.forEach((item) => {
           if (!seenDataIds.has(item.id)) {
             seenDataIds.add(item.id);
@@ -240,7 +241,6 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
         });
 
         if (data?.included?.length > 0) {
-          const seenIncludedKeys = new Set(allIncluded.map((i) => `${i.id}:${i.type}`));
           data.included.forEach((item) => {
             const key = `${item.id}:${item.type}`;
             if (!seenIncludedKeys.has(key)) {
@@ -253,9 +253,6 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
 
       // Get the next page URL from links (cursor-based pagination)
       nextUrl = data?.links?.next || null;
-
-      // Stop if no more data returned
-      if (!data?.data?.length) break;
     }
 
     if (pageCount >= 100 && nextUrl) {
