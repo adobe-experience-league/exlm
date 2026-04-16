@@ -185,49 +185,100 @@ export async function sanitizeBookmarks() {
 
 // ========== PREMIUM LEARNING BOOKMARKS ==========
 
+let allPLBookmarkIdsPromise = null;
+
 /**
- * Fetches PL bookmarks or checks if a specific item is bookmarked
- * @param {string} [loId] - Optional learning object ID to check
- * @returns {Promise<Object|boolean>} Returns full response data if no loId, or boolean if loId provided
+ * Fetches all PL bookmarks with pagination
+ * Automatically handles pagination to fetch all bookmarks (max 10 per page)
+ * @returns {Promise<Object>} Returns { data: [], included: [] }
  */
-export async function fetchPremiumLearningBookmarks(loId = null) {
+export async function fetchPremiumLearningBookmarks() {
   try {
     const { plApiBaseUrl } = getConfig();
     const token = getPLAccessToken();
 
-    if (!token) return loId ? false : { data: [], included: [] };
+    if (!token) return { data: [], included: [] };
 
-    const response = await fetch(
-      `${plApiBaseUrl}/learningObjects?include=instances&page[limit]=10&filter.loTypes=course,learningProgram&filter.bookmarks=true&sort=name&filter.ignoreEnhancedLP=true`,
-      {
+    const allData = [];
+    const allIncluded = [];
+    const seenDataIds = new Set();
+    const seenIncludedKeys = new Set();
+    let pageCount = 0;
+    let nextUrl = `${plApiBaseUrl}/learningObjects?include=instances&page[limit]=10&filter.loTypes=course,learningProgram&filter.bookmarks=true&sort=name&filter.ignoreEnhancedLP=true`;
+
+    // Fetch all pages using cursor-based pagination
+    while (nextUrl && pageCount < 100) {
+      pageCount += 1;
+
+      // eslint-disable-next-line no-await-in-loop
+      const response = await fetch(nextUrl, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/vnd.api+json',
         },
-      },
-    );
+      });
 
-    if (!response.ok) {
+      if (!response.ok) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to fetch PL bookmarks:', response.status);
+        break;
+      }
+
+      // eslint-disable-next-line no-await-in-loop
+      const data = await response.json();
+
+      // Accumulate data and included resources (with deduplication using Sets for O(n) performance)
+      if (data?.data?.length > 0) {
+        data.data.forEach((item) => {
+          if (!seenDataIds.has(item.id)) {
+            seenDataIds.add(item.id);
+            allData.push(item);
+          }
+        });
+
+        if (data?.included?.length > 0) {
+          data.included.forEach((item) => {
+            const key = `${item.id}:${item.type}`;
+            if (!seenIncludedKeys.has(key)) {
+              seenIncludedKeys.add(key);
+              allIncluded.push(item);
+            }
+          });
+        }
+      }
+
+      // Get the next page URL from links (cursor-based pagination)
+      nextUrl = data?.links?.next || null;
+    }
+
+    if (pageCount >= 100 && nextUrl) {
       // eslint-disable-next-line no-console
-      console.error('Failed to fetch PL bookmarks:', response.status);
-      return loId ? false : { data: [], included: [] };
+      console.warn('fetchPremiumLearningBookmarks: pagination cap of 100 pages reached; results may be incomplete');
     }
 
-    const data = await response.json();
-
-    // If loId provided, return true/false
-    if (loId) {
-      const bookmarks = data?.data || [];
-      return bookmarks.some((bookmark) => bookmark.id === loId);
-    }
-
-    // Otherwise return full response data for adaptor processing
-    return data;
+    // Return full combined response data for adaptor processing
+    return { data: allData, included: allIncluded };
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error fetching PL bookmarks:', error);
-    return loId ? false : { data: [], included: [] };
+    return { data: [], included: [] };
   }
+}
+
+/**
+ * Gets all PL bookmark IDs as a Set (cached per page load)
+ * Caches the Promise to prevent multiple simultaneous fetches
+ * @returns {Promise<Set>} Set of bookmark IDs
+ */
+async function getAllPLBookmarkIds() {
+  if (!allPLBookmarkIdsPromise) {
+    // Start the fetch and cache the Promise
+    allPLBookmarkIdsPromise = fetchPremiumLearningBookmarks().then(
+      (result) => new Set((result?.data ?? []).map((b) => b.id)),
+    );
+  }
+  // All calls wait for the same Promise
+  return allPLBookmarkIdsPromise;
 }
 
 /**
@@ -257,10 +308,10 @@ export async function decoratePremiumLearningBookmark(config) {
     return;
   }
 
-  // Check if already bookmarked
-  const plBookmarked = await fetchPremiumLearningBookmarks(loId);
-  element.dataset.bookmarked = String(plBookmarked);
+  // Set initial state immediately to prevent delay in UI
+  element.dataset.bookmarked = 'false';
 
+  // Add tooltips immediately
   const bookmarkTooltip = htmlToElement(
     `<span class="action-tooltip bookmark-tooltip">${tooltips?.bookmarkTooltip || 'Bookmark'}</span>`,
   );
@@ -271,6 +322,11 @@ export async function decoratePremiumLearningBookmark(config) {
   );
   element.appendChild(bookmarkTooltip);
   element.appendChild(removeBookmarkTooltip);
+
+  // Check if already bookmarked using cached IDs (much faster!)
+  const ids = await getAllPLBookmarkIds();
+  const plBookmarked = ids.has(loId);
+  element.dataset.bookmarked = String(plBookmarked);
 }
 
 /**
@@ -311,6 +367,9 @@ export async function premiumLearningBookmarkHandler(config) {
         : tooltips?.bookmarkToastText || 'Successfully bookmarked';
       sendNotice(message);
       assetInteractionModel(loId, isCurrentlyBookmarked ? 'Bookmark Removed' : 'Bookmarked');
+
+      // Invalidate cache on bookmark change
+      allPLBookmarkIdsPromise = null;
 
       // Emit event to trigger UI updates in pl-bookmarks block
       const plBookmarksEventEmitter = getEmitter('pl-bookmarks');
