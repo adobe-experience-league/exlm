@@ -9,7 +9,12 @@ const ALLOY_INSTANCE_NAME = 'alloyBC';
 const MOUNT_SELECTOR = '#brand-concierge-mount';
 const DIALOG_ID = 'bc-dialog';
 const TRIGGER_ID = 'bc-trigger';
+const HEADER_CLEAR_ID = 'bc-header-clear';
 const PANEL_DISCLAIMER_ID = 'bc-panel-disclaimer';
+
+/** Brand Concierge web client transcript keys (see ChatTranscriptStorage in bc main.js). */
+const BC_STORAGE_TRANSCRIPT_PREFIX = 'bc_chat_transcript_';
+const BC_STORAGE_METADATA_KEY = 'bc_chat_metadata';
 
 const PRIVACY_POLICY_URL = 'https://www.adobe.com/privacy/policy.html';
 const GENERATIVE_AI_TERMS_URL = 'https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html';
@@ -27,6 +32,37 @@ let drawerHandle = null;
 let chatObserver = null;
 let inputLabelIconObserver = null;
 let panelDisclaimerObserver = null;
+
+/**
+ * Removes persisted BC chat sessions from localStorage (transcript + metadata).
+ * @param {{ broad?: boolean }} [options] - If broad, also remove any key containing `bc_chat`.
+ */
+function clearBrandConciergeTranscriptStorage(options = {}) {
+  const { broad = false } = options;
+  const toRemove = [];
+  for (let i = 0; i < localStorage.length; i += 1) {
+    const key = localStorage.key(i);
+    if (
+      key &&
+      (key === BC_STORAGE_METADATA_KEY ||
+        key.startsWith(BC_STORAGE_TRANSCRIPT_PREFIX) ||
+        (broad && key.includes('bc_chat')))
+    ) {
+      toRemove.push(key);
+    }
+  }
+  toRemove.forEach((k) => localStorage.removeItem(k));
+}
+
+function getBootstrapOptions() {
+  const { stickySession = false, ...stylingConfigurations } = brandConciergeConfig;
+  return {
+    instanceName: ALLOY_INSTANCE_NAME,
+    stylingConfigurations,
+    selector: MOUNT_SELECTOR,
+    stickySession,
+  };
+}
 
 /**
  * BC renders inline SVG sparkles in several places; swap them for icons/bc-ask-sparkles.svg.
@@ -150,6 +186,60 @@ function focusBcChatInputWhenReady(mount) {
   timeoutId = window.setTimeout(cleanup, 8000);
 }
 
+// scroll the container to the bottom each time.
+function watchChatHistory(mount) {
+  const history = mount.querySelector('.chat-history');
+  if (!history) return null;
+
+  const observer = new MutationObserver(() => {
+    history.scrollTo({ top: history.scrollHeight, behavior: 'smooth' });
+  });
+
+  observer.observe(history, { childList: true });
+  return observer;
+}
+
+/**
+ * Resets the assistant to the first-use welcome state: clears transcript storage and re-runs bootstrap.
+ * The BC client calls reinitialize() when bootstrap is invoked again after the first load.
+ */
+async function clearBrandConciergeConversation() {
+  const concierge = window.adobe?.concierge;
+  if (typeof concierge?.bootstrap !== 'function') {
+    warn('Clear: concierge bootstrap not available');
+    return;
+  }
+
+  try {
+    if (typeof concierge.clearAllSessions === 'function') {
+      concierge.clearAllSessions();
+    } else if (typeof concierge.clearHistory === 'function') {
+      concierge.clearHistory();
+    }
+  } catch (e) {
+    warn('Clear: optional concierge clear API failed (continuing)', e?.message || e);
+  }
+
+  clearBrandConciergeTranscriptStorage({ broad: false });
+
+  try {
+    await concierge.bootstrap(getBootstrapOptions());
+  } catch (e) {
+    warn('Clear: first re-bootstrap failed; retrying after broader storage cleanup', e?.message || e);
+    clearBrandConciergeTranscriptStorage({ broad: true });
+    await concierge.bootstrap(getBootstrapOptions());
+  }
+
+  const bcMount = document.getElementById('brand-concierge-mount');
+  chatObserver?.disconnect();
+  chatObserver = watchChatHistory(bcMount);
+  patchBcSparkleIcons(bcMount);
+  panelDisclaimerObserver?.disconnect();
+  panelDisclaimerObserver = null;
+  watchPanelDisclaimer(bcMount);
+  focusBcChatInputWhenReady(bcMount);
+}
+
 function createMountPoint() {
   if (document.getElementById(DIALOG_ID)) return document.getElementById(DIALOG_ID);
 
@@ -179,6 +269,13 @@ function createMountPoint() {
   const mount = document.createElement('div');
   mount.id = 'brand-concierge-mount';
 
+  const clearBtn = document.createElement('button');
+  clearBtn.id = HEADER_CLEAR_ID;
+  clearBtn.type = 'button';
+  clearBtn.className = 'exl-dialog-header-clear';
+  clearBtn.textContent = 'Clear';
+  clearBtn.setAttribute('aria-label', 'Clear conversation');
+
   drawerHandle = openDrawer({
     id: DIALOG_ID,
     ariaLabel: 'AI assistant',
@@ -187,6 +284,7 @@ function createMountPoint() {
     titleIcon: 'bc-ask-sparkles',
     content: mount,
     canExpand: true,
+    beforeExpandButton: clearBtn,
     triggerEl: trigger,
     onClose: () => trigger.setAttribute('aria-expanded', 'false'),
   });
@@ -203,20 +301,11 @@ function createMountPoint() {
     focusBcChatInputWhenReady(mount);
   });
 
-  return dialog;
-}
-
-// scroll the container to the bottom each time.
-function watchChatHistory(mount) {
-  const history = mount.querySelector('.chat-history');
-  if (!history) return null;
-
-  const observer = new MutationObserver(() => {
-    history.scrollTo({ top: history.scrollHeight, behavior: 'smooth' });
+  clearBtn.addEventListener('click', () => {
+    clearBrandConciergeConversation().catch((e) => warn('Clear conversation failed', e?.message || e));
   });
 
-  observer.observe(history, { childList: true });
-  return observer;
+  return dialog;
 }
 
 async function configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain) {
@@ -239,16 +328,9 @@ function bootstrapWebClient() {
     return;
   }
 
-  const { stickySession = false, ...stylingConfigurations } = brandConciergeConfig;
-
   log('bootstrap called', { instanceName: ALLOY_INSTANCE_NAME, selector: MOUNT_SELECTOR });
 
-  window.adobe.concierge.bootstrap({
-    instanceName: ALLOY_INSTANCE_NAME,
-    stylingConfigurations,
-    selector: MOUNT_SELECTOR,
-    stickySession,
-  });
+  window.adobe.concierge.bootstrap(getBootstrapOptions());
 }
 
 /**

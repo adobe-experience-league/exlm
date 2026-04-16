@@ -372,6 +372,7 @@
   --non-spectrum-pass-green: #2d9d78;
   --non-spectrum-rose-red: #ffc0c0;
   --non-spectrum-warm-yellow: #F5C700;
+  --non-spectrum-darker-gray: #292929;
 
   /* Max-width values  */
   --default-max-width: 1280px;

@@ -9492,6 +9492,12 @@
         "valueType": "string",
         "name": "fail-page-url",
         "label": "Quiz fail page url"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "error-page-url",
+        "label": "Quiz error page url"
       }
     ]
   },
@@ -9511,7 +9517,7 @@
         "name": "classes",
         "value": "pass",
         "label": "Quiz classes",
-        "description": "Sets whether this is a pass or fail scorecard",
+        "description": "Sets whether this is a pass, fail or error scorecard",
         "valueType": "string",
         "options": [
           {
@@ -9521,6 +9527,10 @@
           {
             "name": "Fail",
             "value": "fail"
+          },
+          {
+            "name": "Error",
+            "value": "error"
           }
         ]
       },
@@ -10663,13 +10673,94 @@
             "value": "h6"
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "premium-learning-active-content",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Sets the title for the Premium learning Active cohorts block."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Title Heading Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
       },
       {
         "component": "richtext",
         "valueType": "string",
         "name": "description",
         "value": "",
-        "label": "Description"
+        "label": "Long Description",
+        "description": "Sets the description of Premium learning browse cards block."
+      },
+      {
+        "component": "select",
+        "name": "cta1_Type",
+        "value": "primary",
+        "label": "First CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_linkText",
+        "value": "",
+        "label": "First CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta1_link",
+        "value": "",
+        "label": "First CTA Link",
+        "description": "What link to open when clicking the button."
       }
     ]
   }

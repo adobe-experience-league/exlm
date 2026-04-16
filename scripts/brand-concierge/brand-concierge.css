@@ -415,58 +415,44 @@
   display: none !important;
 }
 
-/* Expanded only: full-width prompt area; taller, half-width welcome pill cards (not in the narrow drawer). */
-#bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container {
-  max-width: 100% !important;
-}
+/*
+ * Expanded-only prompt layouts (wide viewports). Below 769px, expanded uses the same
+ * full-width prompt stack as the side drawer (base `.bc-prompt-pill-button` rules).
+ */
+@media (min-width: 769px) {
+  /* Expanded only: full-width prompt area; taller, half-width welcome pill cards (not in the narrow drawer). */
+  #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container {
+    max-width: 100% !important;
+  }
 
-/* Expanded welcome only (four initial pills before chat): keep wrapped row + card-style sizing. */
-#bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-pills-container:has(> :nth-child(4):last-child) {
-  display: flex !important;
-  flex-flow: row wrap !important;
-  justify-content: center !important;
-  gap: 8px !important;
-}
+  /* Expanded welcome only (four initial pills before chat): keep wrapped row + card-style sizing. */
+  #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-pills-container:has(> :nth-child(4):last-child) {
+    display: flex !important;
+    flex-flow: row wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+  }
 
-#bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container .bc-prompt-pill-button,
-#bc-dialog.exl-dialog-expanded
-  #brand-concierge-mount
-  .prompt-pills-container:has(> :nth-child(4):last-child)
-  .bc-prompt-pill-button {
-  --bc-prompt-pill-gap-count: 3;
-  --bc-prompt-pill-gap: 8px;
+  #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container .bc-prompt-pill-button,
+  #bc-dialog.exl-dialog-expanded
+    #brand-concierge-mount
+    .prompt-pills-container:has(> :nth-child(4):last-child)
+    .bc-prompt-pill-button {
+    --bc-prompt-pill-gap-count: 3;
+    --bc-prompt-pill-gap: 8px;
 
-  flex: 0 1 calc((100% - var(--bc-prompt-pill-gap-count) * var(--bc-prompt-pill-gap)) / 8) !important;
-  width: calc((100% - var(--bc-prompt-pill-gap-count) * var(--bc-prompt-pill-gap)) / 8) !important;
-  max-width: calc((100% - var(--bc-prompt-pill-gap-count) * var(--bc-prompt-pill-gap)) / 8) !important;
-  box-sizing: border-box !important;
-  min-height: calc((16px + 1.4 * 13px) * 3) !important;
-  padding: 24px 12px !important;
-  align-items: flex-start !important;
-  justify-content: center !important;
-}
+    flex: 0 1 calc((100% - var(--bc-prompt-pill-gap-count) * var(--bc-prompt-pill-gap)) / 8) !important;
+    width: calc((100% - var(--bc-prompt-pill-gap-count) * var(--bc-prompt-pill-gap)) / 8) !important;
+    max-width: calc((100% - var(--bc-prompt-pill-gap-count) * var(--bc-prompt-pill-gap)) / 8) !important;
+    min-width: 130px !important;
+    box-sizing: border-box !important;
+    min-height: calc((16px + 1.4 * 13px) * 3) !important;
+    padding: 24px 12px !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+  }
 
-/* Expanded in-chat follow-up suggestions: full-width pills, vertical stack (not the initial welcome row). */
-#bc-dialog.exl-dialog-expanded
-  #brand-concierge-mount
-  .chat-history
-  .prompt-suggestions-container:has(.bc-prompt-suggestion-button),
-#bc-dialog.exl-dialog-expanded
-  #brand-concierge-mount
-  .chat-history
-  .prompt-suggestions-container:has(.bc-prompt-suggestion-button)
-  .prompt-pills-container {
-  display: flex !important;
-  flex-flow: column nowrap !important;
-  align-items: stretch !important;
-  justify-content: flex-start !important;
-  gap: 8px !important;
-  width: auto !important;
-  min-width: 60% !important;
-  max-width: 70% !important;
-}
-
-@media (max-width: 767px) {
+  /* Expanded in-chat follow-up suggestions: full-width pills, vertical stack (not the initial welcome row). */
   #bc-dialog.exl-dialog-expanded
     #brand-concierge-mount
     .chat-history
@@ -476,23 +462,40 @@
     .chat-history
     .prompt-suggestions-container:has(.bc-prompt-suggestion-button)
     .prompt-pills-container {
+    display: flex !important;
+    flex-flow: column nowrap !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    width: auto !important;
     max-width: 100% !important;
+  }
+
+  #bc-dialog.exl-dialog-expanded
+    #brand-concierge-mount
+    .chat-history
+    .prompt-suggestions-container
+    .bc-prompt-suggestion-button {
+    flex: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+    padding: 8px 12px !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    box-sizing: border-box !important;
   }
 }
 
-#bc-dialog.exl-dialog-expanded
-  #brand-concierge-mount
-  .chat-history
-  .prompt-suggestions-container
-  .bc-prompt-suggestion-button {
-  flex: none !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  min-height: 0 !important;
-  padding: 8px 12px !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  box-sizing: border-box !important;
+/* Expanded on narrow viewports: match side-drawer prompt stack (full-width pills, same gap as base). */
+@media (max-width: 768px) {
+  #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-pills-container:has(> :nth-child(4):last-child) {
+    display: flex !important;
+    flex-flow: column nowrap !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 6px !important;
+  }
 }
 
 #brand-concierge-mount .submit-button {
