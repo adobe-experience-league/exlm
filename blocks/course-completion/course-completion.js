@@ -45,8 +45,8 @@ function getTextWrapConfig(text) {
   const len = text.length;
   if (len >= 120) return { charLength: 42, fontSize: 12 };
   if (len >= 102) return { charLength: 40, fontSize: 14 };
-  if (len >= 65) return { charLength: 34, fontSize: 16 };
-  if (len >= 60) return { charLength: 32, fontSize: 18 };
+  if (len >= 70) return { charLength: 38, fontSize: 15 };
+  if (len >= 55) return { charLength: 34, fontSize: 16 };
   if (len >= 50) return { charLength: 30, fontSize: 20 };
   return { charLength: 25, fontSize: 23 };
 }
