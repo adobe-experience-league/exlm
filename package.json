@@ -19,7 +19,8 @@
     "prepare": "husky install",
     "validate:paths": "node validate-paths.js",
     "quality": "npm run format:check && npm run lint && npm run validate:paths",
-    "check:branch-name": "node check-branch-name.js"
+    "check:branch-name": "node check-branch-name.js",
+    "setup:skills": "npx skills add adobe/skills --all"
   },
   "repository": {
     "type": "git",
