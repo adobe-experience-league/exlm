@@ -2,6 +2,7 @@
 import { loadCSS, decorateIcons } from '../lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
 import UserActions from '../user-actions/user-actions.js';
+import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
 
 /**
  * @fileoverview premium-learning specific browse card implementation
@@ -50,6 +51,36 @@ function getBookmarkId(id, viewLink) {
   } catch {
     return '';
   }
+}
+
+/**
+ * Returns the card header and position for analytics payloads.
+ * @param {HTMLElement} card - The card element.
+ * @param {HTMLElement} element - The card wrapper element in the list.
+ * @returns {{cardHeader: string, cardPosition: string}}
+ */
+function getCardHeaderAndPosition(card, element) {
+  let cardHeader = '';
+  const currentBlock = card.closest('.block');
+  const headerEl = currentBlock?.querySelector(
+    '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
+  );
+
+  if (headerEl) {
+    const cloned = headerEl.cloneNode(true);
+    cloned.querySelectorAll('[data-cs-mask]').forEach((maskedElement) => maskedElement.remove());
+    cardHeader = cloned.innerText.trim();
+  }
+
+  cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
+
+  let cardPosition = '';
+  if (element?.parentElement?.children) {
+    const siblings = Array.from(element.parentElement.children);
+    cardPosition = String(siblings.indexOf(element) + 1);
+  }
+
+  return { cardHeader, cardPosition };
 }
 
 /**
@@ -271,7 +302,11 @@ export async function buildPLCard(element, model) {
     cardContainer.addEventListener('click', (e) => {
       if (e.target?.closest('.user-actions')) {
         e.preventDefault();
+        return;
       }
+
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+      pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
     });
 
     cardContainer.appendChild(card);
