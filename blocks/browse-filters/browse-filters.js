@@ -1582,8 +1582,11 @@ function decorateBrowseTopics(block) {
   const allDivs = [...block.children].map((row) => row.firstElementChild);
 
   // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
-  if (allDivs.length <= 7) {
+  if (allDivs.length <= 6) {
     allDivs.splice(4, 0, undefined, undefined, undefined);
+  } else if (allDivs.length === 7) {
+    // Old v2 blocks authored before featuresv2 was introduced
+    allDivs.splice(5, 0, undefined);
   }
 
   // 'customElement' can either be a Form Element or localized tag values returned by the converter.
@@ -1624,16 +1627,7 @@ function decorateBrowseTopics(block) {
     const featuresv2Array = featuresv2Labels ? featuresv2Labels.split(',').map((p) => p.trim()) : [];
     const topicsv2Array = topicsv2Labels ? topicsv2Labels.split(',').map((p) => p.trim()) : [];
 
-    if (featuresv2Array.length > 0 && topicsv2Array.length > 0) {
-      // Both present: combine them
-      allTopicsTags = [...featuresv2Array, ...topicsv2Array];
-    } else if (featuresv2Array.length > 0) {
-      // Only features v2: use features v2
-      allTopicsTags = featuresv2Array;
-    } else {
-      // No features v2: use topics v2
-      allTopicsTags = topicsv2Array;
-    }
+    allTopicsTags = [...new Set([...featuresv2Array, ...topicsv2Array])];
   } else {
     // Legacy tags
     // eslint-disable-next-line no-unused-vars
