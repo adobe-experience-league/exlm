@@ -1582,7 +1582,7 @@ function decorateBrowseTopics(block) {
   const allDivs = [...block.children].map((row) => row.firstElementChild);
 
   // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
-  if (allDivs.length <= 6) {
+  if (allDivs.length <= 7) {
     allDivs.splice(4, 0, undefined, undefined, undefined);
   }
 
@@ -1618,9 +1618,9 @@ function decorateBrowseTopics(block) {
     const topicsv2Content = topicsv2Element?.textContent?.trim() ?? '';
     const topicsv2Labels = topicsv2Content ? getv2TagLabels(topicsv2Content) : '';
 
-    // If features v2 exists, use it for topics
-    // If no features v2, use topics v2
-    // If both exist, combine them in topics v2
+    // If features v2 exists alone, use it for topics
+    // If topics v2 exists alone, use it.
+    // If both exist, merge both arrays into allTopicsTags.
     const featuresv2Array = featuresv2Labels ? featuresv2Labels.split(',').map((p) => p.trim()) : [];
     const topicsv2Array = topicsv2Labels ? topicsv2Labels.split(',').map((p) => p.trim()) : [];
 
