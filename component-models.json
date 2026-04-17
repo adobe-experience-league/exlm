@@ -4533,10 +4533,34 @@
       },
       {
         "component": "custom-aem-tag",
+        "name": "v2-features",
+        "label": "Feature(s) v2",
+        "valueType": "string",
+        "description": "Select up to 15 features.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "feature"
+            }
+          }
+        },
+        "options": {
+          "dependentField": {
+            "name": "v2-products",
+            "taxonomyType": "product"
+          },
+          "requiredTagsToEnable": ["v2-products"]
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
         "name": "v2-topics",
         "label": "Topic(s) v2",
         "valueType": "string",
-        "description": "Select up to 15 topics or features.",
+        "description": "Select up to 15 topics.",
         "dataSource": {
           "type": "action",
           "config": {
