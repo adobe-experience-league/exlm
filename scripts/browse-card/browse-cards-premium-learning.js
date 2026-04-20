@@ -2,6 +2,8 @@
 import { loadCSS, decorateIcons } from '../lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
 import UserActions from '../user-actions/user-actions.js';
+import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
+import { getCardHeaderAndPosition } from './browse-card-utils.js';
 
 /**
  * @fileoverview premium-learning specific browse card implementation
@@ -267,11 +269,19 @@ export async function buildPLCard(element, model) {
     const cardContainer = document.createElement('a');
     cardContainer.href = model.viewLink;
 
-    // Prevent navigation when clicking user actions
+    if (element.closest('.section')?.getAttribute('data-new-tab') === 'true') {
+      cardContainer.setAttribute('target', '_blank');
+      cardContainer.setAttribute('rel', 'noopener noreferrer');
+    }
+
     cardContainer.addEventListener('click', (e) => {
       if (e.target?.closest('.user-actions')) {
         e.preventDefault();
+        return;
       }
+
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+      pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
     });
 
     cardContainer.appendChild(card);

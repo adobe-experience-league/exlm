@@ -13,6 +13,7 @@ import UserActions from '../user-actions/user-actions.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import PL_CONTENT_TYPES from '../data-service/premium-learning/premium-learning-constants.js';
 import isFeatureEnabled from '../utils/feature-flag-utils.js';
+import { getCardHeaderAndPosition } from './browse-card-utils.js';
 
 const bookmarkExclusionContentypes = [
   CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
@@ -303,32 +304,6 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
 };
 
 const stripScriptTags = (input) => input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-
-// Function to calculate cardHeader and cardPosition
-const getCardHeaderAndPosition = (card, element) => {
-  let cardHeader = '';
-  const currentBlock = card.closest('.block');
-  const headerEl = currentBlock?.querySelector(
-    '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
-  );
-  if (headerEl) {
-    const cloned = headerEl.cloneNode(true);
-    // Remove any PII or masked spans
-    cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
-    // Get cleaned text
-    cardHeader = cloned.innerText.trim();
-  }
-
-  cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
-
-  let cardPosition = '';
-  if (element?.parentElement?.children) {
-    const siblings = Array.from(element.parentElement.children);
-    cardPosition = String(siblings.indexOf(element) + 1);
-  }
-
-  return { cardHeader, cardPosition };
-};
 
 const buildCardContent = async (card, model, element) => {
   const {
