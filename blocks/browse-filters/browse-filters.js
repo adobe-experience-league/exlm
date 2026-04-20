@@ -1621,9 +1621,7 @@ function decorateBrowseTopics(block) {
     const topicsv2Content = topicsv2Element?.textContent?.trim() ?? '';
     const topicsv2Labels = topicsv2Content ? getv2TagLabels(topicsv2Content) : '';
 
-    // If features v2 exists alone, use it for topics
-    // If topics v2 exists alone, use it.
-    // If both exist, merge both arrays into allTopicsTags.
+    // Merge features and topics v2 tags; Set deduplicates if both fields contain overlapping labels.
     const featuresv2Array = featuresv2Labels ? featuresv2Labels.split(',').map((p) => p.trim()) : [];
     const topicsv2Array = topicsv2Labels ? topicsv2Labels.split(',').map((p) => p.trim()) : [];
 
@@ -1683,10 +1681,10 @@ function decorateBrowseTopics(block) {
   const browseFiltersSection = document.querySelector('.browse-filters-form');
 
   if (allTopicsTags.length > 0) {
+    const isV2Enabled = isFeatureEnabled('isV2TagsEnabled') && (featuresv2Element || topicsv2Element);
     allTopicsTags
       .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
-        const isV2Enabled = isFeatureEnabled('isV2TagsEnabled') && (featuresv2Element || topicsv2Element);
         // v2 tags are plain text labels
         const topicName = isV2Enabled ? topicsButtonTitle : topicsButtonTitle.split('/').pop();
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
