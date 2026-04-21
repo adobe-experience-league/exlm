@@ -32,9 +32,9 @@ export default async function decorate(block) {
         ),
       ].join(',') || getMetadata('product_v1');
 
-    features = getPreferredMetadata('feature', 'feature_v1');
-    roles = getPreferredMetadata('role', 'role_v1');
-    experienceLevels = getPreferredMetadata('level', 'level_v1');
+    features = getPreferredMetadata('loc-v2-feature', 'feature', 'feature_v1');
+    roles = getPreferredMetadata('loc-v2-role', 'role', 'role_v1');
+    experienceLevels = getPreferredMetadata('loc-v2-level', 'level', 'level_v1');
   } else {
     solutions =
       [
