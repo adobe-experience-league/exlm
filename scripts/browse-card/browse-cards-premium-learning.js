@@ -107,22 +107,9 @@ function buildPLThumbnail({
     card.classList.add('premium-learning-thumbnail-not-loaded');
   }
 
-  // Add user actions overlay (bookmark & copy)
+  // Create placeholder for user actions (will be populated later)
   const cardActions = document.createElement('div');
   cardActions.className = 'premium-learning-card-actions';
-  const bookmarkId = getBookmarkId(id, viewLink);
-
-  const cardAction = UserActions({
-    container: cardActions,
-    id: bookmarkId,
-    bookmarkPath: bookmarkId,
-    link: copyLink,
-    contentType,
-    bookmarkConfig: true,
-    copyConfig: { icons: ['copy-white-fill'] },
-  });
-
-  cardAction.decorate();
   cardFigure.appendChild(cardActions);
 
   if (startLabel) {
@@ -258,6 +245,36 @@ export async function buildPLCard(element, model) {
 
   card.appendChild(cardContent);
 
+  // Add user actions after card structure is complete
+  const cardActionsContainer = card.querySelector('.premium-learning-card-actions');
+  const bookmarkId = getBookmarkId(id, viewLink);
+
+  const cardAction = UserActions({
+    container: cardActionsContainer,
+    id: bookmarkId,
+    bookmarkPath: bookmarkId,
+    link: copyLink,
+    contentType,
+    bookmarkConfig: true,
+    copyConfig: { icons: ['copy-white-fill'] },
+    bookmarkCallback: (linkType, position) => {
+      // Calculate cardHeader and cardPosition dynamically when callback is called
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+      const finalLinkType = linkType || cardHeader || '';
+      const finalPosition = position || cardPosition || '';
+      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, finalLinkType, finalPosition);
+    },
+    copyCallback: (linkType, position) => {
+      // Calculate cardHeader and cardPosition dynamically when callback is called
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+      const finalLinkType = linkType || cardHeader || '';
+      const finalPosition = position || cardPosition || '';
+      pushBrowseCardClickEvent('copyLinkBrowseCard', model, finalLinkType, finalPosition);
+    },
+  });
+
+  cardAction.decorate();
+
   // Load required CSS
   await Promise.all([
     loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`),
@@ -289,6 +306,22 @@ export async function buildPLCard(element, model) {
   } else {
     element.appendChild(card);
   }
+
+  card.addEventListener('click', (e) => {
+    const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+
+    const cardActions = card.querySelector('.premium-learning-card-actions');
+    if (cardActions) {
+      card.dataset.cardHeader = cardHeader || '';
+      card.dataset.cardPosition = cardPosition || '';
+    }
+
+    if (e.target?.closest('.user-actions')) {
+      return;
+    }
+
+    pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
+  });
 }
 
 export default { buildPLCard };
