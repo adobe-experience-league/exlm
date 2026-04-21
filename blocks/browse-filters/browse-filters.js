@@ -1494,7 +1494,7 @@ function decorateBrowseTopics(block) {
 
   // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
   if (allDivs.length <= 6) {
-    allDivs.splice(4, 0, undefined, undefined, undefined);
+    allDivs.splice(4, 0, ...Array(3));
   } else if (allDivs.length === 7) {
     // Old v2 blocks authored before featuresv2 was introduced
     allDivs.splice(5, 0, undefined);
