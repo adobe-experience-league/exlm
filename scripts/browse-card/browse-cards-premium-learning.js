@@ -55,6 +55,17 @@ function getBookmarkId(id, viewLink) {
 }
 
 /**
+ * Gets the premium learning block header
+ * @param {HTMLElement} card - The card element
+ * @returns {string} Block header text
+ * @private
+ */
+function getPremiumLearningBlockHeader(card) {
+  const heading = card.closest('.block')?.querySelector('[class*="header"] :is(h1, h2, h3, h4, h5, h6)');
+  return heading?.textContent?.trim() || '';
+}
+
+/**
  * Builds thumbnail container with image and user actions overlay
  * @param {Object} params - Thumbnail parameters
  * @returns {HTMLElement} Thumbnail figure element
@@ -297,8 +308,10 @@ export async function buildPLCard(element, model) {
         return;
       }
 
-      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
-      pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
+      // Get block header for linkType
+      const blockHeader = getPremiumLearningBlockHeader(card);
+      const { cardPosition } = getCardHeaderAndPosition(card, element);
+      pushBrowseCardClickEvent('browseCardClicked', model, blockHeader, cardPosition);
     });
 
     cardContainer.appendChild(card);
@@ -306,22 +319,6 @@ export async function buildPLCard(element, model) {
   } else {
     element.appendChild(card);
   }
-
-  card.addEventListener('click', (e) => {
-    const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
-
-    const cardActions = card.querySelector('.premium-learning-card-actions');
-    if (cardActions) {
-      card.dataset.cardHeader = cardHeader || '';
-      card.dataset.cardPosition = cardPosition || '';
-    }
-
-    if (e.target?.closest('.user-actions')) {
-      return;
-    }
-
-    pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
-  });
 }
 
 export default { buildPLCard };
