@@ -7,8 +7,16 @@ import {
   fetchBoardPosts,
 } from '../../scripts/data-service/premium-learning-data-service.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
+import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+
+function showFallbackContentInUEMode(blockElement) {
+  const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
+  contentDiv.textContent = 'This block will load the Premium learning active content for Premium users only.';
+  blockElement.appendChild(contentDiv);
+}
 
 function calculateTotalReplies(postsData) {
   if (!postsData?.data) return 0;
@@ -258,107 +266,125 @@ export default async function decorate(block) {
   `;
   block.appendChild(headerDiv);
 
-  try {
-    const enrollmentData = await fetchUserEnrollments(
-      config,
-      'learningProgram',
-      4,
-      'learningObject,learningObject.instances',
-    );
+  // Non-blocking eligibility check — header stays visible until resolved.
+  // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
+  isSignedInUser()
+    .then((signedIn) => isPLEligible(signedIn))
+    .then(async (isEligible) => {
+      if (!isEligible) {
+        if (UEAuthorMode) showFallbackContentInUEMode(block);
+        else block.remove();
+        return;
+      }
 
-    const activeInstances =
-      enrollmentData?.included?.filter(
-        (item) => item.type === 'learningObjectInstance' && item.attributes?.state === 'Active',
-      ) || [];
-
-    const activeInstanceIds = new Set(activeInstances.map((instance) => instance.id));
-
-    // Filter enrollments to only include active instances
-    const allEnrollments = (enrollmentData?.data || []).filter((enrollment) => {
-      const hasActiveInstance =
-        enrollment.relationships?.loInstance?.data?.id &&
-        activeInstanceIds.has(enrollment.relationships.loInstance.data.id);
-      const isNotCompleted = enrollment.attributes?.state !== 'COMPLETED';
-      return hasActiveInstance && isNotCompleted;
-    });
-
-    // Get learning object IDs from active enrollments
-    const activeLearningObjectIds = new Set(
-      allEnrollments.map((enrollment) => enrollment.relationships?.learningObject?.data?.id).filter(Boolean),
-    );
-
-    // Filter learning objects to only include active ones
-    const enrolledLearningObjects =
-      enrollmentData?.included?.filter(
-        (item) => item.type === 'learningObject' && activeLearningObjectIds.has(item.id),
-      ) || [];
-
-    // Map to card data
-    const { default: BrowseCardsPLAdaptor } = await import(
-      '../../scripts/browse-card/browse-cards-premium-learning-adaptor.js'
-    );
-    const cardsData = await BrowseCardsPLAdaptor.mapResultsToCardsData({
-      data: enrolledLearningObjects,
-      included: enrollmentData.included,
-    });
-
-    // Build carousel
-    const carouselContainer = createTag('div', { class: 'carousel-container' });
-    const carouselTrack = createTag('div', { class: 'carousel-track' });
-
-    const slides = await Promise.all(
-      cardsData.map(async (cardData, i) => {
-        const cohortId = enrolledLearningObjects[i]?.id;
-        const cohortProgressData = await fetchCohortProgress(cohortId, config);
-
-        const defaultInstance = cohortProgressData?.included?.find(
-          (item) =>
-            item.type === 'learningObjectInstance' &&
-            item.attributes?.isDefault === true &&
-            item.relationships?.learningObject?.data?.id === cohortId,
+      try {
+        const enrollmentData = await fetchUserEnrollments(
+          config,
+          'learningProgram',
+          4,
+          'learningObject,learningObject.instances',
         );
 
-        const instanceId = defaultInstance?.id;
-        const boardId = await getEngagementBoardId(cohortId, instanceId, config);
+        const activeInstances =
+          enrollmentData?.included?.filter(
+            (item) => item.type === 'learningObjectInstance' && item.attributes?.state === 'Active',
+          ) || [];
 
-        const progressData = extractProgressData(cohortProgressData);
-        const boardPostsData = await fetchBoardPosts(boardId, config);
-        const totalReplies = calculateTotalReplies(boardPostsData);
+        const activeInstanceIds = new Set(activeInstances.map((instance) => instance.id));
 
-        if (progressData && cardData.meta) {
-          cardData.meta.duration = `${placeholders?.premiumLearningWeek || 'Week'} ${progressData.currentWeek} ${
-            placeholders?.of || 'of'
-          } ${progressData.totalWeeks}`;
+        // Filter enrollments to only include active instances
+        const allEnrollments = (enrollmentData?.data || []).filter((enrollment) => {
+          const hasActiveInstance =
+            enrollment.relationships?.loInstance?.data?.id &&
+            activeInstanceIds.has(enrollment.relationships.loInstance.data.id);
+          const isNotCompleted = enrollment.attributes?.state !== 'COMPLETED';
+          return hasActiveInstance && isNotCompleted;
+        });
+
+        // Get learning object IDs from active enrollments
+        const activeLearningObjectIds = new Set(
+          allEnrollments.map((enrollment) => enrollment.relationships?.learningObject?.data?.id).filter(Boolean),
+        );
+
+        // Filter learning objects to only include active ones
+        const enrolledLearningObjects =
+          enrollmentData?.included?.filter(
+            (item) => item.type === 'learningObject' && activeLearningObjectIds.has(item.id),
+          ) || [];
+
+        // Map to card data
+        const { default: BrowseCardsPLAdaptor } = await import(
+          '../../scripts/browse-card/browse-cards-premium-learning-adaptor.js'
+        );
+        const cardsData = await BrowseCardsPLAdaptor.mapResultsToCardsData({
+          data: enrolledLearningObjects,
+          included: enrollmentData.included,
+        });
+
+        // Build carousel
+        const carouselContainer = createTag('div', { class: 'carousel-container' });
+        const carouselTrack = createTag('div', { class: 'carousel-track' });
+
+        const slides = await Promise.all(
+          cardsData.map(async (cardData, i) => {
+            const cohortId = enrolledLearningObjects[i]?.id;
+            const cohortProgressData = await fetchCohortProgress(cohortId, config);
+
+            const defaultInstance = cohortProgressData?.included?.find(
+              (item) =>
+                item.type === 'learningObjectInstance' &&
+                item.attributes?.isDefault === true &&
+                item.relationships?.learningObject?.data?.id === cohortId,
+            );
+
+            const instanceId = defaultInstance?.id;
+            const boardId = await getEngagementBoardId(cohortId, instanceId, config);
+
+            const progressData = extractProgressData(cohortProgressData);
+            const boardPostsData = await fetchBoardPosts(boardId, config);
+            const totalReplies = calculateTotalReplies(boardPostsData);
+
+            if (progressData && cardData.meta) {
+              cardData.meta.duration = `${placeholders?.premiumLearningWeek || 'Week'} ${progressData.currentWeek} ${
+                placeholders?.of || 'of'
+              } ${progressData.totalWeeks}`;
+            }
+
+            return buildCarouselSlide(cardData, progressData, totalReplies, placeholders);
+          }),
+        );
+
+        slides.forEach((slide) => carouselTrack.appendChild(slide));
+
+        carouselContainer.appendChild(carouselTrack);
+        carouselContainer.insertAdjacentHTML(
+          'beforeend',
+          `
+          <div class="carousel-nav">
+            <button class="carousel-btn prev" aria-label="Previous">
+              <img src="/icons/front-arrow.svg" alt="Previous" />
+            </button>
+            <button class="carousel-btn next" aria-label="Next">
+              <img src="/icons/front-arrow.svg" alt="Next" />
+            </button>
+          </div>
+        `,
+        );
+
+        block.appendChild(carouselContainer);
+        initCarousel(carouselContainer);
+      } catch (err) {
+        if (!UEAuthorMode) {
+          block.remove();
         }
-
-        return buildCarouselSlide(cardData, progressData, totalReplies, placeholders);
-      }),
-    );
-
-    slides.forEach((slide) => carouselTrack.appendChild(slide));
-
-    carouselContainer.appendChild(carouselTrack);
-    carouselContainer.insertAdjacentHTML(
-      'beforeend',
-      `
-      <div class="carousel-nav">
-        <button class="carousel-btn prev" aria-label="Previous">
-          <img src="/icons/front-arrow.svg" alt="Previous" />
-        </button>
-        <button class="carousel-btn next" aria-label="Next">
-          <img src="/icons/front-arrow.svg" alt="Next" />
-        </button>
-      </div>
-    `,
-    );
-
-    block.appendChild(carouselContainer);
-    initCarousel(carouselContainer);
-  } catch (err) {
-    if (!UEAuthorMode) {
-      block.remove();
-    }
-    // eslint-disable-next-line no-console
-    console.error('Error fetching active content:', err);
-  }
+        // eslint-disable-next-line no-console
+        console.error('Error fetching active content:', err);
+      }
+    })
+    .catch((err) => {
+      if (UEAuthorMode) showFallbackContentInUEMode(block);
+      else block.remove();
+      // eslint-disable-next-line no-console
+      console.error('Error resolving PL eligibility for active content:', err);
+    });
 }

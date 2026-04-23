@@ -947,6 +947,10 @@ export const URL_SPECIAL_CASE_LOCALES = new Map([
   ['zh-hant', 'zh-TW'],
 ]);
 
+
+// TODO: Move loadIms() out of scripts.js into a dedicated  utility .
+// and import it from there. Its current location causes a cyclic dependency because
+// premium-learning-utils.js → profile.js → scripts.js → premium-learning-utils.js.
 export async function loadIms() {
   // if adobe IMS was loaded already, return. Especially useful when embedding this code outside this site.
   // eg. embedding header in community which has it's own IMS setup.
@@ -1724,41 +1728,6 @@ async function loadPage() {
     return window?.adobeIMS?.isSignedInUser();
   };
 
-  /**
-   * Resolves with fallback if the promise does not settle in time (e.g. hung PL API).
-   * @template T
-   * @param {Promise<T>} promise
-   * @param {number} ms
-   * @param {T} fallback
-   * @returns {Promise<T>}
-   */
-  const withTimeout = (promise, ms, fallback) =>
-    Promise.race([
-      promise,
-      new Promise((resolve) => {
-        setTimeout(() => resolve(fallback), ms);
-      }),
-    ]);
-
-  /**
-   * Initializes Premium Learning authentication and checks membership status.
-   * @returns {Promise<boolean>} True if user is a PL member, false otherwise
-   */
-  const isPLMember = async () => {
-    if (!isFeatureEnabled('isPremiumLearningEnabled')) {
-      return false;
-    }
-    try {
-      await window.adobeIMS?.getAccessToken();
-      const { default: initializePLAuthentication, isPremiumLearner } = await import('./utils/pl-auth-utils.js');
-      await initializePLAuthentication();
-      return isPremiumLearner();
-    } catch (error) {
-      console.error('Error checking Premium Learning status:', error);
-      return false;
-    }
-  };
-
   const loadTarget = async (isAlreadySignedIn = false) => {
     const targetSupportedPaths = ['/perspectives', '/home'];
     if (targetSupportedPaths.includes(currentPagePath)) {
@@ -1784,27 +1753,36 @@ async function loadPage() {
     } else {
       const signedIn = await isUserSignedIn();
       if (signedIn) {
-        // Check PL membership status for signed-in users
-        const plMember = await withTimeout(isPLMember(), 10000, false);
+        // Non-blocking — timeout is handled inside isPLEligible().
+        import('./utils/premium-learning-utils.js')
+          .then(({ isPLEligible }) => isPLEligible(signedIn))
+          .then(async (plMember) => {
+            // Only fetch enrollments if user is BOTH a PL member AND on profile page
+            if (plMember && isProfilePage) {
+              // TODO: Guard this fetch behind a check that the PL blocks are actually present
+              // in the DOM before firing — avoids an unnecessary API call on profile pages
+              // that have no PL content blocks.
+              const { fetchUserEnrollments } = await import('./data-service/premium-learning-data-service.js');
+              const config = getConfig();
+              const enrollmentData = await fetchUserEnrollments(config, 'learningProgram', 10);
+              const hasEnrollments = enrollmentData?.data?.length > 0;
 
-        // Only fetch enrollments if user is BOTH a PL member AND on profile page
-        if (plMember && isProfilePage) {
-          const { fetchUserEnrollments } = await import('./data-service/premium-learning-data-service.js');
-          const config = getConfig();
-          const enrollmentData = await fetchUserEnrollments(config, 'learningProgram', 10);
-          const hasEnrollments = enrollmentData?.data?.length > 0;
+              const activeContentBlock = document.querySelector('.premium-learning-active-content');
+              const suggestedContentBlock = document.querySelector('.premium-learning-suggested-content');
 
-          const activeContentBlock = document.querySelector('.premium-learning-active-content');
-          const suggestedContentBlock = document.querySelector('.premium-learning-suggested-content');
-
-          if (hasEnrollments) {
-            // User has enrollments - remove suggested content block
-            suggestedContentBlock?.remove();
-          } else {
-            // User has no enrollments - remove active content block
-            activeContentBlock?.remove();
-          }
-        }
+              if (hasEnrollments) {
+                // User has enrollments - remove suggested content block
+                suggestedContentBlock?.remove();
+              } else {
+                // User has no enrollments - remove active content block
+                activeContentBlock?.remove();
+              }
+            }
+          })
+          .catch((error) => {
+            // eslint-disable-next-line no-console
+            console.error('Error resolving Premium Learning membership:', error);
+          });
 
         loadPage();
         loadTarget(signedIn);
@@ -1831,30 +1809,17 @@ async function loadPage() {
   if (containsAtomicSearch) {
     initiateCoveoAtomicSearch();
   }
-
-  // Initialize Premium Learning auth for all signed-in users, excluding UE Authoring pages
+  // Initialize Premium Learning auth — fully non-blocking, does not delay loadPage().
   if (!window.hlx.aemRoot && !window.location.href.includes('.html') && isFeatureEnabled('isPremiumLearningEnabled')) {
-    // Helper function to remove premium learning sections
-    const removePremiumLearningSections = () => {
-      document.querySelectorAll('.premium-learning-section').forEach((section) => section.remove());
-    };
-
-    try {
-      const signedIn = await isUserSignedIn();
-
-      if (signedIn) {
-        const plMember = await withTimeout(isPLMember(), 10000, false);
-
-        if (!plMember) {
-          removePremiumLearningSections();
-        }
-      } else {
-        removePremiumLearningSections();
-      }
-    } catch (error) {
-      console.error('Error initializing Premium Learning authentication:', error);
-      removePremiumLearningSections();
-    }
+    // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
+    isUserSignedIn()
+      .then((signedIn) => import('./utils/premium-learning-utils.js')
+        .then(({ applyPLSectionGating }) => applyPLSectionGating(signedIn)))
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error('Error initializing Premium Learning authentication:', error);
+        document.querySelectorAll('.premium-learning-section').forEach((s) => s.remove());
+      });
   }
 
   if (isProfilePage) {

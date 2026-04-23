@@ -1,4 +1,4 @@
-import { getPLAccessToken } from '../utils/pl-auth-utils.js';
+import { getPLAccessToken } from '../utils/premium-learning-utils.js';
 
 /**
  * @typedef {Object} PLQueryParams

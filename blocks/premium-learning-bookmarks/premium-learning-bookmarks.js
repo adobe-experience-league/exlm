@@ -2,13 +2,15 @@
 import { htmlToElement } from '../../scripts/scripts.js';
 import { buildPLCard } from '../../scripts/browse-card/browse-cards-premium-learning.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import { getPLAccessToken } from '../../scripts/utils/pl-auth-utils.js';
+import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { fetchPremiumLearningBookmarks } from '../../scripts/user-actions/bookmark.js';
 import getEmitter from '../../scripts/events.js';
 import PL_CONTENT_TYPES from '../../scripts/data-service/premium-learning/premium-learning-constants.js';
 import BrowseCardsPLAdaptor from '../../scripts/browse-card/browse-cards-premium-learning-adaptor.js';
 
 const bookmarksEventEmitter = getEmitter('pl-bookmarks');
+
 const SHIMMER_COUNT = 4;
 const BATCH_SIZE = 6;
 
@@ -83,63 +85,79 @@ export default async function decorate(block) {
     </div>
   `);
 
+
   block.appendChild(content);
 
-  // Check if user has PL access token
-  if (!getPLAccessToken()) return;
-
-  // Trigger shimmer immediately by calling renderCards with empty array
+  // Show shimmer immediately while eligibility resolves.
   renderCards(block, []).catch(() => {});
 
-  // Fetch and render bookmarks
-  fetchPremiumLearningBookmarks()
-    .then(async (responseData) => {
-      // Transform API response using adaptor
-      const cardModels = await BrowseCardsPLAdaptor.mapResultsToCardsData(
-        responseData?.data?.length
-          ? { data: responseData.data, included: responseData.included ?? [] }
-          : { data: [], included: [] },
-      );
-
-      if (cardModels.length === 0) {
-        // Remove shimmer content if no bookmarks
+  // Non-blocking eligibility check — shimmer stays visible until resolved.
+  // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
+  isSignedInUser()
+    .then((signedIn) => isPLEligible(signedIn))
+    .then(async (isEligible) => {
+      if (!isEligible) {
         block.querySelector('.premium-learning-bookmarks-content')?.remove();
         block.classList.add('pl-bookmarks-empty');
         return;
       }
 
-      // Store bookmarks in event emitter for potential updates
-      bookmarksEventEmitter.set('bookmark_data', cardModels);
-
-      // Listen for bookmark changes
-      bookmarksEventEmitter.on('bookmark_changed', async () => {
-        try {
-          const updatedResponseData = await fetchPremiumLearningBookmarks();
-          const updatedCardModels = await BrowseCardsPLAdaptor.mapResultsToCardsData(
-            updatedResponseData?.data?.length
-              ? { data: updatedResponseData.data, included: updatedResponseData.included ?? [] }
+      // Fetch and render bookmarks
+      fetchPremiumLearningBookmarks()
+        .then(async (responseData) => {
+          // Transform API response using adaptor
+          const cardModels = await BrowseCardsPLAdaptor.mapResultsToCardsData(
+            responseData?.data?.length
+              ? { data: responseData.data, included: responseData.included ?? [] }
               : { data: [], included: [] },
           );
-          const existingContent = block.querySelector('.premium-learning-bookmarks-content');
-          if (updatedCardModels.length === 0) {
-            if (existingContent) existingContent.remove();
-            block.classList.add('pl-bookmarks-empty');
-          } else {
-            block.classList.remove('pl-bookmarks-empty');
-            await renderCards(block, updatedCardModels);
-          }
-        } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error('Error updating PL bookmarks after change:', error);
-        }
-      });
 
-      // Render actual cards
-      await renderCards(block, cardModels);
+          if (cardModels.length === 0) {
+            // Remove shimmer content if no bookmarks
+            block.querySelector('.premium-learning-bookmarks-content')?.remove();
+            block.classList.add('pl-bookmarks-empty');
+            return;
+          }
+
+          // Store bookmarks in event emitter for potential updates
+          bookmarksEventEmitter.set('bookmark_data', cardModels);
+
+          // Listen for bookmark changes
+          bookmarksEventEmitter.on('bookmark_changed', async () => {
+            try {
+              const updatedResponseData = await fetchPremiumLearningBookmarks();
+              const updatedCardModels = await BrowseCardsPLAdaptor.mapResultsToCardsData(
+                updatedResponseData?.data?.length
+                  ? { data: updatedResponseData.data, included: updatedResponseData.included ?? [] }
+                  : { data: [], included: [] },
+              );
+              const existingContent = block.querySelector('.premium-learning-bookmarks-content');
+              if (updatedCardModels.length === 0) {
+                if (existingContent) existingContent.remove();
+                block.classList.add('pl-bookmarks-empty');
+              } else {
+                block.classList.remove('pl-bookmarks-empty');
+                await renderCards(block, updatedCardModels);
+              }
+            } catch (error) {
+              // eslint-disable-next-line no-console
+              console.error('Error updating PL bookmarks after change:', error);
+            }
+          });
+
+          // Render actual cards
+          await renderCards(block, cardModels);
+        })
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error('Error loading PL bookmarks:', error);
+          block.querySelector('.premium-learning-bookmarks-content')?.remove();
+          block.classList.add('pl-bookmarks-empty');
+        });
     })
-    .catch((error) => {
+    .catch((err) => {
       // eslint-disable-next-line no-console
-      console.error('Error loading PL bookmarks:', error);
+      console.error('Error resolving PL eligibility for bookmarks:', err);
       block.querySelector('.premium-learning-bookmarks-content')?.remove();
       block.classList.add('pl-bookmarks-empty');
     });
