@@ -5726,6 +5726,14 @@
         "description": "Sets the title of the page in page meta."
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "lastContentModified",
+        "label": "Content Last Update Date",
+        "description": "Sets the last content update date of the page in page meta.",
+        "hidden": true
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
         "name": "signout-redirect-url",
@@ -5940,6 +5948,13 @@
         "extensionId": "exl-ue-extension"
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "lastContentModified",
+        "label": "Content Last Update Date",
+        "description": "Sets the last content update date of the page in page meta."
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
         "name": "signout-redirect-url",
@@ -5959,6 +5974,13 @@
         "name": "jcr:title",
         "label": "Page Title",
         "description": "Sets the title of the page in page meta."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "lastContentModified",
+        "label": "Content Last Update Date",
+        "description": "Sets the last content update date of the page in page meta."
       }
     ]
   },
@@ -6166,6 +6188,13 @@
         "extensionId": "exl-ue-extension"
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "lastContentModified",
+        "label": "Content Last Update Date",
+        "description": "Sets the last content update date of the page in page meta."
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
         "name": "signout-redirect-url",
@@ -6185,6 +6214,13 @@
         "name": "jcr:title",
         "label": "Page Title",
         "description": "Sets the title of the page in page meta."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "lastContentModified",
+        "label": "Content Last Update Date",
+        "description": "Sets the last content update date of the page in page meta."
       },
       {
         "component": "aem-content",
