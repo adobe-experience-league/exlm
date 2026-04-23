@@ -947,7 +947,6 @@ export const URL_SPECIAL_CASE_LOCALES = new Map([
   ['zh-hant', 'zh-TW'],
 ]);
 
-
 // TODO: Move loadIms() out of scripts.js into a dedicated  utility .
 // and import it from there. Its current location causes a cyclic dependency because
 // premium-learning-utils.js → profile.js → scripts.js → premium-learning-utils.js.
@@ -1813,8 +1812,9 @@ async function loadPage() {
   if (!window.hlx.aemRoot && !window.location.href.includes('.html') && isFeatureEnabled('isPremiumLearningEnabled')) {
     // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
     isUserSignedIn()
-      .then((signedIn) => import('./utils/premium-learning-utils.js')
-        .then(({ applyPLSectionGating }) => applyPLSectionGating(signedIn)))
+      .then((signedIn) =>
+        import('./utils/premium-learning-utils.js').then(({ applyPLSectionGating }) => applyPLSectionGating(signedIn)),
+      )
       .catch((error) => {
         // eslint-disable-next-line no-console
         console.error('Error initializing Premium Learning authentication:', error);
