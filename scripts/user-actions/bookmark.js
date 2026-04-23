@@ -56,7 +56,10 @@ export async function bookmarkHandler(config) {
         element.dataset.bookmarked = true;
         bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
         sendNotice(tooltips?.bookmarkToastText);
-        assetInteractionModel(id, 'Bookmarked', { trackingInfo });
+        // DEPRECATION: assetInteractionModel removed for browse-cards - using pushBrowseCardClickEvent via callback instead
+        if (!callback) {
+          assetInteractionModel(id, 'Bookmarked', { trackingInfo });
+        }
         if (callback) callback(linkType, position);
       })
       .catch(() => sendNotice(tooltips?.profileNotUpdated, 'error'));
@@ -67,7 +70,10 @@ export async function bookmarkHandler(config) {
         element.dataset.bookmarked = false;
         bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
         sendNotice(tooltips?.removeBookmarkToastText);
-        assetInteractionModel(id, 'Bookmark Removed', { trackingInfo });
+        // DEPRECATION: assetInteractionModel removed for browse-cards - using pushBrowseCardClickEvent via callback instead
+        if (!callback) {
+          assetInteractionModel(id, 'Bookmark Removed', { trackingInfo });
+        }
         if (callback) callback(linkType, position);
       })
       .catch(() => {
@@ -310,7 +316,10 @@ export async function premiumLearningBookmarkHandler(config) {
         ? tooltips?.removeBookmarkToastText || 'Bookmark removed'
         : tooltips?.bookmarkToastText || 'Successfully bookmarked';
       sendNotice(message);
-      assetInteractionModel(loId, isCurrentlyBookmarked ? 'Bookmark Removed' : 'Bookmarked');
+      // DEPRECATION: assetInteractionModel removed for PL browse-cards - using pushBrowseCardClickEvent via callback instead
+      if (!callback) {
+        assetInteractionModel(loId, isCurrentlyBookmarked ? 'Bookmark Removed' : 'Bookmarked');
+      }
 
       // Emit event to trigger UI updates in pl-bookmarks block
       const plBookmarksEventEmitter = getEmitter('pl-bookmarks');

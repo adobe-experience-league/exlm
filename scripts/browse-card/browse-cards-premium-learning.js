@@ -2,6 +2,8 @@
 import { loadCSS, decorateIcons } from '../lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
 import UserActions from '../user-actions/user-actions.js';
+import { pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
+import { getCardHeaderAndPosition } from './browse-card-utils.js';
 
 /**
  * @fileoverview premium-learning specific browse card implementation
@@ -50,6 +52,17 @@ function getBookmarkId(id, viewLink) {
   } catch {
     return '';
   }
+}
+
+/**
+ * Gets the premium learning block header
+ * @param {HTMLElement} card - The card element
+ * @returns {string} Block header text
+ * @private
+ */
+function getPremiumLearningBlockHeader(card) {
+  const heading = card.closest('.block')?.querySelector('[class*="header"] :is(h1, h2, h3, h4, h5, h6)');
+  return heading?.textContent?.trim() || '';
 }
 
 /**
@@ -105,22 +118,9 @@ function buildPLThumbnail({
     card.classList.add('premium-learning-thumbnail-not-loaded');
   }
 
-  // Add user actions overlay (bookmark & copy)
+  // Create placeholder for user actions (will be populated later)
   const cardActions = document.createElement('div');
   cardActions.className = 'premium-learning-card-actions';
-  const bookmarkId = getBookmarkId(id, viewLink);
-
-  const cardAction = UserActions({
-    container: cardActions,
-    id: bookmarkId,
-    bookmarkPath: bookmarkId,
-    link: copyLink,
-    contentType,
-    bookmarkConfig: true,
-    copyConfig: { icons: ['copy-white-fill'] },
-  });
-
-  cardAction.decorate();
   cardFigure.appendChild(cardActions);
 
   if (startLabel) {
@@ -256,6 +256,36 @@ export async function buildPLCard(element, model) {
 
   card.appendChild(cardContent);
 
+  // Add user actions after card structure is complete
+  const cardActionsContainer = card.querySelector('.premium-learning-card-actions');
+  const bookmarkId = getBookmarkId(id, viewLink);
+
+  const cardAction = UserActions({
+    container: cardActionsContainer,
+    id: bookmarkId,
+    bookmarkPath: bookmarkId,
+    link: copyLink,
+    contentType,
+    bookmarkConfig: true,
+    copyConfig: { icons: ['copy-white-fill'] },
+    bookmarkCallback: (linkType, position) => {
+      // Calculate cardHeader and cardPosition dynamically when callback is called
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+      const finalLinkType = linkType || cardHeader || '';
+      const finalPosition = position || cardPosition || '';
+      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, finalLinkType, finalPosition);
+    },
+    copyCallback: (linkType, position) => {
+      // Calculate cardHeader and cardPosition dynamically when callback is called
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+      const finalLinkType = linkType || cardHeader || '';
+      const finalPosition = position || cardPosition || '';
+      pushBrowseCardClickEvent('copyLinkBrowseCard', model, finalLinkType, finalPosition);
+    },
+  });
+
+  cardAction.decorate();
+
   // Load required CSS
   await Promise.all([
     loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`),
@@ -267,11 +297,21 @@ export async function buildPLCard(element, model) {
     const cardContainer = document.createElement('a');
     cardContainer.href = model.viewLink;
 
-    // Prevent navigation when clicking user actions
+    if (element.closest('.section')?.getAttribute('data-new-tab') === 'true') {
+      cardContainer.setAttribute('target', '_blank');
+      cardContainer.setAttribute('rel', 'noopener noreferrer');
+    }
+
     cardContainer.addEventListener('click', (e) => {
       if (e.target?.closest('.user-actions')) {
         e.preventDefault();
+        return;
       }
+
+      // Get block header for linkType
+      const blockHeader = getPremiumLearningBlockHeader(card);
+      const { cardPosition } = getCardHeaderAndPosition(card, element);
+      pushBrowseCardClickEvent('browseCardClicked', model, blockHeader, cardPosition);
     });
 
     cardContainer.appendChild(card);

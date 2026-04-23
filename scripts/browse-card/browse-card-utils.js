@@ -206,6 +206,29 @@ export const createDateCriteria = (dateList) => {
   return dateCriteria;
 };
 
+export function getCardHeaderAndPosition(card, element) {
+  let cardHeader = '';
+  const currentBlock = card.closest('.block');
+  const headerEl = currentBlock?.querySelector(
+    '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
+  );
+  if (headerEl) {
+    const cloned = headerEl.cloneNode(true);
+    cloned.querySelectorAll('[data-cs-mask]').forEach((el) => el.remove());
+    cardHeader = cloned.innerText.trim();
+  }
+
+  cardHeader = cardHeader || currentBlock?.getAttribute('data-block-name')?.trim() || '';
+
+  let cardPosition = '';
+  if (element?.parentElement?.children) {
+    const siblings = Array.from(element.parentElement.children);
+    cardPosition = String(siblings.indexOf(element) + 1);
+  }
+
+  return { cardHeader, cardPosition };
+}
+
 // Function to convert a string to title case
 export const formatTitleCase = (str) => str.replace(/[-\s]/g, '').replace(/\b\w/g, (match) => match.toUpperCase());
 // Function to convert headings to id format

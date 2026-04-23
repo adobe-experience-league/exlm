@@ -4533,10 +4533,34 @@
       },
       {
         "component": "custom-aem-tag",
+        "name": "v2-features",
+        "label": "Feature(s) v2",
+        "valueType": "string",
+        "description": "Select up to 15 features.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "feature"
+            }
+          }
+        },
+        "options": {
+          "dependentField": {
+            "name": "v2-products",
+            "taxonomyType": "product"
+          },
+          "requiredTagsToEnable": ["v2-products"]
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "custom-aem-tag",
         "name": "v2-topics",
         "label": "Topic(s) v2",
         "valueType": "string",
-        "description": "Select up to 15 topics or features.",
+        "description": "Select up to 15 topics.",
         "dataSource": {
           "type": "action",
           "config": {
@@ -9492,12 +9516,6 @@
         "valueType": "string",
         "name": "fail-page-url",
         "label": "Quiz fail page url"
-      },
-      {
-        "component": "aem-content",
-        "valueType": "string",
-        "name": "error-page-url",
-        "label": "Quiz error page url"
       }
     ]
   },
@@ -9517,7 +9535,7 @@
         "name": "classes",
         "value": "pass",
         "label": "Quiz classes",
-        "description": "Sets whether this is a pass, fail or error scorecard",
+        "description": "Sets whether this is a pass or fail scorecard",
         "valueType": "string",
         "options": [
           {
@@ -9527,10 +9545,6 @@
           {
             "name": "Fail",
             "value": "fail"
-          },
-          {
-            "name": "Error",
-            "value": "error"
           }
         ]
       },
