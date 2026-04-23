@@ -164,4 +164,8 @@
   .page-bg-gradient main {
     background: linear-gradient(135deg, rgb(250 74 162 / 20%) 0%, rgb(181 222 255 / 20%) 100%);
   }
+
+  .page-bg-gradient main::after {
+    backdrop-filter: none;
+  }
 }
