@@ -5729,7 +5729,7 @@
         "component": "text",
         "valueType": "string",
         "name": "lastContentModified",
-        "value": "2026-04-23T08:46:05.168Z",
+        "value": "",
         "label": "Content Last Update Date",
         "description": "Sets the last content update date of the page in page meta.",
         "hidden": true
