@@ -70,7 +70,9 @@ async function verifyPLAuth(timeoutMs = 10000) {
       return false;
     });
   let timeoutHandle;
-  const timeout = new Promise((r) => { timeoutHandle = setTimeout(() => r(false), timeoutMs); });
+  const timeout = new Promise((r) => {
+    timeoutHandle = setTimeout(() => r(false), timeoutMs);
+  });
   return Promise.race([membershipCheck.finally(() => clearTimeout(timeoutHandle)), timeout]);
 }
 

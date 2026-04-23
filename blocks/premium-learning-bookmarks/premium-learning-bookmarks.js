@@ -85,7 +85,6 @@ export default async function decorate(block) {
     </div>
   `);
 
-
   block.appendChild(content);
 
   // Show shimmer immediately while eligibility resolves.
