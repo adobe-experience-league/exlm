@@ -5729,7 +5729,6 @@
         "component": "text",
         "valueType": "string",
         "name": "lastContentModified",
-        "value": "",
         "label": "Content Last Update Date",
         "description": "Sets the last content update date of the page in page meta.",
         "hidden": true
@@ -5953,7 +5952,8 @@
         "valueType": "string",
         "name": "lastContentModified",
         "label": "Content Last Update Date",
-        "description": "Sets the last content update date of the page in page meta."
+        "description": "Sets the last content update date of the page in page meta.",
+        "hidden": true
       },
       {
         "component": "aem-content",
@@ -5981,7 +5981,8 @@
         "valueType": "string",
         "name": "lastContentModified",
         "label": "Content Last Update Date",
-        "description": "Sets the last content update date of the page in page meta."
+        "description": "Sets the last content update date of the page in page meta.",
+        "hidden": true
       }
     ]
   },
@@ -6193,7 +6194,8 @@
         "valueType": "string",
         "name": "lastContentModified",
         "label": "Content Last Update Date",
-        "description": "Sets the last content update date of the page in page meta."
+        "description": "Sets the last content update date of the page in page meta.",
+        "hidden": true
       },
       {
         "component": "aem-content",
@@ -6221,7 +6223,8 @@
         "valueType": "string",
         "name": "lastContentModified",
         "label": "Content Last Update Date",
-        "description": "Sets the last content update date of the page in page meta."
+        "description": "Sets the last content update date of the page in page meta.",
+        "hidden": true
       },
       {
         "component": "aem-content",
