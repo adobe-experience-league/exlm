@@ -5952,8 +5952,7 @@
         "valueType": "string",
         "name": "content-modified-time",
         "label": "Content Last Update Date",
-        "description": "Sets the last content update date of the page in page meta.",
-        "hidden": true
+        "description": "Sets the last content update date of the page in page meta. Date format should be 'yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
       },
       {
         "component": "aem-content",
