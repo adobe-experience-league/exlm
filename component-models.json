@@ -5728,7 +5728,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "lastContentModified",
+        "name": "content-modified-time",
         "label": "Content Last Update Date",
         "description": "Sets the last content update date of the page in page meta.",
         "hidden": true
@@ -5950,7 +5950,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "lastContentModified",
+        "name": "content-modified-time",
         "label": "Content Last Update Date",
         "description": "Sets the last content update date of the page in page meta.",
         "hidden": true
@@ -5979,7 +5979,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "lastContentModified",
+        "name": "content-modified-time",
         "label": "Content Last Update Date",
         "description": "Sets the last content update date of the page in page meta.",
         "hidden": true
@@ -6192,7 +6192,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "lastContentModified",
+        "name": "content-modified-time",
         "label": "Content Last Update Date",
         "description": "Sets the last content update date of the page in page meta.",
         "hidden": true
@@ -6221,7 +6221,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "lastContentModified",
+        "name": "content-modified-time",
         "label": "Content Last Update Date",
         "description": "Sets the last content update date of the page in page meta.",
         "hidden": true
