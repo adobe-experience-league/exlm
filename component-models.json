@@ -5726,6 +5726,14 @@
         "description": "Sets the title of the page in page meta."
       },
       {
+        "component": "date-time",
+        "valueType": "date-time",
+        "name": "content-modified-time",
+        "label": "Content Last Updated Date",
+        "description": "Sets the last content update date of the page in page metadata.",
+        "placeholder": "YYYY-MM-DD HH:mm:ss"
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
         "name": "signout-redirect-url",
@@ -5943,8 +5951,8 @@
         "component": "date-time",
         "valueType": "date-time",
         "name": "content-modified-time",
-        "label": "Content Last Update Date",
-        "description": "Sets the last content update date of the page in page meta.",
+        "label": "Content Last Updated Date",
+        "description": "Sets the last content update date of the page in page metadata.",
         "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
@@ -6177,8 +6185,8 @@
         "component": "date-time",
         "valueType": "date-time",
         "name": "content-modified-time",
-        "label": "Content Last Update Date",
-        "description": "Sets the last content update date of the page in page meta.",
+        "label": "Content Last Updated Date",
+        "description": "Sets the last content update date of the page in page metadata.",
         "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
@@ -6201,6 +6209,14 @@
         "name": "jcr:title",
         "label": "Page Title",
         "description": "Sets the title of the page in page meta."
+      },
+      {
+        "component": "date-time",
+        "valueType": "date-time",
+        "name": "content-modified-time",
+        "label": "Content Last Updated Date",
+        "description": "Sets the last content update date of the page in page metadata.",
+        "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
         "component": "aem-content",
