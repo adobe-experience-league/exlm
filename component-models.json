@@ -5944,10 +5944,8 @@
         "valueType": "date-time",
         "name": "content-modified-time",
         "label": "Content Last Update Date",
-        "description": "Sets the last content update date of the page in page meta. Format: yyyy-MM-ddTHH:mm:ss.SSSZ (ISO 8601)",
-        "placeholder": "yyyy-MM-ddTHH:mm:ss.SSSZ",
-        "displayFormat": null,
-        "valueFormat": null
+        "description": "Sets the last content update date of the page in page meta.",
+        "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
         "component": "aem-content",
@@ -6180,10 +6178,8 @@
         "valueType": "date-time",
         "name": "content-modified-time",
         "label": "Content Last Update Date",
-        "description": "Sets the last content update date of the page in page meta. Format: yyyy-MM-ddTHH:mm:ss.SSSZ (ISO 8601)",
-        "placeholder": "yyyy-MM-ddTHH:mm:ss.SSSZ",
-        "displayFormat": null,
-        "valueFormat": null
+        "description": "Sets the last content update date of the page in page meta.",
+        "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
         "component": "aem-content",
