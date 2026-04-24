@@ -45,17 +45,13 @@ export default async function decorate(block) {
   block.innerHTML = '';
   block.classList.add('browse-cards-block', 'premium-learning-browse-cards');
 
-  const descriptionHtml = description
-    ? `<div class="premium-learning-browse-cards-description">${description}</div>`
-    : '';
-
   const headerDiv = document.createElement('div');
   headerDiv.className = 'premium-learning-browse-cards-header';
   headerDiv.innerHTML = `
     <div class="premium-learning-browse-cards-header-content">
       <div class="premium-learning-browse-cards-header-text">
         ${title ? `<div class="premium-learning-browse-cards-title">${titleElement?.innerHTML || ''}</div>` : ''}
-        ${descriptionHtml}
+        ${description ? `<div class="premium-learning-browse-cards-description">${description}</div>` : ''}
       </div>
       <div class="premium-learning-browse-cards-cta">
         ${cta}
@@ -80,7 +76,7 @@ export default async function decorate(block) {
 
   const param = {
     contentType,
-    noOfResults,
+    noOfResults: noOfResults + 1,
     browseMode: true,
     ...(products?.length > 0 && { products }),
   };
@@ -121,7 +117,7 @@ export default async function decorate(block) {
         }
         block.appendChild(contentDiv);
 
-        // Show/hide CTA based on number of cohorts
+        // Show CTA based on number of cohorts
         const ctaContainer = block.querySelector('.premium-learning-browse-cards-cta');
         if (ctaContainer) {
           if (sortedData.length > noOfResults) {

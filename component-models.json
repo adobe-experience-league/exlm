@@ -10645,9 +10645,9 @@
       },
       {
         "component": "select",
-        "name": "cta1_Type",
+        "name": "cta_Type",
         "value": "primary",
-        "label": "First CTA Type",
+        "label": "CTA Type",
         "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text",
         "valueType": "string",
         "options": [
@@ -10664,18 +10664,18 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "cta1_linkText",
+        "name": "cta_linkText",
         "value": "",
-        "label": "First CTA Text",
+        "label": "CTA Text",
         "description": "Text to be shown inside button."
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "cta1_link",
+        "name": "cta_link",
         "value": "",
-        "label": "First CTA Link",
-        "description": "What link to open when clicking the button."
+        "label": "CTA Link",
+        "description": "This button will be displayed only if the selected product has more than 4 results"
       }
     ]
   },

@@ -17,17 +17,11 @@
   margin: 0;
 }
 
-.premium-learning-browse-cards .premium-learning-browse-cards-header-description {
-  font-size: var(--spectrum-font-size-200);
-  color: var(--non-spectrum-dark-gray);
-  margin-top: 8px;
-  line-height: 1.5;
-}
-
 .premium-learning-browse-cards-description {
   font-size: var(--spectrum-font-size-200);
   font-weight: var(--font-weight-normal);
   line-height: 1.5;
+  color: var(--non-spectrum-dark-gray);
 }
 
 /* CTA Button Styling */
