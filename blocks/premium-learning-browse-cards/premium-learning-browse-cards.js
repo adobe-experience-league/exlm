@@ -14,7 +14,7 @@ function showFallbackContentInUEMode(blockElement) {
 }
 
 export default async function decorate(block) {
-  const [titleElement, descriptionElement, contentTypeElement, productElement] = [...block.children];
+  const [titleElement, descriptionElement, contentTypeElement, productElement, ctaElement] = [...block.children];
 
   const title = titleElement?.textContent?.trim();
   const description = descriptionElement?.innerHTML?.trim();
