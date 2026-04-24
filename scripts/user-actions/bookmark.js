@@ -4,7 +4,7 @@ import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import getEmitter from '../events.js';
 import { rewriteDocsPath } from '../utils/path-utils.js';
-import { getPLAccessToken } from '../utils/pl-auth-utils.js';
+import { getPLAccessToken } from '../utils/premium-learning-utils.js';
 
 const bookmarksEventEmitter = getEmitter('bookmarks');
 
