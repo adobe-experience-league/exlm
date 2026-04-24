@@ -5726,14 +5726,6 @@
         "description": "Sets the title of the page in page meta."
       },
       {
-        "component": "text",
-        "valueType": "string",
-        "name": "content-modified-time",
-        "label": "Content Last Update Date",
-        "description": "Sets the last content update date of the page in page meta.",
-        "hidden": true
-      },
-      {
         "component": "aem-content",
         "valueType": "string",
         "name": "signout-redirect-url",
@@ -5948,11 +5940,14 @@
         "extensionId": "exl-ue-extension"
       },
       {
-        "component": "text",
-        "valueType": "string",
+        "component": "date-time",
+        "valueType": "date-time",
         "name": "content-modified-time",
         "label": "Content Last Update Date",
-        "description": "Sets the last content update date of the page in page meta. Date format should be 'yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+        "description": "Sets the last content update date of the page in page meta. Format: yyyy-MM-ddTHH:mm:ss.SSSZ (ISO 8601)",
+        "placeholder": "yyyy-MM-ddTHH:mm:ss.SSSZ",
+        "displayFormat": null,
+        "valueFormat": null
       },
       {
         "component": "aem-content",
@@ -5974,14 +5969,6 @@
         "name": "jcr:title",
         "label": "Page Title",
         "description": "Sets the title of the page in page meta."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "content-modified-time",
-        "label": "Content Last Update Date",
-        "description": "Sets the last content update date of the page in page meta.",
-        "hidden": true
       }
     ]
   },
@@ -6189,12 +6176,14 @@
         "extensionId": "exl-ue-extension"
       },
       {
-        "component": "text",
-        "valueType": "string",
+        "component": "date-time",
+        "valueType": "date-time",
         "name": "content-modified-time",
         "label": "Content Last Update Date",
-        "description": "Sets the last content update date of the page in page meta.",
-        "hidden": true
+        "description": "Sets the last content update date of the page in page meta. Format: yyyy-MM-ddTHH:mm:ss.SSSZ (ISO 8601)",
+        "placeholder": "yyyy-MM-ddTHH:mm:ss.SSSZ",
+        "displayFormat": null,
+        "valueFormat": null
       },
       {
         "component": "aem-content",
@@ -6216,14 +6205,6 @@
         "name": "jcr:title",
         "label": "Page Title",
         "description": "Sets the title of the page in page meta."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "content-modified-time",
-        "label": "Content Last Update Date",
-        "description": "Sets the last content update date of the page in page meta.",
-        "hidden": true
       },
       {
         "component": "aem-content",
