@@ -2,6 +2,7 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { createTag, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
+import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
@@ -25,19 +26,6 @@ export default async function decorate(block) {
       .filter(Boolean);
   }
 
-  // Extract and process tags for product filtering
-  const tags = productElement?.textContent?.trim();
-  let products = [];
-  if (tags) {
-    const { extractCapability, removeProductDuplicates } = await import(
-      '../../scripts/browse-card/browse-card-utils.js'
-    );
-    const extractedProducts = extractCapability(tags).products;
-    if (extractedProducts.length > 0) {
-      products = removeProductDuplicates(extractedProducts);
-    }
-  }
-
   const noOfResults = 4;
 
   block.innerHTML = '';
@@ -51,18 +39,20 @@ export default async function decorate(block) {
   `;
   block.appendChild(headerDiv);
 
-  const [signInUser, placeholders] = await Promise.all([
-    isSignedInUser(),
-    fetchLanguagePlaceholders().catch(() => ({})),
-  ]);
+  const buildCardsShimmer = new BrowseCardShimmer(noOfResults, contentType);
+  buildCardsShimmer.addShimmer(block);
 
-  if (!signInUser) {
-    if (UEAuthorMode) {
-      showFallbackContentInUEMode(block);
-    } else {
-      block.remove();
+  // Extract and process tags for product filtering (after shimmer so delay doesn't affect UX)
+  const tags = productElement?.textContent?.trim();
+  let products = [];
+  if (tags) {
+    const { extractCapability, removeProductDuplicates } = await import(
+      '../../scripts/browse-card/browse-card-utils.js'
+    );
+    const extractedProducts = extractCapability(tags).products;
+    if (extractedProducts.length > 0) {
+      products = removeProductDuplicates(extractedProducts);
     }
-    return;
   }
 
   const param = {
@@ -72,47 +62,71 @@ export default async function decorate(block) {
     ...(products?.length > 0 && { products }),
   };
 
-  const buildCardsShimmer = new BrowseCardShimmer(noOfResults, contentType);
-  buildCardsShimmer.addShimmer(block);
+  const placeholders = await fetchLanguagePlaceholders().catch(() => ({}));
 
-  const browseCardsContent = BrowseCardsDelegate.fetchCardData(param);
-  browseCardsContent
-    .then((data) => {
-      buildCardsShimmer.removeShimmer();
-      if (data?.length) {
-        let sortedData = data;
-        // Sort cohorts based on start label
-        const isCohortContent = contentType === 'premium-learning-cohort';
-
-        if (isCohortContent) {
-          const withLabel = data
-            .filter((item) => item.meta?.startLabel?.trim())
-            .sort((a, b) => {
-              const deadlineA = a.meta?.deadline;
-              const deadlineB = b.meta?.deadline;
-              if (deadlineA && deadlineB) {
-                return new Date(deadlineA) - new Date(deadlineB);
-              }
-              return 0;
-            });
-          const withoutLabel = data.filter((item) => !item.meta?.startLabel?.trim());
-          sortedData = [...withLabel, ...withoutLabel];
+  // Non-blocking eligibility check — shimmer stays visible until resolved.
+  // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
+  isSignedInUser()
+    .then((signedIn) => isPLEligible(signedIn))
+    .then((isEligible) => {
+      if (!isEligible) {
+        buildCardsShimmer.removeShimmer();
+        if (UEAuthorMode) {
+          showFallbackContentInUEMode(block);
+        } else {
+          block.remove();
         }
-
-        const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
-        for (let i = 0; i < Math.min(noOfResults, sortedData.length); i += 1) {
-          const cardData = sortedData[i];
-          const cardDiv = document.createElement('div');
-          buildCard(cardDiv, cardData);
-          contentDiv.appendChild(cardDiv);
-        }
-        block.appendChild(contentDiv);
-      } else {
-        const noResultsText =
-          placeholders.noResultsTextBrowse || 'We are sorry, no results found matching the criteria.';
-        const noResultsDiv = htmlToElement(`<div class="browse-card-no-results">${noResultsText}</div>`);
-        block.appendChild(noResultsDiv);
+        return;
       }
+
+      BrowseCardsDelegate.fetchCardData(param)
+        .then((data) => {
+          buildCardsShimmer.removeShimmer();
+          if (data?.length) {
+            let sortedData = data;
+            // Sort cohorts based on start label
+            const isCohortContent = contentType === 'premium-learning-cohort';
+
+            if (isCohortContent) {
+              const withLabel = data
+                .filter((item) => item.meta?.startLabel?.trim())
+                .sort((a, b) => {
+                  const deadlineA = a.meta?.deadline;
+                  const deadlineB = b.meta?.deadline;
+                  if (deadlineA && deadlineB) {
+                    return new Date(deadlineA) - new Date(deadlineB);
+                  }
+                  return 0;
+                });
+              const withoutLabel = data.filter((item) => !item.meta?.startLabel?.trim());
+              sortedData = [...withLabel, ...withoutLabel];
+            }
+
+            const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
+            for (let i = 0; i < Math.min(noOfResults, sortedData.length); i += 1) {
+              const cardData = sortedData[i];
+              const cardDiv = document.createElement('div');
+              buildCard(cardDiv, cardData);
+              contentDiv.appendChild(cardDiv);
+            }
+            block.appendChild(contentDiv);
+          } else {
+            const noResultsText =
+              placeholders.noResultsTextBrowse || 'We are sorry, no results found matching the criteria.';
+            const noResultsDiv = htmlToElement(`<div class="browse-card-no-results">${noResultsText}</div>`);
+            block.appendChild(noResultsDiv);
+          }
+        })
+        .catch((err) => {
+          buildCardsShimmer.removeShimmer();
+          if (UEAuthorMode) {
+            showFallbackContentInUEMode(block);
+          } else {
+            block.remove();
+          }
+          /* eslint-disable-next-line no-console */
+          console.error('Error fetching PL browse card data:', err);
+        });
     })
     .catch((err) => {
       buildCardsShimmer.removeShimmer();
@@ -122,6 +136,6 @@ export default async function decorate(block) {
         showFallbackContentInUEMode(block);
       }
       /* eslint-disable-next-line no-console */
-      console.error(err);
+      console.error('Error resolving PL eligibility for browse cards:', err);
     });
 }

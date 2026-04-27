@@ -4,10 +4,11 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTag, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 
-const UE_AUTHOR_MODE = window.hlx.aemRoot || window.location.href.includes('.html');
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const FETCH_LIMIT = 4;
 
 function parseAuthoredContent(block) {
@@ -214,63 +215,71 @@ export default async function decorate(block) {
     ctaMarkup,
   );
 
-  const [signInUser, placeholders] = await Promise.all([
-    isSignedInUser(),
-    fetchLanguagePlaceholders().catch(() => ({})),
-  ]);
-
-  if (!signInUser) {
-    if (UE_AUTHOR_MODE) {
-      showFallbackContentInUEMode(block);
-    } else {
-      block.remove();
-    }
-    return;
-  }
-
   const shimmer = new BrowseCardShimmer(FETCH_LIMIT, PL_CONTENT_TYPES.COHORT.MAPPING_KEY);
   shimmer.addShimmer(contentContainer);
 
-  try {
-    const suggestedContentItems = await fetchSuggestedContentCards(contentType);
-    shimmer.removeShimmer();
+  const placeholders = await fetchLanguagePlaceholders().catch(() => ({}));
 
-    if (!suggestedContentItems?.length) {
-      renderEmptyState(contentContainer, placeholders);
-      return;
-    }
+  // Non-blocking eligibility check — shimmer stays visible until resolved.
+  // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
+  isSignedInUser()
+    .then((signedIn) => isPLEligible(signedIn))
+    .then(async (isEligible) => {
+      if (!isEligible) {
+        shimmer.removeShimmer();
+        if (UEAuthorMode) showFallbackContentInUEMode(block);
+        else block.remove();
+        return;
+      }
 
-    const tabs = getTabDefinitions(suggestedContentItems, placeholders);
+      try {
+        const suggestedContentItems = await fetchSuggestedContentCards(contentType);
+        shimmer.removeShimmer();
 
-    if (!tabs.length) {
-      renderEmptyState(contentContainer, placeholders);
-      return;
-    }
+        if (!suggestedContentItems?.length) {
+          renderEmptyState(contentContainer, placeholders);
+          return;
+        }
 
-    clearRenderedContent(contentContainer);
-    const { panel, contentDiv } = createContentPanel();
-    const tabsById = Object.fromEntries(tabs.map((tab) => [tab.id, tab]));
-    const defaultTab = tabs[0];
-    const listItems = buildResponsiveListItems(tabs);
+        const tabs = getTabDefinitions(suggestedContentItems, placeholders);
 
-    tabHeader.textContent = '';
-    contentContainer.appendChild(panel);
+        if (!tabs.length) {
+          renderEmptyState(contentContainer, placeholders);
+          return;
+        }
 
-    initializeResponsiveTabs({
-      tabHeader,
-      listItems,
-      defaultTab,
-      tabsById,
-      contentDiv,
+        clearRenderedContent(contentContainer);
+        const { panel, contentDiv } = createContentPanel();
+        const tabsById = Object.fromEntries(tabs.map((tab) => [tab.id, tab]));
+        const defaultTab = tabs[0];
+        const listItems = buildResponsiveListItems(tabs);
+
+        tabHeader.textContent = '';
+        contentContainer.appendChild(panel);
+
+        initializeResponsiveTabs({
+          tabHeader,
+          listItems,
+          defaultTab,
+          tabsById,
+          contentDiv,
+        });
+      } catch (err) {
+        shimmer.removeShimmer();
+        if (!UEAuthorMode) {
+          renderEmptyState(contentContainer, placeholders);
+        } else {
+          showFallbackContentInUEMode(block);
+        }
+        // eslint-disable-next-line no-console
+        console.error('Error fetching PL suggested content:', err);
+      }
+    })
+    .catch((err) => {
+      shimmer.removeShimmer();
+      if (UEAuthorMode) showFallbackContentInUEMode(block);
+      else block.remove();
+      // eslint-disable-next-line no-console
+      console.error('Error resolving PL eligibility for suggested content:', err);
     });
-  } catch (err) {
-    shimmer.removeShimmer();
-    if (!UE_AUTHOR_MODE) {
-      renderEmptyState(contentContainer, placeholders);
-    } else {
-      showFallbackContentInUEMode(block);
-    }
-    // eslint-disable-next-line no-console
-    console.error(err);
-  }
 }

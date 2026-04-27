@@ -14,7 +14,8 @@ import {
   fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
-import { isPremiumLearner } from '../../scripts/utils/pl-auth-utils.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
+import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
 import {
   decoratorState,
   isMobile,
@@ -413,18 +414,27 @@ const navDecorator = async (navBlock, decoratorOptions) => {
   const ul = navWrapper.querySelector(':scope > ul');
   buildNavItems(ul);
 
-  if (isPremiumLearner()) {
-    const placeholders = decoratorOptions.placeholders ?? {};
-    const premiumLearningLabel = placeholders?.premiumLearningHeaderLabel || 'Premium Learning';
-    const { premiumHomeUrl } = getConfig();
-    ul.appendChild(
-      htmlToElement(
-        `<li class="nav-item nav-item-root nav-item-leaf">
-          <a href="${premiumHomeUrl}" title="${premiumLearningLabel}">${premiumLearningLabel}</a>
-        </li>`,
-      ),
-    );
-  }
+  // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
+  isSignedInUser()
+    .then((signedIn) => isPLEligible(signedIn))
+    .then((isMember) => {
+      if (isMember) {
+        const placeholders = decoratorOptions.placeholders ?? {};
+        const premiumLearningLabel = placeholders?.premiumLearningHeaderLabel || 'Premium Learning';
+        const { premiumHomeUrl } = getConfig();
+        ul.appendChild(
+          htmlToElement(
+            `<li class="nav-item nav-item-root nav-item-leaf">
+              <a href="${premiumHomeUrl}" title="${premiumLearningLabel}">${premiumLearningLabel}</a>
+            </li>`,
+          ),
+        );
+      }
+    })
+    .catch((err) => {
+      /* eslint-disable-next-line no-console */
+      console.error('Error checking Premium Learning membership in header:', err);
+    });
 
   // build featured products nav links
   buildFeaturedProductsNavLinks(navBlock, decoratorOptions.lang).then(() => {
@@ -694,11 +704,6 @@ class ExlHeader extends HTMLElement {
   constructor(options = {}) {
     super();
 
-    const doIsSignedInUSer = async () => {
-      const { isSignedInUser } = await import('../../scripts/auth/profile.js');
-      return isSignedInUser();
-    };
-
     const doSignOut = async () => {
       const { signOut } = await import('../../scripts/auth/profile.js');
       return signOut();
@@ -709,7 +714,7 @@ class ExlHeader extends HTMLElement {
     };
 
     this.decoratorOptions = options;
-    options.isUserSignedIn = options.isUserSignedIn || doIsSignedInUSer;
+    options.isUserSignedIn = options.isUserSignedIn || isSignedInUser;
     options.onSignOut = options.onSignOut || doSignOut;
     options.onSignIn = options.onSignIn || doSignIn;
     options.getProfilePicture = options.getProfilePicture || getPPSProfilePicture;
