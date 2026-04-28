@@ -12,12 +12,6 @@ function showFallbackContentInUEMode(blockElement) {
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
   contentDiv.textContent = 'This block will load the Premium learning content for Premium users only.';
   blockElement.appendChild(contentDiv);
-  
-  // Always show CTA in UE mode
-  const ctaContainer = blockElement.querySelector('.premium-learning-browse-cards-cta');
-  if (ctaContainer) {
-    ctaContainer.classList.remove('hidden');
-  }
 }
 
 export default async function decorate(block) {
@@ -46,7 +40,7 @@ export default async function decorate(block) {
         ${title ? `<div class="premium-learning-browse-cards-title">${titleElement?.innerHTML || ''}</div>` : ''}
         ${description ? `<div class="premium-learning-browse-cards-description">${description}</div>` : ''}
       </div>
-      <div class="premium-learning-browse-cards-cta hidden">
+      <div class="premium-learning-browse-cards-cta${UEAuthorMode ? '' : ' hidden'}">
         ${cta}
       </div>
     </div>
