@@ -28,6 +28,7 @@ async function exchangePLToken(imsToken = null, unauthenticated = false) {
     if (unauthenticated) {
       url.searchParams.set('auth', 'false');
     } else {
+      if (!imsToken) return; // no token available; skip rather than send Bearer null
       fetchOptions.headers = { Authorization: `Bearer ${imsToken}` };
     }
     const response = await fetch(url, fetchOptions);
@@ -52,10 +53,10 @@ async function initPLAuth(unauthenticated = false) {
   if (unauthenticated) {
     if (plAuthAnonymousPromise) return plAuthAnonymousPromise;
     plAuthAnonymousPromise = (async () => {
-      const existingToken = getCookie(LEARNER_TOKEN_COOKIE);
-      // Anonymous tokens are not validated against /user — the endpoint may reject them,
-      // causing a delete-and-refetch loop on every page load in UE Author Mode.
-      if (existingToken) return;
+      // Always exchange in UE Author Mode — do not trust any existing cookie.
+      // A leftover production token would silently break all PL API calls with no recovery
+      // path until the cookie's own TTL expires. One extra call per page load is acceptable
+      // in author-only context, and plAuthAnonymousPromise ensures it runs only once.
       await exchangePLToken(null, true);
     })().catch((error) => {
       plAuthAnonymousPromise = undefined;
