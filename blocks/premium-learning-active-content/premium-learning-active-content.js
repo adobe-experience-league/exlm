@@ -269,11 +269,10 @@ export default async function decorate(block) {
   // Non-blocking eligibility check — header stays visible until resolved.
   // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
   isSignedInUser()
-    .then((signedIn) => isPLEligible(signedIn))
+    .then((signedIn) => isPLEligible(10000, signedIn))
     .then(async (isEligible) => {
       if (!isEligible) {
-        if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else block.remove();
+        block.remove();
         return;
       }
 
@@ -374,9 +373,8 @@ export default async function decorate(block) {
         block.appendChild(carouselContainer);
         initCarousel(carouselContainer);
       } catch (err) {
-        if (!UEAuthorMode) {
-          block.remove();
-        }
+        if (UEAuthorMode) showFallbackContentInUEMode(block);
+        else block.remove();
         // eslint-disable-next-line no-console
         console.error('Error fetching active content:', err);
       }

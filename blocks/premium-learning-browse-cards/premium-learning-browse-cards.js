@@ -67,15 +67,11 @@ export default async function decorate(block) {
   // Non-blocking eligibility check — shimmer stays visible until resolved.
   // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
   isSignedInUser()
-    .then((signedIn) => isPLEligible(signedIn))
+    .then((signedIn) => isPLEligible(10000, signedIn))
     .then((isEligible) => {
       if (!isEligible) {
         buildCardsShimmer.removeShimmer();
-        if (UEAuthorMode) {
-          showFallbackContentInUEMode(block);
-        } else {
-          block.remove();
-        }
+        block.remove();
         return;
       }
 
@@ -119,22 +115,16 @@ export default async function decorate(block) {
         })
         .catch((err) => {
           buildCardsShimmer.removeShimmer();
-          if (UEAuthorMode) {
-            showFallbackContentInUEMode(block);
-          } else {
-            block.remove();
-          }
+          if (UEAuthorMode) showFallbackContentInUEMode(block);
+          else block.remove();
           /* eslint-disable-next-line no-console */
           console.error('Error fetching PL browse card data:', err);
         });
     })
     .catch((err) => {
       buildCardsShimmer.removeShimmer();
-      if (!UEAuthorMode) {
-        block.remove();
-      } else {
-        showFallbackContentInUEMode(block);
-      }
+      if (UEAuthorMode) showFallbackContentInUEMode(block);
+      else block.remove();
       /* eslint-disable-next-line no-console */
       console.error('Error resolving PL eligibility for browse cards:', err);
     });

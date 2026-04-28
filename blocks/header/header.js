@@ -416,7 +416,7 @@ const navDecorator = async (navBlock, decoratorOptions) => {
 
   // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
   isSignedInUser()
-    .then((signedIn) => isPLEligible(signedIn))
+    .then((signedIn) => isPLEligible(10000, signedIn))
     .then((isMember) => {
       if (isMember) {
         const placeholders = decoratorOptions.placeholders ?? {};

@@ -13,15 +13,20 @@ export function getPLAccessToken() {
   return getCookie(LEARNER_TOKEN_COOKIE);
 }
 
-// Exchanges IMS token for a Premium Learning access token and stores it in cookies.
-async function exchangePLToken(imsToken) {
+// Exchanges IMS token for a PL access token and stores it in cookies.
+// When unauthenticated=true (UE Author Mode), appends ?auth=false and omits the Bearer header.
+async function exchangePLToken(imsToken, unauthenticated = false) {
   try {
     const { premiumLearningAuthAPI } = window.exlm?.config || {};
     if (!premiumLearningAuthAPI) return;
-    const response = await fetch(premiumLearningAuthAPI, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${imsToken}` },
-    });
+    const url = new URL(premiumLearningAuthAPI);
+    const fetchOptions = { method: 'POST' };
+    if (unauthenticated) {
+      url.searchParams.set('auth', 'false');
+    } else {
+      fetchOptions.headers = { Authorization: `Bearer ${imsToken}` };
+    }
+    const response = await fetch(url.toString(), fetchOptions);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const {
       access_token: accessToken,
@@ -37,8 +42,9 @@ async function exchangePLToken(imsToken) {
   }
 }
 
-// Runs PL authentication once (memoized): validates existing token or fetches a new one via IMS.
-async function initPLAuth() {
+// Runs PL authentication once (memoized): validates existing token or fetches a new one.
+// When unauthenticated=true (UE Author Mode), skips IMS and calls auth API with ?auth=false.
+async function initPLAuth(unauthenticated = false) {
   if (plAuthPromise) return plAuthPromise;
   plAuthPromise = (async () => {
     const existingToken = getCookie(LEARNER_TOKEN_COOKIE);
@@ -51,8 +57,12 @@ async function initPLAuth() {
       if (res.ok) return;
       [LEARNER_TOKEN_COOKIE, LEARNER_USER_ID_COOKIE].forEach((c) => deleteCookie(c));
     }
-    const imsToken = window.adobeIMS?.getAccessToken()?.token;
-    if (imsToken) await exchangePLToken(imsToken);
+    if (unauthenticated) {
+      await exchangePLToken(null, true);
+    } else {
+      const imsToken = window.adobeIMS?.getAccessToken()?.token;
+      if (imsToken) await exchangePLToken(imsToken);
+    }
   })().catch((error) => {
     plAuthPromise = undefined;
     throw error;
@@ -61,8 +71,9 @@ async function initPLAuth() {
 }
 
 // Resolves true if the user has a valid PL token, with a timeout fallback returning false.
-async function verifyPLAuth(timeoutMs = 10000) {
-  const membershipCheck = initPLAuth()
+// When unauthenticated=true (UE Author Mode), uses the ?auth=false init path.
+async function verifyPLAuth(timeoutMs = 10000, unauthenticated = false) {
+  const membershipCheck = initPLAuth(unauthenticated)
     .then(() => !!getCookie(LEARNER_TOKEN_COOKIE))
     .catch((error) => {
       // eslint-disable-next-line no-console
@@ -76,25 +87,33 @@ async function verifyPLAuth(timeoutMs = 10000) {
   return Promise.race([membershipCheck.finally(() => clearTimeout(timeoutHandle)), timeout]);
 }
 
-/**
- * @param {boolean} signedIn
- * @param {number} [timeoutMs]
- * @returns {Promise<boolean>}
- */
-// TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
-export async function isPLEligible(signedIn = false, timeoutMs = 10000) {
-  if (!isFeatureEnabled('isPremiumLearningEnabled')) return false;
-  if (!signedIn) return false;
-  return verifyPLAuth(timeoutMs);
+// Initializes PL auth for UE Author Mode — calls auth API with ?auth=false, no IMS token needed.
+export function initPLAuthAnonymous() {
+  return initPLAuth(true);
 }
 
 /**
- * @param {boolean} signedIn
+ * Checks if the current user is eligible for Premium Learning.
+ * In UE Author Mode, uses anonymous ?auth=false flow (no IMS required).
+ * In production, dynamically imports isSignedInUser to avoid cyclic dependency.
  * @param {number} [timeoutMs]
  * @returns {Promise<boolean>}
  */
-export async function applyPLSectionGating(signedIn = false, timeoutMs = 10000) {
-  const isEligible = await isPLEligible(signedIn, timeoutMs);
+export async function isPLEligible(timeoutMs = 10000, signedIn = null) {
+  if (!isFeatureEnabled('isPremiumLearningEnabled')) return false;
+  if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+    return verifyPLAuth(timeoutMs, true);
+  }
+  if (signedIn === false) return false;
+  return verifyPLAuth(timeoutMs, false);
+}
+
+/**
+ * @param {number} [timeoutMs]
+ * @returns {Promise<boolean>}
+ */
+export async function applyPLSectionGating(timeoutMs = 10000, signedIn = null) {
+  const isEligible = await isPLEligible(timeoutMs, signedIn);
   if (!isEligible) document.querySelectorAll('.premium-learning-section').forEach((s) => s.remove());
   return isEligible;
 }
