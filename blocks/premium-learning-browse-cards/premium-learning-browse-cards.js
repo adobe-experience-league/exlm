@@ -81,6 +81,11 @@ export default async function decorate(block) {
         buildCardsShimmer.removeShimmer();
         if (UEAuthorMode) {
           showFallbackContentInUEMode(block);
+          // Always show CTA in UE mode
+          const ctaContainer = block.querySelector('.premium-learning-browse-cards-cta');
+          if (ctaContainer) {
+            ctaContainer.classList.remove('hidden');
+          }
         } else {
           block.remove();
         }
@@ -139,6 +144,11 @@ export default async function decorate(block) {
           buildCardsShimmer.removeShimmer();
           if (UEAuthorMode) {
             showFallbackContentInUEMode(block);
+            // Always show CTA in UE mode
+            const ctaContainer = block.querySelector('.premium-learning-browse-cards-cta');
+            if (ctaContainer) {
+              ctaContainer.classList.remove('hidden');
+            }
           } else {
             block.remove();
           }
@@ -152,6 +162,11 @@ export default async function decorate(block) {
         block.remove();
       } else {
         showFallbackContentInUEMode(block);
+        // Always show CTA in UE mode
+        const ctaContainer = block.querySelector('.premium-learning-browse-cards-cta');
+        if (ctaContainer) {
+          ctaContainer.classList.remove('hidden');
+        }
       }
       /* eslint-disable-next-line no-console */
       console.error('Error resolving PL eligibility for browse cards:', err);
