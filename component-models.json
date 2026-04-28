@@ -5799,6 +5799,34 @@
       },
       {
         "component": "custom-aem-tag",
+        "name": "tq-products",
+        "label": "Product(s) v2",
+        "valueType": "string",
+        "description": "Sets the Top Quadrant products(s) tags in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "product",
+              "validation": true
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "tq-action-button",
+        "name": "generateTQTags",
+        "label": "Generate TQ Tags",
+        "valueType": "string",
+        "extensionId": "exl-ue-extension",
+        "options": {
+          "requiredTagsToEnable": ["tq-products"]
+        }
+      },
+      {
+        "component": "custom-aem-tag",
         "name": "tq-roles",
         "label": "Role(s) v2",
         "valueType": "string",
@@ -5832,34 +5860,6 @@
           }
         },
         "extensionId": "exl-ue-extension"
-      },
-      {
-        "component": "custom-aem-tag",
-        "name": "tq-products",
-        "label": "Product(s) v2",
-        "valueType": "string",
-        "description": "Sets the Top Quadrant products(s) tags in page meta.",
-        "dataSource": {
-          "type": "action",
-          "config": {
-            "name": "getTQTags",
-            "params": {
-              "taxonomyType": "product",
-              "validation": true
-            }
-          }
-        },
-        "extensionId": "exl-ue-extension"
-      },
-      {
-        "component": "tq-action-button",
-        "name": "generateTQTags",
-        "label": "Generate TQ Tags",
-        "valueType": "string",
-        "extensionId": "exl-ue-extension",
-        "options": {
-          "requiredTagsToEnable": ["tq-roles", "tq-levels", "tq-products"]
-        }
       },
       {
         "component": "custom-aem-tag",
@@ -6033,6 +6033,34 @@
       },
       {
         "component": "custom-aem-tag",
+        "name": "tq-products",
+        "label": "Product(s) v2",
+        "valueType": "string",
+        "description": "Sets the Top Quadrant products(s) tags in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "product",
+              "validation": true
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "tq-action-button",
+        "name": "generateTQTags",
+        "label": "Generate TQ Tags",
+        "valueType": "string",
+        "extensionId": "exl-ue-extension",
+        "options": {
+          "requiredTagsToEnable": ["tq-products"]
+        }
+      },
+      {
+        "component": "custom-aem-tag",
         "name": "tq-roles",
         "label": "Role(s) v2",
         "valueType": "string",
@@ -6066,34 +6094,6 @@
           }
         },
         "extensionId": "exl-ue-extension"
-      },
-      {
-        "component": "custom-aem-tag",
-        "name": "tq-products",
-        "label": "Product(s) v2",
-        "valueType": "string",
-        "description": "Sets the Top Quadrant products(s) tags in page meta.",
-        "dataSource": {
-          "type": "action",
-          "config": {
-            "name": "getTQTags",
-            "params": {
-              "taxonomyType": "product",
-              "validation": true
-            }
-          }
-        },
-        "extensionId": "exl-ue-extension"
-      },
-      {
-        "component": "tq-action-button",
-        "name": "generateTQTags",
-        "label": "Generate TQ Tags",
-        "valueType": "string",
-        "extensionId": "exl-ue-extension",
-        "options": {
-          "requiredTagsToEnable": ["tq-roles", "tq-levels", "tq-products"]
-        }
       },
       {
         "component": "custom-aem-tag",
