@@ -42,8 +42,11 @@ async function exchangePLToken(imsToken = null, unauthenticated = false) {
     setCookie(LEARNER_TOKEN_COOKIE, accessToken, expiresIn);
     if (userId) setCookie(LEARNER_USER_ID_COOKIE, userId, expiresIn);
   } catch (error) {
+    const errorMsg = unauthenticated
+      ? 'Failed to fetch anonymous PL token (UE Author Mode):'
+      : 'Failed to exchange IMS token for Premium Learning token:';
     // eslint-disable-next-line no-console
-    console.error('Failed to exchange IMS token for Premium Learning token:', error);
+    console.error(errorMsg, error);
   }
 }
 
