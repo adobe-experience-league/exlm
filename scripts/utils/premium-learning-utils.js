@@ -6,9 +6,11 @@ const LEARNER_USER_ID_COOKIE = 'alm_user_id';
 const DEFAULT_EXPIRES = 86400;
 const PL_ELIGIBILITY_TIMEOUT_MS = 10000;
 
-// Module-level singleton — safe in practice because sign-out calls window.adobeIMS.signOut()
-// which redirects via IMS and causes a full page reload, resetting this naturally.
+// Two separate singletons for the two mutually exclusive auth modes (UE Author vs production).
+// UE/non-UE is an immutable page-level constant, so each promise is set at most once per load.
+// Sign-out calls window.adobeIMS.signOut() which causes a full page reload, resetting both.
 let plAuthPromise;
+let plAuthAnonymousPromise;
 
 export function getPLAccessToken() {
   return getCookie(LEARNER_TOKEN_COOKIE);
@@ -16,18 +18,19 @@ export function getPLAccessToken() {
 
 // Exchanges IMS token for a PL access token and stores it in cookies.
 // When unauthenticated=true (UE Author Mode), appends ?auth=false and omits the Bearer header.
-async function exchangePLToken(imsToken, unauthenticated = false) {
+// imsToken is unused when unauthenticated=true — pass null in that case.
+async function exchangePLToken(imsToken = null, unauthenticated = false) {
   try {
     const { premiumLearningAuthAPI } = window.exlm?.config || {};
     if (!premiumLearningAuthAPI) return;
-    const url = new URL(premiumLearningAuthAPI);
+    const url = new URL(premiumLearningAuthAPI, window.location.origin);
     const fetchOptions = { method: 'POST' };
     if (unauthenticated) {
       url.searchParams.set('auth', 'false');
     } else {
       fetchOptions.headers = { Authorization: `Bearer ${imsToken}` };
     }
-    const response = await fetch(url.toString(), fetchOptions);
+    const response = await fetch(url, fetchOptions);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const {
       access_token: accessToken,
@@ -43,9 +46,23 @@ async function exchangePLToken(imsToken, unauthenticated = false) {
   }
 }
 
-// Runs PL authentication once (memoized): validates existing token or fetches a new one.
+// Runs PL authentication once per mode (memoized): validates existing token or fetches a new one.
 // When unauthenticated=true (UE Author Mode), skips IMS and calls auth API with ?auth=false.
 async function initPLAuth(unauthenticated = false) {
+  if (unauthenticated) {
+    if (plAuthAnonymousPromise) return plAuthAnonymousPromise;
+    plAuthAnonymousPromise = (async () => {
+      const existingToken = getCookie(LEARNER_TOKEN_COOKIE);
+      // Anonymous tokens are not validated against /user — the endpoint may reject them,
+      // causing a delete-and-refetch loop on every page load in UE Author Mode.
+      if (existingToken) return;
+      await exchangePLToken(null, true);
+    })().catch((error) => {
+      plAuthAnonymousPromise = undefined;
+      throw error;
+    });
+    return plAuthAnonymousPromise;
+  }
   if (plAuthPromise) return plAuthPromise;
   plAuthPromise = (async () => {
     const existingToken = getCookie(LEARNER_TOKEN_COOKIE);
@@ -58,12 +75,8 @@ async function initPLAuth(unauthenticated = false) {
       if (res.ok) return;
       [LEARNER_TOKEN_COOKIE, LEARNER_USER_ID_COOKIE].forEach((c) => deleteCookie(c));
     }
-    if (unauthenticated) {
-      await exchangePLToken(null, true);
-    } else {
-      const imsToken = window.adobeIMS?.getAccessToken()?.token;
-      if (imsToken) await exchangePLToken(imsToken);
-    }
+    const imsToken = window.adobeIMS?.getAccessToken()?.token;
+    if (imsToken) await exchangePLToken(imsToken);
   })().catch((error) => {
     plAuthPromise = undefined;
     throw error;
