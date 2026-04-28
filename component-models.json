@@ -5726,6 +5726,14 @@
         "description": "Sets the title of the page in page meta."
       },
       {
+        "component": "date-time",
+        "valueType": "date-time",
+        "name": "content-modified-time",
+        "label": "Content Last Updated Date",
+        "description": "Sets the last content update date of the page in page metadata.",
+        "placeholder": "YYYY-MM-DD HH:mm:ss"
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
         "name": "signout-redirect-url",
@@ -5938,6 +5946,14 @@
           }
         },
         "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "date-time",
+        "valueType": "date-time",
+        "name": "content-modified-time",
+        "label": "Content Last Updated Date",
+        "description": "Sets the last content update date of the page in page metadata.",
+        "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
         "component": "aem-content",
@@ -6166,6 +6182,14 @@
         "extensionId": "exl-ue-extension"
       },
       {
+        "component": "date-time",
+        "valueType": "date-time",
+        "name": "content-modified-time",
+        "label": "Content Last Updated Date",
+        "description": "Sets the last content update date of the page in page metadata.",
+        "placeholder": "YYYY-MM-DD HH:mm:ss"
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
         "name": "signout-redirect-url",
@@ -6185,6 +6209,14 @@
         "name": "jcr:title",
         "label": "Page Title",
         "description": "Sets the title of the page in page meta."
+      },
+      {
+        "component": "date-time",
+        "valueType": "date-time",
+        "name": "content-modified-time",
+        "label": "Content Last Updated Date",
+        "description": "Sets the last content update date of the page in page metadata.",
+        "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
         "component": "aem-content",
@@ -10642,6 +10674,40 @@
         "valueType": "string",
         "rootPath": "/content/cq:tags/exl",
         "description": "Select the product for which courses/cohorts should be displayed."
+      },
+      {
+        "component": "select",
+        "name": "cta_Type",
+        "value": "primary",
+        "label": "CTA Type",
+        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_linkText",
+        "value": "",
+        "label": "CTA Text",
+        "description": "Text to be shown inside button."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta_link",
+        "value": "",
+        "label": "CTA Link",
+        "description": "This button will be displayed only if the selected product has more than 4 results"
       }
     ]
   },

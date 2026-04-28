@@ -122,7 +122,7 @@ export default class PLDataService {
     params.append('sort', sort || PLDataService.DEFAULT_SORT);
 
     // Add enforced fields and includes for comprehensive data
-    params.append('enforcedFields[learningObject]', 'extensionOverrides');
+    params.append('enforcedFields[learningObject]', 'products,extensionOverrides');
     params.append(
       'include',
       'instances.enrollment.loResourceGrades,instances.loResources.resources,instances.badge,supplementaryResources,enrollment.loResourceGrades,skills.skillLevel.skill',

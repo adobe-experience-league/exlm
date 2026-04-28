@@ -157,9 +157,16 @@
 
 /* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
-  .page-bg-gradient .gradient-layer > .gradient-circle {
-    animation: none;
-    filter: none;
+  .page-bg-gradient .gradient-layer {
+    display: none;
+  }
+
+  .page-bg-gradient main {
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--gradient-secondary) 20%, transparent) 0%,
+      color-mix(in srgb, var(--gradient-primary) 20%, transparent) 100%
+    );
   }
 
   .page-bg-gradient main::after {

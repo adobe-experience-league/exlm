@@ -4,6 +4,7 @@ import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
+import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
@@ -14,10 +15,10 @@ function showFallbackContentInUEMode(blockElement) {
 }
 
 export default async function decorate(block) {
-  const [titleElement, descriptionElement, contentTypeElement, productElement] = [...block.children];
-
+  const [titleElement, descriptionElement, contentTypeElement, productElement, ctaElement] = [...block.children];
   const title = titleElement?.textContent?.trim();
   const description = descriptionElement?.innerHTML?.trim();
+  const cta = ctaElement?.innerHTML ? decorateCustomButtons(ctaElement) : '';
   let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase();
   if (contentType?.includes(',')) {
     contentType = contentType
@@ -34,8 +35,15 @@ export default async function decorate(block) {
   const headerDiv = document.createElement('div');
   headerDiv.className = 'premium-learning-browse-cards-header';
   headerDiv.innerHTML = `
-    ${title ? `<div class="premium-learning-browse-cards-title">${titleElement?.innerHTML || ''}</div>` : ''}
-    ${description ? `<div class="premium-learning-browse-cards-description">${description}</div>` : ''}
+    <div class="premium-learning-browse-cards-header-content">
+      <div class="premium-learning-browse-cards-header-text">
+        ${title ? `<div class="premium-learning-browse-cards-title">${titleElement?.innerHTML || ''}</div>` : ''}
+        ${description ? `<div class="premium-learning-browse-cards-description">${description}</div>` : ''}
+      </div>
+      <div class="premium-learning-browse-cards-cta hidden">
+        ${cta}
+      </div>
+    </div>
   `;
   block.appendChild(headerDiv);
 
@@ -57,7 +65,7 @@ export default async function decorate(block) {
 
   const param = {
     contentType,
-    noOfResults,
+    noOfResults: noOfResults + 1,
     browseMode: true,
     ...(products?.length > 0 && { products }),
   };
@@ -106,6 +114,16 @@ export default async function decorate(block) {
               contentDiv.appendChild(cardDiv);
             }
             block.appendChild(contentDiv);
+
+            // Show/hide CTA based on number of cohorts
+            const ctaContainer = block.querySelector('.premium-learning-browse-cards-cta');
+            if (ctaContainer) {
+              if (sortedData.length > noOfResults) {
+                ctaContainer.classList.remove('hidden');
+              } else {
+                ctaContainer.classList.add('hidden');
+              }
+            }
           } else {
             const noResultsText =
               placeholders.noResultsTextBrowse || 'We are sorry, no results found matching the criteria.';
