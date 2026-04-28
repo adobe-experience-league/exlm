@@ -1823,7 +1823,7 @@ async function loadPage() {
       isUserSignedIn()
         .then((signedIn) =>
           import('./utils/premium-learning-utils.js').then(({ applyPLSectionGating }) =>
-            applyPLSectionGating(10000, signedIn),
+            applyPLSectionGating(signedIn),
           ),
         )
         .catch((error) => {

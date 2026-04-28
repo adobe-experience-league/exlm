@@ -75,11 +75,12 @@ export default async function decorate(block) {
   // Non-blocking eligibility check — shimmer stays visible until resolved.
   // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
   isSignedInUser()
-    .then((signedIn) => isPLEligible(10000, signedIn))
+    .then((signedIn) => isPLEligible(signedIn))
     .then((isEligible) => {
       if (!isEligible) {
         buildCardsShimmer.removeShimmer();
-        block.remove();
+        if (UEAuthorMode) showFallbackContentInUEMode(block);
+        else block.remove();
         return;
       }
 

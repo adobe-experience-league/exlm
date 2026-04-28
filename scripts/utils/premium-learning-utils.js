@@ -4,6 +4,7 @@ import isFeatureEnabled from './feature-flag-utils.js';
 const LEARNER_TOKEN_COOKIE = 'alm_access_token';
 const LEARNER_USER_ID_COOKIE = 'alm_user_id';
 const DEFAULT_EXPIRES = 86400;
+const PL_ELIGIBILITY_TIMEOUT_MS = 10000;
 
 // Module-level singleton — safe in practice because sign-out calls window.adobeIMS.signOut()
 // which redirects via IMS and causes a full page reload, resetting this naturally.
@@ -72,7 +73,7 @@ async function initPLAuth(unauthenticated = false) {
 
 // Resolves true if the user has a valid PL token, with a timeout fallback returning false.
 // When unauthenticated=true (UE Author Mode), uses the ?auth=false init path.
-async function verifyPLAuth(timeoutMs = 10000, unauthenticated = false) {
+async function verifyPLAuth(timeoutMs = PL_ELIGIBILITY_TIMEOUT_MS, unauthenticated = false) {
   const membershipCheck = initPLAuth(unauthenticated)
     .then(() => !!getCookie(LEARNER_TOKEN_COOKIE))
     .catch((error) => {
@@ -95,11 +96,13 @@ export function initPLAuthAnonymous() {
 /**
  * Checks if the current user is eligible for Premium Learning.
  * In UE Author Mode, uses anonymous ?auth=false flow (no IMS required).
- * In production, dynamically imports isSignedInUser to avoid cyclic dependency.
+ * @param {boolean|null} [signedIn] - Pass the result of isSignedInUser() to enable fast early exit
+ *   for signed-out users. Use null (default) to skip the check and rely on verifyPLAuth.
+ *   Strict false short-circuits immediately; null ("unknown") falls through to verifyPLAuth.
  * @param {number} [timeoutMs]
  * @returns {Promise<boolean>}
  */
-export async function isPLEligible(timeoutMs = 10000, signedIn = null) {
+export async function isPLEligible(signedIn = null, timeoutMs = PL_ELIGIBILITY_TIMEOUT_MS) {
   if (!isFeatureEnabled('isPremiumLearningEnabled')) return false;
   if (window.hlx.aemRoot || window.location.href.includes('.html')) {
     return verifyPLAuth(timeoutMs, true);
@@ -109,11 +112,12 @@ export async function isPLEligible(timeoutMs = 10000, signedIn = null) {
 }
 
 /**
+ * @param {boolean|null} [signedIn]
  * @param {number} [timeoutMs]
  * @returns {Promise<boolean>}
  */
-export async function applyPLSectionGating(timeoutMs = 10000, signedIn = null) {
-  const isEligible = await isPLEligible(timeoutMs, signedIn);
+export async function applyPLSectionGating(signedIn = null, timeoutMs = PL_ELIGIBILITY_TIMEOUT_MS) {
+  const isEligible = await isPLEligible(signedIn, timeoutMs);
   if (!isEligible) document.querySelectorAll('.premium-learning-section').forEach((s) => s.remove());
   return isEligible;
 }
