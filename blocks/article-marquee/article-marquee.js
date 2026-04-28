@@ -47,7 +47,9 @@ function createOptions(container, readTimeText) {
   const { lang } = getPathDetails();
   const lastUpdated = document.createElement('div');
   lastUpdated.classList.add('article-marquee-last-updated');
-  const lastUpdatedData = document.querySelector('meta[name="published-time"]').getAttribute('content');
+  const lastPublishedDate = document.querySelector('meta[name="published-time"]')?.getAttribute('content');
+  const lastContentUpdatedDate = document.querySelector('meta[name="content-modified-time"]')?.getAttribute('content');
+  const lastUpdatedData = lastContentUpdatedDate || lastPublishedDate;
   const date = new Date(lastUpdatedData);
   const formatOptions = {
     year: 'numeric',
