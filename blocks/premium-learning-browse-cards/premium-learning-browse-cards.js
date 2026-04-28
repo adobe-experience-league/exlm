@@ -12,6 +12,12 @@ function showFallbackContentInUEMode(blockElement) {
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
   contentDiv.textContent = 'This block will load the Premium learning content for Premium users only.';
   blockElement.appendChild(contentDiv);
+  
+  // Always show CTA in UE mode
+  const ctaContainer = blockElement.querySelector('.premium-learning-browse-cards-cta');
+  if (ctaContainer) {
+    ctaContainer.classList.remove('hidden');
+  }
 }
 
 export default async function decorate(block) {
@@ -81,11 +87,6 @@ export default async function decorate(block) {
         buildCardsShimmer.removeShimmer();
         if (UEAuthorMode) {
           showFallbackContentInUEMode(block);
-          // Always show CTA in UE mode
-          const ctaContainer = block.querySelector('.premium-learning-browse-cards-cta');
-          if (ctaContainer) {
-            ctaContainer.classList.remove('hidden');
-          }
         } else {
           block.remove();
         }
@@ -144,11 +145,6 @@ export default async function decorate(block) {
           buildCardsShimmer.removeShimmer();
           if (UEAuthorMode) {
             showFallbackContentInUEMode(block);
-            // Always show CTA in UE mode
-            const ctaContainer = block.querySelector('.premium-learning-browse-cards-cta');
-            if (ctaContainer) {
-              ctaContainer.classList.remove('hidden');
-            }
           } else {
             block.remove();
           }
@@ -162,11 +158,6 @@ export default async function decorate(block) {
         block.remove();
       } else {
         showFallbackContentInUEMode(block);
-        // Always show CTA in UE mode
-        const ctaContainer = block.querySelector('.premium-learning-browse-cards-cta');
-        if (ctaContainer) {
-          ctaContainer.classList.remove('hidden');
-        }
       }
       /* eslint-disable-next-line no-console */
       console.error('Error resolving PL eligibility for browse cards:', err);
