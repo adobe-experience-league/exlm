@@ -1,3 +1,8 @@
+.premium-learning-bookmarks.pl-bookmarks-empty,
+.section.premium-learning-section:has(.premium-learning-bookmarks.pl-bookmarks-empty) {
+  display: none;
+}
+
 .premium-learning-bookmarks .premium-learning-bookmarks-content {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(318px, 1fr));
@@ -68,4 +73,76 @@ body.profile:not(.profile-home-page)
   .premium-learning-bookmarks-content .premium-learning-bookmarks-card .browse-card {
     width: 256px;
   }
+}
+
+/* Pagination styles */
+.premium-learning-bookmarks-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.premium-learning-bookmarks-pagination .nav-arrow {
+  position: relative;
+  background: transparent;
+  outline: none;
+  height: 36px;
+  width: 36px;
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+
+.premium-learning-bookmarks-pagination .nav-arrow::after {
+  position: absolute;
+  top: 50%;
+  display: flex;
+  width: 6px;
+  height: 6px;
+  border-width: 0 2px 2px 0;
+  border-style: solid;
+  border-color: var(--spectrum-gray-700);
+  transform-origin: 75% 75%;
+  transform: rotateZ(135deg);
+  transition: transform 0.1s ease;
+  content: '';
+  margin-top: -5px;
+  right: 16px;
+}
+
+.premium-learning-bookmarks-pagination .nav-arrow.right-nav-arrow::after {
+  transform: rotateZ(315deg);
+}
+
+.premium-learning-bookmarks-pagination .nav-arrow.nav-arrow-hidden {
+  pointer-events: none;
+  touch-action: none;
+}
+
+.premium-learning-bookmarks-pagination .nav-arrow.nav-arrow-hidden::after {
+  border-color: var(--spectrum-gray-200);
+}
+
+.premium-learning-bookmarks-pagination .bookmarks-pg-input {
+  width: 60px;
+  height: 32px;
+  text-align: center;
+  border: 1px solid var(--spectrum-gray-300);
+  border-radius: 4px;
+  font-size: 14px;
+  padding: 0 8px;
+  line-height: 30px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.premium-learning-bookmarks-pagination .pagination-text {
+  font-size: 14px;
+  color: var(--spectrum-gray-700);
+  white-space: nowrap;
+  line-height: 32px;
+  display: flex;
+  align-items: center;
 }

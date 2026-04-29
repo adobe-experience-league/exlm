@@ -2,6 +2,7 @@ import { createTag, fetchLanguagePlaceholders, getConfig } from '../../scripts/s
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import {
   fetchUserEnrollments,
+  fetchNextEnrollmentPage,
   fetchCohortProgress,
   getEngagementBoardId,
   fetchBoardPosts,
@@ -145,7 +146,6 @@ async function buildCarouselSlide(cardData, progressData, totalReplies, placehol
   // Add metadata below card title
   const titleElement = cohortCardWrapper.querySelector('.premium-learning-card-title');
   const metaParts = [
-    cardData.meta?.duration,
     cardData.meta?.level,
     cardData.meta?.rating?.average > 0
       ? `${cardData.meta.rating.average.toFixed(1)} <span class="rating-star">★</span>`
@@ -278,32 +278,45 @@ export default async function decorate(block) {
       }
 
       try {
-        const enrollmentData = await fetchUserEnrollments(
+        const allData = [];
+        const allIncluded = [];
+
+        let result = await fetchUserEnrollments(
           config,
           'learningProgram',
-          4,
+          10,
           'learningObject,learningObject.instances',
+          'Active',
         );
 
-        const activeInstances =
-          enrollmentData?.included?.filter(
-            (item) => item.type === 'learningObjectInstance' && item.attributes?.state === 'Active',
-          ) || [];
+        while (result) {
+          const nonCompleted = (result.data || []).filter((enrollment) => enrollment.attributes?.state !== 'COMPLETED');
+          const remaining = 4 - allData.length;
+          allData.push(...nonCompleted.slice(0, remaining));
 
-        const activeInstanceIds = new Set(activeInstances.map((instance) => instance.id));
+          if (result.included) {
+            const existingIds = new Set(allIncluded.map((item) => item.id));
+            result.included.forEach((item) => {
+              if (!existingIds.has(item.id)) {
+                allIncluded.push(item);
+              }
+            });
+          }
 
-        // Filter enrollments to only include active instances
-        const allEnrollments = (enrollmentData?.data || []).filter((enrollment) => {
-          const hasActiveInstance =
-            enrollment.relationships?.loInstance?.data?.id &&
-            activeInstanceIds.has(enrollment.relationships.loInstance.data.id);
-          const isNotCompleted = enrollment.attributes?.state !== 'COMPLETED';
-          return hasActiveInstance && isNotCompleted;
-        });
+          if (allData.length >= 4) break;
+
+          const nextUrl = result.links?.next;
+          if (!nextUrl) break;
+
+          // eslint-disable-next-line no-await-in-loop
+          result = await fetchNextEnrollmentPage(nextUrl);
+        }
+
+        const enrollmentData = { data: allData, included: allIncluded };
 
         // Get learning object IDs from active enrollments
         const activeLearningObjectIds = new Set(
-          allEnrollments.map((enrollment) => enrollment.relationships?.learningObject?.data?.id).filter(Boolean),
+          allData.map((enrollment) => enrollment.relationships?.learningObject?.data?.id).filter(Boolean),
         );
 
         // Filter learning objects to only include active ones

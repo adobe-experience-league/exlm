@@ -619,20 +619,53 @@ export default class PLDataService {
 }
 
 /**
+ * Fetches next page of enrollments using cursor URL
+ * @param {string} cursorUrl - Next page URL from links.next
+ * @returns {Promise<Object|null>} Enrollment data or null on error
+ */
+export async function fetchNextEnrollmentPage(cursorUrl) {
+  try {
+    const headers = PLDataService.buildRequestHeaders();
+    const response = await fetch(cursorUrl, {
+      method: 'GET',
+      headers,
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Enrollment page fetch failed: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching enrollment page:', error);
+    return null;
+  }
+}
+
+/**
  * Checks if user has any enrollments in Adobe Learning Manager
  * Standalone utility function that can be used without instantiating PLDataService
  * @param {Object} config - Config object (from getConfig())
  * @param {string} loType - Learning object type ('course' or 'learningProgram')
  * @param {number} noOfResults - Number of results to fetch (default: 10)
  * @param {string} include - Optional include parameter for related data (e.g., 'learningObject,learningObject.instances')
+ * @param {string} instanceStates - Optional filter for instance states (e.g., 'Active')
  * @returns {Promise<Object|null>} Enrollment data or null on error
  * @example
  * import { fetchUserEnrollments } from './data-service/premium-learning-data-service.js';
  * const config = getConfig();
- * const enrollments = await fetchUserEnrollments(config, 'learningProgram', 10, 'learningObject');
+ * const enrollments = await fetchUserEnrollments(config, 'learningProgram', 10, 'learningObject', 'Active');
  * const hasEnrollments = enrollments?.data?.length > 0;
  */
-export async function fetchUserEnrollments(config, loType = 'learningProgram', noOfResults = 10, include = null) {
+export async function fetchUserEnrollments(
+  config,
+  loType = 'learningProgram',
+  noOfResults = 10,
+  include = null,
+  instanceStates = null,
+) {
   try {
     const apiBaseUrl = config?.plApiBaseUrl;
     const url = new URL(`${apiBaseUrl}/enrollments`);
@@ -646,6 +679,10 @@ export async function fetchUserEnrollments(config, loType = 'learningProgram', n
 
     if (include) {
       params.append('include', include);
+    }
+
+    if (instanceStates) {
+      params.append('filter.loInstanceStates', instanceStates);
     }
 
     url.search = params.toString();

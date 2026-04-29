@@ -11,6 +11,11 @@
   --gradient-duration-primary: 8s;
   --gradient-duration-secondary: 10s;
   --gradient-duration-accent: 6s;
+  --gradient-fallback-bg: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--gradient-secondary) 20%, transparent) 0%,
+    color-mix(in srgb, var(--gradient-primary) 20%, transparent) 100%
+  );
 
   position: relative;
   isolation: isolate; /* prevents stacking conflicts */
@@ -155,6 +160,19 @@
   margin-top: 64px; /* Account for fixed header */
 }
 
+/* Author instance (Universal Editor) — block animation, use static fallback */
+body[data-aue-resource].page-bg-gradient .gradient-layer {
+  display: none;
+}
+
+body[data-aue-resource].page-bg-gradient main {
+  background: var(--gradient-fallback-bg);
+}
+
+body[data-aue-resource].page-bg-gradient main::after {
+  backdrop-filter: none;
+}
+
 /* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
   .page-bg-gradient .gradient-layer {
@@ -162,11 +180,7 @@
   }
 
   .page-bg-gradient main {
-    background: linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--gradient-secondary) 20%, transparent) 0%,
-      color-mix(in srgb, var(--gradient-primary) 20%, transparent) 100%
-    );
+    background: var(--gradient-fallback-bg);
   }
 
   .page-bg-gradient main::after {
