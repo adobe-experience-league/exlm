@@ -1,5 +1,4 @@
 import { createTag, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import {
   fetchUserEnrollments,
   fetchNextEnrollmentPage,
