@@ -243,14 +243,13 @@ function initCarousel(container) {
 export default async function decorate(block) {
   const placeholders = await fetchLanguagePlaceholders().catch(() => ({}));
   const config = getConfig();
-  const [headingElement, descriptionElement, ctaElement] = [...block.children];
+  const [headingElement, descriptionElement] = [...block.children];
 
   block.innerHTML = '';
 
   const description = descriptionElement?.innerHTML
     ? `<div class="premium-learning-active-content-header-description">${descriptionElement.innerHTML}</div>`
     : '';
-  const cta = ctaElement?.innerHTML ? decorateCustomButtons(ctaElement) : '';
 
   const headerDiv = createTag('div', { class: 'premium-learning-active-content-header' });
   headerDiv.innerHTML = `
@@ -258,9 +257,6 @@ export default async function decorate(block) {
       <div class="premium-learning-active-content-header-text">
         ${headingElement?.innerHTML || ''}
         ${description}
-      </div>
-      <div class="premium-learning-active-content-cta">
-        ${cta}
       </div>
     </div>
   `;
