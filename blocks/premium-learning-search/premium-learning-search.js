@@ -202,11 +202,11 @@ export default async function decorate(block) {
           })
           .catch((err) => {
             buildCardsShimmer.removeShimmer();
-            if (!UEAuthorMode) {
+            if (UEAuthorMode) {
+              showFallbackContentInUEMode(block);
+            } else {
               block.remove();
               handleEmptyPremiumLearningSection(premiumLearningSection);
-            } else {
-              showFallbackContentInUEMode(block);
             }
             /* eslint-disable-next-line no-console */
             console.error(err);

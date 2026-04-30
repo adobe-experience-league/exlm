@@ -5799,6 +5799,34 @@
       },
       {
         "component": "custom-aem-tag",
+        "name": "tq-products",
+        "label": "Product(s) v2",
+        "valueType": "string",
+        "description": "Sets the Top Quadrant products(s) tags in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "product",
+              "validation": true
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "tq-action-button",
+        "name": "generateTQTags",
+        "label": "Generate TQ Tags",
+        "valueType": "string",
+        "extensionId": "exl-ue-extension",
+        "options": {
+          "requiredTagsToEnable": ["tq-products"]
+        }
+      },
+      {
+        "component": "custom-aem-tag",
         "name": "tq-roles",
         "label": "Role(s) v2",
         "valueType": "string",
@@ -5832,34 +5860,6 @@
           }
         },
         "extensionId": "exl-ue-extension"
-      },
-      {
-        "component": "custom-aem-tag",
-        "name": "tq-products",
-        "label": "Product(s) v2",
-        "valueType": "string",
-        "description": "Sets the Top Quadrant products(s) tags in page meta.",
-        "dataSource": {
-          "type": "action",
-          "config": {
-            "name": "getTQTags",
-            "params": {
-              "taxonomyType": "product",
-              "validation": true
-            }
-          }
-        },
-        "extensionId": "exl-ue-extension"
-      },
-      {
-        "component": "tq-action-button",
-        "name": "generateTQTags",
-        "label": "Generate TQ Tags",
-        "valueType": "string",
-        "extensionId": "exl-ue-extension",
-        "options": {
-          "requiredTagsToEnable": ["tq-roles", "tq-levels", "tq-products"]
-        }
       },
       {
         "component": "custom-aem-tag",
@@ -6033,6 +6033,34 @@
       },
       {
         "component": "custom-aem-tag",
+        "name": "tq-products",
+        "label": "Product(s) v2",
+        "valueType": "string",
+        "description": "Sets the Top Quadrant products(s) tags in page meta.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "product",
+              "validation": true
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
+      },
+      {
+        "component": "tq-action-button",
+        "name": "generateTQTags",
+        "label": "Generate TQ Tags",
+        "valueType": "string",
+        "extensionId": "exl-ue-extension",
+        "options": {
+          "requiredTagsToEnable": ["tq-products"]
+        }
+      },
+      {
+        "component": "custom-aem-tag",
         "name": "tq-roles",
         "label": "Role(s) v2",
         "valueType": "string",
@@ -6066,34 +6094,6 @@
           }
         },
         "extensionId": "exl-ue-extension"
-      },
-      {
-        "component": "custom-aem-tag",
-        "name": "tq-products",
-        "label": "Product(s) v2",
-        "valueType": "string",
-        "description": "Sets the Top Quadrant products(s) tags in page meta.",
-        "dataSource": {
-          "type": "action",
-          "config": {
-            "name": "getTQTags",
-            "params": {
-              "taxonomyType": "product",
-              "validation": true
-            }
-          }
-        },
-        "extensionId": "exl-ue-extension"
-      },
-      {
-        "component": "tq-action-button",
-        "name": "generateTQTags",
-        "label": "Generate TQ Tags",
-        "valueType": "string",
-        "extensionId": "exl-ue-extension",
-        "options": {
-          "requiredTagsToEnable": ["tq-roles", "tq-levels", "tq-products"]
-        }
       },
       {
         "component": "custom-aem-tag",
@@ -10807,40 +10807,6 @@
         "value": "",
         "label": "Long Description",
         "description": "Sets the description of Premium learning browse cards block."
-      },
-      {
-        "component": "select",
-        "name": "cta1_Type",
-        "value": "primary",
-        "label": "First CTA Type",
-        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Primary",
-            "value": "primary"
-          },
-          {
-            "name": "Secondary",
-            "value": "secondary"
-          }
-        ]
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "cta1_linkText",
-        "value": "",
-        "label": "First CTA Text",
-        "description": "Text to be shown inside button."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "cta1_link",
-        "value": "",
-        "label": "First CTA Link",
-        "description": "What link to open when clicking the button."
       }
     ]
   }

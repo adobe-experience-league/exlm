@@ -40,7 +40,7 @@ export default async function decorate(block) {
         ${title ? `<div class="premium-learning-browse-cards-title">${titleElement?.innerHTML || ''}</div>` : ''}
         ${description ? `<div class="premium-learning-browse-cards-description">${description}</div>` : ''}
       </div>
-      <div class="premium-learning-browse-cards-cta hidden">
+      <div class="premium-learning-browse-cards-cta${UEAuthorMode ? '' : ' hidden'}">
         ${cta}
       </div>
     </div>
@@ -79,11 +79,8 @@ export default async function decorate(block) {
     .then((isEligible) => {
       if (!isEligible) {
         buildCardsShimmer.removeShimmer();
-        if (UEAuthorMode) {
-          showFallbackContentInUEMode(block);
-        } else {
-          block.remove();
-        }
+        if (UEAuthorMode) showFallbackContentInUEMode(block);
+        else block.remove();
         return;
       }
 
@@ -137,22 +134,16 @@ export default async function decorate(block) {
         })
         .catch((err) => {
           buildCardsShimmer.removeShimmer();
-          if (UEAuthorMode) {
-            showFallbackContentInUEMode(block);
-          } else {
-            block.remove();
-          }
+          if (UEAuthorMode) showFallbackContentInUEMode(block);
+          else block.remove();
           /* eslint-disable-next-line no-console */
           console.error('Error fetching PL browse card data:', err);
         });
     })
     .catch((err) => {
       buildCardsShimmer.removeShimmer();
-      if (!UEAuthorMode) {
-        block.remove();
-      } else {
-        showFallbackContentInUEMode(block);
-      }
+      if (UEAuthorMode) showFallbackContentInUEMode(block);
+      else block.remove();
       /* eslint-disable-next-line no-console */
       console.error('Error resolving PL eligibility for browse cards:', err);
     });

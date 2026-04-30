@@ -1809,17 +1809,29 @@ async function loadPage() {
     initiateCoveoAtomicSearch();
   }
   // Initialize Premium Learning auth — fully non-blocking, does not delay loadPage().
-  if (!window.hlx.aemRoot && !window.location.href.includes('.html') && isFeatureEnabled('isPremiumLearningEnabled')) {
-    // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
-    isUserSignedIn()
-      .then((signedIn) =>
-        import('./utils/premium-learning-utils.js').then(({ applyPLSectionGating }) => applyPLSectionGating(signedIn)),
-      )
-      .catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error('Error initializing Premium Learning authentication:', error);
-        document.querySelectorAll('.premium-learning-section').forEach((s) => s.remove());
-      });
+  if (isFeatureEnabled('isPremiumLearningEnabled')) {
+    if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+      // UE Author Mode: fetch PL token anonymously via ?auth=false (no IMS required).
+      import('./utils/premium-learning-utils.js')
+        .then(({ initPLAuthAnonymous }) => initPLAuthAnonymous())
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error('Error initializing PL auth in UE Author Mode:', error);
+        });
+    } else {
+      // TODO: Remove isUserSignedIn call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
+      isUserSignedIn()
+        .then((signedIn) =>
+          import('./utils/premium-learning-utils.js').then(({ applyPLSectionGating }) =>
+            applyPLSectionGating(signedIn),
+          ),
+        )
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error('Error initializing Premium Learning authentication:', error);
+          document.querySelectorAll('.premium-learning-section').forEach((s) => s.remove());
+        });
+    }
   }
 
   if (isProfilePage) {

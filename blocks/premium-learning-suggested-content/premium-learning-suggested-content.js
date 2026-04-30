@@ -11,6 +11,13 @@ import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const FETCH_LIMIT = 4;
 
+function showFallbackContentInUEMode(blockElement) {
+  const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
+  contentDiv.textContent =
+    'This block will load the Premium learning suggested content experience for signed-in Premium users.';
+  blockElement.appendChild(contentDiv);
+}
+
 function parseAuthoredContent(block) {
   const [headingElement, descriptionElement, ctaElement, contentTypeElement] = [...block.children];
 
@@ -29,13 +36,6 @@ function parseAuthoredContent(block) {
     ctaMarkup: ctaElement?.innerHTML ? decorateCustomButtons(ctaElement) : '',
     contentType,
   };
-}
-
-function showFallbackContentInUEMode(blockElement) {
-  const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
-  contentDiv.textContent =
-    'This block will load the Premium learning suggested content experience for signed-in Premium users.';
-  blockElement.appendChild(contentDiv);
 }
 
 function getUniqueProductsInOrder(suggestedContentItems) {
@@ -266,11 +266,8 @@ export default async function decorate(block) {
         });
       } catch (err) {
         shimmer.removeShimmer();
-        if (!UEAuthorMode) {
-          renderEmptyState(contentContainer, placeholders);
-        } else {
-          showFallbackContentInUEMode(block);
-        }
+        if (UEAuthorMode) showFallbackContentInUEMode(block);
+        else renderEmptyState(contentContainer, placeholders);
         // eslint-disable-next-line no-console
         console.error('Error fetching PL suggested content:', err);
       }
