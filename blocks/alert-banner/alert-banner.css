@@ -1,0 +1,54 @@
+.alert-banner-content {
+  font-size: 16px;
+  color: #404040;
+  line-height: 1.5;
+}
+
+.alert-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+  background-color: #fff8e1;
+  height: 60px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+}
+
+.alert-banner button {
+  background-color: #f5a623 !important;
+  border: none !important;
+  padding: 6px 12px !important;
+  border-radius: 4px !important;
+  cursor: pointer;
+  color: #fff;
+}
+
+.alert-banner.error {
+  background-color: #ffebee;
+  border-left: 4px solid #f44336;
+}
+
+.alert-banner.success {
+  background-color: #e8f5e9;
+  border-left: 4px solid #4caf50;
+}
+
+.alert-banner > div > div > p > a {
+  color: var(--link-color);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .alert-banner {
+    height: 80px;
+    padding: 0 8px;
+  }
+
+  .alert-banner-content {
+    font-size: 14px;
+  }
+}
