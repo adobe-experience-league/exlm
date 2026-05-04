@@ -5729,8 +5729,8 @@
         "component": "date-time",
         "valueType": "date-time",
         "name": "content-modified-time",
-        "label": "Content Last Updated Date",
-        "description": "Sets the last content update date of the page in page metadata.",
+        "label": "Custom Last Updated Date",
+        "description": "Overrides the last content update date of the page in page metadata.",
         "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
@@ -5951,8 +5951,8 @@
         "component": "date-time",
         "valueType": "date-time",
         "name": "content-modified-time",
-        "label": "Content Last Updated Date",
-        "description": "Sets the last content update date of the page in page metadata.",
+        "label": "Custom Last Updated Date",
+        "description": "Overrides the last content update date of the page in page metadata.",
         "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
@@ -6185,8 +6185,8 @@
         "component": "date-time",
         "valueType": "date-time",
         "name": "content-modified-time",
-        "label": "Content Last Updated Date",
-        "description": "Sets the last content update date of the page in page metadata.",
+        "label": "Custom Last Updated Date",
+        "description": "Overrides the last content update date of the page in page metadata.",
         "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
@@ -6214,8 +6214,8 @@
         "component": "date-time",
         "valueType": "date-time",
         "name": "content-modified-time",
-        "label": "Content Last Updated Date",
-        "description": "Sets the last content update date of the page in page metadata.",
+        "label": "Custom Last Updated Date",
+        "description": "Overrides the last content update date of the page in page metadata.",
         "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
