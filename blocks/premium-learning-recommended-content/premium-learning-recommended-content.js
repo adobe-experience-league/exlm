@@ -2,8 +2,8 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { createTag, fetchLanguagePlaceholders, getConfig, htmlToElement } from '../../scripts/scripts.js';
+import { getPLAccessToken, isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
-import { getPLAccessToken } from '../../scripts/utils/pl-auth-utils.js';
 import { getCookie } from '../../scripts/utils/cookie-utils.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
@@ -127,45 +127,59 @@ export default async function decorate(block) {
   block.classList.add('browse-cards-block', 'premium-learning-recommended-content-block');
   block.appendChild(buildBlockHeader(headingElement?.innerHTML || '', descriptionElement?.innerHTML || '', ctaMarkup));
 
-  const [signedIn, placeholders] = await Promise.all([isSignedInUser(), fetchLanguagePlaceholders().catch(() => ({}))]);
-
-  if (!signedIn) {
-    if (UEAuthorMode) showFallbackContentInUEMode(block);
-    else block.remove();
-    return;
-  }
-
   const shimmer = new BrowseCardShimmer(MAX_CARDS);
   shimmer.addShimmer(block);
 
-  try {
-    const prefsData = await fetchRecommendationPreferences();
-    const products = prefsData.data?.attributes?.products ?? [];
-    const roles = prefsData.data?.attributes?.roles ?? [];
+  const placeholders = await fetchLanguagePlaceholders().catch(() => ({}));
 
-    const allCards = await BrowseCardsDelegate.fetchCardData({
-      contentType,
-      recommendationMode: true,
-      products,
-      roles,
-      noOfResults: NO_OF_RESULTS,
+  // Non-blocking eligibility check — shimmer stays visible until resolved.
+  // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
+  isSignedInUser()
+    .then((signedIn) => isPLEligible(signedIn))
+    .then(async (isEligible) => {
+      if (!isEligible) {
+        shimmer.removeShimmer();
+        if (UEAuthorMode) showFallbackContentInUEMode(block);
+        else block.remove();
+        return;
+      }
+
+      try {
+        const prefsData = await fetchRecommendationPreferences();
+        const products = prefsData.data?.attributes?.products ?? [];
+        const roles = prefsData.data?.attributes?.roles ?? [];
+
+        const allCards = await BrowseCardsDelegate.fetchCardData({
+          contentType,
+          recommendationMode: true,
+          products,
+          roles,
+          noOfResults: NO_OF_RESULTS,
+        });
+
+        shimmer.removeShimmer();
+
+        if (!allCards.length) {
+          renderNoResultsContent(block, placeholders);
+          return;
+        }
+
+        const forYouLabel = placeholders.premiumLearningTabForYou || 'For you';
+        const tabsData = buildTabsData(allCards, products, forYouLabel);
+        renderTabs(block, tabsData, allCards, placeholders);
+      } catch (err) {
+        shimmer.removeShimmer();
+        /* eslint-disable-next-line no-console */
+        console.error('Error fetching PL recommended content:', err);
+        if (UEAuthorMode) showFallbackContentInUEMode(block);
+        else block.remove();
+      }
+    })
+    .catch((err) => {
+      shimmer.removeShimmer();
+      if (UEAuthorMode) showFallbackContentInUEMode(block);
+      else block.remove();
+      /* eslint-disable-next-line no-console */
+      console.error('Error resolving PL eligibility for recommended content:', err);
     });
-
-    shimmer.removeShimmer();
-
-    if (!allCards.length) {
-      renderNoResultsContent(block, placeholders);
-      return;
-    }
-
-    const forYouLabel = placeholders.premiumLearningTabForYou || 'For you';
-    const tabsData = buildTabsData(allCards, products, forYouLabel);
-    renderTabs(block, tabsData, allCards, placeholders);
-  } catch (err) {
-    shimmer.removeShimmer();
-    /* eslint-disable-next-line no-console */
-    console.error(err);
-    if (UEAuthorMode) showFallbackContentInUEMode(block);
-    else block.remove();
-  }
 }

@@ -55,6 +55,17 @@ function getBookmarkId(id, viewLink) {
 }
 
 /**
+ * Gets the premium learning block header
+ * @param {HTMLElement} card - The card element
+ * @returns {string} Block header text
+ * @private
+ */
+function getPremiumLearningBlockHeader(card) {
+  const heading = card.closest('.block')?.querySelector('[class*="header"] :is(h1, h2, h3, h4, h5, h6)');
+  return heading?.textContent?.trim() || '';
+}
+
+/**
  * Builds thumbnail container with image and user actions overlay
  * @param {Object} params - Thumbnail parameters
  * @returns {HTMLElement} Thumbnail figure element
@@ -107,22 +118,9 @@ function buildPLThumbnail({
     card.classList.add('premium-learning-thumbnail-not-loaded');
   }
 
-  // Add user actions overlay (bookmark & copy)
+  // Create placeholder for user actions (will be populated later)
   const cardActions = document.createElement('div');
   cardActions.className = 'premium-learning-card-actions';
-  const bookmarkId = getBookmarkId(id, viewLink);
-
-  const cardAction = UserActions({
-    container: cardActions,
-    id: bookmarkId,
-    bookmarkPath: bookmarkId,
-    link: copyLink,
-    contentType,
-    bookmarkConfig: true,
-    copyConfig: { icons: ['copy-white-fill'] },
-  });
-
-  cardAction.decorate();
   cardFigure.appendChild(cardActions);
 
   if (startLabel) {
@@ -258,6 +256,36 @@ export async function buildPLCard(element, model) {
 
   card.appendChild(cardContent);
 
+  // Add user actions after card structure is complete
+  const cardActionsContainer = card.querySelector('.premium-learning-card-actions');
+  const bookmarkId = getBookmarkId(id, viewLink);
+
+  const cardAction = UserActions({
+    container: cardActionsContainer,
+    id: bookmarkId,
+    bookmarkPath: bookmarkId,
+    link: copyLink,
+    contentType,
+    bookmarkConfig: true,
+    copyConfig: { icons: ['copy-white-fill'] },
+    bookmarkCallback: (linkType, position) => {
+      // Calculate cardHeader and cardPosition dynamically when callback is called
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+      const finalLinkType = linkType || cardHeader || '';
+      const finalPosition = position || cardPosition || '';
+      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, finalLinkType, finalPosition);
+    },
+    copyCallback: (linkType, position) => {
+      // Calculate cardHeader and cardPosition dynamically when callback is called
+      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
+      const finalLinkType = linkType || cardHeader || '';
+      const finalPosition = position || cardPosition || '';
+      pushBrowseCardClickEvent('copyLinkBrowseCard', model, finalLinkType, finalPosition);
+    },
+  });
+
+  cardAction.decorate();
+
   // Load required CSS
   await Promise.all([
     loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card.css`),
@@ -280,8 +308,10 @@ export async function buildPLCard(element, model) {
         return;
       }
 
-      const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
-      pushBrowseCardClickEvent('browseCardClicked', model, cardHeader, cardPosition);
+      // Get block header for linkType
+      const blockHeader = getPremiumLearningBlockHeader(card);
+      const { cardPosition } = getCardHeaderAndPosition(card, element);
+      pushBrowseCardClickEvent('browseCardClicked', model, blockHeader, cardPosition);
     });
 
     cardContainer.appendChild(card);

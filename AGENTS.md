@@ -38,6 +38,16 @@ HTML is not only “folder + Markdown” in the default setup: **[fstab.yaml](fs
 
 Install the AEM CLI globally if you prefer: `npm install -g @adobe/aem-cli`, then `aem up` matches `npm run up`.
 
+### AI skills setup
+
+This project ships with EDS skills for AI coding agents (Claude Code, Cursor, Copilot, etc.) pinned in [skills-lock.json](skills-lock.json). Restore them after cloning:
+
+```bash
+npx skills experimental_install
+```
+
+To update skills to the latest versions run `npm run setup:skills`, which re-runs the install and updates `skills-lock.json`.
+
 ## Project structure (high level)
 
 ```

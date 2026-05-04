@@ -4,7 +4,7 @@ import { sendNotice } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import getEmitter from '../events.js';
 import { rewriteDocsPath } from '../utils/path-utils.js';
-import { getPLAccessToken } from '../utils/pl-auth-utils.js';
+import { getPLAccessToken } from '../utils/premium-learning-utils.js';
 
 const bookmarksEventEmitter = getEmitter('bookmarks');
 
@@ -56,7 +56,10 @@ export async function bookmarkHandler(config) {
         element.dataset.bookmarked = true;
         bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
         sendNotice(tooltips?.bookmarkToastText);
-        assetInteractionModel(id, 'Bookmarked', { trackingInfo });
+        // DEPRECATION: assetInteractionModel removed for browse-cards - using pushBrowseCardClickEvent via callback instead
+        if (!callback) {
+          assetInteractionModel(id, 'Bookmarked', { trackingInfo });
+        }
         if (callback) callback(linkType, position);
       })
       .catch(() => sendNotice(tooltips?.profileNotUpdated, 'error'));
@@ -67,7 +70,10 @@ export async function bookmarkHandler(config) {
         element.dataset.bookmarked = false;
         bookmarksEventEmitter.set('bookmark_ids', newBookmarks);
         sendNotice(tooltips?.removeBookmarkToastText);
-        assetInteractionModel(id, 'Bookmark Removed', { trackingInfo });
+        // DEPRECATION: assetInteractionModel removed for browse-cards - using pushBrowseCardClickEvent via callback instead
+        if (!callback) {
+          assetInteractionModel(id, 'Bookmark Removed', { trackingInfo });
+        }
         if (callback) callback(linkType, position);
       })
       .catch(() => {
@@ -185,6 +191,11 @@ export async function sanitizeBookmarks() {
 
 // ========== PREMIUM LEARNING BOOKMARKS ==========
 
+// Cache of bookmarked learning object IDs for quick lookup
+const plBookmarkedIds = new Set();
+let plBookmarksFetched = false;
+let plFetchPromise = null;
+
 /**
  * Fetches PL bookmarks or checks if a specific item is bookmarked
  * @param {string} [loId] - Optional learning object ID to check
@@ -197,37 +208,69 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
 
     if (!token) return loId ? false : { data: [], included: [] };
 
-    const response = await fetch(
-      `${plApiBaseUrl}/learningObjects?include=instances&page[limit]=10&filter.loTypes=course,learningProgram&filter.bookmarks=true&sort=name&filter.ignoreEnhancedLP=true`,
-      {
+    // Fetch all pages using cursor-based pagination
+    let allData = [];
+    let allIncluded = [];
+    let nextUrl = `${plApiBaseUrl}/learningObjects?include=instances&page[limit]=10&filter.loTypes=course,learningProgram&filter.bookmarks=true&sort=name&filter.ignoreEnhancedLP=true`;
+
+    // eslint-disable-next-line no-await-in-loop
+    while (nextUrl) {
+      // eslint-disable-next-line no-await-in-loop
+      const response = await fetch(nextUrl, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/vnd.api+json',
         },
-      },
-    );
+      });
 
-    if (!response.ok) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to fetch PL bookmarks:', response.status);
-      return loId ? false : { data: [], included: [] };
+      if (!response.ok) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to fetch PL bookmarks:', response.status);
+        return loId ? false : { data: allData, included: allIncluded };
+      }
+
+      // eslint-disable-next-line no-await-in-loop
+      const pageData = await response.json();
+
+      // Accumulate data and included from this page
+      allData = allData.concat(pageData.data || []);
+      allIncluded = allIncluded.concat(pageData.included || []);
+
+      // Check for next page link
+      nextUrl = pageData.links?.next || null;
     }
 
-    const data = await response.json();
+    // Update the cached Set with all bookmarked IDs
+    plBookmarkedIds.clear();
+    allData.forEach((bookmark) => plBookmarkedIds.add(bookmark.id));
+    plBookmarksFetched = true; // Mark as fetched
 
-    // If loId provided, return true/false
+    // If loId provided, return true/false using the Set
     if (loId) {
-      const bookmarks = data?.data || [];
-      return bookmarks.some((bookmark) => bookmark.id === loId);
+      return plBookmarkedIds.has(loId);
     }
 
     // Otherwise return full response data for adaptor processing
-    return data;
+    return { data: allData, included: allIncluded };
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error fetching PL bookmarks:', error);
     return loId ? false : { data: [], included: [] };
   }
+}
+
+/**
+ * Ensures PL bookmarks are fetched, sharing one fetch across concurrent callers
+ * @returns {Promise<void>}
+ */
+async function ensurePLBookmarksFetched() {
+  if (plBookmarksFetched) return;
+  if (!plFetchPromise) {
+    plFetchPromise = fetchPremiumLearningBookmarks().finally(() => {
+      plFetchPromise = null;
+    });
+  }
+  await plFetchPromise;
 }
 
 /**
@@ -257,8 +300,10 @@ export async function decoratePremiumLearningBookmark(config) {
     return;
   }
 
-  // Check if already bookmarked
-  const plBookmarked = await fetchPremiumLearningBookmarks(loId);
+  // Ensure Set is populated before checking (shares one fetch across concurrent callers)
+  await ensurePLBookmarksFetched();
+
+  const plBookmarked = plBookmarkedIds.has(loId);
   element.dataset.bookmarked = String(plBookmarked);
 
   const bookmarkTooltip = htmlToElement(
@@ -305,12 +350,22 @@ export async function premiumLearningBookmarkHandler(config) {
     });
 
     if (response.ok) {
+      // Update cached Set to keep it in sync
+      if (isCurrentlyBookmarked) {
+        plBookmarkedIds.delete(loId);
+      } else {
+        plBookmarkedIds.add(loId);
+      }
+
       element.dataset.bookmarked = String(!isCurrentlyBookmarked);
       const message = isCurrentlyBookmarked
         ? tooltips?.removeBookmarkToastText || 'Bookmark removed'
         : tooltips?.bookmarkToastText || 'Successfully bookmarked';
       sendNotice(message);
-      assetInteractionModel(loId, isCurrentlyBookmarked ? 'Bookmark Removed' : 'Bookmarked');
+      // DEPRECATION: assetInteractionModel removed for PL browse-cards - using pushBrowseCardClickEvent via callback instead
+      if (!callback) {
+        assetInteractionModel(loId, isCurrentlyBookmarked ? 'Bookmark Removed' : 'Bookmarked');
+      }
 
       // Emit event to trigger UI updates in pl-bookmarks block
       const plBookmarksEventEmitter = getEmitter('pl-bookmarks');

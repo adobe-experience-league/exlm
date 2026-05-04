@@ -20,6 +20,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Restore AI skills
+        run: npx skills experimental_install --yes
+
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -27,17 +30,11 @@ jobs:
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
 
-            Review ONLY the pull request diff for code quality, bugs, and security issues.
-            Scope rules (strict):
-            - Only analyze files and hunks returned by the PR diff.
-            - Only report issues introduced by this PR.
-            - Do NOT comment on pre-existing issues outside changed lines/hunks.
-            - If context outside the diff is required, mention it as "out-of-scope context" in one summary comment (no inline comment).
-            - Prefer inline comments only on changed lines in this PR.
-
-            Note: The PR branch is already checked out in the current working directory.
+            The PR branch is already checked out in the current working directory.
             Use `mcp__github_inline_comment__create_inline_comment` (with `confirmed: true`) for line-specific issues.
             Use `gh pr comment` for summary feedback if helpful.
+
+            /code-review ${{ github.event.pull_request.number }}
           claude_args: |
             --max-turns 25
-            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git diff:*),Bash(git log:*),Read,Glob,Grep"
