@@ -1,4 +1,9 @@
-import { URL_SPECIAL_CASE_LOCALES, fetchLanguagePlaceholders, getConfig } from '../../scripts.js';
+import {
+  URL_SPECIAL_CASE_LOCALES,
+  fetchLanguagePlaceholders,
+  getConfig,
+  xssSanitizeQueryParamValue,
+} from '../../scripts.js';
 import { rewriteDocsPath } from '../../utils/path-utils.js';
 import CoveoDataService from './coveo-data-service.js';
 import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET } from './coveo-exl-pipeline-constants.js';
@@ -81,11 +86,22 @@ function constructCoveoFacet(facets, param) {
       field: facet.id,
       type: facet.type,
     };
-    const sourceValues = param[`${facet.id}_all`]?.length ? param[`${facet.id}_all`] : facet.currentValues || [];
+    const allFacetsExist = param[`${facet.id}_all`]?.length > 0;
+    const sourceValues = allFacetsExist ? param[`${facet.id}_all`] : facet.currentValues || [];
     facetObject.numberOfValues = sourceValues.length || 2;
 
     facetObject.currentValues = sourceValues.map((value) => {
-      const isSelected = value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? false : facet.currentValues?.includes(value);
+      let isSelected = false;
+      if (value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
+        isSelected = false;
+      } else if (facet.currentValues?.includes(value)) {
+        isSelected = true;
+      } else if (
+        allFacetsExist &&
+        facet.currentValues?.some((cv) => xssSanitizeQueryParamValue(cv) === xssSanitizeQueryParamValue(value))
+      ) {
+        isSelected = true;
+      }
 
       return {
         value,
