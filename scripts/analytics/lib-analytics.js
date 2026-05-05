@@ -1093,13 +1093,7 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
     },
   };
 
-  // Add source property for bookmark and copy events
-  if (
-    (eventName === 'bookmarkLinkBrowseCard' ||
-      eventName === 'browseCardRemoveBookmark' ||
-      eventName === 'copyLinkBrowseCard') &&
-    source
-  ) {
+  if (source) {
     dataLayerEntry.link.source = source;
   }
 
