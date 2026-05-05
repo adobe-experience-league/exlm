@@ -1,6 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { createTag, isDocPage, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
+import { assetInteractionModel, pushBrowseCardClickEvent } from '../../scripts/analytics/lib-analytics.js';
 import UserActions from '../../scripts/user-actions/user-actions.js';
 
 async function decorateLanguageToggle(block, placeholders) {
@@ -51,6 +51,18 @@ export default async function decorate(block) {
   if (isDocPage) {
     fetchLanguagePlaceholders().then((placeholders) => {
       decorateLanguageToggle(block, placeholders);
+
+      // Computed once outside the loop since it depends only on global DOM state
+      const pageHeading = document.querySelector('main h1')?.textContent?.trim() || document.title;
+
+      // Using pageHeading as title ensures linkTitle = linkType
+      const docPageModel = {
+        contentType: 'documentation',
+        title: pageHeading,
+        viewLink: window.location.href,
+        product: document.querySelector('meta[name="solution"]')?.content?.split(',') || [],
+      };
+
       const docActionMobileElement = document.querySelector('.doc-actions-mobile');
       [block, docActionMobileElement].forEach((container) => {
         const userActions = UserActions({
@@ -64,6 +76,19 @@ export default async function decorate(block) {
           copyConfig: {
             label: placeholders?.userActionCopylinkLabel || 'Copy link',
             icons: ['copy-link'],
+          },
+          bookmarkCallback: (linkType, position, action) => {
+            const finalLinkType = linkType || pageHeading;
+            const finalPosition = position || '';
+
+            const eventName = action === 'remove' ? 'browseCardRemoveBookmark' : 'bookmarkLinkBrowseCard';
+            pushBrowseCardClickEvent(eventName, docPageModel, finalLinkType, finalPosition, 'docs');
+          },
+          copyCallback: (linkType, position) => {
+            const finalLinkType = linkType || pageHeading;
+            const finalPosition = position || '';
+
+            pushBrowseCardClickEvent('copyLinkBrowseCard', docPageModel, finalLinkType, finalPosition, 'docs');
           },
         });
         userActions.decorate();

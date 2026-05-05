@@ -1061,7 +1061,7 @@ export function pushCourseStartEvent(courseData) {
  * @param {string} cardHeader - The header or category associated with the card (used as `linkType`).
  * @param {number} cardPosition - The index or position of the card within the list/grid.
  */
-export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition) {
+export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition, source) {
   window.adobeDataLayer = window.adobeDataLayer || [];
   const product = cardData?.product;
   const cardFullSolution = Array.isArray(product) ? product.join(',') : product || '';
@@ -1091,6 +1091,16 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
       position: cardPosition,
     },
   };
+
+  // Add source property for bookmark and copy events
+  if (
+    (eventName === 'bookmarkLinkBrowseCard' ||
+      eventName === 'browseCardRemoveBookmark' ||
+      eventName === 'copyLinkBrowseCard') &&
+    source
+  ) {
+    dataLayerEntry.link.source = source;
+  }
 
   // Deprecated browseCardClicked event (using componentClick instead); other browseCard events(copy,bookmark,toggles) remain active
   if (eventName !== 'browseCardClicked') {
