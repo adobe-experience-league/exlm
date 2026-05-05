@@ -1060,6 +1060,7 @@ export function pushCourseStartEvent(courseData) {
  * @param {string} [cardData.title] - The display title of the card.
  * @param {string} cardHeader - The header or category associated with the card (used as `linkType`).
  * @param {number} cardPosition - The index or position of the card within the list/grid.
+ * @param {string} [source] - The origin context of the event (e.g., `'docs'`, `'browse-card'`). Only applied to bookmark/copy events.
  */
 export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition, source) {
   window.adobeDataLayer = window.adobeDataLayer || [];

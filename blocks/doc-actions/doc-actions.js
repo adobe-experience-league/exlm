@@ -52,15 +52,17 @@ export default async function decorate(block) {
     fetchLanguagePlaceholders().then((placeholders) => {
       decorateLanguageToggle(block, placeholders);
 
-      // Computed once outside the loop since it depends only on global DOM state
       const pageHeading = document.querySelector('main h1')?.textContent?.trim() || document.title;
 
-      // Using pageHeading as title ensures linkTitle = linkType
       const docPageModel = {
         contentType: 'documentation',
         title: pageHeading,
         viewLink: window.location.href,
-        product: document.querySelector('meta[name="solution"]')?.content?.split(',') || [],
+        product:
+          document
+            .querySelector('meta[name="solution"]')
+            ?.content?.split(',')
+            .map((s) => s.trim()) || [],
       };
 
       const docActionMobileElement = document.querySelector('.doc-actions-mobile');
