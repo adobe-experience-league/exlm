@@ -174,7 +174,7 @@ async function buildCarouselSlide(cardData, progressData, totalReplies, placehol
  * Initialize carousel navigation with ResizeObserver
  * Carousel only active on desktop (≥600px), stacked as cards on mobile
  */
-function initCarousel(container) {
+function initCarousel(container, enrolledLearningObjects) {
   const track = container.querySelector('.carousel-track');
   const slides = track.querySelectorAll('.carousel-slide');
   const prevBtn = container.querySelector('.carousel-btn.prev');
@@ -190,6 +190,15 @@ function initCarousel(container) {
 
   const updateCarousel = () => {
     const isDesktop = window.innerWidth >= 900;
+
+    // Update thumbnails based on viewport
+    slides.forEach((slide, index) => {
+      const img = slide.querySelector('.premium-learning-card-figure > img');
+      if (img && enrolledLearningObjects[index]?.attributes) {
+        const attrs = enrolledLearningObjects[index].attributes;
+        img.src = isDesktop && attrs.bannerUrl ? attrs.bannerUrl : attrs.imageUrl;
+      }
+    });
 
     if (!isDesktop) {
       track.style.transform = 'none';
@@ -380,7 +389,7 @@ export default async function decorate(block) {
         );
 
         block.appendChild(carouselContainer);
-        initCarousel(carouselContainer);
+        initCarousel(carouselContainer, enrolledLearningObjects);
       } catch (err) {
         if (UEAuthorMode) showFallbackContentInUEMode(block);
         else block.remove();
