@@ -10,7 +10,6 @@ import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import { eventTypeOptions, getBrowseFiltersResultCount } from '../browse-filters/browse-filter-utils.js';
 
-const MOBILE_TABLET_MEDIA = '(max-width: 1199px)';
 const FACET_CONTROLLER_MAP = {
   el_product: 'headlessProductFacet',
   el_event_series: 'headlessEventSeriesFacet',
@@ -85,25 +84,11 @@ function createLayout(block) {
 }
 
 function setMobileFilterPanelState(block, shouldOpen) {
-  const isMobileOrTablet = window.matchMedia(MOBILE_TABLET_MEDIA).matches;
   const toggleButton = block.querySelector('.events-search-mobile-filter-toggle');
-  const panel = block.querySelector('.events-search-filters-panel');
-  if (!toggleButton || !panel) return;
-
-  if (!isMobileOrTablet) {
-    block.classList.remove('is-filters-open');
-    panel.removeAttribute('hidden');
-    toggleButton.setAttribute('aria-expanded', 'true');
-    return;
-  }
+  if (!toggleButton) return;
 
   block.classList.toggle('is-filters-open', shouldOpen);
   toggleButton.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
-  if (shouldOpen) {
-    panel.removeAttribute('hidden');
-  } else {
-    panel.setAttribute('hidden', '');
-  }
 }
 
 function renderFilterGroups(block, groups) {
@@ -318,18 +303,11 @@ function bindMobileFilterToggle(block) {
   const toggleButton = block.querySelector('.events-search-mobile-filter-toggle');
   if (!toggleButton) return;
 
+  setMobileFilterPanelState(block, false);
   toggleButton.addEventListener('click', () => {
     const isOpen = block.classList.contains('is-filters-open');
     setMobileFilterPanelState(block, !isOpen);
   });
-
-  const mediaQuery = window.matchMedia(MOBILE_TABLET_MEDIA);
-  const handleViewPortChange = () => {
-    const shouldOpen = !mediaQuery.matches;
-    setMobileFilterPanelState(block, shouldOpen);
-  };
-  mediaQuery.addEventListener('change', handleViewPortChange);
-  handleViewPortChange();
 }
 
 async function loadDynamicFacetValues(groups) {
