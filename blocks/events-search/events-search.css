@@ -83,6 +83,7 @@ main .events-search .events-search-clear-filters {
   text-align: right;
   cursor: pointer;
   text-decoration: underline;
+  border-radius: 0;
 }
 
 main .events-search .events-search-clear-filters:hover {
@@ -157,6 +158,10 @@ main .events-search .events-search-filter-option {
   gap: 10px;
 }
 
+main .events-search .events-search-filter-option.is-overflow-hidden {
+  display: none;
+}
+
 main .events-search .events-search-filter-option:first-child {
   margin-top: 24px;
 }
@@ -169,6 +174,22 @@ main .events-search .events-search-filter-option input[type='checkbox'] {
 main .events-search .events-search-filter-option-label {
   font-size: 14px;
   line-height: 1.4;
+}
+
+main .events-search .events-search-filter-show-more {
+  margin-top: 4px;
+  border: 0;
+  background: transparent;
+  color: var(--link-color);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+main .events-search .events-search-filter-show-more[hidden] {
+  display: none;
 }
 
 main .events-search .events-search-results-column {

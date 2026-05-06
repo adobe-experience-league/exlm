@@ -15,6 +15,7 @@ const FACET_CONTROLLER_MAP = {
   el_event_series: 'headlessEventSeriesFacet',
   el_contenttype: 'headlessTypeFacet',
 };
+const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
 
 let placeholders = {};
 try {
@@ -75,7 +76,7 @@ function createLayout(block) {
       <div class="events-search-keyword">
         <span class="icon icon-search"></span>
         <input type="text" class="events-search-keyword-input" placeholder="${
-          placeholders.filterKeywordSearch || 'Search events'
+          placeholders.eventfilterKeywordSearch || 'Search events'
         }" />
       </div>
       <div class="events-search-results-count"></div>
@@ -96,18 +97,39 @@ function setMobileFilterPanelState(block, shouldOpen) {
   toggleButton.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
 }
 
+function getShowMoreLabel(count) {
+  return `Show ${count} more`;
+}
+
+function updateShowMoreButtonState(groupEl) {
+  const showMoreButton = groupEl.querySelector('.events-search-filter-show-more');
+  if (!showMoreButton) return;
+
+  const hiddenOptionsCount = groupEl.querySelectorAll('.events-search-filter-option.is-overflow-hidden').length;
+  if (hiddenOptionsCount <= 0) {
+    showMoreButton.setAttribute('hidden', '');
+    return;
+  }
+
+  showMoreButton.textContent = getShowMoreLabel(hiddenOptionsCount);
+  showMoreButton.removeAttribute('hidden');
+}
+
 function renderFilterGroups(block, groups) {
   const groupsRoot = block.querySelector('.events-search-filter-groups');
   if (!groupsRoot) return;
 
   groupsRoot.innerHTML = '';
-  groups.forEach((group) => {
+  groups.forEach((group, groupIndex) => {
+    const isInitiallyExpanded = groupIndex === 0;
     const groupEl = createTag('section', {
-      class: 'events-search-filter-group',
+      class: `events-search-filter-group${isInitiallyExpanded ? ' is-expanded' : ''}`,
       'data-filter-type': group.id,
     });
     groupEl.innerHTML = `
-      <button class="events-search-filter-group-header" type="button" aria-expanded="false">
+      <button class="events-search-filter-group-header" type="button" aria-expanded="${
+        isInitiallyExpanded ? 'true' : 'false'
+      }">
         <span class="events-search-filter-group-title">${group.name}</span>
         <span class="events-search-filter-group-count"></span>
         <span class="icon icon-chevron"></span>
@@ -120,13 +142,25 @@ function renderFilterGroups(block, groups) {
       const optionValue = item.value || item.title;
       const optionLabel = item.title || item.value;
       const optionId = `${group.id}-${index + 1}`;
-      const optionEl = createTag('div', { class: 'events-search-filter-option' });
+      const overflowClass = index >= INITIAL_VISIBLE_FILTER_OPTIONS ? ' is-overflow-hidden' : '';
+      const optionEl = createTag('div', { class: `events-search-filter-option${overflowClass}` });
       optionEl.innerHTML = `
         <input type="checkbox" id="${optionId}" value="${optionValue}" data-label="${optionLabel}" />
         <span class="events-search-filter-option-label">${optionLabel}</span>
       `;
       optionsContainer.append(optionEl);
     });
+
+    if (group.items.length > INITIAL_VISIBLE_FILTER_OPTIONS) {
+      const remainingCount = group.items.length - INITIAL_VISIBLE_FILTER_OPTIONS;
+      const showMoreButton = createTag(
+        'button',
+        { class: 'events-search-filter-show-more', type: 'button' },
+        getShowMoreLabel(remainingCount),
+      );
+      optionsContainer.append(showMoreButton);
+      updateShowMoreButtonState(groupEl);
+    }
 
     groupsRoot.append(groupEl);
   });
@@ -222,6 +256,19 @@ function bindFilterInteractions(block, groups) {
   if (!panel) return;
 
   panel.addEventListener('click', (event) => {
+    const showMoreButton = event.target.closest('.events-search-filter-show-more');
+    if (showMoreButton) {
+      const groupEl = showMoreButton.closest('.events-search-filter-group');
+      if (!groupEl) return;
+
+      const hiddenOptions = groupEl.querySelectorAll('.events-search-filter-option.is-overflow-hidden');
+      hiddenOptions.forEach((option) => {
+        option.classList.remove('is-overflow-hidden');
+      });
+      updateShowMoreButtonState(groupEl);
+      return;
+    }
+
     const groupHeader = event.target.closest('.events-search-filter-group-header');
     if (!groupHeader) return;
 
