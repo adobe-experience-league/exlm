@@ -98,11 +98,11 @@ function renderFilterGroups(block, groups) {
   panel.innerHTML = '';
   groups.forEach((group) => {
     const groupEl = createTag('section', {
-      class: 'events-search-filter-group is-expanded',
+      class: 'events-search-filter-group',
       'data-filter-type': group.id,
     });
     groupEl.innerHTML = `
-      <button class="events-search-filter-group-header" type="button" aria-expanded="true">
+      <button class="events-search-filter-group-header" type="button" aria-expanded="false">
         <span class="events-search-filter-group-title">${group.name}</span>
         <span class="events-search-filter-group-count"></span>
         <span class="icon icon-chevron"></span>
