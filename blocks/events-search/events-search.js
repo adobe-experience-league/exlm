@@ -59,10 +59,15 @@ function createLayout(block) {
       <span>${placeholders.filterLabel || 'Filters'}</span>
       <span class="icon icon-chevron"></span>
     </button>
-    <div class="events-search-filters-panel"></div>
-    <button class="events-search-clear-filters" type="button">${
-      placeholders.filterClearFilterLabel || 'Clear all filters'
-    }</button>
+    <div class="events-search-filters-panel">
+      <div class="events-search-filters-header">
+        <h2 class="events-search-filters-heading">${placeholders.filterLabel || 'Filters'}</h2>
+        <button type="button" class="events-search-clear-filters">${
+          placeholders.filterClearFilterLabel || 'Clear all filters'
+        }</button>
+      </div>
+      <div class="events-search-filter-groups"></div>
+    </div>
   `;
 
   resultColumn.innerHTML = `
@@ -92,10 +97,10 @@ function setMobileFilterPanelState(block, shouldOpen) {
 }
 
 function renderFilterGroups(block, groups) {
-  const panel = block.querySelector('.events-search-filters-panel');
-  if (!panel) return;
+  const groupsRoot = block.querySelector('.events-search-filter-groups');
+  if (!groupsRoot) return;
 
-  panel.innerHTML = '';
+  groupsRoot.innerHTML = '';
   groups.forEach((group) => {
     const groupEl = createTag('section', {
       class: 'events-search-filter-group',
@@ -123,7 +128,7 @@ function renderFilterGroups(block, groups) {
       optionsContainer.append(optionEl);
     });
 
-    panel.append(groupEl);
+    groupsRoot.append(groupEl);
   });
 }
 
