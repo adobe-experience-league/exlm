@@ -1,19 +1,133 @@
 /* eslint-disable no-use-before-define */
-import { htmlToElement } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { buildPLCard } from '../../scripts/browse-card/browse-cards-premium-learning.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import { getPLAccessToken } from '../../scripts/utils/pl-auth-utils.js';
+import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { fetchPremiumLearningBookmarks } from '../../scripts/user-actions/bookmark.js';
 import getEmitter from '../../scripts/events.js';
 import PL_CONTENT_TYPES from '../../scripts/data-service/premium-learning/premium-learning-constants.js';
 import BrowseCardsPLAdaptor from '../../scripts/browse-card/browse-cards-premium-learning-adaptor.js';
 
 const bookmarksEventEmitter = getEmitter('pl-bookmarks');
+
 const SHIMMER_COUNT = 4;
 const BATCH_SIZE = 6;
+const CARDS_PER_PAGE = 12;
+
+// Pagination state
+let allCardModels = [];
+let currentPage = 1;
 
 /**
- * Renders bookmark cards in batches
+ * Get pagination text
+ * @param {number} totalPages - Total number of pages
+ * @param {Object} placeHolders - Language placeholders object
+ * @returns {string} Pagination text
+ */
+function getPaginationText(totalPages, placeHolders) {
+  if (totalPages > 1) {
+    return placeHolders?.filterPagesLabel
+      ? placeHolders?.filterPagesLabel?.replace('{}', totalPages)
+      : `of ${totalPages} pages`;
+  }
+  return placeHolders?.filterPageLabel
+    ? placeHolders?.filterPageLabel?.replace('{}', totalPages)
+    : `of ${totalPages} page`;
+}
+
+/**
+ * Renders pagination controls
+ * @param {HTMLElement} block - The block element
+ * @param {Object} placeHolders - Language placeholders object
+ */
+function renderPagination(block, placeHolders) {
+  const totalPages = Math.ceil(allCardModels.length / CARDS_PER_PAGE);
+
+  // Remove existing pagination if any
+  block.querySelector('.premium-learning-bookmarks-pagination')?.remove();
+
+  if (totalPages <= 1) return;
+
+  const paginationEl = htmlToElement(`
+    <div class="premium-learning-bookmarks-pagination">
+      <button class="nav-arrow" aria-label="previous page"></button>
+      <input type="number" min="1" max="${totalPages}" class="bookmarks-pg-input" aria-label="Enter page number" value="${currentPage}">
+      <span class="pagination-text">${getPaginationText(totalPages, placeHolders)}</span>
+      <button class="nav-arrow right-nav-arrow" aria-label="next page"></button>
+    </div>
+  `);
+
+  // Handle navigation buttons
+  const [prevBtn, nextBtn] = paginationEl.querySelectorAll('.nav-arrow');
+
+  prevBtn.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage -= 1;
+      renderCurrentPage(block, placeHolders).catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error('Error rendering page:', err);
+      });
+    }
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if (currentPage < totalPages) {
+      currentPage += 1;
+      renderCurrentPage(block, placeHolders).catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error('Error rendering page:', err);
+      });
+    }
+  });
+
+  // Handle page input
+  const pageInput = paginationEl.querySelector('.bookmarks-pg-input');
+  pageInput.addEventListener('change', (e) => {
+    let newPage = parseInt(e.target.value, 10);
+    if (Number.isNaN(newPage)) newPage = currentPage;
+    if (newPage < 1) newPage = 1;
+    if (newPage > totalPages) newPage = totalPages;
+
+    currentPage = newPage;
+    e.target.value = currentPage;
+    renderCurrentPage(block, placeHolders).catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Error rendering page:', err);
+    });
+  });
+
+  // Update button states
+  prevBtn.disabled = currentPage === 1;
+  nextBtn.disabled = currentPage === totalPages;
+  prevBtn.classList.toggle('nav-arrow-hidden', currentPage === 1);
+  nextBtn.classList.toggle('nav-arrow-hidden', currentPage === totalPages);
+
+  block.appendChild(paginationEl);
+}
+
+/**
+ * Renders current page of bookmark cards
+ * @param {HTMLElement} block - The block element
+ * @param {Object} placeHolders - Language placeholders object
+ * @param {boolean} shouldScroll - Whether to scroll to block (default: true)
+ */
+async function renderCurrentPage(block, placeHolders, shouldScroll = true) {
+  const startIdx = (currentPage - 1) * CARDS_PER_PAGE;
+  const endIdx = startIdx + CARDS_PER_PAGE;
+  const pageCardModels = allCardModels.slice(startIdx, endIdx);
+
+  await renderCards(block, pageCardModels);
+  renderPagination(block, placeHolders);
+
+  // Only scroll on user-initiated navigation
+  if (shouldScroll) {
+    block.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+/**
+ * Renders bookmark cards in batches with shimmer
  * @param {HTMLElement} block - The block element
  * @param {Array} cardModels - Array of card model data from adaptor
  */
@@ -69,6 +183,15 @@ async function renderCards(block, cardModels) {
  * @param {HTMLElement} block - The block element to decorate
  */
 export default async function decorate(block) {
+  // Fetch placeholders for pagination text
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
   const [headerWrapper] = block.children;
   const header = headerWrapper?.firstElementChild?.firstElementChild;
   const headerHTML = header?.outerHTML || '<h2>My Bookmarks</h2>';
@@ -85,61 +208,87 @@ export default async function decorate(block) {
 
   block.appendChild(content);
 
-  // Check if user has PL access token
-  if (!getPLAccessToken()) return;
-
-  // Trigger shimmer immediately by calling renderCards with empty array
+  // Show shimmer immediately while eligibility resolves.
   renderCards(block, []).catch(() => {});
 
-  // Fetch and render bookmarks
-  fetchPremiumLearningBookmarks()
-    .then(async (responseData) => {
-      // Transform API response using adaptor
-      const cardModels = await BrowseCardsPLAdaptor.mapResultsToCardsData(
-        responseData?.data?.length
-          ? { data: responseData.data, included: responseData.included ?? [] }
-          : { data: [], included: [] },
-      );
-
-      if (cardModels.length === 0) {
-        // Remove shimmer content if no bookmarks
+  // Non-blocking eligibility check — shimmer stays visible until resolved.
+  // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
+  isSignedInUser()
+    .then((signedIn) => isPLEligible(signedIn))
+    .then(async (isEligible) => {
+      if (!isEligible) {
         block.querySelector('.premium-learning-bookmarks-content')?.remove();
         block.classList.add('pl-bookmarks-empty');
         return;
       }
 
-      // Store bookmarks in event emitter for potential updates
-      bookmarksEventEmitter.set('bookmark_data', cardModels);
-
-      // Listen for bookmark changes
-      bookmarksEventEmitter.on('bookmark_changed', async () => {
-        try {
-          const updatedResponseData = await fetchPremiumLearningBookmarks();
-          const updatedCardModels = await BrowseCardsPLAdaptor.mapResultsToCardsData(
-            updatedResponseData?.data?.length
-              ? { data: updatedResponseData.data, included: updatedResponseData.included ?? [] }
+      // Fetch and render bookmarks
+      fetchPremiumLearningBookmarks()
+        .then(async (responseData) => {
+          // Transform API response using adaptor
+          const cardModels = await BrowseCardsPLAdaptor.mapResultsToCardsData(
+            responseData?.data?.length
+              ? { data: responseData.data, included: responseData.included ?? [] }
               : { data: [], included: [] },
           );
-          const existingContent = block.querySelector('.premium-learning-bookmarks-content');
-          if (updatedCardModels.length === 0) {
-            if (existingContent) existingContent.remove();
-            block.classList.add('pl-bookmarks-empty');
-          } else {
-            block.classList.remove('pl-bookmarks-empty');
-            await renderCards(block, updatedCardModels);
-          }
-        } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error('Error updating PL bookmarks after change:', error);
-        }
-      });
 
-      // Render actual cards
-      await renderCards(block, cardModels);
+          if (cardModels.length === 0) {
+            // Clear entire block if no bookmarks
+            allCardModels = [];
+            currentPage = 1;
+            block.innerHTML = '';
+            block.classList.add('pl-bookmarks-empty');
+            return;
+          }
+
+          // Store all card models for pagination
+          allCardModels = cardModels;
+          currentPage = 1;
+
+          // Store bookmarks in event emitter for potential updates
+          bookmarksEventEmitter.set('bookmark_data', cardModels);
+
+          // Listen for bookmark changes
+          bookmarksEventEmitter.on('bookmark_changed', async () => {
+            try {
+              const updatedResponseData = await fetchPremiumLearningBookmarks();
+              const updatedCardModels = await BrowseCardsPLAdaptor.mapResultsToCardsData(
+                updatedResponseData?.data?.length
+                  ? { data: updatedResponseData.data, included: updatedResponseData.included ?? [] }
+                  : { data: [], included: [] },
+              );
+
+              if (updatedCardModels.length === 0) {
+                // Clear entire block if no bookmarks
+                allCardModels = [];
+                currentPage = 1;
+                block.innerHTML = '';
+                block.classList.add('pl-bookmarks-empty');
+              } else {
+                block.classList.remove('pl-bookmarks-empty');
+                allCardModels = updatedCardModels;
+                currentPage = 1;
+                await renderCurrentPage(block, placeholders, false);
+              }
+            } catch (error) {
+              // eslint-disable-next-line no-console
+              console.error('Error updating PL bookmarks after change:', error);
+            }
+          });
+
+          // Render first page (no scroll on initial load)
+          await renderCurrentPage(block, placeholders, false);
+        })
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error('Error loading PL bookmarks:', error);
+          block.querySelector('.premium-learning-bookmarks-content')?.remove();
+          block.classList.add('pl-bookmarks-empty');
+        });
     })
-    .catch((error) => {
+    .catch((err) => {
       // eslint-disable-next-line no-console
-      console.error('Error loading PL bookmarks:', error);
+      console.error('Error resolving PL eligibility for bookmarks:', err);
       block.querySelector('.premium-learning-bookmarks-content')?.remove();
       block.classList.add('pl-bookmarks-empty');
     });

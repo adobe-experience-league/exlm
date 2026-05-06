@@ -439,6 +439,8 @@ export async function getCurrentCourseMeta(url = window.location.pathname) {
 
 /**
  * Checks if the current step is the last step in the module.
+ *
+ * @param {Object} stepInfo - The step information object from getCurrentStepInfo()
  * @returns {Promise<boolean>} True if current step is the last step, false otherwise
  */
 export async function isLastStep() {
@@ -446,11 +448,9 @@ export async function isLastStep() {
   if (!stepInfo || !stepInfo.moduleSteps || !Array.isArray(stepInfo.moduleSteps)) {
     return false;
   }
-  const { currentStep, totalSteps } = stepInfo;
-  if (currentStep == null || !totalSteps) {
-    return false;
-  }
-  return currentStep === totalSteps;
+
+  const currentStepIndex = stepInfo.moduleSteps.findIndex((step) => step.url === window.location.pathname);
+  return currentStepIndex === stepInfo.moduleSteps.length - 1;
 }
 
 // Gets the URL of the first step of the next module.

@@ -1,5 +1,7 @@
 import { getLocalizedVideoUrl } from '../../scripts/utils/video-utils.js';
 import { getPathDetails } from '../../scripts/scripts.js';
+import { getMetadata } from '../../scripts/lib-franklin.js';
+import { pushVideoEvent, pushVideoMetadataOnLoad } from '../../scripts/analytics/lib-analytics.js';
 
 const getDefaultEmbed = (url) => `<div class="video-frame">
     <iframe 
@@ -13,8 +15,40 @@ const getDefaultEmbed = (url) => `<div class="video-frame">
     </iframe>
   </div>`;
 
-const embedMpc = (url) => {
+const embedMpc = (url, block) => {
   const urlObject = new URL(url);
+  let firstPlay = true;
+
+  const handleMessage = (event) => {
+    const iframe = block.querySelector('iframe');
+    // Check if message is from this block's iframe
+    if (
+      iframe &&
+      event.source === iframe.contentWindow &&
+      event.data?.type === 'mpcStatus' &&
+      event.data.state === 'play' &&
+      firstPlay
+    ) {
+      firstPlay = false;
+      const fullSolution = getMetadata('solution') || '';
+      const solution = fullSolution?.split(',')[0]?.trim() || '';
+
+      pushVideoEvent({
+        title: getMetadata('og:title'),
+        description: getMetadata('description'),
+        url: url.href,
+        duration: '',
+        solution,
+        fullSolution,
+      });
+
+      // Remove listener after first play
+      window.removeEventListener('message', handleMessage);
+    }
+  };
+
+  window.addEventListener('message', handleMessage, false);
+
   return getDefaultEmbed(urlObject);
 };
 
@@ -24,9 +58,18 @@ const loadEmbed = (block, link) => {
   }
 
   const url = new URL(link);
-  block.innerHTML = embedMpc(url);
+  block.innerHTML = embedMpc(url, block);
   block.classList = 'block video-embed';
   block.classList.add('embed-is-loaded');
+
+  // Call pushVideoMetadataOnLoad if video is from tv.adobe.com
+  if (url.href?.includes('tv.adobe.com')) {
+    const videoId = url.href.match(/\/v\/(\d+)/)?.[1];
+    if (videoId) {
+      const thumbnailUrl = `https://video.tv.adobe.com/v/${videoId}?format=jpeg`;
+      pushVideoMetadataOnLoad(videoId, url.href, thumbnailUrl);
+    }
+  }
 };
 
 export default async function decorate(block) {
@@ -34,6 +77,7 @@ export default async function decorate(block) {
   if (!anchor) return;
 
   const { href } = anchor;
+
   block.textContent = '';
 
   if (href) {
