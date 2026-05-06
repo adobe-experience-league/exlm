@@ -1,7 +1,3 @@
-main .events-search {
-  padding: 0 16px;
-}
-
 main .events-search .events-search-layout {
   display: grid;
   grid-template-columns: 1fr;
@@ -100,6 +96,7 @@ main .events-search .events-search-filter-option {
 
 main .events-search .events-search-filter-option input[type='checkbox'] {
   margin-top: 2px;
+  width: auto;
 }
 
 main .events-search .events-search-filter-option-label {
@@ -145,6 +142,7 @@ main .events-search .events-search-keyword-input {
   padding: 8px;
   background: transparent;
   font-size: 14px;
+  margin-bottom: 0;
 }
 
 main .events-search .events-search-keyword-input:focus {
@@ -170,7 +168,7 @@ main .events-search .events-search-no-results {
 
 @media (width >= 600px) {
   main .events-search .events-search-results-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
