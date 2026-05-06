@@ -4,11 +4,14 @@
  * `/perspectives/`, and writes JSON: { "<pathname>": "<lastmod>", ... }.
  * Pathname keys are from the URL (no host), locale-neutral: /perspectives/...
  * (leading /{locale}/ is removed when the path is /{locale}/perspectives/...).
- * Date-only lastmod values (YYYY-MM-DD) are normalized to ISO 8601 UTC midnight
- * (e.g. 2024-07-18 → 2024-07-18T00:00:00.000Z) so the instant is explicit.
+ *
+ * By default, timestamps come from each page’s `<meta name="last-update">` (HTTPS GET
+ * of the sitemap `<loc>` URL). Pass `--sitemap-lastmod-only` to use `<lastmod>` only
+ * (no fetches). Date-only sitemap lastmod values are normalized to ISO 8601 UTC midnight
+ * when that mode is used.
  *
  * Usage:
- *   node scripts/sitemap-perspectives-json.js <path-to-sitemap.xml> [--out <file.json>]
+ *   node scripts/sitemap-perspectives-json.js <path-to-sitemap.xml> [--out <file.json>] [--sitemap-lastmod-only]
  *
  * Default output: alongside the input file, named <basename>.perspectives.json
  *
@@ -19,14 +22,17 @@
 import fs from 'fs';
 import path from 'path';
 import {
+  hydratePerspectivesLastUpdateFromPages,
   parsePerspectivesFromSitemapXml,
+  parsePerspectivesItemsFromSitemapXml,
   perspectivesJsonPathForXmlFile,
+  sortedRecordFromHydratedItems,
   stringifyPerspectivesJson,
 } from './sitemap-perspectives-lib.js';
 
 function parseArgs(argv) {
-  /** @type {{ input: string | null, outPath: string | null }} */
-  const result = { input: null, outPath: null };
+  /** @type {{ input: string | null, outPath: string | null, sitemapLastmodOnly: boolean }} */
+  const result = { input: null, outPath: null, sitemapLastmodOnly: false };
   for (let i = 2; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === '--out' || a === '-o') {
@@ -34,6 +40,8 @@ function parseArgs(argv) {
       if (!next) throw new Error('Missing value for --out');
       result.outPath = path.resolve(next);
       i += 1;
+    } else if (a === '--sitemap-lastmod-only') {
+      result.sitemapLastmodOnly = true;
     } else if (!result.input && !a.startsWith('-')) {
       result.input = path.resolve(a);
     }
@@ -44,8 +52,9 @@ function parseArgs(argv) {
 async function main() {
   let input;
   let outPath;
+  let sitemapLastmodOnly;
   try {
-    ({ input, outPath } = parseArgs(process.argv));
+    ({ input, outPath, sitemapLastmodOnly } = parseArgs(process.argv));
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(e instanceof Error ? e.message : e);
@@ -55,7 +64,7 @@ async function main() {
   if (!input) {
     // eslint-disable-next-line no-console
     console.error(
-      'Usage: node scripts/sitemap-perspectives-json.js <path-to-sitemap.xml> [--out <file.json>]',
+      'Usage: node scripts/sitemap-perspectives-json.js <path-to-sitemap.xml> [--out <file.json>] [--sitemap-lastmod-only]',
     );
     process.exit(1);
   }
@@ -67,7 +76,19 @@ async function main() {
   }
 
   const xml = await fs.promises.readFile(input, 'utf8');
-  const { sorted, count } = parsePerspectivesFromSitemapXml(xml);
+
+  let sorted;
+  let count;
+  if (sitemapLastmodOnly) {
+    ({ sorted, count } = parsePerspectivesFromSitemapXml(xml));
+  } else {
+    const items = parsePerspectivesItemsFromSitemapXml(xml);
+    count = items.length;
+    // eslint-disable-next-line no-console
+    console.log(`Fetching last-update meta for ${count} /perspectives/ URLs…`);
+    const hydrated = await hydratePerspectivesLastUpdateFromPages(items);
+    sorted = sortedRecordFromHydratedItems(hydrated);
+  }
 
   await fs.promises.writeFile(outPath, stringifyPerspectivesJson(sorted), 'utf8');
 

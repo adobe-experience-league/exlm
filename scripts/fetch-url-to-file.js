@@ -3,9 +3,12 @@
  * Fetches a URL (e.g. sitemap XML) and writes the response body to a file
  * derived from the hostname and path. For sitemap XML, also writes a
  * `{basename}.perspectives.json` next to the XML (see sitemap-perspectives-lib.js).
+ * Perspective timestamps default to each page’s `<meta name="last-update">` (HTTPS GET
+ * of the sitemap `<loc>` URL). Pass `--sitemap-lastmod-only` to use `<lastmod>` only
+ * (no per-page fetches).
  *
  * Usage:
- *   node scripts/fetch-url-to-file.js <url> [--out <directory>] [--no-perspectives-json]
+ *   node scripts/fetch-url-to-file.js <url> [--out <directory>] [--no-perspectives-json] [--sitemap-lastmod-only]
  *
  * Example:
  *   node scripts/fetch-url-to-file.js https://experienceleague.adobe.com/en/sitemap.xml --out ./downloads
@@ -14,8 +17,11 @@
 import fs from 'fs/promises';
 import path from 'path';
 import {
+  hydratePerspectivesLastUpdateFromPages,
   parsePerspectivesFromSitemapXml,
+  parsePerspectivesItemsFromSitemapXml,
   perspectivesJsonPathForXmlFile,
+  sortedRecordFromHydratedItems,
   stringifyPerspectivesJson,
 } from './sitemap-perspectives-lib.js';
 
@@ -36,8 +42,13 @@ function urlToFilename(urlString) {
 }
 
 function parseArgs(argv) {
-  /** @type {{ url: string | null, outDir: string, perspectivesJson: boolean }} */
-  const result = { url: null, outDir: process.cwd(), perspectivesJson: true };
+  /** @type {{ url: string | null, outDir: string, perspectivesJson: boolean, sitemapLastmodOnly: boolean }} */
+  const result = {
+    url: null,
+    outDir: process.cwd(),
+    perspectivesJson: true,
+    sitemapLastmodOnly: false,
+  };
   for (let i = 2; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === '--out' || a === '-o') {
@@ -49,6 +60,8 @@ function parseArgs(argv) {
       i += 1;
     } else if (a === '--no-perspectives-json') {
       result.perspectivesJson = false;
+    } else if (a === '--sitemap-lastmod-only') {
+      result.sitemapLastmodOnly = true;
     } else if (!result.url && !a.startsWith('-')) {
       result.url = a;
     }
@@ -57,11 +70,11 @@ function parseArgs(argv) {
 }
 
 async function main() {
-  const { url, outDir, perspectivesJson } = parseArgs(process.argv);
+  const { url, outDir, perspectivesJson, sitemapLastmodOnly } = parseArgs(process.argv);
   if (!url) {
     // eslint-disable-next-line no-console
     console.error(
-      'Usage: node scripts/fetch-url-to-file.js <url> [--out <directory>] [--no-perspectives-json]',
+      'Usage: node scripts/fetch-url-to-file.js <url> [--out <directory>] [--no-perspectives-json] [--sitemap-lastmod-only]',
     );
     process.exit(1);
   }
@@ -103,7 +116,18 @@ async function main() {
   console.log(`Wrote ${outPath} (${body.length} characters)`);
 
   if (perspectivesJson) {
-    const { sorted, count } = parsePerspectivesFromSitemapXml(body);
+    let sorted;
+    let count;
+    if (sitemapLastmodOnly) {
+      ({ sorted, count } = parsePerspectivesFromSitemapXml(body));
+    } else {
+      const items = parsePerspectivesItemsFromSitemapXml(body);
+      count = items.length;
+      // eslint-disable-next-line no-console
+      console.log(`Fetching last-update meta for ${count} /perspectives/ URLs…`);
+      const hydrated = await hydratePerspectivesLastUpdateFromPages(items);
+      sorted = sortedRecordFromHydratedItems(hydrated);
+    }
     const jsonPath = perspectivesJsonPathForXmlFile(outPath);
     await fs.writeFile(jsonPath, stringifyPerspectivesJson(sorted), 'utf8');
     // eslint-disable-next-line no-console
