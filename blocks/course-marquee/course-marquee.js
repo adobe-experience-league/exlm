@@ -3,7 +3,7 @@ import { fetchLanguagePlaceholders, getPathDetails, htmlToElement } from '../../
 import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 function getPreferredMetadata(...keys) {
-  return keys.map(getMetadata).find(Boolean);
+  return keys.map(getMetadata).find(Boolean) || '';
 }
 
 export default async function decorate(block) {
