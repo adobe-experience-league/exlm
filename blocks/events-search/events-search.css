@@ -1,3 +1,6 @@
+@import '../../scripts/browse-card/browse-cards-block.css';
+@import '../../scripts/browse-card/browse-card.css';
+
 main > div.section.events-search-container {
   padding-inline: 0;
 }
@@ -233,10 +236,36 @@ main .events-search .events-search-results-count {
   color: var(--text-color);
 }
 
+/* Card grid + shimmer share the same container so @container queries apply to skeletons */
+main .events-search .events-search-results-body.browse-cards-block {
+  min-height: auto;
+}
+
 main .events-search .events-search-results-grid {
   display: grid;
   gap: 16px;
   grid-template-columns: 1fr;
+}
+
+main .events-search .events-search-results-grid > .events-search-card-item {
+  min-width: 0;
+}
+
+/* Browse card shimmer: same column rhythm as results grid (browse-filters-style card tiles) */
+main .events-search .events-search-results-body .browse-card-shimmer {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin: 0;
+  margin-top: 0;
+  height: fit-content;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+main .events-search .events-search-results-body .browse-card-shimmer .browse-card-shimmer-wrapper {
+  min-width: 0;
 }
 
 main .events-search .events-search-results-grid.events-search-one-pg-result {
@@ -318,13 +347,27 @@ main .events-search .events-search-pagination input.events-search-pg-input {
 }
 
 main .events-search .events-search-no-results {
-  font-size: 16px;
-  color: var(--text-color);
-  padding: 24px 0;
+  display: none;
+}
+
+main .events-search .events-search-no-results.no-results {
+  display: block;
+  background-color: var(--spectrum-gray-200);
+  color: var(--non-spectrum-grey);
+  font-size: var(--spectrum-font-size-200);
+  padding: 72px 16px;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
 }
 
 @media (width >= 600px) {
   main .events-search .events-search-results-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  main .events-search .events-search-results-body .browse-card-shimmer {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -336,6 +379,10 @@ main .events-search .events-search-no-results {
   }
 
   main .events-search .events-search-results-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  main .events-search .events-search-results-body .browse-card-shimmer {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

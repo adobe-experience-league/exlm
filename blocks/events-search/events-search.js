@@ -6,12 +6,15 @@ import BrowseCardsDelegate, {
   normalizeUpcomingEventModel,
 } from '../../scripts/browse-card/browse-cards-delegate.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
+import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import {
   eventTypeOptions,
   getBrowseFiltersResultCount,
   getFiltersPaginationText,
+  handleCoverSearchSubmit,
 } from '../browse-filters/browse-filter-utils.js';
 
 const FACET_CONTROLLER_MAP = {
@@ -85,14 +88,16 @@ function createLayout(block) {
       </div>
       <div class="events-search-results-count"></div>
     </div>
-    <div class="events-search-results-grid"></div>
-    <div class="events-search-pagination">
-      <button class="nav-arrow" type="button" aria-label="previous page"></button>
-      <input type="text" class="events-search-pg-input" aria-label="Enter page number" value="1" />
-      <span class="events-search-pagination-text"></span>
-      <button class="nav-arrow right-nav-arrow" type="button" aria-label="next page"></button>
+    <div class="events-search-results-body browse-cards-block">
+      <div class="events-search-results-grid"></div>
+      <div class="events-search-pagination">
+        <button class="nav-arrow" type="button" aria-label="previous page"></button>
+        <input type="text" class="events-search-pg-input" aria-label="Enter page number" value="1" />
+        <span class="events-search-pagination-text"></span>
+        <button class="nav-arrow right-nav-arrow" type="button" aria-label="next page"></button>
+      </div>
+      <div class="events-search-no-results" hidden role="status">${placeholders.noResultsTextBrowse || 'No Results'}</div>
     </div>
-    <div class="events-search-no-results">${placeholders.noResultsTextBrowse || 'No Results'}</div>
   `;
 
   layout.append(filterColumn, resultColumn);
@@ -241,6 +246,52 @@ function renderEventsSearchPageNumbers(block) {
   }
 }
 
+/**
+ * Loading shimmer + hide results while Coveo search is in flight (browse-filters pattern).
+ * @param {HTMLElement} block
+ */
+function bindEventsSearchLoadingUI(block) {
+  const resultsBody = block.querySelector('.events-search-results-body');
+  const grid = block.querySelector('.events-search-results-grid');
+  const pagination = block.querySelector('.events-search-pagination');
+  const noResults = block.querySelector('.events-search-no-results');
+  if (!resultsBody || !grid || !pagination) return;
+
+  const shimmer = new BrowseCardShimmer(getBrowseFiltersResultCount());
+
+  const placeShimmerBeforeGrid = () => {
+    const shimmerEl = resultsBody.querySelector(':scope > .browse-card-shimmer');
+    if (shimmerEl) {
+      resultsBody.insertBefore(shimmerEl, grid);
+    }
+  };
+
+  const onPreprocess = (e) => {
+    const { method = '' } = e.detail ?? {};
+    if (method !== 'search' || !block.isConnected) return;
+    shimmer.addShimmer(resultsBody);
+    placeShimmerBeforeGrid();
+    grid.style.display = 'none';
+    pagination.style.display = 'none';
+    if (noResults) {
+      noResults.style.display = 'none';
+    }
+  };
+
+  const onProcessSearchResponse = () => {
+    if (!block.isConnected) return;
+    shimmer.removeShimmer();
+    grid.style.display = '';
+    pagination.style.display = '';
+    if (noResults) {
+      noResults.style.removeProperty('display');
+    }
+  };
+
+  document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, onPreprocess);
+  document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PROCESS_SEARCH_RESPONSE, onProcessSearchResponse);
+}
+
 function bindEventsSearchPagination(block) {
   const filtersPaginationEl = block.querySelector('.events-search-pagination');
   if (!filtersPaginationEl) return;
@@ -324,6 +375,7 @@ async function renderResults(block, results = [], searchResponseId = '') {
   if (!results.length) {
     grid.innerHTML = '';
     grid.setAttribute('hidden', '');
+    noResults.classList.add('no-results');
     noResults.removeAttribute('hidden');
     return;
   }
@@ -354,6 +406,7 @@ async function renderResults(block, results = [], searchResponseId = '') {
     grid.append(cardWrapper);
   });
 
+  noResults.classList.remove('no-results');
   noResults.setAttribute('hidden', '');
   grid.removeAttribute('hidden');
 }
@@ -417,16 +470,25 @@ function bindFilterInteractions(block, groups) {
 
 function bindTopbarSearch(block) {
   const input = block.querySelector('.events-search-keyword-input');
+  const keywordRow = block.querySelector('.events-search-keyword');
   if (!input) return;
 
   const submitSearch = () => {
     if (!window.headlessSearchBox) return;
-    window.headlessSearchBox.updateText(input.value.trim());
+    const query = input.value.trim();
+    window.headlessSearchBox.updateText(query);
     if (window.headlessPager) {
       window.headlessPager.selectPage(1);
     }
-    executeSearch();
+    // Coveo urlManager syncs `q` from the hash; updateText + executeSearch alone does not run keyword search.
+    handleCoverSearchSubmit(query);
   };
+
+  keywordRow?.addEventListener('click', (event) => {
+    if (event.target.closest('.icon-search')) {
+      submitSearch();
+    }
+  });
 
   input.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
@@ -459,6 +521,7 @@ function bindClearFilters(block, groups) {
         searchInput.value = '';
       }
     }
+    handleCoverSearchSubmit('');
     if (window.headlessPager) {
       window.headlessPager.selectPage(1);
     }
@@ -519,6 +582,7 @@ async function initHeadlessSearch(block) {
     executeSearch();
   }
 
+  bindEventsSearchLoadingUI(block);
   bindEventsSearchPagination(block);
   renderPageNumbers();
 }
