@@ -239,6 +239,84 @@ main .events-search .events-search-results-grid {
   grid-template-columns: 1fr;
 }
 
+main .events-search .events-search-results-grid.events-search-one-pg-result {
+  margin-bottom: 40px;
+}
+
+main .events-search .events-search-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 36px;
+  margin-top: 24px;
+  margin-bottom: 40px;
+}
+
+main .events-search .events-search-pagination-text {
+  font-size: var(--spectrum-font-size-100);
+  line-height: 17px;
+  color: var(--spectrum-gray-700);
+}
+
+main .events-search .events-search-pagination.events-search-pagination-hidden {
+  display: none;
+}
+
+main .events-search .events-search-pagination .nav-arrow {
+  position: relative;
+  background: transparent;
+  outline: none;
+  height: 36px;
+  width: 36px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  cursor: pointer;
+}
+
+main .events-search .events-search-pagination .nav-arrow::after {
+  position: absolute;
+  top: 50%;
+  display: flex;
+  width: 6px;
+  height: 6px;
+  border-width: 0 2px 2px 0;
+  border-style: solid;
+  transform-origin: 75% 75%;
+  transform: rotateZ(135deg);
+  transition: transform 0.1s ease;
+  content: '';
+  margin-top: -5px;
+  right: 16px;
+  color: var(--spectrum-gray-700);
+}
+
+main .events-search .events-search-pagination .nav-arrow.nav-arrow-hidden {
+  pointer-events: none;
+  touch-action: none;
+}
+
+main .events-search .events-search-pagination .nav-arrow.right-nav-arrow::after {
+  transform: rotateZ(315deg);
+}
+
+main .events-search .events-search-pagination .nav-arrow.nav-arrow-hidden::after {
+  color: var(--spectrum-gray-200);
+}
+
+main .events-search .events-search-pagination input.events-search-pg-input {
+  width: 49px;
+  height: 32px;
+  margin: 0 8px;
+  border-radius: 4px;
+  border: 1px solid var(--spectrum-gray-200);
+  font-size: var(--spectrum-font-size-100);
+  line-height: 17px;
+  color: var(--spectrum-gray-700);
+  font-family: var(--body-font-family);
+  text-align: center;
+}
+
 main .events-search .events-search-no-results {
   font-size: 16px;
   color: var(--text-color);
