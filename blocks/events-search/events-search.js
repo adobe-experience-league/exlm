@@ -66,7 +66,7 @@ function createLayout(block) {
 
   filterColumn.innerHTML = `
     <button class="events-search-mobile-filter-toggle" type="button" aria-expanded="false">
-      <span class="icon icon-filter"></span>
+      <span class="icon icon-atomic-search-filter"></span>
       <span>${placeholders.filterLabel || 'Filters'}</span>
       <span class="icon icon-chevron"></span>
     </button>
