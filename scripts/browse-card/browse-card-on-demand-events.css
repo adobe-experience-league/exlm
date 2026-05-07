@@ -171,5 +171,7 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
   .list .browse-card.event-card .browse-card-figure .event-series-banner,
   .list .browse-card.event-on-demand-event-card .browse-card-figure .event-series-banner {
     font-size: 14px;
+    letter-spacing: 0;
+    line-height: 1.4;
   }
 }

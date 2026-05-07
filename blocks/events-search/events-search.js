@@ -24,6 +24,7 @@ const FACET_CONTROLLER_MAP = {
   el_contenttype: 'headlessTypeFacet',
 };
 const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
+const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
 
 let placeholders = {};
 try {
@@ -337,6 +338,7 @@ function bindEventsSearchLoadingUI(block) {
   const grid = block.querySelector('.events-search-results-grid');
   const pagination = block.querySelector('.events-search-pagination');
   const noResults = block.querySelector('.events-search-no-results');
+  const resultsTop = block.querySelector('.events-search-topbar');
   if (!resultsBody || !grid || !pagination) return;
 
   const shimmer = new BrowseCardShimmer(getBrowseFiltersResultCount());
@@ -351,6 +353,10 @@ function bindEventsSearchLoadingUI(block) {
   const onPreprocess = (e) => {
     const { method = '' } = e.detail ?? {};
     if (method !== 'search' || !block.isConnected) return;
+    if (resultsTop) {
+      resultsTop.scrollIntoView({ behavior: 'auto', block: 'start' });
+      window.scrollBy({ top: RESULTS_SCROLL_ADJUSTMENT_OFFSET });
+    }
     shimmer.addShimmer(resultsBody);
     placeShimmerBeforeGrid();
     grid.style.display = 'none';

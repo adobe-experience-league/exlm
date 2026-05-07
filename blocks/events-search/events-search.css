@@ -526,15 +526,4 @@ main .events-search .events-search-no-results.no-results {
     z-index: -1;
     pointer-events: none;
   }
-
-  main .events-search .events-search-results-column::before {
-    content: '';
-    position: absolute;
-    inset-block: 0;
-    inset-inline-start: 0;
-    width: 100vw;
-    background: var(--highlight-light-background-color);
-    z-index: -1;
-    pointer-events: none;
-  }
 }
