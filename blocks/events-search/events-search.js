@@ -108,7 +108,9 @@ function createLayout(block) {
         <span class="events-search-pagination-text"></span>
         <button class="nav-arrow right-nav-arrow" type="button" aria-label="next page"></button>
       </div>
-      <div class="events-search-no-results" hidden role="status">${placeholders.noResultsTextBrowse || 'No Results'}</div>
+      <div class="events-search-no-results" hidden role="status">${
+        placeholders.noResultsTextBrowse || 'No Results'
+      }</div>
     </div>
   `;
 
@@ -254,9 +256,7 @@ function syncFilterUIFromHeadlessState(block, groups) {
     if (!controller || !groupEl) return;
 
     const selectedValues = new Set(
-      (controller.state?.values || [])
-        .filter((item) => item.state === 'selected')
-        .map((item) => item.value),
+      (controller.state?.values || []).filter((item) => item.state === 'selected').map((item) => item.value),
     );
 
     const checkboxes = groupEl.querySelectorAll('.events-search-filter-option input[type="checkbox"]');
@@ -489,11 +489,13 @@ async function renderResults(block, results = [], searchResponseId = '') {
   });
 
   grid.innerHTML = '';
-  await Promise.all(normalizedCards.map(async (cardData) => {
-    const cardWrapper = createTag('div', { class: 'events-search-card-item' });
-    grid.append(cardWrapper);
-    await buildCard(cardWrapper, cardData);
-  }));
+  await Promise.all(
+    normalizedCards.map(async (cardData) => {
+      const cardWrapper = createTag('div', { class: 'events-search-card-item' });
+      grid.append(cardWrapper);
+      await buildCard(cardWrapper, cardData);
+    }),
+  );
 
   noResults.classList.remove('no-results');
   noResults.setAttribute('hidden', '');
