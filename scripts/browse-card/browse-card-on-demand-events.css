@@ -98,3 +98,78 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
     font-size: 24px;
   }
 }
+
+/* List view styles: align on-demand cards with upcoming-event list layout */
+@media only screen and (min-width: 900px) {
+  .list .browse-cards-block-content > div .browse-card.event-card,
+  .list .browse-cards-block-content > div .browse-card.event-on-demand-event-card {
+    min-height: auto;
+    flex-direction: row;
+    background-color: var(--spectrum-gray-50);
+  }
+
+  .list .browse-card.event-card .browse-card-figure,
+  .list .browse-card.event-on-demand-event-card .browse-card-figure {
+    flex: 0 0 23.34%;
+    border: unset;
+    border-radius: 16px 0 0 16px;
+    max-height: unset;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .list .browse-card.event-card .browse-card-content,
+  .list .browse-card.event-on-demand-event-card .browse-card-content {
+    padding: 32px;
+  }
+
+  .list .browse-card.event-card .browse-card-footer,
+  .list .browse-card.event-on-demand-event-card .browse-card-footer {
+    padding: 32px;
+    flex: 0 0 18.52%;
+    position: relative;
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: unset;
+    border-radius: 16px;
+  }
+
+  .list .browse-card.event-card .browse-card-footer::before,
+  .list .browse-card.event-on-demand-event-card .browse-card-footer::before {
+    content: '';
+    position: absolute;
+    top: 32px;
+    bottom: 32px;
+    left: 0;
+    width: 1px;
+    background-color: var(--non-spectrum-divider-gray);
+  }
+
+  .list .browse-card.event-card .browse-card-footer .browse-card-cta-element,
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-cta-element {
+    margin: 20px 0;
+    background: var(--spectrum-blue-900) 0% 0% no-repeat padding-box;
+    border-radius: 16px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 17px;
+    color: var(--spectrum-gray-50);
+    width: 100%;
+    height: 32px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .list .browse-card.event-card .browse-card-footer .browse-card-cta-element .icon,
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-cta-element .icon {
+    display: none;
+  }
+
+  .list .browse-card.event-card .browse-card-figure .event-series-banner,
+  .list .browse-card.event-on-demand-event-card .browse-card-figure .event-series-banner {
+    font-size: 14px;
+  }
+}

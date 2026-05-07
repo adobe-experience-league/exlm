@@ -1,4 +1,4 @@
-import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
 import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT } from '../../scripts/browse-card/browse-cards-constants.js';
 import BrowseCardsDelegate, {
@@ -7,6 +7,7 @@ import BrowseCardsDelegate, {
 } from '../../scripts/browse-card/browse-cards-delegate.js';
 import BrowseCardsCoveoDataAdaptor from '../../scripts/browse-card/browse-cards-coveo-data-adaptor.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
+import BrowseCardViewSwitcher from '../../scripts/browse-card/browse-cards-view-switcher.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
@@ -86,10 +87,19 @@ function createLayout(block) {
           placeholders.eventfilterKeywordSearch || 'Search events'
         }" />
       </div>
-      <div class="events-search-results-count"></div>
+      <div class="events-search-meta-row">
+        <div class="events-search-results-count"></div>
+        <div class="events-search-controls">
+          <div class="events-search-view-switcher"></div>
+          <div class="sort-container">
+            <span>${placeholders.filterSortLabel || 'Sort:'}</span>
+            <button class="sort-drop-btn">${placeholders.filterSortRelevanceLabel || 'Relevance'}</button>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="events-search-results-body browse-cards-block">
-      <div class="events-search-results-grid"></div>
+      <div class="events-search-results-grid browse-cards-block-content"></div>
       <div class="events-search-pagination">
         <button class="nav-arrow" type="button" aria-label="previous page"></button>
         <input type="text" class="events-search-pg-input" aria-label="Enter page number" value="1" />
@@ -110,6 +120,49 @@ function setMobileFilterPanelState(block, shouldOpen) {
 
   block.classList.toggle('is-filters-open', shouldOpen);
   toggleButton.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+}
+
+function initEventsSearchViewSwitcher(block) {
+  const resultsBody = block.querySelector('.events-search-results-body');
+  const switcherContainer = block.querySelector('.events-search-view-switcher');
+  if (!resultsBody || !switcherContainer) return;
+
+  BrowseCardViewSwitcher.create({ block: resultsBody }).then((viewSwitcher) => {
+    viewSwitcher.appendTo(switcherContainer);
+  });
+}
+
+async function loadEventsCardStyles() {
+  await Promise.all([
+    loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-upcoming-events.css`),
+    loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-on-demand-events.css`),
+  ]);
+}
+
+function bindSortDropdownToggle(block) {
+  const dropDownBtn = block.querySelector('.sort-drop-btn');
+  if (!dropDownBtn) return;
+
+  dropDownBtn.addEventListener('click', () => {
+    dropDownBtn.classList.toggle('active');
+    const sortDropdown = dropDownBtn.nextElementSibling;
+    sortDropdown?.classList.toggle('show');
+    setTimeout(() => {
+      // Close dropdown when user clicks outside of sort menu/button.
+      document.addEventListener(
+        'click',
+        (event) => {
+          const isInsideDropdown = !!sortDropdown && sortDropdown.contains(event.target);
+          const isOnButton = event.target === dropDownBtn;
+          const shouldHide = !isInsideDropdown && (!isOnButton || !dropDownBtn.classList.contains('active'));
+          if (shouldHide) {
+            sortDropdown?.classList.remove('show');
+          }
+        },
+        { once: true },
+      );
+    });
+  });
 }
 
 function getShowMoreLabel(count) {
@@ -179,6 +232,9 @@ function renderFilterGroups(block, groups) {
 
     groupsRoot.append(groupEl);
   });
+
+  // Filter chevrons are rendered dynamically and need icon decoration after insertion.
+  decorateIcons(groupsRoot);
 }
 
 function updateGroupSelectionCount(block, groupId, selectedCount) {
@@ -187,6 +243,32 @@ function updateGroupSelectionCount(block, groupId, selectedCount) {
   const countEl = groupEl.querySelector('.events-search-filter-group-count');
   if (!countEl) return;
   countEl.textContent = selectedCount > 0 ? `(${selectedCount})` : '';
+}
+
+function syncFilterUIFromHeadlessState(block, groups) {
+  Object.entries(FACET_CONTROLLER_MAP).forEach(([groupId, controllerName]) => {
+    const controller = window[controllerName];
+    const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${groupId}"]`);
+    if (!controller || !groupEl) return;
+
+    const selectedValues = new Set(
+      (controller.state?.values || [])
+        .filter((item) => item.state === 'selected')
+        .map((item) => item.value),
+    );
+
+    const checkboxes = groupEl.querySelectorAll('.events-search-filter-option input[type="checkbox"]');
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = selectedValues.has(checkbox.value);
+    });
+
+    const selectedCount = selectedValues.size;
+    const targetGroup = groups.find((group) => group.id === groupId);
+    if (targetGroup) {
+      targetGroup.selected = selectedCount;
+    }
+    updateGroupSelectionCount(block, groupId, selectedCount);
+  });
 }
 
 function executeSearch() {
@@ -411,8 +493,9 @@ async function renderResults(block, results = [], searchResponseId = '') {
   grid.removeAttribute('hidden');
 }
 
-async function handleSearchEngineSubscription(block) {
+async function handleSearchEngineSubscription(block, groups) {
   if (!window.headlessSearchEngine || window.headlessStatusControllers?.state?.isLoading) return;
+  syncFilterUIFromHeadlessState(block, groups);
   const search = window.headlessSearchEngine.state.search || {};
   const { results = [], searchResponseId = '', response = {} } = search;
   updateResultsCount(block, response.totalCount || 0);
@@ -554,11 +637,11 @@ async function loadDynamicFacetValues(groups) {
   });
 }
 
-async function initHeadlessSearch(block) {
+async function initHeadlessSearch(block, groups) {
   const { default: initiateCoveoHeadlessSearch } = await import('../../scripts/coveo-headless/index.js');
   const renderPageNumbers = () => renderEventsSearchPageNumbers(block);
   await initiateCoveoHeadlessSearch({
-    handleSearchEngineSubscription: () => handleSearchEngineSubscription(block),
+    handleSearchEngineSubscription: () => handleSearchEngineSubscription(block, groups),
     renderPageNumbers,
     numberOfResults: getBrowseFiltersResultCount(),
     renderSearchQuerySummary: () => {
@@ -588,6 +671,7 @@ async function initHeadlessSearch(block) {
 }
 
 export default async function decorate(block) {
+  await loadEventsCardStyles();
   const groups = getBaseFilterGroups();
   try {
     await loadDynamicFacetValues(groups);
@@ -597,11 +681,13 @@ export default async function decorate(block) {
   }
 
   createLayout(block);
+  decorateIcons(block);
   renderFilterGroups(block, groups);
   bindFilterInteractions(block, groups);
   bindTopbarSearch(block);
   bindClearFilters(block, groups);
   bindMobileFilterToggle(block);
-  await initHeadlessSearch(block);
-  decorateIcons(block);
+  initEventsSearchViewSwitcher(block);
+  bindSortDropdownToggle(block);
+  await initHeadlessSearch(block, groups);
 }
