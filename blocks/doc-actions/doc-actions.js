@@ -62,7 +62,8 @@ export default async function decorate(block) {
           document
             .querySelector('meta[name="solution"]')
             ?.content?.split(',')
-            .map((s) => s.trim()) || [],
+            .map((s) => s.trim())
+            .filter(Boolean) || [],
       };
 
       const docActionMobileElement = document.querySelector('.doc-actions-mobile');
@@ -83,8 +84,7 @@ export default async function decorate(block) {
             const finalLinkType = linkType || pageHeading;
             const finalPosition = position || '';
 
-            const eventName = action === 'remove' ? 'browseCardRemoveBookmark' : 'bookmarkLinkBrowseCard';
-            pushBrowseCardClickEvent(eventName, docPageModel, finalLinkType, finalPosition, 'docs');
+            pushBrowseCardClickEvent(action, docPageModel, finalLinkType, finalPosition, 'docs');
           },
           copyCallback: (linkType, position) => {
             const finalLinkType = linkType || pageHeading;

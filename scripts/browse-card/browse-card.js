@@ -441,8 +441,7 @@ const buildCardContent = async (card, model, element) => {
       const finalLinkType = linkType || cardHeader || '';
       const finalPosition = position || cardPosition || '';
 
-      const eventName = action === 'remove' ? 'browseCardRemoveBookmark' : 'bookmarkLinkBrowseCard';
-      pushBrowseCardClickEvent(eventName, model, finalLinkType, finalPosition, 'browse-card');
+      pushBrowseCardClickEvent(action, model, finalLinkType, finalPosition, 'browse-card');
     },
     copyCallback: (linkType, position) => {
       // Calculate cardHeader and cardPosition dynamically when callback is called
