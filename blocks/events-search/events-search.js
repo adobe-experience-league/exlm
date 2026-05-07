@@ -25,6 +25,7 @@ const FACET_CONTROLLER_MAP = {
 };
 const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
 const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
+const viewSwitcherInstances = new WeakMap();
 
 let placeholders = {};
 try {
@@ -123,14 +124,14 @@ function setMobileFilterPanelState(block, shouldOpen) {
   toggleButton.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
 }
 
-function initEventsSearchViewSwitcher(block) {
+async function initEventsSearchViewSwitcher(block) {
   const resultsBody = block.querySelector('.events-search-results-body');
   const switcherContainer = block.querySelector('.events-search-view-switcher');
   if (!resultsBody || !switcherContainer) return;
 
-  BrowseCardViewSwitcher.create({ block: resultsBody }).then((viewSwitcher) => {
-    viewSwitcher.appendTo(switcherContainer);
-  });
+  const viewSwitcher = await BrowseCardViewSwitcher.create({ block: resultsBody });
+  viewSwitcher.appendTo(switcherContainer);
+  viewSwitcherInstances.set(block, viewSwitcher);
 }
 
 async function loadEventsCardStyles() {
@@ -488,15 +489,21 @@ async function renderResults(block, results = [], searchResponseId = '') {
   });
 
   grid.innerHTML = '';
-  normalizedCards.forEach((cardData) => {
+  await Promise.all(normalizedCards.map(async (cardData) => {
     const cardWrapper = createTag('div', { class: 'events-search-card-item' });
-    buildCard(cardWrapper, cardData);
     grid.append(cardWrapper);
-  });
+    await buildCard(cardWrapper, cardData);
+  }));
 
   noResults.classList.remove('no-results');
   noResults.setAttribute('hidden', '');
   grid.removeAttribute('hidden');
+
+  const resultsBody = block.querySelector('.events-search-results-body');
+  const viewSwitcher = viewSwitcherInstances.get(block);
+  if (resultsBody?.classList.contains('list') && viewSwitcher) {
+    viewSwitcher.enhanceCardsForListView();
+  }
 }
 
 async function handleSearchEngineSubscription(block, groups) {
@@ -693,7 +700,7 @@ export default async function decorate(block) {
   bindTopbarSearch(block);
   bindClearFilters(block, groups);
   bindMobileFilterToggle(block);
-  initEventsSearchViewSwitcher(block);
+  await initEventsSearchViewSwitcher(block);
   bindSortDropdownToggle(block);
   await initHeadlessSearch(block, groups);
 }

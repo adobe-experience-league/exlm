@@ -844,20 +844,19 @@ export async function buildCard(element, model) {
     const cardEl = element.querySelector('.browse-card');
     if (cardEl) {
       loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-upcoming-events.css`);
-      // Dynamically import and use the upcoming events decorator
-      getUpcomingEventsDecorator().then(({ decorateUpcomingEvents }) => {
-        decorateUpcomingEvents(cardEl, model);
-      });
+      // Ensure card decorations are available before callers post-process rendered cards.
+      const { decorateUpcomingEvents } = await getUpcomingEventsDecorator();
+      decorateUpcomingEvents(cardEl, model);
     }
   }
 
   if (isOnDemandEvent && isFeatureEnabled('isEventsV2')) {
     const cardElement = element.querySelector('.browse-card');
-    // Dynamically import and use the on-demand events decorator
     loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-on-demand-events.css`);
-    getOnDemandEventsDecorator().then(({ decorateOnDemandEvents }) => {
+    if (cardElement) {
+      const { decorateOnDemandEvents } = await getOnDemandEventsDecorator();
       decorateOnDemandEvents(cardElement, model);
-    });
+    }
   }
 
   return undefined;
