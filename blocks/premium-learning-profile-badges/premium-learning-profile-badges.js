@@ -1,49 +1,8 @@
-/* eslint-disable no-use-before-define */
-import { htmlToElement } from '../../scripts/scripts.js';
-import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
-import { getUserProfile } from '../../scripts/auth/profile.js';
-import { getConfig } from '../../scripts/scripts.js';
-import PLDataService from '../../scripts/data-service/premium-learning-data-service.js';
+import { htmlToElement, getConfig } from '../../scripts/scripts.js';
+import { getCookie } from '../../scripts/utils/cookie-utils.js';
+import { fetchUserBadges } from '../../scripts/data-service/premium-learning-data-service.js';
 
 const MAX_BADGES = 9;
-
-/**
- * Fetches user badges from Adobe Learning Manager API
- * @param {string} userId - User ID
- * @param {Object} config - Config object
- * @returns {Promise<Object|null>} Badge data or null on error
- */
-async function fetchUserBadges(userId, config) {
-  try {
-    const apiBaseUrl = config?.plApiBaseUrl;
-    if (!apiBaseUrl || !userId) {
-      return null;
-    }
-
-    const url = new URL(`${apiBaseUrl}/users/${userId}/userBadges`);
-    url.searchParams.set('page[offset]', '0');
-    url.searchParams.set('page[limit]', String(MAX_BADGES));
-    url.searchParams.set('sort', '-dateAchieved');
-    url.searchParams.set('include', 'badge,model');
-
-    const headers = PLDataService.buildRequestHeaders();
-    const response = await fetch(url.toString(), {
-      method: 'GET',
-      headers,
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      throw new Error(`User badges API request failed: ${response.status} ${response.statusText}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching user badges:', error);
-    return null;
-  }
-}
 
 /**
  * Renders a single badge card
@@ -55,7 +14,7 @@ async function fetchUserBadges(userId, config) {
 function renderBadgeCard(userBadge, badge, learningObject) {
   const badgeName = badge?.attributes?.name || 'Badge';
   const badgeImageUrl = badge?.attributes?.imageUrl || '';
-  const loName = learningObject?.attributes?.localizedMetadata?.[0]?.name || 'Cohort Name Placeholder';
+  const loName = learningObject?.attributes?.localizedMetadata?.[0]?.name || 'Cohort Name';
   const loType = learningObject?.attributes?.loType || '';
   const loFormat = learningObject?.attributes?.loFormat || '';
 
@@ -70,7 +29,11 @@ function renderBadgeCard(userBadge, badge, learningObject) {
   const cardHTML = `
     <div class="badge-card">
       <div class="badge-image">
-        ${badgeImageUrl ? `<img src="${badgeImageUrl}" alt="${badgeName}" loading="lazy" />` : '<div class="badge-placeholder"></div>'}
+        ${
+          badgeImageUrl
+            ? `<img src="${badgeImageUrl}" alt="${badgeName}" loading="lazy" />`
+            : '<div class="badge-placeholder"></div>'
+        }
       </div>
       <div class="badge-info">
         <p class="badge-lo-name">${loName}</p>
@@ -131,13 +94,20 @@ function renderEmptyState(container) {
 export default async function decorate(block) {
   const config = getConfig();
 
-  // Clear block and build structure
+  // Extract authored content (header and description)
+  const [headingElement, descriptionElement] = [...block.children];
+
+  // Clear block
   block.innerHTML = '';
 
+  // Build header with authored content
   const headerHTML = `
     <div class="badges-header">
-      <h2>Premium Learning Badges</h2>
-      <p class="badges-description">Visit the <a href="https://experienceleague.adobe.com/en/premium/my-achievements" target="_blank" rel="noopener noreferrer">Premium Learning portal</a> to see more.</p>
+      ${headingElement?.innerHTML || '<h2>Premium Learning Badges</h2>'}
+      ${
+        descriptionElement?.innerHTML ||
+        '<p class="badges-description">Visit the <a href="https://experienceleague.adobe.com/en/premium/my-achievements" target="_blank" rel="noopener noreferrer">Premium Learning portal</a> to see more.</p>'
+      }
     </div>
   `;
 
@@ -152,33 +122,25 @@ export default async function decorate(block) {
 
   const badgesContentEl = block.querySelector('.badges-content');
 
-  // Show shimmer while checking eligibility
+  // Show shimmer while loading
   renderShimmer(badgesContentEl);
 
   try {
-    // Check if user is eligible for Premium Learning
-    const isEligible = await isPLEligible();
-
-    if (!isEligible) {
-      block.classList.add('pl-badges-empty');
-      badgesContentEl.remove();
-      return;
-    }
-
-    // Get user profile to retrieve user ID
-    const userProfile = await getUserProfile();
-    const userId = userProfile?.userId;
+    // Get user ID from cookie
+    const userId = getCookie('alm_user_id');
 
     if (!userId) {
       // eslint-disable-next-line no-console
-      console.error('User ID not found in profile');
-      block.classList.add('pl-badges-empty');
-      badgesContentEl.remove();
+      console.error('User ID not found in cookie');
+      renderEmptyState(badgesContentEl);
       return;
     }
 
+    // eslint-disable-next-line no-console
+    console.log('Fetching badges for user:', userId);
+
     // Fetch user badges
-    const badgesData = await fetchUserBadges(userId, config);
+    const badgesData = await fetchUserBadges(userId, config, MAX_BADGES);
 
     if (!badgesData || !badgesData.data || badgesData.data.length === 0) {
       renderEmptyState(badgesContentEl);
@@ -193,10 +155,21 @@ export default async function decorate(block) {
       });
     }
 
+    // Filter for completed badges only (those with dateAchieved)
+    const completedBadges = badgesData.data.filter((userBadge) => userBadge?.attributes?.dateAchieved);
+
+    // eslint-disable-next-line no-console
+    console.log(`Found ${completedBadges.length} completed badge(s)`);
+
+    if (completedBadges.length === 0) {
+      renderEmptyState(badgesContentEl);
+      return;
+    }
+
     // Render badge cards
     const badgesGrid = htmlToElement('<div class="badges-grid"></div>');
 
-    badgesData.data.forEach((userBadge) => {
+    completedBadges.forEach((userBadge) => {
       const badgeId = userBadge.relationships?.badge?.data?.id;
       const modelId = userBadge.relationships?.model?.data?.id;
 
