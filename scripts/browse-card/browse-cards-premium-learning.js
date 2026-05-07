@@ -268,19 +268,20 @@ export async function buildPLCard(element, model) {
     contentType,
     bookmarkConfig: true,
     copyConfig: { icons: ['copy-white-fill'] },
-    bookmarkCallback: (linkType, position) => {
+    bookmarkCallback: (linkType, position, action) => {
       // Calculate cardHeader and cardPosition dynamically when callback is called
       const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
       const finalLinkType = linkType || cardHeader || '';
       const finalPosition = position || cardPosition || '';
-      pushBrowseCardClickEvent('bookmarkLinkBrowseCard', model, finalLinkType, finalPosition);
+
+      pushBrowseCardClickEvent(action, model, finalLinkType, finalPosition, 'browse-card');
     },
     copyCallback: (linkType, position) => {
       // Calculate cardHeader and cardPosition dynamically when callback is called
       const { cardHeader, cardPosition } = getCardHeaderAndPosition(card, element);
       const finalLinkType = linkType || cardHeader || '';
       const finalPosition = position || cardPosition || '';
-      pushBrowseCardClickEvent('copyLinkBrowseCard', model, finalLinkType, finalPosition);
+      pushBrowseCardClickEvent('copyLinkBrowseCard', model, finalLinkType, finalPosition, 'browse-card');
     },
   });
 

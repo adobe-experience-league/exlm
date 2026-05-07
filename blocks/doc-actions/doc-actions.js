@@ -1,6 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { createTag, isDocPage, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { assetInteractionModel } from '../../scripts/analytics/lib-analytics.js';
+import { assetInteractionModel, pushBrowseCardClickEvent } from '../../scripts/analytics/lib-analytics.js';
 import UserActions from '../../scripts/user-actions/user-actions.js';
 
 async function decorateLanguageToggle(block, placeholders) {
@@ -51,6 +51,21 @@ export default async function decorate(block) {
   if (isDocPage) {
     fetchLanguagePlaceholders().then((placeholders) => {
       decorateLanguageToggle(block, placeholders);
+
+      const pageHeading = document.querySelector('main h1')?.textContent?.trim() || document.title;
+
+      const docPageModel = {
+        contentType: 'documentation',
+        title: pageHeading,
+        viewLink: window.location.href,
+        product:
+          document
+            .querySelector('meta[name="solution"]')
+            ?.content?.split(',')
+            .map((s) => s.trim())
+            .filter(Boolean) || [],
+      };
+
       const docActionMobileElement = document.querySelector('.doc-actions-mobile');
       [block, docActionMobileElement].forEach((container) => {
         const userActions = UserActions({
@@ -64,6 +79,18 @@ export default async function decorate(block) {
           copyConfig: {
             label: placeholders?.userActionCopylinkLabel || 'Copy link',
             icons: ['copy-link'],
+          },
+          bookmarkCallback: (linkType, position, action) => {
+            const finalLinkType = linkType || pageHeading;
+            const finalPosition = position || '';
+
+            pushBrowseCardClickEvent(action, docPageModel, finalLinkType, finalPosition, 'docs');
+          },
+          copyCallback: (linkType, position) => {
+            const finalLinkType = linkType || pageHeading;
+            const finalPosition = position || '';
+
+            pushBrowseCardClickEvent('copyLinkBrowseCard', docPageModel, finalLinkType, finalPosition, 'docs');
           },
         });
         userActions.decorate();

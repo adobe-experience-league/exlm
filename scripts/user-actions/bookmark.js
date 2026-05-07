@@ -60,7 +60,7 @@ export async function bookmarkHandler(config) {
         if (!callback) {
           assetInteractionModel(id, 'Bookmarked', { trackingInfo });
         }
-        if (callback) callback(linkType, position);
+        if (callback) callback(linkType, position, 'add');
       })
       .catch(() => sendNotice(tooltips?.profileNotUpdated, 'error'));
   } else {
@@ -74,7 +74,7 @@ export async function bookmarkHandler(config) {
         if (!callback) {
           assetInteractionModel(id, 'Bookmark Removed', { trackingInfo });
         }
-        if (callback) callback(linkType, position);
+        if (callback) callback(linkType, position, 'remove');
       })
       .catch(() => {
         sendNotice(tooltips?.profileNotUpdated, 'error');
@@ -375,7 +375,7 @@ export async function premiumLearningBookmarkHandler(config) {
         timestamp: Date.now(),
       });
 
-      if (callback) callback();
+      if (callback) callback(undefined, undefined, isCurrentlyBookmarked ? 'remove' : 'add');
     } else {
       throw new Error(`Failed to update bookmark: ${response.status}`);
     }
