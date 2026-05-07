@@ -190,15 +190,23 @@ function initCarousel(container, enrolledLearningObjects) {
 
   const updateCarousel = () => {
     const isDesktop = window.innerWidth >= 900;
+    const wasDesktop = slides[0]?.dataset.lastViewport === 'desktop';
 
-    // Update thumbnails based on viewport
-    slides.forEach((slide, index) => {
-      const img = slide.querySelector('.premium-learning-card-figure > img');
-      if (img && enrolledLearningObjects[index]?.attributes) {
-        const attrs = enrolledLearningObjects[index].attributes;
-        img.src = isDesktop && attrs.bannerUrl ? attrs.bannerUrl : attrs.imageUrl;
-      }
-    });
+    // Only update images when transitioning between desktop and mobile
+    if (wasDesktop !== isDesktop) {
+      slides.forEach((slide, index) => {
+        const img = slide.querySelector('.premium-learning-card-figure > img');
+        if (img && enrolledLearningObjects[index]?.attributes) {
+          const attrs = enrolledLearningObjects[index].attributes;
+          if (isDesktop) {
+            img.src = attrs.bannerUrl || attrs.imageUrl || img.src;
+          } else {
+            img.src = attrs.imageUrl || attrs.bannerUrl || img.src;
+          }
+        }
+        slide.dataset.lastViewport = isDesktop ? 'desktop' : 'mobile';
+      });
+    }
 
     if (!isDesktop) {
       track.style.transform = 'none';

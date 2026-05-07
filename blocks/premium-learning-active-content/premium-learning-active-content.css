@@ -103,7 +103,6 @@
 
 .premium-learning-active-content .browse-card.premium-learning-browse-card .premium-learning-card-figure > img {
   height: 313px;
-  object-position: 100% center;
 }
 
 .premium-learning-active-content .cohort-progress-label {
@@ -343,5 +342,9 @@
     right: auto;
     top: 40%;
     transform: translateY(-50%);
+  }
+
+  .premium-learning-active-content .browse-card.premium-learning-browse-card .premium-learning-card-figure > img {
+    object-position: 100% center;
   }
 }
