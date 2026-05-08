@@ -1,9 +1,4 @@
-import {
-  URL_SPECIAL_CASE_LOCALES,
-  fetchLanguagePlaceholders,
-  getConfig,
-  xssSanitizeQueryParamValue,
-} from '../../scripts.js';
+import { URL_SPECIAL_CASE_LOCALES, fetchLanguagePlaceholders, getConfig } from '../../scripts.js';
 import { rewriteDocsPath } from '../../utils/path-utils.js';
 import CoveoDataService from './coveo-data-service.js';
 import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET } from './coveo-exl-pipeline-constants.js';
@@ -92,15 +87,15 @@ function constructCoveoFacet(facets, param) {
 
     facetObject.currentValues = sourceValues.map((value) => {
       let isSelected = false;
-      if (value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
-        isSelected = false;
-      } else if (facet.currentValues?.includes(value)) {
-        isSelected = true;
-      } else if (
-        allFacetsExist &&
-        facet.currentValues?.some((cv) => xssSanitizeQueryParamValue(cv) === xssSanitizeQueryParamValue(value))
-      ) {
-        isSelected = true;
+      if (value !== CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
+        if (facet.currentValues?.includes(value)) {
+          isSelected = true;
+        } else if (
+          allFacetsExist &&
+          facet.currentValues?.some((cv) => cv?.replace(/\|/g, '') === value?.replace(/\|/g, ''))
+        ) {
+          isSelected = true;
+        }
       }
 
       return {

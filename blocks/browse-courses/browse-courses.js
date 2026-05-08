@@ -74,7 +74,9 @@ const LEVEL_PRIORITY = {
 const DROPDOWN_TYPE = 'multi-select';
 
 function matchesSanitizedFilter(a, b) {
-  return a === b || xssSanitizeQueryParamValue(a) === xssSanitizeQueryParamValue(b);
+  if (a === b) return true;
+  const stripPipes = (s) => s?.replace(/\|/g, '');
+  return stripPipes(a) === stripPipes(b);
 }
 
 /**
