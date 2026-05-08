@@ -5731,7 +5731,9 @@
         "name": "content-modified-time",
         "label": "Custom Last Updated Date",
         "description": "Overrides the last content update date of the page in page metadata.",
-        "placeholder": "YYYY-MM-DDTHH:mm:ss.sssZ"
+        "placeholder": "YYYY-MM-DDTHH:mm:ss.sssZ",
+        "displayFormat": "YYYY-MM-DDTHH:mm:ss.sssZ",
+        "valueFormat": "YYYY-MM-DDTHH:mm:ss.sssZ"
       },
       {
         "component": "aem-content",
