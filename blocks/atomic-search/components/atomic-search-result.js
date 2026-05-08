@@ -503,6 +503,39 @@ export const atomicResultListStyles = `
                   }
                 </style>
 `;
+
+/**
+ * Converts legacy content type values to hierarchical format.
+ * Legacy "event" → "Event|On Demand Event"
+ * @param {Array|string} contentTypes - Array of content type values or single value
+ * @returns {Array|string} Converted content type values
+ */
+const convertLegacyContentTypes = (contentTypes) => {
+  // For arrays, check if any Event|* child already exists before converting
+  if (Array.isArray(contentTypes)) {
+    const hasEventChild = contentTypes.some((type) => {
+      const strValue = String(type || '').trim();
+      return strValue.startsWith('Event|');
+    });
+
+    return contentTypes.map((value) => {
+      const strValue = String(value || '').trim();
+      // Only convert "Event" to "Event|On Demand Event" if no Event|* child exists
+      if (strValue.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY && !hasEventChild) {
+        return CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY;
+      }
+      return value;
+    });
+  }
+
+  // For single values, convert as-is
+  const strValue = String(contentTypes || '').trim();
+  if (strValue.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY) {
+    return CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY;
+  }
+  return contentTypes;
+};
+
 let isListenerAdded = false;
 export default function atomicResultHandler(block, placeholders) {
   // Cache feature flag check at component initialization to avoid per-result checks
@@ -731,38 +764,6 @@ export default function atomicResultHandler(block, placeholders) {
         }
       });
     }
-  };
-
-  /**
-   * Converts legacy content type values to hierarchical format.
-   * Legacy "event" → "Event|On Demand Event"
-   * @param {Array|string} contentTypes - Array of content type values or single value
-   * @returns {Array|string} Converted content type values
-   */
-  const convertLegacyContentTypes = (contentTypes) => {
-    // For arrays, check if any Event|* child already exists before converting
-    if (Array.isArray(contentTypes)) {
-      const hasEventChild = contentTypes.some((type) => {
-        const strValue = String(type || '').trim();
-        return strValue.startsWith('Event|');
-      });
-
-      return contentTypes.map((value) => {
-        const strValue = String(value || '').trim();
-        // Only convert "Event" to "Event|On Demand Event" if no Event|* child exists
-        if (strValue.toLowerCase() === 'event' && !hasEventChild) {
-          return CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY;
-        }
-        return value;
-      });
-    }
-
-    // For single values, convert as-is
-    const strValue = String(contentTypes || '').trim();
-    if (strValue.toLowerCase() === 'event') {
-      return CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY;
-    }
-    return contentTypes;
   };
 
   /**
