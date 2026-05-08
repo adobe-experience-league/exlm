@@ -5728,7 +5728,7 @@
       {
         "component": "date-time",
         "valueType": "date-time",
-        "name": "content-modified-time",
+        "name": "custom-modified-time",
         "label": "Custom Last Updated Date",
         "description": "Overrides the last content update date of the page in page metadata.",
         "placeholder": "YYYY-MM-DDTHH:mm:ss.sssZ",
