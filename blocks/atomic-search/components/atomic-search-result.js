@@ -13,6 +13,8 @@ import { ContentTypeIcons } from './atomic-search-icons.js';
 import { decorateIcons } from '../../../scripts/lib-franklin.js';
 import { htmlToElement } from '../../../scripts/scripts.js';
 import { INITIAL_ATOMIC_RESULT_CHILDREN_COUNT } from './atomic-result-children.js';
+import { CONTENT_TYPES } from '../../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
+import isFeatureEnabled from '../../../scripts/utils/feature-flag-utils.js';
 
 const MAX_HYDRATION_ATTEMPTS = 10;
 
@@ -503,6 +505,9 @@ export const atomicResultListStyles = `
 `;
 let isListenerAdded = false;
 export default function atomicResultHandler(block, placeholders) {
+  // Cache feature flag check at component initialization to avoid per-result checks
+  const isEventsV2Enabled = isFeatureEnabled('isEventsV2');
+
   const baseElement = block.querySelector('atomic-folded-result-list');
   const searchLayout = block.querySelector('atomic-search-layout');
   if (!searchLayout.classList.contains('no-results')) {
@@ -729,6 +734,38 @@ export default function atomicResultHandler(block, placeholders) {
   };
 
   /**
+   * Converts legacy content type values to hierarchical format.
+   * Legacy "event" → "Event|On Demand Event"
+   * @param {Array|string} contentTypes - Array of content type values or single value
+   * @returns {Array|string} Converted content type values
+   */
+  const convertLegacyContentTypes = (contentTypes) => {
+    // For arrays, check if any Event|* child already exists before converting
+    if (Array.isArray(contentTypes)) {
+      const hasEventChild = contentTypes.some((type) => {
+        const strValue = String(type || '').trim();
+        return strValue.startsWith('Event|');
+      });
+
+      return contentTypes.map((value) => {
+        const strValue = String(value || '').trim();
+        // Only convert "Event" to "Event|On Demand Event" if no Event|* child exists
+        if (strValue.toLowerCase() === 'event' && !hasEventChild) {
+          return CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY;
+        }
+        return value;
+      });
+    }
+
+    // For single values, convert as-is
+    const strValue = String(contentTypes || '').trim();
+    if (strValue.toLowerCase() === 'event') {
+      return CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY;
+    }
+    return contentTypes;
+  };
+
+  /**
    * Filters out parent content type values when their child values are present.
    * Handles both legacy (;) and new (|) separator formats.
    * @param {Array|string} contentTypes - Array of content type values or single value
@@ -929,13 +966,18 @@ export default function atomicResultHandler(block, placeholders) {
           li.textContent = label;
         });
         const rawContentType = resultEl.result?.result?.raw?.el_contenttype;
+        let convertedContentType = rawContentType;
+        // Convert legacy content types to hierarchical format (only when isEventsV2 feature flag is enabled)
+        if (isEventsV2Enabled) {
+          convertedContentType = convertLegacyContentTypes(rawContentType);
+        }
         // Filter out parent values when child values are present to avoid duplicate rendering
-        const filteredContentType = filterParentContentTypes(rawContentType);
+        const filteredContentType = filterParentContentTypes(convertedContentType);
         const contentTypeValues = Array.isArray(filteredContentType) ? structuredClone(filteredContentType) : null;
 
         // Hide duplicate parent <li> elements when child elements exist
         // The atomic component renders all values, so we need to hide duplicates in the DOM
-        if (Array.isArray(rawContentType) && contentTypeElements.length > 0) {
+        if (Array.isArray(convertedContentType) && contentTypeElements.length > 0) {
           const childValues = new Set();
           const parentToHide = new Set();
 
