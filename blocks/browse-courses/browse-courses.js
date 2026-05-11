@@ -73,6 +73,12 @@ const LEVEL_PRIORITY = {
  */
 const DROPDOWN_TYPE = 'multi-select';
 
+function matchesSanitizedFilter(a, b) {
+  if (a === b) return true;
+  const stripPipes = (s) => s?.replace(/\|/g, '');
+  return stripPipes(a) === stripPipes(b);
+}
+
 /**
  * Creates the header section with title, dropdown filter, and clear filter button
  * Uses module-level placeholders for internationalization
@@ -779,7 +785,13 @@ function preselectDropdownFiltersFromUrl(block, state, type) {
   const checkboxInputs = [...container.querySelectorAll('input[type="checkbox"]')];
 
   const valuesToCheck = checkboxInputs
-    .filter((input) => urlFilters.includes(input.value) && !input.checked)
+    .filter((input) => {
+      const matched =
+        type === 'product'
+          ? urlFilters.some((uf) => matchesSanitizedFilter(uf, input.value))
+          : urlFilters.includes(input.value);
+      return matched && !input.checked;
+    })
     .map((input) => input.value);
 
   if (valuesToCheck.length === 0) return;
@@ -997,7 +1009,7 @@ function updateProductDropdown(block, courseData, allProducts, shimmer, state) {
     (!productsFound ||
       state.currentProductFilters.reduce(
         (acc, curr) => {
-          if (filteredProducts.includes(curr)) {
+          if (filteredProducts.some((fp) => matchesSanitizedFilter(fp, curr))) {
             acc.splice(acc.indexOf(curr), 1);
           }
           return acc;
@@ -1017,7 +1029,9 @@ function updateProductDropdown(block, courseData, allProducts, shimmer, state) {
 
       if (state.currentProductFilters?.length > 0) {
         const availableValues = productsList.map((option) => option.title);
-        const validFilters = state.currentProductFilters.filter((product) => availableValues.includes(product));
+        const validFilters = state.currentProductFilters.filter((product) =>
+          availableValues.some((av) => matchesSanitizedFilter(av, product)),
+        );
 
         if (validFilters.length > 0) {
           state.currentProductFilters = validFilters;
@@ -1055,7 +1069,9 @@ function updateProductDropdown(block, courseData, allProducts, shimmer, state) {
 
     if (state.currentProductFilters?.length > 0) {
       const availableValues = productsList.map((option) => option.title);
-      const validFilters = state.currentProductFilters.filter((product) => availableValues.includes(product));
+      const validFilters = state.currentProductFilters.filter((product) =>
+        availableValues.some((av) => matchesSanitizedFilter(av, product)),
+      );
 
       if (validFilters.length > 0) {
         state.currentProductFilters = validFilters;
