@@ -212,8 +212,9 @@ function updateTags(block, selectedFilters, selectedLevels = []) {
       event.preventDefault();
       tagElement.remove();
 
-      // Find and uncheck the corresponding checkbox more efficiently
-      const checkbox = block.querySelector(`${SELECTORS.CHECKBOX_INPUT}[value="${filter}"]`);
+      // Find and uncheck the corresponding checkbox, handling pipe separator in product names
+      const checkboxes = block.querySelectorAll(SELECTORS.CHECKBOX_INPUT);
+      const checkbox = Array.from(checkboxes).find((cb) => matchesSanitizedFilter(cb.value, filter));
       if (checkbox?.checked) {
         checkbox.click();
       }
