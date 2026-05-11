@@ -81,11 +81,22 @@ function constructCoveoFacet(facets, param) {
       field: facet.id,
       type: facet.type,
     };
-    const sourceValues = param[`${facet.id}_all`]?.length ? param[`${facet.id}_all`] : facet.currentValues || [];
+    const allFacetsExist = param[`${facet.id}_all`]?.length > 0;
+    const sourceValues = allFacetsExist ? param[`${facet.id}_all`] : facet.currentValues || [];
     facetObject.numberOfValues = sourceValues.length || 2;
 
     facetObject.currentValues = sourceValues.map((value) => {
-      const isSelected = value === CONTENT_TYPES.COMMUNITY.MAPPING_KEY ? false : facet.currentValues?.includes(value);
+      let isSelected = false;
+      if (value !== CONTENT_TYPES.COMMUNITY.MAPPING_KEY) {
+        if (facet.currentValues?.includes(value)) {
+          isSelected = true;
+        } else if (
+          allFacetsExist &&
+          facet.currentValues?.some((cv) => cv?.replace(/\|/g, '') === value?.replace(/\|/g, ''))
+        ) {
+          isSelected = true;
+        }
+      }
 
       return {
         value,
