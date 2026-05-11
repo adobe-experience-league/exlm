@@ -25,14 +25,10 @@ const FACET_CONTROLLER_MAP = {
 const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
 const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
 const viewSwitcherInstances = new WeakMap();
+/** AbortController + MutationObserver teardown for Coveo document listeners (re-decorate or DOM removal). */
+const eventsSearchLoadingUiCleanups = new WeakMap();
 
 let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
 
 function getBaseFilterGroups() {
   return [
@@ -154,25 +150,24 @@ function bindSortDropdownToggle(block) {
   const dropDownBtn = block.querySelector('.sort-drop-btn');
   if (!dropDownBtn) return;
 
-  dropDownBtn.addEventListener('click', () => {
+  const closeOnDocumentClick = () => {
+    const btn = block.querySelector('.sort-drop-btn');
+    const sortDropdown = btn?.nextElementSibling;
+    sortDropdown?.classList.remove('show');
+    btn?.classList.remove('active');
+  };
+
+  dropDownBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
     dropDownBtn.classList.toggle('active');
     const sortDropdown = dropDownBtn.nextElementSibling;
     sortDropdown?.classList.toggle('show');
-    setTimeout(() => {
-      // Close dropdown when user clicks outside of sort menu/button.
-      document.addEventListener(
-        'click',
-        (event) => {
-          const isInsideDropdown = !!sortDropdown && sortDropdown.contains(event.target);
-          const isOnButton = dropDownBtn.contains(event.target);
-          const shouldHide = !isInsideDropdown && (!isOnButton || !dropDownBtn.classList.contains('active'));
-          if (shouldHide) {
-            sortDropdown?.classList.remove('show');
-          }
-        },
-        { once: true },
-      );
-    });
+
+    if (sortDropdown?.classList.contains('show')) {
+      document.addEventListener('click', closeOnDocumentClick, { once: true });
+    } else {
+      document.removeEventListener('click', closeOnDocumentClick);
+    }
   });
 }
 
@@ -251,7 +246,7 @@ function renderFilterGroups(block, groups) {
       const optionEl = createTag('div', { class: `events-search-filter-option${overflowClass}` });
       optionEl.innerHTML = `
         <input type="checkbox" id="${optionId}" value="${optionValue}" data-label="${optionLabel}" />
-        <span class="events-search-filter-option-label">${optionLabel}</span>
+        <label class="events-search-filter-option-label" for="${optionId}">${optionLabel}</label>
       `;
       optionsContainer.append(optionEl);
     });
@@ -388,12 +383,29 @@ function renderEventsSearchPageNumbers(block) {
  * @param {HTMLElement} block
  */
 function bindEventsSearchLoadingUI(block) {
+  eventsSearchLoadingUiCleanups.get(block)?.();
+
   const resultsBody = block.querySelector('.events-search-results-body');
   const grid = block.querySelector('.events-search-results-grid');
   const pagination = block.querySelector('.events-search-pagination');
   const noResults = block.querySelector('.events-search-no-results');
   const resultsTop = block.querySelector('.events-search-topbar');
   if (!resultsBody || !grid || !pagination) return;
+
+  const ac = new AbortController();
+  let disconnectMo;
+  function teardownEventsSearchLoadingUi() {
+    ac.abort();
+    disconnectMo?.disconnect();
+    eventsSearchLoadingUiCleanups.delete(block);
+  }
+  disconnectMo = new MutationObserver(() => {
+    if (!block.isConnected) {
+      teardownEventsSearchLoadingUi();
+    }
+  });
+  disconnectMo.observe(document.body, { childList: true, subtree: true });
+  eventsSearchLoadingUiCleanups.set(block, teardownEventsSearchLoadingUi);
 
   const shimmer = new BrowseCardShimmer(getBrowseFiltersResultCount());
   /** Avoid jumping to results on first Coveo run; scroll only after subsequent filter/pagination/etc. searches. */
@@ -433,8 +445,10 @@ function bindEventsSearchLoadingUI(block) {
     }
   };
 
-  document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, onPreprocess);
-  document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PROCESS_SEARCH_RESPONSE, onProcessSearchResponse);
+  document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, onPreprocess, { signal: ac.signal });
+  document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PROCESS_SEARCH_RESPONSE, onProcessSearchResponse, {
+    signal: ac.signal,
+  });
 }
 
 function bindEventsSearchPagination(block) {
@@ -762,6 +776,12 @@ async function initHeadlessSearch(block, groups) {
 
 export default async function decorate(block) {
   await loadEventsCardStyles();
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
   const groups = getBaseFilterGroups();
   try {
     await loadDynamicFacetValues(groups);
