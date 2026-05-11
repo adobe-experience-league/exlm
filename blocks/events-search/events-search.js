@@ -55,6 +55,7 @@ function getBaseFilterGroups(placeholders) {
 
 function createLayout(block, placeholders) {
   block.innerHTML = '';
+  const filtersPanelId = `events-search-filters-panel-${crypto.randomUUID()}`;
   const layout = createTag('div', { class: 'events-search-layout' });
   const filterColumn = createTag('aside', {
     class: 'events-search-filters-column',
@@ -63,12 +64,12 @@ function createLayout(block, placeholders) {
   const resultColumn = createTag('section', { class: 'events-search-results-column' });
 
   filterColumn.innerHTML = `
-    <button class="events-search-mobile-filter-toggle" type="button" aria-expanded="false">
+    <button class="events-search-mobile-filter-toggle" type="button" aria-expanded="false" aria-controls="${filtersPanelId}">
       <span class="icon icon-atomic-search-filter"></span>
       <span>${placeholders.eventSearchFiltersLabel || 'Filters'}</span>
       <span class="icon icon-chevron"></span>
     </button>
-    <div class="events-search-filters-panel">
+    <div class="events-search-filters-panel" id="${filtersPanelId}">
       <div class="events-search-filters-header">
         <h2 class="events-search-filters-heading">${placeholders.eventSearchFiltersLabel || 'Filters'}</h2>
         <button type="button" class="events-search-clear-filters">${
@@ -475,7 +476,7 @@ function bindEventsSearchLoadingUI(block) {
     grid.style.display = 'none';
     pagination.style.display = 'none';
     if (noResults) {
-      noResults.style.display = 'none';
+      noResults.setAttribute('hidden', '');
     }
   };
 
@@ -485,9 +486,6 @@ function bindEventsSearchLoadingUI(block) {
     shimmer.removeShimmer();
     grid.style.display = '';
     pagination.style.display = '';
-    if (noResults) {
-      noResults.style.removeProperty('display');
-    }
   };
 
   document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, onPreprocess, { signal: ac.signal });
@@ -550,16 +548,40 @@ function bindEventsSearchPagination(block) {
   }
 }
 
-function toggleFacetSelection(filterType, value) {
+function findFacetValueInController(controller, value) {
+  const want = String(value);
+  const values = controller?.state?.values || [];
+  return (
+    values.find((v) => v.value === want) ||
+    values.find((v) => String(v.value).trim() === want.trim()) ||
+    values.find((v) => String(v.value).toLowerCase() === want.toLowerCase())
+  );
+}
+
+/**
+ * Sync a checkbox with Coveo. Prefer a real facet value from controller state; when the value is
+ * missing from the current facet slice (common after another facet narrows results), fall back to
+ * an explicit selection object (browse-filters pattern) so multi-filter selection works.
+ */
+function toggleFacetSelection(filterType, value, isChecked) {
   const controllerName = FACET_CONTROLLER_MAP[filterType];
   if (!controllerName) return;
   const controller = window[controllerName];
-  if (!controller || !value) return;
+  if (!controller || value === '' || value == null) return;
 
-  const facetValue = controller.state?.values?.find((v) => v.value === value);
+  const facetValue = findFacetValueInController(controller, value);
   if (facetValue) {
-    controller.toggleSelect(facetValue);
+    const selected = facetValue.state === 'selected';
+    if (selected !== isChecked) {
+      controller.toggleSelect(facetValue);
+    }
+    return;
   }
+
+  controller.toggleSelect({
+    value,
+    state: isChecked ? 'selected' : 'idle',
+  });
 }
 
 function updateResultsCount(block, totalCount = 0, placeholders = {}) {
@@ -581,8 +603,12 @@ async function renderResults(block, results = [], searchResponseId = '') {
     grid.innerHTML = '';
     grid.classList.remove('browse-cards-block-content');
     grid.setAttribute('hidden', '');
-    noResults.classList.add('no-results');
-    noResults.removeAttribute('hidden');
+    /* Avoid flashing no-results on first paint: Coveo can emit an empty results slice before any response id exists. */
+    if (searchResponseId) {
+      noResults.removeAttribute('hidden');
+    } else {
+      noResults.setAttribute('hidden', '');
+    }
     return;
   }
 
@@ -615,7 +641,6 @@ async function renderResults(block, results = [], searchResponseId = '') {
     }),
   );
 
-  noResults.classList.remove('no-results');
   noResults.setAttribute('hidden', '');
   grid.removeAttribute('hidden');
 
@@ -685,7 +710,7 @@ function bindFilterInteractions(block, groups, placeholders) {
       targetGroup.selected = selectedCount;
     }
     updateGroupSelectionCount(block, filterType, selectedCount);
-    toggleFacetSelection(filterType, checkbox.value);
+    toggleFacetSelection(filterType, checkbox.value, checkbox.checked);
     if (window.headlessPager) {
       window.headlessPager.selectPage(1);
     }
@@ -738,8 +763,8 @@ function bindClearFilters(block, groups) {
     checkboxes.forEach((checkbox) => {
       const groupEl = checkbox.closest('.events-search-filter-group');
       const filterType = groupEl?.dataset.filterType;
+      toggleFacetSelection(filterType, checkbox.value, false);
       checkbox.checked = false;
-      toggleFacetSelection(filterType, checkbox.value);
     });
     groups.forEach((group) => {
       group.selected = 0;
@@ -752,11 +777,17 @@ function bindClearFilters(block, groups) {
         searchInput.value = '';
       }
     }
+    const hashBeforeClear = window.location.hash;
     handleCoverSearchSubmit('');
     if (window.headlessPager) {
       window.headlessPager.selectPage(1);
     }
-    executeSearch();
+    // `handleCoverSearchSubmit` updates `location.hash`; Coveo `urlManager` listens on `hashchange`
+    // and synchronizes (typically issuing a search). Avoid a second `executeSearch` when the hash
+    // actually changed; if it did not, still dispatch so facet + keyword clears take effect.
+    if (window.location.hash === hashBeforeClear) {
+      executeSearch();
+    }
     updateClearFiltersButtonState(block);
   });
 }
@@ -819,6 +850,9 @@ async function initHeadlessSearch(block, groups, placeholders) {
     },
   });
 
+  bindEventsSearchLoadingUI(block);
+  bindEventsSearchPagination(block);
+
   if (window.headlessQueryActionCreators && window.headlessSearchEngine) {
     const action = window.headlessQueryActionCreators.updateAdvancedSearchQueries({
       aq: BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT,
@@ -826,9 +860,6 @@ async function initHeadlessSearch(block, groups, placeholders) {
     window.headlessSearchEngine.dispatch(action);
     executeSearch();
   }
-
-  bindEventsSearchLoadingUI(block);
-  bindEventsSearchPagination(block);
   renderPageNumbers();
   updateClearFiltersButtonState(block);
 }

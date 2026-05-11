@@ -243,7 +243,7 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     flex-direction: column;
     align-items: center;
     gap: var(--spectrum-spacing-75);
-    margin-top: var(--spectrum-font-size-1200);
+    margin-top: calc(var(--spectrum-spacing-700) + var(--spectrum-spacing-50));
     margin-bottom: calc(var(--spectrum-spacing-100) + var(--spectrum-spacing-50));
   }
 
@@ -253,7 +253,7 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     font-variant: normal;
     font-weight: bold;
     font-size: var(--spectrum-font-size-800);
-    line-height: var(--spectrum-font-size-900);
+    line-height: var(--spectrum-line-height-xxl);
     letter-spacing: 0;
     color: var(--spectrum-gray-50);
     opacity: 1;

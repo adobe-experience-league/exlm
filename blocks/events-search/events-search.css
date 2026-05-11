@@ -493,11 +493,7 @@ main .events-search .events-search-pagination input.events-search-pg-input {
   text-align: center;
 }
 
-main .events-search .events-search-no-results {
-  display: none;
-}
-
-main .events-search .events-search-no-results.no-results {
+main .events-search .events-search-no-results:not([hidden]) {
   display: block;
   background-color: var(--spectrum-gray-200);
   color: var(--non-spectrum-grey);

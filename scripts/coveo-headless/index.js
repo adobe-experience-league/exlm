@@ -105,7 +105,7 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
 export function getSortButtonCaption(btn) {
   if (!btn) return '';
   const valueEl = btn.querySelector('.sort-drop-btn-value');
-  return valueEl ? valueEl.textContent.trim() : btn.innerHTML.trim();
+  return valueEl ? valueEl.textContent.trim() : btn.textContent.trim();
 }
 
 export function setSortButtonCaption(btn, caption) {
@@ -114,7 +114,7 @@ export function setSortButtonCaption(btn, caption) {
   if (valueEl) {
     valueEl.textContent = caption;
   } else {
-    btn.innerHTML = caption;
+    btn.textContent = caption;
   }
 }
 
@@ -356,7 +356,7 @@ export default async function initiateCoveoHeadlessSearch({
           aElement.setAttribute('href', '/');
           aElement.setAttribute('data-sort-criteria', option.sortCriteria);
           aElement.setAttribute('data-sort-caption', option.label);
-          aElement.innerHTML = option.label;
+          aElement.textContent = option.label;
           sortWrapperEl.appendChild(aElement);
         });
 
