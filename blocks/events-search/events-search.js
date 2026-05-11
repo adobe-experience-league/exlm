@@ -651,11 +651,17 @@ async function renderResults(block, results = [], searchResponseId = '') {
 
 async function handleSearchEngineSubscription(block, groups, placeholders) {
   if (!window.headlessSearchEngine || window.headlessStatusControllers?.state?.isLoading) return;
-  syncFilterUIFromHeadlessState(block, groups);
-  const search = window.headlessSearchEngine.state.search || {};
-  const { results = [], searchResponseId = '', response = {} } = search;
-  updateResultsCount(block, response.totalCount || 0, placeholders);
-  await renderResults(block, results, searchResponseId);
+  try {
+    syncFilterUIFromHeadlessState(block, groups);
+    const search = window.headlessSearchEngine.state.search || {};
+    const { results = [], searchResponseId = '', response = {} } = search;
+    updateResultsCount(block, response.totalCount || 0, placeholders);
+    await renderResults(block, results, searchResponseId);
+  } catch (err) {
+    // Coveo invokes this subscriber without awaiting; uncaught rejections from renderResults/buildCard would be unhandled.
+    // eslint-disable-next-line no-console
+    console.error('events-search: search engine subscription callback failed', err);
+  }
 }
 
 function bindFilterInteractions(block, groups, placeholders) {
