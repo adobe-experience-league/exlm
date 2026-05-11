@@ -2,6 +2,8 @@ import { htmlToElement, getConfig } from '../../scripts/scripts.js';
 import { getCookie } from '../../scripts/utils/cookie-utils.js';
 import { fetchUserBadges } from '../../scripts/data-service/premium-learning-data-service.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
+import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 const MAX_BADGES = 9;
 
@@ -33,19 +35,32 @@ function renderBadgeCard(userBadge, badge, learningObject) {
     subtitle = 'Cohort Completion';
   }
 
-  const cardHTML = `
-    <div class="badge-card">
-      <div class="badge-image${!badgeImageUrl ? ' no-badge-image' : ''}">
-        <img src="${badgeImageUrl}" alt="${badgeName}" loading="lazy" />
-      </div>
-      <div class="badge-info">
-        <p class="badge-cohort-name">${loName}</p>
-        <p class="badge-subtitle">${subtitle}</p>
-      </div>
-    </div>
-  `;
+  const card = document.createElement('div');
+  card.className = 'badge-card';
 
-  return htmlToElement(cardHTML);
+  const imageWrapper = document.createElement('div');
+  imageWrapper.className = `badge-image${!badgeImageUrl ? ' no-badge-image' : ''}`;
+
+  const img = document.createElement('img');
+  img.src = badgeImageUrl;
+  img.alt = badgeName;
+  img.loading = 'lazy';
+  imageWrapper.appendChild(img);
+
+  const info = document.createElement('div');
+  info.className = 'badge-info';
+
+  const cohortName = document.createElement('p');
+  cohortName.className = 'badge-cohort-name';
+  cohortName.textContent = loName;
+
+  const sub = document.createElement('p');
+  sub.className = 'badge-subtitle';
+  sub.textContent = subtitle;
+
+  info.append(cohortName, sub);
+  card.append(imageWrapper, info);
+  return card;
 }
 
 /**
@@ -88,63 +103,78 @@ export default async function decorate(block) {
   const shimmer = new BrowseCardShimmer(3);
   shimmer.addShimmer(badgesContentEl);
 
-  try {
-    // Get user ID from cookie
-    const userId = getCookie('alm_user_id');
-
-    if (!userId) {
-      // eslint-disable-next-line no-console
-      console.error('User ID not found in cookie');
-      block.remove();
-      return;
-    }
-
-    // Fetch user badges
-    const badgesData = await fetchUserBadges(userId, config, MAX_BADGES);
-
-    if (!badgesData || !badgesData.data || badgesData.data.length === 0) {
-      block.remove();
-      return;
-    }
-
-    // Build a map of included data for quick lookup
-    const includedMap = {};
-    if (badgesData.included) {
-      badgesData.included.forEach((item) => {
-        includedMap[`${item.type}:${item.id}`] = item;
-      });
-    }
-
-    // Filter for completed badges only (those with dateAchieved)
-    const completedBadges = badgesData.data.filter((userBadge) => userBadge?.attributes?.dateAchieved);
-
-    if (completedBadges.length === 0) {
-      block.remove();
-      return;
-    }
-
-    const badgesGrid = htmlToElement('<div class="badges-grid"></div>');
-
-    completedBadges.forEach((userBadge) => {
-      const badgeId = userBadge.relationships?.badge?.data?.id;
-      const modelId = userBadge.relationships?.model?.data?.id;
-
-      const badge = badgeId ? includedMap[`badge:${badgeId}`] : null;
-      const learningObject = modelId ? includedMap[`learningObject:${modelId}`] : null;
-
-      if (badge) {
-        const badgeCard = renderBadgeCard(userBadge, badge, learningObject);
-        badgesGrid.appendChild(badgeCard);
+  // Non-blocking eligibility check — shimmer stays visible until resolved.
+  // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
+  isSignedInUser()
+    .then((signedIn) => isPLEligible(signedIn))
+    .then(async (isEligible) => {
+      if (!isEligible) {
+        shimmer.removeShimmer();
+        block.remove();
+        return;
       }
-    });
 
-    shimmer.removeShimmer();
-    badgesContentEl.innerHTML = '';
-    badgesContentEl.appendChild(badgesGrid);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error loading premium learning badges:', error);
-    shimmer.removeShimmer();
-    block.remove();
-  }
+      try {
+        const userId = getCookie('alm_user_id');
+
+        if (!userId) {
+          shimmer.removeShimmer();
+          block.remove();
+          return;
+        }
+
+        const badgesData = await fetchUserBadges(userId, config, MAX_BADGES);
+
+        if (!badgesData || !badgesData.data || badgesData.data.length === 0) {
+          shimmer.removeShimmer();
+          block.remove();
+          return;
+        }
+
+        const includedMap = {};
+        if (badgesData.included) {
+          badgesData.included.forEach((item) => {
+            includedMap[`${item.type}:${item.id}`] = item;
+          });
+        }
+
+        const completedBadges = badgesData.data.filter((userBadge) => userBadge?.attributes?.dateAchieved);
+
+        if (completedBadges.length === 0) {
+          shimmer.removeShimmer();
+          block.remove();
+          return;
+        }
+
+        const badgesGrid = htmlToElement('<div class="badges-grid"></div>');
+
+        completedBadges.forEach((userBadge) => {
+          const badgeId = userBadge.relationships?.badge?.data?.id;
+          const modelId = userBadge.relationships?.model?.data?.id;
+
+          const badge = badgeId ? includedMap[`badge:${badgeId}`] : null;
+          const learningObject = modelId ? includedMap[`learningObject:${modelId}`] : null;
+
+          if (badge) {
+            const badgeCard = renderBadgeCard(userBadge, badge, learningObject);
+            badgesGrid.appendChild(badgeCard);
+          }
+        });
+
+        shimmer.removeShimmer();
+        badgesContentEl.innerHTML = '';
+        badgesContentEl.appendChild(badgesGrid);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error loading premium learning badges:', error);
+        shimmer.removeShimmer();
+        block.remove();
+      }
+    })
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Error resolving PL eligibility for badges:', err);
+      shimmer.removeShimmer();
+      block.remove();
+    });
 }

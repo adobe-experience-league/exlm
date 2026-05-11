@@ -821,7 +821,6 @@ export async function fetchUserBadges(userId, config, maxBadges = 9) {
     url.searchParams.set('include', 'badge,model');
 
     const response = await fetch(url.toString(), {
-      method: 'GET',
       headers: PLDataService.buildRequestHeaders(),
       credentials: 'include',
     });
