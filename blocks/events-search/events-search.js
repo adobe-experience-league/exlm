@@ -28,9 +28,7 @@ const viewSwitcherInstances = new WeakMap();
 /** AbortController + MutationObserver teardown for Coveo document listeners (re-decorate or DOM removal). */
 const eventsSearchLoadingUiCleanups = new WeakMap();
 
-let placeholders = {};
-
-function getBaseFilterGroups() {
+function getBaseFilterGroups(placeholders) {
   return [
     {
       id: 'el_product',
@@ -53,7 +51,7 @@ function getBaseFilterGroups() {
   ];
 }
 
-function createLayout(block) {
+function createLayout(block, placeholders) {
   block.innerHTML = '';
   const layout = createTag('div', { class: 'events-search-layout' });
   const filterColumn = createTag('aside', { class: 'events-search-filters-column' });
@@ -171,7 +169,7 @@ function bindSortDropdownToggle(block) {
   });
 }
 
-function getShowMoreLabel(count) {
+function getShowMoreLabel(count, placeholders) {
   const template = placeholders.eventSearchShowMoreLabel;
   if (template?.includes('{}')) {
     return template.replace('{}', String(count));
@@ -179,11 +177,11 @@ function getShowMoreLabel(count) {
   return template || `Show ${count} more`;
 }
 
-function getShowLessLabel() {
+function getShowLessLabel(placeholders) {
   return placeholders.eventSearchShowLessLabel || 'Show less';
 }
 
-function updateShowMoreButtonState(groupEl) {
+function updateShowMoreButtonState(groupEl, placeholders) {
   const showMoreButton = groupEl.querySelector('.events-search-filter-show-more');
   if (!showMoreButton) return;
 
@@ -199,7 +197,7 @@ function updateShowMoreButtonState(groupEl) {
   showMoreButton.removeAttribute('hidden');
   if (hiddenOptionsCount > 0) {
     showMoreButton.classList.remove('is-show-less');
-    const nextText = getShowMoreLabel(hiddenOptionsCount);
+    const nextText = getShowMoreLabel(hiddenOptionsCount, placeholders);
     if (labelEl) {
       labelEl.textContent = nextText;
     } else {
@@ -208,14 +206,14 @@ function updateShowMoreButtonState(groupEl) {
   } else {
     showMoreButton.classList.add('is-show-less');
     if (labelEl) {
-      labelEl.textContent = getShowLessLabel();
+      labelEl.textContent = getShowLessLabel(placeholders);
     } else {
-      showMoreButton.textContent = getShowLessLabel();
+      showMoreButton.textContent = getShowLessLabel(placeholders);
     }
   }
 }
 
-function renderFilterGroups(block, groups) {
+function renderFilterGroups(block, groups, placeholders) {
   const groupsRoot = block.querySelector('.events-search-filter-groups');
   if (!groupsRoot) return;
 
@@ -244,10 +242,17 @@ function renderFilterGroups(block, groups) {
       const optionId = `${group.id}-${index + 1}`;
       const overflowClass = index >= INITIAL_VISIBLE_FILTER_OPTIONS ? ' is-overflow-hidden' : '';
       const optionEl = createTag('div', { class: `events-search-filter-option${overflowClass}` });
-      optionEl.innerHTML = `
-        <input type="checkbox" id="${optionId}" value="${optionValue}" data-label="${optionLabel}" />
-        <label class="events-search-filter-option-label" for="${optionId}">${optionLabel}</label>
-      `;
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = optionId;
+      checkbox.value = String(optionValue ?? '');
+      checkbox.setAttribute('data-label', String(optionLabel ?? ''));
+      const optionLabelEl = createTag('label', {
+        class: 'events-search-filter-option-label',
+        for: optionId,
+      });
+      optionLabelEl.textContent = String(optionLabel ?? '');
+      optionEl.append(checkbox, optionLabelEl);
       optionsContainer.append(optionEl);
     });
 
@@ -255,11 +260,11 @@ function renderFilterGroups(block, groups) {
       const remainingCount = group.items.length - INITIAL_VISIBLE_FILTER_OPTIONS;
       const showMoreButton = createTag('button', { class: 'events-search-filter-show-more', type: 'button' });
       const showMoreLabel = createTag('span', { class: 'events-search-filter-show-more-label' });
-      showMoreLabel.textContent = getShowMoreLabel(remainingCount);
+      showMoreLabel.textContent = getShowMoreLabel(remainingCount, placeholders);
       const showMoreIcon = createTag('span', { class: 'icon icon-arrow', 'aria-hidden': 'true' });
       showMoreButton.append(showMoreLabel, showMoreIcon);
       optionsContainer.append(showMoreButton);
-      updateShowMoreButtonState(groupEl);
+      updateShowMoreButtonState(groupEl, placeholders);
     }
 
     groupsRoot.append(groupEl);
@@ -315,7 +320,10 @@ function syncFilterUIFromHeadlessState(block, groups) {
 
 function executeSearch() {
   if (!window.headlessSearchActionCreators || !window.headlessSearchEngine) return;
-  const searchAction = window.headlessSearchActionCreators.executeSearch(window.logSearchboxSubmit());
+  const logSubmit = window.logSearchboxSubmit;
+  const searchAction = window.headlessSearchActionCreators.executeSearch(
+    typeof logSubmit === 'function' ? logSubmit() : undefined,
+  );
   window.headlessSearchEngine.dispatch(searchAction);
 }
 
@@ -323,7 +331,7 @@ function executeSearch() {
  * Updates pagination UI from headless pager state (same pattern as browse-filters).
  * @param {HTMLElement} block
  */
-function renderEventsSearchPageNumbers(block) {
+function renderEventsSearchPageNumbers(block, placeholders) {
   const filtersPaginationEl = block.querySelector('.events-search-pagination');
   const resultsGrid = block.querySelector('.events-search-results-grid');
   if (!filtersPaginationEl || !window.headlessPager) {
@@ -517,10 +525,10 @@ function toggleFacetSelection(filterType, value, isChecked) {
   });
 }
 
-function updateResultsCount(block, totalCount = 0) {
+function updateResultsCount(block, totalCount = 0, placeholders = {}) {
   const countEl = block.querySelector('.events-search-results-count');
   if (!countEl) return;
-  const formatter = new Intl.NumberFormat('en-US');
+  const formatter = new Intl.NumberFormat();
   const countText = formatter.format(totalCount || 0);
   const suffix = placeholders.eventSearchResultsCountSuffix || 'events and recordings';
   const countStrong = createTag('strong', { class: 'events-search-results-count-value' }, countText);
@@ -579,16 +587,16 @@ async function renderResults(block, results = [], searchResponseId = '') {
   }
 }
 
-async function handleSearchEngineSubscription(block, groups) {
+async function handleSearchEngineSubscription(block, groups, placeholders) {
   if (!window.headlessSearchEngine || window.headlessStatusControllers?.state?.isLoading) return;
   syncFilterUIFromHeadlessState(block, groups);
   const search = window.headlessSearchEngine.state.search || {};
   const { results = [], searchResponseId = '', response = {} } = search;
-  updateResultsCount(block, response.totalCount || 0);
+  updateResultsCount(block, response.totalCount || 0, placeholders);
   await renderResults(block, results, searchResponseId);
 }
 
-function bindFilterInteractions(block, groups) {
+function bindFilterInteractions(block, groups, placeholders) {
   const panel = block.querySelector('.events-search-filters-panel');
   if (!panel) return;
 
@@ -611,7 +619,7 @@ function bindFilterInteractions(block, groups) {
           option.classList.remove('is-overflow-hidden');
         });
       }
-      updateShowMoreButtonState(groupEl);
+      updateShowMoreButtonState(groupEl, placeholders);
       return;
     }
 
@@ -625,7 +633,7 @@ function bindFilterInteractions(block, groups) {
   });
 
   panel.addEventListener('change', (event) => {
-    const checkbox = event.target.closest('.events-search-filter-option input[type="checkbox"]');
+    const checkbox = event.target.matches('input[type="checkbox"]') ? event.target : null;
     if (!checkbox) return;
 
     const groupEl = checkbox.closest('.events-search-filter-group');
@@ -739,16 +747,16 @@ async function loadDynamicFacetValues(groups) {
   });
 }
 
-async function initHeadlessSearch(block, groups) {
+async function initHeadlessSearch(block, groups, placeholders) {
   const { default: initiateCoveoHeadlessSearch } = await import('../../scripts/coveo-headless/index.js');
-  const renderPageNumbers = () => renderEventsSearchPageNumbers(block);
+  const renderPageNumbers = () => renderEventsSearchPageNumbers(block, placeholders);
   await initiateCoveoHeadlessSearch({
-    handleSearchEngineSubscription: () => handleSearchEngineSubscription(block, groups),
+    handleSearchEngineSubscription: () => handleSearchEngineSubscription(block, groups, placeholders),
     renderPageNumbers,
     numberOfResults: getBrowseFiltersResultCount(),
     renderSearchQuerySummary: () => {
       const totalCount = window.headlessQuerySummary?.state?.total || 0;
-      updateResultsCount(block, totalCount);
+      updateResultsCount(block, totalCount, placeholders);
     },
     handleSearchBoxSubscription: () => {
       const input = block.querySelector('.events-search-keyword-input');
@@ -776,13 +784,14 @@ async function initHeadlessSearch(block, groups) {
 
 export default async function decorate(block) {
   await loadEventsCardStyles();
+  let placeholders = {};
   try {
     placeholders = await fetchLanguagePlaceholders();
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Error fetching placeholders:', err);
   }
-  const groups = getBaseFilterGroups();
+  const groups = getBaseFilterGroups(placeholders);
   try {
     await loadDynamicFacetValues(groups);
   } catch (error) {
@@ -790,14 +799,14 @@ export default async function decorate(block) {
     console.error('Error fetching event facets:', error);
   }
 
-  createLayout(block);
+  createLayout(block, placeholders);
   decorateIcons(block);
-  renderFilterGroups(block, groups);
-  bindFilterInteractions(block, groups);
+  renderFilterGroups(block, groups, placeholders);
+  bindFilterInteractions(block, groups, placeholders);
   bindTopbarSearch(block);
   bindClearFilters(block, groups);
   bindMobileFilterToggle(block);
   await initEventsSearchViewSwitcher(block);
   bindSortDropdownToggle(block);
-  await initHeadlessSearch(block, groups);
+  await initHeadlessSearch(block, groups, placeholders);
 }

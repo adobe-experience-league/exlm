@@ -155,7 +155,7 @@ main .events-search.is-filters-open .events-search-mobile-filter-toggle .icon-ch
 
 main .events-search .events-search-filter-options {
   display: grid;
-  gap: 10px;
+  gap: var(--spectrum-spacing-100);
   padding: 0 0 var(--spectrum-spacing-300);
 }
 
@@ -179,7 +179,7 @@ main .events-search .events-search-filter-option:first-child {
 
 main .events-search .events-search-filter-option input[type='checkbox'] {
   border: 2px solid var(--non-spectrum-medium-gray);
-  margin-top: 4px;
+  margin-top: var(--spectrum-spacing-75);
   width: auto;
 }
 
@@ -205,8 +205,8 @@ main .events-search .events-search-filter-show-more {
 
 main .events-search .events-search-filter-show-more .icon-arrow {
   flex-shrink: 0;
-  width: 8px;
-  height: 12px;
+  width: var(--spectrum-spacing-100);
+  height: var(--spectrum-spacing-200);
   transform-origin: center;
   transition: transform 0.15s ease;
 }
@@ -217,7 +217,7 @@ main .events-search .events-search-filter-show-more .icon-arrow img {
 
 main .events-search .events-search-filter-show-more.is-show-less .icon-arrow {
   transform: rotate(180deg);
-  margin-top: 4px;
+  margin-top: var(--spectrum-spacing-75);
 }
 
 main .events-search .events-search-filter-show-more[hidden] {
@@ -263,7 +263,13 @@ main .events-search .events-search-keyword-input {
   margin-bottom: 0;
 }
 
-main .events-search .events-search-keyword-input:focus {
+main .events-search .events-search-keyword-input:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--link-color);
+  border-radius: 4px;
+}
+
+main .events-search .events-search-keyword-input:focus:not(:focus-visible) {
   outline: none;
 }
 
