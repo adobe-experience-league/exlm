@@ -96,6 +96,9 @@ function createLayout(block, placeholders) {
       </div>
     </div>
     <div class="events-search-results-body browse-cards-block">
+      <div class="events-search-no-results" hidden role="status">${
+        placeholders.eventSearchNoResults || 'No Results'
+      }</div>
       <div class="events-search-results-grid browse-cards-block-content"></div>
       <div class="events-search-pagination">
         <button class="nav-arrow" type="button" aria-label="${
@@ -109,9 +112,6 @@ function createLayout(block, placeholders) {
           placeholders.eventSearchPaginationNextAriaLabel || 'next page'
         }"></button>
       </div>
-      <div class="events-search-no-results" hidden role="status">${
-        placeholders.eventSearchNoResults || 'No Results'
-      }</div>
     </div>
   `;
 
@@ -542,6 +542,7 @@ async function renderResults(block, results = [], searchResponseId = '') {
 
   if (!results.length) {
     grid.innerHTML = '';
+    grid.classList.remove('browse-cards-block-content');
     grid.setAttribute('hidden', '');
     noResults.classList.add('no-results');
     noResults.removeAttribute('hidden');
@@ -555,6 +556,7 @@ async function renderResults(block, results = [], searchResponseId = '') {
   if (!shouldRender) return;
 
   grid.dataset.searchresponseid = searchResponseId;
+  grid.classList.add('browse-cards-block-content');
   const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
 
   const normalizedCards = cardsData.map((model) => {
