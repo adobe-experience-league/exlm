@@ -396,7 +396,7 @@ main .events-search .events-search-results-body .browse-card-shimmer {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--spectrum-spacing-300);
-  margin: 0;
+  margin: var(--spectrum-spacing-300) 0 0;
   height: fit-content;
   position: relative;
   z-index: 1;
@@ -556,6 +556,7 @@ main .events-search.is-filters-open .events-search-filters-panel {
 
   main .events-search .events-search-results-body .browse-card-shimmer {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: var(--spectrum-spacing-400);
   }
 
   main .events-search .events-search-controls {

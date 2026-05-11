@@ -421,6 +421,32 @@ function renderEventsSearchPageNumbers(block, placeholders) {
 }
 
 /**
+ * Toggle the no-results banner. When `suppressWhileShimmer` is set, keep it hidden while the
+ * loading shimmer is present so a stale empty subscription cannot stack no-results above shimmer.
+ */
+function setEventsSearchNoResultsVisibility(block, { resultCount, searchResponseId, suppressWhileShimmer = false }) {
+  const noResults = block.querySelector('.events-search-no-results');
+  if (!noResults) return;
+  if (suppressWhileShimmer) {
+    const resultsBody = block.querySelector('.events-search-results-body');
+    if (resultsBody?.querySelector(':scope > .browse-card-shimmer')) {
+      noResults.setAttribute('hidden', '');
+      return;
+    }
+  }
+  if (resultCount === 0) {
+    /* Avoid flashing no-results on first paint: Coveo can emit an empty results slice before any response id exists. */
+    if (searchResponseId) {
+      noResults.removeAttribute('hidden');
+    } else {
+      noResults.setAttribute('hidden', '');
+    }
+  } else {
+    noResults.setAttribute('hidden', '');
+  }
+}
+
+/**
  * Loading shimmer + hide results while Coveo search is in flight (browse-filters pattern).
  * @param {HTMLElement} block
  */
@@ -484,6 +510,12 @@ function bindEventsSearchLoadingUI(block) {
     shimmer.removeShimmer();
     grid.style.display = '';
     pagination.style.display = '';
+    const search = window.headlessSearchEngine?.state?.search || {};
+    const { results: responseResults = [], searchResponseId: responseSearchId = '' } = search;
+    setEventsSearchNoResultsVisibility(block, {
+      resultCount: responseResults.length,
+      searchResponseId: responseSearchId,
+    });
   };
 
   document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, onPreprocess, { signal: ac.signal });
@@ -601,12 +633,11 @@ async function renderResults(block, results = [], searchResponseId = '') {
     grid.innerHTML = '';
     grid.classList.remove('browse-cards-block-content');
     grid.setAttribute('hidden', '');
-    /* Avoid flashing no-results on first paint: Coveo can emit an empty results slice before any response id exists. */
-    if (searchResponseId) {
-      noResults.removeAttribute('hidden');
-    } else {
-      noResults.setAttribute('hidden', '');
-    }
+    setEventsSearchNoResultsVisibility(block, {
+      resultCount: 0,
+      searchResponseId,
+      suppressWhileShimmer: true,
+    });
     return;
   }
 
@@ -639,7 +670,7 @@ async function renderResults(block, results = [], searchResponseId = '') {
     }),
   );
 
-  noResults.setAttribute('hidden', '');
+  setEventsSearchNoResultsVisibility(block, { resultCount: results.length, searchResponseId });
   grid.removeAttribute('hidden');
 
   const resultsBody = block.querySelector('.events-search-results-body');
