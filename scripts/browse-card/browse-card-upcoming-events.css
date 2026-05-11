@@ -209,7 +209,7 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
   .list .browse-card.upcoming-event-card .browse-card-banner,
   .list .browse-card.event-upcoming-event-card .browse-card-banner {
     top: var(--spectrum-spacing-300);
-    height: var(--spectrum-font-size-500);
+    height: calc(2 * var(--spectrum-spacing-200) - var(--spectrum-spacing-50));
     font-style: normal;
     font-variant: normal;
     font-weight: var(--font-weight-heavy);
@@ -266,7 +266,7 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     font-variant: normal;
     font-weight: normal;
     font-size: var(--spectrum-font-size-200);
-    line-height: var(--spectrum-spacing-400);
+    line-height: 1.5;
     letter-spacing: 0;
     color: var(--spectrum-gray-50);
     opacity: 1;
@@ -314,14 +314,14 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
 
   .list .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info .icon,
   .list .browse-card.event-upcoming-event-card .browse-card-footer .browse-card-event-info .icon {
-    width: var(--spectrum-font-size-300);
-    height: var(--spectrum-font-size-300);
+    width: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
+    height: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
   }
 
   .list .browse-card.upcoming-event-card .browse-card-footer .browse-card-cta-element,
   .list .browse-card.event-upcoming-event-card .browse-card-footer .browse-card-cta-element {
     order: 3;
-    margin-block: var(--spectrum-font-size-400);
+    margin-block: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-75));
     margin-inline: 0;
     background: var(--spectrum-blue-900) 0% 0% no-repeat padding-box;
     border-radius: var(--spectrum-spacing-300);
@@ -443,8 +443,8 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
 
   .list .browse-card.upcoming-event-card .browse-card-footer .location-type .icon,
   .list .browse-card.event-upcoming-event-card .browse-card-footer .location-type .icon {
-    width: var(--spectrum-font-size-300);
-    height: var(--spectrum-font-size-300);
+    width: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
+    height: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
   }
 
   .list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner,
@@ -533,8 +533,8 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
 
   .list .browse-card.upcoming-event-card .browse-card-footer .footer-speakers-section .speaker-img-container,
   .list .browse-card.event-upcoming-event-card .browse-card-footer .footer-speakers-section .speaker-img-container {
-    width: var(--spectrum-font-size-1200);
-    height: var(--spectrum-font-size-1200);
+    width: calc(var(--spectrum-spacing-700) + var(--spectrum-spacing-50));
+    height: calc(var(--spectrum-spacing-700) + var(--spectrum-spacing-50));
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;

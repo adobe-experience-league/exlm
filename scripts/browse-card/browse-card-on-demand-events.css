@@ -148,7 +148,7 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
 
   .list .browse-card.event-card .browse-card-footer .browse-card-cta-element,
   .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-cta-element {
-    margin-block: var(--spectrum-font-size-400);
+    margin-block: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-75));
     margin-inline: 0;
     background-color: var(--spectrum-blue-900);
     border-radius: var(--spectrum-spacing-300);

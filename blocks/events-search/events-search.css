@@ -371,7 +371,8 @@ main .events-search .events-search-controls .sort-container .sort-dropdown-conte
   display: block;
 }
 
-/* Card grid + shimmer share the same container so @container queries apply to skeletons */
+/* Shimmer and card grid share `.events-search-results-body.browse-cards-block` so `@container browse-cards-block`
+   rules from browse-cards-block.css apply; shimmer column layout here follows the same media breakpoints as the grid. */
 main .events-search .events-search-results-body.browse-cards-block {
   min-height: auto;
 }

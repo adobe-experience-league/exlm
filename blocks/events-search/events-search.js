@@ -117,7 +117,7 @@ function createLayout(block, placeholders) {
         <button class="nav-arrow" type="button" aria-label="${
           placeholders.eventSearchPaginationPreviousAriaLabel || 'previous page'
         }"></button>
-        <input type="text" class="events-search-pg-input" aria-label="${
+        <input type="text" class="events-search-pg-input" inputmode="numeric" aria-label="${
           placeholders.eventSearchPaginationPageInputAriaLabel || 'Enter page number'
         }" value="1" />
         <span class="events-search-pagination-text"></span>
@@ -167,10 +167,9 @@ function bindSortDropdownToggle(block) {
       eventsSearchSortDropdownOpenAbort.delete(block);
       sortOpenAc.abort();
     }
-    const btn = block.querySelector('.sort-drop-btn');
-    const sortDropdown = btn?.nextElementSibling;
+    const sortDropdown = dropDownBtn.nextElementSibling;
     sortDropdown?.classList.remove('show');
-    btn?.classList.remove('active');
+    dropDownBtn.classList.remove('active');
   };
 
   dropDownBtn.addEventListener('click', (event) => {
@@ -258,15 +257,16 @@ function renderFilterGroups(block, groups, placeholders) {
       class: `events-search-filter-group${isInitiallyExpanded ? ' is-expanded' : ''}`,
       'data-filter-type': group.id,
     });
+    const groupOptionsRegionId = `${group.id}-options-${groupIndex}`;
     groupEl.innerHTML = `
       <button class="events-search-filter-group-header" type="button" aria-expanded="${
         isInitiallyExpanded ? 'true' : 'false'
-      }">
+      }" aria-controls="${groupOptionsRegionId}">
         <span class="events-search-filter-group-title">${group.name}</span>
         <span class="events-search-filter-group-count"></span>
         <span class="icon icon-chevron"></span>
       </button>
-      <div class="events-search-filter-options"></div>
+      <div class="events-search-filter-options" id="${groupOptionsRegionId}"></div>
     `;
 
     const optionsContainer = groupEl.querySelector('.events-search-filter-options');
