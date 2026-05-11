@@ -72,10 +72,6 @@
   z-index: 0;
 }
 
-.premium-learning-profile-badges .badge-image.no-badge-image img {
-  display: none;
-}
-
 .premium-learning-profile-badges .badge-cohort-name {
   font-size: var(--spectrum-font-size-200);
   font-weight: var(--font-weight-bold);

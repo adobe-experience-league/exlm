@@ -15,9 +15,9 @@ const MAX_BADGES = 9;
  * @returns {HTMLElement} Badge card element
  */
 function renderBadgeCard(userBadge, badge, learningObject) {
-  const badgeName = badge?.attributes?.name || 'Badge';
+  const badgeName = badge?.attributes?.name || '';
   const badgeImageUrl = badge?.attributes?.imageUrl || '';
-  const loName = learningObject?.attributes?.localizedMetadata?.[0]?.name || 'Cohort Name';
+  const loName = learningObject?.attributes?.localizedMetadata?.[0]?.name || '';
   const loType = learningObject?.attributes?.loType || '';
   const loFormat = learningObject?.attributes?.loFormat || '';
 
@@ -41,11 +41,13 @@ function renderBadgeCard(userBadge, badge, learningObject) {
   const imageWrapper = document.createElement('div');
   imageWrapper.className = `badge-image${!badgeImageUrl ? ' no-badge-image' : ''}`;
 
-  const img = document.createElement('img');
-  img.src = badgeImageUrl;
-  img.alt = badgeName;
-  img.loading = 'lazy';
-  imageWrapper.appendChild(img);
+  if (badgeImageUrl) {
+    const img = document.createElement('img');
+    img.src = badgeImageUrl;
+    img.alt = badgeName;
+    img.loading = 'lazy';
+    imageWrapper.appendChild(img);
+  }
 
   const info = document.createElement('div');
   info.className = 'badge-info';
