@@ -255,6 +255,11 @@ main .events-search .events-search-keyword {
   min-height: 44px;
 }
 
+main .events-search .events-search-keyword:has(.events-search-keyword-input:focus-visible) {
+  border-color: var(--spectrum-gray-500);
+  box-shadow: 0 0 0 2px var(--spectrum-gray-300);
+}
+
 main .events-search .events-search-keyword-input {
   inline-size: 100%;
   border: 0;
@@ -266,8 +271,6 @@ main .events-search .events-search-keyword-input {
 
 main .events-search .events-search-keyword-input:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px var(--link-color);
-  border-radius: var(--spectrum-spacing-75);
 }
 
 main .events-search .events-search-keyword-input:focus:not(:focus-visible) {
