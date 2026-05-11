@@ -56,7 +56,10 @@ function getBaseFilterGroups(placeholders) {
 function createLayout(block, placeholders) {
   block.innerHTML = '';
   const layout = createTag('div', { class: 'events-search-layout' });
-  const filterColumn = createTag('aside', { class: 'events-search-filters-column' });
+  const filterColumn = createTag('aside', {
+    class: 'events-search-filters-column',
+    'aria-label': String(placeholders.eventSearchFiltersLabel || 'Filters'),
+  });
   const resultColumn = createTag('section', { class: 'events-search-results-column' });
 
   filterColumn.innerHTML = `
@@ -543,16 +546,16 @@ function bindEventsSearchPagination(block) {
   }
 }
 
-function toggleFacetSelection(filterType, value, isChecked) {
+function toggleFacetSelection(filterType, value) {
   const controllerName = FACET_CONTROLLER_MAP[filterType];
   if (!controllerName) return;
   const controller = window[controllerName];
   if (!controller || !value) return;
 
-  controller.toggleSelect({
-    value,
-    state: isChecked ? 'selected' : 'idle',
-  });
+  const facetValue = controller.state?.values?.find((v) => v.value === value);
+  if (facetValue) {
+    controller.toggleSelect(facetValue);
+  }
 }
 
 function updateResultsCount(block, totalCount = 0, placeholders = {}) {
@@ -678,7 +681,7 @@ function bindFilterInteractions(block, groups, placeholders) {
       targetGroup.selected = selectedCount;
     }
     updateGroupSelectionCount(block, filterType, selectedCount);
-    toggleFacetSelection(filterType, checkbox.value, checkbox.checked);
+    toggleFacetSelection(filterType, checkbox.value);
     if (window.headlessPager) {
       window.headlessPager.selectPage(1);
     }
@@ -732,7 +735,7 @@ function bindClearFilters(block, groups) {
       const groupEl = checkbox.closest('.events-search-filter-group');
       const filterType = groupEl?.dataset.filterType;
       checkbox.checked = false;
-      toggleFacetSelection(filterType, checkbox.value, false);
+      toggleFacetSelection(filterType, checkbox.value);
     });
     groups.forEach((group) => {
       group.selected = 0;

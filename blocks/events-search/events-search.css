@@ -311,20 +311,20 @@ main .events-search .events-search-controls .sort-drop-btn {
   gap: var(--spectrum-spacing-75);
   font-weight: var(--font-weight-normal);
   margin: 0;
-  min-height: 32px;
-  padding: 7px 10px;
-  border-radius: 4px;
+  min-height: var(--spectrum-spacing-500);
+  padding: var(--spectrum-spacing-100) var(--spectrum-spacing-200);
+  border-radius: var(--spectrum-spacing-75);
   border: 1px solid var(--spectrum-gray-200);
   background: var(--background-color);
   font-size: var(--spectrum-font-size-100);
-  line-height: 17px;
+  line-height: var(--spectrum-line-height-xs);
   color: var(--spectrum-gray-900);
 }
 
 main .events-search .events-search-controls .sort-drop-btn-prefix,
 main .events-search .events-search-controls .sort-drop-btn-value {
   font-size: var(--spectrum-font-size-100);
-  line-height: 18px;
+  line-height: var(--spectrum-line-height-s);
   color: var(--spectrum-gray-900);
 }
 
@@ -332,11 +332,11 @@ main .events-search .events-search-controls .sort-container .sort-dropdown-conte
   display: none;
   position: absolute;
   background-color: var(--background-color);
-  box-shadow: 0 8px 8px rgb(10 10 10 / 10%);
+  box-shadow: 0 var(--spectrum-spacing-100) var(--spectrum-spacing-100) rgb(10 10 10 / 10%);
   border: 1px solid var(--spectrum-gray-400);
-  border-radius: 6px;
-  top: 36px;
-  width: 120px;
+  border-radius: calc(var(--spectrum-spacing-75) + var(--spectrum-spacing-50));
+  top: calc(var(--spectrum-spacing-500) + var(--spectrum-spacing-75));
+  width: calc(var(--spectrum-spacing-900) + var(--spectrum-spacing-800));
   z-index: 15;
   right: 0;
 }
@@ -349,15 +349,15 @@ main .events-search .events-search-controls .sort-container .sort-dropdown-conte
   font-weight: normal;
   text-decoration: none;
   margin: 0;
-  padding: 5px 15px;
+  padding: calc(var(--spectrum-spacing-75) + var(--spectrum-spacing-50)) var(--spectrum-spacing-300);
   text-transform: capitalize;
 }
 
 main .events-search .events-search-controls .sort-container .sort-dropdown-content a.selected {
   background-image: url('../../icons/checkmark.svg');
-  background-position: 93% 12px;
+  background-position: 93% var(--spectrum-spacing-200);
   background-repeat: no-repeat;
-  background-size: 12px;
+  background-size: var(--spectrum-spacing-200);
 }
 
 main .events-search .events-search-controls .sort-container .sort-dropdown-content a:hover {
