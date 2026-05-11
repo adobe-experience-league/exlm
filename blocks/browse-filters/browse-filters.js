@@ -1543,13 +1543,35 @@ function decorateBrowseTopics(block) {
     allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
     allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
   }
+  // Parse localized tags content into a structured object
   const localizedTopicsTags = localizedTopicsContent
     ? localizedTopicsContent.split(',')?.reduce((acc, pair) => {
-        const [key, value] = pair.split(':').map((str) => str.trim());
-        if (key) acc[key] = value || '';
+        const trimmedPair = pair.trim();
+
+        // Check if it's TQ format: tq/{uuid}:{englishLabel}:{translatedLabel}
+        if (trimmedPair.startsWith('tq/')) {
+          const parts = trimmedPair.split(':');
+          if (parts.length === 3) {
+            const key = parts[0]; // tq/{uuid}
+            const englishLabel = parts[1];
+            const translatedLabel = parts[2];
+            acc[key] = { english: englishLabel, translated: translatedLabel };
+          }
+        } else {
+          // Legacy format: {key}/{tag}:{translatedTag} or {key}/{solution}/{tag}:{translatedTag}
+          const lastColonIndex = trimmedPair.lastIndexOf(':');
+          if (lastColonIndex > -1) {
+            const keyPart = trimmedPair.substring(0, lastColonIndex);
+            const translatedPart = trimmedPair.substring(lastColonIndex + 1);
+            // Extract English tag (last part before colon)
+            const keySegments = keyPart.split('/');
+            const englishTag = keySegments[keySegments.length - 1];
+            acc[keyPart] = { english: englishTag, translated: translatedPart };
+          }
+        }
         return acc;
       }, {})
-    : '';
+    : {};
 
   const supportedProducts = [];
   if (allSolutionsTags.length) {
@@ -1601,14 +1623,34 @@ function decorateBrowseTopics(block) {
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
         topicsButtonDiv.dataset.topicname = topicsButtonTitle;
         topicsButtonDiv.dataset.label = topicName;
-        if (lang === 'en' || window.location.href.includes('.html') || localizedTopicsTags === '') {
+
+        if (lang === 'en' || window.location.href.includes('.html') || Object.keys(localizedTopicsTags).length === 0) {
           topicsButtonDiv.innerHTML = topicName;
         } else {
-          const topicTag = topicsButtonTitle.slice(4); // Remove "exl:" prefix
-          topicsButtonDiv.innerHTML =
-            localizedTopicsTags[topicTag] && localizedTopicsTags[topicTag] !== 'undefined'
-              ? localizedTopicsTags[topicTag]
-              : topicName;
+          // Try to find matching localized tag
+          let displayLabel = topicName;
+
+          // For TQ tags, match by the full key (tq/{uuid})
+          if (topicsButtonTitle.startsWith('tq/')) {
+            const tagInfo = localizedTopicsTags[topicsButtonTitle];
+            if (tagInfo && tagInfo.translated && tagInfo.translated !== 'undefined') {
+              displayLabel = tagInfo.translated;
+            } else if (tagInfo && tagInfo.english) {
+              displayLabel = tagInfo.english;
+            }
+          } else {
+            // For legacy tags, construct the key and look it up
+            const topicTag = topicsButtonTitle.startsWith('exl:') ? topicsButtonTitle.slice(4) : topicsButtonTitle;
+
+            const tagInfo = localizedTopicsTags[topicTag];
+            if (tagInfo && tagInfo.translated && tagInfo.translated !== 'undefined') {
+              displayLabel = tagInfo.translated;
+            } else if (tagInfo && tagInfo.english) {
+              displayLabel = tagInfo.english;
+            }
+          }
+
+          topicsButtonDiv.innerHTML = displayLabel;
         }
 
         contentDiv.appendChild(topicsButtonDiv);
