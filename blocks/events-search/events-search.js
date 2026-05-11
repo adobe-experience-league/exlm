@@ -27,6 +27,8 @@ const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
 const viewSwitcherInstances = new WeakMap();
 /** AbortController + MutationObserver teardown for Coveo document listeners (re-decorate or DOM removal). */
 const eventsSearchLoadingUiCleanups = new WeakMap();
+/** Per-block AbortController for open sort dropdown document listeners (click-outside + Escape). */
+const eventsSearchSortDropdownOpenAbort = new WeakMap();
 
 function getBaseFilterGroups(placeholders) {
   return [
@@ -83,7 +85,12 @@ function createLayout(block, placeholders) {
         }" />
       </div>
       <div class="events-search-meta-row">
-        <div class="events-search-results-count"></div>
+        <div
+          class="events-search-results-count"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        ></div>
         <div class="events-search-controls">
           <div class="events-search-view-switcher"></div>
           <div class="sort-container">
@@ -148,7 +155,12 @@ function bindSortDropdownToggle(block) {
   const dropDownBtn = block.querySelector('.sort-drop-btn');
   if (!dropDownBtn) return;
 
-  const closeOnDocumentClick = () => {
+  const closeSortDropdown = () => {
+    const sortOpenAc = eventsSearchSortDropdownOpenAbort.get(block);
+    if (sortOpenAc) {
+      eventsSearchSortDropdownOpenAbort.delete(block);
+      sortOpenAc.abort();
+    }
     const btn = block.querySelector('.sort-drop-btn');
     const sortDropdown = btn?.nextElementSibling;
     sortDropdown?.classList.remove('show');
@@ -162,9 +174,25 @@ function bindSortDropdownToggle(block) {
     sortDropdown?.classList.toggle('show');
 
     if (sortDropdown?.classList.contains('show')) {
-      document.addEventListener('click', closeOnDocumentClick, { once: true });
+      const sortOpenAc = new AbortController();
+      eventsSearchSortDropdownOpenAbort.set(block, sortOpenAc);
+
+      const onDocumentClose = () => {
+        closeSortDropdown();
+      };
+
+      document.addEventListener('click', onDocumentClose, { once: true, signal: sortOpenAc.signal });
+      document.addEventListener(
+        'keydown',
+        (ev) => {
+          if (ev.key !== 'Escape') return;
+          ev.preventDefault();
+          onDocumentClose();
+        },
+        { signal: sortOpenAc.signal },
+      );
     } else {
-      document.removeEventListener('click', closeOnDocumentClick);
+      closeSortDropdown();
     }
   });
 }
@@ -403,6 +431,8 @@ function bindEventsSearchLoadingUI(block) {
   const ac = new AbortController();
   let disconnectMo;
   function teardownEventsSearchLoadingUi() {
+    eventsSearchSortDropdownOpenAbort.get(block)?.abort();
+    eventsSearchSortDropdownOpenAbort.delete(block);
     ac.abort();
     disconnectMo?.disconnect();
     eventsSearchLoadingUiCleanups.delete(block);
@@ -733,6 +763,18 @@ function bindMobileFilterToggle(block) {
     const isOpen = block.classList.contains('is-filters-open');
     setMobileFilterPanelState(block, !isOpen);
   });
+
+  block.addEventListener(
+    'keydown',
+    (event) => {
+      if (event.key !== 'Escape') return;
+      if (!block.classList.contains('is-filters-open')) return;
+      event.preventDefault();
+      setMobileFilterPanelState(block, false);
+      toggleButton.focus();
+    },
+    true,
+  );
 }
 
 async function loadDynamicFacetValues(groups) {
