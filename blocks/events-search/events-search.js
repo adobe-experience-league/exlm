@@ -14,7 +14,6 @@ import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js
 import {
   eventTypeOptions,
   getBrowseFiltersResultCount,
-  getFiltersPaginationText,
   handleCoverSearchSubmit,
 } from '../browse-filters/browse-filter-utils.js';
 
@@ -39,19 +38,19 @@ function getBaseFilterGroups() {
   return [
     {
       id: 'el_product',
-      name: placeholders.filterProductLabel || 'Product',
+      name: placeholders.eventSearchFilterProductLabel || 'Product',
       items: [],
       selected: 0,
     },
     {
       id: 'el_event_series',
-      name: placeholders.filterEventSeriesLabel || 'Series',
+      name: placeholders.eventSearchFilterEventSeriesLabel || 'Series',
       items: [],
       selected: 0,
     },
     {
       id: 'el_contenttype',
-      name: placeholders.filterEventTypeLabel || 'Event Type',
+      name: placeholders.eventSearchFilterEventTypeLabel || 'Event Type',
       items: eventTypeOptions.items.map((item) => ({ ...item })),
       selected: 0,
     },
@@ -67,14 +66,14 @@ function createLayout(block) {
   filterColumn.innerHTML = `
     <button class="events-search-mobile-filter-toggle" type="button" aria-expanded="false">
       <span class="icon icon-atomic-search-filter"></span>
-      <span>${placeholders.filterLabel || 'Filters'}</span>
+      <span>${placeholders.eventSearchFiltersLabel || 'Filters'}</span>
       <span class="icon icon-chevron"></span>
     </button>
     <div class="events-search-filters-panel">
       <div class="events-search-filters-header">
-        <h2 class="events-search-filters-heading">${placeholders.filterLabel || 'Filters'}</h2>
+        <h2 class="events-search-filters-heading">${placeholders.eventSearchFiltersLabel || 'Filters'}</h2>
         <button type="button" class="events-search-clear-filters">${
-          placeholders.filterClearFilterLabel || 'Clear all filters'
+          placeholders.eventSearchClearFiltersLabel || 'Clear all filters'
         }</button>
       </div>
       <div class="events-search-filter-groups"></div>
@@ -86,7 +85,7 @@ function createLayout(block) {
       <div class="events-search-keyword">
         <span class="icon icon-search"></span>
         <input type="text" class="events-search-keyword-input" placeholder="${
-          placeholders.eventfilterKeywordSearch || 'Search events'
+          placeholders.eventSearchKeywordPlaceholder || 'Search events'
         }" />
       </div>
       <div class="events-search-meta-row">
@@ -103,13 +102,19 @@ function createLayout(block) {
     <div class="events-search-results-body browse-cards-block">
       <div class="events-search-results-grid browse-cards-block-content"></div>
       <div class="events-search-pagination">
-        <button class="nav-arrow" type="button" aria-label="previous page"></button>
-        <input type="text" class="events-search-pg-input" aria-label="Enter page number" value="1" />
+        <button class="nav-arrow" type="button" aria-label="${
+          placeholders.eventSearchPaginationPreviousAriaLabel || 'previous page'
+        }"></button>
+        <input type="text" class="events-search-pg-input" aria-label="${
+          placeholders.eventSearchPaginationPageInputAriaLabel || 'Enter page number'
+        }" value="1" />
         <span class="events-search-pagination-text"></span>
-        <button class="nav-arrow right-nav-arrow" type="button" aria-label="next page"></button>
+        <button class="nav-arrow right-nav-arrow" type="button" aria-label="${
+          placeholders.eventSearchPaginationNextAriaLabel || 'next page'
+        }"></button>
       </div>
       <div class="events-search-no-results" hidden role="status">${
-        placeholders.noResultsTextBrowse || 'No Results'
+        placeholders.eventSearchNoResults || 'No Results'
       }</div>
     </div>
   `;
@@ -170,7 +175,11 @@ function bindSortDropdownToggle(block) {
 }
 
 function getShowMoreLabel(count) {
-  return `Show ${count} more`;
+  const template = placeholders.eventSearchShowMoreLabel;
+  if (template?.includes('{}')) {
+    return template.replace('{}', String(count));
+  }
+  return template || `Show ${count} more`;
 }
 
 function updateShowMoreButtonState(groupEl) {
@@ -298,7 +307,15 @@ function renderEventsSearchPageNumbers(block) {
     inputText.value = String(currentPageNumber);
   }
   if (paginationTextEl) {
-    paginationTextEl.textContent = getFiltersPaginationText(pgCount);
+    if (pgCount > 1) {
+      paginationTextEl.textContent = placeholders?.eventSearchPagesLabel
+        ? placeholders.eventSearchPagesLabel.replace('{}', pgCount)
+        : `of ${pgCount} pages`;
+    } else {
+      paginationTextEl.textContent = placeholders?.eventSearchPageLabel
+        ? placeholders.eventSearchPageLabel.replace('{}', pgCount)
+        : `of ${pgCount} page`;
+    }
   }
 
   const leftNavButton = filtersPaginationEl.querySelector('.nav-arrow:not(.right-nav-arrow)');
@@ -452,7 +469,7 @@ function updateResultsCount(block, totalCount = 0) {
   if (!countEl) return;
   const formatter = new Intl.NumberFormat('en-US');
   const countText = formatter.format(totalCount || 0);
-  const suffix = placeholders.eventsSearchResultsLabel || 'events and recordings';
+  const suffix = placeholders.eventSearchResultsCountSuffix || 'events and recordings';
   countEl.textContent = `${countText} ${suffix}`;
 }
 
