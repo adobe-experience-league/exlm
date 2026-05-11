@@ -515,12 +515,13 @@ const convertLegacyContentTypes = (contentTypes) => {
   if (Array.isArray(contentTypes)) {
     const hasEventChild = contentTypes.some((type) => {
       const strValue = String(type || '').trim();
-      return strValue.startsWith('Event|');
+      return strValue.toLowerCase().startsWith('event|');
     });
 
     return contentTypes.map((value) => {
       const strValue = String(value || '').trim();
       // Only convert "Event" to "Event|On Demand Event" if no Event|* child exists
+      // TODO: Remove this conversion once Events v2 is live and legacy 'event' data is retired
       if (strValue.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY && !hasEventChild) {
         return CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY;
       }
