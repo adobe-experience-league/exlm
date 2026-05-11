@@ -188,6 +188,9 @@ main .events-search .events-search-filter-option-label {
 }
 
 main .events-search .events-search-filter-show-more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spectrum-spacing-75);
   margin-top: var(--spectrum-spacing-75);
   border: 0;
   background: transparent;
@@ -197,6 +200,16 @@ main .events-search .events-search-filter-show-more {
   padding: 0;
   text-align: left;
   cursor: pointer;
+}
+
+main .events-search .events-search-filter-show-more .icon-arrow {
+  flex-shrink: 0;
+  width: 8px;
+  height: 12px;
+}
+
+main .events-search .events-search-filter-show-more .icon-arrow img {
+  object-fit: contain;
 }
 
 main .events-search .events-search-filter-show-more[hidden] {

@@ -194,7 +194,12 @@ function updateShowMoreButtonState(groupEl) {
     return;
   }
 
-  showMoreButton.textContent = getShowMoreLabel(hiddenOptionsCount);
+  const labelEl = showMoreButton.querySelector('.events-search-filter-show-more-label');
+  if (labelEl) {
+    labelEl.textContent = getShowMoreLabel(hiddenOptionsCount);
+  } else {
+    showMoreButton.textContent = getShowMoreLabel(hiddenOptionsCount);
+  }
   showMoreButton.removeAttribute('hidden');
 }
 
@@ -236,11 +241,11 @@ function renderFilterGroups(block, groups) {
 
     if (group.items.length > INITIAL_VISIBLE_FILTER_OPTIONS) {
       const remainingCount = group.items.length - INITIAL_VISIBLE_FILTER_OPTIONS;
-      const showMoreButton = createTag(
-        'button',
-        { class: 'events-search-filter-show-more', type: 'button' },
-        getShowMoreLabel(remainingCount),
-      );
+      const showMoreButton = createTag('button', { class: 'events-search-filter-show-more', type: 'button' });
+      const showMoreLabel = createTag('span', { class: 'events-search-filter-show-more-label' });
+      showMoreLabel.textContent = getShowMoreLabel(remainingCount);
+      const showMoreIcon = createTag('span', { class: 'icon icon-arrow', 'aria-hidden': 'true' });
+      showMoreButton.append(showMoreLabel, showMoreIcon);
       optionsContainer.append(showMoreButton);
       updateShowMoreButtonState(groupEl);
     }
@@ -374,6 +379,8 @@ function bindEventsSearchLoadingUI(block) {
   if (!resultsBody || !grid || !pagination) return;
 
   const shimmer = new BrowseCardShimmer(getBrowseFiltersResultCount());
+  /** Avoid jumping to results on first Coveo run; scroll only after subsequent filter/pagination/etc. searches. */
+  let hasCompletedInitialSearchResponse = false;
 
   const placeShimmerBeforeGrid = () => {
     const shimmerEl = resultsBody.querySelector(':scope > .browse-card-shimmer');
@@ -385,7 +392,7 @@ function bindEventsSearchLoadingUI(block) {
   const onPreprocess = (e) => {
     const { method = '' } = e.detail ?? {};
     if (method !== 'search' || !block.isConnected) return;
-    if (resultsTop) {
+    if (resultsTop && hasCompletedInitialSearchResponse) {
       resultsTop.scrollIntoView({ behavior: 'auto', block: 'start' });
       window.scrollBy({ top: RESULTS_SCROLL_ADJUSTMENT_OFFSET });
     }
@@ -400,6 +407,7 @@ function bindEventsSearchLoadingUI(block) {
 
   const onProcessSearchResponse = () => {
     if (!block.isConnected) return;
+    hasCompletedInitialSearchResponse = true;
     shimmer.removeShimmer();
     grid.style.display = '';
     pagination.style.display = '';
