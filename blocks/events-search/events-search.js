@@ -88,7 +88,7 @@ function createLayout(block, placeholders) {
           <div class="events-search-view-switcher"></div>
           <div class="sort-container">
             <button type="button" class="sort-drop-btn">
-              <span class="sort-drop-btn-prefix">${placeholders.eventSearchfilterSortLabel || 'Sort:'}</span>
+              <span class="sort-drop-btn-prefix">${placeholders.eventSearchFilterSortLabel || 'Sort:'}</span>
               <span class="sort-drop-btn-value">${placeholders.filterSortRelevanceLabel || 'Relevance'}</span>
             </button>
           </div>
@@ -412,7 +412,7 @@ function bindEventsSearchLoadingUI(block) {
       teardownEventsSearchLoadingUi();
     }
   });
-  disconnectMo.observe(document.body, { childList: true, subtree: true });
+  disconnectMo.observe(block.parentElement || document.body, { childList: true });
   eventsSearchLoadingUiCleanups.set(block, teardownEventsSearchLoadingUi);
 
   const shimmer = new BrowseCardShimmer(getBrowseFiltersResultCount());
