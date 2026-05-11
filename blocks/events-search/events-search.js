@@ -85,6 +85,10 @@ function createLayout(block, placeholders) {
         <span class="icon icon-search-gray"></span>
         <input type="text" class="events-search-keyword-input" placeholder="${
           placeholders.eventSearchKeywordPlaceholder || 'Search events'
+        }" aria-label="${
+          placeholders.eventSearchKeywordAriaLabel ||
+          placeholders.eventSearchKeywordPlaceholder ||
+          'Search events'
         }" />
       </div>
       <div class="events-search-meta-row">

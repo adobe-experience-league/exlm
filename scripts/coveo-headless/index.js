@@ -98,6 +98,26 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
   searchEngine.dispatch(fields);
 }
 
+/**
+ * Read/write the visible sort caption on a `.sort-drop-btn` (prefers `.sort-drop-btn-value`).
+ * Pure DOM helpers — no Coveo state; safe to reuse for additional sort widgets.
+ */
+export function getSortButtonCaption(btn) {
+  if (!btn) return '';
+  const valueEl = btn.querySelector('.sort-drop-btn-value');
+  return valueEl ? valueEl.textContent.trim() : btn.innerHTML.trim();
+}
+
+export function setSortButtonCaption(btn, caption) {
+  if (!btn) return;
+  const valueEl = btn.querySelector('.sort-drop-btn-value');
+  if (valueEl) {
+    valueEl.textContent = caption;
+  } else {
+    btn.innerHTML = caption;
+  }
+}
+
 export const fragment = () => window.location.hash.slice(1);
 
 const hashURL = fragment();
@@ -315,20 +335,6 @@ export default async function initiateCoveoHeadlessSearch({
         headlessSearchBox.subscribe(handleSearchBoxSubscription);
 
         /* TODO: Sorting segments to be extracted & restructured and incorporate them into the browse filters, as this file serves coveo engine methods */
-        const getSortButtonCaption = (btn) => {
-          if (!btn) return '';
-          const valueEl = btn.querySelector('.sort-drop-btn-value');
-          return valueEl ? valueEl.textContent.trim() : btn.innerHTML.trim();
-        };
-        const setSortButtonCaption = (btn, caption) => {
-          if (!btn) return;
-          const valueEl = btn.querySelector('.sort-drop-btn-value');
-          if (valueEl) {
-            valueEl.textContent = caption;
-          } else {
-            btn.innerHTML = caption;
-          }
-        };
         const sortLabel = {
           relevance: placeholders.filterSortRelevanceLabel,
           popularity: placeholders.filerSortPopularityLabel,

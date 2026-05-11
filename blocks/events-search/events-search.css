@@ -249,7 +249,7 @@ main .events-search .events-search-keyword {
   display: flex;
   align-items: center;
   border: 1px solid var(--footer-border-color);
-  border-radius: 28px;
+  border-radius: calc(var(--spectrum-spacing-400) + 2 * var(--spectrum-spacing-50));
   background: var(--background-color);
   padding: 0 var(--spectrum-spacing-200);
   min-height: 44px;
@@ -267,7 +267,7 @@ main .events-search .events-search-keyword-input {
 main .events-search .events-search-keyword-input:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px var(--link-color);
-  border-radius: 4px;
+  border-radius: var(--spectrum-spacing-75);
 }
 
 main .events-search .events-search-keyword-input:focus:not(:focus-visible) {
@@ -418,7 +418,7 @@ main .events-search .events-search-pagination {
 
 main .events-search .events-search-pagination-text {
   font-size: var(--spectrum-font-size-100);
-  line-height: 17px;
+  line-height: var(--spectrum-line-height-xs);
   color: var(--spectrum-gray-700);
 }
 
@@ -429,13 +429,22 @@ main .events-search .events-search-pagination.events-search-pagination-hidden {
 main .events-search .events-search-pagination .nav-arrow {
   position: relative;
   background: transparent;
-  outline: none;
   height: 36px;
   width: 36px;
   padding: 0;
   margin: 0;
   border: 0;
   cursor: pointer;
+}
+
+main .events-search .events-search-pagination .nav-arrow:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--link-color);
+  border-radius: var(--spectrum-spacing-75);
+}
+
+main .events-search .events-search-pagination .nav-arrow:focus:not(:focus-visible) {
+  outline: none;
 }
 
 main .events-search .events-search-pagination .nav-arrow::after {
@@ -472,10 +481,10 @@ main .events-search .events-search-pagination input.events-search-pg-input {
   width: 49px;
   height: 32px;
   margin: 0 var(--spectrum-spacing-100);
-  border-radius: 4px;
+  border-radius: var(--spectrum-spacing-75);
   border: 1px solid var(--spectrum-gray-200);
   font-size: var(--spectrum-font-size-100);
-  line-height: 17px;
+  line-height: var(--spectrum-line-height-xs);
   color: var(--spectrum-gray-700);
   font-family: var(--body-font-family);
   text-align: center;
