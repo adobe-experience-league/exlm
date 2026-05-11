@@ -1606,7 +1606,7 @@ export async function fetchJson(url, fallbackUrl) {
 }
 
 export function xssSanitizeQueryParamValue(value) {
-  return value?.replace(/[^a-zA-Z0-9\s.]/g, '');
+  return value?.replace(/[^a-zA-Z0-9\s.|]/g, '');
 }
 
 export function getCookie(cookieName) {
