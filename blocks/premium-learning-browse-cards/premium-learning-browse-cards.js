@@ -42,13 +42,22 @@ export default async function decorate(block) {
     <div class="premium-learning-browse-cards-header-content">
       <div class="premium-learning-browse-cards-header-text">
         ${title ? `<div class="premium-learning-browse-cards-title">${titleElement?.innerHTML || ''}</div>` : ''}
-        ${description || linkHtml
-          ? `<div class="premium-learning-browse-cards-description">${description}${linkHtml}</div>`
-          : ''}
+        ${description ? `<div class="premium-learning-browse-cards-description">${description}</div>` : ''}
       </div>
     </div>
   `;
   block.appendChild(headerDiv);
+
+  if (linkHtml) {
+    const descEl = headerDiv.querySelector('.premium-learning-browse-cards-description');
+    if (descEl) {
+      const lastPara = [...descEl.querySelectorAll('p')].pop();
+      const innerDiv = descEl.querySelector(':scope > div');
+      (lastPara || innerDiv || descEl).insertAdjacentHTML('beforeend', linkHtml);
+    } else {
+      headerDiv.querySelector('.premium-learning-browse-cards-header-text').insertAdjacentHTML('beforeend', linkHtml);
+    }
+  }
 
   const buildCardsShimmer = new BrowseCardShimmer(noOfResults, contentType);
   buildCardsShimmer.addShimmer(block);

@@ -25,20 +25,12 @@
 }
 
 /* Link Styling */
-.premium-learning-browse-cards
-  .premium-learning-browse-cards-header-text
-  .premium-learning-browse-cards-description
-  > * {
-  display: inline;
+.premium-learning-browse-cards .premium-learning-browse-cards-link.hidden {
+  display: none;
 }
 
 .premium-learning-browse-cards .premium-learning-browse-cards-link {
-  display: inline;
-  margin-left: var(--spectrum-spacing-75);
-}
-
-.premium-learning-browse-cards .premium-learning-browse-cards-link.hidden {
-  display: none;
+  margin-left: 4px;
 }
 
 .premium-learning-browse-cards.browse-cards-block {
