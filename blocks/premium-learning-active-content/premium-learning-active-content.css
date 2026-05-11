@@ -60,6 +60,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  width: 100%;
 }
 
 .premium-learning-active-content .carousel-nav {
@@ -341,5 +342,9 @@
     right: auto;
     top: 40%;
     transform: translateY(-50%);
+  }
+
+  .premium-learning-active-content .browse-card.premium-learning-browse-card .premium-learning-card-figure > img {
+    object-position: 100% center;
   }
 }

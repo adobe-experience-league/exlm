@@ -49,7 +49,8 @@ function renderNoResultsContent(block, placeholders) {
 
 function showFallbackContentInUEMode(blockElement) {
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
-  contentDiv.textContent = 'This block will load the Premium learning content for Premium users only.';
+  contentDiv.textContent =
+    'Premium Learning – Recommended Content: This block requires an authenticated Premium Learning user session to retrieve and render personalized course recommendations. As user context is unavailable in the Universal Editor environment, this block cannot be rendered at authoring time. The content will render as expected for authenticated Premium Learning members on the published page.';
   blockElement.appendChild(contentDiv);
 }
 
