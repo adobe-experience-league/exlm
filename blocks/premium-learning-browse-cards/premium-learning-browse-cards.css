@@ -30,7 +30,7 @@
 }
 
 .premium-learning-browse-cards .premium-learning-browse-cards-link {
-  margin-left: 4px;
+  margin-left: var(--spectrum-spacing-75);
 }
 
 .premium-learning-browse-cards.browse-cards-block {

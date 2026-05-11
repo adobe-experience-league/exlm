@@ -20,9 +20,13 @@ export default async function decorate(block) {
   const viewMoreAnchor = ctaElement?.querySelector('a');
   const viewMoreHref = viewMoreAnchor?.getAttribute('href') || '';
   const viewMoreText = viewMoreAnchor?.textContent?.trim() || '';
-  const linkHtml = viewMoreHref
-    ? `<a href="${viewMoreHref}" class="premium-learning-browse-cards-link${UEAuthorMode ? '' : ' hidden'}">${viewMoreText}</a>`
-    : '';
+  let viewMoreLink = null;
+  if (viewMoreHref) {
+    viewMoreLink = document.createElement('a');
+    viewMoreLink.href = viewMoreHref;
+    viewMoreLink.className = `premium-learning-browse-cards-link${UEAuthorMode ? '' : ' hidden'}`;
+    viewMoreLink.textContent = viewMoreText;
+  }
   let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase();
   if (contentType?.includes(',')) {
     contentType = contentType
@@ -48,14 +52,14 @@ export default async function decorate(block) {
   `;
   block.appendChild(headerDiv);
 
-  if (linkHtml) {
+  if (viewMoreLink) {
     const descEl = headerDiv.querySelector('.premium-learning-browse-cards-description');
     if (descEl) {
       const lastPara = [...descEl.querySelectorAll('p')].pop();
       const innerDiv = descEl.querySelector(':scope > div');
-      (lastPara || innerDiv || descEl).insertAdjacentHTML('beforeend', linkHtml);
+      (lastPara || innerDiv || descEl).appendChild(viewMoreLink);
     } else {
-      headerDiv.querySelector('.premium-learning-browse-cards-header-text').insertAdjacentHTML('beforeend', linkHtml);
+      headerDiv.querySelector('.premium-learning-browse-cards-header-text')?.appendChild(viewMoreLink);
     }
   }
 
