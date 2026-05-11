@@ -9,12 +9,11 @@ const MAX_BADGES = 9;
 
 /**
  * Renders a single badge card
- * @param {Object} userBadge - User badge data
  * @param {Object} badge - Badge details from included
  * @param {Object} learningObject - Learning object details from included
  * @returns {HTMLElement} Badge card element
  */
-function renderBadgeCard(userBadge, badge, learningObject) {
+function renderBadgeCard(badge, learningObject) {
   const badgeName = badge?.attributes?.name || '';
   const badgeImageUrl = badge?.attributes?.imageUrl || '';
   const loName = learningObject?.attributes?.localizedMetadata?.[0]?.name || '';
@@ -102,7 +101,7 @@ export default async function decorate(block) {
   const badgesContentEl = block.querySelector('.badges-content');
 
   // Show shimmer while loading
-  const shimmer = new BrowseCardShimmer(3);
+  const shimmer = new BrowseCardShimmer(MAX_BADGES);
   shimmer.addShimmer(badgesContentEl);
 
   // Non-blocking eligibility check — shimmer stays visible until resolved.
@@ -158,7 +157,7 @@ export default async function decorate(block) {
           const learningObject = modelId ? includedMap[`learningObject:${modelId}`] : null;
 
           if (badge) {
-            const badgeCard = renderBadgeCard(userBadge, badge, learningObject);
+            const badgeCard = renderBadgeCard(badge, learningObject);
             badgesGrid.appendChild(badgeCard);
           }
         });
