@@ -83,7 +83,7 @@ function createLayout(block) {
   resultColumn.innerHTML = `
     <div class="events-search-topbar">
       <div class="events-search-keyword">
-        <span class="icon icon-search"></span>
+        <span class="icon icon-search-gray"></span>
         <input type="text" class="events-search-keyword-input" placeholder="${
           placeholders.eventSearchKeywordPlaceholder || 'Search events'
         }" />
@@ -184,23 +184,40 @@ function getShowMoreLabel(count) {
   return template || `Show ${count} more`;
 }
 
+function getShowLessLabel() {
+  return placeholders.eventSearchShowLessLabel || 'Show less';
+}
+
 function updateShowMoreButtonState(groupEl) {
   const showMoreButton = groupEl.querySelector('.events-search-filter-show-more');
   if (!showMoreButton) return;
 
-  const hiddenOptionsCount = groupEl.querySelectorAll('.events-search-filter-option.is-overflow-hidden').length;
-  if (hiddenOptionsCount <= 0) {
+  const totalOptions = groupEl.querySelectorAll('.events-search-filter-option').length;
+  if (totalOptions <= INITIAL_VISIBLE_FILTER_OPTIONS) {
     showMoreButton.setAttribute('hidden', '');
     return;
   }
 
+  const hiddenOptionsCount = groupEl.querySelectorAll('.events-search-filter-option.is-overflow-hidden').length;
   const labelEl = showMoreButton.querySelector('.events-search-filter-show-more-label');
-  if (labelEl) {
-    labelEl.textContent = getShowMoreLabel(hiddenOptionsCount);
-  } else {
-    showMoreButton.textContent = getShowMoreLabel(hiddenOptionsCount);
-  }
+
   showMoreButton.removeAttribute('hidden');
+  if (hiddenOptionsCount > 0) {
+    showMoreButton.classList.remove('is-show-less');
+    const nextText = getShowMoreLabel(hiddenOptionsCount);
+    if (labelEl) {
+      labelEl.textContent = nextText;
+    } else {
+      showMoreButton.textContent = nextText;
+    }
+  } else {
+    showMoreButton.classList.add('is-show-less');
+    if (labelEl) {
+      labelEl.textContent = getShowLessLabel();
+    } else {
+      showMoreButton.textContent = getShowLessLabel();
+    }
+  }
 }
 
 function renderFilterGroups(block, groups) {
@@ -567,10 +584,19 @@ function bindFilterInteractions(block, groups) {
       const groupEl = showMoreButton.closest('.events-search-filter-group');
       if (!groupEl) return;
 
-      const hiddenOptions = groupEl.querySelectorAll('.events-search-filter-option.is-overflow-hidden');
-      hiddenOptions.forEach((option) => {
-        option.classList.remove('is-overflow-hidden');
-      });
+      if (showMoreButton.classList.contains('is-show-less')) {
+        const options = groupEl.querySelectorAll('.events-search-filter-option');
+        options.forEach((option, index) => {
+          if (index >= INITIAL_VISIBLE_FILTER_OPTIONS) {
+            option.classList.add('is-overflow-hidden');
+          }
+        });
+      } else {
+        const hiddenOptions = groupEl.querySelectorAll('.events-search-filter-option.is-overflow-hidden');
+        hiddenOptions.forEach((option) => {
+          option.classList.remove('is-overflow-hidden');
+        });
+      }
       updateShowMoreButtonState(groupEl);
       return;
     }
@@ -629,7 +655,7 @@ function bindTopbarSearch(block) {
   });
 
   keywordRow?.addEventListener('click', (event) => {
-    if (event.target.closest('.icon-search')) {
+    if (event.target.closest('.icon-search-gray')) {
       submitSearch();
     }
   });
