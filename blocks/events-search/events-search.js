@@ -93,8 +93,10 @@ function createLayout(block) {
         <div class="events-search-controls">
           <div class="events-search-view-switcher"></div>
           <div class="sort-container">
-            <span>${placeholders.filterSortLabel || 'Sort:'}</span>
-            <button class="sort-drop-btn">${placeholders.filterSortRelevanceLabel || 'Relevance'}</button>
+            <button type="button" class="sort-drop-btn">
+              <span class="sort-drop-btn-prefix">${placeholders.eventSearchfilterSortLabel || 'Sort:'}</span>
+              <span class="sort-drop-btn-value">${placeholders.filterSortRelevanceLabel || 'Relevance'}</span>
+            </button>
           </div>
         </div>
       </div>
@@ -258,6 +260,17 @@ function updateGroupSelectionCount(block, groupId, selectedCount) {
   countEl.textContent = selectedCount > 0 ? `(${selectedCount})` : '';
 }
 
+function updateClearFiltersButtonState(block) {
+  const clearBtn = block.querySelector('.events-search-clear-filters');
+  if (!clearBtn) return;
+  const hasCheckedFilter = !!block.querySelector('.events-search-filter-option input[type="checkbox"]:checked');
+  const input = block.querySelector('.events-search-keyword-input');
+  const keywordFromInput = input?.value?.trim() ?? '';
+  const keywordFromHeadless = String(window.headlessSearchBox?.state?.value ?? '').trim();
+  const hasKeyword = Boolean(keywordFromInput || keywordFromHeadless);
+  clearBtn.classList.toggle('is-active', hasCheckedFilter || hasKeyword);
+}
+
 function syncFilterUIFromHeadlessState(block, groups) {
   Object.entries(FACET_CONTROLLER_MAP).forEach(([groupId, controllerName]) => {
     const controller = window[controllerName];
@@ -280,6 +293,7 @@ function syncFilterUIFromHeadlessState(block, groups) {
     }
     updateGroupSelectionCount(block, groupId, selectedCount);
   });
+  updateClearFiltersButtonState(block);
 }
 
 function executeSearch() {
@@ -470,7 +484,8 @@ function updateResultsCount(block, totalCount = 0) {
   const formatter = new Intl.NumberFormat('en-US');
   const countText = formatter.format(totalCount || 0);
   const suffix = placeholders.eventSearchResultsCountSuffix || 'events and recordings';
-  countEl.textContent = `${countText} ${suffix}`;
+  const countStrong = createTag('strong', { class: 'events-search-results-count-value' }, countText);
+  countEl.replaceChildren(countStrong, document.createTextNode(` ${suffix}`));
 }
 
 async function renderResults(block, results = [], searchResponseId = '') {
@@ -580,6 +595,7 @@ function bindFilterInteractions(block, groups) {
       window.headlessPager.selectPage(1);
     }
     executeSearch();
+    updateClearFiltersButtonState(block);
   });
 }
 
@@ -597,7 +613,12 @@ function bindTopbarSearch(block) {
     }
     // Coveo urlManager syncs `q` from the hash; updateText + executeSearch alone does not run keyword search.
     handleCoverSearchSubmit(query);
+    updateClearFiltersButtonState(block);
   };
+
+  input.addEventListener('input', () => {
+    updateClearFiltersButtonState(block);
+  });
 
   keywordRow?.addEventListener('click', (event) => {
     if (event.target.closest('.icon-search')) {
@@ -641,6 +662,7 @@ function bindClearFilters(block, groups) {
       window.headlessPager.selectPage(1);
     }
     executeSearch();
+    updateClearFiltersButtonState(block);
   });
 }
 
@@ -686,6 +708,7 @@ async function initHeadlessSearch(block, groups) {
       if (input.value !== window.headlessSearchBox.state.value) {
         input.value = window.headlessSearchBox.state.value || '';
       }
+      updateClearFiltersButtonState(block);
     },
   });
 
@@ -700,6 +723,7 @@ async function initHeadlessSearch(block, groups) {
   bindEventsSearchLoadingUI(block);
   bindEventsSearchPagination(block);
   renderPageNumbers();
+  updateClearFiltersButtonState(block);
 }
 
 export default async function decorate(block) {

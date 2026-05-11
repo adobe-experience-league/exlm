@@ -79,7 +79,7 @@ main .events-search .events-search-clear-filters {
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--non-spectrum-article-dark-gray);
+  color: #b6b6b6;
   font-size: 13px;
   font-weight: 400;
   text-align: right;
@@ -89,7 +89,15 @@ main .events-search .events-search-clear-filters {
 }
 
 main .events-search .events-search-clear-filters:hover {
-  color: var(--text-color);
+  color: #9e9e9e;
+}
+
+main .events-search .events-search-clear-filters.is-active {
+  color: #1473e6;
+}
+
+main .events-search .events-search-clear-filters.is-active:hover {
+  color: #0d66cc;
 }
 
 main .events-search .events-search-filter-groups {
@@ -244,6 +252,10 @@ main .events-search .events-search-results-count {
   color: var(--text-color);
 }
 
+main .events-search .events-search-results-count-value {
+  font-weight: var(--font-weight-bold);
+}
+
 main .events-search .events-search-controls {
   display: none;
   align-items: center;
@@ -266,13 +278,11 @@ main .events-search .events-search-controls .sort-container {
   position: relative;
 }
 
-main .events-search .events-search-controls .sort-container span {
-  font-size: var(--spectrum-font-size-100);
-  line-height: 18px;
-  color: var(--spectrum-gray-700);
-}
-
 main .events-search .events-search-controls .sort-drop-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spectrum-spacing-75);
+  font-weight: var(--font-weight-normal);
   margin: 0;
   min-height: 32px;
   padding: 7px 10px;
@@ -281,7 +291,14 @@ main .events-search .events-search-controls .sort-drop-btn {
   background: var(--background-color);
   font-size: var(--spectrum-font-size-100);
   line-height: 17px;
-  color: var(--spectrum-gray-700);
+  color: var(--spectrum-gray-900);
+}
+
+main .events-search .events-search-controls .sort-drop-btn-prefix,
+main .events-search .events-search-controls .sort-drop-btn-value {
+  font-size: var(--spectrum-font-size-100);
+  line-height: 18px;
+  color: var(--spectrum-gray-900);
 }
 
 main .events-search .events-search-controls .sort-container .sort-dropdown-content {
