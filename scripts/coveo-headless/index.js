@@ -315,6 +315,20 @@ export default async function initiateCoveoHeadlessSearch({
         headlessSearchBox.subscribe(handleSearchBoxSubscription);
 
         /* TODO: Sorting segments to be extracted & restructured and incorporate them into the browse filters, as this file serves coveo engine methods */
+        const getSortButtonCaption = (btn) => {
+          if (!btn) return '';
+          const valueEl = btn.querySelector('.sort-drop-btn-value');
+          return valueEl ? valueEl.textContent.trim() : btn.innerHTML.trim();
+        };
+        const setSortButtonCaption = (btn, caption) => {
+          if (!btn) return;
+          const valueEl = btn.querySelector('.sort-drop-btn-value');
+          if (valueEl) {
+            valueEl.textContent = caption;
+          } else {
+            btn.innerHTML = caption;
+          }
+        };
         const sortLabel = {
           relevance: placeholders.filterSortRelevanceLabel,
           popularity: placeholders.filerSortPopularityLabel,
@@ -355,19 +369,19 @@ export default async function initiateCoveoHeadlessSearch({
               // eslint-disable-next-line
               switch (scValue) {
                 case 'relevancy':
-                  sortBtn.innerHTML = sortLabel.relevance;
+                  setSortButtonCaption(sortBtn, sortLabel.relevance);
                   criteria = [[sortLabel.relevance, module.buildRelevanceSortCriterion()]];
                   break;
                 case '@el_view_count descending':
-                  sortBtn.innerHTML = sortLabel.popularity;
+                  setSortButtonCaption(sortBtn, sortLabel.popularity);
                   criteria = [[sortLabel.popularity, module.buildFieldSortCriterion('el_view_count', 'descending')]];
                   break;
                 case 'date descending':
-                  sortBtn.innerHTML = sortLabel.newest;
+                  setSortButtonCaption(sortBtn, sortLabel.newest);
                   criteria = [[sortLabel.newest, module.buildDateSortCriterion('descending')]];
                   break;
                 case 'date ascending':
-                  sortBtn.innerHTML = sortLabel.oldest;
+                  setSortButtonCaption(sortBtn, sortLabel.oldest);
                   criteria = [[sortLabel.oldest, module.buildDateSortCriterion('ascending')]];
                   break;
               }
@@ -385,7 +399,7 @@ export default async function initiateCoveoHeadlessSearch({
               const anchorCaption = anchor.getAttribute('data-sort-caption');
               const anchorSortCriteria = anchor.getAttribute('data-sort-criteria');
 
-              if (anchorCaption === sortBtn.innerHTML) {
+              if (anchorCaption === getSortButtonCaption(sortBtn)) {
                 anchor.classList.add('selected');
               }
 
@@ -396,7 +410,7 @@ export default async function initiateCoveoHeadlessSearch({
                 });
                 anchor.classList.add('selected');
                 sortDropdown.classList.remove('show');
-                sortBtn.innerHTML = anchorCaption;
+                setSortButtonCaption(sortBtn, anchorCaption);
 
                 // eslint-disable-next-line
                 switch (anchorSortCriteria) {

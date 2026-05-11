@@ -164,7 +164,7 @@ function bindSortDropdownToggle(block) {
         'click',
         (event) => {
           const isInsideDropdown = !!sortDropdown && sortDropdown.contains(event.target);
-          const isOnButton = event.target === dropDownBtn;
+          const isOnButton = dropDownBtn.contains(event.target);
           const shouldHide = !isInsideDropdown && (!isOnButton || !dropDownBtn.classList.contains('active'));
           if (shouldHide) {
             sortDropdown?.classList.remove('show');
