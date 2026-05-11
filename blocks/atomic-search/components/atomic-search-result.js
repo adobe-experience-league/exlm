@@ -538,10 +538,9 @@ const convertLegacyContentTypes = (contentTypes) => {
 };
 
 let isListenerAdded = false;
-export default function atomicResultHandler(block, placeholders) {
-  // Cache feature flag check at component initialization to avoid per-result checks
-  const isEventsV2Enabled = isFeatureEnabled('isEventsV2');
+const isEventsV2Enabled = isFeatureEnabled('isEventsV2');
 
+export default function atomicResultHandler(block, placeholders) {
   const baseElement = block.querySelector('atomic-folded-result-list');
   const searchLayout = block.querySelector('atomic-search-layout');
   if (!searchLayout.classList.contains('no-results')) {
