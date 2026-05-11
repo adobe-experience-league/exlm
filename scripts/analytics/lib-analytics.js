@@ -1053,15 +1053,22 @@ export function pushCourseStartEvent(courseData) {
  * Pushes a browse card click event to the Adobe Data Layer.
  * This event is fired whenever a user clicks on any part of a browse card.
  *
- * @param {string} eventName - The name of the event to be pushed (e.g., "browseCardClicked").
+ * @param {string} eventName - The name of the event to be pushed. For bookmark events, can be 'add' or 'remove' which will be mapped to the appropriate event names.
  * @param {Object} cardData - The data object representing the browse card.
  * @param {string} [cardData.contentType] - The type of content represented by the card (e.g., "article", "video").
  * @param {string} [cardData.viewLink] - The destination URL or domain the card points to.
  * @param {string} [cardData.title] - The display title of the card.
  * @param {string} cardHeader - The header or category associated with the card (used as `linkType`).
  * @param {number} cardPosition - The index or position of the card within the list/grid.
+ * @param {string} [source] - The origin context of the event (e.g., `'docs'`, `'browse-card'`). Conditionally added to `link.source` when provided.
  */
-export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition) {
+export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition, source) {
+  // Map action shortcuts to event names
+  const eventNameMap = {
+    add: 'bookmarkLinkBrowseCard',
+    remove: 'browseCardRemoveBookmark',
+  };
+  const finalEventName = eventNameMap[eventName] || eventName;
   window.adobeDataLayer = window.adobeDataLayer || [];
   const product = cardData?.product;
   const cardFullSolution = Array.isArray(product) ? product.join(',') : product || '';
@@ -1079,7 +1086,7 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
   }
 
   const dataLayerEntry = {
-    event: eventName,
+    event: finalEventName,
     link: {
       contentType: cardData?.contentType?.toLowerCase().trim() || '',
       fullSolution: cardFullSolution,
@@ -1091,6 +1098,10 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
       position: cardPosition,
     },
   };
+
+  if (source) {
+    dataLayerEntry.link.source = source;
+  }
 
   // Deprecated browseCardClicked event (using componentClick instead); other browseCard events(copy,bookmark,toggles) remain active
   if (eventName !== 'browseCardClicked') {

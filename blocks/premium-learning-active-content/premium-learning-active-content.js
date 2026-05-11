@@ -119,11 +119,24 @@ function buildProgressCard(cardData, progressData, placeholders, totalReplies = 
   return progressCard;
 }
 
-async function buildCarouselSlide(cardData, progressData, totalReplies, placeholders) {
+async function buildCarouselSlide(cardData, progressData, totalReplies, placeholders, learningObject) {
   const slide = createTag('div', { class: 'carousel-slide' });
 
   const cohortCardWrapper = createTag('div', { class: 'cohort-card-wrapper' });
   await buildCard(cohortCardWrapper, cardData);
+
+  // Store image URLs on slide element for responsive switching
+  const img = cohortCardWrapper.querySelector('.premium-learning-card-figure > img');
+  if (img && learningObject?.attributes) {
+    const attrs = learningObject.attributes;
+    slide.dataset.bannerUrl = attrs.bannerUrl || '';
+    slide.dataset.imageUrl = attrs.imageUrl || '';
+
+    // Set correct initial image based on viewport to prevent flash
+    const isDesktop = window.innerWidth >= 900;
+    img.src = isDesktop ? attrs.bannerUrl || attrs.imageUrl || img.src : attrs.imageUrl || attrs.bannerUrl || img.src;
+    slide.dataset.lastViewport = isDesktop ? 'desktop' : 'mobile';
+  }
 
   // Add "In Progress" label to thumbnail
   const figureElement = cohortCardWrapper.querySelector('.premium-learning-card-figure');
@@ -183,13 +196,29 @@ function initCarousel(container) {
 
   let currentIndex = 0;
 
-  if (slides.length <= 1) {
-    if (nav) nav.style.display = 'none';
-    return;
+  if (slides.length <= 1 && nav) {
+    nav.style.display = 'none';
   }
 
   const updateCarousel = () => {
     const isDesktop = window.innerWidth >= 900;
+    const wasDesktop = slides[0]?.dataset.lastViewport === 'desktop';
+
+    // Only update images when transitioning between desktop and mobile
+    if (wasDesktop !== isDesktop) {
+      slides.forEach((slide) => {
+        const img = slide.querySelector('.premium-learning-card-figure > img');
+        if (img) {
+          const { bannerUrl, imageUrl } = slide.dataset;
+          if (isDesktop) {
+            img.src = bannerUrl || imageUrl || img.src;
+          } else {
+            img.src = imageUrl || bannerUrl || img.src;
+          }
+        }
+        slide.dataset.lastViewport = isDesktop ? 'desktop' : 'mobile';
+      });
+    }
 
     if (!isDesktop) {
       track.style.transform = 'none';
@@ -358,7 +387,7 @@ export default async function decorate(block) {
               } ${progressData.totalWeeks}`;
             }
 
-            return buildCarouselSlide(cardData, progressData, totalReplies, placeholders);
+            return buildCarouselSlide(cardData, progressData, totalReplies, placeholders, enrolledLearningObjects[i]);
           }),
         );
 
