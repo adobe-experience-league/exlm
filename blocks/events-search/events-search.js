@@ -27,6 +27,13 @@ const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
 // eslint-disable-next-line no-template-curly-in-string -- not a JS template; matches placeholders.json text
 const PLACEHOLDER_COUNT_TOKEN = '${count}';
 const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
+
+/** Fills count slots in CMS strings: `${count}`, `{}`, `{count}` (see PLACEHOLDER_COUNT_TOKEN). */
+function fillPlaceholderCount(template, value) {
+  const s = String(value);
+  return String(template).replaceAll(PLACEHOLDER_COUNT_TOKEN, s).replaceAll('{}', s).replaceAll('{count}', s);
+}
+
 const viewSwitcherInstances = new WeakMap();
 /** AbortController + MutationObserver teardown for Coveo document listeners (re-decorate or DOM removal). */
 const eventsSearchLoadingUiCleanups = new WeakMap();
@@ -210,8 +217,7 @@ function getShowMoreLabel(count, placeholders) {
   if (!template) {
     return `Show ${count} more`;
   }
-  const s = String(count);
-  return String(template).replaceAll(PLACEHOLDER_COUNT_TOKEN, s).replaceAll('{}', s).replaceAll('{count}', s);
+  return fillPlaceholderCount(template, count);
 }
 
 function getShowLessLabel(placeholders) {
@@ -384,18 +390,13 @@ function renderEventsSearchPageNumbers(block, placeholders) {
     inputText.value = String(currentPageNumber);
   }
   if (paginationTextEl) {
+    const pg = String(pgCount);
     if (pgCount > 1) {
       const label = placeholders?.eventSearchPagesLabel;
-      const pg = String(pgCount);
-      paginationTextEl.textContent = label
-        ? String(label).replaceAll(PLACEHOLDER_COUNT_TOKEN, pg).replaceAll('{}', pg).replaceAll('{count}', pg)
-        : `of ${pgCount} pages`;
+      paginationTextEl.textContent = label ? fillPlaceholderCount(label, pg) : `of ${pgCount} pages`;
     } else {
       const label = placeholders?.eventSearchPageLabel;
-      const pg = String(pgCount);
-      paginationTextEl.textContent = label
-        ? String(label).replaceAll(PLACEHOLDER_COUNT_TOKEN, pg).replaceAll('{}', pg).replaceAll('{count}', pg)
-        : `of ${pgCount} page`;
+      paginationTextEl.textContent = label ? fillPlaceholderCount(label, pg) : `of ${pgCount} page`;
     }
   }
 
