@@ -18,7 +18,7 @@
 /* Badge grid */
 .premium-learning-profile-badges .badges-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr;
   gap: 24px;
   margin-top: var(--spectrum-spacing-500);
 }
@@ -87,15 +87,15 @@
 }
 
 /* Responsive - 2 columns on tablet */
-@media (max-width: 900px) {
+@media (min-width: 600px) {
   .premium-learning-profile-badges .badges-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Responsive - 1 column on mobile */
-@media (max-width: 600px) {
+/* Responsive - 3 columns on desktop */
+@media (min-width: 900px) {
   .premium-learning-profile-badges .badges-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
