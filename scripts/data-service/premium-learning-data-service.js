@@ -147,7 +147,6 @@ export default class PLDataService {
       'filter.loTypes': loTypes,
       'filter.learnerState': ['notenrolled', 'enrolled', 'started', 'completed'],
       'filter.ignoreEnhancedLP': false,
-      'filter.recommendationProducts': [{ name: 'Acrobat', levels: [] }],
     };
 
     // Add catalog IDs if configured

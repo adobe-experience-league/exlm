@@ -1770,11 +1770,11 @@ async function loadPage() {
               const suggestedContentBlock = document.querySelector('.premium-learning-suggested-content');
 
               if (hasEnrollments) {
-                // User has enrollments - remove suggested content block
-                suggestedContentBlock?.remove();
+                // User has enrollments - remove suggested content block wrapper
+                suggestedContentBlock?.parentElement?.remove();
               } else {
-                // User has no enrollments - remove active content block
-                activeContentBlock?.remove();
+                // User has no enrollments - remove active content block wrapper
+                activeContentBlock?.parentElement?.remove();
               }
             }
           })
