@@ -3,8 +3,11 @@
   margin-bottom: var(--spectrum-spacing-500);
 }
 
-.premium-learning-profile-badges .badges-title * {
+.premium-learning-profile-badges .badges-title {
   margin: 0 0 var(--spectrum-spacing-100) 0;
+}
+
+.premium-learning-profile-badges .badges-title > * {
   font-size: var(--spectrum-font-size-200);
   font-weight: var(--font-weight-bold);
 }
