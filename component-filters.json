@@ -128,7 +128,8 @@
       "slides",
       "quiz-scorecard",
       "grid-cards",
-      "playlist-embed"
+      "playlist-embed",
+      "premium-learning-profile-badges"
     ]
   },
   {
@@ -443,7 +444,8 @@
       "premium-learning-active-content",
       "premium-learning-suggested-content",
       "premium-learning-recommended-content",
-      "premium-learning-bookmarks"
+      "premium-learning-bookmarks",
+      "premium-learning-profile-badges"
     ]
   },
   {
