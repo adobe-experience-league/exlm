@@ -20,12 +20,8 @@ export default async function decorate(block) {
   const viewMoreAnchor = viewMoreElement?.querySelector('a');
   const viewMoreHref = viewMoreAnchor?.getAttribute('href') || '';
   const viewMoreText = viewMoreAnchor?.textContent?.trim() || '';
-  let viewMoreLink = null;
-  if (viewMoreHref && viewMoreText) {
-    viewMoreLink = document.createElement('a');
-    viewMoreLink.href = viewMoreHref;
-    viewMoreLink.className = `premium-learning-browse-cards-link${UEAuthorMode ? '' : ' hidden'}`;
-    viewMoreLink.textContent = viewMoreText;
+  if (viewMoreAnchor && viewMoreHref && viewMoreText) {
+    viewMoreAnchor.className = `premium-learning-browse-cards-link${UEAuthorMode ? '' : ' hidden'}`;
   }
   let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase();
   if (contentType?.includes(',')) {
@@ -52,8 +48,8 @@ export default async function decorate(block) {
   `;
   block.appendChild(headerDiv);
 
-  if (viewMoreLink) {
-    headerDiv.querySelector('.premium-learning-browse-cards-header-text')?.appendChild(viewMoreLink);
+  if (viewMoreAnchor && viewMoreHref && viewMoreText) {
+    headerDiv?.appendChild(viewMoreAnchor);
   }
 
   const buildCardsShimmer = new BrowseCardShimmer(noOfResults, contentType);
