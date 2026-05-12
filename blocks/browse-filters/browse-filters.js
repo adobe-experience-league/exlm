@@ -1548,27 +1548,16 @@ function decorateBrowseTopics(block) {
     ? localizedTopicsContent.split(',')?.reduce((acc, pair) => {
         const trimmedPair = pair.trim();
 
-        // Check if it's TQ format: tq/{uuid}:{englishLabel}:{translatedLabel}
-        if (trimmedPair.startsWith('tq/')) {
-          const colonIdx1 = trimmedPair.indexOf(':');
-          const colonIdx2 = colonIdx1 > -1 ? trimmedPair.indexOf(':', colonIdx1 + 1) : -1;
-          if (colonIdx1 > -1 && colonIdx2 > -1) {
-            const key = trimmedPair.substring(0, colonIdx1); // tq/{uuid}
-            const englishLabel = trimmedPair.substring(colonIdx1 + 1, colonIdx2);
-            const translatedLabel = trimmedPair.substring(colonIdx2 + 1);
-            acc[key] = { english: englishLabel, translated: translatedLabel };
-          }
-        } else {
-          // Legacy format: {key}/{tag}:{translatedTag} or {key}/{solution}/{tag}:{translatedTag}
-          const lastColonIndex = trimmedPair.lastIndexOf(':');
-          if (lastColonIndex > -1) {
-            const keyPart = trimmedPair.substring(0, lastColonIndex);
-            const translatedPart = trimmedPair.substring(lastColonIndex + 1);
-            // Extract English tag (last part before colon)
-            const keySegments = keyPart.split('/');
-            const englishTag = keySegments[keySegments.length - 1];
-            acc[keyPart] = { english: englishTag, translated: translatedPart };
-          }
+        // TQ format: tq/{uuid}/{englishLabel}:{translatedLabel}
+        // Legacy format: {key}/{tag}:{translatedTag} or {key}/{solution}/{tag}:{translatedTag}
+        const lastColonIndex = trimmedPair.lastIndexOf(':');
+        if (lastColonIndex > -1) {
+          const keyPart = trimmedPair.substring(0, lastColonIndex);
+          const translatedPart = trimmedPair.substring(lastColonIndex + 1);
+          // Extract English tag (last part before colon)
+          const keySegments = keyPart.split('/');
+          const englishTag = keySegments[keySegments.length - 1];
+          acc[keyPart] = { english: englishTag, translated: translatedPart };
         }
         return acc;
       }, {})
@@ -1640,6 +1629,7 @@ function decorateBrowseTopics(block) {
           if (tagInfo?.translated && tagInfo.translated !== 'undefined') {
             displayLabel = tagInfo.translated;
           } else if (tagInfo?.english) {
+            // For TQ tags: use English label when translation is missing
             displayLabel = tagInfo.english;
           }
 
