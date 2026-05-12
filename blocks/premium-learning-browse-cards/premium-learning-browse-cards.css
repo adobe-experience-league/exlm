@@ -27,7 +27,7 @@
 /* Link Styling */
 .premium-learning-browse-cards .premium-learning-browse-cards-link {
   display: block;
-  margin: 5px 0 0;
+  margin: var(--spectrum-spacing-75) 0 0;
 }
 
 .premium-learning-browse-cards .premium-learning-browse-cards-link.hidden {
