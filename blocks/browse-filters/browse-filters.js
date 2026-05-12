@@ -1550,12 +1550,14 @@ function decorateBrowseTopics(block) {
 
         // Check if it's TQ format: tq/{uuid}:{englishLabel}:{translatedLabel}
         if (trimmedPair.startsWith('tq/')) {
-          const parts = trimmedPair.split(':');
-          const colonIdx1 = trimmedPair.indexOf(':');
-          const colonIdx2 = colonIdx1 > -1 ? trimmedPair.indexOf(':', colonIdx1 + 1) : -1;
-          if (colonIdx1 > -1 && colonIdx2 > -1) {
-            const key = trimmedPair.substring(0, colonIdx1); // tq/{uuid}
-            const englishLabel = trimmedPair.substring(colonIdx1 + 1, colonIdx2);
+          const firstColon = trimmedPair.indexOf(':');
+          const secondColon = trimmedPair.indexOf(':', firstColon + 1);
+          if (firstColon > -1 && secondColon > -1) {
+            const key = trimmedPair.substring(0, firstColon);
+            const englishLabel = trimmedPair.substring(firstColon + 1, secondColon);
+            const translatedLabel = trimmedPair.substring(secondColon + 1);
+            acc[key] = { english: englishLabel, translated: translatedLabel };
+          }
             const translatedLabel = trimmedPair.substring(colonIdx2 + 1);
             acc[key] = { english: englishLabel, translated: translatedLabel };
           }
