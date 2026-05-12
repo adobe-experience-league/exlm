@@ -23,7 +23,17 @@ const FACET_CONTROLLER_MAP = {
   el_contenttype: 'headlessTypeFacet',
 };
 const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
+/** Literal token authors enter in placeholders.json for dynamic counts. */
+// eslint-disable-next-line no-template-curly-in-string -- not a JS template; matches placeholders.json text
+const PLACEHOLDER_COUNT_TOKEN = '${count}';
 const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
+
+/** Fills count slots in CMS strings: `${count}`, `{}`, `{count}` (see PLACEHOLDER_COUNT_TOKEN). */
+function fillPlaceholderCount(template, value) {
+  const s = String(value);
+  return String(template).replaceAll(PLACEHOLDER_COUNT_TOKEN, s).replaceAll('{}', s).replaceAll('{count}', s);
+}
+
 const viewSwitcherInstances = new WeakMap();
 /** AbortController + MutationObserver teardown for Coveo document listeners (re-decorate or DOM removal). */
 const eventsSearchLoadingUiCleanups = new WeakMap();
@@ -204,10 +214,10 @@ function bindSortDropdownToggle(block) {
 
 function getShowMoreLabel(count, placeholders) {
   const template = placeholders.eventSearchShowMoreLabel;
-  if (template?.includes('{}')) {
-    return template.replace('{}', String(count));
+  if (!template) {
+    return `Show ${count} more`;
   }
-  return template || `Show ${count} more`;
+  return fillPlaceholderCount(template, count);
 }
 
 function getShowLessLabel(placeholders) {
@@ -380,14 +390,13 @@ function renderEventsSearchPageNumbers(block, placeholders) {
     inputText.value = String(currentPageNumber);
   }
   if (paginationTextEl) {
+    const pg = String(pgCount);
     if (pgCount > 1) {
-      paginationTextEl.textContent = placeholders?.eventSearchPagesLabel
-        ? placeholders.eventSearchPagesLabel.replace('{}', pgCount)
-        : `of ${pgCount} pages`;
+      const label = placeholders?.eventSearchPagesLabel;
+      paginationTextEl.textContent = label ? fillPlaceholderCount(label, pg) : `of ${pgCount} pages`;
     } else {
-      paginationTextEl.textContent = placeholders?.eventSearchPageLabel
-        ? placeholders.eventSearchPageLabel.replace('{}', pgCount)
-        : `of ${pgCount} page`;
+      const label = placeholders?.eventSearchPageLabel;
+      paginationTextEl.textContent = label ? fillPlaceholderCount(label, pg) : `of ${pgCount} page`;
     }
   }
 
