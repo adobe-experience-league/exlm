@@ -1,4 +1,5 @@
 import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 import {
   htmlToElement,
   decoratePlaceholders,
@@ -7,6 +8,8 @@ import {
 } from '../../scripts/scripts.js';
 import { Playlist, LABELS } from './playlist-utils.js';
 import { updateTranscript, transcriptLoading } from '../video-transcript/video-transcript.js';
+
+const schemaOrgEnabled = isFeatureEnabled('schema-org-playlist');
 
 const removeLastSlash = (url) => url.replace(/\/$/, '');
 const isSameUrl = (a, b) => {
@@ -25,19 +28,24 @@ const findJsonLd = (videoUrl) => {
   const jsonLd = [...jsonLdScripts]
     .map((script) => {
       const parsed = JSON.parse(script.textContent);
+      if (schemaOrgEnabled && !Array.isArray(parsed) && parsed['@graph']) return parsed['@graph'];
       return Array.isArray(parsed) ? parsed : [parsed];
     })
     .flat()
-    .find((jsonLdObj) => isSameUrl(jsonLdObj.embedUrl, videoUrl));
+    .find((jsonLdObj) =>
+      schemaOrgEnabled
+        ? jsonLdObj.embedUrl && isSameUrl(jsonLdObj.embedUrl, videoUrl)
+        : isSameUrl(jsonLdObj.embedUrl, videoUrl),
+    );
 
   return jsonLd;
 };
 
 function getVideoThumbnailUrl(videoUrl, jsonLdString) {
   const jsonLd = jsonLdString ? JSON.parse(jsonLdString) : findJsonLd(videoUrl);
+  if (schemaOrgEnabled && !jsonLd) return null;
   const thumbnails = [jsonLd?.thumbnailUrl].flat();
-
-  const defaultThumbnail = thumbnails.sort()[jsonLd.length - 1]; // last one
+  const defaultThumbnail = thumbnails.sort()[schemaOrgEnabled ? thumbnails.length - 1 : jsonLd.length - 1];
   const bestFit = thumbnails?.find((url) => url.includes('640x'));
   return bestFit || defaultThumbnail;
 }
