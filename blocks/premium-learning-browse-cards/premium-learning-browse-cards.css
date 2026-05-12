@@ -24,23 +24,15 @@
   color: var(--non-spectrum-dark-gray);
 }
 
-/* CTA Button Styling */
-.premium-learning-browse-cards .premium-learning-browse-cards-cta {
+/* Link Styling */
+.premium-learning-browse-cards .premium-learning-browse-cards-link {
   display: block;
+  margin: 0 0 var(--spectrum-spacing-100) 0;
+  line-height: var(--spectrum-line-height-s);
 }
 
-.premium-learning-browse-cards .premium-learning-browse-cards-cta.hidden {
+.premium-learning-browse-cards .premium-learning-browse-cards-link.hidden {
   display: none;
-}
-
-.premium-learning-browse-cards .premium-learning-browse-cards-cta a.button:any-link {
-  margin: 0 0 var(--spectrum-spacing-200);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  text-align: center;
-  gap: var(--spectrum-spacing-100);
-  white-space: normal;
 }
 
 .premium-learning-browse-cards.browse-cards-block {

@@ -731,6 +731,14 @@ export async function buildCard(element, model) {
     });
   }
 
+  const eventsV2Enabled = isFeatureEnabled('isEventsV2');
+  const needUpcomingEventDec =
+    eventsV2Enabled && contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase();
+  const needOnDemandEventDec =
+    eventsV2Enabled && contentType?.toLowerCase() === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase();
+  const upcomingEventsDecoratorPromise = needUpcomingEventDec ? getUpcomingEventsDecorator() : null;
+  const onDemandEventsDecoratorPromise = needOnDemandEventDec ? getOnDemandEventsDecorator() : null;
+
   await buildCardContent(card, model, element);
 
   if (isVideoClip) {
@@ -832,11 +840,8 @@ export async function buildCard(element, model) {
     { once: true },
   );
 
-  const isUpcomingEvent = contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase();
-  const isOnDemandEvent = contentType?.toLowerCase() === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase();
-
   // Only apply v2 decorations when feature flag is enabled (content type will be 'Event|Upcoming Event')
-  if (isUpcomingEvent && isFeatureEnabled('isEventsV2')) {
+  if (needUpcomingEventDec) {
     const blockContainer = card.closest('.block') || card.closest('[class*="cards"]');
     if (blockContainer) {
       blockContainer.classList.add('events-v2');
@@ -845,20 +850,18 @@ export async function buildCard(element, model) {
     const cardEl = element.querySelector('.browse-card');
     if (cardEl) {
       loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-upcoming-events.css`);
-      // Dynamically import and use the upcoming events decorator
-      getUpcomingEventsDecorator().then(({ decorateUpcomingEvents }) => {
-        decorateUpcomingEvents(cardEl, model);
-      });
+      const { decorateUpcomingEvents } = await upcomingEventsDecoratorPromise;
+      decorateUpcomingEvents(cardEl, model);
     }
   }
 
-  if (isOnDemandEvent && isFeatureEnabled('isEventsV2')) {
+  if (needOnDemandEventDec) {
     const cardElement = element.querySelector('.browse-card');
-    // Dynamically import and use the on-demand events decorator
-    loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-on-demand-events.css`);
-    getOnDemandEventsDecorator().then(({ decorateOnDemandEvents }) => {
+    if (cardElement) {
+      loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-on-demand-events.css`);
+      const { decorateOnDemandEvents } = await onDemandEventsDecoratorPromise;
       decorateOnDemandEvents(cardElement, model);
-    });
+    }
   }
 
   return undefined;
