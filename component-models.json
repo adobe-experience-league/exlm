@@ -6385,6 +6385,10 @@
     ]
   },
   {
+    "id": "events-search",
+    "fields": []
+  },
+  {
     "id": "featured-authors",
     "fields": [
       {

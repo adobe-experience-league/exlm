@@ -186,7 +186,7 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
   .events-v2 {
     .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers,
     .browse-card.event-upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
-      font-size: 24px;
+      font-size: calc(var(--spectrum-font-size-500) + var(--spectrum-spacing-50));
     }
   }
 }
@@ -208,13 +208,13 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
 
   .list .browse-card.upcoming-event-card .browse-card-banner,
   .list .browse-card.event-upcoming-event-card .browse-card-banner {
-    top: 16px;
-    height: 22px;
+    top: var(--spectrum-spacing-300);
+    height: calc(2 * var(--spectrum-spacing-200) - var(--spectrum-spacing-50));
     font-style: normal;
     font-variant: normal;
     font-weight: var(--font-weight-heavy);
-    font-size: 11px;
-    line-height: 17px;
+    font-size: var(--spectrum-font-size-50);
+    line-height: var(--spectrum-line-height-xs);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -222,15 +222,15 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
 
   .list .browse-card.upcoming-event-card .browse-card-figure .icon-calendar img,
   .list .browse-card.event-upcoming-event-card .browse-card-figure .icon-calendar img {
-    width: 32px;
-    height: 32px;
+    width: var(--spectrum-spacing-500);
+    height: var(--spectrum-spacing-500);
   }
 
   .list .browse-card.upcoming-event-card .browse-card-figure,
   .list .browse-card.event-upcoming-event-card .browse-card-figure {
     flex: 0 0 23.34%;
     border: unset;
-    border-radius: 16px 0 0 16px;
+    border-radius: var(--spectrum-spacing-300) 0 0 var(--spectrum-spacing-300);
     max-height: unset;
     height: auto;
     align-items: center;
@@ -242,9 +242,9 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    margin-top: 50px;
-    margin-bottom: 10px;
+    gap: var(--spectrum-spacing-75);
+    margin-top: calc(var(--spectrum-spacing-700) + var(--spectrum-spacing-50));
+    margin-bottom: calc(var(--spectrum-spacing-100) + var(--spectrum-spacing-50));
   }
 
   .list .browse-card.upcoming-event-card .browse-card-figure .card-figure-date .date-display,
@@ -252,8 +252,8 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     font-style: normal;
     font-variant: normal;
     font-weight: bold;
-    font-size: 28px;
-    line-height: 36px;
+    font-size: var(--spectrum-font-size-800);
+    line-height: var(--spectrum-line-height-xxl);
     letter-spacing: 0;
     color: var(--spectrum-gray-50);
     opacity: 1;
@@ -265,8 +265,8 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     font-style: normal;
     font-variant: normal;
     font-weight: normal;
-    font-size: 16px;
-    line-height: 24px;
+    font-size: var(--spectrum-font-size-200);
+    line-height: 1.5;
     letter-spacing: 0;
     color: var(--spectrum-gray-50);
     opacity: 1;
@@ -274,7 +274,7 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
 
   .list .browse-card.upcoming-event-card .browse-card-content,
   .list .browse-card.event-upcoming-event-card .browse-card-content {
-    padding: 32px;
+    padding: var(--spectrum-spacing-500);
   }
 
   .list .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info,
@@ -282,7 +282,7 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     order: 0;
     margin: 0;
     align-self: flex-start;
-    margin-bottom: 16.5px;
+    margin-bottom: var(--spectrum-spacing-300);
     display: flex;
   }
 
@@ -295,13 +295,13 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
 
   .list .browse-card.upcoming-event-card .browse-card-footer,
   .list .browse-card.event-upcoming-event-card .browse-card-footer {
-    padding: 32px;
+    padding: var(--spectrum-spacing-500);
     flex: 0 0 18.52%;
     position: relative;
     align-self: stretch;
     flex-direction: column;
     justify-content: unset;
-    border-radius: 16px;
+    border-radius: var(--spectrum-spacing-300);
   }
 
   .list .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info .browse-card-event-time h6,
@@ -314,26 +314,27 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
 
   .list .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info .icon,
   .list .browse-card.event-upcoming-event-card .browse-card-footer .browse-card-event-info .icon {
-    width: 18px;
-    height: 18px;
+    width: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
+    height: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
   }
 
   .list .browse-card.upcoming-event-card .browse-card-footer .browse-card-cta-element,
   .list .browse-card.event-upcoming-event-card .browse-card-footer .browse-card-cta-element {
     order: 3;
-    margin: 20px 0;
+    margin-block: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-75));
+    margin-inline: 0;
     background: var(--spectrum-blue-900) 0% 0% no-repeat padding-box;
-    border-radius: 16px;
+    border-radius: var(--spectrum-spacing-300);
     text-align: left;
     font-style: normal;
     font-variant: normal;
     font-weight: normal;
-    font-size: 14px;
-    line-height: 17px;
+    font-size: var(--spectrum-font-size-100);
+    line-height: var(--spectrum-line-height-xs);
     letter-spacing: 0;
     color: var(--spectrum-gray-50);
     width: 100%;
-    height: 32px;
+    height: var(--spectrum-spacing-500);
     justify-content: center;
     align-items: center;
   }
@@ -347,8 +348,8 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
   .list .browse-card.event-upcoming-event-card .browse-card-footer::before {
     content: '';
     position: absolute;
-    top: 32px;
-    bottom: 32px;
+    top: var(--spectrum-spacing-500);
+    bottom: var(--spectrum-spacing-500);
     left: 0;
     width: 1px;
     background-color: var(--non-spectrum-divider-gray);
@@ -381,12 +382,12 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     font-style: normal;
     font-variant: normal;
     font-weight: normal;
-    font-size: 17px;
-    line-height: 21px;
+    font-size: calc(var(--spectrum-font-size-200) + var(--spectrum-spacing-50));
+    line-height: var(--spectrum-line-height-s);
     letter-spacing: 0;
     color: var(--spectrum-blue-900);
     opacity: 1;
-    margin-top: 8px;
+    margin-top: var(--spectrum-spacing-100);
   }
 
   .list .browse-cards-block-content > div .browse-card.upcoming-event-card.expanded .show-more,
@@ -424,7 +425,7 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
   .list .browse-card.event-upcoming-event-card .browse-card-footer .location-type {
     display: flex;
     align-items: center;
-    margin-bottom: 16.5px;
+    margin-bottom: var(--spectrum-spacing-300);
     position: unset;
     align-self: flex-start;
     padding: 0;
@@ -442,8 +443,8 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
 
   .list .browse-card.upcoming-event-card .browse-card-footer .location-type .icon,
   .list .browse-card.event-upcoming-event-card .browse-card-footer .location-type .icon {
-    width: 18px;
-    height: 18px;
+    width: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
+    height: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
   }
 
   .list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner,
@@ -455,7 +456,8 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     color: var(--spectrum-gray-50);
     opacity: 1;
     position: relative;
-    padding: 10px 10%;
+    padding-block: calc(var(--spectrum-spacing-100) + var(--spectrum-spacing-50));
+    padding-inline: 10%;
     margin: 0;
     order: 1;
   }
@@ -498,10 +500,10 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
   .list .browse-card.event-upcoming-event-card .browse-card-footer .footer-speakers-section .speakers-heading {
     font-size: var(--spectrum-font-size-200);
     font-weight: var(--font-weight-bold);
-    margin-bottom: 15px;
+    margin-bottom: var(--spectrum-spacing-300);
     color: #000;
     position: relative;
-    padding-bottom: 8px;
+    padding-bottom: var(--spectrum-spacing-100);
   }
 
   .list .browse-card.upcoming-event-card .browse-card-footer .footer-speakers-section .speakers-heading::after,
@@ -519,20 +521,20 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
   .list .browse-card.event-upcoming-event-card .browse-card-footer .footer-speakers-section .speakers-list {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: calc(var(--spectrum-spacing-300) - var(--spectrum-spacing-50));
   }
 
   .list .browse-card.upcoming-event-card .browse-card-footer .footer-speakers-section .speaker-item,
   .list .browse-card.event-upcoming-event-card .browse-card-footer .footer-speakers-section .speaker-item {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
+    gap: calc(var(--spectrum-spacing-100) + var(--spectrum-spacing-50));
   }
 
   .list .browse-card.upcoming-event-card .browse-card-footer .footer-speakers-section .speaker-img-container,
   .list .browse-card.event-upcoming-event-card .browse-card-footer .footer-speakers-section .speaker-img-container {
-    width: 50px;
-    height: 50px;
+    width: calc(var(--spectrum-spacing-700) + var(--spectrum-spacing-50));
+    height: calc(var(--spectrum-spacing-700) + var(--spectrum-spacing-50));
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
@@ -576,6 +578,6 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
 @media only screen and (min-width: 1440px) {
   body[class^='browse-'] .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers,
   body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figure .event-series-banner-no-speakers {
-    font-size: 24px;
+    font-size: calc(var(--spectrum-font-size-500) + var(--spectrum-spacing-50));
   }
 }
