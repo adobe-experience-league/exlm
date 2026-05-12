@@ -10811,7 +10811,7 @@
         "component": "select",
         "valueType": "string",
         "name": "titleType",
-        "value": "h3",
+        "value": "",
         "label": "Title Heading Type",
         "options": [
           {
@@ -10841,11 +10841,11 @@
         ]
       },
       {
-        "component": "text",
+        "component": "richtext",
         "valueType": "string",
         "name": "description",
         "value": "",
-        "label": "Description",
+        "label": "Long Description",
         "description": "Sets the description text for the Premium Learning Profile Badges block."
       }
     ]
