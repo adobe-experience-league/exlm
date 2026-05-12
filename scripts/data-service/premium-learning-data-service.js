@@ -798,3 +798,41 @@ export async function fetchBoardPosts(boardId, config) {
     return null;
   }
 }
+
+/**
+ * Fetches user badges from Adobe Learning Manager API
+ * Returns badges earned by the user, sorted by date achieved
+ * @param {string} userId - User ID
+ * @param {Object} config - Config object (from getConfig())
+ * @param {number} maxBadges - Maximum number of badges to fetch (default: 9)
+ * @returns {Promise<Object|null>} Badge data or null on error
+ */
+export async function fetchUserBadges(userId, config, maxBadges = 9) {
+  try {
+    const apiBaseUrl = config?.plApiBaseUrl;
+    if (!apiBaseUrl || !userId) {
+      return null;
+    }
+
+    const url = new URL(`${apiBaseUrl}/users/${userId}/userBadges`);
+    url.searchParams.set('page[offset]', '0');
+    url.searchParams.set('page[limit]', String(maxBadges));
+    url.searchParams.set('sort', '-dateAchieved');
+    url.searchParams.set('include', 'badge,model');
+
+    const response = await fetch(url.toString(), {
+      headers: PLDataService.buildRequestHeaders(),
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error(`User badges API request failed: ${response.status} ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching user badges:', error);
+    return null;
+  }
+}
