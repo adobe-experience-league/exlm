@@ -1551,7 +1551,14 @@ function decorateBrowseTopics(block) {
         // Check if it's TQ format: tq/{uuid}:{englishLabel}:{translatedLabel}
         if (trimmedPair.startsWith('tq/')) {
           const parts = trimmedPair.split(':');
-          if (parts.length === 3) {
+          const colonIdx1 = trimmedPair.indexOf(':');
+          const colonIdx2 = colonIdx1 > -1 ? trimmedPair.indexOf(':', colonIdx1 + 1) : -1;
+          if (colonIdx1 > -1 && colonIdx2 > -1) {
+            const key = trimmedPair.substring(0, colonIdx1); // tq/{uuid}
+            const englishLabel = trimmedPair.substring(colonIdx1 + 1, colonIdx2);
+            const translatedLabel = trimmedPair.substring(colonIdx2 + 1);
+            acc[key] = { english: englishLabel, translated: translatedLabel };
+          }
             const key = parts[0]; // tq/{uuid}
             const englishLabel = parts[1];
             const translatedLabel = parts[2];
