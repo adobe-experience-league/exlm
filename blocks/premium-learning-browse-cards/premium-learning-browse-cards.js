@@ -35,21 +35,22 @@ export default async function decorate(block) {
   block.innerHTML = '';
   block.classList.add('browse-cards-block', 'premium-learning-browse-cards');
 
-  const headerDiv = document.createElement('div');
-  headerDiv.className = 'premium-learning-browse-cards-header';
-  headerDiv.innerHTML = `
-    <div class="premium-learning-browse-cards-header-content">
-      <div class="premium-learning-browse-cards-header-text">
-        ${title ? `<div class="premium-learning-browse-cards-title">${titleElement?.innerHTML || ''}</div>` : ''}
-        ${description ? `<div class="premium-learning-browse-cards-description">${description}</div>` : ''}
-      </div>
-    </div>
+  const headerTextDiv = document.createElement('div');
+  headerTextDiv.className = 'premium-learning-browse-cards-header-text';
+  headerTextDiv.innerHTML = `
+    ${title ? `<div class="premium-learning-browse-cards-title">${titleElement?.innerHTML || ''}</div>` : ''}
+    ${description ? `<div class="premium-learning-browse-cards-description">${description}</div>` : ''}
   `;
-  block.appendChild(headerDiv);
 
   if (viewMoreAnchor) {
-    headerDiv.appendChild(viewMoreAnchor);
+    headerTextDiv.insertBefore(viewMoreAnchor, description ? headerTextDiv.lastElementChild : null);
   }
+
+  const headerDiv = document.createElement('div');
+  headerDiv.className = 'premium-learning-browse-cards-header';
+  headerDiv.innerHTML = '<div class="premium-learning-browse-cards-header-content"></div>';
+  headerDiv.firstElementChild.appendChild(headerTextDiv);
+  block.appendChild(headerDiv);
 
   const buildCardsShimmer = new BrowseCardShimmer(noOfResults, contentType);
   buildCardsShimmer.addShimmer(block);

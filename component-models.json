@@ -10678,7 +10678,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "viewMore_linkText",
+        "name": "cta_linkText",
         "value": "",
         "label": "View More Text",
         "description": "Text to be shown as the link."
@@ -10686,7 +10686,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "viewMore_link",
+        "name": "cta_link",
         "value": "",
         "label": "View More Link",
         "description": "This link will be displayed only if the selected product has more than 4 results"

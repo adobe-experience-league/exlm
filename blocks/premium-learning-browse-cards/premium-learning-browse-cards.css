@@ -27,7 +27,8 @@
 /* Link Styling */
 .premium-learning-browse-cards .premium-learning-browse-cards-link {
   display: block;
-  margin: var(--spectrum-spacing-75) 0 0;
+  margin: 0 0 var(--spectrum-spacing-100) 0;
+  line-height: var(--spectrum-line-height-s);
 }
 
 .premium-learning-browse-cards .premium-learning-browse-cards-link.hidden {
