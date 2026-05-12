@@ -20,7 +20,9 @@ export default async function decorate(block) {
   const viewMoreAnchor = viewMoreElement?.querySelector('a');
   const viewMoreHref = viewMoreAnchor?.getAttribute('href') || '';
   const viewMoreText = viewMoreAnchor?.textContent?.trim() || '';
-  if (viewMoreAnchor && viewMoreHref && viewMoreText) {
+  if (viewMoreAnchor) {
+    viewMoreAnchor.className = `premium-learning-browse-cards-link${UEAuthorMode ? '' : ' hidden'}`;
+  }
     viewMoreAnchor.className = `premium-learning-browse-cards-link${UEAuthorMode ? '' : ' hidden'}`;
   }
   let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase();
