@@ -14,7 +14,7 @@ import { isSignedInUser } from '../../scripts/auth/profile.js';
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
 function addShimmer(container) {
-  const isDesktop = window.innerWidth >= 900;
+  const isDesktop = window.matchMedia('(min-width: 900px)').matches;
 
   if (isDesktop) {
     // Desktop: custom shimmer
@@ -160,7 +160,7 @@ async function buildCarouselSlide(cardData, progressData, totalReplies, placehol
     slide.dataset.imageUrl = attrs.imageUrl || '';
 
     // Set correct initial image based on viewport to prevent flash
-    const isDesktop = window.innerWidth >= 900;
+    const isDesktop = window.matchMedia('(min-width: 900px)').matches;
     img.src = isDesktop ? attrs.bannerUrl || attrs.imageUrl || img.src : attrs.imageUrl || attrs.bannerUrl || img.src;
     slide.dataset.lastViewport = isDesktop ? 'desktop' : 'mobile';
   }
@@ -228,7 +228,7 @@ function initCarousel(container) {
   }
 
   const updateCarousel = () => {
-    const isDesktop = window.innerWidth >= 900;
+    const isDesktop = window.matchMedia('(min-width: 900px)').matches;
     const wasDesktop = slides[0]?.dataset.lastViewport === 'desktop';
 
     // Only update images when transitioning between desktop and mobile
@@ -265,14 +265,14 @@ function initCarousel(container) {
   };
 
   prevBtn.addEventListener('click', () => {
-    if (window.innerWidth >= 900 && currentIndex > 0) {
+    if (window.matchMedia('(min-width: 900px)').matches && currentIndex > 0) {
       currentIndex -= 1;
       updateCarousel();
     }
   });
 
   nextBtn.addEventListener('click', () => {
-    if (window.innerWidth >= 900 && currentIndex < slides.length - 1) {
+    if (window.matchMedia('(min-width: 900px)').matches && currentIndex < slides.length - 1) {
       currentIndex += 1;
       updateCarousel();
     }
