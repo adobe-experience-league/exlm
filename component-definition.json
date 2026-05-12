@@ -1802,7 +1802,7 @@
                 "template": {
                   "name": "Premium Learning Profile Badges",
                   "model": "premium-learning-profile-badges",
-                  "header": "Premium Learning Badges",
+                  "title": "Premium Learning Badges",
                   "description": "Visit the Premium Learning portal to see more"
                 }
               }

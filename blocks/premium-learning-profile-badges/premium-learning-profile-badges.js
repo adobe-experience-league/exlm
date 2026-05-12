@@ -1,4 +1,4 @@
-import { htmlToElement, getConfig } from '../../scripts/scripts.js';
+import { htmlToElement, getConfig, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { getCookie } from '../../scripts/utils/cookie-utils.js';
 import { fetchUserBadges } from '../../scripts/data-service/premium-learning-data-service.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
@@ -13,7 +13,7 @@ const MAX_BADGES = 9;
  * @param {Object} learningObject - Learning object details from included
  * @returns {HTMLElement} Badge card element
  */
-function renderBadgeCard(badge, learningObject) {
+function renderBadgeCard(badge, learningObject, placeholders = {}) {
   const badgeName = badge?.attributes?.name || '';
   const badgeImageUrl = badge?.attributes?.imageUrl || '';
   const loName = learningObject?.attributes?.localizedMetadata?.[0]?.name || '';
@@ -21,17 +21,21 @@ function renderBadgeCard(badge, learningObject) {
   const loFormat = learningObject?.attributes?.loFormat || '';
 
   // Determine the subtitle based on learning object type and format
-  let subtitle = 'Cohort Completion';
+  const onDemandLabel = placeholders.premiumLearningOnDemand || 'On Demand';
+  const instructorLedLabel = placeholders.premiumLearningInstructorLed || 'Instructor-Led Training';
+  const cohortCompletionLabel = placeholders.premiumLearningCohortCompletion || 'Cohort Completion';
+
+  let subtitle = cohortCompletionLabel;
   if (loType === 'course') {
     if (loFormat === 'Self Paced') {
-      subtitle = 'On Demand';
+      subtitle = onDemandLabel;
     } else if (loFormat === 'Virtual Classroom' || loFormat === 'Classroom' || loFormat === 'Blended') {
-      subtitle = 'Instructor-Led Training';
+      subtitle = instructorLedLabel;
     } else {
-      subtitle = 'On Demand'; // Default for unknown formats
+      subtitle = onDemandLabel;
     }
   } else if (loType === 'learningProgram') {
-    subtitle = 'Cohort Completion';
+    subtitle = cohortCompletionLabel;
   }
 
   const card = document.createElement('div');
@@ -104,6 +108,8 @@ export default async function decorate(block) {
   const shimmer = new BrowseCardShimmer(MAX_BADGES);
   shimmer.addShimmer(badgesContentEl);
 
+  const placeholders = await fetchLanguagePlaceholders().catch(() => ({}));
+
   // Non-blocking eligibility check — shimmer stays visible until resolved.
   // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
   isSignedInUser()
@@ -157,7 +163,7 @@ export default async function decorate(block) {
           const learningObject = modelId ? includedMap[`learningObject:${modelId}`] : null;
 
           if (badge) {
-            const badgeCard = renderBadgeCard(badge, learningObject);
+            const badgeCard = renderBadgeCard(badge, learningObject, placeholders);
             badgesGrid.appendChild(badgeCard);
           }
         });
