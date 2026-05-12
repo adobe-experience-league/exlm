@@ -48,8 +48,8 @@ export default async function decorate(block) {
   `;
   block.appendChild(headerDiv);
 
-  if (viewMoreAnchor && viewMoreHref && viewMoreText) {
-    headerDiv?.appendChild(viewMoreAnchor);
+  if (viewMoreAnchor) {
+    headerDiv.appendChild(viewMoreAnchor);
   }
 
   const buildCardsShimmer = new BrowseCardShimmer(noOfResults, contentType);
@@ -121,14 +121,8 @@ export default async function decorate(block) {
             }
             block.appendChild(contentDiv);
 
-            // Show/hide link based on number of results
-            const linkEl = block.querySelector('.premium-learning-browse-cards-link');
-            if (linkEl) {
-              if (sortedData.length > noOfResults) {
-                linkEl.classList.remove('hidden');
-              } else {
-                linkEl.classList.add('hidden');
-              }
+            if (viewMoreAnchor) {
+              viewMoreAnchor.classList.toggle('hidden', sortedData.length <= noOfResults);
             }
           } else {
             const noResultsText =
