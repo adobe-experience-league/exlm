@@ -1631,23 +1631,14 @@ function decorateBrowseTopics(block) {
           let displayLabel = topicName;
 
           // For TQ tags, match by the full key (tq/{uuid})
-          if (topicsButtonTitle.startsWith('tq/')) {
-            const tagInfo = localizedTopicsTags[topicsButtonTitle];
-            if (tagInfo && tagInfo.translated && tagInfo.translated !== 'undefined') {
-              displayLabel = tagInfo.translated;
-            } else if (tagInfo && tagInfo.english) {
-              displayLabel = tagInfo.english;
-            }
-          } else {
-            // For legacy tags, construct the key and look it up
-            const topicTag = topicsButtonTitle.startsWith('exl:') ? topicsButtonTitle.slice(4) : topicsButtonTitle;
-
-            const tagInfo = localizedTopicsTags[topicTag];
-            if (tagInfo && tagInfo.translated && tagInfo.translated !== 'undefined') {
-              displayLabel = tagInfo.translated;
-            } else if (tagInfo && tagInfo.english) {
-              displayLabel = tagInfo.english;
-            }
+          const lookupKey = topicsButtonTitle.startsWith('tq/')
+            ? topicsButtonTitle
+            : topicsButtonTitle.startsWith('exl:') ? topicsButtonTitle.slice(4) : topicsButtonTitle;
+          const tagInfo = localizedTopicsTags[lookupKey];
+          if (tagInfo?.translated && tagInfo.translated !== 'undefined') {
+            displayLabel = tagInfo.translated;
+          } else if (tagInfo?.english) {
+            displayLabel = tagInfo.english;
           }
 
           topicsButtonDiv.innerHTML = displayLabel;
