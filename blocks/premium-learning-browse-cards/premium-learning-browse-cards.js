@@ -18,11 +18,10 @@ export default async function decorate(block) {
   const title = titleElement?.textContent?.trim();
   const description = descriptionElement?.innerHTML?.trim();
   const viewMoreAnchor = viewMoreElement?.querySelector('a');
-  const viewMoreHref = viewMoreAnchor?.getAttribute('href') || '';
-  const viewMoreText = viewMoreAnchor?.textContent?.trim() || '';
-  if (viewMoreAnchor && viewMoreHref && viewMoreText) {
+  if (viewMoreAnchor) {
     viewMoreAnchor.className = `premium-learning-browse-cards-link${UEAuthorMode ? '' : ' hidden'}`;
   }
+  
   let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase();
   if (contentType?.includes(',')) {
     contentType = contentType
