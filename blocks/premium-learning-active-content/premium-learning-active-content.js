@@ -7,10 +7,37 @@ import {
   fetchBoardPosts,
 } from '../../scripts/data-service/premium-learning-data-service.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
+import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+
+function addShimmer(container) {
+  const isDesktop = window.matchMedia('(min-width: 900px)').matches;
+
+  if (isDesktop) {
+    // Desktop: custom shimmer
+    const shimmerHTML = `
+      <div class="active-content-shimmer">
+        <div class="shimmer-slide">
+          <div class="shimmer-card"></div>
+          <div class="shimmer-progress"></div>
+        </div>
+      </div>
+    `;
+    container.insertAdjacentHTML('beforeend', shimmerHTML);
+  } else {
+    // Mobile: browse card shimmer
+    const shimmer = new BrowseCardShimmer(2);
+    shimmer.addShimmer(container);
+  }
+}
+
+function removeShimmer(container) {
+  container.querySelector('.active-content-shimmer')?.remove();
+  container.querySelectorAll('.browse-card-shimmer').forEach((el) => el.remove());
+}
 
 function showFallbackContentInUEMode(blockElement) {
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
@@ -133,7 +160,7 @@ async function buildCarouselSlide(cardData, progressData, totalReplies, placehol
     slide.dataset.imageUrl = attrs.imageUrl || '';
 
     // Set correct initial image based on viewport to prevent flash
-    const isDesktop = window.innerWidth >= 900;
+    const isDesktop = window.matchMedia('(min-width: 900px)').matches;
     img.src = isDesktop ? attrs.bannerUrl || attrs.imageUrl || img.src : attrs.imageUrl || attrs.bannerUrl || img.src;
     slide.dataset.lastViewport = isDesktop ? 'desktop' : 'mobile';
   }
@@ -201,7 +228,7 @@ function initCarousel(container) {
   }
 
   const updateCarousel = () => {
-    const isDesktop = window.innerWidth >= 900;
+    const isDesktop = window.matchMedia('(min-width: 900px)').matches;
     const wasDesktop = slides[0]?.dataset.lastViewport === 'desktop';
 
     // Only update images when transitioning between desktop and mobile
@@ -238,14 +265,14 @@ function initCarousel(container) {
   };
 
   prevBtn.addEventListener('click', () => {
-    if (window.innerWidth >= 900 && currentIndex > 0) {
+    if (window.matchMedia('(min-width: 900px)').matches && currentIndex > 0) {
       currentIndex -= 1;
       updateCarousel();
     }
   });
 
   nextBtn.addEventListener('click', () => {
-    if (window.innerWidth >= 900 && currentIndex < slides.length - 1) {
+    if (window.matchMedia('(min-width: 900px)').matches && currentIndex < slides.length - 1) {
       currentIndex += 1;
       updateCarousel();
     }
@@ -289,6 +316,7 @@ export default async function decorate(block) {
     </div>
   `;
   block.appendChild(headerDiv);
+  addShimmer(block);
 
   // Non-blocking eligibility check — header stays visible until resolved.
   // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
@@ -296,6 +324,7 @@ export default async function decorate(block) {
     .then((signedIn) => isPLEligible(signedIn))
     .then(async (isEligible) => {
       if (!isEligible) {
+        removeShimmer(block);
         if (UEAuthorMode) showFallbackContentInUEMode(block);
         else block.remove();
         return;
@@ -408,9 +437,11 @@ export default async function decorate(block) {
         `,
         );
 
+        removeShimmer(block);
         block.appendChild(carouselContainer);
         initCarousel(carouselContainer);
       } catch (err) {
+        removeShimmer(block);
         if (UEAuthorMode) showFallbackContentInUEMode(block);
         else block.remove();
         // eslint-disable-next-line no-console
@@ -418,6 +449,7 @@ export default async function decorate(block) {
       }
     })
     .catch((err) => {
+      removeShimmer(block);
       if (UEAuthorMode) showFallbackContentInUEMode(block);
       else block.remove();
       // eslint-disable-next-line no-console

@@ -1,11 +1,18 @@
-import { htmlToElement, getConfig, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { htmlToElement, getConfig, fetchLanguagePlaceholders, createTag } from '../../scripts/scripts.js';
 import { getCookie } from '../../scripts/utils/cookie-utils.js';
 import { fetchUserBadges } from '../../scripts/data-service/premium-learning-data-service.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const MAX_BADGES = 9;
+
+function showFallbackContentInUEMode(blockElement) {
+  const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
+  contentDiv.textContent = 'This block will load the Premium learning profile badges for Premium users only.';
+  blockElement.appendChild(contentDiv);
+}
 
 /**
  * Renders a single badge card
@@ -18,18 +25,16 @@ function renderBadgeCard(badge, learningObject, placeholders = {}) {
   const badgeImageUrl = badge?.attributes?.imageUrl || '';
   const loName = learningObject?.attributes?.localizedMetadata?.[0]?.name || '';
   const loType = learningObject?.attributes?.loType || '';
-  const loFormat = learningObject?.attributes?.loFormat || '';
+  const tags = learningObject?.attributes?.tags || [];
 
-  // Determine the subtitle based on learning object type and format
   const onDemandLabel = placeholders.premiumLearningOnDemand || 'On Demand';
   const instructorLedLabel = placeholders.premiumLearningInstructorLed || 'Instructor-Led Training';
   const cohortCompletionLabel = placeholders.premiumLearningCohortCompletion || 'Cohort Completion';
 
   let subtitle = cohortCompletionLabel;
   if (loType === 'course') {
-    if (loFormat === 'Self Paced') {
-      subtitle = onDemandLabel;
-    } else if (loFormat === 'Virtual Classroom' || loFormat === 'Classroom' || loFormat === 'Blended') {
+    const hasLiveSession = tags.some((tag) => tag === 'Live Session');
+    if (hasLiveSession) {
       subtitle = instructorLedLabel;
     } else {
       subtitle = onDemandLabel;
@@ -117,7 +122,8 @@ export default async function decorate(block) {
     .then(async (isEligible) => {
       if (!isEligible) {
         shimmer.removeShimmer();
-        block.remove();
+        if (UEAuthorMode) showFallbackContentInUEMode(block);
+        else block.remove();
         return;
       }
 
@@ -126,7 +132,8 @@ export default async function decorate(block) {
 
         if (!userId) {
           shimmer.removeShimmer();
-          block.remove();
+          if (UEAuthorMode) showFallbackContentInUEMode(block);
+          else block.remove();
           return;
         }
 
@@ -134,7 +141,8 @@ export default async function decorate(block) {
 
         if (!badgesData || !badgesData.data || badgesData.data.length === 0) {
           shimmer.removeShimmer();
-          block.remove();
+          if (UEAuthorMode) showFallbackContentInUEMode(block);
+          else block.remove();
           return;
         }
 
@@ -149,7 +157,8 @@ export default async function decorate(block) {
 
         if (completedBadges.length === 0) {
           shimmer.removeShimmer();
-          block.remove();
+          if (UEAuthorMode) showFallbackContentInUEMode(block);
+          else block.remove();
           return;
         }
 
@@ -175,13 +184,15 @@ export default async function decorate(block) {
         // eslint-disable-next-line no-console
         console.error('Error loading premium learning badges:', error);
         shimmer.removeShimmer();
-        block.remove();
+        if (UEAuthorMode) showFallbackContentInUEMode(block);
+        else block.remove();
       }
     })
     .catch((err) => {
       // eslint-disable-next-line no-console
       console.error('Error resolving PL eligibility for badges:', err);
       shimmer.removeShimmer();
-      block.remove();
+      if (UEAuthorMode) showFallbackContentInUEMode(block);
+      else block.remove();
     });
 }
