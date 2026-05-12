@@ -21,7 +21,7 @@ export default async function decorate(block) {
   if (viewMoreAnchor) {
     viewMoreAnchor.className = `premium-learning-browse-cards-link${UEAuthorMode ? '' : ' hidden'}`;
   }
-  
+
   let contentType = contentTypeElement?.textContent?.trim()?.toLowerCase();
   if (contentType?.includes(',')) {
     contentType = contentType
