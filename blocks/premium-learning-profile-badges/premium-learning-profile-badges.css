@@ -5,6 +5,9 @@
 
 .premium-learning-profile-badges .badges-title {
   margin: 0 0 var(--spectrum-spacing-100) 0;
+}
+
+.premium-learning-profile-badges .badges-title > * {
   font-size: var(--spectrum-font-size-200);
   font-weight: var(--font-weight-bold);
 }
@@ -15,8 +18,9 @@
   margin: 0;
 }
 
-/* Badge grid */
-.premium-learning-profile-badges .badges-grid {
+/* Badge grid and shimmer layout */
+.premium-learning-profile-badges .badges-grid,
+.premium-learning-profile-badges .browse-card-shimmer {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--spectrum-spacing-400);
@@ -88,14 +92,16 @@
 
 /* Responsive - 2 columns on tablet */
 @media (min-width: 600px) {
-  .premium-learning-profile-badges .badges-grid {
+  .premium-learning-profile-badges .badges-grid,
+  .premium-learning-profile-badges .browse-card-shimmer {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 /* Responsive - 3 columns on desktop */
 @media (min-width: 900px) {
-  .premium-learning-profile-badges .badges-grid {
+  .premium-learning-profile-badges .badges-grid,
+  .premium-learning-profile-badges .browse-card-shimmer {
     grid-template-columns: repeat(3, 1fr);
   }
 }
