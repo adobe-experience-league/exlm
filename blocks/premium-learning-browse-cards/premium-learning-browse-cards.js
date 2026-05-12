@@ -14,14 +14,14 @@ function showFallbackContentInUEMode(blockElement) {
 }
 
 export default async function decorate(block) {
-  const [titleElement, descriptionElement, contentTypeElement, productElement, ctaElement] = [...block.children];
+  const [titleElement, descriptionElement, contentTypeElement, productElement, viewMoreElement] = [...block.children];
   const title = titleElement?.textContent?.trim();
   const description = descriptionElement?.innerHTML?.trim();
-  const viewMoreAnchor = ctaElement?.querySelector('a');
+  const viewMoreAnchor = viewMoreElement?.querySelector('a');
   const viewMoreHref = viewMoreAnchor?.getAttribute('href') || '';
   const viewMoreText = viewMoreAnchor?.textContent?.trim() || '';
   let viewMoreLink = null;
-  if (viewMoreHref) {
+  if (viewMoreHref && viewMoreText) {
     viewMoreLink = document.createElement('a');
     viewMoreLink.href = viewMoreHref;
     viewMoreLink.className = `premium-learning-browse-cards-link${UEAuthorMode ? '' : ' hidden'}`;
@@ -53,14 +53,7 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
 
   if (viewMoreLink) {
-    const descEl = headerDiv.querySelector('.premium-learning-browse-cards-description');
-    if (descEl) {
-      const lastPara = [...descEl.querySelectorAll('p')].pop();
-      const innerDiv = descEl.querySelector(':scope > div');
-      (lastPara || innerDiv || descEl).appendChild(viewMoreLink);
-    } else {
-      headerDiv.querySelector('.premium-learning-browse-cards-header-text')?.appendChild(viewMoreLink);
-    }
+    headerDiv.querySelector('.premium-learning-browse-cards-header-text')?.appendChild(viewMoreLink);
   }
 
   const buildCardsShimmer = new BrowseCardShimmer(noOfResults, contentType);
