@@ -98,3 +98,81 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
     font-size: 24px;
   }
 }
+
+/* List view styles: align on-demand cards with upcoming-event list layout */
+@media only screen and (min-width: 900px) {
+  .list .browse-cards-block-content > div .browse-card.event-card,
+  .list .browse-cards-block-content > div .browse-card.event-on-demand-event-card {
+    min-height: auto;
+    flex-direction: row;
+    background-color: var(--spectrum-gray-50);
+  }
+
+  .list .browse-card.event-card .browse-card-figure,
+  .list .browse-card.event-on-demand-event-card .browse-card-figure {
+    flex: 0 0 23.34%;
+    border: unset;
+    border-radius: var(--spectrum-spacing-300) 0 0 var(--spectrum-spacing-300);
+    max-height: unset;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .list .browse-card.event-card .browse-card-content,
+  .list .browse-card.event-on-demand-event-card .browse-card-content {
+    padding: var(--spectrum-spacing-500);
+  }
+
+  .list .browse-card.event-card .browse-card-footer,
+  .list .browse-card.event-on-demand-event-card .browse-card-footer {
+    padding: var(--spectrum-spacing-500);
+    flex: 0 0 18.52%;
+    position: relative;
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: unset;
+    border-radius: var(--spectrum-spacing-300);
+  }
+
+  .list .browse-card.event-card .browse-card-footer::before,
+  .list .browse-card.event-on-demand-event-card .browse-card-footer::before {
+    content: '';
+    position: absolute;
+    top: var(--spectrum-spacing-500);
+    bottom: var(--spectrum-spacing-500);
+    left: 0;
+    width: 1px;
+    background-color: var(--non-spectrum-divider-gray);
+  }
+
+  .list .browse-card.event-card .browse-card-footer .browse-card-cta-element,
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-cta-element {
+    margin-block: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-75));
+    margin-inline: 0;
+    background-color: var(--spectrum-blue-900);
+    border-radius: var(--spectrum-spacing-300);
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    font-size: var(--spectrum-font-size-100);
+    line-height: var(--spectrum-line-height-xs);
+    color: var(--spectrum-gray-50);
+    width: 100%;
+    height: var(--spectrum-spacing-500);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .list .browse-card.event-card .browse-card-footer .browse-card-cta-element .icon,
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-cta-element .icon {
+    display: none;
+  }
+
+  .list .browse-card.event-card .browse-card-figure .event-series-banner,
+  .list .browse-card.event-on-demand-event-card .browse-card-figure .event-series-banner {
+    font-size: var(--spectrum-font-size-100);
+    letter-spacing: 0;
+    line-height: 1.4;
+  }
+}
