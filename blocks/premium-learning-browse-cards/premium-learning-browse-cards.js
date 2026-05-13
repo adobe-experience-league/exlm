@@ -61,7 +61,8 @@ export default async function decorate(block) {
   if (tags) {
     products = getv2TagLabels(tags)
       .split(',')
-      .map((p) => p.trim());
+      .map((p) => p.trim())
+      .filter(Boolean);
   }
 
   const param = {
