@@ -1525,7 +1525,7 @@ function decorateBrowseTopics(block) {
   let allTopicsTags;
   // When TQ tags are authored and FF is enabled.
   if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Content) {
-    const solutionsv2Labels = solutionsv2Content ? getv2TagLabels(solutionsv2Content) : '';
+    const solutionsv2Labels = getv2TagLabels(solutionsv2Content);
     allSolutionsTags = solutionsv2Labels ? solutionsv2Labels.split(',').map((p) => p.trim()) : [];
 
     // Handle features v2 and topics v2 logic
