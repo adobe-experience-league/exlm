@@ -46,7 +46,7 @@ export default async function decorate(block) {
           }),
         ),
       ].join(', ') || getMetadata('product_v1');
-    experienceLevel = getPreferredMetadata('loc-v2-level', 'level', 'level_v1')
+    experienceLevel = getPreferredMetadata('loc-v2-level', 'loc-legacy-level', 'loc-level', 'level', 'level_v1')
       .split(',')
       .map((item) => item.trim())
       .join(', ');
@@ -60,7 +60,7 @@ export default async function decorate(block) {
           }),
         ),
       ].join(', ') || getMetadata('product_v2');
-    experienceLevel = getPreferredMetadata('loc-legacy-level', 'loc-level', 'level', 'level_v2')
+    experienceLevel = getPreferredMetadata('loc-legacy-level', 'loc-level', 'loc-v2-level', 'level', 'level_v2')
       .split(',')
       .map((item) => item.trim())
       .join(', ');
