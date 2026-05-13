@@ -1515,21 +1515,21 @@ function decorateBrowseTopics(block) {
   const solutionsContent = solutionsElement?.textContent?.trim() ?? '';
   const headingContent = headingElement?.textContent?.trim() ?? '';
   const topicsContent = topicsElement?.textContent?.trim() ?? '';
+  const solutionsv2Content = solutionsv2Element?.textContent?.trim() ?? '';
+  const featuresv2Content = featuresv2Element?.textContent?.trim() ?? '';
+  const topicsv2Content = topicsv2Element?.textContent?.trim() ?? '';
   const contentTypeContent = contentTypeElement?.textContent?.trim() ?? '';
   const isFormElement = customElement?.classList?.contains('browse-filters-input-container');
   const localizedTopicsContent = isFormElement ? '' : customElement?.textContent?.trim() ?? '';
   let allSolutionsTags;
   let allTopicsTags;
   // When TQ tags are authored and FF is enabled.
-  if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Element) {
-    const solutionsv2Content = solutionsv2Element?.textContent?.trim() ?? '';
-    const solutionsv2Labels = solutionsv2Content ? getv2TagLabels(solutionsv2Content) : '';
+  if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Content) {
+    const solutionsv2Labels = getv2TagLabels(solutionsv2Content);
     allSolutionsTags = solutionsv2Labels ? solutionsv2Labels.split(',').map((p) => p.trim()) : [];
 
     // Handle features v2 and topics v2 logic
-    const featuresv2Content = featuresv2Element?.textContent?.trim() ?? '';
     const featuresv2Labels = featuresv2Content ? getv2TagLabels(featuresv2Content) : '';
-    const topicsv2Content = topicsv2Element?.textContent?.trim() ?? '';
     const topicsv2Labels = topicsv2Content ? getv2TagLabels(topicsv2Content) : '';
 
     // Merge features and topics v2 tags; Set deduplicates if both fields contain overlapping labels.
@@ -1565,7 +1565,7 @@ function decorateBrowseTopics(block) {
 
   const supportedProducts = [];
   if (allSolutionsTags.length) {
-    if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Element) {
+    if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Content) {
       // V2 tags are plain text labels, construct query directly
       const productsQuery = allSolutionsTags.map((product) => `@el_product="${product}"`).join(' OR ');
       window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND (${productsQuery}))`;
@@ -1604,7 +1604,7 @@ function decorateBrowseTopics(block) {
   const browseFiltersSection = document.querySelector('.browse-filters-form');
 
   if (allTopicsTags.length > 0) {
-    const isV2Enabled = isFeatureEnabled('isV2TagsEnabled') && (featuresv2Element || topicsv2Element);
+    const isV2Enabled = isFeatureEnabled('isV2TagsEnabled') && (featuresv2Content || topicsv2Content);
     allTopicsTags
       .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
