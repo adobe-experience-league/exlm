@@ -1613,6 +1613,10 @@ function decorateBrowseTopics(block) {
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
         topicsButtonDiv.dataset.topicname = topicsButtonTitle;
         topicsButtonDiv.dataset.label = topicName;
+        // Mark as v2 tag for proper query generation
+        if (isV2Enabled) {
+          topicsButtonDiv.dataset.isv2 = 'true';
+        }
 
         if (lang === 'en' || window.location.href.includes('.html') || Object.keys(localizedTopicsTags).length === 0) {
           topicsButtonDiv.innerHTML = topicName;
