@@ -1623,17 +1623,43 @@ function decorateBrowseTopics(block) {
         } else {
           // Try to find matching localized tag
           let displayLabel = topicName;
+          let tagInfo = null;
 
-          // For TQ tags, match by the full key (tq/{uuid})
-          let lookupKey = topicsButtonTitle;
-          if (!topicsButtonTitle.startsWith('tq/')) {
-            lookupKey = topicsButtonTitle.startsWith('exl:') ? topicsButtonTitle.slice(4) : topicsButtonTitle;
+          if (isV2Enabled) {
+            // For TQ/v2 tags, topicsButtonTitle is just the label (e.g., "Analysis Workspace")
+            // The English label may have product name appended (e.g., "Analysis Workspace (Analytics)")
+            // Match by checking if English label starts with topicsButtonTitle
+            tagInfo = Object.entries(localizedTopicsTags).find(([, value]) => {
+              if (!value.english) return false;
+              // Try exact match first
+              if (value.english === topicsButtonTitle) return true;
+              // Try matching with product suffix pattern: "Label (Product)"
+              const baseLabel = value.english.replace(/\s*\([^)]+\)\s*$/, '').trim();
+              return baseLabel === topicsButtonTitle;
+            })?.[1];
+          } else {
+            // For legacy tags, try exact match first
+            tagInfo = localizedTopicsTags[topicsButtonTitle];
+
+            if (!tagInfo) {
+              // Try without 'exl:' prefix
+              const lookupKey = topicsButtonTitle.startsWith('exl:') ? topicsButtonTitle.slice(4) : topicsButtonTitle;
+              tagInfo = localizedTopicsTags[lookupKey];
+
+              // If not found, try partial matching
+              if (!tagInfo) {
+                tagInfo = Object.entries(localizedTopicsTags).find(([key]) => {
+                  const cleanKey = key.startsWith('exl:') ? key.slice(4) : key;
+                  return cleanKey === lookupKey || key === topicsButtonTitle;
+                })?.[1];
+              }
+            }
           }
-          const tagInfo = localizedTopicsTags[lookupKey];
+
           if (tagInfo?.translated && tagInfo.translated !== 'undefined') {
             displayLabel = tagInfo.translated;
           } else if (tagInfo?.english) {
-            // For TQ tags: use English label when translation is missing
+            // Use English label when translation is missing
             displayLabel = tagInfo.english;
           }
 
