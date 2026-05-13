@@ -10672,12 +10672,21 @@
         ]
       },
       {
-        "component": "aem-tag",
-        "name": "product",
-        "label": "Solution(s) or Feature(s)",
+        "component": "custom-aem-tag",
+        "name": "pl-tq-product",
+        "label": "Product(s) v2",
         "valueType": "string",
-        "rootPath": "/content/cq:tags/exl",
-        "description": "Select the product for which courses/cohorts should be displayed."
+        "description": "Select the product for which courses/cohorts should be displayed. Optional - all are included if no selection is made.",
+        "dataSource": {
+          "type": "action",
+          "config": {
+            "name": "getTQTags",
+            "params": {
+              "taxonomyType": "product"
+            }
+          }
+        },
+        "extensionId": "exl-ue-extension"
       },
       {
         "component": "text",
