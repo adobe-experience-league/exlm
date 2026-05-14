@@ -56,16 +56,17 @@ export function formattedTags(inputString) {
   return resultArray;
 }
 
-export const generateQuery = (topic, isV2Tag) => {
-  const [type, product, version] = topic.split('/');
-
-  // For v2 tags (both featuresv2 and topicsv2), map to @el_features
-  // solutionsv2 maps to @el_product (handled separately in browse-filters.js)
-  if (isV2Tag) {
-    return { query: `@el_features="${topic}"`, product: topic };
+export const generateQuery = (topic) => {
+  // Check if this is a v2 tag (no slashes) or legacy tag (has slashes)
+  if (topic.indexOf('/') === -1) {
+    // V2 tag - plain text label, query against el_features only
+    // Return forceQuery: true so product facet logic is skipped
+    return { query: `@el_features="${topic}"`, forceQuery: true };
   }
 
   // Legacy tag handling
+  const [type, product, version] = topic.split('/');
+
   if (!product) {
     return { query: `@el_features="${type}"`, product: type };
   }
@@ -168,12 +169,8 @@ export function handleTopicSelection(block, fireSelection, resetPage, targetPage
       const productsInUrl = productsList.split(',').filter(Boolean);
       const topicQueryItems = `${selectedTopics
         .map((topic) => {
-          // Check if this is a v2 tag
-          const topicButton = wrapper.querySelector(`.browse-topics-item[data-topicname="${topic}"]`);
-          const isV2Tag = topicButton?.dataset?.isv2 === 'true';
-
-          const { query: advancedQuery, forceQuery = false, product } = generateQuery(topic, isV2Tag);
-          if (!forceQuery && window.headlessProductFacet && !productsInUrl.includes(product) && !isV2Tag) {
+          const { query: advancedQuery, forceQuery = false, product } = generateQuery(topic);
+          if (!forceQuery && window.headlessProductFacet && !productsInUrl.includes(product)) {
             window.headlessProductFacet.toggleSelect({
               value: product,
               state: 'selected',

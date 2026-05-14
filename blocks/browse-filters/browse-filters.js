@@ -1613,15 +1613,10 @@ function decorateBrowseTopics(block) {
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
         topicsButtonDiv.dataset.topicname = topicsButtonTitle;
         topicsButtonDiv.dataset.label = topicName;
-        // Mark as v2 tag for proper query generation
-        if (isV2Enabled) {
-          topicsButtonDiv.dataset.isv2 = 'true';
-        }
 
         if (lang === 'en' || window.location.href.includes('.html') || Object.keys(localizedTopicsTags).length === 0) {
           topicsButtonDiv.innerHTML = topicName;
         } else {
-          // Try to find matching localized tag
           let displayLabel = topicName;
           let tagInfo = null;
 
@@ -1633,26 +1628,20 @@ function decorateBrowseTopics(block) {
               if (!value.english) return false;
               // Try exact match first
               if (value.english === topicsButtonTitle) return true;
-              // Try matching with product suffix pattern: "Label (Product)"
-              const baseLabel = value.english.replace(/\s*\([^)]+\)\s*$/, '').trim();
-              return baseLabel === topicsButtonTitle;
+              // Strip suffixes from both sides to enable bidirectional matching
+              const baseEnglish = value.english.replace(/\s*\([^)]+\)\s*$/, '').trim();
+              const baseTitle = topicsButtonTitle.replace(/\s*\([^)]+\)\s*$/, '').trim();
+              return baseEnglish === baseTitle;
             })?.[1];
           } else {
             // For legacy tags, try exact match first
             tagInfo = localizedTopicsTags[topicsButtonTitle];
 
             if (!tagInfo) {
-              // Try without 'exl:' prefix
+              // Try matching with or without 'exl:' prefix
               const lookupKey = topicsButtonTitle.startsWith('exl:') ? topicsButtonTitle.slice(4) : topicsButtonTitle;
-              tagInfo = localizedTopicsTags[lookupKey];
 
-              // If not found, try partial matching
-              if (!tagInfo) {
-                tagInfo = Object.entries(localizedTopicsTags).find(([key]) => {
-                  const cleanKey = key.startsWith('exl:') ? key.slice(4) : key;
-                  return cleanKey === lookupKey || key === topicsButtonTitle;
-                })?.[1];
-              }
+              tagInfo = localizedTopicsTags[lookupKey];
             }
           }
 
