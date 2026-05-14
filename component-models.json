@@ -5736,10 +5736,9 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "./cq:translationMethod",
+        "name": "cq:translationMethod",
         "label": "Page Translation method",
-        "description": "Sets the page translation method in page meta.",
-        "hidden": true
+        "description": "Sets the page translation method in page meta."
       },
       {
         "component": "aem-content",
