@@ -5738,7 +5738,8 @@
         "valueType": "string",
         "name": "cq:translationMethod",
         "label": "Page Translation method",
-        "description": "Sets the page translation method in page meta."
+        "description": "Sets the page translation method in page meta.",
+        "readOnly": true
       },
       {
         "component": "aem-content",
