@@ -167,7 +167,7 @@ export function handleTopicSelection(block, fireSelection, resetPage, targetPage
       const productsInUrl = productsList.split(',').filter(Boolean);
       const topicQueryItems = `${selectedTopics
         .map((topic) => {
-          const topicButton = wrapper.querySelector(`.browse-topics-item[data-topicname="${topic}"]`);
+          const topicButton = wrapper.querySelector(`.browse-topics-item[data-topicname="${CSS.escape(topic)}"]`);
           const isV2Tag = topicButton?.dataset?.isv2 === 'true';
           const { query: advancedQuery, forceQuery = false, product } = generateQuery(topic, isV2Tag);
           if (!forceQuery && window.headlessProductFacet && !productsInUrl.includes(product)) {
