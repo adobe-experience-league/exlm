@@ -22,24 +22,44 @@ const findJsonLd = (videoUrl) => {
   const jsonLdScripts = document.querySelectorAll('script[type="application/ld+json"]');
   if (!jsonLdScripts || !jsonLdScripts.length) return null;
 
-  const jsonLd = [...jsonLdScripts]
-    .map((script) => {
-      const parsed = JSON.parse(script.textContent);
-      return Array.isArray(parsed) ? parsed : [parsed];
-    })
-    .flat()
-    .find((jsonLdObj) => isSameUrl(jsonLdObj.embedUrl, videoUrl));
+  const allParsed = [...jsonLdScripts].map((script) => JSON.parse(script.textContent));
+  const flatItems = allParsed.flatMap((parsed) => (Array.isArray(parsed) ? parsed : [parsed]));
 
-  return jsonLd;
+  // Old schema path first: direct embedUrl match in flat items
+  const directMatch = flatItems.find((item) => item.embedUrl && isSameUrl(item.embedUrl, videoUrl));
+  if (directMatch) return directMatch;
+
+  // New schema fallback: @graph format
+  return (
+    flatItems
+      .flatMap((item) => (item['@graph'] ? item['@graph'] : []))
+      .find((item) => item.embedUrl && isSameUrl(item.embedUrl, videoUrl)) || null
+  );
 };
 
 function getVideoThumbnailUrl(videoUrl, jsonLdString) {
-  const jsonLd = jsonLdString ? JSON.parse(jsonLdString) : findJsonLd(videoUrl);
-  const thumbnails = [jsonLd?.thumbnailUrl].flat();
+  let jsonLd;
 
-  const defaultThumbnail = thumbnails.sort()[jsonLd.length - 1]; // last one
-  const bestFit = thumbnails?.find((url) => url.includes('640x'));
-  return bestFit || defaultThumbnail;
+  if (jsonLdString) {
+    const parsed = JSON.parse(jsonLdString);
+    const items = Array.isArray(parsed) ? parsed : [parsed];
+    // Old schema path first: direct embedUrl match
+    jsonLd = items.find((item) => item.embedUrl && isSameUrl(item.embedUrl, videoUrl));
+    // New schema fallback: @graph items
+    if (!jsonLd) {
+      jsonLd = items
+        .flatMap((item) => (item['@graph'] ? item['@graph'] : []))
+        .find((item) => item.embedUrl && isSameUrl(item.embedUrl, videoUrl));
+    }
+  }
+
+  // DOM search fallback if jsonLdString not provided or no match found
+  if (!jsonLd) jsonLd = findJsonLd(videoUrl);
+  if (!jsonLd) return null;
+
+  const thumbnails = [jsonLd.thumbnailUrl].flat().filter(Boolean);
+  const bestFit = thumbnails.find((url) => url.includes('640x'));
+  return bestFit || thumbnails.sort()[thumbnails.length - 1] || null;
 }
 
 /**
