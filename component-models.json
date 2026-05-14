@@ -5739,7 +5739,7 @@
         "name": "cq:translationMethod",
         "label": "Page Translation method",
         "description": "Sets the page translation method in page meta.",
-        "readOnly": true
+        "hidden": true
       },
       {
         "component": "aem-content",
