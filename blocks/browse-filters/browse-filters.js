@@ -1605,6 +1605,15 @@ function decorateBrowseTopics(block) {
 
   if (allTopicsTags.length > 0) {
     const isV2Enabled = isFeatureEnabled('isV2TagsEnabled') && (featuresv2Content || topicsv2Content);
+    const stripParens = (s) => s.replace(/\s*\([^)]+\)\s*$/, '').trim();
+    let v2LocalizedMap = {};
+    if (isV2Enabled) {
+      v2LocalizedMap = Object.fromEntries(
+        Object.entries(localizedTopicsTags)
+          .filter(([, v]) => v.english)
+          .map(([, v]) => [stripParens(v.english), v]),
+      );
+    }
     allTopicsTags
       .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
@@ -1617,19 +1626,27 @@ function decorateBrowseTopics(block) {
         if (lang === 'en' || window.location.href.includes('.html') || Object.keys(localizedTopicsTags).length === 0) {
           topicsButtonDiv.innerHTML = topicName;
         } else {
-          // Try to find matching localized tag
           let displayLabel = topicName;
+          let tagInfo = null;
 
-          // For TQ tags, match by the full key (tq/{uuid})
-          let lookupKey = topicsButtonTitle;
-          if (!topicsButtonTitle.startsWith('tq/')) {
-            lookupKey = topicsButtonTitle.startsWith('exl:') ? topicsButtonTitle.slice(4) : topicsButtonTitle;
+          if (isV2Enabled) {
+            tagInfo = localizedTopicsTags[topicsButtonTitle] ?? v2LocalizedMap[stripParens(topicsButtonTitle)];
+          } else {
+            // For legacy tags, try exact match first
+            tagInfo = localizedTopicsTags[topicsButtonTitle];
+
+            if (!tagInfo) {
+              // Try matching with or without 'exl:' prefix
+              const lookupKey = topicsButtonTitle.startsWith('exl:') ? topicsButtonTitle.slice(4) : topicsButtonTitle;
+
+              tagInfo = localizedTopicsTags[lookupKey];
+            }
           }
-          const tagInfo = localizedTopicsTags[lookupKey];
+
           if (tagInfo?.translated && tagInfo.translated !== 'undefined') {
             displayLabel = tagInfo.translated;
           } else if (tagInfo?.english) {
-            // For TQ tags: use English label when translation is missing
+            // Use English label when translation is missing
             displayLabel = tagInfo.english;
           }
 
