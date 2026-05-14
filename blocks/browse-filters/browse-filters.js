@@ -1515,21 +1515,21 @@ function decorateBrowseTopics(block) {
   const solutionsContent = solutionsElement?.textContent?.trim() ?? '';
   const headingContent = headingElement?.textContent?.trim() ?? '';
   const topicsContent = topicsElement?.textContent?.trim() ?? '';
+  const solutionsv2Content = solutionsv2Element?.textContent?.trim() ?? '';
+  const featuresv2Content = featuresv2Element?.textContent?.trim() ?? '';
+  const topicsv2Content = topicsv2Element?.textContent?.trim() ?? '';
   const contentTypeContent = contentTypeElement?.textContent?.trim() ?? '';
   const isFormElement = customElement?.classList?.contains('browse-filters-input-container');
   const localizedTopicsContent = isFormElement ? '' : customElement?.textContent?.trim() ?? '';
   let allSolutionsTags;
   let allTopicsTags;
   // When TQ tags are authored and FF is enabled.
-  if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Element) {
-    const solutionsv2Content = solutionsv2Element?.textContent?.trim() ?? '';
-    const solutionsv2Labels = solutionsv2Content ? getv2TagLabels(solutionsv2Content) : '';
+  if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Content) {
+    const solutionsv2Labels = getv2TagLabels(solutionsv2Content);
     allSolutionsTags = solutionsv2Labels ? solutionsv2Labels.split(',').map((p) => p.trim()) : [];
 
     // Handle features v2 and topics v2 logic
-    const featuresv2Content = featuresv2Element?.textContent?.trim() ?? '';
     const featuresv2Labels = featuresv2Content ? getv2TagLabels(featuresv2Content) : '';
-    const topicsv2Content = topicsv2Element?.textContent?.trim() ?? '';
     const topicsv2Labels = topicsv2Content ? getv2TagLabels(topicsv2Content) : '';
 
     // Merge features and topics v2 tags; Set deduplicates if both fields contain overlapping labels.
@@ -1543,17 +1543,29 @@ function decorateBrowseTopics(block) {
     allSolutionsTags = solutionsContent !== '' ? formattedTags(solutionsContent) : [];
     allTopicsTags = topicsContent !== '' ? formattedTags(topicsContent) : [];
   }
+  // Parse localized tags content into a structured object
   const localizedTopicsTags = localizedTopicsContent
     ? localizedTopicsContent.split(',')?.reduce((acc, pair) => {
-        const [key, value] = pair.split(':').map((str) => str.trim());
-        if (key) acc[key] = value || '';
+        const trimmedPair = pair.trim();
+
+        // TQ format: tq/{uuid}/{englishLabel}:{translatedLabel}
+        // Legacy format: {key}/{tag}:{translatedTag} or {key}/{solution}/{tag}:{translatedTag}
+        const lastColonIndex = trimmedPair.lastIndexOf(':');
+        if (lastColonIndex > -1) {
+          const keyPart = trimmedPair.substring(0, lastColonIndex);
+          const translatedPart = trimmedPair.substring(lastColonIndex + 1);
+          // Extract English tag (last part before colon)
+          const keySegments = keyPart.split('/');
+          const englishTag = keySegments[keySegments.length - 1];
+          acc[keyPart] = { english: englishTag, translated: translatedPart };
+        }
         return acc;
       }, {})
-    : '';
+    : {};
 
   const supportedProducts = [];
   if (allSolutionsTags.length) {
-    if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Element) {
+    if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Content) {
       // V2 tags are plain text labels, construct query directly
       const productsQuery = allSolutionsTags.map((product) => `@el_product="${product}"`).join(' OR ');
       window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND (${productsQuery}))`;
@@ -1592,7 +1604,16 @@ function decorateBrowseTopics(block) {
   const browseFiltersSection = document.querySelector('.browse-filters-form');
 
   if (allTopicsTags.length > 0) {
-    const isV2Enabled = isFeatureEnabled('isV2TagsEnabled') && (featuresv2Element || topicsv2Element);
+    const isV2Enabled = isFeatureEnabled('isV2TagsEnabled') && (featuresv2Content || topicsv2Content);
+    const stripParens = (s) => s.replace(/\s*\([^)]+\)\s*$/, '').trim();
+    let v2LocalizedMap = {};
+    if (isV2Enabled) {
+      v2LocalizedMap = Object.fromEntries(
+        Object.entries(localizedTopicsTags)
+          .filter(([, v]) => v.english)
+          .map(([, v]) => [stripParens(v.english), v]),
+      );
+    }
     allTopicsTags
       .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
@@ -1601,14 +1622,35 @@ function decorateBrowseTopics(block) {
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
         topicsButtonDiv.dataset.topicname = topicsButtonTitle;
         topicsButtonDiv.dataset.label = topicName;
-        if (lang === 'en' || window.location.href.includes('.html') || localizedTopicsTags === '') {
+
+        if (lang === 'en' || window.location.href.includes('.html') || Object.keys(localizedTopicsTags).length === 0) {
           topicsButtonDiv.innerHTML = topicName;
         } else {
-          const topicTag = topicsButtonTitle.slice(4); // Remove "exl:" prefix
-          topicsButtonDiv.innerHTML =
-            localizedTopicsTags[topicTag] && localizedTopicsTags[topicTag] !== 'undefined'
-              ? localizedTopicsTags[topicTag]
-              : topicName;
+          let displayLabel = topicName;
+          let tagInfo = null;
+
+          if (isV2Enabled) {
+            tagInfo = localizedTopicsTags[topicsButtonTitle] ?? v2LocalizedMap[stripParens(topicsButtonTitle)];
+          } else {
+            // For legacy tags, try exact match first
+            tagInfo = localizedTopicsTags[topicsButtonTitle];
+
+            if (!tagInfo) {
+              // Try matching with or without 'exl:' prefix
+              const lookupKey = topicsButtonTitle.startsWith('exl:') ? topicsButtonTitle.slice(4) : topicsButtonTitle;
+
+              tagInfo = localizedTopicsTags[lookupKey];
+            }
+          }
+
+          if (tagInfo?.translated && tagInfo.translated !== 'undefined') {
+            displayLabel = tagInfo.translated;
+          } else if (tagInfo?.english) {
+            // Use English label when translation is missing
+            displayLabel = tagInfo.english;
+          }
+
+          topicsButtonDiv.innerHTML = displayLabel;
         }
 
         contentDiv.appendChild(topicsButtonDiv);
