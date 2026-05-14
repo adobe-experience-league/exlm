@@ -56,9 +56,9 @@ export function formattedTags(inputString) {
   return resultArray;
 }
 
-export const generateQuery = (topic, isV2Tag = false) => {
+export const generateQuery = (topic) => {
   // V2 tags are plain-text labels; query el_features only and skip product-facet logic
-  if (isV2Tag) {
+  if (!topic.includes('exl:')) {
     return { query: `@el_features="${topic}"`, forceQuery: true };
   }
 
@@ -167,9 +167,7 @@ export function handleTopicSelection(block, fireSelection, resetPage, targetPage
       const productsInUrl = productsList.split(',').filter(Boolean);
       const topicQueryItems = `${selectedTopics
         .map((topic) => {
-          const topicButton = wrapper.querySelector(`.browse-topics-item[data-topicname="${CSS.escape(topic)}"]`);
-          const isV2Tag = topicButton?.dataset?.isv2 === 'true';
-          const { query: advancedQuery, forceQuery = false, product } = generateQuery(topic, isV2Tag);
+          const { query: advancedQuery, forceQuery = false, product } = generateQuery(topic);
           if (!forceQuery && window.headlessProductFacet && !productsInUrl.includes(product)) {
             window.headlessProductFacet.toggleSelect({
               value: product,
