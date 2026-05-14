@@ -781,6 +781,19 @@ export function getConfig() {
     ['en', 'en'],
     ['it', 'it'],
   ]);
+
+  const plCommunityLangsMap = new Map([
+    ['en-US', 'en'],
+    ['de-DE', 'de'],
+    ['es-ES', 'es'],
+    ['fr-FR', 'fr'],
+    ['ja-JP', 'ja'],
+    ['pt-PT', 'pt'],
+    ['ko-KR', 'ko'],
+    ['zh-CN', 'zh-Hans'],
+    ['zh-TW', 'zh-Hant'],
+  ]);
+
   const cookieConsentName = 'OptanonConsent';
   const targetCriteriaIds = {
     mostPopular: 'exl-hp-auth-recs-2',
@@ -797,7 +810,8 @@ export function getConfig() {
   const communityHost = currentEnv?.community || defaultEnv.community;
   const cdnOrigin = `https://${cdnHost}`;
   const premiumLearningAuthAPI = `${cdnOrigin}/api/v1/web/alm/authentication`;
-  const lang = document.querySelector('html').lang || 'en';
+  const rawLang = document.querySelector('html').lang || 'en';
+  const lang = window.location.hostname.includes(communityHost) ? plCommunityLangsMap.get(rawLang) || rawLang : rawLang;
   // Locale param for Community page URL
   const communityLocale = communityLangsMap.get(lang) || 'en';
   // Lang param for Adobe account URL

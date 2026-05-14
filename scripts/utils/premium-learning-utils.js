@@ -6,6 +6,8 @@ const LEARNER_USER_ID_COOKIE = 'alm_user_id';
 const DEFAULT_EXPIRES = 86400;
 const PL_ELIGIBILITY_TIMEOUT_MS = 10000;
 
+const PL_ALLOWED_DOMAINS = ['experienceleaguecommunities-beta.adobe.com'];
+
 // Two separate singletons for the two mutually exclusive auth modes (UE Author vs production).
 // UE/non-UE is an immutable page-level constant, so each promise is set at most once per load.
 // Sign-out calls window.adobeIMS.signOut() which causes a full page reload, resetting both.
@@ -120,11 +122,15 @@ export function initPLAuthAnonymous() {
  * @returns {Promise<boolean>}
  */
 export async function isPLEligible(signedIn = null, timeoutMs = PL_ELIGIBILITY_TIMEOUT_MS) {
-  if (!isFeatureEnabled('isPremiumLearningEnabled')) return false;
+  const isAllowedDomain = PL_ALLOWED_DOMAINS.includes(window.location.hostname);
+  if (!isAllowedDomain && !isFeatureEnabled('isPremiumLearningEnabled')) return false;
   if (window.hlx.aemRoot || window.location.href.includes('.html')) {
     return verifyPLAuth(timeoutMs, true);
   }
-  if (signedIn === false) return false;
+  if (signedIn === false) {
+    [LEARNER_TOKEN_COOKIE, LEARNER_USER_ID_COOKIE].forEach((c) => deleteCookie(c));
+    return false;
+  }
   return verifyPLAuth(timeoutMs, false);
 }
 
