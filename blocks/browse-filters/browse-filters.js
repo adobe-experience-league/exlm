@@ -1605,11 +1605,15 @@ function decorateBrowseTopics(block) {
 
   if (allTopicsTags.length > 0) {
     const isV2Enabled = isFeatureEnabled('isV2TagsEnabled') && (featuresv2Content || topicsv2Content);
-    const v2LocalizedMap = Object.fromEntries(
-      Object.entries(localizedTopicsTags)
-        .filter(([, v]) => v.english)
-        .map(([, v]) => [v.english.replace(/\s*\([^)]+\)\s*$/, '').trim(), v]),
-    );
+    const stripParens = (s) => s.replace(/\s*\([^)]+\)\s*$/, '').trim();
+    let v2LocalizedMap = {};
+    if (isV2Enabled) {
+      v2LocalizedMap = Object.fromEntries(
+        Object.entries(localizedTopicsTags)
+          .filter(([, v]) => v.english)
+          .map(([, v]) => [stripParens(v.english), v]),
+      );
+    }
     allTopicsTags
       .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
@@ -1618,6 +1622,10 @@ function decorateBrowseTopics(block) {
         const topicsButtonDiv = createTag('button', { class: 'browse-topics browse-topics-item' });
         topicsButtonDiv.dataset.topicname = topicsButtonTitle;
         topicsButtonDiv.dataset.label = topicName;
+        // Mark as v2 tag for proper query generation
+        if (isV2Enabled) {
+          topicsButtonDiv.dataset.isv2 = 'true';
+        }
 
         if (lang === 'en' || window.location.href.includes('.html') || Object.keys(localizedTopicsTags).length === 0) {
           topicsButtonDiv.innerHTML = topicName;
@@ -1626,9 +1634,7 @@ function decorateBrowseTopics(block) {
           let tagInfo = null;
 
           if (isV2Enabled) {
-            tagInfo =
-              localizedTopicsTags[topicsButtonTitle] ??
-              v2LocalizedMap[topicsButtonTitle.replace(/\s*\([^)]+\)\s*$/, '').trim()];
+            tagInfo = localizedTopicsTags[topicsButtonTitle] ?? v2LocalizedMap[stripParens(topicsButtonTitle)];
           } else {
             // For legacy tags, try exact match first
             tagInfo = localizedTopicsTags[topicsButtonTitle];
