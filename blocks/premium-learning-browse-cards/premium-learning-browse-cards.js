@@ -1,5 +1,5 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { createTag, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import { createTag, fetchLanguagePlaceholders, htmlToElement, getv2TagLabels } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
@@ -59,13 +59,14 @@ export default async function decorate(block) {
   const tags = productElement?.textContent?.trim();
   let products = [];
   if (tags) {
-    const { extractCapability, removeProductDuplicates } = await import(
-      '../../scripts/browse-card/browse-card-utils.js'
-    );
-    const extractedProducts = extractCapability(tags).products;
-    if (extractedProducts.length > 0) {
-      products = removeProductDuplicates(extractedProducts);
-    }
+    products = [
+      ...new Set(
+        getv2TagLabels(tags)
+          .split(',')
+          .map((p) => p.trim())
+          .filter(Boolean),
+      ),
+    ];
   }
 
   const param = {

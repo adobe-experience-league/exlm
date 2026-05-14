@@ -57,7 +57,14 @@ export function formattedTags(inputString) {
 }
 
 export const generateQuery = (topic) => {
+  // V2 tags are plain-text labels; query el_features only and skip product-facet logic
+  if (!topic.includes('exl:')) {
+    return { query: `@el_features="${topic}"`, forceQuery: true };
+  }
+
+  // Legacy tag handling
   const [type, product, version] = topic.split('/');
+
   if (!product) {
     return { query: `@el_features="${type}"`, product: type };
   }
