@@ -290,13 +290,14 @@ main .events-search .events-search-results-count-value {
 }
 
 main .events-search .events-search-controls {
-  display: none;
+  display: flex;
   align-items: center;
   gap: var(--spectrum-spacing-100);
+  min-width: 0;
 }
 
 main .events-search .events-search-view-switcher {
-  display: flex;
+  display: none;
 }
 
 main .events-search .events-search-controls .browse-cards-view-switcher {
@@ -564,12 +565,12 @@ main .events-search.is-filters-open .events-search-filters-panel {
     grid-template-columns: 1fr;
   }
 
-  main .events-search .events-search-controls {
+  main .events-search .events-search-view-switcher {
     display: flex;
   }
 }
 
-@media (min-width: 1028px) {
+@media (min-width: 1024px) {
   main .events-search .events-search-results-body:not(.list) .events-search-results-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
