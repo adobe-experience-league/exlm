@@ -1605,6 +1605,11 @@ function decorateBrowseTopics(block) {
 
   if (allTopicsTags.length > 0) {
     const isV2Enabled = isFeatureEnabled('isV2TagsEnabled') && (featuresv2Content || topicsv2Content);
+    const v2LocalizedMap = Object.fromEntries(
+      Object.entries(localizedTopicsTags)
+        .filter(([, v]) => v.english)
+        .map(([, v]) => [v.english.replace(/\s*\([^)]+\)\s*$/, '').trim(), v]),
+    );
     allTopicsTags
       .filter((value) => value !== undefined)
       .forEach((topicsButtonTitle) => {
@@ -1621,18 +1626,9 @@ function decorateBrowseTopics(block) {
           let tagInfo = null;
 
           if (isV2Enabled) {
-            // For TQ/v2 tags, topicsButtonTitle is just the label (e.g., "Analysis Workspace")
-            // The English label may have product name appended (e.g., "Analysis Workspace (Analytics)")
-            // Match by checking if English label starts with topicsButtonTitle
-            tagInfo = Object.entries(localizedTopicsTags).find(([, value]) => {
-              if (!value.english) return false;
-              // Try exact match first
-              if (value.english === topicsButtonTitle) return true;
-              // Strip suffixes from both sides to enable bidirectional matching
-              const baseEnglish = value.english.replace(/\s*\([^)]+\)\s*$/, '').trim();
-              const baseTitle = topicsButtonTitle.replace(/\s*\([^)]+\)\s*$/, '').trim();
-              return baseEnglish === baseTitle;
-            })?.[1];
+            tagInfo =
+              localizedTopicsTags[topicsButtonTitle] ??
+              v2LocalizedMap[topicsButtonTitle.replace(/\s*\([^)]+\)\s*$/, '').trim()];
           } else {
             // For legacy tags, try exact match first
             tagInfo = localizedTopicsTags[topicsButtonTitle];

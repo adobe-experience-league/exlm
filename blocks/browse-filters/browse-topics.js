@@ -57,13 +57,10 @@ export function formattedTags(inputString) {
 }
 
 export const generateQuery = (topic) => {
-  // Check if this is a v2 tag (no slashes) or legacy tag (has slashes)
-  if (topic.indexOf('/') === -1) {
-    // V2 tag - plain text label, query against el_features only
-    // Return forceQuery: true so product facet logic is skipped
+  if (!topic.includes('/')) {
+    // v2 tags are plain-text labels; skip product-facet logic
     return { query: `@el_features="${topic}"`, forceQuery: true };
   }
-
   // Legacy tag handling
   const [type, product, version] = topic.split('/');
 
