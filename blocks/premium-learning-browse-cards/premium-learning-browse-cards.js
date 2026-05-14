@@ -59,10 +59,14 @@ export default async function decorate(block) {
   const tags = productElement?.textContent?.trim();
   let products = [];
   if (tags) {
-    products = getv2TagLabels(tags)
-      .split(',')
-      .map((p) => p.trim())
-      .filter(Boolean);
+    products = [
+      ...new Set(
+        getv2TagLabels(tags)
+          .split(',')
+          .map((p) => p.trim())
+          .filter(Boolean),
+      ),
+    ];
   }
 
   const param = {
