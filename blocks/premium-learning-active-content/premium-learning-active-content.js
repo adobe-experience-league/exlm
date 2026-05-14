@@ -13,6 +13,37 @@ import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
+const SKILL_LEVEL_LABELS = { 1: 'Professional', 2: 'Expert', 3: 'Master' };
+
+function extractSkillLevel(loData, included) {
+  if (!loData || !included?.length) return '';
+  const skillIds = new Set((loData.relationships?.skills?.data || []).map((s) => s.id));
+  if (skillIds.size === 0) return '';
+
+  const skillLevelById = new Map();
+  included.forEach((item) => {
+    if (item.type === 'skillLevel') {
+      const levelNum = parseInt(item.attributes?.level, 10);
+      if (!Number.isNaN(levelNum)) skillLevelById.set(item.id, levelNum);
+    }
+  });
+
+  const levels = new Set();
+  included.forEach((item) => {
+    if (item.type === 'learningObjectSkill' && skillIds.has(item.id)) {
+      const levelId = item.relationships?.skillLevel?.data?.id;
+      const levelNum = levelId ? skillLevelById.get(levelId) : null;
+      if (levelNum) levels.add(levelNum);
+    }
+  });
+
+  if (levels.size === 0) return '';
+  return [...levels]
+    .sort((a, b) => a - b)
+    .map((lvl) => SKILL_LEVEL_LABELS[lvl] || `Level ${lvl}`)
+    .join(', ');
+}
+
 function addShimmer(container) {
   const isDesktop = window.matchMedia('(min-width: 900px)').matches;
 
@@ -185,10 +216,10 @@ async function buildCarouselSlide(cardData, progressData, totalReplies, placehol
   // Add metadata below card title
   const titleElement = cohortCardWrapper.querySelector('.premium-learning-card-title');
   const metaParts = [
-    cardData.meta?.level,
     cardData.meta?.rating?.average > 0
       ? `${cardData.meta.rating.average.toFixed(1)} <span class="rating-star">★</span>`
       : null,
+    cardData.meta?.level,
   ].filter(Boolean);
 
   if (titleElement && metaParts.length > 0) {
@@ -395,6 +426,11 @@ export default async function decorate(block) {
           cardsData.map(async (cardData, i) => {
             const cohortId = enrolledLearningObjects[i]?.id;
             const cohortProgressData = await fetchCohortProgress(cohortId, config);
+
+            const skillLevel = extractSkillLevel(cohortProgressData?.data, cohortProgressData?.included);
+            if (skillLevel && cardData.meta) {
+              cardData.meta.level = skillLevel;
+            }
 
             const defaultInstance = cohortProgressData?.included?.find(
               (item) =>
