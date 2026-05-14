@@ -168,6 +168,7 @@ main .events-search .events-search-filter-option {
   display: flex;
   align-items: flex-start;
   gap: var(--spectrum-spacing-100);
+  cursor: pointer;
 }
 
 main .events-search .events-search-filter-option.is-overflow-hidden {
@@ -182,11 +183,13 @@ main .events-search .events-search-filter-option input[type='checkbox'] {
   border: 2px solid var(--non-spectrum-medium-gray);
   margin-top: var(--spectrum-spacing-75);
   width: auto;
+  cursor: pointer;
 }
 
 main .events-search .events-search-filter-option-label {
   font-size: var(--spectrum-font-size-200);
   line-height: 1.4;
+  cursor: pointer;
 }
 
 main .events-search .events-search-filter-show-more {
@@ -371,8 +374,7 @@ main .events-search .events-search-controls .sort-container .sort-dropdown-conte
   display: block;
 }
 
-/* Shimmer and card grid share `.events-search-results-body.browse-cards-block` so `@container browse-cards-block`
-   rules from browse-cards-block.css apply; shimmer column layout here follows the same media breakpoints as the grid. */
+/* Card grid columns: <600 1, 600–899 2, 900–1027 3, 1028–1199 2, ≥1200 3 (grid view only; list stays 1). */
 main .events-search .events-search-results-body.browse-cards-block {
   min-height: auto;
 }
@@ -532,11 +534,11 @@ main .events-search.is-filters-open .events-search-filters-panel {
     margin: 0 var(--spectrum-spacing-800);
   }
 
-  main .events-search .events-search-results-grid {
+  main .events-search .events-search-results-body:not(.list) .events-search-results-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  main .events-search .events-search-results-body .browse-card-shimmer {
+  main .events-search .events-search-results-body:not(.list) .browse-card-shimmer {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -546,7 +548,15 @@ main .events-search.is-filters-open .events-search-filters-panel {
     gap: var(--spectrum-spacing-400);
   }
 
-  main .events-search .events-search-results-grid {
+  main .events-search .events-search-results-body .browse-card-shimmer {
+    margin-top: var(--spectrum-spacing-400);
+  }
+
+  main .events-search .events-search-results-body:not(.list) .events-search-results-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  main .events-search .events-search-results-body:not(.list) .browse-card-shimmer {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
@@ -554,13 +564,28 @@ main .events-search.is-filters-open .events-search-filters-panel {
     grid-template-columns: 1fr;
   }
 
-  main .events-search .events-search-results-body .browse-card-shimmer {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin-top: var(--spectrum-spacing-400);
-  }
-
   main .events-search .events-search-controls {
     display: flex;
+  }
+}
+
+@media (min-width: 1028px) {
+  main .events-search .events-search-results-body:not(.list) .events-search-results-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  main .events-search .events-search-results-body:not(.list) .browse-card-shimmer {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  main .events-search .events-search-results-body:not(.list) .events-search-results-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  main .events-search .events-search-results-body:not(.list) .browse-card-shimmer {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -580,6 +605,7 @@ main .events-search.is-filters-open .events-search-filters-panel {
 
   main .events-search .events-search-results-column {
     margin: 0;
+    margin-right: var(--spectrum-spacing-800);
   }
 
   main .events-search .events-search-filters-header {
