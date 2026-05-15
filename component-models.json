@@ -5734,6 +5734,14 @@
         "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "cq:translationMethod",
+        "label": "Page Translation method",
+        "description": "Sets the page translation method in page meta.",
+        "readOnly": true
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
         "name": "signout-redirect-url",
@@ -6721,19 +6729,18 @@
         "value": "",
         "label": "Background Color",
         "description": "Section background color",
-        "valueType": "string",
         "options": [
           {
             "name": "Default",
-            "value": "default"
+            "value": ["premium-learning-section", "default"]
           },
           {
             "name": "White",
-            "value": "bg-white"
+            "value": ["premium-learning-section", "bg-white"]
           },
           {
             "name": "Dark Gray",
-            "value": "bg-dark-gray"
+            "value": ["premium-learning-section", "bg-dark-gray"]
           }
         ]
       },
