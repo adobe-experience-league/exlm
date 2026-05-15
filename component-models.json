@@ -1384,15 +1384,15 @@
         "options": [
           {
             "name": "Default",
-            "value": ["courses-section", "default"]
+            "value": "courses-section,default"
           },
           {
             "name": "White",
-            "value": ["courses-section", "bg-white"]
+            "value": "courses-section,bg-white"
           },
           {
             "name": "Dark Gray",
-            "value": ["courses-section", "bg-dark-gray"]
+            "value": "courses-section,bg-dark-gray"
           }
         ]
       },
@@ -1418,15 +1418,15 @@
         "options": [
           {
             "name": "Default",
-            "value": ["course-hub-section", "default"]
+            "value": "course-hub-section,default"
           },
           {
             "name": "White",
-            "value": ["course-hub-section", "bg-white"]
+            "value": "course-hub-section,bg-white"
           },
           {
             "name": "Dark Gray",
-            "value": ["course-hub-section", "bg-dark-gray"]
+            "value": "course-hub-section,bg-dark-gray"
           }
         ]
       },
@@ -1467,15 +1467,15 @@
         "options": [
           {
             "name": "Default",
-            "value": ["article-content-section", "default"]
+            "value": "article-content-section,default"
           },
           {
             "name": "White",
-            "value": ["article-content-section", "bg-white"]
+            "value": "article-content-section,bg-white"
           },
           {
             "name": "Dark Gray",
-            "value": ["article-content-section", "bg-dark-gray"]
+            "value": "article-content-section,bg-dark-gray"
           }
         ]
       },
@@ -6623,15 +6623,15 @@
         "options": [
           {
             "name": "Default",
-            "value": ["profile-section", "default"]
+            "value": "profile-section,default"
           },
           {
             "name": "White",
-            "value": ["profile-section", "bg-white"]
+            "value": "profile-section,bg-white"
           },
           {
             "name": "Dark Gray",
-            "value": ["profile-section", "bg-dark-gray"]
+            "value": "profile-section,bg-dark-gray"
           }
         ]
       },
@@ -6664,15 +6664,15 @@
         "options": [
           {
             "name": "Default",
-            "value": ["profile-bottom-section", "default"]
+            "value": "profile-bottom-section,default"
           },
           {
             "name": "White",
-            "value": ["profile-bottom-section", "bg-white"]
+            "value": "profile-bottom-section,bg-white"
           },
           {
             "name": "Dark Gray",
-            "value": ["profile-bottom-section", "bg-dark-gray"]
+            "value": "profile-bottom-section,bg-dark-gray"
           }
         ]
       },
@@ -6725,15 +6725,15 @@
         "options": [
           {
             "name": "Default",
-            "value": ["premium-learning-section", "default"]
+            "value": "premium-learning-section,default"
           },
           {
             "name": "White",
-            "value": ["premium-learning-section", "bg-white"]
+            "value": "premium-learning-section,bg-white"
           },
           {
             "name": "Dark Gray",
-            "value": ["premium-learning-section", "bg-dark-gray"]
+            "value": "premium-learning-section,bg-dark-gray"
           }
         ]
       },
