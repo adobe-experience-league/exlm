@@ -74,7 +74,7 @@ async function initPLAuth(unauthenticated = false) {
       const { plApiBaseUrl } = window.exlm?.config || {};
       if (!plApiBaseUrl) return; // config not ready; skip validation, keep existing token
       const res = await fetch(`${plApiBaseUrl}/user`, {
-        headers: { Authorization: `Bearer ${existingToken}`, Accept: 'application/vnd.api+json' },
+        headers: { Authorization: `oauth ${existingToken}`, Accept: 'application/vnd.api+json' },
       });
       if (res.ok) return;
       [LEARNER_TOKEN_COOKIE, LEARNER_USER_ID_COOKIE].forEach((c) => deleteCookie(c));
