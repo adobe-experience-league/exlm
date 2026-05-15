@@ -6729,6 +6729,7 @@
         "value": "",
         "label": "Background Color",
         "description": "Section background color",
+        "valueType": "string[]",
         "options": [
           {
             "name": "Default",
