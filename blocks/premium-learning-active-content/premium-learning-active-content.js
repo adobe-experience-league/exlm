@@ -310,7 +310,7 @@ export default async function decorate(block) {
   headerDiv.innerHTML = `
     <div class="premium-learning-active-content-header-content">
       <div class="premium-learning-active-content-header-text">
-        ${headingElement?.innerHTML || ''}
+        <div class="premium-learning-active-content-header-title">${headingElement?.innerHTML || ''}</div>
         ${description}
       </div>
     </div>
