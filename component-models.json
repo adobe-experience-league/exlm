@@ -5734,14 +5734,6 @@
         "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
-        "component": "text",
-        "valueType": "string",
-        "name": "cq:translationMethod",
-        "label": "Page Translation method",
-        "description": "Sets the page translation method in page meta.",
-        "readOnly": true
-      },
-      {
         "component": "aem-content",
         "valueType": "string",
         "name": "signout-redirect-url",
