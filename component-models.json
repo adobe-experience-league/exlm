@@ -6725,15 +6725,15 @@
         "options": [
           {
             "name": "Default",
-            "value": "premium-learning-section default"
+            "value": "default"
           },
           {
             "name": "White",
-            "value": "premium-learning-section bg-white"
+            "value": "bg-white"
           },
           {
             "name": "Dark Gray",
-            "value": "premium-learning-section bg-dark-gray"
+            "value": "bg-dark-gray"
           }
         ]
       },
