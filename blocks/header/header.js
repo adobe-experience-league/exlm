@@ -415,6 +415,14 @@ const navDecorator = async (navBlock, decoratorOptions) => {
   buildNavItems(ul);
 
   // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
+  // Reserve space upfront to avoid layout shift when eligibility resolves asynchronously.
+  const plItem = htmlToElement(
+    `<li class="nav-item nav-item-root nav-item-leaf" style="visibility:hidden;opacity:0;transition:opacity 0.2s ease">
+      <a href="" title=""></a>
+    </li>`,
+  );
+  ul.appendChild(plItem);
+
   isSignedInUser()
     .then((signedIn) => isPLEligible(signedIn))
     .then((isMember) => {
@@ -422,16 +430,18 @@ const navDecorator = async (navBlock, decoratorOptions) => {
         const placeholders = decoratorOptions.placeholders ?? {};
         const premiumLearningLabel = placeholders?.premiumLearningHeaderLabel || 'Premium Learning';
         const { premiumHomeUrl } = getConfig();
-        ul.appendChild(
-          htmlToElement(
-            `<li class="nav-item nav-item-root nav-item-leaf">
-              <a href="${premiumHomeUrl}" title="${premiumLearningLabel}">${premiumLearningLabel}</a>
-            </li>`,
-          ),
-        );
+        const anchor = plItem.querySelector('a');
+        anchor.href = premiumHomeUrl;
+        anchor.title = premiumLearningLabel;
+        anchor.textContent = premiumLearningLabel;
+        plItem.style.visibility = 'visible';
+        plItem.style.opacity = '1';
+      } else {
+        plItem.remove();
       }
     })
     .catch((err) => {
+      plItem.remove();
       /* eslint-disable-next-line no-console */
       console.error('Error checking Premium Learning membership in header:', err);
     });
