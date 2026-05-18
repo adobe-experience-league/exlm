@@ -421,16 +421,11 @@ const navDecorator = async (navBlock, decoratorOptions) => {
       if (isMember) {
         const placeholders = decoratorOptions.placeholders ?? {};
         const premiumLearningLabel = placeholders?.premiumLearningHeaderLabel || 'Premium Learning';
-
-        // TODO: Remove the special case for nl and sv once we have deprecated the nl and sv languages.
-        const { premiumHomeUrl, cdnOrigin } = getConfig();
-        const { lang } = decoratorOptions;
-        const premiumLearningHref =
-          lang === 'nl' || lang === 'sv' ? `${cdnOrigin}/en/premium/home` : premiumHomeUrl;
+        const { premiumHomeUrl } = getConfig();
         ul.appendChild(
           htmlToElement(
             `<li class="nav-item nav-item-root nav-item-leaf">
-              <a href="${premiumLearningHref}" title="${premiumLearningLabel}">${premiumLearningLabel}</a>
+              <a href="${premiumHomeUrl}" title="${premiumLearningLabel}">${premiumLearningLabel}</a>
             </li>`,
           ),
         );
