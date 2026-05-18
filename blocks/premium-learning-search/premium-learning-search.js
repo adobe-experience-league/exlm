@@ -225,7 +225,6 @@ export default async function decorate(block) {
             block.classList.add('premium-learning-search-atomic-search');
             existingWrapper.appendChild(block);
             handleEmptyPremiumLearningSection(premiumLearningSection);
-            // Don't fetch here - let PREPROCESS handle the fetch with search query
           }
         };
 
@@ -237,7 +236,6 @@ export default async function decorate(block) {
           const { body, method = '' } = e.detail;
           if (method === 'search') {
             const newQuery = (body?.q ?? '').trim();
-            // Skip duplicate searches with same query
             if (lastSearchQuery === newQuery) {
               return;
             }
