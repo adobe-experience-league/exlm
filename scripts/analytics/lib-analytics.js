@@ -1,6 +1,4 @@
 /* eslint-disable no-console */
-import isFeatureEnabled from '../utils/feature-flag-utils.js';
-
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 const lang = document.querySelector('html').lang || 'en';
 export const search = window.location.pathname === '/search.html' || window.location.pathname === `/${lang}/search`;
@@ -45,49 +43,20 @@ const metaCache = {
   industryV2: getMetaContent('industry_v2'),
 };
 
-const isV2Enabled = isFeatureEnabled('isV2TagsEnabled');
-
 // Helper to get first solution from comma-separated list
 const getFirstSolution = (content) => content?.split(',')[0].toLowerCase() || '';
 
-let solution = '';
-let fullSolution = '';
-let feature = '';
-let role = '';
-let productV2 = '';
-let subFeatureV2 = '';
-let featureV2 = '';
-let roleV2 = '';
-let levelV2 = '';
-let topicV2 = '';
-let industryV2 = '';
-
-// TO-DO: Remove docs and playlist check once v2 is enabled for these pages through markdown.
-if (isV2Enabled && !docs && !playlist) {
-  solution = getFirstSolution(metaCache.solutionV1) || getFirstSolution(metaCache.solution);
-  fullSolution = metaCache.solutionV1 || metaCache.solution;
-  feature = metaCache.featureV1?.toLowerCase() || metaCache.feature?.toLowerCase() || '';
-  role = metaCache.roleV1 || metaCache.role;
-  productV2 = metaCache.solution;
-  subFeatureV2 = metaCache.subFeature?.toLowerCase() || '';
-  featureV2 = metaCache.feature?.toLowerCase() || '';
-  roleV2 = metaCache.role;
-  levelV2 = metaCache.level;
-  topicV2 = metaCache.topic;
-  industryV2 = metaCache.industry;
-} else {
-  solution = getFirstSolution(metaCache.solution);
-  fullSolution = metaCache.solution;
-  feature = metaCache.feature?.toLowerCase() || '';
-  role = metaCache.role;
-  productV2 = metaCache.productV2;
-  subFeatureV2 = metaCache.subFeatureV2?.toLowerCase() || '';
-  featureV2 = metaCache.featureV2?.toLowerCase() || '';
-  roleV2 = metaCache.roleV2;
-  levelV2 = metaCache.levelV2;
-  topicV2 = metaCache.topicV2;
-  industryV2 = metaCache.industryV2;
-}
+const solution = getFirstSolution(metaCache.solutionV1) || getFirstSolution(metaCache.solution) || '';
+const fullSolution = metaCache.solutionV1 || metaCache.solution || '';
+const feature = metaCache.featureV1?.toLowerCase() || metaCache.feature?.toLowerCase() || '';
+const role = metaCache.roleV1 || metaCache.role || '';
+const productV2 = metaCache.productV2 || metaCache.solution || '';
+const subFeatureV2 = metaCache.subFeatureV2?.toLowerCase() || metaCache.subFeature?.toLowerCase() || '';
+const featureV2 = metaCache.featureV2?.toLowerCase() || metaCache.feature?.toLowerCase() || '';
+const roleV2 = metaCache.roleV2 || metaCache.role || '';
+const levelV2 = metaCache.levelV2 || metaCache.level || '';
+const topicV2 = metaCache.topicV2 || metaCache.topic || '';
+const industryV2 = metaCache.industryV2 || metaCache.industry || '';
 
 const UEFilters = {
   Role: '',
