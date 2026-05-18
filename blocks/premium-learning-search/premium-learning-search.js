@@ -217,9 +217,11 @@ export default async function decorate(block) {
         let blockMoved = false;
 
         // Check if atomic search wrapper already exists (SEARCH_DOM_READY already fired)
-        const checkAndMoveBlock = () => {
+        const checkAndMoveBlock = (searchInterface = null) => {
           if (blockMoved) return;
-          const existingWrapper = document.querySelector('.atomic-search-premium-search-wrapper');
+          const existingWrapper = searchInterface
+            ? searchInterface.querySelector('.atomic-search-premium-search-wrapper')
+            : document.querySelector('.atomic-search-premium-search-wrapper');
           if (existingWrapper) {
             blockMoved = true;
             block.classList.add('premium-learning-search-atomic-search');
@@ -272,7 +274,7 @@ export default async function decorate(block) {
               );
             }
             // Try to move block when event fires
-            checkAndMoveBlock();
+            checkAndMoveBlock(searchInterfaceElement);
           }
         });
       } else {
