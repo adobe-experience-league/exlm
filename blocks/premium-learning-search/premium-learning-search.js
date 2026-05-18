@@ -214,6 +214,25 @@ export default async function decorate(block) {
       }
 
       if (isSearchPage && !UEAuthorMode) {
+        let blockMoved = false;
+
+        // Check if atomic search wrapper already exists (SEARCH_DOM_READY already fired)
+        const checkAndMoveBlock = (searchInterface = null) => {
+          if (blockMoved) return;
+          const existingWrapper = searchInterface
+            ? searchInterface.querySelector('.atomic-search-premium-search-wrapper')
+            : document.querySelector('.atomic-search-premium-search-wrapper');
+          if (existingWrapper) {
+            blockMoved = true;
+            block.classList.add('premium-learning-search-atomic-search');
+            existingWrapper.appendChild(block);
+            handleEmptyPremiumLearningSection(premiumLearningSection);
+          }
+        };
+
+        // Try immediately in case SEARCH_DOM_READY already fired
+        checkAndMoveBlock();
+
         let lastSearchQuery = null;
         document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
           const { body, method = '' } = e.detail;
@@ -254,12 +273,8 @@ export default async function decorate(block) {
                 `${block.offsetHeight - delta}px`,
               );
             }
-            block.classList.add('premium-learning-search-atomic-search');
-            const premiumSearchWrapper = searchInterfaceElement.querySelector('.atomic-search-premium-search-wrapper');
-            if (premiumSearchWrapper) {
-              premiumSearchWrapper.appendChild(block);
-              handleEmptyPremiumLearningSection(premiumLearningSection);
-            }
+            // Try to move block when event fires
+            checkAndMoveBlock(searchInterfaceElement);
           }
         });
       } else {
