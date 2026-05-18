@@ -145,8 +145,8 @@ body.profile-home-page .section.premium-learning-section:has(> .default-content-
   font-size: var(--spectrum-font-size-200);
 }
 
-body.profile .section.premium-learning-section h2,
-body.profile .section.premium-learning-section h3:not(.browse-card-banner) {
+body.profile-home-page .section.premium-learning-section h2,
+body.profile-home-page .section.premium-learning-section h3:not(.browse-card-banner) {
   margin-top: 0;
 }
 
