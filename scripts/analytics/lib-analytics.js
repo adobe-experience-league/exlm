@@ -36,7 +36,7 @@ const subFeatureV2 = getMetaContent('subfeature_v2')?.toLowerCase() || '';
 const featureV2 = getMetaContent('feature_v2')?.toLowerCase() || '';
 const roleV2 = getMetaContent('role_v2');
 const levelV2 = getMetaContent('level_v2');
-const topicV2 = getMetaContent('topics_v2');
+const topicV2 = getMetaContent('topic_v2');
 const industryV2 = getMetaContent('industry_v2');
 
 const UEFilters = {
