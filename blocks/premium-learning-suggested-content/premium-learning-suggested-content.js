@@ -149,7 +149,7 @@ function buildSuggestedContentLayout(block, headingMarkup, descriptionMarkup, ct
   headerDiv.className = 'premium-learning-suggested-content-header';
   headerDiv.innerHTML = `
     <div class="premium-learning-suggested-content-title">
-      ${headingMarkup}
+      <div class="premium-learning-suggested-content-header-title">${headingMarkup}</div>
       ${
         descriptionMarkup
           ? `<div class="premium-learning-suggested-content-description">${descriptionMarkup}</div>`

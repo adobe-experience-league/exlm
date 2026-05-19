@@ -812,6 +812,8 @@ export function getConfig() {
   const premiumLearningAuthAPI = `${cdnOrigin}/api/v1/web/alm/authentication`;
   const rawLang = document.querySelector('html').lang || 'en';
   const lang = window.location.hostname.includes(communityHost) ? plCommunityLangsMap.get(rawLang) || rawLang : rawLang;
+  // Premium Learning is not offered for nl/sv locales; use English PL home until those languages are deprecated.
+  const premiumHomeLang = lang === 'nl' || lang === 'sv' ? 'en' : lang;
   // Locale param for Community page URL
   const communityLocale = communityLangsMap.get(lang) || 'en';
   // Lang param for Adobe account URL
@@ -905,7 +907,7 @@ export function getConfig() {
     // Events Page URL
     eventsURL: `${cdnOrigin}/${lang}/events`,
     // Premium Learning home (for premium learner nav link)
-    premiumHomeUrl: `${cdnOrigin}/${lang}/premium/home`,
+    premiumHomeUrl: `${cdnOrigin}/${premiumHomeLang}/premium/home`,
     // Brand Concierge
     bcDatastreamId: '87ae6de9-a49c-4734-a88a-17ec707ded09',
     bcOrgId: 'E4722728699EC56A0A495CA2@AdobeOrg',

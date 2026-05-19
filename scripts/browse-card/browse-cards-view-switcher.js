@@ -378,6 +378,8 @@ export default class BrowseCardViewSwitcher {
   enhanceCardsForListView() {
     const cards = this.block.querySelectorAll('.browse-card');
     cards.forEach((card) => {
+      /* On-demand cards already carry date/duration in content; skip upcoming-style list mutations (footer clone, figure date). */
+      if (card.classList.contains('event-on-demand-event-card')) return;
       BrowseCardViewSwitcher.addCardDateInfo(card);
       this.setupExpandableDescription(card);
       BrowseCardViewSwitcher.addLocationTypeInfo(card);
