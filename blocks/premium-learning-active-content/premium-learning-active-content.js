@@ -382,10 +382,14 @@ export default async function decorate(block) {
         const { default: BrowseCardsPLAdaptor } = await import(
           '../../scripts/browse-card/browse-cards-premium-learning-adaptor.js'
         );
-        const cardsData = await BrowseCardsPLAdaptor.mapResultsToCardsData({
-          data: enrolledLearningObjects,
-          included: enrollmentData.included,
-        });
+        const cardsData = await BrowseCardsPLAdaptor.mapResultsToCardsData(
+          {
+            data: enrolledLearningObjects,
+            included: enrollmentData.included,
+          },
+          // Preserve 1:1 order with enrollments; catalog-style cohort eligibility does not apply to already-enrolled items.
+          { filterInactiveCohortInstances: false },
+        );
 
         // Build carousel
         const carouselContainer = createTag('div', { class: 'carousel-container' });

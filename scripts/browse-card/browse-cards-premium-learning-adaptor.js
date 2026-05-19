@@ -24,6 +24,31 @@ const BrowseCardsPLAdaptor = (() => {
   };
 
   /**
+   * True when enrollment is closed: current time is after the deadline instant (no grace day).
+   * @param {string|Date} deadline - Enrollment deadline from API
+   * @returns {boolean}
+   * @private
+   */
+  function isEnrollmentExpired(deadline) {
+    if (!deadline) return false;
+    const deadlineDate = new Date(new Date(deadline).getTime());
+    return new Date() > deadlineDate;
+  }
+
+  /**
+   * @param {Object|null|undefined} instance - Primary learning object instance from PL API `included`
+   * @returns {boolean}
+   * @private
+   */
+  function isActiveEnrollableInstance(instance) {
+    return (
+      !!instance &&
+      String(instance.attributes?.state || '').toLowerCase() === 'active' &&
+      !isEnrollmentExpired(instance.attributes?.enrollmentDeadline)
+    );
+  }
+
+  /**
    * Helper function to format duration from seconds to human-readable format.
    * @param {number} durationInSeconds - Duration in seconds from API.
    * @returns {string} Human-readable duration string.
@@ -266,10 +291,12 @@ const BrowseCardsPLAdaptor = (() => {
 
   /**
    * Maps an array of Premium learning results to an array of BrowseCards data models.
-   * @param {Array} data - The array of result objects from Premium learning API.
+   * @param {Object} data - Premium learning API payload (`data`, `included`).
+   * @param {{ filterInactiveCohortInstances?: boolean }} [options] - When `filterInactiveCohortInstances` is true (default),
+   *   learning programs (cohorts) without an active, enrollable primary instance are omitted. Courses are never filtered here.
    * @returns {Promise<Array>} A promise that resolves with an array of BrowseCards data models.
    */
-  const mapResultsToCardsData = async (data) => {
+  const mapResultsToCardsData = async (data, { filterInactiveCohortInstances = true } = {}) => {
     let placeholders = {};
     try {
       placeholders = await fetchLanguagePlaceholders();
@@ -278,7 +305,22 @@ const BrowseCardsPLAdaptor = (() => {
       console.error('Error fetching placeholders:', err);
     }
 
-    return data.data.map((cardData) => mapResultToCardsDataModel(cardData, data.included, placeholders));
+    const included = data.included || [];
+    let rows = data.data || [];
+
+    if (filterInactiveCohortInstances) {
+      rows = rows.filter((cardData) => {
+        if (determineContentType(cardData) !== PL_CONTENT_TYPES.COHORT.MAPPING_KEY) {
+          return true;
+        }
+        const instanceId = cardData.relationships?.instances?.data?.[0]?.id;
+        if (!instanceId) return false;
+        const instance = included.find((item) => item.id === instanceId);
+        return isActiveEnrollableInstance(instance);
+      });
+    }
+
+    return rows.map((cardData) => mapResultToCardsDataModel(cardData, included, placeholders));
   };
 
   return {
