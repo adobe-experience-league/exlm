@@ -46,17 +46,18 @@ const metaCache = {
 // Helper to get first solution from comma-separated list
 const getFirstSolution = (content) => content?.split(',')[0].toLowerCase() || '';
 
-const solution = getFirstSolution(metaCache.solutionV1) || getFirstSolution(metaCache.solution) || '';
-const fullSolution = metaCache.solutionV1 || metaCache.solution || '';
+// TODO: Once the legacy tags are decommissioned, the keys will need to be updated to remove the V2 suffix.
+const solution = getFirstSolution(metaCache.solutionV1) || getFirstSolution(metaCache.solution);
+const fullSolution = metaCache.solutionV1 || metaCache.solution;
 const feature = metaCache.featureV1?.toLowerCase() || metaCache.feature?.toLowerCase() || '';
-const role = metaCache.roleV1 || metaCache.role || '';
-const productV2 = metaCache.productV2 || metaCache.solution || '';
+const role = metaCache.roleV1 || metaCache.role;
+const productV2 = metaCache.productV2 || metaCache.solution;
 const subFeatureV2 = metaCache.subFeatureV2?.toLowerCase() || metaCache.subFeature?.toLowerCase() || '';
 const featureV2 = metaCache.featureV2?.toLowerCase() || metaCache.feature?.toLowerCase() || '';
-const roleV2 = metaCache.roleV2 || metaCache.role || '';
-const levelV2 = metaCache.levelV2 || metaCache.level || '';
-const topicV2 = metaCache.topicV2 || metaCache.topic || '';
-const industryV2 = metaCache.industryV2 || metaCache.industry || '';
+const roleV2 = metaCache.roleV2 || metaCache.role;
+const levelV2 = metaCache.levelV2 || metaCache.level;
+const topicV2 = metaCache.topicV2 || metaCache.topic;
+const industryV2 = metaCache.industryV2 || metaCache.industry;
 
 const UEFilters = {
   Role: '',
