@@ -1,10 +1,22 @@
-import { waitForChildElement, debounce, CUSTOM_EVENTS, isMobile } from './atomic-search-utils.js';
+import { waitForChildElement, debounce, CUSTOM_EVENTS, isMobile, waitFor } from './atomic-search-utils.js';
 
 const orderedFacetIds = ['facetContentType', 'facetStatus', 'facetProduct', 'facetRole', 'facetDate'];
+const FACET_MODAL_SCROLL_OFFSET = 60;
+
+function ensureFacetModalInView(modal) {
+  if (!isMobile() || !modal) return;
+  const { top } = modal.getBoundingClientRect();
+  const targetTop = top + window.scrollY - FACET_MODAL_SCROLL_OFFSET;
+  window.scrollTo({
+    top: Math.max(0, targetTop),
+    behavior: 'instant',
+  });
+}
 
 export default function atomicFacetManagerHandler(baseElement) {
-  let resizeObserver;
   let debounceTimer;
+
+  baseElement.dataset.view = isMobile() ? 'mobile' : 'desktop';
 
   const reorderFacets = () => {
     const currentOrder = Array.from(baseElement.querySelectorAll('atomic-facet,atomic-timeframe-facet')).map(
@@ -26,14 +38,24 @@ export default function atomicFacetManagerHandler(baseElement) {
     const delta = 10;
     const topValue = positionValue + window.scrollY + delta;
     modal.style.top = `${topValue}px`;
-    modal.style.maxHeight = `${window.innerHeight - topValue}px`;
     modal.style.overflowY = 'auto';
   }
 
+  function syncModalLayout(modal) {
+    if (!modal || modal.style.display !== 'block') return;
+    positionModal();
+    ensureFacetModalInView(modal);
+  }
+
   function onResultsUpdate() {
-    setTimeout(() => {
-      positionModal();
-    }, 100);
+    const modal = document.querySelector('.facet-modal');
+    if (!modal || modal.style.display !== 'block') return;
+    waitFor(() => {
+      syncModalLayout(modal);
+      setTimeout(() => {
+        syncModalLayout(modal);
+      });
+    }, 25);
   }
 
   const hideAtomicModal = () => {
@@ -58,8 +80,7 @@ export default function atomicFacetManagerHandler(baseElement) {
     baseElement.parentNode.insertBefore(placeholder, baseElement.nextSibling);
 
     facetModalSlot.appendChild(baseElement);
-    positionModal();
-    document.body.style.overflow = 'hidden';
+
     Object.assign(modal.style, {
       backgroundColor: 'white',
       width: '100%',
@@ -79,6 +100,11 @@ export default function atomicFacetManagerHandler(baseElement) {
     }
 
     document.querySelector('atomic-layout-section[section="results"]').style.display = 'none';
+    syncModalLayout(modal);
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => {
+      syncModalLayout(modal);
+    }, 0);
     document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onResultsUpdate);
   };
 
@@ -121,20 +147,35 @@ export default function atomicFacetManagerHandler(baseElement) {
     `;
 
     const atomicSearchContainer = document.querySelector('atomic-search-interface');
+    if (!atomicSearchContainer) return;
+
+    atomicSearchContainer.querySelectorAll('.facet-modal').forEach((existingModal) => {
+      existingModal.remove();
+    });
+
     atomicSearchContainer.appendChild(modal);
 
     const filterBtnEl = document.querySelector('#mobile-filter-btn');
-    if (filterBtnEl) filterBtnEl.addEventListener('click', toggleModalVisibility);
+    if (filterBtnEl && !filterBtnEl.dataset.evented) {
+      filterBtnEl.addEventListener('click', toggleModalVisibility);
+      filterBtnEl.dataset.evented = 'true';
+    }
 
-    resizeObserver = new ResizeObserver(debounce(200, onResize));
-    resizeObserver.observe(atomicSearchContainer);
+    if (!baseElement.dataset.observed) {
+      const managerObserver = new MutationObserver(() => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(reorderFacets, 100);
+      });
 
-    const managerObserver = new MutationObserver(() => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(reorderFacets, 100);
-    });
+      managerObserver.observe(baseElement, { childList: true });
+      baseElement.dataset.observed = 'true';
+    }
+  }
 
-    managerObserver.observe(baseElement, { childList: true });
+  const debouncedResize = debounce(200, onResize);
+  if (!baseElement.dataset.resizeEvented) {
+    document.addEventListener(CUSTOM_EVENTS.RESIZED, debouncedResize);
+    baseElement.dataset.resizeEvented = 'true';
   }
 
   initAtomicFacetManagerUI();
