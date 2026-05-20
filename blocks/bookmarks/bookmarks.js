@@ -131,36 +131,37 @@ async function renderCards(block) {
 
     const { default: PLAdaptor } = await import('../../scripts/browse-card/browse-cards-premium-learning-adaptor.js');
 
-    for (const cardResponse of cardResponses) {
+    await cardResponses.reduce(async (previousPromise, cardResponse) => {
+      await previousPromise;
+
       if (!cardResponse) {
         wrapper.lastElementChild.remove();
-      } else {
-        // Parse premium-learning content with adaptor, regular content with parse()
-        // eslint-disable-next-line no-await-in-loop
-        let parsedCard = isPremiumLearningContent(cardResponse)
-          ? // eslint-disable-next-line no-await-in-loop
-            (await PLAdaptor.mapResultsToCardsData({ data: [cardResponse], included: cardResponse.included || [] }))[0]
-          : parse(cardResponse);
-
-        if (!parsedCard) {
-          wrapper.lastElementChild.remove();
-          // eslint-disable-next-line no-continue
-          continue;
-        }
-
-        // Enrich course cards with status information for signed-in users
-        if (parsedCard.contentType?.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()) {
-          [parsedCard] = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus([parsedCard], userCourses);
-        }
-
-        const cardDiv = wrapper.querySelector('.browse-card-shimmer-wrapper');
-        cardDiv.innerHTML = '';
-        cardDiv.className = '';
-        cardDiv.classList.add('bookmarks-card');
-        // eslint-disable-next-line no-await-in-loop
-        await buildCard(cardDiv, parsedCard);
+        return Promise.resolve();
       }
-    }
+
+      // Parse premium-learning content with adaptor, regular content with parse()
+      let parsedCard = isPremiumLearningContent(cardResponse)
+        ? (await PLAdaptor.mapResultsToCardsData({ data: [cardResponse], included: cardResponse.included || [] }))[0]
+        : parse(cardResponse);
+
+      if (!parsedCard) {
+        wrapper.lastElementChild.remove();
+        return Promise.resolve();
+      }
+
+      // Enrich course cards with status information for signed-in users
+      if (parsedCard.contentType?.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()) {
+        [parsedCard] = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus([parsedCard], userCourses);
+      }
+
+      const cardDiv = wrapper.querySelector('.browse-card-shimmer-wrapper');
+      cardDiv.innerHTML = '';
+      cardDiv.className = '';
+      cardDiv.classList.add('bookmarks-card');
+      await buildCard(cardDiv, parsedCard);
+
+      return Promise.resolve();
+    }, Promise.resolve());
   }
 
   buildCardsShimmer.shimmerContainer.classList.remove('browse-card-shimmer');
@@ -170,12 +171,12 @@ async function renderCards(block) {
     for (let i = 0; i < bookmarksIds.length; i += BATCH_SIZE) {
       batches.push(bookmarksIds.slice(i, i + BATCH_SIZE));
     }
-
-    // Process batches sequentially
-    await batches.reduce(async (previousPromise, batch) => {
-      await previousPromise;
-      return processBatch(batch);
-    }, Promise.resolve());
+    
+    // Process batches sequentially using reduce
+    await batches.reduce(
+      (promise, batch) => promise.then(() => processBatch(batch)),
+      Promise.resolve()
+    );
   }
 
   processBookmarksInBatches(bookmarkIds);

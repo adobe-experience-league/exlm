@@ -38,7 +38,7 @@ export function buildLearningObjectSkillLevels(included) {
 /**
  * Format skill levels into readable labels using placeholders
  * @param {Set} levels - Set of level numbers
- * @param {Object} placeholders - Placeholders object for localization
+ * @param {Object} placeholders - Placeholders object for localization (premiumLearningProfessional, premiumLearningExpert, premiumLearningMaster)
  * @returns {string} Formatted level labels (e.g., "Professional, Expert")
  */
 export function formatSkillLevels(levels, placeholders = {}) {
