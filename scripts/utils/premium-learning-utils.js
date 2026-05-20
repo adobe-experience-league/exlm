@@ -130,7 +130,7 @@ export async function isPLEligible(signedIn = null, timeoutMs = PL_ELIGIBILITY_T
     : [];
   const isAllowedDomain = plAllowedDomains.includes(window.location.hostname);
   if (!isAllowedDomain && !isFeatureEnabled('isPremiumLearningEnabled')) return false;
-  const isUEMode = window.hlx.aemRoot || window.location.href.includes('.html');
+  const isUEMode = window.hlx?.aemRoot || window.location.href.includes('.html');
   if (isUEMode) return verifyPLAuth(timeoutMs, true);
   if (signedIn === false) return false;
   return verifyPLAuth(timeoutMs, false);
