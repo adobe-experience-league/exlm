@@ -12,7 +12,7 @@ function fetchExlmConfig() {
         .then(({ data = [] }) => new Map(data.map(({ key, value }) => [key, value])))
         .catch(() => new Map());
     } catch {
-      return Promise.resolve(new Map());
+      exlmConfigPromise = Promise.resolve(new Map());
     }
   }
   return exlmConfigPromise;

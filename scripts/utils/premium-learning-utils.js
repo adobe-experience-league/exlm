@@ -121,6 +121,13 @@ export function initPLAuthAnonymous() {
  * @returns {Promise<boolean>}
  */
 export async function isPLEligible(signedIn = null, timeoutMs = PL_ELIGIBILITY_TIMEOUT_MS) {
+  if (isFeatureEnabled('isPremiumLearningEnabled')) {
+    const isUEMode = window.hlx?.aemRoot || window.location.href.includes('.html');
+    if (isUEMode) return verifyPLAuth(timeoutMs, true);
+    if (signedIn === false) return false;
+    return verifyPLAuth(timeoutMs, false);
+  }
+  if (signedIn === false) return false;
   const rawDomains = await getExlmConfig('plAllowedDomains');
   const plAllowedDomains = rawDomains
     ? rawDomains
@@ -128,11 +135,7 @@ export async function isPLEligible(signedIn = null, timeoutMs = PL_ELIGIBILITY_T
         .map((d) => d.trim())
         .filter(Boolean)
     : [];
-  const isAllowedDomain = plAllowedDomains.includes(window.location.hostname);
-  if (!isAllowedDomain && !isFeatureEnabled('isPremiumLearningEnabled')) return false;
-  const isUEMode = window.hlx?.aemRoot || window.location.href.includes('.html');
-  if (isUEMode) return verifyPLAuth(timeoutMs, true);
-  if (signedIn === false) return false;
+  if (!plAllowedDomains.includes(window.location.hostname)) return false;
   return verifyPLAuth(timeoutMs, false);
 }
 
