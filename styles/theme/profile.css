@@ -35,6 +35,10 @@ body.profile-home-page .section:not(.sign-up-flow-section) {
   border-bottom: 1px solid var(--spectrum-gray-300);
 }
 
+body.profile-home-page .section.premium-learning-section {
+  padding: 32px 0 24px;
+}
+
 body.profile .section.bg-white {
   background-color: var(--background-color);
 }
@@ -137,6 +141,15 @@ body.profile-home-page
   padding-bottom: 0;
 }
 
+body.profile-home-page .section.premium-learning-section:has(> .default-content-wrapper:only-child) p {
+  font-size: var(--spectrum-font-size-200);
+}
+
+body.profile-home-page .section.premium-learning-section h2,
+body.profile-home-page .section.premium-learning-section h3:not(.browse-card-banner) {
+  margin-top: 0;
+}
+
 @media (width >=600px) {
   body.profile .section:not(.profile-rail-section, .sign-up-flow-section) {
     margin: 0 16px 24px;
@@ -165,6 +178,10 @@ body.profile-home-page
   body.profile-home-page .section:not(.sign-up-flow-section) {
     margin: 0 24px;
     padding: 48px 0;
+  }
+
+  body.profile-home-page .section.premium-learning-section {
+    padding: 32px 0 24px;
   }
 
   body.profile-home-page
