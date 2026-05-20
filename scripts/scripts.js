@@ -822,8 +822,8 @@ export function getConfig() {
   let plPrivateCatalogIds;
   let plPublicCatalogIds;
   if (isProd) {
-    plPrivateCatalogIds = []; // TODO: update once configured in ALM
-    plPublicCatalogIds = []; // TODO: update once configured in ALM
+    plPrivateCatalogIds = ['208912'];
+    plPublicCatalogIds = ['208913'];
   } else if (isStage) {
     plPrivateCatalogIds = ['208426'];
     plPublicCatalogIds = ['208427'];
