@@ -32,7 +32,10 @@ const BrowseCardsPLAdaptor = (() => {
   function isEnrollmentExpired(deadline) {
     if (!deadline) return false;
     const deadlineDate = new Date(deadline);
-    return new Date() > deadlineDate;
+    const deadlineMs = deadlineDate.getTime();
+    // e.g. new Date("") → Invalid Date; comparisons with NaN are always false — treat as "not past deadline" explicitly.
+    if (Number.isNaN(deadlineMs)) return false;
+    return Date.now() > deadlineMs;
   }
 
   /**
@@ -249,11 +252,12 @@ const BrowseCardsPLAdaptor = (() => {
    * Maps a single Premium learning result to the BrowseCards data model.
    * @param {Object} result - The result object from Premium learning API.
    * @param {Array} included - The included data from Premium learning API.
-   * @param {Object} placeholders - Language placeholders.
+   * @param {Map<string, Object|undefined>} [activeCohortInstanceByLoId] - Precomputed `findActiveEnrollableCohortInstance` per cohort LO id (avoids duplicate scans when used with `mapResultsToCardsData`).
+   * @param {Object} [placeholders] - Language placeholders.
    * @returns {Object} The BrowseCards data model.
    * @private
    */
-  const mapResultToCardsDataModel = (cardData, included, placeholders = {}) => {
+  const mapResultToCardsDataModel = (cardData, included, activeCohortInstanceByLoId, placeholders = {}) => {
     const result = cardData;
 
     const contentType = determineContentType(result);
@@ -269,8 +273,12 @@ const BrowseCardsPLAdaptor = (() => {
 
     let deadline = null;
     if (contentType === PL_CONTENT_TYPES.COHORT.MAPPING_KEY) {
-      const activeInstance = findActiveEnrollableCohortInstance(cardData, included);
+      const activeInstance = activeCohortInstanceByLoId
+        ? activeCohortInstanceByLoId.get(id)
+        : findActiveEnrollableCohortInstance(cardData, included);
       const fallbackId = cardData.relationships?.instances?.data?.[0]?.id;
+      // Deliberate product tradeoff: with no active instance (bookmarks / filter off), we still surface data[0]'s
+      // deadline so the card has metadata; that instance may be expired, so countdown / start labels can be stale.
       const instance = activeInstance || (fallbackId ? included.find((i) => i.id === fallbackId) : undefined);
       deadline = instance?.attributes?.enrollmentDeadline;
       startLabel = getStartLabelFromDeadline(deadline);
@@ -327,16 +335,26 @@ const BrowseCardsPLAdaptor = (() => {
     const included = data.included || [];
     let rows = data.data || [];
 
+    // One scan per cohort LO; reused by the optional filter and by mapResult (avoids duplicate findActiveEnrollableCohortInstance).
+    const activeCohortInstanceByLoId = new Map();
+    rows.forEach((cardData) => {
+      if (determineContentType(cardData) === PL_CONTENT_TYPES.COHORT.MAPPING_KEY) {
+        activeCohortInstanceByLoId.set(cardData.id, findActiveEnrollableCohortInstance(cardData, included));
+      }
+    });
+
     if (filterInactiveCohortInstances) {
       rows = rows.filter((cardData) => {
         if (determineContentType(cardData) !== PL_CONTENT_TYPES.COHORT.MAPPING_KEY) {
           return true;
         }
-        return !!findActiveEnrollableCohortInstance(cardData, included);
+        return !!activeCohortInstanceByLoId.get(cardData.id);
       });
     }
 
-    return rows.map((cardData) => mapResultToCardsDataModel(cardData, included, placeholders));
+    return rows.map((cardData) =>
+      mapResultToCardsDataModel(cardData, included, activeCohortInstanceByLoId, placeholders),
+    );
   };
 
   return {
