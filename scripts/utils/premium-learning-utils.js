@@ -1,6 +1,6 @@
 import { setCookie, getCookie, deleteCookie } from './cookie-utils.js';
 import isFeatureEnabled from './feature-flag-utils.js';
-import { getExlmConfig } from './exlm-config-utils.js';
+import getExlmConfig from './exlm-config-utils.js';
 
 const LEARNER_TOKEN_COOKIE = 'alm_access_token';
 const LEARNER_USER_ID_COOKIE = 'alm_user_id';
