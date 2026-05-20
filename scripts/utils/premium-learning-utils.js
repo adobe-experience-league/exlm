@@ -122,15 +122,17 @@ export function initPLAuthAnonymous() {
  */
 export async function isPLEligible(signedIn = null, timeoutMs = PL_ELIGIBILITY_TIMEOUT_MS) {
   const rawDomains = await getExlmConfig('plAllowedDomains');
-  const plAllowedDomains = rawDomains ? rawDomains.split(',').map((d) => d.trim()).filter(Boolean) : [];
+  const plAllowedDomains = rawDomains
+    ? rawDomains
+        .split(',')
+        .map((d) => d.trim())
+        .filter(Boolean)
+    : [];
   const isAllowedDomain = plAllowedDomains.includes(window.location.hostname);
   if (!isAllowedDomain && !isFeatureEnabled('isPremiumLearningEnabled')) return false;
   const isUEMode = window.hlx.aemRoot || window.location.href.includes('.html');
   if (isUEMode) return verifyPLAuth(timeoutMs, true);
-  if (signedIn === false) {
-    [LEARNER_TOKEN_COOKIE, LEARNER_USER_ID_COOKIE].forEach((c) => deleteCookie(c));
-    return false;
-  }
+  if (signedIn === false) return false;
   return verifyPLAuth(timeoutMs, false);
 }
 
@@ -140,6 +142,10 @@ export async function isPLEligible(signedIn = null, timeoutMs = PL_ELIGIBILITY_T
  * @returns {Promise<boolean>}
  */
 export async function applyPLSectionGating(signedIn = null, timeoutMs = PL_ELIGIBILITY_TIMEOUT_MS) {
+  const isUEMode = window.hlx?.aemRoot || window.location.href.includes('.html');
+  // Skip cookie cleanup in UE Author Mode — IMS is absent so signedIn is always false,
+  // but a valid anonymous PL token may already exist and must not be wiped before content renders.
+  if (signedIn === false && !isUEMode) [LEARNER_TOKEN_COOKIE, LEARNER_USER_ID_COOKIE].forEach((c) => deleteCookie(c));
   const isEligible = await isPLEligible(signedIn, timeoutMs);
   if (!isEligible) document.querySelectorAll('.premium-learning-section').forEach((s) => s.remove());
   return isEligible;

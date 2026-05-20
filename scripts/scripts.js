@@ -790,8 +790,8 @@ export function getConfig() {
     ['ja-JP', 'ja'],
     ['pt-PT', 'pt'],
     ['ko-KR', 'ko'],
-    ['zh-CN', 'zh-Hans'],
-    ['zh-TW', 'zh-Hant'],
+    ['zh-CN', 'zh-hans'],
+    ['zh-TW', 'zh-hant'],
   ]);
 
   const cookieConsentName = 'OptanonConsent';
