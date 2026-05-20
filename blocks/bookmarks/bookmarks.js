@@ -113,6 +113,12 @@ async function renderCards(block) {
     return bookmarkId;
   });
 
+  // Load PLAdaptor and userCourses once before processing batches
+  const [{ default: PLAdaptor }, userCourses] = await Promise.all([
+    import('../../scripts/browse-card/browse-cards-premium-learning-adaptor.js'),
+    getCurrentCourses(),
+  ]);
+
   async function processBatch(bookmarkBatch) {
     const bookmarkPromises = bookmarkBatch.map((bookmarkId) => {
       if (bookmarkId.startsWith('/')) {
@@ -125,11 +131,6 @@ async function renderCards(block) {
     });
 
     const cardResponses = await Promise.all(bookmarkPromises);
-
-    // Get user courses for enriching course cards with status
-    const userCourses = await getCurrentCourses();
-
-    const { default: PLAdaptor } = await import('../../scripts/browse-card/browse-cards-premium-learning-adaptor.js');
 
     await cardResponses.reduce(async (previousPromise, cardResponse) => {
       await previousPromise;
@@ -171,12 +172,9 @@ async function renderCards(block) {
     for (let i = 0; i < bookmarksIds.length; i += BATCH_SIZE) {
       batches.push(bookmarksIds.slice(i, i + BATCH_SIZE));
     }
-    
+
     // Process batches sequentially using reduce
-    await batches.reduce(
-      (promise, batch) => promise.then(() => processBatch(batch)),
-      Promise.resolve()
-    );
+    await batches.reduce((promise, batch) => promise.then(() => processBatch(batch)), Promise.resolve());
   }
 
   processBookmarksInBatches(bookmarkIds);
