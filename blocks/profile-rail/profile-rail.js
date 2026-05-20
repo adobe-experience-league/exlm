@@ -61,7 +61,9 @@ async function fetchNavContent() {
 
 function getHeadings() {
   const headings = Array.from(
-    document.querySelectorAll('.recommendation-marquee-header, .recommended-content-header, .recently-reviewed-header'),
+    document.querySelectorAll(
+      '.recommendation-marquee-header, .recommended-content-header, .recently-reviewed-header, .premium-learning-recommended-content-title, .premium-learning-suggested-content-header-title, .premium-learning-active-content-header-title',
+    ),
   ).filter((heading) => heading.textContent.trim());
   return headings;
 }
@@ -210,10 +212,8 @@ export default async function ProfileRail(block) {
         const parentSection = el.closest('.block');
         if (!parentSection) return;
 
-        const firstDivChild = parentSection.querySelector('.rec-block-header');
-        if (!firstDivChild) return;
-
-        const id = firstDivChild.getAttribute('id');
+        const id = el.getAttribute('id');
+        if (!id) return;
         const rect = parentSection.getBoundingClientRect();
 
         if (rect.top <= topThreshold && rect.bottom > 0) {
@@ -256,7 +256,9 @@ export default async function ProfileRail(block) {
 
   const mutationObserver = new MutationObserver(debounce(updateList, 100));
 
-  document.querySelectorAll('.profile-section').forEach((el) => mutationObserver.observe(el, observerConfig));
+  document
+    .querySelectorAll('.profile-section, .premium-learning-section')
+    .forEach((el) => mutationObserver.observe(el, observerConfig));
 
   decorateIcons(block);
 }

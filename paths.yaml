@@ -13,6 +13,7 @@ mappings:
   - /content/exlm/languages:/languages.json
   - /content/exlm/qualtrics:/qualtrics.json
   - /content/exlm/featured-card-products:/featured-card-products.json
+  - /content/exlm/exlm-config:/exlm-config.json
   # taxonomy
   - /content/exlm/taxonomy/features:/features.json
   - /content/exlm/taxonomy/roles:/roles.json

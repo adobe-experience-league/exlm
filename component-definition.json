@@ -74,7 +74,7 @@
                   "filter": "article-content-section",
                   "name": "Article Content Section",
                   "model": "article-content-section",
-                  "style": ["article-content-section", "default"],
+                  "style": "article-content-section,default",
                   "text1": {
                     "sling:resourceType": "core/franklin/components/text/v1/text",
                     "name": "Text",
@@ -167,7 +167,7 @@
                   "filter": "courses-section",
                   "name": "Courses Section",
                   "model": "courses-section",
-                  "style": ["courses-section", "default"]
+                  "style": "courses-section,default"
                 }
               }
             }
@@ -184,7 +184,7 @@
                   "filter": "course-hub-section",
                   "name": "Course Hub Section",
                   "model": "course-hub-section",
-                  "style": ["course-hub-section", "default"]
+                  "style": "course-hub-section,default"
                 }
               }
             }
@@ -200,7 +200,7 @@
                 "template": {
                   "name": "Profile Section",
                   "model": "profile-section",
-                  "style": ["profile-section", "default"],
+                  "style": "profile-section,default",
                   "filter": "profile-section"
                 }
               }
@@ -217,7 +217,7 @@
                 "template": {
                   "name": "Profile Bottom Section",
                   "model": "profile-bottom-section",
-                  "style": ["profile-bottom-section", "default"],
+                  "style": "profile-bottom-section,default",
                   "filter": "profile-bottom-section"
                 }
               }
@@ -320,7 +320,7 @@
                 "template": {
                   "name": "Premium Learning Section",
                   "model": "premium-learning-section",
-                  "style": ["premium-learning-section", "default"],
+                  "style": "premium-learning-section,default",
                   "filter": "premium-learning-section"
                 }
               }

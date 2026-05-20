@@ -218,7 +218,7 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
       // eslint-disable-next-line no-await-in-loop
       const response = await fetch(nextUrl, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `oauth ${token}`,
           Accept: 'application/vnd.api+json',
         },
       });
@@ -344,7 +344,7 @@ export async function premiumLearningBookmarkHandler(config) {
     const response = await fetch(`${plApiBaseUrl}/learningObjects/${loId}/bookmark`, {
       method,
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `oauth ${token}`,
         Accept: 'application/vnd.api+json',
       },
     });
