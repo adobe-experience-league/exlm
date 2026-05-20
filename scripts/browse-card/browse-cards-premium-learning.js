@@ -167,11 +167,10 @@ function buildPLThumbnail({
 /**
  * Builds meta information section (rating, duration, level) for both cohorts and courses
  * @param {Object} meta - Metadata object from card model
- * @param {boolean} isCourseCard - Whether this is a course card (not cohort)
  * @returns {HTMLElement} Meta information container
  * @private
  */
-function buildPLMetaInfo(meta, isCourseCard = false) {
+function buildPLMetaInfo(meta) {
   const metaContainer = document.createElement('div');
   metaContainer.className = 'premium-learning-card-meta';
   const metaParts = [];
@@ -254,7 +253,7 @@ export async function buildPLCard(element, model) {
   }
 
   // Add metadata below title for both cohorts and courses
-  const metaInfo = buildPLMetaInfo(meta, isCourseCard);
+  const metaInfo = buildPLMetaInfo(meta);
   if (metaInfo.querySelector('.premium-learning-card-meta-text')) {
     cardContent.appendChild(metaInfo);
   }

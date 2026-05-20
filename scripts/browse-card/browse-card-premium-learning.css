@@ -226,7 +226,7 @@
   height: var(--spectrum-spacing-75);
   border-radius: 50%;
   background-color: var(--non-spectrum-ash-gray);
-  margin-right: var(--spectrum-spacing-200);
+  margin-right: var(--spectrum-spacing-100);
   position: relative;
   top: -2px;
 }

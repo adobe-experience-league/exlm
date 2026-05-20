@@ -142,6 +142,12 @@ async function renderCards(block) {
             (await PLAdaptor.mapResultsToCardsData({ data: [cardResponse], included: cardResponse.included || [] }))[0]
           : parse(cardResponse);
 
+        if (!parsedCard) {
+          wrapper.lastElementChild.remove();
+          // eslint-disable-next-line no-continue
+          continue;
+        }
+
         // Enrich course cards with status information for signed-in users
         if (parsedCard.contentType?.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()) {
           [parsedCard] = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus([parsedCard], userCourses);
@@ -160,11 +166,16 @@ async function renderCards(block) {
   buildCardsShimmer.shimmerContainer.classList.remove('browse-card-shimmer');
 
   async function processBookmarksInBatches(bookmarksIds) {
+    const batches = [];
     for (let i = 0; i < bookmarksIds.length; i += BATCH_SIZE) {
-      const batch = bookmarksIds.slice(i, i + BATCH_SIZE);
-      // eslint-disable-next-line no-await-in-loop
-      await processBatch(batch);
+      batches.push(bookmarksIds.slice(i, i + BATCH_SIZE));
     }
+
+    // Process batches sequentially
+    await batches.reduce(async (previousPromise, batch) => {
+      await previousPromise;
+      return processBatch(batch);
+    }, Promise.resolve());
   }
 
   processBookmarksInBatches(bookmarkIds);

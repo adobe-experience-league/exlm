@@ -3,15 +3,6 @@ import PL_CONTENT_TYPES from '../data-service/premium-learning/premium-learning-
 import { fetchLanguagePlaceholders, getConfig, getPathDetails } from '../scripts.js';
 
 /**
- * Level labels mapping for skill levels
- */
-const LEVEL_LABELS = {
-  1: 'Professional',
-  2: 'Expert',
-  3: 'Master',
-};
-
-/**
  * Build a map of learning object IDs to their skill levels
  * @param {Array} included - The included array from API response
  * @returns {Map} Map of learning object IDs to Sets of level numbers
@@ -45,14 +36,21 @@ export function buildLearningObjectSkillLevels(included) {
 }
 
 /**
- * Format skill levels into readable labels
+ * Format skill levels into readable labels using placeholders
  * @param {Set} levels - Set of level numbers
- * @param {Object} placeholders - Placeholders object with levelTbd key
+ * @param {Object} placeholders - Placeholders object for localization
  * @returns {string} Formatted level labels (e.g., "Professional, Expert")
  */
 export function formatSkillLevels(levels, placeholders = {}) {
-  if (!levels || levels.size === 0) return placeholders.levelTbd || '';
-  const labels = [...levels].sort((a, b) => a - b).map((lvl) => LEVEL_LABELS[lvl] || `Level ${lvl}`);
+  if (!levels || levels.size === 0) return '';
+
+  const levelLabels = {
+    1: placeholders.premiumLearningProfessional || 'Professional',
+    2: placeholders.premiumLearningExpert || 'Expert',
+    3: placeholders.premiumLearningMaster || 'Master',
+  };
+
+  const labels = [...levels].sort((a, b) => a - b).map((lvl) => levelLabels[lvl] || `Level ${lvl}`);
   return labels.join(', ');
 }
 
@@ -97,7 +95,8 @@ const BrowseCardsPLAdaptor = (() => {
       if (!totalWeeks) return '';
       // Exclude Week 0 (onboarding) and Quiz Week from displayed duration
       const displayWeeks = totalWeeks > 2 ? totalWeeks - 2 : totalWeeks;
-      const label = displayWeeks === 1 ? 'week' : 'weeks';
+      const label =
+        displayWeeks === 1 ? placeholders.premiumLearningWeek || 'week' : placeholders.premiumLearningWeeks || 'weeks';
       return `${displayWeeks} ${label}`;
     }
 
@@ -110,7 +109,8 @@ const BrowseCardsPLAdaptor = (() => {
     // If less than 60 minutes, show in minutes
     if (totalMinutes < 60) {
       const roundedMinutes = Math.max(1, Math.round(totalMinutes));
-      const label = roundedMinutes === 1 ? 'min' : 'mins';
+      const label =
+        roundedMinutes === 1 ? placeholders.premiumLearningMin || 'min' : placeholders.premiumLearningMins || 'mins';
       return `${roundedMinutes} ${label}`;
     }
 
@@ -122,7 +122,8 @@ const BrowseCardsPLAdaptor = (() => {
     } else {
       roundedHours = Number(hours.toFixed(1));
     }
-    const label = roundedHours === 1 ? 'hour' : 'hours';
+    const label =
+      roundedHours === 1 ? placeholders.premiumLearningHour || 'hour' : placeholders.premiumLearningHours || 'hours';
     return `${roundedHours} ${label}`;
   };
 
