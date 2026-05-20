@@ -31,7 +31,7 @@ const BrowseCardsPLAdaptor = (() => {
    */
   function isEnrollmentExpired(deadline) {
     if (!deadline) return false;
-    const deadlineDate = new Date(new Date(deadline).getTime());
+    const deadlineDate = new Date(deadline);
     return new Date() > deadlineDate;
   }
 
@@ -46,6 +46,24 @@ const BrowseCardsPLAdaptor = (() => {
       String(instance.attributes?.state || '').toLowerCase() === 'active' &&
       !isEnrollmentExpired(instance.attributes?.enrollmentDeadline)
     );
+  }
+
+  /**
+   * First learning-program instance in relationship order that is active and still enrollable.
+   * @param {Object} cardData - Primary LO from Premium Learning API `data`
+   * @param {Array<Object>} included - `included` from the same payload
+   * @returns {Object|undefined} Matching included resource, if any
+   * @private
+   */
+  function findActiveEnrollableCohortInstance(cardData, included) {
+    const refs = cardData.relationships?.instances?.data;
+    if (!refs?.length) return undefined;
+    return refs
+      .map((ref) => {
+        const id = ref?.id;
+        return id ? included.find((i) => i.id === id) : undefined;
+      })
+      .find(isActiveEnrollableInstance);
   }
 
   /**
@@ -119,7 +137,8 @@ const BrowseCardsPLAdaptor = (() => {
   function getStartLabelFromDeadline(deadline) {
     if (!deadline) return '';
 
-    const startDate = new Date(new Date(deadline).getTime() + MILLISECONDS_PER_DAY);
+    const deadlineMs = new Date(deadline).getTime();
+    const startDate = new Date(deadlineMs + MILLISECONDS_PER_DAY);
     const today = normalizeToMidnight(new Date());
     const normalizedStartDate = normalizeToMidnight(startDate);
 
@@ -250,9 +269,10 @@ const BrowseCardsPLAdaptor = (() => {
 
     let deadline = null;
     if (contentType === PL_CONTENT_TYPES.COHORT.MAPPING_KEY) {
-      const instanceId = cardData.relationships?.instances?.data?.[0]?.id;
-
-      const instance = included.find((i) => i.id === instanceId);
+      const activeInstance = findActiveEnrollableCohortInstance(cardData, included);
+      const fallbackId = cardData.relationships?.instances?.data?.[0]?.id;
+      const instance =
+        activeInstance || (fallbackId ? included.find((i) => i.id === fallbackId) : undefined);
       deadline = instance?.attributes?.enrollmentDeadline;
       startLabel = getStartLabelFromDeadline(deadline);
     }
@@ -313,10 +333,7 @@ const BrowseCardsPLAdaptor = (() => {
         if (determineContentType(cardData) !== PL_CONTENT_TYPES.COHORT.MAPPING_KEY) {
           return true;
         }
-        const instanceId = cardData.relationships?.instances?.data?.[0]?.id;
-        if (!instanceId) return false;
-        const instance = included.find((item) => item.id === instanceId);
-        return isActiveEnrollableInstance(instance);
+        return !!findActiveEnrollableCohortInstance(cardData, included);
       });
     }
 
