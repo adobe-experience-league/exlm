@@ -5738,7 +5738,7 @@
         "valueType": "string",
         "name": "cq:translationMethod",
         "label": "Page Translation method",
-        "description": "Sets the page translation method in page meta.",
+        "description": "Displays the translation method applied to this page.",
         "readOnly": true
       },
       {
@@ -5968,7 +5968,7 @@
         "valueType": "string",
         "name": "cq:translationMethod",
         "label": "Page Translation method",
-        "description": "Sets the page translation method in page meta.",
+        "description": "Displays the translation method applied to this page.",
         "readOnly": true
       },
       {
@@ -6210,7 +6210,7 @@
         "valueType": "string",
         "name": "cq:translationMethod",
         "label": "Page Translation method",
-        "description": "Sets the page translation method in page meta.",
+        "description": "Displays the translation method applied to this page.",
         "readOnly": true
       },
       {
@@ -6247,7 +6247,7 @@
         "valueType": "string",
         "name": "cq:translationMethod",
         "label": "Page Translation method",
-        "description": "Sets the page translation method in page meta.",
+        "description": "Displays the translation method applied to this page.",
         "readOnly": true
       },
       {
