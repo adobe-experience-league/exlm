@@ -10,6 +10,7 @@ import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeli
 import { sanitizeBookmarks } from '../../scripts/user-actions/bookmark.js';
 import { getCurrentCourses } from '../../scripts/courses/course-profile.js';
 import BrowseCardsCourseEnricher from '../../scripts/browse-card/browse-cards-course-enricher.js';
+import PL_CONTENT_TYPES from '../../scripts/data-service/premium-learning/premium-learning-constants.js';
 
 const BATCH_SIZE = 6;
 const bookmarksEventEmitter = getEmitter('bookmarks');
@@ -76,6 +77,19 @@ function parseFullMeta(metaString) {
   return jsonObject;
 }
 
+/**
+ * Check if card response is premium-learning content
+ * @param {Object} cardResponse - API response object
+ * @returns {boolean} True if premium-learning content
+ */
+function isPremiumLearningContent(cardResponse) {
+  return (
+    cardResponse.type === 'learningObject' ||
+    cardResponse.id?.startsWith(`${PL_CONTENT_TYPES.COHORT.MAPPING_KEY}:`) ||
+    cardResponse.id?.startsWith(`${PL_CONTENT_TYPES.COURSE.MAPPING_KEY}:`)
+  );
+}
+
 async function renderCards(block) {
   const bookmarks = bookmarksEventEmitter.get('bookmark_ids') ?? [];
 
@@ -115,25 +129,32 @@ async function renderCards(block) {
     // Get user courses for enriching course cards with status
     const userCourses = await getCurrentCourses();
 
-    cardResponses.forEach(async (cardResponse) => {
+    const { default: PLAdaptor } = await import('../../scripts/browse-card/browse-cards-premium-learning-adaptor.js');
+
+    for (const cardResponse of cardResponses) {
       if (!cardResponse) {
         wrapper.lastElementChild.remove();
       } else {
-        let parsedCard = parse(cardResponse);
+        // Parse premium-learning content with adaptor, regular content with parse()
+        // eslint-disable-next-line no-await-in-loop
+        let parsedCard = isPremiumLearningContent(cardResponse)
+          ? // eslint-disable-next-line no-await-in-loop
+            (await PLAdaptor.mapResultsToCardsData({ data: [cardResponse], included: cardResponse.included || [] }))[0]
+          : parse(cardResponse);
 
         // Enrich course cards with status information for signed-in users
         if (parsedCard.contentType?.toLowerCase() === CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase()) {
-          const [enrichedCard] = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus([parsedCard], userCourses);
-          parsedCard = enrichedCard;
+          [parsedCard] = BrowseCardsCourseEnricher.enrichCardsWithCourseStatus([parsedCard], userCourses);
         }
 
         const cardDiv = wrapper.querySelector('.browse-card-shimmer-wrapper');
         cardDiv.innerHTML = '';
         cardDiv.className = '';
         cardDiv.classList.add('bookmarks-card');
+        // eslint-disable-next-line no-await-in-loop
         await buildCard(cardDiv, parsedCard);
       }
-    });
+    }
   }
 
   buildCardsShimmer.shimmerContainer.classList.remove('browse-card-shimmer');

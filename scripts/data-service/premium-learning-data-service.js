@@ -726,6 +726,7 @@ export async function fetchCohortProgress(cohortId, config) {
         'subLOs.instances',
         'instances.loResources.resources',
         'subLOs.instances.loResources.resources',
+        'skills.skillLevel',
       ].join(','),
     );
 
