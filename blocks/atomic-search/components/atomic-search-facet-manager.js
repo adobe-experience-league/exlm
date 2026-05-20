@@ -2,6 +2,7 @@ import { waitForChildElement, debounce, CUSTOM_EVENTS, isMobile, waitFor } from 
 
 const orderedFacetIds = ['facetContentType', 'facetStatus', 'facetProduct', 'facetRole', 'facetDate'];
 const FACET_MODAL_SCROLL_OFFSET = 60;
+const FACET_MODAL_LAYOUT_DELAY_MS = 20;
 
 function ensureFacetModalInView(modal) {
   if (!isMobile() || !modal) return;
@@ -31,9 +32,10 @@ export default function atomicFacetManagerHandler(baseElement) {
     });
   };
 
-  function positionModal() {
-    const modal = document.querySelector('.facet-modal');
+  function positionModal(modal) {
     const referenceElement = document.querySelector('atomic-sort-dropdown');
+    if (!modal || !referenceElement) return;
+
     const positionValue = referenceElement.getBoundingClientRect().bottom;
     const delta = 10;
     const topValue = positionValue + window.scrollY + delta;
@@ -43,19 +45,20 @@ export default function atomicFacetManagerHandler(baseElement) {
 
   function syncModalLayout(modal) {
     if (!modal || modal.style.display !== 'block') return;
-    positionModal();
+    positionModal(modal);
     ensureFacetModalInView(modal);
   }
 
   function onResultsUpdate() {
     const modal = document.querySelector('.facet-modal');
     if (!modal || modal.style.display !== 'block') return;
+
+    // RESULT_UPDATED reflows the status row; 25ms is enough before the first sync (100ms felt laggy).
     waitFor(() => {
       syncModalLayout(modal);
-      setTimeout(() => {
-        syncModalLayout(modal);
-      });
-    }, 25);
+      // Let the event loop flush, then re-sync anchor + scroll after layout updates.
+      window.requestAnimationFrame(() => syncModalLayout(modal));
+    }, FACET_MODAL_LAYOUT_DELAY_MS);
   }
 
   const hideAtomicModal = () => {
@@ -100,11 +103,14 @@ export default function atomicFacetManagerHandler(baseElement) {
     }
 
     document.querySelector('atomic-layout-section[section="results"]').style.display = 'none';
+
+    // First pass: anchor under sort row and scroll while the page can still scroll.
     syncModalLayout(modal);
     document.body.style.overflow = 'hidden';
-    setTimeout(() => {
-      syncModalLayout(modal);
-    }, 0);
+
+    // Second pass after the task queue flushes (hiding results shifts the status row).
+    setTimeout(() => syncModalLayout(modal), 0);
+
     document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onResultsUpdate);
   };
 
@@ -172,8 +178,8 @@ export default function atomicFacetManagerHandler(baseElement) {
     }
   }
 
-  const debouncedResize = debounce(200, onResize);
   if (!baseElement.dataset.resizeEvented) {
+    const debouncedResize = debounce(200, onResize);
     document.addEventListener(CUSTOM_EVENTS.RESIZED, debouncedResize);
     baseElement.dataset.resizeEvented = 'true';
   }
