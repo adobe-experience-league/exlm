@@ -5,7 +5,7 @@ let exlmConfigPromise = null;
 function fetchExlmConfig() {
   if (!exlmConfigPromise) {
     exlmConfigPromise = fetch(`${window.hlx.codeBasePath}/exlm-config.json`, {
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(5000),
     })
       .then((res) => (res.ok ? res.json() : { data: [] }))
       .then(({ data = [] }) => new Map(data.map(({ key, value }) => [key, value])))
