@@ -115,16 +115,16 @@ button:disabled:hover {
   display: block;
 }
 
-/* Premium Learning bookmark - hide blue icon by default */
-.user-actions .bookmark .icon-pl-bookmark-blue {
+/* Premium Learning bookmark - hide active icon by default */
+.user-actions .bookmark .icon-bookmark-secondary-active {
   display: none;
 }
 
-/* Premium Learning bookmark - when bookmarked, hide white and show blue */
-.user-actions .bookmark[data-bookmarked='true'] .icon-pl-bookmark-white {
+/* Premium Learning bookmark - when bookmarked, hide inactive and show active */
+.user-actions .bookmark[data-bookmarked='true'] .icon-bookmark-secondary-inactive {
   display: none;
 }
 
-.user-actions .bookmark[data-bookmarked='true'] .icon-pl-bookmark-blue {
+.user-actions .bookmark[data-bookmarked='true'] .icon-bookmark-secondary-active {
   display: block;
 }
