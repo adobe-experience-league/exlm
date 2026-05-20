@@ -60,7 +60,7 @@ export default async function decorate(block) {
           }),
         ),
       ].join(', ') || getMetadata('product_v2');
-    experienceLevel = getPreferredMetadata('loc-legacy-level', 'loc-level', 'loc-v2-level', 'level', 'level_v2')
+    experienceLevel = getPreferredMetadata('loc-legacy-level', 'loc-level', 'level', 'loc-v2-level', 'level_v2')
       .split(',')
       .map((item) => item.trim())
       .join(', ');

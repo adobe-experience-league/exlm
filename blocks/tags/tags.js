@@ -46,9 +46,9 @@ export default async function decorate(block) {
         ),
       ].join(',') || getMetadata('product_v2');
 
-    features = getPreferredMetadata('loc-legacy-feature', 'loc-feature', 'loc-v2-feature', 'feature', 'feature_v2');
-    roles = getPreferredMetadata('loc-legacy-role', 'loc-role', 'loc-v2-role', 'role', 'role_v2');
-    experienceLevels = getPreferredMetadata('loc-legacy-level', 'loc-level', 'loc-v2-level', 'level', 'level_v2');
+    features = getPreferredMetadata('loc-legacy-feature', 'loc-feature', 'feature', 'loc-v2-feature', 'feature_v2');
+    roles = getPreferredMetadata('loc-legacy-role', 'loc-role', 'role', 'loc-v2-role', 'role_v2');
+    experienceLevels = getPreferredMetadata('loc-legacy-level', 'loc-level', 'level', 'loc-v2-level', 'level_v2');
   }
 
   function createTagsHTML(values) {
