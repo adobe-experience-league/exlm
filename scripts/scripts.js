@@ -811,7 +811,9 @@ export function getConfig() {
   const cdnOrigin = `https://${cdnHost}`;
   const premiumLearningAuthAPI = `${cdnOrigin}/api/v1/web/alm/authentication`;
   const rawLang = document.querySelector('html').lang || 'en';
-  const lang = window.location.hostname.includes(communityHost) ? plCommunityLangsMap.get(rawLang) || rawLang.split('-')[0] : rawLang;
+  const lang = window.location.hostname.includes(communityHost)
+    ? plCommunityLangsMap.get(rawLang) || rawLang.split('-')[0]
+    : rawLang;
   // Premium Learning is not offered for nl/sv locales; use English PL home until those languages are deprecated.
   const premiumHomeLang = lang === 'nl' || lang === 'sv' ? 'en' : lang;
   // Locale param for Community page URL
