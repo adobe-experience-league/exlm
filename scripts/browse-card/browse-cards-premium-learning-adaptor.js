@@ -271,8 +271,7 @@ const BrowseCardsPLAdaptor = (() => {
     if (contentType === PL_CONTENT_TYPES.COHORT.MAPPING_KEY) {
       const activeInstance = findActiveEnrollableCohortInstance(cardData, included);
       const fallbackId = cardData.relationships?.instances?.data?.[0]?.id;
-      const instance =
-        activeInstance || (fallbackId ? included.find((i) => i.id === fallbackId) : undefined);
+      const instance = activeInstance || (fallbackId ? included.find((i) => i.id === fallbackId) : undefined);
       deadline = instance?.attributes?.enrollmentDeadline;
       startLabel = getStartLabelFromDeadline(deadline);
     }
