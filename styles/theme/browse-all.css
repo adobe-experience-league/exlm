@@ -1,3 +1,7 @@
+body.browse-all .section.premium-learning-section {
+  margin: 0 49px 40px;
+}
+
 @media (width >= 1440px) {
   body.browse-all main {
     max-width: 1440px;
@@ -19,5 +23,10 @@
   body.browse-all .section.browse-filters-container {
     padding-top: 0;
     padding-bottom: 0;
+  }
+
+  body.browse-all main > div.section.premium-learning-section {
+    padding-left: 32px;
+    margin: 0 30px 30px;
   }
 }

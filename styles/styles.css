@@ -994,6 +994,18 @@ picture[align="right"] {
   text-align: center;
 }
 
+.section.premium-learning-section {
+  border-radius: 20px;
+  background-color: var(--non-spectrum-bg);
+  border: 1px solid var(--spectrum-gray-300);
+}
+
+.section.premium-learning-section > .default-content-wrapper:first-child {
+  border-bottom: 2px solid var(--spectrum-gray-300);
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+}
+
 @media (min-width: 600px) {
   .exl-toast {
     width: auto;
