@@ -176,6 +176,7 @@ export const isHomePage = (() => {
 })();
 
 export const isCertificatePage = () => !!document.querySelector('.course-completion'); // Checking for presence of course-completion block
+export const isUEMode = window.hlx?.aemRoot || window.location.href.includes('.html');
 
 /**
  * add a section for the left rail when on a browse page.
@@ -1704,7 +1705,7 @@ async function loadPage() {
   await loadLazy(document);
   loadDelayed();
   await showSignupDialog();
-  if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+  if (isUEMode) {
     loadDefaultModule(`${window.hlx.codeBasePath}/scripts/editor-support-seo.js`);
   }
   if (isDocPage) {
@@ -1726,7 +1727,7 @@ async function loadPage() {
   if (window.hlx.DO_NOT_LOAD_PAGE) return;
 
   // For AEM Author mode, decode the tags value
-  if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+  if (isUEMode) {
     decodeAemCqMetaTags();
     updateTQTagsMetadata();
     decodeAemPageMetaTags();
@@ -1828,7 +1829,7 @@ async function loadPage() {
   }
   // Initialize Premium Learning auth — fully non-blocking, does not delay loadPage().
   if (isFeatureEnabled('isPremiumLearningEnabled')) {
-    if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+    if (isUEMode) {
       // UE Author Mode: fetch PL token anonymously via ?auth=false (no IMS required).
       import('./utils/premium-learning-utils.js')
         .then(({ initPLAuthAnonymous }) => initPLAuthAnonymous())
