@@ -1,36 +1,9 @@
-/* Header styles */
-.premium-learning-profile-badges .badges-header {
-  margin-bottom: var(--spectrum-spacing-500);
-}
-
-.premium-learning-profile-badges .badges-title {
-  margin: 0 0 var(--spectrum-spacing-100) 0;
-}
-
-.premium-learning-profile-badges .badges-title :is(h1, h2, h3, h4, h5, h6) {
-  font-size: var(--spectrum-font-size-200);
-  font-weight: var(--font-weight-bold);
-  color: var(--text-color);
-  line-height: normal;
-  margin: 0;
-}
-
-.premium-learning-profile-badges .badges-description {
-  font-size: var(--spectrum-font-size-75);
-  margin: 0;
-}
-
-.premium-learning-profile-badges .badges-description a {
-  font-size: var(--spectrum-font-size-75);
-}
-
 /* Badge grid and shimmer layout */
 .premium-learning-profile-badges .badges-grid,
 .premium-learning-profile-badges .browse-card-shimmer {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--spectrum-spacing-400);
-  margin-top: var(--spectrum-spacing-500);
 }
 
 /* Badge card */

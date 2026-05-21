@@ -5,12 +5,38 @@ const LEARNER_TOKEN_COOKIE = 'alm_access_token';
 const LEARNER_USER_ID_COOKIE = 'alm_user_id';
 const DEFAULT_EXPIRES = 86400;
 const PL_ELIGIBILITY_TIMEOUT_MS = 10000;
+const isUEMode = window.hlx?.aemRoot || window.location.href.includes('.html');
+
+// Lazily initialised — null until the first getExlmConfig() call.
+// Deferred so window.hlx.codeBasePath is guaranteed to be set by setup() before the URL is read.
+let exlmConfigPromise = null;
 
 // Two separate singletons for the two mutually exclusive auth modes (UE Author vs production).
 // UE/non-UE is an immutable page-level constant, so each promise is set at most once per load.
 // Sign-out calls window.adobeIMS.signOut() which causes a full page reload, resetting both.
 let plAuthPromise;
 let plAuthAnonymousPromise;
+
+function fetchExlmConfig() {
+  if (!exlmConfigPromise) {
+    try {
+      exlmConfigPromise = fetch(`${window.hlx.codeBasePath}/exlm-config.json`, {
+        signal: AbortSignal.timeout(5000),
+      })
+        .then((res) => (res.ok ? res.json() : { data: [] }))
+        .then(({ data = [] }) => new Map(data.map(({ key, value }) => [key, value])))
+        .catch(() => new Map());
+    } catch {
+      exlmConfigPromise = Promise.resolve(new Map());
+    }
+  }
+  return exlmConfigPromise;
+}
+
+async function getExlmConfig(key) {
+  const config = await fetchExlmConfig();
+  return config.get(key) ?? null;
+}
 
 export function getPLAccessToken() {
   return getCookie(LEARNER_TOKEN_COOKIE);
@@ -120,11 +146,20 @@ export function initPLAuthAnonymous() {
  * @returns {Promise<boolean>}
  */
 export async function isPLEligible(signedIn = null, timeoutMs = PL_ELIGIBILITY_TIMEOUT_MS) {
-  if (!isFeatureEnabled('isPremiumLearningEnabled')) return false;
-  if (window.hlx.aemRoot || window.location.href.includes('.html')) {
-    return verifyPLAuth(timeoutMs, true);
+  if (isFeatureEnabled('isPremiumLearningEnabled')) {
+    if (isUEMode) return verifyPLAuth(timeoutMs, true);
+    if (signedIn === false) return false;
+    return verifyPLAuth(timeoutMs, false);
   }
   if (signedIn === false) return false;
+  const rawDomains = await getExlmConfig('plAllowedDomains');
+  const plAllowedDomains = rawDomains
+    ? rawDomains
+        .split(',')
+        .map((d) => d.trim())
+        .filter(Boolean)
+    : [];
+  if (!plAllowedDomains.includes(window.location.hostname)) return false;
   return verifyPLAuth(timeoutMs, false);
 }
 
@@ -134,6 +169,9 @@ export async function isPLEligible(signedIn = null, timeoutMs = PL_ELIGIBILITY_T
  * @returns {Promise<boolean>}
  */
 export async function applyPLSectionGating(signedIn = null, timeoutMs = PL_ELIGIBILITY_TIMEOUT_MS) {
+  // Skip cookie cleanup in UE Author Mode — IMS is absent so signedIn is always false,
+  // but a valid anonymous PL token may already exist and must not be wiped before content renders.
+  if (signedIn === false && !isUEMode) [LEARNER_TOKEN_COOKIE, LEARNER_USER_ID_COOKIE].forEach((c) => deleteCookie(c));
   const isEligible = await isPLEligible(signedIn, timeoutMs);
   if (!isEligible) document.querySelectorAll('.premium-learning-section').forEach((s) => s.remove());
   return isEligible;

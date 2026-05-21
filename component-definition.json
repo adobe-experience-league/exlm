@@ -1817,9 +1817,7 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Premium Learning Profile Badges",
-                  "model": "premium-learning-profile-badges",
-                  "title": "Premium Learning Badges",
-                  "description": "Visit the Premium Learning portal to see more"
+                  "model": "premium-learning-profile-badges"
                 }
               }
             }
