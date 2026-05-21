@@ -1,5 +1,5 @@
 body.browse-all .section.premium-learning-section {
-  margin: 0 49px;
+  margin: 0 49px 40px;
 }
 
 @media (width >= 1440px) {
@@ -27,6 +27,6 @@ body.browse-all .section.premium-learning-section {
 
   body.browse-all main > div.section.premium-learning-section {
     padding-left: 32px;
-    margin: 0 30px;
+    margin: 0 30px 30px;
   }
 }
