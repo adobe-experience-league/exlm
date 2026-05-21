@@ -80,27 +80,11 @@ function renderBadgeCard(badge, learningObject, placeholders = {}) {
 export default async function decorate(block) {
   const config = getConfig();
 
-  // Extract authored content
-  const [headingElement, descriptionElement] = [...block.children];
-
   // Clear block
   block.innerHTML = '';
 
-  // Build header with authored content
-  const headerHTML = `
-    <div class="badges-header">
-      <div class="badges-title">
-        ${headingElement?.innerHTML || ''}
-      </div>
-      <div class="badges-description">
-        ${descriptionElement?.innerHTML || ''}
-      </div>
-    </div>
-  `;
-
   const contentContainer = htmlToElement(`
     <div>
-      ${headerHTML}
       <div class="badges-content"></div>
     </div>
   `);
