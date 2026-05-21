@@ -99,72 +99,82 @@ export default async function decorate(block) {
 
   // Declare shared variables for early event listeners
   let lastSearchQuery = null;
-  let isEligible = false;
+  let eligibilityPromise = null;
+  let resolveEligibility = null;
   let fetchAndRenderCardsRef = null;
+
+  // Create a promise that will resolve when eligibility check completes
+  eligibilityPromise = new Promise((resolve) => {
+    resolveEligibility = resolve;
+  });
 
   // Set up event listeners early for search page (before eligibility check)
   if (isSearchPage && !UEAuthorMode) {
-    // PREPROCESS listener - set up early to catch first search event
     document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
-      if (!isEligible) {
-        return;
-      }
-
-      const { body, method = '' } = e.detail;
-      if (method === 'search') {
-        const newQuery = (body?.q ?? '').trim();
-
-        if (lastSearchQuery === newQuery) {
+      // Wait for eligibility check to complete before processing
+      eligibilityPromise.then((isEligible) => {
+        if (!isEligible) {
           return;
         }
-        lastSearchQuery = newQuery;
 
-        const urlString = transformCoveoFacetsToPlSearch(param, body);
-        param.searchMode = true;
-        const contentWrapper = block.querySelector('.browse-cards-block-content');
-        if (contentWrapper) {
-          block.removeChild(contentWrapper);
-        }
-        buildCardsShimmer.addShimmer(block);
+        const { body, method = '' } = e.detail;
+        if (method === 'search') {
+          const newQuery = (body?.q ?? '').trim();
 
-        if (fetchAndRenderCardsRef) {
-          fetchAndRenderCardsRef(param);
-        }
+          if (lastSearchQuery === newQuery) {
+            return;
+          }
+          lastSearchQuery = newQuery;
 
-        const anchor = ctaWrapper.querySelector('a');
-        const href = anchor?.getAttribute('href');
-        if (href) {
-          const url = new URL(href, document.baseURI);
-          url.search = urlString;
-          anchor.setAttribute('href', url.toString());
+          const urlString = transformCoveoFacetsToPlSearch(param, body);
+          param.searchMode = true;
+          const contentWrapper = block.querySelector('.browse-cards-block-content');
+          if (contentWrapper) {
+            block.removeChild(contentWrapper);
+          }
+          buildCardsShimmer.addShimmer(block);
+
+          if (fetchAndRenderCardsRef) {
+            fetchAndRenderCardsRef(param);
+          }
+
+          const anchor = ctaWrapper.querySelector('a');
+          const href = anchor?.getAttribute('href');
+          if (href) {
+            const url = new URL(href, document.baseURI);
+            url.search = urlString;
+            anchor.setAttribute('href', url.toString());
+          }
         }
-      }
+      });
     });
 
-    // SEARCH_DOM_READY listener - set up early
     document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.SEARCH_DOM_READY, (e) => {
-      if (!isEligible) {
-        return;
-      }
+      // Wait for eligibility check to complete before processing
+      eligibilityPromise.then((isEligible) => {
+        if (!isEligible) {
+          return;
+        }
 
-      const searchInterfaceElement = e.detail?.searchInterface;
-      if (searchInterfaceElement) {
-        const searchBlockElement = e.detail?.block;
-        if (searchBlockElement) {
-          const delta = 30;
-          searchBlockElement.classList.add('atomic-search-with-premium-search');
-          searchBlockElement.style.setProperty(
-            '--atomic-search-skeleton-margin-top',
-            `${block.offsetHeight - delta}px`,
-          );
+        const searchInterfaceElement = e.detail?.searchInterface;
+        if (searchInterfaceElement) {
+          const searchBlockElement = e.detail?.block;
+          if (searchBlockElement) {
+            const delta = 30;
+            searchBlockElement.classList.add('atomic-search-with-premium-search');
+            searchBlockElement.style.setProperty(
+              '--atomic-search-skeleton-margin-top',
+              `${block.offsetHeight - delta}px`,
+            );
+          }
+          block.classList.add('premium-learning-search-atomic-search');
+          const premiumSearchWrapper = searchInterfaceElement.querySelector('.atomic-search-premium-search-wrapper');
+          if (premiumSearchWrapper) {
+            premiumSearchWrapper.appendChild(block);
+            handleEmptyPremiumLearningSection(premiumLearningSection);
+          }
         }
-        block.classList.add('premium-learning-search-atomic-search');
-        const premiumSearchWrapper = searchInterfaceElement.querySelector('.atomic-search-premium-search-wrapper');
-        if (premiumSearchWrapper) {
-          premiumSearchWrapper.appendChild(block);
-          handleEmptyPremiumLearningSection(premiumLearningSection);
-        }
-      }
+      });
     });
   }
 
@@ -174,6 +184,7 @@ export default async function decorate(block) {
     .then((signedIn) => isPLEligible(signedIn))
     .then((isEligibleResult) => {
       if (!isEligibleResult) {
+        resolveEligibility(false);
         buildCardsShimmer.removeShimmer();
         if (UEAuthorMode) {
           showFallbackContentInUEMode(block);
@@ -284,9 +295,9 @@ export default async function decorate(block) {
           });
       }
 
-      // Update eligibility flag and function reference for early event listeners
+      // Resolve eligibility promise and update function reference for early event listeners
       if (isSearchPage && !UEAuthorMode) {
-        isEligible = isEligibleResult;
+        resolveEligibility(isEligibleResult);
         fetchAndRenderCardsRef = fetchAndRenderCards;
       } else {
         fetchAndRenderCards(param);
