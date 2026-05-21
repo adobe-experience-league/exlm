@@ -121,29 +121,6 @@ const BrowseCardsPLAdaptor = (() => {
   };
 
   /**
-   * Check if a course is new (created within the last 90 days)
-   * @param {Object} course - The course/learning object
-   * @returns {boolean} True if the course is new (created within 90 days)
-   */
-  function isNewCourse(course) {
-    const ONE_DAY_IN_SECONDS = 24 * 60 * 60;
-    const attrs = course.attributes || {};
-
-    // Premium Learning Shows nee tag for only courses but designs show the tag for only cohorts - confirm
-    // const isOnDemand = attrs.loType === 'course';
-    // if (!isOnDemand) return false;
-
-    const createdDate = attrs.dateCreated ? new Date(attrs.dateCreated) : null;
-
-    if (!createdDate) return false;
-
-    const now = Date.now();
-    const days90 = 90 * ONE_DAY_IN_SECONDS * 1000;
-
-    return now - createdDate.getTime() <= days90;
-  }
-
-  /**
    * Build a map of learning object IDs to their skill levels
    * @param {Array} included - The included array from API response
    * @returns {Map} Map of learning object IDs to Sets of level numbers
@@ -202,6 +179,28 @@ const BrowseCardsPLAdaptor = (() => {
   }
 
   /**
+   * Determine the format label based on loType and tags
+   * @param {string} loType - The learning object type (course or learningProgram)
+   * @param {Array} tags - Array of tags from the learning object
+   * @param {Object} placeholders - Language placeholders for i18n
+   * @returns {string} The format label to display
+   */
+  function getFormatLabel(loType, tags = [], placeholders = {}) {
+    if (loType === 'learningProgram') {
+      return placeholders.premiumLearningBrowseCardCohortLabel || 'Cohort';
+    }
+
+    if (loType === 'course') {
+      const hasLiveSession = tags.some((tag) => tag === 'Live Session');
+      return hasLiveSession
+        ? placeholders.premiumLearningBrowseCardViltLabel || 'VILT'
+        : placeholders.premiumLearningBrowseCardOnDemandLabel || 'On-Demand';
+    }
+
+    return '';
+  }
+
+  /**
    * Maps a single Premium learning result to the BrowseCards data model.
    * @param {Object} result - The result object from Premium learning API.
    * @param {Array} included - The included data from Premium learning API.
@@ -232,7 +231,9 @@ const BrowseCardsPLAdaptor = (() => {
       startLabel = getStartLabelFromDeadline(deadline);
     }
 
-    const isNew = isNewCourse(result);
+    const loType = attributes?.loType || '';
+    const tags = attributes?.tags || [];
+    const formatLabel = getFormatLabel(loType, tags, placeholders);
 
     return {
       ...browseCardDataModel,
@@ -251,11 +252,10 @@ const BrowseCardsPLAdaptor = (() => {
           count: attributes?.rating?.ratingsCount || 0,
         },
         duration: formatDuration(attributes?.duration),
-        loFormat: attributes?.loFormat || '',
-        loType: attributes?.loType || '',
+        loFormat: formatLabel,
+        loType,
         description: metadata.description || '',
         startLabel,
-        isNew,
         level: skillLevels, // TODO: Add when field is available in API
         instances, // TODO: Add when field is available in API
         deadline,

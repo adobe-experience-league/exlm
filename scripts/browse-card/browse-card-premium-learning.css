@@ -119,12 +119,7 @@
   margin: 0;
 }
 
-.browse-card.premium-learning-browse-card .premium-learning-card-new-tag {
-  background-color: var(--non-spectrum-warm-yellow);
-  color: var(--spectrum-gray-50);
-}
-
-.browse-card.premium-learning-browse-card .premium-learning-card-format-tag {
+.browse-card.premium-learning-browse-card .premium-learning-card-type-label {
   background-color: var(--background-color);
 }
 
