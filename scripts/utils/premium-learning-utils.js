@@ -1,6 +1,30 @@
 import { setCookie, getCookie, deleteCookie } from './cookie-utils.js';
 import isFeatureEnabled from './feature-flag-utils.js';
-import getExlmConfig from './exlm-config-utils.js';
+
+// Lazily initialised — null until the first getExlmConfig() call.
+// Deferred so window.hlx.codeBasePath is guaranteed to be set by setup() before the URL is read.
+let exlmConfigPromise = null;
+
+function fetchExlmConfig() {
+  if (!exlmConfigPromise) {
+    try {
+      exlmConfigPromise = fetch(`${window.hlx.codeBasePath}/exlm-config.json`, {
+        signal: AbortSignal.timeout(5000),
+      })
+        .then((res) => (res.ok ? res.json() : { data: [] }))
+        .then(({ data = [] }) => new Map(data.map(({ key, value }) => [key, value])))
+        .catch(() => new Map());
+    } catch {
+      exlmConfigPromise = Promise.resolve(new Map());
+    }
+  }
+  return exlmConfigPromise;
+}
+
+async function getExlmConfig(key) {
+  const config = await fetchExlmConfig();
+  return config.get(key) ?? null;
+}
 
 const LEARNER_TOKEN_COOKIE = 'alm_access_token';
 const LEARNER_USER_ID_COOKIE = 'alm_user_id';
