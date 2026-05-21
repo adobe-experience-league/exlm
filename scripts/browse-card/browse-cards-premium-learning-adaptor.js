@@ -234,11 +234,11 @@ const BrowseCardsPLAdaptor = (() => {
    */
   function getFormatLabel(loType, tags = [], placeholders = {}) {
     if (loType === 'learningProgram') {
-      return placeholders.premiumLearningBrowseCardCohortLabel || 'Cohort';
+      return placeholders.premiumLearningCohortLabel || 'Cohort';
     }
 
     if (loType === 'course') {
-      const hasLiveSession = tags.some((tag) => tag === 'Live Session');
+      const hasLiveSession = tags.includes('Live Session');
       return hasLiveSession
         ? placeholders.premiumLearningViltLabel || 'VILT'
         : placeholders.premiumLearningOnDemandLabel || 'On-Demand';
