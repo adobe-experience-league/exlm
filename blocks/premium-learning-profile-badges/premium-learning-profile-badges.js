@@ -121,7 +121,7 @@ export default async function decorate(block) {
       if (!isEligible) {
         shimmer.removeShimmer();
         if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else block.remove();
+        else removePremiumLearningProfileBadgesSection(block);
         return;
       }
 
@@ -131,7 +131,7 @@ export default async function decorate(block) {
         if (!userId) {
           shimmer.removeShimmer();
           if (UEAuthorMode) showFallbackContentInUEMode(block);
-          else block.remove();
+          else removePremiumLearningProfileBadgesSection(block);
           return;
         }
 
@@ -188,7 +188,7 @@ export default async function decorate(block) {
         console.error('Error loading premium learning badges:', error);
         shimmer.removeShimmer();
         if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else block.remove();
+        else removePremiumLearningProfileBadgesSection(block);
       }
     })
     .catch((err) => {
@@ -196,6 +196,6 @@ export default async function decorate(block) {
       console.error('Error resolving PL eligibility for badges:', err);
       shimmer.removeShimmer();
       if (UEAuthorMode) showFallbackContentInUEMode(block);
-      else block.remove();
+      else removePremiumLearningProfileBadgesSection(block);
     });
 }
