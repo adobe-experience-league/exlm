@@ -97,12 +97,98 @@ export default async function decorate(block) {
 
   const placeholders = await fetchLanguagePlaceholders().catch(() => ({}));
 
+  let lastSearchQuery = null;
+  let fetchAndRenderCardsRef = null;
+  let resolveEligibility;
+
+  const eligibilityPromise = new Promise((resolve) => {
+    resolveEligibility = resolve;
+  });
+
+  if (isSearchPage && !UEAuthorMode) {
+    document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
+      eligibilityPromise
+        .then((isEligible) => {
+          if (!isEligible) {
+            return;
+          }
+
+          const { body, method = '' } = e.detail;
+          if (method === 'search') {
+            const newQuery = (body?.q ?? '').trim();
+
+            if (lastSearchQuery === newQuery) {
+              return;
+            }
+            lastSearchQuery = newQuery;
+
+            const urlString = transformCoveoFacetsToPlSearch(param, body);
+            param.searchMode = true;
+            const contentWrapper = block.querySelector('.browse-cards-block-content');
+            if (contentWrapper) {
+              block.removeChild(contentWrapper);
+            }
+            buildCardsShimmer.addShimmer(block);
+
+            fetchAndRenderCardsRef(param);
+
+            const anchor = ctaWrapper.querySelector('a');
+            const href = anchor?.getAttribute('href');
+            if (href) {
+              const url = new URL(href, document.baseURI);
+              url.search = urlString;
+              anchor.setAttribute('href', url.toString());
+            }
+          }
+        })
+        .catch((err) => {
+          /* eslint-disable-next-line no-console */
+          console.error('Error processing PREPROCESS event:', err);
+        });
+    });
+
+    document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.SEARCH_DOM_READY, (e) => {
+      eligibilityPromise
+        .then((isEligible) => {
+          if (!isEligible) {
+            return;
+          }
+
+          const searchInterfaceElement = e.detail?.searchInterface;
+          if (!searchInterfaceElement) {
+            return;
+          }
+
+          const searchBlockElement = e.detail?.block;
+          if (searchBlockElement) {
+            const delta = 30;
+            searchBlockElement.classList.add('atomic-search-with-premium-search');
+            searchBlockElement.style.setProperty(
+              '--atomic-search-skeleton-margin-top',
+              `${block.offsetHeight - delta}px`,
+            );
+          }
+          block.classList.add('premium-learning-search-atomic-search');
+          const premiumSearchWrapper = searchInterfaceElement.querySelector('.atomic-search-premium-search-wrapper');
+          if (premiumSearchWrapper) {
+            premiumSearchWrapper.appendChild(block);
+            handleEmptyPremiumLearningSection(premiumLearningSection);
+          }
+        })
+        .catch((err) => {
+          /* eslint-disable-next-line no-console */
+          console.error('Error processing SEARCH_DOM_READY event:', err);
+        });
+    });
+  }
+
   // Non-blocking eligibility check — shimmer stays visible until resolved.
   // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
   isSignedInUser()
     .then((signedIn) => isPLEligible(signedIn))
-    .then((isEligible) => {
-      if (!isEligible) {
+    .then((isEligibleResult) => {
+      if (!isEligibleResult) {
+        resolveEligibility(false);
         buildCardsShimmer.removeShimmer();
         if (UEAuthorMode) {
           showFallbackContentInUEMode(block);
@@ -214,74 +300,14 @@ export default async function decorate(block) {
       }
 
       if (isSearchPage && !UEAuthorMode) {
-        let blockMoved = false;
-
-        // Check if atomic search wrapper already exists (SEARCH_DOM_READY already fired)
-        const checkAndMoveBlock = (searchInterface = null) => {
-          if (blockMoved) return;
-          const existingWrapper = searchInterface
-            ? searchInterface.querySelector('.atomic-search-premium-search-wrapper')
-            : document.querySelector('.atomic-search-premium-search-wrapper');
-          if (existingWrapper) {
-            blockMoved = true;
-            block.classList.add('premium-learning-search-atomic-search');
-            existingWrapper.appendChild(block);
-            handleEmptyPremiumLearningSection(premiumLearningSection);
-          }
-        };
-
-        // Try immediately in case SEARCH_DOM_READY already fired
-        checkAndMoveBlock();
-
-        let lastSearchQuery = null;
-        document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
-          const { body, method = '' } = e.detail;
-          if (method === 'search') {
-            const newQuery = (body?.q ?? '').trim();
-            if (lastSearchQuery === newQuery) {
-              return;
-            }
-            lastSearchQuery = newQuery;
-
-            const urlString = transformCoveoFacetsToPlSearch(param, body);
-            param.searchMode = true;
-            const contentWrapper = block.querySelector('.browse-cards-block-content');
-            if (contentWrapper) {
-              block.removeChild(contentWrapper);
-            }
-            buildCardsShimmer.addShimmer(block);
-            fetchAndRenderCards(param);
-
-            const anchor = ctaWrapper.querySelector('a');
-            const href = anchor?.getAttribute('href');
-            if (href) {
-              const url = new URL(href, document.baseURI);
-              url.search = urlString;
-              anchor.setAttribute('href', url.toString());
-            }
-          }
-        });
-        document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.SEARCH_DOM_READY, (e) => {
-          const searchInterfaceElement = e.detail?.searchInterface;
-          if (searchInterfaceElement) {
-            const searchBlockElement = e.detail?.block;
-            if (searchBlockElement) {
-              const delta = 30;
-              searchBlockElement.classList.add('atomic-search-with-premium-search');
-              searchBlockElement.style.setProperty(
-                '--atomic-search-skeleton-margin-top',
-                `${block.offsetHeight - delta}px`,
-              );
-            }
-            // Try to move block when event fires
-            checkAndMoveBlock(searchInterfaceElement);
-          }
-        });
+        resolveEligibility(isEligibleResult);
+        fetchAndRenderCardsRef = fetchAndRenderCards;
       } else {
         fetchAndRenderCards(param);
       }
     })
     .catch((err) => {
+      resolveEligibility(false);
       buildCardsShimmer.removeShimmer();
       if (UEAuthorMode) {
         showFallbackContentInUEMode(block);
