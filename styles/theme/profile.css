@@ -102,7 +102,7 @@ body.profile-home-page
 }
 
 body.profile-home-page .section:not(.sign-up-flow-section):has(+ .premium-learning-section) {
-  border-bottom: 0;
+  border-bottom: none;
 }
 
 body.profile:not(.profile-home-page)
