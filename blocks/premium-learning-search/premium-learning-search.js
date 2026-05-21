@@ -97,12 +97,83 @@ export default async function decorate(block) {
 
   const placeholders = await fetchLanguagePlaceholders().catch(() => ({}));
 
+  // Declare shared variables for early event listeners
+  let lastSearchQuery = null;
+  let isEligible = false;
+  let fetchAndRenderCardsRef = null;
+
+  // Set up event listeners early for search page (before eligibility check)
+  if (isSearchPage && !UEAuthorMode) {
+    // PREPROCESS listener - set up early to catch first search event
+    document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
+      if (!isEligible) {
+        return;
+      }
+
+      const { body, method = '' } = e.detail;
+      if (method === 'search') {
+        const newQuery = (body?.q ?? '').trim();
+
+        if (lastSearchQuery === newQuery) {
+          return;
+        }
+        lastSearchQuery = newQuery;
+
+        const urlString = transformCoveoFacetsToPlSearch(param, body);
+        param.searchMode = true;
+        const contentWrapper = block.querySelector('.browse-cards-block-content');
+        if (contentWrapper) {
+          block.removeChild(contentWrapper);
+        }
+        buildCardsShimmer.addShimmer(block);
+
+        if (fetchAndRenderCardsRef) {
+          fetchAndRenderCardsRef(param);
+        }
+
+        const anchor = ctaWrapper.querySelector('a');
+        const href = anchor?.getAttribute('href');
+        if (href) {
+          const url = new URL(href, document.baseURI);
+          url.search = urlString;
+          anchor.setAttribute('href', url.toString());
+        }
+      }
+    });
+
+    // SEARCH_DOM_READY listener - set up early
+    document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.SEARCH_DOM_READY, (e) => {
+      if (!isEligible) {
+        return;
+      }
+
+      const searchInterfaceElement = e.detail?.searchInterface;
+      if (searchInterfaceElement) {
+        const searchBlockElement = e.detail?.block;
+        if (searchBlockElement) {
+          const delta = 30;
+          searchBlockElement.classList.add('atomic-search-with-premium-search');
+          searchBlockElement.style.setProperty(
+            '--atomic-search-skeleton-margin-top',
+            `${block.offsetHeight - delta}px`,
+          );
+        }
+        block.classList.add('premium-learning-search-atomic-search');
+        const premiumSearchWrapper = searchInterfaceElement.querySelector('.atomic-search-premium-search-wrapper');
+        if (premiumSearchWrapper) {
+          premiumSearchWrapper.appendChild(block);
+          handleEmptyPremiumLearningSection(premiumLearningSection);
+        }
+      }
+    });
+  }
+
   // Non-blocking eligibility check — shimmer stays visible until resolved.
   // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
   isSignedInUser()
     .then((signedIn) => isPLEligible(signedIn))
-    .then((isEligible) => {
-      if (!isEligible) {
+    .then((isEligibleResult) => {
+      if (!isEligibleResult) {
         buildCardsShimmer.removeShimmer();
         if (UEAuthorMode) {
           showFallbackContentInUEMode(block);
@@ -213,70 +284,10 @@ export default async function decorate(block) {
           });
       }
 
+      // Update eligibility flag and function reference for early event listeners
       if (isSearchPage && !UEAuthorMode) {
-        let blockMoved = false;
-
-        // Check if atomic search wrapper already exists (SEARCH_DOM_READY already fired)
-        const checkAndMoveBlock = (searchInterface = null) => {
-          if (blockMoved) return;
-          const existingWrapper = searchInterface
-            ? searchInterface.querySelector('.atomic-search-premium-search-wrapper')
-            : document.querySelector('.atomic-search-premium-search-wrapper');
-          if (existingWrapper) {
-            blockMoved = true;
-            block.classList.add('premium-learning-search-atomic-search');
-            existingWrapper.appendChild(block);
-            handleEmptyPremiumLearningSection(premiumLearningSection);
-          }
-        };
-
-        // Try immediately in case SEARCH_DOM_READY already fired
-        checkAndMoveBlock();
-
-        let lastSearchQuery = null;
-        document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
-          const { body, method = '' } = e.detail;
-          if (method === 'search') {
-            const newQuery = (body?.q ?? '').trim();
-            if (lastSearchQuery === newQuery) {
-              return;
-            }
-            lastSearchQuery = newQuery;
-
-            const urlString = transformCoveoFacetsToPlSearch(param, body);
-            param.searchMode = true;
-            const contentWrapper = block.querySelector('.browse-cards-block-content');
-            if (contentWrapper) {
-              block.removeChild(contentWrapper);
-            }
-            buildCardsShimmer.addShimmer(block);
-            fetchAndRenderCards(param);
-
-            const anchor = ctaWrapper.querySelector('a');
-            const href = anchor?.getAttribute('href');
-            if (href) {
-              const url = new URL(href, document.baseURI);
-              url.search = urlString;
-              anchor.setAttribute('href', url.toString());
-            }
-          }
-        });
-        document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.SEARCH_DOM_READY, (e) => {
-          const searchInterfaceElement = e.detail?.searchInterface;
-          if (searchInterfaceElement) {
-            const searchBlockElement = e.detail?.block;
-            if (searchBlockElement) {
-              const delta = 30;
-              searchBlockElement.classList.add('atomic-search-with-premium-search');
-              searchBlockElement.style.setProperty(
-                '--atomic-search-skeleton-margin-top',
-                `${block.offsetHeight - delta}px`,
-              );
-            }
-            // Try to move block when event fires
-            checkAndMoveBlock(searchInterfaceElement);
-          }
-        });
+        isEligible = isEligibleResult;
+        fetchAndRenderCardsRef = fetchAndRenderCards;
       } else {
         fetchAndRenderCards(param);
       }
