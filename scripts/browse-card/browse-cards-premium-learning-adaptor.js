@@ -240,8 +240,8 @@ const BrowseCardsPLAdaptor = (() => {
     if (loType === 'course') {
       const hasLiveSession = tags.some((tag) => tag === 'Live Session');
       return hasLiveSession
-        ? placeholders.premiumLearningBrowseCardViltLabel || 'VILT'
-        : placeholders.premiumLearningBrowseCardOnDemandLabel || 'On-Demand';
+        ? placeholders.premiumLearningViltLabel || 'VILT'
+        : placeholders.premiumLearningOnDemandLabel || 'On-Demand';
     }
 
     return '';
@@ -285,7 +285,7 @@ const BrowseCardsPLAdaptor = (() => {
 
     const loType = attributes?.loType || '';
     const tags = attributes?.tags || [];
-    const typeLabel = getFormatLabel(loType, tags);
+    const typeLabel = getFormatLabel(loType, tags, placeholders);
 
     return {
       ...browseCardDataModel,
