@@ -230,6 +230,8 @@ export default async function decorate(block) {
             responseData?.data?.length
               ? { data: responseData.data, included: responseData.included ?? [] }
               : { data: [], included: [] },
+            // Bookmarks are user-saved items; catalog-style cohort instance filtering should not drop them after enrollment ends.
+            { filterInactiveCohortInstances: false },
           );
 
           if (cardModels.length === 0) {
@@ -256,6 +258,8 @@ export default async function decorate(block) {
                 updatedResponseData?.data?.length
                   ? { data: updatedResponseData.data, included: updatedResponseData.included ?? [] }
                   : { data: [], included: [] },
+                // Same as initial load: bookmarks must remain visible regardless of cohort enrollment state.
+                { filterInactiveCohortInstances: false },
               );
 
               if (updatedCardModels.length === 0) {
