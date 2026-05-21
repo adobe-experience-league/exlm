@@ -6,7 +6,11 @@ import { moveInstrumentation } from '../../scripts/utils/ue-utils.js';
 import { loadBlocks, decorateSections, decorateBlocks } from '../../scripts/lib-franklin.js';
 import { pushQuizEvent } from '../../scripts/analytics/lib-analytics.js';
 import { queueAnalyticsEvent } from '../../scripts/analytics/analytics-queue.js';
-import { startQuizAnswerSession, initQuestionAnswerPersistence } from '../../scripts/quiz/quiz-utils.js';
+import {
+  startQuizAnswerSession,
+  initQuestionAnswerPersistence,
+  getStoredModuleAnswers,
+} from '../../scripts/quiz/quiz-utils.js';
 
 /**
  * Checks if the selected answers for a question are correct
@@ -265,6 +269,7 @@ export default async function decorate(block) {
   let displayIndex = 1;
 
   const sessionAnswers = persistAnswers && moduleId ? startQuizAnswerSession(moduleId) : null;
+  const storedModuleAnswers = sessionAnswers ? getStoredModuleAnswers(moduleId) : {};
 
   // Process each question
   orderedQuestions?.forEach(({ item: question, originalIndex }) => {
@@ -279,7 +284,7 @@ export default async function decorate(block) {
     const questionDOM = generateQuestionDOM(question, currentDisplayIndex, totalQuestions, originalIndex, placeholders);
 
     if (sessionAnswers) {
-      initQuestionAnswerPersistence(questionDOM, moduleId, originalIndex, sessionAnswers);
+      initQuestionAnswerPersistence(questionDOM, storedModuleAnswers, originalIndex, sessionAnswers);
     }
 
     question.textContent = '';

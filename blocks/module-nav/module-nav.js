@@ -29,12 +29,11 @@ const sleep = (ms) =>
   });
 
 async function handleFinishModuleWithRetry(submitButton) {
-  const attemptCount = Math.max(1, MODULE_FINISH_MAX_ATTEMPTS);
   submitButton?.classList.add('disabled');
 
   try {
     let failure;
-    for (let attempt = 1; attempt <= attemptCount; attempt += 1) {
+    for (let attempt = 1; attempt <= MODULE_FINISH_MAX_ATTEMPTS; attempt += 1) {
       if (attempt > 1) {
         // eslint-disable-next-line no-await-in-loop -- sequential profile PATCH retries
         await sleep(MODULE_FINISH_RETRY_DELAY_MS);
@@ -99,22 +98,20 @@ async function handleQuizNextButton(e) {
     return;
   }
 
-  try {
-    const { moduleId } = extractCourseModuleIds();
+  const { moduleId } = extractCourseModuleIds();
 
+  try {
     if (await isLastModuleOfCourse()) {
       await completeCourse();
-      e.target.removeEventListener('click', handleQuizNextButton);
-      if (moduleId) clearStoredModuleQuizAnswers(moduleId);
       const url = await getCourseCompletionPageUrl();
       if (url) e.target.href = url;
     } else {
       await handleFinishModuleWithRetry(e.target);
-      e.target.removeEventListener('click', handleQuizNextButton);
-      if (moduleId) clearStoredModuleQuizAnswers(moduleId);
       const url = await getNextModuleFirstStep();
       if (url) e.target.href = url;
     }
+    e.target.removeEventListener('click', handleQuizNextButton);
+    if (moduleId) clearStoredModuleQuizAnswers(moduleId);
 
     await updateUI();
 
@@ -128,12 +125,9 @@ async function handleQuizNextButton(e) {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error completing course:', error);
-    const { moduleId } = extractCourseModuleIds();
     if (moduleId) persistModuleQuizAnswers(moduleId);
     const errorMessage = document.createElement('div');
     errorMessage.className = 'module-nav-finish-error';
-    errorMessage.style.color = 'red';
-    errorMessage.style.textAlign = 'right';
     errorMessage.textContent =
       placeholders?.quizSubmitError || `We couldn't submit your answers. Please try again later.`;
     nextButton.parentElement.insertAdjacentElement('afterend', errorMessage);

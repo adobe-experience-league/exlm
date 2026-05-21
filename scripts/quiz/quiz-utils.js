@@ -45,18 +45,16 @@ function sanitizeSelectedIndices(indices, maxAnswers) {
   ];
 }
 
-function getStoredQuestionAnswers(moduleId, questionIndex) {
-  if (!moduleId) return [];
+export function getStoredModuleAnswers(moduleId) {
+  if (!moduleId) return {};
   try {
     const store = readQuizAnswersStore();
     const moduleAnswers = store[moduleId];
-    if (!moduleAnswers || typeof moduleAnswers !== 'object') return [];
-    const saved = moduleAnswers[String(questionIndex)];
-    return Array.isArray(saved) ? saved : [];
+    return moduleAnswers && typeof moduleAnswers === 'object' ? moduleAnswers : {};
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error('Error reading question answers from localStorage:', err);
-    return [];
+    console.error('Error reading module quiz answers from localStorage:', err);
+    return {};
   }
 }
 
@@ -99,14 +97,14 @@ function getSelectedAnswerIndices(answersContainer) {
   return Array.from(checkedInputs).map((input) => parseInt(input.value, 10));
 }
 
-function applyStoredQuestionAnswers(answersContainer, moduleId, questionIndex, sessionAnswers) {
+function applyStoredQuestionAnswers(answersContainer, moduleAnswers, questionIndex, sessionAnswers) {
   const maxAnswers = answersContainer.querySelectorAll('input.answer-input').length;
   const key = String(questionIndex);
-  const fromLS = getStoredQuestionAnswers(moduleId, questionIndex);
+  const fromLS = Array.isArray(moduleAnswers[key]) ? moduleAnswers[key] : [];
   if (fromLS.length && !sessionAnswers[key]) {
     sessionAnswers[key] = fromLS;
   }
-  const saved = sanitizeSelectedIndices(sessionAnswers[key] ?? fromLS, maxAnswers);
+  const saved = sanitizeSelectedIndices(sessionAnswers[key] ?? [], maxAnswers);
   saved.forEach((answerIndex) => {
     const input = answersContainer.querySelector(`input.answer-input[value="${answerIndex}"]`);
     if (input) input.checked = true;
@@ -114,9 +112,9 @@ function applyStoredQuestionAnswers(answersContainer, moduleId, questionIndex, s
 }
 
 function wireQuestionAnswerPersistence(answersContainer, questionIndex, sessionAnswers) {
+  const maxAnswers = answersContainer.querySelectorAll('input.answer-input').length;
   answersContainer.addEventListener('change', (event) => {
     if (!event.target.matches('input.answer-input')) return;
-    const maxAnswers = answersContainer.querySelectorAll('input.answer-input').length;
     sessionAnswers[String(questionIndex)] = sanitizeSelectedIndices(
       getSelectedAnswerIndices(answersContainer),
       maxAnswers,
@@ -124,9 +122,9 @@ function wireQuestionAnswerPersistence(answersContainer, questionIndex, sessionA
   });
 }
 
-export function initQuestionAnswerPersistence(questionDOM, moduleId, questionIndex, sessionAnswers) {
+export function initQuestionAnswerPersistence(questionDOM, moduleAnswers, questionIndex, sessionAnswers) {
   const answersContainer = questionDOM.querySelector('.answers-container');
   if (!answersContainer) return;
-  applyStoredQuestionAnswers(answersContainer, moduleId, questionIndex, sessionAnswers);
+  applyStoredQuestionAnswers(answersContainer, moduleAnswers, questionIndex, sessionAnswers);
   wireQuestionAnswerPersistence(answersContainer, questionIndex, sessionAnswers);
 }
