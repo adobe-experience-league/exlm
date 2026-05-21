@@ -106,7 +106,7 @@ const UserActions = (config) => {
       if (isPLContent) {
         actionDefinitions.push({
           name: 'bookmark',
-          icons: bookmarkConfig?.icons || ['bookmark', 'bookmark-active-white'],
+          icons: bookmarkConfig?.icons || ['bookmark-secondary-inactive', 'bookmark-secondary-active'],
           label: bookmarkConfig?.label,
           onButtonReady: (element) =>
             decoratePremiumLearningBookmark({
