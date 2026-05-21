@@ -233,7 +233,7 @@ const BrowseCardsPLAdaptor = (() => {
 
     const loType = attributes?.loType || '';
     const tags = attributes?.tags || [];
-    const formatLabel = getFormatLabel(loType, tags, placeholders);
+    const typeLabel = getFormatLabel(loType, tags);
 
     return {
       ...browseCardDataModel,
@@ -252,7 +252,7 @@ const BrowseCardsPLAdaptor = (() => {
           count: attributes?.rating?.ratingsCount || 0,
         },
         duration: formatDuration(attributes?.duration),
-        loFormat: formatLabel,
+        typeLabel,
         loType,
         description: metadata.description || '',
         startLabel,

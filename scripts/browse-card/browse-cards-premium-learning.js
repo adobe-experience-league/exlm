@@ -71,7 +71,7 @@ function getPremiumLearningBlockHeader(card) {
  * @returns {HTMLElement} Thumbnail figure element
  * @private
  */
-function buildPLThumbnail({ thumbnail, title, id, viewLink, copyLink, card, startLabel, loFormat, contentType }) {
+function buildPLThumbnail({ thumbnail, title, id, viewLink, copyLink, card, startLabel, typeLabel, contentType }) {
   const cardFigure = document.createElement('div');
   cardFigure.className = 'premium-learning-card-figure';
 
@@ -127,15 +127,17 @@ function buildPLThumbnail({ thumbnail, title, id, viewLink, copyLink, card, star
     cardFigure.appendChild(startLabelContainer);
   }
 
-  const tagsContainer = document.createElement('div');
-  tagsContainer.className = 'premium-learning-card-tags-container';
+  if (typeLabel) {
+    const tagsContainer = document.createElement('div');
+    tagsContainer.className = 'premium-learning-card-tags-container';
 
-  const typeLabelElement = document.createElement('p');
-  typeLabelElement.className = 'premium-learning-card-tag premium-learning-card-type-label';
-  typeLabelElement.textContent = loFormat;
-  tagsContainer.appendChild(typeLabelElement);
+    const typeLabelElement = document.createElement('p');
+    typeLabelElement.className = 'premium-learning-card-tag premium-learning-card-type-label';
+    typeLabelElement.textContent = typeLabel;
+    tagsContainer.appendChild(typeLabelElement);
 
-  cardFigure.appendChild(tagsContainer);
+    cardFigure.appendChild(tagsContainer);
+  }
 
   return cardFigure;
 }
@@ -198,7 +200,7 @@ export async function buildPLCard(element, model) {
     copyLink: model.copyLink,
     card,
     startLabel: meta?.startLabel,
-    loFormat: meta?.loFormat,
+    typeLabel: meta?.typeLabel,
     contentType,
   });
 
