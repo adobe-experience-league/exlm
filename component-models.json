@@ -5734,6 +5734,14 @@
         "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "cq:translationMethod",
+        "label": "Page Translation method",
+        "description": "Displays the translation method applied to this page.",
+        "readOnly": true
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
         "name": "signout-redirect-url",
@@ -5954,6 +5962,14 @@
         "label": "Custom Last Updated Date",
         "description": "Overrides the last content update date of the page in page metadata.",
         "placeholder": "YYYY-MM-DD HH:mm:ss"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cq:translationMethod",
+        "label": "Page Translation method",
+        "description": "Displays the translation method applied to this page.",
+        "readOnly": true
       },
       {
         "component": "aem-content",
@@ -6190,6 +6206,14 @@
         "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "cq:translationMethod",
+        "label": "Page Translation method",
+        "description": "Displays the translation method applied to this page.",
+        "readOnly": true
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
         "name": "signout-redirect-url",
@@ -6217,6 +6241,14 @@
         "label": "Custom Last Updated Date",
         "description": "Overrides the last content update date of the page in page metadata.",
         "placeholder": "YYYY-MM-DD HH:mm:ss"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cq:translationMethod",
+        "label": "Page Translation method",
+        "description": "Displays the translation method applied to this page.",
+        "readOnly": true
       },
       {
         "component": "aem-content",
