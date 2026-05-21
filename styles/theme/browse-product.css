@@ -21,3 +21,7 @@
     padding-bottom: 0;
   }
 }
+
+body.browse-product .section.premium-learning-section {
+  margin: 0 49px;
+}
