@@ -97,17 +97,14 @@ export default async function decorate(block) {
 
   const placeholders = await fetchLanguagePlaceholders().catch(() => ({}));
 
-  // Declare shared variables for early event listeners
   let lastSearchQuery = null;
   let fetchAndRenderCardsRef = null;
   let resolveEligibility;
 
-  // Create a promise that resolves when eligibility check completes
   const eligibilityPromise = new Promise((resolve) => {
     resolveEligibility = resolve;
   });
 
-  // Set up event listeners early for search page (before eligibility check)
   if (isSearchPage && !UEAuthorMode) {
     document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
       eligibilityPromise
@@ -133,9 +130,7 @@ export default async function decorate(block) {
             }
             buildCardsShimmer.addShimmer(block);
 
-            if (fetchAndRenderCardsRef) {
-              fetchAndRenderCardsRef(param);
-            }
+            fetchAndRenderCardsRef(param);
 
             const anchor = ctaWrapper.querySelector('a');
             const href = anchor?.getAttribute('href');
