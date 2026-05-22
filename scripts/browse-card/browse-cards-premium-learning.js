@@ -127,7 +127,6 @@ function buildPLThumbnail({ thumbnail, title, id, viewLink, copyLink, card, star
     cardFigure.appendChild(startLabelContainer);
   }
 
-
   if (typeLabel) {
     const tagsContainer = document.createElement('div');
     tagsContainer.className = 'premium-learning-card-tags-container';
@@ -136,7 +135,6 @@ function buildPLThumbnail({ thumbnail, title, id, viewLink, copyLink, card, star
     typeLabelElement.className = 'premium-learning-card-tag premium-learning-card-type-label';
     typeLabelElement.textContent = typeLabel;
     tagsContainer.appendChild(typeLabelElement);
-
 
     cardFigure.appendChild(tagsContainer);
   }

@@ -239,50 +239,6 @@ const BrowseCardsPLAdaptor = (() => {
     return premiumlearningLink || '';
   };
 
-   * Build a map of learning object IDs to their skill levels
-   * @param {Array} included - The included array from API response
-   * @returns {Map} Map of learning object IDs to Sets of level numbers
-   */
-  function buildLearningObjectSkillLevels(included) {
-    const skillLevelById = new Map();
-    const loSkillLevels = new Map();
-
-    included.forEach((item) => {
-      if (item.type === 'skillLevel') {
-        const levelNum = parseInt(item.attributes?.level, 10);
-        if (!Number.isNaN(levelNum)) {
-          skillLevelById.set(item.id, levelNum);
-        }
-      }
-    });
-
-    included.forEach((item) => {
-      if (item.type === 'learningObjectSkill') {
-        const loId = item.attributes?.learningObjectId;
-        const levelId = item.relationships?.skillLevel?.data?.id;
-        const levelNum = levelId ? skillLevelById.get(levelId) : null;
-        if (loId && levelNum) {
-          if (!loSkillLevels.has(loId)) loSkillLevels.set(loId, new Set());
-          loSkillLevels.get(loId).add(levelNum);
-        }
-      }
-    });
-
-    return loSkillLevels;
-  }
-
-  /**
-   * Format skill levels into readable labels
-   * @param {Set} levels - Set of level numbers
-   * @param {Object} placeholders - Placeholders object with levelTbd key
-   * @returns {string} Formatted level labels (e.g., "Professional, Expert")
-   */
-  function formatSkillLevels(levels, placeholders = {}) {
-    if (!levels || levels.size === 0) return placeholders.levelTbd || '';
-    const labels = [...levels].sort((a, b) => a - b).map((lvl) => LEVEL_LABELS[lvl] || `Level ${lvl}`);
-    return labels.join(', ');
-  }
-
   function buildInstances(cardData, included) {
     const instances = cardData.relationships?.instances?.data;
     if (!instances) return [];
@@ -354,12 +310,10 @@ const BrowseCardsPLAdaptor = (() => {
       startLabel = getStartLabelFromDeadline(deadline);
     }
 
-
     const duration = formatDuration(attributes, placeholders);
     const loType = attributes?.loType || '';
     const tags = attributes?.tags || [];
     const typeLabel = getFormatLabel(loType, tags, placeholders);
-
 
     return {
       ...browseCardDataModel,
@@ -377,13 +331,13 @@ const BrowseCardsPLAdaptor = (() => {
           average: attributes?.rating?.averageRating || 0,
           count: attributes?.rating?.ratingsCount || 0,
         },
-        duration: formatDuration(attributes?.duration),
+        duration,
         typeLabel,
         loType,
         description: metadata.description || '',
         startLabel,
-        level: skillLevels, 
-        instances, 
+        level: skillLevels,
+        instances,
         deadline,
         products,
       },
