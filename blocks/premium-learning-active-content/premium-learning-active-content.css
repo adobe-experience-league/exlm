@@ -378,3 +378,8 @@
     object-position: 100% center;
   }
 }
+
+/* Hide type label (Cohort/VILT/On-Demand) in active content block */
+.premium-learning-active-content .premium-learning-card-type-label {
+  display: none;
+}
