@@ -141,8 +141,14 @@ async function renderCards(block) {
       }
 
       // Parse premium-learning content with adaptor, regular content with parse()
+      // Note: For bookmarks, disable filterInactiveCohortInstances since these are user-selected items
       let parsedCard = isPremiumLearningContent(cardResponse)
-        ? (await PLAdaptor.mapResultsToCardsData({ data: [cardResponse], included: cardResponse.included || [] }))[0]
+        ? (
+            await PLAdaptor.mapResultsToCardsData(
+              { data: [cardResponse], included: cardResponse.included || [] },
+              { filterInactiveCohortInstances: false },
+            )
+          )[0]
         : parse(cardResponse);
 
       if (!parsedCard) {
@@ -177,7 +183,7 @@ async function renderCards(block) {
     await batches.reduce((promise, batch) => promise.then(() => processBatch(batch)), Promise.resolve());
   }
 
-  processBookmarksInBatches(bookmarkIds);
+  await processBookmarksInBatches(bookmarkIds);
 }
 
 export default async function decorateBlock(block) {
