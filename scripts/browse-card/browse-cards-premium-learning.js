@@ -143,13 +143,12 @@ function buildPLThumbnail({ thumbnail, title, id, viewLink, copyLink, card, star
 }
 
 /**
- * Builds meta information section (duration, level, rating)
+ * Builds meta information section (rating, duration, level) for both cohorts and courses
  * @param {Object} meta - Metadata object from card model
- * @param {boolean} isCourseCar - Whether this is a course card (not cohort)
  * @returns {HTMLElement} Meta information container
  * @private
  */
-function buildPLMetaInfo(meta, isCourseCard = false) {
+function buildPLMetaInfo(meta) {
   const metaContainer = document.createElement('div');
   metaContainer.className = 'premium-learning-card-meta';
   const metaParts = [];
@@ -157,12 +156,20 @@ function buildPLMetaInfo(meta, isCourseCard = false) {
   // Collect available metadata
   if (meta?.duration) metaParts.push(meta.duration);
   if (meta?.level) metaParts.push(meta.level);
+  if (typeof meta?.rating?.average === 'number' && meta.rating.average > 0) {
+    metaParts.push(`${meta.rating.average.toFixed(1)} ★`);
+  }
 
   // Create meta text element if we have data
   if (metaParts.length > 0) {
     const metaElement = document.createElement('p');
     metaElement.className = 'premium-learning-card-meta-text';
-    metaElement.textContent = metaParts.join(' • ');
+    // Wrap each part in a span for CSS dot styling
+    metaParts.forEach((part) => {
+      const span = document.createElement('span');
+      span.textContent = part;
+      metaElement.appendChild(span);
+    });
     metaContainer.appendChild(metaElement);
   }
 
@@ -204,14 +211,6 @@ export async function buildPLCard(element, model) {
     contentType,
   });
 
-  // Add rating overlay to thumbnail for both courses and cohorts
-  if (typeof meta?.rating?.average === 'number' && meta.rating.average > 0) {
-    const ratingOverlay = document.createElement('div');
-    ratingOverlay.className = 'premium-learning-card-rating-overlay';
-    ratingOverlay.innerHTML = `${meta.rating.average.toFixed(1)} <span class="rating-star">★</span>`;
-    cardFigure.appendChild(ratingOverlay);
-  }
-
   card.appendChild(cardFigure);
 
   // Build content section
@@ -224,6 +223,12 @@ export async function buildPLCard(element, model) {
     titleElement.className = 'premium-learning-card-title';
     titleElement.innerHTML = title;
     cardContent.appendChild(titleElement);
+  }
+
+  // Add metadata below title for both cohorts and courses
+  const metaInfo = buildPLMetaInfo(meta);
+  if (metaInfo.querySelector('.premium-learning-card-meta-text')) {
+    cardContent.appendChild(metaInfo);
   }
 
   card.appendChild(cardContent);

@@ -211,7 +211,7 @@ export async function fetchPremiumLearningBookmarks(loId = null) {
     // Fetch all pages using cursor-based pagination
     let allData = [];
     let allIncluded = [];
-    let nextUrl = `${plApiBaseUrl}/learningObjects?include=instances&page[limit]=10&filter.loTypes=course,learningProgram&filter.bookmarks=true&sort=name&filter.ignoreEnhancedLP=true`;
+    let nextUrl = `${plApiBaseUrl}/learningObjects?include=instances,skills.skillLevel.skill&page[limit]=10&filter.loTypes=course,learningProgram&filter.bookmarks=true&sort=name&filter.ignoreEnhancedLP=true`;
 
     // eslint-disable-next-line no-await-in-loop
     while (nextUrl) {

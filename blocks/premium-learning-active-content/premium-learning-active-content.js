@@ -10,6 +10,10 @@ import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
+import {
+  buildLearningObjectSkillLevels,
+  formatSkillLevels,
+} from '../../scripts/browse-card/browse-cards-premium-learning-adaptor.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
@@ -71,6 +75,31 @@ function extractProgressData(cohortData) {
   const currentWeek = totalWeeks > 0 ? Math.ceil((progress / 100) * totalWeeks) || 1 : 1;
 
   return { progress, currentWeek, totalWeeks, modulesRemaining, totalModules, completedModules };
+}
+
+/**
+ * Build custom metadata for active content cards (skill level • rating)
+ * @param {Object} cardData - Card data object
+ * @returns {HTMLElement|null} Metadata element or null
+ */
+function buildActiveContentMetadata(cardData) {
+  const metaParts = [];
+
+  if (cardData.meta?.level) metaParts.push(cardData.meta.level);
+  if (cardData.meta?.rating?.average > 0) {
+    metaParts.push(`${cardData.meta.rating.average.toFixed(1)} ★`);
+  }
+
+  if (metaParts.length === 0) return null;
+
+  const metaElement = createTag('p', { class: 'premium-learning-card-meta-text' });
+  metaParts.forEach((part) => {
+    const span = createTag('span');
+    span.textContent = part;
+    metaElement.appendChild(span);
+  });
+
+  return metaElement;
 }
 
 function buildProgressCard(cardData, progressData, placeholders, totalReplies = 0) {
@@ -182,23 +211,13 @@ async function buildCarouselSlide(cardData, progressData, totalReplies, placehol
     }
   }
 
-  // Add metadata below card title
-  const titleElement = cohortCardWrapper.querySelector('.premium-learning-card-title');
-  const metaParts = [
-    cardData.meta?.level,
-    cardData.meta?.rating?.average > 0
-      ? `${cardData.meta.rating.average.toFixed(1)} <span class="rating-star">★</span>`
-      : null,
-  ].filter(Boolean);
+  // Replace default metadata with active content metadata
+  cohortCardWrapper.querySelector('.premium-learning-card-meta-text')?.remove();
 
-  if (titleElement && metaParts.length > 0) {
-    const metaElement = createTag('p', { class: 'premium-learning-card-meta-text' });
-    metaParts.forEach((part, index) => {
-      metaElement.appendChild(createTag('span', { class: 'meta-part' }, part));
-      if (index < metaParts.length - 1) {
-        metaElement.appendChild(createTag('span', { class: 'meta-bullet' }, '•'));
-      }
-    });
+  const titleElement = cohortCardWrapper.querySelector('.premium-learning-card-title');
+  const metaElement = buildActiveContentMetadata(cardData);
+
+  if (titleElement && metaElement) {
     titleElement.insertAdjacentElement('afterend', metaElement);
   }
 
@@ -399,6 +418,12 @@ export default async function decorate(block) {
           cardsData.map(async (cardData, i) => {
             const cohortId = enrolledLearningObjects[i]?.id;
             const cohortProgressData = await fetchCohortProgress(cohortId, config);
+
+            const loSkillLevels = buildLearningObjectSkillLevels(cohortProgressData?.included || []);
+            const skillLevel = formatSkillLevels(loSkillLevels.get(cohortId), placeholders);
+            if (skillLevel && cardData.meta) {
+              cardData.meta.level = skillLevel;
+            }
 
             const defaultInstance = cohortProgressData?.included?.find(
               (item) =>
