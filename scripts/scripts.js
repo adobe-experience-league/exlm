@@ -176,6 +176,7 @@ export const isHomePage = (() => {
 })();
 
 export const isCertificatePage = () => !!document.querySelector('.course-completion'); // Checking for presence of course-completion block
+export const isUEMode = window.hlx?.aemRoot || window.location.href.includes('.html');
 
 /**
  * add a section for the left rail when on a browse page.
@@ -781,6 +782,19 @@ export function getConfig() {
     ['en', 'en'],
     ['it', 'it'],
   ]);
+
+  const plCommunityLangsMap = new Map([
+    ['en-US', 'en'],
+    ['de-DE', 'de'],
+    ['es-ES', 'es'],
+    ['fr-FR', 'fr'],
+    ['ja-JP', 'ja'],
+    ['pt-PT', 'pt'],
+    ['ko-KR', 'ko'],
+    ['zh-CN', 'zh-hans'],
+    ['zh-TW', 'zh-hant'],
+  ]);
+
   const cookieConsentName = 'OptanonConsent';
   const targetCriteriaIds = {
     mostPopular: 'exl-hp-auth-recs-2',
@@ -797,7 +811,10 @@ export function getConfig() {
   const communityHost = currentEnv?.community || defaultEnv.community;
   const cdnOrigin = `https://${cdnHost}`;
   const premiumLearningAuthAPI = `${cdnOrigin}/api/v1/web/alm/authentication`;
-  const lang = document.querySelector('html').lang || 'en';
+  const rawLang = document.querySelector('html').lang || 'en';
+  const lang = window.location.hostname.includes(communityHost)
+    ? plCommunityLangsMap.get(rawLang) || rawLang.split('-')[0]
+    : rawLang;
   // Premium Learning is not offered for nl/sv locales; use English PL home until those languages are deprecated.
   const premiumHomeLang = lang === 'nl' || lang === 'sv' ? 'en' : lang;
   // Locale param for Community page URL
@@ -1688,7 +1705,7 @@ async function loadPage() {
   await loadLazy(document);
   loadDelayed();
   await showSignupDialog();
-  if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+  if (isUEMode) {
     loadDefaultModule(`${window.hlx.codeBasePath}/scripts/editor-support-seo.js`);
   }
   if (isDocPage) {
@@ -1710,7 +1727,7 @@ async function loadPage() {
   if (window.hlx.DO_NOT_LOAD_PAGE) return;
 
   // For AEM Author mode, decode the tags value
-  if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+  if (isUEMode) {
     decodeAemCqMetaTags();
     updateTQTagsMetadata();
     decodeAemPageMetaTags();
@@ -1812,7 +1829,7 @@ async function loadPage() {
   }
   // Initialize Premium Learning auth — fully non-blocking, does not delay loadPage().
   if (isFeatureEnabled('isPremiumLearningEnabled')) {
-    if (window.hlx.aemRoot || window.location.href.includes('.html')) {
+    if (isUEMode) {
       // UE Author Mode: fetch PL token anonymously via ?auth=false (no IMS required).
       import('./utils/premium-learning-utils.js')
         .then(({ initPLAuthAnonymous }) => initPLAuthAnonymous())

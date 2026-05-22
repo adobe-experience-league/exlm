@@ -23,7 +23,7 @@ body.profile .section:not(.profile-rail-section, .sign-up-flow-section) {
   padding: 24px 24px 32px;
   border-radius: 20px;
   background-color: var(--non-spectrum-bg);
-  border: 1px solid #d5d5d5;
+  border: 1px solid var(--spectrum-gray-300);
 }
 
 body.profile-home-page .section:not(.sign-up-flow-section) {
@@ -31,12 +31,15 @@ body.profile-home-page .section:not(.sign-up-flow-section) {
   background-color: unset;
   border: unset;
   margin: 0 20px;
-  padding: 40px 0;
+  padding: 40px 16px;
   border-bottom: 1px solid var(--spectrum-gray-300);
 }
 
 body.profile-home-page .section.premium-learning-section {
-  padding: 32px 0 24px;
+  padding: 32px 16px 24px;
+  border-radius: 20px;
+  background-color: var(--non-spectrum-bg);
+  border: 1px solid var(--spectrum-gray-300);
 }
 
 body.profile .section.bg-white {
@@ -96,6 +99,10 @@ body.profile-home-page
   .section:not(.profile-rail-section, .sign-up-flow-section)
   > div:not(.default-content-wrapper, .profile-welcome-wrapper) {
   padding-bottom: 40px;
+}
+
+body.profile-home-page .section:not(.sign-up-flow-section):has(+ .premium-learning-section) {
+  border-bottom: none;
 }
 
 body.profile:not(.profile-home-page)
@@ -177,11 +184,11 @@ body.profile-home-page .section.premium-learning-section h3:not(.browse-card-ban
 
   body.profile-home-page .section:not(.sign-up-flow-section) {
     margin: 0 24px;
-    padding: 48px 0;
+    padding: 48px;
   }
 
   body.profile-home-page .section.premium-learning-section {
-    padding: 32px 0 24px;
+    padding: 32px 48px 24px;
   }
 
   body.profile-home-page

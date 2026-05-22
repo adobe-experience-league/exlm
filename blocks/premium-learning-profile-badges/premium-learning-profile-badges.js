@@ -8,6 +8,20 @@ import { isSignedInUser } from '../../scripts/auth/profile.js';
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const MAX_BADGES = 9;
 
+/**
+ * Removes the wrapping section (see decorateBlock in lib-franklin.js — adds `{block}-container` on the section).
+ * Same pattern as course-awards when there is nothing to show.
+ * @param {HTMLElement} block
+ */
+function removePremiumLearningProfileBadgesSection(block) {
+  const section = block.closest('.section.premium-learning-profile-badges-container');
+  if (section) {
+    section.remove();
+  } else {
+    block.remove();
+  }
+}
+
 function showFallbackContentInUEMode(blockElement) {
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
   contentDiv.textContent = 'This block will load the Premium learning profile badges for Premium users only.';
@@ -80,27 +94,11 @@ function renderBadgeCard(badge, learningObject, placeholders = {}) {
 export default async function decorate(block) {
   const config = getConfig();
 
-  // Extract authored content
-  const [headingElement, descriptionElement] = [...block.children];
-
   // Clear block
   block.innerHTML = '';
 
-  // Build header with authored content
-  const headerHTML = `
-    <div class="badges-header">
-      <div class="badges-title">
-        ${headingElement?.innerHTML || ''}
-      </div>
-      <div class="badges-description">
-        ${descriptionElement?.innerHTML || ''}
-      </div>
-    </div>
-  `;
-
   const contentContainer = htmlToElement(`
     <div>
-      ${headerHTML}
       <div class="badges-content"></div>
     </div>
   `);
@@ -123,7 +121,7 @@ export default async function decorate(block) {
       if (!isEligible) {
         shimmer.removeShimmer();
         if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else block.remove();
+        else removePremiumLearningProfileBadgesSection(block);
         return;
       }
 
@@ -133,7 +131,7 @@ export default async function decorate(block) {
         if (!userId) {
           shimmer.removeShimmer();
           if (UEAuthorMode) showFallbackContentInUEMode(block);
-          else block.remove();
+          else removePremiumLearningProfileBadgesSection(block);
           return;
         }
 
@@ -142,7 +140,7 @@ export default async function decorate(block) {
         if (!badgesData || !badgesData.data || badgesData.data.length === 0) {
           shimmer.removeShimmer();
           if (UEAuthorMode) showFallbackContentInUEMode(block);
-          else block.remove();
+          else removePremiumLearningProfileBadgesSection(block);
           return;
         }
 
@@ -158,7 +156,7 @@ export default async function decorate(block) {
         if (completedBadges.length === 0) {
           shimmer.removeShimmer();
           if (UEAuthorMode) showFallbackContentInUEMode(block);
-          else block.remove();
+          else removePremiumLearningProfileBadgesSection(block);
           return;
         }
 
@@ -178,6 +176,11 @@ export default async function decorate(block) {
         });
 
         shimmer.removeShimmer();
+        if (badgesGrid.childElementCount === 0) {
+          if (UEAuthorMode) showFallbackContentInUEMode(block);
+          else removePremiumLearningProfileBadgesSection(block);
+          return;
+        }
         badgesContentEl.innerHTML = '';
         badgesContentEl.appendChild(badgesGrid);
       } catch (error) {
@@ -185,7 +188,7 @@ export default async function decorate(block) {
         console.error('Error loading premium learning badges:', error);
         shimmer.removeShimmer();
         if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else block.remove();
+        else removePremiumLearningProfileBadgesSection(block);
       }
     })
     .catch((err) => {
@@ -193,6 +196,6 @@ export default async function decorate(block) {
       console.error('Error resolving PL eligibility for badges:', err);
       shimmer.removeShimmer();
       if (UEAuthorMode) showFallbackContentInUEMode(block);
-      else block.remove();
+      else removePremiumLearningProfileBadgesSection(block);
     });
 }

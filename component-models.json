@@ -5734,6 +5734,14 @@
         "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "cq:translationMethod",
+        "label": "Page Translation method",
+        "description": "Displays the translation method applied to this page.",
+        "readOnly": true
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
         "name": "signout-redirect-url",
@@ -5954,6 +5962,14 @@
         "label": "Custom Last Updated Date",
         "description": "Overrides the last content update date of the page in page metadata.",
         "placeholder": "YYYY-MM-DD HH:mm:ss"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cq:translationMethod",
+        "label": "Page Translation method",
+        "description": "Displays the translation method applied to this page.",
+        "readOnly": true
       },
       {
         "component": "aem-content",
@@ -6190,6 +6206,14 @@
         "placeholder": "YYYY-MM-DD HH:mm:ss"
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "cq:translationMethod",
+        "label": "Page Translation method",
+        "description": "Displays the translation method applied to this page.",
+        "readOnly": true
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
         "name": "signout-redirect-url",
@@ -6217,6 +6241,14 @@
         "label": "Custom Last Updated Date",
         "description": "Overrides the last content update date of the page in page metadata.",
         "placeholder": "YYYY-MM-DD HH:mm:ss"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cq:translationMethod",
+        "label": "Page Translation method",
+        "description": "Displays the translation method applied to this page.",
+        "readOnly": true
       },
       {
         "component": "aem-content",
@@ -10807,56 +10839,6 @@
   },
   {
     "id": "premium-learning-profile-badges",
-    "fields": [
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "title",
-        "value": "",
-        "label": "Title",
-        "description": "Sets the title for the Premium learning Profile badges block."
-      },
-      {
-        "component": "select",
-        "valueType": "string",
-        "name": "titleType",
-        "value": "",
-        "label": "Title Heading Type",
-        "options": [
-          {
-            "name": "H1",
-            "value": "h1"
-          },
-          {
-            "name": "H2",
-            "value": "h2"
-          },
-          {
-            "name": "H3",
-            "value": "h3"
-          },
-          {
-            "name": "H4",
-            "value": "h4"
-          },
-          {
-            "name": "H5",
-            "value": "h5"
-          },
-          {
-            "name": "H6",
-            "value": "h6"
-          }
-        ]
-      },
-      {
-        "component": "richtext",
-        "valueType": "string",
-        "name": "description",
-        "value": "",
-        "label": "Long Description",
-        "description": "Sets the description text for the Premium Learning Profile Badges block."
-      }
-    ]
+    "fields": []
   }
 ]

@@ -239,27 +239,48 @@ const BrowseCardsPLAdaptor = (() => {
     return premiumlearningLink || '';
   };
 
-  /**
-   * Check if a course is new (created within the last 90 days)
-   * @param {Object} course - The course/learning object
-   * @returns {boolean} True if the course is new (created within 90 days)
+   * Build a map of learning object IDs to their skill levels
+   * @param {Array} included - The included array from API response
+   * @returns {Map} Map of learning object IDs to Sets of level numbers
    */
-  function isNewCourse(course) {
-    const ONE_DAY_IN_SECONDS = 24 * 60 * 60;
-    const attrs = course.attributes || {};
+  function buildLearningObjectSkillLevels(included) {
+    const skillLevelById = new Map();
+    const loSkillLevels = new Map();
 
-    // Premium Learning Shows nee tag for only courses but designs show the tag for only cohorts - confirm
-    // const isOnDemand = attrs.loType === 'course';
-    // if (!isOnDemand) return false;
+    included.forEach((item) => {
+      if (item.type === 'skillLevel') {
+        const levelNum = parseInt(item.attributes?.level, 10);
+        if (!Number.isNaN(levelNum)) {
+          skillLevelById.set(item.id, levelNum);
+        }
+      }
+    });
 
-    const createdDate = attrs.dateCreated ? new Date(attrs.dateCreated) : null;
+    included.forEach((item) => {
+      if (item.type === 'learningObjectSkill') {
+        const loId = item.attributes?.learningObjectId;
+        const levelId = item.relationships?.skillLevel?.data?.id;
+        const levelNum = levelId ? skillLevelById.get(levelId) : null;
+        if (loId && levelNum) {
+          if (!loSkillLevels.has(loId)) loSkillLevels.set(loId, new Set());
+          loSkillLevels.get(loId).add(levelNum);
+        }
+      }
+    });
 
-    if (!createdDate) return false;
+    return loSkillLevels;
+  }
 
-    const now = Date.now();
-    const days90 = 90 * ONE_DAY_IN_SECONDS * 1000;
-
-    return now - createdDate.getTime() <= days90;
+  /**
+   * Format skill levels into readable labels
+   * @param {Set} levels - Set of level numbers
+   * @param {Object} placeholders - Placeholders object with levelTbd key
+   * @returns {string} Formatted level labels (e.g., "Professional, Expert")
+   */
+  function formatSkillLevels(levels, placeholders = {}) {
+    if (!levels || levels.size === 0) return placeholders.levelTbd || '';
+    const labels = [...levels].sort((a, b) => a - b).map((lvl) => LEVEL_LABELS[lvl] || `Level ${lvl}`);
+    return labels.join(', ');
   }
 
   function buildInstances(cardData, included) {
@@ -273,6 +294,28 @@ const BrowseCardsPLAdaptor = (() => {
         locale: instanceData.attributes?.localizedMetadata?.[0]?.locale || '',
       };
     });
+  }
+
+  /**
+   * Determine the format label based on loType and tags
+   * @param {string} loType - The learning object type (course or learningProgram)
+   * @param {Array} tags - Array of tags from the learning object
+   * @param {Object} placeholders - Language placeholders for i18n
+   * @returns {string} The format label to display
+   */
+  function getFormatLabel(loType, tags = [], placeholders = {}) {
+    if (loType === 'learningProgram') {
+      return placeholders.premiumLearningCohortLabel || 'Cohort';
+    }
+
+    if (loType === 'course') {
+      const hasLiveSession = tags.includes('Live Session');
+      return hasLiveSession
+        ? placeholders.premiumLearningViltLabel || 'VILT'
+        : placeholders.premiumLearningOnDemandLabel || 'On-Demand';
+    }
+
+    return '';
   }
 
   /**
@@ -311,9 +354,12 @@ const BrowseCardsPLAdaptor = (() => {
       startLabel = getStartLabelFromDeadline(deadline);
     }
 
-    const duration = formatDuration(attributes, placeholders);
 
-    const isNew = isNewCourse(result);
+    const duration = formatDuration(attributes, placeholders);
+    const loType = attributes?.loType || '';
+    const tags = attributes?.tags || [];
+    const typeLabel = getFormatLabel(loType, tags, placeholders);
+
 
     return {
       ...browseCardDataModel,
@@ -331,14 +377,13 @@ const BrowseCardsPLAdaptor = (() => {
           average: attributes?.rating?.averageRating || 0,
           count: attributes?.rating?.ratingsCount || 0,
         },
-        duration,
-        loFormat: attributes?.loFormat || '',
-        loType: attributes?.loType || '',
+        duration: formatDuration(attributes?.duration),
+        typeLabel,
+        loType,
         description: metadata.description || '',
         startLabel,
-        isNew,
-        level: skillLevels,
-        instances,
+        level: skillLevels, 
+        instances, 
         deadline,
         products,
       },
