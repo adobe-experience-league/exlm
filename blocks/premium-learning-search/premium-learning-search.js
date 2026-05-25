@@ -169,11 +169,6 @@ export default async function decorate(block) {
             return;
           }
 
-          const searchInterfaceElement = e.detail?.searchInterface;
-          if (!searchInterfaceElement) {
-            return;
-          }
-
           const searchBlockElement = e.detail?.block;
           if (searchBlockElement) {
             const delta = 30;
