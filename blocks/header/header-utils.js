@@ -9,6 +9,8 @@ export class Deferred {
 
 export const decoratorState = {
   languages: new Deferred(),
+  /** @type {((e: Event) => void) | null} Same handler for desktop search-short and mobile nav search link */
+  headerSearchIconClick: null,
 };
 
 /**

@@ -22,6 +22,11 @@
   pointer-events: none;
 }
 
+.module-nav .module-nav-finish-error {
+  color: var(--non-spectrum-adobe-red);
+  text-align: right;
+}
+
 @media (min-width: 600px) {
   .module-nav-buttons {
     justify-content: space-between;

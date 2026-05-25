@@ -3,6 +3,58 @@ import PL_CONTENT_TYPES from '../data-service/premium-learning/premium-learning-
 import { fetchLanguagePlaceholders, getConfig, getPathDetails } from '../scripts.js';
 
 /**
+ * Build a map of learning object IDs to their skill levels
+ * @param {Array} included - The included array from API response
+ * @returns {Map} Map of learning object IDs to Sets of level numbers
+ */
+export function buildLearningObjectSkillLevels(included) {
+  const skillLevelById = new Map();
+  const loSkillLevels = new Map();
+
+  included.forEach((item) => {
+    if (item.type === 'skillLevel') {
+      const levelNum = parseInt(item.attributes?.level, 10);
+      if (!Number.isNaN(levelNum)) {
+        skillLevelById.set(item.id, levelNum);
+      }
+    }
+  });
+
+  included.forEach((item) => {
+    if (item.type === 'learningObjectSkill') {
+      const loId = item.attributes?.learningObjectId;
+      const levelId = item.relationships?.skillLevel?.data?.id;
+      const levelNum = levelId ? skillLevelById.get(levelId) : null;
+      if (loId && levelNum) {
+        if (!loSkillLevels.has(loId)) loSkillLevels.set(loId, new Set());
+        loSkillLevels.get(loId).add(levelNum);
+      }
+    }
+  });
+
+  return loSkillLevels;
+}
+
+/**
+ * Format skill levels into readable labels using placeholders
+ * @param {Set} levels - Set of level numbers
+ * @param {Object} placeholders - Placeholders object for localization (premiumLearningProfessional, premiumLearningExpert, premiumLearningMaster)
+ * @returns {string} Formatted level labels (e.g., "Professional, Expert")
+ */
+export function formatSkillLevels(levels, placeholders = {}) {
+  if (!levels || levels.size === 0) return '';
+
+  const levelLabels = {
+    1: placeholders.premiumLearningProfessional || 'Professional',
+    2: placeholders.premiumLearningExpert || 'Expert',
+    3: placeholders.premiumLearningMaster || 'Master',
+  };
+
+  const labels = [...levels].sort((a, b) => a - b).map((lvl) => levelLabels[lvl] || `Level ${lvl}`);
+  return labels.join(', ');
+}
+
+/**
  * Module that provides functionality for adapting premium-learning results to BrowseCards data model.
  * @module BrowseCardsPLAdaptor
  */
@@ -70,38 +122,58 @@ const BrowseCardsPLAdaptor = (() => {
   }
 
   /**
-   * Helper function to format duration from seconds to human-readable format.
-   * @param {number} durationInSeconds - Duration in seconds from API.
-   * @returns {string} Human-readable duration string.
-   * @private
+   * Helper function to format duration based on learning type.
+   * For learning programs (cohort): shows weeks based on sections count (excluding Week 0 and Quiz Week)
+   * For on-demand courses: shows minutes or hours based on duration in seconds
+   * @param {object} attributes - The learning object attributes
+   * @param {object} placeholders - Optional placeholders for localized labels
    */
-  const formatDuration = (durationInSeconds) => {
-    if (!durationInSeconds) return '';
+  const formatDuration = (attributes, placeholders = {}) => {
+    // For learning programs (cohort), use sections count as weeks
+    if (attributes?.loType === 'learningProgram') {
+      const sections = Array.isArray(attributes?.sections) ? attributes.sections : [];
+      const sectionsWithMetadata = sections.filter(
+        (section) => Array.isArray(section.localizedMetadata) && section.localizedMetadata.length > 0,
+      );
+      const totalWeeks = sectionsWithMetadata.length || sections.length;
+      if (!totalWeeks) return '';
+      // Exclude Week 0 (onboarding) and Quiz Week from displayed duration
+      const displayWeeks = totalWeeks > 2 ? totalWeeks - 2 : totalWeeks;
+      const label =
+        displayWeeks === 1 ? placeholders.premiumLearningWeek || 'week' : placeholders.premiumLearningWeeks || 'weeks';
+      return `${displayWeeks} ${label}`;
+    }
 
-    const seconds = parseInt(durationInSeconds, 10);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-    const weeks = Math.floor(days / 7);
+    // For on-demand courses, use duration in seconds
+    const rawSeconds = Number(attributes?.duration) || 0;
+    if (!rawSeconds) return '';
 
-    if (weeks > 0) return `${weeks} week${weeks > 1 ? 's' : ''}`;
-    if (days > 0) return `${days} day${days > 1 ? 's' : ''}`;
-    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''}`;
-    return `${minutes} minute${minutes > 1 ? 's' : ''}`;
+    const totalMinutes = rawSeconds / 60;
+
+    // If less than 60 minutes, show in minutes
+    if (totalMinutes < 60) {
+      const roundedMinutes = Math.max(1, Math.round(totalMinutes));
+      const label =
+        roundedMinutes === 1 ? placeholders.premiumLearningMin || 'min' : placeholders.premiumLearningMins || 'mins';
+      return `${roundedMinutes} ${label}`;
+    }
+
+    // 60 minutes or more, show in hours
+    const hours = rawSeconds / 3600;
+    let roundedHours;
+    if (Number.isInteger(hours)) {
+      roundedHours = hours;
+    } else {
+      roundedHours = Number(hours.toFixed(1));
+    }
+    const label =
+      roundedHours === 1 ? placeholders.premiumLearningHour || 'hour' : placeholders.premiumLearningHours || 'hours';
+    return `${roundedHours} ${label}`;
   };
 
   // Constants for date calculations
   const MILLISECONDS_PER_DAY = 86400000; // 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
   const DAYS_THRESHOLD_FOR_COUNTDOWN = 30; // Threshold for counting down days
-
-  /**
-   * Level labels mapping for skill levels
-   */
-  const LEVEL_LABELS = {
-    1: 'Professional',
-    2: 'Expert',
-    3: 'Master',
-  };
 
   /**
    * Normalize a date to midnight (00:00:00) for calendar day comparison
@@ -167,51 +239,6 @@ const BrowseCardsPLAdaptor = (() => {
     return premiumlearningLink || '';
   };
 
-  /**
-   * Build a map of learning object IDs to their skill levels
-   * @param {Array} included - The included array from API response
-   * @returns {Map} Map of learning object IDs to Sets of level numbers
-   */
-  function buildLearningObjectSkillLevels(included) {
-    const skillLevelById = new Map();
-    const loSkillLevels = new Map();
-
-    included.forEach((item) => {
-      if (item.type === 'skillLevel') {
-        const levelNum = parseInt(item.attributes?.level, 10);
-        if (!Number.isNaN(levelNum)) {
-          skillLevelById.set(item.id, levelNum);
-        }
-      }
-    });
-
-    included.forEach((item) => {
-      if (item.type === 'learningObjectSkill') {
-        const loId = item.attributes?.learningObjectId;
-        const levelId = item.relationships?.skillLevel?.data?.id;
-        const levelNum = levelId ? skillLevelById.get(levelId) : null;
-        if (loId && levelNum) {
-          if (!loSkillLevels.has(loId)) loSkillLevels.set(loId, new Set());
-          loSkillLevels.get(loId).add(levelNum);
-        }
-      }
-    });
-
-    return loSkillLevels;
-  }
-
-  /**
-   * Format skill levels into readable labels
-   * @param {Set} levels - Set of level numbers
-   * @param {Object} placeholders - Placeholders object with levelTbd key
-   * @returns {string} Formatted level labels (e.g., "Professional, Expert")
-   */
-  function formatSkillLevels(levels, placeholders = {}) {
-    if (!levels || levels.size === 0) return placeholders.levelTbd || '';
-    const labels = [...levels].sort((a, b) => a - b).map((lvl) => LEVEL_LABELS[lvl] || `Level ${lvl}`);
-    return labels.join(', ');
-  }
-
   function buildInstances(cardData, included) {
     const instances = cardData.relationships?.instances?.data;
     if (!instances) return [];
@@ -265,8 +292,8 @@ const BrowseCardsPLAdaptor = (() => {
     const products = (attributes?.products || []).map((product) => product?.name).filter(Boolean);
     let startLabel = '';
 
-    const loSkillLevels = buildLearningObjectSkillLevels(included);
-    const skillLevels = formatSkillLevels(loSkillLevels.get(id), placeholders);
+    // Get skill levels for both cohorts and courses
+    const skillLevels = formatSkillLevels(buildLearningObjectSkillLevels(included).get(id), placeholders);
 
     const instances = buildInstances(cardData, included);
 
@@ -283,6 +310,7 @@ const BrowseCardsPLAdaptor = (() => {
       startLabel = getStartLabelFromDeadline(deadline);
     }
 
+    const duration = formatDuration(attributes, placeholders);
     const loType = attributes?.loType || '';
     const tags = attributes?.tags || [];
     const typeLabel = getFormatLabel(loType, tags, placeholders);
@@ -303,13 +331,13 @@ const BrowseCardsPLAdaptor = (() => {
           average: attributes?.rating?.averageRating || 0,
           count: attributes?.rating?.ratingsCount || 0,
         },
-        duration: formatDuration(attributes?.duration),
+        duration,
         typeLabel,
         loType,
         description: metadata.description || '',
         startLabel,
-        level: skillLevels, // TODO: Add when field is available in API
-        instances, // TODO: Add when field is available in API
+        level: skillLevels,
+        instances,
         deadline,
         products,
       },

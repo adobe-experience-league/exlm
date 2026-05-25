@@ -5,9 +5,11 @@ import {
   isLastModuleOfCourse,
   getCourseCompletionPageUrl,
   getCourseFragmentUrl,
+  extractCourseModuleIds,
 } from '../../scripts/courses/course-utils.js';
 import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
+import { clearStoredModuleQuizAnswers, persistModuleQuizAnswers } from '../../scripts/quiz/quiz-utils.js';
 import { finishModule, completeCourse } from '../../scripts/courses/course-profile.js';
 
 let placeholders = {};
@@ -16,6 +18,34 @@ try {
 } catch (err) {
   // eslint-disable-next-line no-console
   console.error('Error fetching placeholders:', err);
+}
+
+const MODULE_FINISH_MAX_ATTEMPTS = 2;
+const MODULE_FINISH_RETRY_DELAY_MS = 500;
+
+const sleep = (ms) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+async function handleFinishModuleWithRetry(submitButton) {
+  submitButton?.classList.add('disabled');
+
+  try {
+    let failure;
+    for (let attempt = 1; attempt <= MODULE_FINISH_MAX_ATTEMPTS; attempt += 1) {
+      if (attempt > 1) {
+        // eslint-disable-next-line no-await-in-loop -- sequential profile PATCH retries
+        await sleep(MODULE_FINISH_RETRY_DELAY_MS);
+      }
+      // eslint-disable-next-line no-await-in-loop
+      failure = await finishModule().catch((reason) => reason);
+      if (failure === undefined) return;
+    }
+    throw failure;
+  } finally {
+    submitButton?.classList.remove('disabled');
+  }
 }
 
 // Helper function to update back button to point to course landing page
@@ -34,25 +64,17 @@ async function handleQuizNextButton(e) {
   // Disable the button immediately to prevent multiple submissions
   e.target.classList.add('disabled');
 
-  // Call the quiz submission handler if it exists
-  const handler = submitQuizHandler();
-  if (!handler) return;
+  const quizApi = submitQuizHandler({ deferUIUpdate: true });
+  if (!quizApi) return;
+
+  const { handler, updateUI } = quizApi;
   const isQuizPassed = await handler();
 
   const backButton = document.querySelector('.module-nav-button.module-nav-back');
   const nextButton = document.querySelector('.module-nav-button.module-nav-submit');
 
-  // Check if quiz-scorecard block is present (quiz has been successfully submitted)
-  const quizScorecard = document.querySelector('.quiz-scorecard');
-
-  if (quizScorecard) {
-    if (backButton) {
-      await updateBackButtonToCourseUrl(backButton, placeholders);
-    }
-    if (nextButton) {
-      nextButton.textContent = placeholders?.nextBtnLabel || 'Next';
-    }
-  }
+  const wrapper = nextButton?.closest('.module-nav');
+  wrapper?.querySelector('.module-nav-finish-error')?.remove();
 
   if (!isQuizPassed) {
     // re-enable submit button after answering all questions
@@ -69,34 +91,47 @@ async function handleQuizNextButton(e) {
     return;
   }
 
-  // Remove the event listener when quiz is passed
-  e.target.removeEventListener('click', handleQuizNextButton);
-
   // Check if this is the last step in the module
-  if (!(await isLastStep())) return;
+  if (!(await isLastStep())) {
+    e.target.removeEventListener('click', handleQuizNextButton);
+    await updateUI();
+    return;
+  }
+
+  const { moduleId } = extractCourseModuleIds();
 
   try {
-    // Check if this is the last module of the course and complete the course
     if (await isLastModuleOfCourse()) {
       await completeCourse();
       const url = await getCourseCompletionPageUrl();
       if (url) e.target.href = url;
     } else {
-      await finishModule();
+      await handleFinishModuleWithRetry(e.target);
       const url = await getNextModuleFirstStep();
       if (url) e.target.href = url;
     }
-    if (nextButton) {
-      nextButton.classList.remove('disabled');
+    e.target.removeEventListener('click', handleQuizNextButton);
+    if (moduleId) clearStoredModuleQuizAnswers(moduleId);
+
+    await updateUI();
+
+    if (document.querySelector('.quiz-scorecard')) {
+      if (backButton) await updateBackButtonToCourseUrl(backButton, placeholders);
+      if (nextButton) {
+        nextButton.textContent = placeholders?.nextBtnLabel || 'Next';
+        nextButton.classList.remove('disabled');
+      }
     }
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error completing course:', error);
+    if (moduleId) persistModuleQuizAnswers(moduleId);
     const errorMessage = document.createElement('div');
-    errorMessage.style.color = 'red';
-    errorMessage.style.textAlign = 'right';
-    errorMessage.textContent = 'Something went wrong while completing the module. Please try again later.';
+    errorMessage.className = 'module-nav-finish-error';
+    errorMessage.textContent =
+      placeholders?.quizSubmitError || `We couldn't submit your answers. Please try again later.`;
     nextButton.parentElement.insertAdjacentElement('afterend', errorMessage);
+    nextButton.classList.remove('disabled');
   }
 }
 
@@ -185,6 +220,8 @@ export default async function decorate(block) {
         nextLink.href = courseCompletionPageUrl;
       }
     } else {
+      const { moduleId } = extractCourseModuleIds();
+      if (moduleId) clearStoredModuleQuizAnswers(moduleId);
       await finishModule();
       const nextModuleFirstStepUrl = await getNextModuleFirstStep();
       if (nextModuleFirstStepUrl) {

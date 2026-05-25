@@ -1,10 +1,16 @@
 import { htmlToElement, fetchLanguagePlaceholders, decorateExternalLinks, getConfig } from '../../scripts/scripts.js';
 import { generateQuestionDOM } from '../question/question.js';
+import { extractCourseModuleIds } from '../../scripts/courses/course-utils.js';
 import { hashAnswer } from '../../scripts/hash-utils.js';
 import { moveInstrumentation } from '../../scripts/utils/ue-utils.js';
 import { loadBlocks, decorateSections, decorateBlocks } from '../../scripts/lib-franklin.js';
 import { pushQuizEvent } from '../../scripts/analytics/lib-analytics.js';
 import { queueAnalyticsEvent } from '../../scripts/analytics/analytics-queue.js';
+import {
+  startQuizAnswerSession,
+  initQuestionAnswerPersistence,
+  getStoredModuleAnswers,
+} from '../../scripts/quiz/quiz-utils.js';
 
 /**
  * Checks if the selected answers for a question are correct
@@ -120,10 +126,22 @@ async function submitQuiz(questions, passPageUrlElement, failPageUrlElement) {
   };
 }
 
-let quizHandlerFunction = null;
+let quizHandlerApi = null;
 
-// Export a constant function that returns the current handler
-export const submitQuizHandler = () => quizHandlerFunction;
+export const submitQuizHandler = (options = {}) => {
+  if (!quizHandlerApi) return null;
+  const deferUIUpdate = options.deferUIUpdate === true;
+  return {
+    handler: async () => {
+      const isPassed = await quizHandlerApi.evaluate();
+      if (!deferUIUpdate || !isPassed) {
+        await quizHandlerApi.renderUI();
+      }
+      return isPassed;
+    },
+    updateUI: () => quizHandlerApi.renderUI(),
+  };
+};
 
 /**
  * Shuffles the given array
@@ -217,6 +235,8 @@ export default async function decorate(block) {
   const [titleElement, textElement, passPageUrlElement, failPageUrlElement, ...questionsOriginal] = [...block.children];
 
   const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+  const { moduleId } = extractCourseModuleIds();
+  const persistAnswers = !UEAuthorMode;
 
   // Only shuffle questions if not in authoring mode
   const orderedQuestions = UEAuthorMode
@@ -248,6 +268,9 @@ export default async function decorate(block) {
   // Initialize display index
   let displayIndex = 1;
 
+  const sessionAnswers = persistAnswers && moduleId ? startQuizAnswerSession(moduleId) : null;
+  const storedModuleAnswers = sessionAnswers ? getStoredModuleAnswers(moduleId) : {};
+
   // Process each question
   orderedQuestions?.forEach(({ item: question, originalIndex }) => {
     // Set original index for answer validation
@@ -260,6 +283,10 @@ export default async function decorate(block) {
     // Generate the question DOM
     const questionDOM = generateQuestionDOM(question, currentDisplayIndex, totalQuestions, originalIndex, placeholders);
 
+    if (sessionAnswers) {
+      initQuestionAnswerPersistence(questionDOM, storedModuleAnswers, originalIndex, sessionAnswers);
+    }
+
     question.textContent = '';
 
     // Add block classes
@@ -270,67 +297,55 @@ export default async function decorate(block) {
     questionsContainer.append(question);
   });
 
-  // Create a function to handle quiz submission that can be called externally
-  quizHandlerFunction = async () => {
-    // Check if all questions are answered
-    let allQuestionsAnswered = true;
+  let pendingQuizResults = null;
 
-    // Remove any existing error message
-    const existingError = block.querySelector('.quiz-error-message');
-    if (existingError) {
-      existingError.remove();
-    }
+  quizHandlerApi = {
+    async evaluate() {
+      const existingError = block.querySelector('.quiz-error-message');
+      existingError?.remove();
 
-    // Get all question elements
-    const questionElements = Array.from(questionsContainer.querySelectorAll('.question'));
+      const questionElements = Array.from(questionsContainer.querySelectorAll('.question'));
+      const allAnswered = questionElements.every((question) => {
+        const isMultipleChoice = question.dataset.isMultipleChoice === 'true';
+        return isMultipleChoice
+          ? question.querySelectorAll('input[type="checkbox"]:checked').length > 0
+          : question.querySelector('input[type="radio"]:checked') !== null;
+      });
 
-    // Check if all questions are answered using Array methods
-    allQuestionsAnswered = questionElements.every((question) => {
-      const isMultipleChoice = question.dataset.isMultipleChoice === 'true';
-      return isMultipleChoice
-        ? question.querySelectorAll('input[type="checkbox"]:checked').length > 0
-        : question.querySelector('input[type="radio"]:checked') !== null;
-    });
+      if (!allAnswered) {
+        questionsContainer.appendChild(
+          htmlToElement(`
+          <div class="question-feedback incorrect quiz-error-message">
+            ${placeholders?.answerAllQuestions || 'Please answer all the questions'}
+          </div>
+        `),
+        );
+        return false;
+      }
 
-    if (!allQuestionsAnswered) {
-      const errorMessage = htmlToElement(`
-        <div class="question-feedback incorrect quiz-error-message">
-          ${placeholders?.answerAllQuestions || 'Please answer all the questions'}
-        </div>
-      `);
+      await pushQuizEvent('quizSubmit');
 
-      // Insert at the end of the questions container
-      questionsContainer.appendChild(errorMessage);
-      return false;
-    }
+      pendingQuizResults = await submitQuiz(questionElements, passPageUrlElement, failPageUrlElement);
 
-    // Trigger quiz submit event only after validating all questions are answered
-    await pushQuizEvent('quizSubmit');
+      block.dataset.correctAnswers = pendingQuizResults.correctAnswersCount;
+      block.dataset.totalQuestions = pendingQuizResults.totalQuestions;
 
-    // Submit quiz and get results
-    const quizResults = await submitQuiz(questionElements, passPageUrlElement, failPageUrlElement, placeholders);
+      if (pendingQuizResults.isPassed) {
+        await pushQuizEvent('quizCompleted');
+      }
 
-    // Get the appropriate URL based on quiz result
-    const redirectUrl = quizResults.isPassed ? quizResults.passPageUrl : quizResults.failPageUrl;
+      return pendingQuizResults.isPassed;
+    },
 
-    // Load the appropriate page content as a fragment
-    if (redirectUrl) {
-      // Save quiz results data directly to the block's dataset attributes
-      // These will be used by the quiz-scorecard block and preserved during fetchPageContent
-      block.dataset.correctAnswers = quizResults?.correctAnswersCount;
-      block.dataset.totalQuestions = quizResults?.totalQuestions;
+    async renderUI() {
+      if (!pendingQuizResults || block.querySelector('.quiz-result-container')) return;
 
-      await fetchPageContent(redirectUrl, block);
-    }
+      const redirectUrl = pendingQuizResults.isPassed ? pendingQuizResults.passPageUrl : pendingQuizResults.failPageUrl;
 
-    if (quizResults?.isPassed) {
-      // Trigger quiz completed event only when the quiz is passed
-      await pushQuizEvent('quizCompleted');
-
-      return true;
-    }
-
-    return false;
+      if (redirectUrl) {
+        await fetchPageContent(redirectUrl, block);
+      }
+    },
   };
 
   // Create quiz description section using htmlToElement

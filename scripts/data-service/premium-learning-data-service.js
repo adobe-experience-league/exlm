@@ -403,7 +403,7 @@ export default class PLDataService {
       'page[limit]': '10',
       sort: '-recommendationScore',
       'enforcedFields[learningObject]': 'products,roles,extensionOverrides,effectivenessData',
-      include: 'instances.loResources.resources',
+      include: 'instances.loResources.resources,skills.skillLevel.skill',
     });
   }
 
@@ -488,7 +488,7 @@ export default class PLDataService {
           'page[limit]': String(noOfResults || PLDataService.DEFAULT_SEARCH_RESULTS_COUNT),
           sort: '-recommendationScore',
           'enforcedFields[learningObject]': 'products,roles,extensionOverrides,effectivenessData',
-          include: 'instances.loResources.resources',
+          include: 'instances.loResources.resources,skills.skillLevel.skill',
         });
         const headers = {
           Authorization: `oauth ${token}`,
@@ -726,6 +726,7 @@ export async function fetchCohortProgress(cohortId, config) {
         'subLOs.instances',
         'instances.loResources.resources',
         'subLOs.instances.loResources.resources',
+        'skills.skillLevel',
       ].join(','),
     );
 
