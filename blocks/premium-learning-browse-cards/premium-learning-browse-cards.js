@@ -30,7 +30,8 @@ export default async function decorate(block) {
       .filter(Boolean);
   }
 
-  const noOfResults = 4;
+  const FETCH_LIMIT = 10;
+  const DISPLAY_LIMIT = 4;
 
   block.innerHTML = '';
   block.classList.add('browse-cards-block', 'premium-learning-browse-cards');
@@ -52,7 +53,7 @@ export default async function decorate(block) {
   headerDiv.firstElementChild.appendChild(headerTextDiv);
   block.appendChild(headerDiv);
 
-  const buildCardsShimmer = new BrowseCardShimmer(noOfResults, contentType);
+  const buildCardsShimmer = new BrowseCardShimmer(DISPLAY_LIMIT, contentType);
   buildCardsShimmer.addShimmer(block);
 
   // Extract and process tags for product filtering (after shimmer so delay doesn't affect UX)
@@ -71,7 +72,7 @@ export default async function decorate(block) {
 
   const param = {
     contentType,
-    noOfResults: noOfResults + 1,
+    noOfResults: FETCH_LIMIT,
     browseMode: true,
     ...(products?.length > 0 && { products }),
   };
@@ -114,7 +115,7 @@ export default async function decorate(block) {
             }
 
             const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
-            for (let i = 0; i < Math.min(noOfResults, sortedData.length); i += 1) {
+            for (let i = 0; i < Math.min(DISPLAY_LIMIT, sortedData.length); i += 1) {
               const cardData = sortedData[i];
               const cardDiv = document.createElement('div');
               buildCard(cardDiv, cardData);
@@ -123,7 +124,7 @@ export default async function decorate(block) {
             block.appendChild(contentDiv);
 
             if (viewMoreAnchor) {
-              viewMoreAnchor.classList.toggle('hidden', sortedData.length <= noOfResults);
+              viewMoreAnchor.classList.toggle('hidden', sortedData.length <= DISPLAY_LIMIT);
             }
           } else {
             const noResultsText =

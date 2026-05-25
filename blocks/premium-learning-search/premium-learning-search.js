@@ -66,7 +66,8 @@ export default async function decorate(block) {
       .filter(Boolean);
   }
 
-  const noOfResults = 4;
+  const FETCH_LIMIT = 10;
+  const DISPLAY_LIMIT = 4;
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -89,10 +90,10 @@ export default async function decorate(block) {
 
   const param = {
     contentType, // Can be string ('premium-learning-course' or 'premium-learning-cohort') or array (['premium-learning-course', 'premium-learning-cohort'])
-    noOfResults,
+    noOfResults: FETCH_LIMIT,
   };
 
-  const buildCardsShimmer = new BrowseCardShimmer(noOfResults, contentType);
+  const buildCardsShimmer = new BrowseCardShimmer(DISPLAY_LIMIT, contentType);
   buildCardsShimmer.addShimmer(block);
 
   const placeholders = await fetchLanguagePlaceholders().catch(() => ({}));
@@ -275,7 +276,7 @@ export default async function decorate(block) {
             buildCardsShimmer.removeShimmer();
             if (data?.length) {
               const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
-              for (let i = 0; i < Math.min(noOfResults, data.length); i += 1) {
+              for (let i = 0; i < Math.min(DISPLAY_LIMIT, data.length); i += 1) {
                 const cardData = data[i];
                 const cardDiv = document.createElement('div');
                 buildCard(cardDiv, cardData);
