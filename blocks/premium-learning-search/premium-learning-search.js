@@ -101,6 +101,19 @@ export default async function decorate(block) {
   let lastSearchQuery = null;
   let fetchAndRenderCardsRef = null;
   let resolveEligibility;
+  let attachedToAtomicSearch = false;
+
+  function attachToAtomicSearchWrapper(wrapperRoot) {
+    if (attachedToAtomicSearch) return;
+
+    const premiumSearchWrapper = wrapperRoot.querySelector('.atomic-search-premium-search-wrapper');
+    if (premiumSearchWrapper) {
+      block.classList.add('premium-learning-search-atomic-search');
+      premiumSearchWrapper.appendChild(block);
+      handleEmptyPremiumLearningSection(premiumLearningSection);
+      attachedToAtomicSearch = true;
+    }
+  }
 
   const eligibilityPromise = new Promise((resolve) => {
     resolveEligibility = resolve;
@@ -115,8 +128,9 @@ export default async function decorate(block) {
           }
 
           const { body, method = '' } = e.detail;
-          if (method === 'search') {
+          if (method === 'search' && body !== undefined) {
             const newQuery = (body?.q ?? '').trim();
+            attachToAtomicSearchWrapper(document);
 
             if (lastSearchQuery === newQuery) {
               return;
@@ -155,25 +169,14 @@ export default async function decorate(block) {
             return;
           }
 
-          const searchInterfaceElement = e.detail?.searchInterface;
-          if (!searchInterfaceElement) {
-            return;
-          }
-
           const searchBlockElement = e.detail?.block;
           if (searchBlockElement) {
             const delta = 30;
             searchBlockElement.classList.add('atomic-search-with-premium-search');
             searchBlockElement.style.setProperty(
               '--atomic-search-skeleton-margin-top',
-              `${block.offsetHeight - delta}px`,
+              `${Math.max(block.offsetHeight - delta, 0)}px`,
             );
-          }
-          block.classList.add('premium-learning-search-atomic-search');
-          const premiumSearchWrapper = searchInterfaceElement.querySelector('.atomic-search-premium-search-wrapper');
-          if (premiumSearchWrapper) {
-            premiumSearchWrapper.appendChild(block);
-            handleEmptyPremiumLearningSection(premiumLearningSection);
           }
         })
         .catch((err) => {
