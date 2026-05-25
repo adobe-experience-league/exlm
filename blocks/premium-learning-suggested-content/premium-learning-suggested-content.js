@@ -9,7 +9,8 @@ import { isSignedInUser } from '../../scripts/auth/profile.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
-const FETCH_LIMIT = 4;
+const FETCH_LIMIT = 10;
+const DISPLAY_LIMIT = 4;
 
 function showFallbackContentInUEMode(blockElement) {
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
@@ -57,7 +58,7 @@ function getUniqueProductsInOrder(suggestedContentItems) {
 function getTabDefinitions(suggestedContentItems, placeholders) {
   const uniqueProducts = getUniqueProductsInOrder(suggestedContentItems);
   const defaultTab = placeholders.premiumLearningTabForYou || 'For you';
-  const defaultTabItems = suggestedContentItems.slice(0, FETCH_LIMIT);
+  const defaultTabItems = suggestedContentItems.slice(0, DISPLAY_LIMIT);
 
   if (!defaultTabItems.length) {
     return [];
@@ -78,7 +79,7 @@ function getTabDefinitions(suggestedContentItems, placeholders) {
   uniqueProducts.forEach((productName) => {
     const matchingItems = suggestedContentItems
       .filter((contentItem) => (contentItem.product || []).includes(productName))
-      .slice(0, FETCH_LIMIT);
+      .slice(0, DISPLAY_LIMIT);
 
     if (matchingItems.length) {
       tabs.push({
@@ -215,7 +216,7 @@ export default async function decorate(block) {
     ctaMarkup,
   );
 
-  const shimmer = new BrowseCardShimmer(FETCH_LIMIT, PL_CONTENT_TYPES.COHORT.MAPPING_KEY);
+  const shimmer = new BrowseCardShimmer(DISPLAY_LIMIT, PL_CONTENT_TYPES.COHORT.MAPPING_KEY);
   shimmer.addShimmer(contentContainer);
 
   const placeholders = await fetchLanguagePlaceholders().catch(() => ({}));
