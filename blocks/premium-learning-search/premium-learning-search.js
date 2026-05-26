@@ -87,6 +87,16 @@ export default async function decorate(block) {
   const ctaWrapper = createTag('div', { class: 'premium-learning-search-block-cta' });
   ctaWrapper.innerHTML = decorateCustomButtons(ctaElement);
   headerCtaSlot.appendChild(ctaWrapper);
+  const updateCTASearch = (searchString) => {
+    const anchor = ctaWrapper.querySelector('a');
+    const href = anchor?.getAttribute('href');
+
+    if (href) {
+      const url = new URL(href, document.baseURI);
+      url.search = searchString;
+      anchor.setAttribute('href', url.toString());
+    }
+  };
 
   const param = {
     contentType, // Can be string ('premium-learning-course' or 'premium-learning-cohort') or array (['premium-learning-course', 'premium-learning-cohort'])
@@ -145,15 +155,7 @@ export default async function decorate(block) {
             }
             buildCardsShimmer.addShimmer(block);
 
-            fetchAndRenderCardsRef(param);
-
-            const anchor = ctaWrapper.querySelector('a');
-            const href = anchor?.getAttribute('href');
-            if (href) {
-              const url = new URL(href, document.baseURI);
-              url.search = urlString;
-              anchor.setAttribute('href', url.toString());
-            }
+            fetchAndRenderCardsRef({ ...param, searchUrlString: urlString });
           }
         })
         .catch((err) => {
@@ -286,8 +288,13 @@ export default async function decorate(block) {
                 contentDiv.appendChild(cardDiv);
               }
               block.appendChild(contentDiv);
+
+              if (params.searchUrlString) {
+                updateCTASearch(params.searchUrlString);
+              }
             } else {
               toggleNoResultsContent(block, true);
+              updateCTASearch('');
             }
           })
           .catch((err) => {

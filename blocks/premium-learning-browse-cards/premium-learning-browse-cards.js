@@ -128,7 +128,8 @@ export default async function decorate(block) {
             }
           } else {
             const noResultsText =
-              placeholders.noResultsTextBrowse || 'We are sorry, no results found matching the criteria.';
+              placeholders.premiumLearningNoResults ||
+              'No premium learning content available currently for your profile.';
             const noResultsDiv = htmlToElement(`<div class="browse-card-no-results">${noResultsText}</div>`);
             block.appendChild(noResultsDiv);
           }

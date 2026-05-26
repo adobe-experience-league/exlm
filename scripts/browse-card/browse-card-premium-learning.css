@@ -211,6 +211,7 @@
   color: var(--non-spectrum-ash-gray);
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--spectrum-spacing-100);
   line-height: 1.5;
 }
