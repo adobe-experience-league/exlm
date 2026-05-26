@@ -157,6 +157,8 @@ export default async function decorate(block) {
     resolveEligibility = resolve;
   });
 
+  block.style.visibility = 'hidden';
+
   if (isSearchPage && !UEAuthorMode) {
     document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
       eligibilityPromise
@@ -182,6 +184,9 @@ export default async function decorate(block) {
               block.removeChild(contentWrapper);
             }
             buildCardsShimmer.addShimmer(block);
+
+            block.style.visibility = 'visible';
+
 
             fetchAndRenderCardsRef({ ...param, searchUrlString: urlString });
           }

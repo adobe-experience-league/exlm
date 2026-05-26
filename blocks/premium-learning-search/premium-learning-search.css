@@ -1,5 +1,10 @@
 @import '../../scripts/browse-card/browse-cards-block.css';
 
+.premium-learning-search-block .browse-card.premium-learning-browse-card {
+  width: unset;
+  max-width: 350px;
+}
+
 /* premium-learning Cards Block Header Styles */
 .premium-learning-search-block .premium-learning-search-block-header {
   margin-top: 20px;
@@ -48,7 +53,6 @@
 @container browse-cards-block (min-width: 900px) {
   .premium-learning-search .browse-card-shimmer {
     grid-template-columns: repeat(4, 1fr);
-    max-width: min(90vw, var(--default-max-width));
     margin-inline: auto;
   }
 }
@@ -135,8 +139,6 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    max-width: min(90vw, var(--default-max-width));
-    margin-inline: auto;
     margin-top: 12px;
   }
 
@@ -144,12 +146,6 @@
     width: auto;
     min-width: max-content;
     font-size: var(--spectrum-font-size-300);
-  }
-
-  .premium-learning-search.premium-learning-search-atomic-search .browse-cards-block-content {
-    margin-bottom: 0;
-    max-width: min(90vw, var(--default-max-width));
-    margin-inline: auto;
   }
 
   .premium-learning-search-wrapper:has(.premium-learning-search) .premium-learning-search {
