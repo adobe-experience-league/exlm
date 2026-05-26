@@ -93,6 +93,10 @@
 
 /* Card Styling */
 
+.premium-learning-active-content .cohort-card-wrapper .browse-card.premium-learning-browse-card {
+  width: auto;
+}
+
 .premium-learning-active-content
   .cohort-card-wrapper
   .browse-card.premium-learning-browse-card
