@@ -66,7 +66,10 @@ function extractProgressData(cohortData) {
   );
 
   const progress = lpEnrollment?.attributes?.progressPercent || 0;
-  const totalWeeks = data.attributes?.sections?.length || 0;
+  const rawTotalWeeks = data.attributes?.sections?.length || 0;
+
+  // Exclude Week 0 (onboarding) and Quiz Week from displayed duration
+  const totalWeeks = rawTotalWeeks > 2 ? rawTotalWeeks - 2 : rawTotalWeeks;
 
   const resourceGrades = included.filter((item) => item.type === 'learningObjectResourceGrade');
   const totalModules = resourceGrades.length;

@@ -103,7 +103,7 @@ function buildResponsiveListItems(tabs) {
 function buildEmptyStateMarkup(placeholders) {
   return `
     <div class="browse-card-no-results">
-      ${placeholders.noResultsTextBrowse || 'We are sorry, no results found matching the criteria.'}
+      ${placeholders.premiumLearningNoResults || 'No premium learning content available currently for your profile.'}
     </div>
   `;
 }

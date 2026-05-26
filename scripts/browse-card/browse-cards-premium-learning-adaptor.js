@@ -267,7 +267,7 @@ const BrowseCardsPLAdaptor = (() => {
     if (loType === 'course') {
       const hasLiveSession = tags.includes('Live Session');
       return hasLiveSession
-        ? placeholders.premiumLearningViltLabel || 'VILT'
+        ? placeholders.premiumLearningViltLabel || 'Live Instructor'
         : placeholders.premiumLearningOnDemandLabel || 'On-Demand';
     }
 

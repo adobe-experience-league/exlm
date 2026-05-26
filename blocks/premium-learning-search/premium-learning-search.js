@@ -139,6 +139,7 @@ export default async function decorate(block) {
 
             const urlString = transformCoveoFacetsToPlSearch(param, body);
             param.searchMode = true;
+            param.searchUrlString = urlString;
             const contentWrapper = block.querySelector('.browse-cards-block-content');
             if (contentWrapper) {
               block.removeChild(contentWrapper);
@@ -146,14 +147,6 @@ export default async function decorate(block) {
             buildCardsShimmer.addShimmer(block);
 
             fetchAndRenderCardsRef(param);
-
-            const anchor = ctaWrapper.querySelector('a');
-            const href = anchor?.getAttribute('href');
-            if (href) {
-              const url = new URL(href, document.baseURI);
-              url.search = urlString;
-              anchor.setAttribute('href', url.toString());
-            }
           }
         })
         .catch((err) => {
@@ -286,8 +279,28 @@ export default async function decorate(block) {
                 contentDiv.appendChild(cardDiv);
               }
               block.appendChild(contentDiv);
+
+              // Only update CTA with query params if there are results
+              if (params.searchUrlString) {
+                const anchor = ctaWrapper.querySelector('a');
+                const href = anchor?.getAttribute('href');
+                if (href) {
+                  const url = new URL(href, document.baseURI);
+                  url.search = params.searchUrlString;
+                  anchor.setAttribute('href', url.toString());
+                }
+              }
             } else {
               toggleNoResultsContent(block, true);
+
+              // Reset CTA to original href when no results
+              const anchor = ctaWrapper.querySelector('a');
+              const href = anchor?.getAttribute('href');
+              if (href) {
+                const url = new URL(href, document.baseURI);
+                url.search = ''; // Clear search params
+                anchor.setAttribute('href', url.toString());
+              }
             }
           })
           .catch((err) => {
