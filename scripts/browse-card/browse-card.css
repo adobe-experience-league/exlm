@@ -232,6 +232,21 @@
   justify-content: center;
 }
 
+.browse-card .browse-card-figure .browse-card-figure-shimmer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: 7;
+  background-image: linear-gradient(
+    90deg,
+    var(--shimmer-image-slide-start) 0,
+    var(--shimmer-image-slide-end) 40px,
+    var(--shimmer-image-slide-start) 80px
+  );
+  background-size: 200% 100%;
+  animation: placeholder-wave 1.5s infinite;
+}
+
 .browse-card .browse-card-video-clip {
   padding: 24px 16px 0;
   background-color: var(--background-color);

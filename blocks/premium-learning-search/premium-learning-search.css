@@ -48,6 +48,8 @@
 @container browse-cards-block (min-width: 900px) {
   .premium-learning-search .browse-card-shimmer {
     grid-template-columns: repeat(4, 1fr);
+    max-width: min(90vw, var(--default-max-width));
+    margin-inline: auto;
   }
 }
 
@@ -104,11 +106,25 @@
   display: none;
 }
 
+.premium-learning-search:has(.premium-learning-search-no-results) {
+  display: flex;
+  justify-content: center;
+}
+
+.atomic-search.block > .premium-learning-search.premium-learning-search-atomic-search {
+  position: absolute;
+  top: 58px;
+  left: 0;
+  width: 100%;
+  z-index: 2;
+}
+
 /* Tablet styles */
 @media (min-width: 600px) {
   .premium-learning-search.browse-cards-block.premium-learning-search-atomic-search {
     min-height: auto;
     padding-bottom: 80px;
+    position: relative;
   }
 
   .premium-learning-search-no-results-header {
@@ -119,6 +135,9 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    max-width: min(90vw, var(--default-max-width));
+    margin-inline: auto;
+    margin-top: 12px;
   }
 
   .premium-learning-search-block-cta a.button:any-link {
@@ -129,6 +148,25 @@
 
   .premium-learning-search.premium-learning-search-atomic-search .browse-cards-block-content {
     margin-bottom: 0;
+    max-width: min(90vw, var(--default-max-width));
+    margin-inline: auto;
+  }
+
+  .premium-learning-search-wrapper:has(.premium-learning-search) .premium-learning-search {
+    margin-top: 14px;
+  }
+
+  .premium-learning-search.premium-learning-search-atomic-search:has(.browse-card-shimmer-wrapper)
+    .browse-cards-block-content {
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 88px;
+  }
+
+  .atomic-search.block > .premium-learning-search.premium-learning-search-atomic-search {
+    top: 88px;
+    margin-inline: auto;
   }
 }
 
@@ -137,10 +175,12 @@
     width: 75%;
   }
 
-  atomic-search-interface:not(.atomic-search-interface-no-results)
-    .premium-learning-search
+  .atomic-search.block:has(> atomic-search-interface:not(.atomic-search-interface-no-results))
+    > .premium-learning-search
     .premium-learning-search-no-results,
-  atomic-search-interface:not(:has(.all-facets-hidden)) .premium-learning-search .premium-learning-search-no-results {
+  .atomic-search.block:has(> atomic-search-interface:not(:has(.all-facets-hidden)))
+    > .premium-learning-search
+    .premium-learning-search-no-results {
     width: 90%;
     margin: 0 auto;
   }

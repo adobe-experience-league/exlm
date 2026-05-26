@@ -79,7 +79,11 @@ export default function decorate(block) {
       </div>
     </div>`);
     if (insertBefore && block.firstElementChild) {
-      block.insertBefore(skeletonWrapper, block.firstElementChild);
+      const premiumSearchBlock = block.querySelector(
+        ':scope > .premium-learning-search.premium-learning-search-atomic-search',
+      );
+      const insertRef = premiumSearchBlock?.nextElementSibling || block.firstElementChild;
+      block.insertBefore(skeletonWrapper, insertRef);
     } else {
       block.appendChild(skeletonWrapper);
     }

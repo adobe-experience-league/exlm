@@ -112,14 +112,42 @@ export default async function decorate(block) {
   let fetchAndRenderCardsRef = null;
   let resolveEligibility;
   let attachedToAtomicSearch = false;
+  let premiumSearchWrapperRef = null;
+  let premiumSearchResizeObserver = null;
+
+  function syncPremiumSearchWrapperHeight(wrapper = premiumSearchWrapperRef) {
+    if (!wrapper) return;
+
+    wrapper.style.setProperty('--atomic-search-premium-search-height', `${Math.max(block.offsetHeight, 0)}px`);
+  }
+
+  function observePremiumSearchHeight() {
+    if (premiumSearchResizeObserver || !window.ResizeObserver) return;
+
+    premiumSearchResizeObserver = new window.ResizeObserver(() => {
+      syncPremiumSearchWrapperHeight();
+    });
+    premiumSearchResizeObserver.observe(block);
+  }
+
+  function disconnectPremiumSearchHeightObserver() {
+    premiumSearchResizeObserver?.disconnect();
+    premiumSearchResizeObserver = null;
+  }
 
   function attachToAtomicSearchWrapper(wrapperRoot) {
     if (attachedToAtomicSearch) return;
 
     const premiumSearchWrapper = wrapperRoot.querySelector('.atomic-search-premium-search-wrapper');
-    if (premiumSearchWrapper) {
+    const atomicSearchBlock = premiumSearchWrapper?.closest('.atomic-search.block');
+    if (atomicSearchBlock) {
       block.classList.add('premium-learning-search-atomic-search');
-      premiumSearchWrapper.appendChild(block);
+      if (block.parentElement !== atomicSearchBlock || block !== atomicSearchBlock.firstElementChild) {
+        atomicSearchBlock.insertBefore(block, atomicSearchBlock.firstElementChild);
+      }
+      premiumSearchWrapperRef = premiumSearchWrapper;
+      syncPremiumSearchWrapperHeight(premiumSearchWrapper);
+      observePremiumSearchHeight();
       handleEmptyPremiumLearningSection(premiumLearningSection);
       attachedToAtomicSearch = true;
     }
@@ -179,6 +207,7 @@ export default async function decorate(block) {
               '--atomic-search-skeleton-margin-top',
               `${Math.max(block.offsetHeight - delta, 0)}px`,
             );
+            syncPremiumSearchWrapperHeight();
           }
         })
         .catch((err) => {
@@ -196,6 +225,7 @@ export default async function decorate(block) {
       if (!isEligibleResult) {
         resolveEligibility(false);
         buildCardsShimmer.removeShimmer();
+        disconnectPremiumSearchHeightObserver();
         if (UEAuthorMode) {
           showFallbackContentInUEMode(block);
         } else {
@@ -263,6 +293,7 @@ export default async function decorate(block) {
         if (show) {
           renderNoResultsContent(blockElement, param.q);
           headerDiv.classList.add('premium-learning-search-hide-content');
+          syncPremiumSearchWrapperHeight();
         } else {
           headerCtaSlot.appendChild(ctaWrapper);
           const noResultsRoot = blockElement.querySelector('.premium-learning-search-no-results');
@@ -278,27 +309,30 @@ export default async function decorate(block) {
         const browseCardsContent = BrowseCardsDelegate.fetchCardData(params);
         browseCardsContent
           .then((data) => {
-            buildCardsShimmer.removeShimmer();
             if (data?.length) {
               const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
               for (let i = 0; i < Math.min(DISPLAY_LIMIT, data.length); i += 1) {
                 const cardData = data[i];
                 const cardDiv = document.createElement('div');
-                buildCard(cardDiv, cardData);
+                buildCard(cardDiv, { ...cardData, showThumbnailShimmer: true });
                 contentDiv.appendChild(cardDiv);
               }
               block.appendChild(contentDiv);
-
               if (params.searchUrlString) {
                 updateCTASearch(params.searchUrlString);
               }
+              setTimeout(() => {
+                buildCardsShimmer.removeShimmer();
+              }, 100);
             } else {
+              buildCardsShimmer.removeShimmer();
               toggleNoResultsContent(block, true);
               updateCTASearch('');
             }
           })
           .catch((err) => {
             buildCardsShimmer.removeShimmer();
+            disconnectPremiumSearchHeightObserver();
             if (UEAuthorMode) {
               showFallbackContentInUEMode(block);
             } else {
@@ -320,6 +354,7 @@ export default async function decorate(block) {
     .catch((err) => {
       resolveEligibility(false);
       buildCardsShimmer.removeShimmer();
+      disconnectPremiumSearchHeightObserver();
       if (UEAuthorMode) {
         showFallbackContentInUEMode(block);
       } else {

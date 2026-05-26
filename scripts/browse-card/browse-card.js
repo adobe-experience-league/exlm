@@ -541,7 +541,16 @@ const getOnDemandEventsDecorator = () => {
  */
 
 export async function buildCard(element, model) {
-  const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
+  const {
+    thumbnail,
+    product,
+    title,
+    contentType,
+    badgeTitle,
+    inProgressStatus,
+    failedToLoad = false,
+    showThumbnailShimmer = false,
+  } = model;
 
   // Delegate to PL-specific card builder for premium-learning content types
   const isPLContent =
@@ -625,21 +634,40 @@ export async function buildCard(element, model) {
     img.alt = title;
     img.width = 254;
     img.height = 153;
+    let clearFigureShimmer = () => {};
+    if (showThumbnailShimmer) {
+      const figureShimmer = document.createElement('div');
+      figureShimmer.className = 'browse-card-figure-shimmer';
+      cardFigure.appendChild(figureShimmer);
+      clearFigureShimmer = () => {
+        setTimeout(() => {
+          figureShimmer.remove();
+        }, 0);
+      };
+    }
     cardFigure.appendChild(img);
-    img.addEventListener('error', () => {
+    const handleImageError = () => {
       cardFigure.classList.remove('img-custom-height');
       card.classList.remove('thumbnail-loaded');
       card.classList.add('thumbnail-not-loaded');
       img.style.display = 'none';
       laptopContainer.style.display = 'none';
-    });
+      clearFigureShimmer();
+    };
+    img.addEventListener('error', handleImageError);
 
     if (img.complete) {
-      img.classList.add('img-loaded');
+      if (img.naturalWidth > 0) {
+        img.classList.add('img-loaded');
+        clearFigureShimmer();
+      } else {
+        handleImageError();
+      }
     }
 
     img.addEventListener('load', () => {
       img.classList.add('img-loaded');
+      clearFigureShimmer();
       if (
         VIDEO_THUMBNAIL_FORMAT.test(thumbnail) ||
         type === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||

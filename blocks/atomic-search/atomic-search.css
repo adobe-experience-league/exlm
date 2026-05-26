@@ -25,7 +25,17 @@
   --atomic-search-skeleton-margin-top: 0px;
 }
 
-.atomic-search > div {
+.atomic-search-premium-search-wrapper {
+  --atomic-search-premium-search-height: 0px;
+
+  min-height: var(--atomic-search-premium-search-height);
+}
+
+.atomic-search.atomic-search-with-premium-search {
+  position: relative;
+}
+
+.atomic-search > div:not(.premium-learning-search) {
   width: 100%;
   display: flex;
   align-items: center;
@@ -364,28 +374,28 @@
     font-size: var(--spectrum-font-size-200);
   }
 
-  .atomic-search
-    atomic-layout-section[section='search']:has(.atomic-search-premium-search-wrapper .premium-learning-search) {
+  .atomic-search.block:has(> .premium-learning-search.premium-learning-search-atomic-search)
+    atomic-layout-section[section='search'] {
     width: 100% !important;
     max-width: min(90vw, var(--default-max-width)) !important;
   }
 
-  .atomic-search
+  .atomic-search.block:has(> .premium-learning-search.premium-learning-search-atomic-search)
     atomic-search-interface:not(.atomic-search-interface-no-results, .atomic-search-interface-error)
-    atomic-layout-section[section='search']:has(.atomic-search-premium-search-wrapper .premium-learning-search) {
+    atomic-layout-section[section='search'] {
     grid-column: 1 / -1;
     margin: 0 auto;
   }
 
-  .atomic-search
-    atomic-layout-section[section='search']:has(.atomic-search-premium-search-wrapper .premium-learning-search)
+  .atomic-search.block:has(> .premium-learning-search.premium-learning-search-atomic-search)
+    atomic-layout-section[section='search']
     .atomic-search-box-wrapper {
     width: 80%;
   }
 
-  .atomic-search
+  .atomic-search.block:has(> .premium-learning-search.premium-learning-search-atomic-search)
     atomic-search-interface:not(.atomic-search-interface-no-results, .atomic-search-interface-error)
-    atomic-layout-section[section='search']:has(.atomic-search-premium-search-wrapper .premium-learning-search)
+    atomic-layout-section[section='search']
     .atomic-search-box-wrapper {
     margin: 20px auto !important;
   }

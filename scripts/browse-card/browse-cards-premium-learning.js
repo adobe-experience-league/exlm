@@ -71,7 +71,18 @@ function getPremiumLearningBlockHeader(card) {
  * @returns {HTMLElement} Thumbnail figure element
  * @private
  */
-function buildPLThumbnail({ thumbnail, title, id, viewLink, copyLink, card, startLabel, typeLabel, contentType }) {
+function buildPLThumbnail({
+  thumbnail,
+  title,
+  id,
+  viewLink,
+  copyLink,
+  card,
+  startLabel,
+  typeLabel,
+  contentType,
+  showThumbnailShimmer = false,
+}) {
   const cardFigure = document.createElement('div');
   cardFigure.className = 'premium-learning-card-figure';
 
@@ -83,22 +94,40 @@ function buildPLThumbnail({ thumbnail, title, id, viewLink, copyLink, card, star
     img.alt = title;
     img.width = 254;
     img.height = 153;
+    let clearFigureShimmer = () => {};
+    if (showThumbnailShimmer) {
+      const figureShimmer = document.createElement('div');
+      figureShimmer.className = 'premium-learning-card-figure-shimmer';
+      cardFigure.appendChild(figureShimmer);
+      clearFigureShimmer = () => {
+        setTimeout(() => {
+          figureShimmer.remove();
+        }, 0);
+      };
+    }
 
     // Handle image load states
     const handleImageError = () => {
       card.classList.add('premium-learning-thumbnail-not-loaded');
       img.style.display = 'none';
+      clearFigureShimmer();
     };
 
     const handleImageLoad = () => {
       img.classList.add('img-loaded');
+      clearFigureShimmer();
     };
 
     img.addEventListener('error', handleImageError);
     img.addEventListener('load', handleImageLoad);
 
     if (img.complete) {
-      img.classList.add('img-loaded');
+      if (img.naturalWidth > 0) {
+        img.classList.add('img-loaded');
+        clearFigureShimmer();
+      } else {
+        handleImageError();
+      }
     }
 
     cardFigure.appendChild(img);
@@ -186,7 +215,17 @@ function buildPLMetaInfo(meta) {
  * @public
  */
 export async function buildPLCard(element, model) {
-  const { id, thumbnail, title, contentType, viewLink, copyLink, meta, failedToLoad = false } = model;
+  const {
+    id,
+    thumbnail,
+    title,
+    contentType,
+    viewLink,
+    copyLink,
+    meta,
+    failedToLoad = false,
+    showThumbnailShimmer = false,
+  } = model;
 
   // Normalize URLs
   model.viewLink = lowerCaseSameOriginUrls(viewLink);
@@ -209,6 +248,7 @@ export async function buildPLCard(element, model) {
     startLabel: meta?.startLabel,
     typeLabel: meta?.typeLabel,
     contentType,
+    showThumbnailShimmer,
   });
 
   card.appendChild(cardFigure);
