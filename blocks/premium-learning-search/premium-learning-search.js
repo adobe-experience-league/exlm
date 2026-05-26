@@ -87,6 +87,7 @@ export default async function decorate(block) {
   const ctaWrapper = createTag('div', { class: 'premium-learning-search-block-cta' });
   ctaWrapper.innerHTML = decorateCustomButtons(ctaElement);
   headerCtaSlot.appendChild(ctaWrapper);
+  const originalCTAHref = ctaWrapper.querySelector('a')?.getAttribute('href');
 
   const param = {
     contentType, // Can be string ('premium-learning-course' or 'premium-learning-cohort') or array (['premium-learning-course', 'premium-learning-cohort'])
@@ -139,14 +140,13 @@ export default async function decorate(block) {
 
             const urlString = transformCoveoFacetsToPlSearch(param, body);
             param.searchMode = true;
-            param.searchUrlString = urlString;
             const contentWrapper = block.querySelector('.browse-cards-block-content');
             if (contentWrapper) {
               block.removeChild(contentWrapper);
             }
             buildCardsShimmer.addShimmer(block);
 
-            fetchAndRenderCardsRef(param);
+            fetchAndRenderCardsRef({ ...param, searchUrlString: urlString });
           }
         })
         .catch((err) => {
@@ -295,11 +295,8 @@ export default async function decorate(block) {
 
               // Reset CTA to original href when no results
               const anchor = ctaWrapper.querySelector('a');
-              const href = anchor?.getAttribute('href');
-              if (href) {
-                const url = new URL(href, document.baseURI);
-                url.search = ''; // Clear search params
-                anchor.setAttribute('href', url.toString());
+              if (originalCTAHref) {
+                anchor.setAttribute('href', originalCTAHref);
               }
             }
           })
