@@ -87,8 +87,6 @@ export default async function decorate(block) {
   const ctaWrapper = createTag('div', { class: 'premium-learning-search-block-cta' });
   ctaWrapper.innerHTML = decorateCustomButtons(ctaElement);
   headerCtaSlot.appendChild(ctaWrapper);
-  const originalCTAHref = ctaWrapper.querySelector('a')?.getAttribute('href');
-
   const param = {
     contentType, // Can be string ('premium-learning-course' or 'premium-learning-cohort') or array (['premium-learning-course', 'premium-learning-cohort'])
     noOfResults: FETCH_LIMIT,
@@ -295,8 +293,11 @@ export default async function decorate(block) {
 
               // Reset CTA to original href when no results
               const anchor = ctaWrapper.querySelector('a');
-              if (originalCTAHref) {
-                anchor.setAttribute('href', originalCTAHref);
+              const href = anchor?.getAttribute('href');
+              if (href) {
+                const url = new URL(href, document.baseURI);
+                url.search = '';
+                anchor.setAttribute('href', url.toString());
               }
             }
           })
