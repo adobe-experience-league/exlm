@@ -103,7 +103,7 @@ function buildResponsiveListItems(tabs) {
 function buildEmptyStateMarkup(placeholders) {
   return `
     <div class="browse-card-no-results">
-      ${placeholders.premiumLearningNoResults || 'No premium learning content available currently for your profile.'}
+      ${placeholders.premiumLearningNoResults || 'No Premium Learning content available currently for your profile.'}
     </div>
   `;
 }

@@ -43,7 +43,7 @@ function renderCards(contentDiv, cards) {
 
 function renderNoResultsContent(block, placeholders) {
   const noResultsText =
-    placeholders.premiumLearningNoResults || 'No premium learning content available currently for your profile.';
+    placeholders.premiumLearningNoResults || 'No Premium Learning content available currently for your profile.';
   const noResultsDiv = htmlToElement(`<div class="browse-card-no-results">${noResultsText}</div>`);
   block.appendChild(noResultsDiv);
 }
