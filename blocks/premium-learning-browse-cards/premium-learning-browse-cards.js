@@ -129,7 +129,7 @@ export default async function decorate(block) {
           } else {
             const noResultsText =
               placeholders.premiumLearningNoResults ||
-              'No premium learning content available currently for your profile.';
+              'No Premium Learning content available currently for your profile.';
             const noResultsDiv = htmlToElement(`<div class="browse-card-no-results">${noResultsText}</div>`);
             block.appendChild(noResultsDiv);
           }
