@@ -13,6 +13,7 @@
    ========================================================================== */
 
 .browse-card.premium-learning-browse-card {
+  width: 238px;
   display: flex;
   flex-direction: column;
   background: var(--color-white);
@@ -247,26 +248,31 @@
   background-color: var(--spectrum-gray-200);
 }
 
+.browse-cards-block-content:has(.premium-learning-browse-card) {
+  justify-content: flex-start;
+  min-height: auto;
+}
+
 @media (min-width: 600px) {
   .browse-card.premium-learning-browse-card .premium-learning-card-content {
     padding-top: var(--spectrum-spacing-300);
   }
 }
 
-@media (min-width: 900px) {
+@container browse-cards-block (min-width: 600px) {
   .browse-cards-block-content:has(.premium-learning-browse-card) {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 25px;
-    min-height: auto;
-    margin-bottom: var(--spectrum-spacing-300);
+    grid-template-columns: repeat(2, auto);
   }
+}
 
-  .browse-cards-block-content:has(.premium-learning-browse-card) > div {
-    flex: 0 0 calc((100% - 75px) / 4);
-    max-width: calc((100% - 75px) / 4);
-    box-sizing: border-box;
+@container browse-cards-block (min-width: 820px) {
+  .browse-cards-block-content:has(.premium-learning-browse-card) {
+    grid-template-columns: repeat(3, auto);
+  }
+}
+
+@container browse-cards-block (min-width: 1024px) {
+  .browse-cards-block-content:has(.premium-learning-browse-card) {
+    grid-template-columns: repeat(auto-fit, minmax(200px, auto));
   }
 }
