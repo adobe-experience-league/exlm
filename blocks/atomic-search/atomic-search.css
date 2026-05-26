@@ -25,6 +25,11 @@
   --atomic-search-skeleton-margin-top: 0px;
 }
 
+.atomic-search-premium-search-wrapper {
+  position: relative;
+  min-height: var(--atomic-search-premium-search-height, 0);
+}
+
 .atomic-search > div {
   width: 100%;
   display: flex;
