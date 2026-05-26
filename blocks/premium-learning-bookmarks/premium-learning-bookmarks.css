@@ -10,7 +10,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(318px, 1fr));
   place-items: center;
-  align-items: stretch;
+  align-items: start;
   gap: 16px;
   padding-bottom: 32px;
 }
@@ -68,7 +68,7 @@ body.profile:not(.profile-home-page)
   .premium-learning-bookmarks .premium-learning-bookmarks-content {
     grid-template-columns: repeat(auto-fit, minmax(256px, 1fr));
     place-items: center;
-    align-items: stretch;
+    align-items: start;
   }
 
   .premium-learning-bookmarks-content .premium-learning-bookmarks-card,
