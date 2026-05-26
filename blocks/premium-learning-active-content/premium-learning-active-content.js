@@ -69,7 +69,7 @@ function extractProgressData(cohortData) {
   const rawTotalWeeks = data.attributes?.sections?.length || 0;
 
   // Exclude Week 0 (onboarding) and Quiz Week from displayed duration
-  const totalWeeks = Math.max(0, rawTotalWeeks - 2);
+  const totalWeeks = rawTotalWeeks > 2 ? rawTotalWeeks - 2 : rawTotalWeeks;
 
   const resourceGrades = included.filter((item) => item.type === 'learningObjectResourceGrade');
   const totalModules = resourceGrades.length;
