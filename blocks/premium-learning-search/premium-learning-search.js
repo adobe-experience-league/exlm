@@ -87,6 +87,16 @@ export default async function decorate(block) {
   const ctaWrapper = createTag('div', { class: 'premium-learning-search-block-cta' });
   ctaWrapper.innerHTML = decorateCustomButtons(ctaElement);
   headerCtaSlot.appendChild(ctaWrapper);
+  function updateCTASearch(searchString) {
+    const anchor = ctaWrapper.querySelector('a');
+    const href = anchor?.getAttribute('href');
+    if (href) {
+      const url = new URL(href, document.baseURI);
+      url.search = searchString;
+      anchor.setAttribute('href', url.toString());
+    }
+  }
+
   const param = {
     contentType, // Can be string ('premium-learning-course' or 'premium-learning-cohort') or array (['premium-learning-course', 'premium-learning-cohort'])
     noOfResults: FETCH_LIMIT,
@@ -278,27 +288,12 @@ export default async function decorate(block) {
               }
               block.appendChild(contentDiv);
 
-              // Only update CTA with query params if there are results
               if (params.searchUrlString) {
-                const anchor = ctaWrapper.querySelector('a');
-                const href = anchor?.getAttribute('href');
-                if (href) {
-                  const url = new URL(href, document.baseURI);
-                  url.search = params.searchUrlString;
-                  anchor.setAttribute('href', url.toString());
-                }
+                updateCTASearch(params.searchUrlString);
               }
             } else {
               toggleNoResultsContent(block, true);
-
-              // Reset CTA to original href when no results
-              const anchor = ctaWrapper.querySelector('a');
-              const href = anchor?.getAttribute('href');
-              if (href) {
-                const url = new URL(href, document.baseURI);
-                url.search = '';
-                anchor.setAttribute('href', url.toString());
-              }
+              updateCTASearch('');
             }
           })
           .catch((err) => {
