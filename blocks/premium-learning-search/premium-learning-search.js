@@ -87,15 +87,16 @@ export default async function decorate(block) {
   const ctaWrapper = createTag('div', { class: 'premium-learning-search-block-cta' });
   ctaWrapper.innerHTML = decorateCustomButtons(ctaElement);
   headerCtaSlot.appendChild(ctaWrapper);
-  function updateCTASearch(searchString) {
+  const updateCTASearch = (searchString) => {
     const anchor = ctaWrapper.querySelector('a');
     const href = anchor?.getAttribute('href');
+
     if (href) {
       const url = new URL(href, document.baseURI);
       url.search = searchString;
       anchor.setAttribute('href', url.toString());
     }
-  }
+  };
 
   const param = {
     contentType, // Can be string ('premium-learning-course' or 'premium-learning-cohort') or array (['premium-learning-course', 'premium-learning-cohort'])
