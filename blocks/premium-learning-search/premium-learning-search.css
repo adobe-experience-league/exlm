@@ -121,10 +121,12 @@
 
 atomic-search-layout.no-results:has(.all-facets-hidden)
   .atomic-search-premium-search-wrapper
-  > .premium-learning-search.premium-learning-search-atomic-search {
+  > .premium-learning-search.premium-learning-search-atomic-search:not(
+    :has(.premium-learning-search-no-results:not(.premium-learning-search-hide-content))
+  ) {
   position: absolute;
   left: var(--premium-learning-search-left, 0);
-  top: 58px;
+  top: 0;
   width: 100vw;
   max-width: min(90vw, var(--premium-learning-search-max-width));
   z-index: 1;
@@ -135,6 +137,11 @@ atomic-search-layout.no-results:has(.all-facets-hidden)
   .premium-learning-search.browse-cards-block.premium-learning-search-atomic-search {
     min-height: auto;
     padding-bottom: 80px;
+  }
+
+  .premium-learning-search-wrapper:has(.premium-learning-search.block) .premium-learning-search {
+    margin-top: 6px;
+    margin-left: -6px;
   }
 
   .premium-learning-search-no-results-header {

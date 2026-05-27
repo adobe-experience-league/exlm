@@ -119,12 +119,14 @@ export default async function decorate(block) {
 
   function shouldApplyAbsolutePremiumLayout(wrapper = premiumSearchWrapperRef) {
     const searchLayout = wrapper?.closest('atomic-search-layout');
-    const hasNoResultsChild = !!block.querySelector('.premium-learning-search-no-results');
+    const hasVisibleNoResults = !!block.querySelector(
+      '.premium-learning-search-no-results:not(.premium-learning-search-hide-content)',
+    );
     return (
       !!searchLayout &&
       searchLayout.classList.contains('no-results') &&
       !!searchLayout.querySelector('.all-facets-hidden') &&
-      !hasNoResultsChild
+      !hasVisibleNoResults
     );
   }
 
@@ -337,6 +339,7 @@ export default async function decorate(block) {
             noResultsRoot.classList.add('premium-learning-search-hide-content');
           }
           headerDiv.classList.remove('premium-learning-search-hide-content');
+          schedulePremiumSearchLayoutSync();
         }
       }
 
