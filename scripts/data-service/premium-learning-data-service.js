@@ -800,6 +800,37 @@ export async function fetchBoardPosts(boardId, config) {
 }
 
 /**
+ * Checks if user has any active (non-completed) enrollments by paginating through all pages
+ * @param {Object} config - Config object (from getConfig())
+ * @returns {Promise<boolean>} True if user has active enrollments, false otherwise
+ */
+export async function hasActiveEnrollments(config) {
+  try {
+    let result = await fetchUserEnrollments(config, 'learningProgram', 10, null, 'Active');
+
+    while (result) {
+      const nonCompleted = (result.data || []).filter((enrollment) => enrollment.attributes?.state !== 'COMPLETED');
+
+      if (nonCompleted.length > 0) {
+        return true; // Found at least one active enrollment
+      }
+
+      const nextUrl = result.links?.next;
+      if (!nextUrl) break;
+
+      // eslint-disable-next-line no-await-in-loop
+      result = await fetchNextEnrollmentPage(nextUrl);
+    }
+
+    return false; // No active enrollments found after checking all pages
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error checking active enrollments:', error);
+    return false;
+  }
+}
+
+/**
  * Fetches user badges from Adobe Learning Manager API
  * Returns badges earned by the user, sorted by date achieved
  * @param {string} userId - User ID
