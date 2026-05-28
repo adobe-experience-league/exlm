@@ -1783,7 +1783,11 @@ async function loadPage() {
               const { fetchUserEnrollments } = await import('./data-service/premium-learning-data-service.js');
               const config = getConfig();
               const enrollmentData = await fetchUserEnrollments(config, 'learningProgram', 10);
-              const hasEnrollments = enrollmentData?.data?.length > 0;
+              // Filter out completed enrollments
+              const activeEnrollments = enrollmentData?.data?.filter(
+                (enrollment) => enrollment.attributes?.state !== 'COMPLETED',
+              );
+              const hasEnrollments = activeEnrollments?.length > 0;
 
               const activeContentBlock = document.querySelector('.premium-learning-active-content');
               const suggestedContentBlock = document.querySelector('.premium-learning-suggested-content');
