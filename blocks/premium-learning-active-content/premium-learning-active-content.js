@@ -389,6 +389,14 @@ export default async function decorate(block) {
 
         const enrollmentData = { data: allData, included: allIncluded };
 
+        // If no active enrollments, remove the block
+        if (allData.length === 0) {
+          removeShimmer(block);
+          if (UEAuthorMode) showFallbackContentInUEMode(block);
+          else block.remove();
+          return;
+        }
+
         // Get learning object IDs from active enrollments
         const activeLearningObjectIds = new Set(
           allData.map((enrollment) => enrollment.relationships?.learningObject?.data?.id).filter(Boolean),
