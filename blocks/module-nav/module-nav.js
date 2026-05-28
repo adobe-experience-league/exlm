@@ -28,21 +28,25 @@ const sleep = (ms) =>
     setTimeout(resolve, ms);
   });
 
+async function retryProfileUpdate(profileUpdateAction) {
+  let failure;
+  for (let attempt = 1; attempt <= MODULE_FINISH_MAX_ATTEMPTS; attempt += 1) {
+    if (attempt > 1) {
+      // eslint-disable-next-line no-await-in-loop -- sequential profile PATCH retries
+      await sleep(MODULE_FINISH_RETRY_DELAY_MS);
+    }
+    // eslint-disable-next-line no-await-in-loop
+    failure = await profileUpdateAction().catch((reason) => reason);
+    if (failure === undefined) return;
+  }
+  throw failure;
+}
+
 async function handleFinishModuleWithRetry(submitButton) {
   submitButton?.classList.add('disabled');
 
   try {
-    let failure;
-    for (let attempt = 1; attempt <= MODULE_FINISH_MAX_ATTEMPTS; attempt += 1) {
-      if (attempt > 1) {
-        // eslint-disable-next-line no-await-in-loop -- sequential profile PATCH retries
-        await sleep(MODULE_FINISH_RETRY_DELAY_MS);
-      }
-      // eslint-disable-next-line no-await-in-loop
-      failure = await finishModule().catch((reason) => reason);
-      if (failure === undefined) return;
-    }
-    throw failure;
+    await retryProfileUpdate(finishModule);
   } finally {
     submitButton?.classList.remove('disabled');
   }
@@ -102,7 +106,7 @@ async function handleQuizNextButton(e) {
 
   try {
     if (await isLastModuleOfCourse()) {
-      await completeCourse();
+      await retryProfileUpdate(completeCourse);
       const url = await getCourseCompletionPageUrl();
       if (url) e.target.href = url;
     } else {
