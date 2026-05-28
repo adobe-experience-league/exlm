@@ -1780,23 +1780,18 @@ async function loadPage() {
               // TODO: Guard this fetch behind a check that the PL blocks are actually present
               // in the DOM before firing — avoids an unnecessary API call on profile pages
               // that have no PL content blocks.
-              const { fetchUserEnrollments } = await import('./data-service/premium-learning-data-service.js');
+              const { hasActiveEnrollments } = await import('./data-service/premium-learning-data-service.js');
               const config = getConfig();
-              const enrollmentData = await fetchUserEnrollments(config, 'learningProgram', 10);
-              // Filter out completed enrollments
-              const activeEnrollments = enrollmentData?.data?.filter(
-                (enrollment) => enrollment.attributes?.state !== 'COMPLETED',
-              );
-              const hasEnrollments = activeEnrollments?.length > 0;
+              const hasEnrollments = await hasActiveEnrollments(config);
 
               const activeContentBlock = document.querySelector('.premium-learning-active-content');
               const suggestedContentBlock = document.querySelector('.premium-learning-suggested-content');
 
               if (hasEnrollments) {
-                // User has enrollments - remove suggested content block wrapper
+                // User has active enrollments - remove suggested content block wrapper
                 suggestedContentBlock?.parentElement?.remove();
               } else {
-                // User has no enrollments - remove active content block wrapper
+                // User has no active enrollments - remove active content block wrapper
                 activeContentBlock?.parentElement?.remove();
               }
             }
@@ -1834,12 +1829,6 @@ async function loadPage() {
   // Initialize Premium Learning auth — fully non-blocking, does not delay loadPage().
   if (isFeatureEnabled('isPremiumLearningEnabled')) {
     if (isUEMode) {
-      // getConfig() must be called before the import resolves. In non-UE mode this is
-      // guaranteed by isUserSignedIn() → loadIms() → getConfig(). In UE mode there is
-      // no such gate, so a cached module import can resolve before loadLazy() ever calls
-      // getConfig(), leaving window.exlm.config undefined and causing exchangePLToken to
-      // silently no-op. Calling it here is synchronous and idempotent — no effect on non-UE.
-      getConfig();
       // UE Author Mode: fetch PL token anonymously via ?auth=false (no IMS required).
       import('./utils/premium-learning-utils.js')
         .then(({ initPLAuthAnonymous }) => initPLAuthAnonymous())
