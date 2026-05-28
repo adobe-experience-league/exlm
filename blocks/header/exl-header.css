@@ -116,7 +116,7 @@
   font-weight: initial;
   padding: var(--nav-root-item-padding-x);
   position: relative;
-  top: 2px;
+  top: 1px;
 }
 
 .language-selector-popover {
@@ -373,14 +373,11 @@ button:focus {
   display: var(--sign-in-display);
   order: var(--sign-in-order);
   align-items: center;
-  padding-left: 1em;
-  padding-right: 1em;
+  padding: 0 var(--nav-root-item-padding-x);
 }
 
-@media (min-width: 1024px) {
-  .header .sign-in {
-    padding-left: 0;
-  }
+.header .signed-in {
+  padding: 0;
 }
 
 .header .sign-in a {
@@ -1065,7 +1062,7 @@ button:focus {
   background: none;
   font-weight: initial;
   height: 100%;
-  padding: 0 var(--nav-item-padding-x);
+  padding: 0 var(--nav-root-item-padding-x);
   box-sizing: border-box;
 }
 
