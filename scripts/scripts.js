@@ -1780,23 +1780,18 @@ async function loadPage() {
               // TODO: Guard this fetch behind a check that the PL blocks are actually present
               // in the DOM before firing — avoids an unnecessary API call on profile pages
               // that have no PL content blocks.
-              const { fetchUserEnrollments } = await import('./data-service/premium-learning-data-service.js');
+              const { hasActiveEnrollments } = await import('./data-service/premium-learning-data-service.js');
               const config = getConfig();
-              const enrollmentData = await fetchUserEnrollments(config, 'learningProgram', 10);
-              // Filter out completed enrollments
-              const activeEnrollments = enrollmentData?.data?.filter(
-                (enrollment) => enrollment.attributes?.state !== 'COMPLETED',
-              );
-              const hasEnrollments = activeEnrollments?.length > 0;
+              const hasEnrollments = await hasActiveEnrollments(config);
 
               const activeContentBlock = document.querySelector('.premium-learning-active-content');
               const suggestedContentBlock = document.querySelector('.premium-learning-suggested-content');
 
               if (hasEnrollments) {
-                // User has enrollments - remove suggested content block wrapper
+                // User has active enrollments - remove suggested content block wrapper
                 suggestedContentBlock?.parentElement?.remove();
               } else {
-                // User has no enrollments - remove active content block wrapper
+                // User has no active enrollments - remove active content block wrapper
                 activeContentBlock?.parentElement?.remove();
               }
             }
