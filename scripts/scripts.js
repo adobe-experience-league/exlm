@@ -1834,6 +1834,12 @@ async function loadPage() {
   // Initialize Premium Learning auth — fully non-blocking, does not delay loadPage().
   if (isFeatureEnabled('isPremiumLearningEnabled')) {
     if (isUEMode) {
+      // getConfig() must be called before the import resolves. In non-UE mode this is
+      // guaranteed by isUserSignedIn() → loadIms() → getConfig(). In UE mode there is
+      // no such gate, so a cached module import can resolve before loadLazy() ever calls
+      // getConfig(), leaving window.exlm.config undefined and causing exchangePLToken to
+      // silently no-op. Calling it here is synchronous and idempotent — no effect on non-UE.
+      getConfig();
       // UE Author Mode: fetch PL token anonymously via ?auth=false (no IMS required).
       import('./utils/premium-learning-utils.js')
         .then(({ initPLAuthAnonymous }) => initPLAuthAnonymous())
