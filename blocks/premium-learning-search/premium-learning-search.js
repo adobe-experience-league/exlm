@@ -72,6 +72,9 @@ export default async function decorate(block) {
   // Clearing the block's content
   block.innerHTML = '';
   block.classList.add('browse-cards-block', 'premium-learning-search-block');
+  if (!UEAuthorMode) {
+    block.classList.add('premium-learning-search-hide-content');
+  }
 
   // Create header section with heading and CTA
   const headerDiv = document.createElement('div');
@@ -205,7 +208,9 @@ export default async function decorate(block) {
           const { body, method = '' } = e.detail;
           if (method === 'search' && body !== undefined) {
             const newQuery = (body?.q ?? '').trim();
-            attachToAtomicSearchWrapper(document);
+            setTimeout(() => {
+              attachToAtomicSearchWrapper(document);
+            }, 0);
 
             if (lastSearchQuery === newQuery) {
               return;
@@ -257,7 +262,12 @@ export default async function decorate(block) {
   // Non-blocking eligibility check — shimmer stays visible until resolved.
   // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
   isSignedInUser()
-    .then((signedIn) => isPLEligible(signedIn))
+    .then((signedIn) => {
+      if (signedIn) {
+        block.classList.remove('premium-learning-search-hide-content');
+      }
+      return isPLEligible(signedIn);
+    })
     .then((isEligibleResult) => {
       if (!isEligibleResult) {
         resolveEligibility(false);
