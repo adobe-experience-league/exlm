@@ -806,19 +806,11 @@ export async function fetchBoardPosts(boardId, config) {
  */
 export async function hasActiveEnrollments(config) {
   try {
-    let result = await fetchUserEnrollments(
-      config,
-      'learningProgram',
-      10,
-      null,
-      'Active',
-    );
+    let result = await fetchUserEnrollments(config, 'learningProgram', 10, null, 'Active');
 
     while (result) {
-      const nonCompleted = (result.data || []).filter(
-        (enrollment) => enrollment.attributes?.state !== 'COMPLETED',
-      );
-      
+      const nonCompleted = (result.data || []).filter((enrollment) => enrollment.attributes?.state !== 'COMPLETED');
+
       if (nonCompleted.length > 0) {
         return true; // Found at least one active enrollment
       }
