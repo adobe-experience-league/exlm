@@ -11,10 +11,9 @@ import BrowseCardsPLAdaptor from '../../scripts/browse-card/browse-cards-premium
 
 const bookmarksEventEmitter = getEmitter('pl-bookmarks');
 
-const UEAuthorMode = window.hlx?.aemRoot || window.location.href.includes('.html');
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 
 function showFallbackContentInUEMode(blockElement) {
-  blockElement.querySelector('.premium-learning-bookmarks-content')?.remove();
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
   contentDiv.textContent = 'This block will load the Premium Learning Bookmarks for Premium users only.';
   blockElement.appendChild(contentDiv);
@@ -192,6 +191,12 @@ async function renderCards(block, cardModels) {
  * @param {HTMLElement} block - The block element to decorate
  */
 export default async function decorate(block) {
+  // In UE Author Mode, skip shimmer and eligibility check — show fallback immediately.
+  if (UEAuthorMode) {
+    showFallbackContentInUEMode(block);
+    return;
+  }
+
   // Fetch placeholders for pagination text
   let placeholders = {};
   try {
@@ -216,12 +221,6 @@ export default async function decorate(block) {
   `);
 
   block.appendChild(content);
-
-  // In UE Author Mode, skip shimmer and eligibility check — show fallback immediately.
-  if (UEAuthorMode) {
-    showFallbackContentInUEMode(block);
-    return;
-  }
 
   // Show shimmer immediately while eligibility resolves.
   renderCards(block, []).catch(() => {});
