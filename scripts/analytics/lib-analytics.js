@@ -277,7 +277,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
   const webDetails = {
     webPageDetails: {
       URL: window.location.href,
-      cleanURL: window.location.href.replace(/^https?:\/\//, '').replace(/#.*$/, ''),
+      cleanURL: window.location.href.replace(/^https?:\/\//, '').replace(/[?#].*$/, ''),
       domain: window.location.host,
       docrole: role,
       doctype: docType,
