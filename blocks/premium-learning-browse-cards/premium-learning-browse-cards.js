@@ -1,5 +1,5 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { createTag, fetchLanguagePlaceholders, htmlToElement, getv2TagLabels } from '../../scripts/scripts.js';
+import { createTag, getv2TagLabels } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
@@ -77,8 +77,6 @@ export default async function decorate(block) {
     ...(products?.length > 0 && { products }),
   };
 
-  const placeholders = await fetchLanguagePlaceholders().catch(() => ({}));
-
   // Non-blocking eligibility check — shimmer stays visible until resolved.
   // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
   isSignedInUser()
@@ -127,11 +125,7 @@ export default async function decorate(block) {
               viewMoreAnchor.classList.toggle('hidden', sortedData.length <= DISPLAY_LIMIT);
             }
           } else {
-            const noResultsText =
-              placeholders.premiumLearningNoResults ||
-              'No Premium Learning content available currently for your profile.';
-            const noResultsDiv = htmlToElement(`<div class="browse-card-no-results">${noResultsText}</div>`);
-            block.appendChild(noResultsDiv);
+            block.remove();
           }
         })
         .catch((err) => {
