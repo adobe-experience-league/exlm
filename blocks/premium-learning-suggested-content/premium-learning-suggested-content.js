@@ -4,7 +4,7 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
-import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
+import { isPLEligible, removeBlockAndEmptySection } from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 
@@ -214,14 +214,7 @@ export default async function decorate(block) {
       if (!isEligible) {
         shimmer.removeShimmer();
         if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else {
-          const parentSection = block.closest('.section');
-          block.remove();
-          // Check if section is empty after removing block
-          if (parentSection && !parentSection.querySelector('.block')) {
-            parentSection.remove();
-          }
-        }
+        else removeBlockAndEmptySection(block);
         return;
       }
 
@@ -230,24 +223,14 @@ export default async function decorate(block) {
         shimmer.removeShimmer();
 
         if (!suggestedContentItems?.length) {
-          const parentSection = block.closest('.section');
-          block.remove();
-          // Check if section is empty after removing block
-          if (parentSection && !parentSection.querySelector('.block')) {
-            parentSection.remove();
-          }
+          removeBlockAndEmptySection(block);
           return;
         }
 
         const tabs = getTabDefinitions(suggestedContentItems, placeholders);
 
         if (!tabs.length) {
-          const parentSection = block.closest('.section');
-          block.remove();
-          // Check if section is empty after removing block
-          if (parentSection && !parentSection.querySelector('.block')) {
-            parentSection.remove();
-          }
+          removeBlockAndEmptySection(block);
           return;
         }
 
@@ -270,14 +253,7 @@ export default async function decorate(block) {
       } catch (err) {
         shimmer.removeShimmer();
         if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else {
-          const parentSection = block.closest('.section');
-          block.remove();
-          // Check if section is empty after removing block
-          if (parentSection && !parentSection.querySelector('.block')) {
-            parentSection.remove();
-          }
-        }
+        else removeBlockAndEmptySection(block);
         // eslint-disable-next-line no-console
         console.error('Error fetching PL suggested content:', err);
       }
@@ -285,14 +261,7 @@ export default async function decorate(block) {
     .catch((err) => {
       shimmer.removeShimmer();
       if (UEAuthorMode) showFallbackContentInUEMode(block);
-      else {
-        const parentSection = block.closest('.section');
-        block.remove();
-        // Check if section is empty after removing block
-        if (parentSection && !parentSection.querySelector('.block')) {
-          parentSection.remove();
-        }
-      }
+      else removeBlockAndEmptySection(block);
       // eslint-disable-next-line no-console
       console.error('Error resolving PL eligibility for suggested content:', err);
     });

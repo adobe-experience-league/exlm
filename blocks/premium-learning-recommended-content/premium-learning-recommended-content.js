@@ -2,7 +2,11 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { createTag, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
-import { getPLAccessToken, isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
+import {
+  getPLAccessToken,
+  isPLEligible,
+  removeBlockAndEmptySection,
+} from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { getCookie } from '../../scripts/utils/cookie-utils.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
@@ -132,14 +136,7 @@ export default async function decorate(block) {
       if (!isEligible) {
         shimmer.removeShimmer();
         if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else {
-          const parentSection = block.closest('.section');
-          block.remove();
-          // Check if section is empty after removing block
-          if (parentSection && !parentSection.querySelector('.block')) {
-            parentSection.remove();
-          }
-        }
+        else removeBlockAndEmptySection(block);
         return;
       }
 
@@ -159,12 +156,7 @@ export default async function decorate(block) {
         shimmer.removeShimmer();
 
         if (!allCards.length) {
-          const parentSection = block.closest('.section');
-          block.remove();
-          // Check if section is empty after removing block
-          if (parentSection && !parentSection.querySelector('.block')) {
-            parentSection.remove();
-          }
+          removeBlockAndEmptySection(block);
           return;
         }
 
@@ -176,27 +168,13 @@ export default async function decorate(block) {
         /* eslint-disable-next-line no-console */
         console.error('Error fetching PL recommended content:', err);
         if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else {
-          const parentSection = block.closest('.section');
-          block.remove();
-          // Check if section is empty after removing block
-          if (parentSection && !parentSection.querySelector('.block')) {
-            parentSection.remove();
-          }
-        }
+        else removeBlockAndEmptySection(block);
       }
     })
     .catch((err) => {
       shimmer.removeShimmer();
       if (UEAuthorMode) showFallbackContentInUEMode(block);
-      else {
-        const parentSection = block.closest('.section');
-        block.remove();
-        // Check if section is empty after removing block
-        if (parentSection && !parentSection.querySelector('.block')) {
-          parentSection.remove();
-        }
-      }
+      else removeBlockAndEmptySection(block);
       /* eslint-disable-next-line no-console */
       console.error('Error resolving PL eligibility for recommended content:', err);
     });

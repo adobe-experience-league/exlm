@@ -2,7 +2,7 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { createTag, getv2TagLabels } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
+import { isPLEligible, removeBlockAndEmptySection } from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
@@ -85,14 +85,7 @@ export default async function decorate(block) {
       if (!isEligible) {
         buildCardsShimmer.removeShimmer();
         if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else {
-          const parentSection = block.closest('.section');
-          block.remove();
-          // Check if section is empty after removing block
-          if (parentSection && !parentSection.querySelector('.block')) {
-            parentSection.remove();
-          }
-        }
+        else removeBlockAndEmptySection(block);
         return;
       }
 
@@ -132,25 +125,13 @@ export default async function decorate(block) {
               viewMoreAnchor.classList.toggle('hidden', sortedData.length <= DISPLAY_LIMIT);
             }
           } else {
-            const parentSection = block.closest('.section');
-            block.remove();
-            // Check if section is empty after removing block
-            if (parentSection && !parentSection.querySelector('.block')) {
-              parentSection.remove();
-            }
+            removeBlockAndEmptySection(block);
           }
         })
         .catch((err) => {
           buildCardsShimmer.removeShimmer();
           if (UEAuthorMode) showFallbackContentInUEMode(block);
-          else {
-            const parentSection = block.closest('.section');
-            block.remove();
-            // Check if section is empty after removing block
-            if (parentSection && !parentSection.querySelector('.block')) {
-              parentSection.remove();
-            }
-          }
+          else removeBlockAndEmptySection(block);
           /* eslint-disable-next-line no-console */
           console.error('Error fetching PL browse card data:', err);
         });
@@ -158,14 +139,7 @@ export default async function decorate(block) {
     .catch((err) => {
       buildCardsShimmer.removeShimmer();
       if (UEAuthorMode) showFallbackContentInUEMode(block);
-      else {
-        const parentSection = block.closest('.section');
-        block.remove();
-        // Check if section is empty after removing block
-        if (parentSection && !parentSection.querySelector('.block')) {
-          parentSection.remove();
-        }
-      }
+      else removeBlockAndEmptySection(block);
       /* eslint-disable-next-line no-console */
       console.error('Error resolving PL eligibility for browse cards:', err);
     });
