@@ -100,6 +100,9 @@ function createLayout(block, placeholders) {
           placeholders.eventSearchKeywordAriaLabel || placeholders.eventSearchKeywordPlaceholder || 'Search events'
         }" />
       </div>
+      <div class="events-search-active-filters" role="group" aria-label="${
+        placeholders.eventSearchActiveFiltersAriaLabel || 'Active filters'
+      }"></div>
       <div class="events-search-meta-row">
         <div
           class="events-search-results-count"
@@ -623,6 +626,65 @@ function toggleFacetSelection(filterType, value, isChecked) {
   });
 }
 
+function renderActiveFilterCallouts(block) {
+  const container = block.querySelector('.events-search-active-filters');
+  if (!container) return;
+
+  container.innerHTML = '';
+  const checkedBoxes = block.querySelectorAll('.events-search-filter-option input[type="checkbox"]:checked');
+
+  if (!checkedBoxes.length) {
+    container.hidden = true;
+    return;
+  }
+
+  checkedBoxes.forEach((checkbox) => {
+    const label = checkbox.getAttribute('data-label') || checkbox.value;
+    const groupEl = checkbox.closest('.events-search-filter-group');
+    const filterType = groupEl?.dataset.filterType;
+
+    const callout = createTag('span', { class: 'events-search-active-filter-tag' });
+    const calloutLabel = createTag('span', { class: 'events-search-active-filter-tag-label' });
+    calloutLabel.textContent = label;
+
+    const calloutRemove = createTag('span', {
+      class: 'icon icon-close-events events-search-active-filter-tag-remove',
+      role: 'button',
+      tabindex: '0',
+      'aria-label': `Remove filter: ${label}`,
+    });
+
+    const handleRemove = () => {
+      checkbox.checked = false;
+      toggleFacetSelection(filterType, checkbox.value, false);
+      if (groupEl) {
+        const newCount = groupEl.querySelectorAll('input[type="checkbox"]:checked').length;
+        updateGroupSelectionCount(block, filterType, newCount);
+      }
+      if (window.headlessPager) {
+        window.headlessPager.selectPage(1);
+      }
+      executeSearch();
+      renderActiveFilterCallouts(block);
+      updateClearFiltersButtonState(block);
+    };
+
+    calloutRemove.addEventListener('click', handleRemove);
+    calloutRemove.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleRemove();
+      }
+    });
+
+    callout.append(calloutLabel, calloutRemove);
+    container.append(callout);
+    decorateIcons(callout);
+  });
+
+  container.hidden = false;
+}
+
 function updateResultsCount(block, totalCount = 0, placeholders = {}) {
   const countEl = block.querySelector('.events-search-results-count');
   if (!countEl) return;
@@ -696,6 +758,7 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
     const search = window.headlessSearchEngine.state.search || {};
     const { results = [], searchResponseId = '', response = {} } = search;
     updateResultsCount(block, response.totalCount || 0, placeholders);
+    renderActiveFilterCallouts(block);
     await renderResults(block, results, searchResponseId);
   } catch (err) {
     // Coveo invokes this subscriber without awaiting; uncaught rejections from renderResults/buildCard would be unhandled.
@@ -759,6 +822,7 @@ function bindFilterInteractions(block, groups, placeholders) {
       window.headlessPager.selectPage(1);
     }
     executeSearch();
+    renderActiveFilterCallouts(block);
     updateClearFiltersButtonState(block);
   });
 }
@@ -832,6 +896,7 @@ function bindClearFilters(block, groups) {
     if (window.location.hash === hashBeforeClear) {
       executeSearch();
     }
+    renderActiveFilterCallouts(block);
     updateClearFiltersButtonState(block);
   });
 }
