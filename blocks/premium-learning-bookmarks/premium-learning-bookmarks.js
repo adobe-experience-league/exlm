@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { htmlToElement, fetchLanguagePlaceholders, createTag } from '../../scripts/scripts.js';
 import { buildPLCard } from '../../scripts/browse-card/browse-cards-premium-learning.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
@@ -10,6 +10,14 @@ import PL_CONTENT_TYPES from '../../scripts/data-service/premium-learning/premiu
 import BrowseCardsPLAdaptor from '../../scripts/browse-card/browse-cards-premium-learning-adaptor.js';
 
 const bookmarksEventEmitter = getEmitter('pl-bookmarks');
+
+const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
+
+function showFallbackContentInUEMode(blockElement) {
+  const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
+  contentDiv.textContent = 'This block will load the Premium Learning Bookmarks for Premium users only.';
+  blockElement.appendChild(contentDiv);
+}
 
 const SHIMMER_COUNT = 4;
 const BATCH_SIZE = 6;
@@ -183,6 +191,12 @@ async function renderCards(block, cardModels) {
  * @param {HTMLElement} block - The block element to decorate
  */
 export default async function decorate(block) {
+  // In UE Author Mode, skip shimmer and eligibility check — show fallback immediately.
+  if (UEAuthorMode) {
+    showFallbackContentInUEMode(block);
+    return;
+  }
+
   // Fetch placeholders for pagination text
   let placeholders = {};
   try {
