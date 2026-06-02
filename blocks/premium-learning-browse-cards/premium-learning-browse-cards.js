@@ -85,7 +85,14 @@ export default async function decorate(block) {
       if (!isEligible) {
         buildCardsShimmer.removeShimmer();
         if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else block.remove();
+        else {
+          const parentSection = block.closest('.section');
+          block.remove();
+          // Check if section is empty after removing block
+          if (parentSection && !parentSection.querySelector('.block')) {
+            parentSection.remove();
+          }
+        }
         return;
       }
 
@@ -125,13 +132,25 @@ export default async function decorate(block) {
               viewMoreAnchor.classList.toggle('hidden', sortedData.length <= DISPLAY_LIMIT);
             }
           } else {
+            const parentSection = block.closest('.section');
             block.remove();
+            // Check if section is empty after removing block
+            if (parentSection && !parentSection.querySelector('.block')) {
+              parentSection.remove();
+            }
           }
         })
         .catch((err) => {
           buildCardsShimmer.removeShimmer();
           if (UEAuthorMode) showFallbackContentInUEMode(block);
-          else block.remove();
+          else {
+            const parentSection = block.closest('.section');
+            block.remove();
+            // Check if section is empty after removing block
+            if (parentSection && !parentSection.querySelector('.block')) {
+              parentSection.remove();
+            }
+          }
           /* eslint-disable-next-line no-console */
           console.error('Error fetching PL browse card data:', err);
         });
@@ -139,7 +158,14 @@ export default async function decorate(block) {
     .catch((err) => {
       buildCardsShimmer.removeShimmer();
       if (UEAuthorMode) showFallbackContentInUEMode(block);
-      else block.remove();
+      else {
+        const parentSection = block.closest('.section');
+        block.remove();
+        // Check if section is empty after removing block
+        if (parentSection && !parentSection.querySelector('.block')) {
+          parentSection.remove();
+        }
+      }
       /* eslint-disable-next-line no-console */
       console.error('Error resolving PL eligibility for browse cards:', err);
     });
