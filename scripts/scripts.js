@@ -788,6 +788,7 @@ export function getConfig() {
     ['de-DE', 'de'],
     ['es-ES', 'es'],
     ['fr-FR', 'fr'],
+    ['it-IT', 'it'],
     ['ja-JP', 'ja'],
     ['pt-PT', 'pt'],
     ['ko-KR', 'ko'],
