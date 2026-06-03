@@ -638,10 +638,17 @@ function renderActiveFilterCallouts(block) {
   const unchanged = currentValues.length === newValues.length && currentValues.every((v, i) => v === newValues[i]);
   if (unchanged) return;
 
+  // Save focused callout value before teardown so focus can be restored after rebuild.
+  const focusedTag = container.querySelector('.events-search-active-filter-tag-remove:focus');
+  const focusedValue = focusedTag?.closest('.events-search-active-filter-tag')?.dataset.value ?? null;
+
   container.innerHTML = '';
 
   if (!checkedBoxes.length) {
     container.hidden = true;
+    if (focusedValue) {
+      block.querySelector('.events-search-keyword-input')?.focus();
+    }
     return;
   }
 
@@ -654,12 +661,13 @@ function renderActiveFilterCallouts(block) {
     const calloutLabel = createTag('span', { class: 'events-search-active-filter-tag-label' });
     calloutLabel.textContent = label;
 
-    const calloutRemove = createTag('span', {
-      class: 'icon icon-close-events events-search-active-filter-tag-remove',
-      role: 'button',
-      tabindex: '0',
+    const calloutRemove = createTag('button', {
+      class: 'events-search-active-filter-tag-remove',
+      type: 'button',
       'aria-label': `Remove filter: ${label}`,
     });
+    const calloutRemoveIcon = createTag('span', { class: 'icon icon-close-events', 'aria-hidden': 'true' });
+    calloutRemove.append(calloutRemoveIcon);
 
     const handleRemove = () => {
       checkbox.checked = false;
@@ -677,19 +685,21 @@ function renderActiveFilterCallouts(block) {
     };
 
     calloutRemove.addEventListener('click', handleRemove);
-    calloutRemove.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        handleRemove();
-      }
-    });
 
     callout.append(calloutLabel, calloutRemove);
     container.append(callout);
-    decorateIcons(callout);
   });
 
+  decorateIcons(container);
   container.hidden = false;
+
+  // Restore focus to the next available × button, or the search input if none remain.
+  if (focusedValue) {
+    const nextFocus =
+      container.querySelector('.events-search-active-filter-tag-remove') ??
+      block.querySelector('.events-search-keyword-input');
+    nextFocus?.focus();
+  }
 }
 
 function updateResultsCount(block, totalCount = 0, placeholders = {}) {

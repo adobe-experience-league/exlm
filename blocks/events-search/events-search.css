@@ -533,8 +533,12 @@ main .events-search .events-search-active-filter-tag-remove {
   justify-content: center;
   width: 10px;
   height: 10px;
+  line-height: 0;
   cursor: pointer;
-  margin-top: 3px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  margin: 3px 0 0;
 }
 
 main .events-search .events-search-no-results:not([hidden]) {
