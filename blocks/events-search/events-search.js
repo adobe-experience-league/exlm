@@ -630,8 +630,15 @@ function renderActiveFilterCallouts(block) {
   const container = block.querySelector('.events-search-active-filters');
   if (!container) return;
 
-  container.innerHTML = '';
   const checkedBoxes = block.querySelectorAll('.events-search-filter-option input[type="checkbox"]:checked');
+
+  // Skip full DOM teardown if the set of selected values hasn't changed.
+  const currentValues = [...container.querySelectorAll('.events-search-active-filter-tag')].map((t) => t.dataset.value);
+  const newValues = [...checkedBoxes].map((cb) => cb.value);
+  const unchanged = currentValues.length === newValues.length && currentValues.every((v, i) => v === newValues[i]);
+  if (unchanged) return;
+
+  container.innerHTML = '';
 
   if (!checkedBoxes.length) {
     container.hidden = true;
@@ -643,7 +650,7 @@ function renderActiveFilterCallouts(block) {
     const groupEl = checkbox.closest('.events-search-filter-group');
     const filterType = groupEl?.dataset.filterType;
 
-    const callout = createTag('span', { class: 'events-search-active-filter-tag' });
+    const callout = createTag('span', { class: 'events-search-active-filter-tag', 'data-value': checkbox.value });
     const calloutLabel = createTag('span', { class: 'events-search-active-filter-tag-label' });
     calloutLabel.textContent = label;
 
