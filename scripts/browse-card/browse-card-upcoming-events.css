@@ -21,10 +21,22 @@
     flex: 0 0 45%;
   }
 
+  /* Specific styles for fallback images only */
+  .browse-card.upcoming-event-card .browse-card-figure.has-fallback-image img,
+  .browse-card.event-upcoming-event-card .browse-card-figure.has-fallback-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-bottom: none;
+    margin-top: 0;
+  }
+
   .browse-card.upcoming-event-card .browse-card-banner,
   .browse-card.event-upcoming-event-card .browse-card-banner {
     background-color: var(--non-spectrum-adobe-red) !important;
     letter-spacing: 0.2px;
+    z-index: 10;
   }
 
   .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers,

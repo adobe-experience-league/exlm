@@ -64,6 +64,8 @@ export const decorateOnDemandEvents = (card, model) => {
 
   cardFigure.querySelector('.laptop-container')?.remove();
   const img = cardFigure.querySelector('img');
+  const hasSeries = event?.series;
+
   img?.remove();
 
   cardFigure.querySelector('.play-button')?.remove();
@@ -73,6 +75,24 @@ export const decorateOnDemandEvents = (card, model) => {
   });
 
   cardFigure.querySelector('.event-series-banner')?.remove();
+
+  // If no series title, show fallback Adobe A image (light themed)
+  if (!hasSeries) {
+    cardFigure.classList.add('has-fallback-image');
+
+    const fallbackImg = document.createElement('img');
+    fallbackImg.loading = 'lazy';
+    fallbackImg.alt = '';
+    fallbackImg.src = '/images/Event-Thumbnail-A-Light.jpg';
+    if (fallbackImg.complete) {
+      fallbackImg.classList.add('img-loaded');
+    } else {
+      fallbackImg.addEventListener('load', () => fallbackImg.classList.add('img-loaded'));
+      fallbackImg.addEventListener('error', () => fallbackImg.classList.add('img-loaded'));
+    }
+
+    cardFigure.appendChild(fallbackImg);
+  }
 
   if (event?.time) {
     buildOnDemandEventContent({
