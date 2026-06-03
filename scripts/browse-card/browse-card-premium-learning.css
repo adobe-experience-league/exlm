@@ -189,11 +189,17 @@
 
 .browse-card.premium-learning-browse-card .premium-learning-card-title {
   margin: 0;
-  font-size: var(--spectrum-font-size-400);
+  font-size: var(--spectrum-font-size-200);
   font-weight: 700;
   line-height: 1.3;
   color: var(--color-gray-900);
   text-align: left;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-height: calc(2 * 1.3em);
 }
 
 /* ==========================================================================
