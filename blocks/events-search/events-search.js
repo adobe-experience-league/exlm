@@ -659,13 +659,11 @@ function renderActiveFilterCallouts(block) {
   checkedBoxes.forEach((checkbox) => {
     const label = checkbox.getAttribute('data-label') || checkbox.value;
     const groupEl = checkbox.closest('.events-search-filter-group');
-    const filterType = groupEl?.dataset.filterType;
-
-    const ft = groupEl?.dataset.filterType ?? '';
+    const filterType = groupEl?.dataset.filterType ?? '';
     const callout = createTag('span', {
       class: 'events-search-active-filter-tag',
       'data-value': checkbox.value,
-      'data-key': `${ft}:${checkbox.value}`,
+      'data-key': `${filterType}:${checkbox.value}`,
     });
     const calloutLabel = createTag('span', { class: 'events-search-active-filter-tag-label' });
     calloutLabel.textContent = label;
@@ -693,7 +691,7 @@ function renderActiveFilterCallouts(block) {
       updateClearFiltersButtonState(block);
     };
 
-    calloutRemove.addEventListener('click', handleRemove);
+    calloutRemove.addEventListener('click', handleRemove, { once: true });
 
     callout.append(calloutLabel, calloutRemove);
     container.append(callout);
