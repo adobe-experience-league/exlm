@@ -38,6 +38,7 @@ export const decorateUpcomingEvents = (card, model) => {
       fallbackImg.classList.add('img-loaded');
     } else {
       fallbackImg.addEventListener('load', () => fallbackImg.classList.add('img-loaded'));
+      fallbackImg.addEventListener('error', () => fallbackImg.classList.add('img-loaded'));
     }
 
     cardFigure.appendChild(fallbackImg);
