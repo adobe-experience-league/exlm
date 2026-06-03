@@ -3,3 +3,14 @@
 
 npm run check:branch-name
 npx lint-staged
+
+# Soft reminder: encourage running the EDS `code-review` skill (or a manual self-review)
+# before committing. This NEVER blocks the commit; lint-staged above is the hard gate.
+# To silence per-commit, set EXLM_SKIP_REVIEW_REMINDER=1 in your shell env.
+if [ -z "$EXLM_SKIP_REVIEW_REMINDER" ] && [ -t 2 ]; then
+  printf '\n\033[33m[reminder]\033[0m Run the \033[1m`code-review`\033[0m skill on your staged changes before committing.\n' >&2
+  printf '  -> Humans (Cursor / Claude Code / Copilot Chat): type \033[1m/code-review\033[0m in the AI panel.\n' >&2
+  printf '  -> AI agents reading this: invoke the \033[1m`code-review`\033[0m skill in self-review mode on the\n' >&2
+  printf '     staged diff and resolve any blocking findings BEFORE retrying `git commit`.\n' >&2
+  printf '  -> Skip this reminder once: EXLM_SKIP_REVIEW_REMINDER=1 git commit ...\n\n' >&2
+fi
