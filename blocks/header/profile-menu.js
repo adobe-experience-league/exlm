@@ -14,7 +14,7 @@ const communityLocalesMap = new Map([
   ['ko', 'ko'],
   ['sv', 'en'],
   ['nl', 'en'],
-  ['it', 'en'],
+  ['it', 'it'],
   ['zh-hans', 'zh'],
   ['zh-hant', 'zh'],
 ]);

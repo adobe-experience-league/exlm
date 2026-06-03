@@ -767,7 +767,7 @@ export function getConfig() {
     ['ja', 'ja'],
     ['ko', 'ko'],
     ['en', 'en'],
-    ['it', 'en'],
+    ['it', 'it'],
   ]);
 
   const adobeAccountLangsMap = new Map([
@@ -788,6 +788,7 @@ export function getConfig() {
     ['de-DE', 'de'],
     ['es-ES', 'es'],
     ['fr-FR', 'fr'],
+    ['it-IT', 'it'],
     ['ja-JP', 'ja'],
     ['pt-PT', 'pt'],
     ['ko-KR', 'ko'],

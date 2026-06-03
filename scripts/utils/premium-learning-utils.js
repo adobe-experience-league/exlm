@@ -176,3 +176,16 @@ export async function applyPLSectionGating(signedIn = null, timeoutMs = PL_ELIGI
   if (!isEligible) document.querySelectorAll('.premium-learning-section').forEach((s) => s.remove());
   return isEligible;
 }
+
+/**
+ * Removes a block and its parent section if the section becomes empty.
+ * @param {HTMLElement} block - The block element to remove
+ */
+export function removeBlockAndEmptySection(block) {
+  const parentSection = block.closest('.section');
+  block.remove();
+  // Check if section is empty after removing block
+  if (parentSection && !parentSection.querySelector('.block')) {
+    parentSection.remove();
+  }
+}

@@ -2,9 +2,9 @@ import PL_CONTENT_TYPES from '../../scripts/data-service/premium-learning/premiu
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
-import { createTag, fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
+import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
-import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
+import { isPLEligible, removeBlockAndEmptySection } from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 
@@ -100,18 +100,8 @@ function buildResponsiveListItems(tabs) {
   }));
 }
 
-function buildEmptyStateMarkup(placeholders) {
-  return `
-    <div class="browse-card-no-results">
-      ${placeholders.premiumLearningNoResults || 'No Premium Learning content available currently for your profile.'}
-    </div>
-  `;
-}
-
 function clearRenderedContent(container) {
-  container
-    .querySelectorAll('.premium-learning-suggested-content-panel, .browse-card-no-results')
-    .forEach((element) => element.remove());
+  container.querySelectorAll('.premium-learning-suggested-content-panel').forEach((element) => element.remove());
 }
 
 function createContentPanel() {
@@ -121,11 +111,6 @@ function createContentPanel() {
   });
   panel.appendChild(contentDiv);
   return { panel, contentDiv };
-}
-
-function renderEmptyState(container, placeholders) {
-  clearRenderedContent(container);
-  container.appendChild(htmlToElement(buildEmptyStateMarkup(placeholders)));
 }
 
 async function renderContentItems(suggestedContentItems, contentDiv) {
@@ -229,7 +214,7 @@ export default async function decorate(block) {
       if (!isEligible) {
         shimmer.removeShimmer();
         if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else block.remove();
+        else removeBlockAndEmptySection(block);
         return;
       }
 
@@ -238,14 +223,14 @@ export default async function decorate(block) {
         shimmer.removeShimmer();
 
         if (!suggestedContentItems?.length) {
-          renderEmptyState(contentContainer, placeholders);
+          removeBlockAndEmptySection(block);
           return;
         }
 
         const tabs = getTabDefinitions(suggestedContentItems, placeholders);
 
         if (!tabs.length) {
-          renderEmptyState(contentContainer, placeholders);
+          removeBlockAndEmptySection(block);
           return;
         }
 
@@ -268,7 +253,7 @@ export default async function decorate(block) {
       } catch (err) {
         shimmer.removeShimmer();
         if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else renderEmptyState(contentContainer, placeholders);
+        else removeBlockAndEmptySection(block);
         // eslint-disable-next-line no-console
         console.error('Error fetching PL suggested content:', err);
       }
@@ -276,7 +261,7 @@ export default async function decorate(block) {
     .catch((err) => {
       shimmer.removeShimmer();
       if (UEAuthorMode) showFallbackContentInUEMode(block);
-      else block.remove();
+      else removeBlockAndEmptySection(block);
       // eslint-disable-next-line no-console
       console.error('Error resolving PL eligibility for suggested content:', err);
     });
