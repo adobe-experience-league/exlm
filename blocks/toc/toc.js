@@ -27,7 +27,7 @@ async function fetchV1Toc(tocID) {
 }
 
 async function fetchV2Toc(tocID) {
-  const { lang = 'en' } = getPathDetails() || {};
+  const { lang } = getPathDetails();
   const tocPath = `/${lang}/toc/${tocID}.plain.html`;
   try {
     const response = await fetch(tocPath);
