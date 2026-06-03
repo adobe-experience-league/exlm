@@ -104,6 +104,17 @@ Progressive loading follows the same **eager / lazy / delayed** model as standar
 - If you change **`paths.yaml`**, update **`paths.json`** to match (or vice versa)—`validate-paths.js` enforces parity.
 - For previews, use `curl` against the local dev server or published preview URLs; see [Keeping it 100](https://www.aem.live/developer/keeping-it-100) for performance expectations.
 
+### Self-review before commit
+
+Before running `git add` / `git commit`, **run the `code-review` skill on your staged changes**. This applies to everyone — AI agents and humans driving an AI assistant.
+
+- **How to run it**: in Cursor / Claude Code / Copilot Chat, type `/code-review` in the AI panel. The skill operates in **self-review mode** on uncommitted changes in the working directory and checks lint compliance, EDS patterns, performance, accessibility, secrets, CSS scoping, and `eslint-disable` justifications.
+- **Prerequisite**: the skill ships with this repo via `skills-lock.json` — run `npx skills experimental_install` once after cloning to install it.
+- **AI agents (Cursor, Claude Code, Copilot, etc.)**: do not run `git commit` without first invoking `/code-review` on the staged diff and resolving any blocking findings.
+- **Manual fallback** (no AI tool available): review `git diff --staged` for the common issues called out under _Code style_ — debug `console.*`, unscoped CSS selectors, `!important` without justification, hardcoded config, secrets, CSS-in-JS, and changes to `scripts/lib-franklin.js`.
+
+This is a **soft** convention — the husky `pre-commit` hook only prints a reminder and never blocks. Hard enforcement remains `lint-staged` + `npm run quality` in CI.
+
 ## Pull requests
 
 - Include the **Jira issue** and **test URLs** as described in [.github/pull_request_template.md](.github/pull_request_template.md). Prefix paths with `$` so the branch preview base URL can be injected (see [.github/workflows/update-pr-description.yaml](.github/workflows/update-pr-description.yaml)).
