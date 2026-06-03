@@ -100,7 +100,7 @@ function createLayout(block, placeholders) {
           placeholders.eventSearchKeywordAriaLabel || placeholders.eventSearchKeywordPlaceholder || 'Search events'
         }" />
       </div>
-      <div class="events-search-active-filters" role="group" aria-label="${
+      <div class="events-search-active-filters" hidden role="group" aria-label="${
         placeholders.eventSearchActiveFiltersAriaLabel || 'Active filters'
       }"></div>
       <div class="events-search-meta-row">
@@ -632,21 +632,25 @@ function renderActiveFilterCallouts(block) {
 
   const checkedBoxes = block.querySelectorAll('.events-search-filter-option input[type="checkbox"]:checked');
 
-  // Skip full DOM teardown if the set of selected values hasn't changed.
-  const currentValues = [...container.querySelectorAll('.events-search-active-filter-tag')].map((t) => t.dataset.value);
-  const newValues = [...checkedBoxes].map((cb) => cb.value);
+  // Skip full DOM teardown if the set of selected filters hasn't changed.
+  // Use a composite "filterType:value" key so same-named values in different groups don't collide.
+  const currentValues = [...container.querySelectorAll('.events-search-active-filter-tag')].map((t) => t.dataset.key);
+  const newValues = [...checkedBoxes].map((cb) => {
+    const ft = cb.closest('.events-search-filter-group')?.dataset.filterType ?? '';
+    return `${ft}:${cb.value}`;
+  });
   const unchanged = currentValues.length === newValues.length && currentValues.every((v, i) => v === newValues[i]);
   if (unchanged) return;
 
-  // Save focused callout value before teardown so focus can be restored after rebuild.
+  // Save focused callout composite key before teardown so focus can be restored after rebuild.
   const focusedTag = container.querySelector('.events-search-active-filter-tag-remove:focus');
-  const focusedValue = focusedTag?.closest('.events-search-active-filter-tag')?.dataset.value ?? null;
+  const focusedKey = focusedTag?.closest('.events-search-active-filter-tag')?.dataset.key ?? null;
 
   container.innerHTML = '';
 
   if (!checkedBoxes.length) {
     container.hidden = true;
-    if (focusedValue) {
+    if (focusedKey) {
       block.querySelector('.events-search-keyword-input')?.focus();
     }
     return;
@@ -657,7 +661,12 @@ function renderActiveFilterCallouts(block) {
     const groupEl = checkbox.closest('.events-search-filter-group');
     const filterType = groupEl?.dataset.filterType;
 
-    const callout = createTag('span', { class: 'events-search-active-filter-tag', 'data-value': checkbox.value });
+    const ft = groupEl?.dataset.filterType ?? '';
+    const callout = createTag('span', {
+      class: 'events-search-active-filter-tag',
+      'data-value': checkbox.value,
+      'data-key': `${ft}:${checkbox.value}`,
+    });
     const calloutLabel = createTag('span', { class: 'events-search-active-filter-tag-label' });
     calloutLabel.textContent = label;
 
@@ -693,10 +702,13 @@ function renderActiveFilterCallouts(block) {
   decorateIcons(container);
   container.hidden = false;
 
-  // Restore focus to the next available × button, or the search input if none remain.
-  if (focusedValue) {
+  // Restore focus to the adjacent × button (same index position after removal), or the search input if none remain.
+  if (focusedKey) {
+    const tags = [...container.querySelectorAll('.events-search-active-filter-tag')];
+    const removedIndex = currentValues.indexOf(focusedKey);
+    const nextTag = tags[removedIndex] ?? tags[tags.length - 1];
     const nextFocus =
-      container.querySelector('.events-search-active-filter-tag-remove') ??
+      nextTag?.querySelector('.events-search-active-filter-tag-remove') ??
       block.querySelector('.events-search-keyword-input');
     nextFocus?.focus();
   }
