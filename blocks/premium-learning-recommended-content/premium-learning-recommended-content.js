@@ -1,8 +1,12 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import { createTag, fetchLanguagePlaceholders, getConfig, htmlToElement } from '../../scripts/scripts.js';
-import { getPLAccessToken, isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
+import { createTag, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
+import {
+  getPLAccessToken,
+  isPLEligible,
+  removeBlockAndEmptySection,
+} from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { getCookie } from '../../scripts/utils/cookie-utils.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
@@ -41,13 +45,6 @@ function renderCards(contentDiv, cards) {
   }
 }
 
-function renderNoResultsContent(block, placeholders) {
-  const noResultsText =
-    placeholders.premiumLearningNoResults || 'No Premium Learning content available currently for your profile.';
-  const noResultsDiv = htmlToElement(`<div class="browse-card-no-results">${noResultsText}</div>`);
-  block.appendChild(noResultsDiv);
-}
-
 function showFallbackContentInUEMode(blockElement) {
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
   contentDiv.textContent =
@@ -55,7 +52,7 @@ function showFallbackContentInUEMode(blockElement) {
   blockElement.appendChild(contentDiv);
 }
 
-function renderTabs(block, tabsData, allCards, placeholders) {
+function renderTabs(block, tabsData, allCards) {
   const tabsWrapper = createTag('div', { class: 'premium-learning-tabs-wrapper' });
   block.appendChild(tabsWrapper);
 
@@ -74,8 +71,6 @@ function renderTabs(block, tabsData, allCards, placeholders) {
       renderCards(contentDiv, allCards);
     },
     onSelectCallback: (label) => {
-      const existingNoResults = block.querySelector('.premium-learning-recommended-content-no-results');
-      if (existingNoResults) existingNoResults.remove();
       contentDiv.innerHTML = '';
       const filtered = tabsData[label] ?? [];
       if (filtered.length) {
@@ -83,7 +78,6 @@ function renderTabs(block, tabsData, allCards, placeholders) {
         renderCards(contentDiv, filtered);
       } else {
         contentDiv.style.display = 'none';
-        renderNoResultsContent(block, placeholders);
       }
     },
   });
@@ -142,7 +136,7 @@ export default async function decorate(block) {
       if (!isEligible) {
         shimmer.removeShimmer();
         if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else block.remove();
+        else removeBlockAndEmptySection(block);
         return;
       }
 
@@ -162,25 +156,25 @@ export default async function decorate(block) {
         shimmer.removeShimmer();
 
         if (!allCards.length) {
-          renderNoResultsContent(block, placeholders);
+          removeBlockAndEmptySection(block);
           return;
         }
 
         const forYouLabel = placeholders.premiumLearningTabForYou || 'For you';
         const tabsData = buildTabsData(allCards, products, forYouLabel);
-        renderTabs(block, tabsData, allCards, placeholders);
+        renderTabs(block, tabsData, allCards);
       } catch (err) {
         shimmer.removeShimmer();
         /* eslint-disable-next-line no-console */
         console.error('Error fetching PL recommended content:', err);
         if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else block.remove();
+        else removeBlockAndEmptySection(block);
       }
     })
     .catch((err) => {
       shimmer.removeShimmer();
       if (UEAuthorMode) showFallbackContentInUEMode(block);
-      else block.remove();
+      else removeBlockAndEmptySection(block);
       /* eslint-disable-next-line no-console */
       console.error('Error resolving PL eligibility for recommended content:', err);
     });
