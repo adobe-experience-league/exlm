@@ -669,7 +669,7 @@ function renderActiveFilterCallouts(block) {
 
   // Skip full DOM teardown if the ordered set of selected filters hasn't changed.
   const currentValues = [...container.querySelectorAll('.events-search-active-filter-tag')].map((t) => t.dataset.key);
-  const newValues = activeTags.map((tag) => `${tag.filterType}:${tag.value}`);
+  const newValues = activeTags.map((tag) => toCompositeKey(tag.filterType, tag.value));
   const unchanged = currentValues.length === newValues.length && currentValues.every((v, i) => v === newValues[i]);
   if (unchanged) return;
 
@@ -884,7 +884,7 @@ function bindFilterInteractions(block, groups, placeholders) {
     if (!filterType) return;
 
     // Maintain ordered tags array (browse-filters appendTag/removeFromTags pattern).
-    const { tags: activeTags } = getFilterState(block);
+    const { tags: activeTags, pendingRemovals } = getFilterState(block);
     if (checkbox.checked) {
       const alreadyTracked = activeTags.some((t) => t.filterType === filterType && t.value === checkbox.value);
       if (!alreadyTracked) {
@@ -897,7 +897,6 @@ function bindFilterInteractions(block, groups, placeholders) {
     } else {
       const tagIndex = activeTags.findIndex((t) => t.filterType === filterType && t.value === checkbox.value);
       if (tagIndex !== -1) activeTags.splice(tagIndex, 1);
-      const { pendingRemovals } = getFilterState(block);
       pendingRemovals.add(toCompositeKey(filterType, checkbox.value));
     }
 
