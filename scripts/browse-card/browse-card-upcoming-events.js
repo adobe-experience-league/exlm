@@ -25,6 +25,25 @@ export const decorateUpcomingEvents = (card, model) => {
   const hasSeries = event?.series;
   const seriesText = hasSeries ? event?.series : null;
 
+  // If no series title AND no speaker headshots, show fallback Adobe A image (dark themed)
+  if (!hasSeries && !hasSpeakers) {
+    cardFigure.querySelector('img')?.remove();
+    cardFigure.classList.add('has-fallback-image');
+
+    const fallbackImg = document.createElement('img');
+    fallbackImg.loading = 'lazy';
+    fallbackImg.alt = '';
+    fallbackImg.src = '/images/Event-Thumbnail-A-Dark.jpg';
+    if (fallbackImg.complete) {
+      fallbackImg.classList.add('img-loaded');
+    } else {
+      fallbackImg.addEventListener('load', () => fallbackImg.classList.add('img-loaded'));
+      fallbackImg.addEventListener('error', () => fallbackImg.classList.add('img-loaded'));
+    }
+
+    cardFigure.appendChild(fallbackImg);
+  }
+
   if (hasSpeakers) {
     let speakersContainer = cardFigure?.querySelector('.event-speakers-container');
     if (!speakersContainer) {

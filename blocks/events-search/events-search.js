@@ -106,6 +106,9 @@ function createLayout(block, placeholders) {
           placeholders.eventSearchKeywordAriaLabel || placeholders.eventSearchKeywordPlaceholder || 'Search events'
         }" />
       </div>
+      <div class="events-search-active-filters" hidden role="group" aria-label="${
+        placeholders.eventSearchActiveFiltersAriaLabel || 'Active filters'
+      }"></div>
       <div class="events-search-meta-row">
         <div
           class="events-search-results-count"
@@ -629,6 +632,92 @@ function toggleFacetSelection(filterType, value, isChecked) {
   });
 }
 
+function renderActiveFilterCallouts(block) {
+  const container = block.querySelector('.events-search-active-filters');
+  if (!container) return;
+
+  const checkedBoxes = block.querySelectorAll('.events-search-filter-option input[type="checkbox"]:checked');
+
+  // Skip full DOM teardown if the set of selected filters hasn't changed.
+  // Use a composite "filterType:value" key so same-named values in different groups don't collide.
+  const currentValues = [...container.querySelectorAll('.events-search-active-filter-tag')].map((t) => t.dataset.key);
+  const newValues = [...checkedBoxes].map((cb) => {
+    const ft = cb.closest('.events-search-filter-group')?.dataset.filterType ?? '';
+    return `${ft}:${cb.value}`;
+  });
+  const unchanged = currentValues.length === newValues.length && currentValues.every((v, i) => v === newValues[i]);
+  if (unchanged) return;
+
+  // Save focused callout composite key before teardown so focus can be restored after rebuild.
+  const focusedTag = container.querySelector('.events-search-active-filter-tag-remove:focus');
+  const focusedKey = focusedTag?.closest('.events-search-active-filter-tag')?.dataset.key ?? null;
+
+  container.innerHTML = '';
+
+  if (!checkedBoxes.length) {
+    container.hidden = true;
+    if (focusedKey) {
+      block.querySelector('.events-search-keyword-input')?.focus();
+    }
+    return;
+  }
+
+  checkedBoxes.forEach((checkbox) => {
+    const label = checkbox.getAttribute('data-label') || checkbox.value;
+    const groupEl = checkbox.closest('.events-search-filter-group');
+    const filterType = groupEl?.dataset.filterType ?? '';
+    const callout = createTag('span', {
+      class: 'events-search-active-filter-tag',
+      'data-value': checkbox.value,
+      'data-key': `${filterType}:${checkbox.value}`,
+    });
+    const calloutLabel = createTag('span', { class: 'events-search-active-filter-tag-label' });
+    calloutLabel.textContent = label;
+
+    const calloutRemove = createTag('button', {
+      class: 'events-search-active-filter-tag-remove',
+      type: 'button',
+      'aria-label': `Remove filter: ${label}`,
+    });
+    const calloutRemoveIcon = createTag('span', { class: 'icon icon-close-events', 'aria-hidden': 'true' });
+    calloutRemove.append(calloutRemoveIcon);
+
+    const handleRemove = () => {
+      checkbox.checked = false;
+      toggleFacetSelection(filterType, checkbox.value, false);
+      if (groupEl) {
+        const newCount = groupEl.querySelectorAll('input[type="checkbox"]:checked').length;
+        updateGroupSelectionCount(block, filterType, newCount);
+      }
+      if (window.headlessPager) {
+        window.headlessPager.selectPage(1);
+      }
+      executeSearch();
+      renderActiveFilterCallouts(block);
+      updateClearFiltersButtonState(block);
+    };
+
+    calloutRemove.addEventListener('click', handleRemove, { once: true });
+
+    callout.append(calloutLabel, calloutRemove);
+    container.append(callout);
+  });
+
+  decorateIcons(container);
+  container.hidden = false;
+
+  // Restore focus to the adjacent × button (same index position after removal), or the search input if none remain.
+  if (focusedKey) {
+    const tags = [...container.querySelectorAll('.events-search-active-filter-tag')];
+    const removedIndex = currentValues.indexOf(focusedKey);
+    const nextTag = tags[removedIndex] ?? tags[tags.length - 1];
+    const nextFocus =
+      nextTag?.querySelector('.events-search-active-filter-tag-remove') ??
+      block.querySelector('.events-search-keyword-input');
+    nextFocus?.focus();
+  }
+}
+
 function updateResultsCount(block, totalCount = 0, placeholders = {}) {
   const countEl = block.querySelector('.events-search-results-count');
   if (!countEl) return;
@@ -702,6 +791,7 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
     const search = window.headlessSearchEngine.state.search || {};
     const { results = [], searchResponseId = '', response = {} } = search;
     updateResultsCount(block, response.totalCount || 0, placeholders);
+    renderActiveFilterCallouts(block);
     await renderResults(block, results, searchResponseId);
   } catch (err) {
     // Coveo invokes this subscriber without awaiting; uncaught rejections from renderResults/buildCard would be unhandled.
@@ -765,6 +855,7 @@ function bindFilterInteractions(block, groups, placeholders) {
       window.headlessPager.selectPage(1);
     }
     executeSearch();
+    renderActiveFilterCallouts(block);
     updateClearFiltersButtonState(block);
   });
 }
@@ -838,6 +929,7 @@ function bindClearFilters(block, groups) {
     if (window.location.hash === hashBeforeClear) {
       executeSearch();
     }
+    renderActiveFilterCallouts(block);
     updateClearFiltersButtonState(block);
   });
 }
