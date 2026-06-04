@@ -155,9 +155,46 @@ main .events-search.is-filters-open .events-search-mobile-filter-toggle .icon-ch
 }
 
 main .events-search .events-search-filter-options {
+  padding: var(--spectrum-spacing-300) 0;
+}
+
+main .events-search .events-search-filter-options-list {
   display: grid;
   gap: var(--spectrum-spacing-100);
-  padding: 0 0 var(--spectrum-spacing-300);
+}
+
+main
+  .events-search
+  .events-search-filter-options:has(.events-search-filter-show-more.is-show-less)
+  .events-search-filter-options-list {
+  max-height: 500px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding-inline-end: calc(6px + var(--spectrum-spacing-75));
+  scrollbar-width: thin;
+  scrollbar-color: var(--non-spectrum-scrollbar-thumb) transparent;
+}
+
+main
+  .events-search
+  .events-search-filter-options:has(.events-search-filter-show-more.is-show-less)
+  .events-search-filter-options-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+main
+  .events-search
+  .events-search-filter-options:has(.events-search-filter-show-more.is-show-less)
+  .events-search-filter-options-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+main
+  .events-search
+  .events-search-filter-options:has(.events-search-filter-show-more.is-show-less)
+  .events-search-filter-options-list::-webkit-scrollbar-thumb {
+  background-color: var(--non-spectrum-scrollbar-thumb);
+  border-radius: 3px;
 }
 
 main .events-search .events-search-filter-group:not(.is-expanded) .events-search-filter-options {
@@ -173,10 +210,6 @@ main .events-search .events-search-filter-option {
 
 main .events-search .events-search-filter-option.is-overflow-hidden {
   display: none;
-}
-
-main .events-search .events-search-filter-option:first-child {
-  margin-top: var(--spectrum-spacing-300);
 }
 
 main .events-search .events-search-filter-option input[type='checkbox'] {
