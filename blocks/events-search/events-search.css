@@ -182,14 +182,17 @@ main .events-search .events-search-filter-option:first-child {
 main .events-search .events-search-filter-option input[type='checkbox'] {
   border: 2px solid var(--non-spectrum-medium-gray);
   margin-top: var(--spectrum-spacing-75);
-  width: auto;
   cursor: pointer;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 main .events-search .events-search-filter-option-label {
   font-size: var(--spectrum-font-size-200);
   line-height: 1.4;
   cursor: pointer;
+  margin-bottom: var(--spectrum-spacing-300);
 }
 
 main .events-search .events-search-filter-show-more {
