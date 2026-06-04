@@ -169,6 +169,10 @@ main
   .events-search-filter-options-list {
   max-height: 500px;
   overflow-y: auto;
+  box-sizing: border-box;
+  padding-inline-end: calc(6px + var(--spectrum-spacing-75));
+  scrollbar-width: thin;
+  scrollbar-color: var(--non-spectrum-scrollbar-thumb) transparent;
 }
 
 main

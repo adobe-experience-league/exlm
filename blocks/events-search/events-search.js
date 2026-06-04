@@ -813,6 +813,8 @@ function bindFilterInteractions(block, groups, placeholders) {
             option.classList.add('is-overflow-hidden');
           }
         });
+        const optionsList = groupEl.querySelector('.events-search-filter-options-list');
+        if (optionsList) optionsList.scrollTop = 0;
       } else {
         const hiddenOptions = groupEl.querySelectorAll('.events-search-filter-option.is-overflow-hidden');
         hiddenOptions.forEach((option) => {
