@@ -28,6 +28,9 @@ const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
 const PLACEHOLDER_COUNT_TOKEN = '${count}';
 const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
 
+/** Builds the composite key used to identify a filter in pendingRemovals and callout data-key attributes. */
+const toCompositeKey = (filterType, value) => `${filterType}:${value}`;
+
 /** Fills count slots in CMS strings: `${count}`, `{}`, `{count}` (see PLACEHOLDER_COUNT_TOKEN). */
 function fillPlaceholderCount(template, value) {
   const s = String(value);
@@ -372,7 +375,7 @@ function syncFilterUIFromHeadlessState(block, groups) {
 
       // Mirror checkbox state into ordered tags array (browse-filters handleUriHash/appendTag pattern).
       // This ensures callouts appear correctly when filters are restored from URL on page load.
-      const compositeKey = `${groupId}:${checkbox.value}`;
+      const compositeKey = toCompositeKey(groupId, checkbox.value);
       const existingIndex = activeTags.findIndex((t) => t.filterType === groupId && t.value === checkbox.value);
       if (isSelected && existingIndex === -1 && !pendingRemovals.has(compositeKey)) {
         activeTags.push({
@@ -380,8 +383,8 @@ function syncFilterUIFromHeadlessState(block, groups) {
           value: checkbox.value,
           label: checkbox.getAttribute('data-label') || checkbox.value,
         });
-      } else if (!isSelected && existingIndex !== -1) {
-        activeTags.splice(existingIndex, 1);
+      } else if (!isSelected) {
+        if (existingIndex !== -1) activeTags.splice(existingIndex, 1);
         pendingRemovals.delete(compositeKey);
       }
     });
@@ -689,7 +692,7 @@ function renderActiveFilterCallouts(block) {
     const callout = createTag('span', {
       class: 'events-search-active-filter-tag',
       'data-value': value,
-      'data-key': `${filterType}:${value}`,
+      'data-key': toCompositeKey(filterType, value),
     });
     const calloutLabel = createTag('span', { class: 'events-search-active-filter-tag-label' });
     calloutLabel.textContent = label;
@@ -713,10 +716,10 @@ function renderActiveFilterCallouts(block) {
 
       // Remove from ordered tags array and register as pending removal to prevent the Coveo
       // subscription from re-adding the tag before Coveo state catches up.
-      const { tags: activeTags2, pendingRemovals } = getFilterState(block);
-      const tagIndex = activeTags2.findIndex((t) => t.filterType === filterType && t.value === value);
-      if (tagIndex !== -1) activeTags2.splice(tagIndex, 1);
-      pendingRemovals.add(`${filterType}:${value}`);
+      const { pendingRemovals } = getFilterState(block);
+      const tagIndex = activeTags.findIndex((t) => t.filterType === filterType && t.value === value);
+      if (tagIndex !== -1) activeTags.splice(tagIndex, 1);
+      pendingRemovals.add(toCompositeKey(filterType, value));
 
       toggleFacetSelection(filterType, value, false);
       const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${filterType}"]`);
@@ -894,6 +897,8 @@ function bindFilterInteractions(block, groups, placeholders) {
     } else {
       const tagIndex = activeTags.findIndex((t) => t.filterType === filterType && t.value === checkbox.value);
       if (tagIndex !== -1) activeTags.splice(tagIndex, 1);
+      const { pendingRemovals } = getFilterState(block);
+      pendingRemovals.add(toCompositeKey(filterType, checkbox.value));
     }
 
     const selectedCount = groupEl.querySelectorAll('input[type="checkbox"]:checked').length;
