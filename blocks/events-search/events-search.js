@@ -40,6 +40,19 @@ const eventsSearchLoadingUiCleanups = new WeakMap();
 /** Per-block AbortController for open sort dropdown document listeners (click-outside + Escape). */
 const eventsSearchSortDropdownOpenAbort = new WeakMap();
 
+/**
+ * Sorts items alphabetically by their title property .
+ * Uses the page's locale for consistent language-specific sorting.
+ * @param {Object} a - First item to compare
+ * @param {Object} b - Second item to compare
+ * @returns {number} Comparison result for array sort
+ */
+function sortItemsAlphabetically(a, b) {
+  const titleA = (a.title || '').toLowerCase();
+  const titleB = (b.title || '').toLowerCase();
+  return titleA.localeCompare(titleB, document.documentElement.lang || 'en');
+}
+
 function getBaseFilterGroups(placeholders) {
   return [
     {
@@ -57,13 +70,7 @@ function getBaseFilterGroups(placeholders) {
     {
       id: 'el_contenttype',
       name: placeholders.eventSearchFilterEventTypeLabel || 'Event Type',
-      items: eventTypeOptions.items
-        .map((item) => ({ ...item }))
-        .sort((a, b) => {
-          const titleA = (a.title || '').toLowerCase();
-          const titleB = (b.title || '').toLowerCase();
-          return titleA.localeCompare(titleB);
-        }),
+      items: eventTypeOptions.items.map((item) => ({ ...item })).sort(sortItemsAlphabetically),
       selected: 0,
     },
   ];
@@ -969,11 +976,7 @@ async function loadDynamicFacetValues(groups) {
         title: item.split('|').join(' | '),
         description: '',
       }))
-      .sort((a, b) => {
-        const titleA = (a.title || '').toLowerCase();
-        const titleB = (b.title || '').toLowerCase();
-        return titleA.localeCompare(titleB);
-      });
+      .sort(sortItemsAlphabetically);
   });
 }
 
