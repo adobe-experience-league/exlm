@@ -57,7 +57,13 @@ function getBaseFilterGroups(placeholders) {
     {
       id: 'el_contenttype',
       name: placeholders.eventSearchFilterEventTypeLabel || 'Event Type',
-      items: eventTypeOptions.items.map((item) => ({ ...item })),
+      items: eventTypeOptions.items
+        .map((item) => ({ ...item }))
+        .sort((a, b) => {
+          const titleA = (a.title || '').toLowerCase();
+          const titleB = (b.title || '').toLowerCase();
+          return titleA.localeCompare(titleB);
+        }),
       selected: 0,
     },
   ];
@@ -864,12 +870,18 @@ async function loadDynamicFacetValues(groups) {
   groups.forEach((group) => {
     if (group.id !== 'el_event_series' && group.id !== 'el_product') return;
     const groupValues = facetDetails[group.id] || [];
-    group.items = groupValues.map((item) => ({
-      id: item,
-      value: item,
-      title: item.split('|').join(' | '),
-      description: '',
-    }));
+    group.items = groupValues
+      .map((item) => ({
+        id: item,
+        value: item,
+        title: item.split('|').join(' | '),
+        description: '',
+      }))
+      .sort((a, b) => {
+        const titleA = (a.title || '').toLowerCase();
+        const titleB = (b.title || '').toLowerCase();
+        return titleA.localeCompare(titleB);
+      });
   });
 }
 
