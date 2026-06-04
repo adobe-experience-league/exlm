@@ -322,6 +322,19 @@ function getFilterState(block) {
   return state;
 }
 
+/**
+ * Sorts items alphabetically by their title property .
+ * Uses the page's locale for consistent language-specific sorting.
+ * @param {Object} a - First item to compare
+ * @param {Object} b - Second item to compare
+ * @returns {number} Comparison result for array sort
+ */
+function sortItemsAlphabetically(a, b) {
+  const titleA = (a.title || '').toLowerCase();
+  const titleB = (b.title || '').toLowerCase();
+  return titleA.localeCompare(titleB, document.documentElement.lang || 'en');
+}
+
 function getBaseFilterGroups(placeholders) {
   return [
     {
@@ -1315,6 +1328,22 @@ function bindMobileFilterToggle(block) {
     },
     true,
   );
+}
+
+async function loadDynamicFacetValues(groups) {
+  const facetDetails = await BrowseCardsDelegate.fetchCoveoFacetFields(['el_event_series', 'el_product']);
+  groups.forEach((group) => {
+    if (group.id !== 'el_event_series' && group.id !== 'el_product') return;
+    const groupValues = facetDetails[group.id] || [];
+    group.items = groupValues
+      .map((item) => ({
+        id: item,
+        value: item,
+        title: item.split('|').join(' | '),
+        description: '',
+      }))
+      .sort(sortItemsAlphabetically);
+  });
 }
 
 async function initHeadlessSearch(block, groups, placeholders) {
