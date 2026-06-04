@@ -4,42 +4,24 @@ import {
   decoratePlaceholders,
   createPlaceholderSpan,
   fetchLanguagePlaceholders,
+  createTag,
 } from '../../scripts/scripts.js';
 import { Playlist, LABELS } from './playlist-utils.js';
 import { updateTranscript, transcriptLoading } from '../video-transcript/video-transcript.js';
 
-const removeLastSlash = (url) => url.replace(/\/$/, '');
-const isSameUrl = (a, b) => {
-  const aUrl = new URL(a);
-  const bUrl = new URL(b);
-  return aUrl.origin === bUrl.origin && removeLastSlash(aUrl.pathname) === removeLastSlash(bUrl.pathname);
-};
+function getThumbnailFromRowMetadata(rowMetadataJson) {
+  if (!rowMetadataJson) return undefined;
+  let metadata;
+  try {
+    metadata = JSON.parse(rowMetadataJson);
+  } catch {
+    return undefined;
+  }
+  const thumbnails = [metadata.thumbnailUrl].flat().filter(Boolean);
+  if (!thumbnails.length) return undefined;
 
-/**
- * find the json-ld script/object that contains the video url
- */
-const findJsonLd = (videoUrl) => {
-  const jsonLdScripts = document.querySelectorAll('script[type="application/ld+json"]');
-  if (!jsonLdScripts || !jsonLdScripts.length) return null;
-
-  const jsonLd = [...jsonLdScripts]
-    .map((script) => {
-      const parsed = JSON.parse(script.textContent);
-      return Array.isArray(parsed) ? parsed : [parsed];
-    })
-    .flat()
-    .find((jsonLdObj) => isSameUrl(jsonLdObj.embedUrl, videoUrl));
-
-  return jsonLd;
-};
-
-function getVideoThumbnailUrl(videoUrl, jsonLdString) {
-  const jsonLd = jsonLdString ? JSON.parse(jsonLdString) : findJsonLd(videoUrl);
-  const thumbnails = [jsonLd?.thumbnailUrl].flat();
-
-  const defaultThumbnail = thumbnails.sort()[jsonLd.length - 1]; // last one
-  const bestFit = thumbnails?.find((url) => url.includes('640x'));
-  return bestFit || defaultThumbnail;
+  const sorted = [...thumbnails].sort();
+  return thumbnails.find((url) => url.includes('640x')) || sorted[sorted.length - 1];
 }
 
 /**
@@ -333,8 +315,11 @@ export default function decorate(block) {
     const [titleH, descriptionP, durationP, transcriptP] = videoDataCell.children;
     titleH.classList.add('playlist-item-title');
 
+    const rowMetadataJson = jsonLdCell?.textContent?.trim();
+    const videoSrc = srcP.querySelector('a')?.href || srcP.textContent.trim();
+
     const video = {
-      src: srcP.textContent,
+      src: videoSrc,
       title: titleH.textContent,
       description: descriptionP.textContent,
       duration: durationP.textContent,
@@ -347,12 +332,18 @@ export default function decorate(block) {
     descriptionP.remove();
     durationP.remove();
     transcriptP.remove();
+    jsonLdCell?.remove();
 
-    jsonLdCell?.replaceWith(htmlToElement(`<script type="application/ld+json">${jsonLdCell.textContent}</script>`));
-    // add thumbnail from jsonld if available
-    const thumbnailUrl = getVideoThumbnailUrl(video.src, jsonLdCell?.textContent);
-    if (thumbnailUrl) {
-      videoCell.innerHTML = `<img src="${thumbnailUrl}" alt="${srcP.textContent}">`;
+    if (!videoCell.querySelector('picture, img')) {
+      const thumbnailUrl = getThumbnailFromRowMetadata(rowMetadataJson);
+      if (thumbnailUrl) {
+        videoCell.append(
+          createTag('img', {
+            src: thumbnailUrl,
+            alt: titleH.textContent,
+          }),
+        );
+      }
     }
 
     // item bottom status
