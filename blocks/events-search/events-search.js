@@ -886,6 +886,7 @@ function bindFilterInteractions(block, groups, placeholders) {
     // Maintain ordered tags array (browse-filters appendTag/removeFromTags pattern).
     const { tags: activeTags, pendingRemovals } = getFilterState(block);
     if (checkbox.checked) {
+      pendingRemovals.delete(toCompositeKey(filterType, checkbox.value));
       const alreadyTracked = activeTags.some((t) => t.filterType === filterType && t.value === checkbox.value);
       if (!alreadyTracked) {
         activeTags.push({
