@@ -41,6 +41,8 @@ const eventsSearchLoadingUiCleanups = new WeakMap();
 const eventsSearchSortDropdownOpenAbort = new WeakMap();
 /** Per-block ordered list of composite "filterType:value" keys in the order the user selected them. */
 const eventsSearchSelectionOrder = new WeakMap();
+/** Per-block Set of keys deselected by the user but not yet confirmed by Coveo (prevents re-check flicker). */
+const eventsSearchPendingDeselections = new WeakMap();
 
 function getBaseFilterGroups(placeholders) {
   return [
@@ -352,10 +354,18 @@ function syncFilterUIFromHeadlessState(block, groups) {
       (controller.state?.values || []).filter((item) => item.state === 'selected').map((item) => item.value),
     );
 
+    const pendingDeselections = eventsSearchPendingDeselections.get(block) ?? new Set();
     const checkboxes = groupEl.querySelectorAll('.events-search-filter-option input[type="checkbox"]');
     checkboxes.forEach((checkbox) => {
+      const compositeKey = `${groupId}:${checkbox.value}`;
+      if (pendingDeselections.has(compositeKey)) {
+        // Coveo confirmed the deselect — clear the pending flag.
+        if (!selectedValues.has(checkbox.value)) pendingDeselections.delete(compositeKey);
+        return;
+      }
       checkbox.checked = selectedValues.has(checkbox.value);
     });
+    eventsSearchPendingDeselections.set(block, pendingDeselections);
 
     const selectedCount = selectedValues.size;
     const targetGroup = groups.find((group) => group.id === groupId);
@@ -633,31 +643,28 @@ function getSortedCheckedBoxes(block) {
   const order = eventsSearchSelectionOrder.get(block) ?? [];
   const rankMap = new Map(order.map((k, i) => [k, i]));
   return checkboxes
-    .map((cb) => ({
-      cb,
-      key: `${cb.closest('.events-search-filter-group')?.dataset.filterType ?? ''}:${cb.value}`,
-    }))
+    .map((cb) => {
+      const groupEl = cb.closest('.events-search-filter-group');
+      const key = `${groupEl?.dataset.filterType ?? ''}:${cb.value}`;
+      return { cb, key, groupEl };
+    })
     .sort((a, b) => {
       const posA = rankMap.get(a.key) ?? Infinity;
       const posB = rankMap.get(b.key) ?? Infinity;
       return posA === Infinity && posB === Infinity ? 0 : posA - posB;
-    })
-    .map(({ cb }) => cb);
+    });
 }
 
 function renderActiveFilterCallouts(block) {
   const container = block.querySelector('.events-search-active-filters');
   if (!container) return;
 
-  const checkedBoxes = getSortedCheckedBoxes(block);
+  const checkedEntries = getSortedCheckedBoxes(block);
 
   // Skip full DOM teardown if the set of selected filters hasn't changed.
   // Use a composite "filterType:value" key so same-named values in different groups don't collide.
   const currentValues = [...container.querySelectorAll('.events-search-active-filter-tag')].map((t) => t.dataset.key);
-  const newValues = checkedBoxes.map((cb) => {
-    const ft = cb.closest('.events-search-filter-group')?.dataset.filterType ?? '';
-    return `${ft}:${cb.value}`;
-  });
+  const newValues = checkedEntries.map(({ key }) => key);
   const unchanged = currentValues.length === newValues.length && currentValues.every((v, i) => v === newValues[i]);
   if (unchanged) return;
 
@@ -667,7 +674,7 @@ function renderActiveFilterCallouts(block) {
 
   container.innerHTML = '';
 
-  if (!checkedBoxes.length) {
+  if (!checkedEntries.length) {
     container.hidden = true;
     if (focusedKey) {
       block.querySelector('.events-search-keyword-input')?.focus();
@@ -675,14 +682,13 @@ function renderActiveFilterCallouts(block) {
     return;
   }
 
-  checkedBoxes.forEach((checkbox) => {
+  checkedEntries.forEach(({ cb: checkbox, key: compositeKey, groupEl }) => {
     const label = checkbox.getAttribute('data-label') || checkbox.value;
-    const groupEl = checkbox.closest('.events-search-filter-group');
     const filterType = groupEl?.dataset.filterType ?? '';
     const callout = createTag('span', {
       class: 'events-search-active-filter-tag',
       'data-value': checkbox.value,
-      'data-key': `${filterType}:${checkbox.value}`,
+      'data-key': compositeKey,
     });
     const calloutLabel = createTag('span', { class: 'events-search-active-filter-tag-label' });
     calloutLabel.textContent = label;
@@ -697,11 +703,16 @@ function renderActiveFilterCallouts(block) {
 
     const handleRemove = () => {
       checkbox.checked = false;
+      // Mark as pending deselection so syncFilterUIFromHeadlessState doesn't re-check it
+      // on the next stale Coveo subscription tick before Coveo confirms the deselect.
+      const pendingDeselections = eventsSearchPendingDeselections.get(block) ?? new Set();
+      pendingDeselections.add(compositeKey);
+      eventsSearchPendingDeselections.set(block, pendingDeselections);
       // Programmatic checkbox change does not fire the 'change' event, so manually
       // remove the key from the selection order to keep callout position accurate on re-select.
       const orderArr = eventsSearchSelectionOrder.get(block);
       if (orderArr) {
-        const removeIdx = orderArr.indexOf(`${filterType}:${checkbox.value}`);
+        const removeIdx = orderArr.indexOf(compositeKey);
         if (removeIdx !== -1) orderArr.splice(removeIdx, 1);
       }
       toggleFacetSelection(filterType, checkbox.value, false);
@@ -811,6 +822,22 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
     const search = window.headlessSearchEngine.state.search || {};
     const { results = [], searchResponseId = '', response = {} } = search;
     updateResultsCount(block, response.totalCount || 0, placeholders);
+
+    // Seed selection order from URL-restored checked state on the first subscription tick that
+    // has checked boxes. Programmatic checks in syncFilterUIFromHeadlessState bypass the change
+    // event, so these keys would never enter eventsSearchSelectionOrder otherwise.
+    const existingOrder = eventsSearchSelectionOrder.get(block);
+    if (!existingOrder || existingOrder.length === 0) {
+      const checkedBoxes = [...block.querySelectorAll('.events-search-filter-option input[type="checkbox"]:checked')];
+      if (checkedBoxes.length > 0) {
+        const initialOrder = checkedBoxes.map((cb) => {
+          const ft = cb.closest('.events-search-filter-group')?.dataset.filterType ?? '';
+          return `${ft}:${cb.value}`;
+        });
+        eventsSearchSelectionOrder.set(block, initialOrder);
+      }
+    }
+
     renderActiveFilterCallouts(block);
     await renderResults(block, results, searchResponseId);
   } catch (err) {
