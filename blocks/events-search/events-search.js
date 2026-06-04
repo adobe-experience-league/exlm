@@ -355,6 +355,7 @@ function syncFilterUIFromHeadlessState(block, groups) {
     const checkboxes = groupEl.querySelectorAll('.events-search-filter-option input[type="checkbox"]');
     checkboxes.forEach((checkbox) => {
       checkbox.checked = selectedValues.has(checkbox.value);
+      checkbox.closest('.events-search-filter-option')?.classList.toggle('checked', checkbox.checked);
     });
 
     const selectedCount = selectedValues.size;
