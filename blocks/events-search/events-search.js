@@ -283,6 +283,7 @@ function renderFilterGroups(block, groups, placeholders) {
     `;
 
     const optionsContainer = groupEl.querySelector('.events-search-filter-options');
+    const optionsList = createTag('div', { class: 'events-search-filter-options-list' });
     group.items.forEach((item, index) => {
       const optionValue = item.value || item.title;
       const optionLabel = item.title || item.value;
@@ -300,8 +301,9 @@ function renderFilterGroups(block, groups, placeholders) {
       });
       optionLabelEl.textContent = String(optionLabel ?? '');
       optionEl.append(checkbox, optionLabelEl);
-      optionsContainer.append(optionEl);
+      optionsList.append(optionEl);
     });
+    optionsContainer.append(optionsList);
 
     if (group.items.length > INITIAL_VISIBLE_FILTER_OPTIONS) {
       const remainingCount = group.items.length - INITIAL_VISIBLE_FILTER_OPTIONS;
