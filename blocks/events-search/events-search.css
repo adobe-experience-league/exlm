@@ -166,7 +166,7 @@ main .events-search .events-search-filter-group:not(.is-expanded) .events-search
 
 main .events-search .events-search-filter-option {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--spectrum-spacing-100);
   cursor: pointer;
 }
@@ -192,6 +192,7 @@ main .events-search .events-search-filter-option-label {
   font-size: var(--spectrum-font-size-200);
   line-height: 1.4;
   cursor: pointer;
+  margin-top: var(--spectrum-spacing-75);
   margin-bottom: var(--spectrum-spacing-300);
 }
 
