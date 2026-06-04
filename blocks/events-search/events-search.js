@@ -631,15 +631,18 @@ function toggleFacetSelection(filterType, value, isChecked) {
 function getSortedCheckedBoxes(block) {
   const checkboxes = [...block.querySelectorAll('.events-search-filter-option input[type="checkbox"]:checked')];
   const order = eventsSearchSelectionOrder.get(block) ?? [];
-  return checkboxes.sort((a, b) => {
-    const ftA = a.closest('.events-search-filter-group')?.dataset.filterType ?? '';
-    const ftB = b.closest('.events-search-filter-group')?.dataset.filterType ?? '';
-    const idxA = order.indexOf(`${ftA}:${a.value}`);
-    const idxB = order.indexOf(`${ftB}:${b.value}`);
-    const posA = idxA === -1 ? Infinity : idxA;
-    const posB = idxB === -1 ? Infinity : idxB;
-    return posA - posB;
-  });
+  const rankMap = new Map(order.map((k, i) => [k, i]));
+  return checkboxes
+    .map((cb) => ({
+      cb,
+      key: `${cb.closest('.events-search-filter-group')?.dataset.filterType ?? ''}:${cb.value}`,
+    }))
+    .sort((a, b) => {
+      const posA = rankMap.get(a.key) ?? Infinity;
+      const posB = rankMap.get(b.key) ?? Infinity;
+      return posA === Infinity && posB === Infinity ? 0 : posA - posB;
+    })
+    .map(({ cb }) => cb);
 }
 
 function renderActiveFilterCallouts(block) {
@@ -864,11 +867,11 @@ function bindFilterInteractions(block, groups, placeholders) {
     // Track selection order so callout tags appear in the order the user picked them.
     const compositeKey = `${filterType}:${checkbox.value}`;
     const order = eventsSearchSelectionOrder.get(block) ?? [];
+    const idx = order.indexOf(compositeKey);
     if (checkbox.checked) {
-      if (!order.includes(compositeKey)) order.push(compositeKey);
-    } else {
-      const idx = order.indexOf(compositeKey);
-      if (idx !== -1) order.splice(idx, 1);
+      if (idx === -1) order.push(compositeKey);
+    } else if (idx !== -1) {
+      order.splice(idx, 1);
     }
     eventsSearchSelectionOrder.set(block, order);
 
