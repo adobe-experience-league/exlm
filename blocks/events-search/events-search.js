@@ -39,6 +39,8 @@ const viewSwitcherInstances = new WeakMap();
 const eventsSearchLoadingUiCleanups = new WeakMap();
 /** Per-block AbortController for open sort dropdown document listeners (click-outside + Escape). */
 const eventsSearchSortDropdownOpenAbort = new WeakMap();
+/** Per-block ordered list of composite "filterType:value" keys in the order the user selected them. */
+const eventsSearchSelectionOrder = new WeakMap();
 
 function getBaseFilterGroups(placeholders) {
   return [
@@ -626,16 +628,30 @@ function toggleFacetSelection(filterType, value, isChecked) {
   });
 }
 
+function getSortedCheckedBoxes(block) {
+  const checkboxes = [...block.querySelectorAll('.events-search-filter-option input[type="checkbox"]:checked')];
+  const order = eventsSearchSelectionOrder.get(block) ?? [];
+  return checkboxes.sort((a, b) => {
+    const ftA = a.closest('.events-search-filter-group')?.dataset.filterType ?? '';
+    const ftB = b.closest('.events-search-filter-group')?.dataset.filterType ?? '';
+    const idxA = order.indexOf(`${ftA}:${a.value}`);
+    const idxB = order.indexOf(`${ftB}:${b.value}`);
+    const posA = idxA === -1 ? Infinity : idxA;
+    const posB = idxB === -1 ? Infinity : idxB;
+    return posA - posB;
+  });
+}
+
 function renderActiveFilterCallouts(block) {
   const container = block.querySelector('.events-search-active-filters');
   if (!container) return;
 
-  const checkedBoxes = block.querySelectorAll('.events-search-filter-option input[type="checkbox"]:checked');
+  const checkedBoxes = getSortedCheckedBoxes(block);
 
   // Skip full DOM teardown if the set of selected filters hasn't changed.
   // Use a composite "filterType:value" key so same-named values in different groups don't collide.
   const currentValues = [...container.querySelectorAll('.events-search-active-filter-tag')].map((t) => t.dataset.key);
-  const newValues = [...checkedBoxes].map((cb) => {
+  const newValues = checkedBoxes.map((cb) => {
     const ft = cb.closest('.events-search-filter-group')?.dataset.filterType ?? '';
     return `${ft}:${cb.value}`;
   });
@@ -678,6 +694,13 @@ function renderActiveFilterCallouts(block) {
 
     const handleRemove = () => {
       checkbox.checked = false;
+      // Programmatic checkbox change does not fire the 'change' event, so manually
+      // remove the key from the selection order to keep callout position accurate on re-select.
+      const orderArr = eventsSearchSelectionOrder.get(block);
+      if (orderArr) {
+        const removeIdx = orderArr.indexOf(`${filterType}:${checkbox.value}`);
+        if (removeIdx !== -1) orderArr.splice(removeIdx, 1);
+      }
       toggleFacetSelection(filterType, checkbox.value, false);
       if (groupEl) {
         const newCount = groupEl.querySelectorAll('input[type="checkbox"]:checked').length;
@@ -838,6 +861,17 @@ function bindFilterInteractions(block, groups, placeholders) {
     const filterType = groupEl?.dataset.filterType;
     if (!filterType) return;
 
+    // Track selection order so callout tags appear in the order the user picked them.
+    const compositeKey = `${filterType}:${checkbox.value}`;
+    const order = eventsSearchSelectionOrder.get(block) ?? [];
+    if (checkbox.checked) {
+      if (!order.includes(compositeKey)) order.push(compositeKey);
+    } else {
+      const idx = order.indexOf(compositeKey);
+      if (idx !== -1) order.splice(idx, 1);
+    }
+    eventsSearchSelectionOrder.set(block, order);
+
     const selectedCount = groupEl.querySelectorAll('input[type="checkbox"]:checked').length;
     const targetGroup = groups.find((group) => group.id === filterType);
     if (targetGroup) {
@@ -901,6 +935,8 @@ function bindClearFilters(block, groups) {
       toggleFacetSelection(filterType, checkbox.value, false);
       checkbox.checked = false;
     });
+    // Clear the selection order so re-selected filters appear in new click order, not the old one.
+    eventsSearchSelectionOrder.set(block, []);
     groups.forEach((group) => {
       group.selected = 0;
       updateGroupSelectionCount(block, group.id, 0);
