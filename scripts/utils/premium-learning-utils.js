@@ -178,32 +178,23 @@ export async function applyPLSectionGating(signedIn = null, timeoutMs = PL_ELIGI
 }
 
 /**
- * Removes a block and its parent section if the section becomes empty.
- * In UE Author Mode.
- * @param {HTMLElement} block - The block element to remove
+ * Handles Premium Learning block errors by showing fallback content in UE mode or removing in production.
+ * In UE Author Mode, optionally shows fallback content instead of removing.
+ * @param {HTMLElement} block - The block element to handle
+ * @param {Function} [showFallbackFn] - Optional function to call in UE mode to show fallback content.
+ *   If provided, block is preserved with fallback content in UE mode; otherwise removed in production.
  */
-export function removeBlockAndEmptySection(block) {
-  if (isUEMode) return;
+export function handlePLBlockError(block, showFallbackFn = null) {
+  // In UE Author Mode, show fallback content if provided
+  if (isUEMode) {
+    showFallbackFn?.(block);
+    return;
+  }
 
   const parentSection = block.closest('.section');
   block.remove();
   // Check if section is empty after removing block
   if (parentSection && !parentSection.querySelector('.block')) {
     parentSection.remove();
-  }
-}
-
-/**
- * Centralized handler for Premium Learning block cleanup.
- * In UE Author Mode: Calls the provided fallback function to show appropriate message.
- * On publish: Removes the block and its parent section if empty.
- * @param {HTMLElement} block - The block element to handle
- * @param {Function} showFallbackFn - Function to call in UE mode to show fallback content
- */
-export function handlePLBlockError(block, showFallbackFn) {
-  if (isUEMode) {
-    showFallbackFn(block);
-  } else {
-    removeBlockAndEmptySection(block);
   }
 }
