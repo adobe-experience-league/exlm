@@ -3,13 +3,12 @@ import { decorateIcons } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
-/* TODO - Remove duration  during cleanup */
+/* TODO - Remove duration during cleanup */
 
 /**
  * Builds event content specifically for on-demand events
  * @param {Object} params - Parameters for building event content
  * @param {Object} params.event - Event data
- * @param {string} params.contentType - Content type
  * @param {HTMLElement} params.cardContent - Card content element
  * @param {HTMLElement} params.card - Card element
  */
