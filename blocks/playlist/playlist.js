@@ -4,42 +4,69 @@ import {
   decoratePlaceholders,
   createPlaceholderSpan,
   fetchLanguagePlaceholders,
+  createTag,
 } from '../../scripts/scripts.js';
 import { Playlist, LABELS } from './playlist-utils.js';
 import { updateTranscript, transcriptLoading } from '../video-transcript/video-transcript.js';
 
 const removeLastSlash = (url) => url.replace(/\/$/, '');
 const isSameUrl = (a, b) => {
-  const aUrl = new URL(a);
-  const bUrl = new URL(b);
-  return aUrl.origin === bUrl.origin && removeLastSlash(aUrl.pathname) === removeLastSlash(bUrl.pathname);
+  try {
+    const aUrl = new URL(a);
+    const bUrl = new URL(b);
+    return aUrl.origin === bUrl.origin && removeLastSlash(aUrl.pathname) === removeLastSlash(bUrl.pathname);
+  } catch {
+    return false;
+  }
 };
 
-/**
- * find the json-ld script/object that contains the video url
- */
-const findJsonLd = (videoUrl) => {
-  const jsonLdScripts = document.querySelectorAll('script[type="application/ld+json"]');
-  if (!jsonLdScripts || !jsonLdScripts.length) return null;
+const pickBestThumbnail = (thumbnails) => {
+  const list = [thumbnails].flat().filter(Boolean);
+  if (!list.length) return undefined;
+  return (
+    list.find((url) => url.includes('960x540')) ||
+    list.find((url) => url.includes('640x')) ||
+    [...list].sort()[list.length - 1]
+  );
+};
 
-  const jsonLd = [...jsonLdScripts]
-    .map((script) => {
-      const parsed = JSON.parse(script.textContent);
-      return Array.isArray(parsed) ? parsed : [parsed];
+const isVideoThumbnailNode = (node) => (!node?.['@type'] || node['@type'] === 'VideoObject') && node?.thumbnailUrl;
+
+const flattenJsonLdScripts = (parsed) => {
+  if (Array.isArray(parsed)) return parsed;
+  if (Array.isArray(parsed?.['@graph'])) return parsed['@graph'];
+  return [parsed];
+};
+
+/** Read-only: legacy head/body JSON-LD VideoObjects for thumbnail lookup when rows lack picture/code. */
+const buildPageJsonLdVideoNodes = () =>
+  [...document.querySelectorAll('script[type="application/ld+json"]')]
+    .flatMap((script) => {
+      try {
+        return flattenJsonLdScripts(JSON.parse(script.textContent));
+      } catch {
+        return [];
+      }
     })
-    .flat()
-    .find((jsonLdObj) => isSameUrl(jsonLdObj.embedUrl, videoUrl));
+    .filter(isVideoThumbnailNode);
 
-  return jsonLd;
+const getThumbnailFromPageJsonLd = (videoUrl, pageJsonLdVideoNodes) => {
+  const node = pageJsonLdVideoNodes?.find(
+    (item) => (item?.embedUrl && isSameUrl(item.embedUrl, videoUrl)) || (item?.url && isSameUrl(item.url, videoUrl)),
+  );
+  return node ? pickBestThumbnail(node.thumbnailUrl) : undefined;
 };
 
-function getVideoThumbnailUrl(videoUrl, jsonLdString) {
-  const jsonLd = jsonLdString ? JSON.parse(jsonLdString) : findJsonLd(videoUrl);
-  const thumbnails = [jsonLd?.thumbnailUrl].flat();
-
-  const defaultThumbnail = thumbnails.sort()[jsonLd.length - 1]; // last one
-  const bestFit = thumbnails?.find((url) => url.includes('640x'));
-  return bestFit || defaultThumbnail;
+// Legacy v1 row data from optional <code> cell — not page-level schema.org injection.
+function getThumbnailFromRowMetadata(rowMetadataJson) {
+  if (!rowMetadataJson) return undefined;
+  let metadata;
+  try {
+    metadata = JSON.parse(rowMetadataJson);
+  } catch {
+    return undefined;
+  }
+  return pickBestThumbnail(metadata.thumbnailUrl);
 }
 
 /**
@@ -49,7 +76,7 @@ function getVideoThumbnailUrl(videoUrl, jsonLdString) {
 function toTimeInMinutes(seconds) {
   const secondsNumber = parseInt(seconds, 10);
   const minutes = Math.floor(secondsNumber / 60);
-  const remainingSeconds = seconds % 60;
+  const remainingSeconds = secondsNumber % 60;
   return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
 }
 
@@ -322,10 +349,11 @@ export default function decorate(block) {
 
   decoratePlaylistHeader(block, playlist);
 
+  const pageJsonLdVideoNodes = buildPageJsonLdVideoNodes();
+
   [...block.children].forEach((videoRow, videoIndex) => {
     videoRow.classList.add('playlist-item');
     const [videoCell, videoDataCell, jsonLdCell] = videoRow.children;
-    const [srcP] = videoCell.children;
     videoCell.classList.add('playlist-item-thumbnail');
     videoCell.setAttribute('data-playlist-item-progress-box', '');
     videoDataCell.classList.add('playlist-item-content');
@@ -333,26 +361,37 @@ export default function decorate(block) {
     const [titleH, descriptionP, durationP, transcriptP] = videoDataCell.children;
     titleH.classList.add('playlist-item-title');
 
+    const rowMetadataJson = jsonLdCell?.textContent?.trim();
+    const videoSrc = videoCell.querySelector('a')?.href || videoCell.textContent.trim();
+    const [videoLinkCell] = videoCell.children;
+
     const video = {
-      src: srcP.textContent,
+      src: videoSrc,
       title: titleH.textContent,
       description: descriptionP.textContent,
       duration: durationP.textContent,
-      transcriptUrl: transcriptP.textContent,
+      transcriptUrl: transcriptP.querySelector('a')?.href || transcriptP.textContent.trim(),
       el: videoRow,
     };
 
     // remove elements that don't need to show here.
-    srcP.remove();
+    videoLinkCell?.remove();
     descriptionP.remove();
     durationP.remove();
     transcriptP.remove();
+    jsonLdCell?.remove();
 
-    jsonLdCell?.replaceWith(htmlToElement(`<script type="application/ld+json">${jsonLdCell.textContent}</script>`));
-    // add thumbnail from jsonld if available
-    const thumbnailUrl = getVideoThumbnailUrl(video.src, jsonLdCell?.textContent);
-    if (thumbnailUrl) {
-      videoCell.innerHTML = `<img src="${thumbnailUrl}" alt="${srcP.textContent}">`;
+    if (!videoCell.querySelector('picture, img')) {
+      const thumbnailUrl =
+        getThumbnailFromRowMetadata(rowMetadataJson) || getThumbnailFromPageJsonLd(videoSrc, pageJsonLdVideoNodes);
+      if (thumbnailUrl) {
+        videoCell.append(
+          createTag('img', {
+            src: thumbnailUrl,
+            alt: titleH.textContent,
+          }),
+        );
+      }
     }
 
     // item bottom status
