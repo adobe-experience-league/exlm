@@ -98,12 +98,10 @@ export default class PLDataService {
    * Creates an instance of PLDataService.
    * @param {PLQueryParams} queryParams - Query parameters for premium-learning API request
    * @param {Object} config - Config object (from getConfig())
-   * @param {Object} pathDetails - Path details object (from getPathDetails())
    */
-  constructor(queryParams, config, pathDetails) {
+  constructor(queryParams, config) {
     this.queryParams = queryParams;
     this.config = config;
-    this.pathDetails = pathDetails;
   }
 
   /**
