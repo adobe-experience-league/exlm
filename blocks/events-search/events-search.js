@@ -394,6 +394,7 @@ function syncFilterUIFromHeadlessState(block, groups) {
         if (existingIndex !== -1) activeTags.splice(existingIndex, 1);
         pendingRemovals.delete(compositeKey);
       }
+      checkbox.closest('.events-search-filter-option')?.classList.toggle('checked', checkbox.checked);
     });
 
     const selectedCount = selectedValues.size;
