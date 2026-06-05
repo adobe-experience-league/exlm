@@ -735,6 +735,7 @@ function renderActiveFilterCallouts(block) {
         window.headlessPager.selectPage(1);
       }
       executeSearch();
+      renderActiveFilterCallouts(block);
       updateClearFiltersButtonState(block);
     };
 
