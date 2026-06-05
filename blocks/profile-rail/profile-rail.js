@@ -45,7 +45,7 @@ if (isSignedIn) {
   let hasPLBadges = false;
   try {
     const { isPLEligible } = await import('../../scripts/utils/premium-learning-utils.js');
-    const eligible = await isPLEligible(true);
+    const eligible = await isPLEligible(isSignedIn);
     if (eligible) {
       const { getCookie } = await import('../../scripts/utils/cookie-utils.js');
       const { fetchUserBadges } = await import('../../scripts/data-service/premium-learning-data-service.js');
