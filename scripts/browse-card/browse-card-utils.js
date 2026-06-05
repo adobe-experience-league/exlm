@@ -88,7 +88,6 @@ export const getCardData = async (articlePath, placeholders) => {
   }
   const viewLinkPlaceholderKey = `browseCard${convertToTitleCase(type)}ViewLabel`.replace(/\s+/g, '');
   const eventSeries = getMetadata('series', doc);
-  const eventTime = getMetadata('promostarttime', doc);
 
   return {
     id: getMetadata('id', doc),
@@ -120,7 +119,6 @@ export const getCardData = async (articlePath, placeholders) => {
     /* TODO - add duration */
     event: {
       series: eventSeries,
-      time: eventTime,
     },
   };
 };
