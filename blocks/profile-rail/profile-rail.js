@@ -2,8 +2,6 @@ import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { getPathDetails, htmlToElement, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { getCurrentCourses } from '../../scripts/courses/course-profile.js';
-import { fetchUserBadges } from '../../scripts/data-service/premium-learning-data-service.js';
-import { getCookie } from '../../scripts/utils/cookie-utils.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const { lang } = getPathDetails();
@@ -47,12 +45,13 @@ if (isSignedIn) {
   let hasPLBadges = false;
   try {
     const { isPLEligible } = await import('../../scripts/utils/premium-learning-utils.js');
-    const eligible = await isPLEligible(true); // already know user is signed in
+    const eligible = await isPLEligible(true);
     if (eligible) {
+      const { getCookie } = await import('../../scripts/utils/cookie-utils.js');
+      const { fetchUserBadges } = await import('../../scripts/data-service/premium-learning-data-service.js');
       const config = getConfig();
       const userId = getCookie('alm_user_id');
       if (userId && config) {
-        // Fetch only 1 badge - sort by -dateAchieved ensures completed badges come first
         const badgesData = await fetchUserBadges(userId, config, 1);
         // Check if the returned badge is completed (has dateAchieved attribute)
         hasPLBadges = badgesData?.data?.[0]?.attributes?.dateAchieved != null;
