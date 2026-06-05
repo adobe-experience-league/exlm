@@ -4,18 +4,21 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
-import { isPLEligible, removeBlockAndEmptySection } from '../../scripts/utils/premium-learning-utils.js';
+import { isPLEligible, handlePLBlockError } from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 
-const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const FETCH_LIMIT = 10;
 const DISPLAY_LIMIT = 4;
 
-function showFallbackContentInUEMode(blockElement) {
+function showFallbackContentInUEMode(blockElement, showNoDataMessage = false) {
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
-  contentDiv.textContent =
-    'This block will load the Premium learning suggested content experience for signed-in Premium users.';
+  if (showNoDataMessage) {
+    contentDiv.textContent = 'No Premium Learning content available currently for your profile.';
+  } else {
+    contentDiv.textContent =
+      'This block will load the Premium learning suggested content experience for signed-in Premium users.';
+  }
   blockElement.appendChild(contentDiv);
 }
 
@@ -213,8 +216,7 @@ export default async function decorate(block) {
     .then(async (isEligible) => {
       if (!isEligible) {
         shimmer.removeShimmer();
-        if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else removeBlockAndEmptySection(block);
+        handlePLBlockError(block, showFallbackContentInUEMode);
         return;
       }
 
@@ -223,14 +225,14 @@ export default async function decorate(block) {
         shimmer.removeShimmer();
 
         if (!suggestedContentItems?.length) {
-          removeBlockAndEmptySection(block);
+          handlePLBlockError(block, (b) => showFallbackContentInUEMode(b, true));
           return;
         }
 
         const tabs = getTabDefinitions(suggestedContentItems, placeholders);
 
         if (!tabs.length) {
-          removeBlockAndEmptySection(block);
+          handlePLBlockError(block, (b) => showFallbackContentInUEMode(b, true));
           return;
         }
 
@@ -252,17 +254,15 @@ export default async function decorate(block) {
         });
       } catch (err) {
         shimmer.removeShimmer();
-        if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else removeBlockAndEmptySection(block);
         // eslint-disable-next-line no-console
         console.error('Error fetching PL suggested content:', err);
+        handlePLBlockError(block, showFallbackContentInUEMode);
       }
     })
     .catch((err) => {
       shimmer.removeShimmer();
-      if (UEAuthorMode) showFallbackContentInUEMode(block);
-      else removeBlockAndEmptySection(block);
       // eslint-disable-next-line no-console
       console.error('Error resolving PL eligibility for suggested content:', err);
+      handlePLBlockError(block, showFallbackContentInUEMode);
     });
 }
