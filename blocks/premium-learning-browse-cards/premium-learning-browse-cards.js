@@ -2,7 +2,7 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import { createTag, getv2TagLabels } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import { isPLEligible, removeBlockAndEmptySection } from '../../scripts/utils/premium-learning-utils.js';
+import { isPLEligible, handlePLBlockError } from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
@@ -88,8 +88,7 @@ export default async function decorate(block) {
     .then((isEligible) => {
       if (!isEligible) {
         buildCardsShimmer.removeShimmer();
-        if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else removeBlockAndEmptySection(block);
+        handlePLBlockError(block, showFallbackContentInUEMode);
         return;
       }
 
@@ -128,25 +127,21 @@ export default async function decorate(block) {
             if (viewMoreAnchor) {
               viewMoreAnchor.classList.toggle('hidden', sortedData.length <= DISPLAY_LIMIT);
             }
-          } else if (UEAuthorMode) {
-            showFallbackContentInUEMode(block, true);
           } else {
-            removeBlockAndEmptySection(block);
+            handlePLBlockError(block, (b) => showFallbackContentInUEMode(b, true));
           }
         })
         .catch((err) => {
           buildCardsShimmer.removeShimmer();
           /* eslint-disable-next-line no-console */
           console.error('Error fetching PL browse card data:', err);
-          if (UEAuthorMode) showFallbackContentInUEMode(block);
-          else removeBlockAndEmptySection(block);
+          handlePLBlockError(block, showFallbackContentInUEMode);
         });
     })
     .catch((err) => {
       buildCardsShimmer.removeShimmer();
       /* eslint-disable-next-line no-console */
       console.error('Error resolving PL eligibility for browse cards:', err);
-      if (UEAuthorMode) showFallbackContentInUEMode(block);
-      else removeBlockAndEmptySection(block);
+      handlePLBlockError(block, showFallbackContentInUEMode);
     });
 }

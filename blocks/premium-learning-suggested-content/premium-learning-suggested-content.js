@@ -4,7 +4,7 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
-import { isPLEligible, removeBlockAndEmptySection } from '../../scripts/utils/premium-learning-utils.js';
+import { isPLEligible, handlePLBlockError } from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 
@@ -217,8 +217,7 @@ export default async function decorate(block) {
     .then(async (isEligible) => {
       if (!isEligible) {
         shimmer.removeShimmer();
-        if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else removeBlockAndEmptySection(block);
+        handlePLBlockError(block, showFallbackContentInUEMode);
         return;
       }
 
@@ -227,16 +226,14 @@ export default async function decorate(block) {
         shimmer.removeShimmer();
 
         if (!suggestedContentItems?.length) {
-          if (UEAuthorMode) showFallbackContentInUEMode(block, true);
-          else removeBlockAndEmptySection(block);
+          handlePLBlockError(block, (b) => showFallbackContentInUEMode(b, true));
           return;
         }
 
         const tabs = getTabDefinitions(suggestedContentItems, placeholders);
 
         if (!tabs.length) {
-          if (UEAuthorMode) showFallbackContentInUEMode(block, true);
-          else removeBlockAndEmptySection(block);
+          handlePLBlockError(block, (b) => showFallbackContentInUEMode(b, true));
           return;
         }
 
@@ -260,15 +257,13 @@ export default async function decorate(block) {
         shimmer.removeShimmer();
         // eslint-disable-next-line no-console
         console.error('Error fetching PL suggested content:', err);
-        if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else removeBlockAndEmptySection(block);
+        handlePLBlockError(block, showFallbackContentInUEMode);
       }
     })
     .catch((err) => {
       shimmer.removeShimmer();
       // eslint-disable-next-line no-console
       console.error('Error resolving PL eligibility for suggested content:', err);
-      if (UEAuthorMode) showFallbackContentInUEMode(block);
-      else removeBlockAndEmptySection(block);
+      handlePLBlockError(block, showFallbackContentInUEMode);
     });
 }
