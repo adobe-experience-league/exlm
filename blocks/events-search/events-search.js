@@ -34,8 +34,10 @@ const toCompositeKey = (filterType, value) => `${filterType}:${value}`;
 /** Splices the tag out of activeTags and registers it in pendingRemovals (browse-filters removeFromTags pattern). */
 function removeActiveTag(activeTags, pendingRemovals, filterType, value) {
   const tagIndex = activeTags.findIndex((t) => t.filterType === filterType && t.value === value);
-  if (tagIndex !== -1) activeTags.splice(tagIndex, 1);
-  pendingRemovals.add(toCompositeKey(filterType, value));
+  if (tagIndex !== -1) {
+    activeTags.splice(tagIndex, 1);
+    pendingRemovals.add(toCompositeKey(filterType, value));
+  }
 }
 
 /** Fills count slots in CMS strings: `${count}`, `{}`, `{count}` (see PLACEHOLDER_COUNT_TOKEN). */
