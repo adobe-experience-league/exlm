@@ -267,7 +267,6 @@ export default class PLDataService {
   buildSuggestedContentUrlParams() {
     const { noOfResults, contentType } = this.queryParams;
     const { plPublicCatalogIds } = this.config ?? {};
-    const { lang } = this.pathDetails;
     const params = new URLSearchParams();
 
     // Resolve loTypes from contentType; fall back to learningProgram (cohort)
@@ -279,7 +278,6 @@ export default class PLDataService {
     params.set('page[limit]', noOfResults || 10);
     params.set('filter.loTypes', loTypes.join(','));
     params.set('sort', PLDataService.DEFAULT_SORT);
-    params.set('language', lang || 'en');
     params.set('enforcedFields[learningObject]', 'products');
     params.set('filter.ignoreEnhancedLP', 'false');
     params.set('filter.learnerState', 'notenrolled');
@@ -345,9 +343,6 @@ export default class PLDataService {
     }
 
     if (hasQuery) {
-      const { lang } = this.pathDetails;
-      const languageCode = lang || 'en-US';
-
       Object.assign(body, {
         autoCorrectMode: true,
         query: q || '',
@@ -356,7 +351,6 @@ export default class PLDataService {
         stemmed: true,
         'filter.ignoreHigherOrderLOEnrollments': false,
         'filter.snippetTypes': PLDataService.SNIPPET_TYPES,
-        language: [languageCode],
       });
     }
 
