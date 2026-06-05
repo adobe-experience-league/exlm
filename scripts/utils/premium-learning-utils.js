@@ -178,11 +178,9 @@ export async function applyPLSectionGating(signedIn = null, timeoutMs = PL_ELIGI
 }
 
 /**
- * Handles Premium Learning block errors by showing fallback content in UE mode or removing in production.
- * In UE Author Mode, optionally shows fallback content instead of removing.
+ * Handles Premium Learning block errors by showing fallback content in UE mode or removing on publish.
  * @param {HTMLElement} block - The block element to handle
  * @param {Function} [showFallbackFn] - Optional function to call in UE mode to show fallback content.
- *   If provided, block is preserved with fallback content in UE mode; otherwise removed in production.
  */
 export function handlePLBlockError(block, showFallbackFn = null) {
   // In UE Author Mode, show fallback content if provided
