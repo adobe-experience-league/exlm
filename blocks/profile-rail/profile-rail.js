@@ -46,14 +46,17 @@ if (isSignedIn) {
   // Check for Premium Learning badges (completed badges only, same logic as badges carousel)
   let hasPLBadges = false;
   try {
-    const config = getConfig();
-    const userId = getCookie('alm_user_id');
-    if (userId && config) {
-      // Fetch with sort by dateAchieved to get completed badges first
-      const badgesData = await fetchUserBadges(userId, config, 10);
-      // Filter for completed badges only (those with dateAchieved attribute)
-      const completedBadges = badgesData?.data?.filter((userBadge) => userBadge?.attributes?.dateAchieved);
-      hasPLBadges = completedBadges?.length > 0;
+    const { isPLEligible } = await import('../../scripts/utils/premium-learning-utils.js');
+    const eligible = await isPLEligible(true); // already know user is signed in
+    if (eligible) {
+      const config = getConfig();
+      const userId = getCookie('alm_user_id');
+      if (userId && config) {
+        // Fetch only 1 badge - sort by -dateAchieved ensures completed badges come first
+        const badgesData = await fetchUserBadges(userId, config, 1);
+        // Check if the returned badge is completed (has dateAchieved attribute)
+        hasPLBadges = badgesData?.data?.[0]?.attributes?.dateAchieved != null;
+      }
     }
   } catch (error) {
     // eslint-disable-next-line no-console
