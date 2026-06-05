@@ -10,11 +10,7 @@ const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html'
 function showFallbackContentInUEMode(blockElement, showNoDataMessage = false) {
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
   if (showNoDataMessage) {
-    contentDiv.innerHTML = `
-      <div class="browse-card-no-results">
-        No Premium Learning content available currently for your profile.
-      </div>
-    `;
+    contentDiv.textContent = 'No Premium Learning content available currently for your profile.';
   } else {
     contentDiv.textContent = 'This block will load the Premium learning content for Premium users only.';
   }

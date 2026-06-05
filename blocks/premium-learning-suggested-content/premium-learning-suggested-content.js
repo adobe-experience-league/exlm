@@ -15,11 +15,7 @@ const DISPLAY_LIMIT = 4;
 function showFallbackContentInUEMode(blockElement, showNoDataMessage = false) {
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
   if (showNoDataMessage) {
-    contentDiv.innerHTML = `
-      <div class="browse-card-no-results">
-        No Premium Learning content available currently for your profile.
-      </div>
-    `;
+    contentDiv.textContent = 'No Premium Learning content available currently for your profile.';
   } else {
     contentDiv.textContent =
       'This block will load the Premium learning suggested content experience for signed-in Premium users.';
