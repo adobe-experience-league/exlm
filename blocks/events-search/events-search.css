@@ -160,7 +160,6 @@ main .events-search .events-search-filter-options {
 
 main .events-search .events-search-filter-options-list {
   display: grid;
-  gap: var(--spectrum-spacing-100);
 }
 
 main
