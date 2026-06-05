@@ -156,7 +156,8 @@ export default async function decorate(block) {
         shimmer.removeShimmer();
 
         if (!allCards.length) {
-          removeBlockAndEmptySection(block);
+          if (UEAuthorMode) showFallbackContentInUEMode(block);
+          else removeBlockAndEmptySection(block);
           return;
         }
 
@@ -173,9 +174,9 @@ export default async function decorate(block) {
     })
     .catch((err) => {
       shimmer.removeShimmer();
-      if (UEAuthorMode) showFallbackContentInUEMode(block);
-      else removeBlockAndEmptySection(block);
       /* eslint-disable-next-line no-console */
       console.error('Error resolving PL eligibility for recommended content:', err);
+      if (UEAuthorMode) showFallbackContentInUEMode(block);
+      else removeBlockAndEmptySection(block);
     });
 }

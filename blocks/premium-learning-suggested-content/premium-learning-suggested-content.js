@@ -12,10 +12,18 @@ const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html'
 const FETCH_LIMIT = 10;
 const DISPLAY_LIMIT = 4;
 
-function showFallbackContentInUEMode(blockElement) {
+function showFallbackContentInUEMode(blockElement, showNoDataMessage = false) {
   const contentDiv = createTag('div', { class: 'browse-cards-block-content' });
-  contentDiv.textContent =
-    'This block will load the Premium learning suggested content experience for signed-in Premium users.';
+  if (showNoDataMessage) {
+    contentDiv.innerHTML = `
+      <div class="browse-card-no-results">
+        No Premium Learning content available currently for your profile.
+      </div>
+    `;
+  } else {
+    contentDiv.textContent =
+      'This block will load the Premium learning suggested content experience for signed-in Premium users.';
+  }
   blockElement.appendChild(contentDiv);
 }
 
@@ -223,14 +231,16 @@ export default async function decorate(block) {
         shimmer.removeShimmer();
 
         if (!suggestedContentItems?.length) {
-          removeBlockAndEmptySection(block);
+          if (UEAuthorMode) showFallbackContentInUEMode(block, true);
+          else removeBlockAndEmptySection(block);
           return;
         }
 
         const tabs = getTabDefinitions(suggestedContentItems, placeholders);
 
         if (!tabs.length) {
-          removeBlockAndEmptySection(block);
+          if (UEAuthorMode) showFallbackContentInUEMode(block, true);
+          else removeBlockAndEmptySection(block);
           return;
         }
 
@@ -252,17 +262,17 @@ export default async function decorate(block) {
         });
       } catch (err) {
         shimmer.removeShimmer();
-        if (UEAuthorMode) showFallbackContentInUEMode(block);
-        else removeBlockAndEmptySection(block);
         // eslint-disable-next-line no-console
         console.error('Error fetching PL suggested content:', err);
+        if (UEAuthorMode) showFallbackContentInUEMode(block);
+        else removeBlockAndEmptySection(block);
       }
     })
     .catch((err) => {
       shimmer.removeShimmer();
-      if (UEAuthorMode) showFallbackContentInUEMode(block);
-      else removeBlockAndEmptySection(block);
       // eslint-disable-next-line no-console
       console.error('Error resolving PL eligibility for suggested content:', err);
+      if (UEAuthorMode) showFallbackContentInUEMode(block);
+      else removeBlockAndEmptySection(block);
     });
 }
