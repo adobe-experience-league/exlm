@@ -8,7 +8,6 @@ import { isPLEligible, handlePLBlockError } from '../../scripts/utils/premium-le
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 
-const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const FETCH_LIMIT = 10;
 const DISPLAY_LIMIT = 4;
 

@@ -37,7 +37,7 @@
   .browse-card.event-upcoming-event-card .browse-card-banner {
     background-color: var(--non-spectrum-adobe-red) !important;
     letter-spacing: 0.2px;
-    z-index: 9;
+    z-index: 8;
   }
 
   .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers,

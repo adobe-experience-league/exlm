@@ -8,7 +8,6 @@ import { getCookie } from '../../scripts/utils/cookie-utils.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 
-const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
 const MAX_CARDS = 4;
 const NO_OF_RESULTS = 10;
 const DEFAULT_CONTENT_TYPES = ['premium-learning-course'];
