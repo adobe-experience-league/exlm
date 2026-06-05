@@ -61,6 +61,19 @@ function getFilterState(block) {
   return state;
 }
 
+/**
+ * Sorts items alphabetically by their title property .
+ * Uses the page's locale for consistent language-specific sorting.
+ * @param {Object} a - First item to compare
+ * @param {Object} b - Second item to compare
+ * @returns {number} Comparison result for array sort
+ */
+function sortItemsAlphabetically(a, b) {
+  const titleA = (a.title || '').toLowerCase();
+  const titleB = (b.title || '').toLowerCase();
+  return titleA.localeCompare(titleB, document.documentElement.lang || 'en');
+}
+
 function getBaseFilterGroups(placeholders) {
   return [
     {
@@ -78,7 +91,7 @@ function getBaseFilterGroups(placeholders) {
     {
       id: 'el_contenttype',
       name: placeholders.eventSearchFilterEventTypeLabel || 'Event Type',
-      items: eventTypeOptions.items.map((item) => ({ ...item })),
+      items: eventTypeOptions.items.map((item) => ({ ...item })).sort(sortItemsAlphabetically),
       selected: 0,
     },
   ];
@@ -1027,12 +1040,14 @@ async function loadDynamicFacetValues(groups) {
   groups.forEach((group) => {
     if (group.id !== 'el_event_series' && group.id !== 'el_product') return;
     const groupValues = facetDetails[group.id] || [];
-    group.items = groupValues.map((item) => ({
-      id: item,
-      value: item,
-      title: item.split('|').join(' | '),
-      description: '',
-    }));
+    group.items = groupValues
+      .map((item) => ({
+        id: item,
+        value: item,
+        title: item.split('|').join(' | '),
+        description: '',
+      }))
+      .sort(sortItemsAlphabetically);
   });
 }
 
