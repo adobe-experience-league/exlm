@@ -31,6 +31,13 @@ const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
 /** Builds the composite key used to identify a filter in pendingRemovals and callout data-key attributes. */
 const toCompositeKey = (filterType, value) => `${filterType}:${value}`;
 
+/** Splices the tag out of activeTags and registers it in pendingRemovals (browse-filters removeFromTags pattern). */
+function removeActiveTag(activeTags, pendingRemovals, filterType, value) {
+  const tagIndex = activeTags.findIndex((t) => t.filterType === filterType && t.value === value);
+  if (tagIndex !== -1) activeTags.splice(tagIndex, 1);
+  pendingRemovals.add(toCompositeKey(filterType, value));
+}
+
 /** Fills count slots in CMS strings: `${count}`, `{}`, `{count}` (see PLACEHOLDER_COUNT_TOKEN). */
 function fillPlaceholderCount(template, value) {
   const s = String(value);
@@ -665,7 +672,7 @@ function renderActiveFilterCallouts(block) {
   if (!container) return;
 
   // Use the ordered tags array (browse-filters pattern) so callouts reflect user selection order.
-  const { tags: activeTags } = getFilterState(block);
+  const { tags: activeTags, pendingRemovals } = getFilterState(block);
 
   // Skip full DOM teardown if the ordered set of selected filters hasn't changed.
   const currentValues = [...container.querySelectorAll('.events-search-active-filter-tag')].map((t) => t.dataset.key);
@@ -716,10 +723,7 @@ function renderActiveFilterCallouts(block) {
 
       // Remove from ordered tags array and register as pending removal to prevent the Coveo
       // subscription from re-adding the tag before Coveo state catches up.
-      const { pendingRemovals } = getFilterState(block);
-      const tagIndex = activeTags.findIndex((t) => t.filterType === filterType && t.value === value);
-      if (tagIndex !== -1) activeTags.splice(tagIndex, 1);
-      pendingRemovals.add(toCompositeKey(filterType, value));
+      removeActiveTag(activeTags, pendingRemovals, filterType, value);
 
       toggleFacetSelection(filterType, value, false);
       const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${filterType}"]`);
@@ -896,9 +900,7 @@ function bindFilterInteractions(block, groups, placeholders) {
         });
       }
     } else {
-      const tagIndex = activeTags.findIndex((t) => t.filterType === filterType && t.value === checkbox.value);
-      if (tagIndex !== -1) activeTags.splice(tagIndex, 1);
-      pendingRemovals.add(toCompositeKey(filterType, checkbox.value));
+      removeActiveTag(activeTags, pendingRemovals, filterType, checkbox.value);
     }
 
     const selectedCount = groupEl.querySelectorAll('input[type="checkbox"]:checked').length;
