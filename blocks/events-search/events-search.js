@@ -28,6 +28,16 @@ const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
 const PLACEHOLDER_COUNT_TOKEN = '${count}';
 const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
 
+/** Builds the composite key used to identify a filter in pendingRemovals and callout data-key attributes. */
+const toCompositeKey = (filterType, value) => `${filterType}:${value}`;
+
+/** Splices the tag out of activeTags and registers it in pendingRemovals (browse-filters removeFromTags pattern). */
+function removeActiveTag(activeTags, pendingRemovals, filterType, value) {
+  const tagIndex = activeTags.findIndex((t) => t.filterType === filterType && t.value === value);
+  if (tagIndex !== -1) activeTags.splice(tagIndex, 1);
+  pendingRemovals.add(toCompositeKey(filterType, value));
+}
+
 /** Fills count slots in CMS strings: `${count}`, `{}`, `{count}` (see PLACEHOLDER_COUNT_TOKEN). */
 function fillPlaceholderCount(template, value) {
   const s = String(value);
@@ -39,6 +49,17 @@ const viewSwitcherInstances = new WeakMap();
 const eventsSearchLoadingUiCleanups = new WeakMap();
 /** Per-block AbortController for open sort dropdown document listeners (click-outside + Escape). */
 const eventsSearchSortDropdownOpenAbort = new WeakMap();
+/** Per-block filter state: { tags: [], pendingRemovals: Set }. */
+const eventsSearchActiveTags = new WeakMap();
+
+function getFilterState(block) {
+  let state = eventsSearchActiveTags.get(block);
+  if (!state) {
+    state = { tags: [], pendingRemovals: new Set() };
+    eventsSearchActiveTags.set(block, state);
+  }
+  return state;
+}
 
 function getBaseFilterGroups(placeholders) {
   return [
@@ -343,6 +364,8 @@ function updateClearFiltersButtonState(block) {
 }
 
 function syncFilterUIFromHeadlessState(block, groups) {
+  const { tags: activeTags, pendingRemovals } = getFilterState(block);
+
   Object.entries(FACET_CONTROLLER_MAP).forEach(([groupId, controllerName]) => {
     const controller = window[controllerName];
     const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${groupId}"]`);
@@ -354,7 +377,23 @@ function syncFilterUIFromHeadlessState(block, groups) {
 
     const checkboxes = groupEl.querySelectorAll('.events-search-filter-option input[type="checkbox"]');
     checkboxes.forEach((checkbox) => {
-      checkbox.checked = selectedValues.has(checkbox.value);
+      const isSelected = selectedValues.has(checkbox.value);
+      checkbox.checked = isSelected;
+
+      // Mirror checkbox state into ordered tags array (browse-filters handleUriHash/appendTag pattern).
+      // This ensures callouts appear correctly when filters are restored from URL on page load.
+      const compositeKey = toCompositeKey(groupId, checkbox.value);
+      const existingIndex = activeTags.findIndex((t) => t.filterType === groupId && t.value === checkbox.value);
+      if (isSelected && existingIndex === -1 && !pendingRemovals.has(compositeKey)) {
+        activeTags.push({
+          filterType: groupId,
+          value: checkbox.value,
+          label: checkbox.getAttribute('data-label') || checkbox.value,
+        });
+      } else if (!isSelected) {
+        if (existingIndex !== -1) activeTags.splice(existingIndex, 1);
+        pendingRemovals.delete(compositeKey);
+      }
       checkbox.closest('.events-search-filter-option')?.classList.toggle('checked', checkbox.checked);
     });
 
@@ -633,15 +672,12 @@ function renderActiveFilterCallouts(block) {
   const container = block.querySelector('.events-search-active-filters');
   if (!container) return;
 
-  const checkedBoxes = block.querySelectorAll('.events-search-filter-option input[type="checkbox"]:checked');
+  // Use the ordered tags array (browse-filters pattern) so callouts reflect user selection order.
+  const { tags: activeTags, pendingRemovals } = getFilterState(block);
 
-  // Skip full DOM teardown if the set of selected filters hasn't changed.
-  // Use a composite "filterType:value" key so same-named values in different groups don't collide.
+  // Skip full DOM teardown if the ordered set of selected filters hasn't changed.
   const currentValues = [...container.querySelectorAll('.events-search-active-filter-tag')].map((t) => t.dataset.key);
-  const newValues = [...checkedBoxes].map((cb) => {
-    const ft = cb.closest('.events-search-filter-group')?.dataset.filterType ?? '';
-    return `${ft}:${cb.value}`;
-  });
+  const newValues = activeTags.map((tag) => toCompositeKey(tag.filterType, tag.value));
   const unchanged = currentValues.length === newValues.length && currentValues.every((v, i) => v === newValues[i]);
   if (unchanged) return;
 
@@ -651,7 +687,7 @@ function renderActiveFilterCallouts(block) {
 
   container.innerHTML = '';
 
-  if (!checkedBoxes.length) {
+  if (!activeTags.length) {
     container.hidden = true;
     if (focusedKey) {
       block.querySelector('.events-search-keyword-input')?.focus();
@@ -659,14 +695,12 @@ function renderActiveFilterCallouts(block) {
     return;
   }
 
-  checkedBoxes.forEach((checkbox) => {
-    const label = checkbox.getAttribute('data-label') || checkbox.value;
-    const groupEl = checkbox.closest('.events-search-filter-group');
-    const filterType = groupEl?.dataset.filterType ?? '';
+  activeTags.forEach((tag) => {
+    const { filterType, value, label } = tag;
     const callout = createTag('span', {
       class: 'events-search-active-filter-tag',
-      'data-value': checkbox.value,
-      'data-key': `${filterType}:${checkbox.value}`,
+      'data-value': value,
+      'data-key': toCompositeKey(filterType, value),
     });
     const calloutLabel = createTag('span', { class: 'events-search-active-filter-tag-label' });
     calloutLabel.textContent = label;
@@ -680,8 +714,20 @@ function renderActiveFilterCallouts(block) {
     calloutRemove.append(calloutRemoveIcon);
 
     const handleRemove = () => {
-      checkbox.checked = false;
-      toggleFacetSelection(filterType, checkbox.value, false);
+      // Uncheck the corresponding checkbox in the filter panel (browse-filters removeFromTags pattern).
+      const matchedCheckbox = [
+        ...block.querySelectorAll(
+          `.events-search-filter-group[data-filter-type="${filterType}"] input[type="checkbox"]`,
+        ),
+      ].find((cb) => cb.value === value);
+      if (matchedCheckbox) matchedCheckbox.checked = false;
+
+      // Remove from ordered tags array and register as pending removal to prevent the Coveo
+      // subscription from re-adding the tag before Coveo state catches up.
+      removeActiveTag(activeTags, pendingRemovals, filterType, value);
+
+      toggleFacetSelection(filterType, value, false);
+      const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${filterType}"]`);
       if (groupEl) {
         const newCount = groupEl.querySelectorAll('input[type="checkbox"]:checked').length;
         updateGroupSelectionCount(block, filterType, newCount);
@@ -843,6 +889,22 @@ function bindFilterInteractions(block, groups, placeholders) {
     const filterType = groupEl?.dataset.filterType;
     if (!filterType) return;
 
+    // Maintain ordered tags array (browse-filters appendTag/removeFromTags pattern).
+    const { tags: activeTags, pendingRemovals } = getFilterState(block);
+    if (checkbox.checked) {
+      pendingRemovals.delete(toCompositeKey(filterType, checkbox.value));
+      const alreadyTracked = activeTags.some((t) => t.filterType === filterType && t.value === checkbox.value);
+      if (!alreadyTracked) {
+        activeTags.push({
+          filterType,
+          value: checkbox.value,
+          label: checkbox.getAttribute('data-label') || checkbox.value,
+        });
+      }
+    } else {
+      removeActiveTag(activeTags, pendingRemovals, filterType, checkbox.value);
+    }
+
     const selectedCount = groupEl.querySelectorAll('input[type="checkbox"]:checked').length;
     const targetGroup = groups.find((group) => group.id === filterType);
     if (targetGroup) {
@@ -906,6 +968,10 @@ function bindClearFilters(block, groups) {
       toggleFacetSelection(filterType, checkbox.value, false);
       checkbox.checked = false;
     });
+    // Reset ordered tags array (browse-filters clearAllSelectedTag pattern).
+    const { tags: activeTags, pendingRemovals } = getFilterState(block);
+    activeTags.length = 0;
+    pendingRemovals.clear();
     groups.forEach((group) => {
       group.selected = 0;
       updateGroupSelectionCount(block, group.id, 0);
