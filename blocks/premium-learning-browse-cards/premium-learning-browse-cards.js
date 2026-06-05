@@ -132,9 +132,10 @@ export default async function decorate(block) {
             if (viewMoreAnchor) {
               viewMoreAnchor.classList.toggle('hidden', sortedData.length <= DISPLAY_LIMIT);
             }
+          } else if (UEAuthorMode) {
+            showFallbackContentInUEMode(block, true);
           } else {
-            if (UEAuthorMode) showFallbackContentInUEMode(block, true);
-            else removeBlockAndEmptySection(block);
+            removeBlockAndEmptySection(block);
           }
         })
         .catch((err) => {
