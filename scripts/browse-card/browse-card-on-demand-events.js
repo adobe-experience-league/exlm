@@ -3,40 +3,25 @@ import { decorateIcons } from '../lib-franklin.js';
 import { createTag, htmlToElement } from '../scripts.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
-/* TODO - Remove duration and event series placeholder during cleanup */
-
-/**
- * Format date for on-demand events display
- * @param {string} dateString - Date string to format
- * @returns {string|null} - Formatted date string or null
- */
-const formatOnDemandEventDate = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  const optionsDate = { month: 'short', day: '2-digit', year: 'numeric' };
-  const formattedDate = date.toLocaleDateString(undefined, optionsDate).toUpperCase();
-
-  return formattedDate;
-};
+/* TODO - Remove duration during cleanup */
 
 /**
  * Builds event content specifically for on-demand events
  * @param {Object} params - Parameters for building event content
  * @param {Object} params.event - Event data
- * @param {string} params.contentType - Content type
  * @param {HTMLElement} params.cardContent - Card content element
  * @param {HTMLElement} params.card - Card element
  */
 const buildOnDemandEventContent = ({ event, cardContent, card }) => {
-  const { time, duration } = event || {};
+  const { duration } = event || {};
   const durationText = duration || '';
-  const formattedDateTime = formatOnDemandEventDate(time);
+  if (!durationText) return;
 
   const eventInfo = htmlToElement(`
     <div class="browse-card-event-info">
         <span class="icon icon-time"></span>
         <div class="browse-card-event-time">
-            <h6>${formattedDateTime} | ${durationText}</h6>
+            <h6>${durationText}</h6>
         </div>
     </div>
   `);
@@ -94,10 +79,9 @@ export const decorateOnDemandEvents = (card, model) => {
     cardFigure.appendChild(fallbackImg);
   }
 
-  if (event?.time) {
+  if (event?.duration) {
     buildOnDemandEventContent({
       event,
-      contentType: model.contentType,
       cardContent,
       card,
     });
