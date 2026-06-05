@@ -52,9 +52,8 @@ if (isSignedIn) {
       const config = getConfig();
       const userId = getCookie('alm_user_id');
       if (userId && config) {
-        const badgesData = await fetchUserBadges(userId, config, 1);
-        // Check if the returned badge is completed (has dateAchieved attribute)
-        hasPLBadges = badgesData?.data?.[0]?.attributes?.dateAchieved != null;
+        const badgesData = await fetchUserBadges(userId, config, 9);
+        hasPLBadges = badgesData?.data?.some((b) => b?.attributes?.dateAchieved != null) ?? false;
       }
     }
   } catch (error) {
