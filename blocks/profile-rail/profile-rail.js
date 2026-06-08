@@ -1,6 +1,6 @@
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { getPathDetails, htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
+import { getPathDetails, htmlToElement, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { getCurrentCourses } from '../../scripts/courses/course-profile.js';
 
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
@@ -41,8 +41,28 @@ if (isSignedIn) {
   const awardedSkills = skills?.filter((skill) => skill.award === true);
   const hasAwardedSkills = awardedSkills?.length > 0;
 
-  // Show awards if user has either certificates or awarded skills
-  hasAwards = hasCertificates || hasAwardedSkills;
+  // Check for Premium Learning badges (completed badges only, same logic as badges carousel)
+  let hasPLBadges = false;
+  try {
+    const { isPLEligible } = await import('../../scripts/utils/premium-learning-utils.js');
+    const eligible = await isPLEligible(isSignedIn);
+    if (eligible) {
+      const { getCookie } = await import('../../scripts/utils/cookie-utils.js');
+      const { fetchUserBadges } = await import('../../scripts/data-service/premium-learning-data-service.js');
+      const config = getConfig();
+      const userId = getCookie('alm_user_id');
+      if (userId && config) {
+        const badgesData = await fetchUserBadges(userId, config, 9);
+        hasPLBadges = badgesData?.data?.some((b) => b?.attributes?.dateAchieved != null) ?? false;
+      }
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error checking PL badges:', error);
+  }
+
+  // Show awards if user has certificates, awarded skills, or PL badges
+  hasAwards = hasCertificates || hasAwardedSkills || hasPLBadges;
 }
 
 async function fetchNavContent() {
