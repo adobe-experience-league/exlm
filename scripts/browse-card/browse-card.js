@@ -371,7 +371,8 @@ const buildCardContent = async (card, model, element) => {
 
   if (
     contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY.toLowerCase() ||
-    contentType?.toLowerCase() === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY.toLowerCase()
+    contentType?.toLowerCase() === CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY.toLowerCase() ||
+    contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase()
   ) {
     buildEventContent({ event, contentType, cardContent, card });
   }
