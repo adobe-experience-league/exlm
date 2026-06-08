@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-unused-vars */
 import { createTag } from '../scripts.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
@@ -16,8 +15,6 @@ export const decorateOnDemandEvents = (card, model) => {
   const { event } = model;
   const cardFigure = card.querySelector('.browse-card-figure');
   if (!cardFigure) return;
-
-  const cardContent = card.querySelector('.browse-card-content');
 
   cardFigure.querySelector('.laptop-container')?.remove();
   const img = cardFigure.querySelector('img');
