@@ -86,6 +86,9 @@ dialog[data-type] {
 
 /* Text control (e.g. Clear) — secondary outline button, distinct from icon-only controls */
 .exl-dialog-header-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: auto;
   min-width: auto;
   height: 30px;

@@ -433,11 +433,14 @@
 }
 
 /*
- * Expanded-only prompt layouts (wide viewports). Below 768px, expanded uses the same
- * full-width prompt stack as the side drawer (base `.bc-prompt-pill-button` rules).
- * Following exlm viewport standards 600px, 900px, 1200px will look bad, so we're using 768px.
+ * Expanded-only prompt layouts (wide viewports).
+ * Intentional breakpoint exception: ExL uses 600 / 900 / 1200px, but the
+ * expanded drawer is only 80vw wide. At 769–899px the modal is still too narrow for the
+ * half-width welcome pill grid; 900px leaves that range with incorrect pill rendering. 769px
+ * aligns with when 80vw (~615px) can fit the card layout; below that, use the side-drawer
+ * full-width prompt stack (base `.bc-prompt-pill-button` rules).
  */
-@media (min-width: 768px) {
+@media (min-width: 769px) {
   /* Expanded only: full-width prompt area; taller, half-width welcome pill cards (not in the narrow drawer). */
   #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container {
     max-width: 100% !important;
@@ -505,9 +508,7 @@
   }
 }
 
-/* Expanded on narrow viewports: match side-drawer prompt stack (full-width pills, same gap as base). 
- * Following exlm viewport standards 600px, 900px, 1200px will look bad, so we're using 768px.
-*/
+/* Expanded on narrow viewports: match side-drawer prompt stack (see breakpoint note above). */
 @media (max-width: 768px) {
   #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-pills-container:has(> :nth-child(4):last-child) {
     display: flex !important;
@@ -562,7 +563,7 @@
 #brand-concierge-mount .input-section .scroll-to-bottom {
   position: absolute !important;
 
-  /* 48 px = button radius (18 px) + visual gap above the input container */
+  /* 48 px from section top → button bottom lands 12 px above the input row */
   inset: 48px auto auto 50% !important;
   transform: translateX(-50%) !important;
   margin: 0 !important;
@@ -574,7 +575,6 @@
 
 #brand-concierge-mount .scroll-to-bottom:not(.bc-scroll-to-bottom-visible) {
   display: none !important;
-  visibility: hidden !important;
   pointer-events: none !important;
 }
 

@@ -305,7 +305,8 @@ function ensureExchangeScrollRoom(mount, history, userMessageEl, userMessageCoun
   const inputSection = mount?.querySelector('.input-section');
   if (!container) return;
 
-  const neededMinHeight = userMessageEl.offsetTop + container.clientHeight - (inputSection?.clientHeight ?? 0);
+  const neededMinHeight =
+    getMessageScrollTopInHistory(history, userMessageEl) + container.clientHeight - (inputSection?.clientHeight ?? 0);
   if (neededMinHeight > currentMin) {
     history.style.setProperty('min-height', `${Math.ceil(neededMinHeight)}px`);
   }
@@ -344,7 +345,6 @@ function startScrollPin(mount) {
 
   const tick = () => {
     if (Date.now() > end) {
-      scrollPinRafId = null;
       stopScrollPin();
       return;
     }
