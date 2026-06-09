@@ -6,6 +6,92 @@ const SUB_FACET_MAP = {
   Community: COMMUNITY_SEARCH_FACET,
 };
 
+/**
+ * Full event-type filter expressions (exact match OR). Applied via `cq`, not hierarchical facet parent `Event`.
+ */
+export const EVENT_TYPE_FILTER_CQ_BY_UI = Object.freeze({
+  'Event|On Demand Event': '(@el_contenttype=="Event" OR @el_contenttype=="Event|On Demand Event")',
+  'Event|Upcoming Event':
+    '(@el_contenttype=="Upcoming Event" OR @el_contenttype=="upcoming-event" OR @el_contenttype=="Event|Upcoming Event")',
+});
+
+/** v2 values kept for browse-filters facet toggles and hash migration. */
+export const EVENT_TYPE_UI_FACET_VALUE = Object.freeze({
+  'Event|On Demand Event': 'Event|On Demand Event',
+  'Event|Upcoming Event': 'Event|Upcoming Event',
+});
+
+/** @deprecated Use EVENT_TYPE_FILTER_CQ_BY_UI — kept for imports that referenced legacy cq map. */
+export const EVENT_TYPE_LEGACY_CQ_BY_UI = EVENT_TYPE_FILTER_CQ_BY_UI;
+
+/** Legacy facet / hash values that map back to an events-search UI checkbox. */
+export const LEGACY_EVENT_TYPE_FACET_TO_UI = Object.freeze({
+  Event: 'Event|On Demand Event',
+  'Upcoming Event': 'Event|Upcoming Event',
+  'upcoming-event': 'Event|Upcoming Event',
+});
+
+/**
+ * @param {string} uiValue - Checkbox value from event type filter UI
+ * @param {boolean} isSelected - Whether the UI option is being selected or cleared
+ * @returns {{ value: string, state: 'selected'|'idle' }[]}
+ */
+export function getEventTypeCoveoFacetSelections(uiValue, isSelected) {
+  const facetValue = EVENT_TYPE_UI_FACET_VALUE[uiValue];
+  const state = isSelected ? 'selected' : 'idle';
+  if (!facetValue) {
+    return [{ value: uiValue, state }];
+  }
+  return [{ value: facetValue, state }];
+}
+
+/** @param {string[]} checkedUiValues */
+export function buildEventTypeFilterConstantQuery(checkedUiValues) {
+  const fragments = checkedUiValues
+    .map((uiValue) => EVENT_TYPE_FILTER_CQ_BY_UI[uiValue])
+    .filter(Boolean);
+  if (!fragments.length) return '';
+  return fragments.length === 1 ? fragments[0] : `(${fragments.join(' OR ')})`;
+}
+
+/** @deprecated Alias for {@link buildEventTypeFilterConstantQuery}. */
+export const buildEventTypeLegacyConstantQuery = buildEventTypeFilterConstantQuery;
+
+/** True when a UI event-type value uses legacy + v2 mapping. */
+export function isMappedEventTypeFilterValue(uiValue) {
+  return Boolean(EVENT_TYPE_UI_FACET_VALUE[uiValue]);
+}
+
+/** Coveo facet field values that roll up into each Event Type UI option count. */
+export const EVENT_TYPE_FACET_COUNT_SOURCES = Object.freeze({
+  'Event|On Demand Event': ['Event', 'Event|On Demand Event'],
+  'Event|Upcoming Event': ['Upcoming Event', 'upcoming-event', 'Event|Upcoming Event'],
+});
+
+function getFacetValueCount(facetValue) {
+  const count = facetValue?.numberOfResults ?? facetValue?.count;
+  return typeof count === 'number' ? count : 0;
+}
+
+/** Sum contextual Coveo facet counts for a fixed Event Type checkbox (legacy + v2 sources). */
+export function getEventTypeUiOptionCount(uiValue, facetValues = []) {
+  const sources = EVENT_TYPE_FACET_COUNT_SOURCES[uiValue];
+  if (!sources) return null;
+  const countByValue = new Map(facetValues.map((facetValue) => [facetValue.value, getFacetValueCount(facetValue)]));
+  return sources.reduce((sum, value) => sum + (countByValue.get(value) ?? 0), 0);
+}
+
+/** True when a selected Coveo facet value corresponds to a UI event-type checkbox. */
+export function isEventTypeUiValueSelected(uiValue, selectedValues) {
+  const facetValue = EVENT_TYPE_UI_FACET_VALUE[uiValue];
+  if (facetValue && selectedValues.has(facetValue)) {
+    return true;
+  }
+  return Object.entries(LEGACY_EVENT_TYPE_FACET_TO_UI).some(
+    ([legacyValue, mappedUi]) => mappedUi === uiValue && selectedValues.has(legacyValue),
+  );
+}
+
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -377,6 +463,10 @@ export const getParsedSolutionsQuery = (solutionTags) => {
 };
 
 export const getCoveoFacets = (type, value) => {
+  if (EVENT_TYPE_UI_FACET_VALUE[type]) {
+    return getEventTypeCoveoFacetSelections(type, value);
+  }
+
   const subFacets = SUB_FACET_MAP[type];
   if (!subFacets) {
     return [

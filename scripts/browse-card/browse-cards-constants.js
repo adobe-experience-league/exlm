@@ -51,8 +51,9 @@ export const AUTHOR_TYPE = Object.freeze({
 });
 
 export const BASE_COVEO_ADVANCED_QUERY = '(@el_contenttype NOT "Community|User")';
+/** Events hub scope: legacy + Events v2 hierarchical content types. */
 export const BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT =
-  '(@el_contenttype = "Event") OR (@el_contenttype = "Upcoming Event")';
+  '(@el_contenttype = "Event") OR (@el_contenttype = "Event|On Demand Event") OR (@el_contenttype = "Upcoming Event") OR (@el_contenttype = "Event|Upcoming Event")';
 
 export const VIDEO_THUMBNAIL_FORMAT = /^https:\/\/video\.tv\.adobe\.com\/v\/\w+\?format=jpeg$/;
 

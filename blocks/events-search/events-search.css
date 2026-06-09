@@ -205,6 +205,63 @@ main .events-search .events-search-filter-option {
   align-items: center;
   gap: var(--spectrum-spacing-100);
   cursor: pointer;
+  padding: var(--spectrum-spacing-75) var(--spectrum-spacing-100);
+  margin: 0 calc(-1 * var(--spectrum-spacing-100));
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+
+main .events-search .events-search-filter-option:hover,
+main .events-search .events-search-filter-option:focus-within {
+  background-color: var(--footer-border-color);
+}
+
+main .events-search .events-search-filter-group-actions {
+  display: flex;
+  margin-bottom: var(--spectrum-spacing-100);
+}
+
+main .events-search .events-search-filter-select-all {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--link-color);
+  font-size: var(--spectrum-font-size-100);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+main .events-search .events-search-filter-select-all:hover {
+  text-decoration: underline;
+}
+
+main .events-search .events-search-filter-only-btn {
+  flex-shrink: 0;
+  align-self: center;
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  padding: 2px 0;
+  min-width: 2.25rem;
+  text-align: right;
+  line-height: 1.2;
+  color: var(--non-spectrum-web-gray, #747474);
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-medium, 500);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+}
+
+main .events-search .events-search-filter-only-btn:hover {
+  color: var(--non-spectrum-graphite-gray, #464646);
+}
+
+main .events-search .events-search-filter-option:hover .events-search-filter-only-btn,
+main .events-search .events-search-filter-option:focus-within .events-search-filter-only-btn,
+main .events-search .events-search-filter-option.checked .events-search-filter-only-btn {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 main .events-search .events-search-filter-option.is-overflow-hidden {
@@ -213,7 +270,7 @@ main .events-search .events-search-filter-option.is-overflow-hidden {
 
 main .events-search .events-search-filter-option input[type='checkbox'] {
   border: 2px solid var(--non-spectrum-medium-gray);
-  margin-top: var(--spectrum-spacing-75);
+  margin: 0;
   cursor: pointer;
   width: 16px;
   height: 16px;
@@ -221,11 +278,80 @@ main .events-search .events-search-filter-option input[type='checkbox'] {
 }
 
 main .events-search .events-search-filter-option-label {
+  flex: 1;
+  min-width: 0;
+  padding-right: var(--spectrum-spacing-100);
   font-size: var(--spectrum-font-size-200);
   line-height: 1.4;
   cursor: pointer;
-  margin-top: var(--spectrum-spacing-75);
-  margin-bottom: var(--spectrum-spacing-300);
+  margin: 0;
+}
+
+main .events-search .events-search-filter-option-count {
+  color: var(--non-spectrum-article-dark-gray, #6e6e6e);
+  font-weight: 400;
+}
+
+main .events-search .events-search-filter-options-shimmer {
+  display: grid;
+  gap: var(--spectrum-spacing-100);
+  min-height: calc(5 * (16px + 2 * var(--spectrum-spacing-75)));
+}
+
+main .events-search .events-search-filter-option-shimmer {
+  height: 16px;
+  width: 100%;
+  max-width: 18rem;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--spectrum-gray-200, #e1e1e1) 0%,
+    var(--spectrum-gray-100, #f0f0f0) 50%,
+    var(--spectrum-gray-200, #e1e1e1) 100%
+  );
+  background-size: 200% 100%;
+  animation: events-search-filter-shimmer-wave 1.2s ease-in-out infinite;
+}
+
+main .events-search .events-search-filter-count-shimmer {
+  display: inline-block;
+  width: 2.5rem;
+  height: 0.85em;
+  margin-inline-start: 0.15rem;
+  vertical-align: baseline;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--spectrum-gray-200, #e1e1e1) 0%,
+    var(--spectrum-gray-100, #f0f0f0) 50%,
+    var(--spectrum-gray-200, #e1e1e1) 100%
+  );
+  background-size: 200% 100%;
+  animation: events-search-filter-shimmer-wave 1.2s ease-in-out infinite;
+}
+
+main
+  .events-search
+  .events-search-filter-group.is-filter-loading
+  .events-search-filter-option-count:not(.events-search-filter-count-shimmer) {
+  opacity: 0.45;
+}
+
+@keyframes events-search-filter-shimmer-wave {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 1023px) {
+  main .events-search .events-search-filter-only-btn {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 
 main .events-search .events-search-filter-show-more {

@@ -1,7 +1,8 @@
+/* eslint-disable no-use-before-define */
 import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
 import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT } from '../../scripts/browse-card/browse-cards-constants.js';
-import BrowseCardsDelegate, {
+import {
   normalizeOnDemandEventModel,
   normalizeUpcomingEventModel,
 } from '../../scripts/browse-card/browse-cards-delegate.js';
@@ -12,10 +13,28 @@ import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import {
+  buildEventTypeFilterConstantQuery,
   eventTypeOptions,
   getBrowseFiltersResultCount,
+  getEventTypeCoveoFacetSelections,
   handleCoverSearchSubmit,
+  isEventTypeUiValueSelected,
+  isMappedEventTypeFilterValue,
 } from '../browse-filters/browse-filter-utils.js';
+import {
+  EVENTS_SEARCH_DYNAMIC_FACET_FIELDS,
+  getEventsSearchHeadlessFacetOverrides,
+  showDynamicFilterGroupShimmers,
+  syncDynamicFacetGroupsFromHeadless,
+  syncEventTypeFilterCounts,
+} from './events-search-dynamic-facets.js';
+import {
+  appendFilterGroupActions,
+  buildFilterOptionRow,
+  renderFilterGroupOptionsShimmer,
+  renderFilterOptionCountShimmer,
+  updateFilterGroupActionButtons,
+} from './events-search-filter-ui.js';
 
 const FACET_CONTROLLER_MAP = {
   el_product: 'headlessProductFacet',
@@ -23,6 +42,8 @@ const FACET_CONTROLLER_MAP = {
   el_contenttype: 'headlessTypeFacet',
 };
 const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
+/** Prevents nested Headless dispatches from overflowing the stack during passive UI sync. */
+const headlessSubscriptionSyncDepth = new WeakMap();
 /** Literal token authors enter in placeholders.json for dynamic counts. */
 // eslint-disable-next-line no-template-curly-in-string -- not a JS template; matches placeholders.json text
 const PLACEHOLDER_COUNT_TOKEN = '${count}';
@@ -317,37 +338,37 @@ function renderFilterGroups(block, groups, placeholders) {
     `;
 
     const optionsContainer = groupEl.querySelector('.events-search-filter-options');
-    const optionsList = createTag('div', { class: 'events-search-filter-options-list' });
-    group.items.forEach((item, index) => {
-      const optionValue = item.value || item.title;
-      const optionLabel = item.title || item.value;
-      const optionId = `${group.id}-${index + 1}`;
-      const overflowClass = index >= INITIAL_VISIBLE_FILTER_OPTIONS ? ' is-overflow-hidden' : '';
-      const optionEl = createTag('div', { class: `events-search-filter-option${overflowClass}` });
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.id = optionId;
-      checkbox.value = String(optionValue ?? '');
-      checkbox.setAttribute('data-label', String(optionLabel ?? ''));
-      const optionLabelEl = createTag('label', {
-        class: 'events-search-filter-option-label',
-        for: optionId,
-      });
-      optionLabelEl.textContent = String(optionLabel ?? '');
-      optionEl.append(checkbox, optionLabelEl);
-      optionsList.append(optionEl);
-    });
-    optionsContainer.append(optionsList);
+    const isDynamicFacetGroup = EVENTS_SEARCH_DYNAMIC_FACET_FIELDS.includes(group.id);
 
-    if (group.items.length > INITIAL_VISIBLE_FILTER_OPTIONS) {
-      const remainingCount = group.items.length - INITIAL_VISIBLE_FILTER_OPTIONS;
-      const showMoreButton = createTag('button', { class: 'events-search-filter-show-more', type: 'button' });
-      const showMoreLabel = createTag('span', { class: 'events-search-filter-show-more-label' });
-      showMoreLabel.textContent = getShowMoreLabel(remainingCount, placeholders);
-      const showMoreIcon = createTag('span', { class: 'icon icon-arrow', 'aria-hidden': 'true' });
-      showMoreButton.append(showMoreLabel, showMoreIcon);
-      optionsContainer.append(showMoreButton);
-      updateShowMoreButtonState(groupEl, placeholders);
+    if (isDynamicFacetGroup && group.items.length === 0) {
+      renderFilterGroupOptionsShimmer(optionsContainer);
+    } else {
+      const optionsList = createTag('div', { class: 'events-search-filter-options-list' });
+      group.items.forEach((item, index) => {
+        const optionRow = buildFilterOptionRow({
+          groupId: group.id,
+          item: { ...item, overflowHidden: index >= INITIAL_VISIBLE_FILTER_OPTIONS },
+          index,
+          placeholders,
+        });
+        if (group.id === 'el_contenttype') {
+          renderFilterOptionCountShimmer(optionRow);
+        }
+        optionsList.append(optionRow);
+      });
+      optionsContainer.append(optionsList);
+      appendFilterGroupActions(optionsContainer, group, placeholders);
+
+      if (group.items.length > INITIAL_VISIBLE_FILTER_OPTIONS) {
+        const remainingCount = group.items.length - INITIAL_VISIBLE_FILTER_OPTIONS;
+        const showMoreButton = createTag('button', { class: 'events-search-filter-show-more', type: 'button' });
+        const showMoreLabel = createTag('span', { class: 'events-search-filter-show-more-label' });
+        showMoreLabel.textContent = getShowMoreLabel(remainingCount, placeholders);
+        const showMoreIcon = createTag('span', { class: 'icon icon-arrow', 'aria-hidden': 'true' });
+        showMoreButton.append(showMoreLabel, showMoreIcon);
+        optionsContainer.append(showMoreButton);
+        updateShowMoreButtonState(groupEl, placeholders);
+      }
     }
 
     groupsRoot.append(groupEl);
@@ -376,7 +397,7 @@ function updateClearFiltersButtonState(block) {
   clearBtn.classList.toggle('is-active', hasCheckedFilter || hasKeyword);
 }
 
-function syncFilterUIFromHeadlessState(block, groups) {
+function syncFilterUIFromHeadlessState(block, groups, placeholders) {
   const { tags: activeTags, pendingRemovals } = getFilterState(block);
 
   Object.entries(FACET_CONTROLLER_MAP).forEach(([groupId, controllerName]) => {
@@ -389,8 +410,43 @@ function syncFilterUIFromHeadlessState(block, groups) {
     );
 
     const checkboxes = groupEl.querySelectorAll('.events-search-filter-option input[type="checkbox"]');
+
+    if (groupId === 'el_contenttype') {
+      if (selectedValues.size > 0) {
+        checkboxes.forEach((checkbox) => {
+          const isSelected = isEventTypeUiValueSelected(checkbox.value, selectedValues);
+          checkbox.checked = isSelected;
+
+          const compositeKey = toCompositeKey(groupId, checkbox.value);
+          const existingIndex = activeTags.findIndex((t) => t.filterType === groupId && t.value === checkbox.value);
+          if (isSelected && existingIndex === -1 && !pendingRemovals.has(compositeKey)) {
+            activeTags.push({
+              filterType: groupId,
+              value: checkbox.value,
+              label: checkbox.getAttribute('data-label') || checkbox.value,
+            });
+          } else if (!isSelected) {
+            if (existingIndex !== -1) activeTags.splice(existingIndex, 1);
+            pendingRemovals.delete(compositeKey);
+          }
+          checkbox.closest('.events-search-filter-option')?.classList.toggle('checked', checkbox.checked);
+        });
+        clearEventTypeFacetSelections();
+        syncEventTypeSearchQueries(block);
+      }
+      updateFilterGroupActionButtons(groupEl, placeholders);
+      syncEventTypeFilterCounts(block);
+      const selectedCount = groupEl.querySelectorAll('input[type="checkbox"]:checked').length;
+      const targetGroup = groups.find((group) => group.id === groupId);
+      if (targetGroup) {
+        targetGroup.selected = selectedCount;
+      }
+      updateGroupSelectionCount(block, groupId, selectedCount);
+      return;
+    }
+
     checkboxes.forEach((checkbox) => {
-      const isSelected = selectedValues.has(checkbox.value);
+      const isSelected = isUiFilterValueSelected(groupId, checkbox.value, selectedValues);
       checkbox.checked = isSelected;
 
       // Mirror checkbox state into ordered tags array (browse-filters handleUriHash/appendTag pattern).
@@ -410,7 +466,9 @@ function syncFilterUIFromHeadlessState(block, groups) {
       checkbox.closest('.events-search-filter-option')?.classList.toggle('checked', checkbox.checked);
     });
 
-    const selectedCount = selectedValues.size;
+    updateFilterGroupActionButtons(groupEl, placeholders);
+
+    const selectedCount = groupEl.querySelectorAll('input[type="checkbox"]:checked').length;
     const targetGroup = groups.find((group) => group.id === groupId);
     if (targetGroup) {
       targetGroup.selected = selectedCount;
@@ -564,6 +622,8 @@ function bindEventsSearchLoadingUI(block) {
     }
     shimmer.addShimmer(resultsBody);
     placeShimmerBeforeGrid();
+    showDynamicFilterGroupShimmers(block, { refreshCountsOnly: hasCompletedInitialSearchResponse });
+    block.querySelector('.events-search-filter-group[data-filter-type="el_contenttype"]')?.classList.add('is-filter-loading');
     grid.style.display = 'none';
     pagination.style.display = 'none';
     if (noResults) {
@@ -655,30 +715,234 @@ function findFacetValueInController(controller, value) {
   );
 }
 
-/**
- * Sync a checkbox with Coveo. Prefer a real facet value from controller state; when the value is
- * missing from the current facet slice (common after another facet narrows results), fall back to
- * an explicit selection object (browse-filters pattern) so multi-filter selection works.
- */
-function toggleFacetSelection(filterType, value, isChecked) {
-  const controllerName = FACET_CONTROLLER_MAP[filterType];
-  if (!controllerName) return;
-  const controller = window[controllerName];
-  if (!controller || value === '' || value == null) return;
+function getCoveoFacetSelectionsForUiValue(filterType, uiValue, isSelected) {
+  if (filterType === 'el_contenttype') {
+    return getEventTypeCoveoFacetSelections(uiValue, isSelected);
+  }
+  return [{ value: uiValue, state: isSelected ? 'selected' : 'idle' }];
+}
 
+function isUiFilterValueSelected(filterType, uiValue, selectedValues) {
+  if (filterType === 'el_contenttype' && isMappedEventTypeFilterValue(uiValue)) {
+    return isEventTypeUiValueSelected(uiValue, selectedValues);
+  }
+  return selectedValues.has(uiValue);
+}
+
+function getCheckedEventTypeUiValues(block) {
+  const groupEl = block.querySelector('.events-search-filter-group[data-filter-type="el_contenttype"]');
+  if (!groupEl) return [];
+  return [...groupEl.querySelectorAll('.events-search-filter-option input[type="checkbox"]:checked')].map(
+    (checkbox) => checkbox.value,
+  );
+}
+
+/** Legacy parent `Event` facet matches all hierarchical children — keep it deselected. */
+function clearHierarchicalEventParentFacetSelection(controller) {
+  if (!controller) return;
+  const eventParent = findFacetValueInController(controller, 'Event');
+  if (eventParent?.state === 'selected') {
+    controller.toggleSelect(eventParent);
+  }
+}
+
+function syncEventTypeSearchQueries(block) {
+  if (!window.headlessQueryActionCreators || !window.headlessSearchEngine) return;
+  const cq = buildEventTypeFilterConstantQuery(getCheckedEventTypeUiValues(block));
+  const nextAq = BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT;
+  const request = window.headlessSearchEngine.state?.search?.request ?? {};
+  const currentAq = request.aq ?? '';
+  const currentCq = request.cq ?? '';
+  if (currentAq === nextAq && currentCq === cq) return;
+
+  window.headlessSearchEngine.dispatch(
+    window.headlessQueryActionCreators.updateAdvancedSearchQueries({
+      aq: nextAq,
+      cq,
+    }),
+  );
+}
+
+function clearEventTypeFacetSelections() {
+  const controller = getFacetController('el_contenttype');
+  if (!controller) return;
+  const hasSelected = (controller.state?.values || []).some((value) => value.state === 'selected');
+  if (!hasSelected) return;
+  controller.deselectAll?.();
+  clearHierarchicalEventParentFacetSelection(controller);
+}
+
+function applyCoveoFacetValueSelection(controller, value, shouldSelect) {
   const facetValue = findFacetValueInController(controller, value);
   if (facetValue) {
     const selected = facetValue.state === 'selected';
-    if (selected !== isChecked) {
+    if (selected !== shouldSelect) {
       controller.toggleSelect(facetValue);
     }
     return;
   }
+  if (shouldSelect) {
+    controller.toggleSelect({ value, state: 'selected' });
+  }
+}
 
-  controller.toggleSelect({
-    value,
-    state: isChecked ? 'selected' : 'idle',
+function toggleFacetSelection(filterType, value, isChecked) {
+  if (filterType === 'el_contenttype') {
+    // Event type is filtered via constant query (cq) to avoid hierarchical parent `Event` facet matching all children.
+    return;
+  }
+
+  const controller = getFacetController(filterType);
+  if (!controller || value === '' || value == null) return;
+
+  getCoveoFacetSelectionsForUiValue(filterType, value, isChecked).forEach(({ value: coveoValue }) => {
+    applyCoveoFacetValueSelection(controller, coveoValue, isChecked);
   });
+}
+
+function getFacetController(filterType) {
+  const controllerName = FACET_CONTROLLER_MAP[filterType];
+  return controllerName ? window[controllerName] : null;
+}
+
+function applyOnlyFacetSelection(filterType, value) {
+  if (filterType === 'el_contenttype') {
+    clearEventTypeFacetSelections();
+    return;
+  }
+
+  const controller = getFacetController(filterType);
+  if (!controller || value == null || value === '') return;
+
+  controller.deselectAll?.();
+  getCoveoFacetSelectionsForUiValue(filterType, value, true).forEach(({ value: coveoValue }) => {
+    applyCoveoFacetValueSelection(controller, coveoValue, true);
+  });
+}
+
+function syncGroupCheckboxesFromController(block, filterType, placeholders) {
+  if (filterType === 'el_contenttype') return;
+
+  const controller = getFacetController(filterType);
+  const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${filterType}"]`);
+  if (!controller || !groupEl) return;
+
+  const selectedValues = new Set(
+    (controller.state?.values || []).filter((item) => item.state === 'selected').map((item) => item.value),
+  );
+
+  groupEl.querySelectorAll('.events-search-filter-option input[type="checkbox"]').forEach((checkbox) => {
+    checkbox.checked = isUiFilterValueSelected(filterType, checkbox.value, selectedValues);
+    checkbox.closest('.events-search-filter-option')?.classList.toggle('checked', checkbox.checked);
+  });
+  updateFilterGroupActionButtons(groupEl, placeholders);
+}
+
+function commitFilterSelectionChange(block, groups, placeholders, filterType) {
+  const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${filterType}"]`);
+  const selectedCount = groupEl?.querySelectorAll('input[type="checkbox"]:checked').length ?? 0;
+  const targetGroup = groups.find((group) => group.id === filterType);
+  if (targetGroup) {
+    targetGroup.selected = selectedCount;
+  }
+  updateGroupSelectionCount(block, filterType, selectedCount);
+  if (filterType === 'el_contenttype') {
+    syncEventTypeSearchQueries(block);
+  }
+  if (window.headlessPager) {
+    window.headlessPager.selectPage(1);
+  }
+  executeSearch();
+  renderActiveFilterCallouts(block);
+  updateClearFiltersButtonState(block);
+}
+
+function applyOnlyFilter(block, groups, placeholders, filterType, value, label) {
+  const { tags: activeTags, pendingRemovals } = getFilterState(block);
+
+  for (let i = activeTags.length - 1; i >= 0; i -= 1) {
+    if (activeTags[i].filterType === filterType) {
+      pendingRemovals.add(toCompositeKey(activeTags[i].filterType, activeTags[i].value));
+      activeTags.splice(i, 1);
+    }
+  }
+
+  applyOnlyFacetSelection(filterType, value);
+  pendingRemovals.delete(toCompositeKey(filterType, value));
+  activeTags.push({ filterType, value, label });
+
+  if (filterType === 'el_contenttype') {
+    const groupEl = block.querySelector('.events-search-filter-group[data-filter-type="el_contenttype"]');
+    groupEl?.querySelectorAll('.events-search-filter-option input[type="checkbox"]').forEach((checkbox) => {
+      const isOnlySelection = checkbox.value === value;
+      checkbox.checked = isOnlySelection;
+      checkbox.closest('.events-search-filter-option')?.classList.toggle('checked', isOnlySelection);
+    });
+    if (groupEl) {
+      updateFilterGroupActionButtons(groupEl, placeholders);
+    }
+  } else {
+    syncGroupCheckboxesFromController(block, filterType, placeholders);
+  }
+  commitFilterSelectionChange(block, groups, placeholders, filterType);
+}
+
+function clearFilterGroupSelection(block, groups, placeholders, filterType) {
+  if (filterType === 'el_contenttype') {
+    clearEventTypeFacetSelections();
+  } else {
+    getFacetController(filterType)?.deselectAll?.();
+  }
+
+  const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${filterType}"]`);
+  const { tags: activeTags, pendingRemovals } = getFilterState(block);
+
+  for (let i = activeTags.length - 1; i >= 0; i -= 1) {
+    if (activeTags[i].filterType === filterType) {
+      pendingRemovals.add(toCompositeKey(activeTags[i].filterType, activeTags[i].value));
+      activeTags.splice(i, 1);
+    }
+  }
+
+  groupEl?.querySelectorAll('.events-search-filter-option input[type="checkbox"]').forEach((checkbox) => {
+    checkbox.checked = false;
+    checkbox.closest('.events-search-filter-option')?.classList.remove('checked');
+  });
+  updateFilterGroupActionButtons(groupEl, placeholders);
+
+  const targetGroup = groups.find((group) => group.id === filterType);
+  if (targetGroup) {
+    targetGroup.selected = 0;
+  }
+  commitFilterSelectionChange(block, groups, placeholders, filterType);
+}
+
+function selectAllInFilterGroup(block, groups, placeholders, filterType) {
+  const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${filterType}"]`);
+  if (!groupEl) return;
+
+  const { tags: activeTags, pendingRemovals } = getFilterState(block);
+  groupEl.querySelectorAll('.events-search-filter-option input[type="checkbox"]').forEach((checkbox) => {
+    if (checkbox.checked) return;
+    if (filterType !== 'el_contenttype') {
+      toggleFacetSelection(filterType, checkbox.value, true);
+    }
+    checkbox.checked = true;
+    checkbox.closest('.events-search-filter-option')?.classList.add('checked');
+    pendingRemovals.delete(toCompositeKey(filterType, checkbox.value));
+    if (!activeTags.some((t) => t.filterType === filterType && t.value === checkbox.value)) {
+      activeTags.push({
+        filterType,
+        value: checkbox.value,
+        label: checkbox.getAttribute('data-label') || checkbox.value,
+      });
+    }
+  });
+  if (filterType === 'el_contenttype') {
+    clearEventTypeFacetSelections();
+  }
+  updateFilterGroupActionButtons(groupEl, placeholders);
+  commitFilterSelectionChange(block, groups, placeholders, filterType);
 }
 
 function renderActiveFilterCallouts(block) {
@@ -842,8 +1106,12 @@ async function renderResults(block, results = [], searchResponseId = '') {
 
 async function handleSearchEngineSubscription(block, groups, placeholders) {
   if (!window.headlessSearchEngine || window.headlessStatusControllers?.state?.isLoading) return;
+  const syncDepth = headlessSubscriptionSyncDepth.get(block) ?? 0;
+  if (syncDepth > 0) return;
+  headlessSubscriptionSyncDepth.set(block, syncDepth + 1);
   try {
-    syncFilterUIFromHeadlessState(block, groups);
+    syncDynamicFacetGroupsFromHeadless(block, groups, placeholders);
+    syncFilterUIFromHeadlessState(block, groups, placeholders);
     const search = window.headlessSearchEngine.state.search || {};
     const { results = [], searchResponseId = '', response = {} } = search;
     updateResultsCount(block, response.totalCount || 0, placeholders);
@@ -853,6 +1121,8 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
     // Coveo invokes this subscriber without awaiting; uncaught rejections from renderResults/buildCard would be unhandled.
     // eslint-disable-next-line no-console
     console.error('events-search: search engine subscription callback failed', err);
+  } finally {
+    headlessSubscriptionSyncDepth.set(block, 0);
   }
 }
 
@@ -861,6 +1131,45 @@ function bindFilterInteractions(block, groups, placeholders) {
   if (!panel) return;
 
   panel.addEventListener('click', (event) => {
+    const onlyBtn = event.target.closest('.events-search-filter-only-btn');
+    if (onlyBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      const groupEl = onlyBtn.closest('.events-search-filter-group');
+      const optionEl = onlyBtn.closest('.events-search-filter-option');
+      const checkbox = optionEl?.querySelector('input[type="checkbox"]');
+      const filterType = groupEl?.dataset.filterType;
+      if (!filterType || !checkbox) return;
+      const action = onlyBtn.dataset.filterAction || (checkbox.checked ? 'all' : 'only');
+      if (action === 'all') {
+        clearFilterGroupSelection(block, groups, placeholders, filterType);
+      } else {
+        applyOnlyFilter(
+          block,
+          groups,
+          placeholders,
+          filterType,
+          checkbox.value,
+          checkbox.getAttribute('data-label') || checkbox.value,
+        );
+      }
+      return;
+    }
+
+    const selectAllBtn = event.target.closest('.events-search-filter-select-all');
+    if (selectAllBtn) {
+      event.preventDefault();
+      const groupEl = selectAllBtn.closest('.events-search-filter-group');
+      const filterType = groupEl?.dataset.filterType;
+      if (!filterType) return;
+      if (selectAllBtn.dataset.filterAction === 'clear-all') {
+        clearFilterGroupSelection(block, groups, placeholders, filterType);
+      } else {
+        selectAllInFilterGroup(block, groups, placeholders, filterType);
+      }
+      return;
+    }
+
     const showMoreButton = event.target.closest('.events-search-filter-show-more');
     if (showMoreButton) {
       const groupEl = showMoreButton.closest('.events-search-filter-group');
@@ -925,6 +1234,11 @@ function bindFilterInteractions(block, groups, placeholders) {
     }
     updateGroupSelectionCount(block, filterType, selectedCount);
     toggleFacetSelection(filterType, checkbox.value, checkbox.checked);
+    updateFilterGroupActionButtons(groupEl, placeholders);
+    if (filterType === 'el_contenttype') {
+      clearEventTypeFacetSelections();
+      syncEventTypeSearchQueries(block);
+    }
     if (window.headlessPager) {
       window.headlessPager.selectPage(1);
     }
@@ -1007,6 +1321,7 @@ function bindClearFilters(block, groups) {
     if (window.location.hash === hashBeforeClear) {
       executeSearch();
     }
+    syncEventTypeSearchQueries(block);
     renderActiveFilterCallouts(block);
     updateClearFiltersButtonState(block);
   });
@@ -1035,22 +1350,6 @@ function bindMobileFilterToggle(block) {
   );
 }
 
-async function loadDynamicFacetValues(groups) {
-  const facetDetails = await BrowseCardsDelegate.fetchCoveoFacetFields(['el_event_series', 'el_product']);
-  groups.forEach((group) => {
-    if (group.id !== 'el_event_series' && group.id !== 'el_product') return;
-    const groupValues = facetDetails[group.id] || [];
-    group.items = groupValues
-      .map((item) => ({
-        id: item,
-        value: item,
-        title: item.split('|').join(' | '),
-        description: '',
-      }))
-      .sort(sortItemsAlphabetically);
-  });
-}
-
 async function initHeadlessSearch(block, groups, placeholders) {
   const { default: initiateCoveoHeadlessSearch } = await import('../../scripts/coveo-headless/index.js');
   const renderPageNumbers = () => renderEventsSearchPageNumbers(block, placeholders);
@@ -1058,6 +1357,7 @@ async function initHeadlessSearch(block, groups, placeholders) {
     handleSearchEngineSubscription: () => handleSearchEngineSubscription(block, groups, placeholders),
     renderPageNumbers,
     numberOfResults: getBrowseFiltersResultCount(),
+    facetOverrides: getEventsSearchHeadlessFacetOverrides(),
     renderSearchQuerySummary: () => {
       const totalCount = window.headlessQuerySummary?.state?.total || 0;
       updateResultsCount(block, totalCount, placeholders);
@@ -1096,12 +1396,6 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
   const groups = getBaseFilterGroups(placeholders);
-  try {
-    await loadDynamicFacetValues(groups);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching event facets:', error);
-  }
 
   createLayout(block, placeholders);
   decorateIcons(block);
