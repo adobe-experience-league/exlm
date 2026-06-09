@@ -211,13 +211,14 @@
 
   /* Room for input row + panel disclaimer (2–3 lines). */
   --bc-input-overlay-height: 220px;
+  --bc-chat-history-clearance: var(--bc-input-overlay-height);
 }
 
 #brand-concierge-mount .chat-history {
   flex: 1 !important;
   overflow-y: auto !important;
   min-height: 0 !important;
-  padding-bottom: var(--bc-input-overlay-height) !important;
+  padding-bottom: var(--bc-chat-history-clearance, var(--bc-input-overlay-height)) !important;
 }
 
 #brand-concierge-mount .message-blocker {
@@ -244,24 +245,37 @@
   position: absolute !important;
   inset: auto 0 0 !important;
   z-index: 10 !important;
-  display: flex !important;
-  flex-direction: column !important;
+  display: grid !important;
+  grid-template-rows: minmax(96px, 1fr) auto auto !important;
+  align-content: end !important;
   align-items: stretch !important;
   background: transparent !important;
 
   /* No bottom padding — disclaimer sits flush with panel bottom (drawer + expanded). */
-  padding: 96px 28px 0 !important;
+  padding: 0 28px !important;
+
+  /* Pass clicks through the gradient fade; keep input + disclaimer interactive. */
+  pointer-events: none !important;
+}
+
+#brand-concierge-mount .input-section > * {
+  pointer-events: auto !important;
 }
 
 #bc-dialog.exl-dialog-expanded #brand-concierge-mount .input-section {
-  padding: 96px max(40px, 15%) 0 !important;
+  padding: 0 max(40px, 15%) !important;
 }
 
 #brand-concierge-mount .input-container {
+  grid-row: 2 !important;
   align-items: center !important;
+  box-sizing: border-box !important;
+  min-height: 52px !important;
+  height: 52px !important;
   max-height: 56px !important;
   overflow: hidden !important;
   background: #fff !important;
+  border-width: 1px !important;
 }
 
 #brand-concierge-mount label.ai-chat-label .bc-input-label-sparkle {
@@ -273,10 +287,13 @@
 
 #brand-concierge-mount .input-container:focus-within {
   outline: none !important;
+  border-width: 1px !important;
   border-color: var(--spectrum-gray-300) !important;
 }
 
 #brand-concierge-mount .chat-input-wrapper {
+  min-height: 40px !important;
+  height: 40px !important;
   max-height: 40px !important;
   overflow: hidden !important;
 }
@@ -416,10 +433,11 @@
 }
 
 /*
- * Expanded-only prompt layouts (wide viewports). Below 769px, expanded uses the same
+ * Expanded-only prompt layouts (wide viewports). Below 768px, expanded uses the same
  * full-width prompt stack as the side drawer (base `.bc-prompt-pill-button` rules).
+ * Following exlm viewport standards 600px, 900px, 1200px will look bad, so we're using 768px.
  */
-@media (min-width: 769px) {
+@media (min-width: 768px) {
   /* Expanded only: full-width prompt area; taller, half-width welcome pill cards (not in the narrow drawer). */
   #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container {
     max-width: 100% !important;
@@ -487,7 +505,9 @@
   }
 }
 
-/* Expanded on narrow viewports: match side-drawer prompt stack (full-width pills, same gap as base). */
+/* Expanded on narrow viewports: match side-drawer prompt stack (full-width pills, same gap as base). 
+ * Following exlm viewport standards 600px, 900px, 1200px will look bad, so we're using 768px.
+*/
 @media (max-width: 768px) {
   #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-pills-container:has(> :nth-child(4):last-child) {
     display: flex !important;
@@ -522,6 +542,62 @@
 
 #brand-concierge-mount .submit-button svg path {
   fill: white !important;
+}
+
+#brand-concierge-mount .scroll-to-bottom {
+  width: 36px !important;
+  min-width: 36px !important;
+  max-width: 36px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#brand-concierge-mount .input-section .scroll-to-bottom {
+  position: absolute !important;
+  inset: 48px auto auto 50% !important;
+  transform: translateX(-50%) !important;
+  margin: 0 !important;
+}
+
+#brand-concierge-mount .input-section .bc-panel-disclaimer {
+  grid-row: 3 !important;
+}
+
+#brand-concierge-mount .scroll-to-bottom:not(.bc-scroll-to-bottom-visible) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+#brand-concierge-mount .scroll-to-bottom.bc-scroll-to-bottom-visible {
+  display: flex !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  z-index: 8 !important;
+  background-color: #fff !important;
+  border: 1px solid var(--spectrum-gray-300) !important;
+}
+
+/* styles.css sets button:focus { background: link-hover-color } without :focus-visible. */
+#brand-concierge-mount .scroll-to-bottom:focus {
+  background-color: #fff !important;
+  outline: none;
+}
+
+#brand-concierge-mount .scroll-to-bottom:focus-visible {
+  outline: 2px solid var(--non-spectrum-navy-blue);
+  outline-offset: 2px;
+}
+
+#brand-concierge-mount .scroll-to-bottom:hover {
+  background-color: var(--spectrum-gray-100) !important;
 }
 
 #brand-concierge-mount .scroll-to-bottom svg {

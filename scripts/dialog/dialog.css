@@ -67,8 +67,7 @@ dialog[data-type] {
 }
 
 .exl-dialog-header-expand,
-.exl-dialog-header-close,
-.exl-dialog-header-clear {
+.exl-dialog-header-close {
   display: flex;
   align-items: center;
   justify-content: center;

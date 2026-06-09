@@ -12,6 +12,28 @@ const TRIGGER_ID = 'bc-trigger';
 const HEADER_CLEAR_ID = 'bc-header-clear';
 const PANEL_DISCLAIMER_ID = 'bc-panel-disclaimer';
 
+/** Pixels from the bottom of `.chat-history` treated as “at bottom”. */
+const SCROLL_BOTTOM_THRESHOLD = 32;
+/** Space between the last chat message and the message input when scrolled to bottom. */
+const CHAT_HISTORY_BOTTOM_GAP = 16;
+
+/** Mutations inside these regions should not re-run question pinning / scroll alignment. */
+const PIN_IGNORE_SELECTOR =
+  '.citations-accordion, .citations-section, .citations-source-item, .citations-link, .bc-response-footer, .prompt-suggestions-container';
+
+/** How long to hold scroll position after a new question (BC may auto-scroll to bottom). */
+const SCROLL_AFTER_SUGGESTION_PIN_MS = 3500;
+
+const SUGGESTION_CLICK_SELECTOR =
+  '.bc-prompt-suggestion-button, .bc-prompt-pill-button, .prompt-suggestions-container button, .widget-options-container button';
+
+/** BC `onEvent` types (see mt enum in the web client bundle). */
+const BC_EVENT_PROMPT_CLICKED = 'promptSuggestion:clicked';
+const BC_EVENT_QUERY_SUBMITTED = 'query:submitted';
+const BC_EVENT_RESPONSE_STARTED = 'response:started';
+
+const SCROLL_EVENT_TYPES = new Set([BC_EVENT_PROMPT_CLICKED, BC_EVENT_QUERY_SUBMITTED, BC_EVENT_RESPONSE_STARTED]);
+
 /** Brand Concierge web client transcript keys (see ChatTranscriptStorage in bc main.js). */
 const BC_STORAGE_TRANSCRIPT_PREFIX = 'bc_chat_transcript_';
 const BC_STORAGE_METADATA_KEY = 'bc_chat_metadata';
@@ -29,9 +51,13 @@ const error = (...args) => console.error('[BC]', ...args);
 
 let cssLinkEl = null;
 let drawerHandle = null;
-let chatObserver = null;
 let inputLabelIconObserver = null;
 let panelDisclaimerObserver = null;
+let scrollToBottomWatcher = null;
+let scrollAfterSuggestionObserver = null;
+let scrollAfterSuggestionTimers = [];
+let scrollPinRafId = null;
+let mountInteractionHandler = null;
 
 /**
  * Removes persisted BC chat sessions from localStorage (transcript + metadata).
@@ -52,16 +78,6 @@ function clearBrandConciergeTranscriptStorage(options = {}) {
     }
   }
   toRemove.forEach((k) => localStorage.removeItem(k));
-}
-
-function getBootstrapOptions() {
-  const { stickySession = false, ...stylingConfigurations } = brandConciergeConfig;
-  return {
-    instanceName: ALLOY_INSTANCE_NAME,
-    stylingConfigurations,
-    selector: MOUNT_SELECTOR,
-    stickySession,
-  };
 }
 
 /**
@@ -186,17 +202,333 @@ function focusBcChatInputWhenReady(mount) {
   timeoutId = window.setTimeout(cleanup, 8000);
 }
 
-// scroll the container to the bottom each time.
-function watchChatHistory(mount) {
-  const history = mount.querySelector('.chat-history');
-  if (!history) return null;
+function shouldShowScrollToBottomButton(history) {
+  if (!history) return false;
+  const { scrollTop, scrollHeight, clientHeight } = history;
+  if (scrollHeight - clientHeight <= 1) return false;
+  return scrollHeight - scrollTop - clientHeight > SCROLL_BOTTOM_THRESHOLD;
+}
 
-  const observer = new MutationObserver(() => {
-    history.scrollTo({ top: history.scrollHeight, behavior: 'smooth' });
+function scrollChatHistoryToBottom(mount) {
+  const history = mount?.querySelector('.chat-history');
+  if (!history) return;
+  history.scrollTo({ top: history.scrollHeight, behavior: 'smooth' });
+}
+
+/** Places the scroll button above the input and sets chat-history bottom padding (excludes gradient fade). */
+function updateInputOverlayLayout(mount) {
+  const history = mount?.querySelector('.chat-history');
+  const inputSection = mount?.querySelector('.input-section');
+  const inputContainer = mount?.querySelector('.input-container');
+  if (!history || !inputSection || !inputContainer) return;
+
+  const sectionRect = inputSection.getBoundingClientRect();
+  const inputRect = inputContainer.getBoundingClientRect();
+
+  const clearance = Math.ceil(sectionRect.bottom - inputRect.top + CHAT_HISTORY_BOTTOM_GAP);
+  history.style.setProperty('--bc-chat-history-clearance', `${clearance}px`);
+
+  const scrollBtn = mount.querySelector('.scroll-to-bottom');
+  if (!scrollBtn) return;
+
+  if (scrollBtn.parentElement !== inputSection) {
+    inputSection.prepend(scrollBtn);
+  }
+
+  scrollBtn.style.bottom = '';
+  scrollBtn.style.left = '';
+  scrollBtn.style.right = '';
+  scrollBtn.style.position = '';
+}
+
+function syncScrollToBottomButton(mount) {
+  updateInputOverlayLayout(mount);
+
+  const history = mount?.querySelector('.chat-history');
+  const scrollBtn = mount?.querySelector('.scroll-to-bottom');
+  if (!history || !scrollBtn) return;
+
+  const inWelcomeState = mount.querySelector('.brand-concierge-container.initial-state');
+  const visible = !inWelcomeState && shouldShowScrollToBottomButton(history);
+
+  scrollBtn.classList.toggle('bc-scroll-to-bottom-visible', visible);
+  scrollBtn.toggleAttribute('hidden', !visible);
+  scrollBtn.style.display = visible ? 'flex' : 'none';
+}
+
+function getBrandConciergeMount() {
+  return document.getElementById('brand-concierge-mount') || document.querySelector(MOUNT_SELECTOR);
+}
+
+function stopScrollPin() {
+  if (scrollPinRafId) {
+    window.cancelAnimationFrame(scrollPinRafId);
+    scrollPinRafId = null;
+  }
+}
+
+function clearScrollAfterSuggestionSchedule() {
+  scrollAfterSuggestionTimers.forEach((id) => window.clearTimeout(id));
+  scrollAfterSuggestionTimers = [];
+  scrollAfterSuggestionObserver?.disconnect();
+  scrollAfterSuggestionObserver = null;
+  stopScrollPin();
+}
+
+function isInsidePinIgnoredRegion(node) {
+  return node instanceof Element && !!node.closest(PIN_IGNORE_SELECTOR);
+}
+
+function mutationShouldTriggerExchangePin(mutation) {
+  if (mutation.type !== 'childList') return false;
+  if (isInsidePinIgnoredRegion(mutation.target)) return false;
+  if ([...mutation.addedNodes, ...mutation.removedNodes].some((node) => isInsidePinIgnoredRegion(node))) {
+    return false;
+  }
+  return true;
+}
+
+function getMessageScrollTopInHistory(history, messageEl) {
+  return messageEl.getBoundingClientRect().top - history.getBoundingClientRect().top + history.scrollTop;
+}
+
+function ensureExchangeScrollRoom(mount, history, userMessageEl, userMessageCount) {
+  if (userMessageCount < 2 || !userMessageEl) return;
+
+  const container = history.closest('.brand-concierge-container');
+  const inputSection = mount?.querySelector('.input-section');
+  if (!container) return;
+
+  const neededMinHeight = userMessageEl.offsetTop + container.clientHeight - (inputSection?.clientHeight ?? 0);
+  const currentMin = parseInt(history.style.minHeight || '0', 10) || 0;
+  if (neededMinHeight > currentMin) {
+    history.style.setProperty('min-height', `${Math.ceil(neededMinHeight)}px`);
+  }
+}
+
+function resolveExchangeScrollTop(mount) {
+  const history = mount?.querySelector('.chat-history');
+  if (!history) return 0;
+
+  const userMessages = history.querySelectorAll('.user-message');
+  if (userMessages.length === 0) return 0;
+
+  const userMessage = userMessages[userMessages.length - 1];
+  if (userMessages.length >= 2) {
+    ensureExchangeScrollRoom(mount, history, userMessage, userMessages.length);
+  }
+
+  const lastChatMessage = history.querySelector('.chat-message:last-child');
+  const messageMarginTop = lastChatMessage ? parseInt(window.getComputedStyle(lastChatMessage).marginTop, 10) || 0 : 0;
+
+  const offsetTop = getMessageScrollTopInHistory(history, userMessage);
+  return Math.max(0, offsetTop - messageMarginTop);
+}
+
+function startScrollPin(mount) {
+  stopScrollPin();
+  const history = mount?.querySelector('.chat-history');
+  if (!history) return;
+
+  const end = Date.now() + SCROLL_AFTER_SUGGESTION_PIN_MS;
+  const tick = () => {
+    if (Date.now() > end) {
+      scrollPinRafId = null;
+      return;
+    }
+    history.scrollTop = resolveExchangeScrollTop(mount);
+    scrollPinRafId = window.requestAnimationFrame(tick);
+  };
+  tick();
+}
+
+function applyExchangeScrollTop(mount) {
+  const history = mount?.querySelector('.chat-history');
+  if (!history) return;
+
+  const targetTop = resolveExchangeScrollTop(mount);
+  if (targetTop === 0 && history.querySelectorAll('.user-message').length === 0) return;
+
+  history.scrollTop = targetTop;
+}
+
+function scheduleScrollAfterSuggestion(mount) {
+  const chatHistory = mount?.querySelector('.chat-history');
+  if (!chatHistory) return;
+
+  clearScrollAfterSuggestionSchedule();
+  startScrollPin(mount);
+
+  const run = () => {
+    applyExchangeScrollTop(mount);
+    syncScrollToBottomButton(mount);
+  };
+
+  run();
+  [16, 50, 120, 250, 500, 1000, 1800].forEach((delay) => {
+    scrollAfterSuggestionTimers.push(window.setTimeout(run, delay));
   });
 
-  observer.observe(history, { childList: true });
-  return observer;
+  scrollAfterSuggestionObserver = new MutationObserver((mutations) => {
+    if (!mutations.some(mutationShouldTriggerExchangePin)) return;
+    run();
+  });
+  scrollAfterSuggestionObserver.observe(chatHistory, { childList: true, subtree: true });
+  scrollAfterSuggestionTimers.push(
+    window.setTimeout(clearScrollAfterSuggestionSchedule, SCROLL_AFTER_SUGGESTION_PIN_MS + 500),
+  );
+}
+
+function handleBrandConciergeClientEvent(event) {
+  if (!event?.eventType || !SCROLL_EVENT_TYPES.has(event.eventType)) return;
+
+  const mount = getBrandConciergeMount();
+  if (!mount) return;
+
+  scheduleScrollAfterSuggestion(mount);
+}
+
+function getBootstrapOptions() {
+  const { stickySession = false, ...stylingConfigurations } = brandConciergeConfig;
+  return {
+    instanceName: ALLOY_INSTANCE_NAME,
+    stylingConfigurations,
+    selector: MOUNT_SELECTOR,
+    stickySession,
+    onEvent: handleBrandConciergeClientEvent,
+  };
+}
+
+function onMountInteraction(event) {
+  const mount = getBrandConciergeMount();
+  if (!mount?.contains(event.target)) return;
+
+  if (event.target.closest('.citations-accordion, .citations-accordion-button, .citations-section')) {
+    clearScrollAfterSuggestionSchedule();
+    return;
+  }
+
+  if (event.target.closest(SUGGESTION_CLICK_SELECTOR)) {
+    scheduleScrollAfterSuggestion(mount);
+  }
+}
+
+function removeQuestionPinHandlers() {
+  const mount = getBrandConciergeMount();
+  if (mountInteractionHandler && mount) {
+    mount.removeEventListener('click', mountInteractionHandler, true);
+  }
+  mountInteractionHandler = null;
+  clearScrollAfterSuggestionSchedule();
+}
+
+function installQuestionPinHandlers(mount) {
+  removeQuestionPinHandlers();
+  if (!mount) return;
+
+  mountInteractionHandler = onMountInteraction;
+  mount.addEventListener('click', mountInteractionHandler, true);
+}
+
+/**
+ * Shows BC’s scroll-to-bottom control only when `.chat-history` overflows and the
+ * user is not already at the bottom; re-evaluates on scroll, resize, and content changes.
+ */
+function watchScrollToBottomButton(mount) {
+  scrollToBottomWatcher?.cleanup();
+  scrollToBottomWatcher = null;
+  if (!mount) return;
+
+  let history = null;
+  let historyResizeObserver = null;
+  let historyContentObserver = null;
+  let scrollBtnStyleObserver = null;
+  let inputAreaResizeObserver = null;
+
+  const update = () => syncScrollToBottomButton(mount);
+
+  const attachInputAreaObserver = () => {
+    inputAreaResizeObserver?.disconnect();
+    const inputSection = mount.querySelector('.input-section');
+    if (!inputSection) return;
+    inputAreaResizeObserver = new ResizeObserver(update);
+    inputAreaResizeObserver.observe(inputSection);
+  };
+
+  const attachScrollButtonObserver = () => {
+    scrollBtnStyleObserver?.disconnect();
+    const scrollBtn = mount.querySelector('.scroll-to-bottom');
+    if (!scrollBtn) return;
+
+    if (!scrollBtn.dataset.exlScrollBound) {
+      scrollBtn.dataset.exlScrollBound = 'true';
+      scrollBtn.addEventListener('click', () => {
+        clearScrollAfterSuggestionSchedule();
+        scrollChatHistoryToBottom(mount);
+        scrollBtn.blur();
+        update();
+      });
+    }
+
+    scrollBtnStyleObserver = new MutationObserver(() => {
+      const inWelcomeState = mount.querySelector('.brand-concierge-container.initial-state');
+      const shouldShow = !inWelcomeState && history && shouldShowScrollToBottomButton(history);
+      if (shouldShow && !scrollBtn.classList.contains('bc-scroll-to-bottom-visible')) {
+        update();
+      }
+    });
+    scrollBtnStyleObserver.observe(scrollBtn, {
+      attributes: true,
+      attributeFilter: ['class', 'style', 'hidden'],
+    });
+  };
+
+  const attachHistory = () => {
+    const nextHistory = mount.querySelector('.chat-history');
+    if (nextHistory === history) {
+      if (!scrollBtnStyleObserver) attachScrollButtonObserver();
+      if (!inputAreaResizeObserver) attachInputAreaObserver();
+      return;
+    }
+
+    history?.removeEventListener('scroll', update);
+    historyResizeObserver?.disconnect();
+    historyContentObserver?.disconnect();
+
+    history = nextHistory;
+    if (!history) {
+      attachScrollButtonObserver();
+      attachInputAreaObserver();
+      update();
+      return;
+    }
+
+    history.addEventListener('scroll', update, { passive: true });
+    historyResizeObserver = new ResizeObserver(update);
+    historyResizeObserver.observe(history);
+    historyContentObserver = new MutationObserver(update);
+    historyContentObserver.observe(history, { childList: true, subtree: true });
+    attachScrollButtonObserver();
+    attachInputAreaObserver();
+    update();
+  };
+
+  const mountObserver = new MutationObserver(attachHistory);
+  mountObserver.observe(mount, { childList: true, subtree: true });
+  window.addEventListener('resize', update, { passive: true });
+  attachHistory();
+
+  scrollToBottomWatcher = {
+    cleanup: () => {
+      mountObserver.disconnect();
+      window.removeEventListener('resize', update);
+      history?.removeEventListener('scroll', update);
+      historyResizeObserver?.disconnect();
+      historyContentObserver?.disconnect();
+      scrollBtnStyleObserver?.disconnect();
+      inputAreaResizeObserver?.disconnect();
+    },
+  };
 }
 
 /**
@@ -230,9 +562,10 @@ async function clearBrandConciergeConversation() {
     await concierge.bootstrap(getBootstrapOptions());
   }
 
-  const bcMount = document.getElementById('brand-concierge-mount');
-  chatObserver?.disconnect();
-  chatObserver = watchChatHistory(bcMount);
+  const bcMount = getBrandConciergeMount();
+  scrollToBottomWatcher?.cleanup();
+  watchScrollToBottomButton(bcMount);
+  installQuestionPinHandlers(bcMount);
   patchBcSparkleIcons(bcMount);
   panelDisclaimerObserver?.disconnect();
   panelDisclaimerObserver = null;
@@ -354,8 +687,9 @@ function injectAlloyStub() {
 
 /** Call on SPA navigation to prevent the UI persisting across page transitions. */
 export function destroyBrandConcierge() {
-  chatObserver?.disconnect();
-  chatObserver = null;
+  scrollToBottomWatcher?.cleanup();
+  scrollToBottomWatcher = null;
+  removeQuestionPinHandlers();
   inputLabelIconObserver?.disconnect();
   inputLabelIconObserver = null;
   panelDisclaimerObserver?.disconnect();
@@ -384,8 +718,9 @@ export async function initBrandConcierge() {
     log('[BC] Web Client loaded — calling bootstrap');
     bootstrapWebClient();
     log('[BC] bootstrapWebClient called');
-    const bcMount = document.getElementById('brand-concierge-mount');
-    chatObserver = watchChatHistory(bcMount);
+    const bcMount = getBrandConciergeMount();
+    watchScrollToBottomButton(bcMount);
+    installQuestionPinHandlers(bcMount);
     patchBcSparkleIcons(bcMount);
     watchPanelDisclaimer(bcMount);
 
