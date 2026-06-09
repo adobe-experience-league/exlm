@@ -1,6 +1,6 @@
 import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
 import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT } from '../../scripts/browse-card/browse-cards-constants.js';
+import { BASE_COVEO_ADVANCED_QUERY_EVENTS } from '../../scripts/browse-card/browse-cards-constants.js';
 import BrowseCardsDelegate, {
   normalizeOnDemandEventModel,
   normalizeUpcomingEventModel,
@@ -1077,7 +1077,7 @@ async function initHeadlessSearch(block, groups, placeholders) {
 
   if (window.headlessQueryActionCreators && window.headlessSearchEngine) {
     const action = window.headlessQueryActionCreators.updateAdvancedSearchQueries({
-      aq: BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT,
+      aq: BASE_COVEO_ADVANCED_QUERY_EVENTS,
     });
     window.headlessSearchEngine.dispatch(action);
     executeSearch();
