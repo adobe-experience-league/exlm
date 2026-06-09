@@ -57,6 +57,7 @@ let scrollToBottomWatcher = null;
 let scrollAfterSuggestionObserver = null;
 let scrollAfterSuggestionTimers = [];
 let scrollPinRafId = null;
+let scrollPinUserScrollCleanup = null;
 let mountInteractionHandler = null;
 
 /**
@@ -263,6 +264,8 @@ function stopScrollPin() {
     window.cancelAnimationFrame(scrollPinRafId);
     scrollPinRafId = null;
   }
+  scrollPinUserScrollCleanup?.();
+  scrollPinUserScrollCleanup = null;
 }
 
 function clearScrollAfterSuggestionSchedule() {
@@ -291,14 +294,18 @@ function getMessageScrollTopInHistory(history, messageEl) {
 }
 
 function ensureExchangeScrollRoom(mount, history, userMessageEl, userMessageCount) {
-  if (userMessageCount < 2 || !userMessageEl) return;
+  const currentMin = parseInt(history.style.minHeight || '0', 10) || 0;
+  if (userMessageCount < 2) {
+    if (currentMin > 0) history.style.removeProperty('min-height');
+    return;
+  }
+  if (!userMessageEl) return;
 
   const container = history.closest('.brand-concierge-container');
   const inputSection = mount?.querySelector('.input-section');
   if (!container) return;
 
   const neededMinHeight = userMessageEl.offsetTop + container.clientHeight - (inputSection?.clientHeight ?? 0);
-  const currentMin = parseInt(history.style.minHeight || '0', 10) || 0;
   if (neededMinHeight > currentMin) {
     history.style.setProperty('min-height', `${Math.ceil(neededMinHeight)}px`);
   }
@@ -315,9 +322,7 @@ function resolveExchangeScrollTop(mount) {
   }
 
   const userMessage = userMessages[userMessages.length - 1];
-  if (userMessages.length >= 2) {
-    ensureExchangeScrollRoom(mount, history, userMessage, userMessages.length);
-  }
+  ensureExchangeScrollRoom(mount, history, userMessage, userMessages.length);
 
   const messageMarginTop = parseInt(window.getComputedStyle(userMessage).marginTop, 10) || 0;
 
@@ -331,9 +336,16 @@ function startScrollPin(mount) {
   if (!history) return;
 
   const end = Date.now() + SCROLL_AFTER_SUGGESTION_PIN_MS;
+  const onUserScroll = (e) => {
+    if (e.isTrusted) stopScrollPin();
+  };
+  history.addEventListener('scroll', onUserScroll, true);
+  scrollPinUserScrollCleanup = () => history.removeEventListener('scroll', onUserScroll, true);
+
   const tick = () => {
     if (Date.now() > end) {
       scrollPinRafId = null;
+      stopScrollPin();
       return;
     }
     history.scrollTop = resolveExchangeScrollTop(mount);
@@ -409,6 +421,9 @@ function onMountInteraction(event) {
   }
 
   if (event.target.closest(SUGGESTION_CLICK_SELECTOR)) {
+    // BC_EVENT_PROMPT_CLICKED also triggers scheduleScrollAfterSuggestion for suggestion
+    // clicks, but SUGGESTION_CLICK_SELECTOR covers widget-options buttons and any click
+    // paths that do not fire a BC onEvent (e.g. keyboard-activated clicks on some builds).
     scheduleScrollAfterSuggestion(mount);
   }
 }
@@ -428,6 +443,17 @@ function installQuestionPinHandlers(mount) {
 
   mountInteractionHandler = onMountInteraction;
   mount.addEventListener('click', mountInteractionHandler, true);
+}
+
+function rafDebounce(fn) {
+  let id = null;
+  return () => {
+    if (!id)
+      id = requestAnimationFrame(() => {
+        id = null;
+        fn();
+      });
+  };
 }
 
 /**
@@ -506,7 +532,7 @@ function watchScrollToBottomButton(mount) {
     history.addEventListener('scroll', update, { passive: true });
     historyResizeObserver = new ResizeObserver(update);
     historyResizeObserver.observe(history);
-    historyContentObserver = new MutationObserver(update);
+    historyContentObserver = new MutationObserver(rafDebounce(update));
     historyContentObserver.observe(history, { childList: true, subtree: true });
     attachScrollButtonObserver();
     attachInputAreaObserver();

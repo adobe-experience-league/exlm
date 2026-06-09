@@ -561,6 +561,8 @@
 
 #brand-concierge-mount .input-section .scroll-to-bottom {
   position: absolute !important;
+
+  /* 48 px = button radius (18 px) + visual gap above the input container */
   inset: 48px auto auto 50% !important;
   transform: translateX(-50%) !important;
   margin: 0 !important;
