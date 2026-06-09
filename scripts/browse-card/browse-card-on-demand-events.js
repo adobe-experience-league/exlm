@@ -1,34 +1,5 @@
-/* eslint-disable camelcase, no-unused-vars */
-import { decorateIcons } from '../lib-franklin.js';
-import { createTag, htmlToElement } from '../scripts.js';
+import { createTag } from '../scripts.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
-
-/* TODO - Remove duration during cleanup */
-
-/**
- * Builds event content specifically for on-demand events
- * @param {Object} params - Parameters for building event content
- * @param {Object} params.event - Event data
- * @param {HTMLElement} params.cardContent - Card content element
- * @param {HTMLElement} params.card - Card element
- */
-const buildOnDemandEventContent = ({ event, cardContent, card }) => {
-  const { duration } = event || {};
-  const durationText = duration || '';
-  if (!durationText) return;
-
-  const eventInfo = htmlToElement(`
-    <div class="browse-card-event-info">
-        <span class="icon icon-time"></span>
-        <div class="browse-card-event-time">
-            <h6>${durationText}</h6>
-        </div>
-    </div>
-  `);
-  decorateIcons(eventInfo);
-  const title = card.querySelector('.browse-card-title-text');
-  cardContent.insertBefore(eventInfo, title.nextElementSibling);
-};
 
 /**
  * Decorates on-demand event cards with additional features
@@ -44,8 +15,6 @@ export const decorateOnDemandEvents = (card, model) => {
   const { event } = model;
   const cardFigure = card.querySelector('.browse-card-figure');
   if (!cardFigure) return;
-
-  const cardContent = card.querySelector('.browse-card-content');
 
   cardFigure.querySelector('.laptop-container')?.remove();
   const img = cardFigure.querySelector('img');
@@ -77,14 +46,6 @@ export const decorateOnDemandEvents = (card, model) => {
     }
 
     cardFigure.appendChild(fallbackImg);
-  }
-
-  if (event?.duration) {
-    buildOnDemandEventContent({
-      event,
-      cardContent,
-      card,
-    });
   }
 
   const seriesText = event?.series;
