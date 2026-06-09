@@ -99,6 +99,8 @@ dialog[data-type] {
   font-weight: 600;
   line-height: 1;
   color: var(--spectrum-gray-800);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
 }
 
 .exl-dialog-header-clear:hover {

@@ -252,8 +252,6 @@ function syncScrollToBottomButton(mount) {
   const visible = !inWelcomeState && shouldShowScrollToBottomButton(history);
 
   scrollBtn.classList.toggle('bc-scroll-to-bottom-visible', visible);
-  scrollBtn.toggleAttribute('hidden', !visible);
-  scrollBtn.style.display = visible ? 'flex' : 'none';
 }
 
 function getBrandConciergeMount() {
@@ -311,15 +309,17 @@ function resolveExchangeScrollTop(mount) {
   if (!history) return 0;
 
   const userMessages = history.querySelectorAll('.user-message');
-  if (userMessages.length === 0) return 0;
+  if (userMessages.length === 0) {
+    history.style.removeProperty('min-height');
+    return 0;
+  }
 
   const userMessage = userMessages[userMessages.length - 1];
   if (userMessages.length >= 2) {
     ensureExchangeScrollRoom(mount, history, userMessage, userMessages.length);
   }
 
-  const lastChatMessage = history.querySelector('.chat-message:last-child');
-  const messageMarginTop = lastChatMessage ? parseInt(window.getComputedStyle(lastChatMessage).marginTop, 10) || 0 : 0;
+  const messageMarginTop = parseInt(window.getComputedStyle(userMessage).marginTop, 10) || 0;
 
   const offsetTop = getMessageScrollTopInHistory(history, userMessage);
   return Math.max(0, offsetTop - messageMarginTop);
