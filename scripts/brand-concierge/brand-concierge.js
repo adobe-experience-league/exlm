@@ -23,6 +23,8 @@ const PIN_IGNORE_SELECTOR =
 
 /** How long to hold scroll position after a new question (BC may auto-scroll to bottom). */
 const SCROLL_AFTER_SUGGESTION_PIN_MS = 3500;
+/** Retry cadence (ms) for re-applying scroll position while BC settles its DOM after a query. */
+const SCROLL_PIN_RETRY_DELAYS_MS = [16, 50, 120, 250, 500, 1000, 1800];
 
 const SUGGESTION_CLICK_SELECTOR =
   '.bc-prompt-suggestion-button, .bc-prompt-pill-button, .prompt-suggestions-container button, .widget-options-container button';
@@ -293,7 +295,7 @@ function getMessageScrollTopInHistory(history, messageEl) {
   return messageEl.getBoundingClientRect().top - history.getBoundingClientRect().top + history.scrollTop;
 }
 
-function ensureExchangeScrollRoom(mount, history, userMessageEl, userMessageCount) {
+function ensureExchangeScrollRoom(history, userMessageEl, userMessageCount) {
   const currentMin = parseInt(history.style.minHeight || '0', 10) || 0;
   if (userMessageCount < 2) {
     if (currentMin > 0) history.style.removeProperty('min-height');
@@ -301,12 +303,7 @@ function ensureExchangeScrollRoom(mount, history, userMessageEl, userMessageCoun
   }
   if (!userMessageEl) return;
 
-  const container = history.closest('.brand-concierge-container');
-  const inputSection = mount?.querySelector('.input-section');
-  if (!container) return;
-
-  const neededMinHeight =
-    getMessageScrollTopInHistory(history, userMessageEl) + container.clientHeight - (inputSection?.clientHeight ?? 0);
+  const neededMinHeight = getMessageScrollTopInHistory(history, userMessageEl) + history.clientHeight;
   if (neededMinHeight > currentMin) {
     history.style.setProperty('min-height', `${Math.ceil(neededMinHeight)}px`);
   }
@@ -323,7 +320,7 @@ function resolveExchangeScrollTop(mount) {
   }
 
   const userMessage = userMessages[userMessages.length - 1];
-  ensureExchangeScrollRoom(mount, history, userMessage, userMessages.length);
+  ensureExchangeScrollRoom(history, userMessage, userMessages.length);
 
   const messageMarginTop = parseInt(window.getComputedStyle(userMessage).marginTop, 10) || 0;
 
@@ -377,7 +374,7 @@ function scheduleScrollAfterSuggestion(mount) {
   };
 
   run();
-  [16, 50, 120, 250, 500, 1000, 1800].forEach((delay) => {
+  SCROLL_PIN_RETRY_DELAYS_MS.forEach((delay) => {
     scrollAfterSuggestionTimers.push(window.setTimeout(run, delay));
   });
 
@@ -412,7 +409,7 @@ function getBootstrapOptions() {
 }
 
 function onMountInteraction(event) {
-  const mount = getBrandConciergeMount();
+  const mount = /** @type {Element} */ (event.currentTarget);
   if (!mount?.contains(event.target)) return;
 
   if (event.target.closest('.citations-accordion, .citations-accordion-button, .citations-section')) {

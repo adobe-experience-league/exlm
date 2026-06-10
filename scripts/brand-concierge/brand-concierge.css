@@ -258,10 +258,6 @@
   pointer-events: none !important;
 }
 
-#brand-concierge-mount .input-section > * {
-  pointer-events: auto !important;
-}
-
 #bc-dialog.exl-dialog-expanded #brand-concierge-mount .input-section {
   padding: 0 max(40px, 15%) !important;
 }
@@ -273,9 +269,9 @@
   min-height: 52px !important;
   height: 52px !important;
   max-height: 56px !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   background: #fff !important;
-  border-width: 1px !important;
+  border: 1px solid var(--spectrum-gray-300) !important;
 }
 
 #brand-concierge-mount label.ai-chat-label .bc-input-label-sparkle {
@@ -287,15 +283,14 @@
 
 #brand-concierge-mount .input-container:focus-within {
   outline: none !important;
-  border-width: 1px !important;
-  border-color: var(--spectrum-gray-300) !important;
+  border: 1px solid var(--spectrum-gray-300) !important;
 }
 
 #brand-concierge-mount .chat-input-wrapper {
   min-height: 40px !important;
   height: 40px !important;
   max-height: 40px !important;
-  overflow: hidden !important;
+  overflow: visible !important;
 }
 
 /* stylelint-disable-next-line selector-class-pattern -- BC internal BEM modifier */
@@ -490,6 +485,11 @@
     gap: 8px !important;
     width: auto !important;
     max-width: 100% !important;
+    margin-bottom: 12px !important;
+
+    /* Keep in-chat follow-up suggestions above the bottom gradient fade. */
+    position: relative !important;
+    z-index: 6 !important;
   }
 
   #bc-dialog.exl-dialog-expanded
@@ -612,6 +612,15 @@
 
 #brand-concierge-mount .scroll-to-bottom svg path {
   fill: currentcolor !important;
+}
+
+/* Restore interactivity for specific interactive children of the pointer-events:none overlay. */
+#brand-concierge-mount .input-section .input-container,
+#brand-concierge-mount .input-section .input-container *,
+#brand-concierge-mount .input-section .bc-panel-disclaimer,
+#brand-concierge-mount .input-section .bc-panel-disclaimer a,
+#brand-concierge-mount .input-section .scroll-to-bottom {
+  pointer-events: auto !important;
 }
 
 #brand-concierge-mount .citations-link {
