@@ -341,7 +341,7 @@ function resolveExchangeScrollTop(mount) {
  * observer + retry timeouts alone. BC's streaming renderer resets scrollTop to the bottom on
  * every content chunk it appends — effectively on every frame. Without a matching rAF loop
  * our position is overwritten between mutation callbacks, and the question-pin never sticks.
- * The forced-layout cost (~2 getBoundingClientRect calls per frame × 3.5 s) is accepted as
+ * The forced-layout cost (~3 layout reads per frame × 3.5 s) is accepted as
  * the minimum overhead required to hold scroll position against BC's own auto-scroll.
  */
 function startScrollPin(mount) {
@@ -480,6 +480,17 @@ function watchScrollToBottomButton(mount) {
 
   const update = () => syncScrollToBottomButton(mount);
 
+  // Scroll-only update: .input-section and .input-container are position:absolute bottom:0
+  // and don't move during scroll, so skip the getBoundingClientRect calls in
+  // updateInputOverlayLayout — only the button visibility needs re-evaluating.
+  const scrollUpdate = () => {
+    const scrollBtn = mount.querySelector('.scroll-to-bottom');
+    if (!history || !scrollBtn) return;
+    const inWelcomeState = mount.querySelector('.brand-concierge-container.initial-state');
+    scrollBtn.classList.toggle('bc-scroll-to-bottom-visible', !inWelcomeState && shouldShowScrollToBottomButton(history));
+  };
+  const debouncedScrollUpdate = rafDebounce(scrollUpdate);
+
   const attachInputAreaObserver = () => {
     inputAreaResizeObserver?.disconnect();
     const inputSection = mount.querySelector('.input-section');
@@ -524,7 +535,7 @@ function watchScrollToBottomButton(mount) {
       return;
     }
 
-    history?.removeEventListener('scroll', update);
+    history?.removeEventListener('scroll', debouncedScrollUpdate);
     historyResizeObserver?.disconnect();
     historyContentObserver?.disconnect();
 
@@ -536,7 +547,7 @@ function watchScrollToBottomButton(mount) {
       return;
     }
 
-    history.addEventListener('scroll', update, { passive: true });
+    history.addEventListener('scroll', debouncedScrollUpdate, { passive: true });
     historyResizeObserver = new ResizeObserver(update);
     historyResizeObserver.observe(history);
     historyContentObserver = new MutationObserver(rafDebounce(update));
@@ -555,7 +566,7 @@ function watchScrollToBottomButton(mount) {
     cleanup: () => {
       mountObserver.disconnect();
       window.removeEventListener('resize', update);
-      history?.removeEventListener('scroll', update);
+      history?.removeEventListener('scroll', debouncedScrollUpdate);
       historyResizeObserver?.disconnect();
       historyContentObserver?.disconnect();
       scrollBtnStyleObserver?.disconnect();
