@@ -404,6 +404,9 @@ function handleBrandConciergeClientEvent(event) {
   const mount = getBrandConciergeMount();
   if (!mount) return;
 
+  // response:started intentionally re-pins: if a new response begins while the user is still
+  // reading a previous answer we want to re-anchor to their most recent question, not leave
+  // them watching the bottom of a growing history panel.
   scheduleScrollAfterSuggestion(mount);
 }
 
@@ -420,7 +423,7 @@ function getBootstrapOptions() {
 
 function onMountInteraction(event) {
   const mount = /** @type {Element} */ (event.currentTarget);
-  if (!mount?.contains(event.target)) return;
+  if (!mount) return;
 
   if (event.target.closest('.citations-accordion, .citations-accordion-button, .citations-section')) {
     clearScrollAfterSuggestionSchedule();
