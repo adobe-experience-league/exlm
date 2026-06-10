@@ -2,6 +2,11 @@ body.browse-all .section.premium-learning-section {
   margin: 30px 16px;
 }
 
+body.browse-all .section.premium-learning-section .premium-learning-suggested-content.browse-cards-block,
+body.browse-all .section.premium-learning-section .premium-learning-recommended-content.browse-cards-block {
+  margin-bottom: 56px;
+}
+
 @media (min-width: 600px) {
   body.browse-all .section.premium-learning-section {
     margin: 3em 3.5em;
