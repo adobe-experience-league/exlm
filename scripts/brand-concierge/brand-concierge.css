@@ -426,13 +426,22 @@
   display: none !important;
 }
 
+/* Expanded welcome pills default (all viewports): column stack matching the side-drawer layout. */
+#bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-pills-container:has(> :nth-child(4):last-child) {
+  display: flex !important;
+  flex-flow: column nowrap !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+}
+
 /*
  * Expanded-only prompt layouts (wide viewports).
  * Intentional breakpoint exception: ExL uses 600 / 900 / 1200px, but the
  * expanded drawer is only 80vw wide. At 769–899px the modal is still too narrow for the
  * half-width welcome pill grid; 900px leaves that range with incorrect pill rendering. 769px
- * aligns with when 80vw (~615px) can fit the card layout; below that, use the side-drawer
- * full-width prompt stack (base `.bc-prompt-pill-button` rules).
+ * aligns with when 80vw (~615px) can fit the card layout; below that, the base column stack
+ * above applies.
  */
 @media (min-width: 769px) {
   /* Expanded only: full-width prompt area; taller, half-width welcome pill cards (not in the narrow drawer). */
@@ -504,17 +513,6 @@
     align-items: center !important;
     justify-content: flex-start !important;
     box-sizing: border-box !important;
-  }
-}
-
-/* Expanded on narrow viewports: match side-drawer prompt stack (see breakpoint note above). */
-@media (max-width: 768px) {
-  #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-pills-container:has(> :nth-child(4):last-child) {
-    display: flex !important;
-    flex-flow: column nowrap !important;
-    align-items: stretch !important;
-    justify-content: flex-start !important;
-    gap: 6px !important;
   }
 }
 

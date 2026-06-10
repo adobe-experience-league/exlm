@@ -58,6 +58,7 @@ let panelDisclaimerObserver = null;
 let scrollToBottomWatcher = null;
 let scrollAfterSuggestionObserver = null;
 let scrollAfterSuggestionTimers = [];
+let scrollPinCleanupTimerId = null;
 let scrollPinRafId = null;
 let scrollPinUserScrollCleanup = null;
 let mountInteractionHandler = null;
@@ -275,6 +276,10 @@ function clearScrollAfterSuggestionSchedule() {
   scrollAfterSuggestionTimers = [];
   scrollAfterSuggestionObserver?.disconnect();
   scrollAfterSuggestionObserver = null;
+  if (scrollPinCleanupTimerId !== null) {
+    window.clearTimeout(scrollPinCleanupTimerId);
+    scrollPinCleanupTimerId = null;
+  }
   stopScrollPin();
 }
 
@@ -304,6 +309,9 @@ function ensureExchangeScrollRoom(history, userMessageEl, userMessageCount) {
   if (!userMessageEl) return;
 
   const neededMinHeight = getMessageScrollTopInHistory(history, userMessageEl) + history.clientHeight;
+  // Intentional one-way ratchet: min-height only grows to accommodate the latest exchange.
+  // It resets only when userMessageCount < 2 (clear/re-bootstrap). Long sessions accumulate
+  // a large value but BC refreshes the DOM on conversation clear, so it never persists.
   if (neededMinHeight > currentMin) {
     history.style.setProperty('min-height', `${Math.ceil(neededMinHeight)}px`);
   }
@@ -387,9 +395,7 @@ function scheduleScrollAfterSuggestion(mount) {
     run();
   });
   scrollAfterSuggestionObserver.observe(chatHistory, { childList: true, subtree: true });
-  scrollAfterSuggestionTimers.push(
-    window.setTimeout(clearScrollAfterSuggestionSchedule, SCROLL_AFTER_SUGGESTION_PIN_MS + 500),
-  );
+  scrollPinCleanupTimerId = window.setTimeout(clearScrollAfterSuggestionSchedule, SCROLL_AFTER_SUGGESTION_PIN_MS + 500);
 }
 
 function handleBrandConciergeClientEvent(event) {
@@ -450,7 +456,7 @@ function rafDebounce(fn) {
   let id = null;
   return () => {
     if (!id)
-      id = requestAnimationFrame(() => {
+      id = window.requestAnimationFrame(() => {
         id = null;
         fn();
       });
