@@ -487,7 +487,10 @@ function watchScrollToBottomButton(mount) {
     const scrollBtn = mount.querySelector('.scroll-to-bottom');
     if (!history || !scrollBtn) return;
     const inWelcomeState = mount.querySelector('.brand-concierge-container.initial-state');
-    scrollBtn.classList.toggle('bc-scroll-to-bottom-visible', !inWelcomeState && shouldShowScrollToBottomButton(history));
+    scrollBtn.classList.toggle(
+      'bc-scroll-to-bottom-visible',
+      !inWelcomeState && shouldShowScrollToBottomButton(history),
+    );
   };
   const debouncedScrollUpdate = rafDebounce(scrollUpdate);
 
