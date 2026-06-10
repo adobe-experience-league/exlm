@@ -8,6 +8,10 @@
   gap: var(--spectrum-spacing-300);
 }
 
+.premium-learning-suggested-content .premium-learning-suggested-content-header-title * {
+  margin-top: 0;
+}
+
 .premium-learning-suggested-content .premium-learning-suggested-content-description {
   color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-200);
