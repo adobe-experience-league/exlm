@@ -328,6 +328,14 @@ function resolveExchangeScrollTop(mount) {
   return Math.max(0, offsetTop - messageMarginTop);
 }
 
+/*
+ * NOTE: The rAF loop in startScrollPin is intentional and cannot be replaced by the mutation
+ * observer + retry timeouts alone. BC's streaming renderer resets scrollTop to the bottom on
+ * every content chunk it appends — effectively on every frame. Without a matching rAF loop
+ * our position is overwritten between mutation callbacks, and the question-pin never sticks.
+ * The forced-layout cost (~2 getBoundingClientRect calls per frame × 3.5 s) is accepted as
+ * the minimum overhead required to hold scroll position against BC's own auto-scroll.
+ */
 function startScrollPin(mount) {
   stopScrollPin();
   const history = mount?.querySelector('.chat-history');
@@ -502,7 +510,7 @@ function watchScrollToBottomButton(mount) {
     });
     scrollBtnStyleObserver.observe(scrollBtn, {
       attributes: true,
-      attributeFilter: ['class', 'style', 'hidden'],
+      attributeFilter: ['style', 'hidden'],
     });
   };
 
