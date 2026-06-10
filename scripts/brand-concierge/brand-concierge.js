@@ -362,11 +362,7 @@ function startScrollPin(mount) {
 function applyExchangeScrollTop(mount) {
   const history = mount?.querySelector('.chat-history');
   if (!history) return;
-
-  const targetTop = resolveExchangeScrollTop(mount);
-  if (targetTop === 0 && history.querySelectorAll('.user-message').length === 0) return;
-
-  history.scrollTop = targetTop;
+  history.scrollTop = resolveExchangeScrollTop(mount);
 }
 
 function scheduleScrollAfterSuggestion(mount) {

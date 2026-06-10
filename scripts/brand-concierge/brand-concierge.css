@@ -283,7 +283,6 @@
 
 #brand-concierge-mount .input-container:focus-within {
   outline: none !important;
-  border: 1px solid var(--spectrum-gray-300) !important;
 }
 
 #brand-concierge-mount .chat-input-wrapper {
@@ -614,7 +613,13 @@
   fill: currentcolor !important;
 }
 
-/* Restore interactivity for specific interactive children of the pointer-events:none overlay. */
+/*
+ * Restore interactivity for interactive children of the pointer-events:none overlay.
+ * MAINTENANCE: If BC adds new interactive elements inside .input-section (voice button,
+ * tooltip trigger, close icon, etc.) they must be added here or clicks will silently
+ * do nothing. A ::before/::after gradient approach would avoid this list, but is not
+ * feasible here because .input-section itself provides the grid layout for the overlay.
+ */
 #brand-concierge-mount .input-section .input-container,
 #brand-concierge-mount .input-section .input-container *,
 #brand-concierge-mount .input-section .bc-panel-disclaimer,
