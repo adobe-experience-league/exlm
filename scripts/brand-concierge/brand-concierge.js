@@ -63,6 +63,8 @@ let scrollPinRafId = null;
 let scrollPinUserScrollCleanup = null;
 let mountInteractionHandler = null;
 let mountWithHandler = null;
+let keyboardScrollHandler = null;
+let keyboardScrollDialog = null;
 
 /**
  * Removes persisted BC chat sessions from localStorage (transcript + metadata).
@@ -638,6 +640,51 @@ async function clearBrandConciergeConversation() {
   focusBcChatInputWhenReady(bcMount);
 }
 
+/**
+ * Intercepts keyboard scroll keys on the dialog so they scroll `.chat-history` instead of
+ * the page behind. PageUp/PageDown are intercepted unconditionally; ArrowUp/ArrowDown are
+ * intercepted only when focus is outside a text input (where they move the cursor).
+ */
+function removeKeyboardScrollHandler() {
+  if (keyboardScrollHandler && keyboardScrollDialog) {
+    keyboardScrollDialog.removeEventListener('keydown', keyboardScrollHandler, true);
+  }
+  keyboardScrollHandler = null;
+  keyboardScrollDialog = null;
+}
+
+function installKeyboardScrollHandler(dialog, mount) {
+  removeKeyboardScrollHandler();
+
+  keyboardScrollHandler = (e) => {
+    if (e.key !== 'PageUp' && e.key !== 'PageDown' && e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+
+    const activeEl = document.activeElement;
+    if (
+      (e.key === 'ArrowUp' || e.key === 'ArrowDown') &&
+      (activeEl?.tagName === 'TEXTAREA' || activeEl?.tagName === 'INPUT')
+    )
+      return;
+
+    // Always suppress page scroll for these keys inside the dialog, even if chat-history
+    // has no overflow yet (welcome state). showModal() traps focus but does not consume
+    // keyboard events, so unconsumed PageUp/PageDown would scroll the document behind.
+    e.preventDefault();
+
+    const history = mount?.querySelector('.chat-history');
+    if (!history || history.scrollHeight <= history.clientHeight) return;
+
+    const isPageKey = e.key === 'PageUp' || e.key === 'PageDown';
+    const scrollAmount = isPageKey ? history.clientHeight * 0.85 : 60;
+    const direction = (e.key === 'ArrowUp' || e.key === 'PageUp') ? -1 : 1;
+
+    history.scrollBy({ top: direction * scrollAmount, behavior: isPageKey ? 'smooth' : 'auto' });
+  };
+
+  keyboardScrollDialog = dialog;
+  dialog.addEventListener('keydown', keyboardScrollHandler, true);
+}
+
 function createMountPoint() {
   if (document.getElementById(DIALOG_ID)) return document.getElementById(DIALOG_ID);
 
@@ -688,6 +735,7 @@ function createMountPoint() {
   });
 
   const { element: dialog } = drawerHandle;
+  installKeyboardScrollHandler(dialog, mount);
 
   trigger.addEventListener('click', () => {
     dialog.showModal();
@@ -754,6 +802,7 @@ function injectAlloyStub() {
 export function destroyBrandConcierge() {
   scrollToBottomWatcher?.cleanup();
   scrollToBottomWatcher = null;
+  removeKeyboardScrollHandler();
   removeQuestionPinHandlers();
   inputLabelIconObserver?.disconnect();
   inputLabelIconObserver = null;
