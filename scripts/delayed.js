@@ -21,16 +21,6 @@ if (window.location.search?.indexOf('martech=off') === -1) {
   sendCoveoPageViewEvent();
 }
 
-async function isAdobeEmployee() {
-  if (!window.adobeIMS?.isSignedInUser()) return false;
-  try {
-    const profile = await window.adobeIMS.getProfile();
-    return profile?.email?.toLowerCase().endsWith('@adobe.com') === true;
-  } catch {
-    return false;
-  }
-}
-
 /** Paths like /en/support, /fr/premium (communities use a separate origin). */
 function isBrandConciergeExcludedPath() {
   const { pathname } = window.location;
@@ -49,7 +39,6 @@ async function loadBrandConcierge() {
   const { bcAuthRequired } = getConfig();
   if (bcAuthRequired) {
     await loadIms();
-    if (!(await isAdobeEmployee())) return;
   }
 
   const { default: initBrandConcierge } = await import('./brand-concierge/brand-concierge.js');

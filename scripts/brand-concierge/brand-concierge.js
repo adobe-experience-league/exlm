@@ -62,6 +62,7 @@ let scrollPinCleanupTimerId = null;
 let scrollPinRafId = null;
 let scrollPinUserScrollCleanup = null;
 let mountInteractionHandler = null;
+let mountWithHandler = null;
 
 /**
  * Removes persisted BC chat sessions from localStorage (transcript + metadata).
@@ -439,11 +440,11 @@ function onMountInteraction(event) {
 }
 
 function removeQuestionPinHandlers() {
-  const mount = getBrandConciergeMount();
-  if (mountInteractionHandler && mount) {
-    mount.removeEventListener('click', mountInteractionHandler, true);
+  if (mountInteractionHandler && mountWithHandler) {
+    mountWithHandler.removeEventListener('click', mountInteractionHandler, true);
   }
   mountInteractionHandler = null;
+  mountWithHandler = null;
   clearScrollAfterSuggestionSchedule();
 }
 
@@ -452,18 +453,26 @@ function installQuestionPinHandlers(mount) {
   if (!mount) return;
 
   mountInteractionHandler = onMountInteraction;
+  mountWithHandler = mount;
   mount.addEventListener('click', mountInteractionHandler, true);
 }
 
 function rafDebounce(fn) {
   let id = null;
-  return () => {
+  const debounced = () => {
     if (!id)
       id = window.requestAnimationFrame(() => {
         id = null;
         fn();
       });
   };
+  debounced.cancel = () => {
+    if (id) {
+      window.cancelAnimationFrame(id);
+      id = null;
+    }
+  };
+  return debounced;
 }
 
 /**
@@ -478,6 +487,7 @@ function watchScrollToBottomButton(mount) {
   let history = null;
   let historyResizeObserver = null;
   let historyContentObserver = null;
+  let debouncedHistoryUpdate = null;
   let scrollBtnStyleObserver = null;
   let inputAreaResizeObserver = null;
 
@@ -529,7 +539,7 @@ function watchScrollToBottomButton(mount) {
     });
     scrollBtnStyleObserver.observe(scrollBtn, {
       attributes: true,
-      attributeFilter: ['style', 'hidden'],
+      attributeFilter: ['style', 'hidden', 'class'],
     });
   };
 
@@ -544,6 +554,7 @@ function watchScrollToBottomButton(mount) {
     history?.removeEventListener('scroll', debouncedScrollUpdate);
     historyResizeObserver?.disconnect();
     historyContentObserver?.disconnect();
+    debouncedHistoryUpdate?.cancel();
 
     history = nextHistory;
     if (!history) {
@@ -556,7 +567,8 @@ function watchScrollToBottomButton(mount) {
     history.addEventListener('scroll', debouncedScrollUpdate, { passive: true });
     historyResizeObserver = new ResizeObserver(update);
     historyResizeObserver.observe(history);
-    historyContentObserver = new MutationObserver(rafDebounce(update));
+    debouncedHistoryUpdate = rafDebounce(update);
+    historyContentObserver = new MutationObserver(debouncedHistoryUpdate);
     historyContentObserver.observe(history, { childList: true, subtree: true });
     attachScrollButtonObserver();
     attachInputAreaObserver();
@@ -573,8 +585,10 @@ function watchScrollToBottomButton(mount) {
       mountObserver.disconnect();
       window.removeEventListener('resize', update);
       history?.removeEventListener('scroll', debouncedScrollUpdate);
+      debouncedScrollUpdate.cancel();
       historyResizeObserver?.disconnect();
       historyContentObserver?.disconnect();
+      debouncedHistoryUpdate?.cancel();
       scrollBtnStyleObserver?.disconnect();
       inputAreaResizeObserver?.disconnect();
     },
