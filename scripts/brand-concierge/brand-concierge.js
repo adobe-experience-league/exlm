@@ -676,7 +676,7 @@ function installKeyboardScrollHandler(dialog, mount) {
 
     const isPageKey = e.key === 'PageUp' || e.key === 'PageDown';
     const scrollAmount = isPageKey ? history.clientHeight * 0.85 : 60;
-    const direction = (e.key === 'ArrowUp' || e.key === 'PageUp') ? -1 : 1;
+    const direction = e.key === 'ArrowUp' || e.key === 'PageUp' ? -1 : 1;
 
     history.scrollBy({ top: direction * scrollAmount, behavior: isPageKey ? 'smooth' : 'auto' });
   };
