@@ -917,7 +917,7 @@ export function getConfig() {
     bcOrgId: 'E4722728699EC56A0A495CA2@AdobeOrg',
     bcAlloySdkUrl: 'https://cdn1.adoberesources.net/alloy/2.31.1/alloy.min.js',
 
-    // Using temporary URL for Brand Concierge web client until the code is deployed on the actual URL.
+    // TODO: Delete this line and uncomment the line below when the code is deployed on the actual URL.
     bcWebClientUrl: 'https://d3mey6isb8np59.cloudfront.net/experience-league-prod/main.js',
     // bcWebClientUrl:
     // 'https://experience.adobe.net/solutions/experience-platform-brand-concierge-web-agent/static-assets/main.js',

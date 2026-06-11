@@ -552,6 +552,7 @@ function watchScrollToBottomButton(mount) {
     }
 
     history?.removeEventListener('scroll', debouncedScrollUpdate);
+    debouncedScrollUpdate.cancel();
     historyResizeObserver?.disconnect();
     historyContentObserver?.disconnect();
     debouncedHistoryUpdate?.cancel();
