@@ -39,6 +39,7 @@ async function loadBrandConcierge() {
   const { bcAuthRequired } = getConfig();
   if (bcAuthRequired) {
     await loadIms();
+    if (!window.adobeIMS?.isSignedInUser()) return;
   }
 
   const { default: initBrandConcierge } = await import('./brand-concierge/brand-concierge.js');
