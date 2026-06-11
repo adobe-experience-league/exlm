@@ -31,7 +31,7 @@ function isBrandConciergeExcludedPath() {
  * Loads Brand Concierge on eligible page types.
  * Guards:
  *   - hidden on Support and Premium Learning routes
- *   - bcAuthRequired → when true, user must be signed in AND be an @adobe.com employee
+ *   - bcAuthRequired → when true, user must be signed in 
  */
 async function loadBrandConcierge() {
   if (isBrandConciergeExcludedPath()) return;
