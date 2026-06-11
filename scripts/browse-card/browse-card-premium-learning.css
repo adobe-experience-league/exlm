@@ -108,6 +108,7 @@
   right: 12px;
   display: flex;
   gap: 8px;
+  max-width: 150px;
 }
 
 .browse-card.premium-learning-browse-card .premium-learning-card-tag {

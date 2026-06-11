@@ -110,7 +110,9 @@
 }
 
 .premium-learning-active-content .cohort-progress-label {
-  width: 70px;
+  width: auto;
+  max-width: 100px;
+  padding: 0 8px;
   height: 24px;
   background-color: var(--spectrum-gray-900);
   color: var(--spectrum-gray-50);
