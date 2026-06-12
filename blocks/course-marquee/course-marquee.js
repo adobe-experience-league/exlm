@@ -80,6 +80,9 @@ export default async function decorate(block) {
   };
   block.textContent = '';
 
+  const translationMechanism = getMetadata('translation-mechanism');
+  const isMachineTranslated = translationMechanism?.trim().toUpperCase() === 'MT';
+
   // Create metadata items HTML
   let metadataItemsHTML = '';
 
@@ -105,6 +108,26 @@ export default async function decorate(block) {
     `;
   }
 
+  let aiTranslatedItemEl = null;
+  let aiTranslatedSeparatorEl = null;
+  if (isMachineTranslated) {
+    const hasExistingMeta = productName || experienceLevel;
+    if (hasExistingMeta) {
+      aiTranslatedSeparatorEl = htmlToElement('<div class="metadata-separator"></div>');
+    }
+    aiTranslatedItemEl = htmlToElement(`
+      <div class="metadata-item ai-translated-item">
+        <span class="metadata-label ai-translated-label">${placeholders?.aiTranslatedLabel || 'AI translated'}</span>
+        <span class="ai-translated-info-icon">
+          <span class="icon icon-info"></span>
+          <span class="ai-translated-tooltip" role="tooltip">${
+            placeholders?.aiTranslatedTooltip || 'Wording may differ slightly from the original English version.'
+          }</span>
+        </span>
+      </div>
+    `);
+  }
+
   // Generate complete HTML structure
   const courseMarqueeHTML = htmlToElement(`
     <div>
@@ -128,6 +151,12 @@ export default async function decorate(block) {
 
   // Add the generated HTML to the block
   block.appendChild(courseMarqueeHTML);
+
+  if (isMachineTranslated) {
+    const metadataContainer = block.querySelector('.course-marquee-metadata');
+    if (aiTranslatedSeparatorEl) metadataContainer.appendChild(aiTranslatedSeparatorEl);
+    metadataContainer.appendChild(aiTranslatedItemEl);
+  }
 
   // Get bookmark container for UserActions
   const bookmarkContainer = block.querySelector('.course-marquee-bookmark');
