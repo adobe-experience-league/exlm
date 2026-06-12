@@ -673,15 +673,19 @@ function installKeyboardScrollHandler(dialog, mount) {
     )
       return;
 
-    // Always suppress page scroll for these keys inside the dialog, even if chat-history
-    // has no overflow yet (welcome state). showModal() traps focus but does not consume
-    // keyboard events, so unconsumed PageUp/PageDown would scroll the document behind.
-    e.preventDefault();
+    const isPageKey = e.key === 'PageUp' || e.key === 'PageDown';
+
+    // Page keys always suppress document scroll — showModal() traps focus but does not
+    // consume keyboard events, so unconsumed PageUp/PageDown scroll the page behind.
+    // Arrow keys are only prevented when we will actually scroll, so any ARIA widget inside
+    // the dialog that checks e.defaultPrevented for its own navigation is not broken.
+    if (isPageKey) e.preventDefault();
 
     const history = mount.querySelector('.chat-history');
     if (!history || history.scrollHeight <= history.clientHeight) return;
 
-    const isPageKey = e.key === 'PageUp' || e.key === 'PageDown';
+    if (!isPageKey) e.preventDefault();
+
     const scrollAmount = isPageKey ? history.clientHeight * 0.85 : 60;
     const direction = e.key === 'ArrowUp' || e.key === 'PageUp' ? -1 : 1;
 
