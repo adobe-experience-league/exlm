@@ -671,7 +671,7 @@ function installKeyboardScrollHandler(dialog, mount) {
     // keyboard events, so unconsumed PageUp/PageDown would scroll the document behind.
     e.preventDefault();
 
-    const history = mount?.querySelector('.chat-history');
+    const history = mount.querySelector('.chat-history');
     if (!history || history.scrollHeight <= history.clientHeight) return;
 
     const isPageKey = e.key === 'PageUp' || e.key === 'PageDown';
