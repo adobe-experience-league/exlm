@@ -286,7 +286,7 @@
 }
 
 .premium-learning-active-content .user-actions .action-tooltip::after {
-  left: 20%;
+  left: 30%;
 }
 
 /* Desktop styles */
@@ -380,6 +380,15 @@
 
   .premium-learning-active-content .browse-card.premium-learning-browse-card .premium-learning-card-figure > img {
     object-position: 100% center;
+  }
+
+  .premium-learning-active-content .user-actions .action-tooltip {
+    transform: none;
+    left: -2px;
+  }
+
+  .premium-learning-active-content .user-actions .action-tooltip::after {
+    left: 12px;
   }
 }
 
