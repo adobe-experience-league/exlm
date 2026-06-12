@@ -640,11 +640,6 @@ async function clearBrandConciergeConversation() {
   focusBcChatInputWhenReady(bcMount);
 }
 
-/**
- * Intercepts keyboard scroll keys on the dialog so they scroll `.chat-history` instead of
- * the page behind. PageUp/PageDown are intercepted unconditionally; ArrowUp/ArrowDown are
- * intercepted only when focus is outside a text input (where they move the cursor).
- */
 function removeKeyboardScrollHandler() {
   if (keyboardScrollHandler && keyboardScrollDialog) {
     keyboardScrollDialog.removeEventListener('keydown', keyboardScrollHandler, true);
@@ -662,7 +657,10 @@ function installKeyboardScrollHandler(dialog, mount) {
     const activeEl = document.activeElement;
     if (
       (e.key === 'ArrowUp' || e.key === 'ArrowDown') &&
-      (activeEl?.tagName === 'TEXTAREA' || activeEl?.tagName === 'INPUT' || activeEl?.isContentEditable)
+      (activeEl?.tagName === 'TEXTAREA' ||
+        activeEl?.tagName === 'INPUT' ||
+        activeEl?.tagName === 'SELECT' ||
+        activeEl?.isContentEditable)
     )
       return;
 
