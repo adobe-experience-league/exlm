@@ -662,7 +662,7 @@ function installKeyboardScrollHandler(dialog, mount) {
     const activeEl = document.activeElement;
     if (
       (e.key === 'ArrowUp' || e.key === 'ArrowDown') &&
-      (activeEl?.tagName === 'TEXTAREA' || activeEl?.tagName === 'INPUT')
+      (activeEl?.tagName === 'TEXTAREA' || activeEl?.tagName === 'INPUT' || activeEl?.isContentEditable)
     )
       return;
 
