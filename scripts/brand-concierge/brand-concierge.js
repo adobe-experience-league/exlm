@@ -63,6 +63,8 @@ let scrollPinRafId = null;
 let scrollPinUserScrollCleanup = null;
 let mountInteractionHandler = null;
 let mountWithHandler = null;
+let keyboardScrollHandler = null;
+let keyboardScrollDialog = null;
 
 /**
  * Removes persisted BC chat sessions from localStorage (transcript + metadata).
@@ -638,6 +640,62 @@ async function clearBrandConciergeConversation() {
   focusBcChatInputWhenReady(bcMount);
 }
 
+function removeKeyboardScrollHandler() {
+  if (keyboardScrollHandler && keyboardScrollDialog) {
+    keyboardScrollDialog.removeEventListener('keydown', keyboardScrollHandler, true);
+  }
+  keyboardScrollHandler = null;
+  keyboardScrollDialog = null;
+}
+
+/**
+ * Intercepts keyboard scroll keys on the dialog so they scroll `.chat-history` instead of
+ * the page behind. PageUp/PageDown are intercepted unconditionally; ArrowUp/ArrowDown are
+ * intercepted only when focus is outside a text input (where they move the cursor).
+ */
+function installKeyboardScrollHandler(dialog, mount) {
+  removeKeyboardScrollHandler();
+
+  keyboardScrollHandler = (e) => {
+    if (e.key !== 'PageUp' && e.key !== 'PageDown' && e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+
+    const activeEl = document.activeElement;
+
+    // Arrow keys are bypassed when focus is in an editable control so cursor/option
+    // movement is unaffected. Page keys are NOT bypassed — intentional: they always
+    // scroll chat-history, never the textarea behind.
+    if (
+      (e.key === 'ArrowUp' || e.key === 'ArrowDown') &&
+      (activeEl?.tagName === 'TEXTAREA' ||
+        activeEl?.tagName === 'INPUT' ||
+        activeEl?.tagName === 'SELECT' ||
+        activeEl?.isContentEditable)
+    )
+      return;
+
+    const isPageKey = e.key === 'PageUp' || e.key === 'PageDown';
+
+    // Page keys always suppress document scroll — showModal() traps focus but does not
+    // consume keyboard events, so unconsumed PageUp/PageDown scroll the page behind.
+    // Arrow keys are only prevented when we will actually scroll, so any ARIA widget inside
+    // the dialog that checks e.defaultPrevented for its own navigation is not broken.
+    if (isPageKey) e.preventDefault();
+
+    const history = mount.querySelector('.chat-history');
+    if (!history || history.scrollHeight <= history.clientHeight) return;
+
+    if (!isPageKey) e.preventDefault();
+
+    const scrollAmount = isPageKey ? history.clientHeight * 0.85 : 60;
+    const direction = e.key === 'ArrowUp' || e.key === 'PageUp' ? -1 : 1;
+
+    history.scrollBy({ top: direction * scrollAmount, behavior: isPageKey ? 'smooth' : 'auto' });
+  };
+
+  keyboardScrollDialog = dialog;
+  dialog.addEventListener('keydown', keyboardScrollHandler, true);
+}
+
 function createMountPoint() {
   if (document.getElementById(DIALOG_ID)) return document.getElementById(DIALOG_ID);
 
@@ -688,6 +746,7 @@ function createMountPoint() {
   });
 
   const { element: dialog } = drawerHandle;
+  installKeyboardScrollHandler(dialog, mount);
 
   trigger.addEventListener('click', () => {
     dialog.showModal();
@@ -754,6 +813,7 @@ function injectAlloyStub() {
 export function destroyBrandConcierge() {
   scrollToBottomWatcher?.cleanup();
   scrollToBottomWatcher = null;
+  removeKeyboardScrollHandler();
   removeQuestionPinHandlers();
   inputLabelIconObserver?.disconnect();
   inputLabelIconObserver = null;
