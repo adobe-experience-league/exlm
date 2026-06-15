@@ -182,6 +182,10 @@
 }
 
 /* AI Translated label + tooltip */
+.course-marquee .ai-translated-label {
+  font-weight: var(--font-weight-normal);
+}
+
 .course-marquee .ai-translated-item {
   position: relative;
 }
