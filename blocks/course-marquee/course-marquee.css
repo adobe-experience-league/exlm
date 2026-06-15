@@ -182,8 +182,11 @@
 }
 
 /* AI Translated label + tooltip */
-.course-marquee .ai-translated-info-icon {
+.course-marquee .ai-translated-item {
   position: relative;
+}
+
+.course-marquee .ai-translated-info-icon {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -215,11 +218,11 @@
   white-space: normal;
   overflow-wrap: break-word;
   width: max-content;
-  max-width: 150px;
+  max-width: 120px;
   z-index: 1;
   line-height: 1.5;
   left: 50%;
-  bottom: calc(100% + 10px);
+  bottom: calc(100% + 8px);
   transform: translateX(-50%);
 }
 
@@ -234,7 +237,7 @@
   border-color: var(--spectrum-gray-600) transparent transparent transparent;
 }
 
-.course-marquee .ai-translated-info-icon:hover .ai-translated-tooltip {
+.course-marquee .ai-translated-item:hover .ai-translated-tooltip {
   display: block;
 }
 
@@ -286,19 +289,5 @@
   .course-marquee .course-marquee-metadata,
   .course-marquee .course-marquee-bookmark .user-actions button label {
     font-size: var(--spectrum-font-size-100);
-  }
-
-  .course-marquee .ai-translated-tooltip {
-    left: calc(100% + 10px);
-    bottom: 50%;
-    transform: translateY(50%);
-  }
-
-  .course-marquee .ai-translated-tooltip::after {
-    left: -8px;
-    top: 50%;
-    margin-left: 0;
-    margin-top: -4px;
-    border-color: transparent var(--spectrum-gray-600) transparent transparent;
   }
 }
