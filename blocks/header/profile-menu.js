@@ -220,10 +220,7 @@ export default class ProfileMenu extends HTMLElement {
           communitySection.remove();
         });
     } else {
-      const isProfileMenu = document.querySelector('.profile-menu');
-      if (isProfileMenu) {
-        document.querySelector('nav').removeChild(isProfileMenu);
-      }
+      this.remove();
     }
   }
 

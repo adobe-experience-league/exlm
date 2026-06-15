@@ -220,7 +220,7 @@ const buildNavItems = (ul, level = 0) => {
 
       const isNotAncestorOfToggler = (parent) =>
         parent && !parent.contains(toggler) && !parent.parentElement.contains(toggler);
-      const getAllByClass = (className) => [...document.querySelectorAll(`.${className}`)];
+      const getAllByClass = (className) => [...toggler.getRootNode().querySelectorAll(`.${className}`)];
       const removeClassFromAll = (className) =>
         getAllByClass(className).forEach((el) => el.classList.remove(className));
       const removeClassFromNonAncestorAll = (className) => {
@@ -230,7 +230,7 @@ const buildNavItems = (ul, level = 0) => {
       };
 
       const resetExpandedAttribute = () => {
-        const els = document.querySelectorAll(`header [aria-expanded="true"]`);
+        const els = toggler.getRootNode().querySelectorAll('.nav-item-toggle[aria-expanded="true"]');
         if (els && els.length)
           [...els].filter(isNotAncestorOfToggler).forEach((el) => el.setAttribute('aria-expanded', false));
       };
@@ -623,10 +623,7 @@ const productGridDecorator = async (productGridBlock, decoratorOptions) => {
       }
     });
   } else {
-    const isProductGrid = document.querySelector('.product-grid');
-    if (isProductGrid) {
-      document.querySelector('nav').removeChild(isProductGrid);
-    }
+    productGridBlock.remove();
   }
   return productGridBlock;
 };
