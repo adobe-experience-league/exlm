@@ -108,14 +108,12 @@ export default async function decorate(block) {
     `;
   }
 
-  let aiTranslatedItemEl = null;
-  let aiTranslatedSeparatorEl = null;
   if (isMachineTranslated) {
     const hasExistingMeta = productName || experienceLevel;
     if (hasExistingMeta) {
-      aiTranslatedSeparatorEl = htmlToElement('<div class="metadata-separator"></div>');
+      metadataItemsHTML += `<div class="metadata-separator"></div>`;
     }
-    aiTranslatedItemEl = htmlToElement(`
+    metadataItemsHTML += `
       <div class="metadata-item ai-translated-item">
         <span class="metadata-label ai-translated-label">${placeholders?.aiTranslatedLabel || 'AI translated'}</span>
         <span class="ai-translated-info-icon">
@@ -125,7 +123,7 @@ export default async function decorate(block) {
           }</span>
         </span>
       </div>
-    `);
+    `;
   }
 
   // Generate complete HTML structure
@@ -151,12 +149,6 @@ export default async function decorate(block) {
 
   // Add the generated HTML to the block
   block.appendChild(courseMarqueeHTML);
-
-  if (isMachineTranslated) {
-    const metadataContainer = block.querySelector('.course-marquee-metadata');
-    if (aiTranslatedSeparatorEl) metadataContainer.appendChild(aiTranslatedSeparatorEl);
-    metadataContainer.appendChild(aiTranslatedItemEl);
-  }
 
   // Get bookmark container for UserActions
   const bookmarkContainer = block.querySelector('.course-marquee-bookmark');
