@@ -260,9 +260,9 @@ const buildNavItems = (ul, level = 0) => {
       const toggleExpandContent = (e) => {
         const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
         setExpandedState(toggler, navItemContent, !isExpanded);
-        if (e.type === 'mouseenter') {
-          const childContents = e.target.querySelectorAll('.nav-item-content');
-          childContents.forEach((childContent) => {
+        if (!isExpanded) {
+          const rootItem = e.type === 'mouseenter' ? e.target : toggler.parentElement;
+          rootItem.querySelectorAll('.nav-item-content').forEach((childContent) => {
             childContent.classList.add('nav-item-content-expanded');
           });
         }
@@ -275,12 +275,13 @@ const buildNavItems = (ul, level = 0) => {
           toggler.parentElement.removeEventListener('mouseenter', toggleExpandContent);
           toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
         } else {
-          // if desktop, add mouseenter/mouseleave, remove click event
-
-          toggler.removeEventListener('click', toggleExpandContent);
+          // if desktop, root-level items toggle on click; sub-level items have no toggle
+          toggler.parentElement.removeEventListener('mouseenter', toggleExpandContent);
+          toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
           if (level === 0) {
-            toggler.parentElement.addEventListener('mouseenter', toggleExpandContent);
-            toggler.parentElement.addEventListener('mouseleave', toggleExpandContent);
+            toggler.addEventListener('click', toggleExpandContent);
+          } else {
+            toggler.removeEventListener('click', toggleExpandContent);
           }
         }
       });
@@ -416,6 +417,15 @@ const navDecorator = async (navBlock, decoratorOptions) => {
   // build navItems
   const ul = navWrapper.querySelector(':scope > ul');
   buildNavItems(ul);
+
+  // close expanded root nav items when clicking outside the header on desktop
+  const shadowRoot = navBlock.getRootNode();
+  if (shadowRoot?.host) {
+    shadowRoot.host.ownerDocument.addEventListener('click', (e) => {
+      if (isMobile() || shadowRoot.host.contains(e.target)) return;
+      shadowRoot.querySelectorAll('.nav-item-toggle-root[aria-expanded="true"]').forEach((t) => t.click());
+    });
+  }
 
   // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
   isSignedInUser()
