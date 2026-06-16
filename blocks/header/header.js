@@ -202,8 +202,9 @@ const buildNavItems = (ul, level = 0) => {
 
       const toggleClass = level === 0 ? 'nav-item-toggle nav-item-toggle-root' : 'nav-item-toggle';
       const toggler = htmlToElement(
-        `<button class="${toggleClass}" aria-controls="${controlName}" aria-expanded="false">${firstEl.textContent}</button>`,
+        `<button class="${toggleClass}" aria-controls="${controlName}" aria-expanded="false">${firstEl.textContent}<span class="icon icon-nav-chevron"></span></button>`,
       );
+      decorateIcons(toggler);
       const navItemContent = document.createElement('div');
       navItemContent.append(content);
       navItemContent.setAttribute('id', controlName);
