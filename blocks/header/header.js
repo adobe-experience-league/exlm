@@ -209,7 +209,7 @@ const buildNavItems = (ul, level = 0) => {
       const navItemContent = document.createElement('div');
       navItemContent.append(content);
       navItemContent.setAttribute('id', controlName);
-      navItemContent.classList.add('nav-item-content');
+      navItemContent.classList.add('nav-item-content', `nav-item-content-level-${level}`);
       if (secondaryContent) {
         secondaryContent.classList.add('nav-items-secondary');
         navItemContent.append(secondaryContent);
