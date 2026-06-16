@@ -117,13 +117,13 @@ const brandDecorator = (brandBlock, decoratorOptions) => {
 };
 
 /**
- * Function to toggle the navigation menu.
+ * Toggles the mobile nav drawer.
  *
- * @param {Element} button - The button element used to toggle the navigation menu
- * @param {Element} navWrapper - The wrapper element for the navigation menu
- * @param {Element} navOverlay - The overlay element for the navigation menu
+ * @param {Element} button - The hamburger button element
+ * @param {Element} mobileDrawer - The mobile nav drawer element
+ * @param {Element} navOverlay - The overlay element
  */
-function toggleNav(button, navWrapper, navOverlay) {
+function toggleMobileNav(button, mobileDrawer, navOverlay) {
   const shadowRoot = button.getRootNode();
   const profileButton = shadowRoot.querySelector('.profile-toggle');
   if (profileButton && profileButton.getAttribute('aria-expanded') === 'true') {
@@ -131,7 +131,7 @@ function toggleNav(button, navWrapper, navOverlay) {
   }
   const isExpanded = button.getAttribute('aria-expanded') === 'true';
   button.setAttribute('aria-expanded', !isExpanded);
-  navWrapper.classList.toggle('nav-wrapper-expanded');
+  mobileDrawer.classList.toggle('nav-mobile-drawer-open');
   if (!isExpanded) {
     navOverlay.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
@@ -142,28 +142,29 @@ function toggleNav(button, navWrapper, navOverlay) {
 }
 
 /**
- * adds hambuger button to nav wrapper
- * @param {HTMLElement} navWrapper
+ * adds hamburger button that controls the mobile nav drawer
+ * @param {HTMLElement} mobileDrawer
+ * @param {HTMLElement} navOverlay
  * @returns {HTMLButtonElement}
  */
-const hamburgerButton = (navWrapper, navOverlay) => {
-  const navWrapperId = 'nav-wrapper';
+const hamburgerButton = (mobileDrawer, navOverlay) => {
+  const drawerId = 'nav-mobile-drawer';
+  mobileDrawer.id = drawerId;
   const button = htmlToElement(`
-    <button 
+    <button
       class="nav-hamburger"
       aria-label="Navigation menu"
       aria-expanded="false"
       aria-haspopup="true"
-      aria-controls="${navWrapperId}"></button>`);
-  navWrapper.id = navWrapperId;
+      aria-controls="${drawerId}"></button>`);
 
   button.addEventListener('click', () => {
-    toggleNav(button, navWrapper, navOverlay);
+    toggleMobileNav(button, mobileDrawer, navOverlay);
   });
 
   registerHeaderResizeHandler(() => {
     if (!isMobile() && button.getAttribute('aria-expanded') === 'true') {
-      toggleNav(button, navWrapper, navOverlay);
+      toggleMobileNav(button, mobileDrawer, navOverlay);
     }
   });
 
@@ -321,33 +322,6 @@ const buildNavItems = (ul, level = 0) => {
     }
   };
 
-  if (level === 0) {
-    // add search link (visible on mobile only excluding Search page)
-    if (!document.body.classList.contains('search')) {
-      const mobileSearchLi = htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`);
-      ul.appendChild(mobileSearchLi);
-      mobileSearchLi.querySelector('a')?.addEventListener('click', (e) => {
-        decoratorState.headerSearchIconClick?.(e);
-      });
-    }
-    const addMobileLangSelector = async () => {
-      // add language select (visible on mobile only)
-
-      const navItem = ul.appendChild(
-        htmlToElement(
-          `<li class="nav-item-mobile">
-            <p>${decoratorState.languageTitle}</p>
-            <ul>
-              ${decoratorState.languages.map((l) => `<li><a href="${l.lang}">${l.title}</a></li>`).join('')}
-            </ul>
-          </li>`,
-        ),
-      );
-      decorateNavItem(navItem);
-    };
-    addMobileLangSelector();
-  }
-
   [...ul.children].forEach(decorateNavItem);
 };
 
@@ -401,6 +375,121 @@ const updateNavLinks = (navBlock, navLinkOrigin) => {
 };
 
 /**
+ * Builds and returns the mobile nav drawer element.
+ * Creates a separate DOM from the desktop nav-wrapper with its own header, body, and footer.
+ * @param {HTMLUListElement} ul - cloned source nav ul (not yet decorated)
+ * @param {HTMLElement} navBlock
+ * @param {DecoratorOptions} decoratorOptions
+ * @returns {HTMLElement}
+ */
+const buildMobileNavDrawer = (ul, navBlock, decoratorOptions) => {
+  // Mobile-specific items added before buildNavItems so decorateNavItem processes them
+  if (!document.body.classList.contains('search')) {
+    const mobileSearchLi = htmlToElement(`<li class="nav-item-mobile">${decoratorState.searchLinkHtml}</li>`);
+    ul.appendChild(mobileSearchLi);
+    mobileSearchLi.querySelector('a')?.addEventListener('click', (e) => {
+      decoratorState.headerSearchIconClick?.(e);
+    });
+  }
+  if (decoratorState.languages?.length) {
+    ul.appendChild(
+      htmlToElement(
+        `<li class="nav-item-mobile">
+          <p>${decoratorState.languageTitle}</p>
+          <ul>
+            ${decoratorState.languages.map((l) => `<li><a href="${l.lang}">${l.title}</a></li>`).join('')}
+          </ul>
+        </li>`,
+      ),
+    );
+  }
+  buildNavItems(ul);
+
+  // Drawer header: logo + brand (left), close button (right)
+  const logoBlock = navBlock.closest('nav').querySelector('.adobe-logo');
+  const logoClone = logoBlock ? logoBlock.cloneNode(true) : null;
+  if (logoClone) logoClone.classList.add('nav-mobile-logo');
+
+  const brandBlock = navBlock.closest('nav').querySelector('.brand');
+  const brandClone = brandBlock ? brandBlock.cloneNode(true) : document.createElement('div');
+  brandClone.classList.add('nav-mobile-brand');
+
+  const headerBrand = htmlToElement('<div class="nav-mobile-header-brand"></div>');
+  if (logoClone) headerBrand.appendChild(logoClone);
+  headerBrand.appendChild(brandClone);
+
+  const closeBtn = htmlToElement(
+    `<button class="nav-mobile-close" aria-label="Close navigation menu">
+      <span class="icon icon-close"></span>
+    </button>`,
+  );
+  decorateIcons(closeBtn);
+
+  const drawerHeader = htmlToElement('<div class="nav-mobile-header"></div>');
+  drawerHeader.append(headerBrand, closeBtn);
+
+  // Drawer body: scrollable nav items
+  const drawerBody = htmlToElement('<div class="nav-mobile-body"></div>');
+  drawerBody.appendChild(ul);
+
+  // Drawer footer: profile info or sign-in button (populated async)
+  const drawerFooter = htmlToElement('<div class="nav-mobile-footer"></div>');
+
+  const drawer = htmlToElement('<div class="nav-mobile-drawer"></div>');
+  drawer.append(drawerHeader, drawerBody, drawerFooter);
+
+  // Append to header-wrapper (sibling of .header) — mobile has its own standalone CSS
+  const shadowRoot = navBlock.getRootNode();
+  const headerWrapper = shadowRoot.querySelector?.('.header-wrapper');
+  if (headerWrapper) headerWrapper.appendChild(drawer);
+
+  // Close button delegates to the hamburger so toggleMobileNav handles all state
+  closeBtn.addEventListener('click', () => {
+    closeBtn.getRootNode().querySelector('.nav-hamburger')?.click();
+  });
+
+  // Populate footer based on sign-in state
+  decoratorOptions.isUserSignedIn().then(async (signedIn) => {
+    if (signedIn) {
+      let profilePicSrc = null;
+      let displayName = '';
+      let userEmail = '';
+      try {
+        profilePicSrc = await decoratorOptions.getProfilePicture();
+      } catch (e) {
+        /* ignore */
+      }
+      try {
+        // eslint-disable-next-line no-undef
+        const profileData = await window.adobeIMS?.getProfile();
+        displayName = profileData?.displayName || '';
+        userEmail = profileData?.email || '';
+      } catch (e) {
+        /* ignore */
+      }
+      const avatarHtml = profilePicSrc
+        ? `<img class="nav-mobile-profile-picture" src="${profilePicSrc}" alt="profile picture" />`
+        : `<span class="icon icon-profile"></span>`;
+      drawerFooter.innerHTML = `
+        <div class="nav-mobile-profile">
+          ${avatarHtml}
+          <div class="nav-mobile-profile-info">
+            <span class="nav-mobile-profile-name">${displayName}</span>
+            <span class="nav-mobile-profile-email">${userEmail}</span>
+          </div>
+        </div>`;
+      if (!profilePicSrc) decorateIcons(drawerFooter);
+    } else {
+      const signInBtn = htmlToElement('<button class="nav-mobile-signin button">Sign In</button>');
+      signInBtn.addEventListener('click', () => decoratorOptions.onSignIn());
+      drawerFooter.appendChild(signInBtn);
+    }
+  });
+
+  return drawer;
+};
+
+/**
  * Decorates the nav block
  * @param {HTMLElement} navBlock
  * @param {DecoratorOptions} decoratorOptions
@@ -408,18 +497,28 @@ const updateNavLinks = (navBlock, navLinkOrigin) => {
 const navDecorator = async (navBlock, decoratorOptions) => {
   simplifySingleCellBlock(navBlock);
   const navOverlay = document.querySelector('.nav-overlay');
-  const navWrapper = htmlToElement('<div class="nav-wrapper"></div>');
-  const hamburger = hamburgerButton(navWrapper, navOverlay);
 
+  // Clone the source ul for mobile BEFORE moving it to the desktop nav-wrapper
+  const sourceUl = navBlock.querySelector(':scope > ul');
+  const mobileUl = sourceUl ? sourceUl.cloneNode(true) : document.createElement('ul');
+
+  // Desktop nav-wrapper
+  const navWrapper = htmlToElement('<div class="nav-wrapper"></div>');
   navWrapper.replaceChildren(...navBlock.children);
-  navBlock.appendChild(hamburger);
   navBlock.appendChild(navWrapper);
 
-  // build navItems
-  const ul = navWrapper.querySelector(':scope > ul');
-  buildNavItems(ul);
+  // Build desktop nav items
+  const desktopUl = navWrapper.querySelector(':scope > ul');
+  buildNavItems(desktopUl);
 
-  // close expanded root nav items when clicking outside the header on desktop
+  // Build separate mobile drawer and attach it to header-wrapper
+  const mobileDrawer = buildMobileNavDrawer(mobileUl, navBlock, decoratorOptions);
+
+  // Hamburger button references the mobile drawer
+  const hamburger = hamburgerButton(mobileDrawer, navOverlay);
+  navBlock.insertBefore(hamburger, navWrapper);
+
+  // Close expanded root nav items when clicking outside the header on desktop
   const shadowRoot = navBlock.getRootNode();
   if (shadowRoot?.host) {
     shadowRoot.host.ownerDocument.addEventListener('click', (e) => {
@@ -436,7 +535,7 @@ const navDecorator = async (navBlock, decoratorOptions) => {
         const placeholders = decoratorOptions.placeholders ?? {};
         const premiumLearningLabel = placeholders?.premiumLearningHeaderLabel || 'Premium Learning';
         const { premiumHomeUrl } = getConfig();
-        ul.appendChild(
+        desktopUl.appendChild(
           htmlToElement(
             `<li class="nav-item nav-item-root nav-item-leaf">
               <a href="${premiumHomeUrl}" title="${premiumLearningLabel}">${premiumLearningLabel}</a>
@@ -452,8 +551,6 @@ const navDecorator = async (navBlock, decoratorOptions) => {
 
   // build featured products nav links
   buildFeaturedProductsNavLinks(navBlock, decoratorOptions.lang).then(() => {
-    // this needs to run at the end of navDecorator,
-    // it is here since it needs to run after all nav items are built.
     updateNavLinks(navBlock, decoratorOptions.navLinkOrigin);
   });
 };
