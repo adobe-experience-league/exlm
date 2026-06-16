@@ -322,13 +322,10 @@ export default async function decorate(block) {
 
   const reversedElements = htmlElementData.reverse();
 
-  // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
-  if (reversedElements.length <= 13) {
-    reversedElements.splice(0, 0, undefined, undefined, undefined);
-  }
+  // Check if this is old format (with v1 tags solutionEl, roleEl)
+  const hasV1Tags = reversedElements.length >= 9;
 
-  const [
-    rolev2El,
+  let rolev2El,
     featurev2El,
     solutionv2El,
     linkEl,
@@ -337,8 +334,25 @@ export default async function decorate(block) {
     roleEl,
     solutionEl,
     filterProductByOptionEl,
-    ...restOfEl
-  ] = reversedElements;
+    restOfEl;
+
+  if (hasV1Tags) {
+    [
+      rolev2El,
+      featurev2El,
+      solutionv2El,
+      linkEl,
+      resultTextEl,
+      sortEl,
+      roleEl,
+      solutionEl,
+      filterProductByOptionEl,
+      ...restOfEl
+    ] = reversedElements;
+  } else {
+    [rolev2El, featurev2El, solutionv2El, linkEl, resultTextEl, sortEl, filterProductByOptionEl, ...restOfEl] =
+      reversedElements;
+  }
 
   const showOnlyCoveo = block.classList.contains('coveo-only');
 

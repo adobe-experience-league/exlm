@@ -16,19 +16,21 @@ export default async function decorate(block) {
   const [headingElement, toolTipElement, linkElement, ...configs] = [...block.children].map(
     (row) => row.firstElementChild,
   );
-  const [
-    contentType,
-    capabilities,
-    role,
-    level,
-    authorType,
-    sortBy,
-    productv2,
-    featurev2,
-    subfeaturev2,
-    rolev2,
-    levelv2,
-  ] = configs.map((cell) => cell.textContent.trim());
+
+  const configValues = configs.map((cell) => cell.textContent.trim());
+
+  // Check if its has v1 tags (old format with 11 configs)
+  const hasV1Tags = configValues.length >= 11;
+
+  let contentType, capabilities, role, level, authorType, sortBy, productv2, featurev2, subfeaturev2, rolev2, levelv2;
+
+  if (hasV1Tags) {
+    [contentType, capabilities, role, level, authorType, sortBy, productv2, featurev2, subfeaturev2, rolev2, levelv2] =
+      configValues;
+  } else {
+    [contentType, authorType, sortBy, productv2, featurev2, subfeaturev2, rolev2, levelv2] = configValues;
+  }
+
   const sortCriteria = COVEO_SORT_OPTIONS[sortBy?.toUpperCase() ?? 'RELEVANCE'];
   const noOfResults = 4;
   const { products, features, versions } = extractCapability(capabilities);

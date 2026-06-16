@@ -1492,25 +1492,33 @@ function decorateBrowseTopics(block) {
   const { lang } = getPathDetails();
   const allDivs = [...block.children].map((row) => row.firstElementChild);
 
-  // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
-  if (allDivs.length <= 6) {
-    allDivs.splice(4, 0, ...Array(3));
-  } else if (allDivs.length === 7) {
-    // Old v2 blocks authored before featuresv2 was introduced
-    allDivs.splice(5, 0, undefined);
-  }
+  // Check if block has v1 tags (solutions, topics)
+  const hasV1Tags = allDivs.length >= 7;
 
-  // 'customElement' can either be a Form Element or localized tag values returned by the converter.
-  const [
-    solutionsElement,
+  let solutionsElement,
     headingElement,
     topicsElement,
     contentTypeElement,
     solutionsv2Element,
     featuresv2Element,
     topicsv2Element,
-    customElement,
-  ] = allDivs;
+    customElement;
+
+  if (hasV1Tags) {
+    [
+      solutionsElement,
+      headingElement,
+      topicsElement,
+      contentTypeElement,
+      solutionsv2Element,
+      featuresv2Element,
+      topicsv2Element,
+      customElement,
+    ] = allDivs;
+  } else {
+    [headingElement, contentTypeElement, solutionsv2Element, featuresv2Element, topicsv2Element, customElement] =
+      allDivs;
+  }
 
   const solutionsContent = solutionsElement?.textContent?.trim() ?? '';
   const headingContent = headingElement?.textContent?.trim() ?? '';

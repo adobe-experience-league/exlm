@@ -320,13 +320,10 @@ export default async function decorate(block) {
   const descriptionContainer = block.querySelector('.recommended-content-description');
   const reversedDomElements = remainingElements.reverse();
 
-  // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
-  if (reversedDomElements.length <= 12) {
-    reversedDomElements.splice(0, 0, undefined, undefined, undefined);
-  }
+  // Check if this is old format (with v1 tags solutionEl, roleEl)
+  const hasV1Tags = reversedDomElements.length >= 9;
 
-  const [
-    rolev2El,
+  let rolev2El,
     featurev2El,
     solutionv2El,
     linkEl,
@@ -335,8 +332,25 @@ export default async function decorate(block) {
     roleEl,
     solutionEl,
     filterProductByOptionEl,
-    ...contentTypesEl
-  ] = reversedDomElements;
+    contentTypesEl;
+
+  if (hasV1Tags) {
+    [
+      rolev2El,
+      featurev2El,
+      solutionv2El,
+      linkEl,
+      resultTextEl,
+      sortEl,
+      roleEl,
+      solutionEl,
+      filterProductByOptionEl,
+      ...contentTypesEl
+    ] = reversedDomElements;
+  } else {
+    [rolev2El, featurev2El, solutionv2El, linkEl, resultTextEl, sortEl, filterProductByOptionEl, ...contentTypesEl] =
+      reversedDomElements;
+  }
   const showOnlyCoveo = block.classList.contains('coveo-only');
   const targetCriteriaId = block.dataset.targetScope;
   const profileDataPromise = defaultProfileClient.getMergedProfile();

@@ -28,7 +28,18 @@ export default async function decorate(block) {
     (row) => row.firstElementChild,
   );
 
-  const [solutions, solutionsv2] = configs.map((cell) => cell.textContent.trim());
+  const configValues = configs.map((cell) => cell.textContent.trim());
+
+  // Check if this is old format (with v1 tag solutions) or new format (without v1 tag)
+  const hasV1Tag = configValues.length >= 2;
+
+  let solutions, solutionsv2;
+
+  if (hasV1Tag) {
+    [solutions, solutionsv2] = configValues;
+  } else {
+    [solutionsv2] = configValues;
+  }
 
   const contentType = CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
   const noOfResults = 4;
