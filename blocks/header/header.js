@@ -8,12 +8,10 @@ import {
   htmlToElement,
   decorateLinks,
   getConfig,
-  getLink,
   getPathDetails,
   fetchGlobalFragment,
   fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
-import getProducts from '../../scripts/utils/product-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
 import {
@@ -326,31 +324,6 @@ const buildNavItems = (ul, level = 0) => {
 };
 
 /**
- * Adds the featured products to the nav links
- * @param {HTMLElement} navBlock
- * @param {string} lang
- */
-const buildFeaturedProductsNavLinks = async (navBlock, lang) => {
-  const productList = await getProducts(lang, 'browse');
-  [...navBlock.querySelectorAll('.nav-item')].forEach((navItemEl) => {
-    // featured-products property is expected to be present on header.
-    if (navItemEl.querySelector(':scope > a[href*="@featured-products"]')) {
-      const featuredProductLi = navBlock.querySelector('li.nav-item a[href*="@featured-products"]');
-      // Remove the <li> element from the DOM
-      featuredProductLi.remove();
-      productList.forEach((item) => {
-        if (item.featured) {
-          const newLi = document.createElement('li');
-          newLi.className = 'nav-item nav-item-leaf';
-          newLi.innerHTML = `<a href="${getLink(item.path)}">${item.title}</a>`;
-          navItemEl.parentNode.appendChild(newLi);
-        }
-      });
-    }
-  });
-};
-
-/**
  * Runs gneral updates on nav links
  * @param {HTMLElement} navBlock
  * @param {string} navLinkOrigin the link origin to be used for relative links
@@ -549,10 +522,7 @@ const navDecorator = async (navBlock, decoratorOptions) => {
       console.error('Error checking Premium Learning membership in header:', err);
     });
 
-  // build featured products nav links
-  buildFeaturedProductsNavLinks(navBlock, decoratorOptions.lang).then(() => {
-    updateNavLinks(navBlock, decoratorOptions.navLinkOrigin);
-  });
+  updateNavLinks(navBlock, decoratorOptions.navLinkOrigin);
 };
 
 /**
