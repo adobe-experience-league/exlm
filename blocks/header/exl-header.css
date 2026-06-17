@@ -1249,6 +1249,7 @@ profile-block {
   z-index: var(--z-drawer);
   transform: translateX(-100%);
   visibility: hidden;
+  overflow: hidden;
 }
 
 .nav-mobile-drawer.nav-mobile-drawer-open {
@@ -1440,6 +1441,119 @@ profile-block {
 /* Subtitle */
 .nav-mobile-body .nav-item-subtitle {
   display: none;
+}
+
+/* ── Mobile drill-down panels for @tab dropdowns (recursive slide-in) ──
+   Each branch's content becomes a full-drawer panel that slides in from the right.
+   Driven by JS via `.nav-mobile-panel-open`; overrides the accordion's class churn. */
+
+/* anchor panels to the drawer (not to each nav-item li) so they fill it fully */
+.nav-mobile-body .nav-item-tab,
+.nav-mobile-body .nav-item-tab .nav-item {
+  position: static;
+}
+
+.nav-mobile-drawer .nav-mobile-panel {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  margin: 0;
+  background: var(--background-color);
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+}
+
+.nav-mobile-drawer .nav-mobile-panel.nav-mobile-panel-open {
+  transform: translateX(0);
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.nav-mobile-panel > ul {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+}
+
+/* divider under each row in a panel */
+.nav-mobile-panel > ul > li {
+  border-bottom: 1px solid var(--spectrum-gray-200);
+}
+
+/* panel header: back / title / close */
+.nav-mobile-panel-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+  height: var(--nav-height);
+  padding: 0 8px;
+  border-bottom: 1px solid var(--spectrum-gray-200);
+}
+
+.nav-mobile-panel-title {
+  flex: 1;
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-semi-bold);
+  color: var(--spectrum-gray-800);
+}
+
+.nav-mobile-panel-back,
+.nav-mobile-panel-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+/* down chevron → left-pointing back arrow */
+/* stylelint-disable-next-line no-descending-specificity */
+.nav-mobile-panel-back .icon {
+  transform: rotate(90deg);
+}
+
+/* branch rows (drill toggles): a normal tappable row with a right arrow */
+.nav-mobile-body .nav-item-tab .nav-mobile-drill-toggle {
+  position: relative;
+  padding: 12px 40px 12px 20px;
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-semi-bold);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--spectrum-gray-800);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.nav-mobile-body .nav-item-tab .nav-mobile-drill-toggle .icon.icon-nav-chevron {
+  display: none;
+}
+
+.nav-mobile-body .nav-item-tab .nav-mobile-drill-toggle::after {
+  content: '›';
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: var(--spectrum-gray-600);
+}
+
+/* leaf links inside panels show their subtitle */
+.nav-mobile-body .nav-item-tab .nav-item-subtitle {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-normal);
+  color: var(--spectrum-gray-700);
 }
 
 /* Drawer icons inherit the global `.icon img` recolor filter; logo opts out. */
