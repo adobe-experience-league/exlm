@@ -138,6 +138,8 @@ function toggleMobileNav(button, mobileDrawer, navOverlay) {
   } else {
     navOverlay.classList.add('hidden');
     document.body.removeAttribute('style');
+    // reset any open drill-down panels so the drawer reopens at the root
+    mobileDrawer.querySelectorAll('.nav-mobile-panel-open').forEach((p) => p.classList.remove('nav-mobile-panel-open'));
   }
 }
 
@@ -358,6 +360,53 @@ const setupTabDropdowns = (navContainer) => {
 };
 
 /**
+ * Converts @tab dropdowns in the mobile drawer into a recursive slide-in drill-down.
+ * Tapping a branch row slides in a full-drawer panel (header: back / title / close) listing
+ * its children; the deepest panels show the leaf links. Desktop is unaffected.
+ * Panels are driven purely by the `nav-mobile-panel-open` class, so they coexist with the
+ * existing accordion handlers (whose class churn is overridden by the panel CSS).
+ * @param {HTMLUListElement} mobileUl the mobile drawer's root ul
+ */
+const setupMobileDrillPanels = (mobileUl) => {
+  const buildPanel = (item) => {
+    const toggle = item.querySelector(':scope > .nav-item-toggle');
+    const content = item.querySelector(':scope > .nav-item-content');
+    if (!toggle || !content) return;
+
+    content.classList.add('nav-mobile-panel');
+    const header = htmlToElement(
+      `<div class="nav-mobile-panel-header">
+        <button class="nav-mobile-panel-back" aria-label="Back">
+          <span class="icon icon-nav-chevron"></span>
+        </button>
+        <span class="nav-mobile-panel-title">${toggle.textContent.trim()}</span>
+        <button class="nav-mobile-panel-close" aria-label="Close navigation menu">
+          <span class="icon icon-close"></span>
+        </button>
+      </div>`,
+    );
+    decorateIcons(header);
+    content.prepend(header);
+
+    toggle.classList.add('nav-mobile-drill-toggle');
+    toggle.addEventListener('click', () => content.classList.add('nav-mobile-panel-open'));
+    header
+      .querySelector('.nav-mobile-panel-back')
+      .addEventListener('click', () => content.classList.remove('nav-mobile-panel-open'));
+    header
+      .querySelector('.nav-mobile-panel-close')
+      .addEventListener('click', () => content.getRootNode().querySelector('.nav-hamburger')?.click());
+
+    // recurse into nested branch items (leaf links have no toggle/content and are skipped)
+    content.querySelectorAll(':scope > ul > .nav-item').forEach(buildPanel);
+  };
+
+  // level 0 stays a normal accordion toggle (inline, scrollable list); slide-in panels
+  // begin at level 1 — so process the children of each @tab root, not the root itself.
+  mobileUl.querySelectorAll(':scope > .nav-item-tab > .nav-item-content > ul > .nav-item').forEach(buildPanel);
+};
+
+/**
  * Runs gneral updates on nav links
  * @param {HTMLElement} navBlock
  * @param {string} navLinkOrigin the link origin to be used for relative links
@@ -411,6 +460,7 @@ const buildMobileNavDrawer = (ul, navBlock, decoratorOptions) => {
     );
   }
   buildNavItems(ul);
+  setupMobileDrillPanels(ul);
 
   // Drawer header: logo + brand (left), close button (right)
   const logoBlock = navBlock.closest('nav').querySelector('.adobe-logo');
