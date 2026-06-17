@@ -1492,17 +1492,17 @@ function decorateBrowseTopics(block) {
   const { lang } = getPathDetails();
   const allDivs = [...block.children].map((row) => row.firstElementChild);
 
-  // Check if block has v1 tags (solutions, topics)
-  const hasV1Tags = allDivs.length >= 7;
+  // Check if block has v1 tags by finding any element that starts with "exl:"
+  const hasV1Tags = allDivs.some((el) => el?.textContent?.trim().startsWith('exl:'));
 
-  let solutionsElement,
-    headingElement,
-    topicsElement,
-    contentTypeElement,
-    solutionsv2Element,
-    featuresv2Element,
-    topicsv2Element,
-    customElement;
+  let solutionsElement;
+  let headingElement;
+  let topicsElement;
+  let contentTypeElement;
+  let solutionsv2Element;
+  let featuresv2Element;
+  let topicsv2Element;
+  let customElement;
 
   if (hasV1Tags) {
     [
@@ -1531,8 +1531,9 @@ function decorateBrowseTopics(block) {
   const localizedTopicsContent = isFormElement ? '' : customElement?.textContent?.trim() ?? '';
   let allSolutionsTags;
   let allTopicsTags;
-  // When TQ tags are authored and FF is enabled.
-  if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Content) {
+  // If new format (no v1 tags), always use v2 tags
+  // If old format, use v2 tags if FF enabled, otherwise use v1 tags
+  if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Content)) {
     const solutionsv2Labels = getv2TagLabels(solutionsv2Content);
     allSolutionsTags = solutionsv2Labels ? solutionsv2Labels.split(',').map((p) => p.trim()) : [];
 

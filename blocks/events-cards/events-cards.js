@@ -47,7 +47,8 @@ export default async function decorate(block) {
   const [firstConfig, secondConfig] = configValues;
   const hasV1Tag = firstConfig && firstConfig.startsWith('exl:solution/');
 
-  let solutions, solutionsv2;
+  let solutions;
+  let solutionsv2;
 
   if (hasV1Tag) {
     solutions = firstConfig;
@@ -61,8 +62,9 @@ export default async function decorate(block) {
   const contentType = CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
   const noOfResults = 4;
   let solutionsParam = '';
-  // If FF is enabled, use V2 tags
-  if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2) {
+
+  // If new format (no v1 tags), always use v2 tags
+  if (!hasV1Tag || (isFeatureEnabled('isV2TagsEnabled') && solutionsv2)) {
     solutionsParam = solutionsv2
       ? getv2TagLabels(solutionsv2)
           .split(',')
@@ -70,7 +72,7 @@ export default async function decorate(block) {
           .filter(Boolean)
       : '';
   } else {
-    // Legacy tags
+    // Legacy tags (only used in old format when FF is disabled)
     solutionsParam = solutions && solutions !== '' ? formattedSolutionTags(solutions) : '';
   }
   // Clearing the block's content

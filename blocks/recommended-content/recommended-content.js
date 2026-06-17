@@ -323,16 +323,16 @@ export default async function decorate(block) {
   // Check if this is old format by finding any element that starts with "exl:" (v1 tag prefix)
   const hasV1Tags = reversedDomElements.some((el) => el?.innerText?.trim().startsWith('exl:'));
 
-  let rolev2El,
-    featurev2El,
-    solutionv2El,
-    linkEl,
-    resultTextEl,
-    sortEl,
-    roleEl,
-    solutionEl,
-    filterProductByOptionEl,
-    contentTypesEl;
+  let rolev2El;
+  let featurev2El;
+  let solutionv2El;
+  let linkEl;
+  let resultTextEl;
+  let sortEl;
+  let roleEl;
+  let solutionEl;
+  let filterProductByOptionEl;
+  let contentTypesEl;
 
   if (hasV1Tags) {
     [

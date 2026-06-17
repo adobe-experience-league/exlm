@@ -22,7 +22,17 @@ export default async function decorate(block) {
   // Check if it has v1 tags (old format with 11 configs)
   const hasV1Tags = configValues.length >= 11;
 
-  let contentType, capabilities, role, level, authorType, sortBy, productv2, featurev2, subfeaturev2, rolev2, levelv2;
+  let contentType;
+  let capabilities;
+  let role;
+  let level;
+  let authorType;
+  let sortBy;
+  let productv2;
+  let featurev2;
+  let subfeaturev2;
+  let rolev2;
+  let levelv2;
 
   if (hasV1Tags) {
     [contentType, capabilities, role, level, authorType, sortBy, productv2, featurev2, subfeaturev2, rolev2, levelv2] =
@@ -66,8 +76,9 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
 
   let param;
-  // If FF is enabled, use V2 tags
-  if (isFeatureEnabled('isV2TagsEnabled') && productv2) {
+  // If new format (no v1 tags), always use v2 tags
+  // If old format, use v2 tags if FF enabled, otherwise use v1 tags
+  if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && productv2)) {
     const productsv2 = productv2
       ? getv2TagLabels(productv2)
           .split(',')
