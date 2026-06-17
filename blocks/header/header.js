@@ -58,22 +58,17 @@ let searchElementPromise = null;
 const { khorosProfileUrl, communityHost } = getConfig();
 
 /**
- *
- * @returns {Promise<string>}
+ * @returns {Promise<string|null>} the profile picture url, or null if unavailable
  */
 const getPPSProfilePicture = async () => {
   try {
     const { defaultProfileClient } = await import('../../scripts/auth/profile.js');
     const ppsProfile = await defaultProfileClient.getPPSProfile();
-    const profilePicture = ppsProfile?.images['50'];
-    if (profilePicture) {
-      return profilePicture;
-    }
-    return null; // or any other default value
+    return ppsProfile?.images['50'] || null;
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error(err);
-    return err; // or any other default value
+    return null;
   }
 };
 
@@ -96,6 +91,18 @@ const randomId = (length = 6) =>
     .substring(2, length + 2);
 
 /**
+ * Resolves a header link to an absolute url, localizing the site root for non-en langs.
+ * @param {string} currentHref
+ * @param {string} lang
+ * @param {string} origin
+ * @returns {string}
+ */
+const resolveHeaderLink = (currentHref, lang, origin) => {
+  const link = currentHref === '/' && lang !== 'en' ? `/${lang}` : currentHref;
+  return new URL(link, origin).href;
+};
+
+/**
  * Decorates the brand block
  * @param {HTMLElement} brandBlock
  * */
@@ -103,14 +110,9 @@ const brandDecorator = (brandBlock, decoratorOptions) => {
   simplifySingleCellBlock(brandBlock);
   const brandLink = brandBlock.querySelector('a');
   brandBlock.replaceChildren(brandLink);
-  updateLinks(brandBlock, (currentHref) => {
-    let link = currentHref;
-    if (link === '/' && decoratorOptions.lang !== 'en') {
-      link = `/${decoratorOptions.lang}`;
-    }
-    const url = new URL(link, decoratorOptions.navLinkOrigin);
-    return url.href;
-  });
+  updateLinks(brandBlock, (currentHref) =>
+    resolveHeaderLink(currentHref, decoratorOptions.lang, decoratorOptions.navLinkOrigin),
+  );
   return brandBlock;
 };
 
@@ -588,17 +590,17 @@ async function decorateCommunityBlock(header, decoratorOptions) {
   const notificationsUrl = decoratorOptions?.community?.notificationsUrl;
   const messagesUrl = decoratorOptions?.community?.messagesUrl;
   // note: data-community-action is used by community code when this header is used community.
-  communityActionsWrapper.innerHTML = `  
+  communityActionsWrapper.innerHTML = `
     <div class="community-action ${notificationsMarked}" data-community-action="notifications">
-        <a href="${notificationsUrl}" data-id="notifications" title="notifications">
-          <span class="icon icon-bell"></span>
-        </a>
+      <a href="${notificationsUrl}" data-id="notifications" title="notifications">
+        <span class="icon icon-bell"></span>
+      </a>
     </div>
-    <div class="community-action ${messagesMarked}" data-community-action="messages">   
-        <a href="${messagesUrl}" data-id="messages" title="messages">
-          <span class ="icon icon-emailOutline"></span>
-        </a> 
-    <div>
+    <div class="community-action ${messagesMarked}" data-community-action="messages">
+      <a href="${messagesUrl}" data-id="messages" title="messages">
+        <span class="icon icon-emailOutline"></span>
+      </a>
+    </div>
 `;
   decorateIcons(communityActionsWrapper);
   communityBlock.appendChild(communityActionsWrapper);
@@ -714,14 +716,9 @@ const adobeLogoDecorator = async (adobeLogoBlock, decoratorOptions) => {
   simplifySingleCellBlock(adobeLogoBlock);
   decorateIcons(adobeLogoBlock);
   adobeLogoBlock.querySelector('a').setAttribute('aria-label', 'Adobe Experience League'); // a11y
-  updateLinks(adobeLogoBlock, (currentHref) => {
-    let link = currentHref;
-    if (link === '/' && decoratorOptions.lang !== 'en') {
-      link = `/${decoratorOptions.lang}`;
-    }
-    const url = new URL(link, decoratorOptions.navLinkOrigin);
-    return url.href;
-  });
+  updateLinks(adobeLogoBlock, (currentHref) =>
+    resolveHeaderLink(currentHref, decoratorOptions.lang, decoratorOptions.navLinkOrigin),
+  );
   return adobeLogoBlock;
 };
 
@@ -730,9 +727,13 @@ const decorateNewTabLinks = (block) => {
   const links = block.querySelectorAll('a[target="_blank"]');
   links.forEach((link) => {
     link.setAttribute('rel', 'noopener noreferrer');
-    // insert before first text child node
+    // insert after the first child node (fall back to append for empty anchors)
     const icon = htmlToElement('<span class="icon icon-link-out"></span>');
-    link.firstChild.after(icon);
+    if (link.firstChild) {
+      link.firstChild.after(icon);
+    } else {
+      link.append(icon);
+    }
     decorateIcons(link);
   });
 };
@@ -842,6 +843,7 @@ class ExlHeader extends HTMLElement {
       const decorateHeaderBlock = async (className, decorator, options) => {
         try {
           const block = nav.querySelector(`:scope > .${className}`);
+          if (!block) return;
           block.style.visibility = 'hidden';
           await decorator(block, options);
           block.style.visibility = 'visible';
@@ -866,6 +868,9 @@ class ExlHeader extends HTMLElement {
       const productGridP = decorateHeaderBlock('product-grid', this.productGridDecorator, this.decoratorOptions);
       const signInP = decorateHeaderBlock('sign-in', this.signInDecorator, this.decoratorOptions);
       const newTabLinkP = decorateNewTabLinks(header);
+      // nav (mobile drawer) consumes decoratorState set by the search and language
+      // decorators, so ensure both have run before decorating nav.
+      await Promise.allSettled([searchP, languageP]);
       await decorateHeaderBlock('nav', this.navDecorator, this.decoratorOptions);
 
       Promise.allSettled([logoP, brandP, searchP, languageP, productGridP, signInP, newTabLinkP]).then(() => {
