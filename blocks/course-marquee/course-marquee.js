@@ -115,11 +115,13 @@ export default async function decorate(block) {
     }
     metadataItemsHTML += `
       <div class="metadata-item ai-translated-item">
-        <span class="metadata-label ai-translated-label">${placeholders?.aiTranslatedLabel || 'AI translated'}</span>
+        <span class="metadata-label ai-translated-label">${
+          placeholders?.automaticTranslation || 'Automatically translated'
+        }</span>
         <span class="ai-translated-info-icon">
           <span class="icon icon-info"></span>
           <span class="ai-translated-tooltip" role="tooltip">${
-            placeholders?.aiTranslatedTooltip || 'Wording may differ slightly from the original English version.'
+            placeholders?.changeLanguageTooltip || 'Use the Language Selector to view the English version of this page.'
           }</span>
         </span>
       </div>
