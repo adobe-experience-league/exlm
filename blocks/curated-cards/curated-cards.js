@@ -19,7 +19,7 @@ export default async function decorate(block) {
 
   const configValues = configs.map((cell) => cell.textContent.trim());
 
-  // Check if its has v1 tags (old format with 11 configs)
+  // Check if it has v1 tags (old format with 11 configs)
   const hasV1Tags = configValues.length >= 11;
 
   let contentType, capabilities, role, level, authorType, sortBy, productv2, featurev2, subfeaturev2, rolev2, levelv2;
@@ -33,7 +33,9 @@ export default async function decorate(block) {
 
   const sortCriteria = COVEO_SORT_OPTIONS[sortBy?.toUpperCase() ?? 'RELEVANCE'];
   const noOfResults = 4;
-  const { products, features, versions } = extractCapability(capabilities);
+  const { products, features, versions } = hasV1Tags
+    ? extractCapability(capabilities)
+    : { products: [], features: [], versions: [] };
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -70,16 +72,31 @@ export default async function decorate(block) {
       ? getv2TagLabels(productv2)
           .split(',')
           .map((p) => p.trim())
+          .filter(Boolean)
       : [];
     const featuresv2 = featurev2
       ? getv2TagLabels(featurev2)
           .split(',')
           .map((f) => f.trim())
+          .filter(Boolean)
       : [];
     const versionsv2 = subfeaturev2
       ? getv2TagLabels(subfeaturev2)
           .split(',')
           .map((v) => v.trim())
+          .filter(Boolean)
+      : [];
+    const rolesv2 = rolev2
+      ? getv2TagLabels(rolev2)
+          .split(',')
+          .map((r) => r.trim())
+          .filter(Boolean)
+      : [];
+    const levelsv2 = levelv2
+      ? getv2TagLabels(levelv2)
+          .split(',')
+          .map((l) => l.trim())
+          .filter(Boolean)
       : [];
 
     param = {
@@ -87,8 +104,8 @@ export default async function decorate(block) {
       product: productsv2.length ? removeProductDuplicates(productsv2) : null,
       feature: featuresv2.length ? [...new Set(featuresv2)] : null,
       version: versionsv2.length ? [...new Set(versionsv2)] : null,
-      role: rolev2 && getv2TagLabels(rolev2).toLowerCase().split(','),
-      level: levelv2 && getv2TagLabels(levelv2).toLowerCase().split(','),
+      role: rolesv2.length ? rolesv2.map((r) => r.toLowerCase()) : null,
+      level: levelsv2.length ? levelsv2.map((l) => l.toLowerCase()) : null,
       authorType: authorType && authorType.split(','),
       sortCriteria,
       noOfResults,

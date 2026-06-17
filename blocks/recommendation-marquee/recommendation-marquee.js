@@ -322,8 +322,8 @@ export default async function decorate(block) {
 
   const reversedElements = htmlElementData.reverse();
 
-  // Check if this is old format (with v1 tags solutionEl, roleEl)
-  const hasV1Tags = reversedElements.length >= 9;
+  // Check if this is old format by finding any element that starts with "exl:" (v1 tag prefix)
+  const hasV1Tags = reversedElements.some((el) => el?.innerText?.trim().startsWith('exl:'));
 
   let rolev2El,
     featurev2El,
@@ -610,13 +610,19 @@ export default async function decorate(block) {
       let versions;
       let features;
 
-      if (isFeatureEnabled('isV2TagsEnabled') && encodedSolutionsv2Text) {
-        const productsv2 = getv2TagLabels(encodedSolutionsv2Text)
-          .split(',')
-          .map((p) => p.trim());
-        const featuresv2 = getv2TagLabels(encodedFeaturesv2Text)
-          .split(',')
-          .map((p) => p.trim());
+      if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && encodedSolutionsv2Text)) {
+        const productsv2 = encodedSolutionsv2Text
+          ? getv2TagLabels(encodedSolutionsv2Text)
+              .split(',')
+              .map((p) => p.trim())
+              .filter(Boolean)
+          : [];
+        const featuresv2 = encodedFeaturesv2Text
+          ? getv2TagLabels(encodedFeaturesv2Text)
+              .split(',')
+              .map((p) => p.trim())
+              .filter(Boolean)
+          : [];
         products = productsv2.length ? removeProductDuplicates(productsv2) : [];
         versions = [];
         features = featuresv2.length ? removeProductDuplicates(featuresv2) : [];
@@ -643,13 +649,14 @@ export default async function decorate(block) {
       const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase() ?? 'MOST_POPULAR'];
       const filterProductByOption = filterProductByOptionEl?.innerText?.trim() ?? '';
       let role;
-      if (isFeatureEnabled('isV2TagsEnabled') && rolev2El) {
+      if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && rolev2El)) {
         const rolev2Text = rolev2El?.innerText?.trim() ?? '';
         role = !rolev2Text
           ? profileRoles
           : getv2TagLabels(rolev2Text)
               .split(',')
-              .map((p) => p.trim());
+              .map((p) => p.trim())
+              .filter(Boolean);
       } else {
         role = roleEl?.innerText?.trim()?.includes('profile_context')
           ? profileRoles

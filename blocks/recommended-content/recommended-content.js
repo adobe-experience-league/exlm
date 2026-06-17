@@ -320,8 +320,8 @@ export default async function decorate(block) {
   const descriptionContainer = block.querySelector('.recommended-content-description');
   const reversedDomElements = remainingElements.reverse();
 
-  // Check if this is old format (with v1 tags solutionEl, roleEl)
-  const hasV1Tags = reversedDomElements.length >= 9;
+  // Check if this is old format by finding any element that starts with "exl:" (v1 tag prefix)
+  const hasV1Tags = reversedDomElements.some((el) => el?.innerText?.trim().startsWith('exl:'));
 
   let rolev2El,
     featurev2El,
@@ -577,16 +577,18 @@ export default async function decorate(block) {
       let versions;
       let features;
 
-      if (isFeatureEnabled('isV2TagsEnabled') && encodedSolutionsv2Text) {
+      if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && encodedSolutionsv2Text)) {
         const productsv2 = encodedSolutionsv2Text
           ? getv2TagLabels(encodedSolutionsv2Text)
               .split(',')
               .map((p) => p.trim())
+              .filter(Boolean)
           : [];
         const featuresv2 = encodedFeaturesv2Text
           ? getv2TagLabels(encodedFeaturesv2Text)
               .split(',')
               .map((p) => p.trim())
+              .filter(Boolean)
           : [];
         products = productsv2.length ? removeProductDuplicates(productsv2) : [];
         versions = [];
@@ -615,13 +617,14 @@ export default async function decorate(block) {
       const filterProductByOption = filterProductByOptionEl?.innerText?.trim() ?? '';
 
       let role;
-      if (isFeatureEnabled('isV2TagsEnabled') && rolev2El) {
+      if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && rolev2El)) {
         const rolev2Text = rolev2El?.innerText?.trim() ?? '';
         role = !rolev2Text
           ? profileRoles
           : getv2TagLabels(rolev2Text)
               .split(',')
-              .map((p) => p.trim());
+              .map((p) => p.trim())
+              .filter(Boolean);
       } else {
         role = roleEl?.innerText?.trim()?.includes('profile_context')
           ? profileRoles
