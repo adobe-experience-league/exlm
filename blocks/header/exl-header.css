@@ -1,6 +1,7 @@
 /* stylelint-enforce-no-external-css-vars: this is used in header when included externally, it has to be all-inclusive, including variables */
 
 @charset "UTF-8";
+
 /* stylelint-disable  color-hex-length */
 :host {
   --search-display: inline-flex;
@@ -686,35 +687,6 @@ button:focus {
   padding-left: 5px;
 }
 
-@media (max-width: 1024px) {
-  .header .nav-item:has(.nav-item-expanded-active) .nav-items-secondary {
-    display: block;
-    margin: 0;
-  }
-
-  .header .nav-item:has(.nav-item-expanded-active) .nav-items-secondary li {
-    margin: 0;
-    padding: 0;
-  }
-
-  .header .nav-item:has(.nav-item-expanded-active) .nav-items-secondary a {
-    display: inline-block;
-    font: normal normal bold 14px/21px var(--body-font-family);
-    padding: 8px 8px 15px 40px;
-    width: 100%;
-  }
-}
-
-.header .nav-item-mobile {
-  display: block;
-}
-
-@media (min-width: 1024px) {
-  .header .nav-item-mobile {
-    display: none;
-  }
-}
-
 .header .nav-item-expanded {
   margin-left: 0;
 }
@@ -817,10 +789,6 @@ button:focus {
   }
 }
 
-.header .nav-item-toggle[aria-expanded='true'] {
-  border-bottom: 2px solid var(--non-spectrum-silver);
-}
-
 @media (min-width: 1024px) {
   .header .nav-item-toggle[aria-expanded='true'] {
     border-bottom: none;
@@ -919,6 +887,101 @@ button:focus {
   .header .nav-item-content-level-1 > ul li > a .nav-item-subtitle {
     color: var(--spectrum-gray-600);
     font-weight: var(--font-weight-normal);
+  }
+}
+
+/* ── Tab-style level-0 dropdown (opt-in via `@tab` in the root link href, desktop only).
+   Left column = level-1 items stacked as tabs; right pane = the hovered tab's content. ── */
+@media (min-width: 1024px) {
+  /* inner panel becomes a two-pane layout (left tab list + right active content) */
+  .header .nav-item-content-tab > ul {
+    display: block;
+    position: relative;
+    min-height: 360px;
+    padding: 0;
+  }
+
+  /* left column: each level-1 is a stacked tab. position:static so the right pane
+     anchors to the panel (the ul), not to each tab li — keeps content from shifting. */
+  .header .nav-item-content-tab > ul > .nav-item {
+    flex: none;
+    width: 280px;
+    min-width: 0;
+    position: static;
+    border-right: 1px solid var(--spectrum-gray-400);
+  }
+
+  .header .nav-item-content-tab > ul > .nav-item:last-child {
+    border-right: 1px solid var(--spectrum-gray-400);
+  }
+
+  /* tab label (the level-1 toggle) — inset rounded pill */
+  .header .nav-item-content-tab > ul > .nav-item > .nav-item-toggle {
+    display: block;
+    width: auto;
+    margin: 2px 8px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-align: left;
+    text-transform: none;
+    font-size: var(--spectrum-font-size-100);
+    font-weight: var(--font-weight-semi-bold);
+    color: var(--non-spectrum-graphite-gray);
+    cursor: pointer;
+  }
+
+  /* active (hovered) tab: gray bg + arrow indicator */
+  .header .nav-item-content-tab > ul > .nav-item.nav-tab-active > .nav-item-toggle {
+    background-color: var(--spectrum-gray-200);
+    color: var(--spectrum-gray-800);
+  }
+
+  .header .nav-item-content-tab > ul > .nav-item.nav-tab-active > .nav-item-toggle::after {
+    content: '›';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--spectrum-gray-600);
+  }
+
+  /* right pane: each tab's content; only the active one is shown */
+  .header .nav-item-content-tab .nav-item-content-level-1 {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 280px;
+    right: 0;
+    padding: 4px 0 4px 32px;
+  }
+
+  .header .nav-item-content-tab > ul > .nav-item.nav-tab-active > .nav-item-content-level-1 {
+    display: block;
+  }
+
+  /* right-pane heading mirrors the active tab label (bold black) */
+  .header .nav-item-content-tab .nav-tab-heading {
+    padding: 0 0 12px;
+    font-size: var(--spectrum-font-size-200);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-black);
+  }
+
+  /* right-pane links: 2-column grid with a divider under each row */
+  .header .nav-item-content-tab .nav-item-content-level-1 > ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 24px;
+  }
+
+  .header .nav-item-content-tab .nav-item-content-level-1 > ul > li {
+    border-bottom: 1px solid var(--spectrum-gray-200);
+  }
+
+  /* no divider under the last row (last item, plus its row-mate when the row is full) */
+  .header .nav-item-content-tab .nav-item-content-level-1 > ul > li:last-child,
+  .header .nav-item-content-tab .nav-item-content-level-1 > ul > li:nth-last-child(2):nth-child(odd) {
+    border-bottom: none;
   }
 }
 
@@ -1303,7 +1366,6 @@ profile-block {
 /* Nested nav item links */
 .nav-mobile-body .nav-item .nav-item a {
   width: 100%;
-  font-weight: var(--font-weight-bold);
   font-size: 14px;
   line-height: 21px;
   padding: 8px 8px 8px var(--nav-item-padding-x);
@@ -1354,13 +1416,30 @@ profile-block {
   background-color: var(--nav-item-expanded-bg);
 }
 
+/* Mobile dropdown is level-0 only: level-1 groups always render expanded, and the
+   level-1 toggle acts as a static heading (no chevron, not collapsible). */
+.nav-mobile-body .nav-item-content-level-1 {
+  display: block;
+}
+
+.nav-mobile-body .nav-item-content-level-0 .nav-item-toggle {
+  cursor: default;
+  pointer-events: none;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6e6e6e;
+  padding: 12px 20px 5px;
+}
+
+.nav-mobile-body .nav-item-content-level-0 .nav-item-toggle .icon.icon-nav-chevron {
+  display: none;
+}
+
 /* Subtitle */
 .nav-mobile-body .nav-item-subtitle {
-  display: block;
-  font-size: var(--font-size-xs);
-  color: var(--spectrum-gray-700);
-  font-weight: var(--font-weight-normal);
-  margin-top: 2px;
+  display: none;
 }
 
 /* Drawer icons inherit the global `.icon img` recolor filter; logo opts out. */

@@ -187,6 +187,10 @@ const buildNavItems = (ul, level = 0) => {
     const [content, secondaryContent] = navItem.querySelectorAll(':scope > ul');
 
     if (content) {
+      // a level-0 link with `@tab` in its href opts this dropdown into the tab layout (desktop only)
+      const rootLinkHref = navItem.querySelector(':scope > p > a, :scope > a')?.getAttribute('href') || '';
+      const isTabDropdown = level === 0 && rootLinkHref.includes('@tab');
+
       // first elment is the first element if it is a <p> tag OR all text nodes untill the first element wrapped in a <p> tag
       // see: UGP-11860
       let firstEl = navItem.firstElementChild;
@@ -216,6 +220,10 @@ const buildNavItems = (ul, level = 0) => {
       }
       const children = [toggler, navItemContent];
       navItem.replaceChildren(...children);
+      if (isTabDropdown) {
+        navItem.classList.add('nav-item-tab');
+        navItemContent.classList.add('nav-item-content-tab');
+      }
       const currentActiveClass = 'nav-item-expanded-active';
       const itemContentExpanded = 'nav-item-content-expanded';
       const itemExpanded = 'nav-item-expanded';
@@ -323,6 +331,30 @@ const buildNavItems = (ul, level = 0) => {
   };
 
   [...ul.children].forEach(decorateNavItem);
+};
+
+/**
+ * Wires hover-driven tab switching for level-0 dropdowns flagged with `@tab` (desktop only).
+ * Each level-1 item is a tab in the left column; hovering it shows its content on the right.
+ * @param {HTMLElement} navContainer the desktop nav ul
+ */
+const setupTabDropdowns = (navContainer) => {
+  navContainer.querySelectorAll(':scope > .nav-item-tab').forEach((rootItem) => {
+    const tabs = [...rootItem.querySelectorAll(':scope > .nav-item-content > ul > .nav-item')];
+    if (!tabs.length) return;
+    const setActive = (active) => tabs.forEach((tab) => tab.classList.toggle('nav-tab-active', tab === active));
+    tabs.forEach((tab) => {
+      // give each tab's right pane a heading matching the tab label
+      const label = tab.querySelector(':scope > .nav-item-toggle')?.textContent.trim();
+      const content = tab.querySelector(':scope > .nav-item-content');
+      if (label && content && !content.querySelector(':scope > .nav-tab-heading')) {
+        content.prepend(htmlToElement(`<div class="nav-tab-heading">${label}</div>`));
+      }
+      tab.addEventListener('mouseenter', () => setActive(tab));
+    });
+    // default to the first tab so the right pane is never empty when the dropdown opens
+    setActive(tabs[0]);
+  });
 };
 
 /**
@@ -485,6 +517,7 @@ const navDecorator = async (navBlock, decoratorOptions) => {
   // Build desktop nav items
   const desktopUl = navWrapper.querySelector(':scope > ul');
   buildNavItems(desktopUl);
+  setupTabDropdowns(desktopUl);
 
   // Build separate mobile drawer and attach it to header-wrapper
   const mobileDrawer = buildMobileNavDrawer(mobileUl, navBlock, decoratorOptions);
