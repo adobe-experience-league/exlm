@@ -234,7 +234,6 @@
 
 .article-marquee-ai-translated {
   display: flex;
-  align-items: center;
   gap: 5px;
   color: var(--spectrum-gray-700);
   position: relative;
