@@ -263,7 +263,8 @@
   text-align: center;
   white-space: normal;
   overflow-wrap: break-word;
-  min-width: 150px;
+  max-width: 100px;
+  width: max-content;
   z-index: 10;
   line-height: 1.5;
   left: 50%;
@@ -355,7 +356,7 @@
   }
 
   .article-marquee-ai-translated {
-    position: unset;
+    position: static;
   }
 
   .article-marquee-ai-translated-tooltip {
@@ -365,6 +366,7 @@
     transform: translateY(50%);
     margin-bottom: 0;
     margin-left: 10px;
+    max-width: 150px;
   }
 
   .article-marquee-ai-translated-tooltip::after {
