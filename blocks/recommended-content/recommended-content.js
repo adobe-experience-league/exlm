@@ -323,6 +323,26 @@ export default async function decorate(block) {
   // Check if this is old format by finding any element that starts with "exl:" (v1 tag prefix)
   const hasV1Tags = reversedDomElements.some((el) => el?.innerText?.trim().startsWith('exl:'));
 
+  // check if text is a config value that should be ignored
+  const isConfigValue = (text) => {
+    const lower = text.toLowerCase();
+    return [
+      'profile_context',
+      'specific_products',
+      'all_adobe_products',
+      'most_popular',
+      'newest',
+      'relevance',
+      'most_recent',
+    ].includes(lower);
+  };
+
+  // Helper to check if element is a v2 tag
+  const isV2TagElement = (el) => {
+    const text = el?.innerText?.trim() || '';
+    return text.startsWith('exl:') || text.startsWith('[{') || text.startsWith('{');
+  };
+
   let rolev2El;
   let featurev2El;
   let solutionv2El;
@@ -350,6 +370,23 @@ export default async function decorate(block) {
   } else {
     [rolev2El, featurev2El, solutionv2El, linkEl, resultTextEl, sortEl, filterProductByOptionEl, ...contentTypesEl] =
       reversedDomElements;
+  }
+
+  // elements that are config values or should be treated as empty
+  if (linkEl && (isConfigValue(linkEl.innerText?.trim() || '') || !linkEl.innerHTML?.includes('<a'))) {
+    linkEl = null;
+  }
+  if (
+    resultTextEl &&
+    (isConfigValue(resultTextEl.innerText?.trim() || '') || resultTextEl.innerText?.trim().length < 15)
+  ) {
+    resultTextEl = null;
+  }
+  if (sortEl && isConfigValue(sortEl.innerText?.trim() || '')) {
+    sortEl = null;
+  }
+  if (filterProductByOptionEl && isConfigValue(filterProductByOptionEl.innerText?.trim() || '')) {
+    filterProductByOptionEl = null;
   }
   const showOnlyCoveo = block.classList.contains('coveo-only');
   const targetCriteriaId = block.dataset.targetScope;
