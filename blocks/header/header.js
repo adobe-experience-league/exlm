@@ -216,7 +216,7 @@ const buildNavItems = (ul, level = 0) => {
       navItemContent.append(content);
       navItemContent.setAttribute('id', controlName);
       navItemContent.classList.add('nav-item-content', `nav-item-content-level-${level}`);
-      if (secondaryContent) {
+      if (secondaryContent && !isTabDropdown) {
         secondaryContent.classList.add('nav-items-secondary');
         navItemContent.append(secondaryContent);
       }
@@ -298,6 +298,13 @@ const buildNavItems = (ul, level = 0) => {
         }
       });
       buildNavItems(content, level + 1);
+      if (secondaryContent && isTabDropdown) {
+        secondaryContent.classList.add('nav-items-secondary');
+        const footerLi = document.createElement('li');
+        footerLi.classList.add('nav-items-secondary-li');
+        footerLi.append(secondaryContent);
+        content.append(footerLi);
+      }
     } else {
       navItem.classList.add('nav-item-leaf');
       const firstEl = navItem.firstElementChild;
