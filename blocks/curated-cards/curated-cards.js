@@ -19,8 +19,8 @@ export default async function decorate(block) {
 
   const configValues = configs.map((cell) => cell.textContent.trim());
 
-  // Check if it has v1 tags (old format with 11 configs)
-  const hasV1Tags = configValues.length >= 11;
+  // Check if block has v1 tags by finding any element that starts with "exl:"
+  const hasV1Tags = configValues.some((el) => el?.startsWith('exl:'));
 
   let contentType;
   let capabilities;
