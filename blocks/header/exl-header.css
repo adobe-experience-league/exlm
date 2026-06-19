@@ -991,42 +991,47 @@ button:focus {
 
 @media (min-width: 1024px) {
   .header .nav-items-secondary {
-    display: flex;
-    position: absolute;
+    display: block;
     margin: 0;
-    bottom: var(--nav-item-padding-x);
-    right: var(--nav-item-padding-x);
-    list-style-type: none;
-    align-items: center;
     padding: 0 !important;
+    list-style-type: none;
+    border-top: 1px solid var(--spectrum-gray-200);
+    padding-top: 8px !important;
+  }
+
+  .header .nav-items-secondary li {
+    margin: 0;
+    padding: 4px 0;
   }
 
   .header .nav-items-secondary a {
     font: normal normal normal 14px/18px var(--body-font-family);
     color: var(--spectrum-blue-900) !important;
-    text-align: right;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     margin-right: 0;
   }
 
-  .header .nav-items-secondary a::after {
-    position: absolute;
-    display: flex;
-    width: 6px;
-    height: 6px;
-    margin-top: -8px;
-    border-width: 0 1px 1px 0;
-    border-style: solid;
-    transform-origin: 75% 75%;
-    transition: transform 0.1s ease;
-    content: '';
-    transform: rotateZ(-45deg);
-    right: 5px;
-    top: 13px;
+  .header .nav-items-secondary a::before {
+    content: '→';
+    font-size: 14px;
+    color: var(--spectrum-blue-900);
   }
 
-  .header .nav-items-secondary li {
+  /* Tab left-column footer li: strip nav-item tab row styles */
+  .header .nav-item-content-tab > ul > .nav-items-secondary-li {
+    list-style: none;
     margin: 0;
     padding: 0;
+    border-right: none;
+    position: static;
+  }
+
+  /* Right-panel secondary link: flows below the 2-col grid */
+  .header .nav-item-content-tab .nav-item-content-level-1 > .nav-items-secondary {
+    margin-top: 8px;
+    padding: 8px 0 0 !important;
   }
 }
 
@@ -1565,6 +1570,45 @@ profile-block {
 /* Secondary nav (e.g. "Browse all content") */
 .nav-mobile-body .nav-items-secondary {
   display: none;
+}
+
+/* Secondary nav in mobile drill-down panels — must come before the higher-specificity
+   .nav-mobile-body selectors below to satisfy no-descending-specificity */
+
+/* Prevent the secondary ul from inheriting flex:1 / overflow-y:auto from .nav-mobile-panel > ul */
+.nav-mobile-panel > .nav-items-secondary {
+  flex: none;
+  overflow-y: visible;
+}
+
+/* Show browse-all link when the panel slides in */
+.nav-mobile-panel.nav-mobile-panel-open > .nav-items-secondary {
+  display: block;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--spectrum-gray-200);
+}
+
+.nav-mobile-panel.nav-mobile-panel-open > .nav-items-secondary li {
+  margin: 0;
+  padding: 0;
+}
+
+.nav-mobile-panel.nav-mobile-panel-open > .nav-items-secondary a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  color: var(--spectrum-blue-900);
+  font-weight: var(--font-weight-bold);
+  font-size: 14px;
+  line-height: 21px;
+  padding: 12px 20px;
+}
+
+.nav-mobile-panel.nav-mobile-panel-open > .nav-items-secondary a::before {
+  content: '→';
 }
 
 .nav-mobile-body .nav-item:has(.nav-item-expanded-active) .nav-items-secondary {
