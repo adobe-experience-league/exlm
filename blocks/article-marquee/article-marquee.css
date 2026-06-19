@@ -39,7 +39,7 @@
   justify-content: space-between;
   padding: 40px 20px;
   position: relative;
-  z-index: 1;
+  z-index: 2;
   margin-right: -2px;
   background-color: var(--non-spectrum-bg);
 }
@@ -232,6 +232,60 @@
   font-size: var(--spectrum-font-size-200);
 }
 
+.article-marquee-ai-translated {
+  display: flex;
+  gap: 5px;
+  color: var(--spectrum-gray-700);
+  position: relative;
+}
+
+.article-marquee-ai-translated-tooltip-container {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.article-marquee-ai-translated-tooltip-container .icon-info {
+  width: 16px;
+  height: 16px;
+}
+
+.article-marquee-ai-translated-tooltip {
+  background-color: var(--spectrum-gray-600);
+  border-radius: 4px;
+  color: var(--spectrum-gray-50);
+  display: none;
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-normal);
+  padding: 2px 8px 4px;
+  position: absolute;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: break-word;
+  max-width: 100px;
+  width: max-content;
+  z-index: 10;
+  line-height: 1.5;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+}
+
+.article-marquee-ai-translated-tooltip::after {
+  border-width: 4px;
+  border-style: solid;
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  margin-left: -4px;
+  border-color: var(--spectrum-gray-600) transparent transparent transparent;
+}
+
+.article-marquee-ai-translated-tooltip-container:hover .article-marquee-ai-translated-tooltip {
+  display: block;
+}
+
 .article-marquee .user-actions .bookmark {
   margin-right: 16px;
 }
@@ -294,6 +348,34 @@
 
   .article-marquee .user-actions .bookmark {
     margin-right: 0;
+  }
+
+  .article-marquee-ai-translated-tooltip-container {
+    position: relative;
+  }
+
+  .article-marquee-ai-translated {
+    position: static;
+  }
+
+  .article-marquee-ai-translated-tooltip {
+    left: 100%;
+    right: auto;
+    bottom: 50%;
+    transform: translateY(50%);
+    margin-bottom: 0;
+    margin-left: 10px;
+    max-width: 150px;
+  }
+
+  .article-marquee-ai-translated-tooltip::after {
+    left: -8px;
+    right: auto;
+    top: 50%;
+    transform: translateX(0);
+    margin-left: 0;
+    margin-top: -4px;
+    border-color: transparent var(--spectrum-gray-600) transparent transparent;
   }
 }
 
