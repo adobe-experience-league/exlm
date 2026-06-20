@@ -7620,46 +7620,6 @@
         ]
       },
       {
-        "condition": {
-          "===": [{ "var": "filterProductBy" }, "specific_products"]
-        },
-        "component": "aem-tag",
-        "name": "tags",
-        "label": "Legacy Solution(s) or Feature(s)",
-        "valueType": "string",
-        "rootPath": "/content/cq:tags/exl",
-        "description": "Optional - based on Profile Context if no selection is made."
-      },
-      {
-        "component": "multiselect",
-        "name": "roles",
-        "label": "Legacy Role(s)",
-        "valueType": "string",
-        "description": "Sets the Role(s).",
-        "options": [
-          {
-            "name": "Profile Context",
-            "value": "profile_context"
-          },
-          {
-            "name": "Admin",
-            "value": "Admin"
-          },
-          {
-            "name": "Developer",
-            "value": "Developer"
-          },
-          {
-            "name": "Leader",
-            "value": "Leader"
-          },
-          {
-            "name": "User",
-            "value": "User"
-          }
-        ]
-      },
-      {
         "component": "radio-group",
         "name": "sortBy",
         "value": "",
