@@ -320,23 +320,24 @@ export default async function decorate(block) {
   const descriptionContainer = block.querySelector('.recommended-content-description');
   const reversedDomElements = remainingElements.reverse();
 
-  // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
-  if (reversedDomElements.length <= 12) {
+  // Three block generations exist (remainingElements count, after stripping heading/desc/filterSection):
+  // Case 1 — legacy (≤10): authored before v2 fields existed, no role-tq/feat-tq/prod-tq
+  // Case 2 — intermediate (≥13): authored when both v1 (tags/roles) and v2 were in model
+  // Case 3 — new (=11): authored after v1 tags/roles removed from model, v2 only
+  const isNoV2Block = reversedDomElements.length <= 10;
+  const hasLegacyV1Fields = isNoV2Block || reversedDomElements.length >= 13;
+
+  if (isNoV2Block) {
     reversedDomElements.splice(0, 0, undefined, undefined, undefined);
   }
 
-  const [
-    rolev2El,
-    featurev2El,
-    solutionv2El,
-    linkEl,
-    resultTextEl,
-    sortEl,
-    roleEl,
-    solutionEl,
-    filterProductByOptionEl,
-    ...contentTypesEl
-  ] = reversedDomElements;
+  const [rolev2El, featurev2El, solutionv2El, linkEl, resultTextEl, sortEl, ...dynamicEl] = reversedDomElements;
+
+  // Cases 1 & 2: dynamicEl starts with roles → tags → filterProductBy
+  // Case 3: dynamicEl starts directly with filterProductBy (no v1 rows)
+  const [roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] = hasLegacyV1Fields
+    ? dynamicEl
+    : [undefined, undefined, ...dynamicEl];
   const showOnlyCoveo = block.classList.contains('coveo-only');
   const targetCriteriaId = block.dataset.targetScope;
   const profileDataPromise = defaultProfileClient.getMergedProfile();
