@@ -640,7 +640,7 @@ export default async function decorate(block) {
       } else {
         role = roleEl?.innerText?.trim()?.includes('profile_context')
           ? profileRoles
-          : roleEl?.innerText?.trim().split(',').filter(Boolean);
+          : roleEl?.innerText?.trim()?.split(',')?.filter(Boolean);
       }
 
       const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests, targetCriteriaScopeId);
@@ -874,7 +874,7 @@ export default async function decorate(block) {
               versions.length = 0;
               break;
             case 'specific_products':
-              clonedProducts = products?.length ? [...products] : [];
+              clonedProducts = products?.length ? [...products] : null;
               break;
             default:
               clonedProducts = [];

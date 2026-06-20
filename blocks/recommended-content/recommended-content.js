@@ -612,7 +612,7 @@ export default async function decorate(block) {
       } else {
         role = roleEl?.innerText?.trim()?.includes('profile_context')
           ? profileRoles
-          : roleEl?.innerText?.trim().split(',').filter(Boolean);
+          : roleEl?.innerText?.trim()?.split(',')?.filter(Boolean);
       }
       const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests, targetCriteriaScopeId);
       if (filterOptions.length <= 1 && !UEAuthorMode) {
@@ -838,7 +838,7 @@ export default async function decorate(block) {
               clonedProducts = [...new Set(sortedProfileInterests)];
               break;
             case 'specific_products':
-              clonedProducts = products?.length ? [...products] : [];
+              clonedProducts = products?.length ? [...products] : null;
               break;
             default:
               clonedProducts = [];
