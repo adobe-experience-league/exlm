@@ -322,10 +322,7 @@ export default async function decorate(block) {
 
   const reversedElements = htmlElementData.reverse();
 
-  // Three block generations exist:
-  // Case 1 — legacy (≤13 rows): authored before v2 fields existed, no role-tq/feat-tq/prod-tq
-  // Case 2 — intermediate (≥15 rows): authored when both v1 (tags/roles) and v2 were in model
-  // Case 3 — new (=14 rows): authored after v1 tags/roles were removed from model, v2 only
+  // authored before v2 fields existed
   const isNoV2Block = reversedElements.length <= 13;
   const hasLegacyV1Fields = isNoV2Block || reversedElements.length >= 15;
 
@@ -335,8 +332,7 @@ export default async function decorate(block) {
 
   const [rolev2El, featurev2El, solutionv2El, linkEl, resultTextEl, sortEl, ...dynamicEl] = reversedElements;
 
-  // Cases 1 & 2: dynamicEl starts with roles → tags → filterProductBy
-  // Case 3: dynamicEl starts directly with filterProductBy (no v1 rows)
+  // for newly authored blocks dynamicEl starts directly with filterProductBy (no v1 rows)
   const [roleEl, solutionEl, filterProductByOptionEl, ...restOfEl] = hasLegacyV1Fields
     ? dynamicEl
     : [undefined, undefined, ...dynamicEl];

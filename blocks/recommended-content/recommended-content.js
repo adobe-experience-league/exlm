@@ -320,10 +320,7 @@ export default async function decorate(block) {
   const descriptionContainer = block.querySelector('.recommended-content-description');
   const reversedDomElements = remainingElements.reverse();
 
-  // Three block generations exist (remainingElements count, after stripping heading/desc/filterSection):
-  // Case 1 — legacy (≤10): authored before v2 fields existed, no role-tq/feat-tq/prod-tq
-  // Case 2 — intermediate (≥13): authored when both v1 (tags/roles) and v2 were in model
-  // Case 3 — new (=11): authored after v1 tags/roles removed from model, v2 only
+  // authored before v2 fields existed
   const isNoV2Block = reversedDomElements.length <= 10;
   const hasLegacyV1Fields = isNoV2Block || reversedDomElements.length >= 13;
 
@@ -333,8 +330,7 @@ export default async function decorate(block) {
 
   const [rolev2El, featurev2El, solutionv2El, linkEl, resultTextEl, sortEl, ...dynamicEl] = reversedDomElements;
 
-  // Cases 1 & 2: dynamicEl starts with roles → tags → filterProductBy
-  // Case 3: dynamicEl starts directly with filterProductBy (no v1 rows)
+  // for newly authored blocks dynamicEl starts directly with filterProductBy (no v1 rows)
   const [roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] = hasLegacyV1Fields
     ? dynamicEl
     : [undefined, undefined, ...dynamicEl];
