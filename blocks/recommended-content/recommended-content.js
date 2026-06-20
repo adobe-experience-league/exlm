@@ -320,74 +320,20 @@ export default async function decorate(block) {
   const descriptionContainer = block.querySelector('.recommended-content-description');
   const reversedDomElements = remainingElements.reverse();
 
-  // Check if this is old format by finding any element that starts with "exl:" (v1 tag prefix)
-  const hasV1Tags = reversedDomElements.some((el) => el?.innerText?.trim().startsWith('exl:'));
+  // authored before v2 fields existed
+  const isNoV2Block = reversedDomElements.length <= 10;
+  const hasLegacyV1Fields = isNoV2Block || reversedDomElements.length >= 13;
 
-  // check if text is a config value that should be ignored
-  const isConfigValue = (text) => {
-    const lower = text.toLowerCase();
-    return [
-      'profile_context',
-      'specific_products',
-      'all_adobe_products',
-      'most_popular',
-      'newest',
-      'relevance',
-      'most_recent',
-    ].includes(lower);
-  };
-
-  // Helper to check if element is a v2 tag
-  const isV2TagElement = (el) => {
-    const text = el?.innerText?.trim() || '';
-    return text.startsWith('exl:') || text.startsWith('[{') || text.startsWith('{');
-  };
-
-  let rolev2El;
-  let featurev2El;
-  let solutionv2El;
-  let linkEl;
-  let resultTextEl;
-  let sortEl;
-  let roleEl;
-  let solutionEl;
-  let filterProductByOptionEl;
-  let contentTypesEl;
-
-  if (hasV1Tags) {
-    [
-      rolev2El,
-      featurev2El,
-      solutionv2El,
-      linkEl,
-      resultTextEl,
-      sortEl,
-      roleEl,
-      solutionEl,
-      filterProductByOptionEl,
-      ...contentTypesEl
-    ] = reversedDomElements;
-  } else {
-    [rolev2El, featurev2El, solutionv2El, linkEl, resultTextEl, sortEl, filterProductByOptionEl, ...contentTypesEl] =
-      reversedDomElements;
+  if (isNoV2Block) {
+    reversedDomElements.splice(0, 0, undefined, undefined, undefined);
   }
 
-  // elements that are config values or should be treated as empty
-  if (linkEl && (isConfigValue(linkEl.innerText?.trim() || '') || !linkEl.innerHTML?.includes('<a'))) {
-    linkEl = null;
-  }
-  if (
-    resultTextEl &&
-    (isConfigValue(resultTextEl.innerText?.trim() || '') || resultTextEl.innerText?.trim().length < 15)
-  ) {
-    resultTextEl = null;
-  }
-  if (sortEl && isConfigValue(sortEl.innerText?.trim() || '')) {
-    sortEl = null;
-  }
-  if (filterProductByOptionEl && isConfigValue(filterProductByOptionEl.innerText?.trim() || '')) {
-    filterProductByOptionEl = null;
-  }
+  const [rolev2El, featurev2El, solutionv2El, linkEl, resultTextEl, sortEl, ...dynamicEl] = reversedDomElements;
+
+  // for newly authored blocks dynamicEl starts directly with filterProductBy (no v1 rows)
+  const [roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] = hasLegacyV1Fields
+    ? dynamicEl
+    : [undefined, undefined, ...dynamicEl];
   const showOnlyCoveo = block.classList.contains('coveo-only');
   const targetCriteriaId = block.dataset.targetScope;
   const profileDataPromise = defaultProfileClient.getMergedProfile();
@@ -614,18 +560,16 @@ export default async function decorate(block) {
       let versions;
       let features;
 
-      if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && encodedSolutionsv2Text)) {
+      if (isFeatureEnabled('isV2TagsEnabled') && encodedSolutionsv2Text) {
         const productsv2 = encodedSolutionsv2Text
           ? getv2TagLabels(encodedSolutionsv2Text)
               .split(',')
               .map((p) => p.trim())
-              .filter(Boolean)
           : [];
         const featuresv2 = encodedFeaturesv2Text
           ? getv2TagLabels(encodedFeaturesv2Text)
               .split(',')
               .map((p) => p.trim())
-              .filter(Boolean)
           : [];
         products = productsv2.length ? removeProductDuplicates(productsv2) : [];
         versions = [];
@@ -654,18 +598,17 @@ export default async function decorate(block) {
       const filterProductByOption = filterProductByOptionEl?.innerText?.trim() ?? '';
 
       let role;
-      if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && rolev2El)) {
+      if (isFeatureEnabled('isV2TagsEnabled') && rolev2El) {
         const rolev2Text = rolev2El?.innerText?.trim() ?? '';
         role = !rolev2Text
           ? profileRoles
           : getv2TagLabels(rolev2Text)
               .split(',')
-              .map((p) => p.trim())
-              .filter(Boolean);
+              .map((p) => p.trim());
       } else {
         role = roleEl?.innerText?.trim()?.includes('profile_context')
           ? profileRoles
-          : roleEl?.innerText?.trim().split(',').filter(Boolean);
+          : roleEl?.innerText?.trim()?.split(',')?.filter(Boolean);
       }
       const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests, targetCriteriaScopeId);
       if (filterOptions.length <= 1 && !UEAuthorMode) {
@@ -891,7 +834,7 @@ export default async function decorate(block) {
               clonedProducts = [...new Set(sortedProfileInterests)];
               break;
             case 'specific_products':
-              clonedProducts = products?.length ? [...products] : [];
+              clonedProducts = products?.length ? [...products] : null;
               break;
             default:
               clonedProducts = [];
