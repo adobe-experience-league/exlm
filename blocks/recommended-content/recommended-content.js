@@ -320,23 +320,20 @@ export default async function decorate(block) {
   const descriptionContainer = block.querySelector('.recommended-content-description');
   const reversedDomElements = remainingElements.reverse();
 
-  // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
-  if (reversedDomElements.length <= 12) {
+  // Block authored with only v1 fields, needs padding for missing v2 fields
+  const hasV1Tags = reversedDomElements.length <= 10;
+  const hasLegacyV1Fields = hasV1Tags || reversedDomElements.length >= 13;
+
+  if (hasV1Tags) {
     reversedDomElements.splice(0, 0, undefined, undefined, undefined);
   }
 
-  const [
-    rolev2El,
-    featurev2El,
-    solutionv2El,
-    linkEl,
-    resultTextEl,
-    sortEl,
-    roleEl,
-    solutionEl,
-    filterProductByOptionEl,
-    ...contentTypesEl
-  ] = reversedDomElements;
+  const [rolev2El, featurev2El, solutionv2El, linkEl, resultTextEl, sortEl, ...dynamicEl] = reversedDomElements;
+
+  // for newly authored blocks dynamicEl starts directly with filterProductBy (no v1 rows)
+  const [roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] = hasLegacyV1Fields
+    ? dynamicEl
+    : [undefined, undefined, ...dynamicEl];
   const showOnlyCoveo = block.classList.contains('coveo-only');
   const targetCriteriaId = block.dataset.targetScope;
   const profileDataPromise = defaultProfileClient.getMergedProfile();
@@ -611,7 +608,7 @@ export default async function decorate(block) {
       } else {
         role = roleEl?.innerText?.trim()?.includes('profile_context')
           ? profileRoles
-          : roleEl?.innerText?.trim().split(',').filter(Boolean);
+          : roleEl?.innerText?.trim()?.split(',')?.filter(Boolean);
       }
       const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests, targetCriteriaScopeId);
       if (filterOptions.length <= 1 && !UEAuthorMode) {
@@ -837,7 +834,7 @@ export default async function decorate(block) {
               clonedProducts = [...new Set(sortedProfileInterests)];
               break;
             case 'specific_products':
-              clonedProducts = products?.length ? [...products] : [];
+              clonedProducts = products?.length ? [...products] : null;
               break;
             default:
               clonedProducts = [];

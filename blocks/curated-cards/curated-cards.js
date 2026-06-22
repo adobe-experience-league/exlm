@@ -16,22 +16,36 @@ export default async function decorate(block) {
   const [headingElement, toolTipElement, linkElement, ...configs] = [...block.children].map(
     (row) => row.firstElementChild,
   );
-  const [
-    contentType,
-    capabilities,
-    role,
-    level,
-    authorType,
-    sortBy,
-    productv2,
-    featurev2,
-    subfeaturev2,
-    rolev2,
-    levelv2,
-  ] = configs.map((cell) => cell.textContent.trim());
+
+  const configValues = configs.map((cell) => cell.textContent.trim());
+
+  // Check if block has v1 tags by finding any element that starts with "exl:"
+  const hasV1Tags = configValues.some((el) => el?.startsWith('exl:'));
+
+  let contentType;
+  let capabilities;
+  let role;
+  let level;
+  let authorType;
+  let sortBy;
+  let productv2;
+  let featurev2;
+  let subfeaturev2;
+  let rolev2;
+  let levelv2;
+
+  if (hasV1Tags) {
+    [contentType, capabilities, role, level, authorType, sortBy, productv2, featurev2, subfeaturev2, rolev2, levelv2] =
+      configValues;
+  } else {
+    [contentType, authorType, sortBy, productv2, featurev2, subfeaturev2, rolev2, levelv2] = configValues;
+  }
+
   const sortCriteria = COVEO_SORT_OPTIONS[sortBy?.toUpperCase() ?? 'RELEVANCE'];
   const noOfResults = 4;
-  const { products, features, versions } = extractCapability(capabilities);
+  const { products, features, versions } = hasV1Tags
+    ? extractCapability(capabilities)
+    : { products: [], features: [], versions: [] };
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -62,22 +76,38 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
 
   let param;
-  // If FF is enabled, use V2 tags
-  if (isFeatureEnabled('isV2TagsEnabled') && productv2) {
+  // If new format (no v1 tags), always use v2 tags
+  // If old format, use v2 tags if FF enabled, otherwise use v1 tags
+  if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && productv2)) {
     const productsv2 = productv2
       ? getv2TagLabels(productv2)
           .split(',')
           .map((p) => p.trim())
+          .filter(Boolean)
       : [];
     const featuresv2 = featurev2
       ? getv2TagLabels(featurev2)
           .split(',')
           .map((f) => f.trim())
+          .filter(Boolean)
       : [];
     const versionsv2 = subfeaturev2
       ? getv2TagLabels(subfeaturev2)
           .split(',')
           .map((v) => v.trim())
+          .filter(Boolean)
+      : [];
+    const rolesv2 = rolev2
+      ? getv2TagLabels(rolev2)
+          .split(',')
+          .map((r) => r.trim())
+          .filter(Boolean)
+      : [];
+    const levelsv2 = levelv2
+      ? getv2TagLabels(levelv2)
+          .split(',')
+          .map((l) => l.trim())
+          .filter(Boolean)
       : [];
 
     param = {
@@ -85,8 +115,8 @@ export default async function decorate(block) {
       product: productsv2.length ? removeProductDuplicates(productsv2) : null,
       feature: featuresv2.length ? [...new Set(featuresv2)] : null,
       version: versionsv2.length ? [...new Set(versionsv2)] : null,
-      role: rolev2 && getv2TagLabels(rolev2).toLowerCase().split(','),
-      level: levelv2 && getv2TagLabels(levelv2).toLowerCase().split(','),
+      role: rolesv2.length ? rolesv2.map((r) => r.toLowerCase()) : null,
+      level: levelsv2.length ? levelsv2.map((l) => l.toLowerCase()) : null,
       authorType: authorType && authorType.split(','),
       sortCriteria,
       noOfResults,

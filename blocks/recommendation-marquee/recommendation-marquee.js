@@ -322,23 +322,20 @@ export default async function decorate(block) {
 
   const reversedElements = htmlElementData.reverse();
 
-  // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
-  if (reversedElements.length <= 13) {
+  // Block authored with only v1 fields, needs padding for missing v2 fields
+  const hasV1Tags = reversedElements.length <= 13;
+  const hasLegacyV1Fields = hasV1Tags || reversedElements.length >= 15;
+
+  if (hasV1Tags) {
     reversedElements.splice(0, 0, undefined, undefined, undefined);
   }
 
-  const [
-    rolev2El,
-    featurev2El,
-    solutionv2El,
-    linkEl,
-    resultTextEl,
-    sortEl,
-    roleEl,
-    solutionEl,
-    filterProductByOptionEl,
-    ...restOfEl
-  ] = reversedElements;
+  const [rolev2El, featurev2El, solutionv2El, linkEl, resultTextEl, sortEl, ...dynamicEl] = reversedElements;
+
+  // for newly authored blocks dynamicEl starts directly with filterProductBy (no v1 rows)
+  const [roleEl, solutionEl, filterProductByOptionEl, ...restOfEl] = hasLegacyV1Fields
+    ? dynamicEl
+    : [undefined, undefined, ...dynamicEl];
 
   const showOnlyCoveo = block.classList.contains('coveo-only');
 
@@ -639,7 +636,7 @@ export default async function decorate(block) {
       } else {
         role = roleEl?.innerText?.trim()?.includes('profile_context')
           ? profileRoles
-          : roleEl?.innerText?.trim().split(',').filter(Boolean);
+          : roleEl?.innerText?.trim()?.split(',')?.filter(Boolean);
       }
 
       const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests, targetCriteriaScopeId);
@@ -873,7 +870,7 @@ export default async function decorate(block) {
               versions.length = 0;
               break;
             case 'specific_products':
-              clonedProducts = products?.length ? [...products] : [];
+              clonedProducts = products?.length ? [...products] : null;
               break;
             default:
               clonedProducts = [];

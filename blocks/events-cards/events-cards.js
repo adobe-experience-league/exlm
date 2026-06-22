@@ -7,15 +7,28 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 /**
- * formattedSolutionTags returns the solution type by stripping off the exl:solution/ string
- * @param {string} inputString - The solution tag. E.g. exl:solution/experience-cloud
- * @returns the solution tag. E.g. experience-cloud
+ * formattedSolutionTags returns the solution type by stripping off the exl:solution/ string and decoding base64
+ * Handles sub-solutions like exl:solution/campaign/standard where each part is base64 encoded
+ * @param {string} inputString - The solution tag. E.g. exl:solution/QWNyb2JhdA== or exl:solution/Y2FtcGFpZ24=/c3RhbmRhcmQ=
+ * @returns the solution tag decoded. E.g. Acrobat or campaign standard
  */
 function formattedSolutionTags(inputString) {
   return inputString
     .replace(/exl:solution\//g, '')
     .split(',')
-    .map((part) => part.trim());
+    .map((part) => {
+      const trimmed = part.trim();
+      // Handle sub-solutions: split by /, decode each part, join with space
+      const parts = trimmed.split('/');
+      const decodedParts = parts.map((p) => {
+        try {
+          return atob(p);
+        } catch (e) {
+          return p;
+        }
+      });
+      return decodedParts.join(' ');
+    });
 }
 
 /**
@@ -28,21 +41,39 @@ export default async function decorate(block) {
     (row) => row.firstElementChild,
   );
 
-  const [solutions, solutionsv2] = configs.map((cell) => cell.textContent.trim());
+  const configValues = configs.map((cell) => cell.textContent.trim());
+
+  // Extract the solution values
+  const [firstConfig, secondConfig] = configValues;
+  const hasV1Tag = firstConfig && firstConfig.startsWith('exl:solution/');
+
+  let solutions;
+  let solutionsv2;
+
+  if (hasV1Tag) {
+    solutions = firstConfig;
+    solutionsv2 = secondConfig || '';
+  } else {
+    // only v2 tag exists
+    solutions = '';
+    solutionsv2 = firstConfig || '';
+  }
 
   const contentType = CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
   const noOfResults = 4;
   let solutionsParam = '';
-  // If FF is enabled, use V2 tags
-  if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2) {
+
+  // If new format (no v1 tags), always use v2 tags
+  if (!hasV1Tag || (isFeatureEnabled('isV2TagsEnabled') && solutionsv2)) {
     solutionsParam = solutionsv2
       ? getv2TagLabels(solutionsv2)
           .split(',')
           .map((p) => p.trim())
+          .filter(Boolean)
       : '';
   } else {
-    // Legacy tags
-    solutionsParam = solutions !== '' ? formattedSolutionTags(solutions) : '';
+    // Legacy tags (only used in old format when FF is disabled)
+    solutionsParam = solutions && solutions !== '' ? formattedSolutionTags(solutions) : '';
   }
   // Clearing the block's content
   block.innerHTML = '';
@@ -121,17 +152,10 @@ export default async function decorate(block) {
           .sort((card1, card2) => new Date(card1.event.time) - new Date(card2.event.time));
       }
 
-      const solutionParam = solutionsList.map((parameter) => {
-        // In case of sub-solutions. E.g. exl:solution/campaign/standard
-        const parts = parameter.split('/');
-        const decodedParts = parts.map((part) => atob(part));
-        return decodedParts.join(' ');
-      });
-
       const filteredData = eventData.data.filter((event) => {
         const productArray = Array.isArray(event.product) ? event.product : [event.product];
-        const productKey = productArray.map((item) => item);
-        return solutionParam.some((parameter) => productKey.includes(parameter.trim()));
+        const productKey = productArray.map((item) => item.toLowerCase());
+        return solutionsList.some((parameter) => productKey.includes(parameter.toLowerCase().trim()));
       });
 
       // Sort events by startTime in ascending order
