@@ -20,7 +20,12 @@ export default async function decorate(block) {
   const configValues = configs.map((cell) => cell.textContent.trim());
 
   // Check if block has v1 tags by finding any element that starts with "exl:"
-  const hasV1Tags = configValues.some((el) => el?.startsWith('exl:'));
+  const hasExlTag = configValues.some((el) => el?.startsWith('exl:'));
+
+  // v1 blocks have 11 config values (contentType, capabilities, role, level, authorType, sortBy, productv2, featurev2, subfeaturev2, rolev2, levelv2)
+  // v2-only blocks have 8 config values (contentType, authorType, sortBy, productv2, featurev2, subfeaturev2, rolev2, levelv2)
+  // Use exl: tag check first, then fall back to div count
+  const hasV1Tags = hasExlTag || configValues.length >= 11;
 
   let contentType;
   let capabilities;
@@ -75,35 +80,42 @@ export default async function decorate(block) {
   // Appending header div to the block
   block.appendChild(headerDiv);
 
+  // Helper to check if content is valid v2 tag format (JSON)
+  const isV2TagFormat = (content) => {
+    if (!content) return false;
+    const trimmed = content.trim();
+    return trimmed.startsWith('[{') || trimmed.startsWith('{');
+  };
+
   let param;
   // If new format (no v1 tags), always use v2 tags
   // If old format, use v2 tags if FF enabled, otherwise use v1 tags
-  if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && productv2)) {
-    const productsv2 = productv2
+  if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && isV2TagFormat(productv2))) {
+    const productsv2 = isV2TagFormat(productv2)
       ? getv2TagLabels(productv2)
           .split(',')
           .map((p) => p.trim())
           .filter(Boolean)
       : [];
-    const featuresv2 = featurev2
+    const featuresv2 = isV2TagFormat(featurev2)
       ? getv2TagLabels(featurev2)
           .split(',')
           .map((f) => f.trim())
           .filter(Boolean)
       : [];
-    const versionsv2 = subfeaturev2
+    const versionsv2 = isV2TagFormat(subfeaturev2)
       ? getv2TagLabels(subfeaturev2)
           .split(',')
           .map((v) => v.trim())
           .filter(Boolean)
       : [];
-    const rolesv2 = rolev2
+    const rolesv2 = isV2TagFormat(rolev2)
       ? getv2TagLabels(rolev2)
           .split(',')
           .map((r) => r.trim())
           .filter(Boolean)
       : [];
-    const levelsv2 = levelv2
+    const levelsv2 = isV2TagFormat(levelv2)
       ? getv2TagLabels(levelv2)
           .split(',')
           .map((l) => l.trim())

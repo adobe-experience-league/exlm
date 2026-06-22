@@ -43,14 +43,21 @@ export default async function decorate(block) {
 
   const configValues = configs.map((cell) => cell.textContent.trim());
 
+  // Check if block has v1 tags by finding any element that starts with "exl:"
+  const hasExlTag = configValues.some((el) => el?.startsWith('exl:'));
+
+  // v1 blocks have 2 config values (solutions v1, solutionsv2)
+  // v2-only blocks have 1 config value (only solutionsv2)
+  // Use exl: tag check first, then fall back to div count
+  const hasV1Tags = hasExlTag || configValues.length >= 2;
+
   // Extract the solution values
   const [firstConfig, secondConfig] = configValues;
-  const hasV1Tag = firstConfig && firstConfig.startsWith('exl:solution/');
 
   let solutions;
   let solutionsv2;
 
-  if (hasV1Tag) {
+  if (hasV1Tags) {
     solutions = firstConfig;
     solutionsv2 = secondConfig || '';
   } else {
@@ -59,13 +66,20 @@ export default async function decorate(block) {
     solutionsv2 = firstConfig || '';
   }
 
+  // Helper to check if content is valid v2 tag format (JSON)
+  const isV2TagFormat = (content) => {
+    if (!content) return false;
+    const trimmed = content.trim();
+    return trimmed.startsWith('[{') || trimmed.startsWith('{');
+  };
+
   const contentType = CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
   const noOfResults = 4;
   let solutionsParam = '';
 
   // If new format (no v1 tags), always use v2 tags
-  if (!hasV1Tag || (isFeatureEnabled('isV2TagsEnabled') && solutionsv2)) {
-    solutionsParam = solutionsv2
+  if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && isV2TagFormat(solutionsv2))) {
+    solutionsParam = isV2TagFormat(solutionsv2)
       ? getv2TagLabels(solutionsv2)
           .split(',')
           .map((p) => p.trim())

@@ -1493,7 +1493,12 @@ function decorateBrowseTopics(block) {
   const allDivs = [...block.children].map((row) => row.firstElementChild);
 
   // Check if block has v1 tags by finding any element that starts with "exl:"
-  const hasV1Tags = allDivs.some((el) => el?.textContent?.trim().startsWith('exl:'));
+  const hasExlTag = allDivs.some((el) => el?.textContent?.trim().startsWith('exl:'));
+
+  // v1 blocks have 8 divs: solution(v1), heading, topics(v1), contentType, solutionsv2, featuresv2, topicsv2, customElement
+  // v2-only blocks have 6 divs: heading, contentType, solutionsv2, featuresv2, topicsv2, customElement
+  // Use exl: tag check first, then fall back to div count
+  const hasV1Tags = hasExlTag || allDivs.length >= 8;
 
   let solutionsElement;
   let headingElement;
@@ -1516,6 +1521,7 @@ function decorateBrowseTopics(block) {
       customElement,
     ] = allDivs;
   } else {
+    // v2-only blocks with 6 divs
     [headingElement, contentTypeElement, solutionsv2Element, featuresv2Element, topicsv2Element, customElement] =
       allDivs;
   }
@@ -1531,15 +1537,23 @@ function decorateBrowseTopics(block) {
   const localizedTopicsContent = isFormElement ? '' : customElement?.textContent?.trim() ?? '';
   let allSolutionsTags;
   let allTopicsTags;
+
+  // Helper to check if content is valid v2 tag format (JSON)
+  const isV2TagFormat = (content) => {
+    if (!content) return false;
+    const trimmed = content.trim();
+    return trimmed.startsWith('[{') || trimmed.startsWith('{');
+  };
+
   // If new format (no v1 tags), always use v2 tags
   // If old format, use v2 tags if FF enabled, otherwise use v1 tags
-  if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Content)) {
-    const solutionsv2Labels = getv2TagLabels(solutionsv2Content);
+  if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && isV2TagFormat(solutionsv2Content))) {
+    const solutionsv2Labels = isV2TagFormat(solutionsv2Content) ? getv2TagLabels(solutionsv2Content) : '';
     allSolutionsTags = solutionsv2Labels ? solutionsv2Labels.split(',').map((p) => p.trim()) : [];
 
     // Handle features v2 and topics v2 logic
-    const featuresv2Labels = featuresv2Content ? getv2TagLabels(featuresv2Content) : '';
-    const topicsv2Labels = topicsv2Content ? getv2TagLabels(topicsv2Content) : '';
+    const featuresv2Labels = isV2TagFormat(featuresv2Content) ? getv2TagLabels(featuresv2Content) : '';
+    const topicsv2Labels = isV2TagFormat(topicsv2Content) ? getv2TagLabels(topicsv2Content) : '';
 
     // Merge features and topics v2 tags; Set deduplicates if both fields contain overlapping labels.
     const featuresv2Array = featuresv2Labels ? featuresv2Labels.split(',').map((p) => p.trim()) : [];
