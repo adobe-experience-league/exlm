@@ -320,11 +320,11 @@ export default async function decorate(block) {
   const descriptionContainer = block.querySelector('.recommended-content-description');
   const reversedDomElements = remainingElements.reverse();
 
-  // authored before v2 fields existed
-  const isNoV2Block = reversedDomElements.length <= 10;
-  const hasLegacyV1Fields = isNoV2Block || reversedDomElements.length >= 13;
+  // Block authored with only v1 fields, needs padding for missing v2 fields
+  const hasV1Tags = reversedDomElements.length <= 10;
+  const hasLegacyV1Fields = hasV1Tags || reversedDomElements.length >= 13;
 
-  if (isNoV2Block) {
+  if (hasV1Tags) {
     reversedDomElements.splice(0, 0, undefined, undefined, undefined);
   }
 

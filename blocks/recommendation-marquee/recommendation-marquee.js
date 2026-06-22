@@ -322,11 +322,11 @@ export default async function decorate(block) {
 
   const reversedElements = htmlElementData.reverse();
 
-  // authored before v2 fields existed
-  const isNoV2Block = reversedElements.length <= 13;
-  const hasLegacyV1Fields = isNoV2Block || reversedElements.length >= 15;
+  // Block authored with only v1 fields, needs padding for missing v2 fields
+  const hasV1Tags = reversedElements.length <= 13;
+  const hasLegacyV1Fields = hasV1Tags || reversedElements.length >= 15;
 
-  if (isNoV2Block) {
+  if (hasV1Tags) {
     reversedElements.splice(0, 0, undefined, undefined, undefined);
   }
 
