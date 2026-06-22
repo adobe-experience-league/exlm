@@ -4,7 +4,6 @@ import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 /**
  * formattedSolutionTags returns the solution type by stripping off the exl:solution/ string and decoding base64
@@ -64,7 +63,7 @@ export default async function decorate(block) {
   let solutionsParam = '';
 
   // If new format (no v1 tags), always use v2 tags
-  if (!hasV1Tag || (isFeatureEnabled('isV2TagsEnabled') && solutionsv2)) {
+  if (!hasV1Tag || solutionsv2) {
     solutionsParam = solutionsv2
       ? getv2TagLabels(solutionsv2)
           .split(',')

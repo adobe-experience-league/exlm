@@ -1,6 +1,5 @@
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders, getPathDetails, htmlToElement } from '../../scripts/scripts.js';
-import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 function getPreferredMetadata(...keys) {
   return keys.map(getMetadata).find(Boolean) || '';
@@ -32,39 +31,21 @@ export default async function decorate(block) {
   const courseName = getMetadata('og:title') || document.title;
 
   const coveosolutions = getMetadata('coveo-solution');
-  let productName;
-  let experienceLevel;
   const role = getMetadata('role') || '';
   const solution = getMetadata('solution') || '';
-  if (isFeatureEnabled('isV2TagsEnabled')) {
-    productName =
-      [
-        ...new Set(
-          coveosolutions.split(';').map((item) => {
-            const parts = item.split('|');
-            return parts.length > 1 ? parts[1].trim() : item.trim();
-          }),
-        ),
-      ].join(', ') || getMetadata('product_v1');
-    experienceLevel = getPreferredMetadata('loc-v2-level', 'loc-level', 'level', 'loc-legacy-level', 'level_v1')
-      .split(',')
-      .map((item) => item.trim())
-      .join(', ');
-  } else {
-    productName =
-      [
-        ...new Set(
-          coveosolutions.split(';').map((item) => {
-            const parts = item.split('|');
-            return parts.length > 1 ? parts[1].trim() : item.trim();
-          }),
-        ),
-      ].join(', ') || getMetadata('product_v2');
-    experienceLevel = getPreferredMetadata('loc-legacy-level', 'loc-level', 'loc-v2-level', 'level', 'level_v2')
-      .split(',')
-      .map((item) => item.trim())
-      .join(', ');
-  }
+  const productName =
+    [
+      ...new Set(
+        coveosolutions.split(';').map((item) => {
+          const parts = item.split('|');
+          return parts.length > 1 ? parts[1].trim() : item.trim();
+        }),
+      ),
+    ].join(', ') || getMetadata('product_v1');
+  const experienceLevel = getPreferredMetadata('loc-v2-level', 'loc-level', 'level', 'loc-legacy-level', 'level_v1')
+    .split(',')
+    .map((item) => item.trim())
+    .join(', ');
   const courseLink = getMetadata('og:url') || window.location.href;
 
   const [, courseIdFromLink] = courseLink?.split(`/${lang}/`) || [];
