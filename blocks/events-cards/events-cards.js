@@ -1,5 +1,5 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, getv2TagLabels } from '../../scripts/scripts.js';
+import { htmlToElement, getv2TagLabels, isV2TagFormat } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
@@ -46,9 +46,7 @@ export default async function decorate(block) {
   // Check if block has v1 tags by finding any element that starts with "exl:"
   const hasExlTag = configValues.some((el) => el?.startsWith('exl:'));
 
-  // v1 blocks have 2 config values (solutions v1, solutionsv2)
-  // v2-only blocks have 1 config value (only solutionsv2)
-  // Use exl: tag check first, then fall back to div count
+  // blocks with v1 have 2 config values (solutions v1, solutionsv2)
   const hasV1Tags = hasExlTag || configValues.length >= 2;
 
   // Extract the solution values
@@ -65,13 +63,6 @@ export default async function decorate(block) {
     solutions = '';
     solutionsv2 = firstConfig || '';
   }
-
-  // Helper to check if content is valid v2 tag format (JSON)
-  const isV2TagFormat = (content) => {
-    if (!content) return false;
-    const trimmed = content.trim();
-    return trimmed.startsWith('[{') || trimmed.startsWith('{');
-  };
 
   const contentType = CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY;
   const noOfResults = 4;

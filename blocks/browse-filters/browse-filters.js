@@ -3,6 +3,7 @@ import {
   createTag,
   htmlToElement,
   getv2TagLabels,
+  isV2TagFormat,
   getPathDetails,
   fetchLanguagePlaceholders,
   matchesAnyTheme,
@@ -1495,9 +1496,7 @@ function decorateBrowseTopics(block) {
   // Check if block has v1 tags by finding any element that starts with "exl:"
   const hasExlTag = allDivs.some((el) => el?.textContent?.trim().startsWith('exl:'));
 
-  // v1 blocks have 8 divs: solution(v1), heading, topics(v1), contentType, solutionsv2, featuresv2, topicsv2, customElement
-  // v2-only blocks have 6 divs: heading, contentType, solutionsv2, featuresv2, topicsv2, customElement
-  // Use exl: tag check first, then fall back to div count
+  // blocks with v1 tags have 8 divs: solution(v1), heading, topics(v1), contentType, solutionsv2, featuresv2, topicsv2, customElement
   const hasV1Tags = hasExlTag || allDivs.length >= 8;
 
   let solutionsElement;
@@ -1521,7 +1520,7 @@ function decorateBrowseTopics(block) {
       customElement,
     ] = allDivs;
   } else {
-    // v2-only blocks with 6 divs
+    // blocks with v2 has only 6 divs
     [headingElement, contentTypeElement, solutionsv2Element, featuresv2Element, topicsv2Element, customElement] =
       allDivs;
   }
@@ -1537,13 +1536,6 @@ function decorateBrowseTopics(block) {
   const localizedTopicsContent = isFormElement ? '' : customElement?.textContent?.trim() ?? '';
   let allSolutionsTags;
   let allTopicsTags;
-
-  // Helper to check if content is valid v2 tag format (JSON)
-  const isV2TagFormat = (content) => {
-    if (!content) return false;
-    const trimmed = content.trim();
-    return trimmed.startsWith('[{') || trimmed.startsWith('{');
-  };
 
   // If new format (no v1 tags), always use v2 tags
   // If old format, use v2 tags if FF enabled, otherwise use v1 tags

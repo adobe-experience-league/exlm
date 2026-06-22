@@ -1,5 +1,5 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, getv2TagLabels } from '../../scripts/scripts.js';
+import { htmlToElement, getv2TagLabels, isV2TagFormat } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
@@ -22,9 +22,7 @@ export default async function decorate(block) {
   // Check if block has v1 tags by finding any element that starts with "exl:"
   const hasExlTag = configValues.some((el) => el?.startsWith('exl:'));
 
-  // v1 blocks have 11 config values (contentType, capabilities, role, level, authorType, sortBy, productv2, featurev2, subfeaturev2, rolev2, levelv2)
-  // v2-only blocks have 8 config values (contentType, authorType, sortBy, productv2, featurev2, subfeaturev2, rolev2, levelv2)
-  // Use exl: tag check first, then fall back to div count
+  // blocks wih v1 have 11 config values (contentType, capabilities, role, level, authorType, sortBy, productv2, featurev2, subfeaturev2, rolev2, levelv2)
   const hasV1Tags = hasExlTag || configValues.length >= 11;
 
   let contentType;
@@ -79,13 +77,6 @@ export default async function decorate(block) {
 
   // Appending header div to the block
   block.appendChild(headerDiv);
-
-  // Helper to check if content is valid v2 tag format (JSON)
-  const isV2TagFormat = (content) => {
-    if (!content) return false;
-    const trimmed = content.trim();
-    return trimmed.startsWith('[{') || trimmed.startsWith('{');
-  };
 
   let param;
   // If new format (no v1 tags), always use v2 tags
