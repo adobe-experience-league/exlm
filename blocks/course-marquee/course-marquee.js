@@ -80,6 +80,9 @@ export default async function decorate(block) {
   };
   block.textContent = '';
 
+  const translationMechanism = getMetadata('translation-mechanism');
+  const isMachineTranslated = translationMechanism?.trim().toUpperCase() === 'MT';
+
   // Create metadata items HTML
   let metadataItemsHTML = '';
 
@@ -101,6 +104,26 @@ export default async function decorate(block) {
       <div class="metadata-item">
         <span class="metadata-label">${placeholders?.courseExperienceLevelLabel || 'Experience level'}:</span>
         <span class="metadata-value">${experienceLevel}</span>
+      </div>
+    `;
+  }
+
+  if (isMachineTranslated) {
+    const hasExistingMeta = productName || experienceLevel;
+    if (hasExistingMeta) {
+      metadataItemsHTML += `<div class="metadata-separator"></div>`;
+    }
+    metadataItemsHTML += `
+      <div class="metadata-item ai-translated-item">
+        <span class="metadata-label ai-translated-label">${
+          placeholders?.automaticTranslation || 'Automatically translated'
+        }</span>
+        <span class="ai-translated-info-icon">
+          <span class="icon icon-info"></span>
+          <span class="ai-translated-tooltip" role="tooltip">${
+            placeholders?.changeLanguageTooltip || 'Use the Language Selector to view the English version of this page.'
+          }</span>
+        </span>
       </div>
     `;
   }
