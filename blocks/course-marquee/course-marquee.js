@@ -1,5 +1,5 @@
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
-import { fetchLanguagePlaceholders, getPathDetails, htmlToElement } from '../../scripts/scripts.js';
+import { fetchLanguagePlaceholders, getPathDetails, htmlToElement, setMetadata } from '../../scripts/scripts.js';
 import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 function getPreferredMetadata(...keys) {
@@ -80,6 +80,8 @@ export default async function decorate(block) {
   };
   block.textContent = '';
 
+  // TESTING: hardcode translation-mechanism to 'MT' for testing purposes
+  setMetadata('translation-mechanism', 'HT');
   const translationMechanism = getMetadata('translation-mechanism');
   const isMachineTranslated = translationMechanism?.trim().toUpperCase() === 'MT';
 
