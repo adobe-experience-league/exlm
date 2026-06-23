@@ -158,7 +158,11 @@ const hamburgerButton = (mobileDrawer, navOverlay) => {
       aria-label="Navigation menu"
       aria-expanded="false"
       aria-haspopup="true"
-      aria-controls="${drawerId}"></button>`);
+      aria-controls="${drawerId}">
+      <span class="icon icon-menu"></span>
+    </button>`);
+
+  decorateIcons(button);
 
   button.addEventListener('click', () => {
     toggleMobileNav(button, mobileDrawer, navOverlay);
@@ -209,7 +213,7 @@ const buildNavItems = (ul, level = 0) => {
 
       const toggleClass = level === 0 ? 'nav-item-toggle nav-item-toggle-root' : 'nav-item-toggle';
       const toggler = htmlToElement(
-        `<button class="${toggleClass}" aria-controls="${controlName}" aria-expanded="false">${firstEl.textContent}<span class="icon icon-nav-chevron"></span></button>`,
+        `<button class="${toggleClass}" aria-controls="${controlName}" aria-expanded="false"><span class="nav-item-toggle-text">${firstEl.textContent}</span><span class="icon icon-nav-chevron"></span></button>`,
       );
       decorateIcons(toggler);
       const navItemContent = document.createElement('div');
@@ -314,6 +318,11 @@ const buildNavItems = (ul, level = 0) => {
 
       const anchor = navItem.querySelector(':scope > a');
       if (!anchor) return;
+
+      const textSpan = document.createElement('span');
+      textSpan.classList.add('nav-item-link-text');
+      [...anchor.childNodes].forEach((n) => textSpan.appendChild(n));
+      anchor.appendChild(textSpan);
 
       let subtitleHTML = null;
       const subtitleP = navItem.querySelector(':scope > p');
@@ -634,13 +643,11 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
 
   searchBlock.innerHTML = '';
   const searchWrapper = htmlToElement(
-    `<div class="search-wrapper">
-      <div class="search-short">
+    `<div class="search-short">
         <a href="${searchLink?.href || '#'}" aria-label="Search">
           <span title="${placeholders?.search || 'Search'}" class="icon icon-search"></span>
         </a>
-      </div>
-    </div>`,
+      </div>`,
   );
 
   const searchModule = await loadSearchElement();
