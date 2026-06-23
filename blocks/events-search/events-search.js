@@ -10,7 +10,7 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import BrowseCardViewSwitcher from '../../scripts/browse-card/browse-cards-view-switcher.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
-import { initCoveoPipelineTestFromUrl } from '../../scripts/data-service/coveo/coveo-search-config.js';
+import { initCoveoPipelineTestForEventsSearch } from '../../scripts/data-service/coveo/coveo-search-config.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import {
   eventTypeOptions,
@@ -1355,7 +1355,7 @@ async function initHeadlessSearch(block, groups, placeholders) {
 }
 
 export default async function decorate(block) {
-  initCoveoPipelineTestFromUrl();
+  initCoveoPipelineTestForEventsSearch();
   await loadEventsCardStyles();
   let placeholders = {};
   try {
