@@ -162,6 +162,7 @@ button:focus {
 /* ─── Icons ─────────────────────────────────────────────────────────────── */
 
 .icon img {
+  display: block;
   height: 18px;
   width: 18px;
   filter: var(--icon-filter);
@@ -346,6 +347,7 @@ button:focus {
 
 /* Root-level nav item */
 .header .nav-item-root a {
+  white-space: nowrap;
   font-weight: var(--font-weight-semi-bold);
   display: flex;
   align-items: center;
@@ -741,24 +743,27 @@ button:focus {
 }
 
 .language-selector .icon {
-  height: 24px;
-  width: 24px;
+  display: block;
+  height: 20px;
+  width: 18px;
 }
 
 .language-selector-button {
   border-radius: 0;
   margin: 0;
   border: 0;
+  padding: 0;
   text-align: left;
   background: none;
   font-weight: initial;
-  padding: var(--nav-gap-desktop);
   position: relative;
   top: 1px;
+  display: flex;
+  align-items: center;
 }
 
 .language-selector-popover {
-  background: var(--non-spectrum-bg);
+  background: var(--nav-dropdown-bg);
   box-shadow: 0 8px 8px rgb(10 10 10 / 10%);
   display: none;
   width: 120px;
@@ -981,8 +986,13 @@ button:focus {
   background: none;
   font-weight: initial;
   height: 100%;
-  padding: 0 var(--nav-padding-desktop);
+  padding: 0;
+  padding-inline-start: var(--nav-gap-desktop);
   box-sizing: border-box;
+}
+
+.header .profile-toggle {
+  padding-right: var(--nav-padding-desktop);
 }
 
 .header .profile-toggle[aria-expanded='true'],
@@ -1086,7 +1096,7 @@ button:focus {
     background: none;
     font-weight: initial;
     color: var(--nav-item-text-color);
-    padding: var(--nav-root-item-padding);
+    padding: 0;
   }
 }
 
