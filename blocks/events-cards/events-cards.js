@@ -1,5 +1,5 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, getv2TagLabels } from '../../scripts/scripts.js';
+import { htmlToElement, getv2TagLabels, isV2TagFormat } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
@@ -43,14 +43,19 @@ export default async function decorate(block) {
 
   const configValues = configs.map((cell) => cell.textContent.trim());
 
+  // Check if block has v1 tags by finding any element that starts with "exl:"
+  const hasExlTag = configValues.some((el) => el?.startsWith('exl:'));
+
+  // blocks with v1 have 2 config values (solutions v1, solutionsv2)
+  const hasV1Tags = hasExlTag || configValues.length >= 2;
+
   // Extract the solution values
   const [firstConfig, secondConfig] = configValues;
-  const hasV1Tag = firstConfig && firstConfig.startsWith('exl:solution/');
 
   let solutions;
   let solutionsv2;
 
-  if (hasV1Tag) {
+  if (hasV1Tags) {
     solutions = firstConfig;
     solutionsv2 = secondConfig || '';
   } else {
@@ -64,8 +69,8 @@ export default async function decorate(block) {
   let solutionsParam = '';
 
   // If new format (no v1 tags), always use v2 tags
-  if (!hasV1Tag || (isFeatureEnabled('isV2TagsEnabled') && solutionsv2)) {
-    solutionsParam = solutionsv2
+  if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && isV2TagFormat(solutionsv2))) {
+    solutionsParam = isV2TagFormat(solutionsv2)
       ? getv2TagLabels(solutionsv2)
           .split(',')
           .map((p) => p.trim())

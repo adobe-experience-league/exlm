@@ -1588,6 +1588,17 @@ export function updateTQTagsMetadata() {
 }
 
 /**
+ * Checks if content is valid v2 tag format (JSON)
+ * @param {string} content - Content to check
+ * @returns {boolean} True if content is valid JSON format
+ */
+export function isV2TagFormat(content) {
+  if (!content) return false;
+  const trimmed = content.trim();
+  return trimmed.startsWith('[{') || trimmed.startsWith('{');
+}
+
+/**
  * Extracts and returns a comma-separated string of label values from a JSON-encoded tag string.
  * @param {string} tag - A JSON string (possibly HTML-encoded) representing an array of objects with `label` properties.
  * @returns {string} A comma-separated string of labels, or an empty string if parsing fails or input is invalid.
