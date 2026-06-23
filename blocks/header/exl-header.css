@@ -5,49 +5,82 @@
 /* ─── Design Tokens ─────────────────────────────────────────────────────── */
 
 :host {
-  /* SPECTRUM COLOR TOKENS */
-  --spectrum-gray-50: #fff;
-  --spectrum-gray-800: #2c2c2c;
-  --spectrum-blue-900: #06c;
+  /* ── Spectrum Base Tokens ─────────────────────────────────────────────── */
 
-  /* SPECTRUM TYPOGRAPHY TOKENS */
+  /* Colors */
+  --spectrum-gray-50: #fff;
+  --spectrum-gray-800: #222;
+  --spectrum-blue-900: #0265dc;
+
+  /* Font weights */
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semi-bold: 600;
   --font-weight-bold: 700;
   --font-weight-heavy: 900;
+
+  /* Font sizes */
   --spectrum-font-size-40: 10px;
   --spectrum-font-size-75: 12px;
   --spectrum-font-size-100: 14px;
   --spectrum-font-size-200: 16px;
 
-  /* ALIAS TOKENS */
-  --nav-bg-color: var(--spectrum-gray-50);
+  /* Line height */
+  --spectrum-line-height-l: 21px;
+
+  /* Font family */
+  --body-font-family: 'Adobe Clean', adobe-clean, 'Source Sans Pro', -apple-system, system-ui, 'Segoe UI', roboto,
+    ubuntu, 'Trebuchet MS', 'Lucida Grande', sans-serif;
+
+  /* ── Alias Tokens ─────────────────────────────────────────────────────── */
+
+  /* Layout */
   --nav-height: 52px;
   --nav-max-width: 1440px;
-  --nav-shadow: 0 2px 6px #00000012;
-  --font-size-small: var(--spectrum-font-size-75);
-  --font-size-large: var(--spectrum-font-size-200);
-  --font-size-regular: var(--spectrum-font-size-100);
-  --nav-text-color: var(--spectrum-gray-800);
-  --nav-link-color: var(--spectrum-blue-900);
-  --nav-level-0-heading-color: #6e6e6e;
-  --border-color-regular: #e8e8e8;
-  --border-color-thin: #d4d4d4;
   --nav-padding-desktop: 24px;
   --nav-padding-mobile: 16px;
   --nav-gap-desktop: 14px;
   --nav-gap-mobile: 10px;
   --nav-root-item-padding: 14px;
-  --nav-dropdown-bg: #f5f5f5;
-  --nav-dropdown-shadow: 0 6px 28px #0000001f;
   --nav-dropdown-tab-item-width: 180px;
-  --nav-mobile-bg-color: var(--spectrum-gray-50);
   --nav-mobile-max-width: 360px;
   --nav-mobile-item-padding: 20px 14px;
+
+  /* Nav colors */
+  --nav-bg-color: var(--spectrum-gray-50);
+  --nav-shadow: 0 2px 6px #00000012;
+  --nav-text-color: var(--spectrum-gray-800);
+  --nav-link-color: var(--spectrum-blue-900);
+  --nav-level-0-heading-color: #6e6e6e;
+  --border-color-regular: #e8e8e8;
+  --border-color-thin: #d4d4d4;
+  --nav-dropdown-bg: #f5f5f5;
+  --nav-dropdown-shadow: 0 6px 28px #0000001f;
+  --nav-mobile-bg-color: var(--spectrum-gray-50);
   --nav-mobile-level-0-bg-color: #fafafa;
 
-  /* Gautham's line */
+  /* Font size aliases */
+  --font-size-xs: var(--spectrum-font-size-75);
+  --font-size-small: var(--spectrum-font-size-75);
+  --font-size-regular: var(--spectrum-font-size-100);
+  --font-size-large: var(--spectrum-font-size-200);
+  --exlm-font-size-content: var(--spectrum-font-size-100);
+
+  /* Color aliases */
+  --background-color: var(--spectrum-gray-50);
+  --link-color: var(--spectrum-blue-900);
+  --non-spectrum-bg: #fff;
+  --non-spectrum-hover-bg: #f8f8f8;
+  --non-spectrum-link: #2c2c2c;
+  --non-spectrum-grey: #4a4a4a;
+  --non-spectrum-azure-blue: #378ef0;
+
+  /* Nav states */
+  --nav-item-expanded-border: 2px solid var(--spectrum-gray-800);
+  --nav-item-text-color: #2c2c2c;
+
+  /* Icon recolor filter — turns black source icons into #2c2c2c */
+  --icon-filter: brightness(0) invert(0.173);
 
   /* Layout order (mobile defaults) */
   --nav-order: 1;
@@ -56,46 +89,13 @@
   --community-actions-order: 4;
 
   /* Visibility toggles (override at 1024px) */
-  --search-display: inline-flex;
   --sign-in-display: flex;
   --language-selector-display: none;
 
-  /* Nav states */
-  --hover-background: #fafafa;
-  --hover-background-dark: #f8f8f8;
-  --nav-item-expanded-border: 2px solid #222;
-  --nav-item-expanded-bg: #fafafa;
-  --nav-item-text-color: #2c2c2c;
-
-  /* Non-spectrum aliases */
-  --non-spectrum-bg: #fff;
-  --non-spectrum-hover-bg: #f8f8f8;
-  --non-spectrum-link: #2c2c2c;
-  --non-spectrum-article-dark-gray: #6a6a6a;
-  --non-spectrum-silver: #f5f5f5;
-  --non-spectrum-grey: #4a4a4a;
-  --non-spectrum-graphite-gray: #4b4b4b;
-  --non-spectrum-azure-blue: #378ef0;
-  --background-color: #fff;
-  --link-color: #06c;
-
-  /* Typography */
-  --exlm-font-size-content: 14px;
-  --font-size-xs: 12px;
-  --font-weight-light: 300;
-  --spectrum-line-height-l: 21px;
-  --spectrum-font-size-50: 11px;
-  --spectrum-font-size-400: 20px;
-  --body-font-family: 'Adobe Clean', adobe-clean, 'Source Sans Pro', -apple-system, system-ui, 'Segoe UI', roboto,
-    ubuntu, 'Trebuchet MS', 'Lucida Grande', sans-serif;
-
-  /* icon recolor filter — turns black source icons into #2c2c2c */
-  --icon-filter: brightness(0) invert(0.173);
-
-  /* z-index scale (low → high) */
+  /* Z-index scale (low → high) */
   --z-search: 1;
   --z-dropdown: 10;
-  --z-header: 999;
+  --z-header: auto;
   --z-drawer: 1000;
   --z-flyout: 20000;
 }
@@ -103,8 +103,7 @@
 /* Desktop overrides */
 @media (min-width: 1024px) {
   :host {
-    --nav-item-padding-x: 24px;
-    --search-display: inline-flex;
+    --z-header: 999;
     --language-selector-display: flex;
     --nav-order: unset;
     --brand-order: unset;
