@@ -164,11 +164,23 @@ export default async function initiateCoveoHeadlessSearch({
           },
         });
 
-        const headlessTypeFacet = buildHeadlessFacet(module, headlessSearchEngine, 'el_contenttype', {}, facetOverrides);
+        const headlessTypeFacet = buildHeadlessFacet(
+          module,
+          headlessSearchEngine,
+          'el_contenttype',
+          {},
+          facetOverrides,
+        );
 
         const headlessRoleFacet = buildHeadlessFacet(module, headlessSearchEngine, 'el_role', {}, facetOverrides);
 
-        const headlessExperienceFacet = buildHeadlessFacet(module, headlessSearchEngine, 'el_level', {}, facetOverrides);
+        const headlessExperienceFacet = buildHeadlessFacet(
+          module,
+          headlessSearchEngine,
+          'el_level',
+          {},
+          facetOverrides,
+        );
 
         const headlessProductFacet = buildHeadlessFacet(module, headlessSearchEngine, 'el_product', {}, facetOverrides);
 

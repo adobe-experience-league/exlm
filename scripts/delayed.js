@@ -21,16 +21,6 @@ if (window.location.search?.indexOf('martech=off') === -1) {
   sendCoveoPageViewEvent();
 }
 
-async function isAdobeEmployee() {
-  if (!window.adobeIMS?.isSignedInUser()) return false;
-  try {
-    const profile = await window.adobeIMS.getProfile();
-    return profile?.email?.toLowerCase().endsWith('@adobe.com') === true;
-  } catch {
-    return false;
-  }
-}
-
 /** Paths like /en/support, /fr/premium (communities use a separate origin). */
 function isBrandConciergeExcludedPath() {
   const { pathname } = window.location;
@@ -41,7 +31,7 @@ function isBrandConciergeExcludedPath() {
  * Loads Brand Concierge on eligible page types.
  * Guards:
  *   - hidden on Support and Premium Learning routes
- *   - bcAuthRequired → when true, user must be signed in AND be an @adobe.com employee
+ *   - bcAuthRequired → when true, user must be signed in
  */
 async function loadBrandConcierge() {
   if (isBrandConciergeExcludedPath()) return;
@@ -49,7 +39,7 @@ async function loadBrandConcierge() {
   const { bcAuthRequired } = getConfig();
   if (bcAuthRequired) {
     await loadIms();
-    if (!(await isAdobeEmployee())) return;
+    if (!window.adobeIMS?.isSignedInUser()) return;
   }
 
   const { default: initBrandConcierge } = await import('./brand-concierge/brand-concierge.js');

@@ -160,6 +160,7 @@ main .events-search .events-search-filter-options {
 
 main .events-search .events-search-filter-options-list {
   display: grid;
+  min-height: calc(3 * (16px + 2 * var(--spectrum-spacing-75)));
 }
 
 main
@@ -205,63 +206,6 @@ main .events-search .events-search-filter-option {
   align-items: center;
   gap: var(--spectrum-spacing-100);
   cursor: pointer;
-  padding: var(--spectrum-spacing-75) var(--spectrum-spacing-100);
-  margin: 0 calc(-1 * var(--spectrum-spacing-100));
-  border-radius: 4px;
-  transition: background-color 0.15s ease;
-}
-
-main .events-search .events-search-filter-option:hover,
-main .events-search .events-search-filter-option:focus-within {
-  background-color: var(--footer-border-color);
-}
-
-main .events-search .events-search-filter-group-actions {
-  display: flex;
-  margin-bottom: var(--spectrum-spacing-100);
-}
-
-main .events-search .events-search-filter-select-all {
-  border: 0;
-  background: transparent;
-  padding: 0;
-  color: var(--link-color);
-  font-size: var(--spectrum-font-size-100);
-  font-weight: 700;
-  cursor: pointer;
-}
-
-main .events-search .events-search-filter-select-all:hover {
-  text-decoration: underline;
-}
-
-main .events-search .events-search-filter-only-btn {
-  flex-shrink: 0;
-  align-self: center;
-  margin-left: auto;
-  border: 0;
-  background: transparent;
-  padding: 2px 0;
-  min-width: 2.25rem;
-  text-align: right;
-  line-height: 1.2;
-  color: var(--non-spectrum-web-gray, #747474);
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-medium, 500);
-  cursor: pointer;
-  opacity: 0;
-  pointer-events: none;
-}
-
-main .events-search .events-search-filter-only-btn:hover {
-  color: var(--non-spectrum-graphite-gray, #464646);
-}
-
-main .events-search .events-search-filter-option:hover .events-search-filter-only-btn,
-main .events-search .events-search-filter-option:focus-within .events-search-filter-only-btn,
-main .events-search .events-search-filter-option.checked .events-search-filter-only-btn {
-  opacity: 1;
-  pointer-events: auto;
 }
 
 main .events-search .events-search-filter-option.is-overflow-hidden {
@@ -270,7 +214,7 @@ main .events-search .events-search-filter-option.is-overflow-hidden {
 
 main .events-search .events-search-filter-option input[type='checkbox'] {
   border: 2px solid var(--non-spectrum-medium-gray);
-  margin: 0;
+  margin-top: var(--spectrum-spacing-75);
   cursor: pointer;
   width: 16px;
   height: 16px;
@@ -280,15 +224,15 @@ main .events-search .events-search-filter-option input[type='checkbox'] {
 main .events-search .events-search-filter-option-label {
   flex: 1;
   min-width: 0;
-  padding-right: var(--spectrum-spacing-100);
   font-size: var(--spectrum-font-size-200);
   line-height: 1.4;
   cursor: pointer;
-  margin: 0;
+  margin-top: var(--spectrum-spacing-75);
+  margin-bottom: var(--spectrum-spacing-300);
 }
 
 main .events-search .events-search-filter-option-count {
-  color: var(--non-spectrum-article-dark-gray, #6e6e6e);
+  color: var(--non-spectrum-article-dark-gray);
   font-weight: 400;
 }
 
@@ -344,13 +288,6 @@ main
 
   100% {
     background-position: -200% 0;
-  }
-}
-
-@media (max-width: 1023px) {
-  main .events-search .events-search-filter-only-btn {
-    opacity: 1;
-    pointer-events: auto;
   }
 }
 
@@ -704,16 +641,42 @@ main .events-search .events-search-active-filter-tag-remove {
 }
 
 main .events-search .events-search-no-results:not([hidden]) {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spectrum-spacing-300);
   background-color: var(--spectrum-gray-200);
-  color: var(--non-spectrum-grey);
-  font-size: var(--spectrum-font-size-200);
   padding: var(--spectrum-spacing-1000) var(--spectrum-spacing-300);
   text-align: center;
   width: 100%;
   box-sizing: border-box;
   margin: 0;
   margin-top: var(--spectrum-spacing-300);
+}
+
+main .events-search .events-search-no-results-message {
+  color: var(--non-spectrum-grey);
+  font-size: var(--spectrum-font-size-200);
+  margin: 0;
+}
+
+main .events-search .events-search-no-results-clear {
+  color: var(--link-color);
+  font-size: var(--spectrum-font-size-200);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+main .events-search .events-search-no-results-clear:hover {
+  color: var(--spectrum-blue-1000);
+}
+
+main .events-search.has-no-results .events-search-filters-header {
+  display: none;
+}
+
+main .events-search.has-no-results .events-search-mobile-filter-toggle {
+  display: none;
 }
 
 main .events-search .events-search-filters-panel {

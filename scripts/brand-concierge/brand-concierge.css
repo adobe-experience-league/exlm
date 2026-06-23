@@ -211,13 +211,14 @@
 
   /* Room for input row + panel disclaimer (2–3 lines). */
   --bc-input-overlay-height: 220px;
+  --bc-chat-history-clearance: var(--bc-input-overlay-height);
 }
 
 #brand-concierge-mount .chat-history {
   flex: 1 !important;
   overflow-y: auto !important;
   min-height: 0 !important;
-  padding-bottom: var(--bc-input-overlay-height) !important;
+  padding-bottom: var(--bc-chat-history-clearance, var(--bc-input-overlay-height)) !important;
 }
 
 #brand-concierge-mount .message-blocker {
@@ -244,24 +245,32 @@
   position: absolute !important;
   inset: auto 0 0 !important;
   z-index: 10 !important;
-  display: flex !important;
-  flex-direction: column !important;
+  display: grid !important;
+  grid-template-rows: minmax(96px, 1fr) auto auto !important;
+  align-content: end !important;
   align-items: stretch !important;
   background: transparent !important;
 
   /* No bottom padding — disclaimer sits flush with panel bottom (drawer + expanded). */
-  padding: 96px 28px 0 !important;
+  padding: 0 28px !important;
+
+  /* Pass clicks through the gradient fade; keep input + disclaimer interactive. */
+  pointer-events: none !important;
 }
 
 #bc-dialog.exl-dialog-expanded #brand-concierge-mount .input-section {
-  padding: 96px max(40px, 15%) 0 !important;
+  padding: 0 max(40px, 15%) !important;
 }
 
 #brand-concierge-mount .input-container {
+  grid-row: 2 !important;
   align-items: center !important;
+  box-sizing: border-box !important;
+  min-height: 52px !important;
   max-height: 56px !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   background: #fff !important;
+  border: 1px solid var(--spectrum-gray-300) !important;
 }
 
 #brand-concierge-mount label.ai-chat-label .bc-input-label-sparkle {
@@ -273,12 +282,13 @@
 
 #brand-concierge-mount .input-container:focus-within {
   outline: none !important;
-  border-color: var(--spectrum-gray-300) !important;
 }
 
 #brand-concierge-mount .chat-input-wrapper {
+  min-height: 40px !important;
+  height: 40px !important;
   max-height: 40px !important;
-  overflow: hidden !important;
+  overflow: visible !important;
 }
 
 /* stylelint-disable-next-line selector-class-pattern -- BC internal BEM modifier */
@@ -415,9 +425,22 @@
   display: none !important;
 }
 
+/* Expanded welcome pills default (all viewports): column stack matching the side-drawer layout. */
+#bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-pills-container:has(> :nth-child(4):last-child) {
+  display: flex !important;
+  flex-flow: column nowrap !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+}
+
 /*
- * Expanded-only prompt layouts (wide viewports). Below 769px, expanded uses the same
- * full-width prompt stack as the side drawer (base `.bc-prompt-pill-button` rules).
+ * Expanded-only prompt layouts (wide viewports).
+ * Intentional breakpoint exception: ExL uses 600 / 900 / 1200px, but the
+ * expanded drawer is only 80vw wide. At 769–899px the modal is still too narrow for the
+ * half-width welcome pill grid; 900px leaves that range with incorrect pill rendering. 769px
+ * aligns with when 80vw (~615px) can fit the card layout; below that, the base column stack
+ * above applies.
  */
 @media (min-width: 769px) {
   /* Expanded only: full-width prompt area; taller, half-width welcome pill cards (not in the narrow drawer). */
@@ -469,6 +492,11 @@
     gap: 8px !important;
     width: auto !important;
     max-width: 100% !important;
+    margin-bottom: 12px !important;
+
+    /* Keep in-chat follow-up suggestions above the bottom gradient fade. */
+    position: relative !important;
+    z-index: 6 !important;
   }
 
   #bc-dialog.exl-dialog-expanded
@@ -484,17 +512,6 @@
     align-items: center !important;
     justify-content: flex-start !important;
     box-sizing: border-box !important;
-  }
-}
-
-/* Expanded on narrow viewports: match side-drawer prompt stack (full-width pills, same gap as base). */
-@media (max-width: 768px) {
-  #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-pills-container:has(> :nth-child(4):last-child) {
-    display: flex !important;
-    flex-flow: column nowrap !important;
-    align-items: stretch !important;
-    justify-content: flex-start !important;
-    gap: 6px !important;
   }
 }
 
@@ -524,6 +541,63 @@
   fill: white !important;
 }
 
+#brand-concierge-mount .scroll-to-bottom {
+  width: 36px !important;
+  min-width: 36px !important;
+  max-width: 36px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#brand-concierge-mount .input-section .scroll-to-bottom {
+  position: absolute !important;
+
+  /* 48 px from section top → button bottom lands 12 px above the input row */
+  inset: 48px auto auto 50% !important;
+  transform: translateX(-50%) !important;
+  margin: 0 !important;
+}
+
+#brand-concierge-mount .input-section .bc-panel-disclaimer {
+  grid-row: 3 !important;
+}
+
+#brand-concierge-mount .scroll-to-bottom:not(.bc-scroll-to-bottom-visible) {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+#brand-concierge-mount .scroll-to-bottom.bc-scroll-to-bottom-visible {
+  display: flex !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  z-index: 8 !important;
+  background-color: #fff !important;
+  border: 1px solid var(--spectrum-gray-300) !important;
+}
+
+/* styles.css sets button:focus { background: link-hover-color } without :focus-visible. */
+#brand-concierge-mount .scroll-to-bottom:focus {
+  background-color: #fff !important;
+  outline: none;
+}
+
+#brand-concierge-mount .scroll-to-bottom:focus-visible {
+  outline: 2px solid var(--non-spectrum-navy-blue);
+  outline-offset: 2px;
+}
+
+#brand-concierge-mount .scroll-to-bottom:hover {
+  background-color: var(--spectrum-gray-100) !important;
+}
+
 #brand-concierge-mount .scroll-to-bottom svg {
   display: block !important;
   width: 20px !important;
@@ -534,6 +608,21 @@
 
 #brand-concierge-mount .scroll-to-bottom svg path {
   fill: currentcolor !important;
+}
+
+/*
+ * Restore interactivity for interactive children of the pointer-events:none overlay.
+ * MAINTENANCE: If BC adds new interactive elements inside .input-section (voice button,
+ * tooltip trigger, close icon, etc.) they must be added here or clicks will silently
+ * do nothing. A ::before/::after gradient approach would avoid this list, but is not
+ * feasible here because .input-section itself provides the grid layout for the overlay.
+ */
+#brand-concierge-mount .input-section .input-container,
+#brand-concierge-mount .input-section .input-container *,
+#brand-concierge-mount .input-section .bc-panel-disclaimer,
+#brand-concierge-mount .input-section .bc-panel-disclaimer a,
+#brand-concierge-mount .input-section .scroll-to-bottom {
+  pointer-events: auto !important;
 }
 
 #brand-concierge-mount .citations-link {
