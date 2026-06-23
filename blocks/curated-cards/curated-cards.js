@@ -5,7 +5,6 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { extractCapability, removeProductDuplicates } from '../../scripts/browse-card/browse-card-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -80,8 +79,8 @@ export default async function decorate(block) {
 
   let param;
   // If new format (no v1 tags), always use v2 tags
-  // If old format, use v2 tags if FF enabled, otherwise use v1 tags
-  if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && isV2TagFormat(productv2))) {
+  // If old format with v2 tags authored, use v2 tags
+  if (!hasV1Tags || isV2TagFormat(productv2)) {
     const productsv2 = isV2TagFormat(productv2)
       ? getv2TagLabels(productv2)
           .split(',')

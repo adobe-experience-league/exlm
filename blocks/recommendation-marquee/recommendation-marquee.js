@@ -593,7 +593,7 @@ export default async function decorate(block) {
       let versions;
       let features;
 
-      if (isFeatureEnabled('isV2TagsEnabled') && encodedSolutionsv2Text) {
+      if (encodedSolutionsv2Text) {
         const productsv2 = getv2TagLabels(encodedSolutionsv2Text)
           .split(',')
           .map((p) => p.trim());
@@ -626,7 +626,7 @@ export default async function decorate(block) {
       const sortCriteria = COVEO_SORT_OPTIONS[sortByContent?.toUpperCase() ?? 'MOST_POPULAR'];
       const filterProductByOption = filterProductByOptionEl?.innerText?.trim() ?? '';
       let role;
-      if (isFeatureEnabled('isV2TagsEnabled') && rolev2El) {
+      if (rolev2El) {
         const rolev2Text = rolev2El?.innerText?.trim() ?? '';
         role = !rolev2Text
           ? profileRoles

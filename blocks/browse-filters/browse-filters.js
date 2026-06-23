@@ -1539,7 +1539,7 @@ function decorateBrowseTopics(block) {
 
   // If new format (no v1 tags), always use v2 tags
   // If old format, use v2 tags if FF enabled, otherwise use v1 tags
-  if (!hasV1Tags || (isFeatureEnabled('isV2TagsEnabled') && isV2TagFormat(solutionsv2Content))) {
+  if (!hasV1Tags || isV2TagFormat(solutionsv2Content)) {
     const solutionsv2Labels = isV2TagFormat(solutionsv2Content) ? getv2TagLabels(solutionsv2Content) : '';
     allSolutionsTags = solutionsv2Labels ? solutionsv2Labels.split(',').map((p) => p.trim()) : [];
 
@@ -1580,7 +1580,7 @@ function decorateBrowseTopics(block) {
 
   const supportedProducts = [];
   if (allSolutionsTags.length) {
-    if (isFeatureEnabled('isV2TagsEnabled') && solutionsv2Content) {
+    if (solutionsv2Content) {
       // V2 tags are plain text labels, construct query directly
       const productsQuery = allSolutionsTags.map((product) => `@el_product="${product}"`).join(' OR ');
       window.headlessBaseSolutionQuery = `(${window.headlessBaseSolutionQuery} AND (${productsQuery}))`;
@@ -1619,7 +1619,7 @@ function decorateBrowseTopics(block) {
   const browseFiltersSection = document.querySelector('.browse-filters-form');
 
   if (allTopicsTags.length > 0) {
-    const isV2Enabled = isFeatureEnabled('isV2TagsEnabled') && (featuresv2Content || topicsv2Content);
+    const isV2Enabled = !!(featuresv2Content || topicsv2Content);
     const stripParens = (s) => s.replace(/\s*\([^)]+\)\s*$/, '').trim();
     let v2LocalizedMap = {};
     if (isV2Enabled) {

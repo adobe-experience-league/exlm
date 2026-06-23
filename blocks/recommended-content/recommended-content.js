@@ -21,7 +21,6 @@ import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
 import { setTargetDataAsBlockAttribute, setCoveoAnalyticsAttribute } from '../../scripts/utils/analytics-utils.js';
-import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 let placeholders = {};
 try {
@@ -560,7 +559,7 @@ export default async function decorate(block) {
       let versions;
       let features;
 
-      if (isFeatureEnabled('isV2TagsEnabled') && encodedSolutionsv2Text) {
+      if (encodedSolutionsv2Text) {
         const productsv2 = encodedSolutionsv2Text
           ? getv2TagLabels(encodedSolutionsv2Text)
               .split(',')
@@ -598,7 +597,7 @@ export default async function decorate(block) {
       const filterProductByOption = filterProductByOptionEl?.innerText?.trim() ?? '';
 
       let role;
-      if (isFeatureEnabled('isV2TagsEnabled') && rolev2El) {
+      if (rolev2El) {
         const rolev2Text = rolev2El?.innerText?.trim() ?? '';
         role = !rolev2Text
           ? profileRoles

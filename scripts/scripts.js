@@ -1479,7 +1479,7 @@ export function setMetadata(name, content) {
 }
 
 /**
- * Update Legacy and TQ Tags metadata when isV2TagsEnabled FF is enabled
+ * Update Legacy and TQ Tags metadata
  * @param {Document} document
  */
 export function updateLegacyAndV2Tags() {
@@ -1744,9 +1744,7 @@ async function loadPage() {
     updateTQTagsMetadata();
     decodeAemPageMetaTags();
 
-    if (isFeatureEnabled('isV2TagsEnabled')) {
-      updateLegacyAndV2Tags();
-    }
+    updateLegacyAndV2Tags();
   }
 
   const { suffix: currentPagePath, lang } = getPathDetails();
