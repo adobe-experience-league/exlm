@@ -1,31 +1,32 @@
+import { getConfig } from '../../scripts.js';
 import { COVEO_TOKEN, COVEO_PIPELINE_TEST_BEARER, COVEO_PIPELINE_TEST_TOKEN } from '../../session-keys.js';
 import {
   captureCoveoBearerTokenFromUrl,
   getCoveoBearerTokenForPipelineTest,
-  getCoveoTokenUrl,
   isCoveoPipelineTestEnabled,
 } from './coveo-search-config.js';
 
 /**
- * Session-cached Coveo token fetcher
- * Ensures only ONE HTTP request per browser session for optimal performance
+ * EXLM-5173: Sarika prod API key only — never site / vault search tokens.
  */
-
-let tokenFetchPromise = null;
-let tokenFetchPromiseTest = null;
-
-function getTokenStorageKey() {
-  return isCoveoPipelineTestEnabled() ? COVEO_PIPELINE_TEST_TOKEN : COVEO_TOKEN;
+export function loadPipelineTestCoveoToken() {
+  captureCoveoBearerTokenFromUrl();
+  const bearer = getCoveoBearerTokenForPipelineTest();
+  // eslint-disable-next-line no-console
+  console.info('[Coveo Pipeline Test] Using Sarika prod API key only (no site token)');
+  return bearer;
 }
 
+let tokenFetchPromise = null;
+
 async function fetchCoveoTokenFromService() {
-  const tokenUrl = getCoveoTokenUrl();
+  const { coveoTokenUrl } = getConfig();
 
   try {
     // eslint-disable-next-line no-console
-    console.debug('[Coveo Token] Fetching token from service:', tokenUrl);
+    console.debug('[Coveo Token] Fetching token from service:', coveoTokenUrl);
 
-    const response = await fetch(tokenUrl, {
+    const response = await fetch(coveoTokenUrl, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -44,7 +45,7 @@ async function fetchCoveoTokenFromService() {
     }
 
     try {
-      sessionStorage.setItem(getTokenStorageKey(), data.token);
+      sessionStorage.setItem(COVEO_TOKEN, data.token);
       // eslint-disable-next-line no-console
       console.debug('[Coveo Token] Token cached successfully in sessionStorage');
     } catch (e) {
@@ -62,31 +63,13 @@ async function fetchCoveoTokenFromService() {
   }
 }
 
-function loadPipelineTestBearerToken() {
-  captureCoveoBearerTokenFromUrl();
-  const bearer = getCoveoBearerTokenForPipelineTest();
-  if (bearer) {
-    // eslint-disable-next-line no-console
-    console.info('[Coveo Pipeline Test] Using Sarika prod API key (matches curl Bearer)');
-    return Promise.resolve(bearer);
-  }
-  return fetchCoveoTokenFromService();
-}
-
 export default async function loadCoveoToken() {
   if (isCoveoPipelineTestEnabled()) {
-    const bearer = getCoveoBearerTokenForPipelineTest();
-    if (bearer) {
-      // eslint-disable-next-line no-console
-      console.info('[Coveo Pipeline Test] Using Sarika prod API key (matches curl Bearer)');
-      return bearer;
-    }
+    return loadPipelineTestCoveoToken();
   }
 
-  const storageKey = getTokenStorageKey();
-
   try {
-    const cachedToken = sessionStorage.getItem(storageKey);
+    const cachedToken = sessionStorage.getItem(COVEO_TOKEN);
     if (cachedToken) {
       // eslint-disable-next-line no-console
       console.debug('[Coveo Token] Using cached token from sessionStorage');
@@ -97,30 +80,17 @@ export default async function loadCoveoToken() {
     console.warn('[Coveo Token] sessionStorage not available:', e.message);
   }
 
-  const inFlightPromise = isCoveoPipelineTestEnabled() ? tokenFetchPromiseTest : tokenFetchPromise;
-  if (inFlightPromise) {
+  if (tokenFetchPromise) {
     // eslint-disable-next-line no-console
     console.debug('[Coveo Token] Token fetch already in progress, waiting...');
-    return inFlightPromise;
+    return tokenFetchPromise;
   }
 
-  const fetchPromise = isCoveoPipelineTestEnabled()
-    ? loadPipelineTestBearerToken()
-    : fetchCoveoTokenFromService();
-  if (isCoveoPipelineTestEnabled()) {
-    tokenFetchPromiseTest = fetchPromise;
-  } else {
-    tokenFetchPromise = fetchPromise;
-  }
-
+  tokenFetchPromise = fetchCoveoTokenFromService();
   try {
-    return await fetchPromise;
+    return await tokenFetchPromise;
   } finally {
-    if (isCoveoPipelineTestEnabled()) {
-      tokenFetchPromiseTest = null;
-    } else {
-      tokenFetchPromise = null;
-    }
+    tokenFetchPromise = null;
   }
 }
 

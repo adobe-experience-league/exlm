@@ -1,5 +1,6 @@
 import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
 import {
+  COVEO_SEARCH_TEST,
   getCoveoOrganizationId,
   getCoveoSearchRouting,
   isCoveoPipelineTestEnabled,
@@ -27,11 +28,22 @@ export default async function buildHeadlessSearchEngine(module) {
           };
         }
         if (isCoveoPipelineTestEnabled()) {
-          const { pipeline, searchHub } = getCoveoSearchRouting();
+          const { pipeline } = getCoveoSearchRouting();
           bodyJSON.pipeline = pipeline;
-          bodyJSON.searchHub = searchHub;
+          delete bodyJSON.searchHub;
+          if (request.url) {
+            try {
+              const url = new URL(request.url);
+              if (url.searchParams.has('searchHub')) {
+                url.searchParams.delete('searchHub');
+                request.url = url.toString();
+              }
+            } catch (e) {
+              // ignore
+            }
+          }
           // eslint-disable-next-line no-console
-          console.info('[Coveo Pipeline Test] request routing', { pipeline, searchHub, method: metadata?.method });
+          console.info('[Coveo Pipeline Test] request routing', { pipeline, method: metadata?.method });
         }
         const shouldWriteBody =
           (metadata?.method === 'querySuggest' && window.headlessSolutionProductKey) || isCoveoPipelineTestEnabled();
@@ -48,6 +60,14 @@ export default async function buildHeadlessSearchEngine(module) {
       },
       search: {
         preprocessSearchResponseMiddleware: (data) => {
+          if (isCoveoPipelineTestEnabled() && data?.body?.pipeline === COVEO_SEARCH_TEST.pipeline) {
+            const { warnings } = data.body;
+            if (Array.isArray(warnings)) {
+              data.body.warnings = warnings.filter(
+                (w) => !/searchHub in the query parameters was overridden/i.test(String(w)),
+              );
+            }
+          }
           const processSearchResponseEvent = new CustomEvent(COVEO_SEARCH_CUSTOM_EVENTS.PROCESS_SEARCH_RESPONSE, {});
           document.dispatchEvent(processSearchResponseEvent);
           return data;
