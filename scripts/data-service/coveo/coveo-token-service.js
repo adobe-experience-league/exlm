@@ -1,9 +1,8 @@
-import { getConfig } from '../../scripts.js';
 import { COVEO_TOKEN, COVEO_PIPELINE_TEST_BEARER, COVEO_PIPELINE_TEST_TOKEN } from '../../session-keys.js';
 import {
   captureCoveoBearerTokenFromUrl,
   getCoveoBearerTokenForPipelineTest,
-  getCoveoTokenUrlSuffix,
+  getCoveoTokenUrl,
   isCoveoPipelineTestEnabled,
 } from './coveo-search-config.js';
 
@@ -20,8 +19,7 @@ function getTokenStorageKey() {
 }
 
 async function fetchCoveoTokenFromService() {
-  const { coveoTokenUrl } = getConfig();
-  const tokenUrl = `${coveoTokenUrl}${getCoveoTokenUrlSuffix()}`;
+  const tokenUrl = getCoveoTokenUrl();
 
   try {
     // eslint-disable-next-line no-console
@@ -69,14 +67,9 @@ function loadPipelineTestBearerToken() {
   const bearer = getCoveoBearerTokenForPipelineTest();
   if (bearer) {
     // eslint-disable-next-line no-console
-    console.info('[Coveo Pipeline Test] Using Sarika prod API key from session (matches curl Bearer)');
+    console.info('[Coveo Pipeline Test] Using Sarika prod API key (matches curl Bearer)');
     return Promise.resolve(bearer);
   }
-  // eslint-disable-next-line no-console
-  console.warn(
-    '[Coveo Pipeline Test] No bearer token — site token will override searchHub. '
-      + 'Open once with ?coveoBearerToken=<prod API key from Sarika secretshare>.',
-  );
   return fetchCoveoTokenFromService();
 }
 
