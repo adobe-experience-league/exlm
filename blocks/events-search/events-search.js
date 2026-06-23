@@ -30,7 +30,7 @@ const headlessSubscriptionSyncDepth = new WeakMap();
 const PLACEHOLDER_COUNT_TOKEN = '${count}';
 const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
 
-//Filter UI helpers
+// Filter UI helpers
 function removeFilterGroupOptionsShimmer(optionsContainer) {
   optionsContainer?.querySelector('.events-search-filter-options-shimmer')?.remove();
 }
@@ -54,9 +54,13 @@ function renderFilterOptionCountShimmer(optionEl) {
   const optionLabelEl = optionEl?.querySelector('.events-search-filter-option-label');
   if (!checkbox || !optionLabelEl) return;
   const optionLabel = checkbox.getAttribute('data-label') || checkbox.value;
-  optionLabelEl.innerHTML = `${String(
-    optionLabel ?? '',
-  )}<span class="events-search-filter-option-count events-search-filter-count-shimmer" aria-hidden="true"></span>`;
+  optionLabelEl.replaceChildren(
+    document.createTextNode(String(optionLabel ?? '')),
+    createTag('span', {
+      class: 'events-search-filter-option-count events-search-filter-count-shimmer',
+      'aria-hidden': 'true',
+    }),
+  );
 }
 
 function updateFilterOptionCount(optionEl, count, optionLabel) {
@@ -65,9 +69,9 @@ function updateFilterOptionCount(optionEl, count, optionLabel) {
   if (!checkbox || !optionLabelEl) return;
   if (typeof count === 'number' && count >= 0) {
     checkbox.setAttribute('data-count', String(count));
-    optionLabelEl.innerHTML = `${String(
-      optionLabel ?? '',
-    )}<span class="events-search-filter-option-count"> (${count})</span>`;
+    const countEl = createTag('span', { class: 'events-search-filter-option-count' });
+    countEl.textContent = ` (${count})`;
+    optionLabelEl.replaceChildren(document.createTextNode(String(optionLabel ?? '')), countEl);
   } else {
     checkbox.removeAttribute('data-count');
     optionLabelEl.textContent = String(optionLabel ?? '');
@@ -91,12 +95,13 @@ function buildFilterOptionRow({ groupId, item, index }) {
   checkbox.setAttribute('data-label', String(optionLabel ?? ''));
   if (item.count != null) checkbox.setAttribute('data-count', String(item.count));
   const optionLabelEl = createTag('label', { class: 'events-search-filter-option-label', for: optionId });
+  const labelText = document.createTextNode(String(optionLabel ?? ''));
   if (item.count != null) {
-    optionLabelEl.innerHTML = `${String(optionLabel ?? '')}<span class="events-search-filter-option-count"> (${
-      item.count
-    })</span>`;
+    const countEl = createTag('span', { class: 'events-search-filter-option-count' });
+    countEl.textContent = ` (${item.count})`;
+    optionLabelEl.append(labelText, countEl);
   } else {
-    optionLabelEl.textContent = String(optionLabel ?? '');
+    optionLabelEl.append(labelText);
   }
   optionEl.append(checkbox, optionLabelEl);
   return optionEl;
@@ -105,7 +110,7 @@ function buildFilterOptionRow({ groupId, item, index }) {
 // Dynamic facets (Headless v2)
 const DYNAMIC_FACET_FIELDS = ['el_product', 'el_event_series'];
 
-//Fills count value into a placeholder string
+// Fills count value into a placeholder string
 function fillPlaceholderCount(template, value) {
   const s = String(value);
   return String(template).replaceAll(PLACEHOLDER_COUNT_TOKEN, s).replaceAll('{}', s).replaceAll('{count}', s);
@@ -522,7 +527,6 @@ function renderFilterGroups(block, groups, placeholders) {
           groupId: group.id,
           item: { ...item, overflowHidden: index >= INITIAL_VISIBLE_FILTER_OPTIONS },
           index,
-          placeholders,
         });
         if (group.id === 'el_contenttype') {
           renderFilterOptionCountShimmer(optionRow);
@@ -569,7 +573,7 @@ function updateClearFiltersButtonState(block) {
   clearBtn.classList.toggle('is-active', hasCheckedFilter || hasKeyword);
 }
 
-function isUiFilterValueSelected(filterType, uiValue, selectedValues) {
+function isUiFilterValueSelected(uiValue, selectedValues) {
   return selectedValues.has(uiValue);
 }
 
@@ -589,8 +593,7 @@ function syncFilterUIFromHeadlessState(block, groups) {
 
     checkboxes.forEach((checkbox) => {
       const compositeKey = toCompositeKey(groupId, checkbox.value);
-      const isSelected =
-        isUiFilterValueSelected(groupId, checkbox.value, selectedValues) && !pendingRemovals.has(compositeKey);
+      const isSelected = isUiFilterValueSelected(checkbox.value, selectedValues) && !pendingRemovals.has(compositeKey);
       checkbox.checked = isSelected;
 
       // Mirror checkbox state into ordered tags array (browse-filters handleUriHash/appendTag pattern).
@@ -867,10 +870,6 @@ function findFacetValueInController(controller, value) {
   );
 }
 
-function getCoveoFacetSelectionsForUiValue(uiValue, isSelected) {
-  return [{ value: uiValue, state: isSelected ? 'selected' : 'idle' }];
-}
-
 function getFacetController(filterType) {
   const controllerName = FACET_CONTROLLER_MAP[filterType];
   return controllerName ? window[controllerName] : null;
@@ -894,9 +893,7 @@ function toggleFacetSelection(filterType, value, isChecked) {
   const controller = getFacetController(filterType);
   if (!controller || value === '' || value == null) return;
 
-  getCoveoFacetSelectionsForUiValue(value, isChecked).forEach(({ value: coveoValue }) => {
-    applyCoveoFacetValueSelection(controller, coveoValue, isChecked);
-  });
+  applyCoveoFacetValueSelection(controller, value, isChecked);
 }
 
 function renderActiveFilterCallouts(block) {
