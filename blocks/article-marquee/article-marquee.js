@@ -5,6 +5,7 @@ import {
   createPlaceholderSpan,
   fetchLanguagePlaceholders,
   htmlToElement,
+  setMetadata,
 } from '../../scripts/scripts.js';
 import { createOptimizedPicture, decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 
@@ -74,6 +75,9 @@ function createOptions(container, readTimeText) {
   container.appendChild(options);
   container.appendChild(lastUpdated);
   if (readTimeText) container.appendChild(readTime);
+
+  // TESTING: hardcode translation-mechanism to 'MT' for testing purposes
+  setMetadata('translation-mechanism', 'HT');
 
   if (getMetadata('translation-mechanism')?.trim().toUpperCase() === 'MT') {
     const aiTranslated = htmlToElement(`
