@@ -1,5 +1,6 @@
 import buildHeadlessSearchEngine from './engine.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
+import { getCoveoSearchRouting } from '../data-service/coveo/coveo-search-config.js';
 import { handleCoverSearchSubmit } from '../../blocks/browse-filters/browse-filter-utils.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../search/search-utils.js';
 
@@ -149,10 +150,11 @@ export default async function initiateCoveoHeadlessSearch({
         const headlessSearchEngine = await buildHeadlessSearchEngine(module);
         const statusControllers = module.buildSearchStatus(headlessSearchEngine);
 
+        const { searchHub } = getCoveoSearchRouting();
         configureSearchHeadlessEngine({
           module,
           searchEngine: headlessSearchEngine,
-          searchHub: 'Experience League Learning Hub',
+          searchHub,
           contextObject: null,
           advancedQueryRule: '',
         });

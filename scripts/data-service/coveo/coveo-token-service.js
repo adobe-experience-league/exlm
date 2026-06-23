@@ -1,32 +1,32 @@
 import { getConfig } from '../../scripts.js';
-import { COVEO_TOKEN } from '../../session-keys.js';
+import { COVEO_TOKEN, COVEO_PIPELINE_TEST_TOKEN } from '../../session-keys.js';
+import { getCoveoTokenUrlSuffix, isCoveoPipelineTestEnabled } from './coveo-search-config.js';
 
 /**
  * Session-cached Coveo token fetcher
  * Ensures only ONE HTTP request per browser session for optimal performance
  */
 
-// In-memory promise cache to prevent duplicate concurrent requests
 let tokenFetchPromise = null;
+let tokenFetchPromiseTest = null;
 
-/**
- * Fetches token from AIO Runtime service
- * @returns {Promise<string>} The Coveo search token
- * @private
- */
+function getTokenStorageKey() {
+  return isCoveoPipelineTestEnabled() ? COVEO_PIPELINE_TEST_TOKEN : COVEO_TOKEN;
+}
+
 async function fetchCoveoTokenFromService() {
   const { coveoTokenUrl } = getConfig();
+  const tokenUrl = `${coveoTokenUrl}${getCoveoTokenUrlSuffix()}`;
 
   try {
     // eslint-disable-next-line no-console
-    console.debug('[Coveo Token] Fetching token from service:', coveoTokenUrl);
+    console.debug('[Coveo Token] Fetching token from service:', tokenUrl);
 
-    const response = await fetch(coveoTokenUrl, {
+    const response = await fetch(tokenUrl, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-      // Use default credentials to send cookies/origin headers
       credentials: 'same-origin',
     });
 
@@ -40,13 +40,11 @@ async function fetchCoveoTokenFromService() {
       throw new Error('Token service returned empty token');
     }
 
-    // Cache the token in sessionStorage for subsequent page loads
     try {
-      sessionStorage.setItem(COVEO_TOKEN, data.token);
+      sessionStorage.setItem(getTokenStorageKey(), data.token);
       // eslint-disable-next-line no-console
       console.debug('[Coveo Token] Token cached successfully in sessionStorage');
     } catch (e) {
-      // sessionStorage might be full or disabled
       // eslint-disable-next-line no-console
       console.warn('[Coveo Token] Failed to cache token:', e.message);
     }
@@ -61,41 +59,42 @@ async function fetchCoveoTokenFromService() {
   }
 }
 
-/**
- * Fetches Coveo token from AIO Runtime service with session caching
- * @returns {Promise<string>} The Coveo search token
- * @throws {Error} If token fetch fails after all attempts
- */
 export default async function loadCoveoToken() {
-  // 1. Check sessionStorage first (cached from previous page loads)
+  const storageKey = getTokenStorageKey();
+
   try {
-    const cachedToken = sessionStorage.getItem(COVEO_TOKEN);
+    const cachedToken = sessionStorage.getItem(storageKey);
     if (cachedToken) {
       // eslint-disable-next-line no-console
       console.debug('[Coveo Token] Using cached token from sessionStorage');
       return cachedToken;
     }
   } catch (e) {
-    // sessionStorage might be disabled in private mode
     // eslint-disable-next-line no-console
     console.warn('[Coveo Token] sessionStorage not available:', e.message);
   }
 
-  // 2. Check if a fetch is already in progress (prevents duplicate concurrent requests)
-  if (tokenFetchPromise) {
+  const inFlightPromise = isCoveoPipelineTestEnabled() ? tokenFetchPromiseTest : tokenFetchPromise;
+  if (inFlightPromise) {
     // eslint-disable-next-line no-console
     console.debug('[Coveo Token] Token fetch already in progress, waiting...');
-    return tokenFetchPromise;
+    return inFlightPromise;
   }
 
-  // 3. Fetch token from AIO Runtime service
-  tokenFetchPromise = fetchCoveoTokenFromService();
+  const fetchPromise = fetchCoveoTokenFromService();
+  if (isCoveoPipelineTestEnabled()) {
+    tokenFetchPromiseTest = fetchPromise;
+  } else {
+    tokenFetchPromise = fetchPromise;
+  }
 
   try {
-    const token = await tokenFetchPromise;
-    return token;
+    return await fetchPromise;
   } finally {
-    // Clear the promise cache after completion (success or failure)
-    tokenFetchPromise = null;
+    if (isCoveoPipelineTestEnabled()) {
+      tokenFetchPromiseTest = null;
+    } else {
+      tokenFetchPromise = null;
+    }
   }
 }
