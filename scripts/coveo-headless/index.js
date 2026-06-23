@@ -122,12 +122,25 @@ export const fragment = () => window.location.hash.slice(1);
 
 const hashURL = fragment();
 
+function buildHeadlessFacet(module, searchEngine, field, defaults = {}, overrides = {}) {
+  const fieldOverrides = overrides[field] || {};
+  const { numberOfValues: overrideCount, options: overrideOptions = {} } = fieldOverrides;
+  return module.buildFacet(searchEngine, {
+    options: {
+      field,
+      numberOfValues: overrideCount ?? defaults.numberOfValues ?? 8,
+      ...overrideOptions,
+    },
+  });
+}
+
 export default async function initiateCoveoHeadlessSearch({
   handleSearchEngineSubscription,
   renderPageNumbers,
   numberOfResults,
   renderSearchQuerySummary,
   handleSearchBoxSubscription,
+  facetOverrides = {},
 }) {
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
@@ -151,47 +164,41 @@ export default async function initiateCoveoHeadlessSearch({
           },
         });
 
-        const headlessTypeFacet = module.buildFacet(headlessSearchEngine, {
-          options: {
-            field: 'el_contenttype',
-          },
-          numberOfValues: 8,
-        });
+        const headlessTypeFacet = buildHeadlessFacet(
+          module,
+          headlessSearchEngine,
+          'el_contenttype',
+          {},
+          facetOverrides,
+        );
 
-        const headlessRoleFacet = module.buildFacet(headlessSearchEngine, {
-          options: {
-            field: 'el_role',
-          },
-          numberOfValues: 8,
-        });
+        const headlessRoleFacet = buildHeadlessFacet(module, headlessSearchEngine, 'el_role', {}, facetOverrides);
 
-        const headlessExperienceFacet = module.buildFacet(headlessSearchEngine, {
-          options: {
-            field: 'el_level',
-          },
-          numberOfValues: 8,
-        });
+        const headlessExperienceFacet = buildHeadlessFacet(
+          module,
+          headlessSearchEngine,
+          'el_level',
+          {},
+          facetOverrides,
+        );
 
-        const headlessProductFacet = module.buildFacet(headlessSearchEngine, {
-          options: {
-            field: 'el_product',
-          },
-          numberOfValues: 8,
-        });
+        const headlessProductFacet = buildHeadlessFacet(module, headlessSearchEngine, 'el_product', {}, facetOverrides);
 
-        const headlessAuthorTypeFacet = module.buildFacet(headlessSearchEngine, {
-          options: {
-            field: 'author_type',
-          },
-          numberOfValues: 8,
-        });
+        const headlessAuthorTypeFacet = buildHeadlessFacet(
+          module,
+          headlessSearchEngine,
+          'author_type',
+          {},
+          facetOverrides,
+        );
 
-        const headlessEventSeriesFacet = module.buildFacet(headlessSearchEngine, {
-          options: {
-            field: 'el_event_series',
-          },
-          numberOfValues: 8,
-        });
+        const headlessEventSeriesFacet = buildHeadlessFacet(
+          module,
+          headlessSearchEngine,
+          'el_event_series',
+          {},
+          facetOverrides,
+        );
 
         const headlessPager = module.buildPager(headlessSearchEngine, {
           initialState: {

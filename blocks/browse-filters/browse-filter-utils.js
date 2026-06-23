@@ -6,6 +6,57 @@ const SUB_FACET_MAP = {
   Community: COMMUNITY_SEARCH_FACET,
 };
 
+/**
+ * Full event-type filter expressions. Applied via `cq`.
+ */
+const EVENT_TYPE_FILTER_CQ_BY_UI = Object.freeze({
+  'Event|On Demand Event': '(@el_contenttype=="Event|On Demand Event")',
+  'Event|Upcoming Event': '(@el_contenttype=="Event|Upcoming Event")',
+});
+
+/** @param {string[]} checkedUiValues */
+export function buildEventTypeFilterConstantQuery(checkedUiValues) {
+  const fragments = checkedUiValues.map((uiValue) => EVENT_TYPE_FILTER_CQ_BY_UI[uiValue]).filter(Boolean);
+  if (!fragments.length) return '';
+  return fragments.length === 1 ? fragments[0] : `(${fragments.join(' OR ')})`;
+}
+
+function isEventTypeValue(uiValue) {
+  return Boolean(EVENT_TYPE_FILTER_CQ_BY_UI[uiValue]);
+}
+
+/**
+ * Gets Coveo facet selections for event type UI value.
+ * Simplified v2-only version - returns exact match only.
+ * @param {string} uiValue - Event type UI value
+ * @param {boolean} isSelected - Whether selected or idle
+ * @returns {Array} Facet selections
+ */
+export function getEventTypeCoveoFacetSelections(uiValue, isSelected) {
+  const state = isSelected ? 'selected' : 'idle';
+  return [{ value: uiValue, state }];
+}
+
+/**
+ * Checks if event type UI value is selected.
+ * Simplified v2-only version - checks exact match only.
+ * @param {string} uiValue - Event type UI value
+ * @param {Set} selectedValues - Set of selected Coveo facet values
+ * @returns {boolean} True if selected
+ */
+export function isEventTypeUiValueSelected(uiValue, selectedValues) {
+  return selectedValues.has(uiValue);
+}
+
+/**
+ * Checks if UI value is a known event type
+ * @param {string} uiValue - UI value to check
+ * @returns {boolean} True if event type
+ */
+export function isMappedEventTypeFilterValue(uiValue) {
+  return isEventTypeValue(uiValue);
+}
+
 let placeholders = {};
 try {
   placeholders = await fetchLanguagePlaceholders();
@@ -377,6 +428,16 @@ export const getParsedSolutionsQuery = (solutionTags) => {
 };
 
 export const getCoveoFacets = (type, value) => {
+  // For event types, return exact match
+  if (isEventTypeValue(type)) {
+    return [
+      {
+        state: value ? 'selected' : 'idle',
+        value: type,
+      },
+    ];
+  }
+
   const subFacets = SUB_FACET_MAP[type];
   if (!subFacets) {
     return [
