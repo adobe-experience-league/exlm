@@ -1,6 +1,11 @@
 import { getConfig } from '../../scripts.js';
-import { COVEO_TOKEN, COVEO_PIPELINE_TEST_TOKEN } from '../../session-keys.js';
-import { getCoveoTokenUrlSuffix, isCoveoPipelineTestEnabled } from './coveo-search-config.js';
+import { COVEO_TOKEN, COVEO_PIPELINE_TEST_BEARER, COVEO_PIPELINE_TEST_TOKEN } from '../../session-keys.js';
+import {
+  captureCoveoBearerTokenFromUrl,
+  getCoveoBearerTokenForPipelineTest,
+  getCoveoTokenUrlSuffix,
+  isCoveoPipelineTestEnabled,
+} from './coveo-search-config.js';
 
 /**
  * Session-cached Coveo token fetcher
@@ -59,7 +64,30 @@ async function fetchCoveoTokenFromService() {
   }
 }
 
+function loadPipelineTestBearerToken() {
+  captureCoveoBearerTokenFromUrl();
+  const bearer = getCoveoBearerTokenForPipelineTest();
+  if (bearer) {
+    // eslint-disable-next-line no-console
+    console.info('[Coveo Pipeline Test] Using Sarika prod API key from session (matches curl Bearer)');
+    return Promise.resolve(bearer);
+  }
+  // eslint-disable-next-line no-console
+  console.warn(
+    '[Coveo Pipeline Test] No bearer token — site token will override searchHub. '
+      + 'Open once with ?coveoBearerToken=<prod API key from Sarika secretshare>.',
+  );
+  return fetchCoveoTokenFromService();
+}
+
 export default async function loadCoveoToken() {
+  if (isCoveoPipelineTestEnabled()) {
+    const bearer = getCoveoBearerTokenForPipelineTest();
+    if (bearer) {
+      return bearer;
+    }
+  }
+
   const storageKey = getTokenStorageKey();
 
   try {
@@ -81,7 +109,9 @@ export default async function loadCoveoToken() {
     return inFlightPromise;
   }
 
-  const fetchPromise = fetchCoveoTokenFromService();
+  const fetchPromise = isCoveoPipelineTestEnabled()
+    ? loadPipelineTestBearerToken()
+    : fetchCoveoTokenFromService();
   if (isCoveoPipelineTestEnabled()) {
     tokenFetchPromiseTest = fetchPromise;
   } else {
@@ -96,5 +126,15 @@ export default async function loadCoveoToken() {
     } else {
       tokenFetchPromise = null;
     }
+  }
+}
+
+export function clearCoveoTokenCache() {
+  try {
+    sessionStorage.removeItem(COVEO_TOKEN);
+    sessionStorage.removeItem(COVEO_PIPELINE_TEST_TOKEN);
+    sessionStorage.removeItem(COVEO_PIPELINE_TEST_BEARER);
+  } catch (e) {
+    // ignore
   }
 }

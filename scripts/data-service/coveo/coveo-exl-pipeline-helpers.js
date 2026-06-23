@@ -1,10 +1,9 @@
-import { URL_SPECIAL_CASE_LOCALES, fetchLanguagePlaceholders, getConfig } from '../../scripts.js';
+import { URL_SPECIAL_CASE_LOCALES, fetchLanguagePlaceholders } from '../../scripts.js';
 import { rewriteDocsPath } from '../../utils/path-utils.js';
 import CoveoDataService from './coveo-data-service.js';
 import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET } from './coveo-exl-pipeline-constants.js';
-import { getCoveoSearchRouting, isCoveoPipelineTestEnabled } from './coveo-search-config.js';
+import { getCoveoSearchResultsUrl, getCoveoSearchRouting, isCoveoPipelineTestEnabled } from './coveo-search-config.js';
 
-const { coveoSearchResultsUrl } = getConfig();
 const MAX_NUMBER_OF_VALUES_PER_BATCH = 100;
 
 // Most of these are copied from an existing call. I do not believe we need all of them, so this list could probably be pruned.
@@ -195,7 +194,7 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
   }
   const { searchHub, pipeline } = getCoveoSearchRouting();
   const dataSource = {
-    url: coveoSearchResultsUrl,
+    url: getCoveoSearchResultsUrl(),
     param: {
       locale:
         URL_SPECIAL_CASE_LOCALES.get(document.querySelector('html').lang) ||
