@@ -15,6 +15,11 @@ import loadCoveoToken from './coveo-token-service.js';
 // Prefetch Coveo token during idle time, Skips if token is already cached.
 
 function prefetchCoveoTokenIdle() {
+  if (window.location.pathname.includes('/events-search')) {
+    // eslint-disable-next-line no-console
+    console.debug('[Coveo Prefetch] Skipping on events-search — EXLM-5173 uses PipelineTest bearer');
+    return;
+  }
   // Check if token is already cached
   const cached = sessionStorage.getItem('coveoToken');
   if (cached) {
