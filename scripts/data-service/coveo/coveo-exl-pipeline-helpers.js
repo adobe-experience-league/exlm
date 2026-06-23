@@ -200,8 +200,7 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
         URL_SPECIAL_CASE_LOCALES.get(document.querySelector('html').lang) ||
         document.querySelector('html').lang ||
         'en',
-      searchHub,
-      ...(isCoveoPipelineTestEnabled() ? { pipeline } : {}),
+      ...(isCoveoPipelineTestEnabled() ? { pipeline } : { searchHub }),
       numberOfResults: param.noOfResults,
       excerptLength: 200,
       sortCriteria: param.sortCriteria,

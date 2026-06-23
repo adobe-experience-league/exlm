@@ -1,6 +1,6 @@
 import buildHeadlessSearchEngine from './engine.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
-import { getCoveoSearchRouting } from '../data-service/coveo/coveo-search-config.js';
+import { getCoveoSearchRouting, isCoveoPipelineTestEnabled } from '../data-service/coveo/coveo-search-config.js';
 import { handleCoverSearchSubmit } from '../../blocks/browse-filters/browse-filter-utils.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../search/search-utils.js';
 
@@ -27,7 +27,7 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
   const context = contextObject ? module.loadContextActions(searchEngine).setContext(contextObject) : null;
   const searchConfiguration = module.loadSearchConfigurationActions(searchEngine).updateSearchConfiguration({
     locale: locales.get(document.querySelector('html').lang) || document.querySelector('html').lang || 'en',
-    searchHub,
+    ...(searchHub ? { searchHub } : {}),
   });
   const fields = module
     .loadFieldActions(searchEngine)
@@ -141,7 +141,7 @@ export default async function initiateCoveoHeadlessSearch({
         configureSearchHeadlessEngine({
           module,
           searchEngine: headlessSearchEngine,
-          searchHub,
+          searchHub: isCoveoPipelineTestEnabled() ? undefined : searchHub,
           contextObject: null,
           advancedQueryRule: '',
         });

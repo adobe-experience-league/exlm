@@ -79,6 +79,12 @@ export function initCoveoPipelineTestForEventsSearch() {
   captureCoveoBearerTokenFromUrl();
   pipelineTestEnabled = !readPipelineTestOptOutFromUrl();
   if (pipelineTestEnabled) {
+    try {
+      sessionStorage.removeItem('coveoToken');
+      sessionStorage.removeItem('coveoPipelineTestToken');
+    } catch (e) {
+      // ignore
+    }
     // eslint-disable-next-line no-console
     console.info('[Coveo Pipeline Test] EXLM-5173 — hardcoded Sarika routing', {
       org: COVEO_PROD_ORG_ID,
