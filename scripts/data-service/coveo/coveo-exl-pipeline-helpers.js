@@ -2,6 +2,7 @@ import { URL_SPECIAL_CASE_LOCALES, fetchLanguagePlaceholders, getConfig } from '
 import { rewriteDocsPath } from '../../utils/path-utils.js';
 import CoveoDataService from './coveo-data-service.js';
 import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET } from './coveo-exl-pipeline-constants.js';
+import { getCoveoSearchRouting, isCoveoPipelineTestEnabled } from './coveo-search-config.js';
 
 const { coveoSearchResultsUrl } = getConfig();
 const MAX_NUMBER_OF_VALUES_PER_BATCH = 100;
@@ -192,6 +193,7 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
       ...param.context,
     };
   }
+  const { searchHub, pipeline } = getCoveoSearchRouting();
   const dataSource = {
     url: coveoSearchResultsUrl,
     param: {
@@ -199,7 +201,8 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
         URL_SPECIAL_CASE_LOCALES.get(document.querySelector('html').lang) ||
         document.querySelector('html').lang ||
         'en',
-      searchHub: `Experience League Learning Hub`,
+      searchHub,
+      ...(isCoveoPipelineTestEnabled() ? { pipeline } : {}),
       numberOfResults: param.noOfResults,
       excerptLength: 200,
       sortCriteria: param.sortCriteria,

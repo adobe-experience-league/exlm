@@ -1,4 +1,5 @@
 import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
+import { getCoveoSearchRouting, isCoveoPipelineTestEnabled } from '../data-service/coveo/coveo-search-config.js';
 import { getConfig } from '../scripts.js';
 import { generateCustomContext, generateMlParameters, COVEO_SEARCH_CUSTOM_EVENTS } from '../search/search-utils.js';
 
@@ -21,6 +22,17 @@ export default async function buildHeadlessSearchEngine(module) {
             ...context,
             ...customContext,
           };
+        }
+        if (isCoveoPipelineTestEnabled()) {
+          const { pipeline, searchHub } = getCoveoSearchRouting();
+          bodyJSON.pipeline = pipeline;
+          bodyJSON.searchHub = searchHub;
+          // eslint-disable-next-line no-console
+          console.info('[Coveo Pipeline Test] request routing', { pipeline, searchHub, method: metadata?.method });
+        }
+        const shouldWriteBody =
+          (metadata?.method === 'querySuggest' && window.headlessSolutionProductKey) || isCoveoPipelineTestEnabled();
+        if (shouldWriteBody) {
           request.body = JSON.stringify(bodyJSON);
         }
         const preProcessEvent = new CustomEvent(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, {
