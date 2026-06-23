@@ -1479,7 +1479,7 @@ export function setMetadata(name, content) {
 }
 
 /**
- * Update Legacy and TQ Tags metadata when isV2TagsEnabled FF is enabled
+ * Update Legacy and TQ Tags metadata
  * @param {Document} document
  */
 export function updateLegacyAndV2Tags() {
@@ -1585,6 +1585,17 @@ export function updateTQTagsMetadata() {
       console.error(`Failed to parse metadata for ${key}:`, e, metaTag);
     }
   });
+}
+
+/**
+ * Checks if content is valid v2 tag format (JSON)
+ * @param {string} content - Content to check
+ * @returns {boolean} True if content is valid JSON format
+ */
+export function isV2TagFormat(content) {
+  if (!content) return false;
+  const trimmed = content.trim();
+  return trimmed.startsWith('[{') || trimmed.startsWith('{');
 }
 
 /**
@@ -1733,9 +1744,7 @@ async function loadPage() {
     updateTQTagsMetadata();
     decodeAemPageMetaTags();
 
-    if (isFeatureEnabled('isV2TagsEnabled')) {
-      updateLegacyAndV2Tags();
-    }
+    updateLegacyAndV2Tags();
   }
 
   const { suffix: currentPagePath, lang } = getPathDetails();

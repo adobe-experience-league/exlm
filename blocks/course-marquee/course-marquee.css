@@ -181,6 +181,70 @@
   white-space: nowrap;
 }
 
+/* AI Translated label + tooltip */
+.course-marquee .ai-translated-label {
+  font-weight: var(--font-weight-normal);
+}
+
+.course-marquee .ai-translated-item {
+  position: relative;
+}
+
+.course-marquee .ai-translated-info-icon {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.course-marquee .ai-translated-info-icon .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.course-marquee .ai-translated-info-icon .icon img,
+.course-marquee .ai-translated-info-icon .icon svg {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) invert(1);
+}
+
+.course-marquee .ai-translated-tooltip {
+  background-color: var(--spectrum-gray-600);
+  border-radius: 4px;
+  color: var(--spectrum-gray-50);
+  display: none;
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-normal);
+  padding: 2px 8px 4px;
+  position: absolute;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: break-word;
+  width: max-content;
+  max-width: 120px;
+  z-index: 1;
+  line-height: 1.5;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+}
+
+.course-marquee .ai-translated-tooltip::after {
+  border-width: 4px;
+  border-style: solid;
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  margin-left: -4px;
+  border-color: var(--spectrum-gray-600) transparent transparent transparent;
+}
+
+.course-marquee .ai-translated-item:hover .ai-translated-tooltip {
+  display: block;
+}
+
 .section.course-marquee-container > :not(.course-marquee-wrapper) {
   max-width: 792px;
 }

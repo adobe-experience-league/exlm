@@ -22,7 +22,6 @@ const duration = document.querySelector('meta[name="duration"]')?.content || '';
  */
 const getMetaContent = (name) => document.querySelector(`meta[name="${name}"]`)?.content || '';
 
-// TODO: Once the legacy tags are decommissioned, the V2 keys will need to be removed.
 const solution = getMetaContent('solution')?.split(',')[0].toLowerCase() || '';
 const fullSolution = getMetaContent('solution');
 const feature = getMetaContent('feature')?.toLowerCase() || '';
@@ -31,13 +30,6 @@ const subFeature = getMetaContent('sub-feature')?.toLowerCase() || '';
 const level = getMetaContent('level');
 const topic = getMetaContent('topic');
 const industry = getMetaContent('industry');
-const productV2 = getMetaContent('product_v2');
-const subFeatureV2 = getMetaContent('subfeature_v2')?.toLowerCase() || '';
-const featureV2 = getMetaContent('feature_v2')?.toLowerCase() || '';
-const roleV2 = getMetaContent('role_v2');
-const levelV2 = getMetaContent('level_v2');
-const topicV2 = getMetaContent('topic_v2');
-const industryV2 = getMetaContent('industry_v2');
 
 const UEFilters = {
   Role: '',
@@ -315,14 +307,6 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       level,
       topic,
       industry,
-      // TODO: Once the legacy tags are decommissioned, the V2 keys will need to be removed.
-      productV2,
-      subFeatureV2,
-      featureV2,
-      roleV2,
-      levelV2,
-      topicV2,
-      industryV2,
     },
   };
   if (containsAtomicSearch && !searchTrackingData) {
@@ -388,13 +372,6 @@ export function pushComponentClick(data) {
       linkType: data.linkType || '',
       solution: data.solution || '',
       position: data.position || '',
-      productV2: '',
-      featureV2: '',
-      subFeatureV2: '',
-      topicV2: '',
-      industryV2: '',
-      roleV2: '',
-      levelV2: '',
     },
   });
 }
@@ -1216,13 +1193,6 @@ function pushComponentImpressionEvent(data) {
       linkTitle: data.linkTitle || '',
       linkType: data.linkType || '',
       solution: data.solution || '',
-      productV2: '',
-      featureV2: '',
-      subFeatureV2: '',
-      topicV2: '',
-      industryV2: '',
-      roleV2: '',
-      levelV2: '',
     },
   });
 }
