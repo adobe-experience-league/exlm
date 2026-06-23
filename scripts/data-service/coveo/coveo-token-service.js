@@ -77,6 +77,8 @@ export default async function loadCoveoToken() {
   if (isCoveoPipelineTestEnabled()) {
     const bearer = getCoveoBearerTokenForPipelineTest();
     if (bearer) {
+      // eslint-disable-next-line no-console
+      console.info('[Coveo Pipeline Test] Using Sarika prod API key (matches curl Bearer)');
       return bearer;
     }
   }
