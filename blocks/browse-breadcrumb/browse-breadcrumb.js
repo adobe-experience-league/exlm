@@ -1,5 +1,41 @@
 import ffetch from '../../scripts/ffetch.js';
-import { getEDSLink, getLink, getPathDetails, createPlaceholderSpan } from '../../scripts/scripts.js';
+import {
+  getEDSLink,
+  getLink,
+  getPathDetails,
+  createPlaceholderSpan,
+  fetchLanguagePlaceholders,
+  htmlToElement,
+} from '../../scripts/scripts.js';
+import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
+
+async function addMTNotice(block) {
+  const { lang } = getPathDetails();
+  const translationMechanism = getMetadata('translation-mechanism');
+  if (lang === 'en' || translationMechanism?.trim().toUpperCase() !== 'MT') return;
+
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', err);
+  }
+
+  const notice = htmlToElement(`
+    <div class="browse-breadcrumb-mt-notice">
+      <span>${placeholders?.automaticTranslation || 'Automatically translated'}</span>
+      <div class="browse-breadcrumb-mt-tooltip-container">
+        <span class="icon icon-info"></span>
+        <span class="browse-breadcrumb-mt-tooltip">${
+          placeholders?.changeLanguageTooltip || 'Use the Language Selector to view the English version of this page.'
+        }</span>
+      </div>
+    </div>
+  `);
+  decorateIcons(notice);
+  block.appendChild(notice);
+}
 
 export default async function decorate(block) {
   // to avoid dublication when editing
@@ -49,4 +85,6 @@ export default async function decorate(block) {
         return nextCrumbSubPath;
       });
     });
+
+  addMTNotice(block);
 }
