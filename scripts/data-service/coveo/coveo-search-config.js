@@ -17,6 +17,12 @@ export const COVEO_SEARCH_TEST = Object.freeze({
 export const COVEO_PROD_ORG_ID = 'adobev2prod9e382h1q';
 export const COVEO_PROD_SEARCH_BASE_URL = 'https://platform.cloud.coveo.com/rest/search/v2';
 
+/**
+ * EXLM-5173 QA branch only — Sarika prod API key (same as ticket curl).
+ * REMOVE before merging to main.
+ */
+const COVEO_PIPELINE_TEST_API_KEY = 'xx7fb3414b-3741-4a47-96d9-8270b6b10958';
+
 const BEARER_TOKEN_PARAM = 'coveoBearerToken';
 const PIPELINE_TEST_PARAM = 'coveoPipelineTest';
 
@@ -41,9 +47,9 @@ function stripBearerTokenFromUrl() {
 
 export function getCoveoBearerTokenForPipelineTest() {
   try {
-    return sessionStorage.getItem(COVEO_PIPELINE_TEST_BEARER);
+    return sessionStorage.getItem(COVEO_PIPELINE_TEST_BEARER) || COVEO_PIPELINE_TEST_API_KEY;
   } catch (e) {
-    return null;
+    return COVEO_PIPELINE_TEST_API_KEY;
   }
 }
 
@@ -77,7 +83,7 @@ export function initCoveoPipelineTestForEventsSearch() {
     console.info('[Coveo Pipeline Test] EXLM-5173 — hardcoded Sarika routing', {
       org: COVEO_PROD_ORG_ID,
       ...COVEO_SEARCH_TEST,
-      bearerToken: getCoveoBearerTokenForPipelineTest() ? 'session' : 'missing — add ?coveoBearerToken=<prod API key>',
+      bearerToken: getCoveoBearerTokenForPipelineTest() ? 'configured' : 'missing',
     });
   }
   return pipelineTestEnabled;
@@ -89,10 +95,21 @@ export function initCoveoPipelineTestFromUrl() {
 }
 
 export function isCoveoPipelineTestEnabled() {
-  if (pipelineTestEnabled === null) {
-    return initCoveoPipelineTestForEventsSearch();
-  }
-  return pipelineTestEnabled;
+  return pipelineTestEnabled === true;
+}
+
+/** Suffix for coveo-token when PipelineTest is active (converter may honor searchHub param). */
+export function getCoveoTokenUrlSuffix() {
+  if (!isCoveoPipelineTestEnabled()) return '';
+  const { searchHub } = COVEO_SEARCH_TEST;
+  return `&searchHub=${encodeURIComponent(searchHub)}&pipelineTest=true`;
+}
+
+export function getCoveoTokenUrl() {
+  const { coveoTokenUrl, lang } = getConfig();
+  if (!isCoveoPipelineTestEnabled()) return coveoTokenUrl;
+  const language = lang || 'en';
+  return `https://experienceleague.adobe.com/api/action/coveo-token?lang=${language}${getCoveoTokenUrlSuffix()}`;
 }
 
 /** @returns {{ searchHub: string, pipeline: string }} */
@@ -109,11 +126,4 @@ export function getCoveoSearchResultsUrl() {
   const { coveoSearchResultsUrl } = getConfig();
   if (!isCoveoPipelineTestEnabled()) return coveoSearchResultsUrl;
   return `${COVEO_PROD_SEARCH_BASE_URL}?organizationId=${COVEO_PROD_ORG_ID}`;
-}
-
-/** Suffix for coveo-token when PipelineTest is active (converter may honor searchHub param). */
-export function getCoveoTokenUrlSuffix() {
-  if (!isCoveoPipelineTestEnabled()) return '';
-  const { searchHub } = COVEO_SEARCH_TEST;
-  return `&searchHub=${encodeURIComponent(searchHub)}&pipelineTest=true`;
 }
