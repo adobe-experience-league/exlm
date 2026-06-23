@@ -609,13 +609,22 @@ const navDecorator = async (navBlock, decoratorOptions) => {
         const placeholders = decoratorOptions.placeholders ?? {};
         const premiumLearningLabel = placeholders?.premiumLearningHeaderLabel || 'Premium Learning';
         const { premiumHomeUrl } = getConfig();
-        desktopUl.appendChild(
-          htmlToElement(
-            `<li class="nav-item nav-item-root nav-item-leaf">
-              <a href="${premiumHomeUrl}" title="${premiumLearningLabel}">${premiumLearningLabel}</a>
-            </li>`,
-          ),
+        const plItem = htmlToElement(
+          `<li class="nav-item nav-item-root nav-item-leaf">
+            <a href="${premiumHomeUrl}" title="${premiumLearningLabel}">${premiumLearningLabel}</a>
+          </li>`,
         );
+        desktopUl.appendChild(plItem);
+        const mobileNavUl = mobileDrawer.querySelector('.nav-mobile-body > ul');
+        if (mobileNavUl) {
+          const firstMobileItem = mobileNavUl.querySelector('.nav-item-mobile');
+          const plMobileItem = plItem.cloneNode(true);
+          if (firstMobileItem) {
+            mobileNavUl.insertBefore(plMobileItem, firstMobileItem);
+          } else {
+            mobileNavUl.appendChild(plMobileItem);
+          }
+        }
       }
     })
     .catch((err) => {
