@@ -573,10 +573,6 @@ function updateClearFiltersButtonState(block) {
   clearBtn.classList.toggle('is-active', hasCheckedFilter || hasKeyword);
 }
 
-function isUiFilterValueSelected(uiValue, selectedValues) {
-  return selectedValues.has(uiValue);
-}
-
 function syncFilterUIFromHeadlessState(block, groups) {
   const { tags: activeTags, pendingRemovals } = getFilterState(block);
 
@@ -593,7 +589,7 @@ function syncFilterUIFromHeadlessState(block, groups) {
 
     checkboxes.forEach((checkbox) => {
       const compositeKey = toCompositeKey(groupId, checkbox.value);
-      const isSelected = isUiFilterValueSelected(checkbox.value, selectedValues) && !pendingRemovals.has(compositeKey);
+      const isSelected = selectedValues.has(checkbox.value) && !pendingRemovals.has(compositeKey);
       checkbox.checked = isSelected;
 
       // Mirror checkbox state into ordered tags array (browse-filters handleUriHash/appendTag pattern).

@@ -377,16 +377,6 @@ export const getParsedSolutionsQuery = (solutionTags) => {
 };
 
 export const getCoveoFacets = (type, value) => {
-  // For event types, return exact match
-  if (isEventTypeValue(type)) {
-    return [
-      {
-        state: value ? 'selected' : 'idle',
-        value: type,
-      },
-    ];
-  }
-
   const subFacets = SUB_FACET_MAP[type];
   if (!subFacets) {
     return [
