@@ -76,7 +76,6 @@ const fieldsToInclude = [
   'el_event_type',
   'el_event_speakers_name',
   'el_event_speakers_profile_picture_url',
-  'el_event_duration',
 ];
 
 let placeholders = {};
@@ -215,8 +214,7 @@ const BrowseCardsDelegate = (() => {
    */
   const handlePLService = async () => {
     const config = getConfig();
-    const pathDetails = getPathDetails();
-    const premiumlearningService = new PLDataService(param, config, pathDetails);
+    const premiumlearningService = new PLDataService(param, config);
     const cardData = await premiumlearningService.fetchDataFromSource();
 
     if (!cardData) {

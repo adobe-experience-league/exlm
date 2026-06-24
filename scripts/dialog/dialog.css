@@ -67,8 +67,7 @@ dialog[data-type] {
 }
 
 .exl-dialog-header-expand,
-.exl-dialog-header-close,
-.exl-dialog-header-clear {
+.exl-dialog-header-close {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,6 +86,9 @@ dialog[data-type] {
 
 /* Text control (e.g. Clear) — secondary outline button, distinct from icon-only controls */
 .exl-dialog-header-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: auto;
   min-width: auto;
   height: 30px;
@@ -100,6 +102,8 @@ dialog[data-type] {
   font-weight: 600;
   line-height: 1;
   color: var(--spectrum-gray-800);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
 }
 
 .exl-dialog-header-clear:hover {

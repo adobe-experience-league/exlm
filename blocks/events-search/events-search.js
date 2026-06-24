@@ -1,6 +1,6 @@
 import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
 import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT } from '../../scripts/browse-card/browse-cards-constants.js';
+import { BASE_COVEO_ADVANCED_QUERY_EVENTS } from '../../scripts/browse-card/browse-cards-constants.js';
 import BrowseCardsDelegate, {
   normalizeOnDemandEventModel,
   normalizeUpcomingEventModel,
@@ -28,6 +28,16 @@ const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
 const PLACEHOLDER_COUNT_TOKEN = '${count}';
 const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
 
+/** Builds the composite key used to identify a filter in pendingRemovals and callout data-key attributes. */
+const toCompositeKey = (filterType, value) => `${filterType}:${value}`;
+
+/** Splices the tag out of activeTags and registers it in pendingRemovals (browse-filters removeFromTags pattern). */
+function removeActiveTag(activeTags, pendingRemovals, filterType, value) {
+  const tagIndex = activeTags.findIndex((t) => t.filterType === filterType && t.value === value);
+  if (tagIndex !== -1) activeTags.splice(tagIndex, 1);
+  pendingRemovals.add(toCompositeKey(filterType, value));
+}
+
 /** Fills count slots in CMS strings: `${count}`, `{}`, `{count}` (see PLACEHOLDER_COUNT_TOKEN). */
 function fillPlaceholderCount(template, value) {
   const s = String(value);
@@ -39,6 +49,30 @@ const viewSwitcherInstances = new WeakMap();
 const eventsSearchLoadingUiCleanups = new WeakMap();
 /** Per-block AbortController for open sort dropdown document listeners (click-outside + Escape). */
 const eventsSearchSortDropdownOpenAbort = new WeakMap();
+/** Per-block filter state: { tags: [], pendingRemovals: Set }. */
+const eventsSearchActiveTags = new WeakMap();
+
+function getFilterState(block) {
+  let state = eventsSearchActiveTags.get(block);
+  if (!state) {
+    state = { tags: [], pendingRemovals: new Set() };
+    eventsSearchActiveTags.set(block, state);
+  }
+  return state;
+}
+
+/**
+ * Sorts items alphabetically by their title property .
+ * Uses the page's locale for consistent language-specific sorting.
+ * @param {Object} a - First item to compare
+ * @param {Object} b - Second item to compare
+ * @returns {number} Comparison result for array sort
+ */
+function sortItemsAlphabetically(a, b) {
+  const titleA = (a.title || '').toLowerCase();
+  const titleB = (b.title || '').toLowerCase();
+  return titleA.localeCompare(titleB, document.documentElement.lang || 'en');
+}
 
 function getBaseFilterGroups(placeholders) {
   return [
@@ -57,7 +91,7 @@ function getBaseFilterGroups(placeholders) {
     {
       id: 'el_contenttype',
       name: placeholders.eventSearchFilterEventTypeLabel || 'Event Type',
-      items: eventTypeOptions.items.map((item) => ({ ...item })),
+      items: eventTypeOptions.items.map((item) => ({ ...item })).sort(sortItemsAlphabetically),
       selected: 0,
     },
   ];
@@ -100,6 +134,9 @@ function createLayout(block, placeholders) {
           placeholders.eventSearchKeywordAriaLabel || placeholders.eventSearchKeywordPlaceholder || 'Search events'
         }" />
       </div>
+      <div class="events-search-active-filters" hidden role="group" aria-label="${
+        placeholders.eventSearchActiveFiltersAriaLabel || 'Active filters'
+      }"></div>
       <div class="events-search-meta-row">
         <div
           class="events-search-results-count"
@@ -280,6 +317,7 @@ function renderFilterGroups(block, groups, placeholders) {
     `;
 
     const optionsContainer = groupEl.querySelector('.events-search-filter-options');
+    const optionsList = createTag('div', { class: 'events-search-filter-options-list' });
     group.items.forEach((item, index) => {
       const optionValue = item.value || item.title;
       const optionLabel = item.title || item.value;
@@ -297,8 +335,9 @@ function renderFilterGroups(block, groups, placeholders) {
       });
       optionLabelEl.textContent = String(optionLabel ?? '');
       optionEl.append(checkbox, optionLabelEl);
-      optionsContainer.append(optionEl);
+      optionsList.append(optionEl);
     });
+    optionsContainer.append(optionsList);
 
     if (group.items.length > INITIAL_VISIBLE_FILTER_OPTIONS) {
       const remainingCount = group.items.length - INITIAL_VISIBLE_FILTER_OPTIONS;
@@ -338,6 +377,8 @@ function updateClearFiltersButtonState(block) {
 }
 
 function syncFilterUIFromHeadlessState(block, groups) {
+  const { tags: activeTags, pendingRemovals } = getFilterState(block);
+
   Object.entries(FACET_CONTROLLER_MAP).forEach(([groupId, controllerName]) => {
     const controller = window[controllerName];
     const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${groupId}"]`);
@@ -349,7 +390,24 @@ function syncFilterUIFromHeadlessState(block, groups) {
 
     const checkboxes = groupEl.querySelectorAll('.events-search-filter-option input[type="checkbox"]');
     checkboxes.forEach((checkbox) => {
-      checkbox.checked = selectedValues.has(checkbox.value);
+      const isSelected = selectedValues.has(checkbox.value);
+      checkbox.checked = isSelected;
+
+      // Mirror checkbox state into ordered tags array (browse-filters handleUriHash/appendTag pattern).
+      // This ensures callouts appear correctly when filters are restored from URL on page load.
+      const compositeKey = toCompositeKey(groupId, checkbox.value);
+      const existingIndex = activeTags.findIndex((t) => t.filterType === groupId && t.value === checkbox.value);
+      if (isSelected && existingIndex === -1 && !pendingRemovals.has(compositeKey)) {
+        activeTags.push({
+          filterType: groupId,
+          value: checkbox.value,
+          label: checkbox.getAttribute('data-label') || checkbox.value,
+        });
+      } else if (!isSelected) {
+        if (existingIndex !== -1) activeTags.splice(existingIndex, 1);
+        pendingRemovals.delete(compositeKey);
+      }
+      checkbox.closest('.events-search-filter-option')?.classList.toggle('checked', checkbox.checked);
     });
 
     const selectedCount = selectedValues.size;
@@ -623,6 +681,99 @@ function toggleFacetSelection(filterType, value, isChecked) {
   });
 }
 
+function renderActiveFilterCallouts(block) {
+  const container = block.querySelector('.events-search-active-filters');
+  if (!container) return;
+
+  // Use the ordered tags array (browse-filters pattern) so callouts reflect user selection order.
+  const { tags: activeTags, pendingRemovals } = getFilterState(block);
+
+  // Skip full DOM teardown if the ordered set of selected filters hasn't changed.
+  const currentValues = [...container.querySelectorAll('.events-search-active-filter-tag')].map((t) => t.dataset.key);
+  const newValues = activeTags.map((tag) => toCompositeKey(tag.filterType, tag.value));
+  const unchanged = currentValues.length === newValues.length && currentValues.every((v, i) => v === newValues[i]);
+  if (unchanged) return;
+
+  // Save focused callout composite key before teardown so focus can be restored after rebuild.
+  const focusedTag = container.querySelector('.events-search-active-filter-tag-remove:focus');
+  const focusedKey = focusedTag?.closest('.events-search-active-filter-tag')?.dataset.key ?? null;
+
+  container.innerHTML = '';
+
+  if (!activeTags.length) {
+    container.hidden = true;
+    if (focusedKey) {
+      block.querySelector('.events-search-keyword-input')?.focus();
+    }
+    return;
+  }
+
+  activeTags.forEach((tag) => {
+    const { filterType, value, label } = tag;
+    const callout = createTag('span', {
+      class: 'events-search-active-filter-tag',
+      'data-value': value,
+      'data-key': toCompositeKey(filterType, value),
+    });
+    const calloutLabel = createTag('span', { class: 'events-search-active-filter-tag-label' });
+    calloutLabel.textContent = label;
+
+    const calloutRemove = createTag('button', {
+      class: 'events-search-active-filter-tag-remove',
+      type: 'button',
+      'aria-label': `Remove filter: ${label}`,
+    });
+    const calloutRemoveIcon = createTag('span', { class: 'icon icon-close-events', 'aria-hidden': 'true' });
+    calloutRemove.append(calloutRemoveIcon);
+
+    const handleRemove = () => {
+      // Uncheck the corresponding checkbox in the filter panel (browse-filters removeFromTags pattern).
+      const matchedCheckbox = [
+        ...block.querySelectorAll(
+          `.events-search-filter-group[data-filter-type="${filterType}"] input[type="checkbox"]`,
+        ),
+      ].find((cb) => cb.value === value);
+      if (matchedCheckbox) matchedCheckbox.checked = false;
+
+      // Remove from ordered tags array and register as pending removal to prevent the Coveo
+      // subscription from re-adding the tag before Coveo state catches up.
+      removeActiveTag(activeTags, pendingRemovals, filterType, value);
+
+      toggleFacetSelection(filterType, value, false);
+      const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${filterType}"]`);
+      if (groupEl) {
+        const newCount = groupEl.querySelectorAll('input[type="checkbox"]:checked').length;
+        updateGroupSelectionCount(block, filterType, newCount);
+      }
+      if (window.headlessPager) {
+        window.headlessPager.selectPage(1);
+      }
+      executeSearch();
+      renderActiveFilterCallouts(block);
+      updateClearFiltersButtonState(block);
+    };
+
+    calloutRemove.addEventListener('click', handleRemove, { once: true });
+
+    callout.append(calloutLabel, calloutRemove);
+    container.append(callout);
+  });
+
+  decorateIcons(container);
+  container.hidden = false;
+
+  // Restore focus to the adjacent × button (same index position after removal), or the search input if none remain.
+  if (focusedKey) {
+    const tags = [...container.querySelectorAll('.events-search-active-filter-tag')];
+    const removedIndex = currentValues.indexOf(focusedKey);
+    const nextTag = tags[removedIndex] ?? tags[tags.length - 1];
+    const nextFocus =
+      nextTag?.querySelector('.events-search-active-filter-tag-remove') ??
+      block.querySelector('.events-search-keyword-input');
+    nextFocus?.focus();
+  }
+}
+
 function updateResultsCount(block, totalCount = 0, placeholders = {}) {
   const countEl = block.querySelector('.events-search-results-count');
   if (!countEl) return;
@@ -696,6 +847,7 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
     const search = window.headlessSearchEngine.state.search || {};
     const { results = [], searchResponseId = '', response = {} } = search;
     updateResultsCount(block, response.totalCount || 0, placeholders);
+    renderActiveFilterCallouts(block);
     await renderResults(block, results, searchResponseId);
   } catch (err) {
     // Coveo invokes this subscriber without awaiting; uncaught rejections from renderResults/buildCard would be unhandled.
@@ -721,6 +873,8 @@ function bindFilterInteractions(block, groups, placeholders) {
             option.classList.add('is-overflow-hidden');
           }
         });
+        const optionsList = groupEl.querySelector('.events-search-filter-options-list');
+        if (optionsList) optionsList.scrollTop = 0;
       } else {
         const hiddenOptions = groupEl.querySelectorAll('.events-search-filter-option.is-overflow-hidden');
         hiddenOptions.forEach((option) => {
@@ -748,6 +902,22 @@ function bindFilterInteractions(block, groups, placeholders) {
     const filterType = groupEl?.dataset.filterType;
     if (!filterType) return;
 
+    // Maintain ordered tags array (browse-filters appendTag/removeFromTags pattern).
+    const { tags: activeTags, pendingRemovals } = getFilterState(block);
+    if (checkbox.checked) {
+      pendingRemovals.delete(toCompositeKey(filterType, checkbox.value));
+      const alreadyTracked = activeTags.some((t) => t.filterType === filterType && t.value === checkbox.value);
+      if (!alreadyTracked) {
+        activeTags.push({
+          filterType,
+          value: checkbox.value,
+          label: checkbox.getAttribute('data-label') || checkbox.value,
+        });
+      }
+    } else {
+      removeActiveTag(activeTags, pendingRemovals, filterType, checkbox.value);
+    }
+
     const selectedCount = groupEl.querySelectorAll('input[type="checkbox"]:checked').length;
     const targetGroup = groups.find((group) => group.id === filterType);
     if (targetGroup) {
@@ -759,6 +929,7 @@ function bindFilterInteractions(block, groups, placeholders) {
       window.headlessPager.selectPage(1);
     }
     executeSearch();
+    renderActiveFilterCallouts(block);
     updateClearFiltersButtonState(block);
   });
 }
@@ -810,6 +981,10 @@ function bindClearFilters(block, groups) {
       toggleFacetSelection(filterType, checkbox.value, false);
       checkbox.checked = false;
     });
+    // Reset ordered tags array (browse-filters clearAllSelectedTag pattern).
+    const { tags: activeTags, pendingRemovals } = getFilterState(block);
+    activeTags.length = 0;
+    pendingRemovals.clear();
     groups.forEach((group) => {
       group.selected = 0;
       updateGroupSelectionCount(block, group.id, 0);
@@ -832,6 +1007,7 @@ function bindClearFilters(block, groups) {
     if (window.location.hash === hashBeforeClear) {
       executeSearch();
     }
+    renderActiveFilterCallouts(block);
     updateClearFiltersButtonState(block);
   });
 }
@@ -864,12 +1040,14 @@ async function loadDynamicFacetValues(groups) {
   groups.forEach((group) => {
     if (group.id !== 'el_event_series' && group.id !== 'el_product') return;
     const groupValues = facetDetails[group.id] || [];
-    group.items = groupValues.map((item) => ({
-      id: item,
-      value: item,
-      title: item.split('|').join(' | '),
-      description: '',
-    }));
+    group.items = groupValues
+      .map((item) => ({
+        id: item,
+        value: item,
+        title: item.split('|').join(' | '),
+        description: '',
+      }))
+      .sort(sortItemsAlphabetically);
   });
 }
 
@@ -899,7 +1077,7 @@ async function initHeadlessSearch(block, groups, placeholders) {
 
   if (window.headlessQueryActionCreators && window.headlessSearchEngine) {
     const action = window.headlessQueryActionCreators.updateAdvancedSearchQueries({
-      aq: BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT,
+      aq: BASE_COVEO_ADVANCED_QUERY_EVENTS,
     });
     window.headlessSearchEngine.dispatch(action);
     executeSearch();

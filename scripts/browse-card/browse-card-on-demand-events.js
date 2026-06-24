@@ -1,49 +1,5 @@
-/* eslint-disable camelcase, no-unused-vars */
-import { decorateIcons } from '../lib-franklin.js';
-import { createTag, htmlToElement } from '../scripts.js';
+import { createTag } from '../scripts.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
-
-/* TODO - Remove duration and event series placeholder during cleanup */
-
-/**
- * Format date for on-demand events display
- * @param {string} dateString - Date string to format
- * @returns {string|null} - Formatted date string or null
- */
-const formatOnDemandEventDate = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  const optionsDate = { month: 'short', day: '2-digit', year: 'numeric' };
-  const formattedDate = date.toLocaleDateString(undefined, optionsDate).toUpperCase();
-
-  return formattedDate;
-};
-
-/**
- * Builds event content specifically for on-demand events
- * @param {Object} params - Parameters for building event content
- * @param {Object} params.event - Event data
- * @param {string} params.contentType - Content type
- * @param {HTMLElement} params.cardContent - Card content element
- * @param {HTMLElement} params.card - Card element
- */
-const buildOnDemandEventContent = ({ event, cardContent, card }) => {
-  const { time, duration } = event || {};
-  const durationText = duration || '';
-  const formattedDateTime = formatOnDemandEventDate(time);
-
-  const eventInfo = htmlToElement(`
-    <div class="browse-card-event-info">
-        <span class="icon icon-time"></span>
-        <div class="browse-card-event-time">
-            <h6>${formattedDateTime} | ${durationText}</h6>
-        </div>
-    </div>
-  `);
-  decorateIcons(eventInfo);
-  const title = card.querySelector('.browse-card-title-text');
-  cardContent.insertBefore(eventInfo, title.nextElementSibling);
-};
 
 /**
  * Decorates on-demand event cards with additional features
@@ -60,10 +16,10 @@ export const decorateOnDemandEvents = (card, model) => {
   const cardFigure = card.querySelector('.browse-card-figure');
   if (!cardFigure) return;
 
-  const cardContent = card.querySelector('.browse-card-content');
-
   cardFigure.querySelector('.laptop-container')?.remove();
   const img = cardFigure.querySelector('img');
+  const hasSeries = event?.series;
+
   img?.remove();
 
   cardFigure.querySelector('.play-button')?.remove();
@@ -74,13 +30,22 @@ export const decorateOnDemandEvents = (card, model) => {
 
   cardFigure.querySelector('.event-series-banner')?.remove();
 
-  if (event?.time) {
-    buildOnDemandEventContent({
-      event,
-      contentType: model.contentType,
-      cardContent,
-      card,
-    });
+  // If no series title, show fallback Adobe A image (light themed)
+  if (!hasSeries) {
+    cardFigure.classList.add('has-fallback-image');
+
+    const fallbackImg = document.createElement('img');
+    fallbackImg.loading = 'lazy';
+    fallbackImg.alt = '';
+    fallbackImg.src = '/images/Event-Thumbnail-A-Light.jpg';
+    if (fallbackImg.complete) {
+      fallbackImg.classList.add('img-loaded');
+    } else {
+      fallbackImg.addEventListener('load', () => fallbackImg.classList.add('img-loaded'));
+      fallbackImg.addEventListener('error', () => fallbackImg.classList.add('img-loaded'));
+    }
+
+    cardFigure.appendChild(fallbackImg);
   }
 
   const seriesText = event?.series;

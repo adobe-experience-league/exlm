@@ -75,6 +75,22 @@ function createOptions(container, readTimeText) {
   container.appendChild(lastUpdated);
   if (readTimeText) container.appendChild(readTime);
 
+  if (getMetadata('translation-mechanism')?.trim().toUpperCase() === 'MT') {
+    const aiTranslated = htmlToElement(`
+      <div class="article-marquee-ai-translated">
+        <span>${placeholders?.automaticTranslation || 'Automatically translated'}</span>
+        <div class="article-marquee-ai-translated-tooltip-container">
+          <span class="icon icon-info"></span>
+          <span class="article-marquee-ai-translated-tooltip">${
+            placeholders?.changeLanguageTooltip || 'Use the Language Selector to view the English version of this page.'
+          }</span>
+        </div>
+      </div>
+    `);
+    decorateIcons(aiTranslated);
+    container.appendChild(aiTranslated);
+  }
+
   // Delay loading the UserActions script to avoid render-blocking during initial page load
   window.addEventListener('delayed-load', async () => {
     const { default: UserActions } = await import('../../scripts/user-actions/user-actions.js');
