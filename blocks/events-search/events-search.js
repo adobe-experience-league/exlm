@@ -1,7 +1,7 @@
 import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
 import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { BASE_COVEO_ADVANCED_QUERY_EVENTS } from '../../scripts/browse-card/browse-cards-constants.js';
-import BrowseCardsDelegate, {
+import {
   normalizeOnDemandEventModel,
   normalizeUpcomingEventModel,
 } from '../../scripts/browse-card/browse-cards-delegate.js';
@@ -23,10 +23,274 @@ const FACET_CONTROLLER_MAP = {
   el_contenttype: 'headlessTypeFacet',
 };
 const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
+// Tracks active render pass per block; queues the next subscription fire instead of running two renders at once.
+const headlessSubscriptionSyncDepth = new WeakMap();
 /** Literal token authors enter in placeholders.json for dynamic counts. */
 // eslint-disable-next-line no-template-curly-in-string -- not a JS template; matches placeholders.json text
 const PLACEHOLDER_COUNT_TOKEN = '${count}';
 const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
+
+// Filter UI helpers
+function removeFilterGroupOptionsShimmer(optionsContainer) {
+  optionsContainer?.querySelector('.events-search-filter-options-shimmer')?.remove();
+}
+
+function hasFilterGroupOptionsShimmer(optionsContainer) {
+  return Boolean(optionsContainer?.querySelector('.events-search-filter-options-shimmer'));
+}
+
+function renderFilterGroupOptionsShimmer(optionsContainer, rowCount = 5) {
+  if (!optionsContainer) return;
+  removeFilterGroupOptionsShimmer(optionsContainer);
+  const shimmerRoot = createTag('div', { class: 'events-search-filter-options-shimmer', 'aria-hidden': 'true' });
+  for (let i = 0; i < rowCount; i += 1) {
+    shimmerRoot.append(createTag('div', { class: 'events-search-filter-option-shimmer' }));
+  }
+  optionsContainer.append(shimmerRoot);
+}
+
+function renderFilterOptionCountShimmer(optionEl) {
+  const checkbox = optionEl?.querySelector('input[type="checkbox"]');
+  const optionLabelEl = optionEl?.querySelector('.events-search-filter-option-label');
+  if (!checkbox || !optionLabelEl) return;
+  const optionLabel = checkbox.getAttribute('data-label') || checkbox.value;
+  optionLabelEl.replaceChildren(
+    document.createTextNode(String(optionLabel ?? '')),
+    createTag('span', {
+      class: 'events-search-filter-option-count events-search-filter-count-shimmer',
+      'aria-hidden': 'true',
+    }),
+  );
+}
+
+function updateFilterOptionCount(optionEl, count, optionLabel) {
+  const checkbox = optionEl?.querySelector('input[type="checkbox"]');
+  const optionLabelEl = optionEl?.querySelector('.events-search-filter-option-label');
+  if (!checkbox || !optionLabelEl) return;
+  if (typeof count === 'number' && count >= 0) {
+    checkbox.setAttribute('data-count', String(count));
+    const countEl = createTag('span', { class: 'events-search-filter-option-count' });
+    countEl.textContent = ` (${count})`;
+    optionLabelEl.replaceChildren(document.createTextNode(String(optionLabel ?? '')), countEl);
+  } else {
+    checkbox.removeAttribute('data-count');
+    optionLabelEl.textContent = String(optionLabel ?? '');
+  }
+}
+
+function buildFilterOptionRow({ groupId, item, index }) {
+  const optionValue = item.value || item.title;
+  const optionLabel = item.title || item.value;
+  const optionId = `${groupId}-${index + 1}-${String(optionValue).replace(/[^a-zA-Z0-9_-]/g, '-')}`;
+  const optionEl = createTag('div', {
+    class: `events-search-filter-option${item.overflowHidden ? ' is-overflow-hidden' : ''}${
+      item.selected ? ' checked' : ''
+    }`,
+  });
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.id = optionId;
+  checkbox.value = String(optionValue ?? '');
+  checkbox.checked = Boolean(item.selected);
+  checkbox.setAttribute('data-label', String(optionLabel ?? ''));
+  if (item.count != null) checkbox.setAttribute('data-count', String(item.count));
+  const optionLabelEl = createTag('label', { class: 'events-search-filter-option-label', for: optionId });
+  const labelText = document.createTextNode(String(optionLabel ?? ''));
+  if (item.count != null) {
+    const countEl = createTag('span', { class: 'events-search-filter-option-count' });
+    countEl.textContent = ` (${item.count})`;
+    optionLabelEl.append(labelText, countEl);
+  } else {
+    optionLabelEl.append(labelText);
+  }
+  optionEl.append(checkbox, optionLabelEl);
+  return optionEl;
+}
+
+// Dynamic facets (Headless v2)
+const DYNAMIC_FACET_FIELDS = ['el_product', 'el_event_series'];
+
+// Fills count value into a placeholder string
+function fillPlaceholderCount(template, value) {
+  const s = String(value);
+  return String(template).replaceAll(PLACEHOLDER_COUNT_TOKEN, s).replaceAll('{}', s).replaceAll('{count}', s);
+}
+
+function sortItemsAlphabetically(a, b) {
+  const titleA = (a.title || '').toLowerCase();
+  const titleB = (b.title || '').toLowerCase();
+  return titleA.localeCompare(titleB, document.documentElement.lang || 'en');
+}
+
+function getShowMoreLabel(count, placeholders) {
+  const template = placeholders.eventSearchShowMoreLabel;
+  if (!template) {
+    return `Show ${count} more`;
+  }
+  return fillPlaceholderCount(template, count);
+}
+
+function getShowLessLabel(placeholders) {
+  return placeholders.eventSearchShowLessLabel || 'Show less';
+}
+
+function updateShowMoreButtonState(groupEl, placeholders) {
+  const showMoreButton = groupEl.querySelector('.events-search-filter-show-more');
+  if (!showMoreButton) return;
+
+  const totalOptions = groupEl.querySelectorAll('.events-search-filter-option').length;
+  if (totalOptions <= INITIAL_VISIBLE_FILTER_OPTIONS) {
+    showMoreButton.setAttribute('hidden', '');
+    return;
+  }
+
+  const hiddenOptionsCount = groupEl.querySelectorAll('.events-search-filter-option.is-overflow-hidden').length;
+  const labelEl = showMoreButton.querySelector('.events-search-filter-show-more-label');
+
+  showMoreButton.removeAttribute('hidden');
+  if (hiddenOptionsCount > 0) {
+    showMoreButton.classList.remove('is-show-less');
+    const nextText = getShowMoreLabel(hiddenOptionsCount, placeholders);
+    if (labelEl) {
+      labelEl.textContent = nextText;
+    } else {
+      showMoreButton.textContent = nextText;
+    }
+  } else {
+    showMoreButton.classList.add('is-show-less');
+    if (labelEl) {
+      labelEl.textContent = getShowLessLabel(placeholders);
+    } else {
+      showMoreButton.textContent = getShowLessLabel(placeholders);
+    }
+  }
+}
+
+function getEventsSearchHeadlessFacetOverrides() {
+  return {
+    el_product: { numberOfValues: 500, options: { filterFacetCount: true, sortCriteria: 'alphanumeric' } },
+    el_event_series: { numberOfValues: 100, options: { filterFacetCount: true, sortCriteria: 'alphanumeric' } },
+  };
+}
+
+function showDynamicFilterGroupShimmers(block, { refreshCountsOnly = false } = {}) {
+  DYNAMIC_FACET_FIELDS.forEach((field) => {
+    const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${field}"]`);
+    const optionsContainer = groupEl?.querySelector('.events-search-filter-options');
+    if (!groupEl || !optionsContainer) return;
+    if (refreshCountsOnly && groupEl.querySelector('.events-search-filter-option')) {
+      groupEl.classList.add('is-filter-loading');
+      return;
+    }
+    if (!groupEl.querySelector('.events-search-filter-option') && !hasFilterGroupOptionsShimmer(optionsContainer)) {
+      renderFilterGroupOptionsShimmer(optionsContainer);
+    }
+  });
+}
+
+function renderDynamicGroupOptions(groupEl, group, placeholders) {
+  const optionsContainer = groupEl.querySelector('.events-search-filter-options');
+  if (!optionsContainer) return;
+  removeFilterGroupOptionsShimmer(optionsContainer);
+  optionsContainer.innerHTML = '';
+  const optionsList = createTag('div', { class: 'events-search-filter-options-list' });
+  group.items.forEach((item, index) => {
+    optionsList.append(
+      buildFilterOptionRow({
+        groupId: group.id,
+        item: { ...item, overflowHidden: index >= INITIAL_VISIBLE_FILTER_OPTIONS },
+        index,
+      }),
+    );
+  });
+  optionsContainer.append(optionsList);
+  if (group.items.length > INITIAL_VISIBLE_FILTER_OPTIONS) {
+    const remaining = group.items.length - INITIAL_VISIBLE_FILTER_OPTIONS;
+    const showMoreButton = createTag('button', { class: 'events-search-filter-show-more', type: 'button' });
+    const showMoreLabel = createTag('span', { class: 'events-search-filter-show-more-label' });
+    showMoreLabel.textContent = getShowMoreLabel(remaining, placeholders);
+    showMoreButton.append(showMoreLabel, createTag('span', { class: 'icon icon-arrow', 'aria-hidden': 'true' }));
+    optionsContainer.append(showMoreButton);
+  }
+  updateShowMoreButtonState(groupEl, placeholders);
+  decorateIcons(optionsContainer);
+}
+
+function syncDynamicFacetGroup(block, group, placeholders) {
+  const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${group.id}"]`);
+  if (!groupEl) return;
+  const optionsContainer = groupEl.querySelector('.events-search-filter-options');
+  const controller = window[FACET_CONTROLLER_MAP[group.id]];
+  const items = (controller?.state?.values ?? [])
+    .filter((v) => v.state === 'selected' || (v.numberOfResults ?? 0) > 0)
+    .map((v) => ({
+      id: v.value,
+      value: v.value,
+      title: v.value.split('|').join(' | '),
+      count: v.numberOfResults ?? 0,
+      selected: v.state === 'selected',
+    }))
+    .sort(sortItemsAlphabetically);
+
+  if (!items.length) {
+    removeFilterGroupOptionsShimmer(optionsContainer);
+    groupEl.classList.remove('is-filter-loading');
+    return;
+  }
+
+  const wasExpanded = groupEl.classList.contains('is-expanded');
+  group.items = items;
+  renderDynamicGroupOptions(groupEl, group, placeholders);
+  groupEl.classList.remove('is-filter-loading');
+  if (wasExpanded) {
+    groupEl.classList.add('is-expanded');
+    groupEl.querySelector('.events-search-filter-group-header')?.setAttribute('aria-expanded', 'true');
+  }
+}
+
+function syncEventTypeFilterCounts(block) {
+  const controller = window[FACET_CONTROLLER_MAP.el_contenttype];
+  const groupEl = block.querySelector('.events-search-filter-group[data-filter-type="el_contenttype"]');
+  if (!controller || !groupEl) return;
+  const facetValues = controller.state?.values ?? [];
+  let visibleCount = 0;
+  groupEl.querySelectorAll('.events-search-filter-option').forEach((optionEl) => {
+    const checkbox = optionEl.querySelector('input[type="checkbox"]');
+    if (!checkbox) return;
+    const facetValue = facetValues.find((fv) => fv.value === checkbox.value);
+    const count = facetValue?.numberOfResults ?? 0;
+    updateFilterOptionCount(optionEl, count, checkbox.getAttribute('data-label') || checkbox.value);
+    const isVisible = checkbox.checked || count > 0;
+    optionEl.style.display = isVisible ? '' : 'none';
+    if (isVisible) visibleCount += 1;
+  });
+  groupEl.style.display = visibleCount > 0 ? '' : 'none';
+  groupEl.classList.remove('is-filter-loading');
+}
+
+// Skips facet UI updates triggered before the search response arrives, preventing stale counts.
+const lastSyncedSearchResponseId = new WeakMap();
+
+function syncDynamicFacetGroupsFromHeadless(block, groups, placeholders) {
+  if (!(window.headlessStatusControllers?.state?.firstSearchExecuted ?? false)) return;
+
+  // Only sync facet UI when a new search response has arrived.
+  const searchResponseId = window.headlessSearchEngine?.state?.search?.searchResponseId;
+  if (searchResponseId && lastSyncedSearchResponseId.get(block) === searchResponseId) return;
+  if (searchResponseId) lastSyncedSearchResponseId.set(block, searchResponseId);
+
+  const totalResults = window.headlessSearchEngine?.state?.search?.response?.totalCount ?? 0;
+  block.classList.toggle('has-no-results', !totalResults);
+  groups.forEach((group) => {
+    const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${group.id}"]`);
+    if (groupEl) groupEl.style.display = totalResults > 0 ? '' : 'none';
+  });
+  if (!totalResults) return;
+  groups.forEach((group) => {
+    if (DYNAMIC_FACET_FIELDS.includes(group.id)) syncDynamicFacetGroup(block, group, placeholders);
+  });
+  syncEventTypeFilterCounts(block);
+}
 
 /** Builds the composite key used to identify a filter in pendingRemovals and callout data-key attributes. */
 const toCompositeKey = (filterType, value) => `${filterType}:${value}`;
@@ -38,40 +302,21 @@ function removeActiveTag(activeTags, pendingRemovals, filterType, value) {
   pendingRemovals.add(toCompositeKey(filterType, value));
 }
 
-/** Fills count slots in CMS strings: `${count}`, `{}`, `{count}` (see PLACEHOLDER_COUNT_TOKEN). */
-function fillPlaceholderCount(template, value) {
-  const s = String(value);
-  return String(template).replaceAll(PLACEHOLDER_COUNT_TOKEN, s).replaceAll('{}', s).replaceAll('{count}', s);
-}
-
 const viewSwitcherInstances = new WeakMap();
 /** AbortController + MutationObserver teardown for Coveo document listeners (re-decorate or DOM removal). */
 const eventsSearchLoadingUiCleanups = new WeakMap();
 /** Per-block AbortController for open sort dropdown document listeners (click-outside + Escape). */
 const eventsSearchSortDropdownOpenAbort = new WeakMap();
-/** Per-block filter state: { tags: [], pendingRemovals: Set }. */
+/** Per-block filter state: { tags: [], pendingRemovals: Set, isClearing: boolean }. */
 const eventsSearchActiveTags = new WeakMap();
 
 function getFilterState(block) {
   let state = eventsSearchActiveTags.get(block);
   if (!state) {
-    state = { tags: [], pendingRemovals: new Set() };
+    state = { tags: [], pendingRemovals: new Set(), isClearing: false };
     eventsSearchActiveTags.set(block, state);
   }
   return state;
-}
-
-/**
- * Sorts items alphabetically by their title property .
- * Uses the page's locale for consistent language-specific sorting.
- * @param {Object} a - First item to compare
- * @param {Object} b - Second item to compare
- * @returns {number} Comparison result for array sort
- */
-function sortItemsAlphabetically(a, b) {
-  const titleA = (a.title || '').toLowerCase();
-  const titleB = (b.title || '').toLowerCase();
-  return titleA.localeCompare(titleB, document.documentElement.lang || 'en');
 }
 
 function getBaseFilterGroups(placeholders) {
@@ -156,9 +401,7 @@ function createLayout(block, placeholders) {
       </div>
     </div>
     <div class="events-search-results-body browse-cards-block">
-      <div class="events-search-no-results" hidden role="status">${
-        placeholders.eventSearchNoResults || 'No Results'
-      }</div>
+      <div class="events-search-no-results" hidden role="status" aria-live="polite"></div>
       <div class="events-search-results-grid browse-cards-block-content"></div>
       <div class="events-search-pagination">
         <button class="nav-arrow" type="button" aria-label="${
@@ -249,50 +492,6 @@ function bindSortDropdownToggle(block) {
   });
 }
 
-function getShowMoreLabel(count, placeholders) {
-  const template = placeholders.eventSearchShowMoreLabel;
-  if (!template) {
-    return `Show ${count} more`;
-  }
-  return fillPlaceholderCount(template, count);
-}
-
-function getShowLessLabel(placeholders) {
-  return placeholders.eventSearchShowLessLabel || 'Show less';
-}
-
-function updateShowMoreButtonState(groupEl, placeholders) {
-  const showMoreButton = groupEl.querySelector('.events-search-filter-show-more');
-  if (!showMoreButton) return;
-
-  const totalOptions = groupEl.querySelectorAll('.events-search-filter-option').length;
-  if (totalOptions <= INITIAL_VISIBLE_FILTER_OPTIONS) {
-    showMoreButton.setAttribute('hidden', '');
-    return;
-  }
-
-  const hiddenOptionsCount = groupEl.querySelectorAll('.events-search-filter-option.is-overflow-hidden').length;
-  const labelEl = showMoreButton.querySelector('.events-search-filter-show-more-label');
-
-  showMoreButton.removeAttribute('hidden');
-  if (hiddenOptionsCount > 0) {
-    showMoreButton.classList.remove('is-show-less');
-    const nextText = getShowMoreLabel(hiddenOptionsCount, placeholders);
-    if (labelEl) {
-      labelEl.textContent = nextText;
-    } else {
-      showMoreButton.textContent = nextText;
-    }
-  } else {
-    showMoreButton.classList.add('is-show-less');
-    if (labelEl) {
-      labelEl.textContent = getShowLessLabel(placeholders);
-    } else {
-      showMoreButton.textContent = getShowLessLabel(placeholders);
-    }
-  }
-}
-
 function renderFilterGroups(block, groups, placeholders) {
   const groupsRoot = block.querySelector('.events-search-filter-groups');
   if (!groupsRoot) return;
@@ -317,37 +516,35 @@ function renderFilterGroups(block, groups, placeholders) {
     `;
 
     const optionsContainer = groupEl.querySelector('.events-search-filter-options');
-    const optionsList = createTag('div', { class: 'events-search-filter-options-list' });
-    group.items.forEach((item, index) => {
-      const optionValue = item.value || item.title;
-      const optionLabel = item.title || item.value;
-      const optionId = `${group.id}-${index + 1}`;
-      const overflowClass = index >= INITIAL_VISIBLE_FILTER_OPTIONS ? ' is-overflow-hidden' : '';
-      const optionEl = createTag('div', { class: `events-search-filter-option${overflowClass}` });
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.id = optionId;
-      checkbox.value = String(optionValue ?? '');
-      checkbox.setAttribute('data-label', String(optionLabel ?? ''));
-      const optionLabelEl = createTag('label', {
-        class: 'events-search-filter-option-label',
-        for: optionId,
-      });
-      optionLabelEl.textContent = String(optionLabel ?? '');
-      optionEl.append(checkbox, optionLabelEl);
-      optionsList.append(optionEl);
-    });
-    optionsContainer.append(optionsList);
+    const isDynamicFacetGroup = DYNAMIC_FACET_FIELDS.includes(group.id);
 
-    if (group.items.length > INITIAL_VISIBLE_FILTER_OPTIONS) {
-      const remainingCount = group.items.length - INITIAL_VISIBLE_FILTER_OPTIONS;
-      const showMoreButton = createTag('button', { class: 'events-search-filter-show-more', type: 'button' });
-      const showMoreLabel = createTag('span', { class: 'events-search-filter-show-more-label' });
-      showMoreLabel.textContent = getShowMoreLabel(remainingCount, placeholders);
-      const showMoreIcon = createTag('span', { class: 'icon icon-arrow', 'aria-hidden': 'true' });
-      showMoreButton.append(showMoreLabel, showMoreIcon);
-      optionsContainer.append(showMoreButton);
-      updateShowMoreButtonState(groupEl, placeholders);
+    if (isDynamicFacetGroup && group.items.length === 0) {
+      renderFilterGroupOptionsShimmer(optionsContainer);
+    } else {
+      const optionsList = createTag('div', { class: 'events-search-filter-options-list' });
+      group.items.forEach((item, index) => {
+        const optionRow = buildFilterOptionRow({
+          groupId: group.id,
+          item: { ...item, overflowHidden: index >= INITIAL_VISIBLE_FILTER_OPTIONS },
+          index,
+        });
+        if (group.id === 'el_contenttype') {
+          renderFilterOptionCountShimmer(optionRow);
+        }
+        optionsList.append(optionRow);
+      });
+      optionsContainer.append(optionsList);
+
+      if (group.items.length > INITIAL_VISIBLE_FILTER_OPTIONS) {
+        const remainingCount = group.items.length - INITIAL_VISIBLE_FILTER_OPTIONS;
+        const showMoreButton = createTag('button', { class: 'events-search-filter-show-more', type: 'button' });
+        const showMoreLabel = createTag('span', { class: 'events-search-filter-show-more-label' });
+        showMoreLabel.textContent = getShowMoreLabel(remainingCount, placeholders);
+        const showMoreIcon = createTag('span', { class: 'icon icon-arrow', 'aria-hidden': 'true' });
+        showMoreButton.append(showMoreLabel, showMoreIcon);
+        optionsContainer.append(showMoreButton);
+        updateShowMoreButtonState(groupEl, placeholders);
+      }
     }
 
     groupsRoot.append(groupEl);
@@ -389,13 +586,14 @@ function syncFilterUIFromHeadlessState(block, groups) {
     );
 
     const checkboxes = groupEl.querySelectorAll('.events-search-filter-option input[type="checkbox"]');
+
     checkboxes.forEach((checkbox) => {
-      const isSelected = selectedValues.has(checkbox.value);
+      const compositeKey = toCompositeKey(groupId, checkbox.value);
+      const isSelected = selectedValues.has(checkbox.value) && !pendingRemovals.has(compositeKey);
       checkbox.checked = isSelected;
 
       // Mirror checkbox state into ordered tags array (browse-filters handleUriHash/appendTag pattern).
       // This ensures callouts appear correctly when filters are restored from URL on page load.
-      const compositeKey = toCompositeKey(groupId, checkbox.value);
       const existingIndex = activeTags.findIndex((t) => t.filterType === groupId && t.value === checkbox.value);
       if (isSelected && existingIndex === -1 && !pendingRemovals.has(compositeKey)) {
         activeTags.push({
@@ -410,7 +608,7 @@ function syncFilterUIFromHeadlessState(block, groups) {
       checkbox.closest('.events-search-filter-option')?.classList.toggle('checked', checkbox.checked);
     });
 
-    const selectedCount = selectedValues.size;
+    const selectedCount = groupEl.querySelectorAll('input[type="checkbox"]:checked').length;
     const targetGroup = groups.find((group) => group.id === groupId);
     if (targetGroup) {
       targetGroup.selected = selectedCount;
@@ -558,12 +756,25 @@ function bindEventsSearchLoadingUI(block) {
   const onPreprocess = (e) => {
     const { method = '' } = e.detail ?? {};
     if (method !== 'search' || !block.isConnected) return;
+
+    // scroll to results only if they're not currently visible
     if (resultsTop && hasCompletedInitialSearchResponse) {
-      resultsTop.scrollIntoView({ behavior: 'auto', block: 'start' });
-      window.scrollBy({ top: RESULTS_SCROLL_ADJUSTMENT_OFFSET });
+      const rect = resultsTop.getBoundingClientRect();
+      const isResultsVisible = rect.top >= 0 && rect.top <= window.innerHeight;
+
+      // Only scroll if results are not visible
+      if (!isResultsVisible) {
+        resultsTop.scrollIntoView({ behavior: 'auto', block: 'start' });
+        window.scrollBy({ top: RESULTS_SCROLL_ADJUSTMENT_OFFSET });
+      }
     }
+
     shimmer.addShimmer(resultsBody);
     placeShimmerBeforeGrid();
+    showDynamicFilterGroupShimmers(block, { refreshCountsOnly: hasCompletedInitialSearchResponse });
+    block
+      .querySelector('.events-search-filter-group[data-filter-type="el_contenttype"]')
+      ?.classList.add('is-filter-loading');
     grid.style.display = 'none';
     pagination.style.display = 'none';
     if (noResults) {
@@ -655,30 +866,30 @@ function findFacetValueInController(controller, value) {
   );
 }
 
-/**
- * Sync a checkbox with Coveo. Prefer a real facet value from controller state; when the value is
- * missing from the current facet slice (common after another facet narrows results), fall back to
- * an explicit selection object (browse-filters pattern) so multi-filter selection works.
- */
-function toggleFacetSelection(filterType, value, isChecked) {
+function getFacetController(filterType) {
   const controllerName = FACET_CONTROLLER_MAP[filterType];
-  if (!controllerName) return;
-  const controller = window[controllerName];
-  if (!controller || value === '' || value == null) return;
+  return controllerName ? window[controllerName] : null;
+}
 
+function applyCoveoFacetValueSelection(controller, value, shouldSelect) {
   const facetValue = findFacetValueInController(controller, value);
   if (facetValue) {
     const selected = facetValue.state === 'selected';
-    if (selected !== isChecked) {
+    if (selected !== shouldSelect) {
       controller.toggleSelect(facetValue);
     }
     return;
   }
+  if (shouldSelect) {
+    controller.toggleSelect({ value, state: 'selected' });
+  }
+}
 
-  controller.toggleSelect({
-    value,
-    state: isChecked ? 'selected' : 'idle',
-  });
+function toggleFacetSelection(filterType, value, isChecked) {
+  const controller = getFacetController(filterType);
+  if (!controller || value === '' || value == null) return;
+
+  applyCoveoFacetValueSelection(controller, value, isChecked);
 }
 
 function renderActiveFilterCallouts(block) {
@@ -840,19 +1051,59 @@ async function renderResults(block, results = [], searchResponseId = '') {
   }
 }
 
+function updateNoResultsMessage(block, placeholders) {
+  const noResultsEl = block.querySelector('.events-search-no-results');
+  if (!noResultsEl || noResultsEl.hasAttribute('hidden')) return;
+  const query = String(window.headlessSearchBox?.state?.value || '').trim();
+  noResultsEl.innerHTML = '';
+  const msgEl = createTag('p', { class: 'events-search-no-results-message' });
+  if (query) {
+    msgEl.append(
+      `${placeholders.eventSearchNoResultsPrefix || 'Sorry, no results were found for'} `,
+      Object.assign(createTag('strong', {}), { textContent: `"${query}"` }),
+    );
+  } else {
+    msgEl.textContent = placeholders.eventSearchNoResultsMessage || 'Sorry, no results were found.';
+  }
+  const clearBtn = createTag('a', { href: '#', class: 'events-search-no-results-clear' });
+  clearBtn.textContent = placeholders.eventSearchClearSearchLabel || 'Clear search';
+  clearBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    block.querySelector('.events-search-clear-filters')?.click();
+  });
+  noResultsEl.append(msgEl, clearBtn);
+}
+
 async function handleSearchEngineSubscription(block, groups, placeholders) {
   if (!window.headlessSearchEngine || window.headlessStatusControllers?.state?.isLoading) return;
+
+  const state = getFilterState(block);
+  if (state.isClearing) return;
+
+  const syncDepth = headlessSubscriptionSyncDepth.get(block) ?? 0;
+  if (syncDepth > 0) {
+    headlessSubscriptionSyncDepth.set(block, -1);
+    return;
+  }
+  headlessSubscriptionSyncDepth.set(block, 1);
   try {
+    syncDynamicFacetGroupsFromHeadless(block, groups, placeholders);
     syncFilterUIFromHeadlessState(block, groups);
     const search = window.headlessSearchEngine.state.search || {};
     const { results = [], searchResponseId = '', response = {} } = search;
     updateResultsCount(block, response.totalCount || 0, placeholders);
     renderActiveFilterCallouts(block);
     await renderResults(block, results, searchResponseId);
+    if (!response.totalCount) updateNoResultsMessage(block, placeholders);
   } catch (err) {
-    // Coveo invokes this subscriber without awaiting; uncaught rejections from renderResults/buildCard would be unhandled.
     // eslint-disable-next-line no-console
     console.error('events-search: search engine subscription callback failed', err);
+  } finally {
+    const needsRerun = headlessSubscriptionSyncDepth.get(block) === -1;
+    headlessSubscriptionSyncDepth.set(block, 0);
+    if (needsRerun) {
+      handleSearchEngineSubscription(block, groups, placeholders);
+    }
   }
 }
 
@@ -902,8 +1153,14 @@ function bindFilterInteractions(block, groups, placeholders) {
     const filterType = groupEl?.dataset.filterType;
     if (!filterType) return;
 
+    // Skip processing if we're in the middle of a clear all operation
+    const state = getFilterState(block);
+    if (state.isClearing) {
+      return;
+    }
+
     // Maintain ordered tags array (browse-filters appendTag/removeFromTags pattern).
-    const { tags: activeTags, pendingRemovals } = getFilterState(block);
+    const { tags: activeTags, pendingRemovals } = state;
     if (checkbox.checked) {
       pendingRemovals.delete(toCompositeKey(filterType, checkbox.value));
       const alreadyTracked = activeTags.some((t) => t.filterType === filterType && t.value === checkbox.value);
@@ -974,21 +1231,30 @@ function bindClearFilters(block, groups) {
   if (!clearBtn) return;
 
   clearBtn.addEventListener('click', () => {
-    const checkboxes = block.querySelectorAll('.events-search-filter-option input[type="checkbox"]:checked');
-    checkboxes.forEach((checkbox) => {
-      const groupEl = checkbox.closest('.events-search-filter-group');
-      const filterType = groupEl?.dataset.filterType;
-      toggleFacetSelection(filterType, checkbox.value, false);
+    const state = getFilterState(block);
+    const { tags: activeTags, pendingRemovals } = state;
+
+    state.isClearing = true;
+
+    // Uncheck all checkboxes without per-checkbox Headless toggles
+    block.querySelectorAll('.events-search-filter-option input[type="checkbox"]').forEach((checkbox) => {
       checkbox.checked = false;
+      checkbox.closest('.events-search-filter-option')?.classList.remove('checked');
     });
+
+    // deselect all Headless facet controllers.
+    ['el_product', 'el_event_series', 'el_contenttype'].forEach((filterType) => {
+      getFacetController(filterType)?.deselectAll?.();
+    });
+
     // Reset ordered tags array (browse-filters clearAllSelectedTag pattern).
-    const { tags: activeTags, pendingRemovals } = getFilterState(block);
     activeTags.length = 0;
     pendingRemovals.clear();
     groups.forEach((group) => {
       group.selected = 0;
       updateGroupSelectionCount(block, group.id, 0);
     });
+
     if (window.headlessSearchBox) {
       window.headlessSearchBox.updateText('');
       const searchInput = block.querySelector('.events-search-keyword-input');
@@ -996,14 +1262,27 @@ function bindClearFilters(block, groups) {
         searchInput.value = '';
       }
     }
-    const hashBeforeClear = window.location.hash;
-    handleCoverSearchSubmit('');
+
+    state.isClearing = false;
+
     if (window.headlessPager) {
       window.headlessPager.selectPage(1);
     }
-    // `handleCoverSearchSubmit` updates `location.hash`; Coveo `urlManager` listens on `hashchange`
-    // and synchronizes (typically issuing a search). Avoid a second `executeSearch` when the hash
-    // actually changed; if it did not, still dispatch so facet + keyword clears take effect.
+
+    // Remove facet params so urlManager won't re-apply them on hashchange.
+    const fragmentWithoutFacets = window.location.hash
+      .slice(1)
+      .split('&')
+      .filter((p) => p && !p.startsWith('f-'))
+      .join('&');
+    window.history.replaceState(
+      null,
+      document.title,
+      fragmentWithoutFacets ? `#${fragmentWithoutFacets}` : window.location.pathname + window.location.search,
+    );
+
+    const hashBeforeClear = window.location.hash;
+    handleCoverSearchSubmit('');
     if (window.location.hash === hashBeforeClear) {
       executeSearch();
     }
@@ -1035,22 +1314,6 @@ function bindMobileFilterToggle(block) {
   );
 }
 
-async function loadDynamicFacetValues(groups) {
-  const facetDetails = await BrowseCardsDelegate.fetchCoveoFacetFields(['el_event_series', 'el_product']);
-  groups.forEach((group) => {
-    if (group.id !== 'el_event_series' && group.id !== 'el_product') return;
-    const groupValues = facetDetails[group.id] || [];
-    group.items = groupValues
-      .map((item) => ({
-        id: item,
-        value: item,
-        title: item.split('|').join(' | '),
-        description: '',
-      }))
-      .sort(sortItemsAlphabetically);
-  });
-}
-
 async function initHeadlessSearch(block, groups, placeholders) {
   const { default: initiateCoveoHeadlessSearch } = await import('../../scripts/coveo-headless/index.js');
   const renderPageNumbers = () => renderEventsSearchPageNumbers(block, placeholders);
@@ -1058,6 +1321,7 @@ async function initHeadlessSearch(block, groups, placeholders) {
     handleSearchEngineSubscription: () => handleSearchEngineSubscription(block, groups, placeholders),
     renderPageNumbers,
     numberOfResults: getBrowseFiltersResultCount(),
+    facetOverrides: getEventsSearchHeadlessFacetOverrides(),
     renderSearchQuerySummary: () => {
       const totalCount = window.headlessQuerySummary?.state?.total || 0;
       updateResultsCount(block, totalCount, placeholders);
@@ -1096,12 +1360,6 @@ export default async function decorate(block) {
     console.error('Error fetching placeholders:', err);
   }
   const groups = getBaseFilterGroups(placeholders);
-  try {
-    await loadDynamicFacetValues(groups);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error fetching event facets:', error);
-  }
 
   createLayout(block, placeholders);
   decorateIcons(block);
