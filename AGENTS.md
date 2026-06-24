@@ -48,6 +48,10 @@ npx skills experimental_install
 
 To update skills to the latest versions run `npm run setup:skills`, which re-runs the install and updates `skills-lock.json`.
 
+### ExL dev team skills
+
+Custom skills for the Experience League **development team** ship from [AdobeEXL/exl-dev-ai](https://github.com/AdobeEXL/exl-dev-ai) and are pinned in [skills-lock.json](skills-lock.json) alongside Adobe EDS skills. Refresh with `npm run setup:skills`.
+
 ## Project structure (high level)
 
 ```
