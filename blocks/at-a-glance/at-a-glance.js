@@ -1,7 +1,7 @@
 import { getConfig } from '../../scripts/scripts.js';
 
 function generateFilteredEventURL(filterType, label, baseURL) {
-  const contentTypeFilter = 'f-el_contenttype=event';
+  const contentTypeFilter = 'f-el_contenttype=Event|On Demand Event';
   const filterMap = {
     product: 'f-el_product',
     series: 'f-el_event_series',
