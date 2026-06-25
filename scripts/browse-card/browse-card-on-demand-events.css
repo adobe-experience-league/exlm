@@ -27,8 +27,40 @@
   transition: transform 0.35s ease;
 }
 
-.browse-card.event-on-demand-event-card.is-video-playing .event-video-poster {
+.browse-card.event-on-demand-event-card.is-video-playing .event-video-poster.is-hidden {
   display: none;
+}
+
+.browse-card.event-on-demand-event-card.has-events-search-autoplay .event-video-preview {
+  position: relative;
+}
+
+.browse-card.event-on-demand-event-card.has-events-search-autoplay .event-video-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+
+.browse-card.event-on-demand-event-card.has-events-search-autoplay .event-video-iframe {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.browse-card.event-on-demand-event-card.has-events-search-autoplay .event-video-scrim,
+.browse-card.event-on-demand-event-card.has-events-search-autoplay .event-video-play,
+.browse-card.event-on-demand-event-card.has-events-search-autoplay .event-video-close {
+  display: none;
+}
+
+.browse-card.event-on-demand-event-card.has-events-search-autoplay .event-video-preview:hover .event-video-poster,
+.browse-card.event-on-demand-event-card.has-events-search-autoplay .event-video-preview:focus-within .event-video-poster {
+  transform: none;
 }
 
 .browse-card.event-on-demand-event-card .event-video-preview:hover .event-video-poster,
