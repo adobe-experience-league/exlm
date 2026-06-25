@@ -183,6 +183,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       el_course_duration: el_course_duration || '',
       el_course_module_count: el_course_module_count || '',
       el_level: el_level || '',
+      videoUrl: raw?.video_url || '',
     };
   };
 

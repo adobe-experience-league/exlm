@@ -1,3 +1,137 @@
+.browse-card.event-card .browse-card-figure.has-video-preview,
+.browse-card.event-on-demand-event-card .browse-card-figure.has-video-preview {
+  padding: 0;
+  overflow: hidden;
+  justify-content: stretch;
+  align-items: stretch;
+  background-color: var(--spectrum-gray-900);
+}
+
+.browse-card.event-on-demand-event-card .event-video-preview {
+  position: relative;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--spectrum-gray-900);
+}
+
+.browse-card.event-on-demand-event-card .event-video-poster {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  object-fit: cover;
+  display: block;
+  cursor: pointer;
+}
+
+.browse-card.event-on-demand-event-card .event-video-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 56px;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 55%);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+  z-index: 2;
+}
+
+.browse-card.event-on-demand-event-card .event-video-play:hover,
+.browse-card.event-on-demand-event-card .event-video-play:focus-visible {
+  transform: translate(-50%, -50%) scale(1.05);
+  background: rgb(0 0 0 / 70%);
+}
+
+.browse-card.event-on-demand-event-card .event-video-play .icon {
+  width: 24px;
+  height: 24px;
+}
+
+.browse-card.event-on-demand-event-card .event-video-iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  border: 0;
+  display: block;
+}
+
+.browse-card.event-on-demand-event-card .event-video-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 65%);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.browse-card.event-on-demand-event-card .event-video-close .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.browse-card.event-on-demand-event-card .event-video-status {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 4;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: var(--spectrum-font-size-50);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.browse-card.event-on-demand-event-card .event-video-status-available {
+  background: var(--spectrum-green-800);
+  color: var(--spectrum-gray-50);
+}
+
+.browse-card.event-on-demand-event-card .event-video-status-unavailable {
+  background: var(--spectrum-gray-700);
+  color: var(--spectrum-gray-50);
+}
+
+.browse-card.event-on-demand-event-card.is-video-playing .event-series-banner {
+  display: none;
+}
+
+.browse-card.event-on-demand-event-card.has-video-preview .event-series-banner {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 12px 10%;
+  background: linear-gradient(transparent, rgb(0 0 0 / 72%));
+  color: var(--spectrum-gray-50);
+  z-index: 2;
+}
+
+.browse-card.event-on-demand-event-card.has-video-preview .event-series-banner::before,
+.browse-card.event-on-demand-event-card.has-video-preview .event-series-banner::after {
+  display: none;
+}
+
 /* On demand event css */
 
 .browse-cards-block-content:has(.event-card),
