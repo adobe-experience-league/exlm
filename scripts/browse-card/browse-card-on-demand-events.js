@@ -36,7 +36,7 @@ function clearFigureMedia(cardFigure) {
   cardFigure.querySelector('.event-video-preview')?.remove();
   cardFigure.querySelector('.event-series-banner')?.remove();
   cardFigure.querySelector('.event-video-status')?.remove();
-  cardFigure.classList.remove('has-fallback-image', 'has-video-preview', 'has-no-video-preview');
+  cardFigure.classList.remove('has-fallback-image', 'has-video-preview', 'has-no-video-preview', 'img-custom-height');
 }
 
 function appendSeriesBanner(cardFigure, seriesText) {
@@ -193,7 +193,7 @@ export const decorateOnDemandEvents = (card, model) => {
   const isEventsSearch = !!card.closest('.events-search');
 
   clearFigureMedia(cardFigure);
-  card.classList.remove('has-video-preview', 'is-video-playing');
+  card.classList.remove('has-video-preview', 'is-video-playing', 'thumbnail-loaded', 'thumbnail-not-loaded');
   delete card.dataset.videoUrl;
 
   if (hasValidVideo) {

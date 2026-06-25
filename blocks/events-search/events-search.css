@@ -641,6 +641,16 @@ main .events-search.is-filters-open .events-search-filters-panel {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  main
+    .events-search
+    .events-search-results-body:not(.list)
+    .events-search-results-grid
+    > .events-search-card-item:last-child:nth-child(3n + 1):not(:first-child) {
+    grid-column: 1 / -1;
+    width: calc((100% - 2 * var(--spectrum-spacing-300)) / 3);
+    justify-self: center;
+  }
+
   main .events-search .events-search-results-body.list .events-search-results-grid {
     grid-template-columns: 1fr;
   }
@@ -709,5 +719,16 @@ main .events-search.is-filters-open .events-search-filters-panel {
 
   main .events-search .events-search-results-body:not(.list) .browse-card-shimmer {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* Center lone card when result count is not divisible by 3 (legacy 16-per-page). */
+  main
+    .events-search
+    .events-search-results-body:not(.list)
+    .events-search-results-grid
+    > .events-search-card-item:last-child:nth-child(3n + 1):not(:first-child) {
+    grid-column: 1 / -1;
+    width: calc((100% - 2 * var(--spectrum-spacing-300)) / 3);
+    justify-self: center;
   }
 }

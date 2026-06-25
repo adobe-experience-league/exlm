@@ -29,6 +29,15 @@ const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
 const PLACEHOLDER_COUNT_TOKEN = '${count}';
 const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
 
+/** 16 results leaves 1 orphan in a 3-column grid; use 15 at those breakpoints. */
+function getEventsSearchResultCount() {
+  const defaultCount = getBrowseFiltersResultCount();
+  const usesThreeColumns =
+    window.matchMedia('(min-width: 900px) and (max-width: 1023px)').matches ||
+    window.matchMedia('(min-width: 1200px)').matches;
+  return usesThreeColumns ? 15 : defaultCount;
+}
+
 /** Builds the composite key used to identify a filter in pendingRemovals and callout data-key attributes. */
 const toCompositeKey = (filterType, value) => `${filterType}:${value}`;
 
@@ -547,7 +556,7 @@ function bindEventsSearchLoadingUI(block) {
   disconnectMo.observe(block.parentElement || document.body, { childList: true });
   eventsSearchLoadingUiCleanups.set(block, teardownEventsSearchLoadingUi);
 
-  const shimmer = new BrowseCardShimmer(getBrowseFiltersResultCount());
+  const shimmer = new BrowseCardShimmer(getEventsSearchResultCount());
   /** Avoid jumping to results on first Coveo run; scroll only after subsequent filter/pagination/etc. searches. */
   let hasCompletedInitialSearchResponse = false;
 
@@ -1070,7 +1079,7 @@ async function initHeadlessSearch(block, groups, placeholders) {
   await initiateCoveoHeadlessSearch({
     handleSearchEngineSubscription: renderSearchResults,
     renderPageNumbers,
-    numberOfResults: getBrowseFiltersResultCount(),
+    numberOfResults: getEventsSearchResultCount(),
     renderSearchQuerySummary: () => {
       const totalCount = window.headlessQuerySummary?.state?.total || 0;
       updateResultsCount(block, totalCount, placeholders);

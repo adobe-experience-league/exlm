@@ -113,8 +113,9 @@
 .browse-card.event-on-demand-event-card .event-video-status {
   position: absolute;
   top: 10px;
-  left: 10px;
-  z-index: 4;
+  right: 10px;
+  left: auto;
+  z-index: 9;
   padding: 4px 8px;
   border-radius: 4px;
   font-size: var(--spectrum-font-size-50);
