@@ -21,10 +21,13 @@ function getVideoPosterUrl(videoUrl) {
   return `${cleanVideoUrl(videoUrl)}?format=jpeg`;
 }
 
-function getVideoEmbedUrl(videoUrl) {
+function getVideoEmbedUrl(videoUrl, { muted = false } = {}) {
   try {
     const url = new URL(videoUrl);
     url.searchParams.set('autoplay', 'true');
+    if (muted) {
+      url.searchParams.set('muted', 'true');
+    }
     if (!url.searchParams.has('learn')) {
       url.searchParams.set('learn', 'on');
     }
@@ -154,23 +157,20 @@ function startVideoPlayback(card, { userInitiated = false } = {}) {
     delete card.dataset.videoManualStop;
   }
 
-  document.querySelectorAll('.browse-card.event-on-demand-event-card.is-video-playing').forEach((otherCard) => {
-    if (otherCard !== card) {
-      stopVideoPlayback(otherCard);
-    }
-  });
-
   const preview = card.querySelector('.event-video-preview');
   if (!preview) return;
 
   const title = card.querySelector('.browse-card-title-text')?.textContent?.trim() || '';
+  const isEventsSearch = !!card.closest('.events-search');
+  const muted = isEventsSearch || !userInitiated;
+
   card.classList.add('is-video-playing');
   preview.innerHTML = '';
   preview.classList.add('is-playing');
 
   const iframe = createTag('iframe', {
     class: 'event-video-iframe',
-    src: getVideoEmbedUrl(videoUrl),
+    src: getVideoEmbedUrl(videoUrl, { muted }),
     title: title ? `Video: ${title}` : 'Event video',
     loading: 'lazy',
     allow: 'autoplay; encrypted-media; fullscreen',
@@ -199,30 +199,30 @@ function startVideoPlayback(card, { userInitiated = false } = {}) {
   decorateIcons(closeButton);
 }
 
-function updateAutoplayCandidate() {
+function updateAutoplayCandidates() {
   if (!isAutoplayEnabled()) return;
 
-  let bestCard = null;
-  let bestRatio = AUTOPLAY_VISIBILITY_THRESHOLD;
+  const visibleCards = new Set();
 
   autoplayCandidates.forEach((ratio, card) => {
     if (card.dataset.videoManualStop === 'true') return;
     if (!isValidVideoUrl(card.dataset.videoUrl)) return;
-    if (ratio > bestRatio) {
-      bestRatio = ratio;
-      bestCard = card;
+    if (ratio >= AUTOPLAY_VISIBILITY_THRESHOLD) {
+      visibleCards.add(card);
     }
   });
 
   document.querySelectorAll('.browse-card.event-on-demand-event-card.is-video-playing').forEach((playingCard) => {
-    if (playingCard !== bestCard) {
+    if (!visibleCards.has(playingCard)) {
       stopVideoPlayback(playingCard);
     }
   });
 
-  if (bestCard && !bestCard.classList.contains('is-video-playing')) {
-    startVideoPlayback(bestCard);
-  }
+  visibleCards.forEach((card) => {
+    if (!card.classList.contains('is-video-playing')) {
+      startVideoPlayback(card);
+    }
+  });
 }
 
 function scheduleAutoplayUpdate() {
@@ -230,7 +230,7 @@ function scheduleAutoplayUpdate() {
   autoplayUpdateScheduled = true;
   requestAnimationFrame(() => {
     autoplayUpdateScheduled = false;
-    updateAutoplayCandidate();
+    updateAutoplayCandidates();
   });
 }
 

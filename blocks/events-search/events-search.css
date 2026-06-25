@@ -420,7 +420,7 @@ main .events-search .events-search-controls .sort-container .sort-dropdown-conte
   display: block;
 }
 
-/* Card grid columns: <600 1, 600–899 2, ≥900 4 (grid view only; list stays 1). 16 results ÷ 4 = full rows. */
+/* Card grid columns: <600 1, 600–899 2, 900–1023 3, 1024–1199 2, ≥1200 3 (grid view only; list stays 1). */
 main .events-search .events-search-results-body.browse-cards-block {
   min-height: auto;
 }
@@ -429,7 +429,6 @@ main .events-search .events-search-results-grid {
   display: grid;
   gap: var(--spectrum-spacing-300);
   grid-template-columns: 1fr;
-  align-items: stretch;
 }
 
 main .events-search .events-search-results-body.list .events-search-results-grid {
@@ -438,7 +437,6 @@ main .events-search .events-search-results-body.list .events-search-results-grid
 
 main .events-search .events-search-results-grid > .events-search-card-item {
   min-width: 0;
-  display: flex;
 }
 
 /* Browse card shimmer: same column rhythm as results grid (browse-filters-style card tiles) */
@@ -645,11 +643,11 @@ main .events-search.is-filters-open .events-search-filters-panel {
   }
 
   main .events-search .events-search-results-body:not(.list) .events-search-results-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   main .events-search .events-search-results-body:not(.list) .browse-card-shimmer {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   main .events-search .events-search-results-body.list .events-search-results-grid {
@@ -663,11 +661,11 @@ main .events-search.is-filters-open .events-search-filters-panel {
 
 @media (min-width: 1024px) {
   main .events-search .events-search-results-body:not(.list) .events-search-results-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   main .events-search .events-search-results-body:not(.list) .browse-card-shimmer {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   main .events-search .events-search-layout {
@@ -711,81 +709,14 @@ main .events-search.is-filters-open .events-search-filters-panel {
     z-index: -1;
     pointer-events: none;
   }
+}
 
-  /* Events Search grid cards — equal heights, 16:9 media, compact content */
-  main .events-search .browse-cards-block-content:has(.event-on-demand-event-card),
-  main .events-search .browse-cards-block-content:has(.event-upcoming-event-card) {
-    min-height: unset;
-    margin-bottom: var(--spectrum-spacing-800);
-    align-items: stretch;
+@media (min-width: 1200px) {
+  main .events-search .events-search-results-body:not(.list) .events-search-results-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  main .events-search .browse-card.event-on-demand-event-card,
-  main .events-search .browse-card.event-upcoming-event-card,
-  main .events-search .browse-card.event-card {
-    min-height: unset;
-    height: 100%;
-    background-color: var(--spectrum-gray-50);
-    border-radius: var(--spectrum-spacing-300);
-    overflow: hidden;
-  }
-
-  main .events-search .browse-card.event-on-demand-event-card .browse-card-figure,
-  main .events-search .browse-card.event-upcoming-event-card .browse-card-figure,
-  main .events-search .browse-card.event-card .browse-card-figure {
-    flex: 0 0 auto;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    max-height: none;
-  }
-
-  main .events-search .browse-card.event-on-demand-event-card .browse-card-figure.has-fallback-image img,
-  main .events-search .browse-card.event-upcoming-event-card .browse-card-figure.has-fallback-image img {
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-  }
-
-  main .events-search .browse-card.event-on-demand-event-card .browse-card-content,
-  main .events-search .browse-card.event-upcoming-event-card .browse-card-content {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    padding: var(--spectrum-spacing-300) var(--spectrum-spacing-300) var(--spectrum-spacing-200);
-  }
-
-  main .events-search .browse-card.event-on-demand-event-card .browse-card-title-text,
-  main .events-search .browse-card.event-upcoming-event-card .browse-card-title-text {
-    font-size: var(--spectrum-font-size-200);
-    line-height: var(--spectrum-line-height-s);
-    -webkit-line-clamp: 2;
-    max-height: none;
-    margin: var(--spectrum-spacing-100) 0;
-  }
-
-  main .events-search .browse-card.event-on-demand-event-card .browse-card-description-text,
-  main .events-search .browse-card.event-upcoming-event-card .browse-card-description-text {
-    -webkit-line-clamp: 2;
-    font-size: var(--spectrum-font-size-100);
-    line-height: var(--spectrum-line-height-xs);
-    color: var(--spectrum-gray-700);
-    margin-bottom: 0;
-  }
-
-  main .events-search .browse-card.event-on-demand-event-card .browse-card-footer,
-  main .events-search .browse-card.event-upcoming-event-card .browse-card-footer {
-    flex: 0 0 auto;
-    margin-top: auto;
-    padding: 0 var(--spectrum-spacing-300) var(--spectrum-spacing-300);
-  }
-
-  main .events-search .browse-card.event-on-demand-event-card .event-video-preview,
-  main .events-search .browse-card.event-on-demand-event-card .browse-card-figure.has-video-preview {
-    aspect-ratio: 16 / 9;
-  }
-
-  main .events-search .browse-card.event-on-demand-event-card .browse-card-banner {
-    font-size: var(--spectrum-font-size-50);
-    padding: 2px var(--spectrum-spacing-200);
-    top: var(--spectrum-spacing-200);
+  main .events-search .events-search-results-body:not(.list) .browse-card-shimmer {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

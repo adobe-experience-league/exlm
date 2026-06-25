@@ -29,7 +29,7 @@ const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
 const PLACEHOLDER_COUNT_TOKEN = '${count}';
 const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
 
-/** Uses standard browse-filters page size (16); grid is 4 columns on desktop so rows fill evenly. */
+/** Uses standard browse-filters page size (16); grid is 3 columns on desktop at ≥1200px. */
 function getEventsSearchResultCount() {
   return getBrowseFiltersResultCount();
 }
