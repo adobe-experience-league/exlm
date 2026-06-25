@@ -32,9 +32,9 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 56px;
-  height: 56px;
-  border: 0;
+  width: 64px;
+  height: 64px;
+  border: 2px solid rgb(255 255 255 / 85%);
   border-radius: 50%;
   background: rgb(0 0 0 / 55%);
   cursor: pointer;
@@ -43,8 +43,31 @@
   justify-content: center;
   transition:
     transform 0.2s ease,
-    background-color 0.2s ease;
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
   z-index: 2;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 35%);
+}
+
+.browse-card.event-on-demand-event-card .event-video-preview::after {
+  content: 'Click to preview';
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: rgb(0 0 0 / 65%);
+  color: var(--spectrum-gray-50);
+  font-size: var(--spectrum-font-size-75);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.browse-card.event-on-demand-event-card.is-video-playing .event-video-preview::after {
+  display: none;
 }
 
 .browse-card.event-on-demand-event-card .event-video-play:hover,

@@ -771,9 +771,12 @@ export async function buildCard(element, model) {
     cardContainer.addEventListener('click', (e) => {
       const preventLinkRedirection = !!(e.target && e.target.closest('.user-actions'));
 
-      // Prevent default link behavior for user actions and video clips
+      // Prevent default link behavior for user actions, video clips, and inline event video previews
       if (
         preventLinkRedirection ||
+        e.target.closest('.event-video-preview') ||
+        e.target.closest('.event-video-play') ||
+        e.target.closest('.event-video-close') ||
         (isVideoClip && (e.target.closest('.browse-card-figure') || e.target.closest('.play-button')))
       ) {
         e.preventDefault();

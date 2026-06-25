@@ -48,6 +48,8 @@ function fillPlaceholderCount(template, value) {
 const viewSwitcherInstances = new WeakMap();
 /** AbortController + MutationObserver teardown for Coveo document listeners (re-decorate or DOM removal). */
 const eventsSearchLoadingUiCleanups = new WeakMap();
+/** Per-block callback to render Coveo results after search completes (pagination/filter race fix). */
+const eventsSearchResultRenderHandlers = new WeakMap();
 /** Per-block AbortController for open sort dropdown document listeners (click-outside + Escape). */
 const eventsSearchSortDropdownOpenAbort = new WeakMap();
 /** Per-block filter state: { tags: [], pendingRemovals: Set }. */
@@ -584,6 +586,8 @@ function bindEventsSearchLoadingUI(block) {
       resultCount: responseResults.length,
       searchResponseId: responseSearchId,
     });
+    // Subscription can fire while isLoading is still true and skip render; sync after response is processed.
+    eventsSearchResultRenderHandlers.get(block)?.();
   };
 
   document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, onPreprocess, { signal: ac.signal });
@@ -802,13 +806,16 @@ async function renderResults(block, results = [], searchResponseId = '') {
     return;
   }
 
+  const currentPage = window.headlessPager?.state?.currentPage || 1;
+  const renderCacheKey = `${searchResponseId}:${currentPage}`;
   const shouldRender =
-    !grid.dataset.searchresponseid ||
-    grid.dataset.searchresponseid !== searchResponseId ||
+    !grid.dataset.renderCacheKey ||
+    grid.dataset.renderCacheKey !== renderCacheKey ||
     !grid.querySelector('.events-search-card-item');
   if (!shouldRender) return;
 
   grid.dataset.searchresponseid = searchResponseId;
+  grid.dataset.renderCacheKey = renderCacheKey;
   grid.classList.add('browse-cards-block-content');
   const cardsData = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
 
@@ -842,7 +849,7 @@ async function renderResults(block, results = [], searchResponseId = '') {
 }
 
 async function handleSearchEngineSubscription(block, groups, placeholders) {
-  if (!window.headlessSearchEngine || window.headlessStatusControllers?.state?.isLoading) return;
+  if (!window.headlessSearchEngine) return;
   try {
     syncFilterUIFromHeadlessState(block, groups);
     const search = window.headlessSearchEngine.state.search || {};
@@ -1055,8 +1062,13 @@ async function loadDynamicFacetValues(groups) {
 async function initHeadlessSearch(block, groups, placeholders) {
   const { default: initiateCoveoHeadlessSearch } = await import('../../scripts/coveo-headless/index.js');
   const renderPageNumbers = () => renderEventsSearchPageNumbers(block, placeholders);
+  const renderSearchResults = () => handleSearchEngineSubscription(block, groups, placeholders);
+  eventsSearchResultRenderHandlers.set(block, renderSearchResults);
+  bindEventsSearchLoadingUI(block);
+  bindEventsSearchPagination(block);
+
   await initiateCoveoHeadlessSearch({
-    handleSearchEngineSubscription: () => handleSearchEngineSubscription(block, groups, placeholders),
+    handleSearchEngineSubscription: renderSearchResults,
     renderPageNumbers,
     numberOfResults: getBrowseFiltersResultCount(),
     renderSearchQuerySummary: () => {
@@ -1072,9 +1084,6 @@ async function initHeadlessSearch(block, groups, placeholders) {
       updateClearFiltersButtonState(block);
     },
   });
-
-  bindEventsSearchLoadingUI(block);
-  bindEventsSearchPagination(block);
 
   if (window.headlessQueryActionCreators && window.headlessSearchEngine) {
     const action = window.headlessQueryActionCreators.updateAdvancedSearchQueries({
