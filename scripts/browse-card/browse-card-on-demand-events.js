@@ -70,10 +70,10 @@ function appendFallbackImage(cardFigure) {
 }
 
 function appendVideoStatusBadge(cardFigure, isEventsSearch, available) {
-  if (!isEventsSearch) return;
-  const statusClass = available ? 'event-video-status-available' : 'event-video-status-unavailable';
-  const statusText = available ? 'Video preview' : 'Preview unavailable';
-  cardFigure.appendChild(createTag('span', { class: `event-video-status ${statusClass}` }, statusText));
+  if (!isEventsSearch || available) return;
+  cardFigure.appendChild(
+    createTag('span', { class: 'event-video-status event-video-status-unavailable visually-hidden' }, 'Preview unavailable'),
+  );
 }
 
 function buildVideoPreview(card, cardFigure, model) {
@@ -83,6 +83,7 @@ function buildVideoPreview(card, cardFigure, model) {
   cardFigure.classList.add('has-video-preview');
 
   const preview = createTag('div', { class: 'event-video-preview' });
+  const scrim = createTag('div', { class: 'event-video-scrim', 'aria-hidden': 'true' });
   const poster = createTag('img', {
     class: 'event-video-poster',
     loading: 'lazy',
@@ -97,16 +98,12 @@ function buildVideoPreview(card, cardFigure, model) {
       type: 'button',
       'aria-label': title ? `Play ${title}` : 'Play event video',
     },
-    '<span class="icon icon-play-outline-white"></span>',
+    '<span class="icon icon-play"></span>',
   );
 
-  preview.append(poster, playButton);
+  preview.append(poster, scrim, playButton);
   cardFigure.appendChild(preview);
   decorateIcons(playButton);
-
-  if (card.closest('.events-search')) {
-    appendVideoStatusBadge(cardFigure, true, true);
-  }
 
   const handlePlayRequest = (event) => {
     event.preventDefault();
