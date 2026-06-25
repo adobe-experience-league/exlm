@@ -194,7 +194,7 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
   }
   const { searchHub, pipeline } = getCoveoSearchRouting();
   const dataSource = {
-    url: getCoveoSearchResultsUrl(),
+    url: getCoveoSearchResultsUrl({ fetchFacets: !!param.fetchFacets }),
     param: {
       locale:
         URL_SPECIAL_CASE_LOCALES.get(document.querySelector('html').lang) ||
@@ -223,10 +223,6 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
   // Set to select page
   if (param.firstResult) {
     dataSource.param.firstResult = param.firstResult;
-  }
-
-  if (param.fetchFacets) {
-    dataSource.url += '/values/batch';
   }
 
   return dataSource;
