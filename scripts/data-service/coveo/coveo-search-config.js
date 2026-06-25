@@ -128,8 +128,12 @@ export function getCoveoOrganizationId() {
   return isCoveoPipelineTestEnabled() ? COVEO_PROD_ORG_ID : coveoOrganizationId;
 }
 
-export function getCoveoSearchResultsUrl() {
+export function getCoveoSearchResultsUrl(options = {}) {
+  const { fetchFacets = false } = options;
   const { coveoSearchResultsUrl } = getConfig();
-  if (!isCoveoPipelineTestEnabled()) return coveoSearchResultsUrl;
-  return `${COVEO_PROD_SEARCH_BASE_URL}?organizationId=${COVEO_PROD_ORG_ID}`;
+  if (!isCoveoPipelineTestEnabled()) {
+    return fetchFacets ? `${coveoSearchResultsUrl}/values/batch` : coveoSearchResultsUrl;
+  }
+  const path = fetchFacets ? '/values/batch' : '';
+  return `${COVEO_PROD_SEARCH_BASE_URL}${path}?organizationId=${COVEO_PROD_ORG_ID}`;
 }
