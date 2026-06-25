@@ -1496,8 +1496,10 @@ function decorateBrowseTopics(block) {
   // Check if block has v1 tags by finding any element that starts with "exl:"
   const hasExlTag = allDivs.some((el) => el?.textContent?.trim().startsWith('exl:'));
 
-  // blocks with v1 tags have 8 divs: solution(v1), heading, topics(v1), contentType, solutionsv2, featuresv2, topicsv2, customElement
-  const hasV1Tags = hasExlTag || allDivs.length >= 8;
+  // Case 1 : block authored before v2 was introduced — has only v1 tags
+  // Case 2 : block authored after v2 was introduced — has both v1 and v2 tags
+  // Case 3 : block authored after v1 cutover — has only v2 tags
+  const hasV1Tags = hasExlTag || allDivs.length >= 8 || allDivs.length < 6;
 
   let solutionsElement;
   let headingElement;
@@ -1509,18 +1511,24 @@ function decorateBrowseTopics(block) {
   let customElement;
 
   if (hasV1Tags) {
-    [
-      solutionsElement,
-      headingElement,
-      topicsElement,
-      contentTypeElement,
-      solutionsv2Element,
-      featuresv2Element,
-      topicsv2Element,
-      customElement,
-    ] = allDivs;
+    if (allDivs.length >= 8) {
+      // Case 2: both v1 and v2 tags
+      [
+        solutionsElement,
+        headingElement,
+        topicsElement,
+        contentTypeElement,
+        solutionsv2Element,
+        featuresv2Element,
+        topicsv2Element,
+        customElement,
+      ] = allDivs;
+    } else {
+      // Case 1: legacy — only v1 tags
+      [solutionsElement, headingElement, topicsElement, contentTypeElement, customElement] = allDivs;
+    }
   } else {
-    // blocks with v2 has only 6 divs
+    // Case 3: current — only v2 tags
     [headingElement, contentTypeElement, solutionsv2Element, featuresv2Element, topicsv2Element, customElement] =
       allDivs;
   }
