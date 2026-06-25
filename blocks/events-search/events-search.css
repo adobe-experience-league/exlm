@@ -411,7 +411,7 @@ main .events-search .events-search-controls .sort-container .sort-dropdown-conte
   display: block;
 }
 
-/* Card grid columns: <600 1, 600–899 2, 900–1023 3, 1024–1199 2, ≥1200 3 (grid view only; list stays 1). */
+/* Card grid columns: <600 1, 600–899 2, ≥900 4 (grid view only; list stays 1). 16 results ÷ 4 = full rows. */
 main .events-search .events-search-results-body.browse-cards-block {
   min-height: auto;
 }
@@ -634,21 +634,11 @@ main .events-search.is-filters-open .events-search-filters-panel {
   }
 
   main .events-search .events-search-results-body:not(.list) .events-search-results-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   main .events-search .events-search-results-body:not(.list) .browse-card-shimmer {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  main
-    .events-search
-    .events-search-results-body:not(.list)
-    .events-search-results-grid
-    > .events-search-card-item:last-child:nth-child(3n + 1):not(:first-child) {
-    grid-column: 1 / -1;
-    width: calc((100% - 2 * var(--spectrum-spacing-300)) / 3);
-    justify-self: center;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   main .events-search .events-search-results-body.list .events-search-results-grid {
@@ -662,11 +652,11 @@ main .events-search.is-filters-open .events-search-filters-panel {
 
 @media (min-width: 1024px) {
   main .events-search .events-search-results-body:not(.list) .events-search-results-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   main .events-search .events-search-results-body:not(.list) .browse-card-shimmer {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   main .events-search .events-search-layout {
@@ -709,26 +699,5 @@ main .events-search.is-filters-open .events-search-filters-panel {
     background: var(--background-color);
     z-index: -1;
     pointer-events: none;
-  }
-}
-
-@media (min-width: 1200px) {
-  main .events-search .events-search-results-body:not(.list) .events-search-results-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  main .events-search .events-search-results-body:not(.list) .browse-card-shimmer {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  /* Center lone card when result count is not divisible by 3 (legacy 16-per-page). */
-  main
-    .events-search
-    .events-search-results-body:not(.list)
-    .events-search-results-grid
-    > .events-search-card-item:last-child:nth-child(3n + 1):not(:first-child) {
-    grid-column: 1 / -1;
-    width: calc((100% - 2 * var(--spectrum-spacing-300)) / 3);
-    justify-self: center;
   }
 }

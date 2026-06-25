@@ -29,13 +29,9 @@ const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
 const PLACEHOLDER_COUNT_TOKEN = '${count}';
 const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
 
-/** 16 results leaves 1 orphan in a 3-column grid; use 15 at those breakpoints. */
+/** Uses standard browse-filters page size (16); grid is 4 columns on desktop so rows fill evenly. */
 function getEventsSearchResultCount() {
-  const defaultCount = getBrowseFiltersResultCount();
-  const usesThreeColumns =
-    window.matchMedia('(min-width: 900px) and (max-width: 1023px)').matches ||
-    window.matchMedia('(min-width: 1200px)').matches;
-  return usesThreeColumns ? 15 : defaultCount;
+  return getBrowseFiltersResultCount();
 }
 
 /** Builds the composite key used to identify a filter in pendingRemovals and callout data-key attributes. */
