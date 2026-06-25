@@ -3,6 +3,11 @@ import { decorateIcons } from '../lib-franklin.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
 const VIDEO_URL_PATTERN = /^https:\/\/video\.tv\.adobe\.com\/v\/\d+/;
+const AUTOPLAY_VISIBILITY_THRESHOLD = 0.45;
+
+/** @type {Map<HTMLElement, number>} */
+const autoplayCandidates = new Map();
+let autoplayUpdateScheduled = false;
 
 function cleanVideoUrl(videoUrl) {
   return (videoUrl || '').split('?')[0];
@@ -27,6 +32,10 @@ function getVideoEmbedUrl(videoUrl) {
   } catch (e) {
     return videoUrl;
   }
+}
+
+function isAutoplayEnabled() {
+  return !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 function clearFigureMedia(cardFigure) {
@@ -60,6 +69,13 @@ function appendFallbackImage(cardFigure) {
   cardFigure.appendChild(fallbackImg);
 }
 
+function appendVideoStatusBadge(cardFigure, isEventsSearch, available) {
+  if (!isEventsSearch) return;
+  const statusClass = available ? 'event-video-status-available' : 'event-video-status-unavailable';
+  const statusText = available ? 'Video preview' : 'Preview unavailable';
+  cardFigure.appendChild(createTag('span', { class: `event-video-status ${statusClass}` }, statusText));
+}
+
 function buildVideoPreview(card, cardFigure, model) {
   const { videoUrl, title } = model;
   card.dataset.videoUrl = videoUrl;
@@ -89,53 +105,18 @@ function buildVideoPreview(card, cardFigure, model) {
   decorateIcons(playButton);
 
   if (card.closest('.events-search')) {
-    const status = createTag('span', { class: 'event-video-status event-video-status-available' }, 'Video preview');
-    cardFigure.appendChild(status);
+    appendVideoStatusBadge(cardFigure, true, true);
   }
 
-  const startPlayback = (event) => {
+  const handlePlayRequest = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    document.querySelectorAll('.browse-card.event-on-demand-event-card.is-video-playing').forEach((otherCard) => {
-      if (otherCard !== card) {
-        // eslint-disable-next-line no-use-before-define -- paired with stopVideoPlayback below
-        stopVideoPlayback(otherCard);
-      }
-    });
-
-    card.classList.add('is-video-playing');
-    preview.innerHTML = '';
-    const iframe = createTag('iframe', {
-      class: 'event-video-iframe',
-      src: getVideoEmbedUrl(videoUrl),
-      title: title ? `Video: ${title}` : 'Event video',
-      loading: 'lazy',
-      allow: 'autoplay; encrypted-media; fullscreen',
-      allowfullscreen: '',
-    });
-    preview.appendChild(iframe);
-
-    const closeButton = createTag(
-      'button',
-      {
-        class: 'event-video-close',
-        type: 'button',
-        'aria-label': 'Close video preview',
-      },
-      '<span class="icon icon-close-light"></span>',
-    );
-    closeButton.addEventListener('click', (closeEvent) => {
-      closeEvent.preventDefault();
-      closeEvent.stopPropagation();
-      // eslint-disable-next-line no-use-before-define -- paired with stopVideoPlayback below
-      stopVideoPlayback(card);
-    });
-    preview.appendChild(closeButton);
-    decorateIcons(closeButton);
+    // eslint-disable-next-line no-use-before-define -- paired with startVideoPlayback below
+    startVideoPlayback(card, { userInitiated: true });
   };
 
-  playButton.addEventListener('click', startPlayback);
-  poster.addEventListener('click', startPlayback);
+  playButton.addEventListener('click', handlePlayRequest);
+  poster.addEventListener('click', handlePlayRequest);
 }
 
 function stopVideoPlayback(card) {
@@ -160,15 +141,100 @@ function stopVideoPlayback(card) {
 
   if (isEventsSearch && !hasValidVideo) {
     cardFigure.classList.add('has-no-video-preview');
-    const status = createTag(
-      'span',
-      { class: 'event-video-status event-video-status-unavailable' },
-      'Preview unavailable',
-    );
-    cardFigure.appendChild(status);
+    appendVideoStatusBadge(cardFigure, true, false);
   }
 
   appendSeriesBanner(cardFigure, seriesText);
+}
+
+function startVideoPlayback(card, { userInitiated = false } = {}) {
+  if (!card || card.classList.contains('is-video-playing')) return;
+
+  const { videoUrl } = card.dataset;
+  if (!isValidVideoUrl(videoUrl)) return;
+
+  if (userInitiated) {
+    delete card.dataset.videoManualStop;
+  }
+
+  document.querySelectorAll('.browse-card.event-on-demand-event-card.is-video-playing').forEach((otherCard) => {
+    if (otherCard !== card) {
+      stopVideoPlayback(otherCard);
+    }
+  });
+
+  const preview = card.querySelector('.event-video-preview');
+  if (!preview) return;
+
+  const title = card.querySelector('.browse-card-title-text')?.textContent?.trim() || '';
+  card.classList.add('is-video-playing');
+  preview.innerHTML = '';
+  preview.classList.add('is-playing');
+
+  const iframe = createTag('iframe', {
+    class: 'event-video-iframe',
+    src: getVideoEmbedUrl(videoUrl),
+    title: title ? `Video: ${title}` : 'Event video',
+    loading: 'lazy',
+    allow: 'autoplay; encrypted-media; fullscreen',
+    allowfullscreen: '',
+  });
+  preview.appendChild(iframe);
+
+  const closeButton = createTag(
+    'button',
+    {
+      class: 'event-video-close',
+      type: 'button',
+      'aria-label': 'Close video preview',
+    },
+    '<span class="icon icon-close-light"></span>',
+  );
+  closeButton.addEventListener('click', (closeEvent) => {
+    closeEvent.preventDefault();
+    closeEvent.stopPropagation();
+    card.dataset.videoManualStop = 'true';
+    stopVideoPlayback(card);
+    // eslint-disable-next-line no-use-before-define -- paired with scheduleAutoplayUpdate below
+    scheduleAutoplayUpdate();
+  });
+  preview.appendChild(closeButton);
+  decorateIcons(closeButton);
+}
+
+function updateAutoplayCandidate() {
+  if (!isAutoplayEnabled()) return;
+
+  let bestCard = null;
+  let bestRatio = AUTOPLAY_VISIBILITY_THRESHOLD;
+
+  autoplayCandidates.forEach((ratio, card) => {
+    if (card.dataset.videoManualStop === 'true') return;
+    if (!isValidVideoUrl(card.dataset.videoUrl)) return;
+    if (ratio > bestRatio) {
+      bestRatio = ratio;
+      bestCard = card;
+    }
+  });
+
+  document.querySelectorAll('.browse-card.event-on-demand-event-card.is-video-playing').forEach((playingCard) => {
+    if (playingCard !== bestCard) {
+      stopVideoPlayback(playingCard);
+    }
+  });
+
+  if (bestCard && !bestCard.classList.contains('is-video-playing')) {
+    startVideoPlayback(bestCard);
+  }
+}
+
+function scheduleAutoplayUpdate() {
+  if (!isAutoplayEnabled() || autoplayUpdateScheduled) return;
+  autoplayUpdateScheduled = true;
+  requestAnimationFrame(() => {
+    autoplayUpdateScheduled = false;
+    updateAutoplayCandidate();
+  });
 }
 
 export { stopVideoPlayback };
@@ -195,6 +261,7 @@ export const decorateOnDemandEvents = (card, model) => {
   clearFigureMedia(cardFigure);
   card.classList.remove('has-video-preview', 'is-video-playing', 'thumbnail-loaded', 'thumbnail-not-loaded');
   delete card.dataset.videoUrl;
+  delete card.dataset.videoManualStop;
 
   if (hasValidVideo) {
     buildVideoPreview(card, cardFigure, model);
@@ -205,12 +272,7 @@ export const decorateOnDemandEvents = (card, model) => {
   if (isEventsSearch && !hasValidVideo) {
     cardFigure.classList.add('has-no-video-preview');
     card.dataset.videoAvailable = 'false';
-    const status = createTag(
-      'span',
-      { class: 'event-video-status event-video-status-unavailable' },
-      'Preview unavailable',
-    );
-    cardFigure.appendChild(status);
+    appendVideoStatusBadge(cardFigure, true, false);
   } else if (hasValidVideo) {
     card.dataset.videoAvailable = 'true';
   }
@@ -227,14 +289,22 @@ export const decorateOnDemandEvents = (card, model) => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (!entry.isIntersecting) {
-            stopVideoPlayback(card);
+          const ratio = entry.intersectionRatio;
+          if (entry.isIntersecting && ratio >= AUTOPLAY_VISIBILITY_THRESHOLD) {
+            autoplayCandidates.set(card, ratio);
+          } else {
+            autoplayCandidates.delete(card);
+            if (card.classList.contains('is-video-playing')) {
+              stopVideoPlayback(card);
+            }
           }
+          scheduleAutoplayUpdate();
         });
       },
-      { threshold: 0.15 },
+      { threshold: [0, 0.25, 0.45, 0.6, 0.75, 1] },
     );
     observer.observe(card);
+    scheduleAutoplayUpdate();
   }
 };
 
