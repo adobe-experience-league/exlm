@@ -12,13 +12,18 @@ export const decorateOnDemandEvents = (card, model) => {
 
   if (card.closest('.recommendation-marquee')) return;
 
-  const { event } = model;
+  const { event, thumbnail } = model;
   const cardFigure = card.querySelector('.browse-card-figure');
   if (!cardFigure) return;
 
+  if (thumbnail) {
+    // video_url thumbnail available — keep laptop frame, play button, and img as rendered by buildCard
+    // Grey background is already applied via CSS on .browse-card-figure
+    return;
+  }
+
   cardFigure.querySelector('.laptop-container')?.remove();
   const img = cardFigure.querySelector('img');
-  const hasSeries = event?.series;
 
   img?.remove();
 
@@ -31,7 +36,7 @@ export const decorateOnDemandEvents = (card, model) => {
   cardFigure.querySelector('.event-series-banner')?.remove();
 
   // If no series title, show fallback Adobe A image (light themed)
-  if (!hasSeries) {
+  if (!event?.series) {
     cardFigure.classList.add('has-fallback-image');
 
     const fallbackImg = document.createElement('img');
