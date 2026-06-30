@@ -1,4 +1,10 @@
-import { getCurrentStepInfo } from '../../scripts/courses/course-utils.js';
+import {
+  getCurrentStepInfo,
+  getCourseFragmentUrl,
+  extractCourseModuleIds,
+  urlContainsModule,
+  getCurrentCourseMeta,
+} from '../../scripts/courses/course-utils.js';
 import Dropdown, { DROPDOWN_VARIANTS } from '../../scripts/dropdown/dropdown.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
@@ -16,6 +22,19 @@ export default async function decorate(block) {
     // Trigger sign in
     window.adobeIMS?.signIn();
     return;
+  }
+
+  const { moduleId } = extractCourseModuleIds();
+  if (moduleId) {
+    const courseMeta = await getCurrentCourseMeta();
+    const isModuleInCourse = courseMeta?.modules?.some((url) => urlContainsModule(url, moduleId)) ?? false;
+    if (!isModuleInCourse) {
+      const courseUrl = getCourseFragmentUrl();
+      if (courseUrl && !isUEAuthorMode) {
+        window.location.href = courseUrl;
+        return;
+      }
+    }
   }
 
   const moduleStatus = await getModuleStatus();
