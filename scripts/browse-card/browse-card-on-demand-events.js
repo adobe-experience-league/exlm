@@ -13,12 +13,12 @@ export const decorateOnDemandEvents = (card, model) => {
 
   if (card.closest('.recommendation-marquee')) return;
 
-  const { event, videoUrl } = model;
+  const { event, thumbnail } = model;
   const cardFigure = card.querySelector('.browse-card-figure');
   if (!cardFigure) return;
 
-  // Case 1: video_url available
-  if (videoUrl) {
+  // Case 1: thumbnail available
+  if (thumbnail) {
     const img = cardFigure.querySelector('img');
     const ensurePlayButton = () => {
       if (cardFigure.querySelector('.play-button')) return;
@@ -39,8 +39,11 @@ export const decorateOnDemandEvents = (card, model) => {
 
   const hasSeries = event?.series;
 
-  // Case 3: no series title — show fallback Adobe A image
-  if (!hasSeries) {
+  if (hasSeries) {
+    // Case 2: series title available — show series banner
+    cardFigure.appendChild(createTag('div', { class: 'event-series-banner' }, hasSeries));
+  } else {
+    // Case 3: no series title — show fallback Adobe A image
     cardFigure.classList.add('has-fallback-image');
     const fallbackImg = document.createElement('img');
     fallbackImg.loading = 'lazy';
@@ -53,11 +56,6 @@ export const decorateOnDemandEvents = (card, model) => {
       fallbackImg.addEventListener('error', () => fallbackImg.classList.add('img-loaded'));
     }
     cardFigure.appendChild(fallbackImg);
-  }
-
-  // Case 2: series title available — show series banner
-  if (hasSeries) {
-    cardFigure.appendChild(createTag('div', { class: 'event-series-banner' }, hasSeries));
   }
 };
 
