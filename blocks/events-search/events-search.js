@@ -25,9 +25,11 @@ const FACET_CONTROLLER_MAP = {
 const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
 // Tracks active render pass per block; queues the next subscription fire instead of running two renders at once.
 const headlessSubscriptionSyncDepth = new WeakMap();
-/** Literal token authors enter in placeholders.json for dynamic counts. */
-// eslint-disable-next-line no-template-curly-in-string -- not a JS template; matches placeholders.json text
+/** Literal tokens authors enter in placeholders for dynamic counts. */
+/* eslint-disable no-template-curly-in-string -- not JS templates; match placeholders sheet text */
 const PLACEHOLDER_COUNT_TOKEN = '${count}';
+const PLACEHOLDER_PG_COUNT_TOKEN = '${pgCount}';
+/* eslint-enable no-template-curly-in-string */
 const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
 
 // Filter UI helpers
@@ -113,7 +115,11 @@ const DYNAMIC_FACET_FIELDS = ['el_product', 'el_event_series'];
 // Fills count value into a placeholder string
 function fillPlaceholderCount(template, value) {
   const s = String(value);
-  return String(template).replaceAll(PLACEHOLDER_COUNT_TOKEN, s).replaceAll('{}', s).replaceAll('{count}', s);
+  return String(template)
+    .replaceAll(PLACEHOLDER_COUNT_TOKEN, s)
+    .replaceAll(PLACEHOLDER_PG_COUNT_TOKEN, s)
+    .replaceAll('{}', s)
+    .replaceAll('{count}', s);
 }
 
 function sortItemsAlphabetically(a, b) {
@@ -235,9 +241,11 @@ function syncDynamicFacetGroup(block, group, placeholders) {
   if (!items.length) {
     removeFilterGroupOptionsShimmer(optionsContainer);
     groupEl.classList.remove('is-filter-loading');
+    groupEl.style.display = 'none';
     return;
   }
 
+  groupEl.style.display = '';
   const wasExpanded = groupEl.classList.contains('is-expanded');
   group.items = items;
   renderDynamicGroupOptions(groupEl, group, placeholders);
@@ -281,11 +289,6 @@ function syncDynamicFacetGroupsFromHeadless(block, groups, placeholders) {
 
   const totalResults = window.headlessSearchEngine?.state?.search?.response?.totalCount ?? 0;
   block.classList.toggle('has-no-results', !totalResults);
-  groups.forEach((group) => {
-    const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${group.id}"]`);
-    if (groupEl) groupEl.style.display = totalResults > 0 ? '' : 'none';
-  });
-  if (!totalResults) return;
   groups.forEach((group) => {
     if (DYNAMIC_FACET_FIELDS.includes(group.id)) syncDynamicFacetGroup(block, group, placeholders);
   });
