@@ -1,5 +1,6 @@
 import { createTag } from '../scripts.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
+import { decorateIcons } from '../lib-franklin.js';
 
 /**
  * Decorates on-demand event cards with additional features
@@ -12,28 +13,35 @@ export const decorateOnDemandEvents = (card, model) => {
 
   if (card.closest('.recommendation-marquee')) return;
 
-  const { event } = model;
+  const { event, videoUrl } = model;
   const cardFigure = card.querySelector('.browse-card-figure');
   if (!cardFigure) return;
 
+  // Case 1: video_url available
+  if (videoUrl) {
+    const img = cardFigure.querySelector('img');
+    const ensurePlayButton = () => {
+      if (cardFigure.querySelector('.play-button')) return;
+      const playButton = createTag('div', { class: 'play-button' });
+      playButton.innerHTML = '<span class="icon icon-play-outline-white"></span>';
+      cardFigure.appendChild(playButton);
+      decorateIcons(playButton);
+    };
+    if (img?.complete) ensurePlayButton();
+    else img?.addEventListener('load', ensurePlayButton);
+    return;
+  }
+
   cardFigure.querySelector('.laptop-container')?.remove();
-  const img = cardFigure.querySelector('img');
+  cardFigure.querySelector('.play-button')?.remove();
+  cardFigure.querySelector('.event-series-banner')?.remove();
+  cardFigure.querySelector('img')?.remove();
+
   const hasSeries = event?.series;
 
-  img?.remove();
-
-  cardFigure.querySelector('.play-button')?.remove();
-
-  img?.addEventListener('load', () => {
-    cardFigure.querySelector('.play-button')?.remove();
-  });
-
-  cardFigure.querySelector('.event-series-banner')?.remove();
-
-  // If no series title, show fallback Adobe A image (light themed)
+  // Case 3: no series title — show fallback Adobe A image
   if (!hasSeries) {
     cardFigure.classList.add('has-fallback-image');
-
     const fallbackImg = document.createElement('img');
     fallbackImg.loading = 'lazy';
     fallbackImg.alt = '';
@@ -44,14 +52,12 @@ export const decorateOnDemandEvents = (card, model) => {
       fallbackImg.addEventListener('load', () => fallbackImg.classList.add('img-loaded'));
       fallbackImg.addEventListener('error', () => fallbackImg.classList.add('img-loaded'));
     }
-
     cardFigure.appendChild(fallbackImg);
   }
 
-  const seriesText = event?.series;
-  if (seriesText) {
-    const banner = createTag('div', { class: 'event-series-banner' }, seriesText);
-    cardFigure.appendChild(banner);
+  // Case 2: series title available — show series banner
+  if (hasSeries) {
+    cardFigure.appendChild(createTag('div', { class: 'event-series-banner' }, hasSeries));
   }
 };
 

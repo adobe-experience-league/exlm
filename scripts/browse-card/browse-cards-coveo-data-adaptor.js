@@ -165,6 +165,7 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       searchUid,
       index,
 
+      videoUrl: raw?.video_url || '',
       event: {
         series: eventSeries,
         time: eventTime,
