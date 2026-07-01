@@ -12,12 +12,6 @@
       "skillPath": "plugins/aem/edge-delivery-services/skills/aem-cli/SKILL.md",
       "computedHash": "3c3bfbc9c8652e843bf2438e72123811418774ce53345be8c7340ac6140b269c"
     },
-    "ai-story-writer": {
-      "source": "AdobeEXL/exl-dev-ai",
-      "sourceType": "github",
-      "skillPath": "skills/ai-story-writer/SKILL.md",
-      "computedHash": "fcdd678850af41d190b40fb38ff462416cb67bcb3a04d122f78c37b1bdb9116e"
-    },
     "analyze-and-plan": {
       "source": "adobe/skills",
       "sourceType": "github",
@@ -189,18 +183,6 @@
       "sourceType": "github",
       "skillPath": "plugins/aem/edge-delivery-services/skills/snowflake/SKILL.md",
       "computedHash": "fc2d9f94c0424399baa0c8ca5ba2f7d130b8026b9c31140b9da641d11f7d34dd"
-    },
-    "story-writer": {
-      "source": "AdobeEXL/exl-dev-ai",
-      "sourceType": "github",
-      "skillPath": "skills/story-writer/SKILL.md",
-      "computedHash": "05e4db6826cc9bb2d97da9b8a4697a204ae36b01aec415c5d6cd855f8892bf5f"
-    },
-    "tech-doc": {
-      "source": "AdobeEXL/exl-dev-ai",
-      "sourceType": "github",
-      "skillPath": "skills/tech-doc/SKILL.md",
-      "computedHash": "df60cb4f25212f8c9f8a6a65b171e9441d01784b5aecbcbd713a2febc9b5d70e"
     },
     "testing-blocks": {
       "source": "adobe/skills",
