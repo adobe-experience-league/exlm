@@ -25,7 +25,7 @@ jobs:
 
       - name: Fetch existing PR conversation
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.UPDATE_PR_GITHUB_TOKEN }}
         run: |
           PR="${{ github.event.pull_request.number }}"
           REPO="${{ github.repository }}"
