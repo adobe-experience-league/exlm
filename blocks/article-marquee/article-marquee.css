@@ -351,6 +351,7 @@
   }
 
   .article-marquee-ai-translated-tooltip-container {
+    top: -1px;
     position: relative;
   }
 
