@@ -50,6 +50,9 @@ import ProfileMenu from './profile-menu.js';
  * @property {import('../language/language.js').Language[]} languages - array of languages to dispay in language selector
  * @property {(lang: string) => void} onLanguageChange - called when language is changed
  * @property {Object} [placeholders] - language placeholders object
+ * @property {Promise} [navReadyDeps] - resolves once search/language decorators have run;
+ *   set by decorate() and awaited by navDecorator before building the mobile drawer only
+ *   (the desktop nav doesn't need it and renders before this resolves)
  */
 
 const HEADER_CSS = `/blocks/header/exl-header.css`;
@@ -117,6 +120,20 @@ const brandDecorator = (brandBlock, decoratorOptions) => {
 };
 
 /**
+ * Resets a mobile drill-panel toggle's accordion state (aria-expanded + expanded classes).
+ * The same toggle carries both the drill-panel's `nav-mobile-panel-open` class (owned by
+ * setupMobileDrillPanels) and the accordion's own state (set by toggleExpandContent, which
+ * fires on the same click that opens the panel) — closing the panel must clear both so
+ * assistive tech doesn't report a visually-closed panel as still expanded.
+ * @param {HTMLElement} toggle
+ */
+function collapseDrillToggle(toggle) {
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.closest('.nav-item-content')?.classList.remove('nav-item-content-expanded');
+  toggle.parentElement.classList.remove('nav-item-expanded-active');
+}
+
+/**
  * Toggles the mobile nav drawer.
  *
  * @param {Element} button - The hamburger button element
@@ -138,8 +155,12 @@ function toggleMobileNav(button, mobileDrawer, navOverlay) {
   } else {
     navOverlay.classList.add('hidden');
     document.body.removeAttribute('style');
-    // reset any open drill-down panels so the drawer reopens at the root
+    // reset any open drill-down panels, and their toggles' accordion state, so the drawer
+    // reopens at the root in a fully-collapsed, ARIA-consistent state
     mobileDrawer.querySelectorAll('.nav-mobile-panel-open').forEach((p) => p.classList.remove('nav-mobile-panel-open'));
+    mobileDrawer
+      .querySelectorAll('.nav-mobile-drill-toggle[aria-expanded="true"]')
+      .forEach((t) => collapseDrillToggle(t));
   }
 }
 
@@ -180,8 +201,15 @@ const hamburgerButton = (mobileDrawer, navOverlay) => {
 /**
  * Builds nav items from the provided basic list
  * @param {HTMLUListElement} ul
+ * @param {number} level
+ * @param {{mobileOnly?: boolean}} opts - `mobileOnly`: skip the resize-reactive hover/click
+ *   switching (registerHeaderResizeHandler) and just bind click once. Used for the mobile
+ *   drawer's cloned tree, which is only ever reachable via the hamburger (hidden ≥1024px)
+ *   and so never needs to react to viewport resize — avoids doubling the number of
+ *   permanently-retained resize handlers registered for the desktop tree.
  */
-const buildNavItems = (ul, level = 0) => {
+const buildNavItems = (ul, level = 0, opts = {}) => {
+  const { mobileOnly = false } = opts;
   /**
    * @param {HTMLElement} navItem
    */
@@ -193,7 +221,11 @@ const buildNavItems = (ul, level = 0) => {
     const [content, secondaryContent] = navItem.querySelectorAll(':scope > ul');
 
     if (content) {
-      // a level-0 link with `@tab` in its href opts this dropdown into the tab layout (desktop only)
+      // a level-0 link with `@tab` in its href opts this dropdown into the tab layout (desktop only).
+      // Supported shape only: root `@tab` link -> level-1 tabs -> leaf links. A dropdown nested
+      // inside a tab's own content (level-2+) won't be interactive on desktop, since only
+      // level-0 togglers keep a click handler there (see the non-mobileOnly branch below) —
+      // setupTabDropdowns() warns if it finds this.
       const rootLinkHref = navItem.querySelector(':scope > p > a, :scope > a')?.getAttribute('href') || '';
       const isTabDropdown = level === 0 && rootLinkHref.includes('@tab');
 
@@ -232,7 +264,6 @@ const buildNavItems = (ul, level = 0) => {
       }
       const currentActiveClass = 'nav-item-expanded-active';
       const itemContentExpanded = 'nav-item-content-expanded';
-      const itemExpanded = 'nav-item-expanded';
 
       const isNotAncestorOfToggler = (parent) =>
         parent && !parent.contains(toggler) && !parent.parentElement.contains(toggler);
@@ -258,16 +289,13 @@ const buildNavItems = (ul, level = 0) => {
         resetExpandedAttribute();
         toggleElement.setAttribute('aria-expanded', expanded);
         // remove active class from all other expanded nav items
-        removeClassFromNonAncestorAll(itemExpanded);
         removeClassFromNonAncestorAll(itemContentExpanded);
         removeClassFromAll(currentActiveClass);
         if (expanded) {
           containerElement.classList.add(itemContentExpanded);
-          containerElement.parentElement.classList.add(itemExpanded);
           containerElement.parentElement.classList.add(currentActiveClass);
         } else {
           containerElement.classList.remove(itemContentExpanded);
-          containerElement.parentElement.classList.remove(itemExpanded);
           containerElement.parentElement.classList.remove(currentActiveClass);
         }
       };
@@ -283,25 +311,32 @@ const buildNavItems = (ul, level = 0) => {
           });
         }
       };
-      // listen for page resize, update events accordingly
-      registerHeaderResizeHandler(() => {
-        if (isMobile()) {
-          // if mobile, add click event, remove mouseenter/mouseleave
-          toggler.addEventListener('click', toggleExpandContent);
-          toggler.parentElement.removeEventListener('mouseenter', toggleExpandContent);
-          toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
-        } else {
-          // if desktop, root-level items toggle on click; sub-level items have no toggle
-          toggler.parentElement.removeEventListener('mouseenter', toggleExpandContent);
-          toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
-          if (level === 0) {
+      if (mobileOnly) {
+        // mobile drawer is only ever shown below the 1024px breakpoint (hidden via CSS
+        // otherwise), so it always behaves like the resize handler's "mobile" branch —
+        // bind click once instead of registering a resize-reactive handler for it too.
+        toggler.addEventListener('click', toggleExpandContent);
+      } else {
+        // listen for page resize, update events accordingly
+        registerHeaderResizeHandler(() => {
+          if (isMobile()) {
+            // if mobile, add click event, remove mouseenter/mouseleave
             toggler.addEventListener('click', toggleExpandContent);
+            toggler.parentElement.removeEventListener('mouseenter', toggleExpandContent);
+            toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
           } else {
-            toggler.removeEventListener('click', toggleExpandContent);
+            // if desktop, root-level items toggle on click; sub-level items have no toggle
+            toggler.parentElement.removeEventListener('mouseenter', toggleExpandContent);
+            toggler.parentElement.removeEventListener('mouseleave', toggleExpandContent);
+            if (level === 0) {
+              toggler.addEventListener('click', toggleExpandContent);
+            } else {
+              toggler.removeEventListener('click', toggleExpandContent);
+            }
           }
-        }
-      });
-      buildNavItems(content, level + 1);
+        });
+      }
+      buildNavItems(content, level + 1, opts);
       if (secondaryContent && isTabDropdown) {
         secondaryContent.classList.add('nav-items-secondary');
         const footerLi = document.createElement('li');
@@ -318,11 +353,6 @@ const buildNavItems = (ul, level = 0) => {
 
       const anchor = navItem.querySelector(':scope > a');
       if (!anchor) return;
-
-      const textSpan = document.createElement('span');
-      textSpan.classList.add('nav-item-link-text');
-      [...anchor.childNodes].forEach((n) => textSpan.appendChild(n));
-      anchor.appendChild(textSpan);
 
       let subtitleHTML = null;
       const subtitleP = navItem.querySelector(':scope > p');
@@ -368,6 +398,14 @@ const setupTabDropdowns = (navContainer) => {
       if (label && content && !content.querySelector(':scope > .nav-tab-heading')) {
         content.prepend(htmlToElement(`<div class="nav-tab-heading">${label}</div>`));
       }
+      // @tab dropdowns only support root -> tabs -> leaf links; a link nested inside a
+      // tab's own content that itself has a dropdown (a `.nav-item-toggle`) won't be
+      // reachable on desktop (see the isTabDropdown comment in decorateNavItem) — warn
+      // instead of silently shipping unreachable content.
+      if (content?.querySelector(':scope > ul > .nav-item > .nav-item-toggle')) {
+        // eslint-disable-next-line no-console
+        console.warn(`@tab dropdown "${label}" has a nested dropdown link that won't be reachable on desktop`);
+      }
       tab.addEventListener('mouseenter', () => setActive(tab));
     });
     // default to the first tab so the right pane is never empty when the dropdown opens
@@ -406,12 +444,13 @@ const setupMobileDrillPanels = (mobileUl) => {
 
     toggle.classList.add('nav-mobile-drill-toggle');
     toggle.addEventListener('click', () => content.classList.add('nav-mobile-panel-open'));
-    header
-      .querySelector('.nav-mobile-panel-back')
-      .addEventListener('click', () => content.classList.remove('nav-mobile-panel-open'));
-    header
-      .querySelector('.nav-mobile-panel-close')
-      .addEventListener('click', () => content.getRootNode().querySelector('.nav-hamburger')?.click());
+    header.querySelector('.nav-mobile-panel-back').addEventListener('click', () => {
+      content.classList.remove('nav-mobile-panel-open');
+      collapseDrillToggle(toggle);
+    });
+    header.querySelector('.nav-mobile-panel-close').addEventListener('click', () => {
+      content.getRootNode().querySelector('.nav-hamburger')?.click();
+    });
 
     // recurse into nested branch items (leaf links have no toggle/content and are skipped)
     content.querySelectorAll(':scope > ul > .nav-item').forEach(buildPanel);
@@ -475,7 +514,7 @@ const buildMobileNavDrawer = (ul, navBlock, decoratorOptions) => {
       ),
     );
   }
-  buildNavItems(ul);
+  buildNavItems(ul, 0, { mobileOnly: true });
   setupMobileDrillPanels(ul);
 
   // Drawer header: logo + brand (left), close button (right)
@@ -533,8 +572,8 @@ const buildMobileNavDrawer = (ul, navBlock, decoratorOptions) => {
         /* ignore */
       }
       try {
-        // eslint-disable-next-line no-undef
-        const profileData = await window.adobeIMS?.getProfile();
+        const { defaultProfileClient } = await import('../../scripts/auth/profile.js');
+        const profileData = await defaultProfileClient.getIMSProfile();
         displayName = profileData?.displayName || '';
         userEmail = profileData?.email || '';
       } catch (e) {
@@ -585,6 +624,12 @@ const navDecorator = async (navBlock, decoratorOptions) => {
   buildNavItems(desktopUl);
   setupTabDropdowns(desktopUl);
 
+  // The desktop nav is ready now — show it without waiting on the search/language
+  // decorators, which only the mobile drawer (built below) actually needs. decorateHeaderBlock
+  // re-sets visibility to 'visible' again once this whole function resolves, which is harmless.
+  navBlock.style.visibility = 'visible';
+  await decoratorOptions.navReadyDeps;
+
   // Build separate mobile drawer and attach it to header-wrapper
   const mobileDrawer = buildMobileNavDrawer(mobileUl, navBlock, decoratorOptions);
 
@@ -592,9 +637,26 @@ const navDecorator = async (navBlock, decoratorOptions) => {
   const hamburger = hamburgerButton(mobileDrawer, navOverlay);
   navBlock.insertBefore(hamburger, navWrapper);
 
-  // Close expanded root nav items when clicking outside the header on desktop
+  // Close expanded root nav items when clicking anywhere outside that item on desktop —
+  // scoped per-item (not just outside the whole header) so clicking a sibling header
+  // control (search, sign-in, language selector, profile/product toggle) also closes it.
+  //
+  // This needs two listeners because of shadow-DOM event retargeting: a listener on
+  // `document` (outside the shadow tree) always sees `e.target` as `shadowRoot.host` for
+  // any click that originated inside the shadow tree — so a per-toggle containment check
+  // there is always false, closing a dropdown on the very click that just opened it. The
+  // fine-grained "clicked a different in-header control" check has to live on a listener
+  // *inside* the shadow tree, where `e.target` is still the real element clicked.
   const shadowRoot = navBlock.getRootNode();
   if (shadowRoot?.host) {
+    shadowRoot.addEventListener('click', (e) => {
+      if (isMobile()) return;
+      shadowRoot.querySelectorAll('.nav-item-toggle-root[aria-expanded="true"]').forEach((t) => {
+        if (!t.parentElement.contains(e.target)) t.click();
+      });
+    });
+    // Click entirely outside the header (light DOM) — e.target is retargeted to
+    // shadowRoot.host for in-header clicks, so this only ever fires for real outside clicks.
     shadowRoot.host.ownerDocument.addEventListener('click', (e) => {
       if (isMobile() || shadowRoot.host.contains(e.target)) return;
       shadowRoot.querySelectorAll('.nav-item-toggle-root[aria-expanded="true"]').forEach((t) => t.click());
@@ -974,9 +1036,11 @@ class ExlHeader extends HTMLElement {
       const productGridP = decorateHeaderBlock('product-grid', this.productGridDecorator, this.decoratorOptions);
       const signInP = decorateHeaderBlock('sign-in', this.signInDecorator, this.decoratorOptions);
       const newTabLinkP = decorateNewTabLinks(header);
-      // nav (mobile drawer) consumes decoratorState set by the search and language
-      // decorators, so ensure both have run before decorating nav.
-      await Promise.allSettled([searchP, languageP]);
+      // Only the mobile drawer (built inside navDecorator, after the visible desktop nav)
+      // consumes decoratorState set by the search and language decorators — navDecorator
+      // awaits this itself right before building the drawer, so the desktop nav doesn't
+      // wait on it too.
+      this.decoratorOptions.navReadyDeps = Promise.allSettled([searchP, languageP]);
       await decorateHeaderBlock('nav', this.navDecorator, this.decoratorOptions);
 
       Promise.allSettled([logoP, brandP, searchP, languageP, productGridP, signInP, newTabLinkP]).then(() => {
