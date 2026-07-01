@@ -129,7 +129,9 @@ const brandDecorator = (brandBlock, decoratorOptions) => {
  */
 function collapseDrillToggle(toggle) {
   toggle.setAttribute('aria-expanded', 'false');
-  toggle.closest('.nav-item-content')?.classList.remove('nav-item-content-expanded');
+  // navItemContent is a sibling of toggle (both children of the .nav-item), not an
+  // ancestor — closest() would never find it.
+  toggle.parentElement.querySelector(':scope > .nav-item-content')?.classList.remove('nav-item-content-expanded');
   toggle.parentElement.classList.remove('nav-item-expanded-active');
 }
 
@@ -404,7 +406,7 @@ const setupTabDropdowns = (navContainer) => {
       // instead of silently shipping unreachable content.
       if (content?.querySelector(':scope > ul > .nav-item > .nav-item-toggle')) {
         // eslint-disable-next-line no-console
-        console.warn(`@tab dropdown "${label}" has a nested dropdown link that won't be reachable on desktop`);
+        console.warn(`@tab dropdown "${label || 'unknown'}" has a nested dropdown link that won't be reachable on desktop`);
       }
       tab.addEventListener('mouseenter', () => setActive(tab));
     });
@@ -630,37 +632,47 @@ const navDecorator = async (navBlock, decoratorOptions) => {
   navBlock.style.visibility = 'visible';
   await decoratorOptions.navReadyDeps;
 
-  // Build separate mobile drawer and attach it to header-wrapper
-  const mobileDrawer = buildMobileNavDrawer(mobileUl, navBlock, decoratorOptions);
+  // The desktop nav above is already visible and fully usable. Isolate the rest (mobile
+  // drawer, hamburger, outside-click handling) in its own try/catch so a failure here —
+  // e.g. an unexpected DOM shape in a community/legacy embed — can't reject navDecorator's
+  // promise and skip updateNavLinks below, leaving a visible-but-unnormalized desktop nav.
+  let mobileDrawer;
+  try {
+    // Build separate mobile drawer and attach it to header-wrapper
+    mobileDrawer = buildMobileNavDrawer(mobileUl, navBlock, decoratorOptions);
 
-  // Hamburger button references the mobile drawer
-  const hamburger = hamburgerButton(mobileDrawer, navOverlay);
-  navBlock.insertBefore(hamburger, navWrapper);
+    // Hamburger button references the mobile drawer
+    const hamburger = hamburgerButton(mobileDrawer, navOverlay);
+    navBlock.insertBefore(hamburger, navWrapper);
 
-  // Close expanded root nav items when clicking anywhere outside that item on desktop —
-  // scoped per-item (not just outside the whole header) so clicking a sibling header
-  // control (search, sign-in, language selector, profile/product toggle) also closes it.
-  //
-  // This needs two listeners because of shadow-DOM event retargeting: a listener on
-  // `document` (outside the shadow tree) always sees `e.target` as `shadowRoot.host` for
-  // any click that originated inside the shadow tree — so a per-toggle containment check
-  // there is always false, closing a dropdown on the very click that just opened it. The
-  // fine-grained "clicked a different in-header control" check has to live on a listener
-  // *inside* the shadow tree, where `e.target` is still the real element clicked.
-  const shadowRoot = navBlock.getRootNode();
-  if (shadowRoot?.host) {
-    shadowRoot.addEventListener('click', (e) => {
-      if (isMobile()) return;
-      shadowRoot.querySelectorAll('.nav-item-toggle-root[aria-expanded="true"]').forEach((t) => {
-        if (!t.parentElement.contains(e.target)) t.click();
+    // Close expanded root nav items when clicking anywhere outside that item on desktop —
+    // scoped per-item (not just outside the whole header) so clicking a sibling header
+    // control (search, sign-in, language selector, profile/product toggle) also closes it.
+    //
+    // This needs two listeners because of shadow-DOM event retargeting: a listener on
+    // `document` (outside the shadow tree) always sees `e.target` as `shadowRoot.host` for
+    // any click that originated inside the shadow tree — so a per-toggle containment check
+    // there is always false, closing a dropdown on the very click that just opened it. The
+    // fine-grained "clicked a different in-header control" check has to live on a listener
+    // *inside* the shadow tree, where `e.target` is still the real element clicked.
+    const shadowRoot = navBlock.getRootNode();
+    if (shadowRoot?.host) {
+      shadowRoot.addEventListener('click', (e) => {
+        if (isMobile()) return;
+        shadowRoot.querySelectorAll('.nav-item-toggle-root[aria-expanded="true"]').forEach((t) => {
+          if (!t.parentElement.contains(e.target)) t.click();
+        });
       });
-    });
-    // Click entirely outside the header (light DOM) — e.target is retargeted to
-    // shadowRoot.host for in-header clicks, so this only ever fires for real outside clicks.
-    shadowRoot.host.ownerDocument.addEventListener('click', (e) => {
-      if (isMobile() || shadowRoot.host.contains(e.target)) return;
-      shadowRoot.querySelectorAll('.nav-item-toggle-root[aria-expanded="true"]').forEach((t) => t.click());
-    });
+      // Click entirely outside the header (light DOM) — e.target is retargeted to
+      // shadowRoot.host for in-header clicks, so this only ever fires for real outside clicks.
+      shadowRoot.host.ownerDocument.addEventListener('click', (e) => {
+        if (isMobile() || shadowRoot.host.contains(e.target)) return;
+        shadowRoot.querySelectorAll('.nav-item-toggle-root[aria-expanded="true"]').forEach((t) => t.click());
+      });
+    }
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error building mobile nav drawer/outside-click handling; desktop nav remains usable', err);
   }
 
   // TODO: Remove isSignedInUser call and move signedIn check to isPLEligible function once cyclic dependency is resolved.
@@ -677,7 +689,7 @@ const navDecorator = async (navBlock, decoratorOptions) => {
           </li>`,
         );
         desktopUl.appendChild(plItem);
-        const mobileNavUl = mobileDrawer.querySelector('.nav-mobile-body > ul');
+        const mobileNavUl = mobileDrawer?.querySelector('.nav-mobile-body > ul');
         if (mobileNavUl) {
           const firstMobileItem = mobileNavUl.querySelector('.nav-item-mobile');
           const plMobileItem = plItem.cloneNode(true);
