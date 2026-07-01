@@ -1,5 +1,6 @@
 .article-content-container {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto auto;
   padding-top: 131px;
 }
@@ -126,7 +127,7 @@
 @media (min-width: 900px) {
   .articles-wrapper .article-content-container {
     display: grid;
-    grid-template-columns: 3fr 1fr;
+    grid-template-columns: minmax(0, 3fr) 1fr;
     padding: 50px 62px 30px;
     position: relative;
   }
