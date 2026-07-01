@@ -23,6 +23,19 @@ jobs:
       - name: Restore AI skills
         run: npx skills experimental_install --yes
 
+      - name: Fetch existing PR conversation
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR="${{ github.event.pull_request.number }}"
+          REPO="${{ github.repository }}"
+          gh api "repos/$REPO/pulls/$PR/comments" \
+            --jq '[.[] | {path, line: (.line // .original_line), author: .user.login, body, in_reply_to_id}]' \
+            > pr-review-comments.json
+          gh api "repos/$REPO/issues/$PR/comments" \
+            --jq '[.[] | {author: .user.login, body}]' \
+            > pr-issue-comments.json
+
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -35,13 +48,14 @@ jobs:
             Use `mcp__github_inline_comment__create_inline_comment` (with `confirmed: true`) for line-specific issues.
             Use `gh pr comment` for summary feedback if helpful.
 
-            CRITICAL — before posting any finding:
-            1. Fetch all existing review comments and thread replies for this PR.
-            2. Fetch all PR-level (issue) comments.
-            3. Read the "AI Review Notes" section in the PR description.
-            4. Do NOT open a new inline comment on any file:line that already has a review thread.
-            5. Treat every bullet in "AI Review Notes" as an accepted decision — do not flag it.
-            6. If a developer replied to a previous finding with a justification, accept it and move on.
+            Prior review context has been pre-fetched into the working directory:
+            - pr-review-comments.json — all existing inline review comments (path, line, author, body, reply chain)
+            - pr-issue-comments.json — all general PR comments (often contain developer explanations and decisions)
+
+            CRITICAL — read both files before posting any finding:
+            1. Do NOT open a new inline comment on any file:line that already has an entry in pr-review-comments.json.
+            2. If a developer replied to a previous finding with a justification, accept it and do not re-flag.
+            3. Read the "AI Review Notes" section in the PR description and treat every bullet as an accepted decision.
 
             /code-review ${{ github.event.pull_request.number }}
           claude_args: |
