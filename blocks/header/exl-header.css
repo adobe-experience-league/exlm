@@ -48,7 +48,7 @@
 
   /* Nav colors */
   --nav-bg-color: var(--spectrum-gray-50);
-  --nav-shadow: 0 2px 6px #00000012;
+  --nav-shadow: 0 2px 6px #00000005;
   --nav-text-color: var(--spectrum-gray-800);
   --nav-link-color: var(--spectrum-blue-900);
   --nav-level-0-heading-color: #6e6e6e;
@@ -348,7 +348,6 @@ button:focus {
 /* Root-level nav item */
 .header .nav-item-root a {
   white-space: nowrap;
-  font-weight: var(--font-weight-semi-bold);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -394,7 +393,6 @@ button:focus {
   padding: var(--nav-root-item-padding);
   border-bottom: none;
   line-height: 21px;
-  font-weight: 600;
   color: var(--nav-text-color);
 }
 
@@ -498,6 +496,7 @@ button:focus {
 .header .nav-item-content-level-1 > ul li > a {
   display: block;
   padding: 0;
+  white-space: break-spaces;
   font-weight: var(--font-weight-medium);
   margin: 6px 0;
   max-width: 220px;
@@ -566,6 +565,7 @@ button:focus {
     display: block;
     position: static;
     transform: rotate(-90deg);
+    opacity: 0.5;
   }
 
   .header .nav-item-content-tab > ul > .nav-item > .nav-item-toggle > .icon img {
