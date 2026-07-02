@@ -21,7 +21,6 @@ import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import defaultAdobeTargetClient from '../../scripts/adobe-target/adobe-target.js';
 import BrowseCardsTargetDataAdapter from '../../scripts/browse-card/browse-cards-target-data-adapter.js';
 import { setTargetDataAsBlockAttribute, setCoveoAnalyticsAttribute } from '../../scripts/utils/analytics-utils.js';
-import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 let placeholders = {};
 try {
@@ -320,23 +319,20 @@ export default async function decorate(block) {
   const descriptionContainer = block.querySelector('.recommended-content-description');
   const reversedDomElements = remainingElements.reverse();
 
-  // Handle both new blocks (with v2 elements) and already authored blocks (without v2 elements)
-  if (reversedDomElements.length <= 12) {
+  // Block authored with only v1 fields, needs padding for missing v2 fields
+  const hasV1Tags = reversedDomElements.length <= 10;
+  const hasLegacyV1Fields = hasV1Tags || reversedDomElements.length >= 13;
+
+  if (hasV1Tags) {
     reversedDomElements.splice(0, 0, undefined, undefined, undefined);
   }
 
-  const [
-    rolev2El,
-    featurev2El,
-    solutionv2El,
-    linkEl,
-    resultTextEl,
-    sortEl,
-    roleEl,
-    solutionEl,
-    filterProductByOptionEl,
-    ...contentTypesEl
-  ] = reversedDomElements;
+  const [rolev2El, featurev2El, solutionv2El, linkEl, resultTextEl, sortEl, ...dynamicEl] = reversedDomElements;
+
+  // for newly authored blocks dynamicEl starts directly with filterProductBy (no v1 rows)
+  const [roleEl, solutionEl, filterProductByOptionEl, ...contentTypesEl] = hasLegacyV1Fields
+    ? dynamicEl
+    : [undefined, undefined, ...dynamicEl];
   const showOnlyCoveo = block.classList.contains('coveo-only');
   const targetCriteriaId = block.dataset.targetScope;
   const profileDataPromise = defaultProfileClient.getMergedProfile();
@@ -563,7 +559,7 @@ export default async function decorate(block) {
       let versions;
       let features;
 
-      if (isFeatureEnabled('isV2TagsEnabled') && encodedSolutionsv2Text) {
+      if (encodedSolutionsv2Text) {
         const productsv2 = encodedSolutionsv2Text
           ? getv2TagLabels(encodedSolutionsv2Text)
               .split(',')
@@ -601,7 +597,7 @@ export default async function decorate(block) {
       const filterProductByOption = filterProductByOptionEl?.innerText?.trim() ?? '';
 
       let role;
-      if (isFeatureEnabled('isV2TagsEnabled') && rolev2El) {
+      if (rolev2El) {
         const rolev2Text = rolev2El?.innerText?.trim() ?? '';
         role = !rolev2Text
           ? profileRoles
@@ -611,7 +607,7 @@ export default async function decorate(block) {
       } else {
         role = roleEl?.innerText?.trim()?.includes('profile_context')
           ? profileRoles
-          : roleEl?.innerText?.trim().split(',').filter(Boolean);
+          : roleEl?.innerText?.trim()?.split(',')?.filter(Boolean);
       }
       const filterOptions = await getListOfFilterOptions(targetSupport, profileInterests, targetCriteriaScopeId);
       if (filterOptions.length <= 1 && !UEAuthorMode) {
@@ -837,7 +833,7 @@ export default async function decorate(block) {
               clonedProducts = [...new Set(sortedProfileInterests)];
               break;
             case 'specific_products':
-              clonedProducts = products?.length ? [...products] : [];
+              clonedProducts = products?.length ? [...products] : null;
               break;
             default:
               clonedProducts = [];

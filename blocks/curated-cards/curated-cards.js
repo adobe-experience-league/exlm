@@ -1,11 +1,10 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
-import { htmlToElement, getv2TagLabels } from '../../scripts/scripts.js';
+import { htmlToElement, getv2TagLabels, isV2TagFormat } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { extractCapability, removeProductDuplicates } from '../../scripts/browse-card/browse-card-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 /**
  * Decorate function to process and log the mapped data.
@@ -16,22 +15,39 @@ export default async function decorate(block) {
   const [headingElement, toolTipElement, linkElement, ...configs] = [...block.children].map(
     (row) => row.firstElementChild,
   );
-  const [
-    contentType,
-    capabilities,
-    role,
-    level,
-    authorType,
-    sortBy,
-    productv2,
-    featurev2,
-    subfeaturev2,
-    rolev2,
-    levelv2,
-  ] = configs.map((cell) => cell.textContent.trim());
+
+  const configValues = configs.map((cell) => cell.textContent.trim());
+
+  // Check if block has v1 tags by finding any element that starts with "exl:"
+  const hasExlTag = configValues.some((el) => el?.startsWith('exl:'));
+
+  // blocks wih v1 have 11 config values (contentType, capabilities, role, level, authorType, sortBy, productv2, featurev2, subfeaturev2, rolev2, levelv2)
+  const hasV1Tags = hasExlTag || configValues.length >= 11;
+
+  let contentType;
+  let capabilities;
+  let role;
+  let level;
+  let authorType;
+  let sortBy;
+  let productv2;
+  let featurev2;
+  let subfeaturev2;
+  let rolev2;
+  let levelv2;
+
+  if (hasV1Tags) {
+    [contentType, capabilities, role, level, authorType, sortBy, productv2, featurev2, subfeaturev2, rolev2, levelv2] =
+      configValues;
+  } else {
+    [contentType, authorType, sortBy, productv2, featurev2, subfeaturev2, rolev2, levelv2] = configValues;
+  }
+
   const sortCriteria = COVEO_SORT_OPTIONS[sortBy?.toUpperCase() ?? 'RELEVANCE'];
   const noOfResults = 4;
-  const { products, features, versions } = extractCapability(capabilities);
+  const { products, features, versions } = hasV1Tags
+    ? extractCapability(capabilities)
+    : { products: [], features: [], versions: [] };
 
   // Clearing the block's content
   block.innerHTML = '';
@@ -62,22 +78,38 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
 
   let param;
-  // If FF is enabled, use V2 tags
-  if (isFeatureEnabled('isV2TagsEnabled') && productv2) {
-    const productsv2 = productv2
+  // If new format (no v1 tags), always use v2 tags
+  // If old format with v2 tags authored, use v2 tags
+  if (!hasV1Tags || isV2TagFormat(productv2)) {
+    const productsv2 = isV2TagFormat(productv2)
       ? getv2TagLabels(productv2)
           .split(',')
           .map((p) => p.trim())
+          .filter(Boolean)
       : [];
-    const featuresv2 = featurev2
+    const featuresv2 = isV2TagFormat(featurev2)
       ? getv2TagLabels(featurev2)
           .split(',')
           .map((f) => f.trim())
+          .filter(Boolean)
       : [];
-    const versionsv2 = subfeaturev2
+    const versionsv2 = isV2TagFormat(subfeaturev2)
       ? getv2TagLabels(subfeaturev2)
           .split(',')
           .map((v) => v.trim())
+          .filter(Boolean)
+      : [];
+    const rolesv2 = isV2TagFormat(rolev2)
+      ? getv2TagLabels(rolev2)
+          .split(',')
+          .map((r) => r.trim())
+          .filter(Boolean)
+      : [];
+    const levelsv2 = isV2TagFormat(levelv2)
+      ? getv2TagLabels(levelv2)
+          .split(',')
+          .map((l) => l.trim())
+          .filter(Boolean)
       : [];
 
     param = {
@@ -85,8 +117,8 @@ export default async function decorate(block) {
       product: productsv2.length ? removeProductDuplicates(productsv2) : null,
       feature: featuresv2.length ? [...new Set(featuresv2)] : null,
       version: versionsv2.length ? [...new Set(versionsv2)] : null,
-      role: rolev2 && getv2TagLabels(rolev2).toLowerCase().split(','),
-      level: levelv2 && getv2TagLabels(levelv2).toLowerCase().split(','),
+      role: rolesv2.length ? rolesv2.map((r) => r.toLowerCase()) : null,
+      level: levelsv2.length ? levelsv2.map((l) => l.toLowerCase()) : null,
       authorType: authorType && authorType.split(','),
       sortCriteria,
       noOfResults,
