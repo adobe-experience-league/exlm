@@ -90,7 +90,7 @@
   --spectrum-body-color: var(--spectrum-gray-800);
 
   /* nav height */
-  --nav-height: 64px;
+  --nav-height: 52px;
 
   /* spectrum color palettes - light theme only
   https: //spectrum.adobe.com/page/color-palette/#Latest-Spectrum-colors */
@@ -598,7 +598,6 @@ body.appear {
 
 header {
   height: var(--nav-height);
-  border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
 }
 
 dl,
