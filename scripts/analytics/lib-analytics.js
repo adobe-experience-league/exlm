@@ -167,6 +167,22 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       // Detect new signup: true if user hasn't seen signup modal yet
       const isNewSignUp = !userData.interactions?.some((interaction) => interaction.event === 'modalSeen');
 
+      // Transform industry IDs to titles for dataLayer
+      let industryTitles = userData.industryInterests || [];
+      if (industryTitles.length > 0) {
+        try {
+          const { fetchIndustryOptions } = await import('../scripts.js');
+          const industryOptions = await fetchIndustryOptions();
+
+          industryTitles = industryTitles.map((industryId) => {
+            const industryy = industryOptions.find((option) => option.id === industryId);
+            return industryy ? industryy.Name : industryId;
+          });
+        } catch (error) {
+          console.error('Error fetching industry options for analytics:', error);
+        }
+      }
+
       user.userDetails = {
         ...user.userDetails,
         userAccountType: userData.account_type,
@@ -178,7 +194,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
         experienceLevel: userData.level || [],
         solutionLevel: userData.solutionLevels || [],
         certifications: userData.certifications || [],
-        industry: userData.industryInterests || [],
+        industry: industryTitles || [],
         notificationPref: userData.emailOptIn === true,
         org: userData.org || '',
         orgs: userData.orgs || [],
