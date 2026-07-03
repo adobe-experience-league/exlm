@@ -29,3 +29,14 @@ $/en/perspectives?martech=off
 $/en/perspectives/drive-success-with-executive-summary-dashboards?martech=off
 $/en/certification-home?martech=off
 $/en/search?martech=off
+
+## AI Review Notes
+
+<!--
+  Optional — fill this in to guide the automated Claude review.
+  Each bullet tells Claude to accept the decision and not flag it.
+  Examples:
+    - Using inline style on `.hero` because the value comes from a content attribute and cannot be a class.
+    - Skipping IntersectionObserver on this block — the third-party script must load eagerly per vendor requirement.
+    - The eslint-disable on line 42 is intentional: the rule false-positives on this pattern.
+-->
