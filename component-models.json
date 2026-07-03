@@ -5873,9 +5873,10 @@
       {
         "component": "redpen-score-field",
         "name": "redpenScore",
-        "label": "RedPen Score (debug)",
+        "label": "RedPen Score",
         "valueType": "string",
-        "description": "Temporary hidden test field validating RedPen score persistence via field.onChange. Safe to remove after validation.",
+        "description": "Displays the RedPen score for this page, set automatically when scoring is run from the RedPen panel.",
+        "readOnly": true,
         "extensionId": "exl-redpen-extension"
       },
       {
