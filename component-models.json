@@ -5871,19 +5871,19 @@
         }
       },
       {
-        "component": "text",
-        "valueType": "string",
-        "name": "dummy-field",
-        "label": "Dummy Field",
-        "description": "Dummy test field."
-      },
-      {
         "component": "redpen-score-field",
         "name": "redpenScore",
         "label": "RedPen Score (debug)",
         "valueType": "string",
         "description": "Temporary hidden test field validating RedPen score persistence via field.onChange. Safe to remove after validation.",
         "extensionId": "exl-redpen-extension"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "dummy-field",
+        "label": "Dummy Field",
+        "description": "Dummy test field."
       }
     ]
   },
