@@ -171,7 +171,7 @@ export async function pushPageDataLayer(language, searchTrackingData) {
       let industryTitles = userData.industryInterests || [];
       if (industryTitles.length > 0) {
         try {
-          const { fetchIndustryOptions } = await import('../scripts.js');
+          const { fetchIndustryOptions } = await import('../profile/profile.js');
           const industryOptions = await fetchIndustryOptions();
 
           industryTitles = industryTitles.map((industryId) => {
