@@ -5871,20 +5871,22 @@
         }
       },
       {
-        "component": "redpen-score-field",
+        "component": "text",
         "name": "redpenScore",
         "label": "RedPen Score",
         "valueType": "string",
         "description": "Displays the RedPen score for this page, set automatically when scoring is run from the RedPen panel.",
         "readOnly": true,
-        "extensionId": "exl-redpen-extension"
+        "hidden": true
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "dummy-field",
-        "label": "Dummy Field",
-        "description": "Dummy test field."
+        "name": "redpen-properties",
+        "label": "RedPen Properties",
+        "description": "Full RedPen score API response for this page, set automatically when scoring is run from the RedPen panel.",
+        "readOnly": true,
+        "hidden": true
       }
     ]
   },
