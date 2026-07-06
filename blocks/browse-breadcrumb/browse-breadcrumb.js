@@ -1,5 +1,40 @@
 import ffetch from '../../scripts/ffetch.js';
-import { getEDSLink, getLink, getPathDetails, createPlaceholderSpan } from '../../scripts/scripts.js';
+import {
+  getEDSLink,
+  getLink,
+  getPathDetails,
+  createPlaceholderSpan,
+  fetchLanguagePlaceholders,
+  htmlToElement,
+} from '../../scripts/scripts.js';
+import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
+
+/* Fetch data from the Placeholder.json */
+let placeholders = {};
+try {
+  placeholders = await fetchLanguagePlaceholders();
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+}
+
+function decorateAiTranslated(block) {
+  if (getMetadata('translation-mechanism')?.trim().toUpperCase() === 'MT' && getPathDetails().lang !== 'en') {
+    const aiTranslated = htmlToElement(`
+      <div class="browse-breadcrumb-ai-translated">
+        <span>${placeholders?.automaticTranslation || 'Automatically translated'}</span>
+        <div class="browse-breadcrumb-ai-translated-tooltip-container">
+          <span class="icon icon-info"></span>
+          <span class="browse-breadcrumb-ai-translated-tooltip">${
+            placeholders?.changeLanguageTooltip || 'Use the Language Selector to view the English version of this page.'
+          }</span>
+        </div>
+      </div>
+    `);
+    decorateIcons(aiTranslated);
+    block.append(aiTranslated);
+  }
+}
 
 export default async function decorate(block) {
   // to avoid dublication when editing
@@ -49,4 +84,6 @@ export default async function decorate(block) {
         return nextCrumbSubPath;
       });
     });
+
+  decorateAiTranslated(block);
 }
