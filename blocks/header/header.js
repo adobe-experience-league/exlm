@@ -9,8 +9,8 @@ import {
   decorateLinks,
   getConfig,
   getPathDetails,
-  fetchGlobalFragment,
   fetchLanguagePlaceholders,
+  fetchWithFallback,
 } from '../../scripts/scripts.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
@@ -406,7 +406,9 @@ const setupTabDropdowns = (navContainer) => {
       // instead of silently shipping unreachable content.
       if (content?.querySelector(':scope > ul > .nav-item > .nav-item-toggle')) {
         // eslint-disable-next-line no-console
-        console.warn(`@tab dropdown "${label || 'unknown'}" has a nested dropdown link that won't be reachable on desktop`);
+        console.warn(
+          `@tab dropdown "${label || 'unknown'}" has a nested dropdown link that won't be reachable on desktop`,
+        );
       }
       tab.addEventListener('mouseenter', () => setActive(tab));
     });
@@ -563,7 +565,11 @@ const buildMobileNavDrawer = (ul, navBlock, decoratorOptions) => {
   });
 
   // Populate footer based on sign-in state
-  decoratorOptions.isUserSignedIn().then(async (signedIn) => {
+  // Wrapped in Promise.resolve() because, unlike the `await decoratorOptions.isUserSignedIn()`
+  // calls elsewhere in this file, this one can't use `await` (buildMobileNavDrawer isn't async
+  // since it must return the drawer synchronously) — so it needs explicit tolerance for
+  // legacy/community embeds whose isUserSignedIn doesn't return a real Promise.
+  Promise.resolve(decoratorOptions.isUserSignedIn()).then(async (signedIn) => {
     if (signedIn) {
       let profilePicSrc = null;
       let displayName = '';
@@ -987,9 +993,15 @@ class ExlHeader extends HTMLElement {
   }
 
   async decorate() {
-    const headerMeta = 'header-fragment';
+    // const headerMeta = 'header-fragment';
     const fallback = '/en/global-fragments/header';
-    const headerFragment = await fetchGlobalFragment(headerMeta, fallback, this.decoratorOptions.lang);
+    // TODO: remove this hardcoded dev override once header-v2 testing is done.
+    const headerFragment = await (
+      await fetchWithFallback(
+        'https://experienceleague-dev.adobe.com/en/global-fragments/header-v2.plain.html',
+        `${window.hlx.codeBasePath}${fallback}.plain.html`,
+      )
+    ).text();
     if (headerFragment) {
       loadSearchElement();
 
