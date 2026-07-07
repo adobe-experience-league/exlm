@@ -44,8 +44,18 @@ jobs:
             PR NUMBER: ${{ github.event.pull_request.number }}
 
             The PR branch is already checked out in the current working directory.
-            Use `mcp__github_inline_comment__create_inline_comment` (with `confirmed: true`) for line-specific issues.
-            Use `gh pr comment` for summary feedback if helpful.
+
+            SANDBOXED CI RUN — you only have these tools: mcp__github_inline_comment__create_inline_comment,
+            `gh pr comment`, `gh pr diff`, `gh pr view`, `git diff`, `git log`, Read, Glob, Grep.
+            The /code-review skill also describes screenshot capture (Playwright/node), `gh api` calls for
+            posting comments/reviews/suggestions, `git commit`/`push`/`checkout` (Fix Commits), and `npm run
+            lint` — NONE of those are available here, so skip those parts of the skill entirely rather than
+            attempting them:
+            - Skip Step 5 (visual screenshots) — no browser tooling is available.
+            - Skip Step 9's GitHub Suggestions (`gh api .../reviews`) and Fix Commits — post plain findings
+              instead, with `mcp__github_inline_comment__create_inline_comment` for line-specific issues and
+              `gh pr comment` for a single summary comment.
+            - Skip running `npm run lint` or any other build/test command.
 
             Prior review context has been pre-fetched into the working directory:
             - pr-review-comments.json — all existing inline review comments (path, line, author, body, reply chain)
