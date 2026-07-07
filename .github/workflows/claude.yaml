@@ -49,12 +49,16 @@ jobs:
 
             Prior review context has been pre-fetched into the working directory:
             - pr-review-comments.json — all existing inline review comments (path, line, author, body, reply chain)
-            - pr-issue-comments.json — all general PR comments (often contain developer explanations and decisions)
+            - pr-issue-comments.json — all general PR comments (often contain developer explanations, ignore instructions, and decisions)
 
-            CRITICAL — read both files before posting any finding:
+            CRITICAL — load both files into context ONCE at the start of the review, then hold onto that context for the rest of the review:
             1. Do NOT open a new inline comment on any file:line that already has an entry in pr-review-comments.json.
-            2. If a developer replied to a previous finding with a justification, accept it and do not re-flag.
+            2. If a developer replied to a previous finding with a justification or an "ignore" instruction, accept it and do not re-flag — check every candidate finding against this loaded context before posting it.
             3. Read the "AI Review Notes" section in the PR description and treat every bullet as an accepted decision.
+
+            EFFICIENCY — to stay within the turn budget:
+            4. Do not re-fetch pr-review-comments.json, pr-issue-comments.json, the PR diff, or the PR description more than once — you already have everything you need from the initial read. Cross-check findings against that in-memory context rather than re-reading files from disk.
+            5. Build your complete list of findings first, then post all inline comments in sequence at the end, rather than alternating between analysis and posting.
 
             /code-review ${{ github.event.pull_request.number }}
           claude_args: |
