@@ -598,6 +598,11 @@ body.appear {
 
 header {
   height: var(--nav-height);
+  border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
+}
+
+header.header-v2 {
+  border-bottom: none;
 }
 
 dl,
