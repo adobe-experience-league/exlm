@@ -7,6 +7,7 @@ import {
   extractCourseModuleIds,
   getCurrentCourseMeta,
   getCourseCompletionPageUrl,
+  getModuleMeta,
   urlContainsModule,
 } from './course-utils.js';
 import {
@@ -189,12 +190,16 @@ async function getModuleStatus(url = window.location.pathname) {
 
   const currentModule = findModule(course, moduleId);
 
-  // Already-completed modules stay COMPLETED regardless of structural changes
+  // Preserve existing progress regardless of structural changes
   if (currentModule?.finishedAt) {
     return MODULE_STATUS.COMPLETED;
   }
 
-  // Check if previous module is finished
+  if (currentModule?.startedAt) {
+    return MODULE_STATUS.IN_PROGRESS;
+  }
+
+  // Sequential unlock only for modules the user hasn't touched yet
   const moduleIndex =
     courseMeta?.modules?.findIndex((moduleUrl) => {
       const { moduleId: metaModuleId } = extractCourseModuleIds(moduleUrl);
@@ -202,17 +207,14 @@ async function getModuleStatus(url = window.location.pathname) {
     }) ?? -1;
 
   if (moduleIndex > 0) {
-    const prevModuleUrl = courseMeta.modules?.[moduleIndex - 1];
-    const { moduleId: prevModuleId } = extractCourseModuleIds(prevModuleUrl);
-    const prevModule = findModule(course, prevModuleId);
-
-    if (!prevModule || !prevModule?.finishedAt) {
-      return MODULE_STATUS.DISABLED;
+    for (let i = 0; i < moduleIndex; i += 1) {
+      const prevModuleUrl = courseMeta.modules?.[i];
+      const { moduleId: prevModuleId } = extractCourseModuleIds(prevModuleUrl);
+      const prevModule = findModule(course, prevModuleId);
+      if (!prevModule || !prevModule?.finishedAt) {
+        return MODULE_STATUS.DISABLED;
+      }
     }
-  }
-
-  if (currentModule?.startedAt) {
-    return MODULE_STATUS.IN_PROGRESS;
   }
 
   return MODULE_STATUS.NOT_STARTED;
@@ -394,6 +396,32 @@ async function completeCourse(url = window.location.pathname) {
 }
 
 /**
+ * Get the first step of the first incomplete module in authored order.
+ * Used for post-completion navigation so newly inserted modules are visited
+ * before later modules, regardless of where they appear in the course structure.
+ * @param {string} [url] - URL to extract courseId from. Defaults to current page URL.
+ * @returns {Promise<string|null>} URL of the first step, or null if all modules are complete
+ */
+async function getFirstIncompleteModuleFirstStep(url = window.location.pathname) {
+  const [courses, courseMeta] = await Promise.all([getCurrentCourses(), getCurrentCourseMeta(url)]);
+  const { courseId } = extractCourseModuleIds(url);
+  const course = findCourse(courses, courseId);
+
+  if (!courseMeta?.modules) return null;
+
+  const firstIncompleteUrl = courseMeta.modules.find((moduleUrl) => {
+    const { moduleId } = extractCourseModuleIds(moduleUrl);
+    const mod = findModule(course, moduleId);
+    return !mod?.finishedAt;
+  });
+
+  if (!firstIncompleteUrl) return null;
+
+  const moduleMeta = await getModuleMeta(firstIncompleteUrl);
+  return moduleMeta?.moduleSteps?.[0]?.url || null;
+}
+
+/**
  * Get user's display name from profile
  * @returns {Promise<string|null>} User's display name or null if not available
  */
@@ -427,6 +455,7 @@ export {
   getCourseStatus,
   getModuleStatus,
   getLastAddedModule,
+  getFirstIncompleteModuleFirstStep,
   startModule,
   finishModule,
   completeCourse,
