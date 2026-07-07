@@ -187,6 +187,13 @@ async function getModuleStatus(url = window.location.pathname) {
     return MODULE_STATUS.DISABLED;
   }
 
+  const currentModule = findModule(course, moduleId);
+
+  // Already-completed modules stay COMPLETED regardless of structural changes
+  if (currentModule?.finishedAt) {
+    return MODULE_STATUS.COMPLETED;
+  }
+
   // Check if previous module is finished
   const moduleIndex =
     courseMeta?.modules?.findIndex((moduleUrl) => {
@@ -202,12 +209,6 @@ async function getModuleStatus(url = window.location.pathname) {
     if (!prevModule || !prevModule?.finishedAt) {
       return MODULE_STATUS.DISABLED;
     }
-  }
-
-  const currentModule = findModule(course, moduleId);
-
-  if (currentModule?.finishedAt) {
-    return MODULE_STATUS.COMPLETED;
   }
 
   if (currentModule?.startedAt) {
