@@ -27,12 +27,14 @@ export default async function decorate(block) {
   const { moduleId } = extractCourseModuleIds();
   if (moduleId) {
     const courseMeta = await getCurrentCourseMeta();
-    const isModuleInCourse = courseMeta?.modules?.some((url) => urlContainsModule(url, moduleId)) ?? false;
-    if (!isModuleInCourse) {
-      const courseUrl = getCourseFragmentUrl();
-      if (courseUrl && !isUEAuthorMode) {
-        window.location.href = courseUrl;
-        return;
+    if (courseMeta) {
+      const isModuleInCourse = courseMeta.modules?.some((url) => urlContainsModule(url, moduleId));
+      if (!isModuleInCourse) {
+        const courseUrl = getCourseFragmentUrl();
+        if (courseUrl && !isUEAuthorMode) {
+          window.location.href = courseUrl;
+          return;
+        }
       }
     }
   }
