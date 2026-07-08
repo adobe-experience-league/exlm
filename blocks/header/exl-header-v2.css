@@ -182,6 +182,9 @@ button:focus {
   height: var(--nav-height);
   border-bottom: 1px solid var(--border-color-regular);
   box-shadow: var(--nav-shadow);
+
+  /* clip the 100vw full-bleed dropdown's scrollbar-width overflow (Windows) without clipping its vertical extent */
+  overflow: clip visible;
 }
 
 .header {
