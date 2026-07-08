@@ -1,14 +1,6 @@
-export class Deferred {
-  constructor() {
-    this.promise = new Promise((resolve, reject) => {
-      this.reject = reject;
-      this.resolve = resolve;
-    });
-  }
-}
-
 export const decoratorState = {
-  languages: new Deferred(),
+  /** @type {import('../language/language.js').Language[]} populated by languageDecorator */
+  languages: [],
   /** @type {((e: Event) => void) | null} Same handler for desktop search-short and mobile nav search link */
   headerSearchIconClick: null,
 };

@@ -601,6 +601,12 @@ header {
   border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
 }
 
+header.header-v2 {
+  --nav-height: 52px;
+
+  border-bottom: none;
+}
+
 dl,
 pre {
   margin-top: 1em;
