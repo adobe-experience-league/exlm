@@ -366,7 +366,7 @@ button:focus {
   background: none;
   font-weight: initial;
   font-size: var(--spectrum-font-size-100);
-  color: var(--spectrum-gray-800);
+  color: var(--nav-text-color);
   justify-content: space-between;
   position: relative;
   width: 100%;
@@ -641,7 +641,7 @@ button:focus {
   .header .nav-wrapper > ul > li .nav-items-secondary > li a {
     margin: 0;
     padding: 0;
-    color: var(--spectrum-blue-900);
+    color: var(--nav-link-color);
     font-weight: var(--font-weight-bold);
     display: inline-flex;
     align-items: center;
@@ -651,7 +651,7 @@ button:focus {
   .header .nav-items-secondary a::before {
     content: '→';
     font-size: 14px;
-    color: var(--spectrum-blue-900);
+    color: var(--nav-link-color);
   }
 
   /* Tab left-column footer li: strip nav-item tab row styles */
@@ -870,9 +870,9 @@ button:focus {
 
 .header .sign-in a {
   margin: 0;
-  background: var(--spectrum-blue-900);
+  background: var(--link-color);
   border-radius: 16px;
-  color: var(--spectrum-gray-50);
+  color: var(--background-color);
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-semi-bold);
   padding: 5px 16px;
@@ -948,7 +948,7 @@ button:focus {
 
 .header .signed-in .profile a[data-id='sign-out'] {
   border-top: 0 none;
-  color: var(--spectrum-blue-900);
+  color: var(--nav-link-color);
   font-weight: var(--font-weight-normal);
   padding: 10px 0 8px;
   margin: 10px 0 0;
@@ -956,7 +956,7 @@ button:focus {
 
 @media (min-width: 1024px) {
   .header .signed-in .profile a[data-id='sign-out'] {
-    color: var(--spectrum-blue-900);
+    color: var(--nav-link-color);
   }
 
   .header .signed-in .profile a {
@@ -1073,9 +1073,9 @@ button:focus {
 }
 
 .header .product-grid.signed-in a {
-  background: var(--spectrum-blue-900);
+  background: var(--link-color);
   border-radius: 16px;
-  color: var(--spectrum-gray-50);
+  color: var(--background-color);
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-semi-bold);
   padding: 5px 16px;
@@ -1114,7 +1114,7 @@ button:focus {
 .header .product-toggle .icon-grid {
   background: url('../../icons/apps_gray.svg') no-repeat center center;
   background-size: 18px;
-  color: var(--spectrum-gray-800);
+  color: var(--nav-text-color);
   cursor: pointer;
   display: inline-block;
   height: 18px;
@@ -1216,7 +1216,7 @@ profile-block {
 .nav-mobile-drawer .nav-mobile-brand a {
   font-weight: var(--font-weight-semi-bold);
   font-size: 16px;
-  color: var(--spectrum-gray-800);
+  color: var(--nav-text-color);
   text-decoration: none;
   margin: 0;
 }
@@ -1228,7 +1228,7 @@ profile-block {
   cursor: pointer;
   display: flex;
   align-items: center;
-  color: var(--spectrum-gray-800);
+  color: var(--nav-text-color);
 }
 
 /* Drawer body */
@@ -1302,7 +1302,7 @@ profile-block {
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-normal);
-  color: var(--spectrum-gray-800);
+  color: var(--nav-text-color);
   cursor: pointer;
   position: relative;
 }
@@ -1413,7 +1413,7 @@ profile-block {
   flex: 1;
   font-size: var(--spectrum-font-size-200);
   font-weight: var(--font-weight-semi-bold);
-  color: var(--spectrum-gray-800);
+  color: var(--nav-text-color);
 }
 
 .nav-mobile-panel-back,
@@ -1443,7 +1443,7 @@ profile-block {
   font-weight: var(--font-weight-normal);
   letter-spacing: normal;
   text-transform: none;
-  color: var(--spectrum-gray-800);
+  color: var(--nav-text-color);
   pointer-events: auto;
   cursor: pointer;
 }
@@ -1493,7 +1493,7 @@ profile-block {
   align-items: center;
   gap: 6px;
   width: auto;
-  color: var(--spectrum-blue-900);
+  color: var(--nav-link-color);
   font-weight: var(--font-weight-bold);
   font-size: 14px;
   line-height: 21px;
@@ -1559,7 +1559,7 @@ profile-block {
 .nav-mobile-profile-name {
   font-weight: var(--font-weight-semi-bold);
   font-size: var(--spectrum-font-size-100);
-  color: var(--spectrum-gray-800);
+  color: var(--nav-text-color);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
