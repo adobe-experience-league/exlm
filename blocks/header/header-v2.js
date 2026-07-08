@@ -993,7 +993,7 @@ class ExlHeader extends HTMLElement {
   }
 
   async decorate() {
-    const headerMeta = 'header-fragment-v2';
+    const headerMeta = 'header-fragment';
     const fallback = '/en/global-fragments/header-v2';
     const headerFragment = await fetchGlobalFragment(headerMeta, fallback, this.decoratorOptions.lang);
     if (headerFragment) {
