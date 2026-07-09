@@ -361,7 +361,14 @@ async function applyChanges(event) {
   // eslint-disable-next-line no-console
   console.log('[UE applyChanges] parsed <head>:', parsedUpdate.head.innerHTML);
   // eslint-disable-next-line no-console
-  console.log('[UE applyChanges] parsed <meta> tags:', [...parsedUpdate.querySelectorAll('meta')].map((m) => ({ name: m.name, property: m.getAttribute('property'), content: m.content })));
+  console.log(
+    '[UE applyChanges] parsed <meta> tags:',
+    [...parsedUpdate.querySelectorAll('meta')].map((m) => ({
+      name: m.name,
+      property: m.getAttribute('property'),
+      content: m.content,
+    })),
+  );
   // TODO: end of diagnostic logging block to remove post-validation.
 
   // RedPen publish gating only applies on the "articles" theme — other
@@ -402,7 +409,11 @@ async function applyChanges(event) {
   // with an incorrect forced-disable. Apply the gate now (nothing else to
   // run after it for this branch) and report back to the caller.
   if (isRedpenMetadataPatch) {
-    if (isArticlesTheme && freshScoreForGate !== '') {
+    // Called unconditionally (even when freshScoreForGate is '') so a
+    // missing/cleared score fails closed via updatePublishGate's own
+    // default-disable handling, instead of silently leaving Publish in
+    // whatever state the previous score left it.
+    if (isArticlesTheme) {
       try {
         updatePublishGate(freshScoreForGate);
       } catch (redpenErr) {
@@ -600,10 +611,23 @@ function attachEventListeners(main) {
 
 attachEventListeners(document.querySelector('main'));
 
+// temporary workaround until aue:ui-edit and aue:ui-preview events become available
+// show/hide sign-up block when switching betweeen UE Edit mode and preview
+const signUpBlock = document.querySelector('.block.sign-up');
+if (signUpBlock) {
+  const { handleSignUpBlock } = await import('./editor-support-blocks.js');
+  await handleSignUpBlock(signUpBlock);
+}
+
+// update UE component filters on page load
+updateUEInstrumentation();
+
 // RedPen init is isolated in try/catch — a failure here must not prevent
-// the rest of this module's top-level setup (below) from running, since
-// this is a plain top-level statement and an uncaught throw would abort
-// everything after it, including updateUEInstrumentation() at the bottom.
+// the rest of this module's top-level setup (above) from running. It also
+// runs LAST, after the unrelated setup above, so a slow/failing
+// exlm-config.json fetch inside primeRedpenPublishThreshold (up to its
+// 5s timeout) never delays the sign-up block toggle or
+// updateUEInstrumentation — neither depends on the RedPen gate outcome.
 try {
   // All RedPen publish gating is scoped to the "articles" theme — other
   // page types are left with whatever default Publish state UE gives
@@ -633,14 +657,3 @@ try {
   // eslint-disable-next-line no-console
   console.error('[RedPen] failed to initialize publish gate on load (non-fatal):', redpenErr);
 }
-
-// temporary workaround until aue:ui-edit and aue:ui-preview events become available
-// show/hide sign-up block when switching betweeen UE Edit mode and preview
-const signUpBlock = document.querySelector('.block.sign-up');
-if (signUpBlock) {
-  const { handleSignUpBlock } = await import('./editor-support-blocks.js');
-  await handleSignUpBlock(signUpBlock);
-}
-
-// update UE component filters on page load
-updateUEInstrumentation();
