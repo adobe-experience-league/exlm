@@ -1,7 +1,6 @@
 import {
   getCurrentStepInfo,
   isLastStep,
-  getNextModuleFirstStep,
   isLastModuleOfCourse,
   getCourseCompletionPageUrl,
   getCourseFragmentUrl,
@@ -10,7 +9,11 @@ import {
 import { fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { submitQuizHandler } from '../quiz/quiz.js';
 import { clearStoredModuleQuizAnswers, persistModuleQuizAnswers } from '../../scripts/quiz/quiz-utils.js';
-import { finishModule, completeCourse } from '../../scripts/courses/course-profile.js';
+import {
+  finishModule,
+  completeCourse,
+  getFirstIncompleteModuleFirstStep,
+} from '../../scripts/courses/course-profile.js';
 
 let placeholders = {};
 try {
@@ -111,7 +114,7 @@ async function handleQuizNextButton(e) {
       if (url) e.target.href = url;
     } else {
       await handleFinishModuleWithRetry(e.target);
-      const url = await getNextModuleFirstStep();
+      const url = await getFirstIncompleteModuleFirstStep();
       if (url) e.target.href = url;
     }
     e.target.removeEventListener('click', handleQuizNextButton);
@@ -227,7 +230,7 @@ export default async function decorate(block) {
       const { moduleId } = extractCourseModuleIds();
       if (moduleId) clearStoredModuleQuizAnswers(moduleId);
       await finishModule();
-      const nextModuleFirstStepUrl = await getNextModuleFirstStep();
+      const nextModuleFirstStepUrl = await getFirstIncompleteModuleFirstStep();
       if (nextModuleFirstStepUrl) {
         nextLink.href = nextModuleFirstStepUrl;
       }

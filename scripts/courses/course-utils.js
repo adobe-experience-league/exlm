@@ -453,46 +453,6 @@ export async function isLastStep() {
   return currentStepIndex === stepInfo.moduleSteps.length - 1;
 }
 
-// Gets the URL of the first step of the next module.
-/**
- * Gets the URL of the first step of the next module.
- *
- * @returns {Promise<string|null>} The URL of the first step of the next module or null if not found
- */
-export async function getNextModuleFirstStep(url = window.location.pathname) {
-  const courseInfo = await getCurrentCourseMeta(url);
-  if (!courseInfo || !courseInfo.modules || !Array.isArray(courseInfo.modules) || courseInfo.modules.length === 0) {
-    return null;
-  }
-
-  // Extract the current module ID from the URL
-  const { moduleId: currentModuleId } = extractCourseModuleIds(url);
-
-  if (!currentModuleId) {
-    return null;
-  }
-
-  // Find the current module index by comparing extracted module IDs
-  const currentModuleIndex = courseInfo.modules.findIndex((moduleUrl) => {
-    const { moduleId } = extractCourseModuleIds(moduleUrl);
-    return moduleId === currentModuleId;
-  });
-
-  // If there's a next module, get its first step
-  if (currentModuleIndex !== -1 && currentModuleIndex < courseInfo.modules.length - 1) {
-    const nextModuleUrl = courseInfo.modules?.[currentModuleIndex + 1];
-
-    const nextModuleMeta = await getModuleMeta(nextModuleUrl);
-
-    // If we have module steps, return the first one
-    if (nextModuleMeta?.moduleSteps?.length > 0) {
-      return nextModuleMeta.moduleSteps?.[0]?.url;
-    }
-  }
-
-  return null;
-}
-
 /*
  * Fetches and caches the course index for a given language prefix
  * Uses window-level caching to avoid multiple requests for the same data
