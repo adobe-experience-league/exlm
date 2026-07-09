@@ -33,7 +33,7 @@ function fetchExlmConfig() {
   return exlmConfigPromise;
 }
 
-async function getExlmConfig(key) {
+export async function getExlmConfig(key) {
   const config = await fetchExlmConfig();
   return config.get(key) ?? null;
 }
