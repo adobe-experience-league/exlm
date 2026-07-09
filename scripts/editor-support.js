@@ -11,6 +11,7 @@ import {
 import { decorateRichtext } from './editor-support-rte.js';
 import renderSEOWarnings from './editor-support-seo.js';
 import { decorateMain, isPerspectivePage, loadArticles } from './scripts.js';
+import { getExlmConfig } from './utils/premium-learning-utils.js';
 
 // set aem content root
 window.hlx.aemRoot = '/content/exlm/global';
@@ -211,6 +212,120 @@ function updateUEInstrumentation() {
   }
 }
 
+// Property name as exported into the <meta> tag by the page component —
+// AEM exports jcr:content properties verbatim (case-sensitive) as
+// meta[name="<propertyName>"], so this must match component-models.json's
+// "name" value exactly. redpenScore is no longer written as a separate
+// property — redpen-properties already carries final_score as part of the
+// full response payload (see getRedpenProperty below).
+const REDPEN_PROPERTIES_META_NAME = 'redpen-properties';
+
+// Single source of truth for the gate — a `let`, not a `const`, so it can
+// later be updated from exlm-config once fetched (step 2+ of the
+// integration plan) without touching updatePublishGate itself.
+let redpenPublishThreshold = 0;
+
+const REDPEN_PUBLISH_THRESHOLD_CONFIG_KEY = 'redpenPublishThreshold';
+
+/**
+ * Fetches the author-configurable threshold from the exlm-config sheet
+ * (same mechanism as plAllowedDomains) and updates redpenPublishThreshold.
+ * Deliberately NOT called anywhere near module init's synchronous gate-set
+ * sequence — see the call site at the bottom of this file for why. Only
+ * ever updates the cached value for whichever updatePublishGate call
+ * happens next (a later Score click or content edit) — never re-triggers
+ * a gate decision itself, so there's no race with the proven-working
+ * synchronous flow.
+ */
+async function primeRedpenPublishThreshold() {
+  try {
+    const raw = await getExlmConfig(REDPEN_PUBLISH_THRESHOLD_CONFIG_KEY);
+    const threshold = Number(raw);
+    redpenPublishThreshold = Number.isFinite(threshold) ? threshold : 0;
+    // eslint-disable-next-line no-console
+    console.log(
+      '[RedPen] threshold config — key:',
+      REDPEN_PUBLISH_THRESHOLD_CONFIG_KEY,
+      'raw:',
+      raw,
+      '-> redpenPublishThreshold now:',
+      redpenPublishThreshold,
+    );
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('[RedPen] threshold config fetch threw, keeping current value:', redpenPublishThreshold, err);
+  }
+}
+
+/**
+ * Reads a score value out of an arbitrary parsed document's <head> (used to
+ * react to a freshly-fetched UE patch response before it's applied to the
+ * live DOM — see the applyChanges() hook below).
+ */
+function getMetadataFromDoc(doc, name) {
+  const meta = doc.head?.querySelector(`meta[name="${name}"]`);
+  return meta ? meta.content : '';
+}
+
+/**
+ * Extracts a named field out of the redpen-properties JSON blob (e.g.
+ * "final_score", "clarity", "scoredAt") — there's no separate redpenScore
+ * property anymore, Scoring.tsx writes everything as part of the single
+ * redpen-properties payload. Returns '' (matching the existing "no score
+ * yet" convention consumed by updatePublishGate) if the properties value
+ * is missing, unparseable, or doesn't have that field.
+ */
+function getRedpenProperty(propertiesRaw, propertyName) {
+  if (!propertiesRaw) return '';
+  try {
+    const value = JSON.parse(propertiesRaw)?.[propertyName];
+    return value === undefined || value === null ? '' : String(value);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error(`[RedPen] failed to parse redpen-properties for "${propertyName}", treating as missing:`, err);
+    return '';
+  }
+}
+
+/**
+ * Ensures the Publish-gate <meta> tag always exists in <head>, so enabling
+ * and disabling is always just a content toggle on the same element —
+ * never conditional creation/removal.
+ */
+function ensurePublishGateMeta() {
+  let meta = document.querySelector('meta[name="urn:adobe:aue:config:disable"]');
+  if (!meta) {
+    meta = document.createElement('meta');
+    meta.name = 'urn:adobe:aue:config:disable';
+    meta.content = 'publish';
+    document.head.appendChild(meta);
+  }
+  return meta;
+}
+
+/**
+ * Enables/disables Publish based on the RedPen score. Defaults to disabled
+ * (score missing, unparsable, or below redpenPublishThreshold) — only
+ * explicitly enables when a valid score meets or clears the threshold.
+ * Safe to call repeatedly — it always toggles the same meta tag's content.
+ */
+function updatePublishGate(scoreRaw) {
+  const score = Number(scoreRaw);
+  const shouldDisable = scoreRaw === '' || Number.isNaN(score) || score < redpenPublishThreshold;
+  const meta = ensurePublishGateMeta();
+
+  // eslint-disable-next-line no-console
+  console.log(
+    '[RedPen] score:',
+    scoreRaw,
+    '-> publish',
+    shouldDisable ? 'disabled' : 'enabled',
+    `(threshold: ${redpenPublishThreshold})`,
+  );
+
+  meta.content = shouldDisable ? 'publish' : '';
+}
+
 /**
  * Event listener for aue:content-patch, edit of a component
  */
@@ -225,12 +340,100 @@ async function applyChanges(event) {
     detail?.request?.to?.container?.resource; // move in sections
   if (!resource) return false;
   const updates = detail?.response?.updates;
-  if (!updates.length) return false;
+  if (!updates?.length) return false;
   const { content } = updates[0];
   if (!content) return false;
 
+  // TODO: remove this diagnostic logging block once RedPen publish gating
+  // has been end-to-end validated in production — it dumps the full raw
+  // patch payload and parsed <head> on every content-patch event.
+  // eslint-disable-next-line no-console
+  console.log('[UE applyChanges] resource:', resource);
+  // eslint-disable-next-line no-console
+  console.log(
+    '[RedPen] patch type:',
+    resource.endsWith('/jcr:content') ? 'RedPen metadata patch (redpenScore/redpen-properties)' : 'content patch',
+  );
+  // eslint-disable-next-line no-console
+  console.log('[UE applyChanges] raw content:', content);
+
   const parsedUpdate = new DOMParser().parseFromString(content, 'text/html');
+  // eslint-disable-next-line no-console
+  console.log('[UE applyChanges] parsed <head>:', parsedUpdate.head.innerHTML);
+  // eslint-disable-next-line no-console
+  console.log('[UE applyChanges] parsed <meta> tags:', [...parsedUpdate.querySelectorAll('meta')].map((m) => ({ name: m.name, property: m.getAttribute('property'), content: m.content })));
+  // TODO: end of diagnostic logging block to remove post-validation.
+
+  // RedPen publish gating only applies on the "articles" theme — other
+  // page types keep whatever Publish state UE gives them by default,
+  // untouched by any of the logic below. This does NOT affect
+  // isRedpenMetadataPatch's detection itself (that also guards the
+  // generic reload-race avoidance for any page-metadata patch, not just
+  // RedPen's), only the actual gate-mutating calls.
+  const isArticlesTheme = getMetadata('theme') === 'articles';
+
+  // Determine the RedPen reaction here (need parsedUpdate's <head>), but
+  // DEFER actually calling updatePublishGate until after all the live-patch
+  // work below completes — the meta tag update needs to happen LAST, after
+  // applying changes, matching the order confirmed working before the
+  // exlm-config threshold integration. Isolated in try/catch — this is
+  // RedPen-specific and must never prevent the core content-patching logic
+  // below from running for a real edit.
+  let isRedpenMetadataPatch = false;
+  let freshScoreForGate = '';
+  try {
+    isRedpenMetadataPatch = resource.endsWith('/jcr:content');
+    const freshProperties = getMetadataFromDoc(parsedUpdate, REDPEN_PROPERTIES_META_NAME);
+    if (freshProperties !== '') {
+      // eslint-disable-next-line no-console
+      console.log('[RedPen] redpen-properties updated:', freshProperties);
+    }
+    freshScoreForGate = getRedpenProperty(freshProperties, 'final_score');
+  } catch (redpenErr) {
+    // eslint-disable-next-line no-console
+    console.error('[RedPen] failed to process metadata patch reaction (non-fatal):', redpenErr);
+  }
+
+  // Page-level metadata patches (bare .../jcr:content, no /root or deeper)
+  // have no corresponding canvas element and nothing to re-render — the
+  // fallback below would return false and trigger a full page reload,
+  // which races the property write's server-side propagation and can read
+  // back a stale/empty value, overwriting the correct gate update above
+  // with an incorrect forced-disable. Apply the gate now (nothing else to
+  // run after it for this branch) and report back to the caller.
+  if (isRedpenMetadataPatch) {
+    if (isArticlesTheme && freshScoreForGate !== '') {
+      try {
+        updatePublishGate(freshScoreForGate);
+      } catch (redpenErr) {
+        // eslint-disable-next-line no-console
+        console.error('[RedPen] failed to update gate for metadata patch (non-fatal):', redpenErr);
+      }
+    }
+    return true;
+  }
+
   const element = document.querySelector(`[data-aue-resource="${resource}"]`);
+
+  // Any patch reaching here is a genuine content change (component, block,
+  // section, richtext, move, etc), not a RedPen metadata-only write — the
+  // existing score no longer reflects the current content, so force
+  // Publish disabled until the author re-runs RedPen scoring. Called right
+  // before each return below — LAST, after the DOM patching above it has
+  // completed — matching the order confirmed working before the
+  // exlm-config threshold integration. Gated to the "articles" theme —
+  // no-op on any other page type.
+  const invalidateScoreForContentChange = () => {
+    if (!isArticlesTheme) return;
+    try {
+      // eslint-disable-next-line no-console
+      console.log('[RedPen] content changed — invalidating score, publish disabled until re-scored');
+      updatePublishGate('');
+    } catch (redpenErr) {
+      // eslint-disable-next-line no-console
+      console.error('[RedPen] failed to invalidate score on content change (non-fatal):', redpenErr);
+    }
+  };
 
   if (element) {
     if (element.matches('main')) {
@@ -248,6 +451,7 @@ async function applyChanges(event) {
       newMain.style.display = null;
       // eslint-disable-next-line no-use-before-define
       attachEventListeners(newMain);
+      invalidateScoreForContentChange();
       return true;
     }
 
@@ -268,6 +472,7 @@ async function applyChanges(event) {
         block.remove();
         newBlock.style.display = null;
         restoreState(newBlock, state);
+        invalidateScoreForContentChange();
         return true;
       }
     } else {
@@ -293,6 +498,7 @@ async function applyChanges(event) {
           element.innerHTML = newSection.innerHTML;
           newSection.remove();
           element.style.display = null;
+          invalidateScoreForContentChange();
           return true;
         }
         if (element.matches('.section')) {
@@ -324,6 +530,7 @@ async function applyChanges(event) {
           decorateIcons(parentElement);
           decorateRichtext(parentElement);
         }
+        invalidateScoreForContentChange();
         return true;
       }
     }
@@ -392,6 +599,40 @@ function attachEventListeners(main) {
 }
 
 attachEventListeners(document.querySelector('main'));
+
+// RedPen init is isolated in try/catch — a failure here must not prevent
+// the rest of this module's top-level setup (below) from running, since
+// this is a plain top-level statement and an uncaught throw would abort
+// everything after it, including updateUEInstrumentation() at the bottom.
+try {
+  // All RedPen publish gating is scoped to the "articles" theme — other
+  // page types are left with whatever default Publish state UE gives
+  // them, untouched by any RedPen logic.
+  if (getMetadata('theme') === 'articles') {
+    // Awaited before the first gate decision, so the very first page-load
+    // check already uses the real configured threshold instead of the
+    // hardcoded default. Confirmed (2026-07-09) working correctly — the
+    // earlier enable/disable failures traced back to other bugs (tag
+    // mechanism, reload races) that have since been fixed, not to this
+    // await itself.
+    await primeRedpenPublishThreshold();
+
+    // Fetch current page properties on load and set the initial gate —
+    // defaults to disabled (see updatePublishGate) unless final_score
+    // (inside redpen-properties) already clears redpenPublishThreshold
+    // (now primed above, so this decision uses the real configured value).
+    const propertiesOnLoad = getMetadata(REDPEN_PROPERTIES_META_NAME);
+    // eslint-disable-next-line no-console
+    console.log('[RedPen] redpen-properties on load:', propertiesOnLoad);
+    updatePublishGate(getRedpenProperty(propertiesOnLoad, 'final_score'));
+  } else {
+    // eslint-disable-next-line no-console
+    console.log('[RedPen] theme is not "articles" — skipping RedPen publish gating');
+  }
+} catch (redpenErr) {
+  // eslint-disable-next-line no-console
+  console.error('[RedPen] failed to initialize publish gate on load (non-fatal):', redpenErr);
+}
 
 // temporary workaround until aue:ui-edit and aue:ui-preview events become available
 // show/hide sign-up block when switching betweeen UE Edit mode and preview
