@@ -5872,15 +5872,6 @@
       },
       {
         "component": "text",
-        "name": "redpenScore",
-        "label": "RedPen Score",
-        "valueType": "string",
-        "description": "Displays the RedPen score for this page, set automatically when scoring is run from the RedPen panel.",
-        "readOnly": true,
-        "hidden": true
-      },
-      {
-        "component": "text",
         "valueType": "string",
         "name": "redpen-properties",
         "label": "RedPen Properties",
