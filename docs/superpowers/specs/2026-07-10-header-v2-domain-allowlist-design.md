@@ -133,6 +133,20 @@ Because both call sites now resolve through the same module-level `exlmConfigPro
 triggers both the header decision and Premium Learning gating fetches `exlm-config.json` once
 instead of twice.
 
+### Known tradeoff: blocking latency on the header render path
+
+Unlike the removed `isFeatureEnabled('isHeaderV2')` check (a synchronous page-metadata read), the
+new `await isDomainAllowed('headerv2allowedDomains')` blocks the entire header decoration (v1 or
+v2) on a network fetch, for every page load — not just rollout domains. This differs from how
+Premium Learning uses the same config: its nav-item check is deliberately fire-and-forget
+(`navDecorator` does not `await` the `isSignedInUser().then(isPLEligible)` chain), so it never
+blocks header rendering.
+
+Decision (2026-07-10): accepted as-is. `exlm-config.json` is small and same-origin/edge-cached, so
+real-world added latency is expected to be negligible; the 5s worst-case timeout (existing
+`AbortSignal.timeout(5000)` in `fetchExlmConfig`) is a known, accepted risk rather than a blocker.
+Revisit if header render latency regresses after rollout.
+
 ## Testing / verification
 
 No unit test suite exists for the touched files. Verification is manual against a local dev
