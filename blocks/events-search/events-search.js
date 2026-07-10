@@ -22,7 +22,6 @@ const FACET_CONTROLLER_MAP = {
   el_event_series: 'headlessEventSeriesFacet',
   el_contenttype: 'headlessTypeFacet',
 };
-const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
 // Tracks active render pass per block; queues the next subscription fire instead of running two renders at once.
 const headlessSubscriptionSyncDepth = new WeakMap();
 /** Literal tokens authors enter in placeholders for dynamic counts. */
@@ -85,9 +84,7 @@ function buildFilterOptionRow({ groupId, item, index }) {
   const optionLabel = item.title || item.value;
   const optionId = `${groupId}-${index + 1}-${String(optionValue).replace(/[^a-zA-Z0-9_-]/g, '-')}`;
   const optionEl = createTag('div', {
-    class: `events-search-filter-option${item.overflowHidden ? ' is-overflow-hidden' : ''}${
-      item.selected ? ' checked' : ''
-    }`,
+    class: `events-search-filter-option${item.selected ? ' checked' : ''}`,
   });
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
@@ -128,50 +125,6 @@ function sortItemsAlphabetically(a, b) {
   return titleA.localeCompare(titleB, document.documentElement.lang || 'en');
 }
 
-function getShowMoreLabel(count, placeholders) {
-  const template = placeholders.eventSearchShowMoreLabel;
-  if (!template) {
-    return `Show ${count} more`;
-  }
-  return fillPlaceholderCount(template, count);
-}
-
-function getShowLessLabel(placeholders) {
-  return placeholders.eventSearchShowLessLabel || 'Show less';
-}
-
-function updateShowMoreButtonState(groupEl, placeholders) {
-  const showMoreButton = groupEl.querySelector('.events-search-filter-show-more');
-  if (!showMoreButton) return;
-
-  const totalOptions = groupEl.querySelectorAll('.events-search-filter-option').length;
-  if (totalOptions <= INITIAL_VISIBLE_FILTER_OPTIONS) {
-    showMoreButton.setAttribute('hidden', '');
-    return;
-  }
-
-  const hiddenOptionsCount = groupEl.querySelectorAll('.events-search-filter-option.is-overflow-hidden').length;
-  const labelEl = showMoreButton.querySelector('.events-search-filter-show-more-label');
-
-  showMoreButton.removeAttribute('hidden');
-  if (hiddenOptionsCount > 0) {
-    showMoreButton.classList.remove('is-show-less');
-    const nextText = getShowMoreLabel(hiddenOptionsCount, placeholders);
-    if (labelEl) {
-      labelEl.textContent = nextText;
-    } else {
-      showMoreButton.textContent = nextText;
-    }
-  } else {
-    showMoreButton.classList.add('is-show-less');
-    if (labelEl) {
-      labelEl.textContent = getShowLessLabel(placeholders);
-    } else {
-      showMoreButton.textContent = getShowLessLabel(placeholders);
-    }
-  }
-}
-
 function getEventsSearchHeadlessFacetOverrides() {
   return {
     el_product: { numberOfValues: 500, options: { filterFacetCount: true, sortCriteria: 'alphanumeric' } },
@@ -194,35 +147,20 @@ function showDynamicFilterGroupShimmers(block, { refreshCountsOnly = false } = {
   });
 }
 
-function renderDynamicGroupOptions(groupEl, group, placeholders) {
+function renderDynamicGroupOptions(groupEl, group) {
   const optionsContainer = groupEl.querySelector('.events-search-filter-options');
   if (!optionsContainer) return;
   removeFilterGroupOptionsShimmer(optionsContainer);
   optionsContainer.innerHTML = '';
   const optionsList = createTag('div', { class: 'events-search-filter-options-list' });
   group.items.forEach((item, index) => {
-    optionsList.append(
-      buildFilterOptionRow({
-        groupId: group.id,
-        item: { ...item, overflowHidden: index >= INITIAL_VISIBLE_FILTER_OPTIONS },
-        index,
-      }),
-    );
+    optionsList.append(buildFilterOptionRow({ groupId: group.id, item, index }));
   });
   optionsContainer.append(optionsList);
-  if (group.items.length > INITIAL_VISIBLE_FILTER_OPTIONS) {
-    const remaining = group.items.length - INITIAL_VISIBLE_FILTER_OPTIONS;
-    const showMoreButton = createTag('button', { class: 'events-search-filter-show-more', type: 'button' });
-    const showMoreLabel = createTag('span', { class: 'events-search-filter-show-more-label' });
-    showMoreLabel.textContent = getShowMoreLabel(remaining, placeholders);
-    showMoreButton.append(showMoreLabel, createTag('span', { class: 'icon icon-arrow', 'aria-hidden': 'true' }));
-    optionsContainer.append(showMoreButton);
-  }
-  updateShowMoreButtonState(groupEl, placeholders);
   decorateIcons(optionsContainer);
 }
 
-function syncDynamicFacetGroup(block, group, placeholders) {
+function syncDynamicFacetGroup(block, group) {
   const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${group.id}"]`);
   if (!groupEl) return;
   const optionsContainer = groupEl.querySelector('.events-search-filter-options');
@@ -248,7 +186,7 @@ function syncDynamicFacetGroup(block, group, placeholders) {
   groupEl.style.display = '';
   const wasExpanded = groupEl.classList.contains('is-expanded');
   group.items = items;
-  renderDynamicGroupOptions(groupEl, group, placeholders);
+  renderDynamicGroupOptions(groupEl, group);
   groupEl.classList.remove('is-filter-loading');
   if (wasExpanded) {
     groupEl.classList.add('is-expanded');
@@ -279,7 +217,7 @@ function syncEventTypeFilterCounts(block) {
 // Skips facet UI updates triggered before the search response arrives, preventing stale counts.
 const lastSyncedSearchResponseId = new WeakMap();
 
-function syncDynamicFacetGroupsFromHeadless(block, groups, placeholders) {
+function syncDynamicFacetGroupsFromHeadless(block, groups) {
   if (!(window.headlessStatusControllers?.state?.firstSearchExecuted ?? false)) return;
 
   // Only sync facet UI when a new search response has arrived.
@@ -290,7 +228,7 @@ function syncDynamicFacetGroupsFromHeadless(block, groups, placeholders) {
   const totalResults = window.headlessSearchEngine?.state?.search?.response?.totalCount ?? 0;
   block.classList.toggle('has-no-results', !totalResults);
   groups.forEach((group) => {
-    if (DYNAMIC_FACET_FIELDS.includes(group.id)) syncDynamicFacetGroup(block, group, placeholders);
+    if (DYNAMIC_FACET_FIELDS.includes(group.id)) syncDynamicFacetGroup(block, group);
   });
   syncEventTypeFilterCounts(block);
 }
@@ -331,15 +269,15 @@ function getBaseFilterGroups(placeholders) {
       selected: 0,
     },
     {
-      id: 'el_event_series',
-      name: placeholders.eventSearchFilterEventSeriesLabel || 'Series',
-      items: [],
-      selected: 0,
-    },
-    {
       id: 'el_contenttype',
       name: placeholders.eventSearchFilterEventTypeLabel || 'Event Type',
       items: eventTypeOptions.items.map((item) => ({ ...item })).sort(sortItemsAlphabetically),
+      selected: 0,
+    },
+    {
+      id: 'el_event_series',
+      name: placeholders.eventSearchFilterEventSeriesLabel || 'Series',
+      items: [],
       selected: 0,
     },
   ];
@@ -495,22 +433,19 @@ function bindSortDropdownToggle(block) {
   });
 }
 
-function renderFilterGroups(block, groups, placeholders) {
+function renderFilterGroups(block, groups) {
   const groupsRoot = block.querySelector('.events-search-filter-groups');
   if (!groupsRoot) return;
 
   groupsRoot.innerHTML = '';
   groups.forEach((group, groupIndex) => {
-    const isInitiallyExpanded = groupIndex === 0;
     const groupEl = createTag('section', {
-      class: `events-search-filter-group${isInitiallyExpanded ? ' is-expanded' : ''}`,
+      class: 'events-search-filter-group',
       'data-filter-type': group.id,
     });
     const groupOptionsRegionId = `${group.id}-options-${groupIndex}`;
     groupEl.innerHTML = `
-      <button class="events-search-filter-group-header" type="button" aria-expanded="${
-        isInitiallyExpanded ? 'true' : 'false'
-      }" aria-controls="${groupOptionsRegionId}">
+      <button class="events-search-filter-group-header" type="button" aria-expanded="false" aria-controls="${groupOptionsRegionId}">
         <span class="events-search-filter-group-title">${group.name}</span>
         <span class="events-search-filter-group-count"></span>
         <span class="icon icon-chevron"></span>
@@ -526,28 +461,13 @@ function renderFilterGroups(block, groups, placeholders) {
     } else {
       const optionsList = createTag('div', { class: 'events-search-filter-options-list' });
       group.items.forEach((item, index) => {
-        const optionRow = buildFilterOptionRow({
-          groupId: group.id,
-          item: { ...item, overflowHidden: index >= INITIAL_VISIBLE_FILTER_OPTIONS },
-          index,
-        });
+        const optionRow = buildFilterOptionRow({ groupId: group.id, item, index });
         if (group.id === 'el_contenttype') {
           renderFilterOptionCountShimmer(optionRow);
         }
         optionsList.append(optionRow);
       });
       optionsContainer.append(optionsList);
-
-      if (group.items.length > INITIAL_VISIBLE_FILTER_OPTIONS) {
-        const remainingCount = group.items.length - INITIAL_VISIBLE_FILTER_OPTIONS;
-        const showMoreButton = createTag('button', { class: 'events-search-filter-show-more', type: 'button' });
-        const showMoreLabel = createTag('span', { class: 'events-search-filter-show-more-label' });
-        showMoreLabel.textContent = getShowMoreLabel(remainingCount, placeholders);
-        const showMoreIcon = createTag('span', { class: 'icon icon-arrow', 'aria-hidden': 'true' });
-        showMoreButton.append(showMoreLabel, showMoreIcon);
-        optionsContainer.append(showMoreButton);
-        updateShowMoreButtonState(groupEl, placeholders);
-      }
     }
 
     groupsRoot.append(groupEl);
@@ -1090,7 +1010,7 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
   }
   headlessSubscriptionSyncDepth.set(block, 1);
   try {
-    syncDynamicFacetGroupsFromHeadless(block, groups, placeholders);
+    syncDynamicFacetGroupsFromHeadless(block, groups);
     syncFilterUIFromHeadlessState(block, groups);
     const search = window.headlessSearchEngine.state.search || {};
     const { results = [], searchResponseId = '', response = {} } = search;
@@ -1110,35 +1030,11 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
   }
 }
 
-function bindFilterInteractions(block, groups, placeholders) {
+function bindFilterInteractions(block, groups) {
   const panel = block.querySelector('.events-search-filters-panel');
   if (!panel) return;
 
   panel.addEventListener('click', (event) => {
-    const showMoreButton = event.target.closest('.events-search-filter-show-more');
-    if (showMoreButton) {
-      const groupEl = showMoreButton.closest('.events-search-filter-group');
-      if (!groupEl) return;
-
-      if (showMoreButton.classList.contains('is-show-less')) {
-        const options = groupEl.querySelectorAll('.events-search-filter-option');
-        options.forEach((option, index) => {
-          if (index >= INITIAL_VISIBLE_FILTER_OPTIONS) {
-            option.classList.add('is-overflow-hidden');
-          }
-        });
-        const optionsList = groupEl.querySelector('.events-search-filter-options-list');
-        if (optionsList) optionsList.scrollTop = 0;
-      } else {
-        const hiddenOptions = groupEl.querySelectorAll('.events-search-filter-option.is-overflow-hidden');
-        hiddenOptions.forEach((option) => {
-          option.classList.remove('is-overflow-hidden');
-        });
-      }
-      updateShowMoreButtonState(groupEl, placeholders);
-      return;
-    }
-
     const groupHeader = event.target.closest('.events-search-filter-group-header');
     if (!groupHeader) return;
 
@@ -1366,8 +1262,8 @@ export default async function decorate(block) {
 
   createLayout(block, placeholders);
   decorateIcons(block);
-  renderFilterGroups(block, groups, placeholders);
-  bindFilterInteractions(block, groups, placeholders);
+  renderFilterGroups(block, groups);
+  bindFilterInteractions(block, groups);
   bindTopbarSearch(block);
   bindClearFilters(block, groups);
   bindMobileFilterToggle(block);
