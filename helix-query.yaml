@@ -67,15 +67,6 @@ indices:
       - '/**/*.json'
     target: /it/query-index.json
 
-  site-nl:
-    <<: *base-site
-    include:
-      - '/nl/**'
-    exclude:
-      - '/*.json'
-      - '/**/*.json'
-    target: /nl/query-index.json
-
   site-pt-br:
     <<: *base-site
     include:
@@ -102,15 +93,6 @@ indices:
       - '/*.json'
       - '/**/*.json'
     target: /ja/query-index.json
-
-  site-sv:
-    <<: *base-site
-    include:
-      - '/sv/**'
-    exclude:
-      - '/*.json'
-      - '/**/*.json'
-    target: /sv/query-index.json
 
   site-zh-hans:
     <<: *base-site
@@ -178,12 +160,6 @@ indices:
       - /it/browse/**
     target: /it/browse-index.json
 
-  browse-nl:
-    <<: *base-browse
-    include:
-      - /nl/browse/**
-    target: /nl/browse-index.json
-
   browse-pt-br:
     <<: *base-browse
     include:
@@ -201,12 +177,6 @@ indices:
     include:
       - /ja/browse/**
     target: /ja/browse-index.json
-
-  browse-sv:
-    <<: *base-browse
-    include:
-      - /sv/browse/**
-    target: /sv/browse-index.json
 
   browse-zh-hans:
     <<: *base-browse
@@ -302,14 +272,6 @@ indices:
       - /it/perspectives/authors/**
     target: /it/perspective-index.json
 
-  perspective-nl:
-    <<: *base-perspective
-    include:
-      - /nl/perspectives/**
-    exclude:
-      - /nl/perspectives/authors/**
-    target: /nl/perspective-index.json
-
   perspective-pt-br:
     <<: *base-perspective
     include:
@@ -333,14 +295,6 @@ indices:
     exclude:
       - /ja/perspectives/authors/**
     target: /ja/perspective-index.json
-
-  perspective-sv:
-    <<: *base-perspective
-    include:
-      - /sv/perspectives/**
-    exclude:
-      - /sv/perspectives/authors/**
-    target: /sv/perspective-index.json
 
   perspective-zh-hans:
     <<: *base-perspective
@@ -443,14 +397,6 @@ indices:
       - /it/courses/instructors/**
     target: /it/course-index.json
 
-  course-nl:
-    <<: *base-course
-    include:
-      - /nl/courses/*
-    exclude:
-      - /nl/courses/instructors/**
-    target: /nl/course-index.json
-
   course-pt-br:
     <<: *base-course
     include:
@@ -474,14 +420,6 @@ indices:
     exclude:
       - /ja/courses/instructors/**
     target: /ja/course-index.json
-
-  course-sv:
-    <<: *base-course
-    include:
-      - /sv/courses/*
-    exclude:
-      - /sv/courses/instructors/**
-    target: /sv/course-index.json
 
   course-zh-hans:
     <<: *base-course
@@ -699,42 +637,6 @@ indices:
       - '/*.json'
       - '/**/*.json'
 
-  sitemap-nl-1:
-    <<: *base-sitemap-1
-    include:
-      - '/nl/docs/workfront/**'
-      - '/nl/docs/dynamic-media-developer-resources/**'
-      - '/nl/docs/marketo/**'
-      - '/nl/docs/experience-platform/**'
-      - '/nl/docs/experience-manager-65/**'
-      - '/nl/docs/experience-manager-64/**'
-      - '/nl/docs/commerce-knowledge-base/**'
-      - '/nl/docs/experience-cloud-kcs/**'
-      - '/nl/docs/experience-manager-learn/**'
-      - '/nl/docs/experience-manager-cloud-service/**'
-    exclude:
-      - '/*.json'
-      - '/**/*.json'
-    target: /nl/sitemap-index-1.json
-  sitemap-nl-2:
-    <<: *base-sitemap-2
-    target: /nl/sitemap-index-2.json
-    include:
-      - '/nl/**'
-    exclude:
-      - '/nl/docs/workfront/**'
-      - '/nl/docs/dynamic-media-developer-resources/**'
-      - '/nl/docs/marketo/**'
-      - '/nl/docs/experience-platform/**'
-      - '/nl/docs/experience-manager-65/**'
-      - '/nl/docs/experience-manager-64/**'
-      - '/nl/docs/commerce-knowledge-base/**'
-      - '/nl/docs/experience-cloud-kcs/**'
-      - '/nl/docs/experience-manager-learn/**'
-      - '/nl/docs/experience-manager-cloud-service/**'
-      - '/*.json'
-      - '/**/*.json'
-
   sitemap-pt-br-1:
     <<: *base-sitemap-1
     include:
@@ -840,42 +742,6 @@ indices:
       - '/ja/docs/experience-cloud-kcs/**'
       - '/ja/docs/experience-manager-learn/**'
       - '/ja/docs/experience-manager-cloud-service/**'
-      - '/*.json'
-      - '/**/*.json'
-
-  sitemap-sv-1:
-    <<: *base-sitemap-1
-    include:
-      - '/sv/docs/workfront/**'
-      - '/sv/docs/dynamic-media-developer-resources/**'
-      - '/sv/docs/marketo/**'
-      - '/sv/docs/experience-platform/**'
-      - '/sv/docs/experience-manager-65/**'
-      - '/sv/docs/experience-manager-64/**'
-      - '/sv/docs/commerce-knowledge-base/**'
-      - '/sv/docs/experience-cloud-kcs/**'
-      - '/sv/docs/experience-manager-learn/**'
-      - '/sv/docs/experience-manager-cloud-service/**'
-    exclude:
-      - '/*.json'
-      - '/**/*.json'
-    target: /sv/sitemap-index-1.json
-  sitemap-sv-2:
-    <<: *base-sitemap-2
-    target: /sv/sitemap-index-2.json
-    include:
-      - '/sv/**'
-    exclude:
-      - '/sv/docs/workfront/**'
-      - '/sv/docs/dynamic-media-developer-resources/**'
-      - '/sv/docs/marketo/**'
-      - '/sv/docs/experience-platform/**'
-      - '/sv/docs/experience-manager-65/**'
-      - '/sv/docs/experience-manager-64/**'
-      - '/sv/docs/commerce-knowledge-base/**'
-      - '/sv/docs/experience-cloud-kcs/**'
-      - '/sv/docs/experience-manager-learn/**'
-      - '/sv/docs/experience-manager-cloud-service/**'
       - '/*.json'
       - '/**/*.json'
 
@@ -1009,14 +875,6 @@ indices:
     exclude:
       - '/it/playlists'
 
-  playlists-nl:
-    <<: *base-playlists
-    target: /nl/playlists.json
-    include:
-      - '/nl/playlists/**'
-    exclude:
-      - '/nl/playlists'
-
   playlists-pt-br:
     <<: *base-playlists
     target: /pt-br/playlists.json
@@ -1040,14 +898,6 @@ indices:
       - '/ja/playlists/**'
     exclude:
       - '/ja/playlists'
-
-  playlists-sv:
-    <<: *base-playlists
-    target: /sv/playlists.json
-    include:
-      - '/sv/playlists/**'
-    exclude:
-      - '/sv/playlists'
 
   playlists-zh-hans:
     <<: *base-playlists
