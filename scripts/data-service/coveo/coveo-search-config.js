@@ -1,13 +1,13 @@
 import { getConfig } from '../../scripts.js';
 import { COVEO_PIPELINE_TEST_BEARER } from '../../session-keys.js';
 
-/** Actual production Coveo routing (Sarika Monday test target). */
+/** Production Coveo routing (opt-in via ?coveoPipelineTest=false). */
 export const COVEO_SEARCH_DEFAULTS = Object.freeze({
   searchHub: 'Experience League Learning Hub',
   pipeline: 'Experience League Learning Pipeline',
 });
 
-/** PipelineTest routing (opt-in via ?coveoPipelineTest=true). */
+/** PipelineTest routing — default on EXLM-5173 Events Search QA. */
 export const COVEO_SEARCH_TEST = Object.freeze({
   searchHub: 'ExperienceLeagueLearningPipelineTest',
   pipeline: 'Experience League Learning PipelineTest',
@@ -31,9 +31,9 @@ let prodOrgQaEnabled = null;
 /** @type {boolean | null} null = not initialized */
 let pipelineTestEnabled = null;
 
-function readPipelineTestOptInFromUrl() {
+function readPipelineTestOptOutFromUrl() {
   if (typeof window === 'undefined') return false;
-  return new URLSearchParams(window.location.search).get(PIPELINE_TEST_PARAM) === 'true';
+  return new URLSearchParams(window.location.search).get(PIPELINE_TEST_PARAM) === 'false';
 }
 
 function stripBearerTokenFromUrl() {
@@ -75,14 +75,14 @@ export function captureCoveoBearerTokenFromUrl() {
 /**
  * EXLM-5173 Events Search QA:
  * - Always route to prod Coveo org + platform.cloud.coveo.com (EXLM-5359 endpoint).
- * - Default pipeline = actual production pipeline.
- * - Opt into PipelineTest with ?coveoPipelineTest=true
+ * - Default pipeline = PipelineTest.
+ * - Opt into real production pipeline with ?coveoPipelineTest=false
  */
 export function initCoveoPipelineTestForEventsSearch() {
   if (typeof window === 'undefined') return false;
   captureCoveoBearerTokenFromUrl();
   prodOrgQaEnabled = true;
-  pipelineTestEnabled = readPipelineTestOptInFromUrl();
+  pipelineTestEnabled = !readPipelineTestOptOutFromUrl();
   try {
     sessionStorage.removeItem('coveoToken');
     sessionStorage.removeItem('coveoPipelineTestToken');
@@ -110,7 +110,7 @@ export function isCoveoProdOrgQaEnabled() {
   return prodOrgQaEnabled === true;
 }
 
-/** True when ?coveoPipelineTest=true (PipelineTest pipeline name). */
+/** True when PipelineTest pipeline is active (default on this QA branch). */
 export function isCoveoPipelineTestEnabled() {
   return pipelineTestEnabled === true;
 }
