@@ -17,7 +17,7 @@ import loadCoveoToken from './coveo-token-service.js';
 function prefetchCoveoTokenIdle() {
   if (window.location.pathname.includes('/events-search')) {
     // eslint-disable-next-line no-console
-    console.debug('[Coveo Prefetch] Skipping on events-search — EXLM-5173 uses PipelineTest bearer');
+    console.debug('[Coveo Prefetch] Skipping on events-search — EXLM-5173 uses prod-org QA bearer');
     return;
   }
   // Check if token is already cached

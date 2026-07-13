@@ -2,7 +2,12 @@ import { URL_SPECIAL_CASE_LOCALES, fetchLanguagePlaceholders } from '../../scrip
 import { rewriteDocsPath } from '../../utils/path-utils.js';
 import CoveoDataService from './coveo-data-service.js';
 import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET } from './coveo-exl-pipeline-constants.js';
-import { getCoveoSearchResultsUrl, getCoveoSearchRouting, isCoveoPipelineTestEnabled } from './coveo-search-config.js';
+import {
+  getCoveoSearchResultsUrl,
+  getCoveoSearchRouting,
+  isCoveoPipelineTestEnabled,
+  isCoveoProdOrgQaEnabled,
+} from './coveo-search-config.js';
 
 const MAX_NUMBER_OF_VALUES_PER_BATCH = 100;
 
@@ -193,6 +198,10 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
     };
   }
   const { searchHub, pipeline } = getCoveoSearchRouting();
+  let hubOrPipeline = { searchHub };
+  if (isCoveoProdOrgQaEnabled()) {
+    hubOrPipeline = isCoveoPipelineTestEnabled() ? { pipeline } : { searchHub, pipeline };
+  }
   const dataSource = {
     url: getCoveoSearchResultsUrl({ fetchFacets: !!param.fetchFacets }),
     param: {
@@ -200,7 +209,7 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
         URL_SPECIAL_CASE_LOCALES.get(document.querySelector('html').lang) ||
         document.querySelector('html').lang ||
         'en',
-      ...(isCoveoPipelineTestEnabled() ? { pipeline } : { searchHub }),
+      ...hubOrPipeline,
       numberOfResults: param.noOfResults,
       excerptLength: 200,
       sortCriteria: param.sortCriteria,

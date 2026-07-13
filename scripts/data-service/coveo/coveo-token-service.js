@@ -3,7 +3,7 @@ import { COVEO_TOKEN, COVEO_PIPELINE_TEST_BEARER, COVEO_PIPELINE_TEST_TOKEN } fr
 import {
   captureCoveoBearerTokenFromUrl,
   getCoveoBearerTokenForPipelineTest,
-  isCoveoPipelineTestEnabled,
+  isCoveoProdOrgQaEnabled,
 } from './coveo-search-config.js';
 
 /**
@@ -13,7 +13,7 @@ export function loadPipelineTestCoveoToken() {
   captureCoveoBearerTokenFromUrl();
   const bearer = getCoveoBearerTokenForPipelineTest();
   // eslint-disable-next-line no-console
-  console.info('[Coveo Pipeline Test] Using Sarika prod API key only (no site token)');
+  console.info('[Coveo QA] Using Sarika prod API key only (no site token)');
   return bearer;
 }
 
@@ -64,7 +64,7 @@ async function fetchCoveoTokenFromService() {
 }
 
 export default async function loadCoveoToken() {
-  if (isCoveoPipelineTestEnabled()) {
+  if (isCoveoProdOrgQaEnabled()) {
     return loadPipelineTestCoveoToken();
   }
 

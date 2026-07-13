@@ -4,6 +4,7 @@ import {
   getCoveoOrganizationId,
   getCoveoSearchRouting,
   isCoveoPipelineTestEnabled,
+  isCoveoProdOrgQaEnabled,
 } from '../data-service/coveo/coveo-search-config.js';
 import { generateCustomContext, generateMlParameters, COVEO_SEARCH_CUSTOM_EVENTS } from '../search/search-utils.js';
 
@@ -27,26 +28,34 @@ export default async function buildHeadlessSearchEngine(module) {
             ...customContext,
           };
         }
-        if (isCoveoPipelineTestEnabled()) {
-          const { pipeline } = getCoveoSearchRouting();
+        if (isCoveoProdOrgQaEnabled()) {
+          const { pipeline, searchHub } = getCoveoSearchRouting();
           bodyJSON.pipeline = pipeline;
-          delete bodyJSON.searchHub;
-          if (request.url) {
-            try {
-              const url = new URL(request.url);
-              if (url.searchParams.has('searchHub')) {
-                url.searchParams.delete('searchHub');
-                request.url = url.toString();
+          if (isCoveoPipelineTestEnabled()) {
+            delete bodyJSON.searchHub;
+            if (request.url) {
+              try {
+                const url = new URL(request.url);
+                if (url.searchParams.has('searchHub')) {
+                  url.searchParams.delete('searchHub');
+                  request.url = url.toString();
+                }
+              } catch (e) {
+                // ignore
               }
-            } catch (e) {
-              // ignore
             }
+          } else {
+            bodyJSON.searchHub = searchHub;
           }
           // eslint-disable-next-line no-console
-          console.info('[Coveo Pipeline Test] request routing', { pipeline, method: metadata?.method });
+          console.info('[Coveo QA] request routing', {
+            pipeline,
+            searchHub: bodyJSON.searchHub,
+            method: metadata?.method,
+          });
         }
         const shouldWriteBody =
-          (metadata?.method === 'querySuggest' && window.headlessSolutionProductKey) || isCoveoPipelineTestEnabled();
+          (metadata?.method === 'querySuggest' && window.headlessSolutionProductKey) || isCoveoProdOrgQaEnabled();
         if (shouldWriteBody) {
           request.body = JSON.stringify(bodyJSON);
         }

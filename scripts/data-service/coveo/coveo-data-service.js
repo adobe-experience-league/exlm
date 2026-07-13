@@ -1,7 +1,7 @@
 // TODO: Add additional methods and headers specific to Coveo Data Service.
-import { COVEO_TOKEN, COVEO_PIPELINE_TEST_TOKEN } from '../../session-keys.js';
+import { COVEO_TOKEN, COVEO_PIPELINE_TEST_TOKEN, COVEO_PIPELINE_TEST_BEARER } from '../../session-keys.js';
 import loadCoveoToken from './coveo-token-service.js';
-import { isCoveoPipelineTestEnabled } from './coveo-search-config.js';
+import { isCoveoProdOrgQaEnabled } from './coveo-search-config.js';
 
 /**
  * CoveoDataService class for fetching data from a Coveo Data Service.
@@ -40,7 +40,12 @@ export default class CoveoDataService {
       }
 
       if (response.status === 419) {
-        sessionStorage.removeItem(isCoveoPipelineTestEnabled() ? COVEO_PIPELINE_TEST_TOKEN : COVEO_TOKEN);
+        if (isCoveoProdOrgQaEnabled()) {
+          sessionStorage.removeItem(COVEO_PIPELINE_TEST_TOKEN);
+          sessionStorage.removeItem(COVEO_PIPELINE_TEST_BEARER);
+        } else {
+          sessionStorage.removeItem(COVEO_TOKEN);
+        }
       }
 
       return null;

@@ -1,6 +1,10 @@
 import buildHeadlessSearchEngine from './engine.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
-import { getCoveoSearchRouting, isCoveoPipelineTestEnabled } from '../data-service/coveo/coveo-search-config.js';
+import {
+  getCoveoSearchRouting,
+  isCoveoPipelineTestEnabled,
+  isCoveoProdOrgQaEnabled,
+} from '../data-service/coveo/coveo-search-config.js';
 import { handleCoverSearchSubmit } from '../../blocks/browse-filters/browse-filter-utils.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../search/search-utils.js';
 
@@ -154,7 +158,8 @@ export default async function initiateCoveoHeadlessSearch({
         configureSearchHeadlessEngine({
           module,
           searchEngine: headlessSearchEngine,
-          searchHub: isCoveoPipelineTestEnabled() ? undefined : searchHub,
+          // PipelineTest omits searchHub; production pipeline keeps the Learning Hub hub.
+          searchHub: isCoveoProdOrgQaEnabled() && isCoveoPipelineTestEnabled() ? undefined : searchHub,
           contextObject: null,
           advancedQueryRule: '',
         });
