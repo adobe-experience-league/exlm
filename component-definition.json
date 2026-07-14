@@ -11,7 +11,9 @@
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/button/v1/button",
-                "template": {}
+                "template": {
+                  "filter": "button"
+                }
               }
             }
           }
@@ -52,7 +54,9 @@
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/title/v1/title",
-                "template": {}
+                "template": {
+                  "filter": "title"
+                }
               }
             }
           }

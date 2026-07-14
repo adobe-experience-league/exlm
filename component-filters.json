@@ -484,6 +484,24 @@
     "components": ["richtext"]
   },
   {
+    "id": "title",
+    "rte": {
+      "toolbar": {
+        "alignment": ["left", "center", "right", "justify"]
+      }
+    },
+    "components": []
+  },
+  {
+    "id": "button",
+    "rte": {
+      "toolbar": {
+        "alignment": ["left", "center", "right", "justify"]
+      }
+    },
+    "components": []
+  },
+  {
     "id": "cards",
     "components": ["card"]
   },
