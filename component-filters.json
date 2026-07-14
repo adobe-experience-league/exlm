@@ -463,7 +463,7 @@
     "rte": {
       "toolbar": {
         "format": ["bold", "italic"],
-        "alignment": [],
+        "alignment": ["left", "center", "right", "justify"],
         "indentation": [],
         "sr_script": ["superscript", "subscript"],
         "list": ["bullet_list", "ordered_list"],
