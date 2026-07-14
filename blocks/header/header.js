@@ -16,6 +16,8 @@ import {
 import getProducts from '../../scripts/utils/product-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
+import { isDomainAllowed } from '../../scripts/utils/exlm-config-utils.js';
+import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 import {
   decoratorState,
   isMobile,
@@ -29,7 +31,6 @@ import {
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import LanguageBlock from '../language/language.js';
 import ProfileMenu from './profile-menu.js';
-import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 
 /**
  *  @typedef {Object} CommunityOptions
@@ -811,16 +812,17 @@ class ExlHeader extends HTMLElement {
   }
 }
 
-customElements.define('exl-header', ExlHeader);
-
 /**
  * Create header web component and attach to the DOM
  * @param {HTMLHeadElement} headerBlock
  */
 export default async function decorate(headerBlock, options = {}) {
-  if (isFeatureEnabled('isHeaderV2')) {
+  if (isFeatureEnabled('isHeaderV2') || (await isDomainAllowed('headerv2allowedDomains'))) {
     const { default: decorateV2 } = await import('./header-v2.js');
     return decorateV2(headerBlock, options);
+  }
+  if (!customElements.get('exl-header')) {
+    customElements.define('exl-header', ExlHeader);
   }
   const exlHeader = new ExlHeader(options);
   headerBlock.replaceChildren(exlHeader);

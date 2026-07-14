@@ -1078,8 +1078,6 @@ class ExlHeader extends HTMLElement {
   }
 }
 
-customElements.define('exl-header-v2', ExlHeader);
-
 /**
  * Create header web component and attach to the DOM
  * @param {HTMLHeadElement} headerBlock
@@ -1087,6 +1085,9 @@ customElements.define('exl-header-v2', ExlHeader);
 export default async function decorate(headerBlock, options = {}) {
   // marks the semantic <header> so global styles (see styles/styles.css) can differ for v2
   headerBlock.parentElement?.classList.add('header-v2');
+  if (!customElements.get('exl-header')) {
+    customElements.define('exl-header', ExlHeader);
+  }
   const exlHeader = new ExlHeader(options);
   headerBlock.replaceChildren(exlHeader);
 }
