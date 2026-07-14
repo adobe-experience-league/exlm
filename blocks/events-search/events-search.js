@@ -54,6 +54,12 @@ function applyFilterOptionsScrollCap(groupEl) {
   if (capHeight > 0) optionsList.style.maxHeight = `${Math.ceil(capHeight)}px`;
 }
 
+function recalcExpandedFilterScrollCaps(block) {
+  block.querySelectorAll('.events-search-filter-group.is-expanded').forEach((groupEl) => {
+    applyFilterOptionsScrollCap(groupEl);
+  });
+}
+
 function removeFilterGroupOptionsShimmer(optionsContainer) {
   optionsContainer?.querySelector('.events-search-filter-options-shimmer')?.remove();
 }
@@ -1056,6 +1062,10 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
 function bindFilterInteractions(block, groups) {
   const panel = block.querySelector('.events-search-filters-panel');
   if (!panel) return;
+
+  // Recompute the scroll cap on resize so it stays accurate across breakpoints.
+  const resizeObserver = new ResizeObserver(() => recalcExpandedFilterScrollCaps(block));
+  resizeObserver.observe(panel);
 
   panel.addEventListener('click', (event) => {
     const groupHeader = event.target.closest('.events-search-filter-group-header');
