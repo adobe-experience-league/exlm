@@ -10,7 +10,7 @@ import {
   getConfig,
   getLink,
   getPathDetails,
-  fetchGlobalFragment,
+  fetchWithFallback,
   fetchLanguagePlaceholders,
 } from '../../scripts/scripts.js';
 import getProducts from '../../scripts/utils/product-utils.js';
@@ -57,6 +57,15 @@ import ProfileMenu from './profile-menu.js';
  */
 
 const HEADER_CSS = `/blocks/header/exl-header.css`;
+
+/** fetch the header fragment relative to /${lang}/global-fragments/, ignoring any page metadata override */
+async function fetchHeaderFragment(fragmentPath, lang) {
+  const fragmentUrl = fragmentPath.replace('/en/', `/${lang}/`);
+  const path = `${window.hlx.codeBasePath}${fragmentUrl}.plain.html`;
+  const fallbackPath = `${window.hlx.codeBasePath}${fragmentPath}.plain.html`;
+  const response = await fetchWithFallback(path, fallbackPath);
+  return response.text();
+}
 
 let searchElementPromise = null;
 const { khorosProfileUrl, communityHost } = getConfig();
@@ -733,9 +742,8 @@ class ExlHeader extends HTMLElement {
   }
 
   async decorate() {
-    const headerMeta = 'header-fragment';
-    const fallback = '/en/global-fragments/header';
-    const headerFragment = await fetchGlobalFragment(headerMeta, fallback, this.decoratorOptions.lang);
+    const fragmentPath = '/en/global-fragments/header';
+    const headerFragment = await fetchHeaderFragment(fragmentPath, this.decoratorOptions.lang);
     if (headerFragment) {
       loadSearchElement();
 
