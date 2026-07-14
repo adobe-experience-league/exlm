@@ -1,11 +1,6 @@
 {
   "version": 1,
   "skills": {
-    "admin": {
-      "source": "adobe/skills",
-      "sourceType": "github",
-      "computedHash": "348c473f0352a5e18e1785f29f82e0c14f70b6a925b6985578c6f02fa85b689f"
-    },
     "aem-cli": {
       "source": "adobe/skills",
       "sourceType": "github",
@@ -23,11 +18,6 @@
       "sourceType": "github",
       "skillPath": "plugins/aem/project-management/skills/auth/SKILL.md",
       "computedHash": "70a68ce30a4fab8f972605eb1399e343dfcee71095da26e255e8e8fd07af1520"
-    },
-    "authoring": {
-      "source": "adobe/skills",
-      "sourceType": "github",
-      "computedHash": "ad8cb193bcdcb897e633c4e26b1f7be532894e068bda4fc28e830879573daad6"
     },
     "authoring-analysis": {
       "source": "adobe/skills",
@@ -88,11 +78,6 @@
       "sourceType": "github",
       "skillPath": "plugins/aem/edge-delivery-services/skills/da-content/SKILL.md",
       "computedHash": "70980c44ca712f8cabef4202e7e7c65b7736f3b6676690b6f6dcca8e58a0f926"
-    },
-    "development": {
-      "source": "adobe/skills",
-      "sourceType": "github",
-      "computedHash": "c80a546fd1ea69cdfa3c317b9eeb455be002c34e97088a6db38053b91113371b"
     },
     "docs-search": {
       "source": "adobe/skills",
