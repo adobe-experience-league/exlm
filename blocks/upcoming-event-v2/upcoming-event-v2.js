@@ -3,6 +3,7 @@ import { htmlToElement } from '../../scripts/scripts.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
+import { COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ } from '../../scripts/browse-card/browse-cards-constants.js';
 import BrowseCardViewSwitcher from '../../scripts/browse-card/browse-cards-view-switcher.js';
 import { loadCSS } from '../../scripts/lib-franklin.js';
 
@@ -43,6 +44,7 @@ export default async function decorate(block) {
   const parameters = {
     contentType: [CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY],
     sortCriteria: 'date ascending',
+    aq: COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ,
   };
 
   BrowseCardsDelegate.fetchCardData(parameters)
