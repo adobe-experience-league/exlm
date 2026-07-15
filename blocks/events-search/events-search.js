@@ -381,6 +381,13 @@ function createLayout(block, placeholders) {
         }" aria-label="${
           placeholders.eventSearchKeywordAriaLabel || placeholders.eventSearchKeywordPlaceholder || 'Search events'
         }" />
+        <span
+          title="${placeholders.eventSearchClearSearchLabel || 'Clear search'}"
+          class="icon icon-clear events-search-keyword-clear"
+          role="button"
+          tabindex="0"
+          aria-label="${placeholders.eventSearchClearSearchLabel || 'Clear search'}"
+        ></span>
       </div>
       <div class="events-search-active-filters" hidden role="group" aria-label="${
         placeholders.eventSearchActiveFiltersAriaLabel || 'Active filters'
@@ -1194,9 +1201,16 @@ function bindFilterInteractions(block, groups, placeholders) {
   });
 }
 
+function updateKeywordClearIconVisibility(block) {
+  const input = block.querySelector('.events-search-keyword-input');
+  const clearIcon = block.querySelector('.events-search-keyword-clear');
+  clearIcon?.classList.toggle('is-visible', Boolean(input?.value));
+}
+
 function bindTopbarSearch(block) {
   const input = block.querySelector('.events-search-keyword-input');
   const keywordRow = block.querySelector('.events-search-keyword');
+  const clearIcon = block.querySelector('.events-search-keyword-clear');
   if (!input) return;
 
   const submitSearch = () => {
@@ -1212,7 +1226,12 @@ function bindTopbarSearch(block) {
   };
 
   input.addEventListener('input', () => {
+    updateKeywordClearIconVisibility(block);
     updateClearFiltersButtonState(block);
+    // Refresh results as soon as the prompt is fully deleted, without waiting for Enter.
+    if (input.value === '') {
+      submitSearch();
+    }
   });
 
   keywordRow?.addEventListener('click', (event) => {
@@ -1227,6 +1246,22 @@ function bindTopbarSearch(block) {
       submitSearch();
     }
   });
+
+  const clearSearch = () => {
+    input.value = '';
+    updateKeywordClearIconVisibility(block);
+    submitSearch();
+    input.focus();
+  };
+
+  clearIcon?.addEventListener('click', clearSearch);
+  clearIcon?.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    clearSearch();
+  });
+
+  updateKeywordClearIconVisibility(block);
 }
 
 function bindClearFilters(block, groups) {
@@ -1264,6 +1299,7 @@ function bindClearFilters(block, groups) {
       if (searchInput) {
         searchInput.value = '';
       }
+      updateKeywordClearIconVisibility(block);
     }
 
     state.isClearing = false;
@@ -1335,6 +1371,7 @@ async function initHeadlessSearch(block, groups, placeholders) {
       if (input.value !== window.headlessSearchBox.state.value) {
         input.value = window.headlessSearchBox.state.value || '';
       }
+      updateKeywordClearIconVisibility(block);
       updateClearFiltersButtonState(block);
     },
   });
