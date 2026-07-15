@@ -42,9 +42,12 @@
   --nav-gap-desktop: 14px;
   --nav-gap-mobile: 10px;
   --nav-root-item-padding: 14px;
-  --nav-dropdown-tab-item-width: 180px;
+  --nav-dropdown-tab-item-width: 280px;
   --nav-mobile-max-width: 360px;
   --nav-mobile-item-padding: 20px 14px;
+  --nav-dropdown-max-width: 1280px;
+  --nav-dropdown-horizontal-padding: 24px;
+  --nav-dropdown-vertical-padding: 32px;
 
   /* Nav colors */
   --nav-bg-color: var(--spectrum-gray-50);
@@ -456,9 +459,9 @@ button:focus {
   flex-direction: row;
   align-items: stretch;
   width: 100%;
-  max-width: var(--nav-max-width);
+  max-width: var(--nav-dropdown-max-width);
   margin: 0 auto;
-  padding: 32px 24px;
+  padding: var(--nav-dropdown-vertical-padding) var(--nav-dropdown-horizontal-padding);
 }
 
 /* Columns: equal width, right-border dividers */
@@ -529,11 +532,32 @@ button:focus {
     flex-direction: column;
   }
 
+  .header .nav-item-content-tab > ul::before {
+    content: '';
+    position: absolute;
+    top: var(--nav-dropdown-vertical-padding);
+    bottom: var(--nav-dropdown-vertical-padding);
+    left: calc(var(--nav-dropdown-tab-item-width) + var(--nav-dropdown-horizontal-padding) + 20px);
+    width: 1px;
+    background-color: var(--border-color-thin);
+  }
+
+  .header .nav-item-content-tab > ul::after {
+    content: '';
+    position: absolute;
+    top: var(--nav-dropdown-vertical-padding);
+    bottom: var(--nav-dropdown-vertical-padding);
+    right: 0;
+    width: 1px;
+    background-color: var(--border-color-thin);
+  }
+
   /* left column: each level-1 is a stacked tab. position:static so the right pane
      anchors to the panel (the ul), not to each tab li — keeps content from shifting. */
   .header .nav-item-content-tab > ul > .nav-item {
     position: static;
     padding: 0;
+    border-right: none;
     box-sizing: border-box;
     max-width: calc(var(--nav-dropdown-tab-item-width) + 20px);
   }
