@@ -12,8 +12,6 @@ const communityLocalesMap = new Map([
   ['es', 'es'],
   ['pt-br', 'pt'],
   ['ko', 'ko'],
-  ['sv', 'en'],
-  ['nl', 'en'],
   ['it', 'it'],
   ['zh-hans', 'zh'],
   ['zh-hant', 'zh'],

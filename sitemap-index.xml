@@ -31,12 +31,6 @@
     <loc>https://experienceleague-dev.adobe.com/it/sitemap-2.xml</loc>
   </sitemap>
   <sitemap>
-    <loc>https://experienceleague-dev.adobe.com/nl/sitemap-1.xml</loc>
-  </sitemap>
-  <sitemap>
-    <loc>https://experienceleague-dev.adobe.com/nl/sitemap-2.xml</loc>
-  </sitemap>
-  <sitemap>
     <loc>https://experienceleague-dev.adobe.com/pt-br/sitemap-1.xml</loc>
   </sitemap>
   <sitemap>
@@ -53,12 +47,6 @@
   </sitemap>
   <sitemap>
     <loc>https://experienceleague-dev.adobe.com/ja/sitemap-2.xml</loc>
-  </sitemap>
-  <sitemap>
-    <loc>https://experienceleague-dev.adobe.com/sv/sitemap-1.xml</loc>
-  </sitemap>
-  <sitemap>
-    <loc>https://experienceleague-dev.adobe.com/sv/sitemap-2.xml</loc>
   </sitemap>
   <sitemap>
     <loc>https://experienceleague-dev.adobe.com/zh-hans/sitemap-1.xml</loc>

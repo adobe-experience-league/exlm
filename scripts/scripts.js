@@ -759,8 +759,6 @@ export function getConfig() {
 
   const communityLangsMap = new Map([
     ...baseLocalesMap,
-    ['sv', 'en'],
-    ['nl', 'en'],
     ['zh-hans', 'zh'],
     ['zh-hant', 'zh'],
     ['pt-br', 'pt'],
@@ -772,8 +770,6 @@ export function getConfig() {
 
   const adobeAccountLangsMap = new Map([
     ...baseLocalesMap,
-    ['sv', 'sv'],
-    ['nl', 'nl'],
     ['zh-hant', 'zh-Hant'],
     ['zh-hans', 'zh-Hans'],
     ['pt-br', 'pt'],
@@ -816,8 +812,6 @@ export function getConfig() {
   const lang = window.location.hostname.includes(communityHost)
     ? plCommunityLangsMap.get(rawLang) || rawLang.split('-')[0]
     : rawLang;
-  // Premium Learning is not offered for nl/sv locales; use English PL home until those languages are deprecated.
-  const premiumHomeLang = lang === 'nl' || lang === 'sv' ? 'en' : lang;
   // Locale param for Community page URL
   const communityLocale = communityLangsMap.get(lang) || 'en';
   // Lang param for Adobe account URL
@@ -911,7 +905,7 @@ export function getConfig() {
     // Events Page URL
     eventsURL: `${cdnOrigin}/${lang}/events`,
     // Premium Learning home (for premium learner nav link)
-    premiumHomeUrl: `${cdnOrigin}/${premiumHomeLang}/premium/home`,
+    premiumHomeUrl: `${cdnOrigin}/${lang}/premium/home`,
     // Brand Concierge
     bcDatastreamId: '87ae6de9-a49c-4734-a88a-17ec707ded09',
     bcOrgId: 'E4722728699EC56A0A495CA2@AdobeOrg',
@@ -956,8 +950,6 @@ export const locales = new Map([
   ['pt-br', 'pt_BR'],
   ['zh-hans', 'zh_HANS'],
   ['zh-hant', 'zh_HANT'],
-  ['nl', 'nl_NL'],
-  ['sv', 'sv_SE'],
 ]);
 
 export const URL_SPECIAL_CASE_LOCALES = new Map([
