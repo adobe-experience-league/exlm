@@ -784,7 +784,10 @@ export async function buildCard(element, model) {
         CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
         CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY,
         CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
-      ].includes(contentType?.toLowerCase())
+        CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY,
+      ]
+        .map((mappingKey) => mappingKey.toLowerCase())
+        .includes(contentType?.toLowerCase())
     ) {
       cardContainer.setAttribute('target', '_blank');
     }
