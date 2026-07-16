@@ -1167,17 +1167,10 @@ function bindClearFilters(block, groups) {
     const state = getFilterState(block);
     const { tags: activeTags, pendingRemovals } = state;
 
-    state.isClearing = true;
-
     // Uncheck all checkboxes without per-checkbox Headless toggles
     block.querySelectorAll('.events-search-filter-option input[type="checkbox"]').forEach((checkbox) => {
       checkbox.checked = false;
       checkbox.closest('.events-search-filter-option')?.classList.remove('checked');
-    });
-
-    // deselect all Headless facet controllers.
-    ['el_product', 'el_event_series', 'el_contenttype'].forEach((filterType) => {
-      getFacetController(filterType)?.deselectAll?.();
     });
 
     // Reset ordered tags array (browse-filters clearAllSelectedTag pattern).
@@ -1186,6 +1179,13 @@ function bindClearFilters(block, groups) {
     groups.forEach((group) => {
       group.selected = 0;
       updateGroupSelectionCount(block, group.id, 0);
+    });
+
+    state.isClearing = true;
+
+    // deselect all Headless facet controllers.
+    ['el_product', 'el_event_series', 'el_contenttype'].forEach((filterType) => {
+      getFacetController(filterType)?.deselectAll?.();
     });
 
     if (window.headlessSearchBox) {
@@ -1202,20 +1202,15 @@ function bindClearFilters(block, groups) {
       window.headlessPager.selectPage(1);
     }
 
-    // Remove facet params so urlManager won't re-apply them on hashchange.
-    const fragmentWithoutFacets = window.location.hash
-      .slice(1)
-      .split('&')
-      .filter((p) => p && !p.startsWith('f-'))
-      .join('&');
-    window.history.replaceState(
-      null,
-      document.title,
-      fragmentWithoutFacets ? `#${fragmentWithoutFacets}` : window.location.pathname + window.location.search,
-    );
-
     const hashBeforeClear = window.location.hash;
-    handleCoverSearchSubmit('');
+    const [currentSearchString] = hashBeforeClear.match(/\bq=([^&#]*)/) || [];
+    if (currentSearchString) {
+      let updatedHash = hashBeforeClear.replace(currentSearchString, '');
+      if (updatedHash.slice(1).startsWith('&')) {
+        updatedHash = `#${updatedHash.slice(2)}`;
+      }
+      window.location.hash = updatedHash;
+    }
     if (window.location.hash === hashBeforeClear) {
       executeSearch();
     }
@@ -1255,6 +1250,8 @@ async function initHeadlessSearch(block, groups, placeholders) {
     renderPageNumbers,
     numberOfResults: getBrowseFiltersResultCount(),
     facetOverrides: getEventsSearchHeadlessFacetOverrides(),
+    hideAqFromUrl: true,
+    baseAdvancedQuery: BASE_COVEO_ADVANCED_QUERY_EVENTS,
     renderSearchQuerySummary: () => {
       const totalCount = window.headlessQuerySummary?.state?.total || 0;
       updateResultsCount(block, totalCount, placeholders);
@@ -1272,11 +1269,8 @@ async function initHeadlessSearch(block, groups, placeholders) {
   bindEventsSearchLoadingUI(block);
   bindEventsSearchPagination(block);
 
-  if (window.headlessQueryActionCreators && window.headlessSearchEngine) {
-    const action = window.headlessQueryActionCreators.updateAdvancedSearchQueries({
-      aq: BASE_COVEO_ADVANCED_QUERY_EVENTS,
-    });
-    window.headlessSearchEngine.dispatch(action);
+  // aq is now set up-front via baseAdvancedQuery and reasserted on every hash change.
+  if (window.headlessSearchEngine) {
     executeSearch();
   }
   renderPageNumbers();
