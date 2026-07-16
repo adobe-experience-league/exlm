@@ -141,6 +141,8 @@ export default async function initiateCoveoHeadlessSearch({
   renderSearchQuerySummary,
   handleSearchBoxSubscription,
   facetOverrides = {},
+  hideAqFromUrl = false,
+  baseAdvancedQuery = '',
 }) {
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
@@ -154,7 +156,7 @@ export default async function initiateCoveoHeadlessSearch({
           searchEngine: headlessSearchEngine,
           searchHub: 'Experience League Learning Hub',
           contextObject: null,
-          advancedQueryRule: '',
+          advancedQueryRule: baseAdvancedQuery,
         });
 
         const headlessSearchBox = module.buildSearchBox(headlessSearchEngine, {
@@ -223,8 +225,32 @@ export default async function initiateCoveoHeadlessSearch({
           initialState: { fragment: fragment() },
         });
 
+        if (hideAqFromUrl && !baseAdvancedQuery) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            'initiateCoveoHeadlessSearch: hideAqFromUrl is enabled without baseAdvancedQuery — aq will be cleared (and never reapplied) on every hash change.',
+          );
+        }
+
+        // Used by events-search to keep its static aq out of the URL.
+        function visibleHash() {
+          const rawFragment = urlManager.state.fragment;
+          const visibleFragment = hideAqFromUrl
+            ? rawFragment
+                .split('&')
+                .filter((param) => param && !param.startsWith('aq='))
+                .join('&')
+            : rawFragment;
+          return visibleFragment ? `#${visibleFragment}` : window.location.pathname + window.location.search;
+        }
+
+        function currentVisibleUrl() {
+          return window.location.hash || window.location.pathname + window.location.search;
+        }
+
         urlManager.subscribe(() => {
-          const hash = `#${urlManager.state.fragment}`;
+          const hash = visibleHash();
+          if (hash === currentVisibleUrl()) return;
           if (!statusControllers.state.firstSearchExecuted) {
             window.history.replaceState(null, document.title, hash);
             return;
@@ -246,10 +272,28 @@ export default async function initiateCoveoHeadlessSearch({
           }
         });
 
+        function rerunSearch() {
+          const logSubmit = logSearchboxSubmit;
+          headlessSearchEngine.dispatch(
+            headlessSearchActionCreators.executeSearch(typeof logSubmit === 'function' ? logSubmit() : undefined),
+          );
+        }
+
+        // synchronize() restores aq from the (aq-less) URL and searches with it, so reassert the real aq and rerun the search right after.
+        function reapplyBaseAdvancedQuery({ rerunSearch: shouldRerunSearch = false } = {}) {
+          if (!hideAqFromUrl || !baseAdvancedQuery) return;
+          headlessSearchEngine.dispatch(
+            headlessQueryActionCreators.updateAdvancedSearchQueries({ aq: baseAdvancedQuery }),
+          );
+          if (shouldRerunSearch) rerunSearch();
+        }
+
         urlManager.synchronize(fragment());
+        reapplyBaseAdvancedQuery();
 
         function onHashChange() {
           urlManager.synchronize(fragment());
+          reapplyBaseAdvancedQuery({ rerunSearch: true });
         }
         window.addEventListener('hashchange', onHashChange);
 
