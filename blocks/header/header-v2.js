@@ -597,7 +597,7 @@ const buildMobileNavDrawer = (ul, navBlock, decoratorOptions) => {
         /* ignore */
       }
       const avatarHtml = profilePicSrc
-        ? `<img class="nav-mobile-profile-picture" src="${profilePicSrc}" alt="profile picture" />`
+        ? `<img class="nav-mobile-profile-picture" src="${profilePicSrc}" alt="profile picture" data-cs-mask/>`
         : `<span class="icon icon-profile"></span>`;
       drawerFooter.innerHTML = `
         <div class="nav-mobile-profile">

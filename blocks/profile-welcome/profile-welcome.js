@@ -265,7 +265,7 @@ async function decorateProfileWelcomeBlock(block) {
     if (profileUserCardAvatar) {
       profileUserCardAvatar.innerHTML = `${
         profilePicture
-          ? `<img width="75" height="75" class="profile-picture" src="${profilePicture}" alt="Profile Picture" />`
+          ? `<img width="75" height="75" class="profile-picture" src="${profilePicture}" alt="Profile Picture" data-cs-mask/>`
           : '<span class="icon icon-profile"></span>'
       }`;
       decorateIcons(profileUserCardAvatar);

@@ -50,7 +50,7 @@ export default async function decorate(block) {
       <div class="profile-avatar">
         ${
           profilePicture
-            ? `<img width="64" height="64" class="profile-picture" src="${profilePicture}" alt="Profile Picture" />`
+            ? `<img width="64" height="64" class="profile-picture" src="${profilePicture}" alt="Profile Picture" data-cs-mask/>`
             : '<span class="icon icon-profile"></span>'
         }
       </div>
