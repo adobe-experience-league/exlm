@@ -66,6 +66,11 @@ export const BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT =
  */
 export const COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ = '(@el_contenttype = "Event|Upcoming Event" AND @date >= now)';
 export const BASE_COVEO_ADVANCED_QUERY_EVENTS = `(@el_contenttype = "Event|On Demand Event") OR ${COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ}`;
+/**
+ * Exclude stale Upcoming Events while keeping all other content types.
+ * Used by Atomic Search (/en/search) which has no Events-only base aq.
+ */
+export const COVEO_EXCLUDE_STALE_UPCOMING_AQ = `(NOT @el_contenttype = "Event|Upcoming Event") OR ${COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ}`;
 
 export const VIDEO_THUMBNAIL_FORMAT = /^https:\/\/video\.tv\.adobe\.com\/v\/\w+\?format=jpeg$/;
 
