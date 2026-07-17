@@ -104,7 +104,7 @@
 }
 
 /* Desktop overrides */
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   :host {
     --z-header: 999;
     --language-selector-display: flex;
@@ -200,7 +200,7 @@ button:focus {
   container-type: inline-size;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .header-wrapper {
     display: flex;
     justify-content: center;
@@ -219,7 +219,7 @@ button:focus {
   grid-template-columns: min-content min-content auto min-content min-content min-content;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .header > nav {
     width: 100%;
     justify-content: initial;
@@ -249,7 +249,7 @@ button:focus {
   width: 20px;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .header .adobe-logo {
     padding-left: var(--nav-padding-desktop);
   }
@@ -275,7 +275,7 @@ button:focus {
   padding-inline-start: var(--nav-gap-mobile);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .header .brand {
     padding-inline-start: var(--nav-gap-desktop);
   }
@@ -288,7 +288,7 @@ button:focus {
   margin: 0;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .header .brand::after {
     content: '';
     display: block;
@@ -312,7 +312,7 @@ button:focus {
   padding: 0;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .header .nav-wrapper {
     display: flex;
     align-items: center;
@@ -524,7 +524,7 @@ button:focus {
 
 /* ── Tab-style level-0 dropdown (opt-in via `@tab` in the root link href, desktop only).
    Left column = level-1 items stacked as tabs; right pane = the hovered tab's content. ── */
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   /* inner panel becomes a two-pane layout (left tab list + right active content) */
   .header .nav-item-content-tab > ul {
     position: relative;
@@ -653,7 +653,7 @@ button:focus {
   display: none;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .header .nav-wrapper > ul > li .nav-items-secondary {
     display: block;
     margin: 0;
@@ -722,7 +722,7 @@ button:focus {
   height: 24px;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .header .nav-hamburger {
     display: none;
   }
@@ -739,7 +739,7 @@ button:focus {
   padding-inline-start: var(--nav-gap-mobile);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .search {
     padding-inline-start: var(--nav-gap-desktop);
   }
@@ -842,7 +842,7 @@ button:focus {
   padding-inline-start: var(--nav-gap-mobile);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .header .community-actions {
     padding-inline-start: var(--nav-gap-desktop);
   }
@@ -888,7 +888,7 @@ button:focus {
   padding-inline-start: var(--nav-gap-mobile);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .header .sign-in {
     padding-right: var(--nav-padding-desktop);
     padding-inline-start: var(--nav-gap-desktop);
@@ -911,7 +911,7 @@ button:focus {
   padding: 0;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .header .signed-in {
     grid-area: signed-in;
   }
@@ -923,7 +923,7 @@ button:focus {
   height: 100%;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .header .signed-in .profile {
     position: relative;
   }
@@ -981,7 +981,7 @@ button:focus {
   margin: 10px 0 0;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .header .signed-in .profile a[data-id='sign-out'] {
     color: var(--nav-link-color);
   }
@@ -1061,7 +1061,7 @@ button:focus {
 }
 
 /* 600px: above this the profile/product flyout becomes a fixed-width panel
-   instead of full-width (distinct from the 1024px mobile/desktop breakpoint). */
+   instead of full-width (distinct from the 1200px mobile/desktop breakpoint). */
 @media (min-width: 600px) {
   .header .profile-menu.profile-menu-expanded,
   .header .product-dropdown.product-dropdown-expanded {
@@ -1070,7 +1070,7 @@ button:focus {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .header .profile-menu.profile-menu-expanded,
   .header .product-dropdown.product-dropdown-expanded {
     height: auto;
@@ -1110,7 +1110,7 @@ button:focus {
   line-height: unset;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .header .product-grid.signed-in {
     display: var(--sign-in-display);
   }
@@ -1132,7 +1132,7 @@ button:focus {
   display: none;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .header .product-toggle {
     display: block;
   }
@@ -1206,7 +1206,7 @@ profile-block {
   animation: nav-mobile-slide-in 0.3s ease forwards;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .nav-mobile-drawer {
     display: none;
   }
