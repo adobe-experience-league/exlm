@@ -130,4 +130,126 @@ const brandConciergeConfig = {
   },
 };
 
+/**
+ * English chrome strings (trigger button, drawer, clear control, legal disclaimer).
+ * These render from ExL's own code in brand-concierge.js (not forwarded to the BC web
+ * client), so they live here alongside the client-facing `text`/`arrays` above and are
+ * threaded through as `config.ui`. 'BETA' is intentionally left untranslated (brand term).
+ */
+const BC_UI_EN = {
+  triggerAriaLabel: 'Open AI assistant',
+  triggerAsk: 'Ask a question',
+  drawerAriaLabel: 'AI assistant',
+  drawerTitle: 'Ask',
+  clearLabel: 'Clear',
+  clearAriaLabel: 'Clear conversation',
+  disclaimer: {
+    prefix: "Use of this beta AI chatbot is subject to Adobe's ",
+    privacyLabel: 'Privacy Policy',
+    middle:
+      ". Don't share sensitive data. AI responses are not your Content, may be inaccurate, and any offers provided are non-binding. ",
+    termsLabel: 'Generative AI Terms',
+    suffix: '.',
+  },
+};
+
+/**
+ * Per-locale overlays merged onto the English base by resolveBrandConciergeConfig().
+ * Keyed by getPathDetails().lang (e.g. 'es' for /es/... paths). Translations are
+ * review-pending — legal disclaimer copy in particular needs sign-off before launch.
+ */
+const BC_LOCALES = {
+  es: {
+    language: 'es-ES',
+    ui: {
+      triggerAriaLabel: 'Abrir el asistente de IA',
+      triggerAsk: 'Hacer una pregunta',
+      drawerAriaLabel: 'Asistente de IA',
+      drawerTitle: 'Preguntar',
+      clearLabel: 'Borrar',
+      clearAriaLabel: 'Borrar conversación',
+      disclaimer: {
+        prefix: 'El uso de este chatbot de IA en versión beta está sujeto a la ',
+        privacyLabel: 'Política de privacidad',
+        middle:
+          ' de Adobe. No comparta datos confidenciales. Las respuestas de la IA no son su Contenido, pueden ser inexactas y cualquier oferta proporcionada no es vinculante. ',
+        termsLabel: 'Términos de IA generativa',
+        suffix: '.',
+      },
+    },
+    text: {
+      'welcome.heading': '¿No sabe por dónde empezar?<br>Pregúnteme lo que quiera sobre los productos de Adobe.',
+      'welcome.subheading': 'Escriba su pregunta o elija una sugerencia a continuación.',
+      'input.placeholder': 'Haga una pregunta…',
+      'input.messageInput.aria': 'Campo de mensaje',
+      'input.send.aria': 'Enviar mensaje',
+      'input.mic.aria': 'Entrada de voz',
+      'card.aria.select': 'Seleccionar mensaje de ejemplo',
+      'carousel.prev.aria': 'Tarjetas anteriores',
+      'carousel.next.aria': 'Tarjetas siguientes',
+      'scroll.bottom.aria': 'Desplazarse hasta abajo',
+      'error.network':
+        'Lo sentimos, en este momento tenemos problemas de conexión. Vuelva a intentarlo en unos instantes.',
+      'error.general': 'Lo sentimos, se ha producido un error. Vuelva a intentarlo en unos instantes.',
+      'loading.message': 'Generando a partir de los recursos fiables de Adobe',
+      'feedback.dialog.title.positive': 'Agradecemos sus comentarios',
+      'feedback.dialog.title.negative': 'Agradecemos sus comentarios',
+      'feedback.dialog.question.positive': '¿Qué salió bien? Seleccione todas las opciones aplicables.',
+      'feedback.dialog.question.negative': '¿Qué salió mal? Seleccione todas las opciones aplicables.',
+      'feedback.dialog.notes': 'Notas',
+      'feedback.dialog.submit': 'Enviar',
+      'feedback.dialog.cancel': 'Cancelar',
+      'feedback.dialog.notes.placeholder': 'Notas adicionales (opcional)',
+      'feedback.toast.success': 'Gracias por sus comentarios.',
+      'feedback.thumbsUp.aria': 'Me gusta',
+      'feedback.thumbsDown.aria': 'No me gusta',
+    },
+    arrays: {
+      'welcome.examples': [
+        { text: '¿Dónde puedo aprender sobre la IA en Experience League?' },
+        { text: 'Primeros pasos con Experience Manager' },
+        { text: 'Configurar un conjunto de informes de Adobe Analytics' },
+        { text: 'Explicar las pruebas A/B de Adobe Target' },
+      ],
+      'feedback.positive.options': [
+        'Útil y relevante',
+        'Claro y fácil de entender',
+        'Tono cercano y conversacional',
+        'Otro',
+      ],
+      'feedback.negative.options': [
+        'Poco útil o irrelevante',
+        'Confuso o poco claro',
+        'Demasiado formal o robótico',
+        'Otro',
+      ],
+    },
+  },
+};
+
+/**
+ * Resolves the BC config for a given path language, layering any locale overlay onto the
+ * English base. English (and any unknown lang) returns the base config plus English `ui`.
+ * Pure function — the caller supplies `lang` (from getPathDetails().lang) so this module
+ * stays free of a scripts.js import and its cyclic dependency.
+ * @param {string} [lang] - Path language, e.g. 'en', 'es'.
+ * @returns {typeof brandConciergeConfig & { ui: typeof BC_UI_EN }}
+ */
+export function resolveBrandConciergeConfig(lang) {
+  const overlay = BC_LOCALES[(lang || 'en').toLowerCase()];
+  if (!overlay) {
+    return { ...brandConciergeConfig, ui: BC_UI_EN };
+  }
+  return {
+    ...brandConciergeConfig,
+    ui: { ...BC_UI_EN, ...overlay.ui },
+    text: { ...brandConciergeConfig.text, ...overlay.text },
+    arrays: { ...brandConciergeConfig.arrays, ...overlay.arrays },
+    metadata: {
+      ...brandConciergeConfig.metadata,
+      ...(overlay.language ? { language: overlay.language } : {}),
+    },
+  };
+}
+
 export default brandConciergeConfig;

@@ -1,8 +1,8 @@
 // eslint-disable-next-line import/no-cycle
-import { getConfig } from '../scripts.js';
+import { getConfig, getPathDetails } from '../scripts.js';
 import { loadScript, decorateIcon } from '../lib-franklin.js';
 import { openDrawer } from '../dialog/dialog.js';
-import brandConciergeConfig from './brand-concierge-config.js';
+import { resolveBrandConciergeConfig } from './brand-concierge-config.js';
 
 // Separate alloy instance avoids conflicting with the Launch-owned window.alloy.
 const ALLOY_INSTANCE_NAME = 'alloyBC';
@@ -50,6 +50,13 @@ const log = (...args) => isDev && console.log('[BC]', ...args);
 const warn = (...args) => console.warn('[BC]', ...args);
 // eslint-disable-next-line no-console
 const error = (...args) => console.error('[BC]', ...args);
+
+/**
+ * Locale-resolved config (English base + any locale overlay). Re-assigned in
+ * initBrandConcierge() from the page's path language; defaults to the English resolution
+ * so `activeConfig.ui` is always populated even before init runs.
+ */
+let activeConfig = resolveBrandConciergeConfig('en');
 
 let cssLinkEl = null;
 let drawerHandle = null;
@@ -130,6 +137,8 @@ function patchBcSparkleIcons(mount) {
 }
 
 function buildPanelDisclaimer() {
+  const copy = activeConfig.ui.disclaimer;
+
   const disclaimer = document.createElement('p');
   disclaimer.id = PANEL_DISCLAIMER_ID;
   disclaimer.className = 'bc-panel-disclaimer';
@@ -138,22 +147,20 @@ function buildPanelDisclaimer() {
   privacyLink.href = PRIVACY_POLICY_URL;
   privacyLink.target = '_blank';
   privacyLink.rel = 'noopener noreferrer';
-  privacyLink.textContent = 'Privacy Policy';
+  privacyLink.textContent = copy.privacyLabel;
 
   const termsLink = document.createElement('a');
   termsLink.href = GENERATIVE_AI_TERMS_URL;
   termsLink.target = '_blank';
   termsLink.rel = 'noopener noreferrer';
-  termsLink.textContent = 'Generative AI Terms';
+  termsLink.textContent = copy.termsLabel;
 
   disclaimer.append(
-    document.createTextNode("Use of this beta AI chatbot is subject to Adobe's "),
+    document.createTextNode(copy.prefix),
     privacyLink,
-    document.createTextNode(
-      ". Don't share sensitive data. AI responses are not your Content, may be inaccurate, and any offers provided are non-binding. ",
-    ),
+    document.createTextNode(copy.middle),
     termsLink,
-    document.createTextNode('.'),
+    document.createTextNode(copy.suffix),
   );
 
   return disclaimer;
@@ -414,7 +421,9 @@ function handleBrandConciergeClientEvent(event) {
 }
 
 function getBootstrapOptions() {
-  const { stickySession = false, ...stylingConfigurations } = brandConciergeConfig;
+  // `ui` holds ExL chrome strings (rendered by our own code) — strip it so only BC's
+  // own styling/text/arrays are forwarded to the third-party web client.
+  const { stickySession = false, ui: _ui, ...stylingConfigurations } = activeConfig;
   return {
     instanceName: ALLOY_INSTANCE_NAME,
     stylingConfigurations,
@@ -699,9 +708,11 @@ function installKeyboardScrollHandler(dialog, mount) {
 function createMountPoint() {
   if (document.getElementById(DIALOG_ID)) return document.getElementById(DIALOG_ID);
 
+  const { ui } = activeConfig;
+
   const trigger = document.createElement('button');
   trigger.id = TRIGGER_ID;
-  trigger.setAttribute('aria-label', 'Open AI assistant');
+  trigger.setAttribute('aria-label', ui.triggerAriaLabel);
   trigger.setAttribute('aria-expanded', 'false');
   trigger.setAttribute('aria-controls', DIALOG_ID);
 
@@ -709,7 +720,7 @@ function createMountPoint() {
   triggerIcon.className = 'icon icon-bc-ask-sparkles';
   const triggerAsk = document.createElement('span');
   triggerAsk.className = 'bc-trigger-ask';
-  triggerAsk.textContent = 'Ask a question';
+  triggerAsk.textContent = ui.triggerAsk;
   trigger.append(triggerIcon, triggerAsk);
   const betaBadge = document.createElement('span');
   betaBadge.className = 'bc-trigger-beta';
@@ -729,13 +740,13 @@ function createMountPoint() {
   clearBtn.id = HEADER_CLEAR_ID;
   clearBtn.type = 'button';
   clearBtn.className = 'exl-dialog-header-clear';
-  clearBtn.textContent = 'Clear';
-  clearBtn.setAttribute('aria-label', 'Clear conversation');
+  clearBtn.textContent = ui.clearLabel;
+  clearBtn.setAttribute('aria-label', ui.clearAriaLabel);
 
   drawerHandle = openDrawer({
     id: DIALOG_ID,
-    ariaLabel: 'AI assistant',
-    title: 'Ask',
+    ariaLabel: ui.drawerAriaLabel,
+    title: ui.drawerTitle,
     titleBadge: 'BETA',
     titleIcon: 'bc-ask-sparkles',
     content: mount,
@@ -828,6 +839,8 @@ export function destroyBrandConcierge() {
 
 export async function initBrandConcierge() {
   const { bcAlloySdkUrl, bcDatastreamId, bcOrgId, bcWebClientUrl, bcEdgeDomain } = getConfig();
+
+  activeConfig = resolveBrandConciergeConfig(getPathDetails().lang);
 
   createMountPoint();
   injectAlloyStub();
