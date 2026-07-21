@@ -825,7 +825,7 @@ class ExlHeader extends HTMLElement {
  * @param {HTMLHeadElement} headerBlock
  */
 export default async function decorate(headerBlock, options = {}) {
-  // TO-DO: Cleanup FF once Top Nav is live.
+  // TO-DO: Cleanup FF once Top Nav(Header v2) is live.
   if (isFeatureEnabled('isHeaderV2') || (await isDomainAllowed('headerv2allowedDomains'))) {
     const { default: decorateV2 } = await import('./header-v2.js');
     return decorateV2(headerBlock, options);
