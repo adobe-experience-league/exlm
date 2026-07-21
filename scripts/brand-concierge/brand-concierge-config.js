@@ -161,6 +161,9 @@ const BC_UI_EN = {
 const BC_LOCALES = {
   es: {
     language: 'es-ES',
+    // Spanish Brand Concierge datastream (same IMS org as the default). Routes /es/ conversations
+    // to the Spanish concierge/manifest instead of the default English datastream.
+    datastreamId: '3098f7cc-36bb-4965-bea3-6e80fc59571e',
     ui: {
       triggerAriaLabel: 'Abrir el asistente de IA',
       triggerAsk: 'Hacer una pregunta',
@@ -249,6 +252,9 @@ export function resolveBrandConciergeConfig(lang) {
       ...brandConciergeConfig.metadata,
       ...(overlay.language ? { language: overlay.language } : {}),
     },
+    // Locale-specific Edge datastream, consumed in brand-concierge.js; falls back to the
+    // default bcDatastreamId when a locale defines none.
+    ...(overlay.datastreamId ? { datastreamId: overlay.datastreamId } : {}),
   };
 }
 
