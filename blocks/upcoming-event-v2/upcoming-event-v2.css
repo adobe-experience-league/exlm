@@ -51,22 +51,42 @@
   display: none;
 }
 
-/** List view styles start **/
+/** Empty / no-results (match Upcoming Event v1 + other browse empty states) **/
 
-.event-no-results {
+.upcoming-event-v2.has-no-results .browse-cards-block-view,
+.upcoming-event-v2.has-no-results .browse-cards-view-switcher {
+  display: none;
+}
+
+.upcoming-event-v2.has-no-results .browse-cards-block-content {
+  display: block;
+  min-height: unset;
+  gap: 0;
+}
+
+.upcoming-event-v2 .event-no-results,
+.upcoming-event-v2 .browse-card-no-results {
   background-color: var(--spectrum-gray-200);
+  border-radius: 4px;
   color: var(--non-spectrum-grey);
   font-size: var(--spectrum-font-size-200);
-  padding: 72px 0;
+  line-height: var(--spectrum-line-height-s);
+  letter-spacing: normal;
+  padding: 72px 24px;
   text-align: center;
   width: 100%;
   box-sizing: border-box;
   grid-column: 1 / -1;
+  margin-top: 0;
 }
 
-.upcoming-event-v2 .browse-cards-block-content > .event-no-results {
-  min-height: unset;
-  height: 170px;
+.upcoming-event-v2 .browse-cards-block-content > .event-no-results,
+.upcoming-event-v2 .browse-cards-block-content > .browse-card-no-results {
+  height: auto;
+  min-height: 170px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /** List view styles end **/
