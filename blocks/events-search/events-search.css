@@ -331,7 +331,7 @@ main .events-search .events-search-keyword-clear {
   width: 10px;
   height: 10px;
   padding: 4px;
-  margin-left: 50px;
+  margin-left: auto;
   background: var(--non-spectrum-silver-mist);
   border-radius: 100%;
   cursor: pointer;
