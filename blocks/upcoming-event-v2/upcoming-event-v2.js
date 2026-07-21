@@ -7,21 +7,6 @@ import { COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ } from '../../scripts/browse-card/
 import BrowseCardViewSwitcher from '../../scripts/browse-card/browse-cards-view-switcher.js';
 import { loadCSS } from '../../scripts/lib-franklin.js';
 
-const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
-
-/**
- * Hide the block (and its section if emptied) when there is nothing to show —
- * e.g. all Upcoming events were filtered out as stale.
- * @param {HTMLElement} block
- */
-function hideUpcomingEventBlock(block) {
-  const section = block.closest('.section');
-  block.parentElement?.remove();
-  if (section && section.children.length === 0) {
-    section.remove();
-  }
-}
-
 export default async function decorate(block) {
   const [headingElement, descriptionElement] = [...block.children].map((row) => row.firstElementChild);
 
@@ -45,9 +30,7 @@ export default async function decorate(block) {
 
   // Create and initialize the view switcher
   BrowseCardViewSwitcher.create({ block }).then((viewSwitcher) => {
-    if (document.contains(headerDiv)) {
-      viewSwitcher.appendTo(headerDiv);
-    }
+    viewSwitcher.appendTo(headerDiv);
   });
 
   await loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-upcoming-events.css`);
@@ -68,14 +51,9 @@ export default async function decorate(block) {
     .then((results) => {
       buildCardsShimmer.removeShimmer();
 
-      if (!results?.length) {
-        // All upcoming events are stale (or none exist): hide block on published site.
-        // Keep the block visible in Universal Editor so authors can still see/edit it.
-        if (!UEAuthorMode) {
-          hideUpcomingEventBlock(block);
-        }
-        return;
-      }
+      // Keep existing empty-state behaviour (EXLM-5176 / prior Upcoming V2): do not
+      // hide the block or invent a new no-results UI when all Upcoming are stale.
+      if (!results?.length) return;
 
       results.forEach((cardData) => {
         const cardDiv = document.createElement('div');
