@@ -57,6 +57,8 @@ const error = (...args) => console.error('[BC]', ...args);
  * so `activeConfig.ui` is always populated even before init runs.
  */
 let activeConfig = resolveBrandConciergeConfig('en');
+/** Path language backing `activeConfig`; 'en' means no locale overlay is active. */
+let activeLang = 'en';
 
 let cssLinkEl = null;
 let drawerHandle = null;
@@ -95,6 +97,21 @@ function clearBrandConciergeTranscriptStorage(options = {}) {
 }
 
 /**
+ * BC hardcodes English copy in its hover tooltips (e.g. the send button's "Send"), which its
+ * config `text` map does not cover. For non-default locales, replace the send tooltip's text
+ * with the localized send label. No-op for English so BC's own copy is preserved.
+ */
+function localizeSubmitTooltip(mount) {
+  if (activeLang === 'en') return;
+  const label = activeConfig.text['input.send.aria'];
+  if (!label) return;
+  mount.querySelectorAll('.submit-button[aria-describedby]').forEach((btn) => {
+    const tip = document.getElementById(btn.getAttribute('aria-describedby'));
+    if (tip && tip.textContent !== label) tip.textContent = label;
+  });
+}
+
+/**
  * BC renders inline SVG sparkles in several places; swap them for icons/bc-ask-sparkles.svg.
  */
 function patchBcSparkleIcons(mount) {
@@ -128,6 +145,8 @@ function patchBcSparkleIcons(mount) {
         img.className = 'bc-sparkle-img';
         svg.replaceWith(img);
       });
+
+    localizeSubmitTooltip(mount);
   };
 
   run();
@@ -840,7 +859,8 @@ export function destroyBrandConcierge() {
 export async function initBrandConcierge() {
   const { bcAlloySdkUrl, bcDatastreamId, bcOrgId, bcWebClientUrl, bcEdgeDomain } = getConfig();
 
-  activeConfig = resolveBrandConciergeConfig(getPathDetails().lang);
+  activeLang = getPathDetails().lang;
+  activeConfig = resolveBrandConciergeConfig(activeLang);
 
   createMountPoint();
   injectAlloyStub();
