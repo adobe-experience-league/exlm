@@ -286,6 +286,8 @@ const buildCardCtaContent = ({ cardFooter, contentType, viewLinkText, viewLink }
         CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase(),
         CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
         CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
+        CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase(),
+        CONTENT_TYPES.EVENT.MAPPING_KEY,
       ].includes(contentType?.toLowerCase())
     ) {
       icon = 'new-tab-blue';
@@ -782,11 +784,14 @@ export async function buildCard(element, model) {
     if (
       [
         CONTENT_TYPES.UPCOMING_EVENT.MAPPING_KEY,
-        CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY,
+        CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase(),
         CONTENT_TYPES.INSTRUCTOR_LED.MAPPING_KEY,
+        CONTENT_TYPES.EVENT.MAPPING_KEY,
+        CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase(),
       ].includes(contentType?.toLowerCase())
     ) {
       cardContainer.setAttribute('target', '_blank');
+      cardContainer.setAttribute('rel', 'noopener noreferrer');
     }
     cardContainer.appendChild(card);
     element.appendChild(cardContainer);
@@ -801,6 +806,7 @@ export async function buildCard(element, model) {
 
     if (shouldOpenInNewTab) {
       element.querySelector('a')?.setAttribute('target', '_blank');
+      element.querySelector('a')?.setAttribute('rel', 'noopener noreferrer');
     }
     const cardOptions = card.querySelector('.browse-card-options');
     if (cardOptions) {
