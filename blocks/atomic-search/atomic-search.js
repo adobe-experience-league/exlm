@@ -25,6 +25,7 @@ import atomicResultPageHandler from './components/atomic-search-results-per-page
 import loadCoveoToken from '../../scripts/data-service/coveo/coveo-token-service.js';
 import { pushPageDataLayer } from '../../scripts/analytics/lib-analytics.js';
 import { buildCaptionElContentTypeResourceBundle } from './components/atomic-facet-engine-helpers.js';
+import { COVEO_EXCLUDE_STALE_UPCOMING_AQ } from '../../scripts/browse-card/browse-cards-constants.js';
 
 let placeholders = {};
 
@@ -125,6 +126,16 @@ export default function decorate(block) {
           },
         });
         document.dispatchEvent(preProcessEvent);
+
+        // Drop stale Upcoming Events at query time (same rule as Events Hub).
+        if (metadata?.method === 'search') {
+          const existingAq = (bodyJSON.aq || '').trim();
+          bodyJSON.aq = existingAq
+            ? `(${existingAq}) AND (${COVEO_EXCLUDE_STALE_UPCOMING_AQ})`
+            : COVEO_EXCLUDE_STALE_UPCOMING_AQ;
+          request.body = JSON.stringify(bodyJSON);
+        }
+
         return request;
       },
     });

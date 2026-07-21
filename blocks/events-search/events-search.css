@@ -323,6 +323,29 @@ main .events-search .events-search-keyword-input:focus:not(:focus-visible) {
   outline: none;
 }
 
+main .events-search .events-search-keyword-clear {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  padding: 4px;
+  margin-left: auto;
+  background: var(--non-spectrum-silver-mist);
+  border-radius: 100%;
+  cursor: pointer;
+}
+
+main .events-search .events-search-keyword-clear.is-visible {
+  display: flex;
+}
+
+main .events-search .events-search-keyword-clear:focus-visible {
+  outline: 2px solid var(--spectrum-gray-500);
+  outline-offset: 2px;
+}
+
 main .events-search .events-search-results-count {
   font-size: var(--spectrum-font-size-200);
   color: var(--text-color);
