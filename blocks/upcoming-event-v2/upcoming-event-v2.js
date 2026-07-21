@@ -9,15 +9,12 @@ import { loadCSS } from '../../scripts/lib-franklin.js';
 
 /**
  * Empty-state markup used by Upcoming Event v1/v2 (see upcoming-event.js + upcoming-event-v2.css).
+ * Placeholder key: upcoming-event-no-results-text (must be authored in placeholders).
  * @param {HTMLElement} contentDiv
  * @param {Record<string, string>} placeholders
  */
 function showNoResultsContent(contentDiv, placeholders = {}) {
-  // Prefer Events empty copy without "search"/"filters" wording — this block has neither.
-  // event-search-no-results-message → "Sorry, no results were found."
-  // no-results-text → "We are sorry, no results found matching the criteria."
-  const noResultsText =
-    placeholders.eventSearchNoResultsMessage || placeholders.noResultsText || 'Sorry, no results were found.';
+  const noResultsText = placeholders.upcomingEventNoResultsText || 'Sorry, no results were found.';
   contentDiv.appendChild(htmlToElement(`<div class="event-no-results">${noResultsText}</div>`));
 }
 
