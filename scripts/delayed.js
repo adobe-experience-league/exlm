@@ -5,8 +5,6 @@ import loadGainsight from './gainsight/gainsight.js';
 import loadQualtrics from './qualtrics.js';
 import { sendCoveoPageViewEvent } from './coveo-analytics.js';
 import { loadPrism } from './utils/prism-utils.js';
-// eslint-disable-next-line import/no-cycle
-import { getConfig, loadIms } from './scripts.js';
 
 // add more delayed functionality here
 
@@ -31,16 +29,9 @@ function isBrandConciergeExcludedPath() {
  * Loads Brand Concierge on eligible page types.
  * Guards:
  *   - hidden on Support and Premium Learning routes
- *   - bcAuthRequired → when true, user must be signed in
  */
 async function loadBrandConcierge() {
   if (isBrandConciergeExcludedPath()) return;
-
-  const { bcAuthRequired } = getConfig();
-  if (bcAuthRequired) {
-    await loadIms();
-    if (!window.adobeIMS?.isSignedInUser()) return;
-  }
 
   const { default: initBrandConcierge } = await import('./brand-concierge/brand-concierge.js');
   await initBrandConcierge();
