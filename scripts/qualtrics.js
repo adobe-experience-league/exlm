@@ -19,9 +19,7 @@ const langMap = {
   it: 'IT',
   ja: 'JA',
   ko: 'KO',
-  nl: 'NL',
   'pt-br': 'PT-BR',
-  sv: 'SV',
   'zh-hans': 'ZH-S',
   'zh-hant': 'ZH-T',
 };

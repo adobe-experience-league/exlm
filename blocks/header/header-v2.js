@@ -215,7 +215,7 @@ const hamburgerButton = (mobileDrawer, navOverlay) => {
  * @param {number} level
  * @param {{mobileOnly?: boolean}} opts - `mobileOnly`: skip the resize-reactive hover/click
  *   switching (registerHeaderResizeHandler) and just bind click once. Used for the mobile
- *   drawer's cloned tree, which is only ever reachable via the hamburger (hidden ≥1024px)
+ *   drawer's cloned tree, which is only ever reachable via the hamburger (hidden ≥1200px)
  *   and so never needs to react to viewport resize — avoids doubling the number of
  *   permanently-retained resize handlers registered for the desktop tree.
  */
@@ -323,7 +323,7 @@ const buildNavItems = (ul, level = 0, opts = {}) => {
         }
       };
       if (mobileOnly) {
-        // mobile drawer is only ever shown below the 1024px breakpoint (hidden via CSS
+        // mobile drawer is only ever shown below the 1200px breakpoint (hidden via CSS
         // otherwise), so it always behaves like the resize handler's "mobile" branch —
         // bind click once instead of registering a resize-reactive handler for it too.
         toggler.addEventListener('click', toggleExpandContent);

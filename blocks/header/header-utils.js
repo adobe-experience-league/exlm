@@ -14,8 +14,8 @@ export const decoratorState = {
 export const getCell = (block, row, cell) =>
   block.querySelector(`:scope > div:nth-child(${row}) > div:nth-child(${cell})`);
 
-// Mobile Only (Until 1024px)
-export const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
+// Mobile Only (Until 1200px)
+export const isMobile = () => window.matchMedia('(max-width: 1199px)').matches;
 
 /**
  * debounce fn execution

@@ -29,11 +29,6 @@ sitemaps:
         destination: /it/sitemap.xml
         hreflang: it
         alternate: /it/{path}
-      nl:
-        source: /nl/query-index.json
-        destination: /nl/sitemap.xml
-        hreflang: nl
-        alternate: /nl/{path}
       pt-br:
         source: /pt-br/query-index.json
         destination: /pt-br/sitemap.xml
@@ -49,11 +44,6 @@ sitemaps:
         destination: /ja/sitemap.xml
         hreflang: ja
         alternate: /ja/{path}
-      sv:
-        source: /sv/query-index.json
-        destination: /sv/sitemap.xml
-        hreflang: sv
-        alternate: /sv/{path}
       zh-hans:
         source: /zh-hans/query-index.json
         destination: /zh-hans/sitemap.xml
@@ -95,11 +85,6 @@ sitemaps:
         destination: /it/sitemap-1.xml
         hreflang: it
         alternate: /it/{path}
-      nl:
-        source: /nl/sitemap-index-1.json
-        destination: /nl/sitemap-1.xml
-        hreflang: nl
-        alternate: /nl/{path}
       pt-br:
         source: /pt-br/sitemap-index-1.json
         destination: /pt-br/sitemap-1.xml
@@ -115,11 +100,6 @@ sitemaps:
         destination: /ja/sitemap-1.xml
         hreflang: ja
         alternate: /ja/{path}
-      sv:
-        source: /sv/sitemap-index-1.json
-        destination: /sv/sitemap-1.xml
-        hreflang: sv
-        alternate: /sv/{path}
       zh-hans:
         source: /zh-hans/sitemap-index-1.json
         destination: /zh-hans/sitemap-1.xml
@@ -161,11 +141,6 @@ sitemaps:
         destination: /it/sitemap-2.xml
         hreflang: it
         alternate: /it/{path}
-      nl:
-        source: /nl/sitemap-index-2.json
-        destination: /nl/sitemap-2.xml
-        hreflang: nl
-        alternate: /nl/{path}
       pt-br:
         source: /pt-br/sitemap-index-2.json
         destination: /pt-br/sitemap-2.xml
@@ -181,11 +156,6 @@ sitemaps:
         destination: /ja/sitemap-2.xml
         hreflang: ja
         alternate: /ja/{path}
-      sv:
-        source: /sv/sitemap-index-2.json
-        destination: /sv/sitemap-2.xml
-        hreflang: sv
-        alternate: /sv/{path}
       zh-hans:
         source: /zh-hans/sitemap-index-2.json
         destination: /zh-hans/sitemap-2.xml
