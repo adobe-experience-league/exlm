@@ -5869,6 +5869,15 @@
         "validation": {
           "rootPath": "/content/exlm/global"
         }
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "redpen-properties",
+        "label": "RedPen Properties",
+        "description": "Full RedPen score API response for this page, set automatically when scoring is run from the RedPen panel.",
+        "readOnly": true,
+        "hidden": true
       }
     ]
   },

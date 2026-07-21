@@ -22,7 +22,6 @@ const FACET_CONTROLLER_MAP = {
   el_event_series: 'headlessEventSeriesFacet',
   el_contenttype: 'headlessTypeFacet',
 };
-const INITIAL_VISIBLE_FILTER_OPTIONS = 5;
 // Tracks active render pass per block; queues the next subscription fire instead of running two renders at once.
 const headlessSubscriptionSyncDepth = new WeakMap();
 /** Literal tokens authors enter in placeholders for dynamic counts. */
@@ -31,8 +30,36 @@ const PLACEHOLDER_COUNT_TOKEN = '${count}';
 const PLACEHOLDER_PG_COUNT_TOKEN = '${pgCount}';
 /* eslint-enable no-template-curly-in-string */
 const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
+const MAX_VISIBLE_FILTER_OPTIONS = 11;
 
 // Filter UI helpers
+
+/**
+ * Caps the options list height to MAX_VISIBLE_FILTER_OPTIONS rows using the actual rendered row
+ * height (measured from the DOM rather than assumed via CSS) so the scrollbar kicks in at the
+ * right point regardless of font metrics. Only measurable while the group is expanded/visible.
+ */
+function applyFilterOptionsScrollCap(groupEl) {
+  const optionsList = groupEl?.querySelector('.events-search-filter-options-list');
+  if (!optionsList) return;
+  const options = optionsList.querySelectorAll('.events-search-filter-option');
+  if (options.length <= MAX_VISIBLE_FILTER_OPTIONS) {
+    optionsList.style.maxHeight = '';
+    return;
+  }
+  if (optionsList.offsetParent === null) return;
+  const listTop = optionsList.getBoundingClientRect().top;
+  const lastVisibleBottom = options[MAX_VISIBLE_FILTER_OPTIONS - 1].getBoundingClientRect().bottom;
+  const capHeight = lastVisibleBottom - listTop;
+  if (capHeight > 0) optionsList.style.maxHeight = `${Math.ceil(capHeight)}px`;
+}
+
+function recalcExpandedFilterScrollCaps(block) {
+  block.querySelectorAll('.events-search-filter-group.is-expanded').forEach((groupEl) => {
+    applyFilterOptionsScrollCap(groupEl);
+  });
+}
+
 function removeFilterGroupOptionsShimmer(optionsContainer) {
   optionsContainer?.querySelector('.events-search-filter-options-shimmer')?.remove();
 }
@@ -85,9 +112,7 @@ function buildFilterOptionRow({ groupId, item, index }) {
   const optionLabel = item.title || item.value;
   const optionId = `${groupId}-${index + 1}-${String(optionValue).replace(/[^a-zA-Z0-9_-]/g, '-')}`;
   const optionEl = createTag('div', {
-    class: `events-search-filter-option${item.overflowHidden ? ' is-overflow-hidden' : ''}${
-      item.selected ? ' checked' : ''
-    }`,
+    class: `events-search-filter-option${item.selected ? ' checked' : ''}`,
   });
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
@@ -128,50 +153,6 @@ function sortItemsAlphabetically(a, b) {
   return titleA.localeCompare(titleB, document.documentElement.lang || 'en');
 }
 
-function getShowMoreLabel(count, placeholders) {
-  const template = placeholders.eventSearchShowMoreLabel;
-  if (!template) {
-    return `Show ${count} more`;
-  }
-  return fillPlaceholderCount(template, count);
-}
-
-function getShowLessLabel(placeholders) {
-  return placeholders.eventSearchShowLessLabel || 'Show less';
-}
-
-function updateShowMoreButtonState(groupEl, placeholders) {
-  const showMoreButton = groupEl.querySelector('.events-search-filter-show-more');
-  if (!showMoreButton) return;
-
-  const totalOptions = groupEl.querySelectorAll('.events-search-filter-option').length;
-  if (totalOptions <= INITIAL_VISIBLE_FILTER_OPTIONS) {
-    showMoreButton.setAttribute('hidden', '');
-    return;
-  }
-
-  const hiddenOptionsCount = groupEl.querySelectorAll('.events-search-filter-option.is-overflow-hidden').length;
-  const labelEl = showMoreButton.querySelector('.events-search-filter-show-more-label');
-
-  showMoreButton.removeAttribute('hidden');
-  if (hiddenOptionsCount > 0) {
-    showMoreButton.classList.remove('is-show-less');
-    const nextText = getShowMoreLabel(hiddenOptionsCount, placeholders);
-    if (labelEl) {
-      labelEl.textContent = nextText;
-    } else {
-      showMoreButton.textContent = nextText;
-    }
-  } else {
-    showMoreButton.classList.add('is-show-less');
-    if (labelEl) {
-      labelEl.textContent = getShowLessLabel(placeholders);
-    } else {
-      showMoreButton.textContent = getShowLessLabel(placeholders);
-    }
-  }
-}
-
 function getEventsSearchHeadlessFacetOverrides() {
   return {
     el_product: { numberOfValues: 500, options: { filterFacetCount: true, sortCriteria: 'alphanumeric' } },
@@ -194,35 +175,20 @@ function showDynamicFilterGroupShimmers(block, { refreshCountsOnly = false } = {
   });
 }
 
-function renderDynamicGroupOptions(groupEl, group, placeholders) {
+function renderDynamicGroupOptions(groupEl, group) {
   const optionsContainer = groupEl.querySelector('.events-search-filter-options');
   if (!optionsContainer) return;
   removeFilterGroupOptionsShimmer(optionsContainer);
   optionsContainer.innerHTML = '';
   const optionsList = createTag('div', { class: 'events-search-filter-options-list' });
   group.items.forEach((item, index) => {
-    optionsList.append(
-      buildFilterOptionRow({
-        groupId: group.id,
-        item: { ...item, overflowHidden: index >= INITIAL_VISIBLE_FILTER_OPTIONS },
-        index,
-      }),
-    );
+    optionsList.append(buildFilterOptionRow({ groupId: group.id, item, index }));
   });
   optionsContainer.append(optionsList);
-  if (group.items.length > INITIAL_VISIBLE_FILTER_OPTIONS) {
-    const remaining = group.items.length - INITIAL_VISIBLE_FILTER_OPTIONS;
-    const showMoreButton = createTag('button', { class: 'events-search-filter-show-more', type: 'button' });
-    const showMoreLabel = createTag('span', { class: 'events-search-filter-show-more-label' });
-    showMoreLabel.textContent = getShowMoreLabel(remaining, placeholders);
-    showMoreButton.append(showMoreLabel, createTag('span', { class: 'icon icon-arrow', 'aria-hidden': 'true' }));
-    optionsContainer.append(showMoreButton);
-  }
-  updateShowMoreButtonState(groupEl, placeholders);
   decorateIcons(optionsContainer);
 }
 
-function syncDynamicFacetGroup(block, group, placeholders) {
+function syncDynamicFacetGroup(block, group) {
   const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${group.id}"]`);
   if (!groupEl) return;
   const optionsContainer = groupEl.querySelector('.events-search-filter-options');
@@ -248,11 +214,12 @@ function syncDynamicFacetGroup(block, group, placeholders) {
   groupEl.style.display = '';
   const wasExpanded = groupEl.classList.contains('is-expanded');
   group.items = items;
-  renderDynamicGroupOptions(groupEl, group, placeholders);
+  renderDynamicGroupOptions(groupEl, group);
   groupEl.classList.remove('is-filter-loading');
   if (wasExpanded) {
     groupEl.classList.add('is-expanded');
     groupEl.querySelector('.events-search-filter-group-header')?.setAttribute('aria-expanded', 'true');
+    applyFilterOptionsScrollCap(groupEl);
   }
 }
 
@@ -279,7 +246,7 @@ function syncEventTypeFilterCounts(block) {
 // Skips facet UI updates triggered before the search response arrives, preventing stale counts.
 const lastSyncedSearchResponseId = new WeakMap();
 
-function syncDynamicFacetGroupsFromHeadless(block, groups, placeholders) {
+function syncDynamicFacetGroupsFromHeadless(block, groups) {
   if (!(window.headlessStatusControllers?.state?.firstSearchExecuted ?? false)) return;
 
   // Only sync facet UI when a new search response has arrived.
@@ -290,7 +257,7 @@ function syncDynamicFacetGroupsFromHeadless(block, groups, placeholders) {
   const totalResults = window.headlessSearchEngine?.state?.search?.response?.totalCount ?? 0;
   block.classList.toggle('has-no-results', !totalResults);
   groups.forEach((group) => {
-    if (DYNAMIC_FACET_FIELDS.includes(group.id)) syncDynamicFacetGroup(block, group, placeholders);
+    if (DYNAMIC_FACET_FIELDS.includes(group.id)) syncDynamicFacetGroup(block, group);
   });
   syncEventTypeFilterCounts(block);
 }
@@ -331,15 +298,15 @@ function getBaseFilterGroups(placeholders) {
       selected: 0,
     },
     {
-      id: 'el_event_series',
-      name: placeholders.eventSearchFilterEventSeriesLabel || 'Series',
-      items: [],
-      selected: 0,
-    },
-    {
       id: 'el_contenttype',
       name: placeholders.eventSearchFilterEventTypeLabel || 'Event Type',
       items: eventTypeOptions.items.map((item) => ({ ...item })).sort(sortItemsAlphabetically),
+      selected: 0,
+    },
+    {
+      id: 'el_event_series',
+      name: placeholders.eventSearchFilterEventSeriesLabel || 'Series',
+      items: [],
       selected: 0,
     },
   ];
@@ -381,6 +348,13 @@ function createLayout(block, placeholders) {
         }" aria-label="${
           placeholders.eventSearchKeywordAriaLabel || placeholders.eventSearchKeywordPlaceholder || 'Search events'
         }" />
+        <span
+          title="${placeholders.eventSearchClearSearchLabel || 'Clear search'}"
+          class="icon icon-clear events-search-keyword-clear"
+          role="button"
+          tabindex="0"
+          aria-label="${placeholders.eventSearchClearSearchLabel || 'Clear search'}"
+        ></span>
       </div>
       <div class="events-search-active-filters" hidden role="group" aria-label="${
         placeholders.eventSearchActiveFiltersAriaLabel || 'Active filters'
@@ -495,22 +469,19 @@ function bindSortDropdownToggle(block) {
   });
 }
 
-function renderFilterGroups(block, groups, placeholders) {
+function renderFilterGroups(block, groups) {
   const groupsRoot = block.querySelector('.events-search-filter-groups');
   if (!groupsRoot) return;
 
   groupsRoot.innerHTML = '';
   groups.forEach((group, groupIndex) => {
-    const isInitiallyExpanded = groupIndex === 0;
     const groupEl = createTag('section', {
-      class: `events-search-filter-group${isInitiallyExpanded ? ' is-expanded' : ''}`,
+      class: 'events-search-filter-group',
       'data-filter-type': group.id,
     });
     const groupOptionsRegionId = `${group.id}-options-${groupIndex}`;
     groupEl.innerHTML = `
-      <button class="events-search-filter-group-header" type="button" aria-expanded="${
-        isInitiallyExpanded ? 'true' : 'false'
-      }" aria-controls="${groupOptionsRegionId}">
+      <button class="events-search-filter-group-header" type="button" aria-expanded="false" aria-controls="${groupOptionsRegionId}">
         <span class="events-search-filter-group-title">${group.name}</span>
         <span class="events-search-filter-group-count"></span>
         <span class="icon icon-chevron"></span>
@@ -526,28 +497,13 @@ function renderFilterGroups(block, groups, placeholders) {
     } else {
       const optionsList = createTag('div', { class: 'events-search-filter-options-list' });
       group.items.forEach((item, index) => {
-        const optionRow = buildFilterOptionRow({
-          groupId: group.id,
-          item: { ...item, overflowHidden: index >= INITIAL_VISIBLE_FILTER_OPTIONS },
-          index,
-        });
+        const optionRow = buildFilterOptionRow({ groupId: group.id, item, index });
         if (group.id === 'el_contenttype') {
           renderFilterOptionCountShimmer(optionRow);
         }
         optionsList.append(optionRow);
       });
       optionsContainer.append(optionsList);
-
-      if (group.items.length > INITIAL_VISIBLE_FILTER_OPTIONS) {
-        const remainingCount = group.items.length - INITIAL_VISIBLE_FILTER_OPTIONS;
-        const showMoreButton = createTag('button', { class: 'events-search-filter-show-more', type: 'button' });
-        const showMoreLabel = createTag('span', { class: 'events-search-filter-show-more-label' });
-        showMoreLabel.textContent = getShowMoreLabel(remainingCount, placeholders);
-        const showMoreIcon = createTag('span', { class: 'icon icon-arrow', 'aria-hidden': 'true' });
-        showMoreButton.append(showMoreLabel, showMoreIcon);
-        optionsContainer.append(showMoreButton);
-        updateShowMoreButtonState(groupEl, placeholders);
-      }
     }
 
     groupsRoot.append(groupEl);
@@ -1090,7 +1046,7 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
   }
   headlessSubscriptionSyncDepth.set(block, 1);
   try {
-    syncDynamicFacetGroupsFromHeadless(block, groups, placeholders);
+    syncDynamicFacetGroupsFromHeadless(block, groups);
     syncFilterUIFromHeadlessState(block, groups);
     const search = window.headlessSearchEngine.state.search || {};
     const { results = [], searchResponseId = '', response = {} } = search;
@@ -1110,35 +1066,15 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
   }
 }
 
-function bindFilterInteractions(block, groups, placeholders) {
+function bindFilterInteractions(block, groups) {
   const panel = block.querySelector('.events-search-filters-panel');
   if (!panel) return;
 
+  // Recompute the scroll cap on resize so it stays accurate across breakpoints.
+  const resizeObserver = new ResizeObserver(() => recalcExpandedFilterScrollCaps(block));
+  resizeObserver.observe(panel);
+
   panel.addEventListener('click', (event) => {
-    const showMoreButton = event.target.closest('.events-search-filter-show-more');
-    if (showMoreButton) {
-      const groupEl = showMoreButton.closest('.events-search-filter-group');
-      if (!groupEl) return;
-
-      if (showMoreButton.classList.contains('is-show-less')) {
-        const options = groupEl.querySelectorAll('.events-search-filter-option');
-        options.forEach((option, index) => {
-          if (index >= INITIAL_VISIBLE_FILTER_OPTIONS) {
-            option.classList.add('is-overflow-hidden');
-          }
-        });
-        const optionsList = groupEl.querySelector('.events-search-filter-options-list');
-        if (optionsList) optionsList.scrollTop = 0;
-      } else {
-        const hiddenOptions = groupEl.querySelectorAll('.events-search-filter-option.is-overflow-hidden');
-        hiddenOptions.forEach((option) => {
-          option.classList.remove('is-overflow-hidden');
-        });
-      }
-      updateShowMoreButtonState(groupEl, placeholders);
-      return;
-    }
-
     const groupHeader = event.target.closest('.events-search-filter-group-header');
     if (!groupHeader) return;
 
@@ -1146,6 +1082,7 @@ function bindFilterInteractions(block, groups, placeholders) {
     const isExpanded = groupEl.classList.contains('is-expanded');
     groupEl.classList.toggle('is-expanded', !isExpanded);
     groupHeader.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+    if (!isExpanded) applyFilterOptionsScrollCap(groupEl);
   });
 
   panel.addEventListener('change', (event) => {
@@ -1194,9 +1131,16 @@ function bindFilterInteractions(block, groups, placeholders) {
   });
 }
 
+function updateKeywordClearIconVisibility(block) {
+  const input = block.querySelector('.events-search-keyword-input');
+  const clearIcon = block.querySelector('.events-search-keyword-clear');
+  clearIcon?.classList.toggle('is-visible', Boolean(input?.value));
+}
+
 function bindTopbarSearch(block) {
   const input = block.querySelector('.events-search-keyword-input');
   const keywordRow = block.querySelector('.events-search-keyword');
+  const clearIcon = block.querySelector('.events-search-keyword-clear');
   if (!input) return;
 
   const submitSearch = () => {
@@ -1212,7 +1156,12 @@ function bindTopbarSearch(block) {
   };
 
   input.addEventListener('input', () => {
+    updateKeywordClearIconVisibility(block);
     updateClearFiltersButtonState(block);
+    // Refresh results as soon as the prompt is fully deleted, without waiting for Enter.
+    if (input.value === '') {
+      submitSearch();
+    }
   });
 
   keywordRow?.addEventListener('click', (event) => {
@@ -1227,6 +1176,22 @@ function bindTopbarSearch(block) {
       submitSearch();
     }
   });
+
+  const clearSearch = () => {
+    input.value = '';
+    updateKeywordClearIconVisibility(block);
+    submitSearch();
+    input.focus();
+  };
+
+  clearIcon?.addEventListener('click', clearSearch);
+  clearIcon?.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    clearSearch();
+  });
+
+  updateKeywordClearIconVisibility(block);
 }
 
 function bindClearFilters(block, groups) {
@@ -1237,17 +1202,10 @@ function bindClearFilters(block, groups) {
     const state = getFilterState(block);
     const { tags: activeTags, pendingRemovals } = state;
 
-    state.isClearing = true;
-
     // Uncheck all checkboxes without per-checkbox Headless toggles
     block.querySelectorAll('.events-search-filter-option input[type="checkbox"]').forEach((checkbox) => {
       checkbox.checked = false;
       checkbox.closest('.events-search-filter-option')?.classList.remove('checked');
-    });
-
-    // deselect all Headless facet controllers.
-    ['el_product', 'el_event_series', 'el_contenttype'].forEach((filterType) => {
-      getFacetController(filterType)?.deselectAll?.();
     });
 
     // Reset ordered tags array (browse-filters clearAllSelectedTag pattern).
@@ -1258,12 +1216,20 @@ function bindClearFilters(block, groups) {
       updateGroupSelectionCount(block, group.id, 0);
     });
 
+    state.isClearing = true;
+
+    // deselect all Headless facet controllers.
+    ['el_product', 'el_event_series', 'el_contenttype'].forEach((filterType) => {
+      getFacetController(filterType)?.deselectAll?.();
+    });
+
     if (window.headlessSearchBox) {
       window.headlessSearchBox.updateText('');
       const searchInput = block.querySelector('.events-search-keyword-input');
       if (searchInput) {
         searchInput.value = '';
       }
+      updateKeywordClearIconVisibility(block);
     }
 
     state.isClearing = false;
@@ -1272,20 +1238,15 @@ function bindClearFilters(block, groups) {
       window.headlessPager.selectPage(1);
     }
 
-    // Remove facet params so urlManager won't re-apply them on hashchange.
-    const fragmentWithoutFacets = window.location.hash
-      .slice(1)
-      .split('&')
-      .filter((p) => p && !p.startsWith('f-'))
-      .join('&');
-    window.history.replaceState(
-      null,
-      document.title,
-      fragmentWithoutFacets ? `#${fragmentWithoutFacets}` : window.location.pathname + window.location.search,
-    );
-
     const hashBeforeClear = window.location.hash;
-    handleCoverSearchSubmit('');
+    const [currentSearchString] = hashBeforeClear.match(/\bq=([^&#]*)/) || [];
+    if (currentSearchString) {
+      let updatedHash = hashBeforeClear.replace(currentSearchString, '');
+      if (updatedHash.slice(1).startsWith('&')) {
+        updatedHash = `#${updatedHash.slice(2)}`;
+      }
+      window.location.hash = updatedHash;
+    }
     if (window.location.hash === hashBeforeClear) {
       executeSearch();
     }
@@ -1325,6 +1286,8 @@ async function initHeadlessSearch(block, groups, placeholders) {
     renderPageNumbers,
     numberOfResults: getBrowseFiltersResultCount(),
     facetOverrides: getEventsSearchHeadlessFacetOverrides(),
+    hideAqFromUrl: true,
+    baseAdvancedQuery: BASE_COVEO_ADVANCED_QUERY_EVENTS,
     renderSearchQuerySummary: () => {
       const totalCount = window.headlessQuerySummary?.state?.total || 0;
       updateResultsCount(block, totalCount, placeholders);
@@ -1335,6 +1298,7 @@ async function initHeadlessSearch(block, groups, placeholders) {
       if (input.value !== window.headlessSearchBox.state.value) {
         input.value = window.headlessSearchBox.state.value || '';
       }
+      updateKeywordClearIconVisibility(block);
       updateClearFiltersButtonState(block);
     },
   });
@@ -1342,11 +1306,8 @@ async function initHeadlessSearch(block, groups, placeholders) {
   bindEventsSearchLoadingUI(block);
   bindEventsSearchPagination(block);
 
-  if (window.headlessQueryActionCreators && window.headlessSearchEngine) {
-    const action = window.headlessQueryActionCreators.updateAdvancedSearchQueries({
-      aq: BASE_COVEO_ADVANCED_QUERY_EVENTS,
-    });
-    window.headlessSearchEngine.dispatch(action);
+  // aq is now set up-front via baseAdvancedQuery and reasserted on every hash change.
+  if (window.headlessSearchEngine) {
     executeSearch();
   }
   renderPageNumbers();
@@ -1366,8 +1327,8 @@ export default async function decorate(block) {
 
   createLayout(block, placeholders);
   decorateIcons(block);
-  renderFilterGroups(block, groups, placeholders);
-  bindFilterInteractions(block, groups, placeholders);
+  renderFilterGroups(block, groups);
+  bindFilterInteractions(block, groups);
   bindTopbarSearch(block);
   bindClearFilters(block, groups);
   bindMobileFilterToggle(block);

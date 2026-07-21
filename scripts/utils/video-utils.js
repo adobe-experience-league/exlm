@@ -13,8 +13,6 @@ const MPC_CAPTION_LANG_MAP = {
   ja: 'jpn',
   ko: 'kor',
   'pt-br': 'por_br',
-  sv: 'swe',
-  nl: 'dut',
   'zh-hans': 'chi_hans',
   'zh-hant': 'chi_hant',
 };
@@ -32,8 +30,6 @@ const MPC_LANGUAGES_MAP = {
   ja: 'ja-JP',
   ko: 'ko-KR',
   'pt-br': 'pt-BR',
-  sv: 'sv-SE',
-  nl: 'nl-NL',
   'zh-hans': 'zh-CN',
   'zh-hant': 'zh-TW',
 };
