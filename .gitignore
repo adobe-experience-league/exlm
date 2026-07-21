@@ -15,6 +15,7 @@ helix-importer-ui
 .agents/
 .skills/
 .upskill/
+plans/
 .cursor/
 .claude/
 skills/
