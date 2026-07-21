@@ -13,10 +13,11 @@ import { loadCSS } from '../../scripts/lib-franklin.js';
  * @param {Record<string, string>} placeholders
  */
 function showNoResultsContent(contentDiv, placeholders = {}) {
+  // Prefer Events empty copy without "search"/"filters" wording — this block has neither.
+  // event-search-no-results-message → "Sorry, no results were found."
+  // no-results-text → "We are sorry, no results found matching the criteria."
   const noResultsText =
-    placeholders.noResultsTextBrowse ||
-    placeholders.noResultsText ||
-    'We are sorry, no results found matching the criteria. Try adjusting your search to view more content.';
+    placeholders.eventSearchNoResultsMessage || placeholders.noResultsText || 'Sorry, no results were found.';
   contentDiv.appendChild(htmlToElement(`<div class="event-no-results">${noResultsText}</div>`));
 }
 
