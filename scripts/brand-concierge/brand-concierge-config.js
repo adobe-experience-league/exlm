@@ -22,6 +22,12 @@ function getProductNamespace() {
   return key ? `exl-bc-${key}` : 'exl-bc';
 }
 
+/**
+ * Non-localizable Brand Concierge config. Localized strings (`ui`/`text`/`arrays`) and
+ * `metadata.language` come per-locale from ./localization/<lang>.json and are merged in by
+ * loadBrandConciergeConfig(); this base holds only values that can't live in a JSON sheet
+ * (runtime-resolved CSS theme, session/behavior flags, namespace).
+ */
 const brandConciergeConfig = {
   // destructured out in brand-concierge.js before forwarding to bootstrap().
   stickySession: true,
@@ -40,49 +46,6 @@ const brandConciergeConfig = {
     version: '1.0.0',
     language: document.documentElement.lang || 'en-US',
     namespace: getProductNamespace(),
-  },
-
-  text: {
-    'welcome.heading': 'Not sure where to start?<br>Ask me anything about Adobe products.',
-    'welcome.subheading': 'Type your question or pick a suggestion below.',
-    'input.placeholder': 'Ask a question…',
-    'input.messageInput.aria': 'Message input',
-    'input.send.aria': 'Send message',
-    'input.mic.aria': 'Voice input',
-    'card.aria.select': 'Select example message',
-    'carousel.prev.aria': 'Previous cards',
-    'carousel.next.aria': 'Next cards',
-    'scroll.bottom.aria': 'Scroll to bottom',
-    'error.network': "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.",
-    'error.general': "I'm sorry, something went wrong. Please try again in a moment.",
-    'loading.message': "Generating from Adobe's trusted resources",
-    'feedback.dialog.title.positive': 'Your feedback is appreciated',
-    'feedback.dialog.title.negative': 'Your feedback is appreciated',
-    'feedback.dialog.question.positive': 'What went well? Select all that apply.',
-    'feedback.dialog.question.negative': 'What went wrong? Select all that apply.',
-    'feedback.dialog.notes': 'Notes',
-    'feedback.dialog.submit': 'Submit',
-    'feedback.dialog.cancel': 'Cancel',
-    'feedback.dialog.notes.placeholder': 'Additional notes (optional)',
-    'feedback.toast.success': 'Thank you for the feedback.',
-    'feedback.thumbsUp.aria': 'Thumbs up',
-    'feedback.thumbsDown.aria': 'Thumbs down',
-  },
-
-  arrays: {
-    'welcome.examples': [
-      { text: 'Where can I go to learn about AI on Experience League?' },
-      { text: 'Getting started with Experience Manager' },
-      { text: 'Set up an Adobe Analytics report suite' },
-      { text: 'Explain Adobe Target A/B testing' },
-    ],
-    'feedback.positive.options': [
-      'Helpful and relevant',
-      'Clear and easy to understand',
-      'Friendly and conversational tone',
-      'Other',
-    ],
-    'feedback.negative.options': ['Not helpful or relevant', 'Confusing or unclear', 'Too formal or robotic', 'Other'],
   },
 
   // CSS variable overrides forwarded to BC. Only set values that diverge from
@@ -130,132 +93,85 @@ const brandConciergeConfig = {
   },
 };
 
-/**
- * English chrome strings (trigger button, drawer, clear control, legal disclaimer).
- * These render from ExL's own code in brand-concierge.js (not forwarded to the BC web
- * client), so they live here alongside the client-facing `text`/`arrays` above and are
- * threaded through as `config.ui`. 'BETA' is intentionally left untranslated (brand term).
- */
-const BC_UI_EN = {
-  triggerAriaLabel: 'Open AI assistant',
-  triggerAsk: 'Ask a question',
-  drawerAriaLabel: 'AI assistant',
-  drawerTitle: 'Ask',
-  clearLabel: 'Clear',
-  clearAriaLabel: 'Clear conversation',
-  disclaimer: {
-    prefix: "Use of this beta AI chatbot is subject to Adobe's ",
-    privacyLabel: 'Privacy Policy',
-    middle:
-      ". Don't share sensitive data. AI responses are not your Content, may be inaccurate, and any offers provided are non-binding. ",
-    termsLabel: 'Generative AI Terms',
-    suffix: '.',
-  },
-};
+const LOCALES_BASE_PATH = `${window.hlx.codeBasePath}/scripts/brand-concierge/localization`;
+
+/** lang -> Promise resolving that locale's { language, ui, text, arrays } sheet (deduped). */
+const localeSheetCache = {};
+
+function fetchLocaleSheet(lang) {
+  if (!localeSheetCache[lang]) {
+    localeSheetCache[lang] = fetch(`${LOCALES_BASE_PATH}/${lang}.json`).then((res) => {
+      if (!res.ok) throw new Error(`Brand Concierge locale '${lang}' -> ${res.status}`);
+      return res.json();
+    });
+  }
+  return localeSheetCache[lang];
+}
+
+/** Recursive merge: `over` wins; nested plain objects merge per-field, arrays/scalars replace. */
+function deepMerge(base, over) {
+  if (!over) return base;
+  const out = { ...base };
+  Object.entries(over).forEach(([key, value]) => {
+    const baseVal = base?.[key];
+    const bothPlainObjects =
+      value &&
+      typeof value === 'object' &&
+      !Array.isArray(value) &&
+      baseVal &&
+      typeof baseVal === 'object' &&
+      !Array.isArray(baseVal);
+    out[key] = bothPlainObjects ? deepMerge(baseVal, value) : value;
+  });
+  return out;
+}
 
 /**
- * Per-locale overlays merged onto the English base by resolveBrandConciergeConfig().
- * Keyed by getPathDetails().lang (e.g. 'es' for /es/... paths). Translations are
- * review-pending — legal disclaimer copy in particular needs sign-off before launch.
+ * Loads the BC config for a path language, layering the locale's localization sheet over the
+ * English base. English is always fetched as the fallback base, so a partial locale sheet
+ * degrades per-field rather than dropping keys. Falls back to English for unknown/failed locales.
+ * @param {string} [lang] - Path language from getPathDetails().lang (e.g. 'en', 'es').
+ * @returns {Promise<typeof brandConciergeConfig & { ui: object }>}
  */
-const BC_LOCALES = {
-  es: {
-    language: 'es-ES',
-    // Spanish Brand Concierge datastream (same IMS org as the default). Routes /es/ conversations
-    // to the Spanish concierge/manifest instead of the default English datastream.
-    datastreamId: '3098f7cc-36bb-4965-bea3-6e80fc59571e',
-    ui: {
-      triggerAriaLabel: 'Abrir el asistente de IA',
-      triggerAsk: 'Hacer una pregunta',
-      drawerAriaLabel: 'Asistente de IA',
-      drawerTitle: 'Preguntar',
-      clearLabel: 'Borrar',
-      clearAriaLabel: 'Borrar conversación',
-      disclaimer: {
-        prefix: 'El uso de este chatbot de IA en versión beta está sujeto a la ',
-        privacyLabel: 'Política de privacidad',
-        middle:
-          ' de Adobe. No comparta datos confidenciales. Las respuestas de la IA no son su Contenido, pueden ser inexactas y cualquier oferta proporcionada no es vinculante. ',
-        termsLabel: 'Términos de IA generativa',
-        suffix: '.',
-      },
-    },
-    text: {
-      'welcome.heading': '¿No sabe por dónde empezar?<br>Pregúnteme lo que quiera sobre los productos de Adobe.',
-      'welcome.subheading': 'Escriba su pregunta o elija una sugerencia a continuación.',
-      'input.placeholder': 'Haga una pregunta…',
-      'input.messageInput.aria': 'Campo de mensaje',
-      'input.send.aria': 'Enviar mensaje',
-      'input.mic.aria': 'Entrada de voz',
-      'card.aria.select': 'Seleccionar mensaje de ejemplo',
-      'carousel.prev.aria': 'Tarjetas anteriores',
-      'carousel.next.aria': 'Tarjetas siguientes',
-      'scroll.bottom.aria': 'Desplazarse hasta abajo',
-      'error.network':
-        'Lo sentimos, en este momento tenemos problemas de conexión. Vuelva a intentarlo en unos instantes.',
-      'error.general': 'Lo sentimos, se ha producido un error. Vuelva a intentarlo en unos instantes.',
-      'loading.message': 'Generando a partir de los recursos fiables de Adobe',
-      'feedback.dialog.title.positive': 'Agradecemos sus comentarios',
-      'feedback.dialog.title.negative': 'Agradecemos sus comentarios',
-      'feedback.dialog.question.positive': '¿Qué salió bien? Seleccione todas las opciones aplicables.',
-      'feedback.dialog.question.negative': '¿Qué salió mal? Seleccione todas las opciones aplicables.',
-      'feedback.dialog.notes': 'Notas',
-      'feedback.dialog.submit': 'Enviar',
-      'feedback.dialog.cancel': 'Cancelar',
-      'feedback.dialog.notes.placeholder': 'Notas adicionales (opcional)',
-      'feedback.toast.success': 'Gracias por sus comentarios.',
-      'feedback.thumbsUp.aria': 'Me gusta',
-      'feedback.thumbsDown.aria': 'No me gusta',
-    },
-    arrays: {
-      'welcome.examples': [
-        { text: '¿Dónde puedo aprender sobre la IA en Experience League?' },
-        { text: 'Primeros pasos con Experience Manager' },
-        { text: 'Configurar un conjunto de informes de Adobe Analytics' },
-        { text: 'Explicar las pruebas A/B de Adobe Target' },
-      ],
-      'feedback.positive.options': [
-        'Útil y relevante',
-        'Claro y fácil de entender',
-        'Tono cercano y conversacional',
-        'Otro',
-      ],
-      'feedback.negative.options': [
-        'Poco útil o irrelevante',
-        'Confuso o poco claro',
-        'Demasiado formal o robótico',
-        'Otro',
-      ],
-    },
-  },
-};
-
-/**
- * Resolves the BC config for a given path language, layering any locale overlay onto the
- * English base. English (and any unknown lang) returns the base config plus English `ui`.
- * Pure function — the caller supplies `lang` (from getPathDetails().lang) so this module
- * stays free of a scripts.js import and its cyclic dependency.
- * @param {string} [lang] - Path language, e.g. 'en', 'es'.
- * @returns {typeof brandConciergeConfig & { ui: typeof BC_UI_EN }}
- */
-export function resolveBrandConciergeConfig(lang) {
-  const overlay = BC_LOCALES[(lang || 'en').toLowerCase()];
-  if (!overlay) {
-    return { ...brandConciergeConfig, ui: BC_UI_EN };
+export async function loadBrandConciergeConfig(lang) {
+  const key = (lang || 'en').toLowerCase();
+  const en = await fetchLocaleSheet('en');
+  let locale = en;
+  if (key !== 'en') {
+    try {
+      locale = await fetchLocaleSheet(key);
+    } catch {
+      locale = en;
+    }
   }
   return {
     ...brandConciergeConfig,
-    ui: { ...BC_UI_EN, ...overlay.ui },
-    text: { ...brandConciergeConfig.text, ...overlay.text },
-    arrays: { ...brandConciergeConfig.arrays, ...overlay.arrays },
+    ui: deepMerge(en.ui, locale.ui),
+    text: { ...en.text, ...locale.text },
+    arrays: { ...en.arrays, ...locale.arrays },
     metadata: {
       ...brandConciergeConfig.metadata,
-      ...(overlay.language ? { language: overlay.language } : {}),
+      language: locale.language || brandConciergeConfig.metadata.language,
     },
-    // Locale-specific Edge datastream, consumed in brand-concierge.js; falls back to the
-    // default bcDatastreamId when a locale defines none.
-    ...(overlay.datastreamId ? { datastreamId: overlay.datastreamId } : {}),
   };
+}
+
+/**
+ * Per-locale Brand Concierge Edge datastream overrides. This is routing config, not translation,
+ * so it is kept out of the localization sheets and out of the config forwarded to the BC web
+ * client. Same IMS org as the default datastream.
+ */
+const BC_DATASTREAMS = {
+  es: '3098f7cc-36bb-4965-bea3-6e80fc59571e',
+};
+
+/**
+ * @param {string} [lang] - Path language, e.g. 'en', 'es'.
+ * @param {string} fallback - Default datastream id used when the locale has no override.
+ * @returns {string}
+ */
+export function getBrandConciergeDatastreamId(lang, fallback) {
+  return BC_DATASTREAMS[(lang || 'en').toLowerCase()] ?? fallback;
 }
 
 export default brandConciergeConfig;

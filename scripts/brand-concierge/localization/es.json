@@ -1,0 +1,64 @@
+{
+  "language": "es-ES",
+  "ui": {
+    "triggerAriaLabel": "Abrir el asistente de IA",
+    "triggerAsk": "Hacer una pregunta",
+    "drawerAriaLabel": "Asistente de IA",
+    "drawerTitle": "Preguntar",
+    "clearLabel": "Borrar",
+    "clearAriaLabel": "Borrar conversación",
+    "disclaimer": {
+      "prefix": "El uso de este chatbot de IA en versión beta está sujeto a la ",
+      "privacyLabel": "Política de privacidad",
+      "middle": " de Adobe. No comparta datos confidenciales. Las respuestas de la IA no son su Contenido, pueden ser inexactas y cualquier oferta proporcionada no es vinculante. ",
+      "termsLabel": "Términos de IA generativa",
+      "suffix": "."
+    }
+  },
+  "text": {
+    "welcome.heading": "¿No sabe por dónde empezar?<br>Pregúnteme lo que quiera sobre los productos de Adobe.",
+    "welcome.subheading": "Escriba su pregunta o elija una sugerencia a continuación.",
+    "input.placeholder": "Haga una pregunta…",
+    "input.messageInput.aria": "Campo de mensaje",
+    "input.send.aria": "Enviar mensaje",
+    "input.mic.aria": "Entrada de voz",
+    "card.aria.select": "Seleccionar mensaje de ejemplo",
+    "carousel.prev.aria": "Tarjetas anteriores",
+    "carousel.next.aria": "Tarjetas siguientes",
+    "scroll.bottom.aria": "Desplazarse hasta abajo",
+    "error.network": "Lo sentimos, en este momento tenemos problemas de conexión. Vuelva a intentarlo en unos instantes.",
+    "error.general": "Lo sentimos, se ha producido un error. Vuelva a intentarlo en unos instantes.",
+    "loading.message": "Generando a partir de los recursos fiables de Adobe",
+    "feedback.dialog.title.positive": "Agradecemos sus comentarios",
+    "feedback.dialog.title.negative": "Agradecemos sus comentarios",
+    "feedback.dialog.question.positive": "¿Qué salió bien? Seleccione todas las opciones aplicables.",
+    "feedback.dialog.question.negative": "¿Qué salió mal? Seleccione todas las opciones aplicables.",
+    "feedback.dialog.notes": "Notas",
+    "feedback.dialog.submit": "Enviar",
+    "feedback.dialog.cancel": "Cancelar",
+    "feedback.dialog.notes.placeholder": "Notas adicionales (opcional)",
+    "feedback.toast.success": "Gracias por sus comentarios.",
+    "feedback.thumbsUp.aria": "Me gusta",
+    "feedback.thumbsDown.aria": "No me gusta"
+  },
+  "arrays": {
+    "welcome.examples": [
+      { "text": "¿Dónde puedo aprender sobre la IA en Experience League?" },
+      { "text": "Primeros pasos con Experience Manager" },
+      { "text": "Configurar un conjunto de informes de Adobe Analytics" },
+      { "text": "Explicar las pruebas A/B de Adobe Target" }
+    ],
+    "feedback.positive.options": [
+      "Útil y relevante",
+      "Claro y fácil de entender",
+      "Tono cercano y conversacional",
+      "Otro"
+    ],
+    "feedback.negative.options": [
+      "Poco útil o irrelevante",
+      "Confuso o poco claro",
+      "Demasiado formal o robótico",
+      "Otro"
+    ]
+  }
+}

@@ -2,7 +2,7 @@
 import { getConfig, getPathDetails } from '../scripts.js';
 import { loadScript, decorateIcon } from '../lib-franklin.js';
 import { openDrawer } from '../dialog/dialog.js';
-import { resolveBrandConciergeConfig } from './brand-concierge-config.js';
+import { loadBrandConciergeConfig, getBrandConciergeDatastreamId } from './brand-concierge-config.js';
 
 // Separate alloy instance avoids conflicting with the Launch-owned window.alloy.
 const ALLOY_INSTANCE_NAME = 'alloyBC';
@@ -52,11 +52,11 @@ const warn = (...args) => console.warn('[BC]', ...args);
 const error = (...args) => console.error('[BC]', ...args);
 
 /**
- * Locale-resolved config (English base + any locale overlay). Re-assigned in
- * initBrandConcierge() from the page's path language; defaults to the English resolution
- * so `activeConfig.ui` is always populated even before init runs.
+ * Locale-resolved config (English base + any locale overlay), loaded async from per-locale
+ * JSON in initBrandConcierge(). Null until loaded; consumers run only after the load resolves,
+ * and the observer callbacks guard against a null value defensively.
  */
-let activeConfig = resolveBrandConciergeConfig('en');
+let activeConfig = null;
 /** Path language backing `activeConfig`; 'en' means no locale overlay is active. */
 let activeLang = 'en';
 
@@ -103,7 +103,7 @@ function clearBrandConciergeTranscriptStorage(options = {}) {
  */
 function localizeSubmitTooltip(mount) {
   if (activeLang === 'en') return;
-  const label = activeConfig.text['input.send.aria'];
+  const label = activeConfig?.text?.['input.send.aria'];
   if (!label) return;
   mount.querySelectorAll('.submit-button[aria-describedby]').forEach((btn) => {
     const tip = document.getElementById(btn.getAttribute('aria-describedby'));
@@ -156,7 +156,8 @@ function patchBcSparkleIcons(mount) {
 }
 
 function buildPanelDisclaimer() {
-  const copy = activeConfig.ui.disclaimer;
+  const copy = activeConfig?.ui?.disclaimer;
+  if (!copy) return null;
 
   const disclaimer = document.createElement('p');
   disclaimer.id = PANEL_DISCLAIMER_ID;
@@ -192,7 +193,8 @@ function installPanelDisclaimer(mount) {
   if (!mount) return;
   const inputSection = mount.querySelector('.input-section');
   if (!inputSection || inputSection.querySelector(`#${PANEL_DISCLAIMER_ID}`)) return;
-  inputSection.append(buildPanelDisclaimer());
+  const disclaimer = buildPanelDisclaimer();
+  if (disclaimer) inputSection.append(disclaimer);
 }
 
 function watchPanelDisclaimer(mount) {
@@ -860,11 +862,12 @@ export async function initBrandConcierge() {
   const { bcAlloySdkUrl, bcDatastreamId, bcOrgId, bcWebClientUrl, bcEdgeDomain } = getConfig();
 
   activeLang = getPathDetails().lang;
-  activeConfig = resolveBrandConciergeConfig(activeLang);
+  activeConfig = await loadBrandConciergeConfig(activeLang);
 
   // Route to the locale's Brand Concierge datastream (e.g. the Spanish concierge on /es/),
-  // falling back to the default datastream for locales without an override.
-  const datastreamId = activeConfig.datastreamId ?? bcDatastreamId;
+  // falling back to the default datastream for locales without an override. Kept separate from
+  // activeConfig so this routing id never leaks into the styling payload sent to the BC client.
+  const datastreamId = getBrandConciergeDatastreamId(activeLang, bcDatastreamId);
 
   createMountPoint();
   injectAlloyStub();
