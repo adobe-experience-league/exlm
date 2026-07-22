@@ -62,18 +62,22 @@ export const atomicResultStyles = `
                     .atomic-search-result-item.mobile-only .result-field.result-thumbnail {
                       margin-top: 10px;
                     }
-                    .result-root.recommendation-badge {
+                    /* Atomic 3.60 renders results under .result-component (was .result-root). */
+                    .result-root.recommendation-badge,
+                    .result-component.recommendation-badge {
                           margin: 40px 0px 0px;
                     }
                     .atomic-search-result-item .result-field.text-thumbnail {
                       display: flex;
                       gap: 18px;
                     }
-                    .atomic-search-result-item .result-field.text-thumbnail:not(:has(.result-thumbnail)) {
+                    /* Atomic 3.60 keeps inactive field-condition nodes in the DOM with [hidden];
+                       :has(.result-thumbnail) alone falsely enables the video flex layout. */
+                    .atomic-search-result-item .result-field.text-thumbnail:not(:has(atomic-field-condition:not([hidden]) .result-thumbnail)) {
                       gap: 0;
                       display: block;
                     }
-                    .atomic-search-result-item .result-field.text-thumbnail:has(.result-thumbnail) .result-text {
+                    .atomic-search-result-item .result-field.text-thumbnail:has(atomic-field-condition:not([hidden]) .result-thumbnail) .result-text {
                       flex: 0 0 56%;
                     }
                     .atomic-search-result-item.result-item .thumbnail-wrapper {
@@ -384,6 +388,11 @@ export const atomicResultListStyles = `
                   atomic-folded-result-list::part(result-list) {
                     grid-row-gap: 0;
                   }
+                  atomic-folded-result-list::part(outline) {
+                    border: none;
+                    border-radius: 0;
+                    background-color: transparent;
+                  }
                   atomic-folded-result-list::part(outline)::before {
                     background-color:var(--footer-border-color);
                     display: block;
@@ -393,6 +402,9 @@ export const atomicResultListStyles = `
                   }
                   atomic-folded-result-list::part(first-result) {
                     padding-top: 1rem;
+                    border: none;
+                    border-radius: 0;
+                    background-color: transparent;
                   }
                   atomic-folded-result-list::part(first-result)::before {
                     display: none;
@@ -909,8 +921,8 @@ export default function atomicResultHandler(block, placeholders) {
 
         const recommendationBadgeExists = !!resultItem.querySelector('.atomic-recommendation-badge');
         if (recommendationBadgeExists) {
-          const resultRoot = resultShadow.querySelector('.result-root');
-          resultRoot.classList.add('recommendation-badge');
+          const resultRoot = resultShadow.querySelector('.result-root, .result-component');
+          resultRoot?.classList.add('recommendation-badge');
         }
 
         // Handle el_kudo_status field - support both legacy numeric and new user ID format

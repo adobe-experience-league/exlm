@@ -30,6 +30,15 @@ const getCoveoAtomicMarkup = (placeholders) => {
           <div class="header-bg"></div>
           <atomic-layout-section section="search">
             <style>
+            /* Atomic 3.60+ ships card-like theme tokens; keep ExL flat list chrome. */
+            atomic-search-interface {
+              --atomic-border-radius: 0;
+              --atomic-border-radius-md: 0;
+              --atomic-border-radius-lg: 0;
+              --atomic-background: transparent;
+              --atomic-layout-spacing-x: 0;
+              --atomic-layout-spacing-y: 0;
+            }
             .atomic-search .video-modal-wrapper {
                 position: fixed;
                 display: flex;
@@ -68,12 +77,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 position: relative;
                 @media(max-width: 1023px) {
                   position: relative;
-                  gap: 12px;
-                  grid-template-columns: 1fr;
+                  gap: 12px !important;
+                  grid-template-columns: 1fr !important;
                   grid-template-areas:
                     "atomic-sort"
                     "atomic-breadbox"
-                    "atomic-did-you-mean";
+                    "atomic-did-you-mean" !important;
                 }
               }
               atomic-search-interface  atomic-search-layout {
@@ -105,6 +114,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 border-bottom: 2px solid var(--footer-border-color);
                 border-radius: 4px 4px 0 0;
                 position: relative;
+                background-color: transparent;
               }
               atomic-search-box::part(textarea) {
                 display: flex;
@@ -178,7 +188,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
               }
               atomic-search-box {
                 width: 100%;
-                max-width: calc(100vw - 40px);
+                max-width: 100%;
                 @media(min-width: 1024px) {
                   width: 90%;
                 }
@@ -329,6 +339,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   display: none;
                 }
                 atomic-facet::part(label-button), atomic-timeframe-facet::part(label-button) {
+                  font-size: 14px;
                   font-weight: 700;
                   color: var(--non-spectrum-input-text);
                   justify-content: flex-end;
@@ -342,6 +353,8 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   padding-left: 0;
                   padding-right: 0;
                   border: none;
+                  border-radius: 0;
+                  background-color: transparent;
                 }
                 atomic-facet::part(values) {
                   overflow-y: auto;
@@ -634,10 +647,17 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     border: 1px solid #CACACA;
                     border-radius: 4px;
                     color: var(--non-spectrum-grey-updated);
+                    height: 40px;
+                    min-height: 40px;
+                    box-sizing: border-box;
 
                     @media(max-width: 1023px) {
                       padding-right: 2rem;
                     }
+                  }
+                  atomic-sort-dropdown {
+                    height: 40px;
+                    min-height: 40px;
                   }
                   atomic-sort-dropdown::part(label) {
                     font-size: 12px;
@@ -646,6 +666,10 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   }
                   atomic-sort-dropdown::part(select-separator) {
                     color: var(--non-spectrum-grey-updated);
+                  }
+                  /* Atomic 3.60 applies spacing-y margins on section children even when hidden. */
+                  atomic-layout-section[section='status'] > :where(atomic-breadbox, atomic-did-you-mean, .mobile-only, style) {
+                    margin-bottom: 0;
                   }
                 </style>
                 <atomic-sort-expression
@@ -686,6 +710,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 }
                 atomic-folded-result-list::part(outline) {
                   padding: 0;
+                  border: none;
+                  border-radius: 0;
+                  background-color: transparent;
                 }
                 .result-header-section {
                   display: none;
