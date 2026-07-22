@@ -863,6 +863,8 @@ export async function initBrandConcierge() {
 
   activeLang = getPathDetails().lang;
   activeConfig = await loadBrandConciergeConfig(activeLang);
+  // If even the English base sheet can't load, skip mounting rather than render an empty widget.
+  if (!activeConfig) return;
 
   // Route to the locale's Brand Concierge datastream (e.g. the Spanish concierge on /es/),
   // falling back to the default datastream for locales without an override. Kept separate from

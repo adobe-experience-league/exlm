@@ -100,10 +100,16 @@ const localeSheetCache = {};
 
 function fetchLocaleSheet(lang) {
   if (!localeSheetCache[lang]) {
-    localeSheetCache[lang] = fetch(`${LOCALES_BASE_PATH}/${lang}.json`).then((res) => {
-      if (!res.ok) throw new Error(`Brand Concierge locale '${lang}' -> ${res.status}`);
-      return res.json();
-    });
+    localeSheetCache[lang] = fetch(`${LOCALES_BASE_PATH}/${lang}.json`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`Brand Concierge locale '${lang}' -> ${res.status}`);
+        return res.json();
+      })
+      .catch((err) => {
+        // Don't cache failures — a transient network blip shouldn't permanently break this locale.
+        delete localeSheetCache[lang];
+        throw err;
+      });
   }
   return localeSheetCache[lang];
 }
@@ -130,12 +136,21 @@ function deepMerge(base, over) {
  * Loads the BC config for a path language, layering the locale's localization sheet over the
  * English base. English is always fetched as the fallback base, so a partial locale sheet
  * degrades per-field rather than dropping keys. Falls back to English for unknown/failed locales.
+ * Returns `null` if the English base sheet itself can't be loaded, so the caller can skip mounting
+ * gracefully rather than render a widget with no copy (single-point-of-failure guard).
  * @param {string} [lang] - Path language from getPathDetails().lang (e.g. 'en', 'es').
- * @returns {Promise<typeof brandConciergeConfig & { ui: object }>}
+ * @returns {Promise<(typeof brandConciergeConfig & { ui: object }) | null>}
  */
 export async function loadBrandConciergeConfig(lang) {
   const key = (lang || 'en').toLowerCase();
-  const en = await fetchLocaleSheet('en');
+  let en;
+  try {
+    en = await fetchLocaleSheet('en');
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.warn('[BC] English localization sheet failed to load; skipping mount', err?.message || err);
+    return null;
+  }
   let locale = en;
   if (key !== 'en') {
     try {
