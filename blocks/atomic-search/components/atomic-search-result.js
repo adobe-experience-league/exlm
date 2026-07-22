@@ -585,12 +585,24 @@ export default function atomicResultHandler(block, placeholders) {
 
   function onClearBtnClick() {
     const atomicBreadBox = document.querySelector('atomic-breadbox');
-    const coveoClearBtn = atomicBreadBox?.shadowRoot?.querySelector('[part="clear"]');
+    // Atomic 3.60 may expose clear as part token list; keep exact + contains match.
+    const coveoClearBtn =
+      atomicBreadBox?.shadowRoot?.querySelector('[part="clear"]') ||
+      atomicBreadBox?.shadowRoot?.querySelector('button[part~="clear"]:not([part~="breadcrumb-clear"])');
     if (coveoClearBtn) {
-      const event = new CustomEvent(CUSTOM_EVENTS.SEARCH_CLEARED);
-      document.dispatchEvent(event);
       coveoClearBtn.click();
+    } else {
+      // Fallback when breadbox clear control is not in the DOM yet: drop facet hash segments.
+      const hash = window.location.hash.slice(1);
+      if (hash) {
+        const kept = hash
+          .split('&')
+          .filter((part) => part && !part.startsWith('f-') && !part.startsWith('ff-') && !part.startsWith('rf-'));
+        window.location.hash = kept.join('&');
+      }
     }
+    // Emit after clear starts so facet handlers do not re-sync still-selected engine state.
+    document.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.SEARCH_CLEARED));
   }
 
   function decorateExternalLink(link) {

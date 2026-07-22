@@ -154,6 +154,16 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 transform: scale(0.8);
                 position: absolute;
                 left: 0;
+                /* Atomic 3.60 defaults to --atomic-primary blue; ExL prod uses black. */
+                color: #000;
+              }
+              atomic-search-box::part(submit-icon) {
+                color: #000;
+              }
+              /* Atomic 3.60 shows a blue gradient spinner in the search box during facet/sort/pager
+                 refreshes; ExL prod (Atomic 3.13) does not surface a visible loader there. */
+              atomic-search-box::part(loading) {
+                display: none !important;
               }
               atomic-search-box::part(suggestions-wrapper) {
                 background-color: var(--background-color);
@@ -254,12 +264,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   padding-top: 0.625rem;
                   padding-bottom: 0.625rem;
                 }
-                atomic-facet::part(facet-child-element):hover {
-                  background-color: var(--footer-border-color);
-                }
                 atomic-facet::part(facet-child-element) {
                   margin-left: 24px;
                   border-radius: 4px;
+                }
+                atomic-facet::part(facet-child-element):hover {
+                  background-color: var(--footer-border-color);
                 }
                 atomic-facet::part(only-facet-btn):hover {
                   color: var(--non-spectrum-graphite-gray);
@@ -371,19 +381,44 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   padding: 4px 0;
                   color: var(--non-spectrum-input-text);
                 }
-                atomic-facet::part(value-checkbox) {
+                atomic-facet::part(value-checkbox),
+                atomic-facet::part(value-checkbox):hover,
+                atomic-facet::part(value-checkbox):focus-visible {
                   border: 2px solid #959595;
                   border-radius: 2px;
                   margin-top: 4px;
+                  /* Kill Atomic 3.60 primary-blue hover/focus flash on the checkbox only. */
+                  background-color: transparent;
+                  box-shadow: none;
+                  transform: none;
+                  transition: none;
                 }
-                atomic-facet::part(value-checkbox-label) {
+                atomic-facet::part(value-checkbox-label),
+                atomic-facet::part(value-checkbox-label):hover {
                   display: inline;
                   padding-top: 0;
                   padding-bottom: 0;
+                  /* Atomic 3.60 paints a near-white label hover bg that masks child-row grey hover. */
+                  background-color: transparent;
                 }
-                atomic-facet::part(value-checkbox-checked) {
+                atomic-facet::part(facet-child-label),
+                atomic-facet::part(facet-child-label):hover {
+                  background-color: transparent;
+                }
+                atomic-facet::part(value-checkbox-checked),
+                atomic-facet::part(value-checkbox-checked):hover,
+                atomic-facet::part(value-checkbox-checked):focus-visible {
                   background-color: var(--non-spectrum-grey-updated);
                   border-color: var(--non-spectrum-grey-updated);
+                  box-shadow: none;
+                  transform: none;
+                  transition: none;
+                  /* Ensure tick uses light stroke on grey fill (Lit Atomic / currentColor). */
+                  color: #fff;
+                }
+                atomic-facet::part(value-checkbox-icon) {
+                  color: #fff;
+                  stroke: #fff;
                 }
                 atomic-facet::part(value-count), atomic-timeframe-facet::part(value-count) {
                   color: var(--non-spectrum-article-dark-gray);
@@ -411,15 +446,19 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   atomic-facet::part(values) {
                     max-height: 500px;
                   }
+                  /* Keep Only in layout via opacity to avoid display toggle hover flicker. */
                   atomic-facet::part(only-facet-btn) {
-                    display: none;
-                    right: 2px;
-                    font-size: var(--spectrum-font-size-50);
-                  }
-                  atomic-facet::part(only-facet-visible) {
                     display: flex;
                     align-items: center;
                     height: 21px;
+                    right: 2px;
+                    font-size: var(--spectrum-font-size-50);
+                    opacity: 0;
+                    pointer-events: none;
+                  }
+                  atomic-facet::part(only-facet-visible) {
+                    opacity: 1;
+                    pointer-events: auto;
                   }
                 }
               </style>
