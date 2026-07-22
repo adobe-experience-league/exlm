@@ -30,6 +30,15 @@ const getCoveoAtomicMarkup = (placeholders) => {
           <div class="header-bg"></div>
           <atomic-layout-section section="search">
             <style>
+            /* Atomic 3.60+ ships card-like theme tokens; keep ExL flat list chrome. */
+            atomic-search-interface {
+              --atomic-border-radius: 0;
+              --atomic-border-radius-md: 0;
+              --atomic-border-radius-lg: 0;
+              --atomic-background: transparent;
+              --atomic-layout-spacing-x: 0;
+              --atomic-layout-spacing-y: 0;
+            }
             .atomic-search .video-modal-wrapper {
                 position: fixed;
                 display: flex;
@@ -68,12 +77,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 position: relative;
                 @media(max-width: 1023px) {
                   position: relative;
-                  gap: 12px;
-                  grid-template-columns: 1fr;
+                  gap: 12px !important;
+                  grid-template-columns: 1fr !important;
                   grid-template-areas:
                     "atomic-sort"
                     "atomic-breadbox"
-                    "atomic-did-you-mean";
+                    "atomic-did-you-mean" !important;
                 }
               }
               atomic-search-interface  atomic-search-layout {
@@ -105,6 +114,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 border-bottom: 2px solid var(--footer-border-color);
                 border-radius: 4px 4px 0 0;
                 position: relative;
+                background-color: transparent;
               }
               atomic-search-box::part(textarea) {
                 display: flex;
@@ -144,6 +154,16 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 transform: scale(0.8);
                 position: absolute;
                 left: 0;
+                /* Atomic 3.60 defaults to --atomic-primary blue; ExL prod uses black. */
+                color: #000;
+              }
+              atomic-search-box::part(submit-icon) {
+                color: #000;
+              }
+              /* Atomic 3.60 shows a blue gradient spinner in the search box during facet/sort/pager
+                 refreshes; ExL prod (Atomic 3.13) does not surface a visible loader there. */
+              atomic-search-box::part(loading) {
+                display: none !important;
               }
               atomic-search-box::part(suggestions-wrapper) {
                 background-color: var(--background-color);
@@ -178,7 +198,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
               }
               atomic-search-box {
                 width: 100%;
-                max-width: calc(100vw - 40px);
+                max-width: 100%;
                 @media(min-width: 1024px) {
                   width: 90%;
                 }
@@ -244,12 +264,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   padding-top: 0.625rem;
                   padding-bottom: 0.625rem;
                 }
-                atomic-facet::part(facet-child-element):hover {
-                  background-color: var(--footer-border-color);
-                }
                 atomic-facet::part(facet-child-element) {
                   margin-left: 24px;
                   border-radius: 4px;
+                }
+                atomic-facet::part(facet-child-element):hover {
+                  background-color: var(--footer-border-color);
                 }
                 atomic-facet::part(only-facet-btn):hover {
                   color: var(--non-spectrum-graphite-gray);
@@ -329,6 +349,7 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   display: none;
                 }
                 atomic-facet::part(label-button), atomic-timeframe-facet::part(label-button) {
+                  font-size: 14px;
                   font-weight: 700;
                   color: var(--non-spectrum-input-text);
                   justify-content: flex-end;
@@ -342,6 +363,8 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   padding-left: 0;
                   padding-right: 0;
                   border: none;
+                  border-radius: 0;
+                  background-color: transparent;
                 }
                 atomic-facet::part(values) {
                   overflow-y: auto;
@@ -358,19 +381,44 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   padding: 4px 0;
                   color: var(--non-spectrum-input-text);
                 }
-                atomic-facet::part(value-checkbox) {
+                atomic-facet::part(value-checkbox),
+                atomic-facet::part(value-checkbox):hover,
+                atomic-facet::part(value-checkbox):focus-visible {
                   border: 2px solid #959595;
                   border-radius: 2px;
                   margin-top: 4px;
+                  /* Kill Atomic 3.60 primary-blue hover/focus flash on the checkbox only. */
+                  background-color: transparent;
+                  box-shadow: none;
+                  transform: none;
+                  transition: none;
                 }
-                atomic-facet::part(value-checkbox-label) {
+                atomic-facet::part(value-checkbox-label),
+                atomic-facet::part(value-checkbox-label):hover {
                   display: inline;
                   padding-top: 0;
                   padding-bottom: 0;
+                  /* Atomic 3.60 paints a near-white label hover bg that masks child-row grey hover. */
+                  background-color: transparent;
                 }
-                atomic-facet::part(value-checkbox-checked) {
+                atomic-facet::part(facet-child-label),
+                atomic-facet::part(facet-child-label):hover {
+                  background-color: transparent;
+                }
+                atomic-facet::part(value-checkbox-checked),
+                atomic-facet::part(value-checkbox-checked):hover,
+                atomic-facet::part(value-checkbox-checked):focus-visible {
                   background-color: var(--non-spectrum-grey-updated);
                   border-color: var(--non-spectrum-grey-updated);
+                  box-shadow: none;
+                  transform: none;
+                  transition: none;
+                  /* Ensure tick uses light stroke on grey fill (Lit Atomic / currentColor). */
+                  color: #fff;
+                }
+                atomic-facet::part(value-checkbox-icon) {
+                  color: #fff;
+                  stroke: #fff;
                 }
                 atomic-facet::part(value-count), atomic-timeframe-facet::part(value-count) {
                   color: var(--non-spectrum-article-dark-gray);
@@ -398,15 +446,19 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   atomic-facet::part(values) {
                     max-height: 500px;
                   }
+                  /* Keep Only in layout via opacity to avoid display toggle hover flicker. */
                   atomic-facet::part(only-facet-btn) {
-                    display: none;
-                    right: 2px;
-                    font-size: var(--spectrum-font-size-50);
-                  }
-                  atomic-facet::part(only-facet-visible) {
                     display: flex;
                     align-items: center;
                     height: 21px;
+                    right: 2px;
+                    font-size: var(--spectrum-font-size-50);
+                    opacity: 0;
+                    pointer-events: none;
+                  }
+                  atomic-facet::part(only-facet-visible) {
+                    opacity: 1;
+                    pointer-events: auto;
                   }
                 }
               </style>
@@ -634,10 +686,17 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     border: 1px solid #CACACA;
                     border-radius: 4px;
                     color: var(--non-spectrum-grey-updated);
+                    height: 40px;
+                    min-height: 40px;
+                    box-sizing: border-box;
 
                     @media(max-width: 1023px) {
                       padding-right: 2rem;
                     }
+                  }
+                  atomic-sort-dropdown {
+                    height: 40px;
+                    min-height: 40px;
                   }
                   atomic-sort-dropdown::part(label) {
                     font-size: 12px;
@@ -646,6 +705,10 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   }
                   atomic-sort-dropdown::part(select-separator) {
                     color: var(--non-spectrum-grey-updated);
+                  }
+                  /* Atomic 3.60 applies spacing-y margins on section children even when hidden. */
+                  atomic-layout-section[section='status'] > :where(atomic-breadbox, atomic-did-you-mean, .mobile-only, style) {
+                    margin-bottom: 0;
                   }
                 </style>
                 <atomic-sort-expression
@@ -686,6 +749,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 }
                 atomic-folded-result-list::part(outline) {
                   padding: 0;
+                  border: none;
+                  border-radius: 0;
+                  background-color: transparent;
                 }
                 .result-header-section {
                   display: none;
