@@ -100,7 +100,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: auto;
   line-height: 0;
   flex-shrink: 0;
 }
@@ -271,6 +270,36 @@
   overflow: visible !important;
   background: #fff !important;
   border: 1px solid var(--spectrum-gray-300) !important;
+}
+
+#brand-concierge-mount .bc-keyboard-tip {
+  margin: auto 0 12px;
+  padding: 0;
+  text-align: center;
+  font-family: var(--body-font-family);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--spectrum-gray-500);
+  line-height: 1.4;
+  pointer-events: none;
+}
+
+#brand-concierge-mount .bc-keyboard-tip kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 3px;
+  border: 1px solid var(--spectrum-gray-300);
+  background-color: var(--spectrum-gray-100);
+  color: var(--spectrum-gray-500);
+  font-family: var(--body-font-family);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  vertical-align: middle;
 }
 
 #brand-concierge-mount label.ai-chat-label .bc-input-label-sparkle {
