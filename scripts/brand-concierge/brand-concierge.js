@@ -862,13 +862,17 @@ export async function initBrandConcierge() {
   activeLang = getPathDetails().lang;
   activeConfig = resolveBrandConciergeConfig(activeLang);
 
+  // Route to the locale's Brand Concierge datastream (e.g. the Spanish concierge on /es/),
+  // falling back to the default datastream for locales without an override.
+  const datastreamId = activeConfig.datastreamId ?? bcDatastreamId;
+
   createMountPoint();
   injectAlloyStub();
 
   try {
-    log('[BC] loading Web SDK (alloyBC instance)', { bcEdgeDomain, bcDatastreamId });
+    log('[BC] loading Web SDK (alloyBC instance)', { bcEdgeDomain, datastreamId, locale: activeLang });
     await loadScript(bcAlloySdkUrl);
-    await configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain);
+    await configureWebSdk(datastreamId, bcOrgId, bcEdgeDomain);
     log('[BC] Web SDK configured');
 
     log('[BC] loading Web Client', bcWebClientUrl);
