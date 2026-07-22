@@ -1,0 +1,17 @@
+{
+  "name": "coveo-atomic-vendor",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Vendors @coveo/atomic CDN build for same-origin EDS hosting",
+  "scripts": {
+    "vendor": "npm install && node index.js"
+  },
+  "dependencies": {
+    "@coveo/atomic": "3.13.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

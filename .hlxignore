@@ -5,3 +5,5 @@ LICENSE
 package.json
 package-lock.json
 test/*
+scripts/coveo-atomic/index.js
+scripts/coveo-atomic/node_modules/**

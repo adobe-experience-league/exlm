@@ -3,6 +3,7 @@ styles/styles.css
 scripts/prism-grammars/**
 scripts/universal-editor-embedded.js
 scripts/coveo-headless/libs/browser/*
+scripts/coveo-atomic/cdn/**
 scripts/crypto.js
 plugins/rum-conversion/**
 scripts/analytics/privacy-standalone.js

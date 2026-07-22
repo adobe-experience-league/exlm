@@ -33,9 +33,14 @@ export const loadScript = (src, attrs = {}) => {
   return promise;
 };
 
+/**
+ * Load Coveo Atomic from same-origin EDS assets.
+ * Hosted under scripts/coveo-atomic/cdn (vendored @coveo/atomic@3.13.0) to avoid
+ * cross-origin module/chunk CORS failures from static.cloud.coveo.com.
+ */
 export async function initiateCoveoAtomicSearch() {
   return new Promise((resolve, reject) => {
-    loadScript('https://static.cloud.coveo.com/atomic/v3.13.0/atomic.esm.js', { type: 'module' })
+    loadScript('/scripts/coveo-atomic/cdn/atomic.esm.js', { type: 'module' })
       .then(async () => {
         resolve(true);
       })
