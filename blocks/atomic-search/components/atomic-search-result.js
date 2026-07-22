@@ -556,12 +556,20 @@ export default function atomicResultHandler(block, placeholders) {
     return;
   }
   container.parentElement.part.add('list-wrap');
-  // Make result section hidden and start adding skeleton.
-  container.style.cssText = 'display: none;';
-  container.dataset.view = isMobile() ? 'mobile' : 'desktop';
-  const skeletonWrapper = htmlToElement(`<div class="skeleton-wrapper" part="skeleton"></div>`);
-  skeletonWrapper.innerHTML = renderAtomicSekeletonUI();
-  container.parentElement.appendChild(skeletonWrapper);
+
+  // Atomic 3.60+ (Lit) re-renders its shadow DOM. Hiding/replacing nodes fights Lit and
+  // can wipe results permanently. Only show an in-shadow skeleton when results are not yet present.
+  const hasResultsAlready = shadow.querySelectorAll('atomic-result').length > 0;
+  if (!hasResultsAlready) {
+    container.style.cssText = 'display: none;';
+    container.dataset.view = isMobile() ? 'mobile' : 'desktop';
+    const skeletonWrapper = htmlToElement(`<div class="skeleton-wrapper" part="skeleton"></div>`);
+    skeletonWrapper.innerHTML = renderAtomicSekeletonUI();
+    container.parentElement.appendChild(skeletonWrapper);
+  } else {
+    container.dataset.view = isMobile() ? 'mobile' : 'desktop';
+    baseElement.classList.remove('list-wrap-skeleton');
+  }
 
   function onClearBtnClick() {
     const atomicBreadBox = document.querySelector('atomic-breadbox');
@@ -813,7 +821,10 @@ export default function atomicResultHandler(block, placeholders) {
   };
 
   const updateAtomicResultUI = (callFrom) => {
-    const results = container.querySelectorAll('atomic-result');
+    // Prefer light query on the list part; fall back to full shadow (Lit may move nodes).
+    const results = container.querySelectorAll('atomic-result').length
+      ? container.querySelectorAll('atomic-result')
+      : shadow.querySelectorAll('atomic-result');
     const isMobileView = isMobile();
     container.dataset.view = isMobileView ? 'mobile' : 'desktop';
     results.forEach((resultElement, index) => {
@@ -1173,8 +1184,13 @@ export default function atomicResultHandler(block, placeholders) {
   const resizeObserver = new ResizeObserver(debouncedResize);
   resizeObserver.observe(container);
 
-  // Add observer to check the loading of result items.
-  const observer = new MutationObserver(updateAtomicResultUI);
-  observer.observe(container, { childList: true, subtree: false });
+  // Watch the whole shadow tree — Lit Atomic renders results reactively.
+  const observer = new MutationObserver(() => updateAtomicResultUI());
+  observer.observe(shadow, { childList: true, subtree: true });
   updateAtomicResultUI();
+
+  // Fail-safe: never leave the Lit result list permanently hidden behind our skeleton.
+  setTimeout(() => {
+    removeBlockSkeleton();
+  }, 4000);
 }

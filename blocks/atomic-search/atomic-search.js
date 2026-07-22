@@ -156,8 +156,10 @@ export default function decorate(block) {
       atomicResultPageHandler(block.querySelector('atomic-results-per-page'));
     };
 
+    // Wait for components we actually mount. Atomic 3.60+ lazy-registers CE definitions;
+    // we use atomic-folded-result-list (not atomic-result-list), so waiting on the latter hangs forever.
     Promise.all([
-      customElements.whenDefined('atomic-result-list'),
+      customElements.whenDefined('atomic-folded-result-list'),
       customElements.whenDefined('atomic-result'),
       customElements.whenDefined('atomic-result-multi-value-text'),
       customElements.whenDefined('atomic-search-box'),
@@ -166,11 +168,18 @@ export default function decorate(block) {
       customElements.whenDefined('atomic-breadbox'),
       customElements.whenDefined('atomic-pager'),
       customElements.whenDefined('atomic-no-results'),
-      customElements.whenDefined('atomic-search-box'),
       customElements.whenDefined('atomic-results-per-page'),
       customElements.whenDefined('atomic-notifications'),
     ]).then(() => {
       atomicNoResultHandler(block, placeholders);
+      // Register before commonActionHandler — facet init can fire FACET_LOADED synchronously.
+      document.addEventListener(
+        CUSTOM_EVENTS.FACET_LOADED,
+        () => {
+          resolveBlockLevelSkeleton(block);
+        },
+        { once: true },
+      );
       commonActionHandler();
       decorateIcons(block);
       let eventFiredOnPageLoad = false;
@@ -223,14 +232,6 @@ export default function decorate(block) {
         clear: placeholders.searchClearLabel || 'Clear',
         filters: placeholders.searchFiltersLabel || 'Filters',
       });
-
-      document.addEventListener(
-        CUSTOM_EVENTS.FACET_LOADED,
-        () => {
-          resolveBlockLevelSkeleton(block);
-        },
-        { once: true },
-      );
 
       const trackingHandler = (event) => {
         const isResizeAction = event?.detail?.callFrom === 'resize';
