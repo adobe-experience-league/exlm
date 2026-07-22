@@ -1,0 +1,2 @@
+import{c as e}from"./p-0462f723.js";var r={exports:{}};(function(r,n){!function(e,n){r.exports=n()}(e,(function(){return{name:"en",weekdays:"Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"),months:"January_February_March_April_May_June_July_August_September_October_November_December".split("_"),ordinal:function(e){var r=["th","st","nd","rd"],n=e%100;return"["+e+(r[(n-20)%10]||r[n]||r[0])+"]"}}}))})(r);const n=r.exports;const t=Object.freeze(Object.assign(Object.create(null),r.exports,{default:n}));export{t as e};
+//# sourceMappingURL=p-d7a96da2.js.map
