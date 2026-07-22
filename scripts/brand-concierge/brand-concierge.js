@@ -688,10 +688,16 @@ function installSlashShortcut(dialog, trigger, mount) {
   removeSlashShortcut();
 
   slashShortcutHandler = (e) => {
-    if (e.key !== '/') return;
+    if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
 
     const activeEl = document.activeElement;
-    if (activeEl?.tagName === 'TEXTAREA' || activeEl?.tagName === 'INPUT' || activeEl?.isContentEditable) return;
+    if (
+      activeEl?.tagName === 'TEXTAREA' ||
+      activeEl?.tagName === 'INPUT' ||
+      activeEl?.tagName === 'SELECT' ||
+      activeEl?.isContentEditable
+    )
+      return;
 
     e.preventDefault();
 
