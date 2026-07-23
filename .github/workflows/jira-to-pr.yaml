@@ -9,12 +9,14 @@ on:
         description: 'JIRA ticket key (e.g. EXLM-1234)'
         required: true
         type: string
-  # TEMPORARY (testing only): lets this workflow run from the feature branch before
-  # it is merged to the default branch (repository_dispatch / workflow_dispatch only
-  # work from the default branch). The ticket comes from the TEST_TICKET Actions
-  # variable. Remove this whole `push` block before merging to main.
-  push:
-    branches: [jira-to-pr-automation]
+  # TEMPORARY (testing only): claude-code-action does not support the `push` event,
+  # and repository_dispatch / workflow_dispatch only fire from the default branch.
+  # A same-repo pull_request runs the workflow file from the PR's HEAD branch, so
+  # opening a PR from this branch lets us test before merging to main. The ticket
+  # comes from the TEST_TICKET Actions variable. Remove this whole `pull_request`
+  # block before merging to main.
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: write
