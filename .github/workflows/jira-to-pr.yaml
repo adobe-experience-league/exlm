@@ -27,10 +27,14 @@ jobs:
 
       - name: Resolve and validate ticket
         id: ticket
+        # Pass untrusted trigger input via env, never interpolated directly into the
+        # script — prevents shell injection (CWE-78) from client_payload.ticket.
+        env:
+          RAW_TICKET: ${{ github.event.client_payload.ticket || github.event.inputs.ticket }}
         run: |
-          TICKET="${{ github.event.client_payload.ticket || github.event.inputs.ticket }}"
+          TICKET="$RAW_TICKET"
           if [[ ! "$TICKET" =~ ^[A-Z]+-[0-9]+$ ]]; then
-            echo "::error::Invalid or missing ticket key: '$TICKET'. Expected PROJECT-NUMBER (e.g. EXLM-1234)."
+            echo "::error::Invalid or missing ticket key. Expected PROJECT-NUMBER (e.g. EXLM-1234)."
             exit 1
           fi
           echo "ticket=$TICKET" >> "$GITHUB_OUTPUT"
