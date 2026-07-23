@@ -53,7 +53,7 @@ Credentials come from the CI environment (injected from GitHub secrets), NOT a
 ```bash
 [ -n "$JIRA_BASE_URL" ] \
   && [ -n "$JIRA_PAT" ] \
-  && [ -n "$GITHUB_TOKEN" ] \
+  && [ -n "$GH_PAT" ] \
   && echo "ok" || echo "missing"
 ```
 
@@ -63,7 +63,8 @@ Auth setup required — the workflow must export these environment variables
 (from GitHub secrets):
   JIRA_BASE_URL   (e.g. https://jira.corp.adobe.com)
   JIRA_PAT        (secrets.JIRA_PAT)
-  GITHUB_TOKEN    (secrets.UPDATE_PR_GITHUB_TOKEN)
+  GH_PAT          (secrets.UPDATE_PR_GITHUB_TOKEN — named GH_PAT to avoid the
+                   action's own OIDC GITHUB_TOKEN shadowing it)
 Missing: <list>
 ```
 
@@ -351,7 +352,7 @@ EOF
 REMOTE_URL=$(git remote get-url origin)
 HTTPS_URL=$(echo "$REMOTE_URL" \
   | sed 's|git@github.com:|https://github.com/|' \
-  | sed 's|https://github.com|https://'"$GITHUB_TOKEN"'@github.com|')
+  | sed 's|https://github.com|https://'"$GH_PAT"'@github.com|')
 git push "$HTTPS_URL" HEAD:"$BRANCH_NAME"
 ```
 
@@ -409,13 +410,13 @@ Hold the title in a shell variable, then pass untrusted values as arguments
 (`process.argv`) and read the body from `pr-body.md` — never splice `TICKET_SUMMARY`
 or the body into a command string. This is the same safe pattern Step 11 uses; it
 prevents shell injection (a `"`, backtick, or `$(...)` in JIRA text would otherwise
-run in a step holding `$GITHUB_TOKEN`) and stops `$` placeholders from being expanded.
+run in a step holding `$GH_PAT`) and stops `$` placeholders from being expanded.
 
 ```bash
 PR_TITLE="<prefix>($SESSION_TICKET): $TICKET_SUMMARY"
 
 curl -s -X POST \
-  -H "Authorization: Bearer $GITHUB_TOKEN" \
+  -H "Authorization: Bearer $GH_PAT" \
   -H "Accept: application/vnd.github+json" \
   "https://api.github.com/repos/$ORG_REPO/pulls" \
   --data-binary "$(node -e '
@@ -436,7 +437,7 @@ Parse `html_url` and store as `PR_URL`.
 
 | Situation | Action |
 |---|---|
-| 401 | "GITHUB_TOKEN invalid or expired." Stop. |
+| 401 | "GH_PAT (GitHub PAT) invalid or expired." Stop. |
 | 422 — PR already exists | Extract the existing PR URL, store as `PR_URL`, continue. |
 | curl exits non-zero | Print raw error and stop. |
 
@@ -469,7 +470,7 @@ Build the comment body:
 **Write the comment body to a file `jira-comment.md` using the `Write` tool** (not
 `echo`/heredoc), for the same reason as the PR body: the summary is untrusted JIRA
 text and a `$`-sequence in a shell string could expand and leak a secret
-(`$JIRA_PAT`, `$GITHUB_TOKEN`) into the comment. Then read it in `node` with `fs`:
+(`$JIRA_PAT`, `$GH_PAT`) into the comment. Then read it in `node` with `fs`:
 
 ```bash
 curl -s -X POST \

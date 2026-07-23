@@ -19,7 +19,10 @@ jobs:
   auto-build:
     # Only the canonical exlm repo (not exlm-stage or other copies).
     if: github.repository == 'adobe-experience-league/exlm'
-    runs-on: ubuntu-latest
+    # Set the AUTO_BUILD_RUNNER Actions variable to a corp-network-capable
+    # self-hosted runner label (JIRA is behind Zscaler/iPaaS and unreachable from
+    # GitHub-hosted or gh-vnet-runner). Changing the variable needs no code merge.
+    runs-on: ${{ vars.AUTO_BUILD_RUNNER || 'ubuntu-latest' }}
     # Bound the run so a stuck sub-skill (e.g. a dev server) can't run away.
     timeout-minutes: 45
     steps:
@@ -71,7 +74,9 @@ jobs:
         env:
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
           JIRA_PAT: ${{ secrets.JIRA_PAT }}
-          GITHUB_TOKEN: ${{ secrets.UPDATE_PR_GITHUB_TOKEN }}
+          # Named GH_PAT (not GITHUB_TOKEN): the action injects its own OIDC token as
+          # GITHUB_TOKEN, which would shadow our PAT at push/PR-create time.
+          GH_PAT: ${{ secrets.UPDATE_PR_GITHUB_TOKEN }}
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |

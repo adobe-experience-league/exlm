@@ -12,7 +12,9 @@ on:
 jobs:
   probe:
     if: github.repository == 'adobe-experience-league/exlm'
-    runs-on: ubuntu-latest
+    # Point this at your corp runner (AUTO_BUILD_RUNNER variable) to confirm JIRA
+    # reachability from the actual runner before running the full automation.
+    runs-on: ${{ vars.AUTO_BUILD_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 5
     steps:
       - name: Probe JIRA reachability and auth
