@@ -1,0 +1,68 @@
+name: Jira to PR
+
+on:
+  repository_dispatch:
+    types: [jira-build]
+  workflow_dispatch:
+    inputs:
+      ticket:
+        description: 'JIRA ticket key (e.g. EXLM-1234)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  auto-build:
+    # Only the canonical exlm repo (not exlm-stage or other copies).
+    if: github.repository == 'adobe-experience-league/exlm'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve and validate ticket
+        id: ticket
+        # Pass untrusted trigger input via env, never interpolated directly into the
+        # script — prevents shell injection (CWE-78) from client_payload.ticket.
+        env:
+          RAW_TICKET: ${{ github.event.client_payload.ticket || github.event.inputs.ticket }}
+        run: |
+          TICKET="$RAW_TICKET"
+          if [[ ! "$TICKET" =~ ^[A-Z]+-[0-9]+$ ]]; then
+            echo "::error::Invalid or missing ticket key. Expected PROJECT-NUMBER (e.g. EXLM-1234)."
+            exit 1
+          fi
+          echo "ticket=$TICKET" >> "$GITHUB_OUTPUT"
+          echo "Resolved ticket: $TICKET"
+
+      - name: Restore AI skills
+        run: npx skills experimental_install --yes
+
+      # The auto-build skill is committed to this branch (force-added past .gitignore
+      # for testing). Fail loudly if it is not resolvable after the install step so a
+      # missing skill surfaces here rather than as a confusing agent error.
+      - name: Verify auto-build skill is present
+        run: |
+          if [ ! -f .claude/skills/auto-build/SKILL.md ]; then
+            echo "::error::.claude/skills/auto-build/SKILL.md not found — the auto-build skill is missing from the checkout."
+            exit 1
+          fi
+          echo "auto-build skill resolved."
+
+      - uses: anthropics/claude-code-action@v1
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_PAT: ${{ secrets.JIRA_PAT }}
+          GITHUB_TOKEN: ${{ secrets.UPDATE_PR_GITHUB_TOKEN }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            /auto-build ${{ steps.ticket.outputs.ticket }}
+          claude_args: |
+            --max-turns 80
+            --allowedTools "Bash,Read,Write,Edit,Glob,Grep,TodoWrite"
