@@ -399,23 +399,36 @@ $/en/docs?martech=off
 $/en/search?martech=off
 ```
 
+**Write the final composed body to a file `pr-body.md` using the `Write` tool** (not
+`echo`/heredoc). This keeps untrusted JIRA text and the literal `$` template
+placeholders verbatim — the shell never interprets them.
+
 ### 10c. Create the DRAFT PR via GitHub REST API
 
+Hold the title in a shell variable, then pass untrusted values as arguments
+(`process.argv`) and read the body from `pr-body.md` — never splice `TICKET_SUMMARY`
+or the body into a command string. This is the same safe pattern Step 11 uses; it
+prevents shell injection (a `"`, backtick, or `$(...)` in JIRA text would otherwise
+run in a step holding `$GITHUB_TOKEN`) and stops `$` placeholders from being expanded.
+
 ```bash
+PR_TITLE="<prefix>($SESSION_TICKET): $TICKET_SUMMARY"
+
 curl -s -X POST \
   -H "Authorization: Bearer $GITHUB_TOKEN" \
   -H "Accept: application/vnd.github+json" \
   "https://api.github.com/repos/$ORG_REPO/pulls" \
-  -d "$(node -e "
-    console.log(JSON.stringify({
-      title: '<prefix>(<SESSION_TICKET>): <TICKET_SUMMARY>',
-      body:  '<PR body>',
-      head:  '<BRANCH_NAME>',
-      base:  'main',
-      draft: true
-    }))
-  ")"
+  --data-binary "$(node -e '
+    const fs = require("fs");
+    const [title, head] = process.argv.slice(1);
+    const body = fs.readFileSync("pr-body.md", "utf8");
+    console.log(JSON.stringify({ title, body, head, base: "main", draft: true }));
+  ' "$PR_TITLE" "$BRANCH_NAME")"
 ```
+
+Here `$PR_TITLE` and `$BRANCH_NAME` are passed as separate arguments (bash quoting
+keeps them as data), and the body comes from the file — so no untrusted text is ever
+parsed as shell or as a JS string literal.
 
 Parse `html_url` and store as `PR_URL`.
 
@@ -453,13 +466,20 @@ Build the comment body:
 👀 Preview:  <PREVIEW_URL>
 ```
 
-Post it:
+**Write the comment body to a file `jira-comment.md` using the `Write` tool** (not
+`echo`/heredoc), for the same reason as the PR body: the summary is untrusted JIRA
+text and a `$`-sequence in a shell string could expand and leak a secret
+(`$JIRA_PAT`, `$GITHUB_TOKEN`) into the comment. Then read it in `node` with `fs`:
+
 ```bash
 curl -s -X POST \
   -H "Authorization: Bearer $JIRA_PAT" \
   -H "Content-Type: application/json" \
   "$JIRA_BASE_URL/rest/api/2/issue/$SESSION_TICKET/comment" \
-  -d "$(node -e "console.log(JSON.stringify({ body: process.argv[1] }))" "<comment body>")"
+  --data-binary "$(node -e '
+    const fs = require("fs");
+    console.log(JSON.stringify({ body: fs.readFileSync("jira-comment.md", "utf8") }));
+  ')"
 ```
 
 On failure: print a one-line warning and continue (do not fail the run).
