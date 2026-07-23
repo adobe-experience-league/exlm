@@ -44,15 +44,26 @@ jobs:
         run: npx skills experimental_install --yes
 
       # The auto-build skill is committed to this branch (force-added past .gitignore
-      # for testing). Fail loudly if it is not resolvable after the install step so a
-      # missing skill surfaces here rather than as a confusing agent error.
-      - name: Verify auto-build skill is present
+      # for testing). npx skills installs lock-listed skills but not this one, so make
+      # sure the .claude/skills entry resolves after install — self-heal the symlink
+      # from the committed .agents copy if the install step removed it.
+      - name: Ensure auto-build skill is installed
         run: |
+          mkdir -p .claude/skills
+          if [ ! -e .claude/skills/auto-build ]; then
+            ln -s ../../.agents/skills/auto-build .claude/skills/auto-build
+          fi
           if [ ! -f .claude/skills/auto-build/SKILL.md ]; then
-            echo "::error::.claude/skills/auto-build/SKILL.md not found — the auto-build skill is missing from the checkout."
+            echo "::error::auto-build skill missing — neither .claude/skills/auto-build nor .agents/skills/auto-build resolved."
             exit 1
           fi
           echo "auto-build skill resolved."
+
+      # The skill runs git commit; a fresh runner has no committer identity.
+      - name: Configure git identity
+        run: |
+          git config user.name "exlm-auto-build[bot]"
+          git config user.email "exlm-auto-build@users.noreply.github.com"
 
       - uses: anthropics/claude-code-action@v1
         env:
@@ -64,5 +75,5 @@ jobs:
           prompt: |
             /auto-build ${{ steps.ticket.outputs.ticket }}
           claude_args: |
-            --max-turns 80
-            --allowedTools "Bash,Read,Write,Edit,Glob,Grep,TodoWrite"
+            --max-turns 200
+            --allowedTools "Bash,Read,Write,Edit,Glob,Grep,TodoWrite,Skill,WebFetch,WebSearch"
