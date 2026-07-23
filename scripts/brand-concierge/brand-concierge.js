@@ -11,6 +11,7 @@ const DIALOG_ID = 'bc-dialog';
 const TRIGGER_ID = 'bc-trigger';
 const HEADER_CLEAR_ID = 'bc-header-clear';
 const PANEL_DISCLAIMER_ID = 'bc-panel-disclaimer';
+const KEYBOARD_TIP_ID = 'bc-keyboard-tip';
 
 /** Pixels from the bottom of `.chat-history` treated as “at bottom”. */
 const SCROLL_BOTTOM_THRESHOLD = 32;
@@ -65,6 +66,8 @@ let mountInteractionHandler = null;
 let mountWithHandler = null;
 let keyboardScrollHandler = null;
 let keyboardScrollDialog = null;
+let slashShortcutHandler = null;
+let keyboardTipObserver = null;
 
 /**
  * Removes persisted BC chat sessions from localStorage (transcript + metadata).
@@ -174,6 +177,37 @@ function watchPanelDisclaimer(mount) {
   panelDisclaimerObserver?.disconnect();
   panelDisclaimerObserver = new MutationObserver(() => installPanelDisclaimer(mount));
   panelDisclaimerObserver.observe(mount, { childList: true, subtree: true });
+}
+
+function removeKeyboardTip() {
+  keyboardTipObserver?.disconnect();
+  keyboardTipObserver = null;
+  document.getElementById(KEYBOARD_TIP_ID)?.remove();
+}
+
+function insertKeyboardTip(mount) {
+  const history = mount.querySelector('.chat-history');
+  if (history && history.children.length > 0) {
+    removeKeyboardTip();
+    return;
+  }
+  const inputSection = mount.querySelector('.input-section');
+  if (!inputSection || document.getElementById(KEYBOARD_TIP_ID)) return;
+  const tip = document.createElement('p');
+  tip.id = KEYBOARD_TIP_ID;
+  tip.className = 'bc-keyboard-tip';
+  const kbd = document.createElement('kbd');
+  kbd.textContent = '/';
+  tip.append('Tip: Press ', kbd, ' to open this chat from anywhere on the page');
+  tip.setAttribute('aria-hidden', 'true');
+  inputSection.insertBefore(tip, inputSection.querySelector('.input-container') ?? null);
+}
+
+function watchKeyboardTip(mount) {
+  removeKeyboardTip();
+  insertKeyboardTip(mount);
+  keyboardTipObserver = new MutationObserver(() => insertKeyboardTip(mount));
+  keyboardTipObserver.observe(mount, { childList: true, subtree: true });
 }
 
 /**
@@ -407,6 +441,8 @@ function handleBrandConciergeClientEvent(event) {
   const mount = getBrandConciergeMount();
   if (!mount) return;
 
+  if (event.eventType === BC_EVENT_QUERY_SUBMITTED) removeKeyboardTip();
+
   // response:started intentionally re-pins: if a new response begins while the user is still
   // reading a previous answer we want to re-anchor to their most recent question, not leave
   // them watching the bottom of a growing history panel.
@@ -637,9 +673,44 @@ async function clearBrandConciergeConversation() {
   panelDisclaimerObserver?.disconnect();
   panelDisclaimerObserver = null;
   watchPanelDisclaimer(bcMount);
+  watchKeyboardTip(bcMount);
   focusBcChatInputWhenReady(bcMount);
 }
 
+function removeSlashShortcut() {
+  if (slashShortcutHandler) {
+    document.removeEventListener('keydown', slashShortcutHandler, true);
+    slashShortcutHandler = null;
+  }
+}
+
+function installSlashShortcut(dialog, trigger, mount) {
+  removeSlashShortcut();
+
+  slashShortcutHandler = (e) => {
+    if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
+
+    const activeEl = document.activeElement;
+    if (
+      activeEl?.tagName === 'TEXTAREA' ||
+      activeEl?.tagName === 'INPUT' ||
+      activeEl?.tagName === 'SELECT' ||
+      activeEl?.isContentEditable
+    )
+      return;
+
+    e.preventDefault();
+
+    if (!dialog.open) {
+      dialog.showModal();
+      trigger.setAttribute('aria-expanded', 'true');
+    }
+
+    focusBcChatInputWhenReady(mount);
+  };
+
+  document.addEventListener('keydown', slashShortcutHandler, true);
+}
 function removeKeyboardScrollHandler() {
   if (keyboardScrollHandler && keyboardScrollDialog) {
     keyboardScrollDialog.removeEventListener('keydown', keyboardScrollHandler, true);
@@ -747,6 +818,7 @@ function createMountPoint() {
 
   const { element: dialog } = drawerHandle;
   installKeyboardScrollHandler(dialog, mount);
+  installSlashShortcut(dialog, trigger, mount);
 
   trigger.addEventListener('click', () => {
     dialog.showModal();
@@ -814,11 +886,13 @@ export function destroyBrandConcierge() {
   scrollToBottomWatcher?.cleanup();
   scrollToBottomWatcher = null;
   removeKeyboardScrollHandler();
+  removeSlashShortcut();
   removeQuestionPinHandlers();
   inputLabelIconObserver?.disconnect();
   inputLabelIconObserver = null;
   panelDisclaimerObserver?.disconnect();
   panelDisclaimerObserver = null;
+  removeKeyboardTip();
   drawerHandle?.destroy();
   drawerHandle = null;
   document.getElementById(TRIGGER_ID)?.remove();
@@ -848,6 +922,7 @@ export async function initBrandConcierge() {
     installQuestionPinHandlers(bcMount);
     patchBcSparkleIcons(bcMount);
     watchPanelDisclaimer(bcMount);
+    watchKeyboardTip(bcMount);
 
     // Appended after bootstrap() so this <link> follows BC's injected <style> in document
     // order, giving our overrides cascade priority at equal specificity.
