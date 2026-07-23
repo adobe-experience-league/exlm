@@ -9,14 +9,6 @@ on:
         description: 'JIRA ticket key (e.g. EXLM-1234)'
         required: true
         type: string
-  # TEMPORARY (testing only): claude-code-action does not support the `push` event,
-  # and repository_dispatch / workflow_dispatch only fire from the default branch.
-  # A same-repo pull_request runs the workflow file from the PR's HEAD branch, so
-  # opening a PR from this branch lets us test before merging to main. The ticket
-  # comes from the TEST_TICKET Actions variable. Remove this whole `pull_request`
-  # block before merging to main.
-  pull_request:
-    branches: [main]
 
 permissions:
   contents: write
@@ -36,10 +28,9 @@ jobs:
       - name: Resolve and validate ticket
         id: ticket
         run: |
-          # vars.TEST_TICKET is the fallback used by the temporary push trigger.
-          TICKET="${{ github.event.client_payload.ticket || github.event.inputs.ticket || vars.TEST_TICKET }}"
+          TICKET="${{ github.event.client_payload.ticket || github.event.inputs.ticket }}"
           if [[ ! "$TICKET" =~ ^[A-Z]+-[0-9]+$ ]]; then
-            echo "::error::Invalid or missing ticket key: '$TICKET'. Expected PROJECT-NUMBER (e.g. EXLM-1234). For push-triggered test runs, set the TEST_TICKET Actions variable."
+            echo "::error::Invalid or missing ticket key: '$TICKET'. Expected PROJECT-NUMBER (e.g. EXLM-1234)."
             exit 1
           fi
           echo "ticket=$TICKET" >> "$GITHUB_OUTPUT"
