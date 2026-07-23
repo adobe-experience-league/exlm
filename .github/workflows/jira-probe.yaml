@@ -1,9 +1,10 @@
 name: JIRA connectivity probe
 
-# TEMPORARY diagnostic. Runs on the feature branch (push) with plain bash — no
-# claude-code-action — to confirm whether a GitHub-hosted runner can reach the
-# corporate JIRA host and whether the PAT authenticates. Delete this file once the
-# Jira-to-PR automation is validated.
+# TEMPORARY diagnostic. Validates the iPaaS JIRA proxy path from a GitHub-hosted
+# runner (no self-hosted runner, no corp network): mint an IMS token, then call the
+# public iPaaS proxy (ipaasapi.adobe-services.com) with the required headers.
+# Runs on push to the feature branch — plain bash, no claude-code-action.
+# Delete this file once the Jira-to-PR automation is validated.
 on:
   push:
     branches: [jira-to-pr-automation]
@@ -12,44 +13,71 @@ on:
 jobs:
   probe:
     if: github.repository == 'adobe-experience-league/exlm'
-    # Point this at your corp runner (AUTO_BUILD_RUNNER variable) to confirm JIRA
-    # reachability from the actual runner before running the full automation.
     runs-on: ${{ vars.AUTO_BUILD_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 5
     steps:
-      - name: Probe JIRA reachability and auth
+      - name: Probe iPaaS JIRA proxy (IMS auth + issue fetch)
         env:
-          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
-          JIRA_PAT: ${{ secrets.JIRA_PAT }}
+          # IMS client for minting the access token (grant_type=authorization_code).
+          IMS_TOKEN_URL: ${{ secrets.IMS_TOKEN_URL }}
+          IMS_CLIENT_ID: ${{ secrets.IMS_CLIENT_ID }}
+          IMS_CLIENT_SECRET: ${{ secrets.IMS_CLIENT_SECRET }}
+          IMS_AUTH_CODE: ${{ secrets.IMS_AUTH_CODE }}
+          # iPaaS JIRA proxy (public endpoint) + generic Jira user + iPaaS api key.
+          JIRA_IPAAS_BASE_URL: ${{ secrets.JIRA_IPAAS_BASE_URL }}
+          JIRA_USERNAME: ${{ secrets.JIRA_USERNAME }}
+          JIRA_PASSWORD: ${{ secrets.JIRA_PASSWORD }}
+          IPAAS_API_KEY: ${{ secrets.IPAAS_API_KEY }}
+          # A real ticket key to fetch (set as an Actions variable).
+          TEST_TICKET: ${{ vars.TEST_TICKET }}
         run: |
-          if [ -z "$JIRA_BASE_URL" ]; then
-            echo "::error::JIRA_BASE_URL secret is not set."; exit 1
+          missing=""
+          for v in IMS_TOKEN_URL IMS_CLIENT_ID IMS_CLIENT_SECRET IMS_AUTH_CODE \
+                   JIRA_IPAAS_BASE_URL JIRA_USERNAME JIRA_PASSWORD IPAAS_API_KEY; do
+            if [ -z "${!v}" ]; then missing="$missing $v"; fi
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Missing secrets:$missing"; exit 1
           fi
-          if [ -z "$JIRA_PAT" ]; then
-            echo "::error::JIRA_PAT secret is not set."; exit 1
-          fi
+          TICKET="${TEST_TICKET:-EXLM-1}"
 
-          HOST=$(echo "$JIRA_BASE_URL" | sed -E 's#^https?://##; s#/.*$##')
-          echo "== DNS resolution for $HOST =="
-          getent hosts "$HOST" || echo "DNS resolution FAILED for $HOST"
+          echo "== Step 1: mint IMS access token =="
+          IMS_CODE=$(curl -s -o /tmp/ims.json -w '%{http_code}' --max-time 30 \
+            --data-urlencode "grant_type=authorization_code" \
+            --data-urlencode "client_id=$IMS_CLIENT_ID" \
+            --data-urlencode "client_secret=$IMS_CLIENT_SECRET" \
+            --data-urlencode "code=$IMS_AUTH_CODE" \
+            "$IMS_TOKEN_URL") || { echo "::error::IMS token request failed to connect."; exit 1; }
+          echo "IMS HTTP status: $IMS_CODE"
+          if [ "$IMS_CODE" != "200" ]; then
+            echo "::error::IMS token request returned $IMS_CODE."
+            head -c 300 /tmp/ims.json; exit 1
+          fi
+          ACCESS_TOKEN=$(node -e "process.stdin.resume();let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{console.log(JSON.parse(d).access_token||'')}catch(e){console.log('')}})" < /tmp/ims.json)
+          if [ -z "$ACCESS_TOKEN" ]; then
+            echo "::error::No access_token in IMS response."; exit 1
+          fi
+          echo "IMS access token obtained (length: ${#ACCESS_TOKEN})."
 
           echo ""
-          echo "== HTTPS reachability + PAT auth (GET /rest/api/2/myself) =="
-          CODE=$(curl -s -o /tmp/jira_out -w '%{http_code}' --max-time 30 \
-            -H "Authorization: Bearer $JIRA_PAT" \
-            -H "Accept: application/json" \
-            "$JIRA_BASE_URL/rest/api/2/myself") || {
-              echo "::error::curl failed to connect (likely the corporate JIRA host is not reachable from GitHub-hosted runners)."
-              exit 1
-            }
-          echo "HTTP status: $CODE"
-          echo "Response (first 300 bytes):"
-          head -c 300 /tmp/jira_out || true
+          echo "== Step 2: fetch $TICKET via iPaaS proxy =="
+          CODE=$(curl -s -o /tmp/jira.json -w '%{http_code}' --max-time 30 \
+            -H "Content-Type: application/json" \
+            -H "Authorization: $ACCESS_TOKEN" \
+            -H "Username: $JIRA_USERNAME" \
+            -H "Password: $JIRA_PASSWORD" \
+            -H "Api_key: $IPAAS_API_KEY" \
+            "$JIRA_IPAAS_BASE_URL/rest/api/2/issue/$TICKET?fields=summary,status") \
+            || { echo "::error::iPaaS proxy request failed to connect."; exit 1; }
+          echo "iPaaS HTTP status: $CODE"
+          echo "Response (first 400 bytes):"
+          head -c 400 /tmp/jira.json || true
           echo ""
 
           case "$CODE" in
-            200) echo "✅ Reachable and authenticated — the automation can talk to JIRA from this runner." ;;
-            401|403) echo "::warning::Reachable, but auth failed ($CODE) — check JIRA_PAT." ;;
-            000) echo "::error::No HTTP response ($CODE) — host unreachable / blocked from GitHub-hosted runners." ; exit 1 ;;
+            200) echo "✅ iPaaS proxy reachable and authenticated — the automation can read/write JIRA from a hosted runner." ;;
+            401|403) echo "::error::Auth rejected ($CODE) — check IMS token prefix (raw vs 'Bearer'), Username/Password, or Api_key." ; exit 1 ;;
+            404) echo "::warning::Reached the proxy but $TICKET not found (404). Auth path works — set TEST_TICKET to a real key." ;;
+            000) echo "::error::No HTTP response — proxy unreachable." ; exit 1 ;;
             *) echo "::warning::Unexpected status $CODE — inspect the response above." ;;
           esac
