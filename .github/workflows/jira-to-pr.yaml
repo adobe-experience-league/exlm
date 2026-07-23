@@ -20,6 +20,8 @@ jobs:
     # Only the canonical exlm repo (not exlm-stage or other copies).
     if: github.repository == 'adobe-experience-league/exlm'
     runs-on: ubuntu-latest
+    # Bound the run so a stuck sub-skill (e.g. a dev server) can't run away.
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
