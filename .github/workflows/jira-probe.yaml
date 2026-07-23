@@ -1,0 +1,53 @@
+name: JIRA connectivity probe
+
+# TEMPORARY diagnostic. Runs on the feature branch (push) with plain bash — no
+# claude-code-action — to confirm whether a GitHub-hosted runner can reach the
+# corporate JIRA host and whether the PAT authenticates. Delete this file once the
+# Jira-to-PR automation is validated.
+on:
+  push:
+    branches: [jira-to-pr-automation]
+  workflow_dispatch:
+
+jobs:
+  probe:
+    if: github.repository == 'adobe-experience-league/exlm'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Probe JIRA reachability and auth
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_PAT: ${{ secrets.JIRA_PAT }}
+        run: |
+          if [ -z "$JIRA_BASE_URL" ]; then
+            echo "::error::JIRA_BASE_URL secret is not set."; exit 1
+          fi
+          if [ -z "$JIRA_PAT" ]; then
+            echo "::error::JIRA_PAT secret is not set."; exit 1
+          fi
+
+          HOST=$(echo "$JIRA_BASE_URL" | sed -E 's#^https?://##; s#/.*$##')
+          echo "== DNS resolution for $HOST =="
+          getent hosts "$HOST" || echo "DNS resolution FAILED for $HOST"
+
+          echo ""
+          echo "== HTTPS reachability + PAT auth (GET /rest/api/2/myself) =="
+          CODE=$(curl -s -o /tmp/jira_out -w '%{http_code}' --max-time 30 \
+            -H "Authorization: Bearer $JIRA_PAT" \
+            -H "Accept: application/json" \
+            "$JIRA_BASE_URL/rest/api/2/myself") || {
+              echo "::error::curl failed to connect (likely the corporate JIRA host is not reachable from GitHub-hosted runners)."
+              exit 1
+            }
+          echo "HTTP status: $CODE"
+          echo "Response (first 300 bytes):"
+          head -c 300 /tmp/jira_out || true
+          echo ""
+
+          case "$CODE" in
+            200) echo "✅ Reachable and authenticated — the automation can talk to JIRA from this runner." ;;
+            401|403) echo "::warning::Reachable, but auth failed ($CODE) — check JIRA_PAT." ;;
+            000) echo "::error::No HTTP response ($CODE) — host unreachable / blocked from GitHub-hosted runners." ; exit 1 ;;
+            *) echo "::warning::Unexpected status $CODE — inspect the response above." ;;
+          esac
