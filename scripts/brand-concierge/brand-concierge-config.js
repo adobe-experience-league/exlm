@@ -22,6 +22,12 @@ function getProductNamespace() {
   return key ? `exl-bc-${key}` : 'exl-bc';
 }
 
+/**
+ * Non-localizable Brand Concierge config. Localized strings (`ui`/`text`/`arrays`) and
+ * `metadata.language` come per-locale from ./localization/<lang>.json and are merged in by
+ * loadBrandConciergeConfig(); this base holds only values that can't live in a JSON sheet
+ * (runtime-resolved CSS theme, session/behavior flags, namespace).
+ */
 const brandConciergeConfig = {
   // destructured out in brand-concierge.js before forwarding to bootstrap().
   stickySession: true,
@@ -40,49 +46,6 @@ const brandConciergeConfig = {
     version: '1.0.0',
     language: document.documentElement.lang || 'en-US',
     namespace: getProductNamespace(),
-  },
-
-  text: {
-    'welcome.heading': 'Not sure where to start?<br>Ask me anything about Adobe products.',
-    'welcome.subheading': 'Type your question or pick a suggestion below.',
-    'input.placeholder': 'Ask a question…',
-    'input.messageInput.aria': 'Message input',
-    'input.send.aria': 'Send message',
-    'input.mic.aria': 'Voice input',
-    'card.aria.select': 'Select example message',
-    'carousel.prev.aria': 'Previous cards',
-    'carousel.next.aria': 'Next cards',
-    'scroll.bottom.aria': 'Scroll to bottom',
-    'error.network': "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.",
-    'error.general': "I'm sorry, something went wrong. Please try again in a moment.",
-    'loading.message': "Generating from Adobe's trusted resources",
-    'feedback.dialog.title.positive': 'Your feedback is appreciated',
-    'feedback.dialog.title.negative': 'Your feedback is appreciated',
-    'feedback.dialog.question.positive': 'What went well? Select all that apply.',
-    'feedback.dialog.question.negative': 'What went wrong? Select all that apply.',
-    'feedback.dialog.notes': 'Notes',
-    'feedback.dialog.submit': 'Submit',
-    'feedback.dialog.cancel': 'Cancel',
-    'feedback.dialog.notes.placeholder': 'Additional notes (optional)',
-    'feedback.toast.success': 'Thank you for the feedback.',
-    'feedback.thumbsUp.aria': 'Thumbs up',
-    'feedback.thumbsDown.aria': 'Thumbs down',
-  },
-
-  arrays: {
-    'welcome.examples': [
-      { text: 'Where can I go to learn about AI on Experience League?' },
-      { text: 'Getting started with Experience Manager' },
-      { text: 'Set up an Adobe Analytics report suite' },
-      { text: 'Explain Adobe Target A/B testing' },
-    ],
-    'feedback.positive.options': [
-      'Helpful and relevant',
-      'Clear and easy to understand',
-      'Friendly and conversational tone',
-      'Other',
-    ],
-    'feedback.negative.options': ['Not helpful or relevant', 'Confusing or unclear', 'Too formal or robotic', 'Other'],
   },
 
   // CSS variable overrides forwarded to BC. Only set values that diverge from
@@ -129,5 +92,101 @@ const brandConciergeConfig = {
     '--container-padding-mobile': '8px',
   },
 };
+
+const LOCALES_BASE_PATH = `${window.hlx.codeBasePath}/scripts/brand-concierge/localization`;
+
+/** lang -> Promise resolving that locale's { language, ui, text, arrays } sheet (deduped). */
+const localeSheetCache = {};
+
+function fetchLocaleSheet(lang) {
+  if (!localeSheetCache[lang]) {
+    localeSheetCache[lang] = fetch(`${LOCALES_BASE_PATH}/${lang}.json`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`Brand Concierge locale '${lang}' -> ${res.status}`);
+        return res.json();
+      })
+      .catch((err) => {
+        // Don't cache failures — a transient network blip shouldn't permanently break this locale.
+        delete localeSheetCache[lang];
+        throw err;
+      });
+  }
+  return localeSheetCache[lang];
+}
+
+/** Recursive merge: `over` wins; nested plain objects merge per-field, arrays/scalars replace. */
+function deepMerge(base, over) {
+  if (!over) return base;
+  const out = { ...base };
+  Object.entries(over).forEach(([key, value]) => {
+    const baseVal = base?.[key];
+    const bothPlainObjects =
+      value &&
+      typeof value === 'object' &&
+      !Array.isArray(value) &&
+      baseVal &&
+      typeof baseVal === 'object' &&
+      !Array.isArray(baseVal);
+    out[key] = bothPlainObjects ? deepMerge(baseVal, value) : value;
+  });
+  return out;
+}
+
+/**
+ * Loads the BC config for a path language, layering the locale's localization sheet over the
+ * English base. English is always fetched as the fallback base, so a partial locale sheet
+ * degrades per-field rather than dropping keys. Falls back to English for unknown/failed locales.
+ * Returns `null` if the English base sheet itself can't be loaded, so the caller can skip mounting
+ * gracefully rather than render a widget with no copy (single-point-of-failure guard).
+ * @param {string} [lang] - Path language from getPathDetails().lang (e.g. 'en', 'es').
+ * @returns {Promise<(typeof brandConciergeConfig & { ui: object }) | null>}
+ */
+export async function loadBrandConciergeConfig(lang) {
+  const key = (lang || 'en').toLowerCase();
+  let en;
+  try {
+    en = await fetchLocaleSheet('en');
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.warn('[BC] English localization sheet failed to load; skipping mount', err?.message || err);
+    return null;
+  }
+  let locale = en;
+  if (key !== 'en') {
+    try {
+      locale = await fetchLocaleSheet(key);
+    } catch {
+      locale = en;
+    }
+  }
+  return {
+    ...brandConciergeConfig,
+    ui: deepMerge(en.ui, locale.ui),
+    text: { ...en.text, ...locale.text },
+    arrays: { ...en.arrays, ...locale.arrays },
+    metadata: {
+      ...brandConciergeConfig.metadata,
+      language: locale.language || brandConciergeConfig.metadata.language,
+    },
+  };
+}
+
+/**
+ * Per-locale Brand Concierge Edge datastream overrides. This is routing config, not translation,
+ * so it is kept out of the localization sheets and out of the config forwarded to the BC web
+ * client. Same IMS org as the default datastream.
+ */
+const BC_DATASTREAMS = {
+  es: '3098f7cc-36bb-4965-bea3-6e80fc59571e',
+};
+
+/**
+ * @param {string} [lang] - Path language, e.g. 'en', 'es'.
+ * @param {string} fallback - Default datastream id used when the locale has no override.
+ * @returns {string}
+ */
+export function getBrandConciergeDatastreamId(lang, fallback) {
+  return BC_DATASTREAMS[(lang || 'en').toLowerCase()] ?? fallback;
+}
 
 export default brandConciergeConfig;
