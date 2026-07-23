@@ -9,6 +9,12 @@ on:
         description: 'JIRA ticket key (e.g. EXLM-1234)'
         required: true
         type: string
+  # TEMPORARY (testing only): lets this workflow run from the feature branch before
+  # it is merged to the default branch (repository_dispatch / workflow_dispatch only
+  # work from the default branch). The ticket comes from the TEST_TICKET Actions
+  # variable. Remove this whole `push` block before merging to main.
+  push:
+    branches: [jira-to-pr-automation]
 
 permissions:
   contents: write
@@ -28,9 +34,10 @@ jobs:
       - name: Resolve and validate ticket
         id: ticket
         run: |
-          TICKET="${{ github.event.client_payload.ticket || github.event.inputs.ticket }}"
+          # vars.TEST_TICKET is the fallback used by the temporary push trigger.
+          TICKET="${{ github.event.client_payload.ticket || github.event.inputs.ticket || vars.TEST_TICKET }}"
           if [[ ! "$TICKET" =~ ^[A-Z]+-[0-9]+$ ]]; then
-            echo "::error::Invalid or missing ticket key: '$TICKET'. Expected PROJECT-NUMBER (e.g. EXLM-1234)."
+            echo "::error::Invalid or missing ticket key: '$TICKET'. Expected PROJECT-NUMBER (e.g. EXLM-1234). For push-triggered test runs, set the TEST_TICKET Actions variable."
             exit 1
           fi
           echo "ticket=$TICKET" >> "$GITHUB_OUTPUT"
