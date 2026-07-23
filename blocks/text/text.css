@@ -1,0 +1,26 @@
+/* Segments stack in author order; the author's paragraph rhythm inside each
+   segment is preserved, with a small gap between adjacent segments. */
+.text .text-segment {
+  margin: 0;
+}
+
+.text .text-segment + .text-segment {
+  margin-top: 14px;
+}
+
+/* Per-segment horizontal alignment. */
+.text .text-align-left {
+  text-align: left;
+}
+
+.text .text-align-center {
+  text-align: center;
+}
+
+.text .text-align-right {
+  text-align: right;
+}
+
+.text .text-align-justify {
+  text-align: justify;
+}
