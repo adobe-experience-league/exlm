@@ -54,23 +54,60 @@ export const BASE_COVEO_ADVANCED_QUERY = '(@el_contenttype NOT "Community|User")
 export const BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT =
   '(@el_contenttype = "Event") OR (@el_contenttype = "Upcoming Event")';
 /**
- * Upcoming events that have not started yet.
+ * Upcoming Event content-type clause (no date predicate).
  *
- * Coveo stages `el_event_start_time` as a string field, so date operators like
- * `@el_event_start_time >= now` are ignored. Event start is reflected on the
- * standard Date field `@date` (verified against stage Events Hub), which does
- * support `>= now`. Prefer switching `el_event_start_time` to a Date field in
- * Coveo when available, then update this expression.
+ * EXLM-5361 / prod Coveo note:
+ * Stage previously used `@date >= now`, but on prod (`adobev2prod9e382h1q`) `@date` is the
+ * document index/modification time (same value for all Upcoming), not event start — so
+ * `@date >= now` drops *all* Upcoming (including future ones). `el_event_start_time` is a
+ * String field, so Coveo date operators on it are ignored.
+ *
+ * Fetch all Upcoming via aq; filter stale rows client-side with
+ * {@link isStaleUpcomingCoveoResult} using `el_event_start_time`.
+ *
+ * Prefer a Coveo Date field mapped from event start when available, then restore a date aq.
  *
  * @see https://docs.coveo.com/en/1814/ (date operators, `now`)
  */
-export const COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ = '(@el_contenttype = "Event|Upcoming Event" AND @date >= now)';
+export const COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ = '(@el_contenttype = "Event|Upcoming Event")';
 export const BASE_COVEO_ADVANCED_QUERY_EVENTS = `(@el_contenttype = "Event|On Demand Event") OR ${COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ}`;
 /**
  * Exclude stale Upcoming Events while keeping all other content types.
- * Used by Atomic Search (/en/search) which has no Events-only base aq.
+ * Used by Atomic Search (/en/search). Coveo-side date filter is unreliable on prod; Atomic may
+ * still surface stale Upcoming until a Date-typed event-start field exists — Events Hub filters client-side.
  */
 export const COVEO_EXCLUDE_STALE_UPCOMING_AQ = `(NOT @el_contenttype = "Event|Upcoming Event") OR ${COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ}`;
+
+const UPCOMING_EVENT_CONTENT_TYPE = 'Event|Upcoming Event';
+
+/**
+ * True when a Coveo result is an Upcoming Event whose `el_event_start_time` is in the past.
+ * @param {Object} result - Raw Coveo result (or `{ raw }` shape)
+ * @returns {boolean}
+ */
+export function isStaleUpcomingCoveoResult(result) {
+  const raw = result?.raw || result || {};
+  const contentType = raw.el_contenttype;
+  const types = Array.isArray(contentType) ? contentType : [contentType];
+  const isUpcoming = types.some((t) => String(t || '').trim() === UPCOMING_EVENT_CONTENT_TYPE);
+  if (!isUpcoming) return false;
+
+  const start = raw.el_event_start_time;
+  if (!start) return false;
+  const startMs = new Date(start).getTime();
+  if (Number.isNaN(startMs)) return false;
+  return startMs < Date.now();
+}
+
+/**
+ * Drops stale Upcoming Event hits; leaves all other content types unchanged.
+ * @param {Array} results
+ * @returns {Array}
+ */
+export function filterStaleUpcomingCoveoResults(results = []) {
+  if (!Array.isArray(results) || !results.length) return results || [];
+  return results.filter((result) => !isStaleUpcomingCoveoResult(result));
+}
 
 export const VIDEO_THUMBNAIL_FORMAT = /^https:\/\/video\.tv\.adobe\.com\/v\/\w+\?format=jpeg$/;
 
