@@ -48,7 +48,15 @@ function normalizeContentTypeHash() {
 
     const normalizedValue = rawValue
       .split(',')
-      .map((item) => encodeURIComponent(normalizeContentTypeFilterValue(decodeURIComponent(item))))
+      .map((item) => {
+        try {
+          return encodeURIComponent(normalizeContentTypeFilterValue(decodeURIComponent(item)));
+        } catch {
+          // Malformed percent-encoding in an externally-constructed URL — leave this value as-is
+          // rather than let decorate() throw and take down the whole block's render.
+          return item;
+        }
+      })
       .join(',');
 
     if (normalizedValue === rawValue) return segment;
