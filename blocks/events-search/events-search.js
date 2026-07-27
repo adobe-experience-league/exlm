@@ -141,10 +141,10 @@ function hasNonTypeFacetFiltersSelected() {
 async function fetchUpcomingCoveoResults(upcomingFacetCount) {
   const totalWanted = Math.min(Math.max(upcomingFacetCount || 1, 1), LIVE_UPCOMING_FETCH_CAP);
   const q = String(window.headlessSearchBox?.state?.value || '').trim();
-  const all = [];
-  let firstResult = 0;
-  while (all.length < totalWanted) {
-    const noOfResults = Math.min(LIVE_UPCOMING_PAGE_SIZE, totalWanted - all.length);
+
+  const fetchPage = async (firstResult) => {
+    const noOfResults = Math.min(LIVE_UPCOMING_PAGE_SIZE, totalWanted - firstResult);
+    if (noOfResults <= 0) return [];
     const dataSource = getExlPipelineDataSourceParams(
       {
         noOfResults,
@@ -157,11 +157,20 @@ async function fetchUpcomingCoveoResults(upcomingFacetCount) {
     );
     const service = new CoveoDataService(dataSource);
     const data = await service.fetchDataFromSource();
-    const page = Array.isArray(data?.results) ? data.results : [];
+    return Array.isArray(data?.results) ? data.results : [];
+  };
+
+  // Sequential pages required: each offset depends on the prior response length.
+  const all = [];
+  let firstResult = 0;
+  /* eslint-disable no-await-in-loop -- Coveo pagination must be sequential */
+  while (all.length < totalWanted) {
+    const page = await fetchPage(firstResult);
     all.push(...page);
-    if (page.length < noOfResults) break;
+    if (page.length === 0 || page.length < Math.min(LIVE_UPCOMING_PAGE_SIZE, totalWanted - firstResult)) break;
     firstResult += page.length;
   }
+  /* eslint-enable no-await-in-loop */
   return all;
 }
 
