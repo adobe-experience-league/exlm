@@ -1,0 +1,59 @@
+{
+  "language": "en-US",
+  "ui": {
+    "triggerAriaLabel": "Open AI assistant",
+    "triggerAsk": "Ask a question",
+    "drawerAriaLabel": "AI assistant",
+    "drawerTitle": "Ask",
+    "clearLabel": "Clear",
+    "clearAriaLabel": "Clear conversation",
+    "disclaimer": {
+      "prefix": "Use of this beta AI chatbot is subject to Adobe's ",
+      "privacyLabel": "Privacy Policy",
+      "middle": ". Don't share sensitive data. AI responses are not your Content, may be inaccurate, and any offers provided are non-binding. ",
+      "termsLabel": "Generative AI Terms",
+      "suffix": "."
+    }
+  },
+  "text": {
+    "welcome.heading": "Not sure where to start?<br>Ask me anything about Adobe products.",
+    "welcome.subheading": "Type your question or pick a suggestion below.",
+    "input.placeholder": "Ask a question…",
+    "input.messageInput.aria": "Message input",
+    "input.send.aria": "Send message",
+    "input.mic.aria": "Voice input",
+    "card.aria.select": "Select example message",
+    "carousel.prev.aria": "Previous cards",
+    "carousel.next.aria": "Next cards",
+    "scroll.bottom.aria": "Scroll to bottom",
+    "error.network": "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.",
+    "error.general": "I'm sorry, something went wrong. Please try again in a moment.",
+    "loading.message": "Generating from Adobe's trusted resources",
+    "feedback.dialog.title.positive": "Your feedback is appreciated",
+    "feedback.dialog.title.negative": "Your feedback is appreciated",
+    "feedback.dialog.question.positive": "What went well? Select all that apply.",
+    "feedback.dialog.question.negative": "What went wrong? Select all that apply.",
+    "feedback.dialog.notes": "Notes",
+    "feedback.dialog.submit": "Submit",
+    "feedback.dialog.cancel": "Cancel",
+    "feedback.dialog.notes.placeholder": "Additional notes (optional)",
+    "feedback.toast.success": "Thank you for the feedback.",
+    "feedback.thumbsUp.aria": "Thumbs up",
+    "feedback.thumbsDown.aria": "Thumbs down"
+  },
+  "arrays": {
+    "welcome.examples": [
+      { "text": "Where can I go to learn about AI on Experience League?" },
+      { "text": "Getting started with Experience Manager" },
+      { "text": "Set up an Adobe Analytics report suite" },
+      { "text": "Explain Adobe Target A/B testing" }
+    ],
+    "feedback.positive.options": [
+      "Helpful and relevant",
+      "Clear and easy to understand",
+      "Friendly and conversational tone",
+      "Other"
+    ],
+    "feedback.negative.options": ["Not helpful or relevant", "Confusing or unclear", "Too formal or robotic", "Other"]
+  }
+}
