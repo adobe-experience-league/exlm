@@ -1,5 +1,10 @@
 import buildHeadlessSearchEngine from './engine.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
+import {
+  getCoveoSearchRouting,
+  isCoveoPipelineTestEnabled,
+  isCoveoProdOrgQaEnabled,
+} from '../data-service/coveo/coveo-search-config.js';
 import { handleCoverSearchSubmit } from '../../blocks/browse-filters/browse-filter-utils.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../search/search-utils.js';
 
@@ -26,7 +31,7 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
   const context = contextObject ? module.loadContextActions(searchEngine).setContext(contextObject) : null;
   const searchConfiguration = module.loadSearchConfigurationActions(searchEngine).updateSearchConfiguration({
     locale: locales.get(document.querySelector('html').lang) || document.querySelector('html').lang || 'en',
-    searchHub,
+    ...(searchHub ? { searchHub } : {}),
   });
   const fields = module
     .loadFieldActions(searchEngine)
@@ -151,10 +156,12 @@ export default async function initiateCoveoHeadlessSearch({
         const headlessSearchEngine = await buildHeadlessSearchEngine(module);
         const statusControllers = module.buildSearchStatus(headlessSearchEngine);
 
+        const { searchHub } = getCoveoSearchRouting();
         configureSearchHeadlessEngine({
           module,
           searchEngine: headlessSearchEngine,
-          searchHub: 'Experience League Learning Hub',
+          // PipelineTest omits searchHub; production pipeline keeps the Learning Hub hub.
+          searchHub: isCoveoProdOrgQaEnabled() && isCoveoPipelineTestEnabled() ? undefined : searchHub,
           contextObject: null,
           advancedQueryRule: baseAdvancedQuery,
         });
