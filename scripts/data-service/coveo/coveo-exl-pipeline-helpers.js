@@ -1,9 +1,14 @@
-import { URL_SPECIAL_CASE_LOCALES, fetchLanguagePlaceholders, getConfig } from '../../scripts.js';
+import { URL_SPECIAL_CASE_LOCALES, fetchLanguagePlaceholders } from '../../scripts.js';
 import { rewriteDocsPath } from '../../utils/path-utils.js';
 import CoveoDataService from './coveo-data-service.js';
 import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET } from './coveo-exl-pipeline-constants.js';
+import {
+  getCoveoSearchResultsUrl,
+  getCoveoSearchRouting,
+  isCoveoPipelineTestEnabled,
+  isCoveoProdOrgQaEnabled,
+} from './coveo-search-config.js';
 
-const { coveoSearchResultsUrl } = getConfig();
 const MAX_NUMBER_OF_VALUES_PER_BATCH = 100;
 
 // Most of these are copied from an existing call. I do not believe we need all of them, so this list could probably be pruned.
@@ -192,14 +197,19 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
       ...param.context,
     };
   }
+  const { searchHub, pipeline } = getCoveoSearchRouting();
+  let hubOrPipeline = { searchHub };
+  if (isCoveoProdOrgQaEnabled()) {
+    hubOrPipeline = isCoveoPipelineTestEnabled() ? { pipeline } : { searchHub, pipeline };
+  }
   const dataSource = {
-    url: coveoSearchResultsUrl,
+    url: getCoveoSearchResultsUrl({ fetchFacets: !!param.fetchFacets }),
     param: {
       locale:
         URL_SPECIAL_CASE_LOCALES.get(document.querySelector('html').lang) ||
         document.querySelector('html').lang ||
         'en',
-      searchHub: `Experience League Learning Hub`,
+      ...hubOrPipeline,
       numberOfResults: param.noOfResults,
       excerptLength: 200,
       sortCriteria: param.sortCriteria,
@@ -222,10 +232,6 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
   // Set to select page
   if (param.firstResult) {
     dataSource.param.firstResult = param.firstResult;
-  }
-
-  if (param.fetchFacets) {
-    dataSource.url += '/values/batch';
   }
 
   return dataSource;
