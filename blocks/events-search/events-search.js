@@ -27,7 +27,9 @@ const FACET_CONTROLLER_MAP = {
 
 const UPCOMING_EVENT_FACET_VALUE = 'Event|Upcoming Event';
 /** Max Upcoming rows to pull when warming the live-count cache (Coveo facet is global). */
-const LIVE_UPCOMING_FETCH_CAP = 100;
+const LIVE_UPCOMING_FETCH_CAP = 500;
+/** Page size for multi-request Upcoming warm fetches. */
+const LIVE_UPCOMING_PAGE_SIZE = 100;
 /** Fields required for client-side stale detection on auxiliary Upcoming fetches. */
 const UPCOMING_LIVE_FETCH_FIELDS = [
   'el_contenttype',
@@ -98,6 +100,8 @@ function getEffectiveMaxPage(block) {
     const pageSize = getEventsSearchPageSize();
     return Math.max(1, Math.ceil((client.results?.length || 0) / pageSize) || 1);
   }
+  // Mixed/default filters can interleave stale Upcoming across Coveo pages — keep headless
+  // maxPage so later live hits remain reachable. Upcoming-only uses client pagination above.
   return window.headlessPager?.state?.maxPage || 1;
 }
 
@@ -135,20 +139,30 @@ function hasNonTypeFacetFiltersSelected() {
 }
 
 async function fetchUpcomingCoveoResults(upcomingFacetCount) {
-  const noOfResults = Math.min(Math.max(upcomingFacetCount || 1, 1), LIVE_UPCOMING_FETCH_CAP);
+  const totalWanted = Math.min(Math.max(upcomingFacetCount || 1, 1), LIVE_UPCOMING_FETCH_CAP);
   const q = String(window.headlessSearchBox?.state?.value || '').trim();
-  const dataSource = getExlPipelineDataSourceParams(
-    {
-      noOfResults,
-      sortCriteria: 'date ascending',
-      aq: COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ,
-      ...(q ? { q } : {}),
-    },
-    UPCOMING_LIVE_FETCH_FIELDS,
-  );
-  const service = new CoveoDataService(dataSource);
-  const data = await service.fetchDataFromSource();
-  return Array.isArray(data?.results) ? data.results : [];
+  const all = [];
+  let firstResult = 0;
+  while (all.length < totalWanted) {
+    const noOfResults = Math.min(LIVE_UPCOMING_PAGE_SIZE, totalWanted - all.length);
+    const dataSource = getExlPipelineDataSourceParams(
+      {
+        noOfResults,
+        firstResult,
+        sortCriteria: 'date ascending',
+        aq: COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ,
+        ...(q ? { q } : {}),
+      },
+      UPCOMING_LIVE_FETCH_FIELDS,
+    );
+    const service = new CoveoDataService(dataSource);
+    const data = await service.fetchDataFromSource();
+    const page = Array.isArray(data?.results) ? data.results : [];
+    all.push(...page);
+    if (page.length < noOfResults) break;
+    firstResult += page.length;
+  }
+  return all;
 }
 
 /**
@@ -1319,6 +1333,24 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
       }
     } else {
       clientPaginatedUpcomingByBlock.delete(block);
+      // Drop stale Upcoming before card build so mixed/default pages don't go blank after the adaptor filters.
+      resultsToRender = filterStaleUpcomingCoveoResults(resultsToRender);
+    }
+
+    // All-stale Coveo page under mixed filters: advance using headless pages so later live hits remain reachable.
+    if (
+      !resultsToRender.length &&
+      totalForUi > 0 &&
+      !clientPaginatedUpcomingByBlock.has(block) &&
+      window.headlessPager
+    ) {
+      const headlessMax = window.headlessPager.state?.maxPage || 1;
+      const currentPage = window.headlessPager.state?.currentPage || 1;
+      if (currentPage < headlessMax) {
+        window.headlessPager.selectPage(currentPage + 1);
+        executeSearch();
+        return;
+      }
     }
 
     syncDynamicFacetGroupsFromHeadless(block, groups, {
