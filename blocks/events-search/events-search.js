@@ -1,6 +1,6 @@
 import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
 import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { BASE_COVEO_ADVANCED_QUERY_EVENTS } from '../../scripts/browse-card/browse-cards-constants.js';
+import { BASE_COVEO_ADVANCED_QUERY_EVENTS, isStaleUpcomingCoveoResult } from '../../scripts/browse-card/browse-cards-constants.js';
 import {
   normalizeOnDemandEventModel,
   normalizeUpcomingEventModel,
@@ -23,6 +23,61 @@ const FACET_CONTROLLER_MAP = {
   el_event_series: 'headlessEventSeriesFacet',
   el_contenttype: 'headlessTypeFacet',
 };
+
+const UPCOMING_EVENT_FACET_VALUE = 'Event|Upcoming Event';
+/** @type {WeakMap<HTMLElement, number>} Cached non-stale Upcoming count for facet/total adjustments */
+const liveUpcomingCountByBlock = new WeakMap();
+
+function isUpcomingCoveoResult(result) {
+  const contentType = result?.raw?.el_contenttype;
+  const types = Array.isArray(contentType) ? contentType : [contentType];
+  return types.some((t) => String(t || '').trim() === UPCOMING_EVENT_FACET_VALUE);
+}
+
+function countUpcomingInResults(results = []) {
+  return results.filter(isUpcomingCoveoResult).length;
+}
+
+function countLiveUpcomingInResults(results = []) {
+  return results.filter((result) => isUpcomingCoveoResult(result) && !isStaleUpcomingCoveoResult(result)).length;
+}
+
+/**
+ * Coveo facet totals still include stale Upcoming (string start field can't be filtered in aq).
+ * When the current response contains the full Upcoming set, derive the live count from
+ * `el_event_start_time` and cache it for later pages.
+ */
+function getStaleUpcomingCountAdjustments(block, results = [], totalCount = 0, upcomingFacetCount = 0) {
+  const upcomingInResults = countUpcomingInResults(results);
+  const liveInResults = countLiveUpcomingInResults(results);
+
+  if (upcomingFacetCount > 0 && upcomingInResults === upcomingFacetCount) {
+    liveUpcomingCountByBlock.set(block, liveInResults);
+  }
+
+  const liveUpcoming =
+    liveUpcomingCountByBlock.has(block) && upcomingFacetCount > 0
+      ? liveUpcomingCountByBlock.get(block)
+      : upcomingInResults === upcomingFacetCount
+        ? liveInResults
+        : null;
+
+  if (liveUpcoming == null || upcomingFacetCount <= 0) {
+    return { upcomingCount: upcomingFacetCount, totalCount };
+  }
+
+  const staleCount = Math.max(0, upcomingFacetCount - liveUpcoming);
+  return {
+    upcomingCount: liveUpcoming,
+    totalCount: Math.max(0, (totalCount || 0) - staleCount),
+  };
+}
+
+function getCoveoUpcomingFacetCount() {
+  const values = window[FACET_CONTROLLER_MAP.el_contenttype]?.state?.values ?? [];
+  return values.find((v) => v.value === UPCOMING_EVENT_FACET_VALUE)?.numberOfResults ?? 0;
+}
+
 // Tracks active render pass per block; queues the next subscription fire instead of running two renders at once.
 const headlessSubscriptionSyncDepth = new WeakMap();
 /** Literal tokens authors enter in placeholders for dynamic counts. */
@@ -224,7 +279,7 @@ function syncDynamicFacetGroup(block, group) {
   }
 }
 
-function syncEventTypeFilterCounts(block) {
+function syncEventTypeFilterCounts(block, upcomingCountOverride = null) {
   const controller = window[FACET_CONTROLLER_MAP.el_contenttype];
   const groupEl = block.querySelector('.events-search-filter-group[data-filter-type="el_contenttype"]');
   if (!controller || !groupEl) return;
@@ -234,7 +289,10 @@ function syncEventTypeFilterCounts(block) {
     const checkbox = optionEl.querySelector('input[type="checkbox"]');
     if (!checkbox) return;
     const facetValue = facetValues.find((fv) => fv.value === checkbox.value);
-    const count = facetValue?.numberOfResults ?? 0;
+    let count = facetValue?.numberOfResults ?? 0;
+    if (checkbox.value === UPCOMING_EVENT_FACET_VALUE && typeof upcomingCountOverride === 'number') {
+      count = upcomingCountOverride;
+    }
     updateFilterOptionCount(optionEl, count, checkbox.getAttribute('data-label') || checkbox.value);
     const isVisible = checkbox.checked || count > 0;
     optionEl.style.display = isVisible ? '' : 'none';
@@ -247,7 +305,7 @@ function syncEventTypeFilterCounts(block) {
 // Skips facet UI updates triggered before the search response arrives, preventing stale counts.
 const lastSyncedSearchResponseId = new WeakMap();
 
-function syncDynamicFacetGroupsFromHeadless(block, groups) {
+function syncDynamicFacetGroupsFromHeadless(block, groups, upcomingCountOverride = null) {
   if (!(window.headlessStatusControllers?.state?.firstSearchExecuted ?? false)) return;
 
   // Only sync facet UI when a new search response has arrived.
@@ -260,7 +318,7 @@ function syncDynamicFacetGroupsFromHeadless(block, groups) {
   groups.forEach((group) => {
     if (DYNAMIC_FACET_FIELDS.includes(group.id)) syncDynamicFacetGroup(block, group);
   });
-  syncEventTypeFilterCounts(block);
+  syncEventTypeFilterCounts(block, upcomingCountOverride);
 }
 
 /** Builds the composite key used to identify a filter in pendingRemovals and callout data-key attributes. */
@@ -1001,7 +1059,7 @@ async function renderResults(block, results = [], searchResponseId = '') {
     }),
   );
 
-  setEventsSearchNoResultsVisibility(block, { resultCount: results.length, searchResponseId });
+  setEventsSearchNoResultsVisibility(block, { resultCount: normalizedCards.length, searchResponseId });
   grid.removeAttribute('hidden');
 
   const resultsBody = block.querySelector('.events-search-results-body');
@@ -1047,14 +1105,22 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
   }
   headlessSubscriptionSyncDepth.set(block, 1);
   try {
-    syncDynamicFacetGroupsFromHeadless(block, groups);
-    syncFilterUIFromHeadlessState(block, groups);
     const search = window.headlessSearchEngine.state.search || {};
     const { results = [], searchResponseId = '', response = {} } = search;
-    updateResultsCount(block, response.totalCount || 0, placeholders);
+    const adjustments = getStaleUpcomingCountAdjustments(
+      block,
+      results,
+      response.totalCount || 0,
+      getCoveoUpcomingFacetCount(),
+    );
+    syncDynamicFacetGroupsFromHeadless(block, groups, adjustments.upcomingCount);
+    // Facet sync may no-op on duplicate searchResponseId — still refresh Upcoming count.
+    syncEventTypeFilterCounts(block, adjustments.upcomingCount);
+    syncFilterUIFromHeadlessState(block, groups);
+    updateResultsCount(block, adjustments.totalCount, placeholders);
     renderActiveFilterCallouts(block);
     await renderResults(block, results, searchResponseId);
-    if (!response.totalCount) updateNoResultsMessage(block, placeholders);
+    if (!adjustments.totalCount) updateNoResultsMessage(block, placeholders);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('events-search: search engine subscription callback failed', err);
@@ -1290,8 +1356,16 @@ async function initHeadlessSearch(block, groups, placeholders) {
     hideAqFromUrl: true,
     baseAdvancedQuery: BASE_COVEO_ADVANCED_QUERY_EVENTS,
     renderSearchQuerySummary: () => {
+      const results = window.headlessSearchEngine?.state?.search?.results || [];
       const totalCount = window.headlessQuerySummary?.state?.total || 0;
-      updateResultsCount(block, totalCount, placeholders);
+      const adjustments = getStaleUpcomingCountAdjustments(
+        block,
+        results,
+        totalCount,
+        getCoveoUpcomingFacetCount(),
+      );
+      updateResultsCount(block, adjustments.totalCount, placeholders);
+      syncEventTypeFilterCounts(block, adjustments.upcomingCount);
     },
     handleSearchBoxSubscription: () => {
       const input = block.querySelector('.events-search-keyword-input');
