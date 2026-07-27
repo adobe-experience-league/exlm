@@ -126,13 +126,33 @@ export function getHeaderSearchFilterValue(searchOptions, { preferCommunity = fa
   return defaultValue;
 }
 
+/**
+ * Normalizes each comma-separated content-type value to its real indexed form.
+ * @param {string} rawValue - e.g. "Community;Community|Questions" or "TypeA,TypeB"
+ * @returns {string} normalized value, e.g. "Community|Questions"
+ */
+export function normalizeContentTypeFilterValue(rawValue) {
+  return (rawValue || '')
+    .split(',')
+    .map((segment) => segment.trim())
+    .filter(Boolean)
+    .map((segment) => {
+      const parts = segment
+        .split(';')
+        .map((part) => part.trim())
+        .filter(Boolean);
+      return parts[parts.length - 1] || segment;
+    })
+    .join(',');
+}
+
 // Redirects to the search page based on the provided search input and filters
 export const redirectToSearchPage = (searchUrl, searchInput, filters = '') => {
   pushTopNavSearchEvent(filters, searchInput);
 
   const isLegacySearch = searchUrl.includes('.html');
   let targetUrlWithLanguage = isLegacySearch ? `${searchUrl}?lang=${languageCode}` : searchUrl;
-  const filterValue = filters?.toLowerCase() === 'all' ? '' : filters;
+  const filterValue = filters?.toLowerCase() === 'all' ? '' : normalizeContentTypeFilterValue(filters);
   if (searchInput) {
     const trimmedSearchInput = encodeURIComponent(searchInput.trim());
     targetUrlWithLanguage += `#q=${trimmedSearchInput}`;
