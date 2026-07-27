@@ -1,6 +1,6 @@
 import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
 import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { BASE_COVEO_ADVANCED_QUERY_EVENTS, isStaleUpcomingCoveoResult } from '../../scripts/browse-card/browse-cards-constants.js';
+import { BASE_COVEO_ADVANCED_QUERY_EVENTS, COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ, isStaleUpcomingCoveoResult, filterStaleUpcomingCoveoResults } from '../../scripts/browse-card/browse-cards-constants.js';
 import {
   normalizeOnDemandEventModel,
   normalizeUpcomingEventModel,
@@ -10,6 +10,8 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import BrowseCardViewSwitcher from '../../scripts/browse-card/browse-cards-view-switcher.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
+import CoveoDataService from '../../scripts/data-service/coveo/coveo-data-service.js';
+import { getExlPipelineDataSourceParams } from '../../scripts/data-service/coveo/coveo-exl-pipeline-helpers.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import {
   eventTypeOptions,
@@ -24,13 +26,16 @@ const FACET_CONTROLLER_MAP = {
 };
 
 const UPCOMING_EVENT_FACET_VALUE = 'Event|Upcoming Event';
+/** Max Upcoming rows to pull when warming the live-count cache (Coveo facet is global). */
+const LIVE_UPCOMING_FETCH_CAP = 100;
 
 /**
  * Cached live Upcoming count keyed by search context (facet count + query + selected filters).
- * Invalidated when that context changes so we never reuse a live total from another filter set.
  * @type {WeakMap<HTMLElement, { contextKey: string, coveoFacetCount: number, liveCount: number }>}
  */
 const liveUpcomingCacheByBlock = new WeakMap();
+/** @type {WeakMap<HTMLElement, Promise<number|null>>} */
+const liveUpcomingFetchInFlight = new WeakMap();
 
 function isUpcomingCoveoResult(result) {
   const contentType = result?.raw?.el_contenttype;
@@ -63,43 +68,77 @@ function getUpcomingCountContextKey(upcomingFacetCount) {
   return `${upcomingFacetCount}|${q}|${selectedParts.join(';')}`;
 }
 
+function isUpcomingOnlyFilterSelected() {
+  const selected = (window[FACET_CONTROLLER_MAP.el_contenttype]?.state?.values || []).filter(
+    (v) => v.state === 'selected',
+  );
+  return selected.length === 1 && selected[0].value === UPCOMING_EVENT_FACET_VALUE;
+}
+
+async function fetchUpcomingCoveoResults(upcomingFacetCount) {
+  const noOfResults = Math.min(Math.max(upcomingFacetCount || 1, 1), LIVE_UPCOMING_FETCH_CAP);
+  const dataSource = getExlPipelineDataSourceParams({
+    noOfResults,
+    sortCriteria: 'date ascending',
+    aq: COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ,
+  });
+  const service = new CoveoDataService(dataSource);
+  const data = await service.fetchDataFromSource();
+  return Array.isArray(data?.results) ? data.results : [];
+}
+
 /**
- * Coveo facet totals still include stale Upcoming (string start field can't be filtered in aq).
- * When the current response contains the full Upcoming set, derive the live count from
- * `el_event_start_time` and cache it for later pages of the same search context.
+ * Resolve non-stale Upcoming count for facet/total UI.
+ * Prefers counting from the current page when it holds the full Upcoming set; otherwise
+ * warms a one-shot Upcoming-only Coveo fetch (capped) so counts stay correct when
+ * Upcoming > page size.
  */
-function getStaleUpcomingCountAdjustments(block, results = [], totalCount = 0, upcomingFacetCount = 0) {
+async function ensureLiveUpcomingCount(block, results, upcomingFacetCount) {
   if (upcomingFacetCount <= 0) {
     clearLiveUpcomingCache(block);
-    return { upcomingCount: 0, totalCount };
+    return 0;
   }
 
   const contextKey = getUpcomingCountContextKey(upcomingFacetCount);
-  const upcomingInResults = countUpcomingInResults(results);
-  const liveInResults = countLiveUpcomingInResults(results);
   const cached = liveUpcomingCacheByBlock.get(block);
-
+  if (cached?.contextKey === contextKey && cached.coveoFacetCount === upcomingFacetCount) {
+    return cached.liveCount;
+  }
   if (cached && cached.contextKey !== contextKey) {
     clearLiveUpcomingCache(block);
   }
 
-  // Full Upcoming set present in this response — refresh cache for this context.
+  const upcomingInResults = countUpcomingInResults(results);
   if (upcomingInResults === upcomingFacetCount) {
-    liveUpcomingCacheByBlock.set(block, {
-      contextKey,
-      coveoFacetCount: upcomingFacetCount,
-      liveCount: liveInResults,
-    });
+    const liveCount = countLiveUpcomingInResults(results);
+    liveUpcomingCacheByBlock.set(block, { contextKey, coveoFacetCount: upcomingFacetCount, liveCount });
+    return liveCount;
   }
 
-  const activeCache = liveUpcomingCacheByBlock.get(block);
-  const liveUpcoming =
-    activeCache && activeCache.contextKey === contextKey && activeCache.coveoFacetCount === upcomingFacetCount
-      ? activeCache.liveCount
-      : null;
+  let inflight = liveUpcomingFetchInFlight.get(block);
+  if (!inflight) {
+    inflight = fetchUpcomingCoveoResults(upcomingFacetCount)
+      .then((upcomingResults) => {
+        const liveCount = countLiveUpcomingInResults(upcomingResults);
+        liveUpcomingCacheByBlock.set(block, { contextKey, coveoFacetCount: upcomingFacetCount, liveCount });
+        return liveCount;
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.warn('events-search: failed to warm live Upcoming count', err);
+        return null;
+      })
+      .finally(() => {
+        liveUpcomingFetchInFlight.delete(block);
+      });
+    liveUpcomingFetchInFlight.set(block, inflight);
+  }
+  return inflight;
+}
 
-  if (liveUpcoming == null) {
-    // Cannot safely adjust (e.g. Upcoming span multiple pages before a full-set page) — keep Coveo totals.
+async function getStaleUpcomingCountAdjustments(block, results = [], totalCount = 0, upcomingFacetCount = 0) {
+  const liveUpcoming = await ensureLiveUpcomingCount(block, results, upcomingFacetCount);
+  if (liveUpcoming == null || upcomingFacetCount <= 0) {
     return { upcomingCount: upcomingFacetCount, totalCount };
   }
 
@@ -1152,24 +1191,50 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
   try {
     const search = window.headlessSearchEngine.state.search || {};
     const { results = [], searchResponseId = '', response = {} } = search;
-    const adjustments = getStaleUpcomingCountAdjustments(
+    const upcomingFacetCount = getCoveoUpcomingFacetCount();
+    const adjustments = await getStaleUpcomingCountAdjustments(
       block,
       results,
       response.totalCount || 0,
-      getCoveoUpcomingFacetCount(),
+      upcomingFacetCount,
     );
+
+    // Upcoming-only: render the live Upcoming set so pagination isn't full of empty stale pages.
+    let resultsToRender = results;
+    let totalForUi = adjustments.totalCount;
+    let upcomingForUi = adjustments.upcomingCount;
+    if (isUpcomingOnlyFilterSelected()) {
+      try {
+        const liveUpcomingResults = filterStaleUpcomingCoveoResults(
+          await fetchUpcomingCoveoResults(upcomingFacetCount || LIVE_UPCOMING_FETCH_CAP),
+        );
+        resultsToRender = liveUpcomingResults;
+        totalForUi = liveUpcomingResults.length;
+        upcomingForUi = liveUpcomingResults.length;
+        const contextKey = getUpcomingCountContextKey(upcomingFacetCount);
+        liveUpcomingCacheByBlock.set(block, {
+          contextKey,
+          coveoFacetCount: upcomingFacetCount,
+          liveCount: upcomingForUi,
+        });
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.warn('events-search: Upcoming-only live fetch failed; using headless page', err);
+      }
+    }
+
     syncDynamicFacetGroupsFromHeadless(block, groups, {
-      upcomingCountOverride: adjustments.upcomingCount,
-      adjustedTotalCount: adjustments.totalCount,
+      upcomingCountOverride: upcomingForUi,
+      adjustedTotalCount: totalForUi,
     });
     // Facet sync may no-op on duplicate searchResponseId — still refresh Upcoming count / empty state.
-    syncEventTypeFilterCounts(block, adjustments.upcomingCount);
-    block.classList.toggle('has-no-results', !adjustments.totalCount);
+    syncEventTypeFilterCounts(block, upcomingForUi);
+    block.classList.toggle('has-no-results', !totalForUi);
     syncFilterUIFromHeadlessState(block, groups);
-    updateResultsCount(block, adjustments.totalCount, placeholders);
+    updateResultsCount(block, totalForUi, placeholders);
     renderActiveFilterCallouts(block);
-    await renderResults(block, results, searchResponseId, adjustments.totalCount);
-    if (!adjustments.totalCount) updateNoResultsMessage(block, placeholders);
+    await renderResults(block, resultsToRender, searchResponseId, totalForUi);
+    if (!totalForUi) updateNoResultsMessage(block, placeholders);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('events-search: search engine subscription callback failed', err);
@@ -1404,10 +1469,10 @@ async function initHeadlessSearch(block, groups, placeholders) {
     facetOverrides: getEventsSearchHeadlessFacetOverrides(),
     hideAqFromUrl: true,
     baseAdvancedQuery: BASE_COVEO_ADVANCED_QUERY_EVENTS,
-    renderSearchQuerySummary: () => {
+    renderSearchQuerySummary: async () => {
       const results = window.headlessSearchEngine?.state?.search?.results || [];
       const totalCount = window.headlessQuerySummary?.state?.total || 0;
-      const adjustments = getStaleUpcomingCountAdjustments(
+      const adjustments = await getStaleUpcomingCountAdjustments(
         block,
         results,
         totalCount,
