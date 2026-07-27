@@ -4,6 +4,7 @@ import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constant
 import { fetchLanguagePlaceholders } from '../scripts.js';
 import { rewriteDocsPath } from '../utils/path-utils.js';
 import isFeatureEnabled from '../utils/feature-flag-utils.js';
+import { filterStaleUpcomingCoveoResults } from './browse-cards-constants.js';
 
 /**
  * Module that provides functionality for adapting Coveo search results to BrowseCards data model.
@@ -199,7 +200,10 @@ const BrowseCardsCoveoDataAdaptor = (() => {
       // eslint-disable-next-line no-console
       console.error('Error fetching placeholders:', err);
     }
-    return data.map((result, index) => mapResultToCardsDataModel(result, index, searchUid));
+    // Prod `@date >= now` aq is unreliable; drop stale Upcoming via el_event_start_time.
+    return filterStaleUpcomingCoveoResults(data).map((result, index) =>
+      mapResultToCardsDataModel(result, index, searchUid),
+    );
   };
 
   return {
