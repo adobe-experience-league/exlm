@@ -28,6 +28,24 @@ const FACET_CONTROLLER_MAP = {
 const UPCOMING_EVENT_FACET_VALUE = 'Event|Upcoming Event';
 /** Max Upcoming rows to pull when warming the live-count cache (Coveo facet is global). */
 const LIVE_UPCOMING_FETCH_CAP = 100;
+/** Fields required for client-side stale detection on auxiliary Upcoming fetches. */
+const UPCOMING_LIVE_FETCH_FIELDS = [
+  'el_contenttype',
+  'el_event_start_time',
+  'el_event_series',
+  'el_event_type',
+  'el_event_speakers_name',
+  'el_event_speakers_profile_picture_url',
+  'el_product',
+  'title',
+  'exl_description',
+  'exl_thumbnail',
+  'date',
+  'permanentid',
+  'uri',
+  'clickableuri',
+  'source',
+];
 
 /**
  * Cached live Upcoming count keyed by search context (facet count + query + selected filters).
@@ -75,13 +93,25 @@ function isUpcomingOnlyFilterSelected() {
   return selected.length === 1 && selected[0].value === UPCOMING_EVENT_FACET_VALUE;
 }
 
+/** True when Product/Series (or other non-type) facets narrow the result set. */
+function hasNonTypeFacetFiltersSelected() {
+  return ['el_product', 'el_event_series'].some((field) =>
+    (window[FACET_CONTROLLER_MAP[field]]?.state?.values || []).some((v) => v.state === 'selected'),
+  );
+}
+
 async function fetchUpcomingCoveoResults(upcomingFacetCount) {
   const noOfResults = Math.min(Math.max(upcomingFacetCount || 1, 1), LIVE_UPCOMING_FETCH_CAP);
-  const dataSource = getExlPipelineDataSourceParams({
-    noOfResults,
-    sortCriteria: 'date ascending',
-    aq: COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ,
-  });
+  const q = String(window.headlessSearchBox?.state?.value || '').trim();
+  const dataSource = getExlPipelineDataSourceParams(
+    {
+      noOfResults,
+      sortCriteria: 'date ascending',
+      aq: COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ,
+      ...(q ? { q } : {}),
+    },
+    UPCOMING_LIVE_FETCH_FIELDS,
+  );
   const service = new CoveoDataService(dataSource);
   const data = await service.fetchDataFromSource();
   return Array.isArray(data?.results) ? data.results : [];
@@ -90,8 +120,7 @@ async function fetchUpcomingCoveoResults(upcomingFacetCount) {
 /**
  * Resolve non-stale Upcoming count for facet/total UI.
  * Prefers counting from the current page when it holds the full Upcoming set; otherwise
- * warms a one-shot Upcoming-only Coveo fetch (capped) so counts stay correct when
- * Upcoming > page size.
+ * warms a one-shot Upcoming-only Coveo fetch (capped) when safe (Upcoming-only / no product filters).
  */
 async function ensureLiveUpcomingCount(block, results, upcomingFacetCount) {
   if (upcomingFacetCount <= 0) {
@@ -113,6 +142,12 @@ async function ensureLiveUpcomingCount(block, results, upcomingFacetCount) {
     const liveCount = countLiveUpcomingInResults(results);
     liveUpcomingCacheByBlock.set(block, { contextKey, coveoFacetCount: upcomingFacetCount, liveCount });
     return liveCount;
+  }
+
+  // Do not warm with a global Upcoming query when other facets narrow Coveo's facet count —
+  // that fetch would not match the filtered population.
+  if (hasNonTypeFacetFiltersSelected()) {
+    return null;
   }
 
   let inflight = liveUpcomingFetchInFlight.get(block);
@@ -1199,11 +1234,12 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
       upcomingFacetCount,
     );
 
-    // Upcoming-only: render the live Upcoming set so pagination isn't full of empty stale pages.
+    // Upcoming-only (no Product/Series narrowing): render the live Upcoming set so
+    // pagination isn't full of empty stale pages.
     let resultsToRender = results;
     let totalForUi = adjustments.totalCount;
     let upcomingForUi = adjustments.upcomingCount;
-    if (isUpcomingOnlyFilterSelected()) {
+    if (isUpcomingOnlyFilterSelected() && !hasNonTypeFacetFiltersSelected()) {
       try {
         const liveUpcomingResults = filterStaleUpcomingCoveoResults(
           await fetchUpcomingCoveoResults(upcomingFacetCount || LIVE_UPCOMING_FETCH_CAP),
