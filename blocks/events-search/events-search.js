@@ -55,12 +55,12 @@ function getStaleUpcomingCountAdjustments(block, results = [], totalCount = 0, u
     liveUpcomingCountByBlock.set(block, liveInResults);
   }
 
-  const liveUpcoming =
-    liveUpcomingCountByBlock.has(block) && upcomingFacetCount > 0
-      ? liveUpcomingCountByBlock.get(block)
-      : upcomingInResults === upcomingFacetCount
-        ? liveInResults
-        : null;
+  let liveUpcoming = null;
+  if (liveUpcomingCountByBlock.has(block) && upcomingFacetCount > 0) {
+    liveUpcoming = liveUpcomingCountByBlock.get(block);
+  } else if (upcomingInResults === upcomingFacetCount) {
+    liveUpcoming = liveInResults;
+  }
 
   if (liveUpcoming == null || upcomingFacetCount <= 0) {
     return { upcomingCount: upcomingFacetCount, totalCount };
