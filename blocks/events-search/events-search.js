@@ -26,9 +26,9 @@ const FACET_CONTROLLER_MAP = {
 const UPCOMING_EVENT_FACET_VALUE = 'Event|Upcoming Event';
 
 /**
- * Cached live Upcoming count keyed by Coveo's unfiltered facet count.
- * Invalidated when Coveo facet count changes or becomes 0.
- * @type {WeakMap<HTMLElement, { coveoFacetCount: number, liveCount: number }>}
+ * Cached live Upcoming count keyed by search context (facet count + query + selected filters).
+ * Invalidated when that context changes so we never reuse a live total from another filter set.
+ * @type {WeakMap<HTMLElement, { contextKey: string, coveoFacetCount: number, liveCount: number }>}
  */
 const liveUpcomingCacheByBlock = new WeakMap();
 
@@ -50,11 +50,23 @@ function clearLiveUpcomingCache(block) {
   liveUpcomingCacheByBlock.delete(block);
 }
 
+/** Context key so cached live counts are not reused across keyword/facet changes. */
+function getUpcomingCountContextKey(upcomingFacetCount) {
+  const q = String(window.headlessSearchBox?.state?.value || '').trim();
+  const selectedParts = Object.entries(FACET_CONTROLLER_MAP).map(([field, controllerName]) => {
+    const selected = (window[controllerName]?.state?.values || [])
+      .filter((v) => v.state === 'selected')
+      .map((v) => v.value)
+      .sort();
+    return `${field}:${selected.join(',')}`;
+  });
+  return `${upcomingFacetCount}|${q}|${selectedParts.join(';')}`;
+}
+
 /**
  * Coveo facet totals still include stale Upcoming (string start field can't be filtered in aq).
  * When the current response contains the full Upcoming set, derive the live count from
- * `el_event_start_time` and cache it keyed by Coveo's facet count. Cache is cleared when
- * that facet count changes (filters/index shift) so we never reuse a stale live total.
+ * `el_event_start_time` and cache it for later pages of the same search context.
  */
 function getStaleUpcomingCountAdjustments(block, results = [], totalCount = 0, upcomingFacetCount = 0) {
   if (upcomingFacetCount <= 0) {
@@ -62,24 +74,32 @@ function getStaleUpcomingCountAdjustments(block, results = [], totalCount = 0, u
     return { upcomingCount: 0, totalCount };
   }
 
+  const contextKey = getUpcomingCountContextKey(upcomingFacetCount);
   const upcomingInResults = countUpcomingInResults(results);
   const liveInResults = countLiveUpcomingInResults(results);
   const cached = liveUpcomingCacheByBlock.get(block);
 
-  // Full Upcoming set present in this response — refresh cache.
-  if (upcomingInResults === upcomingFacetCount) {
-    liveUpcomingCacheByBlock.set(block, { coveoFacetCount: upcomingFacetCount, liveCount: liveInResults });
-  } else if (cached && cached.coveoFacetCount !== upcomingFacetCount) {
-    // Coveo Upcoming population changed; previous live count is no longer valid.
+  if (cached && cached.contextKey !== contextKey) {
     clearLiveUpcomingCache(block);
+  }
+
+  // Full Upcoming set present in this response — refresh cache for this context.
+  if (upcomingInResults === upcomingFacetCount) {
+    liveUpcomingCacheByBlock.set(block, {
+      contextKey,
+      coveoFacetCount: upcomingFacetCount,
+      liveCount: liveInResults,
+    });
   }
 
   const activeCache = liveUpcomingCacheByBlock.get(block);
   const liveUpcoming =
-    activeCache && activeCache.coveoFacetCount === upcomingFacetCount ? activeCache.liveCount : null;
+    activeCache && activeCache.contextKey === contextKey && activeCache.coveoFacetCount === upcomingFacetCount
+      ? activeCache.liveCount
+      : null;
 
   if (liveUpcoming == null) {
-    // Cannot safely adjust (e.g. Upcoming span multiple pages) — keep Coveo totals.
+    // Cannot safely adjust (e.g. Upcoming span multiple pages before a full-set page) — keep Coveo totals.
     return { upcomingCount: upcomingFacetCount, totalCount };
   }
 
@@ -321,7 +341,7 @@ function syncEventTypeFilterCounts(block, upcomingCountOverride = null) {
 // Skips facet UI updates triggered before the search response arrives, preventing stale counts.
 const lastSyncedSearchResponseId = new WeakMap();
 
-function syncDynamicFacetGroupsFromHeadless(block, groups, upcomingCountOverride = null) {
+function syncDynamicFacetGroupsFromHeadless(block, groups, { upcomingCountOverride = null, adjustedTotalCount = null } = {}) {
   if (!(window.headlessStatusControllers?.state?.firstSearchExecuted ?? false)) return;
 
   // Only sync facet UI when a new search response has arrived.
@@ -329,7 +349,8 @@ function syncDynamicFacetGroupsFromHeadless(block, groups, upcomingCountOverride
   if (searchResponseId && lastSyncedSearchResponseId.get(block) === searchResponseId) return;
   if (searchResponseId) lastSyncedSearchResponseId.set(block, searchResponseId);
 
-  const totalResults = window.headlessSearchEngine?.state?.search?.response?.totalCount ?? 0;
+  const coveoTotal = window.headlessSearchEngine?.state?.search?.response?.totalCount ?? 0;
+  const totalResults = typeof adjustedTotalCount === 'number' ? adjustedTotalCount : coveoTotal;
   block.classList.toggle('has-no-results', !totalResults);
   groups.forEach((group) => {
     if (DYNAMIC_FACET_FIELDS.includes(group.id)) syncDynamicFacetGroup(block, group);
@@ -1029,7 +1050,7 @@ function updateResultsCount(block, totalCount = 0, placeholders = {}) {
   countEl.replaceChildren(countStrong, document.createTextNode(` ${suffix}`));
 }
 
-async function renderResults(block, results = [], searchResponseId = '') {
+async function renderResults(block, results = [], searchResponseId = '', adjustedTotalCount = null) {
   const grid = block.querySelector('.events-search-results-grid');
   const noResults = block.querySelector('.events-search-no-results');
   if (!grid || !noResults) return;
@@ -1039,7 +1060,7 @@ async function renderResults(block, results = [], searchResponseId = '') {
     grid.classList.remove('browse-cards-block-content');
     grid.setAttribute('hidden', '');
     setEventsSearchNoResultsVisibility(block, {
-      resultCount: 0,
+      resultCount: typeof adjustedTotalCount === 'number' ? adjustedTotalCount : 0,
       searchResponseId,
       suppressWhileShimmer: true,
     });
@@ -1075,8 +1096,16 @@ async function renderResults(block, results = [], searchResponseId = '') {
     }),
   );
 
-  setEventsSearchNoResultsVisibility(block, { resultCount: normalizedCards.length, searchResponseId });
-  grid.removeAttribute('hidden');
+  // Use adjusted total so a page of only-stale Upcoming does not flash the global no-results banner
+  // when other live results still exist (pagination / mixed pages).
+  const noResultsCount =
+    typeof adjustedTotalCount === 'number' ? adjustedTotalCount : normalizedCards.length;
+  setEventsSearchNoResultsVisibility(block, { resultCount: noResultsCount, searchResponseId });
+  if (normalizedCards.length) {
+    grid.removeAttribute('hidden');
+  } else {
+    grid.setAttribute('hidden', '');
+  }
 
   const resultsBody = block.querySelector('.events-search-results-body');
   const viewSwitcher = viewSwitcherInstances.get(block);
@@ -1129,13 +1158,17 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
       response.totalCount || 0,
       getCoveoUpcomingFacetCount(),
     );
-    syncDynamicFacetGroupsFromHeadless(block, groups, adjustments.upcomingCount);
-    // Facet sync may no-op on duplicate searchResponseId — still refresh Upcoming count.
+    syncDynamicFacetGroupsFromHeadless(block, groups, {
+      upcomingCountOverride: adjustments.upcomingCount,
+      adjustedTotalCount: adjustments.totalCount,
+    });
+    // Facet sync may no-op on duplicate searchResponseId — still refresh Upcoming count / empty state.
     syncEventTypeFilterCounts(block, adjustments.upcomingCount);
+    block.classList.toggle('has-no-results', !adjustments.totalCount);
     syncFilterUIFromHeadlessState(block, groups);
     updateResultsCount(block, adjustments.totalCount, placeholders);
     renderActiveFilterCallouts(block);
-    await renderResults(block, results, searchResponseId);
+    await renderResults(block, results, searchResponseId, adjustments.totalCount);
     if (!adjustments.totalCount) updateNoResultsMessage(block, placeholders);
   } catch (err) {
     // eslint-disable-next-line no-console
