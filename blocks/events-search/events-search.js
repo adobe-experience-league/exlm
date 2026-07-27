@@ -54,6 +54,11 @@ const UPCOMING_LIVE_FETCH_FIELDS = [
 const liveUpcomingCacheByBlock = new WeakMap();
 /** @type {WeakMap<HTMLElement, Promise<number|null>>} */
 const liveUpcomingFetchInFlight = new WeakMap();
+/**
+ * Full live Upcoming result set for client-side pagination (Upcoming-only, no Product/Series).
+ * @type {WeakMap<HTMLElement, { contextKey: string, results: Array }>}
+ */
+const clientPaginatedUpcomingByBlock = new WeakMap();
 
 function isUpcomingCoveoResult(result) {
   const contentType = result?.raw?.el_contenttype;
@@ -71,6 +76,35 @@ function countLiveUpcomingInResults(results = []) {
 
 function clearLiveUpcomingCache(block) {
   liveUpcomingCacheByBlock.delete(block);
+  clientPaginatedUpcomingByBlock.delete(block);
+}
+
+function getEventsSearchPageSize() {
+  return getBrowseFiltersResultCount() || 12;
+}
+
+/** True when Upcoming hits are part of the current Coveo result population (not On-Demand-only). */
+function isUpcomingIncludedInCurrentResults() {
+  const selected = (window[FACET_CONTROLLER_MAP.el_contenttype]?.state?.values || []).filter(
+    (v) => v.state === 'selected',
+  );
+  if (selected.length === 0) return true;
+  return selected.some((v) => v.value === UPCOMING_EVENT_FACET_VALUE);
+}
+
+function getEffectiveMaxPage(block) {
+  const client = clientPaginatedUpcomingByBlock.get(block);
+  if (client) {
+    const pageSize = getEventsSearchPageSize();
+    return Math.max(1, Math.ceil((client.results?.length || 0) / pageSize) || 1);
+  }
+  return window.headlessPager?.state?.maxPage || 1;
+}
+
+function getEffectiveCurrentPage(block) {
+  const maxPage = getEffectiveMaxPage(block);
+  const current = window.headlessPager?.state?.currentPage || 1;
+  return Math.min(Math.max(1, current), maxPage);
 }
 
 /** Context key so cached live counts are not reused across keyword/facet changes. */
@@ -178,6 +212,11 @@ async function getStaleUpcomingCountAdjustments(block, results = [], totalCount 
   }
 
   const staleCount = Math.max(0, upcomingFacetCount - liveUpcoming);
+  // Idle Upcoming facet counts stay visible under On-Demand-only filters, but those hits are
+  // not in totalCount — only subtract stale when Upcoming is in the active result set.
+  if (!isUpcomingIncludedInCurrentResults()) {
+    return { upcomingCount: liveUpcoming, totalCount };
+  }
   return {
     upcomingCount: liveUpcoming,
     totalCount: Math.max(0, (totalCount || 0) - staleCount),
@@ -767,8 +806,8 @@ function renderEventsSearchPageNumbers(block, placeholders) {
     return;
   }
 
-  const currentPageNumber = window.headlessPager.state?.currentPage || 1;
-  const pgCount = window.headlessPager.state?.maxPage || 1;
+  const currentPageNumber = getEffectiveCurrentPage(block);
+  const pgCount = getEffectiveMaxPage(block);
   const paginationTextEl = filtersPaginationEl.querySelector('.events-search-pagination-text');
   const inputText = filtersPaginationEl.querySelector('input.events-search-pg-input');
   if (inputText) {
@@ -940,8 +979,10 @@ function bindEventsSearchPagination(block) {
     navButton.addEventListener('click', (e) => {
       const jumpToPreviousPg = !e.currentTarget.classList.contains('right-nav-arrow');
       if (!window.headlessPager) return;
-      const newPageNumber = window.headlessPager.state.currentPage + (jumpToPreviousPg ? -1 : 1);
-      if (newPageNumber < 1 || newPageNumber > window.headlessPager.state.maxPage) {
+      const maxPage = getEffectiveMaxPage(block);
+      const currentPage = getEffectiveCurrentPage(block);
+      const newPageNumber = currentPage + (jumpToPreviousPg ? -1 : 1);
+      if (newPageNumber < 1 || newPageNumber > maxPage) {
         return;
       }
       window.headlessPager.selectPage(newPageNumber);
@@ -952,29 +993,31 @@ function bindEventsSearchPagination(block) {
   const filterInputEl = filtersPaginationEl.querySelector('input.events-search-pg-input');
   if (filterInputEl) {
     filterInputEl.addEventListener('change', (e) => {
+      const maxPage = getEffectiveMaxPage(block);
       let newPageNum = +e.target.value;
       if (newPageNum < 1) {
         newPageNum = 1;
         e.target.value = newPageNum;
-      } else if (window.headlessPager?.state?.maxPage && newPageNum > window.headlessPager.state.maxPage) {
-        newPageNum = window.headlessPager.state.maxPage;
+      } else if (newPageNum > maxPage) {
+        newPageNum = maxPage;
         e.target.value = newPageNum;
       }
       if (!window.headlessPager) return;
       if (Number.isNaN(newPageNum)) {
-        e.target.value = window.headlessPager.state?.currentPage || 1;
+        e.target.value = getEffectiveCurrentPage(block);
       } else {
         window.headlessPager.selectPage(newPageNum);
         executeSearch();
       }
     });
     filterInputEl.addEventListener('keyup', (e) => {
+      const maxPage = getEffectiveMaxPage(block);
       const pgNumber = +e.target.value;
       if (window.headlessPager?.state) {
         if (Number.isNaN(pgNumber)) {
-          e.target.value = window.headlessPager.state.currentPage || 1;
-        } else if (pgNumber > window.headlessPager.state.maxPage) {
-          e.target.value = window.headlessPager.state.maxPage;
+          e.target.value = getEffectiveCurrentPage(block);
+        } else if (pgNumber > maxPage) {
+          e.target.value = maxPage;
         }
       }
       if (e.key === 'Enter' && window.headlessPager) {
@@ -1234,29 +1277,48 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
       upcomingFacetCount,
     );
 
-    // Upcoming-only (no Product/Series narrowing): render the live Upcoming set so
-    // pagination isn't full of empty stale pages.
+    // Upcoming-only (no Product/Series narrowing): client-paginate the live Upcoming set so
+    // pager page counts match non-stale results (headless still includes stale Upcoming).
     let resultsToRender = results;
     let totalForUi = adjustments.totalCount;
     let upcomingForUi = adjustments.upcomingCount;
     if (isUpcomingOnlyFilterSelected() && !hasNonTypeFacetFiltersSelected()) {
       try {
-        const liveUpcomingResults = filterStaleUpcomingCoveoResults(
-          await fetchUpcomingCoveoResults(upcomingFacetCount || LIVE_UPCOMING_FETCH_CAP),
-        );
-        resultsToRender = liveUpcomingResults;
+        const contextKey = getUpcomingCountContextKey(upcomingFacetCount);
+        let cachedLive = clientPaginatedUpcomingByBlock.get(block);
+        if (!cachedLive || cachedLive.contextKey !== contextKey) {
+          const liveUpcomingResults = filterStaleUpcomingCoveoResults(
+            await fetchUpcomingCoveoResults(upcomingFacetCount || LIVE_UPCOMING_FETCH_CAP),
+          );
+          cachedLive = { contextKey, results: liveUpcomingResults };
+          clientPaginatedUpcomingByBlock.set(block, cachedLive);
+          liveUpcomingCacheByBlock.set(block, {
+            contextKey,
+            coveoFacetCount: upcomingFacetCount,
+            liveCount: liveUpcomingResults.length,
+          });
+        }
+        const liveUpcomingResults = cachedLive.results;
+        const pageSize = getEventsSearchPageSize();
+        const maxPage = Math.max(1, Math.ceil(liveUpcomingResults.length / pageSize) || 1);
+        const headlessPage = window.headlessPager?.state?.currentPage || 1;
+        if (window.headlessPager && headlessPage > maxPage) {
+          window.headlessPager.selectPage(maxPage);
+          executeSearch();
+          return;
+        }
+        const currentPage = getEffectiveCurrentPage(block);
+        const start = (currentPage - 1) * pageSize;
+        resultsToRender = liveUpcomingResults.slice(start, start + pageSize);
         totalForUi = liveUpcomingResults.length;
         upcomingForUi = liveUpcomingResults.length;
-        const contextKey = getUpcomingCountContextKey(upcomingFacetCount);
-        liveUpcomingCacheByBlock.set(block, {
-          contextKey,
-          coveoFacetCount: upcomingFacetCount,
-          liveCount: upcomingForUi,
-        });
       } catch (err) {
+        clientPaginatedUpcomingByBlock.delete(block);
         // eslint-disable-next-line no-console
         console.warn('events-search: Upcoming-only live fetch failed; using headless page', err);
       }
+    } else {
+      clientPaginatedUpcomingByBlock.delete(block);
     }
 
     syncDynamicFacetGroupsFromHeadless(block, groups, {
@@ -1270,6 +1332,7 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
     updateResultsCount(block, totalForUi, placeholders);
     renderActiveFilterCallouts(block);
     await renderResults(block, resultsToRender, searchResponseId, totalForUi);
+    renderEventsSearchPageNumbers(block, placeholders);
     if (!totalForUi) updateNoResultsMessage(block, placeholders);
   } catch (err) {
     // eslint-disable-next-line no-console
