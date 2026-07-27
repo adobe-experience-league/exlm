@@ -1379,3 +1379,47 @@ export function pushTopNavSearchEvent(contentTypeDropDown, searchTerm) {
     },
   });
 }
+
+/**
+ * Pushes the Brand Concierge widget impression event to the Adobe Data Layer.
+ * Fired once, the first time the BC entry point becomes visible.
+ */
+export function pushBcWidgetImpressionEvent() {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'bcWidgetImpression',
+    eventType: 'web.webInteraction.bcWidgetImpression',
+    link: {
+      linkTitle: 'bc widget impression',
+      linkLocation: 'brand concierge widget',
+      linkType: 'Impression',
+      destinationDomain: window.location.href,
+    },
+    user: {},
+  });
+}
+
+/**
+ * Pushes a Brand Concierge widget interaction event (open, close, expand,
+ * collapse, clear, message submit) to the Adobe Data Layer.
+ * @param {string} linkTitle - e.g. 'bc widget open', 'bc message submit'.
+ * @param {{ bcChatId?: string, bcChatMessageNumber?: number }} [options] - Chat session
+ * identifiers, included only once a conversation has started.
+ */
+export function pushBcInteractionEvent(linkTitle, { bcChatId, bcChatMessageNumber } = {}) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'linkClicked',
+    eventType: 'web.webInteraction.linkclicks',
+    link: {
+      linkTitle,
+      linkLocation: 'brand concierge widget',
+      linkType: 'button',
+      destinationDomain: window.location.href,
+    },
+    ...(bcChatId && { bcChat: { bcChatId, bcChatMessageNumber } }),
+    user: {},
+  });
+}

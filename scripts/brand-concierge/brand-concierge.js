@@ -3,6 +3,7 @@ import { getConfig } from '../scripts.js';
 import { loadScript, decorateIcon } from '../lib-franklin.js';
 import { openDrawer } from '../dialog/dialog.js';
 import brandConciergeConfig from './brand-concierge-config.js';
+import { pushBcWidgetImpressionEvent, pushBcInteractionEvent } from '../analytics/lib-analytics.js';
 
 // Separate alloy instance avoids conflicting with the Launch-owned window.alloy.
 const ALLOY_INSTANCE_NAME = 'alloyBC';
@@ -65,6 +66,12 @@ let mountInteractionHandler = null;
 let mountWithHandler = null;
 let keyboardScrollHandler = null;
 let keyboardScrollDialog = null;
+let impressionObserver = null;
+
+/** Identifies the current BC conversation for analytics; created on first message submit. */
+let bcChatId = null;
+/** Count of messages submitted in the current conversation. */
+let bcChatMessageNumber = 0;
 
 /**
  * Removes persisted BC chat sessions from localStorage (transcript + metadata).
@@ -402,7 +409,15 @@ function scheduleScrollAfterSuggestion(mount) {
 }
 
 function handleBrandConciergeClientEvent(event) {
-  if (!event?.eventType || !SCROLL_EVENT_TYPES.has(event.eventType)) return;
+  if (!event?.eventType) return;
+
+  if (event.eventType === BC_EVENT_QUERY_SUBMITTED) {
+    bcChatId = bcChatId || window.crypto.randomUUID();
+    bcChatMessageNumber += 1;
+    pushBcInteractionEvent('bc message submit', { bcChatId, bcChatMessageNumber });
+  }
+
+  if (!SCROLL_EVENT_TYPES.has(event.eventType)) return;
 
   const mount = getBrandConciergeMount();
   if (!mount) return;
@@ -629,6 +644,9 @@ async function clearBrandConciergeConversation() {
     await concierge.bootstrap(getBootstrapOptions());
   }
 
+  bcChatId = null;
+  bcChatMessageNumber = 0;
+
   const bcMount = getBrandConciergeMount();
   scrollToBottomWatcher?.cleanup();
   watchScrollToBottomButton(bcMount);
@@ -722,6 +740,15 @@ function createMountPoint() {
   decorateIcon(sendIcon);
   document.body.append(trigger);
 
+  impressionObserver?.disconnect();
+  impressionObserver = new IntersectionObserver((entries) => {
+    if (!entries.some((entry) => entry.isIntersecting)) return;
+    pushBcWidgetImpressionEvent();
+    impressionObserver.disconnect();
+    impressionObserver = null;
+  });
+  impressionObserver.observe(trigger);
+
   const mount = document.createElement('div');
   mount.id = 'brand-concierge-mount';
 
@@ -742,7 +769,16 @@ function createMountPoint() {
     canExpand: true,
     beforeExpandButton: clearBtn,
     triggerEl: trigger,
-    onClose: () => trigger.setAttribute('aria-expanded', 'false'),
+    onClose: () => {
+      trigger.setAttribute('aria-expanded', 'false');
+      pushBcInteractionEvent(
+        bcChatMessageNumber > 0 ? 'bc widget close with message' : 'bc widget close without message',
+        {
+          bcChatId,
+          bcChatMessageNumber,
+        },
+      );
+    },
   });
 
   const { element: dialog } = drawerHandle;
@@ -752,13 +788,20 @@ function createMountPoint() {
     dialog.showModal();
     trigger.setAttribute('aria-expanded', 'true');
     focusBcChatInputWhenReady(mount);
+    pushBcInteractionEvent('bc widget open', { bcChatId, bcChatMessageNumber });
   });
 
   dialog.querySelector('.exl-dialog-header-expand')?.addEventListener('click', () => {
     focusBcChatInputWhenReady(mount);
+    const isExpanded = dialog.classList.contains('exl-dialog-expanded');
+    pushBcInteractionEvent(isExpanded ? 'bc widget expand' : 'bc widget collapse', {
+      bcChatId,
+      bcChatMessageNumber,
+    });
   });
 
   clearBtn.addEventListener('click', () => {
+    pushBcInteractionEvent('bc widget clear', { bcChatId, bcChatMessageNumber });
     clearBrandConciergeConversation().catch((e) => warn('Clear conversation failed', e?.message || e));
   });
 
@@ -815,6 +858,8 @@ export function destroyBrandConcierge() {
   scrollToBottomWatcher = null;
   removeKeyboardScrollHandler();
   removeQuestionPinHandlers();
+  impressionObserver?.disconnect();
+  impressionObserver = null;
   inputLabelIconObserver?.disconnect();
   inputLabelIconObserver = null;
   panelDisclaimerObserver?.disconnect();
