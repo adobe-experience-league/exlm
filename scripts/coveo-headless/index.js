@@ -1,5 +1,5 @@
 import buildHeadlessSearchEngine from './engine.js';
-import { fetchLanguagePlaceholders } from '../scripts.js';
+import { fetchLanguagePlaceholders, getCoveoSearchLocale } from '../scripts.js';
 import { handleCoverSearchSubmit } from '../../blocks/browse-filters/browse-filter-utils.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../search/search-utils.js';
 
@@ -12,20 +12,13 @@ try {
   console.error('Error fetching placeholders:', err);
 }
 
-const locales = new Map([
-  ['es', 'es-ES'],
-  ['pt-br', 'pt-BR'],
-  ['zh-hans', 'zh-CN'],
-  ['zh-hant', 'zh-TW'],
-]);
-
 function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contextObject, advancedQueryRule }) {
   const advancedQuery = module.loadAdvancedSearchQueryActions(searchEngine).registerAdvancedSearchQueries({
     aq: advancedQueryRule || '',
   });
   const context = contextObject ? module.loadContextActions(searchEngine).setContext(contextObject) : null;
   const searchConfiguration = module.loadSearchConfigurationActions(searchEngine).updateSearchConfiguration({
-    locale: locales.get(document.querySelector('html').lang) || document.querySelector('html').lang || 'en',
+    locale: getCoveoSearchLocale(),
     searchHub,
   });
   const fields = module

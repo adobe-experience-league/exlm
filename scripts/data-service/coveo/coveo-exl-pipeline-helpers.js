@@ -1,4 +1,4 @@
-import { URL_SPECIAL_CASE_LOCALES, fetchLanguagePlaceholders, getConfig } from '../../scripts.js';
+import { fetchLanguagePlaceholders, getConfig, getCoveoSearchLocale } from '../../scripts.js';
 import { rewriteDocsPath } from '../../utils/path-utils.js';
 import CoveoDataService from './coveo-data-service.js';
 import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET } from './coveo-exl-pipeline-constants.js';
@@ -195,10 +195,7 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
   const dataSource = {
     url: coveoSearchResultsUrl,
     param: {
-      locale:
-        URL_SPECIAL_CASE_LOCALES.get(document.querySelector('html').lang) ||
-        document.querySelector('html').lang ||
-        'en',
+      locale: getCoveoSearchLocale(),
       searchHub: `Experience League Learning Hub`,
       numberOfResults: param.noOfResults,
       excerptLength: 200,
