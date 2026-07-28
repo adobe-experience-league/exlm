@@ -5,5 +5,3 @@ LICENSE
 package.json
 package-lock.json
 test/*
-tests/*
-*.test.js

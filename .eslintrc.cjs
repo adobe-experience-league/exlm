@@ -20,9 +20,6 @@ module.exports = {
         js: 'always',
       },
     ],
-    'import/no-extraneous-dependencies': [
-      'error',
-      { devDependencies: ['build/*', 'tests/**', 'playwright.config.js', '**/*.test.js'] },
-    ],
+    'import/no-extraneous-dependencies': ['error', { devDependencies: ['build/*'] }],
   },
 };

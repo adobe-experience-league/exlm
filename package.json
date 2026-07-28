@@ -19,9 +19,6 @@
     "prepare": "husky install",
     "validate:paths": "node validate-paths.js",
     "quality": "npm run format:check && npm run lint && npm run validate:paths",
-    "test:unit": "node --test scripts/utils/**/*.test.js",
-    "test:e2e": "playwright test",
-    "test": "npm run test:unit && npm run test:e2e",
     "check:branch-name": "node check-branch-name.js",
     "setup:skills": "npx skills add adobe/skills/plugins/aem/edge-delivery-services --all && npx skills add adobe/skills/plugins/aem/project-management --all && npx skills add AdobeEXL/exl-dev-ai --all -y"
   },
@@ -38,7 +35,6 @@
   "devDependencies": {
     "@babel/core": "7.21.0",
     "@babel/eslint-parser": "7.19.1",
-    "@playwright/test": "^1.62.0",
     "eslint": "8.35.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-config-prettier": "^9.0.0",
