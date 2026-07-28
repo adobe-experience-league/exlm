@@ -8,6 +8,11 @@ import {
 } from '../../scripts/scripts.js';
 import { Playlist, LABELS } from './playlist-utils.js';
 import { updateTranscript, transcriptLoading } from '../video-transcript/video-transcript.js';
+import {
+  buildPlaylistAttributionHref,
+  isPlaylistEmbedMode,
+  PLAYLIST_EMBED_BODY_CLASS,
+} from '../../scripts/utils/playlist-embed-utils.js';
 
 const removeLastSlash = (url) => url.replace(/\/$/, '');
 const isSameUrl = (a, b) => {
@@ -306,6 +311,13 @@ function updateProgress(videoIndex, playlist) {
   });
 }
 
+/** Keep embed attribution href current for middle-click / copy-link (not only left-click). */
+function syncPlaylistAttributionHref() {
+  const link = document.querySelector('.playlist-embed-attribution-link');
+  if (!link) return;
+  link.href = buildPlaylistAttributionHref(window.location.href);
+}
+
 const playlist = new Playlist();
 playlist.onVideoChange((videos, vIndex) => {
   const currentVideo = videos[vIndex];
@@ -315,6 +327,7 @@ playlist.onVideoChange((videos, vIndex) => {
   if (active && activeStatusChanged) el.parentElement.scrollTop = el.offsetTop - el.clientHeight / 2;
   updatePlayer(playlist);
   updateVideoIndexParam(playlist.getActiveVideoIndex());
+  syncPlaylistAttributionHref();
   updateProgress(vIndex, playlist);
   return true;
 });
@@ -423,7 +436,8 @@ export default function decorate(block) {
 
   // handle browser back within history changes
   window.addEventListener('popstate', (event) => {
-    if (event.state?.video) {
+    // video index 0 is valid — do not use truthiness checks
+    if (typeof event.state?.video === 'number') {
       playlist.activateVideoByIndex(event.state.video);
     } else if (!event.state) {
       playlist.activateVideoByIndex(0);
@@ -442,5 +456,25 @@ export default function decorate(block) {
         toastResult.value.sendNotice(notice, 'info', 5000);
       },
     );
+  }
+
+  if (isPlaylistEmbedMode()) {
+    document.body.classList.add(PLAYLIST_EMBED_BODY_CLASS);
+    // Fixed overlay on body — never a .playlist-page grid child (that broke desktop columns).
+    document.querySelector('.playlist-embed-attribution')?.remove();
+    const attribution = htmlToElement(`<div class="playlist-embed-attribution"></div>`);
+    const link = document.createElement('a');
+    link.className = 'playlist-embed-attribution-link button';
+    link.href = buildPlaylistAttributionHref(window.location.href);
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.setAttribute('aria-label', 'View more on Experience League (opens in a new tab)');
+    link.append(
+      createPlaceholderSpan('playlistViewMoreOnExperienceLeague', 'View more on Experience League', (span) => {
+        link.setAttribute('aria-label', `${span.textContent} (opens in a new tab)`);
+      }),
+    );
+    attribution.append(link);
+    document.body.append(attribution);
   }
 }

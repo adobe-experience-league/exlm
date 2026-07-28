@@ -79,6 +79,48 @@
   overflow-x: hidden;
 }
 
+/* Embed-only chrome: fixed CTA. Do not place attribution inside .playlist-page grid. */
+body.playlist-embed-mode .playlist-page {
+  max-width: none;
+  width: 100%;
+  box-sizing: border-box;
+
+  /* room for fixed bottom-right CTA on all breakpoints */
+  padding-bottom: 4.5rem;
+}
+
+body.playlist-embed-mode .playlist-embed-attribution {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right, 0px));
+  bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  z-index: 1000;
+  margin: 0;
+  pointer-events: none;
+}
+
+body.playlist-embed-mode .playlist-embed-attribution-link {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: min(90vw, 20rem);
+  margin: 0;
+  padding: 0.625rem 1.125rem;
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.25;
+  white-space: normal;
+  text-align: center;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 22%);
+}
+
+@media (width >= 600px) {
+  body.playlist-embed-mode .playlist-embed-attribution {
+    right: max(1.25rem, env(safe-area-inset-right, 0px));
+    bottom: max(1.25rem, env(safe-area-inset-bottom, 0px));
+  }
+}
+
 .playlist-wrapper {
   display: flex;
   flex-direction: column;
@@ -97,6 +139,11 @@
   overflow: auto;
   position: relative;
   scroll-behavior: smooth;
+}
+
+/* Keep last rail items scrollable clear of the fixed CTA. */
+body.playlist-embed-mode .playlist {
+  padding-bottom: 5rem;
 }
 
 .playlist-info {

@@ -11,6 +11,12 @@ helix-importer-ui
 .aio
 .env
 
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
 # Local AI skill artifacts (developer-machine only)
 .agents/
 .skills/
