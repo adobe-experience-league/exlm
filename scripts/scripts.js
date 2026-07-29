@@ -1127,6 +1127,7 @@ async function loadLazy(doc) {
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   if (isLiveGradientBgPage) {
     loadDefaultModule('./page-bg-gradient/page-bg-gradient.js');
+    loadDefaultModule('./page-bg-gradient/gradient-color-picker.js');
   }
   loadFonts();
 }
