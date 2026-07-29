@@ -1,0 +1,42 @@
+/* Mobile (default) */
+.champions-v2 {
+  --exlm-font-size-h1: var(--spectrum-heading-size-xl);
+  --exlm-font-size-h2: var(--spectrum-heading-size-l);
+  --exlm-font-size-h3: 24px;
+  --exlm-font-size-h4: var(--spectrum-font-size-400);
+  --exlm-font-size-h5: var(--spectrum-heading-size-s);
+  --exlm-font-size-h6: var(--spectrum-heading-size-s);
+}
+
+.champions-v2.page-bg-gradient {
+  /* To be changed */
+  --gradient-base-bg: #fff; /* neutral, so warm gold/orange circles actually contrast against it */
+  --gradient-primary: #ffd700; /* gold */
+  --gradient-secondary: #ff7a00; /* orange, pushed further from gold's hue */
+  --gradient-accent: #e85d04; /* deep amber, distinct third warm tone */
+}
+
+body.champions-v2 .section {
+  background-color: unset;
+  color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-300);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--spectrum-line-height-l);
+}
+
+body.champions-v2 .section > .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) {
+  font-weight: var(--font-weight-bold);
+  line-height: 125%;
+}
+
+/* Desktop */
+@media (min-width: 900px) {
+  .champions-v2 {
+    --exlm-font-size-h1: 44px;
+    --exlm-font-size-h2: var(--spectrum-heading-size-xl);
+    --exlm-font-size-h3: var(--spectrum-heading-size-l);
+    --exlm-font-size-h4: 24px;
+    --exlm-font-size-h5: var(--spectrum-font-size-400);
+    --exlm-font-size-h6: var(--spectrum-heading-size-s);
+  }
+}
