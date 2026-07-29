@@ -6,6 +6,21 @@
   max-width: 100%;
 }
 
+.code .code-language-badge {
+  display: block;
+  width: fit-content;
+  margin: 0 0 0.4em auto;
+  padding: 0.15em 0.6em;
+  border-radius: 4px;
+  background-color: var(--spectrum-blue-900);
+  color: var(--spectrum-gray-50);
+  font-family: Inconsolata, Monaco, Consolas, 'Courier New', Courier, monospace;
+  font-size: var(--spectrum-font-size-50);
+  font-weight: var(--font-weight-extra-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
 /* Collapsible code styles start */
 .code pre.collapsible-code[data-collapsed='true'] {
   overflow-y: hidden;

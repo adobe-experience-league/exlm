@@ -1,5 +1,28 @@
 import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
+const LANGUAGE_LABELS = {
+  js: 'JS',
+  javascript: 'JS',
+  css: 'CSS',
+  html: 'HTML',
+  java: 'Java',
+};
+
+function getLanguageLabel(languageClass) {
+  const lang = languageClass.slice('language-'.length);
+  if (LANGUAGE_LABELS[lang]) return LANGUAGE_LABELS[lang];
+  return lang.charAt(0).toUpperCase() + lang.slice(1);
+}
+
+function createLanguageBadge(languageClass) {
+  const label = getLanguageLabel(languageClass);
+  const badge = document.createElement('span');
+  badge.className = 'code-language-badge';
+  badge.setAttribute('aria-label', `Language: ${label}`);
+  badge.textContent = label;
+  return badge;
+}
+
 function getDataLineValue(arr) {
   let dataLineValue = '';
   arr.forEach((className) => {
@@ -81,12 +104,19 @@ export default async function decorate(block) {
   block.innerHTML = preTagElement.outerHTML;
   const dataLine = [];
   const pre = block.querySelector('pre');
+  let languageClass;
 
   block.classList.forEach((className) => {
     switch (true) {
       case className === 'line-number':
+        pre.classList.add(className);
+        break;
+
       case className.startsWith('language-'):
         pre.classList.add(className);
+        if (className !== 'language-none') {
+          languageClass = className;
+        }
         break;
 
       case className.startsWith('data-start-'):
@@ -121,6 +151,10 @@ export default async function decorate(block) {
       pre.setAttribute(key, value);
     }
   });
+
+  if (languageClass) {
+    block.insertBefore(createLanguageBadge(languageClass), pre);
+  }
 
   if (block.classList.contains('expandable')) {
     addCollapsibleCodeFeature(block, pre, defaultLines, placeholders);
