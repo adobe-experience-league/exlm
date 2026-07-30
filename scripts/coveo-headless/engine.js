@@ -15,8 +15,16 @@ function withExcludeStaleUpcoming(aq) {
   if (existing.includes('el_event_start_time >= now')) {
     return existing;
   }
-  // Empty aq would otherwise drop Browse's Community|User guard — keep both.
   if (!existing) {
+    // Prefer page-configured base (Browse products/topics, Events V2, etc.).
+    const pageBase =
+      typeof window !== 'undefined' ? String(window.headlessBaseSolutionQuery || '').trim() : '';
+    if (pageBase) {
+      return pageBase.includes('el_event_start_time >= now')
+        ? pageBase
+        : `(${pageBase}) AND (${COVEO_EXCLUDE_STALE_UPCOMING_AQ})`;
+    }
+    // Fallback when Headless has not set a page base yet.
     return `(${BASE_COVEO_ADVANCED_QUERY}) AND (${COVEO_EXCLUDE_STALE_UPCOMING_AQ})`;
   }
   return `(${existing}) AND (${COVEO_EXCLUDE_STALE_UPCOMING_AQ})`;
