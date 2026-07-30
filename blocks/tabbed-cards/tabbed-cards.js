@@ -3,7 +3,11 @@ import { htmlToElement, decorateExternalLinks, fetchLanguagePlaceholders } from 
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
-import { createDateCriteria, formatTitleCase } from '../../scripts/browse-card/browse-card-utils.js';
+import {
+  createDateCriteria,
+  formatTitleCase,
+  convertToTitleCase,
+} from '../../scripts/browse-card/browse-card-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 const lang = document.querySelector('html').lang || 'en';
@@ -30,7 +34,7 @@ const urlMap = {
  */
 function formatFallbackLabel(contentType) {
   const label = contentType.includes('|') ? contentType.split('|').pop() : contentType;
-  return label.trim().replace(/\b\w/g, (match) => match.toUpperCase());
+  return convertToTitleCase(label.trim());
 }
 
 /**
