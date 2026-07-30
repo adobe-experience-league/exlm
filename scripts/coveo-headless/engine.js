@@ -1,6 +1,25 @@
 import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
 import { getConfig } from '../scripts.js';
 import { generateCustomContext, generateMlParameters, COVEO_SEARCH_CUSTOM_EVENTS } from '../search/search-utils.js';
+import { COVEO_EXCLUDE_STALE_UPCOMING_AQ } from '../browse-card/browse-cards-constants.js';
+
+/**
+ * Ensure Browse / Headless searches never return past Upcoming Events (EXLM-5361).
+ * URL hash `aq=` can overwrite `headlessBaseSolutionQuery`, so enforce at request time.
+ * @param {string} aq
+ * @returns {string}
+ */
+function withExcludeStaleUpcoming(aq) {
+  const existing = (aq || '').trim();
+  // Already constrained (Events Hub base aq / prior merge).
+  if (existing.includes('el_event_start_time >= now')) {
+    return existing;
+  }
+  if (!existing) {
+    return COVEO_EXCLUDE_STALE_UPCOMING_AQ;
+  }
+  return `(${existing}) AND (${COVEO_EXCLUDE_STALE_UPCOMING_AQ})`;
+}
 
 export default async function buildHeadlessSearchEngine(module) {
   const { coveoOrganizationId } = getConfig();
@@ -21,6 +40,11 @@ export default async function buildHeadlessSearchEngine(module) {
             ...context,
             ...customContext,
           };
+          request.body = JSON.stringify(bodyJSON);
+        }
+        // Drop stale Upcoming at query time (Browse filters + any Headless consumer).
+        if (metadata?.method === 'search') {
+          bodyJSON.aq = withExcludeStaleUpcoming(bodyJSON.aq);
           request.body = JSON.stringify(bodyJSON);
         }
         const preProcessEvent = new CustomEvent(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, {
