@@ -64,6 +64,8 @@ const BASE_BRANCH = 'auto-build';
 
 const WIN = process.platform === 'win32';
 const RUN_TIMEOUT_MS = 25 * 60 * 1000; // under the 30-min tick window
+const CONTINUE_TIMEOUT_MS = 15 * 60 * 1000;
+const MAX_CONTINUATIONS = 3;
 const JIRA_TIMEOUT_MS = 8000;
 
 // Resolved from config in main(); the isolated build worktree lives here.
@@ -321,6 +323,31 @@ async function announcePr(env, key, prArg) {
   }
 }
 
+// Best-effort: notify Teams when a build fails, so a human sees it without having to poll
+// JIRA labels or the poller log. Same webhook/card shape as announcePr, with PR fields
+// blank (there is no PR) and status/reason describing the failure. Errors are logged, never
+// thrown — a failed notification must never mask the underlying build failure.
+async function announceFailure(env, key, reason) {
+  if (!env.TEAMS_WEBHOOK_URL) return;
+  try {
+    const jiraTitle = await getJiraSummary(env, key);
+    await notifyTeams(env.TEAMS_WEBHOOK_URL, key, {
+      ticket: key,
+      jiraUrl: `${env.JIRA_BASE_URL}/browse/${key}`,
+      jiraTitle,
+      prUrl: '',
+      prTitle: '',
+      prNumber: '',
+      branch: key.toLowerCase(),
+      previewUrl: '',
+      status: 'Failed — needs triage',
+      reason: reason || 'Unknown failure — check the poller log',
+    });
+  } catch (err) {
+    log(`${key}: Teams failure-notify error: ${err.message}`);
+  }
+}
+
 // ---------------------------------------------------------------------------
 // git worktree + claude
 // ---------------------------------------------------------------------------
@@ -421,20 +448,64 @@ const AUTO_BUILD_SETTINGS = JSON.stringify({
   permissions: { allow: ['Bash(*)', 'Write(*)', 'Edit(*)'] },
 });
 
-function runAutoBuild(key) {
-  const result = spawnSync(
-    'claude',
+// A single headless `-p` turn is not guaranteed to run all 12 /auto-build steps: the model
+// can treat a natural checkpoint (finishing the plan, finishing the implementation) as a
+// place to stop and summarize, even though the skill says "no approval gate — proceed
+// directly." Since `-p` is strictly single-turn, once it stops emitting tool calls the
+// process just exits with status 0 and nothing further happens on its own. So the poller
+// is the outer loop: if no PR exists yet after a call, resume the same session with
+// `--continue` and an explicit nudge, up to MAX_CONTINUATIONS times.
+const CONTINUE_PROMPT =
+  'Continue the /auto-build run exactly where you left off. Do not summarize, ask questions, ' +
+  'or wait for approval — proceed autonomously through every remaining step (implement, code ' +
+  'review, commit, push, open the draft PR, comment on JIRA) until the draft PR is open. If ' +
+  'you already implemented but did not commit/push/open the PR, do that now.';
+
+function spawnClaude(args, timeoutMs) {
+  return spawnSync('claude', args, {
+    cwd: WORKTREE_PATH,
+    encoding: 'utf8',
+    shell: WIN,
+    timeout: timeoutMs,
+    env: cleanChildEnv(),
+  });
+}
+
+// Runs /auto-build (continuing as needed) and returns the opened PR object, or null on
+// failure/timeout/no-PR-after-retries.
+async function runAutoBuild(env, key) {
+  let result = spawnClaude(
     ['-p', `/auto-build ${key}`, '--settings', AUTO_BUILD_SETTINGS, '--output-format', 'text'],
-    { cwd: WORKTREE_PATH, encoding: 'utf8', shell: WIN, timeout: RUN_TIMEOUT_MS, env: cleanChildEnv() },
+    RUN_TIMEOUT_MS,
   );
   if (result.stdout) log(`${key} stdout:\n${result.stdout}`);
   if (result.stderr) log(`${key} stderr:\n${result.stderr}`);
   if (result.error) {
     const timedOut = result.error.code === 'ETIMEDOUT' || result.signal === 'SIGTERM';
     log(`${key}: claude ${timedOut ? 'TIMED OUT' : 'spawn error'}: ${result.error.message}`);
-    return false;
+    return null;
   }
-  return result.status === 0;
+
+  const slug = repoSlug();
+  for (let attempt = 1; attempt <= MAX_CONTINUATIONS; attempt += 1) {
+    // eslint-disable-next-line no-await-in-loop -- must check after each attempt before retrying
+    const pr = slug && (await findPrForTicket(env, key, slug));
+    if (pr) return pr;
+    log(`${key}: no PR yet (continuation ${attempt}/${MAX_CONTINUATIONS}) — nudging claude to continue`);
+    result = spawnClaude(
+      ['-p', CONTINUE_PROMPT, '--continue', '--settings', AUTO_BUILD_SETTINGS, '--output-format', 'text'],
+      CONTINUE_TIMEOUT_MS,
+    );
+    if (result.stdout) log(`${key} continue-stdout:\n${result.stdout}`);
+    if (result.stderr) log(`${key} continue-stderr:\n${result.stderr}`);
+    if (result.error) {
+      const timedOut = result.error.code === 'ETIMEDOUT' || result.signal === 'SIGTERM';
+      log(`${key}: claude continuation ${timedOut ? 'TIMED OUT' : 'spawn error'}: ${result.error.message}`);
+      break;
+    }
+  }
+  if (!slug) return null;
+  return findPrForTicket(env, key, slug);
 }
 
 // ---------------------------------------------------------------------------
@@ -446,28 +517,24 @@ async function processTicket(env, key) {
     await updateLabels(env, key, { add: [IN_PROGRESS_LABEL] });
     log(`${key}: claimed (${IN_PROGRESS_LABEL})`);
 
-    let ok = prepareTicketBranch(key);
-    if (ok) ok = runAutoBuild(key);
-
-    // `claude` can exit 0 without actually building anything (e.g. the skill wasn't
-    // resolved, or it stopped early). Require a real PR before trusting the exit code.
-    let pr = null;
-    if (ok) {
-      const slug = repoSlug();
-      pr = slug ? await findPrForTicket(env, key, slug) : null;
-      if (!pr) {
-        log(`${key}: claude exited 0 but no PR was opened — treating as failure`);
-        ok = false;
-      }
-    }
+    // `claude` can exit 0 without actually opening a PR (e.g. it stopped early at a
+    // checkpoint). runAutoBuild retries with --continue until a real PR shows up or
+    // MAX_CONTINUATIONS is exhausted, so a null return here is a genuine failure.
+    const branchReady = prepareTicketBranch(key);
+    const pr = branchReady ? await runAutoBuild(env, key) : null;
+    const ok = !!pr;
 
     if (ok) {
       await updateLabels(env, key, { add: [DONE_LABEL], remove: [IN_PROGRESS_LABEL] });
       log(`${key}: SUCCESS -> ${DONE_LABEL}`);
       await announcePr(env, key, pr);
     } else {
+      const reason = branchReady
+        ? `No PR opened after ${MAX_CONTINUATIONS} continuation attempt(s) — see the poller log for details.`
+        : `Could not prepare the ticket branch — see the poller log for details.`;
+      log(`${key}: FAILURE (${reason}) -> ${FAILED_LABEL}`);
       await updateLabels(env, key, { add: [FAILED_LABEL], remove: [IN_PROGRESS_LABEL] });
-      log(`${key}: FAILURE -> ${FAILED_LABEL}`);
+      await announceFailure(env, key, reason);
     }
   } catch (err) {
     log(`${key}: ERROR — ${err.message}. Marking ${FAILED_LABEL}.`);
@@ -476,6 +543,7 @@ async function processTicket(env, key) {
     } catch (e2) {
       log(`${key}: also failed to set ${FAILED_LABEL}: ${e2.message}`);
     }
+    await announceFailure(env, key, `Error: ${err.message}`);
   }
 }
 

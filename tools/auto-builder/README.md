@@ -55,8 +55,10 @@ Edit [`config.json`](./config.json):
 
 ## Teams notifications (optional)
 
-When a draft PR is raised, the poller can post an Adaptive Card to a Teams channel/chat with the
-ticket, PR link, and preview URL. It's off unless `TEAMS_WEBHOOK_URL` is set in `.env`.
+When a build finishes, the poller can post an Adaptive Card to a Teams channel/chat — on success
+with the ticket, PR link, and preview URL; on failure with the ticket and a short reason, so a
+human notices without having to poll JIRA labels or the poller log. It's off unless
+`TEAMS_WEBHOOK_URL` is set in `.env`.
 
 Microsoft is retiring the old "Incoming Webhook" O365 connectors, so use a **Teams Workflow**
 (Power Automate):
@@ -70,9 +72,10 @@ Microsoft is retiring the old "Incoming Webhook" O365 connectors, so use a **Tea
    TEAMS_WEBHOOK_URL=https://prod-XX.westus.logic.azure.com:443/workflows/...
    ```
 
-That's it — the poller posts on each successful draft PR. The card payload is the standard
-`{ "type": "message", "attachments": [ <AdaptiveCard> ] }` the Workflow template expects. Delivery
-failures are logged and never fail a build.
+That's it — the poller posts on every completed run, success or failure. The card payload is the
+standard `{ "type": "message", "attachments": [ <AdaptiveCard> ] }` the Workflow template expects;
+a failure card leaves `prUrl`/`prTitle`/`prNumber`/`previewUrl` blank and sets `status` to
+`Failed — needs triage` plus a `reason` field. Delivery failures are logged and never fail a build.
 
 ## Install (once per machine)
 
