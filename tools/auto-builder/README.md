@@ -90,6 +90,34 @@ The installer detects your `node` and `claude` paths and bakes them into the sch
 (schedulers don't inherit your shell PATH — this is the #1 gotcha). It uses launchd on macOS,
 a systemd user timer (or cron fallback) on Linux, and Task Scheduler on Windows.
 
+## Verify it's running
+
+**Is it installed/loaded?**
+
+```bash
+launchctl list | grep exlm                         # macOS — look for a 0 exit status
+systemctl --user status exlm-auto-build-poller.timer   # Linux (systemd)
+crontab -l | grep poller.mjs                       # Linux (cron fallback)
+schtasks /Query /TN "EXLM Auto-Build Poller"        # Windows
+```
+
+**Is it actually ticking?** Tail the poller activity log (see [Logs](#logs) below) — each tick
+logs a VPN/JIRA check and any tickets found, even when there's nothing to build.
+
+**Did it crash before the log even opened?** Check the raw scheduler stdout/stderr
+(launchd `.stdout.log`/`.stderr.log`, `journalctl --user -u exlm-auto-build-poller.service`, or
+Task Scheduler history).
+
+**Force a tick now and watch it land:**
+
+```bash
+launchctl kickstart -k gui/$(id -u)/com.exlm.auto-build-poller   # macOS
+systemctl --user start exlm-auto-build-poller.service            # Linux
+schtasks /Run /TN "EXLM Auto-Build Poller"                       # Windows
+```
+
+Then `tail -f` the poller log and confirm a fresh entry shows up.
+
 ## Logs
 
 **Poller activity log** (the one you'll read) — `exlm-auto-build-poller.log` in your OS log dir:
