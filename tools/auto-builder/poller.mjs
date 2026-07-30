@@ -399,11 +399,24 @@ function prepareTicketBranch(key) {
   return true;
 }
 
+// If the poller itself happens to run inside a Claude Code terminal (VS Code integrated
+// terminal, another `claude -p` session, etc.), it inherits CLAUDE*/AI_AGENT env vars that
+// mark the child `claude` process as a nested/child session — which silently overrides
+// --dangerously-skip-permissions and forces approval prompts the headless run can never
+// answer. Strip them so the child always starts a clean, independent top-level session.
+function cleanChildEnv() {
+  const env = { ...process.env };
+  for (const key of Object.keys(env)) {
+    if (key.startsWith('CLAUDE') || key === 'AI_AGENT') delete env[key];
+  }
+  return env;
+}
+
 function runAutoBuild(key) {
   const result = spawnSync(
     'claude',
     ['-p', `/auto-build ${key}`, '--dangerously-skip-permissions', '--output-format', 'text'],
-    { cwd: WORKTREE_PATH, encoding: 'utf8', shell: WIN, timeout: RUN_TIMEOUT_MS },
+    { cwd: WORKTREE_PATH, encoding: 'utf8', shell: WIN, timeout: RUN_TIMEOUT_MS, env: cleanChildEnv() },
   );
   if (result.stdout) log(`${key} stdout:\n${result.stdout}`);
   if (result.stderr) log(`${key} stderr:\n${result.stderr}`);
