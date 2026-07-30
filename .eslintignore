@@ -8,3 +8,4 @@ scripts/feedback/qualtrics/qualtrics-embed.js
 scripts/confetti/canvas-confetti-1.9.3.module.min.mjs
 scripts/jspdf/jspdf.umd.min.js
 skills/
+tools/auto-builder/

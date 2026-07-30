@@ -1,0 +1,388 @@
+#!/usr/bin/env node
+/*
+ * EXLM auto-build poller
+ * ----------------------
+ * Runs on a schedule (launchd / systemd / Task Scheduler — see install.sh / install.ps1).
+ * Each run: find unclaimed JIRA stories labelled `auto-build`, and for each one run the
+ * repo's `/auto-build <KEY>` Claude Code skill headlessly, transitioning JIRA labels
+ * `auto-build` -> `auto-building` -> `auto-build-complete` | `auto-build-failed`.
+ *
+ * ISOLATION — builds run in a dedicated git WORKTREE (a linked working copy that shares
+ * this repo's .git object store), never in your primary checkout. So the poller can build
+ * while you work on any branch, with uncommitted changes, and never touches your files or
+ * branch. The worktree is created on first run and reused; `.env` is copied in and
+ * `node_modules` is symlinked so lint/commit hooks work.
+ *
+ * ⚠️ SECURITY — this invokes `claude ... --dangerously-skip-permissions`, so every tool
+ * call the /auto-build skill makes (arbitrary Bash, git push, curl, file writes) runs
+ * unattended with NO human approval, whenever a matching ticket appears. Deliberate,
+ * scoped tradeoff:
+ *   - The safety boundary is that /auto-build always opens a DRAFT PR — a human still
+ *     reviews before merge.
+ *   - Default assigneeScope=me limits triggers to your own tickets. Keep it unless you
+ *     have a reason to widen it.
+ *   - JIRA ticket text is attacker-influenceable (prompt injection into unattended Bash).
+ *     Mitigate: restrict who can apply the `auto-build` label, keep GITHUB_TOKEN a
+ *     fine-grained PAT scoped to THIS repo only, and audit the log periodically.
+ *   - Do not run this on an account whose .env GITHUB_TOKEN reaches other private repos.
+ *
+ * Requires: Node >= 18 (global fetch). No npm dependencies.
+ * Credentials come from the repo-root .env (JIRA_BASE_URL, JIRA_PAT, GITHUB_TOKEN) —
+ * never logged, never passed on a command line.
+ */
+
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  symlinkSync,
+  unlinkSync,
+  writeFileSync,
+  appendFileSync,
+} from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import os from 'node:os';
+import path from 'node:path';
+
+// tools/auto-builder/poller.mjs -> repo root is two levels up.
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(SCRIPT_DIR, '..', '..');
+const ENV_PATH = path.join(REPO_ROOT, '.env');
+const CONFIG_PATH = path.join(SCRIPT_DIR, 'config.json');
+const LOCK_PATH = path.join(os.tmpdir(), 'exlm-auto-build-poller.lock');
+
+const TRIGGER_LABEL = 'auto-build';
+const IN_PROGRESS_LABEL = 'auto-building';
+const DONE_LABEL = 'auto-build-complete';
+const FAILED_LABEL = 'auto-build-failed';
+
+// Ticket branches are cut from this branch (matches the /auto-build skill's assumption).
+const BASE_BRANCH = 'main';
+
+const WIN = process.platform === 'win32';
+const RUN_TIMEOUT_MS = 25 * 60 * 1000; // under the 30-min tick window
+const JIRA_TIMEOUT_MS = 8000;
+
+// Resolved from config in main(); the isolated build worktree lives here.
+let WORKTREE_PATH;
+
+// ---------------------------------------------------------------------------
+// Logging
+// ---------------------------------------------------------------------------
+
+function resolveLogPath() {
+  const home = os.homedir();
+  let dir;
+  if (process.platform === 'darwin') {
+    dir = path.join(home, 'Library', 'Logs');
+  } else if (WIN) {
+    dir = process.env.LOCALAPPDATA || path.join(home, 'AppData', 'Local');
+  } else {
+    dir = process.env.XDG_STATE_HOME || path.join(home, '.local', 'state');
+  }
+  try {
+    mkdirSync(dir, { recursive: true });
+  } catch {
+    dir = os.tmpdir();
+  }
+  return path.join(dir, 'exlm-auto-build-poller.log');
+}
+
+const LOG_PATH = resolveLogPath();
+
+function log(msg) {
+  const line = `[${new Date().toISOString()}] ${msg}\n`;
+  try {
+    appendFileSync(LOG_PATH, line);
+  } catch {
+    // ignore log write failures
+  }
+  process.stdout.write(line);
+}
+
+// ---------------------------------------------------------------------------
+// .env / config
+// ---------------------------------------------------------------------------
+
+function loadEnv(p) {
+  if (!existsSync(p)) throw new Error(`.env not found at ${p}`);
+  const out = {};
+  for (const raw of readFileSync(p, 'utf8').split('\n')) {
+    const m = raw.match(/^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.*)$/);
+    if (!m) continue;
+    let val = m[2].trim();
+    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+      val = val.slice(1, -1);
+    }
+    out[m[1]] = val;
+  }
+  const missing = ['JIRA_BASE_URL', 'JIRA_PAT', 'GITHUB_TOKEN'].filter((k) => !out[k]);
+  if (missing.length) throw new Error(`.env missing keys: ${missing.join(', ')}`);
+  return out;
+}
+
+function loadConfig(p) {
+  const defaults = { assigneeScope: 'me', pollIntervalSeconds: 1800, worktreePath: '' };
+  if (!existsSync(p)) return defaults;
+  try {
+    return { ...defaults, ...JSON.parse(readFileSync(p, 'utf8')) };
+  } catch (err) {
+    log(`WARN: could not parse config.json (${err.message}); using defaults`);
+    return defaults;
+  }
+}
+
+function resolveWorktreePath(config) {
+  const custom = config.worktreePath && String(config.worktreePath).trim();
+  if (custom) {
+    return path.isAbsolute(custom) ? custom : path.resolve(REPO_ROOT, custom);
+  }
+  // Default: a sibling directory next to the repo.
+  return path.resolve(REPO_ROOT, '..', 'exlm-auto-build-workspace');
+}
+
+// ---------------------------------------------------------------------------
+// Lock
+// ---------------------------------------------------------------------------
+
+function isPidAlive(pid) {
+  if (!Number.isInteger(pid) || pid <= 0) return false;
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (err) {
+    // EPERM means the process exists but we can't signal it — still alive.
+    return err.code === 'EPERM';
+  }
+}
+
+function acquireLock() {
+  if (existsSync(LOCK_PATH)) {
+    const pid = Number(readFileSync(LOCK_PATH, 'utf8').trim());
+    if (isPidAlive(pid)) {
+      log(`SKIP: previous run still in progress (pid ${pid})`);
+      return false;
+    }
+    // stale lock from a crashed run — reclaim
+  }
+  writeFileSync(LOCK_PATH, String(process.pid));
+  return true;
+}
+
+function releaseLock() {
+  try {
+    if (existsSync(LOCK_PATH)) {
+      const pid = Number(readFileSync(LOCK_PATH, 'utf8').trim());
+      if (pid === process.pid) unlinkSync(LOCK_PATH);
+    }
+  } catch {
+    // ignore
+  }
+}
+
+// ---------------------------------------------------------------------------
+// JIRA
+// ---------------------------------------------------------------------------
+
+function jiraHeaders(env, extra = {}) {
+  return { Authorization: `Bearer ${env.JIRA_PAT}`, Accept: 'application/json', ...extra };
+}
+
+async function jiraReachable(env) {
+  try {
+    const res = await fetch(`${env.JIRA_BASE_URL}/rest/api/2/myself`, {
+      headers: jiraHeaders(env),
+      signal: AbortSignal.timeout(JIRA_TIMEOUT_MS),
+    });
+    // Reachable even if auth fails — distinguishes "VPN down" from "bad token".
+    return res.ok || res.status === 401 || res.status === 403;
+  } catch {
+    return false;
+  }
+}
+
+async function findUnclaimedTickets(env, config) {
+  const clauses = [
+    `labels = "${TRIGGER_LABEL}"`,
+    `labels NOT IN ("${IN_PROGRESS_LABEL}", "${DONE_LABEL}", "${FAILED_LABEL}")`,
+  ];
+  if (config.assigneeScope === 'me') clauses.push('assignee = currentUser()');
+  const jql = clauses.join(' AND ');
+  const url = `${env.JIRA_BASE_URL}/rest/api/2/search` + `?jql=${encodeURIComponent(jql)}&fields=key&maxResults=50`;
+  const res = await fetch(url, { headers: jiraHeaders(env) });
+  if (!res.ok) {
+    throw new Error(`JQL search failed: ${res.status} ${await res.text()}`);
+  }
+  const data = await res.json();
+  return (data.issues || []).map((i) => i.key);
+}
+
+async function updateLabels(env, key, { add = [], remove = [] }) {
+  const labels = [...remove.map((l) => ({ remove: l })), ...add.map((l) => ({ add: l }))];
+  const res = await fetch(`${env.JIRA_BASE_URL}/rest/api/2/issue/${key}`, {
+    method: 'PUT',
+    headers: jiraHeaders(env, { 'Content-Type': 'application/json' }),
+    body: JSON.stringify({ update: { labels } }),
+  });
+  if (!res.ok && res.status !== 204) {
+    throw new Error(`Label update failed for ${key}: ${res.status} ${await res.text()}`);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// git worktree + claude
+// ---------------------------------------------------------------------------
+
+function gitMain(args) {
+  return spawnSync('git', args, { cwd: REPO_ROOT, encoding: 'utf8', shell: WIN });
+}
+
+function gitWt(args) {
+  return spawnSync('git', args, { cwd: WORKTREE_PATH, encoding: 'utf8', shell: WIN });
+}
+
+// Create (once) the isolated worktree. Idempotent — safe every run.
+function ensureWorktree() {
+  gitMain(['worktree', 'prune']);
+  if (!existsSync(path.join(WORKTREE_PATH, '.git'))) {
+    mkdirSync(path.dirname(WORKTREE_PATH), { recursive: true });
+    // --detach: don't check out a named branch (avoids "branch already checked out"
+    // clashes with your primary worktree). We cut a ticket branch per build below.
+    const add = gitMain(['worktree', 'add', '--detach', WORKTREE_PATH]);
+    if (add.status !== 0) throw new Error(`git worktree add failed: ${(add.stderr || '').trim()}`);
+    log(`Created isolated worktree at ${WORKTREE_PATH}`);
+  }
+  provisionWorktreeFiles();
+}
+
+// Put the machine-local, gitignored files /auto-build needs into the worktree:
+//   - .env  : credentials (refreshed each call in case they changed)
+//   - node_modules : symlinked so husky/lint-staged commit hooks work
+function provisionWorktreeFiles() {
+  try {
+    copyFileSync(ENV_PATH, path.join(WORKTREE_PATH, '.env'));
+  } catch (err) {
+    log(`WARN: could not copy .env into worktree: ${err.message}`);
+  }
+  const wtNodeModules = path.join(WORKTREE_PATH, 'node_modules');
+  const repoNodeModules = path.join(REPO_ROOT, 'node_modules');
+  if (!existsSync(wtNodeModules) && existsSync(repoNodeModules)) {
+    try {
+      symlinkSync(repoNodeModules, wtNodeModules, WIN ? 'junction' : 'dir');
+    } catch (err) {
+      log(`WARN: could not link node_modules into worktree: ${err.message}`);
+    }
+  }
+}
+
+// Reset the worktree onto a fresh ticket branch cut from the latest base branch.
+// After this the worktree is on branch `<key lowercased>`, so /auto-build's Step 6
+// sees it is already on the ticket branch and skips its own checkout-main dance.
+function prepareTicketBranch(key) {
+  const branch = key.toLowerCase();
+  const fetched = gitWt(['fetch', 'origin', BASE_BRANCH]);
+  if (fetched.status !== 0) {
+    log(`WARN: git fetch failed in worktree: ${(fetched.stderr || '').trim()}`);
+  }
+  let base = `origin/${BASE_BRANCH}`;
+  if (gitWt(['rev-parse', '--verify', '--quiet', base]).status !== 0) base = BASE_BRANCH;
+  // -f discards tracked changes; -B creates/resets the branch to the base.
+  const co = gitWt(['checkout', '-f', '-B', branch, base]);
+  if (co.status !== 0) {
+    log(`${key}: could not prepare branch ${branch} from ${base}: ${(co.stderr || '').trim()}`);
+    return false;
+  }
+  // Remove untracked leftovers from a previous build (e.g. pr-body.md, a failed
+  // build's uncommitted files). Exclude node_modules/.env: the repo ignores
+  // `node_modules/*` (not a symlink named node_modules), so a plain clean would
+  // delete our symlink. -d without -x already preserves other gitignored paths.
+  gitWt(['clean', '-fd', '-e', 'node_modules', '-e', '.env']);
+  provisionWorktreeFiles(); // re-assert .env + node_modules in case anything was removed
+  log(`${key}: worktree on fresh branch ${branch} from ${base}`);
+  return true;
+}
+
+function runAutoBuild(key) {
+  const result = spawnSync(
+    'claude',
+    ['-p', `/auto-build ${key}`, '--dangerously-skip-permissions', '--output-format', 'text'],
+    { cwd: WORKTREE_PATH, encoding: 'utf8', shell: WIN, timeout: RUN_TIMEOUT_MS },
+  );
+  if (result.stdout) log(`${key} stdout:\n${result.stdout}`);
+  if (result.stderr) log(`${key} stderr:\n${result.stderr}`);
+  if (result.error) {
+    const timedOut = result.error.code === 'ETIMEDOUT' || result.signal === 'SIGTERM';
+    log(`${key}: claude ${timedOut ? 'TIMED OUT' : 'spawn error'}: ${result.error.message}`);
+    return false;
+  }
+  return result.status === 0;
+}
+
+// ---------------------------------------------------------------------------
+// Main
+// ---------------------------------------------------------------------------
+
+async function processTicket(env, key) {
+  try {
+    await updateLabels(env, key, { add: [IN_PROGRESS_LABEL] });
+    log(`${key}: claimed (${IN_PROGRESS_LABEL})`);
+
+    let ok = prepareTicketBranch(key);
+    if (ok) ok = runAutoBuild(key);
+
+    if (ok) {
+      await updateLabels(env, key, { add: [DONE_LABEL], remove: [IN_PROGRESS_LABEL] });
+      log(`${key}: SUCCESS -> ${DONE_LABEL}`);
+    } else {
+      await updateLabels(env, key, { add: [FAILED_LABEL], remove: [IN_PROGRESS_LABEL] });
+      log(`${key}: FAILURE -> ${FAILED_LABEL}`);
+    }
+  } catch (err) {
+    log(`${key}: ERROR — ${err.message}. Marking ${FAILED_LABEL}.`);
+    try {
+      await updateLabels(env, key, { add: [FAILED_LABEL], remove: [IN_PROGRESS_LABEL] });
+    } catch (e2) {
+      log(`${key}: also failed to set ${FAILED_LABEL}: ${e2.message}`);
+    }
+  }
+}
+
+async function main() {
+  if (!acquireLock()) return;
+  process.on('exit', releaseLock);
+
+  try {
+    const env = loadEnv(ENV_PATH);
+    const config = loadConfig(CONFIG_PATH);
+    WORKTREE_PATH = resolveWorktreePath(config);
+
+    if (!(await jiraReachable(env))) {
+      log('SKIP: JIRA unreachable (VPN down?)');
+      return;
+    }
+
+    const keys = await findUnclaimedTickets(env, config);
+    if (keys.length === 0) {
+      log('No unclaimed auto-build tickets found.');
+      return;
+    }
+    log(`Found ${keys.length} unclaimed ticket(s): ${keys.join(', ')}`);
+
+    // Build in the isolated worktree — never the developer's checkout.
+    ensureWorktree();
+
+    for (const key of keys) {
+      // eslint-disable-next-line no-await-in-loop -- serial: one shared worktree per run
+      await processTicket(env, key);
+    }
+  } catch (err) {
+    log(`FATAL: ${err.stack || err.message}`);
+    process.exitCode = 1;
+  } finally {
+    releaseLock();
+  }
+}
+
+main();
