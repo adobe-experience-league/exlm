@@ -793,6 +793,14 @@ button.tertiary {
   color: var(--spectrum-gray-50);
 }
 
+a.button.tertiary:hover,
+a.button.tertiary:focus,
+button.tertiary:hover,
+button.tertiary:focus {
+  background-color: var(--spectrum-gray-800);
+  color: var(--spectrum-gray-50);
+}
+
 a.button.custom.text-white,
 button.custom.text-white {
   color: var(--spectrum-gray-50);
