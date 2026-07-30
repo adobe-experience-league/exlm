@@ -8,15 +8,9 @@
 .champion-detail.block .champion-detail-image picture img {
   width: 160px;
   height: 160px;
-  border-radius: 50%;
+  border-radius: 12px;
+  border: 3px solid #ffa311;
   object-fit: cover;
-}
-
-.champion-detail.block .champion-detail-eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  font-size: var(--spectrum-font-size-75);
-  color: var(--non-spectrum-adobe-dark-red);
 }
 
 .champion-detail.block .champion-detail-quote {
@@ -24,25 +18,29 @@
   font-size: var(--spectrum-font-size-200);
 }
 
+.champion-detail.block .champion-detail-quote::before {
+  content: '\201C';
+}
+
+.champion-detail.block .champion-detail-quote::after {
+  content: '\201D';
+}
+
 .champion-detail.block .champion-detail-name {
-  display: block;
   font-weight: var(--font-weight-bold);
   text-decoration: none;
 }
 
 .champion-detail.block .champion-detail-title {
   color: var(--non-spectrum-charcoal-gray);
-  font-size: var(--spectrum-font-size-75);
 }
 
 .champion-detail.block .champion-detail-designation {
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
   font-size: var(--spectrum-font-size-75);
+  color: #ffa311;
   margin-top: var(--spectrum-spacing-100);
-}
-
-.champion-detail.block .champion-detail-cta {
-  margin-top: var(--spectrum-spacing-200);
-  width: fit-content;
 }
 
 /* ----- TABLET ----- */

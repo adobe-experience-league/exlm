@@ -10669,13 +10669,6 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "eyebrow",
-        "value": "",
-        "label": "Eyebrow"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
         "name": "name",
         "value": "",
         "label": "Champion Name"
@@ -10735,20 +10728,6 @@
         "value": "",
         "label": "Community Profile Link",
         "description": "URL of the Champion's Community profile. The Champion name links to this URL."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "ctaLabel",
-        "value": "",
-        "label": "CTA Label"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "ctaLink",
-        "value": "",
-        "label": "CTA Link"
       }
     ]
   },

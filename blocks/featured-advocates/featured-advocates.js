@@ -7,7 +7,7 @@ import {
   getTimeCommitmentIcon,
 } from '../../scripts/utils/champion-utils.js';
 
-function buildAssociatedContentCard(item) {
+function buildAssociatedContentCard(item, championName) {
   const contentTypeIcon = getContentTypeIcon(item.contentType);
   const timeIcon = getTimeCommitmentIcon(item.timeIcon);
 
@@ -19,6 +19,7 @@ function buildAssociatedContentCard(item) {
       </div>
       <div class="advocate-content-title">${item.title}</div>
       ${item.description ? `<p class="advocate-content-description">${item.description}</p>` : ''}
+      <div class="advocate-content-byline">By ${championName}</div>
       <div class="advocate-content-time">
         ${timeIcon ? `<span class="icon icon-${timeIcon}"></span>` : ''}
         <span>${item.timeText}</span>
@@ -28,7 +29,7 @@ function buildAssociatedContentCard(item) {
   `;
 }
 
-function buildAdvocatePanel(champion) {
+function buildAdvocatePanel(champion, total) {
   const { detail, associatedContent } = champion;
 
   return htmlToElement(`
@@ -38,17 +39,31 @@ function buildAdvocatePanel(champion) {
           <picture><img src="${detail.image}" alt="${detail.imageAlt}" loading="lazy"></picture>
         </div>
         <div class="advocate-info">
-          ${detail.eyebrow ? `<div class="advocate-eyebrow">${detail.eyebrow}</div>` : ''}
           ${detail.quoteBio ? `<p class="advocate-quote">${detail.quoteBio}</p>` : ''}
           <a class="advocate-name" href="${detail.communityProfileUrl}">${detail.name}</a>
-          <div class="advocate-title">${detail.jobTitle}</div>
+          <span class="advocate-title"> – ${detail.jobTitle}</span>
           ${detail.productDesignation ? `<div class="advocate-designation">${detail.productDesignation}</div>` : ''}
-          ${detail.ctaHref ? `<a class="button advocate-cta" href="${detail.ctaHref}">${detail.ctaLabel}</a>` : ''}
+          ${
+            total > 1
+              ? `<div class="advocate-pagination">
+                  <button type="button" class="advocate-nav advocate-prev" aria-label="Previous advocate">
+                    <span class="icon icon-back-arrow"></span>
+                  </button>
+                  <span class="advocate-pagination-count">1/${total}</span>
+                  <button type="button" class="advocate-nav advocate-next" aria-label="Next advocate">
+                    <span class="icon icon-front-arrow"></span>
+                  </button>
+                </div>`
+              : ''
+          }
         </div>
       </div>
       ${
         associatedContent.length
-          ? `<div class="advocate-associated-content">${associatedContent.map(buildAssociatedContentCard).join('')}</div>`
+          ? `<div class="advocate-more-from">More from ${detail.name}</div>
+             <div class="advocate-associated-content">
+               ${associatedContent.map((item) => buildAssociatedContentCard(item, detail.name)).join('')}
+             </div>`
           : ''
       }
     </div>
@@ -83,70 +98,35 @@ export default async function decorate(block) {
   if (!champions.length) return;
 
   const orderedChampions = getRotatedChampions(champions);
+  const total = orderedChampions.length;
 
   const panelContainer = document.createElement('div');
   panelContainer.classList.add('panel-container');
 
-  const paginationContainer = document.createElement('div');
-  paginationContainer.classList.add('pagination-container');
-
   let currentIndex = 0;
 
   function goTo(index) {
-    currentIndex = (index + orderedChampions.length) % orderedChampions.length;
+    currentIndex = (index + total) % total;
     [...panelContainer.children].forEach((panel, i) => panel.classList.toggle('active', i === currentIndex));
-    [...paginationContainer.children].forEach((dot, i) => {
-      dot.classList.toggle('selected', i === currentIndex);
-      if (i === currentIndex) {
-        dot.setAttribute('aria-current', 'true');
-      } else {
-        dot.removeAttribute('aria-current');
-      }
+    panelContainer.querySelectorAll('.advocate-pagination-count').forEach((el) => {
+      el.textContent = `${currentIndex + 1}/${total}`;
     });
   }
 
   orderedChampions.forEach((champion, i) => {
-    const panel = buildAdvocatePanel(champion);
+    const panel = buildAdvocatePanel(champion, total);
     if (i === 0) panel.classList.add('active');
     panelContainer.append(panel);
-
-    if (orderedChampions.length > 1) {
-      const dot = document.createElement('button');
-      dot.type = 'button';
-      dot.classList.add('pagination-dot');
-      dot.setAttribute('aria-label', `Go to advocate ${i + 1}`);
-      if (i === 0) {
-        dot.classList.add('selected');
-        dot.setAttribute('aria-current', 'true');
-      }
-      dot.addEventListener('click', () => goTo(i));
-      paginationContainer.append(dot);
-    }
   });
 
-  const carouselWrapper = document.createElement('div');
-  carouselWrapper.classList.add('carousel-wrapper');
-  carouselWrapper.append(panelContainer);
-  block.append(carouselWrapper);
-
-  if (orderedChampions.length > 1) {
-    const prevButton = document.createElement('button');
-    prevButton.type = 'button';
-    prevButton.classList.add('carousel-nav', 'carousel-prev');
-    prevButton.setAttribute('aria-label', 'Previous advocate');
-    prevButton.innerHTML = '<span class="icon icon-back-arrow"></span>';
-    prevButton.addEventListener('click', () => goTo(currentIndex - 1));
-
-    const nextButton = document.createElement('button');
-    nextButton.type = 'button';
-    nextButton.classList.add('carousel-nav', 'carousel-next');
-    nextButton.setAttribute('aria-label', 'Next advocate');
-    nextButton.innerHTML = '<span class="icon icon-front-arrow"></span>';
-    nextButton.addEventListener('click', () => goTo(currentIndex + 1));
-
-    carouselWrapper.append(prevButton, nextButton);
-    block.append(paginationContainer);
+  if (total > 1) {
+    panelContainer.addEventListener('click', (event) => {
+      if (event.target.closest('.advocate-prev')) goTo(currentIndex - 1);
+      else if (event.target.closest('.advocate-next')) goTo(currentIndex + 1);
+    });
   }
+
+  block.append(panelContainer);
 
   decorateIcons(block);
 }

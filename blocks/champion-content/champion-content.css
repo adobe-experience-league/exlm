@@ -3,8 +3,9 @@
   flex-direction: column;
   gap: var(--spectrum-spacing-100);
   padding: var(--spectrum-spacing-300);
-  border: 1px solid var(--spectrum-gray-300);
-  border-radius: 8px;
+  border-top: 3px solid #ffa311;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
+  border-radius: 4px;
 }
 
 .champion-content.block .champion-content-eyebrow {
@@ -14,7 +15,7 @@
   text-transform: uppercase;
   letter-spacing: 0.6px;
   font-size: var(--spectrum-font-size-75);
-  color: var(--non-spectrum-adobe-dark-red);
+  color: #ffa311;
 }
 
 .champion-content.block .champion-content-eyebrow .icon {
@@ -31,11 +32,17 @@
   font-size: var(--spectrum-font-size-75);
 }
 
+.champion-content.block .champion-content-byline {
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-bold);
+}
+
 .champion-content.block .champion-content-time {
   display: flex;
   align-items: center;
   gap: var(--spectrum-spacing-100);
   font-size: var(--spectrum-font-size-75);
+  color: var(--non-spectrum-charcoal-gray);
 }
 
 .champion-content.block .champion-content-time .icon {

@@ -33,26 +33,22 @@ export function getTimeCommitmentIcon(iconName) {
  * @param {HTMLElement} block
  */
 export function extractChampionDetail(block) {
-  const [image, imageAlt, eyebrow, name, jobTitle, quoteBio, productDesignation, communityProfile, cta] = [
+  const [image, imageAlt, name, jobTitle, quoteBio, productDesignation, communityProfile] = [
     ...block.children,
   ].map((row) => row.firstElementChild);
 
   const img = image?.querySelector('img');
   const communityLink = communityProfile?.querySelector('a');
-  const ctaLink = cta?.querySelector('a');
   const nameText = name?.textContent.trim() || '';
 
   return {
     image: img?.getAttribute('src') || '',
     imageAlt: imageAlt?.textContent.trim() || nameText,
-    eyebrow: eyebrow?.textContent.trim() || '',
     name: nameText,
     jobTitle: jobTitle?.textContent.trim() || '',
     quoteBio: quoteBio?.textContent.trim() || '',
     productDesignation: productDesignation?.textContent.trim() || '',
     communityProfileUrl: communityLink?.getAttribute('href') || communityProfile?.textContent.trim() || '',
-    ctaLabel: ctaLink?.textContent.trim() || '',
-    ctaHref: ctaLink?.getAttribute('href') || '',
   };
 }
 
@@ -86,13 +82,10 @@ export function isChampionEligible(detail) {
   if (!detail) return false;
   return [
     detail.image,
-    detail.eyebrow,
     detail.name,
     detail.jobTitle,
     detail.productDesignation,
     detail.communityProfileUrl,
-    detail.ctaLabel,
-    detail.ctaHref,
   ].every((value) => !!value);
 }
 
