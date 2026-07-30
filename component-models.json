@@ -6284,6 +6284,168 @@
     ]
   },
   {
+    "id": "advocate-bio",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Champion image",
+        "description": "Sets the image of the Champion",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "advocate-name",
+        "value": "",
+        "label": "Champion name",
+        "description": "Sets the name of the Champion"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "profile-link",
+        "value": "",
+        "label": "Community profile URL",
+        "description": "The Champion name links to this Community profile"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "advocate-title",
+        "value": "",
+        "label": "Champion title",
+        "description": "Sets the Champion's job title"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "product-designation",
+        "value": "Adobe Champion - Adobe Experience Manager",
+        "label": "Product designation",
+        "description": "Sets the Champion's Adobe product designation",
+        "options": [
+          { "name": "Adobe Champion - Adobe Experience Manager", "value": "Adobe Champion - Adobe Experience Manager" },
+          {
+            "name": "Adobe Champion - Adobe Experience Platform",
+            "value": "Adobe Champion - Adobe Experience Platform"
+          },
+          { "name": "Adobe Champion - Analytics", "value": "Adobe Champion - Analytics" },
+          { "name": "Adobe Champion - Commerce", "value": "Adobe Champion - Commerce" },
+          { "name": "Adobe Champion - Marketo Engage", "value": "Adobe Champion - Marketo Engage" },
+          { "name": "Adobe Champion - Workfront", "value": "Adobe Champion - Workfront" }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "advocate-quote",
+        "value": "",
+        "label": "Quote / bio",
+        "description": "Plain-text quote or bio. Quotation marks may be included if desired."
+      }
+    ]
+  },
+  {
+    "id": "advocate-content",
+    "fields": [
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "content-type",
+        "value": "Perspective",
+        "label": "Content type",
+        "description": "Content type shown as the eyebrow, with a matching icon",
+        "options": [
+          { "name": "Perspective", "value": "Perspective" },
+          { "name": "Documentation", "value": "Documentation" },
+          { "name": "Event", "value": "Event" },
+          { "name": "Playlist", "value": "Playlist" },
+          { "name": "Course", "value": "Course" },
+          { "name": "Community", "value": "Community" }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "content-title",
+        "value": "",
+        "label": "Title"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "content-description",
+        "value": "",
+        "label": "Description",
+        "description": "Optional supporting description"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "time-type",
+        "value": "clock",
+        "label": "Time commitment icon",
+        "options": [
+          { "name": "Clock", "value": "clock" },
+          { "name": "Checkmark", "value": "checkmark" },
+          { "name": "Video", "value": "video" }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "time-text",
+        "value": "",
+        "label": "Time commitment text",
+        "description": "e.g. \"5 min read\" or \"Watch now\""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cta-text",
+        "value": "",
+        "label": "CTA label"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "cta-link",
+        "value": "",
+        "label": "CTA destination"
+      }
+    ]
+  },
+  {
+    "id": "featured-advocates",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Optional heading shown above the carousel"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h2",
+        "label": "Heading Type",
+        "options": [
+          { "name": "H1", "value": "h1" },
+          { "name": "H2", "value": "h2" },
+          { "name": "H3", "value": "h3" },
+          { "name": "H4", "value": "h4" },
+          { "name": "H5", "value": "h5" },
+          { "name": "H6", "value": "h6" }
+        ]
+      }
+    ]
+  },
+  {
     "id": "events-search",
     "fields": []
   },

@@ -501,6 +501,63 @@
           }
         },
         {
+          "title": "Advocate Bio",
+          "id": "advocate-bio",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Advocate Bio",
+                  "model": "advocate-bio",
+                  "filter": "advocate-bio",
+                  "product-designation": "Adobe Champion - Adobe Experience Manager",
+                  "item": {
+                    "sling:resourceType": "core/franklin/components/block/v1/block/item",
+                    "name": "Advocate Content",
+                    "model": "advocate-content",
+                    "content-type": "Perspective",
+                    "time-type": "clock"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Advocate Content",
+          "id": "advocate-content",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Advocate Content",
+                  "model": "advocate-content",
+                  "content-type": "Perspective",
+                  "time-type": "clock"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Featured Advocates",
+          "id": "featured-advocates",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Featured Advocates",
+                  "model": "featured-advocates",
+                  "headingType": "h2"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Author Summary",
           "id": "author-summary",
           "plugins": {
