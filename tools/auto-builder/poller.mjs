@@ -60,7 +60,7 @@ const DONE_LABEL = 'auto-build-complete';
 const FAILED_LABEL = 'auto-build-failed';
 
 // Ticket branches are cut from this branch (matches the /auto-build skill's assumption).
-const BASE_BRANCH = 'main';
+const BASE_BRANCH = 'auto-build';
 
 const WIN = process.platform === 'win32';
 const RUN_TIMEOUT_MS = 25 * 60 * 1000; // under the 30-min tick window
@@ -290,7 +290,7 @@ async function notifyTeams(webhookUrl, key, payload) {
 }
 
 // Best-effort: look up the PR + JIRA details and post to Teams. Errors are logged, never thrown.
-async function announcePr(env, key) {
+async function announcePr(env, key, prArg) {
   if (!env.TEAMS_WEBHOOK_URL) return;
   try {
     const slug = repoSlug();
@@ -298,7 +298,7 @@ async function announcePr(env, key) {
       log(`${key}: cannot resolve repo slug — skipping Teams notify`);
       return;
     }
-    const pr = await findPrForTicket(env, key, slug);
+    const pr = prArg || (await findPrForTicket(env, key, slug));
     if (!pr) {
       log(`${key}: no open PR found — skipping Teams notify`);
       return;
@@ -350,19 +350,24 @@ function ensureWorktree() {
 // Put the machine-local, gitignored files /auto-build needs into the worktree:
 //   - .env  : credentials (refreshed each call in case they changed)
 //   - node_modules : symlinked so husky/lint-staged commit hooks work
+//   - .claude, .agents : symlinked so the `claude` CLI can resolve /auto-build and the
+//     skills it delegates to — both dirs are gitignored, so `git worktree add` never
+//     checks them out on its own.
 function provisionWorktreeFiles() {
   try {
     copyFileSync(ENV_PATH, path.join(WORKTREE_PATH, '.env'));
   } catch (err) {
     log(`WARN: could not copy .env into worktree: ${err.message}`);
   }
-  const wtNodeModules = path.join(WORKTREE_PATH, 'node_modules');
-  const repoNodeModules = path.join(REPO_ROOT, 'node_modules');
-  if (!existsSync(wtNodeModules) && existsSync(repoNodeModules)) {
-    try {
-      symlinkSync(repoNodeModules, wtNodeModules, WIN ? 'junction' : 'dir');
-    } catch (err) {
-      log(`WARN: could not link node_modules into worktree: ${err.message}`);
+  for (const dir of ['node_modules', '.claude', '.agents']) {
+    const wtPath = path.join(WORKTREE_PATH, dir);
+    const repoPath = path.join(REPO_ROOT, dir);
+    if (!existsSync(wtPath) && existsSync(repoPath)) {
+      try {
+        symlinkSync(repoPath, wtPath, WIN ? 'junction' : 'dir');
+      } catch (err) {
+        log(`WARN: could not link ${dir} into worktree: ${err.message}`);
+      }
     }
   }
 }
@@ -422,10 +427,22 @@ async function processTicket(env, key) {
     let ok = prepareTicketBranch(key);
     if (ok) ok = runAutoBuild(key);
 
+    // `claude` can exit 0 without actually building anything (e.g. the skill wasn't
+    // resolved, or it stopped early). Require a real PR before trusting the exit code.
+    let pr = null;
+    if (ok) {
+      const slug = repoSlug();
+      pr = slug ? await findPrForTicket(env, key, slug) : null;
+      if (!pr) {
+        log(`${key}: claude exited 0 but no PR was opened — treating as failure`);
+        ok = false;
+      }
+    }
+
     if (ok) {
       await updateLabels(env, key, { add: [DONE_LABEL], remove: [IN_PROGRESS_LABEL] });
       log(`${key}: SUCCESS -> ${DONE_LABEL}`);
-      await announcePr(env, key);
+      await announcePr(env, key, pr);
     } else {
       await updateLabels(env, key, { add: [FAILED_LABEL], remove: [IN_PROGRESS_LABEL] });
       log(`${key}: FAILURE -> ${FAILED_LABEL}`);
