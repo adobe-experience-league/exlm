@@ -1,0 +1,51 @@
+.champion-content.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spectrum-spacing-100);
+  padding: var(--spectrum-spacing-300);
+  border: 1px solid var(--spectrum-gray-300);
+  border-radius: 8px;
+}
+
+.champion-content.block .champion-content-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--spectrum-spacing-100);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  font-size: var(--spectrum-font-size-75);
+  color: var(--non-spectrum-adobe-dark-red);
+}
+
+.champion-content.block .champion-content-eyebrow .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.champion-content.block .champion-content-title {
+  font-weight: var(--font-weight-bold);
+}
+
+.champion-content.block .champion-content-description {
+  color: var(--non-spectrum-charcoal-gray);
+  font-size: var(--spectrum-font-size-75);
+}
+
+.champion-content.block .champion-content-time {
+  display: flex;
+  align-items: center;
+  gap: var(--spectrum-spacing-100);
+  font-size: var(--spectrum-font-size-75);
+}
+
+.champion-content.block .champion-content-time .icon {
+  width: 14px;
+  height: 14px;
+}
+
+.champion-content.block .champion-content-cta {
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-bold);
+  text-decoration: underline;
+  margin-top: var(--spectrum-spacing-100);
+}
