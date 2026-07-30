@@ -28,7 +28,8 @@
  *
  * Requires: Node >= 18 (global fetch). No npm dependencies.
  * Credentials come from the repo-root .env (JIRA_BASE_URL, JIRA_PAT, GITHUB_TOKEN) —
- * never logged, never passed on a command line.
+ * never logged, never passed on a command line. Optional: TEAMS_WEBHOOK_URL to post a
+ * Teams notification (via a Teams Workflow) when a draft PR is raised.
  */
 
 import {
@@ -232,6 +233,95 @@ async function updateLabels(env, key, { add = [], remove = [] }) {
 }
 
 // ---------------------------------------------------------------------------
+// GitHub + Teams notification (optional)
+// ---------------------------------------------------------------------------
+
+// { owner, repo, slug } parsed from origin, or null. Remotes are shared with the worktree.
+function repoSlug() {
+  const res = gitMain(['remote', 'get-url', 'origin']);
+  if (res.status !== 0) return null;
+  const m = res.stdout.trim().match(/github\.com[:/]([^/]+)\/(.+?)(?:\.git)?$/);
+  return m ? { owner: m[1], repo: m[2], slug: `${m[1]}/${m[2]}` } : null;
+}
+
+// Ask GitHub for the open PR on this ticket's branch (URL + draft flag). null if none.
+async function findPrForTicket(env, key, slug) {
+  const branch = key.toLowerCase();
+  const url = `https://api.github.com/repos/${slug.slug}/pulls?head=${slug.owner}:${branch}&state=open`;
+  const res = await fetch(url, {
+    headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}`, Accept: 'application/vnd.github+json' },
+  });
+  if (!res.ok) {
+    log(`${key}: could not query GitHub PR: ${res.status}`);
+    return null;
+  }
+  const arr = await res.json();
+  return Array.isArray(arr) && arr[0] ? arr[0] : null;
+}
+
+// Fetch the JIRA summary for a ticket. Best-effort — returns '' on any failure.
+async function getJiraSummary(env, key) {
+  try {
+    const res = await fetch(`${env.JIRA_BASE_URL}/rest/api/2/issue/${key}?fields=summary`, {
+      headers: jiraHeaders(env),
+    });
+    if (!res.ok) return '';
+    const d = await res.json();
+    return (d.fields && d.fields.summary) || '';
+  } catch {
+    return '';
+  }
+}
+
+// Post the notification DATA to a Teams Workflow webhook. The flow holds a static
+// Adaptive Card template that pulls these fields via triggerBody()?['...'] tokens.
+// Failures never fail the run.
+async function notifyTeams(webhookUrl, key, payload) {
+  const res = await fetch(webhookUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    log(`${key}: Teams notify failed: ${res.status} ${await res.text()}`);
+  } else {
+    log(`${key}: Teams notified`);
+  }
+}
+
+// Best-effort: look up the PR + JIRA details and post to Teams. Errors are logged, never thrown.
+async function announcePr(env, key) {
+  if (!env.TEAMS_WEBHOOK_URL) return;
+  try {
+    const slug = repoSlug();
+    if (!slug) {
+      log(`${key}: cannot resolve repo slug — skipping Teams notify`);
+      return;
+    }
+    const pr = await findPrForTicket(env, key, slug);
+    if (!pr) {
+      log(`${key}: no open PR found — skipping Teams notify`);
+      return;
+    }
+    const branch = key.toLowerCase();
+    const jiraTitle = await getJiraSummary(env, key);
+    await notifyTeams(env.TEAMS_WEBHOOK_URL, key, {
+      ticket: key,
+      jiraUrl: `${env.JIRA_BASE_URL}/browse/${key}`,
+      jiraTitle,
+      prUrl: pr.html_url,
+      prTitle: pr.title || '',
+      prNumber: pr.number,
+      branch,
+      previewUrl: `https://${branch}--${slug.repo}--${slug.owner}.aem.live`,
+      status: pr.draft ? 'Draft — review before merge' : 'Open',
+    });
+  } catch (err) {
+    log(`${key}: Teams notify error: ${err.message}`);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // git worktree + claude
 // ---------------------------------------------------------------------------
 
@@ -335,6 +425,7 @@ async function processTicket(env, key) {
     if (ok) {
       await updateLabels(env, key, { add: [DONE_LABEL], remove: [IN_PROGRESS_LABEL] });
       log(`${key}: SUCCESS -> ${DONE_LABEL}`);
+      await announcePr(env, key);
     } else {
       await updateLabels(env, key, { add: [FAILED_LABEL], remove: [IN_PROGRESS_LABEL] });
       log(`${key}: FAILURE -> ${FAILED_LABEL}`);
@@ -346,6 +437,35 @@ async function processTicket(env, key) {
     } catch (e2) {
       log(`${key}: also failed to set ${FAILED_LABEL}: ${e2.message}`);
     }
+  }
+}
+
+// `node poller.mjs --test-teams` — post one sample card and exit, to verify the
+// TEAMS_WEBHOOK_URL wiring without running a real build. Uses the same notifyTeams path.
+async function testTeams() {
+  try {
+    const env = loadEnv(ENV_PATH);
+    if (!env.TEAMS_WEBHOOK_URL) {
+      log('TEAMS_WEBHOOK_URL not set in .env — nothing to test.');
+      process.exitCode = 1;
+      return;
+    }
+    log('Posting a test card to Teams…');
+    await notifyTeams(env.TEAMS_WEBHOOK_URL, 'TEST-000', {
+      ticket: 'TEST-000',
+      jiraUrl: `${env.JIRA_BASE_URL}/browse/TEST-000`,
+      jiraTitle: 'Sample ticket title (safe to ignore)',
+      prUrl: 'https://github.com/adobe-experience-league/exlm/pulls',
+      prTitle: 'chore(TEST-000): sample auto-build PR',
+      prNumber: 0,
+      branch: 'test-000',
+      previewUrl: 'https://main--exlm--adobe-experience-league.aem.live',
+      status: 'Draft — review before merge',
+    });
+    log('Done — check your Teams channel.');
+  } catch (err) {
+    log(`Teams test error: ${err.message}`);
+    process.exitCode = 1;
   }
 }
 
@@ -385,4 +505,8 @@ async function main() {
   }
 }
 
-main();
+if (process.argv.includes('--test-teams')) {
+  testTeams();
+} else {
+  main();
+}

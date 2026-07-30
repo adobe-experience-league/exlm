@@ -53,6 +53,27 @@ Edit [`config.json`](./config.json):
 - `worktreePath`: where the isolated build worktree lives. Empty = default sibling dir
   `../exlm-auto-build-workspace`. Set an absolute or repo-relative path to override.
 
+## Teams notifications (optional)
+
+When a draft PR is raised, the poller can post an Adaptive Card to a Teams channel/chat with the
+ticket, PR link, and preview URL. It's off unless `TEAMS_WEBHOOK_URL` is set in `.env`.
+
+Microsoft is retiring the old "Incoming Webhook" O365 connectors, so use a **Teams Workflow**
+(Power Automate):
+
+1. In Teams, open the target channel → **⋯ → Workflows** (or **Workflows** app → **+ New flow**).
+2. Pick the template **"Post to a channel when a webhook request is received"** (or the chat
+   variant). Complete it and copy the generated **HTTP POST URL**.
+3. Add it to the repo-root `.env` (it's a secret — anyone with the URL can post):
+
+   ```
+   TEAMS_WEBHOOK_URL=https://prod-XX.westus.logic.azure.com:443/workflows/...
+   ```
+
+That's it — the poller posts on each successful draft PR. The card payload is the standard
+`{ "type": "message", "attachments": [ <AdaptiveCard> ] }` the Workflow template expects. Delivery
+failures are logged and never fail a build.
+
 ## Install (once per machine)
 
 ```bash
