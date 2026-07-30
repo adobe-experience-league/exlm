@@ -158,6 +158,11 @@ function attachPlaylistEmbedAttribution(player) {
     heading.append(title);
   }
 
+  // Full title available on hover when CSS ellipsis clips it on narrow embed widths.
+  if (title.textContent?.trim()) {
+    title.setAttribute('title', title.textContent.trim());
+  }
+
   heading.querySelector('.playlist-embed-attribution')?.remove();
   const attribution = document.createElement('div');
   attribution.className = 'playlist-embed-attribution';
@@ -166,12 +171,23 @@ function attachPlaylistEmbedAttribution(player) {
   link.href = buildPlaylistAttributionHref(window.location.href);
   link.target = '_blank';
   link.rel = 'noopener noreferrer';
-  link.setAttribute('aria-label', 'View more on Experience League (opens in a new tab)');
-  link.append(
-    createPlaceholderSpan('playlistViewMoreOnExperienceLeague', 'View more on Experience League', (span) => {
-      link.setAttribute('aria-label', `${span.textContent} (opens in a new tab)`);
-    }),
-  );
+
+  // Visible label swaps by breakpoint (CSS). Accessible name follows the visible
+  // label (display:none hides the other from the a11y tree) — WCAG 2.5.3.
+  // Set fallback text immediately so first paint / SR name is not empty.
+  const fullLabel = createPlaceholderSpan('playlistViewMoreOnExperienceLeague', 'View more on Experience League');
+  fullLabel.classList.add('playlist-embed-attribution-label', 'playlist-embed-attribution-label-full');
+  fullLabel.textContent = 'View more on Experience League';
+
+  const shortLabel = createPlaceholderSpan('playlistViewMoreOnExperienceLeagueShort', 'View on ExL');
+  shortLabel.classList.add('playlist-embed-attribution-label', 'playlist-embed-attribution-label-short');
+  shortLabel.textContent = 'View on ExL';
+
+  const newTabHint = document.createElement('span');
+  newTabHint.className = 'visually-hidden';
+  newTabHint.textContent = ' (opens in a new tab)';
+
+  link.append(fullLabel, shortLabel, newTabHint);
   attribution.append(link);
   heading.append(attribution);
 }
