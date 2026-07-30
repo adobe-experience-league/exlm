@@ -140,6 +140,43 @@ function iconSpan(icon) {
 }
 
 /**
+ * Attribution CTA beside the video title (product feedback: align with title, not viewport corner).
+ * Rebuilt with the player so it survives updatePlayer innerHTML replace.
+ * @param {HTMLElement} player
+ */
+function attachPlaylistEmbedAttribution(player) {
+  if (!isPlaylistEmbedMode()) return;
+  const info = player.querySelector('.playlist-player-info');
+  const title = info?.querySelector('.playlist-player-info-title');
+  if (!info || !title) return;
+
+  let heading = info.querySelector('.playlist-player-info-heading');
+  if (!heading) {
+    heading = document.createElement('div');
+    heading.className = 'playlist-player-info-heading';
+    title.before(heading);
+    heading.append(title);
+  }
+
+  heading.querySelector('.playlist-embed-attribution')?.remove();
+  const attribution = document.createElement('div');
+  attribution.className = 'playlist-embed-attribution';
+  const link = document.createElement('a');
+  link.className = 'playlist-embed-attribution-link button';
+  link.href = buildPlaylistAttributionHref(window.location.href);
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.setAttribute('aria-label', 'View more on Experience League (opens in a new tab)');
+  link.append(
+    createPlaceholderSpan('playlistViewMoreOnExperienceLeague', 'View more on Experience League', (span) => {
+      link.setAttribute('aria-label', `${span.textContent} (opens in a new tab)`);
+    }),
+  );
+  attribution.append(link);
+  heading.append(attribution);
+}
+
+/**
  * @param {Video} video
  * @param {Playlist} playlist
  * @returns {HTMLElement}
@@ -261,6 +298,7 @@ function updatePlayer(playlist) {
   updateTranscript(transcriptUrl, transcriptDetail);
   playerContainer.innerHTML = '';
   playerContainer.append(player);
+  attachPlaylistEmbedAttribution(player);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -338,6 +376,9 @@ playlist.onVideoChange((videos, vIndex) => {
 export default function decorate(block) {
   const main = document.querySelector('main');
   main.classList.add('playlist-page');
+  if (isPlaylistEmbedMode()) {
+    document.body.classList.add(PLAYLIST_EMBED_BODY_CLASS);
+  }
   const playlistSection = block.closest('.section');
   const playerContainer = htmlToElement(`<div class="playlist-player-container" data-playlist-player-container></div>`);
   playlistSection.parentElement.prepend(playerContainer);
@@ -456,25 +497,5 @@ export default function decorate(block) {
         toastResult.value.sendNotice(notice, 'info', 5000);
       },
     );
-  }
-
-  if (isPlaylistEmbedMode()) {
-    document.body.classList.add(PLAYLIST_EMBED_BODY_CLASS);
-    // Fixed overlay on body — never a .playlist-page grid child (that broke desktop columns).
-    document.querySelector('.playlist-embed-attribution')?.remove();
-    const attribution = htmlToElement(`<div class="playlist-embed-attribution"></div>`);
-    const link = document.createElement('a');
-    link.className = 'playlist-embed-attribution-link button';
-    link.href = buildPlaylistAttributionHref(window.location.href);
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.setAttribute('aria-label', 'View more on Experience League (opens in a new tab)');
-    link.append(
-      createPlaceholderSpan('playlistViewMoreOnExperienceLeague', 'View more on Experience League', (span) => {
-        link.setAttribute('aria-label', `${span.textContent} (opens in a new tab)`);
-      }),
-    );
-    attribution.append(link);
-    document.body.append(attribution);
   }
 }
