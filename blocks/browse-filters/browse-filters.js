@@ -36,6 +36,7 @@ import {
 import {
   BASE_COVEO_ADVANCED_QUERY,
   BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT,
+  COVEO_EXCLUDE_STALE_UPCOMING_AQ,
 } from '../../scripts/browse-card/browse-cards-constants.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import {
@@ -1743,9 +1744,12 @@ function decorateBrowseTopics(block) {
 
 export default async function decorate(block) {
   const isUpcomingEventFlow = isEventsPage && isFeatureEnabled('isEventsV2');
+  // Browse (and other non-Events-V2 filter pages): drop stale Upcoming at query time —
+  // same rule as Events Hub / global search (EXLM-5361). Events-page legacy flow keeps
+  // its own base aq (wired separately via Events Search / upcoming-event-v2).
   window.headlessBaseSolutionQuery = isUpcomingEventFlow
     ? BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT
-    : BASE_COVEO_ADVANCED_QUERY;
+    : `(${BASE_COVEO_ADVANCED_QUERY}) AND (${COVEO_EXCLUDE_STALE_UPCOMING_AQ})`;
   enableTagsAsProxy(block);
   appendFormEl(block);
   constructFilterInputContainer(block);

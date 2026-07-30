@@ -2,6 +2,7 @@ import { URL_SPECIAL_CASE_LOCALES, fetchLanguagePlaceholders, getConfig } from '
 import { rewriteDocsPath } from '../../utils/path-utils.js';
 import CoveoDataService from './coveo-data-service.js';
 import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET } from './coveo-exl-pipeline-constants.js';
+import { COVEO_EXCLUDE_STALE_UPCOMING_AQ } from '../../browse-card/browse-cards-constants.js';
 
 const { coveoSearchResultsUrl } = getConfig();
 const MAX_NUMBER_OF_VALUES_PER_BATCH = 100;
@@ -184,6 +185,28 @@ export function getFacets(param) {
   return constructCoveoFacet(facets, param);
 }
 
+/**
+ * Join Coveo advanced-query clauses with AND (each clause wrapped).
+ * @param {...string} parts
+ * @returns {string|undefined}
+ */
+function mergeAdvancedQueryParts(...parts) {
+  const cleaned = parts.map((part) => (part == null ? '' : String(part).trim())).filter(Boolean);
+  if (!cleaned.length) return undefined;
+  if (cleaned.length === 1) return cleaned[0];
+  return cleaned.map((part) => `(${part})`).join(' AND ');
+}
+
+/**
+ * True when request targets Upcoming Event V2 (tabbed cards / browse card blocks).
+ * @param {object} param
+ * @returns {boolean}
+ */
+function contentTypesIncludeUpcomingEventV2(param) {
+  const upcomingKey = CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase();
+  return (param.contentType || []).some((type) => String(type).toLowerCase() === upcomingKey);
+}
+
 export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) {
   let context = { entitlements: {}, role: {}, interests: {}, industryInterests: {} };
   if (param.context) {
@@ -192,6 +215,17 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
       ...param.context,
     };
   }
+
+  // Preserve prior precedence (feature aq / explicit aq) but merge instead of
+  // silently dropping dateCriteria when both exist — needed so Upcoming + authored
+  // date filters still apply the stale-Upcoming start-time rule (EXLM-5361).
+  const aq = mergeAdvancedQueryParts(
+    param.dateCriteria && !param.feature ? contructDateAdvancedQuery(param.dateCriteria) : '',
+    param.feature ? constructCoveoAdvancedQuery(param) : '',
+    param.aq || '',
+    contentTypesIncludeUpcomingEventV2(param) ? COVEO_EXCLUDE_STALE_UPCOMING_AQ : '',
+  );
+
   const dataSource = {
     url: coveoSearchResultsUrl,
     param: {
@@ -208,10 +242,8 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
       parentField: '@foldingchild',
       childField: '@foldingparent',
       ...(param.q && !param.feature ? { q: param.q } : ''),
-      ...(param.dateCriteria && !param.feature ? { aq: contructDateAdvancedQuery(param.dateCriteria) } : ''),
+      ...(aq ? { aq } : ''),
       ...(!param.feature ? { facets: getFacets(param) } : ''),
-      ...(param.feature ? { aq: constructCoveoAdvancedQuery(param) } : ''),
-      ...(param.aq ? { aq: param.aq } : ''),
       ...(param.fields?.length > 0
         ? { batch: param.fields.map((field) => ({ field, maximumNumberOfValues: MAX_NUMBER_OF_VALUES_PER_BATCH })) }
         : ''),
