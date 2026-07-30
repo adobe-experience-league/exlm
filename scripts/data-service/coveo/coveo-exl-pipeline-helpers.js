@@ -197,16 +197,6 @@ function mergeAdvancedQueryParts(...parts) {
   return cleaned.map((part) => `(${part})`).join(' AND ');
 }
 
-/**
- * True when request targets Upcoming Event V2 (tabbed cards / browse card blocks).
- * @param {object} param
- * @returns {boolean}
- */
-function contentTypesIncludeUpcomingEventV2(param) {
-  const upcomingKey = CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase();
-  return (param.contentType || []).some((type) => String(type).toLowerCase() === upcomingKey);
-}
-
 export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) {
   let context = { entitlements: {}, role: {}, interests: {}, industryInterests: {} };
   if (param.context) {
@@ -216,14 +206,14 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
     };
   }
 
-  // Preserve prior precedence (feature aq / explicit aq) but merge instead of
-  // silently dropping dateCriteria when both exist — needed so Upcoming + authored
-  // date filters still apply the stale-Upcoming start-time rule (EXLM-5361).
+  // Always drop stale Upcoming (EXLM-5361) — not only when Upcoming V2 is the
+  // authored contentType. Topic/recommended/feature pipelines can otherwise still
+  // surface past Event|Upcoming Event cards while Browse Headless hides them.
   const aq = mergeAdvancedQueryParts(
     param.dateCriteria && !param.feature ? contructDateAdvancedQuery(param.dateCriteria) : '',
     param.feature ? constructCoveoAdvancedQuery(param) : '',
     param.aq || '',
-    contentTypesIncludeUpcomingEventV2(param) ? COVEO_EXCLUDE_STALE_UPCOMING_AQ : '',
+    COVEO_EXCLUDE_STALE_UPCOMING_AQ,
   );
 
   const dataSource = {

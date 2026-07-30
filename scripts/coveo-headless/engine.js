@@ -1,7 +1,7 @@
 import loadCoveoToken from '../data-service/coveo/coveo-token-service.js';
 import { getConfig } from '../scripts.js';
 import { generateCustomContext, generateMlParameters, COVEO_SEARCH_CUSTOM_EVENTS } from '../search/search-utils.js';
-import { COVEO_EXCLUDE_STALE_UPCOMING_AQ } from '../browse-card/browse-cards-constants.js';
+import { COVEO_EXCLUDE_STALE_UPCOMING_AQ, BASE_COVEO_ADVANCED_QUERY } from '../browse-card/browse-cards-constants.js';
 
 /**
  * Ensure Browse / Headless searches never return past Upcoming Events (EXLM-5361).
@@ -15,8 +15,9 @@ function withExcludeStaleUpcoming(aq) {
   if (existing.includes('el_event_start_time >= now')) {
     return existing;
   }
+  // Empty aq would otherwise drop Browse's Community|User guard — keep both.
   if (!existing) {
-    return COVEO_EXCLUDE_STALE_UPCOMING_AQ;
+    return `(${BASE_COVEO_ADVANCED_QUERY}) AND (${COVEO_EXCLUDE_STALE_UPCOMING_AQ})`;
   }
   return `(${existing}) AND (${COVEO_EXCLUDE_STALE_UPCOMING_AQ})`;
 }
