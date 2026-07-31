@@ -71,7 +71,6 @@ function normalizeContentTypeHash() {
 
 export default function decorate(block) {
   normalizeContentTypeHash();
-
   const renderAtomicShimmer = (insertBefore) => {
     const skeletonWrapper = htmlToElement(`<div class="atomic-search-load-skeleton">
       <div class="atomic-load-skeleton-head">
