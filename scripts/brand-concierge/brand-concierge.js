@@ -72,8 +72,10 @@ let impressionObserver = null;
 
 /** Real BC conversationId, captured from response:started/response:completed events. */
 let bcConversationId = null;
-/** Count of messages submitted in the current conversation. */
-let bcChatMessageNumber = 0;
+/** Real BC interactionId (per query/response turn), used as bcChatMessageNumber. */
+let bcInteractionId = null;
+/** Whether any message has been submitted in this conversation (for close with/without wording). */
+let bcHasMessage = false;
 
 /**
  * Removes persisted BC chat sessions from localStorage (transcript + metadata).
@@ -413,20 +415,30 @@ function scheduleScrollAfterSuggestion(mount) {
 function handleBrandConciergeClientEvent(event) {
   if (!event?.eventType) return;
 
-  // conversationId is assigned by the backend and only available once a response arrives —
-  // query:submitted itself carries no id (see BC event callback reference).
-  if (event.eventType === BC_EVENT_RESPONSE_STARTED || event.eventType === BC_EVENT_RESPONSE_COMPLETED) {
-    bcConversationId = event.data?.conversationId || bcConversationId;
-  }
+  // TEMP DEBUG — remove once bcConversationId sourcing is confirmed against real BC events.
+  // eslint-disable-next-line no-console
+  console.log('[BC DEBUG] eventType:', event.eventType, 'data:', event.data);
 
   if (event.eventType === BC_EVENT_HISTORY_CLEARED) {
     bcConversationId = null;
-    bcChatMessageNumber = 0;
+    bcInteractionId = null;
+    bcHasMessage = false;
   }
 
   if (event.eventType === BC_EVENT_QUERY_SUBMITTED) {
-    bcChatMessageNumber += 1;
-    pushBcInteractionEvent('bc message submit', { bcChatId: bcConversationId, bcChatMessageNumber });
+    bcHasMessage = true;
+  }
+
+  // conversationId/interactionId are assigned by the backend and only available once a
+  // response arrives — query:submitted itself carries neither id (see BC event callback
+  // reference), so the "bc message submit" tracking event is pushed here, once both are known.
+  if (event.eventType === BC_EVENT_RESPONSE_STARTED || event.eventType === BC_EVENT_RESPONSE_COMPLETED) {
+    bcConversationId = event.data?.conversationId || bcConversationId;
+    bcInteractionId = event.data?.interactionId || bcInteractionId;
+  }
+
+  if (event.eventType === BC_EVENT_RESPONSE_STARTED) {
+    pushBcInteractionEvent('bc message submit', { bcChatId: bcConversationId, bcChatMessageNumber: bcInteractionId });
   }
 
   if (!SCROLL_EVENT_TYPES.has(event.eventType)) return;
@@ -657,7 +669,8 @@ async function clearBrandConciergeConversation() {
   }
 
   bcConversationId = null;
-  bcChatMessageNumber = 0;
+  bcInteractionId = null;
+  bcHasMessage = false;
 
   const bcMount = getBrandConciergeMount();
   scrollToBottomWatcher?.cleanup();
@@ -783,9 +796,7 @@ function createMountPoint() {
     triggerEl: trigger,
     onClose: () => {
       trigger.setAttribute('aria-expanded', 'false');
-      pushBcInteractionEvent(
-        bcChatMessageNumber > 0 ? 'bc widget close with message' : 'bc widget close without message',
-      );
+      pushBcInteractionEvent(bcHasMessage ? 'bc widget close with message' : 'bc widget close without message');
     },
   });
 
