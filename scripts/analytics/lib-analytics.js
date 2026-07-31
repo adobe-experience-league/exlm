@@ -212,28 +212,35 @@ export async function pushPageDataLayer(language, searchTrackingData) {
 
   const { user, userData } = await getDataLayerUserDetails();
 
-  if (userData) {
-    const courseInfo = (userData.courses_v2 || []).find((c) => c.courseId === courseObj?.id);
-    if (courseInfo?.modules && Array.isArray(courseInfo?.modules)) {
-      let startTime = null;
-      courseInfo.modules.forEach((mod) => {
-        if (mod?.startedAt) {
-          if (!startTime || new Date(mod.startedAt) < new Date(startTime)) {
-            startTime = mod.startedAt;
+  try {
+    if (userData) {
+      const courseInfo = (userData.courses_v2 || []).find((c) => c.courseId === courseObj?.id);
+      if (courseInfo) {
+        if (courseInfo?.modules && Array.isArray(courseInfo?.modules)) {
+          let startTime = null;
+          courseInfo.modules.forEach((mod) => {
+            if (mod?.startedAt) {
+              if (!startTime || new Date(mod.startedAt) < new Date(startTime)) {
+                startTime = mod.startedAt;
+              }
+            }
+          });
+          if (startTime) {
+            courseObj.startTime = startTime;
+          }
+
+          if (courseInfo?.awards?.timestamp) courseObj.finishTime = courseInfo.awards.timestamp;
+
+          if (courseObj?.startTime && courseObj?.finishTime) {
+            const durationMs = new Date(courseObj.finishTime) - new Date(courseObj.startTime);
+            courseObj.duration = Math.round(durationMs / 60000); // duration in minutes
           }
         }
-      });
-      if (startTime) {
-        courseObj.startTime = startTime;
-      }
-
-      if (courseInfo?.awards?.timestamp) courseObj.finishTime = courseInfo.awards.timestamp;
-
-      if (courseObj?.startTime && courseObj?.finishTime) {
-        const durationMs = new Date(courseObj.finishTime) - new Date(courseObj.startTime);
-        courseObj.duration = Math.round(durationMs / 60000); // duration in minutes
       }
     }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error getting user profile:', e);
   }
 
   let section = 'learn';
