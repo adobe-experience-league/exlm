@@ -1,0 +1,11 @@
+.text .text-row + .text-row {
+  margin-top: 8px;
+}
+
+.text .text-row[data-align='center'] {
+  text-align: center;
+}
+
+.text .text-row[data-align='right'] {
+  text-align: right;
+}
