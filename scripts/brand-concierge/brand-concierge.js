@@ -30,10 +30,12 @@ const SCROLL_PIN_RETRY_DELAYS_MS = [16, 50, 120, 250, 500, 1000, 1800];
 const SUGGESTION_CLICK_SELECTOR =
   '.bc-prompt-suggestion-button, .bc-prompt-pill-button, .prompt-suggestions-container button, .widget-options-container button';
 
-/** BC `onEvent` types (see mt enum in the web client bundle). */
+/** BC `onEvent` types — see the Brand Concierge event callback reference. */
 const BC_EVENT_PROMPT_CLICKED = 'promptSuggestion:clicked';
 const BC_EVENT_QUERY_SUBMITTED = 'query:submitted';
 const BC_EVENT_RESPONSE_STARTED = 'response:started';
+const BC_EVENT_RESPONSE_COMPLETED = 'response:completed';
+const BC_EVENT_HISTORY_CLEARED = 'history:cleared';
 
 const SCROLL_EVENT_TYPES = new Set([BC_EVENT_PROMPT_CLICKED, BC_EVENT_QUERY_SUBMITTED, BC_EVENT_RESPONSE_STARTED]);
 
@@ -68,8 +70,8 @@ let keyboardScrollHandler = null;
 let keyboardScrollDialog = null;
 let impressionObserver = null;
 
-/** Identifies the current BC conversation for analytics; created on first message submit. */
-let bcChatId = null;
+/** Real BC conversationId, captured from response:started/response:completed events. */
+let bcConversationId = null;
 /** Count of messages submitted in the current conversation. */
 let bcChatMessageNumber = 0;
 
@@ -411,10 +413,20 @@ function scheduleScrollAfterSuggestion(mount) {
 function handleBrandConciergeClientEvent(event) {
   if (!event?.eventType) return;
 
+  // conversationId is assigned by the backend and only available once a response arrives —
+  // query:submitted itself carries no id (see BC event callback reference).
+  if (event.eventType === BC_EVENT_RESPONSE_STARTED || event.eventType === BC_EVENT_RESPONSE_COMPLETED) {
+    bcConversationId = event.data?.conversationId || bcConversationId;
+  }
+
+  if (event.eventType === BC_EVENT_HISTORY_CLEARED) {
+    bcConversationId = null;
+    bcChatMessageNumber = 0;
+  }
+
   if (event.eventType === BC_EVENT_QUERY_SUBMITTED) {
-    bcChatId = bcChatId || window.crypto.randomUUID();
     bcChatMessageNumber += 1;
-    pushBcInteractionEvent('bc message submit', { bcChatId, bcChatMessageNumber });
+    pushBcInteractionEvent('bc message submit', { bcChatId: bcConversationId, bcChatMessageNumber });
   }
 
   if (!SCROLL_EVENT_TYPES.has(event.eventType)) return;
@@ -644,7 +656,7 @@ async function clearBrandConciergeConversation() {
     await concierge.bootstrap(getBootstrapOptions());
   }
 
-  bcChatId = null;
+  bcConversationId = null;
   bcChatMessageNumber = 0;
 
   const bcMount = getBrandConciergeMount();
@@ -773,10 +785,6 @@ function createMountPoint() {
       trigger.setAttribute('aria-expanded', 'false');
       pushBcInteractionEvent(
         bcChatMessageNumber > 0 ? 'bc widget close with message' : 'bc widget close without message',
-        {
-          bcChatId,
-          bcChatMessageNumber,
-        },
       );
     },
   });
@@ -788,20 +796,17 @@ function createMountPoint() {
     dialog.showModal();
     trigger.setAttribute('aria-expanded', 'true');
     focusBcChatInputWhenReady(mount);
-    pushBcInteractionEvent('bc widget open', { bcChatId, bcChatMessageNumber });
+    pushBcInteractionEvent('bc widget open');
   });
 
   dialog.querySelector('.exl-dialog-header-expand')?.addEventListener('click', () => {
     focusBcChatInputWhenReady(mount);
     const isExpanded = dialog.classList.contains('exl-dialog-expanded');
-    pushBcInteractionEvent(isExpanded ? 'bc widget expand' : 'bc widget collapse', {
-      bcChatId,
-      bcChatMessageNumber,
-    });
+    pushBcInteractionEvent(isExpanded ? 'bc widget expand' : 'bc widget collapse');
   });
 
   clearBtn.addEventListener('click', () => {
-    pushBcInteractionEvent('bc widget clear', { bcChatId, bcChatMessageNumber });
+    pushBcInteractionEvent('bc widget clear');
     clearBrandConciergeConversation().catch((e) => warn('Clear conversation failed', e?.message || e));
   });
 

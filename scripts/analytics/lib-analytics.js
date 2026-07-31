@@ -71,6 +71,78 @@ export const pageName = (language) => {
   return responseStr.toLowerCase();
 };
 
+/**
+ * Builds the shared `user` object pushed on every analytics event, fetching the merged
+ * profile when available. Falls back to an unauthenticated shape on error or when signed out.
+ * @returns {Promise<{ user: object, userData: object|null }>}
+ */
+async function getDataLayerUserDetails() {
+  const user = {
+    userDetails: {
+      userAccountType: '',
+      userAuthenticatedStatus: 'unauthenticated',
+      userAuthenticatedSystem: 'ims',
+      userID: '',
+      userLanguageSetting: [],
+      learningInterest: [],
+      role: [],
+      experienceLevel: [],
+      industry: [],
+      notificationPref: false,
+      org: '',
+      orgs: [],
+      userCorporateName: '',
+    },
+  };
+
+  let userData = null;
+
+  try {
+    // eslint-disable-next-line import/no-cycle
+    const { defaultProfileClient } = await import('../auth/profile.js');
+    userData = await defaultProfileClient.getMergedProfile();
+    if (userData) {
+      // Prefer IMS authId so userID remains stable across org/account switches
+      const stableAuthId = userData?.authId || userData?.userId || '';
+
+      // Detect new signup: true if user hasn't seen signup modal yet
+      const isNewSignUp = !userData.interactions?.some((interaction) => interaction.event === 'modalSeen');
+
+      user.userDetails = {
+        ...user.userDetails,
+        userAccountType: userData.account_type,
+        userAuthenticatedStatus: 'logged in',
+        userID: stableAuthId,
+        userLanguageSetting: userData.preferred_languages || ['en-us'],
+        learningInterest: userData.interests || [],
+        role: userData.role || [],
+        experienceLevel: userData.level || [],
+        solutionLevel: userData.solutionLevels || [],
+        certifications: userData.certifications || [],
+        industry: userData.industryInterests || [],
+        notificationPref: userData.emailOptIn === true,
+        org: userData.org || '',
+        orgs: userData.orgs || [],
+        userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
+        newSignUp: isNewSignUp,
+      };
+
+      // get a list of all courses titles and ids with awards.timestamp property
+      // Get arrays of completed courses names and their IDs (where awards.timestamp and course.name exist)
+      const completedCourses = (userData?.courses_v2 || []).filter(
+        (course) => course?.awards?.timestamp && course.name,
+      );
+      user.userDetails.courses = completedCourses.length ? completedCourses.map((course) => course.name) : [];
+      user.userDetails.coursesID = completedCourses.length ? completedCourses.map((course) => course.courseId) : [];
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error getting user profile:', e);
+  }
+
+  return { user, userData };
+}
+
 export async function pushPageDataLayer(language, searchTrackingData) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
@@ -138,89 +210,30 @@ export async function pushPageDataLayer(language, searchTrackingData) {
     }
   }
 
-  const user = {
-    userDetails: {
-      userAccountType: '',
-      userAuthenticatedStatus: 'unauthenticated',
-      userAuthenticatedSystem: 'ims',
-      userID: '',
-      userLanguageSetting: [],
-      learningInterest: [],
-      role: [],
-      experienceLevel: [],
-      industry: [],
-      notificationPref: false,
-      org: '',
-      orgs: [],
-      userCorporateName: '',
-    },
-  };
+  const { user, userData } = await getDataLayerUserDetails();
 
-  try {
-    // eslint-disable-next-line import/no-cycle
-    const { defaultProfileClient } = await import('../auth/profile.js');
-    const userData = await defaultProfileClient.getMergedProfile();
-    if (userData) {
-      // Prefer IMS authId so userID remains stable across org/account switches
-      const stableAuthId = userData?.authId || userData?.userId || '';
-
-      // Detect new signup: true if user hasn't seen signup modal yet
-      const isNewSignUp = !userData.interactions?.some((interaction) => interaction.event === 'modalSeen');
-
-      user.userDetails = {
-        ...user.userDetails,
-        userAccountType: userData.account_type,
-        userAuthenticatedStatus: 'logged in',
-        userID: stableAuthId,
-        userLanguageSetting: userData.preferred_languages || ['en-us'],
-        learningInterest: userData.interests || [],
-        role: userData.role || [],
-        experienceLevel: userData.level || [],
-        solutionLevel: userData.solutionLevels || [],
-        certifications: userData.certifications || [],
-        industry: userData.industryInterests || [],
-        notificationPref: userData.emailOptIn === true,
-        org: userData.org || '',
-        orgs: userData.orgs || [],
-        userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
-        newSignUp: isNewSignUp,
-      };
-
-      // get a list of all courses titles and ids with awards.timestamp property
-      // Get arrays of completed courses names and their IDs (where awards.timestamp and course.name exist)
-      const completedCourses = (userData?.courses_v2 || []).filter(
-        (course) => course?.awards?.timestamp && course.name,
-      );
-      user.userDetails.courses = completedCourses.length ? completedCourses.map((course) => course.name) : [];
-      user.userDetails.coursesID = completedCourses.length ? completedCourses.map((course) => course.courseId) : [];
-
-      const courseInfo = (userData.courses_v2 || []).find((c) => c.courseId === courseObj?.id);
-      if (courseInfo) {
-        if (courseInfo?.modules && Array.isArray(courseInfo?.modules)) {
-          let startTime = null;
-          courseInfo.modules.forEach((mod) => {
-            if (mod?.startedAt) {
-              if (!startTime || new Date(mod.startedAt) < new Date(startTime)) {
-                startTime = mod.startedAt;
-              }
-            }
-          });
-          if (startTime) {
-            courseObj.startTime = startTime;
-          }
-
-          if (courseInfo?.awards?.timestamp) courseObj.finishTime = courseInfo.awards.timestamp;
-
-          if (courseObj?.startTime && courseObj?.finishTime) {
-            const durationMs = new Date(courseObj.finishTime) - new Date(courseObj.startTime);
-            courseObj.duration = Math.round(durationMs / 60000); // duration in minutes
+  if (userData) {
+    const courseInfo = (userData.courses_v2 || []).find((c) => c.courseId === courseObj?.id);
+    if (courseInfo?.modules && Array.isArray(courseInfo?.modules)) {
+      let startTime = null;
+      courseInfo.modules.forEach((mod) => {
+        if (mod?.startedAt) {
+          if (!startTime || new Date(mod.startedAt) < new Date(startTime)) {
+            startTime = mod.startedAt;
           }
         }
+      });
+      if (startTime) {
+        courseObj.startTime = startTime;
+      }
+
+      if (courseInfo?.awards?.timestamp) courseObj.finishTime = courseInfo.awards.timestamp;
+
+      if (courseObj?.startTime && courseObj?.finishTime) {
+        const durationMs = new Date(courseObj.finishTime) - new Date(courseObj.startTime);
+        courseObj.duration = Math.round(durationMs / 60000); // duration in minutes
       }
     }
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error('Error getting user profile:', e);
   }
 
   let section = 'learn';
@@ -1384,8 +1397,9 @@ export function pushTopNavSearchEvent(contentTypeDropDown, searchTerm) {
  * Pushes the Brand Concierge widget impression event to the Adobe Data Layer.
  * Fired once, the first time the BC entry point becomes visible.
  */
-export function pushBcWidgetImpressionEvent() {
+export async function pushBcWidgetImpressionEvent() {
   window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user } = await getDataLayerUserDetails();
 
   window.adobeDataLayer.push({
     event: 'bcWidgetImpression',
@@ -1396,7 +1410,7 @@ export function pushBcWidgetImpressionEvent() {
       linkType: 'Impression',
       destinationDomain: window.location.href,
     },
-    user: {},
+    user,
   });
 }
 
@@ -1404,11 +1418,13 @@ export function pushBcWidgetImpressionEvent() {
  * Pushes a Brand Concierge widget interaction event (open, close, expand,
  * collapse, clear, message submit) to the Adobe Data Layer.
  * @param {string} linkTitle - e.g. 'bc widget open', 'bc message submit'.
- * @param {{ bcChatId?: string, bcChatMessageNumber?: number }} [options] - Chat session
- * identifiers, included only once a conversation has started.
+ * @param {{ bcChatId?: string, bcChatMessageNumber?: number }} [options] - BC's own
+ * `conversationId` (captured from response:started/response:completed) and a running
+ * message count; passed only for the message-submit event.
  */
-export function pushBcInteractionEvent(linkTitle, { bcChatId, bcChatMessageNumber } = {}) {
+export async function pushBcInteractionEvent(linkTitle, { bcChatId, bcChatMessageNumber } = {}) {
   window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user } = await getDataLayerUserDetails();
 
   window.adobeDataLayer.push({
     event: 'linkClicked',
@@ -1420,6 +1436,6 @@ export function pushBcInteractionEvent(linkTitle, { bcChatId, bcChatMessageNumbe
       destinationDomain: window.location.href,
     },
     ...(bcChatId && { bcChat: { bcChatId, bcChatMessageNumber } }),
-    user: {},
+    user,
   });
 }
