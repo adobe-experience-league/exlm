@@ -18,9 +18,10 @@
   color: #ffa311;
 }
 
-.champion-content.block .champion-content-eyebrow .icon {
+.champion-content.block .champion-content-icon {
   width: 16px;
   height: 16px;
+  object-fit: contain;
 }
 
 .champion-content.block .champion-content-title {
@@ -37,17 +38,12 @@
   font-weight: var(--font-weight-bold);
 }
 
-.champion-content.block .champion-content-time {
+.champion-content.block .champion-content-footer {
   display: flex;
   align-items: center;
   gap: var(--spectrum-spacing-100);
   font-size: var(--spectrum-font-size-75);
   color: var(--non-spectrum-charcoal-gray);
-}
-
-.champion-content.block .champion-content-time .icon {
-  width: 14px;
-  height: 14px;
 }
 
 .champion-content.block .champion-content-cta {

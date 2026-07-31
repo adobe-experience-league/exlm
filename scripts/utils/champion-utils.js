@@ -2,30 +2,15 @@ import ffetch from '../ffetch.js';
 
 export const MAX_CHAMPIONS = 18;
 
-const CONTENT_TYPE_ICONS = {
-  perspectives: 'atomic-search-perspective',
-  tutorial: 'atomic-search-tutorial',
-  course: 'atomic-search-course',
-  community: 'atomic-search-community',
-  certification: 'atomic-search-certification',
-  documentation: 'atomic-search-documentation',
-  event: 'atomic-search-event',
-  playlist: 'atomic-search-playlist',
-};
-
-const TIME_COMMITMENT_ICONS = {
-  watch: 'time',
-  checkmark: 'checkmark',
-};
+// Color coding is intentional and used in several places throughout the experience:
+// yellow for Adobe Champion, purple for Community Advisor, blue for User Group Leader.
+const DESIGNATION_COLORS = ['yellow', 'purple', 'blue'];
 
 const ROTATION_STORAGE_KEY = 'featured-advocates-rotation';
 
-export function getContentTypeIcon(contentType) {
-  return CONTENT_TYPE_ICONS[contentType?.trim().toLowerCase()] || '';
-}
-
-export function getTimeCommitmentIcon(iconName) {
-  return TIME_COMMITMENT_ICONS[iconName?.trim().toLowerCase()] || '';
+export function getDesignationColor(colorSelection) {
+  const normalized = colorSelection?.trim().toLowerCase();
+  return DESIGNATION_COLORS.includes(normalized) ? normalized : '';
 }
 
 /**
@@ -33,7 +18,7 @@ export function getTimeCommitmentIcon(iconName) {
  * @param {HTMLElement} block
  */
 export function extractChampionDetail(block) {
-  const [image, imageAlt, name, jobTitle, quoteBio, productDesignation, communityProfile] = [
+  const [image, name, jobTitle, quoteBio, communityProfile, productDesignation, colorSelection] = [
     ...block.children,
   ].map((row) => row.firstElementChild);
 
@@ -43,12 +28,13 @@ export function extractChampionDetail(block) {
 
   return {
     image: img?.getAttribute('src') || '',
-    imageAlt: imageAlt?.textContent.trim() || nameText,
+    imageAlt: nameText,
     name: nameText,
     jobTitle: jobTitle?.textContent.trim() || '',
-    quoteBio: quoteBio?.textContent.trim() || '',
-    productDesignation: productDesignation?.textContent.trim() || '',
+    quoteBio: quoteBio?.innerHTML.trim() || '',
     communityProfileUrl: communityLink?.getAttribute('href') || communityProfile?.textContent.trim() || '',
+    productDesignation: productDesignation?.textContent.trim() || '',
+    colorSelection: colorSelection?.textContent.trim() || '',
   };
 }
 
@@ -57,17 +43,20 @@ export function extractChampionDetail(block) {
  * @param {HTMLElement} block
  */
 export function extractChampionContent(block) {
-  const [contentType, title, description, timeIcon, timeText, cta] = [...block.children].map(
+  const [eyebrowIcon, contentType, title, description, footerIcon, footerText, cta] = [...block.children].map(
     (row) => row.firstElementChild,
   );
+  const eyebrowIconImg = eyebrowIcon?.querySelector('img');
+  const footerIconImg = footerIcon?.querySelector('img');
   const ctaLink = cta?.querySelector('a');
 
   return {
+    eyebrowIcon: eyebrowIconImg?.getAttribute('src') || '',
     contentType: contentType?.textContent.trim() || '',
     title: title?.textContent.trim() || '',
-    description: description?.textContent.trim() || '',
-    timeIcon: timeIcon?.textContent.trim() || '',
-    timeText: timeText?.textContent.trim() || '',
+    description: description?.innerHTML.trim() || '',
+    footerIcon: footerIconImg?.getAttribute('src') || '',
+    footerText: footerText?.innerHTML.trim() || '',
     ctaLabel: ctaLink?.textContent.trim() || '',
     ctaHref: ctaLink?.getAttribute('href') || '',
   };
@@ -84,8 +73,9 @@ export function isChampionEligible(detail) {
     detail.image,
     detail.name,
     detail.jobTitle,
-    detail.productDesignation,
     detail.communityProfileUrl,
+    detail.productDesignation,
+    detail.colorSelection,
   ].every((value) => !!value);
 }
 

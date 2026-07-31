@@ -13,6 +13,18 @@
   object-fit: cover;
 }
 
+.champion-detail.block .champion-detail-image-yellow picture img {
+  border-color: #ffa311;
+}
+
+.champion-detail.block .champion-detail-image-purple picture img {
+  border-color: #a55be8;
+}
+
+.champion-detail.block .champion-detail-image-blue picture img {
+  border-color: #1473e6;
+}
+
 .champion-detail.block .champion-detail-quote {
   font-style: italic;
   font-size: var(--spectrum-font-size-200);
@@ -41,6 +53,18 @@
   font-size: var(--spectrum-font-size-75);
   color: #ffa311;
   margin-top: var(--spectrum-spacing-100);
+}
+
+.champion-detail.block .champion-detail-designation-yellow {
+  color: #ffa311;
+}
+
+.champion-detail.block .champion-detail-designation-purple {
+  color: #a55be8;
+}
+
+.champion-detail.block .champion-detail-designation-blue {
+  color: #1473e6;
 }
 
 /* ----- TABLET ----- */

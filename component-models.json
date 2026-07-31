@@ -10661,14 +10661,6 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "imageAlt",
-        "value": "",
-        "label": "Image Description",
-        "description": "A descriptive text of the Champion image."
-      },
-      {
-        "component": "text",
-        "valueType": "string",
         "name": "name",
         "value": "",
         "label": "Champion Name"
@@ -10678,56 +10670,52 @@
         "valueType": "string",
         "name": "jobTitle",
         "value": "",
-        "label": "Champion Title"
+        "label": "Title"
       },
       {
-        "component": "text",
+        "component": "richtext",
         "valueType": "string",
         "name": "quoteBio",
         "value": "",
-        "label": "Quote / Bio",
-        "description": "Optional. Plain text; authors may include quotation marks if desired."
-      },
-      {
-        "component": "select",
-        "valueType": "string",
-        "name": "productDesignation",
-        "value": "",
-        "label": "Product Designation",
-        "options": [
-          {
-            "name": "Adobe Champion - Adobe Experience Manager",
-            "value": "Adobe Champion - Adobe Experience Manager"
-          },
-          {
-            "name": "Adobe Champion - Adobe Experience Platform",
-            "value": "Adobe Champion - Adobe Experience Platform"
-          },
-          {
-            "name": "Adobe Champion - Analytics",
-            "value": "Adobe Champion - Analytics"
-          },
-          {
-            "name": "Adobe Champion - Commerce",
-            "value": "Adobe Champion - Commerce"
-          },
-          {
-            "name": "Adobe Champion - Marketo Engage",
-            "value": "Adobe Champion - Marketo Engage"
-          },
-          {
-            "name": "Adobe Champion - Workfront",
-            "value": "Adobe Champion - Workfront"
-          }
-        ]
+        "label": "Quote",
+        "description": "Optional. Authors may include quotation marks if desired."
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "communityProfileUrl",
         "value": "",
-        "label": "Community Profile Link",
+        "label": "Community Profile URL",
         "description": "URL of the Champion's Community profile. The Champion name links to this URL."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "productDesignation",
+        "value": "",
+        "label": "Product Designation"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "colorSelection",
+        "value": "",
+        "label": "Color Selection",
+        "description": "The color coding for each program is intentional and is used in several places throughout the experience. Yellow for Adobe Champion, purple for Community Advisor, and blue for User Group Leader.",
+        "options": [
+          {
+            "name": "Yellow - Adobe Champion",
+            "value": "yellow"
+          },
+          {
+            "name": "Purple - Community Advisor",
+            "value": "purple"
+          },
+          {
+            "name": "Blue - User Group Leader",
+            "value": "blue"
+          }
+        ]
       }
     ]
   },
@@ -10735,45 +10723,18 @@
     "id": "champion-content",
     "fields": [
       {
-        "component": "select",
+        "component": "reference",
+        "valueType": "string",
+        "name": "eyebrowIcon",
+        "label": "Eyebrow Icon",
+        "description": "Small icon shown beside the Content Type label."
+      },
+      {
+        "component": "text",
         "valueType": "string",
         "name": "contentType",
         "value": "",
-        "label": "Content Type",
-        "options": [
-          {
-            "name": "Perspectives",
-            "value": "Perspectives"
-          },
-          {
-            "name": "Tutorial",
-            "value": "Tutorial"
-          },
-          {
-            "name": "Course",
-            "value": "Course"
-          },
-          {
-            "name": "Community",
-            "value": "Community"
-          },
-          {
-            "name": "Certification",
-            "value": "Certification"
-          },
-          {
-            "name": "Documentation",
-            "value": "Documentation"
-          },
-          {
-            "name": "Event",
-            "value": "Event"
-          },
-          {
-            "name": "Playlist",
-            "value": "Playlist"
-          }
-        ]
+        "label": "Content Type"
       },
       {
         "component": "text",
@@ -10783,7 +10744,7 @@
         "label": "Title"
       },
       {
-        "component": "text",
+        "component": "richtext",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -10791,29 +10752,19 @@
         "description": "Optional."
       },
       {
-        "component": "select",
+        "component": "reference",
         "valueType": "string",
-        "name": "timeIcon",
-        "value": "watch",
-        "label": "Time Commitment Icon",
-        "options": [
-          {
-            "name": "Watch",
-            "value": "watch"
-          },
-          {
-            "name": "Checkmark",
-            "value": "checkmark"
-          }
-        ]
+        "name": "footerIcon",
+        "label": "Footer Icon",
+        "description": "Small icon shown beside the Footer Text."
       },
       {
-        "component": "text",
+        "component": "richtext",
         "valueType": "string",
-        "name": "timeText",
+        "name": "footerText",
         "value": "",
-        "label": "Time Commitment Text",
-        "description": "e.g. \"5 min read\""
+        "label": "Footer Text",
+        "description": "e.g. \"5 min read\", \"Solved by {name}\""
       },
       {
         "component": "text",

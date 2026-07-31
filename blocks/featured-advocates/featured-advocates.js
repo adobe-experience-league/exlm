@@ -1,28 +1,20 @@
 import { getPathDetails, htmlToElement } from '../../scripts/scripts.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import {
-  getFeaturedChampions,
-  getRotatedChampions,
-  getContentTypeIcon,
-  getTimeCommitmentIcon,
-} from '../../scripts/utils/champion-utils.js';
+import { getFeaturedChampions, getRotatedChampions, getDesignationColor } from '../../scripts/utils/champion-utils.js';
 
 function buildAssociatedContentCard(item, championName) {
-  const contentTypeIcon = getContentTypeIcon(item.contentType);
-  const timeIcon = getTimeCommitmentIcon(item.timeIcon);
-
   return `
     <div class="advocate-content-card">
       <div class="advocate-content-eyebrow">
-        ${contentTypeIcon ? `<span class="icon icon-${contentTypeIcon}"></span>` : ''}
+        ${item.eyebrowIcon ? `<img class="advocate-content-icon" src="${item.eyebrowIcon}" alt="" loading="lazy">` : ''}
         <span>${item.contentType}</span>
       </div>
       <div class="advocate-content-title">${item.title}</div>
-      ${item.description ? `<p class="advocate-content-description">${item.description}</p>` : ''}
+      ${item.description ? `<div class="advocate-content-description">${item.description}</div>` : ''}
       <div class="advocate-content-byline">By ${championName}</div>
-      <div class="advocate-content-time">
-        ${timeIcon ? `<span class="icon icon-${timeIcon}"></span>` : ''}
-        <span>${item.timeText}</span>
+      <div class="advocate-content-footer">
+        ${item.footerIcon ? `<img class="advocate-content-icon" src="${item.footerIcon}" alt="" loading="lazy">` : ''}
+        <div class="advocate-content-footer-text">${item.footerText}</div>
       </div>
       ${item.ctaHref ? `<a class="advocate-content-cta" href="${item.ctaHref}">${item.ctaLabel}</a>` : ''}
     </div>
@@ -31,18 +23,24 @@ function buildAssociatedContentCard(item, championName) {
 
 function buildAdvocatePanel(champion, total) {
   const { detail, associatedContent } = champion;
+  const colorClass = getDesignationColor(detail.colorSelection);
+  const colorModifier = colorClass ? ` advocate-panel-${colorClass}` : '';
 
   return htmlToElement(`
-    <div class="advocate-panel">
+    <div class="advocate-panel${colorModifier}">
       <div class="advocate-profile">
-        <div class="advocate-image">
+        <div class="advocate-image${colorClass ? ` advocate-image-${colorClass}` : ''}">
           <picture><img src="${detail.image}" alt="${detail.imageAlt}" loading="lazy"></picture>
         </div>
         <div class="advocate-info">
-          ${detail.quoteBio ? `<p class="advocate-quote">${detail.quoteBio}</p>` : ''}
+          ${detail.quoteBio ? `<div class="advocate-quote">${detail.quoteBio}</div>` : ''}
           <a class="advocate-name" href="${detail.communityProfileUrl}">${detail.name}</a>
           <span class="advocate-title"> – ${detail.jobTitle}</span>
-          ${detail.productDesignation ? `<div class="advocate-designation">${detail.productDesignation}</div>` : ''}
+          ${
+            detail.productDesignation
+              ? `<div class="advocate-designation${colorClass ? ` advocate-designation-${colorClass}` : ''}">${detail.productDesignation}</div>`
+              : ''
+          }
           ${
             total > 1
               ? `<div class="advocate-pagination">
