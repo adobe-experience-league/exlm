@@ -29,6 +29,26 @@ export const COMMUNITY_CONTENT_TYPES = [
 
 export const COMMUNITY_SUPPORTED_SORT_ELEMENTS = ['el_view_status', 'el_kudo_status', 'el_reply_status'];
 
+/**
+ * Normalizes each comma-separated content-type value to its real indexed form.
+ * @param {string} rawValue - e.g. "Community;Community|Questions" or "TypeA,TypeB"
+ * @returns {string} normalized value, e.g. "Community|Questions"
+ */
+export function normalizeContentTypeFilterValue(rawValue) {
+  return (rawValue || '')
+    .split(',')
+    .map((segment) => segment.trim())
+    .filter(Boolean)
+    .map((segment) => {
+      const parts = segment
+        .split(';')
+        .map((part) => part.trim())
+        .filter(Boolean);
+      return parts[parts.length - 1] || segment;
+    })
+    .join(',');
+}
+
 // Mobile Only (Until 1024px)
 export const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
