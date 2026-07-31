@@ -403,34 +403,31 @@ function handleUriHash(isInitialLoad) {
       if (filterOptionEl) {
         const ddObject = getObjectById(dropdownOptions, keyName);
         const { name } = ddObject;
+        let checkedCount = 0;
         facetValues.forEach((facetValueString) => {
           const [facetValue] = facetValueString.split('|');
-          const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
+          const inputEl =
+            filterOptionEl.querySelector(`input[value="${facetValueString}"]`) ||
+            filterOptionEl.querySelector(`input[value="${facetValue}"]`);
           if (inputEl && !inputEl.checked) {
             const label = inputEl.dataset.label || '';
             inputEl.checked = true;
+            checkedCount += 1;
             appendTag(
               browseFiltersSection,
               {
                 id: keyName,
                 name,
                 label,
-                value: facetValue,
+                value: inputEl.value,
               },
               'handleUriHash',
             );
           }
         });
         const btnEl = filterOptionEl.querySelector(':scope > button');
-        const selectedCount = facetValues.reduce((acc, curr) => {
-          const [key] = curr.split('|');
-          if (!acc.includes(key)) {
-            acc.push(key);
-          }
-          return acc;
-        }, []).length;
-        ddObject.selected = selectedCount;
-        btnEl.firstChild.textContent = selectedCount === 0 ? name : `${name} (${selectedCount})`;
+        ddObject.selected = checkedCount;
+        btnEl.firstChild.textContent = checkedCount === 0 ? name : `${name} (${checkedCount})`;
       }
     } else if (keyName === 'q') {
       containsSearchQuery = true;
