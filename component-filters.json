@@ -104,7 +104,6 @@
       "featured-authors",
       "featured-advocates",
       "champion-detail",
-      "champion-content",
       "inline-survey",
       "featured-content",
       "browse-filters",
@@ -509,6 +508,10 @@
   {
     "id": "accordion",
     "components": ["accordion"]
+  },
+  {
+    "id": "champion-content",
+    "components": ["champion-content"]
   },
   {
     "id": "authorable-card",

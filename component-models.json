@@ -10656,21 +10656,24 @@
         "component": "reference",
         "valueType": "string",
         "name": "image",
-        "label": "Champion Image"
+        "label": "Champion Image",
+        "required": true
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "name",
         "value": "",
-        "label": "Champion Name"
+        "label": "Champion Name",
+        "required": true
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "jobTitle",
         "value": "",
-        "label": "Title"
+        "label": "Title",
+        "required": true
       },
       {
         "component": "richtext",
@@ -10686,14 +10689,16 @@
         "name": "communityProfileUrl",
         "value": "",
         "label": "Community Profile URL",
-        "description": "URL of the Champion's Community profile. The Champion name links to this URL."
+        "description": "URL of the Champion's Community profile. The Champion name links to this URL.",
+        "required": true
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "productDesignation",
         "value": "",
-        "label": "Product Designation"
+        "label": "Product Designation",
+        "required": true
       },
       {
         "component": "select",
@@ -10701,6 +10706,7 @@
         "name": "colorSelection",
         "value": "",
         "label": "Color Selection",
+        "required": true,
         "description": "The color coding for each program is intentional and is used in several places throughout the experience. Yellow for Adobe Champion, purple for Community Advisor, and blue for User Group Leader.",
         "options": [
           {
@@ -10727,21 +10733,24 @@
         "valueType": "string",
         "name": "eyebrowIcon",
         "label": "Eyebrow Icon",
-        "description": "Small icon shown beside the Content Type label."
+        "description": "Small icon shown beside the Content Type label.",
+        "required": true
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "contentType",
         "value": "",
-        "label": "Content Type"
+        "label": "Content Type",
+        "required": true
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "title",
         "value": "",
-        "label": "Title"
+        "label": "Title",
+        "required": true
       },
       {
         "component": "richtext",
@@ -10756,7 +10765,8 @@
         "valueType": "string",
         "name": "footerIcon",
         "label": "Footer Icon",
-        "description": "Small icon shown beside the Footer Text."
+        "description": "Small icon shown beside the Footer Text.",
+        "required": true
       },
       {
         "component": "richtext",
@@ -10764,21 +10774,17 @@
         "name": "footerText",
         "value": "",
         "label": "Footer Text",
-        "description": "e.g. \"5 min read\", \"Solved by {name}\""
+        "description": "e.g. \"5 min read\", \"Solved by {name}\"",
+        "required": true
       },
       {
-        "component": "text",
+        "component": "richtext",
         "valueType": "string",
-        "name": "ctaLabel",
+        "name": "cta",
         "value": "",
-        "label": "CTA Label"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "ctaLink",
-        "value": "",
-        "label": "CTA Link"
+        "label": "CTA",
+        "description": "Select the CTA text and apply a link to it.",
+        "required": true
       }
     ]
   }

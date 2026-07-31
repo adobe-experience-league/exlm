@@ -8,7 +8,12 @@ function getChampionName() {
   return nameRow?.firstElementChild?.textContent.trim() || '';
 }
 
-export default function decorate(block) {
+/**
+ * Decorate a champion-content block/item in place.
+ * Used both standalone (generic block loader) and when nested inside champion-detail.
+ * @param {HTMLElement} block
+ */
+export function decorateChampionContent(block) {
   const content = extractChampionContent(block);
   const championName = getChampionName();
 
@@ -26,4 +31,8 @@ export default function decorate(block) {
     </div>
     ${content.ctaHref ? `<a class="champion-content-cta" href="${content.ctaHref}">${content.ctaLabel}</a>` : ''}
   `;
+}
+
+export default function decorate(block) {
+  decorateChampionContent(block);
 }

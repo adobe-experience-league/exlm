@@ -3,6 +3,7 @@
   flex-direction: column;
   gap: var(--spectrum-spacing-100);
   padding: var(--spectrum-spacing-300);
+  background-color: white;
   border-top: 3px solid #ffa311;
   box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
   border-radius: 4px;
