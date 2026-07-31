@@ -1,11 +1,23 @@
-.text .text-row + .text-row {
-  margin-top: 8px;
+.text .text-segment {
+  margin: 0;
 }
 
-.text .text-row[data-align='center'] {
+.text .text-segment + .text-segment {
+  margin-top: 14px;
+}
+
+.text .text-align-left {
+  text-align: left;
+}
+
+.text .text-align-center {
   text-align: center;
 }
 
-.text .text-row[data-align='right'] {
+.text .text-align-right {
   text-align: right;
+}
+
+.text .text-align-justify {
+  text-align: justify;
 }
