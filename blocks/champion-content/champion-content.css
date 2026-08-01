@@ -9,6 +9,18 @@
   border-radius: 4px;
 }
 
+.champion-content.block.champion-content-yellow {
+  border-top-color: #ffa311;
+}
+
+.champion-content.block.champion-content-purple {
+  border-top-color: #a55be8;
+}
+
+.champion-content.block.champion-content-blue {
+  border-top-color: #1473e6;
+}
+
 .champion-content.block .champion-content-eyebrow {
   display: flex;
   align-items: center;
@@ -17,6 +29,18 @@
   letter-spacing: 0.6px;
   font-size: var(--spectrum-font-size-75);
   color: #ffa311;
+}
+
+.champion-content.block.champion-content-yellow .champion-content-eyebrow {
+  color: #ffa311;
+}
+
+.champion-content.block.champion-content-purple .champion-content-eyebrow {
+  color: #a55be8;
+}
+
+.champion-content.block.champion-content-blue .champion-content-eyebrow {
+  color: #1473e6;
 }
 
 .champion-content.block .champion-content-icon {

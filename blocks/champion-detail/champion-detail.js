@@ -40,6 +40,7 @@ export default function decorate(block) {
     itemsContainer.classList.add('champion-detail-items');
     items.forEach((item) => {
       item.classList.add('champion-content', 'block');
+      if (colorClass) item.classList.add(`champion-content-${colorClass}`);
       decorateChampionContent(item);
       itemsContainer.append(item);
     });

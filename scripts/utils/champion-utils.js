@@ -20,7 +20,7 @@ export function getDesignationColor(colorSelection) {
 export function extractChampionDetail(block) {
   const [image, name, jobTitle, quoteBio, communityProfile, productDesignation, colorSelection] = [
     ...block.children,
-  ].map((row) => row.firstElementChild);
+  ];
 
   const img = image?.querySelector('img');
   const communityLink = communityProfile?.querySelector('a');
@@ -43,9 +43,7 @@ export function extractChampionDetail(block) {
  * @param {HTMLElement} block
  */
 export function extractChampionContent(block) {
-  const [eyebrowIcon, contentType, title, description, footerIcon, footerText, cta] = [...block.children].map(
-    (row) => row.firstElementChild,
-  );
+  const [eyebrowIcon, contentType, title, description, footerIcon, footerText, cta] = [...block.children];
   const eyebrowIconImg = eyebrowIcon?.querySelector('img');
   const footerIconImg = footerIcon?.querySelector('img');
   const ctaLink = cta?.querySelector('a');
