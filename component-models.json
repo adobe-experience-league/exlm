@@ -10662,7 +10662,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "name",
+        "name": "championName",
         "value": "",
         "label": "Champion Name",
         "required": true
