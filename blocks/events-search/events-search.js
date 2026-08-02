@@ -16,6 +16,7 @@ import {
   getBrowseFiltersResultCount,
   handleCoverSearchSubmit,
 } from '../browse-filters/browse-filter-utils.js';
+import { pushEventsFilterSearchEvent, pushEventsClearFiltersEvent } from '../../scripts/analytics/lib-analytics.js';
 
 const FACET_CONTROLLER_MAP = {
   el_product: 'headlessProductFacet',
@@ -279,6 +280,11 @@ const eventsSearchLoadingUiCleanups = new WeakMap();
 const eventsSearchSortDropdownOpenAbort = new WeakMap();
 /** Per-block filter state: { tags: [], pendingRemovals: Set, isClearing: boolean }. */
 const eventsSearchActiveTags = new WeakMap();
+/**
+ * Per-block analytics intent captured at click time.
+ * { pendingType: 'filter'|'search'|null, lastSearchId: string|null, intent: { byFilterType, term }|null }.
+ */
+const eventsSearchAnalyticsState = new WeakMap();
 
 function getFilterState(block) {
   let state = eventsSearchActiveTags.get(block);
@@ -287,6 +293,98 @@ function getFilterState(block) {
     eventsSearchActiveTags.set(block, state);
   }
   return state;
+}
+
+function getEventsSearchAnalyticsState(block) {
+  let state = eventsSearchAnalyticsState.get(block);
+  if (!state) {
+    state = { pendingType: null, lastSearchId: null, intent: null };
+    eventsSearchAnalyticsState.set(block, state);
+  }
+  return state;
+}
+
+const ANALYTICS_FILTER_TYPE_TO_KEY = {
+  el_product: 'product',
+  el_contenttype: 'eventType',
+  el_event_series: 'series',
+};
+
+/** Values of the currently checked checkboxes for a filter group. */
+function getCheckedFilterValues(block, filterType) {
+  const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${filterType}"]`);
+  return [...(groupEl?.querySelectorAll('input[type="checkbox"]:checked') ?? [])].map((cb) => cb.value);
+}
+
+/**
+ * Captures the user's selection at click time — before the headless subscription can revert the
+ * checkboxes to the lagging controller state (syncFilterUIFromHeadlessState overwrites checkbox
+ * .checked from Coveo state, which trails the click by one response-commit). This immutable snapshot
+ * is what we later match committed responses against, so the analytics payload reflects the actual
+ * interaction rather than the previous committed state.
+ */
+function captureEventsSearchIntent(block) {
+  const byFilterType = {};
+  Object.keys(ANALYTICS_FILTER_TYPE_TO_KEY).forEach((filterType) => {
+    byFilterType[filterType] = getCheckedFilterValues(block, filterType);
+  });
+  const term = String(block.querySelector('.events-search-keyword-input')?.value ?? '').trim();
+  return { byFilterType, term };
+}
+
+/**
+ * True once the engine state has settled onto the captured intent: every facet controller's selected
+ * values (per group) and the executed query equal the snapshot. The controllers and the search
+ * response commit together but trail each interaction by one commit, so intermediate subscription
+ * fires still show the previous selection; this gate rejects those until the controllers catch up to
+ * the snapshot, at which point response.totalCount is the matching count (browse-filters pattern).
+ */
+function responseMatchesEventsSearchIntent(intent) {
+  const search = window.headlessSearchEngine?.state?.search;
+  if (!search?.response || !intent) return false;
+  const filtersMatch = Object.keys(ANALYTICS_FILTER_TYPE_TO_KEY).every((filterType) => {
+    const want = intent.byFilterType[filterType] ?? [];
+    const controller = window[FACET_CONTROLLER_MAP[filterType]];
+    const got = (controller?.state?.values ?? []).filter((v) => v.state === 'selected').map((v) => v.value);
+    if (want.length !== got.length) return false;
+    const wantSet = new Set(want);
+    return got.every((v) => wantSet.has(v));
+  });
+  if (!filtersMatch) return false;
+  return String(search.queryExecuted ?? '').trim() === intent.term;
+}
+
+/** Reads the current sort selection, normalizing the UI's "Relevance" label to the spec's "relevancy". */
+function getEventsSearchSortBy(block) {
+  const rawSort = (block.querySelector('.sort-drop-btn-value')?.textContent || '').trim().toLowerCase();
+  return !rawSort || rawSort === 'relevance' ? 'relevancy' : rawSort;
+}
+
+/**
+ * Fires the eventsFilterSearch data layer event once per interaction, only when a filter or keyword
+ * interaction is pending and the committed response matches the captured intent. The count comes from
+ * that same matching response; the filter values come from the immutable intent snapshot. Guarded by
+ * searchResponseId so duplicate post-commit subscription fires are ignored.
+ */
+function fireEventsFilterSearchAnalytics(block, searchResponseId) {
+  const state = getEventsSearchAnalyticsState(block);
+  if (!state.pendingType || !state.intent || !searchResponseId || state.lastSearchId === searchResponseId) return;
+  if (!responseMatchesEventsSearchIntent(state.intent)) return;
+  state.lastSearchId = searchResponseId;
+  const { pendingType, intent } = state;
+  state.pendingType = null;
+  state.intent = null;
+  const filter = {
+    product: intent.byFilterType.el_product ?? [],
+    eventType: intent.byFilterType.el_contenttype ?? [],
+    series: intent.byFilterType.el_event_series ?? [],
+  };
+  const count = window.headlessSearchEngine?.state?.search?.response?.totalCount ?? 0;
+  const linkMeta =
+    pendingType === 'search'
+      ? { linkTitle: 'search events', linkType: 'search text box' }
+      : { linkTitle: 'events filter apply', linkType: 'filter' };
+  pushEventsFilterSearchEvent({ ...linkMeta, count, filter, sortBy: getEventsSearchSortBy(block), term: intent.term });
 }
 
 function getBaseFilterGroups(placeholders) {
@@ -905,6 +1003,12 @@ function renderActiveFilterCallouts(block) {
       ].find((cb) => cb.value === value);
       if (matchedCheckbox) matchedCheckbox.checked = false;
 
+      // Snapshot intent with the removed checkbox now unchecked, before toggleFacetSelection
+      // dispatches and the subscription re-syncs checkboxes from the lagging controller state.
+      const analyticsState = getEventsSearchAnalyticsState(block);
+      analyticsState.pendingType = 'filter';
+      analyticsState.intent = captureEventsSearchIntent(block);
+
       // Remove from ordered tags array and register as pending removal to prevent the Coveo
       // subscription from re-adding the tag before Coveo state catches up.
       removeActiveTag(activeTags, pendingRemovals, filterType, value);
@@ -1050,6 +1154,7 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
     syncFilterUIFromHeadlessState(block, groups);
     const search = window.headlessSearchEngine.state.search || {};
     const { results = [], searchResponseId = '', response = {} } = search;
+    fireEventsFilterSearchAnalytics(block, searchResponseId);
     updateResultsCount(block, response.totalCount || 0, placeholders);
     renderActiveFilterCallouts(block);
     await renderResults(block, results, searchResponseId);
@@ -1121,6 +1226,11 @@ function bindFilterInteractions(block, groups) {
       targetGroup.selected = selectedCount;
     }
     updateGroupSelectionCount(block, filterType, selectedCount);
+    // Snapshot intent while the checkboxes still reflect the click — toggleFacetSelection dispatches
+    // synchronously and the subscription reverts checkbox state to the lagging controller state.
+    const analyticsState = getEventsSearchAnalyticsState(block);
+    analyticsState.pendingType = 'filter';
+    analyticsState.intent = captureEventsSearchIntent(block);
     toggleFacetSelection(filterType, checkbox.value, checkbox.checked);
     if (window.headlessPager) {
       window.headlessPager.selectPage(1);
@@ -1146,6 +1256,12 @@ function bindTopbarSearch(block) {
   const submitSearch = () => {
     if (!window.headlessSearchBox) return;
     const query = input.value.trim();
+    // Snapshot intent before updateText dispatches (which can re-sync the UI from lagging state).
+    if (query) {
+      const analyticsState = getEventsSearchAnalyticsState(block);
+      analyticsState.pendingType = 'search';
+      analyticsState.intent = captureEventsSearchIntent(block);
+    }
     window.headlessSearchBox.updateText(query);
     if (window.headlessPager) {
       window.headlessPager.selectPage(1);
@@ -1252,6 +1368,7 @@ function bindClearFilters(block, groups) {
     }
     renderActiveFilterCallouts(block);
     updateClearFiltersButtonState(block);
+    pushEventsClearFiltersEvent();
   });
 }
 
