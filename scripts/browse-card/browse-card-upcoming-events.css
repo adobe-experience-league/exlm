@@ -146,7 +146,7 @@
   .browse-card.upcoming-event-card .browse-card-description-text *,
   .browse-card.event-upcoming-event-card .browse-card-description-text,
   .browse-card.event-upcoming-event-card .browse-card-description-text * {
-    max-height: 40px;
+    max-height: none;
     -webkit-line-clamp: 2;
   }
 
