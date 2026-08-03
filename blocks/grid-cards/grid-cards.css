@@ -24,13 +24,6 @@
     margin: 0;
     color: var(--non-spectrum-dark-gray);
   }
-
-  .grid-cards-description {
-    font-size: var(--spectrum-body-size-xl);
-    line-height: 150%;
-    font-weight: 400;
-    color: var(--non-spectrum-dark-gray);
-  }
 }
 
 .grid-card-container {
@@ -65,6 +58,15 @@
   font-size: var(--spectrum-body-size-s);
   line-height: 150%;
   font-weight: var(--font-weight-normal);
+  margin: 0;
+}
+
+.grid-cards-description,
+.grid-cards-description > div > * {
+  font-size: var(--spectrum-body-size-xl);
+  line-height: 150%;
+  font-weight: 400;
+  color: var(--non-spectrum-dark-gray);
   margin: 0;
 }
 
@@ -225,40 +227,40 @@
   gap: var(--spectrum-spacing-600);
 }
 
-.champions .grid-cards-title.h1,
-.champions .grid-card-title.h1,
-.champions .grid-card-description > h1 {
+.champions :is(.grid-cards-title, .grid-card-title).h1,
+.champions :is(.grid-card-description, .grid-cards-description) h1 {
   font-size: var(--exlm-font-size-h1);
+  font-weight: var(--font-weight-bold);
 }
 
-.champions .grid-cards-title.h2,
-.champions .grid-card-title.h2,
-.champions .grid-card-description > h2 {
+.champions :is(.grid-cards-title, .grid-card-title).h2,
+.champions :is(.grid-card-description, .grid-cards-description) h2 {
   font-size: var(--exlm-font-size-h2);
+  font-weight: var(--font-weight-bold);
 }
 
-.champions .grid-cards-title.h3,
-.champions .grid-card-title.h3,
-.champions .grid-card-description > h3 {
+.champions :is(.grid-cards-title, .grid-card-title).h3,
+.champions :is(.grid-card-description, .grid-cards-description) h3 {
   font-size: var(--exlm-font-size-h3);
+  font-weight: var(--font-weight-bold);
 }
 
-.champions .grid-cards-title.h4,
-.champions .grid-card-title.h4,
-.champions .grid-card-description > h4 {
+.champions :is(.grid-cards-title, .grid-card-title).h4,
+.champions :is(.grid-card-description, .grid-cards-description) h4 {
   font-size: var(--exlm-font-size-h4);
+  font-weight: var(--font-weight-bold);
 }
 
-.champions .grid-cards-title.h5,
-.champions .grid-card-title.h5,
-.champions .grid-card-description > h5 {
+.champions :is(.grid-cards-title, .grid-card-title).h5,
+.champions :is(.grid-card-description, .grid-cards-description) h5 {
   font-size: var(--exlm-font-size-h5);
+  font-weight: var(--font-weight-bold);
 }
 
-.champions .grid-cards-title.h6,
-.champions .grid-card-title.h6,
-.champions .grid-card-description > h6 {
+.champions :is(.grid-cards-title, .grid-card-title).h6,
+.champions :is(.grid-card-description, .grid-cards-description) h6 {
   font-size: var(--exlm-font-size-h6);
+  font-weight: var(--font-weight-bold);
 }
 
 .champions .grid-cards.minimal .grid-card:not(:has(.grid-card-cta)) {
