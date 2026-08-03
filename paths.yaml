@@ -108,6 +108,18 @@ mappings:
   - /content/exlm.resource/zh-CN/playlists.json:/zh-hans/playlists.json
   - /content/exlm.resource/zh-TW/playlists.json:/zh-hant/playlists.json
 
+  # champion indices
+  - /content/exlm.resource/en/champion-index.json:/en/champion-index.json
+  - /content/exlm.resource/fr/champion-index.json:/fr/champion-index.json
+  - /content/exlm.resource/de/champion-index.json:/de/champion-index.json
+  - /content/exlm.resource/es/champion-index.json:/es/champion-index.json
+  - /content/exlm.resource/it/champion-index.json:/it/champion-index.json
+  - /content/exlm.resource/pt-BR/champion-index.json:/pt-br/champion-index.json
+  - /content/exlm.resource/ko/champion-index.json:/ko/champion-index.json
+  - /content/exlm.resource/ja/champion-index.json:/ja/champion-index.json
+  - /content/exlm.resource/zh-CN/champion-index.json:/zh-hans/champion-index.json
+  - /content/exlm.resource/zh-TW/champion-index.json:/zh-hant/champion-index.json
+
   # site indices - for sitemaps
   - /content/exlm.resource/en/query-index.json:/en/query-index.json
   - /content/exlm.resource/fr/query-index.json:/fr/query-index.json
