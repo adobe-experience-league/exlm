@@ -22,6 +22,7 @@ import {
 } from './lib-franklin.js';
 import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
 import isFeatureEnabled from './utils/feature-flag-utils.js';
+import { PLAYLIST_EMBED_BODY_CLASS } from './utils/playlist-embed-utils.js';
 
 /**
  * please do not import any other modules here, as this file is used in the critical path.
@@ -701,9 +702,7 @@ async function loadEager(doc) {
   // Cheap substring gate; authoritative match is isPlaylistPath() in playlist-embed-utils.
   let embedMode = false;
   if (window.location.pathname.toLowerCase().includes('/playlists')) {
-    const { isPlaylistPath, isPlaylistEmbedMode, PLAYLIST_EMBED_BODY_CLASS } = await import(
-      './utils/playlist-embed-utils.js'
-    );
+    const { isPlaylistPath, isPlaylistEmbedMode } = await import('./utils/playlist-embed-utils.js');
     if (isPlaylistPath(window.location.pathname) && isPlaylistEmbedMode()) {
       embedMode = true;
       doc.body.classList.add(PLAYLIST_EMBED_BODY_CLASS);
@@ -1119,9 +1118,7 @@ async function loadDefaultModule(jsPath) {
 async function loadLazy(doc) {
   let embedMode = false;
   if (window.location.pathname.toLowerCase().includes('/playlists')) {
-    const { isPlaylistPath, isPlaylistEmbedMode, PLAYLIST_EMBED_BODY_CLASS } = await import(
-      './utils/playlist-embed-utils.js'
-    );
+    const { isPlaylistPath, isPlaylistEmbedMode } = await import('./utils/playlist-embed-utils.js');
     if (isPlaylistPath(window.location.pathname)) {
       embedMode = isPlaylistEmbedMode();
       if (embedMode) {
@@ -1248,8 +1245,7 @@ export async function loadArticles() {
 
 async function showSignupDialog() {
   // Product-iframe playlist embed must stay chrome-less (no signup wizard overlay).
-  // Class name must match PLAYLIST_EMBED_BODY_CLASS in playlist-embed-config.js.
-  if (document.body.classList.contains('playlist-embed-mode')) return;
+  if (document.body.classList.contains(PLAYLIST_EMBED_BODY_CLASS)) return;
 
   const isSignedIn = window?.adobeIMS?.isSignedInUser();
   if (!isSignedIn) return;
