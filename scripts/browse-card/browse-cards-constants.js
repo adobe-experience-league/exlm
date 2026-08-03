@@ -54,17 +54,20 @@ export const BASE_COVEO_ADVANCED_QUERY = '(@el_contenttype NOT "Community|User")
 export const BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT =
   '(@el_contenttype = "Event") OR (@el_contenttype = "Upcoming Event")';
 /**
- * Upcoming events that have not started yet.
+ * Upcoming events that have not started yet (Events Hub / Upcoming Event V2).
  *
- * Coveo stages `el_event_start_time` as a string field, so date operators like
- * `@el_event_start_time >= now` are ignored. Event start is reflected on the
- * standard Date field `@date` (verified against stage Events Hub), which does
- * support `>= now`. Prefer switching `el_event_start_time` to a Date field in
- * Coveo when available, then update this expression.
+ * Uses `el_event_start_time` (the same value shown as the event date on cards).
+ * Requires Coveo field type **Date** — if the field is still String, `>= now` is
+ * ignored and all Upcoming return. Do not use `@date`: on prod it is index/batch
+ * time (same for all Upcoming), so `@date >= now` drops every Upcoming.
+ *
+ * Depends on: Coveo change String → Date for `el_event_start_time` + reindex.
  *
  * @see https://docs.coveo.com/en/1814/ (date operators, `now`)
+ * @see EXLM-5361
  */
-export const COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ = '(@el_contenttype = "Event|Upcoming Event" AND @date >= now)';
+export const COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ =
+  '(@el_contenttype = "Event|Upcoming Event" AND @el_event_start_time >= now)';
 export const BASE_COVEO_ADVANCED_QUERY_EVENTS = `(@el_contenttype = "Event|On Demand Event") OR ${COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ}`;
 /**
  * Exclude stale Upcoming Events while keeping all other content types.
