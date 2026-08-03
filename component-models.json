@@ -10149,11 +10149,43 @@
       {
         "component": "text",
         "valueType": "string",
-
         "name": "title",
         "value": "",
         "label": "Title",
         "description": "Sets the main title of the grid cards."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Title Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
       },
       {
         "component": "richtext",
@@ -10197,6 +10229,39 @@
         "value": "",
         "label": "Title",
         "description": "Sets the title for the card. Please limit the content to 2 lines."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "cardTitleType",
+        "value": "h3",
+        "label": "Card Title Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
       },
       {
         "component": "richtext",

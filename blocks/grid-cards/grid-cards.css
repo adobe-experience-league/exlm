@@ -18,6 +18,7 @@
   }
 
   .grid-cards-title {
+    font-size: var(--exlm-font-size-h1);
     line-height: 125%;
     font-weight: var(--font-weight-heavy);
     margin: 0;
@@ -217,4 +218,50 @@
   .grid-cards.minimal .grid-card-container {
     grid-template-columns: repeat(3, 1fr);
   }
+}
+
+/* champions v2 styling */
+.champions .grid-cards.minimal .grid-card-container {
+  gap: var(--spectrum-spacing-600);
+}
+
+.champions .grid-cards-title.h1,
+.champions .grid-card-title.h1,
+.champions .grid-card-description > h1 {
+  font-size: var(--exlm-font-size-h1);
+}
+
+.champions .grid-cards-title.h2,
+.champions .grid-card-title.h2,
+.champions .grid-card-description > h2 {
+  font-size: var(--exlm-font-size-h2);
+}
+
+.champions .grid-cards-title.h3,
+.champions .grid-card-title.h3,
+.champions .grid-card-description > h3 {
+  font-size: var(--exlm-font-size-h3);
+}
+
+.champions .grid-cards-title.h4,
+.champions .grid-card-title.h4,
+.champions .grid-card-description > h4 {
+  font-size: var(--exlm-font-size-h4);
+}
+
+.champions .grid-cards-title.h5,
+.champions .grid-card-title.h5,
+.champions .grid-card-description > h5 {
+  font-size: var(--exlm-font-size-h5);
+}
+
+.champions .grid-cards-title.h6,
+.champions .grid-card-title.h6,
+.champions .grid-card-description > h6 {
+  font-size: var(--exlm-font-size-h6);
+}
+
+.champions .grid-cards.minimal .grid-card:not(:has(.grid-card-cta)) {
+  height: 160px;
+  min-height: 160px;
 }
