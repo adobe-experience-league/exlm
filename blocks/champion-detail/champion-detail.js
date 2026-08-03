@@ -1,3 +1,4 @@
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { extractChampionDetail, getDesignationColor } from '../../scripts/utils/champion-utils.js';
 import { decorateChampionContent } from '../champion-content/champion-content.js';
 
@@ -10,7 +11,12 @@ export default function decorate(block) {
   // anything beyond champion-detail's own fields are nested champion-content items
   const items = [...block.children].slice(OWN_FIELD_COUNT, OWN_FIELD_COUNT + 3);
 
-  if (colorClass) block.classList.add(`champion-detail-${colorClass}`);
+  // the gradient background belongs to the whole section, not just this block
+  const section = block.closest('.section');
+  if (section) {
+    section.classList.add('champion-detail-container');
+    if (colorClass) section.classList.add(`champion-detail-${colorClass}`);
+  }
 
   block.innerHTML = `
     <div class="champion-detail-profile">
@@ -18,17 +24,35 @@ export default function decorate(block) {
         <picture><img src="${detail.image}" alt="${detail.imageAlt}" loading="eager"></picture>
       </div>
       <div class="champion-detail-info">
-        ${detail.quoteBio ? `<div class="champion-detail-quote">${detail.quoteBio}</div>` : ''}
+        ${
+          detail.quoteBio
+            ? `<div class="champion-detail-quote">
+                 <img class="champion-detail-quote-icon" src="/blocks/champion-detail/quote-icon-${colorClass || 'yellow'}.svg" alt="" loading="eager">
+                 <p>${detail.quoteBio}</p>
+               </div>`
+            : ''
+        }
         <a class="champion-detail-name" href="${detail.communityProfileUrl}">${detail.name}</a>
         <span class="champion-detail-title"> – ${detail.jobTitle}</span>
         ${
           detail.productDesignation
-            ? `<div class="champion-detail-designation${colorClass ? ` champion-detail-designation-${colorClass}` : ''}">${detail.productDesignation}</div>`
+            ? `<div class="champion-detail-designation">${detail.productDesignation}</div>`
             : ''
         }
+        <div class="champion-detail-pagination">
+          <button type="button" class="champion-detail-nav champion-detail-prev" aria-label="Previous champion">
+            <span class="icon icon-back-arrow"></span>
+          </button>
+          <span class="champion-detail-pagination-count">1/3</span>
+          <button type="button" class="champion-detail-nav champion-detail-next" aria-label="Next champion">
+            <span class="icon icon-front-arrow"></span>
+          </button>
+        </div>
       </div>
     </div>
   `;
+
+  decorateIcons(block);
 
   if (items.length) {
     const moreFrom = document.createElement('div');

@@ -43,10 +43,10 @@ export function extractChampionDetail(block) {
  * @param {HTMLElement} block
  */
 export function extractChampionContent(block) {
-  const [eyebrowIcon, contentType, title, description, footerIcon, footerText, cta] = [...block.children];
+  const [eyebrowIcon, contentType, title, description, footerIcon, footerText, ...ctaRows] = [...block.children];
   const eyebrowIconImg = eyebrowIcon?.querySelector('img');
   const footerIconImg = footerIcon?.querySelector('img');
-  const ctaLink = cta?.querySelector('a');
+  const ctaLink = ctaRows.map((row) => row?.querySelector('a')).find(Boolean);
 
   return {
     eyebrowIcon: eyebrowIconImg?.getAttribute('src') || '',

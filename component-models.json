@@ -10778,12 +10778,21 @@
         "required": true
       },
       {
-        "component": "richtext",
+        "component": "text",
         "valueType": "string",
-        "name": "cta",
+        "name": "linkText",
         "value": "",
-        "label": "CTA",
-        "description": "Select the CTA text and apply a link to it.",
+        "label": "CTA Text",
+        "description": "Text to be shown for the CTA link.",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "CTA Link",
+        "description": "URL to open when the CTA is clicked.",
         "required": true
       }
     ]
