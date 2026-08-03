@@ -15,7 +15,9 @@
   display: none;
   flex-direction: column;
   gap: var(--spectrum-spacing-400);
-  background: url('./advocate-glow-yellow.svg') no-repeat top left / cover, white;
+  background:
+    url('./advocate-glow-yellow.svg') no-repeat top left / cover,
+    white;
   border-radius: 16px;
   padding: var(--spectrum-spacing-500) var(--spectrum-spacing-400);
 }

@@ -10761,6 +10761,13 @@
         "description": "Optional."
       },
       {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "showByline",
+        "label": "Show Byline?",
+        "description": "Displays \"By {Champion Name}\" just above the footer text."
+      },
+      {
         "component": "reference",
         "valueType": "string",
         "name": "footerIcon",

@@ -18,9 +18,7 @@ export function getDesignationColor(colorSelection) {
  * @param {HTMLElement} block
  */
 export function extractChampionDetail(block) {
-  const [image, name, jobTitle, quoteBio, communityProfile, productDesignation, colorSelection] = [
-    ...block.children,
-  ];
+  const [image, name, jobTitle, quoteBio, communityProfile, productDesignation, colorSelection] = [...block.children];
 
   const img = image?.querySelector('img');
   const communityLink = communityProfile?.querySelector('a');
@@ -43,7 +41,9 @@ export function extractChampionDetail(block) {
  * @param {HTMLElement} block
  */
 export function extractChampionContent(block) {
-  const [eyebrowIcon, contentType, title, description, footerIcon, footerText, ...ctaRows] = [...block.children];
+  const [eyebrowIcon, contentType, title, description, showByline, footerIcon, footerText, ...ctaRows] = [
+    ...block.children,
+  ];
   const eyebrowIconImg = eyebrowIcon?.querySelector('img');
   const footerIconImg = footerIcon?.querySelector('img');
   const ctaLink = ctaRows.map((row) => row?.querySelector('a')).find(Boolean);
@@ -53,6 +53,7 @@ export function extractChampionContent(block) {
     contentType: contentType?.textContent.trim() || '',
     title: title?.textContent.trim() || '',
     description: description?.innerHTML.trim() || '',
+    showByline: showByline?.textContent.trim() === 'true',
     footerIcon: footerIconImg?.getAttribute('src') || '',
     footerText: footerText?.innerHTML.trim() || '',
     ctaLabel: ctaLink?.textContent.trim() || '',

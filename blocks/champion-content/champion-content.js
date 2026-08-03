@@ -19,17 +19,27 @@ export function decorateChampionContent(block) {
 
   block.innerHTML = `
     <div class="champion-content-eyebrow">
-      ${content.eyebrowIcon ? `<img class="champion-content-icon" src="${content.eyebrowIcon}" alt="" loading="lazy">` : ''}
+      ${
+        content.eyebrowIcon
+          ? `<img class="champion-content-icon" src="${content.eyebrowIcon}" alt="" loading="lazy">`
+          : ''
+      }
       <span>${content.contentType}</span>
     </div>
     <div class="champion-content-title">${content.title}</div>
     ${content.description ? `<div class="champion-content-description">${content.description}</div>` : ''}
-    ${championName ? `<div class="champion-content-byline">By ${championName}</div>` : ''}
+    ${content.showByline && championName ? `<div class="champion-content-byline">By ${championName}</div>` : ''}
     <div class="champion-content-footer">
-      ${content.footerIcon ? `<img class="champion-content-icon" src="${content.footerIcon}" alt="" loading="lazy">` : ''}
-      <div class="champion-content-footer-text">${content.footerText}</div>
+      <div class="champion-content-footer-info">
+        ${
+          content.footerIcon
+            ? `<img class="champion-content-icon" src="${content.footerIcon}" alt="" loading="lazy">`
+            : ''
+        }
+        <div class="champion-content-footer-text">${content.footerText}</div>
+      </div>
+      ${content.ctaHref ? `<a class="champion-content-cta" href="${content.ctaHref}">${content.ctaLabel}</a>` : ''}
     </div>
-    ${content.ctaHref ? `<a class="champion-content-cta" href="${content.ctaHref}">${content.ctaLabel}</a>` : ''}
   `;
 }
 

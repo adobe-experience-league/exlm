@@ -27,7 +27,9 @@ export default function decorate(block) {
         ${
           detail.quoteBio
             ? `<div class="champion-detail-quote">
-                 <img class="champion-detail-quote-icon" src="/blocks/champion-detail/quote-icon-${colorClass || 'yellow'}.svg" alt="" loading="eager">
+                 <img class="champion-detail-quote-icon" src="/blocks/champion-detail/quote-icon-${
+                   colorClass || 'yellow'
+                 }.svg" alt="" loading="eager">
                  <p>${detail.quoteBio}</p>
                </div>`
             : ''
@@ -35,9 +37,7 @@ export default function decorate(block) {
         <a class="champion-detail-name" href="${detail.communityProfileUrl}">${detail.name}</a>
         <span class="champion-detail-title"> – ${detail.jobTitle}</span>
         ${
-          detail.productDesignation
-            ? `<div class="champion-detail-designation">${detail.productDesignation}</div>`
-            : ''
+          detail.productDesignation ? `<div class="champion-detail-designation">${detail.productDesignation}</div>` : ''
         }
         <div class="champion-detail-pagination">
           <button type="button" class="champion-detail-nav champion-detail-prev" aria-label="Previous champion">

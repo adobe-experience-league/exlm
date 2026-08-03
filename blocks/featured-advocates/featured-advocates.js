@@ -38,7 +38,9 @@ function buildAdvocatePanel(champion, total) {
           <span class="advocate-title"> – ${detail.jobTitle}</span>
           ${
             detail.productDesignation
-              ? `<div class="advocate-designation${colorClass ? ` advocate-designation-${colorClass}` : ''}">${detail.productDesignation}</div>`
+              ? `<div class="advocate-designation${colorClass ? ` advocate-designation-${colorClass}` : ''}">${
+                  detail.productDesignation
+                }</div>`
               : ''
           }
           ${
