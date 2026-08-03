@@ -72,46 +72,24 @@ export const pageName = (language) => {
 };
 
 /**
- * Builds the shared `user` object pushed on every analytics event, fetching the merged
- * profile when available. Falls back to an unauthenticated shape on error or when signed out.
- * @returns {Promise<{ user: object, userData: object|null }>}
+ * Fetches the merged profile for signed-in visitors, for use by Brand Concierge events.
+ * @returns {Promise<object|undefined>} A `user` object when signed in, otherwise `undefined`.
  */
-async function getDataLayerUserDetails() {
-  const user = {
-    userDetails: {
-      userAccountType: '',
-      userAuthenticatedStatus: 'unauthenticated',
-      userAuthenticatedSystem: 'ims',
-      userID: '',
-      userLanguageSetting: [],
-      learningInterest: [],
-      role: [],
-      experienceLevel: [],
-      industry: [],
-      notificationPref: false,
-      org: '',
-      orgs: [],
-      userCorporateName: '',
-    },
-  };
-
-  let userData = null;
-
+async function getBcSignedInUserDetails() {
   try {
     // eslint-disable-next-line import/no-cycle
     const { defaultProfileClient } = await import('../auth/profile.js');
-    userData = await defaultProfileClient.getMergedProfile();
-    if (userData) {
-      // Prefer IMS authId so userID remains stable across org/account switches
-      const stableAuthId = userData?.authId || userData?.userId || '';
+    const userData = await defaultProfileClient.getMergedProfile();
+    if (!userData) return undefined;
 
-      // Detect new signup: true if user hasn't seen signup modal yet
-      const isNewSignUp = !userData.interactions?.some((interaction) => interaction.event === 'modalSeen');
+    // Prefer IMS authId so userID remains stable across org/account switches
+    const stableAuthId = userData?.authId || userData?.userId || '';
 
-      user.userDetails = {
-        ...user.userDetails,
+    return {
+      userDetails: {
         userAccountType: userData.account_type,
         userAuthenticatedStatus: 'logged in',
+        userAuthenticatedSystem: 'ims',
         userID: stableAuthId,
         userLanguageSetting: userData.preferred_languages || ['en-us'],
         learningInterest: userData.interests || [],
@@ -124,23 +102,13 @@ async function getDataLayerUserDetails() {
         org: userData.org || '',
         orgs: userData.orgs || [],
         userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
-        newSignUp: isNewSignUp,
-      };
-
-      // get a list of all courses titles and ids with awards.timestamp property
-      // Get arrays of completed courses names and their IDs (where awards.timestamp and course.name exist)
-      const completedCourses = (userData?.courses_v2 || []).filter(
-        (course) => course?.awards?.timestamp && course.name,
-      );
-      user.userDetails.courses = completedCourses.length ? completedCourses.map((course) => course.name) : [];
-      user.userDetails.coursesID = completedCourses.length ? completedCourses.map((course) => course.courseId) : [];
-    }
+      },
+    };
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('Error getting user profile:', e);
+    return undefined;
   }
-
-  return { user, userData };
 }
 
 export async function pushPageDataLayer(language, searchTrackingData) {
@@ -210,10 +178,62 @@ export async function pushPageDataLayer(language, searchTrackingData) {
     }
   }
 
-  const { user, userData } = await getDataLayerUserDetails();
+  const user = {
+    userDetails: {
+      userAccountType: '',
+      userAuthenticatedStatus: 'unauthenticated',
+      userAuthenticatedSystem: 'ims',
+      userID: '',
+      userLanguageSetting: [],
+      learningInterest: [],
+      role: [],
+      experienceLevel: [],
+      industry: [],
+      notificationPref: false,
+      org: '',
+      orgs: [],
+      userCorporateName: '',
+    },
+  };
 
   try {
+    // eslint-disable-next-line import/no-cycle
+    const { defaultProfileClient } = await import('../auth/profile.js');
+    const userData = await defaultProfileClient.getMergedProfile();
     if (userData) {
+      // Prefer IMS authId so userID remains stable across org/account switches
+      const stableAuthId = userData?.authId || userData?.userId || '';
+
+      // Detect new signup: true if user hasn't seen signup modal yet
+      const isNewSignUp = !userData.interactions?.some((interaction) => interaction.event === 'modalSeen');
+
+      user.userDetails = {
+        ...user.userDetails,
+        userAccountType: userData.account_type,
+        userAuthenticatedStatus: 'logged in',
+        userID: stableAuthId,
+        userLanguageSetting: userData.preferred_languages || ['en-us'],
+        learningInterest: userData.interests || [],
+        role: userData.role || [],
+        experienceLevel: userData.level || [],
+        solutionLevel: userData.solutionLevels || [],
+        certifications: userData.certifications || [],
+        industry: userData.industryInterests || [],
+        notificationPref: userData.emailOptIn === true,
+        org: userData.org || '',
+        orgs: userData.orgs || [],
+        userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
+        newSignUp: isNewSignUp,
+      };
+
+      // get a list of all courses titles and ids with awards.timestamp property
+      // Get arrays of completed courses names and their IDs (where awards.timestamp and course.name exist)
+      const completedCourses = (userData?.courses_v2 || []).filter(
+        (course) => course?.awards?.timestamp && course.name,
+      );
+      user.userDetails.courses = completedCourses.length ? completedCourses.map((course) => course.name) : [];
+      user.userDetails.coursesID = completedCourses.length ? completedCourses.map((course) => course.courseId) : [];
+
       const courseInfo = (userData.courses_v2 || []).find((c) => c.courseId === courseObj?.id);
       if (courseInfo) {
         if (courseInfo?.modules && Array.isArray(courseInfo?.modules)) {
@@ -1406,7 +1426,7 @@ export function pushTopNavSearchEvent(contentTypeDropDown, searchTerm) {
  */
 export async function pushBcWidgetImpressionEvent() {
   window.adobeDataLayer = window.adobeDataLayer || [];
-  const { user } = await getDataLayerUserDetails();
+  const user = await getBcSignedInUserDetails();
 
   window.adobeDataLayer.push({
     event: 'bcWidgetImpression',
@@ -1417,7 +1437,7 @@ export async function pushBcWidgetImpressionEvent() {
       linkType: 'Impression',
       destinationDomain: window.location.href,
     },
-    user,
+    ...(user && { user }),
   });
 }
 
@@ -1431,7 +1451,7 @@ export async function pushBcWidgetImpressionEvent() {
  */
 export async function pushBcInteractionEvent(linkTitle, { bcChatId, bcChatMessageNumber } = {}) {
   window.adobeDataLayer = window.adobeDataLayer || [];
-  const { user } = await getDataLayerUserDetails();
+  const user = await getBcSignedInUserDetails();
 
   window.adobeDataLayer.push({
     event: 'linkClicked',
@@ -1443,6 +1463,6 @@ export async function pushBcInteractionEvent(linkTitle, { bcChatId, bcChatMessag
       destinationDomain: window.location.href,
     },
     ...(bcChatId && { bcChat: { bcChatId, bcChatMessageNumber } }),
-    user,
+    ...(user && { user }),
   });
 }

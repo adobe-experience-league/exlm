@@ -415,10 +415,6 @@ function scheduleScrollAfterSuggestion(mount) {
 function handleBrandConciergeClientEvent(event) {
   if (!event?.eventType) return;
 
-  // TEMP DEBUG — remove once bcConversationId sourcing is confirmed against real BC events.
-  // eslint-disable-next-line no-console
-  console.log('[BC DEBUG] eventType:', event.eventType, 'data:', event.data);
-
   if (event.eventType === BC_EVENT_HISTORY_CLEARED) {
     bcConversationId = null;
     bcInteractionId = null;
@@ -885,6 +881,9 @@ export function destroyBrandConcierge() {
   document.getElementById(TRIGGER_ID)?.remove();
   cssLinkEl?.remove();
   cssLinkEl = null;
+  bcConversationId = null;
+  bcInteractionId = null;
+  bcHasMessage = false;
 }
 
 export async function initBrandConcierge() {
