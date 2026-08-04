@@ -177,7 +177,7 @@ export async function loadBrandConciergeConfig(lang) {
  * client. Same IMS org as the default datastream.
  */
 const BC_DATASTREAMS = {
-  es: '3098f7cc-36bb-4965-bea3-6e80fc59571e',
+  es: '152f88b1-ef07-4afe-8a23-6c0e21c6f017',
 };
 
 /**
