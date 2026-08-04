@@ -29,7 +29,9 @@ function buildAdvocatePanel(champion, total, placeholders) {
     loading: 'lazy',
   });
 
-  const cards = associatedContent.map((item) => buildAssociatedContentCard(item, detail.name, colorClass, placeholders));
+  const cards = associatedContent.map((item) =>
+    buildAssociatedContentCard(item, detail.name, colorClass, placeholders),
+  );
   appendMoreFromSection(panel, detail.name, cards, placeholders);
 
   return panel;
