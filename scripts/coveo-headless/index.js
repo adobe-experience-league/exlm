@@ -20,11 +20,14 @@ const locales = new Map([
   ['zh-hant', 'zh-TW'],
 ]);
 
-function buildDateSortCriteria(module, order, dateSortField) {
-  if (!dateSortField) return module.buildDateSortCriterion(order);
-  // Chained criterion: sorts by dateSortField first, falling back to the date field
-  // (e.g. items missing dateSortField) automatically.
-  return [module.buildFieldSortCriterion(dateSortField, order), module.buildDateSortCriterion(order)];
+function buildDateSortCriteria(module, order, dateSortFields) {
+  if (!dateSortFields || dateSortFields.length === 0) return module.buildDateSortCriterion(order);
+  // Chained criterion: tries each field in priority order first, falling back to the date field
+  // (e.g. for items missing every listed field) automatically.
+  return [
+    ...dateSortFields.map((field) => module.buildFieldSortCriterion(field, order)),
+    module.buildDateSortCriterion(order),
+  ];
 }
 
 /**
@@ -39,14 +42,15 @@ function isExclusiveUpcomingEventFilter(hash) {
   return values.length === 1 && values[0] === CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY;
 }
 
-function getDateSortOrder(isNewest, dateSortField, hash) {
-  const flip = !!dateSortField && isExclusiveUpcomingEventFilter(hash);
+function getDateSortOrder(isNewest, dateSortFields, hash) {
+  const flip = !!dateSortFields?.length && isExclusiveUpcomingEventFilter(hash);
   if (isNewest) return flip ? 'ascending' : 'descending';
   return flip ? 'descending' : 'ascending';
 }
 
-function buildDateSortHashValue(order, dateSortField) {
-  return dateSortField ? `@${dateSortField} ${order},date ${order}` : `date ${order}`;
+function buildDateSortHashValue(order, dateSortFields) {
+  if (!dateSortFields || dateSortFields.length === 0) return `date ${order}`;
+  return [...dateSortFields.map((field) => `@${field} ${order}`), `date ${order}`].join(',');
 }
 
 function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contextObject, advancedQueryRule }) {
@@ -79,6 +83,7 @@ function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contex
       'el_contenttype',
       'el_event_series',
       'el_event_start_time',
+      'el_event_video_id',
       'el_event_type',
       'el_event_speakers_name',
       'el_event_speakers_profile_picture_url',
@@ -173,7 +178,7 @@ export default async function initiateCoveoHeadlessSearch({
   facetOverrides = {},
   hideAqFromUrl = false,
   baseAdvancedQuery = '',
-  dateSortField = null,
+  dateSortFields = null,
 }) {
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
@@ -451,10 +456,10 @@ export default async function initiateCoveoHeadlessSearch({
           let criteria = [[sortLabel.relevance, module.buildRelevanceSortCriterion()]];
           const isSortValueInHash = hashURL.split('&');
           // Resolved against the facet state captured in hashURL at load time.
-          const newestOrderOnLoad = getDateSortOrder(true, dateSortField, hashURL);
-          const oldestOrderOnLoad = getDateSortOrder(false, dateSortField, hashURL);
-          const newestHashValue = buildDateSortHashValue(newestOrderOnLoad, dateSortField);
-          const oldestHashValue = buildDateSortHashValue(oldestOrderOnLoad, dateSortField);
+          const newestOrderOnLoad = getDateSortOrder(true, dateSortFields, hashURL);
+          const oldestOrderOnLoad = getDateSortOrder(false, dateSortFields, hashURL);
+          const newestHashValue = buildDateSortHashValue(newestOrderOnLoad, dateSortFields);
+          const oldestHashValue = buildDateSortHashValue(oldestOrderOnLoad, dateSortFields);
           // Tracks whether the active sort is date-based (and which direction) so the el_contenttype
           // facet subscription below can re-derive/reapply it when the Upcoming-only condition flips.
           let activeDateSortSemantic = null;
@@ -477,14 +482,14 @@ export default async function initiateCoveoHeadlessSearch({
                 case newestHashValue:
                 case 'date descending':
                   setSortButtonCaption(sortBtn, sortLabel.newest);
-                  criteria = [[sortLabel.newest, buildDateSortCriteria(module, newestOrderOnLoad, dateSortField)]];
+                  criteria = [[sortLabel.newest, buildDateSortCriteria(module, newestOrderOnLoad, dateSortFields)]];
                   activeDateSortSemantic = 'newest';
                   activeDateSortOrder = newestOrderOnLoad;
                   break;
                 case oldestHashValue:
                 case 'date ascending':
                   setSortButtonCaption(sortBtn, sortLabel.oldest);
-                  criteria = [[sortLabel.oldest, buildDateSortCriteria(module, oldestOrderOnLoad, dateSortField)]];
+                  criteria = [[sortLabel.oldest, buildDateSortCriteria(module, oldestOrderOnLoad, dateSortFields)]];
                   activeDateSortSemantic = 'oldest';
                   activeDateSortOrder = oldestOrderOnLoad;
                   break;
@@ -502,11 +507,11 @@ export default async function initiateCoveoHeadlessSearch({
           // pushState/replaceState, which does not fire 'hashchange'. So the Upcoming-only
           // flip must be re-derived here too, not just on sort-anchor click / initial load.
           headlessTypeFacet.subscribe(() => {
-            if (!dateSortField || !activeDateSortSemantic) return;
-            const nextOrder = getDateSortOrder(activeDateSortSemantic === 'newest', dateSortField, fragment());
+            if (!dateSortFields || !activeDateSortSemantic) return;
+            const nextOrder = getDateSortOrder(activeDateSortSemantic === 'newest', dateSortFields, fragment());
             if (nextOrder === activeDateSortOrder) return;
             activeDateSortOrder = nextOrder;
-            headlessBuildSort.sortBy(buildDateSortCriteria(module, nextOrder, dateSortField));
+            headlessBuildSort.sortBy(buildDateSortCriteria(module, nextOrder, dateSortFields));
           });
 
           if (sortAnchors.length > 0) {
@@ -540,10 +545,10 @@ export default async function initiateCoveoHeadlessSearch({
                   case 'newest':
                   case 'oldest': {
                     const isNewest = anchorSortCriteria === 'newest';
-                    const order = getDateSortOrder(isNewest, dateSortField, fragment());
+                    const order = getDateSortOrder(isNewest, dateSortFields, fragment());
                     activeDateSortSemantic = anchorSortCriteria;
                     activeDateSortOrder = order;
-                    headlessBuildSort.sortBy(buildDateSortCriteria(module, order, dateSortField));
+                    headlessBuildSort.sortBy(buildDateSortCriteria(module, order, dateSortFields));
                     break;
                   }
                 }
