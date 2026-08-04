@@ -46,47 +46,47 @@ body.champions .section > .default-content-wrapper :where(h1, h2, h3, h4, h5, h6
 }
 
 /* Grid Cards styling */
-.champions .grid-cards.minimal .grid-card-container {
+body.champions .grid-cards.minimal .grid-card-container {
   gap: var(--spectrum-spacing-600);
 }
 
-.champions :is(.grid-cards-title, .grid-card-title).h1,
-.champions :is(.grid-card-description, .grid-cards-description) h1 {
+body.champions :is(.grid-cards-title, .grid-card-title).h1,
+body.champions :is(.grid-card-description, .grid-cards-description) h1 {
   font-size: var(--exlm-font-size-h1);
   font-weight: var(--font-weight-bold);
 }
 
-.champions :is(.grid-cards-title, .grid-card-title).h2,
-.champions :is(.grid-card-description, .grid-cards-description) h2 {
+body.champions :is(.grid-cards-title, .grid-card-title).h2,
+body.champions :is(.grid-card-description, .grid-cards-description) h2 {
   font-size: var(--exlm-font-size-h2);
   font-weight: var(--font-weight-bold);
 }
 
-.champions :is(.grid-cards-title, .grid-card-title).h3,
-.champions :is(.grid-card-description, .grid-cards-description) h3 {
+body.champions :is(.grid-cards-title, .grid-card-title).h3,
+body.champions :is(.grid-card-description, .grid-cards-description) h3 {
   font-size: var(--exlm-font-size-h3);
   font-weight: var(--font-weight-bold);
 }
 
-.champions :is(.grid-cards-title, .grid-card-title).h4,
-.champions :is(.grid-card-description, .grid-cards-description) h4 {
+body.champions :is(.grid-cards-title, .grid-card-title).h4,
+body.champions :is(.grid-card-description, .grid-cards-description) h4 {
   font-size: var(--exlm-font-size-h4);
   font-weight: var(--font-weight-bold);
 }
 
-.champions :is(.grid-cards-title, .grid-card-title).h5,
-.champions :is(.grid-card-description, .grid-cards-description) h5 {
+body.champions :is(.grid-cards-title, .grid-card-title).h5,
+body.champions :is(.grid-card-description, .grid-cards-description) h5 {
   font-size: var(--exlm-font-size-h5);
   font-weight: var(--font-weight-bold);
 }
 
-.champions :is(.grid-cards-title, .grid-card-title).h6,
-.champions :is(.grid-card-description, .grid-cards-description) h6 {
+body.champions :is(.grid-cards-title, .grid-card-title).h6,
+body.champions :is(.grid-card-description, .grid-cards-description) h6 {
   font-size: var(--exlm-font-size-h6);
   font-weight: var(--font-weight-bold);
 }
 
-.champions .grid-cards.minimal .grid-card:not(:has(.grid-card-cta)) {
+body.champions .grid-cards.minimal .grid-card:not(:has(.grid-card-cta)) {
   height: 160px;
   min-height: 160px;
 }
