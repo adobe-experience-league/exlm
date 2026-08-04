@@ -1288,6 +1288,7 @@ async function initHeadlessSearch(block, groups, placeholders) {
     facetOverrides: getEventsSearchHeadlessFacetOverrides(),
     hideAqFromUrl: true,
     baseAdvancedQuery: BASE_COVEO_ADVANCED_QUERY_EVENTS,
+    dateSortField: 'el_event_start_time',
     renderSearchQuerySummary: () => {
       const totalCount = window.headlessQuerySummary?.state?.total || 0;
       updateResultsCount(block, totalCount, placeholders);

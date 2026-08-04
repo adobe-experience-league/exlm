@@ -2,6 +2,7 @@ import buildHeadlessSearchEngine from './engine.js';
 import { fetchLanguagePlaceholders } from '../scripts.js';
 import { handleCoverSearchSubmit } from '../../blocks/browse-filters/browse-filter-utils.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../search/search-utils.js';
+import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 
 /* Fetch data from the Placeholder.json */
 let placeholders = {};
@@ -18,6 +19,35 @@ const locales = new Map([
   ['zh-hans', 'zh-CN'],
   ['zh-hant', 'zh-TW'],
 ]);
+
+function buildDateSortCriteria(module, order, dateSortField) {
+  if (!dateSortField) return module.buildDateSortCriterion(order);
+  // Chained criterion: sorts by dateSortField first, falling back to the date field
+  // (e.g. items missing dateSortField) automatically.
+  return [module.buildFieldSortCriterion(dateSortField, order), module.buildDateSortCriterion(order)];
+}
+
+/**
+ * True when the el_contenttype facet is narrowed to Upcoming Events only (not On Demand, not both/none).
+ * Upcoming events have a future el_event_start_time, so "Newest" there means soonest (ascending),
+ * the reverse of "Newest" for past/on-demand content (most recent, descending).
+ */
+function isExclusiveUpcomingEventFilter(hash) {
+  const match = /(?:^|&)f-el_contenttype=([^&]*)/.exec(hash);
+  if (!match) return false;
+  const values = decodeURIComponent(match[1]).split(',').filter(Boolean);
+  return values.length === 1 && values[0] === CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY;
+}
+
+function getDateSortOrder(isNewest, dateSortField, hash) {
+  const flip = !!dateSortField && isExclusiveUpcomingEventFilter(hash);
+  if (isNewest) return flip ? 'ascending' : 'descending';
+  return flip ? 'descending' : 'ascending';
+}
+
+function buildDateSortHashValue(order, dateSortField) {
+  return dateSortField ? `@${dateSortField} ${order},date ${order}` : `date ${order}`;
+}
 
 function configureSearchHeadlessEngine({ module, searchEngine, searchHub, contextObject, advancedQueryRule }) {
   const advancedQuery = module.loadAdvancedSearchQueryActions(searchEngine).registerAdvancedSearchQueries({
@@ -143,6 +173,7 @@ export default async function initiateCoveoHeadlessSearch({
   facetOverrides = {},
   hideAqFromUrl = false,
   baseAdvancedQuery = '',
+  dateSortField = null,
 }) {
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
@@ -398,8 +429,8 @@ export default async function initiateCoveoHeadlessSearch({
         const sortingOptions = [
           { label: sortLabel.relevance, sortCriteria: 'relevancy' },
           { label: sortLabel.popularity, sortCriteria: 'el_view_count descending' },
-          { label: sortLabel.newest, sortCriteria: 'descending' },
-          { label: sortLabel.oldest, sortCriteria: 'ascending' },
+          { label: sortLabel.newest, sortCriteria: 'newest' },
+          { label: sortLabel.oldest, sortCriteria: 'oldest' },
         ];
 
         sortingOptions.forEach((option) => {
@@ -417,8 +448,13 @@ export default async function initiateCoveoHeadlessSearch({
           const sortDropdown = sortContainer.querySelector('.sort-dropdown-content');
           const sortAnchors = sortDropdown.querySelectorAll('a');
           const sortBtn = sortContainer.querySelector('.sort-drop-btn');
-          let criteria = [[]];
+          let criteria = [[sortLabel.relevance, module.buildRelevanceSortCriterion()]];
           const isSortValueInHash = hashURL.split('&');
+          // Resolved against the facet state captured in hashURL at load time.
+          const newestOrderOnLoad = getDateSortOrder(true, dateSortField, hashURL);
+          const oldestOrderOnLoad = getDateSortOrder(false, dateSortField, hashURL);
+          const newestHashValue = buildDateSortHashValue(newestOrderOnLoad, dateSortField);
+          const oldestHashValue = buildDateSortHashValue(oldestOrderOnLoad, dateSortField);
           // eslint-disable-next-line
           isSortValueInHash.forEach((item) => {
             if (item.includes('sortCriteria')) {
@@ -433,13 +469,16 @@ export default async function initiateCoveoHeadlessSearch({
                   setSortButtonCaption(sortBtn, sortLabel.popularity);
                   criteria = [[sortLabel.popularity, module.buildFieldSortCriterion('el_view_count', 'descending')]];
                   break;
+                // legacy links may still carry the plain 'date descending'/'date ascending' value
+                case newestHashValue:
                 case 'date descending':
                   setSortButtonCaption(sortBtn, sortLabel.newest);
-                  criteria = [[sortLabel.newest, module.buildDateSortCriterion('descending')]];
+                  criteria = [[sortLabel.newest, buildDateSortCriteria(module, newestOrderOnLoad, dateSortField)]];
                   break;
+                case oldestHashValue:
                 case 'date ascending':
                   setSortButtonCaption(sortBtn, sortLabel.oldest);
-                  criteria = [[sortLabel.oldest, module.buildDateSortCriterion('ascending')]];
+                  criteria = [[sortLabel.oldest, buildDateSortCriteria(module, oldestOrderOnLoad, dateSortField)]];
                   break;
               }
             }
@@ -477,11 +516,19 @@ export default async function initiateCoveoHeadlessSearch({
                   case 'el_view_count descending':
                     headlessBuildSort.sortBy(module.buildFieldSortCriterion('el_view_count', 'descending'));
                     break;
-                  case 'descending':
-                    headlessBuildSort.sortBy(module.buildDateSortCriterion('descending'));
+                  case 'newest':
+                    headlessBuildSort.sortBy(
+                      buildDateSortCriteria(module, getDateSortOrder(true, dateSortField, fragment()), dateSortField),
+                    );
                     break;
-                  case 'ascending':
-                    headlessBuildSort.sortBy(module.buildDateSortCriterion('ascending'));
+                  case 'oldest':
+                    headlessBuildSort.sortBy(
+                      buildDateSortCriteria(
+                        module,
+                        getDateSortOrder(false, dateSortField, fragment()),
+                        dateSortField,
+                      ),
+                    );
                     break;
                 }
               });
