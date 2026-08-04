@@ -455,6 +455,10 @@ export default async function initiateCoveoHeadlessSearch({
           const oldestOrderOnLoad = getDateSortOrder(false, dateSortField, hashURL);
           const newestHashValue = buildDateSortHashValue(newestOrderOnLoad, dateSortField);
           const oldestHashValue = buildDateSortHashValue(oldestOrderOnLoad, dateSortField);
+          // Tracks whether the active sort is date-based (and which direction) so the el_contenttype
+          // facet subscription below can re-derive/reapply it when the Upcoming-only condition flips.
+          let activeDateSortSemantic = null;
+          let activeDateSortOrder = null;
           // eslint-disable-next-line
           isSortValueInHash.forEach((item) => {
             if (item.includes('sortCriteria')) {
@@ -474,11 +478,15 @@ export default async function initiateCoveoHeadlessSearch({
                 case 'date descending':
                   setSortButtonCaption(sortBtn, sortLabel.newest);
                   criteria = [[sortLabel.newest, buildDateSortCriteria(module, newestOrderOnLoad, dateSortField)]];
+                  activeDateSortSemantic = 'newest';
+                  activeDateSortOrder = newestOrderOnLoad;
                   break;
                 case oldestHashValue:
                 case 'date ascending':
                   setSortButtonCaption(sortBtn, sortLabel.oldest);
                   criteria = [[sortLabel.oldest, buildDateSortCriteria(module, oldestOrderOnLoad, dateSortField)]];
+                  activeDateSortSemantic = 'oldest';
+                  activeDateSortOrder = oldestOrderOnLoad;
                   break;
               }
             }
@@ -488,6 +496,17 @@ export default async function initiateCoveoHeadlessSearch({
 
           const headlessBuildSort = module.buildSort(headlessSearchEngine, {
             initialState: { criterion: initialCriterion },
+          });
+
+          // el_contenttype is a checkbox facet: toggling it updates the URL via history
+          // pushState/replaceState, which does not fire 'hashchange'. So the Upcoming-only
+          // flip must be re-derived here too, not just on sort-anchor click / initial load.
+          headlessTypeFacet.subscribe(() => {
+            if (!dateSortField || !activeDateSortSemantic) return;
+            const nextOrder = getDateSortOrder(activeDateSortSemantic === 'newest', dateSortField, fragment());
+            if (nextOrder === activeDateSortOrder) return;
+            activeDateSortOrder = nextOrder;
+            headlessBuildSort.sortBy(buildDateSortCriteria(module, nextOrder, dateSortField));
           });
 
           if (sortAnchors.length > 0) {
@@ -511,25 +530,22 @@ export default async function initiateCoveoHeadlessSearch({
                 // eslint-disable-next-line
                 switch (anchorSortCriteria) {
                   case 'relevancy':
+                    activeDateSortSemantic = null;
                     headlessBuildSort.sortBy(module.buildRelevanceSortCriterion());
                     break;
                   case 'el_view_count descending':
+                    activeDateSortSemantic = null;
                     headlessBuildSort.sortBy(module.buildFieldSortCriterion('el_view_count', 'descending'));
                     break;
                   case 'newest':
-                    headlessBuildSort.sortBy(
-                      buildDateSortCriteria(module, getDateSortOrder(true, dateSortField, fragment()), dateSortField),
-                    );
+                  case 'oldest': {
+                    const isNewest = anchorSortCriteria === 'newest';
+                    const order = getDateSortOrder(isNewest, dateSortField, fragment());
+                    activeDateSortSemantic = anchorSortCriteria;
+                    activeDateSortOrder = order;
+                    headlessBuildSort.sortBy(buildDateSortCriteria(module, order, dateSortField));
                     break;
-                  case 'oldest':
-                    headlessBuildSort.sortBy(
-                      buildDateSortCriteria(
-                        module,
-                        getDateSortOrder(false, dateSortField, fragment()),
-                        dateSortField,
-                      ),
-                    );
-                    break;
+                  }
                 }
               });
             });
