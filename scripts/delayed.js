@@ -13,9 +13,16 @@ loadCSS(`${window.hlx.codeBasePath}/styles/print/print.css`);
 loadPrism(document);
 
 // disable martech if martech=off is in the query string, this is used for testing ONLY
-if (window.location.search?.indexOf('martech=off') === -1) {
-  loadGainsight();
-  loadQualtrics();
+const martechOff = window.location.search?.indexOf('martech=off') !== -1;
+const embedMode = window.location.pathname.toLowerCase().includes('/playlists')
+  ? (await import('./utils/playlist-embed-utils.js')).isPlaylistEmbedMode()
+  : false;
+
+if (!martechOff) {
+  if (!embedMode) {
+    loadGainsight();
+    loadQualtrics();
+  }
   sendCoveoPageViewEvent();
 }
 
@@ -31,7 +38,7 @@ function isBrandConciergeExcludedPath() {
  *   - hidden on Support and Premium Learning routes
  */
 async function loadBrandConcierge() {
-  if (isBrandConciergeExcludedPath()) return;
+  if (embedMode || isBrandConciergeExcludedPath()) return;
 
   const { default: initBrandConcierge } = await import('./brand-concierge/brand-concierge.js');
   await initBrandConcierge();
