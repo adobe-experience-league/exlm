@@ -9,15 +9,14 @@ function getChampionName() {
 }
 
 /**
- * Decorate a champion-content block/item in place.
- * Used both standalone (generic block loader) and when nested inside champion-detail.
- * @param {HTMLElement} block
+ * Build the inner markup for one Associated Content card.
+ * Shared by champion-content.js (nested/standalone block) and featured-advocates.js (carousel),
+ * so both contexts render identically and share champion-content.css.
+ * @param {object} content - as returned by extractChampionContent()
+ * @param {string} championName
  */
-export function decorateChampionContent(block) {
-  const content = extractChampionContent(block);
-  const championName = getChampionName();
-
-  block.innerHTML = `
+export function renderChampionContentHTML(content, championName) {
+  return `
     <div class="champion-content-eyebrow">
       ${
         content.eyebrowIcon
@@ -41,6 +40,17 @@ export function decorateChampionContent(block) {
       ${content.ctaHref ? `<a class="champion-content-cta" href="${content.ctaHref}">${content.ctaLabel}</a>` : ''}
     </div>
   `;
+}
+
+/**
+ * Decorate a champion-content block/item in place.
+ * Used both standalone (generic block loader) and when nested inside champion-detail.
+ * @param {HTMLElement} block
+ */
+export function decorateChampionContent(block) {
+  const content = extractChampionContent(block);
+  const championName = getChampionName();
+  block.innerHTML = renderChampionContentHTML(content, championName);
 }
 
 export default function decorate(block) {

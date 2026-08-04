@@ -4,14 +4,10 @@
   flex-direction: column;
   gap: var(--spectrum-spacing-100);
   padding: var(--spectrum-spacing-300);
-  padding-bottom: 24px;
+  padding-bottom: var(--spectrum-spacing-400);
   background: #fff;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--non-spectrum-unicorn-silver);
   border-radius: 16px;
-  box-shadow: 0 4px 0 0 #ffa311 inset;
-}
-
-.champion-content.block.champion-content-yellow {
   box-shadow: 0 4px 0 0 #ffa311 inset;
 }
 
@@ -20,7 +16,7 @@
 }
 
 .champion-content.block.champion-content-blue {
-  box-shadow: 0 4px 0 0 #1473e6 inset;
+  box-shadow: 0 4px 0 0 var(--non-spectrum-navy-blue) inset;
 }
 
 .champion-content.block .champion-content-eyebrow {

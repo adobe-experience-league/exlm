@@ -439,9 +439,7 @@ indices:
 
   champion-en: &base-champion
     include:
-      - /en/champions/**
-    exclude:
-      - /en/champions
+      - /en/champions/*
     target: /en/champion-index.json
     properties:
       title:
@@ -462,73 +460,55 @@ indices:
   champion-fr:
     <<: *base-champion
     include:
-      - /fr/champions/**
-    exclude:
-      - /fr/champions
+      - /fr/champions/*
     target: /fr/champion-index.json
 
   champion-de:
     <<: *base-champion
     include:
-      - /de/champions/**
-    exclude:
-      - /de/champions
+      - /de/champions/*
     target: /de/champion-index.json
 
   champion-es:
     <<: *base-champion
     include:
-      - /es/champions/**
-    exclude:
-      - /es/champions
+      - /es/champions/*
     target: /es/champion-index.json
 
   champion-it:
     <<: *base-champion
     include:
-      - /it/champions/**
-    exclude:
-      - /it/champions
+      - /it/champions/*
     target: /it/champion-index.json
 
   champion-pt-br:
     <<: *base-champion
     include:
-      - /pt-br/champions/**
-    exclude:
-      - /pt-br/champions
+      - /pt-br/champions/*
     target: /pt-br/champion-index.json
 
   champion-ko:
     <<: *base-champion
     include:
-      - /ko/champions/**
-    exclude:
-      - /ko/champions
+      - /ko/champions/*
     target: /ko/champion-index.json
 
   champion-ja:
     <<: *base-champion
     include:
-      - /ja/champions/**
-    exclude:
-      - /ja/champions
+      - /ja/champions/*
     target: /ja/champion-index.json
 
   champion-zh-hans:
     <<: *base-champion
     include:
-      - /zh-hans/champions/**
-    exclude:
-      - /zh-hans/champions
+      - /zh-hans/champions/*
     target: /zh-hans/champion-index.json
 
   champion-zh-hant:
     <<: *base-champion
     include:
-      - /zh-hant/champions/**
-    exclude:
-      - /zh-hant/champions
+      - /zh-hant/champions/*
     target: /zh-hant/champion-index.json
 
   # Sitemap indicies, split in 2 google has a limit of 50k (and 50MB) urls per sitemap

@@ -10630,24 +10630,7 @@
   },
   {
     "id": "featured-advocates",
-    "fields": [
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "title",
-        "value": "",
-        "label": "Title",
-        "description": "Optional heading shown above the carousel."
-      },
-      {
-        "component": "richtext",
-        "valueType": "string",
-        "name": "description",
-        "value": "",
-        "label": "Description",
-        "description": "Optional intro copy shown above the carousel."
-      }
-    ]
+    "fields": []
   },
   {
     "id": "champion-detail",
