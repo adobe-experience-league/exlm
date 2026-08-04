@@ -1169,6 +1169,75 @@ export function pushBrowseFilterSearchClearEvent(searchType, filterType, filterV
 }
 
 /**
+ * Pushes an events filter/search interaction event to the Adobe Data Layer.
+ * Fired when a user selects a filter or submits a keyword in the events-search block.
+ *
+ * @param {Object} params
+ * @param {string} params.linkTitle - e.g. 'events filter apply' or 'search events'
+ * @param {string} params.linkType - e.g. 'filter' or 'search text box'
+ * @param {string} [params.destinationDomain] - Defaults to the current page URL
+ * @param {number} [params.count=0] - Result count after the interaction
+ * @param {number} [params.depth=1]
+ * @param {Object} [params.filter] - { product: [], eventType: [], series: [] }
+ * @param {string} [params.sortBy='relevancy']
+ * @param {string} [params.term] - Keyword entered in the search box
+ */
+export function pushEventsFilterSearchEvent({
+  linkTitle,
+  linkType,
+  destinationDomain,
+  count = 0,
+  depth = 1,
+  filter = {},
+  sortBy = 'relevancy',
+  term = '',
+} = {}) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'eventsFilterSearch',
+    eventType: 'web.webInteraction.eventsFilterSearch',
+    link: {
+      linkTitle: linkTitle || '',
+      linkLocation: 'events page',
+      linkType: linkType || '',
+      destinationDomain: destinationDomain || window.location.href,
+    },
+    eventHubFilter: {
+      Count: count,
+      depth,
+      filter: {
+        product: filter.product || [],
+        eventType: filter.eventType || [],
+        series: filter.series || [],
+      },
+      sortBy,
+      term,
+    },
+  });
+}
+
+/**
+ * Pushes a "clear all filters" link click event to the Adobe Data Layer for the events-search block.
+ *
+ * @param {string} [destinationDomain] - Defaults to the current page URL
+ */
+export function pushEventsClearFiltersEvent(destinationDomain) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  window.adobeDataLayer.push({
+    event: 'linkClicked',
+    eventType: 'web.webInteraction.linkclicks',
+    link: {
+      linkTitle: 'clear all filters clicked',
+      linkLocation: 'events page',
+      linkType: 'link',
+      destinationDomain: destinationDomain || window.location.href,
+    },
+  });
+}
+
+/**
  * Pushes a grid toggle event to the Adobe Data Layer.
  * This event is fired when users switch to grid view.
  * @param {string} cardHeader - The header associated with the block.
