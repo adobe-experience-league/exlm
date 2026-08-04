@@ -5,16 +5,16 @@
   padding-left: 24px;
   padding-right: 24px;
   background:
-    url('../featured-advocates/advocate-glow-yellow.svg') no-repeat top left / cover,
+    url('/icons/advocate-glow-yellow.svg') no-repeat top left / cover,
     white;
 }
 
 .section.champion-detail-container.champion-detail-purple {
-  background-image: url('../featured-advocates/advocate-glow-purple.svg');
+  background-image: url('/icons/advocate-glow-purple.svg');
 }
 
 .section.champion-detail-container.champion-detail-blue {
-  background-image: url('../featured-advocates/advocate-glow-blue.svg');
+  background-image: url('/icons/advocate-glow-blue.svg');
 }
 
 .champion-detail.block {
@@ -49,15 +49,15 @@
   width: 267.381px;
   height: 267.381px;
   border-radius: 13.673px;
-  background: #ffa311;
+  background: var(--non-spectrum-champion-yellow);
 }
 
 .champion-detail.block .champion-detail-image-purple::before {
-  background: #a55be8;
+  background: var(--non-spectrum-champion-purple);
 }
 
 .champion-detail.block .champion-detail-image-blue::before {
-  background: var(--non-spectrum-navy-blue);
+  background: var(--non-spectrum-champion-blue);
 }
 
 .champion-detail.block .champion-detail-image picture {

@@ -1,4 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import {
   CHAMPION_DETAIL_FIELD_COUNT,
   DESIGNATION_COLORS,
@@ -9,8 +10,7 @@ import { decorateChampionContent } from '../champion-content/champion-content.js
 
 /**
  * Apply (or swap) the gradient background theme on a champion's parent section.
- * Shared by champion-detail.js (one section, set once) and featured-advocates.js (one section,
- * re-applied as the carousel advances, since only one panel is ever visible at a time).
+ * Shared with featured-advocates.js, which re-applies it as the carousel advances.
  * @param {HTMLElement} section
  * @param {string} colorClass - '', 'yellow', 'purple', or 'blue'
  */
@@ -23,8 +23,7 @@ export function applyChampionSectionTheme(section, colorClass) {
 
 /**
  * Build the inner markup for a champion's profile (image, quote, name, title, designation).
- * Shared by champion-detail.js (individual page) and featured-advocates.js (carousel),
- * so both contexts render identically and share champion-detail.css.
+ * Shared with featured-advocates.js so both contexts render identically.
  * @param {object} detail - as returned by extractChampionDetail()
  * @param {string} colorClass - '', 'yellow', 'purple', or 'blue'
  * @param {object} [options]
@@ -41,7 +40,7 @@ export function renderChampionDetailProfileHTML(detail, colorClass, { pagination
         ${
           detail.quoteBio
             ? `<div class="champion-detail-quote">
-                 <img class="champion-detail-quote-icon" src="/blocks/champion-detail/quote-icon-${
+                 <img class="champion-detail-quote-icon" src="/icons/quote-icon-${
                    colorClass || 'yellow'
                  }.svg" alt="" loading="${loading}">
                  <p>${detail.quoteBio}</p>
@@ -81,18 +80,18 @@ export function renderPaginationHTML(countText, label = 'champion') {
 
 /**
  * Append the "More from X" heading + items grid to a champion-detail(-shaped) container.
- * Shared by champion-detail.js (real DOM item elements, decorated in place) and
- * featured-advocates.js (freshly-built card elements) — both just need the same wrapper.
+ * Shared with featured-advocates.js, which just needs the same wrapper for its own cards.
  * @param {HTMLElement} container
  * @param {string} championName
  * @param {HTMLElement[]} itemElements
+ * @param {object} [placeholders]
  */
-export function appendMoreFromSection(container, championName, itemElements) {
+export function appendMoreFromSection(container, championName, itemElements, placeholders = {}) {
   if (!itemElements.length) return;
 
   const moreFrom = document.createElement('div');
   moreFrom.classList.add('champion-detail-more-from');
-  moreFrom.textContent = `More from ${championName}`;
+  moreFrom.textContent = (placeholders.championDetailMoreFromLabel || 'More from {}').replace('{}', championName);
   container.append(moreFrom);
 
   const itemsContainer = document.createElement('div');
@@ -101,9 +100,10 @@ export function appendMoreFromSection(container, championName, itemElements) {
   container.append(itemsContainer);
 }
 
-export default function decorate(block) {
+export default async function decorate(block) {
   const detail = extractChampionDetail(block);
   const colorClass = getDesignationColor(detail.colorSelection);
+  const placeholders = await fetchLanguagePlaceholders();
 
   // anything beyond champion-detail's own fields are nested champion-content items
   const items = [...block.children].slice(CHAMPION_DETAIL_FIELD_COUNT, CHAMPION_DETAIL_FIELD_COUNT + 3);
@@ -118,7 +118,7 @@ export default function decorate(block) {
   items.forEach((item) => {
     item.classList.add('champion-content', 'block');
     if (colorClass) item.classList.add(`champion-content-${colorClass}`);
-    decorateChampionContent(item);
+    decorateChampionContent(item, placeholders);
   });
-  appendMoreFromSection(block, detail.name, items);
+  appendMoreFromSection(block, detail.name, items, placeholders);
 }

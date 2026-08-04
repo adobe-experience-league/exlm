@@ -1,12 +1,6 @@
 @import '../champion-detail/champion-detail.css';
 
-/*
- * Each carousel panel reuses champion-detail.css's own classes (.champion-detail.block,
- * .champion-detail-profile, .champion-detail-items, etc.) so it renders identically to the
- * standalone champion page, including the gradient background living on the whole .section
- * (only one panel is ever visible at a time, so the section's color class just gets swapped
- * as the carousel advances instead of each panel needing its own background).
- */
+/* Each panel reuses champion-detail.css's classes to render identically to the standalone page. */
 .featured-advocates.block .featured-advocates-panel {
   display: none;
 }

@@ -1,3 +1,4 @@
+import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { extractChampionContent } from '../../scripts/utils/champion-utils.js';
 
 function getChampionName() {
@@ -10,12 +11,13 @@ function getChampionName() {
 
 /**
  * Build the inner markup for one Associated Content card.
- * Shared by champion-content.js (nested/standalone block) and featured-advocates.js (carousel),
- * so both contexts render identically and share champion-content.css.
+ * Shared with featured-advocates.js so both contexts render identically.
  * @param {object} content - as returned by extractChampionContent()
  * @param {string} championName
+ * @param {object} [placeholders]
  */
-export function renderChampionContentHTML(content, championName) {
+export function renderChampionContentHTML(content, championName, placeholders = {}) {
+  const bylineLabel = (placeholders.championContentBylineLabel || 'By {}').replace('{}', championName);
   return `
     <div class="champion-content-eyebrow">
       ${
@@ -27,7 +29,7 @@ export function renderChampionContentHTML(content, championName) {
     </div>
     <div class="champion-content-title">${content.title}</div>
     ${content.description ? `<div class="champion-content-description">${content.description}</div>` : ''}
-    ${content.showByline && championName ? `<div class="champion-content-byline">By ${championName}</div>` : ''}
+    ${content.showByline && championName ? `<div class="champion-content-byline">${bylineLabel}</div>` : ''}
     <div class="champion-content-footer">
       <div class="champion-content-footer-info">
         ${
@@ -37,7 +39,11 @@ export function renderChampionContentHTML(content, championName) {
         }
         <div class="champion-content-footer-text">${content.footerText}</div>
       </div>
-      ${content.ctaHref ? `<a class="champion-content-cta" href="${content.ctaHref}">${content.ctaLabel}</a>` : ''}
+      ${
+        content.ctaHref
+          ? `<a class="champion-content-cta" href="${content.ctaHref}"><span class="visually-hidden">${content.title}: </span>${content.ctaLabel}</a>`
+          : ''
+      }
     </div>
   `;
 }
@@ -46,13 +52,15 @@ export function renderChampionContentHTML(content, championName) {
  * Decorate a champion-content block/item in place.
  * Used both standalone (generic block loader) and when nested inside champion-detail.
  * @param {HTMLElement} block
+ * @param {object} [placeholders]
  */
-export function decorateChampionContent(block) {
+export function decorateChampionContent(block, placeholders = {}) {
   const content = extractChampionContent(block);
   const championName = getChampionName();
-  block.innerHTML = renderChampionContentHTML(content, championName);
+  block.innerHTML = renderChampionContentHTML(content, championName, placeholders);
 }
 
-export default function decorate(block) {
-  decorateChampionContent(block);
+export default async function decorate(block) {
+  const placeholders = await fetchLanguagePlaceholders();
+  decorateChampionContent(block, placeholders);
 }

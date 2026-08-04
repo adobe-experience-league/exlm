@@ -3,6 +3,9 @@ import PreferenceStore from '../preferences/preferences.js';
 
 export const MAX_CHAMPIONS = 18;
 
+// matches ffetch.js's own default concurrency (maxInFlight) for the same kind of fetch-each-entry work
+const MAX_CONCURRENT_FETCHES = 5;
+
 // image, name, jobTitle, quoteBio, communityProfileUrl, productDesignation, colorSelection
 export const CHAMPION_DETAIL_FIELD_COUNT = 7;
 
@@ -98,9 +101,8 @@ export async function fetchChampionProfile(path) {
     const detail = extractChampionDetail(detailBlock);
     if (!isChampionEligible(detail)) return null;
 
-    // nested champion-content items aren't class-tagged in raw (undecorated) HTML,
-    // since that class is only added by champion-detail.js's client-side decoration;
-    // find them the same way champion-detail.js does: positionally, after its own fields.
+    // items aren't class-tagged in raw HTML (only added by client-side decoration),
+    // so find them the same way champion-detail.js does: positionally.
     const associatedContent = [...detailBlock.children]
       .slice(CHAMPION_DETAIL_FIELD_COUNT, CHAMPION_DETAIL_FIELD_COUNT + 3)
       .map(extractChampionContent)
@@ -133,7 +135,14 @@ export async function getFeaturedChampions(lang) {
     .filter((path) => /\/champions\/.+/.test(path))
     .slice(0, MAX_CHAMPIONS);
 
-  return (await Promise.all(championPaths.map((path) => fetchChampionProfile(path)))).filter(Boolean);
+  const profiles = [];
+  for (let i = 0; i < championPaths.length; i += MAX_CONCURRENT_FETCHES) {
+    const batch = championPaths.slice(i, i + MAX_CONCURRENT_FETCHES);
+    // eslint-disable-next-line no-await-in-loop -- intentionally sequential to cap concurrent fetches
+    const batchProfiles = await Promise.all(batch.map((path) => fetchChampionProfile(path)));
+    profiles.push(...batchProfiles.filter(Boolean));
+  }
+  return profiles;
 }
 
 function shuffle(array) {

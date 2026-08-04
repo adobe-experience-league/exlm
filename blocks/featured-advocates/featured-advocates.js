@@ -1,4 +1,4 @@
-import { getPathDetails } from '../../scripts/scripts.js';
+import { getPathDetails, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { getFeaturedChampions, getRotatedChampions, getDesignationColor } from '../../scripts/utils/champion-utils.js';
 import {
@@ -9,15 +9,15 @@ import {
 } from '../champion-detail/champion-detail.js';
 import { renderChampionContentHTML } from '../champion-content/champion-content.js';
 
-function buildAssociatedContentCard(item, championName, colorClass) {
+function buildAssociatedContentCard(item, championName, colorClass, placeholders) {
   const card = document.createElement('div');
   card.classList.add('champion-content', 'block');
   if (colorClass) card.classList.add(`champion-content-${colorClass}`);
-  card.innerHTML = renderChampionContentHTML(item, championName);
+  card.innerHTML = renderChampionContentHTML(item, championName, placeholders);
   return card;
 }
 
-function buildAdvocatePanel(champion, total) {
+function buildAdvocatePanel(champion, total, placeholders) {
   const { detail, associatedContent } = champion;
   const colorClass = getDesignationColor(detail.colorSelection);
 
@@ -29,8 +29,8 @@ function buildAdvocatePanel(champion, total) {
     loading: 'lazy',
   });
 
-  const cards = associatedContent.map((item) => buildAssociatedContentCard(item, detail.name, colorClass));
-  appendMoreFromSection(panel, detail.name, cards);
+  const cards = associatedContent.map((item) => buildAssociatedContentCard(item, detail.name, colorClass, placeholders));
+  appendMoreFromSection(panel, detail.name, cards, placeholders);
 
   return panel;
 }
@@ -39,6 +39,7 @@ export default async function decorate(block) {
   block.textContent = '';
 
   const { lang } = getPathDetails();
+  const placeholders = await fetchLanguagePlaceholders(lang);
   let champions = [];
   try {
     champions = await getFeaturedChampions(lang);
@@ -75,7 +76,7 @@ export default async function decorate(block) {
   }
 
   orderedChampions.forEach((champion, i) => {
-    const panel = buildAdvocatePanel(champion, total);
+    const panel = buildAdvocatePanel(champion, total, placeholders);
     if (i === 0) panel.classList.add('active');
     panelContainer.append(panel);
   });

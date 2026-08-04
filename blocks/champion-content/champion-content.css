@@ -8,15 +8,15 @@
   background: #fff;
   border: 1px solid var(--non-spectrum-unicorn-silver);
   border-radius: 16px;
-  box-shadow: 0 4px 0 0 #ffa311 inset;
+  box-shadow: 0 4px 0 0 var(--non-spectrum-champion-yellow) inset;
 }
 
 .champion-content.block.champion-content-purple {
-  box-shadow: 0 4px 0 0 #a55be8 inset;
+  box-shadow: 0 4px 0 0 var(--non-spectrum-champion-purple) inset;
 }
 
 .champion-content.block.champion-content-blue {
-  box-shadow: 0 4px 0 0 var(--non-spectrum-navy-blue) inset;
+  box-shadow: 0 4px 0 0 var(--non-spectrum-champion-blue) inset;
 }
 
 .champion-content.block .champion-content-eyebrow {
