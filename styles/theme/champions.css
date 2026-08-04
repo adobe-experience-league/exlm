@@ -9,11 +9,15 @@
 }
 
 .champions.page-bg-gradient {
-  /* To be changed */
-  --gradient-base-bg: #fff; /* neutral, so warm gold/orange circles actually contrast against it */
-  --gradient-primary: #ffd700; /* gold */
-  --gradient-secondary: #ff7a00; /* orange, pushed further from gold's hue */
-  --gradient-accent: #e85d04; /* deep amber, distinct third warm tone */
+  /* To be changed after receiving final values */
+  --gradient-base-bg: #f8f8f8;
+  --gradient-primary: #fadfb3;
+  --gradient-secondary: #e6d6ad;
+  --gradient-accent: #ffa311;
+  --gradient-blur: 200px;
+  --gradient-duration-primary: 15s;
+  --gradient-duration-secondary: 15s;
+  --gradient-duration-accent: 15s;
 }
 
 body.champions .section {
