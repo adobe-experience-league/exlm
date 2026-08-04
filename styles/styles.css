@@ -604,6 +604,27 @@ header {
   border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
 }
 
+/* Playlist product-iframe chrome only — selectors must stay under .playlist-embed-mode */
+body.playlist-embed-mode {
+  --nav-height: 0px;
+
+  overflow-x: hidden;
+}
+
+body.playlist-embed-mode > header,
+body.playlist-embed-mode > footer,
+body.playlist-embed-mode > aside {
+  display: none;
+  height: 0;
+  min-height: 0;
+  border: 0;
+  overflow: hidden;
+}
+
+body.playlist-embed-mode > main {
+  margin: 0;
+}
+
 header.header-v2 {
   --nav-height: 52px;
 

@@ -18,16 +18,10 @@
   }
 
   .grid-cards-title {
+    font-size: var(--exlm-font-size-h1);
     line-height: 125%;
     font-weight: var(--font-weight-heavy);
     margin: 0;
-    color: var(--non-spectrum-dark-gray);
-  }
-
-  .grid-cards-description {
-    font-size: var(--spectrum-body-size-xl);
-    line-height: 150%;
-    font-weight: 400;
     color: var(--non-spectrum-dark-gray);
   }
 }
@@ -64,6 +58,15 @@
   font-size: var(--spectrum-body-size-s);
   line-height: 150%;
   font-weight: var(--font-weight-normal);
+  margin: 0;
+}
+
+.grid-cards-description,
+.grid-cards-description > div > * {
+  font-size: var(--spectrum-body-size-xl);
+  line-height: 150%;
+  font-weight: 400;
+  color: var(--non-spectrum-dark-gray);
   margin: 0;
 }
 

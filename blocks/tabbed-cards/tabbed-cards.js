@@ -3,7 +3,7 @@ import { htmlToElement, decorateExternalLinks, fetchLanguagePlaceholders } from 
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
-import { createDateCriteria, formatTitleCase } from '../../scripts/browse-card/browse-card-utils.js';
+import { createDateCriteria, convertToTitleCase } from '../../scripts/browse-card/browse-card-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 const lang = document.querySelector('html').lang || 'en';
@@ -19,7 +19,29 @@ const urlMap = {
   perspective: `/${lang}/perspectives`,
   course: `/${lang}/courses`,
   'event|upcoming event': `/${lang}/events`,
+  'event|on demand event': `/${lang}/events`,
 };
+
+/**
+ * Builds a human-readable tab label from an authored content type value,
+ * used when no matching placeholder is found (e.g. "event|on demand event" -> "On Demand Event").
+ * @param {string} contentType - Lowercased content type value.
+ * @returns {string} Fallback label.
+ */
+function formatFallbackLabel(contentType) {
+  const label = contentType.includes('|') ? contentType.split('|').pop() : contentType;
+  return convertToTitleCase(label.trim());
+}
+
+/**
+ * Builds the placeholder key segment for a content type (e.g. "event|upcoming event" -> "UpcomingEvent"),
+ * dropping any "event|" style prefix so the resulting placeholder key is a clean, authorable string.
+ * @param {string} contentType - Lowercased content type value.
+ * @returns {string} Placeholder key segment.
+ */
+function getContentTypeKey(contentType) {
+  return formatFallbackLabel(contentType).replace(/\s+/g, '');
+}
 
 /**
  * Decorate function to process and log the mapped data.
@@ -146,9 +168,10 @@ export default async function decorate(block) {
     const tabListUlElement = document.createElement('ul');
     contentTypeList.forEach((contentType) => {
       const contentTypeLowerCase = contentType.toLowerCase();
-      const contentTypeTitleCase = formatTitleCase(contentType);
+      const contentTypeTitleCase = getContentTypeKey(contentType);
       const tabLabel = document.createElement('li');
-      tabLabel.textContent = placeholders[`tabbedCard${contentTypeTitleCase}TabLabel`];
+      tabLabel.textContent =
+        placeholders[`tabbedCard${contentTypeTitleCase}TabLabel`] || formatFallbackLabel(contentType);
       // Create individual tab labels and attach click event listener
       tabLabel.addEventListener('click', () => {
         // Clear Existing Label
@@ -195,7 +218,7 @@ export default async function decorate(block) {
 
     // Update view link for initial content type
     viewLinkURLElement.innerHTML =
-      placeholders[`tabbedCard${formatTitleCase(initialContentType)}ViewAllLabel`] || 'View All';
+      placeholders[`tabbedCard${getContentTypeKey(initialContentType)}ViewAllLabel`] || 'View All';
     viewLinkURLElement.setAttribute('href', urlMap[initialContentType]);
     tabList.appendChild(viewLinkURLElement);
     tabList.children[0].children[0].classList.add('active');

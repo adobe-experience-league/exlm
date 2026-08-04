@@ -8,6 +8,11 @@ import {
 } from '../../scripts/scripts.js';
 import { Playlist, LABELS } from './playlist-utils.js';
 import { updateTranscript, transcriptLoading } from '../video-transcript/video-transcript.js';
+import {
+  buildPlaylistAttributionHref,
+  isPlaylistEmbedMode,
+  PLAYLIST_EMBED_BODY_CLASS,
+} from '../../scripts/utils/playlist-embed-utils.js';
 
 const removeLastSlash = (url) => url.replace(/\/$/, '');
 const isSameUrl = (a, b) => {
@@ -135,6 +140,59 @@ function iconSpan(icon) {
 }
 
 /**
+ * Attribution CTA beside the video title (product feedback: align with title, not viewport corner).
+ * Rebuilt with the player so it survives updatePlayer innerHTML replace.
+ * @param {HTMLElement} player
+ */
+function attachPlaylistEmbedAttribution(player) {
+  if (!isPlaylistEmbedMode()) return;
+  const info = player.querySelector('.playlist-player-info');
+  const title = info?.querySelector('.playlist-player-info-title');
+  if (!info || !title) return;
+
+  let heading = info.querySelector('.playlist-player-info-heading');
+  if (!heading) {
+    heading = document.createElement('div');
+    heading.className = 'playlist-player-info-heading';
+    title.before(heading);
+    heading.append(title);
+  }
+
+  // Full title available on hover when CSS ellipsis clips it on narrow embed widths.
+  if (title.textContent?.trim()) {
+    title.setAttribute('title', title.textContent.trim());
+  }
+
+  heading.querySelector('.playlist-embed-attribution')?.remove();
+  const attribution = document.createElement('div');
+  attribution.className = 'playlist-embed-attribution';
+  const link = document.createElement('a');
+  link.className = 'playlist-embed-attribution-link button';
+  link.href = buildPlaylistAttributionHref(window.location.href);
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+
+  // Visible label swaps by breakpoint (CSS). Accessible name follows the visible
+  // label (display:none hides the other from the a11y tree) — WCAG 2.5.3.
+  // Set fallback text immediately so first paint / SR name is not empty.
+  const fullLabel = createPlaceholderSpan('playlistViewMoreOnExperienceLeague', 'View more on Experience League');
+  fullLabel.classList.add('playlist-embed-attribution-label', 'playlist-embed-attribution-label-full');
+  fullLabel.textContent = 'View more on Experience League';
+
+  const shortLabel = createPlaceholderSpan('playlistViewMoreOnExperienceLeagueShort', 'View on ExL');
+  shortLabel.classList.add('playlist-embed-attribution-label', 'playlist-embed-attribution-label-short');
+  shortLabel.textContent = 'View on ExL';
+
+  const newTabHint = document.createElement('span');
+  newTabHint.className = 'visually-hidden';
+  newTabHint.textContent = ' (opens in a new tab)';
+
+  link.append(fullLabel, shortLabel, newTabHint);
+  attribution.append(link);
+  heading.append(attribution);
+}
+
+/**
  * @param {Video} video
  * @param {Playlist} playlist
  * @returns {HTMLElement}
@@ -256,6 +314,7 @@ function updatePlayer(playlist) {
   updateTranscript(transcriptUrl, transcriptDetail);
   playerContainer.innerHTML = '';
   playerContainer.append(player);
+  attachPlaylistEmbedAttribution(player);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -306,6 +365,13 @@ function updateProgress(videoIndex, playlist) {
   });
 }
 
+/** Keep embed attribution href current for middle-click / copy-link (not only left-click). */
+function syncPlaylistAttributionHref() {
+  const link = document.querySelector('.playlist-embed-attribution-link');
+  if (!link) return;
+  link.href = buildPlaylistAttributionHref(window.location.href);
+}
+
 const playlist = new Playlist();
 playlist.onVideoChange((videos, vIndex) => {
   const currentVideo = videos[vIndex];
@@ -315,6 +381,7 @@ playlist.onVideoChange((videos, vIndex) => {
   if (active && activeStatusChanged) el.parentElement.scrollTop = el.offsetTop - el.clientHeight / 2;
   updatePlayer(playlist);
   updateVideoIndexParam(playlist.getActiveVideoIndex());
+  syncPlaylistAttributionHref();
   updateProgress(vIndex, playlist);
   return true;
 });
@@ -325,6 +392,9 @@ playlist.onVideoChange((videos, vIndex) => {
 export default function decorate(block) {
   const main = document.querySelector('main');
   main.classList.add('playlist-page');
+  if (isPlaylistEmbedMode()) {
+    document.body.classList.add(PLAYLIST_EMBED_BODY_CLASS);
+  }
   const playlistSection = block.closest('.section');
   const playerContainer = htmlToElement(`<div class="playlist-player-container" data-playlist-player-container></div>`);
   playlistSection.parentElement.prepend(playerContainer);
@@ -423,7 +493,8 @@ export default function decorate(block) {
 
   // handle browser back within history changes
   window.addEventListener('popstate', (event) => {
-    if (event.state?.video) {
+    // video index 0 is valid — do not use truthiness checks
+    if (typeof event.state?.video === 'number') {
       playlist.activateVideoByIndex(event.state.video);
     } else if (!event.state) {
       playlist.activateVideoByIndex(0);
