@@ -2,11 +2,11 @@
 
 /* ----- MOBILE ----- */
 .section.champion-detail-container {
-  padding-left: 24px;
-  padding-right: 24px;
+  padding-left: var(--spectrum-spacing-400);
+  padding-right: var(--spectrum-spacing-400);
   background:
     url('/icons/advocate-glow-yellow.svg') no-repeat top left / cover,
-    white;
+    var(--spectrum-gray-50);
 }
 
 .section.champion-detail-container.champion-detail-purple {
@@ -79,14 +79,14 @@
   font-family: var(--body-font-family);
   font-style: normal;
   font-weight: var(--font-weight-normal);
-  font-size: 28px;
+  font-size: var(--spectrum-font-size-700);
   line-height: 1.5;
   color: var(--non-spectrum-dark-gray);
 }
 
 .champion-detail.block .champion-detail-quote-icon {
   display: block;
-  width: 24px;
+  width: var(--spectrum-spacing-400);
   height: 19px;
   aspect-ratio: 24 / 19;
   margin-bottom: var(--spectrum-spacing-100);
@@ -96,7 +96,7 @@
   font-family: var(--body-font-family);
   font-style: normal;
   font-weight: var(--font-weight-bold);
-  font-size: 22px;
+  font-size: var(--spectrum-font-size-500);
   line-height: 1.25;
   text-decoration: none;
   color: var(--non-spectrum-dark-gray);
@@ -109,7 +109,7 @@
   font-family: var(--body-font-family);
   font-style: normal;
   font-weight: var(--font-weight-normal);
-  font-size: 22px;
+  font-size: var(--spectrum-font-size-500);
   line-height: 1.25;
   color: var(--non-spectrum-dark-gray);
 }
@@ -117,7 +117,7 @@
 .champion-detail.block .champion-detail-designation {
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-100);
   color: var(--non-spectrum-dark-gray);
 }
 
@@ -146,14 +146,14 @@
 }
 
 .champion-detail.block .champion-detail-pagination-count {
-  font-size: 20px;
+  font-size: var(--spectrum-font-size-400);
   color: var(--non-spectrum-dark-gray);
 }
 
 .champion-detail.block .champion-detail-more-from {
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  font-size: 16px;
+  font-size: var(--spectrum-font-size-200);
   font-style: normal;
   font-weight: var(--font-weight-bold);
   line-height: 1.25;

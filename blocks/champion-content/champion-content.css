@@ -5,18 +5,18 @@
   gap: var(--spectrum-spacing-100);
   padding: var(--spectrum-spacing-300);
   padding-bottom: var(--spectrum-spacing-400);
-  background: #fff;
+  background: var(--spectrum-gray-50);
   border: 1px solid var(--non-spectrum-unicorn-silver);
-  border-radius: 16px;
-  box-shadow: 0 4px 0 0 var(--non-spectrum-champion-yellow) inset;
+  border-radius: var(--spectrum-spacing-300);
+  box-shadow: 0 var(--spectrum-spacing-75) 0 0 var(--non-spectrum-champion-yellow) inset;
 }
 
 .champion-content.block.champion-content-purple {
-  box-shadow: 0 4px 0 0 var(--non-spectrum-champion-purple) inset;
+  box-shadow: 0 var(--spectrum-spacing-75) 0 0 var(--non-spectrum-champion-purple) inset;
 }
 
 .champion-content.block.champion-content-blue {
-  box-shadow: 0 4px 0 0 var(--non-spectrum-champion-blue) inset;
+  box-shadow: 0 var(--spectrum-spacing-75) 0 0 var(--non-spectrum-champion-blue) inset;
 }
 
 .champion-content.block .champion-content-eyebrow {
@@ -25,37 +25,37 @@
   gap: var(--spectrum-spacing-100);
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-100);
   font-style: normal;
   font-weight: var(--font-weight-bold);
   line-height: 1.25;
   color: var(--non-spectrum-smoke);
-  margin-bottom: 8px;
+  margin-bottom: var(--spectrum-spacing-100);
 }
 
 .champion-content.block .champion-content-icon {
-  width: 16px;
-  height: 16px;
+  width: var(--spectrum-spacing-300);
+  height: var(--spectrum-spacing-300);
   object-fit: contain;
 }
 
 .champion-content.block .champion-content-title {
-  font-size: 20px;
+  font-size: var(--spectrum-font-size-400);
   font-weight: var(--font-weight-bold);
   line-height: 1.25;
   color: var(--non-spectrum-dark-gray);
-  margin-bottom: 12px;
+  margin-bottom: var(--spectrum-spacing-200);
 }
 
 .champion-content.block .champion-content-description {
   color: var(--non-spectrum-dark-gray);
-  font-size: 16px;
+  font-size: var(--spectrum-font-size-200);
 }
 
 .champion-content.block .champion-content-byline {
-  font-size: 16px;
+  font-size: var(--spectrum-font-size-200);
   font-weight: var(--font-weight-bold);
-  margin-top: 16px;
+  margin-top: var(--spectrum-spacing-300);
 }
 
 .champion-content.block .champion-content-footer {
@@ -63,7 +63,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spectrum-spacing-100);
-  font-size: 16px;
+  font-size: var(--spectrum-font-size-200);
   color: var(--non-spectrum-dark-gray);
   margin-top: auto;
 }
@@ -78,7 +78,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--spectrum-spacing-100);
-  font-size: 14px;
+  font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-bold);
   text-decoration: none;
   color: var(--link-color);
