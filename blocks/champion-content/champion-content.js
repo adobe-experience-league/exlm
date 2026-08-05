@@ -4,8 +4,8 @@ import { extractChampionContent } from '../../scripts/utils/champion-utils.js';
 function getChampionName() {
   const decoratedName = document.querySelector('.champion-detail .champion-detail-name');
   if (decoratedName) return decoratedName.textContent.trim();
-  // champion-detail not decorated yet: read the raw authored row (fileReference, fileReferenceAlt, name, ...)
-  const nameRow = document.querySelector('.champion-detail')?.children[2];
+  // champion-detail not decorated yet: read the raw authored row (fileReference, name, jobTitle, ...)
+  const nameRow = document.querySelector('.champion-detail')?.children[1];
   return nameRow?.firstElementChild?.textContent.trim() || '';
 }
 
