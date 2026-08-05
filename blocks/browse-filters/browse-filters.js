@@ -36,6 +36,7 @@ import {
 import {
   BASE_COVEO_ADVANCED_QUERY,
   BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT,
+  COVEO_EXCLUDE_STALE_UPCOMING_AQ,
 } from '../../scripts/browse-card/browse-cards-constants.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import {
@@ -1743,9 +1744,9 @@ function decorateBrowseTopics(block) {
 
 export default async function decorate(block) {
   const isUpcomingEventFlow = isEventsPage && isFeatureEnabled('isEventsV2');
-  window.headlessBaseSolutionQuery = isUpcomingEventFlow
-    ? BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT
-    : BASE_COVEO_ADVANCED_QUERY;
+  const baseSolutionQuery = isUpcomingEventFlow ? BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT : BASE_COVEO_ADVANCED_QUERY;
+  // Exclude stale Upcoming Events from Browse results (same rule as Atomic Search / Events Hub).
+  window.headlessBaseSolutionQuery = `(${baseSolutionQuery}) AND (${COVEO_EXCLUDE_STALE_UPCOMING_AQ})`;
   enableTagsAsProxy(block);
   appendFormEl(block);
   constructFilterInputContainer(block);
