@@ -1,0 +1,10 @@
+@import '../champion-detail/champion-detail.css';
+
+/* Each panel reuses champion-detail.css's classes to render identically to the standalone page. */
+.featured-advocates.block .featured-advocates-panel {
+  display: none;
+}
+
+.featured-advocates.block .featured-advocates-panel.active {
+  display: block;
+}
