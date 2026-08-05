@@ -971,6 +971,55 @@ export const URL_SPECIAL_CASE_LOCALES = new Map([
   ['zh-hant', 'zh-TW'],
 ]);
 
+/**
+ * Coveo search `locale` (BCP 47, hyphen). Keep separate from IMS `locales` (underscore).
+ * Bare html.lang codes (en/de/…) must map to region tags so multi-lang pipelines that
+ * key off en-US/de-DE still return Events V2; safe if multi-lang is off.
+ */
+export const COVEO_SEARCH_LOCALES = new Map([
+  ['en', 'en-US'],
+  ['de', 'de-DE'],
+  ['fr', 'fr-FR'],
+  ['it', 'it-IT'],
+  ['ja', 'ja-JP'],
+  ['ko', 'ko-KR'],
+  ['es', 'es-ES'],
+  ['pt-br', 'pt-BR'],
+  ['zh-hans', 'zh-CN'],
+  ['zh-hant', 'zh-TW'],
+]);
+
+const COVEO_SEARCH_LOCALE_DEFAULT = 'en-US';
+
+/**
+ * Normalize page language to a Coveo search locale (BCP 47).
+ * @param {string} [lang] - html.lang or path lang; defaults to documentElement.lang
+ * @returns {string}
+ */
+export function getCoveoSearchLocale(lang) {
+  let raw = '';
+  if (lang != null && String(lang).trim() !== '') {
+    raw = String(lang);
+  } else if (typeof document !== 'undefined') {
+    raw = document.documentElement?.lang || document.querySelector?.('html')?.lang || '';
+  }
+  const normalized = raw.trim().replace(/_/g, '-');
+  if (!normalized) return COVEO_SEARCH_LOCALE_DEFAULT;
+
+  const lower = normalized.toLowerCase();
+  if (COVEO_SEARCH_LOCALES.has(lower)) {
+    return COVEO_SEARCH_LOCALES.get(lower);
+  }
+
+  // Already region-qualified (e.g. en-US, zh-CN).
+  if (/^[a-z]{2,3}-[a-z0-9]{2,8}$/i.test(normalized)) {
+    const [language, region] = normalized.split('-');
+    return `${language.toLowerCase()}-${region.toUpperCase()}`;
+  }
+
+  return COVEO_SEARCH_LOCALE_DEFAULT;
+}
+
 // TODO: Move loadIms() out of scripts.js into a dedicated  utility .
 // and import it from there. Its current location causes a cyclic dependency because
 // premium-learning-utils.js → profile.js → scripts.js → premium-learning-utils.js.
