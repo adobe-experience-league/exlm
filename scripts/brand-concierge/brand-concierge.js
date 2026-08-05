@@ -750,13 +750,10 @@ function createMountPoint() {
   triggerAsk.className = 'bc-trigger-ask';
   triggerAsk.textContent = 'Ask a question';
   trigger.append(triggerIcon, triggerAsk);
-  const betaBadge = document.createElement('span');
-  betaBadge.className = 'bc-trigger-beta';
-  betaBadge.textContent = 'BETA';
   const sendIcon = document.createElement('span');
   sendIcon.className = 'icon icon-bc-message-send bc-trigger-send';
   sendIcon.setAttribute('aria-hidden', 'true');
-  trigger.append(betaBadge, sendIcon);
+  trigger.append(sendIcon);
   decorateIcon(triggerIcon);
   decorateIcon(sendIcon);
   document.body.append(trigger);
@@ -784,7 +781,6 @@ function createMountPoint() {
     id: DIALOG_ID,
     ariaLabel: 'AI assistant',
     title: 'Ask',
-    titleBadge: 'BETA',
     titleIcon: 'bc-ask-sparkles',
     content: mount,
     canExpand: true,
