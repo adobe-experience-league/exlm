@@ -60,7 +60,8 @@ const DONE_LABEL = 'auto-build-complete';
 const FAILED_LABEL = 'auto-build-failed';
 
 // Ticket branches are cut from this branch (matches the /auto-build skill's assumption).
-const BASE_BRANCH = 'auto-build';
+// Overridable via BASE_BRANCH in .env; falls back to `main` if unset.
+const DEFAULT_BASE_BRANCH = 'main';
 
 const WIN = process.platform === 'win32';
 const RUN_TIMEOUT_MS = 25 * 60 * 1000; // under the 30-min tick window
@@ -402,14 +403,15 @@ function provisionWorktreeFiles() {
 // Reset the worktree onto a fresh ticket branch cut from the latest base branch.
 // After this the worktree is on branch `<key lowercased>`, so /auto-build's Step 6
 // sees it is already on the ticket branch and skips its own checkout-main dance.
-function prepareTicketBranch(key) {
+function prepareTicketBranch(env, key) {
+  const baseBranch = env.BASE_BRANCH || DEFAULT_BASE_BRANCH;
   const branch = key.toLowerCase();
-  const fetched = gitWt(['fetch', 'origin', BASE_BRANCH]);
+  const fetched = gitWt(['fetch', 'origin', baseBranch]);
   if (fetched.status !== 0) {
     log(`WARN: git fetch failed in worktree: ${(fetched.stderr || '').trim()}`);
   }
-  let base = `origin/${BASE_BRANCH}`;
-  if (gitWt(['rev-parse', '--verify', '--quiet', base]).status !== 0) base = BASE_BRANCH;
+  let base = `origin/${baseBranch}`;
+  if (gitWt(['rev-parse', '--verify', '--quiet', base]).status !== 0) base = baseBranch;
   // -f discards tracked changes; -B creates/resets the branch to the base.
   const co = gitWt(['checkout', '-f', '-B', branch, base]);
   if (co.status !== 0) {
@@ -523,7 +525,7 @@ async function processTicket(env, key) {
     // `claude` can exit 0 without actually opening a PR (e.g. it stopped early at a
     // checkpoint). runAutoBuild retries with --continue until a real PR shows up or
     // MAX_CONTINUATIONS is exhausted, so a null return here is a genuine failure.
-    const branchReady = prepareTicketBranch(key);
+    const branchReady = prepareTicketBranch(env, key);
     const pr = branchReady ? await runAutoBuild(env, key) : null;
     const ok = !!pr;
 

@@ -37,6 +37,7 @@ copied in and `node_modules` is symlinked so lint/commit hooks work.
 - **VPN** connected (JIRA is internal). If it's down, the poller logs a skip and exits — never errors.
 - **Node ≥ 18** and the **`claude`** CLI on your PATH.
 - Repo-root **`.env`** with `JIRA_BASE_URL`, `JIRA_PAT`, `GITHUB_TOKEN` (already used by `/auto-build`).
+  Optionally set `BASE_BRANCH` to override which branch ticket branches are cut from (default `main`).
 
 ## Configure
 
