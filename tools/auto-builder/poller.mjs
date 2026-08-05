@@ -59,6 +59,10 @@ const IN_PROGRESS_LABEL = 'auto-building';
 const DONE_LABEL = 'auto-build-complete';
 const FAILED_LABEL = 'auto-build-failed';
 
+// This poller only ever builds into the EXLM repo, so it must never pick up a
+// same-labelled ticket from an unrelated Jira project.
+const JIRA_PROJECT_KEY = 'EXLM';
+
 // Ticket branches are cut from this branch (matches the /auto-build skill's assumption).
 // Overridable via BASE_BRANCH in .env; falls back to `main` if unset.
 const DEFAULT_BASE_BRANCH = 'main';
@@ -209,6 +213,7 @@ async function jiraReachable(env) {
 
 async function findUnclaimedTickets(env, config) {
   const clauses = [
+    `project = "${JIRA_PROJECT_KEY}"`,
     `labels = "${TRIGGER_LABEL}"`,
     `labels NOT IN ("${IN_PROGRESS_LABEL}", "${DONE_LABEL}", "${FAILED_LABEL}")`,
   ];
