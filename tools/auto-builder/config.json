@@ -1,5 +1,5 @@
 {
-  "assigneeScope": "me",
-  "pollIntervalSeconds": 1800,
+  "assigneeScope": "everyone",
+  "pollIntervalSeconds": 900,
   "worktreePath": ""
 }
