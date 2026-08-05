@@ -5,7 +5,7 @@
   --exlm-font-size-h3: 24px;
   --exlm-font-size-h4: var(--spectrum-font-size-400);
   --exlm-font-size-h5: var(--spectrum-heading-size-s);
-  --exlm-font-size-h6: var(--spectrum-heading-size-s);
+  --exlm-font-size-h6: var(--spectrum-heading-size-xs);
 }
 
 .champions.page-bg-gradient {
