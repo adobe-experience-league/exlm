@@ -4,8 +4,8 @@ import { extractChampionContent } from '../../scripts/utils/champion-utils.js';
 function getChampionName() {
   const decoratedName = document.querySelector('.champion-detail .champion-detail-name');
   if (decoratedName) return decoratedName.textContent.trim();
-  // champion-detail not decorated yet: read the raw authored row (image, name, jobTitle, ...)
-  const nameRow = document.querySelector('.champion-detail')?.children[1];
+  // champion-detail not decorated yet: read the raw authored row (fileReference, fileReferenceAlt, name, ...)
+  const nameRow = document.querySelector('.champion-detail')?.children[2];
   return nameRow?.firstElementChild?.textContent.trim() || '';
 }
 
@@ -22,7 +22,7 @@ export function renderChampionContentHTML(content, championName, placeholders = 
     <div class="champion-content-eyebrow">
       ${
         content.eyebrowIcon
-          ? `<img class="champion-content-icon" src="${content.eyebrowIcon}" alt="" loading="lazy">`
+          ? `<img class="champion-content-icon" src="${content.eyebrowIcon}" alt="${content.eyebrowIconAlt}" loading="lazy">`
           : ''
       }
       <span>${content.contentType}</span>
@@ -34,7 +34,7 @@ export function renderChampionContentHTML(content, championName, placeholders = 
       <div class="champion-content-footer-info">
         ${
           content.footerIcon
-            ? `<img class="champion-content-icon" src="${content.footerIcon}" alt="" loading="lazy">`
+            ? `<img class="champion-content-icon" src="${content.footerIcon}" alt="${content.footerIconAlt}" loading="lazy">`
             : ''
         }
         <div class="champion-content-footer-text">${content.footerText}</div>

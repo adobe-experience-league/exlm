@@ -6,8 +6,8 @@ export const MAX_CHAMPIONS = 18;
 // matches ffetch.js's own default concurrency (maxInFlight) for the same kind of fetch-each-entry work
 const MAX_CONCURRENT_FETCHES = 5;
 
-// image, name, jobTitle, quoteBio, communityProfileUrl, productDesignation, colorSelection
-export const CHAMPION_DETAIL_FIELD_COUNT = 7;
+// fileReference, fileReferenceAlt, name, jobTitle, quoteBio, communityProfileUrl, productDesignation, colorSelection
+export const CHAMPION_DETAIL_FIELD_COUNT = 8;
 
 // Color coding is intentional and used in several places throughout the experience:
 // yellow for Adobe Champion, purple for Community Advisor, blue for User Group Leader.
@@ -25,7 +25,9 @@ export function getDesignationColor(colorSelection) {
  * @param {HTMLElement} block
  */
 export function extractChampionDetail(block) {
-  const [image, name, jobTitle, quoteBio, communityProfile, productDesignation, colorSelection] = [...block.children];
+  const [image, imageAlt, name, jobTitle, quoteBio, communityProfile, productDesignation, colorSelection] = [
+    ...block.children,
+  ];
 
   const img = image?.querySelector('img');
   const communityLink = communityProfile?.querySelector('a');
@@ -33,7 +35,7 @@ export function extractChampionDetail(block) {
 
   return {
     image: img?.getAttribute('src') || '',
-    imageAlt: nameText,
+    imageAlt: imageAlt?.textContent.trim() || nameText,
     name: nameText,
     jobTitle: jobTitle?.textContent.trim() || '',
     quoteBio: quoteBio?.innerHTML.trim() || '',
@@ -48,20 +50,31 @@ export function extractChampionDetail(block) {
  * @param {HTMLElement} block
  */
 export function extractChampionContent(block) {
-  const [eyebrowIcon, contentType, title, description, showByline, footerIcon, footerText, ...ctaRows] = [
-    ...block.children,
-  ];
+  const [
+    eyebrowIcon,
+    eyebrowIconAlt,
+    contentType,
+    title,
+    description,
+    showByline,
+    footerIcon,
+    footerIconAlt,
+    footerText,
+    ...ctaRows
+  ] = [...block.children];
   const eyebrowIconImg = eyebrowIcon?.querySelector('img');
   const footerIconImg = footerIcon?.querySelector('img');
   const ctaLink = ctaRows.map((row) => row?.querySelector('a')).find(Boolean);
 
   return {
     eyebrowIcon: eyebrowIconImg?.getAttribute('src') || '',
+    eyebrowIconAlt: eyebrowIconAlt?.textContent.trim() || '',
     contentType: contentType?.textContent.trim() || '',
     title: title?.textContent.trim() || '',
     description: description?.innerHTML.trim() || '',
     showByline: showByline?.textContent.trim() === 'true',
     footerIcon: footerIconImg?.getAttribute('src') || '',
+    footerIconAlt: footerIconAlt?.textContent.trim() || '',
     footerText: footerText?.innerHTML.trim() || '',
     ctaLabel: ctaLink?.textContent.trim() || '',
     ctaHref: ctaLink?.getAttribute('href') || '',

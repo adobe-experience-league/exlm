@@ -10703,9 +10703,17 @@
       {
         "component": "reference",
         "valueType": "string",
-        "name": "image",
+        "name": "fileReference",
         "label": "Champion Image",
         "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "fileReferenceAlt",
+        "value": "",
+        "label": "Champion Image Description",
+        "description": "A descriptive text of the image will be shown as tooltip."
       },
       {
         "component": "text",
@@ -10787,6 +10795,14 @@
       {
         "component": "text",
         "valueType": "string",
+        "name": "eyebrowIconAlt",
+        "value": "",
+        "label": "Eyebrow Icon Description",
+        "description": "A descriptive text of the icon will be shown as tooltip."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
         "name": "contentType",
         "value": "",
         "label": "Content Type",
@@ -10822,6 +10838,14 @@
         "label": "Footer Icon",
         "description": "Small icon shown beside the Footer Text.",
         "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "footerIconAlt",
+        "value": "",
+        "label": "Footer Icon Description",
+        "description": "A descriptive text of the icon will be shown as tooltip."
       },
       {
         "component": "richtext",
