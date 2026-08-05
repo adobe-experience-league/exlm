@@ -429,10 +429,13 @@ function prepareTicketBranch(key) {
 // If the poller itself happens to run inside a Claude Code terminal (VS Code integrated
 // terminal, another `claude -p` session, etc.), it inherits CLAUDE*/AI_AGENT env vars that
 // mark the child `claude` process as a nested/child session. Strip them so the child always
-// starts a clean, independent top-level session.
+// starts a clean, independent top-level session. CLAUDE_CODE_OAUTH_TOKEN is the exception —
+// it's the long-lived credential from `claude setup-token`, the supported way to authenticate
+// a headless/CI `claude` invocation, and must reach the child process unstripped.
 function cleanChildEnv() {
   const env = { ...process.env };
   for (const key of Object.keys(env)) {
+    if (key === 'CLAUDE_CODE_OAUTH_TOKEN') continue;
     if (key.startsWith('CLAUDE') || key === 'AI_AGENT') delete env[key];
   }
   return env;
