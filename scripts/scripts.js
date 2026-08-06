@@ -806,16 +806,16 @@ export function getConfig() {
   ]);
 
   const plSupportV2LangsMap = new Map([
-    ['en_US', 'en'],
-    ['de_DE', 'de'],
-    ['es_ES', 'es'],
-    ['fr_FR', 'fr'],
-    ['it_IT', 'it'],
-    ['ja_JP', 'ja'],
-    ['pt_PT', 'pt'],
-    ['ko_KR', 'ko'],
-    ['zh_CN', 'zh-hans'],
-    ['zh_TW', 'zh-hant'],
+    ['en-US', 'en'],
+    ['de-DE', 'de'],
+    ['es-ES', 'es'],
+    ['fr-FR', 'fr'],
+    ['it-IT', 'it'],
+    ['ja-JP', 'ja'],
+    ['pt-PT', 'pt'],
+    ['ko-KR', 'ko'],
+    ['zh-CN', 'zh-hans'],
+    ['zh-TW', 'zh-hant'],
   ]);
 
   const cookieConsentName = 'OptanonConsent';
