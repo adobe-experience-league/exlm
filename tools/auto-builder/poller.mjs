@@ -281,14 +281,27 @@ async function getJiraSummary(env, key) {
   }
 }
 
+// Teams Workflow templates typically splice triggerBody()?['field'] tokens directly into the
+// Adaptive Card's raw JSON as plain text, not JSON-aware substitution. A literal `"` or line break
+// in a JIRA/PR title (e.g. a title quoting UI copy) corrupts that JSON, so the card silently fails
+// to post downstream -- while the webhook itself still returns 202, making the poller log
+// "Teams notified" even though nothing appears in the channel. Strip what would break it.
+function sanitizeForCard(value) {
+  if (typeof value !== 'string') return value;
+  return value.replace(/"/g, "'").replace(/[\r\n]+/g, ' ');
+}
+
 // Post the notification DATA to a Teams Workflow webhook. The flow holds a static
 // Adaptive Card template that pulls these fields via triggerBody()?['...'] tokens.
 // Failures never fail the run.
 async function notifyTeams(webhookUrl, key, payload) {
+  const safePayload = Object.fromEntries(
+    Object.entries(payload).map(([k, v]) => [k, sanitizeForCard(v)]),
+  );
   const res = await fetch(webhookUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(safePayload),
   });
   if (!res.ok) {
     log(`${key}: Teams notify failed: ${res.status} ${await res.text()}`);
@@ -571,9 +584,9 @@ async function testTeams() {
     await notifyTeams(env.TEAMS_WEBHOOK_URL, 'TEST-000', {
       ticket: 'TEST-000',
       jiraUrl: `${env.JIRA_BASE_URL}/browse/TEST-000`,
-      jiraTitle: 'Sample ticket title (safe to ignore)',
+      jiraTitle: 'Sample "quoted" ticket title (safe to ignore)',
       prUrl: 'https://github.com/adobe-experience-league/exlm/pulls',
-      prTitle: 'chore(TEST-000): sample auto-build PR',
+      prTitle: 'chore(TEST-000): sample "quoted" auto-build PR',
       prNumber: 0,
       branch: 'test-000',
       previewUrl: 'https://main--exlm--adobe-experience-league.aem.live',
