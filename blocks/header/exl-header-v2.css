@@ -189,23 +189,41 @@ button:focus {
 
 .header {
   z-index: var(--z-header);
-  height: 100%;
+  width: 100%;
+  height: var(--nav-height);
   position: relative;
-  max-width: var(--nav-max-width);
   background-color: var(--nav-bg-color);
   container-name: headersection;
   container-type: inline-size;
 }
 
-@media (min-width: 1200px) {
-  .header-wrapper {
-    display: flex;
-    justify-content: center;
-  }
+/* Purely structural: decouples the horizontal-overflow safety net from `.header`'s visible
+   52px height. Generously tall (so Safari's forced overflow-y:auto — see the overflow-x/y
+   mismatch note below — never has anything to visually clip) and absolutely positioned (so
+   that height doesn't push down page content). `overflow-x: hidden` here properly excludes
+   the level-0 dropdown's intentional (and, pre-JS-measurement, occasionally residual) horizontal
+   overflow from the page's scrollable area, fixing the Windows scrollbar-width issue for good —
+   unlike `clip-path`, which only affects painting, not what counts toward page scroll width.
+   Replicates `.header-wrapper`'s old flex-centering by hand, since absolutely positioned
+   elements don't participate in flex layout. */
+.header-clip {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--nav-max-width);
+  height: 100vh;
+  overflow-x: hidden;
 
-  .header {
-    width: 100%;
-  }
+  /* don't block clicks on page content below the header for the invisible portion of this
+     100vh box; restored to `auto` on `.header` below, which is the only part that's ever
+     visible or needs to be interactive */
+  pointer-events: none;
+}
+
+.header-clip > .header {
+  pointer-events: auto;
 }
 
 /* Mobile: 5-column grid; desktop: 9-column grid */
