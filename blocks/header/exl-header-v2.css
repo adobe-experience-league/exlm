@@ -673,6 +673,7 @@ button:focus {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    white-space: nowrap;
   }
 
   .header .nav-items-secondary a::before {
@@ -1525,6 +1526,7 @@ profile-block {
   font-size: 14px;
   line-height: 21px;
   padding: 12px 20px;
+  white-space: nowrap;
 }
 
 .nav-mobile-body .nav-item-content-level-0 .nav-items-secondary a::before {
