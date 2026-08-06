@@ -36,10 +36,9 @@ const switchLanguage = (language) => {
     const newPathname = getLanguagePath(language);
     // Strip firstResult so pagination resets to page 1 after locale switch.
     // Keeping it causes a "no results" state when the new locale has fewer results.
-    const cleanHash = window.location.hash
-      .replace(/&firstResult=[^&]*/g, '')
-      .replace(/#firstResult=[^&]*&?/, '#');
-    window.location.href = newPathname + window.location.search + (cleanHash === '#' || cleanHash === '' ? '' : cleanHash);
+    const cleanHash = window.location.hash.replace(/&firstResult=[^&]*/g, '').replace(/#firstResult=[^&]*&?/, '#');
+    window.location.href =
+      newPathname + window.location.search + (cleanHash === '#' || cleanHash === '' ? '' : cleanHash);
   }
 };
 
