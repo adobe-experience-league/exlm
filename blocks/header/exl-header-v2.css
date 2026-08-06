@@ -190,6 +190,8 @@ button:focus {
 .header {
   z-index: var(--z-header);
   width: 100%;
+  max-width: var(--nav-max-width);
+  margin: 0 auto;
   height: var(--nav-height);
   position: relative;
   background-color: var(--nav-bg-color);
@@ -200,19 +202,18 @@ button:focus {
 /* Purely structural: decouples the horizontal-overflow safety net from `.header`'s visible
    52px height. Generously tall (so Safari's forced overflow-y:auto — see the overflow-x/y
    mismatch note below — never has anything to visually clip) and absolutely positioned (so
-   that height doesn't push down page content). `overflow-x: hidden` here properly excludes
-   the level-0 dropdown's intentional (and, pre-JS-measurement, occasionally residual) horizontal
-   overflow from the page's scrollable area, fixing the Windows scrollbar-width issue for good —
-   unlike `clip-path`, which only affects painting, not what counts toward page scroll width.
-   Replicates `.header-wrapper`'s old flex-centering by hand, since absolutely positioned
-   elements don't participate in flex layout. */
+   that height doesn't push down page content). Spans the *entire* width of `.header-wrapper`
+   (no max-width) — it must be at least as wide as the full-bleed dropdown itself, or its
+   `overflow-x: hidden` would clip the intentional full-bleed along with any accidental overflow.
+   `.header`'s own max-width/centering (above) is unaffected, since it's independent of this
+   layer's width. `overflow-x: hidden` here properly excludes overflow from the page's scrollable
+   area, fixing the Windows scrollbar-width issue for good — unlike `clip-path`, which only
+   affects painting, not what counts toward page scroll width. */
 .header-clip {
   position: absolute;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: var(--nav-max-width);
+  left: 0;
+  right: 0;
   height: 100vh;
   overflow-x: hidden;
 
