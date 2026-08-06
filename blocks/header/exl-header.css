@@ -961,6 +961,7 @@ button:focus {
     color: var(--spectrum-blue-900) !important;
     text-align: right;
     margin-right: 0;
+    white-space: nowrap;
   }
 
   .header .nav-items-secondary a::after {
