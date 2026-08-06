@@ -627,19 +627,6 @@ const navDecorator = async (navBlock, decoratorOptions) => {
   simplifySingleCellBlock(navBlock);
   const navOverlay = document.querySelector('.nav-overlay');
 
-  // Keep --viewport-width (used by the full-bleed level-0 dropdown panel instead of the `100vw`
-  // unit) in sync with the true visible viewport width. `100vw` doesn't subtract the browser's
-  // reserved scrollbar width on platforms where scrollbars aren't overlays (Windows, Linux), so
-  // the panel would overflow the true viewport by the scrollbar's width and force a spurious
-  // horizontal scrollbar on the page; clientWidth excludes it. Custom properties cross the shadow
-  // boundary, so setting this on the host makes it available to the shadow-scoped CSS.
-  const shadowHost = navBlock.getRootNode()?.host;
-  if (shadowHost) {
-    registerHeaderResizeHandler(() => {
-      shadowHost.style.setProperty('--viewport-width', `${document.documentElement.clientWidth}px`);
-    });
-  }
-
   // Clone the source ul for mobile BEFORE moving it to the desktop nav-wrapper
   const sourceUl = navBlock.querySelector(':scope > ul');
   const mobileUl = sourceUl ? sourceUl.cloneNode(true) : document.createElement('ul');

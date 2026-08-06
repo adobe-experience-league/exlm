@@ -458,15 +458,11 @@ button:focus {
   position: absolute;
   z-index: var(--z-dropdown);
 
-  /* for full bleed panel on desktops > 1440px.
-     Uses --viewport-width (set from document.documentElement.clientWidth in header-v2.js) rather
-     than the 100vw unit: 100vw doesn't subtract the scrollbar's reserved width on non-macOS
-     platforms, so it overshoots the true visible width by the scrollbar's width, pushing this
-     panel's edge past the page and adding a spurious horizontal scrollbar. --viewport-width
-     excludes the scrollbar, so the panel never overflows and no clipping workaround is needed. */
-  left: min(0px, calc((var(--nav-max-width) - var(--viewport-width, 100vw)) / 2));
+  /* for full bleed panel on desktops > 1440px. Any overshoot from 100vw not subtracting the
+     scrollbar's width (Windows/Linux) is caught by .header-clip's overflow-x: hidden. */
+  left: min(0px, calc((var(--nav-max-width) - 100vw) / 2));
   top: 101%;
-  width: var(--viewport-width, 100vw);
+  width: 100vw;
   background: var(--nav-dropdown-bg);
   box-shadow: var(--nav-dropdown-shadow);
   border-top: 1px solid var(--border-color-regular);
