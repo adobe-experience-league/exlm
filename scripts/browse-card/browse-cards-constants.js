@@ -50,9 +50,6 @@ export const AUTHOR_TYPE = Object.freeze({
   ADOBE: 'Adobe',
 });
 
-export const BASE_COVEO_ADVANCED_QUERY = '(@el_contenttype NOT "Community|User")';
-export const BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT =
-  '(@el_contenttype = "Event") OR (@el_contenttype = "Upcoming Event")';
 /**
  * Upcoming events that have not started yet (Events Hub / Upcoming Event V2).
  *
@@ -70,10 +67,21 @@ export const COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ =
   '(@el_contenttype = "Event|Upcoming Event" AND @el_event_start_time >= now)';
 export const BASE_COVEO_ADVANCED_QUERY_EVENTS = `(@el_contenttype = "Event|On Demand Event") OR ${COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ}`;
 /**
+ * Base aq for the Events browse page (browse-filters, Upcoming Event V2 flow).
+ * Reuses BASE_COVEO_ADVANCED_QUERY_EVENTS so stale Upcoming Events are excluded
+ * here the same way they are for the events-search block (EXLM-5517).
+ */
+export const BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT = BASE_COVEO_ADVANCED_QUERY_EVENTS;
+/**
  * Exclude stale Upcoming Events while keeping all other content types.
  * Used by Atomic Search (/en/search) which has no Events-only base aq.
  */
 export const COVEO_EXCLUDE_STALE_UPCOMING_AQ = `(NOT @el_contenttype = "Event|Upcoming Event") OR ${COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ}`;
+/**
+ * Default browse-filters base aq (non-Events-V2 flow, e.g. /en/browse#f-el_contenttype=Event|Upcoming Event).
+ * Excludes Community|User content and, per EXLM-5517, stale Upcoming Events.
+ */
+export const BASE_COVEO_ADVANCED_QUERY = `(@el_contenttype NOT "Community|User") AND (${COVEO_EXCLUDE_STALE_UPCOMING_AQ})`;
 
 export const VIDEO_THUMBNAIL_FORMAT = /^https:\/\/video\.tv\.adobe\.com\/v\/\w+\?format=jpeg$/;
 
