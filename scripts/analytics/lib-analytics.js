@@ -1494,9 +1494,10 @@ export async function pushBcWidgetImpressionEvent() {
  * Pushes a Brand Concierge widget interaction event (open, close, expand,
  * collapse, clear, message submit) to the Adobe Data Layer.
  * @param {string} linkTitle - e.g. 'bc widget open', 'bc message submit'.
- * @param {{ bcChatId?: string, bcChatMessageNumber?: string }} [options] - BC's own
- * `conversationId` and `interactionId` (captured from response:started/response:completed),
- * identifying the conversation and turn; passed only for the message-submit event.
+ * @param {{ bcChatId?: string, bcChatMessageNumber?: number }} [options] - `bcChatId` is BC's own
+ * `conversationId` (captured from response:started/response:completed); `bcChatMessageNumber` is
+ * the number of chat replies since the start of the conversation. Passed only for the
+ * message-submit event.
  */
 export async function pushBcInteractionEvent(linkTitle, { bcChatId, bcChatMessageNumber } = {}) {
   window.adobeDataLayer = window.adobeDataLayer || [];
