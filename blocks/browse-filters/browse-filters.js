@@ -422,13 +422,11 @@ function handleUriHash(isInitialLoad) {
           }
         });
         const btnEl = filterOptionEl.querySelector(':scope > button');
-        const selectedCount = facetValues.reduce((acc, curr) => {
-          const [key] = curr.split('|');
-          if (!acc.includes(key)) {
-            acc.push(key);
-          }
-          return acc;
-        }, []).length;
+        // Base the count on checkboxes actually applied above, not the raw hash values —
+        // a facet value from the hash may not exist for the current locale (e.g. right
+        // after a locale switch), which previously left the count out of sync with the
+        // (empty) selection shown below it.
+        const selectedCount = filterOptionEl.querySelectorAll('.custom-checkbox input[type="checkbox"]:checked').length;
         ddObject.selected = selectedCount;
         btnEl.firstChild.textContent = selectedCount === 0 ? name : `${name} (${selectedCount})`;
       }
