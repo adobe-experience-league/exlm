@@ -404,8 +404,15 @@ function handleUriHash(isInitialLoad) {
         const ddObject = getObjectById(dropdownOptions, keyName);
         const { name } = ddObject;
         facetValues.forEach((facetValueString) => {
+          // Some facet values are opaque strings that contain a literal '|' (e.g. the
+          // isEventsV2 content types 'Event|On Demand Event', 'Event|Upcoming Event') and
+          // must match a checkbox by their full value. Others (e.g. Community sub-facets)
+          // encode multiple hash entries that all map back to one checkbox keyed by the
+          // segment before the '|'. Try the exact value first, then fall back to the key.
           const [facetValue] = facetValueString.split('|');
-          const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
+          const inputEl =
+            filterOptionEl.querySelector(`input[value="${facetValueString}"]`) ||
+            filterOptionEl.querySelector(`input[value="${facetValue}"]`);
           if (inputEl && !inputEl.checked) {
             const label = inputEl.dataset.label || '';
             inputEl.checked = true;
@@ -415,7 +422,7 @@ function handleUriHash(isInitialLoad) {
                 id: keyName,
                 name,
                 label,
-                value: facetValue,
+                value: inputEl.value,
               },
               'handleUriHash',
             );

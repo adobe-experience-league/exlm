@@ -34,10 +34,11 @@ const switchLanguage = (language) => {
   const { lang } = pathDetails;
   if (lang !== language) {
     const newPathname = getLanguagePath(language);
-    // Drop the whole hash on locale switch: filters/facets are carried as raw values
-    // (e.g. Coveo facet values that differ per locale/feature-flag) which don't reliably
-    // resolve on the destination locale, leaving stale selection counts or lost pagination.
-    window.location.href = newPathname + window.location.search;
+    // Strip firstResult so pagination resets to page 1 after locale switch.
+    // Keeping it causes a "no results" state when the new locale has fewer results.
+    const cleanHash = window.location.hash.replace(/&firstResult=[^&]*/g, '').replace(/#firstResult=[^&]*&?/, '#');
+    window.location.href =
+      newPathname + window.location.search + (cleanHash === '#' || cleanHash === '' ? '' : cleanHash);
   }
 };
 
