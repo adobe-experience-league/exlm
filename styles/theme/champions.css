@@ -9,15 +9,26 @@
 }
 
 .champions.page-bg-gradient {
-  /* To be changed after receiving final values */
   --gradient-base-bg: #f8f8f8;
-  --gradient-primary: #fadfb3;
-  --gradient-secondary: #e6d6ad;
-  --gradient-accent: #ffa311;
-  --gradient-blur: 200px;
-  --gradient-duration-primary: 15s;
-  --gradient-duration-secondary: 15s;
-  --gradient-duration-accent: 15s;
+  --gradient-primary: #0fa0b4;
+  --gradient-secondary: #19afa3;
+  --gradient-accent: #ffd700;
+  --gradient-blur: 135px;
+  --gradient-duration-primary: 8s;
+  --gradient-duration-secondary: 8s;
+  --gradient-duration-accent: 8s;
+}
+
+.champions.page-bg-gradient .gradient-circle-primary {
+  opacity: 0.28;
+}
+
+.champions.page-bg-gradient .gradient-circle-secondary {
+  opacity: 0.3;
+}
+
+.champions.page-bg-gradient .gradient-circle-accent {
+  opacity: 0.29;
 }
 
 body.champions .section {
