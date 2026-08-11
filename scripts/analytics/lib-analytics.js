@@ -1208,9 +1208,9 @@ export async function pushEventsFilterSearchEvent({
       Count: count,
       depth,
       filter: {
-        product: filter.product || [],
-        eventType: filter.eventType || [],
-        series: filter.series || [],
+        product: (filter.product || []).join(','),
+        eventType: (filter.eventType || []).join(','),
+        series: (filter.series || []).join(','),
       },
       sortBy,
       term,
