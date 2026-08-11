@@ -12,6 +12,7 @@
     <script type="module">
       import { sampleRUM } from '/scripts/lib-franklin.js';
       import { getPathDetails } from '/scripts/scripts.js';
+      import { getCourseFragmentUrl } from '/scripts/courses/course-utils.js';
       const { lang = 'en' } = getPathDetails() || {};
       const errorPagePath = `/${lang}/404`;
       const defaultErrorHTML = `
@@ -48,9 +49,32 @@
         }
       };
 
-      window.addEventListener('load', () => {
+      // Bookmarked/linked course step, module, or certificate pages can 404 after an author
+      // deletes the module. Route those visitors to the course landing page instead of
+      // showing the generic 404, but only once we've confirmed the course itself still exists
+      // (otherwise fall through to the generic 404 below to avoid a redirect loop).
+      const redirectToCourseIfDeleted = async () => {
+        const { pathname, search } = window.location;
+        const courseUrl = getCourseFragmentUrl(pathname);
+        if (!courseUrl || courseUrl === pathname) return false;
+        try {
+          const response = await fetch(courseUrl);
+          if (response.ok) {
+            window.location.replace(`${courseUrl}${search}`);
+            return true;
+          }
+        } catch (error) {
+          // Network error verifying the course page - fall through to the generic 404.
+        }
+        return false;
+      };
+
+      window.addEventListener('load', async () => {
         sampleRUM('404', { source: document.referrer });
-        fetchAndParseHTML('main');
+        const redirected = await redirectToCourseIfDeleted();
+        if (!redirected) {
+          fetchAndParseHTML('main');
+        }
       });
     </script>
     <link rel="stylesheet" href="/styles/styles.css" />
