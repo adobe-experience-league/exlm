@@ -690,6 +690,7 @@ button:focus {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    max-width: none;
   }
 
   .header .nav-items-secondary a::before {
