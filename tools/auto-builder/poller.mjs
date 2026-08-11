@@ -27,13 +27,19 @@
  *   - Do not run this on an account whose .env GITHUB_TOKEN reaches other private repos.
  *
  * Requires: Node >= 18 (global fetch). No npm dependencies.
- * Credentials come from the repo-root .env (JIRA_BASE_URL, JIRA_PAT, GITHUB_TOKEN) —
+ * Default credentials come from the repo-root .env (JIRA_BASE_URL, JIRA_PAT, GITHUB_TOKEN) —
  * never logged, never passed on a command line. Optional: TEAMS_WEBHOOK_URL to post a
  * Teams notification (via a Teams Workflow) when a draft PR is raised.
+ *
+ * MULTI-ASSIGNEE CREDENTIALS — when assigneeScope is not "me", tickets can belong to
+ * different people. tools/auto-builder/credentials.json (gitignored; see
+ * credentials.example.json) maps a JIRA assignee email to that person's own
+ * jiraPat/githubToken/claudeToken, so each ticket builds — and each PR opens — as its
+ * actual assignee rather than always as the machine's default .env identity. Any field
+ * left blank, or any assignee with no entry, falls back to the .env / process defaults.
  */
 
 import {
-  copyFileSync,
   existsSync,
   mkdirSync,
   readFileSync,
@@ -52,6 +58,7 @@ const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(SCRIPT_DIR, '..', '..');
 const ENV_PATH = path.join(REPO_ROOT, '.env');
 const CONFIG_PATH = path.join(SCRIPT_DIR, 'config.json');
+const CREDENTIALS_PATH = path.join(SCRIPT_DIR, 'credentials.json');
 const LOCK_PATH = path.join(os.tmpdir(), 'exlm-auto-build-poller.lock');
 
 const TRIGGER_LABEL = 'auto-build';
@@ -151,6 +158,50 @@ function resolveWorktreePath(config) {
   return path.resolve(REPO_ROOT, '..', 'exlm-auto-build-workspace');
 }
 
+// Maps a JIRA assignee email (lowercased) -> { jiraPat, githubToken, claudeToken }.
+// Missing file is normal (single-assignee setups don't need it) — returns {} silently.
+// A present-but-broken file is a misconfiguration worth surfacing, so it warns and
+// falls back to {} (every ticket then uses the .env / process defaults).
+function loadCredentials(p) {
+  if (!existsSync(p)) return {};
+  try {
+    const raw = JSON.parse(readFileSync(p, 'utf8'));
+    const map = {};
+    for (const [email, creds] of Object.entries(raw)) {
+      if (!email.includes('@') || !creds || typeof creds !== 'object') continue; // skip "//" comment keys etc.
+      map[email.toLowerCase()] = creds;
+    }
+    return map;
+  } catch (err) {
+    log(`WARN: could not parse credentials.json (${err.message}); falling back to .env defaults for every ticket`);
+    return {};
+  }
+}
+
+// Resolves the identity a single ticket should build/PR as: the assignee's own
+// jiraPat/githubToken/claudeToken when credentials.json has an entry for them, else the
+// .env / process defaults. Returns a per-ticket env clone (JIRA_PAT/GITHUB_TOKEN
+// overridden) plus the claudeToken to run `claude` as, and a label for logging.
+function resolveIdentity(baseEnv, credentialsMap, assigneeEmail) {
+  const creds = assigneeEmail ? credentialsMap[assigneeEmail.toLowerCase()] : null;
+  if (!creds) {
+    return {
+      env: baseEnv,
+      claudeToken: process.env.CLAUDE_CODE_OAUTH_TOKEN,
+      label: assigneeEmail ? `${assigneeEmail} (no credentials.json entry — using defaults)` : 'unassigned (using defaults)',
+    };
+  }
+  return {
+    env: {
+      ...baseEnv,
+      JIRA_PAT: creds.jiraPat || baseEnv.JIRA_PAT,
+      GITHUB_TOKEN: creds.githubToken || baseEnv.GITHUB_TOKEN,
+    },
+    claudeToken: creds.claudeToken || process.env.CLAUDE_CODE_OAUTH_TOKEN,
+    label: assigneeEmail,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Lock
 // ---------------------------------------------------------------------------
@@ -219,13 +270,18 @@ async function findUnclaimedTickets(env, config) {
   ];
   if (config.assigneeScope === 'me') clauses.push('assignee = currentUser()');
   const jql = clauses.join(' AND ');
-  const url = `${env.JIRA_BASE_URL}/rest/api/2/search` + `?jql=${encodeURIComponent(jql)}&fields=key&maxResults=50`;
+  const url = `${env.JIRA_BASE_URL}/rest/api/2/search` + `?jql=${encodeURIComponent(jql)}&fields=key,assignee&maxResults=50`;
   const res = await fetch(url, { headers: jiraHeaders(env) });
   if (!res.ok) {
     throw new Error(`JQL search failed: ${res.status} ${await res.text()}`);
   }
   const data = await res.json();
-  return (data.issues || []).map((i) => i.key);
+  // assigneeEmail drives which credentials.json entry builds/PRs this ticket — null for
+  // unassigned tickets (assigneeScope != "me") or when JIRA hides email addresses.
+  return (data.issues || []).map((i) => ({
+    key: i.key,
+    assigneeEmail: (i.fields && i.fields.assignee && i.fields.assignee.emailAddress) || null,
+  }));
 }
 
 async function updateLabels(env, key, { add = [], remove = [] }) {
@@ -237,6 +293,28 @@ async function updateLabels(env, key, { add = [], remove = [] }) {
   });
   if (!res.ok && res.status !== 204) {
     throw new Error(`Label update failed for ${key}: ${res.status} ${await res.text()}`);
+  }
+}
+
+// Best-effort: write FAILED_LABEL using the ticket's own (possibly per-assignee)
+// JIRA_PAT first. If that PAT is itself what's broken — expired/revoked in
+// credentials.json — retrying with the SAME bad PAT would 401 again, the label never
+// gets written, and the ticket keeps its bare "auto-build" label forever: every future
+// poll tick re-matches it and retries from scratch, forever, with no trace on the
+// ticket itself. So on failure this retries once with the poller-owner's default .env
+// JIRA_PAT, purely to get FAILED_LABEL written and break that loop.
+//
+// This ONLY swaps JIRA_PAT for this one label PUT — it never touches claudeToken or
+// re-runs /auto-build. A broken assignee JIRA PAT must not cause the build itself to
+// silently re-attempt (or have already attempted) under the default/poller-owner's
+// Claude identity; that identity mismatch would misattribute usage and PR authorship.
+async function markFailed(baseEnv, ticketEnv, key, remove = []) {
+  try {
+    await updateLabels(ticketEnv, key, { add: [FAILED_LABEL], remove });
+  } catch (err) {
+    if (ticketEnv.JIRA_PAT === baseEnv.JIRA_PAT) throw err; // already the default — nothing left to retry with
+    log(`${key}: could not set ${FAILED_LABEL} with assignee JIRA_PAT (${err.message}) — retrying with the default .env JIRA_PAT`);
+    await updateLabels({ ...ticketEnv, JIRA_PAT: baseEnv.JIRA_PAT }, key, { add: [FAILED_LABEL], remove });
   }
 }
 
@@ -380,7 +458,7 @@ function gitWt(args) {
 }
 
 // Create (once) the isolated worktree. Idempotent — safe every run.
-function ensureWorktree() {
+function ensureWorktree(env) {
   gitMain(['worktree', 'prune']);
   if (!existsSync(path.join(WORKTREE_PATH, '.git'))) {
     mkdirSync(path.dirname(WORKTREE_PATH), { recursive: true });
@@ -390,20 +468,26 @@ function ensureWorktree() {
     if (add.status !== 0) throw new Error(`git worktree add failed: ${(add.stderr || '').trim()}`);
     log(`Created isolated worktree at ${WORKTREE_PATH}`);
   }
-  provisionWorktreeFiles();
+  provisionWorktreeFiles(env);
 }
 
 // Put the machine-local, gitignored files /auto-build needs into the worktree:
-//   - .env  : credentials (refreshed each call in case they changed)
+//   - .env  : credentials, serialized from `env` (refreshed each call in case they
+//     changed) rather than copied verbatim, so a per-ticket assignee override
+//     (JIRA_PAT/GITHUB_TOKEN from credentials.json) reaches the `source .env` calls the
+//     /auto-build skill makes inside the worktree.
 //   - node_modules : symlinked so husky/lint-staged commit hooks work
 //   - .claude, .agents : symlinked so the `claude` CLI can resolve /auto-build and the
 //     skills it delegates to — both dirs are gitignored, so `git worktree add` never
 //     checks them out on its own.
-function provisionWorktreeFiles() {
+function provisionWorktreeFiles(env) {
   try {
-    copyFileSync(ENV_PATH, path.join(WORKTREE_PATH, '.env'));
+    const contents = Object.entries(env)
+      .map(([k, v]) => `${k}=${v}`)
+      .join('\n');
+    writeFileSync(path.join(WORKTREE_PATH, '.env'), `${contents}\n`);
   } catch (err) {
-    log(`WARN: could not copy .env into worktree: ${err.message}`);
+    log(`WARN: could not write .env into worktree: ${err.message}`);
   }
   for (const dir of ['node_modules', '.claude', '.agents']) {
     const wtPath = path.join(WORKTREE_PATH, dir);
@@ -441,7 +525,7 @@ function prepareTicketBranch(env, key) {
   // `node_modules/*` (not a symlink named node_modules), so a plain clean would
   // delete our symlink. -d without -x already preserves other gitignored paths.
   gitWt(['clean', '-fd', '-e', 'node_modules', '-e', '.env']);
-  provisionWorktreeFiles(); // re-assert .env + node_modules in case anything was removed
+  provisionWorktreeFiles(env); // re-assert .env (this ticket's identity) + node_modules in case anything was removed
   log(`${key}: worktree on fresh branch ${branch} from ${base}`);
   return true;
 }
@@ -452,12 +536,18 @@ function prepareTicketBranch(env, key) {
 // starts a clean, independent top-level session. CLAUDE_CODE_OAUTH_TOKEN is the exception —
 // it's the long-lived credential from `claude setup-token`, the supported way to authenticate
 // a headless/CI `claude` invocation, and must reach the child process unstripped.
-function cleanChildEnv() {
+//
+// claudeToken overrides whichever CLAUDE_CODE_OAUTH_TOKEN the poller process itself was
+// started with — resolveIdentity() supplies the ticket assignee's own token (from
+// credentials.json) when one is configured, so the build/PR is attributed to them, not
+// to whoever's token the scheduler happened to be installed with.
+function cleanChildEnv(claudeToken) {
   const env = { ...process.env };
   for (const key of Object.keys(env)) {
     if (key === 'CLAUDE_CODE_OAUTH_TOKEN') continue;
     if (key.startsWith('CLAUDE') || key === 'AI_AGENT') delete env[key];
   }
+  if (claudeToken) env.CLAUDE_CODE_OAUTH_TOKEN = claudeToken;
   return env;
 }
 
@@ -484,22 +574,23 @@ const CONTINUE_PROMPT =
   'review, commit, push, open the draft PR, comment on JIRA) until the draft PR is open. If ' +
   'you already implemented but did not commit/push/open the PR, do that now.';
 
-function spawnClaude(args, timeoutMs) {
+function spawnClaude(args, timeoutMs, claudeToken) {
   return spawnSync('claude', args, {
     cwd: WORKTREE_PATH,
     encoding: 'utf8',
     shell: WIN,
     timeout: timeoutMs,
-    env: cleanChildEnv(),
+    env: cleanChildEnv(claudeToken),
   });
 }
 
 // Runs /auto-build (continuing as needed) and returns the opened PR object, or null on
 // failure/timeout/no-PR-after-retries.
-async function runAutoBuild(env, key) {
+async function runAutoBuild(env, key, claudeToken) {
   let result = spawnClaude(
     ['-p', `/auto-build ${key}`, '--settings', AUTO_BUILD_SETTINGS, '--output-format', 'text'],
     RUN_TIMEOUT_MS,
+    claudeToken,
   );
   if (result.stdout) log(`${key} stdout:\n${result.stdout}`);
   if (result.stderr) log(`${key} stderr:\n${result.stderr}`);
@@ -518,6 +609,7 @@ async function runAutoBuild(env, key) {
     result = spawnClaude(
       ['-p', CONTINUE_PROMPT, '--continue', '--settings', AUTO_BUILD_SETTINGS, '--output-format', 'text'],
       CONTINUE_TIMEOUT_MS,
+      claudeToken,
     );
     if (result.stdout) log(`${key} continue-stdout:\n${result.stdout}`);
     if (result.stderr) log(`${key} continue-stderr:\n${result.stderr}`);
@@ -535,7 +627,10 @@ async function runAutoBuild(env, key) {
 // Main
 // ---------------------------------------------------------------------------
 
-async function processTicket(env, key) {
+async function processTicket(baseEnv, ticket, credentialsMap) {
+  const { key, assigneeEmail } = ticket;
+  const { env, claudeToken, label } = resolveIdentity(baseEnv, credentialsMap, assigneeEmail);
+  log(`${key}: building as ${label}`);
   try {
     await updateLabels(env, key, { add: [IN_PROGRESS_LABEL] });
     log(`${key}: claimed (${IN_PROGRESS_LABEL})`);
@@ -544,7 +639,7 @@ async function processTicket(env, key) {
     // checkpoint). runAutoBuild retries with --continue until a real PR shows up or
     // MAX_CONTINUATIONS is exhausted, so a null return here is a genuine failure.
     const branchReady = prepareTicketBranch(env, key);
-    const pr = branchReady ? await runAutoBuild(env, key) : null;
+    const pr = branchReady ? await runAutoBuild(env, key, claudeToken) : null;
     const ok = !!pr;
 
     if (ok) {
@@ -556,15 +651,15 @@ async function processTicket(env, key) {
         ? `No PR opened after ${MAX_CONTINUATIONS} continuation attempt(s) — see the poller log for details.`
         : `Could not prepare the ticket branch — see the poller log for details.`;
       log(`${key}: FAILURE (${reason}) -> ${FAILED_LABEL}`);
-      await updateLabels(env, key, { add: [FAILED_LABEL], remove: [IN_PROGRESS_LABEL] });
+      await markFailed(baseEnv, env, key, [IN_PROGRESS_LABEL]);
       await announceFailure(env, key, reason);
     }
   } catch (err) {
     log(`${key}: ERROR — ${err.message}. Marking ${FAILED_LABEL}.`);
     try {
-      await updateLabels(env, key, { add: [FAILED_LABEL], remove: [IN_PROGRESS_LABEL] });
+      await markFailed(baseEnv, env, key, [IN_PROGRESS_LABEL]);
     } catch (e2) {
-      log(`${key}: also failed to set ${FAILED_LABEL}: ${e2.message}`);
+      log(`${key}: also failed to set ${FAILED_LABEL} with the default .env JIRA_PAT: ${e2.message}`);
     }
     await announceFailure(env, key, `Error: ${err.message}`);
   }
@@ -606,6 +701,7 @@ async function main() {
   try {
     const env = loadEnv(ENV_PATH);
     const config = loadConfig(CONFIG_PATH);
+    const credentialsMap = loadCredentials(CREDENTIALS_PATH);
     WORKTREE_PATH = resolveWorktreePath(config);
 
     if (!(await jiraReachable(env))) {
@@ -613,19 +709,19 @@ async function main() {
       return;
     }
 
-    const keys = await findUnclaimedTickets(env, config);
-    if (keys.length === 0) {
+    const tickets = await findUnclaimedTickets(env, config);
+    if (tickets.length === 0) {
       log('No unclaimed auto-build tickets found.');
       return;
     }
-    log(`Found ${keys.length} unclaimed ticket(s): ${keys.join(', ')}`);
+    log(`Found ${tickets.length} unclaimed ticket(s): ${tickets.map((t) => t.key).join(', ')}`);
 
     // Build in the isolated worktree — never the developer's checkout.
-    ensureWorktree();
+    ensureWorktree(env);
 
-    for (const key of keys) {
+    for (const ticket of tickets) {
       // eslint-disable-next-line no-await-in-loop -- serial: one shared worktree per run
-      await processTicket(env, key);
+      await processTicket(env, ticket, credentialsMap);
     }
   } catch (err) {
     log(`FATAL: ${err.stack || err.message}`);

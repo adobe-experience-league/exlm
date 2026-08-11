@@ -10,6 +10,7 @@ helix-importer-ui
 /scripts/coveo-headless/libs/node_modules*
 .aio
 .env
+/tools/auto-builder/credentials.json
 
 # Local AI skill artifacts (developer-machine only)
 .agents/

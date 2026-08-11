@@ -54,6 +54,45 @@ Edit [`config.json`](./config.json):
 - `worktreePath`: where the isolated build worktree lives. Empty = default sibling dir
   `../exlm-auto-build-workspace`. Set an absolute or repo-relative path to override.
 
+## Per-assignee credentials (optional — needed once `assigneeScope` isn't `"me"`)
+
+By default every ticket builds using **your** `.env` (`JIRA_PAT`, `GITHUB_TOKEN`) and **your**
+`CLAUDE_CODE_OAUTH_TOKEN` — fine if the poller only ever picks up your own tickets. Once
+`assigneeScope` is `"any"`/`"everyone"`, the poller can claim tickets assigned to other people, and
+without per-assignee credentials it would still build and open PRs using your tokens for their
+work.
+
+To fix that, copy [`credentials.example.json`](./credentials.example.json) to
+`tools/auto-builder/credentials.json` (gitignored — never commit it) and add one entry per JIRA
+assignee, keyed by their JIRA account email:
+
+```json
+{
+  "jane.doe@adobe.com": {
+    "jiraPat": "jane's JIRA personal access token",
+    "githubToken": "jane's GitHub fine-grained PAT, scoped to this repo only",
+    "claudeToken": "jane's CLAUDE_CODE_OAUTH_TOKEN, from `claude setup-token`"
+  }
+}
+```
+
+For each ticket, the poller looks up the ticket's JIRA assignee email in this map:
+
+- **Match found** — that person's `jiraPat`/`githubToken` are used for the JIRA label updates,
+  JIRA comment, and PR (so the PR opens as them), and their `claudeToken` runs the `/auto-build`
+  skill (so usage attributes to them). Any of the three fields left blank falls back to your `.env`
+  / process default for just that field.
+- **No match** (unassigned ticket, or an assignee not yet added) — the ticket builds using your
+  `.env`/process defaults, same as today. The poller log records which identity was used for every
+  ticket, so unmapped assignees are easy to spot and add.
+
+**If an assignee's `jiraPat` is invalid/expired**, the build itself fails fast (the `/auto-build`
+skill's own auth check catches it), and the poller falls back to your default `.env` `JIRA_PAT`
+_only_ to write the `auto-build-failed` label — otherwise that ticket could never be labeled at
+all and would retry from scratch on every poll tick, forever. That fallback touches only the JIRA
+label call: it never reruns the build under your `claudeToken`, so a bad assignee credential can't
+cause their ticket to silently build/PR under your Claude identity instead.
+
 ## Teams notifications (optional)
 
 When a build finishes, the poller can post an Adaptive Card to a Teams channel/chat — on success
@@ -167,3 +206,7 @@ approval** whenever a matching ticket appears.
   Mitigate: restrict who can apply the `auto-build` label, keep `GITHUB_TOKEN` a
   **fine-grained PAT scoped to this repo only**, and audit the log periodically.
 - Don't run this on an account whose `.env` `GITHUB_TOKEN` reaches other private repos.
+- If you use `credentials.json`, it holds multiple people's PATs/OAuth tokens in one plaintext
+  file on the machine running the poller — keep it gitignored (already set up), restrict file
+  permissions (`chmod 600 tools/auto-builder/credentials.json`), and only run the poller on a
+  machine/account the whole team already trusts with those tokens.
