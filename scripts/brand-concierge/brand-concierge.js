@@ -82,6 +82,16 @@ let bcMessageNumber = 0;
 let bcHasMessage = false;
 
 /**
+ * Resets per-conversation tracking state on a transcript clear. Deliberately does not touch
+ * bcHasMessage: it tracks the widget-open session, not the conversation, so send -> clear -> close
+ * is still tracked as "close with message".
+ */
+function resetBcConversationTracking() {
+  bcConversationId = null;
+  bcMessageNumber = 0;
+}
+
+/**
  * Removes persisted BC chat sessions from localStorage (transcript + metadata).
  * @param {{ broad?: boolean }} [options] - If broad, also remove any key containing `bc_chat`.
  */
@@ -420,11 +430,7 @@ function handleBrandConciergeClientEvent(event) {
   if (!event?.eventType) return;
 
   if (event.eventType === BC_EVENT_HISTORY_CLEARED) {
-    bcConversationId = null;
-    bcMessageNumber = 0;
-    // bcHasMessage is intentionally left as-is: clearing the transcript starts a new
-    // conversation, but if a message was sent before the clear, a subsequent widget
-    // close should still be tracked as "close with message".
+    resetBcConversationTracking();
   }
 
   if (event.eventType === BC_EVENT_QUERY_SUBMITTED) {
@@ -670,10 +676,7 @@ async function clearBrandConciergeConversation() {
     await concierge.bootstrap(getBootstrapOptions());
   }
 
-  bcConversationId = null;
-  bcMessageNumber = 0;
-  // bcHasMessage is intentionally left as-is; see handleBrandConciergeClientEvent's
-  // BC_EVENT_HISTORY_CLEARED branch for why.
+  resetBcConversationTracking();
 
   const bcMount = getBrandConciergeMount();
   scrollToBottomWatcher?.cleanup();
