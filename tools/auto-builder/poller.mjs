@@ -584,9 +584,39 @@ function spawnClaude(args, timeoutMs, claudeToken) {
   });
 }
 
+// A revoked/expired/invalid CLAUDE_CODE_OAUTH_TOKEN makes claude exit cleanly (status 0) right
+// after printing an auth error — spawnSync never sets `.error` for this, so it would otherwise
+// fall through to the stale-PR-guarded success check above and get nudged with `--continue`
+// up to MAX_CONTINUATIONS times, at CONTINUE_TIMEOUT_MS each, every poll tick, even though no
+// amount of retrying can fix a dead token. Detect it directly from claude's own output and fail
+// this ticket immediately with a message that says exactly what to do about it.
+const AUTH_FAILURE_PATTERN = /failed to authenticate|oauth access token has been revoked|invalid api key/i;
+
+function checkAuthFailure(result) {
+  const output = `${result.stdout || ''}\n${result.stderr || ''}`;
+  const match = output.match(AUTH_FAILURE_PATTERN);
+  if (match) {
+    throw new Error(
+      `Claude authentication failed (${match[0]}) — the CLAUDE_CODE_OAUTH_TOKEN for this ` +
+        'ticket\'s identity is invalid/revoked/expired. Regenerate it with `claude setup-token` ' +
+        '(update credentials.json for this assignee if one is configured, otherwise the ' +
+        'scheduler\'s baked-in token) before this ticket can build.',
+    );
+  }
+}
+
 // Runs /auto-build (continuing as needed) and returns the opened PR object, or null on
 // failure/timeout/no-PR-after-retries.
 async function runAutoBuild(env, key, claudeToken) {
+  // Captured before claude ever runs: /auto-build treats "a PR already exists on this
+  // branch" as a normal, expected outcome on a legitimate re-run (its own Step 10d just
+  // reuses it on a 422). So a PR's mere existence can never prove THIS run did anything —
+  // only a PR updated at/after this timestamp can. Without this check, a run whose claude
+  // invocation fails outright (e.g. a revoked/expired token — claude exits cleanly after
+  // printing an auth error, so spawnSync never sets `.error`) falls through to this PR
+  // check, finds a stale PR left over from days/cycles earlier, and reports false success.
+  const runStartedAt = new Date();
+
   let result = spawnClaude(
     ['-p', `/auto-build ${key}`, '--settings', AUTO_BUILD_SETTINGS, '--output-format', 'text'],
     RUN_TIMEOUT_MS,
@@ -599,13 +629,24 @@ async function runAutoBuild(env, key, claudeToken) {
     log(`${key}: claude ${timedOut ? 'TIMED OUT' : 'spawn error'}: ${result.error.message}`);
     return null;
   }
+  checkAuthFailure(result);
 
   const slug = repoSlug();
+  const freshPrForTicket = async () => {
+    const pr = slug && (await findPrForTicket(env, key, slug));
+    if (!pr) return null;
+    if (new Date(pr.updated_at) < runStartedAt) {
+      log(`${key}: found PR #${pr.number} but it was last updated ${pr.updated_at}, before this run started (${runStartedAt.toISOString()}) — a stale PR from an earlier cycle, not evidence this run did anything`);
+      return null;
+    }
+    return pr;
+  };
+
   for (let attempt = 1; attempt <= MAX_CONTINUATIONS; attempt += 1) {
     // eslint-disable-next-line no-await-in-loop -- must check after each attempt before retrying
-    const pr = slug && (await findPrForTicket(env, key, slug));
+    const pr = await freshPrForTicket();
     if (pr) return pr;
-    log(`${key}: no PR yet (continuation ${attempt}/${MAX_CONTINUATIONS}) — nudging claude to continue`);
+    log(`${key}: no fresh PR yet (continuation ${attempt}/${MAX_CONTINUATIONS}) — nudging claude to continue`);
     result = spawnClaude(
       ['-p', CONTINUE_PROMPT, '--continue', '--settings', AUTO_BUILD_SETTINGS, '--output-format', 'text'],
       CONTINUE_TIMEOUT_MS,
@@ -618,9 +659,10 @@ async function runAutoBuild(env, key, claudeToken) {
       log(`${key}: claude continuation ${timedOut ? 'TIMED OUT' : 'spawn error'}: ${result.error.message}`);
       break;
     }
+    checkAuthFailure(result);
   }
   if (!slug) return null;
-  return findPrForTicket(env, key, slug);
+  return freshPrForTicket();
 }
 
 // ---------------------------------------------------------------------------
