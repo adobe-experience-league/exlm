@@ -966,7 +966,7 @@ Loop:
 2. `pull_request_get_comments` — triage:
    - Trivial fixes (typos, lint, suggested replacements): apply directly via a commit.
    - Ambiguous: surface to me with the comment thread and a proposed reply.
-3. If CI is red, identify the failing check. If it's `npm run quality` or `validate:paths`, apply the fix and re-push with `git push --force-with-lease`.
+3. If CI is red, identify the failing check. If it's `npm run quality` apply the fix and re-push with `git push --force-with-lease`.
 4. If `main` has moved, rebase or merge — pick whichever this repo's history prefers.
 5. After each push, wait for checks to re-run before the next iteration.
 6. When the PR is green and has no unresolved reviewer threads, ping me. Do NOT merge.

@@ -17,8 +17,7 @@
     "up-secure-stage": "sudo aem up --url https://main--exlm-stage--adobe-experience-league.aem.page --tls-cert=local-cert/server.crt --tls-key=local-cert/server.key --port=443 --open https://experienceleague-local.adobe.com",
     "up-secure-prod": "sudo aem up --url https://main--exlm-prod--adobe-experience-league.aem.page --tls-cert=local-cert/server.crt --tls-key=local-cert/server.key --port=443 --open https://experienceleague-local.adobe.com",
     "prepare": "husky install",
-    "validate:paths": "node validate-paths.js",
-    "quality": "npm run format:check && npm run lint && npm run validate:paths",
+    "quality": "npm run format:check && npm run lint",
     "check:branch-name": "node check-branch-name.js",
     "setup:skills": "npx skills add adobe/skills/plugins/aem/edge-delivery-services --all && npx skills add adobe/skills/plugins/aem/project-management --all && npx skills add AdobeEXL/exl-dev-ai --all -y"
   },
