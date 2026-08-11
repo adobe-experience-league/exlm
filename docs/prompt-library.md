@@ -14,11 +14,11 @@ If you do have MCP servers configured, several prompts get stronger. Where that'
 | --------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | `ExL_ExperienceLeague` (`search_documents`, `fetch_docs`) | Authoritative source content for migrations, doc lookups for `/docs-search` style prompts |
 | `AEM-Content`                                             | Inspect live AEM content paths, validate blocks against authored content                  |
-| `eds`                                                     | Inspect EDS / converter output for upstream-vs-repo bugs (see §15.3)                      |
+| `eds`                                                     | Inspect EDS / converter output for upstream-vs-repo bugs (see §14.3)                      |
 | `figma`                                                   | Pull frames as the source of truth when scaffolding new blocks (§3.1)                     |
 | `github`                                                  | PR description / review / merge workflows (§13)                                           |
 
-For deeper standalone prompts that lean entirely on MCP tools, see [§18 — MCP-aware variants](#18-mcp-aware-variants).
+For deeper standalone prompts that lean entirely on MCP tools, see [§17 — MCP-aware variants](#17-mcp-aware-variants).
 
 ## Table of contents
 
@@ -38,10 +38,10 @@ For deeper standalone prompts that lean entirely on MCP tools, see [§18 — MCP
 - [11. Testing](#11-testing)
 - [12. Self-review before commit](#12-self-review-before-commit)
 - [13. Commits, branches, and PR hygiene](#13-commits-branches-and-pr-hygiene)
-- [15. Debugging](#15-debugging)
-- [16. Documentation and handover](#16-documentation-and-handover)
-- [17. Cross-cutting integrations (Coveo, feature flags, locales)](#17-cross-cutting-integrations-coveo-feature-flags-locales)
-- [18. MCP-aware variants](#18-mcp-aware-variants)
+- [14. Debugging](#14-debugging)
+- [15. Documentation and handover](#15-documentation-and-handover)
+- [16. Cross-cutting integrations (Coveo, feature flags, locales)](#16-cross-cutting-integrations-coveo-feature-flags-locales)
+- [17. MCP-aware variants](#17-mcp-aware-variants)
 
 ## How to use this library
 
@@ -176,7 +176,7 @@ Inputs:
 - Acceptance criteria: {{paste or link}}
 - Figma: {{figma-link-or-screenshot}}
 - Reference sibling block (from /block-inventory): blocks/{{sibling-block}}/
-- MCP boost (optional): if the `figma` MCP is available, prefer the dedicated end-to-end variant in [§18.1](#181-new-block-from-a-figma-frame-figma-mcp--end-to-end) instead of this prompt — it reads the frame directly and skips the screenshot step.
+- MCP boost (optional): if the `figma` MCP is available, prefer the dedicated end-to-end variant in [§17.1](#171-new-block-from-a-figma-frame-figma-mcp--end-to-end) instead of this prompt — it reads the frame directly and skips the screenshot step.
 
 Requirements:
 - Follow the EDS sections-and-blocks markup conventions used by the sibling.
@@ -1010,7 +1010,7 @@ If the MCP returns zero matches, fall back to /docs-search against aem.live and 
 
 ### 17.7 Converter-vs-repo diagnosis (`eds` MCP)
 
-**When to use**: production HTML differs from what this repo's code would produce — see §15.3. Stronger version when the `eds` MCP can inspect converter output directly.
+**When to use**: production HTML differs from what this repo's code would produce — see §14.3. Stronger version when the `eds` MCP can inspect converter output directly.
 
 **Prompt**:
 
@@ -1050,17 +1050,17 @@ Production HTML at `{{prod-url}}` is unexpected. Use the `eds` MCP to diagnose w
 | `/handover`, `/development`, `/authoring`, `/admin`, `/auth`                                                                                                                  | Generate handover guides                               |
 | `/whitepaper`                                                                                                                                                                 | Long-form PDF documentation                            |
 
-### MCP servers (optional — see [§18](#18-mcp-aware-variants))
+### MCP servers (optional — see [§17](#17-mcp-aware-variants))
 
-The base prompt library is MCP-agnostic. These are the servers that, when configured, unlock the variants in §18:
+The base prompt library is MCP-agnostic. These are the servers that, when configured, unlock the variants in §17:
 
 | MCP server             | Key tools (where known)                                                                                     | Used by                    |
 | ---------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------- |
-| `ExL_ExperienceLeague` | `search_documents`, `fetch_docs`                                                                            | §8, §9.2, §18.2, §18.6     |
-| `AEM-Content`          | (authenticated content inspection)                                                                          | §15.3, §18.3               |
-| `eds`                  | (EDS / converter inspection)                                                                                | §15.3, §18.7               |
-| `figma`                | (frame / design token extraction)                                                                           | §3.1, §18.1                |
-| `github`               | `pull_request_create`, `pull_request_get_comments`, `pull_request_get_detail`, `pull_request_create_review` | §13.3, §13.4, §18.4, §18.5 |
+| `ExL_ExperienceLeague` | `search_documents`, `fetch_docs`                                                                            | §8, §9.2, §17.2, §17.6     |
+| `AEM-Content`          | (authenticated content inspection)                                                                          | §14.3, §17.3               |
+| `eds`                  | (EDS / converter inspection)                                                                                | §14.3, §17.7               |
+| `figma`                | (frame / design token extraction)                                                                           | §3.1, §17.1                |
+| `github`               | `pull_request_create`, `pull_request_get_comments`, `pull_request_get_detail`, `pull_request_create_review` | §13.3, §13.4, §17.4, §17.5 |
 
 If any MCP errors or needs authentication, surface that to the user before trying the variant prompt.
 
