@@ -74,7 +74,11 @@ let impressionObserver = null;
 let bcConversationId = null;
 /** Count of chat replies since the start of the conversation, used as bcChatMessageNumber. */
 let bcMessageNumber = 0;
-/** Whether any message has been submitted in this conversation (for close with/without wording). */
+/**
+ * Whether any message has been submitted since the widget was mounted (for close with/without
+ * wording). Deliberately survives a transcript clear (see BC_EVENT_HISTORY_CLEARED handling) so
+ * send -> clear -> close is still tracked as "close with message".
+ */
 let bcHasMessage = false;
 
 /**
@@ -418,7 +422,9 @@ function handleBrandConciergeClientEvent(event) {
   if (event.eventType === BC_EVENT_HISTORY_CLEARED) {
     bcConversationId = null;
     bcMessageNumber = 0;
-    bcHasMessage = false;
+    // bcHasMessage is intentionally left as-is: clearing the transcript starts a new
+    // conversation, but if a message was sent before the clear, a subsequent widget
+    // close should still be tracked as "close with message".
   }
 
   if (event.eventType === BC_EVENT_QUERY_SUBMITTED) {
@@ -666,7 +672,8 @@ async function clearBrandConciergeConversation() {
 
   bcConversationId = null;
   bcMessageNumber = 0;
-  bcHasMessage = false;
+  // bcHasMessage is intentionally left as-is; see handleBrandConciergeClientEvent's
+  // BC_EVENT_HISTORY_CLEARED branch for why.
 
   const bcMount = getBrandConciergeMount();
   scrollToBottomWatcher?.cleanup();
