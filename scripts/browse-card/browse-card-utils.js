@@ -268,8 +268,10 @@ export function buildDiversifiedForYouList(items, productTabs) {
     }
   }
 
-  const mergedSet = new Set(merged);
-  const unmatchedItems = items.filter((item) => !mergedSet.has(item));
+  const unmatchedItems = items.filter((item) => {
+    const itemId = item.id ?? item.path;
+    return itemId ? !usedIds.has(itemId) : !usedItems.has(item);
+  });
 
   return [...merged, ...unmatchedItems];
 }
