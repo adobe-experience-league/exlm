@@ -1,4 +1,7 @@
+import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../../scripts/search/search-utils.js';
 import { CUSTOM_EVENTS, fragment, waitFor } from './atomic-search-utils.js';
+
+const HIDE_SUGGESTIONS_CLASS = 'hide-suggestions';
 
 export const clearIconHandler = (clearIcon) => {
   if (!clearIcon || clearIcon.dataset.evented === 'true') {
@@ -36,4 +39,24 @@ export default function atomicSearchBoxHandler(block) {
   };
 
   document.addEventListener(CUSTOM_EVENTS.SEARCH_QUERY_CHANGED, onSearchQueryChange);
+
+  if (baseElement.dataset.suggestionsHideEvented !== 'true') {
+    const showSuggestions = () => {
+      baseElement.classList.remove(HIDE_SUGGESTIONS_CLASS);
+    };
+
+    document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
+      const { method = '' } = e.detail ?? {};
+      if (method === 'search') {
+        baseElement.classList.add(HIDE_SUGGESTIONS_CLASS);
+      }
+    });
+
+    const textarea = shadowElement.querySelector('[part="textarea"]');
+    textarea?.addEventListener('input', showSuggestions);
+    textarea?.addEventListener('focus', showSuggestions);
+    textarea?.addEventListener('click', showSuggestions);
+
+    baseElement.dataset.suggestionsHideEvented = 'true';
+  }
 }
