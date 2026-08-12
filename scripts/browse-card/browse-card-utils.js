@@ -227,6 +227,46 @@ export function getCardHeaderAndPosition(card, element) {
   return { cardHeader, cardPosition };
 }
 
+/**
+ * Builds a "For you" style list by round-robining one item per product tab (in tab order)
+ * instead of taking the top N of the raw, unfiltered list. Falls back to the raw list
+ * when there are no product tabs to diversify against.
+ * @param {Array} items - Raw, ranked list of items (each with a `product` string field).
+ * @param {Array<string>} productTabs - Product tab names to interleave across, in tab order.
+ * @returns {Array} Diversified list, same items, reordered.
+ */
+export function buildDiversifiedForYouList(items, productTabs) {
+  if (!productTabs?.length) return items;
+
+  const buckets = productTabs.map((tab) =>
+    items.filter((item) => item.product?.toLowerCase().includes(tab.toLowerCase())),
+  );
+  const cursors = buckets.map(() => 0);
+  const usedIds = new Set();
+  const merged = [];
+  let addedThisPass = true;
+
+  while (addedThisPass) {
+    addedThisPass = false;
+    for (let bucketIndex = 0; bucketIndex < buckets.length; bucketIndex += 1) {
+      const bucket = buckets[bucketIndex];
+      while (cursors[bucketIndex] < bucket.length) {
+        const candidate = bucket[cursors[bucketIndex]];
+        cursors[bucketIndex] += 1;
+        const candidateId = candidate.id ?? candidate.path;
+        if (!candidateId || !usedIds.has(candidateId)) {
+          merged.push(candidate);
+          if (candidateId) usedIds.add(candidateId);
+          addedThisPass = true;
+          break;
+        }
+      }
+    }
+  }
+
+  return merged;
+}
+
 // Function to convert a string to title case
 export const formatTitleCase = (str) => str.replace(/[-\s]/g, '').replace(/\b\w/g, (match) => match.toUpperCase());
 // Function to convert headings to id format
