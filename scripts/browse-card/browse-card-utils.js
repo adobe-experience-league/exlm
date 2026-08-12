@@ -244,6 +244,7 @@ export function buildDiversifiedForYouList(items, productTabs) {
   );
   const cursors = buckets.map(() => 0);
   const usedIds = new Set();
+  const usedItems = new Set();
   const merged = [];
   let addedThisPass = true;
 
@@ -255,9 +256,11 @@ export function buildDiversifiedForYouList(items, productTabs) {
         const candidate = bucket[cursors[bucketIndex]];
         cursors[bucketIndex] += 1;
         const candidateId = candidate.id ?? candidate.path;
-        if (!candidateId || !usedIds.has(candidateId)) {
+        const alreadyUsed = candidateId ? usedIds.has(candidateId) : usedItems.has(candidate);
+        if (!alreadyUsed) {
           merged.push(candidate);
           if (candidateId) usedIds.add(candidateId);
+          else usedItems.add(candidate);
           addedThisPass = true;
           break;
         }
