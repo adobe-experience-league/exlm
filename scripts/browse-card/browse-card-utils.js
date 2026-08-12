@@ -229,7 +229,8 @@ export function getCardHeaderAndPosition(card, element) {
 
 /**
  * Builds a "For you" style list by round-robining one item per product tab (in tab order)
- * instead of taking the top N of the raw, unfiltered list. Falls back to the raw list
+ * instead of taking the top N of the raw, unfiltered list. Items that don't match any tab
+ * are appended at the end, so nothing from the raw list is lost. Falls back to the raw list
  * when there are no product tabs to diversify against.
  * @param {Array} items - Raw, ranked list of items (each with a `product` string field).
  * @param {Array<string>} productTabs - Product tab names to interleave across, in tab order.
@@ -264,7 +265,10 @@ export function buildDiversifiedForYouList(items, productTabs) {
     }
   }
 
-  return merged;
+  const mergedSet = new Set(merged);
+  const unmatchedItems = items.filter((item) => !mergedSet.has(item));
+
+  return [...merged, ...unmatchedItems];
 }
 
 // Function to convert a string to title case
