@@ -516,12 +516,15 @@ const buildMobileNavDrawer = (ul, navBlock, decoratorOptions) => {
     });
   }
   if (decoratorState.languages?.length) {
+    const { prefix, suffix } = getPathDetails();
     ul.appendChild(
       htmlToElement(
         `<li class="nav-item-mobile">
           <p>${decoratorState.languageTitle}</p>
           <ul>
-            ${decoratorState.languages.map((l) => `<li><a href="${l.lang}">${l.title}</a></li>`).join('')}
+            ${decoratorState.languages
+              .map((l) => `<li><a href="${prefix}/${l.lang}${suffix}">${l.title}</a></li>`)
+              .join('')}
           </ul>
         </li>`,
       ),
