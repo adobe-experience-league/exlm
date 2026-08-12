@@ -72,10 +72,24 @@ let impressionObserver = null;
 
 /** Real BC conversationId, captured from response:started/response:completed events. */
 let bcConversationId = null;
-/** Real BC interactionId (per query/response turn), used as bcChatMessageNumber. */
-let bcInteractionId = null;
-/** Whether any message has been submitted in this conversation (for close with/without wording). */
+/** Count of chat replies since the start of the conversation, used as bcChatMessageNumber. */
+let bcMessageNumber = 0;
+/**
+ * Whether any message has been submitted since the widget was mounted (for close with/without
+ * wording). Deliberately survives a transcript clear (see BC_EVENT_HISTORY_CLEARED handling) so
+ * send -> clear -> close is still tracked as "close with message".
+ */
 let bcHasMessage = false;
+
+/**
+ * Resets per-conversation tracking state on a transcript clear. Deliberately does not touch
+ * bcHasMessage: it tracks the widget-open session, not the conversation, so send -> clear -> close
+ * is still tracked as "close with message".
+ */
+function resetBcConversationTracking() {
+  bcConversationId = null;
+  bcMessageNumber = 0;
+}
 
 /**
  * Removes persisted BC chat sessions from localStorage (transcript + metadata).
@@ -416,25 +430,23 @@ function handleBrandConciergeClientEvent(event) {
   if (!event?.eventType) return;
 
   if (event.eventType === BC_EVENT_HISTORY_CLEARED) {
-    bcConversationId = null;
-    bcInteractionId = null;
-    bcHasMessage = false;
+    resetBcConversationTracking();
   }
 
   if (event.eventType === BC_EVENT_QUERY_SUBMITTED) {
     bcHasMessage = true;
   }
 
-  // conversationId/interactionId are assigned by the backend and only available once a
-  // response arrives — query:submitted itself carries neither id (see BC event callback
-  // reference), so the "bc message submit" tracking event is pushed here, once both are known.
+  // conversationId is assigned by the backend and only available once a response arrives —
+  // query:submitted itself carries no id (see BC event callback reference), so the "bc message
+  // submit" tracking event is pushed here, once it's known.
   if (event.eventType === BC_EVENT_RESPONSE_STARTED || event.eventType === BC_EVENT_RESPONSE_COMPLETED) {
     bcConversationId = event.data?.conversationId || bcConversationId;
-    bcInteractionId = event.data?.interactionId || bcInteractionId;
   }
 
   if (event.eventType === BC_EVENT_RESPONSE_STARTED) {
-    pushBcInteractionEvent('bc message submit', { bcChatId: bcConversationId, bcChatMessageNumber: bcInteractionId });
+    bcMessageNumber += 1;
+    pushBcInteractionEvent('bc message submit', { bcChatId: bcConversationId, bcChatMessageNumber: bcMessageNumber });
   }
 
   if (!SCROLL_EVENT_TYPES.has(event.eventType)) return;
@@ -664,9 +676,7 @@ async function clearBrandConciergeConversation() {
     await concierge.bootstrap(getBootstrapOptions());
   }
 
-  bcConversationId = null;
-  bcInteractionId = null;
-  bcHasMessage = false;
+  resetBcConversationTracking();
 
   const bcMount = getBrandConciergeMount();
   scrollToBottomWatcher?.cleanup();
@@ -878,7 +888,7 @@ export function destroyBrandConcierge() {
   cssLinkEl?.remove();
   cssLinkEl = null;
   bcConversationId = null;
-  bcInteractionId = null;
+  bcMessageNumber = 0;
   bcHasMessage = false;
 }
 

@@ -1182,7 +1182,7 @@ export function pushBrowseFilterSearchClearEvent(searchType, filterType, filterV
  * @param {string} [params.sortBy='relevancy']
  * @param {string} [params.term] - Keyword entered in the search box
  */
-export function pushEventsFilterSearchEvent({
+export async function pushEventsFilterSearchEvent({
   linkTitle,
   linkType,
   destinationDomain,
@@ -1193,6 +1193,7 @@ export function pushEventsFilterSearchEvent({
   term = '',
 } = {}) {
   window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user, userData } = await getDataLayerUserDetails();
 
   window.adobeDataLayer.push({
     event: 'eventsFilterSearch',
@@ -1207,13 +1208,14 @@ export function pushEventsFilterSearchEvent({
       Count: count,
       depth,
       filter: {
-        product: filter.product || [],
-        eventType: filter.eventType || [],
-        series: filter.series || [],
+        product: (filter.product || []).join(','),
+        eventType: (filter.eventType || []).join(','),
+        series: (filter.series || []).join(','),
       },
       sortBy,
       term,
     },
+    ...(userData && { user }),
   });
 }
 
@@ -1222,8 +1224,9 @@ export function pushEventsFilterSearchEvent({
  *
  * @param {string} [destinationDomain] - Defaults to the current page URL
  */
-export function pushEventsClearFiltersEvent(destinationDomain) {
+export async function pushEventsClearFiltersEvent(destinationDomain) {
   window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user, userData } = await getDataLayerUserDetails();
 
   window.adobeDataLayer.push({
     event: 'linkClicked',
@@ -1234,6 +1237,7 @@ export function pushEventsClearFiltersEvent(destinationDomain) {
       linkType: 'link',
       destinationDomain: destinationDomain || window.location.href,
     },
+    ...(userData && { user }),
   });
 }
 
@@ -1494,9 +1498,10 @@ export async function pushBcWidgetImpressionEvent() {
  * Pushes a Brand Concierge widget interaction event (open, close, expand,
  * collapse, clear, message submit) to the Adobe Data Layer.
  * @param {string} linkTitle - e.g. 'bc widget open', 'bc message submit'.
- * @param {{ bcChatId?: string, bcChatMessageNumber?: string }} [options] - BC's own
- * `conversationId` and `interactionId` (captured from response:started/response:completed),
- * identifying the conversation and turn; passed only for the message-submit event.
+ * @param {{ bcChatId?: string, bcChatMessageNumber?: number }} [options] - `bcChatId` is BC's own
+ * `conversationId` (captured from response:started/response:completed); `bcChatMessageNumber` is
+ * the number of chat replies since the start of the conversation. Passed only for the
+ * message-submit event.
  */
 export async function pushBcInteractionEvent(linkTitle, { bcChatId, bcChatMessageNumber } = {}) {
   window.adobeDataLayer = window.adobeDataLayer || [];
