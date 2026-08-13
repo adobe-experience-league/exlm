@@ -174,9 +174,6 @@
   --chat-history-padding-mobile: 16px 20px;
   --chat-history-padding-tablet: 20px 5%;
   --chat-history-padding-top-expanded: 24px;
-
-  /* Match Stage's docs.css scoping (16px) instead of inheriting the site-wide 18px
-   * from styles.css :root — covers nested response markdown (p, a, li) too. */
   --exlm-font-size-content: var(--spectrum-body-size-m);
 }
 
@@ -384,10 +381,7 @@
 #brand-concierge-mount .concierge-message .message-text {
   width: 100% !important;
   max-width: 100% !important;
-
-  /* Ties container-level (unwrapped plain-text) responses to the same scoped
-   * variable used by nested markdown elements (p, a, li), so both cases match. */
-  font-size: var(--exlm-font-size-content) !important;
+  font-size: var(--exlm-font-size-content);
 }
 
 #brand-concierge-mount .concierge-message .message-content {
@@ -636,6 +630,10 @@
   margin: 0 !important;
   font-size: 13px !important;
   word-break: break-word !important;
+}
+
+#brand-concierge-mount .message-content .citation-number a {
+  font-size: 13px;
 }
 
 #brand-concierge-mount .citations-source-item {
