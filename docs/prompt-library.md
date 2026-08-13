@@ -2,7 +2,7 @@
 
 A curated set of prompts developers can paste into an AI coding agent (Cursor, Claude Code, Copilot Chat, etc.) when working in this repo. The prompts are tuned for the conventions documented in [AGENTS.md](../AGENTS.md) and assume the EDS skills shipped via [`skills-lock.json`](../skills-lock.json) are installed (`npx skills experimental_install`).
 
-> If you add a new prompt, follow the format under [How to read a prompt entry](#how-to-read-a-prompt-entry). Keep prompts grounded in real repo conventions — `scripts/lib-franklin.js`, `paths.yaml`/`paths.json` parity, `LCP_BLOCKS`, the `code-review` skill, `?martech=off`, etc.
+> If you add a new prompt, follow the format under [How to read a prompt entry](#how-to-read-a-prompt-entry). Keep prompts grounded in real repo conventions — `scripts/lib-franklin.js`, `paths.json`, `LCP_BLOCKS`, the `code-review` skill, `?martech=off`, etc.
 
 ### MCP servers — optional, not required
 
@@ -14,11 +14,11 @@ If you do have MCP servers configured, several prompts get stronger. Where that'
 | --------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | `ExL_ExperienceLeague` (`search_documents`, `fetch_docs`) | Authoritative source content for migrations, doc lookups for `/docs-search` style prompts |
 | `AEM-Content`                                             | Inspect live AEM content paths, validate blocks against authored content                  |
-| `eds`                                                     | Inspect EDS / converter output for upstream-vs-repo bugs (see §15.3)                      |
+| `eds`                                                     | Inspect EDS / converter output for upstream-vs-repo bugs (see §14.3)                      |
 | `figma`                                                   | Pull frames as the source of truth when scaffolding new blocks (§3.1)                     |
 | `github`                                                  | PR description / review / merge workflows (§13)                                           |
 
-For deeper standalone prompts that lean entirely on MCP tools, see [§18 — MCP-aware variants](#18-mcp-aware-variants).
+For deeper standalone prompts that lean entirely on MCP tools, see [§17 — MCP-aware variants](#17-mcp-aware-variants).
 
 ## Table of contents
 
@@ -38,11 +38,10 @@ For deeper standalone prompts that lean entirely on MCP tools, see [§18 — MCP
 - [11. Testing](#11-testing)
 - [12. Self-review before commit](#12-self-review-before-commit)
 - [13. Commits, branches, and PR hygiene](#13-commits-branches-and-pr-hygiene)
-- [14. `paths.yaml` / `paths.json` sync](#14-pathsyaml--pathsjson-sync)
-- [15. Debugging](#15-debugging)
-- [16. Documentation and handover](#16-documentation-and-handover)
-- [17. Cross-cutting integrations (Coveo, feature flags, locales)](#17-cross-cutting-integrations-coveo-feature-flags-locales)
-- [18. MCP-aware variants](#18-mcp-aware-variants)
+- [14. Debugging](#14-debugging)
+- [15. Documentation and handover](#15-documentation-and-handover)
+- [16. Cross-cutting integrations (Coveo, feature flags, locales)](#16-cross-cutting-integrations-coveo-feature-flags-locales)
+- [17. MCP-aware variants](#17-mcp-aware-variants)
 
 ## How to use this library
 
@@ -177,7 +176,7 @@ Inputs:
 - Acceptance criteria: {{paste or link}}
 - Figma: {{figma-link-or-screenshot}}
 - Reference sibling block (from /block-inventory): blocks/{{sibling-block}}/
-- MCP boost (optional): if the `figma` MCP is available, prefer the dedicated end-to-end variant in [§18.1](#181-new-block-from-a-figma-frame-figma-mcp--end-to-end) instead of this prompt — it reads the frame directly and skips the screenshot step.
+- MCP boost (optional): if the `figma` MCP is available, prefer the dedicated end-to-end variant in [§17.1](#171-new-block-from-a-figma-frame-figma-mcp--end-to-end) instead of this prompt — it reads the frame directly and skips the screenshot step.
 
 Requirements:
 - Follow the EDS sections-and-blocks markup conventions used by the sibling.
@@ -250,7 +249,7 @@ Then:
 I need to change `blocks/{{block-name}}/` to {{describe change}}.
 
 Before editing:
-1. Search the repo and `paths.yaml` for pages/tests that use this block — list them.
+1. Search the repo and `paths.json` for pages/tests that use this block — list them.
 2. Identify which selectors / authored cells external code or content might depend on.
 3. Propose a backward-compatible change. If it can't be backward compatible, explain the migration steps for authors.
 
@@ -313,7 +312,7 @@ I'm about to {{add | remove}} `{{block-name}}` to/from `LCP_BLOCKS` in `scripts/
 
 Confirm whether this is correct:
 1. Inspect the block to verify it can render before lazy CSS loads (no late layout shifts, no late-loaded fonts/icons that would cause CLS).
-2. Search content paths in `paths.yaml` for typical pages where this block sits above the fold.
+2. Search content paths in `paths.json` for typical pages where this block sits above the fold.
 3. Tell me the expected impact on LCP/CLS for those pages.
 4. If correct, make the edit. If not, explain what would need to change in the block first.
 ```
@@ -567,7 +566,6 @@ Check, at minimum:
 - Accessibility (semantics, labels, focus, alt).
 - Secrets / hardcoded config / `console.*` left in.
 - `eslint-disable` lines without a one-line justification.
-- `paths.yaml` and `paths.json` parity if either was touched.
 
 Output: blockers, then nice-to-haves. Block me from committing until blockers are resolved.
 ```
@@ -586,7 +584,6 @@ I don't have skills available. Walk me through `git diff --staged` and flag anyt
 - CSS-in-JS.
 - Edits to `scripts/lib-franklin.js`.
 - New top-level imports in `scripts/scripts.js`.
-- `paths.yaml` changed without `paths.json` (or vice versa).
 
 Don't change anything — just list issues with file:line references.
 ```
@@ -668,39 +665,9 @@ Do not merge — that's my call.
 
 ---
 
-## 14. `paths.yaml` / `paths.json` sync
+## 14. Debugging
 
-### 14.1 Add or remove a path
-
-**Prompt**:
-
-```text
-I need to {{add | remove | rename}} the path `{{path}}` in this repo.
-
-1. Update `paths.yaml`.
-2. Update `paths.json` to match — they MUST stay in sync (enforced by `validate-paths.js`).
-3. Run `npm run validate:paths` and paste the result.
-4. If any block or test references this path, list them.
-```
-
-### 14.2 Investigate a `validate:paths` failure
-
-**Prompt**:
-
-```text
-`npm run validate:paths` is failing on this branch. Read `validate-paths.js`, then:
-
-1. Diff `paths.yaml` against `paths.json` and show me the entries that differ.
-2. Tell me which side is likely correct based on `git log` of both files.
-3. Propose a unified patch and apply it.
-4. Re-run `npm run validate:paths` to confirm.
-```
-
----
-
-## 15. Debugging
-
-### 15.1 "Why isn't my block rendering?"
+### 14.1 "Why isn't my block rendering?"
 
 **Prompt**:
 
@@ -717,7 +684,7 @@ Diagnose, in order:
 Use the browser preview, `curl` against the URL, and the block source. Don't change code yet — diagnose first.
 ```
 
-### 15.2 Locale / path parsing went sideways
+### 14.2 Locale / path parsing went sideways
 
 **Prompt**:
 
@@ -733,7 +700,7 @@ Cover both:
 Tell me whether the bug is in `getPathDetails()`, the calling block, or the authored URL. Don't change code yet.
 ```
 
-### 15.3 Unexpected HTML in production
+### 14.3 Unexpected HTML in production
 
 **Prompt**:
 
@@ -751,9 +718,9 @@ MCP boost (optional): if the `eds` or `AEM-Content` MCP is available, use it to 
 
 ---
 
-## 16. Documentation and handover
+## 15. Documentation and handover
 
-### 16.1 Generate developer handover docs
+### 15.1 Generate developer handover docs
 
 **Prompt**:
 
@@ -772,7 +739,7 @@ Cover:
 Save it under `docs/developer-handover.md`.
 ```
 
-### 16.2 Generate an admin guide
+### 15.2 Generate an admin guide
 
 **Prompt**:
 
@@ -782,7 +749,7 @@ Use the /admin and /auth skills to generate an admin handover at `docs/admin-han
 Cover Config Service setup, permissions, Admin API operations relevant to this project (cache, code sync), and how to rotate auth credentials. Pull current values from the live Config Service when possible — don't hardcode anything secret.
 ```
 
-### 16.3 Generate an authoring guide
+### 15.3 Generate an authoring guide
 
 **Prompt**:
 
@@ -800,9 +767,9 @@ Pull purposes from the block JS and any existing comments — don't make them up
 
 ---
 
-## 17. Cross-cutting integrations (Coveo, feature flags, locales)
+## 16. Cross-cutting integrations (Coveo, feature flags, locales)
 
-### 17.1 Add a Coveo / Atomic Search-aware feature
+### 16.1 Add a Coveo / Atomic Search-aware feature
 
 **Prompt**:
 
@@ -817,7 +784,7 @@ Before writing code:
 Then implement, keeping all Coveo-specific logic out of the critical path.
 ```
 
-### 17.2 Gate a feature behind a flag
+### 16.2 Gate a feature behind a flag
 
 **Prompt**:
 
@@ -831,7 +798,7 @@ After implementing:
 - Confirm the default-off path is the safe one — no regressions when the flag is off.
 ```
 
-### 17.3 Add a locale-aware string or path
+### 16.3 Add a locale-aware string or path
 
 **Prompt**:
 
@@ -847,13 +814,13 @@ Implement, then list the placeholder keys (if any) that need a translation entry
 
 ---
 
-## 18. MCP-aware variants
+## 17. MCP-aware variants
 
 Full standalone prompts that lean on MCP servers as the primary tool surface. Use these when you have the relevant MCP configured and authenticated. If the MCP isn't available, fall back to the matching base prompt in the earlier sections.
 
 > Before any of these, check the MCP's status. If it's errored or unauthenticated, surface that to the user rather than guessing — most MCPs surface auth issues via a `mcp_auth` tool or a status file in the agent's MCP registry.
 
-### 18.1 New block from a Figma frame (`figma` MCP) — end to end
+### 17.1 New block from a Figma frame (`figma` MCP) — end to end
 
 **When to use**: scaffolding a brand-new block where a Figma frame is the source of truth and the `figma` MCP is configured. Self-contained — does design extraction, code scaffolding, UE registration, lint, and a test plan in one pass. If the `figma` MCP isn't available, fall back to [§3.1](#31-scaffold-a-new-block-end-to-end).
 
@@ -940,7 +907,7 @@ Do NOT commit or open a PR — that's my call.
 - Tokens flagged as "missing" should be added to `styles/styles.css` in a separate PR by design / a maintainer, not invented inside the block CSS.
 - If the frame has multiple linked breakpoint variants but they don't land on 600 / 900 / 1200, treat that as a design conversation, not a CSS workaround.
 
-### 18.2 Migrate Experience League pages with authoritative source (`ExL_ExperienceLeague` MCP)
+### 17.2 Migrate Experience League pages with authoritative source (`ExL_ExperienceLeague` MCP)
 
 **When to use**: importing pages that already exist on Experience League. The MCP returns the authored document instead of a rendered HTML snapshot, which avoids re-introducing render-time artifacts.
 
@@ -965,7 +932,7 @@ Workflow:
 5. Stop and ask me before creating a new block; never invent one silently.
 ```
 
-### 18.3 Inspect a live AEM content path before changing a block (`AEM-Content` MCP)
+### 17.3 Inspect a live AEM content path before changing a block (`AEM-Content` MCP)
 
 **When to use**: you're about to modify a block and want to see what authored content is actually depending on the current structure, not guess.
 
@@ -974,7 +941,7 @@ Workflow:
 ```text
 Use the `AEM-Content` MCP to inspect authored content that depends on `blocks/{{block-name}}/`.
 
-1. Query the MCP for pages containing this block. If the MCP doesn't expose a "find by block" query, fetch the candidate paths from `paths.yaml` and probe each.
+1. Query the MCP for pages containing this block. If the MCP doesn't expose a "find by block" query, fetch the candidate paths from `paths.json` and probe each.
 2. For each authored instance, capture:
    - The authored cell structure (rows / cells / values).
    - Variants in use (modifier classes on the block).
@@ -985,7 +952,7 @@ Use the `AEM-Content` MCP to inspect authored content that depends on `blocks/{{
 Do NOT modify code yet.
 ```
 
-### 18.4 PR babysit loop with the GitHub MCP
+### 17.4 PR babysit loop with the GitHub MCP
 
 **When to use**: keeping an open PR merge-ready using the `github` MCP instead of the `gh` CLI.
 
@@ -999,13 +966,13 @@ Loop:
 2. `pull_request_get_comments` — triage:
    - Trivial fixes (typos, lint, suggested replacements): apply directly via a commit.
    - Ambiguous: surface to me with the comment thread and a proposed reply.
-3. If CI is red, identify the failing check. If it's `npm run quality` or `validate:paths`, apply the fix and re-push with `git push --force-with-lease`.
+3. If CI is red, identify the failing check. If it's `npm run quality` apply the fix and re-push with `git push --force-with-lease`.
 4. If `main` has moved, rebase or merge — pick whichever this repo's history prefers.
 5. After each push, wait for checks to re-run before the next iteration.
 6. When the PR is green and has no unresolved reviewer threads, ping me. Do NOT merge.
 ```
 
-### 18.5 Create a PR from a green local branch (`github` MCP)
+### 17.5 Create a PR from a green local branch (`github` MCP)
 
 **Prompt**:
 
@@ -1023,7 +990,7 @@ Use the `github` MCP:
 Do not request reviewers — I'll add them.
 ```
 
-### 18.6 Authoritative aem.live / Experience League docs lookup (`ExL_ExperienceLeague` MCP)
+### 17.6 Authoritative aem.live / Experience League docs lookup (`ExL_ExperienceLeague` MCP)
 
 **When to use**: any time the base prompt says "use /docs-search" and you want a stronger pull from Experience League directly.
 
@@ -1041,9 +1008,9 @@ Use the `ExL_ExperienceLeague` MCP instead of /docs-search:
 If the MCP returns zero matches, fall back to /docs-search against aem.live and explicitly note the fallback in your answer.
 ```
 
-### 18.7 Converter-vs-repo diagnosis (`eds` MCP)
+### 17.7 Converter-vs-repo diagnosis (`eds` MCP)
 
-**When to use**: production HTML differs from what this repo's code would produce — see §15.3. Stronger version when the `eds` MCP can inspect converter output directly.
+**When to use**: production HTML differs from what this repo's code would produce — see §14.3. Stronger version when the `eds` MCP can inspect converter output directly.
 
 **Prompt**:
 
@@ -1083,17 +1050,17 @@ Production HTML at `{{prod-url}}` is unexpected. Use the `eds` MCP to diagnose w
 | `/handover`, `/development`, `/authoring`, `/admin`, `/auth`                                                                                                                  | Generate handover guides                               |
 | `/whitepaper`                                                                                                                                                                 | Long-form PDF documentation                            |
 
-### MCP servers (optional — see [§18](#18-mcp-aware-variants))
+### MCP servers (optional — see [§17](#17-mcp-aware-variants))
 
-The base prompt library is MCP-agnostic. These are the servers that, when configured, unlock the variants in §18:
+The base prompt library is MCP-agnostic. These are the servers that, when configured, unlock the variants in §17:
 
 | MCP server             | Key tools (where known)                                                                                     | Used by                    |
 | ---------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------- |
-| `ExL_ExperienceLeague` | `search_documents`, `fetch_docs`                                                                            | §8, §9.2, §18.2, §18.6     |
-| `AEM-Content`          | (authenticated content inspection)                                                                          | §15.3, §18.3               |
-| `eds`                  | (EDS / converter inspection)                                                                                | §15.3, §18.7               |
-| `figma`                | (frame / design token extraction)                                                                           | §3.1, §18.1                |
-| `github`               | `pull_request_create`, `pull_request_get_comments`, `pull_request_get_detail`, `pull_request_create_review` | §13.3, §13.4, §18.4, §18.5 |
+| `ExL_ExperienceLeague` | `search_documents`, `fetch_docs`                                                                            | §8, §9.2, §17.2, §17.6     |
+| `AEM-Content`          | (authenticated content inspection)                                                                          | §14.3, §17.3               |
+| `eds`                  | (EDS / converter inspection)                                                                                | §14.3, §17.7               |
+| `figma`                | (frame / design token extraction)                                                                           | §3.1, §17.1                |
+| `github`               | `pull_request_create`, `pull_request_get_comments`, `pull_request_get_detail`, `pull_request_create_review` | §13.3, §13.4, §17.4, §17.5 |
 
 If any MCP errors or needs authentication, surface that to the user before trying the variant prompt.
 
@@ -1102,7 +1069,6 @@ If any MCP errors or needs authentication, surface that to the user before tryin
 - `scripts/lib-franklin.js` is core — **do not edit**.
 - `scripts/scripts.js` is critical path — **no heavy top-level imports**.
 - `LCP_BLOCKS` must include any above-the-fold block.
-- `paths.yaml` and `paths.json` must stay in sync (`npm run validate:paths`).
 - Branch names should be under ~18 chars (`check-branch-name.js`).
 - Test URLs in PRs use the `$` prefix and `?martech=off`.
 - All shipped JS is public — **no secrets**.
