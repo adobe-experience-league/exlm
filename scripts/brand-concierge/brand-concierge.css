@@ -381,7 +381,7 @@
 #brand-concierge-mount .concierge-message .message-text {
   width: 100% !important;
   max-width: 100% !important;
-  font-size: var(--exlm-font-size-content);
+  font-size: var(--exlm-font-size-content) !important;
 }
 
 #brand-concierge-mount .concierge-message .message-content {
@@ -633,7 +633,7 @@
 }
 
 #brand-concierge-mount .message-content .citation-number a {
-  font-size: 13px;
+  font-size: 13px !important;
 }
 
 #brand-concierge-mount .citations-source-item {
