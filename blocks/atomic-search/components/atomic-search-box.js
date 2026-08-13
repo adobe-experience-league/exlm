@@ -41,22 +41,33 @@ export default function atomicSearchBoxHandler(block) {
   document.addEventListener(CUSTOM_EVENTS.SEARCH_QUERY_CHANGED, onSearchQueryChange);
 
   if (baseElement.dataset.suggestionsHideEvented !== 'true') {
-    const showSuggestions = () => {
-      baseElement.classList.remove(HIDE_SUGGESTIONS_CLASS);
+    // Claim immediately so concurrent handler passes cannot attach duplicate listeners.
+    baseElement.dataset.suggestionsHideEvented = 'true';
+
+    const setupSuggestionsHide = () => {
+      const textarea = baseElement.shadowRoot?.querySelector('[part="textarea"]');
+      if (!textarea) {
+        waitFor(setupSuggestionsHide);
+        return;
+      }
+
+      const showSuggestions = () => {
+        baseElement.classList.remove(HIDE_SUGGESTIONS_CLASS);
+      };
+
+      document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
+        const { method = '' } = e.detail ?? {};
+        if (method === 'search') {
+          baseElement.classList.add(HIDE_SUGGESTIONS_CLASS);
+        }
+      });
+
+      // Restore only on user interaction. Avoid `focus` — Coveo may refocus the
+      // textarea after search and would incorrectly clear hide-suggestions.
+      textarea.addEventListener('input', showSuggestions);
+      textarea.addEventListener('click', showSuggestions);
     };
 
-    document.addEventListener(COVEO_SEARCH_CUSTOM_EVENTS.PREPROCESS, (e) => {
-      const { method = '' } = e.detail ?? {};
-      if (method === 'search') {
-        baseElement.classList.add(HIDE_SUGGESTIONS_CLASS);
-      }
-    });
-
-    const textarea = shadowElement.querySelector('[part="textarea"]');
-    textarea?.addEventListener('input', showSuggestions);
-    textarea?.addEventListener('focus', showSuggestions);
-    textarea?.addEventListener('click', showSuggestions);
-
-    baseElement.dataset.suggestionsHideEvented = 'true';
+    setupSuggestionsHide();
   }
 }
