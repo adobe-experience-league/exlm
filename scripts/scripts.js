@@ -22,6 +22,7 @@ import {
 } from './lib-franklin.js';
 import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
 import isFeatureEnabled from './utils/feature-flag-utils.js';
+import { PLAYLIST_EMBED_BODY_CLASS } from './utils/playlist-embed-utils.js';
 
 /**
  * please do not import any other modules here, as this file is used in the critical path.
@@ -697,10 +698,22 @@ export function decorateMain(main, isFragment = false) {
  * @param {Element} doc The container element
  */
 async function loadEager(doc) {
+  // Apply embed chrome before appear/LCP wait so product iframes never flash ExL header.
+  // Cheap substring gate; authoritative match is isPlaylistPath() in playlist-embed-utils.
+  let embedMode = false;
+  if (window.location.pathname.toLowerCase().includes('/playlists')) {
+    const { isPlaylistPath, isPlaylistEmbedMode } = await import('./utils/playlist-embed-utils.js');
+    if (isPlaylistPath(window.location.pathname) && isPlaylistEmbedMode()) {
+      embedMode = true;
+      doc.body.classList.add(PLAYLIST_EMBED_BODY_CLASS);
+    }
+  }
+
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
   if (main) {
-    buildPreMain(main);
+    // Site-wide banner is global chrome — skip in product embed iframes.
+    if (!embedMode) buildPreMain(main);
     decorateMain(main);
     document.body.classList.add('appear');
     await waitForLCPonMain(LCP_BLOCKS);
@@ -1103,6 +1116,19 @@ async function loadDefaultModule(jsPath) {
  */
 
 async function loadLazy(doc) {
+  let embedMode = false;
+  if (window.location.pathname.toLowerCase().includes('/playlists')) {
+    const { isPlaylistPath, isPlaylistEmbedMode } = await import('./utils/playlist-embed-utils.js');
+    if (isPlaylistPath(window.location.pathname)) {
+      embedMode = isPlaylistEmbedMode();
+      if (embedMode) {
+        doc.body.classList.add(PLAYLIST_EMBED_BODY_CLASS);
+      } else {
+        doc.body.classList.remove(PLAYLIST_EMBED_BODY_CLASS);
+      }
+    }
+  }
+
   const main = doc.querySelector('main');
   const preMain = doc.body.querySelector(':scope > aside');
   loadIms(); // start it early, asyncronously
@@ -1114,16 +1140,19 @@ async function loadLazy(doc) {
   loadDefaultModule('./data-service/coveo/coveo-token-prefetch.js');
 
   await loadThemes();
-  if (preMain) await loadBlocks(preMain);
+  if (preMain && !embedMode) await loadBlocks(preMain);
   await loadBlocks(main);
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
-  const headerPromise = loadHeader(doc.querySelector('header'));
-  const footerPromise = loadFooter(doc.querySelector('footer'));
-  // disable martech if martech=off is in the query string, this is used for testing ONLY
-  if (window.location.search?.indexOf('martech=off') === -1) loadMartech(headerPromise, footerPromise);
+
+  if (!embedMode) {
+    const headerPromise = loadHeader(doc.querySelector('header'));
+    const footerPromise = loadFooter(doc.querySelector('footer'));
+    // disable martech if martech=off is in the query string, this is used for testing ONLY
+    if (window.location.search?.indexOf('martech=off') === -1) loadMartech(headerPromise, footerPromise);
+  }
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   if (isLiveGradientBgPage) {
     loadDefaultModule('./page-bg-gradient/page-bg-gradient.js');
@@ -1215,6 +1244,9 @@ export async function loadArticles() {
 }
 
 async function showSignupDialog() {
+  // Product-iframe playlist embed must stay chrome-less (no signup wizard overlay).
+  if (document.body.classList.contains(PLAYLIST_EMBED_BODY_CLASS)) return;
+
   const isSignedIn = window?.adobeIMS?.isSignedInUser();
   if (!isSignedIn) return;
 
@@ -1628,7 +1660,7 @@ export async function fetchJson(url, fallbackUrl) {
 }
 
 export function xssSanitizeQueryParamValue(value) {
-  return value?.replace(/[^a-zA-Z0-9\s.|]/g, '');
+  return value?.replace(/[^a-zA-Z0-9\s.|-]/g, '');
 }
 
 export function getCookie(cookieName) {

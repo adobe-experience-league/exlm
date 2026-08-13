@@ -71,6 +71,78 @@ export const pageName = (language) => {
   return responseStr.toLowerCase();
 };
 
+/**
+ * Builds the `user` object pushed on analytics events, fetching the merged profile when
+ * available. Falls back to an unauthenticated shape on error or when signed out.
+ * @returns {Promise<{ user: object, userData: object|null }>}
+ */
+async function getDataLayerUserDetails() {
+  const user = {
+    userDetails: {
+      userAccountType: '',
+      userAuthenticatedStatus: 'unauthenticated',
+      userAuthenticatedSystem: 'ims',
+      userID: '',
+      userLanguageSetting: [],
+      learningInterest: [],
+      role: [],
+      experienceLevel: [],
+      industry: [],
+      notificationPref: false,
+      org: '',
+      orgs: [],
+      userCorporateName: '',
+    },
+  };
+
+  let userData = null;
+
+  try {
+    // eslint-disable-next-line import/no-cycle
+    const { defaultProfileClient } = await import('../auth/profile.js');
+    userData = await defaultProfileClient.getMergedProfile();
+    if (userData) {
+      // Prefer IMS authId so userID remains stable across org/account switches
+      const stableAuthId = userData?.authId || userData?.userId || '';
+
+      // Detect new signup: true if user hasn't seen signup modal yet
+      const isNewSignUp = !userData.interactions?.some((interaction) => interaction.event === 'modalSeen');
+
+      user.userDetails = {
+        ...user.userDetails,
+        userAccountType: userData.account_type,
+        userAuthenticatedStatus: 'logged in',
+        userID: stableAuthId,
+        userLanguageSetting: userData.preferred_languages || ['en-us'],
+        learningInterest: userData.interests || [],
+        role: userData.role || [],
+        experienceLevel: userData.level || [],
+        solutionLevel: userData.solutionLevels || [],
+        certifications: userData.certifications || [],
+        industry: userData.industryInterests || [],
+        notificationPref: userData.emailOptIn === true,
+        org: userData.org || '',
+        orgs: userData.orgs || [],
+        userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
+        newSignUp: isNewSignUp,
+      };
+
+      // get a list of all courses titles and ids with awards.timestamp property
+      // Get arrays of completed courses names and their IDs (where awards.timestamp and course.name exist)
+      const completedCourses = (userData?.courses_v2 || []).filter(
+        (course) => course?.awards?.timestamp && course.name,
+      );
+      user.userDetails.courses = completedCourses.length ? completedCourses.map((course) => course.name) : [];
+      user.userDetails.coursesID = completedCourses.length ? completedCourses.map((course) => course.courseId) : [];
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error getting user profile:', e);
+  }
+
+  return { user, userData };
+}
+
 export async function pushPageDataLayer(language, searchTrackingData) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
@@ -138,62 +210,10 @@ export async function pushPageDataLayer(language, searchTrackingData) {
     }
   }
 
-  const user = {
-    userDetails: {
-      userAccountType: '',
-      userAuthenticatedStatus: 'unauthenticated',
-      userAuthenticatedSystem: 'ims',
-      userID: '',
-      userLanguageSetting: [],
-      learningInterest: [],
-      role: [],
-      experienceLevel: [],
-      industry: [],
-      notificationPref: false,
-      org: '',
-      orgs: [],
-      userCorporateName: '',
-    },
-  };
+  const { user, userData } = await getDataLayerUserDetails();
 
   try {
-    // eslint-disable-next-line import/no-cycle
-    const { defaultProfileClient } = await import('../auth/profile.js');
-    const userData = await defaultProfileClient.getMergedProfile();
     if (userData) {
-      // Prefer IMS authId so userID remains stable across org/account switches
-      const stableAuthId = userData?.authId || userData?.userId || '';
-
-      // Detect new signup: true if user hasn't seen signup modal yet
-      const isNewSignUp = !userData.interactions?.some((interaction) => interaction.event === 'modalSeen');
-
-      user.userDetails = {
-        ...user.userDetails,
-        userAccountType: userData.account_type,
-        userAuthenticatedStatus: 'logged in',
-        userID: stableAuthId,
-        userLanguageSetting: userData.preferred_languages || ['en-us'],
-        learningInterest: userData.interests || [],
-        role: userData.role || [],
-        experienceLevel: userData.level || [],
-        solutionLevel: userData.solutionLevels || [],
-        certifications: userData.certifications || [],
-        industry: userData.industryInterests || [],
-        notificationPref: userData.emailOptIn === true,
-        org: userData.org || '',
-        orgs: userData.orgs || [],
-        userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
-        newSignUp: isNewSignUp,
-      };
-
-      // get a list of all courses titles and ids with awards.timestamp property
-      // Get arrays of completed courses names and their IDs (where awards.timestamp and course.name exist)
-      const completedCourses = (userData?.courses_v2 || []).filter(
-        (course) => course?.awards?.timestamp && course.name,
-      );
-      user.userDetails.courses = completedCourses.length ? completedCourses.map((course) => course.name) : [];
-      user.userDetails.coursesID = completedCourses.length ? completedCourses.map((course) => course.courseId) : [];
-
       const courseInfo = (userData.courses_v2 || []).find((c) => c.courseId === courseObj?.id);
       if (courseInfo) {
         if (courseInfo?.modules && Array.isArray(courseInfo?.modules)) {
@@ -1149,6 +1169,79 @@ export function pushBrowseFilterSearchClearEvent(searchType, filterType, filterV
 }
 
 /**
+ * Pushes an events filter/search interaction event to the Adobe Data Layer.
+ * Fired when a user selects a filter or submits a keyword in the events-search block.
+ *
+ * @param {Object} params
+ * @param {string} params.linkTitle - e.g. 'events filter apply' or 'search events'
+ * @param {string} params.linkType - e.g. 'filter' or 'search text box'
+ * @param {string} [params.destinationDomain] - Defaults to the current page URL
+ * @param {number} [params.count=0] - Result count after the interaction
+ * @param {number} [params.depth=1]
+ * @param {Object} [params.filter] - { product: [], eventType: [], series: [] }
+ * @param {string} [params.sortBy='relevancy']
+ * @param {string} [params.term] - Keyword entered in the search box
+ */
+export async function pushEventsFilterSearchEvent({
+  linkTitle,
+  linkType,
+  destinationDomain,
+  count = 0,
+  depth = 1,
+  filter = {},
+  sortBy = 'relevancy',
+  term = '',
+} = {}) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user, userData } = await getDataLayerUserDetails();
+
+  window.adobeDataLayer.push({
+    event: 'eventsFilterSearch',
+    eventType: 'web.webInteraction.eventsFilterSearch',
+    link: {
+      linkTitle: linkTitle || '',
+      linkLocation: 'events page',
+      linkType: linkType || '',
+      destinationDomain: destinationDomain || window.location.href,
+    },
+    eventHubFilter: {
+      Count: count,
+      depth,
+      filter: {
+        product: (filter.product || []).join(','),
+        eventType: (filter.eventType || []).join(','),
+        series: (filter.series || []).join(','),
+      },
+      sortBy,
+      term,
+    },
+    ...(userData && { user }),
+  });
+}
+
+/**
+ * Pushes a "clear all filters" link click event to the Adobe Data Layer for the events-search block.
+ *
+ * @param {string} [destinationDomain] - Defaults to the current page URL
+ */
+export async function pushEventsClearFiltersEvent(destinationDomain) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user, userData } = await getDataLayerUserDetails();
+
+  window.adobeDataLayer.push({
+    event: 'linkClicked',
+    eventType: 'web.webInteraction.linkclicks',
+    link: {
+      linkTitle: 'clear all filters clicked',
+      linkLocation: 'events page',
+      linkType: 'link',
+      destinationDomain: destinationDomain || window.location.href,
+    },
+    ...(userData && { user }),
+  });
+}
+
+/**
  * Pushes a grid toggle event to the Adobe Data Layer.
  * This event is fired when users switch to grid view.
  * @param {string} cardHeader - The header associated with the block.
@@ -1377,5 +1470,53 @@ export function pushTopNavSearchEvent(contentTypeDropDown, searchTerm) {
       contentTypeDropDown: contentTypeDropDown || '',
       searchTerm: searchTerm || '',
     },
+  });
+}
+
+/**
+ * Pushes the Brand Concierge widget impression event to the Adobe Data Layer.
+ * Fired once, the first time the BC entry point becomes visible.
+ */
+export async function pushBcWidgetImpressionEvent() {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user, userData } = await getDataLayerUserDetails();
+
+  window.adobeDataLayer.push({
+    event: 'bcWidgetImpression',
+    eventType: 'web.webInteraction.bcWidgetImpression',
+    link: {
+      linkTitle: 'bc widget impression',
+      linkLocation: 'brand concierge widget',
+      linkType: 'Impression',
+      destinationDomain: window.location.href,
+    },
+    ...(userData && { user }),
+  });
+}
+
+/**
+ * Pushes a Brand Concierge widget interaction event (open, close, expand,
+ * collapse, clear, message submit) to the Adobe Data Layer.
+ * @param {string} linkTitle - e.g. 'bc widget open', 'bc message submit'.
+ * @param {{ bcChatId?: string, bcChatMessageNumber?: number }} [options] - `bcChatId` is BC's own
+ * `conversationId` (captured from response:started/response:completed); `bcChatMessageNumber` is
+ * the number of chat replies since the start of the conversation. Passed only for the
+ * message-submit event.
+ */
+export async function pushBcInteractionEvent(linkTitle, { bcChatId, bcChatMessageNumber } = {}) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user, userData } = await getDataLayerUserDetails();
+
+  window.adobeDataLayer.push({
+    event: 'linkClicked',
+    eventType: 'web.webInteraction.linkclicks',
+    link: {
+      linkTitle,
+      linkLocation: 'brand concierge widget',
+      linkType: 'button',
+      destinationDomain: window.location.href,
+    },
+    ...(bcChatId && { bcChat: { bcChatId, bcChatMessageNumber } }),
+    ...(userData && { user }),
   });
 }

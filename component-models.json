@@ -10149,11 +10149,43 @@
       {
         "component": "text",
         "valueType": "string",
-
         "name": "title",
         "value": "",
         "label": "Title",
         "description": "Sets the main title of the grid cards."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h3",
+        "label": "Title Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
       },
       {
         "component": "richtext",
@@ -10197,6 +10229,39 @@
         "value": "",
         "label": "Title",
         "description": "Sets the title for the card. Please limit the content to 2 lines."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "cardTitleType",
+        "value": "h3",
+        "label": "Card Title Type",
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
       },
       {
         "component": "richtext",
@@ -10627,5 +10692,188 @@
   {
     "id": "premium-learning-profile-badges",
     "fields": []
+  },
+  {
+    "id": "featured-advocates",
+    "fields": []
+  },
+  {
+    "id": "champion-detail",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "fileReference",
+        "label": "Champion Image",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "fileReferenceAlt",
+        "value": "",
+        "label": "Champion Image Description",
+        "description": "A descriptive text of the image will be shown as tooltip."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "championName",
+        "value": "",
+        "label": "Champion Name",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jobTitle",
+        "value": "",
+        "label": "Title",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "quoteBio",
+        "value": "",
+        "label": "Quote",
+        "description": "Optional. Authors may include quotation marks if desired."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "communityProfileUrl",
+        "value": "",
+        "label": "Community Profile URL",
+        "description": "URL of the Champion's Community profile. The Champion name links to this URL.",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "productDesignation",
+        "value": "",
+        "label": "Product Designation",
+        "required": true
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "colorSelection",
+        "value": "",
+        "label": "Color Selection",
+        "required": true,
+        "description": "The color coding for each program is intentional and is used in several places throughout the experience. Yellow for Adobe Champion, purple for Community Advisor, and blue for User Group Leader.",
+        "options": [
+          {
+            "name": "Yellow - Adobe Champion",
+            "value": "yellow"
+          },
+          {
+            "name": "Purple - Community Advisor",
+            "value": "purple"
+          },
+          {
+            "name": "Blue - User Group Leader",
+            "value": "blue"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "champion-content",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "eyebrowIcon",
+        "label": "Eyebrow Icon",
+        "description": "Small icon shown beside the Content Type label.",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrowIconAlt",
+        "value": "",
+        "label": "Eyebrow Icon Description",
+        "description": "A descriptive text of the icon will be shown as tooltip."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "contentType",
+        "value": "",
+        "label": "Content Type",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "description": "Optional."
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "showByline",
+        "label": "Show Byline?",
+        "description": "Displays \"By {Champion Name}\" just above the footer text."
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "footerIcon",
+        "label": "Footer Icon",
+        "description": "Small icon shown beside the Footer Text.",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "footerIconAlt",
+        "value": "",
+        "label": "Footer Icon Description",
+        "description": "A descriptive text of the icon will be shown as tooltip."
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "footerText",
+        "value": "",
+        "label": "Footer Text",
+        "description": "e.g. \"5 min read\", \"Solved by {name}\"",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "linkText",
+        "value": "",
+        "label": "CTA Text",
+        "description": "Text to be shown for the CTA link.",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "link",
+        "value": "",
+        "label": "CTA Link",
+        "description": "URL to open when the CTA is clicked.",
+        "required": true
+      }
+    ]
   }
 ]

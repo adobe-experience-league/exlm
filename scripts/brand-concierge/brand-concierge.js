@@ -3,6 +3,7 @@ import { getConfig } from '../scripts.js';
 import { loadScript, decorateIcon } from '../lib-franklin.js';
 import { openDrawer } from '../dialog/dialog.js';
 import brandConciergeConfig from './brand-concierge-config.js';
+import { pushBcWidgetImpressionEvent, pushBcInteractionEvent } from '../analytics/lib-analytics.js';
 
 // Separate alloy instance avoids conflicting with the Launch-owned window.alloy.
 const ALLOY_INSTANCE_NAME = 'alloyBC';
@@ -29,10 +30,12 @@ const SCROLL_PIN_RETRY_DELAYS_MS = [16, 50, 120, 250, 500, 1000, 1800];
 const SUGGESTION_CLICK_SELECTOR =
   '.bc-prompt-suggestion-button, .bc-prompt-pill-button, .prompt-suggestions-container button, .widget-options-container button';
 
-/** BC `onEvent` types (see mt enum in the web client bundle). */
+/** BC `onEvent` types — see the Brand Concierge event callback reference. */
 const BC_EVENT_PROMPT_CLICKED = 'promptSuggestion:clicked';
 const BC_EVENT_QUERY_SUBMITTED = 'query:submitted';
 const BC_EVENT_RESPONSE_STARTED = 'response:started';
+const BC_EVENT_RESPONSE_COMPLETED = 'response:completed';
+const BC_EVENT_HISTORY_CLEARED = 'history:cleared';
 
 const SCROLL_EVENT_TYPES = new Set([BC_EVENT_PROMPT_CLICKED, BC_EVENT_QUERY_SUBMITTED, BC_EVENT_RESPONSE_STARTED]);
 
@@ -65,6 +68,28 @@ let mountInteractionHandler = null;
 let mountWithHandler = null;
 let keyboardScrollHandler = null;
 let keyboardScrollDialog = null;
+let impressionObserver = null;
+
+/** Real BC conversationId, captured from response:started/response:completed events. */
+let bcConversationId = null;
+/** Count of chat replies since the start of the conversation, used as bcChatMessageNumber. */
+let bcMessageNumber = 0;
+/**
+ * Whether any message has been submitted since the widget was mounted (for close with/without
+ * wording). Deliberately survives a transcript clear (see BC_EVENT_HISTORY_CLEARED handling) so
+ * send -> clear -> close is still tracked as "close with message".
+ */
+let bcHasMessage = false;
+
+/**
+ * Resets per-conversation tracking state on a transcript clear. Deliberately does not touch
+ * bcHasMessage: it tracks the widget-open session, not the conversation, so send -> clear -> close
+ * is still tracked as "close with message".
+ */
+function resetBcConversationTracking() {
+  bcConversationId = null;
+  bcMessageNumber = 0;
+}
 
 /**
  * Removes persisted BC chat sessions from localStorage (transcript + metadata).
@@ -402,7 +427,29 @@ function scheduleScrollAfterSuggestion(mount) {
 }
 
 function handleBrandConciergeClientEvent(event) {
-  if (!event?.eventType || !SCROLL_EVENT_TYPES.has(event.eventType)) return;
+  if (!event?.eventType) return;
+
+  if (event.eventType === BC_EVENT_HISTORY_CLEARED) {
+    resetBcConversationTracking();
+  }
+
+  if (event.eventType === BC_EVENT_QUERY_SUBMITTED) {
+    bcHasMessage = true;
+  }
+
+  // conversationId is assigned by the backend and only available once a response arrives —
+  // query:submitted itself carries no id (see BC event callback reference), so the "bc message
+  // submit" tracking event is pushed here, once it's known.
+  if (event.eventType === BC_EVENT_RESPONSE_STARTED || event.eventType === BC_EVENT_RESPONSE_COMPLETED) {
+    bcConversationId = event.data?.conversationId || bcConversationId;
+  }
+
+  if (event.eventType === BC_EVENT_RESPONSE_STARTED) {
+    bcMessageNumber += 1;
+    pushBcInteractionEvent('bc message submit', { bcChatId: bcConversationId, bcChatMessageNumber: bcMessageNumber });
+  }
+
+  if (!SCROLL_EVENT_TYPES.has(event.eventType)) return;
 
   const mount = getBrandConciergeMount();
   if (!mount) return;
@@ -629,6 +676,8 @@ async function clearBrandConciergeConversation() {
     await concierge.bootstrap(getBootstrapOptions());
   }
 
+  resetBcConversationTracking();
+
   const bcMount = getBrandConciergeMount();
   scrollToBottomWatcher?.cleanup();
   watchScrollToBottomButton(bcMount);
@@ -711,16 +760,22 @@ function createMountPoint() {
   triggerAsk.className = 'bc-trigger-ask';
   triggerAsk.textContent = 'Ask a question';
   trigger.append(triggerIcon, triggerAsk);
-  const betaBadge = document.createElement('span');
-  betaBadge.className = 'bc-trigger-beta';
-  betaBadge.textContent = 'BETA';
   const sendIcon = document.createElement('span');
   sendIcon.className = 'icon icon-bc-message-send bc-trigger-send';
   sendIcon.setAttribute('aria-hidden', 'true');
-  trigger.append(betaBadge, sendIcon);
+  trigger.append(sendIcon);
   decorateIcon(triggerIcon);
   decorateIcon(sendIcon);
   document.body.append(trigger);
+
+  impressionObserver?.disconnect();
+  impressionObserver = new IntersectionObserver((entries) => {
+    if (!entries.some((entry) => entry.isIntersecting)) return;
+    pushBcWidgetImpressionEvent();
+    impressionObserver.disconnect();
+    impressionObserver = null;
+  });
+  impressionObserver.observe(trigger);
 
   const mount = document.createElement('div');
   mount.id = 'brand-concierge-mount';
@@ -736,13 +791,15 @@ function createMountPoint() {
     id: DIALOG_ID,
     ariaLabel: 'AI assistant',
     title: 'Ask',
-    titleBadge: 'BETA',
     titleIcon: 'bc-ask-sparkles',
     content: mount,
     canExpand: true,
     beforeExpandButton: clearBtn,
     triggerEl: trigger,
-    onClose: () => trigger.setAttribute('aria-expanded', 'false'),
+    onClose: () => {
+      trigger.setAttribute('aria-expanded', 'false');
+      pushBcInteractionEvent(bcHasMessage ? 'bc widget close with message' : 'bc widget close without message');
+    },
   });
 
   const { element: dialog } = drawerHandle;
@@ -752,13 +809,17 @@ function createMountPoint() {
     dialog.showModal();
     trigger.setAttribute('aria-expanded', 'true');
     focusBcChatInputWhenReady(mount);
+    pushBcInteractionEvent('bc widget open');
   });
 
   dialog.querySelector('.exl-dialog-header-expand')?.addEventListener('click', () => {
     focusBcChatInputWhenReady(mount);
+    const isExpanded = dialog.classList.contains('exl-dialog-expanded');
+    pushBcInteractionEvent(isExpanded ? 'bc widget expand' : 'bc widget collapse');
   });
 
   clearBtn.addEventListener('click', () => {
+    pushBcInteractionEvent('bc widget clear');
     clearBrandConciergeConversation().catch((e) => warn('Clear conversation failed', e?.message || e));
   });
 
@@ -815,6 +876,8 @@ export function destroyBrandConcierge() {
   scrollToBottomWatcher = null;
   removeKeyboardScrollHandler();
   removeQuestionPinHandlers();
+  impressionObserver?.disconnect();
+  impressionObserver = null;
   inputLabelIconObserver?.disconnect();
   inputLabelIconObserver = null;
   panelDisclaimerObserver?.disconnect();
@@ -824,6 +887,9 @@ export function destroyBrandConcierge() {
   document.getElementById(TRIGGER_ID)?.remove();
   cssLinkEl?.remove();
   cssLinkEl = null;
+  bcConversationId = null;
+  bcMessageNumber = 0;
+  bcHasMessage = false;
 }
 
 export async function initBrandConcierge() {

@@ -1,0 +1,103 @@
+/* Mobile (default) */
+.champions {
+  --exlm-font-size-h1: var(--spectrum-heading-size-xl);
+  --exlm-font-size-h2: var(--spectrum-heading-size-l);
+  --exlm-font-size-h3: 24px;
+  --exlm-font-size-h4: var(--spectrum-font-size-400);
+  --exlm-font-size-h5: var(--spectrum-heading-size-s);
+  --exlm-font-size-h6: var(--spectrum-heading-size-xs);
+}
+
+.champions.page-bg-gradient {
+  --gradient-base-bg: #f8f8f8;
+  --gradient-primary: #0fa0b4;
+  --gradient-secondary: #19afa3;
+  --gradient-accent: #ffd700;
+  --gradient-blur: 135px;
+  --gradient-duration-primary: 8s;
+  --gradient-duration-secondary: 8s;
+  --gradient-duration-accent: 8s;
+}
+
+.champions.page-bg-gradient .gradient-circle-primary {
+  opacity: 0.28;
+}
+
+.champions.page-bg-gradient .gradient-circle-secondary {
+  opacity: 0.3;
+}
+
+.champions.page-bg-gradient .gradient-circle-accent {
+  opacity: 0.29;
+}
+
+body.champions .section {
+  background-color: unset;
+  color: var(--non-spectrum-dark-gray);
+  font-size: var(--spectrum-font-size-300);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--spectrum-line-height-l);
+}
+
+body.champions .section > .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) {
+  font-weight: var(--font-weight-bold);
+  line-height: 125%;
+}
+
+/* Desktop */
+@media (min-width: 900px) {
+  .champions {
+    --exlm-font-size-h1: 44px;
+    --exlm-font-size-h2: var(--spectrum-heading-size-xl);
+    --exlm-font-size-h3: var(--spectrum-heading-size-l);
+    --exlm-font-size-h4: 24px;
+    --exlm-font-size-h5: var(--spectrum-font-size-400);
+    --exlm-font-size-h6: var(--spectrum-heading-size-s);
+  }
+}
+
+/* Grid Cards styling */
+body.champions .grid-cards.minimal .grid-card-container {
+  gap: var(--spectrum-spacing-600);
+}
+
+body.champions :is(.grid-cards-title, .grid-card-title).h1,
+body.champions :is(.grid-card-description, .grid-cards-description) h1 {
+  font-size: var(--exlm-font-size-h1);
+  font-weight: var(--font-weight-bold);
+}
+
+body.champions :is(.grid-cards-title, .grid-card-title).h2,
+body.champions :is(.grid-card-description, .grid-cards-description) h2 {
+  font-size: var(--exlm-font-size-h2);
+  font-weight: var(--font-weight-bold);
+}
+
+body.champions :is(.grid-cards-title, .grid-card-title).h3,
+body.champions :is(.grid-card-description, .grid-cards-description) h3 {
+  font-size: var(--exlm-font-size-h3);
+  font-weight: var(--font-weight-bold);
+}
+
+body.champions :is(.grid-cards-title, .grid-card-title).h4,
+body.champions :is(.grid-card-description, .grid-cards-description) h4 {
+  font-size: var(--exlm-font-size-h4);
+  font-weight: var(--font-weight-bold);
+}
+
+body.champions :is(.grid-cards-title, .grid-card-title).h5,
+body.champions :is(.grid-card-description, .grid-cards-description) h5 {
+  font-size: var(--exlm-font-size-h5);
+  font-weight: var(--font-weight-bold);
+}
+
+body.champions :is(.grid-cards-title, .grid-card-title).h6,
+body.champions :is(.grid-card-description, .grid-cards-description) h6 {
+  font-size: var(--exlm-font-size-h6);
+  font-weight: var(--font-weight-bold);
+}
+
+body.champions .grid-cards.minimal .grid-card:not(:has(.grid-card-cta)) {
+  height: 160px;
+  min-height: 160px;
+}

@@ -315,6 +315,9 @@
   --non-spectrum-navy-blue: #1473e6;
   --non-spectrum-dark-navy-blue: #0265dc;
   --non-spectrum-navy-blue-alpha: rgb(20 115 230 / 25%);
+  --non-spectrum-champion-yellow: #ffa311;
+  --non-spectrum-champion-purple: #a55be8;
+  --non-spectrum-champion-blue: #1473e6;
 
   /* ── Brand Concierge ──────────────────────────────────────────────────── */
 
@@ -599,6 +602,27 @@ body.appear {
 header {
   height: var(--nav-height);
   border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
+}
+
+/* Playlist product-iframe chrome only — selectors must stay under .playlist-embed-mode */
+body.playlist-embed-mode {
+  --nav-height: 0px;
+
+  overflow-x: hidden;
+}
+
+body.playlist-embed-mode > header,
+body.playlist-embed-mode > footer,
+body.playlist-embed-mode > aside {
+  display: none;
+  height: 0;
+  min-height: 0;
+  border: 0;
+  overflow: hidden;
+}
+
+body.playlist-embed-mode > main {
+  margin: 0;
 }
 
 header.header-v2 {

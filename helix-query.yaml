@@ -437,6 +437,80 @@ indices:
       - /zh-hant/courses/instructors/**
     target: /zh-hant/course-index.json
 
+  champion-en: &base-champion
+    include:
+      - /en/champions/**
+    target: /en/champion-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: |
+          attribute(el, 'content')
+      lastModified:
+        select: head > meta[name="last-update"]
+        value: |
+          parseTimestamp(attribute(el, "content"), 'ddd MMM DD YYYY hh:mm:ss GMT')
+      robots:
+        select: head > meta[name="robots"]
+        value: attribute(el, "content")
+      lastContentModified:
+        select: none
+        value: parseTimestamp(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
+
+  champion-fr:
+    <<: *base-champion
+    include:
+      - /fr/champions/**
+    target: /fr/champion-index.json
+
+  champion-de:
+    <<: *base-champion
+    include:
+      - /de/champions/**
+    target: /de/champion-index.json
+
+  champion-es:
+    <<: *base-champion
+    include:
+      - /es/champions/**
+    target: /es/champion-index.json
+
+  champion-it:
+    <<: *base-champion
+    include:
+      - /it/champions/**
+    target: /it/champion-index.json
+
+  champion-pt-br:
+    <<: *base-champion
+    include:
+      - /pt-br/champions/**
+    target: /pt-br/champion-index.json
+
+  champion-ko:
+    <<: *base-champion
+    include:
+      - /ko/champions/**
+    target: /ko/champion-index.json
+
+  champion-ja:
+    <<: *base-champion
+    include:
+      - /ja/champions/**
+    target: /ja/champion-index.json
+
+  champion-zh-hans:
+    <<: *base-champion
+    include:
+      - /zh-hans/champions/**
+    target: /zh-hans/champion-index.json
+
+  champion-zh-hant:
+    <<: *base-champion
+    include:
+      - /zh-hant/champions/**
+    target: /zh-hant/champion-index.json
+
   # Sitemap indicies, split in 2 google has a limit of 50k (and 50MB) urls per sitemap
   sitemap-en-1: &base-sitemap-1
     include:

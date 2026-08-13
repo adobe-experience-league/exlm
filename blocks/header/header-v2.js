@@ -516,12 +516,15 @@ const buildMobileNavDrawer = (ul, navBlock, decoratorOptions) => {
     });
   }
   if (decoratorState.languages?.length) {
+    const { prefix, suffix } = getPathDetails();
     ul.appendChild(
       htmlToElement(
         `<li class="nav-item-mobile">
           <p>${decoratorState.languageTitle}</p>
           <ul>
-            ${decoratorState.languages.map((l) => `<li><a href="${l.lang}">${l.title}</a></li>`).join('')}
+            ${decoratorState.languages
+              .map((l) => `<li><a href="${prefix}/${l.lang}${suffix}">${l.title}</a></li>`)
+              .join('')}
           </ul>
         </li>`,
       ),
@@ -1007,8 +1010,10 @@ class ExlHeader extends HTMLElement {
     if (headerFragment) {
       loadSearchElement();
 
+      // .header-clip is a purely structural layer: see its CSS rule for why it exists
+      // (decouples the horizontal-overflow safety net from `.header`'s visible 52px height).
       const headerWrapper = htmlToElement(
-        '<div class="header-wrapper" id="header-wrapper"><div class="header block"></div></div>',
+        '<div class="header-wrapper" id="header-wrapper"><div class="header-clip"><div class="header block"></div></div></div>',
       );
       this.shadowRoot.appendChild(headerWrapper);
       const header = this.shadowRoot.querySelector('.header');
