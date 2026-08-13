@@ -40,9 +40,9 @@ export default function atomicSearchBoxHandler(block) {
 
   document.addEventListener(CUSTOM_EVENTS.SEARCH_QUERY_CHANGED, onSearchQueryChange);
 
-  if (baseElement.dataset.suggestionsHideEvented !== 'true') {
+  if (baseElement.dataset.hideSuggestionsBound !== 'true') {
     // Claim immediately so concurrent handler passes cannot attach duplicate listeners.
-    baseElement.dataset.suggestionsHideEvented = 'true';
+    baseElement.dataset.hideSuggestionsBound = 'true';
 
     const setupSuggestionsHide = () => {
       const textarea = baseElement.shadowRoot?.querySelector('[part="textarea"]');
