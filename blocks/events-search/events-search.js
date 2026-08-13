@@ -31,35 +31,8 @@ const PLACEHOLDER_COUNT_TOKEN = '${count}';
 const PLACEHOLDER_PG_COUNT_TOKEN = '${pgCount}';
 /* eslint-enable no-template-curly-in-string */
 const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
-const MAX_VISIBLE_FILTER_OPTIONS = 11;
 
 // Filter UI helpers
-
-/**
- * Caps the options list height to MAX_VISIBLE_FILTER_OPTIONS rows using the actual rendered row
- * height (measured from the DOM rather than assumed via CSS) so the scrollbar kicks in at the
- * right point regardless of font metrics. Only measurable while the group is expanded/visible.
- */
-function applyFilterOptionsScrollCap(groupEl) {
-  const optionsList = groupEl?.querySelector('.events-search-filter-options-list');
-  if (!optionsList) return;
-  const options = optionsList.querySelectorAll('.events-search-filter-option');
-  if (options.length <= MAX_VISIBLE_FILTER_OPTIONS) {
-    optionsList.style.maxHeight = '';
-    return;
-  }
-  if (optionsList.offsetParent === null) return;
-  const listTop = optionsList.getBoundingClientRect().top;
-  const lastVisibleBottom = options[MAX_VISIBLE_FILTER_OPTIONS - 1].getBoundingClientRect().bottom;
-  const capHeight = lastVisibleBottom - listTop;
-  if (capHeight > 0) optionsList.style.maxHeight = `${Math.ceil(capHeight)}px`;
-}
-
-function recalcExpandedFilterScrollCaps(block) {
-  block.querySelectorAll('.events-search-filter-group.is-expanded').forEach((groupEl) => {
-    applyFilterOptionsScrollCap(groupEl);
-  });
-}
 
 function removeFilterGroupOptionsShimmer(optionsContainer) {
   optionsContainer?.querySelector('.events-search-filter-options-shimmer')?.remove();
@@ -220,7 +193,6 @@ function syncDynamicFacetGroup(block, group) {
   if (wasExpanded) {
     groupEl.classList.add('is-expanded');
     groupEl.querySelector('.events-search-filter-group-header')?.setAttribute('aria-expanded', 'true');
-    applyFilterOptionsScrollCap(groupEl);
   }
 }
 
@@ -660,7 +632,9 @@ function syncFilterUIFromHeadlessState(block, groups) {
         });
       } else if (!isSelected) {
         if (existingIndex !== -1) activeTags.splice(existingIndex, 1);
-        pendingRemovals.delete(compositeKey);
+        if (!selectedValues.has(checkbox.value)) {
+          pendingRemovals.delete(compositeKey);
+        }
       }
       checkbox.closest('.events-search-filter-option')?.classList.toggle('checked', checkbox.checked);
     });
@@ -1175,10 +1149,6 @@ function bindFilterInteractions(block, groups) {
   const panel = block.querySelector('.events-search-filters-panel');
   if (!panel) return;
 
-  // Recompute the scroll cap on resize so it stays accurate across breakpoints.
-  const resizeObserver = new ResizeObserver(() => recalcExpandedFilterScrollCaps(block));
-  resizeObserver.observe(panel);
-
   panel.addEventListener('click', (event) => {
     const groupHeader = event.target.closest('.events-search-filter-group-header');
     if (!groupHeader) return;
@@ -1187,7 +1157,6 @@ function bindFilterInteractions(block, groups) {
     const isExpanded = groupEl.classList.contains('is-expanded');
     groupEl.classList.toggle('is-expanded', !isExpanded);
     groupHeader.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
-    if (!isExpanded) applyFilterOptionsScrollCap(groupEl);
   });
 
   panel.addEventListener('change', (event) => {

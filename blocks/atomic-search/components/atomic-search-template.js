@@ -154,6 +154,10 @@ const getCoveoAtomicMarkup = (placeholders) => {
                   display: block;
                 }
               }
+              atomic-search-box.hide-suggestions::part(suggestions-wrapper),
+              atomic-search-box.hide-suggestions::part(suggestions) {
+                display: none;
+              }
               atomic-search-box::part(textarea-spacer) {
                 display: none;
               }
