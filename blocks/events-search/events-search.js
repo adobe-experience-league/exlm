@@ -632,7 +632,9 @@ function syncFilterUIFromHeadlessState(block, groups) {
         });
       } else if (!isSelected) {
         if (existingIndex !== -1) activeTags.splice(existingIndex, 1);
-        pendingRemovals.delete(compositeKey);
+        if (!selectedValues.has(checkbox.value)) {
+          pendingRemovals.delete(compositeKey);
+        }
       }
       checkbox.closest('.events-search-filter-option')?.classList.toggle('checked', checkbox.checked);
     });
