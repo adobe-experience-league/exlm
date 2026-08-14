@@ -159,6 +159,7 @@
   --chat-history-padding-mobile: 16px 20px;
   --chat-history-padding-tablet: 20px 5%;
   --chat-history-padding-top-expanded: 24px;
+  --exlm-font-size-content: var(--spectrum-body-size-m);
 }
 
 #bc-dialog .exl-dialog-body {
@@ -365,7 +366,7 @@
 #brand-concierge-mount .concierge-message .message-text {
   width: 100% !important;
   max-width: 100% !important;
-  font-size: 16px !important;
+  font-size: var(--exlm-font-size-content) !important;
 }
 
 #brand-concierge-mount .concierge-message .message-content {
@@ -614,6 +615,10 @@
   margin: 0 !important;
   font-size: 13px !important;
   word-break: break-word !important;
+}
+
+#brand-concierge-mount .message-content .citation-number a {
+  font-size: 13px !important;
 }
 
 #brand-concierge-mount .citations-source-item {
