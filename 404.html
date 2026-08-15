@@ -51,9 +51,9 @@
 
       // A deleted step/module page 404s here even though its course is still live.
       // Redirect back to the course landing page instead of showing a generic 404.
-      // The section is written hidden (see the blocking script at the top of <body>)
-      // for course/step paths so it's laid out correctly from the start — we just
-      // reveal it here once we know there's nowhere to redirect to.
+      // The section is hidden (see the blocking script in <body>) for course/step
+      // paths so it's laid out correctly from the start — we just reveal it here
+      // once we know there's nowhere to redirect to.
       let redirected = false;
       const tryCourseRedirect = async () => {
         try {
@@ -65,6 +65,8 @@
           sampleRUM('404-course-redirect', { source: document.referrer, target: courseUrl });
           window.location.replace(courseUrl);
         } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error(error);
           // Fall through to the generic 404 handling below //
         }
       };
@@ -143,24 +145,28 @@
   <body>
     <header></header>
     <main class="error">
+      <div class="section">
+        <div>
+          <div>
+            <img class="error-image" src="/404.webp" alt="404" />
+          </div>
+        </div>
+      </div>
       <script>
         (function () {
           // Mirrors getCourseFragmentUrl's path shape check (course-utils.js) without the
-          // module import, so it can run synchronously before this script tag's position
-          // is parsed. The section is always written now (so the grid + absolutely
-          // positioned image layout correctly from the very first layout pass — building
-          // this markup later, after the page, causes it to render broken). For course/step
-          // paths it's written hidden until the redirect check (deferred module script
-          // below) confirms there's nowhere to redirect to; other 404s show it immediately.
+          // module import, so it can run synchronously right after the image above is
+          // parsed — before the browser paints it. For course/step paths this hides the
+          // image until the redirect check (deferred module script above) confirms
+          // there's nowhere to redirect to; other 404s are unaffected and show it
+          // immediately, same as always. The image itself stays real static HTML, so it
+          // still renders even if JavaScript never runs.
           var parts = window.location.pathname.split('/').filter(Boolean);
           var idx = parts.indexOf('courses');
           var looksLikeCoursePath = idx > 0 && parts.length > idx + 1;
-          var hiddenAttr = looksLikeCoursePath ? ' style="visibility:hidden"' : '';
-          document.write(
-            '<div class="section"' +
-              hiddenAttr +
-              '><div><div><img class="error-image" src="/404.webp" alt="404" /></div></div></div>',
-          );
+          if (looksLikeCoursePath) {
+            document.querySelector('main.error .section').style.visibility = 'hidden';
+          }
         })();
       </script>
     </main>
