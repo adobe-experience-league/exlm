@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { getConfig, getPathDetails } from '../scripts.js';
+import { getConfig, getPathDetails, fetchJson } from '../scripts.js';
 import { loadScript, decorateIcon } from '../lib-franklin.js';
 import { openDrawer } from '../dialog/dialog.js';
 import brandConciergeConfig from './brand-concierge-config.js';
@@ -69,6 +69,7 @@ let mountWithHandler = null;
 let keyboardScrollHandler = null;
 let keyboardScrollDialog = null;
 let impressionObserver = null;
+let welcomeExamplesOverride = null;
 
 /** Real BC conversationId, captured from response:started/response:completed events. */
 let bcConversationId = null;
@@ -461,10 +462,11 @@ function handleBrandConciergeClientEvent(event) {
 }
 
 function getBootstrapOptions() {
-  const { stickySession = false, ...stylingConfigurations } = brandConciergeConfig;
+  const { stickySession = false, arrays, ...stylingConfigurations } = brandConciergeConfig;
+  const effectiveArrays = welcomeExamplesOverride ? { ...arrays, 'welcome.examples': welcomeExamplesOverride } : arrays;
   return {
     instanceName: ALLOY_INSTANCE_NAME,
-    stylingConfigurations,
+    stylingConfigurations: { ...stylingConfigurations, arrays: effectiveArrays },
     selector: MOUNT_SELECTOR,
     stickySession,
     onEvent: handleBrandConciergeClientEvent,
@@ -830,14 +832,17 @@ const BC_SHEET_PROMPT_COLUMN = 'Default prompts';
 
 async function fetchWelcomeExamplesOverride() {
   const lang = getPathDetails()?.lang || 'en';
+  const prefix = window.hlx.codeBasePath;
   try {
-    const resp = await fetch(`${window.hlx.codeBasePath}/${lang}/brand-concierge.json`);
-    if (!resp.ok) return null;
-    const { data } = await resp.json();
-    const examples = (data || [])
+    const data = await fetchJson(`${prefix}/${lang}/brand-concierge.json`, `${prefix}/en/brand-concierge.json`);
+    const examples = data
       .filter((row) => row[BC_SHEET_PROMPT_COLUMN]?.trim())
       .map((row) => ({ text: row[BC_SHEET_PROMPT_COLUMN].trim() }));
-    return examples.length ? examples : null;
+    if (!examples.length) {
+      warn('Failed to fetch brand-concierge.json');
+      return null;
+    }
+    return examples;
   } catch (e) {
     warn('Welcome examples override fetch failed; using config defaults', e?.message || e);
     return null;
@@ -908,6 +913,7 @@ export function destroyBrandConcierge() {
   bcConversationId = null;
   bcMessageNumber = 0;
   bcHasMessage = false;
+  welcomeExamplesOverride = null;
 }
 
 export async function initBrandConcierge() {
@@ -916,7 +922,7 @@ export async function initBrandConcierge() {
   createMountPoint();
   injectAlloyStub();
 
-  // Runs alongside the script loads below so it adds no extra latency.
+  welcomeExamplesOverride = null;
   const welcomeExamplesPromise = fetchWelcomeExamplesOverride();
 
   try {
@@ -928,9 +934,8 @@ export async function initBrandConcierge() {
     log('[BC] loading Web Client', bcWebClientUrl);
     await loadScript(bcWebClientUrl);
 
-    const welcomeExamplesOverride = await welcomeExamplesPromise;
+    welcomeExamplesOverride = await welcomeExamplesPromise;
     if (welcomeExamplesOverride) {
-      brandConciergeConfig.arrays['welcome.examples'] = welcomeExamplesOverride;
       log('[BC] welcome examples overridden from brand-concierge.json', welcomeExamplesOverride);
     }
 
