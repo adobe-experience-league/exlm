@@ -12,7 +12,6 @@
     <script type="module">
       import { sampleRUM } from '/scripts/lib-franklin.js';
       import { getPathDetails } from '/scripts/scripts.js';
-      import { getCourseFragmentUrl } from '/scripts/courses/course-utils.js';
       const { lang = 'en' } = getPathDetails() || {};
       const errorPagePath = `/${lang}/404`;
       const defaultErrorHTML = `
@@ -49,36 +48,7 @@
         }
       };
 
-      // A deleted step/module page 404s here even though its course is still live.
-      // Redirect back to the course landing page instead of showing a generic 404.
-      // The section is hidden (see the blocking script in <body>) for course/step
-      // paths so it's laid out correctly from the start — we just reveal it here
-      // once we know there's nowhere to redirect to.
-      let redirected = false;
-      const tryCourseRedirect = async () => {
-        try {
-          const courseUrl = getCourseFragmentUrl(window.location.pathname);
-          if (!courseUrl) return;
-          const response = await fetch(courseUrl);
-          if (!response.ok) return;
-          redirected = true;
-          sampleRUM('404-course-redirect', { source: document.referrer, target: courseUrl });
-          window.location.replace(courseUrl);
-        } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error(error);
-          // Fall through to the generic 404 handling below //
-        }
-      };
-      const courseRedirectAttempt = tryCourseRedirect().finally(() => {
-        if (!redirected) {
-          document.querySelector('main.error .section')?.style.removeProperty('visibility');
-        }
-      });
-
-      window.addEventListener('load', async () => {
-        await courseRedirectAttempt;
-        if (redirected) return;
+      window.addEventListener('load', () => {
         sampleRUM('404', { source: document.referrer });
         fetchAndParseHTML('main');
       });
@@ -152,23 +122,6 @@
           </div>
         </div>
       </div>
-      <script>
-        (function () {
-          // Mirrors getCourseFragmentUrl's path shape check (course-utils.js) without the
-          // module import, so it can run synchronously right after the image above is
-          // parsed — before the browser paints it. For course/step paths this hides the
-          // image until the redirect check (deferred module script above) confirms
-          // there's nowhere to redirect to; other 404s are unaffected and show it
-          // immediately, same as always. The image itself stays real static HTML, so it
-          // still renders even if JavaScript never runs.
-          var parts = window.location.pathname.split('/').filter(Boolean);
-          var idx = parts.indexOf('courses');
-          var looksLikeCoursePath = idx > 0 && parts.length > idx + 1;
-          if (looksLikeCoursePath) {
-            document.querySelector('main.error .section').style.visibility = 'hidden';
-          }
-        })();
-      </script>
     </main>
     <footer></footer>
   </body>
