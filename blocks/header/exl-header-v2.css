@@ -185,30 +185,46 @@ button:focus {
   height: var(--nav-height);
   border-bottom: 1px solid var(--border-color-regular);
   box-shadow: var(--nav-shadow);
-
-  /* clip the 100vw full-bleed dropdown's scrollbar-width overflow (Windows) without clipping its vertical extent */
-  overflow: clip visible;
 }
 
 .header {
   z-index: var(--z-header);
-  height: 100%;
-  position: relative;
+  width: 100%;
   max-width: var(--nav-max-width);
+  margin: 0 auto;
+  height: var(--nav-height);
+  position: relative;
   background-color: var(--nav-bg-color);
   container-name: headersection;
   container-type: inline-size;
 }
 
-@media (min-width: 1200px) {
-  .header-wrapper {
-    display: flex;
-    justify-content: center;
-  }
+/* Purely structural: decouples the horizontal-overflow safety net from `.header`'s visible
+   52px height. Generously tall (so Safari's forced overflow-y:auto — see the overflow-x/y
+   mismatch note below — never has anything to visually clip) and absolutely positioned (so
+   that height doesn't push down page content). Spans the *entire* width of `.header-wrapper`
+   (no max-width) — it must be at least as wide as the full-bleed dropdown itself, or its
+   `overflow-x: hidden` would clip the intentional full-bleed along with any accidental overflow.
+   `.header`'s own max-width/centering (above) is unaffected, since it's independent of this
+   layer's width. `overflow-x: hidden` here properly excludes overflow from the page's scrollable
+   area, fixing the Windows scrollbar-width issue for good — unlike `clip-path`, which only
+   affects painting, not what counts toward page scroll width. */
+.header-clip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  overflow-x: hidden;
 
-  .header {
-    width: 100%;
-  }
+  /* don't block clicks on page content below the header for the invisible portion of this
+     100vh box; restored to `auto` on `.header` below, which is the only part that's ever
+     visible or needs to be interactive */
+  pointer-events: none;
+}
+
+.header-clip > .header {
+  pointer-events: auto;
 }
 
 /* Mobile: 5-column grid; desktop: 9-column grid */
@@ -442,7 +458,8 @@ button:focus {
   position: absolute;
   z-index: var(--z-dropdown);
 
-  /* for full bleed panel on desktops > 1440px */
+  /* for full bleed panel on desktops > 1440px. Any overshoot from 100vw not subtracting the
+     scrollbar's width (Windows/Linux) is caught by .header-clip's overflow-x: hidden. */
   left: min(0px, calc((var(--nav-max-width) - 100vw) / 2));
   top: 101%;
   width: 100vw;
@@ -673,6 +690,7 @@ button:focus {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    max-width: none;
   }
 
   .header .nav-items-secondary a::before {

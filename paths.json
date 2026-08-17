@@ -51,6 +51,7 @@
     "/content/exlm/global/ja/placeholders:/ja/placeholders.json",
     "/content/exlm/global/zh-CN/placeholders:/zh-hans/placeholders.json",
     "/content/exlm/global/zh-TW/placeholders:/zh-hant/placeholders.json",
+    "/content/exlm/global/en/brand-concierge:/en/brand-concierge.json",
     "/content/exlm.resource/en/browse-index.json:/en/browse-index.json",
     "/content/exlm.resource/fr/browse-index.json:/fr/browse-index.json",
     "/content/exlm.resource/de/browse-index.json:/de/browse-index.json",

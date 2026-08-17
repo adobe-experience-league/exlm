@@ -74,8 +74,22 @@ let impressionObserver = null;
 let bcConversationId = null;
 /** Count of chat replies since the start of the conversation, used as bcChatMessageNumber. */
 let bcMessageNumber = 0;
-/** Whether any message has been submitted in this conversation (for close with/without wording). */
+/**
+ * Whether any message has been submitted since the widget was mounted (for close with/without
+ * wording). Deliberately survives a transcript clear (see BC_EVENT_HISTORY_CLEARED handling) so
+ * send -> clear -> close is still tracked as "close with message".
+ */
 let bcHasMessage = false;
+
+/**
+ * Resets per-conversation tracking state on a transcript clear. Deliberately does not touch
+ * bcHasMessage: it tracks the widget-open session, not the conversation, so send -> clear -> close
+ * is still tracked as "close with message".
+ */
+function resetBcConversationTracking() {
+  bcConversationId = null;
+  bcMessageNumber = 0;
+}
 
 /**
  * Removes persisted BC chat sessions from localStorage (transcript + metadata).
@@ -158,7 +172,7 @@ function buildPanelDisclaimer() {
   termsLink.textContent = 'Generative AI Terms';
 
   disclaimer.append(
-    document.createTextNode("Use of this beta AI chatbot is subject to Adobe's "),
+    document.createTextNode("Use of this AI chatbot is subject to Adobe's "),
     privacyLink,
     document.createTextNode(
       ". Don't share sensitive data. AI responses are not your Content, may be inaccurate, and any offers provided are non-binding. ",
@@ -416,9 +430,7 @@ function handleBrandConciergeClientEvent(event) {
   if (!event?.eventType) return;
 
   if (event.eventType === BC_EVENT_HISTORY_CLEARED) {
-    bcConversationId = null;
-    bcMessageNumber = 0;
-    bcHasMessage = false;
+    resetBcConversationTracking();
   }
 
   if (event.eventType === BC_EVENT_QUERY_SUBMITTED) {
@@ -664,9 +676,7 @@ async function clearBrandConciergeConversation() {
     await concierge.bootstrap(getBootstrapOptions());
   }
 
-  bcConversationId = null;
-  bcMessageNumber = 0;
-  bcHasMessage = false;
+  resetBcConversationTracking();
 
   const bcMount = getBrandConciergeMount();
   scrollToBottomWatcher?.cleanup();
@@ -750,13 +760,10 @@ function createMountPoint() {
   triggerAsk.className = 'bc-trigger-ask';
   triggerAsk.textContent = 'Ask a question';
   trigger.append(triggerIcon, triggerAsk);
-  const betaBadge = document.createElement('span');
-  betaBadge.className = 'bc-trigger-beta';
-  betaBadge.textContent = 'BETA';
   const sendIcon = document.createElement('span');
   sendIcon.className = 'icon icon-bc-message-send bc-trigger-send';
   sendIcon.setAttribute('aria-hidden', 'true');
-  trigger.append(betaBadge, sendIcon);
+  trigger.append(sendIcon);
   decorateIcon(triggerIcon);
   decorateIcon(sendIcon);
   document.body.append(trigger);
@@ -784,7 +791,6 @@ function createMountPoint() {
     id: DIALOG_ID,
     ariaLabel: 'AI assistant',
     title: 'Ask',
-    titleBadge: 'BETA',
     titleIcon: 'bc-ask-sparkles',
     content: mount,
     canExpand: true,

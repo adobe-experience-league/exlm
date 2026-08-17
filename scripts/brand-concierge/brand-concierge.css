@@ -2,7 +2,7 @@
   position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 25000;
+  z-index: 999;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -62,7 +62,7 @@
   align-items: center;
   line-height: 0;
 
-  /* Pull “Ask” closer than flex gap allows without tightening Ask–BETA */
+  /* Pull “Ask” closer than the flex gap allows */
   margin-inline-end: -8px;
 }
 
@@ -79,21 +79,6 @@
   color: var(--spectrum-gray-500);
   letter-spacing: -0.01em;
   transition: color 0.2s ease;
-}
-
-#bc-trigger .bc-trigger-beta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: -6px;
-  padding: 2px 5px;
-  border-radius: 5px;
-  background-color: #ebebef;
-  color: #9d59b7;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  line-height: 1;
 }
 
 #bc-trigger .bc-trigger-send {
@@ -174,6 +159,7 @@
   --chat-history-padding-mobile: 16px 20px;
   --chat-history-padding-tablet: 20px 5%;
   --chat-history-padding-top-expanded: 24px;
+  --exlm-font-size-content: var(--spectrum-body-size-m);
 }
 
 #bc-dialog .exl-dialog-body {
@@ -380,7 +366,7 @@
 #brand-concierge-mount .concierge-message .message-text {
   width: 100% !important;
   max-width: 100% !important;
-  font-size: 16px !important;
+  font-size: var(--exlm-font-size-content) !important;
 }
 
 #brand-concierge-mount .concierge-message .message-content {
@@ -629,6 +615,10 @@
   margin: 0 !important;
   font-size: 13px !important;
   word-break: break-word !important;
+}
+
+#brand-concierge-mount .message-content .citation-number a {
+  font-size: 13px !important;
 }
 
 #brand-concierge-mount .citations-source-item {

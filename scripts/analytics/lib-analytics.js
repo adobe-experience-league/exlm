@@ -1182,7 +1182,7 @@ export function pushBrowseFilterSearchClearEvent(searchType, filterType, filterV
  * @param {string} [params.sortBy='relevancy']
  * @param {string} [params.term] - Keyword entered in the search box
  */
-export function pushEventsFilterSearchEvent({
+export async function pushEventsFilterSearchEvent({
   linkTitle,
   linkType,
   destinationDomain,
@@ -1193,6 +1193,7 @@ export function pushEventsFilterSearchEvent({
   term = '',
 } = {}) {
   window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user, userData } = await getDataLayerUserDetails();
 
   window.adobeDataLayer.push({
     event: 'eventsFilterSearch',
@@ -1207,13 +1208,14 @@ export function pushEventsFilterSearchEvent({
       Count: count,
       depth,
       filter: {
-        product: filter.product || [],
-        eventType: filter.eventType || [],
-        series: filter.series || [],
+        product: (filter.product || []).join(','),
+        eventType: (filter.eventType || []).join(','),
+        series: (filter.series || []).join(','),
       },
       sortBy,
       term,
     },
+    ...(userData && { user }),
   });
 }
 
@@ -1222,8 +1224,9 @@ export function pushEventsFilterSearchEvent({
  *
  * @param {string} [destinationDomain] - Defaults to the current page URL
  */
-export function pushEventsClearFiltersEvent(destinationDomain) {
+export async function pushEventsClearFiltersEvent(destinationDomain) {
   window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user, userData } = await getDataLayerUserDetails();
 
   window.adobeDataLayer.push({
     event: 'linkClicked',
@@ -1234,6 +1237,7 @@ export function pushEventsClearFiltersEvent(destinationDomain) {
       linkType: 'link',
       destinationDomain: destinationDomain || window.location.href,
     },
+    ...(userData && { user }),
   });
 }
 
