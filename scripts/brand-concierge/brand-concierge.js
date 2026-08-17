@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { getConfig } from '../scripts.js';
+import { getConfig, getPathDetails } from '../scripts.js';
 import { loadScript, decorateIcon } from '../lib-franklin.js';
 import { openDrawer } from '../dialog/dialog.js';
 import brandConciergeConfig from './brand-concierge-config.js';
@@ -826,6 +826,24 @@ function createMountPoint() {
   return dialog;
 }
 
+const BC_SHEET_PROMPT_COLUMN = 'Default prompts';
+
+async function fetchWelcomeExamplesOverride() {
+  const lang = getPathDetails()?.lang || 'en';
+  try {
+    const resp = await fetch(`${window.hlx.codeBasePath}/${lang}/brand-concierge.json`);
+    if (!resp.ok) return null;
+    const { data } = await resp.json();
+    const examples = (data || [])
+      .filter((row) => row[BC_SHEET_PROMPT_COLUMN]?.trim())
+      .map((row) => ({ text: row[BC_SHEET_PROMPT_COLUMN].trim() }));
+    return examples.length ? examples : null;
+  } catch (e) {
+    warn('Welcome examples override fetch failed; using config defaults', e?.message || e);
+    return null;
+  }
+}
+
 async function configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain) {
   await window[ALLOY_INSTANCE_NAME]('configure', {
     defaultConsent: 'in',
@@ -898,6 +916,9 @@ export async function initBrandConcierge() {
   createMountPoint();
   injectAlloyStub();
 
+  // Runs alongside the script loads below so it adds no extra latency.
+  const welcomeExamplesPromise = fetchWelcomeExamplesOverride();
+
   try {
     log('[BC] loading Web SDK (alloyBC instance)', { bcEdgeDomain, bcDatastreamId });
     await loadScript(bcAlloySdkUrl);
@@ -906,6 +927,13 @@ export async function initBrandConcierge() {
 
     log('[BC] loading Web Client', bcWebClientUrl);
     await loadScript(bcWebClientUrl);
+
+    const welcomeExamplesOverride = await welcomeExamplesPromise;
+    if (welcomeExamplesOverride) {
+      brandConciergeConfig.arrays['welcome.examples'] = welcomeExamplesOverride;
+      log('[BC] welcome examples overridden from brand-concierge.json', welcomeExamplesOverride);
+    }
+
     log('[BC] Web Client loaded — calling bootstrap');
     bootstrapWebClient();
     log('[BC] bootstrapWebClient called');

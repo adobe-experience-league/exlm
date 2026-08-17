@@ -70,11 +70,13 @@ const brandConciergeConfig = {
   },
 
   arrays: {
+    // Fallback if brand-concierge.json fails to load
     'welcome.examples': [
       { text: 'Where can I go to learn about AI on Experience League?' },
       { text: 'Getting started with Experience Manager' },
-      { text: 'Set up an Adobe Analytics report suite' },
-      { text: 'Explain Adobe Target A/B testing' },
+      { text: 'How do I set up my Workfront instance for my team?' },
+      { text: 'How do I get started with a journey in Adobe Journey Optimizer?' },
+      { text: 'What is CX Enterprise Coworker?' },
     ],
     'feedback.positive.options': [
       'Helpful and relevant',

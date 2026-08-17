@@ -411,8 +411,7 @@
   display: none !important;
 }
 
-/* Expanded welcome pills default (all viewports): column stack matching the side-drawer layout. */
-#bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-pills-container:has(> :nth-child(4):last-child) {
+#bc-dialog.exl-dialog-expanded #brand-concierge-mount .initial-state .prompt-pills-container {
   display: flex !important;
   flex-flow: column nowrap !important;
   align-items: stretch !important;
@@ -434,8 +433,7 @@
     max-width: 100% !important;
   }
 
-  /* Expanded welcome only (four initial pills before chat): keep wrapped row + card-style sizing. */
-  #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-pills-container:has(> :nth-child(4):last-child) {
+  #bc-dialog.exl-dialog-expanded #brand-concierge-mount .initial-state .prompt-pills-container {
     display: flex !important;
     flex-flow: row wrap !important;
     justify-content: center !important;
@@ -443,10 +441,7 @@
   }
 
   #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container .bc-prompt-pill-button,
-  #bc-dialog.exl-dialog-expanded
-    #brand-concierge-mount
-    .prompt-pills-container:has(> :nth-child(4):last-child)
-    .bc-prompt-pill-button {
+  #bc-dialog.exl-dialog-expanded #brand-concierge-mount .initial-state .prompt-pills-container .bc-prompt-pill-button {
     --bc-prompt-pill-gap-count: 3;
     --bc-prompt-pill-gap: 8px;
 
