@@ -23,7 +23,6 @@ import {
 import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
 import isFeatureEnabled from './utils/feature-flag-utils.js';
 import { PLAYLIST_EMBED_BODY_CLASS } from './utils/playlist-embed-utils.js';
-import { getCourseFragmentUrl, getModuleFragmentUrl } from './courses/course-utils.js';
 
 /**
  * please do not import any other modules here, as this file is used in the critical path.
@@ -322,6 +321,24 @@ async function buildTabSection(main) {
 }
 
 /**
+ * Parsed locally instead of importing courses/course-utils.js, to keep this
+ * critical-path file from pulling in that ~500-line module on every page.
+ * Only matches when there's a module/step segment after the collection (a bare
+ * /courses/{collection} URL returns null), so a 404 redirect to a course that's
+ * also gone lands on a normal 404 there instead of looping back through this again.
+ * @param {string} url
+ * @returns {string|null} the course landing page URL, or null if url isn't course-shaped
+ */
+function getCourseUrlFor404(url = window.location.pathname) {
+  const parts = url.split('/').filter(Boolean);
+  const idx = parts.indexOf('courses');
+  if (idx > 0 && parts.length > idx + 2) {
+    return `/${parts[idx - 1]}/courses/${parts[idx + 1]}`;
+  }
+  return null;
+}
+
+/**
  * A deleted step or module page 404s even though its course is still live. Module
  * pages were never directly user-facing anyway (accessing one normally redirects
  * to the course landing page), so redirecting their 404s there too matches
@@ -330,16 +347,12 @@ async function buildTabSection(main) {
  * an async check here would delay loadEager() (buildAutoBlocks runs inside it) and
  * let the site's own section/block decoration run late, re-wrapping content that's
  * already been inserted elsewhere and corrupting the layout.
- * Only applies when the 404'd path has at least one segment after the collection
- * (a module or step) — a bare /courses/{collection} 404 is left alone, so if this
- * redirects to a course that's also gone, landing there just shows a normal 404
- * instead of triggering this same redirect again in a loop.
  * @param {HTMLElement} main
  */
 function validateCourseUrl(main) {
   if (window.errorCode !== '404') return;
-  if (!getModuleFragmentUrl(window.location.pathname)) return;
-  const courseUrl = getCourseFragmentUrl(window.location.pathname);
+  const courseUrl = getCourseUrlFor404();
+  if (!courseUrl) return;
   main.classList.add('hidden');
   window.location.replace(courseUrl);
 }
