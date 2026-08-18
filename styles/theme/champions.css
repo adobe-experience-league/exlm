@@ -1,13 +1,3 @@
-/* Mobile (default) */
-.champions {
-  --exlm-font-size-h1: var(--spectrum-heading-size-xl);
-  --exlm-font-size-h2: var(--spectrum-heading-size-l);
-  --exlm-font-size-h3: 24px;
-  --exlm-font-size-h4: var(--spectrum-font-size-400);
-  --exlm-font-size-h5: var(--spectrum-heading-size-s);
-  --exlm-font-size-h6: var(--spectrum-heading-size-xs);
-}
-
 .champions.page-bg-gradient {
   --gradient-base-bg: #f8f8f8;
   --gradient-primary: #0fa0b4;
@@ -42,18 +32,6 @@ body.champions .section {
 body.champions .section > .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) {
   font-weight: var(--font-weight-bold);
   line-height: 125%;
-}
-
-/* Desktop */
-@media (min-width: 900px) {
-  .champions {
-    --exlm-font-size-h1: 44px;
-    --exlm-font-size-h2: var(--spectrum-heading-size-xl);
-    --exlm-font-size-h3: var(--spectrum-heading-size-l);
-    --exlm-font-size-h4: 24px;
-    --exlm-font-size-h5: var(--spectrum-font-size-400);
-    --exlm-font-size-h6: var(--spectrum-heading-size-s);
-  }
 }
 
 /* Grid Cards styling */
