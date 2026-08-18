@@ -1,14 +1,10 @@
 import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate.js';
 import { htmlToElement, decorateExternalLinks, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import {
-  COVEO_SORT_OPTIONS,
-  COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ,
-} from '../../scripts/browse-card/browse-cards-constants.js';
+import { COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
 import { buildCard, buildNoResultsContent } from '../../scripts/browse-card/browse-card.js';
 import { createDateCriteria, convertToTitleCase } from '../../scripts/browse-card/browse-card-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
 
 const lang = document.querySelector('html').lang || 'en';
 
@@ -118,16 +114,11 @@ export default async function decorate(block) {
 
   // Function to fetch data and render block
   const fetchDataAndRenderBlock = (contentType) => {
-    const contentTypeArray = contentType && contentType.split(',');
     const params = {
-      contentType: contentTypeArray,
+      contentType: contentType && contentType.split(','),
       sortCriteria,
       numberOfResults,
       dateCriteria: dateList && createDateCriteria(dateList),
-      // Exclude stale Upcoming Events, matching upcoming-event-v2 (EXLM-5517).
-      ...(contentTypeArray?.includes(CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase())
-        ? { aq: COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ }
-        : {}),
     };
 
     const browseCardsContent = BrowseCardsDelegate.fetchCardData(params);

@@ -2,6 +2,7 @@ import { URL_SPECIAL_CASE_LOCALES, fetchLanguagePlaceholders, getConfig } from '
 import { rewriteDocsPath } from '../../utils/path-utils.js';
 import CoveoDataService from './coveo-data-service.js';
 import { CONTENT_TYPES, COMMUNITY_SEARCH_FACET } from './coveo-exl-pipeline-constants.js';
+import { COVEO_EXCLUDE_STALE_UPCOMING_AQ } from '../../browse-card/browse-cards-constants.js';
 
 const { coveoSearchResultsUrl } = getConfig();
 const MAX_NUMBER_OF_VALUES_PER_BATCH = 100;
@@ -184,6 +185,22 @@ export function getFacets(param) {
   return constructCoveoFacet(facets, param);
 }
 
+/**
+ * Join Coveo advanced-query clauses with AND, wrapping each clause in parens so a clause's own
+ * OR can't bind loosely against the AND — Coveo AQL evaluates AND before OR (EXLM-5517).
+ * @param {...string} parts
+ * @returns {string|undefined} The combined aq, or undefined when no clause is present.
+ */
+function mergeAdvancedQueryParts(...parts) {
+  const cleaned = parts.map((part) => (part == null ? '' : String(part).trim())).filter(Boolean);
+  if (!cleaned.length) return undefined;
+  if (cleaned.length === 1) return cleaned[0];
+  return cleaned.map((part) => `(${part})`).join(' AND ');
+}
+
+const isUpcomingEventV2Type = (type) =>
+  type?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase();
+
 export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) {
   let context = { entitlements: {}, role: {}, interests: {}, industryInterests: {} };
   if (param.context) {
@@ -193,17 +210,21 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
     };
   }
 
-  // param.dateCriteria and param.aq (e.g. COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ) are independent
-  // filters that both narrow results, so on non-feature requests AND them together instead of
-  // letting one silently clobber the other when both are present (EXLM-5517 tabbed-cards fix).
-  // The param.feature branch keeps its pre-existing override semantics (param.aq, when present,
-  // intentionally replaces the feature query for callers like recommended-content.js).
-  let combinedAq = param.aq || '';
-  if (param.feature) {
-    combinedAq = param.aq || constructCoveoAdvancedQuery(param);
-  } else if (param.dateCriteria) {
-    combinedAq = [contructDateAdvancedQuery(param.dateCriteria), param.aq].filter(Boolean).join(' AND ');
-  }
+  // Exclude stale Upcoming Events from every content query (EXLM-5517): feature/topic/recommended
+  // pipelines can otherwise surface past Event|Upcoming Event cards. All clauses are AND-merged (not
+  // overridden), so a request keeps its date/feature/exclusion filters alongside the staleness guard.
+  // Skipped for facet-value fetches so filter dropdowns still list every value.
+  const onlyUpcoming =
+    Array.isArray(param.contentType) && param.contentType.length > 0 && param.contentType.every(isUpcomingEventV2Type);
+  const combinedAq = mergeAdvancedQueryParts(
+    // @date is Coveo index/batch time for events (not the event's own date), so it can't filter
+    // Upcoming Events meaningfully — skip it when the request is exclusively Upcoming Events, but
+    // keep it otherwise so the non-event content types still honor the author's date filter.
+    param.dateCriteria && !param.feature && !onlyUpcoming ? contructDateAdvancedQuery(param.dateCriteria) : '',
+    param.feature ? constructCoveoAdvancedQuery(param) : '',
+    param.aq || '',
+    param.fetchFacets ? '' : COVEO_EXCLUDE_STALE_UPCOMING_AQ,
+  );
 
   const dataSource = {
     url: coveoSearchResultsUrl,
