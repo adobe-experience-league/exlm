@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { getConfig } from '../scripts.js';
+import { getConfig, getPathDetails, fetchJson } from '../scripts.js';
 import { loadScript, decorateIcon } from '../lib-franklin.js';
 import { openDrawer } from '../dialog/dialog.js';
 import brandConciergeConfig from './brand-concierge-config.js';
@@ -69,6 +69,7 @@ let mountWithHandler = null;
 let keyboardScrollHandler = null;
 let keyboardScrollDialog = null;
 let impressionObserver = null;
+let defaultPromptsOverride = null;
 
 /** Real BC conversationId, captured from response:started/response:completed events. */
 let bcConversationId = null;
@@ -460,11 +461,12 @@ function handleBrandConciergeClientEvent(event) {
   scheduleScrollAfterSuggestion(mount);
 }
 
-function getBootstrapOptions() {
-  const { stickySession = false, ...stylingConfigurations } = brandConciergeConfig;
+function getBootstrapOptions(defaultPrompts = defaultPromptsOverride) {
+  const { stickySession = false, arrays, ...stylingConfigurations } = brandConciergeConfig;
+  const effectiveArrays = defaultPrompts ? { ...arrays, 'welcome.examples': defaultPrompts } : arrays;
   return {
     instanceName: ALLOY_INSTANCE_NAME,
-    stylingConfigurations,
+    stylingConfigurations: { ...stylingConfigurations, arrays: effectiveArrays },
     selector: MOUNT_SELECTOR,
     stickySession,
     onEvent: handleBrandConciergeClientEvent,
@@ -826,6 +828,27 @@ function createMountPoint() {
   return dialog;
 }
 
+const BC_SHEET_PROMPT_COLUMN = 'Default prompts';
+
+async function fetchDefaultPromptsOverride() {
+  const lang = getPathDetails()?.lang || 'en';
+  const prefix = window.hlx.codeBasePath;
+  try {
+    const data = await fetchJson(`${prefix}/${lang}/brand-concierge.json`, `${prefix}/en/brand-concierge.json`);
+    const defaultPrompts = data
+      .filter((row) => row[BC_SHEET_PROMPT_COLUMN]?.trim())
+      .map((row) => ({ text: row[BC_SHEET_PROMPT_COLUMN].trim() }));
+    if (!defaultPrompts.length) {
+      warn('brand-concierge.json returned no valid prompt rows; using config defaults');
+      return null;
+    }
+    return defaultPrompts;
+  } catch (e) {
+    warn('Failed to fetch brand-concierge.json; using config defaults', e?.message || e);
+    return null;
+  }
+}
+
 async function configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain) {
   await window[ALLOY_INSTANCE_NAME]('configure', {
     defaultConsent: 'in',
@@ -840,7 +863,7 @@ async function configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain) {
   await window[ALLOY_INSTANCE_NAME]('sendEvent', {});
 }
 
-function bootstrapWebClient() {
+function bootstrapWebClient(defaultPrompts) {
   if (typeof window.adobe?.concierge?.bootstrap !== 'function') {
     warn('bootstrap not available — confirm the datastream is enabled for Brand Concierge');
     return;
@@ -848,7 +871,7 @@ function bootstrapWebClient() {
 
   log('bootstrap called', { instanceName: ALLOY_INSTANCE_NAME, selector: MOUNT_SELECTOR });
 
-  window.adobe.concierge.bootstrap(getBootstrapOptions());
+  window.adobe.concierge.bootstrap(getBootstrapOptions(defaultPrompts));
 }
 
 /**
@@ -890,6 +913,7 @@ export function destroyBrandConcierge() {
   bcConversationId = null;
   bcMessageNumber = 0;
   bcHasMessage = false;
+  defaultPromptsOverride = null;
 }
 
 export async function initBrandConcierge() {
@@ -897,6 +921,9 @@ export async function initBrandConcierge() {
 
   createMountPoint();
   injectAlloyStub();
+
+  defaultPromptsOverride = null;
+  const defaultPromptsPromise = fetchDefaultPromptsOverride();
 
   try {
     log('[BC] loading Web SDK (alloyBC instance)', { bcEdgeDomain, bcDatastreamId });
@@ -906,8 +933,14 @@ export async function initBrandConcierge() {
 
     log('[BC] loading Web Client', bcWebClientUrl);
     await loadScript(bcWebClientUrl);
+
+    defaultPromptsOverride = await defaultPromptsPromise;
+    if (defaultPromptsOverride) {
+      log('[BC] default prompts overridden from brand-concierge.json', defaultPromptsOverride);
+    }
+
     log('[BC] Web Client loaded — calling bootstrap');
-    bootstrapWebClient();
+    bootstrapWebClient(defaultPromptsOverride);
     log('[BC] bootstrapWebClient called');
     const bcMount = getBrandConciergeMount();
     watchScrollToBottomButton(bcMount);
