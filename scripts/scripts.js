@@ -340,7 +340,6 @@ function validateCourseUrl(main) {
   if (window.errorCode !== '404') return;
   if (!getModuleFragmentUrl(window.location.pathname)) return;
   const courseUrl = getCourseFragmentUrl(window.location.pathname);
-  if (!courseUrl) return;
   main.classList.add('hidden');
   window.location.replace(courseUrl);
 }
