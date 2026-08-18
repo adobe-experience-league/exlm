@@ -192,6 +192,19 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
       ...param.context,
     };
   }
+
+  // param.dateCriteria and param.aq (e.g. COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ) are independent
+  // filters that both narrow results, so on non-feature requests AND them together instead of
+  // letting one silently clobber the other when both are present (EXLM-5517 tabbed-cards fix).
+  // The param.feature branch keeps its pre-existing override semantics (param.aq, when present,
+  // intentionally replaces the feature query for callers like recommended-content.js).
+  let combinedAq = param.aq || '';
+  if (param.feature) {
+    combinedAq = param.aq || constructCoveoAdvancedQuery(param);
+  } else if (param.dateCriteria) {
+    combinedAq = [contructDateAdvancedQuery(param.dateCriteria), param.aq].filter(Boolean).join(' AND ');
+  }
+
   const dataSource = {
     url: coveoSearchResultsUrl,
     param: {
@@ -208,10 +221,8 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
       parentField: '@foldingchild',
       childField: '@foldingparent',
       ...(param.q && !param.feature ? { q: param.q } : ''),
-      ...(param.dateCriteria && !param.feature ? { aq: contructDateAdvancedQuery(param.dateCriteria) } : ''),
       ...(!param.feature ? { facets: getFacets(param) } : ''),
-      ...(param.feature ? { aq: constructCoveoAdvancedQuery(param) } : ''),
-      ...(param.aq ? { aq: param.aq } : ''),
+      ...(combinedAq ? { aq: combinedAq } : ''),
       ...(param.fields?.length > 0
         ? { batch: param.fields.map((field) => ({ field, maximumNumberOfValues: MAX_NUMBER_OF_VALUES_PER_BATCH })) }
         : ''),
