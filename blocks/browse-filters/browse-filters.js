@@ -35,7 +35,7 @@ import {
 } from '../../scripts/analytics/lib-analytics.js';
 import {
   BASE_COVEO_ADVANCED_QUERY,
-  BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT,
+  BASE_COVEO_ADVANCED_QUERY_EVENTS,
 } from '../../scripts/browse-card/browse-cards-constants.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import {
@@ -1748,9 +1748,7 @@ function decorateBrowseTopics(block) {
 
 export default async function decorate(block) {
   const isUpcomingEventFlow = isEventsPage && isFeatureEnabled('isEventsV2');
-  window.headlessBaseSolutionQuery = isUpcomingEventFlow
-    ? BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT
-    : BASE_COVEO_ADVANCED_QUERY;
+  window.headlessBaseSolutionQuery = isUpcomingEventFlow ? BASE_COVEO_ADVANCED_QUERY_EVENTS : BASE_COVEO_ADVANCED_QUERY;
   enableTagsAsProxy(block);
   appendFormEl(block);
   constructFilterInputContainer(block);
