@@ -23,7 +23,7 @@ import {
 import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
 import isFeatureEnabled from './utils/feature-flag-utils.js';
 import { PLAYLIST_EMBED_BODY_CLASS } from './utils/playlist-embed-utils.js';
-import { getCourseFragmentUrl } from './courses/course-utils.js';
+import { getCourseFragmentUrl, getModuleFragmentUrl } from './courses/course-utils.js';
 
 /**
  * please do not import any other modules here, as this file is used in the critical path.
@@ -322,22 +322,23 @@ async function buildTabSection(main) {
 }
 
 /**
- * A deleted step/module page 404s even though its course is still live.
+ * A deleted step or module page 404s even though its course is still live. Module
+ * pages were never directly user-facing anyway (accessing one normally redirects
+ * to the course landing page), so redirecting their 404s there too matches
+ * existing behavior — this just also covers the deleted-page case.
  * Redirects to the course landing page without first verifying it still exists —
  * an async check here would delay loadEager() (buildAutoBlocks runs inside it) and
  * let the site's own section/block decoration run late, re-wrapping content that's
  * already been inserted elsewhere and corrupting the layout.
- * Only applies when the 404'd path has a module AND a step segment after the
- * collection (a real step-page shape) — a bare /courses/{collection} 404 is left
- * alone, so if this redirects to a course that's also gone, landing there just
- * shows a normal 404 instead of triggering this same redirect again in a loop.
+ * Only applies when the 404'd path has at least one segment after the collection
+ * (a module or step) — a bare /courses/{collection} 404 is left alone, so if this
+ * redirects to a course that's also gone, landing there just shows a normal 404
+ * instead of triggering this same redirect again in a loop.
  * @param {HTMLElement} main
  */
 function validateCourseUrl(main) {
   if (window.errorCode !== '404') return;
-  const parts = window.location.pathname.split('/').filter(Boolean);
-  const idx = parts.indexOf('courses');
-  if (idx <= 0 || parts.length <= idx + 2) return;
+  if (!getModuleFragmentUrl(window.location.pathname)) return;
   const courseUrl = getCourseFragmentUrl(window.location.pathname);
   if (!courseUrl) return;
   main.classList.add('hidden');
