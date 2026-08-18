@@ -1,5 +1,3 @@
-/* Mobile (default) */
-
 .champions.page-bg-gradient {
   --gradient-base-bg: #f8f8f8;
   --gradient-primary: #0fa0b4;
@@ -32,6 +30,7 @@ body.champions .section {
 }
 
 body.champions .section > .default-content-wrapper :where(h1, h2, h3, h4, h5, h6) {
+  font-weight: var(--font-weight-bold);
   line-height: 125%;
 }
 
@@ -43,31 +42,37 @@ body.champions .grid-cards.minimal .grid-card-container {
 body.champions :is(.grid-cards-title, .grid-card-title).h1,
 body.champions :is(.grid-card-description, .grid-cards-description) h1 {
   font-size: var(--exlm-font-size-h1);
+  font-weight: var(--font-weight-bold);
 }
 
 body.champions :is(.grid-cards-title, .grid-card-title).h2,
 body.champions :is(.grid-card-description, .grid-cards-description) h2 {
   font-size: var(--exlm-font-size-h2);
+  font-weight: var(--font-weight-bold);
 }
 
 body.champions :is(.grid-cards-title, .grid-card-title).h3,
 body.champions :is(.grid-card-description, .grid-cards-description) h3 {
   font-size: var(--exlm-font-size-h3);
+  font-weight: var(--font-weight-bold);
 }
 
 body.champions :is(.grid-cards-title, .grid-card-title).h4,
 body.champions :is(.grid-card-description, .grid-cards-description) h4 {
   font-size: var(--exlm-font-size-h4);
+  font-weight: var(--font-weight-bold);
 }
 
 body.champions :is(.grid-cards-title, .grid-card-title).h5,
 body.champions :is(.grid-card-description, .grid-cards-description) h5 {
   font-size: var(--exlm-font-size-h5);
+  font-weight: var(--font-weight-bold);
 }
 
 body.champions :is(.grid-cards-title, .grid-card-title).h6,
 body.champions :is(.grid-card-description, .grid-cards-description) h6 {
   font-size: var(--exlm-font-size-h6);
+  font-weight: var(--font-weight-bold);
 }
 
 body.champions .grid-cards.minimal .grid-card:not(:has(.grid-card-cta)) {
