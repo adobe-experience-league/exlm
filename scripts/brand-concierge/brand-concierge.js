@@ -760,7 +760,7 @@ function createMountPoint() {
   triggerIcon.className = 'icon icon-bc-ask-sparkles';
   const triggerAsk = document.createElement('span');
   triggerAsk.className = 'bc-trigger-ask';
-  triggerAsk.textContent = 'Ask a question';
+  triggerAsk.textContent = 'Ask a question...';
   trigger.append(triggerIcon, triggerAsk);
   const sendIcon = document.createElement('span');
   sendIcon.className = 'icon icon-bc-message-send bc-trigger-send';
