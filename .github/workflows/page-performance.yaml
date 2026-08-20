@@ -23,7 +23,7 @@ jobs:
           node-version: '22'
 
       - name: Install Lighthouse (lean)
-        run: npm install lighthouse --no-save
+        run: npm install lighthouse@^12 --no-save
 
       - name: Run page performance audits
         run: node scripts/run-page-performance.mjs

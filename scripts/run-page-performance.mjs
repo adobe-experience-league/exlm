@@ -15,11 +15,11 @@ const repoRoot = resolve(__dirname, '..');
 
 async function loadLighthouse() {
   try {
-    const mod = await import('lighthouse');
-    return mod.default || mod;
+    const [mod, constants] = await Promise.all([import('lighthouse'), import('lighthouse/core/config/constants.js')]);
+    return { lighthouse: mod.default || mod, constants };
   } catch (err) {
     throw new Error(
-      `Cannot import lighthouse. Install it first (CI does this lean). Local: npm install lighthouse --no-save. ${err.message}`,
+      `Cannot import lighthouse. Install it first (CI does this lean). Local: npm install lighthouse@^12 --no-save. ${err.message}`,
     );
   }
 }
@@ -34,23 +34,30 @@ async function loadChromeLauncher() {
   }
 }
 
-function lighthouseFlags(formFactor) {
+function lighthouseFlags(formFactor, constants) {
   const isMobile = formFactor === 'mobile';
+  if (isMobile) {
+    return {
+      onlyCategories: ['performance'],
+      formFactor: 'mobile',
+      throttlingMethod: 'simulate',
+      output: 'html',
+    };
+  }
   return {
     onlyCategories: ['performance'],
-    formFactor: isMobile ? 'mobile' : 'desktop',
-    screenEmulation: isMobile
-      ? undefined
-      : { mobile: false, width: 1350, height: 940, deviceScaleFactor: 1, disabled: false },
+    formFactor: 'desktop',
+    screenEmulation: constants.screenEmulationMetrics.desktop,
+    throttling: constants.throttling.desktopDense4G,
     throttlingMethod: 'simulate',
     output: 'html',
   };
 }
 
-async function auditOne({ lighthouse, chrome, url, formFactor, outDir }) {
+async function auditOne({ lighthouse, constants, chrome, url, formFactor, outDir }) {
   const target = ensureMartechOff(url);
   const result = await lighthouse(target, {
-    ...lighthouseFlags(formFactor),
+    ...lighthouseFlags(formFactor, constants),
     port: chrome.port,
   });
   const lhr = result.lhr;
@@ -77,7 +84,7 @@ export async function runPagePerformance({
   const generatedAt = new Date().toISOString();
   const urls = urlOverride ? [urlOverride] : await loadUrls(configPath);
 
-  const lighthouse = await loadLighthouse();
+  const { lighthouse, constants } = await loadLighthouse();
   const { launch } = await loadChromeLauncher();
 
   await mkdir(outDir, { recursive: true });
@@ -94,14 +101,14 @@ export async function runPagePerformance({
   const rows = [];
   try {
     for (const url of urls) {
+      const target = ensureMartechOff(url);
       for (const formFactor of FORM_FACTORS) {
         try {
           // eslint-disable-next-line no-await-in-loop
-          const row = await auditOne({ lighthouse, chrome, url, formFactor, outDir });
+          const row = await auditOne({ lighthouse, constants, chrome, url: target, formFactor, outDir });
           rows.push(row);
           console.log(`OK ${formFactor} ${row.url} score=${row.score}`);
         } catch (err) {
-          const target = ensureMartechOff(url);
           rows.push({
             url: target,
             formFactor,
@@ -140,9 +147,7 @@ const isMain = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(imp
 
 if (isMain) {
   runPagePerformance({
-    outDir: process.env.PERF_OUT_DIR
-      ? resolve(process.env.PERF_OUT_DIR)
-      : join(repoRoot, 'performance-reports'),
+    outDir: process.env.PERF_OUT_DIR ? resolve(process.env.PERF_OUT_DIR) : join(repoRoot, 'performance-reports'),
   })
     .then(({ outDir }) => {
       console.log(`Wrote reports to ${outDir}`);

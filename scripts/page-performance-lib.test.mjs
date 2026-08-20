@@ -111,4 +111,33 @@ describe('buildSummaryMarkdown', () => {
     assert.match(md, /mobile/);
     assert.match(md, /90/);
   });
+
+  it('puts sanitized error text in Status and em-dash in Bytes', () => {
+    const md = buildSummaryMarkdown(
+      [
+        {
+          url: 'https://example.com',
+          formFactor: 'desktop',
+          status: 'error',
+          error: 'timeout |\r\non line two',
+          score: null,
+          lcpMs: null,
+          cls: null,
+          inpMs: null,
+          tbtMs: null,
+          ttfbMs: null,
+          totalByteWeight: null,
+        },
+      ],
+      '2026-08-20T08:00:00.000Z',
+    );
+    const dataRow = md.split('\n').find((line) => line.includes('https://example.com'));
+    assert.ok(dataRow);
+    assert.match(dataRow, /ERROR: timeout \/ on line two/);
+    assert.doesNotMatch(dataRow, /timeout \|/);
+    assert.doesNotMatch(dataRow, /\r?\n/);
+    const cells = dataRow.split('|').map((c) => c.trim());
+    assert.equal(cells[3], 'ERROR: timeout / on line two');
+    assert.equal(cells[10], '—');
+  });
 });

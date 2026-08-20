@@ -64,6 +64,10 @@ function fmt(v, digits = 0) {
   return typeof v === 'number' ? v.toFixed(digits) : String(v);
 }
 
+function sanitizeMdCell(text) {
+  return String(text).replace(/\r?\n/g, ' ').replace(/\|/g, '/');
+}
+
 export function buildSummaryMarkdown(rows, generatedAt) {
   const lines = [
     `# Page performance report`,
@@ -75,13 +79,14 @@ export function buildSummaryMarkdown(rows, generatedAt) {
   ];
   for (const r of rows) {
     if (r.status !== 'ok') {
-      lines.push(
-        `| ${r.url} | ${r.formFactor} | ERROR | — | — | — | — | — | — | ${(r.error || 'failed').replace(/\|/g, '/')} |`,
-      );
+      const errText = sanitizeMdCell(r.error || 'failed');
+      lines.push(`| ${r.url} | ${r.formFactor} | ERROR: ${errText} | — | — | — | — | — | — | — |`);
       continue;
     }
     lines.push(
-      `| ${r.url} | ${r.formFactor} | ok | ${fmt(r.score)} | ${fmt(r.lcpMs)} | ${fmt(r.cls, 3)} | ${fmt(r.inpMs)} | ${fmt(r.tbtMs)} | ${fmt(r.ttfbMs)} | ${fmt(r.totalByteWeight)} |`,
+      `| ${r.url} | ${r.formFactor} | ok | ${fmt(r.score)} | ${fmt(r.lcpMs)} | ${fmt(r.cls, 3)} | ${fmt(
+        r.inpMs,
+      )} | ${fmt(r.tbtMs)} | ${fmt(r.ttfbMs)} | ${fmt(r.totalByteWeight)} |`,
     );
   }
   lines.push('');
