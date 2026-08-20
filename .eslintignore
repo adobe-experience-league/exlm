@@ -1,4 +1,8 @@
 helix-importer-ui
+# Node CLI tooling (not browser block code)
+scripts/page-performance-lib.mjs
+scripts/page-performance-lib.test.mjs
+scripts/run-page-performance.mjs
 scripts/prism.js
 scripts/prism-grammars/**
 scripts/universal-editor-embedded.js
