@@ -69,6 +69,30 @@
 
 /* Collapsible code styles end */
 
+/* Language badge styles start */
+.code {
+  position: relative;
+}
+
+.code .code-language-badge {
+  position: absolute;
+  top: 0.75em;
+  right: 0.75em;
+  z-index: 1;
+  padding: 0.15em 0.6em;
+  border-radius: 6px;
+  background-color: rgb(224 224 224 / 20%);
+  color: var(--non-spectrum-silver-chalice);
+  font-size: var(--spectrum-font-size-50);
+  font-weight: var(--font-weight-extra-bold);
+  line-height: 1.5;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+}
+
+/* Language badge styles end */
+
 /* Styles are imported from Prism Library [No Linting Required] */
 code[class*='language-'],
 pre[class*='language-'] {
@@ -423,4 +447,9 @@ div.code-toolbar > .toolbar > .toolbar-item > span:hover {
 
 div.code-toolbar > .toolbar > .toolbar-item > button > span:hover {
   color: #ededed;
+}
+
+/* Keep Prism's copy-to-clipboard toolbar from overlapping the language badge (both anchor top-right) */
+.code:has(.code-language-badge) div.code-toolbar > .toolbar {
+  top: 2.75em;
 }

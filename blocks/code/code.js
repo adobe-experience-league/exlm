@@ -1,5 +1,52 @@
 import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
+const LANGUAGE_LABELS = {
+  js: 'JS',
+  javascript: 'JS',
+  css: 'CSS',
+  html: 'HTML',
+  markup: 'HTML',
+  java: 'Java',
+  ts: 'TS',
+  typescript: 'TS',
+  jsx: 'JSX',
+  tsx: 'TSX',
+  json: 'JSON',
+  xml: 'XML',
+  sql: 'SQL',
+  python: 'Python',
+  php: 'PHP',
+  yaml: 'YAML',
+  yml: 'YAML',
+  bash: 'Shell',
+  shell: 'Shell',
+  sh: 'Shell',
+  csharp: 'C#',
+  cs: 'C#',
+  dotnet: 'C#',
+  cpp: 'C++',
+  c: 'C',
+  ruby: 'Ruby',
+  go: 'Go',
+  graphql: 'GraphQL',
+  markdown: 'Markdown',
+  md: 'Markdown',
+  plaintext: 'Text',
+  plain: 'Text',
+  text: 'Text',
+};
+
+/**
+ * Resolves a display label for a Prism `language-*` class suffix.
+ * @param {string} language - the language suffix (e.g. 'js' from 'language-js')
+ * @returns {string} the short display label (e.g. 'JS')
+ */
+function getLanguageLabel(language) {
+  const known = LANGUAGE_LABELS[language.toLowerCase()];
+  if (known) return known;
+  return language.charAt(0).toUpperCase() + language.slice(1);
+}
+
 function getDataLineValue(arr) {
   let dataLineValue = '';
   arr.forEach((className) => {
@@ -81,12 +128,19 @@ export default async function decorate(block) {
   block.innerHTML = preTagElement.outerHTML;
   const dataLine = [];
   const pre = block.querySelector('pre');
+  let detectedLanguage = '';
 
   block.classList.forEach((className) => {
     switch (true) {
       case className === 'line-number':
       case className.startsWith('language-'):
         pre.classList.add(className);
+        if (className.startsWith('language-')) {
+          const language = className.slice(9);
+          if (language && language.toLowerCase() !== 'none' && !detectedLanguage) {
+            detectedLanguage = language;
+          }
+        }
         break;
 
       case className.startsWith('data-start-'):
@@ -121,6 +175,14 @@ export default async function decorate(block) {
       pre.setAttribute(key, value);
     }
   });
+
+  if (detectedLanguage) {
+    const badge = document.createElement('span');
+    badge.className = 'code-language-badge';
+    badge.setAttribute('aria-hidden', 'true');
+    badge.textContent = getLanguageLabel(detectedLanguage);
+    block.appendChild(badge);
+  }
 
   if (block.classList.contains('expandable')) {
     addCollapsibleCodeFeature(block, pre, defaultLines, placeholders);
