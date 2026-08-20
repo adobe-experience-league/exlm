@@ -18,8 +18,8 @@ const urlMap = {
   certification: `/${lang}/certification-home`,
   perspective: `/${lang}/perspectives`,
   course: `/${lang}/courses`,
-  'event|upcoming event': `/${lang}/events`,
-  'event|on demand event': `/${lang}/events`,
+  'event|upcoming event': `/${lang}/events#f-el_contenttype=Event%7CUpcoming%20Event`,
+  'event|on demand event': `/${lang}/events#f-el_contenttype=Event%7COn%20Demand%20Event`,
 };
 
 /**
