@@ -486,6 +486,10 @@
     "components": ["richtext"]
   },
   {
+    "id": "text-lines",
+    "components": ["text-line"]
+  },
+  {
     "id": "cards",
     "components": ["card"]
   },

@@ -1,0 +1,24 @@
+main .text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+main .text .text-line {
+  font-family: var(--body-font-family);
+  font-size: var(--spectrum-body-size-m);
+  line-height: 25.6px;
+}
+
+main .text .text-align-left {
+  text-align: left;
+}
+
+main .text .text-align-center {
+  text-align: center;
+}
+
+main .text .text-align-right {
+  text-align: right;
+}
