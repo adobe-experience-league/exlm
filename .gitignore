@@ -47,3 +47,6 @@ skills/
 .windsurf/
 .zencoder/
 plans/
+
+# EXLM-5636 page performance agent output
+performance-reports/
