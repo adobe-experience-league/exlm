@@ -75,8 +75,11 @@ const JIRA_PROJECT_KEY = 'EXLM';
 const DEFAULT_BASE_BRANCH = 'main';
 
 const WIN = process.platform === 'win32';
-const RUN_TIMEOUT_MS = 25 * 60 * 1000; // under the 30-min tick window
-const CONTINUE_TIMEOUT_MS = 15 * 60 * 1000;
+// The lock file (see acquireLock) makes the poller skip a tick outright if the previous
+// run is still in progress, so these don't need to fit inside pollIntervalSeconds — they
+// just bound how long a single claude invocation gets before we consider it stuck.
+const RUN_TIMEOUT_MS = 35 * 60 * 1000;
+const CONTINUE_TIMEOUT_MS = 20 * 60 * 1000;
 const MAX_CONTINUATIONS = 3;
 const JIRA_TIMEOUT_MS = 8000;
 
@@ -627,9 +630,16 @@ async function runAutoBuild(env, key, claudeToken) {
   if (result.error) {
     const timedOut = result.error.code === 'ETIMEDOUT' || result.signal === 'SIGTERM';
     log(`${key}: claude ${timedOut ? 'TIMED OUT' : 'spawn error'}: ${result.error.message}`);
-    return null;
+    // A timeout only means this call ran out of budget, not that the run failed — the
+    // session may already have implemented/committed/pushed and just been killed before
+    // opening the PR (or mid code-review). Fall through to the same --continue retry loop
+    // used when claude exits cleanly without a PR, instead of giving up on the first kill.
+    // A non-timeout spawn error (e.g. the claude binary missing) will fail identically on
+    // retry, so bail immediately for those.
+    if (!timedOut) return null;
+  } else {
+    checkAuthFailure(result);
   }
-  checkAuthFailure(result);
 
   const slug = repoSlug();
   const freshPrForTicket = async () => {
@@ -657,7 +667,11 @@ async function runAutoBuild(env, key, claudeToken) {
     if (result.error) {
       const timedOut = result.error.code === 'ETIMEDOUT' || result.signal === 'SIGTERM';
       log(`${key}: claude continuation ${timedOut ? 'TIMED OUT' : 'spawn error'}: ${result.error.message}`);
-      break;
+      // Same reasoning as the initial call: a timeout just means this attempt ran out of
+      // budget, so let the loop try `--continue` again (up to MAX_CONTINUATIONS) rather
+      // than giving up on the first kill. Only a genuine spawn error stops the retries.
+      if (!timedOut) break;
+      continue;
     }
     checkAuthFailure(result);
   }
