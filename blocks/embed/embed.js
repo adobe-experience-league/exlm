@@ -46,17 +46,24 @@ const embedTwitter = (url) => {
  */
 const embedMpc = (url) => {
   const urlObject = new URL(url);
+  let completed = false;
+
+  const getVideoDetails = () => ({
+    title: getMetadata('og:title'),
+    description: getMetadata('og:description'),
+    url: url.href,
+    duration: getMetadata('video:duration'),
+  });
+
   window.addEventListener(
     'message',
     (event) => {
       if (event.data?.type === 'mpcStatus') {
         if (event.data.state === 'play') {
-          pushVideoEvent({
-            title: getMetadata('og:title'),
-            description: getMetadata('og:description'),
-            url: url.href,
-            duration: getMetadata('video:duration'),
-          });
+          pushVideoEvent(getVideoDetails());
+        } else if (event.data.state === 'complete' && !completed) {
+          completed = true;
+          pushVideoEvent(getVideoDetails(), 'videoCompleted');
         }
       }
     },

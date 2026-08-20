@@ -8,6 +8,7 @@ import {
   renderPaginationHTML,
 } from '../champion-detail/champion-detail.js';
 import { renderChampionContentHTML } from '../champion-content/champion-content.js';
+import { pushComponentClick, generateComponentID } from '../../scripts/analytics/lib-analytics.js';
 
 function buildAssociatedContentCard(item, championName, colorClass, placeholders) {
   const card = document.createElement('div');
@@ -78,8 +79,18 @@ export default async function decorate(block) {
 
   if (total > 1) {
     panelContainer.addEventListener('click', (event) => {
+      if (!event.target.closest('.champion-detail-prev, .champion-detail-next')) return;
+
+      pushComponentClick({
+        component: 'carousel arrow',
+        componentID: generateComponentID(block, 'featured-advocates'),
+        sectionID: block.closest('.section')?.dataset?.sectionId || '',
+        linkTitle: 'carousel arrow',
+        linkType: 'carousel',
+      });
+
       if (event.target.closest('.champion-detail-prev')) goTo(currentIndex - 1);
-      else if (event.target.closest('.champion-detail-next')) goTo(currentIndex + 1);
+      else goTo(currentIndex + 1);
     });
   }
 
