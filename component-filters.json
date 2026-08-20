@@ -486,8 +486,8 @@
     "components": ["richtext"]
   },
   {
-    "id": "text-lines",
-    "components": ["text-line"]
+    "id": "aligned-text-lines",
+    "components": ["aligned-text-line"]
   },
   {
     "id": "cards",
