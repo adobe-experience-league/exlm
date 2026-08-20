@@ -224,6 +224,9 @@ export class Playlist {
   }
 
   handleComplete() {
+    const { title, description, duration, src } = this.getActiveVideo();
+    pushVideoEvent({ title, description, url: src, duration }, 'videoCompleted');
+
     if (this.options.autoplayNext) {
       this.next(this.options.autoplayNext);
     }

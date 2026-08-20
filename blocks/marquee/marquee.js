@@ -3,6 +3,28 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { getLocalizedVideoUrl } from '../../scripts/utils/video-utils.js';
 import { getPathDetails } from '../../scripts/scripts.js';
+import { pushVideoEvent } from '../../scripts/analytics/lib-analytics.js';
+
+function trackMpcVideo(iframe, video) {
+  let firstPlay = true;
+  let completed = false;
+
+  const handleMessage = (event) => {
+    if (event.source !== iframe.contentWindow || event.data?.type !== 'mpcStatus') return;
+
+    if (event.data.state === 'play' && firstPlay) {
+      firstPlay = false;
+      pushVideoEvent(video);
+    } else if (event.data.state === 'complete' && !completed) {
+      completed = true;
+      pushVideoEvent(video, 'videoCompleted');
+      window.removeEventListener('message', handleMessage);
+    }
+  };
+
+  window.addEventListener('message', handleMessage);
+  return handleMessage;
+}
 
 const getDefaultEmbed = (url) => `
   <div class="video-frame" style="position: absolute; inset: 0; width: 100%; height: 100%;">
@@ -26,6 +48,8 @@ async function handleVideoLinks(videoLinkElems, block, lang) {
   const videoResults = await Promise.all(videoPromises);
 
   videoResults.forEach(({ videoLinkElem, locVideoLink }) => {
+    const videoTitle = videoLinkElem.textContent?.trim() || '';
+
     videoLinkElem.setAttribute('href', '#');
     videoLinkElem.removeAttribute('target');
 
@@ -45,6 +69,8 @@ async function handleVideoLinks(videoLinkElems, block, lang) {
     modal.style.display = 'none';
     block.append(modal);
 
+    let stopTracking;
+
     // Event listeners
     videoLinkElem.addEventListener('click', (e) => {
       e.preventDefault();
@@ -56,6 +82,14 @@ async function handleVideoLinks(videoLinkElems, block, lang) {
         iframeContainer.classList.add('iframe-container');
         iframeContainer.innerHTML = `<iframe src="${locVideoLink}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
         modal.append(iframeContainer);
+
+        const handleMessage = trackMpcVideo(iframeContainer.querySelector('iframe'), {
+          title: videoTitle,
+          description: '',
+          url: locVideoLink,
+          duration: '',
+        });
+        stopTracking = () => window.removeEventListener('message', handleMessage);
       }
     });
 
@@ -63,6 +97,8 @@ async function handleVideoLinks(videoLinkElems, block, lang) {
       modal.style.display = 'none';
       document.body.removeAttribute('style');
       modal.querySelector('.iframe-container').remove();
+      stopTracking?.();
+      stopTracking = null;
     });
   });
 }
@@ -216,6 +252,16 @@ export default async function decorate(block) {
     embedWrapper.innerHTML = getDefaultEmbed(locVideoUrl);
 
     bgContainer.appendChild(embedWrapper);
+
+    const bgIframe = embedWrapper.querySelector('iframe');
+    if (bgIframe) {
+      trackMpcVideo(bgIframe, {
+        title: title?.textContent?.trim() || '',
+        description: longDescr?.textContent?.trim() || '',
+        url: locVideoUrl,
+        duration: '',
+      });
+    }
   } else if (subjectPicture) {
     appendSubjectPicture(block, subjectPicture, bgColor);
   } else {
