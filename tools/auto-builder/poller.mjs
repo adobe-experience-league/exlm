@@ -334,9 +334,15 @@ function repoSlug() {
 }
 
 // Ask GitHub for the open PR on this ticket's branch (URL + draft flag). null if none.
+// Matches the exact ticket branch (e.g. `exlm-5417`) as well as versioned retry branches
+// the skill creates when it routes around a stale/closed prior attempt (e.g. `exlm-5417-v2`,
+// `-v3`, ...). An exact `head=owner:branch` filter only ever sees the first branch name and
+// would report "no PR yet" forever once a retry moves to a `-vN` branch -- even after a real
+// PR is open there -- so we list open PRs and match the ticket key as a branch-name prefix.
 async function findPrForTicket(env, key, slug) {
   const branch = key.toLowerCase();
-  const url = `https://api.github.com/repos/${slug.slug}/pulls?head=${slug.owner}:${branch}&state=open`;
+  const branchPattern = new RegExp(`^${branch}(-v\\d+)?$`);
+  const url = `https://api.github.com/repos/${slug.slug}/pulls?state=open&per_page=100`;
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}`, Accept: 'application/vnd.github+json' },
   });
@@ -345,7 +351,11 @@ async function findPrForTicket(env, key, slug) {
     return null;
   }
   const arr = await res.json();
-  return Array.isArray(arr) && arr[0] ? arr[0] : null;
+  if (!Array.isArray(arr)) return null;
+  const matches = arr.filter((pr) => branchPattern.test(pr.head?.ref || ''));
+  if (matches.length === 0) return null;
+  matches.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+  return matches[0];
 }
 
 // Fetch the JIRA summary for a ticket. Best-effort — returns '' on any failure.
