@@ -2,23 +2,19 @@ import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import {
   CHAMPION_DETAIL_FIELD_COUNT,
-  DESIGNATION_COLORS,
   extractChampionDetail,
   getDesignationColor,
 } from '../../scripts/utils/champion-utils.js';
 import { decorateChampionContent } from '../champion-content/champion-content.js';
 
 /**
- * Apply (or swap) the gradient background theme on a champion's parent section.
- * Shared with featured-advocates.js, which re-applies it as the carousel advances.
+ * Ensure a champion's parent section carries the shared container class (used for the
+ * section's own padding). Shared with featured-advocates.js.
  * @param {HTMLElement} section
- * @param {string} colorClass - '', 'yellow', 'purple', or 'blue'
  */
-export function applyChampionSectionTheme(section, colorClass) {
+export function applyChampionSectionTheme(section) {
   if (!section) return;
   section.classList.add('champion-detail-container');
-  DESIGNATION_COLORS.forEach((color) => section.classList.remove(`champion-detail-${color}`));
-  if (colorClass) section.classList.add(`champion-detail-${colorClass}`);
 }
 
 /**
@@ -108,8 +104,8 @@ export default async function decorate(block) {
   // anything beyond champion-detail's own fields are nested champion-content items
   const items = [...block.children].slice(CHAMPION_DETAIL_FIELD_COUNT, CHAMPION_DETAIL_FIELD_COUNT + 3);
 
-  // the gradient background belongs to the whole section, not just this block
-  applyChampionSectionTheme(block.closest('.section'), colorClass);
+  // the container class (used for section padding) belongs to the whole section, not just this block
+  applyChampionSectionTheme(block.closest('.section'));
 
   block.innerHTML = renderChampionDetailProfileHTML(detail, colorClass, { loading: 'eager' });
 
