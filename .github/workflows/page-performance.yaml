@@ -1,0 +1,47 @@
+name: Page Performance
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    name: Lighthouse report
+    if: github.repository == 'adobe-experience-league/exlm'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Lighthouse (lean)
+        run: npm install lighthouse --no-save
+
+      - name: Run page performance audits
+        run: node scripts/run-page-performance.mjs
+
+      - name: Write job summary
+        if: always()
+        run: |
+          if [ -f performance-reports/summary.md ]; then
+            cat performance-reports/summary.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No summary.md produced." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload reports artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: page-performance-reports
+          path: performance-reports/
+          if-no-files-found: warn
+          retention-days: 45
