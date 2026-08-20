@@ -6848,11 +6848,11 @@
     ]
   },
   {
-    "id": "text",
+    "id": "aligned-text",
     "fields": []
   },
   {
-    "id": "text-line",
+    "id": "aligned-text-line",
     "fields": [
       {
         "component": "richtext",
