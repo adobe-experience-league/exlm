@@ -93,6 +93,7 @@ export class Playlist {
 
   constructor(options) {
     this.options = { autoplayNext: true, ...options };
+    this.lastCompletedVideoIndex = null;
     const pathBasedId = window.location.pathname.split('/').join('-');
     // If playlistId is provided in options, append it to make key unique per playlist
     const uniqueId = options?.playlistId ? `${pathBasedId}-${options.playlistId}` : pathBasedId;
@@ -197,6 +198,8 @@ export class Playlist {
       currentTime = currentTime >= this.getVideo(i).duration - 1 ? 0 : currentTime;
       this.updateActiveVideo({ active: false, autoplay: false });
       this.updateVideoByIndex(i, { active: true, autoplay, currentTime });
+      // Reset the completion guard so a rewatch of this video can push a fresh videoCompleted event
+      this.lastCompletedVideoIndex = null;
     }
   }
 
@@ -224,6 +227,10 @@ export class Playlist {
   }
 
   handleComplete() {
+    const activeVideoIndex = this.getActiveVideoIndex();
+    if (activeVideoIndex === -1 || activeVideoIndex === this.lastCompletedVideoIndex) return;
+    this.lastCompletedVideoIndex = activeVideoIndex;
+
     const { title, description, duration, src } = this.getActiveVideo();
     pushVideoEvent({ title, description, url: src, duration }, 'videoCompleted');
 
