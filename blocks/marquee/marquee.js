@@ -1,5 +1,5 @@
 /* eslint-disable no-plusplus */
-import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { getLocalizedVideoUrl } from '../../scripts/utils/video-utils.js';
 import { getPathDetails } from '../../scripts/scripts.js';
@@ -8,6 +8,7 @@ import { pushVideoEvent } from '../../scripts/analytics/lib-analytics.js';
 function trackMpcVideo(iframe, video) {
   let firstPlay = true;
   let completed = false;
+  const videoId = iframe.src.match(/\/v\/(\d+)/)?.[1] || '';
 
   const handleMessage = (event) => {
     if (event.source !== iframe.contentWindow || event.data?.type !== 'mpcStatus') return;
@@ -17,7 +18,7 @@ function trackMpcVideo(iframe, video) {
       pushVideoEvent(video);
     } else if (event.data.state === 'complete' && !completed) {
       completed = true;
-      pushVideoEvent(video, 'videoCompleted');
+      pushVideoEvent({ ...video, id: videoId }, 'videoCompleted');
       window.removeEventListener('message', handleMessage);
     }
   };
@@ -259,7 +260,7 @@ export default async function decorate(block) {
         title: title?.textContent?.trim() || '',
         description: longDescr?.textContent?.trim() || '',
         url: locVideoUrl,
-        duration: '',
+        duration: getMetadata('video:duration') || '',
       });
     }
   } else if (subjectPicture) {

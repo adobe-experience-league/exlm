@@ -17,6 +17,7 @@ const getDefaultEmbed = (url) => `<div class="video-frame">
 
 const embedMpc = (url, block) => {
   const urlObject = new URL(url);
+  const videoId = url.href.match(/\/v\/(\d+)/)?.[1] || '';
   let firstPlay = true;
   let completed = false;
 
@@ -43,7 +44,7 @@ const embedMpc = (url, block) => {
       pushVideoEvent(getVideoDetails());
     } else if (event.data.state === 'complete' && !completed) {
       completed = true;
-      pushVideoEvent(getVideoDetails(), 'videoCompleted');
+      pushVideoEvent({ ...getVideoDetails(), id: videoId }, 'videoCompleted');
       // Remove listener once the video has completed
       window.removeEventListener('message', handleMessage);
     }

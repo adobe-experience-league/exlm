@@ -232,7 +232,8 @@ export class Playlist {
     this.lastCompletedVideoIndex = activeVideoIndex;
 
     const { title, description, duration, src } = this.getActiveVideo();
-    pushVideoEvent({ title, description, url: src, duration }, 'videoCompleted');
+    const videoId = src?.match(/\/v\/(\d+)/)?.[1] || '';
+    pushVideoEvent({ title, description, url: src, duration, id: videoId }, 'videoCompleted');
 
     if (this.options.autoplayNext) {
       this.next(this.options.autoplayNext);

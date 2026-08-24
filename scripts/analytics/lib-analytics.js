@@ -539,11 +539,13 @@ export function pushVideoEvent(video, event = 'videoPlay') {
   const videoDuration = video.duration || '';
   const videoSolution = video.solution || solution || '';
   const videoFullSolution = video.fullSolution || fullSolution || '';
+  const videoId = video.id || '';
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   window.adobeDataLayer.push({
     event,
     video: {
+      id: videoId,
       title,
       description,
       url,

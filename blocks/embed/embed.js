@@ -42,10 +42,13 @@ const embedTwitter = (url) => {
 /**
  *
  * @param {URL} url
+ * @param {boolean} autoplay
+ * @param {HTMLElement} block
  * @returns
  */
-const embedMpc = (url, block) => {
+const embedMpc = (url, autoplay, block) => {
   const urlObject = new URL(url);
+  const videoId = url.href.match(/\/v\/(\d+)/)?.[1] || '';
   let completed = false;
 
   const getVideoDetails = () => ({
@@ -64,7 +67,7 @@ const embedMpc = (url, block) => {
       pushVideoEvent(getVideoDetails());
     } else if (event.data.state === 'complete' && !completed) {
       completed = true;
-      pushVideoEvent(getVideoDetails(), 'videoCompleted');
+      pushVideoEvent({ ...getVideoDetails(), id: videoId }, 'videoCompleted');
     }
   };
 
@@ -72,7 +75,7 @@ const embedMpc = (url, block) => {
   return getDefaultEmbed(urlObject);
 };
 
-const loadEmbed = (block, link) => {
+const loadEmbed = (block, link, autoplay) => {
   if (block.classList.contains('embed-is-loaded')) {
     return;
   }
@@ -91,7 +94,7 @@ const loadEmbed = (block, link) => {
   const config = EMBEDS_CONFIG.find((e) => e.match.some((match) => link.includes(match)));
   const url = new URL(link);
   if (config) {
-    block.innerHTML = config.embed(url, block);
+    block.innerHTML = config.embed(url, autoplay, block);
     block.classList = `block embed embed-${config.match[0]}`;
   } else {
     block.innerHTML = getDefaultEmbed(url);

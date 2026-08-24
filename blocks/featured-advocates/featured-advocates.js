@@ -81,16 +81,19 @@ export default async function decorate(block) {
     panelContainer.addEventListener('click', (event) => {
       if (!event.target.closest('.champion-detail-prev, .champion-detail-next')) return;
 
+      const isPrev = !!event.target.closest('.champion-detail-prev');
+      const targetIndex = (currentIndex + (isPrev ? -1 : 1) + total) % total;
+
       pushComponentClick({
-        component: 'carousel arrow',
+        component: 'Featured advocates carousel arrow',
         componentID: generateComponentID(block, 'featured-advocates'),
         sectionID: block.closest('.section')?.dataset?.sectionId || '',
         linkTitle: 'carousel arrow',
         linkType: 'carousel',
+        position: targetIndex + 1,
       });
 
-      if (event.target.closest('.champion-detail-prev')) goTo(currentIndex - 1);
-      else goTo(currentIndex + 1);
+      goTo(targetIndex);
     });
   }
 
