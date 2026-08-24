@@ -65,8 +65,6 @@ const embedMpc = (url, block) => {
     } else if (event.data.state === 'complete' && !completed) {
       completed = true;
       pushVideoEvent(getVideoDetails(), 'videoCompleted');
-      // Remove listener once the video has completed
-      window.removeEventListener('message', handleMessage);
     }
   };
 
