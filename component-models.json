@@ -10695,7 +10695,15 @@
   },
   {
     "id": "featured-advocates",
-    "fields": []
+    "fields": [
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "glassyEffect",
+        "label": "Apply glassy effect?",
+        "description": "Applies the glassy effect to this component's tiles."
+      }
+    ]
   },
   {
     "id": "champion-detail",
