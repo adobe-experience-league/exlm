@@ -35,9 +35,10 @@ const embedMpc = (url, block) => {
   };
 
   const handleMessage = (event) => {
+    if (event.data?.type !== 'mpcStatus') return;
     const iframe = block.querySelector('iframe');
     // Check if message is from this block's iframe
-    if (!iframe || event.source !== iframe.contentWindow || event.data?.type !== 'mpcStatus') return;
+    if (!iframe || event.source !== iframe.contentWindow) return;
 
     if (event.data.state === 'play' && firstPlay) {
       firstPlay = false;
