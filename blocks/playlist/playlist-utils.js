@@ -133,6 +133,8 @@ export class Playlist {
     this.mpcListener.on(MCP_EVENT.SEEK, this.handleSeek.bind(this));
     this.mpcListener.on(MCP_EVENT.COMPLETE, this.handleComplete.bind(this));
     this.mpcListener.on(MCP_EVENT.START, () => {
+      // Reset the completion guard so a fresh playback of this video can push a videoCompleted event
+      this.lastCompletedVideoIndex = null;
       const { title, description, duration, src } = this.getActiveVideo();
       pushVideoEvent({ title, description, url: src, duration });
     });
@@ -198,8 +200,6 @@ export class Playlist {
       currentTime = currentTime >= this.getVideo(i).duration - 1 ? 0 : currentTime;
       this.updateActiveVideo({ active: false, autoplay: false });
       this.updateVideoByIndex(i, { active: true, autoplay, currentTime });
-      // Reset the completion guard so a rewatch of this video can push a fresh videoCompleted event
-      this.lastCompletedVideoIndex = null;
     }
   }
 
