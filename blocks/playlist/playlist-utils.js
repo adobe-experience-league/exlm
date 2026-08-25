@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 
-import { pushVideoEvent } from '../../scripts/analytics/lib-analytics.js';
+import { pushVideoEvent, createVideoMilestoneTracker } from '../../scripts/analytics/lib-analytics.js';
 
 export const LABELS = {
   tutorials: 'playlistTutorials',
@@ -129,11 +129,13 @@ export class Playlist {
     });
     this.mpcListener = new MPCListener();
     this.mpcListener.on(MCP_EVENT.TICK, this.handleSeek.bind(this));
+    this.mpcListener.on(MCP_EVENT.TICK, this.handleMilestone.bind(this));
     this.mpcListener.on(MCP_EVENT.SEEK, this.handleSeek.bind(this));
     this.mpcListener.on(MCP_EVENT.COMPLETE, this.handleComplete.bind(this));
     this.mpcListener.on(MCP_EVENT.START, () => {
       const { title, description, duration, src } = this.getActiveVideo();
       pushVideoEvent({ title, description, url: src, duration });
+      this.milestoneTracker = createVideoMilestoneTracker({ title, description, url: src, duration });
     });
   }
 
@@ -221,6 +223,12 @@ export class Playlist {
     if (currentTime >= 0) {
       this.updateActiveVideo({ currentTime });
     }
+  }
+
+  handleMilestone(event) {
+    const { currentTime } = event;
+    const { duration } = this.getActiveVideo() || {};
+    this.milestoneTracker?.(currentTime, duration);
   }
 
   handleComplete() {

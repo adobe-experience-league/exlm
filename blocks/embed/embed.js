@@ -4,7 +4,11 @@
  * https://www.hlx.live/developer/block-collection/embed
  */
 
-import { pushVideoEvent, pushVideoMetadataOnLoad } from '../../scripts/analytics/lib-analytics.js';
+import {
+  pushVideoEvent,
+  pushVideoMetadataOnLoad,
+  createVideoMilestoneTracker,
+} from '../../scripts/analytics/lib-analytics.js';
 
 const loadScript = (url, callback, type) => {
   const head = document.querySelector('head');
@@ -46,18 +50,24 @@ const embedTwitter = (url) => {
  */
 const embedMpc = (url) => {
   const urlObject = new URL(url);
+  let milestoneTracker;
+
   window.addEventListener(
     'message',
     (event) => {
-      if (event.data?.type === 'mpcStatus') {
-        if (event.data.state === 'play') {
-          pushVideoEvent({
-            title: getMetadata('og:title'),
-            description: getMetadata('og:description'),
-            url: url.href,
-            duration: getMetadata('video:duration'),
-          });
-        }
+      if (event.data?.type !== 'mpcStatus') return;
+
+      if (event.data.state === 'play') {
+        const video = {
+          title: getMetadata('og:title'),
+          description: getMetadata('og:description'),
+          url: url.href,
+          duration: getMetadata('video:duration'),
+        };
+        pushVideoEvent(video);
+        milestoneTracker = createVideoMilestoneTracker(video);
+      } else if (event.data.state === 'tick') {
+        milestoneTracker?.(event.data.currentTime, getMetadata('video:duration'));
       }
     },
     false,
