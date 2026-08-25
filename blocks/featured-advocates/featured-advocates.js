@@ -57,14 +57,8 @@ export default async function decorate(block) {
   const panelContainer = document.createElement('div');
   panelContainer.classList.add('panel-container');
 
-  // only one panel is ever visible at a time, so the gradient background lives on the whole
-  // section (same as the standalone champion page) and just gets swapped as the carousel advances
-  const section = block.closest('.section');
-
-  function setActiveSectionColor(index) {
-    const colorClass = getDesignationColor(orderedChampions[index].detail.colorSelection);
-    applyChampionSectionTheme(section, colorClass);
-  }
+  // shared container class (used for the section's own padding), same as the standalone champion page
+  applyChampionSectionTheme(block.closest('.section'));
 
   let currentIndex = 0;
 
@@ -74,7 +68,6 @@ export default async function decorate(block) {
     panelContainer.querySelectorAll('.champion-detail-pagination-count').forEach((el) => {
       el.textContent = `${currentIndex + 1}/${total}`;
     });
-    setActiveSectionColor(currentIndex);
   }
 
   orderedChampions.forEach((champion, i) => {
@@ -82,7 +75,6 @@ export default async function decorate(block) {
     if (i === 0) panel.classList.add('active');
     panelContainer.append(panel);
   });
-  setActiveSectionColor(currentIndex);
 
   if (total > 1) {
     panelContainer.addEventListener('click', (event) => {

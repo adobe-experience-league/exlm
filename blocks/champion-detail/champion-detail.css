@@ -4,17 +4,6 @@
 .section.champion-detail-container {
   padding-left: var(--spectrum-spacing-400);
   padding-right: var(--spectrum-spacing-400);
-  background:
-    url('/icons/advocate-glow-yellow.svg') no-repeat top left / cover,
-    var(--spectrum-gray-50);
-}
-
-.section.champion-detail-container.champion-detail-purple {
-  background-image: url('/icons/advocate-glow-purple.svg');
-}
-
-.section.champion-detail-container.champion-detail-blue {
-  background-image: url('/icons/advocate-glow-blue.svg');
 }
 
 .champion-detail.block {
