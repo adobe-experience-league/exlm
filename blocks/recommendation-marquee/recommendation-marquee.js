@@ -13,6 +13,7 @@ import {
   extractCapability,
   removeProductDuplicates,
   formatId,
+  buildDiversifiedForYouList,
 } from '../../scripts/browse-card/browse-card-utils.js';
 import { isSignedInUser, defaultProfileClient } from '../../scripts/auth/profile.js';
 import getEmitter from '../../scripts/events.js';
@@ -674,7 +675,8 @@ export default async function decorate(block) {
             if (cardResponse?.allAdobeProducts) {
               data = cardResponse.allAdobeProducts;
             } else {
-              cardResponse.allAdobeProducts = Array.from(data);
+              const productTabs = filterOptions.filter((option) => option !== defaultOptionsKey[0]);
+              cardResponse.allAdobeProducts = buildDiversifiedForYouList(data, productTabs);
               data = cardResponse.allAdobeProducts;
             }
           }
