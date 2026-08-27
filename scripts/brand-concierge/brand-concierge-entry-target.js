@@ -12,12 +12,14 @@ export const BC_ENTRY_EXPERIENCES = {
 const VALID_EXPERIENCES = new Set(Object.values(BC_ENTRY_EXPERIENCES));
 const DEFAULT_EXPERIENCE = BC_ENTRY_EXPERIENCES.FLOATING_ASK_BUTTON;
 const DESKTOP_MQ = '(min-width: 1200px)';
-const DEFAULT_WAIT_MS = 500;
+const DEFAULT_WAIT_MS = 5000;
 
 let rawExperience = null;
 let waitResolvers = [];
 let viewportListenerAttached = false;
 let bcReady = false;
+/** @type {((experience: string) => void)|null} */
+let onExperienceApplied = null;
 
 function syncHeaderHost(experience) {
   const headerHost = document.querySelector('exl-header');
@@ -86,6 +88,15 @@ function flushWaiters() {
   resolvers.forEach((resolve) => resolve(experience));
 }
 
+/**
+ * Optional hook for brand-concierge.js to mount variant-specific DOM after Target resolves
+ * (covers late Target firing after init already fell back to control FAB).
+ * @param {(experience: string) => void|null} callback
+ */
+export function setOnExperienceApplied(callback) {
+  onExperienceApplied = callback;
+}
+
 function storeExperience(experience) {
   if (!VALID_EXPERIENCES.has(experience)) return;
   // First valid Target assignment wins — ignore duplicate or late re-fires.
@@ -95,6 +106,7 @@ function storeExperience(experience) {
   window.exlm.bcEntryExperience = experience;
   applyBcEntryChrome();
   flushWaiters();
+  onExperienceApplied?.(resolveBcEntryExperience());
 }
 
 function onBcEntryReady(event) {
@@ -107,6 +119,9 @@ function onBcEntryReady(event) {
 
 function onViewportChange() {
   applyBcEntryChrome();
+  // Late mount for Mode B: Target may have assigned bottom-ask-bar while viewport was
+  // <1200px (FAB only); crossing desktop must create the bar or CSS hides FAB with no entry.
+  onExperienceApplied?.(resolveBcEntryExperience());
 }
 
 /**

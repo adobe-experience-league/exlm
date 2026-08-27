@@ -7,6 +7,7 @@ import {
   applyBcEntryChrome,
   BC_ENTRY_EXPERIENCES,
   resetBcEntryVariant,
+  setOnExperienceApplied,
   syncHeaderBcReady,
   waitForExperienceOrTimeout,
 } from './brand-concierge-entry-target.js';
@@ -515,6 +516,21 @@ function createBottomAskBar() {
   observeBottomBarImpression(bar);
   return bar;
 }
+
+/**
+ * Late Target may assign bottom-ask-bar after init timed out to control FAB.
+ * Mount the dock only when init has already run; normal init path is unchanged.
+ * @param {string} experience
+ */
+function ensureBottomAskBarForLateTarget(experience) {
+  if (experience !== BC_ENTRY_EXPERIENCES.BOTTOM_ASK_BAR) return;
+  if (!initStarted) return;
+  if (document.getElementById(BOTTOM_ASK_BAR_ID)) return;
+  createBottomAskBar();
+  document.body.append(document.getElementById(BOTTOM_ASK_BAR_ID));
+}
+
+setOnExperienceApplied(ensureBottomAskBarForLateTarget);
 
 function shouldShowScrollToBottomButton(history) {
   if (!history) return false;

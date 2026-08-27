@@ -1200,7 +1200,7 @@ async function loadLazy(doc) {
       loadMartech(headerPromise, footerPromise);
     }
     if (!isBrandConciergeExcludedPath() && !martechOff) {
-      import('./brand-concierge/brand-concierge-entry-target.js').then((mod) => mod.markBcEntryPending());
+      import('./brand-concierge/brand-concierge-entry-target.js').catch(() => {});
     }
   }
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
