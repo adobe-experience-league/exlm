@@ -8,3 +8,34 @@
 .featured-advocates.block .featured-advocates-panel.active {
   display: block;
 }
+
+/*
+ * .champion-content.block (2 classes) has higher specificity than the shared .glass-bg utility
+ * (styles.css, 1 class), so its own background/border/box-shadow would win over glass-bg's and the
+ * toggle would be a no-op. Re-declare just those three properties here, scoped to this combination —
+ * backdrop-filter isn't touched by champion-content.block, so it already applies from .glass-bg as-is.
+ * The color accent's inset box-shadow is merged in since one box-shadow property can't hold both.
+ */
+.featured-advocates.block .champion-content.block.glass-bg {
+  border: 2px solid rgb(255 255 255 / 60%);
+  background: rgb(255 255 255 / 50%);
+}
+
+.featured-advocates.block .champion-content.block.glass-bg,
+.featured-advocates.block .champion-content.block.champion-content-yellow.glass-bg {
+  box-shadow:
+    0 0 8px 0 rgb(0 0 0 / 25%),
+    0 var(--spectrum-spacing-75) 0 0 var(--non-spectrum-champion-yellow) inset;
+}
+
+.featured-advocates.block .champion-content.block.champion-content-purple.glass-bg {
+  box-shadow:
+    0 0 8px 0 rgb(0 0 0 / 25%),
+    0 var(--spectrum-spacing-75) 0 0 var(--non-spectrum-champion-purple) inset;
+}
+
+.featured-advocates.block .champion-content.block.champion-content-blue.glass-bg {
+  box-shadow:
+    0 0 8px 0 rgb(0 0 0 / 25%),
+    0 var(--spectrum-spacing-75) 0 0 var(--non-spectrum-champion-blue) inset;
+}
