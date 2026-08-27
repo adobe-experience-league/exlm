@@ -136,7 +136,8 @@ export class Playlist {
       // Reset the completion guard so a fresh playback of this video can push a videoCompleted event
       this.lastCompletedVideoIndex = null;
       const { title, description, duration, src } = this.getActiveVideo();
-      pushVideoEvent({ title, description, url: src, duration });
+      const videoId = src?.match(/\/v\/(\d+)/)?.[1] || '';
+      pushVideoEvent({ title, description, url: src, duration, id: videoId });
     });
   }
 

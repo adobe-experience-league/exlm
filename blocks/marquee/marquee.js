@@ -1,5 +1,5 @@
 /* eslint-disable no-plusplus */
-import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 import decorateCustomButtons from '../../scripts/utils/button-utils.js';
 import { getLocalizedVideoUrl } from '../../scripts/utils/video-utils.js';
 import { getPathDetails } from '../../scripts/scripts.js';
@@ -15,10 +15,10 @@ function trackMpcVideo(iframe, video) {
 
     if (event.data.state === 'play' && firstPlay) {
       firstPlay = false;
-      pushVideoEvent(video);
+      pushVideoEvent({ ...video, id: videoId, duration: event.data.duration || video.duration });
     } else if (event.data.state === 'complete' && !completed) {
       completed = true;
-      pushVideoEvent({ ...video, id: videoId }, 'videoCompleted');
+      pushVideoEvent({ ...video, id: videoId, duration: event.data.duration || video.duration }, 'videoCompleted');
       window.removeEventListener('message', handleMessage);
     }
   };
@@ -260,7 +260,7 @@ export default async function decorate(block) {
         title: title?.textContent?.trim() || '',
         description: longDescr?.textContent?.trim() || '',
         url: locVideoUrl,
-        duration: getMetadata('video:duration') || '',
+        duration: '',
       });
     }
   } else if (subjectPicture) {

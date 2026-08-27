@@ -21,14 +21,14 @@ const embedMpc = (url, block) => {
   let firstPlay = true;
   let completed = false;
 
-  const getVideoDetails = () => {
+  const getVideoDetails = (duration) => {
     const fullSolution = getMetadata('solution') || '';
     const solution = fullSolution?.split(',')[0]?.trim() || '';
     return {
       title: getMetadata('og:title'),
       description: getMetadata('description'),
       url: url.href,
-      duration: '',
+      duration: duration || '',
       solution,
       fullSolution,
     };
@@ -42,10 +42,10 @@ const embedMpc = (url, block) => {
 
     if (event.data.state === 'play' && firstPlay) {
       firstPlay = false;
-      pushVideoEvent(getVideoDetails());
+      pushVideoEvent({ ...getVideoDetails(event.data.duration), id: videoId });
     } else if (event.data.state === 'complete' && !completed) {
       completed = true;
-      pushVideoEvent({ ...getVideoDetails(), id: videoId }, 'videoCompleted');
+      pushVideoEvent({ ...getVideoDetails(event.data.duration), id: videoId }, 'videoCompleted');
       // Remove listener once the video has completed
       window.removeEventListener('message', handleMessage);
     }

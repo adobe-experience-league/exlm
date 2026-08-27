@@ -51,11 +51,11 @@ const embedMpc = (url, autoplay, block) => {
   const videoId = url.href.match(/\/v\/(\d+)/)?.[1] || '';
   let completed = false;
 
-  const getVideoDetails = () => ({
+  const getVideoDetails = (duration) => ({
     title: getMetadata('og:title'),
     description: getMetadata('og:description'),
     url: url.href,
-    duration: getMetadata('video:duration'),
+    duration: duration || '',
   });
 
   const handleMessage = (event) => {
@@ -65,10 +65,10 @@ const embedMpc = (url, autoplay, block) => {
     if (!iframe || event.source !== iframe.contentWindow) return;
 
     if (event.data.state === 'play') {
-      pushVideoEvent(getVideoDetails());
+      pushVideoEvent({ ...getVideoDetails(event.data.duration), id: videoId });
     } else if (event.data.state === 'complete' && !completed) {
       completed = true;
-      pushVideoEvent({ ...getVideoDetails(), id: videoId }, 'videoCompleted');
+      pushVideoEvent({ ...getVideoDetails(event.data.duration), id: videoId }, 'videoCompleted');
     }
   };
 
