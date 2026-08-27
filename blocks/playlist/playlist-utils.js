@@ -140,7 +140,7 @@ export class Playlist {
       const videoId = src?.match(/\/v\/(\d+)/)?.[1] || '';
       pushVideoEvent({ title, description, url: src, duration, id: videoId });
       this.milestoneTracker = createVideoMilestoneTracker(
-        { title, description, url: src, duration },
+        { title, description, url: src, duration, id: videoId },
         undefined,
         currentTime,
       );
