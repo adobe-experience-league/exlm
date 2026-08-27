@@ -1,11 +1,7 @@
 import { getLocalizedVideoUrl } from '../../scripts/utils/video-utils.js';
 import { getPathDetails } from '../../scripts/scripts.js';
 import { getMetadata } from '../../scripts/lib-franklin.js';
-import {
-  pushVideoEvent,
-  pushVideoMetadataOnLoad,
-  createVideoMilestoneTracker,
-} from '../../scripts/analytics/lib-analytics.js';
+import { pushVideoEvent, pushVideoMetadataOnLoad } from '../../scripts/analytics/lib-analytics.js';
 
 const getDefaultEmbed = (url) => `<div class="video-frame">
     <iframe 
@@ -22,30 +18,29 @@ const getDefaultEmbed = (url) => `<div class="video-frame">
 const embedMpc = (url, block) => {
   const urlObject = new URL(url);
   let firstPlay = true;
-  let milestoneTracker;
 
   const handleMessage = (event) => {
     const iframe = block.querySelector('iframe');
     // Check if message is from this block's iframe
-    if (!iframe || event.source !== iframe.contentWindow || event.data?.type !== 'mpcStatus') return;
-
-    if (event.data.state === 'play' && firstPlay) {
+    if (
+      iframe &&
+      event.source === iframe.contentWindow &&
+      event.data?.type === 'mpcStatus' &&
+      event.data.state === 'play' &&
+      firstPlay
+    ) {
       firstPlay = false;
       const fullSolution = getMetadata('solution') || '';
       const solution = fullSolution?.split(',')[0]?.trim() || '';
-      const duration = getMetadata('video:duration');
 
-      const video = {
+      pushVideoEvent({
         title: getMetadata('og:title'),
         description: getMetadata('description'),
         url: url.href,
-        duration,
+        duration: '',
         solution,
         fullSolution,
-      };
-
-      pushVideoEvent(video);
-      milestoneTracker = createVideoMilestoneTracker(video);
+      });
 
       // Remove listener after first play
       window.removeEventListener('message', handleMessage);
@@ -53,16 +48,6 @@ const embedMpc = (url, block) => {
   };
 
   window.addEventListener('message', handleMessage, false);
-
-  const handleTick = (event) => {
-    const iframe = block.querySelector('iframe');
-    if (!iframe || event.source !== iframe.contentWindow || event.data?.type !== 'mpcStatus') return;
-    if (event.data.state === 'tick') {
-      milestoneTracker?.(event.data.currentTime, getMetadata('video:duration'));
-    }
-  };
-
-  window.addEventListener('message', handleTick, false);
 
   return getDefaultEmbed(urlObject);
 };
