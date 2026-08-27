@@ -203,6 +203,21 @@
   justify-content: flex-end;
 }
 
+@media (min-width: 1200px) {
+  :host([data-bc-entry='header-ask-button']) .search-wrapper {
+    display: inline-flex;
+    flex-grow: 0;
+    max-width: none;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  :host([data-bc-entry='header-ask-button']) .search-short {
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+}
+
 .header-wrapper {
   /* header is always white */
   background-color: var(--color-white);
@@ -287,6 +302,88 @@ a.button:focus,
 button:hover,
 button:focus {
   cursor: pointer;
+}
+
+/* Header Ask (Mode C) — matches Updated FAB pill (mode-C/Updated Floating Action Button.png) */
+button.bc-header-ask {
+  position: relative;
+  display: none;
+  box-sizing: border-box;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 6px 14px 6px 10px;
+  border: none;
+  border-radius: 100px;
+  background-color: var(--background-color);
+  color: #6e6e6e;
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  overflow: visible;
+  text-overflow: unset;
+  text-align: center;
+  white-space: nowrap;
+  isolation: isolate;
+  cursor: pointer;
+}
+
+button.bc-header-ask::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 100px;
+  padding: 2px;
+  background: linear-gradient(to right, #d73220 0%, #d92361 33%, #7155fa 100%);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 0;
+}
+
+button.bc-header-ask > * {
+  position: relative;
+  z-index: 1;
+}
+
+button.bc-header-ask-label,
+.bc-header-ask-label {
+  font-weight: var(--font-weight-normal);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #6e6e6e;
+}
+
+button.bc-header-ask:hover,
+button.bc-header-ask:focus,
+button.bc-header-ask:focus-visible {
+  background-color: var(--background-color);
+  color: #6e6e6e;
+  cursor: pointer;
+}
+
+@media (min-width: 1200px) {
+  :host([data-bc-entry='header-ask-button'][data-bc-ready='true']) button.bc-header-ask {
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+.bc-header-ask .icon {
+  display: flex;
+  align-items: center;
+  line-height: 0;
+  margin-inline-end: -6px;
+}
+
+.bc-header-ask .icon.icon-bc-ask-sparkles img {
+  display: block;
+  width: 18px;
+  height: 18px;
+  filter: none;
 }
 
 .header {

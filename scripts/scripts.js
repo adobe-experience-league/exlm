@@ -1153,6 +1153,12 @@ async function loadDefaultModule(jsPath) {
  * @param {Element} doc The container element
  */
 
+/** Paths like /en/support, /fr/premium — keep in sync with delayed.js isBrandConciergeExcludedPath(). */
+function isBrandConciergeExcludedPath() {
+  const { pathname } = window.location;
+  return /^\/[^/]+\/(support|premium)(\/|$)/i.test(pathname) || /^\/(support|premium)(\/|$)/i.test(pathname);
+}
+
 async function loadLazy(doc) {
   let embedMode = false;
   if (window.location.pathname.toLowerCase().includes('/playlists')) {
@@ -1188,8 +1194,14 @@ async function loadLazy(doc) {
   if (!embedMode) {
     const headerPromise = loadHeader(doc.querySelector('header'));
     const footerPromise = loadFooter(doc.querySelector('footer'));
+    const martechOff = window.location.search?.indexOf('martech=off') !== -1;
     // disable martech if martech=off is in the query string, this is used for testing ONLY
-    if (window.location.search?.indexOf('martech=off') === -1) loadMartech(headerPromise, footerPromise);
+    if (!martechOff) {
+      loadMartech(headerPromise, footerPromise);
+    }
+    if (!isBrandConciergeExcludedPath() && !martechOff) {
+      import('./brand-concierge/brand-concierge-entry-target.js').then((mod) => mod.markBcEntryPending());
+    }
   }
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   if (isLiveGradientBgPage) {

@@ -476,6 +476,10 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
   searchBlock.innerHTML = '';
   const searchWrapper = htmlToElement(
     `<div class="search-wrapper">
+      <button type="button" class="bc-header-ask" aria-label="Ask">
+        <span class="icon icon-bc-ask-sparkles" aria-hidden="true"></span>
+        <span class="bc-header-ask-label">Ask</span>
+      </button>
       <div class="search-short">
         <a href="${searchLink?.href || '#'}" aria-label="Search">
           <span title="${placeholders?.search || 'Search'}" class="icon icon-search"></span>
@@ -500,6 +504,15 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
   } else {
     decoratorState.headerSearchIconClick = null;
   }
+
+  searchWrapper.querySelector('.bc-header-ask')?.addEventListener('click', () => {
+    import('../../scripts/brand-concierge/brand-concierge.js')
+      .then((mod) => mod.openBrandConcierge())
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.warn('[BC] header Ask open failed', e?.message || e);
+      });
+  });
 
   searchBlock.append(searchWrapper);
   decorateIcons(searchBlock);

@@ -3,6 +3,13 @@ import { getConfig, getPathDetails, fetchJson } from '../scripts.js';
 import { loadScript, decorateIcon } from '../lib-franklin.js';
 import { openDrawer } from '../dialog/dialog.js';
 import brandConciergeConfig from './brand-concierge-config.js';
+import {
+  applyBcEntryChrome,
+  BC_ENTRY_EXPERIENCES,
+  resetBcEntryVariant,
+  syncHeaderBcReady,
+  waitForExperienceOrTimeout,
+} from './brand-concierge-entry-target.js';
 import { pushBcWidgetImpressionEvent, pushBcInteractionEvent } from '../analytics/lib-analytics.js';
 
 // Separate alloy instance avoids conflicting with the Launch-owned window.alloy.
@@ -10,6 +17,7 @@ const ALLOY_INSTANCE_NAME = 'alloyBC';
 const MOUNT_SELECTOR = '#brand-concierge-mount';
 const DIALOG_ID = 'bc-dialog';
 const TRIGGER_ID = 'bc-trigger';
+const BOTTOM_ASK_BAR_ID = 'bc-bottom-ask-bar';
 const HEADER_CLEAR_ID = 'bc-header-clear';
 const PANEL_DISCLAIMER_ID = 'bc-panel-disclaimer';
 
@@ -69,7 +77,12 @@ let mountWithHandler = null;
 let keyboardScrollHandler = null;
 let keyboardScrollDialog = null;
 let impressionObserver = null;
+let bottomBarImpressionObserver = null;
 let defaultPromptsOverride = null;
+let initPromise = null;
+let initResolve = null;
+let initReject = null;
+let initStarted = false;
 
 /** Real BC conversationId, captured from response:started/response:completed events. */
 let bcConversationId = null;
@@ -233,6 +246,274 @@ function focusBcChatInputWhenReady(mount) {
   });
   obs.observe(mount, { childList: true, subtree: true });
   timeoutId = window.setTimeout(cleanup, 8000);
+}
+
+/**
+ * Waits for BC chat input, optionally sets value and submits.
+ * @param {HTMLElement} mount
+ * @param {string} [query]
+ * @returns {Promise<void>}
+ */
+function prepareBcChatInput(mount, query) {
+  if (!mount) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    let timeoutId;
+    let obs;
+
+    const cleanup = () => {
+      obs?.disconnect();
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+
+    const tryPrepare = () => {
+      const input = mount.querySelector('.chat-input--input');
+      if (!input || !document.contains(input)) return false;
+
+      if (query) {
+        input.value = query;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        const submitBtn = mount.querySelector('.submit-button');
+        if (submitBtn && typeof submitBtn.click === 'function') {
+          submitBtn.click();
+        }
+      } else if (typeof input.focus === 'function') {
+        input.focus({ preventScroll: true });
+      }
+
+      cleanup();
+      resolve();
+      return true;
+    };
+
+    if (tryPrepare()) return;
+
+    obs = new MutationObserver(() => {
+      tryPrepare();
+    });
+    obs.observe(mount, { childList: true, subtree: true });
+    timeoutId = window.setTimeout(() => {
+      cleanup();
+      resolve();
+    }, 8000);
+  });
+}
+
+function ensureInitPromise() {
+  if (!initPromise) {
+    initPromise = new Promise((resolve, reject) => {
+      initResolve = resolve;
+      initReject = reject;
+    });
+  }
+  return initPromise;
+}
+
+function setBottomAskBarExpanded(bar, expanded) {
+  if (!bar) return;
+  bar.dataset.expanded = expanded ? 'true' : 'false';
+  bar.querySelector('.bc-bottom-ask-bar-collapsed')?.setAttribute('aria-expanded', String(expanded));
+}
+
+function collapseBottomAskBar() {
+  setBottomAskBarExpanded(document.getElementById(BOTTOM_ASK_BAR_ID), false);
+}
+
+function expandBottomAskBar() {
+  setBottomAskBarExpanded(document.getElementById(BOTTOM_ASK_BAR_ID), true);
+}
+
+/**
+ * Opens the BC drawer; optionally seeds and submits a query after bootstrap.
+ * @param {{ query?: string }} [options]
+ * @returns {Promise<void>}
+ */
+export async function openBrandConcierge({ query } = {}) {
+  if (!initStarted) {
+    // Lazy init when header Ask is clicked before delayed.js runs.
+    // eslint-disable-next-line no-use-before-define -- initBrandConcierge is defined below; circular entry point
+    await initBrandConcierge();
+  } else {
+    await ensureInitPromise();
+  }
+
+  const dialog = document.getElementById(DIALOG_ID);
+  const mount = document.getElementById('brand-concierge-mount');
+  const trigger = document.getElementById(TRIGGER_ID);
+
+  if (!dialog || !mount) {
+    warn('openBrandConcierge: dialog or mount missing');
+    return;
+  }
+
+  dialog.showModal();
+  trigger?.setAttribute('aria-expanded', 'true');
+  if (document.body.dataset.bcEntry === 'bottom-ask-bar') {
+    collapseBottomAskBar();
+  }
+  pushBcInteractionEvent('bc widget open');
+  await prepareBcChatInput(mount, query?.trim() || undefined);
+}
+
+function observeEntryImpression(element) {
+  if (!element) return;
+  impressionObserver?.disconnect();
+  impressionObserver = new IntersectionObserver((entries) => {
+    if (!entries.some((entry) => entry.isIntersecting)) return;
+    pushBcWidgetImpressionEvent();
+    impressionObserver.disconnect();
+    impressionObserver = null;
+  });
+  impressionObserver.observe(element);
+}
+
+function observeBottomBarImpression(bar) {
+  if (!bar) return;
+  bottomBarImpressionObserver?.disconnect();
+  bottomBarImpressionObserver = new IntersectionObserver((entries) => {
+    if (!entries.some((entry) => entry.isIntersecting)) return;
+    pushBcWidgetImpressionEvent();
+    bottomBarImpressionObserver.disconnect();
+    bottomBarImpressionObserver = null;
+  });
+  bottomBarImpressionObserver.observe(bar);
+}
+
+function createBottomAskBar() {
+  if (document.getElementById(BOTTOM_ASK_BAR_ID)) {
+    return document.getElementById(BOTTOM_ASK_BAR_ID);
+  }
+
+  const bar = document.createElement('div');
+  bar.id = BOTTOM_ASK_BAR_ID;
+  bar.dataset.expanded = 'true';
+  bar.setAttribute('role', 'region');
+  bar.setAttribute('aria-label', 'Brand Concierge');
+
+  const collapsedBtn = document.createElement('button');
+  collapsedBtn.type = 'button';
+  collapsedBtn.className = 'bc-bottom-ask-bar-collapsed';
+  collapsedBtn.setAttribute('aria-expanded', 'true');
+  collapsedBtn.setAttribute('aria-label', 'Expand Brand Concierge ask bar');
+
+  const collapsedIcon = document.createElement('span');
+  collapsedIcon.className = 'icon icon-bc-ask-sparkles';
+  const collapsedLabel = document.createElement('span');
+  collapsedLabel.className = 'bc-bottom-ask-bar-collapsed-label';
+  collapsedLabel.textContent = 'Ask';
+  const collapsedChevron = document.createElement('span');
+  collapsedChevron.className = 'icon icon-chevron bc-bottom-ask-bar-collapsed-chevron';
+  collapsedChevron.setAttribute('aria-hidden', 'true');
+  collapsedBtn.append(collapsedIcon, collapsedLabel, collapsedChevron);
+  decorateIcon(collapsedIcon);
+  decorateIcon(collapsedChevron);
+
+  const expanded = document.createElement('div');
+  expanded.className = 'bc-bottom-ask-bar-expanded';
+
+  const brand = document.createElement('div');
+  brand.className = 'bc-bottom-ask-bar-brand';
+  const brandIcon = document.createElement('span');
+  brandIcon.className = 'icon icon-bc-ask-sparkles';
+  const brandLabel = document.createElement('span');
+  brandLabel.className = 'bc-bottom-ask-bar-label';
+  brandLabel.textContent = 'Brand Concierge';
+  brand.append(brandIcon, brandLabel);
+  decorateIcon(brandIcon);
+
+  const inputWrap = document.createElement('div');
+  inputWrap.className = 'bc-bottom-ask-bar-input-wrap';
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'bc-bottom-ask-bar-input';
+  input.placeholder = 'Ask a question';
+  input.setAttribute('aria-label', 'Ask a question');
+
+  const sendBtn = document.createElement('button');
+  sendBtn.type = 'button';
+  sendBtn.className = 'bc-bottom-ask-bar-send';
+  sendBtn.setAttribute('aria-label', 'Send');
+  sendBtn.disabled = true;
+  const sendIcon = document.createElement('span');
+  sendIcon.className = 'icon icon-bc-message-send';
+  sendIcon.setAttribute('aria-hidden', 'true');
+  sendBtn.append(sendIcon);
+  decorateIcon(sendIcon);
+
+  inputWrap.append(input, sendBtn);
+
+  const actions = document.createElement('div');
+  actions.className = 'bc-bottom-ask-bar-actions';
+
+  const expandBtn = document.createElement('button');
+  expandBtn.type = 'button';
+  expandBtn.className = 'bc-bottom-ask-bar-expand';
+  expandBtn.setAttribute('aria-label', 'Open Brand Concierge');
+  const expandIcon = document.createElement('span');
+  expandIcon.className = 'icon icon-expand';
+  expandIcon.setAttribute('aria-hidden', 'true');
+  expandBtn.append(expandIcon);
+  decorateIcon(expandIcon);
+
+  const hideBtn = document.createElement('button');
+  hideBtn.type = 'button';
+  hideBtn.className = 'bc-bottom-ask-bar-hide';
+  hideBtn.setAttribute('aria-label', 'Hide ask bar');
+  const hideLabel = document.createElement('span');
+  hideLabel.textContent = 'Hide';
+  const hideChevron = document.createElement('span');
+  hideChevron.className = 'icon icon-chevron bc-bottom-ask-bar-hide-chevron';
+  hideChevron.setAttribute('aria-hidden', 'true');
+  hideBtn.append(hideLabel, hideChevron);
+  decorateIcon(hideChevron);
+
+  actions.append(expandBtn, hideBtn);
+  expanded.append(brand, inputWrap, actions);
+  bar.append(collapsedBtn, expanded);
+
+  const focusInput = () => {
+    window.requestAnimationFrame(() => {
+      input.focus({ preventScroll: true });
+    });
+  };
+
+  const syncSendButtonState = () => {
+    sendBtn.disabled = !input.value.trim();
+  };
+
+  const expandBar = () => {
+    setBottomAskBarExpanded(bar, true);
+    focusInput();
+  };
+
+  const submitFromBar = () => {
+    const query = input.value.trim();
+    if (!query) return;
+    openBrandConcierge({ query }).catch((e) => warn('Open from bottom bar failed', e?.message || e));
+    input.value = '';
+    syncSendButtonState();
+  };
+
+  collapsedBtn.addEventListener('click', expandBar);
+  input.addEventListener('input', syncSendButtonState);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      submitFromBar();
+    }
+  });
+  sendBtn.addEventListener('click', submitFromBar);
+  expandBtn.addEventListener('click', () => {
+    openBrandConcierge().catch((e) => warn('Open from bottom bar expand failed', e?.message || e));
+  });
+  hideBtn.addEventListener('click', () => {
+    setBottomAskBarExpanded(bar, false);
+  });
+
+  document.body.append(bar);
+  observeBottomBarImpression(bar);
+  return bar;
 }
 
 function shouldShowScrollToBottomButton(history) {
@@ -769,15 +1050,7 @@ function createMountPoint() {
   decorateIcon(triggerIcon);
   decorateIcon(sendIcon);
   document.body.append(trigger);
-
-  impressionObserver?.disconnect();
-  impressionObserver = new IntersectionObserver((entries) => {
-    if (!entries.some((entry) => entry.isIntersecting)) return;
-    pushBcWidgetImpressionEvent();
-    impressionObserver.disconnect();
-    impressionObserver = null;
-  });
-  impressionObserver.observe(trigger);
+  observeEntryImpression(trigger);
 
   const mount = document.createElement('div');
   mount.id = 'brand-concierge-mount';
@@ -800,6 +1073,7 @@ function createMountPoint() {
     triggerEl: trigger,
     onClose: () => {
       trigger.setAttribute('aria-expanded', 'false');
+      expandBottomAskBar();
       pushBcInteractionEvent(bcHasMessage ? 'bc widget close with message' : 'bc widget close without message');
     },
   });
@@ -808,10 +1082,7 @@ function createMountPoint() {
   installKeyboardScrollHandler(dialog, mount);
 
   trigger.addEventListener('click', () => {
-    dialog.showModal();
-    trigger.setAttribute('aria-expanded', 'true');
-    focusBcChatInputWhenReady(mount);
-    pushBcInteractionEvent('bc widget open');
+    openBrandConcierge().catch((e) => warn('Open from FAB failed', e?.message || e));
   });
 
   dialog.querySelector('.exl-dialog-header-expand')?.addEventListener('click', () => {
@@ -901,6 +1172,8 @@ export function destroyBrandConcierge() {
   removeQuestionPinHandlers();
   impressionObserver?.disconnect();
   impressionObserver = null;
+  bottomBarImpressionObserver?.disconnect();
+  bottomBarImpressionObserver = null;
   inputLabelIconObserver?.disconnect();
   inputLabelIconObserver = null;
   panelDisclaimerObserver?.disconnect();
@@ -908,17 +1181,26 @@ export function destroyBrandConcierge() {
   drawerHandle?.destroy();
   drawerHandle = null;
   document.getElementById(TRIGGER_ID)?.remove();
+  document.getElementById(BOTTOM_ASK_BAR_ID)?.remove();
   cssLinkEl?.remove();
   cssLinkEl = null;
   bcConversationId = null;
   bcMessageNumber = 0;
   bcHasMessage = false;
   defaultPromptsOverride = null;
+  initPromise = null;
+  initResolve = null;
+  initReject = null;
+  initStarted = false;
+  resetBcEntryVariant();
 }
 
 export async function initBrandConcierge() {
-  const { bcAlloySdkUrl, bcDatastreamId, bcOrgId, bcWebClientUrl, bcEdgeDomain } = getConfig();
+  ensureInitPromise();
+  if (initStarted) return initPromise;
+  initStarted = true;
 
+  const { bcAlloySdkUrl, bcDatastreamId, bcOrgId, bcWebClientUrl, bcEdgeDomain } = getConfig();
   createMountPoint();
   injectAlloyStub();
 
@@ -955,13 +1237,34 @@ export async function initBrandConcierge() {
     cssLinkEl.href = `${window.hlx.codeBasePath}/scripts/brand-concierge/brand-concierge.css`;
     document.head.append(cssLinkEl);
 
-    /* Later scripts may append fixed layers; keep the trigger button last in body stacking order. */
+    const martechOff = window.location.search?.indexOf('martech=off') !== -1;
+    const experience = martechOff ? BC_ENTRY_EXPERIENCES.FLOATING_ASK_BUTTON : await waitForExperienceOrTimeout();
+    applyBcEntryChrome(experience);
+
+    if (experience === BC_ENTRY_EXPERIENCES.BOTTOM_ASK_BAR) {
+      createBottomAskBar();
+    }
+
+    /* Later scripts may append fixed layers; keep fixed entry chrome last in body stacking order. */
     const triggerEl = document.getElementById(TRIGGER_ID);
+    const bottomBarEl = document.getElementById(BOTTOM_ASK_BAR_ID);
+    if (bottomBarEl) document.body.append(bottomBarEl);
     if (triggerEl) document.body.append(triggerEl);
+
+    syncHeaderBcReady(true);
+
+    initResolve?.();
+    initResolve = null;
   } catch (e) {
     error('[BC] failed to initialise', e?.message || e);
+    initReject?.(e);
+    initReject = null;
+    initStarted = false;
+    syncHeaderBcReady(false);
     destroyBrandConcierge();
   }
+
+  return initPromise;
 }
 
 export default initBrandConcierge;
