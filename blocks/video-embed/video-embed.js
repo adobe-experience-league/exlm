@@ -17,32 +17,36 @@ const getDefaultEmbed = (url) => `<div class="video-frame">
 
 const embedMpc = (url, block) => {
   const urlObject = new URL(url);
+  const videoId = url.href.match(/\/v\/(\d+)/)?.[1] || '';
   let firstPlay = true;
+  let completed = false;
+
+  const getVideoDetails = (duration) => {
+    const fullSolution = getMetadata('solution') || '';
+    const solution = fullSolution?.split(',')[0]?.trim() || '';
+    return {
+      title: getMetadata('og:title'),
+      description: getMetadata('description'),
+      url: url.href,
+      duration: duration || '',
+      solution,
+      fullSolution,
+    };
+  };
 
   const handleMessage = (event) => {
+    if (event.data?.type !== 'mpcStatus') return;
     const iframe = block.querySelector('iframe');
     // Check if message is from this block's iframe
-    if (
-      iframe &&
-      event.source === iframe.contentWindow &&
-      event.data?.type === 'mpcStatus' &&
-      event.data.state === 'play' &&
-      firstPlay
-    ) {
+    if (!iframe || event.source !== iframe.contentWindow) return;
+
+    if (event.data.state === 'play' && firstPlay) {
       firstPlay = false;
-      const fullSolution = getMetadata('solution') || '';
-      const solution = fullSolution?.split(',')[0]?.trim() || '';
-
-      pushVideoEvent({
-        title: getMetadata('og:title'),
-        description: getMetadata('description'),
-        url: url.href,
-        duration: '',
-        solution,
-        fullSolution,
-      });
-
-      // Remove listener after first play
+      pushVideoEvent({ ...getVideoDetails(event.data.duration), id: videoId });
+    } else if (event.data.state === 'complete' && !completed) {
+      completed = true;
+      pushVideoEvent({ ...getVideoDetails(event.data.duration), id: videoId }, 'videoCompleted');
+      // Remove listener once the video has completed
       window.removeEventListener('message', handleMessage);
     }
   };

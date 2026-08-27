@@ -8,6 +8,7 @@ import {
   renderPaginationHTML,
 } from '../champion-detail/champion-detail.js';
 import { renderChampionContentHTML } from '../champion-content/champion-content.js';
+import { pushComponentClick, generateComponentID } from '../../scripts/analytics/lib-analytics.js';
 
 function buildAssociatedContentCard(item, championName, colorClass, placeholders, glassyEffect) {
   const card = document.createElement('div');
@@ -82,8 +83,21 @@ export default async function decorate(block) {
 
   if (total > 1) {
     panelContainer.addEventListener('click', (event) => {
-      if (event.target.closest('.champion-detail-prev')) goTo(currentIndex - 1);
-      else if (event.target.closest('.champion-detail-next')) goTo(currentIndex + 1);
+      if (!event.target.closest('.champion-detail-prev, .champion-detail-next')) return;
+
+      const isPrev = !!event.target.closest('.champion-detail-prev');
+      const targetIndex = (currentIndex + (isPrev ? -1 : 1) + total) % total;
+
+      pushComponentClick({
+        component: 'Featured advocates carousel arrow',
+        componentID: generateComponentID(block, 'featured-advocates'),
+        sectionID: block.closest('.section')?.dataset?.sectionId || '',
+        linkTitle: 'carousel arrow',
+        linkType: 'carousel',
+        position: targetIndex + 1,
+      });
+
+      goTo(targetIndex);
     });
   }
 

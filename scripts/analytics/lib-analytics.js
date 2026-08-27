@@ -539,11 +539,13 @@ export function pushVideoEvent(video, event = 'videoPlay') {
   const videoDuration = video.duration || '';
   const videoSolution = video.solution || solution || '';
   const videoFullSolution = video.fullSolution || fullSolution || '';
+  const videoId = video.id || '';
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   window.adobeDataLayer.push({
     event,
     video: {
+      id: videoId,
       title,
       description,
       url,
@@ -570,13 +572,23 @@ export function pushVideoEvent(video, event = 'videoPlay') {
  * threshold on `video.milestone`. MPC has no native milestone/quartile message, so
  * thresholds are derived from the `tick` message's currentTime against a known
  * total duration.
+ *
+ * `startTime` seeds already-crossed thresholds as fired so resuming a
+ * partially-watched video doesn't re-report milestones reached in an earlier session.
  * @param {Video} video
  * @param {number[]} [thresholds]
+ * @param {number} [startTime]
  * @returns {(currentTime: number) => void}
  */
-export function createVideoMilestoneTracker(video, thresholds = [25, 50, 75]) {
-  const fired = new Set();
+export function createVideoMilestoneTracker(video, thresholds = [25, 50, 75], startTime = 0) {
   const totalDuration = Number(video.duration);
+  const fired = new Set();
+  if (totalDuration) {
+    const startPercent = (startTime / totalDuration) * 100;
+    thresholds.forEach((threshold) => {
+      if (startPercent >= threshold) fired.add(threshold);
+    });
+  }
   return (currentTime) => {
     if (!totalDuration) return;
     const percent = (currentTime / totalDuration) * 100;
