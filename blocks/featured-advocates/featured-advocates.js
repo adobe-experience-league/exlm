@@ -10,15 +10,16 @@ import {
 import { renderChampionContentHTML } from '../champion-content/champion-content.js';
 import { pushComponentClick, generateComponentID } from '../../scripts/analytics/lib-analytics.js';
 
-function buildAssociatedContentCard(item, championName, colorClass, placeholders) {
+function buildAssociatedContentCard(item, championName, colorClass, placeholders, glassyEffect) {
   const card = document.createElement('div');
   card.classList.add('champion-content', 'block');
   if (colorClass) card.classList.add(`champion-content-${colorClass}`);
+  if (glassyEffect) card.classList.add('glass-bg');
   card.innerHTML = renderChampionContentHTML(item, championName, placeholders);
   return card;
 }
 
-function buildAdvocatePanel(champion, total, placeholders) {
+function buildAdvocatePanel(champion, total, placeholders, glassyEffect) {
   const { detail, associatedContent } = champion;
   const colorClass = getDesignationColor(detail.colorSelection);
 
@@ -31,7 +32,7 @@ function buildAdvocatePanel(champion, total, placeholders) {
   });
 
   const cards = associatedContent.map((item) =>
-    buildAssociatedContentCard(item, detail.name, colorClass, placeholders),
+    buildAssociatedContentCard(item, detail.name, colorClass, placeholders, glassyEffect),
   );
   appendMoreFromSection(panel, detail.name, cards, placeholders);
 
@@ -39,6 +40,9 @@ function buildAdvocatePanel(champion, total, placeholders) {
 }
 
 export default async function decorate(block) {
+  // read authoring fields before clearing — this block is otherwise zero-config and
+  // rebuilt entirely from fetched champion data, so glassyEffect must be the last field.
+  const glassyEffect = block.children[block.children.length - 1]?.textContent.trim() === 'true';
   block.textContent = '';
 
   const { lang } = getPathDetails();
@@ -72,7 +76,7 @@ export default async function decorate(block) {
   }
 
   orderedChampions.forEach((champion, i) => {
-    const panel = buildAdvocatePanel(champion, total, placeholders);
+    const panel = buildAdvocatePanel(champion, total, placeholders, glassyEffect);
     if (i === 0) panel.classList.add('active');
     panelContainer.append(panel);
   });

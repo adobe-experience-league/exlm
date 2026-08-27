@@ -1178,7 +1178,8 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Featured Advocates",
-                  "model": "featured-advocates"
+                  "model": "featured-advocates",
+                  "glassyEffect": false
                 }
               }
             }
