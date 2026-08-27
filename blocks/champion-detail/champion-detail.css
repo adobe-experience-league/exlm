@@ -157,6 +157,19 @@
   margin-top: var(--spectrum-spacing-400);
 }
 
+/* the 2nd/3rd cards of a 3-item set are the structurally "smaller" ones */
+.champion-detail.block
+  .champion-detail-items
+  .champion-content.block:nth-child(2):nth-last-child(2)
+  .champion-content-description,
+.champion-detail.block
+  .champion-detail-items
+  .champion-content.block:nth-child(3):last-child
+  .champion-content-description {
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+}
+
 /* ----- TABLET ----- */
 @media (min-width: 600px) {
   .section.champion-detail-container {

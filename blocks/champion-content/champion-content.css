@@ -45,6 +45,13 @@
   line-height: 1.25;
   color: var(--non-spectrum-dark-gray);
   margin-bottom: var(--spectrum-spacing-200);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
 }
 
 .champion-content.block .champion-content-description {
