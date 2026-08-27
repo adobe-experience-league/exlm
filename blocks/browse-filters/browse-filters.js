@@ -396,7 +396,7 @@ function handleUriHash(isInitialLoad) {
     const facetValues = facetValueInfo
       .split(',')
       .filter(Boolean)
-      .map((v) => safeDecode(v));
+      .map((v) => safeDecode(v).trim());
 
     if (Object.keys(coveoFacetMap).includes(keyName)) {
       const filterOptionEl = browseFiltersSection.querySelector(`.filter-dropdown[data-filter-type="${keyName}"]`);
@@ -1056,7 +1056,10 @@ if (isArticleLandingPage()) {
     return acc;
   }, '');
 
-  const coveoSolutionArr = coveoSolutions.split(/[,;]/).filter((solution) => solution && !solution.includes('|'));
+  const coveoSolutionArr = coveoSolutions
+    .split(/[,;]/)
+    .map((solution) => solution.trim())
+    .filter((solution) => solution && !solution.includes('|'));
   const coveoSolutionOptionsList = Array.from(new Set(coveoSolutionArr)).sort();
   const coveoSolutionOptions = coveoSolutionOptionsList.map((solution) => ({
     description: '',
