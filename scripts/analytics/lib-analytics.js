@@ -572,12 +572,12 @@ export function pushVideoEvent(video, event = 'videoPlay') {
  * total duration.
  * @param {Video} video
  * @param {number[]} [thresholds]
- * @returns {(currentTime: number, duration: number|string) => void}
+ * @returns {(currentTime: number) => void}
  */
 export function createVideoMilestoneTracker(video, thresholds = [25, 50, 75]) {
   const fired = new Set();
-  return (currentTime, videoDuration) => {
-    const totalDuration = Number(videoDuration);
+  const totalDuration = Number(video.duration);
+  return (currentTime) => {
     if (!totalDuration) return;
     const percent = (currentTime / totalDuration) * 100;
     thresholds.forEach((threshold) => {

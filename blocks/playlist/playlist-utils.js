@@ -227,8 +227,7 @@ export class Playlist {
 
   handleMilestone(event) {
     const { currentTime } = event;
-    const { duration } = this.getActiveVideo() || {};
-    this.milestoneTracker?.(currentTime, duration);
+    this.milestoneTracker?.(currentTime);
   }
 
   handleComplete() {
