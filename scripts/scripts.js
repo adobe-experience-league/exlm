@@ -1046,7 +1046,13 @@ const loadMartech = async (headerPromise, footerPromise) => {
   // eslint-disable-next-line import/no-cycle
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
   libAnalyticsPromise.then(async (libAnalyticsModule) => {
-    const { pushPageDataLayer, pushLinkClick, handleComponentClick, setupComponentImpressions } = libAnalyticsModule;
+    const {
+      pushPageDataLayer,
+      pushLinkClick,
+      handleComponentClick,
+      setupComponentImpressions,
+      setupScrollDepthTracking,
+    } = libAnalyticsModule;
     const { lang } = getPathDetails();
 
     try {
@@ -1058,6 +1064,8 @@ const loadMartech = async (headerPromise, footerPromise) => {
       // eslint-disable-next-line no-console
       console.error('Error getting pageLoadModel:', e);
     }
+
+    setupScrollDepthTracking();
 
     if (isFeatureEnabled('isComponentImpressionEnabled')) {
       setupComponentImpressions();

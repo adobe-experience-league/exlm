@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
-export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
+export const microsite = /^\/([^/]+\/)?(developer|events|landing|overview|tools|welcome)(\/|$)/.test(
+  window.location.pathname,
+);
 const lang = document.querySelector('html').lang || 'en';
 export const search = window.location.pathname === '/search.html' || window.location.pathname === `/${lang}/search`;
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
@@ -1521,4 +1523,77 @@ export async function pushBcInteractionEvent(linkTitle, { bcChatId, bcChatMessag
     ...(bcChatId && { bcChat: { bcChatId, bcChatMessageNumber } }),
     ...(userData && { user }),
   });
+}
+
+const SCROLL_DEPTH_THRESHOLDS = [10, 40, 70, 100];
+
+/**
+ * Pushes a contentScroll event to the Adobe Data Layer.
+ * @param {number} percentage - The scroll depth milestone reached (10, 40, 70, or 100).
+ * @param {string} scrollType - How the milestone was reached: 'scroll' or 'anchor tag click'.
+ * @param {boolean} isBackfilled - True when this milestone was skipped over (fast scroll or
+ * anchor jump) and is being fired retroactively alongside the milestone actually reached.
+ */
+async function pushScrollDepthEvent(percentage, scrollType, isBackfilled) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user } = await getDataLayerUserDetails();
+
+  window.adobeDataLayer.push({
+    event: 'contentScroll',
+    eventType: 'web.webInteraction.contentScroll',
+    scroll: {
+      percentageScrolled: percentage,
+      scrollType,
+      isBackfilled,
+    },
+    user,
+  });
+}
+
+/**
+ * Sets up scroll depth tracking for Learn and Documentation pages. Fires a contentScroll event
+ * once per milestone (10%, 40%, 70%, 100%) per page view. Checks happen on 'scrollend' (once a
+ * scroll motion — instant jump, fling, or animated scrollIntoView — actually finishes) rather
+ * than per frame, so any milestones skipped over in one motion resolve together.
+ */
+export function setupScrollDepthTracking() {
+  if (window.errorCode === '404' || !(docs || (!microsite && !search))) return;
+
+  const firedThresholds = new Set();
+  let scrollType = 'scroll';
+
+  function checkThresholds() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const maxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    if (maxScroll <= 0) return;
+
+    // Rounded because scrollTop is sub-pixel while scrollHeight/clientHeight are whole pixels,
+    // so an exact bottom-of-page position can compute to e.g. 99.99% instead of a clean 100.
+    const currentPercent = Math.round((scrollTop / maxScroll) * 100);
+    const crossed = SCROLL_DEPTH_THRESHOLDS.filter(
+      (threshold) => !firedThresholds.has(threshold) && currentPercent >= threshold,
+    );
+
+    crossed.forEach((threshold, index) => {
+      firedThresholds.add(threshold);
+      pushScrollDepthEvent(threshold, scrollType, index !== crossed.length - 1);
+    });
+    scrollType = 'scroll';
+  }
+
+  window.addEventListener('scrollend', checkThresholds, { passive: true });
+
+  document.addEventListener(
+    'click',
+    (e) => {
+      if (!e.target.closest('a[href^="#"]')) return;
+
+      const markAnchorScroll = () => {
+        scrollType = 'anchor tag click';
+      };
+      window.addEventListener('scroll', markAnchorScroll, { passive: true, once: true });
+      setTimeout(() => window.removeEventListener('scroll', markAnchorScroll), 100);
+    },
+    true,
+  );
 }
