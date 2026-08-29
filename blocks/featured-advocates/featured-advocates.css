@@ -9,20 +9,9 @@
   display: block;
 }
 
-/*
- * .champion-content.block (2 classes) has higher specificity than the shared .glass-bg utility
- * (styles.css, 1 class), so its own background/border/box-shadow would win over glass-bg's and the
- * toggle would be a no-op. Re-declare just those three properties here, scoped to this combination —
- * backdrop-filter isn't touched by champion-content.block, so it already applies from .glass-bg as-is.
- * The color accent's inset box-shadow is merged in since one box-shadow property can't hold both.
- * Border stays 1px (not glass-bg's usual 2px) to match champion-content.block's own border width —
- * the accent strip is an inset box-shadow anchored to the padding-box, so a wider border here would
- * shift it down and visibly misalign it from the non-glassy state.
- */
 .featured-advocates.block .champion-content.block.glass-bg {
-  border: 1px solid rgb(255 255 255 / 60%);
+  border: 0;
   background: rgb(255 255 255 / 50%);
-  clip-path: inset(0 round var(--spectrum-spacing-300));
 }
 
 .featured-advocates.block .champion-content.block.glass-bg,
