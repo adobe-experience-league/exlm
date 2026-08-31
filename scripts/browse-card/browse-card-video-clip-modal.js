@@ -308,7 +308,8 @@ export class BrowseCardVideoClipModal {
         duration: event.data.duration || this.model.duration || '',
         solution: this.model.product?.[0] || '',
         fullSolution: this.model.product?.join(', ') || '',
-        id: extractVideoId(this.model.videoURL) || '',
+        // Derive the ID from the actual (post-localization) iframe src, not the original model URL
+        id: extractVideoId(iframe.src) || '',
       };
 
       if (event.data.state === 'play' && this.firstPlay) {
