@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
-export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 const lang = document.querySelector('html').lang || 'en';
+export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
+export const migratedMicrosite = /^\/en\/tools\//.test(window.location.pathname);
 export const search = window.location.pathname === '/search.html' || window.location.pathname === `/${lang}/search`;
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
 export const courses = document.querySelector('meta[name="theme"]')?.content.includes('course-') || false;
@@ -1521,4 +1522,104 @@ export async function pushBcInteractionEvent(linkTitle, { bcChatId, bcChatMessag
     ...(bcChatId && { bcChat: { bcChatId, bcChatMessageNumber } }),
     ...(userData && { user }),
   });
+}
+
+const SCROLL_DEPTH_THRESHOLDS = [10, 40, 70, 100];
+
+// Milestones fire once scrolling has been quiet for this long, so a whole scroll motion
+// (instant jump, fling, or animated scrollIntoView) is judged as one batch instead of
+// frame-by-frame.
+const SCROLL_SETTLE_MS = 200;
+
+/**
+ * Pushes a contentScroll event to the Adobe Data Layer.
+ * @param {number} percentage - The scroll depth milestone reached (10, 40, 70, or 100).
+ * @param {string} scrollType - How the milestone was reached: 'scroll' or 'anchor tag click'.
+ * @param {boolean} isBackfilled - True when this milestone was skipped over (fast scroll or
+ * anchor jump) and is being fired retroactively alongside the milestone actually reached.
+ */
+async function pushScrollDepthEvent(percentage, scrollType, isBackfilled) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user } = await getDataLayerUserDetails();
+
+  window.adobeDataLayer.push({
+    event: 'contentScroll',
+    eventType: 'web.webInteraction.contentScroll',
+    scroll: {
+      percentageScrolled: percentage,
+      scrollType,
+      isBackfilled,
+    },
+    user,
+  });
+}
+
+/**
+ * Sets up scroll depth tracking for Learn and Documentation pages. Fires a contentScroll event
+ * once per milestone (10%, 40%, 70%, 100%) per page view. Checks happen once scrolling has
+ * settled rather than per frame, so any milestones skipped over in one scroll motion resolve
+ * together.
+ */
+export function setupScrollDepthTracking() {
+  if (window.errorCode === '404' || !(docs || (!microsite && !migratedMicrosite && !search))) return;
+
+  const firedThresholds = new Set();
+  let scrollType = 'scroll';
+
+  async function checkThresholds() {
+    const currentScrollType = scrollType;
+    scrollType = 'scroll';
+
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const maxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    if (maxScroll <= 0) return;
+
+    // Rounded because scrollTop is sub-pixel while scrollHeight/clientHeight are whole pixels,
+    // so an exact bottom-of-page position can compute to e.g. 99.99% instead of a clean 100.
+    const currentPercent = Math.round((scrollTop / maxScroll) * 100);
+    const crossed = SCROLL_DEPTH_THRESHOLDS.filter(
+      (threshold) => !firedThresholds.has(threshold) && currentPercent >= threshold,
+    );
+    if (!crossed.length) return;
+
+    crossed.forEach((threshold) => firedThresholds.add(threshold));
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const threshold of crossed) {
+      // eslint-disable-next-line no-await-in-loop
+      await pushScrollDepthEvent(threshold, currentScrollType, threshold !== crossed[crossed.length - 1]);
+    }
+  }
+
+  // Covers a page landing already scrolled past a threshold (restored scroll position on
+  // back/forward navigation, or a #hash in the URL auto-scrolling on load) with no scroll
+  // event firing afterward.
+  checkThresholds();
+
+  let settleTimer = null;
+  window.addEventListener(
+    'scroll',
+    () => {
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(checkThresholds, SCROLL_SETTLE_MS);
+    },
+    { passive: true },
+  );
+
+  document.addEventListener(
+    'click',
+    (e) => {
+      const anchor = e.target.closest('a[href*="#"]');
+      if (!anchor) return;
+
+      const isSamePageHash =
+        anchor.hash && anchor.origin === window.location.origin && anchor.pathname === window.location.pathname;
+      if (!isSamePageHash) return;
+
+      scrollType = 'anchor tag click';
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(checkThresholds, SCROLL_SETTLE_MS);
+    },
+    true,
+  );
 }
