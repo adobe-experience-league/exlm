@@ -1567,6 +1567,9 @@ export function setupScrollDepthTracking() {
   let scrollType = 'scroll';
 
   async function checkThresholds() {
+    const currentScrollType = scrollType;
+    scrollType = 'scroll';
+
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
     const maxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     if (maxScroll <= 0) return;
@@ -1579,8 +1582,6 @@ export function setupScrollDepthTracking() {
     );
     if (!crossed.length) return;
 
-    const currentScrollType = scrollType;
-    scrollType = 'scroll';
     crossed.forEach((threshold) => firedThresholds.add(threshold));
 
     // eslint-disable-next-line no-restricted-syntax
