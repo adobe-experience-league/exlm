@@ -9,15 +9,8 @@
   display: block;
 }
 
-/*
- * .champion-content.block (2 classes) has higher specificity than the shared .glass-bg utility
- * (styles.css, 1 class), so its own background/border/box-shadow would win over glass-bg's and the
- * toggle would be a no-op. Re-declare just those three properties here, scoped to this combination —
- * backdrop-filter isn't touched by champion-content.block, so it already applies from .glass-bg as-is.
- * The color accent's inset box-shadow is merged in since one box-shadow property can't hold both.
- */
 .featured-advocates.block .champion-content.block.glass-bg {
-  border: 2px solid rgb(255 255 255 / 60%);
+  border: 0;
   background: rgb(255 255 255 / 50%);
 }
 
