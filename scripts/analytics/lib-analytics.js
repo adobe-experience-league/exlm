@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
 const lang = document.querySelector('html').lang || 'en';
-export const microsite = new RegExp(`^/(${lang}/)?(developer|events|landing|overview|tools|welcome)(/|$)`).test(
-  window.location.pathname,
-);
+export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
+export const migratedMicrosite = /^\/en\/tools\//.test(window.location.pathname);
 export const search = window.location.pathname === '/search.html' || window.location.pathname === `/${lang}/search`;
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
 export const courses = document.querySelector('meta[name="theme"]')?.content.includes('course-') || false;
@@ -1562,7 +1561,7 @@ async function pushScrollDepthEvent(percentage, scrollType, isBackfilled) {
  * together.
  */
 export function setupScrollDepthTracking() {
-  if (window.errorCode === '404' || !(docs || (!microsite && !search))) return;
+  if (window.errorCode === '404' || !(docs || (!microsite && !migratedMicrosite && !search))) return;
 
   const firedThresholds = new Set();
   let scrollType = 'scroll';
