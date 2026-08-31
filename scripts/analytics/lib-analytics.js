@@ -1616,11 +1616,9 @@ export function setupScrollDepthTracking() {
         anchor.hash && anchor.origin === window.location.origin && anchor.pathname === window.location.pathname;
       if (!isSamePageHash) return;
 
-      const markAnchorScroll = () => {
-        scrollType = 'anchor tag click';
-      };
-      window.addEventListener('scroll', markAnchorScroll, { passive: true, once: true });
-      setTimeout(() => window.removeEventListener('scroll', markAnchorScroll), 100);
+      scrollType = 'anchor tag click';
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(checkThresholds, SCROLL_SETTLE_MS);
     },
     true,
   );
