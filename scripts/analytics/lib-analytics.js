@@ -1527,6 +1527,11 @@ export async function pushBcInteractionEvent(linkTitle, { bcChatId, bcChatMessag
 
 const SCROLL_DEPTH_THRESHOLDS = [10, 40, 70, 100];
 
+// Milestones fire once scrolling has been quiet for this long, so a whole scroll motion
+// (instant jump, fling, or animated scrollIntoView) is judged as one batch instead of
+// frame-by-frame.
+const SCROLL_SETTLE_MS = 200;
+
 /**
  * Pushes a contentScroll event to the Adobe Data Layer.
  * @param {number} percentage - The scroll depth milestone reached (10, 40, 70, or 100).
@@ -1552,9 +1557,9 @@ async function pushScrollDepthEvent(percentage, scrollType, isBackfilled) {
 
 /**
  * Sets up scroll depth tracking for Learn and Documentation pages. Fires a contentScroll event
- * once per milestone (10%, 40%, 70%, 100%) per page view. Checks happen on 'scrollend' (once a
- * scroll motion — instant jump, fling, or animated scrollIntoView — actually finishes) rather
- * than per frame, so any milestones skipped over in one motion resolve together.
+ * once per milestone (10%, 40%, 70%, 100%) per page view. Checks happen once scrolling has
+ * settled rather than per frame, so any milestones skipped over in one scroll motion resolve
+ * together.
  */
 export function setupScrollDepthTracking() {
   if (window.errorCode === '404' || !(docs || (!microsite && !search))) return;
@@ -1562,7 +1567,7 @@ export function setupScrollDepthTracking() {
   const firedThresholds = new Set();
   let scrollType = 'scroll';
 
-  function checkThresholds() {
+  async function checkThresholds() {
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
     const maxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     if (maxScroll <= 0) return;
@@ -1573,19 +1578,33 @@ export function setupScrollDepthTracking() {
     const crossed = SCROLL_DEPTH_THRESHOLDS.filter(
       (threshold) => !firedThresholds.has(threshold) && currentPercent >= threshold,
     );
+    if (!crossed.length) return;
 
-    crossed.forEach((threshold, index) => {
-      firedThresholds.add(threshold);
-      pushScrollDepthEvent(threshold, scrollType, index !== crossed.length - 1);
-    });
+    const currentScrollType = scrollType;
     scrollType = 'scroll';
+    crossed.forEach((threshold) => firedThresholds.add(threshold));
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const threshold of crossed) {
+      // eslint-disable-next-line no-await-in-loop
+      await pushScrollDepthEvent(threshold, currentScrollType, threshold !== crossed[crossed.length - 1]);
+    }
   }
 
   // Covers a page landing already scrolled past a threshold (restored scroll position on
   // back/forward navigation, or a #hash in the URL auto-scrolling on load) with no scroll
   // event firing afterward.
   checkThresholds();
-  window.addEventListener('scrollend', checkThresholds, { passive: true });
+
+  let settleTimer = null;
+  window.addEventListener(
+    'scroll',
+    () => {
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(checkThresholds, SCROLL_SETTLE_MS);
+    },
+    { passive: true },
+  );
 
   document.addEventListener(
     'click',
