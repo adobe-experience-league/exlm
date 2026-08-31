@@ -80,6 +80,7 @@ export class BrowseCardVideoClipModal {
     this.miniPlayerButton = null;
     this.miniPlayerLabel = null;
     this.isModalReady = false;
+    this.videoCompleted = false;
 
     this.isCompactMode = isCompactUIMode();
     this.loadStyles();
@@ -293,17 +294,26 @@ export class BrowseCardVideoClipModal {
     this.eventListeners.push({ element: document, type: 'keydown', handler: keyHandler });
 
     const messageHandler = (event) => {
-      if (event.data?.type === 'mpcStatus') {
-        if (event.data.state === 'play') {
-          pushVideoEvent({
-            title: this.model.title || '',
-            description: this.model.description || '',
-            url: this.model.videoURL || '',
-            duration: this.model.duration || '',
-            solution: this.model.product?.[0] || '',
-            fullSolution: this.model.product?.join(', ') || '',
-          });
-        }
+      if (event.data?.type !== 'mpcStatus') return;
+
+      const videoId = this.model.videoURL?.match(/\/v\/(\d+)/)?.[1] || '';
+      const videoDetails = {
+        title: this.model.title || '',
+        description: this.model.description || '',
+        url: this.model.videoURL || '',
+        duration: event.data.duration || this.model.duration || '',
+        solution: this.model.product?.[0] || '',
+        fullSolution: this.model.product?.join(', ') || '',
+        id: videoId,
+      };
+
+      if (event.data.state === 'play') {
+        // Reset the completion guard so a fresh playback can push a videoCompleted event
+        this.videoCompleted = false;
+        pushVideoEvent(videoDetails);
+      } else if (event.data.state === 'complete' && !this.videoCompleted) {
+        this.videoCompleted = true;
+        pushVideoEvent(videoDetails, 'videoCompleted');
       }
     };
 
