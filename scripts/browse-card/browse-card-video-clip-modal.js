@@ -1,7 +1,7 @@
 import { decorateIcons, loadCSS } from '../lib-franklin.js';
 import { createTag, htmlToElement, fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { pushVideoEvent, pushBrowseCardClickEvent } from '../analytics/lib-analytics.js';
-import { getLocalizedVideoUrl } from '../utils/video-utils.js';
+import { getLocalizedVideoUrl, extractVideoId } from '../utils/video-utils.js';
 
 export const isCompactUIMode = () => window.matchMedia('(max-width: 1023px)').matches;
 
@@ -80,6 +80,8 @@ export class BrowseCardVideoClipModal {
     this.miniPlayerButton = null;
     this.miniPlayerLabel = null;
     this.isModalReady = false;
+    this.firstPlay = true;
+    this.videoCompleted = false;
 
     this.isCompactMode = isCompactUIMode();
     this.loadStyles();
@@ -293,17 +295,30 @@ export class BrowseCardVideoClipModal {
     this.eventListeners.push({ element: document, type: 'keydown', handler: keyHandler });
 
     const messageHandler = (event) => {
-      if (event.data?.type === 'mpcStatus') {
-        if (event.data.state === 'play') {
-          pushVideoEvent({
-            title: this.model.title || '',
-            description: this.model.description || '',
-            url: this.model.videoURL || '',
-            duration: this.model.duration || '',
-            solution: this.model.product?.[0] || '',
-            fullSolution: this.model.product?.join(', ') || '',
-          });
-        }
+      if (event.data?.type !== 'mpcStatus') return;
+
+      // Only react to messages from this modal's own video iframe
+      const iframe = this.videoContainer?.querySelector('iframe');
+      if (!iframe || event.source !== iframe.contentWindow) return;
+
+      const videoDetails = {
+        title: this.model.title || '',
+        description: this.model.description || '',
+        url: this.model.videoURL || '',
+        duration: event.data.duration || this.model.duration || '',
+        solution: this.model.product?.[0] || '',
+        fullSolution: this.model.product?.join(', ') || '',
+        // Derive the ID from the actual (post-localization) iframe src, not the original model URL
+        id: extractVideoId(iframe.src) || '',
+      };
+
+      if (event.data.state === 'play' && this.firstPlay) {
+        // Guard against repeated play messages within a single playback session
+        this.firstPlay = false;
+        pushVideoEvent(videoDetails);
+      } else if (event.data.state === 'complete' && !this.videoCompleted) {
+        this.videoCompleted = true;
+        pushVideoEvent(videoDetails, 'videoCompleted');
       }
     };
 
@@ -424,6 +439,10 @@ export class BrowseCardVideoClipModal {
       if (existingIframe) {
         existingIframe.remove();
       }
+
+      // New video loaded - reset analytics guards so it can emit its own play/complete events
+      this.firstPlay = true;
+      this.videoCompleted = false;
 
       const { lang = 'en' } = getPathDetails() || {};
       let videoSrc = await getLocalizedVideoUrl(videoURL, lang);
