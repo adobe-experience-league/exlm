@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
-export const microsite = /^\/([^/]+\/)?(developer|events|landing|overview|tools|welcome)(\/|$)/.test(
+const lang = document.querySelector('html').lang || 'en';
+export const microsite = new RegExp(`^/(${lang}/)?(developer|events|landing|overview|tools|welcome)(/|$)`).test(
   window.location.pathname,
 );
-const lang = document.querySelector('html').lang || 'en';
 export const search = window.location.pathname === '/search.html' || window.location.pathname === `/${lang}/search`;
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
 export const courses = document.querySelector('meta[name="theme"]')?.content.includes('course-') || false;
@@ -1581,12 +1581,21 @@ export function setupScrollDepthTracking() {
     scrollType = 'scroll';
   }
 
+  // Covers a page landing already scrolled past a threshold (restored scroll position on
+  // back/forward navigation, or a #hash in the URL auto-scrolling on load) with no scroll
+  // event firing afterward.
+  checkThresholds();
   window.addEventListener('scrollend', checkThresholds, { passive: true });
 
   document.addEventListener(
     'click',
     (e) => {
-      if (!e.target.closest('a[href^="#"]')) return;
+      const anchor = e.target.closest('a[href*="#"]');
+      if (!anchor) return;
+
+      const isSamePageHash =
+        anchor.hash && anchor.origin === window.location.origin && anchor.pathname === window.location.pathname;
+      if (!isSamePageHash) return;
 
       const markAnchorScroll = () => {
         scrollType = 'anchor tag click';
