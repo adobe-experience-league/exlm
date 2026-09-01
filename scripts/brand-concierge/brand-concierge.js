@@ -403,7 +403,7 @@ function createBottomAskBar() {
   collapsedLabel.className = 'bc-bottom-ask-bar-collapsed-label';
   collapsedLabel.textContent = 'Ask';
   const collapsedChevron = document.createElement('span');
-  collapsedChevron.className = 'icon icon-chevron bc-bottom-ask-bar-collapsed-chevron';
+  collapsedChevron.className = 'icon icon-bc-chevron-bottom bc-bottom-ask-bar-collapsed-chevron';
   collapsedChevron.setAttribute('aria-hidden', 'true');
   collapsedBtn.append(collapsedIcon, collapsedLabel, collapsedChevron);
   decorateIcon(collapsedIcon);
@@ -421,6 +421,9 @@ function createBottomAskBar() {
   brandLabel.textContent = 'Brand Concierge';
   brand.append(brandIcon, brandLabel);
   decorateIcon(brandIcon);
+
+  const inputGroup = document.createElement('div');
+  inputGroup.className = 'bc-bottom-ask-bar-input-group';
 
   const inputWrap = document.createElement('div');
   inputWrap.className = 'bc-bottom-ask-bar-input-wrap';
@@ -442,7 +445,8 @@ function createBottomAskBar() {
   sendBtn.append(sendIcon);
   decorateIcon(sendIcon);
 
-  inputWrap.append(input, sendBtn);
+  inputWrap.append(input);
+  inputGroup.append(inputWrap, sendBtn);
 
   const actions = document.createElement('div');
   actions.className = 'bc-bottom-ask-bar-actions';
@@ -464,13 +468,13 @@ function createBottomAskBar() {
   const hideLabel = document.createElement('span');
   hideLabel.textContent = 'Hide';
   const hideChevron = document.createElement('span');
-  hideChevron.className = 'icon icon-chevron bc-bottom-ask-bar-hide-chevron';
+  hideChevron.className = 'icon icon-bc-chevron-bottom bc-bottom-ask-bar-hide-chevron';
   hideChevron.setAttribute('aria-hidden', 'true');
   hideBtn.append(hideLabel, hideChevron);
   decorateIcon(hideChevron);
 
   actions.append(expandBtn, hideBtn);
-  expanded.append(brand, inputWrap, actions);
+  expanded.append(brand, inputGroup, actions);
   bar.append(collapsedBtn, expanded);
 
   const focusInput = () => {
