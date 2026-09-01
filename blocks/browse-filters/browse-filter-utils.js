@@ -466,7 +466,7 @@ export async function fetchPerspectiveIndex(prefix = 'en') {
   const loaded = window.perspectiveIndex[`${prefix}-loaded`];
   if (!loaded) {
     window.perspectiveIndex[`${prefix}-loaded`] = new Promise((resolve, reject) => {
-      const url = `/${prefix}/perspective-index.json`;
+      const url = `https://experienceleague.adobe.com/${prefix}/perspective-index.json`;
       fetch(url)
         .then((resp) => {
           if (resp.ok) {
