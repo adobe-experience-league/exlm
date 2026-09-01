@@ -1,0 +1,2 @@
+import{b as o}from"./p-1580513b.js";const t=(t,n)=>{const c=o("atomic/numberFormat",t);const r=n.dispatchEvent(c);if(r){throw new Error("The Atomic number format component was not handled, as it is not a child of a compatible component")}};const n=(o,t)=>o.toLocaleString(t);const c=o=>(t,n)=>t.toLocaleString(n,{style:"currency",currency:o});export{n as a,t as b,c as d};
+//# sourceMappingURL=p-f3c1c9a0.js.map

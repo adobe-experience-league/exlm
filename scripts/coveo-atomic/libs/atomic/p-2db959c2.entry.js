@@ -1,0 +1,2 @@
+import{r as t,g as s}from"./p-5925f187.js";import{h as o}from"./p-8661bafe.js";import"./p-2d022b96.js";import"./p-0462f723.js";const r=class{constructor(s){t(this,s)}componentDidRender(){o(this.host)}get host(){return s(this)}};export{r as atomic_result_section_title_metadata};
+//# sourceMappingURL=p-2db959c2.entry.js.map

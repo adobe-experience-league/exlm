@@ -1,0 +1,2 @@
+import{r as s}from"./p-5925f187.js";const t=class{constructor(t){s(this,t);this.period="past";this.amount=1;this.period="past";this.unit=undefined;this.amount=1;this.label=undefined}};export{t as atomic_timeframe};
+//# sourceMappingURL=p-9e9080c2.entry.js.map

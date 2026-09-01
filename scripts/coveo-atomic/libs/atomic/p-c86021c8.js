@@ -1,0 +1,2 @@
+function n(){const n=()=>{const n=new Audio;n.volume=.5;return n.volume===1};const o=/iPad|iPhone|iPod/.test(navigator.userAgent);const t=navigator.userAgent.includes("Macintosh");const a=navigator.maxTouchPoints>=1;return o||t&&(a||n())}function o(){return navigator.platform.startsWith("Mac")}function t(){return window.matchMedia("(any-hover: hover)").matches}export{n as a,t as h,o as i};
+//# sourceMappingURL=p-c86021c8.js.map
