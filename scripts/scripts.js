@@ -843,6 +843,19 @@ export function getConfig() {
     ['zh-TW', 'zh-hant'],
   ]);
 
+  const plSupportV2LangsMap = new Map([
+    ['en-US', 'en'],
+    ['de-DE', 'de'],
+    ['es-ES', 'es'],
+    ['fr-FR', 'fr'],
+    ['it-IT', 'it'],
+    ['ja-JP', 'ja'],
+    ['pt-PT', 'pt'],
+    ['ko-KR', 'ko'],
+    ['zh-CN', 'zh-hans'],
+    ['zh-TW', 'zh-hant'],
+  ]);
+
   const cookieConsentName = 'OptanonConsent';
   const targetCriteriaIds = {
     mostPopular: 'exl-hp-auth-recs-2',
@@ -860,9 +873,15 @@ export function getConfig() {
   const cdnOrigin = `https://${cdnHost}`;
   const premiumLearningAuthAPI = `${cdnOrigin}/api/v1/web/alm/authentication`;
   const rawLang = document.querySelector('html').lang || 'en';
-  const lang = window.location.hostname.includes(communityHost)
-    ? plCommunityLangsMap.get(rawLang) || rawLang.split('-')[0]
-    : rawLang;
+  const lang = (() => {
+    if (window.location.pathname.includes('/support/v2/')) {
+      return plSupportV2LangsMap.get(rawLang) || rawLang.split('-')[0];
+    }
+    if (window.location.hostname.includes(communityHost)) {
+      return plCommunityLangsMap.get(rawLang) || rawLang.split('-')[0];
+    }
+    return rawLang;
+  })();
   // Locale param for Community page URL
   const communityLocale = communityLangsMap.get(lang) || 'en';
   // Lang param for Adobe account URL
