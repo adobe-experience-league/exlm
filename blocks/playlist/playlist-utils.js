@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 
-import { pushVideoEvent } from '../../scripts/analytics/lib-analytics.js';
+import { pushVideoEvent, createVideoMilestoneTracker } from '../../scripts/analytics/lib-analytics.js';
 
 export const LABELS = {
   tutorials: 'playlistTutorials',
@@ -130,14 +130,20 @@ export class Playlist {
     });
     this.mpcListener = new MPCListener();
     this.mpcListener.on(MCP_EVENT.TICK, this.handleSeek.bind(this));
+    this.mpcListener.on(MCP_EVENT.TICK, this.handleMilestone.bind(this));
     this.mpcListener.on(MCP_EVENT.SEEK, this.handleSeek.bind(this));
     this.mpcListener.on(MCP_EVENT.COMPLETE, this.handleComplete.bind(this));
     this.mpcListener.on(MCP_EVENT.START, () => {
       // Reset the completion guard so a fresh playback of this video can push a videoCompleted event
       this.lastCompletedVideoIndex = null;
-      const { title, description, duration, src } = this.getActiveVideo();
+      const { title, description, duration, src, currentTime } = this.getActiveVideo();
       const videoId = src?.match(/\/v\/(\d+)/)?.[1] || '';
       pushVideoEvent({ title, description, url: src, duration, id: videoId });
+      this.milestoneTracker = createVideoMilestoneTracker(
+        { title, description, url: src, duration, id: videoId },
+        undefined,
+        currentTime,
+      );
     });
   }
 
@@ -225,6 +231,11 @@ export class Playlist {
     if (currentTime >= 0) {
       this.updateActiveVideo({ currentTime });
     }
+  }
+
+  handleMilestone(event) {
+    const { currentTime } = event;
+    this.milestoneTracker?.(currentTime);
   }
 
   handleComplete() {
