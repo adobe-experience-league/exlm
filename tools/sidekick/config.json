@@ -1,0 +1,12 @@
+{
+  "project": "Visual Checker",
+  "plugins": [
+    {
+      "id": "library",
+      "title": "Sidekick Library",
+      "environments": ["edit"],
+      "url": "/tools/sidekick/library.html",
+      "includePaths": ["**.docx**"]
+    }
+  ]
+}
