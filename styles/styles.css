@@ -322,9 +322,16 @@
   /* ── Brand Concierge ──────────────────────────────────────────────────── */
 
   /* Gradient palette — derived from the concierge-icon.svg brand gradient. */
-  --bc-gradient-start: #ff6a54;
-  --bc-gradient-end: #5d4ada;
+  --bc-gradient-start: #d73220;
+  --bc-gradient-mid: #d92361;
+  --bc-gradient-end: #7155fa;
   --bc-gradient-blue: #b5deff;
+  --bc-gradient: linear-gradient(
+    to right,
+    var(--bc-gradient-start) 0%,
+    var(--bc-gradient-mid) 33%,
+    var(--bc-gradient-end) 100%
+  );
 
   /* User message bubble background — #5258E3 at 15% opacity. */
   --bc-user-bubble: #5258e326;

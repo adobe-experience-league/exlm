@@ -84,6 +84,15 @@
 
   /* Icon recolor filter — turns black source icons into #2c2c2c */
   --icon-filter: brightness(0) invert(0.173);
+  --bc-gradient-start: #d73220;
+  --bc-gradient-mid: #d92361;
+  --bc-gradient-end: #7155fa;
+  --bc-gradient: linear-gradient(
+    to right,
+    var(--bc-gradient-start) 0%,
+    var(--bc-gradient-mid) 33%,
+    var(--bc-gradient-end) 100%
+  );
 
   /* Layout order (mobile defaults) */
   --nav-order: 1;
@@ -168,15 +177,20 @@ button.bc-header-ask {
   display: none;
   box-sizing: border-box;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  width: 80px;
+  min-width: 80px;
+  height: 40px;
+  min-height: 40px;
   margin: 0;
-  padding: 6px 14px 6px 10px;
+  padding: 0 16px;
   border: none;
   border-radius: 100px;
   background-color: var(--background-color);
-  color: #6e6e6e;
+  color: var(--nav-item-text-color);
   font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-normal);
+  font-weight: var(--font-weight-bold);
   line-height: 1.2;
   letter-spacing: -0.01em;
   overflow: visible;
@@ -193,7 +207,7 @@ button.bc-header-ask::before {
   inset: 0;
   border-radius: 100px;
   padding: 2px;
-  background: linear-gradient(to right, #d73220 0%, #d92361 33%, #7155fa 100%);
+  background: var(--bc-gradient);
   mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -209,17 +223,18 @@ button.bc-header-ask > * {
 
 button.bc-header-ask-label,
 .bc-header-ask-label {
-  font-weight: var(--font-weight-normal);
+  font-weight: var(--font-weight-bold);
   line-height: 1.2;
   letter-spacing: -0.01em;
-  color: #6e6e6e;
+  font-size: var(--spectrum-font-size-100);
+  color: var(--nav-item-text-color);
 }
 
 button.bc-header-ask:hover,
 button.bc-header-ask:focus,
 button.bc-header-ask:focus-visible {
   background-color: var(--background-color);
-  color: #6e6e6e;
+  color: var(--nav-item-text-color);
   cursor: pointer;
 }
 
@@ -838,7 +853,7 @@ button.bc-header-ask:focus-visible {
   :host([data-bc-entry='header-ask-button']) .search-wrapper {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: 30px;
     height: 100%;
     min-height: 32px;
     flex-shrink: 0;
@@ -868,7 +883,7 @@ button.bc-header-ask:focus-visible {
   display: flex;
   align-items: center;
   line-height: 0;
-  margin-inline-end: -6px;
+  margin: 0;
 }
 
 .bc-header-ask .icon.icon-bc-ask-sparkles img {
