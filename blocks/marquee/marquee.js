@@ -1,46 +1,9 @@
 /* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { decorateCta } from '../../scripts/utils/button-utils.js';
 import { getLocalizedVideoUrl } from '../../scripts/utils/video-utils.js';
 import { getPathDetails } from '../../scripts/scripts.js';
 import { pushVideoEvent } from '../../scripts/analytics/lib-analytics.js';
-
-const CTA_BUTTON_TYPES = ['primary', 'secondary', 'tertiary', 'custom'];
-
-// Content authored before this fix stores CTA type/color/hex/text-color as extra sibling
-// cells next to the link (the shape scripts/utils/button-utils.js expects). Content authored
-// after this fix only ever has the link itself in the cell; its styling lives in predefined
-// block-level classes instead (e.g. cta1-primary, cta1-bg-spectrum-gray-700, cta1-text-white),
-// so no color/hex values leak into the page's markdown export. Detecting the shape at runtime
-// lets already-published pages keep rendering with their original custom color, unchanged,
-// until they're reopened and re-saved against the new predefined-color fields.
-function decorateMarqueeCta(ctaEl, block, prefix) {
-  if (!ctaEl) return '';
-
-  if (ctaEl.children.length > 1) {
-    return decorateCustomButtons(ctaEl);
-  }
-
-  const link = ctaEl.querySelector('a');
-  if (!link) return '';
-
-  link.classList.add('button');
-
-  const blockClasses = [...block.classList];
-  const typeCls = blockClasses.find((cls) => CTA_BUTTON_TYPES.some((type) => cls === `${prefix}-${type}`));
-  const type = typeCls?.slice(prefix.length + 1);
-
-  if (type && type !== 'custom') {
-    link.classList.add(type);
-  } else if (type === 'custom') {
-    const bgCls = blockClasses.find((cls) => cls.startsWith(`${prefix}-bg-`));
-    const textCls = blockClasses.find((cls) => cls.startsWith(`${prefix}-text-`));
-    if (bgCls) link.style.backgroundColor = `var(--${bgCls.slice(`${prefix}-bg-`.length)})`;
-    if (textCls) link.classList.add(textCls.endsWith('white') ? 'text-white' : 'text-black');
-  }
-
-  return link.outerHTML;
-}
 
 function trackMpcVideo(iframe, video) {
   let firstPlay = true;
@@ -232,7 +195,7 @@ export default async function decorate(block) {
         <div class='marquee-title'>${title.innerHTML}</div>
         <div class='marquee-long-description'>${longDescr.innerHTML}</div>
         <div class='marquee-cta'>
-          ${decorateMarqueeCta(firstCta, block, 'cta1')}${decorateMarqueeCta(secondCta, block, 'cta2')}
+          ${decorateCta(firstCta, block, 'cta1')}${decorateCta(secondCta, block, 'cta2')}
         </div>
       </div>
       </div>
