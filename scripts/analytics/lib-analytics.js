@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+import { queueAnalyticsEvent } from './analytics-queue.js';
+
 const lang = document.querySelector('html').lang || 'en';
 export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
 export const migratedMicrosite = /^\/en\/tools\//.test(window.location.pathname);
@@ -530,11 +532,11 @@ export function handleComponentClick(e) {
 }
 
 /**
- * Used to push a video event to the data layer
+ * Pushes a video event straight to the data layer.
  * @param {Video} video
  * @param {string} event
  */
-export function pushVideoEvent(video, event = 'videoPlay') {
+function pushVideoEventToDataLayer(video, event = 'videoPlay') {
   const { title, description, url } = video;
 
   const videoDuration = video.duration || '';
@@ -564,6 +566,17 @@ export function pushVideoEvent(video, event = 'videoPlay') {
       },
     },
   });
+}
+
+/**
+ * Used to push a video event to the data layer.
+ * Routed through the analytics queue so it never lands before the `page loaded`
+ * event, e.g. when a video auto-plays before pushPageDataLayer resolves.
+ * @param {Video} video
+ * @param {string} event
+ */
+export function pushVideoEvent(video, event = 'videoPlay') {
+  queueAnalyticsEvent(pushVideoEventToDataLayer, video, event);
 }
 
 export function assetInteractionModel(id, assetInteractionType, options) {
