@@ -217,7 +217,7 @@
     display: inline-flex;
     flex-grow: 0;
     max-width: none;
-    gap: 30px;
+    gap: 14px;
     flex-shrink: 0;
   }
 

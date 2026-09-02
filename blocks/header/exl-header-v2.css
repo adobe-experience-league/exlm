@@ -853,7 +853,7 @@ button.bc-header-ask:focus-visible {
   :host([data-bc-entry='header-ask-button']) .search-wrapper {
     display: inline-flex;
     align-items: center;
-    gap: 30px;
+    gap: 14px;
     height: 100%;
     min-height: 32px;
     flex-shrink: 0;

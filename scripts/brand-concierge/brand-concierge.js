@@ -484,7 +484,15 @@ function createBottomAskBar() {
   };
 
   const syncSendButtonState = () => {
-    sendBtn.disabled = !input.value.trim();
+    const hasQuery = Boolean(input.value.trim());
+    sendBtn.disabled = !hasQuery;
+    expandBtn.style.visibility = hasQuery ? 'hidden' : '';
+    expandBtn.setAttribute('aria-hidden', String(hasQuery));
+    if (hasQuery) {
+      expandBtn.setAttribute('tabindex', '-1');
+    } else {
+      expandBtn.removeAttribute('tabindex');
+    }
   };
 
   const expandBar = () => {
