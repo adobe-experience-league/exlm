@@ -140,7 +140,9 @@ async function initializeVisualTest() {
   // Remove existing elements if they exist
 
   if (document.body.classList.contains('sidekick-library')) {
-    const themeRoot = window.parent?.window?.document?.querySelector('sidekick-library')?.shadowRoot.querySelector('sp-theme');
+    const themeRoot = window.parent?.window?.document
+      ?.querySelector('sidekick-library')
+      ?.shadowRoot.querySelector('sp-theme');
     if (isVtestMode()) {
       console.log('in vtest mode');
       document.body.classList.add('vtest');
@@ -272,7 +274,11 @@ async function initializeVisualTest() {
       vtestButton.innerHTML = 'Running...';
 
       // componentName is the last part of the path after split by /
-      const componentName = window.parent?.window?.location?.search?.split('path=')[1]?.split('&')[0]?.split('/')?.pop();
+      const componentName = window.parent?.window?.location?.search
+        ?.split('path=')[1]
+        ?.split('&')[0]
+        ?.split('/')
+        ?.pop();
       console.log(componentName, 'componentName');
 
       try {
@@ -334,7 +340,9 @@ async function checkPathChange() {
     // remove the status element and vtest button
     // they are added in initializeVisualTest
     // so we need to remove them
-    const themeRoot = window.parent?.window?.document?.querySelector('sidekick-library')?.shadowRoot.querySelector('sp-theme');
+    const themeRoot = window.parent?.window?.document
+      ?.querySelector('sidekick-library')
+      ?.shadowRoot.querySelector('sp-theme');
     const actionGroup = themeRoot.querySelector('plugin-renderer').shadowRoot.querySelector('sp-action-group');
     const infoIconWrapper = actionGroup.querySelector('span[data-test-status-icon]');
     if (infoIconWrapper) {

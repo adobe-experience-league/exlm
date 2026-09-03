@@ -22,7 +22,9 @@ class VisualOverlay {
 
   // eslint-disable-next-line class-methods-use-this
   getComponentStyles() {
-    const componentContainer = document.querySelector('main.sidekick-library > div.section[data-section-status="loaded"] > div');
+    const componentContainer = document.querySelector(
+      'main.sidekick-library > div.section[data-section-status="loaded"] > div',
+    );
     const computedStyle = window.getComputedStyle(componentContainer);
     return {
       width: computedStyle.width,
@@ -79,10 +81,10 @@ class VisualOverlay {
 
   setImageDimensions() {
     this.spActionGroup = window.parent?.document
-      ?.querySelector('sidekick-library')?.shadowRoot
-      ?.querySelector('sp-theme')
-      ?.querySelector('plugin-renderer')?.shadowRoot
-      ?.querySelector('sp-action-group');
+      ?.querySelector('sidekick-library')
+      ?.shadowRoot?.querySelector('sp-theme')
+      ?.querySelector('plugin-renderer')
+      ?.shadowRoot?.querySelector('sp-action-group');
 
     this.spActionGroup?.querySelectorAll('sp-action-button').forEach((button) => {
       button.addEventListener('click', () => {
@@ -115,8 +117,12 @@ class VisualOverlay {
 
   // eslint-disable-next-line class-methods-use-this
   getCurrentViewport() {
-    const themeRoot = window.parent?.window?.document?.querySelector('sidekick-library')?.shadowRoot.querySelector('sp-theme');
-    const activeButton = themeRoot?.querySelector('plugin-renderer')?.shadowRoot.querySelector('sp-action-button[aria-pressed="true"]');
+    const themeRoot = window.parent?.window?.document
+      ?.querySelector('sidekick-library')
+      ?.shadowRoot.querySelector('sp-theme');
+    const activeButton = themeRoot
+      ?.querySelector('plugin-renderer')
+      ?.shadowRoot.querySelector('sp-action-button[aria-pressed="true"]');
     return activeButton?.getAttribute('data-viewport') || 'desktop';
   }
 
@@ -494,7 +500,9 @@ class VisualOverlay {
 
 // Initialize the overlay
 export default function initializeVisualOverlay() {
-  const themeRoot = window.parent?.window?.document?.querySelector('sidekick-library')?.shadowRoot.querySelector('sp-theme');
+  const themeRoot = window.parent?.window?.document
+    ?.querySelector('sidekick-library')
+    ?.shadowRoot.querySelector('sp-theme');
   const actionGroup = themeRoot?.querySelector('plugin-renderer')?.shadowRoot.querySelector('sp-action-group');
 
   // Remove existing button if present to avoid duplicates

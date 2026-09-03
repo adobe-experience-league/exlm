@@ -27,7 +27,7 @@ module.exports = {
       // Node-side build/test tooling, not browser app code: console output is the point,
       // __dirname is the standard ESM idiom, and recording/generation scripts intentionally
       // await one block/variation at a time in a shared browser session.
-      files: ['tools/visual-tests/**/*.js'],
+      files: ['tools/visual-tests/**/*.js', 'tools/visual-tests/**/*.ts'],
       env: { node: true },
       rules: {
         'no-console': 'off',

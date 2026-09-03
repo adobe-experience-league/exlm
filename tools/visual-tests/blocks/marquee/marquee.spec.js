@@ -11,13 +11,18 @@ test.describe('marquee Visual Tests', () => {
     await page.setViewportSize({ width: 320, height: 568 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=0&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=0&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -28,7 +33,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -53,9 +58,9 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
   test('marquee (straight, bg-spectrum-blue-700, large) visual test at Tablet viewport', async ({ page }) => {
@@ -63,13 +68,18 @@ test.describe('marquee Visual Tests', () => {
     await page.setViewportSize({ width: 768, height: 1024 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=0&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=0&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -80,7 +90,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -105,9 +115,9 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
   test('marquee (straight, bg-spectrum-blue-700, large) visual test at Desktop viewport', async ({ page }) => {
@@ -115,13 +125,18 @@ test.describe('marquee Visual Tests', () => {
     await page.setViewportSize({ width: 1024, height: 768 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=0&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=0&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -132,7 +147,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -157,9 +172,9 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
   test('marquee (straight, bg-spectrum-blue-700, large) visual test at Large viewport', async ({ page }) => {
@@ -167,13 +182,18 @@ test.describe('marquee Visual Tests', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=0&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=0&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -184,7 +204,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -209,23 +229,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (medium, curved, text-spectrum-gray-900, bg-spectrum-red-700) visual test at Mobile viewport', async ({ page }) => {
+  test('marquee (medium, curved, text-spectrum-gray-900, bg-spectrum-red-700) visual test at Mobile viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 320, height: 568 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=1&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=1&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -236,7 +263,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -261,23 +288,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (medium, curved, text-spectrum-gray-900, bg-spectrum-red-700) visual test at Tablet viewport', async ({ page }) => {
+  test('marquee (medium, curved, text-spectrum-gray-900, bg-spectrum-red-700) visual test at Tablet viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 768, height: 1024 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=1&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=1&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -288,7 +322,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -313,23 +347,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (medium, curved, text-spectrum-gray-900, bg-spectrum-red-700) visual test at Desktop viewport', async ({ page }) => {
+  test('marquee (medium, curved, text-spectrum-gray-900, bg-spectrum-red-700) visual test at Desktop viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 1024, height: 768 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=1&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=1&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -340,7 +381,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -365,23 +406,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (medium, curved, text-spectrum-gray-900, bg-spectrum-red-700) visual test at Large viewport', async ({ page }) => {
+  test('marquee (medium, curved, text-spectrum-gray-900, bg-spectrum-red-700) visual test at Large viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 1440, height: 900 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=1&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=1&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -392,7 +440,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -417,23 +465,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (text-spectrum-gray-900, small, straight, bg-spectrum-yellow-700) visual test at Mobile viewport', async ({ page }) => {
+  test('marquee (text-spectrum-gray-900, small, straight, bg-spectrum-yellow-700) visual test at Mobile viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 320, height: 568 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=2&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=2&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -444,7 +499,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -469,23 +524,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (text-spectrum-gray-900, small, straight, bg-spectrum-yellow-700) visual test at Tablet viewport', async ({ page }) => {
+  test('marquee (text-spectrum-gray-900, small, straight, bg-spectrum-yellow-700) visual test at Tablet viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 768, height: 1024 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=2&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=2&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -496,7 +558,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -521,23 +583,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (text-spectrum-gray-900, small, straight, bg-spectrum-yellow-700) visual test at Desktop viewport', async ({ page }) => {
+  test('marquee (text-spectrum-gray-900, small, straight, bg-spectrum-yellow-700) visual test at Desktop viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 1024, height: 768 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=2&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=2&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -548,7 +617,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -573,23 +642,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (text-spectrum-gray-900, small, straight, bg-spectrum-yellow-700) visual test at Large viewport', async ({ page }) => {
+  test('marquee (text-spectrum-gray-900, small, straight, bg-spectrum-yellow-700) visual test at Large viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 1440, height: 900 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=2&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=2&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -600,7 +676,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -625,23 +701,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (medium, text-spectrum-gray-900, straight, fill-background, bg-spectrum-celery-700) visual test at Mobile viewport', async ({ page }) => {
+  test('marquee (medium, text-spectrum-gray-900, straight, fill-background, bg-spectrum-celery-700) visual test at Mobile viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 320, height: 568 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=3&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=3&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -652,7 +735,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -677,23 +760,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (medium, text-spectrum-gray-900, straight, fill-background, bg-spectrum-celery-700) visual test at Tablet viewport', async ({ page }) => {
+  test('marquee (medium, text-spectrum-gray-900, straight, fill-background, bg-spectrum-celery-700) visual test at Tablet viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 768, height: 1024 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=3&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=3&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -704,7 +794,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -729,23 +819,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (medium, text-spectrum-gray-900, straight, fill-background, bg-spectrum-celery-700) visual test at Desktop viewport', async ({ page }) => {
+  test('marquee (medium, text-spectrum-gray-900, straight, fill-background, bg-spectrum-celery-700) visual test at Desktop viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 1024, height: 768 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=3&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=3&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -756,7 +853,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -781,23 +878,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (medium, text-spectrum-gray-900, straight, fill-background, bg-spectrum-celery-700) visual test at Large viewport', async ({ page }) => {
+  test('marquee (medium, text-spectrum-gray-900, straight, fill-background, bg-spectrum-celery-700) visual test at Large viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 1440, height: 900 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=3&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=3&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -808,7 +912,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -833,23 +937,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (bg-spectrum-gray-700, large, straight, fill-background, text-spectrum-gray-50) visual test at Mobile viewport', async ({ page }) => {
+  test('marquee (bg-spectrum-gray-700, large, straight, fill-background, text-spectrum-gray-50) visual test at Mobile viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 320, height: 568 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=4&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=4&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -860,7 +971,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -885,23 +996,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (bg-spectrum-gray-700, large, straight, fill-background, text-spectrum-gray-50) visual test at Tablet viewport', async ({ page }) => {
+  test('marquee (bg-spectrum-gray-700, large, straight, fill-background, text-spectrum-gray-50) visual test at Tablet viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 768, height: 1024 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=4&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=4&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -912,7 +1030,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -937,23 +1055,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (bg-spectrum-gray-700, large, straight, fill-background, text-spectrum-gray-50) visual test at Desktop viewport', async ({ page }) => {
+  test('marquee (bg-spectrum-gray-700, large, straight, fill-background, text-spectrum-gray-50) visual test at Desktop viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 1024, height: 768 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=4&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=4&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -964,7 +1089,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -989,23 +1114,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (bg-spectrum-gray-700, large, straight, fill-background, text-spectrum-gray-50) visual test at Large viewport', async ({ page }) => {
+  test('marquee (bg-spectrum-gray-700, large, straight, fill-background, text-spectrum-gray-50) visual test at Large viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 1440, height: 900 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=4&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=4&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -1016,7 +1148,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -1041,23 +1173,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (medium, straight, bg-spectrum-fuchsia-700, text-spectrum-gray-900) visual test at Mobile viewport', async ({ page }) => {
+  test('marquee (medium, straight, bg-spectrum-fuchsia-700, text-spectrum-gray-900) visual test at Mobile viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 320, height: 568 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=5&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=5&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -1068,7 +1207,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -1093,23 +1232,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (medium, straight, bg-spectrum-fuchsia-700, text-spectrum-gray-900) visual test at Tablet viewport', async ({ page }) => {
+  test('marquee (medium, straight, bg-spectrum-fuchsia-700, text-spectrum-gray-900) visual test at Tablet viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 768, height: 1024 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=5&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=5&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -1120,7 +1266,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -1145,23 +1291,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (medium, straight, bg-spectrum-fuchsia-700, text-spectrum-gray-900) visual test at Desktop viewport', async ({ page }) => {
+  test('marquee (medium, straight, bg-spectrum-fuchsia-700, text-spectrum-gray-900) visual test at Desktop viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 1024, height: 768 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=5&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=5&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -1172,7 +1325,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -1197,23 +1350,30 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
-  test('marquee (medium, straight, bg-spectrum-fuchsia-700, text-spectrum-gray-900) visual test at Large viewport', async ({ page }) => {
+  test('marquee (medium, straight, bg-spectrum-fuchsia-700, text-spectrum-gray-900) visual test at Large viewport', async ({
+    page,
+  }) => {
     // Set viewport size
     await page.setViewportSize({ width: 1440, height: 900 });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=5&vtest=true');
+    await page.goto(
+      '/tools/sidekick/library.html?plugin=blocks&path=/tools/sidekick/blocks/marquee&index=5&vtest=true',
+    );
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: 30000 });
 
     // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: 30000 });
+    const iframe = await page.waitForSelector(
+      'sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe',
+      { timeout: 30000 },
+    );
     const frame = await iframe.contentFrame();
     if (!frame) throw new Error('Could not get iframe content frame');
 
@@ -1224,7 +1384,7 @@ test.describe('marquee Visual Tests', () => {
     await page.waitForTimeout(1000);
 
     await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
+    await page.evaluate((el) => {
       el.style.overflow = 'visible';
       el.style.maxHeight = 'none';
     }, block);
@@ -1249,9 +1409,9 @@ test.describe('marquee Visual Tests', () => {
 
     // Use strict visual comparison settings for detecting color and layout changes
     expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      maxDiffPixels: 50, // Reduced tolerance for better sensitivity
+      threshold: 0.05, // 5% color difference tolerance (more sensitive)
+      maxDiffPixelRatio: 0.005, // 0.5% of total pixels tolerance
     });
   });
 });

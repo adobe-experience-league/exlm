@@ -67,34 +67,36 @@ function getFigmaImageUrl(figmaFileId, nodeId, token, format, scale) {
       },
     };
 
-    https.get(url, options, (res) => {
-      let data = '';
+    https
+      .get(url, options, (res) => {
+        let data = '';
 
-      res.on('data', (chunk) => {
-        data += chunk;
-      });
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
 
-      res.on('end', () => {
-        if (res.statusCode === 200) {
-          try {
-            const response = JSON.parse(data);
-            const imageUrl = response.images[nodeId];
+        res.on('end', () => {
+          if (res.statusCode === 200) {
+            try {
+              const response = JSON.parse(data);
+              const imageUrl = response.images[nodeId];
 
-            if (imageUrl) {
-              resolve(imageUrl);
-            } else {
-              reject(new Error(`No image URL found for node ID: ${nodeId}`));
+              if (imageUrl) {
+                resolve(imageUrl);
+              } else {
+                reject(new Error(`No image URL found for node ID: ${nodeId}`));
+              }
+            } catch (error) {
+              reject(new Error(`Failed to parse Figma API response: ${error.message}`));
             }
-          } catch (error) {
-            reject(new Error(`Failed to parse Figma API response: ${error.message}`));
+          } else {
+            reject(new Error(`Figma API request failed with status ${res.statusCode}: ${data}`));
           }
-        } else {
-          reject(new Error(`Figma API request failed with status ${res.statusCode}: ${data}`));
-        }
+        });
+      })
+      .on('error', (error) => {
+        reject(new Error(`Failed to get Figma image URL: ${error.message}`));
       });
-    }).on('error', (error) => {
-      reject(new Error(`Failed to get Figma image URL: ${error.message}`));
-    });
   });
 }
 
@@ -106,27 +108,29 @@ function getFigmaImageUrl(figmaFileId, nodeId, token, format, scale) {
  */
 function downloadImage(imageUrl, filePath) {
   return new Promise((resolve, reject) => {
-    https.get(imageUrl, (res) => {
-      if (res.statusCode === 200) {
-        const fileStream = fs.createWriteStream(filePath);
+    https
+      .get(imageUrl, (res) => {
+        if (res.statusCode === 200) {
+          const fileStream = fs.createWriteStream(filePath);
 
-        res.pipe(fileStream);
+          res.pipe(fileStream);
 
-        fileStream.on('finish', () => {
-          fileStream.close();
-          resolve();
-        });
+          fileStream.on('finish', () => {
+            fileStream.close();
+            resolve();
+          });
 
-        fileStream.on('error', (error) => {
-          fs.unlink(filePath, () => {}); // Delete the file if it exists
-          reject(new Error(`Failed to write image file: ${error.message}`));
-        });
-      } else {
-        reject(new Error(`Failed to download image: HTTP ${res.statusCode}`));
-      }
-    }).on('error', (error) => {
-      reject(new Error(`Failed to download image: ${error.message}`));
-    });
+          fileStream.on('error', (error) => {
+            fs.unlink(filePath, () => {}); // Delete the file if it exists
+            reject(new Error(`Failed to write image file: ${error.message}`));
+          });
+        } else {
+          reject(new Error(`Failed to download image: HTTP ${res.statusCode}`));
+        }
+      })
+      .on('error', (error) => {
+        reject(new Error(`Failed to download image: ${error.message}`));
+      });
   });
 }
 
@@ -153,7 +157,10 @@ async function downloadFigmaImage(figmaUrlOrFileId, nodeId, name, blockName, for
     let figmaNodeId;
 
     // Check if figmaUrlOrFileId is a URL (contains http/https)
-    if (typeof figmaUrlOrFileId === 'string' && (figmaUrlOrFileId.startsWith('http://') || figmaUrlOrFileId.startsWith('https://'))) {
+    if (
+      typeof figmaUrlOrFileId === 'string' &&
+      (figmaUrlOrFileId.startsWith('http://') || figmaUrlOrFileId.startsWith('https://'))
+    ) {
       // Parse Figma URL
       const parsed = parseFigmaUrl(figmaUrlOrFileId);
       figmaFileId = parsed.fileId;
@@ -235,9 +242,7 @@ async function processBlock(blockName, blocksDir) {
 
     // Download images for each config entry using Promise.all to avoid await in loop
     const downloadPromises = blockConfig.map(async (config) => {
-      const {
-        name, figmaUrl, figmaFile, figmaNode, format = 'png', scale = 1,
-      } = config;
+      const { name, figmaUrl, figmaFile, figmaNode, format = 'png', scale = 1 } = config;
 
       // Support both new figmaUrl format and legacy figmaFile+figmaNode format
       if (!name || (!figmaUrl && (!figmaFile || !figmaNode))) {
@@ -288,7 +293,8 @@ async function generateScreenshotsForBlocks() {
   }
 
   // Get all block directories
-  const blockFolders = fs.readdirSync(blocksDir, { withFileTypes: true })
+  const blockFolders = fs
+    .readdirSync(blocksDir, { withFileTypes: true })
     .filter((dirent) => dirent.isDirectory())
     .map((dirent) => dirent.name);
 
@@ -296,9 +302,7 @@ async function generateScreenshotsForBlocks() {
   console.log(`\nScanning ${blockFolders.length} block folders for Figma configurations...\n`);
 
   // Process each block folder using Promise.all to avoid await in loop
-  const results = await Promise.all(
-    blockFolders.map((blockName) => processBlock(blockName, blocksDir)),
-  );
+  const results = await Promise.all(blockFolders.map((blockName) => processBlock(blockName, blocksDir)));
 
   // Calculate totals
   const totalProcessedBlocks = results.reduce((sum, r) => sum + r.processedBlocks, 0);

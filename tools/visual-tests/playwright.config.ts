@@ -1,4 +1,11 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { defineConfig, devices } from '@playwright/test';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Repo root: aem-cli's `aem up` only recognizes a project if `.git` is in its cwd, and
+// Playwright spawns webServer.command from the config file's directory by default.
+const REPO_ROOT = path.resolve(__dirname, '../..');
 
 export default defineConfig({
   testDir: './',
@@ -30,18 +37,20 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         launchOptions: {
-          args: [
-            '--font-render-hinting=none',
-            '--disable-font-subpixel-positioning',
-            '--force-device-scale-factor=1',
-          ],
+          args: ['--font-render-hinting=none', '--disable-font-subpixel-positioning', '--force-device-scale-factor=1'],
         },
       },
     },
   ],
-  webServer: process.env.DOCKER ? undefined : {
-    command: 'aem up',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-  },
-}); 
+  webServer: process.env.DOCKER
+    ? undefined
+    : {
+        command: 'aem up',
+        cwd: REPO_ROOT,
+        // A plain port check, not `url`: aem-cli's reverse-proxied responses can carry both
+        // Content-Length and Transfer-Encoding, which Node's strict HTTP client (used by the
+        // `url` readiness check) rejects as malformed even though real browsers accept it fine.
+        port: 3000,
+        reuseExistingServer: !process.env.CI,
+      },
+});

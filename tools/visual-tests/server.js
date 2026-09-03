@@ -22,20 +22,24 @@ const portFileDir = path.dirname(portFilePath);
 // Function to check if a port is used by our visual-test server
 async function isOurServer(portToCheck) {
   return new Promise((resolve) => {
-    http.get(`http://localhost:${portToCheck}/api/health`, (res) => {
-      let data = '';
-      res.on('data', (chunk) => { data += chunk; });
-      res.on('end', () => {
-        try {
-          const response = JSON.parse(data);
-          resolve(response.status === 'ok');
-        } catch (e) {
-          resolve(false);
-        }
+    http
+      .get(`http://localhost:${portToCheck}/api/health`, (res) => {
+        let data = '';
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+        res.on('end', () => {
+          try {
+            const response = JSON.parse(data);
+            resolve(response.status === 'ok');
+          } catch (e) {
+            resolve(false);
+          }
+        });
+      })
+      .on('error', () => {
+        resolve(false);
       });
-    }).on('error', () => {
-      resolve(false);
-    });
   });
 }
 
@@ -153,47 +157,51 @@ app.post('/api/run-visual-test', async (req, res) => {
       return res.status(400).json({ error: 'Working directory does not exist' });
     }
 
-    exec(testCommand, {
-      cwd: projectRoot,
-      env: {
-        ...process.env,
-        FORCE_COLOR: '1',
-        PATH: process.env.PATH,
+    exec(
+      testCommand,
+      {
+        cwd: projectRoot,
+        env: {
+          ...process.env,
+          FORCE_COLOR: '1',
+          PATH: process.env.PATH,
+        },
+        shell: process.platform === 'win32',
       },
-      shell: process.platform === 'win32',
-    }, (error, stdout, stderr) => {
-      console.log('Command output:', stdout);
-      if (stderr) console.log('Command errors:', stderr);
-      console.log('Current working directory:', process.cwd());
-      console.log('Command working directory:', projectRoot);
-      console.log('Command:', testCommand);
+      (error, stdout, stderr) => {
+        console.log('Command output:', stdout);
+        if (stderr) console.log('Command errors:', stderr);
+        console.log('Current working directory:', process.cwd());
+        console.log('Command working directory:', projectRoot);
+        console.log('Command:', testCommand);
 
-      if (error) {
-        console.error('Command execution error:', error);
-        res.status(500).json({
-          error: 'Command execution failed',
-          details: error.message,
+        if (error) {
+          console.error('Command execution error:', error);
+          res.status(500).json({
+            error: 'Command execution failed',
+            details: error.message,
+            output: stdout,
+            stderr,
+          });
+          return;
+        }
+
+        if (stderr && stderr.toLowerCase().includes('error')) {
+          res.status(500).json({
+            error: 'Command completed with errors',
+            output: stdout,
+            stderr,
+          });
+          return;
+        }
+
+        res.json({
+          success: true,
           output: stdout,
           stderr,
         });
-        return;
-      }
-
-      if (stderr && stderr.toLowerCase().includes('error')) {
-        res.status(500).json({
-          error: 'Command completed with errors',
-          output: stdout,
-          stderr,
-        });
-        return;
-      }
-
-      res.json({
-        success: true,
-        output: stdout,
-        stderr,
-      });
-    });
+      },
+    );
   } catch (error) {
     console.error('Error executing command:', error);
     res.status(500).json({

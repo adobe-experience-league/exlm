@@ -15,5 +15,5 @@ services:
       - ./playwright-report:/app/tools/visual-tests/playwright-report
     extra_hosts:
       # Allow container to reach the host's aem dev server (Linux compatibility)
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
     command: npx playwright test --config=tools/visual-tests/playwright.config.ts

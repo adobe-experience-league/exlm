@@ -4,12 +4,12 @@ import { chromium } from 'playwright';
 
 import { VIEWPORTS as configViewports, SIDEKICK_CONFIG, COVEO_MOCKED_BLOCKS, COVEO_ROUTE_GLOBS } from './config.js';
 
-const VIEWPORTS = (configViewports || [
+const VIEWPORTS = configViewports || [
   { width: '320px', height: '568px', label: 'mobile' },
   { width: '768px', height: '1024px', label: 'tablet' },
   { width: '1024px', height: '768px', label: 'desktop' },
   { width: '1440px', height: '900px', label: 'large' },
-]);
+];
 
 // remove px from width and height and convert to number
 VIEWPORTS.forEach((viewport) => {
@@ -105,15 +105,16 @@ function generateTestSpec(blockName, blockVariations) {
   const isCoveoMocked = COVEO_MOCKED_BLOCKS.includes(blockSlug);
 
   const imports = isCoveoMocked
-    ? 'import { test, expect } from \'@playwright/test\';\n'
-      + 'import path from \'path\';\n'
-      + 'import { fileURLToPath } from \'url\';\n\n'
-      + 'const __dirname = path.dirname(fileURLToPath(import.meta.url));\n\n'
-    : 'import { test, expect } from \'@playwright/test\';\n\n';
+    ? "import { test, expect } from '@playwright/test';\n" +
+      "import path from 'path';\n" +
+      "import { fileURLToPath } from 'url';\n\n" +
+      'const __dirname = path.dirname(fileURLToPath(import.meta.url));\n\n'
+    : "import { test, expect } from '@playwright/test';\n\n";
 
-  const mockRouteCalls = COVEO_ROUTE_GLOBS
-    .map((glob) => `    await page.routeFromHAR(path.join(__dirname, '${blockSlug}.har'), { url: '${glob}', notFound: 'abort' });\n`)
-    .join('');
+  const mockRouteCalls = COVEO_ROUTE_GLOBS.map(
+    (glob) =>
+      `    await page.routeFromHAR(path.join(__dirname, '${blockSlug}.har'), { url: '${glob}', notFound: 'abort' });\n`,
+  ).join('');
   const coveoMockSetup = isCoveoMocked
     ? `\n    // Replay recorded Coveo responses (EXLM visual tests): live search results drift over time
     // and would make this test flaky. Refresh with:
@@ -128,24 +129,33 @@ ${mockRouteCalls}`
     return counts;
   }, new Map());
 
-  const testContent = blockVariations.flatMap((block) => {
-    const testName = nameCounts.get(block.variationName) > 1
-      ? `${block.variationName} (${block.variationIndex}) visual test`
-      : `${block.variationName} visual test`;
+  const testContent = blockVariations
+    .flatMap((block) => {
+      const testName =
+        nameCounts.get(block.variationName) > 1
+          ? `${block.variationName} (${block.variationIndex}) visual test`
+          : `${block.variationName} visual test`;
 
-    // Some labels carry a parenthetical path suffix, e.g. "BlockName (something-12)",
-    // where the real template folder is actually "something-12-blockname".
-    const parenMatch = block.name.match(/\(([^)]*)\)/);
-    const cleanSlug = block.name.replace(/\s*\([^)]*\)/g, '').trim().toLowerCase().replace(/\s+/g, '-');
-    const gotoPath = parenMatch ? `${TEMPLATES_PATH}${parenMatch[1].trim()}-${cleanSlug}` : block.path;
+      // Some labels carry a parenthetical path suffix, e.g. "BlockName (something-12)",
+      // where the real template folder is actually "something-12-blockname".
+      const parenMatch = block.name.match(/\(([^)]*)\)/);
+      const cleanSlug = block.name
+        .replace(/\s*\([^)]*\)/g, '')
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '-');
+      const gotoPath = parenMatch ? `${TEMPLATES_PATH}${parenMatch[1].trim()}-${cleanSlug}` : block.path;
 
-    // Generate tests for each viewport for this block variation
-    const viewportTests = VIEWPORTS.map((viewport) => `  test('${testName} at ${viewport.label} viewport', async ({ page }) => {
+      // Generate tests for each viewport for this block variation
+      const viewportTests = VIEWPORTS.map(
+        (viewport) => `  test('${testName} at ${viewport.label} viewport', async ({ page }) => {
     // Set viewport size
     await page.setViewportSize({ width: ${viewport.width}, height: ${viewport.height} });
 
     // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=${gotoPath}&index=${block.variationIndex}&vtest=true');
+    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=${gotoPath}&index=${
+      block.variationIndex
+    }&vtest=true');
 
     // Wait for the library component to load
     await page.waitForSelector('sidekick-library', { timeout: ${SELECTOR_TIMEOUT} });
@@ -156,7 +166,9 @@ ${mockRouteCalls}`
     if (!frame) throw new Error('Could not get iframe content frame');
 
     // Wait for the block to be fully rendered
-    const block = await frame.waitForSelector('.${block.name.toLowerCase().replace(/\s+/g, '-')}', { timeout: ${SELECTOR_TIMEOUT}, state: 'visible' });
+    const block = await frame.waitForSelector('.${block.name
+      .toLowerCase()
+      .replace(/\s+/g, '-')}', { timeout: ${SELECTOR_TIMEOUT}, state: 'visible' });
 
     // Small delay to ensure layout is stable${viewport.label === 'tablet' ? ' after breakpoint transition' : ''}
     await page.waitForTimeout(${LAYOUT_TIMEOUT});
@@ -177,7 +189,9 @@ ${mockRouteCalls}`
     });
 
     // Take a screenshot of only the block area
-    const screenshotName = '${block.name.toLowerCase().replace(/\s+/g, '-')}-${block.variationIndex}-${viewport.label}.png';
+    const screenshotName = '${block.name.toLowerCase().replace(/\s+/g, '-')}-${block.variationIndex}-${
+      viewport.label
+    }.png';
     const screenshot = await page.screenshot({
       clip: box,
       timeout: ${SELECTOR_TIMEOUT},
@@ -191,10 +205,12 @@ ${mockRouteCalls}`
       threshold: 0.05,            // 5% color difference tolerance (more sensitive)
       maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
     });
-  });`);
+  });`,
+      );
 
-    return viewportTests;
-  }).join('\n');
+      return viewportTests;
+    })
+    .join('\n');
 
   return `${imports}test.describe('${blockName} Visual Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -248,7 +264,9 @@ async function generateVisualTests() {
     console.log(`Generated test file: blocks/${blockName.toLowerCase().replace(/\s+/g, '-')}/${testFileName}`);
   });
 
-  console.log(`\nSuccessfully generated ${totalTests} test variations across ${Object.keys(blocksByName).length} blocks`);
+  console.log(
+    `\nSuccessfully generated ${totalTests} test variations across ${Object.keys(blocksByName).length} blocks`,
+  );
 }
 
 // Run the generator
