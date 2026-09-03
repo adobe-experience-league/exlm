@@ -22,4 +22,18 @@ module.exports = {
     ],
     'import/no-extraneous-dependencies': ['error', { devDependencies: ['build/*'] }],
   },
+  overrides: [
+    {
+      // Node-side build/test tooling, not browser app code: console output is the point,
+      // __dirname is the standard ESM idiom, and recording/generation scripts intentionally
+      // await one block/variation at a time in a shared browser session.
+      files: ['tools/visual-tests/**/*.js'],
+      env: { node: true },
+      rules: {
+        'no-console': 'off',
+        'no-await-in-loop': 'off',
+        'no-underscore-dangle': ['error', { allow: ['__dirname', '__filename'] }],
+      },
+    },
+  ],
 };

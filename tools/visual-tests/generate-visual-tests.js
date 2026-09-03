@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { chromium } from 'playwright';
 
-import { VIEWPORTS as configViewports, SIDEKICK_CONFIG } from './config.js';
+import { VIEWPORTS as configViewports, SIDEKICK_CONFIG, COVEO_MOCKED_BLOCKS, COVEO_ROUTE_GLOBS } from './config.js';
 
 const VIEWPORTS = (configViewports || [
   { width: '320px', height: '568px', label: 'mobile' },
@@ -101,7 +101,25 @@ async function fetchLibraryBlocks() {
 }
 
 function generateTestSpec(blockName, blockVariations) {
-  const imports = 'import { test, expect } from \'@playwright/test\';\n\n';
+  const blockSlug = blockName.toLowerCase().replace(/\s+/g, '-');
+  const isCoveoMocked = COVEO_MOCKED_BLOCKS.includes(blockSlug);
+
+  const imports = isCoveoMocked
+    ? 'import { test, expect } from \'@playwright/test\';\n'
+      + 'import path from \'path\';\n'
+      + 'import { fileURLToPath } from \'url\';\n\n'
+      + 'const __dirname = path.dirname(fileURLToPath(import.meta.url));\n\n'
+    : 'import { test, expect } from \'@playwright/test\';\n\n';
+
+  const mockRouteCalls = COVEO_ROUTE_GLOBS
+    .map((glob) => `    await page.routeFromHAR(path.join(__dirname, '${blockSlug}.har'), { url: '${glob}', notFound: 'abort' });\n`)
+    .join('');
+  const coveoMockSetup = isCoveoMocked
+    ? `\n    // Replay recorded Coveo responses (EXLM visual tests): live search results drift over time
+    // and would make this test flaky. Refresh with:
+    //   node tools/visual-tests/record-coveo-har.js ${blockSlug}
+${mockRouteCalls}`
+    : '';
 
   // Variations can share the same label (e.g. two "Default" entries); Playwright
   // requires unique test titles, so disambiguate duplicates with their variation index.
@@ -182,7 +200,7 @@ function generateTestSpec(blockName, blockVariations) {
   test.beforeEach(async ({ page }) => {
     // Set default viewport size
     await page.setViewportSize({ width: 1280, height: 2000 });
-  });
+${coveoMockSetup}  });
 
 ${testContent}
 });`;

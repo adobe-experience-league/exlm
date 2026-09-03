@@ -28,7 +28,8 @@
     "test:visual": "docker compose -f tools/visual-tests/docker-compose.yml run --rm playwright",
     "test:visual:update": "docker compose -f tools/visual-tests/docker-compose.yml run --rm playwright npx playwright test --config=tools/visual-tests/playwright.config.ts --update-snapshots",
     "test:visual:block": "docker compose -f tools/visual-tests/docker-compose.yml run --rm playwright npx playwright test --config=tools/visual-tests/playwright.config.ts",
-    "test:visual:generate": "docker compose -f tools/visual-tests/docker-compose.yml run --rm playwright node tools/visual-tests/generate-visual-tests.js"
+    "test:visual:generate": "docker compose -f tools/visual-tests/docker-compose.yml run --rm playwright node tools/visual-tests/generate-visual-tests.js",
+    "test:visual:record-coveo": "node tools/visual-tests/record-coveo-har.js"
   },
   "repository": {
     "type": "git",
