@@ -33,9 +33,7 @@ jobs:
 
       - name: Run visual tests
         id: tests
-        run: npx playwright test --config=tools/visual-tests/playwright.config.ts --reporter=html,json
-        env:
-          PLAYWRIGHT_JSON_OUTPUT_NAME: playwright-results.json
+        run: npx playwright test --config=tools/visual-tests/playwright.config.ts
         continue-on-error: true
 
       - name: Upload Playwright report
@@ -100,7 +98,7 @@ jobs:
 
             try {
               const { stats, suites } = JSON.parse(
-                fs.readFileSync('playwright-results.json', 'utf8'),
+                fs.readFileSync('tools/visual-tests/test-results/results.json', 'utf8'),
               );
 
               const passed  = stats.expected   ?? 0;
