@@ -1,0 +1,9 @@
+node_modules
+tools/visual-tests/playwright-report
+tools/visual-tests/test-results
+playwright-report
+test-results
+.env
+.env.local
+.git
+.DS_Store

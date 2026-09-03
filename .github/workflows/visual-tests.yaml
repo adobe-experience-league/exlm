@@ -1,0 +1,189 @@
+name: Visual Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'visual-test*'
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  visual-tests:
+    # Run inside the same image used to generate baselines locally so
+    # font rendering is pixel-identical between local Docker and CI.
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.53.1-jammy
+    timeout-minutes: 20
+    permissions:
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install AEM CLI
+        run: npm install -g @adobe/aem-cli
+
+      # Browsers are pre-installed in the playwright image — no install needed.
+
+      - name: Run visual tests
+        id: tests
+        run: npx playwright test --config=tools/visual-tests/playwright.config.ts
+        continue-on-error: true
+
+      - name: Upload Playwright report
+        if: always()
+        id: upload-report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: tools/visual-tests/playwright-report/
+          retention-days: 7
+
+      - name: Upload failure screenshots
+        if: steps.tests.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: tools/visual-tests/test-results/
+          retention-days: 3
+
+      - name: Post results to PR
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+          REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
+        with:
+          script: |
+            const fs   = require('fs');
+            const outcome   = process.env.TEST_OUTCOME;
+            const reportUrl = process.env.REPORT_URL;
+            const runUrl    = process.env.RUN_URL;
+            const sha       = process.env.COMMIT_SHA.slice(0, 7);
+
+            // ── helpers ──────────────────────────────────────────────────────
+            function collect(nodes, acc = []) {
+              for (const node of nodes ?? []) {
+                for (const spec of node.specs ?? []) {
+                  for (const test of spec.tests ?? []) {
+                    acc.push({
+                      suite: node.title,
+                      title: spec.title,
+                      status: test.status, // 'expected' | 'unexpected' | 'skipped'
+                    });
+                  }
+                }
+                collect(node.suites, acc);
+              }
+              return acc;
+            }
+
+            // Parse viewport and block from test title like
+            // "cards visual test at Mobile viewport"
+            function parseTitle(title) {
+              const m = title.match(/^(.+?) visual test at (.+?) viewport/);
+              return m ? { block: m[1], viewport: m[2] } : { block: title, viewport: '' };
+            }
+
+            // ── build comment ────────────────────────────────────────────────
+            let body = '## 🎭 Visual Test Results\n\n';
+
+            try {
+              const { stats, suites } = JSON.parse(
+                fs.readFileSync('tools/visual-tests/test-results/results.json', 'utf8'),
+              );
+
+              const passed  = stats.expected   ?? 0;
+              const failed  = stats.unexpected ?? 0;
+              const skipped = stats.skipped    ?? 0;
+              const secs    = ((stats.duration ?? 0) / 1000).toFixed(1);
+              const total   = passed + failed + skipped;
+
+              // ── status banner ─────────────────────────────────────────────
+              if (failed === 0) {
+                body += `**✅ All ${total} tests passed** &nbsp;·&nbsp; ⏱ ${secs}s\n\n`;
+              } else {
+                body += `**❌ ${failed} of ${total} tests failed** &nbsp;·&nbsp; ⏱ ${secs}s\n\n`;
+              }
+
+              // ── summary chips ─────────────────────────────────────────────
+              body += `![passed](https://img.shields.io/badge/passed-${passed}-brightgreen?style=flat-square) `;
+              body += `![failed](https://img.shields.io/badge/failed-${failed}-${failed > 0 ? 'red' : 'brightgreen'}?style=flat-square) `;
+              body += `![skipped](https://img.shields.io/badge/skipped-${skipped}-lightgrey?style=flat-square)\n\n`;
+
+              // ── per-test table ────────────────────────────────────────────
+              const tests = collect(suites);
+              if (tests.length > 0) {
+                body += '<details>\n';
+                body += failed > 0
+                  ? '<summary><strong>❌ Failed tests — click to expand</strong></summary>\n\n'
+                  : '<summary><strong>✅ Test breakdown — click to expand</strong></summary>\n\n';
+
+                body += '| Block | Viewport | Result |\n';
+                body += '|-------|----------|--------|\n';
+
+                // Failed first, then passed
+                const sorted = [
+                  ...tests.filter(t => t.status === 'unexpected'),
+                  ...tests.filter(t => t.status === 'expected'),
+                  ...tests.filter(t => t.status === 'skipped'),
+                ];
+
+                for (const t of sorted) {
+                  const { block, viewport } = parseTitle(t.title);
+                  const icon = t.status === 'expected'   ? '✅'
+                             : t.status === 'unexpected' ? '❌'
+                             : '⏭️';
+                  body += `| \`${block}\` | ${viewport} | ${icon} |\n`;
+                }
+
+                body += '\n</details>\n\n';
+              }
+
+              // ── report link ───────────────────────────────────────────────
+              if (reportUrl) {
+                body += `📊 **[Download Playwright Report](${reportUrl})** — pixel diffs, screenshots & traces\n\n`;
+              }
+
+            } catch {
+              body += `> ⚠️ Could not parse test results. Check the [workflow run](${runUrl}).\n\n`;
+            }
+
+            // ── footer ────────────────────────────────────────────────────
+            body += `---\n`;
+            body += `<sub>Commit \`${sha}\` · [Run #${{ github.run_number }}](${runUrl})</sub>`;
+
+            // ── upsert comment ────────────────────────────────────────────
+            const MARKER = '## 🎭 Visual Test Results';
+            const { data: comments } = await github.rest.issues.listComments({
+              ...context.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c => c.body.startsWith(MARKER));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                ...context.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                ...context.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+      # Fail the job after comment + artifacts are uploaded.
+      - name: Fail if tests failed
+        if: steps.tests.outcome == 'failure'
+        run: exit 1
