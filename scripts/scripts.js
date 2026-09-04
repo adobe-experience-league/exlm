@@ -783,6 +783,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities.adobe.com',
+      ethos: 'expereinceleague-api.ethos09-prod-va7.ethos.adobe.net',
     },
     {
       env: 'STAGE',
@@ -791,6 +792,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-beta.adobe.com',
+      ethos: 'expereinceleague-api-stage.ethos09-prod-va7.ethos.adobe.net',
     },
     {
       env: 'DEV',
@@ -799,6 +801,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-beta.adobe.com',
+      ethos: 'expereinceleague-api-stage.ethos09-prod-va7.ethos.adobe.net',
     },
   ];
 
@@ -857,7 +860,9 @@ export function getConfig() {
   );
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const communityHost = currentEnv?.community || defaultEnv.community;
+  const ethosHost = currentEnv?.ethos || defaultEnv.ethos;
   const cdnOrigin = `https://${cdnHost}`;
+  const ethosOrigin = `https://${ethosHost}`;
   const premiumLearningAuthAPI = `${cdnOrigin}/api/v1/web/alm/authentication`;
   const rawLang = document.querySelector('html').lang || 'en';
   const lang = window.location.hostname.includes(communityHost)
@@ -916,8 +921,8 @@ export function getConfig() {
     quizPassingCriteria: 0.65, // 65% passing criteria for quizzes
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list?platform=gainsight`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`,
-    profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
-    JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
+    profileUrl: `${ethosOrigin}/api/profile?lang=${lang}`,
+    JWTTokenUrl: `${ethosOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `${cdnOrigin}/api/action/coveo-token?lang=${lang}`,
     coveoSearchResultsUrl: isProd
       ? 'https://platform.cloud.coveo.com/rest/search/v2'
@@ -928,7 +933,7 @@ export function getConfig() {
     plPublicCatalogIds,
     plApiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
-    industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
+    industryUrl: `${ethosOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     articleUrl: `${cdnOrigin}/api/articles`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
@@ -948,7 +953,7 @@ export function getConfig() {
     communityAccountURL: isProd
       ? `https://experienceleaguecommunities.adobe.com/?lang=${communityLocale}`
       : `https://experienceleaguecommunities-beta.adobe.com/?lang=${communityLocale}`,
-    interestsUrl: `${cdnOrigin}/api/interests?page_size=200&sort=Order`,
+    interestsUrl: `${ethosOrigin}/api/interests?page_size=200&sort=Order`,
     // Param for localized Community Profile URL
     localizedCommunityProfileParam: `?lang=${communityLocale}`,
     // MPC API Base
