@@ -496,6 +496,13 @@
   flex-shrink: 0;
 }
 
+/* The design's outlined send glyph fills a square box, unlike the flatter filled plane it
+   replaced, so scope it below the 18px shared with the sparkle icon to hold the FAB's weight. */
+#bc-trigger .bc-trigger-send img {
+  width: 16px;
+  height: 16px;
+}
+
 /* EXLM-5715 — entry variant visibility */
 body.bc-entry-pending #bc-trigger,
 body.bc-entry-pending #bc-bottom-ask-bar {
