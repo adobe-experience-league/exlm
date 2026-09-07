@@ -42,37 +42,26 @@ const embedTwitter = (url) => {
 /**
  *
  * @param {URL} url
- * @param {boolean} autoplay
- * @param {HTMLElement} block
  * @returns
  */
-const embedMpc = (url, autoplay, block) => {
+const embedMpc = (url) => {
   const urlObject = new URL(url);
-  const videoId = url.href.match(/\/v\/(\d+)/)?.[1] || '';
-  let completed = false;
-
-  const getVideoDetails = (duration) => ({
-    title: getMetadata('og:title'),
-    description: getMetadata('og:description'),
-    url: url.href,
-    duration: duration || '',
-  });
-
-  const handleMessage = (event) => {
-    if (event.data?.type !== 'mpcStatus') return;
-    const iframe = block.querySelector('iframe');
-    // Check if message is from this block's iframe
-    if (!iframe || event.source !== iframe.contentWindow) return;
-
-    if (event.data.state === 'play') {
-      pushVideoEvent({ ...getVideoDetails(event.data.duration), id: videoId });
-    } else if (event.data.state === 'complete' && !completed) {
-      completed = true;
-      pushVideoEvent({ ...getVideoDetails(event.data.duration), id: videoId }, 'videoCompleted');
-    }
-  };
-
-  window.addEventListener('message', handleMessage, false);
+  window.addEventListener(
+    'message',
+    (event) => {
+      if (event.data?.type === 'mpcStatus') {
+        if (event.data.state === 'play') {
+          pushVideoEvent({
+            title: getMetadata('og:title'),
+            description: getMetadata('og:description'),
+            url: url.href,
+            duration: getMetadata('video:duration'),
+          });
+        }
+      }
+    },
+    false,
+  );
   return getDefaultEmbed(urlObject);
 };
 
@@ -95,7 +84,7 @@ const loadEmbed = (block, link, autoplay) => {
   const config = EMBEDS_CONFIG.find((e) => e.match.some((match) => link.includes(match)));
   const url = new URL(link);
   if (config) {
-    block.innerHTML = config.embed(url, autoplay, block);
+    block.innerHTML = config.embed(url, autoplay);
     block.classList = `block embed embed-${config.match[0]}`;
   } else {
     block.innerHTML = getDefaultEmbed(url);
