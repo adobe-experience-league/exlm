@@ -431,8 +431,8 @@ function createBottomAskBar() {
   const input = document.createElement('input');
   input.type = 'text';
   input.className = 'bc-bottom-ask-bar-input';
-  input.placeholder = 'Ask a question...';
-  input.setAttribute('aria-label', 'Ask a question...');
+  input.placeholder = 'Ask a question…';
+  input.setAttribute('aria-label', 'Ask a question');
 
   const sendBtn = document.createElement('button');
   sendBtn.type = 'button';
@@ -1069,7 +1069,7 @@ function createMountPoint() {
   triggerIcon.className = 'icon icon-bc-ask-sparkles';
   const triggerAsk = document.createElement('span');
   triggerAsk.className = 'bc-trigger-ask';
-  triggerAsk.textContent = 'Ask a question...';
+  triggerAsk.textContent = 'Ask a question…';
   trigger.append(triggerIcon, triggerAsk);
   const sendIcon = document.createElement('span');
   sendIcon.className = 'icon icon-bc-message-send bc-trigger-send';
