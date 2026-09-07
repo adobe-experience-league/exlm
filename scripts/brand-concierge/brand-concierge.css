@@ -184,8 +184,11 @@
   color: var(--text-color);
 }
 
+/* Widths track the design dock: prompt ~54% of the bar, centered between brand and actions. */
 .bc-bottom-ask-bar-input-group {
   flex: 1 1 auto;
+  max-width: 840px;
+  margin-inline: auto;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -194,6 +197,7 @@
 
 .bc-bottom-ask-bar-input-wrap {
   flex: 1 1 auto;
+  max-width: 784px;
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -280,12 +284,13 @@
   height: 16px;
 }
 
+/* No auto margin here: the prompt group's auto margins absorb the free space and
+   still push these controls flush to the bar's right edge. */
 .bc-bottom-ask-bar-actions {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 32px;
-  margin-left: auto;
 }
 
 .bc-bottom-ask-bar-hide {
