@@ -169,7 +169,7 @@
   grid-template-columns: 1fr;
 }
 
-.grid-cards.wide .grid-card > a {
+.grid-cards.wide .grid-card > .grid-card-link {
   display: flex;
   margin: 0;
   gap: var(--spectrum-spacing-400);
