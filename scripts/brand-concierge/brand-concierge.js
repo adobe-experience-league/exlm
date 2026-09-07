@@ -431,8 +431,8 @@ function createBottomAskBar() {
   const input = document.createElement('input');
   input.type = 'text';
   input.className = 'bc-bottom-ask-bar-input';
-  input.placeholder = 'Ask a question';
-  input.setAttribute('aria-label', 'Ask a question');
+  input.placeholder = 'Ask a question...';
+  input.setAttribute('aria-label', 'Ask a question...');
 
   const sendBtn = document.createElement('button');
   sendBtn.type = 'button';
@@ -1266,7 +1266,13 @@ export async function initBrandConcierge() {
     document.head.append(cssLinkEl);
 
     const martechOff = window.location.search?.indexOf('martech=off') !== -1;
-    const experience = martechOff ? BC_ENTRY_EXPERIENCES.FLOATING_ASK_BUTTON : await waitForExperienceOrTimeout();
+    const isLocalDevHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    // Preview/CI: martech=off → control FAB. Localhost keeps Target / local simulator
+    // (scripts.js still loads entry-target when martech=off on local hosts).
+    const experience =
+      martechOff && !isLocalDevHost
+        ? BC_ENTRY_EXPERIENCES.FLOATING_ASK_BUTTON
+        : await waitForExperienceOrTimeout();
     applyBcEntryChrome(experience);
 
     if (experience === BC_ENTRY_EXPERIENCES.BOTTOM_ASK_BAR) {

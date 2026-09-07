@@ -186,8 +186,6 @@
 
 .bc-bottom-ask-bar-input-group {
   flex: 1 1 auto;
-  max-width: 760px;
-  margin-inline: auto;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -196,7 +194,6 @@
 
 .bc-bottom-ask-bar-input-wrap {
   flex: 1 1 auto;
-  max-width: 704px;
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -418,7 +415,7 @@
   border: none;
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-normal);
   cursor: pointer;
   color: var(--non-spectrum-dark-gray);
   background-color: rgb(255 255 255 / 70%);
@@ -478,7 +475,7 @@
 
 #bc-trigger .bc-trigger-ask {
   font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-normal);
   line-height: 1.2;
   color: var(--non-spectrum-dark-gray);
   letter-spacing: -0.01em;

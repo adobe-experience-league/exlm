@@ -1203,12 +1203,22 @@ async function loadLazy(doc) {
     const headerPromise = loadHeader(doc.querySelector('header'));
     const footerPromise = loadFooter(doc.querySelector('footer'));
     const martechOff = window.location.search?.indexOf('martech=off') !== -1;
+    const isLocalDevHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     // disable martech if martech=off is in the query string, this is used for testing ONLY
     if (!martechOff) {
       loadMartech(headerPromise, footerPromise);
     }
-    if (!isBrandConciergeExcludedPath() && !martechOff) {
-      import('./brand-concierge/brand-concierge-entry-target.js').catch(() => {});
+    if (!isBrandConciergeExcludedPath() && (!martechOff || isLocalDevHost)) {
+      import('./brand-concierge/brand-concierge-entry-target.js')
+        .then((mod) => {
+          if (typeof mod.markBcEntryPending === 'function') mod.markBcEntryPending();
+          if (isLocalDevHost) {
+            return import('./brand-concierge/brand-concierge-entry-target-local.js');
+          }
+          return null;
+        })
+        .then((mod) => mod?.default?.())
+        .catch(() => {});
     }
   }
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
