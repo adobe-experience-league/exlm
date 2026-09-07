@@ -386,6 +386,13 @@
   background-color: var(--spectrum-gray-200);
 }
 
+/* The asset is authored for the FAB's white pill (#d8d8d8); on the grey disc the design uses a
+   darker #b1b1b1, so flatten to white then scale down (255 * 0.694 = 177). Doing it in CSS keeps
+   one shared asset and stays correct whatever colour the exported SVG carries. */
+.bc-bottom-ask-bar-send:disabled .icon img {
+  filter: brightness(0) invert(1) brightness(0.694);
+}
+
 .bc-bottom-ask-bar-send:not(:disabled) .icon img {
   filter: brightness(0) invert(1);
 }
