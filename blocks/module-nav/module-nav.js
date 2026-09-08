@@ -222,6 +222,7 @@ export default async function decorate(block) {
   }
 
   // Check if this is the last step - maintaining the original condition exactly
+  let finishError = null;
   if ((!isQuiz || skipQuiz) && (await isLastStep())) {
     nextLink.classList.add('disabled');
     try {
@@ -245,11 +246,12 @@ export default async function decorate(block) {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error completing course:', error);
-      const errorMessage = document.createElement('div');
-      errorMessage.className = 'module-nav-finish-error';
-      errorMessage.textContent =
+      finishError = document.createElement('div');
+      finishError.className = 'module-nav-finish-error';
+      finishError.textContent =
         placeholders?.quizSubmitError || `We couldn't submit your answers. Please try again later.`;
-      container.appendChild(errorMessage);
+      nextLink.classList.remove('disabled');
+      await queueAnalyticsEvent(pushNextButtonImpressionEvent);
     }
   }
 
@@ -268,4 +270,9 @@ export default async function decorate(block) {
 
   // Add to block
   block.appendChild(container);
+
+  // Show any finish failure message below the button row (same as the quiz path)
+  if (finishError) {
+    container.insertAdjacentElement('afterend', finishError);
+  }
 }
