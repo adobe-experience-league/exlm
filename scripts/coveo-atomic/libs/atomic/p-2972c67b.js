@@ -1,0 +1,2 @@
+import{h as r,F as t}from"./p-5925f187.js";import{B as e}from"./p-121dc676.js";const s=({i18n:t,onClick:s,setRef:a})=>r(e,{style:"outline-primary",class:"w-full p-3",onClick:s,text:t.t("sort-and-filter"),ref:a,part:"button"});const a=({hasError:e,firstRequestExecuted:s,hasItems:a},n)=>{if(e){return}if(!s){return r("div",{part:"placeholder","aria-hidden":true,class:"bg-neutral my-2 h-8 w-28 animate-pulse rounded"})}if(!a){return}return r(t,null,n)};export{s as R,a};
+//# sourceMappingURL=p-2972c67b.js.map

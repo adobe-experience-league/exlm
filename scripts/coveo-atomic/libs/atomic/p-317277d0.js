@@ -1,0 +1,2 @@
+import{h as t,F as n}from"./p-5925f187.js";const o=({i18n:o,key:s,params:c,count:e})=>{const a="";const r="";const p=t=>`${a}${r}${t}${a}`;const l=t=>c[t.slice(1)];const u=Object.fromEntries(Object.keys(c).map((t=>[t,p(t)])));const i=o.t(s,{interpolation:{escapeValue:false},count:e,...u});return t(n,null,i.split(a).map((t=>t.startsWith(r)?l(t):t)))};export{o as L};
+//# sourceMappingURL=p-317277d0.js.map

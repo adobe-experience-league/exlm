@@ -1,0 +1,2 @@
+function n(n){return`caption-${n}`}function t(t,r){return r.getResourceBundle(r.language,n(t))||{}}function r(t,r,u){return u.t(r,{ns:n(t)})}export{t as a,r as g};
+//# sourceMappingURL=p-55d2bcf3.js.map

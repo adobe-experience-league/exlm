@@ -1,0 +1,2 @@
+import{h as r,F as s}from"./p-5925f187.js";import{H as e}from"./p-842de847.js";const t=({hasError:t,enabled:a,firstSearchExecuted:o,hasResults:l},n)=>{if(t||!a||o&&!l){return r(e,null)}return r(s,null,n)};export{t as F};
+//# sourceMappingURL=p-8ddb9d24.js.map

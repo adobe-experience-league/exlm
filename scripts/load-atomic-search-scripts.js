@@ -33,9 +33,15 @@ export const loadScript = (src, attrs = {}) => {
   return promise;
 };
 
+// Self-hosted Coveo Atomic entry point. The full `dist/atomic` distribution (entry + lazy p-*.js
+// chunks + lang/assets) is vendored under scripts/coveo-atomic/libs/atomic via that folder's
+// package.json/copy script. Atomic resolves its chunks/assets relative to this URL, so it must
+// point at the vendored atomic.esm.js — see scripts/coveo-atomic/libs/index.js to upgrade.
+const ATOMIC_ESM_URL = '/scripts/coveo-atomic/libs/atomic/atomic.esm.js';
+
 export async function initiateCoveoAtomicSearch() {
   return new Promise((resolve, reject) => {
-    loadScript('https://static.cloud.coveo.com/atomic/v3.13.0/atomic.esm.js', { type: 'module' })
+    loadScript(ATOMIC_ESM_URL, { type: 'module' })
       .then(async () => {
         resolve(true);
       })

@@ -1,0 +1,2 @@
+function e(e,n){const t=n.split(".");let o=e;for(const e of t){if(o&&typeof o==="object"&&e in o){o=o[e]}else{return undefined}}return typeof o==="string"?o:undefined}export{e as r};
+//# sourceMappingURL=p-e39d4895.js.map
