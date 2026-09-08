@@ -748,6 +748,79 @@ export async function pushQuizEvent(eventName) {
 }
 
 /**
+ * Used to push a profile update request-sent event to the data layer
+ * @param {string} message - Description of the profile update request being sent
+ */
+export async function pushProfileUpdateRequestSentEvent(message) {
+  if (!courses) return;
+
+  try {
+    const { courses: coursesInfo, module } = await getEventInfo('quiz');
+
+    window.adobeDataLayer = window.adobeDataLayer || [];
+    window.adobeDataLayer.push({
+      event: 'ProfileUpdateRequestSent',
+      profileAPI: {
+        requestMessage: message,
+        timeStamp: new Date().toISOString(),
+      },
+      courses: coursesInfo,
+      module,
+    });
+  } catch (e) {
+    // Log error but don't throw to prevent breaking the user experience
+    console.error('Error pushing profile update request-sent event:', e);
+  }
+}
+
+/**
+ * Used to push a profile update response-received event to the data layer
+ * @param {string|number} message - HTTP status code on success, or the failed request's status/reason
+ */
+export async function pushProfileUpdateRequestReceivedEvent(message) {
+  if (!courses) return;
+
+  try {
+    const { courses: coursesInfo, module } = await getEventInfo('quiz');
+
+    window.adobeDataLayer = window.adobeDataLayer || [];
+    window.adobeDataLayer.push({
+      event: 'ProfileUpdateRequestReceived',
+      profileAPI: {
+        requestMessage: message,
+        timeStamp: new Date().toISOString(),
+      },
+      courses: coursesInfo,
+      module,
+    });
+  } catch (e) {
+    // Log error but don't throw to prevent breaking the user experience
+    console.error('Error pushing profile update response-received event:', e);
+  }
+}
+
+/**
+ * Used to push a Next-button-enabled impression event to the data layer
+ */
+export async function pushNextButtonImpressionEvent() {
+  if (!courses) return;
+
+  try {
+    const { courses: coursesInfo, module } = await getEventInfo('quiz');
+
+    window.adobeDataLayer = window.adobeDataLayer || [];
+    window.adobeDataLayer.push({
+      event: 'nextButtonImpression',
+      courses: coursesInfo,
+      module,
+    });
+  } catch (e) {
+    // Log error but don't throw to prevent breaking the user experience
+    console.error('Error pushing next button impression event:', e);
+  }
+}
+
+/**
  * Used to push a product interests event to the data layer
  * @param {string} id - The product id.
  * @param {string} title - The product interest title.

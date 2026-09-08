@@ -15,6 +15,8 @@ import {
   pushModuleCompletionEvent,
   pushCourseCompletionEvent,
   pushCourseStartEvent,
+  pushProfileUpdateRequestSentEvent,
+  pushProfileUpdateRequestReceivedEvent,
 } from '../analytics/lib-analytics.js';
 import { queueAnalyticsEvent } from '../analytics/analytics-queue.js';
 
@@ -344,8 +346,19 @@ async function finishModule(url = window.location.pathname) {
   if (module && !module.finishedAt) {
     module.finishedAt = finishTime;
 
-    // Update the profile with the new courses data
-    await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
+    await queueAnalyticsEvent(pushProfileUpdateRequestSentEvent, `finishModule request for module ${moduleId}`);
+
+    try {
+      // Update the profile with the new courses data
+      const statusCode = await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true, {
+        throwOnHttpError: true,
+      });
+      await queueAnalyticsEvent(pushProfileUpdateRequestReceivedEvent, statusCode);
+    } catch (error) {
+      await queueAnalyticsEvent(pushProfileUpdateRequestReceivedEvent, error?.apiMessage || error?.status || 'ERROR');
+      throw error;
+    }
+
     await queueAnalyticsEvent(pushModuleCompletionEvent, courseId);
   }
 }
@@ -387,8 +400,18 @@ async function completeCourse(url = window.location.pathname) {
       course.awards.id = id;
     }
 
-    // Update the profile with the new courses data
-    await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
+    await queueAnalyticsEvent(pushProfileUpdateRequestSentEvent, `completeCourse request for course ${courseId}`);
+
+    try {
+      // Update the profile with the new courses data
+      const statusCode = await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true, {
+        throwOnHttpError: true,
+      });
+      await queueAnalyticsEvent(pushProfileUpdateRequestReceivedEvent, statusCode);
+    } catch (error) {
+      await queueAnalyticsEvent(pushProfileUpdateRequestReceivedEvent, error?.apiMessage || error?.status || 'ERROR');
+      throw error;
+    }
 
     await queueAnalyticsEvent(pushModuleCompletionEvent, courseId);
     await queueAnalyticsEvent(pushCourseCompletionEvent, courseId, updatedCourses);
