@@ -7,7 +7,6 @@ import { pushVideoEvent } from '../../scripts/analytics/lib-analytics.js';
 
 function trackMpcVideo(iframe, video) {
   let firstPlay = true;
-  let completed = false;
   const videoId = iframe.src.match(/\/v\/(\d+)/)?.[1] || '';
 
   const handleMessage = (event) => {
@@ -16,9 +15,7 @@ function trackMpcVideo(iframe, video) {
     if (event.data.state === 'play' && firstPlay) {
       firstPlay = false;
       pushVideoEvent({ ...video, id: videoId, duration: event.data.duration || video.duration });
-    } else if (event.data.state === 'complete' && !completed) {
-      completed = true;
-      pushVideoEvent({ ...video, id: videoId, duration: event.data.duration || video.duration }, 'videoCompleted');
+    } else if (event.data.state === 'complete') {
       window.removeEventListener('message', handleMessage);
     }
   };
