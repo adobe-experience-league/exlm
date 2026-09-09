@@ -530,7 +530,7 @@ function createBottomAskBar() {
 }
 
 /**
- * Late Target may assign bottom-ask-bar after init timed out to control FAB.
+ * Late Target may assign bottom-ask-bar after init already painted the control FAB.
  * Mount the dock only when init has already run; normal init path is unchanged.
  * @param {string} experience
  */

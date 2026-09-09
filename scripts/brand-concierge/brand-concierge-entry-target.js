@@ -141,6 +141,8 @@ function attachViewportListener() {
 
 /**
  * Marks desktop pages while waiting for Target (reduces wrong-chrome flash).
+ * Parked until the BC Target activity is live — calling this with Target off hid
+ * the control FAB for 5s. Re-enable with waitForExperienceOrTimeout() at launch.
  */
 export function markBcEntryPending() {
   if (!isDesktopViewport()) return;
@@ -149,6 +151,7 @@ export function markBcEntryPending() {
 
 /**
  * Waits for Target experience or timeout; returns resolved experience for current viewport.
+ * Parked until the BC Target activity is live. Init paints control immediately instead.
  * @param {number} [maxMs]
  * @returns {Promise<string>}
  */
