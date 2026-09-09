@@ -192,6 +192,6 @@ document.addEventListener(BC_ENTRY_EVENT, onBcEntryReady);
 document.addEventListener('header-loaded', onHeaderLoaded, true);
 attachViewportListener();
 
-if (window.location.search?.indexOf('martech=off') === -1) {
-  markBcEntryPending();
-}
+// Paint control FAB immediately. Waiting for Target hid the button for 5s when the
+// activity is off. Late `exlm-bc-entry-ready` still swaps chrome via storeExperience.
+applyBcEntryChrome();

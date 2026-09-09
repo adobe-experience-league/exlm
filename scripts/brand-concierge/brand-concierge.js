@@ -7,9 +7,9 @@ import {
   applyBcEntryChrome,
   BC_ENTRY_EXPERIENCES,
   resetBcEntryVariant,
+  resolveBcEntryExperience,
   setOnExperienceApplied,
   syncHeaderBcReady,
-  waitForExperienceOrTimeout,
 } from './brand-concierge-entry-target.js';
 import { pushBcWidgetImpressionEvent, pushBcInteractionEvent } from '../analytics/lib-analytics.js';
 
@@ -1230,6 +1230,7 @@ export async function initBrandConcierge() {
 
   const { bcAlloySdkUrl, bcDatastreamId, bcOrgId, bcWebClientUrl, bcEdgeDomain } = getConfig();
   createMountPoint();
+  applyBcEntryChrome(resolveBcEntryExperience());
   injectAlloyStub();
 
   defaultPromptsOverride = null;
@@ -1263,11 +1264,9 @@ export async function initBrandConcierge() {
     cssLinkEl = document.createElement('link');
     cssLinkEl.rel = 'stylesheet';
     cssLinkEl.href = `${window.hlx.codeBasePath}/scripts/brand-concierge/brand-concierge.css`;
-    document.head.append(cssLinkEl);
-
-    const martechOff = window.location.search?.indexOf('martech=off') !== -1;
-    const experience = martechOff ? BC_ENTRY_EXPERIENCES.FLOATING_ASK_BUTTON : await waitForExperienceOrTimeout();
+    const experience = resolveBcEntryExperience();
     applyBcEntryChrome(experience);
+    document.head.append(cssLinkEl);
 
     if (experience === BC_ENTRY_EXPERIENCES.BOTTOM_ASK_BAR) {
       createBottomAskBar();

@@ -478,9 +478,9 @@
 
 #bc-trigger .bc-trigger-ask {
   font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-normal);
   line-height: 1.2;
-  color: var(--non-spectrum-dark-gray);
+  color: var(--spectrum-gray-500);
   letter-spacing: -0.01em;
   transition: color 0.2s ease;
 }
@@ -533,7 +533,7 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
 }
 
 #bc-trigger:hover .bc-trigger-ask {
-  color: var(--non-spectrum-dark-gray);
+  color: var(--spectrum-gray-800);
 }
 
 #bc-trigger[aria-expanded='true'] {
