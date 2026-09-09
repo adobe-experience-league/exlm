@@ -89,6 +89,7 @@ export function decorateCta(ctaEl, block, prefix) {
   if (type && type !== 'custom') {
     link.classList.add(type);
   } else if (type === 'custom') {
+    link.classList.add('custom');
     const bgCls = blockClasses.find((cls) => cls.startsWith(`${prefix}-bg-`));
     const textCls = blockClasses.find((cls) => cls.startsWith(`${prefix}-text-`));
     if (bgCls) link.style.backgroundColor = `var(--${bgCls.slice(`${prefix}-bg-`.length)})`;
