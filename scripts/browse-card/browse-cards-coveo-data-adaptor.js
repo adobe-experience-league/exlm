@@ -135,7 +135,10 @@ const BrowseCardsCoveoDataAdaptor = (() => {
 
     let eventDate = '';
     if (isOnDemandEvent && coveoDate != null && coveoDate !== '') {
-      // Same Coveo `date` field used for on-demand sort (most recent first).
+      // EXLM-5813: On-Demand cards display Coveo `@date` (unix), the same field Events Hub
+      // uses for most-recent-first sort. Unlike Upcoming, that value varies per recording.
+      // Do not use `@date` for Upcoming (index/batch time) — see EXLM-5361 /
+      // COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ (`el_event_start_time`).
       eventDate = coveoDate;
     } else if (raw?.el_event_start_time) {
       eventDate = new Date(raw.el_event_start_time).toISOString();

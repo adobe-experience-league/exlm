@@ -17,7 +17,15 @@ export const formatOnDemandEventDate = (dateValue) => {
     if (!Number.isFinite(numeric) || numeric <= 0) return null;
     date = new Date(numeric < 1e11 ? numeric * 1000 : numeric);
   } else {
-    date = new Date(dateValue);
+    const raw = String(dateValue).trim();
+    const hasOffset = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(raw);
+    // Naive ISO date/datetime has no zone; parse as UTC so the calendar day matches sort.
+    if (!hasOffset && /^\d{4}-\d{2}-\d{2}/.test(raw)) {
+      const iso = raw.includes('T') ? raw : raw.replace(' ', 'T');
+      date = new Date(`${iso}Z`);
+    } else {
+      date = new Date(raw);
+    }
   }
 
   if (Number.isNaN(date.getTime())) return null;
