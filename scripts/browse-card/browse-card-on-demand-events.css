@@ -92,6 +92,12 @@
   -webkit-line-clamp: 2;
 }
 
+/* Grid: date sits under the title. List clones live in the figure/footer. */
+.browse-card.event-on-demand-event-card .card-figure-date,
+.browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info {
+  display: none;
+}
+
 body[class^='browse-'] .browse-card.event-card .browse-card-figure .event-series-banner,
 body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figure .event-series-banner {
   font-size: var(--spectrum-font-size-700);
@@ -165,6 +171,7 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
 
   .list .browse-card.event-card .browse-card-footer .browse-card-cta-element,
   .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-cta-element {
+    order: 3;
     margin-block: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-75));
     margin-inline: 0;
     background-color: var(--spectrum-blue-900);
@@ -191,5 +198,103 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
     font-size: var(--spectrum-font-size-100);
     letter-spacing: 0;
     line-height: 1.4;
+  }
+
+  /* List left rail is a date well (same as Upcoming), not a stacked thumbnail + date. */
+  .list .browse-card.event-on-demand-event-card .browse-card-figure .laptop-container,
+  .list .browse-card.event-on-demand-event-card .browse-card-figure img,
+  .list .browse-card.event-on-demand-event-card .browse-card-figure .play-button,
+  .list .browse-card.event-on-demand-event-card .browse-card-figure .event-series-banner {
+    display: none;
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-figure .card-figure-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spectrum-spacing-75);
+    width: 100%;
+    margin-top: calc(var(--spectrum-spacing-700) + var(--spectrum-spacing-50));
+    margin-bottom: calc(var(--spectrum-spacing-100) + var(--spectrum-spacing-50));
+    position: relative;
+    z-index: 8;
+    text-align: center;
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-figure .icon-calendar img {
+    width: var(--spectrum-spacing-500);
+    height: var(--spectrum-spacing-500);
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-figure .card-figure-date .date-display {
+    font-style: normal;
+    font-variant: normal;
+    font-weight: bold;
+    font-size: var(--spectrum-font-size-800);
+    line-height: var(--spectrum-line-height-xxl);
+    letter-spacing: 0;
+    color: var(--spectrum-gray-800);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-figure .card-figure-date .year-display {
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    font-size: var(--spectrum-font-size-200);
+    line-height: 1.5;
+    letter-spacing: 0;
+    color: var(--spectrum-gray-800);
+    text-align: center;
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-content .browse-card-event-info {
+    display: none;
+  }
+
+  /* Match Upcoming list column: date first, left-aligned, then actions, then CTA. */
+  .list .browse-card.event-on-demand-event-card .browse-card-footer {
+    align-items: flex-start;
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info {
+    order: 0;
+    margin: 0 0 var(--spectrum-spacing-300);
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: var(--spectrum-spacing-75);
+    max-width: 100%;
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-options {
+    order: 1;
+    align-self: flex-start;
+    margin: 0 0 var(--spectrum-spacing-300);
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-cta-element {
+    align-self: stretch;
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info .browse-card-event-time {
+    min-width: 0;
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info .browse-card-event-time h6 {
+    color: var(--spectrum-gray-800);
+    font-weight: bold;
+    white-space: normal;
+    overflow: visible;
+    line-height: var(--spectrum-line-height-s);
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info .icon {
+    width: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
+    height: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
+    flex-shrink: 0;
+    margin-top: 0;
   }
 }

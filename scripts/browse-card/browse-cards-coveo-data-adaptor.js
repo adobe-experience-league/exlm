@@ -130,8 +130,14 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     const eventSpeakersProfile =
       raw?.el_event_speakers_profile_picture_url || el_event_speakers_profile_picture_url || '';
 
+    const coveoDate = raw?.date ?? parentResult?.raw?.date;
+    const isOnDemandEvent = contentType?.toLowerCase() === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase();
+
     let eventDate = '';
-    if (raw?.el_event_start_time) {
+    if (isOnDemandEvent && coveoDate != null && coveoDate !== '') {
+      // Same Coveo `date` field used for on-demand sort (most recent first).
+      eventDate = coveoDate;
+    } else if (raw?.el_event_start_time) {
       eventDate = new Date(raw.el_event_start_time).toISOString();
     } else if (el_event_start_time) {
       eventDate = new Date(el_event_start_time).toISOString();

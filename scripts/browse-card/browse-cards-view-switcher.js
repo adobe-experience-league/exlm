@@ -148,26 +148,33 @@ export default class BrowseCardViewSwitcher {
     const eventInfo = card.querySelector('.browse-card-event-info');
     const footer = card.querySelector('.browse-card-footer');
 
-    if (!eventInfo || !footer || cardFigure.querySelector('.card-figure-date')) return;
+    if (!eventInfo || !footer || !cardFigure || cardFigure.querySelector('.card-figure-date')) return;
 
-    const eventTimeText = eventInfo.querySelector('.browse-card-event-time h6')?.textContent;
-    if (!eventTimeText || !eventTimeText.includes('|')) return;
+    const eventTimeText = eventInfo.querySelector('.browse-card-event-time h6')?.textContent?.trim();
+    if (!eventTimeText) return;
 
-    const [rawDate, rawTime] = eventTimeText.split('|');
+    const isOnDemand = card.classList.contains('event-on-demand-event-card');
+    const hasTime = eventTimeText.includes('|');
+    if (!hasTime && !isOnDemand) return;
+
+    const [rawDate, rawTime] = hasTime ? eventTimeText.split('|') : [eventTimeText, ''];
     const dateParts = rawDate.trim();
     const timeAndZone = rawTime.trim();
+    const calendarIcon = isOnDemand ? 'icon-calendar' : 'icon-calendar-white';
+    const onDemandYear = isOnDemand ? dateParts.match(/^(.*?),\s*(\d{4})$/) : null;
+    const dateLine = onDemandYear ? onDemandYear[1] : dateParts;
+    const yearLine = onDemandYear ? onDemandYear[2] : '';
 
     const dateDisplay = htmlToElement(`
-      <div class="card-figure-date">
+      <div class="card-figure-date${timeAndZone ? '' : ' date-only'}">
         <div class="calendar-icon">
-          <span class="icon icon-calendar-white"></span>
+          <span class="icon ${calendarIcon}"></span>
         </div>
         <div class="date-display">
-          ${dateParts}
+          ${dateLine}
         </div>
-        <div class="time-display">
-          ${timeAndZone}
-        </div>
+        ${yearLine ? `<div class="year-display">${yearLine}</div>` : ''}
+        ${timeAndZone ? `<div class="time-display">${timeAndZone}</div>` : ''}
       </div>
     `);
 
@@ -378,9 +385,9 @@ export default class BrowseCardViewSwitcher {
   enhanceCardsForListView() {
     const cards = this.block.querySelectorAll('.browse-card');
     cards.forEach((card) => {
-      /* On-demand cards already carry date/duration in content; skip upcoming-style list mutations (footer clone, figure date). */
-      if (card.classList.contains('event-on-demand-event-card')) return;
       BrowseCardViewSwitcher.addCardDateInfo(card);
+      /* On-demand list rows get date only; skip upcoming-only location/speakers/expand. */
+      if (card.classList.contains('event-on-demand-event-card')) return;
       this.setupExpandableDescription(card);
       BrowseCardViewSwitcher.addLocationTypeInfo(card);
       BrowseCardViewSwitcher.addSpeakersToFooter(card);
