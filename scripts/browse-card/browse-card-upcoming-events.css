@@ -50,7 +50,7 @@
     color: var(--spectrum-gray-50);
     font-size: var(--spectrum-font-size-700);
     font-weight: var(--font-weight-bold);
-    text-align: left;
+    text-align: center;
     width: 100%;
     box-sizing: border-box;
     padding-left: 10%;
@@ -64,23 +64,21 @@
   .browse-card.event-upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after {
     content: '';
     position: absolute;
+    left: 50%;
     height: 8px;
-    transform: scaleY(0.5);
+    width: 90%;
+    transform: translateX(-50%) scaleY(0.5);
     background-color: var(--non-spectrum-adobe-red);
   }
 
   .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::before,
   .browse-card.event-upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::before {
     top: -5px;
-    left: 0;
-    width: 90%;
   }
 
   .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after,
   .browse-card.event-upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after {
     bottom: -5px;
-    right: 0;
-    width: 90%;
   }
 
   .browse-card.upcoming-event-card .location-type,
@@ -477,10 +475,10 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     order: 1;
   }
 
-  .list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::before,
-  .list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner::before,
-  .list .browse-card.event-upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::before,
-  .list .browse-card.event-upcoming-event-card .browse-card-figure .event-series-banner::before {
+  .events-v2 .list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::before,
+  .events-v2 .list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner::before,
+  .events-v2 .list .browse-card.event-upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::before,
+  .events-v2 .list .browse-card.event-upcoming-event-card .browse-card-figure .event-series-banner::before {
     content: '';
     position: absolute;
     top: 0;
@@ -492,8 +490,8 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     transform: translateX(-50%);
   }
 
-  .list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after,
-  .list .browse-card.event-upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after {
+  .events-v2 .list .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after,
+  .events-v2 .list .browse-card.event-upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after {
     display: none;
   }
 
