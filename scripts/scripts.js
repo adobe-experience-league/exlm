@@ -765,6 +765,10 @@ async function loadEager(doc) {
   } catch (e) {
     // do nothing
   }
+  if (document.body.classList.contains('sidekick-library')) {
+    loadScript(`${window.hlx.codeBasePath}/tools/visual-tests/visual-test.js`);
+    loadScript(`${window.hlx.codeBasePath}/tools/visual-overlay/index.js`, { type: 'module' });
+  }
 }
 
 /**
@@ -1761,6 +1765,8 @@ export function getLastDocsSection() {
 
 /** handles a set of 1-1 redirects */
 function handleRedirects() {
+  // window.location.href is not a valid URL base (e.g. 'about:srcdoc' inside preview iframes)
+  if (!/^https?:$/.test(window.location.protocol)) return;
   const redirects = ['/#feedback:/home#feedback'].map((p) => p.split(':').map((s) => new URL(s, window.location.href)));
   const redirect = redirects.find(([from]) => window.location.href === from.href);
   if (redirect) window.location.href = redirect[1].href;
