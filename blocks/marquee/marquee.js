@@ -1,6 +1,6 @@
 /* eslint-disable no-plusplus */
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { decorateCta } from '../../scripts/utils/button-utils.js';
 import { getLocalizedVideoUrl } from '../../scripts/utils/video-utils.js';
 import { getPathDetails } from '../../scripts/scripts.js';
 import { pushVideoEvent } from '../../scripts/analytics/lib-analytics.js';
@@ -192,7 +192,7 @@ export default async function decorate(block) {
         <div class='marquee-title'>${title.innerHTML}</div>
         <div class='marquee-long-description'>${longDescr.innerHTML}</div>
         <div class='marquee-cta'>
-          ${decorateCustomButtons(firstCta, secondCta)}
+          ${decorateCta(firstCta, block, 'cta1')}${decorateCta(secondCta, block, 'cta2')}
         </div>
       </div>
       </div>
