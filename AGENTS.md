@@ -103,7 +103,7 @@ Progressive loading follows the same **eager / lazy / delayed** model as standar
 ## Testing and quality assurance
 
 - Run **`npm run quality`** before opening a PR; CI runs the same via [.github/workflows/quality-action.yaml](.github/workflows/quality-action.yaml).
-- Weekly **Page Performance** GitHub Action (`.github/workflows/page-performance.yaml`) runs Lighthouse against URLs in `performance/urls.json` and publishes a report artifact + job summary. Run locally with `npm install lighthouse --no-save` then `npm run performance:pages` (optional `PERF_URL` for a single URL).
+- Weekly **Page Performance** GitHub Action (`.github/workflows/page-performance.yaml`) discovers URLs from the production sitemap index using `performance/config.json`, audits shards in parallel, and publishes GitHub Artifacts that expire (`artifactRetentionDays` + keep-last-N). Local: `npm run test:performance`; with Lighthouse, `npm install lighthouse@^12 --no-save` then `npm run performance:pages` (optional `PERF_URL` for a single URL). Adding pages is a config change, not a code change.
 - For previews, use `curl` against the local dev server or published preview URLs; see [Keeping it 100](https://www.aem.live/developer/keeping-it-100) for performance expectations.
 
 ### Self-review before commit

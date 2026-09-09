@@ -1,0 +1,21 @@
+{
+  "sitemapUrl": "https://experienceleague.adobe.com/sitemap-index.xml",
+  "include": ["^https://experienceleague\\.adobe\\.com/en/"],
+  "exclude": ["/search"],
+  "maxUrls": 20,
+  "select": "stride",
+  "seed": 1,
+  "formFactors": ["mobile", "desktop"],
+  "query": {
+    "martech": "off"
+  },
+  "shards": 4,
+  "concurrencyPerShard": 1,
+  "auditor": "lighthouse",
+  "artifactRetentionDays": 45,
+  "keepLastRuns": 8,
+  "fetchTimeoutMs": 120000,
+  "maxSitemapBytes": 52428800,
+  "allowedHosts": ["experienceleague.adobe.com"],
+  "sitemapConcurrency": 4
+}
