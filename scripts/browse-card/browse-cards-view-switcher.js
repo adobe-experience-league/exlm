@@ -148,7 +148,8 @@ export default class BrowseCardViewSwitcher {
     const eventInfo = card.querySelector('.browse-card-event-info');
     const footer = card.querySelector('.browse-card-footer');
 
-    if (!eventInfo || !footer || !cardFigure || cardFigure.querySelector('.card-figure-date')) return;
+    if (!eventInfo || !footer || !cardFigure) return;
+    if (cardFigure.querySelector('.card-figure-date')) return;
 
     const eventTimeText = eventInfo.querySelector('.browse-card-event-time h6')?.textContent?.trim();
     if (!eventTimeText) return;
@@ -156,34 +157,32 @@ export default class BrowseCardViewSwitcher {
     const isOnDemand = card.classList.contains('event-on-demand-event-card');
     const hasTime = eventTimeText.includes('|');
     if (!hasTime && !isOnDemand) return;
+    if (isOnDemand && footer.querySelector('.browse-card-event-info')) return;
 
     const [rawDate, rawTime] = hasTime ? eventTimeText.split('|') : [eventTimeText, ''];
     const dateParts = rawDate.trim();
     const timeAndZone = rawTime.trim();
-    const calendarIcon = isOnDemand ? 'icon-calendar' : 'icon-calendar-white';
-    const onDemandYear = isOnDemand ? dateParts.match(/^(.*?),\s*(\d{4})$/) : null;
-    const dateLine = onDemandYear ? onDemandYear[1] : dateParts;
-    const yearLine = onDemandYear ? onDemandYear[2] : '';
 
-    const dateDisplay = htmlToElement(`
-      <div class="card-figure-date${timeAndZone ? '' : ' date-only'}">
-        <div class="calendar-icon">
-          <span class="icon ${calendarIcon}"></span>
+    /* On-demand keeps the thumbnail in the figure; date lives in the footer only. */
+    if (!isOnDemand) {
+      const dateDisplay = htmlToElement(`
+        <div class="card-figure-date">
+          <div class="calendar-icon">
+            <span class="icon icon-calendar-white"></span>
+          </div>
+          <div class="date-display">
+            ${dateParts}
+          </div>
+          ${timeAndZone ? `<div class="time-display">${timeAndZone}</div>` : ''}
         </div>
-        <div class="date-display">
-          ${dateLine}
-        </div>
-        ${yearLine ? `<div class="year-display">${yearLine}</div>` : ''}
-        ${timeAndZone ? `<div class="time-display">${timeAndZone}</div>` : ''}
-      </div>
-    `);
+      `);
 
-    cardFigure.appendChild(dateDisplay);
-    decorateIcons(dateDisplay);
+      cardFigure.appendChild(dateDisplay);
+      decorateIcons(dateDisplay);
+    }
 
-    if (!footer.contains(eventInfo)) {
-      const clonedEventInfo = eventInfo.cloneNode(true);
-      footer.appendChild(clonedEventInfo);
+    if (!footer.querySelector('.browse-card-event-info')) {
+      footer.appendChild(eventInfo.cloneNode(true));
     }
   }
 
