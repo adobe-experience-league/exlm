@@ -49,6 +49,7 @@ const embedTwitter = (url) => {
 const embedMpc = (url, autoplay, block) => {
   const urlObject = new URL(url);
   const videoId = url.href.match(/\/v\/(\d+)/)?.[1] || '';
+  let completed = false;
 
   const getVideoDetails = (duration) => ({
     title: getMetadata('og:title'),
@@ -65,6 +66,9 @@ const embedMpc = (url, autoplay, block) => {
 
     if (event.data.state === 'play') {
       pushVideoEvent({ ...getVideoDetails(event.data.duration), id: videoId });
+    } else if (event.data.state === 'complete' && !completed) {
+      completed = true;
+      pushVideoEvent({ ...getVideoDetails(event.data.duration), id: videoId }, 'videoCompleted');
     }
   };
 
