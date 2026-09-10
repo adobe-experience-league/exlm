@@ -438,16 +438,8 @@
                   "title": "Announcement Ribbon Title",
                   "titleType": "h3",
                   "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt",
-                  "cta1_Type": "primary",
-                  "cta1_customBgColor": "--spectrum-gray-700",
-                  "cta1_textColor": "white",
-                  "cta1_customBgHexCode": "000000",
-                  "cta2_Type": "primary",
-                  "cta2_customBgColor": "--spectrum-gray-700",
-                  "cta2_textColor": "white",
-                  "cta2_customBgHexCode": "000000",
                   "customHexCode": "FFFFFF",
-                  "classes": "light"
+                  "classes": ["light", "cta1-primary", "cta2-primary"]
                 }
               }
             }
@@ -941,7 +933,7 @@
                 "template": {
                   "name": "Detailed Teaser",
                   "model": "detailed-teaser",
-                  "classes": ["light", "left", "detailed-teaser"],
+                  "classes": ["light", "left", "detailed-teaser", "cta1-primary", "cta2-primary"],
                   "fileReference": "/content/dam/adobe-summit-background.jpeg",
                   "eyebrow_logo": "/content/dam/summit-logo.png",
                   "eyebrow_title": "Eyebrow title",
@@ -949,15 +941,7 @@
                   "title": "Detailed Teaser Title",
                   "titleType": "h3",
                   "description": "Description",
-                  "subject": "/content/dam/summit-subject.png",
-                  "cta1_Type": "primary",
-                  "cta1_customBgColor": "--spectrum-gray-700",
-                  "cta1_textColor": "white",
-                  "cta1_customBgHexCode": "000000",
-                  "cta2_Type": "primary",
-                  "cta2_customBgColor": "--spectrum-gray-700",
-                  "cta2_textColor": "white",
-                  "cta2_customBgHexCode": "000000"
+                  "subject": "/content/dam/summit-subject.png"
                 }
               }
             }
@@ -1253,11 +1237,7 @@
                   "name": "Featured Content",
                   "model": "featured-content",
                   "content_cta": "Read Article",
-                  "classes": ["adobe", "left"],
-                  "cta1_Type": "primary",
-                  "cta1_customBgColor": "--spectrum-gray-700",
-                  "cta1_textColor": "white",
-                  "cta1_customBgHexCode": "000000",
+                  "classes": ["adobe", "left", "cta1-primary"],
                   "cta1_linkText": "Read Article"
                 }
               }
@@ -1671,10 +1651,9 @@
                   "model": "marquee-video-full-bleed",
                   "title": "Your place for everything AI.",
                   "description": "<p>Discover all the ways AI can empower you to do your best work. Dig into articles, hands-on learning, events, and more to level up your capabilities and double down on your impact.</p>",
-                  "primaryCta_Type": "primary",
+                  "classes": ["primaryCta-primary", "secondaryCta-secondary"],
                   "primaryCta_linkText": "CTA lorem ipsum",
                   "primaryCta_link": "#section-id",
-                  "secondaryCta_Type": "secondary",
                   "secondaryCta_linkText": "Take the quiz",
                   "secondaryCta_link": "#quiz"
                 }
@@ -1724,16 +1703,12 @@
                   "filter": "media-panel",
                   "fileReference": "/content/dam/exlm/en/images/subjects/media-panel-sub.png",
                   "fileReferenceAlt": "Subject Image Description",
-                  "classes": ["left"],
+                  "classes": ["left", "cta-secondary"],
                   "eyebrow": "Featured",
                   "title": "Media Panel Heading",
                   "description": "<p>Add a short description here. This media panel supports left or right image alignment and an optional highlight card variant.</p>",
                   "cta_linkText": "CTA Text",
                   "cta_link": "http://experienceleague.adobe.com/",
-                  "cta_Type": "secondary",
-                  "cta_customBgColor": "--spectrum-gray-700",
-                  "cta_textColor": "white",
-                  "cta_customBgHexCode": "000000",
                   "podcastCardHeading": "Podcast Card Heading",
                   "podcastCardDescription": "Podcast Card Description"
                 }
@@ -2529,15 +2504,7 @@
                   "title": "Teaser Title",
                   "titleType": "h3",
                   "longDescr": "<p>Teaser Description</p>",
-                  "classes": ["light", "left"],
-                  "cta1_Type": "primary",
-                  "cta1_customBgColor": "--spectrum-gray-700",
-                  "cta1_textColor": "white",
-                  "cta1_customBgHexCode": "000000",
-                  "cta2_Type": "primary",
-                  "cta2_customBgColor": "--spectrum-gray-700",
-                  "cta2_textColor": "white",
-                  "cta2_customBgHexCode": "000000"
+                  "classes": ["light", "left", "cta1-primary", "cta2-primary"]
                 }
               }
             }

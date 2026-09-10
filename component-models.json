@@ -24,7 +24,7 @@
         "label": "Style",
         "valueType": "string",
         "required": true,
-        "maxSize": 3,
+        "maxSize": 9,
         "options": [
           {
             "name": "Theme",
@@ -112,6 +112,204 @@
                 "value": "bg-spectrum-yellow-700"
               }
             ]
+          },
+          {
+            "name": "First CTA Style",
+            "children": [
+              {
+                "name": "Primary",
+                "value": "cta1-primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "cta1-secondary"
+              },
+              {
+                "name": "Tertiary",
+                "value": "cta1-tertiary"
+              },
+              {
+                "name": "Custom",
+                "value": "cta1-custom"
+              }
+            ]
+          },
+          {
+            "name": "First CTA Custom Background Color (used only when First CTA Style = Custom)",
+            "children": [
+              {
+                "name": "Gray",
+                "value": "cta1-bg-spectrum-gray-700"
+              },
+              {
+                "name": "Blue",
+                "value": "cta1-bg-spectrum-blue-700"
+              },
+              {
+                "name": "Green",
+                "value": "cta1-bg-spectrum-green-700"
+              },
+              {
+                "name": "Orange",
+                "value": "cta1-bg-spectrum-orange-700"
+              },
+              {
+                "name": "Red",
+                "value": "cta1-bg-spectrum-red-700"
+              },
+              {
+                "name": "Celery",
+                "value": "cta1-bg-spectrum-celery-700"
+              },
+              {
+                "name": "Chartreuse",
+                "value": "cta1-bg-spectrum-chartreuse-700"
+              },
+              {
+                "name": "Cyan",
+                "value": "cta1-bg-spectrum-cyan-700"
+              },
+              {
+                "name": "Fuchsia",
+                "value": "cta1-bg-spectrum-fuchsia-700"
+              },
+              {
+                "name": "Indigo",
+                "value": "cta1-bg-spectrum-indigo-700"
+              },
+              {
+                "name": "Magenta",
+                "value": "cta1-bg-spectrum-magenta-700"
+              },
+              {
+                "name": "Purple",
+                "value": "cta1-bg-spectrum-purple-700"
+              },
+              {
+                "name": "Seafoam",
+                "value": "cta1-bg-spectrum-seafoam-700"
+              },
+              {
+                "name": "Yellow",
+                "value": "cta1-bg-spectrum-yellow-700"
+              },
+              {
+                "name": "Adobe Red",
+                "value": "cta1-bg-non-spectrum-adobe-red"
+              }
+            ]
+          },
+          {
+            "name": "First CTA Custom Text Color (used only when First CTA Style = Custom)",
+            "children": [
+              {
+                "name": "White",
+                "value": "cta1-text-white"
+              },
+              {
+                "name": "Black",
+                "value": "cta1-text-black"
+              }
+            ]
+          },
+          {
+            "name": "Second CTA Style",
+            "children": [
+              {
+                "name": "Primary",
+                "value": "cta2-primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "cta2-secondary"
+              },
+              {
+                "name": "Tertiary",
+                "value": "cta2-tertiary"
+              },
+              {
+                "name": "Custom",
+                "value": "cta2-custom"
+              }
+            ]
+          },
+          {
+            "name": "Second CTA Custom Background Color (used only when Second CTA Style = Custom)",
+            "children": [
+              {
+                "name": "Gray",
+                "value": "cta2-bg-spectrum-gray-700"
+              },
+              {
+                "name": "Blue",
+                "value": "cta2-bg-spectrum-blue-700"
+              },
+              {
+                "name": "Green",
+                "value": "cta2-bg-spectrum-green-700"
+              },
+              {
+                "name": "Orange",
+                "value": "cta2-bg-spectrum-orange-700"
+              },
+              {
+                "name": "Red",
+                "value": "cta2-bg-spectrum-red-700"
+              },
+              {
+                "name": "Celery",
+                "value": "cta2-bg-spectrum-celery-700"
+              },
+              {
+                "name": "Chartreuse",
+                "value": "cta2-bg-spectrum-chartreuse-700"
+              },
+              {
+                "name": "Cyan",
+                "value": "cta2-bg-spectrum-cyan-700"
+              },
+              {
+                "name": "Fuchsia",
+                "value": "cta2-bg-spectrum-fuchsia-700"
+              },
+              {
+                "name": "Indigo",
+                "value": "cta2-bg-spectrum-indigo-700"
+              },
+              {
+                "name": "Magenta",
+                "value": "cta2-bg-spectrum-magenta-700"
+              },
+              {
+                "name": "Purple",
+                "value": "cta2-bg-spectrum-purple-700"
+              },
+              {
+                "name": "Seafoam",
+                "value": "cta2-bg-spectrum-seafoam-700"
+              },
+              {
+                "name": "Yellow",
+                "value": "cta2-bg-spectrum-yellow-700"
+              },
+              {
+                "name": "Adobe Red",
+                "value": "cta2-bg-non-spectrum-adobe-red"
+              }
+            ]
+          },
+          {
+            "name": "Second CTA Custom Text Color (used only when Second CTA Style = Custom)",
+            "children": [
+              {
+                "name": "White",
+                "value": "cta2-text-white"
+              },
+              {
+                "name": "Black",
+                "value": "cta2-text-black"
+              }
+            ]
           }
         ]
       },
@@ -181,144 +379,6 @@
         "description": "The description shown in Mobile view. If not set long text is used."
       },
       {
-        "component": "select",
-        "name": "cta1_Type",
-        "value": "primary",
-        "label": "First CTA Type",
-        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Primary",
-            "value": "primary"
-          },
-          {
-            "name": "Secondary",
-            "value": "secondary"
-          },
-          {
-            "name": "Tertiary",
-            "value": "tertiary"
-          },
-          {
-            "name": "Custom",
-            "value": "custom"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "cta1_Type" }, "custom"]
-        },
-        "component": "select",
-        "name": "cta1_customBgColor",
-        "value": "",
-        "label": "First CTA Background Color",
-        "description": "Select First CTA background color. Select 'Custom Hexcode' to enter the custom color",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Gray",
-            "value": "--spectrum-gray-700"
-          },
-          {
-            "name": "Blue",
-            "value": "--spectrum-blue-700"
-          },
-          {
-            "name": "Green",
-            "value": "--spectrum-green-700"
-          },
-          {
-            "name": "Orange",
-            "value": "--spectrum-orange-700"
-          },
-          {
-            "name": "Red",
-            "value": "--spectrum-red-700"
-          },
-          {
-            "name": "Celery",
-            "value": "--spectrum-celery-700"
-          },
-          {
-            "name": "Chartreuse",
-            "value": "--spectrum-chartreuse-700"
-          },
-          {
-            "name": "Cyan",
-            "value": "--spectrum-cyan-700"
-          },
-          {
-            "name": "Fuchsia",
-            "value": "--spectrum-fuchsia-700"
-          },
-          {
-            "name": "Indigo",
-            "value": "--spectrum-indigo-700"
-          },
-          {
-            "name": "Magenta",
-            "value": "--spectrum-magenta-700"
-          },
-          {
-            "name": "Purple",
-            "value": "--spectrum-purple-700"
-          },
-          {
-            "name": "Seafoam",
-            "value": "--spectrum-seafoam-700"
-          },
-          {
-            "name": "Yellow",
-            "value": "--spectrum-yellow-700"
-          },
-          {
-            "name": "Adobe Red",
-            "value": "--non-spectrum-adobe-red"
-          },
-          {
-            "name": "Custom Hexcode",
-            "value": "custom-hexcode"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "and": [
-            { "===": [{ "var": "cta1_customBgColor" }, "custom-hexcode"] },
-            { "===": [{ "var": "cta1_Type" }, "custom"] }
-          ]
-        },
-        "component": "text",
-        "valueType": "string",
-        "name": "cta1_customBgHexCode",
-        "value": "",
-        "label": "First CTA Custom Background Hexcode",
-        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
-      },
-      {
-        "condition": {
-          "===": [{ "var": "cta1_Type" }, "custom"]
-        },
-        "component": "select",
-        "valueType": "string",
-        "name": "cta1_textColor",
-        "value": "white",
-        "label": "First CTA Text Color",
-        "description": "Select the text color",
-        "options": [
-          {
-            "name": "White",
-            "value": "white"
-          },
-          {
-            "name": "Black",
-            "value": "black"
-          }
-        ]
-      },
-      {
         "component": "text",
         "valueType": "string",
         "name": "cta1_linkText",
@@ -333,144 +393,6 @@
         "value": "",
         "label": "First CTA Link",
         "description": "What link to open when clicking the button."
-      },
-      {
-        "component": "select",
-        "name": "cta2_Type",
-        "value": "primary",
-        "label": "Second CTA Type",
-        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Primary",
-            "value": "primary"
-          },
-          {
-            "name": "Secondary",
-            "value": "secondary"
-          },
-          {
-            "name": "Tertiary",
-            "value": "tertiary"
-          },
-          {
-            "name": "Custom",
-            "value": "custom"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "cta2_Type" }, "custom"]
-        },
-        "component": "select",
-        "name": "cta2_customBgColor",
-        "value": "",
-        "label": "Second CTA Background Color",
-        "description": "Select Second CTA background color. Select 'Custom Hexcode' to enter the custom color",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Gray",
-            "value": "--spectrum-gray-700"
-          },
-          {
-            "name": "Blue",
-            "value": "--spectrum-blue-700"
-          },
-          {
-            "name": "Green",
-            "value": "--spectrum-green-700"
-          },
-          {
-            "name": "Orange",
-            "value": "--spectrum-orange-700"
-          },
-          {
-            "name": "Red",
-            "value": "--spectrum-red-700"
-          },
-          {
-            "name": "Celery",
-            "value": "--spectrum-celery-700"
-          },
-          {
-            "name": "Chartreuse",
-            "value": "--spectrum-chartreuse-700"
-          },
-          {
-            "name": "Cyan",
-            "value": "--spectrum-cyan-700"
-          },
-          {
-            "name": "Fuchsia",
-            "value": "--spectrum-fuchsia-700"
-          },
-          {
-            "name": "Indigo",
-            "value": "--spectrum-indigo-700"
-          },
-          {
-            "name": "Magenta",
-            "value": "--spectrum-magenta-700"
-          },
-          {
-            "name": "Purple",
-            "value": "--spectrum-purple-700"
-          },
-          {
-            "name": "Seafoam",
-            "value": "--spectrum-seafoam-700"
-          },
-          {
-            "name": "Yellow",
-            "value": "--spectrum-yellow-700"
-          },
-          {
-            "name": "Adobe Red",
-            "value": "--non-spectrum-adobe-red"
-          },
-          {
-            "name": "Custom Hexcode",
-            "value": "custom-hexcode"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "and": [
-            { "===": [{ "var": "cta2_customBgColor" }, "custom-hexcode"] },
-            { "===": [{ "var": "cta2_Type" }, "custom"] }
-          ]
-        },
-        "component": "text",
-        "valueType": "string",
-        "name": "cta2_customBgHexCode",
-        "value": "",
-        "label": "Second CTA Custom Background Hexcode",
-        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
-      },
-      {
-        "condition": {
-          "===": [{ "var": "cta2_Type" }, "custom"]
-        },
-        "component": "select",
-        "valueType": "string",
-        "name": "cta2_textColor",
-        "value": "white",
-        "label": "Second CTA Text Color",
-        "description": "Select the text color",
-        "options": [
-          {
-            "name": "White",
-            "value": "white"
-          },
-          {
-            "name": "Black",
-            "value": "black"
-          }
-        ]
       },
       {
         "component": "text",
@@ -560,7 +482,7 @@
         "label": "Style",
         "valueType": "string",
         "required": true,
-        "maxSize": 6,
+        "maxSize": 12,
         "options": [
           {
             "name": "Theme",
@@ -695,6 +617,204 @@
                 "value": "bg-non-spectrum-adobe-red"
               }
             ]
+          },
+          {
+            "name": "First CTA Style",
+            "children": [
+              {
+                "name": "Primary",
+                "value": "cta1-primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "cta1-secondary"
+              },
+              {
+                "name": "Tertiary",
+                "value": "cta1-tertiary"
+              },
+              {
+                "name": "Custom",
+                "value": "cta1-custom"
+              }
+            ]
+          },
+          {
+            "name": "First CTA Custom Background Color (used only when First CTA Style = Custom)",
+            "children": [
+              {
+                "name": "Gray",
+                "value": "cta1-bg-spectrum-gray-700"
+              },
+              {
+                "name": "Blue",
+                "value": "cta1-bg-spectrum-blue-700"
+              },
+              {
+                "name": "Green",
+                "value": "cta1-bg-spectrum-green-700"
+              },
+              {
+                "name": "Orange",
+                "value": "cta1-bg-spectrum-orange-700"
+              },
+              {
+                "name": "Red",
+                "value": "cta1-bg-spectrum-red-700"
+              },
+              {
+                "name": "Celery",
+                "value": "cta1-bg-spectrum-celery-700"
+              },
+              {
+                "name": "Chartreuse",
+                "value": "cta1-bg-spectrum-chartreuse-700"
+              },
+              {
+                "name": "Cyan",
+                "value": "cta1-bg-spectrum-cyan-700"
+              },
+              {
+                "name": "Fuchsia",
+                "value": "cta1-bg-spectrum-fuchsia-700"
+              },
+              {
+                "name": "Indigo",
+                "value": "cta1-bg-spectrum-indigo-700"
+              },
+              {
+                "name": "Magenta",
+                "value": "cta1-bg-spectrum-magenta-700"
+              },
+              {
+                "name": "Purple",
+                "value": "cta1-bg-spectrum-purple-700"
+              },
+              {
+                "name": "Seafoam",
+                "value": "cta1-bg-spectrum-seafoam-700"
+              },
+              {
+                "name": "Yellow",
+                "value": "cta1-bg-spectrum-yellow-700"
+              },
+              {
+                "name": "Adobe Red",
+                "value": "cta1-bg-non-spectrum-adobe-red"
+              }
+            ]
+          },
+          {
+            "name": "First CTA Custom Text Color (used only when First CTA Style = Custom)",
+            "children": [
+              {
+                "name": "White",
+                "value": "cta1-text-white"
+              },
+              {
+                "name": "Black",
+                "value": "cta1-text-black"
+              }
+            ]
+          },
+          {
+            "name": "Second CTA Style",
+            "children": [
+              {
+                "name": "Primary",
+                "value": "cta2-primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "cta2-secondary"
+              },
+              {
+                "name": "Tertiary",
+                "value": "cta2-tertiary"
+              },
+              {
+                "name": "Custom",
+                "value": "cta2-custom"
+              }
+            ]
+          },
+          {
+            "name": "Second CTA Custom Background Color (used only when Second CTA Style = Custom)",
+            "children": [
+              {
+                "name": "Gray",
+                "value": "cta2-bg-spectrum-gray-700"
+              },
+              {
+                "name": "Blue",
+                "value": "cta2-bg-spectrum-blue-700"
+              },
+              {
+                "name": "Green",
+                "value": "cta2-bg-spectrum-green-700"
+              },
+              {
+                "name": "Orange",
+                "value": "cta2-bg-spectrum-orange-700"
+              },
+              {
+                "name": "Red",
+                "value": "cta2-bg-spectrum-red-700"
+              },
+              {
+                "name": "Celery",
+                "value": "cta2-bg-spectrum-celery-700"
+              },
+              {
+                "name": "Chartreuse",
+                "value": "cta2-bg-spectrum-chartreuse-700"
+              },
+              {
+                "name": "Cyan",
+                "value": "cta2-bg-spectrum-cyan-700"
+              },
+              {
+                "name": "Fuchsia",
+                "value": "cta2-bg-spectrum-fuchsia-700"
+              },
+              {
+                "name": "Indigo",
+                "value": "cta2-bg-spectrum-indigo-700"
+              },
+              {
+                "name": "Magenta",
+                "value": "cta2-bg-spectrum-magenta-700"
+              },
+              {
+                "name": "Purple",
+                "value": "cta2-bg-spectrum-purple-700"
+              },
+              {
+                "name": "Seafoam",
+                "value": "cta2-bg-spectrum-seafoam-700"
+              },
+              {
+                "name": "Yellow",
+                "value": "cta2-bg-spectrum-yellow-700"
+              },
+              {
+                "name": "Adobe Red",
+                "value": "cta2-bg-non-spectrum-adobe-red"
+              }
+            ]
+          },
+          {
+            "name": "Second CTA Custom Text Color (used only when Second CTA Style = Custom)",
+            "children": [
+              {
+                "name": "White",
+                "value": "cta2-text-white"
+              },
+              {
+                "name": "Black",
+                "value": "cta2-text-black"
+              }
+            ]
           }
         ]
       },
@@ -795,144 +915,6 @@
         "description": "A descriptive text of the subject image."
       },
       {
-        "component": "select",
-        "name": "cta1_Type",
-        "value": "primary",
-        "label": "First CTA Type",
-        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Primary",
-            "value": "primary"
-          },
-          {
-            "name": "Secondary",
-            "value": "secondary"
-          },
-          {
-            "name": "Tertiary",
-            "value": "tertiary"
-          },
-          {
-            "name": "Custom",
-            "value": "custom"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "cta1_Type" }, "custom"]
-        },
-        "component": "select",
-        "name": "cta1_customBgColor",
-        "value": "",
-        "label": "First CTA Background Color",
-        "description": "Select First CTA background color. Select 'Custom Hexcode' to enter the custom color",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Gray",
-            "value": "--spectrum-gray-700"
-          },
-          {
-            "name": "Blue",
-            "value": "--spectrum-blue-700"
-          },
-          {
-            "name": "Green",
-            "value": "--spectrum-green-700"
-          },
-          {
-            "name": "Orange",
-            "value": "--spectrum-orange-700"
-          },
-          {
-            "name": "Red",
-            "value": "--spectrum-red-700"
-          },
-          {
-            "name": "Celery",
-            "value": "--spectrum-celery-700"
-          },
-          {
-            "name": "Chartreuse",
-            "value": "--spectrum-chartreuse-700"
-          },
-          {
-            "name": "Cyan",
-            "value": "--spectrum-cyan-700"
-          },
-          {
-            "name": "Fuchsia",
-            "value": "--spectrum-fuchsia-700"
-          },
-          {
-            "name": "Indigo",
-            "value": "--spectrum-indigo-700"
-          },
-          {
-            "name": "Magenta",
-            "value": "--spectrum-magenta-700"
-          },
-          {
-            "name": "Purple",
-            "value": "--spectrum-purple-700"
-          },
-          {
-            "name": "Seafoam",
-            "value": "--spectrum-seafoam-700"
-          },
-          {
-            "name": "Yellow",
-            "value": "--spectrum-yellow-700"
-          },
-          {
-            "name": "Adobe Red",
-            "value": "--non-spectrum-adobe-red"
-          },
-          {
-            "name": "Custom Hexcode",
-            "value": "custom-hexcode"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "and": [
-            { "===": [{ "var": "cta1_customBgColor" }, "custom-hexcode"] },
-            { "===": [{ "var": "cta1_Type" }, "custom"] }
-          ]
-        },
-        "component": "text",
-        "valueType": "string",
-        "name": "cta1_customBgHexCode",
-        "value": "",
-        "label": "First CTA Custom Background Hexcode",
-        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
-      },
-      {
-        "condition": {
-          "===": [{ "var": "cta1_Type" }, "custom"]
-        },
-        "component": "select",
-        "valueType": "string",
-        "name": "cta1_textColor",
-        "value": "white",
-        "label": "First CTA Text Color",
-        "description": "Select the text color",
-        "options": [
-          {
-            "name": "White",
-            "value": "white"
-          },
-          {
-            "name": "Black",
-            "value": "black"
-          }
-        ]
-      },
-      {
         "component": "text",
         "valueType": "string",
         "name": "cta1_linkText",
@@ -947,144 +929,6 @@
         "value": "",
         "label": "First CTA Link",
         "description": "What link to open when clicking the button."
-      },
-      {
-        "component": "select",
-        "name": "cta2_Type",
-        "value": "primary",
-        "label": "Second CTA Type",
-        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Primary",
-            "value": "primary"
-          },
-          {
-            "name": "Secondary",
-            "value": "secondary"
-          },
-          {
-            "name": "Tertiary",
-            "value": "tertiary"
-          },
-          {
-            "name": "Custom",
-            "value": "custom"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "cta2_Type" }, "custom"]
-        },
-        "component": "select",
-        "name": "cta2_customBgColor",
-        "value": "",
-        "label": "Second CTA Background Color",
-        "description": "Select Second CTA background color. Select 'Custom Hexcode' to enter the custom color",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Gray",
-            "value": "--spectrum-gray-700"
-          },
-          {
-            "name": "Blue",
-            "value": "--spectrum-blue-700"
-          },
-          {
-            "name": "Green",
-            "value": "--spectrum-green-700"
-          },
-          {
-            "name": "Orange",
-            "value": "--spectrum-orange-700"
-          },
-          {
-            "name": "Red",
-            "value": "--spectrum-red-700"
-          },
-          {
-            "name": "Celery",
-            "value": "--spectrum-celery-700"
-          },
-          {
-            "name": "Chartreuse",
-            "value": "--spectrum-chartreuse-700"
-          },
-          {
-            "name": "Cyan",
-            "value": "--spectrum-cyan-700"
-          },
-          {
-            "name": "Fuchsia",
-            "value": "--spectrum-fuchsia-700"
-          },
-          {
-            "name": "Indigo",
-            "value": "--spectrum-indigo-700"
-          },
-          {
-            "name": "Magenta",
-            "value": "--spectrum-magenta-700"
-          },
-          {
-            "name": "Purple",
-            "value": "--spectrum-purple-700"
-          },
-          {
-            "name": "Seafoam",
-            "value": "--spectrum-seafoam-700"
-          },
-          {
-            "name": "Yellow",
-            "value": "--spectrum-yellow-700"
-          },
-          {
-            "name": "Adobe Red",
-            "value": "--non-spectrum-adobe-red"
-          },
-          {
-            "name": "Custom Hexcode",
-            "value": "custom-hexcode"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "and": [
-            { "===": [{ "var": "cta2_customBgColor" }, "custom-hexcode"] },
-            { "===": [{ "var": "cta2_Type" }, "custom"] }
-          ]
-        },
-        "component": "text",
-        "valueType": "string",
-        "name": "cta2_customBgHexCode",
-        "value": "",
-        "label": "Second CTA Custom Background Hexcode",
-        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
-      },
-      {
-        "condition": {
-          "===": [{ "var": "cta2_Type" }, "custom"]
-        },
-        "component": "select",
-        "valueType": "string",
-        "name": "cta2_textColor",
-        "value": "white",
-        "label": "Second CTA Text Color",
-        "description": "Select the text color",
-        "options": [
-          {
-            "name": "White",
-            "value": "white"
-          },
-          {
-            "name": "Black",
-            "value": "black"
-          }
-        ]
       },
       {
         "component": "text",
@@ -2733,6 +2577,204 @@
                 "value": "dark"
               }
             ]
+          },
+          {
+            "name": "Primary CTA Style",
+            "children": [
+              {
+                "name": "Primary",
+                "value": "primaryCta-primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "primaryCta-secondary"
+              },
+              {
+                "name": "Tertiary",
+                "value": "primaryCta-tertiary"
+              },
+              {
+                "name": "Custom",
+                "value": "primaryCta-custom"
+              }
+            ]
+          },
+          {
+            "name": "Primary CTA Custom Background Color (used only when Primary CTA Style = Custom)",
+            "children": [
+              {
+                "name": "Gray",
+                "value": "primaryCta-bg-spectrum-gray-700"
+              },
+              {
+                "name": "Blue",
+                "value": "primaryCta-bg-spectrum-blue-700"
+              },
+              {
+                "name": "Green",
+                "value": "primaryCta-bg-spectrum-green-700"
+              },
+              {
+                "name": "Orange",
+                "value": "primaryCta-bg-spectrum-orange-700"
+              },
+              {
+                "name": "Red",
+                "value": "primaryCta-bg-spectrum-red-700"
+              },
+              {
+                "name": "Celery",
+                "value": "primaryCta-bg-spectrum-celery-700"
+              },
+              {
+                "name": "Chartreuse",
+                "value": "primaryCta-bg-spectrum-chartreuse-700"
+              },
+              {
+                "name": "Cyan",
+                "value": "primaryCta-bg-spectrum-cyan-700"
+              },
+              {
+                "name": "Fuchsia",
+                "value": "primaryCta-bg-spectrum-fuchsia-700"
+              },
+              {
+                "name": "Indigo",
+                "value": "primaryCta-bg-spectrum-indigo-700"
+              },
+              {
+                "name": "Magenta",
+                "value": "primaryCta-bg-spectrum-magenta-700"
+              },
+              {
+                "name": "Purple",
+                "value": "primaryCta-bg-spectrum-purple-700"
+              },
+              {
+                "name": "Seafoam",
+                "value": "primaryCta-bg-spectrum-seafoam-700"
+              },
+              {
+                "name": "Yellow",
+                "value": "primaryCta-bg-spectrum-yellow-700"
+              },
+              {
+                "name": "Adobe Red",
+                "value": "primaryCta-bg-non-spectrum-adobe-red"
+              }
+            ]
+          },
+          {
+            "name": "Primary CTA Custom Text Color (used only when Primary CTA Style = Custom)",
+            "children": [
+              {
+                "name": "White",
+                "value": "primaryCta-text-white"
+              },
+              {
+                "name": "Black",
+                "value": "primaryCta-text-black"
+              }
+            ]
+          },
+          {
+            "name": "Secondary CTA Style",
+            "children": [
+              {
+                "name": "Primary",
+                "value": "secondaryCta-primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "secondaryCta-secondary"
+              },
+              {
+                "name": "Tertiary",
+                "value": "secondaryCta-tertiary"
+              },
+              {
+                "name": "Custom",
+                "value": "secondaryCta-custom"
+              }
+            ]
+          },
+          {
+            "name": "Secondary CTA Custom Background Color (used only when Secondary CTA Style = Custom)",
+            "children": [
+              {
+                "name": "Gray",
+                "value": "secondaryCta-bg-spectrum-gray-700"
+              },
+              {
+                "name": "Blue",
+                "value": "secondaryCta-bg-spectrum-blue-700"
+              },
+              {
+                "name": "Green",
+                "value": "secondaryCta-bg-spectrum-green-700"
+              },
+              {
+                "name": "Orange",
+                "value": "secondaryCta-bg-spectrum-orange-700"
+              },
+              {
+                "name": "Red",
+                "value": "secondaryCta-bg-spectrum-red-700"
+              },
+              {
+                "name": "Celery",
+                "value": "secondaryCta-bg-spectrum-celery-700"
+              },
+              {
+                "name": "Chartreuse",
+                "value": "secondaryCta-bg-spectrum-chartreuse-700"
+              },
+              {
+                "name": "Cyan",
+                "value": "secondaryCta-bg-spectrum-cyan-700"
+              },
+              {
+                "name": "Fuchsia",
+                "value": "secondaryCta-bg-spectrum-fuchsia-700"
+              },
+              {
+                "name": "Indigo",
+                "value": "secondaryCta-bg-spectrum-indigo-700"
+              },
+              {
+                "name": "Magenta",
+                "value": "secondaryCta-bg-spectrum-magenta-700"
+              },
+              {
+                "name": "Purple",
+                "value": "secondaryCta-bg-spectrum-purple-700"
+              },
+              {
+                "name": "Seafoam",
+                "value": "secondaryCta-bg-spectrum-seafoam-700"
+              },
+              {
+                "name": "Yellow",
+                "value": "secondaryCta-bg-spectrum-yellow-700"
+              },
+              {
+                "name": "Adobe Red",
+                "value": "secondaryCta-bg-non-spectrum-adobe-red"
+              }
+            ]
+          },
+          {
+            "name": "Secondary CTA Custom Text Color (used only when Secondary CTA Style = Custom)",
+            "children": [
+              {
+                "name": "White",
+                "value": "secondaryCta-text-white"
+              },
+              {
+                "name": "Black",
+                "value": "secondaryCta-text-black"
+              }
+            ]
           }
         ]
       },
@@ -2777,144 +2819,6 @@
         "description": "A descriptive text of the mobile image."
       },
       {
-        "component": "select",
-        "name": "primaryCta_Type",
-        "value": "primary",
-        "label": "Primary CTA Type",
-        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Primary",
-            "value": "primary"
-          },
-          {
-            "name": "Secondary",
-            "value": "secondary"
-          },
-          {
-            "name": "Tertiary",
-            "value": "tertiary"
-          },
-          {
-            "name": "Custom",
-            "value": "custom"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "primaryCta_Type" }, "custom"]
-        },
-        "component": "select",
-        "name": "primaryCta_customBgColor",
-        "value": "",
-        "label": "Primary CTA Background Color",
-        "description": "Select Primary CTA background color. Select 'Custom Hexcode' to enter the custom color",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Gray",
-            "value": "--spectrum-gray-700"
-          },
-          {
-            "name": "Blue",
-            "value": "--spectrum-blue-700"
-          },
-          {
-            "name": "Green",
-            "value": "--spectrum-green-700"
-          },
-          {
-            "name": "Orange",
-            "value": "--spectrum-orange-700"
-          },
-          {
-            "name": "Red",
-            "value": "--spectrum-red-700"
-          },
-          {
-            "name": "Celery",
-            "value": "--spectrum-celery-700"
-          },
-          {
-            "name": "Chartreuse",
-            "value": "--spectrum-chartreuse-700"
-          },
-          {
-            "name": "Cyan",
-            "value": "--spectrum-cyan-700"
-          },
-          {
-            "name": "Fuchsia",
-            "value": "--spectrum-fuchsia-700"
-          },
-          {
-            "name": "Indigo",
-            "value": "--spectrum-indigo-700"
-          },
-          {
-            "name": "Magenta",
-            "value": "--spectrum-magenta-700"
-          },
-          {
-            "name": "Purple",
-            "value": "--spectrum-purple-700"
-          },
-          {
-            "name": "Seafoam",
-            "value": "--spectrum-seafoam-700"
-          },
-          {
-            "name": "Yellow",
-            "value": "--spectrum-yellow-700"
-          },
-          {
-            "name": "Adobe Red",
-            "value": "--non-spectrum-adobe-red"
-          },
-          {
-            "name": "Custom Hexcode",
-            "value": "custom-hexcode"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "and": [
-            { "===": [{ "var": "primaryCta_customBgColor" }, "custom-hexcode"] },
-            { "===": [{ "var": "primaryCta_Type" }, "custom"] }
-          ]
-        },
-        "component": "text",
-        "valueType": "string",
-        "name": "primaryCta_customBgHexCode",
-        "value": "",
-        "label": "Primary CTA Custom Background Hexcode",
-        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
-      },
-      {
-        "condition": {
-          "===": [{ "var": "primaryCta_Type" }, "custom"]
-        },
-        "component": "select",
-        "valueType": "string",
-        "name": "primaryCta_textColor",
-        "value": "white",
-        "label": "Primary CTA Text Color",
-        "description": "Select the text color",
-        "options": [
-          {
-            "name": "White",
-            "value": "white"
-          },
-          {
-            "name": "Black",
-            "value": "black"
-          }
-        ]
-      },
-      {
         "component": "text",
         "valueType": "string",
         "name": "primaryCta_linkText",
@@ -2929,144 +2833,6 @@
         "value": "",
         "label": "Primary CTA Link",
         "description": "Link for primary CTA. Use #SECTION-ID for jump links."
-      },
-      {
-        "component": "select",
-        "name": "secondaryCta_Type",
-        "value": "secondary",
-        "label": "Secondary CTA Type",
-        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Primary",
-            "value": "primary"
-          },
-          {
-            "name": "Secondary",
-            "value": "secondary"
-          },
-          {
-            "name": "Tertiary",
-            "value": "tertiary"
-          },
-          {
-            "name": "Custom",
-            "value": "custom"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "secondaryCta_Type" }, "custom"]
-        },
-        "component": "select",
-        "name": "secondaryCta_customBgColor",
-        "value": "",
-        "label": "Secondary CTA Background Color",
-        "description": "Select Secondary CTA background color. Select 'Custom Hexcode' to enter the custom color",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Gray",
-            "value": "--spectrum-gray-700"
-          },
-          {
-            "name": "Blue",
-            "value": "--spectrum-blue-700"
-          },
-          {
-            "name": "Green",
-            "value": "--spectrum-green-700"
-          },
-          {
-            "name": "Orange",
-            "value": "--spectrum-orange-700"
-          },
-          {
-            "name": "Red",
-            "value": "--spectrum-red-700"
-          },
-          {
-            "name": "Celery",
-            "value": "--spectrum-celery-700"
-          },
-          {
-            "name": "Chartreuse",
-            "value": "--spectrum-chartreuse-700"
-          },
-          {
-            "name": "Cyan",
-            "value": "--spectrum-cyan-700"
-          },
-          {
-            "name": "Fuchsia",
-            "value": "--spectrum-fuchsia-700"
-          },
-          {
-            "name": "Indigo",
-            "value": "--spectrum-indigo-700"
-          },
-          {
-            "name": "Magenta",
-            "value": "--spectrum-magenta-700"
-          },
-          {
-            "name": "Purple",
-            "value": "--spectrum-purple-700"
-          },
-          {
-            "name": "Seafoam",
-            "value": "--spectrum-seafoam-700"
-          },
-          {
-            "name": "Yellow",
-            "value": "--spectrum-yellow-700"
-          },
-          {
-            "name": "Adobe Red",
-            "value": "--non-spectrum-adobe-red"
-          },
-          {
-            "name": "Custom Hexcode",
-            "value": "custom-hexcode"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "and": [
-            { "===": [{ "var": "secondaryCta_customBgColor" }, "custom-hexcode"] },
-            { "===": [{ "var": "secondaryCta_Type" }, "custom"] }
-          ]
-        },
-        "component": "text",
-        "valueType": "string",
-        "name": "secondaryCta_customBgHexCode",
-        "value": "",
-        "label": "Secondary CTA Custom Background Hexcode",
-        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
-      },
-      {
-        "condition": {
-          "===": [{ "var": "secondaryCta_Type" }, "custom"]
-        },
-        "component": "select",
-        "valueType": "string",
-        "name": "secondaryCta_textColor",
-        "value": "white",
-        "label": "Secondary CTA Text Color",
-        "description": "Select the text color",
-        "options": [
-          {
-            "name": "White",
-            "value": "white"
-          },
-          {
-            "name": "Black",
-            "value": "black"
-          }
-        ]
       },
       {
         "component": "text",
@@ -3962,6 +3728,105 @@
                 "value": "podcast-card"
               }
             ]
+          },
+          {
+            "name": "CTA Style",
+            "children": [
+              {
+                "name": "Primary",
+                "value": "cta-primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "cta-secondary"
+              },
+              {
+                "name": "Tertiary",
+                "value": "cta-tertiary"
+              },
+              {
+                "name": "Custom",
+                "value": "cta-custom"
+              }
+            ]
+          },
+          {
+            "name": "CTA Custom Background Color (used only when CTA Style = Custom)",
+            "children": [
+              {
+                "name": "Gray",
+                "value": "cta-bg-spectrum-gray-700"
+              },
+              {
+                "name": "Blue",
+                "value": "cta-bg-spectrum-blue-700"
+              },
+              {
+                "name": "Green",
+                "value": "cta-bg-spectrum-green-700"
+              },
+              {
+                "name": "Orange",
+                "value": "cta-bg-spectrum-orange-700"
+              },
+              {
+                "name": "Red",
+                "value": "cta-bg-spectrum-red-700"
+              },
+              {
+                "name": "Celery",
+                "value": "cta-bg-spectrum-celery-700"
+              },
+              {
+                "name": "Chartreuse",
+                "value": "cta-bg-spectrum-chartreuse-700"
+              },
+              {
+                "name": "Cyan",
+                "value": "cta-bg-spectrum-cyan-700"
+              },
+              {
+                "name": "Fuchsia",
+                "value": "cta-bg-spectrum-fuchsia-700"
+              },
+              {
+                "name": "Indigo",
+                "value": "cta-bg-spectrum-indigo-700"
+              },
+              {
+                "name": "Magenta",
+                "value": "cta-bg-spectrum-magenta-700"
+              },
+              {
+                "name": "Purple",
+                "value": "cta-bg-spectrum-purple-700"
+              },
+              {
+                "name": "Seafoam",
+                "value": "cta-bg-spectrum-seafoam-700"
+              },
+              {
+                "name": "Yellow",
+                "value": "cta-bg-spectrum-yellow-700"
+              },
+              {
+                "name": "Adobe Red",
+                "value": "cta-bg-non-spectrum-adobe-red"
+              }
+            ]
+          },
+          {
+            "name": "CTA Custom Text Color (used only when CTA Style = Custom)",
+            "children": [
+              {
+                "name": "White",
+                "value": "cta-text-white"
+              },
+              {
+                "name": "Black",
+                "value": "cta-text-black"
+              }
+            ]
           }
         ]
       },
@@ -3987,144 +3852,6 @@
         "name": "description",
         "value": "",
         "label": "Description"
-      },
-      {
-        "component": "select",
-        "name": "cta_Type",
-        "value": "primary",
-        "label": "CTA Type",
-        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Primary",
-            "value": "primary"
-          },
-          {
-            "name": "Secondary",
-            "value": "secondary"
-          },
-          {
-            "name": "Tertiary",
-            "value": "tertiary"
-          },
-          {
-            "name": "Custom",
-            "value": "custom"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "cta_Type" }, "custom"]
-        },
-        "component": "select",
-        "name": "cta_customBgColor",
-        "value": "",
-        "label": "CTA Background Color",
-        "description": "Select CTA background color. Select 'Custom Hexcode' to enter the custom color",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Gray",
-            "value": "--spectrum-gray-700"
-          },
-          {
-            "name": "Blue",
-            "value": "--spectrum-blue-700"
-          },
-          {
-            "name": "Green",
-            "value": "--spectrum-green-700"
-          },
-          {
-            "name": "Orange",
-            "value": "--spectrum-orange-700"
-          },
-          {
-            "name": "Red",
-            "value": "--spectrum-red-700"
-          },
-          {
-            "name": "Celery",
-            "value": "--spectrum-celery-700"
-          },
-          {
-            "name": "Chartreuse",
-            "value": "--spectrum-chartreuse-700"
-          },
-          {
-            "name": "Cyan",
-            "value": "--spectrum-cyan-700"
-          },
-          {
-            "name": "Fuchsia",
-            "value": "--spectrum-fuchsia-700"
-          },
-          {
-            "name": "Indigo",
-            "value": "--spectrum-indigo-700"
-          },
-          {
-            "name": "Magenta",
-            "value": "--spectrum-magenta-700"
-          },
-          {
-            "name": "Purple",
-            "value": "--spectrum-purple-700"
-          },
-          {
-            "name": "Seafoam",
-            "value": "--spectrum-seafoam-700"
-          },
-          {
-            "name": "Yellow",
-            "value": "--spectrum-yellow-700"
-          },
-          {
-            "name": "Adobe Red",
-            "value": "--non-spectrum-adobe-red"
-          },
-          {
-            "name": "Custom Hexcode",
-            "value": "custom-hexcode"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "and": [
-            { "===": [{ "var": "cta_customBgColor" }, "custom-hexcode"] },
-            { "===": [{ "var": "cta_Type" }, "custom"] }
-          ]
-        },
-        "component": "text",
-        "valueType": "string",
-        "name": "cta_customBgHexCode",
-        "value": "",
-        "label": "CTA Custom Background Hexcode",
-        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
-      },
-      {
-        "condition": {
-          "===": [{ "var": "cta_Type" }, "custom"]
-        },
-        "component": "select",
-        "valueType": "string",
-        "name": "cta_textColor",
-        "value": "white",
-        "label": "CTA Text Color",
-        "description": "Select the text color",
-        "options": [
-          {
-            "name": "White",
-            "value": "white"
-          },
-          {
-            "name": "Black",
-            "value": "black"
-          }
-        ]
       },
       {
         "component": "text",
@@ -4586,7 +4313,7 @@
         "label": "Image Border and Alignment",
         "valueType": "string",
         "required": true,
-        "maxSize": 2,
+        "maxSize": 5,
         "options": [
           {
             "name": "Content Source",
@@ -4613,6 +4340,105 @@
                 "value": "right"
               }
             ]
+          },
+          {
+            "name": "CTA Style",
+            "children": [
+              {
+                "name": "Primary",
+                "value": "cta1-primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "cta1-secondary"
+              },
+              {
+                "name": "Tertiary",
+                "value": "cta1-tertiary"
+              },
+              {
+                "name": "Custom",
+                "value": "cta1-custom"
+              }
+            ]
+          },
+          {
+            "name": "CTA Custom Background Color (used only when CTA Style = Custom)",
+            "children": [
+              {
+                "name": "Gray",
+                "value": "cta1-bg-spectrum-gray-700"
+              },
+              {
+                "name": "Blue",
+                "value": "cta1-bg-spectrum-blue-700"
+              },
+              {
+                "name": "Green",
+                "value": "cta1-bg-spectrum-green-700"
+              },
+              {
+                "name": "Orange",
+                "value": "cta1-bg-spectrum-orange-700"
+              },
+              {
+                "name": "Red",
+                "value": "cta1-bg-spectrum-red-700"
+              },
+              {
+                "name": "Celery",
+                "value": "cta1-bg-spectrum-celery-700"
+              },
+              {
+                "name": "Chartreuse",
+                "value": "cta1-bg-spectrum-chartreuse-700"
+              },
+              {
+                "name": "Cyan",
+                "value": "cta1-bg-spectrum-cyan-700"
+              },
+              {
+                "name": "Fuchsia",
+                "value": "cta1-bg-spectrum-fuchsia-700"
+              },
+              {
+                "name": "Indigo",
+                "value": "cta1-bg-spectrum-indigo-700"
+              },
+              {
+                "name": "Magenta",
+                "value": "cta1-bg-spectrum-magenta-700"
+              },
+              {
+                "name": "Purple",
+                "value": "cta1-bg-spectrum-purple-700"
+              },
+              {
+                "name": "Seafoam",
+                "value": "cta1-bg-spectrum-seafoam-700"
+              },
+              {
+                "name": "Yellow",
+                "value": "cta1-bg-spectrum-yellow-700"
+              },
+              {
+                "name": "Adobe Red",
+                "value": "cta1-bg-non-spectrum-adobe-red"
+              }
+            ]
+          },
+          {
+            "name": "CTA Custom Text Color (used only when CTA Style = Custom)",
+            "children": [
+              {
+                "name": "White",
+                "value": "cta1-text-white"
+              },
+              {
+                "name": "Black",
+                "value": "cta1-text-black"
+              }
+            ]
           }
         ]
       },
@@ -4623,144 +4449,6 @@
         "value": "",
         "label": "Alternate Description",
         "description": "Override the article's summary with this description."
-      },
-      {
-        "component": "select",
-        "name": "cta1_Type",
-        "value": "primary",
-        "label": "CTA Type",
-        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Primary",
-            "value": "primary"
-          },
-          {
-            "name": "Secondary",
-            "value": "secondary"
-          },
-          {
-            "name": "Tertiary",
-            "value": "tertiary"
-          },
-          {
-            "name": "Custom",
-            "value": "custom"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "cta1_Type" }, "custom"]
-        },
-        "component": "select",
-        "name": "cta1_customBgColor",
-        "value": "",
-        "label": "CTA Background Color",
-        "description": "Select First CTA background color. Select 'Custom Hexcode' to enter the custom color",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Gray",
-            "value": "--spectrum-gray-700"
-          },
-          {
-            "name": "Blue",
-            "value": "--spectrum-blue-700"
-          },
-          {
-            "name": "Green",
-            "value": "--spectrum-green-700"
-          },
-          {
-            "name": "Orange",
-            "value": "--spectrum-orange-700"
-          },
-          {
-            "name": "Red",
-            "value": "--spectrum-red-700"
-          },
-          {
-            "name": "Celery",
-            "value": "--spectrum-celery-700"
-          },
-          {
-            "name": "Chartreuse",
-            "value": "--spectrum-chartreuse-700"
-          },
-          {
-            "name": "Cyan",
-            "value": "--spectrum-cyan-700"
-          },
-          {
-            "name": "Fuchsia",
-            "value": "--spectrum-fuchsia-700"
-          },
-          {
-            "name": "Indigo",
-            "value": "--spectrum-indigo-700"
-          },
-          {
-            "name": "Magenta",
-            "value": "--spectrum-magenta-700"
-          },
-          {
-            "name": "Purple",
-            "value": "--spectrum-purple-700"
-          },
-          {
-            "name": "Seafoam",
-            "value": "--spectrum-seafoam-700"
-          },
-          {
-            "name": "Yellow",
-            "value": "--spectrum-yellow-700"
-          },
-          {
-            "name": "Adobe Red",
-            "value": "--non-spectrum-adobe-red"
-          },
-          {
-            "name": "Custom Hexcode",
-            "value": "custom-hexcode"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "and": [
-            { "===": [{ "var": "cta1_customBgColor" }, "custom-hexcode"] },
-            { "===": [{ "var": "cta1_Type" }, "custom"] }
-          ]
-        },
-        "component": "text",
-        "valueType": "string",
-        "name": "cta1_customBgHexCode",
-        "value": "",
-        "label": "CTA Custom Background Hexcode",
-        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
-      },
-      {
-        "condition": {
-          "===": [{ "var": "cta1_Type" }, "custom"]
-        },
-        "component": "select",
-        "valueType": "string",
-        "name": "cta1_textColor",
-        "value": "white",
-        "label": "CTA Text Color",
-        "description": "Select the text color",
-        "options": [
-          {
-            "name": "White",
-            "value": "white"
-          },
-          {
-            "name": "Black",
-            "value": "black"
-          }
-        ]
       },
       {
         "component": "aem-content",
@@ -8093,7 +7781,7 @@
         "label": "Block options",
         "valueType": "string",
         "required": true,
-        "maxSize": 6,
+        "maxSize": 12,
         "options": [
           {
             "name": "Theme",
@@ -8216,6 +7904,204 @@
                 "value": "custom"
               }
             ]
+          },
+          {
+            "name": "First CTA Style",
+            "children": [
+              {
+                "name": "Primary",
+                "value": "cta1-primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "cta1-secondary"
+              },
+              {
+                "name": "Tertiary",
+                "value": "cta1-tertiary"
+              },
+              {
+                "name": "Custom",
+                "value": "cta1-custom"
+              }
+            ]
+          },
+          {
+            "name": "First CTA Custom Background Color (used only when First CTA Style = Custom)",
+            "children": [
+              {
+                "name": "Gray",
+                "value": "cta1-bg-spectrum-gray-700"
+              },
+              {
+                "name": "Blue",
+                "value": "cta1-bg-spectrum-blue-700"
+              },
+              {
+                "name": "Green",
+                "value": "cta1-bg-spectrum-green-700"
+              },
+              {
+                "name": "Orange",
+                "value": "cta1-bg-spectrum-orange-700"
+              },
+              {
+                "name": "Red",
+                "value": "cta1-bg-spectrum-red-700"
+              },
+              {
+                "name": "Celery",
+                "value": "cta1-bg-spectrum-celery-700"
+              },
+              {
+                "name": "Chartreuse",
+                "value": "cta1-bg-spectrum-chartreuse-700"
+              },
+              {
+                "name": "Cyan",
+                "value": "cta1-bg-spectrum-cyan-700"
+              },
+              {
+                "name": "Fuchsia",
+                "value": "cta1-bg-spectrum-fuchsia-700"
+              },
+              {
+                "name": "Indigo",
+                "value": "cta1-bg-spectrum-indigo-700"
+              },
+              {
+                "name": "Magenta",
+                "value": "cta1-bg-spectrum-magenta-700"
+              },
+              {
+                "name": "Purple",
+                "value": "cta1-bg-spectrum-purple-700"
+              },
+              {
+                "name": "Seafoam",
+                "value": "cta1-bg-spectrum-seafoam-700"
+              },
+              {
+                "name": "Yellow",
+                "value": "cta1-bg-spectrum-yellow-700"
+              },
+              {
+                "name": "Adobe Red",
+                "value": "cta1-bg-non-spectrum-adobe-red"
+              }
+            ]
+          },
+          {
+            "name": "First CTA Custom Text Color (used only when First CTA Style = Custom)",
+            "children": [
+              {
+                "name": "White",
+                "value": "cta1-text-white"
+              },
+              {
+                "name": "Black",
+                "value": "cta1-text-black"
+              }
+            ]
+          },
+          {
+            "name": "Second CTA Style",
+            "children": [
+              {
+                "name": "Primary",
+                "value": "cta2-primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "cta2-secondary"
+              },
+              {
+                "name": "Tertiary",
+                "value": "cta2-tertiary"
+              },
+              {
+                "name": "Custom",
+                "value": "cta2-custom"
+              }
+            ]
+          },
+          {
+            "name": "Second CTA Custom Background Color (used only when Second CTA Style = Custom)",
+            "children": [
+              {
+                "name": "Gray",
+                "value": "cta2-bg-spectrum-gray-700"
+              },
+              {
+                "name": "Blue",
+                "value": "cta2-bg-spectrum-blue-700"
+              },
+              {
+                "name": "Green",
+                "value": "cta2-bg-spectrum-green-700"
+              },
+              {
+                "name": "Orange",
+                "value": "cta2-bg-spectrum-orange-700"
+              },
+              {
+                "name": "Red",
+                "value": "cta2-bg-spectrum-red-700"
+              },
+              {
+                "name": "Celery",
+                "value": "cta2-bg-spectrum-celery-700"
+              },
+              {
+                "name": "Chartreuse",
+                "value": "cta2-bg-spectrum-chartreuse-700"
+              },
+              {
+                "name": "Cyan",
+                "value": "cta2-bg-spectrum-cyan-700"
+              },
+              {
+                "name": "Fuchsia",
+                "value": "cta2-bg-spectrum-fuchsia-700"
+              },
+              {
+                "name": "Indigo",
+                "value": "cta2-bg-spectrum-indigo-700"
+              },
+              {
+                "name": "Magenta",
+                "value": "cta2-bg-spectrum-magenta-700"
+              },
+              {
+                "name": "Purple",
+                "value": "cta2-bg-spectrum-purple-700"
+              },
+              {
+                "name": "Seafoam",
+                "value": "cta2-bg-spectrum-seafoam-700"
+              },
+              {
+                "name": "Yellow",
+                "value": "cta2-bg-spectrum-yellow-700"
+              },
+              {
+                "name": "Adobe Red",
+                "value": "cta2-bg-non-spectrum-adobe-red"
+              }
+            ]
+          },
+          {
+            "name": "Second CTA Custom Text Color (used only when Second CTA Style = Custom)",
+            "children": [
+              {
+                "name": "White",
+                "value": "cta2-text-white"
+              },
+              {
+                "name": "Black",
+                "value": "cta2-text-black"
+              }
+            ]
           }
         ]
       },
@@ -8253,144 +8139,6 @@
         "description": "Enter the custom hex code, such as FFFFFF (without the # symbol)."
       },
       {
-        "component": "select",
-        "name": "cta1_Type",
-        "value": "primary",
-        "label": "First CTA Type",
-        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Primary",
-            "value": "primary"
-          },
-          {
-            "name": "Secondary",
-            "value": "secondary"
-          },
-          {
-            "name": "Tertiary",
-            "value": "tertiary"
-          },
-          {
-            "name": "Custom",
-            "value": "custom"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "cta1_Type" }, "custom"]
-        },
-        "component": "select",
-        "name": "cta1_customBgColor",
-        "value": "",
-        "label": "First CTA Background Color",
-        "description": "Select First CTA background color. Select 'Custom Hexcode' to enter the custom color",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Gray",
-            "value": "--spectrum-gray-700"
-          },
-          {
-            "name": "Blue",
-            "value": "--spectrum-blue-700"
-          },
-          {
-            "name": "Green",
-            "value": "--spectrum-green-700"
-          },
-          {
-            "name": "Orange",
-            "value": "--spectrum-orange-700"
-          },
-          {
-            "name": "Red",
-            "value": "--spectrum-red-700"
-          },
-          {
-            "name": "Celery",
-            "value": "--spectrum-celery-700"
-          },
-          {
-            "name": "Chartreuse",
-            "value": "--spectrum-chartreuse-700"
-          },
-          {
-            "name": "Cyan",
-            "value": "--spectrum-cyan-700"
-          },
-          {
-            "name": "Fuchsia",
-            "value": "--spectrum-fuchsia-700"
-          },
-          {
-            "name": "Indigo",
-            "value": "--spectrum-indigo-700"
-          },
-          {
-            "name": "Magenta",
-            "value": "--spectrum-magenta-700"
-          },
-          {
-            "name": "Purple",
-            "value": "--spectrum-purple-700"
-          },
-          {
-            "name": "Seafoam",
-            "value": "--spectrum-seafoam-700"
-          },
-          {
-            "name": "Yellow",
-            "value": "--spectrum-yellow-700"
-          },
-          {
-            "name": "Adobe Red",
-            "value": "--non-spectrum-adobe-red"
-          },
-          {
-            "name": "Custom Hexcode",
-            "value": "custom-hexcode"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "and": [
-            { "===": [{ "var": "cta1_customBgColor" }, "custom-hexcode"] },
-            { "===": [{ "var": "cta1_Type" }, "custom"] }
-          ]
-        },
-        "component": "text",
-        "valueType": "string",
-        "name": "cta1_customBgHexCode",
-        "value": "",
-        "label": "First CTA Custom Background Hexcode",
-        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
-      },
-      {
-        "condition": {
-          "===": [{ "var": "cta1_Type" }, "custom"]
-        },
-        "component": "select",
-        "valueType": "string",
-        "name": "cta1_textColor",
-        "value": "white",
-        "label": "First CTA Text Color",
-        "description": "Select the text color",
-        "options": [
-          {
-            "name": "White",
-            "value": "white"
-          },
-          {
-            "name": "Black",
-            "value": "black"
-          }
-        ]
-      },
-      {
         "component": "text",
         "valueType": "string",
         "name": "cta1_linkText",
@@ -8405,144 +8153,6 @@
         "value": "",
         "label": "First CTA Link",
         "description": "What link to open when clicking the button."
-      },
-      {
-        "component": "select",
-        "name": "cta2_Type",
-        "value": "primary",
-        "label": "Second CTA Type",
-        "description": "'Primary' will render a filled blue CTA, 'Secondary' will render a white CTA with a black border and black text, 'Tertiary' will render a filled black CTA, and 'Custom' will render a CTA with a custom hex color background.",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Primary",
-            "value": "primary"
-          },
-          {
-            "name": "Secondary",
-            "value": "secondary"
-          },
-          {
-            "name": "Tertiary",
-            "value": "tertiary"
-          },
-          {
-            "name": "Custom",
-            "value": "custom"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "===": [{ "var": "cta2_Type" }, "custom"]
-        },
-        "component": "select",
-        "name": "cta2_customBgColor",
-        "value": "",
-        "label": "Second CTA Background Color",
-        "description": "Select Second CTA background color. Select 'Custom Hexcode' to enter the custom color",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Gray",
-            "value": "--spectrum-gray-700"
-          },
-          {
-            "name": "Blue",
-            "value": "--spectrum-blue-700"
-          },
-          {
-            "name": "Green",
-            "value": "--spectrum-green-700"
-          },
-          {
-            "name": "Orange",
-            "value": "--spectrum-orange-700"
-          },
-          {
-            "name": "Red",
-            "value": "--spectrum-red-700"
-          },
-          {
-            "name": "Celery",
-            "value": "--spectrum-celery-700"
-          },
-          {
-            "name": "Chartreuse",
-            "value": "--spectrum-chartreuse-700"
-          },
-          {
-            "name": "Cyan",
-            "value": "--spectrum-cyan-700"
-          },
-          {
-            "name": "Fuchsia",
-            "value": "--spectrum-fuchsia-700"
-          },
-          {
-            "name": "Indigo",
-            "value": "--spectrum-indigo-700"
-          },
-          {
-            "name": "Magenta",
-            "value": "--spectrum-magenta-700"
-          },
-          {
-            "name": "Purple",
-            "value": "--spectrum-purple-700"
-          },
-          {
-            "name": "Seafoam",
-            "value": "--spectrum-seafoam-700"
-          },
-          {
-            "name": "Yellow",
-            "value": "--spectrum-yellow-700"
-          },
-          {
-            "name": "Adobe Red",
-            "value": "--non-spectrum-adobe-red"
-          },
-          {
-            "name": "Custom Hexcode",
-            "value": "custom-hexcode"
-          }
-        ]
-      },
-      {
-        "condition": {
-          "and": [
-            { "===": [{ "var": "cta2_customBgColor" }, "custom-hexcode"] },
-            { "===": [{ "var": "cta2_Type" }, "custom"] }
-          ]
-        },
-        "component": "text",
-        "valueType": "string",
-        "name": "cta2_customBgHexCode",
-        "value": "",
-        "label": "Second CTA Custom Background Hexcode",
-        "description": "Enter the custom hex code, such as FFFFFF (without the # symbol). Please ensure to follow the Adobe style guides when selecting CTA Colors"
-      },
-      {
-        "condition": {
-          "===": [{ "var": "cta2_Type" }, "custom"]
-        },
-        "component": "select",
-        "valueType": "string",
-        "name": "cta2_textColor",
-        "value": "white",
-        "label": "Second CTA Text Color",
-        "description": "Select the text color",
-        "options": [
-          {
-            "name": "White",
-            "value": "white"
-          },
-          {
-            "name": "Black",
-            "value": "black"
-          }
-        ]
       },
       {
         "component": "text",

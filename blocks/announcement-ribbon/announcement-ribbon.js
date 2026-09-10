@@ -1,5 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { decorateCta } from '../../scripts/utils/button-utils.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import { MD5 } from '../../scripts/crypto.js';
 
@@ -148,7 +148,7 @@ async function decorateRibbon({
       ${description ? description.outerHTML : ''}
     </div>
     <div class="ribbon-button-container">
-      ${decorateCustomButtons(firstCta, secondCta)}
+      ${decorateCta(firstCta, block, 'cta1')}${decorateCta(secondCta, block, 'cta2')}
     </div>
     </div>
     ${dismissable ? dismissButton : ''}

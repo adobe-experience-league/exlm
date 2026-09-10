@@ -1,4 +1,4 @@
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { decorateCta } from '../../scripts/utils/button-utils.js';
 
 export default function decorate(block) {
   const [image, eyebrow, heading, description, cta, podcastHeading, podcastDescription] = block.children || [];
@@ -26,7 +26,7 @@ export default function decorate(block) {
   contentContainer.classList.add('content-container');
   block.append(contentContainer);
   contentContainer.append(eyebrow, headingTag, description);
-  cta.innerHTML = decorateCustomButtons(cta.firstElementChild);
+  cta.innerHTML = decorateCta(cta.firstElementChild, block, 'cta');
 
   contentContainer.append(cta);
 

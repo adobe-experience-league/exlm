@@ -66,11 +66,14 @@ const CTA_BUTTON_TYPES = ['primary', 'secondary', 'tertiary', 'custom'];
  * color, unchanged, until they're reopened and re-saved against the new predefined-color fields.
  *
  * @param {HTMLElement} ctaEl - The CTA container cell, expected to hold just the link `<a>`.
- * @param {HTMLElement} block - The block element carrying the predefined `${prefix}-*` classes.
+ * @param {HTMLElement|DOMTokenList|string[]} classSource - The element carrying the predefined
+ *   `${prefix}-*` classes, or its class list/array directly. Some blocks build their CTA markup
+ *   before it is attached to the block element (e.g. teaser/detailed-teaser, and their reuse by
+ *   carousel), so only the class list — not the element — is available at that point.
  * @param {string} prefix - The CTA's class prefix, e.g. 'cta1', 'cta2', or 'cta'.
  * @returns {string} - The decorated CTA link's outerHTML, or '' if there is no link.
  */
-export function decorateCta(ctaEl, block, prefix) {
+export function decorateCta(ctaEl, classSource, prefix) {
   if (!ctaEl) return '';
 
   if (ctaEl.children.length > 1) {
@@ -82,7 +85,7 @@ export function decorateCta(ctaEl, block, prefix) {
 
   link.classList.add('button');
 
-  const blockClasses = [...block.classList];
+  const blockClasses = classSource?.classList ? [...classSource.classList] : [...(classSource || [])];
   const typeCls = blockClasses.find((cls) => CTA_BUTTON_TYPES.some((type) => cls === `${prefix}-${type}`));
   const type = typeCls?.slice(prefix.length + 1);
 

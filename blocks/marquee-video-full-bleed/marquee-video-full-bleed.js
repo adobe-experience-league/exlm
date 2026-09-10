@@ -1,5 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { decorateCta } from '../../scripts/utils/button-utils.js';
 import { getConfig } from '../../scripts/scripts.js';
 
 // Handle CTA click for jump to section links
@@ -41,7 +41,7 @@ export default async function decorate(block) {
           ${description?.innerHTML || ''}
         </div>
         <div class='marquee-video-full-bleed-cta'>
-          ${decorateCustomButtons(primaryCta, secondaryCta)}
+          ${decorateCta(primaryCta, block, 'primaryCta')}${decorateCta(secondaryCta, block, 'secondaryCta')}
         </div>
       </div>
       ${
