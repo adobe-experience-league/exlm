@@ -1,0 +1,143 @@
+name: Page Performance
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: page-performance-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Unit tests
+    if: github.repository == 'adobe-experience-league/exlm'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run page-performance tests
+        run: node --test scripts/page-performance/*.test.mjs
+
+  discover:
+    name: Discover URLs from sitemap
+    needs: test
+    if: github.repository == 'adobe-experience-league/exlm'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
+      retention: ${{ steps.plan.outputs.retention }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Discover
+        run: node scripts/page-performance/discover.mjs
+      - id: plan
+        name: Export shard matrix
+        run: |
+          echo "shards=$(jq -c '.shardIndexes' performance-reports/plan.json)" >> "$GITHUB_OUTPUT"
+          echo "retention=$(jq -r '.artifactRetentionDays' performance-reports/plan.json)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: page-performance-plan
+          path: performance-reports/
+          retention-days: ${{ fromJSON(steps.plan.outputs.retention) }}
+          if-no-files-found: error
+
+  audit:
+    name: Audit shard ${{ matrix.shard }}
+    needs: discover
+    if: github.repository == 'adobe-experience-league/exlm'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJson(needs.discover.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Lighthouse (lean)
+        run: npm install lighthouse@^12 --no-save
+      - uses: actions/download-artifact@v4
+        with:
+          name: page-performance-plan
+          path: performance-reports
+      - name: Audit
+        env:
+          SHARD_INDEX: ${{ matrix.shard }}
+        run: node scripts/page-performance/audit.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: page-performance-shard-${{ matrix.shard }}
+          path: performance-reports/shards/${{ matrix.shard }}/
+          retention-days: ${{ fromJSON(needs.discover.outputs.retention) }}
+          if-no-files-found: error
+
+  summarize:
+    name: Summarize
+    needs: [discover, audit]
+    if: always() && needs.discover.result == 'success' && github.repository == 'adobe-experience-league/exlm'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: page-performance-*
+          path: _artifacts
+          merge-multiple: false
+      - name: Rebuild report tree
+        run: |
+          mkdir -p performance-reports/shards
+          cp -R _artifacts/page-performance-plan/. performance-reports/
+          for d in _artifacts/page-performance-shard-*; do
+            [ -d "$d" ] || continue
+            idx="${d##*-}"
+            mkdir -p "performance-reports/shards/${idx}"
+            cp -R "$d"/. "performance-reports/shards/${idx}/"
+          done
+          node scripts/page-performance/summarize.mjs
+          cat performance-reports/summary.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: page-performance-summary
+          path: |
+            performance-reports/summary.md
+            performance-reports/summary.json
+            performance-reports/plan.json
+          retention-days: ${{ fromJSON(needs.discover.outputs.retention) }}
+
+  cleanup:
+    name: Delete old artifacts
+    needs: summarize
+    if: always() && needs.summarize.result == 'success' && github.repository == 'adobe-experience-league/exlm'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Keep last N runs, delete the rest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/page-performance/cleanup.mjs

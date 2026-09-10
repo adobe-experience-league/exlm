@@ -1,0 +1,21 @@
+{
+  "sitemapUrl": "./performance/fixtures/sitemap-index.xml",
+  "include": [],
+  "exclude": ["/search"],
+  "maxUrls": 6,
+  "select": "first",
+  "seed": 1,
+  "formFactors": ["mobile", "desktop"],
+  "query": {
+    "martech": "off"
+  },
+  "shards": 3,
+  "concurrencyPerShard": 2,
+  "auditor": "stub",
+  "artifactRetentionDays": 14,
+  "keepLastRuns": 5,
+  "fetchTimeoutMs": 30000,
+  "maxSitemapBytes": 52428800,
+  "allowedHosts": [],
+  "sitemapConcurrency": 4
+}
