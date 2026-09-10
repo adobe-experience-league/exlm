@@ -131,12 +131,14 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
   }
 }
 
-/* List view styles: align on-demand cards with upcoming-event list layout */
+/* List view: same left | main | right + vertical rule as Upcoming (≥900). */
 @media only screen and (min-width: 900px) {
+  .list .browse-card.event-card,
+  .list .browse-card.event-on-demand-event-card,
   .list .browse-cards-block-content > div .browse-card.event-card,
   .list .browse-cards-block-content > div .browse-card.event-on-demand-event-card {
     min-height: auto;
-    flex-direction: row;
+    flex-flow: row nowrap;
     background-color: var(--spectrum-gray-50);
   }
 
@@ -147,19 +149,29 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
     border-radius: var(--spectrum-spacing-300) 0 0 var(--spectrum-spacing-300);
     max-height: unset;
     height: auto;
+    align-self: stretch;
     align-items: center;
     justify-content: center;
   }
 
   .list .browse-card.event-card .browse-card-content,
   .list .browse-card.event-on-demand-event-card .browse-card-content {
+    flex: 1 1 auto;
+    min-width: 0;
     padding: var(--spectrum-spacing-500);
   }
 
+  /*
+   * Upcoming's footer is flex 0 0 18.52% but grows with its nowrap date
+   * (~12.5rem with padding). Capping OD at 18.52% pushed the vertical rule
+   * ~26px right of Upcoming in the mixed search list.
+   */
   .list .browse-card.event-card .browse-card-footer,
   .list .browse-card.event-on-demand-event-card .browse-card-footer {
     padding: var(--spectrum-spacing-500);
     flex: 0 0 18.52%;
+    width: auto;
+    min-width: 12.5rem;
     position: relative;
     align-self: stretch;
     flex-direction: column;
@@ -224,10 +236,11 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
   .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-options {
     order: 1;
     align-self: flex-start;
+    margin-bottom: var(--spectrum-spacing-300);
   }
 
-  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-cta-element {
-    order: 3;
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .user-actions {
+    margin-inline-start: calc(-1 * var(--spectrum-spacing-50));
   }
 
   .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info .browse-card-event-time h6 {
@@ -240,5 +253,14 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
   .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info .icon {
     width: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
     height: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .user-actions button .icon {
+    width: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
+    height: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-cta-element {
+    order: 3;
   }
 }
