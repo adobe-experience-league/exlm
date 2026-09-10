@@ -754,12 +754,8 @@ async function loadEager(doc) {
     if (!embedMode) buildPreMain(main);
     decorateMain(main);
     document.body.classList.add('appear');
-    // A URL fragment (#anchor) needs the page's height to settle before it's safe to
-    // scroll to it. `display` (used above) skips layout for hidden content entirely, so
-    // it can't be used to gate on real height changes — layer `visibility` on top instead,
-    // which still lays out content while keeping it unpainted. Cleared once loadLazy()
-    // confirms the scroll position is correct (see the fragment-scroll block there).
-    if (window.location.hash) document.body.style.visibility = 'hidden';
+    // For docs pages, hide the page when its URL has a fragment (anchor link), until loadLazy() scrolls to it correctly.
+    if (isDocPage && window.location.hash) document.body.style.visibility = 'hidden';
     await waitForLCPonMain(LCP_BLOCKS);
   }
 
@@ -1209,31 +1205,22 @@ async function loadLazy(doc) {
     // malformed escape sequence in the fragment, fall back to the raw hash
   }
 
-  if (id) {
-    // loadEager() kept the page unpainted (`visibility: hidden`) because of this
-    // fragment. The page's height can keep changing well after the initial render
-    // (async content settling — see EXLM-5596), which would otherwise clamp
-    // scrollIntoView() short with no way to correct it visibly once shown. Keep the
-    // page unpainted while re-scrolling on every real height change, reveal once it's
-    // gone quiet for a bit (or a hard cap is hit so an invalid/slow fragment never
-    // blocks the page forever), and keep watching a while after reveal too, in case
-    // something still shifts later than expected — but never once the user has
-    // manually scrolled, so a later correction can't fight their own scrolling.
+  if (isDocPage && id) {
+    // Re-scroll to the anchor until the page height stops changing, then reveal; stop if the user scrolls manually.
     let userScrolledAway = false;
     const markUserScrolled = () => {
       userScrolledAway = true;
     };
-    window.addEventListener('wheel', markUserScrolled, { passive: true, once: true });
-    window.addEventListener('touchmove', markUserScrolled, { passive: true, once: true });
-    window.addEventListener('keydown', markUserScrolled, { once: true });
+    ['wheel', 'touchmove', 'keydown'].forEach((type) => {
+      window.addEventListener(type, markUserScrolled, { passive: true, once: true });
+    });
 
     let lastHeight = -1;
     let quietFrames = 0;
     let framesLeft = 600; // ~10s hard cap
-    let revealed = false;
     const settleAndScroll = () => {
       if (userScrolledAway) {
-        if (!revealed) document.body.style.visibility = '';
+        document.body.style.visibility = '';
         return;
       }
       const { scrollHeight } = doc.documentElement;
@@ -1246,13 +1233,13 @@ async function loadLazy(doc) {
         if (el) el.scrollIntoView();
       }
       framesLeft -= 1;
-      if (!revealed && (quietFrames >= 45 || framesLeft <= 0)) {
-        revealed = true;
-        document.body.style.visibility = '';
-      }
+      if (quietFrames >= 45 || framesLeft <= 0) document.body.style.visibility = ''; // 45 frames ~0.75s quiet
       if (framesLeft > 0) requestAnimationFrame(settleAndScroll);
     };
     requestAnimationFrame(settleAndScroll);
+  } else {
+    const element = hash ? doc.getElementById(hash.substring(1)) : false;
+    if (hash && element) element.scrollIntoView();
   }
 
   if (!embedMode) {
