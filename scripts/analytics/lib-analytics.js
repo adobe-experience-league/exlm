@@ -425,7 +425,7 @@ export async function pushLinkClick(e) {
   let linkType = 'other';
   let name = e.target.innerHTML;
   let destinationDomain = e.target.href;
-  let linkTitle = e.target.innerHTML;
+  let linkTitle = e.target.innerHTML || '';
 
   /*
    * Navigation bar analytics:
@@ -435,14 +435,13 @@ export async function pushLinkClick(e) {
    */
   let navigationSolution = '';
 
-  if (header) {
+  if (navigation) {
     // Prefer an explicit navigation solution attribute when available.
     navigationSolution =
-      e.target.closest('.nav-item:not(.nav-item-leaf)')?.querySelector('.nav-item-toggle-text')?.textContent.trim() || '';    
+      navigation?.querySelector('.nav-item-toggle-text')?.textContent.trim() || '';
 
     // Find the title element and exclude the subtitle from analytics.
     const titleElement =
-      e.target.closest('.nav-item')?.querySelector('.nav-item-title') ||
       e.target.closest('.nav-item')?.querySelector(':scope > a') ||
       e.target.closest('a');
 
@@ -473,7 +472,6 @@ export async function pushLinkClick(e) {
     const courseMeta = await getCurrentCourseMeta();
     const courseTitle = courseMeta?.heading;
     linkTitle = `${e.target.innerHTML} | ${courseTitle}`;
-    name = linkTitle;
   }
 
   const linkObj = {
