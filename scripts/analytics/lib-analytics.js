@@ -404,13 +404,14 @@ export async function pushLinkClick(e) {
 
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
   const isCourseStartCTA = e.target.closest('.course-breakdown-header-start-button');
+  const header = e.target.closest('.header');
 
   let linkLocation = 'unidentified';
   if (e.target.closest('.rail-right') || e.target.closest('.mini-toc-wrapper')) {
     linkLocation = 'mtoc';
   } else if (e.target.closest('.rail-left')) {
     linkLocation = 'toc';
-  } else if (e.target.closest('.header')) {
+  } else if (header) {
     linkLocation = 'header';
   } else if (e.target.closest('.footer-container')) {
     linkLocation = 'footer';
@@ -423,7 +424,40 @@ export async function pushLinkClick(e) {
   let linkType = 'other';
   let name = e.target.innerHTML;
   let destinationDomain = e.target.href;
-  let linkTitle = e.target.innerHTML || '';
+  let linkTitle = e.target.innerHTML;
+
+  /*
+   * Navigation bar analytics:
+   * - Use only the clicked nav item's title.
+   * - Do not include the nav-item-subtitle markup/text.
+   * - Get solution from the nav item instead of the page meta solution.
+   */
+  let navigationSolution = '';
+
+  if (header) {
+    // Prefer an explicit navigation solution attribute when available.
+    navigationSolution =
+      e.target.closest('.nav-item:not(.nav-item-leaf)')?.querySelector('.nav-item-toggle-text')?.textContent.trim() || '';    
+
+    // Find the title element and exclude the subtitle from analytics.
+    const titleElement =
+      e.target.closest('.nav-item')?.querySelector('.nav-item-title') ||
+      e.target.closest('.nav-item')?.querySelector(':scope > a') ||
+      e.target.closest('a');
+
+    if (titleElement) {
+      // Clone the element so the subtitle can be removed without modifying the DOM.
+      const titleClone = titleElement.cloneNode(true);
+      titleClone.querySelectorAll('.nav-item-subtitle').forEach((subtitle) => subtitle.remove());
+
+      const cleanedTitle = titleClone.textContent?.trim() || '';
+
+      if (cleanedTitle) {
+        linkTitle = cleanedTitle;
+        name = cleanedTitle;
+      }
+    }
+  }
 
   if (!viewMoreLess && e.target.href?.match(/.(pdf|zip|dmg|exe)$/)) {
     linkType = 'download';
@@ -438,6 +472,7 @@ export async function pushLinkClick(e) {
     const courseMeta = await getCurrentCourseMeta();
     const courseTitle = courseMeta?.heading;
     linkTitle = `${e.target.innerHTML} | ${courseTitle}`;
+    name = linkTitle;
   }
 
   const linkObj = {
@@ -447,12 +482,12 @@ export async function pushLinkClick(e) {
     linkType,
   };
 
-  // Only add solution field if not a course CTA
+  // For navigation-bar clicks, use the solution associated with the
+  // navigation item. For other links, retain the existing page solution.
   if (!isCourseStartCTA) {
-    linkObj.solution =
-      document.querySelector('meta[name="solution"]') !== null
-        ? document.querySelector('meta[name="solution"]').content.split(',')[0].trim()
-        : '';
+    linkObj.solution = header
+      ? navigationSolution
+      : document.querySelector('meta[name="solution"]')?.content?.split(',')[0].trim() || '';
   }
 
   window.adobeDataLayer.push({
@@ -477,6 +512,7 @@ export async function pushLinkClick(e) {
     },
   });
 }
+
 
 export function handleComponentClick(e) {
   const component = e.target.closest('[data-block-name]');
