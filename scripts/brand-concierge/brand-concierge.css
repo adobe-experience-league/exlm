@@ -21,12 +21,11 @@
 }
 
 #bc-bottom-ask-bar[data-expanded='true'] {
-  gap: 16px 24px;
   height: 72px;
   min-height: 72px;
   max-height: 72px;
-  padding: 12px 24px;
-  justify-content: flex-start;
+  padding: 12px 0;
+  justify-content: center;
   border-top: 1px solid #e8e8e8;
   background: radial-gradient(
       ellipse 40% 140% at 88% 50%,
@@ -146,9 +145,6 @@
 
 .bc-bottom-ask-bar-expanded {
   display: none;
-  flex: 1 1 auto;
-  align-items: center;
-  gap: 16px 24px;
   width: 100%;
   min-width: 0;
 }
@@ -157,20 +153,44 @@
   display: none;
 }
 
+/* Same 3-col track as docs `main` (left rail / article / right rail). */
 #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  align-items: center;
+  box-sizing: border-box;
+  max-width: 1700px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+body:has(main.rail-left-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
+  grid-template-columns: 0 4fr 1fr;
+}
+
+body:has(main.rail-right-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
+  grid-template-columns: 1fr 4fr auto;
+}
+
+body:has(main.rail-left-closed.rail-right-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
+  grid-template-columns: 0 1fr auto;
 }
 
 .bc-bottom-ask-bar-brand {
-  flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
+  padding-left: 12px;
   font-size: var(--spectrum-font-size-200);
   font-weight: var(--font-weight-bold);
   line-height: 1.5;
   white-space: nowrap;
   color: var(--text-color);
+}
+
+body:has(main.rail-left-closed) .bc-bottom-ask-bar-brand {
+  visibility: hidden;
 }
 
 .bc-bottom-ask-bar-brand .icon img {
@@ -184,14 +204,12 @@
   color: var(--text-color);
 }
 
-/* Fill the space between brand and Hide so the prompt extends to the send control. */
+/* Center track = docs article column. Send stays inside the pill. */
 .bc-bottom-ask-bar-input-group {
-  flex: 1 1 auto;
   min-width: 0;
-  margin-inline: 0;
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 16px;
 }
 
 .bc-bottom-ask-bar-input-wrap {
@@ -204,7 +222,7 @@
   min-height: 48px;
   max-height: 48px;
   min-width: 0;
-  padding: 0 16px 0 24px;
+  padding: 4px 8px 4px 24px;
   border: 1px solid #d4d4d4;
   border-radius: 100px;
   background-color: var(--background-color);
@@ -253,19 +271,24 @@
 }
 
 .bc-bottom-ask-bar-send {
-  flex-shrink: 0;
-  display: inline-flex;
+  display: flex;
+  flex: 0 0 40px;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
   width: 40px;
   height: 40px;
   min-width: 40px;
+  min-height: 40px;
+  margin: 0;
   padding: 0;
+  border: none;
   border-radius: 50%;
   background-color: var(--spectrum-gray-200);
   cursor: pointer;
   line-height: 0;
-  overflow: visible;
+  text-align: center;
+  overflow: hidden;
 }
 
 .bc-bottom-ask-bar-send .icon {
@@ -274,6 +297,8 @@
   justify-content: center;
   width: 16px;
   height: 16px;
+  margin: 0;
+  flex-shrink: 0;
   line-height: 0;
 }
 
@@ -281,15 +306,18 @@
   display: block;
   width: 16px;
   height: 16px;
+  margin: 0;
+
+  /* The plane's mass sits in the left of the 24 viewBox; nudge so it reads centered in the disc. */
+  transform: translateX(2px);
 }
 
-/* No auto margin here: the prompt group's auto margins absorb the free space and
-   still push these controls flush to the bar's right edge. */
 .bc-bottom-ask-bar-actions {
-  flex: 0 0 auto;
+  justify-self: end;
   display: flex;
   align-items: center;
   gap: 32px;
+  padding-right: 12px;
 }
 
 .bc-bottom-ask-bar-hide {
