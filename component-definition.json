@@ -1651,7 +1651,7 @@
                   "model": "marquee-video-full-bleed",
                   "title": "Your place for everything AI.",
                   "description": "<p>Discover all the ways AI can empower you to do your best work. Dig into articles, hands-on learning, events, and more to level up your capabilities and double down on your impact.</p>",
-                  "classes": ["primaryCta-primary", "secondaryCta-secondary"],
+                  "classes": ["primary-cta-primary", "secondary-cta-secondary"],
                   "primaryCta_linkText": "CTA lorem ipsum",
                   "primaryCta_link": "#section-id",
                   "secondaryCta_linkText": "Take the quiz",

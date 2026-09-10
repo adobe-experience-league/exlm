@@ -2583,19 +2583,19 @@
             "children": [
               {
                 "name": "Primary",
-                "value": "primaryCta-primary"
+                "value": "primary-cta-primary"
               },
               {
                 "name": "Secondary",
-                "value": "primaryCta-secondary"
+                "value": "primary-cta-secondary"
               },
               {
                 "name": "Tertiary",
-                "value": "primaryCta-tertiary"
+                "value": "primary-cta-tertiary"
               },
               {
                 "name": "Custom",
-                "value": "primaryCta-custom"
+                "value": "primary-cta-custom"
               }
             ]
           },
@@ -2604,63 +2604,63 @@
             "children": [
               {
                 "name": "Gray",
-                "value": "primaryCta-bg-spectrum-gray-700"
+                "value": "primary-cta-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "primaryCta-bg-spectrum-blue-700"
+                "value": "primary-cta-bg-spectrum-blue-700"
               },
               {
                 "name": "Green",
-                "value": "primaryCta-bg-spectrum-green-700"
+                "value": "primary-cta-bg-spectrum-green-700"
               },
               {
                 "name": "Orange",
-                "value": "primaryCta-bg-spectrum-orange-700"
+                "value": "primary-cta-bg-spectrum-orange-700"
               },
               {
                 "name": "Red",
-                "value": "primaryCta-bg-spectrum-red-700"
+                "value": "primary-cta-bg-spectrum-red-700"
               },
               {
                 "name": "Celery",
-                "value": "primaryCta-bg-spectrum-celery-700"
+                "value": "primary-cta-bg-spectrum-celery-700"
               },
               {
                 "name": "Chartreuse",
-                "value": "primaryCta-bg-spectrum-chartreuse-700"
+                "value": "primary-cta-bg-spectrum-chartreuse-700"
               },
               {
                 "name": "Cyan",
-                "value": "primaryCta-bg-spectrum-cyan-700"
+                "value": "primary-cta-bg-spectrum-cyan-700"
               },
               {
                 "name": "Fuchsia",
-                "value": "primaryCta-bg-spectrum-fuchsia-700"
+                "value": "primary-cta-bg-spectrum-fuchsia-700"
               },
               {
                 "name": "Indigo",
-                "value": "primaryCta-bg-spectrum-indigo-700"
+                "value": "primary-cta-bg-spectrum-indigo-700"
               },
               {
                 "name": "Magenta",
-                "value": "primaryCta-bg-spectrum-magenta-700"
+                "value": "primary-cta-bg-spectrum-magenta-700"
               },
               {
                 "name": "Purple",
-                "value": "primaryCta-bg-spectrum-purple-700"
+                "value": "primary-cta-bg-spectrum-purple-700"
               },
               {
                 "name": "Seafoam",
-                "value": "primaryCta-bg-spectrum-seafoam-700"
+                "value": "primary-cta-bg-spectrum-seafoam-700"
               },
               {
                 "name": "Yellow",
-                "value": "primaryCta-bg-spectrum-yellow-700"
+                "value": "primary-cta-bg-spectrum-yellow-700"
               },
               {
                 "name": "Adobe Red",
-                "value": "primaryCta-bg-non-spectrum-adobe-red"
+                "value": "primary-cta-bg-non-spectrum-adobe-red"
               }
             ]
           },
@@ -2669,11 +2669,11 @@
             "children": [
               {
                 "name": "White",
-                "value": "primaryCta-text-white"
+                "value": "primary-cta-text-white"
               },
               {
                 "name": "Black",
-                "value": "primaryCta-text-black"
+                "value": "primary-cta-text-black"
               }
             ]
           },
@@ -2682,19 +2682,19 @@
             "children": [
               {
                 "name": "Primary",
-                "value": "secondaryCta-primary"
+                "value": "secondary-cta-primary"
               },
               {
                 "name": "Secondary",
-                "value": "secondaryCta-secondary"
+                "value": "secondary-cta-secondary"
               },
               {
                 "name": "Tertiary",
-                "value": "secondaryCta-tertiary"
+                "value": "secondary-cta-tertiary"
               },
               {
                 "name": "Custom",
-                "value": "secondaryCta-custom"
+                "value": "secondary-cta-custom"
               }
             ]
           },
@@ -2703,63 +2703,63 @@
             "children": [
               {
                 "name": "Gray",
-                "value": "secondaryCta-bg-spectrum-gray-700"
+                "value": "secondary-cta-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "secondaryCta-bg-spectrum-blue-700"
+                "value": "secondary-cta-bg-spectrum-blue-700"
               },
               {
                 "name": "Green",
-                "value": "secondaryCta-bg-spectrum-green-700"
+                "value": "secondary-cta-bg-spectrum-green-700"
               },
               {
                 "name": "Orange",
-                "value": "secondaryCta-bg-spectrum-orange-700"
+                "value": "secondary-cta-bg-spectrum-orange-700"
               },
               {
                 "name": "Red",
-                "value": "secondaryCta-bg-spectrum-red-700"
+                "value": "secondary-cta-bg-spectrum-red-700"
               },
               {
                 "name": "Celery",
-                "value": "secondaryCta-bg-spectrum-celery-700"
+                "value": "secondary-cta-bg-spectrum-celery-700"
               },
               {
                 "name": "Chartreuse",
-                "value": "secondaryCta-bg-spectrum-chartreuse-700"
+                "value": "secondary-cta-bg-spectrum-chartreuse-700"
               },
               {
                 "name": "Cyan",
-                "value": "secondaryCta-bg-spectrum-cyan-700"
+                "value": "secondary-cta-bg-spectrum-cyan-700"
               },
               {
                 "name": "Fuchsia",
-                "value": "secondaryCta-bg-spectrum-fuchsia-700"
+                "value": "secondary-cta-bg-spectrum-fuchsia-700"
               },
               {
                 "name": "Indigo",
-                "value": "secondaryCta-bg-spectrum-indigo-700"
+                "value": "secondary-cta-bg-spectrum-indigo-700"
               },
               {
                 "name": "Magenta",
-                "value": "secondaryCta-bg-spectrum-magenta-700"
+                "value": "secondary-cta-bg-spectrum-magenta-700"
               },
               {
                 "name": "Purple",
-                "value": "secondaryCta-bg-spectrum-purple-700"
+                "value": "secondary-cta-bg-spectrum-purple-700"
               },
               {
                 "name": "Seafoam",
-                "value": "secondaryCta-bg-spectrum-seafoam-700"
+                "value": "secondary-cta-bg-spectrum-seafoam-700"
               },
               {
                 "name": "Yellow",
-                "value": "secondaryCta-bg-spectrum-yellow-700"
+                "value": "secondary-cta-bg-spectrum-yellow-700"
               },
               {
                 "name": "Adobe Red",
-                "value": "secondaryCta-bg-non-spectrum-adobe-red"
+                "value": "secondary-cta-bg-non-spectrum-adobe-red"
               }
             ]
           },
@@ -2768,11 +2768,11 @@
             "children": [
               {
                 "name": "White",
-                "value": "secondaryCta-text-white"
+                "value": "secondary-cta-text-white"
               },
               {
                 "name": "Black",
-                "value": "secondaryCta-text-black"
+                "value": "secondary-cta-text-black"
               }
             ]
           }

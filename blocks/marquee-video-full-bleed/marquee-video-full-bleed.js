@@ -41,7 +41,7 @@ export default async function decorate(block) {
           ${description?.innerHTML || ''}
         </div>
         <div class='marquee-video-full-bleed-cta'>
-          ${decorateCta(primaryCta, block, 'primaryCta')}${decorateCta(secondaryCta, block, 'secondaryCta')}
+          ${decorateCta(primaryCta, block, 'primary-cta')}${decorateCta(secondaryCta, block, 'secondary-cta')}
         </div>
       </div>
       ${
