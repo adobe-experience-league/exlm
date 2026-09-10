@@ -168,6 +168,7 @@ body:has(main.rail-left-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bot
   grid-template-columns: 0 4fr 1fr;
 }
 
+/* `auto` (not docs `0`) so Hide stays in the right track when the TOC rail is closed. */
 body:has(main.rail-right-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
   grid-template-columns: 1fr 4fr auto;
 }
@@ -217,6 +218,7 @@ body:has(main.rail-left-closed) .bc-bottom-ask-bar-brand {
   max-width: none;
   display: flex;
   align-items: center;
+  gap: 8px;
   box-sizing: border-box;
   height: 48px;
   min-height: 48px;
@@ -416,8 +418,8 @@ body:has(main.rail-left-closed) .bc-bottom-ask-bar-brand {
 /* The asset is authored for the FAB's white pill (#d8d8d8); on the grey disc the design uses the
    darker --spectrum-gray-400 (#b1b1b1). An <img> can't inherit currentColor, and the enabled rule
    below already recolours this same icon with a filter, so stay with that: flatten to white, then
-   scale to the token (255 * 0.694 = 177). exlm-5868-design-parity.mjs pins the painted pixels to
-   --spectrum-gray-400, so retuning the token fails the probe rather than drifting unnoticed. */
+   scale to the token (255 * 0.694 = 177). There is currently no automated check pinning this value
+   to --spectrum-gray-400, so if that token changes, update the 0.694 multiplier here to match. */
 .bc-bottom-ask-bar-send:disabled .icon img {
   filter: brightness(0) invert(1) brightness(0.694);
 }

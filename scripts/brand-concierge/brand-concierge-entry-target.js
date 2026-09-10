@@ -13,16 +13,6 @@ const VALID_EXPERIENCES = new Set(Object.values(BC_ENTRY_EXPERIENCES));
 const DEFAULT_EXPERIENCE = BC_ENTRY_EXPERIENCES.FLOATING_ASK_BUTTON;
 const DESKTOP_MQ = '(min-width: 1200px)';
 const DEFAULT_WAIT_MS = 5000;
-/** QA override — `?bc-entry=floating-ask-button|bottom-ask-bar|header-ask-button` (aliases: fab, bottom, header). */
-const BC_ENTRY_QUERY = 'bc-entry';
-const QUERY_ALIASES = {
-  [BC_ENTRY_EXPERIENCES.FLOATING_ASK_BUTTON]: BC_ENTRY_EXPERIENCES.FLOATING_ASK_BUTTON,
-  [BC_ENTRY_EXPERIENCES.BOTTOM_ASK_BAR]: BC_ENTRY_EXPERIENCES.BOTTOM_ASK_BAR,
-  [BC_ENTRY_EXPERIENCES.HEADER_ASK_BUTTON]: BC_ENTRY_EXPERIENCES.HEADER_ASK_BUTTON,
-  fab: BC_ENTRY_EXPERIENCES.FLOATING_ASK_BUTTON,
-  bottom: BC_ENTRY_EXPERIENCES.BOTTOM_ASK_BAR,
-  header: BC_ENTRY_EXPERIENCES.HEADER_ASK_BUTTON,
-};
 
 let rawExperience = null;
 let waitResolvers = [];
@@ -83,7 +73,11 @@ export function getResolvedExperience() {
  */
 export function applyBcEntryChrome(experience = resolveBcEntryExperience()) {
   const resolved = VALID_EXPERIENCES.has(experience) ? experience : DEFAULT_EXPERIENCE;
-  const effective = isDesktopViewport() ? resolved : DEFAULT_EXPERIENCE;
+  let effective = isDesktopViewport() ? resolved : DEFAULT_EXPERIENCE;
+  // Keep the control FAB until the dock is in the DOM (Alloy load / late Target).
+  if (effective === BC_ENTRY_EXPERIENCES.BOTTOM_ASK_BAR && !document.getElementById('bc-bottom-ask-bar')) {
+    effective = DEFAULT_EXPERIENCE;
+  }
 
   document.body.dataset.bcEntry = effective;
   syncHeaderHost(effective);
@@ -107,19 +101,9 @@ export function setOnExperienceApplied(callback) {
   onExperienceApplied = callback;
 }
 
-function experienceFromQuery() {
-  const raw = new URLSearchParams(window.location.search).get(BC_ENTRY_QUERY);
-  if (!raw) return null;
-  const mapped = QUERY_ALIASES[raw];
-  if (mapped) return mapped;
-  // eslint-disable-next-line no-console
-  console.warn(`[BC entry] Ignoring invalid ?${BC_ENTRY_QUERY}=${raw}. Valid: ${[...VALID_EXPERIENCES].join(', ')}`);
-  return null;
-}
-
 function storeExperience(experience) {
   if (!VALID_EXPERIENCES.has(experience)) return;
-  // First valid assignment wins (query override or Target) — ignore duplicate or late re-fires.
+  // First valid Target assignment wins — ignore duplicate or late re-fires.
   if (rawExperience) return;
   rawExperience = experience;
   window.exlm = window.exlm || {};
@@ -161,8 +145,8 @@ function attachViewportListener() {
 
 /**
  * Marks desktop pages while waiting for Target (reduces wrong-chrome flash).
- * Parked until the BC Target activity is live — calling this with Target off hid
- * the control FAB for 5s. Re-enable with waitForExperienceOrTimeout() at launch.
+ * Parked (EXLM-5868) until the BC Target activity is live — calling this with Target
+ * off hid the control FAB for 5s. Re-enable with waitForExperienceOrTimeout() at launch.
  */
 export function markBcEntryPending() {
   if (!isDesktopViewport()) return;
@@ -171,7 +155,7 @@ export function markBcEntryPending() {
 
 /**
  * Waits for Target experience or timeout; returns resolved experience for current viewport.
- * Parked until the BC Target activity is live. Init paints control immediately instead.
+ * Parked (EXLM-5868) until the BC Target activity is live. Init paints control immediately instead.
  * @param {number} [maxMs]
  * @returns {Promise<string>}
  */
@@ -215,9 +199,6 @@ document.addEventListener(BC_ENTRY_EVENT, onBcEntryReady);
 document.addEventListener('header-loaded', onHeaderLoaded, true);
 attachViewportListener();
 
-// `?bc-entry=` wins over Target (first assignment). Then paint chrome immediately so
-// the control FAB is not hidden for 5s when Target is off. Late Target still swaps via
-// storeExperience when no query override is present.
-const queryExperience = experienceFromQuery();
-if (queryExperience) storeExperience(queryExperience);
+// Paint control FAB immediately. Waiting for Target hid the button for 5s when the
+// activity is off. Late `exlm-bc-entry-ready` still swaps chrome via storeExperience.
 applyBcEntryChrome();

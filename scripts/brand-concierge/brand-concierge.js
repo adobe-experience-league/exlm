@@ -527,6 +527,7 @@ function createBottomAskBar() {
 
   document.body.append(bar);
   observeBottomBarImpression(bar);
+  applyBcEntryChrome(BC_ENTRY_EXPERIENCES.BOTTOM_ASK_BAR);
   return bar;
 }
 
