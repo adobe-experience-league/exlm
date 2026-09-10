@@ -212,60 +212,33 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
     display: none;
   }
 
-  /* Date, bookmark, and Watch now share one left edge in the footer. */
-  .list .browse-card.event-on-demand-event-card .browse-card-footer {
-    align-items: flex-start;
-    text-align: left;
-  }
-
+  /* List footer matches Upcoming: date, then action icons, then primary CTA. */
   .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info {
     order: 0;
-    margin: 0 0 var(--spectrum-spacing-300);
-    margin-inline: 0;
+    margin: 0;
     align-self: flex-start;
+    margin-bottom: var(--spectrum-spacing-300);
     display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: var(--spectrum-spacing-75);
-    max-width: 100%;
   }
 
-  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-options,
-  .list .browse-card.event-on-demand-event-card .browse-card-footer .user-actions {
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-options {
     order: 1;
     align-self: flex-start;
-    justify-content: flex-start;
-    margin: 0 0 var(--spectrum-spacing-300);
-    margin-inline: 0;
-    width: auto;
   }
 
   .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-cta-element {
     order: 3;
-    align-self: stretch;
-  }
-
-  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info .browse-card-event-time {
-    min-width: 0;
   }
 
   .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info .browse-card-event-time h6 {
     color: var(--spectrum-gray-800);
     font-weight: bold;
-    white-space: normal;
-    overflow: visible;
-    line-height: var(--spectrum-line-height-s);
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info .icon {
-    width: var(--spectrum-spacing-400);
-    height: var(--spectrum-spacing-400);
-    flex-shrink: 0;
-    margin: 0;
-  }
-
-  .list .browse-card.event-on-demand-event-card .browse-card-footer .user-actions button {
-    padding: 0;
-    margin: 0;
+    width: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
+    height: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
   }
 }
