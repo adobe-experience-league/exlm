@@ -754,6 +754,8 @@ async function loadEager(doc) {
     if (!embedMode) buildPreMain(main);
     decorateMain(main);
     document.body.classList.add('appear');
+    // For docs pages, hide the page when its URL has a fragment (anchor link), until loadLazy() scrolls to it correctly.
+    if (isDocPage && window.location.hash) document.body.style.visibility = 'hidden';
     await waitForLCPonMain(LCP_BLOCKS);
   }
 
@@ -1201,8 +1203,49 @@ async function loadLazy(doc) {
   await loadBlocks(main);
 
   const { hash } = window.location;
-  const element = hash ? doc.getElementById(hash.substring(1)) : false;
-  if (hash && element) element.scrollIntoView();
+  let id = hash ? hash.substring(1) : '';
+  try {
+    id = decodeURIComponent(id);
+  } catch (e) {
+    // malformed escape sequence in the fragment, fall back to the raw hash
+  }
+
+  if (isDocPage && id) {
+    // Re-scroll to the anchor until the page height stops changing, then reveal; stop if the user scrolls manually.
+    let userScrolledAway = false;
+    const markUserScrolled = () => {
+      userScrolledAway = true;
+    };
+    ['wheel', 'touchmove', 'keydown'].forEach((type) => {
+      window.addEventListener(type, markUserScrolled, { passive: true, once: true });
+    });
+
+    let lastHeight = -1;
+    let quietFrames = 0;
+    let framesLeft = 600; // ~10s hard cap
+    const settleAndScroll = () => {
+      if (userScrolledAway) {
+        document.body.style.visibility = '';
+        return;
+      }
+      const { scrollHeight } = doc.documentElement;
+      if (scrollHeight === lastHeight) {
+        quietFrames += 1;
+      } else {
+        quietFrames = 0;
+        lastHeight = scrollHeight;
+        const el = doc.getElementById(id);
+        if (el) el.scrollIntoView();
+      }
+      framesLeft -= 1;
+      if (quietFrames >= 45 || framesLeft <= 0) document.body.style.visibility = ''; // 45 frames ~0.75s quiet
+      if (framesLeft > 0) requestAnimationFrame(settleAndScroll);
+    };
+    requestAnimationFrame(settleAndScroll);
+  } else {
+    const element = hash ? doc.getElementById(hash.substring(1)) : false;
+    if (hash && element) element.scrollIntoView();
+  }
 
   if (!embedMode) {
     const headerPromise = loadHeader(doc.querySelector('header'));
