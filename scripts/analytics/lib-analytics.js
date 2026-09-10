@@ -405,6 +405,7 @@ export async function pushLinkClick(e) {
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
   const isCourseStartCTA = e.target.closest('.course-breakdown-header-start-button');
   const header = e.target.closest('.header');
+  const navigation = e.target.closest('.nav-item:not(.nav-item-leaf)');
 
   let linkLocation = 'unidentified';
   if (e.target.closest('.rail-right') || e.target.closest('.mini-toc-wrapper')) {
@@ -485,7 +486,7 @@ export async function pushLinkClick(e) {
   // For navigation-bar clicks, use the solution associated with the
   // navigation item. For other links, retain the existing page solution.
   if (!isCourseStartCTA) {
-    linkObj.solution = header
+    linkObj.solution = navigation
       ? navigationSolution
       : document.querySelector('meta[name="solution"]')?.content?.split(',')[0].trim() || '';
   }
