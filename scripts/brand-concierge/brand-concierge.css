@@ -21,12 +21,11 @@
 }
 
 #bc-bottom-ask-bar[data-expanded='true'] {
-  gap: 16px 24px;
   height: 72px;
   min-height: 72px;
   max-height: 72px;
-  padding: 12px 24px;
-  justify-content: flex-start;
+  padding: 12px 0;
+  justify-content: center;
   border-top: 1px solid #e8e8e8;
   background: radial-gradient(
       ellipse 40% 140% at 88% 50%,
@@ -146,9 +145,6 @@
 
 .bc-bottom-ask-bar-expanded {
   display: none;
-  flex: 1 1 auto;
-  align-items: center;
-  gap: 16px 24px;
   width: 100%;
   min-width: 0;
 }
@@ -157,20 +153,45 @@
   display: none;
 }
 
+/* Same 3-col track as docs `main` (left rail / article / right rail). */
 #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  align-items: center;
+  box-sizing: border-box;
+  max-width: 1700px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+body:has(main.rail-left-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
+  grid-template-columns: 0 4fr 1fr;
+}
+
+/* `auto` (not docs `0`) so Hide stays in the right track when the TOC rail is closed. */
+body:has(main.rail-right-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
+  grid-template-columns: 1fr 4fr auto;
+}
+
+body:has(main.rail-left-closed.rail-right-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
+  grid-template-columns: 0 1fr auto;
 }
 
 .bc-bottom-ask-bar-brand {
-  flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
+  padding-left: 12px;
   font-size: var(--spectrum-font-size-200);
   font-weight: var(--font-weight-bold);
   line-height: 1.5;
   white-space: nowrap;
   color: var(--text-color);
+}
+
+body:has(main.rail-left-closed) .bc-bottom-ask-bar-brand {
+  visibility: hidden;
 }
 
 .bc-bottom-ask-bar-brand .icon img {
@@ -184,27 +205,26 @@
   color: var(--text-color);
 }
 
+/* Center track = docs article column. Send stays inside the pill. */
 .bc-bottom-ask-bar-input-group {
-  flex: 1 1 auto;
-  max-width: 760px;
-  margin-inline: auto;
+  min-width: 0;
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 16px;
-  min-width: 0;
 }
 
 .bc-bottom-ask-bar-input-wrap {
   flex: 1 1 auto;
-  max-width: 704px;
+  max-width: none;
   display: flex;
   align-items: center;
+  gap: 8px;
   box-sizing: border-box;
   height: 48px;
   min-height: 48px;
   max-height: 48px;
   min-width: 0;
-  padding: 0 16px 0 24px;
+  padding: 4px 8px 4px 24px;
   border: 1px solid #d4d4d4;
   border-radius: 100px;
   background-color: var(--background-color);
@@ -253,19 +273,24 @@
 }
 
 .bc-bottom-ask-bar-send {
-  flex-shrink: 0;
-  display: inline-flex;
+  display: flex;
+  flex: 0 0 40px;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
   width: 40px;
   height: 40px;
   min-width: 40px;
+  min-height: 40px;
+  margin: 0;
   padding: 0;
+  border: none;
   border-radius: 50%;
   background-color: var(--spectrum-gray-200);
   cursor: pointer;
   line-height: 0;
-  overflow: visible;
+  text-align: center;
+  overflow: hidden;
 }
 
 .bc-bottom-ask-bar-send .icon {
@@ -274,6 +299,8 @@
   justify-content: center;
   width: 16px;
   height: 16px;
+  margin: 0;
+  flex-shrink: 0;
   line-height: 0;
 }
 
@@ -281,14 +308,18 @@
   display: block;
   width: 16px;
   height: 16px;
+  margin: 0;
+
+  /* The plane's mass sits in the left of the 24 viewBox; nudge so it reads centered in the disc. */
+  transform: translateX(2px);
 }
 
 .bc-bottom-ask-bar-actions {
-  flex: 0 0 auto;
+  justify-self: end;
   display: flex;
   align-items: center;
   gap: 32px;
-  margin-left: auto;
+  padding-right: 12px;
 }
 
 .bc-bottom-ask-bar-hide {
@@ -384,6 +415,15 @@
   background-color: var(--spectrum-gray-200);
 }
 
+/* The asset is authored for the FAB's white pill (#d8d8d8); on the grey disc the design uses the
+   darker --spectrum-gray-400 (#b1b1b1). An <img> can't inherit currentColor, and the enabled rule
+   below already recolours this same icon with a filter, so stay with that: flatten to white, then
+   scale to the token (255 * 0.694 = 177). There is currently no automated check pinning this value
+   to --spectrum-gray-400, so if that token changes, update the 0.694 multiplier here to match. */
+.bc-bottom-ask-bar-send:disabled .icon img {
+  filter: brightness(0) invert(1) brightness(0.694);
+}
+
 .bc-bottom-ask-bar-send:not(:disabled) .icon img {
   filter: brightness(0) invert(1);
 }
@@ -418,7 +458,7 @@
   border: none;
   font-family: var(--body-font-family);
   font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-normal);
   cursor: pointer;
   color: var(--non-spectrum-dark-gray);
   background-color: rgb(255 255 255 / 70%);
@@ -478,9 +518,9 @@
 
 #bc-trigger .bc-trigger-ask {
   font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-normal);
   line-height: 1.2;
-  color: var(--non-spectrum-dark-gray);
+  color: var(--spectrum-gray-500);
   letter-spacing: -0.01em;
   transition: color 0.2s ease;
 }
@@ -492,6 +532,13 @@
   margin-left: auto;
   line-height: 0;
   flex-shrink: 0;
+}
+
+/* The design's outlined send glyph fills a square box, unlike the flatter filled plane it
+   replaced, so scope it below the 18px shared with the sparkle icon to hold the FAB's weight. */
+#bc-trigger .bc-trigger-send img {
+  width: 16px;
+  height: 16px;
 }
 
 /* EXLM-5715 — entry variant visibility */
@@ -533,7 +580,7 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
 }
 
 #bc-trigger:hover .bc-trigger-ask {
-  color: var(--non-spectrum-dark-gray);
+  color: var(--spectrum-gray-800);
 }
 
 #bc-trigger[aria-expanded='true'] {
