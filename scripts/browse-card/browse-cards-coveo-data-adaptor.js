@@ -130,7 +130,8 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     const eventSpeakersProfile =
       raw?.el_event_speakers_profile_picture_url || el_event_speakers_profile_picture_url || '';
 
-    const coveoDate = raw?.date ?? parentResult?.raw?.date;
+    const rawDate = raw?.date;
+    const coveoDate = rawDate != null && rawDate !== '' ? rawDate : parentResult?.raw?.date;
     const isOnDemandEvent = contentType?.toLowerCase() === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase();
 
     let eventDate = '';
