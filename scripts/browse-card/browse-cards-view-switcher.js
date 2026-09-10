@@ -148,35 +148,46 @@ export default class BrowseCardViewSwitcher {
     const eventInfo = card.querySelector('.browse-card-event-info');
     const footer = card.querySelector('.browse-card-footer');
 
-    if (!eventInfo || !footer || cardFigure.querySelector('.card-figure-date')) return;
+    if (!eventInfo || !footer || !cardFigure) return;
+    if (cardFigure.querySelector('.card-figure-date')) return;
 
-    const eventTimeText = eventInfo.querySelector('.browse-card-event-time h6')?.textContent;
-    if (!eventTimeText || !eventTimeText.includes('|')) return;
+    const eventTimeText = eventInfo.querySelector('.browse-card-event-time h6')?.textContent?.trim();
+    if (!eventTimeText) return;
+
+    const isOnDemand = card.classList.contains('event-on-demand-event-card');
+
+    /* On-demand keeps the thumbnail; date is footer-only (no `|` time, no figure overlay). */
+    if (isOnDemand) {
+      if (!footer.querySelector('.browse-card-event-info')) {
+        footer.appendChild(eventInfo.cloneNode(true));
+      }
+      return;
+    }
+
+    const hasTime = eventTimeText.includes('|');
+    if (!hasTime) return;
 
     const [rawDate, rawTime] = eventTimeText.split('|');
     const dateParts = rawDate.trim();
     const timeAndZone = rawTime.trim();
 
     const dateDisplay = htmlToElement(`
-      <div class="card-figure-date">
-        <div class="calendar-icon">
-          <span class="icon icon-calendar-white"></span>
+        <div class="card-figure-date">
+          <div class="calendar-icon">
+            <span class="icon icon-calendar-white"></span>
+          </div>
+          <div class="date-display">
+            ${dateParts}
+          </div>
+          ${timeAndZone ? `<div class="time-display">${timeAndZone}</div>` : ''}
         </div>
-        <div class="date-display">
-          ${dateParts}
-        </div>
-        <div class="time-display">
-          ${timeAndZone}
-        </div>
-      </div>
-    `);
+      `);
 
     cardFigure.appendChild(dateDisplay);
     decorateIcons(dateDisplay);
 
-    if (!footer.contains(eventInfo)) {
-      const clonedEventInfo = eventInfo.cloneNode(true);
-      footer.appendChild(clonedEventInfo);
+    if (!footer.querySelector('.browse-card-event-info')) {
+      footer.appendChild(eventInfo.cloneNode(true));
     }
   }
 
@@ -378,9 +389,9 @@ export default class BrowseCardViewSwitcher {
   enhanceCardsForListView() {
     const cards = this.block.querySelectorAll('.browse-card');
     cards.forEach((card) => {
-      /* On-demand cards already carry date/duration in content; skip upcoming-style list mutations (footer clone, figure date). */
-      if (card.classList.contains('event-on-demand-event-card')) return;
       BrowseCardViewSwitcher.addCardDateInfo(card);
+      /* On-demand list rows get date only; skip upcoming-only location/speakers/expand. */
+      if (card.classList.contains('event-on-demand-event-card')) return;
       this.setupExpandableDescription(card);
       BrowseCardViewSwitcher.addLocationTypeInfo(card);
       BrowseCardViewSwitcher.addSpeakersToFooter(card);
