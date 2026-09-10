@@ -81,6 +81,7 @@ export class BrowseCardVideoClipModal {
     this.miniPlayerLabel = null;
     this.isModalReady = false;
     this.firstPlay = true;
+    this.videoCompleted = false;
 
     this.isCompactMode = isCompactUIMode();
     this.loadStyles();
@@ -315,6 +316,9 @@ export class BrowseCardVideoClipModal {
         // Guard against repeated play messages within a single playback session
         this.firstPlay = false;
         pushVideoEvent(videoDetails);
+      } else if (event.data.state === 'complete' && !this.videoCompleted) {
+        this.videoCompleted = true;
+        pushVideoEvent(videoDetails, 'videoCompleted');
       }
     };
 
@@ -436,8 +440,9 @@ export class BrowseCardVideoClipModal {
         existingIframe.remove();
       }
 
-      // New video loaded - reset analytics guard so it can emit its own play event
+      // New video loaded - reset analytics guards so it can emit its own play/complete events
       this.firstPlay = true;
+      this.videoCompleted = false;
 
       const { lang = 'en' } = getPathDetails() || {};
       let videoSrc = await getLocalizedVideoUrl(videoURL, lang);
