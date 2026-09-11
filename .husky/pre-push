@@ -2,3 +2,8 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 npm run check:branch-name
+
+# ai-tracker: start
+_AI_STDIN=$(cat)
+echo "$_AI_STDIN" | "C:/Users/ruhis/.ai-tracker/hooks/pre-push" "$@"
+# ai-tracker: end

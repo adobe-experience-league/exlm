@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# ai-tracker: start
+"C:/Users/ruhis/.ai-tracker/hooks/post-commit"
+# ai-tracker: end

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# ai-tracker: start
+_AI_STDIN=$(cat)
+echo "$_AI_STDIN" | "C:/Users/ruhis/.ai-tracker/hooks/post-rewrite" "$@"
+# ai-tracker: end
