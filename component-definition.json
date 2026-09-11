@@ -2039,10 +2039,7 @@
                   "heading": "Your Experience League just got more personal.",
                   "description": "Reaching your career goals has never been easier. Explore learning recommendations we made just for you based on your product interests, experience level, and role.",
                   "incompleteProfileText": "Complete your profile for a more personalized experience.",
-                  "cta1_Type": "primary",
-                  "cta1_customBgColor": "--spectrum-gray-700",
-                  "cta1_textColor": "white",
-                  "cta1_customBgHexCode": "000000",
+                  "classes": ["cta1-primary"],
                   "cta1_linkText": "Manage profile"
                 }
               }
