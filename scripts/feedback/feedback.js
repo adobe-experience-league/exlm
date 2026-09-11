@@ -1,14 +1,6 @@
 import { decorateIcons, getMetadata, loadCSS } from '../lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
-import {
-  createTag,
-  htmlToElement,
-  getPathDetails,
-  fetchLanguagePlaceholders,
-  fetchFragment,
-  isDocPage,
-  isOnDemandEventPage,
-} from '../scripts.js';
+import { createTag, htmlToElement, getPathDetails, fetchLanguagePlaceholders, fetchFragment, isDocPage } from '../scripts.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { sendNotice } from '../toast/toast.js';
 
@@ -345,7 +337,7 @@ function mountFeedbackUi(fb, attempt = 0) {
       observeRailContent(fb, railContent);
       return;
     }
-    if ((isDocPage || isOnDemandEventPage) && attempt < RETRY_LIMIT) {
+    if (isDocPage && attempt < RETRY_LIMIT) {
       mountRetryTimeoutId = setTimeout(() => mountFeedbackUi(fb, attempt + 1), RETRY_DELAY);
       return;
     }
