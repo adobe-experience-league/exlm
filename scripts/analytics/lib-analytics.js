@@ -436,7 +436,6 @@ export async function pushLinkClick(e) {
   let navigationSolution = '';
 
   if (navigation) {
-    // Prefer an explicit navigation solution attribute when available.
     navigationSolution = navigation?.querySelector('.nav-item-toggle-text')?.textContent.trim() || '';
 
     // Find the title element and exclude the subtitle from analytics.
@@ -481,9 +480,10 @@ export async function pushLinkClick(e) {
   // For navigation-bar clicks, use the solution associated with the
   // navigation item. For other links, retain the existing page solution.
   if (!isCourseStartCTA) {
-    linkObj.solution = navigation
-      ? navigationSolution
-      : document.querySelector('meta[name="solution"]')?.content?.split(',')[0].trim() || '';
+    linkObj.solution =
+      navigation && navigationSolution
+        ? navigationSolution
+        : document.querySelector('meta[name="solution"]')?.content?.split(',')[0].trim() || '';
   }
 
   window.adobeDataLayer.push({
