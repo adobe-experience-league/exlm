@@ -6584,6 +6584,10 @@
             "name": "Block options",
             "children": [
               {
+                "name": "Default",
+                "value": ""
+              },
+              {
                 "name": "Enable profile card",
                 "value": "enable-profile-card"
               }
