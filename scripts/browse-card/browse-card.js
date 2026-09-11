@@ -644,6 +644,7 @@ export async function buildCard(element, model) {
         type === CONTENT_TYPES.PLAYLIST.MAPPING_KEY ||
         type === CONTENT_TYPES.TUTORIAL.MAPPING_KEY ||
         type === CONTENT_TYPES.EVENT.MAPPING_KEY ||
+        type === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase() ||
         type === CONTENT_TYPES['VIDEO CLIP'].MAPPING_KEY
       ) {
         const playButton = document.createElement('div');

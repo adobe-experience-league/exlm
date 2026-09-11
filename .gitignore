@@ -47,3 +47,8 @@ skills/
 .windsurf/
 .zencoder/
 plans/
+
+# IDE / editor / OS
+.vscode/
+.idea/
+Thumbs.db
