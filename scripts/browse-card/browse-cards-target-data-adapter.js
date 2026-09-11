@@ -12,8 +12,14 @@ const BrowseCardsTargetDataAdapter = (() => {
    */
   const mapResultsToCardsDataModel = (data) => {
     const contentTypeKey = data?.contentType?.toUpperCase();
-    // Normalize contentType to lowercase to match CONTENT_TYPES mapping keys
-    const contentType = data?.contentType?.toLowerCase() || '';
+    // Normalize contentType to lowercase to match CONTENT_TYPES mapping keys.
+    // Target only returns the generic "Event" bucket; on-demand-event decoration/
+    // routing downstream (decorateOnDemandEvents, browse-cards-delegate) keys off
+    // the compound value Coveo sends natively for on-demand events.
+    const contentType =
+      data?.contentType?.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY
+        ? CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase()
+        : data?.contentType?.toLowerCase() || '';
     const articlePath = `/${getPathDetails().lang}${data?.path}`;
     const fullURL = new URL(articlePath, window.location.origin).href;
     const solutions = data?.product?.split(',').map((s) => s.trim()) || [];
