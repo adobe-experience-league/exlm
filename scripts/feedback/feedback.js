@@ -15,11 +15,6 @@ try {
 const RETRY_LIMIT = 5;
 const RETRY_DELAY = 500;
 
-// TEMPORARY — local testing only. Qualtrics never injects its intercept on localhost
-// (targeting logic requires experienceleague.adobe.com), so without this the vote/
-// comment/submit click handlers never get attached at all. Remove before committing.
-const MOCK_QUALTRICS_FOR_LOCAL_TESTING = true;
-
 const FEEDBACK_CONTAINER_SELECTOR = '.feedback-ui';
 const FEEDBACK_SUCCESS = placeholders?.feedbackSuccess || 'Received! Thank you for your feedback.';
 const FEEDBACK_TEXT_ACTIVE = placeholders?.feedbackTextActive || 'Type your detailed feedback here and submit.';
@@ -407,8 +402,8 @@ function handleFeedbackIcons(el) {
       const qualtricsIcons = [...el.querySelectorAll(`.QSI__EmbeddedFeedbackContainer_SVGButton`)];
       const qualtricsIcon = qualtricsIcons.length > iconIndex && qualtricsIcons[iconIndex];
 
-      if (qualtricsIcon || MOCK_QUALTRICS_FOR_LOCAL_TESTING) {
-        if (qualtricsIcon) qualtricsIcon.click();
+      if (qualtricsIcon) {
+        qualtricsIcon.click();
 
         if (textArea) {
           textArea.placeholder = textArea.getAttribute('data-updated-placeholder');
@@ -445,19 +440,17 @@ function handleFeedbackSubmit(el) {
     const qualtricsSubmitButton = el.querySelector('.QSI__EmbeddedFeedbackContainer_TextButton');
     const qualtricsTextArea = el.querySelector('.QSI__EmbeddedFeedbackContainer_OpenText');
 
-    if ((qualtricsTextArea && qualtricsSubmitButton) || MOCK_QUALTRICS_FOR_LOCAL_TESTING) {
-      if (qualtricsTextArea && qualtricsSubmitButton) {
-        qualtricsTextArea.click();
-        qualtricsTextArea.value = textArea.value || '';
+    if (qualtricsTextArea && qualtricsSubmitButton) {
+      qualtricsTextArea.click();
+      qualtricsTextArea.value = textArea.value || '';
 
-        // Qualtrics pulls the value off the element referenced in an InputEvent
-        qualtricsTextArea.dispatchEvent(new InputEvent('input'));
-      }
+      // Qualtrics pulls the value off the element referenced in an InputEvent
+      qualtricsTextArea.dispatchEvent(new InputEvent('input'));
 
       // There is also a race condition — sometimes the form can be submitted before the value is validated in the InputEvent.
       setTimeout(() => {
         toggleCommentBox(el, false);
-        if (qualtricsSubmitButton) qualtricsSubmitButton.click();
+        qualtricsSubmitButton.click();
         secondQuestionElement.classList.add('complete');
         const { surveyCompletedText } = firstQuestionElement.dataset;
         const surveyCompletedElement = createTag('p', { class: 'subtitle' }, surveyCompletedText);
@@ -488,10 +481,6 @@ function checkInterceptLoaded() {
   const fb = document.querySelector(FEEDBACK_CONTAINER_SELECTOR);
 
   if (fb.querySelector(' .QSI__EmbeddedFeedbackContainer_Thumbs')) {
-    clearInterval(checkInterval);
-    handleFeedbackIcons(fb);
-    handleFeedbackSubmit(fb);
-  } else if (MOCK_QUALTRICS_FOR_LOCAL_TESTING) {
     clearInterval(checkInterval);
     handleFeedbackIcons(fb);
     handleFeedbackSubmit(fb);
