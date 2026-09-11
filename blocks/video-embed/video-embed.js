@@ -19,6 +19,7 @@ const embedMpc = (url, block) => {
   const urlObject = new URL(url);
   const videoId = url.href.match(/\/v\/(\d+)/)?.[1] || '';
   let firstPlay = true;
+  let completed = false;
 
   const getVideoDetails = (duration) => {
     const fullSolution = getMetadata('solution') || '';
@@ -42,7 +43,9 @@ const embedMpc = (url, block) => {
     if (event.data.state === 'play' && firstPlay) {
       firstPlay = false;
       pushVideoEvent({ ...getVideoDetails(event.data.duration), id: videoId });
-    } else if (event.data.state === 'complete') {
+    } else if (event.data.state === 'complete' && !completed) {
+      completed = true;
+      pushVideoEvent({ ...getVideoDetails(event.data.duration), id: videoId }, 'videoCompleted');
       // Remove listener once the video has completed
       window.removeEventListener('message', handleMessage);
     }

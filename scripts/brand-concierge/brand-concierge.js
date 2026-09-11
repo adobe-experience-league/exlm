@@ -7,9 +7,9 @@ import {
   applyBcEntryChrome,
   BC_ENTRY_EXPERIENCES,
   resetBcEntryVariant,
+  resolveBcEntryExperience,
   setOnExperienceApplied,
   syncHeaderBcReady,
-  waitForExperienceOrTimeout,
 } from './brand-concierge-entry-target.js';
 import { pushBcWidgetImpressionEvent, pushBcInteractionEvent } from '../analytics/lib-analytics.js';
 
@@ -19,6 +19,7 @@ const MOUNT_SELECTOR = '#brand-concierge-mount';
 const DIALOG_ID = 'bc-dialog';
 const TRIGGER_ID = 'bc-trigger';
 const BOTTOM_ASK_BAR_ID = 'bc-bottom-ask-bar';
+const ASK_AI_LABEL = 'Ask AI';
 const HEADER_CLEAR_ID = 'bc-header-clear';
 const PANEL_DISCLAIMER_ID = 'bc-panel-disclaimer';
 
@@ -389,19 +390,19 @@ function createBottomAskBar() {
   bar.id = BOTTOM_ASK_BAR_ID;
   bar.dataset.expanded = 'true';
   bar.setAttribute('role', 'region');
-  bar.setAttribute('aria-label', 'Brand Concierge');
+  bar.setAttribute('aria-label', ASK_AI_LABEL);
 
   const collapsedBtn = document.createElement('button');
   collapsedBtn.type = 'button';
   collapsedBtn.className = 'bc-bottom-ask-bar-collapsed';
   collapsedBtn.setAttribute('aria-expanded', 'true');
-  collapsedBtn.setAttribute('aria-label', 'Expand Brand Concierge ask bar');
+  collapsedBtn.setAttribute('aria-label', `Expand ${ASK_AI_LABEL} ask bar`);
 
   const collapsedIcon = document.createElement('span');
   collapsedIcon.className = 'icon icon-bc-ask-sparkles';
   const collapsedLabel = document.createElement('span');
   collapsedLabel.className = 'bc-bottom-ask-bar-collapsed-label';
-  collapsedLabel.textContent = 'Ask';
+  collapsedLabel.textContent = ASK_AI_LABEL;
   const collapsedChevron = document.createElement('span');
   collapsedChevron.className = 'icon icon-bc-chevron-bottom bc-bottom-ask-bar-collapsed-chevron';
   collapsedChevron.setAttribute('aria-hidden', 'true');
@@ -418,7 +419,7 @@ function createBottomAskBar() {
   brandIcon.className = 'icon icon-bc-ask-sparkles';
   const brandLabel = document.createElement('span');
   brandLabel.className = 'bc-bottom-ask-bar-label';
-  brandLabel.textContent = 'Brand Concierge';
+  brandLabel.textContent = ASK_AI_LABEL;
   brand.append(brandIcon, brandLabel);
   decorateIcon(brandIcon);
 
@@ -431,7 +432,7 @@ function createBottomAskBar() {
   const input = document.createElement('input');
   input.type = 'text';
   input.className = 'bc-bottom-ask-bar-input';
-  input.placeholder = 'Ask a question';
+  input.placeholder = 'Ask a question…';
   input.setAttribute('aria-label', 'Ask a question');
 
   const sendBtn = document.createElement('button');
@@ -445,8 +446,8 @@ function createBottomAskBar() {
   sendBtn.append(sendIcon);
   decorateIcon(sendIcon);
 
-  inputWrap.append(input);
-  inputGroup.append(inputWrap, sendBtn);
+  inputWrap.append(input, sendBtn);
+  inputGroup.append(inputWrap);
 
   const actions = document.createElement('div');
   actions.className = 'bc-bottom-ask-bar-actions';
@@ -454,7 +455,7 @@ function createBottomAskBar() {
   const expandBtn = document.createElement('button');
   expandBtn.type = 'button';
   expandBtn.className = 'bc-bottom-ask-bar-expand';
-  expandBtn.setAttribute('aria-label', 'Open Brand Concierge');
+  expandBtn.setAttribute('aria-label', `Open ${ASK_AI_LABEL}`);
   const expandIcon = document.createElement('span');
   expandIcon.className = 'icon icon-expand';
   expandIcon.setAttribute('aria-hidden', 'true');
@@ -526,11 +527,12 @@ function createBottomAskBar() {
 
   document.body.append(bar);
   observeBottomBarImpression(bar);
+  applyBcEntryChrome(BC_ENTRY_EXPERIENCES.BOTTOM_ASK_BAR);
   return bar;
 }
 
 /**
- * Late Target may assign bottom-ask-bar after init timed out to control FAB.
+ * Late Target may assign bottom-ask-bar after init already painted the control FAB.
  * Mount the dock only when init has already run; normal init path is unchanged.
  * @param {string} experience
  */
@@ -1069,7 +1071,7 @@ function createMountPoint() {
   triggerIcon.className = 'icon icon-bc-ask-sparkles';
   const triggerAsk = document.createElement('span');
   triggerAsk.className = 'bc-trigger-ask';
-  triggerAsk.textContent = 'Ask a question...';
+  triggerAsk.textContent = 'Ask a question…';
   trigger.append(triggerIcon, triggerAsk);
   const sendIcon = document.createElement('span');
   sendIcon.className = 'icon icon-bc-message-send bc-trigger-send';
@@ -1093,7 +1095,7 @@ function createMountPoint() {
   drawerHandle = openDrawer({
     id: DIALOG_ID,
     ariaLabel: 'AI assistant',
-    title: 'Ask',
+    title: ASK_AI_LABEL,
     titleIcon: 'bc-ask-sparkles',
     content: mount,
     canExpand: true,
@@ -1230,6 +1232,7 @@ export async function initBrandConcierge() {
 
   const { bcAlloySdkUrl, bcDatastreamId, bcOrgId, bcWebClientUrl, bcEdgeDomain } = getConfig();
   createMountPoint();
+  applyBcEntryChrome(resolveBcEntryExperience());
   injectAlloyStub();
 
   defaultPromptsOverride = null;
@@ -1263,11 +1266,9 @@ export async function initBrandConcierge() {
     cssLinkEl = document.createElement('link');
     cssLinkEl.rel = 'stylesheet';
     cssLinkEl.href = `${window.hlx.codeBasePath}/scripts/brand-concierge/brand-concierge.css`;
-    document.head.append(cssLinkEl);
-
-    const martechOff = window.location.search?.indexOf('martech=off') !== -1;
-    const experience = martechOff ? BC_ENTRY_EXPERIENCES.FLOATING_ASK_BUTTON : await waitForExperienceOrTimeout();
+    const experience = resolveBcEntryExperience();
     applyBcEntryChrome(experience);
+    document.head.append(cssLinkEl);
 
     if (experience === BC_ENTRY_EXPERIENCES.BOTTOM_ASK_BAR) {
       createBottomAskBar();
