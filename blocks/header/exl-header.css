@@ -321,8 +321,8 @@ button.bc-header-ask {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  width: 80px;
-  min-width: 80px;
+  width: auto;
+  min-width: 0;
   height: 40px;
   min-height: 40px;
   margin: 0;

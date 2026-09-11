@@ -476,9 +476,9 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
   searchBlock.innerHTML = '';
   const searchWrapper = htmlToElement(
     `<div class="search-wrapper">
-      <button type="button" class="bc-header-ask" aria-label="Ask">
+      <button type="button" class="bc-header-ask" aria-label="Ask AI">
         <span class="icon icon-bc-ask-sparkles" aria-hidden="true"></span>
-        <span class="bc-header-ask-label">Ask</span>
+        <span class="bc-header-ask-label">Ask AI</span>
       </button>
       <div class="search-short">
         <a href="${searchLink?.href || '#'}" aria-label="Search">
