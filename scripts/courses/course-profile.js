@@ -15,6 +15,8 @@ import {
   pushModuleCompletionEvent,
   pushCourseCompletionEvent,
   pushCourseStartEvent,
+  pushProfileUpdateRequestSentEvent,
+  pushProfileUpdateRequestReceivedEvent,
 } from '../analytics/lib-analytics.js';
 import { queueAnalyticsEvent } from '../analytics/analytics-queue.js';
 
@@ -324,6 +326,27 @@ async function startModule(url = window.location.pathname) {
 }
 
 /**
+ * Update the courses profile data and report the outcome to analytics.
+ * @param {string} message - Description of the update request, for the "sent" analytics event
+ * @param {Array} updatedCourses - New courses data to save
+ * @returns {Promise<number>} The HTTP status code on success
+ */
+async function updateCoursesProfileWithAnalytics(message, updatedCourses) {
+  await queueAnalyticsEvent(pushProfileUpdateRequestSentEvent, message);
+
+  try {
+    const statusCode = await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true, {
+      throwOnHttpError: true,
+    });
+    await queueAnalyticsEvent(pushProfileUpdateRequestReceivedEvent, statusCode);
+    return statusCode;
+  } catch (error) {
+    await queueAnalyticsEvent(pushProfileUpdateRequestReceivedEvent, error?.apiMessage || error?.status || 'ERROR');
+    throw error;
+  }
+}
+
+/**
  * Finish a module in a course
  * @param {string} courseId - Course URL identifier
  * @param {string} moduleId - Module URL identifier
@@ -344,8 +367,8 @@ async function finishModule(url = window.location.pathname) {
   if (module && !module.finishedAt) {
     module.finishedAt = finishTime;
 
-    // Update the profile with the new courses data
-    await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
+    await updateCoursesProfileWithAnalytics(`finishModule request for module ${moduleId}`, updatedCourses);
+
     await queueAnalyticsEvent(pushModuleCompletionEvent, courseId);
   }
 }
@@ -387,8 +410,7 @@ async function completeCourse(url = window.location.pathname) {
       course.awards.id = id;
     }
 
-    // Update the profile with the new courses data
-    await defaultProfileClient.updateProfile(COURSE_KEY, updatedCourses, true);
+    await updateCoursesProfileWithAnalytics(`completeCourse request for course ${courseId}`, updatedCourses);
 
     await queueAnalyticsEvent(pushModuleCompletionEvent, courseId);
     await queueAnalyticsEvent(pushCourseCompletionEvent, courseId, updatedCourses);

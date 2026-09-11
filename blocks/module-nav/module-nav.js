@@ -14,6 +14,8 @@ import {
   completeCourse,
   getFirstIncompleteModuleFirstStep,
 } from '../../scripts/courses/course-profile.js';
+import { pushNextButtonImpressionEvent } from '../../scripts/analytics/lib-analytics.js';
+import { queueAnalyticsEvent } from '../../scripts/analytics/analytics-queue.js';
 
 let placeholders = {};
 try {
@@ -127,6 +129,7 @@ async function handleQuizNextButton(e) {
       if (nextButton) {
         nextButton.textContent = placeholders?.nextBtnLabel || 'Next';
         nextButton.classList.remove('disabled');
+        await queueAnalyticsEvent(pushNextButtonImpressionEvent);
       }
     }
   } catch (error) {
@@ -139,6 +142,7 @@ async function handleQuizNextButton(e) {
       placeholders?.quizSubmitError || `We couldn't submit your answers. Please try again later.`;
     nextButton.parentElement.insertAdjacentElement('afterend', errorMessage);
     nextButton.classList.remove('disabled');
+    await queueAnalyticsEvent(pushNextButtonImpressionEvent);
   }
 }
 
@@ -218,24 +222,37 @@ export default async function decorate(block) {
   }
 
   // Check if this is the last step - maintaining the original condition exactly
+  let finishError = null;
   if ((!isQuiz || skipQuiz) && (await isLastStep())) {
     nextLink.classList.add('disabled');
-    if (await isLastModuleOfCourse()) {
-      await completeCourse();
-      const courseCompletionPageUrl = await getCourseCompletionPageUrl();
-      if (courseCompletionPageUrl) {
-        nextLink.href = courseCompletionPageUrl;
+    try {
+      if (await isLastModuleOfCourse()) {
+        await retryProfileUpdate(completeCourse);
+        const courseCompletionPageUrl = await getCourseCompletionPageUrl();
+        if (courseCompletionPageUrl) {
+          nextLink.href = courseCompletionPageUrl;
+        }
+      } else {
+        const { moduleId } = extractCourseModuleIds();
+        if (moduleId) clearStoredModuleQuizAnswers(moduleId);
+        await retryProfileUpdate(finishModule);
+        const nextModuleFirstStepUrl = await getFirstIncompleteModuleFirstStep();
+        if (nextModuleFirstStepUrl) {
+          nextLink.href = nextModuleFirstStepUrl;
+        }
       }
-    } else {
-      const { moduleId } = extractCourseModuleIds();
-      if (moduleId) clearStoredModuleQuizAnswers(moduleId);
-      await finishModule();
-      const nextModuleFirstStepUrl = await getFirstIncompleteModuleFirstStep();
-      if (nextModuleFirstStepUrl) {
-        nextLink.href = nextModuleFirstStepUrl;
-      }
+      nextLink.classList.remove('disabled');
+      await queueAnalyticsEvent(pushNextButtonImpressionEvent);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error completing course:', error);
+      finishError = document.createElement('div');
+      finishError.className = 'module-nav-finish-error';
+      finishError.textContent =
+        placeholders?.quizSubmitError || `We couldn't submit your answers. Please try again later.`;
+      nextLink.classList.remove('disabled');
+      await queueAnalyticsEvent(pushNextButtonImpressionEvent);
     }
-    nextLink.classList.remove('disabled');
   }
 
   // Check if quiz-scorecard block is present on page load
@@ -253,4 +270,9 @@ export default async function decorate(block) {
 
   // Add to block
   block.appendChild(container);
+
+  // Show any finish failure message below the button row (same as the quiz path)
+  if (finishError) {
+    container.insertAdjacentElement('afterend', finishError);
+  }
 }
