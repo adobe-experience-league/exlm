@@ -2,6 +2,7 @@ import { convertToTitleCase } from './browse-card-utils.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import { fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { isSignedInUser } from '../auth/profile.js';
+import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 const BrowseCardsTargetDataAdapter = (() => {
   let placeholders = {};
@@ -11,19 +12,25 @@ const BrowseCardsTargetDataAdapter = (() => {
    * @returns {Object} The BrowseCards data model.
    */
   const mapResultsToCardsDataModel = (data) => {
-    const contentTypeKey = data?.contentType?.toUpperCase();
-    // Normalize contentType to lowercase to match CONTENT_TYPES mapping keys.
-    // Target only returns the generic "Event" bucket; on-demand-event decoration/
-    // routing downstream (decorateOnDemandEvents, browse-cards-delegate) keys off
-    // the compound value Coveo sends natively for on-demand events.
-    const contentType =
-      data?.contentType?.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY
-        ? CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase()
-        : data?.contentType?.toLowerCase() || '';
+    // Single normalized read of the raw contentType so badgeTitle / viewLinkPlaceholderKey /
+    // contentType / type can never silently diverge from each other.
+    const baseContentType = data?.contentType?.trim() || '';
+    const contentTypeKey = baseContentType.toUpperCase();
+    // Target only returns the generic "Event" bucket, but on-demand-event decoration/routing
+    // downstream (decorateOnDemandEvents, browse-cards-delegate) keys off the compound value
+    // Coveo sends natively for on-demand events. Gated behind isEventsV2, mirroring the same
+    // remap in browse-cards-coveo-data-adaptor.js.
+    // TODO: Remove this condition once Events v2 is live
+    const isOnDemandEvent =
+      isFeatureEnabled('isEventsV2') && baseContentType.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY;
+    // Normalize contentType to lowercase to match CONTENT_TYPES mapping keys
+    const contentType = isOnDemandEvent
+      ? CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase()
+      : baseContentType.toLowerCase();
     const articlePath = `/${getPathDetails().lang}${data?.path}`;
     const fullURL = new URL(articlePath, window.location.origin).href;
     const solutions = data?.product?.split(',').map((s) => s.trim()) || [];
-    const viewLinkPlaceholderKey = `browseCard${convertToTitleCase(data?.contentType)}ViewLabel`.replace(/\s+/g, '');
+    const viewLinkPlaceholderKey = `browseCard${convertToTitleCase(baseContentType)}ViewLabel`.replace(/\s+/g, '');
 
     // Extract course-related fields
     const level = data?.level || data?.el_level || '';
@@ -46,7 +53,7 @@ const BrowseCardsTargetDataAdapter = (() => {
       viewLink: fullURL,
       viewLinkText: placeholders[viewLinkPlaceholderKey]
         ? placeholders[viewLinkPlaceholderKey]
-        : `View ${data?.contentType}`,
+        : `View ${baseContentType}`,
       // Course-specific fields
       el_level: level,
       el_course_duration: duration,
