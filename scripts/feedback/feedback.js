@@ -1,6 +1,14 @@
 import { decorateIcons, getMetadata, loadCSS } from '../lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
-import { createTag, htmlToElement, getPathDetails, fetchLanguagePlaceholders, fetchFragment } from '../scripts.js';
+import {
+  createTag,
+  htmlToElement,
+  getPathDetails,
+  fetchLanguagePlaceholders,
+  fetchFragment,
+  isDocPage,
+  isOnDemandEventPage,
+} from '../scripts.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { sendNotice } from '../toast/toast.js';
 
@@ -175,7 +183,7 @@ function decorateExpandedCtrl(expandedControls) {
 function decorateOpenedCtrl(openedControl) {
   const detailedFb = createTag('span');
   const text = openedControl.querySelector('div:nth-child(1) > div').textContent.trim();
-  const desktopChevronIcon = htmlToElement('<span class="icon is-desktop icon-chevron-blue"></span>');
+  const desktopChevronIcon = htmlToElement('<span class="icon icon-chevron-blue"></span>');
   detailedFb.textContent = text;
   openedControl.innerHTML = '';
   openedControl.append(detailedFb);
@@ -337,7 +345,7 @@ function mountFeedbackUi(fb, attempt = 0) {
       observeRailContent(fb, railContent);
       return;
     }
-    if (attempt < RETRY_LIMIT) {
+    if ((isDocPage || isOnDemandEventPage) && attempt < RETRY_LIMIT) {
       mountRetryTimeoutId = setTimeout(() => mountFeedbackUi(fb, attempt + 1), RETRY_DELAY);
       return;
     }
