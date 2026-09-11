@@ -1,5 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { decorateCta } from '../../scripts/utils/button-utils.js';
 
 export default function decorate(block) {
   const children = [...block.children];
@@ -90,7 +90,7 @@ export default function decorate(block) {
         // Only show CTA if author provided real label text
         if (text && href && text !== href) {
           ctaCell.classList.add('grid-card-cta');
-          ctaCell.innerHTML = decorateCustomButtons(ctaCell);
+          ctaCell.innerHTML = decorateCta(ctaCell, block, 'cta');
           contentWrapper.appendChild(ctaCell);
         }
       }
