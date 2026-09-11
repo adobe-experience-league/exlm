@@ -76,10 +76,6 @@
   cursor: pointer;
 }
 
-.feedback-ui .left .icon-chevron-blue {
-  display: none;
-}
-
 .feedback-ui .like-btns button {
   width: 28px;
   height: 28px;
@@ -210,10 +206,6 @@
   color: var(--non-spectrum-grey-updated);
 }
 
-.feedback-ui .header-text-mobile {
-  display: none;
-}
-
 .feedback-ui .cta button span:nth-child(1) {
   padding: 0;
 }
@@ -295,7 +287,6 @@
   margin-bottom: auto;
 }
 
-.feedback-ui .right[aria-hidden='true'] .header-text-mobile,
 .feedback-ui .right[aria-hidden='true'] .expanded-controls {
   display: none;
 }

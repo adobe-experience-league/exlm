@@ -67,7 +67,6 @@ function decorateFirstQuestion(firstQuestion) {
   firstQuestion.appendChild(document.createElement('h3')).textContent = wasThisHelpful;
   firstQuestion.appendChild(newDiv);
   firstQuestion.appendChild(createTag('div', { class: 'error' }));
-  firstQuestion.innerHTML += '<span class="icon icon-chevron-blue"></span>';
   firstQuestion.dataset.updatedTitle = thankyouForYourFeedback;
   firstQuestion.dataset.subtitle = subTitle;
   firstQuestion.dataset.surveyCompletedText = surveyCompletedText;
@@ -117,13 +116,6 @@ function decorateSecondQuestion(secondQuestion) {
   secondQuestion.innerHTML = '';
   secondQuestion.appendChild(newDiv);
   secondQuestion.appendChild(ctaDiv);
-}
-
-function decorateHeaderTxtMobile(headerTextMobile) {
-  const newSpan = document.createElement('span');
-  newSpan.textContent = headerTextMobile.textContent.trim();
-  headerTextMobile.innerHTML = '';
-  headerTextMobile.appendChild(newSpan);
 }
 
 function decorateExpandedCtrl(expandedControls) {
@@ -225,17 +217,15 @@ function decorateFeedback(el) {
   const secondEl = el.querySelector('.second-question');
   secondEl.setAttribute('aria-hidden', true);
   const openedCtrlEl = el.querySelector('.opened-controls');
-  const headerTxtMobileEl = el.querySelector('.header-text-mobile');
   const expandedCtrlEl = el.querySelector('.expanded-controls');
 
   decorateFirstQuestion(firstEl);
   decorateSecondQuestion(secondEl);
   decorateOpenedCtrl(openedCtrlEl);
-  decorateHeaderTxtMobile(headerTxtMobileEl);
   decorateExpandedCtrl(expandedCtrlEl);
 
   leftEl.append(qualtricsElContainer, firstEl, secondEl);
-  rightEl.append(openedCtrlEl, headerTxtMobileEl, expandedCtrlEl);
+  rightEl.append(openedCtrlEl, expandedCtrlEl);
   rightEl.setAttribute('aria-hidden', true);
   container.append(leftEl, rightEl);
 
@@ -308,6 +298,7 @@ function getDesktopRailContent() {
 }
 
 let railObserver;
+let mountRetryTimeoutId;
 
 function positionAfterToc(fb, railContent) {
   const toc = railContent.querySelector('.mini-toc-wrapper');
@@ -333,6 +324,11 @@ function mountFeedbackUi(fb, attempt = 0) {
     railObserver = null;
   }
 
+  if (mountRetryTimeoutId) {
+    clearTimeout(mountRetryTimeoutId);
+    mountRetryTimeoutId = null;
+  }
+
   if (isDesktop) {
     const railContent = getDesktopRailContent();
     if (railContent) {
@@ -342,7 +338,7 @@ function mountFeedbackUi(fb, attempt = 0) {
       return;
     }
     if (attempt < RETRY_LIMIT) {
-      setTimeout(() => mountFeedbackUi(fb, attempt + 1), RETRY_DELAY);
+      mountRetryTimeoutId = setTimeout(() => mountFeedbackUi(fb, attempt + 1), RETRY_DELAY);
       return;
     }
   }
@@ -396,7 +392,6 @@ function handleFeedbackIcons(el) {
       const textarea = el.querySelector('.more-question > textarea');
       textarea.disabled = false;
       toggleCommentBox(el, true);
-      firstQuestionElement.classList.add('answered');
       [...feedbackIcon].forEach((otherIcon) => setThumbIcon(otherIcon, otherIcon === icon));
       // find the real qualtrics icon to click, based on index.
       const qualtricsIcons = [...el.querySelectorAll(`.QSI__EmbeddedFeedbackContainer_SVGButton`)];
@@ -467,6 +462,7 @@ function handleFeedbackSubmit(el) {
 
 export function feedbackError() {
   const fb = document.querySelector(FEEDBACK_CONTAINER_SELECTOR);
+  if (!fb) return;
   // eslint-disable-next-line no-console
   console.error("Couldn't embed Qualtrics survey intercept.");
   showQualtricsLoadingError(fb);
@@ -480,7 +476,7 @@ let retryCount = 0;
 function checkInterceptLoaded() {
   const fb = document.querySelector(FEEDBACK_CONTAINER_SELECTOR);
 
-  if (fb.querySelector(' .QSI__EmbeddedFeedbackContainer_Thumbs')) {
+  if (fb?.querySelector(' .QSI__EmbeddedFeedbackContainer_Thumbs')) {
     clearInterval(checkInterval);
     handleFeedbackIcons(fb);
     handleFeedbackSubmit(fb);
