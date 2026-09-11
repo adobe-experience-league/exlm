@@ -437,13 +437,10 @@ export async function pushLinkClick(e) {
 
   if (navigation) {
     // Prefer an explicit navigation solution attribute when available.
-    navigationSolution =
-      navigation?.querySelector('.nav-item-toggle-text')?.textContent.trim() || '';
+    navigationSolution = navigation?.querySelector('.nav-item-toggle-text')?.textContent.trim() || '';
 
     // Find the title element and exclude the subtitle from analytics.
-    const titleElement =
-      e.target.closest('.nav-item')?.querySelector(':scope > a') ||
-      e.target.closest('a');
+    const titleElement = e.target.closest('.nav-item')?.querySelector(':scope > a') || e.target.closest('a');
 
     if (titleElement) {
       // Clone the element so the subtitle can be removed without modifying the DOM.
@@ -511,7 +508,6 @@ export async function pushLinkClick(e) {
     },
   });
 }
-
 
 export function handleComponentClick(e) {
   const component = e.target.closest('[data-block-name]');
