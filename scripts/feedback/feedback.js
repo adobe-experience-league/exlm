@@ -1,6 +1,13 @@
 import { decorateIcons, getMetadata, loadCSS } from '../lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
-import { createTag, htmlToElement, getPathDetails, fetchLanguagePlaceholders, fetchFragment, isDocPage } from '../scripts.js';
+import {
+  createTag,
+  htmlToElement,
+  getPathDetails,
+  fetchLanguagePlaceholders,
+  fetchFragment,
+  isDocPage,
+} from '../scripts.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { sendNotice } from '../toast/toast.js';
 
