@@ -1387,49 +1387,40 @@
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Grid Card",
                     "model": "grid-card",
+                    "classes": "cta-secondary",
                     "cardTitle": "Card Title",
                     "cardTitleType": "h3",
                     "cardDescription": "Card description text",
                     "fileReference": "/content/dam/exlm/content-at-scale.png",
                     "fileReferenceAlt": "Card image",
-                    "cta_Type": "secondary",
                     "cta_linkText": "Learn More",
-                    "cta_link": "http://experienceleague.adobe.com/",
-                    "cta_customBgColor": "--spectrum-gray-700",
-                    "cta_textColor": "white",
-                    "cta_customBgHexCode": "000000"
+                    "cta_link": "http://experienceleague.adobe.com/"
                   },
                   "item2": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Grid Card",
                     "model": "grid-card",
+                    "classes": "cta-secondary",
                     "cardTitle": "Card Title",
                     "cardTitleType": "h3",
                     "cardDescription": "Card description text",
                     "fileReference": "/content/dam/exlm/content-at-scale.png",
                     "fileReferenceAlt": "Card image",
-                    "cta_Type": "secondary",
                     "cta_linkText": "Learn More",
-                    "cta_link": "http://experienceleague.adobe.com/",
-                    "cta_customBgColor": "--spectrum-gray-700",
-                    "cta_textColor": "white",
-                    "cta_customBgHexCode": "000000"
+                    "cta_link": "http://experienceleague.adobe.com/"
                   },
                   "item3": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Grid Card",
                     "model": "grid-card",
+                    "classes": "cta-secondary",
                     "cardTitle": "Card Title",
                     "cardTitleType": "h3",
                     "cardDescription": "Card description text",
                     "fileReference": "/content/dam/exlm/content-at-scale.png",
                     "fileReferenceAlt": "Card image",
-                    "cta_Type": "secondary",
                     "cta_linkText": "Learn More",
-                    "cta_link": "http://experienceleague.adobe.com/",
-                    "cta_customBgColor": "--spectrum-gray-700",
-                    "cta_textColor": "white",
-                    "cta_customBgHexCode": "000000"
+                    "cta_link": "http://experienceleague.adobe.com/"
                   }
                 }
               }
@@ -1446,17 +1437,14 @@
                 "template": {
                   "name": "Grid Card",
                   "model": "grid-card",
+                  "classes": "cta-secondary",
                   "cardTitle": "Card Title",
                   "cardTitleType": "h3",
                   "cardDescription": "Card description text",
                   "fileReference": "/content/dam/exlm/content-at-scale.png",
                   "fileReferenceAlt": "Card image",
-                  "cta_Type": "secondary",
                   "cta_linkText": "Learn More",
-                  "cta_link": "http://experienceleague.adobe.com/",
-                  "cta_customBgColor": "--spectrum-gray-700",
-                  "cta_textColor": "white",
-                  "cta_customBgHexCode": "000000"
+                  "cta_link": "http://experienceleague.adobe.com/"
                 }
               }
             }
@@ -2039,7 +2027,7 @@
                   "heading": "Your Experience League just got more personal.",
                   "description": "Reaching your career goals has never been easier. Explore learning recommendations we made just for you based on your product interests, experience level, and role.",
                   "incompleteProfileText": "Complete your profile for a more personalized experience.",
-                  "classes": ["cta1-primary"],
+                  "classes": ["", "cta1-primary"],
                   "cta1_linkText": "Manage profile"
                 }
               }
