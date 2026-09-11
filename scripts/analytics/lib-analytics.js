@@ -439,10 +439,7 @@ export async function pushLinkClick(e) {
   let navigationSolution = '';
 
   if (navigation) {
-    const rootNavItem = navigation.closest('.nav-item-root');
-    navigationSolution = rootNavItem?.matches(':first-child')
-      ? navigation.querySelector('.nav-item-toggle-text')?.textContent.trim()
-      : '';
+    navigationSolution = navigation.querySelector('.nav-tab-heading')?.textContent.trim() || '';
 
     const titleElement = nearestNavItem?.querySelector(':scope > a') || e.target.closest('a');
 
