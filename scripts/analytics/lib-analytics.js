@@ -405,7 +405,10 @@ export async function pushLinkClick(e) {
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
   const isCourseStartCTA = e.target.closest('.course-breakdown-header-start-button');
   const header = e.target.closest('.header');
-  const navigation = e.target.closest('.nav-item:not(.nav-item-leaf)');
+  const nearestNavItem = e.target.closest('.nav-item');
+  const navigation = nearestNavItem?.classList.contains('nav-item-leaf')
+    ? nearestNavItem.parentElement?.closest('.nav-item:not(.nav-item-leaf)')
+    : nearestNavItem;
 
   let linkLocation = 'unidentified';
   if (e.target.closest('.rail-right') || e.target.closest('.mini-toc-wrapper')) {
@@ -436,11 +439,11 @@ export async function pushLinkClick(e) {
   let navigationSolution = '';
 
   if (navigation) {
-    navigationSolution = navigation?.querySelector('.nav-item-toggle-text')?.textContent.trim() || '';
+    navigationSolution = navigation.querySelector('.nav-item-toggle-text')?.textContent.trim() || '';
+
+    const titleElement = nearestNavItem?.querySelector(':scope > a') || e.target.closest('a');
 
     // Find the title element and exclude the subtitle from analytics.
-    const titleElement = e.target.closest('.nav-item')?.querySelector(':scope > a') || e.target.closest('a');
-
     if (titleElement) {
       // Clone the element so the subtitle can be removed without modifying the DOM.
       const titleClone = titleElement.cloneNode(true);
