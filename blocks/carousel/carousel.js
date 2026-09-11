@@ -68,7 +68,7 @@ export default function decorate(block) {
     if (blockType === 'detailed-teaser') {
       contentDOM = generateDetailedTeaserDOM([image, ...rest], classes);
     } else if (blockType === 'media') {
-      contentDOM = generateMediaDOM([image, ...rest]);
+      contentDOM = generateMediaDOM([image, ...rest], classes);
     } else {
       contentDOM = generateTeaserDOM([image, ...rest], classes);
     }
