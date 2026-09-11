@@ -29,15 +29,10 @@
     margin: 0;
     padding-top: 8px;
     padding-bottom: 50px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  /* mini-toc-container is a row-direction flex container (docs.css), so by default
-     rail-content stretches to match its full page-height span. That let the sticky
-     TOC above it stay "stuck" for nearly the whole page, overlapping the feedback
-     card sitting right after it. align-self: flex-start makes rail-content hug its
-     own content height instead, so feedback attaches directly after the TOC as a
-     normal continuation — no gap, and the TOC's sticky range is naturally bounded
-     by that short height instead of the full page. */
   .docs main .section.rail.rail-right .rail-content {
     align-self: flex-start;
   }

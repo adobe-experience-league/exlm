@@ -199,9 +199,6 @@ function hideFeedbackBar(state = true) {
   document.querySelector(FEEDBACK_CONTAINER_SELECTOR).setAttribute('aria-hidden', state);
 }
 
-// Per Figma: expanding "Detailed feedback options" shows only the git-buttons/link
-// panel — it must not also reveal the comment box, which stays strictly vote-gated.
-// These two are kept as independent toggles rather than one combined function.
 function toggleDetailedOptions(el, show = false) {
   const rightEl = el.querySelector('.right');
 
@@ -310,21 +307,43 @@ const DESKTOP_MEDIA_QUERY = '(width >= 900px)';
 
 function getDesktopRailContent() {
   return (
-    document.querySelector('main .mini-toc-container .rail-content') || document.querySelector('main .mini-toc-container')
+    document.querySelector('main .mini-toc-container .rail-content') ||
+    document.querySelector('main .mini-toc-container')
   );
 }
 
-// Single shared feedback node, appended (not duplicated) as the last item in the right
-// rail on desktop, or right before <footer> on mobile/tablet — per EXLM-5846: "moves from
-// sticky footer to the last position in the right rail" (static placement, no pinning).
+let railObserver;
+
+function positionAfterToc(fb, railContent) {
+  const toc = railContent.querySelector('.mini-toc-wrapper');
+  if (toc) {
+    if (toc.nextElementSibling !== fb) toc.after(fb);
+  } else if (railContent.lastElementChild !== fb) {
+    railContent.append(fb);
+  }
+}
+
+function observeRailContent(fb, railContent) {
+  if (railObserver) railObserver.disconnect();
+  railObserver = new MutationObserver(() => positionAfterToc(fb, railContent));
+  railObserver.observe(railContent, { childList: true });
+}
+
+// Append the shared feedback element, right after the TOC in the rail on desktop, or right before the footer on mobile.
 function mountFeedbackUi(fb, attempt = 0) {
   const isDesktop = window.matchMedia(DESKTOP_MEDIA_QUERY).matches;
+
+  if (railObserver) {
+    railObserver.disconnect();
+    railObserver = null;
+  }
 
   if (isDesktop) {
     const railContent = getDesktopRailContent();
     if (railContent) {
-      fb.classList.remove('feedback-ui--mobile');
-      railContent.append(fb);
+      fb.classList.remove('feedback-mobile-ui');
+      positionAfterToc(fb, railContent);
+      observeRailContent(fb, railContent);
       return;
     }
     if (attempt < RETRY_LIMIT) {
@@ -333,7 +352,7 @@ function mountFeedbackUi(fb, attempt = 0) {
     }
   }
 
-  fb.classList.add('feedback-ui--mobile');
+  fb.classList.add('feedback-mobile-ui');
   const footerEl = document.querySelector('footer');
   if (footerEl) {
     footerEl.before(fb);
