@@ -52,6 +52,7 @@
 
 .feedback-ui .first-question {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   min-height: 28px;
@@ -356,6 +357,7 @@
 }
 
 .feedback-ui .error {
+  flex-basis: 100%;
   font-size: var(--spectrum-font-size-100);
   line-height: normal;
   color: var(--spectrum-red-900);
