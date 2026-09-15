@@ -11,13 +11,25 @@ const BrowseCardsTargetDataAdapter = (() => {
    * @returns {Object} The BrowseCards data model.
    */
   const mapResultsToCardsDataModel = (data) => {
-    const contentTypeKey = data?.contentType?.toUpperCase();
+    // Single normalized read of the raw contentType so badgeTitle / viewLinkPlaceholderKey /
+    // contentType / type can never silently diverge from each other.
+    const baseContentType = data?.contentType?.trim() || '';
+    const contentTypeKey = baseContentType.toUpperCase();
+    // Target only returns the generic "Event" bucket, but on-demand-event decoration/routing
+    // downstream (decorateOnDemandEvents, browse-cards-delegate) keys off the compound value
+    // Coveo sends natively for on-demand events, mirroring the same remap in
+    // browse-cards-coveo-data-adaptor.js.
+    const isOnDemandEvent = baseContentType.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY;
     // Normalize contentType to lowercase to match CONTENT_TYPES mapping keys
-    const contentType = data?.contentType?.toLowerCase() || '';
+    const contentType = isOnDemandEvent
+      ? CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase()
+      : baseContentType.toLowerCase();
+    // badgeTitle must reflect the post-remap identity, not the raw Target "Event" bucket
+    const badgeTitle = isOnDemandEvent ? CONTENT_TYPES.ON_DEMAND_EVENT.LABEL : CONTENT_TYPES[contentTypeKey]?.LABEL;
     const articlePath = `/${getPathDetails().lang}${data?.path}`;
     const fullURL = new URL(articlePath, window.location.origin).href;
     const solutions = data?.product?.split(',').map((s) => s.trim()) || [];
-    const viewLinkPlaceholderKey = `browseCard${convertToTitleCase(data?.contentType)}ViewLabel`.replace(/\s+/g, '');
+    const viewLinkPlaceholderKey = `browseCard${convertToTitleCase(baseContentType)}ViewLabel`.replace(/\s+/g, '');
 
     // Extract course-related fields
     const level = data?.level || data?.el_level || '';
@@ -27,7 +39,7 @@ const BrowseCardsTargetDataAdapter = (() => {
     return {
       ...data,
       contentType, // Normalized to lowercase
-      badgeTitle: CONTENT_TYPES[contentTypeKey]?.LABEL,
+      badgeTitle,
       type: contentType,
       authorInfo: {
         name: data?.authorName ? [data?.authorName] : '',
@@ -40,7 +52,7 @@ const BrowseCardsTargetDataAdapter = (() => {
       viewLink: fullURL,
       viewLinkText: placeholders[viewLinkPlaceholderKey]
         ? placeholders[viewLinkPlaceholderKey]
-        : `View ${data?.contentType}`,
+        : `View ${baseContentType}`,
       // Course-specific fields
       el_level: level,
       el_course_duration: duration,
