@@ -1,26 +1,30 @@
 import { decorateIcons, getMetadata, loadCSS } from '../lib-franklin.js';
 // eslint-disable-next-line import/no-cycle
-import { createTag, htmlToElement, getPathDetails, fetchLanguagePlaceholders, fetchFragment } from '../scripts.js';
+import {
+  createTag,
+  htmlToElement,
+  getPathDetails,
+  fetchLanguagePlaceholders,
+  fetchFragment,
+  isDocPage,
+} from '../scripts.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { sendNotice } from '../toast/toast.js';
-
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
 
 const RETRY_LIMIT = 5;
 const RETRY_DELAY = 500;
 
 const FEEDBACK_CONTAINER_SELECTOR = '.feedback-ui';
-const FEEDBACK_SUCCESS = placeholders?.feedbackSuccess || 'Received! Thank you for your feedback.';
-const FEEDBACK_TEXT_ACTIVE = placeholders?.feedbackTextActive || 'Type your detailed feedback here and submit.';
+let FEEDBACK_SUCCESS;
+let FEEDBACK_TEXT_ACTIVE;
 
 const { lang } = getPathDetails();
-const feedbackFragment = await fetchFragment('feedback-bar/feedback-bar', lang);
+const placeholdersPromise = fetchLanguagePlaceholders().catch((err) => {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+  return {};
+});
+const feedbackFragmentPromise = fetchFragment('feedback-bar/feedback-bar', lang);
 
 function decorateFirstQuestion(firstQuestion) {
   const newDiv = createTag('div', { class: 'like-btns' });
@@ -40,16 +44,16 @@ function decorateFirstQuestion(firstQuestion) {
     .querySelector('div:nth-child(1) > div:nth-child(2) > p:first-child')
     .textContent.trim();
 
-  const thumbUpButton = createTag('button', { 'aria-label': 'thumbs up' });
+  const thumbUpButton = createTag('button', { 'aria-label': 'thumbs up', 'aria-pressed': 'false' });
   thumbUpButton.innerHTML = `
-    <span class="icon icon-thumb-up-light"></span>
+    <span class="icon icon-thumb-up-gray"></span>
     <span class="tooltip">${helpFul}</span>
   `;
   newDiv.appendChild(thumbUpButton);
 
-  const thumbDownButton = createTag('button', { 'aria-label': 'thumbs down' });
+  const thumbDownButton = createTag('button', { 'aria-label': 'thumbs down', 'aria-pressed': 'false' });
   thumbDownButton.innerHTML = `
-    <span class="icon icon-thumb-down-light"></span>
+    <span class="icon icon-thumb-down-gray"></span>
     <span class="tooltip">${notHelpFul}</span>
   `;
   newDiv.appendChild(thumbDownButton);
@@ -67,7 +71,6 @@ function decorateFirstQuestion(firstQuestion) {
   firstQuestion.appendChild(document.createElement('h3')).textContent = wasThisHelpful;
   firstQuestion.appendChild(newDiv);
   firstQuestion.appendChild(createTag('div', { class: 'error' }));
-  firstQuestion.innerHTML += '<span class="icon icon-chevron-gray"></span>';
   firstQuestion.dataset.updatedTitle = thankyouForYourFeedback;
   firstQuestion.dataset.subtitle = subTitle;
   firstQuestion.dataset.surveyCompletedText = surveyCompletedText;
@@ -119,13 +122,6 @@ function decorateSecondQuestion(secondQuestion) {
   secondQuestion.appendChild(ctaDiv);
 }
 
-function decorateHeaderTxtMobile(headerTextMobile) {
-  const newSpan = document.createElement('span');
-  newSpan.textContent = headerTextMobile.textContent.trim();
-  headerTextMobile.innerHTML = '';
-  headerTextMobile.appendChild(newSpan);
-}
-
 function decorateExpandedCtrl(expandedControls) {
   const newDiv = createTag('div', { class: 'git-buttons' });
   const reportIssueText = expandedControls
@@ -157,8 +153,8 @@ function decorateExpandedCtrl(expandedControls) {
     return button;
   }
 
-  const reportButton = createGitButton('icon-bug', reportIssueText, githubReportText);
-  const editButton = createGitButton('icon-edit', suggestEditText, githubSuggestText);
+  const reportButton = createGitButton('icon-bug-gray', reportIssueText, githubReportText);
+  const editButton = createGitButton('icon-edit-gray', suggestEditText, githubSuggestText);
 
   newDiv.appendChild(reportButton);
   newDiv.appendChild(editButton);
@@ -180,16 +176,10 @@ function decorateExpandedCtrl(expandedControls) {
   expandedControls.appendChild(newAnchor);
 }
 
-function decorateCloseBtnEl() {
-  return createTag('span', {
-    class: 'icon icon-close',
-  });
-}
-
 function decorateOpenedCtrl(openedControl) {
   const detailedFb = createTag('span');
   const text = openedControl.querySelector('div:nth-child(1) > div').textContent.trim();
-  const desktopChevronIcon = htmlToElement('<span class="icon is-desktop icon-chevron-gray"></span>');
+  const desktopChevronIcon = htmlToElement('<span class="icon icon-chevron-blue"></span>');
   detailedFb.textContent = text;
   openedControl.innerHTML = '';
   openedControl.append(detailedFb);
@@ -200,13 +190,16 @@ function hideFeedbackBar(state = true) {
   document.querySelector(FEEDBACK_CONTAINER_SELECTOR).setAttribute('aria-hidden', state);
 }
 
-function toggleFeedbackBar(el, show = false) {
-  const secondEl = el.querySelector('.second-question');
+function toggleDetailedOptions(el, show = false) {
   const rightEl = el.querySelector('.right');
 
   el.setAttribute('aria-expanded', show);
-  secondEl.setAttribute('aria-hidden', !show);
   rightEl.setAttribute('aria-hidden', !show);
+}
+
+function toggleCommentBox(el, show = false) {
+  const secondEl = el.querySelector('.second-question');
+  secondEl.setAttribute('aria-hidden', !show);
 }
 
 function decorateFeedback(el) {
@@ -228,41 +221,33 @@ function decorateFeedback(el) {
   const secondEl = el.querySelector('.second-question');
   secondEl.setAttribute('aria-hidden', true);
   const openedCtrlEl = el.querySelector('.opened-controls');
-  const headerTxtMobileEl = el.querySelector('.header-text-mobile');
   const expandedCtrlEl = el.querySelector('.expanded-controls');
 
   decorateFirstQuestion(firstEl);
   decorateSecondQuestion(secondEl);
   decorateOpenedCtrl(openedCtrlEl);
-  decorateHeaderTxtMobile(headerTxtMobileEl);
   decorateExpandedCtrl(expandedCtrlEl);
-  const closeBtnEl = decorateCloseBtnEl();
-
-  closeBtnEl.addEventListener('click', () => {
-    assetInteractionModel(null, 'Feedback Dismissed');
-    hideFeedbackBar();
-  });
 
   leftEl.append(qualtricsElContainer, firstEl, secondEl);
-  rightEl.append(openedCtrlEl, headerTxtMobileEl, expandedCtrlEl);
+  rightEl.append(openedCtrlEl, expandedCtrlEl);
   rightEl.setAttribute('aria-hidden', true);
-  container.append(closeBtnEl, leftEl, rightEl);
+  container.append(leftEl, rightEl);
 
   return container;
 }
 
 function handleFeedbackToggle(el) {
-  const chevrons = el.querySelectorAll('.icon-chevron-gray');
+  const chevrons = el.querySelectorAll('.icon-chevron-blue');
 
   chevrons.forEach((chevron) => {
     chevron.addEventListener('click', () => {
       const isExpanded = el.getAttribute('aria-expanded') === 'true';
 
       if (isExpanded) {
-        toggleFeedbackBar(el, false);
+        toggleDetailedOptions(el, false);
         assetInteractionModel(null, 'Feedback Collapsed');
       } else {
-        toggleFeedbackBar(el, true);
+        toggleDetailedOptions(el, true);
         assetInteractionModel(null, 'Feedback Expanded');
       }
     });
@@ -307,27 +292,71 @@ function handleGithubBtns(el) {
   });
 }
 
-function handleIntersection(entries) {
-  const fb = document.querySelector(FEEDBACK_CONTAINER_SELECTOR);
+const DESKTOP_MEDIA_QUERY = '(width >= 900px)';
 
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      hideFeedbackBar(true);
-      toggleFeedbackBar(fb, false);
-    } else {
-      hideFeedbackBar(false);
-    }
-  });
+function getDesktopRailContent() {
+  return (
+    document.querySelector('main .mini-toc-container .rail-content') ||
+    document.querySelector('main .mini-toc-container')
+  );
 }
 
-function handleFeedbackBarVisibilityOnScroll() {
-  const options = {
-    threshold: 0.05,
-  };
+let railObserver;
+let mountRetryTimeoutId;
 
-  const observer = new IntersectionObserver(handleIntersection, options);
+function positionAfterToc(fb, railContent) {
+  // Anchor to the mini-toc block itself, not its wrapper: related-content-widget.js appends
+  // Announcements/Related-events content as siblings of the block *inside* the same wrapper, so
+  // anchoring to the wrapper would push feedback after that unrelated content too.
+  const toc = railContent.querySelector('.mini-toc-wrapper .mini-toc.block');
+  if (toc) {
+    if (toc.nextElementSibling !== fb) toc.after(fb);
+  } else if (railContent.lastElementChild !== fb) {
+    railContent.append(fb);
+  }
+}
+
+function observeRailContent(fb, railContent) {
+  if (railObserver) railObserver.disconnect();
+  railObserver = new MutationObserver(() => positionAfterToc(fb, railContent));
+  railObserver.observe(railContent, { childList: true });
+}
+
+// Append the shared feedback element, right after the TOC in the rail on desktop, or right before the footer on mobile.
+function mountFeedbackUi(fb, attempt = 0) {
+  const isDesktop = window.matchMedia(DESKTOP_MEDIA_QUERY).matches;
+
+  if (railObserver) {
+    railObserver.disconnect();
+    railObserver = null;
+  }
+
+  if (mountRetryTimeoutId) {
+    clearTimeout(mountRetryTimeoutId);
+    mountRetryTimeoutId = null;
+  }
+
+  if (isDesktop) {
+    const railContent = getDesktopRailContent();
+    if (railContent) {
+      fb.classList.remove('feedback-mobile-ui');
+      positionAfterToc(fb, railContent);
+      observeRailContent(fb, railContent);
+      return;
+    }
+    if (isDocPage && attempt < RETRY_LIMIT) {
+      mountRetryTimeoutId = setTimeout(() => mountFeedbackUi(fb, attempt + 1), RETRY_DELAY);
+      return;
+    }
+  }
+
+  fb.classList.add('feedback-mobile-ui');
   const footerEl = document.querySelector('footer');
-  if (footerEl) observer.observe(footerEl);
+  if (footerEl) {
+    footerEl.before(fb);
+  } else {
+    document.body.append(fb);
+  }
 }
 
 function handleClosingFeedbackBar(el) {
@@ -353,12 +382,25 @@ function handleFeedbackIcons(el) {
   const textArea = moreQuestion.querySelector('.more-question > textarea');
   const title = el.querySelector('.first-question > h3');
 
+  function setThumbIcon(icon, selected) {
+    const img = icon.querySelector('.icon img');
+    if (!img) return;
+    const isThumbUp = icon.getAttribute('aria-label') === 'thumbs up';
+    const iconName = selected
+      ? `thumb-${isThumbUp ? 'up' : 'down'}-selected`
+      : `thumb-${isThumbUp ? 'up' : 'down'}-gray`;
+    img.src = `${window.hlx.codeBasePath}/icons/${iconName}.svg`;
+    img.dataset.iconName = iconName;
+    icon.classList.toggle('selected', selected);
+    icon.setAttribute('aria-pressed', String(selected));
+  }
+
   [...feedbackIcon].forEach((icon, iconIndex) => {
     icon.addEventListener('click', () => {
       const textarea = el.querySelector('.more-question > textarea');
       textarea.disabled = false;
-      toggleFeedbackBar(el, true);
-      firstQuestionElement.classList.add('answered');
+      toggleCommentBox(el, true);
+      [...feedbackIcon].forEach((otherIcon) => setThumbIcon(otherIcon, otherIcon === icon));
       // find the real qualtrics icon to click, based on index.
       const qualtricsIcons = [...el.querySelectorAll(`.QSI__EmbeddedFeedbackContainer_SVGButton`)];
       const qualtricsIcon = qualtricsIcons.length > iconIndex && qualtricsIcons[iconIndex];
@@ -372,12 +414,14 @@ function handleFeedbackIcons(el) {
 
         const { updatedTitle, subtitle } = firstQuestionElement.dataset;
         title.textContent = updatedTitle;
-        const subtitleElement = createTag('p', { class: 'subtitle' }, subtitle);
-        moreQuestion.insertAdjacentElement('beforebegin', subtitleElement);
+        if (!moreQuestion.previousElementSibling?.classList.contains('subtitle')) {
+          const subtitleElement = createTag('p', { class: 'subtitle' }, subtitle);
+          moreQuestion.insertAdjacentElement('beforebegin', subtitleElement);
+        }
       } else {
         console.log('Qualtrics feedback malformed.'); // eslint-disable-line no-console
         showQualtricsLoadingError(el);
-        toggleFeedbackBar(el, false);
+        toggleCommentBox(el, false);
       }
       assetInteractionModel(null, `feedback ${icon.ariaLabel}`);
     });
@@ -408,7 +452,7 @@ function handleFeedbackSubmit(el) {
 
       // There is also a race condition — sometimes the form can be submitted before the value is validated in the InputEvent.
       setTimeout(() => {
-        toggleFeedbackBar(el, false);
+        toggleCommentBox(el, false);
         qualtricsSubmitButton.click();
         secondQuestionElement.classList.add('complete');
         const { surveyCompletedText } = firstQuestionElement.dataset;
@@ -419,17 +463,19 @@ function handleFeedbackSubmit(el) {
     } else {
       console.log('Qualtrics text feedback malformed.'); // eslint-disable-line no-console
       showQualtricsLoadingError(el);
-      toggleFeedbackBar(el, false);
+      toggleCommentBox(el, false);
     }
   });
 }
 
 export function feedbackError() {
   const fb = document.querySelector(FEEDBACK_CONTAINER_SELECTOR);
+  if (!fb) return;
   // eslint-disable-next-line no-console
   console.error("Couldn't embed Qualtrics survey intercept.");
   showQualtricsLoadingError(fb);
-  toggleFeedbackBar(fb, false);
+  toggleCommentBox(fb, false);
+  toggleDetailedOptions(fb, false);
 }
 
 let checkInterval;
@@ -438,7 +484,7 @@ let retryCount = 0;
 function checkInterceptLoaded() {
   const fb = document.querySelector(FEEDBACK_CONTAINER_SELECTOR);
 
-  if (fb.querySelector(' .QSI__EmbeddedFeedbackContainer_Thumbs')) {
+  if (fb?.querySelector(' .QSI__EmbeddedFeedbackContainer_Thumbs')) {
     clearInterval(checkInterval);
     handleFeedbackIcons(fb);
     handleFeedbackSubmit(fb);
@@ -457,17 +503,17 @@ function checkInterceptLoaded() {
 export default async function loadFeedbackUi() {
   loadCSS(`${window.hlx.codeBasePath}/scripts/feedback/feedback.css`);
 
-  let feedbackHtml = await feedbackFragment;
-  feedbackHtml = htmlToElement(feedbackHtml);
+  const [placeholders, feedbackFragmentHtml] = await Promise.all([placeholdersPromise, feedbackFragmentPromise]);
+  FEEDBACK_SUCCESS = placeholders?.feedbackSuccess || 'Received! Thank you for your feedback.';
+  FEEDBACK_TEXT_ACTIVE = placeholders?.feedbackTextActive || 'Type your detailed feedback here and submit.';
+  const feedbackHtml = htmlToElement(feedbackFragmentHtml);
 
   const hasGit = Boolean(getMetadata('git-repo'));
 
-  const body = document.querySelector('body');
   const fb = decorateFeedback(feedbackHtml);
   decorateIcons(fb);
   handleFeedbackToggle(fb);
   handleClosingFeedbackBar(fb);
-  handleFeedbackBarVisibilityOnScroll();
 
   if (hasGit) {
     handleGithubBtns(fb);
@@ -475,7 +521,8 @@ export default async function loadFeedbackUi() {
     fb.classList.add('no-git');
   }
 
-  body.append(fb);
+  mountFeedbackUi(fb);
+  window.matchMedia(DESKTOP_MEDIA_QUERY).addEventListener('change', () => mountFeedbackUi(fb));
   window.addEventListener('qsi_js_loaded', checkInterceptLoaded, false);
 }
 
