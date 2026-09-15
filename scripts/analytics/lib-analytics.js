@@ -439,7 +439,9 @@ export async function pushLinkClick(e) {
   let navigationSolution = '';
 
   if (navigation) {
-    navigationSolution = navigation.querySelector('.nav-tab-heading')?.textContent.trim() || '';
+    navigationSolution = navigation.querySelector('.nav-item-toggle')?.classList.contains('nav-item-toggle-root')
+      ? document.querySelector('meta[name="solution"]')?.content?.split(',')[0].trim()
+      : navigation.querySelector('.nav-tab-heading')?.textContent.trim() || '';
 
     const titleElement = nearestNavItem?.querySelector(':scope > a') || e.target.closest('a');
 
