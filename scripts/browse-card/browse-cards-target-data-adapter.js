@@ -24,6 +24,8 @@ const BrowseCardsTargetDataAdapter = (() => {
     const contentType = isOnDemandEvent
       ? CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase()
       : baseContentType.toLowerCase();
+    // badgeTitle must reflect the post-remap identity, not the raw Target "Event" bucket
+    const badgeTitle = isOnDemandEvent ? CONTENT_TYPES.ON_DEMAND_EVENT.LABEL : CONTENT_TYPES[contentTypeKey]?.LABEL;
     const articlePath = `/${getPathDetails().lang}${data?.path}`;
     const fullURL = new URL(articlePath, window.location.origin).href;
     const solutions = data?.product?.split(',').map((s) => s.trim()) || [];
@@ -37,7 +39,7 @@ const BrowseCardsTargetDataAdapter = (() => {
     return {
       ...data,
       contentType, // Normalized to lowercase
-      badgeTitle: CONTENT_TYPES[contentTypeKey]?.LABEL,
+      badgeTitle,
       type: contentType,
       authorInfo: {
         name: data?.authorName ? [data?.authorName] : '',
