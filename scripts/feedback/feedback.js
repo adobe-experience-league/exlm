@@ -11,23 +11,20 @@ import {
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { sendNotice } from '../toast/toast.js';
 
-let placeholders = {};
-try {
-  placeholders = await fetchLanguagePlaceholders();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error('Error fetching placeholders:', err);
-}
-
 const RETRY_LIMIT = 5;
 const RETRY_DELAY = 500;
 
 const FEEDBACK_CONTAINER_SELECTOR = '.feedback-ui';
-const FEEDBACK_SUCCESS = placeholders?.feedbackSuccess || 'Received! Thank you for your feedback.';
-const FEEDBACK_TEXT_ACTIVE = placeholders?.feedbackTextActive || 'Type your detailed feedback here and submit.';
+let FEEDBACK_SUCCESS;
+let FEEDBACK_TEXT_ACTIVE;
 
 const { lang } = getPathDetails();
-const feedbackFragment = await fetchFragment('feedback-bar/feedback-bar', lang);
+const placeholdersPromise = fetchLanguagePlaceholders().catch((err) => {
+  // eslint-disable-next-line no-console
+  console.error('Error fetching placeholders:', err);
+  return {};
+});
+const feedbackFragmentPromise = fetchFragment('feedback-bar/feedback-bar', lang);
 
 function decorateFirstQuestion(firstQuestion) {
   const newDiv = createTag('div', { class: 'like-btns' });
@@ -308,7 +305,10 @@ let railObserver;
 let mountRetryTimeoutId;
 
 function positionAfterToc(fb, railContent) {
-  const toc = railContent.querySelector('.mini-toc-wrapper');
+  // Anchor to the mini-toc block itself, not its wrapper: related-content-widget.js appends
+  // Announcements/Related-events content as siblings of the block *inside* the same wrapper, so
+  // anchoring to the wrapper would push feedback after that unrelated content too.
+  const toc = railContent.querySelector('.mini-toc-wrapper .mini-toc.block');
   if (toc) {
     if (toc.nextElementSibling !== fb) toc.after(fb);
   } else if (railContent.lastElementChild !== fb) {
@@ -503,8 +503,10 @@ function checkInterceptLoaded() {
 export default async function loadFeedbackUi() {
   loadCSS(`${window.hlx.codeBasePath}/scripts/feedback/feedback.css`);
 
-  let feedbackHtml = await feedbackFragment;
-  feedbackHtml = htmlToElement(feedbackHtml);
+  const [placeholders, feedbackFragmentHtml] = await Promise.all([placeholdersPromise, feedbackFragmentPromise]);
+  FEEDBACK_SUCCESS = placeholders?.feedbackSuccess || 'Received! Thank you for your feedback.';
+  FEEDBACK_TEXT_ACTIVE = placeholders?.feedbackTextActive || 'Type your detailed feedback here and submit.';
+  const feedbackHtml = htmlToElement(feedbackFragmentHtml);
 
   const hasGit = Boolean(getMetadata('git-repo'));
 

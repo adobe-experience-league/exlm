@@ -1210,10 +1210,6 @@ async function loadLazy(doc) {
     if (!isBrandConciergeExcludedPath() && !martechOff) {
       import('./brand-concierge/brand-concierge-entry-target.js').catch(() => {});
     }
-    if (isDocPage) {
-      // eslint-disable-next-line import/no-cycle
-      import('./feedback/feedback.js').catch(() => {});
-    }
   }
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   if (isLiveGradientBgPage) {
