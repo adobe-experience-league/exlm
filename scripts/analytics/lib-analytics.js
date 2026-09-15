@@ -440,7 +440,7 @@ export async function pushLinkClick(e) {
   let navigationSolution = '';
 
   if (navigation) {
-    navigationSolution = navigation.querySelector('.nav-item-toggle')?.classList.contains('nav-item-toggle-root')
+    navigationSolution = navigation.classList.contains('nav-item-root')
       ? pageSolution
       : navigation.querySelector('.nav-tab-heading')?.textContent.trim() || '';
 
