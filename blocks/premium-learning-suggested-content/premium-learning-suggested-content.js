@@ -3,7 +3,7 @@ import BrowseCardsDelegate from '../../scripts/browse-card/browse-cards-delegate
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { decorateCta } from '../../scripts/utils/button-utils.js';
 import { isPLEligible, handlePLBlockError } from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
@@ -37,7 +37,7 @@ function parseAuthoredContent(block) {
   return {
     headingMarkup: headingElement?.innerHTML || '',
     descriptionMarkup: descriptionElement?.innerHTML || '',
-    ctaMarkup: ctaElement?.innerHTML ? decorateCustomButtons(ctaElement) : '',
+    ctaMarkup: ctaElement?.innerHTML ? decorateCta(ctaElement, block, 'cta1') : '',
     contentType,
   };
 }
