@@ -1017,6 +1017,7 @@
                   "filter": "events",
                   "name": "Events",
                   "model": "events",
+                  "classes": ["cta-primary"],
                   "item1": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
                     "name": "Event Card Item",
@@ -1029,10 +1030,6 @@
                     "description": "Join us as we cut through the hype about AI and get real about what makes it work in modern B2B marketing. Presenters will share real examples to show what works and what doesn't.",
                     "fileReference": "/content/dam/exlm/aim-featured-event-image.png",
                     "fileReferenceAlt": "Featured Image",
-                    "cta1_Type": "primary",
-                    "cta1_customBgColor": "--spectrum-gray-700",
-                    "cta1_textColor": "white",
-                    "cta1_customBgHexCode": "000000",
                     "cta1_linkText": "View event",
                     "cta1_link": "http://experienceleague.adobe.com/"
                   },
@@ -1044,11 +1041,7 @@
                     "tagText": "Summit Session",
                     "dateText": "MONDAY APRIL 20, 11:30 AM PDT",
                     "eventTypeText": "LIVE",
-                    "title": "AI to Activation: How Microsoft is Reimagining Marketing at Scale",
-                    "cta1_Type": "primary",
-                    "cta1_customBgColor": "--spectrum-gray-700",
-                    "cta1_textColor": "white",
-                    "cta1_customBgHexCode": "000000"
+                    "title": "AI to Activation: How Microsoft is Reimagining Marketing at Scale"
                   },
                   "item3": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
@@ -1058,11 +1051,7 @@
                     "tagText": "AI forum",
                     "dateText": "VARIOUS DATES",
                     "eventTypeText": "LIVE",
-                    "title": "AI Forum Event Series: Discover What's Next for AI Marketing",
-                    "cta1_Type": "primary",
-                    "cta1_customBgColor": "--spectrum-gray-700",
-                    "cta1_textColor": "white",
-                    "cta1_customBgHexCode": "000000"
+                    "title": "AI Forum Event Series: Discover What's Next for AI Marketing"
                   },
                   "item4": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
@@ -1072,11 +1061,7 @@
                     "tagText": "Webinar",
                     "dateText": "ON DEMAND",
                     "eventTypeText": "ON DEMAND",
-                    "title": "AI Agents in AEP: An Overview",
-                    "cta1_Type": "primary",
-                    "cta1_customBgColor": "--spectrum-gray-700",
-                    "cta1_textColor": "white",
-                    "cta1_customBgHexCode": "000000"
+                    "title": "AI Agents in AEP: An Overview"
                   }
                 }
               }
@@ -1093,11 +1078,7 @@
                 "template": {
                   "name": "Event Card Item",
                   "model": "event-item",
-                  "filter": "events",
-                  "cta1_Type": "primary",
-                  "cta1_customBgColor": "--spectrum-gray-700",
-                  "cta1_textColor": "white",
-                  "cta1_customBgHexCode": "000000"
+                  "filter": "events"
                 }
               }
             }

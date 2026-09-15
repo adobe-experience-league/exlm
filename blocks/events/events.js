@@ -1,5 +1,5 @@
 import { createTag } from '../../scripts/scripts.js';
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { decorateCta } from '../../scripts/utils/button-utils.js';
 
 const getText = (cell) => (cell?.textContent ?? '').trim();
 
@@ -42,7 +42,7 @@ export default function decorate(block) {
       link.textContent = titleAttr;
     }
   }
-  const ctaHtml = ctaContainer ? decorateCustomButtons(ctaContainer) : '';
+  const ctaHtml = ctaContainer ? decorateCta(ctaContainer, block, 'cta') : '';
   const featuredMediaHtml =
     (imgCell?.querySelector('picture') ?? featuredRow?.querySelector('picture'))?.outerHTML ?? '';
   const featuredUrl = (ctaContainer?.querySelector('a')?.getAttribute('href') ?? '').trim();
