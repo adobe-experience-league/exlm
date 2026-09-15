@@ -922,7 +922,7 @@ export function getConfig() {
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list?platform=gainsight`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`,
     profileUrl: `${ethosOrigin}/api/profile?lang=${lang}`,
-    JWTTokenUrl: `${ethosOrigin}/api/token?lang=${lang}`,
+    JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `${cdnOrigin}/api/action/coveo-token?lang=${lang}`,
     coveoSearchResultsUrl: isProd
       ? 'https://platform.cloud.coveo.com/rest/search/v2'
