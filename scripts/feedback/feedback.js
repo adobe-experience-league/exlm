@@ -47,14 +47,14 @@ function decorateFirstQuestion(firstQuestion) {
     .querySelector('div:nth-child(1) > div:nth-child(2) > p:first-child')
     .textContent.trim();
 
-  const thumbUpButton = createTag('button', { 'aria-label': 'thumbs up' });
+  const thumbUpButton = createTag('button', { 'aria-label': 'thumbs up', 'aria-pressed': 'false' });
   thumbUpButton.innerHTML = `
     <span class="icon icon-thumb-up-gray"></span>
     <span class="tooltip">${helpFul}</span>
   `;
   newDiv.appendChild(thumbUpButton);
 
-  const thumbDownButton = createTag('button', { 'aria-label': 'thumbs down' });
+  const thumbDownButton = createTag('button', { 'aria-label': 'thumbs down', 'aria-pressed': 'false' });
   thumbDownButton.innerHTML = `
     <span class="icon icon-thumb-down-gray"></span>
     <span class="tooltip">${notHelpFul}</span>
@@ -392,6 +392,7 @@ function handleFeedbackIcons(el) {
     img.src = `${window.hlx.codeBasePath}/icons/${iconName}.svg`;
     img.dataset.iconName = iconName;
     icon.classList.toggle('selected', selected);
+    icon.setAttribute('aria-pressed', String(selected));
   }
 
   [...feedbackIcon].forEach((icon, iconIndex) => {

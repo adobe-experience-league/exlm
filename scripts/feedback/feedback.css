@@ -141,7 +141,7 @@
   background-color: var(--shimmer-image-slide-end);
   border: none;
   border-radius: 16px;
-  color: #b0b0b0;
+  color: var(--non-spectrum-feedback-gray);
   font-size: 12.5px;
   font-weight: var(--font-weight-semi-bold);
   display: inline-flex;
@@ -242,7 +242,7 @@
 .feedback-ui .cta button:disabled {
   background-color: var(--shimmer-image-slide-end);
   border: none;
-  color: #b0b0b0;
+  color: var(--non-spectrum-feedback-gray);
   display: inline-flex;
 }
 
