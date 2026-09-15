@@ -446,8 +446,8 @@ function createBottomAskBar() {
   sendBtn.append(sendIcon);
   decorateIcon(sendIcon);
 
-  inputWrap.append(input, sendBtn);
-  inputGroup.append(inputWrap);
+  inputWrap.append(input);
+  inputGroup.append(inputWrap, sendBtn);
 
   const actions = document.createElement('div');
   actions.className = 'bc-bottom-ask-bar-actions';
