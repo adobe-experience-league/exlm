@@ -6848,6 +6848,44 @@
     ]
   },
   {
+    "id": "aligned-text",
+    "fields": []
+  },
+  {
+    "id": "aligned-text-line",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "",
+        "label": "Text",
+        "description": "Sets the text for this line"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "alignment",
+        "value": "left",
+        "label": "Alignment",
+        "options": [
+          {
+            "name": "Left",
+            "value": "left"
+          },
+          {
+            "name": "Center",
+            "value": "center"
+          },
+          {
+            "name": "Right",
+            "value": "right"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "bookmarks",
     "fields": [
       {
