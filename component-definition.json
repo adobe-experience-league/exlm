@@ -2093,11 +2093,9 @@
                   "model": "quiz-scorecard",
                   "resultText": "",
                   "description": "",
-                  "classes": "pass",
-                  "cta1_Type": "",
+                  "classes": ["pass", "cta1-primary", "cta2-secondary"],
                   "cta1_linkText": "Back to Step 1",
                   "cta1_link": "",
-                  "cta2_Type": "",
                   "cta2_linkText": "Retake the quiz",
                   "cta2_link": ""
                 }
