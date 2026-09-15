@@ -409,6 +409,7 @@ export async function pushLinkClick(e) {
   const navigation = nearestNavItem?.classList.contains('nav-item-leaf')
     ? nearestNavItem.parentElement?.closest('.nav-item:not(.nav-item-leaf)')
     : nearestNavItem;
+  const pageSolution = document.querySelector('meta[name="solution"]')?.content?.split(',')[0].trim() || '';
 
   let linkLocation = 'unidentified';
   if (e.target.closest('.rail-right') || e.target.closest('.mini-toc-wrapper')) {
@@ -440,7 +441,7 @@ export async function pushLinkClick(e) {
 
   if (navigation) {
     navigationSolution = navigation.querySelector('.nav-item-toggle')?.classList.contains('nav-item-toggle-root')
-      ? document.querySelector('meta[name="solution"]')?.content?.split(',')[0].trim()
+      ? pageSolution
       : navigation.querySelector('.nav-tab-heading')?.textContent.trim() || '';
 
     const titleElement = nearestNavItem?.querySelector(':scope > a') || e.target.closest('a');
@@ -485,10 +486,7 @@ export async function pushLinkClick(e) {
   // For navigation-bar clicks, use the solution associated with the
   // navigation item. For other links, retain the existing page solution.
   if (!isCourseStartCTA) {
-    linkObj.solution =
-      navigation && navigationSolution
-        ? navigationSolution
-        : document.querySelector('meta[name="solution"]')?.content?.split(',')[0].trim() || '';
+    linkObj.solution = navigation && navigationSolution ? navigationSolution : pageSolution;
   }
 
   window.adobeDataLayer.push({
