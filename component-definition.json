@@ -1892,7 +1892,7 @@
                   "filter": "rte-no-headings",
                   "title": "Based on previous learnings",
                   "titleType": "h3",
-                  "cta_Type": "primary",
+                  "classes": ["cta1-primary"],
                   "linkText": "View all Premium Learning results",
                   "link": "",
                   "contentType": ["premium-learning-course"]
@@ -1913,7 +1913,7 @@
                   "model": "premium-learning-search",
                   "heading": "Premium learning search results",
                   "headingType": "h2",
-                  "cta_Type": "primary",
+                  "classes": ["cta1-primary"],
                   "linkText": "View all Premium Learning results",
                   "link": "",
                   "contentType": "premium-learning-course"
@@ -1935,7 +1935,7 @@
                   "filter": "rte-no-headings",
                   "title": "Suggested cohorts to join",
                   "titleType": "h3",
-                  "cta_Type": "primary",
+                  "classes": ["cta1-primary"],
                   "linkText": "View all Premium Learning results",
                   "link": "",
                   "contentType": ["premium-learning-cohort"]

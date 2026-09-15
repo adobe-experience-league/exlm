@@ -6,7 +6,7 @@ import { getPLAccessToken, isPLEligible, handlePLBlockError } from '../../script
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { getCookie } from '../../scripts/utils/cookie-utils.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { decorateCta } from '../../scripts/utils/button-utils.js';
 
 const MAX_CARDS = 4;
 const NO_OF_RESULTS = 10;
@@ -112,7 +112,7 @@ export default async function decorate(block) {
   const [headingElement, descriptionElement, ctaElement, contentTypeElement] = [...block.children];
   const contentTypeRaw = contentTypeElement?.textContent?.trim() || '';
   const contentType = contentTypeRaw ? contentTypeRaw.split(',').map((s) => s.trim()) : DEFAULT_CONTENT_TYPES;
-  const ctaMarkup = ctaElement?.innerHTML ? decorateCustomButtons(ctaElement) : '';
+  const ctaMarkup = ctaElement?.innerHTML ? decorateCta(ctaElement, block, 'cta1') : '';
 
   block.textContent = '';
   block.classList.add('browse-cards-block', 'premium-learning-recommended-content-block');
