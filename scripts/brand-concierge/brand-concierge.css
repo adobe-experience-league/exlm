@@ -205,13 +205,15 @@ body:has(main.rail-left-closed) .bc-bottom-ask-bar-brand {
   color: var(--text-color);
 }
 
-/* Center track = docs article column. Send sits beside the prompt field, not inside it. */
+/* Center track = docs article column (full 3fr span). Inset so input + send are not flush. */
 .bc-bottom-ask-bar-input-group {
+  box-sizing: border-box;
   min-width: 0;
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--spectrum-spacing-300);
+  padding-inline: var(--spectrum-spacing-400);
 }
 
 .bc-bottom-ask-bar-input-wrap {
