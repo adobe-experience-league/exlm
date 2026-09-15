@@ -1200,13 +1200,31 @@ async function loadLazy(doc) {
   if (preMain && !embedMode) await loadBlocks(preMain);
   await loadBlocks(main);
 
-  const { hash } = window.location;
-  const element = hash ? doc.getElementById(hash.substring(1)) : false;
-  if (hash && element) element.scrollIntoView();
-
   if (!embedMode) {
     const headerPromise = loadHeader(doc.querySelector('header'));
     const footerPromise = loadFooter(doc.querySelector('footer'));
+    // Browser scrolls to #hash before the page finishes laying out, so re-scroll to the target as it reflows; stop once the header is loaded (layout done) or the user scrolls.
+    const { hash } = window.location;
+    const target = hash ? doc.getElementById(hash.substring(1)) : null;
+    if (target && main) {
+      let done = false;
+      const realign = () => {
+        if (!done) target.scrollIntoView();
+      };
+      const observer = new ResizeObserver(realign);
+      const stop = () => {
+        done = true;
+        observer.disconnect();
+      };
+      observer.observe(main);
+      ['wheel', 'touchstart', 'keydown'].forEach((evt) =>
+        window.addEventListener(evt, stop, { once: true, passive: true }),
+      );
+      Promise.allSettled([headerPromise]).then(() => {
+        realign();
+        stop();
+      });
+    }
     const martechOff = window.location.search?.indexOf('martech=off') !== -1;
     // disable martech if martech=off is in the query string, this is used for testing ONLY
     if (!martechOff) {
