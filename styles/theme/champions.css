@@ -4,9 +4,9 @@
   --gradient-secondary: #fdf4cc;
   --gradient-accent: #cff5ee;
   --gradient-blur: 75px;
-  --gradient-duration-primary: 5s;
-  --gradient-duration-secondary: 5s;
-  --gradient-duration-accent: 5s;
+  --gradient-duration-primary: 8s;
+  --gradient-duration-secondary: 8s;
+  --gradient-duration-accent: 8s;
 }
 
 .champions.page-bg-gradient .gradient-circle-primary {
