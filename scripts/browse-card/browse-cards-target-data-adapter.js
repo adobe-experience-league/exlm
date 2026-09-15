@@ -2,7 +2,6 @@ import { convertToTitleCase } from './browse-card-utils.js';
 import { CONTENT_TYPES } from '../data-service/coveo/coveo-exl-pipeline-constants.js';
 import { fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { isSignedInUser } from '../auth/profile.js';
-import isFeatureEnabled from '../utils/feature-flag-utils.js';
 
 const BrowseCardsTargetDataAdapter = (() => {
   let placeholders = {};
@@ -18,11 +17,9 @@ const BrowseCardsTargetDataAdapter = (() => {
     const contentTypeKey = baseContentType.toUpperCase();
     // Target only returns the generic "Event" bucket, but on-demand-event decoration/routing
     // downstream (decorateOnDemandEvents, browse-cards-delegate) keys off the compound value
-    // Coveo sends natively for on-demand events. Gated behind isEventsV2, mirroring the same
-    // remap in browse-cards-coveo-data-adaptor.js.
-    // TODO: Remove this condition once Events v2 is live
-    const isOnDemandEvent =
-      isFeatureEnabled('isEventsV2') && baseContentType.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY;
+    // Coveo sends natively for on-demand events, mirroring the same remap in
+    // browse-cards-coveo-data-adaptor.js.
+    const isOnDemandEvent = baseContentType.toLowerCase() === CONTENT_TYPES.EVENT.MAPPING_KEY;
     // Normalize contentType to lowercase to match CONTENT_TYPES mapping keys
     const contentType = isOnDemandEvent
       ? CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase()
