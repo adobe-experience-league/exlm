@@ -1128,7 +1128,6 @@ function createMountPoint() {
     id: DIALOG_ID,
     ariaLabel: ui.drawerAriaLabel,
     title: ui.drawerTitle,
-    titleBadge: 'BETA',
     titleIcon: 'bc-ask-sparkles',
     content: mount,
     canExpand: true,
@@ -1267,12 +1266,18 @@ export async function initBrandConcierge() {
   activeLang = getPathDetails().lang;
   activeConfig = await loadBrandConciergeConfig(activeLang);
   // If even the English base sheet can't load, skip mounting rather than render an empty widget.
-  if (!activeConfig) return initPromise;
+  if (!activeConfig) {
+    initResolve?.();
+    initResolve = null;
+    initReject = null;
+    initStarted = false;
+    return initPromise;
+  }
 
   // Route to the locale's Brand Concierge datastream (e.g. the Spanish concierge on /es/),
   // falling back to the default datastream for locales without an override. Kept separate from
   // activeConfig so this routing id never leaks into the styling payload sent to the BC client.
-  const datastreamId = getBrandConciergeDatastreamId(activeLang, bcDatastreamId);
+  const datastreamId = getBrandConciergeDatastreamId(activeConfig.metadata.language, bcDatastreamId);
   createMountPoint();
   applyBcEntryChrome(resolveBcEntryExperience());
   injectAlloyStub();

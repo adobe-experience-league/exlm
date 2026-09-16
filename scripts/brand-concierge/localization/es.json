@@ -1,5 +1,4 @@
 {
-  "language": "es-ES",
   "ui": {
     "triggerAriaLabel": "Abrir el asistente de IA",
     "triggerAsk": "Hacer una pregunta",
@@ -42,23 +41,23 @@
     "feedback.thumbsDown.aria": "No me gusta"
   },
   "arrays": {
-    "welcome.examples": [
-      { "text": "¿Dónde puedo aprender sobre la IA en Experience League?" },
-      { "text": "Primeros pasos con Experience Manager" },
-      { "text": "Configurar un conjunto de informes de Adobe Analytics" },
-      { "text": "Explicar las pruebas A/B de Adobe Target" }
-    ],
-    "feedback.positive.options": [
-      "Útil y relevante",
-      "Claro y fácil de entender",
-      "Tono cercano y conversacional",
-      "Otro"
-    ],
-    "feedback.negative.options": [
-      "Poco útil o irrelevante",
-      "Confuso o poco claro",
-      "Demasiado formal o robótico",
-      "Otro"
-    ]
+    "welcome.examples": {
+      "0": "¿Dónde puedo aprender sobre la IA en Experience League?",
+      "1": "Primeros pasos con Experience Manager",
+      "2": "Configurar un conjunto de informes de Adobe Analytics",
+      "3": "Explicar las pruebas A/B de Adobe Target"
+    },
+    "feedback.positive.options": {
+      "0": "Útil y relevante",
+      "1": "Claro y fácil de entender",
+      "2": "Tono cercano y conversacional",
+      "3": "Otro"
+    },
+    "feedback.negative.options": {
+      "0": "Poco útil o irrelevante",
+      "1": "Confuso o poco claro",
+      "2": "Demasiado formal o robótico",
+      "3": "Otro"
+    }
   }
 }

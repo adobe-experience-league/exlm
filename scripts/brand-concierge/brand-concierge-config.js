@@ -48,51 +48,6 @@ const brandConciergeConfig = {
     namespace: getProductNamespace(),
   },
 
-  text: {
-    'welcome.heading': 'Not sure where to start?<br>Ask me anything about Adobe products.',
-    'welcome.subheading': 'Type your question or pick a suggestion below.',
-    'input.placeholder': 'Ask a question…',
-    'input.messageInput.aria': 'Message input',
-    'input.send.aria': 'Send message',
-    'input.mic.aria': 'Voice input',
-    'card.aria.select': 'Select example message',
-    'carousel.prev.aria': 'Previous cards',
-    'carousel.next.aria': 'Next cards',
-    'scroll.bottom.aria': 'Scroll to bottom',
-    'error.network': "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.",
-    'error.general': "I'm sorry, something went wrong. Please try again in a moment.",
-    'loading.message': "Generating from Adobe's trusted resources",
-    'feedback.dialog.title.positive': 'Your feedback is appreciated',
-    'feedback.dialog.title.negative': 'Your feedback is appreciated',
-    'feedback.dialog.question.positive': 'What went well? Select all that apply.',
-    'feedback.dialog.question.negative': 'What went wrong? Select all that apply.',
-    'feedback.dialog.notes': 'Notes',
-    'feedback.dialog.submit': 'Submit',
-    'feedback.dialog.cancel': 'Cancel',
-    'feedback.dialog.notes.placeholder': 'Additional notes (optional)',
-    'feedback.toast.success': 'Thank you for the feedback.',
-    'feedback.thumbsUp.aria': 'Thumbs up',
-    'feedback.thumbsDown.aria': 'Thumbs down',
-  },
-
-  arrays: {
-    // Fallback if brand-concierge.json fails to load
-    'welcome.examples': [
-      { text: 'Where can I go to learn about AI on Experience League?' },
-      { text: 'Getting started with Experience Manager' },
-      { text: 'How do I set up my Workfront instance for my team?' },
-      { text: 'How do I get started with a journey in Adobe Journey Optimizer?' },
-      { text: 'What is CX Enterprise Coworker?' },
-    ],
-    'feedback.positive.options': [
-      'Helpful and relevant',
-      'Clear and easy to understand',
-      'Friendly and conversational tone',
-      'Other',
-    ],
-    'feedback.negative.options': ['Not helpful or relevant', 'Confusing or unclear', 'Too formal or robotic', 'Other'],
-  },
-
   // CSS variable overrides forwarded to BC. Only set values that diverge from
   // BC defaults or need tuning for the compact dialog context.
   // spacing and sizing for pill/suggestion buttons are intentionally set only
@@ -139,6 +94,11 @@ const brandConciergeConfig = {
 };
 
 const LOCALES_BASE_PATH = `${window.hlx.codeBasePath}/scripts/brand-concierge/localization`;
+const SUPPORTED_LOCALES = new Set(['en', 'es']);
+const LOCALE_LANGUAGES = {
+  en: 'en-US',
+  es: 'es-ES',
+};
 
 /** lang -> Promise resolving that locale's { language, ui, text, arrays } sheet (deduped). */
 const localeSheetCache = {};
@@ -159,6 +119,14 @@ function fetchLocaleSheet(lang) {
   return localeSheetCache[lang];
 }
 
+function objectValues(value) {
+  return value && typeof value === 'object' && !Array.isArray(value) ? Object.values(value) : value;
+}
+
+function normalizeLocaleArrays(arrays) {
+  return Object.fromEntries(Object.entries(arrays || {}).map(([key, value]) => [key, objectValues(value)]));
+}
+
 /** Recursive merge: `over` wins; nested plain objects merge per-field, arrays/scalars replace. */
 function deepMerge(base, over) {
   if (!over) return base;
@@ -177,6 +145,19 @@ function deepMerge(base, over) {
   return out;
 }
 
+function buildBrandConciergeConfig(en, locale, localeKey) {
+  return {
+    ...brandConciergeConfig,
+    ui: deepMerge(en.ui, locale.ui),
+    text: { ...en.text, ...locale.text },
+    arrays: normalizeLocaleArrays({ ...en.arrays, ...locale.arrays }),
+    metadata: {
+      ...brandConciergeConfig.metadata,
+      language: LOCALE_LANGUAGES[localeKey] || brandConciergeConfig.metadata.language,
+    },
+  };
+}
+
 /**
  * Loads the BC config for a path language, layering the locale's localization sheet over the
  * English base. English is always fetched as the fallback base, so a partial locale sheet
@@ -188,32 +169,29 @@ function deepMerge(base, over) {
  */
 export async function loadBrandConciergeConfig(lang) {
   const key = (lang || 'en').toLowerCase();
-  let en;
-  try {
-    en = await fetchLocaleSheet('en');
-  } catch (err) {
+  const [englishResult, localeResult] = await Promise.allSettled([
+    fetchLocaleSheet('en'),
+    key !== 'en' && SUPPORTED_LOCALES.has(key) ? fetchLocaleSheet(key) : Promise.resolve(null),
+  ]);
+  if (englishResult.status !== 'fulfilled') {
     // eslint-disable-next-line no-console
-    console.warn('[BC] English localization sheet failed to load; skipping mount', err?.message || err);
+    console.warn(
+      '[BC] English localization sheet failed to load; skipping mount',
+      englishResult.reason?.message || englishResult.reason,
+    );
     return null;
   }
+  const en = englishResult.value;
   let locale = en;
-  if (key !== 'en') {
-    try {
-      locale = await fetchLocaleSheet(key);
-    } catch {
-      locale = en;
-    }
+  let localeKey = 'en';
+  if (localeResult.status === 'fulfilled' && localeResult.value) {
+    locale = localeResult.value;
+    localeKey = key;
+  } else if (localeResult.status === 'rejected') {
+    // eslint-disable-next-line no-console
+    console.warn(`[BC] Locale sheet '${key}' failed; using English`, localeResult.reason?.message || localeResult.reason);
   }
-  return {
-    ...brandConciergeConfig,
-    ui: deepMerge(en.ui, locale.ui),
-    text: { ...en.text, ...locale.text },
-    arrays: { ...en.arrays, ...locale.arrays },
-    metadata: {
-      ...brandConciergeConfig.metadata,
-      language: locale.language || brandConciergeConfig.metadata.language,
-    },
-  };
+  return buildBrandConciergeConfig(en, locale, localeKey);
 }
 
 /**
@@ -231,7 +209,8 @@ const BC_DATASTREAMS = {
  * @returns {string}
  */
 export function getBrandConciergeDatastreamId(lang, fallback) {
-  return BC_DATASTREAMS[(lang || 'en').toLowerCase()] ?? fallback;
+  const key = (lang || 'en').toLowerCase().split('-')[0];
+  return BC_DATASTREAMS[key] ?? fallback;
 }
 
 export default brandConciergeConfig;
