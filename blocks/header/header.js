@@ -16,7 +16,6 @@ import {
 import getProducts from '../../scripts/utils/product-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
-import { isDomainAllowed } from '../../scripts/utils/exlm-config-utils.js';
 import isFeatureEnabled from '../../scripts/utils/feature-flag-utils.js';
 import {
   decoratorState,
@@ -31,6 +30,7 @@ import {
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import LanguageBlock from '../language/language.js';
 import ProfileMenu from './profile-menu.js';
+import { isDomainAllowed } from '../../scripts/utils/exlm-config-utils.js';
 
 /**
  *  @typedef {Object} CommunityOptions
@@ -476,6 +476,10 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
   searchBlock.innerHTML = '';
   const searchWrapper = htmlToElement(
     `<div class="search-wrapper">
+      <button type="button" class="bc-header-ask" aria-label="Ask AI">
+        <span class="icon icon-bc-ask-sparkles" aria-hidden="true"></span>
+        <span class="bc-header-ask-label">Ask AI</span>
+      </button>
       <div class="search-short">
         <a href="${searchLink?.href || '#'}" aria-label="Search">
           <span title="${placeholders?.search || 'Search'}" class="icon icon-search"></span>
@@ -500,6 +504,15 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
   } else {
     decoratorState.headerSearchIconClick = null;
   }
+
+  searchWrapper.querySelector('.bc-header-ask')?.addEventListener('click', () => {
+    import('../../scripts/brand-concierge/brand-concierge.js')
+      .then((mod) => mod.openBrandConcierge())
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.warn('[BC] header Ask open failed', e?.message || e);
+      });
+  });
 
   searchBlock.append(searchWrapper);
   decorateIcons(searchBlock);
@@ -825,6 +838,7 @@ class ExlHeader extends HTMLElement {
  * @param {HTMLHeadElement} headerBlock
  */
 export default async function decorate(headerBlock, options = {}) {
+  // TODO: Cleanup FF once Top Nav(Header v2) is live.
   if (isFeatureEnabled('isHeaderV2') || (await isDomainAllowed('headerv2allowedDomains'))) {
     const { default: decorateV2 } = await import('./header-v2.js');
     return decorateV2(headerBlock, options);

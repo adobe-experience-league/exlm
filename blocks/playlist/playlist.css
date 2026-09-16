@@ -79,6 +79,74 @@
   overflow-x: hidden;
 }
 
+/* Embed-only: attribution CTA aligned with video title (not viewport-fixed). */
+body.playlist-embed-mode .playlist-page {
+  max-width: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+body.playlist-embed-mode .playlist-player-info-heading {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 0.75rem;
+  margin-top: 1em;
+}
+
+body.playlist-embed-mode .playlist-embed-attribution {
+  flex: 0 0 auto;
+  margin: 0;
+  max-width: 45%;
+}
+
+body.playlist-embed-mode .playlist-embed-attribution-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  margin: 0;
+  padding: 0.375rem 0.625rem;
+  font-size: var(--spectrum-font-size-75);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  white-space: nowrap;
+  text-align: center;
+}
+
+body.playlist-embed-mode .playlist-embed-attribution-label-short {
+  display: inline;
+}
+
+body.playlist-embed-mode .playlist-embed-attribution-label-full {
+  display: none;
+}
+
+@media (width >= 600px) {
+  body.playlist-embed-mode .playlist-player-info-heading {
+    gap: 0.75rem 1rem;
+  }
+
+  body.playlist-embed-mode .playlist-embed-attribution {
+    max-width: none;
+  }
+
+  body.playlist-embed-mode .playlist-embed-attribution-link {
+    padding: 0.5rem 1rem;
+    font-size: var(--spectrum-font-size-100);
+    line-height: 1.25;
+  }
+
+  body.playlist-embed-mode .playlist-embed-attribution-label-short {
+    display: none;
+  }
+
+  body.playlist-embed-mode .playlist-embed-attribution-label-full {
+    display: inline;
+  }
+}
+
 .playlist-wrapper {
   display: flex;
   flex-direction: column;
@@ -143,6 +211,15 @@
 .playlist-player-info-title {
   margin: 0;
   margin-top: 1em;
+}
+
+body.playlist-embed-mode .playlist-player-info-heading .playlist-player-info-title {
+  margin-top: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .playlist-player-info-transcript a {

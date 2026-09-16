@@ -4,7 +4,9 @@
 
 .events-v2 {
   .browse-cards-block-content .browse-card.upcoming-event-card,
-  .browse-cards-block-content .browse-card.event-upcoming-event-card {
+  .browse-filters-results .browse-card.upcoming-event-card,
+  .browse-cards-block-content .browse-card.event-upcoming-event-card,
+  .browse-filters-results .browse-card.event-upcoming-event-card {
     background-color: var(--spectrum-gray-50);
     min-height: 450px;
   }

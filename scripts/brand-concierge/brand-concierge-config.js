@@ -48,6 +48,51 @@ const brandConciergeConfig = {
     namespace: getProductNamespace(),
   },
 
+  text: {
+    'welcome.heading': 'Not sure where to start?<br>Ask me anything about Adobe products.',
+    'welcome.subheading': 'Type your question or pick a suggestion below.',
+    'input.placeholder': 'Ask a question…',
+    'input.messageInput.aria': 'Message input',
+    'input.send.aria': 'Send message',
+    'input.mic.aria': 'Voice input',
+    'card.aria.select': 'Select example message',
+    'carousel.prev.aria': 'Previous cards',
+    'carousel.next.aria': 'Next cards',
+    'scroll.bottom.aria': 'Scroll to bottom',
+    'error.network': "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.",
+    'error.general': "I'm sorry, something went wrong. Please try again in a moment.",
+    'loading.message': "Generating from Adobe's trusted resources",
+    'feedback.dialog.title.positive': 'Your feedback is appreciated',
+    'feedback.dialog.title.negative': 'Your feedback is appreciated',
+    'feedback.dialog.question.positive': 'What went well? Select all that apply.',
+    'feedback.dialog.question.negative': 'What went wrong? Select all that apply.',
+    'feedback.dialog.notes': 'Notes',
+    'feedback.dialog.submit': 'Submit',
+    'feedback.dialog.cancel': 'Cancel',
+    'feedback.dialog.notes.placeholder': 'Additional notes (optional)',
+    'feedback.toast.success': 'Thank you for the feedback.',
+    'feedback.thumbsUp.aria': 'Thumbs up',
+    'feedback.thumbsDown.aria': 'Thumbs down',
+  },
+
+  arrays: {
+    // Fallback if brand-concierge.json fails to load
+    'welcome.examples': [
+      { text: 'Where can I go to learn about AI on Experience League?' },
+      { text: 'Getting started with Experience Manager' },
+      { text: 'How do I set up my Workfront instance for my team?' },
+      { text: 'How do I get started with a journey in Adobe Journey Optimizer?' },
+      { text: 'What is CX Enterprise Coworker?' },
+    ],
+    'feedback.positive.options': [
+      'Helpful and relevant',
+      'Clear and easy to understand',
+      'Friendly and conversational tone',
+      'Other',
+    ],
+    'feedback.negative.options': ['Not helpful or relevant', 'Confusing or unclear', 'Too formal or robotic', 'Other'],
+  },
+
   // CSS variable overrides forwarded to BC. Only set values that diverge from
   // BC defaults or need tuning for the compact dialog context.
   // spacing and sizing for pill/suggestion buttons are intentionally set only

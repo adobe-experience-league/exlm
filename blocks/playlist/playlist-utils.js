@@ -93,6 +93,7 @@ export class Playlist {
 
   constructor(options) {
     this.options = { autoplayNext: true, ...options };
+    this.lastCompletedVideoIndex = null;
     const pathBasedId = window.location.pathname.split('/').join('-');
     // If playlistId is provided in options, append it to make key unique per playlist
     const uniqueId = options?.playlistId ? `${pathBasedId}-${options.playlistId}` : pathBasedId;
@@ -132,8 +133,11 @@ export class Playlist {
     this.mpcListener.on(MCP_EVENT.SEEK, this.handleSeek.bind(this));
     this.mpcListener.on(MCP_EVENT.COMPLETE, this.handleComplete.bind(this));
     this.mpcListener.on(MCP_EVENT.START, () => {
+      // Reset the completion guard so a fresh playback of this video can push a videoCompleted event
+      this.lastCompletedVideoIndex = null;
       const { title, description, duration, src } = this.getActiveVideo();
-      pushVideoEvent({ title, description, url: src, duration });
+      const videoId = src?.match(/\/v\/(\d+)/)?.[1] || '';
+      pushVideoEvent({ title, description, url: src, duration, id: videoId });
     });
   }
 
@@ -224,6 +228,14 @@ export class Playlist {
   }
 
   handleComplete() {
+    const activeVideoIndex = this.getActiveVideoIndex();
+    if (activeVideoIndex === -1 || activeVideoIndex === this.lastCompletedVideoIndex) return;
+    this.lastCompletedVideoIndex = activeVideoIndex;
+
+    const { title, description, duration, src } = this.getActiveVideo();
+    const videoId = src?.match(/\/v\/(\d+)/)?.[1] || '';
+    pushVideoEvent({ title, description, url: src, duration, id: videoId }, 'videoCompleted');
+
     if (this.options.autoplayNext) {
       this.next(this.options.autoplayNext);
     }

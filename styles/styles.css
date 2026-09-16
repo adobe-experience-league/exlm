@@ -315,13 +315,25 @@
   --non-spectrum-navy-blue: #1473e6;
   --non-spectrum-dark-navy-blue: #0265dc;
   --non-spectrum-navy-blue-alpha: rgb(20 115 230 / 25%);
+  --non-spectrum-champion-yellow: #ffa311;
+  --non-spectrum-champion-purple: #a55be8;
+  --non-spectrum-champion-blue: #1473e6;
+  --non-spectrum-feedback-black: #1a1a1a;
+  --non-spectrum-feedback-gray: #b0b0b0;
 
   /* ── Brand Concierge ──────────────────────────────────────────────────── */
 
   /* Gradient palette — derived from the concierge-icon.svg brand gradient. */
-  --bc-gradient-start: #ff6a54;
-  --bc-gradient-end: #5d4ada;
+  --bc-gradient-start: #d73220;
+  --bc-gradient-mid: #d92361;
+  --bc-gradient-end: #7155fa;
   --bc-gradient-blue: #b5deff;
+  --bc-gradient: linear-gradient(
+    to right,
+    var(--bc-gradient-start) 0%,
+    var(--bc-gradient-mid) 33%,
+    var(--bc-gradient-end) 100%
+  );
 
   /* User message bubble background — #5258E3 at 15% opacity. */
   --bc-user-bubble: #5258e326;
@@ -599,6 +611,27 @@ body.appear {
 header {
   height: var(--nav-height);
   border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
+}
+
+/* Playlist product-iframe chrome only — selectors must stay under .playlist-embed-mode */
+body.playlist-embed-mode {
+  --nav-height: 0px;
+
+  overflow-x: hidden;
+}
+
+body.playlist-embed-mode > header,
+body.playlist-embed-mode > footer,
+body.playlist-embed-mode > aside {
+  display: none;
+  height: 0;
+  min-height: 0;
+  border: 0;
+  overflow: hidden;
+}
+
+body.playlist-embed-mode > main {
+  margin: 0;
 }
 
 header.header-v2 {

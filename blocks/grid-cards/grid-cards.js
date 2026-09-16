@@ -1,5 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { decorateCta } from '../../scripts/utils/button-utils.js';
 
 export default function decorate(block) {
   const children = [...block.children];
@@ -22,9 +22,12 @@ export default function decorate(block) {
     }
 
     if (hasTitle) {
-      const headingTag = document.createElement('h2');
-      headingTag.classList.add('grid-cards-title', 'h1');
-      headingTag.innerHTML = titleRow.textContent;
+      let headingTag = titleRow.querySelector('h1, h2, h3, h4, h5, h6');
+      if (!headingTag) {
+        headingTag = document.createElement('h2');
+        headingTag.textContent = titleRow.textContent;
+      }
+      headingTag.classList.add('grid-cards-title', headingTag.tagName.toLowerCase());
       titleRow.replaceWith(headingTag);
       headerDiv.appendChild(headingTag);
     } else {
@@ -56,12 +59,14 @@ export default function decorate(block) {
     cardRow.dataset.cardPosition = index + 1;
     const [titleCell, descCell, imageCell, ctaCell] = cardRow.children;
     const picture = imageCell?.querySelector('picture');
+    let cardHeading = titleCell.querySelector('h1, h2, h3, h4, h5, h6');
+    if (!cardHeading) {
+      cardHeading = document.createElement('h3');
+      cardHeading.textContent = titleCell.textContent;
+    }
+    cardHeading.classList.add('grid-card-title', cardHeading.tagName.toLowerCase());
 
     cardRow.textContent = '';
-
-    const cardHeading = document.createElement('h3');
-    cardHeading.classList.add('grid-card-title');
-    cardHeading.innerHTML = titleCell.textContent;
 
     descCell.classList.add('grid-card-description');
 
@@ -85,7 +90,7 @@ export default function decorate(block) {
         // Only show CTA if author provided real label text
         if (text && href && text !== href) {
           ctaCell.classList.add('grid-card-cta');
-          ctaCell.innerHTML = decorateCustomButtons(ctaCell);
+          ctaCell.innerHTML = decorateCta(ctaCell, block, 'cta');
           contentWrapper.appendChild(ctaCell);
         }
       }
@@ -94,13 +99,15 @@ export default function decorate(block) {
     // create clickable wrapper for wide card
     if (isWide) {
       const anchor = ctaCell?.querySelector('a');
-      if (anchor?.href) {
-        anchor.textContent = '';
-        anchor.classList.add('grid-card-link');
-        if (picture) anchor.appendChild(picture);
-        anchor.appendChild(contentWrapper);
-        cardRow.appendChild(anchor);
+      const href = anchor?.getAttribute('href')?.trim();
+      const wrapper = href ? anchor : document.createElement('div');
+      wrapper.textContent = '';
+      wrapper.classList.add('grid-card-link');
+      if (picture) wrapper.appendChild(picture);
+      wrapper.appendChild(contentWrapper);
+      cardRow.appendChild(wrapper);
 
+      if (href) {
         // Add componentClick tracking for wide variant
         anchor.addEventListener('click', async () => {
           const { pushComponentClick, generateComponentID } = await import('../../scripts/analytics/lib-analytics.js');

@@ -22,6 +22,7 @@ import {
 } from './lib-franklin.js';
 import { initiateCoveoAtomicSearch } from './load-atomic-search-scripts.js';
 import isFeatureEnabled from './utils/feature-flag-utils.js';
+import { PLAYLIST_EMBED_BODY_CLASS } from './utils/playlist-embed-utils.js';
 
 /**
  * please do not import any other modules here, as this file is used in the critical path.
@@ -320,6 +321,43 @@ async function buildTabSection(main) {
 }
 
 /**
+ * Parsed locally instead of importing courses/course-utils.js, to keep this
+ * critical-path file from pulling in that ~500-line module on every page.
+ * Only matches when there's a module/step segment after the collection (a bare
+ * /courses/{collection} URL returns null), so a 404 redirect to a course that's
+ * also gone lands on a normal 404 there instead of looping back through this again.
+ * @param {string} url
+ * @returns {string|null} the course landing page URL, or null if url isn't course-shaped
+ */
+function getCourseUrlFor404(url = window.location.pathname) {
+  const parts = url.split('/').filter(Boolean);
+  const idx = parts.indexOf('courses');
+  if (idx > 0 && parts.length > idx + 2) {
+    return `/${parts[idx - 1]}/courses/${parts[idx + 1]}`;
+  }
+  return null;
+}
+
+/**
+ * A deleted step or module page 404s even though its course is still live. Module
+ * pages were never directly user-facing anyway (accessing one normally redirects
+ * to the course landing page), so redirecting their 404s there too matches
+ * existing behavior — this just also covers the deleted-page case.
+ * Redirects to the course landing page without first verifying it still exists —
+ * an async check here would delay loadEager() (buildAutoBlocks runs inside it) and
+ * let the site's own section/block decoration run late, re-wrapping content that's
+ * already been inserted elsewhere and corrupting the layout.
+ * @param {HTMLElement} main
+ */
+function validateCourseUrl(main) {
+  if (window.errorCode !== '404') return;
+  const courseUrl = getCourseUrlFor404();
+  if (!courseUrl) return;
+  main.classList.add('hidden');
+  window.location.replace(courseUrl);
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -330,6 +368,7 @@ function buildAutoBlocks(main, isFragment = false) {
       buildTabSection(main);
     }
     if (!isFragment) {
+      validateCourseUrl(main);
       // Determine page type and add appropriate blocks
       if (isBrowsePage) {
         addBrowseBreadCrumb(main);
@@ -697,10 +736,22 @@ export function decorateMain(main, isFragment = false) {
  * @param {Element} doc The container element
  */
 async function loadEager(doc) {
+  // Apply embed chrome before appear/LCP wait so product iframes never flash ExL header.
+  // Cheap substring gate; authoritative match is isPlaylistPath() in playlist-embed-utils.
+  let embedMode = false;
+  if (window.location.pathname.toLowerCase().includes('/playlists')) {
+    const { isPlaylistPath, isPlaylistEmbedMode } = await import('./utils/playlist-embed-utils.js');
+    if (isPlaylistPath(window.location.pathname) && isPlaylistEmbedMode()) {
+      embedMode = true;
+      doc.body.classList.add(PLAYLIST_EMBED_BODY_CLASS);
+    }
+  }
+
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
   if (main) {
-    buildPreMain(main);
+    // Site-wide banner is global chrome — skip in product embed iframes.
+    if (!embedMode) buildPreMain(main);
     decorateMain(main);
     document.body.classList.add('appear');
     await waitForLCPonMain(LCP_BLOCKS);
@@ -732,6 +783,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities.adobe.com',
+      ethos: 'expereinceleague-api.ethos09-prod-va7.ethos.adobe.net',
     },
     {
       env: 'STAGE',
@@ -740,6 +792,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-beta.adobe.com',
+      ethos: 'expereinceleague-api-stage.ethos09-prod-va7.ethos.adobe.net',
     },
     {
       env: 'DEV',
@@ -748,6 +801,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-beta.adobe.com',
+      ethos: 'expereinceleague-api-stage.ethos09-prod-va7.ethos.adobe.net',
     },
   ];
 
@@ -806,7 +860,9 @@ export function getConfig() {
   );
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const communityHost = currentEnv?.community || defaultEnv.community;
+  const ethosHost = currentEnv?.ethos || defaultEnv.ethos;
   const cdnOrigin = `https://${cdnHost}`;
+  const ethosOrigin = `https://${ethosHost}`;
   const premiumLearningAuthAPI = `${cdnOrigin}/api/v1/web/alm/authentication`;
   const rawLang = document.querySelector('html').lang || 'en';
   const lang = window.location.hostname.includes(communityHost)
@@ -865,7 +921,7 @@ export function getConfig() {
     quizPassingCriteria: 0.65, // 65% passing criteria for quizzes
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list?platform=gainsight`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`,
-    profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
+    profileUrl: `${ethosOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `${cdnOrigin}/api/action/coveo-token?lang=${lang}`,
     coveoSearchResultsUrl: isProd
@@ -877,7 +933,7 @@ export function getConfig() {
     plPublicCatalogIds,
     plApiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
-    industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
+    industryUrl: `${ethosOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     articleUrl: `${cdnOrigin}/api/articles`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
@@ -897,7 +953,7 @@ export function getConfig() {
     communityAccountURL: isProd
       ? `https://experienceleaguecommunities.adobe.com/?lang=${communityLocale}`
       : `https://experienceleaguecommunities-beta.adobe.com/?lang=${communityLocale}`,
-    interestsUrl: `${cdnOrigin}/api/interests?page_size=200&sort=Order`,
+    interestsUrl: `${ethosOrigin}/api/interests?page_size=200&sort=Order`,
     // Param for localized Community Profile URL
     localizedCommunityProfileParam: `?lang=${communityLocale}`,
     // MPC API Base
@@ -995,7 +1051,13 @@ const loadMartech = async (headerPromise, footerPromise) => {
   // eslint-disable-next-line import/no-cycle
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
   libAnalyticsPromise.then(async (libAnalyticsModule) => {
-    const { pushPageDataLayer, pushLinkClick, handleComponentClick, setupComponentImpressions } = libAnalyticsModule;
+    const {
+      pushPageDataLayer,
+      pushLinkClick,
+      handleComponentClick,
+      setupComponentImpressions,
+      setupScrollDepthTracking,
+    } = libAnalyticsModule;
     const { lang } = getPathDetails();
 
     try {
@@ -1007,6 +1069,8 @@ const loadMartech = async (headerPromise, footerPromise) => {
       // eslint-disable-next-line no-console
       console.error('Error getting pageLoadModel:', e);
     }
+
+    setupScrollDepthTracking();
 
     if (isFeatureEnabled('isComponentImpressionEnabled')) {
       setupComponentImpressions();
@@ -1102,7 +1166,26 @@ async function loadDefaultModule(jsPath) {
  * @param {Element} doc The container element
  */
 
+/** Paths like /en/support, /fr/premium — keep in sync with delayed.js isBrandConciergeExcludedPath(). */
+function isBrandConciergeExcludedPath() {
+  const { pathname } = window.location;
+  return /^\/[^/]+\/(support|premium)(\/|$)/i.test(pathname) || /^\/(support|premium)(\/|$)/i.test(pathname);
+}
+
 async function loadLazy(doc) {
+  let embedMode = false;
+  if (window.location.pathname.toLowerCase().includes('/playlists')) {
+    const { isPlaylistPath, isPlaylistEmbedMode } = await import('./utils/playlist-embed-utils.js');
+    if (isPlaylistPath(window.location.pathname)) {
+      embedMode = isPlaylistEmbedMode();
+      if (embedMode) {
+        doc.body.classList.add(PLAYLIST_EMBED_BODY_CLASS);
+      } else {
+        doc.body.classList.remove(PLAYLIST_EMBED_BODY_CLASS);
+      }
+    }
+  }
+
   const main = doc.querySelector('main');
   const preMain = doc.body.querySelector(':scope > aside');
   loadIms(); // start it early, asyncronously
@@ -1114,16 +1197,25 @@ async function loadLazy(doc) {
   loadDefaultModule('./data-service/coveo/coveo-token-prefetch.js');
 
   await loadThemes();
-  if (preMain) await loadBlocks(preMain);
+  if (preMain && !embedMode) await loadBlocks(preMain);
   await loadBlocks(main);
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
-  const headerPromise = loadHeader(doc.querySelector('header'));
-  const footerPromise = loadFooter(doc.querySelector('footer'));
-  // disable martech if martech=off is in the query string, this is used for testing ONLY
-  if (window.location.search?.indexOf('martech=off') === -1) loadMartech(headerPromise, footerPromise);
+
+  if (!embedMode) {
+    const headerPromise = loadHeader(doc.querySelector('header'));
+    const footerPromise = loadFooter(doc.querySelector('footer'));
+    const martechOff = window.location.search?.indexOf('martech=off') !== -1;
+    // disable martech if martech=off is in the query string, this is used for testing ONLY
+    if (!martechOff) {
+      loadMartech(headerPromise, footerPromise);
+    }
+    if (!isBrandConciergeExcludedPath() && !martechOff) {
+      import('./brand-concierge/brand-concierge-entry-target.js').catch(() => {});
+    }
+  }
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   if (isLiveGradientBgPage) {
     loadDefaultModule('./page-bg-gradient/page-bg-gradient.js');
@@ -1215,6 +1307,9 @@ export async function loadArticles() {
 }
 
 async function showSignupDialog() {
+  // Product-iframe playlist embed must stay chrome-less (no signup wizard overlay).
+  if (document.body.classList.contains(PLAYLIST_EMBED_BODY_CLASS)) return;
+
   const isSignedIn = window?.adobeIMS?.isSignedInUser();
   if (!isSignedIn) return;
 
@@ -1628,7 +1723,7 @@ export async function fetchJson(url, fallbackUrl) {
 }
 
 export function xssSanitizeQueryParamValue(value) {
-  return value?.replace(/[^a-zA-Z0-9\s.|]/g, '');
+  return value?.replace(/[^a-zA-Z0-9\s.|-]/g, '');
 }
 
 export function getCookie(cookieName) {

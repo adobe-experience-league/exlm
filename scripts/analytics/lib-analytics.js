@@ -1,6 +1,9 @@
 /* eslint-disable no-console */
-export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
+import { queueAnalyticsEvent } from './analytics-queue.js';
+
 const lang = document.querySelector('html').lang || 'en';
+export const microsite = /^\/(developer|events|landing|overview|tools|welcome)/.test(window.location.pathname);
+export const migratedMicrosite = /^\/en\/tools\//.test(window.location.pathname);
 export const search = window.location.pathname === '/search.html' || window.location.pathname === `/${lang}/search`;
 export const docs = window.location.pathname.indexOf('/docs') !== -1;
 export const courses = document.querySelector('meta[name="theme"]')?.content.includes('course-') || false;
@@ -71,6 +74,78 @@ export const pageName = (language) => {
   return responseStr.toLowerCase();
 };
 
+/**
+ * Builds the `user` object pushed on analytics events, fetching the merged profile when
+ * available. Falls back to an unauthenticated shape on error or when signed out.
+ * @returns {Promise<{ user: object, userData: object|null }>}
+ */
+async function getDataLayerUserDetails() {
+  const user = {
+    userDetails: {
+      userAccountType: '',
+      userAuthenticatedStatus: 'unauthenticated',
+      userAuthenticatedSystem: 'ims',
+      userID: '',
+      userLanguageSetting: [],
+      learningInterest: [],
+      role: [],
+      experienceLevel: [],
+      industry: [],
+      notificationPref: false,
+      org: '',
+      orgs: [],
+      userCorporateName: '',
+    },
+  };
+
+  let userData = null;
+
+  try {
+    // eslint-disable-next-line import/no-cycle
+    const { defaultProfileClient } = await import('../auth/profile.js');
+    userData = await defaultProfileClient.getMergedProfile();
+    if (userData) {
+      // Prefer IMS authId so userID remains stable across org/account switches
+      const stableAuthId = userData?.authId || userData?.userId || '';
+
+      // Detect new signup: true if user hasn't seen signup modal yet
+      const isNewSignUp = !userData.interactions?.some((interaction) => interaction.event === 'modalSeen');
+
+      user.userDetails = {
+        ...user.userDetails,
+        userAccountType: userData.account_type,
+        userAuthenticatedStatus: 'logged in',
+        userID: stableAuthId,
+        userLanguageSetting: userData.preferred_languages || ['en-us'],
+        learningInterest: userData.interests || [],
+        role: userData.role || [],
+        experienceLevel: userData.level || [],
+        solutionLevel: userData.solutionLevels || [],
+        certifications: userData.certifications || [],
+        industry: userData.industryInterests || [],
+        notificationPref: userData.emailOptIn === true,
+        org: userData.org || '',
+        orgs: userData.orgs || [],
+        userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
+        newSignUp: isNewSignUp,
+      };
+
+      // get a list of all courses titles and ids with awards.timestamp property
+      // Get arrays of completed courses names and their IDs (where awards.timestamp and course.name exist)
+      const completedCourses = (userData?.courses_v2 || []).filter(
+        (course) => course?.awards?.timestamp && course.name,
+      );
+      user.userDetails.courses = completedCourses.length ? completedCourses.map((course) => course.name) : [];
+      user.userDetails.coursesID = completedCourses.length ? completedCourses.map((course) => course.courseId) : [];
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error getting user profile:', e);
+  }
+
+  return { user, userData };
+}
+
 export async function pushPageDataLayer(language, searchTrackingData) {
   window.adobeDataLayer = window.adobeDataLayer || [];
 
@@ -138,62 +213,10 @@ export async function pushPageDataLayer(language, searchTrackingData) {
     }
   }
 
-  const user = {
-    userDetails: {
-      userAccountType: '',
-      userAuthenticatedStatus: 'unauthenticated',
-      userAuthenticatedSystem: 'ims',
-      userID: '',
-      userLanguageSetting: [],
-      learningInterest: [],
-      role: [],
-      experienceLevel: [],
-      industry: [],
-      notificationPref: false,
-      org: '',
-      orgs: [],
-      userCorporateName: '',
-    },
-  };
+  const { user, userData } = await getDataLayerUserDetails();
 
   try {
-    // eslint-disable-next-line import/no-cycle
-    const { defaultProfileClient } = await import('../auth/profile.js');
-    const userData = await defaultProfileClient.getMergedProfile();
     if (userData) {
-      // Prefer IMS authId so userID remains stable across org/account switches
-      const stableAuthId = userData?.authId || userData?.userId || '';
-
-      // Detect new signup: true if user hasn't seen signup modal yet
-      const isNewSignUp = !userData.interactions?.some((interaction) => interaction.event === 'modalSeen');
-
-      user.userDetails = {
-        ...user.userDetails,
-        userAccountType: userData.account_type,
-        userAuthenticatedStatus: 'logged in',
-        userID: stableAuthId,
-        userLanguageSetting: userData.preferred_languages || ['en-us'],
-        learningInterest: userData.interests || [],
-        role: userData.role || [],
-        experienceLevel: userData.level || [],
-        solutionLevel: userData.solutionLevels || [],
-        certifications: userData.certifications || [],
-        industry: userData.industryInterests || [],
-        notificationPref: userData.emailOptIn === true,
-        org: userData.org || '',
-        orgs: userData.orgs || [],
-        userCorporateName: userData.orgs.find((o) => o.orgId === userData.org)?.orgName ?? '',
-        newSignUp: isNewSignUp,
-      };
-
-      // get a list of all courses titles and ids with awards.timestamp property
-      // Get arrays of completed courses names and their IDs (where awards.timestamp and course.name exist)
-      const completedCourses = (userData?.courses_v2 || []).filter(
-        (course) => course?.awards?.timestamp && course.name,
-      );
-      user.userDetails.courses = completedCourses.length ? completedCourses.map((course) => course.name) : [];
-      user.userDetails.coursesID = completedCourses.length ? completedCourses.map((course) => course.courseId) : [];
-
       const courseInfo = (userData.courses_v2 || []).find((c) => c.courseId === courseObj?.id);
       if (courseInfo) {
         if (courseInfo?.modules && Array.isArray(courseInfo?.modules)) {
@@ -381,13 +404,19 @@ export async function pushLinkClick(e) {
 
   const viewMoreLess = e.target.parentElement?.classList?.contains('view-more-less');
   const isCourseStartCTA = e.target.closest('.course-breakdown-header-start-button');
+  const header = e.target.closest('.header');
+  const nearestNavItem = e.target.closest('.nav-item');
+  const navigation = nearestNavItem?.classList.contains('nav-item-leaf')
+    ? nearestNavItem.parentElement?.closest('.nav-item:not(.nav-item-leaf)')
+    : nearestNavItem;
+  const getPageSolution = () => document.querySelector('meta[name="solution"]')?.content?.split(',')[0].trim() || '';
 
   let linkLocation = 'unidentified';
   if (e.target.closest('.rail-right') || e.target.closest('.mini-toc-wrapper')) {
     linkLocation = 'mtoc';
   } else if (e.target.closest('.rail-left')) {
     linkLocation = 'toc';
-  } else if (e.target.closest('.header')) {
+  } else if (header) {
     linkLocation = 'header';
   } else if (e.target.closest('.footer-container')) {
     linkLocation = 'footer';
@@ -401,6 +430,36 @@ export async function pushLinkClick(e) {
   let name = e.target.innerHTML;
   let destinationDomain = e.target.href;
   let linkTitle = e.target.innerHTML || '';
+
+  /*
+   * Navigation bar analytics:
+   * - Use only the clicked nav item's title.
+   * - Do not include the nav-item-subtitle markup/text.
+   * - Get solution from the nav item instead of the page meta solution.
+   */
+  let navigationSolution = '';
+
+  if (navigation) {
+    navigationSolution = navigation.classList.contains('nav-item-root')
+      ? getPageSolution()
+      : navigation.querySelector('.nav-tab-heading')?.textContent.trim() || '';
+
+    const titleElement = nearestNavItem?.querySelector(':scope > a') || e.target.closest('a');
+
+    // Find the title element and exclude the subtitle from analytics.
+    if (titleElement) {
+      // Clone the element so the subtitle can be removed without modifying the DOM.
+      const titleClone = titleElement.cloneNode(true);
+      titleClone.querySelectorAll('.nav-item-subtitle').forEach((subtitle) => subtitle.remove());
+
+      const cleanedTitle = titleClone.textContent?.trim() || '';
+
+      if (cleanedTitle) {
+        linkTitle = cleanedTitle;
+        name = cleanedTitle;
+      }
+    }
+  }
 
   if (!viewMoreLess && e.target.href?.match(/.(pdf|zip|dmg|exe)$/)) {
     linkType = 'download';
@@ -424,12 +483,10 @@ export async function pushLinkClick(e) {
     linkType,
   };
 
-  // Only add solution field if not a course CTA
+  // For navigation-bar clicks, use the solution associated with the
+  // navigation item. For other links, retain the existing page solution.
   if (!isCourseStartCTA) {
-    linkObj.solution =
-      document.querySelector('meta[name="solution"]') !== null
-        ? document.querySelector('meta[name="solution"]').content.split(',')[0].trim()
-        : '';
+    linkObj.solution = navigation && navigationSolution ? navigationSolution : getPageSolution();
   }
 
   window.adobeDataLayer.push({
@@ -509,21 +566,23 @@ export function handleComponentClick(e) {
 }
 
 /**
- * Used to push a video event to the data layer
+ * Pushes a video event straight to the data layer.
  * @param {Video} video
  * @param {string} event
  */
-export function pushVideoEvent(video, event = 'videoPlay') {
+function pushVideoEventToDataLayer(video, event = 'videoPlay') {
   const { title, description, url } = video;
 
   const videoDuration = video.duration || '';
   const videoSolution = video.solution || solution || '';
   const videoFullSolution = video.fullSolution || fullSolution || '';
+  const videoId = video.id || '';
   window.adobeDataLayer = window.adobeDataLayer || [];
 
   window.adobeDataLayer.push({
     event,
     video: {
+      id: videoId,
       title,
       description,
       url,
@@ -541,6 +600,17 @@ export function pushVideoEvent(video, event = 'videoPlay') {
       },
     },
   });
+}
+
+/**
+ * Used to push a video event to the data layer.
+ * Routed through the analytics queue so it never lands before the `page loaded`
+ * event, e.g. when a video auto-plays before pushPageDataLayer resolves.
+ * @param {Video} video
+ * @param {string} event
+ */
+export function pushVideoEvent(video, event = 'videoPlay') {
+  queueAnalyticsEvent(pushVideoEventToDataLayer, video, event);
 }
 
 export function assetInteractionModel(id, assetInteractionType, options) {
@@ -1149,6 +1219,79 @@ export function pushBrowseFilterSearchClearEvent(searchType, filterType, filterV
 }
 
 /**
+ * Pushes an events filter/search interaction event to the Adobe Data Layer.
+ * Fired when a user selects a filter or submits a keyword in the events-search block.
+ *
+ * @param {Object} params
+ * @param {string} params.linkTitle - e.g. 'events filter apply' or 'search events'
+ * @param {string} params.linkType - e.g. 'filter' or 'search text box'
+ * @param {string} [params.destinationDomain] - Defaults to the current page URL
+ * @param {number} [params.count=0] - Result count after the interaction
+ * @param {number} [params.depth=1]
+ * @param {Object} [params.filter] - { product: [], eventType: [], series: [] }
+ * @param {string} [params.sortBy='relevancy']
+ * @param {string} [params.term] - Keyword entered in the search box
+ */
+export async function pushEventsFilterSearchEvent({
+  linkTitle,
+  linkType,
+  destinationDomain,
+  count = 0,
+  depth = 1,
+  filter = {},
+  sortBy = 'relevancy',
+  term = '',
+} = {}) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user, userData } = await getDataLayerUserDetails();
+
+  window.adobeDataLayer.push({
+    event: 'eventsFilterSearch',
+    eventType: 'web.webInteraction.eventsFilterSearch',
+    link: {
+      linkTitle: linkTitle || '',
+      linkLocation: 'events page',
+      linkType: linkType || '',
+      destinationDomain: destinationDomain || window.location.href,
+    },
+    eventHubFilter: {
+      Count: count,
+      depth,
+      filter: {
+        product: (filter.product || []).join(','),
+        eventType: (filter.eventType || []).join(','),
+        series: (filter.series || []).join(','),
+      },
+      sortBy,
+      term,
+    },
+    ...(userData && { user }),
+  });
+}
+
+/**
+ * Pushes a "clear all filters" link click event to the Adobe Data Layer for the events-search block.
+ *
+ * @param {string} [destinationDomain] - Defaults to the current page URL
+ */
+export async function pushEventsClearFiltersEvent(destinationDomain) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user, userData } = await getDataLayerUserDetails();
+
+  window.adobeDataLayer.push({
+    event: 'linkClicked',
+    eventType: 'web.webInteraction.linkclicks',
+    link: {
+      linkTitle: 'clear all filters clicked',
+      linkLocation: 'events page',
+      linkType: 'link',
+      destinationDomain: destinationDomain || window.location.href,
+    },
+    ...(userData && { user }),
+  });
+}
+
+/**
  * Pushes a grid toggle event to the Adobe Data Layer.
  * This event is fired when users switch to grid view.
  * @param {string} cardHeader - The header associated with the block.
@@ -1378,4 +1521,152 @@ export function pushTopNavSearchEvent(contentTypeDropDown, searchTerm) {
       searchTerm: searchTerm || '',
     },
   });
+}
+
+/**
+ * Pushes the Brand Concierge widget impression event to the Adobe Data Layer.
+ * Fired once, the first time the BC entry point becomes visible.
+ */
+export async function pushBcWidgetImpressionEvent() {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user, userData } = await getDataLayerUserDetails();
+
+  window.adobeDataLayer.push({
+    event: 'bcWidgetImpression',
+    eventType: 'web.webInteraction.bcWidgetImpression',
+    link: {
+      linkTitle: 'bc widget impression',
+      linkLocation: 'brand concierge widget',
+      linkType: 'Impression',
+      destinationDomain: window.location.href,
+    },
+    ...(userData && { user }),
+  });
+}
+
+/**
+ * Pushes a Brand Concierge widget interaction event (open, close, expand,
+ * collapse, clear, message submit) to the Adobe Data Layer.
+ * @param {string} linkTitle - e.g. 'bc widget open', 'bc message submit'.
+ * @param {{ bcChatId?: string, bcChatMessageNumber?: number }} [options] - `bcChatId` is BC's own
+ * `conversationId` (captured from response:started/response:completed); `bcChatMessageNumber` is
+ * the number of chat replies since the start of the conversation. Passed only for the
+ * message-submit event.
+ */
+export async function pushBcInteractionEvent(linkTitle, { bcChatId, bcChatMessageNumber } = {}) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user, userData } = await getDataLayerUserDetails();
+
+  window.adobeDataLayer.push({
+    event: 'linkClicked',
+    eventType: 'web.webInteraction.linkclicks',
+    link: {
+      linkTitle,
+      linkLocation: 'brand concierge widget',
+      linkType: 'button',
+      destinationDomain: window.location.href,
+    },
+    ...(bcChatId && { bcChat: { bcChatId, bcChatMessageNumber } }),
+    ...(userData && { user }),
+  });
+}
+
+const SCROLL_DEPTH_THRESHOLDS = [10, 40, 70, 100];
+
+// Milestones fire once scrolling has been quiet for this long, so a whole scroll motion
+// (instant jump, fling, or animated scrollIntoView) is judged as one batch instead of
+// frame-by-frame.
+const SCROLL_SETTLE_MS = 200;
+
+/**
+ * Pushes a contentScroll event to the Adobe Data Layer.
+ * @param {number} percentage - The scroll depth milestone reached (10, 40, 70, or 100).
+ * @param {string} scrollType - How the milestone was reached: 'scroll' or 'anchor tag click'.
+ * @param {boolean} isBackfilled - True when this milestone was skipped over (fast scroll or
+ * anchor jump) and is being fired retroactively alongside the milestone actually reached.
+ */
+async function pushScrollDepthEvent(percentage, scrollType, isBackfilled) {
+  window.adobeDataLayer = window.adobeDataLayer || [];
+  const { user } = await getDataLayerUserDetails();
+
+  window.adobeDataLayer.push({
+    event: 'contentScroll',
+    eventType: 'web.webInteraction.contentScroll',
+    scroll: {
+      percentageScrolled: percentage,
+      scrollType,
+      isBackfilled,
+    },
+    user,
+  });
+}
+
+/**
+ * Sets up scroll depth tracking for Learn and Documentation pages. Fires a contentScroll event
+ * once per milestone (10%, 40%, 70%, 100%) per page view. Checks happen once scrolling has
+ * settled rather than per frame, so any milestones skipped over in one scroll motion resolve
+ * together.
+ */
+export function setupScrollDepthTracking() {
+  if (window.errorCode === '404' || !(docs || (!microsite && !migratedMicrosite && !search))) return;
+
+  const firedThresholds = new Set();
+  let scrollType = 'scroll';
+
+  async function checkThresholds() {
+    const currentScrollType = scrollType;
+    scrollType = 'scroll';
+
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const maxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    if (maxScroll <= 0) return;
+
+    // Rounded because scrollTop is sub-pixel while scrollHeight/clientHeight are whole pixels,
+    // so an exact bottom-of-page position can compute to e.g. 99.99% instead of a clean 100.
+    const currentPercent = Math.round((scrollTop / maxScroll) * 100);
+    const crossed = SCROLL_DEPTH_THRESHOLDS.filter(
+      (threshold) => !firedThresholds.has(threshold) && currentPercent >= threshold,
+    );
+    if (!crossed.length) return;
+
+    crossed.forEach((threshold) => firedThresholds.add(threshold));
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const threshold of crossed) {
+      // eslint-disable-next-line no-await-in-loop
+      await pushScrollDepthEvent(threshold, currentScrollType, threshold !== crossed[crossed.length - 1]);
+    }
+  }
+
+  // Covers a page landing already scrolled past a threshold (restored scroll position on
+  // back/forward navigation, or a #hash in the URL auto-scrolling on load) with no scroll
+  // event firing afterward.
+  checkThresholds();
+
+  let settleTimer = null;
+  window.addEventListener(
+    'scroll',
+    () => {
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(checkThresholds, SCROLL_SETTLE_MS);
+    },
+    { passive: true },
+  );
+
+  document.addEventListener(
+    'click',
+    (e) => {
+      const anchor = e.target.closest('a[href*="#"]');
+      if (!anchor) return;
+
+      const isSamePageHash =
+        anchor.hash && anchor.origin === window.location.origin && anchor.pathname === window.location.pathname;
+      if (!isSamePageHash) return;
+
+      scrollType = 'anchor tag click';
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(checkThresholds, SCROLL_SETTLE_MS);
+    },
+    true,
+  );
 }

@@ -1,0 +1,34 @@
+@import '../champion-detail/champion-detail.css';
+
+/* Each panel reuses champion-detail.css's classes to render identically to the standalone page. */
+.featured-advocates.block .featured-advocates-panel {
+  display: none;
+}
+
+.featured-advocates.block .featured-advocates-panel.active {
+  display: block;
+}
+
+.featured-advocates.block .champion-content.block.glass-bg {
+  border: 0;
+  background: rgb(255 255 255 / 50%);
+}
+
+.featured-advocates.block .champion-content.block.glass-bg,
+.featured-advocates.block .champion-content.block.champion-content-yellow.glass-bg {
+  box-shadow:
+    0 0 8px 0 rgb(0 0 0 / 25%),
+    0 var(--spectrum-spacing-75) 0 0 var(--non-spectrum-champion-yellow) inset;
+}
+
+.featured-advocates.block .champion-content.block.champion-content-purple.glass-bg {
+  box-shadow:
+    0 0 8px 0 rgb(0 0 0 / 25%),
+    0 var(--spectrum-spacing-75) 0 0 var(--non-spectrum-champion-purple) inset;
+}
+
+.featured-advocates.block .champion-content.block.champion-content-blue.glass-bg {
+  box-shadow:
+    0 0 8px 0 rgb(0 0 0 / 25%),
+    0 var(--spectrum-spacing-75) 0 0 var(--non-spectrum-champion-blue) inset;
+}

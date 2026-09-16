@@ -161,24 +161,8 @@ main .events-search .events-search-filter-options {
 main .events-search .events-search-filter-options-list {
   display: grid;
   min-height: calc(3 * (16px + 2 * var(--spectrum-spacing-75)));
-  overflow-y: auto;
   box-sizing: border-box;
-  padding-inline-end: calc(6px + var(--spectrum-spacing-75));
-  scrollbar-width: thin;
-  scrollbar-color: var(--non-spectrum-scrollbar-thumb) transparent;
-}
-
-main .events-search .events-search-filter-options-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-main .events-search .events-search-filter-options-list::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-main .events-search .events-search-filter-options-list::-webkit-scrollbar-thumb {
-  background-color: var(--non-spectrum-scrollbar-thumb);
-  border-radius: 3px;
+  padding-inline-end: var(--spectrum-spacing-75);
 }
 
 main .events-search .events-search-filter-group:not(.is-expanded) .events-search-filter-options {

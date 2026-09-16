@@ -1,4 +1,4 @@
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { decorateCta } from '../../scripts/utils/button-utils.js';
 
 export function generateTeaserDOM(props, classes) {
   // Extract properties, always same order as in model, empty string if not set
@@ -18,7 +18,7 @@ export function generateTeaserDOM(props, classes) {
         <div class='title'>${title.innerHTML}</div>
         <div class='long-description'>${longDescr.innerHTML}</div>
         <div class='short-description'>${hasShortDescr ? shortDescr.innerHTML : longDescr.innerHTML}</div>
-        <div class='cta'>${decorateCustomButtons(firstCta, secondCta)}</div>
+        <div class='cta'>${decorateCta(firstCta, classes, 'cta1')}${decorateCta(secondCta, classes, 'cta2')}</div>
       </div>
       <div class='spacer'>
       </div>

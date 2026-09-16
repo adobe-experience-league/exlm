@@ -145,8 +145,8 @@ function findLocalizedVideoId(collectionsData, lang) {
  * @param {string} url - Video URL to extract ID from
  * @returns {string|null} - Extracted video ID or null if not found
  */
-function extractVideoId(url) {
-  const match = url.match(/\/v\/(\d+)/);
+export function extractVideoId(url) {
+  const match = url?.match(/\/v\/(\d+)/);
   return match ? match[1] : null;
 }
 

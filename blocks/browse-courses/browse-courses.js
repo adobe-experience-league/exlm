@@ -116,7 +116,10 @@ function createHeader(headingElement, filterLabelElement) {
 function getFiltersFromUrl() {
   const urlParams = new URLSearchParams(window.location.search);
   const filtersParam = urlParams.get(URL_PARAMS.FILTERS)
-    ? urlParams.get(URL_PARAMS.FILTERS).split(',').map(xssSanitizeQueryParamValue)
+    ? urlParams
+        .get(URL_PARAMS.FILTERS)
+        .split(',')
+        .map((value) => xssSanitizeQueryParamValue(value.trim()))
     : [];
 
   return filtersParam;
@@ -129,7 +132,10 @@ function getFiltersFromUrl() {
 function getLevelFiltersFromUrl() {
   const urlParams = new URLSearchParams(window.location.search);
   const levelParam = urlParams.get(URL_PARAMS.LEVEL)
-    ? urlParams.get(URL_PARAMS.LEVEL).split(',').map(xssSanitizeQueryParamValue)
+    ? urlParams
+        .get(URL_PARAMS.LEVEL)
+        .split(',')
+        .map((value) => xssSanitizeQueryParamValue(value.trim()))
     : [];
 
   return levelParam;

@@ -71,6 +71,15 @@
   /* fonts */
   --body-font-family: 'Adobe Clean', adobe-clean, 'Source Sans Pro', -apple-system, system-ui, 'Segoe UI', roboto,
     ubuntu, 'Trebuchet MS', 'Lucida Grande', sans-serif;
+  --bc-gradient-start: #d73220;
+  --bc-gradient-mid: #d92361;
+  --bc-gradient-end: #7155fa;
+  --bc-gradient: linear-gradient(
+    to right,
+    var(--bc-gradient-start) 0%,
+    var(--bc-gradient-mid) 33%,
+    var(--bc-gradient-end) 100%
+  );
 }
 
 @media (min-width: 1024px) {
@@ -203,6 +212,21 @@
   justify-content: flex-end;
 }
 
+@media (min-width: 1200px) {
+  :host([data-bc-entry='header-ask-button']) .search-wrapper {
+    display: inline-flex;
+    flex-grow: 0;
+    max-width: none;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+
+  :host([data-bc-entry='header-ask-button']) .search-short {
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+}
+
 .header-wrapper {
   /* header is always white */
   background-color: var(--color-white);
@@ -287,6 +311,94 @@ a.button:focus,
 button:hover,
 button:focus {
   cursor: pointer;
+}
+
+/* Header Ask (Mode C) — matches Updated FAB pill (mode-C/Updated Floating Action Button.png) */
+button.bc-header-ask {
+  position: relative;
+  display: none;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: auto;
+  min-width: 0;
+  height: 40px;
+  min-height: 40px;
+  margin: 0;
+  padding: 0 16px;
+  border: none;
+  border-radius: 100px;
+  background-color: var(--background-color);
+  color: var(--nav-item-text-color);
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  overflow: visible;
+  text-overflow: unset;
+  text-align: center;
+  white-space: nowrap;
+  isolation: isolate;
+  cursor: pointer;
+}
+
+button.bc-header-ask::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 100px;
+  padding: 2px;
+  background: var(--bc-gradient);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 0;
+}
+
+button.bc-header-ask > * {
+  position: relative;
+  z-index: 1;
+}
+
+button.bc-header-ask-label,
+.bc-header-ask-label {
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  font-size: var(--spectrum-font-size-100);
+  color: var(--nav-item-text-color);
+}
+
+button.bc-header-ask:hover,
+button.bc-header-ask:focus,
+button.bc-header-ask:focus-visible {
+  background-color: var(--background-color);
+  color: var(--nav-item-text-color);
+  cursor: pointer;
+}
+
+@media (min-width: 1200px) {
+  :host([data-bc-entry='header-ask-button'][data-bc-ready='true']) button.bc-header-ask {
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+.bc-header-ask .icon {
+  display: flex;
+  align-items: center;
+  line-height: 0;
+  margin: 0;
+}
+
+.bc-header-ask .icon.icon-bc-ask-sparkles img {
+  display: block;
+  width: 18px;
+  height: 18px;
+  filter: none;
 }
 
 .header {

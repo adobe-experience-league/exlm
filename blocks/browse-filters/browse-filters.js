@@ -35,7 +35,7 @@ import {
 } from '../../scripts/analytics/lib-analytics.js';
 import {
   BASE_COVEO_ADVANCED_QUERY,
-  BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT,
+  BASE_COVEO_ADVANCED_QUERY_EVENTS,
 } from '../../scripts/browse-card/browse-cards-constants.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import {
@@ -396,7 +396,7 @@ function handleUriHash(isInitialLoad) {
     const facetValues = facetValueInfo
       .split(',')
       .filter(Boolean)
-      .map((v) => safeDecode(v));
+      .map((v) => safeDecode(v).trim());
 
     if (Object.keys(coveoFacetMap).includes(keyName)) {
       const filterOptionEl = browseFiltersSection.querySelector(`.filter-dropdown[data-filter-type="${keyName}"]`);
@@ -404,8 +404,15 @@ function handleUriHash(isInitialLoad) {
         const ddObject = getObjectById(dropdownOptions, keyName);
         const { name } = ddObject;
         facetValues.forEach((facetValueString) => {
+          // Some facet values are opaque strings that contain a literal '|' (e.g. the
+          // isEventsV2 content types 'Event|On Demand Event', 'Event|Upcoming Event') and
+          // must match a checkbox by their full value. Others (e.g. Community sub-facets)
+          // encode multiple hash entries that all map back to one checkbox keyed by the
+          // segment before the '|'. Try the exact value first, then fall back to the key.
           const [facetValue] = facetValueString.split('|');
-          const inputEl = filterOptionEl.querySelector(`input[value="${facetValue}"]`);
+          const inputEl =
+            filterOptionEl.querySelector(`input[value="${facetValueString}"]`) ||
+            filterOptionEl.querySelector(`input[value="${facetValue}"]`);
           if (inputEl && !inputEl.checked) {
             const label = inputEl.dataset.label || '';
             inputEl.checked = true;
@@ -415,20 +422,18 @@ function handleUriHash(isInitialLoad) {
                 id: keyName,
                 name,
                 label,
-                value: facetValue,
+                value: inputEl.value,
               },
               'handleUriHash',
             );
           }
         });
         const btnEl = filterOptionEl.querySelector(':scope > button');
-        const selectedCount = facetValues.reduce((acc, curr) => {
-          const [key] = curr.split('|');
-          if (!acc.includes(key)) {
-            acc.push(key);
-          }
-          return acc;
-        }, []).length;
+        // Base the count on checkboxes actually applied above, not the raw hash values —
+        // a facet value from the hash may not exist for the current locale (e.g. right
+        // after a locale switch), which previously left the count out of sync with the
+        // (empty) selection shown below it.
+        const selectedCount = filterOptionEl.querySelectorAll('.custom-checkbox input[type="checkbox"]:checked').length;
         ddObject.selected = selectedCount;
         btnEl.firstChild.textContent = selectedCount === 0 ? name : `${name} (${selectedCount})`;
       }
@@ -1051,7 +1056,10 @@ if (isArticleLandingPage()) {
     return acc;
   }, '');
 
-  const coveoSolutionArr = coveoSolutions.split(/[,;]/).filter((solution) => solution && !solution.includes('|'));
+  const coveoSolutionArr = coveoSolutions
+    .split(/[,;]/)
+    .map((solution) => solution.trim())
+    .filter((solution) => solution && !solution.includes('|'));
   const coveoSolutionOptionsList = Array.from(new Set(coveoSolutionArr)).sort();
   const coveoSolutionOptions = coveoSolutionOptionsList.map((solution) => ({
     description: '',
@@ -1743,9 +1751,7 @@ function decorateBrowseTopics(block) {
 
 export default async function decorate(block) {
   const isUpcomingEventFlow = isEventsPage && isFeatureEnabled('isEventsV2');
-  window.headlessBaseSolutionQuery = isUpcomingEventFlow
-    ? BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT
-    : BASE_COVEO_ADVANCED_QUERY;
+  window.headlessBaseSolutionQuery = isUpcomingEventFlow ? BASE_COVEO_ADVANCED_QUERY_EVENTS : BASE_COVEO_ADVANCED_QUERY;
   enableTagsAsProxy(block);
   appendFormEl(block);
   constructFilterInputContainer(block);

@@ -516,12 +516,15 @@ const buildMobileNavDrawer = (ul, navBlock, decoratorOptions) => {
     });
   }
   if (decoratorState.languages?.length) {
+    const { prefix, suffix } = getPathDetails();
     ul.appendChild(
       htmlToElement(
         `<li class="nav-item-mobile">
           <p>${decoratorState.languageTitle}</p>
           <ul>
-            ${decoratorState.languages.map((l) => `<li><a href="${l.lang}">${l.title}</a></li>`).join('')}
+            ${decoratorState.languages
+              .map((l) => `<li><a href="${prefix}/${l.lang}${suffix}">${l.title}</a></li>`)
+              .join('')}
           </ul>
         </li>`,
       ),
@@ -740,13 +743,20 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
   const options = [...searchOptions].map((option) => option.textContent);
 
   searchBlock.innerHTML = '';
-  const searchWrapper = htmlToElement(
+  const searchShort = htmlToElement(
     `<div class="search-short">
         <a href="${searchLink?.href || '#'}" aria-label="Search">
           <span title="${placeholders?.search || 'Search'}" class="icon icon-search"></span>
         </a>
       </div>`,
   );
+  const askBtn = htmlToElement(
+    `<button type="button" class="bc-header-ask" aria-label="Ask AI">
+      <span class="icon icon-bc-ask-sparkles" aria-hidden="true"></span>
+      <span class="bc-header-ask-label">Ask AI</span>
+    </button>`,
+  );
+  const searchWrapper = htmlToElement('<div class="search-wrapper"></div>');
 
   const searchModule = await loadSearchElement();
   const { redirectToSearchPage, getHeaderSearchFilterValue } = searchModule;
@@ -760,11 +770,21 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
       e.preventDefault();
       redirectToSearchPage(searchUrl, '', filterValue);
     };
-    searchWrapper.querySelector('.search-short a')?.addEventListener('click', decoratorState.headerSearchIconClick);
+    searchShort.querySelector('a')?.addEventListener('click', decoratorState.headerSearchIconClick);
   } else {
     decoratorState.headerSearchIconClick = null;
   }
 
+  askBtn.addEventListener('click', () => {
+    import('../../scripts/brand-concierge/brand-concierge.js')
+      .then((mod) => mod.openBrandConcierge())
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.warn('[BC] header Ask open failed', e?.message || e);
+      });
+  });
+
+  searchWrapper.append(askBtn, searchShort);
   searchBlock.append(searchWrapper);
   decorateIcons(searchBlock);
   return searchBlock;
@@ -1007,8 +1027,10 @@ class ExlHeader extends HTMLElement {
     if (headerFragment) {
       loadSearchElement();
 
+      // .header-clip is a purely structural layer: see its CSS rule for why it exists
+      // (decouples the horizontal-overflow safety net from `.header`'s visible 52px height).
       const headerWrapper = htmlToElement(
-        '<div class="header-wrapper" id="header-wrapper"><div class="header block"></div></div>',
+        '<div class="header-wrapper" id="header-wrapper"><div class="header-clip"><div class="header block"></div></div></div>',
       );
       this.shadowRoot.appendChild(headerWrapper);
       const header = this.shadowRoot.querySelector('.header');

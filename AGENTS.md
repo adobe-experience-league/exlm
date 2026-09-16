@@ -22,19 +22,18 @@ HTML is not only “folder + Markdown” in the default setup: **[fstab.yaml](fs
 
 **Requirements** (from [package.json](package.json)): Node `>=22`, npm `>=10`.
 
-| Command                   | Purpose                                                                                                      |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `npm install`             | Install dev dependencies                                                                                     |
-| `npm run up`              | Local dev (`aem up`); default `http://localhost:3000`                                                        |
-| `npm run up-secure`       | HTTPS local dev with signed-in flows (see [README](README.md); requires hosts + cert)                        |
-| `npm run up-secure-stage` | Like `up-secure`, proxying stage content                                                                     |
-| `npm run up-secure-prod`  | Like `up-secure`, proxying production content                                                                |
-| `npm run lint`            | ESLint + Stylelint                                                                                           |
-| `npm run lint:css:fix`    | Stylelint with `--fix`                                                                                       |
-| `npm run format`          | Prettier write                                                                                               |
-| `npm run format:check`    | Prettier check                                                                                               |
-| `npm run quality`         | **CI gate**: format check + lint + `paths.json` / `paths.yaml` sync ([validate-paths.js](validate-paths.js)) |
-| `npm run validate:paths`  | Ensure `paths.yaml` and `paths.json` match                                                                   |
+| Command                   | Purpose                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| `npm install`             | Install dev dependencies                                                              |
+| `npm run up`              | Local dev (`aem up`); default `http://localhost:3000`                                 |
+| `npm run up-secure`       | HTTPS local dev with signed-in flows (see [README](README.md); requires hosts + cert) |
+| `npm run up-secure-stage` | Like `up-secure`, proxying stage content                                              |
+| `npm run up-secure-prod`  | Like `up-secure`, proxying production content                                         |
+| `npm run lint`            | ESLint + Stylelint                                                                    |
+| `npm run lint:css:fix`    | Stylelint with `--fix`                                                                |
+| `npm run format`          | Prettier write                                                                        |
+| `npm run format:check`    | Prettier check                                                                        |
+| `npm run quality`         | **CI gate**: format check + lint                                                      |
 
 Install the AEM CLI globally if you prefer: `npm install -g @adobe/aem-cli`, then `aem up` matches `npm run up`.
 
@@ -61,7 +60,6 @@ Custom skills for the Experience League **development team** ship from [AdobeEXL
 ├── icons/            # SVG icons
 ├── head.html         # Head fragment
 ├── fstab.yaml        # Content mount / converter
-├── paths.yaml        # Path config (must stay in sync with paths.json)
 ├── paths.json
 └── component-*.json  # Universal Editor / authoring metadata
 ```
@@ -105,7 +103,6 @@ Progressive loading follows the same **eager / lazy / delayed** model as standar
 ## Testing and quality assurance
 
 - Run **`npm run quality`** before opening a PR; CI runs the same via [.github/workflows/quality-action.yaml](.github/workflows/quality-action.yaml).
-- If you change **`paths.yaml`**, update **`paths.json`** to match (or vice versa)—`validate-paths.js` enforces parity.
 - For previews, use `curl` against the local dev server or published preview URLs; see [Keeping it 100](https://www.aem.live/developer/keeping-it-100) for performance expectations.
 
 ### Self-review before commit
@@ -146,7 +143,6 @@ Always test against the URL your reviewers use in the PR template.
 
 - **EDS docs**: [https://www.aem.live/docs/](https://www.aem.live/docs/) and `site:www.aem.live` web search.
 - **Unexpected HTML**: remember **`fstab.yaml`** points at a **converter**—HTML changes may require converter or authoring pipeline updates, not only this repo.
-- **Paths errors**: re-run `npm run validate:paths` after editing `paths.yaml` / `paths.json`.
 - **AI agents**: [Working with AI coding agents](https://www.aem.live/developer/ai-coding-agents) (Adobe).
 
 ## Security

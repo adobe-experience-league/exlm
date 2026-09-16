@@ -50,27 +50,39 @@ export const AUTHOR_TYPE = Object.freeze({
   ADOBE: 'Adobe',
 });
 
-export const BASE_COVEO_ADVANCED_QUERY = '(@el_contenttype NOT "Community|User")';
-export const BASE_COVEO_ADVANCED_QUERY_UPCOMING_EVENT =
-  '(@el_contenttype = "Event") OR (@el_contenttype = "Upcoming Event")';
 /**
- * Upcoming events that have not started yet.
+ * Upcoming events that have not started yet (Events Hub / Upcoming Event V2).
  *
- * Coveo stages `el_event_start_time` as a string field, so date operators like
- * `@el_event_start_time >= now` are ignored. Event start is reflected on the
- * standard Date field `@date` (verified against stage Events Hub), which does
- * support `>= now`. Prefer switching `el_event_start_time` to a Date field in
- * Coveo when available, then update this expression.
+ * Uses `el_event_start_time` (the same value shown as the event date on cards).
+ * Requires Coveo field type **Date** — if the field is still String, `>= now` is
+ * ignored and all Upcoming return. Do not use `@date`: on prod it is index/batch
+ * time (same for all Upcoming), so `@date >= now` drops every Upcoming.
+ *
+ * Depends on: Coveo change String → Date for `el_event_start_time` + reindex.
  *
  * @see https://docs.coveo.com/en/1814/ (date operators, `now`)
+ * @see EXLM-5361
  */
-export const COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ = '(@el_contenttype = "Event|Upcoming Event" AND @date >= now)';
-export const BASE_COVEO_ADVANCED_QUERY_EVENTS = `(@el_contenttype = "Event|On Demand Event") OR ${COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ}`;
+export const COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ =
+  '(@el_contenttype = "Event|Upcoming Event" AND @el_event_start_time >= now)';
+/**
+ * Parenthesized as a whole (not just its OR operands) so callers can safely
+ * AND further clauses onto it without Coveo AQL's AND-before-OR precedence
+ * silently reordering the expression (see EXLM-5517 review discussion).
+ */
+export const BASE_COVEO_ADVANCED_QUERY_EVENTS = `((@el_contenttype = "Event|On Demand Event") OR ${COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ})`;
 /**
  * Exclude stale Upcoming Events while keeping all other content types.
- * Used by Atomic Search (/en/search) which has no Events-only base aq.
+ * Used by Atomic Search (/en/search), which has no Events-only base aq, and
+ * reused below for the default browse-filters base aq. Parenthesized as a
+ * whole for the same AND/OR-precedence reason as BASE_COVEO_ADVANCED_QUERY_EVENTS.
  */
-export const COVEO_EXCLUDE_STALE_UPCOMING_AQ = `(NOT @el_contenttype = "Event|Upcoming Event") OR ${COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ}`;
+export const COVEO_EXCLUDE_STALE_UPCOMING_AQ = `((NOT @el_contenttype = "Event|Upcoming Event") OR ${COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ})`;
+/**
+ * Default browse-filters base aq (non-Events-V2 flow, e.g. /en/browse#f-el_contenttype=Event|Upcoming Event).
+ * Excludes Community|User content and, per EXLM-5517, stale Upcoming Events.
+ */
+export const BASE_COVEO_ADVANCED_QUERY = `(@el_contenttype NOT "Community|User") AND ${COVEO_EXCLUDE_STALE_UPCOMING_AQ}`;
 
 export const VIDEO_THUMBNAIL_FORMAT = /^https:\/\/video\.tv\.adobe\.com\/v\/\w+\?format=jpeg$/;
 

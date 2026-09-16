@@ -1,5 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { decorateCta } from '../../scripts/utils/button-utils.js';
 import { fetchLanguagePlaceholders, htmlToElement } from '../../scripts/scripts.js';
 import { getCurrentStepInfo } from '../../scripts/courses/course-utils.js';
 import { pushLinkClick } from '../../scripts/analytics/lib-analytics.js';
@@ -41,7 +41,7 @@ export default async function decorate(block) {
 
     ctaHTML = `
       <div class="quiz-scorecard-cta-container">
-        ${decorateCustomButtons(cta1Container, cta2Container)}
+        ${decorateCta(cta1Container, block, 'cta1')}${decorateCta(cta2Container, block, 'cta2')}
       </div>
     `;
   }

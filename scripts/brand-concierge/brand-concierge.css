@@ -1,21 +1,469 @@
+#bc-bottom-ask-bar {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-family: var(--body-font-family);
+}
+
+#bc-bottom-ask-bar:not([data-expanded='true']) {
+  inset: auto 24px 0 auto;
+  width: auto;
+  padding: 0;
+  justify-content: flex-end;
+  align-items: flex-end;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+#bc-bottom-ask-bar[data-expanded='true'] {
+  height: 72px;
+  min-height: 72px;
+  max-height: 72px;
+  padding: 12px 0;
+  justify-content: center;
+  border-top: 1px solid #e8e8e8;
+  background: radial-gradient(
+      ellipse 40% 140% at 88% 50%,
+      color-mix(in srgb, var(--bc-gradient-mid) 8%, white) 0%,
+      transparent 72%
+    ),
+    radial-gradient(ellipse 55% 150% at 52% 45%, var(--bc-gradient-blue) 0%, transparent 68%),
+    radial-gradient(
+      ellipse 38% 150% at 12% 50%,
+      color-mix(in srgb, var(--bc-gradient-end) 8%, white) 0%,
+      transparent 72%
+    ),
+    var(--background-color);
+  box-shadow: 0 -8px 24px rgb(0 0 0 / 4%);
+  backdrop-filter: blur(12px);
+}
+
+/* Reset global button styles (styles.css margin/border/radius/hover bleed). */
+.bc-bottom-ask-bar-collapsed,
+.bc-bottom-ask-bar-send,
+.bc-bottom-ask-bar-expand,
+.bc-bottom-ask-bar-hide {
+  margin: 0;
+  border: none;
+}
+
+.bc-bottom-ask-bar-collapsed {
+  position: relative;
+  display: inline-flex;
+  box-sizing: border-box;
+  align-items: center;
+  gap: 8px;
+  width: auto;
+  min-width: 109px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 16px 16px 0 0;
+  font-family: inherit;
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  color: var(--non-spectrum-dark-gray);
+  background-color: rgb(255 255 255 / 70%);
+  box-shadow: 0 0 20px rgb(0 0 0 / 10%);
+  isolation: isolate;
+}
+
+.bc-bottom-ask-bar-collapsed::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px 16px 0 0;
+  padding: 2px 2px 0;
+  background: var(--bc-gradient);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bc-bottom-ask-bar-collapsed > * {
+  position: relative;
+  z-index: 1;
+}
+
+.bc-bottom-ask-bar-collapsed .icon {
+  display: flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.bc-bottom-ask-bar-collapsed-chevron,
+.bc-bottom-ask-bar-hide-chevron {
+  width: 18px;
+  height: 18px;
+}
+
+.bc-bottom-ask-bar-collapsed-chevron img,
+.bc-bottom-ask-bar-hide-chevron img {
+  width: 18px;
+  height: 18px;
+}
+
+.bc-bottom-ask-bar-collapsed .icon-bc-ask-sparkles img {
+  width: 18px;
+  height: 18px;
+}
+
+.bc-bottom-ask-bar-collapsed-label {
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.5;
+  color: var(--non-spectrum-dark-gray);
+  white-space: nowrap;
+}
+
+.bc-bottom-ask-bar-collapsed-chevron {
+  transform: rotate(180deg);
+}
+
+.bc-bottom-ask-bar-collapsed:focus {
+  outline: none;
+  background-color: rgb(255 255 255 / 70%);
+}
+
+.bc-bottom-ask-bar-collapsed:focus-visible {
+  outline: 2px solid var(--non-spectrum-navy-blue);
+  outline-offset: 2px;
+}
+
+.bc-bottom-ask-bar-collapsed:hover:not(:active) {
+  background-color: rgb(255 255 255 / 85%);
+}
+
+.bc-bottom-ask-bar-expanded {
+  display: none;
+  width: 100%;
+  min-width: 0;
+}
+
+#bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-collapsed {
+  display: none;
+}
+
+/* Same 3-col track as docs `main` (left rail / article / right rail). */
+#bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  align-items: center;
+  box-sizing: border-box;
+  max-width: 1700px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+body:has(main.rail-left-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
+  grid-template-columns: 0 4fr 1fr;
+}
+
+/* `auto` (not docs `0`) so Hide stays in the right track when the TOC rail is closed. */
+body:has(main.rail-right-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
+  grid-template-columns: 1fr 4fr auto;
+}
+
+body:has(main.rail-left-closed.rail-right-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
+  grid-template-columns: 0 1fr auto;
+}
+
+.bc-bottom-ask-bar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding-left: 12px;
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.5;
+  white-space: nowrap;
+  color: var(--text-color);
+}
+
+body:has(main.rail-left-closed) .bc-bottom-ask-bar-brand {
+  visibility: hidden;
+}
+
+.bc-bottom-ask-bar-brand .icon img {
+  width: 24px;
+  height: 24px;
+}
+
+.bc-bottom-ask-bar-label {
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-color);
+}
+
+/* Center track = docs article column (full 3fr span). Inset so input + send are not flush. */
+.bc-bottom-ask-bar-input-group {
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--spectrum-spacing-300);
+  padding-inline: var(--spectrum-spacing-400);
+}
+
+.bc-bottom-ask-bar-input-wrap {
+  flex: 1 1 auto;
+  max-width: none;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 48px;
+  min-height: 48px;
+  max-height: 48px;
+  min-width: 0;
+  padding: 0 16px 0 24px;
+  border: 1px solid #d4d4d4;
+  border-radius: 100px;
+  background-color: var(--background-color);
+  box-shadow: 0 0 10px rgb(0 0 0 / 10%);
+}
+
+.bc-bottom-ask-bar-input-wrap:focus-within {
+  outline: none;
+}
+
+.bc-bottom-ask-bar-input {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  max-width: none;
+  display: block;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  font-size: var(--spectrum-font-size-200);
+  line-height: 1.5;
+  outline: none;
+  box-shadow: none;
+  color: var(--non-spectrum-dark-gray);
+}
+
+.bc-bottom-ask-bar-input::placeholder {
+  color: var(--non-spectrum-smoke);
+  opacity: 1;
+}
+
+/* Override global styles.css input / input:hover border + padding that cause focus layout shift. */
+.bc-bottom-ask-bar-input:hover,
+.bc-bottom-ask-bar-input:focus,
+.bc-bottom-ask-bar-input:focus-visible {
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+.bc-bottom-ask-bar-send {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--spectrum-gray-200);
+  cursor: pointer;
+  line-height: 0;
+  text-align: center;
+  overflow: visible;
+}
+
+.bc-bottom-ask-bar-send .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.bc-bottom-ask-bar-send .icon img {
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+
+  /* The plane's mass sits in the left of the 24 viewBox; nudge so it reads centered in the disc. */
+  transform: translateX(2px);
+}
+
+.bc-bottom-ask-bar-actions {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding-right: 12px;
+}
+
+.bc-bottom-ask-bar-hide {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 18px;
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-bold);
+  line-height: 18px;
+  cursor: pointer;
+  color: var(--non-spectrum-dark-gray);
+  padding: 0;
+  overflow: visible;
+}
+
+.bc-bottom-ask-bar-expand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  line-height: 0;
+  overflow: visible;
+}
+
+.bc-bottom-ask-bar-expand .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  line-height: 0;
+}
+
+.bc-bottom-ask-bar-expand .icon img {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.bc-bottom-ask-bar-expand:focus {
+  outline: none;
+  background-color: rgb(0 0 0 / 6%);
+}
+
+.bc-bottom-ask-bar-expand:focus-visible {
+  outline: 2px solid var(--non-spectrum-navy-blue);
+  outline-offset: 2px;
+}
+
+.bc-bottom-ask-bar-expand:hover:not(:active) {
+  background-color: rgb(0 0 0 / 6%);
+}
+
+.bc-bottom-ask-bar-hide:focus {
+  outline: none;
+  color: var(--non-spectrum-dark-gray);
+  background-color: transparent;
+}
+
+.bc-bottom-ask-bar-hide:focus-visible {
+  outline: 2px solid var(--non-spectrum-navy-blue);
+  outline-offset: 2px;
+}
+
+.bc-bottom-ask-bar-hide:hover:not(:active) {
+  color: var(--non-spectrum-dark-gray);
+  background-color: transparent;
+}
+
+.bc-bottom-ask-bar-send:disabled {
+  cursor: default;
+  opacity: 1;
+  color: inherit;
+  background-color: var(--spectrum-gray-200);
+}
+
+.bc-bottom-ask-bar-send:not(:disabled) {
+  background-color: var(--non-spectrum-navy-blue);
+}
+
+.bc-bottom-ask-bar-send:disabled:hover,
+.bc-bottom-ask-bar-send:disabled:focus {
+  background-color: var(--spectrum-gray-200);
+}
+
+/* The asset is authored for the FAB's white pill (#d8d8d8); on the grey disc the design uses the
+   darker --spectrum-gray-400 (#b1b1b1). An <img> can't inherit currentColor, and the enabled rule
+   below already recolours this same icon with a filter, so stay with that: flatten to white, then
+   scale to the token (255 * 0.694 = 177). There is currently no automated check pinning this value
+   to --spectrum-gray-400, so if that token changes, update the 0.694 multiplier here to match. */
+.bc-bottom-ask-bar-send:disabled .icon img {
+  filter: brightness(0) invert(1) brightness(0.694);
+}
+
+.bc-bottom-ask-bar-send:not(:disabled) .icon img {
+  filter: brightness(0) invert(1);
+}
+
+.bc-bottom-ask-bar-send:not(:disabled):focus {
+  outline: none;
+  background-color: var(--non-spectrum-navy-blue);
+}
+
+.bc-bottom-ask-bar-send:not(:disabled):focus-visible {
+  outline: 2px solid var(--non-spectrum-navy-blue);
+  outline-offset: 2px;
+}
+
+.bc-bottom-ask-bar-send:not(:disabled):hover:not(:active) {
+  background-color: var(--link-hover-color);
+}
+
 #bc-trigger {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 25000;
+  z-index: 999;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-width: 218px;
-  padding: 7px 14px 7px 16px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 14px 0 16px;
   border-radius: 100px;
   border: none;
   font-family: var(--body-font-family);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-normal);
   cursor: pointer;
-  color: var(--spectrum-gray-600);
-  background-color: rgb(255 255 255 / 50%);
+  color: var(--non-spectrum-dark-gray);
+  background-color: rgb(255 255 255 / 70%);
   box-shadow:
     0 8px 28px rgb(0 0 0 / 9%),
     0 2px 8px rgb(0 0 0 / 5%),
@@ -36,7 +484,7 @@
   inset: 0;
   border-radius: 100px;
   padding: 2px;
-  background: linear-gradient(to right, var(--bc-gradient-start), var(--bc-gradient-end));
+  background: var(--bc-gradient);
   mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -61,9 +509,7 @@
   display: flex;
   align-items: center;
   line-height: 0;
-
-  /* Pull “Ask” closer than flex gap allows without tightening Ask–BETA */
-  margin-inline-end: -8px;
+  margin: 0;
 }
 
 #bc-trigger img {
@@ -73,27 +519,12 @@
 }
 
 #bc-trigger .bc-trigger-ask {
-  font-size: 14px;
-  font-weight: 400;
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-normal);
   line-height: 1.2;
   color: var(--spectrum-gray-500);
   letter-spacing: -0.01em;
   transition: color 0.2s ease;
-}
-
-#bc-trigger .bc-trigger-beta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: -6px;
-  padding: 2px 5px;
-  border-radius: 5px;
-  background-color: #ebebef;
-  color: #9d59b7;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  line-height: 1;
 }
 
 #bc-trigger .bc-trigger-send {
@@ -105,8 +536,39 @@
   flex-shrink: 0;
 }
 
+/* The design's outlined send glyph fills a square box, unlike the flatter filled plane it
+   replaced, so scope it below the 18px shared with the sparkle icon to hold the FAB's weight. */
+#bc-trigger .bc-trigger-send img {
+  width: 16px;
+  height: 16px;
+}
+
+/* EXLM-5715 — entry variant visibility */
+body.bc-entry-pending #bc-trigger,
+body.bc-entry-pending #bc-bottom-ask-bar {
+  visibility: hidden;
+}
+
+body:not([data-bc-entry='floating-ask-button']) #bc-trigger {
+  display: none;
+}
+
+body[data-bc-entry='floating-ask-button'] #bc-bottom-ask-bar {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  body[data-bc-entry='bottom-ask-bar'] #bc-bottom-ask-bar {
+    display: flex;
+  }
+}
+
+body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
+  display: none;
+}
+
 #bc-trigger:hover:not(:active) {
-  background-color: #fff;
+  background-color: var(--background-color);
   backdrop-filter: none;
   transform: translateY(-3px);
   box-shadow:
@@ -174,6 +636,7 @@
   --chat-history-padding-mobile: 16px 20px;
   --chat-history-padding-tablet: 20px 5%;
   --chat-history-padding-top-expanded: 24px;
+  --exlm-font-size-content: var(--spectrum-body-size-m);
 }
 
 #bc-dialog .exl-dialog-body {
@@ -380,7 +843,7 @@
 #brand-concierge-mount .concierge-message .message-text {
   width: 100% !important;
   max-width: 100% !important;
-  font-size: 16px !important;
+  font-size: var(--exlm-font-size-content) !important;
 }
 
 #brand-concierge-mount .concierge-message .message-content {
@@ -425,8 +888,7 @@
   display: none !important;
 }
 
-/* Expanded welcome pills default (all viewports): column stack matching the side-drawer layout. */
-#bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-pills-container:has(> :nth-child(4):last-child) {
+#bc-dialog.exl-dialog-expanded #brand-concierge-mount .initial-state .prompt-pills-container {
   display: flex !important;
   flex-flow: column nowrap !important;
   align-items: stretch !important;
@@ -448,8 +910,7 @@
     max-width: 100% !important;
   }
 
-  /* Expanded welcome only (four initial pills before chat): keep wrapped row + card-style sizing. */
-  #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-pills-container:has(> :nth-child(4):last-child) {
+  #bc-dialog.exl-dialog-expanded #brand-concierge-mount .initial-state .prompt-pills-container {
     display: flex !important;
     flex-flow: row wrap !important;
     justify-content: center !important;
@@ -457,10 +918,7 @@
   }
 
   #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container .bc-prompt-pill-button,
-  #bc-dialog.exl-dialog-expanded
-    #brand-concierge-mount
-    .prompt-pills-container:has(> :nth-child(4):last-child)
-    .bc-prompt-pill-button {
+  #bc-dialog.exl-dialog-expanded #brand-concierge-mount .initial-state .prompt-pills-container .bc-prompt-pill-button {
     --bc-prompt-pill-gap-count: 3;
     --bc-prompt-pill-gap: 8px;
 
@@ -629,6 +1087,10 @@
   margin: 0 !important;
   font-size: 13px !important;
   word-break: break-word !important;
+}
+
+#brand-concierge-mount .message-content .citation-number a {
+  font-size: 13px !important;
 }
 
 #brand-concierge-mount .citations-source-item {

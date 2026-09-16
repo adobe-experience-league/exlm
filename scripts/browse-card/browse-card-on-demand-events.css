@@ -26,6 +26,15 @@
   background-color: var(--spectrum-gray-150);
 }
 
+/*
+ * Grid: lift the 198px img-custom-height cap so the figure can use flex 0 0 45%
+ * like Upcoming (~203px). Laptop + hover zoom stay on browse-card.css.
+ */
+.browse-card.event-on-demand-event-card.thumbnail-loaded .browse-card-figure.img-custom-height {
+  height: auto;
+  max-height: none;
+}
+
 /* Specific styles for fallback images only */
 .browse-card.event-card .browse-card-figure.has-fallback-image img,
 .browse-card.event-on-demand-event-card .browse-card-figure.has-fallback-image img {
@@ -92,6 +101,11 @@
   -webkit-line-clamp: 2;
 }
 
+/* Grid: date sits under the title. List clones live in the footer. */
+.browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info {
+  display: none;
+}
+
 body[class^='browse-'] .browse-card.event-card .browse-card-figure .event-series-banner,
 body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figure .event-series-banner {
   font-size: var(--spectrum-font-size-700);
@@ -116,12 +130,14 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
   }
 }
 
-/* List view styles: align on-demand cards with upcoming-event list layout */
+/* List view: same left | main | right + vertical rule as Upcoming (≥900). */
 @media only screen and (min-width: 900px) {
+  .list .browse-card.event-card,
+  .list .browse-card.event-on-demand-event-card,
   .list .browse-cards-block-content > div .browse-card.event-card,
   .list .browse-cards-block-content > div .browse-card.event-on-demand-event-card {
     min-height: auto;
-    flex-direction: row;
+    flex-flow: row nowrap;
     background-color: var(--spectrum-gray-50);
   }
 
@@ -132,12 +148,15 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
     border-radius: var(--spectrum-spacing-300) 0 0 var(--spectrum-spacing-300);
     max-height: unset;
     height: auto;
+    align-self: stretch;
     align-items: center;
     justify-content: center;
   }
 
   .list .browse-card.event-card .browse-card-content,
   .list .browse-card.event-on-demand-event-card .browse-card-content {
+    flex: 1 1 auto;
+    min-width: 0;
     padding: var(--spectrum-spacing-500);
   }
 
@@ -150,6 +169,15 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
     flex-direction: column;
     justify-content: unset;
     border-radius: var(--spectrum-spacing-300);
+  }
+
+  /*
+   * Upcoming's footer grows with its nowrap date (~12.5rem with padding).
+   * On-Demand-only: do not apply to legacy .event-card (isEventsV2 off).
+   */
+  .list .browse-card.event-on-demand-event-card .browse-card-footer {
+    width: auto;
+    min-width: 12.5rem;
   }
 
   .list .browse-card.event-card .browse-card-footer::before,
@@ -191,5 +219,49 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
     font-size: var(--spectrum-font-size-100);
     letter-spacing: 0;
     line-height: 1.4;
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-content .browse-card-event-info {
+    display: none;
+  }
+
+  /* List footer matches Upcoming: date, then action icons, then primary CTA. */
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info {
+    order: 0;
+    margin: 0;
+    align-self: flex-start;
+    margin-bottom: var(--spectrum-spacing-300);
+    display: flex;
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-options {
+    order: 1;
+    align-self: flex-start;
+    margin-bottom: var(--spectrum-spacing-300);
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .user-actions {
+    margin-inline-start: calc(-1 * var(--spectrum-spacing-50));
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info .browse-card-event-time h6 {
+    color: var(--spectrum-gray-800);
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info .icon {
+    width: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
+    height: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .user-actions button .icon {
+    width: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
+    height: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
+  }
+
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-cta-element {
+    order: 3;
   }
 }
