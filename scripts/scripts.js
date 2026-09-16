@@ -1200,8 +1200,7 @@ async function loadLazy(doc) {
   if (preMain && !embedMode) await loadBlocks(preMain);
   await loadBlocks(main);
 
-  // #hash lands wrong because content above it lays out after the browser jumps; re-scroll to
-  // the target on each main/preMain reflow until layout settles or the user interacts.
+  // Layout above the #hash target shifts after load, so re-scroll to it on each reflow.
   const { hash } = window.location;
   const target = hash ? doc.getElementById(hash.substring(1)) : null;
   const alignHashTarget = (settled) => {
