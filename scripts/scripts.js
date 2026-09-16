@@ -1230,7 +1230,7 @@ async function loadLazy(doc) {
     const footerPromise = loadFooter(doc.querySelector('footer'));
     alignHashTarget(
       new Promise((resolve) => {
-        document.addEventListener('header-loaded', resolve, { capture: true, once: true });
+        doc.addEventListener('header-loaded', resolve, { capture: true, once: true });
       }),
     );
     const martechOff = window.location.search?.indexOf('martech=off') !== -1;
@@ -1244,7 +1244,7 @@ async function loadLazy(doc) {
   } else {
     // Embed mode has no header, settle on load.
     alignHashTarget(
-      document.readyState === 'complete'
+      doc.readyState === 'complete'
         ? Promise.resolve()
         : new Promise((resolve) => {
             window.addEventListener('load', resolve, { once: true });
