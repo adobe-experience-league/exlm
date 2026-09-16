@@ -247,6 +247,11 @@
   display: inline-flex;
 }
 
+.feedback-ui .like-btns button:disabled:not(.selected) {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .feedback-ui .git-buttons {
   display: flex;
   flex-direction: column;
@@ -312,7 +317,8 @@
   position: absolute;
   z-index: 1;
   bottom: 40px;
-  white-space: nowrap;
+  white-space: normal;
+  max-width: 150px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--spectrum-gray-600);
