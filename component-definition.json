@@ -242,6 +242,23 @@
           }
         },
         {
+          "title": "Section (Test)",
+          "id": "section-test",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "name": "Section",
+                  "model": "section",
+                  "style": "default",
+                  "filter": "section-test"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Sign Up Flow Section",
           "id": "sign-up-flow-section",
           "plugins": {
