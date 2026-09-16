@@ -1200,7 +1200,7 @@ async function loadLazy(doc) {
   if (preMain && !embedMode) await loadBlocks(preMain);
   await loadBlocks(main);
 
-  // Layout above the #hash target shifts after load, so re-scroll to it on each reflow.
+  // Layout above the #hash target shifts after load, so re-scroll to the right section until the layout has settled or the user scrolls.
   const { hash } = window.location;
   const target = hash ? doc.getElementById(hash.substring(1)) : null;
   const alignHashTarget = (settled) => {
@@ -1209,15 +1209,16 @@ async function loadLazy(doc) {
     const realign = () => {
       if (!done) target.scrollIntoView();
     };
+    realign();
     const observer = new ResizeObserver(realign);
+    const events = ['wheel', 'touchstart', 'keydown', 'click'];
     const stop = () => {
       done = true;
       observer.disconnect();
+      events.forEach((evt) => window.removeEventListener(evt, stop));
     };
     [main, preMain].filter(Boolean).forEach((el) => observer.observe(el));
-    ['wheel', 'touchstart', 'keydown', 'click'].forEach((evt) =>
-      window.addEventListener(evt, stop, { once: true, passive: true }),
-    );
+    events.forEach((evt) => window.addEventListener(evt, stop, { once: true, passive: true }));
     settled.then(() => {
       realign();
       stop();
@@ -1227,7 +1228,11 @@ async function loadLazy(doc) {
   if (!embedMode) {
     const headerPromise = loadHeader(doc.querySelector('header'));
     const footerPromise = loadFooter(doc.querySelector('footer'));
-    alignHashTarget(Promise.allSettled([headerPromise])); // header loaded => layout settled
+    alignHashTarget(
+      new Promise((resolve) => {
+        document.addEventListener('header-loaded', resolve, { capture: true, once: true });
+      }),
+    );
     const martechOff = window.location.search?.indexOf('martech=off') !== -1;
     // disable martech if martech=off is in the query string, this is used for testing ONLY
     if (!martechOff) {
@@ -1237,7 +1242,7 @@ async function loadLazy(doc) {
       import('./brand-concierge/brand-concierge-entry-target.js').catch(() => {});
     }
   } else {
-    // Embed mode has no header/footer chrome to gate on - settle on load.
+    // Embed mode has no header, settle on load.
     alignHashTarget(
       document.readyState === 'complete'
         ? Promise.resolve()
