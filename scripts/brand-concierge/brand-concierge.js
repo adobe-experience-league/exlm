@@ -2,7 +2,11 @@
 import { getConfig, getPathDetails, fetchJson } from '../scripts.js';
 import { loadScript, decorateIcon } from '../lib-franklin.js';
 import { openDrawer } from '../dialog/dialog.js';
-import { loadBrandConciergeConfig, getBrandConciergeDatastreamId } from './brand-concierge-config.js';
+import {
+  loadBrandConciergeConfig,
+  getBrandConciergeDatastreamId,
+  SUPPORTED_LOCALES,
+} from './brand-concierge-config.js';
 import {
   applyBcEntryChrome,
   BC_ENTRY_EXPERIENCES,
@@ -19,7 +23,6 @@ const MOUNT_SELECTOR = '#brand-concierge-mount';
 const DIALOG_ID = 'bc-dialog';
 const TRIGGER_ID = 'bc-trigger';
 const BOTTOM_ASK_BAR_ID = 'bc-bottom-ask-bar';
-const ASK_AI_LABEL = 'Ask AI';
 const HEADER_CLEAR_ID = 'bc-header-clear';
 const PANEL_DISCLAIMER_ID = 'bc-panel-disclaimer';
 
@@ -143,7 +146,12 @@ function clearBrandConciergeTranscriptStorage(options = {}) {
  * with the localized send label. No-op for English so BC's own copy is preserved.
  */
 function localizeSubmitTooltip(mount) {
-  if (activeLang === 'en') return;
+  // Gate on whether a locale overlay actually applied, not the raw path lang — an unsupported
+  // locale (e.g. 'fr') falls back to English content but activeLang stays 'fr', which would
+  // otherwise overwrite BC's own default tooltip with our English override unnecessarily.
+  // Lowercased to match SUPPORTED_LOCALES' keys and loadBrandConciergeConfig()'s own comparison.
+  const lang = (activeLang || '').toLowerCase();
+  if (lang === 'en' || !SUPPORTED_LOCALES.has(lang)) return;
   const label = activeConfig?.text?.['input.send.aria'];
   if (!label) return;
   mount.querySelectorAll('.submit-button[aria-describedby]').forEach((btn) => {
@@ -414,23 +422,25 @@ function createBottomAskBar() {
     return document.getElementById(BOTTOM_ASK_BAR_ID);
   }
 
+  const { bottomBar } = activeConfig.ui;
+
   const bar = document.createElement('div');
   bar.id = BOTTOM_ASK_BAR_ID;
   bar.dataset.expanded = 'true';
   bar.setAttribute('role', 'region');
-  bar.setAttribute('aria-label', ASK_AI_LABEL);
+  bar.setAttribute('aria-label', bottomBar.label);
 
   const collapsedBtn = document.createElement('button');
   collapsedBtn.type = 'button';
   collapsedBtn.className = 'bc-bottom-ask-bar-collapsed';
   collapsedBtn.setAttribute('aria-expanded', 'true');
-  collapsedBtn.setAttribute('aria-label', `Expand ${ASK_AI_LABEL} ask bar`);
+  collapsedBtn.setAttribute('aria-label', bottomBar.expandAria);
 
   const collapsedIcon = document.createElement('span');
   collapsedIcon.className = 'icon icon-bc-ask-sparkles';
   const collapsedLabel = document.createElement('span');
   collapsedLabel.className = 'bc-bottom-ask-bar-collapsed-label';
-  collapsedLabel.textContent = ASK_AI_LABEL;
+  collapsedLabel.textContent = bottomBar.label;
   const collapsedChevron = document.createElement('span');
   collapsedChevron.className = 'icon icon-bc-chevron-bottom bc-bottom-ask-bar-collapsed-chevron';
   collapsedChevron.setAttribute('aria-hidden', 'true');
@@ -447,7 +457,7 @@ function createBottomAskBar() {
   brandIcon.className = 'icon icon-bc-ask-sparkles';
   const brandLabel = document.createElement('span');
   brandLabel.className = 'bc-bottom-ask-bar-label';
-  brandLabel.textContent = ASK_AI_LABEL;
+  brandLabel.textContent = bottomBar.label;
   brand.append(brandIcon, brandLabel);
   decorateIcon(brandIcon);
 
@@ -460,13 +470,13 @@ function createBottomAskBar() {
   const input = document.createElement('input');
   input.type = 'text';
   input.className = 'bc-bottom-ask-bar-input';
-  input.placeholder = 'Ask a question…';
-  input.setAttribute('aria-label', 'Ask a question');
+  input.placeholder = bottomBar.inputPlaceholder;
+  input.setAttribute('aria-label', bottomBar.inputAria);
 
   const sendBtn = document.createElement('button');
   sendBtn.type = 'button';
   sendBtn.className = 'bc-bottom-ask-bar-send';
-  sendBtn.setAttribute('aria-label', 'Send');
+  sendBtn.setAttribute('aria-label', bottomBar.sendAria);
   sendBtn.disabled = true;
   const sendIcon = document.createElement('span');
   sendIcon.className = 'icon icon-bc-message-send';
@@ -483,7 +493,7 @@ function createBottomAskBar() {
   const expandBtn = document.createElement('button');
   expandBtn.type = 'button';
   expandBtn.className = 'bc-bottom-ask-bar-expand';
-  expandBtn.setAttribute('aria-label', `Open ${ASK_AI_LABEL}`);
+  expandBtn.setAttribute('aria-label', bottomBar.openAria);
   const expandIcon = document.createElement('span');
   expandIcon.className = 'icon icon-expand';
   expandIcon.setAttribute('aria-hidden', 'true');
@@ -493,9 +503,9 @@ function createBottomAskBar() {
   const hideBtn = document.createElement('button');
   hideBtn.type = 'button';
   hideBtn.className = 'bc-bottom-ask-bar-hide';
-  hideBtn.setAttribute('aria-label', 'Hide ask bar');
+  hideBtn.setAttribute('aria-label', bottomBar.hideAria);
   const hideLabel = document.createElement('span');
-  hideLabel.textContent = 'Hide';
+  hideLabel.textContent = bottomBar.hideLabel;
   const hideChevron = document.createElement('span');
   hideChevron.className = 'icon icon-bc-chevron-bottom bc-bottom-ask-bar-hide-chevron';
   hideChevron.setAttribute('aria-hidden', 'true');
@@ -566,7 +576,9 @@ function createBottomAskBar() {
  */
 function ensureBottomAskBarForLateTarget(experience) {
   if (experience !== BC_ENTRY_EXPERIENCES.BOTTOM_ASK_BAR) return;
-  if (!initStarted) return;
+  // activeConfig may still be loading (initStarted flips true before the locale fetch resolves);
+  // createBottomAskBar() needs activeConfig.ui, so bail rather than mount before it's ready.
+  if (!initStarted || !activeConfig) return;
   if (document.getElementById(BOTTOM_ASK_BAR_ID)) return;
   createBottomAskBar();
   document.body.append(document.getElementById(BOTTOM_ASK_BAR_ID));

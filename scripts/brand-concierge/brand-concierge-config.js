@@ -94,11 +94,23 @@ const brandConciergeConfig = {
 };
 
 const LOCALES_BASE_PATH = `${window.hlx.codeBasePath}/scripts/brand-concierge/localization`;
-const SUPPORTED_LOCALES = new Set(['en', 'es']);
-const LOCALE_LANGUAGES = {
-  en: 'en-US',
-  es: 'es-ES',
+
+/**
+ * Single registry of everything per-locale that isn't translated copy: the BCP-47 language tag
+ * forwarded to the BC client/backend, and any Edge datastream override. Adding a locale only
+ * needs a new entry here (plus its <lang>.json) — keeping language and datastream in one place
+ * avoids the two structures silently drifting out of sync with each other.
+ */
+const LOCALES = {
+  en: { language: 'en-US' },
+  es: {
+    language: 'es-ES',
+    // Spanish Brand Concierge datastream (same IMS org as the default). Routes /es/ conversations
+    // to the Spanish concierge/manifest instead of the default English datastream.
+    datastreamId: '152f88b1-ef07-4afe-8a23-6c0e21c6f017',
+  },
 };
+export const SUPPORTED_LOCALES = new Set(Object.keys(LOCALES));
 
 /** lang -> Promise resolving that locale's { language, ui, text, arrays } sheet (deduped). */
 const localeSheetCache = {};
@@ -123,8 +135,21 @@ function objectValues(value) {
   return value && typeof value === 'object' && !Array.isArray(value) ? Object.values(value) : value;
 }
 
+/**
+ * Array keys whose entries must be wrapped as `{ text }` to match the shape
+ * fetchDefaultPromptsOverride() builds (and BC's bootstrap() expects), so the welcome cards
+ * render the same whether prompts come from the sheet override or this config fallback.
+ */
+const ARRAYS_NEEDING_TEXT_WRAPPER = new Set(['welcome.examples']);
+
 function normalizeLocaleArrays(arrays) {
-  return Object.fromEntries(Object.entries(arrays || {}).map(([key, value]) => [key, objectValues(value)]));
+  return Object.fromEntries(
+    Object.entries(arrays || {}).map(([key, value]) => {
+      const list = objectValues(value);
+      const needsWrapper = ARRAYS_NEEDING_TEXT_WRAPPER.has(key) && Array.isArray(list);
+      return [key, needsWrapper ? list.map((text) => ({ text })) : list];
+    }),
+  );
 }
 
 /** Recursive merge: `over` wins; nested plain objects merge per-field, arrays/scalars replace. */
@@ -145,7 +170,14 @@ function deepMerge(base, over) {
   return out;
 }
 
-function buildBrandConciergeConfig(en, locale, localeKey) {
+/**
+ * @param {string | null} pageLangKey - The requested locale key, but only when that locale's own
+ * content actually applied (see loadBrandConciergeConfig()); `null` otherwise (unsupported locale,
+ * or a supported one whose sheet fetch failed), so metadata.language falls through to
+ * `brandConciergeConfig.metadata.language` (`document.documentElement.lang`) rather than
+ * mislabeling English fallback content as a locale it isn't.
+ */
+function buildBrandConciergeConfig(en, locale, pageLangKey) {
   return {
     ...brandConciergeConfig,
     ui: deepMerge(en.ui, locale.ui),
@@ -153,7 +185,7 @@ function buildBrandConciergeConfig(en, locale, localeKey) {
     arrays: normalizeLocaleArrays({ ...en.arrays, ...locale.arrays }),
     metadata: {
       ...brandConciergeConfig.metadata,
-      language: LOCALE_LANGUAGES[localeKey] || brandConciergeConfig.metadata.language,
+      language: LOCALES[pageLangKey]?.language || brandConciergeConfig.metadata.language,
     },
   };
 }
@@ -183,25 +215,23 @@ export async function loadBrandConciergeConfig(lang) {
   }
   const en = englishResult.value;
   let locale = en;
-  let localeKey = 'en';
+  let appliedKey = 'en';
   if (localeResult.status === 'fulfilled' && localeResult.value) {
     locale = localeResult.value;
-    localeKey = key;
+    appliedKey = key;
   } else if (localeResult.status === 'rejected') {
     // eslint-disable-next-line no-console
-    console.warn(`[BC] Locale sheet '${key}' failed; using English`, localeResult.reason?.message || localeResult.reason);
+    console.warn(
+      `[BC] Locale sheet '${key}' failed; using English`,
+      localeResult.reason?.message || localeResult.reason,
+    );
   }
-  return buildBrandConciergeConfig(en, locale, localeKey);
+  // Only trust `key` for metadata.language when that locale's own content actually applied.
+  // Otherwise (unsupported locale, or a supported one whose sheet fetch failed) pass null so
+  // buildBrandConciergeConfig falls through to the page's own document language instead of
+  // mislabeling English fallback content as a locale it isn't.
+  return buildBrandConciergeConfig(en, locale, appliedKey === key ? key : null);
 }
-
-/**
- * Per-locale Brand Concierge Edge datastream overrides. This is routing config, not translation,
- * so it is kept out of the localization sheets and out of the config forwarded to the BC web
- * client. Same IMS org as the default datastream.
- */
-const BC_DATASTREAMS = {
-  es: '152f88b1-ef07-4afe-8a23-6c0e21c6f017',
-};
 
 /**
  * @param {string} [lang] - Path language, e.g. 'en', 'es'.
@@ -210,7 +240,7 @@ const BC_DATASTREAMS = {
  */
 export function getBrandConciergeDatastreamId(lang, fallback) {
   const key = (lang || 'en').toLowerCase().split('-')[0];
-  return BC_DATASTREAMS[key] ?? fallback;
+  return LOCALES[key]?.datastreamId ?? fallback;
 }
 
 export default brandConciergeConfig;

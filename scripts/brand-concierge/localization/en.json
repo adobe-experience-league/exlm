@@ -6,6 +6,16 @@
     "drawerTitle": "Ask AI",
     "clearLabel": "Clear",
     "clearAriaLabel": "Clear conversation",
+    "bottomBar": {
+      "label": "Ask AI",
+      "expandAria": "Expand Ask AI ask bar",
+      "openAria": "Open Ask AI",
+      "inputPlaceholder": "Ask a question…",
+      "inputAria": "Ask a question",
+      "sendAria": "Send",
+      "hideAria": "Hide ask bar",
+      "hideLabel": "Hide"
+    },
     "disclaimer": {
       "prefix": "Use of this beta AI chatbot is subject to Adobe's ",
       "privacyLabel": "Privacy Policy",

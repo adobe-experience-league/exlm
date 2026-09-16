@@ -6,6 +6,16 @@
     "drawerTitle": "Preguntar",
     "clearLabel": "Borrar",
     "clearAriaLabel": "Borrar conversación",
+    "bottomBar": {
+      "label": "Preguntar a la IA",
+      "expandAria": "Ampliar la barra de Preguntar a la IA",
+      "openAria": "Abrir Preguntar a la IA",
+      "inputPlaceholder": "Haga una pregunta…",
+      "inputAria": "Hacer una pregunta",
+      "sendAria": "Enviar",
+      "hideAria": "Ocultar barra de preguntas",
+      "hideLabel": "Ocultar"
+    },
     "disclaimer": {
       "prefix": "El uso de este chatbot de IA en versión beta está sujeto a la ",
       "privacyLabel": "Política de privacidad",
