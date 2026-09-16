@@ -1200,31 +1200,35 @@ async function loadLazy(doc) {
   if (preMain && !embedMode) await loadBlocks(preMain);
   await loadBlocks(main);
 
+  // #hash lands wrong because content above it lays out after the browser jumps; re-scroll to
+  // the target on each main/preMain reflow until layout settles or the user interacts.
+  const { hash } = window.location;
+  const target = hash ? doc.getElementById(hash.substring(1)) : null;
+  const alignHashTarget = (settled) => {
+    if (!target) return;
+    let done = false;
+    const realign = () => {
+      if (!done) target.scrollIntoView();
+    };
+    const observer = new ResizeObserver(realign);
+    const stop = () => {
+      done = true;
+      observer.disconnect();
+    };
+    [main, preMain].filter(Boolean).forEach((el) => observer.observe(el));
+    ['wheel', 'touchstart', 'keydown', 'click'].forEach((evt) =>
+      window.addEventListener(evt, stop, { once: true, passive: true }),
+    );
+    settled.then(() => {
+      realign();
+      stop();
+    });
+  };
+
   if (!embedMode) {
     const headerPromise = loadHeader(doc.querySelector('header'));
     const footerPromise = loadFooter(doc.querySelector('footer'));
-    // Browser scrolls to #hash before the page finishes laying out, so re-scroll to the target as it reflows; stop once the header is loaded (layout done) or the user scrolls.
-    const { hash } = window.location;
-    const target = hash ? doc.getElementById(hash.substring(1)) : null;
-    if (target && main) {
-      let done = false;
-      const realign = () => {
-        if (!done) target.scrollIntoView();
-      };
-      const observer = new ResizeObserver(realign);
-      const stop = () => {
-        done = true;
-        observer.disconnect();
-      };
-      observer.observe(main);
-      ['wheel', 'touchstart', 'keydown'].forEach((evt) =>
-        window.addEventListener(evt, stop, { once: true, passive: true }),
-      );
-      Promise.allSettled([headerPromise]).then(() => {
-        realign();
-        stop();
-      });
-    }
+    alignHashTarget(Promise.allSettled([headerPromise])); // header loaded => layout settled
     const martechOff = window.location.search?.indexOf('martech=off') !== -1;
     // disable martech if martech=off is in the query string, this is used for testing ONLY
     if (!martechOff) {
@@ -1233,6 +1237,15 @@ async function loadLazy(doc) {
     if (!isBrandConciergeExcludedPath() && !martechOff) {
       import('./brand-concierge/brand-concierge-entry-target.js').catch(() => {});
     }
+  } else {
+    // Embed mode has no header/footer chrome to gate on - settle on load.
+    alignHashTarget(
+      document.readyState === 'complete'
+        ? Promise.resolve()
+        : new Promise((resolve) => {
+            window.addEventListener('load', resolve, { once: true });
+          }),
+    );
   }
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   if (isLiveGradientBgPage) {
