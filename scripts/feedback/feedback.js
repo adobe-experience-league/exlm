@@ -418,6 +418,9 @@ function handleFeedbackIcons(el) {
           const subtitleElement = createTag('p', { class: 'subtitle' }, subtitle);
           moreQuestion.insertAdjacentElement('beforebegin', subtitleElement);
         }
+        feedbackIcon.forEach((otherIcon) => {
+          otherIcon.disabled = true;
+        });
       } else {
         console.log('Qualtrics feedback malformed.'); // eslint-disable-line no-console
         showQualtricsLoadingError(el);
