@@ -35,6 +35,21 @@
   max-height: none;
 }
 
+/*
+ * EXLM-5810: Disable the hover animation on on-demand event tiles. The shared
+ * browse-card.css zooms the laptop container (scale 2.2) and grows the thumbnail
+ * on hover, which magnifies the low-resolution source image and makes it look
+ * blurry/cropped. Keep the thumbnail scaled down inside the laptop on hover.
+ */
+.browse-card.event-on-demand-event-card .browse-card-figure:hover .laptop-container {
+  transform: none;
+}
+
+.browse-card.event-on-demand-event-card .browse-card-figure:hover > img {
+  width: 180px;
+  height: 116px;
+}
+
 /* Specific styles for fallback images only */
 .browse-card.event-card .browse-card-figure.has-fallback-image img,
 .browse-card.event-on-demand-event-card .browse-card-figure.has-fallback-image img {
