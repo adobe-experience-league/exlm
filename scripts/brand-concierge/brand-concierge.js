@@ -2,7 +2,11 @@
 import { getConfig, getPathDetails, fetchJson } from '../scripts.js';
 import { loadScript, decorateIcon } from '../lib-franklin.js';
 import { openDrawer } from '../dialog/dialog.js';
-import brandConciergeConfig from './brand-concierge-config.js';
+import {
+  loadBrandConciergeConfig,
+  getBrandConciergeDatastreamId,
+  SUPPORTED_LOCALES,
+} from './brand-concierge-config.js';
 import {
   applyBcEntryChrome,
   BC_ENTRY_EXPERIENCES,
@@ -19,7 +23,6 @@ const MOUNT_SELECTOR = '#brand-concierge-mount';
 const DIALOG_ID = 'bc-dialog';
 const TRIGGER_ID = 'bc-trigger';
 const BOTTOM_ASK_BAR_ID = 'bc-bottom-ask-bar';
-const ASK_AI_LABEL = 'Ask AI';
 const HEADER_CLEAR_ID = 'bc-header-clear';
 const PANEL_DISCLAIMER_ID = 'bc-panel-disclaimer';
 
@@ -63,6 +66,15 @@ const log = (...args) => isDev && console.log('[BC]', ...args);
 const warn = (...args) => console.warn('[BC]', ...args);
 // eslint-disable-next-line no-console
 const error = (...args) => console.error('[BC]', ...args);
+
+/**
+ * Locale-resolved config (English base + any locale overlay), loaded async from per-locale
+ * JSON in initBrandConcierge(). Null until loaded; consumers run only after the load resolves,
+ * and the observer callbacks guard against a null value defensively.
+ */
+let activeConfig = null;
+/** Path language backing `activeConfig`; 'en' means no locale overlay is active. */
+let activeLang = 'en';
 
 let cssLinkEl = null;
 let drawerHandle = null;
@@ -129,6 +141,26 @@ function clearBrandConciergeTranscriptStorage(options = {}) {
 }
 
 /**
+ * BC hardcodes English copy in its hover tooltips (e.g. the send button's "Send"), which its
+ * config `text` map does not cover. For non-default locales, replace the send tooltip's text
+ * with the localized send label. No-op for English so BC's own copy is preserved.
+ */
+function localizeSubmitTooltip(mount) {
+  // Gate on whether a locale overlay actually applied, not the raw path lang — an unsupported
+  // locale (e.g. 'fr') falls back to English content but activeLang stays 'fr', which would
+  // otherwise overwrite BC's own default tooltip with our English override unnecessarily.
+  // Lowercased to match SUPPORTED_LOCALES' keys and loadBrandConciergeConfig()'s own comparison.
+  const lang = (activeLang || '').toLowerCase();
+  if (lang === 'en' || !SUPPORTED_LOCALES.has(lang)) return;
+  const label = activeConfig?.text?.['input.send.aria'];
+  if (!label) return;
+  mount.querySelectorAll('.submit-button[aria-describedby]').forEach((btn) => {
+    const tip = document.getElementById(btn.getAttribute('aria-describedby'));
+    if (tip && tip.textContent !== label) tip.textContent = label;
+  });
+}
+
+/**
  * BC renders inline SVG sparkles in several places; swap them for icons/bc-ask-sparkles.svg.
  */
 function patchBcSparkleIcons(mount) {
@@ -162,6 +194,8 @@ function patchBcSparkleIcons(mount) {
         img.className = 'bc-sparkle-img';
         svg.replaceWith(img);
       });
+
+    localizeSubmitTooltip(mount);
   };
 
   run();
@@ -171,6 +205,9 @@ function patchBcSparkleIcons(mount) {
 }
 
 function buildPanelDisclaimer() {
+  const copy = activeConfig?.ui?.disclaimer;
+  if (!copy) return null;
+
   const disclaimer = document.createElement('p');
   disclaimer.id = PANEL_DISCLAIMER_ID;
   disclaimer.className = 'bc-panel-disclaimer';
@@ -179,22 +216,20 @@ function buildPanelDisclaimer() {
   privacyLink.href = PRIVACY_POLICY_URL;
   privacyLink.target = '_blank';
   privacyLink.rel = 'noopener noreferrer';
-  privacyLink.textContent = 'Privacy Policy';
+  privacyLink.textContent = copy.privacyLabel;
 
   const termsLink = document.createElement('a');
   termsLink.href = GENERATIVE_AI_TERMS_URL;
   termsLink.target = '_blank';
   termsLink.rel = 'noopener noreferrer';
-  termsLink.textContent = 'Generative AI Terms';
+  termsLink.textContent = copy.termsLabel;
 
   disclaimer.append(
-    document.createTextNode("Use of this AI chatbot is subject to Adobe's "),
+    document.createTextNode(copy.prefix),
     privacyLink,
-    document.createTextNode(
-      ". Don't share sensitive data. AI responses are not your Content, may be inaccurate, and any offers provided are non-binding. ",
-    ),
+    document.createTextNode(copy.middle),
     termsLink,
-    document.createTextNode('.'),
+    document.createTextNode(copy.suffix),
   );
 
   return disclaimer;
@@ -207,7 +242,8 @@ function installPanelDisclaimer(mount) {
   if (!mount) return;
   const inputSection = mount.querySelector('.input-section');
   if (!inputSection || inputSection.querySelector(`#${PANEL_DISCLAIMER_ID}`)) return;
-  inputSection.append(buildPanelDisclaimer());
+  const disclaimer = buildPanelDisclaimer();
+  if (disclaimer) inputSection.append(disclaimer);
 }
 
 function watchPanelDisclaimer(mount) {
@@ -386,23 +422,25 @@ function createBottomAskBar() {
     return document.getElementById(BOTTOM_ASK_BAR_ID);
   }
 
+  const { bottomBar } = activeConfig.ui;
+
   const bar = document.createElement('div');
   bar.id = BOTTOM_ASK_BAR_ID;
   bar.dataset.expanded = 'true';
   bar.setAttribute('role', 'region');
-  bar.setAttribute('aria-label', ASK_AI_LABEL);
+  bar.setAttribute('aria-label', bottomBar.label);
 
   const collapsedBtn = document.createElement('button');
   collapsedBtn.type = 'button';
   collapsedBtn.className = 'bc-bottom-ask-bar-collapsed';
   collapsedBtn.setAttribute('aria-expanded', 'true');
-  collapsedBtn.setAttribute('aria-label', `Expand ${ASK_AI_LABEL} ask bar`);
+  collapsedBtn.setAttribute('aria-label', bottomBar.expandAria);
 
   const collapsedIcon = document.createElement('span');
   collapsedIcon.className = 'icon icon-bc-ask-sparkles';
   const collapsedLabel = document.createElement('span');
   collapsedLabel.className = 'bc-bottom-ask-bar-collapsed-label';
-  collapsedLabel.textContent = ASK_AI_LABEL;
+  collapsedLabel.textContent = bottomBar.label;
   const collapsedChevron = document.createElement('span');
   collapsedChevron.className = 'icon icon-bc-chevron-bottom bc-bottom-ask-bar-collapsed-chevron';
   collapsedChevron.setAttribute('aria-hidden', 'true');
@@ -419,7 +457,7 @@ function createBottomAskBar() {
   brandIcon.className = 'icon icon-bc-ask-sparkles';
   const brandLabel = document.createElement('span');
   brandLabel.className = 'bc-bottom-ask-bar-label';
-  brandLabel.textContent = ASK_AI_LABEL;
+  brandLabel.textContent = bottomBar.label;
   brand.append(brandIcon, brandLabel);
   decorateIcon(brandIcon);
 
@@ -432,13 +470,13 @@ function createBottomAskBar() {
   const input = document.createElement('input');
   input.type = 'text';
   input.className = 'bc-bottom-ask-bar-input';
-  input.placeholder = 'Ask a question…';
-  input.setAttribute('aria-label', 'Ask a question');
+  input.placeholder = bottomBar.inputPlaceholder;
+  input.setAttribute('aria-label', bottomBar.inputAria);
 
   const sendBtn = document.createElement('button');
   sendBtn.type = 'button';
   sendBtn.className = 'bc-bottom-ask-bar-send';
-  sendBtn.setAttribute('aria-label', 'Send');
+  sendBtn.setAttribute('aria-label', bottomBar.sendAria);
   sendBtn.disabled = true;
   const sendIcon = document.createElement('span');
   sendIcon.className = 'icon icon-bc-message-send';
@@ -455,7 +493,7 @@ function createBottomAskBar() {
   const expandBtn = document.createElement('button');
   expandBtn.type = 'button';
   expandBtn.className = 'bc-bottom-ask-bar-expand';
-  expandBtn.setAttribute('aria-label', `Open ${ASK_AI_LABEL}`);
+  expandBtn.setAttribute('aria-label', bottomBar.openAria);
   const expandIcon = document.createElement('span');
   expandIcon.className = 'icon icon-expand';
   expandIcon.setAttribute('aria-hidden', 'true');
@@ -465,9 +503,9 @@ function createBottomAskBar() {
   const hideBtn = document.createElement('button');
   hideBtn.type = 'button';
   hideBtn.className = 'bc-bottom-ask-bar-hide';
-  hideBtn.setAttribute('aria-label', 'Hide ask bar');
+  hideBtn.setAttribute('aria-label', bottomBar.hideAria);
   const hideLabel = document.createElement('span');
-  hideLabel.textContent = 'Hide';
+  hideLabel.textContent = bottomBar.hideLabel;
   const hideChevron = document.createElement('span');
   hideChevron.className = 'icon icon-bc-chevron-bottom bc-bottom-ask-bar-hide-chevron';
   hideChevron.setAttribute('aria-hidden', 'true');
@@ -538,7 +576,9 @@ function createBottomAskBar() {
  */
 function ensureBottomAskBarForLateTarget(experience) {
   if (experience !== BC_ENTRY_EXPERIENCES.BOTTOM_ASK_BAR) return;
-  if (!initStarted) return;
+  // activeConfig may still be loading (initStarted flips true before the locale fetch resolves);
+  // createBottomAskBar() needs activeConfig.ui, so bail rather than mount before it's ready.
+  if (!initStarted || !activeConfig) return;
   if (document.getElementById(BOTTOM_ASK_BAR_ID)) return;
   createBottomAskBar();
   document.body.append(document.getElementById(BOTTOM_ASK_BAR_ID));
@@ -773,7 +813,9 @@ function handleBrandConciergeClientEvent(event) {
 }
 
 function getBootstrapOptions(defaultPrompts = defaultPromptsOverride) {
-  const { stickySession = false, arrays, ...stylingConfigurations } = brandConciergeConfig;
+  // `ui` holds ExL chrome strings (rendered by our own code) — strip it so only BC's
+  // own styling/text/arrays are forwarded to the third-party web client.
+  const { stickySession = false, ui: _ui, arrays, ...stylingConfigurations } = activeConfig;
   const effectiveArrays = defaultPrompts ? { ...arrays, 'welcome.examples': defaultPrompts } : arrays;
   return {
     instanceName: ALLOY_INSTANCE_NAME,
@@ -1061,9 +1103,11 @@ function installKeyboardScrollHandler(dialog, mount) {
 function createMountPoint() {
   if (document.getElementById(DIALOG_ID)) return document.getElementById(DIALOG_ID);
 
+  const { ui } = activeConfig;
+
   const trigger = document.createElement('button');
   trigger.id = TRIGGER_ID;
-  trigger.setAttribute('aria-label', 'Open AI assistant');
+  trigger.setAttribute('aria-label', ui.triggerAriaLabel);
   trigger.setAttribute('aria-expanded', 'false');
   trigger.setAttribute('aria-controls', DIALOG_ID);
 
@@ -1071,7 +1115,7 @@ function createMountPoint() {
   triggerIcon.className = 'icon icon-bc-ask-sparkles';
   const triggerAsk = document.createElement('span');
   triggerAsk.className = 'bc-trigger-ask';
-  triggerAsk.textContent = 'Ask a question…';
+  triggerAsk.textContent = ui.triggerAsk;
   trigger.append(triggerIcon, triggerAsk);
   const sendIcon = document.createElement('span');
   sendIcon.className = 'icon icon-bc-message-send bc-trigger-send';
@@ -1089,13 +1133,13 @@ function createMountPoint() {
   clearBtn.id = HEADER_CLEAR_ID;
   clearBtn.type = 'button';
   clearBtn.className = 'exl-dialog-header-clear';
-  clearBtn.textContent = 'Clear';
-  clearBtn.setAttribute('aria-label', 'Clear conversation');
+  clearBtn.textContent = ui.clearLabel;
+  clearBtn.setAttribute('aria-label', ui.clearAriaLabel);
 
   drawerHandle = openDrawer({
     id: DIALOG_ID,
-    ariaLabel: 'AI assistant',
-    title: ASK_AI_LABEL,
+    ariaLabel: ui.drawerAriaLabel,
+    title: ui.drawerTitle,
     titleIcon: 'bc-ask-sparkles',
     content: mount,
     canExpand: true,
@@ -1231,6 +1275,21 @@ export async function initBrandConcierge() {
   initStarted = true;
 
   const { bcAlloySdkUrl, bcDatastreamId, bcOrgId, bcWebClientUrl, bcEdgeDomain } = getConfig();
+  activeLang = getPathDetails().lang;
+  activeConfig = await loadBrandConciergeConfig(activeLang);
+  // If even the English base sheet can't load, skip mounting rather than render an empty widget.
+  if (!activeConfig) {
+    initResolve?.();
+    initResolve = null;
+    initReject = null;
+    initStarted = false;
+    return initPromise;
+  }
+
+  // Route to the locale's Brand Concierge datastream (e.g. the Spanish concierge on /es/),
+  // falling back to the default datastream for locales without an override. Kept separate from
+  // activeConfig so this routing id never leaks into the styling payload sent to the BC client.
+  const datastreamId = getBrandConciergeDatastreamId(activeConfig.metadata.language, bcDatastreamId);
   createMountPoint();
   applyBcEntryChrome(resolveBcEntryExperience());
   injectAlloyStub();
@@ -1239,9 +1298,9 @@ export async function initBrandConcierge() {
   const defaultPromptsPromise = fetchDefaultPromptsOverride();
 
   try {
-    log('[BC] loading Web SDK (alloyBC instance)', { bcEdgeDomain, bcDatastreamId });
+    log('[BC] loading Web SDK (alloyBC instance)', { bcEdgeDomain, datastreamId, locale: activeLang });
     await loadScript(bcAlloySdkUrl);
-    await configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain);
+    await configureWebSdk(datastreamId, bcOrgId, bcEdgeDomain);
     log('[BC] Web SDK configured');
 
     log('[BC] loading Web Client', bcWebClientUrl);
