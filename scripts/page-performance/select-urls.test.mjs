@@ -50,6 +50,57 @@ describe('selectUrls', () => {
     assert.equal(selected[2], URLS[4]);
   });
 
+  it('picks one hub URL per page type and skips missing types', () => {
+    const urls = [
+      'https://demo.example/en/docs/experience-manager/using/home',
+      'https://demo.example/en/docs',
+      'https://demo.example/en/playlists/getting-started-with-aem',
+      'https://demo.example/en/playlists',
+      'https://demo.example/en/perspectives/why-edge-delivery',
+      'https://demo.example/en/search',
+      'https://demo.example/en/home',
+    ];
+    const selected = selectUrls(urls, {
+      include: ['/en/'],
+      exclude: ['/search'],
+      select: 'onePerType',
+      withinType: 'hub',
+      maxUrls: 8,
+      pageTypes: [
+        { id: 'home', match: '/en/home(/|$)' },
+        { id: 'playlists', match: '/en/playlists(/|$)' },
+        { id: 'perspectives', match: '/en/perspectives(/|$)' },
+        { id: 'courses', match: '/en/courses(/|$)' },
+        { id: 'docs', match: '/en/docs(/|$)' },
+      ],
+    });
+    assert.deepEqual(selected, [
+      'https://demo.example/en/home',
+      'https://demo.example/en/playlists',
+      'https://demo.example/en/perspectives/why-edge-delivery',
+      'https://demo.example/en/docs',
+    ]);
+  });
+
+  it('caps onePerType at maxUrls in pageTypes order', () => {
+    const selected = selectUrls(
+      ['https://demo.example/en/home', 'https://demo.example/en/docs', 'https://demo.example/en/playlists'],
+      {
+        include: [],
+        exclude: [],
+        select: 'onePerType',
+        withinType: 'hub',
+        maxUrls: 2,
+        pageTypes: [
+          { id: 'home', match: '/en/home(/|$)' },
+          { id: 'docs', match: '/en/docs(/|$)' },
+          { id: 'playlists', match: '/en/playlists(/|$)' },
+        ],
+      },
+    );
+    assert.deepEqual(selected, ['https://demo.example/en/home', 'https://demo.example/en/docs']);
+  });
+
   it('random with the same seed is stable', () => {
     const a = selectUrls(URLS, { include: [], exclude: [], maxUrls: 3, select: 'random', seed: 7 });
     const b = selectUrls(URLS, { include: [], exclude: [], maxUrls: 3, select: 'random', seed: 7 });

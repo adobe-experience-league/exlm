@@ -5,6 +5,8 @@ const DEFAULTS = {
   exclude: [],
   maxUrls: 20,
   select: 'stride',
+  withinType: 'hub',
+  pageTypes: [],
   seed: 1,
   formFactors: ['mobile', 'desktop'],
   query: { martech: 'off' },
@@ -18,6 +20,31 @@ const DEFAULTS = {
   allowedHosts: [],
   sitemapConcurrency: 4,
 };
+
+function assertPageTypes(list) {
+  if (!Array.isArray(list) || list.length === 0) {
+    throw new Error('pageTypes must be a non-empty array when select is onePerType');
+  }
+  const ids = new Set();
+  for (const type of list) {
+    if (!type || typeof type.id !== 'string' || !type.id.trim()) {
+      throw new Error('pageTypes[].id must be a non-empty string');
+    }
+    if (ids.has(type.id)) {
+      throw new Error(`Duplicate pageTypes id: ${type.id}`);
+    }
+    ids.add(type.id);
+    if (typeof type.match !== 'string' || !type.match.trim()) {
+      throw new Error(`pageTypes[${type.id}].match must be a regex string`);
+    }
+    try {
+      // eslint-disable-next-line no-new
+      new RegExp(type.match);
+    } catch {
+      throw new Error(`Invalid regex in pageTypes[${type.id}].match`);
+    }
+  }
+}
 
 function assertRegexList(list, label) {
   if (!Array.isArray(list)) {
@@ -48,6 +75,7 @@ export async function loadConfig(path) {
     throw new Error(`sitemapUrl is required in ${path}`);
   }
 
+  const parsedHasMaxUrls = Object.hasOwn(parsed, 'maxUrls');
   const cfg = {
     ...DEFAULTS,
     ...parsed,
@@ -56,6 +84,21 @@ export async function loadConfig(path) {
 
   if (!Number.isInteger(cfg.shards) || cfg.shards < 1) {
     throw new Error('shards must be an integer >= 1');
+  }
+  if (!Array.isArray(cfg.pageTypes)) {
+    throw new Error('pageTypes must be an array');
+  }
+  if (!['hub', 'first', 'random'].includes(cfg.withinType)) {
+    throw new Error('withinType must be hub, first, or random');
+  }
+  if (!['first', 'stride', 'random', 'onePerType'].includes(cfg.select)) {
+    throw new Error('select must be first, stride, random, or onePerType');
+  }
+  if (cfg.select === 'onePerType') {
+    assertPageTypes(cfg.pageTypes);
+    if (!parsedHasMaxUrls) {
+      cfg.maxUrls = cfg.pageTypes.length;
+    }
   }
   if (!Number.isInteger(cfg.maxUrls) || cfg.maxUrls < 1) {
     throw new Error('maxUrls must be an integer >= 1');
@@ -74,9 +117,6 @@ export async function loadConfig(path) {
   }
   if (!Array.isArray(cfg.allowedHosts)) {
     throw new Error('allowedHosts must be an array of hostnames');
-  }
-  if (!['first', 'stride', 'random'].includes(cfg.select)) {
-    throw new Error('select must be first, stride, or random');
   }
   if (!['stub', 'lighthouse'].includes(cfg.auditor)) {
     throw new Error('auditor must be stub or lighthouse');

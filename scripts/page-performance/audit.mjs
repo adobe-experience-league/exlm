@@ -2,7 +2,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { auditUrl as stubAudit } from './auditor-stub.mjs';
 import { loadConfig } from './load-config.mjs';
-import { isMainModule, mapLimit, repoRootFrom } from './paths.mjs';
+import { isMainModule, mapLimit, repoRootFrom, resolveConfigPath } from './paths.mjs';
 import { applyPageQuery } from './select-urls.mjs';
 
 async function loadAuditor(kind) {
@@ -24,7 +24,7 @@ export async function auditShard({
 } = {}) {
   const root = repoRoot;
   const dest = outDir || join(root, 'performance-reports');
-  const cfg = await loadConfig(configPath || join(root, 'performance/config.json'));
+  const cfg = await loadConfig(resolveConfigPath(configPath, root));
   const shardFile = join(dest, 'shards', `${shardIndex}.json`);
   const { urls } = JSON.parse(await readFile(shardFile, 'utf8'));
   const shardOut = join(dest, 'shards', String(shardIndex));
@@ -51,11 +51,14 @@ export async function auditShard({
           status: 'error',
           error: err.message,
           score: null,
+          fcpMs: null,
           lcpMs: null,
           cls: null,
           tbtMs: null,
+          siMs: null,
           ttfbMs: null,
-          totalByteWeight: null,
+          inpMs: null,
+          insights: [],
           htmlPath: null,
           auditor: cfg.auditor,
         };
@@ -63,7 +66,11 @@ export async function auditShard({
     });
     rows.push(...results);
   } finally {
-    await session.close();
+    try {
+      await session.close();
+    } catch {
+      // Chrome teardown must not drop the shard summary
+    }
   }
 
   const summary = {

@@ -2,20 +2,43 @@ name: Page Performance
 
 on:
   schedule:
-    - cron: '0 8 * * 1'
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 concurrency:
   group: page-performance-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
   contents: read
 
 jobs:
+  gate:
+    name: Schedule gate
+    if: github.repository == 'adobe-experience-league/exlm'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+      reason: ${{ steps.check.outputs.reason }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - id: check
+        env:
+          PAGE_PERFORMANCE_ENABLED: ${{ vars.PAGE_PERFORMANCE_ENABLED }}
+          PAGE_PERFORMANCE_SCHEDULE: ${{ vars.PAGE_PERFORMANCE_SCHEDULE }}
+          PAGE_PERFORMANCE_SKIP_UNTIL: ${{ vars.PAGE_PERFORMANCE_SKIP_UNTIL }}
+        run: node scripts/page-performance/gate.mjs
+      - name: Gate result
+        run: echo "run=${{ steps.check.outputs.run }} reason=${{ steps.check.outputs.reason }}"
+
   test:
     name: Unit tests
-    if: github.repository == 'adobe-experience-league/exlm'
+    needs: gate
+    if: github.repository == 'adobe-experience-league/exlm' && needs.gate.outputs.run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -28,8 +51,8 @@ jobs:
 
   discover:
     name: Discover URLs from sitemap
-    needs: test
-    if: github.repository == 'adobe-experience-league/exlm'
+    needs: [gate, test]
+    if: github.repository == 'adobe-experience-league/exlm' && needs.gate.outputs.run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
@@ -47,6 +70,8 @@ jobs:
         run: |
           echo "shards=$(jq -c '.shardIndexes' performance-reports/plan.json)" >> "$GITHUB_OUTPUT"
           echo "retention=$(jq -r '.artifactRetentionDays' performance-reports/plan.json)" >> "$GITHUB_OUTPUT"
+          echo "Selected $(jq -r '.urlCount' performance-reports/plan.json) URLs from $(jq -r '.discoveredCount' performance-reports/plan.json) sitemap locs"
+          jq -r '.selectedByType[]? | "\(.id)\t\(.url)"' performance-reports/plan.json || true
       - uses: actions/upload-artifact@v4
         with:
           name: page-performance-plan
@@ -56,19 +81,22 @@ jobs:
 
   audit:
     name: Audit shard ${{ matrix.shard }}
-    needs: discover
-    if: github.repository == 'adobe-experience-league/exlm'
+    needs: [gate, discover]
+    if: github.repository == 'adobe-experience-league/exlm' && needs.gate.outputs.run == 'true' && needs.discover.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
-        shard: ${{ fromJson(needs.discover.outputs.shards) }}
+        shard: ${{ fromJson(needs.discover.outputs.shards || '[0]') }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Install Chrome
+        id: chrome
+        uses: browser-actions/setup-chrome@v2
       - name: Install Lighthouse (lean)
         run: npm install lighthouse@^12 --no-save
       - uses: actions/download-artifact@v4
@@ -78,6 +106,7 @@ jobs:
       - name: Audit
         env:
           SHARD_INDEX: ${{ matrix.shard }}
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
         run: node scripts/page-performance/audit.mjs
       - uses: actions/upload-artifact@v4
         with:

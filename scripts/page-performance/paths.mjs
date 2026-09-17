@@ -6,6 +6,11 @@ export function repoRootFrom(metaUrl) {
   return resolve(dirname(fileURLToPath(metaUrl)), '../..');
 }
 
+export function resolveConfigPath(configPath, root) {
+  const raw = configPath || process.env.PERF_CONFIG || 'performance/config.json';
+  return resolve(root, raw);
+}
+
 export function resolveSitemapSource(sitemapUrl, root) {
   if (/^https?:\/\//i.test(sitemapUrl) || sitemapUrl.startsWith('file:')) return sitemapUrl;
   return resolve(root, sitemapUrl);

@@ -11,11 +11,12 @@ function numericFrom(url, formFactor, salt, min, max) {
 
 export async function auditUrl({ url, formFactor, outDir }) {
   const score = Math.round(numericFrom(url, formFactor, 'score', 72, 99));
+  const fcpMs = Math.round(numericFrom(url, formFactor, 'fcp', 600, 2800));
   const lcpMs = Math.round(numericFrom(url, formFactor, 'lcp', 800, 3200));
   const cls = Number(numericFrom(url, formFactor, 'cls', 0.001, 0.12).toFixed(3));
   const tbtMs = Math.round(numericFrom(url, formFactor, 'tbt', 0, 250));
+  const siMs = Math.round(numericFrom(url, formFactor, 'si', 900, 4000));
   const ttfbMs = Math.round(numericFrom(url, formFactor, 'ttfb', 40, 280));
-  const totalByteWeight = Math.round(numericFrom(url, formFactor, 'bytes', 180_000, 900_000));
   const slug = reportSlug(url, formFactor);
   await mkdir(outDir, { recursive: true });
   const htmlPath = join(outDir, `${slug}.report.html`);
@@ -28,6 +29,7 @@ export async function auditUrl({ url, formFactor, outDir }) {
     <dt>URL</dt><dd>${escapeHtml(url)}</dd>
     <dt>Device</dt><dd>${formFactor}</dd>
     <dt>Score</dt><dd>${score}</dd>
+    <dt>FCP (ms)</dt><dd>${fcpMs}</dd>
     <dt>LCP (ms)</dt><dd>${lcpMs}</dd>
     <dt>CLS</dt><dd>${cls}</dd>
   </dl>
@@ -40,11 +42,14 @@ export async function auditUrl({ url, formFactor, outDir }) {
     status: 'ok',
     error: null,
     score,
+    fcpMs,
     lcpMs,
     cls,
     tbtMs,
+    siMs,
     ttfbMs,
-    totalByteWeight,
+    inpMs: null,
+    insights: [],
     htmlPath,
     auditor: 'stub',
   };

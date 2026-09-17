@@ -4,9 +4,27 @@
     <loc>https://demo.example/en/docs</loc>
   </url>
   <url>
+    <loc>https://demo.example/en/docs/experience-manager/using/home</loc>
+  </url>
+  <url>
     <loc>https://demo.example/en/search</loc>
   </url>
   <url>
     <loc>https://demo.example/en/playlists</loc>
+  </url>
+  <url>
+    <loc>https://demo.example/en/playlists/getting-started-with-aem</loc>
+  </url>
+  <url>
+    <loc>https://demo.example/en/perspectives</loc>
+  </url>
+  <url>
+    <loc>https://demo.example/en/perspectives/why-edge-delivery</loc>
+  </url>
+  <url>
+    <loc>https://demo.example/en/courses</loc>
+  </url>
+  <url>
+    <loc>https://demo.example/en/certification-home</loc>
   </url>
 </urlset>

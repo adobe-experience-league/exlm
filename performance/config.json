@@ -2,8 +2,18 @@
   "sitemapUrl": "https://experienceleague.adobe.com/sitemap-index.xml",
   "include": ["^https://experienceleague\\.adobe\\.com/en/"],
   "exclude": ["/search"],
-  "maxUrls": 20,
-  "select": "stride",
+  "select": "onePerType",
+  "withinType": "hub",
+  "pageTypes": [
+    { "id": "home", "match": "/en/?$|/en/home(/|$)" },
+    { "id": "browse", "match": "/en/browse(/|$)" },
+    { "id": "events", "match": "/en/events(/|$)" },
+    { "id": "playlists", "match": "/en/playlists(/|$)" },
+    { "id": "perspectives", "match": "/en/perspectives(/|$)" },
+    { "id": "courses", "match": "/en/courses(/|$)" },
+    { "id": "certification", "match": "/en/certification" },
+    { "id": "docs", "match": "/en/docs(/|$)" }
+  ],
   "seed": 1,
   "formFactors": ["mobile", "desktop"],
   "query": {

@@ -2,6 +2,7 @@ import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { isMainModule, repoRootFrom } from './paths.mjs';
 import { buildSummaryMarkdown, mergeShardSummaries } from './summary.mjs';
+import { buildRunInsights, buildRunSuggestion } from './metrics.mjs';
 
 export async function summarize({ outDir, repoRoot = repoRootFrom(import.meta.url) } = {}) {
   const dest = outDir || join(repoRoot, 'performance-reports');
@@ -22,6 +23,7 @@ export async function summarize({ outDir, repoRoot = repoRootFrom(import.meta.ur
     throw new Error(`No shard summary.json files found under ${shardRoot}`);
   }
 
+  let selectedByType = [];
   try {
     const plan = JSON.parse(await readFile(join(dest, 'plan.json'), 'utf8'));
     const expected = new Set((plan.shardIndexes || []).map(String));
@@ -30,6 +32,7 @@ export async function summarize({ outDir, repoRoot = repoRootFrom(import.meta.ur
     if (missing.length) {
       throw new Error(`missing shard summaries: ${missing.join(', ')}`);
     }
+    selectedByType = plan.selectedByType || [];
   } catch (err) {
     if (err.code === 'ENOENT') {
       // local callers can summarize without a plan file
@@ -40,8 +43,14 @@ export async function summarize({ outDir, repoRoot = repoRootFrom(import.meta.ur
 
   const generatedAt = new Date().toISOString();
   const { rows } = mergeShardSummaries(shards);
-  const summaryMd = buildSummaryMarkdown(rows, generatedAt);
-  const summaryJson = { generatedAt, rowCount: rows.length, rows };
+  const summaryMd = buildSummaryMarkdown(rows, generatedAt, selectedByType);
+  const summaryJson = {
+    generatedAt,
+    rowCount: rows.length,
+    suggestion: buildRunSuggestion(rows),
+    insights: buildRunInsights(rows),
+    rows,
+  };
   await writeFile(join(dest, 'summary.md'), summaryMd, 'utf8');
   await writeFile(join(dest, 'summary.json'), `${JSON.stringify(summaryJson, null, 2)}\n`, 'utf8');
   return { dest, summaryMd, summaryJson, rows };

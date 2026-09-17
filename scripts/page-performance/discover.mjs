@@ -2,7 +2,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { loadConfig } from './load-config.mjs';
 import { isMainModule, repoRootFrom, resolveSitemapSource } from './paths.mjs';
-import { selectUrls } from './select-urls.mjs';
+import { selectUrlPlan } from './select-urls.mjs';
 import { shardIndexes, shardUrls } from './shard.mjs';
 import { collectSitemapUrls } from './sitemap.mjs';
 
@@ -14,9 +14,9 @@ export async function discover({ configPath, outDir, repoRoot = repoRootFrom(imp
   const sitemapSource = resolveSitemapSource(cfg.sitemapUrl, root);
   const urlOverride = process.env.PERF_URL || null;
   const allUrls = urlOverride ? [urlOverride] : await collectSitemapUrls(sitemapSource, cfg);
-  const urls = urlOverride ? allUrls : selectUrls(allUrls, cfg);
+  const { urls, byType } = urlOverride ? { urls: allUrls, byType: [] } : selectUrlPlan(allUrls, cfg);
   if (!urls.length) {
-    throw new Error('No URLs left after sitemap collect + include/exclude/maxUrls');
+    throw new Error('No URLs left after sitemap collect + include/exclude/pageTypes');
   }
   const shards = shardUrls(urls, cfg.shards);
   const generatedAt = new Date().toISOString();
@@ -27,6 +27,8 @@ export async function discover({ configPath, outDir, repoRoot = repoRootFrom(imp
     discoveredCount: allUrls.length,
     urlCount: urls.length,
     urls,
+    selectedByType: byType,
+    select: cfg.select,
     shardIndexes: shardIndexes(shards.length),
     shardSizes: shards.map((s) => s.length),
     formFactors: cfg.formFactors,
@@ -37,7 +39,7 @@ export async function discover({ configPath, outDir, repoRoot = repoRootFrom(imp
 
   await mkdir(join(dest, 'shards'), { recursive: true });
   await writeFile(join(dest, 'plan.json'), `${JSON.stringify(plan, null, 2)}\n`, 'utf8');
-  await writeFile(join(dest, 'selected-urls.json'), `${JSON.stringify({ urls }, null, 2)}\n`, 'utf8');
+  await writeFile(join(dest, 'selected-urls.json'), `${JSON.stringify({ urls, byType }, null, 2)}\n`, 'utf8');
   await Promise.all(
     shards.map((shardUrlsForIndex, index) =>
       writeFile(

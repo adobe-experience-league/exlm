@@ -36,6 +36,34 @@ describe('loadConfig', () => {
     assert.equal(cfg.keepLastRuns, 5);
     assert.equal(cfg.concurrencyPerShard, 1);
     assert.deepEqual(cfg.allowedHosts, []);
+    assert.equal(cfg.withinType, 'hub');
+    assert.deepEqual(cfg.pageTypes, []);
+  });
+
+  it('onePerType without maxUrls caps at the number of page types', async () => {
+    dir = await mkdtemp(join(tmpdir(), 'perf-cfg-'));
+    const path = join(dir, 'performance.json');
+    await writeFile(
+      path,
+      JSON.stringify({
+        sitemapUrl: 'https://example.com/sitemap.xml',
+        select: 'onePerType',
+        pageTypes: [
+          { id: 'home', match: '/home' },
+          { id: 'docs', match: '/docs' },
+        ],
+      }),
+    );
+    const cfg = await loadConfig(path);
+    assert.equal(cfg.maxUrls, 2);
+    assert.equal(cfg.select, 'onePerType');
+  });
+
+  it('rejects onePerType without pageTypes', async () => {
+    dir = await mkdtemp(join(tmpdir(), 'perf-cfg-'));
+    const path = join(dir, 'performance.json');
+    await writeFile(path, JSON.stringify({ sitemapUrl: 'https://example.com/sitemap.xml', select: 'onePerType' }));
+    await assert.rejects(() => loadConfig(path), /pageTypes/);
   });
 
   it('rejects missing sitemapUrl', async () => {

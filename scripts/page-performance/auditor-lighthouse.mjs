@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { extractInsights, extractMetrics } from './metrics.mjs';
 import { reportSlug } from './paths.mjs';
 
 function lighthouseFlags(formFactor, constants) {
@@ -21,11 +22,6 @@ function lighthouseFlags(formFactor, constants) {
   };
 }
 
-function num(audit) {
-  if (!audit || typeof audit.numericValue !== 'number') return null;
-  return audit.numericValue;
-}
-
 export async function createLighthouseSession() {
   let lighthouseMod;
   let constants;
@@ -41,7 +37,7 @@ export async function createLighthouseSession() {
   }
 
   const chrome = await chromeLauncher.launch({
-    chromeFlags: ['--headless', '--no-sandbox', '--disable-gpu'],
+    chromeFlags: ['--headless', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage'],
   });
 
   return {
@@ -58,18 +54,15 @@ export async function createLighthouseSession() {
       await mkdir(outDir, { recursive: true });
       const htmlPath = join(outDir, `${slug}.report.html`);
       await writeFile(htmlPath, html, 'utf8');
-      const audits = lhr?.audits || {};
+      const metrics = extractMetrics(lhr);
       return {
         url,
         formFactor,
         status: 'ok',
         error: null,
         score: typeof scoreFrac === 'number' ? Math.round(scoreFrac * 100) : null,
-        lcpMs: num(audits['largest-contentful-paint']),
-        cls: num(audits['cumulative-layout-shift']),
-        tbtMs: num(audits['total-blocking-time']),
-        ttfbMs: num(audits['server-response-time']),
-        totalByteWeight: num(audits['total-byte-weight']),
+        ...metrics,
+        insights: extractInsights(lhr),
         htmlPath,
         auditor: 'lighthouse',
       };
