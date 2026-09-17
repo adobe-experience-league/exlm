@@ -1190,13 +1190,17 @@ function alignHashTarget(target, containers, settled) {
   if (!window.ResizeObserver) return;
   const observer = new ResizeObserver(realign);
   const events = ['wheel', 'touchstart', 'keydown', 'click'];
+  let safety;
   const stop = () => {
     done = true;
+    clearTimeout(safety);
     observer.disconnect();
     events.forEach((evt) => window.removeEventListener(evt, stop));
   };
   containers.filter(Boolean).forEach((el) => observer.observe(el));
   events.forEach((evt) => window.addEventListener(evt, stop, { once: true, passive: true }));
+  // Safety net to stop anyway if `settled` never resolves (when the header module fails to load).
+  safety = setTimeout(stop, 5000);
   settled.then(() => {
     realign();
     stop();
