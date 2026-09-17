@@ -1173,6 +1173,41 @@ function isBrandConciergeExcludedPath() {
   return /^\/[^/]+\/(support|premium)(\/|$)/i.test(pathname) || /^\/(support|premium)(\/|$)/i.test(pathname);
 }
 
+/**
+ * The browser jumps to the hash before that content has rendered, so it lands on the wrong section;
+ * we re-scroll to the target on each reflow of the given containers until `settled` resolves (the
+ * layout is final) or the user scrolls.
+ * @param {HTMLElement|null} target the hash target element
+ * @param {Array<HTMLElement>} containers elements to observe for reflow (e.g. main, preMain)
+ * @param {Promise} settled resolves once the layout has settled
+ */
+function alignHashTarget(target, containers, settled) {
+  if (!target) return;
+  let done = false;
+  const realign = () => {
+    if (!done) target.scrollIntoView();
+  };
+  realign();
+  if (!window.ResizeObserver) return;
+  const observer = new ResizeObserver(realign);
+  const events = ['wheel', 'touchstart', 'keydown', 'click'];
+  let safety;
+  const stop = () => {
+    done = true;
+    clearTimeout(safety);
+    observer.disconnect();
+    events.forEach((evt) => window.removeEventListener(evt, stop));
+  };
+  containers.filter(Boolean).forEach((el) => observer.observe(el));
+  events.forEach((evt) => window.addEventListener(evt, stop, { once: true, passive: true }));
+  // Safety net to stop anyway if `settled` never resolves (when the header module fails to load).
+  safety = setTimeout(stop, 5000);
+  settled.then(() => {
+    realign();
+    stop();
+  });
+}
+
 async function loadLazy(doc) {
   let embedMode = false;
   if (window.location.pathname.toLowerCase().includes('/playlists')) {
@@ -1202,12 +1237,19 @@ async function loadLazy(doc) {
   await loadBlocks(main);
 
   const { hash } = window.location;
-  const element = hash ? doc.getElementById(hash.substring(1)) : false;
-  if (hash && element) element.scrollIntoView();
+  const target = hash ? doc.getElementById(hash.substring(1)) : null;
 
   if (!embedMode) {
     const headerPromise = loadHeader(doc.querySelector('header'));
     const footerPromise = loadFooter(doc.querySelector('footer'));
+    // Re-align the #hash target as the layout settles; stop on header-loaded (header rendered) or a user scroll.
+    alignHashTarget(
+      target,
+      [main, preMain],
+      new Promise((resolve) => {
+        doc.addEventListener('header-loaded', resolve, { capture: true, once: true });
+      }),
+    );
     const martechOff = window.location.search?.indexOf('martech=off') !== -1;
     // disable martech if martech=off is in the query string, this is used for testing ONLY
     if (!martechOff) {
@@ -1216,6 +1258,17 @@ async function loadLazy(doc) {
     if (!isBrandConciergeExcludedPath() && !martechOff) {
       import('./brand-concierge/brand-concierge-entry-target.js').catch(() => {});
     }
+  } else {
+    // Embed mode has no header - settle on load.
+    alignHashTarget(
+      target,
+      [main, preMain],
+      doc.readyState === 'complete'
+        ? Promise.resolve()
+        : new Promise((resolve) => {
+            window.addEventListener('load', resolve, { once: true });
+          }),
+    );
   }
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   if (isLiveGradientBgPage) {
