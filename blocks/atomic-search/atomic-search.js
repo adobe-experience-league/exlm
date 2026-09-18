@@ -17,6 +17,7 @@ import {
   generateAdobeTrackingData,
   resolveBlockLevelSkeleton,
   normalizeContentTypeFilterValue,
+  installAtomicHistoryCoalesce,
 } from './components/atomic-search-utils.js';
 import { isMobile } from '../header/header-utils.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
@@ -70,6 +71,7 @@ function normalizeContentTypeHash() {
 }
 
 export default function decorate(block) {
+  installAtomicHistoryCoalesce();
   normalizeContentTypeHash();
   const renderAtomicShimmer = (insertBefore) => {
     const skeletonWrapper = htmlToElement(`<div class="atomic-search-load-skeleton">

@@ -85,8 +85,9 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
         }
       };
 
-      const debouncedHandler = debounce(100, clickHandler);
-      facet.addEventListener('click', debouncedHandler);
+      // EXLM-4854: run in the same turn as Atomic's parent pushState so coalesce
+      // can fold child facet writes into that one history entry.
+      facet.addEventListener('click', clickHandler);
       const onlyFilterEl = facet.querySelector(`[part="only-facet-btn"]`);
       if (onlyFilterEl) {
         const filterHandler = (e) => {

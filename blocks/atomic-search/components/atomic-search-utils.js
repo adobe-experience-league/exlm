@@ -150,6 +150,24 @@ const getFacetParamKeyFromSegment = (segment) => {
 };
 
 /**
+ * Write the search hash without using `location.hash =`, which always pushes a
+ * history entry. `replaceState` does not fire `hashchange`; dispatch one so Atomic
+ * can synchronize.
+ */
+export function writeSearchHashFragment(newHash, { replace = false } = {}) {
+  const hash = String(newHash || '').replace(/^#/, '');
+  const hashUrl = `${window.location.pathname}${window.location.search}${hash ? `#${hash}` : ''}`;
+  const oldHref = window.location.href;
+  if (hashUrl === oldHref) return;
+  if (replace) {
+    window.history.replaceState(null, document.title, hashUrl);
+  } else {
+    window.history.pushState(null, document.title, hashUrl);
+  }
+  window.dispatchEvent(new HashChangeEvent('hashchange', { oldURL: oldHref, newURL: window.location.href }));
+}
+
+/**
  * Removes existing `f-{facetId}=…` segments for each replacement’s facetId, then appends the new segments. Single hash write.
  * Same flow as updateHash: fragment → split → filter → push → join.
  *
@@ -168,8 +186,48 @@ export const replaceFacetParamsInHash = (replacements, joinWith = '&') => {
   replacements.forEach(({ facetId, targetFacetKeys }) => {
     updatedParts.push(`f-${facetId}=${targetFacetKeys.join(',')}`);
   });
-  window.location.hash = updatedParts.join(joinWith);
+  writeSearchHashFragment(updatedParts.join(joinWith), { replace: true });
 };
+
+let atomicHistoryCoalesceInstalled = false;
+
+/**
+ * EXLM-4854 approach 2: coalesce Atomic UrlManager `pushState` bursts.
+ * First write in a burst is a real push; later writes in the same turn (and nested
+ * 0-timeouts) replace that entry so one user gesture stays one Back step.
+ */
+export function installAtomicHistoryCoalesce() {
+  if (atomicHistoryCoalesceInstalled) {
+    return;
+  }
+  atomicHistoryCoalesceInstalled = true;
+
+  const origPush = window.history.pushState.bind(window.history);
+  let inBurst = false;
+  let endTimer = 0;
+
+  const scheduleEndBurst = () => {
+    if (endTimer) {
+      window.clearTimeout(endTimer);
+    }
+    endTimer = window.setTimeout(() => {
+      inBurst = false;
+      endTimer = 0;
+    }, 0);
+  };
+
+  window.history.pushState = function coalescedPushState(...args) {
+    if (!inBurst) {
+      inBurst = true;
+      origPush(...args);
+      scheduleEndBurst();
+      return undefined;
+    }
+    window.history.replaceState(...args);
+    scheduleEndBurst();
+    return undefined;
+  };
+}
 
 export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutation, waitForElement = false } = {}) {
   let observer;
