@@ -9609,7 +9609,7 @@
         "valueType": "boolean",
         "name": "showTitleAboveCards",
         "value": false,
-        "label": "Would you like for Eyebrow, Title, and Description text to be shown above the grid cards?",
+        "label": "Would you like for Eyebrow, Title, and Description text to be shown above the grid cards?"
       },
       {
         "component": "text",
