@@ -1,9 +1,9 @@
 {
   "ui": {
     "triggerAriaLabel": "Abrir el asistente de IA",
-    "triggerAsk": "Hacer una pregunta",
+    "triggerAsk": "Hacer una pregunta…",
     "drawerAriaLabel": "Asistente de IA",
-    "drawerTitle": "Preguntar",
+    "drawerTitle": "Preguntar AI",
     "clearLabel": "Borrar",
     "clearAriaLabel": "Borrar conversación",
     "bottomBar": {
@@ -11,13 +11,13 @@
       "expandAria": "Ampliar la barra de Preguntar a la IA",
       "openAria": "Abrir Preguntar a la IA",
       "inputPlaceholder": "Haga una pregunta…",
-      "inputAria": "Hacer una pregunta",
+      "inputAria": "Hacer una pregunta…",
       "sendAria": "Enviar",
       "hideAria": "Ocultar barra de preguntas",
       "hideLabel": "Ocultar"
     },
     "disclaimer": {
-      "prefix": "El uso de este chatbot de IA en versión beta está sujeto a la ",
+      "prefix": "El uso de este chatbot de IA en está sujeto a la ",
       "privacyLabel": "Política de privacidad",
       "middle": " de Adobe. No comparta datos confidenciales. Las respuestas de la IA no son su Contenido, pueden ser inexactas y cualquier oferta proporcionada no es vinculante. ",
       "termsLabel": "Términos de IA generativa",
