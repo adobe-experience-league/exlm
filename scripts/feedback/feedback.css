@@ -104,6 +104,7 @@
 
 .feedback-ui .opened-controls {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--spectrum-spacing-100);
@@ -367,4 +368,13 @@
   font-size: var(--spectrum-font-size-100);
   line-height: normal;
   color: var(--spectrum-red-900);
+}
+
+.feedback-ui .first-question.wrapped {
+  justify-content: center;
+  text-align: center;
+}
+
+.feedback-ui .opened-controls.wrapped .icon-chevron-blue {
+  margin: 0 auto;
 }
