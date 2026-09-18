@@ -9610,7 +9610,6 @@
         "name": "showTitleAboveCards",
         "value": false,
         "label": "Would you like for Eyebrow, Title, and Description text to be shown above the grid cards?",
-        "description": "Controls whether the grid cards header is shown above the cards."
       },
       {
         "component": "text",
