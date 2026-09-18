@@ -52,3 +52,19 @@ Use this only if you need sign-in to work locally for development purposes.
    > if asked to trust the certificate on the browser, do trust it. Might also need to allow runnig as admin (`sudo`)
 
 > If you have a Windows machine, please add any learnings to this Doc. The current dev team uses MacOs.
+
+## Visual Regression Testing (pixel-guard)
+
+Every block/variation in the Sidekick Library gets screenshotted at multiple viewports and compared against a committed baseline to catch unintended visual changes. Tests run in Docker (via Playwright) so rendering is pixel-identical locally and in CI.
+
+```sh
+npm start                    # aem up + the visual test server, in one terminal
+npm run test:visual:build    # one-time: build the Playwright Docker image
+npm run test:visual          # run the suite
+npm run test:visual:update   # accept current output as the new baselines
+npm run test:visual:report   # open the last HTML report
+```
+
+New/changed blocks need specs regenerated first: `npm run test:visual:generate`, then `npm run test:visual:update` to commit baselines.
+
+Full details (how it fits together, CI workflow, troubleshooting) are in [`tools/visual-tests/README.md`](tools/visual-tests/README.md).

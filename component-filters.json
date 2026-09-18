@@ -61,6 +61,10 @@
     ]
   },
   {
+    "id": "main-test",
+    "components": ["section", "section-test"]
+  },
+  {
     "id": "section",
     "components": [
       "text",
@@ -133,6 +137,29 @@
       "grid-cards",
       "playlist-embed",
       "premium-learning-profile-badges"
+    ]
+  },
+  {
+    "id": "section-test",
+    "components": [
+      "adobe-account-card",
+      "article-marquee",
+      "article-tags",
+      "author-bio",
+      "author-summary",
+      "awards",
+      "bookmarks",
+      "data-and-email-consent",
+      "email-card",
+      "note",
+      "personalized-content-placeholder",
+      "premium-learning-bookmarks",
+      "product-interests",
+      "profile-welcome",
+      "recently-reviewed",
+      "role-and-industry",
+      "social-share",
+      "user-profile-card"
     ]
   },
   {

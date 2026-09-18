@@ -209,6 +209,12 @@ function updateUEInstrumentation() {
     // update available sections
     setUEFilter(main, 'main-course-hub');
   }
+
+  // ----- if visual test page, identified by theme (all authorable blocks available for pixel-guard test pages)
+  if (getMetadata('theme') === 'test') {
+    // update available sections
+    setUEFilter(main, 'main-test');
+  }
 }
 
 /**
