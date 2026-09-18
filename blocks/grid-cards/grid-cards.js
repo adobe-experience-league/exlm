@@ -3,14 +3,15 @@ import { decorateCta } from '../../scripts/utils/button-utils.js';
 
 export default function decorate(block) {
   const children = [...block.children];
-  const [eyebrowRow, titleRow, descRow, ...cardRows] = children;
+  const [showTitleAboveCards, eyebrowRow, titleRow, descRow, ...cardRows] = children;
 
   // Create header section for block only if at least one element has content
   const hasEyebrow = eyebrowRow.textContent.trim();
   const hasTitle = titleRow.textContent.trim();
   const hasDesc = descRow.textContent.trim();
+  const showHeader = showTitleAboveCards.textContent.trim() === 'true';
 
-  if (hasEyebrow || hasTitle || hasDesc) {
+  if (showHeader && (hasEyebrow || hasTitle || hasDesc)) {
     const headerDiv = document.createElement('div');
     headerDiv.classList.add('grid-cards-header', 'block-header');
 
@@ -43,6 +44,7 @@ export default function decorate(block) {
 
     block.appendChild(headerDiv);
   } else {
+    showTitleAboveCards.remove();
     eyebrowRow.remove();
     titleRow.remove();
     descRow.remove();
