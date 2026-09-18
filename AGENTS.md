@@ -103,6 +103,7 @@ Progressive loading follows the same **eager / lazy / delayed** model as standar
 ## Testing and quality assurance
 
 - Run **`npm run quality`** before opening a PR; CI runs the same via [.github/workflows/quality-action.yaml](.github/workflows/quality-action.yaml).
+- Weekly **Page Performance** GitHub Action (`.github/workflows/page-performance.yaml`) discovers URLs from the production sitemap index using `performance/config.json`, picks **one hub URL per `pageTypes` entry** (`select: onePerType`; cap = unique types, currently 8), audits **4 shards in parallel**, and publishes GitHub Artifacts (`page-performance-plan` / `shard-N` / `summary`) that expire after **45 days** and keep-last-**8** runs. YAML ticks hourly; a gate matches repo **variables** `PAGE_PERFORMANCE_SCHEDULE` (default Monday 08:00 UTC), `PAGE_PERFORMANCE_ENABLED`, `PAGE_PERFORMANCE_SKIP_UNTIL` — not git secrets. Report has FCP/LCP/CLS/TBT/SI/TTFB, run suggestion, insights, low-score reasons; no Bytes. FAQ: [`performance/READOUT.md`](performance/READOUT.md). Local: `npm run test:performance`; with Lighthouse, `npm install lighthouse@^12 --no-save` then `npm run performance:pages` (optional `PERF_URL` for a single URL). Adding a type is a config change, not a code change. The XML under `performance/fixtures/` is unit-test data only.
 - For previews, use `curl` against the local dev server or published preview URLs; see [Keeping it 100](https://www.aem.live/developer/keeping-it-100) for performance expectations.
 
 ### Self-review before commit
