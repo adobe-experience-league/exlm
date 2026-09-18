@@ -150,6 +150,24 @@ const getFacetParamKeyFromSegment = (segment) => {
 };
 
 /**
+ * Write the search hash without using `location.hash =`, which always pushes a
+ * history entry. `replaceState` does not fire `hashchange`; dispatch one so Atomic
+ * can synchronize.
+ */
+export function writeSearchHashFragment(newHash, { replace = false } = {}) {
+  const hash = String(newHash || '').replace(/^#/, '');
+  const hashUrl = `${window.location.pathname}${window.location.search}${hash ? `#${hash}` : ''}`;
+  const oldHref = window.location.href;
+  if (hashUrl === oldHref) return;
+  if (replace) {
+    window.history.replaceState(null, document.title, hashUrl);
+  } else {
+    window.history.pushState(null, document.title, hashUrl);
+  }
+  window.dispatchEvent(new HashChangeEvent('hashchange', { oldURL: oldHref, newURL: window.location.href }));
+}
+
+/**
  * Removes existing `f-{facetId}=…` segments for each replacement’s facetId, then appends the new segments. Single hash write.
  * Same flow as updateHash: fragment → split → filter → push → join.
  *
@@ -168,8 +186,34 @@ export const replaceFacetParamsInHash = (replacements, joinWith = '&') => {
   replacements.forEach(({ facetId, targetFacetKeys }) => {
     updatedParts.push(`f-${facetId}=${targetFacetKeys.join(',')}`);
   });
-  window.location.hash = updatedParts.join(joinWith);
+  writeSearchHashFragment(updatedParts.join(joinWith), { replace: true });
 };
+
+/**
+ * EXLM-4854 approach 1: while programmatic child-facet `.click()`s run, send Atomic
+ * `history.pushState` through `replaceState`.
+ *
+ * The parent checkbox already created one history entry. Intermediate child writes
+ * must not stack. A trailing `pushState` of the final URL would add a second entry
+ * (parent-only + full set), so every child write replaces that parent entry instead.
+ */
+export function replacePushStateDuring(callback) {
+  const origPush = window.history.pushState;
+  const origReplace = window.history.replaceState.bind(window.history);
+  window.history.pushState = function replacePushStateDuringWrite(...args) {
+    return origReplace(...args);
+  };
+  try {
+    return callback();
+  } finally {
+    // Atomic UrlManager may pushState in a microtask / 0-timeout after .click().
+    window.queueMicrotask(() => {
+      window.setTimeout(() => {
+        window.history.pushState = origPush;
+      }, 0);
+    });
+  }
+}
 
 export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutation, waitForElement = false } = {}) {
   let observer;
@@ -268,11 +312,7 @@ export function isContentTypeFacet(atomicFacet) {
   return atomicFacet?.getAttribute('id') === FACET_CONTENT_TYPE_ID;
 }
 
-/**
- * Keeps parent/child content-type facet selections in sync after a user click.
- * @returns {boolean} true if any programmatic .click() ran to change filters
- */
-export function syncFacetParentChildFilters({ facet, atomicElement, onlyOptionClicked = false }) {
+function syncFacetParentChildFiltersUnbatched({ facet, atomicElement, onlyOptionClicked = false }) {
   const isChildFacet = facet.dataset.childfacet === 'true';
   const isSelected = facet.firstElementChild.ariaChecked === 'false'; // Will take some to update the state.
   const valuesList = facet.parentElement;
@@ -333,6 +373,16 @@ export function syncFacetParentChildFilters({ facet, atomicElement, onlyOptionCl
     });
   }
   return filtersChanged;
+}
+
+/**
+ * Keeps parent/child content-type facet selections in sync after a user click.
+ * @returns {boolean} true if any programmatic .click() ran to change filters
+ */
+export function syncFacetParentChildFilters({ facet, atomicElement, onlyOptionClicked = false }) {
+  return replacePushStateDuring(() =>
+    syncFacetParentChildFiltersUnbatched({ facet, atomicElement, onlyOptionClicked }),
+  );
 }
 
 export function escapeHtml(unsafe) {
