@@ -27,6 +27,7 @@ import {
 import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import LanguageBlock from '../language/language.js';
 import ProfileMenu from './profile-menu.js';
+import { pushBcWidgetImpressionEvent } from '../../scripts/analytics/lib-analytics.js';
 
 /**
  *  @typedef {Object} CommunityOptions
@@ -774,6 +775,13 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
   } else {
     decoratorState.headerSearchIconClick = null;
   }
+
+  const headerAskImpressionObserver = new IntersectionObserver((entries) => {
+    if (!entries.some((entry) => entry.isIntersecting)) return;
+    pushBcWidgetImpressionEvent();
+    headerAskImpressionObserver.disconnect();
+  });
+  headerAskImpressionObserver.observe(askBtn);
 
   askBtn.addEventListener('click', () => {
     import('../../scripts/brand-concierge/brand-concierge.js')
