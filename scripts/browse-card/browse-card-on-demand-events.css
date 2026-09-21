@@ -28,7 +28,8 @@
 
 /*
  * Grid: lift the 198px img-custom-height cap so the figure can use flex 0 0 45%
- * like Upcoming (~203px). Laptop + hover zoom stay on browse-card.css.
+ * like Upcoming (~203px). The laptop lives on browse-card.css; its hover zoom is
+ * disabled for on-demand cards just below (see EXLM-5810).
  */
 .browse-card.event-on-demand-event-card.thumbnail-loaded .browse-card-figure.img-custom-height {
   height: auto;
@@ -46,8 +47,8 @@
 }
 
 .browse-card.event-on-demand-event-card .browse-card-figure:hover > img {
-  width: 180px;
-  height: 116px;
+  width: var(--browse-card-figure-img-width);
+  height: var(--browse-card-figure-img-height);
 }
 
 /* Specific styles for fallback images only */
