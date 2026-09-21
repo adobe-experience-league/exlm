@@ -3,8 +3,7 @@ import { decorateCta } from '../../scripts/utils/button-utils.js';
 
 export default function decorate(block) {
   const children = [...block.children];
-  const showTitleAboveCards = children.at(-1);
-  const [eyebrowRow, titleRow, descRow, ...cardRows] = children;
+  const [eyebrowRow, titleRow, descRow, showTitleAboveCards, ...cardRows] = children;
 
   // Create header section for block only if at least one element has content
   const hasEyebrow = eyebrowRow.textContent.trim();
