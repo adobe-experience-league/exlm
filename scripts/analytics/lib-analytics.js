@@ -571,7 +571,7 @@ export function handleComponentClick(e) {
  * @param {string} event
  */
 function pushVideoEventToDataLayer(video, event = 'videoPlay') {
-  const { title, description, url } = video;
+  const { title, description, url, milestone } = video;
 
   const videoDuration = video.duration || '';
   const videoSolution = video.solution || solution || '';
@@ -589,6 +589,7 @@ function pushVideoEventToDataLayer(video, event = 'videoPlay') {
       duration: videoDuration,
       solution: videoSolution,
       fullSolution: videoFullSolution,
+      ...(milestone !== undefined && { milestone }),
     },
     web: {
       webPageDetails: {
@@ -611,6 +612,41 @@ function pushVideoEventToDataLayer(video, event = 'videoPlay') {
  */
 export function pushVideoEvent(video, event = 'videoPlay') {
   queueAnalyticsEvent(pushVideoEventToDataLayer, video, event);
+}
+
+/**
+ * Creates a tracker that pushes a single `videoMilestone` event to the data layer
+ * once per percentage threshold as playback position crosses it, with the crossed
+ * threshold on `video.milestone`. MPC has no native milestone/quartile message, so
+ * thresholds are derived from the `tick` message's currentTime against a known
+ * total duration.
+ *
+ * `startTime` seeds already-crossed thresholds as fired so resuming a
+ * partially-watched video doesn't re-report milestones reached in an earlier session.
+ * @param {Video} video
+ * @param {number[]} [thresholds]
+ * @param {number} [startTime]
+ * @returns {(currentTime: number) => void}
+ */
+export function createVideoMilestoneTracker(video, thresholds = [25, 50, 75], startTime = 0) {
+  const totalDuration = Number(video.duration);
+  const fired = new Set();
+  if (totalDuration) {
+    const startPercent = (startTime / totalDuration) * 100;
+    thresholds.forEach((threshold) => {
+      if (startPercent >= threshold) fired.add(threshold);
+    });
+  }
+  return (currentTime) => {
+    if (!totalDuration) return;
+    const percent = (currentTime / totalDuration) * 100;
+    thresholds.forEach((threshold) => {
+      if (percent >= threshold && !fired.has(threshold)) {
+        fired.add(threshold);
+        pushVideoEvent({ ...video, milestone: `${threshold}%` }, 'videoMilestone');
+      }
+    });
+  };
 }
 
 export function assetInteractionModel(id, assetInteractionType, options) {
