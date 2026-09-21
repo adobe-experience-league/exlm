@@ -999,6 +999,31 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
   fill: white !important;
 }
 
+/*
+ * BC's tooltip lib positions the submit button's tooltip via inline left/top, clamped to stay
+ * inside .input-container. The button sits close to that container's right edge, so wider
+ * translated labels (e.g. es "Enviar mensaje" vs en "Send") get shifted left to avoid
+ * overflowing, breaking the arrow's alignment with the button. Re-anchor it to the button's
+ * horizontal center — via `right` + translateX(50%) so it self-centers regardless of label
+ * width — instead of relying on BC's clamped `left`.
+ */
+#brand-concierge-mount [id^='submit-button-tooltip'] {
+  left: auto !important;
+  right: 28px !important;
+  transform: translateX(50%) !important;
+}
+
+/*
+ * Now permanently overlaps the button's box (even while hidden), so it would otherwise block
+ * real clicks/hovers on the button under it. Selector must out-specify the
+ * ".input-section .input-container *" pointer-events: auto rule above (also !important) —
+ * that rule intentionally re-enables pointer-events for input-container's contents after
+ * .input-section's own passthrough override.
+ */
+#brand-concierge-mount .input-section .input-container [id^='submit-button-tooltip'] {
+  pointer-events: none !important;
+}
+
 #brand-concierge-mount .scroll-to-bottom {
   width: 36px !important;
   min-width: 36px !important;

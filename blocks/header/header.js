@@ -31,6 +31,7 @@ import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import LanguageBlock from '../language/language.js';
 import ProfileMenu from './profile-menu.js';
 import { isDomainAllowed } from '../../scripts/utils/exlm-config-utils.js';
+import { pushBcWidgetImpressionEvent } from '../../scripts/analytics/lib-analytics.js';
 
 /**
  *  @typedef {Object} CommunityOptions
@@ -505,7 +506,8 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
     decoratorState.headerSearchIconClick = null;
   }
 
-  searchWrapper.querySelector('.bc-header-ask')?.addEventListener('click', () => {
+  const headerAskBtn = searchWrapper.querySelector('.bc-header-ask');
+  headerAskBtn?.addEventListener('click', () => {
     import('../../scripts/brand-concierge/brand-concierge.js')
       .then((mod) => mod.openBrandConcierge())
       .catch((e) => {
@@ -513,6 +515,15 @@ const searchDecorator = async (searchBlock, decoratorOptions) => {
         console.warn('[BC] header Ask open failed', e?.message || e);
       });
   });
+
+  if (headerAskBtn) {
+    const headerAskImpressionObserver = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      pushBcWidgetImpressionEvent();
+      headerAskImpressionObserver.disconnect();
+    });
+    headerAskImpressionObserver.observe(headerAskBtn);
+  }
 
   searchBlock.append(searchWrapper);
   decorateIcons(searchBlock);
