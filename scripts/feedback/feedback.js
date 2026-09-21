@@ -202,6 +202,21 @@ function toggleCommentBox(el, show = false) {
   secondEl.setAttribute('aria-hidden', !show);
 }
 
+function updateWrapState(row) {
+  const [label, icon] = [...row.children].filter((child) => child.getClientRects().length > 0);
+  if (!label || !icon) return;
+  const labelRect = label.getBoundingClientRect();
+  const iconRect = icon.getBoundingClientRect();
+  row.classList.toggle('wrapped', labelRect.bottom <= iconRect.top || iconRect.bottom <= labelRect.top);
+}
+
+function observeWrapping(el) {
+  const rows = [el.querySelector('.first-question'), el.querySelector('.opened-controls')].filter(Boolean);
+  const recalc = () => rows.forEach(updateWrapState);
+  new ResizeObserver(recalc).observe(el);
+  recalc();
+}
+
 function decorateFeedback(el) {
   const leftEl = createTag('div', { class: 'left' });
   const rightEl = createTag('div', { class: 'right' });
@@ -525,6 +540,7 @@ export default async function loadFeedbackUi() {
   }
 
   mountFeedbackUi(fb);
+  observeWrapping(fb);
   window.matchMedia(DESKTOP_MEDIA_QUERY).addEventListener('change', () => mountFeedbackUi(fb));
   window.addEventListener('qsi_js_loaded', checkInterceptLoaded, false);
 }

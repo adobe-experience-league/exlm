@@ -1,7 +1,7 @@
 {
   "ui": {
     "triggerAriaLabel": "Open AI assistant",
-    "triggerAsk": "Ask a question",
+    "triggerAsk": "Ask a question…",
     "drawerAriaLabel": "AI assistant",
     "drawerTitle": "Ask AI",
     "clearLabel": "Clear",
@@ -17,7 +17,7 @@
       "hideLabel": "Hide"
     },
     "disclaimer": {
-      "prefix": "Use of this beta AI chatbot is subject to Adobe's ",
+      "prefix": "Use of this AI chatbot is subject to Adobe's ",
       "privacyLabel": "Privacy Policy",
       "middle": ". Don't share sensitive data. AI responses are not your Content, may be inaccurate, and any offers provided are non-binding. ",
       "termsLabel": "Generative AI Terms",
