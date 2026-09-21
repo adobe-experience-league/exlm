@@ -14,6 +14,7 @@ export default function decorate(block) {
   if (showHeader && (hasEyebrow || hasTitle || hasDesc)) {
     const headerDiv = document.createElement('div');
     headerDiv.classList.add('grid-cards-header', 'block-header');
+    showTitleAboveCards.remove();
 
     if (hasEyebrow) {
       eyebrowRow.classList.add('grid-cards-eyebrow');
@@ -44,11 +45,11 @@ export default function decorate(block) {
 
     block.appendChild(headerDiv);
   } else {
+    showTitleAboveCards.remove();
     eyebrowRow.remove();
     titleRow.remove();
     descRow.remove();
   }
-  showTitleAboveCards.remove();
 
   // Create card container and populate with cards
   const cardsContainer = document.createElement('div');
