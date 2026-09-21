@@ -3,7 +3,8 @@ import { decorateCta } from '../../scripts/utils/button-utils.js';
 
 export default function decorate(block) {
   const children = [...block.children];
-  const [showTitleAboveCards, eyebrowRow, titleRow, descRow, ...cardRows] = children;
+  const showTitleAboveCards = children.at(-1);
+  const [eyebrowRow, titleRow, descRow, ...cardRows] = children;
 
   // Create header section for block only if at least one element has content
   const hasEyebrow = eyebrowRow.textContent.trim();
@@ -14,7 +15,6 @@ export default function decorate(block) {
   if (showHeader && (hasEyebrow || hasTitle || hasDesc)) {
     const headerDiv = document.createElement('div');
     headerDiv.classList.add('grid-cards-header', 'block-header');
-    showTitleAboveCards.remove();
 
     if (hasEyebrow) {
       eyebrowRow.classList.add('grid-cards-eyebrow');
@@ -45,11 +45,11 @@ export default function decorate(block) {
 
     block.appendChild(headerDiv);
   } else {
-    showTitleAboveCards.remove();
     eyebrowRow.remove();
     titleRow.remove();
     descRow.remove();
   }
+  showTitleAboveCards.remove();
 
   // Create card container and populate with cards
   const cardsContainer = document.createElement('div');
