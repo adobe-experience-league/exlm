@@ -783,7 +783,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities.adobe.com',
-      ethos: 'expereinceleague-api.ethos09-prod-va7.ethos.adobe.net',
+      ethos: 'experienceleague-api.ethos09-prod-va7.ethos.adobe.net',
     },
     {
       env: 'STAGE',
@@ -792,7 +792,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-beta.adobe.com',
-      ethos: 'expereinceleague-api-stage.ethos09-prod-va7.ethos.adobe.net',
+      ethos: 'experienceleague-api-stage.ethos09-prod-va7.ethos.adobe.net',
     },
     {
       env: 'DEV',
@@ -801,7 +801,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-beta.adobe.com',
-      ethos: 'expereinceleague-api-stage.ethos09-prod-va7.ethos.adobe.net',
+      ethos: 'experienceleague-api-stage.ethos09-prod-va7.ethos.adobe.net',
     },
   ];
 
