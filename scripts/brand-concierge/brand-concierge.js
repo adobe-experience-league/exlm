@@ -56,6 +56,9 @@ const SCROLL_EVENT_TYPES = new Set([BC_EVENT_PROMPT_CLICKED, BC_EVENT_QUERY_SUBM
 const BC_STORAGE_TRANSCRIPT_PREFIX = 'bc_chat_transcript_';
 const BC_STORAGE_METADATA_KEY = 'bc_chat_metadata';
 
+/** Persists the bottom ask bar's expanded/hidden state across page navigations and tabs. */
+const BC_STORAGE_BOTTOM_BAR_EXPANDED_KEY = 'bc_bottom_bar_expanded';
+
 const PRIVACY_POLICY_URL = 'https://www.adobe.com/privacy/policy.html';
 const GENERATIVE_AI_TERMS_URL = 'https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html';
 
@@ -347,18 +350,45 @@ function ensureInitPromise() {
   return initPromise;
 }
 
-function setBottomAskBarExpanded(bar, expanded) {
+/** Reads the last persisted bottom ask bar state; defaults to expanded when unset/invalid. */
+function readBottomAskBarExpandedPref() {
+  try {
+    return localStorage.getItem(BC_STORAGE_BOTTOM_BAR_EXPANDED_KEY) !== 'false';
+  } catch (e) {
+    return true;
+  }
+}
+
+function setBottomAskBarExpanded(bar, expanded, { persist = true } = {}) {
   if (!bar) return;
   bar.dataset.expanded = expanded ? 'true' : 'false';
   bar.querySelector('.bc-bottom-ask-bar-collapsed')?.setAttribute('aria-expanded', String(expanded));
+  if (!persist) return;
+  try {
+    localStorage.setItem(BC_STORAGE_BOTTOM_BAR_EXPANDED_KEY, expanded ? 'true' : 'false');
+  } catch (e) {
+    // Storage unavailable (private browsing quota, etc.) - state simply won't persist.
+  }
 }
 
+/** Keeps the bottom ask bar's expanded/hidden state in sync across tabs of the same browser. */
+function onBottomBarStoragePreferenceChange(e) {
+  if (e.key !== BC_STORAGE_BOTTOM_BAR_EXPANDED_KEY && e.key !== null) return;
+  const bar = document.getElementById(BOTTOM_ASK_BAR_ID);
+  if (!bar) return;
+  setBottomAskBarExpanded(bar, e.newValue !== 'false', { persist: false });
+}
+
+window.addEventListener('storage', onBottomBarStoragePreferenceChange);
+
+/** Transient collapse while the BC drawer is open - not a user "hide" choice, so don't persist it. */
 function collapseBottomAskBar() {
-  setBottomAskBarExpanded(document.getElementById(BOTTOM_ASK_BAR_ID), false);
+  setBottomAskBarExpanded(document.getElementById(BOTTOM_ASK_BAR_ID), false, { persist: false });
 }
 
+/** Restores the bar when the BC drawer closes - not a user choice, so don't persist it. */
 function expandBottomAskBar() {
-  setBottomAskBarExpanded(document.getElementById(BOTTOM_ASK_BAR_ID), true);
+  setBottomAskBarExpanded(document.getElementById(BOTTOM_ASK_BAR_ID), true, { persist: false });
 }
 
 /**
@@ -424,16 +454,18 @@ function createBottomAskBar() {
 
   const { bottomBar } = activeConfig.ui;
 
+  const initiallyExpanded = readBottomAskBarExpandedPref();
+
   const bar = document.createElement('div');
   bar.id = BOTTOM_ASK_BAR_ID;
-  bar.dataset.expanded = 'true';
+  bar.dataset.expanded = initiallyExpanded ? 'true' : 'false';
   bar.setAttribute('role', 'region');
   bar.setAttribute('aria-label', bottomBar.label);
 
   const collapsedBtn = document.createElement('button');
   collapsedBtn.type = 'button';
   collapsedBtn.className = 'bc-bottom-ask-bar-collapsed';
-  collapsedBtn.setAttribute('aria-expanded', 'true');
+  collapsedBtn.setAttribute('aria-expanded', String(initiallyExpanded));
   collapsedBtn.setAttribute('aria-label', bottomBar.expandAria);
 
   const collapsedIcon = document.createElement('span');

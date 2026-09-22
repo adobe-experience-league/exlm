@@ -54,8 +54,9 @@
     "welcome.examples": {
       "0": "Where can I go to learn about AI on Experience League?",
       "1": "Getting started with Experience Manager",
-      "2": "Set up an Adobe Analytics report suite",
-      "3": "Explain Adobe Target A/B testing"
+      "2": "How do I set up my Workfront instance for my team?",
+      "3": "How do I get started with a journey in Adobe Journey Optimizer?",
+      "4": "What is CX Enterprise Coworker?"
     },
     "feedback.positive.options": {
       "0": "Helpful and relevant",
