@@ -9668,7 +9668,7 @@
         "label": "Style",
         "description": "Sets the style variant and the shared CTA style applied to all card buttons in this block.",
         "valueType": "string",
-        "maxSize": 5,
+        "maxSize": 6,
         "options": [
           {
             "name": "Card Variant",
@@ -9783,6 +9783,15 @@
               {
                 "name": "Black",
                 "value": "cta-text-black"
+              }
+            ]
+          },
+          {
+            "name": "Display Preferences",
+            "children": [
+              {
+                "name": "Would you like for Eyebrow, Title, and Description text to be shown above the grid cards?",
+                "value": "enable-block-header"
               }
             ]
           }
