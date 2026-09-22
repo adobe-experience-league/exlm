@@ -164,19 +164,6 @@
   margin-inline: auto;
 }
 
-body:has(main.rail-left-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
-  grid-template-columns: 0 4fr 1fr;
-}
-
-/* `auto` (not docs `0`) so Hide stays in the right track when the TOC rail is closed. */
-body:has(main.rail-right-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
-  grid-template-columns: 1fr 4fr auto;
-}
-
-body:has(main.rail-left-closed.rail-right-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
-  grid-template-columns: 0 1fr auto;
-}
-
 .bc-bottom-ask-bar-brand {
   display: flex;
   align-items: center;
@@ -188,10 +175,6 @@ body:has(main.rail-left-closed.rail-right-closed) #bc-bottom-ask-bar[data-expand
   line-height: 1.5;
   white-space: nowrap;
   color: var(--text-color);
-}
-
-body:has(main.rail-left-closed) .bc-bottom-ask-bar-brand {
-  visibility: hidden;
 }
 
 .bc-bottom-ask-bar-brand .icon img {
