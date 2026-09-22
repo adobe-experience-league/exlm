@@ -1,6 +1,6 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { createTag, isDocPage, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import { assetInteractionModel, pushBrowseCardClickEvent } from '../../scripts/analytics/lib-analytics.js';
+import { pushBrowseCardClickEvent } from '../../scripts/analytics/lib-analytics.js';
 import UserActions from '../../scripts/user-actions/user-actions.js';
 
 async function decorateLanguageToggle(block, placeholders) {
@@ -19,31 +19,11 @@ async function decorateLanguageToggle(block, placeholders) {
           placeholders.changeLanguageTooltip || 'Use the Language Selector to view the English version of this page.'
         }</span>
       </div>
-      </div>
-      <div class="doc-mt-feedback">
-        <span class="prompt">${placeholders.automaticTranslationFeedback}</span>
-        <div class="doc-mt-feedback-radio">
-          <label class="radio"><input type="radio" name="helpful-translation" value="yes">${
-            placeholders.automaticTranslationFeedbackYes
-          }</label>
-          <label class="radio"><input type="radio" name="helpful-translation" value="no">${
-            placeholders.automaticTranslationFeedbackNo
-          }</label>
-        </div>
       </div>`,
     );
     // addToDocActions(languageToggleElement, block);
     block.appendChild(languageToggleElement);
     decorateIcons(block);
-
-    const desktopAndMobileRadioFeedback = document.querySelectorAll(
-      '.doc-mt-toggle .doc-mt-feedback input[type="radio"]',
-    );
-    [...desktopAndMobileRadioFeedback].forEach((radio) => {
-      radio.addEventListener('click', async (e) => {
-        assetInteractionModel(null, `helpful-translation - ${e.target.value}`);
-      });
-    });
   }
 }
 
