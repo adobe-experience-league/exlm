@@ -39,13 +39,13 @@ Install the AEM CLI globally if you prefer: `npm install -g @adobe/aem-cli`, the
 
 ### AI skills setup
 
-This project ships with EDS skills for AI coding agents (Claude Code, Cursor, Copilot, etc.) pinned in [skills-lock.json](skills-lock.json). Restore them after cloning:
+This project ships with Edge Delivery Services skills for GitHub Copilot pinned in [skills-lock.json](skills-lock.json). Restore them after cloning:
 
 ```bash
-npx skills experimental_install
+npm run setup:skills
 ```
 
-To update skills to the latest versions run `npm run setup:skills`, which re-runs the install and updates `skills-lock.json`.
+The setup command installs the Adobe Edge Delivery Services, Adobe project-management, and Experience League development skills for GitHub Copilot. It also updates `skills-lock.json` when the skill sources change.
 
 ### ExL dev team skills
 
@@ -109,9 +109,9 @@ Progressive loading follows the same **eager / lazy / delayed** model as standar
 
 Before running `git add` / `git commit`, **run the `code-review` skill on your staged changes**. This applies to everyone — AI agents and humans driving an AI assistant.
 
-- **How to run it**: in Cursor / Claude Code / Copilot Chat, type `/code-review` in the AI panel. The skill operates in **self-review mode** on uncommitted changes in the working directory and checks lint compliance, EDS patterns, performance, accessibility, secrets, CSS scoping, and `eslint-disable` justifications.
-- **Prerequisite**: the skill ships with this repo via `skills-lock.json` — run `npx skills experimental_install` once after cloning to install it.
-- **AI agents (Cursor, Claude Code, Copilot, etc.)**: do not run `git commit` without first invoking `/code-review` on the staged diff and resolving any blocking findings.
+- **How to run it**: in GitHub Copilot Chat, type `/code-review` in the AI panel. The skill operates in **self-review mode** on uncommitted changes in the working directory and checks lint compliance, Edge Delivery Services patterns, performance, accessibility, secrets, CSS scoping, and `eslint-disable` justifications.
+- **Prerequisite**: the skill ships with this repo via `skills-lock.json` — run `npm run setup:skills` once after cloning to install it for GitHub Copilot.
+- **GitHub Copilot**: do not run `git commit` without first invoking `/code-review` on the staged diff and resolving any blocking findings.
 - **Manual fallback** (no AI tool available): review `git diff --staged` for the common issues called out under _Code style_ — debug `console.*`, unscoped CSS selectors, `!important` without justification, hardcoded config, secrets, CSS-in-JS, and changes to `scripts/lib-franklin.js`.
 
 This is a **soft** convention — the husky `pre-commit` hook only prints a reminder and never blocks. Hard enforcement remains `lint-staged` + `npm run quality` in CI.

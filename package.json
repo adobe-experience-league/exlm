@@ -19,7 +19,7 @@
     "prepare": "husky install",
     "quality": "npm run format:check && npm run lint",
     "check:branch-name": "node check-branch-name.js",
-    "setup:skills": "npx skills add adobe/skills/plugins/aem/edge-delivery-services --all && npx skills add adobe/skills/plugins/aem/project-management --all && npx skills add AdobeEXL/exl-dev-ai --all -y"
+    "setup:skills": "npx skills add adobe/skills/plugins/aem/edge-delivery-services --agent github-copilot && npx skills add adobe/skills/plugins/aem/project-management --agent github-copilot && npx skills add AdobeEXL/exl-dev-ai --agent github-copilot -y"
   },
   "repository": {
     "type": "git",

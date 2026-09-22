@@ -1,12 +1,12 @@
 # EXLM Prompt Library
 
-A curated set of prompts developers can paste into an AI coding agent (Cursor, Claude Code, Copilot Chat, etc.) when working in this repo. The prompts are tuned for the conventions documented in [AGENTS.md](../AGENTS.md) and assume the EDS skills shipped via [`skills-lock.json`](../skills-lock.json) are installed (`npx skills experimental_install`).
+A curated set of prompts developers can paste into GitHub Copilot Chat when working in this repo. The prompts are tuned for the conventions documented in [AGENTS.md](../AGENTS.md) and assume the Edge Delivery Services skills shipped via [`skills-lock.json`](../skills-lock.json) are installed (`npm run setup:skills`).
 
 > If you add a new prompt, follow the format under [How to read a prompt entry](#how-to-read-a-prompt-entry). Keep prompts grounded in real repo conventions — `scripts/lib-franklin.js`, `paths.json`, `LCP_BLOCKS`, the `code-review` skill, `?martech=off`, etc.
 
 ### MCP servers — optional, not required
 
-The base prompts in this library are **MCP-agnostic** — they only require the EDS skills installed by `npx skills experimental_install`. Skills are a separate mechanism from MCP: skills are local markdown files the agent reads, while MCP servers are external tool providers the agent calls.
+The base prompts in this library are **MCP-agnostic** — they only require the Edge Delivery Services skills installed by `npm run setup:skills`. Skills are a separate mechanism from MCP: skills are local markdown files the agent reads, while MCP servers are external tool providers the agent calls.
 
 If you do have MCP servers configured, several prompts get stronger. Where that's the case, you'll see a **"MCP boost"** callout. The MCPs most commonly useful in this repo:
 
@@ -45,10 +45,10 @@ For deeper standalone prompts that lean entirely on MCP tools, see [§17 — MCP
 
 ## How to use this library
 
-1. Open the AI panel in your editor (Cursor `Cmd/Ctrl+L`, Claude Code, Copilot Chat, etc.).
+1. Open GitHub Copilot Chat in your editor.
 2. Find the section that matches your task.
 3. Copy the prompt, replace anything in `{{double braces}}` with your specifics, and send it.
-4. Most prompts reference an EDS **skill** via `/skill-name` (e.g. `/code-review`, `/page-import`). These are installed by `npx skills experimental_install` and listed under [`skills/`](../skills). If a slash command isn't recognized in your editor, paste the prompt as plain text — the agent will still pick the right skill from context.
+4. Most prompts reference an Edge Delivery Services **skill** via `/skill-name` (e.g. `/code-review`, `/page-import`). These are installed by `npm run setup:skills` and listed under [`skills/`](../skills). If a slash command isn't recognized in your editor, paste the prompt as plain text — the agent will still pick the right skill from context.
 5. Always finish a session by running `/code-review` on your staged diff before `git commit` (see [§12](#12-self-review-before-commit) and [AGENTS.md → Self-review before commit](../AGENTS.md#self-review-before-commit)).
 
 ## Conventions
@@ -81,7 +81,7 @@ Each entry has the same structure:
 I just cloned the exlm repo. Read AGENTS.md and README.md, then:
 
 1. Verify my Node version satisfies `>=22` and npm `>=10` (from package.json). If not, tell me how to fix it with nvm.
-2. Walk me through running `npm install`, `npx skills experimental_install`, and `npm run up`. Explain what each does and what success looks like.
+2. Walk me through running `npm install`, `npm run setup:skills`, and `npm run up`. Explain what each does and what success looks like.
 3. Summarize the difference between `npm run up`, `npm run up-secure`, `npm run up-secure-stage`, and `npm run up-secure-prod` so I know which to pick.
 4. List the top-level folders (`blocks/`, `scripts/`, `styles/`, `icons/`, `solutions/`) and one sentence on what lives in each.
 5. Point me at the AI skills that ship with the repo and explain when I'd use `/code-review`, `/building-blocks`, and `/page-import`.
