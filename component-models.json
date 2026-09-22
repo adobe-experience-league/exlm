@@ -9790,8 +9790,8 @@
             "name": "Display Preferences",
             "children": [
               {
-                "name": "Enable Eyebrow, Title, and Description",
-                "value": "enable-block-header"
+                "name": "Disable Eyebrow, Title, and Description",
+                "value": "no-header"
               }
             ]
           }
