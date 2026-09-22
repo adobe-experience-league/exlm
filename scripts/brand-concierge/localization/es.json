@@ -7,7 +7,7 @@
     "clearLabel": "Borrar",
     "clearAriaLabel": "Borrar conversación",
     "bottomBar": {
-      "label": "Preguntar a la IA",
+      "label": "Preguntar IA",
       "expandAria": "Ampliar la barra de Preguntar a la IA",
       "openAria": "Abrir Preguntar a la IA",
       "inputPlaceholder": "Hacer una pregunta…",
