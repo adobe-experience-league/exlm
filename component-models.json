@@ -9790,7 +9790,7 @@
             "name": "Display Preferences",
             "children": [
               {
-                "name": "Would you like for Eyebrow, Title, and Description text to be shown above the grid cards?",
+                "name": "Enable Eyebrow, Title, and Description",
                 "value": "enable-block-header"
               }
             ]
