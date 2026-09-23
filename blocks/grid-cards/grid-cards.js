@@ -22,11 +22,9 @@ export default function decorate(block) {
     }
 
     if (hasTitle) {
-      let headingTag = titleRow.querySelector('h1, h2, h3, h4, h5, h6');
-      if (!headingTag) {
-        headingTag = document.createElement('h2');
-        headingTag.textContent = titleRow.textContent;
-      }
+      const headingTag = document.createElement('h2');
+      headingTag.textContent = titleRow.textContent;
+
       headingTag.classList.add('grid-cards-title', headingTag.tagName.toLowerCase());
       titleRow.replaceWith(headingTag);
       headerDiv.appendChild(headingTag);
