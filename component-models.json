@@ -6439,6 +6439,14 @@
     "id": "aligned-text",
     "fields": [
       {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "",
+        "label": "Text",
+        "description": "Sets the aligned text content."
+      },
+      {
         "component": "multiselect",
         "name": "classes",
         "label": "Alignment",
