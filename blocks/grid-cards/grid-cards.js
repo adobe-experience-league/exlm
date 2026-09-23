@@ -9,9 +9,9 @@ export default function decorate(block) {
   const hasEyebrow = eyebrowRow.textContent.trim();
   const hasTitle = titleRow.textContent.trim();
   const hasDesc = descRow.textContent.trim();
-  const showHeader = block.classList.contains('no-header');
+  const hideHeader = block.classList.contains('no-header');
 
-  if (!showHeader && (hasEyebrow || hasTitle || hasDesc)) {
+  if (!hideHeader && (hasEyebrow || hasTitle || hasDesc)) {
     const headerDiv = document.createElement('div');
     headerDiv.classList.add('grid-cards-header', 'block-header');
 
