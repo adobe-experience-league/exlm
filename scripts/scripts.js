@@ -875,13 +875,6 @@ export function getConfig() {
   const prodAssetsCdnOrigin = 'https://cdn.experienceleague.adobe.com';
   const isProd = currentEnv?.env === 'PROD' || currentEnv?.authorUrl === 'author-p122525-e1219150.adobeaemcloud.com';
   const isStage = currentEnv?.env === 'STAGE' || currentEnv?.authorUrl === 'author-p122525-e1219192.adobeaemcloud.com';
-  // On stage, the 'useProdAPI' feature flag routes the ethos-backed APIs (profile, JWT token,
-  // industries, interests) to prod ethos. Profile/JWT are normally reverse proxied through the
-  // CDN, but that reverse proxy isn't set up yet for prod ethos, so they go direct too.
-  const useProdAPIOnStage = isStage && isFeatureEnabled('useProdAPI');
-  const prodEthosOrigin = `https://${HOSTS.find((hostObj) => hostObj.env === 'PROD').ethos}`;
-  const profileAndJwtApiOrigin = useProdAPIOnStage ? prodEthosOrigin : cdnOrigin;
-  const ethosApiOrigin = useProdAPIOnStage ? prodEthosOrigin : ethosOrigin;
   const ppsOrigin = isProd ? 'https://pps.adobe.io' : 'https://pps-stage.adobe.io';
   const ims = {
     client_id: 'ExperienceLeague',
@@ -929,8 +922,8 @@ export function getConfig() {
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list?platform=gainsight`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`,
     // Profile and JWT Token Ethos APIs are reverse proxied through the ExL CDN domains.
-    profileUrl: `${profileAndJwtApiOrigin}/api/profile?lang=${lang}`,
-    JWTTokenUrl: `${profileAndJwtApiOrigin}/api/token?lang=${lang}`,
+    profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
+    JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `${cdnOrigin}/api/action/coveo-token?lang=${lang}`,
     coveoSearchResultsUrl: isProd
       ? 'https://platform.cloud.coveo.com/rest/search/v2'
@@ -941,7 +934,7 @@ export function getConfig() {
     plPublicCatalogIds,
     plApiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
-    industryUrl: `${ethosApiOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
+    industryUrl: `${ethosOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     articleUrl: `${cdnOrigin}/api/articles`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
@@ -961,7 +954,7 @@ export function getConfig() {
     communityAccountURL: isProd
       ? `https://experienceleaguecommunities.adobe.com/?lang=${communityLocale}`
       : `https://experienceleaguecommunities-beta.adobe.com/?lang=${communityLocale}`,
-    interestsUrl: `${ethosApiOrigin}/api/interests?page_size=200&sort=Order`,
+    interestsUrl: `${ethosOrigin}/api/interests?page_size=200&sort=Order`,
     // Param for localized Community Profile URL
     localizedCommunityProfileParam: `?lang=${communityLocale}`,
     // MPC API Base
