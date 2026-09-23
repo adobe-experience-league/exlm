@@ -6437,25 +6437,15 @@
   },
   {
     "id": "aligned-text",
-    "fields": []
-  },
-  {
-    "id": "aligned-text-line",
     "fields": [
       {
-        "component": "richtext",
-        "valueType": "string",
-        "name": "text",
-        "value": "",
-        "label": "Text",
-        "description": "Sets the text for this line"
-      },
-      {
-        "component": "select",
-        "valueType": "string",
-        "name": "alignment",
-        "value": "left",
+        "component": "multiselect",
+        "name": "classes",
         "label": "Alignment",
+        "description": "Sets the text alignment.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
         "options": [
           {
             "name": "Left",
