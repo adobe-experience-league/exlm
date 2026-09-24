@@ -62,18 +62,22 @@ export const atomicResultStyles = `
                     .atomic-search-result-item.mobile-only .result-field.result-thumbnail {
                       margin-top: 10px;
                     }
-                    .result-root.recommendation-badge {
+                    /* Atomic 3.60 renders results under .result-component (was .result-root). */
+                    .result-root.recommendation-badge,
+                    .result-component.recommendation-badge {
                           margin: 40px 0px 0px;
                     }
                     .atomic-search-result-item .result-field.text-thumbnail {
                       display: flex;
                       gap: 18px;
                     }
-                    .atomic-search-result-item .result-field.text-thumbnail:not(:has(.result-thumbnail)) {
+                    /* Atomic 3.60 keeps inactive field-condition nodes in the DOM with [hidden];
+                       :has(.result-thumbnail) alone falsely enables the video flex layout. */
+                    .atomic-search-result-item .result-field.text-thumbnail:not(:has(atomic-field-condition:not([hidden]) .result-thumbnail)) {
                       gap: 0;
                       display: block;
                     }
-                    .atomic-search-result-item .result-field.text-thumbnail:has(.result-thumbnail) .result-text {
+                    .atomic-search-result-item .result-field.text-thumbnail:has(atomic-field-condition:not([hidden]) .result-thumbnail) .result-text {
                       flex: 0 0 56%;
                     }
                     .atomic-search-result-item.result-item .thumbnail-wrapper {
@@ -384,6 +388,11 @@ export const atomicResultListStyles = `
                   atomic-folded-result-list::part(result-list) {
                     grid-row-gap: 0;
                   }
+                  atomic-folded-result-list::part(outline) {
+                    border: none;
+                    border-radius: 0;
+                    background-color: transparent;
+                  }
                   atomic-folded-result-list::part(outline)::before {
                     background-color:var(--footer-border-color);
                     display: block;
@@ -393,6 +402,9 @@ export const atomicResultListStyles = `
                   }
                   atomic-folded-result-list::part(first-result) {
                     padding-top: 1rem;
+                    border: none;
+                    border-radius: 0;
+                    background-color: transparent;
                   }
                   atomic-folded-result-list::part(first-result)::before {
                     display: none;
@@ -556,21 +568,41 @@ export default function atomicResultHandler(block, placeholders) {
     return;
   }
   container.parentElement.part.add('list-wrap');
-  // Make result section hidden and start adding skeleton.
-  container.style.cssText = 'display: none;';
-  container.dataset.view = isMobile() ? 'mobile' : 'desktop';
-  const skeletonWrapper = htmlToElement(`<div class="skeleton-wrapper" part="skeleton"></div>`);
-  skeletonWrapper.innerHTML = renderAtomicSekeletonUI();
-  container.parentElement.appendChild(skeletonWrapper);
+
+  // Atomic 3.60+ (Lit) re-renders its shadow DOM. Hiding/replacing nodes fights Lit and
+  // can wipe results permanently. Only show an in-shadow skeleton when results are not yet present.
+  const hasResultsAlready = shadow.querySelectorAll('atomic-result').length > 0;
+  if (!hasResultsAlready) {
+    container.style.cssText = 'display: none;';
+    container.dataset.view = isMobile() ? 'mobile' : 'desktop';
+    const skeletonWrapper = htmlToElement(`<div class="skeleton-wrapper" part="skeleton"></div>`);
+    skeletonWrapper.innerHTML = renderAtomicSekeletonUI();
+    container.parentElement.appendChild(skeletonWrapper);
+  } else {
+    container.dataset.view = isMobile() ? 'mobile' : 'desktop';
+    baseElement.classList.remove('list-wrap-skeleton');
+  }
 
   function onClearBtnClick() {
     const atomicBreadBox = document.querySelector('atomic-breadbox');
-    const coveoClearBtn = atomicBreadBox?.shadowRoot?.querySelector('[part="clear"]');
+    // Atomic 3.60 may expose clear as part token list; keep exact + contains match.
+    const coveoClearBtn =
+      atomicBreadBox?.shadowRoot?.querySelector('[part="clear"]') ||
+      atomicBreadBox?.shadowRoot?.querySelector('button[part~="clear"]:not([part~="breadcrumb-clear"])');
     if (coveoClearBtn) {
-      const event = new CustomEvent(CUSTOM_EVENTS.SEARCH_CLEARED);
-      document.dispatchEvent(event);
       coveoClearBtn.click();
+    } else {
+      // Fallback when breadbox clear control is not in the DOM yet: drop facet hash segments.
+      const hash = window.location.hash.slice(1);
+      if (hash) {
+        const kept = hash
+          .split('&')
+          .filter((part) => part && !part.startsWith('f-') && !part.startsWith('ff-') && !part.startsWith('rf-'));
+        window.location.hash = kept.join('&');
+      }
     }
+    // Emit after clear starts so facet handlers do not re-sync still-selected engine state.
+    document.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.SEARCH_CLEARED));
   }
 
   function decorateExternalLink(link) {
@@ -813,7 +845,10 @@ export default function atomicResultHandler(block, placeholders) {
   };
 
   const updateAtomicResultUI = (callFrom) => {
-    const results = container.querySelectorAll('atomic-result');
+    // Prefer light query on the list part; fall back to full shadow (Lit may move nodes).
+    const results = container.querySelectorAll('atomic-result').length
+      ? container.querySelectorAll('atomic-result')
+      : shadow.querySelectorAll('atomic-result');
     const isMobileView = isMobile();
     container.dataset.view = isMobileView ? 'mobile' : 'desktop';
     results.forEach((resultElement, index) => {
@@ -898,8 +933,8 @@ export default function atomicResultHandler(block, placeholders) {
 
         const recommendationBadgeExists = !!resultItem.querySelector('.atomic-recommendation-badge');
         if (recommendationBadgeExists) {
-          const resultRoot = resultShadow.querySelector('.result-root');
-          resultRoot.classList.add('recommendation-badge');
+          const resultRoot = resultShadow.querySelector('.result-root, .result-component');
+          resultRoot?.classList.add('recommendation-badge');
         }
 
         // Handle el_kudo_status field - support both legacy numeric and new user ID format
@@ -1173,8 +1208,13 @@ export default function atomicResultHandler(block, placeholders) {
   const resizeObserver = new ResizeObserver(debouncedResize);
   resizeObserver.observe(container);
 
-  // Add observer to check the loading of result items.
-  const observer = new MutationObserver(updateAtomicResultUI);
-  observer.observe(container, { childList: true, subtree: false });
+  // Watch the whole shadow tree — Lit Atomic renders results reactively.
+  const observer = new MutationObserver(() => updateAtomicResultUI());
+  observer.observe(shadow, { childList: true, subtree: true });
   updateAtomicResultUI();
+
+  // Fail-safe: never leave the Lit result list permanently hidden behind our skeleton.
+  setTimeout(() => {
+    removeBlockSkeleton();
+  }, 4000);
 }

@@ -167,7 +167,7 @@ export function applyFacetRawValuesToDom(parentWrapper, engineValues, placeholde
       delete li.dataset.updated;
       delete li.dataset.childfacet;
       delete li.dataset.parent;
-      li.querySelector('[part="only-facet-btn"]')?.remove();
+      li.querySelector('[part~="only-facet-btn"]')?.remove();
       delete li.dataset.onlyfacet;
       li.part?.remove('facet-child-element');
       const labelEl = li.querySelector('label');

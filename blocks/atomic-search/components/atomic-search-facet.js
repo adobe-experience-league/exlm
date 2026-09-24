@@ -69,41 +69,55 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
         }
       }
     }
+    const runFacetClick = (e, onlyOptionClicked = false) => {
+      const userClickAction = isUserClick(e);
+      if (!userClickAction || facet.dataset.filterclick === 'true') {
+        return;
+      }
+
+      const shimmer = atomicElement.shadowRoot.querySelector('.facet-shimmer');
+      shimmer?.part.add('show-shimmer');
+      const filtersChanged = syncFacetParentChildFilters({ facet, atomicElement, onlyOptionClicked });
+      if (!filtersChanged && shimmer) {
+        shimmer.part.remove('show-shimmer');
+      }
+    };
+
+    // "Only" hover/click must bind even if row was evented before the Only span existed
+    // (Lit / hash-driven re-renders). Re-query the span on each event.
+    if (!facet.dataset.onlyHoverBound) {
+      facet.dataset.onlyHoverBound = 'true';
+      facet.addEventListener('mouseenter', () => {
+        facet.querySelector('[part~="only-facet-btn"]')?.part.add('only-facet-visible');
+      });
+      facet.addEventListener('mouseleave', () => {
+        facet.querySelector('[part~="only-facet-btn"]')?.part.remove('only-facet-visible');
+      });
+    }
+
+    if (!facet.dataset.onlyClickBound) {
+      facet.dataset.onlyClickBound = 'true';
+      const debouncedOnlyClick = debounce(100, (e) => {
+        runFacetClick(e, true);
+        facet.dataset.filterclick = 'true';
+      });
+      // stopImmediatePropagation must be sync; debouncing it lets the row click win.
+      facet.addEventListener(
+        'click',
+        (e) => {
+          const target = e.target instanceof Element ? e.target : e.target?.parentElement;
+          const onlyFilterEl = target?.closest?.('[part~="only-facet-btn"]');
+          if (!onlyFilterEl || !facet.contains(onlyFilterEl)) return;
+          e.stopImmediatePropagation();
+          debouncedOnlyClick(e);
+        },
+        true,
+      );
+    }
+
     if (!facet.dataset.evented) {
       facet.dataset.evented = 'true';
-      const clickHandler = (e, onlyOptionClicked = false) => {
-        const userClickAction = isUserClick(e);
-        if (!userClickAction || facet.dataset.filterclick === 'true') {
-          return;
-        }
-
-        const shimmer = atomicElement.shadowRoot.querySelector('.facet-shimmer');
-        shimmer?.part.add('show-shimmer');
-        const filtersChanged = syncFacetParentChildFilters({ facet, atomicElement, onlyOptionClicked });
-        if (!filtersChanged && shimmer) {
-          shimmer.part.remove('show-shimmer');
-        }
-      };
-
-      const debouncedHandler = debounce(100, clickHandler);
-      facet.addEventListener('click', debouncedHandler);
-      const onlyFilterEl = facet.querySelector(`[part="only-facet-btn"]`);
-      if (onlyFilterEl) {
-        const filterHandler = (e) => {
-          e.stopImmediatePropagation();
-          clickHandler(e, true);
-          facet.dataset.filterclick = 'true';
-        };
-        const debouncedFilterClickHandler = debounce(100, filterHandler);
-        onlyFilterEl.addEventListener('click', debouncedFilterClickHandler);
-        facet.addEventListener('mouseenter', () => {
-          onlyFilterEl.part.add('only-facet-visible');
-        });
-
-        facet.addEventListener('mouseleave', () => {
-          onlyFilterEl.part.remove('only-facet-visible');
-        });
-      }
+      facet.addEventListener('click', debounce(100, runFacetClick));
     }
   };
 
@@ -117,7 +131,8 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
   const sortFacetsInOrder = (parentWrapper) => {
     const children = Array.from(parentWrapper.children);
     const sortedChildren = sortElementsByLabel(children);
-    parentWrapper.innerHTML = '';
+    // Move nodes in place — do NOT clear innerHTML. Atomic 3.60 (Lit) owns these
+    // value rows; destroying/recreating them breaks checkbox click bindings until reload.
     sortedChildren.forEach((item) => parentWrapper.appendChild(item));
   };
 
@@ -146,6 +161,12 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
 
   const updateChildElementUI = (parentWrapper, facetParent) => {
     const children = Array.from(parentWrapper.children);
+    // Product/Role/etc. have no parent/child rows — skip. Clearing values DOM here
+    // breaks Lit Atomic checkbox bindings after the first selection until reload.
+    if (!children.some((el) => el.dataset.childfacet === 'true')) {
+      return;
+    }
+
     const finalList = [];
 
     let tempGroup = [];
@@ -203,7 +224,7 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
         facetParent.dataset.observed = '';
       }
     }
-    parentWrapper.innerHTML = '';
+    // Reorder by moving existing nodes — never innerHTML='' (Lit Atomic 3.60).
     finalList.forEach((item) => parentWrapper.appendChild(item));
   };
 
@@ -347,6 +368,121 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     }
   };
 
+  /**
+   * Atomic 3.60 (Lit) can leave checkbox visuals stale after Clear All / hash-driven
+   * deselect while the headless engine is already idle. Keep DOM parts/classes aligned
+   * with engine selection, and strip Atomic primary Tailwind utilities that fight ExL grey chrome.
+   */
+  const PRIMARY_UTILITY_CLASSES = [
+    'bg-primary',
+    'hover:bg-primary-light',
+    'focus-visible:bg-primary-light',
+    'hover:border-primary-light',
+    'focus-visible:border-primary-light',
+  ];
+
+  // While Clear All is in flight, ignore engine selection until a post-clear RESULT_UPDATED
+  // reports idle (or a different selection than the clear-time baseline).
+  let facetClearInProgress = false;
+  let facetClearSafetyTimerId = 0;
+  let clearBaselineFingerprint = '';
+
+  const applyCheckboxVisualState = (btn, isSelected) => {
+    btn.classList.remove(...PRIMARY_UTILITY_CLASSES);
+    const icon = btn.querySelector('[part~="value-checkbox-icon"]');
+    if (isSelected) {
+      btn.classList.add('selected');
+      btn.part.add('value-checkbox-checked');
+      btn.setAttribute('aria-checked', 'true');
+      // Atomic 3.60 may leave the tick `display:none` when we only sync parts/classes.
+      if (icon) {
+        icon.style.display = 'block';
+        icon.style.stroke = '#fff';
+        icon.style.color = '#fff';
+      }
+    } else {
+      btn.classList.remove('selected');
+      btn.part.remove('value-checkbox-checked');
+      btn.setAttribute('aria-checked', 'false');
+      if (icon) {
+        icon.style.display = 'none';
+        icon.style.removeProperty('stroke');
+        icon.style.removeProperty('color');
+      }
+    }
+  };
+
+  const facetSelectionFingerprint = () => {
+    const facetSet = searchInterface?.engine?.state?.facetSet || {};
+    return Object.entries(facetSet)
+      .map(([facetId, facetState]) => {
+        const selected = (facetState.request?.currentValues || [])
+          .filter((value) => value.state === 'selected')
+          .map((value) => String(value.value))
+          .sort()
+          .join(',');
+        return selected ? `${facetId}:${selected}` : '';
+      })
+      .filter(Boolean)
+      .sort()
+      .join('|');
+  };
+
+  const clearFacetCheckboxVisuals = (atomicFacet) => {
+    const rows = atomicFacet.shadowRoot?.querySelector('[part="values"]')?.querySelectorAll(':scope > li') || [];
+    rows.forEach((li) => {
+      const btn = li.querySelector('[part~="value-checkbox"]');
+      if (btn) applyCheckboxVisualState(btn, false);
+    });
+  };
+
+  const endFacetClearInProgress = () => {
+    facetClearInProgress = false;
+    clearBaselineFingerprint = '';
+    if (facetClearSafetyTimerId) {
+      clearTimeout(facetClearSafetyTimerId);
+      facetClearSafetyTimerId = 0;
+    }
+  };
+
+  const maybeEndFacetClearInProgress = () => {
+    if (!facetClearInProgress) return;
+    const fingerprint = facetSelectionFingerprint();
+    // Idle engine, or user re-selected something different than the clear-time baseline.
+    if (!fingerprint || fingerprint !== clearBaselineFingerprint) {
+      endFacetClearInProgress();
+    }
+  };
+
+  const syncFacetCheckboxVisuals = (atomicFacet) => {
+    if (facetClearInProgress) {
+      clearFacetCheckboxVisuals(atomicFacet);
+      return;
+    }
+
+    const facetId = atomicFacet.facetId || atomicFacet.getAttribute('field');
+    const currentValues = searchInterface?.engine?.state?.facetSet?.[facetId]?.request?.currentValues || [];
+    const selectedValues = new Set(
+      currentValues.filter((value) => value.state === 'selected').map((value) => String(value.value).toLowerCase()),
+    );
+
+    const rows = atomicFacet.shadowRoot?.querySelector('[part="values"]')?.querySelectorAll(':scope > li') || [];
+    rows.forEach((li) => {
+      const btn = li.querySelector('[part~="value-checkbox"]');
+      if (!btn) return;
+
+      const candidates = [
+        li.dataset.facetRawValue,
+        li.dataset.contenttype,
+        li.querySelector('.value-label')?.getAttribute('title'),
+      ]
+        .filter(Boolean)
+        .map((value) => String(value).toLowerCase());
+      const isSelected = candidates.some((candidate) => selectedValues.has(candidate));
+      applyCheckboxVisualState(btn, isSelected);
+    });
+  };
+
   const handleAtomicFacetUI = (atomicFacet) => {
     if (atomicFacet.getAttribute('id') === 'facetStatus') {
       // Hide the facetStatus if no filters are selected
@@ -380,7 +516,12 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
       facets.forEach((facet) => {
         updateFacetUI(facet, atomicFacet, false);
       });
-      sortFacetsInOrder(parentWrapper);
+      // Only reorder Content Type (parent/child hierarchy). Other facets are already
+      // alphanumeric from Atomic; reordering all product rows after each search was
+      // churning Lit DOM and blocking subsequent product checkbox clicks.
+      if (isContentTypeFacet(atomicFacet)) {
+        sortFacetsInOrder(parentWrapper);
+      }
       const sortedFacets = Array.from(parentWrapper.children);
       sortedFacets.forEach((facet) => {
         adjustChildElementsPosition(facet, atomicFacet);
@@ -388,6 +529,7 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
 
       // Update parent facet counts with sum of child counts
       updateParentFacetCounts(parentWrapper);
+      syncFacetCheckboxVisuals(atomicFacet);
 
       const facetParent = atomicFacet.shadowRoot.querySelector('[part="facet"]');
       updateChildElementUI(parentWrapper, facetParent);
@@ -433,6 +575,8 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
       resultTimerId = 0;
     }
     resultTimerId = setTimeout(() => {
+      // Only lift the Clear All gate once engine left the clear-time selection (or went idle).
+      maybeEndFacetClearInProgress();
       const atomicFacets = document.querySelectorAll('atomic-facet');
       atomicFacets.forEach((atomicFacet) => {
         handleAtomicFacetUI(atomicFacet);
@@ -460,6 +604,8 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     }, 100);
   };
 
+  let facetEventListenersBound = false;
+
   const initAtomicFacetUI = (removeSkeleton = false) => {
     const atomicFacets = document.querySelectorAll('atomic-facet');
     atomicFacets.forEach((atomicFacet) => {
@@ -476,8 +622,52 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
       observeFacetValuesList(atomicFacet);
       handleAtomicFacetUI(atomicFacet);
     });
+    if (facetEventListenersBound) {
+      return;
+    }
+    facetEventListenersBound = true;
+
+    const onSearchCleared = () => {
+      // Cancel any pending RESULT_UPDATED sync that would re-apply stale checked chrome.
+      if (resultTimerId) {
+        clearTimeout(resultTimerId);
+        resultTimerId = 0;
+      }
+      clearBaselineFingerprint = facetSelectionFingerprint();
+      facetClearInProgress = true;
+      if (facetClearSafetyTimerId) {
+        clearTimeout(facetClearSafetyTimerId);
+      }
+      // Keep forcing clear visuals until engine leaves the clear-time selection.
+      // Cap retries so a hung clear cannot poll forever.
+      let clearSafetyAttempts = 0;
+      const scheduleClearSafetyCheck = () => {
+        facetClearSafetyTimerId = setTimeout(() => {
+          maybeEndFacetClearInProgress();
+          clearSafetyAttempts += 1;
+          if (facetClearInProgress && clearSafetyAttempts < 5) {
+            document.querySelectorAll('atomic-facet').forEach((atomicFacet) => {
+              clearFacetCheckboxVisuals(atomicFacet);
+            });
+            scheduleClearSafetyCheck();
+            return;
+          }
+          if (facetClearInProgress) {
+            // Last resort after ~10s — avoid leaving UI permanently gated.
+            endFacetClearInProgress();
+          }
+          facetClearSafetyTimerId = 0;
+        }, 2000);
+      };
+      scheduleClearSafetyCheck();
+      document.querySelectorAll('atomic-facet').forEach((atomicFacet) => {
+        clearFacetCheckboxVisuals(atomicFacet);
+      });
+    };
+
     document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onResultsUpdate);
     document.addEventListener(CUSTOM_EVENTS.NO_RESULT_FOUND, onNoResultFoundUpdate);
+    document.addEventListener(CUSTOM_EVENTS.SEARCH_CLEARED, onSearchCleared);
   };
 
   const onAtomicFacetUIReady = () => {

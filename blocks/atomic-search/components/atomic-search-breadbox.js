@@ -1,8 +1,12 @@
-import { CUSTOM_EVENTS, isUserClick } from './atomic-search-utils.js';
+import { CUSTOM_EVENTS, isUserClick, waitFor } from './atomic-search-utils.js';
 
 export default function atomicBreadBoxHandler(baseElement) {
+  let listObserver = null;
+  let listObserveRetryPending = false;
+
   function updateFilterClearBtnStyles(enabled) {
     const clearBtn = document.querySelector('.clear-label');
+    if (!clearBtn) return;
     if (enabled) {
       clearBtn.classList.add('clear-btn-enabled');
     } else {
@@ -13,6 +17,22 @@ export default function atomicBreadBoxHandler(baseElement) {
   function onFilterUpdate() {
     const event = new CustomEvent(CUSTOM_EVENTS.FILTER_UPDATED);
     document.dispatchEvent(event);
+  }
+
+  /**
+   * Atomic 3.13 toggled visibility via `.atomic-hidden` on the host.
+   * Atomic 3.60+ (Lit) often leaves className empty and only swaps display / crumbs.
+   * Drive Clear All from active breadcrumbs so both versions stay in sync with prod.
+   */
+  function hasActiveBreadcrumbs() {
+    const list = baseElement.shadowRoot?.querySelector('[part="breadcrumb-list"]');
+    if (!list) return false;
+    return list.querySelectorAll('li.breadcrumb').length > 0;
+  }
+
+  function isBreadboxEnabled() {
+    if (baseElement.className?.includes('atomic-hidden')) return false;
+    return hasActiveBreadcrumbs();
   }
 
   function attachListeners() {
@@ -74,32 +94,56 @@ export default function atomicBreadBoxHandler(baseElement) {
     });
   }
 
-  function observeBreadboxUI(enabled) {
-    const targetElement = baseElement.shadowRoot.querySelector(`[part="breadcrumb-list"]`);
+  function syncFromBreadcrumbs({ emitFilterUpdate = true } = {}) {
+    const enabled = isBreadboxEnabled();
+    updateFilterClearBtnStyles(enabled);
     if (enabled) {
-      const observer = new MutationObserver(() => {
-        attachListeners();
-        onFilterUpdate();
-      });
-      observer.observe(targetElement, { childList: true });
-    } else {
+      attachListeners();
+    }
+    if (emitFilterUpdate) {
       onFilterUpdate();
     }
+  }
+
+  function observeBreadcrumbList() {
+    const targetElement = baseElement.shadowRoot?.querySelector(`[part="breadcrumb-list"]`);
+    if (!targetElement) {
+      // Retry until Lit mounts the breadcrumb list; coalesce concurrent retries.
+      if (!listObserveRetryPending) {
+        listObserveRetryPending = true;
+        waitFor(() => {
+          listObserveRetryPending = false;
+          observeBreadcrumbList();
+        });
+      }
+      return;
+    }
+    listObserveRetryPending = false;
+    if (listObserver) {
+      listObserver.disconnect();
+    }
+    listObserver = new MutationObserver(() => {
+      syncFromBreadcrumbs();
+    });
+    listObserver.observe(targetElement, { childList: true, subtree: true });
+    syncFromBreadcrumbs();
   }
 
   const observer = new MutationObserver((mutationsList) => {
     mutationsList.forEach((mutation) => {
       if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-        const enabled = !baseElement.className.includes('atomic-hidden');
-        updateFilterClearBtnStyles(enabled);
-        observeBreadboxUI(enabled);
-        attachListeners();
+        // Keep legacy Atomic 3.13 class-toggle path.
+        syncFromBreadcrumbs();
+        observeBreadcrumbList();
+      }
+      if (mutation.type === 'childList') {
+        observeBreadcrumbList();
       }
     });
   });
 
   function onResultsUpdate() {
-    onFilterUpdate();
+    syncFromBreadcrumbs();
   }
 
   function hideSection() {
@@ -110,9 +154,10 @@ export default function atomicBreadBoxHandler(baseElement) {
     baseElement.style.display = '';
   }
 
-  document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onResultsUpdate, { once: true });
+  document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onResultsUpdate);
   document.addEventListener(CUSTOM_EVENTS.NO_RESULT_FOUND, hideSection);
   document.addEventListener(CUSTOM_EVENTS.RESULT_FOUND, showSection);
 
   observer.observe(baseElement, { attributes: true, attributeFilter: ['class'], childList: true });
+  observeBreadcrumbList();
 }
