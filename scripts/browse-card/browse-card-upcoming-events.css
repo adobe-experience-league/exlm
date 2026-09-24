@@ -250,6 +250,24 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     justify-content: center;
   }
 
+  /*
+   * Fallback Adobe mark is 572×396. List figures are a narrow full-height column;
+   * cover plus the shared absolute centering crops the mark. Contain shows the whole file.
+   */
+  .list .browse-card.upcoming-event-card .browse-card-figure.has-fallback-image > img,
+  .list .browse-card.event-upcoming-event-card .browse-card-figure.has-fallback-image > img {
+    position: absolute;
+    inset: 0;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    transform: none;
+    object-fit: contain;
+    object-position: center;
+  }
+
   .list .browse-card.upcoming-event-card .browse-card-figure .card-figure-date,
   .list .browse-card.event-upcoming-event-card .browse-card-figure .card-figure-date {
     display: flex;

@@ -679,6 +679,18 @@ main .events-search.is-filters-open .events-search-filters-panel {
 
   main .events-search .events-search-results-body.list .events-search-results-grid {
     grid-template-columns: 1fr;
+
+    /* One row was stretching to the 400px/450px grid min-height. */
+    min-height: 0;
+    height: auto;
+    align-content: start;
+  }
+
+  main .events-search .events-search-results-body.list .events-search-results-grid > .events-search-card-item,
+  main .events-search .events-search-results-body.list .browse-card {
+    height: auto;
+    min-height: 0;
+    align-self: start;
   }
 
   main .events-search .events-search-view-switcher {
