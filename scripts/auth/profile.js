@@ -116,7 +116,7 @@ class ProfileClient {
     return mergedProfile;
   }
 
-  async updateProfile(key, val, replace = false) {
+  async updateProfile(key, val, replace = false, { throwOnHttpError = false } = {}) {
     const profile = await this.getProfile();
     const attriubutes = await this.getAttributes();
 
@@ -158,17 +158,55 @@ class ProfileClient {
     } else {
       payload.push({ op: 'replace', path: `/${key}`, value: profile[key] });
     }
-    await this.fetchProfile({
-      method: 'PATCH',
-      headers: {
-        'content-type': 'application/json-patch+json',
-        'x-csrf-token': await csrf(JWTTokenUrl),
-      },
-      body: JSON.stringify(payload),
-    });
+    let statusCode;
+
+    if (throwOnHttpError) {
+      // Callers that opt in get the real result of the save instead of the
+      // shared fetchProfile()/fetchStaleWhileRevalidate() path, which never
+      // treats a failed save as an error.
+      const jwt = await this.jwt;
+      const response = await fetch(this.url, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          authorization: jwt,
+          accept: 'application/json',
+          'content-type': 'application/json-patch+json',
+          'x-csrf-token': await csrf(JWTTokenUrl),
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        let apiMessage;
+        try {
+          const body = await response.json();
+          apiMessage = body?.error || body?.message;
+        } catch (e) {
+          apiMessage = null;
+        }
+        const error = new Error(apiMessage || `Profile update failed: ${response.status} ${response.statusText}`);
+        error.status = response.status;
+        error.apiMessage = apiMessage;
+        throw error;
+      }
+
+      statusCode = response.status;
+    } else {
+      await this.fetchProfile({
+        method: 'PATCH',
+        headers: {
+          'content-type': 'application/json-patch+json',
+          'x-csrf-token': await csrf(JWTTokenUrl),
+        },
+        body: JSON.stringify(payload),
+      });
+    }
 
     // uppdate the profile in session storage after the changes
     await this.getMergedProfile(true);
+
+    return statusCode;
   }
 
   // Fetches the community profile details of the specific logged in user
