@@ -8,6 +8,7 @@ helix-importer-ui
 *.bak
 .idea
 /scripts/coveo-headless/libs/node_modules*
+/scripts/coveo-atomic/libs/node_modules*
 .aio
 .env
 

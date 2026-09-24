@@ -1,0 +1,2 @@
+function r(r,n){return r.x===n.x&&r.y===n.y&&r.width===n.width&&r.height===n.height}function n(r){return Array.from(r.children).map((r=>r.outerHTML)).join("")}export{n as p,r};
+//# sourceMappingURL=p-09a01af8.js.map

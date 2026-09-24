@@ -1,0 +1,2 @@
+import{g as t}from"./p-55d2bcf3.js";const e=({manualRanges:e,field:c,i18n:o,facetValue:n,logger:f,formatter:s})=>{const u=e.find((t=>a(t,n)))?.label;return u?t(c,u,o):o.t("to",{start:r(n.start,o,f,s),end:r(n.end,o,f,s)})};const r=(t,e,r,a)=>{try{return a(t,e.languages)}catch(e){r.error(`atomic-numeric-facet facet value "${t}" could not be formatted correctly.`,e);return t}};const a=(t,e)=>t.start===e.start&&t.end===e.end&&t.endInclusive===e.endInclusive;export{e as f};
+//# sourceMappingURL=p-985d0ef5.js.map

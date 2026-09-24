@@ -1,0 +1,2 @@
+function e(e){let n=[];let t=null;function u(){const e=n.shift();if(e){e.execute()}else{clearInterval(t);t=null}}function l(e){n=n.filter((n=>n.id!==e))}return{enqueue(r,c){if(c){l(c)}n.push({id:c,execute:r});if(t===null){u();t=setInterval(u,e.delay)}},clear(){n=[]},cancelActionIfQueued:l}}function n(e,n){let t;return(...u)=>{clearTimeout(t);return new Promise((l=>{t=setTimeout((()=>l(e(...u))),n)}))}}export{e as b,n as d};
+//# sourceMappingURL=p-e48090a7.js.map

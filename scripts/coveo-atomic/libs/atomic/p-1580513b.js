@@ -1,0 +1,2 @@
+function e(e,t){return new CustomEvent(e,{detail:t,bubbles:true,cancelable:true,composed:true})}function t(e,t,n,o){const u=c=>{e.removeEventListener(t,u,o);typeof n==="object"?n.handleEvent.call(e,c):n.call(e,c)};e.addEventListener(t,u,o)}export{e as b,t as l};
+//# sourceMappingURL=p-1580513b.js.map
