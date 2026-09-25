@@ -308,13 +308,18 @@
 }
 
 .browse-card .browse-card-figure > img {
+  /* Scaled-down (in-laptop) thumbnail size. Single source of truth so the
+     on-demand hover override can reuse it instead of restating literals. */
+  --browse-card-figure-img-width: 180px;
+  --browse-card-figure-img-height: 116px;
+
   position: absolute;
   top: 50%;
   right: 50%;
   transform: translate(50%, -50%);
   margin-top: -2px;
-  width: 180px;
-  height: 116px;
+  width: var(--browse-card-figure-img-width);
+  height: var(--browse-card-figure-img-height);
   border-bottom: 1px solid var(--spectrum-gray-200);
   object-fit: cover;
   z-index: 8;
