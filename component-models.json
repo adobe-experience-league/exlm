@@ -9621,6 +9621,40 @@
         "description": "Sets the main title of the grid cards."
       },
       {
+        "component": "select",
+        "valueType": "string",
+        "name": "titleType",
+        "value": "h2",
+        "label": "Title Type",
+        "hidden": true,
+        "options": [
+          {
+            "name": "H1",
+            "value": "h1"
+          },
+          {
+            "name": "H2",
+            "value": "h2"
+          },
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
         "component": "richtext",
         "valueType": "string",
         "name": "description",
@@ -9635,7 +9669,7 @@
         "label": "Style",
         "description": "Sets the style variant and the shared CTA style applied to all card buttons in this block.",
         "valueType": "string",
-        "maxSize": 6,
+        "maxSize": 5,
         "options": [
           {
             "name": "Card Variant",
@@ -9750,15 +9784,6 @@
               {
                 "name": "Black",
                 "value": "cta-text-black"
-              }
-            ]
-          },
-          {
-            "name": "Display Preferences",
-            "children": [
-              {
-                "name": "Disable Eyebrow, Title, and Description",
-                "value": "no-header"
               }
             ]
           }

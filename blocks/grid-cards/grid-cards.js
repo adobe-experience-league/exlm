@@ -9,9 +9,8 @@ export default function decorate(block) {
   const hasEyebrow = eyebrowRow.textContent.trim();
   const hasTitle = titleRow.textContent.trim();
   const hasDesc = descRow.textContent.trim();
-  const hideHeader = block.classList.contains('no-header');
 
-  if (!hideHeader && (hasEyebrow || hasTitle || hasDesc)) {
+  if (hasEyebrow || hasTitle || hasDesc) {
     const headerDiv = document.createElement('div');
     headerDiv.classList.add('grid-cards-header', 'block-header');
 
@@ -23,9 +22,11 @@ export default function decorate(block) {
     }
 
     if (hasTitle) {
-      const headingTag = document.createElement('h2');
-      headingTag.textContent = titleRow.textContent;
-
+      let headingTag = titleRow.querySelector('h2');
+      if (!headingTag) {
+        headingTag = document.createElement('h2');
+        headingTag.textContent = titleRow.textContent;
+      }
       headingTag.classList.add('grid-cards-title', headingTag.tagName.toLowerCase());
       titleRow.replaceWith(headingTag);
       headerDiv.appendChild(headingTag);
