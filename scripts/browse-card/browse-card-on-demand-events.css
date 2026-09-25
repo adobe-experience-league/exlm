@@ -148,17 +148,21 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
 
 /* List view: same left | main | right + vertical rule as Upcoming (≥900). */
 @media only screen and (min-width: 900px) {
-  .list .browse-card.event-card,
-  .list .browse-card.event-on-demand-event-card,
-  .list .browse-cards-block-content > div .browse-card.event-card,
-  .list .browse-cards-block-content > div .browse-card.event-on-demand-event-card {
+  .events-search .events-search-results-body.list .browse-card.event-card,
+  .events-search .events-search-results-body.list .browse-card.event-on-demand-event-card,
+  .events-search .events-search-results-body.list .browse-cards-block-content > div .browse-card.event-card,
+  .events-search
+    .events-search-results-body.list
+    .browse-cards-block-content
+    > div
+    .browse-card.event-on-demand-event-card {
     min-height: auto;
     flex-flow: row nowrap;
     background-color: var(--spectrum-gray-50);
   }
 
-  .list .browse-card.event-card .browse-card-figure,
-  .list .browse-card.event-on-demand-event-card .browse-card-figure {
+  .events-search .events-search-results-body.list .browse-card.event-card .browse-card-figure,
+  .events-search .events-search-results-body.list .browse-card.event-on-demand-event-card .browse-card-figure {
     flex: 0 0 23.34%;
     border: unset;
     border-radius: var(--spectrum-spacing-300) 0 0 var(--spectrum-spacing-300);
@@ -169,15 +173,15 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
     justify-content: center;
   }
 
-  .list .browse-card.event-card .browse-card-content,
-  .list .browse-card.event-on-demand-event-card .browse-card-content {
+  .events-search .events-search-results-body.list .browse-card.event-card .browse-card-content,
+  .events-search .events-search-results-body.list .browse-card.event-on-demand-event-card .browse-card-content {
     flex: 1 1 auto;
     min-width: 0;
     padding: var(--spectrum-spacing-500);
   }
 
-  .list .browse-card.event-card .browse-card-footer,
-  .list .browse-card.event-on-demand-event-card .browse-card-footer {
+  .events-search .events-search-results-body.list .browse-card.event-card .browse-card-footer,
+  .events-search .events-search-results-body.list .browse-card.event-on-demand-event-card .browse-card-footer {
     padding: var(--spectrum-spacing-500);
     flex: 0 0 18.52%;
     position: relative;
@@ -191,7 +195,7 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
    * Same list footer width as Upcoming (max(18.52%, 13rem)).
    * On-Demand-only: do not apply to legacy .event-card (isEventsV2 off).
    */
-  .list .browse-card.event-on-demand-event-card .browse-card-footer {
+  .events-search .events-search-results-body.list .browse-card.event-on-demand-event-card .browse-card-footer {
     flex: 0 0 max(18.52%, 13rem);
     width: max(18.52%, 13rem);
     min-width: 13rem;
@@ -199,8 +203,8 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
     box-sizing: border-box;
   }
 
-  .list .browse-card.event-card .browse-card-footer::before,
-  .list .browse-card.event-on-demand-event-card .browse-card-footer::before {
+  .events-search .events-search-results-body.list .browse-card.event-card .browse-card-footer::before,
+  .events-search .events-search-results-body.list .browse-card.event-on-demand-event-card .browse-card-footer::before {
     content: '';
     position: absolute;
     top: var(--spectrum-spacing-500);
@@ -210,8 +214,12 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
     background-color: var(--non-spectrum-divider-gray);
   }
 
-  .list .browse-card.event-card .browse-card-footer .browse-card-cta-element,
-  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-cta-element {
+  .events-search .events-search-results-body.list .browse-card.event-card .browse-card-footer .browse-card-cta-element,
+  .events-search
+    .events-search-results-body.list
+    .browse-card.event-on-demand-event-card
+    .browse-card-footer
+    .browse-card-cta-element {
     margin-block: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-75));
     margin-inline: 0;
     background-color: var(--spectrum-blue-900);
@@ -228,24 +236,46 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
     align-items: center;
   }
 
-  .list .browse-card.event-card .browse-card-footer .browse-card-cta-element .icon,
-  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-cta-element .icon {
+  .events-search
+    .events-search-results-body.list
+    .browse-card.event-card
+    .browse-card-footer
+    .browse-card-cta-element
+    .icon,
+  .events-search
+    .events-search-results-body.list
+    .browse-card.event-on-demand-event-card
+    .browse-card-footer
+    .browse-card-cta-element
+    .icon {
     display: none;
   }
 
-  .list .browse-card.event-card .browse-card-figure .event-series-banner,
-  .list .browse-card.event-on-demand-event-card .browse-card-figure .event-series-banner {
+  .events-search .events-search-results-body.list .browse-card.event-card .browse-card-figure .event-series-banner,
+  .events-search
+    .events-search-results-body.list
+    .browse-card.event-on-demand-event-card
+    .browse-card-figure
+    .event-series-banner {
     font-size: var(--spectrum-font-size-100);
     letter-spacing: 0;
     line-height: 1.4;
   }
 
-  .list .browse-card.event-on-demand-event-card .browse-card-content .browse-card-event-info {
+  .events-search
+    .events-search-results-body.list
+    .browse-card.event-on-demand-event-card
+    .browse-card-content
+    .browse-card-event-info {
     display: none;
   }
 
   /* List footer matches Upcoming: date, then action icons, then primary CTA. */
-  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info {
+  .events-search
+    .events-search-results-body.list
+    .browse-card.event-on-demand-event-card
+    .browse-card-footer
+    .browse-card-event-info {
     order: 0;
     margin: 0;
     align-self: flex-start;
@@ -255,22 +285,41 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
     min-width: 0;
   }
 
-  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-options {
+  .events-search
+    .events-search-results-body.list
+    .browse-card.event-on-demand-event-card
+    .browse-card-footer
+    .browse-card-options {
     order: 1;
     align-self: flex-start;
     margin-bottom: var(--spectrum-spacing-300);
   }
 
-  .list .browse-card.event-on-demand-event-card .browse-card-footer .user-actions {
+  .events-search
+    .events-search-results-body.list
+    .browse-card.event-on-demand-event-card
+    .browse-card-footer
+    .user-actions {
     margin-inline-start: calc(-1 * var(--spectrum-spacing-50));
   }
 
-  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info .browse-card-event-time {
+  .events-search
+    .events-search-results-body.list
+    .browse-card.event-on-demand-event-card
+    .browse-card-footer
+    .browse-card-event-info
+    .browse-card-event-time {
     min-width: 0;
     overflow: hidden;
   }
 
-  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info .browse-card-event-time h6 {
+  .events-search
+    .events-search-results-body.list
+    .browse-card.event-on-demand-event-card
+    .browse-card-footer
+    .browse-card-event-info
+    .browse-card-event-time
+    h6 {
     color: var(--spectrum-gray-800);
     font-weight: bold;
     white-space: nowrap;
@@ -279,18 +328,33 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
     max-width: 100%;
   }
 
-  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info .icon {
+  .events-search
+    .events-search-results-body.list
+    .browse-card.event-on-demand-event-card
+    .browse-card-footer
+    .browse-card-event-info
+    .icon {
     width: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
     height: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
     flex-shrink: 0;
   }
 
-  .list .browse-card.event-on-demand-event-card .browse-card-footer .user-actions button .icon {
+  .events-search
+    .events-search-results-body.list
+    .browse-card.event-on-demand-event-card
+    .browse-card-footer
+    .user-actions
+    button
+    .icon {
     width: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
     height: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
   }
 
-  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-cta-element {
+  .events-search
+    .events-search-results-body.list
+    .browse-card.event-on-demand-event-card
+    .browse-card-footer
+    .browse-card-cta-element {
     order: 3;
     box-sizing: border-box;
     max-width: 100%;
