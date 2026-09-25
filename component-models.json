@@ -6436,6 +6436,42 @@
     ]
   },
   {
+    "id": "aligned-text",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "",
+        "label": "Text",
+        "description": "Sets the aligned text content."
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Alignment",
+        "description": "Sets the text alignment.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Left",
+            "value": "left"
+          },
+          {
+            "name": "Center",
+            "value": "center"
+          },
+          {
+            "name": "Right",
+            "value": "right"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "bookmarks",
     "fields": [
       {
