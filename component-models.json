@@ -9822,6 +9822,15 @@
                 "value": "cta-text-black"
               }
             ]
+          },
+          {
+            "name": "Display Preferences",
+            "children": [
+              {
+                "name": "Disable Eyebrow, Title, and Description",
+                "value": "no-header"
+              }
+            ]
           }
         ]
       }
