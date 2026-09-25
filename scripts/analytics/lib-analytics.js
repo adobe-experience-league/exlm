@@ -638,7 +638,7 @@ export function createVideoMilestoneTracker(video, thresholds = [25, 50, 75], st
     });
   }
   return (currentTime) => {
-    if (!totalDuration) return;
+    if (!totalDuration || fired.size === thresholds.length) return;
     const percent = (currentTime / totalDuration) * 100;
     thresholds.forEach((threshold) => {
       if (percent >= threshold && !fired.has(threshold)) {
