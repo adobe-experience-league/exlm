@@ -158,6 +158,21 @@
     border-radius: 16px;
   }
 
+  /* Fallback Adobe mark is 572×396. Contain keeps it whole inside the list figure. */
+  .upcoming-event-v2.list .browse-card.upcoming-event-card .browse-card-figure.has-fallback-image > img,
+  .upcoming-event-v2.list .browse-card.event-upcoming-event-card .browse-card-figure.has-fallback-image > img {
+    position: absolute;
+    inset: 0;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    transform: none;
+    object-fit: contain;
+    object-position: center;
+  }
+
   /** List view styles end **/
 }
 
