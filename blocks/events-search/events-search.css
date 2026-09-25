@@ -679,6 +679,55 @@ main .events-search.is-filters-open .events-search-filters-panel {
 
   main .events-search .events-search-results-body.list .events-search-results-grid {
     grid-template-columns: 1fr;
+
+    /* One row was stretching to the 400px/450px grid min-height. */
+    min-height: 0;
+    height: auto;
+    align-content: start;
+  }
+
+  main .events-search .events-search-results-body.list .events-search-results-grid > .events-search-card-item,
+  main .events-search .events-search-results-body.list .browse-card {
+    height: auto;
+    min-height: 0;
+    align-self: start;
+  }
+
+  /* Fallback Adobe mark is 572×396. Contain keeps it whole inside the list figure. */
+  main
+    .events-search
+    .events-search-results-body.list
+    .browse-card.upcoming-event-card
+    .browse-card-figure.has-fallback-image
+    > img,
+  main
+    .events-search
+    .events-search-results-body.list
+    .browse-card.event-upcoming-event-card
+    .browse-card-figure.has-fallback-image
+    > img,
+  main
+    .events-search
+    .events-search-results-body.list
+    .browse-card.event-card
+    .browse-card-figure.has-fallback-image
+    > img,
+  main
+    .events-search
+    .events-search-results-body.list
+    .browse-card.event-on-demand-event-card
+    .browse-card-figure.has-fallback-image
+    > img {
+    position: absolute;
+    inset: 0;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    transform: none;
+    object-fit: contain;
+    object-position: center;
   }
 
   main .events-search .events-search-view-switcher {
