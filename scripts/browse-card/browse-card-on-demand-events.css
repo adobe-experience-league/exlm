@@ -188,12 +188,15 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
   }
 
   /*
-   * Upcoming's footer grows with its nowrap date (~12.5rem with padding).
+   * Same list footer width as Upcoming (max(18.52%, 13rem)).
    * On-Demand-only: do not apply to legacy .event-card (isEventsV2 off).
    */
   .list .browse-card.event-on-demand-event-card .browse-card-footer {
-    width: auto;
-    min-width: 12.5rem;
+    flex: 0 0 max(18.52%, 13rem);
+    width: max(18.52%, 13rem);
+    min-width: 13rem;
+    max-width: max(18.52%, 13rem);
+    box-sizing: border-box;
   }
 
   .list .browse-card.event-card .browse-card-footer::before,
@@ -248,6 +251,8 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
     align-self: flex-start;
     margin-bottom: var(--spectrum-spacing-300);
     display: flex;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-options {
@@ -260,16 +265,24 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
     margin-inline-start: calc(-1 * var(--spectrum-spacing-50));
   }
 
+  .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info .browse-card-event-time {
+    min-width: 0;
+    overflow: hidden;
+  }
+
   .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info .browse-card-event-time h6 {
     color: var(--spectrum-gray-800);
     font-weight: bold;
     white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
 
   .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-event-info .icon {
     width: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
     height: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
+    flex-shrink: 0;
   }
 
   .list .browse-card.event-on-demand-event-card .browse-card-footer .user-actions button .icon {
@@ -279,5 +292,12 @@ body[class^='browse-'] .browse-card.event-on-demand-event-card .browse-card-figu
 
   .list .browse-card.event-on-demand-event-card .browse-card-footer .browse-card-cta-element {
     order: 3;
+    box-sizing: border-box;
+    max-width: 100%;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
   }
 }

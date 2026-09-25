@@ -297,6 +297,8 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     align-self: flex-start;
     margin-bottom: var(--spectrum-spacing-300);
     display: flex;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .list .browse-card.upcoming-event-card .browse-card-content .browse-card-event-info,
@@ -309,12 +311,29 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
   .list .browse-card.upcoming-event-card .browse-card-footer,
   .list .browse-card.event-upcoming-event-card .browse-card-footer {
     padding: var(--spectrum-spacing-500);
-    flex: 0 0 18.52%;
+
+    /*
+     * One footer width for every list card. 18.52% of a wide row, but never
+     * below 13rem and never grown by the nowrap date. On iPad the filters
+     * column makes 18.52% narrower than the date, so each proportional
+     * timestamp was a different pill (EXLM-5684).
+     */
+    flex: 0 0 max(18.52%, 13rem);
+    width: max(18.52%, 13rem);
+    min-width: 13rem;
+    max-width: max(18.52%, 13rem);
+    box-sizing: border-box;
     position: relative;
     align-self: stretch;
     flex-direction: column;
     justify-content: unset;
     border-radius: var(--spectrum-spacing-300);
+  }
+
+  .list .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info .browse-card-event-time,
+  .list .browse-card.event-upcoming-event-card .browse-card-footer .browse-card-event-info .browse-card-event-time {
+    min-width: 0;
+    overflow: hidden;
   }
 
   .list .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info .browse-card-event-time h6,
@@ -323,12 +342,15 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     font-weight: bold;
     white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
 
   .list .browse-card.upcoming-event-card .browse-card-footer .browse-card-event-info .icon,
   .list .browse-card.event-upcoming-event-card .browse-card-footer .browse-card-event-info .icon {
     width: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
     height: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-50));
+    flex-shrink: 0;
   }
 
   .list .browse-card.upcoming-event-card .browse-card-footer .browse-card-cta-element,
@@ -338,7 +360,6 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     margin-inline: 0;
     background: var(--spectrum-blue-900) 0% 0% no-repeat padding-box;
     border-radius: var(--spectrum-spacing-300);
-    text-align: left;
     font-style: normal;
     font-variant: normal;
     font-weight: normal;
@@ -346,8 +367,15 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     line-height: var(--spectrum-line-height-xs);
     letter-spacing: 0;
     color: var(--spectrum-gray-50);
+    box-sizing: border-box;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     height: var(--spectrum-spacing-500);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
     justify-content: center;
     align-items: center;
   }
