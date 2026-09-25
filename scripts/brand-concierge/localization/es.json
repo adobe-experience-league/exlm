@@ -7,10 +7,10 @@
     "clearLabel": "Borrar",
     "clearAriaLabel": "Borrar conversación",
     "bottomBar": {
-      "label": "Preguntar a la IA",
+      "label": "Preguntar IA",
       "expandAria": "Ampliar la barra de Preguntar a la IA",
       "openAria": "Abrir Preguntar a la IA",
-      "inputPlaceholder": "Haga una pregunta…",
+      "inputPlaceholder": "Hacer una pregunta…",
       "inputAria": "Hacer una pregunta",
       "sendAria": "Enviar",
       "hideAria": "Ocultar barra de preguntas",
@@ -27,7 +27,7 @@
   "text": {
     "welcome.heading": "¿No sabe por dónde empezar?<br>Pregúnteme lo que quiera sobre los productos de Adobe.",
     "welcome.subheading": "Escriba su pregunta o elija una sugerencia a continuación.",
-    "input.placeholder": "Haga una pregunta…",
+    "input.placeholder": "Hacer una pregunta…",
     "input.messageInput.aria": "Campo de mensaje",
     "input.send.aria": "Enviar mensaje",
     "input.mic.aria": "Entrada de voz",
@@ -52,10 +52,11 @@
   },
   "arrays": {
     "welcome.examples": {
-      "0": "¿Dónde puedo aprender sobre la IA en Experience League?",
+      "0": "¿Dónde puedo informarme sobre la IA en Experience League?",
       "1": "Primeros pasos con Experience Manager",
-      "2": "Configurar un conjunto de informes de Adobe Analytics",
-      "3": "Explicar las pruebas A/B de Adobe Target"
+      "2": "¿Cómo configuro mi instancia de Workfront para mi equipo?",
+      "3": "¿Cómo empiezo un recorrido en Adobe Journey Optimizer?",
+      "4": "¿Qué es CX Enterprise Coworker?"
     },
     "feedback.positive.options": {
       "0": "Útil y relevante",

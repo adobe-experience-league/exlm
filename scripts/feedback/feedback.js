@@ -519,9 +519,13 @@ function checkInterceptLoaded() {
 }
 
 export default async function loadFeedbackUi() {
-  loadCSS(`${window.hlx.codeBasePath}/scripts/feedback/feedback.css`);
+  const cssPromise = loadCSS(`${window.hlx.codeBasePath}/scripts/feedback/feedback.css`);
 
-  const [placeholders, feedbackFragmentHtml] = await Promise.all([placeholdersPromise, feedbackFragmentPromise]);
+  const [placeholders, feedbackFragmentHtml] = await Promise.all([
+    placeholdersPromise,
+    feedbackFragmentPromise,
+    cssPromise,
+  ]);
   FEEDBACK_SUCCESS = placeholders?.feedbackSuccess || 'Received! Thank you for your feedback.';
   FEEDBACK_TEXT_ACTIVE = placeholders?.feedbackTextActive || 'Type your detailed feedback here and submit.';
   const feedbackHtml = htmlToElement(feedbackFragmentHtml);

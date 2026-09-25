@@ -6436,6 +6436,42 @@
     ]
   },
   {
+    "id": "aligned-text",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "",
+        "label": "Text",
+        "description": "Sets the aligned text content."
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Alignment",
+        "description": "Sets the text alignment.",
+        "valueType": "string",
+        "required": true,
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Left",
+            "value": "left"
+          },
+          {
+            "name": "Center",
+            "value": "center"
+          },
+          {
+            "name": "Right",
+            "value": "right"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "bookmarks",
     "fields": [
       {
@@ -9668,7 +9704,7 @@
         "label": "Style",
         "description": "Sets the style variant and the shared CTA style applied to all card buttons in this block.",
         "valueType": "string",
-        "maxSize": 5,
+        "maxSize": 6,
         "options": [
           {
             "name": "Card Variant",
@@ -9783,6 +9819,15 @@
               {
                 "name": "Black",
                 "value": "cta-text-black"
+              }
+            ]
+          },
+          {
+            "name": "Display Preferences",
+            "children": [
+              {
+                "name": "Disable Eyebrow, Title, and Description",
+                "value": "no-header"
               }
             ]
           }
