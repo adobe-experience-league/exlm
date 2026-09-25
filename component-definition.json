@@ -1361,7 +1361,7 @@
                   "filter": "grid-cards",
                   "eyebrow": "Eyebrow Text",
                   "title": "Grid Cards Title",
-                  "titleType": "h1",
+                  "titleType": "h2",
                   "description": "Grid cards description text",
                   "classes": ["standard", "cta-secondary"],
                   "item1": {

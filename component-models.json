@@ -9653,15 +9653,16 @@
         "valueType": "string",
         "name": "title",
         "value": "",
-        "label": "Title",
+        "label": "Heading",
         "description": "Sets the main title of the grid cards."
       },
       {
         "component": "select",
         "valueType": "string",
         "name": "titleType",
-        "value": "h3",
+        "value": "h2",
         "label": "Title Type",
+        "hidden": true,
         "options": [
           {
             "name": "H1",
