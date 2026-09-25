@@ -69,35 +69,6 @@
   display: block;
 }
 
-.doc-mt-toggle .doc-mt-feedback {
-  display: block;
-  margin: 0 0 20px 10px;
-}
-
-.doc-mt-feedback .prompt {
-  font-weight: var(--font-weight-bold);
-}
-
-.doc-mt-toggle .doc-mt-feedback-radio {
-  display: flex;
-  gap: 10px;
-}
-
-.doc-mt-feedback-radio label.radio {
-  align-items: center;
-  display: flex;
-}
-
-.doc-mt-feedback-radio input {
-  margin: 3px 5px 0 0;
-}
-
-.doc-mt-toggle .doc-mt-feedback input {
-  cursor: pointer;
-  width: auto;
-  margin-right: 10px;
-}
-
 .doc-actions-mobile .user-actions button {
   margin-right: 10px;
 }
