@@ -1,0 +1,15 @@
+main .aligned-text {
+  margin: 24px 0;
+}
+
+main .aligned-text.text-align-left {
+  text-align: left;
+}
+
+main .aligned-text.text-align-center {
+  text-align: center;
+}
+
+main .aligned-text.text-align-right {
+  text-align: right;
+}
