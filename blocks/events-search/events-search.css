@@ -362,6 +362,10 @@ main .events-search .events-search-controls .sort-container {
   position: relative;
 }
 
+main .events-search .events-search-controls .sort-container[hidden] {
+  display: none;
+}
+
 main .events-search .events-search-controls .sort-drop-btn {
   display: inline-flex;
   align-items: center;
