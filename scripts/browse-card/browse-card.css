@@ -780,3 +780,15 @@
 .browse-card .browse-card-figure:hover .play-button .icon {
   display: none;
 }
+
+/*
+ * EXLM-5810: Disable the hover animation on on-demand event tiles. Keep the thumbnail scaled down inside the laptop on hover.
+ */
+.browse-card.event-card .browse-card-figure:hover .laptop-container {
+  transform: none;
+}
+
+.browse-card.event-card .browse-card-figure:hover > img {
+  width: var(--browse-card-figure-img-width);
+  height: var(--browse-card-figure-img-height);
+}
