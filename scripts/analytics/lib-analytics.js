@@ -818,6 +818,79 @@ export async function pushQuizEvent(eventName) {
 }
 
 /**
+ * Pushes a profile-update "request sent" event to the data layer (courses only).
+ * @param {string|number} message - Description/code of the profile update request being sent
+ */
+export async function pushProfileUpdateRequestSentEvent(message) {
+  if (!courses) return;
+
+  try {
+    const { courses: coursesInfo, module } = await getEventInfo('quiz');
+
+    window.adobeDataLayer = window.adobeDataLayer || [];
+    window.adobeDataLayer.push({
+      event: 'ProfileUpdateRequestSent',
+      profileAPI: {
+        requestMessage: message,
+        timeStamp: new Date().toISOString(),
+      },
+      courses: coursesInfo,
+      module,
+    });
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error pushing profile update request-sent event:', e);
+  }
+}
+
+/**
+ * Pushes a profile-update "response received" event to the data layer (courses only).
+ * @param {string|number} message - HTTP status code on success, or failure status/reason
+ */
+export async function pushProfileUpdateRequestReceivedEvent(message) {
+  if (!courses) return;
+
+  try {
+    const { courses: coursesInfo, module } = await getEventInfo('quiz');
+
+    window.adobeDataLayer = window.adobeDataLayer || [];
+    window.adobeDataLayer.push({
+      event: 'ProfileUpdateRequestReceived',
+      profileAPI: {
+        requestMessage: message,
+        timeStamp: new Date().toISOString(),
+      },
+      courses: coursesInfo,
+      module,
+    });
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error pushing profile update response-received event:', e);
+  }
+}
+
+/**
+ * Pushes a Next-button-enabled impression event to the data layer (courses only).
+ */
+export async function pushNextButtonImpressionEvent() {
+  if (!courses) return;
+
+  try {
+    const { courses: coursesInfo, module } = await getEventInfo('quiz');
+
+    window.adobeDataLayer = window.adobeDataLayer || [];
+    window.adobeDataLayer.push({
+      event: 'nextButtonImpression',
+      courses: coursesInfo,
+      module,
+    });
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error pushing next button impression event:', e);
+  }
+}
+
+/**
  * Used to push a product interests event to the data layer
  * @param {string} id - The product id.
  * @param {string} title - The product interest title.
