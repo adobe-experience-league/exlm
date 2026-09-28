@@ -1019,6 +1019,13 @@ export const URL_SPECIAL_CASE_LOCALES = new Map([
 // and import it from there. Its current location causes a cyclic dependency because
 // premium-learning-utils.js → profile.js → scripts.js → premium-learning-utils.js.
 export async function loadIms() {
+  // DRAFT: QA IMS bypass (cookie-only). See scripts/auth/qa-bypass.js.
+  if (!window.exlm?.qaImsBypass && document.cookie.includes('qa_ims_token=')) {
+    // eslint-disable-next-line import/no-cycle
+    const { default: installQaImsBypass } = await import('./auth/qa-bypass.js');
+    if (installQaImsBypass()) return Promise.resolve();
+  }
+
   // if adobe IMS was loaded already, return. Especially useful when embedding this code outside this site.
   // eg. embedding header in community which has it's own IMS setup.
   if (!window.imsLoaded && window.adobeIMS) return Promise.resolve();

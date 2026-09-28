@@ -36,6 +36,9 @@ export async function signOut() {
 
   ['alm_access_token', 'alm_user_id'].forEach((cookie) => deleteCookie(cookie));
 
+  // DRAFT: also clear QA IMS bypass cookies so sign-out isn't silently undone.
+  ['qa_ims_token', 'qa_ims_profile', 'qa_ims_expires_in'].forEach((cookie) => deleteCookie(cookie));
+
   // Clear all cache entries from both sessionStorage and localStorage
   Object.keys(sessionStorage).forEach((key) => {
     if (key.startsWith('exl-fetch-cache')) {
