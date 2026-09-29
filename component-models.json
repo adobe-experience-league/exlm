@@ -9851,7 +9851,7 @@
         "component": "select",
         "valueType": "string",
         "name": "cardTitleType",
-        "value": "h2",
+        "value": "h3",
         "label": "Card Title Type",
         "hidden": true,
         "options": [
