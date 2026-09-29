@@ -33,10 +33,6 @@
     box-sizing: border-box;
   }
 
-  .docs main .section.rail.rail-right .rail-content {
-    align-self: flex-start;
-  }
-
   .docs main .section.rail .rail-toggle,
   .on-demand-event main .section.rail .rail-toggle {
     background: none;
