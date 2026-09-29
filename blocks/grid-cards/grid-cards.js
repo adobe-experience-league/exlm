@@ -28,7 +28,7 @@ export default function decorate(block) {
         headingTag = document.createElement('h2');
         headingTag.textContent = titleRow.textContent;
       }
-      headingTag.classList.add('grid-cards-title', headingTag.tagName.toLowerCase());
+      headingTag.classList.add('grid-cards-title', 'h1');
       titleRow.replaceWith(headingTag);
       headerDiv.appendChild(headingTag);
     } else {
@@ -65,7 +65,7 @@ export default function decorate(block) {
       cardHeading = document.createElement('h2');
       cardHeading.textContent = titleCell.textContent;
     }
-    cardHeading.classList.add('grid-card-title', cardHeading.tagName.toLowerCase());
+    cardHeading.classList.add('grid-card-title', 'h1');
 
     cardRow.textContent = '';
 
