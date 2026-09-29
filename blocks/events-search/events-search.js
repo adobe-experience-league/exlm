@@ -340,6 +340,7 @@ function getEventsSearchSortBy(block) {
   return !rawSort || rawSort === 'relevance' ? 'relevancy' : rawSort;
 }
 
+/** Returns the per-block sort state, lazily creating it with defaults on first access. */
 function getEventsSearchSortState(block) {
   let state = eventsSearchSortState.get(block);
   if (!state) {
@@ -382,6 +383,7 @@ function getAvailableEventsSearchSortOptions({ hasQuery, onDemandOnly, mixed }) 
   return options;
 }
 
+/** Returns the localized dropdown/caption label for a sort option, falling back to English defaults. */
 function getEventsSearchSortOptionLabel(option, placeholders) {
   if (option === 'date') return placeholders.eventSearchFilterSortDateLabel || 'Date';
   if (option === 'popularity') return placeholders.filerSortPopularityLabel || 'Popularity';
@@ -424,6 +426,7 @@ function resolveEventsSearchSortCriterion(state, option, context) {
   return criteria.relevance();
 }
 
+/** Dispatches the resolved Coveo sort criterion, skipping the call when the same key was already applied. */
 function applyEventsSearchSort(block, option, context) {
   const state = getEventsSearchSortState(block);
   if (!state.sortController) return;
@@ -433,6 +436,7 @@ function applyEventsSearchSort(block, option, context) {
   state.sortController.sortBy(resolveEventsSearchSortCriterion(state, option, context));
 }
 
+/** Renders the sort dropdown anchors and the button caption for the given options and selection. */
 function renderEventsSearchSortOptions(block, options, selected, placeholders) {
   const sortContainer = block.querySelector('.sort-container');
   const dropDownBtn = block.querySelector('.sort-drop-btn');
@@ -441,17 +445,24 @@ function renderEventsSearchSortOptions(block, options, selected, placeholders) {
   if (!dropdown) {
     dropdown = createTag('div', { class: 'sort-dropdown-content' });
     sortContainer.append(dropdown);
+    // Single delegated listener on the persistent container.
+    dropdown.addEventListener('click', (event) => {
+      const anchor = event.target.closest('a[data-sort-option]');
+      if (!anchor) return;
+      event.preventDefault();
+      // eslint-disable-next-line no-use-before-define
+      selectEventsSearchSortOption(block, anchor.dataset.sortOption);
+    });
   }
   dropdown.innerHTML = '';
   options.forEach((option) => {
     const label = getEventsSearchSortOptionLabel(option, placeholders);
-    const anchor = createTag('a', { href: '#', class: option === selected ? 'selected' : '' });
-    anchor.textContent = label;
-    anchor.addEventListener('click', (event) => {
-      event.preventDefault();
-      // eslint-disable-next-line no-use-before-define -- mutually recursive with renderEventsSearchSortOptions
-      selectEventsSearchSortOption(block, option);
+    const anchor = createTag('a', {
+      href: '#',
+      class: option === selected ? 'selected' : '',
+      'data-sort-option': option,
     });
+    anchor.textContent = label;
     dropdown.append(anchor);
   });
   const captionEl = dropDownBtn.querySelector('.sort-drop-btn-value');
@@ -459,6 +470,7 @@ function renderEventsSearchSortOptions(block, options, selected, placeholders) {
   if (captionEl) captionEl.textContent = caption;
 }
 
+/** Handles a sort option click: updates state, re-renders the dropdown, and applies the criterion. */
 function selectEventsSearchSortOption(block, option) {
   const state = getEventsSearchSortState(block);
   state.selected = option;
@@ -469,7 +481,7 @@ function selectEventsSearchSortOption(block, option) {
   renderEventsSearchSortOptions(block, getAvailableEventsSearchSortOptions(context), option, state.placeholders);
   // sortBy() always dispatches (even switching between two options that resolve to the same
   // relevance criterion, e.g. Relevance <-> Date while mixed), which re-fires the search engine
-  // subscription and re-renders results — picking up the grouped client-side order via
+  // subscription and re-renders results picking up the grouped client-side order via
   // shouldGroupEventsSearchResults for the mixed+Date case.
   state.lastAppliedKey = null;
   applyEventsSearchSort(block, option, context);
@@ -1599,17 +1611,23 @@ async function initHeadlessSearch(block, groups, placeholders) {
   });
 
   if (window.headlessSearchEngine) {
-    const { controller, criteria } = await buildEventsSearchSortController(window.headlessSearchEngine);
-    const sortState = getEventsSearchSortState(block);
-    sortState.sortController = controller;
-    sortState.criteria = criteria;
-    // Seed lastAppliedKey to the controller's initial relevance criterion so the first UI pass doesn't re-dispatch a redundant sortBy.
-    const initialContext = getEventsSearchSortContext(block);
-    sortState.lastAppliedKey = `relevance:${initialContext.upcomingOnly}:${initialContext.onDemandOnly}`;
-    if (urlSortSelection) {
-      sortState.selected = urlSortSelection;
-      sortState.hasShownControl = true;
-      sortState.urlRestorePending = true;
+    try {
+      const { controller, criteria } = await buildEventsSearchSortController(window.headlessSearchEngine);
+      const sortState = getEventsSearchSortState(block);
+      sortState.sortController = controller;
+      sortState.criteria = criteria;
+      // Seed lastAppliedKey to the controller's initial relevance criterion so the first UI pass doesn't re-dispatch a redundant sortBy.
+      const initialContext = getEventsSearchSortContext(block);
+      sortState.lastAppliedKey = `relevance:${initialContext.upcomingOnly}:${initialContext.onDemandOnly}`;
+      if (urlSortSelection) {
+        sortState.selected = urlSortSelection;
+        sortState.hasShownControl = true;
+        sortState.urlRestorePending = true;
+      }
+    } catch (err) {
+      // Sort controller failed to build ,leave sortController null so the control stays hidden; search still works.
+      // eslint-disable-next-line no-console
+      console.error('events-search: failed to build sort controller; sort disabled', err);
     }
   }
 
