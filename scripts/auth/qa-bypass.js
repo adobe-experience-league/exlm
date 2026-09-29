@@ -7,25 +7,13 @@ const TOKEN_COOKIE = 'qa_ims_token';
 const PROFILE_COOKIE = 'qa_ims_profile';
 const EXPIRES_COOKIE = 'qa_ims_expires_in';
 
-const DEFAULT_PROFILE = {
-  authId: 'qa-authid',
-  userId: 'qa-userid',
-  email: 'qa@example.com',
-  first_name: 'QA',
-  last_name: 'Automation',
-  displayName: 'QA Automation',
-  account_type: 'type3',
-  ownerOrg: '',
-  session: '',
-};
-
 function parseProfileCookie() {
   const raw = getCookie(PROFILE_COOKIE);
-  if (!raw) return { ...DEFAULT_PROFILE };
+  if (!raw) return {};
   try {
-    return { ...DEFAULT_PROFILE, ...JSON.parse(raw) };
+    return JSON.parse(raw);
   } catch {
-    return { ...DEFAULT_PROFILE };
+    return {};
   }
 }
 
