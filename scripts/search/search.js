@@ -16,6 +16,7 @@ const communityProducts = [
   'Campaign',
   'Campaign Classic v7 & Campaign v8',
   'Campaign Standard',
+  'CX Enterprise Coworker',
   'Developer',
   'Experience Manager',
   'Commerce',
