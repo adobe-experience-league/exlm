@@ -97,7 +97,13 @@ export async function decorateBookmark(bookmarkButton) {
 export async function bookmark(event) {
   const button = event.target.closest('button');
   const isBookmarked = button.dataset.bookmarked === 'true';
-  await toggleBookmark();
+  try {
+    await toggleBookmark();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error updating playlist bookmark:', error);
+    return false;
+  }
   const placeholders = await placeholdersPromise;
 
   if (isBookmarked) {

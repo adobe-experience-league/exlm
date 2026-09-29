@@ -168,7 +168,12 @@ export default async function initSignupFlowHandler(signUpFlowConfigDate, modalR
         modalSeen: true,
       });
 
-      await defaultProfileClient.updateProfile('interactions', updatedInteractions, true);
+      try {
+        await defaultProfileClient.updateProfile('interactions', updatedInteractions, true);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error updating modalSeen interaction:', error);
+      }
     }
   } else {
     // eslint-disable-next-line no-lonely-if

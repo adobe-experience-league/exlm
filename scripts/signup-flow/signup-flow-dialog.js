@@ -307,7 +307,12 @@ export default class SignupFlowDialog {
     const modelInteraction = await defaultProfileClient.getLatestInteraction(SIGNUP_INTERACTION_NAME);
     if (!modelInteraction) {
       this.interactions = [{ event: SIGNUP_INTERACTION_NAME, timestamp: new Date().toISOString(), modalSeen: true }];
-      await defaultProfileClient.updateProfile('interactions', this.interactions);
+      try {
+        await defaultProfileClient.updateProfile('interactions', this.interactions);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error saving modalSeen interaction:', error);
+      }
     }
   }
 
