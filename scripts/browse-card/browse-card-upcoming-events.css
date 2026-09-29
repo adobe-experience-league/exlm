@@ -276,6 +276,22 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     justify-content: center;
   }
 
+  /*
+   * Fallback file is 572×396. A stretched list row is taller than that, so contain
+   * letterboxed the mark and the time line showed in the gap. Match the file and
+   * keep the date in the right column.
+   */
+  :is(.upcoming-event-v2.list, .events-search .events-search-results-body.list)
+    .browse-card.upcoming-event-card
+    .browse-card-figure.has-fallback-image,
+  :is(.upcoming-event-v2.list, .events-search .events-search-results-body.list)
+    .browse-card.event-upcoming-event-card
+    .browse-card-figure.has-fallback-image {
+    align-self: center;
+    aspect-ratio: 572 / 396;
+    height: auto;
+  }
+
   :is(.upcoming-event-v2.list, .events-search .events-search-results-body.list)
     .browse-card.upcoming-event-card
     .browse-card-figure
@@ -331,6 +347,17 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     letter-spacing: 0;
     color: var(--spectrum-gray-50);
     opacity: 1;
+  }
+
+  :is(.upcoming-event-v2.list, .events-search .events-search-results-body.list)
+    .browse-card.upcoming-event-card
+    .browse-card-figure.has-fallback-image
+    .card-figure-date,
+  :is(.upcoming-event-v2.list, .events-search .events-search-results-body.list)
+    .browse-card.event-upcoming-event-card
+    .browse-card-figure.has-fallback-image
+    .card-figure-date {
+    display: none;
   }
 
   :is(.upcoming-event-v2.list, .events-search .events-search-results-body.list)
