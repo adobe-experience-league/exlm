@@ -23,7 +23,7 @@ export default function decorate(block) {
     }
 
     if (hasTitle) {
-      let headingTag = titleRow.querySelector('h1, h2, h3, h4, h5, h6');
+      let headingTag = titleRow.querySelector('h2');
       if (!headingTag) {
         headingTag = document.createElement('h2');
         headingTag.textContent = titleRow.textContent;
