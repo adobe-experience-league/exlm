@@ -9698,6 +9698,14 @@
         "label": "Description",
         "description": "Sets the description for the grid cards."
       },
+       {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "classes",
+        "value": "",
+        "label": "Disable Eyebrow, Title, and Description",
+        "description": "Disables the eyebrow, title, and description for the grid cards."
+      },
       {
         "component": "multiselect",
         "name": "classes",
@@ -9822,16 +9830,16 @@
                 "value": "cta-text-black"
               }
             ]
-          },
-          {
-            "name": "Display Preferences",
-            "children": [
-              {
-                "name": "Disable Eyebrow, Title, and Description",
-                "value": "no-header"
-              }
-            ]
           }
+          // {
+          //   "name": "Display Preferences",
+          //   "children": [
+          //     {
+          //       "name": "Disable Eyebrow, Title, and Description",
+          //       "value": "no-header"
+          //     }
+          //   ]
+          // }
         ]
       }
     ]
