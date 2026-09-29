@@ -65,7 +65,7 @@ export default function decorate(block) {
       cardHeading = document.createElement('h2');
       cardHeading.textContent = titleCell.textContent;
     }
-    cardHeading.classList.add('grid-card-title', 'h1');
+    cardHeading.classList.add('grid-card-title', cardHeading.tagName.toLowerCase());
 
     cardRow.textContent = '';
 
