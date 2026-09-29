@@ -134,6 +134,27 @@ function buildHeadlessFacet(module, searchEngine, field, defaults = {}, override
   });
 }
 
+/**
+ * Builds a standalone sort controller + criterion builders for events-search that need
+ * their own conditional sort options instead of the generic dropdown.
+ * @param {Object} searchEngine - the headless search engine (e.g. window.headlessSearchEngine).
+ */
+export async function buildEventsSearchSortController(searchEngine) {
+  // eslint-disable-next-line import/no-relative-packages
+  const module = await import('./libs/browser/headless.esm.js');
+  const controller = module.buildSort(searchEngine, {
+    initialState: { criterion: module.buildRelevanceSortCriterion() },
+  });
+  return {
+    controller,
+    criteria: {
+      relevance: () => module.buildRelevanceSortCriterion(),
+      date: (direction) => module.buildDateSortCriterion(direction),
+      field: (field, direction) => module.buildFieldSortCriterion(field, direction),
+    },
+  };
+}
+
 export default async function initiateCoveoHeadlessSearch({
   handleSearchEngineSubscription,
   renderPageNumbers,
@@ -143,6 +164,7 @@ export default async function initiateCoveoHeadlessSearch({
   facetOverrides = {},
   hideAqFromUrl = false,
   baseAdvancedQuery = '',
+  skipGenericSortDropdown = false,
 }) {
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
@@ -386,106 +408,110 @@ export default async function initiateCoveoHeadlessSearch({
         headlessSearchBox.subscribe(handleSearchBoxSubscription);
 
         /* TODO: Sorting segments to be extracted & restructured and incorporate them into the browse filters, as this file serves coveo engine methods */
-        const sortLabel = {
-          relevance: placeholders.filterSortRelevanceLabel,
-          popularity: placeholders.filerSortPopularityLabel,
-          newest: placeholders.filterSortNewestLabel,
-          oldest: placeholders.filterSortOldestLabel,
-        };
-        const sortWrapperEl = document.createElement('div');
-        sortWrapperEl.classList.add('sort-dropdown-content');
+        // events-search opts out (skipGenericSortDropdown) to render its own conditional sort dropdown.
+        // Only `if` guard added, the block below is the unchanged generic dropdown.
+        if (!skipGenericSortDropdown) {
+          const sortLabel = {
+            relevance: placeholders.filterSortRelevanceLabel,
+            popularity: placeholders.filerSortPopularityLabel,
+            newest: placeholders.filterSortNewestLabel,
+            oldest: placeholders.filterSortOldestLabel,
+          };
+          const sortWrapperEl = document.createElement('div');
+          sortWrapperEl.classList.add('sort-dropdown-content');
 
-        const sortingOptions = [
-          { label: sortLabel.relevance, sortCriteria: 'relevancy' },
-          { label: sortLabel.popularity, sortCriteria: 'el_view_count descending' },
-          { label: sortLabel.newest, sortCriteria: 'descending' },
-          { label: sortLabel.oldest, sortCriteria: 'ascending' },
-        ];
+          const sortingOptions = [
+            { label: sortLabel.relevance, sortCriteria: 'relevancy' },
+            { label: sortLabel.popularity, sortCriteria: 'el_view_count descending' },
+            { label: sortLabel.newest, sortCriteria: 'descending' },
+            { label: sortLabel.oldest, sortCriteria: 'ascending' },
+          ];
 
-        sortingOptions.forEach((option) => {
-          const aElement = document.createElement('a');
-          aElement.setAttribute('href', '/');
-          aElement.setAttribute('data-sort-criteria', option.sortCriteria);
-          aElement.setAttribute('data-sort-caption', option.label);
-          aElement.textContent = option.label;
-          sortWrapperEl.appendChild(aElement);
-        });
-
-        const sortContainer = document.querySelector('.sort-container');
-        if (sortContainer) {
-          sortContainer.appendChild(sortWrapperEl);
-          const sortDropdown = sortContainer.querySelector('.sort-dropdown-content');
-          const sortAnchors = sortDropdown.querySelectorAll('a');
-          const sortBtn = sortContainer.querySelector('.sort-drop-btn');
-          let criteria = [[]];
-          const isSortValueInHash = hashURL.split('&');
-          // eslint-disable-next-line
-          isSortValueInHash.forEach((item) => {
-            if (item.includes('sortCriteria')) {
-              const scValue = decodeURIComponent(item.split('=')[1]);
-              // eslint-disable-next-line
-              switch (scValue) {
-                case 'relevancy':
-                  setSortButtonCaption(sortBtn, sortLabel.relevance);
-                  criteria = [[sortLabel.relevance, module.buildRelevanceSortCriterion()]];
-                  break;
-                case '@el_view_count descending':
-                  setSortButtonCaption(sortBtn, sortLabel.popularity);
-                  criteria = [[sortLabel.popularity, module.buildFieldSortCriterion('el_view_count', 'descending')]];
-                  break;
-                case 'date descending':
-                  setSortButtonCaption(sortBtn, sortLabel.newest);
-                  criteria = [[sortLabel.newest, module.buildDateSortCriterion('descending')]];
-                  break;
-                case 'date ascending':
-                  setSortButtonCaption(sortBtn, sortLabel.oldest);
-                  criteria = [[sortLabel.oldest, module.buildDateSortCriterion('ascending')]];
-                  break;
-              }
-            }
+          sortingOptions.forEach((option) => {
+            const aElement = document.createElement('a');
+            aElement.setAttribute('href', '/');
+            aElement.setAttribute('data-sort-criteria', option.sortCriteria);
+            aElement.setAttribute('data-sort-caption', option.label);
+            aElement.textContent = option.label;
+            sortWrapperEl.appendChild(aElement);
           });
 
-          const initialCriterion = criteria[0][1];
-
-          const headlessBuildSort = module.buildSort(headlessSearchEngine, {
-            initialState: { criterion: initialCriterion },
-          });
-
-          if (sortAnchors.length > 0) {
-            sortAnchors.forEach((anchor) => {
-              const anchorCaption = anchor.getAttribute('data-sort-caption');
-              const anchorSortCriteria = anchor.getAttribute('data-sort-criteria');
-
-              if (anchorCaption === getSortButtonCaption(sortBtn)) {
-                anchor.classList.add('selected');
-              }
-
-              anchor.addEventListener('click', (e) => {
-                e.preventDefault();
-                sortAnchors.forEach((anch) => {
-                  anch.classList.remove('selected');
-                });
-                anchor.classList.add('selected');
-                sortDropdown.classList.remove('show');
-                setSortButtonCaption(sortBtn, anchorCaption);
-
+          const sortContainer = document.querySelector('.sort-container');
+          if (sortContainer) {
+            sortContainer.appendChild(sortWrapperEl);
+            const sortDropdown = sortContainer.querySelector('.sort-dropdown-content');
+            const sortAnchors = sortDropdown.querySelectorAll('a');
+            const sortBtn = sortContainer.querySelector('.sort-drop-btn');
+            let criteria = [[]];
+            const isSortValueInHash = hashURL.split('&');
+            // eslint-disable-next-line
+            isSortValueInHash.forEach((item) => {
+              if (item.includes('sortCriteria')) {
+                const scValue = decodeURIComponent(item.split('=')[1]);
                 // eslint-disable-next-line
-                switch (anchorSortCriteria) {
+                switch (scValue) {
                   case 'relevancy':
-                    headlessBuildSort.sortBy(module.buildRelevanceSortCriterion());
+                    setSortButtonCaption(sortBtn, sortLabel.relevance);
+                    criteria = [[sortLabel.relevance, module.buildRelevanceSortCriterion()]];
                     break;
-                  case 'el_view_count descending':
-                    headlessBuildSort.sortBy(module.buildFieldSortCriterion('el_view_count', 'descending'));
+                  case '@el_view_count descending':
+                    setSortButtonCaption(sortBtn, sortLabel.popularity);
+                    criteria = [[sortLabel.popularity, module.buildFieldSortCriterion('el_view_count', 'descending')]];
                     break;
-                  case 'descending':
-                    headlessBuildSort.sortBy(module.buildDateSortCriterion('descending'));
+                  case 'date descending':
+                    setSortButtonCaption(sortBtn, sortLabel.newest);
+                    criteria = [[sortLabel.newest, module.buildDateSortCriterion('descending')]];
                     break;
-                  case 'ascending':
-                    headlessBuildSort.sortBy(module.buildDateSortCriterion('ascending'));
+                  case 'date ascending':
+                    setSortButtonCaption(sortBtn, sortLabel.oldest);
+                    criteria = [[sortLabel.oldest, module.buildDateSortCriterion('ascending')]];
                     break;
                 }
-              });
+              }
             });
+
+            const initialCriterion = criteria[0][1];
+
+            const headlessBuildSort = module.buildSort(headlessSearchEngine, {
+              initialState: { criterion: initialCriterion },
+            });
+
+            if (sortAnchors.length > 0) {
+              sortAnchors.forEach((anchor) => {
+                const anchorCaption = anchor.getAttribute('data-sort-caption');
+                const anchorSortCriteria = anchor.getAttribute('data-sort-criteria');
+
+                if (anchorCaption === getSortButtonCaption(sortBtn)) {
+                  anchor.classList.add('selected');
+                }
+
+                anchor.addEventListener('click', (e) => {
+                  e.preventDefault();
+                  sortAnchors.forEach((anch) => {
+                    anch.classList.remove('selected');
+                  });
+                  anchor.classList.add('selected');
+                  sortDropdown.classList.remove('show');
+                  setSortButtonCaption(sortBtn, anchorCaption);
+
+                  // eslint-disable-next-line
+                  switch (anchorSortCriteria) {
+                    case 'relevancy':
+                      headlessBuildSort.sortBy(module.buildRelevanceSortCriterion());
+                      break;
+                    case 'el_view_count descending':
+                      headlessBuildSort.sortBy(module.buildFieldSortCriterion('el_view_count', 'descending'));
+                      break;
+                    case 'descending':
+                      headlessBuildSort.sortBy(module.buildDateSortCriterion('descending'));
+                      break;
+                    case 'ascending':
+                      headlessBuildSort.sortBy(module.buildDateSortCriterion('ascending'));
+                      break;
+                  }
+                });
+              });
+            }
           }
         }
         const readyEvent = new CustomEvent(COVEO_SEARCH_CUSTOM_EVENTS.READY);
