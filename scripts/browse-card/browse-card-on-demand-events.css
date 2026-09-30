@@ -42,6 +42,10 @@
  * on hover, which magnifies the low-resolution source image and makes it look
  * blurry/cropped. Keep the thumbnail scaled down inside the laptop on hover.
  */
+.browse-card.event-on-demand-event-card .browse-card-figure > img {
+  object-fit: fill;
+}
+
 .browse-card.event-on-demand-event-card .browse-card-figure:hover .laptop-container {
   transform: none;
 }
@@ -49,6 +53,7 @@
 .browse-card.event-on-demand-event-card .browse-card-figure:hover > img {
   width: var(--browse-card-figure-img-width);
   height: var(--browse-card-figure-img-height);
+  object-fit: fill;
 }
 
 /* Specific styles for fallback images only */
