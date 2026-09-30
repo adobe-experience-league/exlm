@@ -277,9 +277,9 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
   }
 
   /*
-   * Fallback file is 572×396. A stretched list row is taller than that, so contain
-   * letterboxed the mark and the time line showed in the gap. Match the file and
-   * keep the date in the right column.
+   * Fallback file is 572×396. Stretch the figure with the row so the column matches
+   * the other list thumbs and the badge stays at the top. Contain keeps the file
+   * ratio inside that column. The date stays in the right column.
    */
   :is(.upcoming-event-v2.list, .events-search .events-search-results-body.list)
     .browse-card.upcoming-event-card
@@ -287,7 +287,6 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
   :is(.upcoming-event-v2.list, .events-search .events-search-results-body.list)
     .browse-card.event-upcoming-event-card
     .browse-card-figure.has-fallback-image {
-    align-self: center;
     aspect-ratio: 572 / 396;
     height: auto;
   }
