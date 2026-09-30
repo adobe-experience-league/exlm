@@ -643,7 +643,7 @@ export function createVideoMilestoneTracker(video, thresholds = [25, 50, 75], st
     thresholds.forEach((threshold) => {
       if (percent >= threshold && !fired.has(threshold)) {
         fired.add(threshold);
-        pushVideoEvent({ ...video, milestone: `${threshold}%` }, 'videoMilestone');
+        pushVideoEvent({ ...video, milestone: threshold }, 'videoMilestone');
       }
     });
   };
