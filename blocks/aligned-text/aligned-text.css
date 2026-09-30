@@ -1,7 +1,3 @@
-main .aligned-text {
-  margin: 24px 0;
-}
-
 main .aligned-text.text-align-left {
   text-align: left;
 }
