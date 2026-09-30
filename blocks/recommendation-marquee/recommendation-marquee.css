@@ -123,6 +123,11 @@
   top: 5px;
 }
 
+/* Course card with no description: reserve space for the absolute status row to prevent overlap */
+.recommendation-marquee.block .browse-card.course-card .browse-card-content:not(:has(.browse-card-description-text)) {
+  padding-bottom: 48px;
+}
+
 .recommendation-marquee.block .browse-cards-block-content .card-wrapper .browse-card .browse-card-content {
   border-radius: 16px 16px 0 0;
   order: 1;
