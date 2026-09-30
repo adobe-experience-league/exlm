@@ -1,4 +1,3 @@
-// DRAFT — QA IMS bypass. Cookie-only, for PoC / approval testing.
 // Not for production sign-off without security review.
 
 import { getCookie } from '../utils/cookie-utils.js';
