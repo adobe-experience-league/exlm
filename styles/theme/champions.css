@@ -39,7 +39,7 @@ body.champions .grid-cards.minimal .grid-card-container {
   gap: var(--spectrum-spacing-600);
 }
 
-body.champions :is(.grid-cards-title, .grid-card-title) {
+body.champions :is(.grid-cards-header .grid-cards-title, .grid-card-title) {
   font-weight: var(--font-weight-bold);
 }
 
