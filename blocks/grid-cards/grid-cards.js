@@ -28,7 +28,7 @@ export default function decorate(block) {
         headingTag = document.createElement('h2');
         headingTag.textContent = titleRow.textContent;
       }
-      headingTag.classList.add('grid-cards-title', 'h1');
+      headingTag.classList.add('grid-cards-title');
       titleRow.replaceWith(headingTag);
       headerDiv.appendChild(headingTag);
     } else {
@@ -65,7 +65,7 @@ export default function decorate(block) {
       cardHeading = document.createElement('h3');
       cardHeading.textContent = titleCell.textContent;
     }
-    cardHeading.classList.add('grid-card-title', 'h2');
+    cardHeading.classList.add('grid-card-title');
 
     cardRow.textContent = '';
 
