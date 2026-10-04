@@ -1,0 +1,19 @@
+services:
+  playwright:
+    build:
+      context: ../..
+      dockerfile: tools/visual-tests/Dockerfile
+    environment:
+      - DOCKER=true
+      - BASE_URL=http://localhost:3000
+    volumes:
+      # Mount snapshot dirs so Docker-generated baselines persist on the host
+      - ./blocks:/app/tools/visual-tests/blocks
+      # Mount test-results so failure screenshots are accessible on the host
+      - ./test-results:/app/tools/visual-tests/test-results
+      # Mount the HTML report so it survives after --rm deletes the container
+      - ./playwright-report:/app/tools/visual-tests/playwright-report
+    extra_hosts:
+      # Allow container to reach the host's aem dev server (Linux compatibility)
+      - 'host.docker.internal:host-gateway'
+    command: npx playwright test --config=tools/visual-tests/playwright.config.ts
