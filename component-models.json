@@ -9653,16 +9653,15 @@
         "valueType": "string",
         "name": "title",
         "value": "",
-        "label": "Heading",
+        "label": "Title",
         "description": "Sets the main title of the grid cards."
       },
       {
         "component": "select",
         "valueType": "string",
         "name": "titleType",
-        "value": "h2",
+        "value": "h3",
         "label": "Title Type",
-        "hidden": true,
         "options": [
           {
             "name": "H1",
@@ -9844,7 +9843,7 @@
         "valueType": "string",
         "name": "cardTitle",
         "value": "",
-        "label": "Heading",
+        "label": "Title",
         "description": "Sets the title for the card. Please limit the content to 2 lines."
       },
       {
@@ -9853,7 +9852,6 @@
         "name": "cardTitleType",
         "value": "h3",
         "label": "Card Title Type",
-        "hidden": true,
         "options": [
           {
             "name": "H1",
