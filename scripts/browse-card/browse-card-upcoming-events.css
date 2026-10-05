@@ -64,21 +64,24 @@
   .browse-card.event-upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after {
     content: '';
     position: absolute;
-    left: 50%;
     height: 8px;
-    width: 90%;
-    transform: translateX(-50%) scaleY(0.5);
+    transform: scaleY(0.5);
     background-color: var(--non-spectrum-adobe-red);
   }
 
+  /* Offset is intentional: top bar flush left, bottom bar flush right. */
   .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::before,
   .browse-card.event-upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::before {
     top: -5px;
+    left: 0;
+    width: 90%;
   }
 
   .browse-card.upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after,
   .browse-card.event-upcoming-event-card .browse-card-figure .event-series-banner-no-speakers::after {
     bottom: -5px;
+    right: 0;
+    width: 90%;
   }
 
   .browse-card.upcoming-event-card .location-type,
