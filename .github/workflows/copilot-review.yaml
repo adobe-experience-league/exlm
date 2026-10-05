@@ -3,6 +3,10 @@ name: Copilot PR Review
 on:
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
+  # Temporary pre-merge smoke test; remove this trigger before deploying to main.
+  pull_request:
+    branches: [copilot-base]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: read
@@ -14,7 +18,12 @@ concurrency:
 
 jobs:
   review:
-    if: github.repository == 'adobe-experience-league/exlm' && !github.event.pull_request.draft
+    if: >-
+      github.repository == 'adobe-experience-league/exlm' &&
+      !github.event.pull_request.draft &&
+      (github.event_name == 'pull_request_target' ||
+       (github.event.pull_request.head.repo.full_name == github.repository &&
+        github.base_ref == 'copilot-base' && github.head_ref == 'copilot-test'))
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

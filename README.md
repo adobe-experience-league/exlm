@@ -56,9 +56,9 @@ To enable it:
    Copilot CLI.
 4. Merge the workflow into the default branch, then open or update a PR.
 
-To test before merging into the default branch, push a temporary base branch containing the workflow. Create a
-second branch from it with a small, nonempty change and open a non-draft PR targeting the temporary base branch.
-The workflow runs from the PR's base branch; adding it only to the PR's head branch does not activate it.
+For pre-merge testing, this test branch temporarily enables `pull_request` only for the same-repository
+`copilot-test` PR targeting `copilot-base`. Remove that temporary trigger and its job condition before deployment.
+On GitHub Enterprise Cloud, `pull_request_target` runs the workflow from the default branch, not the PR's base branch.
 
 The workflow uses `pull_request_target` so secrets are available for fork PRs. It never checks out PR code, installs
 PR dependencies, or enables Copilot tools. Only the API-provided diff is sent for review; a separate step posts the
