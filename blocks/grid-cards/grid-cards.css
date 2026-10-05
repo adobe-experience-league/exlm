@@ -34,7 +34,7 @@
 }
 
 .grid-card-title {
-  font-size: var(--exlm-font-size-h2);
+  font-size: var(--spectrum-font-size-400);
   margin: 0;
   margin-bottom: var(--spectrum-spacing-100);
   align-self: stretch;

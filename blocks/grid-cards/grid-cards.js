@@ -23,12 +23,12 @@ export default function decorate(block) {
     }
 
     if (hasTitle) {
-      let headingTag = titleRow.querySelector('h2');
+      let headingTag = titleRow.querySelector('h1, h2, h3, h4, h5, h6');
       if (!headingTag) {
         headingTag = document.createElement('h2');
         headingTag.textContent = titleRow.textContent;
       }
-      headingTag.classList.add('grid-cards-title');
+      headingTag.classList.add('grid-cards-title', headingTag.tagName.toLowerCase());
       titleRow.replaceWith(headingTag);
       headerDiv.appendChild(headingTag);
     } else {
@@ -60,12 +60,12 @@ export default function decorate(block) {
     cardRow.dataset.cardPosition = index + 1;
     const [titleCell, descCell, imageCell, ctaCell] = cardRow.children;
     const picture = imageCell?.querySelector('picture');
-    let cardHeading = titleCell.querySelector('h3');
+    let cardHeading = titleCell.querySelector('h1, h2, h3, h4, h5, h6');
     if (!cardHeading) {
       cardHeading = document.createElement('h3');
       cardHeading.textContent = titleCell.textContent;
     }
-    cardHeading.classList.add('grid-card-title');
+    cardHeading.classList.add('grid-card-title', cardHeading.tagName.toLowerCase());
 
     cardRow.textContent = '';
 
