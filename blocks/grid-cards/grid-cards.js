@@ -60,6 +60,9 @@ export default function decorate(block) {
   const isStandard = block.classList.contains('standard');
 
   cardRows.forEach((cardRow, index) => {
+    console.log('GRID CARD ROW:', cardRow);
+    console.log('GRID CARD CLASS:', cardRow.className);
+    console.log('GRID CARD HTML:', cardRow.outerHTML);
     cardRow.classList.add('grid-card', 'glass-bg');
     cardRow.dataset.cardPosition = index + 1;
     const largeCardTitle = cardRow.classList.contains('lg-title');

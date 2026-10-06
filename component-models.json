@@ -9923,16 +9923,12 @@
       {
         "component": "select",
         "valueType": "string",
-        "name": "cardTitleSize",
-        "value": "default",
-        "label": "Card Title Size",
+        "name": "classes",
+        "value": "",
+        "label": "Style",
         "options": [
           {
-            "name": "Default",
-            "value": "default"
-          },
-          {
-            "name": "Large (45px)",
+            "name": "Large",
             "value": "lg-title"
           }
         ]
