@@ -408,6 +408,29 @@ async function fetchCourseData(selectedFilters = [], selectedLevels = [], state 
   state.facetsResponse = facetsResponse;
   populateValidFacets(facetsResponse, state);
 
+  const hasModuleCount = (card) =>
+    card.el_course_module_count !== undefined &&
+    card.el_course_module_count !== null &&
+    card.el_course_module_count !== '';
+
+  if (data?.some((card) => !hasModuleCount(card) && card.viewLink)) {
+    const { getCurrentCourseMeta } = await import('../../scripts/courses/course-utils.js');
+    return Promise.all(
+      data.map(async (card) => {
+        if (hasModuleCount(card) || !card.viewLink) return card;
+        try {
+          const courseMeta = await getCurrentCourseMeta(card.viewLink);
+          if (Array.isArray(courseMeta?.modules)) {
+            return { ...card, el_course_module_count: String(courseMeta.modules.length) };
+          }
+        } catch {
+          return card;
+        }
+        return card;
+      }),
+    );
+  }
+
   return data;
 }
 
