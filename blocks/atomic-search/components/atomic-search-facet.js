@@ -3,6 +3,8 @@ import { htmlToElement } from '../../../scripts/scripts.js';
 import {
   CUSTOM_EVENTS,
   debounce,
+  beginFacetHistoryBatch,
+  finishFacetHistoryBatch,
   isUserClick,
   waitForChildElement,
   hasContentTypeFilter,
@@ -71,19 +73,38 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     }
     if (!facet.dataset.evented) {
       facet.dataset.evented = 'true';
+      let historyBatch;
       const clickHandler = (e, onlyOptionClicked = false) => {
         const userClickAction = isUserClick(e);
         if (!userClickAction || facet.dataset.filterclick === 'true') {
           return;
         }
 
-        const shimmer = atomicElement.shadowRoot.querySelector('.facet-shimmer');
-        shimmer?.part.add('show-shimmer');
-        const filtersChanged = syncFacetParentChildFilters({ facet, atomicElement, onlyOptionClicked });
-        if (!filtersChanged && shimmer) {
-          shimmer.part.remove('show-shimmer');
+        try {
+          const shimmer = atomicElement.shadowRoot.querySelector('.facet-shimmer');
+          shimmer?.part.add('show-shimmer');
+          const filtersChanged = syncFacetParentChildFilters({ facet, atomicElement, onlyOptionClicked });
+          if (!filtersChanged && shimmer) {
+            shimmer.part.remove('show-shimmer');
+          }
+        } finally {
+          finishFacetHistoryBatch(historyBatch);
         }
       };
+
+      // Capture the real click before Atomic writes the parent's URL state.
+      facet.addEventListener(
+        'click',
+        (e) => {
+          if (!isUserClick(e) || facet.dataset.filterclick === 'true') return;
+          const parentKey = facet.dataset.facetRawValue || facet.dataset.contenttype;
+          const hasChildren = Array.from(facet.parentElement.children).some((row) => row.dataset.parent === parentKey);
+          if (facet.dataset.childfacet === 'true' || hasChildren) {
+            historyBatch = beginFacetHistoryBatch(searchInterface.engine, atomicElement.getAttribute('field'));
+          }
+        },
+        { capture: true },
+      );
 
       const debouncedHandler = debounce(100, clickHandler);
       facet.addEventListener('click', debouncedHandler);
@@ -518,14 +539,25 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     initAtomicFacetUI();
   };
 
-  const filters = getFiltersFromUrl();
-  Object.keys(filters).forEach((key) => {
-    if (filters[key]?.length === 1) {
-      const [value] = filters[key];
-      if (value && isParentOnlyFacetSegment(value)) {
-        autoApplyChildFacet[key] = [value];
+  const updateAutoApplyChildFacet = () => {
+    Object.keys(autoApplyChildFacet).forEach((key) => delete autoApplyChildFacet[key]);
+    const filters = getFiltersFromUrl();
+    Object.keys(filters).forEach((key) => {
+      if (filters[key]?.length === 1) {
+        const [value] = filters[key];
+        if (value && isParentOnlyFacetSegment(value)) {
+          autoApplyChildFacet[key] = [value];
+        }
       }
+    });
+  };
+
+  window.addEventListener('hashchange', () => {
+    updateAutoApplyChildFacet();
+    if (Object.keys(autoApplyChildFacet).length > 0) {
+      document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onAtomicFacetUIReady, { once: true });
     }
   });
+  updateAutoApplyChildFacet();
   waitForChildElement(baseElement, onAtomicFacetUIReady);
 }
