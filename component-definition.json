@@ -1374,7 +1374,8 @@
                     "fileReference": "/content/dam/exlm/content-at-scale.png",
                     "fileReferenceAlt": "Card image",
                     "cta_linkText": "Learn More",
-                    "cta_link": "http://experienceleague.adobe.com/"
+                    "cta_link": "http://experienceleague.adobe.com/",
+                    "classes": ["lg-title"]
                   },
                   "item2": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
@@ -1386,7 +1387,8 @@
                     "fileReference": "/content/dam/exlm/content-at-scale.png",
                     "fileReferenceAlt": "Card image",
                     "cta_linkText": "Learn More",
-                    "cta_link": "http://experienceleague.adobe.com/"
+                    "cta_link": "http://experienceleague.adobe.com/",
+                    "classes": ["lg-title"]
                   },
                   "item3": {
                     "sling:resourceType": "core/franklin/components/block/v1/block/item",
@@ -1398,7 +1400,8 @@
                     "fileReference": "/content/dam/exlm/content-at-scale.png",
                     "fileReferenceAlt": "Card image",
                     "cta_linkText": "Learn More",
-                    "cta_link": "http://experienceleague.adobe.com/"
+                    "cta_link": "http://experienceleague.adobe.com/",
+                    "classes": ["lg-title"]
                   }
                 }
               }
