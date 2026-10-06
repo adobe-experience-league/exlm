@@ -143,6 +143,7 @@ export default async function initiateCoveoHeadlessSearch({
   facetOverrides = {},
   hideAqFromUrl = false,
   baseAdvancedQuery = '',
+  tabId = '',
 }) {
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
@@ -158,6 +159,15 @@ export default async function initiateCoveoHeadlessSearch({
           contextObject: null,
           advancedQueryRule: baseAdvancedQuery,
         });
+
+        // Tab id is Coveo's originLevel2. Empty expression adds no extra cq.
+        // Only events-search passes tabId; browse-filters must stay on the default label.
+        if (tabId) {
+          module.buildTab(headlessSearchEngine, {
+            initialState: { isActive: true },
+            options: { id: tabId, expression: '' },
+          });
+        }
 
         const headlessSearchBox = module.buildSearchBox(headlessSearchEngine, {
           options: {
@@ -232,15 +242,17 @@ export default async function initiateCoveoHeadlessSearch({
           );
         }
 
-        // Used by events-search to keep its static aq out of the URL.
+        // Events search keeps its static aq, and a fixed Tab id, out of the address bar.
         function visibleHash() {
-          const rawFragment = urlManager.state.fragment;
-          const visibleFragment = hideAqFromUrl
-            ? rawFragment
+          const hiddenKeys = [];
+          if (hideAqFromUrl) hiddenKeys.push('aq');
+          if (tabId) hiddenKeys.push('tab');
+          const visibleFragment = hiddenKeys.length
+            ? urlManager.state.fragment
                 .split('&')
-                .filter((param) => param && !param.startsWith('aq='))
+                .filter((param) => param && !hiddenKeys.some((key) => param.startsWith(`${key}=`)))
                 .join('&')
-            : rawFragment;
+            : urlManager.state.fragment;
           return visibleFragment ? `#${visibleFragment}` : window.location.pathname + window.location.search;
         }
 

@@ -18,6 +18,9 @@ import {
 } from '../browse-filters/browse-filter-utils.js';
 import { pushEventsFilterSearchEvent, pushEventsClearFiltersEvent } from '../../scripts/analytics/lib-analytics.js';
 
+/** Coveo Tab id. Becomes originLevel2 on Events Hub search requests only. */
+const EVENTS_HUB_COVEO_TAB = 'Events Hub';
+
 const FACET_CONTROLLER_MAP = {
   el_product: 'headlessProductFacet',
   el_event_series: 'headlessEventSeriesFacet',
@@ -1374,6 +1377,7 @@ async function initHeadlessSearch(block, groups, placeholders) {
     facetOverrides: getEventsSearchHeadlessFacetOverrides(),
     hideAqFromUrl: true,
     baseAdvancedQuery: BASE_COVEO_ADVANCED_QUERY_EVENTS,
+    tabId: EVENTS_HUB_COVEO_TAB,
     renderSearchQuerySummary: () => {
       const totalCount = window.headlessQuerySummary?.state?.total || 0;
       updateResultsCount(block, totalCount, placeholders);

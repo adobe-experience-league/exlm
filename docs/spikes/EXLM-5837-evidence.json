@@ -1,0 +1,23 @@
+{
+  "package": "@coveo/headless",
+  "version": "2.42.0",
+  "ranAt": "2026-09-25T13:54:19.929Z",
+  "mapping": "Search API body field `tab` is set from configuration.analytics.originLevel2. updateActiveTab writes the Tab id into that field. An empty tab expression is omitted from cq.",
+  "eventsHub": {
+    "label": "events-hub-with-tab",
+    "searchHub": "Experience League Learning Hub",
+    "originLevel2": "Events Hub",
+    "activeTabId": "Events Hub",
+    "activeTabExpression": "",
+    "urlFragment": "tab=Events%20Hub"
+  },
+  "browse": {
+    "label": "browse-without-tab",
+    "searchHub": "Experience League Learning Hub",
+    "originLevel2": "default",
+    "activeTabId": null,
+    "activeTabExpression": null,
+    "urlFragment": ""
+  },
+  "pass": true
+}
