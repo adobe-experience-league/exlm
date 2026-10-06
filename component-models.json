@@ -9664,10 +9664,6 @@
         "label": "Title Type",
         "options": [
           {
-            "name": "H1",
-            "value": "h1"
-          },
-          {
             "name": "H2",
             "value": "h2"
           },
@@ -9830,6 +9826,15 @@
                 "value": "no-header"
               }
             ]
+          },
+          {
+            "name": "Component Title Size",
+            "children": [
+              {
+                "name": "Component Title Size: Large (45px)",
+                "value": "lg-title"
+              }
+            ]
           }
         ]
       }
@@ -9853,10 +9858,6 @@
         "value": "h3",
         "label": "Card Title Type",
         "options": [
-          {
-            "name": "H1",
-            "value": "h1"
-          },
           {
             "name": "H2",
             "value": "h2"
