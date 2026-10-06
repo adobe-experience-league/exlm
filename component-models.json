@@ -9921,22 +9921,19 @@
         "description": "What link to open when clicking the button."
       },
       {
-        "component": "multiselect",
-        "name": "classes",
-        "value": "",
-        "label": "Style",
-        "description": "Sets the style variant",
+        "component": "select",
         "valueType": "string",
-        "maxSize": 1,
+        "name": "cardTitleSize",
+        "value": "default",
+        "label": "Card Title Size",
         "options": [
           {
-            "name": "Component Title Size",
-            "children": [
-              {
-                "name": "Component Title Size: Large (45px)",
-                "value": "lg-title"
-              }
-            ]
+            "name": "Default",
+            "value": "default"
+          },
+          {
+            "name": "Large (45px)",
+            "value": "lg-title"
           }
         ]
       }
