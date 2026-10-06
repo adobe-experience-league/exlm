@@ -9919,6 +9919,26 @@
         "value": "",
         "label": "CTA Link",
         "description": "What link to open when clicking the button."
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "value": "",
+        "label": "Style",
+        "description": "Sets the style variant",
+        "valueType": "string",
+        "maxSize": 1,
+        "options": [
+          {
+            "name": "Component Title Size",
+            "children": [
+              {
+                "name": "Component Title Size: Large (45px)",
+                "value": "lg-title"
+              }
+            ]
+          }
+        ]
       }
     ]
   },

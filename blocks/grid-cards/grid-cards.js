@@ -62,6 +62,7 @@ export default function decorate(block) {
   cardRows.forEach((cardRow, index) => {
     cardRow.classList.add('grid-card', 'glass-bg');
     cardRow.dataset.cardPosition = index + 1;
+    const largeCardTitle = cardRow.classList.contains('lg-title');
     const [titleCell, descCell, imageCell, ctaCell] = cardRow.children;
     const picture = imageCell?.querySelector('picture');
     let cardHeading = titleCell.querySelector('h1, h2, h3, h4, h5, h6');
@@ -70,6 +71,10 @@ export default function decorate(block) {
       cardHeading.textContent = titleCell.textContent;
     }
     cardHeading.classList.add('grid-card-title', cardHeading.tagName.toLowerCase());
+
+    if (largeCardTitle) {
+      cardHeading.classList.add('lg-title');
+    }
 
     cardRow.textContent = '';
 
