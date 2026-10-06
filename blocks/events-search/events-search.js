@@ -255,7 +255,7 @@ const EVENTS_SEARCH_UPCOMING_VALUE = CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY
 const EVENTS_SEARCH_ON_DEMAND_VALUE = CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY;
 /**
  * Per-block sort state: { selected: 'relevance'|'date'|'popularity', hasShownControl, sortController,
- * criteria, lastAppliedKey, placeholders, urlRestorePending, urlRestoreGraceRemaining }.
+ * criteria, lastAppliedKey, placeholders, urlRestorePending, urlRestoreGraceRemaining, lastHasQuery }.
  */
 const eventsSearchSortState = new WeakMap();
 /** Per-block filter state: { tags: [], pendingRemovals: Set, isClearing: boolean }. */
@@ -353,6 +353,7 @@ function getEventsSearchSortState(block) {
       placeholders: {},
       urlRestorePending: false,
       urlRestoreGraceRemaining: null,
+      lastHasQuery: false,
     };
     eventsSearchSortState.set(block, state);
   }
@@ -386,7 +387,7 @@ function getAvailableEventsSearchSortOptions({ hasQuery, onDemandOnly, mixed }) 
 /** Returns the localized dropdown/caption label for a sort option, falling back to English defaults. */
 function getEventsSearchSortOptionLabel(option, placeholders) {
   if (option === 'date') return placeholders.eventSearchFilterSortDateLabel || 'Date';
-  if (option === 'popularity') return placeholders.filerSortPopularityLabel || 'Popularity';
+  if (option === 'popularity') return placeholders.filterSortPopularityLabel || 'Popularity';
   return placeholders.filterSortRelevanceLabel || 'Relevance';
 }
 
@@ -415,7 +416,7 @@ function groupUpcomingThenOnDemand(cards) {
   return [...upcoming, ...onDemand];
 }
 
-/** Coveo sort criterion per option/context: Popularity→el_view_count, Upcoming Date→el_event_start_time, On-demand Date→date; mixed Date stays relevance (re-grouped client-side). */
+/** Coveo sort criterion per option/context: Popularity→el_view_count, Upcoming Date-el_event_start_time, On-demand Date-date; mixed Date stays relevance (re-grouped client-side). */
 function resolveEventsSearchSortCriterion(state, option, context) {
   const { criteria } = state;
   if (option === 'popularity') return criteria.field('el_view_count', 'descending');
@@ -434,6 +435,20 @@ function applyEventsSearchSort(block, option, context) {
   if (state.lastAppliedKey === appliedKey) return;
   state.lastAppliedKey = appliedKey;
   state.sortController.sortBy(resolveEventsSearchSortCriterion(state, option, context));
+}
+
+/** Resets sort back to its default so Clear removes the sort along with filters and query. */
+function resetEventsSearchSort(block, { dispatch = true } = {}) {
+  const state = getEventsSearchSortState(block);
+  state.selected = 'relevance';
+  state.hasShownControl = false;
+  state.lastAppliedKey = null;
+  state.urlRestorePending = false;
+  state.urlRestoreGraceRemaining = null;
+  state.lastHasQuery = false;
+  if (dispatch && state.sortController && state.criteria) {
+    state.sortController.sortBy(state.criteria.relevance());
+  }
 }
 
 /** Renders the sort dropdown anchors and the button caption for the given options and selection. */
@@ -518,6 +533,9 @@ function updateEventsSearchSortUI(block, placeholders) {
   state.placeholders = placeholders;
   const context = getEventsSearchSortContext(block);
   const options = getAvailableEventsSearchSortOptions(context);
+  // Capture the no-query, query transition before the early return.
+  const queryJustEntered = context.hasQuery && !state.lastHasQuery;
+  state.lastHasQuery = context.hasQuery;
 
   if (!options.length) {
     sortContainer.setAttribute('hidden', '');
@@ -535,6 +553,9 @@ function updateEventsSearchSortUI(block, placeholders) {
       if (!restored) state.selected = options.includes('date') ? 'date' : options[0];
     }
     // else: still waiting for the facet checkboxes to catch up to the URL — leave selected as-is.
+  } else if (queryJustEntered) {
+    // Entering a query defaults the sort to Relevance
+    state.selected = 'relevance';
   } else if (!options.includes(state.selected)) {
     state.selected = options.includes('date') ? 'date' : options[0];
   }
@@ -1540,16 +1561,15 @@ function bindClearFilters(block, groups) {
       window.headlessPager.selectPage(1);
     }
 
-    const hashBeforeClear = window.location.hash;
-    const [currentSearchString] = hashBeforeClear.match(/\bq=([^&#]*)/) || [];
-    if (currentSearchString) {
-      let updatedHash = hashBeforeClear.replace(currentSearchString, '');
-      if (updatedHash.slice(1).startsWith('&')) {
-        updatedHash = `#${updatedHash.slice(2)}`;
-      }
-      window.location.hash = updatedHash;
-    }
-    if (window.location.hash === hashBeforeClear) {
+    // Drop the whole hash at once
+    const hadHash = Boolean(window.location.hash) && window.location.hash !== '#';
+
+    // Clear resets the sort back to default.
+    resetEventsSearchSort(block, { dispatch: !hadHash });
+
+    if (hadHash) {
+      window.location.hash = '';
+    } else {
       executeSearch();
     }
     renderActiveFilterCallouts(block);
