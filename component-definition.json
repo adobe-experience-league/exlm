@@ -1757,7 +1757,7 @@
                 "template": {
                   "name": "Aligned Text",
                   "model": "aligned-text",
-                  "filter": "text",
+                  "filter": "aligned-text",
                   "classes": ["left"],
                   "text": "<p>Placeholder text</p>"
                 }
