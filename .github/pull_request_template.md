@@ -33,8 +33,8 @@ $/en/search?martech=off
 ## AI Review Notes
 
 <!--
-  Optional — fill this in to guide the automated Claude review.
-  Each bullet tells Claude to accept the decision and not flag it.
+  Optional — provide context for human reviewers and manually invoked AI tools.
+  Automated Copilot CLI reviews inspect only the diff and do not read this section.
   Examples:
     - Using inline style on `.hero` because the value comes from a content attribute and cannot be a class.
     - Skipping IntersectionObserver on this block — the third-party script must load eagerly per vendor requirement.

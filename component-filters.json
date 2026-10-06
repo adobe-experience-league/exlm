@@ -497,6 +497,32 @@
     "components": ["richtext"]
   },
   {
+    "id": "aligned-text",
+    "rte": {
+      "toolbar": {
+        "format": ["bold", "italic"],
+        "blocks": ["paragraph", "h2", "h3", "h4", "h5", "h6", "code_block", "blockquote"],
+        "alignment": [],
+        "indentation": [],
+        "sr_script": ["superscript", "subscript"],
+        "list": ["bullet_list", "ordered_list"],
+        "insert": ["link"],
+        "advanced": [],
+        "extensions": [],
+        "editor": ["removeformat"]
+      },
+      "actions": {
+        "bullet_list": {
+          "wrapInParagraphs": true
+        },
+        "ordered_list": {
+          "wrapInParagraphs": true
+        }
+      }
+    },
+    "components": ["richtext"]
+  },
+  {
     "id": "cards",
     "components": ["card"]
   },
