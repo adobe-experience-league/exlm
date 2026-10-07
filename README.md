@@ -48,13 +48,15 @@ It uses trusted review skills, project guidance, and prior PR discussions; it do
 - **Setup:** Add the Actions secret `COPILOT_REVIEW_PAT`: a personal fine-grained PAT with **Copilot Requests:
   Read-only**, owned by a user with Copilot access. Merge workflow changes into the default branch to activate them.
 - **Re-review:** Users with write, maintain, or admin access can post exactly `/copilot-review` as a new PR
-  conversation comment. Use **Reply** on inline findings; prior replies inform subsequent reviews. Disagreements
+  conversation comment; authorization completes before entering the review queue. Use **Reply** on inline findings;
+  prior replies inform subsequent reviews. Disagreements
   appear in the review's **Discussion follow-up** section. Existing conversation comments are not converted.
 - **Actions policy:** Before **November 2, 2026**, an administrator must configure **Settings > Actions > Policies**
   to explicitly allow `pull_request_target` for this workflow in affected public repositories.
   See [GitHub's policy notice](https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target#default-policy-for-pull_request_target).
 - **Limits:** Reviews consume the token owner's Copilot allowance. Large diffs or discussion context fail explicitly;
-  findings are diff-only, not merge approvals, and semantic deduplication is not guaranteed.
+  findings are diff-only, not merge approvals, and semantic deduplication is not guaranteed. Exact current-revision
+  Copilot findings are suppressed; unrelated threads and distinct findings on the same line are preserved.
 
 ## Local SignedIn Development
 

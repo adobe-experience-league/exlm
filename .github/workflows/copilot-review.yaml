@@ -12,17 +12,17 @@ permissions:
   pull-requests: write
 
 jobs:
-  review:
+  validate-request:
     if: >-
       github.repository == 'adobe-experience-league/exlm' &&
       ((github.event_name == 'pull_request_target' && !github.event.pull_request.draft) ||
        (github.event_name == 'issue_comment' && github.event.issue.pull_request &&
         github.event.comment.body == '/copilot-review' && github.event.comment.user.type != 'Bot'))
-    concurrency:
-      group: copilot-review-${{ github.event.pull_request.number || github.event.issue.number }}
-      cancel-in-progress: ${{ github.event_name == 'pull_request_target' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 2
+    outputs:
+      head-sha: ${{ steps.request.outputs.head-sha }}
+      base-sha: ${{ steps.request.outputs.base-sha }}
     steps:
       - name: Validate review request
         id: request
@@ -55,6 +55,15 @@ jobs:
             core.setOutput('head-sha', pr.head.sha);
             core.setOutput('base-sha', pr.base.sha);
 
+  review:
+    needs: validate-request
+    if: needs.validate-request.result == 'success'
+    concurrency:
+      group: copilot-review-${{ github.event.pull_request.number || github.event.issue.number }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request_target' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
       # Never check out or execute PR code: this job receives secrets for fork PRs.
       - uses: actions/setup-node@v4
         with:
@@ -83,8 +92,8 @@ jobs:
       - name: Prepare diff-only review
         uses: actions/github-script@v7
         env:
-          REVIEW_HEAD_SHA: ${{ steps.request.outputs.head-sha }}
-          REVIEW_BASE_SHA: ${{ steps.request.outputs.base-sha }}
+          REVIEW_HEAD_SHA: ${{ needs.validate-request.outputs.head-sha }}
+          REVIEW_BASE_SHA: ${{ needs.validate-request.outputs.base-sha }}
         with:
           script: |
             const fs = require('node:fs');
@@ -206,8 +215,8 @@ jobs:
       - name: Submit PR review
         uses: actions/github-script@v7
         env:
-          REVIEW_HEAD_SHA: ${{ steps.request.outputs.head-sha }}
-          REVIEW_BASE_SHA: ${{ steps.request.outputs.base-sha }}
+          REVIEW_HEAD_SHA: ${{ needs.validate-request.outputs.head-sha }}
+          REVIEW_BASE_SHA: ${{ needs.validate-request.outputs.base-sha }}
         with:
           script: |
             const fs = require('node:fs');
@@ -267,18 +276,24 @@ jobs:
               if (!diffLines.get(comment.path)?.has(comment.line)) {
                 throw new Error(`Inline finding is outside the current diff: ${comment.path}:${comment.line}`);
               }
-              const key = JSON.stringify([comment.path, comment.line]);
+              const normalizedBody = comment.body.trim().replace(/\r\n/g, '\n');
+              const key = JSON.stringify([comment.path, comment.line, 'RIGHT', normalizedBody]);
               if (seen.has(key)) {
                 throw new Error(`Duplicate inline finding: ${comment.path}:${comment.line}`);
               }
               seen.add(key);
-              if (existingComments.some((existing) => existing.path === comment.path && existing.line === comment.line)) {
+              if (existingComments.some((existing) =>
+                existing.path === comment.path && existing.line === comment.line &&
+                existing.side === 'RIGHT' && existing.commit_id === pr.head.sha &&
+                existing.user?.login === 'github-actions[bot]' && !existing.in_reply_to_id &&
+                typeof existing.body === 'string' &&
+                existing.body.trim().replace(/\r\n/g, '\n') === normalizedBody)) {
                 skipped += 1;
               } else {
-                comments.push({ path: comment.path, line: comment.line, side: 'RIGHT', body: comment.body.trim() });
+                comments.push({ path: comment.path, line: comment.line, side: 'RIGHT', body: normalizedBody });
               }
             });
-            const deduplicationNote = skipped ? `\n\nSkipped ${skipped} findings whose current lines already have review threads.` : '';
+            const deduplicationNote = skipped ? `\n\nSkipped ${skipped} exact duplicate Copilot findings on the current revision.` : '';
             core.info(`Submitting ${comments.length} inline findings; skipped ${skipped} existing threads.`);
             const body = `## Copilot CLI review\n\nCommit: ${pr.head.sha}\n\n${review.summary.trim()}${deduplicationNote}\n\n---\nAutomated diff-only review; not a merge approval.`;
             if (body.length > 65000) {
