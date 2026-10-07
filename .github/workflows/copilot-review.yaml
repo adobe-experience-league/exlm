@@ -1,8 +1,6 @@
 name: Copilot PR Review
 
 on:
-  push:
-    branches: [copilot-rev-1007]
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
   issue_comment:
@@ -19,10 +17,9 @@ jobs:
       github.repository == 'adobe-experience-league/exlm' &&
       ((github.event_name == 'pull_request_target' && !github.event.pull_request.draft) ||
        (github.event_name == 'issue_comment' && github.event.issue.pull_request &&
-        github.event.comment.body == '/copilot-review' && github.event.comment.user.type != 'Bot') ||
-       (github.event_name == 'push' && github.ref == 'refs/heads/copilot-rev-1007'))
+        github.event.comment.body == '/copilot-review' && github.event.comment.user.type != 'Bot'))
     concurrency:
-      group: copilot-review-${{ github.event_name == 'push' && 'smoke-' || '' }}${{ github.event.pull_request.number || github.event.issue.number || 2967 }}
+      group: copilot-review-${{ github.event.pull_request.number || github.event.issue.number }}
       cancel-in-progress: ${{ github.event_name == 'pull_request_target' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -32,7 +29,6 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const pullNumber = context.eventName === 'push' ? 2967 : context.issue.number;
             if (context.eventName === 'issue_comment') {
               if (!context.payload.issue.pull_request ||
                   context.payload.comment.body.trim() !== '/copilot-review' ||
@@ -49,7 +45,7 @@ jobs:
             }
             const { data: pr } = await github.rest.pulls.get({
               ...context.repo,
-              pull_number: pullNumber,
+              pull_number: context.issue.number,
             });
             const requested = context.payload.pull_request;
             if (pr.state !== 'open' || pr.draft ||
@@ -93,8 +89,7 @@ jobs:
           script: |
             const fs = require('node:fs');
             const path = require('node:path');
-            const pullNumber = context.eventName === 'push' ? 2967 : context.issue.number;
-            const params = { ...context.repo, pull_number: pullNumber };
+            const params = { ...context.repo, pull_number: context.issue.number };
             const { data: pr } = await github.rest.pulls.get(params);
             if (pr.state !== 'open' || pr.draft ||
                 pr.head.sha !== process.env.REVIEW_HEAD_SHA ||
@@ -116,7 +111,7 @@ jobs:
               github.paginate(github.rest.pulls.listReviewComments, { ...params, per_page: 100 }),
               github.paginate(github.rest.issues.listComments, {
                 ...context.repo,
-                issue_number: pullNumber,
+                issue_number: context.issue.number,
                 per_page: 100,
               }),
             ]);
@@ -217,10 +212,9 @@ jobs:
           script: |
             const fs = require('node:fs');
             const path = require('node:path');
-            const pullNumber = context.eventName === 'push' ? 2967 : context.issue.number;
             const { data: pr } = await github.rest.pulls.get({
               ...context.repo,
-              pull_number: pullNumber,
+              pull_number: context.issue.number,
             });
             if (pr.state !== 'open' || pr.draft ||
                 pr.head.sha !== process.env.REVIEW_HEAD_SHA ||
@@ -239,7 +233,7 @@ jobs:
             if (review.comments.length > 50) {
               throw new Error('Copilot review exceeds the limit of 50 inline comments.');
             }
-            const params = { ...context.repo, pull_number: pullNumber, per_page: 100 };
+            const params = { ...context.repo, pull_number: context.issue.number, per_page: 100 };
             const [files, existingComments] = await Promise.all([
               github.paginate(github.rest.pulls.listFiles, params),
               github.paginate(github.rest.pulls.listReviewComments, params),
@@ -292,7 +286,7 @@ jobs:
             }
             const { data: current } = await github.rest.pulls.get({
               ...context.repo,
-              pull_number: pullNumber,
+              pull_number: context.issue.number,
             });
             if (current.state !== 'open' || current.draft ||
                 current.head.sha !== pr.head.sha || current.base.sha !== pr.base.sha) {
@@ -300,7 +294,7 @@ jobs:
             }
             await github.rest.pulls.createReview({
               ...context.repo,
-              pull_number: pullNumber,
+              pull_number: context.issue.number,
               commit_id: pr.head.sha,
               event: 'COMMENT',
               body,
