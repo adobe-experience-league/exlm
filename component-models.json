@@ -9700,7 +9700,7 @@
         "label": "Style",
         "description": "Sets the style variant and the shared CTA style applied to all card buttons in this block.",
         "valueType": "string",
-        "maxSize": 6,
+        "maxSize": 8,
         "options": [
           {
             "name": "Card Variant",
