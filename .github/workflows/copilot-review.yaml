@@ -22,7 +22,7 @@ jobs:
         github.event.comment.body == '/copilot-review' && github.event.comment.user.type != 'Bot') ||
        (github.event_name == 'push' && github.ref == 'refs/heads/copilot-rev-1007'))
     concurrency:
-      group: copilot-review-${{ github.event.pull_request.number || github.event.issue.number || 2967 }}
+      group: copilot-review-${{ github.event_name == 'push' && 'smoke-' || '' }}${{ github.event.pull_request.number || github.event.issue.number || 2967 }}
       cancel-in-progress: ${{ github.event_name == 'pull_request_target' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
