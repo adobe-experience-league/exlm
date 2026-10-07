@@ -29,6 +29,8 @@
     margin: 0;
     padding-top: 8px;
     padding-bottom: 50px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .docs main .section.rail .rail-toggle,

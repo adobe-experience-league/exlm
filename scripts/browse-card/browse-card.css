@@ -308,13 +308,18 @@
 }
 
 .browse-card .browse-card-figure > img {
+  /* Scaled-down (in-laptop) thumbnail size. Single source of truth so the
+     on-demand hover override can reuse it instead of restating literals. */
+  --browse-card-figure-img-width: 180px;
+  --browse-card-figure-img-height: 116px;
+
   position: absolute;
   top: 50%;
   right: 50%;
   transform: translate(50%, -50%);
   margin-top: -2px;
-  width: 180px;
-  height: 116px;
+  width: var(--browse-card-figure-img-width);
+  height: var(--browse-card-figure-img-height);
   border-bottom: 1px solid var(--spectrum-gray-200);
   object-fit: cover;
   z-index: 8;
@@ -774,4 +779,21 @@
 /* CSS Specificity */
 .browse-card .browse-card-figure:hover .play-button .icon {
   display: none;
+}
+
+/*
+ * EXLM-5810: Disable the hover animation on on-demand event tiles. Keep the thumbnail scaled down inside the laptop on hover.
+ */
+.browse-card.event-card .browse-card-figure > img {
+  object-fit: fill;
+}
+
+.browse-card.event-card .browse-card-figure:hover .laptop-container {
+  transform: none;
+}
+
+.browse-card.event-card .browse-card-figure:hover > img {
+  width: var(--browse-card-figure-img-width);
+  height: var(--browse-card-figure-img-height);
+  object-fit: fill;
 }

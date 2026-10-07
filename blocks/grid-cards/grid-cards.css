@@ -115,10 +115,6 @@
 }
 
 /* Minimal card styling */
-.grid-cards.minimal .grid-cards-header {
-  display: none;
-}
-
 .grid-cards.minimal .grid-card-container {
   gap: var(--spectrum-spacing-400);
   justify-items: center;

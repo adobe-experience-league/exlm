@@ -39,6 +39,35 @@ The action is the entry point for all HTML delivered to https://aem.live service
 | `npm run format`  | Format code                            |
 | `npm run lint`    | Run JS/CSS linters                     |
 
+## Copilot PR review
+
+[Copilot PR Review](.github/workflows/copilot-review.yaml) automatically posts a diff-only review on new, updated,
+reopened, and ready-for-review PRs in the canonical repository, including fork PRs. Draft PRs are skipped. It replaces
+the previous Claude PR review workflow.
+
+To enable it:
+
+1. On [GitHub's fine-grained PAT settings](https://github.com/settings/personal-access-tokens/new), create a token with
+   your **personal account** as the resource owner, not the enterprise or organization.
+2. Under **Account permissions**, enable **Copilot Requests: Read-only**. Repository permissions are not needed for
+   this token. Classic PATs (`ghp_...`) and the Actions `GITHUB_TOKEN` cannot authenticate Copilot CLI.
+3. Save the token as the repository Actions secret **`COPILOT_REVIEW_PAT`** under **Settings > Secrets and variables >
+   Actions**. The token owner needs an active Copilot entitlement, and enterprise/organization policy must allow
+   Copilot CLI.
+4. Merge the workflow into the default branch, then open or update a PR.
+
+On GitHub Enterprise Cloud, `pull_request_target` runs the workflow from the default branch, not the PR's base or
+head branch, and makes secrets available for fork PRs. It never checks out PR code, installs PR dependencies, or
+enables Copilot tools. Only the API-provided diff is sent for review; a separate step posts the summary using the
+workflow's `GITHUB_TOKEN`. Do not add PR checkout or execution to this privileged workflow.
+
+Reviews consume the token owner's Copilot usage allowance, including reviews of fork PRs. Diffs over 60 KB or PRs
+with more than 300 changed files fail explicitly and need manual review. Findings are advisory, not merge approvals;
+no tests or full-file analysis are performed. Each completed run posts a new summary comment. Rotate the secret
+before the PAT expires.
+
+See [GitHub's Copilot CLI authentication documentation](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/authenticate-copilot-cli).
+
 ## Local SignedIn Development
 
 Use this only if you need sign-in to work locally for development purposes.

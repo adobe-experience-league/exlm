@@ -250,6 +250,14 @@ const viewSwitcherInstances = new WeakMap();
 const eventsSearchLoadingUiCleanups = new WeakMap();
 /** Per-block AbortController for open sort dropdown document listeners (click-outside + Escape). */
 const eventsSearchSortDropdownOpenAbort = new WeakMap();
+/** Facet values behind the Event Type checkboxes, from the shared Coveo pipeline constants */
+const EVENTS_SEARCH_UPCOMING_VALUE = CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY;
+const EVENTS_SEARCH_ON_DEMAND_VALUE = CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY;
+/**
+ * Per-block sort state: { selected: 'relevance'|'date'|'popularity', hasShownControl, sortController,
+ * criteria, lastAppliedKey, placeholders, urlRestorePending, urlRestoreGraceRemaining, lastHasQuery }.
+ */
+const eventsSearchSortState = new WeakMap();
 /** Per-block filter state: { tags: [], pendingRemovals: Set, isClearing: boolean }. */
 const eventsSearchActiveTags = new WeakMap();
 /**
@@ -330,6 +338,231 @@ function responseMatchesEventsSearchIntent(intent) {
 function getEventsSearchSortBy(block) {
   const rawSort = (block.querySelector('.sort-drop-btn-value')?.textContent || '').trim().toLowerCase();
   return !rawSort || rawSort === 'relevance' ? 'relevancy' : rawSort;
+}
+
+/** Returns the per-block sort state, lazily creating it with defaults on first access. */
+function getEventsSearchSortState(block) {
+  let state = eventsSearchSortState.get(block);
+  if (!state) {
+    state = {
+      selected: 'relevance',
+      hasShownControl: false,
+      sortController: null,
+      criteria: null,
+      lastAppliedKey: null,
+      placeholders: {},
+      urlRestorePending: false,
+      urlRestoreGraceRemaining: null,
+      lastHasQuery: false,
+    };
+    eventsSearchSortState.set(block, state);
+  }
+  return state;
+}
+
+/** Derives the current filter/query state that determines which sort options are available. */
+function getEventsSearchSortContext(block) {
+  const checkedTypes = getCheckedFilterValues(block, 'el_contenttype');
+  const upcomingChecked = checkedTypes.includes(EVENTS_SEARCH_UPCOMING_VALUE);
+  const onDemandChecked = checkedTypes.includes(EVENTS_SEARCH_ON_DEMAND_VALUE);
+  const upcomingOnly = upcomingChecked && !onDemandChecked;
+  const onDemandOnly = onDemandChecked && !upcomingChecked;
+  const hasQuery = Boolean(String(window.headlessSearchBox?.state?.value ?? '').trim());
+  return { hasQuery, upcomingOnly, onDemandOnly, mixed: !upcomingOnly && !onDemandOnly };
+}
+
+/**
+ * Sort options available for the current state: no control with no query and no
+ * filter; Relevance only appears once a query is entered; Popularity only appears On-demand-only.
+ */
+function getAvailableEventsSearchSortOptions({ hasQuery, onDemandOnly, mixed }) {
+  if (!hasQuery && mixed) return [];
+  const options = [];
+  if (hasQuery) options.push('relevance');
+  options.push('date');
+  if (onDemandOnly) options.push('popularity');
+  return options;
+}
+
+/** Returns the localized dropdown/caption label for a sort option, falling back to English defaults. */
+function getEventsSearchSortOptionLabel(option, placeholders) {
+  if (option === 'date') return placeholders.eventSearchFilterSortDateLabel || 'Date';
+  if (option === 'popularity') return placeholders.filterSortPopularityLabel || 'Popularity';
+  return placeholders.filterSortRelevanceLabel || 'Relevance';
+}
+
+/**
+ * True when results need the fixed Upcoming-then-On-demand grouped order applied client-side
+ * (default view, and "Date" selected while mixed) rather than a single native Coveo field sort
+ * (used directly for Upcoming-only/On-demand-only/Popularity, where one field sort is sufficient).
+ */
+function shouldGroupEventsSearchResults(block) {
+  const context = getEventsSearchSortContext(block);
+  if (!context.mixed) return false;
+  const { selected } = getEventsSearchSortState(block);
+  return !context.hasQuery || selected === 'date';
+}
+
+/**
+ * Groups cards: Upcoming (soonest first), then On-demand (most recent first).
+ * Event date is at `card.event.date` (ISO for Upcoming, unix-ms for On-demand) — both parse via `new Date()`.
+ */
+function groupUpcomingThenOnDemand(cards) {
+  const isUpcoming = (card) =>
+    card?.contentType?.toLowerCase() === CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY.toLowerCase();
+  const eventDate = (card) => new Date(card?.event?.date ?? NaN);
+  const upcoming = cards.filter(isUpcoming).sort((a, b) => eventDate(a) - eventDate(b));
+  const onDemand = cards.filter((card) => !isUpcoming(card)).sort((a, b) => eventDate(b) - eventDate(a));
+  return [...upcoming, ...onDemand];
+}
+
+/** Coveo sort criterion per option/context: Popularity→el_view_count, Upcoming Date-el_event_start_time, On-demand Date-date; mixed Date stays relevance (re-grouped client-side). */
+function resolveEventsSearchSortCriterion(state, option, context) {
+  const { criteria } = state;
+  if (option === 'popularity') return criteria.field('el_view_count', 'descending');
+  if (option === 'date') {
+    if (context.upcomingOnly) return criteria.field('el_event_start_time', 'ascending');
+    if (context.onDemandOnly) return criteria.date('descending');
+  }
+  return criteria.relevance();
+}
+
+/** Dispatches the resolved Coveo sort criterion, skipping the call when the same key was already applied. */
+function applyEventsSearchSort(block, option, context) {
+  const state = getEventsSearchSortState(block);
+  if (!state.sortController) return;
+  const appliedKey = `${option}:${context.upcomingOnly}:${context.onDemandOnly}`;
+  if (state.lastAppliedKey === appliedKey) return;
+  state.lastAppliedKey = appliedKey;
+  state.sortController.sortBy(resolveEventsSearchSortCriterion(state, option, context));
+}
+
+/** Resets sort back to its default so Clear removes the sort along with filters and query. */
+function resetEventsSearchSort(block, { dispatch = true } = {}) {
+  const state = getEventsSearchSortState(block);
+  state.selected = 'relevance';
+  state.hasShownControl = false;
+  state.lastAppliedKey = null;
+  state.urlRestorePending = false;
+  state.urlRestoreGraceRemaining = null;
+  state.lastHasQuery = false;
+  if (dispatch && state.sortController && state.criteria) {
+    state.sortController.sortBy(state.criteria.relevance());
+  }
+}
+
+/** Renders the sort dropdown anchors and the button caption for the given options and selection. */
+function renderEventsSearchSortOptions(block, options, selected, placeholders) {
+  const sortContainer = block.querySelector('.sort-container');
+  const dropDownBtn = block.querySelector('.sort-drop-btn');
+  if (!sortContainer || !dropDownBtn) return;
+  let dropdown = sortContainer.querySelector('.sort-dropdown-content');
+  if (!dropdown) {
+    dropdown = createTag('div', { class: 'sort-dropdown-content' });
+    sortContainer.append(dropdown);
+    // Single delegated listener on the persistent container.
+    dropdown.addEventListener('click', (event) => {
+      const anchor = event.target.closest('a[data-sort-option]');
+      if (!anchor) return;
+      event.preventDefault();
+      // eslint-disable-next-line no-use-before-define
+      selectEventsSearchSortOption(block, anchor.dataset.sortOption);
+    });
+  }
+  dropdown.innerHTML = '';
+  options.forEach((option) => {
+    const label = getEventsSearchSortOptionLabel(option, placeholders);
+    const anchor = createTag('a', {
+      href: '#',
+      class: option === selected ? 'selected' : '',
+      'data-sort-option': option,
+    });
+    anchor.textContent = label;
+    dropdown.append(anchor);
+  });
+  const captionEl = dropDownBtn.querySelector('.sort-drop-btn-value');
+  const caption = getEventsSearchSortOptionLabel(selected, placeholders);
+  if (captionEl) captionEl.textContent = caption;
+}
+
+/** Handles a sort option click: updates state, re-renders the dropdown, and applies the criterion. */
+function selectEventsSearchSortOption(block, option) {
+  const state = getEventsSearchSortState(block);
+  state.selected = option;
+  const dropdown = block.querySelector('.sort-dropdown-content');
+  dropdown?.classList.remove('show');
+  block.querySelector('.sort-drop-btn')?.classList.remove('active');
+  const context = getEventsSearchSortContext(block);
+  renderEventsSearchSortOptions(block, getAvailableEventsSearchSortOptions(context), option, state.placeholders);
+  // sortBy() always dispatches (even switching between two options that resolve to the same
+  // relevance criterion, e.g. Relevance <-> Date while mixed), which re-fires the search engine
+  // subscription and re-renders results picking up the grouped client-side order via
+  // shouldGroupEventsSearchResults for the mixed+Date case.
+  state.lastAppliedKey = null;
+  applyEventsSearchSort(block, option, context);
+}
+
+/**
+ * Maps the URL hash `sortCriteria` back to a sort option (shared/bookmarked links, back/forward).
+ * Must run before `initiateCoveoHeadlessSearch`, whose urlManager strips `sortCriteria` from the hash.
+ */
+function parseEventsSearchSortSelectionFromHash() {
+  const sortParam = window.location.hash
+    .slice(1)
+    .split('&')
+    .find((item) => item.startsWith('sortCriteria='));
+  if (!sortParam) return null;
+  const value = decodeURIComponent(sortParam.split('=')[1] || '');
+  if (value === '@el_view_count descending') return 'popularity';
+  if (value === 'date descending' || value === '@el_event_start_time ascending') return 'date';
+  if (value === 'relevancy') return 'relevance';
+  return null;
+}
+
+/**
+ * Max search responses a URL-restored sort selection may look "invalid" before being abandoned —
+ * the facet checkbox state lags the URL hash by several commits (~6-7) on initial load.
+ */
+const EVENTS_SEARCH_URL_RESTORE_MAX_GRACE_PASSES = 20;
+
+/** Recomputes sort visibility/options from filter+query state, resets an invalid selection, and applies the criterion. */
+function updateEventsSearchSortUI(block, placeholders) {
+  const sortContainer = block.querySelector('.sort-container');
+  if (!sortContainer) return;
+  const state = getEventsSearchSortState(block);
+  state.placeholders = placeholders;
+  const context = getEventsSearchSortContext(block);
+  const options = getAvailableEventsSearchSortOptions(context);
+  // Capture the no-query, query transition before the early return.
+  const queryJustEntered = context.hasQuery && !state.lastHasQuery;
+  state.lastHasQuery = context.hasQuery;
+
+  if (!options.length) {
+    sortContainer.setAttribute('hidden', '');
+    return;
+  }
+
+  if (!state.hasShownControl) {
+    state.hasShownControl = true;
+    state.selected = options.includes('relevance') ? 'relevance' : 'date';
+  } else if (state.urlRestorePending) {
+    const restored = options.includes(state.selected);
+    state.urlRestoreGraceRemaining = (state.urlRestoreGraceRemaining ?? EVENTS_SEARCH_URL_RESTORE_MAX_GRACE_PASSES) - 1;
+    if (restored || state.urlRestoreGraceRemaining <= 0) {
+      state.urlRestorePending = false;
+      if (!restored) state.selected = options.includes('date') ? 'date' : options[0];
+    }
+    // else: still waiting for the facet checkboxes to catch up to the URL — leave selected as-is.
+  } else if (queryJustEntered) {
+    // Entering a query defaults the sort to Relevance
+    state.selected = 'relevance';
+  } else if (!options.includes(state.selected)) {
+    state.selected = options.includes('date') ? 'date' : options[0];
+  }
+
+  sortContainer.removeAttribute('hidden');
+  renderEventsSearchSortOptions(block, options, state.selected, placeholders);
+  applyEventsSearchSort(block, state.selected, context);
 }
 
 /**
@@ -438,7 +671,7 @@ function createLayout(block, placeholders) {
         ></div>
         <div class="events-search-controls">
           <div class="events-search-view-switcher"></div>
-          <div class="sort-container">
+          <div class="sort-container" hidden>
             <button type="button" class="sort-drop-btn">
               <span class="sort-drop-btn-prefix">${placeholders.eventSearchFilterSortLabel || 'Sort:'}</span>
               <span class="sort-drop-btn-value">${placeholders.filterSortRelevanceLabel || 'Relevance'}</span>
@@ -1069,9 +1302,13 @@ async function renderResults(block, results = [], searchResponseId = '') {
     return model;
   });
 
+  const orderedCards = shouldGroupEventsSearchResults(block)
+    ? groupUpcomingThenOnDemand(normalizedCards)
+    : normalizedCards;
+
   grid.innerHTML = '';
   await Promise.all(
-    normalizedCards.map(async (cardData) => {
+    orderedCards.map(async (cardData) => {
       const cardWrapper = createTag('div', { class: 'events-search-card-item' });
       grid.append(cardWrapper);
       await buildCard(cardWrapper, cardData);
@@ -1126,6 +1363,7 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
   try {
     syncDynamicFacetGroupsFromHeadless(block, groups);
     syncFilterUIFromHeadlessState(block, groups);
+    updateEventsSearchSortUI(block, placeholders);
     const search = window.headlessSearchEngine.state.search || {};
     const { results = [], searchResponseId = '', response = {} } = search;
     fireEventsFilterSearchAnalytics(block, searchResponseId);
@@ -1323,16 +1561,15 @@ function bindClearFilters(block, groups) {
       window.headlessPager.selectPage(1);
     }
 
-    const hashBeforeClear = window.location.hash;
-    const [currentSearchString] = hashBeforeClear.match(/\bq=([^&#]*)/) || [];
-    if (currentSearchString) {
-      let updatedHash = hashBeforeClear.replace(currentSearchString, '');
-      if (updatedHash.slice(1).startsWith('&')) {
-        updatedHash = `#${updatedHash.slice(2)}`;
-      }
-      window.location.hash = updatedHash;
-    }
-    if (window.location.hash === hashBeforeClear) {
+    // Drop the whole hash at once
+    const hadHash = Boolean(window.location.hash) && window.location.hash !== '#';
+
+    // Clear resets the sort back to default.
+    resetEventsSearchSort(block, { dispatch: !hadHash });
+
+    if (hadHash) {
+      window.location.hash = '';
+    } else {
       executeSearch();
     }
     renderActiveFilterCallouts(block);
@@ -1365,7 +1602,10 @@ function bindMobileFilterToggle(block) {
 }
 
 async function initHeadlessSearch(block, groups, placeholders) {
-  const { default: initiateCoveoHeadlessSearch } = await import('../../scripts/coveo-headless/index.js');
+  const urlSortSelection = parseEventsSearchSortSelectionFromHash();
+  const { default: initiateCoveoHeadlessSearch, buildEventsSearchSortController } = await import(
+    '../../scripts/coveo-headless/index.js'
+  );
   const renderPageNumbers = () => renderEventsSearchPageNumbers(block, placeholders);
   await initiateCoveoHeadlessSearch({
     handleSearchEngineSubscription: () => handleSearchEngineSubscription(block, groups, placeholders),
@@ -1374,6 +1614,7 @@ async function initHeadlessSearch(block, groups, placeholders) {
     facetOverrides: getEventsSearchHeadlessFacetOverrides(),
     hideAqFromUrl: true,
     baseAdvancedQuery: BASE_COVEO_ADVANCED_QUERY_EVENTS,
+    skipGenericSortDropdown: true,
     renderSearchQuerySummary: () => {
       const totalCount = window.headlessQuerySummary?.state?.total || 0;
       updateResultsCount(block, totalCount, placeholders);
@@ -1388,6 +1629,27 @@ async function initHeadlessSearch(block, groups, placeholders) {
       updateClearFiltersButtonState(block);
     },
   });
+
+  if (window.headlessSearchEngine) {
+    try {
+      const { controller, criteria } = await buildEventsSearchSortController(window.headlessSearchEngine);
+      const sortState = getEventsSearchSortState(block);
+      sortState.sortController = controller;
+      sortState.criteria = criteria;
+      // Seed lastAppliedKey to the controller's initial relevance criterion so the first UI pass doesn't re-dispatch a redundant sortBy.
+      const initialContext = getEventsSearchSortContext(block);
+      sortState.lastAppliedKey = `relevance:${initialContext.upcomingOnly}:${initialContext.onDemandOnly}`;
+      if (urlSortSelection) {
+        sortState.selected = urlSortSelection;
+        sortState.hasShownControl = true;
+        sortState.urlRestorePending = true;
+      }
+    } catch (err) {
+      // Sort controller failed to build ,leave sortController null so the control stays hidden; search still works.
+      // eslint-disable-next-line no-console
+      console.error('events-search: failed to build sort controller; sort disabled', err);
+    }
+  }
 
   bindEventsSearchLoadingUI(block);
   bindEventsSearchPagination(block);

@@ -409,6 +409,7 @@ export async function pushLinkClick(e) {
   const navigation = nearestNavItem?.classList.contains('nav-item-leaf')
     ? nearestNavItem.parentElement?.closest('.nav-item:not(.nav-item-leaf)')
     : nearestNavItem;
+  const getPageSolution = () => document.querySelector('meta[name="solution"]')?.content?.split(',')[0].trim() || '';
 
   let linkLocation = 'unidentified';
   if (e.target.closest('.rail-right') || e.target.closest('.mini-toc-wrapper')) {
@@ -439,7 +440,9 @@ export async function pushLinkClick(e) {
   let navigationSolution = '';
 
   if (navigation) {
-    navigationSolution = navigation.querySelector('.nav-tab-heading')?.textContent.trim() || '';
+    navigationSolution = navigation.classList.contains('nav-item-root')
+      ? getPageSolution()
+      : navigation.querySelector('.nav-tab-heading')?.textContent.trim() || '';
 
     const titleElement = nearestNavItem?.querySelector(':scope > a') || e.target.closest('a');
 
@@ -483,10 +486,7 @@ export async function pushLinkClick(e) {
   // For navigation-bar clicks, use the solution associated with the
   // navigation item. For other links, retain the existing page solution.
   if (!isCourseStartCTA) {
-    linkObj.solution =
-      navigation && navigationSolution
-        ? navigationSolution
-        : document.querySelector('meta[name="solution"]')?.content?.split(',')[0].trim() || '';
+    linkObj.solution = navigation && navigationSolution ? navigationSolution : getPageSolution();
   }
 
   window.adobeDataLayer.push({
@@ -571,7 +571,7 @@ export function handleComponentClick(e) {
  * @param {string} event
  */
 function pushVideoEventToDataLayer(video, event = 'videoPlay') {
-  const { title, description, url } = video;
+  const { title, description, url, milestone } = video;
 
   const videoDuration = video.duration || '';
   const videoSolution = video.solution || solution || '';
@@ -589,6 +589,7 @@ function pushVideoEventToDataLayer(video, event = 'videoPlay') {
       duration: videoDuration,
       solution: videoSolution,
       fullSolution: videoFullSolution,
+      ...(milestone !== undefined && { milestone }),
     },
     web: {
       webPageDetails: {
@@ -611,6 +612,41 @@ function pushVideoEventToDataLayer(video, event = 'videoPlay') {
  */
 export function pushVideoEvent(video, event = 'videoPlay') {
   queueAnalyticsEvent(pushVideoEventToDataLayer, video, event);
+}
+
+/**
+ * Creates a tracker that pushes a single `videoMilestone` event to the data layer
+ * once per percentage threshold as playback position crosses it, with the crossed
+ * threshold on `video.milestone`. MPC has no native milestone/quartile message, so
+ * thresholds are derived from the `tick` message's currentTime against a known
+ * total duration.
+ *
+ * `startTime` seeds already-crossed thresholds as fired so resuming a
+ * partially-watched video doesn't re-report milestones reached in an earlier session.
+ * @param {Video} video
+ * @param {number[]} [thresholds]
+ * @param {number} [startTime]
+ * @returns {(currentTime: number) => void}
+ */
+export function createVideoMilestoneTracker(video, thresholds = [25, 50, 75], startTime = 0) {
+  const totalDuration = Number(video.duration);
+  const fired = new Set();
+  if (totalDuration) {
+    const startPercent = (startTime / totalDuration) * 100;
+    thresholds.forEach((threshold) => {
+      if (startPercent >= threshold) fired.add(threshold);
+    });
+  }
+  return (currentTime) => {
+    if (!totalDuration || fired.size === thresholds.length) return;
+    const percent = (currentTime / totalDuration) * 100;
+    thresholds.forEach((threshold) => {
+      if (percent >= threshold && !fired.has(threshold)) {
+        fired.add(threshold);
+        pushVideoEvent({ ...video, milestone: threshold }, 'videoMilestone');
+      }
+    });
+  };
 }
 
 export function assetInteractionModel(id, assetInteractionType, options) {
@@ -778,6 +814,79 @@ export async function pushQuizEvent(eventName) {
   } catch (e) {
     // Log error but don't throw to prevent breaking the user experience
     console.error(`Error pushing quiz event ${eventName}:`, e);
+  }
+}
+
+/**
+ * Pushes a profile-update "request sent" event to the data layer (courses only).
+ * @param {string|number} message - Description/code of the profile update request being sent
+ */
+export async function pushProfileUpdateRequestSentEvent(message) {
+  if (!courses) return;
+
+  try {
+    const { courses: coursesInfo, module } = await getEventInfo('quiz');
+
+    window.adobeDataLayer = window.adobeDataLayer || [];
+    window.adobeDataLayer.push({
+      event: 'ProfileUpdateRequestSent',
+      profileAPI: {
+        requestMessage: message,
+        timeStamp: new Date().toISOString(),
+      },
+      courses: coursesInfo,
+      module,
+    });
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error pushing profile update request-sent event:', e);
+  }
+}
+
+/**
+ * Pushes a profile-update "response received" event to the data layer (courses only).
+ * @param {string|number} message - HTTP status code on success, or failure status/reason
+ */
+export async function pushProfileUpdateRequestReceivedEvent(message) {
+  if (!courses) return;
+
+  try {
+    const { courses: coursesInfo, module } = await getEventInfo('quiz');
+
+    window.adobeDataLayer = window.adobeDataLayer || [];
+    window.adobeDataLayer.push({
+      event: 'ProfileUpdateRequestReceived',
+      profileAPI: {
+        requestMessage: message,
+        timeStamp: new Date().toISOString(),
+      },
+      courses: coursesInfo,
+      module,
+    });
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error pushing profile update response-received event:', e);
+  }
+}
+
+/**
+ * Pushes a Next-button-enabled impression event to the data layer (courses only).
+ */
+export async function pushNextButtonImpressionEvent() {
+  if (!courses) return;
+
+  try {
+    const { courses: coursesInfo, module } = await getEventInfo('quiz');
+
+    window.adobeDataLayer = window.adobeDataLayer || [];
+    window.adobeDataLayer.push({
+      event: 'nextButtonImpression',
+      courses: coursesInfo,
+      module,
+    });
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error pushing next button impression event:', e);
   }
 }
 

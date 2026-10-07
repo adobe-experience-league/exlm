@@ -164,19 +164,6 @@
   margin-inline: auto;
 }
 
-body:has(main.rail-left-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
-  grid-template-columns: 0 4fr 1fr;
-}
-
-/* `auto` (not docs `0`) so Hide stays in the right track when the TOC rail is closed. */
-body:has(main.rail-right-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
-  grid-template-columns: 1fr 4fr auto;
-}
-
-body:has(main.rail-left-closed.rail-right-closed) #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
-  grid-template-columns: 0 1fr auto;
-}
-
 .bc-bottom-ask-bar-brand {
   display: flex;
   align-items: center;
@@ -190,10 +177,6 @@ body:has(main.rail-left-closed.rail-right-closed) #bc-bottom-ask-bar[data-expand
   color: var(--text-color);
 }
 
-body:has(main.rail-left-closed) .bc-bottom-ask-bar-brand {
-  visibility: hidden;
-}
-
 .bc-bottom-ask-bar-brand .icon img {
   width: 24px;
   height: 24px;
@@ -205,12 +188,15 @@ body:has(main.rail-left-closed) .bc-bottom-ask-bar-brand {
   color: var(--text-color);
 }
 
-/* Center track = docs article column. Send stays inside the pill. */
+/* Center track = docs article column (full 3fr span). Inset so input + send are not flush. */
 .bc-bottom-ask-bar-input-group {
+  box-sizing: border-box;
   min-width: 0;
   width: 100%;
   display: flex;
   align-items: center;
+  gap: var(--spectrum-spacing-300);
+  padding-inline: var(--spectrum-spacing-400);
 }
 
 .bc-bottom-ask-bar-input-wrap {
@@ -218,13 +204,12 @@ body:has(main.rail-left-closed) .bc-bottom-ask-bar-brand {
   max-width: none;
   display: flex;
   align-items: center;
-  gap: 8px;
   box-sizing: border-box;
   height: 48px;
   min-height: 48px;
   max-height: 48px;
   min-width: 0;
-  padding: 4px 8px 4px 24px;
+  padding: 0 16px 0 24px;
   border: 1px solid #d4d4d4;
   border-radius: 100px;
   background-color: var(--background-color);
@@ -273,8 +258,8 @@ body:has(main.rail-left-closed) .bc-bottom-ask-bar-brand {
 }
 
 .bc-bottom-ask-bar-send {
+  flex-shrink: 0;
   display: flex;
-  flex: 0 0 40px;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
@@ -290,7 +275,7 @@ body:has(main.rail-left-closed) .bc-bottom-ask-bar-brand {
   cursor: pointer;
   line-height: 0;
   text-align: center;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .bc-bottom-ask-bar-send .icon {
@@ -995,6 +980,31 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
 
 #brand-concierge-mount .submit-button svg path {
   fill: white !important;
+}
+
+/*
+ * BC's tooltip lib positions the submit button's tooltip via inline left/top, clamped to stay
+ * inside .input-container. The button sits close to that container's right edge, so wider
+ * translated labels (e.g. es "Enviar mensaje" vs en "Send") get shifted left to avoid
+ * overflowing, breaking the arrow's alignment with the button. Re-anchor it to the button's
+ * horizontal center — via `right` + translateX(50%) so it self-centers regardless of label
+ * width — instead of relying on BC's clamped `left`.
+ */
+#brand-concierge-mount [id^='submit-button-tooltip'] {
+  left: auto !important;
+  right: 28px !important;
+  transform: translateX(50%) !important;
+}
+
+/*
+ * Now permanently overlaps the button's box (even while hidden), so it would otherwise block
+ * real clicks/hovers on the button under it. Selector must out-specify the
+ * ".input-section .input-container *" pointer-events: auto rule above (also !important) —
+ * that rule intentionally re-enables pointer-events for input-container's contents after
+ * .input-section's own passthrough override.
+ */
+#brand-concierge-mount .input-section .input-container [id^='submit-button-tooltip'] {
+  pointer-events: none !important;
 }
 
 #brand-concierge-mount .scroll-to-bottom {
