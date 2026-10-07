@@ -26,7 +26,7 @@ export default function decorate(block) {
 
     if (hasTitle) {
       let headingTag = titleRow.querySelector('h1, h2, h3, h4, h5, h6');
-      if (!headingTag) {
+      if (!headingTag || headingTag.tagName.toLowerCase() === 'h1') {
         headingTag = document.createElement('h2');
         headingTag.textContent = titleRow.textContent;
       }
@@ -66,7 +66,7 @@ export default function decorate(block) {
     const [titleCell, descCell, imageCell, ctaCell] = cardRow.children;
     const picture = imageCell?.querySelector('picture');
     let cardHeading = titleCell.querySelector('h1, h2, h3, h4, h5, h6');
-    if (!cardHeading) {
+    if (!cardHeading || cardHeading.tagName.toLowerCase() === 'h1') {
       cardHeading = document.createElement('h3');
       cardHeading.textContent = titleCell.textContent;
     }
