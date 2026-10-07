@@ -10,7 +10,8 @@ export default function decorate(block) {
   const hasTitle = titleRow.textContent.trim();
   const hasDesc = descRow.textContent.trim();
   const hideHeader = block.classList.contains('no-header');
-  const largeTitle = block.classList.contains('lg-title');
+  const largeSectionTitle = block.classList.contains('lg-section-title');
+  const largeCardTitle = block.classList.contains('lg-card-title');
 
   if (!hideHeader && (hasEyebrow || hasTitle || hasDesc)) {
     const headerDiv = document.createElement('div');
@@ -30,7 +31,7 @@ export default function decorate(block) {
         headingTag.textContent = titleRow.textContent;
       }
       headingTag.classList.add('grid-cards-title', headingTag.tagName.toLowerCase());
-      if (largeTitle) {
+      if (largeSectionTitle) {
         headingTag.classList.add('lg-title');
       }
       titleRow.replaceWith(headingTag);
@@ -60,12 +61,8 @@ export default function decorate(block) {
   const isStandard = block.classList.contains('standard');
 
   cardRows.forEach((cardRow, index) => {
-    console.log('GRID CARD ROW:', cardRow);
-    console.log('GRID CARD CLASS:', cardRow.className);
-    console.log('GRID CARD HTML:', cardRow.outerHTML);
     cardRow.classList.add('grid-card', 'glass-bg');
     cardRow.dataset.cardPosition = index + 1;
-    const largeCardTitle = cardRow.classList.contains('lg-title');
     const [titleCell, descCell, imageCell, ctaCell] = cardRow.children;
     const picture = imageCell?.querySelector('picture');
     let cardHeading = titleCell.querySelector('h1, h2, h3, h4, h5, h6');

@@ -9831,8 +9831,12 @@
             "name": "Component Title Size",
             "children": [
               {
-                "name": "Component Title Size: Large (45px)",
-                "value": "lg-title"
+                "name": "Section Title Size: Large (45px)",
+                "value": "lg-section-title"
+              },
+              {
+                "name": "Card Title Size: Large (45px)",
+                "value": "lg-card-title"
               }
             ]
           }
@@ -9919,19 +9923,6 @@
         "value": "",
         "label": "CTA Link",
         "description": "What link to open when clicking the button."
-      },
-      {
-        "component": "select",
-        "valueType": "string",
-        "name": "classes",
-        "value": "",
-        "label": "Style",
-        "options": [
-          {
-            "name": "Large",
-            "value": "lg-title"
-          }
-        ]
       }
     ]
   },
