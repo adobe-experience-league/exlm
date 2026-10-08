@@ -138,12 +138,20 @@
             "name": "First CTA Custom Background Color (used only when First CTA Style = Custom)",
             "children": [
               {
+                "name": "Black",
+                "value": "cta1-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "cta1-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "cta1-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "cta1-bg-spectrum-blue-700"
+                "value": "cta1-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -237,12 +245,20 @@
             "name": "Second CTA Custom Background Color (used only when Second CTA Style = Custom)",
             "children": [
               {
+                "name": "Black",
+                "value": "cta2-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "cta2-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "cta2-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "cta2-bg-spectrum-blue-700"
+                "value": "cta2-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -643,12 +659,20 @@
             "name": "First CTA Custom Background Color (used only when First CTA Style = Custom)",
             "children": [
               {
+                "name": "Black",
+                "value": "cta1-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "cta1-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "cta1-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "cta1-bg-spectrum-blue-700"
+                "value": "cta1-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -742,12 +766,20 @@
             "name": "Second CTA Custom Background Color (used only when Second CTA Style = Custom)",
             "children": [
               {
+                "name": "Black",
+                "value": "cta2-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "cta2-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "cta2-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "cta2-bg-spectrum-blue-700"
+                "value": "cta2-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -2214,12 +2246,20 @@
             "name": "First CTA Custom Background Color (used only when First CTA Style = Custom)",
             "children": [
               {
+                "name": "Black",
+                "value": "cta1-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "cta1-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "cta1-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "cta1-bg-spectrum-blue-700"
+                "value": "cta1-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -2313,12 +2353,20 @@
             "name": "Second CTA Custom Background Color (used only when Second CTA Style = Custom)",
             "children": [
               {
+                "name": "Black",
+                "value": "cta2-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "cta2-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "cta2-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "cta2-bg-spectrum-blue-700"
+                "value": "cta2-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -2606,12 +2654,20 @@
             "name": "Primary CTA Custom Background Color (used only when Primary CTA Style = Custom)",
             "children": [
               {
+                "name": "Black",
+                "value": "primary-cta-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "primary-cta-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "primary-cta-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "primary-cta-bg-spectrum-blue-700"
+                "value": "primary-cta-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -2705,12 +2761,20 @@
             "name": "Secondary CTA Custom Background Color (used only when Secondary CTA Style = Custom)",
             "children": [
               {
+                "name": "Black",
+                "value": "secondary-cta-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "secondary-cta-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "secondary-cta-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "secondary-cta-bg-spectrum-blue-700"
+                "value": "secondary-cta-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -3355,12 +3419,20 @@
             "name": "First CTA Custom Background Color (used only when First CTA Style = Custom)",
             "children": [
               {
+                "name": "Black",
+                "value": "cta1-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "cta1-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "cta1-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "cta1-bg-spectrum-blue-700"
+                "value": "cta1-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -3454,12 +3526,20 @@
             "name": "Second CTA Custom Background Color (used only when Second CTA Style = Custom)",
             "children": [
               {
+                "name": "Black",
+                "value": "cta2-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "cta2-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "cta2-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "cta2-bg-spectrum-blue-700"
+                "value": "cta2-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -3688,12 +3768,20 @@
             "name": "CTA Custom Background Color (used only when CTA Style = Custom)",
             "children": [
               {
+                "name": "Black",
+                "value": "cta-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "cta-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "cta-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "cta-bg-spectrum-blue-700"
+                "value": "cta-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -4300,12 +4388,20 @@
             "name": "CTA Custom Background Color (used only when CTA Style = Custom)",
             "children": [
               {
+                "name": "Black",
+                "value": "cta1-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "cta1-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "cta1-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "cta1-bg-spectrum-blue-700"
+                "value": "cta1-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -4574,12 +4670,20 @@
             "name": "CTA Background Color (Custom only)",
             "children": [
               {
+                "name": "Black",
+                "value": "cta-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "cta-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "cta-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "cta-bg-spectrum-blue-700"
+                "value": "cta-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -6701,12 +6805,20 @@
             "name": "CTA Custom Background Color (used only when CTA Style = Custom)",
             "children": [
               {
+                "name": "Black",
+                "value": "cta1-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "cta1-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "cta1-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "cta1-bg-spectrum-blue-700"
+                "value": "cta1-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -7910,12 +8022,20 @@
             "name": "First CTA Custom Background Color (used only when First CTA Style = Custom)",
             "children": [
               {
+                "name": "Black",
+                "value": "cta1-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "cta1-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "cta1-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "cta1-bg-spectrum-blue-700"
+                "value": "cta1-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -8009,12 +8129,20 @@
             "name": "Second CTA Custom Background Color (used only when Second CTA Style = Custom)",
             "children": [
               {
+                "name": "Black",
+                "value": "cta2-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "cta2-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "cta2-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "cta2-bg-spectrum-blue-700"
+                "value": "cta2-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -9664,10 +9792,6 @@
         "label": "Title Type",
         "options": [
           {
-            "name": "H1",
-            "value": "h1"
-          },
-          {
             "name": "H2",
             "value": "h2"
           },
@@ -9704,7 +9828,7 @@
         "label": "Style",
         "description": "Sets the style variant and the shared CTA style applied to all card buttons in this block.",
         "valueType": "string",
-        "maxSize": 6,
+        "maxSize": 8,
         "options": [
           {
             "name": "Card Variant",
@@ -9748,12 +9872,20 @@
             "name": "CTA Background Color (Custom only)",
             "children": [
               {
+                "name": "Black",
+                "value": "cta-bg-spectrum-gray-900"
+              },
+              {
+                "name": "White",
+                "value": "cta-bg-spectrum-gray-50"
+              },
+              {
                 "name": "Gray",
                 "value": "cta-bg-spectrum-gray-700"
               },
               {
                 "name": "Blue",
-                "value": "cta-bg-spectrum-blue-700"
+                "value": "cta-bg-non-spectrum-custom-cta-blue"
               },
               {
                 "name": "Green",
@@ -9830,6 +9962,19 @@
                 "value": "no-header"
               }
             ]
+          },
+          {
+            "name": "Component Title Size",
+            "children": [
+              {
+                "name": "Section Title Size: Large (45px)",
+                "value": "lg-section-title"
+              },
+              {
+                "name": "Card Title Size: Large (45px)",
+                "value": "lg-card-title"
+              }
+            ]
           }
         ]
       }
@@ -9853,10 +9998,6 @@
         "value": "h3",
         "label": "Card Title Type",
         "options": [
-          {
-            "name": "H1",
-            "value": "h1"
-          },
           {
             "name": "H2",
             "value": "h2"
