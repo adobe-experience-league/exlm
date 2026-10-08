@@ -1,16 +1,158 @@
 name: Visual Tests
 
+# Manual-only. Three ways to start a run:
+#   1. PR "button": tick the "Run visual tests" checkbox in the bot comment on the PR.
+#   2. PR comment: post a comment containing `/visual-test`.
+#   3. Actions tab -> Visual Tests -> "Run workflow" (optionally with a PR number).
+# Only users with write access to the repo can trigger a run from a PR.
+# Note: issue_comment and workflow_dispatch always use the workflow file from the default
+# branch, so changes to this file only take effect once merged to main.
+
 on:
-  pull_request:
-    branches:
-      - main
-      - 'visual-test*'
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to test and comment on (leave empty to test the selected branch only)'
+        required: false
+        type: string
+  # Only used to post the comment with the "Run visual tests" checkbox. It never checks out
+  # or runs PR code, so pull_request_target is safe here and also works for fork PRs.
+  pull_request_target:
+    types: [opened, reopened, ready_for_review]
+  issue_comment:
+    types: [created, edited]
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  COMMENT_MARKER: '<!-- exlm-visual-tests -->'
+  RUN_CHECKBOX_LABEL: 'Run visual tests'
 
 jobs:
+  # Adds the comment with the "Run visual tests" checkbox when a PR is opened.
+  prompt:
+    if: github.event_name == 'pull_request_target'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = process.env.COMMENT_MARKER;
+            const label = process.env.RUN_CHECKBOX_LABEL;
+            const issue_number = context.payload.pull_request.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { ...context.repo, issue_number });
+            if (comments.some((c) => c.body?.includes(marker))) return;
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number,
+              body: [
+                marker,
+                '## 🎭 Visual Test Results',
+                '',
+                'Visual tests run on demand. Tick the box below (or comment `/visual-test`) to run them against the latest commit of this PR.',
+                '',
+                `- [ ] ${label}`,
+              ].join('\n'),
+            });
+
+  # Works out what to test, and checks the person who triggered the run is allowed to.
+  resolve:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request && github.event.sender.type != 'Bot' &&
+       ((github.event.action == 'created' && contains(github.event.comment.body, '/visual-test')) ||
+        (github.event.action == 'edited' && contains(github.event.comment.body, '<!-- exlm-visual-tests -->') &&
+         contains(github.event.comment.body, '- [x] Run visual tests'))))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    outputs:
+      pr_number: ${{ steps.resolve.outputs.pr_number }}
+      ref: ${{ steps.resolve.outputs.ref }}
+      sha: ${{ steps.resolve.outputs.sha }}
+    steps:
+      - id: resolve
+        uses: actions/github-script@v7
+        env:
+          INPUT_PR: ${{ github.event.inputs.pr_number }}
+        with:
+          script: |
+            const marker = process.env.COMMENT_MARKER;
+            const label = process.env.RUN_CHECKBOX_LABEL;
+            let prNumber = '';
+
+            if (context.eventName === 'issue_comment') {
+              const { data } = await github.rest.repos.getCollaboratorPermissionLevel({
+                ...context.repo,
+                username: context.payload.sender.login,
+              });
+              if (!['admin', 'maintain', 'write'].includes(data.role_name ?? data.permission)) {
+                core.setFailed(`@${context.payload.sender.login} needs write access to run visual tests.`);
+                return;
+              }
+              prNumber = String(context.payload.issue.number);
+
+              // A ticked checkbox is reset below when the comment switches to "Running", so it
+              // works as a button again; acknowledge `/visual-test` comments with a reaction.
+              if (context.payload.action === 'created') {
+                await github.rest.reactions.createForIssueComment({
+                  ...context.repo,
+                  comment_id: context.payload.comment.id,
+                  content: 'rocket',
+                });
+              }
+            } else {
+              prNumber = (process.env.INPUT_PR || '').trim().replace(/^#/, '');
+            }
+
+            if (prNumber) {
+              if (!/^\d+$/.test(prNumber)) {
+                core.setFailed(`Invalid PR number "${prNumber}".`);
+                return;
+              }
+              const { data: pr } = await github.rest.pulls.get({ ...context.repo, pull_number: Number(prNumber) });
+              if (pr.state !== 'open') {
+                core.setFailed(`PR #${prNumber} is ${pr.state}.`);
+                return;
+              }
+              core.setOutput('pr_number', prNumber);
+              core.setOutput('ref', `refs/pull/${prNumber}/head`);
+              core.setOutput('sha', pr.head.sha);
+
+              // Show that a run is in progress in the PR comment.
+              const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                ...context.repo,
+                issue_number: Number(prNumber),
+              });
+              const existing = comments.find((c) => c.body?.includes(marker));
+              const body = [
+                marker,
+                '## 🎭 Visual Test Results',
+                '',
+                `⏳ **Running** on \`${pr.head.sha.slice(0, 7)}\`… [view run](${runUrl})`,
+                '',
+                `- [ ] ${label}`,
+              ].join('\n');
+              if (existing) {
+                await github.rest.issues.updateComment({ ...context.repo, comment_id: existing.id, body });
+              } else {
+                await github.rest.issues.createComment({ ...context.repo, issue_number: Number(prNumber), body });
+              }
+            } else {
+              core.setOutput('pr_number', '');
+              core.setOutput('ref', context.ref);
+              core.setOutput('sha', context.sha);
+            }
+
   visual-tests:
+    needs: resolve
+    # One run per PR (or branch) at a time; a new trigger cancels the older run.
+    concurrency:
+      group: visual-tests-${{ needs.resolve.outputs.pr_number || needs.resolve.outputs.ref }}
+      cancel-in-progress: true
     # Run inside the same image used to generate baselines locally so
     # font rendering is pixel-identical between local Docker and CI.
     runs-on: ubuntu-latest
@@ -18,10 +160,32 @@ jobs:
       image: mcr.microsoft.com/playwright:v1.53.1-jammy
     timeout-minutes: 20
     permissions:
+      contents: read
       pull-requests: write
+      statuses: write
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.resolve.outputs.ref }}
+
+      # issue_comment / workflow_dispatch runs don't show up in a PR's checks, so report a
+      # commit status on the PR head instead.
+      - name: Set pending status
+        if: needs.resolve.outputs.pr_number != ''
+        uses: actions/github-script@v7
+        env:
+          SHA: ${{ needs.resolve.outputs.sha }}
+        with:
+          script: |
+            await github.rest.repos.createCommitStatus({
+              ...context.repo,
+              sha: process.env.SHA,
+              state: 'pending',
+              context: 'Visual Tests',
+              description: 'Running visual tests…',
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
 
       - name: Install dependencies
         run: npm ci
@@ -54,20 +218,24 @@ jobs:
           retention-days: 3
 
       - name: Post results to PR
-        if: always()
+        if: always() && needs.resolve.outputs.pr_number != ''
         uses: actions/github-script@v7
         env:
           TEST_OUTCOME: ${{ steps.tests.outcome }}
           REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
+          COMMIT_SHA: ${{ needs.resolve.outputs.sha }}
+          PR_NUMBER: ${{ needs.resolve.outputs.pr_number }}
         with:
           script: |
             const fs   = require('fs');
             const outcome   = process.env.TEST_OUTCOME;
             const reportUrl = process.env.REPORT_URL;
             const runUrl    = process.env.RUN_URL;
-            const sha       = process.env.COMMIT_SHA.slice(0, 7);
+            const sha       = process.env.COMMIT_SHA;
+            const prNumber  = Number(process.env.PR_NUMBER);
+            const marker    = process.env.COMMENT_MARKER;
+            const label     = process.env.RUN_CHECKBOX_LABEL;
 
             // ── helpers ──────────────────────────────────────────────────────
             function collect(nodes, acc = []) {
@@ -77,7 +245,7 @@ jobs:
                     acc.push({
                       suite: node.title,
                       title: spec.title,
-                      status: test.status, // 'expected' | 'unexpected' | 'skipped'
+                      status: test.status, // 'expected' | 'unexpected' | 'skipped' | 'flaky'
                     });
                   }
                 }
@@ -94,7 +262,7 @@ jobs:
             }
 
             // ── build comment ────────────────────────────────────────────────
-            let body = '## 🎭 Visual Test Results\n\n';
+            let body = `${marker}\n## 🎭 Visual Test Results\n\n`;
 
             try {
               const { stats, suites } = JSON.parse(
@@ -104,8 +272,9 @@ jobs:
               const passed  = stats.expected   ?? 0;
               const failed  = stats.unexpected ?? 0;
               const skipped = stats.skipped    ?? 0;
+              const flaky   = stats.flaky      ?? 0;
               const secs    = ((stats.duration ?? 0) / 1000).toFixed(1);
-              const total   = passed + failed + skipped;
+              const total   = passed + failed + skipped + flaky;
 
               // ── status banner ─────────────────────────────────────────────
               if (failed === 0) {
@@ -117,6 +286,7 @@ jobs:
               // ── summary chips ─────────────────────────────────────────────
               body += `![passed](https://img.shields.io/badge/passed-${passed}-brightgreen?style=flat-square) `;
               body += `![failed](https://img.shields.io/badge/failed-${failed}-${failed > 0 ? 'red' : 'brightgreen'}?style=flat-square) `;
+              if (flaky > 0) body += `![flaky](https://img.shields.io/badge/flaky-${flaky}-orange?style=flat-square) `;
               body += `![skipped](https://img.shields.io/badge/skipped-${skipped}-lightgrey?style=flat-square)\n\n`;
 
               // ── per-test table ────────────────────────────────────────────
@@ -130,17 +300,15 @@ jobs:
                 body += '| Block | Viewport | Result |\n';
                 body += '|-------|----------|--------|\n';
 
-                // Failed first, then passed
-                const sorted = [
-                  ...tests.filter(t => t.status === 'unexpected'),
-                  ...tests.filter(t => t.status === 'expected'),
-                  ...tests.filter(t => t.status === 'skipped'),
-                ];
+                // Failed first, then flaky, passed, skipped
+                const order = { unexpected: 0, flaky: 1, expected: 2, skipped: 3 };
+                const sorted = [...tests].sort((a, b) => (order[a.status] ?? 4) - (order[b.status] ?? 4));
 
                 for (const t of sorted) {
                   const { block, viewport } = parseTitle(t.title);
                   const icon = t.status === 'expected'   ? '✅'
                              : t.status === 'unexpected' ? '❌'
+                             : t.status === 'flaky'      ? '⚠️'
                              : '⏭️';
                   body += `| \`${block}\` | ${viewport} | ${icon} |\n`;
                 }
@@ -154,34 +322,46 @@ jobs:
               }
 
             } catch {
-              body += `> ⚠️ Could not parse test results. Check the [workflow run](${runUrl}).\n\n`;
+              body += outcome === 'cancelled'
+                ? `> ⚠️ Run was cancelled. Check the [workflow run](${runUrl}).\n\n`
+                : `> ⚠️ Could not parse test results. Check the [workflow run](${runUrl}).\n\n`;
             }
 
-            // ── footer ────────────────────────────────────────────────────
+            // ── re-run "button" + footer ──────────────────────────────────
+            body += `- [ ] ${label}\n\n`;
             body += `---\n`;
-            body += `<sub>Commit \`${sha}\` · [Run #${{ github.run_number }}](${runUrl})</sub>`;
+            body += `<sub>Commit \`${sha.slice(0, 7)}\` · [Run #${{ github.run_number }}](${runUrl}) · triggered by @${context.actor}</sub>`;
 
             // ── upsert comment ────────────────────────────────────────────
-            const MARKER = '## 🎭 Visual Test Results';
-            const { data: comments } = await github.rest.issues.listComments({
+            const comments = await github.paginate(github.rest.issues.listComments, {
               ...context.repo,
-              issue_number: context.issue.number,
+              issue_number: prNumber,
             });
-            const existing = comments.find(c => c.body.startsWith(MARKER));
+            const existing = comments.find((c) => c.body?.includes(marker));
 
             if (existing) {
-              await github.rest.issues.updateComment({
-                ...context.repo,
-                comment_id: existing.id,
-                body,
-              });
+              await github.rest.issues.updateComment({ ...context.repo, comment_id: existing.id, body });
             } else {
-              await github.rest.issues.createComment({
-                ...context.repo,
-                issue_number: context.issue.number,
-                body,
-              });
+              await github.rest.issues.createComment({ ...context.repo, issue_number: prNumber, body });
             }
+
+      - name: Set final status
+        if: always() && needs.resolve.outputs.pr_number != ''
+        uses: actions/github-script@v7
+        env:
+          SHA: ${{ needs.resolve.outputs.sha }}
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+        with:
+          script: |
+            const passed = process.env.TEST_OUTCOME === 'success';
+            await github.rest.repos.createCommitStatus({
+              ...context.repo,
+              sha: process.env.SHA,
+              state: passed ? 'success' : 'failure',
+              context: 'Visual Tests',
+              description: passed ? 'All visual tests passed' : 'Visual tests failed',
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
 
       # Fail the job after comment + artifacts are uploaded.
       - name: Fail if tests failed

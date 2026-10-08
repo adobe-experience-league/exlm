@@ -152,13 +152,21 @@ Runs on every push: checkout, Node 22, `npm ci`, `npm run lint` (ESLint + Stylel
 
 ### `visual-tests.yaml` — Visual Tests
 
-Runs on pull requests targeting `main` or any `visual-test*` branch. Steps:
+Runs **on demand only** (not on every push). There are three ways to start it:
+
+- **PR "button"**: when a PR is opened, a bot comment appears with a `- [ ] Run visual tests` checkbox. Tick it to run the tests against the PR's latest commit. The same comment is updated with results and gets a fresh checkbox for re-runs.
+- **PR comment**: post a comment containing `/visual-test`.
+- **Actions tab**: _Visual Tests → Run workflow_. Optionally enter a PR number to test that PR and post results to it; leave it empty to test the selected branch only.
+
+Only users with write access can trigger runs from a PR. A new trigger cancels an in-progress run for the same PR. PR runs report a `Visual Tests` commit status on the PR head. GitHub always uses the default branch's copy of this workflow for comment and manual triggers, so changes to it take effect only after merging to `main`.
+
+Steps:
 
 1. Checks out the repo inside the **same Playwright container image** used for local Docker runs (`mcr.microsoft.com/playwright:v1.53.1-jammy`), so CI and local Docker baselines are pixel-identical — no browser install step needed, it's baked into the image.
 2. `npm ci`, then installs `@adobe/aem-cli` globally (needed since the Playwright config drives `aem up` as the local dev server).
 3. Runs `npx playwright test --reporter=html,json` with `continue-on-error: true` so later steps (artifact upload, PR comment) still run on failure.
 4. Uploads the HTML report as an artifact (always, 7-day retention) and, on failure only, the `test-results/` folder containing failure screenshots/traces/videos (3-day retention).
-5. Posts (or updates) a single PR comment summarizing pass/fail counts, a collapsible per-test table (failures first), and a link to download the report — see the `github-script` step in [`visual-tests.yaml`](../../.github/workflows/visual-tests.yaml) for the exact formatting logic.
+5. Posts (or updates) a single PR comment (when a PR is targeted) summarizing pass/fail counts, a collapsible per-test table (failures first), and a link to download the report — see the `github-script` step in [`visual-tests.yaml`](../../.github/workflows/visual-tests.yaml) for the exact formatting logic.
 6. Explicitly fails the job (`exit 1`) if tests failed — this happens _after_ the report/comment steps so those artifacts are always available even on failure.
 
 To debug a CI failure: open the PR comment for the failed-test table, download the "playwright-report" artifact for full HTML diffs/traces, or the "test-results" artifact for raw failure screenshots.
