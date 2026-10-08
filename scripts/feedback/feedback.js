@@ -252,10 +252,11 @@ function decorateFeedback(el) {
 }
 
 function handleFeedbackToggle(el) {
-  const chevrons = el.querySelectorAll('.icon-chevron-blue');
+  const openedControls = el.querySelector('.opened-controls');
+  const clickableElements = openedControls?.querySelectorAll('span');
 
-  chevrons.forEach((chevron) => {
-    chevron.addEventListener('click', () => {
+  clickableElements?.forEach((element) => {
+    element.addEventListener('click', () => {
       const isExpanded = el.getAttribute('aria-expanded') === 'true';
 
       if (isExpanded) {
