@@ -8,10 +8,11 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "@coveo/headless": "2.42.0"
+    "@coveo/headless": "3.57.2",
+    "esbuild": "0.25.9"
   },
   "engines": {
-    "node": ">=20.0.0",
+    "node": ">=22.0.0",
     "npm": ">=10.0.0"
   }
 }

@@ -380,9 +380,11 @@ export function isContentTypeFacet(atomicFacet) {
  * Keeps parent/child content-type facet selections in sync after a user click.
  * @returns {boolean} true if any programmatic .click() ran to change filters
  */
-export function syncFacetParentChildFilters({ facet, atomicElement, onlyOptionClicked = false }) {
+export function syncFacetParentChildFilters({ facet, atomicElement, onlyOptionClicked = false, wasChecked = null }) {
   const isChildFacet = facet.dataset.childfacet === 'true';
-  const isSelected = facet.firstElementChild.ariaChecked === 'false'; // Will take some to update the state.
+  // Atomic 3.62 updates aria-checked before our debounced handler. Capture the
+  // pre-click state (wasChecked) so "turning on" still selects the child rows.
+  const isSelected = wasChecked == null ? facet.firstElementChild.ariaChecked === 'false' : wasChecked === false;
   const valuesList = facet.parentElement;
   const parentFacet = isChildFacet
     ? findParentFacetRow(valuesList, facet.dataset.parent, isContentTypeFacet(atomicElement))

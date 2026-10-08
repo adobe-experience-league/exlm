@@ -33,9 +33,32 @@ export const loadScript = (src, attrs = {}) => {
   return promise;
 };
 
+const loadStylesheet = (href) => {
+  if (document.querySelector(`link[href="${href}"]`)) {
+    return;
+  }
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = href;
+  document.head.appendChild(link);
+};
+
+/**
+ * Latest Atomic CDN (cloud-only).
+ *
+ * Use the minor segment (`v3.62`) — it tracks the latest 3.62.x and sends CORS
+ * (`Access-Control-Allow-Origin: *`). The stub re-exports the commit bundle, which
+ * also sends CORS. Pinning a patch URL is unnecessary while the minor segment
+ * already resolves to 3.62.0 (headless 3.57.2 inside Atomic).
+ *
+ * @see https://docs.coveo.com/en/atomic/latest/usage/
+ */
+const COVEO_ATOMIC_CDN = 'https://static.cloud.coveo.com/atomic/v3.62';
+
 export async function initiateCoveoAtomicSearch() {
+  loadStylesheet(`${COVEO_ATOMIC_CDN}/themes/coveo.css`);
   return new Promise((resolve, reject) => {
-    loadScript('https://static.cloud.coveo.com/atomic/v3.13.0/atomic.esm.js', { type: 'module' })
+    loadScript(`${COVEO_ATOMIC_CDN}/atomic.esm.js`, { type: 'module', crossorigin: 'anonymous' })
       .then(async () => {
         resolve(true);
       })

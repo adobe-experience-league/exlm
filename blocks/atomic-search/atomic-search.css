@@ -25,6 +25,18 @@
   --atomic-search-skeleton-margin-top: 0px;
 }
 
+/* Flatten Atomic 3.60+ Lit theme tokens to match ExL prod (Atomic 3.13) chrome. */
+.atomic-search atomic-search-interface {
+  --atomic-border-radius: 0;
+  --atomic-border-radius-md: 0;
+  --atomic-border-radius-lg: 0;
+  --atomic-background: transparent;
+
+  /* Kill Atomic 3.60 default 1.5rem/1rem layout gaps that inflate section margins. */
+  --atomic-layout-spacing-x: 0;
+  --atomic-layout-spacing-y: 0;
+}
+
 .atomic-search-premium-search-wrapper {
   position: relative;
   min-height: var(--atomic-search-premium-search-height, 0);
@@ -403,9 +415,11 @@
 }
 
 @media only screen and (min-width: 1024px) {
-  .atomic-search atomic-search-interface atomic-search-layout[id^='atomic-search-layout'] {
+  .atomic-search atomic-search-interface atomic-search-layout[id^='atomic-search-layout'],
+  .atomic-search atomic-search-interface atomic-search-layout {
     grid-template-columns: 0 20% 80% !important;
-    grid-column-gap: 16px;
+    grid-column-gap: 0;
+    column-gap: 0;
   }
 
   .atomic-load-skeleton-main {
@@ -476,7 +490,18 @@
   }
 
   .section.atomic-search-container .atomic-search-wrapper {
+    box-sizing: border-box;
+    width: 100%;
     max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .section.atomic-search-container .atomic-search-wrapper .atomic-search,
+  .section.atomic-search-container .atomic-search-wrapper atomic-search-interface,
+  .section.atomic-search-container .atomic-search-wrapper atomic-search-layout {
+    width: 100%;
+    max-width: 100%;
   }
 
   .atomic-search button.facet-close-btn {
