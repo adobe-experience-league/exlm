@@ -253,12 +253,12 @@ export default async function initiateCoveoHeadlessSearch({
 
         const fragmentForSynchronization = () => {
           const rawFragment = fragment();
-          return tabId
-            ? rawFragment
-                .split('&')
-                .filter((param) => !param.startsWith('tab='))
-                .join('&')
-            : rawFragment;
+          if (!tabId) return rawFragment;
+
+          const parameters = rawFragment.split('&').filter((param) => param && !param.startsWith('tab='));
+
+          parameters.push(`tab=${encodeURIComponent(tabId)}`);
+          return parameters.join('&');
         };
         const urlManager = module.buildUrlManager(headlessSearchEngine, {
           initialState: { fragment: fragmentForSynchronization() },
