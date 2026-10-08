@@ -3,6 +3,8 @@ import { htmlToElement } from '../../../scripts/scripts.js';
 import {
   CUSTOM_EVENTS,
   debounce,
+  beginFacetHistoryBatch,
+  finishFacetHistoryBatch,
   isUserClick,
   waitForChildElement,
   hasContentTypeFilter,
@@ -71,19 +73,38 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     }
     if (!facet.dataset.evented) {
       facet.dataset.evented = 'true';
+      let historyBatch;
       const clickHandler = (e, onlyOptionClicked = false) => {
         const userClickAction = isUserClick(e);
         if (!userClickAction || facet.dataset.filterclick === 'true') {
           return;
         }
 
-        const shimmer = atomicElement.shadowRoot.querySelector('.facet-shimmer');
-        shimmer?.part.add('show-shimmer');
-        const filtersChanged = syncFacetParentChildFilters({ facet, atomicElement, onlyOptionClicked });
-        if (!filtersChanged && shimmer) {
-          shimmer.part.remove('show-shimmer');
+        try {
+          const shimmer = atomicElement.shadowRoot.querySelector('.facet-shimmer');
+          shimmer?.part.add('show-shimmer');
+          const filtersChanged = syncFacetParentChildFilters({ facet, atomicElement, onlyOptionClicked });
+          if (!filtersChanged && shimmer) {
+            shimmer.part.remove('show-shimmer');
+          }
+        } finally {
+          finishFacetHistoryBatch(historyBatch);
         }
       };
+
+      // Capture the real click before Atomic writes the parent's URL state.
+      facet.addEventListener(
+        'click',
+        (e) => {
+          if (!isUserClick(e) || facet.dataset.filterclick === 'true') return;
+          const parentKey = facet.dataset.facetRawValue || facet.dataset.contenttype;
+          const hasChildren = Array.from(facet.parentElement.children).some((row) => row.dataset.parent === parentKey);
+          if (facet.dataset.childfacet === 'true' || hasChildren) {
+            historyBatch = beginFacetHistoryBatch(searchInterface.engine, atomicElement.getAttribute('field'));
+          }
+        },
+        { capture: true },
+      );
 
       const debouncedHandler = debounce(100, clickHandler);
       facet.addEventListener('click', debouncedHandler);
@@ -480,7 +501,8 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     document.addEventListener(CUSTOM_EVENTS.NO_RESULT_FOUND, onNoResultFoundUpdate);
   };
 
-  const onAtomicFacetUIReady = () => {
+  // Shared by first-load and hashchange paths: which facets need parent→children expansion.
+  const buildFacetHashUpdates = () => {
     const atomicFacets = document.querySelectorAll('atomic-facet');
     const facetSet = searchInterface.engine.state?.facetSet || {};
     const facetHashUpdates = [];
@@ -502,8 +524,13 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
         }
       }
     });
-    const facetAutoSelected = facetHashUpdates.length > 0;
-    if (facetAutoSelected) {
+    return facetHashUpdates;
+  };
+
+  // First load only: may also (re)run facet startup.
+  const onAtomicFacetUIReady = () => {
+    const facetHashUpdates = buildFacetHashUpdates();
+    if (facetHashUpdates.length > 0) {
       // facet got changed, so wait for the new coveo response.
       replaceFacetParamsInHash(facetHashUpdates);
       document.addEventListener(
@@ -518,14 +545,30 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     initAtomicFacetUI();
   };
 
-  const filters = getFiltersFromUrl();
-  Object.keys(filters).forEach((key) => {
-    if (filters[key]?.length === 1) {
-      const [value] = filters[key];
-      if (value && isParentOnlyFacetSegment(value)) {
-        autoApplyChildFacet[key] = [value];
-      }
+  // hashchange (e.g. Back/Forward) only: re-expand children, never re-run facet startup.
+  const expandParentOnlyContentType = () => {
+    const facetHashUpdates = buildFacetHashUpdates();
+    if (facetHashUpdates.length > 0) replaceFacetParamsInHash(facetHashUpdates);
+  };
+
+  const updateAutoApplyChildFacet = () => {
+    Object.keys(autoApplyChildFacet).forEach((key) => delete autoApplyChildFacet[key]);
+    const values = getFiltersFromUrl()[EL_CONTENTTYPE_FIELD];
+    if (values?.length === 1 && isParentOnlyFacetSegment(values[0])) {
+      autoApplyChildFacet[EL_CONTENTTYPE_FIELD] = [values[0]];
     }
-  });
+  };
+
+  // atomicFacetHandler can run again after RESULT_FOUND; bind this listener once per block.
+  if (block.dataset.facetHashBound !== 'true') {
+    block.dataset.facetHashBound = 'true';
+    window.addEventListener('hashchange', () => {
+      updateAutoApplyChildFacet();
+      if (autoApplyChildFacet[EL_CONTENTTYPE_FIELD]) {
+        document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, expandParentOnlyContentType, { once: true });
+      }
+    });
+  }
+  updateAutoApplyChildFacet();
   waitForChildElement(baseElement, onAtomicFacetUIReady);
 }
