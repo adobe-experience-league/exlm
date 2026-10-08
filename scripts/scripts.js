@@ -1820,6 +1820,15 @@ export function getLastDocsSection() {
 
 /** handles a set of 1-1 redirects */
 function handleRedirects() {
+  const currentUrl = new URL(window.location.href);
+  // Match the legacy support route independently of query parameters and preserve them.
+  if (currentUrl.pathname === '/home' && currentUrl.hash === '#support') {
+    currentUrl.pathname = '/en/support';
+    currentUrl.hash = '';
+    window.location.href = currentUrl.href;
+    return;
+  }
+
   const redirects = ['/#feedback:/home#feedback'].map((p) => p.split(':').map((s) => new URL(s, window.location.href)));
   const redirect = redirects.find(([from]) => window.location.href === from.href);
   if (redirect) window.location.href = redirect[1].href;
