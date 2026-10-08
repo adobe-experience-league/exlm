@@ -7,6 +7,8 @@
 import { mkdirSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+// Installed only in this folder (`npm install` here) when regenerating the bundle. Root CI does not install it.
+// eslint-disable-next-line import/no-unresolved
 import esbuild from 'esbuild';
 
 const dir = dirname(fileURLToPath(import.meta.url));
