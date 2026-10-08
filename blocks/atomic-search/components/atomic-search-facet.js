@@ -501,7 +501,8 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     document.addEventListener(CUSTOM_EVENTS.NO_RESULT_FOUND, onNoResultFoundUpdate);
   };
 
-  const onAtomicFacetUIReady = () => {
+  // Shared by first-load and hashchange paths: which facets need parent→children expansion.
+  const buildFacetHashUpdates = () => {
     const atomicFacets = document.querySelectorAll('atomic-facet');
     const facetSet = searchInterface.engine.state?.facetSet || {};
     const facetHashUpdates = [];
@@ -523,8 +524,13 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
         }
       }
     });
-    const facetAutoSelected = facetHashUpdates.length > 0;
-    if (facetAutoSelected) {
+    return facetHashUpdates;
+  };
+
+  // First load only: may also (re)run facet startup.
+  const onAtomicFacetUIReady = () => {
+    const facetHashUpdates = buildFacetHashUpdates();
+    if (facetHashUpdates.length > 0) {
       // facet got changed, so wait for the new coveo response.
       replaceFacetParamsInHash(facetHashUpdates);
       document.addEventListener(
@@ -539,25 +545,30 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     initAtomicFacetUI();
   };
 
-  const updateAutoApplyChildFacet = () => {
-    Object.keys(autoApplyChildFacet).forEach((key) => delete autoApplyChildFacet[key]);
-    const filters = getFiltersFromUrl();
-    Object.keys(filters).forEach((key) => {
-      if (filters[key]?.length === 1) {
-        const [value] = filters[key];
-        if (value && isParentOnlyFacetSegment(value)) {
-          autoApplyChildFacet[key] = [value];
-        }
-      }
-    });
+  // hashchange (e.g. Back/Forward) only: re-expand children, never re-run facet startup.
+  const expandParentOnlyContentType = () => {
+    const facetHashUpdates = buildFacetHashUpdates();
+    if (facetHashUpdates.length > 0) replaceFacetParamsInHash(facetHashUpdates);
   };
 
-  window.addEventListener('hashchange', () => {
-    updateAutoApplyChildFacet();
-    if (Object.keys(autoApplyChildFacet).length > 0) {
-      document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, onAtomicFacetUIReady, { once: true });
+  const updateAutoApplyChildFacet = () => {
+    Object.keys(autoApplyChildFacet).forEach((key) => delete autoApplyChildFacet[key]);
+    const values = getFiltersFromUrl()[EL_CONTENTTYPE_FIELD];
+    if (values?.length === 1 && isParentOnlyFacetSegment(values[0])) {
+      autoApplyChildFacet[EL_CONTENTTYPE_FIELD] = [values[0]];
     }
-  });
+  };
+
+  // atomicFacetHandler can run again after RESULT_FOUND; bind this listener once per block.
+  if (block.dataset.facetHashBound !== 'true') {
+    block.dataset.facetHashBound = 'true';
+    window.addEventListener('hashchange', () => {
+      updateAutoApplyChildFacet();
+      if (autoApplyChildFacet[EL_CONTENTTYPE_FIELD]) {
+        document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, expandParentOnlyContentType, { once: true });
+      }
+    });
+  }
   updateAutoApplyChildFacet();
   waitForChildElement(baseElement, onAtomicFacetUIReady);
 }

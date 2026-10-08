@@ -185,7 +185,6 @@ export function beginFacetHistoryBatch(engine, field) {
     if (history.pushState === pushState) history.pushState = originalPushState;
     unsubscribe();
     window.removeEventListener('popstate', stop);
-    window.removeEventListener('hashchange', stop);
     if (activeBatch === batch) activeBatch = undefined;
   }
 
@@ -228,8 +227,8 @@ export function beginFacetHistoryBatch(engine, field) {
   };
   activeBatch = batch;
   history.pushState = pushState;
+  // hashchange fires for Atomic's own writeSearchHashFragment sync; only popstate means the user navigated away.
   window.addEventListener('popstate', stop);
-  window.addEventListener('hashchange', stop);
   unsubscribe = engine.subscribe(settle);
   return batch;
 }
