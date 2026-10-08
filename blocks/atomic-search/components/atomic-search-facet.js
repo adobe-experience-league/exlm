@@ -159,61 +159,60 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     }
   };
 
+  const rowKey = (el) => el.dataset.facetRawValue || el.dataset.contenttype || '';
+
+  const isFacetRowChecked = (el) => el?.querySelector('button')?.getAttribute('aria-checked') === 'true';
+
   const updateChildElementUI = (parentWrapper) => {
-    const children = Array.from(parentWrapper.children);
+    const rows = Array.from(parentWrapper.children);
     // Product/Role have no parent/child rows. Clearing their values DOM breaks Lit checkbox bindings.
-    if (!children.some((el) => el.dataset.childfacet === 'true')) {
+    if (!rows.some((el) => el.dataset.childfacet === 'true')) {
       return;
     }
-    const finalList = [];
 
-    let tempGroup = [];
-    let lastParent = null;
-
-    const flushGroup = () => {
-      if (lastParent) finalList.push(lastParent);
-
-      if (tempGroup.length > 0) {
-        const sortedGroup = sortElementsByLabel(tempGroup);
-
-        const parentSelected = lastParent?.querySelector('button')?.getAttribute('aria-checked') === 'true';
-        const atleastOneChildSelected = parentSelected
-          ? true
-          : sortedGroup.find((el) => el.querySelector('button')?.getAttribute('aria-checked') === 'true');
-        const facetIsSelected = parentSelected || atleastOneChildSelected;
-
-        sortedGroup.forEach((el) => {
-          if (facetIsSelected && !el.part?.contains('facet-missing-parent')) {
-            el.part.remove('facet-hide-element');
-          } else {
-            el.part.add('facet-hide-element');
-          }
-        });
-
-        const parentLabel = lastParent?.querySelector('label');
-        if (facetIsSelected) {
-          parentLabel?.part.remove('facet-parent-hide-ui');
-        } else {
-          parentLabel?.part.add('facet-parent-hide-ui');
-        }
-
-        finalList.push(...sortedGroup);
-        tempGroup = [];
-      }
-
-      lastParent = null;
-    };
-
-    children.forEach((el) => {
+    // Coveo pins selected values to the top, so a child can sit before its parent in the DOM.
+    // Group by data-parent instead of walking adjacency, then paint that order with CSS.
+    const childrenByParent = new Map();
+    const parents = [];
+    rows.forEach((el) => {
       if (el.dataset.childfacet === 'true') {
-        tempGroup.push(el);
+        const parentName = el.dataset.parent || '';
+        const group = childrenByParent.get(parentName) || [];
+        group.push(el);
+        childrenByParent.set(parentName, group);
       } else {
-        flushGroup();
-        lastParent = el;
+        parents.push(el);
       }
     });
 
-    flushGroup();
+    const finalList = [];
+    const placed = new Set();
+    sortElementsByLabel(parents).forEach((parent) => {
+      const kids = sortElementsByLabel([...(childrenByParent.get(rowKey(parent)) || [])]);
+      const facetIsSelected = isFacetRowChecked(parent) || kids.some((el) => isFacetRowChecked(el));
+      kids.forEach((el) => {
+        placed.add(el);
+        if (facetIsSelected && !el.part?.contains('facet-missing-parent')) {
+          el.part.remove('facet-hide-element');
+        } else {
+          el.part.add('facet-hide-element');
+        }
+      });
+      const parentLabel = parent.querySelector('label');
+      if (facetIsSelected) {
+        parentLabel?.part.remove('facet-parent-hide-ui');
+      } else {
+        parentLabel?.part.add('facet-parent-hide-ui');
+      }
+      finalList.push(parent, ...kids);
+    });
+
+    rows.forEach((el) => {
+      if (el.dataset.childfacet === 'true' && !placed.has(el)) {
+        el.part.add('facet-hide-element');
+        finalList.push(el);
+      }
+    });
 
     parentWrapper.style.display = 'flex';
     parentWrapper.style.flexDirection = 'column';
