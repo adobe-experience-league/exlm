@@ -6,7 +6,7 @@ export function generateAccordionDOM(block) {
   Array.from(block.children).forEach((element, i) => {
     if (i === 0) {
       const heading = element.querySelector('h2,h3,h4,h5,h6');
-      summary.append(heading.cloneNode(true));
+      summary.append(heading ? heading.cloneNode(true) : element.textContent.trim());
     } else {
       summary.append(element);
     }
