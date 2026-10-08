@@ -241,7 +241,12 @@ export const atomicResultStyles = `
                     atomic-result-multi-value-text::part(svg-element) {
                       top: 2px;
                       position: relative;
-                      max-height: 18px
+                      display: inline-block;
+                      width: 13px;
+                      height: 13px;
+                      min-width: 13px;
+                      flex: 0 0 13px;
+                      max-height: 18px;
                     }
                     atomic-result-multi-value-text::part(multi-hidden) {
                       display: none;
@@ -942,10 +947,18 @@ export default function atomicResultHandler(block, placeholders) {
           sanitizeProductTypes(resultFieldValue);
         }
 
-        const recommendationBadgeExists = !!resultItem.querySelector('.atomic-recommendation-badge');
+        const recommendationCondition = resultItem.querySelector(
+          'atomic-field-condition[must-match-is-recommendation]',
+        );
+        const recommendationBadgeExists =
+          !!recommendationCondition &&
+          !recommendationCondition.hasAttribute('hidden') &&
+          !!recommendationCondition.querySelector('.atomic-recommendation-badge');
+        const resultRoot = resultShadow.querySelector('.result-root, .result-component');
         if (recommendationBadgeExists) {
-          const resultRoot = resultShadow.querySelector('.result-root, .result-component');
           resultRoot?.classList.add('recommendation-badge');
+        } else {
+          resultRoot?.classList.remove('recommendation-badge');
         }
 
         // Handle el_kudo_status field - support both legacy numeric and new user ID format
@@ -1135,6 +1148,11 @@ export default function atomicResultHandler(block, placeholders) {
         });
         if (contentTypeElements.length) {
           decorateIcons(contentTypeElParent);
+          contentTypeElParent.querySelectorAll('[part~="svg-element"] img').forEach((img) => {
+            img.style.width = '13px';
+            img.style.height = '13px';
+            img.style.display = 'inline';
+          });
         }
 
         const anchorTag = resultItem?.querySelector('atomic-result-link > a');

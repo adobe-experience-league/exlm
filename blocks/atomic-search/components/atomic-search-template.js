@@ -646,12 +646,17 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     gap: 8px;
                     max-width: 100%;
                   }
-                  atomic-breadbox::part(breadcrumb-button) {
+                  atomic-breadbox::part(breadcrumb-button),
+                  atomic-breadbox::part(breadcrumb-button):hover,
+                  atomic-breadbox::part(breadcrumb-button):focus-visible {
                     border: 1px solid #959595;
                     border-radius: 4px;
                     color: var(--non-spectrum-grey-updated);
                     font-size: 12px;
                     line-height: 15px;
+                    /* Atomic 3.62 paints a grey hover fill. Prod chips stay transparent. */
+                    background-color: transparent;
+                    box-shadow: none;
                   }
                   atomic-breadbox::part(show-more), atomic-breadbox::part(show-less), atomic-breadbox::part(clear) {
                     border: 1px solid #959595;

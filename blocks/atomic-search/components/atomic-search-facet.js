@@ -317,7 +317,8 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
 
   const updateFacetUI = (facet, atomicElement, forceUpdate = false) => {
     const forceUpdateElement = forceUpdate === true;
-    if (facet && (facet.dataset.updated !== 'true' || forceUpdateElement)) {
+    const needsChild = (facet?.dataset.facetRawValue || '').includes('|') && facet?.dataset.childfacet !== 'true';
+    if (facet && (facet.dataset.updated !== 'true' || forceUpdateElement || needsChild)) {
       const labelTitle = facet.querySelector('.value-label')?.getAttribute('title') || '';
       if (!facet.dataset.contenttype && labelTitle) {
         facet.dataset.contenttype = labelTitle;
