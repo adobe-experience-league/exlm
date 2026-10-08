@@ -32,6 +32,8 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
   let resultTimerId;
   let noResultFoundTimerId;
   const autoApplyChildFacet = {};
+  // Parent-only deep links expand once. A facet click means the user is driving selection.
+  let expandParentFromUrl = true;
   const baseElement = block.querySelector('atomic-facet');
   const adjustChildElementsPosition = (facet, atomicElement) => {
     if (facet.dataset.childfacet === 'true') {
@@ -107,6 +109,7 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
         'click',
         (e) => {
           if (!isUserClick(e) || facet.dataset.filterclick === 'true') return;
+          expandParentFromUrl = false;
           facet.dataset.preclickChecked =
             facet.firstElementChild?.getAttribute('aria-checked') === 'true' ? 'true' : 'false';
           const target = e.target instanceof Element ? e.target : e.target?.parentElement;
@@ -137,8 +140,15 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     });
 
   const handleFacetsVisibility = (facetParent, facets, expanded) => {
+    // Coveo pins a selected value to the first DOM node. Show more has to follow
+    // the visual order, or that child stays on screen after its parent is folded.
+    const orderedFacets = [...facets].sort((a, b) => {
+      const ao = a.style.order === '' ? Number.POSITIVE_INFINITY : Number(a.style.order);
+      const bo = b.style.order === '' ? Number.POSITIVE_INFINITY : Number(b.style.order);
+      return ao - bo;
+    });
     let count = 0;
-    facets.forEach((facet) => {
+    orderedFacets.forEach((facet) => {
       const isFacetParent = facet.dataset.childfacet !== 'true';
       if (isFacetParent) {
         count += 1;
@@ -679,22 +689,37 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     return facetHashUpdates;
   };
 
+  const tryExpandParentFromUrl = () => {
+    if (!expandParentFromUrl) return false;
+    const facetHashUpdates = buildFacetHashUpdates();
+    if (facetHashUpdates.length === 0) return false;
+    expandParentFromUrl = false;
+    replaceFacetParamsInHash(facetHashUpdates);
+    return true;
+  };
+
+  // Facet shadow can render before request.currentValues includes the children.
+  const retryParentExpandFromResult = () => {
+    if (!expandParentFromUrl) {
+      document.removeEventListener(CUSTOM_EVENTS.RESULT_UPDATED, retryParentExpandFromResult);
+      return;
+    }
+    if (!tryExpandParentFromUrl()) return;
+    document.removeEventListener(CUSTOM_EVENTS.RESULT_UPDATED, retryParentExpandFromResult);
+    document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, () => initAtomicFacetUI(true), { once: true });
+  };
+
   // First load only: may also (re)run facet startup.
   const onAtomicFacetUIReady = () => {
-    const facetHashUpdates = buildFacetHashUpdates();
-    if (facetHashUpdates.length > 0) {
+    if (tryExpandParentFromUrl()) {
       // facet got changed, so wait for the new coveo response.
-      replaceFacetParamsInHash(facetHashUpdates);
-      document.addEventListener(
-        CUSTOM_EVENTS.RESULT_UPDATED,
-        () => {
-          initAtomicFacetUI(true);
-        },
-        { once: true },
-      );
+      document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, () => initAtomicFacetUI(true), { once: true });
       return;
     }
     initAtomicFacetUI();
+    if (expandParentFromUrl) {
+      document.addEventListener(CUSTOM_EVENTS.RESULT_UPDATED, retryParentExpandFromResult);
+    }
   };
 
   // hashchange (e.g. Back/Forward) only: re-expand children, never re-run facet startup.
