@@ -41,6 +41,10 @@
   font-weight: var(--font-weight-heavy);
   line-height: 125%;
   color: var(--text-color);
+
+  &.lg-title {
+    font-size: var(--exlm-font-size-h1);
+  }
 }
 
 .grid-card-description {
