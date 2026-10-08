@@ -165,6 +165,7 @@ export default async function initiateCoveoHeadlessSearch({
   hideAqFromUrl = false,
   baseAdvancedQuery = '',
   skipGenericSortDropdown = false,
+  tabId = '',
 }) {
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
@@ -180,6 +181,13 @@ export default async function initiateCoveoHeadlessSearch({
           contextObject: null,
           advancedQueryRule: baseAdvancedQuery,
         });
+
+        if (tabId) {
+          module.buildTab(headlessSearchEngine, {
+            initialState: { isActive: true },
+            options: { id: tabId, expression: '' },
+          });
+        }
 
         const headlessSearchBox = module.buildSearchBox(headlessSearchEngine, {
           options: {
@@ -243,8 +251,17 @@ export default async function initiateCoveoHeadlessSearch({
         const headlessSearchActionCreators = module.loadSearchActions(headlessSearchEngine);
         const { logSearchboxSubmit } = module.loadSearchAnalyticsActions(headlessSearchEngine);
 
+        const fragmentForSynchronization = () => {
+          const rawFragment = fragment();
+          if (!tabId) return rawFragment;
+
+          const parameters = rawFragment.split('&').filter((param) => param && !param.startsWith('tab='));
+
+          parameters.push(`tab=${encodeURIComponent(tabId)}`);
+          return parameters.join('&');
+        };
         const urlManager = module.buildUrlManager(headlessSearchEngine, {
-          initialState: { fragment: fragment() },
+          initialState: { fragment: fragmentForSynchronization() },
         });
 
         if (hideAqFromUrl && !baseAdvancedQuery) {
@@ -257,10 +274,13 @@ export default async function initiateCoveoHeadlessSearch({
         // Used by events-search to keep its static aq out of the URL.
         function visibleHash() {
           const rawFragment = urlManager.state.fragment;
-          const visibleFragment = hideAqFromUrl
+          const hiddenKeys = [];
+          if (hideAqFromUrl) hiddenKeys.push('aq');
+          if (tabId) hiddenKeys.push('tab');
+          const visibleFragment = hiddenKeys.length
             ? rawFragment
                 .split('&')
-                .filter((param) => param && !param.startsWith('aq='))
+                .filter((param) => param && !hiddenKeys.some((key) => param.startsWith(`${key}=`)))
                 .join('&')
             : rawFragment;
           return visibleFragment ? `#${visibleFragment}` : window.location.pathname + window.location.search;
@@ -310,11 +330,11 @@ export default async function initiateCoveoHeadlessSearch({
           if (shouldRerunSearch) rerunSearch();
         }
 
-        urlManager.synchronize(fragment());
+        urlManager.synchronize(fragmentForSynchronization());
         reapplyBaseAdvancedQuery();
 
         function onHashChange() {
-          urlManager.synchronize(fragment());
+          urlManager.synchronize(fragmentForSynchronization());
           reapplyBaseAdvancedQuery({ rerunSearch: true });
         }
         window.addEventListener('hashchange', onHashChange);

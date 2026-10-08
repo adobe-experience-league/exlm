@@ -1614,6 +1614,7 @@ async function initHeadlessSearch(block, groups, placeholders) {
     facetOverrides: getEventsSearchHeadlessFacetOverrides(),
     hideAqFromUrl: true,
     baseAdvancedQuery: BASE_COVEO_ADVANCED_QUERY_EVENTS,
+    tabId: 'Events Hub',
     skipGenericSortDropdown: true,
     renderSearchQuerySummary: () => {
       const totalCount = window.headlessQuerySummary?.state?.total || 0;
