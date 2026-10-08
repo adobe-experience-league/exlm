@@ -28,7 +28,7 @@ const REDACTED_HEADERS = new Set(['authorization', 'cookie', 'set-cookie']);
 
 function extractVariationPaths(specPath) {
   const content = fs.readFileSync(specPath, 'utf-8');
-  const matches = [...content.matchAll(/page\.goto\('(\/tools\/sidekick\/library\.html\?[^']+)'\)/g)];
+  const matches = [...content.matchAll(/['"](\/tools\/sidekick\/library\.html\?[^'"]+)['"]/g)];
   return [...new Set(matches.map((match) => match[1]))];
 }
 
@@ -70,6 +70,9 @@ async function recordBlock(blockSlug) {
       const variationPath = variationPaths[i];
       console.log(`[${blockSlug}] Recording variation ${i + 1}/${variationPaths.length}: ${variationPath}`);
 
+      const searchResponsePromise = page.waitForResponse((res) => /\/rest\/search\/v2/.test(res.url()), {
+        timeout: SELECTOR_TIMEOUT,
+      });
       await page.goto(`${BASE_URL}${variationPath}`);
       await page.waitForSelector('sidekick-library', { timeout: SELECTOR_TIMEOUT });
 
@@ -83,7 +86,7 @@ async function recordBlock(blockSlug) {
       await frame.waitForSelector(`.${blockSlug}`, { timeout: SELECTOR_TIMEOUT, state: 'visible' });
       // Wait for the actual Coveo search response so the round trip is fully captured before
       // navigating to the next variation — a fixed sleep risks aborting a slow request mid-flight.
-      await page.waitForResponse((res) => /\/rest\/search\/v2/.test(res.url()), { timeout: SELECTOR_TIMEOUT });
+      await searchResponsePromise;
       // Small buffer for cards to paint after the response resolves.
       await page.waitForTimeout(1000);
     }

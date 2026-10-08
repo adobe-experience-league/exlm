@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { chromium } from 'playwright';
 
-import { VIEWPORTS as configViewports, SIDEKICK_CONFIG, COVEO_MOCKED_BLOCKS, COVEO_ROUTE_GLOBS } from './config.js';
+import { VIEWPORTS as configViewports, SIDEKICK_CONFIG, EXCLUDED_BLOCKS } from './config.js';
 
 const VIEWPORTS = configViewports || [
   { width: '320px', height: '568px', label: 'mobile' },
@@ -23,7 +23,43 @@ const TEMPLATES_PATH = SIDEKICK_CONFIG?.templatesPath || '/tools/sidekick/librar
 // Timeout constants
 const SELECTOR_TIMEOUT = 30000;
 const RENDER_TIMEOUT = 3000;
-const LAYOUT_TIMEOUT = 1000;
+
+function getBlockSlug(blockName) {
+  return blockName.toLowerCase().replace(/\s+/g, '-');
+}
+
+function normalizeBlockFilter(blockFilter) {
+  const normalizedFilter = blockFilter
+    .trim()
+    .replace(/[\\/]+$/, '')
+    .split(/[\\/]/)
+    .pop()
+    .toLowerCase()
+    .replace(/\s+/g, '-');
+  if (!/^[a-z0-9-]+$/.test(normalizedFilter)) {
+    throw new Error(`Invalid block name "${blockFilter}". Use a block slug like "accordion" or "announcement-ribbon".`);
+  }
+  return normalizedFilter;
+}
+
+function getBlockFilter(args = process.argv.slice(2)) {
+  const blockFlagIndex = args.findIndex((arg) => arg === '--block' || arg === '-b');
+  if (blockFlagIndex !== -1) {
+    const blockName = args[blockFlagIndex + 1];
+    if (!blockName) {
+      throw new Error('Missing block name after --block.');
+    }
+    return normalizeBlockFilter(blockName);
+  }
+
+  const blockArg = args.find((arg) => arg.startsWith('--block='));
+  if (blockArg) {
+    return normalizeBlockFilter(blockArg.slice('--block='.length));
+  }
+
+  const positionalBlock = args.find((arg) => !arg.startsWith('-'));
+  return positionalBlock ? normalizeBlockFilter(positionalBlock) : null;
+}
 
 async function fetchLibraryBlocks() {
   // Launch a headless browser
@@ -100,27 +136,12 @@ async function fetchLibraryBlocks() {
   return blocks;
 }
 
+function quote(value) {
+  return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+}
+
 function generateTestSpec(blockName, blockVariations) {
-  const blockSlug = blockName.toLowerCase().replace(/\s+/g, '-');
-  const isCoveoMocked = COVEO_MOCKED_BLOCKS.includes(blockSlug);
-
-  const imports = isCoveoMocked
-    ? "import { test, expect } from '@playwright/test';\n" +
-      "import path from 'path';\n" +
-      "import { fileURLToPath } from 'url';\n\n" +
-      'const __dirname = path.dirname(fileURLToPath(import.meta.url));\n\n'
-    : "import { test, expect } from '@playwright/test';\n\n";
-
-  const mockRouteCalls = COVEO_ROUTE_GLOBS.map(
-    (glob) =>
-      `    await page.routeFromHAR(path.join(__dirname, '${blockSlug}.har'), { url: '${glob}', notFound: 'abort' });\n`,
-  ).join('');
-  const coveoMockSetup = isCoveoMocked
-    ? `\n    // Replay recorded Coveo responses (EXLM visual tests): live search results drift over time
-    // and would make this test flaky. Refresh with:
-    //   node tools/visual-tests/record-coveo-har.js ${blockSlug}
-${mockRouteCalls}`
-    : '';
+  const blockSlug = getBlockSlug(blockName);
 
   // Variations can share the same label (e.g. two "Default" entries); Playwright
   // requires unique test titles, so disambiguate duplicates with their variation index.
@@ -145,84 +166,37 @@ ${mockRouteCalls}`
         .toLowerCase()
         .replace(/\s+/g, '-');
       const gotoPath = parenMatch ? `${TEMPLATES_PATH}${parenMatch[1].trim()}-${cleanSlug}` : block.path;
+      const url = `/tools/sidekick/library.html?plugin=blocks&path=${gotoPath}&index=${block.variationIndex}&vtest=true`;
 
-      // Generate tests for each viewport for this block variation
-      const viewportTests = VIEWPORTS.map(
-        (viewport) => `  test('${testName} at ${viewport.label} viewport', async ({ page }) => {
-    // Set viewport size
-    await page.setViewportSize({ width: ${viewport.width}, height: ${viewport.height} });
-
-    // Navigate to the block variation
-    await page.goto('/tools/sidekick/library.html?plugin=blocks&path=${gotoPath}&index=${
-      block.variationIndex
-    }&vtest=true');
-
-    // Wait for the library component to load
-    await page.waitForSelector('sidekick-library', { timeout: ${SELECTOR_TIMEOUT} });
-
-    // Wait for the iframe to load and switch to its context
-    const iframe = await page.waitForSelector('sidekick-library >> sp-theme >> plugin-renderer >> .view block-renderer >> iframe', { timeout: ${SELECTOR_TIMEOUT} });
-    const frame = await iframe.contentFrame();
-    if (!frame) throw new Error('Could not get iframe content frame');
-
-    // Wait for the block to be fully rendered
-    const block = await frame.waitForSelector('.${block.name
-      .toLowerCase()
-      .replace(/\s+/g, '-')}', { timeout: ${SELECTOR_TIMEOUT}, state: 'visible' });
-
-    // Small delay to ensure layout is stable${viewport.label === 'tablet' ? ' after breakpoint transition' : ''}
-    await page.waitForTimeout(${LAYOUT_TIMEOUT});
-
-    await block.scrollIntoViewIfNeeded();
-    await page.evaluate(el => {
-      el.style.overflow = 'visible';
-      el.style.maxHeight = 'none';
-    }, block);
-
-    // Get the bounding box of the block
-    const box = await block.boundingBox();
-    if (!box) throw new Error('Could not get bounding box for ${block.name}');
-
-    await page.setViewportSize({
-      width: ${viewport.width},
-      height: Math.round(box.height + box.y),
-    });
-
-    // Take a screenshot of only the block area
-    const screenshotName = '${block.name.toLowerCase().replace(/\s+/g, '-')}-${block.variationIndex}-${
-      viewport.label
-    }.png';
-    const screenshot = await page.screenshot({
-      clip: box,
-      timeout: ${SELECTOR_TIMEOUT},
-      animations: 'disabled',
-      type: 'png',
-    });
-
-    // Use strict visual comparison settings for detecting color and layout changes
-    expect(screenshot).toMatchSnapshot(screenshotName, {
-      maxDiffPixels: 50,         // Reduced tolerance for better sensitivity
-      threshold: 0.05,            // 5% color difference tolerance (more sensitive)
-      maxDiffPixelRatio: 0.005,  // 0.5% of total pixels tolerance
+      return VIEWPORTS.map(
+        (viewport) => `  test(${quote(`${testName} at ${viewport.label} viewport`)}, async ({ page }) => {
+    await runBlockVisualTest(page, {
+      blockSlug: BLOCK_SLUG,
+      url: '${url}',
+      viewport: { width: ${viewport.width}, height: ${viewport.height} },
+      screenshotName: '${blockSlug}-${block.variationIndex}-${viewport.label}.png',
     });
   });`,
       );
-
-      return viewportTests;
     })
-    .join('\n');
+    .join('\n\n');
 
-  return `${imports}test.describe('${blockName} Visual Tests', () => {
-  test.beforeEach(async ({ page }) => {
-    // Set default viewport size
-    await page.setViewportSize({ width: 1280, height: 2000 });
-${coveoMockSetup}  });
+  return `// Generated by tools/visual-tests/generate-visual-tests.js -- do not edit by hand.
+// Readiness/stubbing logic lives in tools/visual-tests/spec-helpers.js.
+import { test } from '@playwright/test';
+import runBlockVisualTest from '../../spec-helpers.js';
 
+const BLOCK_SLUG = '${blockSlug}';
+
+test.describe(${quote(`${blockName} Visual Tests`)}, () => {
 ${testContent}
-});`;
+});
+`;
 }
 
 async function generateVisualTests() {
+  const blockFilter = getBlockFilter();
+
   // Fetch library blocks
   const blocks = await fetchLibraryBlocks();
   if (blocks.length === 0) {
@@ -238,6 +212,25 @@ async function generateVisualTests() {
     return acc;
   }, {});
 
+  const excluded = Object.keys(blocksByName).filter((blockName) => EXCLUDED_BLOCKS.includes(getBlockSlug(blockName)));
+  if (excluded.length) {
+    console.log(
+      `Skipping excluded blocks (see EXCLUDED_BLOCKS in config.js): ${excluded.map(getBlockSlug).join(', ')}`,
+    );
+  }
+
+  const blockEntries = Object.entries(blocksByName).filter(
+    ([blockName]) =>
+      !EXCLUDED_BLOCKS.includes(getBlockSlug(blockName)) && (!blockFilter || getBlockSlug(blockName) === blockFilter),
+  );
+
+  if (blockEntries.length === 0) {
+    const availableBlocks = Object.keys(blocksByName).map(getBlockSlug).sort().join(', ');
+    throw new Error(
+      `Block "${blockFilter}" was not found in the Sidekick Library. Available blocks: ${availableBlocks}`,
+    );
+  }
+
   // Create blocks directory
   const blocksDir = 'tools/visual-tests/blocks';
   if (!fs.existsSync(blocksDir)) {
@@ -246,9 +239,11 @@ async function generateVisualTests() {
 
   // Generate separate test file for each block
   let totalTests = 0;
-  Object.entries(blocksByName).forEach(([blockName, blockVariations]) => {
+  blockEntries.forEach(([blockName, blockVariations]) => {
+    const blockSlug = getBlockSlug(blockName);
+
     // Create block-specific directory
-    const blockDir = path.join(blocksDir, blockName.toLowerCase().replace(/\s+/g, '-'));
+    const blockDir = path.join(blocksDir, blockSlug);
     if (!fs.existsSync(blockDir)) {
       fs.mkdirSync(blockDir, { recursive: true });
     }
@@ -257,15 +252,17 @@ async function generateVisualTests() {
     const testSpec = generateTestSpec(blockName, blockVariations);
 
     // Write to block-specific test file
-    const testFileName = `${blockName.toLowerCase().replace(/\s+/g, '-')}.spec.js`;
+    const testFileName = `${blockSlug}.spec.js`;
     fs.writeFileSync(path.join(blockDir, testFileName), testSpec);
 
     totalTests += blockVariations.length;
-    console.log(`Generated test file: blocks/${blockName.toLowerCase().replace(/\s+/g, '-')}/${testFileName}`);
+    console.log(`Generated test file: blocks/${blockSlug}/${testFileName}`);
   });
 
   console.log(
-    `\nSuccessfully generated ${totalTests} test variations across ${Object.keys(blocksByName).length} blocks`,
+    `\nSuccessfully generated ${totalTests} test variations across ${blockEntries.length} block${
+      blockEntries.length === 1 ? '' : 's'
+    }`,
   );
 }
 

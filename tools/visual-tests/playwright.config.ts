@@ -12,7 +12,10 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 2 : undefined,
+  // Each test waits on real readiness signals (see spec-helpers.js), not fixed sleeps,
+  // so a generous ceiling only matters when something is genuinely stuck.
+  timeout: 60000,
   outputDir: './test-results',
   reporter: [
     ['html', { outputFolder: './playwright-report', open: 'never' }],
@@ -28,6 +31,9 @@ export default defineConfig({
       mode: 'retain-on-failure',
     },
     viewport: { width: 1280, height: 720 },
+    // Pin locale/timezone so date and number formatting match between laptops, Docker and CI.
+    locale: 'en-US',
+    timezoneId: 'UTC',
   },
   // Custom snapshot path to remove platform name from snapshot files
   snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',

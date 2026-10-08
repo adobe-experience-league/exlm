@@ -30,14 +30,28 @@ Tests run against the local AEM dev server (`aem up`, `http://localhost:3000`) v
 
 ## How a test works
 
-Each generated spec (e.g. [`blocks/cards/cards.spec.js`](blocks/cards/cards.spec.js)) does the following, once per viewport:
+Each generated spec (e.g. [`blocks/accordion/accordion.spec.js`](blocks/accordion/accordion.spec.js)) is a thin list of variation × viewport cases. They all call `runBlockVisualTest()` in [`spec-helpers.js`](spec-helpers.js), which does the following:
 
-1. Navigate to `/tools/sidekick/library.html?plugin=blocks&path=<template>&index=<variation>&vtest=true`. The `vtest=true` flag puts the library UI into a stripped-down "vtest mode" (see [`visual-test.js`](visual-test.js)) that hides chrome and lets the block render at full width.
-2. Wait for the `sidekick-library` component, then reach into its shadow DOM/iframe to find the `block-renderer` iframe and the rendered block element.
-3. Wait briefly for layout to settle, force `overflow: visible`/`max-height: none` so nothing is clipped, then resize the viewport to the block's actual bounding-box height.
-4. Take a clipped screenshot of just the block (`clip: box`) and compare it with `expect(screenshot).toMatchSnapshot(...)`.
+1. **Makes the page deterministic before loading it:**
+   - Third-party requests are stubbed (see `THIRD_PARTY_ALLOWED_HOSTS` in [`config.js`](config.js)). Remote images become a 1×1 grey PNG, remote iframes (video players) become a flat grey page, and all other remote requests (IMS, martech, Qualtrics…) are aborted.
+   - IMS is replaced with a signed-out stub, so sign-in checks resolve instantly.
+   - `scripts/delayed.js` and Brand Concierge are replaced with no-ops. The stub still dispatches `delayed-load`, so blocks that listen for it keep working.
+   - The `aem up` livereload client is disabled, so saving a file mid-run can't reload the page.
+   - `Date` is frozen: Coveo-mocked blocks use their HAR recording time, other blocks use `SNAPSHOT_FIXED_TIME`. Locale/timezone are pinned to `en-US`/`UTC` in [`playwright.config.ts`](playwright.config.ts).
+   - Coveo calls are replayed from `blocks/<block>/<block>.har` for blocks in `COVEO_MOCKED_BLOCKS`.
+2. Navigates to `/tools/sidekick/library.html?plugin=blocks&path=<template>&index=<variation>&vtest=true`. The `vtest=true` flag puts the library UI into a stripped-down "vtest mode" (see [`visual-test.js`](visual-test.js)) that hides chrome and lets the block render at full width.
+3. **Waits on real readiness signals (no fixed sleeps):**
+   - every block in the iframe has `data-block-status="loaded"`, and `fonts.css`/`lazy-styles.css` are attached
+   - no loading indicator (`DEFAULT_LOADING_SELECTORS` + `BLOCK_SNAPSHOT_READY_SELECTORS`) is visible in the block
+   - network idle
+   - lazy images forced to eager, then loaded and decoded
+   - every declared font face loaded
+   - the block's bounding box stays unchanged across consecutive animation frames
+4. Freezes animations/transitions, then grows (never shrinks) the viewport so the whole block is on screen. If it grew, it waits for the same readiness signals again and re-measures the box before taking the clipped screenshot.
 
-Snapshot comparison is intentionally strict (`tools/visual-tests/blocks/**/config.js` values aside, these are hardcoded in the generator):
+Per-block knobs in [`config.js`](config.js): `BLOCK_SNAPSHOT_READY_SELECTORS` (extra "still loading" selectors), `BLOCK_SNAPSHOT_HIDE_SELECTORS` (elements to hide), and `BLOCK_SNAPSHOT_EXTRA_WAIT` (last-resort fixed delay; prefer a readiness selector). Blocks that are too dynamic to snapshot reliably are listed in `EXCLUDED_BLOCKS` and skipped by the generator (currently `atomic-search` and `browse-courses`).
+
+Snapshot comparison is intentionally strict (`SNAPSHOT_COMPARE_OPTIONS` in [`spec-helpers.js`](spec-helpers.js)):
 
 | Option              | Value | Meaning                                |
 | ------------------- | ----- | -------------------------------------- |
@@ -62,6 +76,20 @@ Specs aren't hand-written. `npm run test:visual:generate` runs [`generate-visual
 2. Groups them by block name and writes one `blocks/<block>/<block>.spec.js` file with a test per variation × viewport.
 
 Re-run this whenever a block or its variations change in the library so the specs stay in sync. It's a code generator — don't hand-edit the generated spec files; edit the template/library content or the generator instead.
+
+To regenerate only one block spec, pass a block slug with `--block`:
+
+```sh
+npm run test:visual:generate -- --block accordion
+```
+
+Or use the dedicated helper script:
+
+```sh
+npm run test:visual:generate:block -- accordion
+```
+
+The block filter also accepts a block folder path such as `tools/visual-tests/blocks/accordion`.
 
 ### Authoring-time helpers
 
@@ -95,6 +123,7 @@ npm start
 npm run test:visual:build   # build the image
 npm run test:visual         # run the suite in the container
 npm run test:visual:update  # run with --update-snapshots
+npm run test:visual:generate:block -- accordion  # regenerate one block spec
 
 # open the last HTML report
 npm run test:visual:report
@@ -107,7 +136,7 @@ The compose file mounts `blocks/`, `test-results/`, and `playwright-report/` bac
 ## Adding a new block/variation to the suite
 
 1. Make sure the block and its variations are registered in the Sidekick Library (`tools/sidekick/library/...`).
-2. Run `npm run test:visual:generate` to (re)generate `blocks/<block>/<block>.spec.js`.
+2. Run `npm run test:visual:generate:block -- <block>` to (re)generate `blocks/<block>/<block>.spec.js`, or `npm run test:visual:generate` to regenerate every block.
 3. Either:
    - run `npm run test:visual:update` and review/commit the generated PNGs, or
    - add a `config.js` with `FIGMA_CONFIG` next to the new spec and run `npm run test:visual:figma` to pull baselines from Figma.
