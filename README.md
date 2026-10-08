@@ -41,32 +41,22 @@ The action is the entry point for all HTML delivered to https://aem.live service
 
 ## Copilot PR review
 
-[Copilot PR Review](.github/workflows/copilot-review.yaml) automatically posts a diff-only review on new, updated,
-reopened, and ready-for-review PRs in the canonical repository, including fork PRs. Draft PRs are skipped. It replaces
-the previous Claude PR review workflow.
+[Copilot PR Review](.github/workflows/copilot-review.yaml) reviews non-draft PRs automatically, including fork PRs.
+Findings appear as replyable inline threads in a formal advisory review authored by `github-actions[bot]`.
+It uses trusted review skills, project guidance, and prior PR discussions; it does not execute PR code or run tests.
 
-To enable it:
-
-1. On [GitHub's fine-grained PAT settings](https://github.com/settings/personal-access-tokens/new), create a token with
-   your **personal account** as the resource owner, not the enterprise or organization.
-2. Under **Account permissions**, enable **Copilot Requests: Read-only**. Repository permissions are not needed for
-   this token. Classic PATs (`ghp_...`) and the Actions `GITHUB_TOKEN` cannot authenticate Copilot CLI.
-3. Save the token as the repository Actions secret **`COPILOT_REVIEW_PAT`** under **Settings > Secrets and variables >
-   Actions**. The token owner needs an active Copilot entitlement, and enterprise/organization policy must allow
-   Copilot CLI.
-4. Merge the workflow into the default branch, then open or update a PR.
-
-On GitHub Enterprise Cloud, `pull_request_target` runs the workflow from the default branch, not the PR's base or
-head branch, and makes secrets available for fork PRs. It never checks out PR code, installs PR dependencies, or
-enables Copilot tools. Only the API-provided diff is sent for review; a separate step posts the summary using the
-workflow's `GITHUB_TOKEN`. Do not add PR checkout or execution to this privileged workflow.
-
-Reviews consume the token owner's Copilot usage allowance, including reviews of fork PRs. Diffs over 60 KB or PRs
-with more than 300 changed files fail explicitly and need manual review. Findings are advisory, not merge approvals;
-no tests or full-file analysis are performed. Each completed run posts a new summary comment. Rotate the secret
-before the PAT expires.
-
-See [GitHub's Copilot CLI authentication documentation](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/authenticate-copilot-cli).
+- **Setup:** Add the Actions secret `COPILOT_REVIEW_PAT`: a personal fine-grained PAT with **Copilot Requests:
+  Read-only**, owned by a user with Copilot access. Merge workflow changes into the default branch to activate them.
+- **Re-review:** Users with write, maintain, or admin access can post exactly `/copilot-review` as a new PR
+  conversation comment; authorization completes before entering the review queue. Use **Reply** on inline findings;
+  prior replies inform subsequent reviews. Disagreements
+  appear in the review's **Discussion follow-up** section. Existing conversation comments are not converted.
+- **Actions policy:** Before **November 2, 2026**, an administrator must configure **Settings > Actions > Policies**
+  to explicitly allow `pull_request_target` for this workflow in affected public repositories.
+  See [GitHub's policy notice](https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target#default-policy-for-pull_request_target).
+- **Limits:** Reviews consume the token owner's Copilot allowance. Large diffs or discussion context fail explicitly;
+  findings are diff-only, not merge approvals, and semantic deduplication is not guaranteed. Exact current-revision
+  Copilot findings are suppressed; unrelated threads and distinct findings on the same line are preserved.
 
 ## Local SignedIn Development
 
