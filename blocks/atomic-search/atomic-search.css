@@ -35,6 +35,10 @@
   /* Kill Atomic 3.60 default 1.5rem/1rem layout gaps that inflate section margins. */
   --atomic-layout-spacing-x: 0;
   --atomic-layout-spacing-y: 0;
+
+  /* Atomic 3.62 sets a system font stack. ExL stays on Adobe Clean. */
+  --atomic-font-family: 'Adobe Clean', adobe-clean, 'Source Sans Pro', -apple-system, system-ui, 'Segoe UI', roboto,
+    ubuntu, 'Trebuchet MS', 'Lucida Grande', sans-serif;
 }
 
 .atomic-search-premium-search-wrapper {

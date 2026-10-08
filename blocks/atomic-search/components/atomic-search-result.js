@@ -73,11 +73,13 @@ export const atomicResultStyles = `
                     }
                     /* Atomic 3.60 keeps inactive field-condition nodes in the DOM with [hidden];
                        :has(.result-thumbnail) alone falsely enables the video flex layout. */
-                    .atomic-search-result-item .result-field.text-thumbnail:not(:has(atomic-field-condition:not([hidden]) .result-thumbnail)) {
+                    /* Both conditions must be showing. Lit keeps a nested video condition in the DOM
+                       when the parent matches, so :has() would otherwise shrink titles that have no thumbnail. */
+                    .atomic-search-result-item .result-field.text-thumbnail:not(:has(> atomic-field-condition:not([hidden]) > atomic-field-condition:not([hidden]) .result-thumbnail)) {
                       gap: 0;
                       display: block;
                     }
-                    .atomic-search-result-item .result-field.text-thumbnail:has(atomic-field-condition:not([hidden]) .result-thumbnail) .result-text {
+                    .atomic-search-result-item .result-field.text-thumbnail:has(> atomic-field-condition:not([hidden]) > atomic-field-condition:not([hidden]) .result-thumbnail) .result-text {
                       flex: 0 0 56%;
                     }
                     .atomic-search-result-item.result-item .thumbnail-wrapper {
@@ -552,6 +554,12 @@ const convertLegacyContentTypes = (contentTypes) => {
 let isListenerAdded = false;
 const isEventsV2Enabled = isFeatureEnabled('isEventsV2');
 
+const isMultiValueSeparator = (el) =>
+  !!el &&
+  (el.part?.contains('result-multi-value-text-separator') ||
+    el.classList?.contains('separator') ||
+    (typeof el.className === 'string' && el.className.includes('separator')));
+
 export default function atomicResultHandler(block, placeholders) {
   const baseElement = block.querySelector('atomic-folded-result-list');
   const searchLayout = block.querySelector('atomic-search-layout');
@@ -887,7 +895,10 @@ export default function atomicResultHandler(block, placeholders) {
         const resultFieldValue = resultItem?.querySelector('.result-product .result-field-value');
         const productList = resultFieldValue?.firstElementChild?.shadowRoot?.querySelectorAll('li');
         const productCount = productList ? productList.length : 0;
-        if (productList && productList.length === 0) {
+        const rawProduct = resultEl.result?.result?.raw?.el_product;
+        const productStillRendering =
+          rawProduct && productList && productList.length === 0 && currentHydrationCount < MAX_HYDRATION_ATTEMPTS;
+        if (productStillRendering) {
           waitFor(() => {
             hydrateResult(resultEl);
           }, 100);
@@ -898,7 +909,7 @@ export default function atomicResultHandler(block, placeholders) {
           const liElements = tooltipBaseElement?.shadowRoot?.firstElementChild
             ? Array.from(tooltipBaseElement.shadowRoot.querySelectorAll(`li`))
             : [];
-          const uniqueProductListItems = liElements.filter((item) => !item.classList.contains('separator'));
+          const uniqueProductListItems = liElements.filter((item) => !isMultiValueSeparator(item));
           const uniqueParentItems = uniqueProductListItems.reduce((acc, li) => {
             const currentText = li.textContent;
             const isChild = currentText.includes('|');
@@ -921,7 +932,7 @@ export default function atomicResultHandler(block, placeholders) {
             resultFieldValue?.classList.add('hidden');
             const visibleElements = tooltipBaseElement.shadowRoot.querySelectorAll(`li:not([part~="multi-hidden"])`);
             const lastVisibleElment = visibleElements[visibleElements.length - 1];
-            if (lastVisibleElment?.classList?.contains('separator')) {
+            if (isMultiValueSeparator(lastVisibleElment)) {
               lastVisibleElment.part.add('multi-hidden');
             }
           }
@@ -989,7 +1000,7 @@ export default function atomicResultHandler(block, placeholders) {
             ?.querySelector('.result-description atomic-result-multi-value-text')
             ?.shadowRoot?.querySelectorAll('li') || [];
         topicElements.forEach((li) => {
-          if (li.classList.contains('separator')) {
+          if (isMultiValueSeparator(li)) {
             li.remove();
             return;
           }
@@ -1019,7 +1030,7 @@ export default function atomicResultHandler(block, placeholders) {
 
           // First pass: identify all child values and their parent names
           Array.from(contentTypeElements).forEach((li) => {
-            if (li.className?.includes('separator')) return;
+            if (isMultiValueSeparator(li)) return;
             const slotEl = li.firstElementChild;
             const slotName = slotEl?.getAttribute('name') || '';
             // Extract value from slot name (e.g., "result-multi-value-text-value-community|questions")
@@ -1043,7 +1054,7 @@ export default function atomicResultHandler(block, placeholders) {
 
           // Second pass: hide parent elements if their child exists
           Array.from(contentTypeElements).forEach((li) => {
-            if (li.className?.includes('separator')) return;
+            if (isMultiValueSeparator(li)) return;
             const slotEl = li.firstElementChild;
             const slotName = slotEl?.getAttribute('name') || '';
             const value = slotName.replace('result-multi-value-text-value-', '').toLowerCase();
@@ -1054,7 +1065,7 @@ export default function atomicResultHandler(block, placeholders) {
               li.style.setProperty('display', 'none', 'important');
               li.dataset.hiddenDuplicate = 'true';
               // Also hide the separator after this element if it exists
-              if (li.nextElementSibling?.classList?.contains('separator')) {
+              if (isMultiValueSeparator(li.nextElementSibling)) {
                 li.nextElementSibling.part.add('multi-hidden');
                 li.nextElementSibling.style.setProperty('display', 'none', 'important');
               }
@@ -1068,7 +1079,7 @@ export default function atomicResultHandler(block, placeholders) {
             return;
           }
 
-          const isSeparator = contentTypeEl?.className.includes('separator');
+          const isSeparator = isMultiValueSeparator(contentTypeEl);
           const contentTypeValue =
             Array.isArray(contentTypeValues) && !isSeparator ? contentTypeValues.shift() : filteredContentType;
           let contentType = isSeparator ? '' : (contentTypeValue || contentTypeEl.textContent).toLowerCase().trim();
@@ -1139,8 +1150,21 @@ export default function atomicResultHandler(block, placeholders) {
         const VIDEO_THUMBNAIL_FORMAT = /^https:\/\/video\.tv\.adobe\.com\/v\/\w+/;
 
         if (videoUrlEl) {
-          const videoUrl = videoUrlEl?.textContent?.trim() || '';
-          if (!videoUrl) return;
+          // Lit keeps the URL on atomic-text[value]. textContent does not cross that shadow.
+          const videoUrl =
+            [...resultShadow.querySelectorAll('atomic-result-text[field="video_url"]')]
+              .map(
+                (el) => el.textContent?.trim() || el.querySelector('atomic-text')?.getAttribute('value')?.trim() || '',
+              )
+              .find(Boolean) || '';
+          if (!videoUrl) {
+            if (currentHydrationCount < MAX_HYDRATION_ATTEMPTS) {
+              waitFor(() => {
+                hydrateResult(resultEl);
+              }, 50);
+            }
+            return;
+          }
           const thumbnailAlt = titleEl?.textContent || '';
           const cleanUrl = videoUrl.split('?')[0];
 
