@@ -1994,9 +1994,9 @@ async function loadPage() {
       // getConfig(), leaving window.exlm.config undefined and causing exchangePLToken to
       // silently no-op. Calling it here is synchronous and idempotent — no effect on non-UE.
       getConfig();
-      // UE Author Mode: fetch PL token anonymously via ?auth=false (no IMS required).
+      // UE Author Mode: fetch a PL token directly from the allowlisted editor origin.
       import('./utils/premium-learning-utils.js')
-        .then(({ initPLAuthAnonymous }) => initPLAuthAnonymous())
+        .then(({ initPLAuthForUe }) => initPLAuthForUe())
         .catch((error) => {
           // eslint-disable-next-line no-console
           console.error('Error initializing PL auth in UE Author Mode:', error);
