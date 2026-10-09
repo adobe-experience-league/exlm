@@ -73,7 +73,7 @@ export default class ProfileMenu extends HTMLElement {
         if (!profilePicture) return;
         const profileToggle = profile.querySelector('.profile-toggle');
         profileToggle.replaceChildren(
-          htmlToElement(`<img class="profile-picture" src="${profilePicture}" alt="profile picture" />`),
+          htmlToElement(`<img class="profile-picture" src="${profilePicture}" alt="profile picture" data-cs-mask/>`),
         );
       });
     }
