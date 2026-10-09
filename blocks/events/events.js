@@ -5,6 +5,13 @@ const getText = (cell) => (cell?.textContent ?? '').trim();
 
 const DESKTOP_BREAKPOINT = '(min-width: 600px)';
 
+// Plain-text description: always a <p>, never a heading, and HTML-safe (EXLM-5957).
+function createDescription(className, text) {
+  const paragraph = createTag('p', { class: className });
+  paragraph.textContent = text;
+  return paragraph;
+}
+
 export const debounce = (ms, fn) => {
   let timer;
   // eslint-disable-next-line func-names
@@ -55,7 +62,6 @@ export default function decorate(block) {
     <div class="events-header block-header">
       ${blockEyebrowText ? `<div class="events-header-eyebrow">${blockEyebrowText}</div>` : ''}
       ${blockTitle ? `<h2 class="events-header-title h1">${blockTitle}</h2>` : ''}
-      ${blockDescription ? `<div class="events-header-description">${blockDescription}</div>` : ''}
     </div>
   `
       : '';
@@ -77,7 +83,6 @@ export default function decorate(block) {
         ${metaLine ? `<span class="events-featured-meta">${metaLine}</span>` : ''}
       </div>
       ${featuredTitleHtml}
-      ${description ? `<div class="events-featured-description">${description}</div>` : ''}
       ${ctaHtml ? `<div class="events-featured-cta">${ctaHtml}</div>` : ''}
     </div>
     <div class="events-featured-media">${featuredMediaHtml}</div>
@@ -86,12 +91,24 @@ export default function decorate(block) {
   [blockEyebrowDiv, blockTitleDiv, blockDescDiv].forEach((el) => el?.remove());
 
   block.classList.add('events-block');
-  if (headerHtml) block.insertAdjacentHTML('afterbegin', headerHtml);
+  if (headerHtml) {
+    block.insertAdjacentHTML('afterbegin', headerHtml);
+    if (blockDescription) {
+      block
+        .querySelector('.events-header')
+        ?.appendChild(createDescription('events-header-description', blockDescription));
+    }
+  }
 
   const contentWrapper = createTag('div', { class: 'events-content' });
   if (featuredRow) {
     featuredRow.innerHTML = featuredInnerHtml;
     featuredRow.className = 'events-featured';
+    if (description) {
+      const featuredContent = featuredRow.querySelector('.events-featured-content');
+      const featuredCta = featuredContent?.querySelector('.events-featured-cta');
+      featuredContent?.insertBefore(createDescription('events-featured-description', description), featuredCta ?? null);
+    }
     contentWrapper.appendChild(featuredRow);
   }
 
@@ -107,8 +124,11 @@ export default function decorate(block) {
     row.innerHTML = `
       ${item.tagText ? `<span class="events-featured-tag">${item.tagText}</span>` : ''}
       ${itemMetaLine ? `<span class="events-featured-meta">${itemMetaLine}</span>` : ''}
-      ${item.desc ? `<div class="events-item-description">${item.desc}</div>` : ''}
     `;
+
+    if (item.desc) {
+      row.appendChild(createDescription('events-item-description', item.desc));
+    }
 
     if (item.title) {
       const titleDiv = createTag('div', { class: 'events-item-title' });
