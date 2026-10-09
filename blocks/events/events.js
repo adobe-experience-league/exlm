@@ -5,7 +5,7 @@ const getText = (cell) => (cell?.textContent ?? '').trim();
 
 const DESKTOP_BREAKPOINT = '(min-width: 600px)';
 
-// Plain-text description: always a <p>, never a heading, and HTML-safe (EXLM-5957).
+// Plain-text description, always a <p>.
 function createDescription(className, text) {
   const paragraph = createTag('p', { class: className });
   paragraph.textContent = text;
