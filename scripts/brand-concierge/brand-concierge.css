@@ -21,25 +21,25 @@
 }
 
 #bc-bottom-ask-bar[data-expanded='true'] {
-  gap: 16px 24px;
-  min-height: 64px;
-  padding: 12px 24px;
-  justify-content: flex-start;
+  height: 72px;
+  min-height: 72px;
+  max-height: 72px;
+  padding: 12px 0;
+  justify-content: center;
+  border-top: 1px solid #e8e8e8;
   background: radial-gradient(
-      ellipse 30% 120% at 10% 50%,
-      color-mix(in srgb, var(--bc-gradient-start) 25%, white) 0%,
-      transparent 100%
+      ellipse 40% 140% at 88% 50%,
+      color-mix(in srgb, var(--bc-gradient-mid) 8%, white) 0%,
+      transparent 72%
     ),
-    radial-gradient(ellipse 50% 120% at 50% 50%, var(--bc-gradient-blue) 0%, transparent 100%),
+    radial-gradient(ellipse 55% 150% at 52% 45%, var(--bc-gradient-blue) 0%, transparent 68%),
     radial-gradient(
-      ellipse 30% 120% at 90% 50%,
-      color-mix(in srgb, var(--bc-gradient-end) 15%, white) 0%,
-      transparent 100%
+      ellipse 38% 150% at 12% 50%,
+      color-mix(in srgb, var(--bc-gradient-end) 8%, white) 0%,
+      transparent 72%
     ),
-    rgb(250 250 250 / 95%);
-  box-shadow:
-    0 -1px 0 rgb(0 0 0 / 6%),
-    0 -8px 24px rgb(0 0 0 / 4%);
+    var(--background-color);
+  box-shadow: 0 -8px 24px rgb(0 0 0 / 4%);
   backdrop-filter: blur(12px);
 }
 
@@ -59,17 +59,18 @@
   align-items: center;
   gap: 8px;
   width: auto;
+  min-width: 109px;
   height: 40px;
   min-height: 40px;
-  padding: 14px 16px;
-  border-radius: 12px 12px 0 0;
+  padding: 0 16px;
+  border-radius: 16px 16px 0 0;
   font-family: inherit;
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-semi-bold);
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
-  color: var(--spectrum-gray-800);
-  background-color: var(--background-color);
-  box-shadow: 0 -1px 0 rgb(0 0 0 / 6%);
+  color: var(--non-spectrum-dark-gray);
+  background-color: rgb(255 255 255 / 70%);
+  box-shadow: 0 0 20px rgb(0 0 0 / 10%);
   isolation: isolate;
 }
 
@@ -77,9 +78,9 @@
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 12px 12px 0 0;
+  border-radius: 16px 16px 0 0;
   padding: 2px 2px 0;
-  background: linear-gradient(to right, var(--bc-gradient-start), var(--bc-gradient-end));
+  background: var(--bc-gradient);
   mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -101,14 +102,14 @@
 
 .bc-bottom-ask-bar-collapsed-chevron,
 .bc-bottom-ask-bar-hide-chevron {
-  width: 12px;
-  height: 12px;
+  width: 18px;
+  height: 18px;
 }
 
 .bc-bottom-ask-bar-collapsed-chevron img,
 .bc-bottom-ask-bar-hide-chevron img {
-  width: 12px;
-  height: 12px;
+  width: 18px;
+  height: 18px;
 }
 
 .bc-bottom-ask-bar-collapsed .icon-bc-ask-sparkles img {
@@ -117,8 +118,10 @@
 }
 
 .bc-bottom-ask-bar-collapsed-label {
-  font-weight: var(--font-weight-semi-bold);
-  line-height: 1.2;
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.5;
+  color: var(--non-spectrum-dark-gray);
   white-space: nowrap;
 }
 
@@ -128,7 +131,7 @@
 
 .bc-bottom-ask-bar-collapsed:focus {
   outline: none;
-  background-color: var(--background-color);
+  background-color: rgb(255 255 255 / 70%);
 }
 
 .bc-bottom-ask-bar-collapsed:focus-visible {
@@ -137,14 +140,11 @@
 }
 
 .bc-bottom-ask-bar-collapsed:hover:not(:active) {
-  background-color: var(--background-color);
+  background-color: rgb(255 255 255 / 85%);
 }
 
 .bc-bottom-ask-bar-expanded {
   display: none;
-  flex: 1 1 auto;
-  align-items: center;
-  gap: 16px 24px;
   width: 100%;
   min-width: 0;
 }
@@ -153,41 +153,67 @@
   display: none;
 }
 
+/* Same 3-col track as docs `main` (left rail / article / right rail). */
 #bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  align-items: center;
+  box-sizing: border-box;
+  max-width: 1700px;
+  width: 100%;
+  margin-inline: auto;
 }
 
 .bc-bottom-ask-bar-brand {
-  flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-semi-bold);
+  gap: 10px;
+  min-width: 0;
+  padding-left: 12px;
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.5;
   white-space: nowrap;
-  color: var(--spectrum-gray-800);
+  color: var(--text-color);
 }
 
 .bc-bottom-ask-bar-brand .icon img {
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
+}
+
+.bc-bottom-ask-bar-label {
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-color);
+}
+
+/* Center track = docs article column (full 3fr span). Inset so input + send are not flush. */
+.bc-bottom-ask-bar-input-group {
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--spectrum-spacing-300);
+  padding-inline: var(--spectrum-spacing-400);
 }
 
 .bc-bottom-ask-bar-input-wrap {
   flex: 1 1 auto;
-  max-width: 560px;
-  margin-inline: auto;
+  max-width: none;
   display: flex;
   align-items: center;
-  gap: 8px;
   box-sizing: border-box;
-  height: 40px;
-  min-height: 40px;
-  max-height: 40px;
-  padding: 0 4px 0 16px;
-  border: 1px solid var(--spectrum-gray-300);
+  height: 48px;
+  min-height: 48px;
+  max-height: 48px;
+  min-width: 0;
+  padding: 0 16px 0 24px;
+  border: 1px solid #d4d4d4;
   border-radius: 100px;
-  background: var(--background-color);
+  background-color: var(--background-color);
+  box-shadow: 0 0 10px rgb(0 0 0 / 10%);
 }
 
 .bc-bottom-ask-bar-input-wrap:focus-within {
@@ -207,11 +233,16 @@
   border-radius: 0;
   background: transparent;
   font: inherit;
-  font-size: var(--spectrum-font-size-100);
-  line-height: 1.2;
+  font-size: var(--spectrum-font-size-200);
+  line-height: 1.5;
   outline: none;
   box-shadow: none;
-  color: var(--spectrum-gray-800);
+  color: var(--non-spectrum-dark-gray);
+}
+
+.bc-bottom-ask-bar-input::placeholder {
+  color: var(--non-spectrum-smoke);
+  opacity: 1;
 }
 
 /* Override global styles.css input / input:hover border + padding that cause focus layout shift. */
@@ -228,17 +259,22 @@
 
 .bc-bottom-ask-bar-send {
   flex-shrink: 0;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  margin: 0;
   padding: 0;
+  border: none;
   border-radius: 50%;
   background-color: var(--spectrum-gray-200);
   cursor: pointer;
   line-height: 0;
+  text-align: center;
   overflow: visible;
 }
 
@@ -248,6 +284,8 @@
   justify-content: center;
   width: 16px;
   height: 16px;
+  margin: 0;
+  flex-shrink: 0;
   line-height: 0;
 }
 
@@ -255,11 +293,95 @@
   display: block;
   width: 16px;
   height: 16px;
+  margin: 0;
+
+  /* The plane's mass sits in the left of the 24 viewBox; nudge so it reads centered in the disc. */
+  transform: translateX(2px);
+}
+
+.bc-bottom-ask-bar-actions {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding-right: 12px;
+}
+
+.bc-bottom-ask-bar-hide {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 18px;
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  font-size: var(--spectrum-font-size-200);
+  font-weight: var(--font-weight-bold);
+  line-height: 18px;
+  cursor: pointer;
+  color: var(--non-spectrum-dark-gray);
+  padding: 0;
+  overflow: visible;
+}
+
+.bc-bottom-ask-bar-expand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  line-height: 0;
+  overflow: visible;
+}
+
+.bc-bottom-ask-bar-expand .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  line-height: 0;
 }
 
 .bc-bottom-ask-bar-expand .icon img {
+  display: block;
   width: 18px;
   height: 18px;
+}
+
+.bc-bottom-ask-bar-expand:focus {
+  outline: none;
+  background-color: rgb(0 0 0 / 6%);
+}
+
+.bc-bottom-ask-bar-expand:focus-visible {
+  outline: 2px solid var(--non-spectrum-navy-blue);
+  outline-offset: 2px;
+}
+
+.bc-bottom-ask-bar-expand:hover:not(:active) {
+  background-color: rgb(0 0 0 / 6%);
+}
+
+.bc-bottom-ask-bar-hide:focus {
+  outline: none;
+  color: var(--non-spectrum-dark-gray);
+  background-color: transparent;
+}
+
+.bc-bottom-ask-bar-hide:focus-visible {
+  outline: 2px solid var(--non-spectrum-navy-blue);
+  outline-offset: 2px;
+}
+
+.bc-bottom-ask-bar-hide:hover:not(:active) {
+  color: var(--non-spectrum-dark-gray);
+  background-color: transparent;
 }
 
 .bc-bottom-ask-bar-send:disabled {
@@ -276,6 +398,15 @@
 .bc-bottom-ask-bar-send:disabled:hover,
 .bc-bottom-ask-bar-send:disabled:focus {
   background-color: var(--spectrum-gray-200);
+}
+
+/* The asset is authored for the FAB's white pill (#d8d8d8); on the grey disc the design uses the
+   darker --spectrum-gray-400 (#b1b1b1). An <img> can't inherit currentColor, and the enabled rule
+   below already recolours this same icon with a filter, so stay with that: flatten to white, then
+   scale to the token (255 * 0.694 = 177). There is currently no automated check pinning this value
+   to --spectrum-gray-400, so if that token changes, update the 0.694 multiplier here to match. */
+.bc-bottom-ask-bar-send:disabled .icon img {
+  filter: brightness(0) invert(1) brightness(0.694);
 }
 
 .bc-bottom-ask-bar-send:not(:disabled) .icon img {
@@ -296,69 +427,6 @@
   background-color: var(--link-hover-color);
 }
 
-.bc-bottom-ask-bar-actions {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-left: auto;
-}
-
-.bc-bottom-ask-bar-hide {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: 0;
-  background: transparent;
-  font: inherit;
-  font-size: var(--spectrum-font-size-100);
-  font-weight: var(--font-weight-semi-bold);
-  cursor: pointer;
-  color: var(--spectrum-gray-900);
-  padding: 4px 8px;
-}
-
-.bc-bottom-ask-bar-expand {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  border-radius: 4px;
-  background: transparent;
-  cursor: pointer;
-  line-height: 0;
-}
-
-.bc-bottom-ask-bar-expand:focus {
-  outline: none;
-  background-color: rgb(0 0 0 / 6%);
-}
-
-.bc-bottom-ask-bar-expand:focus-visible {
-  outline: 2px solid var(--non-spectrum-navy-blue);
-  outline-offset: 2px;
-}
-
-.bc-bottom-ask-bar-expand:hover:not(:active) {
-  background-color: rgb(0 0 0 / 6%);
-}
-
-.bc-bottom-ask-bar-hide:focus {
-  outline: none;
-  color: var(--spectrum-gray-900);
-  background-color: transparent;
-}
-
-.bc-bottom-ask-bar-hide:focus-visible {
-  outline: 2px solid var(--non-spectrum-navy-blue);
-  outline-offset: 2px;
-}
-
-.bc-bottom-ask-bar-hide:hover:not(:active) {
-  color: var(--spectrum-gray-900);
-  background-color: transparent;
-}
-
 #bc-trigger {
   position: fixed;
   bottom: 24px;
@@ -366,17 +434,19 @@
   z-index: 999;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-width: 218px;
-  padding: 7px 14px 7px 16px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 14px 0 16px;
   border-radius: 100px;
   border: none;
   font-family: var(--body-font-family);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-normal);
   cursor: pointer;
-  color: var(--spectrum-gray-600);
-  background-color: rgb(255 255 255 / 50%);
+  color: var(--non-spectrum-dark-gray);
+  background-color: rgb(255 255 255 / 70%);
   box-shadow:
     0 8px 28px rgb(0 0 0 / 9%),
     0 2px 8px rgb(0 0 0 / 5%),
@@ -397,7 +467,7 @@
   inset: 0;
   border-radius: 100px;
   padding: 2px;
-  background: linear-gradient(to right, var(--bc-gradient-start), var(--bc-gradient-end));
+  background: var(--bc-gradient);
   mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -422,9 +492,7 @@
   display: flex;
   align-items: center;
   line-height: 0;
-
-  /* Pull “Ask” closer than the flex gap allows */
-  margin-inline-end: -8px;
+  margin: 0;
 }
 
 #bc-trigger img {
@@ -434,8 +502,8 @@
 }
 
 #bc-trigger .bc-trigger-ask {
-  font-size: 14px;
-  font-weight: 400;
+  font-size: var(--spectrum-font-size-100);
+  font-weight: var(--font-weight-normal);
   line-height: 1.2;
   color: var(--spectrum-gray-500);
   letter-spacing: -0.01em;
@@ -449,6 +517,13 @@
   margin-left: auto;
   line-height: 0;
   flex-shrink: 0;
+}
+
+/* The design's outlined send glyph fills a square box, unlike the flatter filled plane it
+   replaced, so scope it below the 18px shared with the sparkle icon to hold the FAB's weight. */
+#bc-trigger .bc-trigger-send img {
+  width: 16px;
+  height: 16px;
 }
 
 /* EXLM-5715 — entry variant visibility */
@@ -476,7 +551,7 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
 }
 
 #bc-trigger:hover:not(:active) {
-  background-color: #fff;
+  background-color: var(--background-color);
   backdrop-filter: none;
   transform: translateY(-3px);
   box-shadow:
@@ -905,6 +980,31 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
 
 #brand-concierge-mount .submit-button svg path {
   fill: white !important;
+}
+
+/*
+ * BC's tooltip lib positions the submit button's tooltip via inline left/top, clamped to stay
+ * inside .input-container. The button sits close to that container's right edge, so wider
+ * translated labels (e.g. es "Enviar mensaje" vs en "Send") get shifted left to avoid
+ * overflowing, breaking the arrow's alignment with the button. Re-anchor it to the button's
+ * horizontal center — via `right` + translateX(50%) so it self-centers regardless of label
+ * width — instead of relying on BC's clamped `left`.
+ */
+#brand-concierge-mount [id^='submit-button-tooltip'] {
+  left: auto !important;
+  right: 28px !important;
+  transform: translateX(50%) !important;
+}
+
+/*
+ * Now permanently overlaps the button's box (even while hidden), so it would otherwise block
+ * real clicks/hovers on the button under it. Selector must out-specify the
+ * ".input-section .input-container *" pointer-events: auto rule above (also !important) —
+ * that rule intentionally re-enables pointer-events for input-container's contents after
+ * .input-section's own passthrough override.
+ */
+#brand-concierge-mount .input-section .input-container [id^='submit-button-tooltip'] {
+  pointer-events: none !important;
 }
 
 #brand-concierge-mount .scroll-to-bottom {

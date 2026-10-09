@@ -94,6 +94,8 @@
   font-size: var(--spectrum-font-size-200);
   height: auto;
   background-color: var(--non-spectrum-navy-blue);
+  border: 2px solid transparent;
+  color: var(--background-color);
   padding-inline: 16px;
   width: 100%;
   display: flex;

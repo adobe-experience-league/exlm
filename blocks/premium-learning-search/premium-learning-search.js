@@ -3,7 +3,7 @@ import { createTag, fetchLanguagePlaceholders, htmlToElement } from '../../scrip
 import { getMetadata } from '../../scripts/lib-franklin.js';
 import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { decorateCta } from '../../scripts/utils/button-utils.js';
 import { COVEO_SEARCH_CUSTOM_EVENTS } from '../../scripts/search/search-utils.js';
 import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
@@ -88,7 +88,7 @@ export default async function decorate(block) {
   block.appendChild(headerDiv);
   const headerCtaSlot = headerDiv.querySelector('.premium-learning-search-header-cta-slot');
   const ctaWrapper = createTag('div', { class: 'premium-learning-search-block-cta' });
-  ctaWrapper.innerHTML = decorateCustomButtons(ctaElement);
+  ctaWrapper.innerHTML = decorateCta(ctaElement, block, 'cta1');
   headerCtaSlot.appendChild(ctaWrapper);
   const updateCTASearch = (searchString) => {
     const anchor = ctaWrapper.querySelector('a');

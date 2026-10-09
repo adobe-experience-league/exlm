@@ -1,4 +1,4 @@
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { decorateCta } from '../../scripts/utils/button-utils.js';
 
 // eslint-disable-next-line no-unused-vars
 export function generateDetailedTeaserDOM(props, classes) {
@@ -37,7 +37,7 @@ export function generateDetailedTeaserDOM(props, classes) {
         ${eyebrowContent.outerHTML}
         <div class='title'>${title.innerHTML}</div>
         <div class='description'>${description.innerHTML}</div>
-        <div class='cta'>${decorateCustomButtons(firstCta, secondCta)}</div>
+        <div class='cta'>${decorateCta(firstCta, classes, 'cta1')}${decorateCta(secondCta, classes, 'cta2')}</div>
       </div>
       <div class='spacer'>
         ${subjectPicture ? subjectPicture.outerHTML : ''}

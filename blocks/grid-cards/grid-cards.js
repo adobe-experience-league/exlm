@@ -1,5 +1,5 @@
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { decorateCta } from '../../scripts/utils/button-utils.js';
 
 export default function decorate(block) {
   const children = [...block.children];
@@ -9,8 +9,11 @@ export default function decorate(block) {
   const hasEyebrow = eyebrowRow.textContent.trim();
   const hasTitle = titleRow.textContent.trim();
   const hasDesc = descRow.textContent.trim();
+  const hideHeader = block.classList.contains('no-header');
+  const largeSectionTitle = block.classList.contains('lg-section-title');
+  const largeCardTitle = block.classList.contains('lg-card-title');
 
-  if (hasEyebrow || hasTitle || hasDesc) {
+  if (!hideHeader && (hasEyebrow || hasTitle || hasDesc)) {
     const headerDiv = document.createElement('div');
     headerDiv.classList.add('grid-cards-header', 'block-header');
 
@@ -23,11 +26,14 @@ export default function decorate(block) {
 
     if (hasTitle) {
       let headingTag = titleRow.querySelector('h1, h2, h3, h4, h5, h6');
-      if (!headingTag) {
+      if (!headingTag || headingTag.tagName.toLowerCase() === 'h1') {
         headingTag = document.createElement('h2');
         headingTag.textContent = titleRow.textContent;
       }
       headingTag.classList.add('grid-cards-title', headingTag.tagName.toLowerCase());
+      if (largeSectionTitle) {
+        headingTag.classList.add('lg-title');
+      }
       titleRow.replaceWith(headingTag);
       headerDiv.appendChild(headingTag);
     } else {
@@ -60,11 +66,15 @@ export default function decorate(block) {
     const [titleCell, descCell, imageCell, ctaCell] = cardRow.children;
     const picture = imageCell?.querySelector('picture');
     let cardHeading = titleCell.querySelector('h1, h2, h3, h4, h5, h6');
-    if (!cardHeading) {
+    if (!cardHeading || cardHeading.tagName.toLowerCase() === 'h1') {
       cardHeading = document.createElement('h3');
       cardHeading.textContent = titleCell.textContent;
     }
     cardHeading.classList.add('grid-card-title', cardHeading.tagName.toLowerCase());
+
+    if (largeCardTitle) {
+      cardHeading.classList.add('lg-title');
+    }
 
     cardRow.textContent = '';
 
@@ -90,7 +100,7 @@ export default function decorate(block) {
         // Only show CTA if author provided real label text
         if (text && href && text !== href) {
           ctaCell.classList.add('grid-card-cta');
-          ctaCell.innerHTML = decorateCustomButtons(ctaCell);
+          ctaCell.innerHTML = decorateCta(ctaCell, block, 'cta');
           contentWrapper.appendChild(ctaCell);
         }
       }
@@ -99,13 +109,15 @@ export default function decorate(block) {
     // create clickable wrapper for wide card
     if (isWide) {
       const anchor = ctaCell?.querySelector('a');
-      if (anchor?.href) {
-        anchor.textContent = '';
-        anchor.classList.add('grid-card-link');
-        if (picture) anchor.appendChild(picture);
-        anchor.appendChild(contentWrapper);
-        cardRow.appendChild(anchor);
+      const href = anchor?.getAttribute('href')?.trim();
+      const wrapper = href ? anchor : document.createElement('div');
+      wrapper.textContent = '';
+      wrapper.classList.add('grid-card-link');
+      if (picture) wrapper.appendChild(picture);
+      wrapper.appendChild(contentWrapper);
+      cardRow.appendChild(wrapper);
 
+      if (href) {
         // Add componentClick tracking for wide variant
         anchor.addEventListener('click', async () => {
           const { pushComponentClick, generateComponentID } = await import('../../scripts/analytics/lib-analytics.js');

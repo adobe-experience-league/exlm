@@ -158,17 +158,40 @@ class ProfileClient {
     } else {
       payload.push({ op: 'replace', path: `/${key}`, value: profile[key] });
     }
-    await this.fetchProfile({
+    // Profile saves go through a raw fetch (not fetchProfile/fetchStaleWhileRevalidate,
+    // which never treats a non-OK response as a failure) so a failed save is surfaced
+    // consistently to every caller instead of being silently swallowed. Reads are unaffected.
+    const jwt = await this.jwt;
+    const response = await fetch(this.url, {
       method: 'PATCH',
+      credentials: 'include',
       headers: {
+        authorization: jwt,
+        accept: 'application/json',
         'content-type': 'application/json-patch+json',
         'x-csrf-token': await csrf(JWTTokenUrl),
       },
       body: JSON.stringify(payload),
     });
 
+    if (!response.ok) {
+      let apiMessage;
+      try {
+        const body = await response.json();
+        apiMessage = body?.error || body?.message;
+      } catch (e) {
+        apiMessage = null;
+      }
+      const error = new Error(apiMessage || `Profile update failed: ${response.status} ${response.statusText}`);
+      error.status = response.status;
+      error.apiMessage = apiMessage;
+      throw error;
+    }
+
     // uppdate the profile in session storage after the changes
     await this.getMergedProfile(true);
+
+    return response.status;
   }
 
   // Fetches the community profile details of the specific logged in user
@@ -303,7 +326,10 @@ class ProfileClient {
     );
 
     profile.interactions.push(interaction);
-    this.updateProfile('interactions', profile.interactions, true);
+    this.updateProfile('interactions', profile.interactions, true).catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error('Error adding interaction:', error);
+    });
   }
 }
 

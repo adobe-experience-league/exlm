@@ -3,7 +3,7 @@ import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { fetchIndustryOptions, getIndustryNameById } from '../../scripts/profile/profile.js';
 import getEmitter from '../../scripts/events.js';
-import decorateCustomButtons from '../../scripts/utils/button-utils.js';
+import { decorateCta } from '../../scripts/utils/button-utils.js';
 
 const profileEventEmitter = getEmitter('profile');
 const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
@@ -183,7 +183,7 @@ async function decorateProfileWelcomeBlock(block) {
                       </span>
                     </div>
                   </div>
-                    <div class="profile-user-card-cta">${decorateCustomButtons(profileCta)}</div>
+                    <div class="profile-user-card-cta">${decorateCta(profileCta, block, 'cta1')}</div>
                 </div>    
               </div>
         `);

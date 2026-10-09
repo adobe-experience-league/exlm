@@ -130,8 +130,18 @@ const BrowseCardsCoveoDataAdaptor = (() => {
     const eventSpeakersProfile =
       raw?.el_event_speakers_profile_picture_url || el_event_speakers_profile_picture_url || '';
 
+    const rawDate = raw?.date;
+    const coveoDate = rawDate != null && rawDate !== '' ? rawDate : parentResult?.raw?.date;
+    const isOnDemandEvent = contentType?.toLowerCase() === CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY.toLowerCase();
+
     let eventDate = '';
-    if (raw?.el_event_start_time) {
+    if (isOnDemandEvent && coveoDate != null && coveoDate !== '') {
+      // EXLM-5813: On-Demand cards display Coveo `@date` (unix), the same field Events Hub
+      // uses for most-recent-first sort. Unlike Upcoming, that value varies per recording.
+      // Do not use `@date` for Upcoming (index/batch time) — see EXLM-5361 /
+      // COVEO_UPCOMING_EVENT_STILL_FUTURE_AQ (`el_event_start_time`).
+      eventDate = coveoDate;
+    } else if (raw?.el_event_start_time) {
       eventDate = new Date(raw.el_event_start_time).toISOString();
     } else if (el_event_start_time) {
       eventDate = new Date(el_event_start_time).toISOString();

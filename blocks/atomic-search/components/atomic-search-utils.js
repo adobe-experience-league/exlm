@@ -1,5 +1,7 @@
 const DEFAULT_WAIT_TIME = 100; // 100ms.
 
+let activeBatch;
+
 export const CUSTOM_EVENTS = {
   RESULT_UPDATED: 'ATOMIC_SEARCH_RESULTS_UPDATED',
   FILTER_UPDATED: 'ATOMIC_SEARCH_FILTER_UPDATED',
@@ -149,6 +151,111 @@ const getFacetParamKeyFromSegment = (segment) => {
   return m ? m[1] : null;
 };
 
+// Ignore the facet being changed and the pagination reset it can trigger.
+function otherParameters(url, field) {
+  const parameters = new URLSearchParams(url.hash.slice(1));
+  parameters.delete(`f-${field}`);
+  parameters.delete('first');
+  if (parameters.get('sort') === 'relevancy') parameters.delete('sort');
+  parameters.sort();
+  return parameters.toString();
+}
+
+/**
+ * Atomic owns URL synchronization. Temporarily coalesce only writes belonging
+ * to one facet interaction, including its debounced child selections.
+ */
+export function beginFacetHistoryBatch(engine, field) {
+  if (!engine || !field) return null;
+  activeBatch?.stop();
+
+  const { history } = window;
+  const initialUrl = new URL(window.location.href);
+  const originalPushState = history.pushState;
+  let pushed = false;
+  let complete = false;
+  let stopped = false;
+  let unsubscribe = () => {};
+  let batch;
+  let pushState;
+
+  function stop() {
+    if (stopped) return;
+    stopped = true;
+    if (history.pushState === pushState) history.pushState = originalPushState;
+    unsubscribe();
+    window.removeEventListener('popstate', stop);
+    if (activeBatch === batch) activeBatch = undefined;
+  }
+
+  pushState = (state, title, url) => {
+    const nextUrl = new URL(url || window.location.href, window.location.href);
+    const belongsToFacet =
+      nextUrl.origin === initialUrl.origin &&
+      nextUrl.pathname === initialUrl.pathname &&
+      nextUrl.search === initialUrl.search &&
+      otherParameters(nextUrl, field) === otherParameters(initialUrl, field);
+
+    if (!belongsToFacet) {
+      stop();
+      originalPushState.call(history, state, title, url);
+      return;
+    }
+
+    if (nextUrl.href === window.location.href) return;
+    if (pushed) {
+      history.replaceState(state, title, url);
+    } else {
+      originalPushState.call(history, state, title, url);
+      pushed = true;
+    }
+  };
+
+  function settle() {
+    // Let all URL subscribers finish before restoring the history writer.
+    queueMicrotask(() => {
+      if (complete && !engine.state.search.isLoading) stop();
+    });
+  }
+
+  batch = {
+    stop,
+    finish() {
+      complete = true;
+      settle();
+    },
+  };
+  activeBatch = batch;
+  history.pushState = pushState;
+  // hashchange fires for Atomic's own writeSearchHashFragment sync; only popstate means the user navigated away.
+  window.addEventListener('popstate', stop);
+  unsubscribe = engine.subscribe(settle);
+  return batch;
+}
+
+export function finishFacetHistoryBatch(batch) {
+  if (batch && activeBatch === batch) batch.finish();
+}
+
+/**
+ * Write a search hash, optionally replacing the current history entry.
+ * History API writes do not emit hashchange, so notify Atomic explicitly.
+ */
+export function writeSearchHashFragment(newHash, { replace = false } = {}) {
+  const oldHref = window.location.href;
+  const nextUrl = new URL(oldHref);
+  nextUrl.hash = String(newHash || '').replace(/^#/, '');
+  if (nextUrl.href === oldHref) return;
+
+  const { history } = window;
+  if (replace) {
+    history.replaceState(history.state, '', nextUrl.href);
+  } else {
+    history.pushState(history.state, '', nextUrl.href);
+  }
+  window.dispatchEvent(new HashChangeEvent('hashchange', { oldURL: oldHref, newURL: nextUrl.href }));
+}
+
 /**
  * Removes existing `f-{facetId}=…` segments for each replacement’s facetId, then appends the new segments. Single hash write.
  * Same flow as updateHash: fragment → split → filter → push → join.
@@ -168,7 +275,8 @@ export const replaceFacetParamsInHash = (replacements, joinWith = '&') => {
   replacements.forEach(({ facetId, targetFacetKeys }) => {
     updatedParts.push(`f-${facetId}=${targetFacetKeys.join(',')}`);
   });
-  window.location.hash = updatedParts.join(joinWith);
+  // Expanding a parent-only deep link is setup, not a new user interaction.
+  writeSearchHashFragment(updatedParts.join(joinWith), { replace: true });
 };
 
 export function observeShadowRoot(host, { onEmpty, onPopulate, onClear, onMutation, waitForElement = false } = {}) {

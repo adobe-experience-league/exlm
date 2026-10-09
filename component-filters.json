@@ -68,6 +68,7 @@
     "id": "section",
     "components": [
       "text",
+      "aligned-text",
       "image",
       "button",
       "title",
@@ -166,6 +167,7 @@
     "id": "profile-bottom-section",
     "components": [
       "text",
+      "aligned-text",
       "image",
       "button",
       "title",
@@ -212,6 +214,7 @@
     "id": "section-article",
     "components": [
       "text",
+      "aligned-text",
       "image",
       "button",
       "title",
@@ -257,6 +260,7 @@
     "id": "tab-section",
     "components": [
       "text",
+      "aligned-text",
       "image",
       "button",
       "title",
@@ -284,6 +288,7 @@
     "id": "section-browse",
     "components": [
       "text",
+      "aligned-text",
       "image",
       "button",
       "title",
@@ -342,6 +347,7 @@
     "id": "profile-section",
     "components": [
       "text",
+      "aligned-text",
       "title",
       "button",
       "image",
@@ -369,6 +375,7 @@
     "id": "courses-section",
     "components": [
       "text",
+      "aligned-text",
       "title",
       "button",
       "image",
@@ -393,6 +400,7 @@
     "id": "course-hub-section",
     "components": [
       "text",
+      "aligned-text",
       "title",
       "button",
       "image",
@@ -407,6 +415,7 @@
     "id": "sign-up-flow-section",
     "components": [
       "text",
+      "aligned-text",
       "title",
       "button",
       "image",
@@ -423,6 +432,7 @@
     "id": "article-content-section",
     "components": [
       "text",
+      "aligned-text",
       "image",
       "button",
       "title",
@@ -467,6 +477,7 @@
     "id": "premium-learning-section",
     "components": [
       "text",
+      "aligned-text",
       "title",
       "button",
       "image",
@@ -492,6 +503,32 @@
     "rte": {
       "toolbar": {
         "format": ["bold", "italic"],
+        "alignment": [],
+        "indentation": [],
+        "sr_script": ["superscript", "subscript"],
+        "list": ["bullet_list", "ordered_list"],
+        "insert": ["link"],
+        "advanced": [],
+        "extensions": [],
+        "editor": ["removeformat"]
+      },
+      "actions": {
+        "bullet_list": {
+          "wrapInParagraphs": true
+        },
+        "ordered_list": {
+          "wrapInParagraphs": true
+        }
+      }
+    },
+    "components": ["richtext"]
+  },
+  {
+    "id": "aligned-text",
+    "rte": {
+      "toolbar": {
+        "format": ["bold", "italic"],
+        "blocks": ["paragraph", "h2", "h3", "h4", "h5", "h6", "code_block", "blockquote"],
         "alignment": [],
         "indentation": [],
         "sr_script": ["superscript", "subscript"],

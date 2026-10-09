@@ -41,6 +41,10 @@
   font-weight: var(--font-weight-heavy);
   line-height: 125%;
   color: var(--text-color);
+
+  &.lg-title {
+    font-size: var(--exlm-font-size-h1);
+  }
 }
 
 .grid-card-description {
@@ -115,10 +119,6 @@
 }
 
 /* Minimal card styling */
-.grid-cards.minimal .grid-cards-header {
-  display: none;
-}
-
 .grid-cards.minimal .grid-card-container {
   gap: var(--spectrum-spacing-400);
   justify-items: center;
@@ -169,7 +169,7 @@
   grid-template-columns: 1fr;
 }
 
-.grid-cards.wide .grid-card > a {
+.grid-cards.wide .grid-card > .grid-card-link {
   display: flex;
   margin: 0;
   gap: var(--spectrum-spacing-400);

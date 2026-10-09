@@ -787,6 +787,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-prod--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities.adobe.com',
+      ethos: 'experienceleague-api.ethos09-prod-va7.ethos.adobe.net',
     },
     {
       env: 'STAGE',
@@ -795,6 +796,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm-stage--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-beta.adobe.com',
+      ethos: 'experienceleague-api-stage.ethos09-prod-va7.ethos.adobe.net',
     },
     {
       env: 'DEV',
@@ -803,6 +805,7 @@ export function getConfig() {
       hlxPreview: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).page$/,
       hlxLive: /^([a-z0-9-]+)--exlm--adobe-experience-league.(hlx|aem).live$/,
       community: 'experienceleaguecommunities-beta.adobe.com',
+      ethos: 'experienceleague-api-stage.ethos09-prod-va7.ethos.adobe.net',
     },
   ];
 
@@ -861,7 +864,9 @@ export function getConfig() {
   );
   const cdnHost = currentEnv?.cdn || defaultEnv.cdn;
   const communityHost = currentEnv?.community || defaultEnv.community;
+  const ethosHost = currentEnv?.ethos || defaultEnv.ethos;
   const cdnOrigin = `https://${cdnHost}`;
+  const ethosOrigin = `https://${ethosHost}`;
   const premiumLearningAuthAPI = `${cdnOrigin}/api/v1/web/alm/authentication`;
   const rawLang = document.querySelector('html').lang || 'en';
   const lang = window.location.hostname.includes(communityHost)
@@ -920,6 +925,7 @@ export function getConfig() {
     quizPassingCriteria: 0.65, // 65% passing criteria for quizzes
     khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list?platform=gainsight`,
     khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`,
+    // Profile and JWT Token Ethos APIs are reverse proxied through the ExL CDN domains.
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
     coveoTokenUrl: `${cdnOrigin}/api/action/coveo-token?lang=${lang}`,
@@ -932,7 +938,7 @@ export function getConfig() {
     plPublicCatalogIds,
     plApiBaseUrl: 'https://learningmanager.adobe.com/primeapi/v2',
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
-    industryUrl: `${cdnOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
+    industryUrl: `${ethosOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     articleUrl: `${cdnOrigin}/api/articles`,
     solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
@@ -952,7 +958,7 @@ export function getConfig() {
     communityAccountURL: isProd
       ? `https://experienceleaguecommunities.adobe.com/?lang=${communityLocale}`
       : `https://experienceleaguecommunities-beta.adobe.com/?lang=${communityLocale}`,
-    interestsUrl: `${cdnOrigin}/api/interests?page_size=200&sort=Order`,
+    interestsUrl: `${ethosOrigin}/api/interests?page_size=200&sort=Order`,
     // Param for localized Community Profile URL
     localizedCommunityProfileParam: `?lang=${communityLocale}`,
     // MPC API Base
@@ -1171,6 +1177,41 @@ function isBrandConciergeExcludedPath() {
   return /^\/[^/]+\/(support|premium)(\/|$)/i.test(pathname) || /^\/(support|premium)(\/|$)/i.test(pathname);
 }
 
+/**
+ * The browser jumps to the hash before that content has rendered, so it lands on the wrong section;
+ * we re-scroll to the target on each reflow of the given containers until `settled` resolves (the
+ * layout is final) or the user scrolls.
+ * @param {HTMLElement|null} target the hash target element
+ * @param {Array<HTMLElement>} containers elements to observe for reflow (e.g. main, preMain)
+ * @param {Promise} settled resolves once the layout has settled
+ */
+function alignHashTarget(target, containers, settled) {
+  if (!target) return;
+  let done = false;
+  const realign = () => {
+    if (!done) target.scrollIntoView();
+  };
+  realign();
+  if (!window.ResizeObserver) return;
+  const observer = new ResizeObserver(realign);
+  const events = ['wheel', 'touchstart', 'keydown', 'click'];
+  let safety;
+  const stop = () => {
+    done = true;
+    clearTimeout(safety);
+    observer.disconnect();
+    events.forEach((evt) => window.removeEventListener(evt, stop));
+  };
+  containers.filter(Boolean).forEach((el) => observer.observe(el));
+  events.forEach((evt) => window.addEventListener(evt, stop, { once: true, passive: true }));
+  // Safety net to stop anyway if `settled` never resolves (when the header module fails to load).
+  safety = setTimeout(stop, 5000);
+  settled.then(() => {
+    realign();
+    stop();
+  });
+}
+
 async function loadLazy(doc) {
   let embedMode = false;
   if (window.location.pathname.toLowerCase().includes('/playlists')) {
@@ -1200,12 +1241,19 @@ async function loadLazy(doc) {
   await loadBlocks(main);
 
   const { hash } = window.location;
-  const element = hash ? doc.getElementById(hash.substring(1)) : false;
-  if (hash && element) element.scrollIntoView();
+  const target = hash ? doc.getElementById(hash.substring(1)) : null;
 
   if (!embedMode) {
     const headerPromise = loadHeader(doc.querySelector('header'));
     const footerPromise = loadFooter(doc.querySelector('footer'));
+    // Re-align the #hash target as the layout settles; stop on header-loaded (header rendered) or a user scroll.
+    alignHashTarget(
+      target,
+      [main, preMain],
+      new Promise((resolve) => {
+        doc.addEventListener('header-loaded', resolve, { capture: true, once: true });
+      }),
+    );
     const martechOff = window.location.search?.indexOf('martech=off') !== -1;
     // disable martech if martech=off is in the query string, this is used for testing ONLY
     if (!martechOff) {
@@ -1214,6 +1262,17 @@ async function loadLazy(doc) {
     if (!isBrandConciergeExcludedPath() && !martechOff) {
       import('./brand-concierge/brand-concierge-entry-target.js').catch(() => {});
     }
+  } else {
+    // Embed mode has no header - settle on load.
+    alignHashTarget(
+      target,
+      [main, preMain],
+      doc.readyState === 'complete'
+        ? Promise.resolve()
+        : new Promise((resolve) => {
+            window.addEventListener('load', resolve, { once: true });
+          }),
+    );
   }
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   if (isLiveGradientBgPage) {
@@ -1767,6 +1826,15 @@ export function getLastDocsSection() {
 function handleRedirects() {
   // window.location.href is not a valid URL base (e.g. 'about:srcdoc' inside preview iframes)
   if (!/^https?:$/.test(window.location.protocol)) return;
+  const currentUrl = new URL(window.location.href);
+  // Match the legacy support route independently of query parameters and preserve them.
+  if (currentUrl.pathname === '/home' && currentUrl.hash === '#support') {
+    currentUrl.pathname = '/en/support';
+    currentUrl.hash = '';
+    window.location.href = currentUrl.href;
+    return;
+  }
+
   const redirects = ['/#feedback:/home#feedback'].map((p) => p.split(':').map((s) => new URL(s, window.location.href)));
   const redirect = redirects.find(([from]) => window.location.href === from.href);
   if (redirect) window.location.href = redirect[1].href;
