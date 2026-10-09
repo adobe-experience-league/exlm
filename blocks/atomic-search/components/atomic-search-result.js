@@ -241,9 +241,9 @@ export const atomicResultStyles = `
                     atomic-result-multi-value-text::part(svg-element) {
                       top: 2px;
                       position: relative;
-                      display: inline-block;
+                      display: block;
                       width: 13px;
-                      height: 13px;
+                      height: 18px;
                       min-width: 13px;
                       flex: 0 0 13px;
                       max-height: 18px;
@@ -1148,10 +1148,18 @@ export default function atomicResultHandler(block, placeholders) {
         });
         if (contentTypeElements.length) {
           decorateIcons(contentTypeElParent);
-          contentTypeElParent.querySelectorAll('[part~="svg-element"] img').forEach((img) => {
-            img.style.width = '13px';
-            img.style.height = '13px';
-            img.style.display = 'inline';
+          contentTypeElParent.querySelectorAll('[part~="svg-element"]').forEach((iconWrap) => {
+            const icon = iconWrap.querySelector('.icon');
+            if (icon) {
+              icon.style.display = 'block';
+              icon.style.width = '13px';
+              icon.style.height = '13px';
+            }
+            iconWrap.querySelectorAll('img').forEach((img) => {
+              img.style.width = '13px';
+              img.style.height = '13px';
+              img.style.display = 'block';
+            });
           });
         }
 
