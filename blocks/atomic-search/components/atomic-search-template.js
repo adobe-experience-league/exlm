@@ -658,6 +658,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
                     background-color: transparent;
                     box-shadow: none;
                   }
+                  /* Atomic 3.62 group-hover:text-primary turns "Content Type:" blue. Prod stays grey. */
+                  atomic-breadbox::part(breadcrumb-label),
+                  atomic-breadbox::part(breadcrumb-value),
+                  atomic-breadbox::part(breadcrumb-clear) {
+                    color: var(--non-spectrum-grey-updated);
+                  }
                   atomic-breadbox::part(show-more), atomic-breadbox::part(show-less), atomic-breadbox::part(clear) {
                     border: 1px solid #959595;
                     border-radius: 4px;
