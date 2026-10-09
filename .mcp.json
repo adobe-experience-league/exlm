@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "pixel-guard": {
+      "command": "npx",
+      "args": ["-y", "github:ACSGenUI/pixel-guard"],
+      "env": {}
+    }
+  }
+}
