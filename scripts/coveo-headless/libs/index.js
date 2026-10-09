@@ -1,31 +1,29 @@
-// copy folder recursively from ./node_modules/@coveo/headless/dist/browser to ./browser
-
-import fs from 'fs/promises';
-import { existsSync, mkdirSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { join, dirname } from 'path';
-
 /**
- * Just a simple script to copy the headless browser ESM module to the browser folder
- * for use in browser as a module (instead of bundling it)
- * this is done here to ensure we get the module as is from NPM, and easy upgrade it in future
+ * Bundle @coveo/headless into a single browser ESM module.
+ * Headless 3 no longer ships dist/browser; the site imports this file directly.
+ * Regenerate after a version bump: npm install && node index.js
  */
 
-let dir;
-try {
-  dir = __dirname; // if commonjs, this will get current directory
-} catch (e) {
-  dir = dirname(fileURLToPath(import.meta.url)); // if esm, this will get current directory
-}
+import { mkdirSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+// Installed only in this folder (`npm install` here) when regenerating the bundle. Root CI does not install it.
+// eslint-disable-next-line import/no-unresolved
+import esbuild from 'esbuild';
 
-const from = join(dir, '/node_modules/@coveo/headless/dist/browser');
-const to = join(dir, '/browser');
+const dir = dirname(fileURLToPath(import.meta.url));
+const outfile = join(dir, 'browser/headless.esm.js');
 
-const ensureDir = (d) => {
-  if (!existsSync(d)) {
-    mkdirSync(d, { recursive: true });
-  }
-};
+mkdirSync(join(dir, 'browser'), { recursive: true });
 
-ensureDir(to);
-await fs.cp(from, to, { recursive: true });
+await esbuild.build({
+  entryPoints: [join(dir, 'node_modules/@coveo/headless/dist/esm/index.js')],
+  bundle: true,
+  format: 'esm',
+  platform: 'browser',
+  minify: true,
+  outfile,
+  banner: {
+    js: '/* @coveo/headless browser bundle. Regenerate with: node index.js */',
+  },
+});
