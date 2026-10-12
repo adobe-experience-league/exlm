@@ -4629,7 +4629,7 @@
         "description": "Section title for the whole block, displayed above the featured card."
       },
       {
-        "component": "richtext",
+        "component": "text",
         "valueType": "string",
         "name": "blockDescription",
         "value": "",
@@ -4792,7 +4792,7 @@
         "description": "Title for the event card item."
       },
       {
-        "component": "richtext",
+        "component": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
