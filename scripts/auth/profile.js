@@ -119,6 +119,8 @@ class ProfileClient {
   async updateProfile(key, val, replace = false) {
     const profile = await this.getProfile();
     const attriubutes = await this.getAttributes();
+    // Capture this before the write-filter below can delete the key from `profile`.
+    const hasUpdatedField = Object.prototype.hasOwnProperty.call(profile, 'updated');
 
     Object.keys(profile).forEach((i) => {
       if (attriubutes.write.includes(i) === false) {
@@ -158,6 +160,9 @@ class ProfileClient {
     } else {
       payload.push({ op: 'replace', path: `/${key}`, value: profile[key] });
     }
+    // Keep "updated" consistent as an ISO timestamp (previously inconsistent: ISO string vs number).
+    // Use 'add' when the record doesn't have the key yet, 'replace' when it does.
+    payload.push({ op: hasUpdatedField ? 'replace' : 'add', path: '/updated', value: new Date().toISOString() });
     // Profile saves go through a raw fetch (not fetchProfile/fetchStaleWhileRevalidate,
     // which never treats a non-OK response as a failure) so a failed save is surfaced
     // consistently to every caller instead of being silently swallowed. Reads are unaffected.
