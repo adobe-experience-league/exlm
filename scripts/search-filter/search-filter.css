@@ -1,0 +1,424 @@
+/* GENERATED from search-filter.scss - edit the .scss and recompile:
+   npx sass scripts/search-filter/search-filter.scss scripts/search-filter/search-filter.css --no-source-map */
+
+/* ---------- Layout ---------- */
+.sf-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+  width: 100%;
+}
+
+.sf-layout .sf-filters-column,
+.sf-layout .sf-results-column {
+  min-width: 0;
+}
+
+/* ---------- Filters header ---------- */
+.sf-layout .sf-filters-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #d5d5d5;
+}
+
+.sf-layout .sf-filters-heading {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.3;
+}
+
+.sf-layout .sf-clear-filters {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  color: #1473e6;
+  font-size: 0.875rem;
+  line-height: 1.3;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.sf-layout .sf-clear-filters:disabled {
+  color: #909090;
+  text-decoration: none;
+  cursor: default;
+}
+
+/* ---------- Filter groups ---------- */
+.sf-layout .sf-filter-groups {
+  display: flex;
+  flex-direction: column;
+}
+
+.sf-layout .sf-filter-group {
+  margin: 0;
+  border-bottom: 1px solid #d5d5d5;
+}
+
+.sf-layout .sf-filter-group[hidden] {
+  display: none;
+}
+
+.sf-layout .sf-filter-group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin: 0;
+  padding: 14px 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  color: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sf-layout .sf-filter-group-title {
+  flex: 1;
+}
+
+.sf-layout .sf-filter-group-count {
+  font-weight: 400;
+  color: #505050;
+}
+
+.sf-layout .sf-filter-group-header .icon {
+  display: inline-flex;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.sf-layout .sf-filter-group-header .icon svg,
+.sf-layout .sf-filter-group-header .icon img {
+  width: 100%;
+  height: 100%;
+}
+
+.sf-layout .sf-filter-group.is-expanded .sf-filter-group-header .icon-chevron {
+  transform: rotate(180deg);
+}
+
+.sf-layout .sf-filter-options {
+  display: none;
+  padding: 0 0 14px;
+}
+
+.sf-layout .sf-filter-group.is-expanded .sf-filter-options {
+  display: block;
+}
+
+.sf-layout .sf-filter-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.sf-layout .sf-filter-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+.sf-layout .sf-filter-option input[type='checkbox'] {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin: 2px 0 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.sf-layout .sf-filter-option-label {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.4;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.sf-layout .sf-filter-option.checked .sf-filter-option-label {
+  font-weight: 700;
+}
+
+.sf-layout .sf-filter-option-count {
+  color: #6e6e6e;
+  font-weight: 400;
+}
+
+/* ---------- Keyword search ---------- */
+.sf-layout .sf-keyword {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0 0 16px;
+  padding: 0 12px;
+  background: #fff;
+  border: 1px solid #909090;
+  border-radius: 4px;
+}
+
+.sf-layout .sf-keyword:focus-within {
+  border-color: #1473e6;
+  box-shadow: 0 0 0 1px #1473e6;
+}
+
+.sf-layout .sf-keyword .icon {
+  display: inline-flex;
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
+.sf-layout .sf-keyword .icon svg,
+.sf-layout .sf-keyword .icon img {
+  width: 100%;
+  height: 100%;
+}
+
+.sf-layout .sf-keyword-input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  outline: 0;
+  font: inherit;
+}
+
+/* higher specificity than `.sf-keyword .icon` so the clear icon really is hidden until there is text */
+.sf-layout .sf-keyword .sf-keyword-clear {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.sf-layout .sf-keyword .sf-keyword-clear.is-visible {
+  display: inline-flex;
+}
+
+/* if the icon svg fails to load the span stays empty: draw a plain x instead */
+.sf-layout .sf-keyword-clear:empty::before {
+  content: '\00d7';
+  font-size: 22px;
+  line-height: 20px;
+}
+
+/* ---------- Results count ---------- */
+.sf-layout .sf-results-count {
+  margin: 0 0 16px;
+  font-size: 0.875rem;
+  color: #505050;
+}
+
+.sf-layout .sf-results-count:empty {
+  display: none;
+}
+
+.sf-layout .sf-results-count strong {
+  color: #2c2c2c;
+}
+
+/* ---------- Active filter tags ---------- */
+.sf-layout .sf-active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+.sf-layout .sf-active-filters[hidden] {
+  display: none;
+}
+
+.sf-layout .sf-active-filter-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px 4px 12px;
+  background: #fff;
+  border: 1px solid #909090;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+
+.sf-layout .sf-active-filter-tag-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.sf-layout .sf-active-filter-tag-remove .icon {
+  display: inline-flex;
+  width: 12px;
+  height: 12px;
+}
+
+.sf-layout .sf-active-filter-tag-remove .icon svg,
+.sf-layout .sf-active-filter-tag-remove .icon img {
+  width: 100%;
+  height: 100%;
+}
+
+.sf-layout .sf-filters.is-filter-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ---------- Cards: 3 per row next to the sidebar ---------- */
+.sf-layout .sf-results-column .browse-cards-block-content,
+.sf-layout .sf-results-column .playlist-browse-cards,
+.sf-layout .sf-results-column .shimmer-grid-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+  margin: 0;
+}
+
+/* cards must fill their grid cell instead of keeping the old 4-up widths */
+.sf-layout .sf-results-column .browse-cards-block-content > *,
+.sf-layout .sf-results-column .playlist-browse-cards > .playlist-browse-card {
+  width: auto;
+  max-width: none;
+  min-width: 0;
+  flex: none;
+  margin: 0;
+}
+
+/* messages span the whole row */
+.sf-layout .sf-results-column .course-no-results,
+.sf-layout .sf-results-column .playlist-no-results {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 1200px) {
+  .sf-layout .sf-results-column .browse-cards-block-content,
+  .sf-layout .sf-results-column .playlist-browse-cards,
+  .sf-layout .sf-results-column .shimmer-grid-wrapper {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* the toggle only exists on narrow screens */
+.sf-layout .sf-mobile-filter-toggle {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .sf-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .sf-layout .sf-mobile-filter-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding: 10px 14px;
+    background: #fff;
+    border: 1px solid #909090;
+    border-radius: 4px;
+    color: inherit;
+    font: inherit;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .sf-layout .sf-mobile-filter-toggle-label {
+    flex: 1;
+  }
+
+  .sf-layout .sf-mobile-filter-toggle-count {
+    font-weight: 400;
+    color: #505050;
+  }
+
+  .sf-layout .sf-mobile-filter-toggle .icon {
+    display: inline-flex;
+    flex: none;
+    width: 16px;
+    height: 16px;
+  }
+
+  .sf-layout .sf-mobile-filter-toggle .icon svg,
+  .sf-layout .sf-mobile-filter-toggle .icon img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .sf-layout .sf-mobile-filter-toggle .icon-chevron {
+    transition: transform 0.2s ease;
+  }
+
+  .sf-layout.is-filters-open .sf-mobile-filter-toggle .icon-chevron {
+    transform: rotate(180deg);
+  }
+
+  /* collapsed until the toggle is pressed */
+  .sf-layout .sf-filters-panel {
+    display: none;
+    margin-top: 12px;
+  }
+
+  .sf-layout.is-filters-open .sf-filters-panel {
+    display: block;
+  }
+
+  /* the toggle already says "Filters" */
+  .sf-layout .sf-filters-heading {
+    display: none;
+  }
+
+  .sf-layout .sf-filters-header {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 600px) {
+  .sf-layout .sf-results-column .browse-cards-block-content,
+  .sf-layout .sf-results-column .playlist-browse-cards,
+  .sf-layout .sf-results-column .shimmer-grid-wrapper {
+    grid-template-columns: 1fr;
+  }
+}

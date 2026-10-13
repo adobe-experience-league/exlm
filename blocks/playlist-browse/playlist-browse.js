@@ -1,14 +1,23 @@
-import { createOptimizedPicture, decorateIcons } from '../../scripts/lib-franklin.js';
+import { createOptimizedPicture, loadCSS } from '../../scripts/lib-franklin.js';
 import {
   createPlaceholderSpan,
   decoratePlaceholders,
   getPathDetails,
   htmlToElement,
   fetchWithFallback,
+  fetchLanguagePlaceholders,
   xssSanitizeQueryParamValue,
 } from '../../scripts/scripts.js';
-import { newMultiSelect, newPagination, newShowHidePanel } from './dom-helpers.js';
+import { newPagination } from './dom-helpers.js';
 import { pushBrowseCardClickEvent } from '../../scripts/analytics/lib-analytics.js';
+import {
+  createFilterStore,
+  createSearchFilterUI,
+  createSidebarLayout,
+  readFiltersFromUrl,
+  readKeywordFromUrl,
+  bindFiltersToUrl,
+} from '../../scripts/search-filter/search-filter.js';
 
 const EXPERIENCE_LEVEL_PLACEHOLDERS = [
   {
@@ -55,8 +64,6 @@ const PLACEHOLDERS = {
   previous: 'playlistPreviousLabel',
   next: 'playlistNextLabel',
   of: 'playlistOfLabel',
-  filter: 'filterLabel',
-  clearFilter: 'filterClearLabel',
 };
 
 async function fetchPlaylists() {
@@ -70,6 +77,8 @@ async function fetchPlaylists() {
 const sortAlphanumerically = (a, b) => a.localeCompare(b);
 
 const playlistsPromise = fetchPlaylists();
+
+// filterName doubles as the filter group id and the playlists.json column name
 const filterOptions = [
   { legend: 'Product', filterName: 'solution', placeholderKey: 'filterProductLabel', sort: sortAlphanumerically },
   {
@@ -90,35 +99,26 @@ const filterOptions = [
     },
   },
 ];
-const multiSelects = [];
+const GROUP_IDS = filterOptions.map((f) => f.filterName);
 
 /**
  * get all possible values for a filter from the playlists
  * @param {string} filterName
- * @returns {string[]}
+ * @returns {Promise<string[]>}
  */
 async function getAllPossibleFilterValues(filterName) {
   const playlists = await playlistsPromise;
-  const solutions = playlists.data
-    .map((p) => p[filterName])
+  const values = playlists.data
+    .map((p) => p[filterName] || '')
     .map((s) => s.split(',').map((p) => p.trim()))
     .flat()
     .filter((s) => s !== '');
-  return [...new Set(solutions)];
+  return [...new Set(values)];
 }
 
 /**
- * @typedef {Object} PlaylistCard
- * @property {string} title
- * @property {string} description
- * @property {string} image
- * @property {string} path
- * @property {boolean} loading
- */
-
-/**
  * Playlist Card UI
- * @param {PlaylistCard} cardOptions
+ * @param {{title?: string, description?: string, image?: string, path?: string, loading?: boolean}} cardOptions
  * @returns {HTMLElement}
  */
 function newPlaylistCard({ title = '', description = '', image, path = '', loading = false }) {
@@ -139,67 +139,50 @@ function newPlaylistCard({ title = '', description = '', image, path = '', loadi
 }
 
 /**
- * @typedef {Object} Playlist
- * @property {string} solution
- * @property {string} role
- * @property {string} level
- * @property {string} title
- * @property {string} description
- * @property {string} image
- * @property {string} path
+ * Filter playlists based on the selected values ({ solution, role, level })
  */
-
-/**
- * @typedef {Object} Filters
- * @property {string[]} solution
- * @property {string[]} role
- * @property {string[]} level
- */
-
-/**
- * Filter playlists based on the provided filters
- * @param {Playlist[]} playlists
- * @param {Filters} filters
- * @returns
- */
-const filterPlaylists = (playlists, filters) => {
-  const { solution, role, level } = filters.filters;
-  return playlists.filter((playlist) => {
-    const playlistSolutions = playlist.solution.split(',').map((s) => s.trim());
-    const solutionMatch = !solution.length || solution.some((s) => playlistSolutions.includes(s));
-    const playlistRoles = playlist.role.split(',').map((r) => r.trim());
-    const roleMatch = !role.length || role.some((r) => playlistRoles.includes(r));
-    const playlistLevel = playlist.level.split(',').map((l) => l.trim());
-    const levelMatch = !level.length || level.some((l) => playlistLevel.includes(l));
-    return solutionMatch && roleMatch && levelMatch;
-  });
+const filterPlaylists = (playlists, { solution = [], role = [], level = [], keyword = '' }) => {
+  const matches = (playlist, field, selected) => {
+    if (!selected.length) return true;
+    const values = (playlist[field] || '').split(',').map((v) => v.trim());
+    return selected.some((s) => values.includes(s));
+  };
+  // case-insensitive, every word must appear in the title, description or product
+  const terms = String(keyword).toLowerCase().split(/\s+/).filter(Boolean);
+  const matchesKeyword = (playlist) => {
+    if (!terms.length) return true;
+    const haystack = `${playlist.title || ''} ${playlist.description || ''} ${playlist.solution || ''}`.toLowerCase();
+    return terms.every((term) => haystack.includes(term));
+  };
+  return playlists.filter(
+    (playlist) =>
+      matches(playlist, 'solution', solution) &&
+      matches(playlist, 'role', role) &&
+      matches(playlist, 'level', level) &&
+      matchesKeyword(playlist),
+  );
 };
-
-/**
- * @returns {Filters}
- */
-function readFiltersFromUrl() {
-  const url = new URL(window.location.href);
-  const solution = url.searchParams.getAll('solution')?.map(xssSanitizeQueryParamValue);
-  const role = url.searchParams.getAll('role')?.map(xssSanitizeQueryParamValue) || [];
-  const level = url.searchParams.getAll('level')?.map(xssSanitizeQueryParamValue) || [];
-
-  return { solution, role, level } || [];
-}
 
 // Playlist Cards
 const cards = htmlToElement('<div class="playlist-browse-cards"></div>');
 let pagination;
+let renderId = 0;
+// set in decorate(); receives the filtered total (or null while loading)
+let onResultCount = () => {};
 
 // called when filters change
-const updateCards = (filters) => {
+const updateCards = (block, filters) => {
+  renderId += 1;
+  const currentRender = renderId;
+
   // reset pagination and cards
   if (pagination) {
     pagination.remove();
     pagination = null;
   }
   cards.innerHTML = '';
-  filters.block.querySelector('.playlist-no-results')?.remove();
+  block.querySelector('.playlist-no-results')?.remove();
+  onResultCount(null);
 
   // add loading cards
   for (let i = 0; i < 16; i += 1) {
@@ -207,21 +190,24 @@ const updateCards = (filters) => {
   }
 
   playlistsPromise.then((playlists) => {
-    // add filtered cards and pagination for them.
-    const filteredPlaylists = filterPlaylists(playlists.data, filters);
+    // a newer filter change has started; ignore this stale render
+    if (currentRender !== renderId) return;
 
-    // Show error message if no playlists match
+    const filteredPlaylists = filterPlaylists(playlists.data, filters);
+    onResultCount(filteredPlaylists.length);
+
+    // Show message if no playlists match
     if (filteredPlaylists.length === 0) {
       const errorMsg = document.createElement('div');
       errorMsg.className = 'playlist-no-results';
-      const noResultsText = createPlaceholderSpan(
-        'noResultsTextBrowse',
-        'We are sorry, no results found matching the criteria. Try adjusting your search to view more content.',
+      errorMsg.append(
+        createPlaceholderSpan(
+          'noResultsTextBrowse',
+          'We are sorry, no results found matching the criteria. Try adjusting your search to view more content.',
+        ),
       );
-      errorMsg.append(noResultsText);
-
       cards.innerHTML = '';
-      filters.block.append(errorMsg);
+      cards.after(errorMsg);
       return;
     }
 
@@ -231,12 +217,10 @@ const updateCards = (filters) => {
         const cardElement = newPlaylistCard(playlist);
         cards.append(cardElement);
 
-        const block = cardElement.closest('.block');
-        const cardHeader = block?.getAttribute('data-block-name') || 'playlist-browse';
+        const cardHeader = block.getAttribute('data-block-name') || 'playlist-browse';
         const cardPosition = String(index + 1);
         const product = playlist.solution ? playlist.solution.split(',').map((s) => s.trim()) : [];
 
-        // Add click tracking
         cardElement.addEventListener('click', () => {
           pushBrowseCardClickEvent(
             'browseCardClicked',
@@ -273,225 +257,77 @@ const updateCards = (filters) => {
 };
 
 /**
- * @typedef {Object} Filter Option
- * @property {string} value
- * @property {string} label
- * @property {string} selected
- */
-
-/**
- * @typedef {Object} Filter
- * @property {string} name
- * @property {string} label
- * @property {Array.<Filter>} options
- */
-
-class Filter {
-  constructor({ onFilterChange, onClearAll, labels: { clearAll, filter }, block }) {
-    const thisFilter = this;
-    const filters = readFiltersFromUrl();
-    this.filters = new Proxy(filters, {
-      set(target, prop, val) {
-        target[prop] = val;
-        // this is where change to filters should be reacted to.
-        thisFilter.updateAll();
-        // the assignment was successful, see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy/set
-        return true;
-      },
-    });
-    this.onFilterChange = onFilterChange;
-    this.onClearAll = onClearAll;
-    this.labels = { clearAll, filter };
-    this.block = block;
-    this.updateUI();
-  }
-
-  updateAll() {
-    this.updateFilterPills();
-    this.writeFiltersToUrl(this);
-    this.updateCount();
-  }
-
-  /**
-   * @param {Filters} filters
-   * @returns {void}
-   */
-  writeFiltersToUrl() {
-    const url = new URL(window.location.href);
-    url.searchParams.delete('solution');
-    url.searchParams.delete('role');
-    url.searchParams.delete('level');
-    this.filters.solution.forEach((s) => url.searchParams.append('solution', s));
-    this.filters.role.forEach((r) => url.searchParams.append('role', r));
-    this.filters.level.forEach((l) => url.searchParams.append('level', l));
-    window.history.pushState({}, '', url);
-  }
-
-  // update filter count
-  updateCount() {
-    const filterButton = this.filterWrapper.querySelectorAll('.playlist-browse-filter-button');
-    filterButton.forEach((button) => {
-      const filterName = button.classList[1];
-      const span = button.querySelector('.count-span');
-      const filterCount = this.filters[filterName]?.length;
-      span.innerHTML = filterCount ? ` (${filterCount})` : '';
-    });
-    // enable clear button if filters are selected
-    if (this.filters.solution.length || this.filters.role.length || this.filters.level.length) {
-      this.clearButton.disabled = false;
-    } else {
-      this.clearButton.disabled = true;
-    }
-  }
-
-  // add filter pills
-  updateFilterPills = () => {
-    const filterPills = this.block.querySelector('.filter-pill-container');
-    filterPills.innerHTML = '';
-    Object.entries(this.filters).forEach(([legend, filterValues]) => {
-      filterValues.forEach((value) => {
-        const filterOption = filterOptions.find((f) => f.filterName === legend);
-        const filterValuePlaceholderKey = filterOption?.optionPlaceholders?.find(
-          (o) => o?.label?.toLowerCase() === value?.toLowerCase(),
-        )?.placeholder;
-
-        const pill = htmlToElement(`
-          <button class="filter-pill" data-value="${value}" data-filter="${filterOption.legend}">
-            <span data-placeholder="${filterOption.placeholderKey}">${filterOption.legend}</span>
-            <span>:&nbsp</span>
-            <span data-placeholder="${filterValuePlaceholderKey}">${value}</span>
-            <span class="icon icon-close"></span>
-          </button>`);
-        decoratePlaceholders(pill);
-        filterPills.append(pill);
-        // remove filter when pill is clicked
-        pill.addEventListener('click', () => {
-          this.filters[legend] = this.filters[legend].filter((v) => v !== value);
-          const fieldset = this.filterWrapper.querySelector(`fieldset > div > input[id="${value}"]`);
-          fieldset.checked = false;
-          multiSelects.find(({ filterName }) => filterName === legend).removeOption(value);
-          this.onFilterChange();
-        });
-      });
-    });
-  };
-
-  updateUI = () => {
-    this.filterContainer = htmlToElement('<div class="playlist-filter-container"></div>');
-    this.filterPill = htmlToElement('<div class="filter-pill-container"></div>');
-    this.filterWrapper = htmlToElement(
-      `<div class="playlist-filter-wrapper"><label class="playlist-filter-label"><span data-placeholder="${PLACEHOLDERS.filter}">Filters</span></label></div>`,
-    );
-    this.clearButton = htmlToElement(
-      `<button class="filters-clear" disabled><span data-placeholder="${PLACEHOLDERS.clearFilter}">Clear filters</span></button>`,
-    );
-
-    const filterOptionsPromises = filterOptions.map(
-      ({ legend, filterName, placeholderKey, optionPlaceholders, sort }) => {
-        const panelContent = htmlToElement(`<div></div>`);
-        const buttonLabel = document.createElement('span');
-        buttonLabel.append(createPlaceholderSpan(placeholderKey, legend));
-        buttonLabel.append(htmlToElement(`<span class="count-span"></span>`));
-
-        // load filter options
-        const filterPanel = newShowHidePanel({
-          buttonLabel,
-          buttonClass: `playlist-browse-filter-button ${filterName} ${legend}`,
-          hiddenPanelClass: 'playlist-browse-filter-hidden',
-          panelContent,
-          panelClass: 'playlist-browse-filter-panel',
-          expanded: false,
-        });
-        filterPanel.classList.add(`playlist-browse-filter-${filterName}`, 'playlist-filter-dropdown');
-        const span = filterPanel.querySelector('span');
-        span.classList.add('button-span');
-
-        const { fieldset, addOption, onClear, removeOption } = newMultiSelect({
-          legend,
-          onSelect: (selectedValues) => {
-            this.filters[filterName] = selectedValues;
-            this.updateAll();
-            this.onFilterChange();
-          },
-        });
-        multiSelects.push({ filterName, onClear, removeOption });
-
-        this.filterWrapper.append(filterPanel);
-        this.filterWrapper.append(this.clearButton);
-        this.filterContainer.append(this.filterWrapper);
-        this.filterContainer.append(this.filterPill);
-        this.block.append(this.filterContainer);
-        decoratePlaceholders(this.filterWrapper);
-
-        return getAllPossibleFilterValues(filterName).then((filterValues) => {
-          const sortedValues = filterValues.sort(sort);
-          sortedValues.forEach((filterValue) => {
-            const sortFilterValue = optionPlaceholders?.find(
-              (o) => o?.label?.toLowerCase() === filterValue?.toLowerCase(),
-            );
-            const filterValuePlaceholderKey = sortFilterValue?.placeholder;
-            const filterDescriptionPlaceholderKey = sortFilterValue?.description;
-
-            addOption({
-              label: filterValue,
-              description: filterDescriptionPlaceholderKey || '',
-              labelPlaceholderKey: filterValuePlaceholderKey || filterValue,
-              value: filterValue,
-              checked: this.filters[filterName].includes(filterValue),
-            });
-          });
-          panelContent.append(fieldset);
-          decorateIcons(fieldset);
-        });
-      },
-    );
-
-    Promise.allSettled(filterOptionsPromises).then(() => {
-      this.updateAll();
-    });
-
-    // add event listener to clear filters
-    const clearButton = this.filterWrapper.querySelector('.filters-clear');
-    clearButton.addEventListener('click', () => {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('solution');
-      url.searchParams.delete('role');
-      url.searchParams.delete('level');
-      window.history.pushState({}, '', url);
-      // Need this to allow proxy to trigger change
-      Object.keys(this.filters).forEach((key) => {
-        this.filters[key] = [];
-      });
-      clearButton.disabled = true;
-      multiSelects.forEach(({ onClear }) => {
-        onClear();
-      });
-      this.onClearAll();
-    });
-  };
-}
-
-/**
  * @param {HTMLElement} block
  */
 export default async function decorate(block) {
-  // create the filter UI
-  const filters = new Filter({
-    onFilterChange: () => {
-      updateCards(filters);
+  let placeholders = {};
+  try {
+    placeholders = await fetchLanguagePlaceholders();
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching placeholders:', e);
+  }
+  loadCSS(`${window.hlx.codeBasePath}/scripts/search-filter/search-filter.css`).catch(() => {});
+
+  const groups = [
+    { id: 'solution', name: placeholders.filterProductLabel || 'Product' },
+    { id: 'role', name: placeholders.filterRoleLabel || 'Role' },
+    { id: 'level', name: placeholders.filterExperienceLevelLabel || 'Experience Level' },
+  ];
+
+  const store = createFilterStore({
+    groupIds: GROUP_IDS,
+    initial: {
+      ...readFiltersFromUrl(GROUP_IDS, { format: 'repeat', sanitize: xssSanitizeQueryParamValue }),
+      keyword: readKeywordFromUrl('q', xssSanitizeQueryParamValue),
     },
-    onClearAll: () => {
-      updateCards(filters);
-    },
-    labels: {
-      clearAll: 'Clear All',
-      filter: 'Filter',
-    },
-    block,
   });
+  const ui = createSearchFilterUI({
+    store,
+    groups,
+    placeholders: {
+      filtersLabel: placeholders.filterLabel,
+      filterClearLabel: placeholders.filterClearLabel,
+      searchPlaceholder: placeholders.playlistSearchPlaceholder || 'Search playlists',
+      clearSearchLabel: placeholders.playlistClearSearchLabel || 'Clear search',
+    },
+    withKeyword: true,
+  });
+  bindFiltersToUrl(store, GROUP_IDS, { format: 'repeat', keywordParam: 'q' });
 
-  updateCards(filters);
+  block.textContent = '';
+  const { layout, results } = createSidebarLayout({ ui, placeholders: { filtersLabel: placeholders.filterLabel } });
+  results.append(cards);
+  block.append(layout);
 
-  block.append(htmlToElement('<br style="clear:both" />'));
-  block.append(cards);
+  // load options for each group from playlists.json
+  await Promise.all(
+    filterOptions.map(async ({ filterName, sort, optionPlaceholders }) => {
+      const values = (await getAllPossibleFilterValues(filterName)).sort(sort);
+      ui.setGroupItems(
+        filterName,
+        values.map((value) => {
+          const ph = optionPlaceholders?.find((o) => o.label.toLowerCase() === value.toLowerCase());
+          return {
+            value,
+            title: (ph && placeholders[ph.placeholder]) || value,
+            description: ph ? placeholders[ph.description] : undefined,
+          };
+        }),
+      );
+    }),
+  );
+
+  onResultCount = (count) =>
+    ui.setResultCount(
+      count,
+      count === 1
+        ? placeholders.playlistResultsCountSingular || 'playlist'
+        : placeholders.playlistResultsCountSuffix || 'playlists',
+    );
+
+  store.subscribe(({ filters, keyword }) => updateCards(block, { ...filters, keyword }));
+  const initial = store.get();
+  ui.refresh(); // shows a keyword restored from the URL in the input
+  updateCards(block, { ...initial.filters, keyword: initial.keyword });
 }

@@ -17,12 +17,15 @@ import {
   handleCoverSearchSubmit,
 } from '../browse-filters/browse-filter-utils.js';
 import { pushEventsFilterSearchEvent, pushEventsClearFiltersEvent } from '../../scripts/analytics/lib-analytics.js';
+import { createFilterStore, createSearchFilterUI } from '../../scripts/search-filter/search-filter.js';
 
 const FACET_CONTROLLER_MAP = {
   el_product: 'headlessProductFacet',
   el_event_series: 'headlessEventSeriesFacet',
   el_contenttype: 'headlessTypeFacet',
 };
+const GROUP_IDS = ['el_product', 'el_contenttype', 'el_event_series'];
+
 // Tracks active render pass per block; queues the next subscription fire instead of running two renders at once.
 const headlessSubscriptionSyncDepth = new WeakMap();
 /** Literal tokens authors enter in placeholders for dynamic counts. */
@@ -31,85 +34,35 @@ const PLACEHOLDER_COUNT_TOKEN = '${count}';
 const PLACEHOLDER_PG_COUNT_TOKEN = '${pgCount}';
 /* eslint-enable no-template-curly-in-string */
 const RESULTS_SCROLL_ADJUSTMENT_OFFSET = -12;
+/** Max subscription passes we wait for Headless to catch up with a user interaction before syncing anyway. */
+const MAX_PENDING_SYNC_PASSES = 12;
 
-// Filter UI helpers
+/**
+ * Per-block filter context created in setupFilters:
+ * { store, ui, awaiting: { intent, passes }|null, isClearing, lastResponseId, itemKeys: Map }
+ */
+const filterContexts = new WeakMap();
 
-function removeFilterGroupOptionsShimmer(optionsContainer) {
-  optionsContainer?.querySelector('.events-search-filter-options-shimmer')?.remove();
-}
+const viewSwitcherInstances = new WeakMap();
+/** AbortController + MutationObserver teardown for Coveo document listeners (re-decorate or DOM removal). */
+const eventsSearchLoadingUiCleanups = new WeakMap();
+/** Per-block AbortController for open sort dropdown document listeners (click-outside + Escape). */
+const eventsSearchSortDropdownOpenAbort = new WeakMap();
+/** Facet values behind the Event Type checkboxes, from the shared Coveo pipeline constants */
+const EVENTS_SEARCH_UPCOMING_VALUE = CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY;
+const EVENTS_SEARCH_ON_DEMAND_VALUE = CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY;
+/**
+ * Per-block sort state: { selected: 'relevance'|'date'|'popularity', hasShownControl, sortController,
+ * criteria, lastAppliedKey, placeholders, urlRestorePending, urlRestoreGraceRemaining, lastHasQuery }.
+ */
+const eventsSearchSortState = new WeakMap();
+/**
+ * Per-block analytics intent captured at interaction time.
+ * { pendingType: 'filter'|'search'|null, lastSearchId: string|null, intent: { byFilterType, term }|null }.
+ */
+const eventsSearchAnalyticsState = new WeakMap();
 
-function hasFilterGroupOptionsShimmer(optionsContainer) {
-  return Boolean(optionsContainer?.querySelector('.events-search-filter-options-shimmer'));
-}
-
-function renderFilterGroupOptionsShimmer(optionsContainer, rowCount = 5) {
-  if (!optionsContainer) return;
-  removeFilterGroupOptionsShimmer(optionsContainer);
-  const shimmerRoot = createTag('div', { class: 'events-search-filter-options-shimmer', 'aria-hidden': 'true' });
-  for (let i = 0; i < rowCount; i += 1) {
-    shimmerRoot.append(createTag('div', { class: 'events-search-filter-option-shimmer' }));
-  }
-  optionsContainer.append(shimmerRoot);
-}
-
-function renderFilterOptionCountShimmer(optionEl) {
-  const checkbox = optionEl?.querySelector('input[type="checkbox"]');
-  const optionLabelEl = optionEl?.querySelector('.events-search-filter-option-label');
-  if (!checkbox || !optionLabelEl) return;
-  const optionLabel = checkbox.getAttribute('data-label') || checkbox.value;
-  optionLabelEl.replaceChildren(
-    document.createTextNode(String(optionLabel ?? '')),
-    createTag('span', {
-      class: 'events-search-filter-option-count events-search-filter-count-shimmer',
-      'aria-hidden': 'true',
-    }),
-  );
-}
-
-function updateFilterOptionCount(optionEl, count, optionLabel) {
-  const checkbox = optionEl?.querySelector('input[type="checkbox"]');
-  const optionLabelEl = optionEl?.querySelector('.events-search-filter-option-label');
-  if (!checkbox || !optionLabelEl) return;
-  if (typeof count === 'number' && count >= 0) {
-    checkbox.setAttribute('data-count', String(count));
-    const countEl = createTag('span', { class: 'events-search-filter-option-count' });
-    countEl.textContent = ` (${count})`;
-    optionLabelEl.replaceChildren(document.createTextNode(String(optionLabel ?? '')), countEl);
-  } else {
-    checkbox.removeAttribute('data-count');
-    optionLabelEl.textContent = String(optionLabel ?? '');
-  }
-}
-
-function buildFilterOptionRow({ groupId, item, index }) {
-  const optionValue = item.value || item.title;
-  const optionLabel = item.title || item.value;
-  const optionId = `${groupId}-${index + 1}-${String(optionValue).replace(/[^a-zA-Z0-9_-]/g, '-')}`;
-  const optionEl = createTag('div', {
-    class: `events-search-filter-option${item.selected ? ' checked' : ''}`,
-  });
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
-  checkbox.id = optionId;
-  checkbox.value = String(optionValue ?? '');
-  checkbox.checked = Boolean(item.selected);
-  checkbox.setAttribute('data-label', String(optionLabel ?? ''));
-  if (item.count != null) checkbox.setAttribute('data-count', String(item.count));
-  const optionLabelEl = createTag('label', { class: 'events-search-filter-option-label', for: optionId });
-  const labelText = document.createTextNode(String(optionLabel ?? ''));
-  if (item.count != null) {
-    const countEl = createTag('span', { class: 'events-search-filter-option-count' });
-    countEl.textContent = ` (${item.count})`;
-    optionLabelEl.append(labelText, countEl);
-  } else {
-    optionLabelEl.append(labelText);
-  }
-  optionEl.append(checkbox, optionLabelEl);
-  return optionEl;
-}
-
-// Dynamic facets (Headless v2)
-const DYNAMIC_FACET_FIELDS = ['el_product', 'el_event_series'];
+// Helpers
 
 // Fills count value into a placeholder string
 function fillPlaceholderCount(template, value) {
@@ -134,147 +87,6 @@ function getEventsSearchHeadlessFacetOverrides() {
   };
 }
 
-function showDynamicFilterGroupShimmers(block, { refreshCountsOnly = false } = {}) {
-  DYNAMIC_FACET_FIELDS.forEach((field) => {
-    const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${field}"]`);
-    const optionsContainer = groupEl?.querySelector('.events-search-filter-options');
-    if (!groupEl || !optionsContainer) return;
-    if (refreshCountsOnly && groupEl.querySelector('.events-search-filter-option')) {
-      groupEl.classList.add('is-filter-loading');
-      return;
-    }
-    if (!groupEl.querySelector('.events-search-filter-option') && !hasFilterGroupOptionsShimmer(optionsContainer)) {
-      renderFilterGroupOptionsShimmer(optionsContainer);
-    }
-  });
-}
-
-function renderDynamicGroupOptions(groupEl, group) {
-  const optionsContainer = groupEl.querySelector('.events-search-filter-options');
-  if (!optionsContainer) return;
-  removeFilterGroupOptionsShimmer(optionsContainer);
-  optionsContainer.innerHTML = '';
-  const optionsList = createTag('div', { class: 'events-search-filter-options-list' });
-  group.items.forEach((item, index) => {
-    optionsList.append(buildFilterOptionRow({ groupId: group.id, item, index }));
-  });
-  optionsContainer.append(optionsList);
-  decorateIcons(optionsContainer);
-}
-
-function syncDynamicFacetGroup(block, group) {
-  const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${group.id}"]`);
-  if (!groupEl) return;
-  const optionsContainer = groupEl.querySelector('.events-search-filter-options');
-  const controller = window[FACET_CONTROLLER_MAP[group.id]];
-  const items = (controller?.state?.values ?? [])
-    .filter((v) => v.state === 'selected' || (v.numberOfResults ?? 0) > 0)
-    .map((v) => ({
-      id: v.value,
-      value: v.value,
-      title: v.value.split('|').join(' | '),
-      count: v.numberOfResults ?? 0,
-      selected: v.state === 'selected',
-    }))
-    .sort(sortItemsAlphabetically);
-
-  if (!items.length) {
-    removeFilterGroupOptionsShimmer(optionsContainer);
-    groupEl.classList.remove('is-filter-loading');
-    groupEl.style.display = 'none';
-    return;
-  }
-
-  groupEl.style.display = '';
-  const wasExpanded = groupEl.classList.contains('is-expanded');
-  group.items = items;
-  renderDynamicGroupOptions(groupEl, group);
-  groupEl.classList.remove('is-filter-loading');
-  if (wasExpanded) {
-    groupEl.classList.add('is-expanded');
-    groupEl.querySelector('.events-search-filter-group-header')?.setAttribute('aria-expanded', 'true');
-  }
-}
-
-function syncEventTypeFilterCounts(block) {
-  const controller = window[FACET_CONTROLLER_MAP.el_contenttype];
-  const groupEl = block.querySelector('.events-search-filter-group[data-filter-type="el_contenttype"]');
-  if (!controller || !groupEl) return;
-  const facetValues = controller.state?.values ?? [];
-  let visibleCount = 0;
-  groupEl.querySelectorAll('.events-search-filter-option').forEach((optionEl) => {
-    const checkbox = optionEl.querySelector('input[type="checkbox"]');
-    if (!checkbox) return;
-    const facetValue = facetValues.find((fv) => fv.value === checkbox.value);
-    const count = facetValue?.numberOfResults ?? 0;
-    updateFilterOptionCount(optionEl, count, checkbox.getAttribute('data-label') || checkbox.value);
-    const isVisible = checkbox.checked || count > 0;
-    optionEl.style.display = isVisible ? '' : 'none';
-    if (isVisible) visibleCount += 1;
-  });
-  groupEl.style.display = visibleCount > 0 ? '' : 'none';
-  groupEl.classList.remove('is-filter-loading');
-}
-
-// Skips facet UI updates triggered before the search response arrives, preventing stale counts.
-const lastSyncedSearchResponseId = new WeakMap();
-
-function syncDynamicFacetGroupsFromHeadless(block, groups) {
-  if (!(window.headlessStatusControllers?.state?.firstSearchExecuted ?? false)) return;
-
-  // Only sync facet UI when a new search response has arrived.
-  const searchResponseId = window.headlessSearchEngine?.state?.search?.searchResponseId;
-  if (searchResponseId && lastSyncedSearchResponseId.get(block) === searchResponseId) return;
-  if (searchResponseId) lastSyncedSearchResponseId.set(block, searchResponseId);
-
-  const totalResults = window.headlessSearchEngine?.state?.search?.response?.totalCount ?? 0;
-  block.classList.toggle('has-no-results', !totalResults);
-  groups.forEach((group) => {
-    if (DYNAMIC_FACET_FIELDS.includes(group.id)) syncDynamicFacetGroup(block, group);
-  });
-  syncEventTypeFilterCounts(block);
-}
-
-/** Builds the composite key used to identify a filter in pendingRemovals and callout data-key attributes. */
-const toCompositeKey = (filterType, value) => `${filterType}:${value}`;
-
-/** Splices the tag out of activeTags and registers it in pendingRemovals (browse-filters removeFromTags pattern). */
-function removeActiveTag(activeTags, pendingRemovals, filterType, value) {
-  const tagIndex = activeTags.findIndex((t) => t.filterType === filterType && t.value === value);
-  if (tagIndex !== -1) activeTags.splice(tagIndex, 1);
-  pendingRemovals.add(toCompositeKey(filterType, value));
-}
-
-const viewSwitcherInstances = new WeakMap();
-/** AbortController + MutationObserver teardown for Coveo document listeners (re-decorate or DOM removal). */
-const eventsSearchLoadingUiCleanups = new WeakMap();
-/** Per-block AbortController for open sort dropdown document listeners (click-outside + Escape). */
-const eventsSearchSortDropdownOpenAbort = new WeakMap();
-/** Facet values behind the Event Type checkboxes, from the shared Coveo pipeline constants */
-const EVENTS_SEARCH_UPCOMING_VALUE = CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY;
-const EVENTS_SEARCH_ON_DEMAND_VALUE = CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY;
-/**
- * Per-block sort state: { selected: 'relevance'|'date'|'popularity', hasShownControl, sortController,
- * criteria, lastAppliedKey, placeholders, urlRestorePending, urlRestoreGraceRemaining, lastHasQuery }.
- */
-const eventsSearchSortState = new WeakMap();
-/** Per-block filter state: { tags: [], pendingRemovals: Set, isClearing: boolean }. */
-const eventsSearchActiveTags = new WeakMap();
-/**
- * Per-block analytics intent captured at click time.
- * { pendingType: 'filter'|'search'|null, lastSearchId: string|null, intent: { byFilterType, term }|null }.
- */
-const eventsSearchAnalyticsState = new WeakMap();
-
-function getFilterState(block) {
-  let state = eventsSearchActiveTags.get(block);
-  if (!state) {
-    state = { tags: [], pendingRemovals: new Set(), isClearing: false };
-    eventsSearchActiveTags.set(block, state);
-  }
-  return state;
-}
-
 function getEventsSearchAnalyticsState(block) {
   let state = eventsSearchAnalyticsState.get(block);
   if (!state) {
@@ -290,26 +102,14 @@ const ANALYTICS_FILTER_TYPE_TO_KEY = {
   el_event_series: 'series',
 };
 
-/** Values of the currently checked checkboxes for a filter group. */
-function getCheckedFilterValues(block, filterType) {
-  const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${filterType}"]`);
-  return [...(groupEl?.querySelectorAll('input[type="checkbox"]:checked') ?? [])].map((cb) => cb.value);
+function getFacetController(filterType) {
+  const controllerName = FACET_CONTROLLER_MAP[filterType];
+  return controllerName ? window[controllerName] : null;
 }
 
-/**
- * Captures the user's selection at click time — before the headless subscription can revert the
- * checkboxes to the lagging controller state (syncFilterUIFromHeadlessState overwrites checkbox
- * .checked from Coveo state, which trails the click by one response-commit). This immutable snapshot
- * is what we later match committed responses against, so the analytics payload reflects the actual
- * interaction rather than the previous committed state.
- */
-function captureEventsSearchIntent(block) {
-  const byFilterType = {};
-  Object.keys(ANALYTICS_FILTER_TYPE_TO_KEY).forEach((filterType) => {
-    byFilterType[filterType] = getCheckedFilterValues(block, filterType);
-  });
-  const term = String(block.querySelector('.events-search-keyword-input')?.value ?? '').trim();
-  return { byFilterType, term };
+/** Values currently selected for a filter group (from the shared filter store). */
+function getCheckedFilterValues(block, filterType) {
+  return filterContexts.get(block)?.store.get().filters[filterType] ?? [];
 }
 
 /**
@@ -552,7 +352,7 @@ function updateEventsSearchSortUI(block, placeholders) {
       state.urlRestorePending = false;
       if (!restored) state.selected = options.includes('date') ? 'date' : options[0];
     }
-    // else: still waiting for the facet checkboxes to catch up to the URL — leave selected as-is.
+    // else: still waiting for the facet selection to catch up to the URL — leave selected as-is.
   } else if (queryJustEntered) {
     // Entering a query defaults the sort to Relevance
     state.selected = 'relevance';
@@ -598,19 +398,16 @@ function getBaseFilterGroups(placeholders) {
       id: 'el_product',
       name: placeholders.eventSearchFilterProductLabel || 'Product',
       items: [],
-      selected: 0,
     },
     {
       id: 'el_contenttype',
       name: placeholders.eventSearchFilterEventTypeLabel || 'Event Type',
       items: eventTypeOptions.items.map((item) => ({ ...item })).sort(sortItemsAlphabetically),
-      selected: 0,
     },
     {
       id: 'el_event_series',
       name: placeholders.eventSearchFilterEventSeriesLabel || 'Series',
       items: [],
-      selected: 0,
     },
   ];
 }
@@ -625,43 +422,19 @@ function createLayout(block, placeholders) {
   });
   const resultColumn = createTag('section', { class: 'events-search-results-column' });
 
+  // The filters panel is empty here: the shared search-filter UI mounts into it (see setupFilters).
   filterColumn.innerHTML = `
     <button class="events-search-mobile-filter-toggle" type="button" aria-expanded="false" aria-controls="${filtersPanelId}">
       <span class="icon icon-atomic-search-filter"></span>
       <span>${placeholders.eventSearchFiltersLabel || 'Filters'}</span>
       <span class="icon icon-chevron"></span>
     </button>
-    <div class="events-search-filters-panel" id="${filtersPanelId}">
-      <div class="events-search-filters-header">
-        <h2 class="events-search-filters-heading">${placeholders.eventSearchFiltersLabel || 'Filters'}</h2>
-        <button type="button" class="events-search-clear-filters">${
-          placeholders.eventSearchClearFiltersLabel || 'Clear all filters'
-        }</button>
-      </div>
-      <div class="events-search-filter-groups"></div>
-    </div>
+    <div class="events-search-filters-panel" id="${filtersPanelId}"></div>
   `;
 
+  // The keyword box and active-filter tags are prepended into .events-search-topbar by setupFilters.
   resultColumn.innerHTML = `
     <div class="events-search-topbar">
-      <div class="events-search-keyword">
-        <span class="icon icon-search-gray"></span>
-        <input type="text" class="events-search-keyword-input" placeholder="${
-          placeholders.eventSearchKeywordPlaceholder || 'Search events'
-        }" aria-label="${
-          placeholders.eventSearchKeywordAriaLabel || placeholders.eventSearchKeywordPlaceholder || 'Search events'
-        }" />
-        <span
-          title="${placeholders.eventSearchClearSearchLabel || 'Clear search'}"
-          class="icon icon-clear events-search-keyword-clear"
-          role="button"
-          tabindex="0"
-          aria-label="${placeholders.eventSearchClearSearchLabel || 'Clear search'}"
-        ></span>
-      </div>
-      <div class="events-search-active-filters" hidden role="group" aria-label="${
-        placeholders.eventSearchActiveFiltersAriaLabel || 'Active filters'
-      }"></div>
       <div class="events-search-meta-row">
         <div
           class="events-search-results-count"
@@ -770,116 +543,6 @@ function bindSortDropdownToggle(block) {
       closeSortDropdown();
     }
   });
-}
-
-function renderFilterGroups(block, groups) {
-  const groupsRoot = block.querySelector('.events-search-filter-groups');
-  if (!groupsRoot) return;
-
-  groupsRoot.innerHTML = '';
-  groups.forEach((group, groupIndex) => {
-    const groupEl = createTag('section', {
-      class: 'events-search-filter-group',
-      'data-filter-type': group.id,
-    });
-    const groupOptionsRegionId = `${group.id}-options-${groupIndex}`;
-    groupEl.innerHTML = `
-      <button class="events-search-filter-group-header" type="button" aria-expanded="false" aria-controls="${groupOptionsRegionId}">
-        <span class="events-search-filter-group-title">${group.name}</span>
-        <span class="events-search-filter-group-count"></span>
-        <span class="icon icon-chevron"></span>
-      </button>
-      <div class="events-search-filter-options" id="${groupOptionsRegionId}"></div>
-    `;
-
-    const optionsContainer = groupEl.querySelector('.events-search-filter-options');
-    const isDynamicFacetGroup = DYNAMIC_FACET_FIELDS.includes(group.id);
-
-    if (isDynamicFacetGroup && group.items.length === 0) {
-      renderFilterGroupOptionsShimmer(optionsContainer);
-    } else {
-      const optionsList = createTag('div', { class: 'events-search-filter-options-list' });
-      group.items.forEach((item, index) => {
-        const optionRow = buildFilterOptionRow({ groupId: group.id, item, index });
-        if (group.id === 'el_contenttype') {
-          renderFilterOptionCountShimmer(optionRow);
-        }
-        optionsList.append(optionRow);
-      });
-      optionsContainer.append(optionsList);
-    }
-
-    groupsRoot.append(groupEl);
-  });
-
-  // Filter chevrons are rendered dynamically and need icon decoration after insertion.
-  decorateIcons(groupsRoot);
-}
-
-function updateGroupSelectionCount(block, groupId, selectedCount) {
-  const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${groupId}"]`);
-  if (!groupEl) return;
-  const countEl = groupEl.querySelector('.events-search-filter-group-count');
-  if (!countEl) return;
-  countEl.textContent = selectedCount > 0 ? `(${selectedCount})` : '';
-}
-
-function updateClearFiltersButtonState(block) {
-  const clearBtn = block.querySelector('.events-search-clear-filters');
-  if (!clearBtn) return;
-  const hasCheckedFilter = !!block.querySelector('.events-search-filter-option input[type="checkbox"]:checked');
-  const input = block.querySelector('.events-search-keyword-input');
-  const keywordFromInput = input?.value?.trim() ?? '';
-  const keywordFromHeadless = String(window.headlessSearchBox?.state?.value ?? '').trim();
-  const hasKeyword = Boolean(keywordFromInput || keywordFromHeadless);
-  clearBtn.classList.toggle('is-active', hasCheckedFilter || hasKeyword);
-}
-
-function syncFilterUIFromHeadlessState(block, groups) {
-  const { tags: activeTags, pendingRemovals } = getFilterState(block);
-
-  Object.entries(FACET_CONTROLLER_MAP).forEach(([groupId, controllerName]) => {
-    const controller = window[controllerName];
-    const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${groupId}"]`);
-    if (!controller || !groupEl) return;
-
-    const selectedValues = new Set(
-      (controller.state?.values || []).filter((item) => item.state === 'selected').map((item) => item.value),
-    );
-
-    const checkboxes = groupEl.querySelectorAll('.events-search-filter-option input[type="checkbox"]');
-
-    checkboxes.forEach((checkbox) => {
-      const compositeKey = toCompositeKey(groupId, checkbox.value);
-      const isSelected = selectedValues.has(checkbox.value) && !pendingRemovals.has(compositeKey);
-      checkbox.checked = isSelected;
-
-      // Mirror checkbox state into ordered tags array (browse-filters handleUriHash/appendTag pattern).
-      // This ensures callouts appear correctly when filters are restored from URL on page load.
-      const existingIndex = activeTags.findIndex((t) => t.filterType === groupId && t.value === checkbox.value);
-      if (isSelected && existingIndex === -1 && !pendingRemovals.has(compositeKey)) {
-        activeTags.push({
-          filterType: groupId,
-          value: checkbox.value,
-          label: checkbox.getAttribute('data-label') || checkbox.value,
-        });
-      } else if (!isSelected) {
-        if (existingIndex !== -1) activeTags.splice(existingIndex, 1);
-        if (!selectedValues.has(checkbox.value)) {
-          pendingRemovals.delete(compositeKey);
-        }
-      }
-      checkbox.closest('.events-search-filter-option')?.classList.toggle('checked', checkbox.checked);
-    });
-
-    const selectedCount = groupEl.querySelectorAll('input[type="checkbox"]:checked').length;
-    const targetGroup = groups.find((group) => group.id === groupId);
-    if (targetGroup) {
-      targetGroup.selected = selectedCount;
-    }
-    updateGroupSelectionCount(block, groupId, selectedCount);
-  });
-  updateClearFiltersButtonState(block);
 }
 
 function executeSearch() {
@@ -1035,10 +698,7 @@ function bindEventsSearchLoadingUI(block) {
 
     shimmer.addShimmer(resultsBody);
     placeShimmerBeforeGrid();
-    showDynamicFilterGroupShimmers(block, { refreshCountsOnly: hasCompletedInitialSearchResponse });
-    block
-      .querySelector('.events-search-filter-group[data-filter-type="el_contenttype"]')
-      ?.classList.add('is-filter-loading');
+    filterContexts.get(block)?.ui.setLoading(true);
     grid.style.display = 'none';
     pagination.style.display = 'none';
     if (noResults) {
@@ -1050,6 +710,7 @@ function bindEventsSearchLoadingUI(block) {
     if (!block.isConnected) return;
     hasCompletedInitialSearchResponse = true;
     shimmer.removeShimmer();
+    filterContexts.get(block)?.ui.setLoading(false);
     grid.style.display = '';
     pagination.style.display = '';
     const search = window.headlessSearchEngine?.state?.search || {};
@@ -1117,141 +778,6 @@ function bindEventsSearchPagination(block) {
         executeSearch();
       }
     });
-  }
-}
-
-function findFacetValueInController(controller, value) {
-  const want = String(value);
-  const values = controller?.state?.values || [];
-  return (
-    values.find((v) => v.value === want) ||
-    values.find((v) => String(v.value).trim() === want.trim()) ||
-    values.find((v) => String(v.value).toLowerCase() === want.toLowerCase())
-  );
-}
-
-function getFacetController(filterType) {
-  const controllerName = FACET_CONTROLLER_MAP[filterType];
-  return controllerName ? window[controllerName] : null;
-}
-
-function applyCoveoFacetValueSelection(controller, value, shouldSelect) {
-  const facetValue = findFacetValueInController(controller, value);
-  if (facetValue) {
-    const selected = facetValue.state === 'selected';
-    if (selected !== shouldSelect) {
-      controller.toggleSelect(facetValue);
-    }
-    return;
-  }
-  if (shouldSelect) {
-    controller.toggleSelect({ value, state: 'selected' });
-  }
-}
-
-function toggleFacetSelection(filterType, value, isChecked) {
-  const controller = getFacetController(filterType);
-  if (!controller || value === '' || value == null) return;
-
-  applyCoveoFacetValueSelection(controller, value, isChecked);
-}
-
-function renderActiveFilterCallouts(block) {
-  const container = block.querySelector('.events-search-active-filters');
-  if (!container) return;
-
-  // Use the ordered tags array (browse-filters pattern) so callouts reflect user selection order.
-  const { tags: activeTags, pendingRemovals } = getFilterState(block);
-
-  // Skip full DOM teardown if the ordered set of selected filters hasn't changed.
-  const currentValues = [...container.querySelectorAll('.events-search-active-filter-tag')].map((t) => t.dataset.key);
-  const newValues = activeTags.map((tag) => toCompositeKey(tag.filterType, tag.value));
-  const unchanged = currentValues.length === newValues.length && currentValues.every((v, i) => v === newValues[i]);
-  if (unchanged) return;
-
-  // Save focused callout composite key before teardown so focus can be restored after rebuild.
-  const focusedTag = container.querySelector('.events-search-active-filter-tag-remove:focus');
-  const focusedKey = focusedTag?.closest('.events-search-active-filter-tag')?.dataset.key ?? null;
-
-  container.innerHTML = '';
-
-  if (!activeTags.length) {
-    container.hidden = true;
-    if (focusedKey) {
-      block.querySelector('.events-search-keyword-input')?.focus();
-    }
-    return;
-  }
-
-  activeTags.forEach((tag) => {
-    const { filterType, value, label } = tag;
-    const callout = createTag('span', {
-      class: 'events-search-active-filter-tag',
-      'data-value': value,
-      'data-key': toCompositeKey(filterType, value),
-    });
-    const calloutLabel = createTag('span', { class: 'events-search-active-filter-tag-label' });
-    calloutLabel.textContent = label;
-
-    const calloutRemove = createTag('button', {
-      class: 'events-search-active-filter-tag-remove',
-      type: 'button',
-      'aria-label': `Remove filter: ${label}`,
-    });
-    const calloutRemoveIcon = createTag('span', { class: 'icon icon-close-events', 'aria-hidden': 'true' });
-    calloutRemove.append(calloutRemoveIcon);
-
-    const handleRemove = () => {
-      // Uncheck the corresponding checkbox in the filter panel (browse-filters removeFromTags pattern).
-      const matchedCheckbox = [
-        ...block.querySelectorAll(
-          `.events-search-filter-group[data-filter-type="${filterType}"] input[type="checkbox"]`,
-        ),
-      ].find((cb) => cb.value === value);
-      if (matchedCheckbox) matchedCheckbox.checked = false;
-
-      // Snapshot intent with the removed checkbox now unchecked, before toggleFacetSelection
-      // dispatches and the subscription re-syncs checkboxes from the lagging controller state.
-      const analyticsState = getEventsSearchAnalyticsState(block);
-      analyticsState.pendingType = 'filter';
-      analyticsState.intent = captureEventsSearchIntent(block);
-
-      // Remove from ordered tags array and register as pending removal to prevent the Coveo
-      // subscription from re-adding the tag before Coveo state catches up.
-      removeActiveTag(activeTags, pendingRemovals, filterType, value);
-
-      toggleFacetSelection(filterType, value, false);
-      const groupEl = block.querySelector(`.events-search-filter-group[data-filter-type="${filterType}"]`);
-      if (groupEl) {
-        const newCount = groupEl.querySelectorAll('input[type="checkbox"]:checked').length;
-        updateGroupSelectionCount(block, filterType, newCount);
-      }
-      if (window.headlessPager) {
-        window.headlessPager.selectPage(1);
-      }
-      executeSearch();
-      renderActiveFilterCallouts(block);
-      updateClearFiltersButtonState(block);
-    };
-
-    calloutRemove.addEventListener('click', handleRemove, { once: true });
-
-    callout.append(calloutLabel, calloutRemove);
-    container.append(callout);
-  });
-
-  decorateIcons(container);
-  container.hidden = false;
-
-  // Restore focus to the adjacent × button (same index position after removal), or the search input if none remain.
-  if (focusedKey) {
-    const tags = [...container.querySelectorAll('.events-search-active-filter-tag')];
-    const removedIndex = currentValues.indexOf(focusedKey);
-    const nextTag = tags[removedIndex] ?? tags[tags.length - 1];
-    const nextFocus =
-      nextTag?.querySelector('.events-search-active-filter-tag-remove') ??
-      block.querySelector('.events-search-keyword-input');
-    nextFocus?.focus();
   }
 }
 
@@ -1343,16 +869,197 @@ function updateNoResultsMessage(block, placeholders) {
   clearBtn.textContent = placeholders.eventSearchClearSearchLabel || 'Clear search';
   clearBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    block.querySelector('.events-search-clear-filters')?.click();
+    filterContexts.get(block)?.store.clear();
   });
   noResultsEl.append(msgEl, clearBtn);
+}
+
+/* ------------------------------------------------------------------ */
+/* Filters: shared store/UI  <->  Coveo Headless                       */
+/* ------------------------------------------------------------------ */
+
+/** Makes a facet controller's selection equal `wanted` (values not yet known to the controller are added). */
+function reconcileFacetSelection(controller, wanted = []) {
+  if (!controller) return;
+  const want = new Set(wanted);
+  const values = controller.state?.values ?? [];
+  values.forEach((facetValue) => {
+    if ((facetValue.state === 'selected') !== want.has(facetValue.value)) {
+      controller.toggleSelect(facetValue);
+    }
+  });
+  const known = new Set(values.map((facetValue) => facetValue.value));
+  wanted.forEach((value) => {
+    if (!known.has(value)) controller.toggleSelect({ value, state: 'selected' });
+  });
+}
+
+/**
+ * USER -> HEADLESS. The store only emits on user actions (backend syncs are silent), so every
+ * emit here is a real filter / keyword / clear interaction.
+ */
+function applyStoreChangeToHeadless(block, ctx, snapshot, source) {
+  const { filters, keyword } = snapshot;
+  const intent = { byFilterType: filters, term: keyword };
+
+  // Analytics: same rules as before — keyword search only counts when non-empty; clear has its own event.
+  if (source === 'filter' || (source === 'keyword' && keyword)) {
+    const analytics = getEventsSearchAnalyticsState(block);
+    analytics.pendingType = source === 'keyword' ? 'search' : 'filter';
+    analytics.intent = intent;
+  }
+
+  // Don't let a lagging Headless state overwrite this click until it has caught up (see syncFromHeadless).
+  ctx.awaiting = { intent, passes: 0 };
+
+  if (source === 'clear') {
+    ctx.isClearing = true;
+    GROUP_IDS.forEach((id) => getFacetController(id)?.deselectAll?.());
+    window.headlessSearchBox?.updateText('');
+    ctx.isClearing = false;
+  } else {
+    GROUP_IDS.forEach((id) => reconcileFacetSelection(getFacetController(id), filters[id]));
+    if (source === 'keyword') window.headlessSearchBox?.updateText(keyword);
+  }
+
+  window.headlessPager?.selectPage(1);
+
+  if (source === 'clear') {
+    // Drop the whole hash at once
+    const hadHash = Boolean(window.location.hash) && window.location.hash !== '#';
+    // Clear resets the sort back to default.
+    resetEventsSearchSort(block, { dispatch: !hadHash });
+    if (hadHash) {
+      window.location.hash = '';
+    } else {
+      executeSearch();
+    }
+    pushEventsClearFiltersEvent();
+  } else if (source === 'keyword') {
+    // Coveo urlManager syncs `q` from the hash; updateText + executeSearch alone does not run keyword search.
+    handleCoverSearchSubmit(keyword);
+  } else {
+    executeSearch();
+  }
+}
+
+function toEventTypeStaticItems(group) {
+  return (group?.items ?? []).map((item) => ({
+    value: item.value || item.title,
+    title: item.title || item.value,
+  }));
+}
+
+/** Builds the option list for a group from the Headless facet controller. */
+function buildGroupItemsFromHeadless(group, ctx) {
+  const controller = getFacetController(group.id);
+  const facetValues = controller?.state?.values ?? [];
+  const selected = new Set(ctx.store.get().filters[group.id]);
+
+  if (group.id === 'el_contenttype') {
+    // Static options; counts come from the facet, zero-count options are hidden unless selected.
+    return toEventTypeStaticItems(group)
+      .map((item) => {
+        const facetValue = facetValues.find((fv) => fv.value === item.value);
+        return { ...item, count: facetValue?.numberOfResults ?? 0 };
+      })
+      .filter((item) => selected.has(item.value) || item.count > 0);
+  }
+
+  return facetValues
+    .filter((v) => v.state === 'selected' || (v.numberOfResults ?? 0) > 0)
+    .map((v) => ({
+      value: v.value,
+      title: v.value.split('|').join(' | '),
+      count: v.numberOfResults ?? 0,
+    }))
+    .sort(sortItemsAlphabetically);
+}
+
+/**
+ * HEADLESS -> UI. Called from every search engine subscription fire.
+ * 1) Mirrors the controllers' selected values and the search box into the store (silently).
+ * 2) Refreshes option lists/counts once per new search response.
+ */
+function syncFromHeadless(block, groups) {
+  const ctx = filterContexts.get(block);
+  if (!ctx) return;
+  if (!(window.headlessStatusControllers?.state?.firstSearchExecuted ?? false)) return;
+
+  // A user interaction is in flight: wait until Headless has caught up with it before mirroring state back.
+  if (ctx.awaiting) {
+    ctx.awaiting.passes += 1;
+    if (responseMatchesEventsSearchIntent(ctx.awaiting.intent) || ctx.awaiting.passes > MAX_PENDING_SYNC_PASSES) {
+      ctx.awaiting = null;
+    } else {
+      return;
+    }
+  }
+
+  const { store, ui } = ctx;
+  const search = window.headlessSearchEngine?.state?.search ?? {};
+
+  // 1) selections + keyword (also covers URL restore and back/forward navigation)
+  groups.forEach((group) => {
+    const selected = (getFacetController(group.id)?.state?.values ?? [])
+      .filter((v) => v.state === 'selected')
+      .map((v) => v.value);
+    store.setGroup(group.id, selected, { silent: true });
+  });
+  store.setKeyword(window.headlessSearchBox?.state?.value ?? '', { silent: true });
+
+  // 2) options + counts, only when a new response has arrived (avoids stale counts)
+  const responseId = search.searchResponseId;
+  if (responseId && ctx.lastResponseId !== responseId) {
+    ctx.lastResponseId = responseId;
+    block.classList.toggle('has-no-results', !(search.response?.totalCount ?? 0));
+    groups.forEach((group) => {
+      const items = buildGroupItemsFromHeadless(group, ctx);
+      const key = JSON.stringify(items);
+      if (ctx.itemKeys.get(group.id) !== key) {
+        ctx.itemKeys.set(group.id, key);
+        ui.setGroupItems(group.id, items);
+      }
+    });
+  }
+
+  ui.refresh();
+}
+
+function setupFilters(block, groups, placeholders) {
+  const store = createFilterStore({ groupIds: GROUP_IDS });
+  const ui = createSearchFilterUI({
+    store,
+    groups: groups.map(({ id, name }) => ({ id, name })),
+    prefix: 'events-search',
+    closeIcon: 'icon-close-events',
+    expandedByDefault: false,
+    placeholders: {
+      filtersLabel: placeholders.eventSearchFiltersLabel,
+      filterClearLabel: placeholders.eventSearchClearFiltersLabel || 'Clear all filters',
+      searchPlaceholder: placeholders.eventSearchKeywordPlaceholder || 'Search events',
+      clearSearchLabel: placeholders.eventSearchClearSearchLabel,
+      activeFiltersAriaLabel: placeholders.eventSearchActiveFiltersAriaLabel,
+    },
+  });
+  const ctx = { store, ui, awaiting: null, isClearing: false, lastResponseId: null, itemKeys: new Map() };
+  filterContexts.set(block, ctx);
+
+  // Mount into the layout created by createLayout
+  block.querySelector('.events-search-filters-panel').append(ui.filtersEl);
+  block.querySelector('.events-search-topbar').prepend(ui.keywordEl, ui.activeEl);
+
+  // Event Type options are static; counts arrive from Headless later.
+  ui.setGroupItems('el_contenttype', toEventTypeStaticItems(groups.find((g) => g.id === 'el_contenttype')));
+
+  store.subscribe((snapshot, source) => applyStoreChangeToHeadless(block, ctx, snapshot, source));
 }
 
 async function handleSearchEngineSubscription(block, groups, placeholders) {
   if (!window.headlessSearchEngine || window.headlessStatusControllers?.state?.isLoading) return;
 
-  const state = getFilterState(block);
-  if (state.isClearing) return;
+  const ctx = filterContexts.get(block);
+  if (!ctx || ctx.isClearing) return;
 
   const syncDepth = headlessSubscriptionSyncDepth.get(block) ?? 0;
   if (syncDepth > 0) {
@@ -1361,14 +1068,12 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
   }
   headlessSubscriptionSyncDepth.set(block, 1);
   try {
-    syncDynamicFacetGroupsFromHeadless(block, groups);
-    syncFilterUIFromHeadlessState(block, groups);
+    syncFromHeadless(block, groups);
     updateEventsSearchSortUI(block, placeholders);
     const search = window.headlessSearchEngine.state.search || {};
     const { results = [], searchResponseId = '', response = {} } = search;
     fireEventsFilterSearchAnalytics(block, searchResponseId);
     updateResultsCount(block, response.totalCount || 0, placeholders);
-    renderActiveFilterCallouts(block);
     await renderResults(block, results, searchResponseId);
     if (!response.totalCount) updateNoResultsMessage(block, placeholders);
   } catch (err) {
@@ -1381,201 +1086,6 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
       handleSearchEngineSubscription(block, groups, placeholders);
     }
   }
-}
-
-function bindFilterInteractions(block, groups) {
-  const panel = block.querySelector('.events-search-filters-panel');
-  if (!panel) return;
-
-  panel.addEventListener('click', (event) => {
-    const groupHeader = event.target.closest('.events-search-filter-group-header');
-    if (!groupHeader) return;
-
-    const groupEl = groupHeader.closest('.events-search-filter-group');
-    const isExpanded = groupEl.classList.contains('is-expanded');
-    groupEl.classList.toggle('is-expanded', !isExpanded);
-    groupHeader.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
-  });
-
-  panel.addEventListener('change', (event) => {
-    const checkbox = event.target.matches('input[type="checkbox"]') ? event.target : null;
-    if (!checkbox) return;
-
-    const groupEl = checkbox.closest('.events-search-filter-group');
-    const filterType = groupEl?.dataset.filterType;
-    if (!filterType) return;
-
-    // Skip processing if we're in the middle of a clear all operation
-    const state = getFilterState(block);
-    if (state.isClearing) {
-      return;
-    }
-
-    // Maintain ordered tags array (browse-filters appendTag/removeFromTags pattern).
-    const { tags: activeTags, pendingRemovals } = state;
-    if (checkbox.checked) {
-      pendingRemovals.delete(toCompositeKey(filterType, checkbox.value));
-      const alreadyTracked = activeTags.some((t) => t.filterType === filterType && t.value === checkbox.value);
-      if (!alreadyTracked) {
-        activeTags.push({
-          filterType,
-          value: checkbox.value,
-          label: checkbox.getAttribute('data-label') || checkbox.value,
-        });
-      }
-    } else {
-      removeActiveTag(activeTags, pendingRemovals, filterType, checkbox.value);
-    }
-
-    const selectedCount = groupEl.querySelectorAll('input[type="checkbox"]:checked').length;
-    const targetGroup = groups.find((group) => group.id === filterType);
-    if (targetGroup) {
-      targetGroup.selected = selectedCount;
-    }
-    updateGroupSelectionCount(block, filterType, selectedCount);
-    // Snapshot intent while the checkboxes still reflect the click — toggleFacetSelection dispatches
-    // synchronously and the subscription reverts checkbox state to the lagging controller state.
-    const analyticsState = getEventsSearchAnalyticsState(block);
-    analyticsState.pendingType = 'filter';
-    analyticsState.intent = captureEventsSearchIntent(block);
-    toggleFacetSelection(filterType, checkbox.value, checkbox.checked);
-    if (window.headlessPager) {
-      window.headlessPager.selectPage(1);
-    }
-    executeSearch();
-    renderActiveFilterCallouts(block);
-    updateClearFiltersButtonState(block);
-  });
-}
-
-function updateKeywordClearIconVisibility(block) {
-  const input = block.querySelector('.events-search-keyword-input');
-  const clearIcon = block.querySelector('.events-search-keyword-clear');
-  clearIcon?.classList.toggle('is-visible', Boolean(input?.value));
-}
-
-function bindTopbarSearch(block) {
-  const input = block.querySelector('.events-search-keyword-input');
-  const keywordRow = block.querySelector('.events-search-keyword');
-  const clearIcon = block.querySelector('.events-search-keyword-clear');
-  if (!input) return;
-
-  const submitSearch = () => {
-    if (!window.headlessSearchBox) return;
-    const query = input.value.trim();
-    // Snapshot intent before updateText dispatches (which can re-sync the UI from lagging state).
-    if (query) {
-      const analyticsState = getEventsSearchAnalyticsState(block);
-      analyticsState.pendingType = 'search';
-      analyticsState.intent = captureEventsSearchIntent(block);
-    }
-    window.headlessSearchBox.updateText(query);
-    if (window.headlessPager) {
-      window.headlessPager.selectPage(1);
-    }
-    // Coveo urlManager syncs `q` from the hash; updateText + executeSearch alone does not run keyword search.
-    handleCoverSearchSubmit(query);
-    updateClearFiltersButtonState(block);
-  };
-
-  input.addEventListener('input', () => {
-    updateKeywordClearIconVisibility(block);
-    updateClearFiltersButtonState(block);
-    // Refresh results as soon as the prompt is fully deleted, without waiting for Enter.
-    if (input.value === '') {
-      submitSearch();
-    }
-  });
-
-  keywordRow?.addEventListener('click', (event) => {
-    if (event.target.closest('.icon-search-gray')) {
-      submitSearch();
-    }
-  });
-
-  input.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      submitSearch();
-    }
-  });
-
-  const clearSearch = () => {
-    input.value = '';
-    updateKeywordClearIconVisibility(block);
-    submitSearch();
-    input.focus();
-  };
-
-  clearIcon?.addEventListener('click', clearSearch);
-  clearIcon?.addEventListener('keydown', (event) => {
-    if (event.key !== 'Enter' && event.key !== ' ') return;
-    event.preventDefault();
-    clearSearch();
-  });
-
-  updateKeywordClearIconVisibility(block);
-}
-
-function bindClearFilters(block, groups) {
-  const clearBtn = block.querySelector('.events-search-clear-filters');
-  if (!clearBtn) return;
-
-  clearBtn.addEventListener('click', () => {
-    const state = getFilterState(block);
-    const { tags: activeTags, pendingRemovals } = state;
-
-    // Uncheck all checkboxes without per-checkbox Headless toggles
-    block.querySelectorAll('.events-search-filter-option input[type="checkbox"]').forEach((checkbox) => {
-      checkbox.checked = false;
-      checkbox.closest('.events-search-filter-option')?.classList.remove('checked');
-    });
-
-    // Reset ordered tags array (browse-filters clearAllSelectedTag pattern).
-    activeTags.length = 0;
-    pendingRemovals.clear();
-    groups.forEach((group) => {
-      group.selected = 0;
-      updateGroupSelectionCount(block, group.id, 0);
-    });
-
-    state.isClearing = true;
-
-    // deselect all Headless facet controllers.
-    ['el_product', 'el_event_series', 'el_contenttype'].forEach((filterType) => {
-      getFacetController(filterType)?.deselectAll?.();
-    });
-
-    if (window.headlessSearchBox) {
-      window.headlessSearchBox.updateText('');
-      const searchInput = block.querySelector('.events-search-keyword-input');
-      if (searchInput) {
-        searchInput.value = '';
-      }
-      updateKeywordClearIconVisibility(block);
-    }
-
-    state.isClearing = false;
-
-    if (window.headlessPager) {
-      window.headlessPager.selectPage(1);
-    }
-
-    // Drop the whole hash at once
-    const hadHash = Boolean(window.location.hash) && window.location.hash !== '#';
-
-    // Clear resets the sort back to default.
-    resetEventsSearchSort(block, { dispatch: !hadHash });
-
-    if (hadHash) {
-      window.location.hash = '';
-    } else {
-      executeSearch();
-    }
-    renderActiveFilterCallouts(block);
-    updateClearFiltersButtonState(block);
-    pushEventsClearFiltersEvent();
-  });
 }
 
 function bindMobileFilterToggle(block) {
@@ -1621,13 +1131,10 @@ async function initHeadlessSearch(block, groups, placeholders) {
       updateResultsCount(block, totalCount, placeholders);
     },
     handleSearchBoxSubscription: () => {
-      const input = block.querySelector('.events-search-keyword-input');
-      if (!input || !window.headlessSearchBox) return;
-      if (input.value !== window.headlessSearchBox.state.value) {
-        input.value = window.headlessSearchBox.state.value || '';
-      }
-      updateKeywordClearIconVisibility(block);
-      updateClearFiltersButtonState(block);
+      const ctx = filterContexts.get(block);
+      if (!ctx || ctx.awaiting || !window.headlessSearchBox) return;
+      ctx.store.setKeyword(window.headlessSearchBox.state.value || '', { silent: true });
+      ctx.ui.refresh();
     },
   });
 
@@ -1646,7 +1153,7 @@ async function initHeadlessSearch(block, groups, placeholders) {
         sortState.urlRestorePending = true;
       }
     } catch (err) {
-      // Sort controller failed to build ,leave sortController null so the control stays hidden; search still works.
+      // Sort controller failed to build, leave sortController null so the control stays hidden; search still works.
       // eslint-disable-next-line no-console
       console.error('events-search: failed to build sort controller; sort disabled', err);
     }
@@ -1660,28 +1167,29 @@ async function initHeadlessSearch(block, groups, placeholders) {
     executeSearch();
   }
   renderPageNumbers();
-  updateClearFiltersButtonState(block);
 }
 
 export default async function decorate(block) {
-  await loadEventsCardStyles();
-  let placeholders = {};
   try {
-    placeholders = await fetchLanguagePlaceholders();
+    await loadEventsCardStyles().catch(() => {});
+    let placeholders = {};
+    try {
+      placeholders = await fetchLanguagePlaceholders();
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching placeholders:', err);
+    }
+    const groups = getBaseFilterGroups(placeholders);
+
+    createLayout(block, placeholders);
+    decorateIcons(block);
+    setupFilters(block, groups, placeholders); // must run after createLayout
+    bindMobileFilterToggle(block);
+    await initEventsSearchViewSwitcher(block);
+    bindSortDropdownToggle(block);
+    await initHeadlessSearch(block, groups, placeholders);
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error('Error fetching placeholders:', err);
+    console.error('events-search: decorate failed', err);
   }
-  const groups = getBaseFilterGroups(placeholders);
-
-  createLayout(block, placeholders);
-  decorateIcons(block);
-  renderFilterGroups(block, groups);
-  bindFilterInteractions(block, groups);
-  bindTopbarSearch(block);
-  bindClearFilters(block, groups);
-  bindMobileFilterToggle(block);
-  await initEventsSearchViewSwitcher(block);
-  bindSortDropdownToggle(block);
-  await initHeadlessSearch(block, groups, placeholders);
 }
