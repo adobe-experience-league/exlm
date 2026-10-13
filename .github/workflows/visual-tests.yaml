@@ -59,11 +59,19 @@ jobs:
               await github.rest.issues.createComment({ ...context.repo, issue_number, body });
             }
 
+      # Shared npm download cache for both the project dependencies and the AEM CLI.
+      - name: Cache npm downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: visual-tests-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: visual-tests-npm-
+
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --prefer-offline --no-audit --no-fund
 
       - name: Install AEM CLI
-        run: npm install -g @adobe/aem-cli
+        run: npm install -g @adobe/aem-cli --prefer-offline --no-audit --no-fund
 
       - name: Run visual tests
         id: tests

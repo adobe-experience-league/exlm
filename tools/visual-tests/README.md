@@ -158,8 +158,8 @@ Steps:
 
 1. Checks out the PR inside the **same Playwright container image** used for local Docker runs (`mcr.microsoft.com/playwright:v1.53.1-jammy`), so CI and local Docker baselines are pixel-identical.
 2. Creates or updates a single PR results comment showing that the run is in progress.
-3. `npm ci`, then installs `@adobe/aem-cli` globally (the Playwright config drives `aem up` as the local dev server).
-4. Runs the suite with `continue-on-error: true` so the report and comment are still published on failure.
+3. Restores the npm download cache, then runs `npm ci` and installs `@adobe/aem-cli` globally (the Playwright config drives `aem up` as the local dev server).
+4. Runs the suite with 4 parallel workers and `continue-on-error: true`, so the report and comment are still published on failure.
 5. Uploads the HTML report as an artifact (7-day retention) and, on failure only, the `test-results/` folder with failure screenshots and traces (3-day retention).
 6. Updates the PR comment with a pass/fail headline, a summary table (passed, failed, flaky, skipped, duration), failures grouped by block and viewport, flaky tests, and links to the report and run.
 7. Fails the job if tests failed, after the report and comment are published.

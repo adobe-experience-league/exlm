@@ -12,7 +12,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  // GitHub-hosted Linux runners have 4 vCPUs.
+  workers: process.env.CI ? 4 : undefined,
   // Each test waits on real readiness signals (see spec-helpers.js), not fixed sleeps,
   // so a generous ceiling only matters when something is genuinely stuck.
   timeout: 60000,
