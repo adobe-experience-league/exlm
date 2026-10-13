@@ -330,11 +330,7 @@ function addShimmerWrapper(block, shimmer) {
 }
 
 function hasModuleCount(card) {
-  return (
-    card.el_course_module_count !== undefined &&
-    card.el_course_module_count !== null &&
-    card.el_course_module_count !== ''
-  );
+  return card.el_course_module_count != null && card.el_course_module_count !== '';
 }
 
 async function enrichRenderedCourse(cardDiv, cardData, cardBuilt, contentDiv) {
