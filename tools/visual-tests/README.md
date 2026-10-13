@@ -160,13 +160,13 @@ Steps:
 2. Creates or updates a single PR results comment showing that the run is in progress.
 3. Restores the npm download cache, then runs `npm ci` and installs `@adobe/aem-cli` globally (the Playwright config drives `aem up` as the local dev server).
 4. Runs the suite with 4 parallel workers and `continue-on-error: true`, so the report and comment are still published on failure.
-5. Uploads the HTML report as an artifact (7-day retention) and, on failure only, the `test-results/` folder with failure screenshots and traces (3-day retention).
-6. Updates the PR comment with a pass/fail headline, a summary table (passed, failed, flaky, skipped, duration), failures grouped by block and viewport, flaky tests, and links to the report and run.
+5. Uploads the HTML report as an artifact (7-day retention) and, on failure only, a `visual-diffs` artifact with the expected/actual/diff PNGs and traces for each failed test (3-day retention).
+6. Updates the PR comment with a pass/fail headline, a summary table (passed, failed, flaky, skipped, duration), one row per failure (block, viewport, pixel difference, and links to the diff images and report), flaky tests, and links to the report and run.
 7. Fails the job if tests failed, after the report and comment are published.
 
 Fork PRs receive a read-only token, so they run the tests and upload reports but do not post the comment. Fork runs remain subject to GitHub's contributor-approval policy.
 
-To debug a CI failure: check the PR comment for failing blocks and viewports, download the "playwright-report" artifact for full HTML diffs and traces, or the "test-results" artifact for raw failure screenshots.
+To debug a CI failure: check the PR comment for failing blocks and viewports, use the row's **Diff images** link for the expected/actual/diff PNGs, or **Report** (open with `npx playwright show-report <unzipped folder>`) for side-by-side comparisons and traces.
 
 ### Copilot PR review exclusions
 

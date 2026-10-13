@@ -87,11 +87,13 @@ jobs:
           path: tools/visual-tests/playwright-report/
           retention-days: 7
 
+      # Expected / actual / diff PNGs for every failed screenshot.
       - name: Upload failure artifacts
+        id: upload-diffs
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: visual-diffs
           path: tools/visual-tests/test-results/
           retention-days: 3
 
@@ -101,6 +103,7 @@ jobs:
         env:
           TEST_OUTCOME: ${{ steps.tests.outcome }}
           REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
+          DIFFS_URL: ${{ steps.upload-diffs.outputs.artifact-url }}
         with:
           script: |
             const fs = require('node:fs');
@@ -109,11 +112,35 @@ jobs:
             const sha = context.payload.pull_request.head.sha;
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const reportUrl = process.env.REPORT_URL;
+            const diffsUrl = process.env.DIFFS_URL;
+
+            // Turns a Playwright failure message into a one-line, table-safe summary.
+            const summarizeError = (message) => {
+              const lines = (message ?? '')
+                .replace(/\u001b\[[0-9;]*m/g, '')
+                .split('\n')
+                .map((line) => line.trim())
+                .filter(Boolean);
+              const pixels = lines.find((line) => /pixels? \(ratio [\d.]+ of all image pixels\) (are|is) different/.test(line));
+              const size = lines.find((line) => /^Expected an image .* received /.test(line));
+              const missing = lines.find((line) => /snapshot doesn't exist/i.test(line));
+              const summary =
+                (pixels && pixels.replace(/ of all image pixels\)/, ')')) ||
+                size ||
+                (missing && 'Baseline is missing') ||
+                lines.find((line) => !/^(Error:|Call log:|at )/.test(line)) ||
+                lines[0] ||
+                'Unknown error';
+              return summary.replace(/\|/g, '\\|').slice(0, 140);
+            };
 
             const collect = (suites, acc = []) => {
               for (const suite of suites ?? []) {
                 for (const spec of suite.specs ?? []) {
-                  for (const test of spec.tests ?? []) acc.push({ title: spec.title, status: test.status });
+                  for (const test of spec.tests ?? []) {
+                    const last = test.results?.[test.results.length - 1];
+                    acc.push({ title: spec.title, status: test.status, error: last?.error?.message });
+                  }
                 }
                 collect(suite.suites, acc);
               }
@@ -176,8 +203,22 @@ jobs:
 
               const failedTests = tests.filter((t) => t.status === 'unexpected');
               if (failedTests.length) {
-                lines.push('#### Failures', '', '| Block | Viewports |', '| --- | --- |', ...groupByBlock(failedTests), '');
+                const artifactLinks = [
+                  diffsUrl && `[Diff images](${diffsUrl})`,
+                  reportUrl && `[Report](${reportUrl})`,
+                ].filter(Boolean);
+                const rows = failedTests
+                  .map((test) => ({ ...parseTitle(test.title), error: summarizeError(test.error) }))
+                  .sort((a, b) => a.block.localeCompare(b.block))
+                  .map(
+                    ({ block, viewport, error }) =>
+                      `| \`${block}\` | ${viewport || '—'} | ${error} | ${artifactLinks.join(' · ') || '—'} |`,
+                  );
+                lines.push('#### Failures', '', '| Block | Viewport | Difference | Details |', '| --- | --- | --- | --- |', ...rows, '');
                 lines.push(
+                  '**Diff images** contains the expected, actual and diff PNG for each failure (in a folder named after the test). ' +
+                    'Open the **Report** with `npx playwright show-report <unzipped folder>` for a side-by-side slider.',
+                  '',
                   'If a change is intentional, update the baselines with `npm run test:visual:update` and commit the new snapshots.',
                   '',
                 );

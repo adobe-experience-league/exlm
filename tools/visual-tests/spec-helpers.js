@@ -7,12 +7,15 @@
  *     so nothing loads or changes after the snapshot is taken
  *   - scripts/delayed.js (which fires on a 3s timer) is replaced with a no-op that only
  *     dispatches `delayed-load`, so Brand Concierge etc. can't race the screenshot
+ *   - static remote content (Sidekick Library app, library examples, fragments, placeholders)
+ *     is fetched once per worker and served from memory for later tests
  *   - Date is frozen and Coveo calls are replayed from a committed HAR for data-driven blocks
  *   - before capturing, it waits for block decoration, fonts, images, loading shimmers,
  *     network idle and a stable layout. It waits again after the viewport resize and
  *     re-measures the box.
  */
 import fs from 'fs';
+import http from 'http';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { expect } from '@playwright/test';
@@ -65,6 +68,59 @@ const FREEZE_CSS = `
 `;
 
 const harCache = new Map();
+
+// Content that is static for the whole run but fetched remotely (through aem up) on every test:
+// the Sidekick Library app and every library example it lists. Cache it per worker.
+const remoteResponseCache = new Map();
+const CACHEABLE_REMOTE = [
+  /\/tools\/sidekick\/library\.json/,
+  /\/tools\/sidekick\/blocks\/[^?]+\.plain\.html/,
+  /^https:\/\/www\.(hlx|aem)\.live\/tools\/sidekick\/library\//,
+  /\/en\/global-fragments\/[^?]+\.plain\.html/,
+  /\/en\/placeholders\.json/,
+  /\/languages\.json/,
+];
+
+// aem up's proxied responses carry both Content-Length and Transfer-Encoding, which strict
+// HTTP clients (including route.fetch) reject, so local requests use Node's lenient parser.
+function fetchFromDevServer(url) {
+  return new Promise((resolve, reject) => {
+    http
+      .get(url, { insecureHTTPParser: true }, (res) => {
+        const chunks = [];
+        res.on('data', (chunk) => chunks.push(chunk));
+        res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: Buffer.concat(chunks) }));
+        res.on('error', reject);
+      })
+      .on('error', reject);
+  });
+}
+
+async function fulfillFromCache(route) {
+  const url = route.request().url();
+  let cached = remoteResponseCache.get(url);
+  if (!cached) {
+    let response;
+    if (new URL(url).protocol === 'http:') {
+      response = await fetchFromDevServer(url);
+    } else {
+      const fetched = await route.fetch();
+      response = { status: fetched.status(), headers: fetched.headers(), body: await fetched.body() };
+    }
+    const excluded = new Set(['content-encoding', 'content-length', 'transfer-encoding', 'connection']);
+    cached = {
+      status: response.status,
+      headers: Object.fromEntries(
+        Object.entries(response.headers)
+          .filter(([key]) => !excluded.has(key.toLowerCase()))
+          .map(([key, value]) => [key, Array.isArray(value) ? value.join(', ') : String(value)]),
+      ),
+      body: response.body,
+    };
+    if (response.status >= 200 && response.status < 300) remoteResponseCache.set(url, cached);
+  }
+  return route.fulfill(cached);
+}
 
 function loadHar(blockSlug) {
   if (!harCache.has(blockSlug)) {
@@ -149,6 +205,8 @@ async function installNetworkStubs(page, blockSlug) {
       return route.fulfill({ status: 200, contentType: 'text/html', body: PLACEHOLDER_DOCUMENT });
     return route.abort('blockedbyclient');
   });
+
+  await Promise.all(CACHEABLE_REMOTE.map((pattern) => page.route(pattern, fulfillFromCache)));
 
   // aem up injects a livereload client; saving any repo file mid-run would reload the page
   // and detach the block iframe under the test.
