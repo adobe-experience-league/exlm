@@ -1,6 +1,7 @@
 name: Visual Tests
 
-# Manual-only. Three ways to start a run:
+# Runs automatically on every PR, including drafts and forks.
+# Three ways to start an additional manual run:
 #   1. PR "button": tick the "Run visual tests" checkbox in the bot comment on the PR.
 #   2. PR comment: post a comment containing `/visual-test`.
 #   3. Actions tab -> Visual Tests -> "Run workflow" (optionally with a PR number).
@@ -9,6 +10,8 @@ name: Visual Tests
 # branch, so changes to this file only take effect once merged to main.
 
 on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
     inputs:
       pr_number:
@@ -28,6 +31,50 @@ env:
   RUN_CHECKBOX_LABEL: 'Run visual tests'
 
 jobs:
+  # Keep automatic PR execution read-only, separate from privileged manual reporting.
+  automatic-visual-tests:
+    name: Automatic Visual Tests
+    if: github.event_name == 'pull_request'
+    concurrency:
+      group: visual-tests-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.53.1-jammy
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install AEM CLI
+        run: npm install -g @adobe/aem-cli
+
+      - name: Run visual tests
+        id: tests
+        run: npx playwright test --config=tools/visual-tests/playwright.config.ts
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: tools/visual-tests/playwright-report/
+          retention-days: 7
+
+      - name: Upload failure screenshots
+        if: failure() && steps.tests.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: tools/visual-tests/test-results/
+          retention-days: 3
+
   # Adds the comment with the "Run visual tests" checkbox when a PR is opened.
   prompt:
     if: github.event_name == 'pull_request_target'
@@ -50,7 +97,7 @@ jobs:
                 marker,
                 '## 🎭 Visual Test Results',
                 '',
-                'Visual tests run on demand. Tick the box below (or comment `/visual-test`) to run them against the latest commit of this PR.',
+                'Visual tests run automatically on every PR update. View the Automatic Visual Tests check for results and reports. Tick the box below (or comment `/visual-test`) for an additional run against the latest commit of this PR.',
                 '',
                 `- [ ] ${label}`,
               ].join('\n'),

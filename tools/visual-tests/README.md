@@ -152,15 +152,17 @@ Runs on every push: checkout, Node 22, `npm ci`, `npm run lint` (ESLint + Stylel
 
 ### `visual-tests.yaml` — Visual Tests
 
-Runs **on demand only** (not on every push). There are three ways to start it:
+Runs **automatically on every PR** when it is opened, updated with new commits, reopened, or marked ready for review. Drafts and forks are included, with no target-branch or changed-path filters. The `Automatic Visual Tests` check runs the full suite against the PR merge commit with a read-only token and uploads reports and failure screenshots. Test failures fail the check; this workflow does not change branch protection or make the check required for merging. Fork runs remain subject to GitHub's contributor-approval policy.
 
-- **PR "button"**: when a PR is opened, a bot comment appears with a `- [ ] Run visual tests` checkbox. Tick it to run the tests against the PR's latest commit. The same comment is updated with results and gets a fresh checkbox for re-runs.
+There are also three ways to start an additional manual run:
+
+- **PR "button"**: when a PR is opened, a bot comment appears with a `- [ ] Run visual tests` checkbox. Tick it to run the tests against the PR's latest commit. Manual runs update the same comment with results and a fresh checkbox for re-runs.
 - **PR comment**: post a comment containing `/visual-test`.
 - **Actions tab**: _Visual Tests → Run workflow_. Optionally enter a PR number to test that PR and post results to it; leave it empty to test the selected branch only.
 
-Only users with write access can trigger runs from a PR. A new trigger cancels an in-progress run for the same PR. PR runs report a `Visual Tests` commit status on the PR head. GitHub always uses the default branch's copy of this workflow for comment and manual triggers, so changes to it take effect only after merging to `main`.
+Only users with write access can trigger manual runs from a PR. A new automatic or manual trigger cancels an in-progress test job for the same PR. Manual PR runs report a `Visual Tests` commit status on the PR head and update the results comment; automatic runs report through the native `Automatic Visual Tests` check and its artifacts, without write permissions. GitHub always uses the default branch's copy of this workflow for comment and manual triggers, so changes to those triggers take effect only after merging to `main`. Existing open PRs receive automatic runs on their next matching event after the workflow is available.
 
-Steps:
+Manual-run steps (automatic runs use the same image, setup, test command, and artifact retention, but fail directly on test failure and omit PR comments and commit statuses):
 
 1. Checks out the repo inside the **same Playwright container image** used for local Docker runs (`mcr.microsoft.com/playwright:v1.53.1-jammy`), so CI and local Docker baselines are pixel-identical — no browser install step needed, it's baked into the image.
 2. `npm ci`, then installs `@adobe/aem-cli` globally (needed since the Playwright config drives `aem up` as the local dev server).
@@ -170,6 +172,12 @@ Steps:
 6. Explicitly fails the job (`exit 1`) if tests failed — this happens _after_ the report/comment steps so those artifacts are always available even on failure.
 
 To debug a CI failure: open the PR comment for the failed-test table, download the "playwright-report" artifact for full HTML diffs/traces, or the "test-results" artifact for raw failure screenshots.
+
+### Copilot PR review exclusions
+
+The [Copilot PR review workflow](../../.github/workflows/copilot-review.yaml) excludes **all files under `tools/visual-tests/`** from its review input, including specs, baselines, fixtures, generated reports, infrastructure, configuration, and documentation. Excluded files are listed with reasons in review coverage. If only excluded files change, Copilot review is skipped and the workflow summary lists the exclusions.
+
+Files outside this directory, including GitHub workflows, remain reviewable. These review exclusions do not delete any files or skip the automatic visual-test suite.
 
 ## Troubleshooting
 
