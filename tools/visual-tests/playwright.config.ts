@@ -18,12 +18,16 @@ export default defineConfig({
   // so a generous ceiling only matters when something is genuinely stuck.
   timeout: 60000,
   outputDir: './test-results',
-  reporter: [
-    ['html', { outputFolder: './playwright-report', open: 'never' }],
-    // Structured per-test results (title/status/error/attachment paths) for tooling that
-    // needs to report pass/fail per block or locate diff images without scraping stdout.
-    ['json', { outputFile: './test-results/results.json' }],
-  ],
+  // CI runs the suite in shards; each shard writes a blob report that the workflow merges
+  // into the HTML/JSON reports below with merge.config.ts.
+  reporter: process.env.CI
+    ? [['blob', { outputDir: './blob-report' }], ['dot']]
+    : [
+        ['html', { outputFolder: './playwright-report', open: 'never' }],
+        // Structured per-test results (title/status/error/attachment paths) for tooling that
+        // needs to report pass/fail per block or locate diff images without scraping stdout.
+        ['json', { outputFile: './test-results/results.json' }],
+      ],
   use: {
     baseURL: process.env.BASE_URL || 'http://localhost:3000',
     trace: 'on-first-retry',

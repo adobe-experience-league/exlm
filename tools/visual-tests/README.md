@@ -152,17 +152,24 @@ Runs on every push: checkout, Node 22, `npm ci`, `npm run lint` (ESLint + Stylel
 
 ### `visual-tests.yaml` — Visual Tests
 
-Runs **automatically on every PR** when it is opened, updated with new commits, reopened, or marked ready for review, as a single `Visual Tests` job. Drafts are included, with no target-branch or changed-path filters. A newer push cancels the in-progress run for the same PR. To rerun, use GitHub's **Re-run jobs** on the check. Test failures fail the check; the workflow does not change branch protection.
+Runs **automatically on every PR** when it is opened, updated with new commits, reopened, or marked ready for review. Drafts are included, with no target-branch or changed-path filters. A newer push cancels the in-progress run for the same PR. To rerun, use GitHub's **Re-run all jobs**. The workflow does not change branch protection.
 
-Steps:
+The suite is split across 4 parallel shard jobs, `Visual Tests (shard N/4)`, followed by one `Visual Tests` job that merges their results. **`Visual Tests` is the check to watch or make required:** it fails when any test fails. A shard only fails on infrastructure errors (setup, dev server or uploads); test failures are reported by `Visual Tests`.
+
+Each shard job:
 
 1. Checks out the PR inside the **same Playwright container image** used for local Docker runs (`mcr.microsoft.com/playwright:v1.53.1-jammy`), so CI and local Docker baselines are pixel-identical.
-2. Creates or updates a single PR results comment showing that the run is in progress.
+2. Shard 1 only: creates or updates a single PR results comment showing that the run is in progress.
 3. Restores the npm download cache, then runs `npm ci` and installs `@adobe/aem-cli` globally (the Playwright config drives `aem up` as the local dev server).
-4. Runs the suite with 4 parallel workers and `continue-on-error: true`, so the report and comment are still published on failure.
-5. Uploads the HTML report as an artifact (7-day retention) and, on failure only, a `visual-diffs` artifact with the expected/actual/diff PNGs and traces for each failed test (3-day retention).
-6. Updates the PR comment with a pass/fail headline, a summary table (passed, failed, flaky, skipped, duration), one row per failure (block, viewport, pixel difference, and links to the diff images and report), flaky tests, and links to the report and run.
-7. Fails the job if tests failed, after the report and comment are published.
+4. Runs its quarter of the suite (`--shard=N/4`, 4 workers) with `continue-on-error: true`. In CI the Playwright config writes a blob report instead of HTML/JSON.
+5. Uploads its blob report and, on failure, its expected/actual/diff PNGs (1-day retention; these are intermediate artifacts).
+
+The `Visual Tests` job then:
+
+1. Merges the blob reports with [`merge.config.ts`](merge.config.ts) into the same HTML report and `test-results/results.json` a local run produces.
+2. Uploads the HTML report as `playwright-report` (7-day retention) and, on failure only, one combined `visual-diffs` artifact (3-day retention).
+3. Updates the PR comment with a pass/fail headline, a summary table (passed, failed, flaky, skipped, duration), one row per failure (block, viewport, pixel difference, and links to the diff images and report), flaky tests, and links to the report and run.
+4. Fails if any test failed, a shard failed, or the reports could not be merged.
 
 Fork PRs receive a read-only token, so they run the tests and upload reports but do not post the comment. Fork runs remain subject to GitHub's contributor-approval policy.
 

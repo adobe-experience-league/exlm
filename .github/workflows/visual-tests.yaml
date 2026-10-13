@@ -1,7 +1,9 @@
 name: Visual Tests
 
-# Runs the full visual regression suite on every PR update and keeps a single
-# results comment on the PR up to date. Rerun with GitHub's "Re-run jobs".
+# Runs the full visual regression suite on every PR update, split across 4 parallel
+# shards, then merges the results into one report and keeps a single results comment
+# on the PR up to date. "Visual Tests" is the job to watch; the shard jobs only fail
+# on infrastructure errors. Rerun with GitHub's "Re-run all jobs".
 
 on:
   pull_request:
@@ -14,28 +16,31 @@ concurrency:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   COMMENT_MARKER: '<!-- exlm-visual-tests -->'
+  # Fork PRs receive a read-only token, so they run the tests without commenting.
+  CAN_COMMENT: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
 
 jobs:
-  visual-tests:
-    name: Visual Tests
+  shard:
+    name: Visual Tests (shard ${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
     # Same image used for local Docker runs, so rendering matches the committed baselines.
     container:
       image: mcr.microsoft.com/playwright:v1.53.1-jammy
-    timeout-minutes: 20
+    timeout-minutes: 15
     permissions:
       contents: read
       pull-requests: write
-    env:
-      # Fork PRs receive a read-only token, so they run the tests without commenting.
-      CAN_COMMENT: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - name: Mark results comment as running
-        if: env.CAN_COMMENT == 'true'
+        if: env.CAN_COMMENT == 'true' && matrix.shard == 1
         uses: actions/github-script@v7
         with:
           script: |
@@ -73,10 +78,64 @@ jobs:
       - name: Install AEM CLI
         run: npm install -g @adobe/aem-cli --prefer-offline --no-audit --no-fund
 
+      # Failures are reported by the "Visual Tests" job, so a shard only fails on errors
+      # outside the tests themselves (setup, dev server, upload).
       - name: Run visual tests
         id: tests
-        run: npx playwright test --config=tools/visual-tests/playwright.config.ts
+        run: npx playwright test --config=tools/visual-tests/playwright.config.ts --shard=${{ matrix.shard }}/4
         continue-on-error: true
+
+      - name: Upload blob report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-${{ matrix.shard }}
+          path: tools/visual-tests/blob-report/
+          retention-days: 1
+
+      # Expected / actual / diff PNGs for every failed screenshot.
+      - name: Upload failure artifacts
+        if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diffs-${{ matrix.shard }}
+          path: tools/visual-tests/test-results/
+          retention-days: 1
+
+  report:
+    name: Visual Tests
+    needs: shard
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit --no-fund
+
+      - name: Download shard reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: blob-report-*
+          path: all-blob-reports
+          merge-multiple: true
+
+      - name: Merge reports
+        id: merge
+        run: |
+          npx playwright merge-reports --config=tools/visual-tests/merge.config.ts ./all-blob-reports
+          node -e "const s=require('./tools/visual-tests/test-results/results.json').stats; console.log('failed=' + (s.unexpected ?? 0))" >> "$GITHUB_OUTPUT"
 
       - name: Upload Playwright report
         id: upload-report
@@ -87,21 +146,28 @@ jobs:
           path: tools/visual-tests/playwright-report/
           retention-days: 7
 
-      # Expected / actual / diff PNGs for every failed screenshot.
-      - name: Upload failure artifacts
+      - name: Collect diff images
+        if: ${{ steps.merge.outputs.failed != '0' }}
+        uses: actions/download-artifact@v4
+        with:
+          pattern: visual-diffs-*
+          path: visual-diffs
+          merge-multiple: true
+
+      - name: Upload diff images
         id: upload-diffs
-        if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
+        if: ${{ !cancelled() && steps.merge.outputs.failed != '0' }}
         uses: actions/upload-artifact@v4
         with:
           name: visual-diffs
-          path: tools/visual-tests/test-results/
+          path: visual-diffs/
+          if-no-files-found: ignore
           retention-days: 3
 
       - name: Publish results comment
         if: ${{ !cancelled() && env.CAN_COMMENT == 'true' }}
         uses: actions/github-script@v7
         env:
-          TEST_OUTCOME: ${{ steps.tests.outcome }}
           REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
           DIFFS_URL: ${{ steps.upload-diffs.outputs.artifact-url }}
         with:
@@ -251,5 +317,7 @@ jobs:
             }
 
       - name: Fail if visual tests failed
-        if: ${{ steps.tests.outcome == 'failure' }}
-        run: exit 1
+        if: ${{ !cancelled() && (needs.shard.result != 'success' || steps.merge.outcome != 'success' || steps.merge.outputs.failed != '0') }}
+        run: |
+          echo "::error::Visual tests failed (shards: ${{ needs.shard.result }}, merge: ${{ steps.merge.outcome }}, failed tests: ${{ steps.merge.outputs.failed || 'unknown' }})."
+          exit 1
