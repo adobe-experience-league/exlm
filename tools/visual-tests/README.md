@@ -175,7 +175,7 @@ To debug a CI failure: open the PR comment for the failed-test table, download t
 
 ### Copilot PR review exclusions
 
-The [Copilot PR review workflow](../../.github/workflows/copilot-review.yaml) excludes **all files under `tools/visual-tests/`** from its review input, including specs, baselines, fixtures, generated reports, infrastructure, configuration, and documentation. Excluded files are listed with reasons in review coverage. If only excluded files change, Copilot review is skipped and the workflow summary lists the exclusions.
+The [Copilot PR review workflow](../../.github/workflows/copilot-review.yaml) excludes **all files under `tools/visual-tests/`** from its review input, including specs, baselines, fixtures, generated reports, infrastructure, configuration, and documentation. It also excludes the generated root `package-lock.json`, whose diff GitHub often omits when it is large. Excluded files are listed with reasons in review coverage. If only excluded files change, Copilot review is skipped and the workflow summary lists the exclusions.
 
 Files outside this directory, including GitHub workflows, remain reviewable. These review exclusions do not delete any files or skip the automatic visual-test suite.
 

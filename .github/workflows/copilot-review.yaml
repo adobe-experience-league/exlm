@@ -129,6 +129,7 @@ jobs:
                 : file.filename === vendorPath)
                 ? 'Vendored library'
                 : file.filename.endsWith('.map') ? 'Source map'
+                : file.filename === 'package-lock.json' ? 'Generated lockfile'
                 : visualTestFile ? 'Visual test directory' : null;
               if (reason) {
                 coverage.excluded.push({ path: file.filename, reason });
