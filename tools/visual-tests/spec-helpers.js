@@ -96,29 +96,68 @@ function fetchFromDevServer(url) {
   });
 }
 
+const FETCH_ATTEMPTS = 4;
+const FETCH_RETRY_BASE_MS = 300;
+const EXCLUDED_RESPONSE_HEADERS = new Set(['content-encoding', 'content-length', 'transfer-encoding', 'connection']);
+
+async function fetchOnce(route, url) {
+  if (new URL(url).protocol === 'http:') return fetchFromDevServer(url);
+  const fetched = await route.fetch();
+  return { status: fetched.status(), headers: fetched.headers(), body: await fetched.body() };
+}
+
+// A cold cache means every worker requests all library examples at once, so the dev server's
+// upstream (aem.page) can briefly error. A failed example makes the Sidekick Library show an
+// "An error occurred fetching <block>" toast over the screenshot, so retry transient failures.
+async function fetchWithRetry(route, url) {
+  let lastError;
+  for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt += 1) {
+    try {
+      const response = await fetchOnce(route, url);
+      if (response.status < 500 && response.status !== 429) return response;
+      lastError = new Error(`HTTP ${response.status}`);
+    } catch (error) {
+      lastError = error;
+    }
+    if (attempt < FETCH_ATTEMPTS) {
+      await new Promise((resolve) => {
+        setTimeout(resolve, FETCH_RETRY_BASE_MS * attempt);
+      });
+    }
+  }
+  throw new Error(`Failed to fetch ${url} after ${FETCH_ATTEMPTS} attempts: ${lastError?.message}`);
+}
+
+async function loadCacheable(route, url) {
+  const response = await fetchWithRetry(route, url);
+  return {
+    status: response.status,
+    headers: Object.fromEntries(
+      Object.entries(response.headers)
+        .filter(([key]) => !EXCLUDED_RESPONSE_HEADERS.has(key.toLowerCase()))
+        .map(([key, value]) => [key, Array.isArray(value) ? value.join(', ') : String(value)]),
+    ),
+    body: response.body,
+  };
+}
+
 async function fulfillFromCache(route) {
   const url = route.request().url();
-  let cached = remoteResponseCache.get(url);
-  if (!cached) {
-    let response;
-    if (new URL(url).protocol === 'http:') {
-      response = await fetchFromDevServer(url);
-    } else {
-      const fetched = await route.fetch();
-      response = { status: fetched.status(), headers: fetched.headers(), body: await fetched.body() };
-    }
-    const excluded = new Set(['content-encoding', 'content-length', 'transfer-encoding', 'connection']);
-    cached = {
-      status: response.status,
-      headers: Object.fromEntries(
-        Object.entries(response.headers)
-          .filter(([key]) => !excluded.has(key.toLowerCase()))
-          .map(([key, value]) => [key, Array.isArray(value) ? value.join(', ') : String(value)]),
-      ),
-      body: response.body,
-    };
-    if (response.status >= 200 && response.status < 300) remoteResponseCache.set(url, cached);
+  // Cache the in-flight promise so concurrent requests for the same URL share one fetch.
+  let pending = remoteResponseCache.get(url);
+  if (!pending) {
+    pending = loadCacheable(route, url);
+    remoteResponseCache.set(url, pending);
   }
+  let cached;
+  try {
+    cached = await pending;
+  } catch (error) {
+    remoteResponseCache.delete(url);
+    // Let the browser try the request itself rather than failing it outright.
+    return route.continue();
+  }
+  if (cached.status < 200 || cached.status >= 300) remoteResponseCache.delete(url);
   return route.fulfill(cached);
 }
 
@@ -438,6 +477,11 @@ export default async function runBlockVisualTest(page, { blockSlug, url, viewpor
 
   const extraWait = BLOCK_SNAPSHOT_EXTRA_WAIT[blockSlug];
   if (extraWait) await page.waitForTimeout(extraWait);
+
+  // The screenshot is a page-level clip, so Sidekick Library toasts (e.g. a failed fetch of
+  // some other block's example) would be captured over the block. They are library chrome,
+  // not block output; a failure to load this block's own example fails the readiness waits.
+  await page.locator('sp-toast').evaluateAll((toasts) => toasts.forEach((toast) => toast.remove()));
 
   const box = await block.boundingBox();
   if (!box) throw new Error(`Could not get bounding box for ${blockSelector}`);
