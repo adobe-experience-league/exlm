@@ -329,6 +329,35 @@ function addShimmerWrapper(block, shimmer) {
   shimmer.addShimmer(shimmerWrapper);
 }
 
+function hasModuleCount(card) {
+  return (
+    card.el_course_module_count !== undefined &&
+    card.el_course_module_count !== null &&
+    card.el_course_module_count !== ''
+  );
+}
+
+async function enrichRenderedCourse(cardDiv, cardData, cardBuilt, contentDiv) {
+  await cardBuilt;
+  if (!contentDiv.contains(cardDiv)) return;
+
+  const { getCurrentCourseMeta } = await import('../../scripts/courses/course-utils.js');
+  const courseMeta = await getCurrentCourseMeta(cardData.viewLink);
+  if (!Array.isArray(courseMeta?.modules) || !contentDiv.contains(cardDiv) || hasModuleCount(cardData)) return;
+
+  cardData.el_course_module_count = String(courseMeta.modules.length);
+  const statusRow = cardDiv.querySelector('.browse-card-status-row');
+  if (!statusRow || statusRow.querySelector('.browse-card-module-count')) return;
+
+  const cardContent = document.createElement('div');
+  await buildCard(cardContent, cardData);
+
+  const moduleCount = cardContent.querySelector('.browse-card-module-count');
+  if (moduleCount && contentDiv.contains(cardDiv) && !statusRow.querySelector('.browse-card-module-count')) {
+    statusRow.appendChild(moduleCount);
+  }
+}
+
 /**
  * Renders course cards to the DOM
  * Uses module-level placeholders for error and no-results messages
@@ -352,8 +381,11 @@ async function renderCards(block, courseData, shimmer) {
 
       courseData.forEach((cardData) => {
         const cardDiv = document.createElement('div');
-        buildCard(cardDiv, cardData);
+        const cardBuilt = buildCard(cardDiv, cardData);
         fragment.appendChild(cardDiv);
+        if (!hasModuleCount(cardData) && cardData.viewLink) {
+          enrichRenderedCourse(cardDiv, cardData, cardBuilt, contentDiv).catch(() => undefined);
+        }
       });
 
       contentDiv.appendChild(fragment);
@@ -407,29 +439,6 @@ async function fetchCourseData(selectedFilters = [], selectedLevels = [], state 
   const facetsResponse = BrowseCardsDelegate.fetchFacetsData(param);
   state.facetsResponse = facetsResponse;
   populateValidFacets(facetsResponse, state);
-
-  const hasModuleCount = (card) =>
-    card.el_course_module_count !== undefined &&
-    card.el_course_module_count !== null &&
-    card.el_course_module_count !== '';
-
-  if (data?.some((card) => !hasModuleCount(card) && card.viewLink)) {
-    const { getCurrentCourseMeta } = await import('../../scripts/courses/course-utils.js');
-    return Promise.all(
-      data.map(async (card) => {
-        if (hasModuleCount(card) || !card.viewLink) return card;
-        try {
-          const courseMeta = await getCurrentCourseMeta(card.viewLink);
-          if (Array.isArray(courseMeta?.modules)) {
-            return { ...card, el_course_module_count: String(courseMeta.modules.length) };
-          }
-        } catch {
-          return card;
-        }
-        return card;
-      }),
-    );
-  }
 
   return data;
 }
