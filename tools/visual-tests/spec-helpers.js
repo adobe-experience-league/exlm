@@ -50,6 +50,8 @@ const SNAPSHOT_COMPARE_OPTIONS = {
 
 // Applied inside the block iframe: kill transitions/animations and the text caret so the
 // pixels don't depend on how far an animation had progressed at capture time.
+// backdrop-filter promotes elements to GPU layers whose fractional edges snap
+// nondeterministically (e.g. 1/3-width grid cards shifting ±1px between runs).
 const FREEZE_CSS = `
   *, *::before, *::after {
     transition: none !important;
@@ -58,6 +60,7 @@ const FREEZE_CSS = `
     animation-iteration-count: 1 !important;
     caret-color: transparent !important;
     scroll-behavior: auto !important;
+    backdrop-filter: none !important;
   }
 `;
 
