@@ -144,12 +144,11 @@ jobs:
                 }
               }
               if (file.additions === 0 && file.deletions === 0 &&
-                  (file.status === 'modified' || (file.status === 'renamed' &&
-                    typeof file.previous_filename === 'string' && file.previous_filename.trim()))) {
-                metadata.note = file.status === 'renamed'
-                  ? 'Rename without changed text lines'
-                  : hasPatch ? 'No changed text lines; inspect the supplied metadata patch for file modes'
-                    : 'No changed text lines; old/new file modes unavailable in the changed-file response';
+                  (!['renamed', 'copied'].includes(file.status) ||
+                    (typeof file.previous_filename === 'string' && file.previous_filename.trim()))) {
+                metadata.note = 'No changed text lines; file content and type are unavailable outside any supplied metadata patch'
+                  + (hasPatch ? '; inspect the supplied metadata patch for additional file metadata'
+                    : '; old/new file modes unavailable in the changed-file response');
                 coverage.metadataOnly.push(metadata);
                 patches.push(JSON.stringify(metadata) + (hasPatch ? '\n' + file.patch : ''));
                 return;
@@ -222,7 +221,7 @@ jobs:
               'Do not claim to have inspected files outside this diff or run tests.',
               'Return only valid JSON, without Markdown fences, in this exact shape: {"summary":"Markdown summary","comments":[{"path":"repo-relative/file.js","line":123,"body":"Actionable Markdown finding"}]}.',
               'Put each new finding in comments, not in the summary. Use exact file paths and integer new-side line numbers visible in the diff. Return at most 50 comments.',
-              'Metadata-only changes have no changed text lines. Renames supply old/new paths; zero-line modifications may be file-mode changes, but old/new modes are unavailable unless a supplied metadata patch includes them. Assess only supplied metadata, note unverifiable impacts in the summary, and do not emit inline comments for these files.',
+              'Metadata-only changes have no changed text lines. Preserve each path and status, including additions and deletions; renames and copies also supply previous paths. Zero text counts alone do not prove that a file is empty or unchanged. File content, type, and modes are unavailable unless a supplied metadata patch includes them. Assess only supplied metadata, note unverifiable impacts in the summary, and do not emit inline comments for these files.',
               'Start each finding with [P1], [P2], or [P3], and explain its trigger, impact, evidence, and a concrete fix. Omit style-only suggestions and speculative issues.',
               'Use concise Assessment and Suggested verification headings in the summary. Suggested checks must be specific to these changes and explicitly marked not run.',
               'If prior findings exist, add a Prior findings section distinguishing addressed, still present, and unverifiable findings with links; do not turn these into new inline comments.',
@@ -376,7 +375,7 @@ jobs:
               ...(coverage.metadataOnly.length ? [
                 'Metadata-only changes were reviewed using available paths and metadata patches only; content and downstream references were not inspected.',
                 '<details><summary>Metadata-only changes</summary>\n',
-                ...coverage.metadataOnly.map((file) => `- ${file.previousPath ? JSON.stringify(file.previousPath) + ' -> ' : ''}${JSON.stringify(file.path)} (${file.note})`),
+                ...coverage.metadataOnly.map((file) => `- ${file.previousPath ? JSON.stringify(file.previousPath) + ' -> ' : ''}${JSON.stringify(file.path)} (${file.status}; ${file.note})`),
                 '\n</details>',
               ] : []),
               ...(coverage.excluded.length ? [
