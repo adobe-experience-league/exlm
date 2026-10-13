@@ -1,6 +1,6 @@
 import { defaultProfileClient, isSignedInUser } from '../auth/profile.js';
 import { getPathDetails, htmlToElement, getConfig } from '../scripts.js';
-import { sendNotice } from '../toast/toast.js';
+import { sendNotice, sendProfileSaveError } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import getEmitter from '../events.js';
 import { rewriteDocsPath } from '../utils/path-utils.js';
@@ -62,7 +62,7 @@ export async function bookmarkHandler(config) {
         }
         if (callback) callback(linkType, position, 'add');
       })
-      .catch(() => sendNotice(tooltips?.profileNotUpdated, 'error'));
+      .catch(() => sendProfileSaveError());
   } else {
     defaultProfileClient
       .updateProfile('bookmarks', newBookmarks, true)
@@ -77,7 +77,7 @@ export async function bookmarkHandler(config) {
         if (callback) callback(linkType, position, 'remove');
       })
       .catch(() => {
-        sendNotice(tooltips?.profileNotUpdated, 'error');
+        sendProfileSaveError();
       });
   }
 }

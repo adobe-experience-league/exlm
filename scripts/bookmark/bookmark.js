@@ -1,4 +1,4 @@
-import { sendNotice } from '../toast/toast.js';
+import { sendNotice, sendProfileSaveError } from '../toast/toast.js';
 import { assetInteractionModel } from '../analytics/lib-analytics.js';
 import { fetchLanguagePlaceholders, getPathDetails } from '../scripts.js';
 import { defaultProfileClient } from '../auth/profile.js';
@@ -29,10 +29,14 @@ const renderBookmark = (labelSel, iconSel, id) => {
         const profileData = await defaultProfileClient.getMergedProfile();
         const { bookmarks = [] } = profileData;
         const bookmarkItems = bookmarks.filter((bookmark) => !isBookmarkSelected(bookmark, id));
-        defaultProfileClient.updateProfile('bookmarks', bookmarkItems, true).catch((error) => {
+        try {
+          await defaultProfileClient.updateProfile('bookmarks', bookmarkItems, true);
+        } catch (error) {
           // eslint-disable-next-line no-console
           console.error('Error updating bookmark:', error);
-        });
+          sendProfileSaveError();
+          return;
+        }
         bookmarksEventEmitter.set('bookmark_ids', bookmarkItems);
         labelSel.innerHTML = `${placeholders.bookmarkAuthLabelSet}`;
         iconSel.classList.remove('authed');
@@ -44,10 +48,14 @@ const renderBookmark = (labelSel, iconSel, id) => {
         const { bookmarks = [] } = profileData;
         const bookmarkItems = bookmarks.filter((bookmark) => !isBookmarkSelected(bookmark, id));
         bookmarkItems.push(`${id}:${Date.now()}`);
-        defaultProfileClient.updateProfile('bookmarks', bookmarkItems, true).catch((error) => {
+        try {
+          await defaultProfileClient.updateProfile('bookmarks', bookmarkItems, true);
+        } catch (error) {
           // eslint-disable-next-line no-console
           console.error('Error updating bookmark:', error);
-        });
+          sendProfileSaveError();
+          return;
+        }
         bookmarksEventEmitter.set('bookmark_ids', bookmarkItems);
         labelSel.innerHTML = `${placeholders.bookmarkAuthLabelRemove}`;
         iconSel.classList.add('authed');

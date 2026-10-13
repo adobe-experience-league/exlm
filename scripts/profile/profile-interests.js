@@ -5,7 +5,7 @@ import getSolutionByName from '../../blocks/toc/toc-solutions.js';
 import loadJWT from '../auth/jwt.js';
 import getEmitter from '../events.js';
 import { defaultProfileClient } from '../auth/profile.js';
-import { sendNotice } from '../toast/toast.js';
+import { sendNotice, sendProfileSaveError } from '../toast/toast.js';
 import FormValidator from '../form-validator.js';
 
 loadCSS(`${window.hlx.codeBasePath}/scripts/profile/profile-interests.css`);
@@ -21,8 +21,6 @@ try {
 }
 
 const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes have been saved!';
-const PROFILE_NOT_UPDATED =
-  placeholders?.profileNotUpdated || 'An error occurred during profile update. Please try again at a later time.';
 
 const EXP_LEVELS = {
   BEGINNER: 'Beginner',
@@ -173,7 +171,7 @@ export default async function buildProductCard(element, model, isInSignUpFlow) {
           sendNotice(PROFILE_UPDATED);
           profileEventEmitter.emit('profileDataUpdated');
         })
-        .catch(() => sendNotice(PROFILE_NOT_UPDATED, 'error'));
+        .catch(() => sendProfileSaveError());
     }
   });
 
