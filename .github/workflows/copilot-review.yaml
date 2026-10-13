@@ -108,13 +108,65 @@ jobs:
             if (pr.changed_files > 300) {
               throw new Error('PR exceeds the diff-only review limit of 300 files. Review it manually.');
             }
-            const { data: diff } = await github.rest.pulls.get({
-              ...params,
-              mediaType: { format: 'diff' },
-            });
-            if (typeof diff !== 'string' || !diff.trim() || Buffer.byteLength(diff, 'utf8') > 60000) {
-              throw new Error('PR diff is empty or exceeds the 60 KB review limit. Review it manually.');
+            const files = await github.paginate(github.rest.pulls.listFiles, { ...params, per_page: 100 });
+            if (files.length !== pr.changed_files) {
+              throw new Error('GitHub returned an incomplete changed-file list. Review it manually.');
             }
+            const coverage = { reviewed: [], metadataOnly: [], excluded: [] };
+            const patches = [];
+            const vendoredPaths = [
+              'scripts/coveo-headless/libs/',
+              'scripts/prism.js',
+              'scripts/prism-grammars/',
+              'scripts/jspdf/jspdf.umd.min.js',
+              'scripts/confetti/canvas-confetti-1.9.3.module.min.mjs',
+            ];
+            files.forEach((file) => {
+              const reason = vendoredPaths.some((vendorPath) => vendorPath.endsWith('/')
+                ? file.filename.startsWith(vendorPath)
+                : file.filename === vendorPath)
+                ? 'Vendored library'
+                : file.filename.endsWith('.map') ? 'Source map' : null;
+              if (reason) {
+                coverage.excluded.push({ path: file.filename, reason });
+                return;
+              }
+              const metadata = {
+                path: file.filename, previousPath: file.previous_filename, status: file.status,
+                additions: file.additions, deletions: file.deletions,
+              };
+              const hasPatch = typeof file.patch === 'string' && Boolean(file.patch.trim());
+              if (hasPatch) {
+                const lines = file.patch.split('\n');
+                if (lines.filter((line) => line.startsWith('+')).length !== file.additions ||
+                    lines.filter((line) => line.startsWith('-')).length !== file.deletions) {
+                  throw new Error(`GitHub supplied an incomplete patch for ${file.filename}. Review it manually.`);
+                }
+              }
+              if (file.additions === 0 && file.deletions === 0 &&
+                  (!['renamed', 'copied'].includes(file.status) ||
+                    (typeof file.previous_filename === 'string' && file.previous_filename.trim()))) {
+                metadata.note = 'No changed text lines; file content and type are unavailable outside any supplied metadata patch'
+                  + (hasPatch ? '; inspect the supplied metadata patch for additional file metadata'
+                    : '; old/new file modes unavailable in the changed-file response');
+                coverage.metadataOnly.push(metadata);
+                patches.push(JSON.stringify(metadata) + (hasPatch ? '\n' + file.patch : ''));
+                return;
+              }
+              if (!hasPatch) {
+                throw new Error(`GitHub did not supply a patch for ${file.filename}. Review it manually.`);
+              }
+              coverage.reviewed.push(file.filename);
+              patches.push(JSON.stringify(metadata) + '\n' + file.patch);
+            });
+            const diff = patches.join('\n\n');
+            if (!coverage.reviewed.length && !coverage.metadataOnly.length) {
+              throw new Error('No reviewable patches or file metadata remain after exclusions. Review the vendored/generated assets manually.');
+            }
+            if (Buffer.byteLength(diff, 'utf8') > 80000) {
+              throw new Error('Authored patches exceed the 80 KB review limit. Review it manually.');
+            }
+            core.info(`Reviewing ${coverage.reviewed.length} content patches and ${coverage.metadataOnly.length} metadata-only changes of ${files.length} changed files; excluded ${coverage.excluded.length} vendored/generated assets.`);
             const [reviews, reviewComments, conversationComments] = await Promise.all([
               github.paginate(github.rest.pulls.listReviews, { ...params, per_page: 100 }),
               github.paginate(github.rest.pulls.listReviewComments, { ...params, per_page: 100 }),
@@ -138,7 +190,7 @@ jobs:
                 body: comment.body, created_at: comment.created_at, updated_at: comment.updated_at,
                 url: comment.html_url,
               })),
-              conversationComments: conversationComments.map((comment) => ({
+              conversationComments: conversationComments.filter((comment) => comment.user?.login !== 'aem-code-sync[bot]').map((comment) => ({
                 id: comment.id, author: comment.user?.login, body: comment.body,
                 created_at: comment.created_at, updated_at: comment.updated_at, url: comment.html_url,
               })),
@@ -149,6 +201,11 @@ jobs:
             if (!projectGuidance || !reviewSkill) {
               throw new Error('Trusted project guidance or the installed code-review skill is empty.');
             }
+            const postingStart = reviewSkill.indexOf('\n### Step 8: Generate Review Summary');
+            if (postingStart < 1) {
+              throw new Error('Cannot locate the trusted code-review criteria boundary. Check the installed skill format.');
+            }
+            const reviewCriteria = reviewSkill.slice(0, postingStart);
             const prompt = [
               'Review the following pull request diff for high-confidence bugs and regressions.',
               'This is Adobe Experience League on AEM Edge Delivery Services.',
@@ -164,7 +221,12 @@ jobs:
               'Do not claim to have inspected files outside this diff or run tests.',
               'Return only valid JSON, without Markdown fences, in this exact shape: {"summary":"Markdown summary","comments":[{"path":"repo-relative/file.js","line":123,"body":"Actionable Markdown finding"}]}.',
               'Put each new finding in comments, not in the summary. Use exact file paths and integer new-side line numbers visible in the diff. Return at most 50 comments.',
-              'Keep the summary concise, including diff-only limitations and any Discussion follow-up. If there are no new high-confidence findings, use an empty comments array.',
+              'Metadata-only changes have no changed text lines. Preserve each path and status, including additions and deletions; renames and copies also supply previous paths. Zero text counts alone do not prove that a file is empty or unchanged. File content, type, and modes are unavailable unless a supplied metadata patch includes them. Assess only supplied metadata, note unverifiable impacts in the summary, and do not emit inline comments for these files.',
+              'Start each finding with [P1], [P2], or [P3], and explain its trigger, impact, evidence, and a concrete fix. Omit style-only suggestions and speculative issues.',
+              'Use concise Assessment and Suggested verification headings in the summary. Suggested checks must be specific to these changes and explicitly marked not run.',
+              'If prior findings exist, add a Prior findings section distinguishing addressed, still present, and unverifiable findings with links; do not turn these into new inline comments.',
+              'Include diff-only limitations and any Discussion follow-up. If there are no new high-confidence findings, use an empty comments array.',
+              'Excluded vendored/generated assets were not inspected. Their correctness and dependency compatibility require human validation; do not describe this as a complete PR review.',
               'Do not approve or request changes. A human must validate the findings.',
               '',
               'BEGIN TRUSTED PROJECT GUIDANCE',
@@ -172,7 +234,7 @@ jobs:
               'END TRUSTED PROJECT GUIDANCE',
               '',
               'BEGIN CODE-REVIEW SKILL CRITERIA',
-              reviewSkill,
+              reviewCriteria,
               'END CODE-REVIEW SKILL CRITERIA',
               '',
               'BEGIN UNTRUSTED PR DISCUSSION',
@@ -182,6 +244,10 @@ jobs:
               'BEGIN UNTRUSTED PR DIFF',
               diff,
               'END UNTRUSTED PR DIFF',
+              '',
+              'BEGIN UNTRUSTED COVERAGE MANIFEST',
+              JSON.stringify(coverage),
+              'END UNTRUSTED COVERAGE MANIFEST',
             ].join('\n');
             if (Buffer.byteLength(prompt, 'utf8') > 120000) {
               throw new Error('Review prompt including skill and discussion context exceeds the 120 KB limit. Review it manually.');
@@ -189,6 +255,7 @@ jobs:
             const dir = path.join(process.env.RUNNER_TEMP, 'copilot-review');
             fs.mkdirSync(dir);
             fs.writeFileSync(path.join(dir, 'prompt.txt'), prompt);
+            fs.writeFileSync(path.join(dir, 'coverage.json'), JSON.stringify(coverage));
 
       - name: Run Copilot review
         env:
@@ -235,6 +302,7 @@ jobs:
               throw new Error('Copilot review exceeds the 200 KB output size limit.');
             }
             const review = JSON.parse(raw);
+            const coverage = JSON.parse(fs.readFileSync(path.join(process.env.RUNNER_TEMP, 'copilot-review', 'coverage.json'), 'utf8'));
             if (!review || typeof review.summary !== 'string' || !review.summary.trim() ||
                 !Array.isArray(review.comments)) {
               throw new Error('Copilot must return a nonempty summary and comments array.');
@@ -273,6 +341,9 @@ jobs:
                   typeof comment.body !== 'string' || !comment.body.trim() || comment.body.length > 65000) {
                 throw new Error('Invalid inline review comment: require a path, positive integer line, and nonempty body within the size limit.');
               }
+              if (!coverage.reviewed.includes(comment.path)) {
+                throw new Error(`Inline finding is outside the reviewed patches: ${comment.path}`);
+              }
               if (!diffLines.get(comment.path)?.has(comment.line)) {
                 throw new Error(`Inline finding is outside the current diff: ${comment.path}:${comment.line}`);
               }
@@ -295,7 +366,26 @@ jobs:
             });
             const deduplicationNote = skipped ? `\n\nSkipped ${skipped} exact duplicate Copilot findings on the current revision.` : '';
             core.info(`Submitting ${comments.length} inline findings; skipped ${skipped} existing threads.`);
-            const body = `## Copilot CLI review\n\nCommit: ${pr.head.sha}\n\n${review.summary.trim()}${deduplicationNote}\n\n---\nAutomated diff-only review; not a merge approval.`;
+            const coverageNote = [
+              '### Coverage',
+              `Reviewed ${coverage.reviewed.length + coverage.metadataOnly.length} of ${files.length} changed files: ${coverage.reviewed.length} content patches and ${coverage.metadataOnly.length} metadata-only changes. No tools or tests were run.`,
+              '<details><summary>Reviewed files</summary>\n',
+              ...coverage.reviewed.map((filename) => `- ${JSON.stringify(filename)}`),
+              '\n</details>',
+              ...(coverage.metadataOnly.length ? [
+                'Metadata-only changes were reviewed using available paths and metadata patches only; content and downstream references were not inspected.',
+                '<details><summary>Metadata-only changes</summary>\n',
+                ...coverage.metadataOnly.map((file) => `- ${file.previousPath ? JSON.stringify(file.previousPath) + ' -> ' : ''}${JSON.stringify(file.path)} (${file.status}; ${file.note})`),
+                '\n</details>',
+              ] : []),
+              ...(coverage.excluded.length ? [
+                'Vendored/generated assets below were not inspected; validate library upgrades and compatibility manually.',
+                '<details><summary>Excluded vendored/generated assets</summary>\n',
+                ...coverage.excluded.map((file) => `- ${JSON.stringify(file.path)} (${file.reason})`),
+                '\n</details>',
+              ] : []),
+            ].join('\n');
+            const body = `## Copilot CLI review\n\nCommit: ${pr.head.sha}\n\n${coverageNote}\n\n${review.summary.trim()}${deduplicationNote}\n\n---\nAutomated diff-only review; not a merge approval.`;
             if (body.length > 65000) {
               throw new Error('Copilot review exceeds the review body size limit.');
             }

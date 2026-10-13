@@ -1,5 +1,5 @@
 import { defaultProfileClient } from '../../scripts/auth/profile.js';
-import { sendNotice } from '../../scripts/toast/toast.js';
+import { sendNotice, sendProfileSaveError } from '../../scripts/toast/toast.js';
 import { htmlToElement, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { pushProductInterestsEvent } from '../../scripts/analytics/lib-analytics.js';
 import getEmitter from '../../scripts/events.js';
@@ -166,11 +166,7 @@ function decorateInterests(block) {
           });
         })
         .catch(() => {
-          sendNotice(
-            placeholders?.profileNotUpdated ||
-              'An error occurred during profile update. Please try again at a later time.',
-            'error',
-          );
+          sendProfileSaveError();
         });
     }
   });

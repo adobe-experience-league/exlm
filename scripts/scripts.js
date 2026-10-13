@@ -1820,15 +1820,6 @@ export function getLastDocsSection() {
 
 /** handles a set of 1-1 redirects */
 function handleRedirects() {
-  const currentUrl = new URL(window.location.href);
-  // Match the legacy support route independently of query parameters and preserve them.
-  if (currentUrl.pathname === '/home' && currentUrl.hash === '#support') {
-    currentUrl.pathname = '/en/support';
-    currentUrl.hash = '';
-    window.location.href = currentUrl.href;
-    return;
-  }
-
   const redirects = ['/#feedback:/home#feedback'].map((p) => p.split(':').map((s) => new URL(s, window.location.href)));
   const redirect = redirects.find(([from]) => window.location.href === from.href);
   if (redirect) window.location.href = redirect[1].href;
@@ -1994,9 +1985,9 @@ async function loadPage() {
       // getConfig(), leaving window.exlm.config undefined and causing exchangePLToken to
       // silently no-op. Calling it here is synchronous and idempotent — no effect on non-UE.
       getConfig();
-      // UE Author Mode: fetch PL token anonymously via ?auth=false (no IMS required).
+      // UE Author Mode: fetch a PL token directly from the allowlisted editor origin.
       import('./utils/premium-learning-utils.js')
-        .then(({ initPLAuthAnonymous }) => initPLAuthAnonymous())
+        .then(({ initPLAuthForUe }) => initPLAuthForUe())
         .catch((error) => {
           // eslint-disable-next-line no-console
           console.error('Error initializing PL auth in UE Author Mode:', error);
