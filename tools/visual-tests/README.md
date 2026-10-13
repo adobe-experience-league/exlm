@@ -152,26 +152,21 @@ Runs on every push: checkout, Node 22, `npm ci`, `npm run lint` (ESLint + Stylel
 
 ### `visual-tests.yaml` — Visual Tests
 
-Runs **automatically on every PR** when it is opened, updated with new commits, reopened, or marked ready for review. Drafts and forks are included, with no target-branch or changed-path filters. The `Automatic Visual Tests` check runs the full suite against the PR merge commit with a read-only token and uploads reports and failure screenshots. Test failures fail the check; this workflow does not change branch protection or make the check required for merging. Fork runs remain subject to GitHub's contributor-approval policy.
+Runs **automatically on every PR** when it is opened, updated with new commits, reopened, or marked ready for review, as a single `Visual Tests` job. Drafts are included, with no target-branch or changed-path filters. A newer push cancels the in-progress run for the same PR. To rerun, use GitHub's **Re-run jobs** on the check. Test failures fail the check; the workflow does not change branch protection.
 
-There are also three ways to start an additional manual run:
+Steps:
 
-- **PR "button"**: when a PR is opened, a bot comment appears with a `- [ ] Run visual tests` checkbox. Tick it to run the tests against the PR's latest commit. Manual runs update the same comment with results and a fresh checkbox for re-runs.
-- **PR comment**: post a comment containing `/visual-test`.
-- **Actions tab**: _Visual Tests → Run workflow_. Optionally enter a PR number to test that PR and post results to it; leave it empty to test the selected branch only.
+1. Checks out the PR inside the **same Playwright container image** used for local Docker runs (`mcr.microsoft.com/playwright:v1.53.1-jammy`), so CI and local Docker baselines are pixel-identical.
+2. Creates or updates a single PR results comment showing that the run is in progress.
+3. `npm ci`, then installs `@adobe/aem-cli` globally (the Playwright config drives `aem up` as the local dev server).
+4. Runs the suite with `continue-on-error: true` so the report and comment are still published on failure.
+5. Uploads the HTML report as an artifact (7-day retention) and, on failure only, the `test-results/` folder with failure screenshots and traces (3-day retention).
+6. Updates the PR comment with a pass/fail headline, a summary table (passed, failed, flaky, skipped, duration), failures grouped by block and viewport, flaky tests, and links to the report and run.
+7. Fails the job if tests failed, after the report and comment are published.
 
-Only users with write access can trigger manual runs from a PR. A new automatic or manual trigger cancels an in-progress test job for the same PR. Manual PR runs report a `Visual Tests` commit status on the PR head and update the results comment; automatic runs report through the native `Automatic Visual Tests` check and its artifacts, without write permissions. GitHub always uses the default branch's copy of this workflow for comment and manual triggers, so changes to those triggers take effect only after merging to `main`. Existing open PRs receive automatic runs on their next matching event after the workflow is available.
+Fork PRs receive a read-only token, so they run the tests and upload reports but do not post the comment. Fork runs remain subject to GitHub's contributor-approval policy.
 
-Manual-run steps (automatic runs use the same image, setup, test command, and artifact retention, but fail directly on test failure and omit PR comments and commit statuses):
-
-1. Checks out the repo inside the **same Playwright container image** used for local Docker runs (`mcr.microsoft.com/playwright:v1.53.1-jammy`), so CI and local Docker baselines are pixel-identical — no browser install step needed, it's baked into the image.
-2. `npm ci`, then installs `@adobe/aem-cli` globally (needed since the Playwright config drives `aem up` as the local dev server).
-3. Runs `npx playwright test --reporter=html,json` with `continue-on-error: true` so later steps (artifact upload, PR comment) still run on failure.
-4. Uploads the HTML report as an artifact (always, 7-day retention) and, on failure only, the `test-results/` folder containing failure screenshots/traces/videos (3-day retention).
-5. Posts (or updates) a single PR comment (when a PR is targeted) summarizing pass/fail counts, a collapsible per-test table (failures first), and a link to download the report — see the `github-script` step in [`visual-tests.yaml`](../../.github/workflows/visual-tests.yaml) for the exact formatting logic.
-6. Explicitly fails the job (`exit 1`) if tests failed — this happens _after_ the report/comment steps so those artifacts are always available even on failure.
-
-To debug a CI failure: open the PR comment for the failed-test table, download the "playwright-report" artifact for full HTML diffs/traces, or the "test-results" artifact for raw failure screenshots.
+To debug a CI failure: check the PR comment for failing blocks and viewports, download the "playwright-report" artifact for full HTML diffs and traces, or the "test-results" artifact for raw failure screenshots.
 
 ### Copilot PR review exclusions
 
