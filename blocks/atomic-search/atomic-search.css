@@ -25,6 +25,22 @@
   --atomic-search-skeleton-margin-top: 0px;
 }
 
+/* Flatten Atomic 3.60+ Lit theme tokens to match ExL prod (Atomic 3.13) chrome. */
+.atomic-search atomic-search-interface {
+  --atomic-border-radius: 0;
+  --atomic-border-radius-md: 0;
+  --atomic-border-radius-lg: 0;
+  --atomic-background: transparent;
+
+  /* Kill Atomic 3.60 default 1.5rem/1rem layout gaps that inflate section margins. */
+  --atomic-layout-spacing-x: 0;
+  --atomic-layout-spacing-y: 0;
+
+  /* Atomic 3.62 sets a system font stack. ExL stays on Adobe Clean. */
+  --atomic-font-family: 'Adobe Clean', adobe-clean, 'Source Sans Pro', -apple-system, system-ui, 'Segoe UI', roboto,
+    ubuntu, 'Trebuchet MS', 'Lucida Grande', sans-serif;
+}
+
 .atomic-search-premium-search-wrapper {
   position: relative;
   min-height: var(--atomic-search-premium-search-height, 0);
@@ -113,12 +129,16 @@
 }
 
 .atomic-search .atomic-search-load-skeleton {
+  /* Cap height — content under the overlay used to stretch this node and score CLS. */
   min-height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   position: absolute;
+  inset: 0 auto auto 0;
   z-index: 11;
 }
 
@@ -167,7 +187,17 @@
 
 .atomic-search.block:has(.atomic-search-load-skeleton) {
   min-height: 100vh;
+
+  /* Clip Atomic hydration under the absolute overlay so underlay growth cannot
+     expand the block or move in-view content (those shifts still count as CLS). */
+  max-height: 100vh;
+  overflow: hidden;
   position: relative;
+}
+
+.atomic-search.block:has(.atomic-search-load-skeleton) atomic-search-interface {
+  /* Hidden elements do not contribute to CLS while they reflow under the shimmer. */
+  visibility: hidden;
 }
 
 .atomic-search .atomic-search-load-skeleton.atomic-skeleton-shimmer-hide {
@@ -403,9 +433,11 @@
 }
 
 @media only screen and (min-width: 1024px) {
-  .atomic-search atomic-search-interface atomic-search-layout[id^='atomic-search-layout'] {
+  .atomic-search atomic-search-interface atomic-search-layout[id^='atomic-search-layout'],
+  .atomic-search atomic-search-interface atomic-search-layout {
     grid-template-columns: 0 20% 80% !important;
-    grid-column-gap: 16px;
+    grid-column-gap: 0;
+    column-gap: 0;
   }
 
   .atomic-load-skeleton-main {
@@ -476,7 +508,18 @@
   }
 
   .section.atomic-search-container .atomic-search-wrapper {
+    box-sizing: border-box;
+    width: 100%;
     max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .section.atomic-search-container .atomic-search-wrapper .atomic-search,
+  .section.atomic-search-container .atomic-search-wrapper atomic-search-interface,
+  .section.atomic-search-container .atomic-search-wrapper atomic-search-layout {
+    width: 100%;
+    max-width: 100%;
   }
 
   .atomic-search button.facet-close-btn {

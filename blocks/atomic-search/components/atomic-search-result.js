@@ -8,6 +8,7 @@ import {
   disconnectShadowObserver,
   observeShadowRoot,
   resolveBlockLevelSkeleton,
+  revealResultList,
 } from './atomic-search-utils.js';
 import { ContentTypeIcons } from './atomic-search-icons.js';
 import { decorateIcons } from '../../../scripts/lib-franklin.js';
@@ -62,18 +63,24 @@ export const atomicResultStyles = `
                     .atomic-search-result-item.mobile-only .result-field.result-thumbnail {
                       margin-top: 10px;
                     }
-                    .result-root.recommendation-badge {
+                    /* Atomic 3.60 renders results under .result-component (was .result-root). */
+                    .result-root.recommendation-badge,
+                    .result-component.recommendation-badge {
                           margin: 40px 0px 0px;
                     }
                     .atomic-search-result-item .result-field.text-thumbnail {
                       display: flex;
                       gap: 18px;
                     }
-                    .atomic-search-result-item .result-field.text-thumbnail:not(:has(.result-thumbnail)) {
+                    /* Atomic 3.60 keeps inactive field-condition nodes in the DOM with [hidden];
+                       :has(.result-thumbnail) alone falsely enables the video flex layout. */
+                    /* Both conditions must be showing. Lit keeps a nested video condition in the DOM
+                       when the parent matches, so :has() would otherwise shrink titles that have no thumbnail. */
+                    .atomic-search-result-item .result-field.text-thumbnail:not(:has(> atomic-field-condition:not([hidden]) > atomic-field-condition:not([hidden]) .result-thumbnail)) {
                       gap: 0;
                       display: block;
                     }
-                    .atomic-search-result-item .result-field.text-thumbnail:has(.result-thumbnail) .result-text {
+                    .atomic-search-result-item .result-field.text-thumbnail:has(> atomic-field-condition:not([hidden]) > atomic-field-condition:not([hidden]) .result-thumbnail) .result-text {
                       flex: 0 0 56%;
                     }
                     .atomic-search-result-item.result-item .thumbnail-wrapper {
@@ -235,7 +242,12 @@ export const atomicResultStyles = `
                     atomic-result-multi-value-text::part(svg-element) {
                       top: 2px;
                       position: relative;
-                      max-height: 18px
+                      display: block;
+                      width: 13px;
+                      height: 18px;
+                      min-width: 13px;
+                      flex: 0 0 13px;
+                      max-height: 18px;
                     }
                     atomic-result-multi-value-text::part(multi-hidden) {
                       display: none;
@@ -384,6 +396,11 @@ export const atomicResultListStyles = `
                   atomic-folded-result-list::part(result-list) {
                     grid-row-gap: 0;
                   }
+                  atomic-folded-result-list::part(outline) {
+                    border: none;
+                    border-radius: 0;
+                    background-color: transparent;
+                  }
                   atomic-folded-result-list::part(outline)::before {
                     background-color:var(--footer-border-color);
                     display: block;
@@ -393,6 +410,9 @@ export const atomicResultListStyles = `
                   }
                   atomic-folded-result-list::part(first-result) {
                     padding-top: 1rem;
+                    border: none;
+                    border-radius: 0;
+                    background-color: transparent;
                   }
                   atomic-folded-result-list::part(first-result)::before {
                     display: none;
@@ -540,12 +560,15 @@ const convertLegacyContentTypes = (contentTypes) => {
 let isListenerAdded = false;
 const isEventsV2Enabled = isFeatureEnabled('isEventsV2');
 
+const isMultiValueSeparator = (el) =>
+  !!el &&
+  (el.part?.contains('result-multi-value-text-separator') ||
+    el.classList?.contains('separator') ||
+    (typeof el.className === 'string' && el.className.includes('separator')));
+
 export default function atomicResultHandler(block, placeholders) {
   const baseElement = block.querySelector('atomic-folded-result-list');
   const searchLayout = block.querySelector('atomic-search-layout');
-  if (!searchLayout.classList.contains('no-results')) {
-    baseElement.classList.add('list-wrap-skeleton');
-  }
   const shadow = baseElement.shadowRoot;
   const container = shadow?.querySelector('[part="result-list"]');
 
@@ -556,21 +579,54 @@ export default function atomicResultHandler(block, placeholders) {
     return;
   }
   container.parentElement.part.add('list-wrap');
-  // Make result section hidden and start adding skeleton.
-  container.style.cssText = 'display: none;';
+
+  // Atomic 3.60+ (Lit) re-renders its shadow DOM. Hiding/replacing nodes fights Lit and
+  // can wipe results permanently. Only show an in-shadow skeleton UI when results are not
+  // yet present AND the page-level overlay is already gone — stacking both flickers.
+  // Still apply list-wrap-skeleton under the page overlay so ~720px stays reserved; without
+  // that, clearing the absolute overlay expands a collapsed results section (~0.85 CLS).
+  const hasResultsAlready = shadow.querySelectorAll('atomic-result').length > 0;
+  const blockSkeletonStillUp = !!block.querySelector('.atomic-search-load-skeleton');
   container.dataset.view = isMobile() ? 'mobile' : 'desktop';
-  const skeletonWrapper = htmlToElement(`<div class="skeleton-wrapper" part="skeleton"></div>`);
-  skeletonWrapper.innerHTML = renderAtomicSekeletonUI();
-  container.parentElement.appendChild(skeletonWrapper);
+  if (hasResultsAlready && !blockSkeletonStillUp) {
+    baseElement.classList.remove('list-wrap-skeleton');
+  } else if (hasResultsAlready && blockSkeletonStillUp) {
+    // Results hydrated under the page overlay — keep height reserved until reveal.
+    baseElement.classList.add('list-wrap-skeleton');
+    container.style.cssText = 'display: none;';
+  } else if (!searchLayout.classList.contains('no-results')) {
+    baseElement.classList.add('list-wrap-skeleton');
+    container.style.cssText = 'display: none;';
+    if (!blockSkeletonStillUp) {
+      const skeletonWrapper = htmlToElement(`<div class="skeleton-wrapper" part="skeleton"></div>`);
+      skeletonWrapper.innerHTML = renderAtomicSekeletonUI();
+      container.parentElement.appendChild(skeletonWrapper);
+    }
+  } else if (blockSkeletonStillUp) {
+    baseElement.classList.add('list-wrap-skeleton');
+    container.style.cssText = 'display: none;';
+  }
 
   function onClearBtnClick() {
     const atomicBreadBox = document.querySelector('atomic-breadbox');
-    const coveoClearBtn = atomicBreadBox?.shadowRoot?.querySelector('[part="clear"]');
+    // Atomic 3.60 may expose clear as part token list; keep exact + contains match.
+    const coveoClearBtn =
+      atomicBreadBox?.shadowRoot?.querySelector('[part="clear"]') ||
+      atomicBreadBox?.shadowRoot?.querySelector('button[part~="clear"]:not([part~="breadcrumb-clear"])');
     if (coveoClearBtn) {
-      const event = new CustomEvent(CUSTOM_EVENTS.SEARCH_CLEARED);
-      document.dispatchEvent(event);
       coveoClearBtn.click();
+    } else {
+      // Fallback when breadbox clear control is not in the DOM yet: drop facet hash segments.
+      const hash = window.location.hash.slice(1);
+      if (hash) {
+        const kept = hash
+          .split('&')
+          .filter((part) => part && !part.startsWith('f-') && !part.startsWith('ff-') && !part.startsWith('rf-'));
+        window.location.hash = kept.join('&');
+      }
     }
+    // Emit after clear starts so facet handlers do not re-sync still-selected engine state.
+    document.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.SEARCH_CLEARED));
   }
 
   function decorateExternalLink(link) {
@@ -597,10 +653,19 @@ export default function atomicResultHandler(block, placeholders) {
   function removeBlockSkeleton() {
     const skeleton = container.parentElement.querySelector('.skeleton-wrapper');
     if (skeleton) {
-      container.style.cssText = '';
-      baseElement.classList.remove('list-wrap-skeleton');
       container.parentElement.removeChild(skeleton);
     }
+    const pageOverlayUp = !!block.querySelector('.atomic-search-load-skeleton');
+    if (pageOverlayUp) {
+      // Keep display:none + list-wrap-skeleton until resolve clears the page overlay.
+      baseElement.classList.add('list-wrap-skeleton');
+      container.style.cssText = 'display: none;';
+      resolveBlockLevelSkeleton(block);
+      return;
+    }
+    container.style.cssText = '';
+    baseElement.classList.remove('list-wrap-skeleton');
+    resolveBlockLevelSkeleton(block);
   }
 
   function decorateChildrenSection({ btn, element }) {
@@ -813,7 +878,10 @@ export default function atomicResultHandler(block, placeholders) {
   };
 
   const updateAtomicResultUI = (callFrom) => {
-    const results = container.querySelectorAll('atomic-result');
+    // Prefer light query on the list part; fall back to full shadow (Lit may move nodes).
+    const results = container.querySelectorAll('atomic-result').length
+      ? container.querySelectorAll('atomic-result')
+      : shadow.querySelectorAll('atomic-result');
     const isMobileView = isMobile();
     container.dataset.view = isMobileView ? 'mobile' : 'desktop';
     results.forEach((resultElement, index) => {
@@ -852,7 +920,10 @@ export default function atomicResultHandler(block, placeholders) {
         const resultFieldValue = resultItem?.querySelector('.result-product .result-field-value');
         const productList = resultFieldValue?.firstElementChild?.shadowRoot?.querySelectorAll('li');
         const productCount = productList ? productList.length : 0;
-        if (productList && productList.length === 0) {
+        const rawProduct = resultEl.result?.result?.raw?.el_product;
+        const productStillRendering =
+          rawProduct && productList && productList.length === 0 && currentHydrationCount < MAX_HYDRATION_ATTEMPTS;
+        if (productStillRendering) {
           waitFor(() => {
             hydrateResult(resultEl);
           }, 100);
@@ -863,7 +934,7 @@ export default function atomicResultHandler(block, placeholders) {
           const liElements = tooltipBaseElement?.shadowRoot?.firstElementChild
             ? Array.from(tooltipBaseElement.shadowRoot.querySelectorAll(`li`))
             : [];
-          const uniqueProductListItems = liElements.filter((item) => !item.classList.contains('separator'));
+          const uniqueProductListItems = liElements.filter((item) => !isMultiValueSeparator(item));
           const uniqueParentItems = uniqueProductListItems.reduce((acc, li) => {
             const currentText = li.textContent;
             const isChild = currentText.includes('|');
@@ -886,7 +957,7 @@ export default function atomicResultHandler(block, placeholders) {
             resultFieldValue?.classList.add('hidden');
             const visibleElements = tooltipBaseElement.shadowRoot.querySelectorAll(`li:not([part~="multi-hidden"])`);
             const lastVisibleElment = visibleElements[visibleElements.length - 1];
-            if (lastVisibleElment?.classList?.contains('separator')) {
+            if (isMultiValueSeparator(lastVisibleElment)) {
               lastVisibleElment.part.add('multi-hidden');
             }
           }
@@ -896,10 +967,18 @@ export default function atomicResultHandler(block, placeholders) {
           sanitizeProductTypes(resultFieldValue);
         }
 
-        const recommendationBadgeExists = !!resultItem.querySelector('.atomic-recommendation-badge');
+        const recommendationCondition = resultItem.querySelector(
+          'atomic-field-condition[must-match-is-recommendation]',
+        );
+        const recommendationBadgeExists =
+          !!recommendationCondition &&
+          !recommendationCondition.hasAttribute('hidden') &&
+          !!recommendationCondition.querySelector('.atomic-recommendation-badge');
+        const resultRoot = resultShadow.querySelector('.result-root, .result-component');
         if (recommendationBadgeExists) {
-          const resultRoot = resultShadow.querySelector('.result-root');
-          resultRoot.classList.add('recommendation-badge');
+          resultRoot?.classList.add('recommendation-badge');
+        } else {
+          resultRoot?.classList.remove('recommendation-badge');
         }
 
         // Handle el_kudo_status field - support both legacy numeric and new user ID format
@@ -954,7 +1033,7 @@ export default function atomicResultHandler(block, placeholders) {
             ?.querySelector('.result-description atomic-result-multi-value-text')
             ?.shadowRoot?.querySelectorAll('li') || [];
         topicElements.forEach((li) => {
-          if (li.classList.contains('separator')) {
+          if (isMultiValueSeparator(li)) {
             li.remove();
             return;
           }
@@ -984,7 +1063,7 @@ export default function atomicResultHandler(block, placeholders) {
 
           // First pass: identify all child values and their parent names
           Array.from(contentTypeElements).forEach((li) => {
-            if (li.className?.includes('separator')) return;
+            if (isMultiValueSeparator(li)) return;
             const slotEl = li.firstElementChild;
             const slotName = slotEl?.getAttribute('name') || '';
             // Extract value from slot name (e.g., "result-multi-value-text-value-community|questions")
@@ -1008,7 +1087,7 @@ export default function atomicResultHandler(block, placeholders) {
 
           // Second pass: hide parent elements if their child exists
           Array.from(contentTypeElements).forEach((li) => {
-            if (li.className?.includes('separator')) return;
+            if (isMultiValueSeparator(li)) return;
             const slotEl = li.firstElementChild;
             const slotName = slotEl?.getAttribute('name') || '';
             const value = slotName.replace('result-multi-value-text-value-', '').toLowerCase();
@@ -1019,7 +1098,7 @@ export default function atomicResultHandler(block, placeholders) {
               li.style.setProperty('display', 'none', 'important');
               li.dataset.hiddenDuplicate = 'true';
               // Also hide the separator after this element if it exists
-              if (li.nextElementSibling?.classList?.contains('separator')) {
+              if (isMultiValueSeparator(li.nextElementSibling)) {
                 li.nextElementSibling.part.add('multi-hidden');
                 li.nextElementSibling.style.setProperty('display', 'none', 'important');
               }
@@ -1033,7 +1112,7 @@ export default function atomicResultHandler(block, placeholders) {
             return;
           }
 
-          const isSeparator = contentTypeEl?.className.includes('separator');
+          const isSeparator = isMultiValueSeparator(contentTypeEl);
           const contentTypeValue =
             Array.isArray(contentTypeValues) && !isSeparator ? contentTypeValues.shift() : filteredContentType;
           let contentType = isSeparator ? '' : (contentTypeValue || contentTypeEl.textContent).toLowerCase().trim();
@@ -1089,6 +1168,19 @@ export default function atomicResultHandler(block, placeholders) {
         });
         if (contentTypeElements.length) {
           decorateIcons(contentTypeElParent);
+          contentTypeElParent.querySelectorAll('[part~="svg-element"]').forEach((iconWrap) => {
+            const icon = iconWrap.querySelector('.icon');
+            if (icon) {
+              icon.style.display = 'block';
+              icon.style.width = '13px';
+              icon.style.height = '13px';
+            }
+            iconWrap.querySelectorAll('img').forEach((img) => {
+              img.style.width = '13px';
+              img.style.height = '13px';
+              img.style.display = 'block';
+            });
+          });
         }
 
         const anchorTag = resultItem?.querySelector('atomic-result-link > a');
@@ -1104,8 +1196,21 @@ export default function atomicResultHandler(block, placeholders) {
         const VIDEO_THUMBNAIL_FORMAT = /^https:\/\/video\.tv\.adobe\.com\/v\/\w+/;
 
         if (videoUrlEl) {
-          const videoUrl = videoUrlEl?.textContent?.trim() || '';
-          if (!videoUrl) return;
+          // Lit keeps the URL on atomic-text[value]. textContent does not cross that shadow.
+          const videoUrl =
+            [...resultShadow.querySelectorAll('atomic-result-text[field="video_url"]')]
+              .map(
+                (el) => el.textContent?.trim() || el.querySelector('atomic-text')?.getAttribute('value')?.trim() || '',
+              )
+              .find(Boolean) || '';
+          if (!videoUrl) {
+            if (currentHydrationCount < MAX_HYDRATION_ATTEMPTS) {
+              waitFor(() => {
+                hydrateResult(resultEl);
+              }, 50);
+            }
+            return;
+          }
           const thumbnailAlt = titleEl?.textContent || '';
           const cleanUrl = videoUrl.split('?')[0];
 
@@ -1173,8 +1278,17 @@ export default function atomicResultHandler(block, placeholders) {
   const resizeObserver = new ResizeObserver(debouncedResize);
   resizeObserver.observe(container);
 
-  // Add observer to check the loading of result items.
-  const observer = new MutationObserver(updateAtomicResultUI);
-  observer.observe(container, { childList: true, subtree: false });
+  // Watch the whole shadow tree — Lit Atomic renders results reactively.
+  const observer = new MutationObserver(() => updateAtomicResultUI());
+  observer.observe(shadow, { childList: true, subtree: true });
   updateAtomicResultUI();
+
+  // Fail-safe: never leave the Lit result list permanently hidden behind our skeleton.
+  setTimeout(() => {
+    const pageSkeleton = block.querySelector('.atomic-search-load-skeleton');
+    if (pageSkeleton) {
+      pageSkeleton.remove();
+    }
+    revealResultList(block);
+  }, 4000);
 }

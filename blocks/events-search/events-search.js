@@ -527,6 +527,7 @@ const EVENTS_SEARCH_URL_RESTORE_MAX_GRACE_PASSES = 20;
 
 /** Recomputes sort visibility/options from filter+query state, resets an invalid selection, and applies the criterion. */
 function updateEventsSearchSortUI(block, placeholders) {
+  if (getFilterState(block).isClearing) return;
   const sortContainer = block.querySelector('.sort-container');
   if (!sortContainer) return;
   const state = getEventsSearchSortState(block);
@@ -539,6 +540,14 @@ function updateEventsSearchSortUI(block, placeholders) {
 
   if (!options.length) {
     sortContainer.setAttribute('hidden', '');
+    state.selected = 'relevance';
+    state.hasShownControl = false;
+    const captionEl = sortContainer.querySelector('.sort-drop-btn-value');
+    if (captionEl) captionEl.textContent = getEventsSearchSortOptionLabel('relevance', placeholders);
+    if (state.sortController && state.criteria && state.lastAppliedKey !== 'relevance:false:false') {
+      state.lastAppliedKey = 'relevance:false:false';
+      state.sortController.sortBy(state.criteria.relevance());
+    }
     return;
   }
 
@@ -1553,25 +1562,25 @@ function bindClearFilters(block, groups) {
         searchInput.value = '';
       }
       updateKeywordClearIconVisibility(block);
+      // updateText only edits the box. Submit so the executed query and the hash drop `q`.
+      window.headlessSearchBox.submit();
     }
-
-    state.isClearing = false;
 
     if (window.headlessPager) {
       window.headlessPager.selectPage(1);
     }
 
-    // Drop the whole hash at once
+    // Drop the whole hash at once, then put the sort controller back on relevance.
+    // A search subscription during this work would otherwise re-apply the on-demand date sort.
     const hadHash = Boolean(window.location.hash) && window.location.hash !== '#';
-
-    // Clear resets the sort back to default.
-    resetEventsSearchSort(block, { dispatch: !hadHash });
 
     if (hadHash) {
       window.location.hash = '';
     } else {
       executeSearch();
     }
+    resetEventsSearchSort(block);
+    state.isClearing = false;
     renderActiveFilterCallouts(block);
     updateClearFiltersButtonState(block);
     pushEventsClearFiltersEvent();

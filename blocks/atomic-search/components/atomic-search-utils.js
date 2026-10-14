@@ -380,9 +380,11 @@ export function isContentTypeFacet(atomicFacet) {
  * Keeps parent/child content-type facet selections in sync after a user click.
  * @returns {boolean} true if any programmatic .click() ran to change filters
  */
-export function syncFacetParentChildFilters({ facet, atomicElement, onlyOptionClicked = false }) {
+export function syncFacetParentChildFilters({ facet, atomicElement, onlyOptionClicked = false, wasChecked = null }) {
   const isChildFacet = facet.dataset.childfacet === 'true';
-  const isSelected = facet.firstElementChild.ariaChecked === 'false'; // Will take some to update the state.
+  // Atomic 3.62 updates aria-checked before our debounced handler. Capture the
+  // pre-click state (wasChecked) so "turning on" still selects the child rows.
+  const isSelected = wasChecked == null ? facet.firstElementChild.ariaChecked === 'false' : wasChecked === false;
   const valuesList = facet.parentElement;
   const parentFacet = isChildFacet
     ? findParentFacetRow(valuesList, facet.dataset.parent, isContentTypeFacet(atomicElement))
@@ -495,15 +497,51 @@ function areBlockFacetsRendered(block) {
   return [...facets].every((facet) => facet.dataset.rendered === 'true');
 }
 
+/**
+ * True once the result list has painted, or Atomic has settled on no-results / error.
+ * Facets alone must not clear the page skeleton — Atomic 3.62 marks facets ready
+ * before results, which removed the overlay and caused a second list skeleton (CLS).
+ */
+export function areBlockResultsReady(block) {
+  const searchInterface = block.querySelector('atomic-search-interface');
+  if (
+    searchInterface?.classList.contains('atomic-search-interface-no-results') ||
+    searchInterface?.classList.contains('atomic-search-interface-error')
+  ) {
+    return true;
+  }
+  const list = block.querySelector('atomic-folded-result-list');
+  return (list?.shadowRoot?.querySelectorAll('atomic-result').length || 0) > 0;
+}
+
+export function revealResultList(block) {
+  const list = block.querySelector('atomic-folded-result-list');
+  if (!list) {
+    return;
+  }
+  const container = list.shadowRoot?.querySelector('[part="result-list"]');
+  if (container) {
+    container.style.cssText = '';
+  }
+  list.classList.remove('list-wrap-skeleton');
+  const wrap = list.shadowRoot?.querySelector('.skeleton-wrapper, [part="skeleton"]');
+  wrap?.remove();
+}
+
 export function resolveBlockLevelSkeleton(block) {
   const skeleton = block.querySelector('.atomic-search-load-skeleton');
   if (!skeleton) {
     return;
   }
-  if (areBlockFacetsRendered(block)) {
+  const facetsReady = areBlockFacetsRendered(block);
+  const resultsReady = areBlockResultsReady(block);
+  if (facetsReady && resultsReady) {
     skeleton.classList.remove(BLOCK_SKELETON_PARTIAL_CLASS);
     skeleton.remove();
-  } else if (!skeleton.classList.contains(BLOCK_SKELETON_PARTIAL_CLASS)) {
-    skeleton.classList.add(BLOCK_SKELETON_PARTIAL_CLASS);
+    // Same turn as overlay removal — list may still be display:none under list-wrap-skeleton.
+    revealResultList(block);
   }
+  // Do not enter partial-results-ready while waiting on facets: with the interface
+  // visibility:hidden under the page overlay, blanking the results shimmer only
+  // shows a hollow facet column.
 }
