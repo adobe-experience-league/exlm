@@ -497,15 +497,34 @@ function areBlockFacetsRendered(block) {
   return [...facets].every((facet) => facet.dataset.rendered === 'true');
 }
 
+/**
+ * True once the result list has painted, or Atomic has settled on no-results.
+ * Facets alone must not clear the page skeleton — Atomic 3.62 marks facets ready
+ * before results, which removed the overlay and caused a second list skeleton (CLS).
+ */
+export function areBlockResultsReady(block) {
+  const searchInterface = block.querySelector('atomic-search-interface');
+  if (searchInterface?.classList.contains('atomic-search-interface-no-results')) {
+    return true;
+  }
+  const list = block.querySelector('atomic-folded-result-list');
+  return (list?.shadowRoot?.querySelectorAll('atomic-result').length || 0) > 0;
+}
+
 export function resolveBlockLevelSkeleton(block) {
   const skeleton = block.querySelector('.atomic-search-load-skeleton');
   if (!skeleton) {
     return;
   }
-  if (areBlockFacetsRendered(block)) {
+  const facetsReady = areBlockFacetsRendered(block);
+  const resultsReady = areBlockResultsReady(block);
+  if (facetsReady && resultsReady) {
     skeleton.classList.remove(BLOCK_SKELETON_PARTIAL_CLASS);
     skeleton.remove();
-  } else if (!skeleton.classList.contains(BLOCK_SKELETON_PARTIAL_CLASS)) {
+    return;
+  }
+  // Results painted first: hide the result-side overlay so content shows, keep facet side.
+  if (resultsReady && !facetsReady && !skeleton.classList.contains(BLOCK_SKELETON_PARTIAL_CLASS)) {
     skeleton.classList.add(BLOCK_SKELETON_PARTIAL_CLASS);
   }
 }

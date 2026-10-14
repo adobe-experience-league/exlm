@@ -568,9 +568,6 @@ const isMultiValueSeparator = (el) =>
 export default function atomicResultHandler(block, placeholders) {
   const baseElement = block.querySelector('atomic-folded-result-list');
   const searchLayout = block.querySelector('atomic-search-layout');
-  if (!searchLayout.classList.contains('no-results')) {
-    baseElement.classList.add('list-wrap-skeleton');
-  }
   const shadow = baseElement.shadowRoot;
   const container = shadow?.querySelector('[part="result-list"]');
 
@@ -583,17 +580,22 @@ export default function atomicResultHandler(block, placeholders) {
   container.parentElement.part.add('list-wrap');
 
   // Atomic 3.60+ (Lit) re-renders its shadow DOM. Hiding/replacing nodes fights Lit and
-  // can wipe results permanently. Only show an in-shadow skeleton when results are not yet present.
+  // can wipe results permanently. Only show an in-shadow skeleton when results are not yet
+  // present AND the page-level overlay is already gone — stacking both caused CLS/flicker.
   const hasResultsAlready = shadow.querySelectorAll('atomic-result').length > 0;
-  if (!hasResultsAlready) {
+  const blockSkeletonStillUp = !!block.querySelector('.atomic-search-load-skeleton');
+  container.dataset.view = isMobile() ? 'mobile' : 'desktop';
+  if (hasResultsAlready) {
+    baseElement.classList.remove('list-wrap-skeleton');
+  } else if (!blockSkeletonStillUp && !searchLayout.classList.contains('no-results')) {
+    baseElement.classList.add('list-wrap-skeleton');
     container.style.cssText = 'display: none;';
-    container.dataset.view = isMobile() ? 'mobile' : 'desktop';
     const skeletonWrapper = htmlToElement(`<div class="skeleton-wrapper" part="skeleton"></div>`);
     skeletonWrapper.innerHTML = renderAtomicSekeletonUI();
     container.parentElement.appendChild(skeletonWrapper);
   } else {
-    container.dataset.view = isMobile() ? 'mobile' : 'desktop';
-    baseElement.classList.remove('list-wrap-skeleton');
+    // Page overlay still covers the list — keep results hidden without a second skeleton.
+    container.style.cssText = 'display: none;';
   }
 
   function onClearBtnClick() {
@@ -642,10 +644,13 @@ export default function atomicResultHandler(block, placeholders) {
   function removeBlockSkeleton() {
     const skeleton = container.parentElement.querySelector('.skeleton-wrapper');
     if (skeleton) {
-      container.style.cssText = '';
-      baseElement.classList.remove('list-wrap-skeleton');
       container.parentElement.removeChild(skeleton);
     }
+    // Always reveal the list once results hydrate — we may have hidden it under the
+    // page overlay without inserting a list skeleton wrapper.
+    container.style.cssText = '';
+    baseElement.classList.remove('list-wrap-skeleton');
+    resolveBlockLevelSkeleton(block);
   }
 
   function decorateChildrenSection({ btn, element }) {

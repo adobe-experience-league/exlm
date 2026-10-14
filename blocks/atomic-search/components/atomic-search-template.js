@@ -758,8 +758,9 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-folded-result-list::part(list-wrap) {
                   margin: 0 0 24px;
                 }
+                /* Reserve roughly ten result rows — full 100vh forced a large jump when results replaced it. */
                 atomic-folded-result-list.list-wrap-skeleton {
-                 min-height: 100vh;
+                 min-height: 720px;
                  display: block;
                 }
                 atomic-folded-result-list::part(outline) {

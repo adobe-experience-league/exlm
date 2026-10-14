@@ -310,7 +310,11 @@ export default function decorate(block) {
       });
 
       document.addEventListener(CUSTOM_EVENTS.RESULT_FOUND, () => {
-        if (!block.querySelector('.atomic-search-load-skeleton')) {
+        // Restore the page shimmer only when returning from no-results with an empty list.
+        // Re-covering a list that is already painting stacked skeletons and caused flicker.
+        const list = block.querySelector('atomic-folded-result-list');
+        const hasResults = (list?.shadowRoot?.querySelectorAll('atomic-result').length || 0) > 0;
+        if (!block.querySelector('.atomic-search-load-skeleton') && !hasResults) {
           renderAtomicShimmer(true);
         }
         setTimeout(() => {
