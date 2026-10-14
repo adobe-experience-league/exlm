@@ -8,6 +8,7 @@ import {
   disconnectShadowObserver,
   observeShadowRoot,
   resolveBlockLevelSkeleton,
+  revealResultList,
 } from './atomic-search-utils.js';
 import { ContentTypeIcons } from './atomic-search-icons.js';
 import { decorateIcons } from '../../../scripts/lib-franklin.js';
@@ -654,8 +655,14 @@ export default function atomicResultHandler(block, placeholders) {
     if (skeleton) {
       container.parentElement.removeChild(skeleton);
     }
-    // Always reveal the list once results hydrate — we may have hidden it under the
-    // page overlay without inserting a list skeleton wrapper.
+    const pageOverlayUp = !!block.querySelector('.atomic-search-load-skeleton');
+    if (pageOverlayUp) {
+      // Keep display:none + list-wrap-skeleton until resolve clears the page overlay.
+      baseElement.classList.add('list-wrap-skeleton');
+      container.style.cssText = 'display: none;';
+      resolveBlockLevelSkeleton(block);
+      return;
+    }
     container.style.cssText = '';
     baseElement.classList.remove('list-wrap-skeleton');
     resolveBlockLevelSkeleton(block);
@@ -1278,6 +1285,10 @@ export default function atomicResultHandler(block, placeholders) {
 
   // Fail-safe: never leave the Lit result list permanently hidden behind our skeleton.
   setTimeout(() => {
-    removeBlockSkeleton();
+    const pageSkeleton = block.querySelector('.atomic-search-load-skeleton');
+    if (pageSkeleton) {
+      pageSkeleton.remove();
+    }
+    revealResultList(block);
   }, 4000);
 }

@@ -16,6 +16,7 @@ import {
   debounce,
   generateAdobeTrackingData,
   resolveBlockLevelSkeleton,
+  revealResultList,
   normalizeContentTypeFilterValue,
 } from './components/atomic-search-utils.js';
 import { isMobile } from '../header/header-utils.js';
@@ -302,6 +303,7 @@ export default function decorate(block) {
         if (skeleton) {
           block.removeChild(skeleton);
         }
+        revealResultList(block);
         const baseSummaryQueryEl = block.querySelector('atomic-query-summary');
         if (baseSummaryQueryEl) {
           baseSummaryQueryEl.dataset.observed = '';

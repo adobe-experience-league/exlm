@@ -498,20 +498,23 @@ function areBlockFacetsRendered(block) {
 }
 
 /**
- * True once the result list has painted, or Atomic has settled on no-results.
+ * True once the result list has painted, or Atomic has settled on no-results / error.
  * Facets alone must not clear the page skeleton — Atomic 3.62 marks facets ready
  * before results, which removed the overlay and caused a second list skeleton (CLS).
  */
 export function areBlockResultsReady(block) {
   const searchInterface = block.querySelector('atomic-search-interface');
-  if (searchInterface?.classList.contains('atomic-search-interface-no-results')) {
+  if (
+    searchInterface?.classList.contains('atomic-search-interface-no-results') ||
+    searchInterface?.classList.contains('atomic-search-interface-error')
+  ) {
     return true;
   }
   const list = block.querySelector('atomic-folded-result-list');
   return (list?.shadowRoot?.querySelectorAll('atomic-result').length || 0) > 0;
 }
 
-function revealResultList(block) {
+export function revealResultList(block) {
   const list = block.querySelector('atomic-folded-result-list');
   if (!list) {
     return;
@@ -537,11 +540,8 @@ export function resolveBlockLevelSkeleton(block) {
     skeleton.remove();
     // Same turn as overlay removal — list may still be display:none under list-wrap-skeleton.
     revealResultList(block);
-    return;
   }
-  // Results painted first: hide the result-side shimmer panels only. Do not reveal the list
-  // yet — expanding it under the absolute overlay still counts as CLS.
-  if (resultsReady && !facetsReady && !skeleton.classList.contains(BLOCK_SKELETON_PARTIAL_CLASS)) {
-    skeleton.classList.add(BLOCK_SKELETON_PARTIAL_CLASS);
-  }
+  // Do not enter partial-results-ready while waiting on facets: with the interface
+  // visibility:hidden under the page overlay, blanking the results shimmer only
+  // shows a hollow facet column.
 }
