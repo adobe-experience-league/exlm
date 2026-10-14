@@ -129,12 +129,16 @@
 }
 
 .atomic-search .atomic-search-load-skeleton {
+  /* Cap height — content under the overlay used to stretch this node and score CLS. */
   min-height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   position: absolute;
+  inset: 0 auto auto 0;
   z-index: 11;
 }
 
@@ -183,7 +187,17 @@
 
 .atomic-search.block:has(.atomic-search-load-skeleton) {
   min-height: 100vh;
+
+  /* Clip Atomic hydration under the absolute overlay so underlay growth cannot
+     expand the block or move in-view content (those shifts still count as CLS). */
+  max-height: 100vh;
+  overflow: hidden;
   position: relative;
+}
+
+.atomic-search.block:has(.atomic-search-load-skeleton) atomic-search-interface {
+  /* Hidden elements do not contribute to CLS while they reflow under the shimmer. */
+  visibility: hidden;
 }
 
 .atomic-search .atomic-search-load-skeleton.atomic-skeleton-shimmer-hide {
