@@ -8,8 +8,10 @@ export default async function buildHeadlessSearchEngine(module) {
   return module.buildSearchEngine({
     configuration: {
       organizationId: coveoOrganizationId,
-      organizationEndpoints: module.getOrganizationEndpoints(coveoOrganizationId),
       accessToken: coveoToken,
+      // Headless 3 defaults to Event Protocol (`next`). Search stays on legacy UA,
+      // same as Atomic, so the existing Experience League pipeline keeps receiving events.
+      analytics: { analyticsMode: 'legacy' },
       preprocessRequest: (request, clientOrigin, metadata) => {
         const { body } = request;
         const bodyJSON = JSON.parse(body || '{}');
