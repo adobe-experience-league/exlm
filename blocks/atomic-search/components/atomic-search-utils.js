@@ -511,6 +511,20 @@ export function areBlockResultsReady(block) {
   return (list?.shadowRoot?.querySelectorAll('atomic-result').length || 0) > 0;
 }
 
+function revealResultList(block) {
+  const list = block.querySelector('atomic-folded-result-list');
+  if (!list) {
+    return;
+  }
+  const container = list.shadowRoot?.querySelector('[part="result-list"]');
+  if (container) {
+    container.style.cssText = '';
+  }
+  list.classList.remove('list-wrap-skeleton');
+  const wrap = list.shadowRoot?.querySelector('.skeleton-wrapper, [part="skeleton"]');
+  wrap?.remove();
+}
+
 export function resolveBlockLevelSkeleton(block) {
   const skeleton = block.querySelector('.atomic-search-load-skeleton');
   if (!skeleton) {
@@ -521,10 +535,14 @@ export function resolveBlockLevelSkeleton(block) {
   if (facetsReady && resultsReady) {
     skeleton.classList.remove(BLOCK_SKELETON_PARTIAL_CLASS);
     skeleton.remove();
+    // Same turn as overlay removal — results may already exist while still display:none
+    // under the page shimmer (no list-wrap reservation). Reveal before the next paint.
+    revealResultList(block);
     return;
   }
   // Results painted first: hide the result-side overlay so content shows, keep facet side.
   if (resultsReady && !facetsReady && !skeleton.classList.contains(BLOCK_SKELETON_PARTIAL_CLASS)) {
     skeleton.classList.add(BLOCK_SKELETON_PARTIAL_CLASS);
+    revealResultList(block);
   }
 }
