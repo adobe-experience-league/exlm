@@ -535,14 +535,13 @@ export function resolveBlockLevelSkeleton(block) {
   if (facetsReady && resultsReady) {
     skeleton.classList.remove(BLOCK_SKELETON_PARTIAL_CLASS);
     skeleton.remove();
-    // Same turn as overlay removal — results may already exist while still display:none
-    // under the page shimmer (no list-wrap reservation). Reveal before the next paint.
+    // Same turn as overlay removal — list may still be display:none under list-wrap-skeleton.
     revealResultList(block);
     return;
   }
-  // Results painted first: hide the result-side overlay so content shows, keep facet side.
+  // Results painted first: hide the result-side shimmer panels only. Do not reveal the list
+  // yet — expanding it under the absolute overlay still counts as CLS.
   if (resultsReady && !facetsReady && !skeleton.classList.contains(BLOCK_SKELETON_PARTIAL_CLASS)) {
     skeleton.classList.add(BLOCK_SKELETON_PARTIAL_CLASS);
-    revealResultList(block);
   }
 }

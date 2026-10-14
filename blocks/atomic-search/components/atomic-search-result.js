@@ -580,21 +580,29 @@ export default function atomicResultHandler(block, placeholders) {
   container.parentElement.part.add('list-wrap');
 
   // Atomic 3.60+ (Lit) re-renders its shadow DOM. Hiding/replacing nodes fights Lit and
-  // can wipe results permanently. Only show an in-shadow skeleton when results are not yet
-  // present AND the page-level overlay is already gone — stacking both caused CLS/flicker.
+  // can wipe results permanently. Only show an in-shadow skeleton UI when results are not
+  // yet present AND the page-level overlay is already gone — stacking both flickers.
+  // Still apply list-wrap-skeleton under the page overlay so ~720px stays reserved; without
+  // that, clearing the absolute overlay expands a collapsed results section (~0.85 CLS).
   const hasResultsAlready = shadow.querySelectorAll('atomic-result').length > 0;
   const blockSkeletonStillUp = !!block.querySelector('.atomic-search-load-skeleton');
   container.dataset.view = isMobile() ? 'mobile' : 'desktop';
-  if (hasResultsAlready) {
+  if (hasResultsAlready && !blockSkeletonStillUp) {
     baseElement.classList.remove('list-wrap-skeleton');
-  } else if (!blockSkeletonStillUp && !searchLayout.classList.contains('no-results')) {
+  } else if (hasResultsAlready && blockSkeletonStillUp) {
+    // Results hydrated under the page overlay — keep height reserved until reveal.
     baseElement.classList.add('list-wrap-skeleton');
     container.style.cssText = 'display: none;';
-    const skeletonWrapper = htmlToElement(`<div class="skeleton-wrapper" part="skeleton"></div>`);
-    skeletonWrapper.innerHTML = renderAtomicSekeletonUI();
-    container.parentElement.appendChild(skeletonWrapper);
-  } else {
-    // Page overlay still covers the list — keep results hidden without a second skeleton.
+  } else if (!searchLayout.classList.contains('no-results')) {
+    baseElement.classList.add('list-wrap-skeleton');
+    container.style.cssText = 'display: none;';
+    if (!blockSkeletonStillUp) {
+      const skeletonWrapper = htmlToElement(`<div class="skeleton-wrapper" part="skeleton"></div>`);
+      skeletonWrapper.innerHTML = renderAtomicSekeletonUI();
+      container.parentElement.appendChild(skeletonWrapper);
+    }
+  } else if (blockSkeletonStillUp) {
+    baseElement.classList.add('list-wrap-skeleton');
     container.style.cssText = 'display: none;';
   }
 
