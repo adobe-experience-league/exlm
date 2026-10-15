@@ -23,11 +23,19 @@ import {
   readFiltersFromUrl,
   readKeywordFromUrl,
   bindFiltersToUrl,
+  createStoreSort,
+  getDefaultSortOptions,
+  sortItems,
 } from '../../scripts/search-filter/search-filter.js';
 
 /** Module-level placeholders for internationalization */
 let placeholders = {};
 const numberOfResults = 1000;
+
+// Keyword search goes to the API as this param (same idea as Events' `q`).
+// Set USE_API_KEYWORD to false to fall back to filtering the loaded courses in the browser.
+const USE_API_KEYWORD = true;
+const KEYWORD_PARAM = 'q';
 
 const CSS_CLASSES = {
   HEADER: 'browse-cards-block-header',
@@ -129,11 +137,12 @@ function populateValidFacets(facetsResponse, state) {
 /**
  * Fetches course data (auto-enriched with meta.courseInfo.courseStatus for signed-in users).
  */
-async function fetchCourseData(selectedFilters = [], selectedLevels = [], state = {}) {
+async function fetchCourseData(selectedFilters = [], selectedLevels = [], state = {}, keyword = '') {
   const param = {
     contentType: CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase().split(','),
     ...(selectedFilters.length > 0 && { product: selectedFilters }),
     ...(selectedLevels.length > 0 && { level: selectedLevels, el_level_all: state?.allLevels }),
+    ...(keyword && { [KEYWORD_PARAM]: keyword }),
     el_product_all: state?.allProducts,
     noOfResults: numberOfResults,
   };
@@ -232,11 +241,14 @@ export default async function decorate(block) {
   ];
   const groupIds = groups.map((g) => g.id);
 
+  const sortOptions = getDefaultSortOptions(placeholders);
+  const urlSort = readKeywordFromUrl('sort', xssSanitizeQueryParamValue);
   const store = createFilterStore({
     groupIds,
     initial: {
       ...readFiltersFromUrl(['product', 'level'], { format: 'comma', sanitize: xssSanitizeQueryParamValue }),
       keyword: readKeywordFromUrl('q', xssSanitizeQueryParamValue),
+      sort: sortOptions.some((option) => option.value === urlSort) ? urlSort : '',
     },
   });
   const ui = createSearchFilterUI({
@@ -251,14 +263,20 @@ export default async function decorate(block) {
     withKeyword: true,
   });
   // status is not URL-backed
-  bindFiltersToUrl(store, ['product', 'level'], { format: 'comma', keywordParam: 'q' });
+  bindFiltersToUrl(store, ['product', 'level'], { format: 'comma', keywordParam: 'q', sortParam: 'sort' });
 
   // Build DOM
   block.textContent = '';
   const header = createTag('div', { class: CSS_CLASSES.HEADER });
   header.append(createTag('div', { class: CSS_CLASSES.TITLE }, headingHtml));
   const contentDiv = createTag('div', { class: CSS_CLASSES.CONTENT });
-  const { layout, results } = createSidebarLayout({ ui, placeholders: { filtersLabel: placeholders.filterLabel } });
+  const { layout, results, controls } = createSidebarLayout({
+    ui,
+    placeholders: { filtersLabel: placeholders.filterLabel },
+  });
+  // sort is always visible
+  const sort = createStoreSort({ store, ui, options: sortOptions, label: placeholders.sortLabel || 'Sort:' });
+  controls.append(sort.el);
   results.append(contentDiv);
   block.append(header, layout);
 
@@ -267,11 +285,12 @@ export default async function decorate(block) {
   let lastApiKey = null;
   let requestId = 0;
 
-  async function onChange({ filters, keyword }) {
+  async function onChange({ filters, keyword, sort: sortBy }) {
     requestId += 1;
     const currentRequest = requestId;
 
-    const apiKey = JSON.stringify([filters.product, filters.level]);
+    const apiKeyword = USE_API_KEYWORD ? keyword : '';
+    const apiKey = JSON.stringify([filters.product, filters.level, apiKeyword]);
     if (apiKey !== lastApiKey) {
       lastApiKey = apiKey;
       ui.setLoading(true);
@@ -280,7 +299,7 @@ export default async function decorate(block) {
 
       let courseData;
       try {
-        courseData = await fetchCourseData(filters.product, filters.level, state);
+        courseData = await fetchCourseData(filters.product, filters.level, state, apiKeyword);
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('Error fetching courses:', error);
@@ -301,24 +320,27 @@ export default async function decorate(block) {
         ? state.validLevels
         : filterItemsForCourseData(allLevels, courseData, 'el_level');
 
+      // Without a keyword, selections that are no longer valid are dropped. With a keyword a selected
+      // filter can simply have 0 matches, so it is kept (and stays listed so it can still be unchecked).
+      const prune = !apiKeyword;
+      const nextProducts =
+        prune && !productValues.length
+          ? filters.product
+          : filters.product
+              .map((p) => productValues.find((v) => matchesSanitizedFilter(v, p)) ?? (prune ? null : p))
+              .filter(Boolean);
+      const nextLevels =
+        prune && levelValues.length ? filters.level.filter((l) => levelValues.includes(l)) : filters.level;
+
       ui.setGroupItems(
         'product',
-        productValues.map((value) => ({ value })),
+        [...new Set([...productValues, ...nextProducts])].map((value) => ({ value })),
       );
-      ui.setGroupItems('level', transformLevelsForDropdown(levelValues));
+      ui.setGroupItems('level', transformLevelsForDropdown([...new Set([...levelValues, ...nextLevels])]));
 
-      // Drop (or normalize) selections that are no longer valid. A real change emits,
-      // which re-enters onChange with a new API key and refetches.
-      if (productValues.length) {
-        const normalized = filters.product
-          .map((p) => productValues.find((v) => matchesSanitizedFilter(v, p)))
-          .filter(Boolean);
-        if (store.setGroup('product', normalized)) return;
-      }
-      if (levelValues.length) {
-        const keptLevels = filters.level.filter((l) => levelValues.includes(l));
-        if (store.setGroup('level', keptLevels)) return;
-      }
+      // A real change emits, which re-enters onChange with a new API key and refetches.
+      if (store.setGroup('product', nextProducts)) return;
+      if (store.setGroup('level', nextLevels)) return;
     }
 
     // Status: client-side only
@@ -335,8 +357,10 @@ export default async function decorate(block) {
     const byStatus = selectedStatuses.length
       ? state.courseData.filter((c) => selectedStatuses.includes(c.meta?.courseInfo?.courseStatus))
       : state.courseData;
-    // keyword is client-side over the fetched courses, so it never triggers an API call
-    const visible = keyword ? byStatus.filter((c) => matchesKeyword(c, keyword)) : byStatus;
+    // keyword is applied by the API (see USE_API_KEYWORD); the browser-side match is only the fallback
+    const matched = !USE_API_KEYWORD && keyword ? byStatus.filter((c) => matchesKeyword(c, keyword)) : byStatus;
+    // sort is client-side too, so changing it never triggers an API call
+    const visible = sortItems(matched, sortBy);
     ui.setResultCount(
       visible.length,
       visible.length === 1

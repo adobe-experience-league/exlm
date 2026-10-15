@@ -1,4 +1,4 @@
-import { decorateIcons, loadCSS } from '../../scripts/lib-franklin.js';
+import { loadCSS } from '../../scripts/lib-franklin.js';
 import { createTag, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { BASE_COVEO_ADVANCED_QUERY_EVENTS } from '../../scripts/browse-card/browse-cards-constants.js';
 import {
@@ -17,7 +17,12 @@ import {
   handleCoverSearchSubmit,
 } from '../browse-filters/browse-filter-utils.js';
 import { pushEventsFilterSearchEvent, pushEventsClearFiltersEvent } from '../../scripts/analytics/lib-analytics.js';
-import { createFilterStore, createSearchFilterUI } from '../../scripts/search-filter/search-filter.js';
+import {
+  createFilterStore,
+  createSearchFilterUI,
+  createSidebarLayout,
+  createSortControl,
+} from '../../scripts/search-filter/search-filter.js';
 
 const FACET_CONTROLLER_MAP = {
   el_product: 'headlessProductFacet',
@@ -39,15 +44,13 @@ const MAX_PENDING_SYNC_PASSES = 12;
 
 /**
  * Per-block filter context created in setupFilters:
- * { store, ui, awaiting: { intent, passes }|null, isClearing, lastResponseId, itemKeys: Map }
+ * { store, ui, sort (shared sort control), awaiting: { intent, passes }|null, isClearing, lastResponseId, itemKeys: Map }
  */
 const filterContexts = new WeakMap();
 
 const viewSwitcherInstances = new WeakMap();
 /** AbortController + MutationObserver teardown for Coveo document listeners (re-decorate or DOM removal). */
 const eventsSearchLoadingUiCleanups = new WeakMap();
-/** Per-block AbortController for open sort dropdown document listeners (click-outside + Escape). */
-const eventsSearchSortDropdownOpenAbort = new WeakMap();
 /** Facet values behind the Event Type checkboxes, from the shared Coveo pipeline constants */
 const EVENTS_SEARCH_UPCOMING_VALUE = CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY;
 const EVENTS_SEARCH_ON_DEMAND_VALUE = CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY;
@@ -134,12 +137,6 @@ function responseMatchesEventsSearchIntent(intent) {
   return String(search.queryExecuted ?? '').trim() === intent.term;
 }
 
-/** Reads the current sort selection, normalizing the UI's "Relevance" label to the spec's "relevancy". */
-function getEventsSearchSortBy(block) {
-  const rawSort = (block.querySelector('.sort-drop-btn-value')?.textContent || '').trim().toLowerCase();
-  return !rawSort || rawSort === 'relevance' ? 'relevancy' : rawSort;
-}
-
 /** Returns the per-block sort state, lazily creating it with defaults on first access. */
 function getEventsSearchSortState(block) {
   let state = eventsSearchSortState.get(block);
@@ -158,6 +155,12 @@ function getEventsSearchSortState(block) {
     eventsSearchSortState.set(block, state);
   }
   return state;
+}
+
+/** Reads the current sort selection, normalizing the UI's "Relevance" label to the spec's "relevancy". */
+function getEventsSearchSortBy(block) {
+  const { selected } = getEventsSearchSortState(block);
+  return selected === 'relevance' ? 'relevancy' : selected;
 }
 
 /** Derives the current filter/query state that determines which sort options are available. */
@@ -253,45 +256,18 @@ function resetEventsSearchSort(block, { dispatch = true } = {}) {
 
 /** Renders the sort dropdown anchors and the button caption for the given options and selection. */
 function renderEventsSearchSortOptions(block, options, selected, placeholders) {
-  const sortContainer = block.querySelector('.sort-container');
-  const dropDownBtn = block.querySelector('.sort-drop-btn');
-  if (!sortContainer || !dropDownBtn) return;
-  let dropdown = sortContainer.querySelector('.sort-dropdown-content');
-  if (!dropdown) {
-    dropdown = createTag('div', { class: 'sort-dropdown-content' });
-    sortContainer.append(dropdown);
-    // Single delegated listener on the persistent container.
-    dropdown.addEventListener('click', (event) => {
-      const anchor = event.target.closest('a[data-sort-option]');
-      if (!anchor) return;
-      event.preventDefault();
-      // eslint-disable-next-line no-use-before-define
-      selectEventsSearchSortOption(block, anchor.dataset.sortOption);
-    });
-  }
-  dropdown.innerHTML = '';
-  options.forEach((option) => {
-    const label = getEventsSearchSortOptionLabel(option, placeholders);
-    const anchor = createTag('a', {
-      href: '#',
-      class: option === selected ? 'selected' : '',
-      'data-sort-option': option,
-    });
-    anchor.textContent = label;
-    dropdown.append(anchor);
-  });
-  const captionEl = dropDownBtn.querySelector('.sort-drop-btn-value');
-  const caption = getEventsSearchSortOptionLabel(selected, placeholders);
-  if (captionEl) captionEl.textContent = caption;
+  const sortControl = filterContexts.get(block)?.sort;
+  if (!sortControl) return;
+  sortControl.setOptions(
+    options.map((option) => ({ value: option, label: getEventsSearchSortOptionLabel(option, placeholders) })),
+    selected,
+  );
 }
 
 /** Handles a sort option click: updates state, re-renders the dropdown, and applies the criterion. */
 function selectEventsSearchSortOption(block, option) {
   const state = getEventsSearchSortState(block);
   state.selected = option;
-  const dropdown = block.querySelector('.sort-dropdown-content');
-  dropdown?.classList.remove('show');
-  block.querySelector('.sort-drop-btn')?.classList.remove('active');
   const context = getEventsSearchSortContext(block);
   renderEventsSearchSortOptions(block, getAvailableEventsSearchSortOptions(context), option, state.placeholders);
   // sortBy() always dispatches (even switching between two options that resolve to the same
@@ -327,8 +303,8 @@ const EVENTS_SEARCH_URL_RESTORE_MAX_GRACE_PASSES = 20;
 
 /** Recomputes sort visibility/options from filter+query state, resets an invalid selection, and applies the criterion. */
 function updateEventsSearchSortUI(block, placeholders) {
-  const sortContainer = block.querySelector('.sort-container');
-  if (!sortContainer) return;
+  const sortControl = filterContexts.get(block)?.sort;
+  if (!sortControl) return;
   const state = getEventsSearchSortState(block);
   state.placeholders = placeholders;
   const context = getEventsSearchSortContext(block);
@@ -338,7 +314,7 @@ function updateEventsSearchSortUI(block, placeholders) {
   state.lastHasQuery = context.hasQuery;
 
   if (!options.length) {
-    sortContainer.setAttribute('hidden', '');
+    sortControl.setHidden(true);
     return;
   }
 
@@ -360,7 +336,7 @@ function updateEventsSearchSortUI(block, placeholders) {
     state.selected = options.includes('date') ? 'date' : options[0];
   }
 
-  sortContainer.removeAttribute('hidden');
+  sortControl.setHidden(false);
   renderEventsSearchSortOptions(block, options, state.selected, placeholders);
   applyEventsSearchSort(block, state.selected, context);
 }
@@ -413,74 +389,37 @@ function getBaseFilterGroups(placeholders) {
 }
 
 function createLayout(block, placeholders) {
+  const { ui, sort } = filterContexts.get(block);
   block.innerHTML = '';
-  const filtersPanelId = `events-search-filters-panel-${crypto.randomUUID()}`;
-  const layout = createTag('div', { class: 'events-search-layout' });
-  const filterColumn = createTag('aside', {
-    class: 'events-search-filters-column',
-    'aria-label': String(placeholders.eventSearchFiltersLabel || 'Filters'),
+
+  // Sidebar, keyword box, active-filter tags, results count and mobile toggle all come from the shared layout.
+  // cardColumns: false -> events keeps its own results grid / list-grid view switcher styling.
+  const { layout, results, controls } = createSidebarLayout({
+    ui,
+    placeholders: { filtersLabel: placeholders.eventSearchFiltersLabel },
+    cardColumns: false,
   });
-  const resultColumn = createTag('section', { class: 'events-search-results-column' });
+  controls.append(createTag('div', { class: 'events-search-view-switcher' }), sort.el);
 
-  // The filters panel is empty here: the shared search-filter UI mounts into it (see setupFilters).
-  filterColumn.innerHTML = `
-    <button class="events-search-mobile-filter-toggle" type="button" aria-expanded="false" aria-controls="${filtersPanelId}">
-      <span class="icon icon-atomic-search-filter"></span>
-      <span>${placeholders.eventSearchFiltersLabel || 'Filters'}</span>
-      <span class="icon icon-chevron"></span>
-    </button>
-    <div class="events-search-filters-panel" id="${filtersPanelId}"></div>
-  `;
-
-  // The keyword box and active-filter tags are prepended into .events-search-topbar by setupFilters.
-  resultColumn.innerHTML = `
-    <div class="events-search-topbar">
-      <div class="events-search-meta-row">
-        <div
-          class="events-search-results-count"
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
-        ></div>
-        <div class="events-search-controls">
-          <div class="events-search-view-switcher"></div>
-          <div class="sort-container" hidden>
-            <button type="button" class="sort-drop-btn">
-              <span class="sort-drop-btn-prefix">${placeholders.eventSearchFilterSortLabel || 'Sort:'}</span>
-              <span class="sort-drop-btn-value">${placeholders.filterSortRelevanceLabel || 'Relevance'}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="events-search-results-body browse-cards-block">
-      <div class="events-search-no-results" hidden role="status" aria-live="polite"></div>
-      <div class="events-search-results-grid browse-cards-block-content"></div>
-      <div class="events-search-pagination">
-        <button class="nav-arrow" type="button" aria-label="${
-          placeholders.eventSearchPaginationPreviousAriaLabel || 'previous page'
-        }"></button>
-        <input type="text" class="events-search-pg-input" inputmode="numeric" aria-label="${
-          placeholders.eventSearchPaginationPageInputAriaLabel || 'Enter page number'
-        }" value="1" />
-        <span class="events-search-pagination-text"></span>
-        <button class="nav-arrow right-nav-arrow" type="button" aria-label="${
-          placeholders.eventSearchPaginationNextAriaLabel || 'next page'
-        }"></button>
-      </div>
+  const resultsBody = createTag('div', { class: 'events-search-results-body browse-cards-block' });
+  resultsBody.innerHTML = `
+    <div class="events-search-no-results" hidden role="status" aria-live="polite"></div>
+    <div class="events-search-results-grid browse-cards-block-content"></div>
+    <div class="events-search-pagination">
+      <button class="nav-arrow" type="button" aria-label="${
+        placeholders.eventSearchPaginationPreviousAriaLabel || 'previous page'
+      }"></button>
+      <input type="text" class="events-search-pg-input" inputmode="numeric" aria-label="${
+        placeholders.eventSearchPaginationPageInputAriaLabel || 'Enter page number'
+      }" value="1" />
+      <span class="events-search-pagination-text"></span>
+      <button class="nav-arrow right-nav-arrow" type="button" aria-label="${
+        placeholders.eventSearchPaginationNextAriaLabel || 'next page'
+      }"></button>
     </div>
   `;
-
-  layout.append(filterColumn, resultColumn);
+  results.append(resultsBody);
   block.append(layout);
-}
-
-function setMobileFilterPanelState(block, shouldOpen) {
-  const toggleButton = block.querySelector('.events-search-mobile-filter-toggle');
-  if (!toggleButton) return;
-
-  block.classList.toggle('is-filters-open', shouldOpen);
-  toggleButton.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
 }
 
 async function initEventsSearchViewSwitcher(block) {
@@ -498,51 +437,6 @@ async function loadEventsCardStyles() {
     loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-upcoming-events.css`),
     loadCSS(`${window.hlx.codeBasePath}/scripts/browse-card/browse-card-on-demand-events.css`),
   ]);
-}
-
-function bindSortDropdownToggle(block) {
-  const dropDownBtn = block.querySelector('.sort-drop-btn');
-  if (!dropDownBtn) return;
-
-  const closeSortDropdown = () => {
-    const sortOpenAc = eventsSearchSortDropdownOpenAbort.get(block);
-    if (sortOpenAc) {
-      eventsSearchSortDropdownOpenAbort.delete(block);
-      sortOpenAc.abort();
-    }
-    const sortDropdown = dropDownBtn.nextElementSibling;
-    sortDropdown?.classList.remove('show');
-    dropDownBtn.classList.remove('active');
-  };
-
-  dropDownBtn.addEventListener('click', (event) => {
-    event.stopPropagation();
-    dropDownBtn.classList.toggle('active');
-    const sortDropdown = dropDownBtn.nextElementSibling;
-    sortDropdown?.classList.toggle('show');
-
-    if (sortDropdown?.classList.contains('show')) {
-      const sortOpenAc = new AbortController();
-      eventsSearchSortDropdownOpenAbort.set(block, sortOpenAc);
-
-      const onDocumentClose = () => {
-        closeSortDropdown();
-      };
-
-      document.addEventListener('click', onDocumentClose, { once: true, signal: sortOpenAc.signal });
-      document.addEventListener(
-        'keydown',
-        (ev) => {
-          if (ev.key !== 'Escape') return;
-          ev.preventDefault();
-          onDocumentClose();
-        },
-        { signal: sortOpenAc.signal },
-      );
-    } else {
-      closeSortDropdown();
-    }
-  });
 }
 
 function executeSearch() {
@@ -649,14 +543,12 @@ function bindEventsSearchLoadingUI(block) {
   const grid = block.querySelector('.events-search-results-grid');
   const pagination = block.querySelector('.events-search-pagination');
   const noResults = block.querySelector('.events-search-no-results');
-  const resultsTop = block.querySelector('.events-search-topbar');
+  const resultsTop = block.querySelector('.sf-results-column');
   if (!resultsBody || !grid || !pagination) return;
 
   const ac = new AbortController();
   let disconnectMo;
   function teardownEventsSearchLoadingUi() {
-    eventsSearchSortDropdownOpenAbort.get(block)?.abort();
-    eventsSearchSortDropdownOpenAbort.delete(block);
     ac.abort();
     disconnectMo?.disconnect();
     eventsSearchLoadingUiCleanups.delete(block);
@@ -782,13 +674,9 @@ function bindEventsSearchPagination(block) {
 }
 
 function updateResultsCount(block, totalCount = 0, placeholders = {}) {
-  const countEl = block.querySelector('.events-search-results-count');
-  if (!countEl) return;
-  const formatter = new Intl.NumberFormat();
-  const countText = formatter.format(totalCount || 0);
-  const suffix = placeholders.eventSearchResultsCountSuffix || 'events and recordings';
-  const countStrong = createTag('strong', { class: 'events-search-results-count-value' }, countText);
-  countEl.replaceChildren(countStrong, document.createTextNode(` ${suffix}`));
+  const ui = filterContexts.get(block)?.ui;
+  if (!ui) return;
+  ui.setResultCount(totalCount || 0, placeholders.eventSearchResultsCountSuffix || 'events and recordings');
 }
 
 async function renderResults(block, results = [], searchResponseId = '') {
@@ -1031,9 +919,6 @@ function setupFilters(block, groups, placeholders) {
   const ui = createSearchFilterUI({
     store,
     groups: groups.map(({ id, name }) => ({ id, name })),
-    prefix: 'events-search',
-    closeIcon: 'icon-close-events',
-    expandedByDefault: false,
     placeholders: {
       filtersLabel: placeholders.eventSearchFiltersLabel,
       filterClearLabel: placeholders.eventSearchClearFiltersLabel || 'Clear all filters',
@@ -1042,12 +927,17 @@ function setupFilters(block, groups, placeholders) {
       activeFiltersAriaLabel: placeholders.eventSearchActiveFiltersAriaLabel,
     },
   });
-  const ctx = { store, ui, awaiting: null, isClearing: false, lastResponseId: null, itemKeys: new Map() };
-  filterContexts.set(block, ctx);
 
-  // Mount into the layout created by createLayout
-  block.querySelector('.events-search-filters-panel').append(ui.filtersEl);
-  block.querySelector('.events-search-topbar').prepend(ui.keywordEl, ui.activeEl);
+  // Which sort options exist (and whether the control shows at all) is Coveo/filter driven,
+  // see updateEventsSearchSortUI. The shared control only renders them.
+  const sort = createSortControl({
+    label: placeholders.eventSearchFilterSortLabel || 'Sort:',
+    onChange: (option) => selectEventsSearchSortOption(block, option),
+  });
+  sort.setHidden(true);
+
+  const ctx = { store, ui, sort, awaiting: null, isClearing: false, lastResponseId: null, itemKeys: new Map() };
+  filterContexts.set(block, ctx);
 
   // Event Type options are static; counts arrive from Headless later.
   ui.setGroupItems('el_contenttype', toEventTypeStaticItems(groups.find((g) => g.id === 'el_contenttype')));
@@ -1086,29 +976,6 @@ async function handleSearchEngineSubscription(block, groups, placeholders) {
       handleSearchEngineSubscription(block, groups, placeholders);
     }
   }
-}
-
-function bindMobileFilterToggle(block) {
-  const toggleButton = block.querySelector('.events-search-mobile-filter-toggle');
-  if (!toggleButton) return;
-
-  setMobileFilterPanelState(block, false);
-  toggleButton.addEventListener('click', () => {
-    const isOpen = block.classList.contains('is-filters-open');
-    setMobileFilterPanelState(block, !isOpen);
-  });
-
-  block.addEventListener(
-    'keydown',
-    (event) => {
-      if (event.key !== 'Escape') return;
-      if (!block.classList.contains('is-filters-open')) return;
-      event.preventDefault();
-      setMobileFilterPanelState(block, false);
-      toggleButton.focus();
-    },
-    true,
-  );
 }
 
 async function initHeadlessSearch(block, groups, placeholders) {
@@ -1171,6 +1038,7 @@ async function initHeadlessSearch(block, groups, placeholders) {
 
 export default async function decorate(block) {
   try {
+    loadCSS(`${window.hlx.codeBasePath}/scripts/search-filter/search-filter.css`).catch(() => {});
     await loadEventsCardStyles().catch(() => {});
     let placeholders = {};
     try {
@@ -1181,12 +1049,9 @@ export default async function decorate(block) {
     }
     const groups = getBaseFilterGroups(placeholders);
 
-    createLayout(block, placeholders);
-    decorateIcons(block);
-    setupFilters(block, groups, placeholders); // must run after createLayout
-    bindMobileFilterToggle(block);
+    setupFilters(block, groups, placeholders); // shared store + UI + sort control (not mounted yet)
+    createLayout(block, placeholders); // mounts them via the shared sidebar layout
     await initEventsSearchViewSwitcher(block);
-    bindSortDropdownToggle(block);
     await initHeadlessSearch(block, groups, placeholders);
   } catch (err) {
     // eslint-disable-next-line no-console

@@ -4,9 +4,10 @@ import { decorateIcons } from '../lib-franklin.js';
 /* ------------------------------------------------------------------ */
 /* Store: single source of truth for selected filters + keyword        */
 /* ------------------------------------------------------------------ */
-export function createFilterStore({ groupIds, initial = {} }) {
+export function createFilterStore({ groupIds, initial = {}, defaultSort = '' }) {
   let tags = []; // ordered: [{ groupId, value, label }]
   let keyword = initial.keyword || '';
+  let sort = initial.sort ?? defaultSort;
   const listeners = new Set();
 
   groupIds.forEach((id) => {
@@ -15,6 +16,7 @@ export function createFilterStore({ groupIds, initial = {} }) {
 
   const get = () => ({
     keyword,
+    sort,
     tags: tags.map((t) => ({ ...t })),
     filters: Object.fromEntries(groupIds.map((id) => [id, tags.filter((t) => t.groupId === id).map((t) => t.value)])),
   });
@@ -61,9 +63,16 @@ export function createFilterStore({ groupIds, initial = {} }) {
       keyword = next;
       if (!silent) emit('keyword');
     },
+    setSort(value, { silent = false } = {}) {
+      const next = String(value ?? '');
+      if (next === sort) return;
+      sort = next;
+      if (!silent) emit('sort');
+    },
     clear({ silent = false } = {}) {
       tags = [];
       keyword = '';
+      sort = defaultSort;
       if (!silent) emit('clear');
     },
   };
@@ -88,8 +97,8 @@ export function readKeywordFromUrl(param = 'q', sanitize = (v) => v) {
 }
 
 /** keywordParam (e.g. 'q'): also mirrors the store keyword into the URL. */
-export function bindFiltersToUrl(store, groupIds, { format = 'repeat', keywordParam = null } = {}) {
-  return store.subscribe(({ filters, keyword }) => {
+export function bindFiltersToUrl(store, groupIds, { format = 'repeat', keywordParam = null, sortParam = null } = {}) {
+  return store.subscribe(({ filters, keyword, sort }) => {
     const url = new URL(window.location.href);
     groupIds.forEach((id) => {
       url.searchParams.delete(id);
@@ -100,6 +109,10 @@ export function bindFiltersToUrl(store, groupIds, { format = 'repeat', keywordPa
     if (keywordParam) {
       if (keyword) url.searchParams.set(keywordParam, keyword);
       else url.searchParams.delete(keywordParam);
+    }
+    if (sortParam) {
+      if (sort) url.searchParams.set(sortParam, sort);
+      else url.searchParams.delete(sortParam);
     }
     if (url.href !== window.location.href) window.history.pushState({}, '', url);
   });
@@ -355,8 +368,16 @@ export function createSearchFilterUI({
 /* ------------------------------------------------------------------ */
 /* Sidebar layout: filters left, keyword + active tags + results right */
 /* ------------------------------------------------------------------ */
-export function createSidebarLayout({ ui, prefix = 'sf', placeholders = {}, collapsibleOnMobile = true }) {
-  const layout = createTag('div', { class: `${prefix}-layout` });
+export function createSidebarLayout({
+  ui,
+  prefix = 'sf',
+  placeholders = {},
+  collapsibleOnMobile = true,
+  cardColumns = true, // false: don't apply the 3-per-row card grid (blocks with their own results layout)
+}) {
+  const layout = createTag('div', {
+    class: `${prefix}-layout${cardColumns ? ` ${prefix}-layout-cards` : ''}`,
+  });
   const aside = createTag('aside', { class: `${prefix}-filters-column` });
   const panelId = `${prefix}-filters-panel-${crypto.randomUUID()}`;
   const panel = createTag('div', { class: `${prefix}-filters-panel`, id: panelId });
@@ -403,7 +424,146 @@ export function createSidebarLayout({ ui, prefix = 'sf', placeholders = {}, coll
 
   aside.append(panel);
   const results = createTag('section', { class: `${prefix}-results-column` });
-  results.append(...[ui.keywordEl, ui.activeEl, ui.countEl].filter(Boolean));
+  // toolbar: results count on the left, `controls` (sort, view switcher, ...) on the right
+  const toolbar = createTag('div', { class: `${prefix}-toolbar` });
+  const controls = createTag('div', { class: `${prefix}-toolbar-controls` });
+  toolbar.append(ui.countEl, controls);
+  results.append(...[ui.keywordEl, ui.activeEl, toolbar].filter(Boolean));
   layout.append(aside, results);
-  return { layout, results };
+  return { layout, results, toolbar, controls };
+}
+
+/* ------------------------------------------------------------------ */
+/* Sort                                                                */
+/* ------------------------------------------------------------------ */
+
+/** Standard client-side sort options. '' (the default) keeps the source order. */
+export function getDefaultSortOptions(placeholders = {}) {
+  return [
+    { value: '', label: placeholders.sortDefaultLabel || 'Default' },
+    { value: 'title-asc', label: placeholders.sortTitleAscLabel || 'Title (A-Z)' },
+    { value: 'title-desc', label: placeholders.sortTitleDescLabel || 'Title (Z-A)' },
+  ];
+}
+
+/** Returns a sorted copy for 'title-asc' / 'title-desc'; any other value keeps the source order. */
+export function sortItems(items, sort, getTitle = (item) => item.title) {
+  if (sort !== 'title-asc' && sort !== 'title-desc') return items;
+  const direction = sort === 'title-asc' ? 1 : -1;
+  const locale = document.documentElement.lang || 'en';
+  return [...items].sort(
+    (a, b) =>
+      direction * String(getTitle(a) || '').localeCompare(String(getTitle(b) || ''), locale, { sensitivity: 'base' }),
+  );
+}
+
+/**
+ * "Sort: <current> v" dropdown. Options are [{ value, label }].
+ * onChange(value) fires only on a user selection.
+ */
+export function createSortControl({ prefix = 'sf', label = 'Sort:', onChange = () => {} } = {}) {
+  const c = (name) => `${prefix}-${name}`;
+  let options = [];
+  let selected = '';
+  let abortOpen = null;
+
+  const el = createTag('div', { class: c('sort') });
+  const btn = createTag('button', {
+    class: c('sort-btn'),
+    type: 'button',
+    'aria-haspopup': 'true',
+    'aria-expanded': 'false',
+  });
+  btn.innerHTML = `
+    <span class="${c('sort-btn-prefix')}">${label}</span>
+    <span class="${c('sort-btn-value')}"></span>
+    <span class="icon icon-chevron ${c('sort-chevron')}" aria-hidden="true"></span>`;
+  const menu = createTag('div', { class: c('sort-menu'), hidden: '' });
+  el.append(btn, menu);
+  decorateIcons(btn);
+  const valueEl = btn.querySelector(`.${c('sort-btn-value')}`);
+
+  const close = () => {
+    abortOpen?.abort();
+    abortOpen = null;
+    menu.hidden = true;
+    menu.classList.remove('show'); // stylesheets show the menu via .show
+    btn.setAttribute('aria-expanded', 'false');
+  };
+
+  const open = () => {
+    menu.hidden = false;
+    menu.classList.add('show');
+    btn.setAttribute('aria-expanded', 'true');
+    abortOpen = new AbortController();
+    const { signal } = abortOpen;
+    document.addEventListener(
+      'click',
+      (e) => {
+        if (!el.contains(e.target)) close();
+      },
+      { signal },
+    );
+    document.addEventListener(
+      'keydown',
+      (e) => {
+        if (e.key !== 'Escape') return;
+        close();
+        btn.focus();
+      },
+      { signal },
+    );
+  };
+
+  btn.addEventListener('click', () => (menu.hidden ? open() : close()));
+
+  const render = () => {
+    menu.replaceChildren(
+      ...options.map((option) => {
+        const item = createTag('button', { class: c('sort-option'), type: 'button', 'data-value': option.value });
+        item.textContent = option.label;
+        if (option.value === selected) item.setAttribute('aria-current', 'true');
+        item.addEventListener('click', () => {
+          const changed = option.value !== selected;
+          selected = option.value;
+          render();
+          close();
+          btn.focus();
+          if (changed) onChange(option.value);
+        });
+        return item;
+      }),
+    );
+    valueEl.textContent = options.find((option) => option.value === selected)?.label ?? '';
+  };
+
+  return {
+    el,
+    setOptions(nextOptions, nextSelected) {
+      options = nextOptions;
+      if (nextSelected !== undefined) selected = nextSelected;
+      render();
+    },
+    /** Programmatic selection (URL restore, clear); does not call onChange. */
+    setSelected(value) {
+      if (value === selected) return;
+      selected = value;
+      render();
+    },
+    setHidden(hidden) {
+      el.hidden = hidden;
+      if (hidden) close();
+    },
+    get value() {
+      return selected;
+    },
+  };
+}
+
+/** Sort control bound to store.sort (client-side sorting blocks: courses, playlists). */
+export function createStoreSort({ store, ui, options, label }) {
+  const sort = createSortControl({ label, onChange: (value) => store.setSort(value) });
+  sort.setOptions(options, store.get().sort);
+  ui.onRefresh(() => sort.setSelected(store.get().sort)); // URL restore / Clear filters
+  return sort;
 }

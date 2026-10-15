@@ -17,6 +17,9 @@ import {
   readFiltersFromUrl,
   readKeywordFromUrl,
   bindFiltersToUrl,
+  createStoreSort,
+  getDefaultSortOptions,
+  sortItems,
 } from '../../scripts/search-filter/search-filter.js';
 
 const EXPERIENCE_LEVEL_PLACEHOLDERS = [
@@ -193,7 +196,7 @@ const updateCards = (block, filters) => {
     // a newer filter change has started; ignore this stale render
     if (currentRender !== renderId) return;
 
-    const filteredPlaylists = filterPlaylists(playlists.data, filters);
+    const filteredPlaylists = sortItems(filterPlaylists(playlists.data, filters), filters.sort);
     onResultCount(filteredPlaylists.length);
 
     // Show message if no playlists match
@@ -275,11 +278,14 @@ export default async function decorate(block) {
     { id: 'level', name: placeholders.filterExperienceLevelLabel || 'Experience Level' },
   ];
 
+  const sortOptions = getDefaultSortOptions(placeholders);
+  const urlSort = readKeywordFromUrl('sort', xssSanitizeQueryParamValue);
   const store = createFilterStore({
     groupIds: GROUP_IDS,
     initial: {
       ...readFiltersFromUrl(GROUP_IDS, { format: 'repeat', sanitize: xssSanitizeQueryParamValue }),
       keyword: readKeywordFromUrl('q', xssSanitizeQueryParamValue),
+      sort: sortOptions.some((option) => option.value === urlSort) ? urlSort : '',
     },
   });
   const ui = createSearchFilterUI({
@@ -293,17 +299,23 @@ export default async function decorate(block) {
     },
     withKeyword: true,
   });
-  bindFiltersToUrl(store, GROUP_IDS, { format: 'repeat', keywordParam: 'q' });
+  bindFiltersToUrl(store, GROUP_IDS, { format: 'repeat', keywordParam: 'q', sortParam: 'sort' });
 
   block.textContent = '';
-  const { layout, results } = createSidebarLayout({ ui, placeholders: { filtersLabel: placeholders.filterLabel } });
+  const { layout, results, controls } = createSidebarLayout({
+    ui,
+    placeholders: { filtersLabel: placeholders.filterLabel },
+  });
+  // sort is always visible
+  const sort = createStoreSort({ store, ui, options: sortOptions, label: placeholders.sortLabel || 'Sort:' });
+  controls.append(sort.el);
   results.append(cards);
   block.append(layout);
 
   // load options for each group from playlists.json
   await Promise.all(
-    filterOptions.map(async ({ filterName, sort, optionPlaceholders }) => {
-      const values = (await getAllPossibleFilterValues(filterName)).sort(sort);
+    filterOptions.map(async ({ filterName, sort: sortFn, optionPlaceholders }) => {
+      const values = (await getAllPossibleFilterValues(filterName)).sort(sortFn);
       ui.setGroupItems(
         filterName,
         values.map((value) => {
@@ -326,8 +338,8 @@ export default async function decorate(block) {
         : placeholders.playlistResultsCountSuffix || 'playlists',
     );
 
-  store.subscribe(({ filters, keyword }) => updateCards(block, { ...filters, keyword }));
+  store.subscribe(({ filters, keyword, sort: sortBy }) => updateCards(block, { ...filters, keyword, sort: sortBy }));
   const initial = store.get();
   ui.refresh(); // shows a keyword restored from the URL in the input
-  updateCards(block, { ...initial.filters, keyword: initial.keyword });
+  updateCards(block, { ...initial.filters, keyword: initial.keyword, sort: initial.sort });
 }
