@@ -86,6 +86,25 @@ test('prepareWorktree installs deps, tolerates skills failure, and git-excludes 
   assert.equal(await git(workDir, 'status', '--porcelain'), '');
 });
 
+test('prepareWorktree reverts tracked files modified by setup tools', async () => {
+  const remote = await makeRemote();
+  const root = await tempDir();
+  const mirrorDir = path.join(root, 'mirror.git');
+  const workDir = path.join(root, 'work', 'run-1');
+  await ensureMirror({ mirrorDir, remoteUrl: remote.bare });
+  await createWorktree({ mirrorDir, workDir, branch: 'exlm-3', baseBranch: 'main' });
+
+  const run = async (cmd, args, opts) => {
+    if (cmd === 'git') return runCommand(cmd, args, opts);
+    if (cmd === 'npx') await fs.writeFile(path.join(workDir, 'README.md'), '# rewritten by skills install\n');
+    return { code: 0, stdout: '', stderr: '', timedOut: false };
+  };
+  await prepareWorktree({ workDir, log: silentLog(), run });
+
+  assert.equal(await git(workDir, 'status', '--porcelain'), '');
+  assert.equal(await fs.readFile(path.join(workDir, 'README.md'), 'utf8'), '# test\n');
+});
+
 test('prepareWorktree fails the workspace stage when npm ci fails', async () => {
   const workDir = await tempDir();
   const run = async () => ({ code: 1, stdout: '', stderr: 'npm ERR!', timedOut: false });

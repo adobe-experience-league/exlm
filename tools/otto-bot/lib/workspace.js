@@ -85,6 +85,9 @@ export async function prepareWorktree({ workDir, log, run = runCommand }) {
   if (skills.code !== 0)
     log.warn('skills install failed; continuing without repo skills', { stderr: skills.stderr.slice(-1000) });
 
+  // Setup tools (e.g. skills install rewriting skills-lock.json) must not leak into the ticket's diff.
+  await mustGit(run, ['checkout', '--', '.'], { cwd: workDir });
+
   const commonDir = path.resolve(workDir, await mustGit(run, ['rev-parse', '--git-common-dir'], { cwd: workDir }));
   const excludePath = path.join(commonDir, 'info', 'exclude');
   await fs.mkdir(path.dirname(excludePath), { recursive: true });
