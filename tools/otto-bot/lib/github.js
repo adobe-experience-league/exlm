@@ -47,6 +47,11 @@ export function createGithubClient({
     return { data: text ? JSON.parse(text) : null, headers: res.headers };
   }
 
+  async function graphql(query, variables) {
+    const { data } = await request('POST', '/graphql', { query, variables });
+    return data;
+  }
+
   return {
     async getRepo() {
       const { data, headers } = await request('GET', repoPath);
@@ -84,11 +89,28 @@ export function createGithubClient({
     async commentOnPr(number, body) {
       await request('POST', `${repoPath}/issues/${number}/comments`, { body: redactString(body) });
     },
+
+    async convertPullRequestToDraft(pr) {
+      if (!pr.node_id)
+        throw new StageError('pr', `Cannot convert PR #${pr.number} to draft because node_id is missing`);
+      await graphql(
+        `
+          mutation ConvertPullRequestToDraft($pullRequestId: ID!) {
+            convertPullRequestToDraft(input: { pullRequestId: $pullRequestId }) {
+              pullRequest {
+                isDraft
+              }
+            }
+          }
+        `,
+        { pullRequestId: pr.node_id },
+      );
+    },
   };
 }
 
-export function buildCommitMessage({ ticket, result }) {
-  return `${ticket.key}: ${ticket.summary}\n\n${result.summary}\n\n${COAUTHOR_TRAILER}\n`;
+export function buildCommitMessage({ ticket, result, redact = (value) => String(value ?? '') }) {
+  return `${ticket.key}: ${redact(ticket.summary)}\n\n${redact(result.summary)}\n\n${COAUTHOR_TRAILER}\n`;
 }
 
 export async function commitAndPush({
@@ -106,7 +128,6 @@ export async function commitAndPush({
     return res.stdout.trim();
   };
 
-  await step('add', ['add', '-A']);
   const identity = ['-c', `user.name=${gitName}`, '-c', `user.email=${gitEmail}`];
   await step('commit', [...identity, 'commit', '--no-verify', '-F', '-'], message);
   await step('push', ['push', '--force', 'origin', `HEAD:refs/heads/${branch}`]);

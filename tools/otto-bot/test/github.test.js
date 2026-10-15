@@ -13,7 +13,7 @@ import {
   toTestPath,
 } from '../lib/github.js';
 import { createWorktree, ensureMirror } from '../lib/workspace.js';
-import { fakeFetch, gitBare, jsonResponse, makeRemote, tempDir } from './helpers.js';
+import { fakeFetch, git, gitBare, jsonResponse, makeRemote, tempDir } from './helpers.js';
 
 const ticket = { key: 'EXLM-1234', summary: 'Fix tabs focus' };
 const result = {
@@ -51,6 +51,30 @@ test('createDraftPr always opens a draft', async () => {
   await gh.createDraftPr({ title: 't', body: 'b', head: 'exlm-1', base: 'main' });
   assert.equal(fetch.calls[0].method, 'POST');
   assert.deepEqual(fetch.calls[0].body, { title: 't', body: 'b', head: 'exlm-1', base: 'main', draft: true });
+});
+
+test('convertPullRequestToDraft uses the PR node id', async () => {
+  const fetch = fakeFetch(() =>
+    jsonResponse({ data: { convertPullRequestToDraft: { pullRequest: { isDraft: true } } } }),
+  );
+  const gh = createGithubClient({ owner: 'o', repo: 'r', token: 't', fetchImpl: fetch.impl });
+  await gh.convertPullRequestToDraft({ number: 8, node_id: 'PR_node' });
+  assert.equal(fetch.calls[0].method, 'POST');
+  assert.equal(new URL(fetch.calls[0].url).pathname, '/graphql');
+  assert.deepEqual(fetch.calls[0].body.variables, { pullRequestId: 'PR_node' });
+});
+
+test('convertPullRequestToDraft refuses PRs without a node id', async () => {
+  const gh = createGithubClient({
+    owner: 'o',
+    repo: 'r',
+    token: 't',
+    fetchImpl: fakeFetch(() => jsonResponse(null)).impl,
+  });
+  await assert.rejects(
+    gh.convertPullRequestToDraft({ number: 8 }),
+    (err) => err.stage === 'pr' && /node_id/.test(err.message),
+  );
 });
 
 test('createDraftPr and comments redact GitHub-bound strings', async () => {
@@ -137,6 +161,16 @@ test('buildCommitMessage includes the ticket, summary, and Copilot trailer', () 
   assert.ok(msg.trimEnd().endsWith(COAUTHOR_TRAILER));
 });
 
+test('buildCommitMessage redacts ticket and result text', () => {
+  const msg = buildCommitMessage({
+    ticket: { key: 'EXLM-1234', summary: 'Fix SECRET-XYZ' },
+    result: { summary: 'Changed SECRET-XYZ' },
+    redact: (value) => String(value).replaceAll('SECRET-XYZ', '[REDACTED]'),
+  });
+  assert.equal(msg.includes('SECRET-XYZ'), false);
+  assert.ok(msg.includes('[REDACTED]'));
+});
+
 test('commitAndPush commits as the identity and force-pushes the branch', async () => {
   const remote = await makeRemote();
   const root = await tempDir();
@@ -145,6 +179,7 @@ test('commitAndPush commits as the identity and force-pushes the branch', async 
   await ensureMirror({ mirrorDir, remoteUrl: remote.bare });
   await createWorktree({ mirrorDir, workDir, branch: 'exlm-1234', baseBranch: 'main' });
   await fs.writeFile(path.join(workDir, 'fix.js'), 'export default 1;\n');
+  await git(workDir, 'add', '-A');
 
   const sha = await commitAndPush({
     workDir,

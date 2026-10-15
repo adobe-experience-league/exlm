@@ -29,6 +29,7 @@ import {
 } from './workspace.js';
 
 const MINUTE_MS = 60 * 1000;
+const DRY_RUN_MARKER = '.otto-dry-run-retained';
 
 export const DEFAULT_STEPS = Object.freeze({
   writeAskpass,
@@ -61,10 +62,18 @@ async function readResult(workDir) {
   }
 }
 
+function assertRunnableResult(result) {
+  if (result.status === 'blocked') {
+    throw new StageError('blocked', result.summary, result.openQuestions.join('\n'));
+  }
+  return result;
+}
+
 export async function runTicket({ ticket, identity, config, runId, log, secrets, dryRun = false, deps = {} }) {
   const steps = { ...DEFAULT_STEPS, ...deps.steps };
   const paths = runPaths(config.dataDir, runId);
   const { workDir, runDir } = paths;
+  const redact = createRedactor(secrets);
   const branch = branchName(ticket.key);
   const baseRef = `origin/${config.baseBranch}`;
   const remoteUrl = `https://github.com/${config.githubOwner}/${config.githubRepo}.git`;
@@ -85,6 +94,7 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
       token: identity.creds.copilotPat,
       runDir,
       sessionName: `session-${session}`,
+      redact,
     });
   };
 
@@ -117,10 +127,7 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
     );
 
     await copilot(INITIAL_PROMPT, config.copilotTimeoutMinutes);
-    let result = await readResult(workDir);
-    if (result.status === 'blocked') {
-      throw new StageError('blocked', result.summary, result.openQuestions.join('\n'));
-    }
+    let result = assertRunnableResult(await readResult(workDir));
     await guard();
 
     const quality = await qualityLoop({
@@ -136,17 +143,20 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
       guard,
       maxRepairs: config.maxRepairs,
     });
-    result = await readResult(workDir).catch(() => result);
+    result = assertRunnableResult(await readResult(workDir));
+    await guard();
 
-    const title = buildPrTitle({ ticket, qualityOk: quality.ok });
-    const body = buildPrBody({
-      ticket,
-      jiraUrl: issueUrl(config.jiraBaseUrl, ticket.key),
-      result,
-      quality,
-      identity,
-      runId,
-    });
+    const title = redact(buildPrTitle({ ticket, qualityOk: quality.ok }));
+    const body = redact(
+      buildPrBody({
+        ticket,
+        jiraUrl: issueUrl(config.jiraBaseUrl, ticket.key),
+        result,
+        quality,
+        identity,
+        runId,
+      }),
+    );
     const outcome = { dryRun, branch, workDir, result, quality, title, body };
     if (dryRun) return outcome;
 
@@ -155,7 +165,7 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
       sha = await steps.commitAndPush({
         workDir,
         branch,
-        message: buildCommitMessage({ ticket, result }),
+        message: buildCommitMessage({ ticket, result, redact }),
         gitName: identity.creds.gitName,
         gitEmail: identity.creds.gitEmail,
         env: gitEnv,
@@ -174,6 +184,7 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
       });
       const existing = await gh.findOpenPr(branch);
       if (existing) {
+        if (existing.draft === false) await gh.convertPullRequestToDraft(existing);
         await gh.updatePr(existing.number, { title, body });
         await gh.commentOnPr(existing.number, `🤖 otto-bot pushed \`${sha}\` from run \`${runId}\`.`);
         return { ...outcome, sha, prUrl: existing.html_url, prNumber: existing.number, reusedPr: true };
@@ -184,6 +195,11 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
       throw new StageError('pr', err.message);
     }
   } finally {
+    if (worktreeCreated && dryRun) {
+      await fs
+        .writeFile(path.join(workDir, DRY_RUN_MARKER), new Date().toISOString())
+        .catch((err) => log.warn('could not mark retained dry-run worktree', { error: err.message }));
+    }
     if (worktreeCreated && !dryRun) {
       await steps
         .removeWorktree({ mirrorDir: paths.mirrorDir, workDir })

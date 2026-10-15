@@ -29,6 +29,7 @@ const goodResult = { status: 'done', summary: 'Made first tab focusable.', testU
 function fakeSteps({
   result = goodResult,
   diff,
+  diffs = null,
   quality = [true],
   existingPr = null,
   writeResult = true,
@@ -37,6 +38,7 @@ function fakeSteps({
   const calls = [];
   const githubClientArgs = [];
   const qualityQueue = [...quality];
+  const diffQueue = diffs ? [...diffs] : null;
   const steps = {
     writeAskpass: async (dir) => {
       if (writeAskpassError) throw writeAskpassError;
@@ -58,7 +60,7 @@ function fakeSteps({
     },
     collectDiff: async () => {
       calls.push(['collectDiff']);
-      return diff || { changedFiles: ['blocks/tabs/tabs.js'], addedLines: ["tabindex: '0',"] };
+      return diffQueue?.shift() || diff || { changedFiles: ['blocks/tabs/tabs.js'], addedLines: ["tabindex: '0',"] };
     },
     runQuality: async () => {
       const ok = qualityQueue.length > 1 ? qualityQueue.shift() : qualityQueue[0];
@@ -82,6 +84,7 @@ function fakeSteps({
           return { ...existingPr, ...prArgs };
         },
         commentOnPr: async (number, body) => calls.push(['commentOnPr', number, body]),
+        convertPullRequestToDraft: async (pr) => calls.push(['convertPullRequestToDraft', pr]),
       };
     },
   };
@@ -110,6 +113,41 @@ test('previewUrl builds the EDS branch preview URL', () => {
   );
 });
 
+test('blocked or invalid repair results fail instead of publishing stale success', async () => {
+  const blocked = fakeSteps({ quality: [false, true] });
+  let copilotRuns = 0;
+  blocked.steps.runCopilot = async (args) => {
+    blocked.calls.push(['runCopilot', args]);
+    copilotRuns += 1;
+    const result =
+      copilotRuns === 1 ? goodResult : { status: 'blocked', summary: 'Need info', openQuestions: ['What?'] };
+    await fs.writeFile(path.join(args.workDir, RESULT_FILE), JSON.stringify(result));
+  };
+  await assert.rejects(run(blocked), (err) => err.stage === 'blocked' && /What\?/.test(err.details));
+  assert.ok(!blocked.names().includes('commitAndPush'));
+
+  const invalid = fakeSteps({ quality: [false, true] });
+  copilotRuns = 0;
+  invalid.steps.runCopilot = async (args) => {
+    invalid.calls.push(['runCopilot', args]);
+    copilotRuns += 1;
+    await fs.writeFile(path.join(args.workDir, RESULT_FILE), copilotRuns === 1 ? JSON.stringify(goodResult) : '{nope');
+  };
+  await assert.rejects(run(invalid), (err) => err.stage === 'copilot' && /valid JSON/.test(err.message));
+  assert.ok(!invalid.names().includes('commitAndPush'));
+});
+
+test('final staged diff is guarded after quality and committed without restaging', async () => {
+  const fake = fakeSteps({
+    diffs: [
+      { changedFiles: ['blocks/tabs/tabs.js'], addedLines: ['safe();'] },
+      { changedFiles: ['fstab.yaml'], addedLines: ['mount: changed'] },
+    ],
+  });
+  await assert.rejects(run(fake), (err) => err.stage === 'guardrails' && /fstab\.yaml/.test(err.details));
+  assert.ok(!fake.names().includes('commitAndPush'));
+});
+
 test('happy path writes the task, runs Copilot once, pushes, and opens a draft PR', async () => {
   const fake = fakeSteps();
   const out = await run(fake);
@@ -123,6 +161,7 @@ test('happy path writes the task, runs Copilot once, pushes, and opens a draft P
     'runCopilot',
     'collectDiff',
     'runQuality',
+    'collectDiff',
     'commitAndPush',
     'createDraftPr',
     'removeWorktree',
@@ -133,6 +172,7 @@ test('happy path writes the task, runs Copilot once, pushes, and opens a draft P
   assert.equal(copilot.token, 'github_pat_copilot');
   assert.equal(copilot.timeoutMs, 40 * 60 * 1000);
   assert.ok(copilot.copilotHome.endsWith(path.join('copilot-homes', 'user-jdoe')));
+  assert.equal(copilot.redact('token gh-push-123456'), 'token [REDACTED]');
   const task = await fs.readFile(path.join(out.workDir, TASK_FILE), 'utf8');
   assert.ok(task.includes('EXLM-1234: Fix tabs focus'));
   const push = fake.calls.find(([n]) => n === 'commitAndPush')[1];
@@ -179,6 +219,16 @@ test('reuses an existing open PR and comments on it', async () => {
   const comment = fake.calls.find(([n]) => n === 'commentOnPr');
   assert.equal(comment[1], 5);
   assert.ok(comment[2].includes('run-1'));
+});
+
+test('converts a reused ready PR back to draft before updating it', async () => {
+  const existingPr = { number: 5, node_id: 'PR_node', draft: false, html_url: 'https://github.com/o/r/pull/5' };
+  const fake = fakeSteps({ existingPr });
+  const out = await run(fake);
+  assert.equal(out.reusedPr, true);
+  const names = fake.names();
+  assert.ok(names.indexOf('convertPullRequestToDraft') < names.indexOf('updatePr'));
+  assert.equal(fake.calls.find(([n]) => n === 'convertPullRequestToDraft')[1], existingPr);
 });
 
 test('blocked result fails with stage blocked and still removes the worktree', async () => {

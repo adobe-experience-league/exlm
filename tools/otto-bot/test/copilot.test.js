@@ -74,6 +74,43 @@ test('runCopilot runs in the worktree, records output, and isolates COPILOT_HOME
   assert.equal(log.includes('github_pat_'), false);
 });
 
+test('runCopilot redacts Copilot log-dir and share artifacts in place', async () => {
+  const root = await tempDir();
+  const runDir = path.join(root, 'run');
+  const logDir = path.join(runDir, 'copilot');
+  const shareFile = path.join(runDir, 'session-1.md');
+  await fs.mkdir(logDir, { recursive: true });
+  const run = async () => {
+    await fs.writeFile(
+      path.join(logDir, 'transcript.log'),
+      'artifact has shared-secret and github_pat_ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    );
+    await fs.writeFile(shareFile, 'share has shared-secret');
+    return { code: 0, signal: null, timedOut: false, stdout: 'ok', stderr: '' };
+  };
+
+  await runCopilot({
+    copilotBin: 'copilot',
+    workDir: '/work',
+    prompt: 'p',
+    model: 'auto',
+    timeoutMs: 1000,
+    copilotHome: path.join(root, 'home'),
+    token: 'copilot-secret-value',
+    runDir,
+    sessionName: 'session-1',
+    run,
+    redact: (value) =>
+      String(value)
+        .replaceAll('shared-secret', '[REDACTED]')
+        .replace(/github_pat_[A-Z]+/g, '[REDACTED]'),
+  });
+
+  assert.equal((await fs.readFile(path.join(logDir, 'transcript.log'), 'utf8')).includes('shared-secret'), false);
+  assert.equal((await fs.readFile(path.join(logDir, 'transcript.log'), 'utf8')).includes('github_pat_'), false);
+  assert.equal((await fs.readFile(shareFile, 'utf8')).includes('shared-secret'), false);
+});
+
 test('runCopilot throws a copilot StageError on timeout and on failure', async () => {
   const root = await tempDir();
   const base = {
