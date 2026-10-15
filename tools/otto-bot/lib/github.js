@@ -1,5 +1,6 @@
 import { StageError } from './errors.js';
 import { runCommand } from './exec.js';
+import { createRedactor } from './redact.js';
 import { trimOutput } from './task.js';
 
 export const COAUTHOR_TRAILER = 'Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>';
@@ -14,8 +15,16 @@ export class GithubError extends Error {
   }
 }
 
-export function createGithubClient({ owner, repo, token, fetchImpl = fetch, apiBase = 'https://api.github.com' }) {
+export function createGithubClient({
+  owner,
+  repo,
+  token,
+  fetchImpl = fetch,
+  apiBase = 'https://api.github.com',
+  redact = createRedactor([token]),
+}) {
   const repoPath = `/repos/${owner}/${repo}`;
+  const redactString = (value) => (typeof value === 'string' ? redact(value) : value);
 
   async function request(method, pathname, body) {
     const res = await fetchImpl(`${apiBase}${pathname}`, {
@@ -54,17 +63,26 @@ export function createGithubClient({ owner, repo, token, fetchImpl = fetch, apiB
     },
 
     async createDraftPr({ title, body, head, base }) {
-      const { data } = await request('POST', `${repoPath}/pulls`, { title, body, head, base, draft: true });
+      const { data } = await request('POST', `${repoPath}/pulls`, {
+        title: redactString(title),
+        body: redactString(body),
+        head,
+        base,
+        draft: true,
+      });
       return data;
     },
 
     async updatePr(number, { title, body }) {
-      const { data } = await request('PATCH', `${repoPath}/pulls/${number}`, { title, body });
+      const { data } = await request('PATCH', `${repoPath}/pulls/${number}`, {
+        title: redactString(title),
+        body: redactString(body),
+      });
       return data;
     },
 
     async commentOnPr(number, body) {
-      await request('POST', `${repoPath}/issues/${number}/comments`, { body });
+      await request('POST', `${repoPath}/issues/${number}/comments`, { body: redactString(body) });
     },
   };
 }

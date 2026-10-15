@@ -53,6 +53,36 @@ test('createDraftPr always opens a draft', async () => {
   assert.deepEqual(fetch.calls[0].body, { title: 't', body: 'b', head: 'exlm-1', base: 'main', draft: true });
 });
 
+test('createDraftPr and comments redact GitHub-bound strings', async () => {
+  const fetch = fakeFetch(() => jsonResponse({ number: 8, html_url: 'u' }, 201));
+  const redact = (value) => String(value).replaceAll('SECRET-XYZ', '[redacted]');
+  const gh = createGithubClient({ owner: 'o', repo: 'r', token: 't', fetchImpl: fetch.impl, redact });
+  await gh.createDraftPr({
+    title: 'Fix SECRET-XYZ leak',
+    body: 'Body SECRET-XYZ leak',
+    head: 'exlm-1',
+    base: 'main',
+  });
+  await gh.commentOnPr(8, 'Comment SECRET-XYZ leak');
+
+  assert.equal(fetch.calls[0].body.title.includes('SECRET-XYZ'), false);
+  assert.equal(fetch.calls[0].body.title.includes('[redacted]'), true);
+  assert.equal(fetch.calls[0].body.body.includes('SECRET-XYZ'), false);
+  assert.equal(fetch.calls[0].body.body.includes('[redacted]'), true);
+  assert.equal(fetch.calls[1].body.body.includes('SECRET-XYZ'), false);
+  assert.equal(fetch.calls[1].body.body.includes('[redacted]'), true);
+});
+
+test('default GitHub redactor strips the client token from PR bodies', async () => {
+  const fetch = fakeFetch(() => jsonResponse({ number: 8, html_url: 'u' }, 201));
+  const token = 'ghp_abcdefghijklmnopqrstuvwxyz';
+  const gh = createGithubClient({ owner: 'o', repo: 'r', token, fetchImpl: fetch.impl });
+  await gh.createDraftPr({ title: 't', body: `Token: ${token}`, head: 'exlm-1', base: 'main' });
+
+  assert.equal(fetch.calls[0].body.body.includes(token), false);
+  assert.equal(fetch.calls[0].body.body.includes('[REDACTED]'), true);
+});
+
 test('GitHub HTTP errors throw GithubError with the status', async () => {
   const fetch = fakeFetch(() => new Response('{"message":"Validation Failed"}', { status: 422 }));
   const gh = createGithubClient({ owner: 'o', repo: 'r', token: 't', fetchImpl: fetch.impl });
