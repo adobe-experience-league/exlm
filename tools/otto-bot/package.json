@@ -1,0 +1,15 @@
+{
+  "name": "otto-bot",
+  "private": true,
+  "type": "module",
+  "description": "Jira label -> GitHub Copilot CLI -> draft PR worker for exlm",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "otto": "bin/otto.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}

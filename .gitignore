@@ -47,3 +47,7 @@ skills/
 .windsurf/
 .zencoder/
 plans/
+
+# otto-bot local secrets (never commit)
+tools/otto-bot/.secrets
+tools/otto-bot/*.local.json
