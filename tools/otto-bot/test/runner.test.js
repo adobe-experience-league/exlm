@@ -227,7 +227,8 @@ test('converts a reused ready PR back to draft before updating it', async () => 
   const out = await run(fake);
   assert.equal(out.reusedPr, true);
   const names = fake.names();
-  assert.ok(names.indexOf('convertPullRequestToDraft') < names.indexOf('updatePr'));
+  assert.ok(names.indexOf('convertPullRequestToDraft') < names.indexOf('commitAndPush'));
+  assert.ok(names.indexOf('commitAndPush') < names.indexOf('updatePr'));
   assert.equal(fake.calls.find(([n]) => n === 'convertPullRequestToDraft')[1], existingPr);
 });
 
@@ -245,7 +246,7 @@ test('does not update or comment on a reused PR when draft conversion fails', as
   });
 
   await assert.rejects(run(fake), (err) => err.stage === 'pr' && /GraphQL/.test(err.message));
-  assert.ok(fake.names().includes('commitAndPush'));
+  assert.ok(!fake.names().includes('commitAndPush'));
   assert.ok(!fake.names().includes('updatePr'));
   assert.ok(!fake.names().includes('commentOnPr'));
 });

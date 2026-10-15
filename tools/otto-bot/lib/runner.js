@@ -160,6 +160,21 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
     const outcome = { dryRun, branch, workDir, result, quality, title, body };
     if (dryRun) return outcome;
 
+    let gh;
+    let existing;
+    try {
+      gh = steps.createGithubClient({
+        owner: config.githubOwner,
+        repo: config.githubRepo,
+        token: identity.creds.githubPat,
+        redact: createRedactor(secrets),
+      });
+      existing = await gh.findOpenPr(branch);
+      if (existing?.draft === false) await gh.convertPullRequestToDraft(existing);
+    } catch (err) {
+      throw new StageError('pr', err.message);
+    }
+
     let sha;
     try {
       sha = await steps.commitAndPush({
@@ -176,15 +191,7 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
     log.info('pushed branch', { branch, sha });
 
     try {
-      const gh = steps.createGithubClient({
-        owner: config.githubOwner,
-        repo: config.githubRepo,
-        token: identity.creds.githubPat,
-        redact: createRedactor(secrets),
-      });
-      const existing = await gh.findOpenPr(branch);
       if (existing) {
-        if (existing.draft === false) await gh.convertPullRequestToDraft(existing);
         await gh.updatePr(existing.number, { title, body });
         await gh.commentOnPr(existing.number, `🤖 otto-bot pushed \`${sha}\` from run \`${runId}\`.`);
         return { ...outcome, sha, prUrl: existing.html_url, prNumber: existing.number, reusedPr: true };
