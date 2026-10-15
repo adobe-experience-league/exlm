@@ -77,6 +77,16 @@ test('saveUsers writes users.json with mode 0600 and readUsersFile reads it back
   assert.equal((await readUsersFile(usersPath)).master.jiraUser, 'otto-master');
 });
 
+test('saveUsers tightens an existing parent directory to mode 0700', async () => {
+  const dir = path.join(await tempDir(), 'existing');
+  await fs.mkdir(dir, { mode: 0o755 });
+  await fs.chmod(dir, 0o755);
+  await saveUsers(path.join(dir, 'users.json'), usersFixture());
+  const stat = await fs.stat(dir);
+  // eslint-disable-next-line no-bitwise
+  assert.equal(stat.mode & 0o777, 0o700);
+});
+
 test('resolveIdentity uses the onboarded assignee', () => {
   const id = resolveIdentity(usersFixture(), 'jdoe');
   assert.equal(id.name, 'jdoe');

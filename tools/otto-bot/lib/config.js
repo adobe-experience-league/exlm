@@ -76,6 +76,7 @@ export async function readUsersFile(usersPath) {
 
 export async function saveUsers(usersPath, users) {
   await fs.mkdir(path.dirname(usersPath), { recursive: true, mode: 0o700 });
+  await fs.chmod(path.dirname(usersPath), 0o700);
   const tmp = `${usersPath}.tmp`;
   await fs.writeFile(tmp, `${JSON.stringify(users, null, 2)}\n`, { mode: 0o600 });
   await fs.chmod(tmp, 0o600);
