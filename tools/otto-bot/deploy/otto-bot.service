@@ -6,7 +6,6 @@ Wants=network-online.target
 [Service]
 Type=oneshot
 User=otto
-Group=otto
 WorkingDirectory=/home/otto/exlm-otto/tools/otto-bot
 Environment=PATH=/home/otto/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 Environment=HOME=/home/otto
