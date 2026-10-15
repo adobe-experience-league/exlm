@@ -45,12 +45,16 @@ const outcome = {
   result: { summary: 'Made the first tab focusable.', openQuestions: ['Copy OK?'] },
 };
 
-function fakeJira({ found = null, claimError = null } = {}) {
+function fakeJira({ found = null, claimError = null, issueLabels = [LABELS.working] } = {}) {
   const calls = [];
   const createJiraClient = ({ token }) => ({
     searchOne: async (jql) => {
       calls.push({ token, op: 'search', jql });
       return found;
+    },
+    getIssue: async (key) => {
+      calls.push({ token, op: 'getIssue', key });
+      return { key, fields: { labels: issueLabels } };
     },
     updateLabels: async (key, change) => {
       calls.push({ token, op: 'labels', key, change });
@@ -222,7 +226,12 @@ test('a network error during claim leaves the ticket for the next tick', async (
     /fetch failed/,
   );
   assert.equal(jira.calls.length, 1);
-  assert.equal(await readCurrentRun(stateDir), null);
+  assert.deepEqual(await readCurrentRun(stateDir), {
+    key: 'EXLM-1234',
+    runId: '20261014-140509-exlm-1234',
+    identity: 'jdoe',
+    startedAt: NOW.toISOString(),
+  });
 });
 
 test('recover marks an interrupted run failed using master', async () => {
@@ -250,6 +259,28 @@ test('recover marks an interrupted run failed using master', async () => {
   assert.ok(!jira.comments()[0].body.includes('master-jira-pat'));
   assert.equal(await readCurrentRun(stateDir), null);
   assert.equal((await readHistory(stateDir))[0].stage, 'interrupted');
+});
+
+test('recover clears state without failing Jira when the claim did not happen', async () => {
+  const { config, stateDir } = await setup();
+  const jira = fakeJira({ issueLabels: [LABELS.trigger] });
+  await writeCurrentRun(stateDir, { key: 'EXLM-1234', runId: 'r1', identity: 'jdoe' });
+  assert.equal(
+    await recover({ config, users, log: silentLog(), deps: { createJiraClient: jira.createJiraClient } }),
+    false,
+  );
+  assert.equal(jira.labels().length, 0);
+  assert.equal(await readCurrentRun(stateDir), null);
+});
+
+test('recover clears malformed current.json without blocking future ticks', async () => {
+  const { config, stateDir } = await setup();
+  await fs.mkdir(stateDir, { recursive: true });
+  await fs.writeFile(path.join(stateDir, 'current.json'), '{nope');
+  const log = silentLog();
+  assert.equal(await recover({ config, users, log, deps: { createJiraClient: fakeJira().createJiraClient } }), false);
+  assert.equal(await readCurrentRun(stateDir), null);
+  assert.ok(log.lines.some(([, msg]) => msg === 'clearing malformed recovery state'));
 });
 
 test('tick is idle when nothing is labeled and uses the configured JQL', async () => {

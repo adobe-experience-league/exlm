@@ -56,26 +56,31 @@ async function runCommandForKey([key, flag], { loaded, log, out, deps }) {
     token: users.master.jiraPat,
   });
   const issue = await jira.getIssue(key);
-  if (flag === '--dry-run') {
-    const ticket = toTicket(issue);
-    const outcome = await (deps.runTicket || runTicket)({
-      ticket,
-      identity: resolveIdentity(users, ticket.assignee),
-      config,
-      runId: `${makeRunId(key)}-dry`,
-      log,
-      secrets: allSecrets(users),
-      dryRun: true,
-      deps,
-    });
-    out(`Dry run complete. Worktree kept at ${outcome.workDir}`);
-    out(`PR title: ${outcome.title}\n\n${outcome.body}`);
-    return 0;
-  }
   const release = await acquireLock(dataPaths(config.dataDir).stateDir);
   if (!release) {
     out('Another otto-bot run is in progress; try again later.');
     return 1;
+  }
+  const redact = createRedactor(allSecrets(users));
+  if (flag === '--dry-run') {
+    try {
+      const ticket = toTicket(issue);
+      const outcome = await (deps.runTicket || runTicket)({
+        ticket,
+        identity: resolveIdentity(users, ticket.assignee),
+        config,
+        runId: `${makeRunId(key)}-dry`,
+        log,
+        secrets: allSecrets(users),
+        dryRun: true,
+        deps,
+      });
+      out(`Dry run complete. Worktree kept at ${outcome.workDir}`);
+      out(redact(`PR title: ${outcome.title}\n\n${outcome.body}`));
+      return 0;
+    } finally {
+      await release();
+    }
   }
   try {
     const result = await processTicket({ issue, config, users, log, deps });

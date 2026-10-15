@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { main } from '../lib/cli.js';
-import { appendHistory, writeCurrentRun } from '../lib/state.js';
+import { acquireLock, appendHistory, writeCurrentRun } from '../lib/state.js';
 import { tempDir } from './helpers.js';
 
 async function cliEnv() {
@@ -74,4 +74,43 @@ test('run validates the ticket key', async () => {
   const { opts } = await cliEnv();
   await main(['users', 'add', '--master'], opts);
   assert.equal(await main(['run', 'not-a-key'], opts), 2);
+});
+
+test('dry run acquires the lock and redacts stdout', async () => {
+  const { opts, out, dataDir } = await cliEnv();
+  await main(['users', 'add', '--master'], opts);
+  const deps = {
+    createJiraClient: () => ({
+      getIssue: async (key) => ({ key, fields: { summary: 's', description: '', labels: ['otto'], assignee: null } }),
+    }),
+    runTicket: async () => ({
+      workDir: path.join(dataDir, 'work', 'dry'),
+      title: 'Title value-123',
+      body: 'Body value-123',
+    }),
+  };
+  assert.equal(await main(['run', 'EXLM-1234', '--dry-run'], { ...opts, deps }), 0);
+  const text = out.join('\n');
+  assert.ok(text.includes('Dry run complete'));
+  assert.equal(text.includes('value-123'), false);
+  assert.ok(text.includes('[REDACTED]'));
+});
+
+test('dry run skips while another process holds the lock', async () => {
+  const { opts, dataDir } = await cliEnv();
+  await main(['users', 'add', '--master'], opts);
+  const release = await acquireLock(path.join(dataDir, 'state'), { pid: process.pid });
+  try {
+    const deps = {
+      createJiraClient: () => ({
+        getIssue: async (key) => ({ key, fields: { summary: 's', description: '', labels: ['otto'], assignee: null } }),
+      }),
+      runTicket: async () => {
+        throw new Error('must not run');
+      },
+    };
+    assert.equal(await main(['run', 'EXLM-1234', '--dry-run'], { ...opts, deps }), 1);
+  } finally {
+    await release();
+  }
 });

@@ -37,13 +37,30 @@ const masterJira = (config, users, deps) =>
 export async function recover({ config, users, log, deps: overrides = {} }) {
   const deps = { ...DEFAULT_DEPS, ...overrides };
   const { stateDir } = dataPaths(config.dataDir);
-  const current = await readCurrentRun(stateDir);
+  let current;
+  try {
+    current = await readCurrentRun(stateDir);
+  } catch (err) {
+    if (err instanceof SyntaxError) {
+      log.warn('clearing malformed recovery state', { error: err.message });
+      await clearCurrentRun(stateDir);
+      return false;
+    }
+    throw err;
+  }
   if (!current) return false;
   const secrets = allSecrets(users);
   const redact = createRedactor(secrets);
   log.warn('recovering interrupted run', current);
   const jira = masterJira(config, users, deps);
   const { runDir } = runPaths(config.dataDir, current.runId);
+  const issue = await jira.getIssue(current.key);
+  const labels = issue?.fields?.labels || [];
+  if (!labels.includes(LABELS.working)) {
+    log.warn('clearing recovery state for an unclaimed run', { key: current.key, runId: current.runId, labels });
+    await clearCurrentRun(stateDir);
+    return false;
+  }
   await jira.addComment(current.key, redact(buildInterruptedComment({ runId: current.runId, logDir: runDir })));
   await jira.updateLabels(current.key, { remove: [LABELS.working], add: [LABELS.failed] });
   await appendHistory(stateDir, {
@@ -68,6 +85,7 @@ export async function processTicket({ issue, config, users, log, deps: overrides
   const jira = deps.createJiraClient({ baseUrl: config.jiraBaseUrl, token: identity.creds.jiraPat });
   const base = { key: ticket.key, runId };
   log.info('claiming ticket', { ...base, identity: identity.name });
+  await writeCurrentRun(stateDir, { ...base, identity: identity.name, startedAt: deps.now().toISOString() });
 
   try {
     await jira.updateLabels(ticket.key, { remove: [LABELS.trigger], add: [LABELS.working] });
@@ -82,6 +100,7 @@ export async function processTicket({ issue, config, users, log, deps: overrides
         stage: 'claim',
         finishedAt: deps.now().toISOString(),
       });
+      await clearCurrentRun(stateDir);
       return { ...base, outcome: 'failed', stage: 'claim' };
     }
     throw err;
@@ -89,7 +108,6 @@ export async function processTicket({ issue, config, users, log, deps: overrides
 
   await fs.mkdir(runDir, { recursive: true });
   log.attachFile(path.join(runDir, 'otto.log'));
-  await writeCurrentRun(stateDir, { ...base, identity: identity.name, startedAt: deps.now().toISOString() });
   await jira
     .addComment(ticket.key, redact(buildPickupComment({ identity, runId })))
     .catch((err) => log.warn('pickup comment failed', { error: err.message }));

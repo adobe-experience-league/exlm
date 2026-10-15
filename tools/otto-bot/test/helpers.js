@@ -1,10 +1,10 @@
 import fs from 'node:fs/promises';
-import os from 'node:os';
 import path from 'node:path';
 import { runCommand } from '../lib/exec.js';
 
 export function tempDir(prefix = 'otto-test-') {
-  return fs.mkdtemp(path.join(os.tmpdir(), prefix));
+  const root = new URL('../.test-tmp/', import.meta.url);
+  return fs.mkdir(root, { recursive: true }).then(() => fs.mkdtemp(path.join(root.pathname, prefix)));
 }
 
 export function jsonResponse(body, status = 200, headers = {}) {

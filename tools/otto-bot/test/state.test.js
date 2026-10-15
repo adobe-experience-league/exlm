@@ -26,11 +26,26 @@ test('acquireLock is exclusive while the holder is alive', async () => {
 
 test('acquireLock reclaims a lock held by a dead process', async () => {
   const dir = await tempDir();
-  await acquireLock(dir, { pid: 111, isAlive: () => true });
+  const stale = await acquireLock(dir, { pid: 111, isAlive: () => true });
   const release = await acquireLock(dir, { pid: 222, isAlive: (pid) => pid !== 111 });
   assert.equal(typeof release, 'function');
-  assert.equal(await fs.readFile(path.join(dir, 'lock'), 'utf8'), '222');
+  const owner = JSON.parse(await fs.readFile(path.join(dir, 'lock', 'owner.json'), 'utf8'));
+  assert.equal(owner.pid, 222);
+  await stale();
+  await fs.access(path.join(dir, 'lock'));
   await release();
+});
+
+test('acquireLock stale takeover yields exactly one holder for two contenders', async () => {
+  const dir = await tempDir();
+  const stale = await acquireLock(dir, { pid: 111, isAlive: () => true });
+  assert.equal(typeof stale, 'function');
+  const contenders = await Promise.all([
+    acquireLock(dir, { pid: 222, isAlive: (pid) => pid !== 111 }),
+    acquireLock(dir, { pid: 333, isAlive: (pid) => pid !== 111 }),
+  ]);
+  assert.equal(contenders.filter(Boolean).length, 1);
+  await Promise.all(contenders.filter(Boolean).map((release) => release()));
 });
 
 test('current run can be written, read, and cleared', async () => {
@@ -49,19 +64,28 @@ test('history appends JSON lines and returns the most recent entries', async () 
   assert.deepEqual(await readHistory(dir, 2), [{ n: 2 }, { n: 3 }]);
 });
 
-test('cleanupRuns removes expired run dirs and every leftover work dir', async () => {
+test('cleanupRuns removes expired run dirs, leftovers, and only old retained dry-run work dirs', async () => {
   const root = await tempDir();
   const runsRoot = path.join(root, 'runs');
   const workRoot = path.join(root, 'work');
   await fs.mkdir(path.join(runsRoot, 'old'), { recursive: true });
   await fs.mkdir(path.join(runsRoot, 'new'), { recursive: true });
   await fs.mkdir(path.join(workRoot, 'stale'), { recursive: true });
+  await fs.mkdir(path.join(workRoot, 'dry-new'), { recursive: true });
+  await fs.mkdir(path.join(workRoot, 'dry-old'), { recursive: true });
+  await fs.writeFile(path.join(workRoot, 'dry-new', '.otto-dry-run-retained'), 'new');
+  await fs.writeFile(path.join(workRoot, 'dry-old', '.otto-dry-run-retained'), 'old');
   const now = Date.now();
   const twentyDaysAgo = new Date(now - 20 * 24 * 60 * 60 * 1000);
   await fs.utimes(path.join(runsRoot, 'old'), twentyDaysAgo, twentyDaysAgo);
+  await fs.utimes(path.join(workRoot, 'dry-old', '.otto-dry-run-retained'), twentyDaysAgo, twentyDaysAgo);
   const removed = await cleanupRuns({ runsRoot, workRoot, retentionDays: 14, now });
-  assert.deepEqual(removed.sort(), [path.join(runsRoot, 'old'), path.join(workRoot, 'stale')].sort());
+  assert.deepEqual(
+    removed.sort(),
+    [path.join(runsRoot, 'old'), path.join(workRoot, 'dry-old'), path.join(workRoot, 'stale')].sort(),
+  );
   await fs.access(path.join(runsRoot, 'new'));
+  await fs.access(path.join(workRoot, 'dry-new'));
 });
 
 test('cleanupRuns tolerates missing directories', async () => {
