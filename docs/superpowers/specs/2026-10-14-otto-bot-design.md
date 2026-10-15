@@ -146,7 +146,7 @@ sudo -u otto node bin/otto.js doctor                       # validates every ide
 
 ```
 tick
- ├─ acquire lock (flock on var/state/lock; systemd oneshot also prevents overlap)
+ ├─ acquire lock (exclusive-create var/state/lock holding the PID; a dead PID's lock is reclaimed; systemd oneshot also prevents overlap)
  ├─ recover: if var/state/current.json exists → previous run crashed
  │     → (master) comment "worker interrupted (run <id>)", otto-working → otto-failed, delete state
  ├─ poll (master): JQL below, maxResults=1
@@ -184,13 +184,12 @@ ORDER BY updated ASC
    copilot -p "Read .otto/task.md and complete the task it describes." \
      --no-ask-user --disable-builtin-mcps \
      --allow-all-tools \
-     --deny-tool='shell(git push)' --deny-tool='shell(git commit)' \
-     --deny-tool='shell(gh)' --deny-tool='shell(curl)' --deny-tool='shell(wget)' \
-     --model=<config.model> \
-     --log-dir=var/runs/<runId>/copilot --share=var/runs/<runId>/session.md
+     --deny-tool='shell(git push),shell(git commit),shell(gh),shell(curl),shell(wget)' \
+     --model=<config.model> --no-color \
+     --log-dir=var/runs/<runId>/copilot --share=var/runs/<runId>/session-<n>.md
    ```
 
-   The environment is rebuilt from scratch: `PATH`, `HOME`, `LANG`, `COPILOT_HOME=~otto/.copilot-homes/<identity>`, `COPILOT_GITHUB_TOKEN=<copilotPat>`. No Jira or GitHub repo tokens. Timeout: **40 minutes** for the initial run (configurable); SIGTERM, then SIGKILL after 30 seconds.
+   The environment is rebuilt from scratch: `PATH`, `HOME`, `LANG`, `COPILOT_HOME=~otto/var/copilot-homes/<identity>`, `COPILOT_GITHUB_TOKEN=<copilotPat>`. No Jira or GitHub repo tokens. Timeout: **40 minutes** for the initial run (configurable); SIGTERM, then SIGKILL after 30 seconds.
 
 4. **Result.** Missing or invalid `result.json` → fail. `status: "blocked"` → fail with Copilot's open questions in the comment.
 5. **Guardrails.** Fail if any of these hold:
@@ -228,7 +227,8 @@ Initial Copilot run 40 min + 3 repairs × 10 min + `npm ci`/quality/push ≈ 80 
 | Situation                                          | Outcome                                                            |
 | -------------------------------------------------- | ------------------------------------------------------------------ |
 | Jira poll fails                                    | Log, exit non-zero, retry next tick. No ticket touched.            |
-| Claim `PUT` fails                                  | Ticket stays `otto`; retried next tick.                            |
+| Claim `PUT` fails (network / 5xx)                  | Ticket stays `otto`; retried next tick.                            |
+| Claim `PUT` rejected (401 / 403, bad assignee PAT) | Master marks `otto-failed` with "could not claim as <identity>".   |
 | Process crash, service timeout, or VM reboot       | Next tick recovers → `otto-failed` "worker interrupted".           |
 | Copilot auth or quota error                        | `otto-failed`, stage `copilot`, with the CLI's message (redacted). |
 | Copilot timeout                                    | `otto-failed`, stage `copilot`, "timed out after N minutes".       |
@@ -251,14 +251,14 @@ Initial Copilot run 40 min + 3 repairs × 10 min + `npm ci`/quality/push ≈ 80 
 **Units:**
 
 - `otto-bot.service`: `Type=oneshot`, `User=otto`, `WorkingDirectory=/home/otto/exlm-otto/tools/otto-bot`, `ExecStart=/usr/bin/env node bin/otto.js tick`, `TimeoutStartSec=120min`, `NoNewPrivileges=yes`, `ProtectSystem=strict`, `ReadWritePaths=/home/otto`, `PrivateTmp=yes`.
-- `otto-bot.timer`: `OnBootSec=2min`, `OnUnitInactiveSec=5min`, `Persistent=true`. The next tick starts 5 minutes after the previous one ends, and a oneshot service never overlaps itself.
+- `otto-bot.timer`: `OnActiveSec=1min`, `OnBootSec=2min`, `OnUnitInactiveSec=5min`. The next tick starts 5 minutes after the previous one ends, and a oneshot service never overlaps itself.
 
 **Data layout (`/home/otto`):**
 
 ```
 exlm-otto/                  # deployed code (otto-bot branch)
 .config/otto-bot/           # config.json, users.json (0600)
-.copilot-homes/<identity>/  # isolated Copilot CLI config per identity
+var/copilot-homes/<identity>/  # isolated Copilot CLI config per identity
 var/mirror/exlm.git         # bare mirror used for worktrees
 var/work/<runId>/           # per-run worktree (deleted after run)
 var/runs/<runId>/           # logs + Copilot session transcript (14 days)
