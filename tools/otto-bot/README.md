@@ -53,7 +53,3 @@ Usage:
 ```
 
 Configuration defaults are documented in `config.example.json`. The example intentionally contains no PATs or tokens; user credentials are stored separately by `otto users add`.
-
-## Security
-
-Known risk (accepted): Copilot runs as the same `otto` Unix user that owns `users.json`, so environment scrubbing and Copilot token separation do not prevent filesystem reads of controller credentials. This is accepted for now and must be fixed with a stronger execution boundary before broader rollout.
