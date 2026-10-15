@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { StageError } from './errors.js';
 import { runCommand } from './exec.js';
+import { createRedactor } from './redact.js';
 
 export const DENIED_TOOLS = Object.freeze([
   'shell(git push)',
@@ -49,6 +50,7 @@ export async function runCopilot({
   baseEnv = process.env,
   run = runCommand,
 }) {
+  const redact = createRedactor([token]);
   await fs.mkdir(copilotHome, { recursive: true, mode: 0o700 });
   await fs.chmod(copilotHome, 0o700);
   const args = buildCopilotArgs({
@@ -64,13 +66,15 @@ export async function runCopilot({
   });
   await fs.writeFile(
     path.join(runDir, `${sessionName}.out.log`),
-    `exit=${result.code} signal=${result.signal}\n--- stdout ---\n${result.stdout}\n--- stderr ---\n${result.stderr}\n`,
+    redact(
+      `exit=${result.code} signal=${result.signal}\n--- stdout ---\n${result.stdout}\n--- stderr ---\n${result.stderr}\n`,
+    ),
   );
   if (result.timedOut) {
     throw new StageError('copilot', `Copilot CLI timed out after ${Math.round(timeoutMs / 60000)} minutes`);
   }
   if (result.code !== 0) {
-    throw new StageError('copilot', `Copilot CLI exited with code ${result.code}`, result.stderr.slice(-4000));
+    throw new StageError('copilot', `Copilot CLI exited with code ${result.code}`, redact(result.stderr.slice(-4000)));
   }
   return { stdout: result.stdout, stderr: result.stderr };
 }

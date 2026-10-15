@@ -39,7 +39,13 @@ test('runCopilot runs in the worktree, records output, and isolates COPILOT_HOME
   const calls = [];
   const run = async (cmd, args, opts) => {
     calls.push({ cmd, args, opts });
-    return { code: 0, signal: null, timedOut: false, stdout: 'did it', stderr: '' };
+    return {
+      code: 0,
+      signal: null,
+      timedOut: false,
+      stdout: 'did it with copilot-secret-value and github_pat_ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      stderr: '',
+    };
   };
   const copilotHome = path.join(root, 'homes', 'master');
   const runDir = path.join(root, 'run');
@@ -51,7 +57,7 @@ test('runCopilot runs in the worktree, records output, and isolates COPILOT_HOME
     model: 'auto',
     timeoutMs: 1000,
     copilotHome,
-    token: 'github_pat_t',
+    token: 'copilot-secret-value',
     runDir,
     sessionName: 'session-1',
     baseEnv: { PATH: '/bin' },
@@ -62,7 +68,10 @@ test('runCopilot runs in the worktree, records output, and isolates COPILOT_HOME
   assert.equal(calls[0].opts.timeoutMs, 1000);
   assert.equal(calls[0].opts.env.COPILOT_HOME, copilotHome);
   assert.equal((await fs.stat(copilotHome)).mode % 0o1000, 0o700);
-  assert.ok((await fs.readFile(path.join(runDir, 'session-1.out.log'), 'utf8')).includes('did it'));
+  const log = await fs.readFile(path.join(runDir, 'session-1.out.log'), 'utf8');
+  assert.ok(log.includes('did it'));
+  assert.equal(log.includes('copilot-secret-value'), false);
+  assert.equal(log.includes('github_pat_'), false);
 });
 
 test('runCopilot throws a copilot StageError on timeout and on failure', async () => {
@@ -74,18 +83,24 @@ test('runCopilot throws a copilot StageError on timeout and on failure', async (
     model: 'auto',
     timeoutMs: 1000,
     copilotHome: path.join(root, 'home'),
-    token: 't',
+    token: 'copilot-secret-value',
     runDir: root,
     sessionName: 's',
   };
   const timedOut = async () => ({ code: null, signal: 'SIGTERM', timedOut: true, stdout: '', stderr: '' });
-  const failed = async () => ({ code: 1, signal: null, timedOut: false, stdout: '', stderr: 'auth failed' });
+  const failed = async () => ({
+    code: 1,
+    signal: null,
+    timedOut: false,
+    stdout: '',
+    stderr: 'auth failed copilot-secret-value',
+  });
   await assert.rejects(
     runCopilot({ ...base, run: timedOut }),
     (e) => e.stage === 'copilot' && /timed out/.test(e.message),
   );
   await assert.rejects(
     runCopilot({ ...base, run: failed }),
-    (e) => e.stage === 'copilot' && /auth failed/.test(e.details),
+    (e) => e.stage === 'copilot' && /auth failed/.test(e.details) && !e.details.includes('copilot-secret-value'),
   );
 });
